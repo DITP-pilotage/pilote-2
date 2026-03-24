@@ -2,6 +2,14 @@ import type { Inject } from "@/server/chantiers/module";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 
+export type ValeurAvancementIndicateurTerritoire = {
+  territoireCode: string;
+  valeurAvancement: number | null;
+  valeurCibleAnnuelle: number | null;
+  estApplicable: boolean | null;
+  dateValeurAvancement: string | null;
+};
+
 export class RecupererValeursAvancementIndicateurTerritoiresQuery {
   constructor(
     private readonly deps: Inject<"listerDetailsIndicateurTerritoireUseCaseV2">,
@@ -13,7 +21,7 @@ export class RecupererValeursAvancementIndicateurTerritoiresQuery {
     jalon: number;
     habilitations: Habilitations;
     profil: ProfilCode;
-  }) {
+  }): Promise<ValeurAvancementIndicateurTerritoire[]> {
     const result =
       await this.deps.listerDetailsIndicateurTerritoireUseCaseV2.run(
         [params.indicateurId],
@@ -30,6 +38,7 @@ export class RecupererValeursAvancementIndicateurTerritoiresQuery {
       valeurAvancement: detail.valeurAvancement,
       valeurCibleAnnuelle: detail.valeurCibleAnnuelle,
       estApplicable: detail.estApplicable,
+      dateValeurAvancement: detail.dateValeurAvancement,
     }));
   }
 }

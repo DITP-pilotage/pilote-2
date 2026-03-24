@@ -1,8 +1,9 @@
 import { useMemo } from "react";
-import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
 import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
-import { TerritoireLabel } from "@/components/_commons/Widget/TerritoireLabel";
-import { TerritoireProgressBar } from "@/components/_commons/Widget/TerritoireProgressBar";
+import {
+  SuiviTerritoires,
+  SuiviTerritoireItem,
+} from "@/components/_commons/Widget/SuiviTerritoires";
 
 export const SuiviTauxAvancement = ({
   territoiresSelectionnes,
@@ -13,64 +14,42 @@ export const SuiviTauxAvancement = ({
   onSupprimerTerritoire: (territoireCode: string) => void;
   territoireCode: string;
 }) => {
-  const territoiresTries = useMemo(
+  const territoires: SuiviTerritoireItem[] = useMemo(
     () =>
-      [...territoiresSelectionnes].sort((territoire1, territoire2) => {
-        if (
-          territoire1.tauxAvancementJalon === null &&
-          territoire2.tauxAvancementJalon === null
-        )
-          return 0;
-        if (territoire1.tauxAvancementJalon === null) return 1;
-        if (territoire2.tauxAvancementJalon === null) return -1;
-        return (
-          territoire2.tauxAvancementJalon - territoire1.tauxAvancementJalon
-        );
-      }),
+      [...territoiresSelectionnes]
+        .sort((a, b) => {
+          if (
+            a.tauxAvancementJalon === null &&
+            b.tauxAvancementJalon === null
+          )
+            return 0;
+          if (a.tauxAvancementJalon === null) return 1;
+          if (b.tauxAvancementJalon === null) return -1;
+          return b.tauxAvancementJalon - a.tauxAvancementJalon;
+        })
+        .map((territoire) => ({
+          territoireCode: territoire.territoireCode,
+          nom: territoire.territoireNom,
+          estApplicable: territoire.estApplicable,
+          pourcentage: territoire.tauxAvancementJalon,
+          libelle:
+            territoire.tauxAvancementJalon !== null
+              ? `${territoire.tauxAvancementJalon.toFixed(0)} %`
+              : "",
+          dateMaj: territoire.dateTauxAvancementAnnuel
+            ? new Date(
+                territoire.dateTauxAvancementAnnuel,
+              ).toLocaleDateString("fr-FR")
+            : null,
+        })),
     [territoiresSelectionnes],
   );
 
   return (
-    <div className="text-xs flex flex-col">
-      {territoiresTries.map((territoire) => {
-        const dateMaj = territoire.dateTauxAvancementAnnuel
-          ? new Date(territoire.dateTauxAvancementAnnuel).toLocaleDateString(
-              "fr-FR",
-            )
-          : null;
-        const estInitial = territoire.territoireCode === territoireCode;
-        const couleur = getCouleurTerritoireParCode(territoire.territoireCode);
-
-        return (
-          <div
-            key={territoire.territoireCode}
-            className="grid grid-cols-[120px_1fr_auto] items-center py-2"
-          >
-            <TerritoireLabel
-              nom={territoire.territoireNom}
-              couleur={couleur}
-              onSupprimer={
-                !estInitial
-                  ? () => onSupprimerTerritoire(territoire.territoireCode)
-                  : undefined
-              }
-            />
-
-            {territoire.estApplicable === false ? (
-              <span className="col-span-2 text-center">Non applicable</span>
-            ) : territoire.tauxAvancementJalon === null ? (
-              <span className="col-span-2 text-center">Non renseigné</span>
-            ) : (
-              <TerritoireProgressBar
-                pourcentage={territoire.tauxAvancementJalon}
-                libelle={`${territoire.tauxAvancementJalon.toFixed(0)} %`}
-                couleur={couleur}
-                dateMaj={dateMaj}
-              />
-            )}
-          </div>
-        );
-      })}
-    </div>
+    <SuiviTerritoires
+      territoires={territoires}
+      territoireCode={territoireCode}
+      onSupprimerTerritoire={onSupprimerTerritoire}
+    />
   );
 };

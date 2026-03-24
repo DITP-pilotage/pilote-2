@@ -3,7 +3,7 @@ import { interpolerCouleurs } from "@/client/utils/couleur/couleur";
 import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/types";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
-import { ValeurAvancementIndicateurTerritoire } from "./types";
+import { ValeurAvancementIndicateurTerritoire } from "@/server/chantiers/infrastructure/queries/RecupererValeursAvancementIndicateurTerritoiresQuery";
 
 const COULEUR_DÉPART = "#8bcdb1";
 const COULEUR_ARRIVÉE = "#083a25";

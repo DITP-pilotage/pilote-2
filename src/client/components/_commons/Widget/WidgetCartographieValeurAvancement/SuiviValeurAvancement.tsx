@@ -1,9 +1,10 @@
 import { useMemo } from "react";
-import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
 import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
-import { TerritoireLabel } from "@/components/_commons/Widget/TerritoireLabel";
-import { TerritoireProgressBar } from "@/components/_commons/Widget/TerritoireProgressBar";
-import { ValeurAvancementIndicateurTerritoire } from "./types";
+import {
+  SuiviTerritoires,
+  SuiviTerritoireItem,
+} from "@/components/_commons/Widget/SuiviTerritoires";
+import { ValeurAvancementIndicateurTerritoire } from "@/server/chantiers/infrastructure/queries/RecupererValeursAvancementIndicateurTerritoiresQuery";
 
 const formatValeur = (valeur: number | null, unite: string | null): string => {
   if (valeur === null) return "Non renseigné";
@@ -15,8 +16,9 @@ const computePourcentage = (
   valeur: number | null,
   min: number | null,
   max: number | null,
-): number => {
-  if (valeur === null || min === null || max === null) return 0;
+): number | null => {
+  if (valeur === null) return null;
+  if (min === null || max === null) return 0;
   if (max === min) return 100;
   return ((valeur - min) / (max - min)) * 100;
 };
@@ -37,64 +39,49 @@ export const SuiviValeurAvancement = ({
     maximum: number | null;
   };
 }) => {
-  const territoiresTries = useMemo(
+  const territoires: SuiviTerritoireItem[] = useMemo(
     () =>
-      [...territoiresSelectionnes].sort((territoire1, territoire2) => {
-        if (
-          territoire1.valeurAvancement === null &&
-          territoire2.valeurAvancement === null
-        )
-          return 0;
-        if (territoire1.valeurAvancement === null) return 1;
-        if (territoire2.valeurAvancement === null) return -1;
-        return territoire2.valeurAvancement - territoire1.valeurAvancement;
-      }),
-    [territoiresSelectionnes],
+      [...territoiresSelectionnes]
+        .sort((a, b) => {
+          if (
+            a.valeurAvancement === null &&
+            b.valeurAvancement === null
+          )
+            return 0;
+          if (a.valeurAvancement === null) return 1;
+          if (b.valeurAvancement === null) return -1;
+          return b.valeurAvancement - a.valeurAvancement;
+        })
+        .map((territoire) => {
+          const détails = récupérerDétailsSurUnTerritoire(
+            territoire.territoireCode,
+          );
+
+          return {
+            territoireCode: territoire.territoireCode,
+            nom: détails?.nomAffiché ?? territoire.territoireCode,
+            estApplicable: territoire.estApplicable,
+            pourcentage: computePourcentage(
+              territoire.valeurAvancement,
+              statistiques.minimum,
+              statistiques.maximum,
+            ),
+            libelle: formatValeur(territoire.valeurAvancement, unite),
+            dateMaj: territoire.dateValeurAvancement
+              ? new Date(
+                  territoire.dateValeurAvancement,
+                ).toLocaleDateString("fr-FR")
+              : null,
+          };
+        }),
+    [territoiresSelectionnes, statistiques, unite],
   );
 
   return (
-    <div className="text-xs flex flex-col">
-      {territoiresTries.map((territoire) => {
-        const estInitial = territoire.territoireCode === territoireCode;
-        const couleur = getCouleurTerritoireParCode(territoire.territoireCode);
-        const détails = récupérerDétailsSurUnTerritoire(
-          territoire.territoireCode,
-        );
-        const nom = détails?.nomAffiché ?? territoire.territoireCode;
-
-        return (
-          <div
-            key={territoire.territoireCode}
-            className="grid grid-cols-[120px_1fr_auto] items-center py-2"
-          >
-            <TerritoireLabel
-              nom={nom}
-              couleur={couleur}
-              onSupprimer={
-                !estInitial
-                  ? () => onSupprimerTerritoire(territoire.territoireCode)
-                  : undefined
-              }
-            />
-
-            {territoire.estApplicable === false ? (
-              <span className="col-span-2 text-center">Non applicable</span>
-            ) : territoire.valeurAvancement === null ? (
-              <span className="col-span-2 text-center">Non renseigné</span>
-            ) : (
-              <TerritoireProgressBar
-                pourcentage={computePourcentage(
-                  territoire.valeurAvancement,
-                  statistiques.minimum,
-                  statistiques.maximum,
-                )}
-                libelle={formatValeur(territoire.valeurAvancement, unite)}
-                couleur={couleur}
-              />
-            )}
-          </div>
-        );
-      })}
-    </div>
+    <SuiviTerritoires
+      territoires={territoires}
+      territoireCode={territoireCode}
+      onSupprimerTerritoire={onSupprimerTerritoire}
+    />
   );
 };
