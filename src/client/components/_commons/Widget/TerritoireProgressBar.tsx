@@ -1,3 +1,5 @@
+import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
+
 export const TerritoireProgressBar = ({
   pourcentage,
   libelle,
@@ -20,13 +22,12 @@ export const TerritoireProgressBar = ({
       />
     </div>
 
-    <div className="whitespace-nowrap">
-      <span style={{ color: couleur }}>{libelle}</span>
-      {dateMaj !== undefined && (
-        <span className="text-[10px] !text-dsfr-grey-625">
-          {" "}
-          ({dateMaj ?? "—"})
-        </span>
+    <div className="whitespace-nowrap text-left">
+      <div style={{ color: couleur }}>{libelle}</div>
+      {dateMaj != undefined && (
+        <div className="text-[10px] !text-dsfr-grey-625">
+          {PiloteDateFormatter.isoMonthFranceMetropolitaine(dateMaj) ?? "—"}
+        </div>
       )}
     </div>
   </>

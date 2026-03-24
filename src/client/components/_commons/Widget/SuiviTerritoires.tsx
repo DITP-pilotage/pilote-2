@@ -28,7 +28,7 @@ export const SuiviTerritoires = ({
       return (
         <div
           key={territoire.territoireCode}
-          className="grid grid-cols-[120px_1fr_auto] items-center py-2"
+          className="grid grid-cols-[120px_1fr_auto] items-center py-1"
         >
           <TerritoireLabel
             nom={territoire.nom}

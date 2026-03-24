@@ -996,7 +996,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         dateValeurInitiale:
           indicateurRow?.date_valeur_initiale?.toLocaleString() ?? null,
         dateValeurAvancement:
-          indicateurTerritoireJalon?.date_valeur_actuelle?.toLocaleString() ??
+          indicateurTerritoireJalon?.date_valeur_actuelle?.toISOString() ??
           null,
         dateValeurAvancementMandat:
           indicateurRow?.date_valeur_actuelle_mandat?.toLocaleString() ?? null,

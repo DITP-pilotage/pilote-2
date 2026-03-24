@@ -67,11 +67,7 @@ export const SuiviValeurAvancement = ({
               statistiques.maximum,
             ),
             libelle: formatValeur(territoire.valeurAvancement, unite),
-            dateMaj: territoire.dateValeurAvancement
-              ? new Date(
-                  territoire.dateValeurAvancement,
-                ).toLocaleDateString("fr-FR")
-              : null,
+            dateMaj: territoire.dateValeurAvancement ?? null,
           };
         }),
     [territoiresSelectionnes, statistiques, unite],

@@ -36,11 +36,7 @@ export const SuiviTauxAvancement = ({
             territoire.tauxAvancementJalon !== null
               ? `${territoire.tauxAvancementJalon.toFixed(0)} %`
               : "",
-          dateMaj: territoire.dateTauxAvancementAnnuel
-            ? new Date(
-                territoire.dateTauxAvancementAnnuel,
-              ).toLocaleDateString("fr-FR")
-            : null,
+          dateMaj: territoire.dateTauxAvancementAnnuel ?? null,
         })),
     [territoiresSelectionnes],
   );
