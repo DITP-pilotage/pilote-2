@@ -2,7 +2,6 @@ import {
   VARIABLE_CONTENU_DISPONIBLE_ENV,
   VariableContenuDisponibleEnv,
   FEATURE_FLIP_KEYS,
-  FeatureFlipKey,
 } from "@/server/gestion-contenu/domain/VariableContenuDisponible";
 import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 import { GestionContenuRepository } from "@/server/gestion-contenu/domain/ports/GestionContenuRepository";
@@ -44,18 +43,14 @@ export class RecupererToutesLesVariablesContenuUseCase {
       );
 
     // Fusionner : DB > config
+    const mergedValues: Record<string, unknown> = { ...configValues };
     for (const key of FEATURE_FLIP_KEYS) {
       const dbValue = dbValues[key];
-      if (dbValue !== undefined) {
-        const envKey = key as FeatureFlipKey &
-          keyof VariableContenuDisponibleEnv;
-        if (envKey in configValues) {
-          (configValues as Record<string, unknown>)[envKey] =
-            dbValue as boolean;
-        }
+      if (dbValue !== undefined && key in configValues) {
+        mergedValues[key] = dbValue as boolean;
       }
     }
 
-    return configValues;
+    return mergedValues as VariableContenuDisponibleEnv;
   }
 }
