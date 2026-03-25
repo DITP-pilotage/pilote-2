@@ -44,16 +44,14 @@ export class RecupererTauxAvancementIndicateurTerritoiresQuery {
 
     const details = result[params.indicateurId] ?? {};
 
-    const territoires =
-      await this.deps.territoireRepository.récupérerTousNew();
+    const territoires = await this.deps.territoireRepository.récupérerTousNew();
     const territoiresMap = new Map(
       territoires.map((territoire) => [territoire.code, territoire]),
     );
 
     return Object.entries(details).map(([territoireCode, detail]) => ({
       territoireCode,
-      territoireNom:
-        territoiresMap.get(territoireCode)?.nomAffiché ?? "",
+      territoireNom: territoiresMap.get(territoireCode)?.nomAffiché ?? "",
       maille: determinerMaille(territoireCode),
       tauxAvancementJalon: detail.avancement.annuel,
       estApplicable: detail.estApplicable,

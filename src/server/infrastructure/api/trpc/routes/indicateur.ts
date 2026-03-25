@@ -91,9 +91,7 @@ export const indicateurRouter = créerRouteurTRPC({
     )
     .query(async ({ input, ctx }) => {
       return getContainer("chantiers")
-        .resolve(
-          "getStatistiquesTauxAvancementIndicateurTerritoiresQuery",
-        )
+        .resolve("getStatistiquesTauxAvancementIndicateurTerritoiresQuery")
         .execute({
           indicateurId: input.indicateurId,
           chantierId: input.chantierId,
