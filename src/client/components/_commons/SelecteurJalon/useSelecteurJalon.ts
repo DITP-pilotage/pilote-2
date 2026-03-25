@@ -1,11 +1,8 @@
 import { getAnneeDateDeBascule } from "@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import { useEnv } from "@/client/hooks/useEnv";
+import { buildJalons } from "@/client/utils/jalons";
 
-const PREMIER_JALON = 2022;
-const listeJalonAAfficher = Array.from(
-  { length: new Date().getFullYear() - PREMIER_JALON + 1 },
-  (_value, i) => `${PREMIER_JALON + i}`,
-);
+const listeJalonAAfficher = buildJalons().map(String);
 export type JalonsAAfficherType = (typeof listeJalonAAfficher)[number];
 
 export const useSelecteurJalon = () => {

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
 import { buildJalons } from "@/client/utils/jalons";
 
-export const useValeursAvancementParJalon = ({
+export const useTauxAvancementParJalon = ({
   indicateurId,
   chantierId,
 }: {
@@ -13,7 +13,7 @@ export const useValeursAvancementParJalon = ({
 
   const [results] = api.useSuspenseQueries((t) =>
     jalons.map((jalon) =>
-      t.indicateur.recupererValeursAvancementTerritoires({
+      t.indicateur.recupererTauxAvancementTerritoires({
         indicateurId,
         chantierId,
         jalon,

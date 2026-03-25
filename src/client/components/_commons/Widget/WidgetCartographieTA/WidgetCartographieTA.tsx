@@ -16,6 +16,7 @@ import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avanc
 import { useDonneesCartographieTA } from "./useDonneesCartographieTA";
 import { useLegendeTA } from "./useLegendeTA";
 import { SuiviTauxAvancement } from "./SuiviTauxAvancement";
+import { TableauEvolutionTA } from "./TableauEvolutionTA";
 
 const WidgetCartographieTAContext = createContext<{
   territoiresAvancement: TauxAvancementComparaisonTerritoireViewModel[];
@@ -113,15 +114,19 @@ const formatValeurTA = (valeur: number | null | undefined): string | null => {
   return `${Math.round(valeur)}%`;
 };
 
-const WidgetCartographieTAContent = ({
-  maille,
-  territoireCode,
-  jalon,
-}: {
+type WidgetCartographieTAContentProps = {
   maille: MailleInterne;
   territoireCode: string;
   jalon: number;
-}) => {
+} & (
+  | { mode: "chantiers" }
+  | { mode: "indicateur"; indicateurId: string; chantierId: string }
+);
+
+const WidgetCartographieTAContent = (
+  props: WidgetCartographieTAContentProps,
+) => {
+  const { maille, territoireCode, jalon, mode } = props;
   const { territoiresAvancement, statistiques } =
     useWidgetCartographieTAContext();
   const [vueActive, setVueActive] = useState<VueCartographieTA>("situation");
@@ -173,32 +178,44 @@ const WidgetCartographieTAContent = ({
       }
       titre="Suivi et évolution des taux d'avancement"
     >
-      <PillToggleGroup.Root
-        type="single"
-        value={vueActive}
-        onValueChange={(value) => {
-          if (value) setVueActive(value as VueCartographieTA);
-        }}
-      >
-        <PillToggleGroup.Item value="situation">
-          <EqualizerIcon className="w-3 h-3" />
-          situation en {jalon}
-        </PillToggleGroup.Item>
-        <PillToggleGroup.Item value="tableau">
-          <GridIcon className="w-3 h-3" />
-          évolution temporelle - tableau
-        </PillToggleGroup.Item>
-        <PillToggleGroup.Item value="courbes">
-          <LineChartIcon className="w-3 h-3" />
-          évolution temporelle - courbes
-        </PillToggleGroup.Item>
-      </PillToggleGroup.Root>
+      {mode === "indicateur" && (
+        <PillToggleGroup.Root
+          type="single"
+          value={vueActive}
+          onValueChange={(value) => {
+            if (value) setVueActive(value as VueCartographieTA);
+          }}
+        >
+          <PillToggleGroup.Item value="situation">
+            <EqualizerIcon className="w-3 h-3" />
+            situation en {jalon}
+          </PillToggleGroup.Item>
+          <PillToggleGroup.Item value="tableau">
+            <GridIcon className="w-3 h-3" />
+            évolution temporelle - tableau
+          </PillToggleGroup.Item>
+          <PillToggleGroup.Item value="courbes">
+            <LineChartIcon className="w-3 h-3" />
+            évolution temporelle - courbes
+          </PillToggleGroup.Item>
+        </PillToggleGroup.Root>
+      )}
 
-      {vueActive === "situation" && (
+      {(mode === "chantiers" || vueActive === "situation") && (
         <SuiviTauxAvancement
           territoireCode={territoireCode}
           onSupprimerTerritoire={supprimerTerritoire}
           territoiresSelectionnes={territoiresSelectionnes}
+        />
+      )}
+      {mode === "indicateur" && vueActive === "tableau" && (
+        <TableauEvolutionTA
+          indicateurId={props.indicateurId}
+          chantierId={props.chantierId}
+          territoiresSelectionnes={territoiresSelectionnes}
+          territoireCode={territoireCode}
+          onSupprimerTerritoire={supprimerTerritoire}
+          jalonActif={jalon}
         />
       )}
       <AjouterTerritoirePicker
@@ -224,14 +241,6 @@ type WidgetCartographieTAProps = {
 );
 
 export const WidgetCartographieTA = (props: WidgetCartographieTAProps) => {
-  const content = (
-    <WidgetCartographieTAContent
-      maille={props.maille}
-      territoireCode={props.territoireCode}
-      jalon={props.jalon}
-    />
-  );
-
   if (props.mode === "indicateur") {
     return (
       <IndicateurProvider
@@ -240,7 +249,14 @@ export const WidgetCartographieTA = (props: WidgetCartographieTAProps) => {
         maille={props.maille}
         jalon={props.jalon}
       >
-        {content}
+        <WidgetCartographieTAContent
+          mode="indicateur"
+          indicateurId={props.indicateurId}
+          chantierId={props.chantierId}
+          maille={props.maille}
+          territoireCode={props.territoireCode}
+          jalon={props.jalon}
+        />
       </IndicateurProvider>
     );
   }
@@ -251,7 +267,12 @@ export const WidgetCartographieTA = (props: WidgetCartographieTAProps) => {
       maille={props.maille}
       jalon={props.jalon}
     >
-      {content}
+      <WidgetCartographieTAContent
+        mode="chantiers"
+        maille={props.maille}
+        territoireCode={props.territoireCode}
+        jalon={props.jalon}
+      />
     </ChantiersProvider>
   );
 };

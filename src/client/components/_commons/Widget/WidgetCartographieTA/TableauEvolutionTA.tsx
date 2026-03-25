@@ -1,41 +1,35 @@
 import { useMemo } from "react";
 import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
-import { ValeurAvancementIndicateurTerritoire } from "@/server/chantiers/infrastructure/queries/RecupererValeursAvancementIndicateurTerritoiresQuery";
+import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
 import {
   TableauEvolution,
   CelluleJalon,
   LigneTerritoire,
 } from "@/components/_commons/Widget/TableauEvolution";
-import { useValeursAvancementParJalon } from "@/components/_commons/Widget/WidgetCartographieValeurAvancement/useValeursAvancementParJalon";
+import { useTauxAvancementParJalon } from "./useTauxAvancementParJalon";
 
-const formatValeur = (
-  valeur: number | null,
-  unite: string | null,
-): string | null => {
-  if (valeur === null) return null;
-  const unitéAffichée = unite?.toLocaleLowerCase() === "pourcentage" ? "%" : "";
-  return valeur.toLocaleString() + unitéAffichée;
+const formatValeurTA = (valeur: number | null | undefined): string | null => {
+  if (valeur === null || valeur === undefined) return null;
+  return `${Math.round(valeur)}%`;
 };
 
-export const TableauEvolutionVA = ({
+export const TableauEvolutionTA = ({
   indicateurId,
   chantierId,
   territoiresSelectionnes,
   territoireCode,
   onSupprimerTerritoire,
   jalonActif,
-  unite,
 }: {
   indicateurId: string;
   chantierId: string;
-  territoiresSelectionnes: ValeurAvancementIndicateurTerritoire[];
+  territoiresSelectionnes: TauxAvancementComparaisonTerritoireViewModel[];
   territoireCode: string;
   onSupprimerTerritoire: (territoireCode: string) => void;
   jalonActif: number;
-  unite: string | null;
 }) => {
-  const { jalons, donneesParJalon } = useValeursAvancementParJalon({
+  const { jalons, donneesParJalon } = useTauxAvancementParJalon({
     indicateurId,
     chantierId,
   });
@@ -55,9 +49,9 @@ export const TableauEvolutionVA = ({
 
         cellules.set(jalon, {
           valeur: donneeTerritoire
-            ? formatValeur(donneeTerritoire.valeurAvancement, unite)
+            ? formatValeurTA(donneeTerritoire.tauxAvancementJalon)
             : null,
-          date: donneeTerritoire?.dateValeurAvancement ?? null,
+          date: donneeTerritoire?.dateTauxAvancementAnnuel ?? null,
           estApplicable: donneeTerritoire?.estApplicable ?? null,
         });
       }
@@ -70,7 +64,7 @@ export const TableauEvolutionVA = ({
         cellules,
       };
     });
-  }, [territoiresSelectionnes, donneesParJalon, jalons, unite, territoireCode]);
+  }, [territoiresSelectionnes, donneesParJalon, jalons, territoireCode]);
 
   return (
     <TableauEvolution
