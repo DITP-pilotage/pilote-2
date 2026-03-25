@@ -111,10 +111,9 @@ const TuilesMeteos = ({
         <li key={meteo}>
           <button
             className={clsxm(
-              "flex items-center gap-3 w-full py-4 px-5 border border-dsfr-moutarde-main-975 rounded-xl bg-white shadow-lg cursor-pointer transition-colors hover:border-dsfr-moutarde-main-850",
+              "flex items-center gap-3 w-full py-4 px-5 border border-dsfr-moutarde-main-975 rounded-xl bg-white shadow-lg cursor-pointer transition-colors hover:border-dsfr-moutarde-main-850 hover:bg-dsfr-moutarde-main-975",
               {
-                "border-dsfr-moutarde-main-925 bg-dsfr-moutarde-main-975":
-                  meteos.includes(meteo),
+                "border-dsfr-moutarde-main-925": meteos.includes(meteo),
               },
             )}
             onClick={() => {
