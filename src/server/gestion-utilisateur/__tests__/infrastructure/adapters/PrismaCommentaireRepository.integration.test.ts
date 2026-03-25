@@ -1,5 +1,5 @@
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { prisma } from "@/server/db/prisma";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaCommentaireRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaCommentaireRepository";
 
 describe("PrismaCommentaireRepository", () => {
@@ -10,118 +10,206 @@ describe("PrismaCommentaireRepository", () => {
   });
 
   describe("#anonymiserAuteurs", () => {
-    test("doit anonymiser l'auteur des commentaires saisis par l'utilisateur supprimé", async () => {
-      // Given
-      const auteurId1 = "f62765e6-0d66-4cfa-af41-6ec9b3ded48c";
-      const auteurId2 = "3150e759-3551-4ff7-9ba1-c8e119f49f3b";
-      const auteurId3 = "4421e6d7-980b-4ea9-ab66-95d4c2b62a6c";
+    it(
+      "doit anonymiser l'auteur de modification des commentaires saisis par l'utilisateur supprimé",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const auteurNonCible = await fixtures.utilisateur();
+        const auteurASupprimer = await fixtures.utilisateur();
+        const auteurAnonyme = await fixtures.utilisateur({
+          email: "utilisateur.supprime@modernisation.gouv.fr",
+        });
 
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Chantier 001",
-        },
-      });
-      await prisma.chantier_territoire.create({
-        data: {
-          id: "CH-001",
-          zone_id: "FRANCE",
+        const chantier = await fixtures.chantierIdentite();
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
           maille: "NAT",
           code_insee: "FR",
+          zone_id: "FRANCE",
+        });
+
+        await fixtures.commentaire({
+          chantier_id: chantier.id,
           territoire_code: "NAT-FR",
-        },
-      });
+          maille: "NAT",
+          code_insee: "FR",
+          type: "commentaires_sur_les_donnees",
+          auteur_modification_id: auteurNonCible.id,
+          auteur_creation_id: auteurNonCible.id,
+        });
+        const commentaire2 = await fixtures.commentaire({
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          maille: "NAT",
+          code_insee: "FR",
+          type: "commentaires_sur_les_donnees",
+          auteur_modification_id: auteurASupprimer.id,
+          auteur_creation_id: auteurNonCible.id,
+        });
+        const commentaire3 = await fixtures.commentaire({
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          maille: "NAT",
+          code_insee: "FR",
+          type: "commentaires_sur_les_donnees",
+          auteur_modification_id: auteurASupprimer.id,
+          auteur_creation_id: auteurNonCible.id,
+        });
 
-      await prisma.utilisateur.createMany({
-        data: [
-          {
-            id: auteurId1,
-            email: "john.doe@test.com",
-            nom: "doe",
-            prenom: "john",
-            date_creation: new Date().toISOString(),
-            profilCode: ProfilEnum.DITP_ADMIN,
-          },
-          {
-            id: auteurId2,
-            email: "auteur.commentaire@test.com",
-            nom: "commentaire",
-            prenom: "auteur",
-            date_creation: new Date().toISOString(),
-            profilCode: ProfilEnum.DITP_ADMIN,
-          },
-          {
-            id: auteurId3,
-            email: "utilisateur.supprime@modernisation.gouv.fr",
-            nom: "inconnu",
-            prenom: "auteur",
-            date_creation: new Date().toISOString(),
-            profilCode: ProfilEnum.DITP_ADMIN,
-          },
-        ],
-      });
+        // When
+        await prismaCommentaireRepository.anonymiserAuteurs(
+          [auteurASupprimer.id],
+          "utilisateur.supprime@modernisation.gouv.fr",
+        );
 
-      await prisma.commentaire.createMany({
-        data: [
-          {
-            id: "77053976-1a8e-49f0-b68a-df01da2fc277",
-            chantier_id: "CH-001",
-            auteur_creation_id: auteurId1,
-            auteur_modification_id: auteurId1,
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            type: "commentaires_sur_les_donnees",
-            date_creation: new Date("2023-04-20"),
-            date_modification: new Date("2023-04-20"),
-            contenu: "commentaire risquesEtFreinsÀLever",
-          },
-          {
-            id: "b699907e-43c4-43be-8d8d-185fca1b2e50",
-            chantier_id: "CH-001",
-            auteur_creation_id: auteurId2,
-            auteur_modification_id: auteurId2,
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            type: "commentaires_sur_les_donnees",
-            date_modification: new Date("2024-04-20"),
-            date_creation: new Date("2024-04-20"),
-            contenu: "commentaire risquesEtFreinsÀLever",
-          },
-          {
-            id: "e3885e40-caab-4fb6-acf4-0c8f66c9e290",
-            chantier_id: "CH-001",
-            auteur_creation_id: auteurId2,
-            auteur_modification_id: auteurId2,
-            maille: "NAT",
-            code_insee: "FR",
-            territoire_code: "NAT-FR",
-            type: "commentaires_sur_les_donnees",
-            date_creation: new Date("2023-04-20"),
-            date_modification: new Date("2023-04-20"),
-            contenu: "commentaire risquesEtFreinsÀLever",
-          },
-        ],
-      });
+        // Then
+        const commentairesAnonymises = await tx.commentaire.findMany({
+          where: { auteur_modification_id: auteurAnonyme.id },
+        });
+        expect(commentairesAnonymises).toEqual([
+          expect.objectContaining({ id: commentaire2.id }),
+          expect.objectContaining({ id: commentaire3.id }),
+        ]);
+      }),
+    );
 
-      // When
-      await prismaCommentaireRepository.anonymiserAuteurs(
-        [auteurId2],
-        "utilisateur.supprime@modernisation.gouv.fr",
-      );
+    it(
+      "doit anonymiser l'auteur de création des commentaires saisis par l'utilisateur supprimé",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const auteurNonCible = await fixtures.utilisateur();
+        const auteurASupprimer = await fixtures.utilisateur();
+        const auteurAnonyme = await fixtures.utilisateur({
+          email: "utilisateur.supprime@modernisation.gouv.fr",
+        });
 
-      // Then
-      const commentairesAvecAuteurAnonyme = await prisma.commentaire.findMany({
-        where: { auteur_modification_id: auteurId3 },
-      });
-      expect(commentairesAvecAuteurAnonyme).toHaveLength(2);
-      expect(commentairesAvecAuteurAnonyme[0].id).toStrictEqual(
-        "b699907e-43c4-43be-8d8d-185fca1b2e50",
-      );
-      expect(commentairesAvecAuteurAnonyme[1].id).toStrictEqual(
-        "e3885e40-caab-4fb6-acf4-0c8f66c9e290",
-      );
-    });
+        const chantier = await fixtures.chantierIdentite();
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          maille: "NAT",
+          code_insee: "FR",
+          zone_id: "FRANCE",
+        });
+
+        await fixtures.commentaire({
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          maille: "NAT",
+          code_insee: "FR",
+          type: "commentaires_sur_les_donnees",
+          auteur_creation_id: auteurNonCible.id,
+          auteur_modification_id: auteurNonCible.id,
+        });
+        const commentaire2 = await fixtures.commentaire({
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          maille: "NAT",
+          code_insee: "FR",
+          type: "commentaires_sur_les_donnees",
+          auteur_creation_id: auteurASupprimer.id,
+          auteur_modification_id: auteurNonCible.id,
+        });
+        const commentaire3 = await fixtures.commentaire({
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          maille: "NAT",
+          code_insee: "FR",
+          type: "commentaires_sur_les_donnees",
+          auteur_creation_id: auteurASupprimer.id,
+          auteur_modification_id: auteurNonCible.id,
+        });
+
+        // When
+        await prismaCommentaireRepository.anonymiserAuteurs(
+          [auteurASupprimer.id],
+          "utilisateur.supprime@modernisation.gouv.fr",
+        );
+
+        // Then
+        const commentairesAnonymises = await tx.commentaire.findMany({
+          where: { auteur_creation_id: auteurAnonyme.id },
+        });
+        expect(commentairesAnonymises).toEqual([
+          expect.objectContaining({ id: commentaire2.id }),
+          expect.objectContaining({ id: commentaire3.id }),
+        ]);
+      }),
+    );
+
+    it(
+      "doit anonymiser chaque champ auteur indépendamment sans modifier l'autre",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const auteurNonCible = await fixtures.utilisateur();
+        const auteurASupprimer = await fixtures.utilisateur();
+        const auteurAnonyme = await fixtures.utilisateur({
+          email: "utilisateur.supprime@modernisation.gouv.fr",
+        });
+
+        const chantier = await fixtures.chantierIdentite();
+        await fixtures.chantierTerritoire({
+          id: chantier.id,
+          territoire_code: "NAT-FR",
+          maille: "NAT",
+          code_insee: "FR",
+          zone_id: "FRANCE",
+        });
+
+        // auteur_creation = auteurASupprimer, auteur_modification = auteurNonCible
+        const commentaireCreationCible = await fixtures.commentaire({
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          maille: "NAT",
+          code_insee: "FR",
+          type: "commentaires_sur_les_donnees",
+          auteur_creation_id: auteurASupprimer.id,
+          auteur_modification_id: auteurNonCible.id,
+        });
+        // auteur_creation = auteurNonCible, auteur_modification = auteurASupprimer
+        const commentaireModificationCible = await fixtures.commentaire({
+          chantier_id: chantier.id,
+          territoire_code: "NAT-FR",
+          maille: "NAT",
+          code_insee: "FR",
+          type: "commentaires_sur_les_donnees",
+          auteur_creation_id: auteurNonCible.id,
+          auteur_modification_id: auteurASupprimer.id,
+        });
+
+        // When
+        await prismaCommentaireRepository.anonymiserAuteurs(
+          [auteurASupprimer.id],
+          "utilisateur.supprime@modernisation.gouv.fr",
+        );
+
+        // Then
+        const commentaires = await tx.commentaire.findMany({
+          where: {
+            id: {
+              in: [
+                commentaireCreationCible.id,
+                commentaireModificationCible.id,
+              ],
+            },
+          },
+        });
+        expect(commentaires).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: commentaireCreationCible.id,
+              auteur_creation_id: auteurAnonyme.id,
+              auteur_modification_id: auteurNonCible.id,
+            }),
+            expect.objectContaining({
+              id: commentaireModificationCible.id,
+              auteur_creation_id: auteurNonCible.id,
+              auteur_modification_id: auteurAnonyme.id,
+            }),
+          ]),
+        );
+      }),
+    );
   });
 });

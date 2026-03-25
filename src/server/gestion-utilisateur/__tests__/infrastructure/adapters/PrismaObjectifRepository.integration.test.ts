@@ -1,5 +1,5 @@
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { prisma } from "@/server/db/prisma";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaObjectifRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaObjectifRepository";
 
 describe("PrismaObjectifRepository", () => {
@@ -8,101 +8,156 @@ describe("PrismaObjectifRepository", () => {
   beforeEach(() => {
     prismaObjectifRepository = new PrismaObjectifRepository();
   });
+
   describe("#anonymiserAuteurs", () => {
-    test("doit anonymiser l'auteur des objectifs saisis par l'utilisateur supprimé", async () => {
-      // Given
-      const auteurId1 = "f62765e6-0d66-4cfa-af41-6ec9b3ded48c";
-      const auteurId2 = "3150e759-3551-4ff7-9ba1-c8e119f49f3b";
-      const auteurId3 = "4421e6d7-980b-4ea9-ab66-95d4c2b62a6c";
+    it(
+      "doit anonymiser l'auteur de modification des objectifs saisis par l'utilisateur supprimé",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const auteurNonCible = await fixtures.utilisateur();
+        const auteurASupprimer = await fixtures.utilisateur();
+        const auteurAnonyme = await fixtures.utilisateur({
+          email: "utilisateur.supprime@modernisation.gouv.fr",
+        });
 
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Chantier 001",
-        },
-      });
+        const chantier = await fixtures.chantierIdentite();
 
-      await prisma.utilisateur.createMany({
-        data: [
-          {
-            id: auteurId1,
-            email: "john.doe@test.com",
-            nom: "doe",
-            prenom: "john",
-            date_creation: new Date().toISOString(),
-            profilCode: ProfilEnum.DITP_ADMIN,
-          },
-          {
-            id: auteurId2,
-            email: "auteur.commentaire@test.com",
-            nom: "commentaire",
-            prenom: "auteur",
-            date_creation: new Date().toISOString(),
-            profilCode: ProfilEnum.DITP_ADMIN,
-          },
-          {
-            id: auteurId3,
-            email: "utilisateur.supprime@modernisation.gouv.fr",
-            nom: "inconnu",
-            prenom: "auteur",
-            date_creation: new Date().toISOString(),
-            profilCode: ProfilEnum.DITP_ADMIN,
-          },
-        ],
-      });
+        await fixtures.objectifChantier({
+          chantier_id: chantier.id,
+          type: "a_faire",
+          auteur_modification_id: auteurNonCible.id,
+          auteur_creation_id: auteurNonCible.id,
+        });
+        const objectif2 = await fixtures.objectifChantier({
+          chantier_id: chantier.id,
+          type: "a_faire",
+          auteur_modification_id: auteurASupprimer.id,
+          auteur_creation_id: auteurNonCible.id,
+        });
+        const objectif3 = await fixtures.objectifChantier({
+          chantier_id: chantier.id,
+          type: "a_faire",
+          auteur_modification_id: auteurASupprimer.id,
+          auteur_creation_id: auteurNonCible.id,
+        });
 
-      await prisma.objectif.createMany({
-        data: [
-          {
-            id: "77053976-1a8e-49f0-b68a-df01da2fc277",
-            chantier_id: "CH-001",
-            auteur_creation_id: auteurId1,
-            auteur_modification_id: auteurId1,
-            contenu: "",
-            type: "a_faire",
-            date_creation: new Date("2023-05-01"),
-            date_modification: new Date("2023-05-01"),
-          },
-          {
-            id: "b699907e-43c4-43be-8d8d-185fca1b2e50",
-            chantier_id: "CH-001",
-            auteur_creation_id: auteurId2,
-            auteur_modification_id: auteurId2,
-            contenu: "",
-            type: "a_faire",
-            date_creation: new Date("2024-05-01"),
-            date_modification: new Date("2024-05-01"),
-          },
-          {
-            id: "e3885e40-caab-4fb6-acf4-0c8f66c9e290",
-            chantier_id: "CH-001",
-            auteur_creation_id: auteurId2,
-            auteur_modification_id: auteurId2,
-            contenu: "",
-            type: "a_faire",
-            date_creation: new Date("2023-05-01"),
-            date_modification: new Date("2023-05-01"),
-          },
-        ],
-      });
+        // When
+        await prismaObjectifRepository.anonymiserAuteurs(
+          [auteurASupprimer.id],
+          "utilisateur.supprime@modernisation.gouv.fr",
+        );
 
-      // When
-      await prismaObjectifRepository.anonymiserAuteurs(
-        [auteurId2],
-        "utilisateur.supprime@modernisation.gouv.fr",
-      );
+        // Then
+        const objectifsAnonymises = await tx.objectif.findMany({
+          where: { auteur_modification_id: auteurAnonyme.id },
+        });
+        expect(objectifsAnonymises).toEqual([
+          expect.objectContaining({ id: objectif2.id }),
+          expect.objectContaining({ id: objectif3.id }),
+        ]);
+      }),
+    );
 
-      // Then
-      const decisionsAvecAuteurAnonyme = await prisma.objectif.findMany({
-        where: { auteur_modification_id: auteurId3 },
-      });
-      expect(decisionsAvecAuteurAnonyme).toHaveLength(2);
-      expect(decisionsAvecAuteurAnonyme[0].id).toStrictEqual(
-        "b699907e-43c4-43be-8d8d-185fca1b2e50",
-      );
-      expect(decisionsAvecAuteurAnonyme[1].id).toStrictEqual(
-        "e3885e40-caab-4fb6-acf4-0c8f66c9e290",
-      );
-    });
+    it(
+      "doit anonymiser l'auteur de création des objectifs saisis par l'utilisateur supprimé",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const auteurNonCible = await fixtures.utilisateur();
+        const auteurASupprimer = await fixtures.utilisateur();
+        const auteurAnonyme = await fixtures.utilisateur({
+          email: "utilisateur.supprime@modernisation.gouv.fr",
+        });
+
+        const chantier = await fixtures.chantierIdentite();
+
+        await fixtures.objectifChantier({
+          chantier_id: chantier.id,
+          type: "a_faire",
+          auteur_creation_id: auteurNonCible.id,
+          auteur_modification_id: auteurNonCible.id,
+        });
+        const objectif2 = await fixtures.objectifChantier({
+          chantier_id: chantier.id,
+          type: "a_faire",
+          auteur_creation_id: auteurASupprimer.id,
+          auteur_modification_id: auteurNonCible.id,
+        });
+        const objectif3 = await fixtures.objectifChantier({
+          chantier_id: chantier.id,
+          type: "a_faire",
+          auteur_creation_id: auteurASupprimer.id,
+          auteur_modification_id: auteurNonCible.id,
+        });
+
+        // When
+        await prismaObjectifRepository.anonymiserAuteurs(
+          [auteurASupprimer.id],
+          "utilisateur.supprime@modernisation.gouv.fr",
+        );
+
+        // Then
+        const objectifsAnonymises = await tx.objectif.findMany({
+          where: { auteur_creation_id: auteurAnonyme.id },
+        });
+        expect(objectifsAnonymises).toEqual([
+          expect.objectContaining({ id: objectif2.id }),
+          expect.objectContaining({ id: objectif3.id }),
+        ]);
+      }),
+    );
+
+    it(
+      "doit anonymiser chaque champ auteur indépendamment sans modifier l'autre",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const auteurNonCible = await fixtures.utilisateur();
+        const auteurASupprimer = await fixtures.utilisateur();
+        const auteurAnonyme = await fixtures.utilisateur({
+          email: "utilisateur.supprime@modernisation.gouv.fr",
+        });
+
+        const chantier = await fixtures.chantierIdentite();
+
+        // auteur_creation = auteurASupprimer, auteur_modification = auteurNonCible
+        const objectifCreationCible = await fixtures.objectifChantier({
+          chantier_id: chantier.id,
+          type: "a_faire",
+          auteur_creation_id: auteurASupprimer.id,
+          auteur_modification_id: auteurNonCible.id,
+        });
+        // auteur_creation = auteurNonCible, auteur_modification = auteurASupprimer
+        const objectifModificationCible = await fixtures.objectifChantier({
+          chantier_id: chantier.id,
+          type: "a_faire",
+          auteur_creation_id: auteurNonCible.id,
+          auteur_modification_id: auteurASupprimer.id,
+        });
+
+        // When
+        await prismaObjectifRepository.anonymiserAuteurs(
+          [auteurASupprimer.id],
+          "utilisateur.supprime@modernisation.gouv.fr",
+        );
+
+        // Then
+        const objectifs = await tx.objectif.findMany({
+          where: { id: { in: [objectifCreationCible.id, objectifModificationCible.id] } },
+        });
+        expect(objectifs).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              id: objectifCreationCible.id,
+              auteur_creation_id: auteurAnonyme.id,
+              auteur_modification_id: auteurNonCible.id,
+            }),
+            expect.objectContaining({
+              id: objectifModificationCible.id,
+              auteur_creation_id: auteurNonCible.id,
+              auteur_modification_id: auteurAnonyme.id,
+            }),
+          ]),
+        );
+      }),
+    );
   });
 });
