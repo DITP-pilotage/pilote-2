@@ -17,15 +17,10 @@ import { useDonneesCartographieTA } from "./useDonneesCartographieTA";
 import { useLegendeTA } from "./useLegendeTA";
 import { SuiviTauxAvancement } from "./SuiviTauxAvancement";
 
-// --- Context ---
-
-type WidgetCartographieTAContextValue = {
+const WidgetCartographieTAContext = createContext<{
   territoiresAvancement: TauxAvancementComparaisonTerritoireViewModel[];
   statistiques: AvancementsStatistiques;
-};
-
-const WidgetCartographieTAContext =
-  createContext<WidgetCartographieTAContextValue | null>(null);
+} | null>(null);
 
 const useWidgetCartographieTAContext = () => {
   const ctx = useContext(WidgetCartographieTAContext);
@@ -36,8 +31,6 @@ const useWidgetCartographieTAContext = () => {
   }
   return ctx;
 };
-
-// --- Providers ---
 
 const ChantiersProvider = ({
   chantierIds,
@@ -50,12 +43,16 @@ const ChantiersProvider = ({
   jalon: number;
   children: ReactNode;
 }) => {
-  const [results] = api.useSuspenseQueries((t) => [
-    t.chantier.recupererAvancementsTerritoires({ chantierIds, jalon }),
-    t.chantier.recupererStatistiquesAvancement({ chantierIds, maille, jalon }),
-  ]);
-
-  const [territoiresAvancement, statistiques] = results;
+  const [[territoiresAvancement, statistiques]] = api.useSuspenseQueries(
+    (t) => [
+      t.chantier.recupererAvancementsTerritoires({ chantierIds, jalon }),
+      t.chantier.recupererStatistiquesAvancement({
+        chantierIds,
+        maille,
+        jalon,
+      }),
+    ],
+  );
 
   return (
     <WidgetCartographieTAContext.Provider
@@ -79,21 +76,21 @@ const IndicateurProvider = ({
   jalon: number;
   children: ReactNode;
 }) => {
-  const [results] = api.useSuspenseQueries((t) => [
-    t.indicateur.recupererTauxAvancementTerritoires({
-      indicateurId,
-      chantierId,
-      jalon,
-    }),
-    t.indicateur.recupererStatistiquesTauxAvancement({
-      indicateurId,
-      chantierId,
-      maille,
-      jalon,
-    }),
-  ]);
-
-  const [territoiresAvancement, statistiques] = results;
+  const [[territoiresAvancement, statistiques]] = api.useSuspenseQueries(
+    (t) => [
+      t.indicateur.recupererTauxAvancementTerritoires({
+        indicateurId,
+        chantierId,
+        jalon,
+      }),
+      t.indicateur.recupererStatistiquesTauxAvancement({
+        indicateurId,
+        chantierId,
+        maille,
+        jalon,
+      }),
+    ],
+  );
 
   return (
     <WidgetCartographieTAContext.Provider
