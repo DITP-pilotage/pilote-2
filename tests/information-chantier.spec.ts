@@ -297,7 +297,7 @@ test.describe("Cartographie PVA — Comparaison territoriale", () => {
     // Sélectionner la carte PVA dans le dropdown (portail Radix)
     await page
       .getByRole("option", {
-        name: "Carte des propositions des valeurs d'avancement",
+        name: "Carte des propositions de valeur d'avancement",
       })
       .click();
   }

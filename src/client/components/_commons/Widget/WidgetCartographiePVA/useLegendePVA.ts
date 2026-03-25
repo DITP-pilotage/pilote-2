@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS } from "@/client/constants/légendes/elementDeLegendesCartographiePropositionValeur";
-import { PVATerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierPVATerritoiresQuery";
+import { PVATerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierPVACountTerritoiresQuery";
 
 export const useLegendePVA = (territoires: PVATerritoireViewModel[]) => {
   return useMemo(() => {
@@ -8,21 +8,11 @@ export const useLegendePVA = (territoires: PVATerritoireViewModel[]) => {
       (territoire) => territoire.estApplicable,
     );
 
-    let legendeAffichee = Object.values(
-      ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS,
-    );
+    const clesAExclure = new Set<string>();
+    if (tousApplicables) clesAExclure.add("NON_APPLICABLE");
 
-    if (tousApplicables) {
-      legendeAffichee = legendeAffichee.filter(
-        (el) =>
-          el.libellé !==
-          "Territoire où le chantier prioritaire ne s'applique pas",
-      );
-    }
-
-    return legendeAffichee.map(({ remplissage, libellé }) => ({
-      libellé,
-      remplissage,
-    }));
+    return Object.entries(ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS)
+      .filter(([cle]) => !clesAExclure.has(cle))
+      .map(([, { remplissage, libellé }]) => ({ libellé, remplissage }));
   }, [territoires]);
 };

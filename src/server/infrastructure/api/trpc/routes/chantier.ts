@@ -41,9 +41,14 @@ export const chantierRouter = créerRouteurTRPC({
         jalon: z.number(),
       }),
     )
-    .query(({ input }) => {
+    .query(({ input, ctx }) => {
+      if (
+        !ctx.session.habilitations.lecture.chantiers.includes(input.chantierId)
+      ) {
+        return [];
+      }
       return getContainer("chantiers")
-        .resolve("getChantierPVATerritoiresQuery")
+        .resolve("getChantierPVACountTerritoiresQuery")
         .execute(input);
     }),
   recupererAvancementsTerritoires: procédureProtégée

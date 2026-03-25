@@ -1,8 +1,10 @@
 import { Fragment, useMemo } from "react";
 import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
-import { PVATerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierPVATerritoiresQuery";
+import { PVATerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierPVACountTerritoiresQuery";
 import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
+import { TerritoireLabel } from "@/components/_commons/Widget/TerritoireLabel";
 import { clsxm } from "@/utils/clsxm";
+import { formaterPropositions } from "./formaterPropositions";
 
 export const NombrePropositionsValeur = ({
   territoiresSelectionnes,
@@ -51,29 +53,20 @@ export const NombrePropositionsValeur = ({
                 })}
               >
                 <div
-                  className={clsxm(
-                    "py-2 grid grid-cols-[1fr_30px] items-center gap-2",
-                    {
-                      "w-full max-w-[300px] mr-auto": isModeDispositionG(),
-                    },
-                  )}
+                  className={clsxm("py-2", {
+                    "w-full max-w-[300px] mr-auto": isModeDispositionG(),
+                  })}
                 >
-                  <span className="text-right" style={{ color: couleur }}>
-                    {territoire.territoireNom}
-                  </span>
-                  {!estInitial && (
-                    <button
-                      onClick={() =>
-                        onSupprimerTerritoire(territoire.territoireCode)
-                      }
-                      title={`Retirer ${territoire.territoireNom}`}
-                      type="button"
-                      className="p-2"
-                      style={{ color: couleur }}
-                    >
-                      ✕
-                    </button>
-                  )}
+                  <TerritoireLabel
+                    nom={territoire.territoireNom}
+                    couleur={couleur}
+                    onSupprimer={
+                      !estInitial
+                        ? () =>
+                            onSupprimerTerritoire(territoire.territoireCode)
+                        : undefined
+                    }
+                  />
                 </div>
               </div>
               <div
@@ -81,15 +74,12 @@ export const NombrePropositionsValeur = ({
                   "py-2 flex items-center justify-center border-b",
                 )}
               >
-                {territoire.estApplicable === false ? (
-                  <span>Non applicable</span>
-                ) : territoire.nombrePropositionsValeur === 0 ? (
-                  <span>pas de proposition</span>
-                ) : (
-                  <span>
-                    {`${territoire.nombrePropositionsValeur} ${territoire.nombrePropositionsValeur > 1 ? "propositions" : "proposition"}`}
-                  </span>
-                )}
+                <span>
+                  {formaterPropositions(
+                    territoire.nombrePropositionsValeur,
+                    territoire.estApplicable,
+                  )}
+                </span>
               </div>
             </Fragment>
           );

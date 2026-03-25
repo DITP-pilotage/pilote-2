@@ -10,7 +10,7 @@ export type PVATerritoireViewModel = {
   estApplicable: boolean | null;
 };
 
-export class GetChantierPVATerritoiresQuery {
+export class GetChantierPVACountTerritoiresQuery {
   constructor(private readonly deps: Inject<"prisma">) {}
 
   async execute(params: {

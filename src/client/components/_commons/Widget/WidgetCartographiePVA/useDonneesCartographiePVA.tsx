@@ -1,36 +1,20 @@
-import { ReactNode, useMemo } from "react";
+import { useMemo } from "react";
 import { ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS } from "@/client/constants/légendes/elementDeLegendesCartographiePropositionValeur";
 import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/types";
-import { PVATerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierPVATerritoiresQuery";
+import { PVATerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierPVACountTerritoiresQuery";
+import { formaterPropositions } from "./formaterPropositions";
 
 const determinerRemplissage = (
   nombrePropositions: number,
   estApplicable: boolean | null,
 ) => {
-  if (!estApplicable) {
+  if (estApplicable === false) {
     return ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS.NON_APPLICABLE
       .remplissage;
   }
   return nombrePropositions > 0
     ? ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS.PROPOSITION.remplissage
     : ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS.DEFAUT.remplissage;
-};
-
-const determinerContenuInfoBulle = (
-  nombrePropositions: number,
-  estApplicable: boolean | null,
-): ReactNode => {
-  if (estApplicable === false) {
-    return <div className="fr-text--bold">Non applicable</div>;
-  }
-  if (nombrePropositions === 0) {
-    return <div className="fr-text--bold">pas de proposition</div>;
-  }
-  return (
-    <div className="fr-text--bold">
-      {`${nombrePropositions} ${nombrePropositions > 1 ? "propositions" : "proposition"}`}
-    </div>
-  );
 };
 
 export const useDonneesCartographiePVA = (
@@ -46,9 +30,13 @@ export const useDonneesCartographiePVA = (
             territoire.estApplicable,
           ),
           libelle: territoire.territoireNom,
-          contenuInfoBulle: determinerContenuInfoBulle(
-            territoire.nombrePropositionsValeur,
-            territoire.estApplicable,
+          contenuInfoBulle: (
+            <div className="fr-text--bold">
+              {formaterPropositions(
+                territoire.nombrePropositionsValeur,
+                territoire.estApplicable,
+              )}
+            </div>
           ),
         },
       }),

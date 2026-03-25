@@ -36,7 +36,7 @@ import { PrismaRapportPropositionsAvancementRepository } from "./infrastructure/
 import { CreerLesRapportsPropositionsUseCase } from "./usecases/CreerLesRapportsPropositionsUseCase";
 import { EnvoyerLesRapportsPropositionsUseCase } from "./usecases/EnvoyerLesRapportsPropositionsUseCase";
 import { GetChantierMeteosTerritoiresQuery } from "./infrastructure/queries/GetChantierMeteosTerritoiresQuery";
-import { GetChantierPVATerritoiresQuery } from "./infrastructure/queries/GetChantierPVATerritoiresQuery";
+import { GetChantierPVACountTerritoiresQuery } from "./infrastructure/queries/GetChantierPVACountTerritoiresQuery";
 import { RecupererAvancementsTerritoiresQuery } from "./infrastructure/queries/RecupererAvancementsTerritoiresQuery";
 import { RecupererValeursAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/RecupererValeursAvancementIndicateurTerritoiresQuery";
 import { GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery";
@@ -71,7 +71,7 @@ type ChantierOwnCradle = ChantierExports & {
   creerLesRapportsPropositionsUseCase: CreerLesRapportsPropositionsUseCase;
   envoyerLesRapportsPropositionsUseCase: EnvoyerLesRapportsPropositionsUseCase;
   getChantierMeteosTerritoiresQuery: GetChantierMeteosTerritoiresQuery;
-  getChantierPVATerritoiresQuery: GetChantierPVATerritoiresQuery;
+  getChantierPVACountTerritoiresQuery: GetChantierPVACountTerritoiresQuery;
   recupererAvancementsTerritoiresQuery: RecupererAvancementsTerritoiresQuery;
   recupererValeursAvancementIndicateurTerritoiresQuery: RecupererValeursAvancementIndicateurTerritoiresQuery;
   getValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery: GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery;
@@ -141,8 +141,8 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       getChantierMeteosTerritoiresQuery: asModuleClass(
         GetChantierMeteosTerritoiresQuery,
       ),
-      getChantierPVATerritoiresQuery: asModuleClass(
-        GetChantierPVATerritoiresQuery,
+      getChantierPVACountTerritoiresQuery: asModuleClass(
+        GetChantierPVACountTerritoiresQuery,
       ),
       recupererAvancementsTerritoiresQuery: asModuleClass(
         RecupererAvancementsTerritoiresQuery,

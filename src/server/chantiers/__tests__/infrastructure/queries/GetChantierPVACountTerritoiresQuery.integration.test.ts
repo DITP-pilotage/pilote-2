@@ -1,13 +1,13 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { GetChantierPVATerritoiresQuery } from "@/server/chantiers/infrastructure/queries/GetChantierPVATerritoiresQuery";
+import { GetChantierPVACountTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/GetChantierPVACountTerritoiresQuery";
 
-describe("GetChantierPVATerritoiresQuery", () => {
-  let query: GetChantierPVATerritoiresQuery;
+describe("GetChantierPVACountTerritoiresQuery", () => {
+  let query: GetChantierPVACountTerritoiresQuery;
 
   beforeEach(() => {
-    query = new GetChantierPVATerritoiresQuery({
+    query = new GetChantierPVACountTerritoiresQuery({
       prisma: new PrismaPilote(),
     });
   });

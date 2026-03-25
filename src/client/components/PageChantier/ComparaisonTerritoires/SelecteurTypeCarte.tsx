@@ -10,7 +10,7 @@ type SelecteurTypeCarteProps = {
 const labels: Record<TypeCarte, (jalon: number) => string> = {
   ta: (jalon) => `Carte des taux d'avancement ${jalon}`,
   meteo: () => "Carte des niveaux de confiance",
-  pva: () => "Carte des propositions des valeurs d'avancement",
+  pva: () => "Carte des propositions de valeur d'avancement",
 };
 
 export const SelecteurTypeCarte = ({
