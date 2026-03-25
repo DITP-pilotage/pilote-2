@@ -249,9 +249,9 @@ describe("GetStatistiquesTauxAvancementIndicateurTerritoiresQuery", () => {
   );
 
   it(
-    "calcule la médiane pour un nombre pair de valeurs",
+    "filtre par maille départementale en ignorant les territoires régionaux",
     createIntegrationTest(async () => {
-      // given
+      // given — 3 DEPT + 1 REG
       await créerIndicateurAvecTerritoires("CH-013", "IND-013", [
         {
           code: "DEPT-75",
@@ -302,11 +302,74 @@ describe("GetStatistiquesTauxAvancementIndicateurTerritoiresQuery", () => {
         profil: ProfilEnum.DITP_ADMIN,
       });
 
-      // then — median of [20, 40, 60] = 40 (3 DEPT values, odd count)
+      // then — median of [20, 40, 60] = 40 (3 DEPT values, REG-11 excluded)
       expect(result).toEqual({
         minimum: 20,
         médiane: 40,
         maximum: 60,
+      });
+    }),
+  );
+
+  it(
+    "calcule la médiane pour un nombre pair de valeurs",
+    createIntegrationTest(async () => {
+      // given — 4 DEPT values
+      await créerIndicateurAvecTerritoires("CH-014", "IND-014", [
+        {
+          code: "DEPT-75",
+          codeInsee: "75",
+          maille: "DEPT",
+          zoneId: "D75",
+          tauxAvancement: 20,
+          estApplicable: true,
+        },
+        {
+          code: "DEPT-92",
+          codeInsee: "92",
+          maille: "DEPT",
+          zoneId: "D92",
+          tauxAvancement: 40,
+          estApplicable: true,
+        },
+        {
+          code: "DEPT-93",
+          codeInsee: "93",
+          maille: "DEPT",
+          zoneId: "D93",
+          tauxAvancement: 60,
+          estApplicable: true,
+        },
+        {
+          code: "DEPT-94",
+          codeInsee: "94",
+          maille: "DEPT",
+          zoneId: "D94",
+          tauxAvancement: 80,
+          estApplicable: true,
+        },
+      ]);
+
+      // when
+      const result = await query.execute({
+        indicateurId: "IND-014",
+        chantierId: "CH-014",
+        maille: "departementale",
+        jalon: 2025,
+        habilitations: habilitationsPourChantier("CH-014", [
+          "DEPT-75",
+          "DEPT-92",
+          "DEPT-93",
+          "DEPT-94",
+        ]),
+        profil: ProfilEnum.DITP_ADMIN,
+      });
+
+      // then — median of [20, 40, 60, 80] = (40 + 60) / 2 = 50
+      expect(result).toEqual({
+        minimum: 20,
+        médiane: 50,
+        maximum: 80,
       });
     }),
   );
