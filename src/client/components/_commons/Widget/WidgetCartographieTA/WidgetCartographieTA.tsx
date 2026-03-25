@@ -159,11 +159,14 @@ const WidgetCartographieTAContent = (
       if (vue === "tableau" && mode === "indicateur") {
         const jalons = buildJalons();
         for (const jalon of jalons) {
-          void utils.indicateur.recupererTauxAvancementTerritoires.prefetch({
-            indicateurId: props.indicateurId,
-            chantierId: props.chantierId,
-            jalon,
-          });
+          void utils.indicateur.recupererTauxAvancementTerritoires.prefetch(
+            {
+              indicateurId: props.indicateurId,
+              chantierId: props.chantierId,
+              jalon,
+            },
+            { staleTime: WIDGET_STALE_TIME },
+          );
         }
       }
     },

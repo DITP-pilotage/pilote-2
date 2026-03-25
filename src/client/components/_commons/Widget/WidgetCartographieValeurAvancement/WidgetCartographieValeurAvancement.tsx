@@ -112,11 +112,14 @@ export const WidgetCartographieValeurAvancement = ({
       if (vue === "tableau") {
         const jalons = buildJalons();
         for (const jalon of jalons) {
-          void utils.indicateur.recupererValeursAvancementTerritoires.prefetch({
-            indicateurId,
-            chantierId,
-            jalon,
-          });
+          void utils.indicateur.recupererValeursAvancementTerritoires.prefetch(
+            {
+              indicateurId,
+              chantierId,
+              jalon,
+            },
+            { staleTime: WIDGET_STALE_TIME },
+          );
         }
       }
     },
