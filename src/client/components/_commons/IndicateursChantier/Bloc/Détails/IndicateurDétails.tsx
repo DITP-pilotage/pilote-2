@@ -181,6 +181,21 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       unité={indicateur.unité}
                     />
                   </section>
+
+                  {featureComparaisonTerritoires && (
+                    <div className="fr-mt-2w fr-container">
+                      <Suspense>
+                        <ComparaisonTerritoiresIndicateur
+                          indicateurId={indicateur.id}
+                          chantierId={chantierId}
+                          jalon={jalon}
+                          maille={mailleQuery}
+                          territoireCode={territoireCode}
+                          unite={indicateur.unité}
+                        />
+                      </Suspense>
+                    </div>
+                  )}
                 </>
               ) : null}
               {futOuvert && detailIndicateurDuTerritoire ? (
@@ -199,20 +214,6 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
           </div>
         </div>
       </section>
-      {featureComparaisonTerritoires && (
-        <div className="fr-mt-2w fr-container">
-          <Suspense>
-            <ComparaisonTerritoiresIndicateur
-              indicateurId={indicateur.id}
-              chantierId={chantierId}
-              jalon={jalon}
-              maille={mailleQuery}
-              territoireCode={territoireCode}
-              unite={indicateur.unité}
-            />
-          </Suspense>
-        </div>
-      )}
     </div>
   );
 };
