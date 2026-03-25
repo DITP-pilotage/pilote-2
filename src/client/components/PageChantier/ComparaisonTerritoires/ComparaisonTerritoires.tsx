@@ -13,15 +13,16 @@ type ComparaisonTerritoiresProps = {
 
 type TypeCarteChantier = "ta" | "meteo" | "pva";
 
-const options: (jalon: number) => { value: TypeCarteChantier; label: string }[] =
-  (jalon) => [
-    { value: "ta", label: `Carte des taux d'avancement ${jalon}` },
-    { value: "meteo", label: "Carte des niveaux de confiance" },
-    {
-      value: "pva",
-      label: "Carte des propositions de valeur d'avancement",
-    },
-  ];
+const options: (
+  jalon: number,
+) => { value: TypeCarteChantier; label: string }[] = (jalon) => [
+  { value: "ta", label: `Carte des taux d'avancement ${jalon}` },
+  { value: "meteo", label: "Carte des niveaux de confiance" },
+  {
+    value: "pva",
+    label: "Carte des propositions de valeur d'avancement",
+  },
+];
 
 export const ComparaisonTerritoires = ({
   chantierId,

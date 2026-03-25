@@ -2,7 +2,10 @@ import { createContext, ReactNode, useContext } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
-import { BaseCartographieWidgetLayout, TitreWidget } from "@/components/_commons/Widget/BaseCartographieWidgetLayout";
+import {
+  BaseCartographieWidgetLayout,
+  TitreWidget,
+} from "@/components/_commons/Widget/BaseCartographieWidgetLayout";
 import api from "@/server/infrastructure/api/trpc/api";
 import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires";
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";

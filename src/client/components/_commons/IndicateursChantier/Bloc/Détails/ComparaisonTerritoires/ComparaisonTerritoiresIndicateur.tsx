@@ -14,11 +14,12 @@ type ComparaisonTerritoiresIndicateurProps = {
 
 type TypeCarteIndicateur = "ta" | "valeurAvancement";
 
-const options: (jalon: number) => { value: TypeCarteIndicateur; label: string }[] =
-  (jalon) => [
-    { value: "ta", label: `Carte des taux d'avancement ${jalon}` },
-    { value: "valeurAvancement", label: "Carte des valeurs d'avancement" },
-  ];
+const options: (
+  jalon: number,
+) => { value: TypeCarteIndicateur; label: string }[] = (jalon) => [
+  { value: "ta", label: `Carte des taux d'avancement ${jalon}` },
+  { value: "valeurAvancement", label: "Carte des valeurs d'avancement" },
+];
 
 export const ComparaisonTerritoiresIndicateur = ({
   indicateurId,
