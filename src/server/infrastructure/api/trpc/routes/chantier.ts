@@ -66,6 +66,24 @@ export const chantierRouter = créerRouteurTRPC({
         .resolve("recupererTauxAvancementsChantierTerritoiresQuery")
         .run({ chantierIds: chantierIdsAutorisés, jalon: input.jalon });
     }),
+  recupererRepartitionMeteos: procédureProtégée
+    .input(
+      z.object({
+        chantierIds: z.array(z.string()),
+        territoireCode: z.string(),
+      }),
+    )
+    .query(({ input, ctx }) => {
+      const chantierIdsAutorisés = input.chantierIds.filter((id) =>
+        ctx.session.habilitations.lecture.chantiers.includes(id),
+      );
+      return getContainer("chantiers")
+        .resolve("getRepartitionMeteoChantiersQuery")
+        .execute({
+          chantierIds: chantierIdsAutorisés,
+          territoireCode: input.territoireCode,
+        });
+    }),
   recupererStatistiquesAvancement: procédureProtégée
     .input(
       z.object({

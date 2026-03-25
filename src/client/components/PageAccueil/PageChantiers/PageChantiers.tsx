@@ -31,6 +31,7 @@ import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/Chanti
 import { useEnv } from "@/client/hooks/useEnv";
 import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
 import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
+import { WidgetRepartitionMeteos } from "@/components/_commons/Widget/WidgetRepartitionMeteos/WidgetRepartitionMeteos";
 import PageChantiersStyled from "./PageChantiers.styled";
 import TableauChantiers from "./TableauChantiers/TableauChantiers";
 import usePageChantiers from "./usePageChantiers";
@@ -68,6 +69,9 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   const ffAlertesBaisse = useEnv("NEXT_PUBLIC_FF_ALERTES_BAISSE");
   const featureComparaisonTerritoires = useEnv(
     "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES",
+  );
+  const featureRepartitionMeteosV2 = useEnv(
+    "NEXT_PUBLIC_FF_REPARTITION_METEOS_V2",
   );
   const pathname = "/accueil/chantier/[territoireCode]";
   const { auClicTerritoireCallback } = useCartographie(
@@ -195,6 +199,12 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 />
               </Bloc>
             </section>
+            {featureRepartitionMeteosV2 ? (
+              <WidgetRepartitionMeteos
+                chantierIds={chantierIds}
+                territoireCode={territoireCode}
+              />
+            ) : null}
           </div>
           <div className="fr-col-12 fr-col-lg-5 fr-col-xl-6 fr-pl-xl-1w">
             <Bloc>
