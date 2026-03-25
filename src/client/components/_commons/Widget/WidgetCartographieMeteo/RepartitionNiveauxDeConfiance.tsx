@@ -4,6 +4,7 @@ import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
 import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
+import { TerritoireLabel } from "@/components/_commons/Widget/TerritoireLabel";
 import { clsxm } from "@/utils/clsxm";
 
 const ordreMeteo: Record<string, number> = {
@@ -74,22 +75,15 @@ export const RepartitionNiveauxDeConfiance = ({
                     },
                   )}
                 >
-                  <span className="text-right" style={{ color: couleur }}>
-                    {territoire.territoireNom}
-                  </span>
-                  {!estInitial && (
-                    <button
-                      onClick={() =>
-                        onSupprimerTerritoire(territoire.territoireCode)
-                      }
-                      title={`Retirer ${territoire.territoireNom}`}
-                      type="button"
-                      className="p-2"
-                      style={{ color: couleur }}
-                    >
-                      ✕
-                    </button>
-                  )}
+                  <TerritoireLabel
+                    nom={territoire.territoireNom}
+                    couleur={couleur}
+                    onSupprimer={
+                      !estInitial
+                        ? () => onSupprimerTerritoire(territoire.territoireCode)
+                        : undefined
+                    }
+                  />
                 </div>
               </div>
               <div

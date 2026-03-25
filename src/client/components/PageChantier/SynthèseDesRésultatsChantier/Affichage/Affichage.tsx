@@ -6,7 +6,7 @@ import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { SyntheseDesResultatsHistoriqueItem } from "@/server/syntheses-des-resultats/queries/RecupererHistoriqueSyntheseDesResultatsQuery";
-import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
+import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 
 const LIMITE_CARACTERES_AFFICHAGE_SYNTHESE_DES_RESULTATS = 250;
 

@@ -10,7 +10,7 @@ import { libellesTypesCommentaire } from "@/client/constants/libellesCommentaire
 import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { isDefined } from "@/client/utils/predicates";
 import { Badge } from "@/components/_commons/Badge";
-import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
+import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 
 interface CommentairesRapportDetailleProps {
   commentaires: Commentaire[];

@@ -2,7 +2,7 @@ import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { Accordion } from "@/components/shared/Accordion";
 import { clsxm } from "@/utils/clsxm";
-import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
+import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import {
   type SectionChantier,
   type TypeValeurIndicateur,

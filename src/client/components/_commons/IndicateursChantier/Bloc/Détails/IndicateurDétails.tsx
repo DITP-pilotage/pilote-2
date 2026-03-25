@@ -1,4 +1,4 @@
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, Suspense, useState } from "react";
 import { parseAsString, useQueryState } from "nuqs";
 import { IndicateurEvolution } from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/IndicateurEvolution";
 import IndicateurSpécifications from "@/components/_commons/IndicateursChantier/Bloc/Détails/Spécifications/IndicateurSpécifications";
@@ -7,6 +7,9 @@ import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicate
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import CartographieAvecSelecteurIndicateur from "@/components/_commons/Cartographie/CartographieAvecSelecteurIndicateur/CartographieAvecSelecteurIndicateur";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
+import { useEnv } from "@/client/hooks/useEnv";
+import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
+import { WidgetCartographieValeurAvancement } from "@/components/_commons/Widget/WidgetCartographieValeurAvancement/WidgetCartographieValeurAvancement";
 import { useIndicateurDétails } from "./useIndicateurDétails";
 
 export type CartographieIndicateurType =
@@ -40,11 +43,15 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
 }) => {
   const {
     indicateur,
-    chantier: { estTerritorialisé: chantierEstTerritorialisé },
+    chantier: { estTerritorialisé: chantierEstTerritorialisé, id: chantierId },
     detailIndicateurDuTerritoire,
     jalon,
     territoireCode,
   } = useBlocIndicateurContext();
+
+  const featureComparaisonTerritoires = useEnv(
+    "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES",
+  );
 
   const [futOuvert, setFutOuvert] = useState(false);
 
@@ -193,6 +200,23 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
           </div>
         </div>
       </section>
+      {featureComparaisonTerritoires && (
+        <div className="fr-mt-2w fr-container">
+          <TuileWidget titre="Comparaison territoriale">
+            <div />
+            <Suspense>
+              <WidgetCartographieValeurAvancement
+                indicateurId={indicateur.id}
+                chantierId={chantierId}
+                jalon={jalon}
+                maille={mailleQuery}
+                territoireCode={territoireCode}
+                unite={indicateur.unité}
+              />
+            </Suspense>
+          </TuileWidget>
+        </div>
+      )}
     </div>
   );
 };

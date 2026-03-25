@@ -1,4 +1,4 @@
-import { PiloteDateFormatter } from "@/server/rapports-hebdomadaires/infrastructure/adapters/PiloteDateFormatter";
+import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 
 describe("PiloteDateFormatter", () => {
   describe("isoDateFranceMetropolitaine", () => {
