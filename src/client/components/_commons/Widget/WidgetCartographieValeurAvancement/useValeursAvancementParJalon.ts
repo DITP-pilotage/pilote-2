@@ -31,13 +31,10 @@ export const useValeursAvancementParJalon = ({
     ),
   );
 
-  const donneesParJalon = useMemo(() => {
-    const map = new Map<number, ValeurAvancementIndicateurTerritoire[]>();
-    jalons.forEach((jalon, index) => {
-      map.set(jalon, results[index]);
-    });
-    return map;
-  }, [jalons, results]);
+  const donneesParJalon = useMemo(
+    () => new Map(jalons.map((jalon, index) => [jalon, results[index]])),
+    [jalons, results],
+  );
 
   return { jalons, donneesParJalon };
 };
