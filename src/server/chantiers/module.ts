@@ -40,6 +40,8 @@ import { GetChantierPVACountTerritoiresQuery } from "./infrastructure/queries/Ge
 import { RecupererAvancementsTerritoiresQuery } from "./infrastructure/queries/RecupererAvancementsTerritoiresQuery";
 import { RecupererValeursAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/RecupererValeursAvancementIndicateurTerritoiresQuery";
 import { GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery";
+import { RecupererTauxAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/RecupererTauxAvancementIndicateurTerritoiresQuery";
+import { GetStatistiquesTauxAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/GetStatistiquesTauxAvancementIndicateurTerritoiresQuery";
 
 type ChantierExports = {
   recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
@@ -75,6 +77,8 @@ type ChantierOwnCradle = ChantierExports & {
   recupererAvancementsTerritoiresQuery: RecupererAvancementsTerritoiresQuery;
   recupererValeursAvancementIndicateurTerritoiresQuery: RecupererValeursAvancementIndicateurTerritoiresQuery;
   getValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery: GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery;
+  recupererTauxAvancementIndicateurTerritoiresQuery: RecupererTauxAvancementIndicateurTerritoiresQuery;
+  getStatistiquesTauxAvancementIndicateurTerritoiresQuery: GetStatistiquesTauxAvancementIndicateurTerritoiresQuery;
 };
 
 type ChantierCradle = ChantierOwnCradle & ChantierImports;
@@ -154,6 +158,12 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
         asModuleClass(
           GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery,
         ),
+      recupererTauxAvancementIndicateurTerritoiresQuery: asModuleClass(
+        RecupererTauxAvancementIndicateurTerritoiresQuery,
+      ),
+      getStatistiquesTauxAvancementIndicateurTerritoiresQuery: asModuleClass(
+        GetStatistiquesTauxAvancementIndicateurTerritoiresQuery,
+      ),
     } satisfies VerifyCradle<ChantierOwnCradle>);
   },
 });

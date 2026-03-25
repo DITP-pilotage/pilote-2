@@ -222,6 +222,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
           <TuileWidget titre="Comparaison territoriale et évolution">
             <div />
             <WidgetCartographieTA
+              mode="chantiers"
               chantierIds={chantierIds}
               jalon={jalon}
               maille={mailleQuery}

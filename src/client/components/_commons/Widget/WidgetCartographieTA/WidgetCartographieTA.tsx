@@ -11,42 +11,47 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires";
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { ValeursRemarquables } from "@/components/_commons/Widget/ValeursRemarquables";
+import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
 import { useDonneesCartographieTA } from "./useDonneesCartographieTA";
 import { useLegendeTA } from "./useLegendeTA";
 import { SuiviTauxAvancement } from "./SuiviTauxAvancement";
 
 type VueCartographieTA = "situation" | "tableau" | "courbes";
 
-export const WidgetCartographieTA = ({
-  chantierIds,
-  maille,
-  territoireCode,
-  jalon,
-}: {
-  chantierIds: string[];
+type WidgetCartographieTAProps = {
   maille: MailleInterne;
   territoireCode: string;
   jalon: number;
-}) => {
+} & (
+  | { mode: "chantiers"; chantierIds: string[] }
+  | { mode: "indicateur"; indicateurId: string; chantierId: string }
+);
+
+type WidgetCartographieTAContentProps = {
+  maille: MailleInterne;
+  territoireCode: string;
+  jalon: number;
+  territoiresAvancement: TauxAvancementComparaisonTerritoireViewModel[];
+  statistiques: {
+    minimum: number | null | undefined;
+    médiane: number | null | undefined;
+    maximum: number | null | undefined;
+  } | null;
+};
+
+const formatValeurTA = (valeur: number | null | undefined): string | null => {
+  if (valeur === null || valeur === undefined) return null;
+  return `${Math.round(valeur)}%`;
+};
+
+const WidgetCartographieTAContent = ({
+  maille,
+  territoireCode,
+  jalon,
+  territoiresAvancement,
+  statistiques,
+}: WidgetCartographieTAContentProps) => {
   const [vueActive, setVueActive] = useState<VueCartographieTA>("situation");
-
-  const [territoiresAvancement] =
-    api.chantier.recupererAvancementsTerritoires.useSuspenseQuery({
-      chantierIds,
-      jalon,
-    });
-
-  const [statistiques] =
-    api.chantier.recupererStatistiquesAvancement.useSuspenseQuery({
-      chantierIds,
-      maille,
-      jalon,
-    });
-
-  const formatValeurTA = (valeur: number | null | undefined): string | null => {
-    if (valeur === null || valeur === undefined) return null;
-    return `${Math.round(valeur)}%`;
-  };
 
   const valeursRemarquables = {
     minimum: formatValeurTA(statistiques?.minimum),
@@ -131,5 +136,102 @@ export const WidgetCartographieTA = ({
         onAjouterTerritoires={ajouterTerritoires}
       />
     </BaseCartographieWidgetLayout>
+  );
+};
+
+const WidgetCartographieTAChantiers = ({
+  chantierIds,
+  maille,
+  territoireCode,
+  jalon,
+}: {
+  chantierIds: string[];
+  maille: MailleInterne;
+  territoireCode: string;
+  jalon: number;
+}) => {
+  const [territoiresAvancement] =
+    api.chantier.recupererAvancementsTerritoires.useSuspenseQuery({
+      chantierIds,
+      jalon,
+    });
+
+  const [statistiques] =
+    api.chantier.recupererStatistiquesAvancement.useSuspenseQuery({
+      chantierIds,
+      maille,
+      jalon,
+    });
+
+  return (
+    <WidgetCartographieTAContent
+      maille={maille}
+      territoireCode={territoireCode}
+      jalon={jalon}
+      territoiresAvancement={territoiresAvancement}
+      statistiques={statistiques}
+    />
+  );
+};
+
+const WidgetCartographieTAIndicateur = ({
+  indicateurId,
+  chantierId,
+  maille,
+  territoireCode,
+  jalon,
+}: {
+  indicateurId: string;
+  chantierId: string;
+  maille: MailleInterne;
+  territoireCode: string;
+  jalon: number;
+}) => {
+  const [territoiresAvancement] =
+    api.indicateur.recupererTauxAvancementTerritoires.useSuspenseQuery({
+      indicateurId,
+      chantierId,
+      jalon,
+    });
+
+  const [statistiques] =
+    api.indicateur.recupererStatistiquesTauxAvancement.useSuspenseQuery({
+      indicateurId,
+      chantierId,
+      maille,
+      jalon,
+    });
+
+  return (
+    <WidgetCartographieTAContent
+      maille={maille}
+      territoireCode={territoireCode}
+      jalon={jalon}
+      territoiresAvancement={territoiresAvancement}
+      statistiques={statistiques}
+    />
+  );
+};
+
+export const WidgetCartographieTA = (props: WidgetCartographieTAProps) => {
+  if (props.mode === "indicateur") {
+    return (
+      <WidgetCartographieTAIndicateur
+        indicateurId={props.indicateurId}
+        chantierId={props.chantierId}
+        maille={props.maille}
+        territoireCode={props.territoireCode}
+        jalon={props.jalon}
+      />
+    );
+  }
+
+  return (
+    <WidgetCartographieTAChantiers
+      chantierIds={props.chantierIds}
+      maille={props.maille}
+      territoireCode={props.territoireCode}
+      jalon={props.jalon}
+    />
   );
 };

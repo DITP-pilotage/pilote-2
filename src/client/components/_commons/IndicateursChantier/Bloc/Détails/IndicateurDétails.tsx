@@ -10,6 +10,7 @@ import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndic
 import { useEnv } from "@/client/hooks/useEnv";
 import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
 import { WidgetCartographieValeurAvancement } from "@/components/_commons/Widget/WidgetCartographieValeurAvancement/WidgetCartographieValeurAvancement";
+import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
 import { useIndicateurDétails } from "./useIndicateurDétails";
 
 export type CartographieIndicateurType =
@@ -202,9 +203,16 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
       </section>
       {featureComparaisonTerritoires && (
         <div className="fr-mt-2w fr-container">
-          <TuileWidget titre="Comparaison territoriale">
-            <div />
-            <Suspense>
+          <Suspense>
+            <TuileWidget titre="Comparaison territoriale">
+              <WidgetCartographieTA
+                mode="indicateur"
+                indicateurId={indicateur.id}
+                chantierId={chantierId}
+                jalon={jalon}
+                maille={mailleQuery}
+                territoireCode={territoireCode}
+              />
               <WidgetCartographieValeurAvancement
                 indicateurId={indicateur.id}
                 chantierId={chantierId}
@@ -213,8 +221,8 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                 territoireCode={territoireCode}
                 unite={indicateur.unité}
               />
-            </Suspense>
-          </TuileWidget>
+            </TuileWidget>
+          </Suspense>
         </div>
       )}
     </div>

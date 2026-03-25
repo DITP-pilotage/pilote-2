@@ -60,6 +60,7 @@ export const PanneauCarte = ({
 
       {typeCarte === "ta" ? (
         <WidgetCartographieTA
+          mode="chantiers"
           chantierIds={[chantierId]}
           jalon={jalon}
           maille={maille}
