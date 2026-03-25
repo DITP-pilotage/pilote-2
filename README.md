@@ -18,9 +18,9 @@ La documentation est accessible à l'adresse :
 https://ditp-pilotage.github.io/pilote-2/
 ```
 
-- Documentation dbt : https://ditp-pilotage.github.io/pilote-2/dbt/
-- Page de maintenance : https://ditp-pilotage.github.io/pilote-2/maintenance/
-- Suivi des déploiements : https://ditp-pilotage.github.io/pilote-2/releases/
+- Documentation dbt : https://ditp-pilotage.github.io/pilote-2/docs/dbt/
+- Page de maintenance : https://ditp-pilotage.github.io/pilote-2/docs/maintenance/
+- Suivi des déploiements : https://ditp-pilotage.github.io/pilote-2/docs/releases/
 
 ## Mettre à jour la documentation
 
@@ -55,7 +55,7 @@ https://ditp-pilotage.github.io/pilote-2/
 2. Y placer un `index.html` (ou les fichiers statiques nécessaires)
 3. Mettre à jour le tableau de contenu dans ce README
 4. Commit et push sur `gh-pages`
-5. La page sera accessible à `https://ditp-pilotage.github.io/pilote-2/ma-nouvelle-doc/`
+5. La page sera accessible à `https://ditp-pilotage.github.io/pilote-2/docs/ma-nouvelle-doc/`
 
 ## Configuration GitHub Pages
 
