@@ -80,6 +80,25 @@ export const indicateurRouter = créerRouteurTRPC({
           profil: ctx.session.profil,
         });
     }),
+  recupererPVATerritoires: procédureProtégée
+    .input(
+      z.object({
+        indicateurId: z.string(),
+        chantierId: z.string(),
+        jalon: z.number(),
+      }),
+    )
+    .query(async ({ input, ctx }) => {
+      return getContainer("chantiers")
+        .resolve("getIndicateurPVACountTerritoiresQuery")
+        .execute({
+          indicateurId: input.indicateurId,
+          chantierId: input.chantierId,
+          jalon: input.jalon,
+          habilitations: ctx.session.habilitations,
+          profil: ctx.session.profil,
+        });
+    }),
   recupererStatistiquesTauxAvancement: procédureProtégée
     .input(
       z.object({
