@@ -38,6 +38,7 @@ import { CreerLesRapportsPropositionsUseCase } from "./usecases/CreerLesRapports
 import { EnvoyerLesRapportsPropositionsUseCase } from "./usecases/EnvoyerLesRapportsPropositionsUseCase";
 import { GetChantierMeteosTerritoiresQuery } from "./infrastructure/queries/GetChantierMeteosTerritoiresQuery";
 import { GetChantierPVACountTerritoiresQuery } from "./infrastructure/queries/GetChantierPVACountTerritoiresQuery";
+import { GetIndicateurPVACountTerritoiresQuery } from "./infrastructure/queries/GetIndicateurPVACountTerritoiresQuery";
 import { RecupererTauxAvancementsChantierTerritoiresQuery } from "./infrastructure/queries/RecupererTauxAvancementsChantierTerritoiresQuery";
 import { RecupererValeursAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/RecupererValeursAvancementIndicateurTerritoiresQuery";
 import { GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery";
@@ -78,6 +79,7 @@ type ChantierOwnCradle = ChantierExports & {
   envoyerLesRapportsPropositionsUseCase: EnvoyerLesRapportsPropositionsUseCase;
   getChantierMeteosTerritoiresQuery: GetChantierMeteosTerritoiresQuery;
   getChantierPVACountTerritoiresQuery: GetChantierPVACountTerritoiresQuery;
+  getIndicateurPVACountTerritoiresQuery: GetIndicateurPVACountTerritoiresQuery;
   recupererTauxAvancementsChantierTerritoiresQuery: RecupererTauxAvancementsChantierTerritoiresQuery;
   recupererValeursAvancementIndicateurTerritoiresQuery: RecupererValeursAvancementIndicateurTerritoiresQuery;
   getValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery: GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery;
@@ -156,6 +158,9 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       ),
       getChantierPVACountTerritoiresQuery: asModuleClass(
         GetChantierPVACountTerritoiresQuery,
+      ),
+      getIndicateurPVACountTerritoiresQuery: asModuleClass(
+        GetIndicateurPVACountTerritoiresQuery,
       ),
       recupererTauxAvancementsChantierTerritoiresQuery: asModuleClass(
         RecupererTauxAvancementsChantierTerritoiresQuery,

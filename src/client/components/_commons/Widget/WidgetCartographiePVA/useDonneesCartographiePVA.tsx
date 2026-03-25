@@ -1,5 +1,8 @@
 import { useMemo } from "react";
-import { ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS } from "@/client/constants/légendes/elementDeLegendesCartographiePropositionValeur";
+import {
+  ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS,
+  ELEMENTS_LEGENDE_PROPOSITION_VALEUR_INDICATEURS,
+} from "@/client/constants/légendes/elementDeLegendesCartographiePropositionValeur";
 import { getLabelTerritoire } from "@/client/constants/territoires";
 import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/types";
 import { PVATerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierPVACountTerritoiresQuery";
@@ -8,18 +11,24 @@ import { formaterPropositions } from "./formaterPropositions";
 const determinerRemplissage = (
   nombrePropositions: number,
   estApplicable: boolean | null,
+  mode: "chantier" | "indicateur",
 ) => {
+  const legende =
+    mode === "indicateur"
+      ? ELEMENTS_LEGENDE_PROPOSITION_VALEUR_INDICATEURS
+      : ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS;
+
   if (estApplicable === false) {
-    return ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS.NON_APPLICABLE
-      .remplissage;
+    return legende.NON_APPLICABLE.remplissage;
   }
   return nombrePropositions > 0
-    ? ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS.PROPOSITION.remplissage
-    : ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS.DEFAUT.remplissage;
+    ? legende.PROPOSITION.remplissage
+    : legende.DEFAUT.remplissage;
 };
 
 export const useDonneesCartographiePVA = (
   territoires: PVATerritoireViewModel[],
+  mode: "chantier" | "indicateur",
 ) => {
   return useMemo(() => {
     return territoires.reduce(
@@ -29,6 +38,7 @@ export const useDonneesCartographiePVA = (
           remplissage: determinerRemplissage(
             territoire.nombrePropositionsValeur,
             territoire.estApplicable,
+            mode,
           ),
           libelle: getLabelTerritoire(territoire.territoireCode),
           contenuInfoBulle: (
@@ -43,5 +53,5 @@ export const useDonneesCartographiePVA = (
       }),
       {} as Record<string, CartographieV2Donnee>,
     );
-  }, [territoires]);
+  }, [territoires, mode]);
 };

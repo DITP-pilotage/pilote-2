@@ -34,7 +34,7 @@ export const chantierRouter = créerRouteurTRPC({
         .resolve("getChantierMeteosTerritoiresQuery")
         .execute(input);
     }),
-  recupererPVATerritoires: procédureProtégée
+  recupererPVAChantierTerritoires: procédureProtégée
     .input(
       z.object({
         chantierId: z.string(),
