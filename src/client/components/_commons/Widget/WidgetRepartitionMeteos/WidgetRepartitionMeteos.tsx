@@ -111,9 +111,10 @@ const TuilesMeteos = ({
         <li key={meteo}>
           <button
             className={clsxm(
-              "flex items-center gap-3 w-full py-4 px-5 border border-[#fcc63a] rounded-xl bg-white shadow-lg cursor-pointer transition-colors hover:border-[#e5a800]",
+              "flex items-center gap-3 w-full py-4 px-5 border border-dsfr-moutarde-main-975 rounded-xl bg-white shadow-lg cursor-pointer transition-colors hover:border-dsfr-moutarde-main-850",
               {
-                "!border-primary !border-2": meteos.includes(meteo),
+                "border-dsfr-moutarde-main-925 bg-dsfr-moutarde-main-975":
+                  meteos.includes(meteo),
               },
             )}
             onClick={() => {
@@ -122,7 +123,7 @@ const TuilesMeteos = ({
             title={libellesMeteos[meteo]}
             type="button"
           >
-            <span className="text-[1.75rem] font-bold text-[#e5a800] min-w-[2.5rem] text-center">
+            <span className="text-[1.75rem] font-bold text-dsfr-moutarde-main-679 min-w-[2.5rem] text-center">
               {repartition[meteo]}
             </span>
             <MeteoPicto meteo={meteo} />
