@@ -106,7 +106,7 @@ const TuilesMeteos = ({
   );
 
   return (
-    <ul className="flex flex-col gap-3 list-none p-0 m-0">
+    <ul className="flex flex-col gap-3 list-none p-0 m-0 max-w-[360px]">
       {meteosOrdonnees.map((meteo) => (
         <li key={meteo}>
           <button
