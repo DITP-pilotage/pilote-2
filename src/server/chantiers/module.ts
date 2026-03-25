@@ -46,6 +46,7 @@ import { GetRepartitionMeteoChantiersQuery } from "./infrastructure/queries/GetR
 import { GetChantiersSignalesQuery } from "./infrastructure/queries/GetChantiersSignalesQuery";
 import { GetStatistiquesAvancementChantiersQuery } from "./infrastructure/queries/GetStatistiquesAvancementChantiersQuery";
 import { GetStatistiquesAvancementChantiersParChantierQuery } from "./infrastructure/queries/GetStatistiquesAvancementChantiersParChantierQuery";
+import { RecupererEvolutionValeursAvancementTerritoiresQuery } from "./infrastructure/queries/RecupererEvolutionValeursAvancementTerritoiresQuery";
 
 type ChantierExports = {
   recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
@@ -88,6 +89,7 @@ type ChantierOwnCradle = ChantierExports & {
   getStatistiquesAvancementChantiersParChantierQuery: GetStatistiquesAvancementChantiersParChantierQuery;
   getRepartitionMeteoChantiersQuery: GetRepartitionMeteoChantiersQuery;
   getChantiersSignalesQuery: GetChantiersSignalesQuery;
+  recupererEvolutionValeursAvancementTerritoiresQuery: RecupererEvolutionValeursAvancementTerritoiresQuery;
 };
 
 type ChantierCradle = ChantierOwnCradle & ChantierImports;
@@ -186,6 +188,9 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
         GetRepartitionMeteoChantiersQuery,
       ),
       getChantiersSignalesQuery: asModuleClass(GetChantiersSignalesQuery),
+      recupererEvolutionValeursAvancementTerritoiresQuery: asModuleClass(
+        RecupererEvolutionValeursAvancementTerritoiresQuery,
+      ),
     } satisfies VerifyCradle<ChantierOwnCradle>);
   },
 });
