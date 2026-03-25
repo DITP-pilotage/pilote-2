@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
-import { ValeurAvancementIndicateurTerritoire } from "@/server/chantiers/infrastructure/queries/RecupererValeursAvancementIndicateurTerritoiresQuery";
 
 const PREMIER_JALON = 2022;
 
