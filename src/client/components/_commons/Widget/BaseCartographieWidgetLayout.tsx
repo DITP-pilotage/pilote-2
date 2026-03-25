@@ -20,21 +20,26 @@ export const BaseCartographieWidgetLayout = ({
   cartographie,
   complementsCartographie,
   children,
+  footer,
 }: {
   cartographie: ReactNode;
   complementsCartographie?: ReactNode;
   children: ReactNode;
+  footer?: ReactNode;
 }) => {
   const { isModeG } = useMesureWidget();
 
   if (isModeG) {
     return (
-      <div className="grid grid-cols-2 gap-8 h-full">
-        <div className="flex flex-col gap-4">
-          {cartographie}
-          {complementsCartographie}
+      <div className="flex flex-col gap-8 h-full">
+        <div className="grid grid-cols-2 gap-8">
+          <div className="flex flex-col gap-4">
+            {cartographie}
+            {complementsCartographie}
+          </div>
+          <div className="flex flex-col gap-2">{children}</div>
         </div>
-        <div className="flex flex-col gap-2 grow">{children}</div>
+        {footer}
       </div>
     );
   }
@@ -44,6 +49,7 @@ export const BaseCartographieWidgetLayout = ({
       <div className="w-full max-w-[400px] mx-auto">{cartographie}</div>
       {complementsCartographie}
       <div className="flex flex-col gap-2 grow">{children}</div>
+      {footer}
     </div>
   );
 };

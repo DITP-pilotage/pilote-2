@@ -200,6 +200,15 @@ const WidgetCartographieTAContent = (
           <LegendeCartographie items={legende} />
         </ComplementsCartographie>
       }
+      footer={
+        <AjouterTerritoirePicker
+          territoiresSelectionnesCodes={territoiresSelectionnes.map(
+            (territoire) => territoire.territoireCode,
+          )}
+          onAjouterTerritoire={ajouterTerritoire}
+          onAjouterTerritoires={ajouterTerritoires}
+        />
+      }
     >
       {mode === "indicateur" ? (
         <SelecteurVueWidget
@@ -241,13 +250,6 @@ const WidgetCartographieTAContent = (
           />
         </>
       )}
-      <AjouterTerritoirePicker
-        territoiresSelectionnesCodes={territoiresSelectionnes.map(
-          (territoire) => territoire.territoireCode,
-        )}
-        onAjouterTerritoire={ajouterTerritoire}
-        onAjouterTerritoires={ajouterTerritoires}
-      />
     </BaseCartographieWidgetLayout>
   );
 };

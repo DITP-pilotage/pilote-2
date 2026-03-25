@@ -60,6 +60,15 @@ export const WidgetCartographiePVA = ({
           <LegendeCartographie items={legende} />
         </ComplementsCartographie>
       }
+      footer={
+        <AjouterTerritoirePicker
+          territoiresSelectionnesCodes={territoiresSelectionnes.map(
+            (territoire) => territoire.territoireCode,
+          )}
+          onAjouterTerritoire={ajouterTerritoire}
+          onAjouterTerritoires={ajouterTerritoires}
+        />
+      }
     >
       <TitreWidget>Nombres de propositions de valeur d'avancement</TitreWidget>
       <NombrePropositionsValeur
@@ -67,14 +76,6 @@ export const WidgetCartographiePVA = ({
         jalon={jalon}
         onSupprimerTerritoire={supprimerTerritoire}
         territoiresSelectionnes={territoiresSelectionnes}
-      />
-
-      <AjouterTerritoirePicker
-        territoiresSelectionnesCodes={territoiresSelectionnes.map(
-          (territoire) => territoire.territoireCode,
-        )}
-        onAjouterTerritoire={ajouterTerritoire}
-        onAjouterTerritoires={ajouterTerritoires}
       />
     </BaseCartographieWidgetLayout>
   );

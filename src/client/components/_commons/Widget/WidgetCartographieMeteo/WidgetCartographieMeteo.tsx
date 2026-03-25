@@ -60,6 +60,15 @@ export const WidgetCartographieMeteo = ({
           <LegendeCartographie items={legende} />
         </ComplementsCartographie>
       }
+      footer={
+        <AjouterTerritoirePicker
+          territoiresSelectionnesCodes={territoiresSelectionnes.map(
+            (territoire) => territoire.territoireCode,
+          )}
+          onAjouterTerritoire={ajouterTerritoire}
+          onAjouterTerritoires={ajouterTerritoires}
+        />
+      }
     >
       <TitreWidget>Répartition des niveaux de confiance</TitreWidget>
       <RepartitionNiveauxDeConfiance
@@ -67,14 +76,6 @@ export const WidgetCartographieMeteo = ({
         jalon={jalon}
         onSupprimerTerritoire={supprimerTerritoire}
         territoiresSelectionnes={territoiresSelectionnes}
-      />
-
-      <AjouterTerritoirePicker
-        territoiresSelectionnesCodes={territoiresSelectionnes.map(
-          (territoire) => territoire.territoireCode,
-        )}
-        onAjouterTerritoire={ajouterTerritoire}
-        onAjouterTerritoires={ajouterTerritoires}
       />
     </BaseCartographieWidgetLayout>
   );

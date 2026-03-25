@@ -172,6 +172,15 @@ export const WidgetCartographieValeurAvancement = ({
           <LegendeCartographie items={legendeItems} />
         </ComplementsCartographie>
       }
+      footer={
+        <AjouterTerritoirePicker
+          territoiresSelectionnesCodes={territoiresSelectionnes.map(
+            (territoire) => territoire.territoireCode,
+          )}
+          onAjouterTerritoire={ajouterTerritoire}
+          onAjouterTerritoires={ajouterTerritoires}
+        />
+      }
     >
       <SelecteurVueWidget
         titre="Suivi et évolution des valeurs d'avancement"
@@ -204,13 +213,6 @@ export const WidgetCartographieValeurAvancement = ({
           }
           return null;
         }}
-      />
-      <AjouterTerritoirePicker
-        territoiresSelectionnesCodes={territoiresSelectionnes.map(
-          (territoire) => territoire.territoireCode,
-        )}
-        onAjouterTerritoire={ajouterTerritoire}
-        onAjouterTerritoires={ajouterTerritoires}
       />
     </BaseCartographieWidgetLayout>
   );
