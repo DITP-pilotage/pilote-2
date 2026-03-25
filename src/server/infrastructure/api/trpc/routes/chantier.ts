@@ -51,7 +51,7 @@ export const chantierRouter = créerRouteurTRPC({
         .resolve("getChantierPVACountTerritoiresQuery")
         .execute(input);
     }),
-  recupererAvancementsTerritoires: procédureProtégée
+  recupererTauxAvancementTerritoires: procédureProtégée
     .input(
       z.object({
         chantierIds: z.array(z.string()),
@@ -63,7 +63,7 @@ export const chantierRouter = créerRouteurTRPC({
         ctx.session.habilitations.lecture.chantiers.includes(id),
       );
       return getContainer("chantiers")
-        .resolve("recupererAvancementsTerritoiresQuery")
+        .resolve("recupererTauxAvancementsChantierTerritoiresQuery")
         .run({ chantierIds: chantierIdsAutorisés, jalon: input.jalon });
     }),
   recupererStatistiquesAvancement: procédureProtégée

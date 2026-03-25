@@ -6,7 +6,7 @@ import {
   MailleTerritoireSelectionne,
 } from "@/server/domain/maille/Maille.interface";
 
-export class RecupererAvancementsTerritoiresQuery {
+export class RecupererTauxAvancementsChantierTerritoiresQuery {
   constructor(
     private readonly deps: Inject<
       // TODO: cette query de couche infra ne devrait pas dépendre d'un use case — toléré ici pour des raisons legacy

@@ -45,7 +45,10 @@ const ChantiersProvider = ({
 }) => {
   const [[territoiresAvancement, statistiques]] = api.useSuspenseQueries(
     (t) => [
-      t.chantier.recupererAvancementsTerritoires({ chantierIds, jalon }),
+      t.chantier.recupererTauxAvancementTerritoires({
+        chantierIds,
+        jalon,
+      }),
       t.chantier.recupererStatistiquesAvancement({
         chantierIds,
         maille,
