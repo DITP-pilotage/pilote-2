@@ -34,6 +34,23 @@ export const chantierRouter = créerRouteurTRPC({
         .resolve("getChantierMeteosTerritoiresQuery")
         .execute(input);
     }),
+  recupererPVATerritoires: procédureProtégée
+    .input(
+      z.object({
+        chantierId: z.string(),
+        jalon: z.number(),
+      }),
+    )
+    .query(({ input, ctx }) => {
+      if (
+        !ctx.session.habilitations.lecture.chantiers.includes(input.chantierId)
+      ) {
+        return [];
+      }
+      return getContainer("chantiers")
+        .resolve("getChantierPVACountTerritoiresQuery")
+        .execute(input);
+    }),
   recupererAvancementsTerritoires: procédureProtégée
     .input(
       z.object({
