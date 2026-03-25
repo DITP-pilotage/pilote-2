@@ -20,6 +20,7 @@ describe("PrismaCommentaireRepository", () => {
       "doit lister les commentaires associé au chantier",
       createIntegrationTest(async (prisma) => {
         // Given
+        const auteur = await fixtures.utilisateur();
         const chantier = await fixtures.chantierIdentite();
         const autreChantier = await fixtures.chantierIdentite();
 
@@ -45,7 +46,8 @@ describe("PrismaCommentaireRepository", () => {
               chantier_id: chantier.id,
               type: "freins_a_lever",
               contenu: "contenu OK freins_a_lever",
-              auteur_creation_id: null,
+              auteur_creation_id: auteur.id,
+              auteur_modification_id: auteur.id,
               date_creation: new Date(),
               date_modification: new Date(),
               maille: $Enums.Maille.NAT,
@@ -57,6 +59,8 @@ describe("PrismaCommentaireRepository", () => {
               chantier_id: chantier.id,
               type: "actions_a_venir",
               contenu: "contenu OK actions_a_venir",
+              auteur_creation_id: auteur.id,
+              auteur_modification_id: auteur.id,
               date_creation: new Date(),
               date_modification: new Date(),
               maille: $Enums.Maille.NAT,
@@ -69,6 +73,8 @@ describe("PrismaCommentaireRepository", () => {
               chantier_id: autreChantier.id,
               type: "actions_a_venir",
               contenu: "contenu KO chantier_id",
+              auteur_creation_id: auteur.id,
+              auteur_modification_id: auteur.id,
               date_creation: new Date(),
               date_modification: new Date(),
               maille: $Enums.Maille.NAT,

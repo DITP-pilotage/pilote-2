@@ -51,8 +51,7 @@ describe("ObjectifSQLRepository", () => {
         const ch1DejaFait = await fixtures.objectifChantier({
           chantier_id: ch1.id,
           type: "deja_fait",
-          // auteur_modification_id null pour tester "Auteur Inconnu"
-          auteur_modification_id: null,
+          auteur_modification_id: auteur.id,
           date_modification: new Date("2023-04-02"),
           contenu: "Objectif deja fait plus recent",
         });
@@ -116,7 +115,7 @@ describe("ObjectifSQLRepository", () => {
             type: "dejaFait",
             contenu: "Objectif deja fait plus recent",
             date: new Date("2023-04-02").toISOString(),
-            auteur: "Auteur Inconnu",
+            auteur: "Doe John",
           },
         ]);
         expect(result[ch2.id]).toIncludeAllMembers([

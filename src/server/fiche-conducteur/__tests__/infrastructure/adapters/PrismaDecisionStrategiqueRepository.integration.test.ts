@@ -19,6 +19,7 @@ describe("PrismaDecisionStrategiqueRepository", () => {
       "doit lister les decisions strategiques associé au chantier",
       createIntegrationTest(async (prisma) => {
         // Given
+        const auteur = await fixtures.utilisateur();
         const chantier = await fixtures.chantierIdentite();
         const autreChantier = await fixtures.chantierIdentite();
 
@@ -29,7 +30,8 @@ describe("PrismaDecisionStrategiqueRepository", () => {
               chantier_id: chantier.id,
               type: $Enums.type_decision_strategique.suivi_des_decisions,
               contenu: "contenu OK suivi_des_decisions",
-              auteur_modification_id: null,
+              auteur_creation_id: auteur.id,
+              auteur_modification_id: auteur.id,
               date_modification: new Date(),
               date_creation: new Date(),
             },
@@ -39,7 +41,8 @@ describe("PrismaDecisionStrategiqueRepository", () => {
               chantier_id: autreChantier.id,
               type: $Enums.type_decision_strategique.suivi_des_decisions,
               contenu: "contenu KO chantier_id",
-              auteur_modification_id: null,
+              auteur_creation_id: auteur.id,
+              auteur_modification_id: auteur.id,
               date_modification: new Date(),
               date_creation: new Date(),
             },

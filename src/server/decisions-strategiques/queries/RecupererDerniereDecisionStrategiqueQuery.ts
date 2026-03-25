@@ -26,16 +26,12 @@ export class RecupererDerniereDecisionStrategiqueQuery {
       chantierId: decision.chantier_id,
       contenu: decision.contenu,
       statut: decision.statut,
-      auteurCreationId: decision.auteur_creation_id ?? "",
+      auteurCreationId: decision.auteur_creation_id,
       dateCreation: decision.date_creation.toISOString(),
-      auteurModificationId: decision.auteur_modification_id ?? "",
+      auteurModificationId: decision.auteur_modification_id,
       dateModification: decision.date_modification.toISOString(),
-      auteurCreationNom: decision.auteur_creation
-        ? `${decision.auteur_creation.prenom} ${decision.auteur_creation.nom}`
-        : "Auteur Inconnu",
-      auteurModificationNom: decision.auteur_modification
-        ? `${decision.auteur_modification.prenom} ${decision.auteur_modification.nom}`
-        : "Auteur Inconnu",
+      auteurCreationNom: `${decision.auteur_creation.prenom} ${decision.auteur_creation.nom}`,
+      auteurModificationNom: `${decision.auteur_modification.prenom} ${decision.auteur_modification.nom}`,
     };
   }
 }

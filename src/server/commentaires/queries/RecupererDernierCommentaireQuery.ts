@@ -63,16 +63,12 @@ export class RecupererDernierCommentaireQuery {
             type: NOMS_TYPES_COMMENTAIRES[commentaire.type],
             contenu: commentaire.contenu,
             statut: commentaire.statut,
-            auteurCreationId: commentaire.auteur_creation_id ?? "",
+            auteurCreationId: commentaire.auteur_creation_id,
             dateCreation: commentaire.date_creation.toISOString(),
-            auteurModificationId: commentaire.auteur_modification_id ?? "",
+            auteurModificationId: commentaire.auteur_modification_id,
             dateModification: commentaire.date_modification.toISOString(),
-            auteurCreationNom: commentaire.auteur_creation
-              ? `${commentaire.auteur_creation.prenom} ${commentaire.auteur_creation.nom}`
-              : "Auteur Inconnu",
-            auteurModificationNom: commentaire.auteur_modification
-              ? `${commentaire.auteur_modification.prenom} ${commentaire.auteur_modification.nom}`
-              : "Auteur Inconnu",
+            auteurCreationNom: `${commentaire.auteur_creation.prenom} ${commentaire.auteur_creation.nom}`,
+            auteurModificationNom: `${commentaire.auteur_modification.prenom} ${commentaire.auteur_modification.nom}`,
           },
         ];
       }),

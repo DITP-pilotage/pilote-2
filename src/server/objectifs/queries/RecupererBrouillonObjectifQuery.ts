@@ -51,9 +51,9 @@ export class RecupererBrouillonObjectifQuery {
             type: NOMS_TYPES_OBJECTIFS[brouillon.type],
             contenu: brouillon.contenu,
             statut: brouillon.statut,
-            auteurCreationId: brouillon.auteur_creation_id ?? "",
+            auteurCreationId: brouillon.auteur_creation_id,
             dateCreation: brouillon.date_creation.toISOString(),
-            auteurModificationId: brouillon.auteur_modification_id ?? "",
+            auteurModificationId: brouillon.auteur_modification_id,
             dateModification: brouillon.date_modification.toISOString(),
           },
         ];

@@ -38,17 +38,13 @@ export class RecupererDerniereSyntheseDesResultatsQuery {
       territoireCode: synthese.territoire_code,
       contenu: synthese.commentaire ?? "",
       meteo: (synthese.meteo as Meteo) ?? "NON_RENSEIGNEE",
-      auteurCreationId: synthese.auteur_creation_id ?? "",
+      auteurCreationId: synthese.auteur_creation_id,
       dateCreation: synthese.date_creation.toISOString(),
-      auteurModificationId: synthese.auteur_modification_id ?? "",
+      auteurModificationId: synthese.auteur_modification_id,
       dateModification: synthese.date_modification.toISOString(),
       statut: synthese.statut,
-      auteurCreationNom: synthese.auteur_creation
-        ? `${synthese.auteur_creation.prenom} ${synthese.auteur_creation.nom}`
-        : "Auteur Inconnu",
-      auteurModificationNom: synthese.auteur_modification
-        ? `${synthese.auteur_modification.prenom} ${synthese.auteur_modification.nom}`
-        : "Auteur Inconnu",
+      auteurCreationNom: `${synthese.auteur_creation.prenom} ${synthese.auteur_creation.nom}`,
+      auteurModificationNom: `${synthese.auteur_modification.prenom} ${synthese.auteur_modification.nom}`,
     };
   }
 }

@@ -1,174 +1,171 @@
-import { prisma } from "@/server/db/prisma";
+import { randomUUID } from "node:crypto";
 import { PrismaSyntheseDesResultatsRepository } from "@/server/fiche-territoriale/infrastructure/adapters/PrismaSyntheseDesResultatsRepository";
+import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 describe("PrismaSyntheseDesResultatsRepository", () => {
   let prismaSyntheseDesResultatsRepository: PrismaSyntheseDesResultatsRepository;
 
   beforeEach(() => {
     prismaSyntheseDesResultatsRepository =
-      new PrismaSyntheseDesResultatsRepository();
+      new PrismaSyntheseDesResultatsRepository({ prisma: new PrismaPilote() });
   });
 
   describe("#recupererMapSyntheseDesResultatsParListeChantierIdEtTerritoire", () => {
-    it("doit récupérer les synthèses correspondant à la liste des chantiers id", async () => {
-      // Given
-      const listeChantierId = ["CH-001", "CH-002"];
-      const maille = "DEPT";
-      const codeInsee = "34";
+    it(
+      "doit récupérer les synthèses correspondant à la liste des chantiers id",
+      createIntegrationTest(async (prisma) => {
+        // Given
+        const auteur = await fixtures.utilisateur();
+        const ch1 = await fixtures.chantierIdentite();
+        const ch2 = await fixtures.chantierIdentite();
+        const ch3 = await fixtures.chantierIdentite();
 
-      await prisma.chantier_identite.createMany({
-        data: [
-          {
-            id: "CH-001",
-            nom: "Chantier 001",
-          },
-          {
-            id: "CH-002",
-            nom: "Chantier 002",
-          },
-          {
-            id: "CH-003",
-            nom: "Chantier 003",
-          },
-        ],
-      });
+        await fixtures.chantierTerritoire({
+          id: ch1.id,
+          territoire_code: "DEPT-34",
+          maille: "DEPT",
+          code_insee: "34",
+          zone_id: "D34",
+        });
+        await fixtures.chantierTerritoire({
+          id: ch2.id,
+          territoire_code: "DEPT-34",
+          maille: "DEPT",
+          code_insee: "34",
+          zone_id: "D34",
+        });
+        await fixtures.chantierTerritoire({
+          id: ch2.id,
+          territoire_code: "DEPT-35",
+          maille: "DEPT",
+          code_insee: "35",
+          zone_id: "D35",
+        });
+        await fixtures.chantierTerritoire({
+          id: ch2.id,
+          territoire_code: "REG-01",
+          maille: "REG",
+          code_insee: "01",
+          zone_id: "R01",
+        });
+        await fixtures.chantierTerritoire({
+          id: ch3.id,
+          territoire_code: "DEPT-36",
+          maille: "DEPT",
+          code_insee: "36",
+          zone_id: "D36",
+        });
 
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            zone_id: "D34",
-            code_insee: "34",
-            maille: "DEPT",
-            meteo: null,
-            territoire_code: "DEPT-34",
-            taux_avancement_mandat: 2,
-          },
-          {
-            id: "CH-002",
-            zone_id: "D34",
-            code_insee: "34",
-            maille: "DEPT",
-            meteo: null,
-            territoire_code: "DEPT-34",
-            taux_avancement_mandat: 2,
-          },
-          {
-            id: "CH-002",
-            zone_id: "D35",
-            code_insee: "35",
-            maille: "DEPT",
-            meteo: null,
-            territoire_code: "DEPT-35",
-            taux_avancement_mandat: 2,
-          },
-          {
-            id: "CH-002",
-            zone_id: "R01",
-            code_insee: "01",
-            maille: "REG",
-            meteo: null,
-            territoire_code: "REG-01",
-            taux_avancement_mandat: 2,
-          },
-          {
-            id: "CH-003",
-            zone_id: "D36",
-            code_insee: "36",
-            maille: "DEPT",
-            meteo: null,
-            territoire_code: "DEPT-36",
-            taux_avancement_mandat: 2,
-          },
-        ],
-      });
+        await prisma.synthese_des_resultats.createMany({
+          data: [
+            // ch1/DEPT-34 - la plus récente
+            {
+              id: randomUUID(),
+              chantier_id: ch1.id,
+              code_insee: "34",
+              maille: "DEPT",
+              territoire_code: "DEPT-34",
+              auteur_creation_id: auteur.id,
+              auteur_modification_id: auteur.id,
+              date_creation: new Date("2023-02-02T00:00:00.000Z"),
+              date_modification: new Date("2024-01-02T00:00:00.000Z"),
+            },
+            // ch1/DEPT-34 - moins récente
+            {
+              id: randomUUID(),
+              chantier_id: ch1.id,
+              code_insee: "34",
+              maille: "DEPT",
+              territoire_code: "DEPT-34",
+              auteur_creation_id: auteur.id,
+              auteur_modification_id: auteur.id,
+              date_creation: new Date("2021-01-02T00:00:00.000Z"),
+              date_modification: new Date("2023-01-02T00:00:00.000Z"),
+            },
+            // ch2/DEPT-34
+            {
+              id: randomUUID(),
+              chantier_id: ch2.id,
+              code_insee: "34",
+              maille: "DEPT",
+              territoire_code: "DEPT-34",
+              auteur_creation_id: auteur.id,
+              auteur_modification_id: auteur.id,
+              date_creation: new Date("2020-03-02T00:00:00.000Z"),
+              date_modification: new Date("2021-04-02T00:00:00.000Z"),
+            },
+            // ch2/DEPT-35 - ne doit pas être retourné (mauvais territoire)
+            {
+              id: randomUUID(),
+              chantier_id: ch2.id,
+              code_insee: "35",
+              maille: "DEPT",
+              territoire_code: "DEPT-35",
+              auteur_creation_id: auteur.id,
+              auteur_modification_id: auteur.id,
+              date_creation: new Date("2021-01-02T00:00:00.000Z"),
+              date_modification: new Date("2022-01-02T00:00:00.000Z"),
+            },
+            // ch2/REG-01 - ne doit pas être retourné (mauvaise maille)
+            {
+              id: randomUUID(),
+              chantier_id: ch2.id,
+              code_insee: "01",
+              maille: "REG",
+              territoire_code: "REG-01",
+              auteur_creation_id: auteur.id,
+              auteur_modification_id: auteur.id,
+              date_creation: new Date("2021-01-02T00:00:00.000Z"),
+              date_modification: new Date("2022-01-02T00:00:00.000Z"),
+            },
+            // ch3 - ne doit pas être retourné (chantier non demandé)
+            {
+              id: randomUUID(),
+              chantier_id: ch3.id,
+              code_insee: "36",
+              maille: "DEPT",
+              territoire_code: "DEPT-36",
+              auteur_creation_id: auteur.id,
+              auteur_modification_id: auteur.id,
+              date_creation: new Date("2021-01-02T00:00:00.000Z"),
+              date_modification: new Date("2022-01-02T00:00:00.000Z"),
+            },
+          ],
+        });
 
-      await prisma.synthese_des_resultats.createMany({
-        data: [
-          {
-            id: "871814a6-18b4-434c-a641-6f20659b5349",
-            chantier_id: "CH-001",
-            code_insee: "34",
-            maille: "DEPT",
-            territoire_code: "DEPT-34",
-            date_creation: "2023-02-02T00:00:00.000Z",
-            date_modification: "2024-01-02T00:00:00.000Z",
-          },
-          {
-            id: "9b87031f-6ea1-483c-b404-3cd83114b386",
-            chantier_id: "CH-001",
-            code_insee: "34",
-            maille: "DEPT",
-            territoire_code: "DEPT-34",
-            date_creation: "2021-01-02T00:00:00.000Z",
-            date_modification: "2023-01-02T00:00:00.000Z",
-          },
-          {
-            id: "2e15dc4d-7d59-40a2-96c8-5e1cf3270cf4",
-            chantier_id: "CH-002",
-            code_insee: "34",
-            maille: "DEPT",
-            territoire_code: "DEPT-34",
-            date_creation: "2020-03-02T00:00:00.000Z",
-            date_modification: "2021-04-02T00:00:00.000Z",
-          },
-          {
-            id: "63a7626e-a4ba-46fd-a9c2-73de73e5d6ba",
-            chantier_id: "CH-002",
-            code_insee: "35",
-            maille: "DEPT",
-            territoire_code: "DEPT-35",
-            date_creation: "2021-01-02T00:00:00.000Z",
-            date_modification: "2022-01-02T00:00:00.000Z",
-          },
-          {
-            id: "34b20967-95d0-4716-8a80-90a905676999",
-            chantier_id: "CH-002",
-            code_insee: "01",
-            maille: "REG",
-            territoire_code: "REG-01",
-            date_creation: "2021-01-02T00:00:00.000Z",
-            date_modification: "2022-01-02T00:00:00.000Z",
-          },
-          {
-            id: "71f69f33-d95b-47ca-909d-126810ccf129",
-            chantier_id: "CH-003",
-            code_insee: "36",
-            maille: "DEPT",
-            territoire_code: "DEPT-36",
-            date_creation: "2021-01-02T00:00:00.000Z",
-            date_modification: "2022-01-02T00:00:00.000Z",
-          },
-        ],
-      });
+        // When
+        const result =
+          await prismaSyntheseDesResultatsRepository.recupererMapSyntheseDesResultatsParListeChantierIdEtTerritoire(
+            {
+              listeChantierId: [ch1.id, ch2.id],
+              maille: "DEPT",
+              codeInsee: "34",
+            },
+          );
 
-      // When
-      const result =
-        await prismaSyntheseDesResultatsRepository.recupererMapSyntheseDesResultatsParListeChantierIdEtTerritoire(
-          { listeChantierId, maille, codeInsee },
+        // Then
+        expect([...result.keys()]).toIncludeSameMembers([ch1.id, ch2.id]);
+        expect(result.get(ch1.id)?.at(0)?.dateMeteo).toEqual(
+          "2024-01-02T00:00:00.000Z",
         );
-
-      // Then
-      expect([...result.keys()]).toStrictEqual(["CH-001", "CH-002"]);
-      expect(result.get("CH-001")?.at(0)?.dateMeteo).toEqual(
-        "2024-01-02T00:00:00.000Z",
-      );
-      expect(result.get("CH-001")?.at(0)?.dateCommentaire).toEqual(
-        "2024-01-02T00:00:00.000Z",
-      );
-      expect(result.get("CH-001")?.at(1)?.dateMeteo).toEqual(
-        "2023-01-02T00:00:00.000Z",
-      );
-      expect(result.get("CH-001")?.at(1)?.dateCommentaire).toEqual(
-        "2023-01-02T00:00:00.000Z",
-      );
-
-      expect(result.get("CH-002")?.at(0)?.dateMeteo).toEqual(
-        "2021-04-02T00:00:00.000Z",
-      );
-      expect(result.get("CH-002")?.at(0)?.dateCommentaire).toEqual(
-        "2021-04-02T00:00:00.000Z",
-      );
-    });
+        expect(result.get(ch1.id)?.at(0)?.dateCommentaire).toEqual(
+          "2024-01-02T00:00:00.000Z",
+        );
+        expect(result.get(ch1.id)?.at(1)?.dateMeteo).toEqual(
+          "2023-01-02T00:00:00.000Z",
+        );
+        expect(result.get(ch1.id)?.at(1)?.dateCommentaire).toEqual(
+          "2023-01-02T00:00:00.000Z",
+        );
+        expect(result.get(ch2.id)?.at(0)?.dateMeteo).toEqual(
+          "2021-04-02T00:00:00.000Z",
+        );
+        expect(result.get(ch2.id)?.at(0)?.dateCommentaire).toEqual(
+          "2021-04-02T00:00:00.000Z",
+        );
+      }),
+    );
   });
 });

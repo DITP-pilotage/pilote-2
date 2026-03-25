@@ -45,7 +45,6 @@ describe("RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
         maille: "DEPT",
         code_insee: "75",
         type: CODES_TYPES_COMMENTAIRES["commentairesSurLesDonnées"],
-        auteur_modification_id: null,
       });
       await fixtures.commentaire({
         chantier_id: chantier004.id,
@@ -73,9 +72,7 @@ describe("RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
         );
 
       // Then
-      expect(résultat[chantier003.id][0]?.auteur).toStrictEqual(
-        "Auteur Inconnu",
-      );
+      expect(résultat[chantier003.id][0]?.auteur).toStrictEqual("User Test");
       expect(résultat[chantier004.id][0]?.auteur).toStrictEqual("Paul Lasne");
     }),
   );

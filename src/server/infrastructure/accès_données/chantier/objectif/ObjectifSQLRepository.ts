@@ -75,9 +75,9 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
       type: NOMS_TYPES_OBJECTIFS[objectif.type],
       contenu: objectif.contenu,
       statut: objectif.statut,
-      auteurCreationId: objectif.auteur_creation_id ?? "",
+      auteurCreationId: objectif.auteur_creation_id,
       dateCreation: objectif.date_creation.toISOString(),
-      auteurModificationId: objectif.auteur_modification_id ?? "",
+      auteurModificationId: objectif.auteur_modification_id,
       dateModification: objectif.date_modification.toISOString(),
     };
   }
@@ -123,9 +123,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
           type: NOMS_TYPES_OBJECTIFS[objectif.type],
           contenu: objectif.contenu,
           date: objectif.date_modification.toISOString(),
-          auteur: objectif.auteur_modification
-            ? `${objectif.auteur_modification.prenom} ${objectif.auteur_modification.nom}`
-            : "Auteur Inconnu",
+          auteur: `${objectif.auteur_modification.prenom} ${objectif.auteur_modification.nom}`,
         };
       },
     );

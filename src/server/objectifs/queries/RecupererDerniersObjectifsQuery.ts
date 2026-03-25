@@ -47,16 +47,12 @@ export class RecupererDerniersObjectifsQuery {
             type: NOMS_TYPES_OBJECTIFS[objectif.type],
             contenu: objectif.contenu,
             statut: objectif.statut,
-            auteurCreationId: objectif.auteur_creation_id ?? "",
+            auteurCreationId: objectif.auteur_creation_id,
             dateCreation: objectif.date_creation.toISOString(),
-            auteurModificationId: objectif.auteur_modification_id ?? "",
+            auteurModificationId: objectif.auteur_modification_id,
             dateModification: objectif.date_modification.toISOString(),
-            auteurCreationNom: objectif.auteur_creation
-              ? `${objectif.auteur_creation.prenom} ${objectif.auteur_creation.nom}`
-              : "Auteur Inconnu",
-            auteurModificationNom: objectif.auteur_modification
-              ? `${objectif.auteur_modification.prenom} ${objectif.auteur_modification.nom}`
-              : "Auteur Inconnu",
+            auteurCreationNom: `${objectif.auteur_creation.prenom} ${objectif.auteur_creation.nom}`,
+            auteurModificationNom: `${objectif.auteur_modification.prenom} ${objectif.auteur_modification.nom}`,
           },
         ];
       }),

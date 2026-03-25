@@ -17,8 +17,9 @@ describe("PrismaSynthèseDesRésultatsRepository", () => {
   describe("#recupererLaPlusRecenteMailleNatParChantierId", () => {
     it(
       "doit récupérer la synthèse la plus récente pour un chantier de maille nationale",
-      createIntegrationTest(async (prisma) => {
+      createIntegrationTest(async () => {
         // Given
+        const auteur = await fixtures.utilisateur();
         const chantier = await fixtures.chantierIdentite();
         const autreChantier = await fixtures.chantierIdentite();
 
@@ -51,13 +52,15 @@ describe("PrismaSynthèseDesRésultatsRepository", () => {
           maille: $Enums.Maille.DEPT,
         });
 
-        await prisma.synthese_des_resultats.create({
+        await prismaPilote.getInstance().synthese_des_resultats.create({
           data: {
             id: randomUUID(),
             chantier_id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: $Enums.Maille.NAT,
+            auteur_creation_id: auteur.id,
+            auteur_modification_id: auteur.id,
             date_creation: "2022-01-02T00:00:00.000Z",
             date_modification: "2022-01-02T00:00:00.000Z",
             meteo: "SOLEIL",
@@ -65,13 +68,15 @@ describe("PrismaSynthèseDesRésultatsRepository", () => {
           },
         });
         // date plus ancienne, ne doit pas être retournée
-        await prisma.synthese_des_resultats.create({
+        await prismaPilote.getInstance().synthese_des_resultats.create({
           data: {
             id: randomUUID(),
             chantier_id: chantier.id,
             territoire_code: "NAT-FR",
             code_insee: "FR",
             maille: $Enums.Maille.NAT,
+            auteur_creation_id: auteur.id,
+            auteur_modification_id: auteur.id,
             date_creation: "2021-01-02T00:00:00.000Z",
             date_modification: "2021-01-02T00:00:00.000Z",
             meteo: "COUVERT",
@@ -79,13 +84,15 @@ describe("PrismaSynthèseDesRésultatsRepository", () => {
           },
         });
         // maille DEPT, ne doit pas être retournée
-        await prisma.synthese_des_resultats.create({
+        await prismaPilote.getInstance().synthese_des_resultats.create({
           data: {
             id: randomUUID(),
             chantier_id: chantier.id,
             territoire_code: "DEPT-34",
             code_insee: "34",
             maille: $Enums.Maille.DEPT,
+            auteur_creation_id: auteur.id,
+            auteur_modification_id: auteur.id,
             meteo: "SOLEIL",
             commentaire: "commentaire synthèse KO maille",
             date_creation: "2021-01-02T00:00:00.000Z",
@@ -93,13 +100,15 @@ describe("PrismaSynthèseDesRésultatsRepository", () => {
           },
         });
         // autre chantier, ne doit pas être retourné
-        await prisma.synthese_des_resultats.create({
+        await prismaPilote.getInstance().synthese_des_resultats.create({
           data: {
             id: randomUUID(),
             chantier_id: autreChantier.id,
             territoire_code: "DEPT-34",
             code_insee: "34",
             maille: $Enums.Maille.DEPT,
+            auteur_creation_id: auteur.id,
+            auteur_modification_id: auteur.id,
             meteo: "SOLEIL",
             commentaire: "commentaire synthèse KO chantierID",
             date_creation: "2021-01-02T00:00:00.000Z",

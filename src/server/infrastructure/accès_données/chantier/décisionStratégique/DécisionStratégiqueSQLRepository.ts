@@ -41,8 +41,8 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
       chantierId: decision.chantier_id,
       contenu: decision.contenu,
       statut: decision.statut,
-      auteurCreationId: decision.auteur_creation_id ?? "",
-      auteurModificationId: decision.auteur_modification_id ?? "",
+      auteurCreationId: decision.auteur_creation_id,
+      auteurModificationId: decision.auteur_modification_id,
       dateCreation: decision.date_creation.toISOString(),
       dateModification: decision.date_modification.toISOString(),
     };
@@ -76,8 +76,8 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
   ): Promise<Record<string, DécisionStratégique>> {
     const décisionsStratégiques = await this.prisma.$queryRaw<
       (DécisionStratégiquePrisma & {
-        prenom_auteur: string | null;
-        nom_auteur: string | null;
+        prenom_auteur: string;
+        nom_auteur: string;
       })[]
     >`
         SELECT d.*, u.prenom as prenom_auteur, u.nom as nom_auteur
@@ -103,9 +103,7 @@ export default class DécisionStratégiqueSQLRepository implements DécisionStra
           type: NOMS_TYPES_DECISION_STRATEGIQUE[décisionStratégique.type],
           contenu: décisionStratégique.contenu,
           date: décisionStratégique.date_modification.toISOString(),
-          auteur: décisionStratégique.auteur_modification_id
-            ? `${décisionStratégique.prenom_auteur} ${décisionStratégique.nom_auteur}`
-            : "Auteur Inconnu",
+          auteur: `${décisionStratégique.prenom_auteur} ${décisionStratégique.nom_auteur}`,
         },
       ]),
     );

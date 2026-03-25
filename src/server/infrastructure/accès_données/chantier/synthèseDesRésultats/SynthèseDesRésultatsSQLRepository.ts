@@ -71,9 +71,9 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
       territoireCode: row.territoire_code,
       contenu: row.commentaire ?? "",
       meteo: row.meteo as Meteo,
-      auteurCreationId: row.auteur_creation_id ?? "",
+      auteurCreationId: row.auteur_creation_id,
       dateCreation: row.date_creation.toISOString(),
-      auteurModificationId: row.auteur_modification_id ?? "",
+      auteurModificationId: row.auteur_modification_id,
       dateModification: row.date_modification.toISOString(),
       statut: row.statut,
     };
@@ -113,9 +113,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
           id: synthèseDesRésultats.id,
           contenu: synthèseDesRésultats.commentaire ?? "",
           date: synthèseDesRésultats.date_modification?.toISOString() ?? "",
-          auteur: synthèseDesRésultats.auteur_modification_id
-            ? `${synthèseDesRésultats.auteur_prenom} ${synthèseDesRésultats.auteur_nom}`
-            : "Auteur Inconnu",
+          auteur: `${synthèseDesRésultats.auteur_prenom} ${synthèseDesRésultats.auteur_nom}`,
           météo: (synthèseDesRésultats.meteo as Meteo) ?? "NON_RENSEIGNEE",
         },
       ]),
