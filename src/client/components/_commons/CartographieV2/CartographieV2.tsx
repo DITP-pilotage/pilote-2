@@ -5,7 +5,6 @@ import SecureTooltip from "@/components/_commons/SecureTooltip/SecureTooltip";
 import { getListeTerritoires } from "@/client/constants/territoires";
 import { clsxm } from "@/utils/clsxm";
 import { CartographieV2Donnee, GetTerritoireProps } from "./types";
-import { useZoomContext, ZoomControl, ZoomProvider } from "./ZoomContext";
 import { CarteDepartements } from "./CarteDepartements";
 import { CarteRegions } from "./CarteRegions";
 import { FrontieresRegions } from "./FrontieresRegions";
@@ -19,14 +18,13 @@ type CartographieV2Props = {
   children: ReactNode;
 };
 
-const CartographieV2Contenu = ({
+export const CartographieV2 = ({
   maille,
   donnees,
   territoiresSelectionnes,
   onTerritoireSelect,
   children,
 }: CartographieV2Props) => {
-  const { svgRef } = useZoomContext();
   const territoiresAffiches = getListeTerritoires(maille);
   const [hovered, setHovered] = useState<{
     code: string;
@@ -64,8 +62,6 @@ const CartographieV2Contenu = ({
 
   return (
     <div className="relative">
-      <ZoomControl />
-
       <SecureTooltip
         anchorEl={hovered?.element ?? null}
         classNameInfoBulle="infobull--sm"
@@ -86,7 +82,6 @@ const CartographieV2Contenu = ({
       </SecureTooltip>
 
       <svg
-        ref={svgRef}
         version="1.2"
         viewBox="1 0 100 100"
         xmlns="http://www.w3.org/2000/svg"
@@ -112,9 +107,3 @@ const CartographieV2Contenu = ({
     </div>
   );
 };
-
-export const CartographieV2 = (props: CartographieV2Props) => (
-  <ZoomProvider>
-    <CartographieV2Contenu {...props} />
-  </ZoomProvider>
-);
