@@ -410,6 +410,11 @@ const config = convict({
       default: "",
       env: "TCHAP_ROOM_ID_DESACTIVATION_COMPTES",
     },
+    roomIdSuppressionComptes: {
+      format: String,
+      default: "",
+      env: "TCHAP_ROOM_ID_SUPPRESSION_COMPTES",
+    },
     roomIdRapportServiceAutre: {
       format: String,
       default: "",
