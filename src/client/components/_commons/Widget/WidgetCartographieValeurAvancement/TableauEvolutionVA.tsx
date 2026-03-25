@@ -52,7 +52,7 @@ export const TableauEvolutionVA = ({
   });
   const lignes: LigneTerritoire[] = useMemo(() => {
     return territoiresSelectionnes.map((territoire) => {
-      const détails = récupérerDétailsSurUnTerritoire(
+      const details = récupérerDétailsSurUnTerritoire(
         territoire.territoireCode,
       );
       const cellules = new Map<number, CelluleJalon>();
@@ -74,7 +74,7 @@ export const TableauEvolutionVA = ({
 
       return {
         territoireCode: territoire.territoireCode,
-        nom: détails?.nomAffiché ?? territoire.territoireCode,
+        nom: details?.nomAffiché ?? territoire.territoireCode,
         couleur: getCouleurTerritoireParCode(territoire.territoireCode),
         estInitial: territoire.territoireCode === territoireCode,
         cellules,
