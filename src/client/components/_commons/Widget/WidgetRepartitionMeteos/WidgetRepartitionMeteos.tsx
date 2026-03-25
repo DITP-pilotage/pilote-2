@@ -30,7 +30,7 @@ export const WidgetRepartitionMeteos = ({
   territoireCode: string;
 }) => {
   return (
-    <section className="fr-mr-md-2w fr-mr-xl-0">
+    <section className="fr-mr-md-2w fr-mr-xl-0 max-w-fit">
       <Bloc contenuClassesSupplémentaires="fr-py-2w fr-px-3w">
         <TitreInfobulleConteneur className="justify-between fr-mb-2w">
           <Titre
@@ -123,7 +123,7 @@ const TuilesMeteos = ({
             title={libellesMeteos[meteo]}
             type="button"
           >
-            <span className="text-[1.75rem] font-bold text-dsfr-moutarde-main-679 min-w-[2.5rem] text-center">
+            <span className="text-[1.75rem] font-bold text-dsfr-moutarde-main-850 min-w-[2.5rem] text-center">
               {repartition[meteo]}
             </span>
             <MeteoPicto meteo={meteo} />
