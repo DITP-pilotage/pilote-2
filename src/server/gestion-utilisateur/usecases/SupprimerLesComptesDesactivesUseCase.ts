@@ -8,6 +8,7 @@ import { RapportRepository } from "@/server/gestion-utilisateur/domain/ports/Rap
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/gestion-utilisateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
+import { Transaction } from "@/server/db/Transaction";
 import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export const EMAIL_AUTEUR_REMPLACEMENT =
@@ -38,6 +39,8 @@ export class SupprimerLesComptesDesactivesUseCase {
 
   private historisationModification: HistorisationModificationRepository;
 
+  private transaction: Transaction;
+
   constructor({
     utilisateurRepository,
     utilisateurIAMRepository,
@@ -48,6 +51,7 @@ export class SupprimerLesComptesDesactivesUseCase {
     rapportRepository,
     indicateurTerritoireValeurEvenementRepository,
     historisationModification,
+    transaction,
   }: Inject<
     | "utilisateurRepository"
     | "utilisateurIAMRepository"
@@ -58,6 +62,7 @@ export class SupprimerLesComptesDesactivesUseCase {
     | "rapportRepository"
     | "indicateurTerritoireValeurEvenementRepository"
     | "historisationModification"
+    | "transaction"
   >) {
     this.utilisateurRepository = utilisateurRepository;
     this.utilisateurIAMRepository = utilisateurIAMRepository;
@@ -69,6 +74,7 @@ export class SupprimerLesComptesDesactivesUseCase {
     this.indicateurTerritoireValeurEvenementRepository =
       indicateurTerritoireValeurEvenementRepository;
     this.historisationModification = historisationModification;
+    this.transaction = transaction;
   }
 
   async run(): Promise<ResultatSuppression> {
@@ -87,45 +93,48 @@ export class SupprimerLesComptesDesactivesUseCase {
 
     for (const utilisateur of utilisateursASupprimer) {
       try {
-        await Promise.all([
-          this.commentaireRepository.anonymiserAuteurs(
-            [utilisateur.id],
-            EMAIL_AUTEUR_REMPLACEMENT,
-          ),
-          this.syntheseDesResultatsRepository.anonymiserAuteurs(
-            [utilisateur.id],
-            EMAIL_AUTEUR_REMPLACEMENT,
-          ),
-          this.decisionStrategiqueRepository.anonymiserAuteurs(
-            [utilisateur.id],
-            EMAIL_AUTEUR_REMPLACEMENT,
-          ),
-          this.objectifRepository.anonymiserAuteurs(
-            [utilisateur.id],
-            EMAIL_AUTEUR_REMPLACEMENT,
-          ),
-          this.indicateurTerritoireValeurEvenementRepository.anonymiserAuteurs(
-            [utilisateur.id],
-            EMAIL_AUTEUR_REMPLACEMENT,
-          ),
-          this.historisationModification.anonymiserAuteurs(
-            [utilisateur.id],
-            EMAIL_AUTEUR_REMPLACEMENT,
-          ),
-          this.rapportRepository.anonymiserAuteurs(
-            [utilisateur.email],
-            EMAIL_AUTEUR_REMPLACEMENT,
-          ),
-        ]);
+        await this.transaction.run(async () => {
+          await Promise.all([
+            this.commentaireRepository.anonymiserAuteurs(
+              [utilisateur.id],
+              EMAIL_AUTEUR_REMPLACEMENT,
+            ),
+            this.syntheseDesResultatsRepository.anonymiserAuteurs(
+              [utilisateur.id],
+              EMAIL_AUTEUR_REMPLACEMENT,
+            ),
+            this.decisionStrategiqueRepository.anonymiserAuteurs(
+              [utilisateur.id],
+              EMAIL_AUTEUR_REMPLACEMENT,
+            ),
+            this.objectifRepository.anonymiserAuteurs(
+              [utilisateur.id],
+              EMAIL_AUTEUR_REMPLACEMENT,
+            ),
+            this.indicateurTerritoireValeurEvenementRepository.anonymiserAuteurs(
+              [utilisateur.id],
+              EMAIL_AUTEUR_REMPLACEMENT,
+            ),
+            this.historisationModification.anonymiserAuteurs(
+              [utilisateur.id],
+              EMAIL_AUTEUR_REMPLACEMENT,
+            ),
+            this.rapportRepository.anonymiserAuteurs(
+              [utilisateur.email],
+              EMAIL_AUTEUR_REMPLACEMENT,
+            ),
+          ]);
 
-        await this.utilisateurRepository.anonymiserAuteurs(
-          [utilisateur.id],
-          EMAIL_AUTEUR_REMPLACEMENT,
-        );
+          await this.utilisateurRepository.anonymiserAuteurs(
+            [utilisateur.id],
+            EMAIL_AUTEUR_REMPLACEMENT,
+          );
+        });
+
+        await this.utilisateurIAMRepository.supprime(utilisateur.email);
         await this.utilisateurRepository.supprimerListeUtilisateur([
           utilisateur.id,
         ]);
-        await this.utilisateurIAMRepository.supprime(utilisateur.email);
 
         supprimes.push(utilisateur);
       } catch (error) {

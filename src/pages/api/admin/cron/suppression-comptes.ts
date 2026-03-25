@@ -39,7 +39,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     envoieMessageTchap(message.join("\n"), baseUrl, roomId, accessToken);
 
-    logger.info("Script de suppression des comptes désactivés terminé", resultat);
+    logger.info(
+      "Script de suppression des comptes désactivés terminé",
+      resultat,
+    );
 
     return res.status(200).json(resultat);
   } catch (error) {

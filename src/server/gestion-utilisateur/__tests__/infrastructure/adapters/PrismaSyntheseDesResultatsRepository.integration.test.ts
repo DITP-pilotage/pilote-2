@@ -1,13 +1,16 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaSyntheseDesResultatsRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaSyntheseDesResultatsRepository";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 describe("PrismaSyntheseDesResultatsRepository", () => {
   let prismaSyntheseDesResultatsRepository: PrismaSyntheseDesResultatsRepository;
 
   beforeEach(() => {
     prismaSyntheseDesResultatsRepository =
-      new PrismaSyntheseDesResultatsRepository();
+      new PrismaSyntheseDesResultatsRepository({
+        prisma: new PrismaPilote(),
+      });
   });
 
   describe("#anonymiserAuteurs", () => {

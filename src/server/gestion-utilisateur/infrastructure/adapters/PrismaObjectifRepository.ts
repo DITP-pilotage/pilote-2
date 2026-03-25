@@ -1,14 +1,22 @@
-import { getPrisma } from "@/server/db/PrismaTransaction";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { ObjectifRepository } from "@/server/gestion-utilisateur/domain/ports/ObjectifRepository";
 
 export class PrismaObjectifRepository implements ObjectifRepository {
+  private prismaClient: PrismaPilote;
+
+  constructor({ prisma }: { prisma: PrismaPilote }) {
+    this.prismaClient = prisma;
+  }
+
+  get prisma() {
+    return this.prismaClient.getInstance();
+  }
+
   async anonymiserAuteurs(
     auteursAAnonymiserIds: string[],
     emailAuteurRemplacement: string,
   ): Promise<void> {
-    const prisma = getPrisma();
-
-    const auteurAnonyme = await prisma.utilisateur.findFirst({
+    const auteurAnonyme = await this.prisma.utilisateur.findFirst({
       where: {
         email: emailAuteurRemplacement,
       },
@@ -16,7 +24,7 @@ export class PrismaObjectifRepository implements ObjectifRepository {
 
     if (auteurAnonyme) {
       await Promise.all([
-        prisma.objectif.updateMany({
+        this.prisma.objectif.updateMany({
           where: {
             auteur_modification_id: {
               in: auteursAAnonymiserIds,
@@ -26,7 +34,7 @@ export class PrismaObjectifRepository implements ObjectifRepository {
             auteur_modification_id: auteurAnonyme.id,
           },
         }),
-        prisma.objectif.updateMany({
+        this.prisma.objectif.updateMany({
           where: {
             auteur_creation_id: {
               in: auteursAAnonymiserIds,

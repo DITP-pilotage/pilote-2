@@ -1,12 +1,15 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaIndicateurTerritoireValeurEvenementRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaIndicateurTerritoireValeurEvenementRepository";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
   let repository: PrismaIndicateurTerritoireValeurEvenementRepository;
 
   beforeEach(() => {
-    repository = new PrismaIndicateurTerritoireValeurEvenementRepository();
+    repository = new PrismaIndicateurTerritoireValeurEvenementRepository({
+      prisma: new PrismaPilote(),
+    });
   });
 
   describe("#anonymiserAuteurs", () => {

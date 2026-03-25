@@ -1,13 +1,14 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaDecisionStrategiqueRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaDecisionStrategiqueRepository";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 describe("PrismaDecisionStrategiqueRepository", () => {
   let prismaDecisionStrategiqueRepository: PrismaDecisionStrategiqueRepository;
 
   beforeEach(() => {
     prismaDecisionStrategiqueRepository =
-      new PrismaDecisionStrategiqueRepository();
+      new PrismaDecisionStrategiqueRepository({ prisma: new PrismaPilote() });
   });
 
   describe("#anonymiserAuteurs", () => {

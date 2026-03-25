@@ -12,6 +12,8 @@ import {
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/gestion-utilisateur/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
+import { Transaction } from "@/server/db/Transaction";
+import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
 
 describe("SupprimerLesComptesDesactivesUseCase", () => {
   let utilisateurRepository: MockProxy<UtilisateurRepository>;
@@ -23,6 +25,7 @@ describe("SupprimerLesComptesDesactivesUseCase", () => {
   let rapportRepository: MockProxy<RapportRepository>;
   let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
   let historisationModification: MockProxy<HistorisationModificationRepository>;
+  let transaction: Transaction;
 
   let supprimerLesComptesDesactivesUseCase: SupprimerLesComptesDesactivesUseCase;
 
@@ -37,6 +40,7 @@ describe("SupprimerLesComptesDesactivesUseCase", () => {
     indicateurTerritoireValeurEvenementRepository =
       mock<IndicateurTerritoireValeurEvenementRepository>();
     historisationModification = mock<HistorisationModificationRepository>();
+    transaction = new InMemoryTransaction();
     supprimerLesComptesDesactivesUseCase =
       new SupprimerLesComptesDesactivesUseCase({
         utilisateurRepository,
@@ -48,6 +52,7 @@ describe("SupprimerLesComptesDesactivesUseCase", () => {
         rapportRepository,
         indicateurTerritoireValeurEvenementRepository,
         historisationModification,
+        transaction,
       });
   });
 

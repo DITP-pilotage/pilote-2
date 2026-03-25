@@ -1,12 +1,15 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaObjectifRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaObjectifRepository";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 describe("PrismaObjectifRepository", () => {
   let prismaObjectifRepository: PrismaObjectifRepository;
 
   beforeEach(() => {
-    prismaObjectifRepository = new PrismaObjectifRepository();
+    prismaObjectifRepository = new PrismaObjectifRepository({
+      prisma: new PrismaPilote(),
+    });
   });
 
   describe("#anonymiserAuteurs", () => {
@@ -141,7 +144,11 @@ describe("PrismaObjectifRepository", () => {
 
         // Then
         const objectifs = await tx.objectif.findMany({
-          where: { id: { in: [objectifCreationCible.id, objectifModificationCible.id] } },
+          where: {
+            id: {
+              in: [objectifCreationCible.id, objectifModificationCible.id],
+            },
+          },
         });
         expect(objectifs).toEqual(
           expect.arrayContaining([

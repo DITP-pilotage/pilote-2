@@ -1,12 +1,15 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaCommentaireRepository } from "@/server/gestion-utilisateur/infrastructure/adapters/PrismaCommentaireRepository";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 describe("PrismaCommentaireRepository", () => {
   let prismaCommentaireRepository: PrismaCommentaireRepository;
 
   beforeEach(() => {
-    prismaCommentaireRepository = new PrismaCommentaireRepository();
+    prismaCommentaireRepository = new PrismaCommentaireRepository({
+      prisma: new PrismaPilote(),
+    });
   });
 
   describe("#anonymiserAuteurs", () => {
