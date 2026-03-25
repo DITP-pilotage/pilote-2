@@ -37,9 +37,11 @@ import { CreerLesRapportsPropositionsUseCase } from "./usecases/CreerLesRapports
 import { EnvoyerLesRapportsPropositionsUseCase } from "./usecases/EnvoyerLesRapportsPropositionsUseCase";
 import { GetChantierMeteosTerritoiresQuery } from "./infrastructure/queries/GetChantierMeteosTerritoiresQuery";
 import { GetChantierPVACountTerritoiresQuery } from "./infrastructure/queries/GetChantierPVACountTerritoiresQuery";
-import { RecupererAvancementsTerritoiresQuery } from "./infrastructure/queries/RecupererAvancementsTerritoiresQuery";
+import { RecupererTauxAvancementsChantierTerritoiresQuery } from "./infrastructure/queries/RecupererTauxAvancementsChantierTerritoiresQuery";
 import { RecupererValeursAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/RecupererValeursAvancementIndicateurTerritoiresQuery";
 import { GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery";
+import { RecupererTauxAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/RecupererTauxAvancementIndicateurTerritoiresQuery";
+import { GetStatistiquesTauxAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/GetStatistiquesTauxAvancementIndicateurTerritoiresQuery";
 
 type ChantierExports = {
   recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
@@ -72,9 +74,11 @@ type ChantierOwnCradle = ChantierExports & {
   envoyerLesRapportsPropositionsUseCase: EnvoyerLesRapportsPropositionsUseCase;
   getChantierMeteosTerritoiresQuery: GetChantierMeteosTerritoiresQuery;
   getChantierPVACountTerritoiresQuery: GetChantierPVACountTerritoiresQuery;
-  recupererAvancementsTerritoiresQuery: RecupererAvancementsTerritoiresQuery;
+  recupererTauxAvancementsChantierTerritoiresQuery: RecupererTauxAvancementsChantierTerritoiresQuery;
   recupererValeursAvancementIndicateurTerritoiresQuery: RecupererValeursAvancementIndicateurTerritoiresQuery;
   getValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery: GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery;
+  recupererTauxAvancementIndicateurTerritoiresQuery: RecupererTauxAvancementIndicateurTerritoiresQuery;
+  getStatistiquesTauxAvancementIndicateurTerritoiresQuery: GetStatistiquesTauxAvancementIndicateurTerritoiresQuery;
 };
 
 type ChantierCradle = ChantierOwnCradle & ChantierImports;
@@ -144,8 +148,8 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       getChantierPVACountTerritoiresQuery: asModuleClass(
         GetChantierPVACountTerritoiresQuery,
       ),
-      recupererAvancementsTerritoiresQuery: asModuleClass(
-        RecupererAvancementsTerritoiresQuery,
+      recupererTauxAvancementsChantierTerritoiresQuery: asModuleClass(
+        RecupererTauxAvancementsChantierTerritoiresQuery,
       ),
       recupererValeursAvancementIndicateurTerritoiresQuery: asModuleClass(
         RecupererValeursAvancementIndicateurTerritoiresQuery,
@@ -154,6 +158,12 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
         asModuleClass(
           GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery,
         ),
+      recupererTauxAvancementIndicateurTerritoiresQuery: asModuleClass(
+        RecupererTauxAvancementIndicateurTerritoiresQuery,
+      ),
+      getStatistiquesTauxAvancementIndicateurTerritoiresQuery: asModuleClass(
+        GetStatistiquesTauxAvancementIndicateurTerritoiresQuery,
+      ),
     } satisfies VerifyCradle<ChantierOwnCradle>);
   },
 });
