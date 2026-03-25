@@ -62,8 +62,7 @@ export const NombrePropositionsValeur = ({
                     couleur={couleur}
                     onSupprimer={
                       !estInitial
-                        ? () =>
-                            onSupprimerTerritoire(territoire.territoireCode)
+                        ? () => onSupprimerTerritoire(territoire.territoireCode)
                         : undefined
                     }
                   />

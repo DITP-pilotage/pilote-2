@@ -285,16 +285,25 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
 test.describe("Cartographie PVA — Comparaison territoriale", () => {
   const chantierId = "129";
 
+  function widgetPVA(page: import("@playwright/test").Page) {
+    return page
+      .locator("div")
+      .filter({
+        has: page.getByText("Nombres de propositions de valeur d'avancement", {
+          exact: true,
+        }),
+      })
+      .filter({ has: page.getByText("+ ajouter un territoire") })
+      .last();
+  }
+
   async function selectionnerCartePVA(page: import("@playwright/test").Page) {
-    // Scoper dans la section "Comparaison territoriale et évolution"
     const sectionComparaison = page.locator("div.fr-card").filter({
       hasText: "Comparaison territoriale et évolution",
     });
 
-    // Cliquer sur le sélecteur de type de carte (Radix Select trigger)
     await sectionComparaison.getByRole("combobox").first().click();
 
-    // Sélectionner la carte PVA dans le dropdown (portail Radix)
     await page
       .getByRole("option", {
         name: "Carte des propositions de valeur d'avancement",
@@ -356,8 +365,10 @@ test.describe("Cartographie PVA — Comparaison territoriale", () => {
     await step(
       "Vérification de la présence du lien '+ ajouter un territoire'",
       async () => {
+        const pvaWidget = widgetPVA(page);
+        await pvaWidget.scrollIntoViewIfNeeded();
         await expect(
-          page.getByText("+ ajouter un territoire").last(),
+          pvaWidget.getByText("+ ajouter un territoire"),
         ).toBeVisible();
       },
     );
@@ -389,7 +400,9 @@ test.describe("Cartographie PVA — Comparaison territoriale", () => {
     );
 
     await step("Ajout du territoire 'Paris' via le picker", async () => {
-      await page.getByText("+ ajouter un territoire").last().click();
+      const pvaWidget = widgetPVA(page);
+      await pvaWidget.scrollIntoViewIfNeeded();
+      await pvaWidget.getByText("+ ajouter un territoire").click();
       await page.getByLabel("Rechercher").last().fill("Paris");
       await page.getByRole("option", { name: "Paris" }).click();
     });
@@ -404,7 +417,9 @@ test.describe("Cartographie PVA — Comparaison territoriale", () => {
     );
 
     await step("Ajout du territoire 'Morbihan'", async () => {
-      await page.getByText("+ ajouter un territoire").last().click();
+      const pvaWidget = widgetPVA(page);
+      await pvaWidget.scrollIntoViewIfNeeded();
+      await pvaWidget.getByText("+ ajouter un territoire").click();
       await page.getByLabel("Rechercher").last().fill("Morbihan");
       await page.getByRole("option", { name: "Morbihan" }).click();
     });
@@ -419,10 +434,8 @@ test.describe("Cartographie PVA — Comparaison territoriale", () => {
     );
 
     await step("Suppression de 'Paris' (clic sur le bouton ✕)", async () => {
-      await page
-        .getByTitle(/Retirer.*Paris/)
-        .last()
-        .click();
+      const pvaWidget = widgetPVA(page);
+      await pvaWidget.getByTitle(/Retirer.*Paris/).click();
     });
 
     await step(
