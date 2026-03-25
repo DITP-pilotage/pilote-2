@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="fr" data-fr-scheme="light">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PILOTE — Suivi des déploiements</title>
+  <meta name="description" content="Visualisation des commits entre les environnements PILOTE">
+  <link rel="stylesheet" href="https://unpkg.com/@gouvfr/dsfr@1.12.1/dist/dsfr.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/@gouvfr/dsfr@1.12.1/dist/utility/icons/icons.min.css">
+  <link rel="apple-touch-icon" href="https://unpkg.com/@gouvfr/dsfr@1.12.1/dist/favicon/apple-touch-icon.png">
+  <link rel="icon" href="https://unpkg.com/@gouvfr/dsfr@1.12.1/dist/favicon/favicon.svg" type="image/svg+xml">
+  <style>
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideInLeft {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    .animate-fade-in-up {
+      animation: fadeInUp 0.4s ease-out both;
+    }
+
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-out both;
+    }
+
+    .commit-item {
+      animation: slideInLeft 0.3s ease-out both;
+      transition: background-color 0.2s ease, box-shadow 0.2s ease;
+      border-left: 3px solid transparent;
+    }
+
+    .commit-item:hover {
+      background-color: var(--background-alt-grey);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      border-left-color: var(--border-action-high-blue-france);
+    }
+
+    .loading-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--text-action-high-blue-france);
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+
+    .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+    .commit-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      transition: transform 0.2s ease;
+    }
+
+    .commit-item:hover .commit-avatar {
+      transform: scale(1.1);
+    }
+
+    .commit-hash {
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: var(--text-mention-grey);
+      transition: color 0.2s ease;
+    }
+
+    .commit-item:hover .commit-hash {
+      color: var(--text-action-high-blue-france);
+    }
+
+    .commit-date {
+      font-size: 0.85rem;
+      color: var(--text-mention-grey);
+      white-space: nowrap;
+    }
+
+    .badge-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 24px;
+      height: 24px;
+      padding: 0 8px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      animation: fadeIn 0.5s ease-out both;
+    }
+
+    .badge-ahead {
+      background-color: var(--background-contrast-success);
+      color: var(--text-default-success);
+    }
+
+    .badge-behind {
+      background-color: var(--background-contrast-warning);
+      color: var(--text-default-warning);
+    }
+
+    .tab-content {
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .stats-row {
+      animation: fadeInUp 0.5s ease-out both;
+      animation-delay: 0.1s;
+    }
+
+    .empty-state {
+      animation: fadeIn 0.5s ease-out both;
+    }
+
+    .error-state {
+      animation: fadeIn 0.3s ease-out both;
+    }
+
+    .refresh-btn {
+      transition: transform 0.3s ease;
+    }
+
+    .refresh-btn:hover {
+      transform: rotate(180deg);
+    }
+
+    .pr-link {
+      transition: opacity 0.2s ease;
+    }
+
+    .pr-link:hover {
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+  <header role="banner" class="fr-header">
+    <div class="fr-header__body">
+      <div class="fr-container">
+        <div class="fr-header__body-row">
+          <div class="fr-header__brand fr-enlarge-link">
+            <div class="fr-header__brand-top">
+              <div class="fr-header__logo">
+                <p class="fr-logo">
+                  République
+                  <br>Française
+                </p>
+              </div>
+            </div>
+            <div class="fr-header__service">
+              <a href="/pilote-2/" title="Accueil">
+                <p class="fr-header__service-title">PILOTE</p>
+              </a>
+              <p class="fr-header__service-tagline">Suivi des déploiements</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main role="main">
+    <div class="fr-container fr-my-4w">
+      <div class="fr-grid-row fr-grid-row--center">
+        <div class="fr-col-12 fr-col-lg-10">
+
+          <h1 class="fr-mb-1w animate-fade-in-up">Suivi des déploiements</h1>
+          <p class="fr-text--lg fr-mb-4w animate-fade-in-up" style="animation-delay: 0.1s;">
+            Commits en attente de déploiement entre les environnements.
+          </p>
+
+          <div class="fr-tabs">
+            <ul class="fr-tabs__list" role="tablist" aria-label="Comparaison des branches">
+              <li role="presentation">
+                <button id="tab-preprod" class="fr-tabs__tab" tabindex="0" role="tab"
+                  aria-selected="true" aria-controls="panel-preprod"
+                  onclick="switchTab('preprod')">
+                  preprod ← dev
+                  <span id="count-preprod"></span>
+                </button>
+              </li>
+              <li role="presentation">
+                <button id="tab-prod" class="fr-tabs__tab" tabindex="-1" role="tab"
+                  aria-selected="false" aria-controls="panel-prod"
+                  onclick="switchTab('prod')">
+                  prod ← preprod
+                  <span id="count-prod"></span>
+                </button>
+              </li>
+            </ul>
+
+            <div id="panel-preprod" class="fr-tabs__panel fr-tabs__panel--selected tab-content" role="tabpanel"
+              aria-labelledby="tab-preprod" tabindex="0">
+              <div id="content-preprod">
+                <div class="fr-py-4w" style="text-align: center;">
+                  <div>
+                    <span class="loading-dot"></span>
+                    <span class="loading-dot"></span>
+                    <span class="loading-dot"></span>
+                  </div>
+                  <p class="fr-mt-2w fr-text--sm" style="color: var(--text-mention-grey);">
+                    Chargement des commits…
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div id="panel-prod" class="fr-tabs__panel tab-content" role="tabpanel"
+              aria-labelledby="tab-prod" tabindex="0">
+              <div id="content-prod">
+                <div class="fr-py-4w" style="text-align: center;">
+                  <div>
+                    <span class="loading-dot"></span>
+                    <span class="loading-dot"></span>
+                    <span class="loading-dot"></span>
+                  </div>
+                  <p class="fr-mt-2w fr-text--sm" style="color: var(--text-mention-grey);">
+                    Chargement des commits…
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="fr-mt-2w" style="text-align: right;">
+            <button class="fr-btn fr-btn--tertiary-no-outline fr-btn--sm refresh-btn" onclick="loadAll()" title="Rafraîchir">
+              ↻ Rafraîchir
+            </button>
+            <p id="last-updated" class="fr-text--xs fr-mt-1v" style="color: var(--text-mention-grey);"></p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer role="contentinfo" class="fr-footer">
+    <div class="fr-container">
+      <div class="fr-footer__body">
+        <div class="fr-footer__brand fr-enlarge-link">
+          <p class="fr-logo">
+            République
+            <br>Française
+          </p>
+        </div>
+        <div class="fr-footer__content">
+          <p class="fr-footer__content-desc">
+            PILOTE — Piloter l'action publique par les résultats
+          </p>
+        </div>
+      </div>
+      <div class="fr-footer__bottom">
+        <ul class="fr-footer__bottom-list">
+          <li class="fr-footer__bottom-item">
+            <span class="fr-footer__bottom-link">Accessibilité : non conforme</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/@gouvfr/dsfr@1.12.1/dist/dsfr.module.min.js" type="module"></script>
+  <script src="https://unpkg.com/@gouvfr/dsfr@1.12.1/dist/dsfr.nomodule.min.js" nomodule></script>
+
+  <script>
+    const REPO = 'DITP-pilotage/pilote-2';
+    const API = 'https://api.github.com';
+
+    const COMPARISONS = {
+      preprod: { base: 'preprod', head: 'dev', label: 'preprod ← dev' },
+      prod: { base: 'prod', head: 'preprod', label: 'prod ← preprod' },
+    };
+
+    function switchTab(tab) {
+      document.querySelectorAll('.fr-tabs__tab').forEach(function (button) {
+        var isSelected = button.id === 'tab-' + tab;
+        button.setAttribute('aria-selected', isSelected);
+        button.setAttribute('tabindex', isSelected ? '0' : '-1');
+      });
+
+      document.querySelectorAll('.fr-tabs__panel').forEach(function (panel) {
+        var isActive = panel.id === 'panel-' + tab;
+        if (isActive) {
+          panel.classList.add('fr-tabs__panel--selected');
+        } else {
+          panel.classList.remove('fr-tabs__panel--selected');
+        }
+      });
+    }
+
+    function formatDate(dateStr) {
+      var date = new Date(dateStr);
+      var now = new Date();
+      var diffMs = now - date;
+      var diffMins = Math.floor(diffMs / 60000);
+      var diffHours = Math.floor(diffMs / 3600000);
+      var diffDays = Math.floor(diffMs / 86400000);
+
+      if (diffMins < 1) return "à l'instant";
+      if (diffMins < 60) return 'il y a ' + diffMins + ' min';
+      if (diffHours < 24) return 'il y a ' + diffHours + 'h';
+      if (diffDays < 7) return 'il y a ' + diffDays + 'j';
+
+      return date.toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'short',
+        year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
+      });
+    }
+
+    function extractPRNumber(message) {
+      var match = message.match(/\(#(\d+)\)/);
+      return match ? match[1] : null;
+    }
+
+    function renderCommit(commit, index) {
+      var sha = commit.sha.substring(0, 7);
+      var message = commit.commit.message.split('\n')[0];
+      var author = commit.author;
+      var date = commit.commit.author.date;
+      var prNumber = extractPRNumber(message);
+
+      var avatarHtml = author
+        ? '<img class="commit-avatar" src="' + author.avatar_url + '&s=64" alt="' + (author.login || '') + '">'
+        : '<div class="commit-avatar" style="background:var(--background-alt-grey);display:flex;align-items:center;justify-content:center;font-size:0.75rem;">?</div>';
+
+      var prHtml = prNumber
+        ? ' <a class="fr-link fr-link--sm pr-link" href="https://github.com/' + REPO + '/pull/' + prNumber + '" target="_blank" rel="noopener" title="Voir la PR #' + prNumber + '">#' + prNumber + '</a>'
+        : '';
+
+      var authorName = author ? author.login : commit.commit.author.name;
+
+      return '<div class="commit-item fr-p-2w fr-mb-1v" style="border-radius:4px;animation-delay:' + (index * 0.05) + 's;">'
+        + '<div style="display:flex;align-items:center;gap:12px;">'
+        + avatarHtml
+        + '<div style="flex:1;min-width:0;">'
+        + '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">'
+        + '<span style="font-weight:500;word-break:break-word;">' + escapeHtml(message.replace(/\s*\(#\d+\)/, '')) + '</span>'
+        + prHtml
+        + '</div>'
+        + '<div style="display:flex;align-items:center;gap:12px;margin-top:4px;">'
+        + '<span class="commit-hash">' + sha + '</span>'
+        + '<span class="fr-text--xs" style="color:var(--text-mention-grey);">' + escapeHtml(authorName) + '</span>'
+        + '<span class="commit-date">' + formatDate(date) + '</span>'
+        + '</div>'
+        + '</div>'
+        + '</div>'
+        + '</div>';
+    }
+
+    function escapeHtml(text) {
+      var div = document.createElement('div');
+      div.appendChild(document.createTextNode(text));
+      return div.innerHTML;
+    }
+
+    function renderStats(data, comparison) {
+      return '<div class="fr-callout fr-callout--green-emeraude fr-mb-3w stats-row">'
+        + '<div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">'
+        + '<div>'
+        + '<span class="badge-count badge-ahead">' + data.ahead_by + '</span>'
+        + ' commit' + (data.ahead_by > 1 ? 's' : '') + ' en avance'
+        + '</div>'
+        + (data.behind_by > 0
+          ? '<div>'
+          + '<span class="badge-count badge-behind">' + data.behind_by + '</span>'
+          + ' commit' + (data.behind_by > 1 ? 's' : '') + ' en retard'
+          + '</div>'
+          : '')
+        + '<div style="margin-left:auto;">'
+        + '<a class="fr-link fr-link--sm" href="https://github.com/' + REPO + '/compare/' + comparison.base + '...' + comparison.head + '" target="_blank" rel="noopener">'
+        + 'Voir sur GitHub ↗'
+        + '</a>'
+        + '</div>'
+        + '</div>'
+        + '</div>';
+    }
+
+    function renderEmpty(comparison) {
+      return '<div class="empty-state fr-py-6w" style="text-align:center;">'
+        + '<span style="font-size:2.5rem;">✓</span>'
+        + '<p class="fr-text--lead fr-mt-2w fr-mb-1w">Aucun commit en attente</p>'
+        + '<p class="fr-text--sm" style="color:var(--text-mention-grey);">'
+        + '<strong>' + comparison.base + '</strong> est à jour avec <strong>' + comparison.head + '</strong>'
+        + '</p>'
+        + '</div>';
+    }
+
+    function renderError(error) {
+      return '<div class="error-state">'
+        + '<div class="fr-callout">'
+        + '<p class="fr-callout__title">Erreur de chargement</p>'
+        + '<p class="fr-callout__text">' + escapeHtml(error) + '</p>'
+        + '<button class="fr-btn fr-btn--secondary fr-btn--sm fr-mt-2w" onclick="loadAll()">Réessayer</button>'
+        + '</div>'
+        + '</div>';
+    }
+
+    function loadComparison(tab) {
+      var comparison = COMPARISONS[tab];
+      var container = document.getElementById('content-' + tab);
+      var countBadge = document.getElementById('count-' + tab);
+
+      var url = API + '/repos/' + REPO + '/compare/' + comparison.base + '...' + comparison.head;
+
+      return fetch(url)
+        .then(function (response) {
+          if (!response.ok) throw new Error('GitHub API: ' + response.status + ' ' + response.statusText);
+          return response.json();
+        })
+        .then(function (data) {
+          if (data.ahead_by === 0) {
+            container.innerHTML = renderEmpty(comparison);
+            countBadge.innerHTML = '';
+            return;
+          }
+
+          var html = renderStats(data, comparison);
+
+          var commits = data.commits.slice().reverse();
+          commits.forEach(function (commit, index) {
+            html += renderCommit(commit, index);
+          });
+
+          container.innerHTML = html;
+          countBadge.innerHTML = ' <span class="badge-count badge-ahead" style="font-size:0.75rem;min-width:20px;height:20px;">' + data.ahead_by + '</span>';
+        })
+        .catch(function (error) {
+          container.innerHTML = renderError(error.message);
+          countBadge.innerHTML = '';
+        });
+    }
+
+    function loadAll() {
+      Promise.all([
+        loadComparison('preprod'),
+        loadComparison('prod'),
+      ]).then(function () {
+        var now = new Date();
+        document.getElementById('last-updated').textContent =
+          'Mis à jour à ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+      });
+    }
+
+    loadAll();
+  </script>
+</body>
+
+</html>
