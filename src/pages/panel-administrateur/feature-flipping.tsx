@@ -2,6 +2,7 @@ import Head from "next/head";
 import { GetServerSideProps } from "next";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
+import { PagePanelAdministrateurFeatureFlipping } from "@/components/PagePanelAdministrateur/PagePanelAdministrateurFeatureFlipping/PagePanelAdministrateurFeatureFlipping";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await auth(context);
@@ -28,8 +29,16 @@ const NextPagePanelAdministrateurFeatureFlipping = () => {
         <title>Panel Administrateur - Feature flipping - PILOTE</title>
       </Head>
       <NextPanelAdministrateurLayout pageActive="feature-flipping">
-        <h2>Feature flipping</h2>
-        <p>Contenu à venir...</p>
+        <div className="p-6">
+          <h2 className="text-lg font-bold text-dsfr-blue-france-sun-113 mb-1">
+            Feature flipping
+          </h2>
+          <p className="text-sm text-gray-500 mb-6">
+            Activez ou desactivez les fonctionnalites de l&apos;application. Les
+            modifications sont prises en compte immediatement apres sauvegarde.
+          </p>
+          <PagePanelAdministrateurFeatureFlipping />
+        </div>
       </NextPanelAdministrateurLayout>
     </>
   );
