@@ -1,8 +1,7 @@
-import { Suspense } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-import { ColonneMesuree } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
-import { useComparaisonTerritoiresIndicateur } from "./useComparaisonTerritoiresIndicateur";
-import { PanneauCarteIndicateur } from "./PanneauCarteIndicateur";
+import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
+import { WidgetCartographieValeurAvancement } from "@/components/_commons/Widget/WidgetCartographieValeurAvancement/WidgetCartographieValeurAvancement";
+import { ComparaisonTerritoires } from "@/components/_commons/ComparaisonTerritoires/ComparaisonTerritoires";
 
 type ComparaisonTerritoiresIndicateurProps = {
   indicateurId: string;
@@ -13,6 +12,14 @@ type ComparaisonTerritoiresIndicateurProps = {
   unite: string | null;
 };
 
+type TypeCarteIndicateur = "ta" | "valeurAvancement";
+
+const options: (jalon: number) => { value: TypeCarteIndicateur; label: string }[] =
+  (jalon) => [
+    { value: "ta", label: `Carte des taux d'avancement ${jalon}` },
+    { value: "valeurAvancement", label: "Carte des valeurs d'avancement" },
+  ];
+
 export const ComparaisonTerritoiresIndicateur = ({
   indicateurId,
   chantierId,
@@ -20,64 +27,37 @@ export const ComparaisonTerritoiresIndicateur = ({
   maille,
   territoireCode,
   unite,
-}: ComparaisonTerritoiresIndicateurProps) => {
-  const {
-    panneauGauche,
-    panneauDroite,
-    changerTypeCarte,
-    activerComparaison,
-    supprimerPanneau,
-  } = useComparaisonTerritoiresIndicateur();
-
-  const estEnComparaison = panneauDroite !== null;
-
-  return (
-    <div className="fr-card fr-p-3w flex flex-col gap-4">
-      <span className="fr-text--xl font-bold fr-m-0">
-        Comparaison territoriale et évolution
-      </span>
-      <div
-        className="grid max-sm:!grid-cols-1 gap-14"
-        style={{
-          gridTemplateColumns: estEnComparaison ? "repeat(2, 1fr)" : "1fr",
-        }}
-      >
-        <ColonneMesuree>
-          <PanneauCarteIndicateur
+}: ComparaisonTerritoiresIndicateurProps) => (
+  <ComparaisonTerritoires<TypeCarteIndicateur>
+    typeParDefaut="ta"
+    typeAlternatif={(t) => (t === "ta" ? "valeurAvancement" : "ta")}
+    options={options(jalon)}
+    renderCarte={(type) => {
+      if (type === "ta") {
+        return (
+          <WidgetCartographieTA
+            mode="indicateur"
+            indicateurId={indicateurId}
+            chantierId={chantierId}
+            jalon={jalon}
+            maille={maille}
+            territoireCode={territoireCode}
+          />
+        );
+      }
+      if (type === "valeurAvancement") {
+        return (
+          <WidgetCartographieValeurAvancement
             indicateurId={indicateurId}
             chantierId={chantierId}
             jalon={jalon}
             maille={maille}
             territoireCode={territoireCode}
             unite={unite}
-            typeCarte={panneauGauche}
-            estEnComparaison={estEnComparaison}
-            onChangerType={(type) => changerTypeCarte("gauche", type)}
-            onComparer={activerComparaison}
-            onSupprimer={() => supprimerPanneau("gauche")}
           />
-        </ColonneMesuree>
-
-        {panneauDroite != null && (
-          <ColonneMesuree>
-            <Suspense>
-              <PanneauCarteIndicateur
-                indicateurId={indicateurId}
-                chantierId={chantierId}
-                jalon={jalon}
-                maille={maille}
-                territoireCode={territoireCode}
-                unite={unite}
-                typeCarte={panneauDroite}
-                estEnComparaison={estEnComparaison}
-                onChangerType={(type) => changerTypeCarte("droite", type)}
-                onComparer={activerComparaison}
-                onSupprimer={() => supprimerPanneau("droite")}
-              />
-            </Suspense>
-          </ColonneMesuree>
-        )}
-      </div>
-    </div>
-  );
-};
+        );
+      }
+      return null;
+    }}
+  />
+);
