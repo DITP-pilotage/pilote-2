@@ -14,6 +14,7 @@ export const ColonneMesuree = ({ children }: { children: ReactNode }) => {
   const contextValue = useMemo(
     () => ({
       modeDisposition: calculerModeDisposition(largeur ?? 0),
+      largeur: largeur ?? 0,
     }),
     [largeur],
   );

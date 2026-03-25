@@ -7,6 +7,7 @@ import {
 } from "@/components/_commons/Widget/BaseCartographieWidgetLayout";
 import api from "@/server/infrastructure/api/trpc/api";
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
+import { ComplementsCartographie } from "@/components/_commons/Widget/ComplementsCartographie";
 import { RepartitionNiveauxDeConfiance } from "./RepartitionNiveauxDeConfiance";
 import { useDonneesCartographie } from "./useDonneesCartographie";
 import { useLegendeMeteo } from "./useLegendeMeteo";
@@ -52,9 +53,12 @@ export const WidgetCartographieMeteo = ({
           territoiresSelectionnes={territoiresSelectionnes.map(
             (territoire) => territoire.territoireCode,
           )}
-        >
+        />
+      }
+      complementsCartographie={
+        <ComplementsCartographie>
           <LegendeCartographie items={legende} />
-        </CartographieV2>
+        </ComplementsCartographie>
       }
     >
       <TitreWidget>Répartition des niveaux de confiance</TitreWidget>

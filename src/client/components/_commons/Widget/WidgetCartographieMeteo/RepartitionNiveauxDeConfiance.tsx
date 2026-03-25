@@ -27,7 +27,7 @@ export const RepartitionNiveauxDeConfiance = ({
   jalon: number;
   territoireCode: string;
 }) => {
-  const { isModeDispositionG } = useMesureWidget();
+  const { isModeP } = useMesureWidget();
 
   const territoiresTries = useMemo(
     () =>
@@ -64,14 +64,14 @@ export const RepartitionNiveauxDeConfiance = ({
             <Fragment key={territoire.territoireCode}>
               <div
                 className={clsxm("border-b", {
-                  "flex justify-center": isModeDispositionG(),
+                  "flex justify-center": !isModeP,
                 })}
               >
                 <div
                   className={clsxm(
                     "py-2 grid grid-cols-[1fr_30px] items-center gap-2",
                     {
-                      "w-full max-w-[300px] mr-auto": isModeDispositionG(),
+                      "w-full max-w-[300px] mr-auto": !isModeP,
                     },
                   )}
                 >
@@ -88,7 +88,7 @@ export const RepartitionNiveauxDeConfiance = ({
               </div>
               <div
                 className={clsxm("py-2 flex items-center flex-col border-b", {
-                  "flex-row gap-4": isModeDispositionG(),
+                  "flex-row gap-4": !isModeP,
                 })}
               >
                 <div className="flex items-center gap-2">

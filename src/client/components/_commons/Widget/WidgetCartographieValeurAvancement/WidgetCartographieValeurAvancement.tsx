@@ -8,6 +8,7 @@ import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCart
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE } from "@/client/constants/légendes/élémentsDeLégendesCartographieValeurAvancement";
 import { ValeursRemarquables } from "@/components/_commons/Widget/ValeursRemarquables";
+import { ComplementsCartographie } from "@/components/_commons/Widget/ComplementsCartographie";
 import {
   SelecteurVueWidget,
   VueWidget,
@@ -136,7 +137,10 @@ export const WidgetCartographieValeurAvancement = ({
           territoiresSelectionnes={territoiresSelectionnes.map(
             (territoire) => territoire.territoireCode,
           )}
-        >
+        />
+      }
+      complementsCartographie={
+        <ComplementsCartographie>
           <ValeursRemarquables
             valeurs={{
               minimum: formatValeurVA(statistiques.minimum, unite),
@@ -166,7 +170,7 @@ export const WidgetCartographieValeurAvancement = ({
             couleurMax={COULEUR_MAX}
           />
           <LegendeCartographie items={legendeItems} />
-        </CartographieV2>
+        </ComplementsCartographie>
       }
     >
       <SelecteurVueWidget

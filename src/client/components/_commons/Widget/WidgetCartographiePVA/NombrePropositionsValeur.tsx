@@ -17,7 +17,7 @@ export const NombrePropositionsValeur = ({
   jalon: number;
   territoireCode: string;
 }) => {
-  const { isModeDispositionG } = useMesureWidget();
+  const { isModeP } = useMesureWidget();
 
   const territoiresTries = useMemo(
     () =>
@@ -49,12 +49,12 @@ export const NombrePropositionsValeur = ({
             <Fragment key={territoire.territoireCode}>
               <div
                 className={clsxm("border-b", {
-                  "flex justify-center": isModeDispositionG(),
+                  "flex justify-center": !isModeP,
                 })}
               >
                 <div
                   className={clsxm("py-2", {
-                    "w-full max-w-[300px] mr-auto": isModeDispositionG(),
+                    "w-full max-w-[300px] mr-auto": !isModeP,
                   })}
                 >
                   <TerritoireLabel

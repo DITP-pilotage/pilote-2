@@ -10,6 +10,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires";
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { ValeursRemarquables } from "@/components/_commons/Widget/ValeursRemarquables";
+import { ComplementsCartographie } from "@/components/_commons/Widget/ComplementsCartographie";
 import {
   SelecteurVueWidget,
   VueWidget,
@@ -183,7 +184,10 @@ const WidgetCartographieTAContent = (
           territoiresSelectionnes={territoiresSelectionnes.map(
             (territoire) => territoire.territoireCode,
           )}
-        >
+        />
+      }
+      complementsCartographie={
+        <ComplementsCartographie>
           <ValeursRemarquables
             valeurs={valeursRemarquables}
             palette={{
@@ -194,7 +198,7 @@ const WidgetCartographieTAContent = (
             maille={maille}
           />
           <LegendeCartographie items={legende} />
-        </CartographieV2>
+        </ComplementsCartographie>
       }
     >
       {mode === "indicateur" ? (

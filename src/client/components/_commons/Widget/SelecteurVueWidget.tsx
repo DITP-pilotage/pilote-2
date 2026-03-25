@@ -4,6 +4,7 @@ import { EqualizerIcon } from "@/components/_commons/Icones/EqualizerIcon";
 import { GridIcon } from "@/components/_commons/Icones/GridIcon";
 import { LineChartIcon } from "@/components/_commons/Icones/LineChartIcon";
 import { TitreWidget } from "@/components/_commons/Widget/BaseCartographieWidgetLayout";
+import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
 
 export type VueWidget = "situation" | "tableau" | "courbes";
 
@@ -21,6 +22,7 @@ export const SelecteurVueWidget = ({
   onPrefetchVue,
 }: SelecteurVueWidgetProps) => {
   const [vueActive, setVueActive] = useState<VueWidget>("situation");
+  const { isModeP } = useMesureWidget();
 
   return (
     <>
@@ -28,6 +30,11 @@ export const SelecteurVueWidget = ({
       <PillToggleGroup.Root
         type="single"
         value={vueActive}
+        className={
+          isModeP
+            ? "flex-col items-center"
+            : "flex-row justify-center"
+        }
         onValueChange={(value) => {
           if (value) {
             startTransition(() => {

@@ -9,7 +9,7 @@ export const PillToggleGroup = Object.assign({}, ToggleGroup, {
     <ToggleGroup.Root
       {...props}
       className={clsxm(
-        "flex flex-wrap flex-col items-center md:flex-row md:justify-center gap-2",
+        "flex flex-wrap gap-2",
         props.className,
       )}
     >

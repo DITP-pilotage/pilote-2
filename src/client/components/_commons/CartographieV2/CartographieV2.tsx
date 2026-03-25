@@ -15,7 +15,7 @@ type CartographieV2Props = {
   donnees: Record<string, CartographieV2Donnee>;
   territoiresSelectionnes?: string[];
   onTerritoireSelect?: (territoireCode: string) => void;
-  children: ReactNode;
+  children?: ReactNode;
 };
 
 export const CartographieV2 = ({

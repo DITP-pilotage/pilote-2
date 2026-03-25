@@ -8,6 +8,7 @@ import {
 import api from "@/server/infrastructure/api/trpc/api";
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires";
+import { ComplementsCartographie } from "@/components/_commons/Widget/ComplementsCartographie";
 import { NombrePropositionsValeur } from "./NombrePropositionsValeur";
 import { useDonneesCartographiePVA } from "./useDonneesCartographiePVA";
 import { useLegendePVA } from "./useLegendePVA";
@@ -52,9 +53,12 @@ export const WidgetCartographiePVA = ({
           territoiresSelectionnes={territoiresSelectionnes.map(
             (territoire) => territoire.territoireCode,
           )}
-        >
+        />
+      }
+      complementsCartographie={
+        <ComplementsCartographie>
           <LegendeCartographie items={legende} />
-        </CartographieV2>
+        </ComplementsCartographie>
       }
     >
       <TitreWidget>Nombres de propositions de valeur d'avancement</TitreWidget>
