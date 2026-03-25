@@ -5,6 +5,7 @@ import {
   getPerimetreLibelle,
   getServiceLibelle,
 } from "@/client/constants/referentiel-services";
+import Champ from "@/components/_commons/Champ";
 
 interface TableauUtilisateurProps {
   utilisateur: {
@@ -22,24 +23,6 @@ interface TableauUtilisateurProps {
     perimetreMinisteriel?: string | null;
   };
 }
-
-const Champ = ({
-  label,
-  valeur,
-}: {
-  label: string;
-  valeur: string | null | undefined;
-}) => (
-  <div className="min-w-0">
-    <p className="text-xs text-gray-500 mb-1">{label}</p>
-    <p
-      className="text-sm font-bold text-gray-900 truncate mb-0"
-      title={valeur ?? undefined}
-    >
-      {valeur || "-"}
-    </p>
-  </div>
-);
 
 const TableauUtilisateur: FunctionComponent<TableauUtilisateurProps> = ({
   utilisateur,
