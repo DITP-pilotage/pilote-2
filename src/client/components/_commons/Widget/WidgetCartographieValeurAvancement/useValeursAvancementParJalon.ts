@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
 import { buildJalons } from "@/client/utils/jalons";
+import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 
 export const useValeursAvancementParJalon = ({
   indicateurId,
@@ -13,11 +14,10 @@ export const useValeursAvancementParJalon = ({
 
   const [results] = api.useSuspenseQueries((t) =>
     jalons.map((jalon) =>
-      t.indicateur.recupererValeursAvancementTerritoires({
-        indicateurId,
-        chantierId,
-        jalon,
-      }),
+      t.indicateur.recupererValeursAvancementTerritoires(
+        { indicateurId, chantierId, jalon },
+        { staleTime: WIDGET_STALE_TIME },
+      ),
     ),
   );
 

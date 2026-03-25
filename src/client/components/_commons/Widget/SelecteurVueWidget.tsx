@@ -11,12 +11,14 @@ type SelecteurVueWidgetProps = {
   titre: string;
   jalon: number;
   renderVue: (vue: VueWidget) => ReactNode;
+  onPrefetchVue?: (vue: VueWidget) => void;
 };
 
 export const SelecteurVueWidget = ({
   titre,
   jalon,
   renderVue,
+  onPrefetchVue,
 }: SelecteurVueWidgetProps) => {
   const [vueActive, setVueActive] = useState<VueWidget>("situation");
 
@@ -34,15 +36,24 @@ export const SelecteurVueWidget = ({
           }
         }}
       >
-        <PillToggleGroup.Item value="situation">
+        <PillToggleGroup.Item
+          value="situation"
+          onMouseEnter={() => onPrefetchVue?.("situation")}
+        >
           <EqualizerIcon className="w-3 h-3" />
           situation en {jalon}
         </PillToggleGroup.Item>
-        <PillToggleGroup.Item value="tableau">
+        <PillToggleGroup.Item
+          value="tableau"
+          onMouseEnter={() => onPrefetchVue?.("tableau")}
+        >
           <GridIcon className="w-3 h-3" />
           évolution temporelle - tableau
         </PillToggleGroup.Item>
-        <PillToggleGroup.Item value="courbes">
+        <PillToggleGroup.Item
+          value="courbes"
+          onMouseEnter={() => onPrefetchVue?.("courbes")}
+        >
           <LineChartIcon className="w-3 h-3" />
           évolution temporelle - courbes
         </PillToggleGroup.Item>

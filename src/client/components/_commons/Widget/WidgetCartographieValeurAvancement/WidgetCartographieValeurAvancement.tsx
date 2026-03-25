@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
@@ -8,7 +8,12 @@ import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCart
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { ÉLÉMENTS_LÉGENDE_VALEUR_ACTUELLE } from "@/client/constants/légendes/élémentsDeLégendesCartographieValeurAvancement";
 import { ValeursRemarquables } from "@/components/_commons/Widget/ValeursRemarquables";
-import { SelecteurVueWidget } from "@/components/_commons/Widget/SelecteurVueWidget";
+import {
+  SelecteurVueWidget,
+  VueWidget,
+} from "@/components/_commons/Widget/SelecteurVueWidget";
+import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
+import { buildJalons } from "@/client/utils/jalons";
 import { useDonneesCartographieVA } from "./useDonneesCartographieVA";
 import { LegendeDegradeVA } from "./LegendeDegradeVA";
 import { SuiviValeurAvancement } from "./SuiviValeurAvancement";
@@ -42,19 +47,16 @@ export const WidgetCartographieValeurAvancement = ({
   unite: string | null;
 }) => {
   const [territoiresValeurAvancement] =
-    api.indicateur.recupererValeursAvancementTerritoires.useSuspenseQuery({
-      indicateurId,
-      chantierId,
-      jalon,
-    });
+    api.indicateur.recupererValeursAvancementTerritoires.useSuspenseQuery(
+      { indicateurId, chantierId, jalon },
+      { staleTime: WIDGET_STALE_TIME },
+    );
 
   const [statistiques] =
-    api.indicateur.recupererStatistiquesValeurAvancement.useSuspenseQuery({
-      indicateurId,
-      chantierId,
-      maille,
-      jalon,
-    });
+    api.indicateur.recupererStatistiquesValeurAvancement.useSuspenseQuery(
+      { indicateurId, chantierId, maille, jalon },
+      { staleTime: WIDGET_STALE_TIME },
+    );
 
   const donneesCartographie = useDonneesCartographieVA(
     territoiresValeurAvancement,
@@ -104,6 +106,23 @@ export const WidgetCartographieValeurAvancement = ({
       ? ""
       : `En ${unite.toLocaleLowerCase()}`;
 
+  const utils = api.useUtils();
+  const handlePrefetchVue = useCallback(
+    (vue: VueWidget) => {
+      if (vue === "tableau") {
+        const jalons = buildJalons();
+        for (const jalon of jalons) {
+          void utils.indicateur.recupererValeursAvancementTerritoires.prefetch({
+            indicateurId,
+            chantierId,
+            jalon,
+          });
+        }
+      }
+    },
+    [utils, indicateurId, chantierId],
+  );
+
   return (
     <BaseCartographieWidgetLayout
       cartographie={
@@ -150,6 +169,7 @@ export const WidgetCartographieValeurAvancement = ({
       <SelecteurVueWidget
         titre="Suivi et évolution des valeurs d'avancement"
         jalon={jalon}
+        onPrefetchVue={handlePrefetchVue}
         renderVue={(vue) => {
           if (vue === "situation") {
             return (
