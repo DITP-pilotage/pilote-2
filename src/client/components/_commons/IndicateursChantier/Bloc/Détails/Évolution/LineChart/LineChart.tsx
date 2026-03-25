@@ -6,14 +6,14 @@ import {
   useRef,
 } from "react";
 import * as echarts from "echarts";
-import { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { ECOption } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
+import type { TerritoireEvolutionDonnees } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
 import { LineChartStyled } from "./LineChart.styled";
 import LineChartLegende from "./LineChartLegende/LineChartLegende";
 
 export interface LineChartProps {
   getOptions: (modeImpression: boolean) => ECOption;
-  tousLesIndicateursDetails: IndicateurDetailsParTerritoire[];
+  tousLesIndicateursDetails: TerritoireEvolutionDonnees[];
   territoiresAAfficher: Record<string, boolean>;
   setTerritoiresAAfficher: Dispatch<Record<string, boolean>>;
   afficherLesCibles: boolean;

@@ -2,14 +2,14 @@ import type { LineSeriesOption } from "echarts/charts";
 import { TopLevelFormatterParams } from "echarts/types/dist/shared";
 import { ComposeOption } from "echarts/types/dist/echarts";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { formaterDate } from "@/client/utils/date/date";
 import { PALETTE_DSFR } from "@/client/utils/couleur/paletteTerritoires";
+import type { TerritoireEvolutionDonnees } from "./types";
 
 export type ECOption = ComposeOption<LineSeriesOption>;
 
 const creerSerie = (
-  indicateur: IndicateurDetailsParTerritoire,
+  indicateur: TerritoireEvolutionDonnees,
   couleur: string,
   territoiresAAfficher: Record<string, boolean>,
 ): LineSeriesOption => ({
@@ -28,7 +28,7 @@ const creerSerie = (
 });
 
 const creerSerieCibles = (
-  indicateur: IndicateurDetailsParTerritoire,
+  indicateur: TerritoireEvolutionDonnees,
   couleur: string,
   territoiresAAfficher: Record<string, boolean>,
   afficherLesCibles: boolean,
@@ -72,7 +72,7 @@ const creerSerieCibles = (
 export default function useIndicateurEvolutionNew({
   tousLesIndicateursDetails,
 }: {
-  tousLesIndicateursDetails: IndicateurDetailsParTerritoire[];
+  tousLesIndicateursDetails: TerritoireEvolutionDonnees[];
 }) {
   const [afficherLesCibles, setAfficherLesCibles] = useState<boolean>(false);
   const [masquerSlider, setMasquerSlider] = useState<boolean>(false);

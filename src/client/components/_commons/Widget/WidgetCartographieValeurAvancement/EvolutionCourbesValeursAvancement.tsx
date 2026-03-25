@@ -1,8 +1,7 @@
 import { useMemo } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
-import { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
-import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateur.interface";
+import type { TerritoireEvolutionDonnees } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
 import useIndicateurEvolutionNew from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
 import LineChart from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/LineChart/LineChart";
 
@@ -26,7 +25,7 @@ export const EvolutionCourbesValeursAvancement = ({
       },
     );
 
-  const tousLesIndicateursDetails: IndicateurDetailsParTerritoire[] =
+  const tousLesIndicateursDetails: TerritoireEvolutionDonnees[] =
     useMemo(() => {
       return evolutionTerritoires
         .filter((territoire) =>
@@ -37,40 +36,14 @@ export const EvolutionCourbesValeursAvancement = ({
             territoire.territoireCode,
           );
 
-          const données: DétailsIndicateur = {
-            codeInsee: territoireDetails?.codeInsee ?? territoire.territoireCode,
-            valeurInitiale: null,
-            dateValeurInitiale: null,
-            historiquesValeurs: territoire.historiquesValeurs,
-            valeurAvancementMandat: null,
-            valeurAvancement: null,
-            dateValeurAvancement: null,
-            dateValeurAvancementMandat: null,
-            valeurCible: null,
-            dateValeurCible: null,
-            valeurCibleAnnuelle: null,
-            dateValeurCibleAnnuelle: null,
-            avancement: { global: null, annuel: null },
-            proposition: null,
-            propositionStatutTerritoire: null,
-            propositionStatutDirectionProjet: null,
-            unite: null,
-            estApplicable: null,
-            dateImport: null,
-            ponderation: null,
-            prochaineDateValeurAvancement: null,
-            prochaineDateMaj: null,
-            prochaineDateMajJours: null,
-            estAJour: null,
-            tendance: null,
-            listeValeursCiblesAnnuelles:
-              territoire.listeValeursCiblesAnnuelles,
-          };
-
           return {
             territoireNom:
               territoireDetails?.nomAffiché ?? territoire.territoireCode,
-            données,
+            données: {
+              historiquesValeurs: territoire.historiquesValeurs,
+              listeValeursCiblesAnnuelles:
+                territoire.listeValeursCiblesAnnuelles,
+            },
           };
         });
     }, [evolutionTerritoires, territoiresSelectionnesCodes]);

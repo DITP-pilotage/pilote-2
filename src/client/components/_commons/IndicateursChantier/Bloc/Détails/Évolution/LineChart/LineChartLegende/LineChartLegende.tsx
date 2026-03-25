@@ -1,6 +1,6 @@
 import { Dispatch, FunctionComponent, SetStateAction, useId } from "react";
 import { PALETTE_DSFR } from "@/client/utils/couleur/paletteTerritoires";
-import { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
+import type { TerritoireEvolutionDonnees } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import {
   CheckboxGroupeStyled,
@@ -8,7 +8,7 @@ import {
 } from "./LineChartLegende.styled";
 
 interface LineChartLegendeProps {
-  tousLesIndicateursDetails: IndicateurDetailsParTerritoire[];
+  tousLesIndicateursDetails: TerritoireEvolutionDonnees[];
   territoiresAAfficher: Record<string, boolean>;
   setTerritoiresAAfficher: Dispatch<Record<string, boolean>>;
   afficherLesCibles: boolean;
@@ -34,24 +34,26 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
   return (
     <LineChartLegendeStyled className="fr-mt-1w fr-ml-8w fr-mr-4w">
       {afficherControls ? (
-        <div className="flex align-center">
+        <div className="flex flex-col gap-2">
           <Interrupteur
             checked={afficherLesCibles}
             direction="inverse"
             libellé="afficher les valeurs cibles"
             onChange={() => setAfficherLesCibles(!afficherLesCibles)}
           />
-          <span className="fr-ml-4w fr-mr-1w">zoomer sur : </span>
-          {periodesSelectionnablesZoom.map((periode) => (
-            <button
-              className={`fr-tag fr-mr-1w${periode === periodeSelectionnee ? " tag-selectionnee" : ""}`}
-              key={periode}
-              onClick={() => changerLaPeriodeSelectionnee(periode)}
-              type="button"
-            >
-              <p className="titre-ellipsis fr-text--sm">{periode}</p>
-            </button>
-          ))}
+          <div className="flex items-center flex-wrap gap-2">
+            <span className="text-sm">zoomer sur : </span>
+            {periodesSelectionnablesZoom.map((periode) => (
+              <button
+                className={`fr-tag fr-mr-1w${periode === periodeSelectionnee ? " tag-selectionnee" : ""} min-h-0`}
+                key={periode}
+                onClick={() => changerLaPeriodeSelectionnee(periode)}
+                type="button"
+              >
+                <p className="titre-ellipsis text-xs">{periode}</p>
+              </button>
+            ))}
+          </div>
         </div>
       ) : null}
 
