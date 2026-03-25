@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { startTransition, useMemo, useState } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { PillToggleGroup } from "@/components/shared/PillToggleGroup";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
@@ -15,6 +15,7 @@ import { ValeursRemarquables } from "@/components/_commons/Widget/ValeursRemarqu
 import { useDonneesCartographieVA } from "./useDonneesCartographieVA";
 import { LegendeDegradeVA } from "./LegendeDegradeVA";
 import { SuiviValeurAvancement } from "./SuiviValeurAvancement";
+import { TableauEvolutionVA } from "./TableauEvolutionVA";
 
 type VueCartographieVA = "situation" | "tableau" | "courbes";
 
@@ -158,7 +159,11 @@ export const WidgetCartographieValeurAvancement = ({
         type="single"
         value={vueActive}
         onValueChange={(value) => {
-          if (value) setVueActive(value as VueCartographieVA);
+          if (value) {
+            startTransition(() => {
+              setVueActive(value as VueCartographieVA);
+            });
+          }
         }}
       >
         <PillToggleGroup.Item value="situation">
@@ -182,6 +187,17 @@ export const WidgetCartographieValeurAvancement = ({
           territoiresSelectionnes={territoiresSelectionnes}
           unite={unite}
           statistiques={statistiques}
+        />
+      )}
+      {vueActive === "tableau" && (
+        <TableauEvolutionVA
+          indicateurId={indicateurId}
+          chantierId={chantierId}
+          territoiresSelectionnes={territoiresSelectionnes}
+          territoireCode={territoireCode}
+          onSupprimerTerritoire={supprimerTerritoire}
+          jalonActif={jalon}
+          unite={unite}
         />
       )}
       <AjouterTerritoirePicker
