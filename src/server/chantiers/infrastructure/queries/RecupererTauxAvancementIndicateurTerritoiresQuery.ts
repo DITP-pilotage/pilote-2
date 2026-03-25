@@ -1,23 +1,8 @@
 import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
 import type { Inject } from "@/server/chantiers/module";
-import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
-
-const MAILLE_PAR_PREFIXE: Record<string, MailleTerritoireSelectionne> = {
-  "NAT-": "NAT",
-  "REG-": "REG",
-  "DEPT-": "DEPT",
-};
-
-const determinerMaille = (
-  territoireCode: string,
-): MailleTerritoireSelectionne => {
-  for (const [prefixe, maille] of Object.entries(MAILLE_PAR_PREFIXE)) {
-    if (territoireCode.startsWith(prefixe)) return maille;
-  }
-  return "DEPT";
-};
+import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 
 export class RecupererTauxAvancementIndicateurTerritoiresQuery {
   constructor(
@@ -52,7 +37,7 @@ export class RecupererTauxAvancementIndicateurTerritoiresQuery {
     return Object.entries(details).map(([territoireCode, detail]) => ({
       territoireCode,
       territoireNom: territoiresMap.get(territoireCode)?.nomAffiché ?? "",
-      maille: determinerMaille(territoireCode),
+      maille: territoireCodeVersMailleCodeInsee(territoireCode).maille,
       tauxAvancementJalon: detail.avancement.annuel,
       estApplicable: detail.estApplicable,
       dateTauxAvancementAnnuel: detail.dateValeurAvancement
