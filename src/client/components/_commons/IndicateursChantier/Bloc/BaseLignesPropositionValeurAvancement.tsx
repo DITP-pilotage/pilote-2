@@ -88,7 +88,7 @@ export const BaseLignesPropositionValeurAvancement = ({
             estAutoriseAProposerUneValeurAvancement
           }
         />
-        <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200">
+        <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200 min-h-8 align-top">
           <ValeurEtDate
             date={detailIndicateurDuTerritoire.dateValeurInitiale}
             unité={detailIndicateurDuTerritoire.unite}
@@ -98,7 +98,7 @@ export const BaseLignesPropositionValeurAvancement = ({
         {estPropositionSurLeBonJalon ? (
           <>
             {/* Valeur d'avancement en fonction de la proposition du jalon et date valeur d'avancement en fonction du mandat */}
-            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm texte-proposition text-center">
+            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm !text-current text-center min-h-8 align-top">
               <ValeurEtDate
                 date={
                   detailIndicateurDuTerritoire.proposition.dateValeurAvancement
@@ -109,14 +109,14 @@ export const BaseLignesPropositionValeurAvancement = ({
                 }
               />
             </td>
-            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200">
+            <td className="fr-mb-0 fr-p-0 fr-py-md-1w fr-text--sm text-center text-dsfr-grey-200 min-h-8 align-top">
               <ValeurEtDate
                 date={detailIndicateurDuTerritoire.dateValeurCibleAnnuelle}
                 unité={detailIndicateurDuTerritoire.unite}
                 valeur={detailIndicateurDuTerritoire.valeurCibleAnnuelle}
               />
             </td>
-            <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm texte-proposition">
+            <td className="fr-mb-0 fr-p-0 fr-px-2w fr-py-md-1w fr-text--sm !text-current min-h-8 align-top">
               {detailIndicateurDuTerritoire.proposition.statutTauxAvancement ===
               "EN_COURS" ? (
                 <BarreDeProgressionAVenir variante={varianteBarreProgression} />

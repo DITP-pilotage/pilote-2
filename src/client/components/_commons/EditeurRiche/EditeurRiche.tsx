@@ -3,7 +3,6 @@ import { type Extensions } from "@tiptap/core";
 import { Placeholder } from "@tiptap/extension-placeholder";
 import { FunctionComponent, RefObject, useImperativeHandle } from "react";
 import { TextareaRef } from "@/components/_commons/Textarea";
-import { ÉditeurRicheStyled } from "./ÉditeurRiche.styled";
 import { MenuBar } from "./MenuBar";
 
 export type EditeurRicheRef = {
@@ -56,9 +55,9 @@ export const EditeurRiche: FunctionComponent<EditeurRicheProps> = ({
   }));
 
   return (
-    <ÉditeurRicheStyled className="relative overflow-auto !bg-dsfr-contrast-grey">
+    <div className="relative overflow-auto !bg-dsfr-contrast-grey">
       <MenuBar editor={editor} />
       <EditorContent editor={editor} />
-    </ÉditeurRicheStyled>
+    </div>
   );
 };

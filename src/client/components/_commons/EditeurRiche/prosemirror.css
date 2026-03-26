@@ -1,0 +1,81 @@
+.ProseMirror {
+  min-height: 200px;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  outline: none;
+
+  > * + * {
+    margin-top: 0.75em;
+  }
+
+  ul,
+  ol {
+    padding: 0 1rem;
+  }
+
+  p {
+    margin-bottom: 0;
+  }
+
+  h4 {
+    margin-top: 0.5rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  hr {
+    margin: 2rem 0.5rem;
+    border: none;
+    border-top: 2px solid rgba(13 13 13 / 10%);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    line-height: 1.1;
+  }
+
+  code {
+    padding: 0.2em 0.4em;
+    color: #616161;
+    background-color: rgba(97 97 97 / 10%);
+    border-radius: 3px;
+  }
+
+  pre {
+    padding: 0.75rem 1rem;
+    font-family: JetBrainsMono, monospace;
+    color: #fff;
+    background: #0d0d0d;
+    border-radius: 0.5rem;
+
+    code {
+      padding: 0;
+      font-size: 0.8rem;
+      color: inherit;
+      background: none;
+    }
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  blockquote {
+    padding-left: 1rem;
+    border-left: 2px solid rgba(13 13 13 / 10%);
+  }
+
+  a {
+    color: #0063cb;
+    text-decoration: underline;
+  }
+}
+
+.ProseMirror-focused {
+  border-color: #0063cb;
+}

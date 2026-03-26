@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @config "../../../tailwind.config.js";
+@import "../components/_commons/EditeurRiche/prosemirror.css";
 
 .uppercase {
   text-transform: uppercase;

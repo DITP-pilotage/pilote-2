@@ -6,7 +6,7 @@ export const BoutonModifierProposition = () => {
   return (
     <ModalePropositionValeurAvancementV2>
       <button
-        className="fr-btn gap-2 fr-btn--secondary bouton-proposition-valeur-davancement fr-mr-1w"
+        className="fr-btn gap-2 fr-btn--secondary !text-current ![box-shadow:inset_0_0_0_1px_currentColor] fr-mr-1w"
         type="button"
       >
         <Icone className="w-4 h-4 text-current" icone={Icone1Icon} />
