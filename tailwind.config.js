@@ -74,12 +74,18 @@ module.exports = {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.5" },
         },
+        "pulse-opacity": {
+          "0%": { opacity: "0" },
+          "50%": { opacity: "1" },
+          "100%": { opacity: "0" },
+        },
       },
       animation: {
         "dropdown-fade-in": "dropdown-fade-in 150ms ease-out",
         "dropdown-fade-out": "dropdown-fade-out 150ms ease-in",
         "fade-in": "fade-in 300ms ease-out",
         "pulse-recording": "pulse-recording 1.5s ease-in-out infinite",
+        "pulse-opacity": "pulse-opacity 2s ease-in-out infinite",
       },
     },
   },

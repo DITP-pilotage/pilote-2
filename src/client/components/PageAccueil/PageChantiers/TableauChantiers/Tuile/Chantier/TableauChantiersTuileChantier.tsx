@@ -4,7 +4,6 @@ import { EcartTuileChantier } from "@/components/_commons/TexteColoré/EcartTuil
 import TableauRéformesAvancement from "@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement";
 import TableauRéformesMétéo from "@/components/PageAccueil/TableauRéformes/Météo/TableauRéformesMétéo";
 import TypologiesPictos from "@/components/PageAccueil/PageChantiers/TableauChantiers/TypologiesPictos/TypologiesPictos";
-import TableauChantiersTuileChantierStyled from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tuile/Chantier/TableauChantiersTuileChantier.styled";
 import { DonnéesTableauChantiers } from "@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface";
 import { IconeMinistere } from "@/client/utils/mapperIconeMinistereVersIcone";
 
@@ -14,8 +13,8 @@ const TableauChantiersTuileChantier: FunctionComponent<{
   chantiersSontArchives: boolean;
 }> = ({ chantier, afficherIcône, chantiersSontArchives }) => {
   return (
-    <TableauChantiersTuileChantierStyled>
-      <div className="tuile-chantier-entête">
+    <div>
+      <div className="grid grid-cols-[auto_max-content]">
         <div className="fr-mb-0 fr-ml-n1w flex gap-2">
           {afficherIcône ? (
             <IconeMinistere
@@ -27,8 +26,8 @@ const TableauChantiersTuileChantier: FunctionComponent<{
         </div>
         <TypologiesPictos typologies={chantier.typologie} />
       </div>
-      <div className="fr-mt-1w fr-ml-5v tuile-chantier-corps">
-        <div className="météo">
+      <div className="fr-mt-1w fr-ml-5v grid grid-cols-[2.5rem_auto_1.5rem_2.75rem] gap-x-4 items-baseline whitespace-nowrap">
+        <div className="flex self-start [&_.météo-picto]:max-w-full">
           <TableauRéformesMétéo
             chantiersSontArchives={chantiersSontArchives}
             dateDeMàjDonnéesQualitatives={chantier.dateDeMàjDonnéesQualitatives}
@@ -36,7 +35,7 @@ const TableauChantiersTuileChantier: FunctionComponent<{
             taille="sm"
           />
         </div>
-        <div className="avancement">
+        <div className="grow max-w-48 h-8">
           <TableauRéformesAvancement
             avancement={chantier.avancement}
             dateDeMàjDonnéesQuantitatives={
@@ -54,7 +53,7 @@ const TableauChantiersTuileChantier: FunctionComponent<{
           ecart={chantier.écart}
         />
       </div>
-    </TableauChantiersTuileChantierStyled>
+    </div>
   );
 };
 

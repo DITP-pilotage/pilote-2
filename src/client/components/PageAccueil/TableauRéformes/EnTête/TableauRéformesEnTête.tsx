@@ -1,7 +1,6 @@
 import { flexRender, SortDirection, Table } from "@tanstack/react-table";
 import { FunctionComponent } from "react";
 import { ChantierVueDEnsemble } from "@/server/domain/chantier/Chantier.interface";
-import TableauRéformesEnTêteStyled from "./TableauRéformesEnTête.styled";
 
 interface TableauRéformesEnTêteProps {
   tableau: Table<ChantierVueDEnsemble>;
@@ -22,7 +21,7 @@ const TableauRéformesEnTête: FunctionComponent<TableauRéformesEnTêteProps> =
   tableau,
 }) => {
   return (
-    <TableauRéformesEnTêteStyled>
+    <thead className="!bg-dsfr-blue-france-925 border border-dsfr-grey-625 [&_th:first-of-type]:rounded-tl-lg [&_th:last-child]:rounded-tr-lg [&_th_p]:inline-block max-[78rem]:[&_.title]:!text-xs">
       {tableau.getHeaderGroups().map((headerGroup) => (
         <tr key={headerGroup.id}>
           {headerGroup.headers.map((header) => (
@@ -46,7 +45,7 @@ const TableauRéformesEnTête: FunctionComponent<TableauRéformesEnTêteProps> =
           ))}
         </tr>
       ))}
-    </TableauRéformesEnTêteStyled>
+    </thead>
   );
 };
 

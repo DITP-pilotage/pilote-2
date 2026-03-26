@@ -23,7 +23,6 @@ import {
   LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS,
 } from "@/client/constants/libellesSyntheseDesResultats";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
-import SyntheseDesResultatsFormulaireStyled from "./SyntheseDesResultatsFormulaire.styled";
 import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
 import { useModifierSyntheseDesResultats } from "./useModifierSyntheseDesResultats";
 import { SelecteurMeteo } from "./SelecteurMeteo";
@@ -62,7 +61,7 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
   });
 
   return (
-    <SyntheseDesResultatsFormulaireStyled
+    <form
       method="post"
       onSubmit={handleSubmit(modifierSynthèseDesRésultats)}
     >
@@ -96,7 +95,7 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
           className={`flex-1 flex flex-col fr-mb-0 fr-input-group ${errors.contenu && "fr-input-group--error"}`}
         >
           <textarea
-            className="fr-input fr-text--sm fr-mb-0 flex-1"
+            className="fr-input fr-text--sm fr-mb-0 flex-1 max-h-[85vh] resize-y"
             rows={6}
             {...register("contenu")}
           />
@@ -133,7 +132,7 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
           variant="secondary"
         />
       </div>
-    </SyntheseDesResultatsFormulaireStyled>
+    </form>
   );
 };
 

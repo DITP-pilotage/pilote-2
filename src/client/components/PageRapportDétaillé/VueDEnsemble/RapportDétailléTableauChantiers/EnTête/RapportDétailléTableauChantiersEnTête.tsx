@@ -1,7 +1,6 @@
 import { flexRender, Table } from "@tanstack/react-table";
 import { FunctionComponent } from "react";
 import { DonnéesTableauChantiers } from "@/components/PageAccueil/PageChantiers/TableauChantiers/TableauChantiers.interface";
-import RapportDétailléTableauChantiersEnTêteStyled from "./RapportDétailléTableauChantiersEnTête.styled";
 
 interface TableauChantiersEnTêteProps {
   tableau: Table<DonnéesTableauChantiers>;
@@ -11,7 +10,7 @@ const RapportDétailléTableauChantiersEnTête: FunctionComponent<
   TableauChantiersEnTêteProps
 > = ({ tableau }) => {
   return (
-    <RapportDétailléTableauChantiersEnTêteStyled>
+    <thead className="!bg-dsfr-blue-france-925 border border-dsfr-grey-625 [&_th:first-of-type]:rounded-tl-lg [&_th:last-child]:rounded-tr-lg [&_th_p]:inline-block">
       {tableau.getHeaderGroups().map((headerGroup) => (
         <tr key={headerGroup.id}>
           {headerGroup.headers.map((header) => (
@@ -31,7 +30,7 @@ const RapportDétailléTableauChantiersEnTête: FunctionComponent<
           ))}
         </tr>
       ))}
-    </RapportDétailléTableauChantiersEnTêteStyled>
+    </thead>
   );
 };
 

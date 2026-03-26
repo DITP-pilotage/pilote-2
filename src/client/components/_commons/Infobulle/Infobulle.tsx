@@ -12,7 +12,6 @@ import { Icone } from "@/components/_commons/Icone";
 import { IconeDocumentationIcon } from "@/components/_commons/Icones/IconeDocumentationIcon";
 import { clsxm } from "@/utils/clsxm";
 import { WarningIcon } from "@/client/components/_commons/Icones/WarningIcon";
-import InfobulleStyled from "./Infobulle.styled";
 
 export const Infobulle: FunctionComponent<
   PropsWithChildren<{
@@ -38,7 +37,7 @@ export const Infobulle: FunctionComponent<
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <InfobulleStyled>
+    <div className="relative inline-flex [&_.tooltip-infobulle]:z-[10000] [&_.tooltip-infobulle]:max-w-full [&_.tooltip-infobulle]:text-dsfr-grey-50 [&_.tooltip-infobulle]:bg-dsfr-alt-blue-france [&_.tooltip-infobulle]:rounded-lg [&_.tooltip-infobulle]:shadow-[0_4px_2px_#0002] [&_.tooltip-accordeon]:!max-w-[50%] [&_.information-proposition-icone]:!text-2xl">
       <button
         aria-describedby={randomId}
         className={clsxm(
@@ -87,6 +86,6 @@ export const Infobulle: FunctionComponent<
       >
         {children}
       </SecureTooltip>
-    </InfobulleStyled>
+    </div>
   );
 };

@@ -7,7 +7,6 @@ import Avancements from "@/components/_commons/Avancements/Avancements";
 import usePageRapportDétaillé from "@/components/PageRapportDétaillé/usePageRapportDétaillé";
 import { htmlId } from "@/components/PageRapportDétaillé/PageRapportDétaillé";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
-import RapportDétailléVueDEnsembleStyled from "@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble.styled";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 import BadgeIcône from "@/components/_commons/BadgeIcône/BadgeIcône";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
@@ -61,13 +60,13 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
   );
 
   return (
-    <RapportDétailléVueDEnsembleStyled>
+    <section className="break-after-page">
       <Encart>
         <Titre baliseHtml="h2" className="fr-h2 fr-mb-0">
           Vue d'ensemble
         </Titre>
       </Encart>
-      <div className="fr-mt-3w avancements-météos-carto impression-section">
+      <div className="fr-mt-3w grid grid-cols-1 gap-6 min-[62rem]:grid-cols-2 print:grid-cols-2 print:break-inside-avoid">
         <Bloc>
           <section>
             <TitreInfobulleConteneur>
@@ -123,13 +122,13 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
         </Bloc>
       </div>
       {!chantiersSontArchives && (
-        <div className="fr-pt-3w fr-px-2w fr-px-md-0 alertes">
+        <div className="fr-pt-3w fr-px-2w fr-px-md-0">
           <div className="fr-mb-2w ">
             <TitreInfobulleConteneur>
               <BadgeIcône type="warning" />
               <Titre
                 baliseHtml="h2"
-                className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w titre-remontée-alertes"
+                className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w text-warning"
                 estInline
               >
                 Chantiers signalés
@@ -156,7 +155,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
         </div>
       )}
       <div
-        className="fr-grid-row fr-mt-7v impression-section"
+        className="fr-grid-row fr-mt-7v print:break-inside-avoid"
         id={htmlId.listeDesChantiers()}
       >
         <div className="fr-col">
@@ -177,7 +176,7 @@ const RapportDétailléVueDEnsemble: FunctionComponent<
           </Bloc>
         </div>
       </div>
-    </RapportDétailléVueDEnsembleStyled>
+    </section>
   );
 };
 
