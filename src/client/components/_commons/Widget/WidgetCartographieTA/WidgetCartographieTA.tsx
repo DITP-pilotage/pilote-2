@@ -1,9 +1,4 @@
-import {
-  createContext,
-  ReactNode,
-  useCallback,
-  useContext,
-} from "react";
+import { createContext, ReactNode, useCallback, useContext } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
@@ -182,7 +177,12 @@ const WidgetCartographieTAContent = (
 
   return (
     <BaseCartographieWidgetLayout
-      titre={<WidgetCartographieTitle title="Taux d'avancement" subtitle={String(jalon)} />}
+      titre={
+        <WidgetCartographieTitle
+          title="Taux d'avancement"
+          subtitle={String(jalon)}
+        />
+      }
       cartographie={
         <CartographieV2
           onTerritoireSelect={onSelectTerritoire}

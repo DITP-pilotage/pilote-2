@@ -46,7 +46,9 @@ export const WidgetCartographiePVA = ({
 
   return (
     <BaseCartographieWidgetLayout
-      titre={<WidgetCartographieTitle title="Propositions de valeurs d'avancement" />}
+      titre={
+        <WidgetCartographieTitle title="Propositions de valeurs d'avancement" />
+      }
       cartographie={
         <CartographieV2
           onTerritoireSelect={onSelectTerritoire}

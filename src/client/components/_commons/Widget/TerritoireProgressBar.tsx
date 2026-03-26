@@ -1,3 +1,4 @@
+import { clsxm } from "@/utils/clsxm";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 
 export type TerritoireProgressBarVariant = "progressBar" | "histogram";
@@ -20,10 +21,10 @@ export const TerritoireProgressBar = ({
   return (
     <>
       <div
-        className={`h-4 mx-2 ${isHistogram ? "" : "rounded-full bg-dsfr-grey-925"}`}
+        className={clsxm("h-4 mx-2", !isHistogram && "rounded-full bg-dsfr-grey-925")}
       >
         <div
-          className={`h-full ${isHistogram ? "" : "rounded-full"}`}
+          className={clsxm("h-full", !isHistogram && "rounded-full")}
           style={{
             width: `${Math.min(pourcentage, 100)}%`,
             backgroundColor: couleur,

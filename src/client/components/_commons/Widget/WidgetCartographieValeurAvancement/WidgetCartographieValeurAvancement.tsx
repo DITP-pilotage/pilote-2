@@ -130,7 +130,12 @@ export const WidgetCartographieValeurAvancement = ({
 
   return (
     <BaseCartographieWidgetLayout
-      titre={<WidgetCartographieTitle title="Valeurs d'avancement" subtitle={String(jalon)} />}
+      titre={
+        <WidgetCartographieTitle
+          title="Valeurs d'avancement"
+          subtitle={String(jalon)}
+        />
+      }
       cartographie={
         <CartographieV2
           onTerritoireSelect={onSelectTerritoire}

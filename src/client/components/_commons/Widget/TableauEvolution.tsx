@@ -1,4 +1,5 @@
 import { TerritoireLabel } from "@/components/_commons/Widget/TerritoireLabel";
+import { clsxm } from "@/utils/clsxm";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 
 export type CelluleJalon = {
@@ -35,9 +36,7 @@ export const TableauEvolution = ({
             {jalons.map((jalon) => (
               <th
                 key={jalon}
-                className={`px-3 py-2 text-center whitespace-nowrap ${
-                  jalon === jalonActif ? "font-bold" : "font-semibold"
-                }`}
+                className={clsxm("px-3 py-2 text-center whitespace-nowrap", jalon === jalonActif ? "font-bold" : "font-semibold")}
               >
                 {jalon}
               </th>
@@ -84,7 +83,7 @@ export const TableauEvolution = ({
                     {cellule?.valeur !== null ? (
                       <div className="flex flex-col items-center gap-0.5">
                         <span
-                          className={estActif ? "font-bold" : ""}
+                          className={clsxm(estActif && "font-bold")}
                           style={{ color: ligne.couleur }}
                         >
                           {cellule?.valeur}
