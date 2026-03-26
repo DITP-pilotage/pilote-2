@@ -42,8 +42,6 @@ import { PrismaRapportRepository } from "./infrastructure/adapters/PrismaRapport
 import { PrismaSyntheseDesResultatsRepository } from "./infrastructure/adapters/PrismaSyntheseDesResultatsRepository";
 import { SupprimerLesComptesDesactivesUseCase } from "./usecases/SupprimerLesComptesDesactivesUseCase";
 import { RecupererLaListeDesInfomrationsChantiersUse } from "./usecases/RecupererLaListeDesInfomrationsChantiersUse";
-import { PropositionValeurAvancementRepository } from "./domain/ports/PropositionValeurAvancementRepository";
-import { PrismaPropositionValeurAvancementRepository } from "./infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
 import { ContactInfoLettresService } from "./domain/ports/ContactInfoLettresService";
 import { BrevoContactInfoLettresService } from "./infrastructure/adapters/BrevoContactInfoLettresService";
 import CréerOuMettreÀJourUnUtilisateurUseCase from "./usecases/CréerOuMettreÀJourUnUtilisateurUseCase";
@@ -82,7 +80,6 @@ type GestionUtilisateurCradle = GestionUtilisateurExports & {
   objectifRepository: ObjectifRepository;
   rapportRepository: RapportRepository;
   syntheseDesResultatsRepository: SyntheseDesResultatsRepository;
-  propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
   historisationModification: HistorisationModificationRepository;
   supprimerLesComptesDesactivesUseCase: SupprimerLesComptesDesactivesUseCase;
   recupererChantiersSynthetisesUseCase: RecupererChantiersSynthetisesUseCase;
@@ -173,9 +170,6 @@ export const gestionUtilisateurModule = defineModule<
       rapportRepository: asModuleClass(PrismaRapportRepository),
       syntheseDesResultatsRepository: asModuleClass(
         PrismaSyntheseDesResultatsRepository,
-      ),
-      propositionValeurAvancementRepository: asModuleClass(
-        PrismaPropositionValeurAvancementRepository,
       ),
       supprimerLesComptesDesactivesUseCase: asModuleClass(
         SupprimerLesComptesDesactivesUseCase,

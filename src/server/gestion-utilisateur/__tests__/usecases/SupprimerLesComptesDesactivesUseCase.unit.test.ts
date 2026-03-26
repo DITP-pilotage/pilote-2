@@ -10,7 +10,6 @@ import {
   SupprimerLesComptesDesactivesUseCase,
 } from "@/server/gestion-utilisateur/usecases/SupprimerLesComptesDesactivesUseCase";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
-import { PropositionValeurAvancementRepository } from "@/server/gestion-utilisateur/domain/ports/PropositionValeurAvancementRepository";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
 
 describe("SupprimerLesComptesDesactivesUseCase", () => {
@@ -21,7 +20,6 @@ describe("SupprimerLesComptesDesactivesUseCase", () => {
   let decisionStrategiqueRepository: MockProxy<DecisionStrategiqueRepository>;
   let objectifRepository: MockProxy<ObjectifRepository>;
   let rapportRepository: MockProxy<RapportRepository>;
-  let propositionValeurAvancementRepository: MockProxy<PropositionValeurAvancementRepository>;
   let historisationModification: MockProxy<HistorisationModificationRepository>;
 
   let supprimerLesComptesDesactivesUseCase: SupprimerLesComptesDesactivesUseCase;
@@ -34,8 +32,6 @@ describe("SupprimerLesComptesDesactivesUseCase", () => {
     decisionStrategiqueRepository = mock<DecisionStrategiqueRepository>();
     objectifRepository = mock<ObjectifRepository>();
     rapportRepository = mock<RapportRepository>();
-    propositionValeurAvancementRepository =
-      mock<PropositionValeurAvancementRepository>();
     historisationModification = mock<HistorisationModificationRepository>();
     supprimerLesComptesDesactivesUseCase =
       new SupprimerLesComptesDesactivesUseCase({
@@ -46,7 +42,6 @@ describe("SupprimerLesComptesDesactivesUseCase", () => {
         decisionStrategiqueRepository,
         objectifRepository,
         rapportRepository,
-        propositionValeurAvancementRepository,
         historisationModification,
       });
   });
@@ -87,9 +82,6 @@ describe("SupprimerLesComptesDesactivesUseCase", () => {
     );
     expect(
       decisionStrategiqueRepository.anonymiserAuteurs,
-    ).toHaveBeenCalledWith(utilisateurAsupprimerId, EMAIL_AUTEUR_REMPLACEMENT);
-    expect(
-      propositionValeurAvancementRepository.anonymiserAuteurs,
     ).toHaveBeenCalledWith(utilisateurAsupprimerId, EMAIL_AUTEUR_REMPLACEMENT);
     expect(historisationModification.anonymiserAuteurs).toHaveBeenCalledWith(
       utilisateurAsupprimerId,

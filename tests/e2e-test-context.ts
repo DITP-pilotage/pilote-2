@@ -46,11 +46,6 @@ export class E2ETestContext {
             },
           });
           break;
-        case "PROPOSITION_VALEUR_AVANCEMENT_CREEE":
-          await prisma.proposition_valeur_actuelle.deleteMany({
-            where: action.filters,
-          });
-          break;
         case "COMMENTAIRE_CREE":
           await prisma.commentaire.deleteMany({
             where: action.filters,

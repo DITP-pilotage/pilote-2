@@ -1,10 +1,10 @@
-import { PropositionValeurAvancementRapport } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
 import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
 import {
   ContenuRapport,
   ChantierRapport,
   IndicateurProposition,
 } from "@/server/chantiers/domain/RapportPropositionsAvancement";
+import { PropositionValeurAvancementRapport } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 
 export const genererParametresEnvoieRapportProposition = (
   listeChantierIds: string[],
