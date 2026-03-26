@@ -1,6 +1,16 @@
 import { FunctionComponent, useId } from "react";
 import { JaugeDeProgressionSmallCouleur } from "@/components/_commons/JaugeDeProgressionSmall/JaugeDeProgressionSmall.interface";
 
+const COULEUR_FILL: Record<JaugeDeProgressionSmallCouleur, string> = {
+  bleu: "fill-primary",
+  "bleu-clair": "fill-dsfr-info-main-525",
+  violet: "fill-pilote-ecart-blue",
+  orange: "fill-pilote-orange",
+  vert: "fill-pilote-vert",
+  rose: "fill-dsfr-pink-tuile-main-556",
+  gris: "fill-dsfr-grey-625",
+};
+
 interface JaugeDeProgressionSVGSmallProps {
   couleur: JaugeDeProgressionSmallCouleur;
   pourcentage: number | null;
@@ -68,13 +78,13 @@ const JaugeDeProgressionSVGSmall: FunctionComponent<
     >
       <g clipPath={`url(#masque-${id})`}>
         <rect
-          className={`jauge-barre-fond jauge-barre-valeur-${couleur}`}
+          className="fill-pilote-jauge-fond"
           height={TAILLE_VIEWBOX}
           width={TAILLE_VIEWBOX}
         />
         {pourcentage ? (
           <path
-            className={`jauge-barre-valeur jauge-barre-valeur--${couleur}`}
+            className={COULEUR_FILL[couleur]}
             d={tracerValeurJauge(pourcentage)}
             transform={`rotate(${TRACÉS["sm"].angleDépart} ${CENTRE_VIEWBOX.x} ${CENTRE_VIEWBOX.y})`}
           />

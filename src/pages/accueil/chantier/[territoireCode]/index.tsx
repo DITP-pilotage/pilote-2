@@ -429,7 +429,7 @@ const ChantierLayout = ({
           </section>
         </BarreLatérale>
         <div className="w-full">
-          <div className="sticky top-0 z-[1] w-full shadow-[0_6px_18px_var(--shadow-color)] fr-background-blue-france-850 fr-grid-row fr-pt-2w">
+          <div className="sticky top-0 z-[1] w-full shadow-[0_6px_18px_var(--shadow-color)] bg-dsfr-blue-france-850 fr-grid-row fr-pt-2w">
             <PanelMenuNavigation
               estAutoriseAVoirLeSelecteurDeMaille={
                 estAutoriseAVoirLeSelecteurDeMaille
