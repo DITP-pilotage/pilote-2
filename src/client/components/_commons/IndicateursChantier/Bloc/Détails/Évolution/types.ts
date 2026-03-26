@@ -1,6 +1,8 @@
 import type { Dispatch, SetStateAction } from "react";
 import type { ECOption } from "./useIndicateurEvolutionNew";
 
+export type ChartDisplayMode = "default" | "compact";
+
 export type TerritoireEvolutionDonnees = {
   territoireNom: string;
   données: {
@@ -15,7 +17,10 @@ export type TerritoireEvolutionDonnees = {
 export type BaseEvolutionMode = "impression" | "default";
 
 export interface ChartConfig {
-  getOptions: (modeImpresssion: boolean) => ECOption;
+  getOptions: (args: {
+    modeImpression: boolean;
+    chartDisplayMode: ChartDisplayMode;
+  }) => ECOption;
   tousLesIndicateursDetails: TerritoireEvolutionDonnees[];
   territoiresAAfficher: Record<string, boolean>;
   setTerritoiresAAfficher: Dispatch<Record<string, boolean>>;

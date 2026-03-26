@@ -7,11 +7,17 @@ import {
 } from "react";
 import * as echarts from "echarts";
 import { ECOption } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
-import type { TerritoireEvolutionDonnees } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
+import type {
+  ChartDisplayMode,
+  TerritoireEvolutionDonnees,
+} from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
 import LineChartLegende from "./LineChartLegende/LineChartLegende";
 
 export interface LineChartProps {
-  getOptions: (modeImpression: boolean) => ECOption;
+  getOptions: (args: {
+    modeImpression: boolean;
+    chartDisplayMode: ChartDisplayMode;
+  }) => ECOption;
   tousLesIndicateursDetails: TerritoireEvolutionDonnees[];
   territoiresAAfficher: Record<string, boolean>;
   setTerritoiresAAfficher: Dispatch<Record<string, boolean>>;
@@ -22,6 +28,7 @@ export interface LineChartProps {
   periodesSelectionnablesZoom: string[];
   modeImpression?: boolean;
   afficherInterrupteurCibles?: boolean;
+  chartDisplayMode?: ChartDisplayMode;
 }
 
 const LineChart: FunctionComponent<LineChartProps> = ({
@@ -36,6 +43,7 @@ const LineChart: FunctionComponent<LineChartProps> = ({
   periodesSelectionnablesZoom,
   modeImpression = false,
   afficherInterrupteurCibles = true,
+  chartDisplayMode = "default",
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const chart = useRef<echarts.EChartsType | null>(null);
@@ -44,7 +52,7 @@ const LineChart: FunctionComponent<LineChartProps> = ({
     if (!ref.current) return;
     chart.current = echarts.init(ref.current);
     chart.current.setOption({
-      ...getOptions(modeImpression),
+      ...getOptions({ modeImpression, chartDisplayMode }),
       animation: !modeImpression,
     });
 
@@ -55,7 +63,7 @@ const LineChart: FunctionComponent<LineChartProps> = ({
       window.removeEventListener("resize", handleResize);
       chart.current?.dispose();
     };
-  }, [modeImpression, getOptions]);
+  }, [chartDisplayMode, modeImpression, getOptions]);
 
   return (
     <div>

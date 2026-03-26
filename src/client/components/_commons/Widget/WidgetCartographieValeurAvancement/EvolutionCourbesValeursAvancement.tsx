@@ -70,6 +70,7 @@ export const EvolutionCourbesValeursAvancement = ({
       afficherInterrupteurCibles={false}
       afficherLesCibles={afficherLesCibles}
       changerLaPeriodeSelectionnee={changerLaPeriodeSelectionnee}
+      chartDisplayMode="compact"
       getOptions={getOptions}
       periodeSelectionnee={periodeSelectionnee}
       periodesSelectionnablesZoom={periodesSelectionnablesZoom}
