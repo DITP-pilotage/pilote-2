@@ -1,6 +1,6 @@
 import { Fragment, useRef } from "react";
 import Titre from "@/client/components/_commons/Titre/Titre";
-import SélecteurAvecRechercheStyled from "./SélecteurAvecRecherche.styled";
+import { clsxm } from "@/utils/clsxm";
 import SélecteurAvecRechercheProps from "./SélecteurAvecRecherche.interface";
 import useSélecteurAvecRecherche from "./useSélecteurAvecRecherche";
 import "@gouvfr/dsfr/dist/component/radio/radio.css";
@@ -28,7 +28,7 @@ const SélecteurAvecRecherche = <T extends string>({
   } = useSélecteurAvecRecherche(options, valeurSélectionnée);
 
   return (
-    <SélecteurAvecRechercheStyled>
+    <div className="relative">
       <div
         className={`fr-select-group${erreurMessage ? " fr-select-group--error" : ""}`}
       >
@@ -42,7 +42,7 @@ const SélecteurAvecRecherche = <T extends string>({
           </label>
         ) : null}
         <button
-          className={`fr-select${erreurMessage ? " fr-select--error" : ""} fr-ellipsis`}
+          className={`fr-select${erreurMessage ? " fr-select--error" : ""} fr-ellipsis text-left`}
           id={htmlName}
           title={libellé}
           type="button"
@@ -50,8 +50,15 @@ const SélecteurAvecRecherche = <T extends string>({
         >
           {libelléValeurSélectionnée}
         </button>
-        <div className={estOuvert ? "visible" : ""} ref={ref} role="menu">
-          <div className="fr-p-2w input-container">
+        <div
+          className={clsxm(
+            "hidden",
+            estOuvert && "block absolute z-[2] w-full max-h-80 overflow-auto bg-[var(--background-contrast-grey)] border border-gray-500",
+          )}
+          ref={ref}
+          role="menu"
+        >
+          <div className="fr-p-2w bg-white">
             <input
               className="fr-input"
               onChange={(e) => setRecherche(e.target.value)}
@@ -64,7 +71,7 @@ const SélecteurAvecRecherche = <T extends string>({
             <Fragment key={`${option.valeur}`}>
               {!option.désactivée ? (
                 <div
-                  className="fr-option fr-px-2w"
+                  className="fr-px-2w text-base leading-6 even:bg-[var(--background-alt-grey)] hover:text-white hover:bg-[var(--background-active-blue-france)]"
                   id={option.valeur}
                   onClick={(événement) => {
                     setEstOuvert(false);
@@ -87,7 +94,7 @@ const SélecteurAvecRecherche = <T extends string>({
                   {option.libellé}
                 </div>
               ) : (
-                <div className="fr-px-2w fr-option-disabled" id={option.valeur}>
+                <div className="fr-px-2w text-base leading-6 text-dsfr-mention-grey" id={option.valeur}>
                   {option.libellé}
                 </div>
               )}
@@ -98,7 +105,7 @@ const SélecteurAvecRecherche = <T extends string>({
           <p className="fr-error-text fr-mt-1v">{erreurMessage}</p>
         )}
       </div>
-    </SélecteurAvecRechercheStyled>
+    </div>
   );
 };
 

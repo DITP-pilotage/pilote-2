@@ -1,5 +1,5 @@
 import { FunctionComponent, ReactNode } from "react";
-import TitreInfobulleConteneurStyled from "./TitreInfobulleConteneur.styled";
+import { clsxm } from "@/utils/clsxm";
 
 interface TitreInfobulleConteneurProps {
   className?: string;
@@ -10,9 +10,9 @@ const TitreInfobulleConteneur: FunctionComponent<
   TitreInfobulleConteneurProps
 > = ({ className, children }) => {
   return (
-    <TitreInfobulleConteneurStyled className={`${className} flex align-center`}>
+    <div className={clsxm("relative flex align-center", className)}>
       {children}
-    </TitreInfobulleConteneurStyled>
+    </div>
   );
 };
 
