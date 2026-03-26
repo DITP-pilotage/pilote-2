@@ -60,6 +60,7 @@ export const ComparaisonTerritoires = ({
         if (type === "pva") {
           return (
             <WidgetCartographiePVA
+              mode="chantier"
               chantierId={chantierId}
               jalon={jalon}
               maille={maille}
