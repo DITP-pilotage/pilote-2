@@ -70,7 +70,7 @@ const PageChantierEnTête: FunctionComponent<{
       <Titre
         baliseHtml="h1"
         className={clsxm(
-          "select-all fr-h2 !mb-4 !mt-2 !text-dsfr-blue-france-sun-113 line-clamp-3",
+          "select-all fr-h2 !mb-4 !mt-2 !text-dsfr-blue-france-sun-113 line-clamp-3 !text-[1.875rem] !leading-9",
           {
             "!text-dsfr-grey-200": chantierEstArchive,
           },

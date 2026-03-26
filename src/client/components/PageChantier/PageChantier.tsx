@@ -146,7 +146,7 @@ const PageChantier = () => {
       : Object.keys(detailsIndicateursTerritoire);
 
   return (
-    <div className="flex bg-dsfr-contrast-grey [&_tbody]:bg-none [&_.fr-h2]:!text-[1.875rem] [&_.fr-h2]:!leading-9 print:bg-white print:[&_main]:mx-[12mm] print:[&_.fr-accordion]:hidden">
+    <div className="flex bg-dsfr-contrast-grey print:bg-white">
       <BarreLatérale
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
@@ -173,7 +173,7 @@ const PageChantier = () => {
         />
       </BarreLatérale>
       <main
-        className={clsx("fr-pb-5w w-full", {
+        className={clsx("fr-pb-5w w-full print:mx-[12mm]", {
           "!bg-dsfr-grey-1000": estChantierArchive,
         })}
       >
@@ -194,7 +194,7 @@ const PageChantier = () => {
           />
         </div>
         <div className="fr-container--fluid fr-py-2w fr-px-md-2w hidden print:block print:mb-4 print:[page-break-after:avoid]">
-          <Titre baliseHtml="h1" className="fr-h2 fr-mb-0 fr-text--center">
+          <Titre baliseHtml="h1" className="fr-h2 fr-mb-0 fr-text--center !text-[1.875rem] !leading-9">
             {chantier.nom}
           </Titre>
         </div>

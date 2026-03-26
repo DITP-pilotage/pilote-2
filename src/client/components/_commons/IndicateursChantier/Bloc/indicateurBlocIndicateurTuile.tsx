@@ -32,7 +32,7 @@ const IndicateurBlocIndicateurTuile = () => {
             <th className="fr-py-1v">{detailTerritoireSelectionne.nom}</th>
           </tr>
         </thead>
-        <tbody className="[&_tr]:!bg-[unset] [&_td]:leading-5">
+        <tbody className="bg-none [&_tr]:!bg-[unset] [&_td]:leading-5">
           <tr>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold">
               Valeur initiale

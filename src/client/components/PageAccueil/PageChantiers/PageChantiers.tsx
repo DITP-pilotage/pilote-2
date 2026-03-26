@@ -106,7 +106,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   const chantiersSontArchives = filtres.statut?.includes("ARCHIVE") ?? false;
 
   return (
-    <main className="[&_.fr-text--lg]:leading-6">
+    <main>
       <div className="fr-py-2w fr-px-md-2w fr-container--fluid">
         <div className="fr-grid-row">
           <div className="fr-col-12 fr-col-lg-7 fr-col-xl-6 flex flex-column">
@@ -121,7 +121,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                       <TitreInfobulleConteneur>
                         <Titre
                           baliseHtml="h2"
-                          className="fr-text--lg fr-mb-0 fr-py-1v"
+                          className="fr-text--lg fr-mb-0 fr-py-1v leading-6"
                           estInline
                         >
                           Taux d'avancement moyen
@@ -149,7 +149,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                         <TitreInfobulleConteneur className="mb-6">
                           <Titre
                             baliseHtml="h2"
-                            className="fr-text--lg fr-py-1v !mb-0"
+                            className="fr-text--lg fr-py-1v !mb-0 leading-6"
                             estInline
                           >
                             {`Répartition territoriale ${jalon}`}
@@ -186,7 +186,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 <TitreInfobulleConteneur>
                   <Titre
                     baliseHtml="h2"
-                    className="fr-text--lg fr-mb-0 fr-py-1v"
+                    className="fr-text--lg fr-mb-0 fr-py-1v leading-6"
                     estInline
                   >
                     Répartition des météos renseignées
@@ -210,7 +210,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               <section>
                 <Titre
                   baliseHtml="h2"
-                  className="fr-text--lg break-keep fr-mb-0 fr-py-1v"
+                  className="fr-text--lg break-keep fr-mb-0 fr-py-1v leading-6"
                 >
                   Taux d'avancement des chantiers par territoire
                 </Titre>
@@ -246,7 +246,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 <BadgeIcône type="warning" />
                 <Titre
                   baliseHtml="h2"
-                  className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w !text-dsfr-warning-425"
+                  className="fr-text--lg fr-mb-0 fr-py-1v fr-ml-1w !text-dsfr-warning-425 leading-6"
                   estInline
                 >
                   Chantiers signalés
@@ -279,7 +279,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
               <TitreInfobulleConteneur>
                 <Titre
                   baliseHtml="h2"
-                  className="fr-text--lg fr-mb-0 fr-py-1v"
+                  className="fr-text--lg fr-mb-0 fr-py-1v leading-6"
                   estInline
                 >
                   {`Liste des chantiers (${nombreTotalChantiersAvecAlertes})`}

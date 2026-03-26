@@ -89,7 +89,7 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
 
   return (
     <div className="fr-accordions-group">
-      <section className="fr-accordion">
+      <section className="fr-accordion print:hidden">
         <h3 className="fr-accordion__title">
           <button
             aria-controls={`détails-${indicateur.id}`}
@@ -121,7 +121,7 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
           </div>
         </div>
       </section>
-      <section className="fr-accordion">
+      <section className="fr-accordion print:hidden">
         <h3 className="fr-accordion__title">
           <button
             aria-controls={`repartition-geographique-et-evolution-${indicateur.id}`}

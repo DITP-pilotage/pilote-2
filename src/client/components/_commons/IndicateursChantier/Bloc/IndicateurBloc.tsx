@@ -227,7 +227,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                     </th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="bg-none">
                   <tr
                     className="bg-transparent"
                     key={détailTerritoireSélectionné.nomAffiché}

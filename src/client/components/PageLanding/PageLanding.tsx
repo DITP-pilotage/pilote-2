@@ -17,12 +17,12 @@ const PageLanding = () => {
       <Head>
         <title>PILOTE - Piloter l'action publique par les résultats</title>
       </Head>
-      <main className="[&_h1]:!text-black [&_.fr-btn]:rounded [&_.fr-enlarge-link:hover]:bg-white">
+      <main>
         <section className="bloc-hero">
           <div className="fr-container">
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
               <div className="fr-col-12 fr-col-lg-6 fr-py-8w">
-                <Titre baliseHtml="h1">
+                <Titre baliseHtml="h1" className="!text-black">
                   Piloter l'action publique par les résultats
                 </Titre>
                 <p className="fr-text--xl">
@@ -38,7 +38,7 @@ const PageLanding = () => {
                   feuille de route du Gouvernement.
                 </p>
                 <button
-                  className="fr-btn fr-mr-2w"
+                  className="fr-btn fr-mr-2w rounded"
                   onClick={() => signIn("keycloak")}
                   type="button"
                 >
@@ -178,7 +178,7 @@ const PageLanding = () => {
                   en œuvre.
                 </p>
                 <Link
-                  className="fr-btn fr-btn--secondary fr-mt-3w"
+                  className="fr-btn fr-btn--secondary fr-mt-3w rounded"
                   href="https://www.modernisation.gouv.fr/transformer-laction-publique/assurer-la-mise-en-oeuvre-des-politiques-prioritaires-du-gouvernement"
                   target="_blank"
                 >
@@ -186,7 +186,7 @@ const PageLanding = () => {
                 </Link>
               </div>
               <div className="fr-col-12 fr-col-lg-4">
-                <div className="fr-card fr-enlarge-link">
+                <div className="fr-card fr-enlarge-link hover:bg-white">
                   <div className="fr-card__body">
                     <div className="fr-card__content">
                       <Titre baliseHtml="h2" className="fr-h3">

@@ -102,7 +102,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   return (
     <div
       className={clsxm(
-        "grid [grid-template-areas:'nat'] gap-[0.7rem] [&_.jauge>div]:m-auto [&_.text-bottom-jauge-progression]:max-w-[17rem]",
+        "grid [grid-template-areas:'nat'] gap-[0.7rem]",
         classeAPartirDeLaMaille[territoireSélectionné.maille],
       )}
     >
@@ -114,7 +114,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
           }
           titre={territoireSélectionné?.nomAffiché}
         >
-          <div className="fr-py-1w jauge">
+          <div className="fr-py-1w jauge [&>div]:m-auto">
             <AvancementsTerritoire
               avancement={avancements.departementale.annuel.moyenne}
               couleurBarreDeProgression="secondaire"
@@ -148,7 +148,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               : territoireSélectionné.nomAffiché
           }
         >
-          <div className="fr-py-1w jauge">
+          <div className="fr-py-1w jauge [&>div]:m-auto">
             <AvancementsTerritoire
               avancement={avancements.regionale.annuel.moyenne}
               couleurBarreDeProgression={
@@ -177,7 +177,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
         }
         titre="France"
       >
-        <div className="fr-py-1w jauge">
+        <div className="fr-py-1w jauge [&>div]:m-auto">
           <div className="flex flex-direction-column flex-wrap justify-center align-center">
             <strong className="fr-text--sm fr-mb-0 text-center">
               Taux d'avancement national

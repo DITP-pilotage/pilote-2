@@ -108,7 +108,7 @@ const RapportDétailléChantier: FunctionComponent<
         >
           {avancements !== null && (
             <>
-              <section className="break-inside-avoid [grid-area:avancement] [&_.rubrique__conteneur>div]:h-auto print:break-inside-avoid print:break-before-page">
+              <section className="break-inside-avoid [grid-area:avancement] print:break-inside-avoid print:break-before-page">
                 <Link
                   className="fr-btn gap-2 fr-btn--tertiary-no-outline fr-text--sm"
                   href={`#${htmlId.listeDesChantiers()}`}
@@ -139,7 +139,7 @@ const RapportDétailléChantier: FunctionComponent<
                   territoireCode={territoireCode}
                 />
               </section>
-              <section className="break-inside-avoid [grid-area:responsables] [&_.rubrique__conteneur>div]:h-auto">
+              <section className="break-inside-avoid [grid-area:responsables]">
                 <Titre
                   baliseHtml="h2"
                   className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
@@ -163,7 +163,7 @@ const RapportDétailléChantier: FunctionComponent<
               </section>
             </>
           )}
-          <section className="break-inside-avoid [grid-area:synthèse] [&_.rubrique__conteneur>div]:h-auto print:break-inside-avoid">
+          <section className="break-inside-avoid [grid-area:synthèse] print:break-inside-avoid">
             <Titre
               baliseHtml="h2"
               className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
@@ -180,7 +180,7 @@ const RapportDétailléChantier: FunctionComponent<
         !!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] ||
         chantier.estTerritorialisé ? (
           <div className="fr-my-2w print:break-inside-avoid">
-            <section className="break-inside-avoid [&_.rubrique__conteneur>div]:h-auto">
+            <section className="break-inside-avoid">
               <Titre
                 baliseHtml="h2"
                 className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
@@ -208,8 +208,8 @@ const RapportDétailléChantier: FunctionComponent<
         ) : null}
         {objectifs !== null && objectifs.length > 0 ? (
           <div className="fr-my-2w print:break-inside-avoid">
-            <section className="break-inside-avoid [&_.rubrique__conteneur>div]:h-auto">
-              <div className="rubrique__conteneur">
+            <section className="break-inside-avoid">
+              <div className="rubrique__conteneur [&>div]:h-auto">
                 <Titre
                   baliseHtml="h2"
                   className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
@@ -223,8 +223,8 @@ const RapportDétailléChantier: FunctionComponent<
         ) : null}
         {indicateurs.length > 0 ? (
           <div className="fr-my-2w print:break-inside-avoid">
-            <section className="break-inside-avoid [&_.rubrique__conteneur>div]:h-auto">
-              <div className="rubrique__conteneur">
+            <section className="break-inside-avoid">
+              <div className="rubrique__conteneur [&>div]:h-auto">
                 <Titre
                   baliseHtml="h2"
                   className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
@@ -258,8 +258,8 @@ const RapportDétailléChantier: FunctionComponent<
         {décisionStratégique !== null &&
           territoireSélectionné!.maille === "nationale" && (
             <div className="fr-my-2w print:break-inside-avoid">
-              <section className="break-inside-avoid [&_.rubrique__conteneur>div]:h-auto">
-                <div className="rubrique__conteneur">
+              <section className="break-inside-avoid">
+                <div className="rubrique__conteneur [&>div]:h-auto">
                   <Titre
                     baliseHtml="h2"
                     className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
@@ -275,8 +275,8 @@ const RapportDétailléChantier: FunctionComponent<
           )}
         {commentaires !== null && (
           <div className="fr-my-2w print:break-inside-avoid">
-            <section className="break-inside-avoid [&_.rubrique__conteneur>div]:h-auto">
-              <div className="rubrique__conteneur">
+            <section className="break-inside-avoid">
+              <div className="rubrique__conteneur [&>div]:h-auto">
                 <Titre
                   baliseHtml="h2"
                   className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
