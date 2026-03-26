@@ -293,7 +293,7 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
   );
 
   it(
-    "retourne une liste vide quand le territoire n'est pas dans les habilitations",
+    "lance une erreur quand le territoire n'est pas dans les habilitations",
     createIntegrationTest(async () => {
       // Given
       await fixtures.chantierIdentite({ id: "CH-005" });
@@ -320,16 +320,16 @@ describe("GetIndicateurPVACountTerritoiresQuery", () => {
       });
 
       // When — territory not in habilitations
-      const result = await query.execute({
-        indicateurId: "IND-005",
-        chantierId: "CH-005",
-        jalon: 2025,
-        habilitations: habilitationsPourChantier("CH-005", ["DEPT-13"]),
-        profil: ProfilEnum.DITP_ADMIN,
-      });
-
       // Then
-      expect(result).toEqual([]);
+      await expect(
+        query.execute({
+          indicateurId: "IND-005",
+          chantierId: "CH-005",
+          jalon: 2025,
+          habilitations: habilitationsPourChantier("CH-005", ["DEPT-13"]),
+          profil: ProfilEnum.DITP_ADMIN,
+        }),
+      ).rejects.toThrow("indicateur 'IND-005' non trouvé");
     }),
   );
 });
