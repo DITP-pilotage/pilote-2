@@ -4,7 +4,7 @@ import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { objectEntries } from "@/client/utils/objects/objects";
 import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
-import SélecteurMailleStyled from "./SélecteurMaille.styled";
+import { clsxm } from "@/utils/clsxm";
 
 const SélecteurMaille: FunctionComponent<{
   pathname: string;
@@ -47,7 +47,7 @@ const SélecteurMaille: FunctionComponent<{
   };
 
   return (
-    <SélecteurMailleStyled className="w-full flex align-center">
+    <div className="w-full flex align-center">
       <label className="fr-label fr-mr-1w no-wrap" htmlFor="maille">
         Affichage :
       </label>
@@ -58,16 +58,19 @@ const SélecteurMaille: FunctionComponent<{
           )
           .map(([maille, libellé]) => (
             <button
-              className={`fr-tag fr-mr-1w${mailleQuery === maille ? " tag-selectionnee" : ""}`}
+              className={clsxm(
+                "fr-tag fr-mr-1w",
+                mailleQuery === maille && "text-white bg-primary",
+              )}
               key={maille}
               onClick={() => changerMaille(maille)}
               type="button"
             >
-              <p className="titre-ellipsis fr-text--sm">{libellé}</p>
+              <p className="overflow-hidden text-ellipsis whitespace-nowrap fr-text--sm">{libellé}</p>
             </button>
           ))}
       </div>
-    </SélecteurMailleStyled>
+    </div>
   );
 };
 

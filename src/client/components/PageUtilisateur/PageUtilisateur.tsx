@@ -4,7 +4,6 @@ import { useSession } from "next-auth/react";
 import { FunctionComponent } from "react";
 import { Dialog } from "radix-ui";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
-import PageUtilisateurStyled from "@/components/PageUtilisateur/PageUtilisateur.styled";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import FicheUtilisateur from "@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur";
@@ -41,7 +40,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
   const { creerTokenAPI, alerte } = useGestionTokenAPI();
 
   return (
-    <PageUtilisateurStyled className="fr-pt-2w">
+    <div className="bg-dsfr-alt-blue-france fr-pt-2w">
       <main className="fr-container">
         <FilAriane chemin={chemin} libelléPageCourante="Utilisateur" />
         <div className="fiche-utilisateur fr-pb-4w">
@@ -109,7 +108,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
                     <Modale
                       title="Désactivation de compte"
                       trigger={
-                        <button className="fr-text desactiver" type="button">
+                        <button className="fr-text text-primary" type="button">
                           Désactiver le compte
                         </button>
                       }
@@ -197,7 +196,7 @@ const PageUtilisateur: FunctionComponent<PageUtilisateurProps> = ({
           </Bloc>
         </div>
       </main>
-    </PageUtilisateurStyled>
+    </div>
   );
 };
 
