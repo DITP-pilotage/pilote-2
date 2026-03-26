@@ -15,6 +15,7 @@ import {
 } from "@/components/_commons/Widget/SelecteurVueWidget";
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 import { buildJalons } from "@/client/utils/jalons";
+import { WidgetCartographieTitle } from "@/components/_commons/Widget/WidgetCartographieTitle";
 import { useDonneesCartographieVA } from "./useDonneesCartographieVA";
 import { LegendeDegradeVA } from "./LegendeDegradeVA";
 import { SuiviValeurAvancement } from "./SuiviValeurAvancement";
@@ -129,6 +130,7 @@ export const WidgetCartographieValeurAvancement = ({
 
   return (
     <BaseCartographieWidgetLayout
+      titre={<WidgetCartographieTitle title="Valeurs d'avancement" subtitle={String(jalon)} />}
       cartographie={
         <CartographieV2
           onTerritoireSelect={onSelectTerritoire}

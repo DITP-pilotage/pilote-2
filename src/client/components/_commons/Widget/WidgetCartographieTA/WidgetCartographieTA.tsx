@@ -1,4 +1,9 @@
-import { createContext, ReactNode, useCallback, useContext } from "react";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+} from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
@@ -19,6 +24,7 @@ import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
 import { buildJalons } from "@/client/utils/jalons";
 import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
+import { WidgetCartographieTitle } from "@/components/_commons/Widget/WidgetCartographieTitle";
 import { useDonneesCartographieTA } from "./useDonneesCartographieTA";
 import { useLegendeTA } from "./useLegendeTA";
 import { SuiviTauxAvancement } from "./SuiviTauxAvancement";
@@ -152,7 +158,7 @@ const WidgetCartographieTAContent = (
     territoireCode,
   });
 
-  const titre = "Suivi et évolution des taux d'avancement";
+  const titreSuivi = "Suivi et évolution des taux d'avancement";
 
   const utils = api.useUtils();
   const handlePrefetchVue = useCallback(
@@ -176,6 +182,7 @@ const WidgetCartographieTAContent = (
 
   return (
     <BaseCartographieWidgetLayout
+      titre={<WidgetCartographieTitle title="Taux d'avancement" subtitle={String(jalon)} />}
       cartographie={
         <CartographieV2
           onTerritoireSelect={onSelectTerritoire}
@@ -212,7 +219,7 @@ const WidgetCartographieTAContent = (
     >
       {mode === "indicateur" ? (
         <SelecteurVueWidget
-          titre={titre}
+          titre={titreSuivi}
           jalon={jalon}
           onPrefetchVue={handlePrefetchVue}
           renderVue={(vue) => {
@@ -242,7 +249,7 @@ const WidgetCartographieTAContent = (
         />
       ) : (
         <>
-          <TitreWidget>{titre}</TitreWidget>
+          <TitreWidget>{titreSuivi}</TitreWidget>
           <SuiviTauxAvancement
             territoireCode={territoireCode}
             onSupprimerTerritoire={supprimerTerritoire}

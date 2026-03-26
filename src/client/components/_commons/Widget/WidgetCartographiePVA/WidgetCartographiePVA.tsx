@@ -9,6 +9,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires";
 import { ComplementsCartographie } from "@/components/_commons/Widget/ComplementsCartographie";
+import { WidgetCartographieTitle } from "@/components/_commons/Widget/WidgetCartographieTitle";
 import { NombrePropositionsValeur } from "./NombrePropositionsValeur";
 import { useDonneesCartographiePVA } from "./useDonneesCartographiePVA";
 import { useLegendePVA } from "./useLegendePVA";
@@ -45,6 +46,7 @@ export const WidgetCartographiePVA = ({
 
   return (
     <BaseCartographieWidgetLayout
+      titre={<WidgetCartographieTitle title="Propositions de valeurs d'avancement" />}
       cartographie={
         <CartographieV2
           onTerritoireSelect={onSelectTerritoire}

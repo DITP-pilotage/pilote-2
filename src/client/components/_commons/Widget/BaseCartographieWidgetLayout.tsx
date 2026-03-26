@@ -17,11 +17,13 @@ export const TitreWidget = ({ children }: { children: ReactNode }) => {
 };
 
 export const BaseCartographieWidgetLayout = ({
+  titre,
   cartographie,
   complementsCartographie,
   children,
   footer,
 }: {
+  titre?: ReactNode;
   cartographie: ReactNode;
   complementsCartographie?: ReactNode;
   children: ReactNode;
@@ -34,6 +36,7 @@ export const BaseCartographieWidgetLayout = ({
       <div className="flex flex-col gap-8 h-full">
         <div className="grid grid-cols-2 gap-8">
           <div className="flex flex-col gap-4">
+            {titre}
             {cartographie}
             {complementsCartographie}
           </div>
@@ -46,6 +49,7 @@ export const BaseCartographieWidgetLayout = ({
 
   return (
     <div className="flex flex-col gap-8 h-full">
+      {titre}
       <div className="w-full max-w-[400px] mx-auto">{cartographie}</div>
       {complementsCartographie}
       <div className="flex flex-col gap-2 grow">{children}</div>
