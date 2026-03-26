@@ -16,7 +16,7 @@ export const EvolutionCourbesTauxAvancement = ({
   jalon: number;
   territoiresSelectionnesCodes: string[];
 }) => {
-  const [evolutionTerritoires] =
+  const [evolutionData] =
     api.indicateur.recupererEvolutionTauxAvancementTerritoires.useSuspenseQuery(
       {
         indicateurId,
@@ -27,7 +27,7 @@ export const EvolutionCourbesTauxAvancement = ({
 
   const tousLesIndicateursDetails: TerritoireEvolutionDonnees[] =
     useMemo(() => {
-      return evolutionTerritoires
+      return evolutionData.territoires
         .filter((territoire) =>
           territoiresSelectionnesCodes.includes(territoire.territoireCode),
         )
@@ -41,12 +41,11 @@ export const EvolutionCourbesTauxAvancement = ({
               territoireDetails?.nomAffiché ?? territoire.territoireCode,
             données: {
               historiquesValeurs: territoire.historiquesValeurs,
-              listeValeursCiblesAnnuelles:
-                territoire.listeValeursCiblesAnnuelles,
+              listeValeursCiblesAnnuelles: [],
             },
           };
         });
-    }, [evolutionTerritoires, territoiresSelectionnesCodes]);
+    }, [evolutionData, territoiresSelectionnesCodes]);
 
   const {
     afficherLesCibles,
@@ -65,6 +64,7 @@ export const EvolutionCourbesTauxAvancement = ({
 
   return (
     <LineChart
+      afficherInterrupteurCibles={false}
       afficherLesCibles={afficherLesCibles}
       changerLaPeriodeSelectionnee={changerLaPeriodeSelectionnee}
       getOptions={getOptions}

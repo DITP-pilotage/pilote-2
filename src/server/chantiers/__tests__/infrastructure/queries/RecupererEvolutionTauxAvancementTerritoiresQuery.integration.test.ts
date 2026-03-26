@@ -98,18 +98,17 @@ describe("RecupererEvolutionTauxAvancementTerritoiresQuery", () => {
       });
 
       // then
-      expect(result).toEqual(
-        expect.arrayContaining([
+      expect(result).toEqual({
+        territoires: expect.arrayContaining([
           expect.objectContaining({
             territoireCode: "DEPT-75",
             historiquesValeurs: [
               { date: "2025-01-15T00:00:00.000Z", valeur: 45.5 },
               { date: "2025-06-15T00:00:00.000Z", valeur: 67.2 },
             ],
-            listeValeursCiblesAnnuelles: [],
           }),
         ]),
-      );
+      });
     }),
   );
 
@@ -165,7 +164,7 @@ describe("RecupererEvolutionTauxAvancementTerritoiresQuery", () => {
       });
 
       // then
-      const territoire = result.find(
+      const territoire = result.territoires.find(
         (entry) => entry.territoireCode === "DEPT-92",
       );
       expect(territoire).toEqual(
@@ -174,7 +173,6 @@ describe("RecupererEvolutionTauxAvancementTerritoiresQuery", () => {
           historiquesValeurs: [
             { date: "2025-01-15T00:00:00.000Z", valeur: 30 },
           ],
-          listeValeursCiblesAnnuelles: [],
         }),
       );
     }),
@@ -227,14 +225,13 @@ describe("RecupererEvolutionTauxAvancementTerritoiresQuery", () => {
       });
 
       // then
-      const territoire = result.find(
+      const territoire = result.territoires.find(
         (entry) => entry.territoireCode === "DEPT-33",
       );
       expect(territoire).toEqual(
         expect.objectContaining({
           territoireCode: "DEPT-33",
           historiquesValeurs: [],
-          listeValeursCiblesAnnuelles: [],
         }),
       );
     }),

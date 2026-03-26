@@ -2,12 +2,10 @@ import type { Inject } from "@/server/chantiers/module";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 
-export type EvolutionTAIndicateurTerritoire = {
-  territoireCode: string;
-  historiquesValeurs: { date: string; valeur: number }[];
-  listeValeursCiblesAnnuelles: {
-    annee: number;
-    valeurCible: number | null;
+export type EvolutionTAResult = {
+  territoires: {
+    territoireCode: string;
+    historiquesValeurs: { date: string; valeur: number }[];
   }[];
 };
 
@@ -22,7 +20,7 @@ export class RecupererEvolutionTauxAvancementTerritoiresQuery {
     jalon: number;
     habilitations: Habilitations;
     profil: ProfilCode;
-  }): Promise<EvolutionTAIndicateurTerritoire[]> {
+  }): Promise<EvolutionTAResult> {
     const result =
       await this.deps.listerDetailsIndicateurTerritoireUseCaseV2.run(
         [params.indicateurId],
@@ -34,15 +32,18 @@ export class RecupererEvolutionTauxAvancementTerritoiresQuery {
 
     const details = result[params.indicateurId] ?? {};
 
-    return Object.entries(details).map(([territoireCode, detail]) => ({
-      territoireCode,
-      historiquesValeurs: detail.historiquesValeurs
-        .filter((entry) => entry.taux_avancement_jalon != null)
-        .map((entry) => ({
-          date: entry.date,
-          valeur: entry.taux_avancement_jalon!,
-        })),
-      listeValeursCiblesAnnuelles: [],
-    }));
+    const territoires = Object.entries(details).map(
+      ([territoireCode, detail]) => ({
+        territoireCode,
+        historiquesValeurs: detail.historiquesValeurs
+          .filter((entry) => entry.taux_avancement_jalon != null)
+          .map((entry) => ({
+            date: entry.date,
+            valeur: entry.taux_avancement_jalon!,
+          })),
+      }),
+    );
+
+    return { territoires };
   }
 }

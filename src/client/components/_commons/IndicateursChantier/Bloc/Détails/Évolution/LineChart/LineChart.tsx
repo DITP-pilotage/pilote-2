@@ -21,6 +21,7 @@ export interface LineChartProps {
   changerLaPeriodeSelectionnee: (periode: string) => void;
   periodesSelectionnablesZoom: string[];
   modeImpression?: boolean;
+  afficherInterrupteurCibles?: boolean;
 }
 
 const LineChart: FunctionComponent<LineChartProps> = ({
@@ -34,6 +35,7 @@ const LineChart: FunctionComponent<LineChartProps> = ({
   changerLaPeriodeSelectionnee,
   periodesSelectionnablesZoom,
   modeImpression = false,
+  afficherInterrupteurCibles = true,
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const chart = useRef<echarts.EChartsType | null>(null);
@@ -60,6 +62,7 @@ const LineChart: FunctionComponent<LineChartProps> = ({
       <div className="w-full h-[360px]" ref={ref} />
       <LineChartLegende
         afficherControls={!modeImpression}
+        afficherInterrupteurCibles={afficherInterrupteurCibles}
         afficherLesCibles={afficherLesCibles}
         changerLaPeriodeSelectionnee={changerLaPeriodeSelectionnee}
         periodeSelectionnee={periodeSelectionnee}

@@ -1,9 +1,9 @@
 import { useMemo } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
-import type { TerritoireEvolutionDonnees } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
-import useIndicateurEvolutionNew from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
-import LineChart from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/LineChart/LineChart";
+import type { TerritoireEvolutionDonnees } from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
+import useIndicateurEvolutionNew from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
+import LineChart from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/LineChart/LineChart";
 
 export const EvolutionCourbesValeursAvancement = ({
   indicateurId,
@@ -16,7 +16,7 @@ export const EvolutionCourbesValeursAvancement = ({
   jalon: number;
   territoiresSelectionnesCodes: string[];
 }) => {
-  const [evolutionTerritoires] =
+  const [evolutionData] =
     api.indicateur.recupererEvolutionValeursAvancementTerritoires.useSuspenseQuery(
       {
         indicateurId,
@@ -27,7 +27,7 @@ export const EvolutionCourbesValeursAvancement = ({
 
   const tousLesIndicateursDetails: TerritoireEvolutionDonnees[] =
     useMemo(() => {
-      return evolutionTerritoires
+      return evolutionData.territoires
         .filter((territoire) =>
           territoiresSelectionnesCodes.includes(territoire.territoireCode),
         )
@@ -41,12 +41,11 @@ export const EvolutionCourbesValeursAvancement = ({
               territoireDetails?.nomAffiché ?? territoire.territoireCode,
             données: {
               historiquesValeurs: territoire.historiquesValeurs,
-              listeValeursCiblesAnnuelles:
-                territoire.listeValeursCiblesAnnuelles,
+              listeValeursCiblesAnnuelles: [],
             },
           };
         });
-    }, [evolutionTerritoires, territoiresSelectionnesCodes]);
+    }, [evolutionData, territoiresSelectionnesCodes]);
 
   const {
     afficherLesCibles,
@@ -65,6 +64,7 @@ export const EvolutionCourbesValeursAvancement = ({
 
   return (
     <LineChart
+      afficherInterrupteurCibles={false}
       afficherLesCibles={afficherLesCibles}
       changerLaPeriodeSelectionnee={changerLaPeriodeSelectionnee}
       getOptions={getOptions}

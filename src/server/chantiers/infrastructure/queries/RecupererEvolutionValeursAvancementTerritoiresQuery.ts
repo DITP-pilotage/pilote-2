@@ -2,12 +2,10 @@ import type { Inject } from "@/server/chantiers/module";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 
-export type EvolutionVAIndicateurTerritoire = {
-  territoireCode: string;
-  historiquesValeurs: { date: string; valeur: number }[];
-  listeValeursCiblesAnnuelles: {
-    annee: number;
-    valeurCible: number | null;
+export type EvolutionVAResult = {
+  territoires: {
+    territoireCode: string;
+    historiquesValeurs: { date: string; valeur: number }[];
   }[];
 };
 
@@ -22,7 +20,7 @@ export class RecupererEvolutionValeursAvancementTerritoiresQuery {
     jalon: number;
     habilitations: Habilitations;
     profil: ProfilCode;
-  }): Promise<EvolutionVAIndicateurTerritoire[]> {
+  }): Promise<EvolutionVAResult> {
     const result =
       await this.deps.listerDetailsIndicateurTerritoireUseCaseV2.run(
         [params.indicateurId],
@@ -34,10 +32,13 @@ export class RecupererEvolutionValeursAvancementTerritoiresQuery {
 
     const details = result[params.indicateurId] ?? {};
 
-    return Object.entries(details).map(([territoireCode, detail]) => ({
-      territoireCode,
-      historiquesValeurs: detail.historiquesValeurs,
-      listeValeursCiblesAnnuelles: detail.listeValeursCiblesAnnuelles,
-    }));
+    const territoires = Object.entries(details).map(
+      ([territoireCode, detail]) => ({
+        territoireCode,
+        historiquesValeurs: detail.historiquesValeurs,
+      }),
+    );
+
+    return { territoires };
   }
 }

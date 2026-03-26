@@ -50,6 +50,7 @@ interface LineChartLegendeProps {
   changerLaPeriodeSelectionnee: (periode: string) => void;
   periodesSelectionnablesZoom: string[];
   afficherControls: boolean;
+  afficherInterrupteurCibles?: boolean;
 }
 
 const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
@@ -62,18 +63,21 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
   changerLaPeriodeSelectionnee,
   periodesSelectionnablesZoom,
   afficherControls,
+  afficherInterrupteurCibles = true,
 }) => {
   const id = useId();
   return (
     <div className="fr-mt-1w fr-ml-8w fr-mr-4w">
       {afficherControls ? (
         <div className="flex flex-col gap-2">
-          <Interrupteur
-            checked={afficherLesCibles}
-            direction="inverse"
-            libellé="afficher les valeurs cibles"
-            onChange={() => setAfficherLesCibles(!afficherLesCibles)}
-          />
+          {afficherInterrupteurCibles ? (
+            <Interrupteur
+              checked={afficherLesCibles}
+              direction="inverse"
+              libellé="afficher les valeurs cibles"
+              onChange={() => setAfficherLesCibles(!afficherLesCibles)}
+            />
+          ) : null}
           <div className="flex items-center flex-wrap gap-2">
             <span className="text-sm">zoomer sur : </span>
             {periodesSelectionnablesZoom.map((periode) => (
@@ -93,10 +97,12 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
       <div className="fr-text fr-text--bold">Légende :</div>
       <div className="flex items-start">
         <div className="flex flex-col whitespace-nowrap fr-mr-4w">
-          <div className="flex items-center fr-mb-1w">
-            <div className="w-[50px] h-0 border-t-[3px] border-dashed border-pilote-grey-legend fr-mr-2w" />
-            <span>valeur cible</span>
-          </div>
+          {afficherInterrupteurCibles ? (
+            <div className="flex items-center fr-mb-1w">
+              <div className="w-[50px] h-0 border-t-[3px] border-dashed border-pilote-grey-legend fr-mr-2w" />
+              <span>valeur cible</span>
+            </div>
+          ) : null}
           <div className="flex items-center">
             <div className="w-[50px] h-[3px] bg-pilote-grey-legend relative after:content-[''] after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-gray-500 after:rounded-full after:shadow-[0_0_2px_rgba(0,0,0,0.3)] fr-mr-2w" />
             <span>valeur de l'indicateur</span>
