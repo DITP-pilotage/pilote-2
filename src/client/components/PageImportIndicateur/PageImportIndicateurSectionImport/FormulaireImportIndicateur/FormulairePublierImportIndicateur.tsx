@@ -26,6 +26,7 @@ const FormulairePublierImportIndicateur: FunctionComponent<
       onSubmit={publierLeFichier as React.FormEventHandler<HTMLFormElement>}
     >
       <SubmitBouton
+        className="ml-8"
         label={
           wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
             .ETAPE_PUBLIER_FICHIER.LABEL_BOUTON_PROCHAINE_ETAPE

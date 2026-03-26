@@ -11,14 +11,14 @@ interface PageVideProps {
 
 const PageVide: FunctionComponent<PageVideProps> = ({ titre }) => {
   return (
-    <div className="[&_.fr-badge]:bg-[var(--background-contrast-purple-glycine)] [&_.fr-badge]:text-[var(--text-label-purple-glycine)] [&_.fr-badge]:max-h-8">
+    <div>
       <main>
         <div className="fr-px-15w fr-pb-12w fr-container--fluid">
           <div className="fr-grid-row fr-py-4w">
             <Titre baliseHtml="h1" className="fr-my-auto">
               {titre}
             </Titre>
-            <p className="fr-badge fr-ml-3w fr-my-auto">À venir</p>
+            <p className="fr-badge fr-ml-3w fr-my-auto bg-dsfr-purple-glycine-950 text-dsfr-purple-glycine-text max-h-8">À venir</p>
           </div>
           <Bloc>
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">

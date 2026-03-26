@@ -54,7 +54,7 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
         <CartographieZoomEtDéplacement svgRef={svgRef} viewbox={viewbox} />
       ) : null}
       <div
-        className={`max-w-[25rem] mx-auto [stroke:var(--grey-1000-50)] ${contoursGris ? "[stroke:#695240]" : ""}`}
+        className={`max-w-[25rem] mx-auto stroke-white ${contoursGris ? "stroke-dsfr-green-tilleul-verveine-sun" : ""}`}
       >
         <SecureTooltip
           anchorEl={hoveredElement}

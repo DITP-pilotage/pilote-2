@@ -27,7 +27,7 @@ export const CartographieTerritoireSélectionné: FunctionComponent<{
               territoire.code,
               {
                 className:
-                  "fill-none [stroke:var(--yellow-moutarde-850-200)] [stroke-width:0.5]",
+                  "fill-none stroke-dsfr-moutarde-main-850 [stroke-width:0.5]",
                 key: territoire.code,
               },
               mailleSelectionnee,
@@ -37,7 +37,7 @@ export const CartographieTerritoireSélectionné: FunctionComponent<{
             territoireCode,
             {
               className:
-                "fill-none [stroke:var(--yellow-moutarde-850-200)] [stroke-width:0.5]",
+                "fill-none stroke-dsfr-moutarde-main-850 [stroke-width:0.5]",
               key: territoireCode,
             },
             mailleSelectionnee,

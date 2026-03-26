@@ -13,8 +13,8 @@ const FicheUtilisateur: FunctionComponent<FicheUtilisateurProps> = ({
   const { scopes, chantiers } = useFicheUtilisateur(utilisateur);
 
   return (
-    <div className="[&_h1]:text-primary [&_h2]:text-primary">
-      <Titre baliseHtml="h2" className="fr-h5">
+    <div>
+      <Titre baliseHtml="h2" className="fr-h5 text-primary">
         Utilisateur
       </Titre>
       {!!utilisateur.dateDesactivation && (

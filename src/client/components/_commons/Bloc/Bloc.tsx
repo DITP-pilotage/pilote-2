@@ -29,7 +29,7 @@ const Bloc: FunctionComponent<BlocProps> = ({
       {titre ? (
         <div
           className={clsxm(
-            "titre h-16 border-b-2 border-b-[var(--border-plain-grey)] rounded-t-[7px] fr-mb-0 fr-p-2w fr-text--sm fr-text--bold flex align-center justify-start relative w-full print:rounded-t-lg",
+            "titre h-16 border-b-2 border-b-dsfr-grey-200 rounded-t-[7px] fr-mb-0 fr-p-2w fr-text--sm fr-text--bold flex align-center justify-start relative w-full print:rounded-t-lg",
             backgroundClassNameTitre,
           )}
         >

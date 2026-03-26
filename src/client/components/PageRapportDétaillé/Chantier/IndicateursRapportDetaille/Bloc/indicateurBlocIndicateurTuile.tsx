@@ -28,7 +28,7 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
 
   return (
     <div>
-      <table className="fr-p-0 fr-pb-2w table overflow-hidden bg-[var(--grey-1000-50)]">
+      <table className="fr-p-0 fr-pb-2w table overflow-hidden bg-white">
         <thead className="bg-dsfr-blue-france-925 bg-none [&_th:first-of-type]:rounded-tl-lg [&_th:last-child]:rounded-tr-lg">
           <tr>
             <th className="fr-py-1v">Territoire</th>

@@ -41,9 +41,9 @@ const PageImportIndicateurExplicationEtapeImport: FunctionComponent = () => {
   const etapeCourante = query.etapeCourante ? Number(query.etapeCourante) : 1;
 
   return (
-    <section className="bg-dsfr-grey-1000 [&_h2]:text-primary [&_li]:marker:content-['']">
+    <section className="bg-dsfr-grey-1000">
       <div className="fr-container fr-pt-2w fr-pb-3w">
-        <Titre baliseHtml="h2" className="fr-h4">
+        <Titre baliseHtml="h2" className="fr-h4 text-primary">
           {
             wording.PAGE_IMPORT_MESURE_INDICATEUR
               .SECTION_EXPLICATION_ETAPE_IMPORT.TITRE
@@ -52,7 +52,7 @@ const PageImportIndicateurExplicationEtapeImport: FunctionComponent = () => {
         <ol className="fr-grid-row fr-grid-row--gutters fr-m-0 fr-p-0">
           {explicationsEtapeImport.map(({ titre, texte }, index) => (
             <li
-              className="fr-col-lg-4 min-[62rem]:first-of-type:pl-0 min-[62rem]:last-of-type:pr-0"
+              className="fr-col-lg-4 min-[62rem]:first-of-type:pl-0 min-[62rem]:last-of-type:pr-0 marker:content-['']"
               key={titre}
             >
               <ExplicationEtapeIndicateur

@@ -73,6 +73,7 @@ const EtapeSelectionIndicateur: FunctionComponent<{
           </p>
           <div className="fr-mt-4w flex justify-end">
             <SubmitBouton
+              className="ml-8"
               iconRight={
                 <Icone
                   className="text-current h-4 w-4"

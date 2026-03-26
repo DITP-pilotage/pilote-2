@@ -153,9 +153,10 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
       <Titre baliseHtml="h2" className="fr-text--lg text-dsfr-grey-50">
         Contenu du rapport détaillé
       </Titre>
-      <div className="columns-4 gap-8 pl-0 text-[0.95rem] children:inline-block children:w-full">
+      <div className="columns-4 gap-8 pl-0 text-[0.95rem]">
         {filtresCatégories.map(({ nom, filtresActifs }) => (
           <FiltresSélectionnésCatégorie
+            className="inline-block w-full"
             filtres={filtresActifs}
             key={nom}
             titre={nom}

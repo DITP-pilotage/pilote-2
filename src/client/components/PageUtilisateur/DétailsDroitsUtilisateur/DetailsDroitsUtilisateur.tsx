@@ -31,7 +31,7 @@ export const DetailsDroitsUtilisateur: FunctionComponent<
     });
   return (
     <div>
-      <Titre baliseHtml="h2" className="fr-h5">
+      <Titre baliseHtml="h2" className="fr-h5 text-primary">
         {titre}
       </Titre>
       <div className="fr-grid-row">

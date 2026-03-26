@@ -40,7 +40,7 @@ const TableauChantiersContenu: FunctionComponent<
       {tableau.getRowModel().rows.map((row) =>
         row.getIsGrouped() ? (
           <tr
-            className="h-[4.5rem] not-first:border-t-primary not-first:border-t-2 bold cursor-pointer bg-white bg-[image:linear-gradient(0deg,var(--border-default-grey),var(--border-default-grey))] bg-no-repeat bg-bottom bg-[size:100%_1px] [@media(hover:hover)]:hover:bg-[var(--background-default-grey-hover)]"
+            className="h-[4.5rem] not-first:border-t-primary not-first:border-t-2 bold cursor-pointer bg-white bg-[image:linear-gradient(0deg,theme(colors.dsfr-grey-900),theme(colors.dsfr-grey-900))] bg-no-repeat bg-bottom bg-[size:100%_1px] [@media(hover:hover)]:hover:bg-dsfr-grey-1000"
             key={row.id}
             onClick={() => row.getToggleExpandedHandler()()}
           >

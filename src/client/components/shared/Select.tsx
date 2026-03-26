@@ -33,7 +33,7 @@ export const Select = Object.assign({}, SelectPrimitive, {
     <SelectPrimitive.Trigger
       className={clsxm(
         "bg-transparent border-none p-0 text-xs cursor-pointer",
-        "text-[var(--text-action-high-blue-france)] hover:underline",
+        "text-primary hover:underline",
         className,
       )}
       {...props}

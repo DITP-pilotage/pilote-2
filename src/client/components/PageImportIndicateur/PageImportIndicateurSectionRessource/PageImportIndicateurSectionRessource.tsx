@@ -6,9 +6,9 @@ import "@gouvfr/dsfr/dist/component/download/download.min.css";
 
 const PageImportIndicateurSectionRessource: FunctionComponent = () => {
   return (
-    <section className="bg-dsfr-alt-blue-france [&_h2]:text-primary [&_span.fr-h4]:text-primary [&_button]:ml-8 [&_table]:w-full">
+    <section className="bg-dsfr-alt-blue-france">
       <div className="fr-container fr-py-3w">
-        <Titre baliseHtml="h2">
+        <Titre baliseHtml="h2" className="text-primary">
           {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.TITRE}
         </Titre>
         <Bloc>
@@ -99,7 +99,7 @@ const PageImportIndicateurSectionRessource: FunctionComponent = () => {
                 .SECTION_EXPLICATION_IMPORT.FORMAT_ACCEPTE
             }
           </p>
-          <table className="fr-table fr-mb-3 fr-p-0">
+          <table className="fr-table fr-mb-3 fr-p-0 w-full">
             <thead>
               <tr>
                 <th>

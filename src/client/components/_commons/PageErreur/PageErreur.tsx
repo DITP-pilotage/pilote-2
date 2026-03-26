@@ -17,11 +17,11 @@ const PageErreur: FunctionComponent<PageErreurProps> = ({
   message,
 }) => {
   return (
-    <div className="bg-dsfr-alt-blue-france [&_h1]:text-primary [&_.fr-badge]:bg-[var(--background-contrast-purple-glycine)] [&_.fr-badge]:text-[var(--text-label-purple-glycine)] [&_.fr-badge]:max-h-8">
+    <div className="bg-dsfr-alt-blue-france">
       <main>
         <div className="fr-px-15w fr-pb-12w fr-container--fluid">
           <div className="fr-grid-row fr-py-4w">
-            <Titre baliseHtml="h1" className="fr-my-auto">
+            <Titre baliseHtml="h1" className="fr-my-auto text-primary">
               {titre}
             </Titre>
           </div>

@@ -27,7 +27,7 @@ const TableauChantiersTuileChantier: FunctionComponent<{
         <TypologiesPictos typologies={chantier.typologie} />
       </div>
       <div className="fr-mt-1w fr-ml-5v grid grid-cols-[2.5rem_auto_1.5rem_2.75rem] gap-x-4 items-baseline whitespace-nowrap">
-        <div className="flex self-start [&_.météo-picto]:max-w-full">
+        <div className="flex self-start">
           <TableauRéformesMétéo
             chantiersSontArchives={chantiersSontArchives}
             dateDeMàjDonnéesQualitatives={chantier.dateDeMàjDonnéesQualitatives}

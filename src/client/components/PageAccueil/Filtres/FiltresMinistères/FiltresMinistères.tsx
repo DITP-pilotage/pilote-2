@@ -99,7 +99,7 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
                 className={clsxm(
                   "fr-m-0 fr-p-1w fr-text--md rounded w-full text-left focus:-outline-offset-2",
                   estDéroulé(ministère) &&
-                    "font-bold text-white bg-primary [&_svg]:text-white focus:outline-white hover:bg-dsfr-blue-france-sun-113-hover",
+                    "font-bold text-white bg-primary focus:outline-white hover:bg-dsfr-blue-france-sun-113-hover",
                 )}
                 onClick={() => auClicSurUnMinistèreCallback(ministère)}
                 type="button"
@@ -130,7 +130,7 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
                         className={clsxm(
                           "!m-0 p-2 fr-text--md rounded w-full text-left focus:-outline-offset-2",
                           perimetres.includes(périmètre.id) &&
-                            "font-bold text-white bg-primary [&_svg]:text-white focus:outline-white hover:bg-dsfr-blue-france-sun-113-hover",
+                            "font-bold text-white bg-primary focus:outline-white hover:bg-dsfr-blue-france-sun-113-hover",
                         )}
                         onClick={() => auClicSurUnPérimètreCallback(périmètre)}
                         tabIndex={!estDéroulé(ministère) ? -1 : undefined}

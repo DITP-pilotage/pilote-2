@@ -254,13 +254,13 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="col-span-7 sm:col-span-9 lg:col-span-10 flex gap-1">
               <ul
                 aria-label="liste des tags des filtres météo actifs"
-                className="max-h-[7.5rem] ps-0 overflow-y-auto list-none children:inline my-0 gap-2 max-[992px]:overflow-x-auto max-[992px]:whitespace-nowrap"
+                className="max-h-[7.5rem] ps-0 overflow-y-auto list-none my-0 gap-2 max-[992px]:overflow-x-auto max-[992px]:whitespace-nowrap"
               >
                 {filtres.meteos
                   .split(",")
                   .filter(Boolean)
                   .map((meteo) => (
-                    <li key={`tag-axe-${meteo}`}>
+                    <li className="inline" key={`tag-axe-${meteo}`}>
                       <Tag
                         ariaLabel={`Retirer le tag ${libellesMeteos[meteo]}`}
                         color="yellow-moutarde"
