@@ -10,12 +10,7 @@ export const ComplementsCartographie = ({
   const { isModeM } = useMesureWidget();
 
   return (
-    <div
-      className={clsxm(
-        "flex",
-        isModeM ? "flex-row flex-wrap" : "flex-col",
-      )}
-    >
+    <div className={clsxm("flex", isModeM ? "flex-row flex-wrap" : "flex-col")}>
       {children}
     </div>
   );

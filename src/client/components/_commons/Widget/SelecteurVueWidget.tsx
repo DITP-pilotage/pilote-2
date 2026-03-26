@@ -31,9 +31,7 @@ export const SelecteurVueWidget = ({
         type="single"
         value={vueActive}
         className={
-          isModeP
-            ? "flex-col items-center"
-            : "flex-row justify-center"
+          isModeP ? "flex-col items-center" : "flex-row justify-center"
         }
         onValueChange={(value) => {
           if (value) {

@@ -8,10 +8,7 @@ export const PillToggleGroup = Object.assign({}, ToggleGroup, {
   Root: ({ children, ...props }: ComponentProps<typeof ToggleGroup.Root>) => (
     <ToggleGroup.Root
       {...props}
-      className={clsxm(
-        "flex flex-wrap gap-2",
-        props.className,
-      )}
+      className={clsxm("flex flex-wrap gap-2", props.className)}
     >
       {children}
     </ToggleGroup.Root>

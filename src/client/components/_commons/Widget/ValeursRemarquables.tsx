@@ -50,9 +50,7 @@ export const ValeursRemarquables = ({
       <div
         className={clsxm(
           "flex",
-          isModeP
-            ? "flex-col"
-            : "flex-row flex-wrap justify-center",
+          isModeP ? "flex-col" : "flex-row flex-wrap justify-center",
         )}
       >
         {valeurs.minimum !== null && (
