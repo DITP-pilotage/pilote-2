@@ -32,7 +32,8 @@ export default function SélecteurCustom<T extends string>({
       <div
         className={clsxm(
           "hidden",
-          estOuvert && "block absolute z-[2] w-full max-h-80 overflow-auto bg-dsfr-contrast-grey border border-gray-500",
+          estOuvert &&
+            "block absolute z-[2] w-full max-h-80 overflow-auto bg-dsfr-contrast-grey border border-gray-500",
         )}
         ref={ref}
         role="menu"
@@ -64,7 +65,10 @@ export default function SélecteurCustom<T extends string>({
                 {option.libellé}
               </div>
             ) : (
-              <div className="fr-px-2w text-base leading-6 text-dsfr-mention-grey" id={option.valeur}>
+              <div
+                className="fr-px-2w text-base leading-6 text-dsfr-mention-grey"
+                id={option.valeur}
+              >
                 {option.libellé}
               </div>
             )}

@@ -46,7 +46,9 @@ const RepartitionsMeteosRapportDetaille: FunctionComponent<
             <p className="fr-h1 fr-mb-0 text-primary">
               {repartitionMeteos[meteo]}
             </p>
-            <p className="fr-mb-0 break-keep text-dsfr-grey-50 max-[80rem]:!text-xs">{libellesMeteos[meteo]}</p>
+            <p className="fr-mb-0 break-keep text-dsfr-grey-50 max-[80rem]:!text-xs">
+              {libellesMeteos[meteo]}
+            </p>
           </button>
         </li>
       ))}

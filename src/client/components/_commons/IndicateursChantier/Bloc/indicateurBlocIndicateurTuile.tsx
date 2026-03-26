@@ -101,7 +101,9 @@ const IndicateurBlocIndicateurTuile = () => {
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold">Cible 2026</td>
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold">
+              Cible 2026
+            </td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 [&_span:nth-of-type(2)]:text-[10px]">
               <span>
                 {Boolean(valeurCible)

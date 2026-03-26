@@ -61,10 +61,7 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
   });
 
   return (
-    <form
-      method="post"
-      onSubmit={handleSubmit(modifierSynthèseDesRésultats)}
-    >
+    <form method="post" onSubmit={handleSubmit(modifierSynthèseDesRésultats)}>
       <div className="flex items-center gap-2 fr-mb-1v">
         <Titre baliseHtml="h3" className="text-xl mb-0">
           {`Modifier le commentaire "${LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS}"`}

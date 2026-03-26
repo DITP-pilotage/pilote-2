@@ -30,10 +30,10 @@ import {
   useTerritoireSelectionne,
 } from "@/components/PageChantier/PageChantierServerSideContext";
 import { BandeauEntetePageChantier } from "@/components/PageChantier/BandeauEntetePageChantier";
+import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
 import AvancementChantier from "./AvancementChantier/AvancementChantier";
 import PageChantierEnTête from "./EnTête/EnTête";
 import Cartes from "./Cartes/Cartes";
-import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
 import { usePageChantier } from "./usePageChantier";
 import { DécisionsStratégiques } from "./DécisionsStratégiques/DécisionsStratégiques";
 
@@ -213,7 +213,10 @@ const PageChantier = () => {
                 : "",
             )}
           >
-            <section className="grid grid-rows-[auto_1fr] print:block print:break-inside-avoid [grid-area:avancement]" id="avancement">
+            <section
+              className="grid grid-rows-[auto_1fr] print:block print:break-inside-avoid [grid-area:avancement]"
+              id="avancement"
+            >
               <TitreInfobulleConteneur className="fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0">
                 <Titre
                   baliseHtml="h2"
@@ -261,7 +264,10 @@ const PageChantier = () => {
                 territoireCode={territoireCode}
               />
             </section>
-            <section className="grid grid-rows-[auto_1fr] print:block [grid-area:synthèse]" id="synthèse">
+            <section
+              className="grid grid-rows-[auto_1fr] print:block [grid-area:synthèse]"
+              id="synthèse"
+            >
               <TitreInfobulleConteneur className="fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0">
                 <Titre
                   baliseHtml="h2"
@@ -282,7 +288,10 @@ const PageChantier = () => {
                 nomTerritoire={territoireSélectionné.nomAffiché}
               />
             </section>
-            <section className="grid grid-rows-[auto_1fr] print:block print:break-inside-avoid [grid-area:responsables]" id="responsables">
+            <section
+              className="grid grid-rows-[auto_1fr] print:block print:break-inside-avoid [grid-area:responsables]"
+              id="responsables"
+            >
               <Titre
                 baliseHtml="h2"
                 className={clsx(
@@ -312,14 +321,17 @@ const PageChantier = () => {
           !!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] ||
           chantier.estTerritorialisé ? (
             <div className="fr-my-2w">
-              <section className="grid grid-rows-[auto_1fr] print:block print:break-inside-avoid" id="cartes">
+              <section
+                className="grid grid-rows-[auto_1fr] print:block print:break-inside-avoid"
+                id="cartes"
+              >
                 <Titre
                   baliseHtml="h2"
                   className={clsx(
                     "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0",
                     {
                       "text-primary": !estChantierArchive,
-                    "!text-dsfr-grey-50": estChantierArchive,
+                      "!text-dsfr-grey-50": estChantierArchive,
                     },
                   )}
                 >
@@ -330,7 +342,10 @@ const PageChantier = () => {
             </div>
           ) : null}
           <div className="fr-my-2w">
-            <section className="grid grid-rows-[auto_1fr] print:block" id="objectifs">
+            <section
+              className="grid grid-rows-[auto_1fr] print:block"
+              id="objectifs"
+            >
               <TitreInfobulleConteneur className="fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0">
                 <Titre
                   baliseHtml="h2"
@@ -351,14 +366,17 @@ const PageChantier = () => {
           </div>
           {indicateurs.length > 0 ? (
             <div className="fr-my-2w">
-              <section className="grid grid-rows-[auto_1fr] print:block" id="indicateurs">
+              <section
+                className="grid grid-rows-[auto_1fr] print:block"
+                id="indicateurs"
+              >
                 <Titre
                   baliseHtml="h2"
                   className={clsx(
                     "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0",
                     {
                       "text-primary": !estChantierArchive,
-                    "!text-dsfr-grey-50": estChantierArchive,
+                      "!text-dsfr-grey-50": estChantierArchive,
                     },
                   )}
                 >
@@ -390,7 +408,10 @@ const PageChantier = () => {
           ) : null}
           {territoireSélectionné.maille === "nationale" ? (
             <div className="fr-my-2w">
-              <section className="grid grid-rows-[auto_1fr] print:block" id="décisions-stratégiques">
+              <section
+                className="grid grid-rows-[auto_1fr] print:block"
+                id="décisions-stratégiques"
+              >
                 <TitreInfobulleConteneur className="!mb-4 !mt-3 !md:mt-0 !mx-4 !md:mx-0 flex align-center">
                   <Titre baliseHtml="h2" className="fr-h4 !m-0" estInline>
                     Décisions stratégiques
@@ -407,7 +428,10 @@ const PageChantier = () => {
             </div>
           ) : null}
           <div className="fr-my-2w">
-            <section className="grid grid-rows-[auto_1fr] print:block" id="commentaires">
+            <section
+              className="grid grid-rows-[auto_1fr] print:block"
+              id="commentaires"
+            >
               <TitreInfobulleConteneur className="fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0">
                 <Titre
                   baliseHtml="h2"

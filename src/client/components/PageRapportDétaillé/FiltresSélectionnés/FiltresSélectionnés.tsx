@@ -150,10 +150,7 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
 
   return (
     <div className="fr-mb-2w print:hidden">
-      <Titre
-        baliseHtml="h2"
-        className="fr-text--lg text-dsfr-grey-50"
-      >
+      <Titre baliseHtml="h2" className="fr-text--lg text-dsfr-grey-50">
         Contenu du rapport détaillé
       </Titre>
       <div className="columns-4 gap-8 pl-0 text-[0.95rem] children:inline-block children:w-full">

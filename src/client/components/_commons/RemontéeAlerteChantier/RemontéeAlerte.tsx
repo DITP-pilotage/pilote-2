@@ -47,7 +47,9 @@ const RemontéeAlerte: FunctionComponent<RemontéeAlerteProps> = ({
       <span className="fr-h1 fr-mb-0 text-warning">
         {nombre ?? "-"} {filtreAlerte}
       </span>
-      <span className="fr-mb-0 texte-gauche text-xs text-dsfr-grey-50 md:text-base">{libellé}</span>
+      <span className="fr-mb-0 texte-gauche text-xs text-dsfr-grey-50 md:text-base">
+        {libellé}
+      </span>
     </button>
   );
 };

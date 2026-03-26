@@ -228,7 +228,10 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="bg-transparent" key={détailTerritoireSélectionné.nomAffiché}>
+                  <tr
+                    className="bg-transparent"
+                    key={détailTerritoireSélectionné.nomAffiché}
+                  >
                     <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w !text-sm bold text-primary min-h-8 align-top">
                       {détailTerritoireSélectionné.nomAffiché}
                     </td>

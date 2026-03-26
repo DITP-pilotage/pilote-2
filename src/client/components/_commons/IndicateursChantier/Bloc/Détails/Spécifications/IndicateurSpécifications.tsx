@@ -34,7 +34,9 @@ const IndicateurSpécifications: FunctionComponent<
 
   return (
     <div className="relative">
-      <p className="fr-text--md inline-block mb-1 text-primary">Description de l'indicateur</p>
+      <p className="fr-text--md inline-block mb-1 text-primary">
+        Description de l'indicateur
+      </p>
       <p className="fr-text--sm mb-0">
         {indicateur.description ?? libelléValeurNull}
       </p>
@@ -44,13 +46,21 @@ const IndicateurSpécifications: FunctionComponent<
       <p className="fr-text--sm mb-0">
         {libellesTypologieIndicateur[indicateur.type]}
       </p>
-      <p className="fr-text--md inline-block mb-1 text-primary fr-mt-2w">Méthode de calcul</p>
+      <p className="fr-text--md inline-block mb-1 text-primary fr-mt-2w">
+        Méthode de calcul
+      </p>
       <p className="fr-text--sm mb-0">
         {indicateur.modeDeCalcul ?? libelléValeurNull}
       </p>
-      <p className="fr-text--md inline-block mb-1 text-primary fr-mt-2w">Source</p>
-      <p className="fr-text--sm mb-0">{indicateur.source ?? libelléValeurNull}</p>
-      <p className="fr-text--md inline-block mb-1 text-primary fr-mt-2w">Mise à jour</p>
+      <p className="fr-text--md inline-block mb-1 text-primary fr-mt-2w">
+        Source
+      </p>
+      <p className="fr-text--sm mb-0">
+        {indicateur.source ?? libelléValeurNull}
+      </p>
+      <p className="fr-text--md inline-block mb-1 text-primary fr-mt-2w">
+        Mise à jour
+      </p>
       {!detailIndicateurDuTerritoire.estApplicable ? (
         <p className="fr-text--sm mb-0">
           L'indicateur n'est pas applicable sur le territoire.

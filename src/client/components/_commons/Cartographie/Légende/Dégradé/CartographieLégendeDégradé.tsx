@@ -15,7 +15,9 @@ const CartographieLégendeDégradé: FunctionComponent<
       </p>
       <div
         className="h-2"
-        style={{ background: `linear-gradient(90deg, ${contenu.couleurMin}, ${contenu.couleurMax})` }}
+        style={{
+          background: `linear-gradient(90deg, ${contenu.couleurMin}, ${contenu.couleurMax})`,
+        }}
       />
       <div className="flex justify-between">
         <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-0">

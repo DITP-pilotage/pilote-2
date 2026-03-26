@@ -98,7 +98,8 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
               <button
                 className={clsxm(
                   "fr-m-0 fr-p-1w fr-text--md rounded w-full text-left focus:-outline-offset-2",
-                  estDéroulé(ministère) && "font-bold text-white bg-primary [&_svg]:text-white focus:outline-white hover:bg-dsfr-blue-france-sun-113-hover",
+                  estDéroulé(ministère) &&
+                    "font-bold text-white bg-primary [&_svg]:text-white focus:outline-white hover:bg-dsfr-blue-france-sun-113-hover",
                 )}
                 onClick={() => auClicSurUnMinistèreCallback(ministère)}
                 type="button"
@@ -118,7 +119,8 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
                 <ul
                   className={clsxm(
                     "fr-p-0 fr-m-0 fr-mb-1w list-none overflow-y-hidden transition-[max-height] duration-500 [transition-timing-function:cubic-bezier(0,1.05,0,1)] max-h-0",
-                    estDéroulé(ministère) && "max-h-screen transition-[max-height] duration-[2s]",
+                    estDéroulé(ministère) &&
+                      "max-h-screen transition-[max-height] duration-[2s]",
                   )}
                   tabIndex={!estDéroulé(ministère) ? -1 : undefined}
                 >
@@ -127,7 +129,8 @@ const FiltresMinistères: FunctionComponent<FiltresMinistèresProps> = ({
                       <button
                         className={clsxm(
                           "!m-0 p-2 fr-text--md rounded w-full text-left focus:-outline-offset-2",
-                          perimetres.includes(périmètre.id) && "font-bold text-white bg-primary [&_svg]:text-white focus:outline-white hover:bg-dsfr-blue-france-sun-113-hover",
+                          perimetres.includes(périmètre.id) &&
+                            "font-bold text-white bg-primary [&_svg]:text-white focus:outline-white hover:bg-dsfr-blue-france-sun-113-hover",
                         )}
                         onClick={() => auClicSurUnPérimètreCallback(périmètre)}
                         tabIndex={!estDéroulé(ministère) ? -1 : undefined}

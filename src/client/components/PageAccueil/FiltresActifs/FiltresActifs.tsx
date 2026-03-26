@@ -97,7 +97,10 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
   );
 
   return (
-    <div className="sticky w-full top-0 z-[1] bg-dsfr-blue-france-925 shadow-[0_6px_18px_var(--shadow-color)] max-[992px]:top-14" id="filtres-actifs">
+    <div
+      className="sticky w-full top-0 z-[1] bg-dsfr-blue-france-925 shadow-[0_6px_18px_var(--shadow-color)] max-[992px]:top-14"
+      id="filtres-actifs"
+    >
       <div
         aria-controls="filtres-actifs"
         aria-expanded={estOuvert}

@@ -26,7 +26,8 @@ export const CartographieTerritoireSélectionné: FunctionComponent<{
             getTraceSvg(
               territoire.code,
               {
-                className: "fill-none [stroke:var(--yellow-moutarde-850-200)] [stroke-width:0.5]",
+                className:
+                  "fill-none [stroke:var(--yellow-moutarde-850-200)] [stroke-width:0.5]",
                 key: territoire.code,
               },
               mailleSelectionnee,
@@ -35,7 +36,8 @@ export const CartographieTerritoireSélectionné: FunctionComponent<{
         : getTraceSvg(
             territoireCode,
             {
-              className: "fill-none [stroke:var(--yellow-moutarde-850-200)] [stroke-width:0.5]",
+              className:
+                "fill-none [stroke:var(--yellow-moutarde-850-200)] [stroke-width:0.5]",
               key: territoireCode,
             },
             mailleSelectionnee,

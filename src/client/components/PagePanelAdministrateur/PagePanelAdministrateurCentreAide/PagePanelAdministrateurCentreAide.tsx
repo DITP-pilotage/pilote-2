@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react";
 import { EditeurCentreAide } from "@/components/_commons/EditeurRiche/EditeurCentreAide";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
-import { ContenuHtmlStyled } from "@/components/_commons/EditeurContenu3Colonnes/EditeurContenu3Colonnes.styled";
 import { ArborescenceCentreAideAdmin } from "./ArborescenceCentreAide";
 import { useEditionCentreAide } from "./useEditionCentreAide";
 
@@ -97,9 +96,12 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
           {aContenu && (
             <div className="flex-1 border-l border-gray-200 overflow-y-auto p-4">
               <h3 className="text-base font-bold mb-4">Aperçu</h3>
-              <ContenuHtmlStyled key={contenu}>
+              <div
+                className="[&_p]:mb-0 [&_a]:text-primary [&_h4]:my-2 [&_hr]:!my-2"
+                key={contenu}
+              >
                 <RenduContenuHtml html={contenu!} />
-              </ContenuHtmlStyled>
+              </div>
             </div>
           )}
         </>

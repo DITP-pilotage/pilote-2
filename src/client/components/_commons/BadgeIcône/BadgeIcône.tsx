@@ -6,7 +6,11 @@ interface BadgeIcôneProps {
 }
 
 const BadgeIcône: FunctionComponent<BadgeIcôneProps> = ({ type }) => {
-  return <p className={`fr-badge fr-badge--${type} [&::before]:my-0 [&::before]:-mx-1`} />;
+  return (
+    <p
+      className={`fr-badge fr-badge--${type} [&::before]:my-0 [&::before]:-mx-1`}
+    />
+  );
 };
 
 export default BadgeIcône;

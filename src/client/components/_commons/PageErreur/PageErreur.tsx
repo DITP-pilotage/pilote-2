@@ -4,7 +4,6 @@ import technicalError from "@gouvfr/dsfr/dist/artwork/pictograms/system/technica
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import PageErreurStyled from "./PageErreurStyled";
 
 interface PageErreurProps {
   titre: string;
@@ -18,7 +17,7 @@ const PageErreur: FunctionComponent<PageErreurProps> = ({
   message,
 }) => {
   return (
-    <PageErreurStyled>
+    <div className="bg-dsfr-alt-blue-france [&_h1]:text-primary [&_.fr-badge]:bg-[var(--background-contrast-purple-glycine)] [&_.fr-badge]:text-[var(--text-label-purple-glycine)] [&_.fr-badge]:max-h-8">
       <main>
         <div className="fr-px-15w fr-pb-12w fr-container--fluid">
           <div className="fr-grid-row fr-py-4w">
@@ -69,7 +68,7 @@ const PageErreur: FunctionComponent<PageErreurProps> = ({
           </Bloc>
         </div>
       </main>
-    </PageErreurStyled>
+    </div>
   );
 };
 

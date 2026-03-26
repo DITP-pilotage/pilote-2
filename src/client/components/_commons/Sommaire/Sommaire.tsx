@@ -13,7 +13,10 @@ const Sommaire: FunctionComponent<SommaireProps> = ({ rubriques, auClic }) => {
         <p className="bold fr-text--lg fr-mb-1w">Sommaire</p>
         <ul className="fr-text--sm fr-pl-3w [&_a:not(:hover,:active)]:[--underline-idle-width:0]">
           {rubriques.map((rubrique) => (
-            <li className="fr-pb-0 leading-8 text-primary list-none" key={rubrique.ancre}>
+            <li
+              className="fr-pb-0 leading-8 text-primary list-none"
+              key={rubrique.ancre}
+            >
               <a href={`#${rubrique.ancre}`} onClick={auClic}>
                 {rubrique.nom}
               </a>
@@ -21,7 +24,10 @@ const Sommaire: FunctionComponent<SommaireProps> = ({ rubriques, auClic }) => {
                 rubrique.sousRubriques.length > 0 && (
                   <ul className="fr-pl-3w fr-my-0">
                     {rubrique.sousRubriques.map((sousRubrique) => (
-                      <li className="pb-3 leading-5 text-primary list-none" key={sousRubrique.nom}>
+                      <li
+                        className="pb-3 leading-5 text-primary list-none"
+                        key={sousRubrique.nom}
+                      >
                         <a href={`#${sousRubrique.ancre}`} onClick={auClic}>
                           {sousRubrique.nom}
                         </a>

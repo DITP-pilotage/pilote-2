@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
-import { ContenuHtmlStyled } from "@/components/_commons/EditeurContenu3Colonnes/EditeurContenu3Colonnes.styled";
 import { ArborescenceCentreAide } from "@/components/_commons/CentreAide/ArborescenceCentreAide";
 import { NoeudArbre } from "@/components/_commons/CentreAide/types";
 import { useLectureCentreAide } from "@/components/_commons/CentreAide/useLectureCentreAide";
@@ -40,9 +39,9 @@ export const PageCentreAidePilote: FunctionComponent = () => {
           <div className="flex-1 overflow-y-auto p-6">
             <h2 className="text-xl font-bold mb-4">{itemSelectionne.titre}</h2>
             {aContenu ? (
-              <ContenuHtmlStyled>
+              <div className="[&_p]:mb-0 [&_a]:text-primary [&_h4]:my-2 [&_hr]:!my-2">
                 <RenduContenuHtml html={itemSelectionne.contenu!} />
-              </ContenuHtmlStyled>
+              </div>
             ) : (
               <p className="text-gray-400 text-sm">
                 Ce groupe ne contient pas de contenu.

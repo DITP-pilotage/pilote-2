@@ -32,17 +32,22 @@ interface JaugeDeProgressionProps {
   noWrap?: boolean;
 }
 
-const classesÀPartirDeTaille: Record<JaugeDeProgressionTaille, { valeur: string; libellé: string }> = {
+const classesÀPartirDeTaille: Record<
+  JaugeDeProgressionTaille,
+  { valeur: string; libellé: string }
+> = {
   sm: {
     valeur: "fr-h6",
     libellé: "",
   },
   md: {
-    valeur: "absolute top-[calc(50%-1.4rem)] w-full !leading-10 fr-h4 text-center",
+    valeur:
+      "absolute top-[calc(50%-1.4rem)] w-full !leading-10 fr-h4 text-center",
     libellé: "text-center",
   },
   lg: {
-    valeur: "absolute top-[calc(50%-1.4rem)] w-full !leading-10 fr-h1 text-center",
+    valeur:
+      "absolute top-[calc(50%-1.4rem)] w-full !leading-10 fr-h1 text-center",
     libellé: "text-center",
   },
 };
@@ -74,13 +79,21 @@ const JaugeDeProgression: FunctionComponent<JaugeDeProgressionProps> = ({
         </p>
       </div>
       <p
-        className={clsxm("fr-text--xs fr-mb-0 text-center", classesÀPartirDeTaille[taille].libellé, noWrap && "no-wrap")}
+        className={clsxm(
+          "fr-text--xs fr-mb-0 text-center",
+          classesÀPartirDeTaille[taille].libellé,
+          noWrap && "no-wrap",
+        )}
       >
         {libellé}
       </p>
       {date ? (
         <p
-          className={clsxm("fr-text--xs fr-mb-0 text-center", classesÀPartirDeTaille[taille].libellé, noWrap && "no-wrap")}
+          className={clsxm(
+            "fr-text--xs fr-mb-0 text-center",
+            classesÀPartirDeTaille[taille].libellé,
+            noWrap && "no-wrap",
+          )}
         >
           {`(${formaterDate(date, "MM/YYYY")})`}
         </p>

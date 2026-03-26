@@ -18,7 +18,9 @@ const BarreLatérale: FunctionComponent<BarreLatéraleProps> = ({
         className={clsxm(
           "barre-latérale sticky top-0 z-[2] w-80 h-screen pb-32 overflow-y-auto bg-white border-r border-dsfr-grey-925",
           "max-[992px]:fixed max-[992px]:top-0 max-[992px]:left-0 max-[992px]:z-[10000] max-[992px]:w-[90%] max-[992px]:h-[95%] max-[992px]:transition-transform max-[992px]:duration-500",
-          estOuvert ? "max-[992px]:translate-x-0" : "max-[992px]:-translate-x-[200rem]",
+          estOuvert
+            ? "max-[992px]:translate-x-0"
+            : "max-[992px]:-translate-x-[200rem]",
         )}
       >
         <div className="fr-grid-row fr-grid-row--right bg-dsfr-alt-blue-france">

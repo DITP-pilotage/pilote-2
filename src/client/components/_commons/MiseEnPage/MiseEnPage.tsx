@@ -32,9 +32,7 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
               <div className="relative w-full h-[0.4em] bg-[rgb(229,233,235)]">
                 <div className="relative h-full bg-[#3c763d] bg-[size:23em_0.25em] animate-cssload-width" />
               </div>
-              <p className="p-4 m-0">
-                Chargement des données en cours...
-              </p>
+              <p className="p-4 m-0">Chargement des données en cours...</p>
             </div>
           ) : null}
           {status === "unauthenticated" ? (

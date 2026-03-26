@@ -5,7 +5,11 @@ interface EncartProps {
 }
 
 const Encart: FunctionComponent<EncartProps> = ({ children }) => {
-  return <div className="encart-container py-4 px-8 bg-dsfr-blue-france-925">{children}</div>;
+  return (
+    <div className="encart-container py-4 px-8 bg-dsfr-blue-france-925">
+      {children}
+    </div>
+  );
 };
 
 export default Encart;

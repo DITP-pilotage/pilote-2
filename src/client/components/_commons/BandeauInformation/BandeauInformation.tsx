@@ -10,17 +10,13 @@ const warningStyle = {
 } as const;
 
 const getBandeauTypeConfig = (bandeauType: string) => {
-  switch (bandeauType) {
-    case "INFO": {
-      return { className: "fr-notice--info", style: undefined };
-    }
-    case "WARNING": {
-      return { className: "fr-notice--info fr-notice--warning", style: warningStyle };
-    }
-    default: {
-      return { className: "fr-notice--info fr-notice--warning", style: warningStyle };
-    }
+  if (bandeauType === "INFO") {
+    return { className: "fr-notice--info", style: undefined };
   }
+  return {
+    className: "fr-notice--info fr-notice--warning",
+    style: warningStyle,
+  };
 };
 
 const BandeauInformation: FunctionComponent<

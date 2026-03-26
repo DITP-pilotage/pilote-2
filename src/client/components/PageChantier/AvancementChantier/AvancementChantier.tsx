@@ -80,9 +80,12 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   const sousTitreTuileAvancementRegional = "Taux d'avancement régional";
 
   const classeAPartirDeLaMaille: Record<Maille, string> = {
-    nationale: "md:[grid-template-areas:'nat'] md:grid-cols-[4fr_4fr] print:[grid-template-areas:'nat'] print:grid-cols-[4fr_4fr]",
-    departementale: "[grid-template-areas:'dept'_'reg'_'nat'] min-[1025px]:[grid-template-areas:'dept_reg_nat'] min-[1025px]:grid-cols-3 min-[768px]:max-[1024px]:[grid-template-areas:'dept_reg'_'nat_nat'] min-[768px]:max-[1024px]:grid-cols-2 print:[grid-template-areas:'dept_reg_nat'] print:grid-cols-3",
-    regionale: "md:[grid-template-areas:'reg_nat'] md:grid-cols-2 print:[grid-template-areas:'reg_nat'] print:grid-cols-2",
+    nationale:
+      "md:[grid-template-areas:'nat'] md:grid-cols-[4fr_4fr] print:[grid-template-areas:'nat'] print:grid-cols-[4fr_4fr]",
+    departementale:
+      "[grid-template-areas:'dept'_'reg'_'nat'] min-[1025px]:[grid-template-areas:'dept_reg_nat'] min-[1025px]:grid-cols-3 min-[768px]:max-[1024px]:[grid-template-areas:'dept_reg'_'nat_nat'] min-[768px]:max-[1024px]:grid-cols-2 print:[grid-template-areas:'dept_reg_nat'] print:grid-cols-3",
+    regionale:
+      "md:[grid-template-areas:'reg_nat'] md:grid-cols-2 print:[grid-template-areas:'reg_nat'] print:grid-cols-2",
   };
 
   const tuileEcartTAAPartirDeLaMaille: Record<string, string> = {

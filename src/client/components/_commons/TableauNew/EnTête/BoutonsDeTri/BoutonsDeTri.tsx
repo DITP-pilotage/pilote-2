@@ -20,7 +20,8 @@ export default function BoutonsDeTri({
         aria-label={`trier la colonne "${nomColonneÀTrier}" par ordre croissant`}
         className={clsxm(
           "w-6 bg-dsfr-blue-france-925 border border-white rounded hover:bg-dsfr-blue-france-925-hover fr-mr-1v",
-          directionDeTri === "asc" && "bg-primary hover:bg-dsfr-blue-france-sun-113-hover",
+          directionDeTri === "asc" &&
+            "bg-primary hover:bg-dsfr-blue-france-sun-113-hover",
         )}
         onClick={() =>
           directionDeTri === "asc"
@@ -35,7 +36,8 @@ export default function BoutonsDeTri({
         aria-label={`trier la colonne "${nomColonneÀTrier}" par ordre décroissant`}
         className={clsxm(
           "w-6 bg-dsfr-blue-france-925 border border-white rounded hover:bg-dsfr-blue-france-925-hover",
-          directionDeTri === "desc" && "bg-primary hover:bg-dsfr-blue-france-sun-113-hover",
+          directionDeTri === "desc" &&
+            "bg-primary hover:bg-dsfr-blue-france-sun-113-hover",
         )}
         onClick={() =>
           directionDeTri === "desc"

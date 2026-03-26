@@ -66,7 +66,9 @@ const SélecteurMaille: FunctionComponent<{
               onClick={() => changerMaille(maille)}
               type="button"
             >
-              <p className="overflow-hidden text-ellipsis whitespace-nowrap fr-text--sm">{libellé}</p>
+              <p className="overflow-hidden text-ellipsis whitespace-nowrap fr-text--sm">
+                {libellé}
+              </p>
             </button>
           ))}
       </div>

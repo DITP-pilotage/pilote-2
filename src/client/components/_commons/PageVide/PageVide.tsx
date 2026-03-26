@@ -4,7 +4,6 @@ import technicalError from "@gouvfr/dsfr/dist/artwork/pictograms/system/technica
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import PageVideStyled from "./PageVideStyled";
 
 interface PageVideProps {
   titre: string;
@@ -12,7 +11,7 @@ interface PageVideProps {
 
 const PageVide: FunctionComponent<PageVideProps> = ({ titre }) => {
   return (
-    <PageVideStyled>
+    <div className="[&_.fr-badge]:bg-[var(--background-contrast-purple-glycine)] [&_.fr-badge]:text-[var(--text-label-purple-glycine)] [&_.fr-badge]:max-h-8">
       <main>
         <div className="fr-px-15w fr-pb-12w fr-container--fluid">
           <div className="fr-grid-row fr-py-4w">
@@ -77,7 +76,7 @@ const PageVide: FunctionComponent<PageVideProps> = ({ titre }) => {
           </Bloc>
         </div>
       </main>
-    </PageVideStyled>
+    </div>
   );
 };
 

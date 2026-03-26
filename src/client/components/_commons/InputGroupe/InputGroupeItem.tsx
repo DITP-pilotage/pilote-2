@@ -29,9 +29,20 @@ const InputGroupeItem: FunctionComponent<MultiSelectGroupeProps> = ({
           <li
             className="fr-py-1w fr-pl-2w"
             key={`${option.value} ${id}`}
-            style={index % 2 === 1
-              ? { backgroundColor: "var(--background-contrast-grey)", "--idle": "transparent", "--hover": "var(--background-contrast-grey-hover)", "--active": "var(--background-contrast-grey-active)" } as React.CSSProperties
-              : { backgroundColor: "var(--background-alt-grey)", "--idle": "transparent", "--hover": "var(--background-alt-grey-hover)", "--active": "var(--background-alt-grey-active)" } as React.CSSProperties
+            style={
+              index % 2 === 1
+                ? ({
+                    backgroundColor: "var(--background-contrast-grey)",
+                    "--idle": "transparent",
+                    "--hover": "var(--background-contrast-grey-hover)",
+                    "--active": "var(--background-contrast-grey-active)",
+                  } as React.CSSProperties)
+                : ({
+                    backgroundColor: "var(--background-alt-grey)",
+                    "--idle": "transparent",
+                    "--hover": "var(--background-alt-grey-hover)",
+                    "--active": "var(--background-alt-grey-active)",
+                  } as React.CSSProperties)
             }
           >
             <button

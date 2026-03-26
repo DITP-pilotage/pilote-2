@@ -127,7 +127,8 @@ export const FiltresSelectionUnique: FunctionComponent<
               <button
                 className={clsxm(
                   "fr-tag fr-tag--icon-left fr-mr-1w w-auto min-w-0",
-                  filtresNew === filtre.id && "text-white bg-primary hover:text-white hover:bg-primary hover:cursor-not-allowed",
+                  filtresNew === filtre.id &&
+                    "text-white bg-primary hover:text-white hover:bg-primary hover:cursor-not-allowed",
                 )}
                 id={`${categorieDeFiltre}-${filtre.id}`}
                 key={`${categorieDeFiltre}-${filtre.id}`}

@@ -67,7 +67,8 @@ const MultiSelect: FunctionComponent<MultiSelectProps> = ({
       <div
         className={clsxm(
           "hidden",
-          estOuvert && "block absolute z-[2] w-full max-h-80 p-4 overflow-auto bg-white border border-gray-500",
+          estOuvert &&
+            "block absolute z-[2] w-full max-h-80 p-4 overflow-auto bg-white border border-gray-500",
         )}
         ref={ref}
         role="menu"
