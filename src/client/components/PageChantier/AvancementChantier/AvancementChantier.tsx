@@ -10,7 +10,7 @@ import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territo
 import { formaterDate } from "@/client/utils/date/date";
 import { BadgeTendance } from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/BadgeTendance";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
-import AvancementChantierStyled from "./AvancementChantier.styled";
+import { clsxm } from "@/utils/clsxm";
 import EcartTauxAvancementPPG from "./EcartTauxAvancementPPG/EcartTauxAvancementPPG";
 
 interface AvancementChantierProps {
@@ -80,9 +80,9 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   const sousTitreTuileAvancementRegional = "Taux d'avancement régional";
 
   const classeAPartirDeLaMaille: Record<Maille, string> = {
-    nationale: "layout--nat",
-    departementale: "layout--dept",
-    regionale: "layout--reg",
+    nationale: "md:[grid-template-areas:'nat'] md:grid-cols-[4fr_4fr] print:[grid-template-areas:'nat'] print:grid-cols-[4fr_4fr]",
+    departementale: "[grid-template-areas:'dept'_'reg'_'nat'] min-[1025px]:[grid-template-areas:'dept_reg_nat'] min-[1025px]:grid-cols-3 min-[768px]:max-[1024px]:[grid-template-areas:'dept_reg'_'nat_nat'] min-[768px]:max-[1024px]:grid-cols-2 print:[grid-template-areas:'dept_reg_nat'] print:grid-cols-3",
+    regionale: "md:[grid-template-areas:'reg_nat'] md:grid-cols-2 print:[grid-template-areas:'reg_nat'] print:grid-cols-2",
   };
 
   const tuileEcartTAAPartirDeLaMaille: Record<string, string> = {
@@ -97,8 +97,11 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
   };
 
   return (
-    <AvancementChantierStyled
-      className={classeAPartirDeLaMaille[territoireSélectionné.maille]}
+    <div
+      className={clsxm(
+        "grid [grid-template-areas:'nat'] gap-[0.7rem] [&_.jauge>div]:m-auto [&_.text-bottom-jauge-progression]:max-w-[17rem]",
+        classeAPartirDeLaMaille[territoireSélectionné.maille],
+      )}
     >
       {territoireCode !== "NAT-FR" &&
       mailleSelectionnee === "departementale" ? (
@@ -283,11 +286,11 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                   (
                   {avancements.nationale &&
                   avancements.nationale.global.médiane ? (
-                    <strong className="ecart-pourcentage-couleur">
+                    <strong className="text-pilote-ecart-blue">
                       {avancements.nationale.global.médiane.toFixed(0) + "%"}
                     </strong>
                   ) : (
-                    <strong className="ecart-pourcentage-couleur">
+                    <strong className="text-pilote-ecart-blue">
                       Non défini
                     </strong>
                   )}
@@ -319,7 +322,7 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
               null ? (
               <div className="flex justify-center">
                 ({" "}
-                <strong className="tendance-pourcentage-couleur">
+                <strong className="text-primary">
                   {`${donneesComparaisonDuTauxDAvancement.ppgTauxDAvancementValeurPrecedente.toFixed(0) + "%"}`}
                 </strong>
                 {", "}
@@ -329,14 +332,14 @@ const AvancementChantier: FunctionComponent<AvancementChantierProps> = ({
                 )
               </div>
             ) : (
-              <p className="fr-text--xs fr-m-0 bold tendance-pourcentage-couleur">
+              <p className="fr-text--xs fr-m-0 bold text-primary">
                 (Non défini)
               </p>
             )}
           </div>
         </div>
       </Bloc>
-    </AvancementChantierStyled>
+    </div>
   );
 };
 
