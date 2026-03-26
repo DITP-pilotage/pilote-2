@@ -42,7 +42,7 @@ const menuItems = [
     pageKey: "albert",
   },
   {
-    label: "🚧 Feature flipping 🚧",
+    label: "Feature flipping",
     href: "/panel-administrateur/feature-flipping",
     pageKey: "feature-flipping",
   },
