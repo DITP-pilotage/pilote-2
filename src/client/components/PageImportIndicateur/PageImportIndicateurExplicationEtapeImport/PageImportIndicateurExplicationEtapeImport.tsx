@@ -51,7 +51,10 @@ const PageImportIndicateurExplicationEtapeImport: FunctionComponent = () => {
         </Titre>
         <ol className="fr-grid-row fr-grid-row--gutters fr-m-0 fr-p-0">
           {explicationsEtapeImport.map(({ titre, texte }, index) => (
-            <li className="fr-col-lg-4 min-[62rem]:first-of-type:pl-0 min-[62rem]:last-of-type:pr-0" key={titre}>
+            <li
+              className="fr-col-lg-4 min-[62rem]:first-of-type:pl-0 min-[62rem]:last-of-type:pr-0"
+              key={titre}
+            >
               <ExplicationEtapeIndicateur
                 etapeCourante={etapeCourante}
                 numéro={index + 1}
