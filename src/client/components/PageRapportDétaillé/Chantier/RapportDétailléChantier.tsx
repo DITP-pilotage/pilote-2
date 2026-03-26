@@ -25,7 +25,6 @@ import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
-import RapportDétailléChantierStyled from "./RapportDétailléChantier.styled";
 
 const RapportDétailléChantier: FunctionComponent<
   RapportDétailléChantierProps
@@ -99,17 +98,17 @@ const RapportDétailléChantier: FunctionComponent<
   );
 
   return (
-    <RapportDétailléChantierStyled
-      className="fr-mt-4w fr-pb-4w chantier-item"
+    <section
+      className="fr-mt-4w fr-pb-4w [content-visibility:auto] break-before-page"
       id={htmlId.chantier(chantier.id)}
     >
       <div className="fr-mt-2w">
         <div
-          className={`grid-template ${territoireSélectionné!.maille === "nationale" ? "layout--nat" : "layout--dept-reg"}`}
+          className={`grid gap-6 ${territoireSélectionné!.maille === "nationale" ? "grid-cols-[auto_minmax(22.5rem,1fr)] [grid-template-areas:'avancement_avancement'_'responsables_responsables'_'synthèse_synthèse']" : "[grid-template-areas:'avancement'_'responsables'_'synthèse']"}`}
         >
           {avancements !== null && (
             <>
-              <section className="rubrique avancement impression-section-haut-de-page">
+              <section className="break-inside-avoid [grid-area:avancement] [&_.rubrique__conteneur>div]:h-auto print:break-inside-avoid print:break-before-page">
                 <Link
                   className="fr-btn gap-2 fr-btn--tertiary-no-outline fr-text--sm"
                   href={`#${htmlId.listeDesChantiers()}`}
@@ -140,7 +139,7 @@ const RapportDétailléChantier: FunctionComponent<
                   territoireCode={territoireCode}
                 />
               </section>
-              <section className="rubrique responsables">
+              <section className="break-inside-avoid [grid-area:responsables] [&_.rubrique__conteneur>div]:h-auto">
                 <Titre
                   baliseHtml="h2"
                   className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
@@ -164,7 +163,7 @@ const RapportDétailléChantier: FunctionComponent<
               </section>
             </>
           )}
-          <section className="rubrique synthèse impression-section">
+          <section className="break-inside-avoid [grid-area:synthèse] [&_.rubrique__conteneur>div]:h-auto print:break-inside-avoid">
             <Titre
               baliseHtml="h2"
               className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
@@ -180,8 +179,8 @@ const RapportDétailléChantier: FunctionComponent<
         {!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSelectionnee] ||
         !!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] ||
         chantier.estTerritorialisé ? (
-          <div className="fr-my-2w impression-section">
-            <section className="rubrique cartes">
+          <div className="fr-my-2w print:break-inside-avoid">
+            <section className="break-inside-avoid [&_.rubrique__conteneur>div]:h-auto">
               <Titre
                 baliseHtml="h2"
                 className="fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0"
@@ -208,8 +207,8 @@ const RapportDétailléChantier: FunctionComponent<
           </div>
         ) : null}
         {objectifs !== null && objectifs.length > 0 ? (
-          <div className="fr-my-2w impression-section">
-            <section className="rubrique objectifs">
+          <div className="fr-my-2w print:break-inside-avoid">
+            <section className="break-inside-avoid [&_.rubrique__conteneur>div]:h-auto">
               <div className="rubrique__conteneur">
                 <Titre
                   baliseHtml="h2"
@@ -223,8 +222,8 @@ const RapportDétailléChantier: FunctionComponent<
           </div>
         ) : null}
         {indicateurs.length > 0 ? (
-          <div className="fr-my-2w impression-section">
-            <section className="rubrique indicateurs">
+          <div className="fr-my-2w print:break-inside-avoid">
+            <section className="break-inside-avoid [&_.rubrique__conteneur>div]:h-auto">
               <div className="rubrique__conteneur">
                 <Titre
                   baliseHtml="h2"
@@ -258,8 +257,8 @@ const RapportDétailléChantier: FunctionComponent<
         ) : null}
         {décisionStratégique !== null &&
           territoireSélectionné!.maille === "nationale" && (
-            <div className="fr-my-2w impression-section">
-              <section className="rubrique décisions-stratégiques">
+            <div className="fr-my-2w print:break-inside-avoid">
+              <section className="break-inside-avoid [&_.rubrique__conteneur>div]:h-auto">
                 <div className="rubrique__conteneur">
                   <Titre
                     baliseHtml="h2"
@@ -275,8 +274,8 @@ const RapportDétailléChantier: FunctionComponent<
             </div>
           )}
         {commentaires !== null && (
-          <div className="fr-my-2w impression-section">
-            <section className="rubrique commentaires">
+          <div className="fr-my-2w print:break-inside-avoid">
+            <section className="break-inside-avoid [&_.rubrique__conteneur>div]:h-auto">
               <div className="rubrique__conteneur">
                 <Titre
                   baliseHtml="h2"
@@ -298,7 +297,7 @@ const RapportDétailléChantier: FunctionComponent<
           </div>
         )}
       </div>
-    </RapportDétailléChantierStyled>
+    </section>
   );
 };
 
