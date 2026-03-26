@@ -36,7 +36,10 @@ export const TableauEvolution = ({
             {jalons.map((jalon) => (
               <th
                 key={jalon}
-                className={clsxm("px-3 py-2 text-center whitespace-nowrap", jalon === jalonActif ? "font-bold" : "font-semibold")}
+                className={clsxm(
+                  "px-3 py-2 text-center whitespace-nowrap",
+                  jalon === jalonActif ? "font-bold" : "font-semibold",
+                )}
               >
                 {jalon}
               </th>

@@ -21,7 +21,10 @@ export const TerritoireProgressBar = ({
   return (
     <>
       <div
-        className={clsxm("h-4 mx-2", !isHistogram && "rounded-full bg-dsfr-grey-925")}
+        className={clsxm(
+          "h-4 mx-2",
+          !isHistogram && "rounded-full bg-dsfr-grey-925",
+        )}
       >
         <div
           className={clsxm("h-full", !isHistogram && "rounded-full")}
