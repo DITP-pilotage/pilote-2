@@ -2,7 +2,7 @@ import { FunctionComponent, useId, useRef } from "react";
 import MultiSelectProps from "@/components/_commons/MultiSelect/MultiSelect.interface";
 import MultiSelectGroupe from "@/components/_commons/MultiSelect/MultiSelectGroupe";
 import BoutonToutSélectionner from "@/components/_commons/BoutonsToutSélectionner/BoutonsToutSélectionner";
-import MultiSelectStyled from "./MultiSelect.styled";
+import { clsxm } from "@/utils/clsxm";
 import useMultiSelect from "./useMultiSelect";
 
 const MultiSelect: FunctionComponent<MultiSelectProps> = ({
@@ -35,7 +35,7 @@ const MultiSelect: FunctionComponent<MultiSelectProps> = ({
   );
 
   return (
-    <MultiSelectStyled>
+    <div className="relative">
       <label className="fr-label" htmlFor={id}>
         {label}
       </label>
@@ -55,7 +55,7 @@ const MultiSelect: FunctionComponent<MultiSelectProps> = ({
         />
       )}
       <button
-        className="fr-select fr-ellipsis"
+        className="fr-select fr-ellipsis text-left"
         disabled={desactive}
         id={id}
         title={libellé}
@@ -64,7 +64,14 @@ const MultiSelect: FunctionComponent<MultiSelectProps> = ({
       >
         {libellé}
       </button>
-      <div className={estOuvert ? "visible" : ""} ref={ref} role="menu">
+      <div
+        className={clsxm(
+          "hidden",
+          estOuvert && "block absolute z-[2] w-full max-h-80 p-4 overflow-auto bg-white border border-gray-500",
+        )}
+        ref={ref}
+        role="menu"
+      >
         <input
           className="fr-input"
           onChange={(e) => setRecherche(e.target.value)}
@@ -83,7 +90,7 @@ const MultiSelect: FunctionComponent<MultiSelectProps> = ({
           />
         ))}
       </div>
-    </MultiSelectStyled>
+    </div>
   );
 };
 

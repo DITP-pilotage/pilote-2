@@ -32,7 +32,6 @@ import { useEnv } from "@/client/hooks/useEnv";
 import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
 import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
 import { WidgetRepartitionMeteos } from "@/components/_commons/Widget/WidgetRepartitionMeteos/WidgetRepartitionMeteos";
-import PageChantiersStyled from "./PageChantiers.styled";
 import TableauChantiers from "./TableauChantiers/TableauChantiers";
 import usePageChantiers from "./usePageChantiers";
 import RepartitionsMeteosChantiers from "./FiltresMeteos/RepartitionsMeteosChantiers";
@@ -107,7 +106,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   const chantiersSontArchives = filtres.statut?.includes("ARCHIVE") ?? false;
 
   return (
-    <PageChantiersStyled>
+    <main className="[&_.fr-text--lg]:leading-6">
       <div className="fr-py-2w fr-px-md-2w fr-container--fluid">
         <div className="fr-grid-row">
           <div className="fr-col-12 fr-col-lg-7 fr-col-xl-6 flex flex-column">
@@ -300,7 +299,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
           </div>
         </div>
       </div>
-    </PageChantiersStyled>
+    </main>
   );
 };
 

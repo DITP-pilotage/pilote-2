@@ -1,5 +1,4 @@
 import { FunctionComponent } from "react";
-import IndicateurBlocIndicateurTuileStyled from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/IndicateurBlocIndicateurTuile.styled";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 import { formaterDate } from "@/client/utils/date/date";
 import { IndicateurDétailsParTerritoire } from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/IndicateurBloc.interface";
@@ -28,9 +27,9 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
     unité?.toLocaleLowerCase() === "pourcentage" ? " %" : "";
 
   return (
-    <IndicateurBlocIndicateurTuileStyled>
-      <table className="fr-p-0 fr-pb-2w">
-        <thead>
+    <div>
+      <table className="fr-p-0 fr-pb-2w table overflow-hidden bg-[var(--grey-1000-50)]">
+        <thead className="bg-dsfr-blue-france-925 bg-none [&_th:first-of-type]:rounded-tl-lg [&_th:last-child]:rounded-tr-lg">
           <tr>
             <th className="fr-py-1v">Territoire</th>
             <th className="fr-py-1v">
@@ -38,12 +37,12 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
             </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="[&_tr]:!bg-[unset] [&_td]:leading-5">
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold">
               Valeur initiale
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 [&_span:nth-of-type(2)]:text-[10px]">
               <span>
                 {valeurInitiale !== null && valeurInitiale !== undefined
                   ? valeurInitiale?.toLocaleString() + unitéAffichée
@@ -57,10 +56,10 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold">
               Valeur d'avancement
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 [&_span:nth-of-type(2)]:text-[10px]">
               <span>
                 {valeurAvancement !== null && valeurAvancement !== undefined
                   ? valeurAvancement?.toLocaleString() + unitéAffichée
@@ -74,12 +73,12 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold">
               {typeDeRéforme === "chantier"
                 ? "Cible " + new Date().getFullYear().toString()
                 : "Cible"}
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 [&_span:nth-of-type(2)]:text-[10px]">
               <span>
                 {valeurCibleAnnuelle !== null &&
                 valeurCibleAnnuelle !== undefined
@@ -94,7 +93,7 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold">
               {typeDeRéforme === "chantier"
                 ? "Avancement " + new Date().getFullYear().toString()
                 : "Avancement"}
@@ -111,10 +110,10 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold">
               {typeDeRéforme === "chantier" ? "Cible 2026" : "Cible"}
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 [&_span:nth-of-type(2)]:text-[10px]">
               <span>
                 {Boolean(valeurCible)
                   ? valeurCible?.toLocaleString() + unitéAffichée
@@ -128,7 +127,7 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold">
               {typeDeRéforme === "chantier" ? "Avancement 2026" : "Avancement"}
             </td>
             <td className="fr-pt-1w fr-pb-0 fr-pr-0">
@@ -144,7 +143,7 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
           </tr>
         </tbody>
       </table>
-    </IndicateurBlocIndicateurTuileStyled>
+    </div>
   );
 };
 

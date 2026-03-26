@@ -10,7 +10,6 @@ import { IndicateurTendance } from "@/components/_commons/IndicateurTendance/Ind
 import { IndicateurPonderation } from "@/components/_commons/IndicateursChantier/Bloc/Pondération/IndicateurPonderation";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
 import useIndicateurBloc from "./useIndicateurBloc";
-import IndicateurBlocStyled from "./IndicateurBloc.styled";
 
 interface IndicateurBlocProps {
   indicateur: Indicateur;
@@ -39,8 +38,8 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   );
 
   return (
-    <IndicateurBlocStyled
-      className="fr-mb-2w impression-section"
+    <div
+      className="mb-4 last-of-type:mb-0 print:break-inside-avoid [&_td]:min-h-8 [&_td]:align-top [&_.indicateur-date-valeur]:h-4 [&_.indicateur-date-valeur]:text-[10px] [&_.indicateur-date-valeur]:leading-4"
       key={indicateur.id}
     >
       <Bloc>
@@ -85,7 +84,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
           />
         </section>
       </Bloc>
-    </IndicateurBlocStyled>
+    </div>
   );
 };
 

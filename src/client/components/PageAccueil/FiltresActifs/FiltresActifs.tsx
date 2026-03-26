@@ -13,7 +13,6 @@ import { listeStatuts } from "@/client/constants/statut";
 import { BoutonReintialiserLesFiltres } from "@/components/PageAccueil/BoutonReintialiserLesFiltres";
 import "@gouvfr/dsfr/dist/component/accordion/accordion.min.css";
 import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
-import FiltresActifsStyled from "./FiltresActifs.styled";
 
 interface FiltresActifsProps {
   ministères: Ministère[];
@@ -98,11 +97,11 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
   );
 
   return (
-    <FiltresActifsStyled id="filtres-actifs">
+    <div className="sticky w-full top-0 z-[1] bg-dsfr-blue-france-925 shadow-[0_6px_18px_var(--shadow-color)] max-[992px]:top-14" id="filtres-actifs">
       <div
         aria-controls="filtres-actifs"
         aria-expanded={estOuvert}
-        className="fr-accordion__btn flex items-center justify-between px-6 pt-6 pb-4"
+        className="fr-accordion__btn flex items-center justify-between px-6 pt-6 pb-4 cursor-pointer"
         onClick={() => setEstOuvert(!estOuvert)}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
@@ -252,7 +251,7 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
             <div className="col-span-7 sm:col-span-9 lg:col-span-10 flex gap-1">
               <ul
                 aria-label="liste des tags des filtres météo actifs"
-                className="conteneur-tags my-0 gap-2"
+                className="max-h-[7.5rem] ps-0 overflow-y-auto list-none children:inline my-0 gap-2 max-[992px]:overflow-x-auto max-[992px]:whitespace-nowrap"
               >
                 {filtres.meteos
                   .split(",")
@@ -482,6 +481,6 @@ export const FiltresActifs: FunctionComponent<FiltresActifsProps> = ({
           </div>
         ) : null}
       </div>
-    </FiltresActifsStyled>
+    </div>
   );
 };
