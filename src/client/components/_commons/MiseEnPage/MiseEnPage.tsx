@@ -2,7 +2,6 @@ import { useSession } from "next-auth/react";
 import { FunctionComponent } from "react";
 import PageLanding from "@/components/PageLanding/PageLanding";
 import Loader from "@/client/components/_commons/Loader/Loader";
-import MiseEnPageStyled from "@/components/_commons/MiseEnPage/MiseEnPage.styled";
 import { ClientOnly } from "@/components/shared/ClientOnly";
 import { usePrefetchUtilisateurConnecte } from "@/client/hooks/usePrefetchUtilisateurConnecte";
 import { EnTete } from "./EnTete/EnTete";
@@ -22,18 +21,18 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
   usePrefetchUtilisateurConnecte();
 
   return (
-    <MiseEnPageStyled>
+    <div className="break-words [&_.fr-header]:z-[2] [&_main]:grow [&_main]:bg-dsfr-alt-blue-france [&_main_h1]:text-primary print:[&_.barre-latérale]:hidden print:[&_.fr-btn]:hidden print:[&_.fr-link]:hidden print:[&_.fr-header]:hidden print:[&_.fr-footer]:hidden print:[&_*]:[-webkit-scrollbar:none] print:[-webkit-print-color-adjust:exact] print:[print-color-adjust:exact] print:[&_main]:!bg-white">
       <EnTete />
       {status === "loading" ? (
         <Loader />
       ) : (
         <div className="relative">
           {afficherLeLoader ? (
-            <div className="toaster-chargement">
-              <div className="progress">
-                <div className="progress-bar-green" />
+            <div className="fixed right-16 bottom-16 z-[1751] w-80 bg-[var(--background-alt-overlap-grey)] [filter:drop-shadow(var(--overlap-shadow))] shadow-[inset_0_0_0_1px_var(--border-default-grey)]">
+              <div className="relative w-full h-[0.4em] bg-[rgb(229,233,235)]">
+                <div className="relative h-full bg-[#3c763d] bg-[size:23em_0.25em] animate-cssload-width" />
               </div>
-              <p className="toaster-texte">
+              <p className="p-4 m-0">
                 Chargement des données en cours...
               </p>
             </div>
@@ -50,7 +49,7 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
           </ClientOnly>
         </div>
       )}
-    </MiseEnPageStyled>
+    </div>
   );
 };
 

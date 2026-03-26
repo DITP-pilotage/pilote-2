@@ -99,6 +99,10 @@ module.exports = {
           "50%": { opacity: "1" },
           "100%": { opacity: "0" },
         },
+        "cssload-width": {
+          "0%": { width: "0" },
+          "100%": { width: "100%" },
+        },
       },
       animation: {
         "dropdown-fade-in": "dropdown-fade-in 150ms ease-out",
@@ -106,12 +110,20 @@ module.exports = {
         "fade-in": "fade-in 300ms ease-out",
         "pulse-recording": "pulse-recording 1.5s ease-in-out infinite",
         "pulse-opacity": "pulse-opacity 2s ease-in-out infinite",
+        "cssload-width": "cssload-width 1s ease-out 1",
       },
     },
   },
   plugins: [
-    plugin(({ addVariant }) => {
+    plugin(({ addVariant, addBase }) => {
       addVariant("children", "& > *");
+      addBase({
+        "@media print": {
+          "@page": {
+            margin: "1.5cm 1cm",
+          },
+        },
+      });
     }),
   ],
 };

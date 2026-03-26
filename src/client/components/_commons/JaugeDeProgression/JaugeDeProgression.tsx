@@ -5,7 +5,23 @@ import {
 } from "@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface";
 import JaugeDeProgressionSVG from "@/components/_commons/JaugeDeProgression/JaugeDeProgressionSVG";
 import { formaterDate } from "@/client/utils/date/date";
-import JaugeDeProgressionStyled from "./JaugeDeProgression.styled";
+import { clsxm } from "@/utils/clsxm";
+
+const COULEUR_TEXTE: Record<JaugeDeProgressionCouleur, string> = {
+  bleu: "text-primary",
+  "bleu-clair": "text-dsfr-info-main-525",
+  violet: "text-pilote-ecart-blue",
+  orange: "text-pilote-orange",
+  vert: "text-pilote-vert",
+  rose: "text-dsfr-pink-tuile-main-556",
+  gris: "text-dsfr-grey-625",
+};
+
+const TAILLE_TRACÉ: Record<JaugeDeProgressionTaille, string> = {
+  sm: "w-[3.75rem]",
+  md: "w-[5.5rem] max-[80rem]:w-16",
+  lg: "w-[10.5rem] max-[80rem]:w-[8.25rem]",
+};
 
 interface JaugeDeProgressionProps {
   couleur: JaugeDeProgressionCouleur;
@@ -16,17 +32,17 @@ interface JaugeDeProgressionProps {
   noWrap?: boolean;
 }
 
-const classesÀPartirDeTaille = {
+const classesÀPartirDeTaille: Record<JaugeDeProgressionTaille, { valeur: string; libellé: string }> = {
   sm: {
-    valeur: "jauge-valeur-dessous fr-h6",
+    valeur: "fr-h6",
     libellé: "",
   },
   md: {
-    valeur: "jauge-valeur-au-centre fr-h4 text-center",
+    valeur: "absolute top-[calc(50%-1.4rem)] w-full !leading-10 fr-h4 text-center",
     libellé: "text-center",
   },
   lg: {
-    valeur: "jauge-valeur-au-centre fr-h1 text-center",
+    valeur: "absolute top-[calc(50%-1.4rem)] w-full !leading-10 fr-h1 text-center",
     libellé: "text-center",
   },
 };
@@ -40,32 +56,36 @@ const JaugeDeProgression: FunctionComponent<JaugeDeProgressionProps> = ({
   noWrap = false,
 }) => {
   return (
-    <JaugeDeProgressionStyled>
-      <div className={`jauge-tracé jauge-tracé--${taille}`}>
+    <div className="relative flex flex-col items-center">
+      <div className={clsxm("relative", TAILLE_TRACÉ[taille])}>
         <JaugeDeProgressionSVG
           couleur={couleur}
           pourcentage={pourcentage !== undefined ? pourcentage : null}
           taille={taille}
         />
         <p
-          className={`jauge-valeur jauge-valeur--${couleur} text-center ${classesÀPartirDeTaille[taille].valeur}`}
+          className={clsxm(
+            "mb-0 break-normal text-center",
+            COULEUR_TEXTE[couleur],
+            classesÀPartirDeTaille[taille].valeur,
+          )}
         >
           {`${pourcentage?.toFixed(0) ?? "- "}%`}
         </p>
       </div>
       <p
-        className={`fr-text--xs fr-mb-0 text-center ${classesÀPartirDeTaille[taille].libellé}${noWrap ? "no-wrap" : ""}`}
+        className={clsxm("fr-text--xs fr-mb-0 text-center", classesÀPartirDeTaille[taille].libellé, noWrap && "no-wrap")}
       >
         {libellé}
       </p>
       {date ? (
         <p
-          className={`fr-text--xs fr-mb-0 text-center ${classesÀPartirDeTaille[taille].libellé}${noWrap ? "no-wrap" : ""}`}
+          className={clsxm("fr-text--xs fr-mb-0 text-center", classesÀPartirDeTaille[taille].libellé, noWrap && "no-wrap")}
         >
           {`(${formaterDate(date, "MM/YYYY")})`}
         </p>
       ) : null}
-    </JaugeDeProgressionStyled>
+    </div>
   );
 };
 
