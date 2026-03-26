@@ -94,9 +94,9 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
         </div>
       ) : null}
 
-      <div className="fr-text fr-text--bold">Légende :</div>
-      <div className="flex items-start">
-        <div className="flex flex-col whitespace-nowrap fr-mr-4w">
+      <div className="fr-text fr-text--bold mt-4">Légende :</div>
+      <div className="flex flex-col gap-4">
+        <div className="legend-content fr-mr-4w">
           {afficherInterrupteurCibles ? (
             <div className="flex items-center fr-mb-1w">
               <div className="w-[50px] h-0 border-t-[3px] border-dashed border-pilote-grey-legend fr-mr-2w" />
