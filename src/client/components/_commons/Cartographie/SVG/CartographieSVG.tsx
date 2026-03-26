@@ -53,7 +53,9 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
       {options.estInteractif ? (
         <CartographieZoomEtDéplacement svgRef={svgRef} viewbox={viewbox} />
       ) : null}
-      <div className={`max-w-[25rem] mx-auto [stroke:var(--grey-1000-50)] ${contoursGris ? "[stroke:#695240]" : ""}`}>
+      <div
+        className={`max-w-[25rem] mx-auto [stroke:var(--grey-1000-50)] ${contoursGris ? "[stroke:#695240]" : ""}`}
+      >
         <SecureTooltip
           anchorEl={hoveredElement}
           classNameInfoBulle="infobull--sm"

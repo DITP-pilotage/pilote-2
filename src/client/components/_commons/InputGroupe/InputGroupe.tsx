@@ -2,7 +2,7 @@ import { FunctionComponent, useId, useRef } from "react";
 import { useSession } from "next-auth/react";
 import InputGroupeProps from "@/components/_commons/InputGroupe/InputGroupe.interface";
 import InputGroupeItem from "@/components/_commons/InputGroupe/InputGroupeItem";
-import InputGroupeStyled from "./InputGroupe.styled";
+import { clsxm } from "@/utils/clsxm";
 import useInputGroupe from "./useInputGroupe";
 
 const InputGroupe: FunctionComponent<InputGroupeProps> = ({
@@ -34,7 +34,7 @@ const InputGroupe: FunctionComponent<InputGroupeProps> = ({
     session!.habilitations.lecture.territoires.includes("NAT-FR");
 
   return (
-    <InputGroupeStyled>
+    <div className="relative">
       <div
         className={`${direction === "horizontal" ? " flex align-center" : ""}`}
       >
@@ -48,7 +48,7 @@ const InputGroupe: FunctionComponent<InputGroupeProps> = ({
           ) : null}
         </label>
         <button
-          className={`fr-select fr-ellipsis ${direction === "horizontal" ? "fr-mt-0" : ""}`}
+          className={`fr-select fr-ellipsis text-left ${direction === "horizontal" ? "fr-mt-0" : ""}`}
           disabled={desactive}
           id={id}
           title={libelle}
@@ -58,7 +58,15 @@ const InputGroupe: FunctionComponent<InputGroupeProps> = ({
           {libelle}
         </button>
       </div>
-      <div className={estOuvert ? "visible" : ""} ref={ref} role="menu">
+      <div
+        className={clsxm(
+          "hidden",
+          estOuvert &&
+            "block absolute z-[2] w-full max-h-80 overflow-auto bg-white border border-gray-500",
+        )}
+        ref={ref}
+        role="menu"
+      >
         <div className="w-full fr-p-2w">
           <input
             className="fr-input"
@@ -70,7 +78,14 @@ const InputGroupe: FunctionComponent<InputGroupeProps> = ({
         </div>
         {possedeLeDroitSurLaMailleNat ? (
           <button
-            className="territoire-item-nat w-full texte-gauche fr-py-1v fr-pl-2w"
+            className="w-full texte-gauche fr-py-1v fr-pl-2w bg-dsfr-grey-1000"
+            style={
+              {
+                "--idle": "transparent",
+                "--hover": "var(--background-alt-grey-hover)",
+                "--active": "var(--background-alt-grey-active)",
+              } as React.CSSProperties
+            }
             disabled={valeurSelectionneeParDefaut === "NAT-FR"}
             id="NAT-FR"
             key="NAT-FR"
@@ -92,7 +107,7 @@ const InputGroupe: FunctionComponent<InputGroupeProps> = ({
           />
         ))}
       </div>
-    </InputGroupeStyled>
+    </div>
   );
 };
 
