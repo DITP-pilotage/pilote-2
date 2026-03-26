@@ -76,6 +76,10 @@ module.exports = {
         "dsfr-pink-tuile-main-556": "#CE614A",
         "dsfr-green-archipel-main-557": "#009099",
         "dsfr-beige-gris-galet-main-702": "#AEA397",
+        "pilote-gris-moyen": "#bababa",
+        "pilote-loader-green": "#3c763d",
+        "pilote-grey-legend": "#999",
+        "pilote-grey-border-print": "#7b7b7b",
       },
       keyframes: {
         "dropdown-fade-in": {

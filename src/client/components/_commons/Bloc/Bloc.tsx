@@ -22,7 +22,7 @@ const Bloc: FunctionComponent<BlocProps> = ({
   return (
     <div
       className={clsxm(
-        "bloc-container min-w-full bg-white border border-dsfr-grey-925 rounded-lg print:h-auto print:border-[#7b7b7b]",
+        "bloc-container min-w-full bg-white border border-dsfr-grey-925 rounded-lg print:h-auto print:border-pilote-grey-border-print",
         className,
       )}
     >

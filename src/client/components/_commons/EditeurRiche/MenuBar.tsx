@@ -48,11 +48,11 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
     clsxm(
       "flex items-center justify-center w-8 h-8 p-0 transition-all duration-150 ease-in-out rounded border",
       {
-        "!text-[#000091] !bg-[#e3e3fd] !border-[#000091]": isActive,
-        "!text-[#3a3a3a] !bg-transparent !border-transparent": !isActive,
-        "!hover:bg-[#e5e5e5] !hover:border-[#ddd] !active:bg-[#d6d6d6]":
+        "!text-primary !bg-dsfr-blue-france-925 !border-primary": isActive,
+        "!text-dsfr-grey-200 !bg-transparent !border-transparent": !isActive,
+        "!hover:bg-dsfr-grey-925 !hover:border-dsfr-grey-900 !active:bg-dsfr-grey-950-hover":
           !isActive,
-        "!disabled:text-[#929292] !disabled:cursor-not-allowed !disabled:opacity-50": true,
+        "!disabled:text-dsfr-grey-625 !disabled:cursor-not-allowed !disabled:opacity-50": true,
       },
     );
 
@@ -491,10 +491,10 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
 
   return (
     <>
-      <div className="flex z-1 sticky top-0 flex-wrap gap-1 items-center p-2 border border-[#ddd] border-b-0 rounded-t !bg-white">
+      <div className="flex z-1 sticky top-0 flex-wrap gap-1 items-center p-2 border border-dsfr-grey-900 border-b-0 rounded-t !bg-white">
         {visibleGroups.map((group, index) => (
           <Fragment key={index}>
-            {index > 0 && <div className="w-px h-6 mx-1 bg-[#ddd]" />}
+            {index > 0 && <div className="w-px h-6 mx-1 bg-dsfr-grey-900" />}
             {group}
           </Fragment>
         ))}

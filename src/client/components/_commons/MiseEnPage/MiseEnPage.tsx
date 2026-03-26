@@ -30,7 +30,7 @@ const MiseEnPage: FunctionComponent<MiseEnPageProps> = ({
           {afficherLeLoader ? (
             <div className="fixed right-16 bottom-16 z-[1751] w-80 bg-[var(--background-alt-overlap-grey)] [filter:drop-shadow(var(--overlap-shadow))] shadow-[inset_0_0_0_1px_var(--border-default-grey)]">
               <div className="relative w-full h-[0.4em] bg-[rgb(229,233,235)]">
-                <div className="relative h-full bg-[#3c763d] bg-[size:23em_0.25em] animate-cssload-width" />
+                <div className="relative h-full bg-pilote-loader-green bg-[size:23em_0.25em] animate-cssload-width" />
               </div>
               <p className="p-4 m-0">Chargement des données en cours...</p>
             </div>

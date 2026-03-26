@@ -32,7 +32,7 @@ export const Tag: FunctionComponent<TagProps> = ({
       className={clsxm(`fr-tag flex gap-1 !text-primary over`, {
         "fr-tag--sm": size === "sm",
         "!bg-primary !text-white": isActive,
-        "!bg-[#0078f3] !text-white": color === "blue-info-main",
+        "!bg-dsfr-info-main-525 !text-white": color === "blue-info-main",
         "!bg-dsfr-warning-425 !text-white": color === "warning",
         "!bg-dsfr-moutarde-main-850 !text-black": color === "yellow-moutarde",
       })}

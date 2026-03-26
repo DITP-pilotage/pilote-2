@@ -29,13 +29,13 @@ const HAUTEUR_TAILLE: Record<BarreDeProgressionTaille, string> = {
 const COULEUR_FOND: Record<BarreDeProgressionFond, string> = {
   bleu: "bg-[var(--blue-ecume-850-200)]",
   blanc: "bg-white",
-  "gris-moyen": "bg-[#bababa]",
+  "gris-moyen": "bg-pilote-gris-moyen",
   "gris-clair": "bg-dsfr-grey-925",
 };
 
 const COULEUR_BORDURE: Record<string, string> = {
   bleu: "border border-[var(--blue-ecume-850-200)]",
-  "gris-moyen": "border border-[#bababa]",
+  "gris-moyen": "border border-pilote-gris-moyen",
 };
 
 const COULEUR_VARIANTE: Record<BarreDeProgressionVariante, string> = {
@@ -53,7 +53,7 @@ const COULEUR_VARIANTE: Record<BarreDeProgressionVariante, string> = {
 const COULEUR_TEXTE_FOND: Record<BarreDeProgressionFond, string> = {
   bleu: "text-[var(--blue-ecume-850-200)]",
   blanc: "text-white",
-  "gris-moyen": "text-[#bababa]",
+  "gris-moyen": "text-pilote-gris-moyen",
   "gris-clair": "text-dsfr-grey-925",
 };
 
