@@ -53,7 +53,7 @@ const SélecteurAvecRecherche = <T extends string>({
         <div
           className={clsxm(
             "hidden",
-            estOuvert && "block absolute z-[2] w-full max-h-80 overflow-auto bg-[var(--background-contrast-grey)] border border-gray-500",
+            estOuvert && "block absolute z-[2] w-full max-h-80 overflow-auto bg-dsfr-contrast-grey border border-gray-500",
           )}
           ref={ref}
           role="menu"
@@ -71,7 +71,7 @@ const SélecteurAvecRecherche = <T extends string>({
             <Fragment key={`${option.valeur}`}>
               {!option.désactivée ? (
                 <div
-                  className="fr-px-2w text-base leading-6 even:bg-[var(--background-alt-grey)] hover:text-white hover:bg-[var(--background-active-blue-france)]"
+                  className="fr-px-2w text-base leading-6 even:bg-dsfr-grey-1000 hover:text-white hover:bg-primary"
                   id={option.valeur}
                   onClick={(événement) => {
                     setEstOuvert(false);

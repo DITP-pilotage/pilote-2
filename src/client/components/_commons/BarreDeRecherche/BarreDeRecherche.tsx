@@ -7,9 +7,9 @@ const BarreDeRecherche: FunctionComponent<{
   valeur?: string;
 }> = ({ changementDeLaRechercheCallback, valeur = "" }) => {
   return (
-    <div className="fr-search-bar w-full [&_input]:bg-dsfr-alt-blue-france" role="search">
+    <div className="fr-search-bar w-full" role="search">
       <input
-        className="fr-input"
+        className="fr-input bg-dsfr-alt-blue-france"
         onChange={changementDeLaRechercheCallback}
         placeholder="Rechercher"
         type="search"
