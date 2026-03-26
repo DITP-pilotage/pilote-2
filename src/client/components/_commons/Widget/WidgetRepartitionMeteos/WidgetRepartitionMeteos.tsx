@@ -90,7 +90,7 @@ const TuilesMeteos = ({
     }),
   );
 
-  const auClickCallback = useCallback(
+  const onClick = useCallback(
     (meteo: MeteoSaisissable) => {
       let arrMeteoFiltre = meteos.split(",").filter(Boolean);
       if (meteos.includes(meteo)) {
@@ -117,10 +117,11 @@ const TuilesMeteos = ({
               },
             )}
             onClick={() => {
-              auClickCallback(meteo);
+              onClick(meteo);
             }}
             title={libellesMeteos[meteo]}
             type="button"
+            aria-pressed={meteos.includes(meteo)}
           >
             <span className="text-[1.75rem] font-bold text-dsfr-moutarde-main-850 min-w-[2.5rem] text-center">
               {repartition[meteo]}
