@@ -1,8 +1,8 @@
 import "@gouvfr/dsfr/dist/utility/colors/colors.css";
 
 import { FunctionComponent } from "react";
+import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
 import { FicheConducteurContrat } from "@/server/fiche-conducteur/app/contrats/FicheConducteurContrat";
-import PageFicheConducteurStyled from "@/components/PageFicheConducteur/PageFicheConducteur.styled";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
@@ -25,6 +25,8 @@ const PageFicheConducteur: FunctionComponent<
   publications,
   doitAfficherDonnéesCartographie,
 }) => {
+  usePrintPageStyle("margin: 0; size: landscape");
+
   const commentaire =
     (synthèseDesRésultats.commentaire?.length || 0) > 1000
       ? synthèseDesRésultats.commentaire?.slice(0, 930) +
@@ -32,16 +34,16 @@ const PageFicheConducteur: FunctionComponent<
       : synthèseDesRésultats.commentaire;
 
   return (
-    <PageFicheConducteurStyled>
+    <div className="print:[&_.fr-badge]:!text-[10px] print:[&_.fr-badge]:!leading-4 print:[&_.fr-text--xs]:!text-[10px] print:[&_.fr-text--xs]:!leading-4 print:[&_.fr-text--sm]:!text-[10px] print:[&_.fr-text--sm]:!leading-4">
       <main className="fr-pb-2w">
-        <div className="fr-container fr-pb-1w fiche-conducteur__container">
+        <div className="fr-container fr-pb-1w [&_.encart-container]:p-2">
           <EnteteFicheConducteur>
             {`${chantier.nom} - Principaux résultats`}
           </EnteteFicheConducteur>
         </div>
         <div className="fr-container">
           <div className="fr-grid-row fr-grid-row--gutters">
-            <div className="fr-col-4 flex flex-column fiche-conducteur__bloc fiche-conducteur__bloc--border-light fr-pr-1v">
+            <div className="fr-col-4 flex flex-column children:h-full print:[&_.bloc-container]:p-0 print:[&_.bloc-container]:border-dsfr-grey-925 fr-pr-1v">
               <Titre
                 baliseHtml="h2"
                 className="fr-h5 fr-mb-1w fr-text-title--blue-france"
@@ -97,7 +99,7 @@ const PageFicheConducteur: FunctionComponent<
                 </div>
               </Bloc>
             </div>
-            <div className="fr-col-8 flex flex-column fiche-conducteur__bloc fiche-conducteur__bloc--border-light fr-pl-1v">
+            <div className="fr-col-8 flex flex-column children:h-full print:[&_.bloc-container]:p-0 print:[&_.bloc-container]:border-dsfr-grey-925 fr-pl-1v">
               <Titre
                 baliseHtml="h2"
                 className="fr-h5 fr-mb-1w fr-text-title--blue-france"
@@ -133,10 +135,10 @@ const PageFicheConducteur: FunctionComponent<
             </div>
           </div>
         </div>
-        <div className="fr-container fiche-conducteur__bloc--border-light fr-mt-1w">
+        <div className="fr-container print:[&_.bloc-container]:p-0 print:[&_.bloc-container]:border-dsfr-grey-925 fr-mt-1w">
           <Bloc contenuClassesSupplémentaires="fr-px-0 fr-py-0">
             <div className="fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0">
-              <div className="fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b grid-row--header">
+              <div className="fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b rounded-tl-md rounded-tr-md">
                 <div className="fr-col-5 fr-text--bold">
                   Avancement des indicateurs d'impact pris en compte dans le TA
                 </div>
@@ -187,12 +189,12 @@ const PageFicheConducteur: FunctionComponent<
         <div className="page-break fr-mb-2w" />
         {doitAfficherDonnéesCartographie ? (
           <>
-            <div className="fr-container fr-pb-1w fiche-conducteur__container fiche-conducteur__bloc--no-border only-print">
+            <div className="fr-container fr-pb-1w [&_.encart-container]:p-2 print:[&_.bloc-container]:border-none hidden print:block">
               <EnteteFicheConducteur>
                 {`${chantier.nom} - Principaux résultats`}
               </EnteteFicheConducteur>
             </div>
-            <div className="fr-container fiche-conducteur__bloc--no-border">
+            <div className="fr-container print:[&_.bloc-container]:border-none">
               <div className="fr-grid-row fr-grid-row--gutters">
                 <div className="fr-col-6">
                   <Titre
@@ -240,15 +242,15 @@ const PageFicheConducteur: FunctionComponent<
             <div className="page-break fr-mb-2w" />
           </>
         ) : null}
-        <div className="fr-container fr-pb-1w fiche-conducteur__container only-print">
+        <div className="fr-container fr-pb-1w [&_.encart-container]:p-2 hidden print:block">
           <EnteteFicheConducteur>
             {`${chantier.nom} - Point d'avancement`}
           </EnteteFicheConducteur>
         </div>
-        <div className="fr-container fiche-conducteur__bloc--border-light">
+        <div className="fr-container print:[&_.bloc-container]:p-0 print:[&_.bloc-container]:border-dsfr-grey-925">
           <Bloc contenuClassesSupplémentaires="fr-px-0">
             <div className="fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0">
-              <div className="fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b grid-row--header">
+              <div className="fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b rounded-tl-md rounded-tr-md">
                 <div className="fr-col-2 fr-text--bold">Catégorie</div>
                 <div className="fr-col-10 fr-text--bold">Détail</div>
               </div>
@@ -267,7 +269,7 @@ const PageFicheConducteur: FunctionComponent<
           </Bloc>
         </div>
       </main>
-    </PageFicheConducteurStyled>
+    </div>
   );
 };
 

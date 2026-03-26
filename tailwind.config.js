@@ -102,16 +102,8 @@ module.exports = {
     },
   },
   plugins: [
-    plugin(({ addVariant, addBase }) => {
+    plugin(({ addVariant }) => {
       addVariant("children", "& > *");
-      addBase({
-        "@media print": {
-          "@page": {
-            margin: "12mm 0",
-            size: "280mm 396mm",
-          },
-        },
-      });
     }),
   ],
 };

@@ -1,6 +1,7 @@
 import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
 import Link from "next/link";
 import { FunctionComponent, useState } from "react";
+import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
 import Titre from "@/components/_commons/Titre/Titre";
 import { PublicationsGroupéesParChantier } from "@/components/PageRapportDétaillé/PageRapportDétaillé.interface";
 import RapportDétailléVueDEnsemble from "@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble";
@@ -88,6 +89,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   moyenneTauxAvancementTerritoire,
   masquerIndicateursNonApplicables,
 }) => {
+  usePrintPageStyle("margin: 12mm 0; size: 280mm 396mm");
   const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const [afficherLesChantiers, setAfficherLesChantiers] = useState(false);
