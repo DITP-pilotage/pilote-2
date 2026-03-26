@@ -32,7 +32,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
   );
 
   return (
-    <section className="fr-table fr-m-0 fr-p-0 text-dsfr-grey-50 [&_nav_button]:rounded">
+    <section className="fr-table fr-m-0 fr-p-0 text-dsfr-grey-50">
       <div className="flex flex-col justify-between md:flex-row gap-4 md:items-end w-full mb-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="w-80">

@@ -15,7 +15,7 @@ const RapportDétailléTableauChantiers: FunctionComponent<
   );
 
   return (
-    <section className="fr-table fr-m-0 fr-p-0 overflow-x-auto [&_tbody_a]:no-underline [&_tbody_a]:bg-none [&_.ligne-chantier]:cursor-pointer [&_.ligne-chantier:hover:nth-of-type(even)]:bg-dsfr-grey-950-hover [&_.ligne-chantier:hover:nth-of-type(odd)]:bg-dsfr-grey-975-hover">
+    <section className="fr-table fr-m-0 fr-p-0 overflow-x-auto [&_tbody_a]:no-underline [&_tbody_a]:bg-none">
       {tableau.getRowModel().rows.length === 0 ? (
         <div className="fr-notice fr-notice--info">
           <div className="fr-container">

@@ -39,10 +39,10 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
         </thead>
         <tbody className="[&_tr]:!bg-[unset]">
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5 min-h-8 align-top">
               Valeur initiale
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 leading-5">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 leading-5 min-h-8 align-top">
               <span>
                 {valeurInitiale !== null && valeurInitiale !== undefined
                   ? valeurInitiale?.toLocaleString() + unitéAffichée
@@ -56,10 +56,10 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5 min-h-8 align-top">
               Valeur d'avancement
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 leading-5">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 leading-5 min-h-8 align-top">
               <span>
                 {valeurAvancement !== null && valeurAvancement !== undefined
                   ? valeurAvancement?.toLocaleString() + unitéAffichée
@@ -73,12 +73,12 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5 min-h-8 align-top">
               {typeDeRéforme === "chantier"
                 ? "Cible " + new Date().getFullYear().toString()
                 : "Cible"}
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 leading-5">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 leading-5 min-h-8 align-top">
               <span>
                 {valeurCibleAnnuelle !== null &&
                 valeurCibleAnnuelle !== undefined
@@ -93,12 +93,12 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5 min-h-8 align-top">
               {typeDeRéforme === "chantier"
                 ? "Avancement " + new Date().getFullYear().toString()
                 : "Avancement"}
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 leading-5">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 leading-5 min-h-8 align-top">
               <BarreDeProgression
                 afficherTexte
                 fond="gris-clair"
@@ -110,10 +110,10 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5 min-h-8 align-top">
               {typeDeRéforme === "chantier" ? "Cible 2026" : "Cible"}
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 leading-5">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 leading-5 min-h-8 align-top">
               <span>
                 {Boolean(valeurCible)
                   ? valeurCible?.toLocaleString() + unitéAffichée
@@ -127,10 +127,10 @@ const IndicateurBlocIndicateurTuile: FunctionComponent<
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5 min-h-8 align-top">
               {typeDeRéforme === "chantier" ? "Avancement 2026" : "Avancement"}
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 leading-5">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 leading-5 min-h-8 align-top">
               <BarreDeProgression
                 afficherTexte
                 fond="gris-clair"

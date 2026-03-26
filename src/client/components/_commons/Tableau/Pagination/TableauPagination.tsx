@@ -41,7 +41,7 @@ const TableauPagination: FunctionComponent<PaginationProps> = ({
       <ul className="fr-pagination__list">
         <li className="fr-unhidden-sm fr-hidden">
           <button
-            className="fr-pagination__link fr-pagination__link--first"
+            className="fr-pagination__link fr-pagination__link--first rounded"
             disabled={numéroDePageCourante === 1}
             onClick={() => changerPage(1)}
             title="Première page"
@@ -52,7 +52,7 @@ const TableauPagination: FunctionComponent<PaginationProps> = ({
         </li>
         <li className="fr-unhidden-sm fr-hidden">
           <button
-            className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label"
+            className="fr-pagination__link fr-pagination__link--prev fr-pagination__link--lg-label rounded"
             disabled={numéroDePageCourante === 1}
             onClick={() => changerPage(numéroPagePrécédente)}
             title="Page précédente"
@@ -170,7 +170,7 @@ const TableauPagination: FunctionComponent<PaginationProps> = ({
         )}
         <li className="fr-unhidden-sm fr-hidden">
           <button
-            className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label"
+            className="fr-pagination__link fr-pagination__link--next fr-pagination__link--lg-label rounded"
             disabled={numéroDePageCourante === numéroDernièrePage}
             onClick={() => changerPage(numéroPageSuivante)}
             title="Page suivante"
@@ -181,7 +181,7 @@ const TableauPagination: FunctionComponent<PaginationProps> = ({
         </li>
         <li className="fr-unhidden-sm fr-hidden">
           <button
-            className="fr-pagination__link fr-pagination__link--last"
+            className="fr-pagination__link fr-pagination__link--last rounded"
             disabled={numéroDePageCourante === numéroDernièrePage}
             onClick={() => changerPage(numéroDernièrePage)}
             title="Dernière page"

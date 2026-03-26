@@ -28,7 +28,7 @@ const RapportDétailléTableauChantiersContenu: FunctionComponent<
     <tbody>
       {tableau.getRowModel().rows.map((row) => (
         <tr
-          className="ligne-chantier"
+          className="ligne-chantier cursor-pointer even:hover:bg-dsfr-grey-950-hover odd:hover:bg-dsfr-grey-975-hover"
           key={row.id}
           onClick={() => auClicSurLaLigne(row)}
         >

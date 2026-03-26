@@ -43,7 +43,7 @@ const TableauAdminUtilisateurs: FunctionComponent<{
     regex.test(typeExport);
 
   return (
-    <section className="fr-px-1w [&_tbody>tr]:cursor-pointer [&_tbody>tr:hover:nth-of-type(even)]:bg-dsfr-grey-950-hover [&_tbody>tr:hover:nth-of-type(odd)]:bg-dsfr-grey-975-hover [&_tbody_td]:max-w-[10px] [&_tbody_td]:overflow-hidden [&_tbody_td]:text-ellipsis [&_tbody_td]:whitespace-nowrap [&_nav_button]:rounded">
+    <section className="fr-px-1w">
       <div className="w-full max-w-[20.5rem] fr-mt-2w">
         <BarreDeRecherche
           changementDeLaRechercheCallback={changementDeLaRechercheCallback}

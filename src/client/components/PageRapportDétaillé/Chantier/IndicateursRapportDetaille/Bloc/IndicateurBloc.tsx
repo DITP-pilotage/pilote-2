@@ -39,7 +39,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
 
   return (
     <div
-      className="mb-4 last-of-type:mb-0 print:break-inside-avoid [&_td]:min-h-8 [&_td]:align-top [&_.indicateur-date-valeur]:h-4 [&_.indicateur-date-valeur]:text-[10px] [&_.indicateur-date-valeur]:leading-4"
+      className="mb-4 last-of-type:mb-0 print:break-inside-avoid"
       key={indicateur.id}
     >
       <Bloc>

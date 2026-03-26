@@ -26,7 +26,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
   } = useTableauPageAdminIndicateurs();
 
   return (
-    <section className="[&_tbody>tr]:cursor-pointer [&_tbody>tr:hover:nth-of-type(even)]:bg-dsfr-grey-950-hover [&_tbody>tr:hover:nth-of-type(odd)]:bg-dsfr-grey-975-hover [&_tbody_td]:max-w-[20px] [&_tbody_td]:overflow-hidden [&_tbody_td]:text-ellipsis [&_tbody_td]:whitespace-nowrap [&_nav_button]:rounded">
+    <section>
       {!!alerte && (
         <div className="fr-mt-2w">
           <Alerte

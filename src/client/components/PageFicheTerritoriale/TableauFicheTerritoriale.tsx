@@ -22,14 +22,14 @@ export const TableauFicheTerritoriale: FunctionComponent<{
   jalon: number;
 }> = ({ chantiersFicheTerritoriale, jalon }) => {
   return (
-    <div className="fr-container--fluid fr-mt-2v [&_div.fr-grid-row:first-of-type]:border-b-2 [&_div.fr-grid-row:first-of-type]:border-b-black [&_div.fr-grid-row:first-of-type]:rounded-tl-lg [&_div.fr-grid-row:first-of-type]:rounded-tr-lg">
-      <div className="fr-grid-row fr-p-2w fr-background-action-low--blue-france print:!py-2 print:!px-2 print:[&>div]:!text-[0.6rem] print:[&_.fiche-territoriale--contenu]:!text-[0.6rem]">
-        <div className="fr-col-8 fr-text--bold fr-px-4w">
+    <div className="fr-container--fluid fr-mt-2v">
+      <div className="fr-grid-row fr-p-2w fr-background-action-low--blue-france border-b-2 border-b-black rounded-tl-lg rounded-tr-lg print:!py-2 print:!px-2">
+        <div className="fr-col-8 fr-text--bold fr-px-4w print:!text-[0.6rem]">
           Chantiers publiés au baromètre de l'action publique et leurs
           indicateurs
         </div>
-        <div className="fr-col-2 fr-text--bold">Météo</div>
-        <div className="fr-col-2 fr-text--bold">Avancement global</div>
+        <div className="fr-col-2 fr-text--bold print:!text-[0.6rem]">Météo</div>
+        <div className="fr-col-2 fr-text--bold print:!text-[0.6rem]">Avancement global</div>
       </div>
       {chantiersFicheTerritoriale.map((chantierFicheTerritoriale, index) => {
         return (
@@ -74,30 +74,30 @@ export const TableauFicheTerritoriale: FunctionComponent<{
               </div>
             </div>
             <div
-              className="fr-grid-row fr-pt-1w print:!py-0 print:!m-0 print:[&_span]:max-h-4 fr-px-2w"
+              className="fr-grid-row fr-pt-1w print:!py-0 print:!m-0 fr-px-2w"
               key={`indicateur-fiche-territoriale-${index}`}
             >
               <div className="fr-col-4 flex align-center fr-p-0 fr-m-0" />
               <div className="fr-col-2 flex flex-column fr-p-0">
-                <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] fr-text-mention--grey">
+                <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] print:max-h-4 fr-text-mention--grey">
                   Dernière valeur
                 </span>
-                <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] fr-text-mention--grey">
+                <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] print:max-h-4 fr-text-mention--grey">
                   {chantierFicheTerritoriale.dateQuantitative}
                 </span>
               </div>
               <div className="fr-col-2 fr-text--bold flex flex-column  fr-p-0 fr-m-0">
-                <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] fr-m-0 fr-text-mention--grey">
+                <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] print:max-h-4 fr-m-0 fr-text-mention--grey">
                   {`Cible ${jalon}`}
                 </span>
               </div>
               <div className="fr-col-2 fr-text--bold flex flex-column fr-p-0 fr-m-0">
-                <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] fr-m-0 fr-text-mention--grey">
+                <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] print:max-h-4 fr-m-0 fr-text-mention--grey">
                   {`Avancement ${jalon}`}
                 </span>
               </div>
               <div className="fr-col-2 fr-text--bold flex flex-column fr-p-0 fr-m-0">
-                <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] fr-m-0 fr-text-mention--grey">
+                <span className="!text-[0.8rem] leading-4 print:!text-[0.6rem] print:max-h-4 fr-m-0 fr-text-mention--grey">
                   Avancement national
                 </span>
               </div>

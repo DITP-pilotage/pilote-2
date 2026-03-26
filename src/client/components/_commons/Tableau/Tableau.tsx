@@ -24,7 +24,7 @@ export default function Tableau<T extends object>({
   );
 
   return (
-    <section className="fr-table fr-m-0 fr-p-0 overflow-x-auto [&_nav_button]:rounded">
+    <section className="fr-table fr-m-0 fr-p-0 overflow-x-auto">
       {tableau.getRowModel().rows.length === 0 ? (
         <div className="fr-notice fr-notice--info">
           <div className="fr-container">
