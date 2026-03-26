@@ -1,8 +1,8 @@
-import { Suspense } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-import { ColonneMesuree } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
-import { useComparaisonTerritoires } from "./useComparaisonTerritoires";
-import { PanneauCarte } from "./PanneauCarte";
+import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
+import { WidgetCartographieMeteo } from "@/components/_commons/Widget/WidgetCartographieMeteo/WidgetCartographieMeteo";
+import { WidgetCartographiePVA } from "@/components/_commons/Widget/WidgetCartographiePVA/WidgetCartographiePVA";
+import { ComparaisonTerritoires as ComparaisonTerritoiresBase } from "@/components/_commons/ComparaisonTerritoires/ComparaisonTerritoires";
 
 type ComparaisonTerritoiresProps = {
   chantierId: string;
@@ -11,65 +11,62 @@ type ComparaisonTerritoiresProps = {
   territoireCode: string;
 };
 
+type TypeCarteChantier = "ta" | "meteo" | "pva";
+
+const options: (
+  jalon: number,
+) => { value: TypeCarteChantier; label: string }[] = (jalon) => [
+  { value: "ta", label: `Carte des taux d'avancement ${jalon}` },
+  { value: "meteo", label: "Carte des niveaux de confiance" },
+  {
+    value: "pva",
+    label: "Carte des propositions de valeur d'avancement",
+  },
+];
+
 export const ComparaisonTerritoires = ({
   chantierId,
   jalon,
   maille,
   territoireCode,
-}: ComparaisonTerritoiresProps) => {
-  const {
-    panneauGauche,
-    panneauDroite,
-    changerTypeCarte,
-    activerComparaison,
-    supprimerPanneau,
-  } = useComparaisonTerritoires();
-
-  const estEnComparaison = panneauDroite !== null;
-
-  return (
-    <div className="fr-card fr-p-3w flex flex-col gap-4">
-      <span className="fr-text--xl font-bold fr-m-0">
-        Comparaison territoriale et évolution
-      </span>
-      <div
-        className="grid max-sm:!grid-cols-1 gap-14"
-        style={{
-          gridTemplateColumns: estEnComparaison ? "repeat(2, 1fr)" : "1fr",
-        }}
-      >
-        <ColonneMesuree>
-          <PanneauCarte
+}: ComparaisonTerritoiresProps) => (
+  <ComparaisonTerritoiresBase<TypeCarteChantier>
+    typeParDefaut="ta"
+    typeAlternatif={(t) => (t === "ta" ? "meteo" : "ta")}
+    options={options(jalon)}
+    renderCarte={(type) => {
+      if (type === "ta") {
+        return (
+          <WidgetCartographieTA
+            mode="chantiers"
+            chantierIds={[chantierId]}
+            jalon={jalon}
+            maille={maille}
+            territoireCode={territoireCode}
+          />
+        );
+      }
+      if (type === "meteo") {
+        return (
+          <WidgetCartographieMeteo
             chantierId={chantierId}
             jalon={jalon}
             maille={maille}
             territoireCode={territoireCode}
-            typeCarte={panneauGauche}
-            estEnComparaison={estEnComparaison}
-            onChangerType={(type) => changerTypeCarte("gauche", type)}
-            onComparer={activerComparaison}
-            onSupprimer={() => supprimerPanneau("gauche")}
           />
-        </ColonneMesuree>
-
-        {panneauDroite != null && (
-          <ColonneMesuree>
-            <Suspense>
-              <PanneauCarte
-                chantierId={chantierId}
-                jalon={jalon}
-                maille={maille}
-                territoireCode={territoireCode}
-                typeCarte={panneauDroite}
-                estEnComparaison={estEnComparaison}
-                onChangerType={(type) => changerTypeCarte("droite", type)}
-                onComparer={activerComparaison}
-                onSupprimer={() => supprimerPanneau("droite")}
-              />
-            </Suspense>
-          </ColonneMesuree>
-        )}
-      </div>
-    </div>
-  );
-};
+        );
+      }
+      if (type === "pva") {
+        return (
+          <WidgetCartographiePVA
+            chantierId={chantierId}
+            jalon={jalon}
+            maille={maille}
+            territoireCode={territoireCode}
+          />
+        );
+      }
+      return null;
+    }}
+  />
+);

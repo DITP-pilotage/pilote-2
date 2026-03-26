@@ -8,9 +8,7 @@ import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import CartographieAvecSelecteurIndicateur from "@/components/_commons/Cartographie/CartographieAvecSelecteurIndicateur/CartographieAvecSelecteurIndicateur";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { useEnv } from "@/client/hooks/useEnv";
-import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
-import { WidgetCartographieValeurAvancement } from "@/components/_commons/Widget/WidgetCartographieValeurAvancement/WidgetCartographieValeurAvancement";
-import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
+import { ComparaisonTerritoiresIndicateur } from "@/components/_commons/IndicateursChantier/Bloc/Détails/ComparaisonTerritoires/ComparaisonTerritoiresIndicateur";
 import { useIndicateurDétails } from "./useIndicateurDétails";
 
 export type CartographieIndicateurType =
@@ -183,6 +181,21 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                       unité={indicateur.unité}
                     />
                   </section>
+
+                  {featureComparaisonTerritoires && (
+                    <div className="fr-mt-2w fr-container">
+                      <Suspense>
+                        <ComparaisonTerritoiresIndicateur
+                          indicateurId={indicateur.id}
+                          chantierId={chantierId}
+                          jalon={jalon}
+                          maille={mailleQuery}
+                          territoireCode={territoireCode}
+                          unite={indicateur.unité}
+                        />
+                      </Suspense>
+                    </div>
+                  )}
                 </>
               ) : null}
               {futOuvert && detailIndicateurDuTerritoire ? (
@@ -201,30 +214,6 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
           </div>
         </div>
       </section>
-      {featureComparaisonTerritoires && (
-        <div className="fr-mt-2w fr-container">
-          <Suspense>
-            <TuileWidget titre="Comparaison territoriale">
-              <WidgetCartographieTA
-                mode="indicateur"
-                indicateurId={indicateur.id}
-                chantierId={chantierId}
-                jalon={jalon}
-                maille={mailleQuery}
-                territoireCode={territoireCode}
-              />
-              <WidgetCartographieValeurAvancement
-                indicateurId={indicateur.id}
-                chantierId={chantierId}
-                jalon={jalon}
-                maille={mailleQuery}
-                territoireCode={territoireCode}
-                unite={indicateur.unité}
-              />
-            </TuileWidget>
-          </Suspense>
-        </div>
-      )}
     </div>
   );
 };
