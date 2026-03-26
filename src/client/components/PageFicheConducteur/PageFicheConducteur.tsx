@@ -242,7 +242,7 @@ const PageFicheConducteur: FunctionComponent<
             <div className="page-break fr-mb-2w" />
           </>
         ) : null}
-        <div className="fr-container fr-pb-1w  hidden print:block">
+        <div className="fr-container fr-pb-1w hidden print:block">
           <EnteteFicheConducteur classNameEncart="p-2">
             {`${chantier.nom} - Point d'avancement`}
           </EnteteFicheConducteur>

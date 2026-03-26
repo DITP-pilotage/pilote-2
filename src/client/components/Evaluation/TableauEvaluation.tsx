@@ -160,20 +160,20 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
                     </button>
                   }
                 >
-                  <div className="flex flex-col gap-2 children:!mb-0">
-                    <p>
+                  <div className="flex flex-col gap-2">
+                    <p className="!mb-0">
                       Renseignez ici les <strong>résultats quantitatifs</strong>{" "}
                       et les <strong>commentaires</strong> pour chaque objectif
                       individuel et manière de servir.
                     </p>
 
-                    <p>
+                    <p className="!mb-0">
                       Une fois un élément évalué,{" "}
                       <strong>marquez-le comme traité</strong> pour suivre
                       l'avancement de votre travail.
                     </p>
 
-                    <p>
+                    <p className="!mb-0">
                       Lorsque tous les éléments sont traités, vous pouvez{" "}
                       <strong>transmettre les résultats</strong> pour létape
                       suivante. Tant que les résultats ne sont pas transmis, ils
@@ -181,13 +181,13 @@ export const InnerTableauEvaluation = memo(function TableauEvaluation({
                       à tout moment.
                     </p>
 
-                    <p>
+                    <p className="!mb-0">
                       Les options de <strong>filtrage</strong> vous permettent
                       d'adapter la vue. Vous pouvez les utiliser pour travailler
                       par territoire ou par item, selon votre préférence.
                     </p>
 
-                    <p>
+                    <p className="!mb-0">
                       Pour plus de détails, consultez le{" "}
                       <Link
                         href="/centre-aide-pilote-2/centre-aide-eval"

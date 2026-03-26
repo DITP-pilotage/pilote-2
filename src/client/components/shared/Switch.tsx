@@ -32,18 +32,17 @@ export const Switch = Object.assign({}, BaseSwitch, {
   }: ComponentProps<typeof BaseSwitch.Thumb> & { disabled?: boolean }) => (
     <BaseSwitch.Thumb
       className={clsxm(
-        "h-6 w-6 block",
+        "group h-6 w-6 block",
         "rounded-full border !border-primary",
         "translate-x-0 transition-transform data-[state=checked]:!translate-x-4",
         "bg-white",
         { "!border-gray-500 !text-gray-500": disabled },
-        "children:!hidden data-[state=checked]:children:!block",
         "flex items-center justify-center",
         className,
       )}
       {...props}
     >
-      <Icone className="h-5 w-5 text-current" icone={CheckLineIcon} />
+      <Icone className="h-5 w-5 text-current !hidden group-data-[state=checked]:!block" icone={CheckLineIcon} />
     </BaseSwitch.Thumb>
   ),
 });
