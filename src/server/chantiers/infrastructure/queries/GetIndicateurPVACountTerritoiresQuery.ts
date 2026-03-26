@@ -29,8 +29,7 @@ export class GetIndicateurPVACountTerritoiresQuery {
 
     const details = result[params.indicateurId] ?? {};
 
-    const territoires =
-      await this.deps.territoireRepository.récupérerTousNew();
+    const territoires = await this.deps.territoireRepository.récupérerTousNew();
     const territoiresMap = new Map(
       territoires.map((territoire) => [territoire.code, territoire]),
     );
