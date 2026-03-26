@@ -17,11 +17,6 @@ import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { Maille } from "@/server/domain/maille/Maille.interface";
-import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
-import { CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
-import { calculerMediane } from "@/client/utils/statistiques/statistiques";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
 
 class ErreurChantierNonTrouvé extends Error {
   constructor(idChantier: string) {
@@ -1382,94 +1377,5 @@ export class PrismaChantierRepository implements ChantierRepository {
         },
       },
     });
-  }
-
-  async getChantierStatistiques(
-    habilitations: Habilitations,
-    listeChantier: Chantier["id"][],
-    maille: Maille,
-    jalon: number,
-  ): Promise<AvancementsStatistiques> {
-    const habilitation = new Habilitation(habilitations);
-    const chantiersAutorisés =
-      habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
-    const chantiersLecture = listeChantier.filter((chantier) =>
-      chantiersAutorisés.includes(chantier),
-    );
-
-    const listeMoyenneParTerritoire =
-      await this.prisma.chantier_territoire_jalon.groupBy({
-        by: ["territoire_code"],
-        _avg: {
-          taux_avancement: true,
-        },
-        where: {
-          id: {
-            in: chantiersLecture,
-          },
-          jalon: jalon,
-          maille: CODES_MAILLES[maille],
-          NOT: {
-            taux_avancement: {
-              equals: null,
-            },
-          },
-        },
-        orderBy: {
-          _avg: {
-            taux_avancement: "asc",
-          },
-        },
-      });
-
-    return {
-      médiane: calculerMediane(
-        listeMoyenneParTerritoire.map(
-          (moyenneParTerritoire) => moyenneParTerritoire._avg.taux_avancement,
-        ),
-      ),
-      minimum: verifyValeurIsNotNullOrUndefined(
-        listeMoyenneParTerritoire.at(0)?._avg.taux_avancement,
-      ),
-      maximum: verifyValeurIsNotNullOrUndefined(
-        listeMoyenneParTerritoire.at(-1)?._avg.taux_avancement,
-      ),
-    };
-  }
-
-  async getChantierStatistiquesParChantier(
-    listeChantier: string[],
-    maille: Maille,
-    jalon: number,
-  ): Promise<Map<string, AvancementsStatistiques>> {
-    const rows = await this.prisma.chantier_territoire_jalon.findMany({
-      where: {
-        id: { in: listeChantier },
-        jalon,
-        maille: CODES_MAILLES[maille],
-        NOT: { taux_avancement: { equals: null } },
-      },
-      select: { id: true, taux_avancement: true },
-    });
-
-    const valeursParChantier = new Map<string, number[]>();
-    for (const row of rows) {
-      if (row.taux_avancement !== null) {
-        const valeurs = valeursParChantier.get(row.id) ?? [];
-        valeurs.push(Number(row.taux_avancement));
-        valeursParChantier.set(row.id, valeurs);
-      }
-    }
-
-    const result = new Map<string, AvancementsStatistiques>();
-    for (const [chantierId, valeurs] of valeursParChantier) {
-      const sorted = [...valeurs].sort((a, b) => a - b);
-      result.set(chantierId, {
-        minimum: sorted.at(0) ?? null,
-        maximum: sorted.at(-1) ?? null,
-        médiane: calculerMediane(sorted),
-      });
-    }
-    return result;
   }
 }

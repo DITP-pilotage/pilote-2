@@ -5,13 +5,16 @@ import { Maille } from "@/server/domain/maille/Maille.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { MailleNonAutoriséeErreur } from "@/server/utils/errors";
 import type { Inject } from "@/server/chantiers/module";
-import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
+import { GetStatistiquesAvancementChantiersQuery } from "@/server/chantiers/infrastructure/queries/GetStatistiquesAvancementChantiersQuery";
 
 export class RécupérerStatistiquesAvancementChantiersUseCase {
-  private readonly chantierRepository: ChantierRepository;
+  private readonly getStatistiquesAvancementChantiersQuery: GetStatistiquesAvancementChantiersQuery;
 
-  constructor({ chantierRepository }: Inject<"chantierRepository">) {
-    this.chantierRepository = chantierRepository;
+  constructor({
+    getStatistiquesAvancementChantiersQuery,
+  }: Inject<"getStatistiquesAvancementChantiersQuery">) {
+    this.getStatistiquesAvancementChantiersQuery =
+      getStatistiquesAvancementChantiersQuery;
   }
 
   async run(
@@ -28,11 +31,11 @@ export class RécupérerStatistiquesAvancementChantiersUseCase {
       throw new MailleNonAutoriséeErreur();
     }
 
-    return this.chantierRepository.getChantierStatistiques(
+    return this.getStatistiquesAvancementChantiersQuery.execute({
       habilitations,
-      chantiers,
+      listeChantier: chantiers,
       maille,
       jalon,
-    );
+    });
   }
 }

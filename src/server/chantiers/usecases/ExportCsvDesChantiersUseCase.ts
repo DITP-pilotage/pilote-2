@@ -17,6 +17,7 @@ import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import type { Inject } from "@/server/chantiers/module";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
+import { GetStatistiquesAvancementChantiersParChantierQuery } from "@/server/chantiers/infrastructure/queries/GetStatistiquesAvancementChantiersParChantierQuery";
 import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
 import {
   ChantierPourExport,
@@ -294,9 +295,17 @@ export class ExportCsvDesChantiersUseCase {
   };
 
   private readonly chantierRepository: ChantierRepository;
+  private readonly getStatistiquesAvancementChantiersParChantierQuery: GetStatistiquesAvancementChantiersParChantierQuery;
 
-  constructor({ chantierRepository }: Inject<"chantierRepository">) {
+  constructor({
+    chantierRepository,
+    getStatistiquesAvancementChantiersParChantierQuery,
+  }: Inject<
+    "chantierRepository" | "getStatistiquesAvancementChantiersParChantierQuery"
+  >) {
     this.chantierRepository = chantierRepository;
+    this.getStatistiquesAvancementChantiersParChantierQuery =
+      getStatistiquesAvancementChantiersParChantierQuery;
   }
 
   public async *run({
@@ -318,16 +327,16 @@ export class ExportCsvDesChantiersUseCase {
   }): AsyncGenerator<string[][]> {
     const [statistiquesRegParChantier, statistiquesDeptParChantier] =
       await Promise.all([
-        this.chantierRepository.getChantierStatistiquesParChantier(
-          chantierIds,
-          "regionale",
-          jalonSelectionne,
-        ),
-        this.chantierRepository.getChantierStatistiquesParChantier(
-          chantierIds,
-          "departementale",
-          jalonSelectionne,
-        ),
+        this.getStatistiquesAvancementChantiersParChantierQuery.execute({
+          listeChantier: chantierIds,
+          maille: "regionale",
+          jalon: jalonSelectionne,
+        }),
+        this.getStatistiquesAvancementChantiersParChantierQuery.execute({
+          listeChantier: chantierIds,
+          maille: "departementale",
+          jalon: jalonSelectionne,
+        }),
       ]);
     for (let i = 0; i < chantierIds.length; i += chantierChunkSize) {
       const partialChantierIds = chantierIds.slice(i, i + chantierChunkSize);
