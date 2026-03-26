@@ -1,5 +1,5 @@
 import FlècheDeTri from "@/components/_commons/Tableau/EnTête/FlècheDeTri/FlècheDeTri";
-import BoutonsDeTriStyled from "@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.styled";
+import { clsxm } from "@/utils/clsxm";
 
 type DirectionDeTri = "asc" | "desc" | false;
 
@@ -15,10 +15,13 @@ export default function BoutonsDeTri({
   changementDirectionDeTriCallback,
 }: BoutonsDeTriProps) {
   return (
-    <BoutonsDeTriStyled>
+    <div className="inline-block">
       <button
         aria-label={`trier la colonne "${nomColonneÀTrier}" par ordre croissant`}
-        className={`${directionDeTri === "asc" ? "actif" : ""} bouton-de-tri fr-mr-1v`}
+        className={clsxm(
+          "w-6 bg-dsfr-blue-france-925 border border-white rounded hover:bg-dsfr-blue-france-925-hover fr-mr-1v",
+          directionDeTri === "asc" && "bg-primary hover:bg-dsfr-blue-france-sun-113-hover",
+        )}
         onClick={() =>
           directionDeTri === "asc"
             ? changementDirectionDeTriCallback(false)
@@ -30,7 +33,10 @@ export default function BoutonsDeTri({
       </button>
       <button
         aria-label={`trier la colonne "${nomColonneÀTrier}" par ordre décroissant`}
-        className={`${directionDeTri === "desc" ? "actif" : ""} bouton-de-tri`}
+        className={clsxm(
+          "w-6 bg-dsfr-blue-france-925 border border-white rounded hover:bg-dsfr-blue-france-925-hover",
+          directionDeTri === "desc" && "bg-primary hover:bg-dsfr-blue-france-sun-113-hover",
+        )}
         onClick={() =>
           directionDeTri === "desc"
             ? changementDirectionDeTriCallback(false)
@@ -40,6 +46,6 @@ export default function BoutonsDeTri({
       >
         <FlècheDeTri direction="desc" estActif={directionDeTri === "desc"} />
       </button>
-    </BoutonsDeTriStyled>
+    </div>
   );
 }

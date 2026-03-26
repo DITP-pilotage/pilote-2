@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import { Rubrique } from "@/client/utils/rubriques";
-import SommaireStyled from "./Sommaire.styled";
 
 interface SommaireProps {
   rubriques: Rubrique[];
@@ -9,12 +8,12 @@ interface SommaireProps {
 
 const Sommaire: FunctionComponent<SommaireProps> = ({ rubriques, auClic }) => {
   return (
-    <SommaireStyled>
+    <div className="sticky top-0 max-w-80">
       <nav className="fr-pt-3w fr-pl-7v fr-pr-4w">
         <p className="bold fr-text--lg fr-mb-1w">Sommaire</p>
-        <ul className="fr-text--sm fr-pl-3w">
+        <ul className="fr-text--sm fr-pl-3w [&_a:not(:hover,:active)]:[--underline-idle-width:0]">
           {rubriques.map((rubrique) => (
-            <li className="fr-pb-0" key={rubrique.ancre}>
+            <li className="fr-pb-0 leading-8 text-primary list-none" key={rubrique.ancre}>
               <a href={`#${rubrique.ancre}`} onClick={auClic}>
                 {rubrique.nom}
               </a>
@@ -22,7 +21,7 @@ const Sommaire: FunctionComponent<SommaireProps> = ({ rubriques, auClic }) => {
                 rubrique.sousRubriques.length > 0 && (
                   <ul className="fr-pl-3w fr-my-0">
                     {rubrique.sousRubriques.map((sousRubrique) => (
-                      <li className="line-height-xs" key={sousRubrique.nom}>
+                      <li className="pb-3 leading-5 text-primary list-none" key={sousRubrique.nom}>
                         <a href={`#${sousRubrique.ancre}`} onClick={auClic}>
                           {sousRubrique.nom}
                         </a>
@@ -34,7 +33,7 @@ const Sommaire: FunctionComponent<SommaireProps> = ({ rubriques, auClic }) => {
           ))}
         </ul>
       </nav>
-    </SommaireStyled>
+    </div>
   );
 };
 
