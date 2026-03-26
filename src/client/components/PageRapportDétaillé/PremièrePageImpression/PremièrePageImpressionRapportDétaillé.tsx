@@ -161,7 +161,9 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
       <div className="fr-px-12w fr-py-4w max-h-[20cm]">
         <ul className="fr-pl-0 columns-[auto_2] gap-8 [column-fill:auto] list-none">
           <li className="pb-0">
-            <span className="fr-text--bold text-[1.3rem] leading-7">Territoire sélectionné</span>
+            <span className="fr-text--bold text-[1.3rem] leading-7">
+              Territoire sélectionné
+            </span>
             <ul className="pl-4 [margin-block:0.25rem_0] mb-4">
               <li className="pb-0">{territoireSélectionné?.nomAffiché}</li>
             </ul>
@@ -178,7 +180,9 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
                       <span className="fr-text--bold">{ministère.nom}</span>
                       <ul className="pl-5 [margin-block:0_0.25rem]">
                         {ministère.perimetres.map((périmètre) => (
-                          <li className="pb-0" key={périmètre.id}>{périmètre.nom}</li>
+                          <li className="pb-0" key={périmètre.id}>
+                            {périmètre.nom}
+                          </li>
                         ))}
                       </ul>
                     </li>
@@ -194,27 +198,37 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
               </span>
               <ul className="pl-4 [margin-block:0.25rem_0] mb-4">
                 {filtresTypologie.map((typologie) => (
-                  <li className="pb-0" key={typologie}>{typologie}</li>
+                  <li className="pb-0" key={typologie}>
+                    {typologie}
+                  </li>
                 ))}
               </ul>
             </li>
           )}
           {filtresAxes.length > 0 && (
             <li className="pb-0">
-              <span className="fr-text--bold text-[1.3rem] leading-7">Axe(s)</span>
+              <span className="fr-text--bold text-[1.3rem] leading-7">
+                Axe(s)
+              </span>
               <ul className="pl-4 [margin-block:0.25rem_0] mb-4">
                 {filtresAxes.map((axe) => (
-                  <li className="pb-0" key={axe}>{axe}</li>
+                  <li className="pb-0" key={axe}>
+                    {axe}
+                  </li>
                 ))}
               </ul>
             </li>
           )}
           {ffAlertes && filtresAlertes.length > 0 && (
             <li className="pb-0">
-              <span className="fr-text--bold text-[1.3rem] leading-7">Alerte(s) sélectionnée(s)</span>
+              <span className="fr-text--bold text-[1.3rem] leading-7">
+                Alerte(s) sélectionnée(s)
+              </span>
               <ul className="pl-4 [margin-block:0.25rem_0] mb-4">
                 {filtresAlertes.map((alerte) => (
-                  <li className="pb-0" key={alerte}>{alerte}</li>
+                  <li className="pb-0" key={alerte}>
+                    {alerte}
+                  </li>
                 ))}
               </ul>
             </li>

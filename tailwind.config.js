@@ -90,8 +90,16 @@ module.exports = {
     },
   },
   plugins: [
-    plugin(({ addVariant }) => {
+    plugin(({ addVariant, addBase }) => {
       addVariant("children", "& > *");
+      addBase({
+        "@media print": {
+          "@page": {
+            margin: "12mm 0",
+            size: "280mm 396mm",
+          },
+        },
+      });
     }),
   ],
 };
