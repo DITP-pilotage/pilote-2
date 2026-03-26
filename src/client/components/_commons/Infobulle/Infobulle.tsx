@@ -37,7 +37,7 @@ export const Infobulle: FunctionComponent<
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <div className="relative inline-flex [&_.tooltip-infobulle]:z-[10000] [&_.tooltip-infobulle]:max-w-full [&_.tooltip-infobulle]:text-dsfr-grey-50 [&_.tooltip-infobulle]:bg-dsfr-alt-blue-france [&_.tooltip-infobulle]:rounded-lg [&_.tooltip-infobulle]:shadow-[0_4px_2px_#0002] [&_.tooltip-accordeon]:!max-w-[50%] [&_.information-proposition-icone]:!text-2xl">
+    <div className="relative inline-flex">
       <button
         aria-describedby={randomId}
         className={clsxm(

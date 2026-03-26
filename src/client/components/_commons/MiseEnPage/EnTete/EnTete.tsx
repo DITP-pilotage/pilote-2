@@ -52,7 +52,7 @@ export const EnTete = () => {
   const bandeauType = messageInformation?.bandeauType || "WARNING";
 
   return (
-    <header className="fr-header" role="banner">
+    <header className="fr-header z-[2] print:hidden" role="banner">
       <div className="fr-header__body">
         <div className="fr-container">
           <div className="fr-header__body-row">

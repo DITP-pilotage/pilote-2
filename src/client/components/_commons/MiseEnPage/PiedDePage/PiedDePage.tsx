@@ -7,7 +7,7 @@ const PiedDePage: FunctionComponent = () => {
   const estBoutonDocsAPIAffiche = useEnv("NEXT_PUBLIC_FF_DOCS_API");
 
   return (
-    <footer className="fr-footer" id="footer" role="contentinfo">
+    <footer className="fr-footer print:hidden" id="footer" role="contentinfo">
       <div className="fr-container">
         <div className="fr-footer__body">
           <div className="fr-footer__brand fr-enlarge-link">
