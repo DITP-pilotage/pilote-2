@@ -42,7 +42,10 @@ export const Switch = Object.assign({}, BaseSwitch, {
       )}
       {...props}
     >
-      <Icone className="h-5 w-5 text-current !hidden group-data-[state=checked]:!block" icone={CheckLineIcon} />
+      <Icone
+        className="h-5 w-5 text-current !hidden group-data-[state=checked]:!block"
+        icone={CheckLineIcon}
+      />
     </BaseSwitch.Thumb>
   ),
 });

@@ -29,7 +29,9 @@ const IndicateurBlocIndicateurTuile = () => {
         <thead className="bg-dsfr-blue-france-925 bg-none">
           <tr>
             <th className="fr-py-1v rounded-tl-lg">Territoire</th>
-            <th className="fr-py-1v rounded-tr-lg">{detailTerritoireSelectionne.nom}</th>
+            <th className="fr-py-1v rounded-tr-lg">
+              {detailTerritoireSelectionne.nom}
+            </th>
           </tr>
         </thead>
         <tbody className="bg-none [&_tr]:!bg-[unset]">

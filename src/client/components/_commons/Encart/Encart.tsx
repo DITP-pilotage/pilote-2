@@ -8,7 +8,12 @@ interface EncartProps {
 
 const Encart: FunctionComponent<EncartProps> = ({ children, className }) => {
   return (
-    <div className={clsxm("encart-container py-4 px-8 bg-dsfr-blue-france-925", className)}>
+    <div
+      className={clsxm(
+        "encart-container py-4 px-8 bg-dsfr-blue-france-925",
+        className,
+      )}
+    >
       {children}
     </div>
   );

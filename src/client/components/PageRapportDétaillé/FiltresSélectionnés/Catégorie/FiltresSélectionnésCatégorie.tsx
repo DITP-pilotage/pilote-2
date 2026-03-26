@@ -12,7 +12,11 @@ const FiltresSélectionnésCatégorie: FunctionComponent<
   FiltresSélectionnésCatégorieProps
 > = ({ titre, filtres, className }) => {
   if (filtres.length === 0) {
-    return <h3 className={`!text-base !mb-1 ${className ?? ""}`}>{`${titre} (Tous)`}</h3>;
+    return (
+      <h3
+        className={`!text-base !mb-1 ${className ?? ""}`}
+      >{`${titre} (Tous)`}</h3>
+    );
   }
 
   return (

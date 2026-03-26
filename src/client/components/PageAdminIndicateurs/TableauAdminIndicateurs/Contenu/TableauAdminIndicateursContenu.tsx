@@ -15,7 +15,10 @@ const TableauAdminIndicateursContenu: FunctionComponent<
         .getRowModel()
         .rows.filter(Boolean)
         .map((row) => (
-          <tr className="cursor-pointer even:hover:bg-dsfr-grey-950-hover odd:hover:bg-dsfr-grey-975-hover" key={row.id}>
+          <tr
+            className="cursor-pointer even:hover:bg-dsfr-grey-950-hover odd:hover:bg-dsfr-grey-975-hover"
+            key={row.id}
+          >
             {row.getVisibleCells().map((cell) => (
               <td
                 className="fr-p-1w max-w-[20px] overflow-hidden text-ellipsis whitespace-nowrap"

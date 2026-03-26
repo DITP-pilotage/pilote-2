@@ -194,7 +194,10 @@ const PageChantier = () => {
           />
         </div>
         <div className="fr-container--fluid fr-py-2w fr-px-md-2w hidden print:block print:mb-4 print:[page-break-after:avoid]">
-          <Titre baliseHtml="h1" className="fr-h2 fr-mb-0 fr-text--center !text-[1.875rem] !leading-9">
+          <Titre
+            baliseHtml="h1"
+            className="fr-h2 fr-mb-0 fr-text--center !text-[1.875rem] !leading-9"
+          >
             {chantier.nom}
           </Titre>
         </div>

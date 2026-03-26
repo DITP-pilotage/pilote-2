@@ -18,7 +18,9 @@ const PageVide: FunctionComponent<PageVideProps> = ({ titre }) => {
             <Titre baliseHtml="h1" className="fr-my-auto">
               {titre}
             </Titre>
-            <p className="fr-badge fr-ml-3w fr-my-auto bg-dsfr-purple-glycine-950 text-dsfr-purple-glycine-text max-h-8">À venir</p>
+            <p className="fr-badge fr-ml-3w fr-my-auto bg-dsfr-purple-glycine-950 text-dsfr-purple-glycine-text max-h-8">
+              À venir
+            </p>
           </div>
           <Bloc>
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--middle fr-grid-row--center">

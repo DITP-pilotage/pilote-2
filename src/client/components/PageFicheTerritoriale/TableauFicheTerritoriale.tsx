@@ -29,7 +29,9 @@ export const TableauFicheTerritoriale: FunctionComponent<{
           indicateurs
         </div>
         <div className="fr-col-2 fr-text--bold print:!text-[0.6rem]">Météo</div>
-        <div className="fr-col-2 fr-text--bold print:!text-[0.6rem]">Avancement global</div>
+        <div className="fr-col-2 fr-text--bold print:!text-[0.6rem]">
+          Avancement global
+        </div>
       </div>
       {chantiersFicheTerritoriale.map((chantierFicheTerritoriale, index) => {
         return (

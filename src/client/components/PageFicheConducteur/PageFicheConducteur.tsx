@@ -50,7 +50,10 @@ const PageFicheConducteur: FunctionComponent<
               >
                 Responsables & État d'avancement
               </Titre>
-              <Bloc className="h-full print:p-0 print:border-dsfr-grey-925" contenuClassesSupplémentaires="fr-px-1w fr-py-1v">
+              <Bloc
+                className="h-full print:p-0 print:border-dsfr-grey-925"
+                contenuClassesSupplémentaires="fr-px-1w fr-py-1v"
+              >
                 <div className="fr-grid-row border-b fr-pb-1v fr-text--xs fr-m-0 print:!text-[10px] print:!leading-4">
                   <span className="fr-col-2 fr-text--bold">DAC</span>
                   <span className="fr-col-8">
@@ -106,7 +109,10 @@ const PageFicheConducteur: FunctionComponent<
               >
                 Météo et synthèse des résultats
               </Titre>
-              <Bloc className="p-4 h-full print:p-0 print:border-dsfr-grey-925" contenuClassesSupplémentaires="flex gap-2">
+              <Bloc
+                className="p-4 h-full print:p-0 print:border-dsfr-grey-925"
+                contenuClassesSupplémentaires="flex gap-2"
+              >
                 <div className="flex flex-col gap-2 align-center">
                   <MétéoBadge
                     météo={synthèseDesRésultats.meteo || "NON_RENSEIGNEE"}
@@ -128,7 +134,9 @@ const PageFicheConducteur: FunctionComponent<
                         </p>
                       ))
                   ) : (
-                    <p className="fr-text--xs print:!text-[10px] print:!leading-4">Aucune synthèse des résultats</p>
+                    <p className="fr-text--xs print:!text-[10px] print:!leading-4">
+                      Aucune synthèse des résultats
+                    </p>
                   )}
                 </div>
               </Bloc>
@@ -136,7 +144,10 @@ const PageFicheConducteur: FunctionComponent<
           </div>
         </div>
         <div className="fr-container fr-mt-1w">
-          <Bloc className="print:p-0 print:border-dsfr-grey-925" contenuClassesSupplémentaires="fr-px-0 fr-py-0">
+          <Bloc
+            className="print:p-0 print:border-dsfr-grey-925"
+            contenuClassesSupplémentaires="fr-px-0 fr-py-0"
+          >
             <div className="fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0 print:!text-[10px] print:!leading-4">
               <div className="fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b rounded-tl-md rounded-tr-md">
                 <div className="fr-col-5 fr-text--bold">
@@ -248,7 +259,10 @@ const PageFicheConducteur: FunctionComponent<
           </EnteteFicheConducteur>
         </div>
         <div className="fr-container">
-          <Bloc className="print:p-0 print:border-dsfr-grey-925" contenuClassesSupplémentaires="fr-px-0">
+          <Bloc
+            className="print:p-0 print:border-dsfr-grey-925"
+            contenuClassesSupplémentaires="fr-px-0"
+          >
             <div className="fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0 print:!text-[10px] print:!leading-4">
               <div className="fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b rounded-tl-md rounded-tr-md">
                 <div className="fr-col-2 fr-text--bold">Catégorie</div>
