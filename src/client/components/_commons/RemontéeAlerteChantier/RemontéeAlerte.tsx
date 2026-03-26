@@ -34,7 +34,7 @@ const RemontéeAlerte: FunctionComponent<RemontéeAlerteProps> = ({
   return (
     <button
       className={clsxm(
-        "flex flex-col items-start w-full h-full bg-white border border-dsfr-grey-625 rounded-lg shadow-[0_2px_6px_0_#00001229] fr-p-3v fr-p-md-3w",
+        "flex flex-col items-start w-full h-full bg-white border border-dsfr-grey-900 rounded-lg shadow-[0_2px_6px_0_#00001229] fr-p-3v fr-p-md-3w",
         estActivée && "border-warning",
       )}
       disabled={nombre === null}

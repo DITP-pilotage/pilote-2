@@ -21,7 +21,7 @@ const TableauRéformesEnTête: FunctionComponent<TableauRéformesEnTêteProps> =
   tableau,
 }) => {
   return (
-    <thead className="!bg-dsfr-blue-france-925 border border-dsfr-grey-625 [&_th:first-of-type]:rounded-tl-lg [&_th:last-child]:rounded-tr-lg [&_th_p]:inline-block max-[78rem]:[&_.title]:!text-xs">
+    <thead className="!bg-dsfr-blue-france-925 border border-dsfr-grey-925 [&_th:first-of-type]:rounded-tl-lg [&_th:last-child]:rounded-tr-lg [&_th_p]:inline-block max-[78rem]:[&_.title]:!text-xs">
       {tableau.getHeaderGroups().map((headerGroup) => (
         <tr key={headerGroup.id}>
           {headerGroup.headers.map((header) => (

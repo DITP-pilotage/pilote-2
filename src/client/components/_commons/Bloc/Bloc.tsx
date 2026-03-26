@@ -20,7 +20,12 @@ const Bloc: FunctionComponent<BlocProps> = ({
   backgroundClassNameTitre,
 }) => {
   return (
-    <div className={clsxm("bloc-container min-w-full bg-white border border-dsfr-grey-625 rounded-lg print:h-auto print:border-[#7b7b7b]", className)}>
+    <div
+      className={clsxm(
+        "bloc-container min-w-full bg-white border border-dsfr-grey-925 rounded-lg print:h-auto print:border-[#7b7b7b]",
+        className,
+      )}
+    >
       {titre ? (
         <div
           className={clsxm(
@@ -28,7 +33,9 @@ const Bloc: FunctionComponent<BlocProps> = ({
             backgroundClassNameTitre,
           )}
         >
-          <div className="w-auto overflow-hidden text-ellipsis whitespace-nowrap">{titre}</div>
+          <div className="w-auto overflow-hidden text-ellipsis whitespace-nowrap">
+            {titre}
+          </div>
           <div>
             {titre && contenuInfobulle ? (
               <Infobulle classNameBouton="fr-pl-2w">

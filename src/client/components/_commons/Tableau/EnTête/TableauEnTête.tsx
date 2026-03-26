@@ -18,7 +18,7 @@ function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
 
 export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
   return (
-    <thead className="!bg-dsfr-blue-france-925 border border-dsfr-grey-625 [&_th:first-of-type]:rounded-tl-lg [&_th:last-child]:rounded-tr-lg [&_th_p]:inline-block max-[49rem]:[&_.label]:!text-xs">
+    <thead className="!bg-dsfr-blue-france-925 border border-dsfr-grey-925 [&_th:first-of-type]:rounded-tl-lg [&_th:last-child]:rounded-tr-lg [&_th_p]:inline-block max-[49rem]:[&_.label]:!text-xs">
       {tableau.getHeaderGroups().map((headerGroup) => (
         <tr key={headerGroup.id}>
           {headerGroup.headers.map((header) => (

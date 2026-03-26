@@ -13,7 +13,7 @@ export const BoutonSousLigné = forwardRef<HTMLButtonElement, Props>(
     return (
       <button
         className={clsxm(
-          "!flex items-center gap-2 fr-link h-6 border-b border-solid hover:enabled:bg-[unset] hover:enabled:border-b-2",
+          "!flex items-center gap-2 fr-link h-6 border-0 border-b border-solid border-current hover:enabled:bg-[unset] hover:enabled:border-b-2",
           className,
           {
             "!opacity-80": props.disabled,
