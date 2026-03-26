@@ -36,7 +36,12 @@ export const gestionContenuRouter = créerRouteurTRPC({
       .resolve("recupererToutesLesVariablesContenuUseCase")
       .run();
   }),
-  recupererFeatureFlips: procédureProtégée.query(async () => {
+  recupererFeatureFlips: procédureProtégée.query(async ({ ctx }) => {
+    const habilitations = await getContainer("gestionUtilisateur")
+      .resolve("habilitationService")
+      .recupererHabilitations(ctx.session);
+    habilitations.verifierAutorisationModificationGestionContenu();
+
     return getContainer("legacy").resolve("recupererFeatureFlipsUseCase").run();
   }),
   modifierFeatureFlips: procédureProtégée

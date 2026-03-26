@@ -7,8 +7,11 @@ import {
 import { configuration, configurationFeatureFlip } from "@/config";
 import type { Inject } from "@/server/legacy/module";
 
+type FeatureFlipConfig = ReturnType<typeof configurationFeatureFlip>;
+type FeatureFlipConfigKey = keyof FeatureFlipConfig;
+
 /** Mapping entre clé d'env et propriété de config.featureFlip */
-const ENV_TO_CONFIG_KEY: Record<FeatureFlipKey, string> = {
+const ENV_TO_CONFIG_KEY: Record<FeatureFlipKey, FeatureFlipConfigKey> = {
   NEXT_PUBLIC_FF_NOUVELLE_PAGE_ACCUEIL: "nouvellePageAccueil",
   NEXT_PUBLIC_FF_RAPPORT_DETAILLE: "rapportDetaille",
   NEXT_PUBLIC_FF_INFOBULLE_PONDERATION: "infobullePonderation",
@@ -53,16 +56,13 @@ export class RecupererFeatureFlipsUseCase {
   }
 
   async run(): Promise<FeatureFlipMap> {
-    const featureFlipConfig = configurationFeatureFlip() as unknown as Record<
-      string,
-      boolean
-    >;
+    const featureFlipConfig = configurationFeatureFlip();
 
     // Construire les valeurs depuis la config (env vars)
     const result = {} as FeatureFlipMap;
     for (const key of FEATURE_FLIP_KEYS) {
       const configKey = ENV_TO_CONFIG_KEY[key];
-      result[key] = featureFlipConfig[configKey] ?? false;
+      result[key] = Boolean(featureFlipConfig[configKey]);
     }
 
     // Si le FF admin est désactivé, on retourne uniquement les valeurs config

@@ -36,17 +36,22 @@ export class RecupererToutesLesVariablesContenuUseCase {
       return configValues;
     }
 
+    // Restreindre aux flips effectivement disponibles dans l'env/config
+    const featureFlipKeysInEnv = FEATURE_FLIP_KEYS.filter(
+      (key) => key in configValues,
+    );
+
     // Récupérer les overrides DB pour les feature flips
     const dbValues =
       await this.gestionContenuRepository.recupererMapVariableContenuParListeDeNom(
-        [...FEATURE_FLIP_KEYS],
+        [...featureFlipKeysInEnv],
       );
 
     // Fusionner : DB > config
     const mergedValues: Record<string, unknown> = { ...configValues };
-    for (const key of FEATURE_FLIP_KEYS) {
+    for (const key of featureFlipKeysInEnv) {
       const dbValue = dbValues[key];
-      if (dbValue !== undefined && key in configValues) {
+      if (dbValue !== undefined) {
         mergedValues[key] = dbValue as boolean;
       }
     }

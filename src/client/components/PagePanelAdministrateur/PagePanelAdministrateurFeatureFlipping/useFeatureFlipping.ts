@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
 import type {
   FeatureFlipKey,
@@ -17,6 +17,15 @@ export const useFeatureFlipping = () => {
 
   const [estSauvegarde, setEstSauvegarde] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
 
   const mutation = api.gestionContenu.modifierFeatureFlips.useMutation({
     onSuccess: () => {
@@ -25,7 +34,10 @@ export const useFeatureFlipping = () => {
       setErreur(null);
       void utils.gestionContenu.recupererFeatureFlips.invalidate();
       void utils.gestionContenu.recupererToutesLesVariablesContenu.invalidate();
-      setTimeout(() => setEstSauvegarde(false), 3000);
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      timerRef.current = setTimeout(() => setEstSauvegarde(false), 3000);
     },
     onError: (error) => {
       setErreur(error.message);
@@ -45,9 +57,9 @@ export const useFeatureFlipping = () => {
   );
 
   const sauvegarder = useCallback(() => {
-    if (!valeursMerged) return;
-    mutation.mutate({ featureFlips: valeursMerged });
-  }, [valeursMerged, mutation]);
+    if (Object.keys(localOverrides).length === 0) return;
+    mutation.mutate({ featureFlips: localOverrides });
+  }, [localOverrides, mutation]);
 
   const modifiedKeys = useMemo(
     () => new Set(Object.keys(localOverrides) as FeatureFlipKey[]),

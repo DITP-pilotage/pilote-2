@@ -34,8 +34,8 @@ const NextPagePanelAdministrateurFeatureFlipping = () => {
             Feature flipping
           </h2>
           <p className="text-sm text-gray-500 mb-6">
-            Activez ou desactivez les fonctionnalites de l&apos;application. Les
-            modifications sont prises en compte immediatement apres sauvegarde.
+            Activez ou désactivez les fonctionnalités de l&apos;application. Les
+            modifications sont prises en compte immédiatement après sauvegarde.
           </p>
           <PagePanelAdministrateurFeatureFlipping />
         </div>

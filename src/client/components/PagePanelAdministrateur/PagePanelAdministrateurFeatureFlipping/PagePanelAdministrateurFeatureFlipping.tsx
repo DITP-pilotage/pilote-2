@@ -36,6 +36,7 @@ const FeatureFlipRow: FunctionComponent<{
           {actif ? "Actif" : "Inactif"}
         </span>
         <Switch.Root
+          aria-label={FEATURE_FLIP_LABELS[ffKey]}
           checked={actif}
           onCheckedChange={(checked) => onToggle(ffKey, checked)}
         >
@@ -87,7 +88,7 @@ export const PagePanelAdministrateurFeatureFlipping: FunctionComponent = () => {
         <Callout.Root color="success">
           <Callout.Icon />
           <Callout.Text>
-            Les feature flips ont bien ete sauvegardes.
+            Les feature flips ont bien été sauvegardés.
           </Callout.Text>
         </Callout.Root>
       )}
@@ -118,7 +119,7 @@ export const PagePanelAdministrateurFeatureFlipping: FunctionComponent = () => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         {filteredKeys.length === 0 ? (
           <div className="px-4 py-8 text-center text-sm text-gray-400">
-            Aucun feature flip ne correspond a la recherche.
+            Aucun feature flip ne correspond à la recherche.
           </div>
         ) : (
           filteredKeys.map((key) => (
