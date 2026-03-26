@@ -12,7 +12,7 @@ export const LegendeDegradeVA = ({
   couleurMax: string;
 }) => {
   return (
-    <div className="fr-mt-1w max-w-[25rem] mx-auto">
+    <div className="fr-mt-1w max-w-[25rem] mx-auto w-full">
       <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-0">{libelle}</p>
       <div
         className="h-2"

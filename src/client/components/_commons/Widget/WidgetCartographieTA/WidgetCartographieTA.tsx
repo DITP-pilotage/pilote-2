@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useCallback, useContext } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
@@ -10,9 +10,16 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires";
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { ValeursRemarquables } from "@/components/_commons/Widget/ValeursRemarquables";
-import { SelecteurVueWidget } from "@/components/_commons/Widget/SelecteurVueWidget";
+import { ComplementsCartographie } from "@/components/_commons/Widget/ComplementsCartographie";
+import {
+  SelecteurVueWidget,
+  VueWidget,
+} from "@/components/_commons/Widget/SelecteurVueWidget";
+import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
+import { buildJalons } from "@/client/utils/jalons";
 import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
+import { WidgetCartographieTitle } from "@/components/_commons/Widget/WidgetCartographieTitle";
 import { useDonneesCartographieTA } from "./useDonneesCartographieTA";
 import { useLegendeTA } from "./useLegendeTA";
 import { SuiviTauxAvancement } from "./SuiviTauxAvancement";
@@ -46,15 +53,14 @@ const ChantiersProvider = ({
 }) => {
   const [[territoiresAvancement, statistiques]] = api.useSuspenseQueries(
     (t) => [
-      t.chantier.recupererTauxAvancementTerritoires({
-        chantierIds,
-        jalon,
-      }),
-      t.chantier.recupererStatistiquesAvancement({
-        chantierIds,
-        maille,
-        jalon,
-      }),
+      t.chantier.recupererTauxAvancementTerritoires(
+        { chantierIds, jalon },
+        { staleTime: WIDGET_STALE_TIME },
+      ),
+      t.chantier.recupererStatistiquesAvancement(
+        { chantierIds, maille, jalon },
+        { staleTime: WIDGET_STALE_TIME },
+      ),
     ],
   );
 
@@ -82,17 +88,14 @@ const IndicateurProvider = ({
 }) => {
   const [[territoiresAvancement, statistiques]] = api.useSuspenseQueries(
     (t) => [
-      t.indicateur.recupererTauxAvancementTerritoires({
-        indicateurId,
-        chantierId,
-        jalon,
-      }),
-      t.indicateur.recupererStatistiquesTauxAvancement({
-        indicateurId,
-        chantierId,
-        maille,
-        jalon,
-      }),
+      t.indicateur.recupererTauxAvancementTerritoires(
+        { indicateurId, chantierId, jalon },
+        { staleTime: WIDGET_STALE_TIME },
+      ),
+      t.indicateur.recupererStatistiquesTauxAvancement(
+        { indicateurId, chantierId, maille, jalon },
+        { staleTime: WIDGET_STALE_TIME },
+      ),
     ],
   );
 
@@ -150,10 +153,36 @@ const WidgetCartographieTAContent = (
     territoireCode,
   });
 
-  const titre = "Suivi et évolution des taux d'avancement";
+  const titreSuivi = "Suivi et évolution des taux d'avancement";
+
+  const utils = api.useUtils();
+  const handlePrefetchVue = useCallback(
+    (vue: VueWidget) => {
+      if (vue === "tableau" && mode === "indicateur") {
+        const jalons = buildJalons();
+        for (const jalon of jalons) {
+          void utils.indicateur.recupererTauxAvancementTerritoires.prefetch(
+            {
+              indicateurId: props.indicateurId,
+              chantierId: props.chantierId,
+              jalon,
+            },
+            { staleTime: WIDGET_STALE_TIME },
+          );
+        }
+      }
+    },
+    [utils, mode, props],
+  );
 
   return (
     <BaseCartographieWidgetLayout
+      titre={
+        <WidgetCartographieTitle
+          title="Taux d'avancement"
+          subtitle={String(jalon)}
+        />
+      }
       cartographie={
         <CartographieV2
           onTerritoireSelect={onSelectTerritoire}
@@ -162,7 +191,10 @@ const WidgetCartographieTAContent = (
           territoiresSelectionnes={territoiresSelectionnes.map(
             (territoire) => territoire.territoireCode,
           )}
-        >
+        />
+      }
+      complementsCartographie={
+        <ComplementsCartographie>
           <ValeursRemarquables
             valeurs={valeursRemarquables}
             palette={{
@@ -173,13 +205,23 @@ const WidgetCartographieTAContent = (
             maille={maille}
           />
           <LegendeCartographie items={legende} />
-        </CartographieV2>
+        </ComplementsCartographie>
+      }
+      footer={
+        <AjouterTerritoirePicker
+          territoiresSelectionnesCodes={territoiresSelectionnes.map(
+            (territoire) => territoire.territoireCode,
+          )}
+          onAjouterTerritoire={ajouterTerritoire}
+          onAjouterTerritoires={ajouterTerritoires}
+        />
       }
     >
       {mode === "indicateur" ? (
         <SelecteurVueWidget
-          titre={titre}
+          titre={titreSuivi}
           jalon={jalon}
+          onPrefetchVue={handlePrefetchVue}
           renderVue={(vue) => {
             if (vue === "situation") {
               return (
@@ -207,7 +249,7 @@ const WidgetCartographieTAContent = (
         />
       ) : (
         <>
-          <TitreWidget>{titre}</TitreWidget>
+          <TitreWidget>{titreSuivi}</TitreWidget>
           <SuiviTauxAvancement
             territoireCode={territoireCode}
             onSupprimerTerritoire={supprimerTerritoire}
@@ -215,13 +257,6 @@ const WidgetCartographieTAContent = (
           />
         </>
       )}
-      <AjouterTerritoirePicker
-        territoiresSelectionnesCodes={territoiresSelectionnes.map(
-          (territoire) => territoire.territoireCode,
-        )}
-        onAjouterTerritoire={ajouterTerritoire}
-        onAjouterTerritoires={ajouterTerritoires}
-      />
     </BaseCartographieWidgetLayout>
   );
 };

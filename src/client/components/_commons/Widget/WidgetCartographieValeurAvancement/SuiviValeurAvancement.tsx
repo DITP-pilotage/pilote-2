@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { getLabelTerritoire } from "@/client/constants/territoires";
 import {
   SuiviTerritoires,
   SuiviTerritoireItem,
@@ -28,17 +28,19 @@ export const SuiviValeurAvancement = ({
   onSupprimerTerritoire,
   territoireCode,
   unite,
-  statistiques,
 }: {
   territoiresSelectionnes: ValeurAvancementIndicateurTerritoire[];
   onSupprimerTerritoire: (territoireCode: string) => void;
   territoireCode: string;
   unite: string | null;
-  statistiques: {
-    minimum: number | null;
-    maximum: number | null;
-  };
 }) => {
+  const maxValeur = useMemo(() => {
+    const valeurs = territoiresSelectionnes
+      .map((territoire) => territoire.valeurAvancement)
+      .filter((valeur): valeur is number => valeur !== null);
+    return valeurs.length > 0 ? Math.max(...valeurs) : null;
+  }, [territoiresSelectionnes]);
+
   const territoires: SuiviTerritoireItem[] = useMemo(
     () =>
       [...territoiresSelectionnes]
@@ -50,24 +52,20 @@ export const SuiviValeurAvancement = ({
           return b.valeurAvancement - a.valeurAvancement;
         })
         .map((territoire) => {
-          const détails = récupérerDétailsSurUnTerritoire(
-            territoire.territoireCode,
-          );
-
           return {
             territoireCode: territoire.territoireCode,
-            nom: détails?.nomAffiché ?? territoire.territoireCode,
+            nom: getLabelTerritoire(territoire.territoireCode),
             estApplicable: territoire.estApplicable,
             pourcentage: computePourcentage(
               territoire.valeurAvancement,
-              statistiques.minimum,
-              statistiques.maximum,
+              0,
+              maxValeur,
             ),
             libelle: formatValeur(territoire.valeurAvancement, unite),
             dateMaj: territoire.dateValeurAvancement ?? null,
           };
         }),
-    [territoiresSelectionnes, statistiques, unite],
+    [territoiresSelectionnes, maxValeur, unite],
   );
 
   return (
@@ -75,6 +73,7 @@ export const SuiviValeurAvancement = ({
       territoires={territoires}
       territoireCode={territoireCode}
       onSupprimerTerritoire={onSupprimerTerritoire}
+      variant="histogram"
     />
   );
 };

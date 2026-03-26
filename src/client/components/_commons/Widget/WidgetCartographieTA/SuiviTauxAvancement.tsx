@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { getLabelTerritoire } from "@/client/constants/territoires";
 import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
 import {
   SuiviTerritoires,
@@ -26,7 +27,7 @@ export const SuiviTauxAvancement = ({
         })
         .map((territoire) => ({
           territoireCode: territoire.territoireCode,
-          nom: territoire.territoireNom,
+          nom: getLabelTerritoire(territoire.territoireCode),
           estApplicable: territoire.estApplicable,
           pourcentage: territoire.tauxAvancementJalon,
           libelle:

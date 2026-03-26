@@ -8,6 +8,8 @@ import {
 import api from "@/server/infrastructure/api/trpc/api";
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires";
+import { ComplementsCartographie } from "@/components/_commons/Widget/ComplementsCartographie";
+import { WidgetCartographieTitle } from "@/components/_commons/Widget/WidgetCartographieTitle";
 import { NombrePropositionsValeur } from "./NombrePropositionsValeur";
 import { useDonneesCartographiePVA } from "./useDonneesCartographiePVA";
 import { useLegendePVA } from "./useLegendePVA";
@@ -44,6 +46,9 @@ export const WidgetCartographiePVA = ({
 
   return (
     <BaseCartographieWidgetLayout
+      titre={
+        <WidgetCartographieTitle title="Propositions de valeurs d'avancement" />
+      }
       cartographie={
         <CartographieV2
           onTerritoireSelect={onSelectTerritoire}
@@ -52,9 +57,21 @@ export const WidgetCartographiePVA = ({
           territoiresSelectionnes={territoiresSelectionnes.map(
             (territoire) => territoire.territoireCode,
           )}
-        >
+        />
+      }
+      complementsCartographie={
+        <ComplementsCartographie>
           <LegendeCartographie items={legende} />
-        </CartographieV2>
+        </ComplementsCartographie>
+      }
+      footer={
+        <AjouterTerritoirePicker
+          territoiresSelectionnesCodes={territoiresSelectionnes.map(
+            (territoire) => territoire.territoireCode,
+          )}
+          onAjouterTerritoire={ajouterTerritoire}
+          onAjouterTerritoires={ajouterTerritoires}
+        />
       }
     >
       <TitreWidget>Nombres de propositions de valeur d'avancement</TitreWidget>
@@ -63,14 +80,6 @@ export const WidgetCartographiePVA = ({
         jalon={jalon}
         onSupprimerTerritoire={supprimerTerritoire}
         territoiresSelectionnes={territoiresSelectionnes}
-      />
-
-      <AjouterTerritoirePicker
-        territoiresSelectionnesCodes={territoiresSelectionnes.map(
-          (territoire) => territoire.territoireCode,
-        )}
-        onAjouterTerritoire={ajouterTerritoire}
-        onAjouterTerritoires={ajouterTerritoires}
       />
     </BaseCartographieWidgetLayout>
   );

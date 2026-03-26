@@ -2,7 +2,6 @@ import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.inter
 
 export type TauxAvancementComparaisonTerritoireViewModel = {
   territoireCode: string;
-  territoireNom: string;
   maille: MailleTerritoireSelectionne;
   tauxAvancementJalon: number | null;
   // false = aucun chantier de la sélection n'est applicable

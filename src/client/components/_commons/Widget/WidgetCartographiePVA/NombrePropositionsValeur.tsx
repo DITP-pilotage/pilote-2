@@ -1,5 +1,6 @@
 import { Fragment, useMemo } from "react";
 import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
+import { getLabelTerritoire } from "@/client/constants/territoires";
 import { PVATerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierPVACountTerritoiresQuery";
 import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
 import { TerritoireLabel } from "@/components/_commons/Widget/TerritoireLabel";
@@ -17,7 +18,7 @@ export const NombrePropositionsValeur = ({
   jalon: number;
   territoireCode: string;
 }) => {
-  const { isModeDispositionG } = useMesureWidget();
+  const { isModeP } = useMesureWidget();
 
   const territoiresTries = useMemo(
     () =>
@@ -49,16 +50,16 @@ export const NombrePropositionsValeur = ({
             <Fragment key={territoire.territoireCode}>
               <div
                 className={clsxm("border-b", {
-                  "flex justify-center": isModeDispositionG(),
+                  "flex justify-center": !isModeP,
                 })}
               >
                 <div
                   className={clsxm("py-2", {
-                    "w-full max-w-[300px] mr-auto": isModeDispositionG(),
+                    "w-full max-w-[300px] mr-auto": !isModeP,
                   })}
                 >
                   <TerritoireLabel
-                    nom={territoire.territoireNom}
+                    nom={getLabelTerritoire(territoire.territoireCode)}
                     couleur={couleur}
                     onSupprimer={
                       !estInitial

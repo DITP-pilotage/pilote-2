@@ -1,15 +1,19 @@
 import { createContext, useContext } from "react";
 
-export type ModeDisposition = "P" | "G";
+export type ModeDisposition = "P" | "M" | "G";
 
-const SEUIL_MODE_G = 400;
+const SEUIL_MODE_M = 400;
+const SEUIL_MODE_G = 736;
 
 export const calculerModeDisposition = (largeur: number): ModeDisposition => {
-  return largeur >= SEUIL_MODE_G ? "G" : "P";
+  if (largeur >= SEUIL_MODE_G) return "G";
+  if (largeur >= SEUIL_MODE_M) return "M";
+  return "P";
 };
 
 type MesureWidgetContextValue = {
   modeDisposition: ModeDisposition;
+  largeur: number;
 };
 
 export const MesureWidgetCtx = createContext<MesureWidgetContextValue | null>(
@@ -22,6 +26,9 @@ export const useMesureWidget = () => {
     throw new Error("useMesureWidget must be used within TuileWidget provider");
 
   return {
-    isModeDispositionG: () => ctx.modeDisposition === "G",
+    isModeP: ctx.modeDisposition === "P",
+    isModeM: ctx.modeDisposition === "M",
+    isModeG: ctx.modeDisposition === "G",
+    largeur: ctx.largeur,
   };
 };

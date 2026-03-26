@@ -30,43 +30,45 @@ export const ComparaisonTerritoires = ({
   maille,
   territoireCode,
 }: ComparaisonTerritoiresProps) => (
-  <ComparaisonTerritoiresBase<TypeCarteChantier>
-    typeParDefaut="ta"
-    typeAlternatif={(t) => (t === "ta" ? "meteo" : "ta")}
-    options={options(jalon)}
-    renderCarte={(type) => {
-      if (type === "ta") {
-        return (
-          <WidgetCartographieTA
-            mode="chantiers"
-            chantierIds={[chantierId]}
-            jalon={jalon}
-            maille={maille}
-            territoireCode={territoireCode}
-          />
-        );
-      }
-      if (type === "meteo") {
-        return (
-          <WidgetCartographieMeteo
-            chantierId={chantierId}
-            jalon={jalon}
-            maille={maille}
-            territoireCode={territoireCode}
-          />
-        );
-      }
-      if (type === "pva") {
-        return (
-          <WidgetCartographiePVA
-            chantierId={chantierId}
-            jalon={jalon}
-            maille={maille}
-            territoireCode={territoireCode}
-          />
-        );
-      }
-      return null;
-    }}
-  />
+  <div className="fr-container">
+    <ComparaisonTerritoiresBase<TypeCarteChantier>
+      typeParDefaut="ta"
+      typeAlternatif={(t) => (t === "ta" ? "meteo" : "ta")}
+      options={options(jalon)}
+      renderCarte={(type) => {
+        if (type === "ta") {
+          return (
+            <WidgetCartographieTA
+              mode="chantiers"
+              chantierIds={[chantierId]}
+              jalon={jalon}
+              maille={maille}
+              territoireCode={territoireCode}
+            />
+          );
+        }
+        if (type === "meteo") {
+          return (
+            <WidgetCartographieMeteo
+              chantierId={chantierId}
+              jalon={jalon}
+              maille={maille}
+              territoireCode={territoireCode}
+            />
+          );
+        }
+        if (type === "pva") {
+          return (
+            <WidgetCartographiePVA
+              chantierId={chantierId}
+              jalon={jalon}
+              maille={maille}
+              territoireCode={territoireCode}
+            />
+          );
+        }
+        return null;
+      }}
+    />
+  </div>
 );

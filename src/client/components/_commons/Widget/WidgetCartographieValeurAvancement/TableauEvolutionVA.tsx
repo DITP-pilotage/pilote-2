@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { getLabelTerritoire } from "@/client/constants/territoires";
 import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
 import { ValeurAvancementIndicateurTerritoire } from "@/server/chantiers/infrastructure/queries/RecupererValeursAvancementIndicateurTerritoiresQuery";
 import {
@@ -42,9 +42,6 @@ export const TableauEvolutionVA = ({
 
   const lignes: LigneTerritoire[] = useMemo(() => {
     return territoiresSelectionnes.map((territoire) => {
-      const details = récupérerDétailsSurUnTerritoire(
-        territoire.territoireCode,
-      );
       const cellules = new Map<number, CelluleJalon>();
 
       for (const jalon of jalons) {
@@ -64,7 +61,7 @@ export const TableauEvolutionVA = ({
 
       return {
         territoireCode: territoire.territoireCode,
-        nom: details?.nomAffiché ?? territoire.territoireCode,
+        nom: getLabelTerritoire(territoire.territoireCode),
         couleur: getCouleurTerritoireParCode(territoire.territoireCode),
         estInitial: territoire.territoireCode === territoireCode,
         cellules,

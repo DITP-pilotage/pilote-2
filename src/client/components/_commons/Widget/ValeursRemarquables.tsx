@@ -1,4 +1,6 @@
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { clsxm } from "@/utils/clsxm";
+import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
 
 const libelleMaille = (maille: MailleInterne): string =>
   maille === "departementale" ? "départements" : "régions";
@@ -33,6 +35,7 @@ export const ValeursRemarquables = ({
   palette: { minimum: string; mediane: string; maximum: string };
   maille: MailleInterne;
 }) => {
+  const { isModeP } = useMesureWidget();
   const libelle = libelleMaille(maille);
 
   if (
@@ -44,7 +47,12 @@ export const ValeursRemarquables = ({
 
   return (
     <div className="mb-4">
-      <div className="flex flex-col md:flex-row md:flex-wrap md:justify-center">
+      <div
+        className={clsxm(
+          "flex",
+          isModeP ? "flex-col" : "flex-row flex-wrap justify-center",
+        )}
+      >
         {valeurs.minimum !== null && (
           <ValeurRemarquable
             color={palette.minimum}

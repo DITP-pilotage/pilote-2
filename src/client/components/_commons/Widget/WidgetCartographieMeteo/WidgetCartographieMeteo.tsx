@@ -7,6 +7,8 @@ import {
 } from "@/components/_commons/Widget/BaseCartographieWidgetLayout";
 import api from "@/server/infrastructure/api/trpc/api";
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
+import { ComplementsCartographie } from "@/components/_commons/Widget/ComplementsCartographie";
+import { WidgetCartographieTitle } from "@/components/_commons/Widget/WidgetCartographieTitle";
 import { RepartitionNiveauxDeConfiance } from "./RepartitionNiveauxDeConfiance";
 import { useDonneesCartographie } from "./useDonneesCartographie";
 import { useLegendeMeteo } from "./useLegendeMeteo";
@@ -44,6 +46,7 @@ export const WidgetCartographieMeteo = ({
 
   return (
     <BaseCartographieWidgetLayout
+      titre={<WidgetCartographieTitle title="Niveaux de confiance" />}
       cartographie={
         <CartographieV2
           onTerritoireSelect={onSelectTerritoire}
@@ -52,9 +55,21 @@ export const WidgetCartographieMeteo = ({
           territoiresSelectionnes={territoiresSelectionnes.map(
             (territoire) => territoire.territoireCode,
           )}
-        >
+        />
+      }
+      complementsCartographie={
+        <ComplementsCartographie>
           <LegendeCartographie items={legende} />
-        </CartographieV2>
+        </ComplementsCartographie>
+      }
+      footer={
+        <AjouterTerritoirePicker
+          territoiresSelectionnesCodes={territoiresSelectionnes.map(
+            (territoire) => territoire.territoireCode,
+          )}
+          onAjouterTerritoire={ajouterTerritoire}
+          onAjouterTerritoires={ajouterTerritoires}
+        />
       }
     >
       <TitreWidget>Répartition des niveaux de confiance</TitreWidget>
@@ -63,14 +78,6 @@ export const WidgetCartographieMeteo = ({
         jalon={jalon}
         onSupprimerTerritoire={supprimerTerritoire}
         territoiresSelectionnes={territoiresSelectionnes}
-      />
-
-      <AjouterTerritoirePicker
-        territoiresSelectionnesCodes={territoiresSelectionnes.map(
-          (territoire) => territoire.territoireCode,
-        )}
-        onAjouterTerritoire={ajouterTerritoire}
-        onAjouterTerritoires={ajouterTerritoires}
       />
     </BaseCartographieWidgetLayout>
   );

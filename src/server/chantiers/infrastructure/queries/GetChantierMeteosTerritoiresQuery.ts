@@ -4,7 +4,6 @@ import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.inter
 
 export type MeteoTerritoireViewModel = {
   territoireCode: string;
-  territoireNom: string;
   codeInsee: string;
   maille: MailleTerritoireSelectionne;
   meteo: Meteo;
@@ -36,7 +35,6 @@ export class GetChantierMeteosTerritoiresQuery {
 
     return rows.map((row) => ({
       territoireCode: row.territoire.code,
-      territoireNom: row.territoire.nom_affiche,
       codeInsee: row.code_insee,
       maille: row.maille as MailleTerritoireSelectionne,
       meteo: (row.meteo as Meteo) ?? "NON_RENSEIGNEE",
