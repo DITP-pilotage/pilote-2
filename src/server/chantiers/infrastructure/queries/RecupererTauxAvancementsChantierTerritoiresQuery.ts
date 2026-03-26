@@ -8,10 +8,8 @@ import {
 
 export class RecupererTauxAvancementsChantierTerritoiresQuery {
   constructor(
-    private readonly deps: Inject<
-      // TODO: cette query de couche infra ne devrait pas dépendre d'un use case — toléré ici pour des raisons legacy
-      "agregerAvancementsChantiersUseCase" | "territoireRepository"
-    >,
+    private readonly deps: Inject<// TODO: cette query de couche infra ne devrait pas dépendre d'un use case — toléré ici pour des raisons legacy
+    "agregerAvancementsChantiersUseCase">,
   ) {}
 
   async run(params: {
@@ -23,11 +21,6 @@ export class RecupererTauxAvancementsChantierTerritoiresQuery {
         params.chantierIds,
         params.jalon,
       );
-
-    const territoires = await this.deps.territoireRepository.récupérerTousNew();
-    const territoiresMap = new Map(
-      territoires.map((territoire) => [territoire.code, territoire]),
-    );
 
     const result: TauxAvancementComparaisonTerritoireViewModel[] = [];
 
@@ -46,7 +39,6 @@ export class RecupererTauxAvancementsChantierTerritoiresQuery {
       )) {
         result.push({
           territoireCode,
-          territoireNom: territoiresMap.get(territoireCode)?.nomAffiché ?? "",
           maille: mailleCode,
           tauxAvancementJalon:
             territoire.repartition.avancements.annuel.moyenne,

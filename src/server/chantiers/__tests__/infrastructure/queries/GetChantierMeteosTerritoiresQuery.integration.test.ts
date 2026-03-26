@@ -161,7 +161,7 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
   );
 
   it(
-    "mappe territoire_nom et code_insee",
+    "mappe code_insee",
     createIntegrationTest(async () => {
       // Given
       await fixtures.chantierIdentite({ id: "CH-003" });
@@ -171,7 +171,6 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
         code_insee: "11",
         maille: "REG",
         zone_id: "zone-1",
-        territoire_nom: "Île-de-France",
         meteo: "NUAGE",
         est_applicable: true,
       });
@@ -194,7 +193,6 @@ describe("GetChantierMeteosTerritoiresQuery", () => {
       expect(result).toEqual([
         expect.objectContaining({
           territoireCode: "REG-11",
-          territoireNom: "Île-de-France",
           codeInsee: "11",
         }),
       ]);

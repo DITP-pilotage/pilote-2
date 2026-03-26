@@ -3,7 +3,6 @@ import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { RecupererTauxAvancementIndicateurTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererTauxAvancementIndicateurTerritoiresQuery";
 import { ListerDetailsIndicateurTerritoireUseCaseV2 } from "@/server/chantiers/usecases/ListerDetailsIndicateurTerritoireUseCaseV2";
 import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository";
-import { PrismaTerritoireRepository } from "@/server/chantiers/infrastructure/adapters/PrismaTerritoireRepository";
 import { DatajobsExecutionQueries } from "@/server/datajobs-execution/DatajobsExecution";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
@@ -37,9 +36,6 @@ describe("RecupererTauxAvancementIndicateurTerritoiresQuery", () => {
     const datajobsExecutionQueries = new DatajobsExecutionQueries({
       prisma: prismaPilote,
     });
-    const territoireRepository = new PrismaTerritoireRepository({
-      prisma: prismaPilote,
-    });
 
     query = new RecupererTauxAvancementIndicateurTerritoiresQuery({
       listerDetailsIndicateurTerritoireUseCaseV2:
@@ -47,7 +43,6 @@ describe("RecupererTauxAvancementIndicateurTerritoiresQuery", () => {
           indicateurRepository,
           datajobsExecutionQueries,
         }),
-      territoireRepository,
     });
   });
 
@@ -264,58 +259,6 @@ describe("RecupererTauxAvancementIndicateurTerritoiresQuery", () => {
           tauxAvancementJalon: 80,
         }),
       );
-    }),
-  );
-
-  it(
-    "inclut le nom du territoire",
-    createIntegrationTest(async () => {
-      // given
-      await fixtures.chantierIdentite({ id: "CH-004" });
-      await fixtures.chantierTerritoire({
-        id: "CH-004",
-        territoire_code: "DEPT-75",
-        maille: "DEPT",
-        code_insee: "75",
-        zone_id: "D75",
-      });
-      await fixtures.indicateurIdentite({
-        id: "IND-004",
-        chantier_id: "CH-004",
-        statut: "PUBLIE",
-      });
-      await fixtures.indicateurTerritoire({
-        id: "IND-004",
-        chantier_id: "CH-004",
-        territoire_code: "DEPT-75",
-        code_insee: "75",
-        maille: "DEPT",
-        zone_id: "D75",
-        est_applicable: true,
-      });
-      await fixtures.indicateurTerritoireJalon({
-        id: "IND-004",
-        territoire_code: "DEPT-75",
-        code_insee: "75",
-        maille: "DEPT",
-        zone_id: "D75",
-        jalon: 2025,
-        taux_avancement: 50,
-      });
-
-      // when
-      const result = await query.execute({
-        indicateurId: "IND-004",
-        chantierId: "CH-004",
-        jalon: 2025,
-        habilitations: habilitationsPourChantier("CH-004", ["DEPT-75"]),
-        profil: ProfilEnum.DITP_ADMIN,
-      });
-
-      // then
-      const dept75 = result.find((r) => r.territoireCode === "DEPT-75");
-      expect(dept75).toBeDefined();
-      expect(dept75!.territoireNom).not.toBe("");
     }),
   );
 });

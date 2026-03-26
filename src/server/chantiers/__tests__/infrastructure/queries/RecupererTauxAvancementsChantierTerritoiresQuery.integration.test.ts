@@ -2,7 +2,6 @@ import { createIntegrationTest } from "@/server/infrastructure/test/createIntegr
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { RecupererTauxAvancementsChantierTerritoiresQuery } from "@/server/chantiers/infrastructure/queries/RecupererTauxAvancementsChantierTerritoiresQuery";
 import { AgregerAvancementsChantiersUseCase } from "@/server/chantiers/usecases/AgregerAvancementsChantiersUseCase";
-import { PrismaTerritoireRepository } from "@/server/chantiers/infrastructure/adapters/PrismaTerritoireRepository";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import ChantierSQLRepository from "@/server/infrastructure/accès_données/chantier/ChantierSQLRepository";
 
@@ -13,9 +12,6 @@ beforeEach(() => {
   query = new RecupererTauxAvancementsChantierTerritoiresQuery({
     agregerAvancementsChantiersUseCase: new AgregerAvancementsChantiersUseCase({
       chantierRepository: new ChantierSQLRepository({ prisma: prismaPilote }),
-    }),
-    territoireRepository: new PrismaTerritoireRepository({
-      prisma: prismaPilote,
     }),
   });
 });

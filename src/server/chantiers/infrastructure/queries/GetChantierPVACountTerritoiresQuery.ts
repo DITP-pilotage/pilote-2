@@ -3,7 +3,6 @@ import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.inter
 
 export type PVATerritoireViewModel = {
   territoireCode: string;
-  territoireNom: string;
   codeInsee: string;
   maille: MailleTerritoireSelectionne;
   nombrePropositionsValeur: number;
@@ -34,7 +33,6 @@ export class GetChantierPVACountTerritoiresQuery {
 
     return rows.map((row) => ({
       territoireCode: row.territoire.code,
-      territoireNom: row.territoire.nom_affiche,
       codeInsee: row.code_insee,
       maille: row.maille as MailleTerritoireSelectionne,
       nombrePropositionsValeur: row.nombre_propositions_valeur_actuelle,

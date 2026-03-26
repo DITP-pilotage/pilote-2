@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
+import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 import { determinerRemplissageAvancement } from "@/client/utils/avancement/determinerRemplissageAvancement";
 import { determinerValeurAfficheeAvancement } from "@/client/utils/avancement/determinerValeurAfficheeAvancement";
 import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/types";
@@ -20,7 +21,9 @@ export const useDonneesCartographieTA = (
               ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS,
               territoire.estApplicable,
             ),
-            libelle: territoire.territoireNom,
+            libelle:
+              récupérerDétailsSurUnTerritoire(territoire.territoireCode)
+                ?.nomAffiché ?? territoire.territoireCode,
             contenuInfoBulle: determinerValeurAfficheeAvancement(
               territoire.tauxAvancementJalon,
               territoire.estApplicable,

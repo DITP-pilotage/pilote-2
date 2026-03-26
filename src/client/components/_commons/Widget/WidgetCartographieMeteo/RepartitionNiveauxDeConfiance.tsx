@@ -1,5 +1,6 @@
 import { Fragment, useMemo } from "react";
 import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
+import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
@@ -76,7 +77,10 @@ export const RepartitionNiveauxDeConfiance = ({
                   )}
                 >
                   <TerritoireLabel
-                    nom={territoire.territoireNom}
+                    nom={
+                      récupérerDétailsSurUnTerritoire(territoire.territoireCode)
+                        ?.nomAffiché ?? territoire.territoireCode
+                    }
                     couleur={couleur}
                     onSupprimer={
                       !estInitial

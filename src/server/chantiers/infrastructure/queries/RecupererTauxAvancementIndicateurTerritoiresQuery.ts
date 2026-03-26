@@ -6,9 +6,7 @@ import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 
 export class RecupererTauxAvancementIndicateurTerritoiresQuery {
   constructor(
-    private readonly deps: Inject<
-      "listerDetailsIndicateurTerritoireUseCaseV2" | "territoireRepository"
-    >,
+    private readonly deps: Inject<"listerDetailsIndicateurTerritoireUseCaseV2">,
   ) {}
 
   async execute(params: {
@@ -29,14 +27,8 @@ export class RecupererTauxAvancementIndicateurTerritoiresQuery {
 
     const details = result[params.indicateurId] ?? {};
 
-    const territoires = await this.deps.territoireRepository.récupérerTousNew();
-    const territoiresMap = new Map(
-      territoires.map((territoire) => [territoire.code, territoire]),
-    );
-
     return Object.entries(details).map(([territoireCode, detail]) => ({
       territoireCode,
-      territoireNom: territoiresMap.get(territoireCode)?.nomAffiché ?? "",
       maille: territoireCodeVersMailleCodeInsee(territoireCode).maille,
       tauxAvancementJalon: detail.avancement.annuel,
       estApplicable: detail.estApplicable,
