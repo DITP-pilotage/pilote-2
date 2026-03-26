@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useCallback, useContext } from "react";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useRef,
+} from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
@@ -20,6 +26,7 @@ import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers
 import { buildJalons } from "@/client/utils/jalons";
 import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
 import { WidgetCartographieTitle } from "@/components/_commons/Widget/WidgetCartographieTitle";
+import { ExportCartographieButtons } from "@/components/_commons/Widget/ExportCartographieButtons";
 import { useDonneesCartographieTA } from "./useDonneesCartographieTA";
 import { useLegendeTA } from "./useLegendeTA";
 import { SuiviTauxAvancement } from "./SuiviTauxAvancement";
@@ -129,6 +136,7 @@ const WidgetCartographieTAContent = (
   props: WidgetCartographieTAContentProps,
 ) => {
   const { maille, territoireCode, jalon, mode } = props;
+  const widgetRef = useRef<HTMLDivElement>(null);
   const { territoiresAvancement, statistiques } =
     useWidgetCartographieTAContext();
 
@@ -176,8 +184,28 @@ const WidgetCartographieTAContent = (
     [utils, mode, props],
   );
 
+  const genererCSV = useCallback(() => {
+    const header = "Territoire;Taux d'avancement (%);Applicable;Date MAJ";
+    const lignes = territoiresAvancement.map((territoire) => {
+      const tauxAvancement =
+        territoire.tauxAvancementJalon !== null
+          ? String(Math.round(territoire.tauxAvancementJalon))
+          : "";
+      const applicable =
+        territoire.estApplicable === null
+          ? "Non renseigné"
+          : territoire.estApplicable
+            ? "Oui"
+            : "Non";
+      const dateMaj = territoire.dateTauxAvancementAnnuel ?? "";
+      return `${territoire.territoireCode};${tauxAvancement};${applicable};${dateMaj}`;
+    });
+    return [header, ...lignes].join("\n");
+  }, [territoiresAvancement]);
+
   return (
     <BaseCartographieWidgetLayout
+      ref={widgetRef}
       titre={
         <WidgetCartographieTitle
           title="Taux d'avancement"
@@ -209,13 +237,20 @@ const WidgetCartographieTAContent = (
         </ComplementsCartographie>
       }
       footer={
-        <AjouterTerritoirePicker
-          territoiresSelectionnesCodes={territoiresSelectionnes.map(
-            (territoire) => territoire.territoireCode,
-          )}
-          onAjouterTerritoire={ajouterTerritoire}
-          onAjouterTerritoires={ajouterTerritoires}
-        />
+        <>
+          <AjouterTerritoirePicker
+            territoiresSelectionnesCodes={territoiresSelectionnes.map(
+              (territoire) => territoire.territoireCode,
+            )}
+            onAjouterTerritoire={ajouterTerritoire}
+            onAjouterTerritoires={ajouterTerritoires}
+          />
+          <ExportCartographieButtons
+            widgetRef={widgetRef}
+            nomFichier="cartographie-taux-avancement"
+            genererCSV={genererCSV}
+          />
+        </>
       }
     >
       {mode === "indicateur" ? (

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
@@ -16,6 +16,7 @@ import {
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 import { buildJalons } from "@/client/utils/jalons";
 import { WidgetCartographieTitle } from "@/components/_commons/Widget/WidgetCartographieTitle";
+import { ExportCartographieButtons } from "@/components/_commons/Widget/ExportCartographieButtons";
 import { useDonneesCartographieVA } from "./useDonneesCartographieVA";
 import { LegendeDegradeVA } from "./LegendeDegradeVA";
 import { SuiviValeurAvancement } from "./SuiviValeurAvancement";
@@ -49,6 +50,8 @@ export const WidgetCartographieValeurAvancement = ({
   jalon: number;
   unite: string | null;
 }) => {
+  const widgetRef = useRef<HTMLDivElement>(null);
+
   const [territoiresValeurAvancement] =
     api.indicateur.recupererValeursAvancementTerritoires.useSuspenseQuery(
       { indicateurId, chantierId, jalon },
@@ -129,8 +132,33 @@ export const WidgetCartographieValeurAvancement = ({
     [utils, indicateurId, chantierId],
   );
 
+  const genererCSV = useCallback(() => {
+    const header =
+      "Territoire;Valeur d'avancement;Valeur cible annuelle;Applicable;Date MAJ";
+    const lignes = territoiresValeurAvancement.map((territoire) => {
+      const valeurAvancement =
+        territoire.valeurAvancement !== null
+          ? String(territoire.valeurAvancement)
+          : "";
+      const valeurCible =
+        territoire.valeurCibleAnnuelle !== null
+          ? String(territoire.valeurCibleAnnuelle)
+          : "";
+      const applicable =
+        territoire.estApplicable === null
+          ? "Non renseigné"
+          : territoire.estApplicable
+            ? "Oui"
+            : "Non";
+      const dateMaj = territoire.dateValeurAvancement ?? "";
+      return `${territoire.territoireCode};${valeurAvancement};${valeurCible};${applicable};${dateMaj}`;
+    });
+    return [header, ...lignes].join("\n");
+  }, [territoiresValeurAvancement]);
+
   return (
     <BaseCartographieWidgetLayout
+      ref={widgetRef}
       titre={
         <WidgetCartographieTitle
           title="Valeurs d'avancement"
@@ -181,13 +209,20 @@ export const WidgetCartographieValeurAvancement = ({
         </ComplementsCartographie>
       }
       footer={
-        <AjouterTerritoirePicker
-          territoiresSelectionnesCodes={territoiresSelectionnes.map(
-            (territoire) => territoire.territoireCode,
-          )}
-          onAjouterTerritoire={ajouterTerritoire}
-          onAjouterTerritoires={ajouterTerritoires}
-        />
+        <>
+          <AjouterTerritoirePicker
+            territoiresSelectionnesCodes={territoiresSelectionnes.map(
+              (territoire) => territoire.territoireCode,
+            )}
+            onAjouterTerritoire={ajouterTerritoire}
+            onAjouterTerritoires={ajouterTerritoires}
+          />
+          <ExportCartographieButtons
+            widgetRef={widgetRef}
+            nomFichier="cartographie-valeurs-avancement"
+            genererCSV={genererCSV}
+          />
+        </>
       }
     >
       <SelecteurVueWidget

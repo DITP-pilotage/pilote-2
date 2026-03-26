@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { forwardRef, ReactNode } from "react";
 import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
 import { clsxm } from "@/utils/clsxm";
 
@@ -16,24 +16,21 @@ export const TitreWidget = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const BaseCartographieWidgetLayout = ({
-  titre,
-  cartographie,
-  complementsCartographie,
-  children,
-  footer,
-}: {
-  titre?: ReactNode;
-  cartographie: ReactNode;
-  complementsCartographie?: ReactNode;
-  children: ReactNode;
-  footer?: ReactNode;
-}) => {
+export const BaseCartographieWidgetLayout = forwardRef<
+  HTMLDivElement,
+  {
+    titre?: ReactNode;
+    cartographie: ReactNode;
+    complementsCartographie?: ReactNode;
+    children: ReactNode;
+    footer?: ReactNode;
+  }
+>(({ titre, cartographie, complementsCartographie, children, footer }, ref) => {
   const { isModeG } = useMesureWidget();
 
   if (isModeG) {
     return (
-      <div className="flex flex-col gap-8 h-full">
+      <div className="flex flex-col gap-8 h-full" ref={ref}>
         <div className="grid grid-cols-2 gap-8">
           <div className="flex flex-col gap-4">
             {titre}
@@ -48,7 +45,7 @@ export const BaseCartographieWidgetLayout = ({
   }
 
   return (
-    <div className="flex flex-col gap-8 h-full">
+    <div className="flex flex-col gap-8 h-full" ref={ref}>
       {titre}
       <div className="w-full max-w-[400px] mx-auto">{cartographie}</div>
       {complementsCartographie}
@@ -56,4 +53,6 @@ export const BaseCartographieWidgetLayout = ({
       {footer}
     </div>
   );
-};
+});
+
+BaseCartographieWidgetLayout.displayName = "BaseCartographieWidgetLayout";

@@ -1,4 +1,6 @@
+import { useCallback, useRef } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
 import {
@@ -9,6 +11,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTerritoirePicker";
 import { ComplementsCartographie } from "@/components/_commons/Widget/ComplementsCartographie";
 import { WidgetCartographieTitle } from "@/components/_commons/Widget/WidgetCartographieTitle";
+import { ExportCartographieButtons } from "@/components/_commons/Widget/ExportCartographieButtons";
 import { RepartitionNiveauxDeConfiance } from "./RepartitionNiveauxDeConfiance";
 import { useDonneesCartographie } from "./useDonneesCartographie";
 import { useLegendeMeteo } from "./useLegendeMeteo";
@@ -25,6 +28,8 @@ export const WidgetCartographieMeteo = ({
   territoireCode: string;
   jalon: number;
 }) => {
+  const widgetRef = useRef<HTMLDivElement>(null);
+
   const [territoiresMeteo] =
     api.chantier.recupererMeteosTerritoires.useSuspenseQuery({
       chantierId,
@@ -44,8 +49,25 @@ export const WidgetCartographieMeteo = ({
     territoireCode,
   });
 
+  const genererCSV = useCallback(() => {
+    const header = "Territoire;Météo;Applicable;Date MAJ";
+    const lignes = territoiresMeteo.map((territoire) => {
+      const meteoLabel = libellesMeteos[territoire.meteo] ?? territoire.meteo;
+      const applicable =
+        territoire.estApplicable === null
+          ? "Non renseigné"
+          : territoire.estApplicable
+            ? "Oui"
+            : "Non";
+      const dateMaj = territoire.dateDeMajQualitative ?? "";
+      return `${territoire.territoireCode};${meteoLabel};${applicable};${dateMaj}`;
+    });
+    return [header, ...lignes].join("\n");
+  }, [territoiresMeteo]);
+
   return (
     <BaseCartographieWidgetLayout
+      ref={widgetRef}
       titre={<WidgetCartographieTitle title="Niveaux de confiance" />}
       cartographie={
         <CartographieV2
@@ -63,13 +85,20 @@ export const WidgetCartographieMeteo = ({
         </ComplementsCartographie>
       }
       footer={
-        <AjouterTerritoirePicker
-          territoiresSelectionnesCodes={territoiresSelectionnes.map(
-            (territoire) => territoire.territoireCode,
-          )}
-          onAjouterTerritoire={ajouterTerritoire}
-          onAjouterTerritoires={ajouterTerritoires}
-        />
+        <>
+          <AjouterTerritoirePicker
+            territoiresSelectionnesCodes={territoiresSelectionnes.map(
+              (territoire) => territoire.territoireCode,
+            )}
+            onAjouterTerritoire={ajouterTerritoire}
+            onAjouterTerritoires={ajouterTerritoires}
+          />
+          <ExportCartographieButtons
+            widgetRef={widgetRef}
+            nomFichier="cartographie-niveaux-de-confiance"
+            genererCSV={genererCSV}
+          />
+        </>
       }
     >
       <TitreWidget>Répartition des niveaux de confiance</TitreWidget>

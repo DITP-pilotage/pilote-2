@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useContext } from "react";
+import {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useRef,
+} from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { CartographieV2 } from "@/components/_commons/CartographieV2/CartographieV2";
 import { LegendeCartographie } from "@/components/_commons/CartographieV2/LegendeCartographie";
@@ -11,6 +17,7 @@ import { AjouterTerritoirePicker } from "@/components/_commons/Widget/AjouterTer
 import { useSelectionTerritoires } from "@/components/_commons/Widget/WidgetCartographieMeteo/useSelectionTerritoires";
 import { ComplementsCartographie } from "@/components/_commons/Widget/ComplementsCartographie";
 import { WidgetCartographieTitle } from "@/components/_commons/Widget/WidgetCartographieTitle";
+import { ExportCartographieButtons } from "@/components/_commons/Widget/ExportCartographieButtons";
 import { PVATerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierPVACountTerritoiresQuery";
 import { NombrePropositionsValeur } from "./NombrePropositionsValeur";
 import { useDonneesCartographiePVA } from "./useDonneesCartographiePVA";
@@ -99,6 +106,7 @@ const WidgetCartographiePVAContent = ({
   territoireCode: string;
   jalon: number;
 }) => {
+  const widgetRef = useRef<HTMLDivElement>(null);
   const { territoiresPVA, mode } = useWidgetCartographiePVAContext();
 
   const donneesCartographie = useDonneesCartographiePVA(territoiresPVA, mode);
@@ -114,8 +122,23 @@ const WidgetCartographiePVAContent = ({
     territoireCode,
   });
 
+  const genererCSV = useCallback(() => {
+    const header = "Territoire;Nombre de propositions;Applicable";
+    const lignes = territoiresPVA.map((territoire) => {
+      const applicable =
+        territoire.estApplicable === null
+          ? "Non renseigné"
+          : territoire.estApplicable
+            ? "Oui"
+            : "Non";
+      return `${territoire.territoireCode};${territoire.nombrePropositionsValeur};${applicable}`;
+    });
+    return [header, ...lignes].join("\n");
+  }, [territoiresPVA]);
+
   return (
     <BaseCartographieWidgetLayout
+      ref={widgetRef}
       titre={
         <WidgetCartographieTitle title="Propositions de valeurs d'avancement" />
       }
@@ -135,13 +158,20 @@ const WidgetCartographiePVAContent = ({
         </ComplementsCartographie>
       }
       footer={
-        <AjouterTerritoirePicker
-          territoiresSelectionnesCodes={territoiresSelectionnes.map(
-            (territoire) => territoire.territoireCode,
-          )}
-          onAjouterTerritoire={ajouterTerritoire}
-          onAjouterTerritoires={ajouterTerritoires}
-        />
+        <>
+          <AjouterTerritoirePicker
+            territoiresSelectionnesCodes={territoiresSelectionnes.map(
+              (territoire) => territoire.territoireCode,
+            )}
+            onAjouterTerritoire={ajouterTerritoire}
+            onAjouterTerritoires={ajouterTerritoires}
+          />
+          <ExportCartographieButtons
+            widgetRef={widgetRef}
+            nomFichier="cartographie-pva"
+            genererCSV={genererCSV}
+          />
+        </>
       }
     >
       <TitreWidget>Nombres de propositions de valeur d'avancement</TitreWidget>
