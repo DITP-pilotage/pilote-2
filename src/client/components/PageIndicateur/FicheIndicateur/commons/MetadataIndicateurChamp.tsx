@@ -20,7 +20,7 @@ export const MetadataIndicateurChamp: FunctionComponent<
   return (
     <>
       <div className="fr-text--md bold fr-mb-1v relative flex align-center ">
-        <p className="titre-input-metadata overflow-ellipsis">
+        <p className="m-0 overflow-ellipsis">
           {informationMetadataIndicateur.metaPiloteAlias}
         </p>
         {estEnCoursDeModification ? (

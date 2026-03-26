@@ -7,7 +7,6 @@ import {
 } from "nuqs";
 import { FunctionComponent } from "react";
 import { sauvegarderFiltres } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
-import { FiltresSélectionMultipleStyled } from "./FiltresSelectionMultipleBoolean.styled";
 
 type AvailableFiltres = "estBarometre" | "estTerritorialise";
 
@@ -53,11 +52,11 @@ export const FiltresSelectionMultipleBoolean: FunctionComponent<
   );
 
   return (
-    <FiltresSélectionMultipleStyled>
+    <div>
       <button
         aria-controls={`fr-sidemenu-item-${listeCategorieDeFiltre.join("-")}`}
         aria-expanded="false"
-        className="fr-sidemenu__btn fr-m-0 fr-text--sm"
+        className="fr-sidemenu__btn fr-m-0 fr-text--sm w-full text-left"
         type="button"
       >
         {libelle}
@@ -66,7 +65,7 @@ export const FiltresSelectionMultipleBoolean: FunctionComponent<
         className="fr-collapse"
         id={`fr-sidemenu-item-${listeCategorieDeFiltre.join("-")}`}
       >
-        <ul className="fr-p-0 fr-m-0 fr-mb-1w fr-pl-1w">
+        <ul className="fr-p-0 fr-m-0 fr-mb-1w fr-pl-1w list-none">
           {listeCategorieDeFiltre.map((filtre) => (
             <li className="fr-p-0 fr-my-1w fr-mr-0" key={filtre}>
               <div className="fr-checkbox-group fr-pb-1w">
@@ -92,6 +91,6 @@ export const FiltresSelectionMultipleBoolean: FunctionComponent<
           ))}
         </ul>
       </div>
-    </FiltresSélectionMultipleStyled>
+    </div>
   );
 };

@@ -1,9 +1,8 @@
 import { FunctionComponent } from "react";
-import HeaderFicheTerritorialeStyled from "@/components/PageFicheTerritoriale/HeaderFicheTerritoriale.styled";
 
 const HeaderFicheTerritoriale: FunctionComponent = () => {
   return (
-    <HeaderFicheTerritorialeStyled>
+    <div className="hidden print:block">
       <header className="flex fr-px-4w fr-mb-0" role="banner">
         <p className="fr-logo">Gouvernement</p>
         <div className="fr-pt-1w fr-ml-5w">
@@ -13,7 +12,7 @@ const HeaderFicheTerritoriale: FunctionComponent = () => {
           </p>
         </div>
       </header>
-    </HeaderFicheTerritorialeStyled>
+    </div>
   );
 };
 

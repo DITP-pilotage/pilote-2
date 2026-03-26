@@ -42,7 +42,7 @@ export const PageCréerUtilisateurAide: FunctionComponent = () => {
           il vous est demandé de prendre connaissance des règles ci-dessous puis
           de suivre les étapes indiquées.
         </p>
-        <div className="fr-mt-6w fr-p-2w fr-mb-6w bg-dsfr-grey-1000">
+        <div className="fr-mt-6w fr-p-2w fr-mb-6w bg-white">
           <h3>Règles de gestion des comptes</h3>
           <h5 className="fr-mb-1w">Responsabilités du Coordinateur PILOTE</h5>
           <p className="fr-text fr-text--sm">
@@ -78,7 +78,7 @@ export const PageCréerUtilisateurAide: FunctionComponent = () => {
             disposition pour vous aider.
           </p>
         </div>
-        <div className="bg-dsfr-grey-1000 fr-p-2w">
+        <div className="bg-white fr-p-2w">
           <div className="flex justify-center align-center">
             <DescriptionEtapes etapes={etapes} />
           </div>

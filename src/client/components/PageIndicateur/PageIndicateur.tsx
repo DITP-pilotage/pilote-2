@@ -5,7 +5,6 @@ import { FunctionComponent } from "react";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import Titre from "@/components/_commons/Titre/Titre";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import PageIndicateurStyled from "@/components/PageIndicateur/PageIndicateur.styled";
 import FicheIndicateur from "@/components/PageIndicateur/FicheIndicateur/FicheIndicateur";
 import {
   MetadataIndicateurForm,
@@ -53,7 +52,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
   } = usePageIndicateur(indicateur, mapInformationMetadataIndicateur);
 
   return (
-    <PageIndicateurStyled className="fr-pt-2w">
+    <div className="bg-dsfr-alt-blue-france fr-pt-2w">
       <main className="fr-container">
         <FilAriane chemin={chemin} libelléPageCourante="Indicateur" />
         <div className="fiche-indicateur fr-pt-1w fr-pb-13w">
@@ -208,7 +207,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
           </FormProvider>
         </div>
       </main>
-    </PageIndicateurStyled>
+    </div>
   );
 };
 

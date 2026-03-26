@@ -12,7 +12,6 @@ import EtapePublierFichier from "@/components/PageImportIndicateur/PageImportInd
 import { EtapesImport } from "@/components/PageImportIndicateur/PageImportIndicateurSectionImport/EtapesImport";
 import { RapportContrat } from "@/server/app/contrats/RapportContrat";
 import { InformationIndicateurContrat } from "@/server/app/contrats/InformationIndicateurContrat";
-import PageImportIndicateurSectionImportStyled from "./PageImportIndicateurSectionImport.styled";
 
 interface PageImportIndicateurSectionImportProps {
   indicateurs: Indicateur[];
@@ -54,7 +53,7 @@ const PageImportIndicateurSectionImport: FunctionComponent<
   );
 
   return (
-    <PageImportIndicateurSectionImportStyled>
+    <section className="bg-dsfr-alt-blue-france [&_h2]:text-primary [&_span.fr-h4]:text-primary [&_button]:ml-8 [&_table]:w-full">
       <div className="fr-container fr-py-3w">
         <Titre baliseHtml="h2">
           {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT.TITRE}
@@ -96,7 +95,7 @@ const PageImportIndicateurSectionImport: FunctionComponent<
           </div>
         </Bloc>
       </div>
-    </PageImportIndicateurSectionImportStyled>
+    </section>
   );
 };
 

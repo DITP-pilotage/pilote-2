@@ -1,13 +1,12 @@
 import { FunctionComponent } from "react";
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import Titre from "@/components/_commons/Titre/Titre";
-import PageImportIndicateurSectionRessourceStyled from "@/components/PageImportIndicateur/PageImportIndicateurSectionRessource/PageImportIndicateurSectionRessource.styled";
 import { wording } from "@/client/utils/i18n/i18n";
 import "@gouvfr/dsfr/dist/component/download/download.min.css";
 
 const PageImportIndicateurSectionRessource: FunctionComponent = () => {
   return (
-    <PageImportIndicateurSectionRessourceStyled>
+    <section className="bg-dsfr-alt-blue-france [&_h2]:text-primary [&_span.fr-h4]:text-primary [&_button]:ml-8 [&_table]:w-full">
       <div className="fr-container fr-py-3w">
         <Titre baliseHtml="h2">
           {wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_RESSOURCE.TITRE}
@@ -400,7 +399,7 @@ const PageImportIndicateurSectionRessource: FunctionComponent = () => {
           </p>
         </Bloc>
       </div>
-    </PageImportIndicateurSectionRessourceStyled>
+    </section>
   );
 };
 

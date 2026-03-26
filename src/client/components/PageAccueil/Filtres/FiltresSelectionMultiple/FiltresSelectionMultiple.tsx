@@ -1,6 +1,5 @@
 import { parseAsString, useQueryState } from "nuqs";
 import { FunctionComponent } from "react";
-import FiltresSélectionMultipleStyled from "./FiltresSelectionMultiple.styled";
 
 interface Filtre {
   id: string;
@@ -27,17 +26,17 @@ export const FiltresSelectionMultiple: FunctionComponent<
   );
 
   return (
-    <FiltresSélectionMultipleStyled>
+    <div>
       <button
         aria-controls={`fr-sidemenu-item-${categorieDeFiltre}`}
         aria-expanded="false"
-        className="fr-sidemenu__btn fr-m-0 fr-text--sm"
+        className="fr-sidemenu__btn fr-m-0 fr-text--sm w-full text-left"
         type="button"
       >
         {libelle}
       </button>
       <div className="fr-collapse" id={`fr-sidemenu-item-${categorieDeFiltre}`}>
-        <ul className="fr-p-0 fr-m-0 fr-mb-1w fr-pl-1w">
+        <ul className="fr-p-0 fr-m-0 fr-mb-1w fr-pl-1w list-none">
           {filtres.map((filtre) => (
             <li className="fr-p-0 fr-my-1w fr-mr-0" key={filtre.id}>
               <div className="fr-checkbox-group fr-pb-1w">
@@ -64,6 +63,6 @@ export const FiltresSelectionMultiple: FunctionComponent<
           ))}
         </ul>
       </div>
-    </FiltresSélectionMultipleStyled>
+    </div>
   );
 };

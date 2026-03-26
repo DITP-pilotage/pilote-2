@@ -5,14 +5,13 @@ import "@gouvfr/dsfr/dist/component/select/select.min.css";
 import "@gouvfr/dsfr/dist/component/form/form.min.css";
 import TableauAdminIndicateurs from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/TableauAdminIndicateurs";
 import usePageAdminIndicateurs from "@/components/PageAdminIndicateurs/UsePageAdminIndicateurs";
-import PageAdminIndicateursStyled from "./PageAdminIndicateurs.styled";
 
 const PageAdminIndicateurs: FunctionComponent = () => {
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
   const { naviguerVersCreationIndicateur } = usePageAdminIndicateurs();
 
   return (
-    <PageAdminIndicateursStyled>
+    <div>
       <div className="flex">
         <AdminIndicateurBarreLatérale
           estOuverteBarreLatérale={estOuverteBarreLatérale}
@@ -25,7 +24,7 @@ const PageAdminIndicateurs: FunctionComponent = () => {
                 Gestion des paramètres des indicateurs
               </Titre>
             </div>
-            <div className="fr-col-12 fr-col-md-3 bouton-creation-indicateur">
+            <div className="fr-col-12 fr-col-md-3 flex items-end justify-end max-[576px]:justify-center">
               <button
                 aria-controls="créer-nouvel-indicateur"
                 className="fr-btn fr-text no-wrap"
@@ -37,12 +36,12 @@ const PageAdminIndicateurs: FunctionComponent = () => {
               </button>
             </div>
           </div>
-          <div className="fr-p-2w tableau">
+          <div className="fr-p-2w bg-white">
             <TableauAdminIndicateurs />
           </div>
         </main>
       </div>
-    </PageAdminIndicateursStyled>
+    </div>
   );
 };
 
