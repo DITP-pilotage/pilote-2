@@ -80,8 +80,8 @@ export const PageFicheTerritoriale: FunctionComponent<
                 </Bloc>
               </div>
             </div>
-            <div className="fr-col-8 fr-pl-1v print:children:h-full">
-              <Bloc>
+            <div className="fr-col-8 fr-pl-1v">
+              <Bloc className="print:h-full">
                 <div className="fr-grid-row">
                   <TitreInfobulleConteneur>
                     <Titre

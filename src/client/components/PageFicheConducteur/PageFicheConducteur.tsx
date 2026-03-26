@@ -34,30 +34,30 @@ const PageFicheConducteur: FunctionComponent<
       : synthèseDesRésultats.commentaire;
 
   return (
-    <div className="print:[&_.fr-badge]:!text-[10px] print:[&_.fr-badge]:!leading-4 print:[&_.fr-text--xs]:!text-[10px] print:[&_.fr-text--xs]:!leading-4 print:[&_.fr-text--sm]:!text-[10px] print:[&_.fr-text--sm]:!leading-4">
+    <div>
       <main className="fr-pb-2w">
-        <div className="fr-container fr-pb-1w [&_.encart-container]:p-2">
-          <EnteteFicheConducteur>
+        <div className="fr-container fr-pb-1w ">
+          <EnteteFicheConducteur classNameEncart="p-2">
             {`${chantier.nom} - Principaux résultats`}
           </EnteteFicheConducteur>
         </div>
         <div className="fr-container">
           <div className="fr-grid-row fr-grid-row--gutters">
-            <div className="fr-col-4 flex flex-column children:h-full print:[&_.bloc-container]:p-0 print:[&_.bloc-container]:border-dsfr-grey-925 fr-pr-1v">
+            <div className="fr-col-4 flex flex-column fr-pr-1v">
               <Titre
                 baliseHtml="h2"
-                className="fr-h5 fr-mb-1w fr-text-title--blue-france"
+                className="fr-h5 fr-mb-1w fr-text-title--blue-france h-full"
               >
                 Responsables & État d'avancement
               </Titre>
-              <Bloc contenuClassesSupplémentaires="fr-px-1w fr-py-1v">
-                <div className="fr-grid-row border-b fr-pb-1v fr-text--xs fr-m-0">
+              <Bloc className="h-full print:p-0 print:border-dsfr-grey-925" contenuClassesSupplémentaires="fr-px-1w fr-py-1v">
+                <div className="fr-grid-row border-b fr-pb-1v fr-text--xs fr-m-0 print:!text-[10px] print:!leading-4">
                   <span className="fr-col-2 fr-text--bold">DAC</span>
                   <span className="fr-col-8">
                     {chantier.directeursAdministrationCentrale}
                   </span>
                 </div>
-                <div className="fr-grid-row border-b fr-py-1v fr-text--xs fr-m-0">
+                <div className="fr-grid-row border-b fr-py-1v fr-text--xs fr-m-0 print:!text-[10px] print:!leading-4">
                   <span className="fr-col-2 fr-text--bold">DP</span>
                   <span className="fr-col-8">{chantier.directeursProjet}</span>
                 </div>
@@ -99,14 +99,14 @@ const PageFicheConducteur: FunctionComponent<
                 </div>
               </Bloc>
             </div>
-            <div className="fr-col-8 flex flex-column children:h-full print:[&_.bloc-container]:p-0 print:[&_.bloc-container]:border-dsfr-grey-925 fr-pl-1v">
+            <div className="fr-col-8 flex flex-column fr-pl-1v">
               <Titre
                 baliseHtml="h2"
-                className="fr-h5 fr-mb-1w fr-text-title--blue-france"
+                className="fr-h5 fr-mb-1w fr-text-title--blue-france h-full"
               >
                 Météo et synthèse des résultats
               </Titre>
-              <Bloc className="p-4" contenuClassesSupplémentaires="flex gap-2">
+              <Bloc className="p-4 h-full print:p-0 print:border-dsfr-grey-925" contenuClassesSupplémentaires="flex gap-2">
                 <div className="flex flex-col gap-2 align-center">
                   <MétéoBadge
                     météo={synthèseDesRésultats.meteo || "NON_RENSEIGNEE"}
@@ -121,23 +121,23 @@ const PageFicheConducteur: FunctionComponent<
                       ?.split("\n")
                       .map((paragrapheCommentaire, index) => (
                         <p
-                          className="fr-text--xs fr-mb-1w"
+                          className="fr-text--xs fr-mb-1w print:!text-[10px] print:!leading-4"
                           key={`paragraphe-commentaire-${index}`}
                         >
                           {paragrapheCommentaire}
                         </p>
                       ))
                   ) : (
-                    <p className="fr-text--xs">Aucune synthèse des résultats</p>
+                    <p className="fr-text--xs print:!text-[10px] print:!leading-4">Aucune synthèse des résultats</p>
                   )}
                 </div>
               </Bloc>
             </div>
           </div>
         </div>
-        <div className="fr-container print:[&_.bloc-container]:p-0 print:[&_.bloc-container]:border-dsfr-grey-925 fr-mt-1w">
-          <Bloc contenuClassesSupplémentaires="fr-px-0 fr-py-0">
-            <div className="fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0">
+        <div className="fr-container fr-mt-1w">
+          <Bloc className="print:p-0 print:border-dsfr-grey-925" contenuClassesSupplémentaires="fr-px-0 fr-py-0">
+            <div className="fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0 print:!text-[10px] print:!leading-4">
               <div className="fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b rounded-tl-md rounded-tr-md">
                 <div className="fr-col-5 fr-text--bold">
                   Avancement des indicateurs d'impact pris en compte dans le TA
@@ -189,12 +189,12 @@ const PageFicheConducteur: FunctionComponent<
         <div className="page-break fr-mb-2w" />
         {doitAfficherDonnéesCartographie ? (
           <>
-            <div className="fr-container fr-pb-1w [&_.encart-container]:p-2 print:[&_.bloc-container]:border-none hidden print:block">
-              <EnteteFicheConducteur>
+            <div className="fr-container fr-pb-1w hidden print:block">
+              <EnteteFicheConducteur classNameEncart="p-2">
                 {`${chantier.nom} - Principaux résultats`}
               </EnteteFicheConducteur>
             </div>
-            <div className="fr-container print:[&_.bloc-container]:border-none">
+            <div className="fr-container">
               <div className="fr-grid-row fr-grid-row--gutters">
                 <div className="fr-col-6">
                   <Titre
@@ -204,7 +204,7 @@ const PageFicheConducteur: FunctionComponent<
                     {`Taux d'avancement ${jalon}`}
                   </Titre>
                   <div>
-                    <Bloc>
+                    <Bloc className="print:border-none">
                       <CartographieAvancement
                         auClicTerritoireCallback={() => {}}
                         données={donnéesCartographie.tauxAvancement}
@@ -226,7 +226,7 @@ const PageFicheConducteur: FunctionComponent<
                     Niveau de confiance
                   </Titre>
                   <div>
-                    <Bloc>
+                    <Bloc className="print:border-none">
                       <CartographieMétéo
                         auClicTerritoireCallback={() => {}}
                         données={donnéesCartographie.meteo}
@@ -242,14 +242,14 @@ const PageFicheConducteur: FunctionComponent<
             <div className="page-break fr-mb-2w" />
           </>
         ) : null}
-        <div className="fr-container fr-pb-1w [&_.encart-container]:p-2 hidden print:block">
-          <EnteteFicheConducteur>
+        <div className="fr-container fr-pb-1w  hidden print:block">
+          <EnteteFicheConducteur classNameEncart="p-2">
             {`${chantier.nom} - Point d'avancement`}
           </EnteteFicheConducteur>
         </div>
-        <div className="fr-container print:[&_.bloc-container]:p-0 print:[&_.bloc-container]:border-dsfr-grey-925">
-          <Bloc contenuClassesSupplémentaires="fr-px-0">
-            <div className="fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0">
+        <div className="fr-container">
+          <Bloc className="print:p-0 print:border-dsfr-grey-925" contenuClassesSupplémentaires="fr-px-0">
+            <div className="fiche-conducteur--tableau fr-container fr-text--xs fr-m-0 fr-px-0 print:!text-[10px] print:!leading-4">
               <div className="fr-grid-row fr-background-action-low--blue-france fr-px-1w fr-py-1w border-b rounded-tl-md rounded-tr-md">
                 <div className="fr-col-2 fr-text--bold">Catégorie</div>
                 <div className="fr-col-10 fr-text--bold">Détail</div>
