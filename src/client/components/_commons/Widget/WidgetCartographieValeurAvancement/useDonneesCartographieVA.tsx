@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { interpolerCouleurs } from "@/client/utils/couleur/couleur";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { getLabelTerritoire } from "@/client/constants/territoires";
 import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/types";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
 import { ValeurAvancementIndicateurTerritoire } from "@/server/chantiers/infrastructure/queries/RecupererValeursAvancementIndicateurTerritoiresQuery";
@@ -48,10 +48,6 @@ export const useDonneesCartographieVA = (
   return useMemo(() => {
     return territoires.reduce(
       (acc, territoire) => {
-        const détails = récupérerDétailsSurUnTerritoire(
-          territoire.territoireCode,
-        );
-
         return {
           ...acc,
           [territoire.territoireCode]: {
@@ -61,7 +57,7 @@ export const useDonneesCartographieVA = (
               valeurMax,
               territoire.estApplicable,
             ),
-            libelle: détails?.nomAffiché ?? territoire.territoireCode,
+            libelle: getLabelTerritoire(territoire.territoireCode),
             contenuInfoBulle:
               territoire.estApplicable === false ? (
                 <div className="fr-text--bold">Non applicable</div>

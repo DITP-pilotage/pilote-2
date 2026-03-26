@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { ELEMENTS_LEGENDE_PROPOSITION_VALEUR_CHANTIERS } from "@/client/constants/légendes/elementDeLegendesCartographiePropositionValeur";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { getLabelTerritoire } from "@/client/constants/territoires";
 import { CartographieV2Donnee } from "@/components/_commons/CartographieV2/types";
 import { PVATerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierPVACountTerritoiresQuery";
 import { formaterPropositions } from "./formaterPropositions";
@@ -30,9 +30,7 @@ export const useDonneesCartographiePVA = (
             territoire.nombrePropositionsValeur,
             territoire.estApplicable,
           ),
-          libelle:
-            récupérerDétailsSurUnTerritoire(territoire.territoireCode)
-              ?.nomAffiché ?? territoire.territoireCode,
+          libelle: getLabelTerritoire(territoire.territoireCode),
           contenuInfoBulle: (
             <div className="fr-text--bold">
               {formaterPropositions(

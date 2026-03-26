@@ -1,6 +1,6 @@
 import { Fragment, useMemo } from "react";
 import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { getLabelTerritoire } from "@/client/constants/territoires";
 import { PVATerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierPVACountTerritoiresQuery";
 import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
 import { TerritoireLabel } from "@/components/_commons/Widget/TerritoireLabel";
@@ -59,10 +59,7 @@ export const NombrePropositionsValeur = ({
                   })}
                 >
                   <TerritoireLabel
-                    nom={
-                      récupérerDétailsSurUnTerritoire(territoire.territoireCode)
-                        ?.nomAffiché ?? territoire.territoireCode
-                    }
+                    nom={getLabelTerritoire(territoire.territoireCode)}
                     couleur={couleur}
                     onSupprimer={
                       !estInitial

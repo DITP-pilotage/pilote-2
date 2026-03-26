@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
+import { getLabelTerritoire } from "@/client/constants/territoires";
 import {
   SuiviTerritoires,
   SuiviTerritoireItem,
@@ -50,13 +50,9 @@ export const SuiviValeurAvancement = ({
           return b.valeurAvancement - a.valeurAvancement;
         })
         .map((territoire) => {
-          const détails = récupérerDétailsSurUnTerritoire(
-            territoire.territoireCode,
-          );
-
           return {
             territoireCode: territoire.territoireCode,
-            nom: détails?.nomAffiché ?? territoire.territoireCode,
+            nom: getLabelTerritoire(territoire.territoireCode),
             estApplicable: territoire.estApplicable,
             pourcentage: computePourcentage(
               territoire.valeurAvancement,

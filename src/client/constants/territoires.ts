@@ -53,6 +53,13 @@ export const récupérerDétailsSurUnTerritoire = (
   )!;
 };
 
+export const getLabelTerritoire = (territoireCode: string): string => {
+  return (
+    récupérerDétailsSurUnTerritoire(territoireCode)?.nomAffiché ??
+    territoireCode
+  );
+};
+
 export const getListeTerritoires = (maille: string) => {
   if (maille === "departementale") {
     return listeTerritoires.départements;
