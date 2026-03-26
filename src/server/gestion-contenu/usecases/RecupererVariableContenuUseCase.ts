@@ -115,6 +115,9 @@ export class RecupererVariableContenuUseCase {
       case "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES":
         return configuration().featureFlip
           .comparaisonTerritoires as VariableContenuDisponibleEnv[T];
+      case "NEXT_PUBLIC_FF_REPARTITION_METEOS_V2":
+        return configuration().featureFlip
+          .repartitionMeteosV2 as VariableContenuDisponibleEnv[T];
     }
   }
 }

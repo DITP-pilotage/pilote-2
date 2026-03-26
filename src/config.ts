@@ -319,6 +319,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES",
     },
+    repartitionMeteosV2: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_REPARTITION_METEOS_V2",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",

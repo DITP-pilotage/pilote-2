@@ -25,6 +25,7 @@ module.exports = {
         "dsfr-error-425": "#CE0500",
         "dsfr-moutarde-main-679": "#C3992A",
         "dsfr-moutarde-main-850": "#FCC63A",
+        "dsfr-moutarde-main-925": "#FDE2B5",
         "dsfr-moutarde-main-975": "#FEF5E8",
         "dsfr-grey-200": "#3A3A3A",
         "dsfr-grey-625": "#929292",
