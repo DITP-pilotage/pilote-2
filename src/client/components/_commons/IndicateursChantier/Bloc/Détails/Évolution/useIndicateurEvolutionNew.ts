@@ -71,8 +71,10 @@ const creerSerieCibles = (
 
 export default function useIndicateurEvolutionNew({
   tousLesIndicateursDetails,
+  jalon,
 }: {
   tousLesIndicateursDetails: TerritoireEvolutionDonnees[];
+  jalon?: number;
 }) {
   const [afficherLesCibles, setAfficherLesCibles] = useState<boolean>(false);
   const [masquerSlider, setMasquerSlider] = useState<boolean>(false);
@@ -118,16 +120,20 @@ export default function useIndicateurEvolutionNew({
         if (date > max) max = date;
       });
     });
-    if (min === max) {
+    if (max < min) {
+      const annee = jalon ?? new Date().getFullYear();
+      min = new Date(`${annee}-01-01`);
+      max = new Date(`${annee}-01-31`);
+      setMasquerSlider(true);
+    } else if (min === max) {
       setMasquerSlider(true);
     } else {
       setMasquerSlider(false);
     }
     const maxAreturn = new Date(max);
     maxAreturn.setMonth(maxAreturn.getMonth() + 1);
-
     return [min, maxAreturn];
-  }, [tousLesIndicateursDetails]);
+  }, [jalon, tousLesIndicateursDetails]);
 
   const [minYear, maxYear] = useMemo(() => {
     return [new Date(minDate).getFullYear(), maxDate.getFullYear()];

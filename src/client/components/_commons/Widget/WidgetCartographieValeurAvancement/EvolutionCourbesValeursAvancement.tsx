@@ -56,7 +56,10 @@ export const EvolutionCourbesValeursAvancement = ({
     periodesSelectionnablesZoom,
     changerLaPeriodeSelectionnee,
     periodeSelectionnee,
-  } = useIndicateurEvolutionNew({ tousLesIndicateursDetails });
+  } = useIndicateurEvolutionNew({
+    tousLesIndicateursDetails,
+    jalon,
+  });
 
   if (tousLesIndicateursDetails.length === 0) {
     return null;
