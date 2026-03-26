@@ -221,9 +221,9 @@ export const getServerSideProps: GetServerSideProps<
     )
     .then(presenterEnRépartitionsMétéosChantiersContrat);
 
-  const récupérerStatistiquesChantiersUseCase = getContainer("legacy").resolve(
-    "récupérerStatistiquesAvancementChantiersUseCase",
-  );
+  const récupérerStatistiquesChantiersUseCase = getContainer(
+    "chantiers",
+  ).resolve("récupérerStatistiquesAvancementChantiersUseCase");
 
   const listeAvancementsStatistiques: {
     id: string;

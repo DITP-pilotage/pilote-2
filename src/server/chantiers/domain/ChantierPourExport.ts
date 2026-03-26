@@ -7,7 +7,7 @@ import { ChantierTendance } from "@/server/domain/chantier/Chantier.interface";
 
 export type ChantierPourExport = {
   nom: string | null;
-  id: string | null;
+  id: string;
   maille: string | null;
   régionNom: string | null;
   départementNom: string | null;

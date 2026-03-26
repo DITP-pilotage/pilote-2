@@ -6,25 +6,18 @@ import {
   type_statut,
 } from "@prisma/client";
 import ChantierRepository from "@/server/domain/chantier/ChantierRepository.interface";
-import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
-import {
-  CODES_MAILLES,
-  NOMS_MAILLES,
-} from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
+import { NOMS_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import { ChantierPourAgregation } from "@/client/utils/chantier/agrégateurListeChantiers/agregateur";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
-import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
 import {
   ProfilCode,
   profilsTerritoriaux,
 } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { removeAccents } from "@/server/utils/remove-accents";
-import { calculerMediane } from "@/client/utils/statistiques/statistiques";
 import { RepartitionMeteoChantiers } from "@/server/chantiers/domain/RepartitionMeteoChantiers";
-import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 class ErreurChantierNonTrouvé extends Error {
@@ -104,60 +97,6 @@ export default class ChantierSQLRepository implements ChantierRepository {
     }
 
     return chantier;
-  }
-
-  async getChantierStatistiques(
-    habilitations: Habilitations,
-    listeChantier: Chantier["id"][],
-    maille: Maille,
-    jalon: number,
-  ): Promise<AvancementsStatistiques> {
-    const prisma = this.prismaPilote.getInstance();
-    const habilitation = new Habilitation(habilitations);
-    const chantiersAutorisés =
-      habilitation.récupérerListeChantiersIdsAccessiblesEnLecture();
-    const chantiersLecture = listeChantier.filter((x) =>
-      chantiersAutorisés.includes(x),
-    );
-
-    const listeMoyenneParTerritoire =
-      await prisma.chantier_territoire_jalon.groupBy({
-        by: ["territoire_code"],
-        _avg: {
-          taux_avancement: true,
-        },
-        where: {
-          id: {
-            in: chantiersLecture || [],
-          },
-          jalon: jalon,
-          maille: CODES_MAILLES[maille],
-          NOT: {
-            taux_avancement: {
-              equals: null,
-            },
-          },
-        },
-        orderBy: {
-          _avg: {
-            taux_avancement: "asc",
-          },
-        },
-      });
-
-    return {
-      médiane: calculerMediane(
-        listeMoyenneParTerritoire.map(
-          (moyenneParTerritoire) => moyenneParTerritoire._avg.taux_avancement,
-        ),
-      ),
-      minimum: verifyValeurIsNotNullOrUndefined(
-        listeMoyenneParTerritoire.at(0)?._avg.taux_avancement,
-      ),
-      maximum: verifyValeurIsNotNullOrUndefined(
-        listeMoyenneParTerritoire.at(-1)?._avg.taux_avancement,
-      ),
-    };
   }
 
   async recupererLaRepartitionMeteo(

@@ -226,6 +226,37 @@ export const EtapeDonneeChantierACollecter = () => {
             </label>
           )}
         </div>
+        <div className="fr-checkbox-group fr-mt-1w">
+          <input
+            checked={optionsExport.split(",").includes("valeurs-reference")}
+            className="fr-input"
+            id="valeurs-reference"
+            name="valeurs-reference"
+            onChange={() => onChangeOptionsExport("valeurs-reference")}
+            type="checkbox"
+          />
+          {afficherDetail ? (
+            <label
+              className="fr-label fr-text--sm fr-mb-0"
+              htmlFor="valeurs-reference"
+            >
+              <span>
+                <span className="fr-text--bold">valeurs de référence</span> :
+                Minimum, médiane et maximum des taux d'avancement observés pour
+                chaque chantier à la maille régionale et départementale.
+              </span>
+            </label>
+          ) : (
+            <label
+              className="fr-label fr-text--sm fr-mb-0"
+              htmlFor="valeurs-reference"
+            >
+              <span>
+                <span className="fr-text--bold">valeurs de référence</span>
+              </span>
+            </label>
+          )}
+        </div>
       </div>
       <div className="fr-fieldset__element fr-pl-0">
         <h3 className="fr-text--md underline fr-mb-1w fr-mt-2w">

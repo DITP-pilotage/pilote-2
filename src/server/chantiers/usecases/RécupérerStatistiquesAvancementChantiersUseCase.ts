@@ -1,17 +1,20 @@
-import ChantierRepository from "@/server/domain/chantier/ChantierRepository.interface";
 import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import { MailleNonAutoriséeErreur } from "@/server/utils/errors";
-import type { Inject } from "@/server/legacy/module";
+import type { Inject } from "@/server/chantiers/module";
+import { GetStatistiquesAvancementChantiersQuery } from "@/server/chantiers/infrastructure/queries/GetStatistiquesAvancementChantiersQuery";
 
-export default class RécupérerStatistiquesAvancementChantiersUseCase {
-  private readonly chantierRepository: ChantierRepository;
+export class RécupérerStatistiquesAvancementChantiersUseCase {
+  private readonly getStatistiquesAvancementChantiersQuery: GetStatistiquesAvancementChantiersQuery;
 
-  constructor({ chantierRepository }: Inject<"chantierRepository">) {
-    this.chantierRepository = chantierRepository;
+  constructor({
+    getStatistiquesAvancementChantiersQuery,
+  }: Inject<"getStatistiquesAvancementChantiersQuery">) {
+    this.getStatistiquesAvancementChantiersQuery =
+      getStatistiquesAvancementChantiersQuery;
   }
 
   async run(
@@ -28,11 +31,11 @@ export default class RécupérerStatistiquesAvancementChantiersUseCase {
       throw new MailleNonAutoriséeErreur();
     }
 
-    return this.chantierRepository.getChantierStatistiques(
+    return this.getStatistiquesAvancementChantiersQuery.execute({
       habilitations,
-      chantiers,
+      listeChantier: chantiers,
       maille,
       jalon,
-    );
+    });
   }
 }

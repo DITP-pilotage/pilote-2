@@ -17,6 +17,8 @@ import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import type { Inject } from "@/server/chantiers/module";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
+import { GetStatistiquesAvancementChantiersParChantierQuery } from "@/server/chantiers/infrastructure/queries/GetStatistiquesAvancementChantiersParChantierQuery";
+import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
 import {
   ChantierPourExport,
   masquerPourProfilDROM,
@@ -32,6 +34,8 @@ const presenterEnChantierExportContrat = (
   chantierPourExport: ChantierPourExport,
   profil: ProfilCode,
   optionsExport: OptionsExport,
+  statistiquesReg: AvancementsStatistiques,
+  statistiquesDept: AvancementsStatistiques,
 ): string[] => {
   const donnees = [
     chantierPourExport.maille === "NAT"
@@ -113,6 +117,35 @@ const presenterEnChantierExportContrat = (
             chantierPourExport.tauxDAvancementNational,
             true,
           ),
+    );
+  }
+
+  if (optionsExport.listeOptionsExport.includes("valeurs-reference")) {
+    donnees.push(
+      formaterNumériqueOuValeurManquante(
+        statistiquesReg?.maximum ?? null,
+        true,
+      ),
+      formaterNumériqueOuValeurManquante(
+        statistiquesReg?.médiane ?? null,
+        true,
+      ),
+      formaterNumériqueOuValeurManquante(
+        statistiquesReg?.minimum ?? null,
+        true,
+      ),
+      formaterNumériqueOuValeurManquante(
+        statistiquesDept?.maximum ?? null,
+        true,
+      ),
+      formaterNumériqueOuValeurManquante(
+        statistiquesDept?.médiane ?? null,
+        true,
+      ),
+      formaterNumériqueOuValeurManquante(
+        statistiquesDept?.minimum ?? null,
+        true,
+      ),
     );
   }
 
@@ -216,6 +249,17 @@ export class ExportCsvDesChantiersUseCase {
       );
     }
 
+    if (optionsExport.listeOptionsExport.includes("valeurs-reference")) {
+      headersColumn.push(
+        `maximum régional ${jalon}`,
+        `médiane régionale ${jalon}`,
+        `minimum régional ${jalon}`,
+        `maximum départemental ${jalon}`,
+        `médiane départementale ${jalon}`,
+        `minimum départemental ${jalon}`,
+      );
+    }
+
     if (optionsExport.listeOptionsExport.includes("synthese")) {
       headersColumn.push("Météo", "Synthèse des résultats");
     }
@@ -251,9 +295,17 @@ export class ExportCsvDesChantiersUseCase {
   };
 
   private readonly chantierRepository: ChantierRepository;
+  private readonly getStatistiquesAvancementChantiersParChantierQuery: GetStatistiquesAvancementChantiersParChantierQuery;
 
-  constructor({ chantierRepository }: Inject<"chantierRepository">) {
+  constructor({
+    chantierRepository,
+    getStatistiquesAvancementChantiersParChantierQuery,
+  }: Inject<
+    "chantierRepository" | "getStatistiquesAvancementChantiersParChantierQuery"
+  >) {
     this.chantierRepository = chantierRepository;
+    this.getStatistiquesAvancementChantiersParChantierQuery =
+      getStatistiquesAvancementChantiersParChantierQuery;
   }
 
   public async *run({
@@ -273,6 +325,19 @@ export class ExportCsvDesChantiersUseCase {
     jalonSelectionne: number;
     jalonParDefaut: number;
   }): AsyncGenerator<string[][]> {
+    const [statistiquesRegParChantier, statistiquesDeptParChantier] =
+      await Promise.all([
+        this.getStatistiquesAvancementChantiersParChantierQuery.execute({
+          listeChantier: chantierIds,
+          maille: "regionale",
+          jalon: jalonSelectionne,
+        }),
+        this.getStatistiquesAvancementChantiersParChantierQuery.execute({
+          listeChantier: chantierIds,
+          maille: "departementale",
+          jalon: jalonSelectionne,
+        }),
+      ]);
     for (let i = 0; i < chantierIds.length; i += chantierChunkSize) {
       const partialChantierIds = chantierIds.slice(i, i + chantierChunkSize);
 
@@ -328,6 +393,12 @@ export class ExportCsvDesChantiersUseCase {
                       chantierTerritoireExport,
                       profil,
                       optionsExport,
+                      statistiquesRegParChantier.get(
+                        chantierTerritoireExport.id,
+                      ) ?? null,
+                      statistiquesDeptParChantier.get(
+                        chantierTerritoireExport.id,
+                      ) ?? null,
                     ),
                   ];
                 }

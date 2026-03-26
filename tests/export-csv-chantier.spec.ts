@@ -87,6 +87,12 @@ test("doit pouvoir exporter les données des chantiers sous format CSV", async (
     ).toBeChecked();
   });
 
+  await test.step("Vérification des possibilités de choix d'export - valeurs de référence", async () => {
+    await expect(page.getByLabel(/valeurs de référence/)).toBeVisible();
+    await pageAccueil.exportModal.checkDataOption("valeurs de référence");
+    await expect(page.getByLabel("valeurs de référence")).toBeChecked();
+  });
+
   await test.step("Vérification des possibilités de choix d'export - météo et synthèse des résultats du chantier sur le territoire", async () => {
     await expect(
       page.getByLabel(
@@ -147,6 +153,24 @@ test("doit pouvoir exporter les données des chantiers sous format CSV", async (
       const contents = await fs.promises.readFile(await download.path());
       expect(contents.toString()).toMatch(
         '"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier Id";"Chantier";"Ministère";"Axe";"Statut";"Chantier territorialisé";"Chantier du baromètre"\n',
+      );
+    });
+  });
+
+  await test.step("Étape 4 - Récapitulatif et validation - partie téléchargement et vérification du fichier avec valeurs de référence", async () => {
+    await test.step("Téléchargement du fichier", async () => {
+      await page.goto(
+        `/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&optionsExport=identifiant,valeurs-reference&jalon=2025`,
+      );
+
+      download = await pageAccueil.exportModal.download();
+      expect(download.suggestedFilename()).toMatch(/PILOTE-Chantiers-.*\.csv/);
+    });
+
+    await test.step("vérification des colonnes valeurs de référence", async () => {
+      const contents = await fs.promises.readFile(await download.path());
+      expect(contents.toString()).toMatch(
+        '"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier Id";"Chantier";"maximum régional 2025";"médiane régionale 2025";"minimum régional 2025";"maximum départemental 2025";"médiane départementale 2025";"minimum départemental 2025"\n',
       );
     });
   });
