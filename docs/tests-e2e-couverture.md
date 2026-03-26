@@ -171,10 +171,12 @@ Profil : `prefet.region@example.com` (PREFET_REGION, territoires : REG-53, saisi
   - Objectifs du chantier
   - Données descriptives du chantier sur le territoire
   - Données de comparaison du chantier
+  - Valeurs de référence
   - Météo et synthèse des résultats
   - Commentaires du chantier
   - Suivi des décisions stratégiques
 - Téléchargement du fichier avec options "identifiant + gouvernance" : vérification du nom de fichier (`PILOTE-Chantiers-*.csv`) et des colonnes CSV (Maille, Région, Département, Code INSEE, Chantier Id, Chantier, Ministère, Axe, Statut, etc.)
+- Téléchargement avec option "valeurs de référence" (jalon 2025) : vérification des colonnes maximum régional, médiane régionale, minimum régional, maximum départemental, médiane départementale, minimum départemental
 - Téléchargement avec options supplémentaires (responsabilité, objectifs) : vérification des colonnes additionnelles (Directeur projet, Contact, Responsable local, Notre ambition, etc.)
 
 ### 4.2 Export des indicateurs
