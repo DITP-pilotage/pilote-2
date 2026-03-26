@@ -1,6 +1,9 @@
 import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
 import { TerritoireLabel } from "@/components/_commons/Widget/TerritoireLabel";
-import { TerritoireProgressBar } from "@/components/_commons/Widget/TerritoireProgressBar";
+import {
+  TerritoireProgressBar,
+  TerritoireProgressBarVariant,
+} from "@/components/_commons/Widget/TerritoireProgressBar";
 
 export type SuiviTerritoireItem = {
   territoireCode: string;
@@ -15,10 +18,12 @@ export const SuiviTerritoires = ({
   territoires,
   territoireCode,
   onSupprimerTerritoire,
+  variant = "progressBar",
 }: {
   territoires: SuiviTerritoireItem[];
   territoireCode: string;
   onSupprimerTerritoire: (territoireCode: string) => void;
+  variant?: TerritoireProgressBarVariant;
 }) => (
   <div className="text-xs flex flex-col">
     {territoires.map((territoire) => {
@@ -50,6 +55,7 @@ export const SuiviTerritoires = ({
               libelle={territoire.libelle}
               couleur={couleur}
               dateMaj={territoire.dateMaj}
+              variant={variant}
             />
           )}
         </div>

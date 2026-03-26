@@ -196,7 +196,6 @@ export const WidgetCartographieValeurAvancement = ({
                 onSupprimerTerritoire={supprimerTerritoire}
                 territoiresSelectionnes={territoiresSelectionnes}
                 unite={unite}
-                statistiques={statistiques}
               />
             );
           }
