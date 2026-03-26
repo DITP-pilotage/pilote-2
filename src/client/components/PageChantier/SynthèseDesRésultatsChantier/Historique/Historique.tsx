@@ -9,7 +9,6 @@ import { Eye1Icon } from "@/components/_commons/Icones/Eye1Icon";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 import api from "@/server/infrastructure/api/trpc/api";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
-import SynthèseDesRésultatsHistoriqueStyled from "./Historique.styled";
 
 const SynthèseDesRésultatsHistorique = () => {
   const { chantier, territoireCode } = pageChantier.useServerSidePropsContext();
@@ -39,13 +38,13 @@ const SynthèseDesRésultatsHistorique = () => {
         </BoutonSousLigné>
       }
     >
-      <SynthèseDesRésultatsHistoriqueStyled>
+      <div>
         {historiqueDeLaSynthèseDesRésultats ? (
           historiqueDeLaSynthèseDesRésultats.map((synthèse, i) => (
             <Fragment key={synthèse.dateModification}>
               {i !== 0 && <hr className="fr-mt-4w" />}
-              <div className="conteneur">
-                <div className="conteneur-météo fr-mb-3w fr-mb-md-0">
+              <div className="grid md:grid-cols-[1fr_4fr] md:gap-x-4">
+                <div className="text-center fr-mb-3w fr-mb-md-0">
                   <div className="fr-mb-2w">
                     <MétéoBadge météo={synthèse?.meteo ?? "NON_RENSEIGNEE"} />
                   </div>
@@ -66,7 +65,7 @@ const SynthèseDesRésultatsHistorique = () => {
         ) : (
           <p>Chargement de l'historique...</p>
         )}
-      </SynthèseDesRésultatsHistoriqueStyled>
+      </div>
     </Modale>
   );
 };

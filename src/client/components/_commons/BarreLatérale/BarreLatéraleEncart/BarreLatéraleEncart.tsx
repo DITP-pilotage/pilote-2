@@ -1,6 +1,5 @@
 import { FunctionComponent, ReactNode } from "react";
-import clsx from "clsx";
-import BarreLatéraleEncartStyled from "./BarreLatéraleEncart.styled";
+import { clsxm } from "@/utils/clsxm";
 
 interface BarreLatéraleEncartProps {
   children: ReactNode;
@@ -12,9 +11,9 @@ const BarreLatéraleEncart: FunctionComponent<BarreLatéraleEncartProps> = ({
   className = "bg-dsfr-blue-france-925",
 }) => {
   return (
-    <BarreLatéraleEncartStyled className={clsx("fr-p-3w w-full", className)}>
+    <div className={clsxm("fr-p-3w w-full [&_select]:bg-dsfr-alt-blue-france", className)}>
       {children}
-    </BarreLatéraleEncartStyled>
+    </div>
   );
 };
 

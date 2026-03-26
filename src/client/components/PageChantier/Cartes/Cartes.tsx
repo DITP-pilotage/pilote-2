@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react";
 import { parseAsString, useQueryState } from "nuqs";
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import CartesStyled from "@/components/PageChantier/Cartes/Cartes.styled";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import CartographieAvecSelecteur from "@/components/_commons/Cartographie/CartographieAvecSelecteur/CartographieAvecSelecteur";
@@ -62,9 +61,9 @@ const Cartes: FunctionComponent<CartesProps> = ({
 
   return (
     <>
-      <CartesStyled>
+      <div className="grid gap-6 md:grid-cols-2 print:grid-cols-2">
         {afficheCarteAvancement ? (
-          <div className="carte">
+          <div className="print:break-inside-avoid">
             <Bloc>
               <section>
                 <CartographieAvecSelecteur
@@ -91,7 +90,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
           </div>
         ) : null}
         {afficheCarteMétéo ? (
-          <div className="carte">
+          <div className="print:break-inside-avoid">
             <Bloc>
               <section>
                 <CartographieAvecSelecteur
@@ -110,7 +109,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
             </Bloc>
           </div>
         ) : null}
-      </CartesStyled>
+      </div>
       {featureComparaisonTerritoires ? (
         <div className="mt-4">
           <ComparaisonTerritoires

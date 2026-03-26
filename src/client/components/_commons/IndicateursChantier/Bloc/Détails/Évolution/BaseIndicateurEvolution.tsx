@@ -3,7 +3,6 @@ import type { ChartData } from "chart.js";
 import Titre from "@/client/components/_commons/Titre/Titre";
 import { LogoPilote } from "@/components/_commons/LogoPilote";
 import LineChart from "./LineChart/LineChart";
-import IndicateurÉvolutionStyled from "./IndicateurÉvolution.styled";
 import type {
   BaseEvolutionMode,
   ChartConfig,
@@ -26,7 +25,7 @@ export const BaseIndicateurEvolution = forwardRef<
   );
 
   return (
-    <IndicateurÉvolutionStyled className="!p-10" ref={ref}>
+    <section className="!p-10" ref={ref}>
       <div className="flex justify-between items-start gap-4 mb-2">
         <div>
           <Titre baliseHtml="h5" className="fr-text--lg fr-mb-0">
@@ -40,8 +39,8 @@ export const BaseIndicateurEvolution = forwardRef<
       </div>
 
       {hasData ? (
-        <div className="graphique-bloc">
-          <div className="graphique-conteneur">
+        <div className="grid">
+          <div className="min-h-80 overflow-hidden">
             <LineChart {...chartConfig} modeImpression={modeImpression} />
           </div>
         </div>
@@ -52,7 +51,7 @@ export const BaseIndicateurEvolution = forwardRef<
       {modeImpression ? (
         <LogoPilote className="border-t border-gray-300 p-4 mt-4" />
       ) : null}
-    </IndicateurÉvolutionStyled>
+    </section>
   );
 });
 

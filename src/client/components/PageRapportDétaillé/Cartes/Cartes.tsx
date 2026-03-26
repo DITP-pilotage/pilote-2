@@ -5,7 +5,6 @@ import CartographieMétéo from "@/components/_commons/Cartographie/Cartographie
 import Titre from "@/components/_commons/Titre/Titre";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieMétéo";
-import CartesStyled from "@/components/PageChantier/Cartes/Cartes.styled";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
@@ -33,9 +32,9 @@ const Cartes: FunctionComponent<CartesProps> = ({
   mailleSelectionnee,
 }) => {
   return (
-    <CartesStyled>
+    <div className="grid gap-6 md:grid-cols-2 print:grid-cols-2">
       {afficheCarteAvancement ? (
-        <div className="carte">
+        <div className="print:break-inside-avoid">
           <Bloc>
             <section>
               <TitreInfobulleConteneur>
@@ -68,7 +67,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
         </div>
       ) : null}
       {afficheCarteMétéo ? (
-        <div className="carte">
+        <div className="print:break-inside-avoid">
           <Bloc>
             <section>
               <TitreInfobulleConteneur>
@@ -99,7 +98,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
           </Bloc>
         </div>
       ) : null}
-    </CartesStyled>
+    </div>
   );
 };
 

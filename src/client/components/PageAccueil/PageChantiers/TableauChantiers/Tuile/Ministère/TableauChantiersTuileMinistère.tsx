@@ -5,13 +5,12 @@ import { Icone } from "@/components/_commons/Icone";
 import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
 import { ArrowSLineIcon } from "@/components/_commons/Icones/ArrowSLineIcon";
 import TableauChantiersTuileMinistèreProps from "./TableauChantiersTuileMinistère.interface";
-import TableauChantiersTuileMinistèreStyled from "./TableauChantiersTuileMinistère.styled";
 
 const TableauChantiersTuileMinistère: FunctionComponent<
   TableauChantiersTuileMinistèreProps
 > = ({ ministère, estDéroulé, estArchive }) => {
   return (
-    <TableauChantiersTuileMinistèreStyled>
+    <div className="grid grid-cols-[auto_max-content]">
       <div>
         <div className="fr-mb-0 fr-ml-n1w">
           <div className="flex gap-2">
@@ -24,7 +23,7 @@ const TableauChantiersTuileMinistère: FunctionComponent<
             {ministère?.nom}
           </div>
         </div>
-        <div className="fr-mx-3w fr-mt-1v avancement">
+        <div className="fr-mx-3w fr-mt-1v max-w-60">
           <BarreDeProgression
             fond="blanc"
             taille="sm"
@@ -40,7 +39,7 @@ const TableauChantiersTuileMinistère: FunctionComponent<
           <Icone icone={ArrowSLine2Icon} />
         )}
       </button>
-    </TableauChantiersTuileMinistèreStyled>
+    </div>
   );
 };
 

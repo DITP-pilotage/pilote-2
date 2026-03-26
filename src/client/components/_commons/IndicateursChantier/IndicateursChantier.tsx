@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import IndicateurBloc from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBloc";
-import IndicateursChantierStyled from "@/components/_commons/IndicateursChantier/IndicateursChantier.styled";
 import { comparerIndicateur } from "@/client/utils/indicateur/indicateur";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import {
@@ -44,7 +43,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
   }
 
   return (
-    <IndicateursChantierStyled>
+    <section>
       {alerteMiseAJourIndicateur && chantier.statut !== "ARCHIVE" ? (
         <div className="fr-mb-2w">
           <Alerte titre="Mise à jour des données requise" type="warning" />
@@ -60,7 +59,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
         if (indicateursDeCetteRubrique.length > 0) {
           return (
             <section
-              className="fr-mb-3w sous-rubrique-indicateur"
+              className="mb-6 last-of-type:mb-0"
               id={rubriqueIndicateur.ancre}
               key={rubriqueIndicateur.ancre}
             >
@@ -121,7 +120,7 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
           );
         }
       })}
-    </IndicateursChantierStyled>
+    </section>
   );
 };
 

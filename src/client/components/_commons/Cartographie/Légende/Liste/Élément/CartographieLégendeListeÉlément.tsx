@@ -2,7 +2,6 @@ import { FunctionComponent, ReactNode } from "react";
 import hachuresGrisBlanc from "@/client/constants/légendes/hachure/hachuresGrisBlanc";
 import { estHachure } from "@/client/constants/légendes/hachure/hachure";
 import { Remplissage } from "@/components/_commons/Cartographie/Légende/CartographieLégende.interface";
-import CartographieLégendeListeÉlémentStyled from "./CartographieLégendeListeÉlément.styled";
 
 interface CartographieLégendeListeÉlémentProps {
   remplissage: Remplissage;
@@ -15,9 +14,9 @@ const CartographieLégendeListeÉlément: FunctionComponent<
   CartographieLégendeListeÉlémentProps
 > = ({ children, remplissage }) => {
   return (
-    <CartographieLégendeListeÉlémentStyled className="fr-pr-3v fr-pb-1v !text-dsfr-mention-grey">
+    <li className="flex items-start text-xs leading-4 fr-pr-3v fr-pb-1v !text-dsfr-mention-grey">
       <svg
-        className="fr-mr-1v fr-mt-1v remplissage"
+        className="fr-mr-1v fr-mt-1v w-[0.6rem] h-[0.6rem] border border-dsfr-grey-50"
         version="1.2"
         viewBox={`0 0 ${miseÀLÉchelle} ${miseÀLÉchelle}`}
         xmlns="http://www.w3.org/2000/svg"
@@ -32,7 +31,7 @@ const CartographieLégendeListeÉlément: FunctionComponent<
         />
       </svg>
       {children}
-    </CartographieLégendeListeÉlémentStyled>
+    </li>
   );
 };
 

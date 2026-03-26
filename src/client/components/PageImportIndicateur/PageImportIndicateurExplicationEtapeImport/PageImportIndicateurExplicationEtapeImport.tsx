@@ -3,7 +3,6 @@ import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { wording } from "@/client/utils/i18n/i18n";
 import ExplicationEtapeIndicateur from "./ExplicationEtapeIndicateur/ExplicationEtapeIndicateur";
-import PageImportIndicateurExplicationEtapeImportStyled from "./PageImportIndicateurExplicationEtapeImport.styled";
 
 interface ExplicationEtape {
   titre: string;
@@ -42,7 +41,7 @@ const PageImportIndicateurExplicationEtapeImport: FunctionComponent = () => {
   const etapeCourante = query.etapeCourante ? Number(query.etapeCourante) : 1;
 
   return (
-    <PageImportIndicateurExplicationEtapeImportStyled>
+    <section className="bg-dsfr-grey-1000 [&_h2]:text-primary [&_li]:marker:content-['']">
       <div className="fr-container fr-pt-2w fr-pb-3w">
         <Titre baliseHtml="h2" className="fr-h4">
           {
@@ -52,7 +51,7 @@ const PageImportIndicateurExplicationEtapeImport: FunctionComponent = () => {
         </Titre>
         <ol className="fr-grid-row fr-grid-row--gutters fr-m-0 fr-p-0">
           {explicationsEtapeImport.map(({ titre, texte }, index) => (
-            <li className="fr-col-lg-4" key={titre}>
+            <li className="fr-col-lg-4 min-[62rem]:first-of-type:pl-0 min-[62rem]:last-of-type:pr-0" key={titre}>
               <ExplicationEtapeIndicateur
                 etapeCourante={etapeCourante}
                 numéro={index + 1}
@@ -63,7 +62,7 @@ const PageImportIndicateurExplicationEtapeImport: FunctionComponent = () => {
           ))}
         </ol>
       </div>
-    </PageImportIndicateurExplicationEtapeImportStyled>
+    </section>
   );
 };
 

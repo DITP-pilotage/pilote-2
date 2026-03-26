@@ -1,7 +1,6 @@
 import { FunctionComponent, ReactNode } from "react";
 import { EditeurNouveauté } from "@/components/_commons/EditeurRiche/EditeurNouveauté";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
-import { ContenuHtmlStyled } from "./EditeurContenu3Colonnes.styled";
 
 export interface ItemListe {
   id: string;
@@ -101,9 +100,9 @@ export const EditeurContenu3Colonnes: FunctionComponent<
 
       <div className="flex-1 border-l border-gray-200 overflow-y-auto p-4">
         <h3 className="text-base font-bold mb-4">Aperçu</h3>
-        <ContenuHtmlStyled key={contenu}>
+        <div className="[&_p]:mb-0 [&_a]:text-primary [&_h4]:my-2 [&_hr]:!my-2" key={contenu}>
           <RenduContenuHtml html={contenu} />
-        </ContenuHtmlStyled>
+        </div>
       </div>
     </div>
   );

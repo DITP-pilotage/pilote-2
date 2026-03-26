@@ -15,7 +15,6 @@ import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { NOMS_CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import FiltresSélectionnésCatégorie from "./Catégorie/FiltresSélectionnésCatégorie";
-import FiltresSélectionnésStyled from "./FiltresSélectionnés.styled";
 
 interface FiltresSélectionnésProps {
   estAutoriseAVoirLesBrouillons: boolean;
@@ -150,14 +149,14 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
   ];
 
   return (
-    <FiltresSélectionnésStyled className="fr-mb-2w">
+    <div className="fr-mb-2w print:hidden">
       <Titre
         baliseHtml="h2"
-        className="fr-text--lg filtres-sélectionnés__titre"
+        className="fr-text--lg text-dsfr-grey-50"
       >
         Contenu du rapport détaillé
       </Titre>
-      <div className="filtres-sélectionnés__conteneur">
+      <div className="columns-4 gap-8 pl-0 text-[0.95rem] children:inline-block children:w-full">
         {filtresCatégories.map(({ nom, filtresActifs }) => (
           <FiltresSélectionnésCatégorie
             filtres={filtresActifs}
@@ -166,7 +165,7 @@ const FiltresSélectionnés: FunctionComponent<FiltresSélectionnésProps> = ({
           />
         ))}
       </div>
-    </FiltresSélectionnésStyled>
+    </div>
   );
 };
 

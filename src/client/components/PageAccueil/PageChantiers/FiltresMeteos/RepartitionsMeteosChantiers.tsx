@@ -9,7 +9,6 @@ import { sauvegarderFiltres } from "@/client/stores/useFiltresStoreNew/useFiltre
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrats/RepartitionMeteoContrat";
 import { clsxm } from "@/utils/clsxm";
-import RepartitionsMeteosChantiersStyled from "./RepartitionsMeteosChantiersStyled.styled";
 
 interface RepartitionsMeteosChantiersProps {
   repartitionMeteos: RepartitionMeteoContrat;
@@ -50,10 +49,10 @@ const RepartitionsMeteosChantiers: FunctionComponent<
   );
 
   return (
-    <RepartitionsMeteosChantiersStyled className="fr-grid-row fr-mx-n3v">
+    <ul className="fr-grid-row fr-mx-n3v list-none">
       {meteosSaisissables.map((meteo) => (
         <li
-          className="fr-col-3 fr-p-2v"
+          className="fr-col-3 fr-p-2v max-[80rem]:p-0.5"
           key={libellesMeteos[meteo]}
           title={libellesMeteos[meteo]}
         >
@@ -70,14 +69,14 @@ const RepartitionsMeteosChantiers: FunctionComponent<
             type="button"
           >
             <MeteoPicto meteo={meteo} />
-            <p className="nombre-de-chantiers fr-h1 fr-mb-0">
+            <p className="fr-h1 fr-mb-0 text-primary">
               {repartitionMeteos[meteo]}
             </p>
-            <p className="label fr-mb-0 break-keep">{libellesMeteos[meteo]}</p>
+            <p className="fr-mb-0 break-keep text-dsfr-grey-50 max-[80rem]:!text-xs">{libellesMeteos[meteo]}</p>
           </button>
         </li>
       ))}
-    </RepartitionsMeteosChantiersStyled>
+    </ul>
   );
 };
 

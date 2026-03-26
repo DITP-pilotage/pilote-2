@@ -1,5 +1,4 @@
 import Bloc from "@/components/_commons/Bloc/Bloc";
-import SynthèseDesRésultatsStyled from "@/components/PageRapportDétaillé/SynthèseDesRésultats/SynthèseDesRésultats.styled";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import Alerte from "@/components/_commons/Alerte/Alerte";
@@ -19,7 +18,7 @@ const SynthèseDesRésultats = ({
   mailleSourceDonnees,
 }: SynthèseDesRésultatsProps) => {
   return (
-    <SynthèseDesRésultatsStyled>
+    <div>
       <Bloc
         titre={nomTerritoire}
         backgroundClassNameTitre="bg-dsfr-blue-france-925"
@@ -33,8 +32,8 @@ const SynthèseDesRésultats = ({
               type="info"
             />
           )}
-          <div className="contenu">
-            <div className="fr-mx-1w fr-mb-2w fr-mb-md-0 météo-affichage">
+          <div className="flex flex-wrap gap-x-4 justify-center">
+            <div className="fr-mx-1w fr-mb-2w fr-mb-md-0 basis-32 text-center">
               <div className="fr-mb-2w">
                 <MétéoBadge
                   météo={synthèseDesRésultats?.météo ?? "NON_RENSEIGNEE"}
@@ -46,7 +45,7 @@ const SynthèseDesRésultats = ({
                 </div>
               )}
             </div>
-            <div className="synthèse-affichage">
+            <div className="basis-72 grow">
               <SynthèseDesRésultatsAffichage
                 synthèseDesRésultats={synthèseDesRésultats}
               />
@@ -54,7 +53,7 @@ const SynthèseDesRésultats = ({
           </div>
         </div>
       </Bloc>
-    </SynthèseDesRésultatsStyled>
+    </div>
   );
 };
 
