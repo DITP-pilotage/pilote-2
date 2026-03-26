@@ -42,12 +42,12 @@ const classesÀPartirDeTaille: Record<
   },
   md: {
     valeur:
-      "absolute top-[calc(50%-1.4rem)] w-full !leading-10 fr-h4 text-center",
+      "absolute top-[calc(50%_-_1.4rem)] w-full !leading-10 fr-h4 text-center",
     libellé: "text-center",
   },
   lg: {
     valeur:
-      "absolute top-[calc(50%-1.4rem)] w-full !leading-10 fr-h1 text-center",
+      "absolute top-[calc(50%_-_1.4rem)] w-full !leading-10 fr-h1 text-center",
     libellé: "text-center",
   },
 };

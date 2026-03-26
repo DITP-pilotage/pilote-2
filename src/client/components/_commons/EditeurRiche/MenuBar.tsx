@@ -491,7 +491,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
 
   return (
     <>
-      <div className="flex z-1 sticky top-0 flex-wrap gap-1 items-center p-2 border border-dsfr-grey-900 border-b-0 rounded-t !bg-white">
+      <div className="flex z-[1] sticky top-0 flex-wrap gap-1 items-center p-2 border border-dsfr-grey-900 border-b-0 rounded-t !bg-white">
         {visibleGroups.map((group, index) => (
           <Fragment key={index}>
             {index > 0 && <div className="w-px h-6 mx-1 bg-dsfr-grey-900" />}
