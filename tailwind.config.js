@@ -56,6 +56,18 @@ module.exports = {
         "dsfr-green-tilleul-verveine-950": "#fceeac",
         "dsfr-green-tilleul-verveine-sun": "#695240",
         "dsfr-grey-900": "#dddddd",
+        "dsfr-purple-glycine-main-494": "#A558A0",
+        "dsfr-blue-cumulus-main-526": "#417DC4",
+        "dsfr-yellow-tournesol-main-731": "#C8AA39",
+        "dsfr-pink-macaron-main-689": "#E18B76",
+        "dsfr-blue-ecume-main-400": "#465F9D",
+        "dsfr-brown-caramel-main-648": "#C08C65",
+        "dsfr-orange-terre-battue-main-645": "#E4794A",
+        "dsfr-brown-cafe-creme-main-782": "#D1B781",
+        "dsfr-green-foret": "#1F8D49",
+        "dsfr-pink-tuile-main-556": "#CE614A",
+        "dsfr-green-archipel-main-557": "#009099",
+        "dsfr-beige-gris-galet-main-702": "#AEA397",
       },
       keyframes: {
         "dropdown-fade-in": {
