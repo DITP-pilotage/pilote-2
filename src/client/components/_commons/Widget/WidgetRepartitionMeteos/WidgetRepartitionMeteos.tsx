@@ -126,7 +126,7 @@ const TuilesMeteos = ({
               {repartition[meteo]}
             </span>
             <MeteoPicto meteo={meteo} />
-            <span className="text-sm text-[var(--text-action-high-grey)] leading-tight">
+            <span className="text-sm text-dsfr-grey-200 leading-tight">
               {libellesMeteos[meteo]}
             </span>
           </button>
