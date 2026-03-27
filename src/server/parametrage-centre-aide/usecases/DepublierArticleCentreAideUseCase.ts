@@ -12,8 +12,7 @@ export class DepublierArticleCentreAideUseCase {
   }
 
   async execute({ id }: { id: string }) {
-    const articles = await this.articleCentreAideRepository.lister();
-    const existant = articles.find((article) => article.id === id);
+    const existant = await this.articleCentreAideRepository.recupererParId(id);
     if (!existant) throw new Error(`Article ${id} introuvable`);
 
     const articleDepublie = ArticleCentreAide.creerArticle({

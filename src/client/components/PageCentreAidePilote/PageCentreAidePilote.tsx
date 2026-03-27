@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useRef } from "react";
+import { FunctionComponent, useEffect, useMemo, useRef } from "react";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { ArborescenceCentreAide } from "@/components/_commons/CentreAide/ArborescenceCentreAide";
 import { NoeudArbre } from "@/components/_commons/CentreAide/types";
@@ -34,7 +34,7 @@ export const PageCentreAidePilote: FunctionComponent = () => {
     estChargement,
   } = useLectureCentreAide();
 
-  const arbrePublie = filtrerArbrePublie(arbre);
+  const arbrePublie = useMemo(() => filtrerArbrePublie(arbre), [arbre]);
   const aAutoSelectionne = useRef(false);
 
   useEffect(() => {

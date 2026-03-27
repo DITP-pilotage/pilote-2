@@ -61,6 +61,13 @@ export class PrismaArticleCentreAideRepository implements ArticleCentreAideRepos
     return articles.map(convertirEnDomaine);
   }
 
+  async recupererParId(id: string): Promise<ArticleCentreAide | null> {
+    const article = await this.prisma.article_centre_aide.findUnique({
+      where: { id },
+    });
+    return article ? convertirEnDomaine(article) : null;
+  }
+
   async modifier(article: ArticleCentreAide): Promise<void> {
     const model = convertirEnModel(article);
     await this.prisma.article_centre_aide.update({
