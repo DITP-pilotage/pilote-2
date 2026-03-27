@@ -215,7 +215,7 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
                   </div>
                 </div>
                 {aContenu ? (
-                  <div className="flex-1 overflow-y-auto p-4 flex flex-col">
+                  <div className="flex-1 min-h-0 p-4 flex flex-col">
                     <EditeurCentreAide
                       contenu={contenu}
                       onChange={setContenu}

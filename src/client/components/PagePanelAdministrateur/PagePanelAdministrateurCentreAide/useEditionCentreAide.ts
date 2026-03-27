@@ -1,11 +1,23 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { $Enums } from "@prisma/client";
 import api from "@/server/infrastructure/api/trpc/api";
 import { ArticleCentreAideContrat } from "@/server/parametrage-centre-aide/app/contrats/ArticleCentreAideContrat";
 import { useLectureCentreAide } from "@/components/_commons/CentreAide/useLectureCentreAide";
+import { NoeudArbre } from "@/components/_commons/CentreAide/types";
 
 export type { NoeudArbre } from "@/components/_commons/CentreAide/types";
+
+const trouverPremierArticle = (
+  noeuds: NoeudArbre[],
+): NoeudArbre | undefined => {
+  for (const noeud of noeuds) {
+    if (noeud.contenuBrouillon !== null || noeud.contenu !== null) return noeud;
+    const trouve = trouverPremierArticle(noeud.enfants);
+    if (trouve) return trouve;
+  }
+  return undefined;
+};
 
 const compterEnfants = (
   parentId: string | null,
@@ -33,6 +45,21 @@ export const useEditionCentreAide = () => {
   const [titre, setTitre] = useState("");
   const [contenu, setContenu] = useState<string | null>(templateInitial);
   const [type, setType] = useState<$Enums.TypeArticleCentreAide>("PAGE");
+
+  const aAutoSelectionne = useRef(false);
+
+  useEffect(() => {
+    if (!estChargement && arbre.length > 0 && !aAutoSelectionne.current) {
+      aAutoSelectionne.current = true;
+      const premier = trouverPremierArticle(arbre);
+      if (premier) {
+        setItemSelectionneId(premier.id);
+        setTitre(premier.titreBrouillon ?? premier.titre);
+        setContenu(premier.contenuBrouillon ?? premier.contenu);
+        setType(premier.type);
+      }
+    }
+  }, [estChargement, arbre, setItemSelectionneId]);
 
   const selectionnerItem = useCallback(
     (id: string) => {
