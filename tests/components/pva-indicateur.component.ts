@@ -21,10 +21,6 @@ export class PvaIndicateurComponent {
       indic_id: this.indicateurId,
       territoire_code: this.territoireCode,
     });
-    this.e2eContext.track("PROPOSITION_VALEUR_AVANCEMENT_CREEE", {
-      indic_id: this.indicateurId,
-      territoire_code: this.territoireCode,
-    });
   }
 
   // --- Actions---

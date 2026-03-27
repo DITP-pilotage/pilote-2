@@ -1951,3 +1951,5 @@ sources:
         description: "Habilitations des utilisateurs"
       - name: utilisateur
         description: "Table des utilisateurs de la webapp"
+      - name: indicateur_territoire_valeur_evenement
+        description: "Table des évènements de valeurs pour les indicateurs"
