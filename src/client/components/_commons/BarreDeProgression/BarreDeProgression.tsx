@@ -50,13 +50,6 @@ const COULEUR_VARIANTE: Record<BarreDeProgressionVariante, string> = {
   "grey-dsfr": "bg-dsfr-grey-200",
 };
 
-const COULEUR_TEXTE_FOND: Record<BarreDeProgressionFond, string> = {
-  bleu: "text-dsfr-blue-ecume-850",
-  blanc: "text-white",
-  "gris-moyen": "text-pilote-gris-moyen",
-  "gris-clair": "text-dsfr-grey-925",
-};
-
 const LARGEUR_POURCENTAGE: Record<BarreDeProgressionTaille, string> = {
   xxs: "w-10",
   xs: "w-10",
@@ -132,7 +125,6 @@ const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
               "fr-mb-0 bold fr-mr-1w whitespace-nowrap align-middle",
               dimensions[taille].classNameDsfr,
               positionTexte === "côté" && "pl-2 text-right",
-              COULEUR_TEXTE_FOND[fond],
             )}
           >
             {pourcentageAffiché}

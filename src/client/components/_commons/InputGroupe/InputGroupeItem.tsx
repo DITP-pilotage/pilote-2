@@ -1,5 +1,6 @@
 import "@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css";
 import { FunctionComponent, useId } from "react";
+import { clsxm } from "@/utils/clsxm";
 import { MultiSelectOptionGroupée } from "@/components/_commons/MultiSelect/MultiSelect.interface";
 
 interface MultiSelectGroupeProps {
@@ -27,23 +28,13 @@ const InputGroupeItem: FunctionComponent<MultiSelectGroupeProps> = ({
       <ul className="p-0 list-none fr-m-">
         {groupeOptions.options.map((option, index) => (
           <li
-            className="fr-py-1w fr-pl-2w"
-            key={`${option.value} ${id}`}
-            style={
+            className={clsxm(
+              "fr-py-1w fr-pl-2w [--idle:transparent]",
               index % 2 === 1
-                ? ({
-                    backgroundColor: "var(--background-contrast-grey)",
-                    "--idle": "transparent",
-                    "--hover": "var(--background-contrast-grey-hover)",
-                    "--active": "var(--background-contrast-grey-active)",
-                  } as React.CSSProperties)
-                : ({
-                    backgroundColor: "var(--background-alt-grey)",
-                    "--idle": "transparent",
-                    "--hover": "var(--background-alt-grey-hover)",
-                    "--active": "var(--background-alt-grey-active)",
-                  } as React.CSSProperties)
-            }
+                ? "bg-[var(--background-contrast-grey)] [--hover:var(--background-contrast-grey-hover)] [--active:var(--background-contrast-grey-active)]"
+                : "bg-[var(--background-alt-grey)] [--hover:var(--background-alt-grey-hover)] [--active:var(--background-alt-grey-active)]",
+            )}
+            key={`${option.value} ${id}`}
           >
             <button
               className="w-full texte-gauche fr-p-0"

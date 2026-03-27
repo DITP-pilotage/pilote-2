@@ -126,7 +126,7 @@ export const FiltresSelectionUnique: FunctionComponent<
             <li className="fr-p-0 fr-my-1w fr-mr-0 flex gap-2" key={filtre.id}>
               <button
                 className={clsxm(
-                  "fr-tag fr-tag--icon-left fr-mr-1w w-auto min-w-0",
+                  "fr-tag fr-tag--icon-left fr-mr-1w w-auto min-w-0 text-left",
                   filtresNew === filtre.id &&
                     "text-white bg-primary hover:text-white hover:bg-primary hover:cursor-not-allowed",
                 )}

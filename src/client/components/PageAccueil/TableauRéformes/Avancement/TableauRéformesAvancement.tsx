@@ -14,7 +14,7 @@ const TableauRéformesAvancement: FunctionComponent<
   const typeDeRéforme = "chantier";
 
   return (
-    <div className="grid grid-rows-[2rem_0.75rem] items-center text-[10px]">
+    <div className="grid grid-rows-[2rem_0.75rem] items-center text-[10px] w-full">
       {avancement === null ? (
         <span className="!text-dsfr-mention-grey fr-text--xs">
           Non renseigné

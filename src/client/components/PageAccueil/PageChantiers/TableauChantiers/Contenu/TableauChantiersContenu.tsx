@@ -68,7 +68,7 @@ const TableauChantiersContenu: FunctionComponent<
               return (
                 <td className="fr-p-0" key={cell.id}>
                   <Link
-                    className="pl-4 pr-4 py-2 flex items-center h-full no-underline bg-none children:w-full"
+                    className="pl-4 pr-4 py-2 flex items-center h-full no-underline bg-none"
                     href={`/chantier/${row.original.id}/${territoireCode}?maille=${mailleRedirection}&jalon=${jalon}`}
                     tabIndex={cell.column.columnDef.meta?.tabIndex}
                   >
