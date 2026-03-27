@@ -1,0 +1,29 @@
+name: "Demande de review sur une Pull request"
+
+on:
+  pull_request:
+    types:
+      - labeled
+
+jobs:
+  send_msg_on_review_requested:
+    name: "Envoi Tchap si review demandée"
+    if: github.event.label.name == 'review-requested'
+    runs-on: ubuntu-latest
+    steps:
+      - name: get infos pr
+        id: PR
+        uses: 8BitJonny/gh-get-current-pr@3.0.0
+        with:
+          github-token: ${{ github.token }}
+          sha: ${{ github.event.pull_request.head.sha }}
+      - name: "Envoi message Tchap"
+        uses: indiesdev/curl@v1.1
+        with:
+          url: "https://matrix.agent.dinum.tchap.gouv.fr/_matrix/client/r0/rooms/${{ secrets.TCHAP_ROOM_ID_REVIEW }}/send/m.room.message"
+          method: POST
+          accept: 200,201,204
+          headers: '{ "Authorization": "Bearer ${{ secrets.TCHAP_ACCESS_TOKEN }}" }'
+          body: '{"body": "","format":"org.matrix.custom.html","formatted_body":"<h2>[review] ${{ steps.PR.outputs.pr_title }}</h2> Une review est demandée sur cette PR. <br> <blockquote><a href=\"${{ steps.PR.outputs.pr_url }}\">PR ${{ steps.PR.outputs.number }}</a></blockquote>","msgtype":"m.text"}'
+          timeout: 6000
+          retries: 3
