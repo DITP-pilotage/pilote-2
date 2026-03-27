@@ -10,6 +10,14 @@ import { presenterEnListeArticleCentreAideContrat } from "@/server/parametrage-c
 
 const TypeArticleCentreAideSchema = z.enum(["GROUPE", "PAGE"]);
 
+const vérifierAdmin = (profil: string) => {
+  if (profil !== ProfilEnum.DITP_ADMIN) {
+    throw new UnauthorizedError(
+      "Vous n'êtes pas autorisé à effectuer cette action",
+    );
+  }
+};
+
 export const parametrageCentreAideRouter = créerRouteurTRPC({
   creer: procédureProtégée
     .input(
@@ -23,11 +31,7 @@ export const parametrageCentreAideRouter = créerRouteurTRPC({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      if (ctx.session.profil !== ProfilEnum.DITP_ADMIN) {
-        throw new UnauthorizedError(
-          "Vous n'êtes pas autorisé à effectuer cette action",
-        );
-      }
+      vérifierAdmin(ctx.session.profil);
 
       return getContainer("parametrageCentreAide")
         .resolve("creerArticleCentreAideUseCase")
@@ -58,14 +62,14 @@ export const parametrageCentreAideRouter = créerRouteurTRPC({
         type: TypeArticleCentreAideSchema,
         ordre: z.number(),
         parentId: z.string().uuid().nullish(),
+        contenuPublie: z.string().nullish(),
+        titrePublie: z.string().nullish(),
+        estPublie: z.boolean().optional(),
+        estMasque: z.boolean().optional(),
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      if (ctx.session.profil !== ProfilEnum.DITP_ADMIN) {
-        throw new UnauthorizedError(
-          "Vous n'êtes pas autorisé à effectuer cette action",
-        );
-      }
+      vérifierAdmin(ctx.session.profil);
 
       return getContainer("parametrageCentreAide")
         .resolve("modifierArticleCentreAideUseCase")
@@ -76,6 +80,10 @@ export const parametrageCentreAideRouter = créerRouteurTRPC({
           type: input.type,
           ordre: input.ordre,
           parentId: input.parentId,
+          contenuPublie: input.contenuPublie,
+          titrePublie: input.titrePublie,
+          estPublie: input.estPublie,
+          estMasque: input.estMasque,
         });
     }),
 
@@ -86,14 +94,40 @@ export const parametrageCentreAideRouter = créerRouteurTRPC({
       }),
     )
     .mutation(async ({ input, ctx }) => {
-      if (ctx.session.profil !== ProfilEnum.DITP_ADMIN) {
-        throw new UnauthorizedError(
-          "Vous n'êtes pas autorisé à effectuer cette action",
-        );
-      }
+      vérifierAdmin(ctx.session.profil);
 
       return getContainer("parametrageCentreAide")
         .resolve("supprimerArticleCentreAideUseCase")
+        .execute({ id: input.id });
+    }),
+
+  publier: procédureProtégée
+    .input(z.object({ id: z.string().uuid() }))
+    .mutation(async ({ input, ctx }) => {
+      vérifierAdmin(ctx.session.profil);
+
+      return getContainer("parametrageCentreAide")
+        .resolve("publierArticleCentreAideUseCase")
+        .execute({ id: input.id });
+    }),
+
+  depublier: procédureProtégée
+    .input(z.object({ id: z.string().uuid() }))
+    .mutation(async ({ input, ctx }) => {
+      vérifierAdmin(ctx.session.profil);
+
+      return getContainer("parametrageCentreAide")
+        .resolve("depublierArticleCentreAideUseCase")
+        .execute({ id: input.id });
+    }),
+
+  basculerVisibilite: procédureProtégée
+    .input(z.object({ id: z.string().uuid() }))
+    .mutation(async ({ input, ctx }) => {
+      vérifierAdmin(ctx.session.profil);
+
+      return getContainer("parametrageCentreAide")
+        .resolve("basculerVisibiliteArticleCentreAideUseCase")
         .execute({ id: input.id });
     }),
 });

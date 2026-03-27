@@ -16,12 +16,41 @@ const IndicateurSelection: FunctionComponent<{
   />
 );
 
+const BadgesStatut: FunctionComponent<{ noeud: NoeudArbre }> = ({ noeud }) => {
+  const estBrouillon = !noeud.estPublie;
+  const aModifsNonPubliees =
+    noeud.estPublie &&
+    (noeud.titreBrouillon !== noeud.titre ||
+      noeud.contenuBrouillon !== noeud.contenu);
+
+  return (
+    <div className="flex gap-1 shrink-0 ml-auto">
+      {noeud.estMasque && (
+        <span className="w-2 h-2 rounded-full bg-gray-400" title="Masqué" />
+      )}
+      {estBrouillon && (
+        <span
+          className="w-2 h-2 rounded-full bg-yellow-400"
+          title="Brouillon"
+        />
+      )}
+      {aModifsNonPubliees && (
+        <span
+          className="w-2 h-2 rounded-full bg-orange-400"
+          title="Modifications non publiées"
+        />
+      )}
+    </div>
+  );
+};
+
 interface NoeudArbreProps {
   noeud: NoeudArbre;
   niveau: number;
   itemSelectionneId: string | null;
   onSelectionItem: (id: string) => void;
   estItemDesactive?: (noeud: NoeudArbre) => boolean;
+  afficherStatut?: boolean;
 }
 
 const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
@@ -30,6 +59,7 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
   itemSelectionneId,
   onSelectionItem,
   estItemDesactive,
+  afficherStatut,
 }) => {
   const estGroupe = noeud.type === "GROUPE";
   const estSelectionne = noeud.id === itemSelectionneId;
@@ -44,7 +74,7 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
             : estSelectionne
               ? "bg-blue-50 text-blue-700"
               : "hover:bg-gray-50 text-gray-700"
-        }`}
+        } ${afficherStatut && noeud.estMasque ? "opacity-50" : ""}`}
         disabled={estDesactive}
         onClick={() => onSelectionItem(noeud.id)}
         style={{ paddingLeft: `${niveau * 20 + 12}px` }}
@@ -57,11 +87,14 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
         <span
           className={`text-sm truncate ${estGroupe ? "font-semibold" : ""}`}
         >
-          {noeud.titre || "(sans titre)"}
+          {afficherStatut
+            ? noeud.titreBrouillon || noeud.titre || "(sans titre)"
+            : noeud.titre || "(sans titre)"}
         </span>
         {estGroupe && noeud.contenu !== null && (
           <span className="text-xs text-gray-400 shrink-0">+</span>
         )}
+        {afficherStatut && <BadgesStatut noeud={noeud} />}
       </button>
 
       {estGroupe && noeud.enfants.length > 0 && (
@@ -72,6 +105,7 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
           />
           {noeud.enfants.map((enfant) => (
             <NoeudArbreItem
+              afficherStatut={afficherStatut}
               estItemDesactive={estItemDesactive}
               itemSelectionneId={itemSelectionneId}
               key={enfant.id}
@@ -91,15 +125,23 @@ interface ArborescenceCentreAideProps {
   itemSelectionneId: string | null;
   onSelectionItem: (id: string) => void;
   estItemDesactive?: (noeud: NoeudArbre) => boolean;
+  afficherStatut?: boolean;
 }
 
 export const ArborescenceCentreAide: FunctionComponent<
   ArborescenceCentreAideProps
-> = ({ arbre, itemSelectionneId, onSelectionItem, estItemDesactive }) => {
+> = ({
+  arbre,
+  itemSelectionneId,
+  onSelectionItem,
+  estItemDesactive,
+  afficherStatut,
+}) => {
   return (
     <div className="overflow-y-auto flex-1">
       {arbre.map((noeud) => (
         <NoeudArbreItem
+          afficherStatut={afficherStatut}
           estItemDesactive={estItemDesactive}
           itemSelectionneId={itemSelectionneId}
           key={noeud.id}

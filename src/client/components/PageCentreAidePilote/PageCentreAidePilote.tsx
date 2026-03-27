@@ -7,6 +7,15 @@ import { useLectureCentreAide } from "@/components/_commons/CentreAide/useLectur
 const estGroupeSansContenu = (noeud: NoeudArbre) =>
   noeud.type === "GROUPE" && noeud.contenu === null;
 
+const filtrerArbrePublie = (noeuds: NoeudArbre[]): NoeudArbre[] => {
+  return noeuds
+    .filter((noeud) => noeud.estPublie && !noeud.estMasque)
+    .map((noeud) => ({
+      ...noeud,
+      enfants: filtrerArbrePublie(noeud.enfants),
+    }));
+};
+
 const trouverPremierePage = (noeuds: NoeudArbre[]): NoeudArbre | undefined => {
   for (const noeud of noeuds) {
     if (!estGroupeSansContenu(noeud)) return noeud;
@@ -25,17 +34,18 @@ export const PageCentreAidePilote: FunctionComponent = () => {
     estChargement,
   } = useLectureCentreAide();
 
+  const arbrePublie = filtrerArbrePublie(arbre);
   const aAutoSelectionne = useRef(false);
 
   useEffect(() => {
-    if (!estChargement && arbre.length > 0 && !aAutoSelectionne.current) {
+    if (!estChargement && arbrePublie.length > 0 && !aAutoSelectionne.current) {
       aAutoSelectionne.current = true;
-      const premiere = trouverPremierePage(arbre);
+      const premiere = trouverPremierePage(arbrePublie);
       if (premiere) {
         selectionnerItem(premiere.id);
       }
     }
-  }, [estChargement, arbre, selectionnerItem]);
+  }, [estChargement, arbrePublie, selectionnerItem]);
 
   if (estChargement) {
     return <p>Chargement...</p>;
@@ -49,7 +59,7 @@ export const PageCentreAidePilote: FunctionComponent = () => {
       <div className="flex bg-white border border-gray-200 rounded-lg">
         <div className="w-[280px] shrink-0 border-r border-gray-200 flex flex-col overflow-hidden">
           <ArborescenceCentreAide
-            arbre={arbre}
+            arbre={arbrePublie}
             estItemDesactive={estGroupeSansContenu}
             itemSelectionneId={itemSelectionneId}
             onSelectionItem={selectionnerItem}

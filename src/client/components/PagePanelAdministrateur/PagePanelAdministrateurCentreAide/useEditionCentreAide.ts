@@ -40,8 +40,8 @@ export const useEditionCentreAide = () => {
       if (!article) return;
 
       setItemSelectionneId(id);
-      setTitre(article.titre);
-      setContenu(article.contenu);
+      setTitre(article.titreBrouillon ?? article.titre);
+      setContenu(article.contenuBrouillon ?? article.contenu);
       setType(article.type);
     },
     [articles, setItemSelectionneId],
@@ -65,7 +65,7 @@ export const useEditionCentreAide = () => {
   const mutationModifier = api.parametrageCentreAide.modifier.useMutation({
     onSuccess: () => {
       refetchListe();
-      toast.success("Article modifié avec succès", {
+      toast.success("Brouillon sauvegardé", {
         duration: 3000,
         position: "top-right",
         richColors: true,
@@ -86,6 +86,40 @@ export const useEditionCentreAide = () => {
       });
     },
   });
+
+  const mutationPublier = api.parametrageCentreAide.publier.useMutation({
+    onSuccess: () => {
+      refetchListe();
+      toast.success("Article publié", {
+        duration: 3000,
+        position: "top-right",
+        richColors: true,
+      });
+    },
+  });
+
+  const mutationDepublier = api.parametrageCentreAide.depublier.useMutation({
+    onSuccess: () => {
+      refetchListe();
+      toast.success("Article dépublié", {
+        duration: 3000,
+        position: "top-right",
+        richColors: true,
+      });
+    },
+  });
+
+  const mutationBasculerVisibilite =
+    api.parametrageCentreAide.basculerVisibilite.useMutation({
+      onSuccess: () => {
+        refetchListe();
+        toast.success("Visibilité modifiée", {
+          duration: 3000,
+          position: "top-right",
+          richColors: true,
+        });
+      },
+    });
 
   const creerGroupe = useCallback(
     (avecContenu: boolean) => {
@@ -135,15 +169,42 @@ export const useEditionCentreAide = () => {
         type: itemSelectionne.type,
         ordre: itemSelectionne.ordre,
         parentId: itemSelectionne.parentId,
+        contenuPublie: itemSelectionne.contenu,
+        titrePublie: itemSelectionne.titre,
+        estPublie: itemSelectionne.estPublie,
+        estMasque: itemSelectionne.estMasque,
       });
     }
   }, [itemSelectionneId, itemSelectionne, titre, contenu, mutationModifier]);
+
+  const publier = useCallback(() => {
+    if (itemSelectionneId) {
+      mutationPublier.mutate({ id: itemSelectionneId });
+    }
+  }, [itemSelectionneId, mutationPublier]);
+
+  const depublier = useCallback(() => {
+    if (itemSelectionneId) {
+      mutationDepublier.mutate({ id: itemSelectionneId });
+    }
+  }, [itemSelectionneId, mutationDepublier]);
+
+  const basculerVisibilite = useCallback(() => {
+    if (itemSelectionneId) {
+      mutationBasculerVisibilite.mutate({ id: itemSelectionneId });
+    }
+  }, [itemSelectionneId, mutationBasculerVisibilite]);
 
   const supprimer = useCallback(() => {
     if (itemSelectionneId) {
       mutationSupprimer.mutate({ id: itemSelectionneId });
     }
   }, [itemSelectionneId, mutationSupprimer]);
+
+  const aDesModificationsNonPubliees =
+    itemSelectionne?.estPublie === true &&
+    (itemSelectionne.titreBrouillon !== itemSelectionne.titre ||
+      itemSelectionne.contenuBrouillon !== itemSelectionne.contenu);
 
   return {
     arbre,
@@ -161,5 +222,9 @@ export const useEditionCentreAide = () => {
     type,
     sauvegarder,
     supprimer,
+    publier,
+    depublier,
+    basculerVisibilite,
+    aDesModificationsNonPubliees,
   };
 };

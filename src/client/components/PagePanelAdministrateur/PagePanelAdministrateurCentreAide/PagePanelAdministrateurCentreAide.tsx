@@ -7,6 +7,12 @@ import {
 } from "react";
 import { EditeurCentreAide } from "@/components/_commons/EditeurRiche/EditeurCentreAide";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
+import { Icone } from "@/components/_commons/Icone";
+import { SavePleineIcon } from "@/components/_commons/Icones/SavePleineIcon";
+import { SendIcon } from "@/components/_commons/Icones/SendIcon";
+import { Delete1Icon } from "@/components/_commons/Icones/Delete1Icon";
+import { EyeIcon } from "@/components/_commons/Icones/EyeIcon";
+import { EyeOffIcon } from "@/components/_commons/Icones/EyeOffIcon";
 import { ArborescenceCentreAideAdmin } from "./ArborescenceCentreAide";
 import { useEditionCentreAide } from "./useEditionCentreAide";
 
@@ -25,6 +31,9 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
     setContenu,
     sauvegarder,
     supprimer,
+    publier,
+    basculerVisibilite,
+    aDesModificationsNonPubliees,
   } = useEditionCentreAide();
 
   const [afficherArbo, setAfficherArbo] = useState(true);
@@ -110,36 +119,99 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
                 className="flex-1 flex flex-col overflow-hidden min-w-0"
                 key={itemSelectionneId}
               >
-                <div className="p-4 border-b border-gray-200 flex items-end gap-4">
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Titre
-                    </label>
-                    <input
-                      className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      onChange={(event) => setTitre(event.target.value)}
-                      placeholder="Titre de l'article"
-                      type="text"
-                      value={titre}
-                    />
+                <div className="p-4 border-b border-gray-200 flex flex-col gap-3">
+                  <div className="flex items-center gap-2">
+                    {itemSelectionne?.estPublie ? (
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-green-100 text-green-800">
+                        Publié
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800">
+                        Brouillon
+                      </span>
+                    )}
+                    {aDesModificationsNonPubliees && (
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-orange-100 text-orange-800">
+                        Modifications non publiées
+                      </span>
+                    )}
+                    {itemSelectionne?.estMasque && (
+                      <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
+                        Masqué
+                      </span>
+                    )}
                   </div>
-                  <div className="flex gap-2 shrink-0">
-                    <button
-                      className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded hover:bg-blue-700"
-                      onClick={sauvegarder}
-                      type="button"
-                    >
-                      Sauvegarder
-                    </button>
-                    {itemSelectionneId && (
+                  <div className="flex items-end gap-4">
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Titre
+                      </label>
+                      <input
+                        className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onChange={(event) => setTitre(event.target.value)}
+                        placeholder="Titre de l'article"
+                        type="text"
+                        value={titre}
+                      />
+                    </div>
+                    <div className="flex gap-2 shrink-0">
                       <button
-                        className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700"
-                        onClick={supprimer}
+                        className="p-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+                        onClick={sauvegarder}
+                        title="Sauvegarder le brouillon"
                         type="button"
                       >
-                        Supprimer
+                        <Icone
+                          className="w-5 h-5 text-white"
+                          icone={SavePleineIcon}
+                        />
                       </button>
-                    )}
+                      <button
+                        className="p-2 text-white bg-green-600 rounded hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                        disabled={
+                          !aDesModificationsNonPubliees &&
+                          itemSelectionne?.estPublie === true
+                        }
+                        onClick={publier}
+                        title="Publier"
+                        type="button"
+                      >
+                        <Icone
+                          className="w-5 h-5 text-white"
+                          icone={SendIcon}
+                        />
+                      </button>
+                      <button
+                        className="p-2 border border-gray-300 rounded hover:bg-gray-50"
+                        onClick={basculerVisibilite}
+                        title={
+                          itemSelectionne?.estMasque
+                            ? "Rendre visible"
+                            : "Masquer"
+                        }
+                        type="button"
+                      >
+                        <Icone
+                          className="w-5 h-5"
+                          icone={
+                            itemSelectionne?.estMasque ? EyeIcon : EyeOffIcon
+                          }
+                        />
+                      </button>
+                      {itemSelectionneId && (
+                        <button
+                          className="p-2 text-white bg-red-600 rounded hover:bg-red-700"
+                          onClick={supprimer}
+                          title="Supprimer"
+                          type="button"
+                        >
+                          <Icone
+                            className="w-5 h-5 text-white"
+                            icone={Delete1Icon}
+                          />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
                 {aContenu ? (
