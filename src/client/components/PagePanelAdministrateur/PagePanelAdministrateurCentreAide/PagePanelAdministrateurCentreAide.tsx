@@ -1,10 +1,4 @@
-import {
-  FunctionComponent,
-  useCallback,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { FunctionComponent, useState } from "react";
 import { EditeurCentreAide } from "@/components/_commons/EditeurRiche/EditeurCentreAide";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { Icone } from "@/components/_commons/Icone";
@@ -39,21 +33,6 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
   const [afficherArbo, setAfficherArbo] = useState(true);
   const [afficherEditeurCol, setAfficherEditeurCol] = useState(true);
   const [afficherApercu, setAfficherApercu] = useState(true);
-  const [hauteurContenu, setHauteurContenu] = useState("auto");
-  const conteneurRef = useRef<HTMLDivElement>(null);
-
-  const calculerHauteur = useCallback(() => {
-    if (conteneurRef.current) {
-      const top = conteneurRef.current.getBoundingClientRect().top;
-      setHauteurContenu(`calc(100dvh - ${top + 16}px)`);
-    }
-  }, []);
-
-  useLayoutEffect(() => {
-    calculerHauteur();
-    window.addEventListener("resize", calculerHauteur);
-    return () => window.removeEventListener("resize", calculerHauteur);
-  }, [calculerHauteur]);
 
   if (estChargement) {
     return <p>Chargement...</p>;
@@ -70,7 +49,7 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
     }`;
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 h-[calc(100dvh-120px)]">
       <div className="flex gap-2">
         <button
           className={toggleButtonClass(afficherArbo)}
@@ -95,11 +74,7 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
         </button>
       </div>
 
-      <div
-        className="flex bg-white border-gray-200 rounded-lg overflow-hidden"
-        ref={conteneurRef}
-        style={{ height: hauteurContenu }}
-      >
+      <div className="flex flex-1 min-h-0 bg-white border-gray-200 rounded-lg overflow-hidden">
         {afficherArbo && (
           <div className="w-[280px] shrink-0 border-r border-gray-200 flex flex-col overflow-hidden">
             <ArborescenceCentreAideAdmin

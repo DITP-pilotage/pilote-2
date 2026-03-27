@@ -1,27 +1,15 @@
 import { FunctionComponent } from "react";
 import { NoeudArbre, aDesModificationsNonPubliees } from "./types";
 
-const IndicateurSelection: FunctionComponent<{
-  estSelectionne: boolean;
-  estDesactive: boolean;
-}> = ({ estSelectionne, estDesactive }) => (
-  <span
-    className={`w-[10px] h-[10px] shrink-0 rounded-full border-2 transition-colors ${
-      estDesactive
-        ? "border-gray-300 bg-gray-300"
-        : estSelectionne
-          ? "border-blue-600 bg-blue-600"
-          : "border-gray-300 bg-white"
-    }`}
-  />
-);
-
 const BadgesStatut: FunctionComponent<{ noeud: NoeudArbre }> = ({ noeud }) => {
   const estBrouillon = !noeud.estPublie;
   const aModifsNonPubliees = aDesModificationsNonPubliees(noeud);
 
   return (
     <div className="flex gap-1 shrink-0 ml-auto">
+      {noeud.estPublie && !aModifsNonPubliees && (
+        <span className="w-2 h-2 rounded-full bg-green-500" title="Publié" />
+      )}
       {noeud.estMasque && (
         <span className="w-2 h-2 rounded-full bg-gray-400" title="Masqué" />
       )}
@@ -62,44 +50,42 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
   const estSelectionne = noeud.id === itemSelectionneId;
   const estDesactive = estItemDesactive?.(noeud) ?? false;
 
+  const titre = afficherStatut
+    ? noeud.titreBrouillon || noeud.titre || "(sans titre)"
+    : noeud.titre || "(sans titre)";
+
   return (
     <div>
       <button
-        className={`w-full text-left py-2 pr-3 flex items-center gap-2 transition-colors ${
+        className={`w-full text-left py-2 pr-3 flex items-center gap-2 transition-colors border-l-3 ${
           estDesactive
-            ? "cursor-default text-gray-700"
+            ? "cursor-default text-gray-500 border-l-transparent"
             : estSelectionne
-              ? "bg-blue-50 text-blue-700"
-              : "hover:bg-gray-50 text-gray-700"
+              ? "bg-blue-50 text-blue-700 border-l-blue-600 font-medium"
+              : "hover:bg-gray-50 text-gray-700 border-l-transparent"
         } ${afficherStatut && noeud.estMasque ? "opacity-50" : ""}`}
         disabled={estDesactive}
         onClick={() => onSelectionItem(noeud.id)}
-        style={{ paddingLeft: `${niveau * 20 + 12}px` }}
+        style={{ paddingLeft: `${niveau * 16 + 12}px` }}
         type="button"
       >
-        <IndicateurSelection
-          estDesactive={estDesactive}
-          estSelectionne={estSelectionne}
-        />
+        {estGroupe ? (
+          <span className="text-gray-400 shrink-0 text-xs">
+            {noeud.enfants.length > 0 ? "▸" : "▹"}
+          </span>
+        ) : (
+          <span className="text-gray-400 shrink-0 text-xs">›</span>
+        )}
         <span
           className={`text-sm truncate ${estGroupe ? "font-semibold" : ""}`}
         >
-          {afficherStatut
-            ? noeud.titreBrouillon || noeud.titre || "(sans titre)"
-            : noeud.titre || "(sans titre)"}
+          {titre}
         </span>
-        {estGroupe && noeud.contenu !== null && (
-          <span className="text-xs text-gray-400 shrink-0">+</span>
-        )}
         {afficherStatut && <BadgesStatut noeud={noeud} />}
       </button>
 
       {estGroupe && noeud.enfants.length > 0 && (
-        <div className="relative">
-          <span
-            className="absolute top-0 bottom-0 w-px bg-gray-200"
-            style={{ left: `${niveau * 20 + 18}px` }}
-          />
+        <div>
           {noeud.enfants.map((enfant) => (
             <NoeudArbreItem
               afficherStatut={afficherStatut}
@@ -135,7 +121,7 @@ export const ArborescenceCentreAide: FunctionComponent<
   afficherStatut,
 }) => {
   return (
-    <div className="overflow-y-auto flex-1">
+    <div className="overflow-y-auto flex-1 py-2">
       {arbre.map((noeud) => (
         <NoeudArbreItem
           afficherStatut={afficherStatut}

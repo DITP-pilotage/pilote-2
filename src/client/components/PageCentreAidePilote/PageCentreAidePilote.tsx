@@ -56,8 +56,11 @@ export const PageCentreAidePilote: FunctionComponent = () => {
 
   return (
     <main className="px-48 md:px-96 py-4">
-      <div className="flex bg-white border border-gray-200 rounded-lg">
-        <div className="w-[280px] shrink-0 border-r border-gray-200 flex flex-col overflow-hidden">
+      <div className="flex gap-4">
+        <div className="w-[280px] shrink-0 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col overflow-hidden">
+          <h2 className="px-4 pt-4 pb-2 text-base font-bold border-b border-gray-200">
+            Centre d'aide PILOTE
+          </h2>
           <ArborescenceCentreAide
             arbre={arbrePublie}
             estItemDesactive={estGroupeSansContenu}
@@ -67,7 +70,7 @@ export const PageCentreAidePilote: FunctionComponent = () => {
         </div>
 
         {itemSelectionne ? (
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 bg-white border border-gray-200 rounded-lg shadow-sm overflow-y-auto p-6">
             <h2 className="text-xl font-bold mb-4">{itemSelectionne.titre}</h2>
             {aContenu ? (
               <div className="[&_p]:mb-0 [&_a]:text-primary [&_h4]:my-2 [&_hr]:!my-2">
@@ -80,7 +83,7 @@ export const PageCentreAidePilote: FunctionComponent = () => {
             )}
           </div>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">
+          <div className="flex-1 bg-white border border-gray-200 rounded-lg shadow-sm flex items-center justify-center text-gray-400 text-sm">
             Sélectionnez un article pour afficher son contenu.
           </div>
         )}
