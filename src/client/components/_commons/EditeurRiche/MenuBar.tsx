@@ -24,20 +24,21 @@ import { UndoIcon } from "@/components/_commons/Icones/UndoIcon";
 import { RedoIcon } from "@/components/_commons/Icones/RedoIcon";
 import { ClearFormatIcon } from "@/components/_commons/Icones/ClearFormatIcon";
 import { ClearNodesIcon } from "@/components/_commons/Icones/ClearNodesIcon";
-import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
-import { ListUnorderedIcon } from "@/components/_commons/Icones/ListUnorderedIcon";
 import { ShapesIcon } from "@/components/_commons/Icones/ShapesIcon";
+import { LayoutGridIcon } from "@/components/_commons/Icones/LayoutGridIcon";
 import { LinkLineIcon } from "@/components/_commons/Icones/LinkLineIcon";
 import { LinkUnlinkIcon } from "@/components/_commons/Icones/LinkUnlinkIcon";
 import { VideoIcon } from "@/components/_commons/Icones/VideoIcon";
 import { ModaleInsertionUrl } from "./ModaleInsertionUrl";
 import { ModaleInsertionIcone } from "./ModaleInsertionIcone";
+import { ModaleInsertionComposant } from "./ModaleInsertionComposant";
 
 export const MenuBar = ({ editor }: { editor: Editor }) => {
   const [modaleImage, setModaleImage] = useState(false);
   const [modaleLien, setModaleLien] = useState(false);
   const [modaleVideo, setModaleVideo] = useState(false);
   const [modaleIcone, setModaleIcone] = useState(false);
+  const [modaleComposant, setModaleComposant] = useState(false);
 
   if (!editor) {
     return null;
@@ -403,33 +404,22 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
 
   const composants = (): ReactNode | null => {
     const boutons: ReactNode[] = [];
+    const aCallout = hasExtension("callout");
+    const aAccordion = hasExtension("accordionItem");
 
-    if (hasExtension("callout")) {
+    if (aCallout || aAccordion) {
       boutons.push(
         <button
-          aria-label="Callout"
-          className={buttonClass(editor.isActive("callout"))}
-          key="callout"
-          onClick={() => editor.chain().focus().insertCallout().run()}
-          title="Insérer un callout"
+          aria-label="Composant"
+          className={buttonClass(
+            editor.isActive("callout") || editor.isActive("accordionItem"),
+          )}
+          key="composant"
+          onClick={() => setModaleComposant(true)}
+          title="Insérer un composant"
           type="button"
         >
-          <Icone icone={InformationPleineIcon} />
-        </button>,
-      );
-    }
-
-    if (hasExtension("accordionItem")) {
-      boutons.push(
-        <button
-          aria-label="Accordéon"
-          className={buttonClass(editor.isActive("accordionItem"))}
-          key="accordion"
-          onClick={() => editor.chain().focus().insertAccordion().run()}
-          title="Insérer un accordéon"
-          type="button"
-        >
-          <Icone icone={ListUnorderedIcon} />
+          <Icone icone={LayoutGridIcon} />
         </button>,
       );
     }
@@ -543,6 +533,20 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           editor.chain().focus().insertIcone({ type: nomIcone }).run();
         }}
         open={modaleIcone}
+      />
+      <ModaleInsertionComposant
+        composantsDisponibles={{
+          callout: hasExtension("callout"),
+          accordion: hasExtension("accordionItem"),
+        }}
+        onInsererAccordion={() => {
+          editor.chain().focus().insertAccordion().run();
+        }}
+        onInsererCallout={(color) => {
+          editor.chain().focus().insertCallout({ color }).run();
+        }}
+        onOpenChange={setModaleComposant}
+        open={modaleComposant}
       />
     </>
   );
