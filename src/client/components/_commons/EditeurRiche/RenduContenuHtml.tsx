@@ -4,8 +4,7 @@ import { Accordion } from "@/client/components/shared/Accordion";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
 import { ErrorWarningIcon } from "@/components/_commons/Icones/ErrorWarningIcon";
-import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
-import { EtoileIcon } from "@/components/_commons/Icones/EtoileIcon";
+import { registreIcones } from "./registreIcones";
 
 type IconComponent = ComponentType<{ className: string; fill: string }>;
 
@@ -16,14 +15,6 @@ const calloutIconMap: Record<string, IconComponent> = {
   error: ErrorWarningIcon,
   blue: InformationPleineIcon,
   moutarde: WarningIcon,
-};
-
-const iconeMap: Record<string, IconComponent> = {
-  info: InformationPleineIcon,
-  warning: WarningIcon,
-  error: ErrorWarningIcon,
-  arrowLine1: ArrowLine1Icon,
-  etoile: EtoileIcon,
 };
 
 function renderChildren(element: Element): ReactNode[] {
@@ -78,7 +69,7 @@ function renderNode(node: Node): ReactNode {
 
   if (dataType === "icone") {
     const iconType = element.getAttribute("data-icon-type") || "info";
-    const Icon = iconeMap[iconType];
+    const Icon = registreIcones[iconType];
     if (!Icon) return null;
     return (
       <Icon className="w-5 h-5 inline-block align-middle" fill="currentColor" />

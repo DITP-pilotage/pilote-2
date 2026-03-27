@@ -1,67 +1,19 @@
-import { ComponentType } from "react";
 import { mergeAttributes, Node } from "@tiptap/core";
 import {
   NodeViewProps,
   NodeViewWrapper,
   ReactNodeViewRenderer,
 } from "@tiptap/react";
-import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
-import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
-import { ErrorWarningIcon } from "@/components/_commons/Icones/ErrorWarningIcon";
-import { ArrowLine1Icon } from "@/components/_commons/Icones/ArrowLine1Icon";
-import { EtoileIcon } from "@/components/_commons/Icones/EtoileIcon";
+import { registreIcones } from "../registreIcones";
 
-type IconType = "info" | "warning" | "error" | "arrowLine1" | "etoile";
-
-const ICON_TYPES: IconType[] = [
-  "info",
-  "warning",
-  "error",
-  "arrowLine1",
-  "etoile",
-];
-
-const iconMap: Record<
-  IconType,
-  ComponentType<{ className: string; fill: string }>
-> = {
-  info: InformationPleineIcon,
-  warning: WarningIcon,
-  error: ErrorWarningIcon,
-  arrowLine1: ArrowLine1Icon,
-  etoile: EtoileIcon,
-};
-
-const iconLabels: Record<IconType, string> = {
-  info: "Info",
-  warning: "Attention",
-  error: "Erreur",
-  arrowLine1: "Flèche",
-  etoile: "Étoile",
-};
-
-function IconeNodeView({ node, updateAttributes, editor }: NodeViewProps) {
-  const type = (node.attrs.type as IconType) || "info";
-  const IconComponent = iconMap[type];
+function IconeNodeView({ node }: NodeViewProps) {
+  const type = (node.attrs.type as string) || "info";
+  const IconComponent = registreIcones[type];
 
   if (!IconComponent) return null;
 
   return (
     <NodeViewWrapper as="span" className="inline-flex items-center">
-      {editor.isEditable && (
-        <select
-          className="text-xs border rounded px-0.5 mr-1 bg-white"
-          contentEditable={false}
-          onChange={(event) => updateAttributes({ type: event.target.value })}
-          value={type}
-        >
-          {ICON_TYPES.map((iconType) => (
-            <option key={iconType} value={iconType}>
-              {iconLabels[iconType]}
-            </option>
-          ))}
-        </select>
-      )}
       <IconComponent
         className="w-5 h-5 inline-block align-middle"
         fill="currentColor"
@@ -73,7 +25,7 @@ function IconeNodeView({ node, updateAttributes, editor }: NodeViewProps) {
 declare module "@tiptap/core" {
   interface Commands<ReturnType> {
     icone: {
-      insertIcone: (attrs?: { type?: IconType }) => ReturnType;
+      insertIcone: (attrs?: { type?: string }) => ReturnType;
     };
   }
 }
@@ -87,9 +39,9 @@ export const IconeExtension = Node.create({
   addAttributes() {
     return {
       type: {
-        default: "info",
+        default: "InformationPleineIcon",
         parseHTML: (element: HTMLElement) =>
-          element.getAttribute("data-icon-type") || "info",
+          element.getAttribute("data-icon-type") || "InformationPleineIcon",
         renderHTML: (attributes: Record<string, string>) => ({
           "data-icon-type": attributes.type,
         }),

@@ -26,16 +26,18 @@ import { ClearFormatIcon } from "@/components/_commons/Icones/ClearFormatIcon";
 import { ClearNodesIcon } from "@/components/_commons/Icones/ClearNodesIcon";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 import { ListUnorderedIcon } from "@/components/_commons/Icones/ListUnorderedIcon";
-import { EtoileIcon } from "@/components/_commons/Icones/EtoileIcon";
+import { ShapesIcon } from "@/components/_commons/Icones/ShapesIcon";
 import { LinkLineIcon } from "@/components/_commons/Icones/LinkLineIcon";
 import { LinkUnlinkIcon } from "@/components/_commons/Icones/LinkUnlinkIcon";
 import { VideoIcon } from "@/components/_commons/Icones/VideoIcon";
 import { ModaleInsertionUrl } from "./ModaleInsertionUrl";
+import { ModaleInsertionIcone } from "./ModaleInsertionIcone";
 
 export const MenuBar = ({ editor }: { editor: Editor }) => {
   const [modaleImage, setModaleImage] = useState(false);
   const [modaleLien, setModaleLien] = useState(false);
   const [modaleVideo, setModaleVideo] = useState(false);
+  const [modaleIcone, setModaleIcone] = useState(false);
 
   if (!editor) {
     return null;
@@ -438,11 +440,11 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           aria-label="Icône"
           className={buttonClass(false)}
           key="icone"
-          onClick={() => editor.chain().focus().insertIcone().run()}
+          onClick={() => setModaleIcone(true)}
           title="Insérer une icône"
           type="button"
         >
-          <Icone icone={EtoileIcon} />
+          <Icone icone={ShapesIcon} />
         </button>,
       );
     }
@@ -534,6 +536,13 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
         open={modaleVideo}
         titre="Insérer une vidéo"
         type="video"
+      />
+      <ModaleInsertionIcone
+        onOpenChange={setModaleIcone}
+        onValider={(nomIcone) => {
+          editor.chain().focus().insertIcone({ type: nomIcone }).run();
+        }}
+        open={modaleIcone}
       />
     </>
   );
