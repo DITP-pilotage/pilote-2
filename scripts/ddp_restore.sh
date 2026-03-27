@@ -25,7 +25,6 @@ TRUNCATE TABLE
     public.rapport_propositions_avancement,
     public.llm_calls,
     public.rattachement_utilisateur_etape_jalon,
-    public.proposition_valeur_actuelle,
     public.indicateur_territoire_valeur_evenement,
     public.indicateur_territoire_jalon,
     public.indicateur_territoire,

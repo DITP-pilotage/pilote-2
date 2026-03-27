@@ -2,7 +2,6 @@ import groupBy from "lodash.groupby";
 import { MesureIndicateurRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface";
 import { MesureIndicateurTemporaireRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurTemporaireRepository.interface";
 import { IndicateurData } from "@/server/import-indicateur/domain/IndicateurData";
-import { PropositionValeurAvancementRepository } from "@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { IndicateurTerritoireValeurEvenements } from "@/server/import-indicateur/domain/IndicateurTerritoireValeurEvenements";
@@ -15,8 +14,6 @@ export class PublierFichierIndicateurImporteUseCase {
 
   private mesureIndicateurRepository: MesureIndicateurRepository;
 
-  private propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
-
   private indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
 
   private transaction: Transaction;
@@ -24,21 +21,17 @@ export class PublierFichierIndicateurImporteUseCase {
   constructor({
     mesureIndicateurTemporaireRepository,
     mesureIndicateurRepository,
-    propositionValeurAvancementRepository,
     indicateurTerritoireValeurEvenementRepository,
     transaction,
   }: Inject<
     | "mesureIndicateurTemporaireRepository"
     | "mesureIndicateurRepository"
-    | "propositionValeurAvancementRepository"
     | "indicateurTerritoireValeurEvenementRepository"
     | "transaction"
   >) {
     this.mesureIndicateurTemporaireRepository =
       mesureIndicateurTemporaireRepository;
     this.mesureIndicateurRepository = mesureIndicateurRepository;
-    this.propositionValeurAvancementRepository =
-      propositionValeurAvancementRepository;
     this.indicateurTerritoireValeurEvenementRepository =
       indicateurTerritoireValeurEvenementRepository;
     this.transaction = transaction;
@@ -70,9 +63,6 @@ export class PublierFichierIndicateurImporteUseCase {
         }),
     );
 
-    const listeValeursAvancementImportees = listeIndicateursData.filter(
-      (indicateur) => indicateur.metricType === "va",
-    );
     const evenements = await this.creerValeurIndicateurTerritoireEvenements(
       listeIndicateursData,
       auteurId,
@@ -82,23 +72,6 @@ export class PublierFichierIndicateurImporteUseCase {
       await this.mesureIndicateurRepository.sauvegarder(listeIndicateursData);
       await this.indicateurTerritoireValeurEvenementRepository.enregistrerTous(
         evenements,
-      );
-      await Promise.all(
-        listeValeursAvancementImportees.map((valeurAvancement) =>
-          this.propositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport(
-            {
-              indicId: valeurAvancement.indicId,
-              zoneId: valeurAvancement.zoneId,
-              dateValeurImportee: new Date(valeurAvancement.metricDate),
-              valeurImportee:
-                // TODO (JOTA:PVA:22/09/2025) En réalité ne peut pas être null, c'est chaine de caractère vide
-                valeurAvancement.metricValue === null ||
-                valeurAvancement.metricValue.length === 0
-                  ? null
-                  : Number.parseFloat(valeurAvancement.metricValue),
-            },
-          ),
-        ),
       );
       await this.mesureIndicateurTemporaireRepository.supprimerToutParRapportId(
         rapportId,

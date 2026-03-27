@@ -24,8 +24,6 @@ import {
   type NoExports,
   type VerifyCradle,
 } from "@/server/module-system";
-import { PropositionValeurAvancementRepository } from "./domain/ports/PropositionValeurAvancementRepository";
-import { PrismaPropositionValeurAvancementRepository } from "./infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
 
 type ImportIndicateurImports = IndicateurTerritoireValeurEvenementExports;
 
@@ -42,7 +40,6 @@ type ImportIndicateurOwnCradle = {
   indicateurRepository: IndicateurRepository;
   rapportRepository: RapportRepository;
   importDonneeIndicateurAPIHandler: ImportDonneeIndicateurAPIHandler;
-  propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
 };
 
 type ImportIndicateurCradle = ImportIndicateurOwnCradle &
@@ -86,9 +83,6 @@ export const importIndicateurModule = defineModule<
       rapportRepository: asModuleClass(PrismaRapportRepository),
       importDonneeIndicateurAPIHandler: asModuleClass(
         ImportDonneeIndicateurAPIHandler,
-      ),
-      propositionValeurAvancementRepository: asModuleClass(
-        PrismaPropositionValeurAvancementRepository,
       ),
     } satisfies VerifyCradle<ImportIndicateurOwnCradle>);
   },

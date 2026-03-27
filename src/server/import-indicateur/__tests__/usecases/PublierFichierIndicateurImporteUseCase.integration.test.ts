@@ -5,7 +5,6 @@ import { MesureIndicateurTemporaireRepository } from "@/server/import-indicateur
 import { MesureIndicateurTemporaire } from "@/server/import-indicateur/domain/MesureIndicateurTemporaire";
 import { MesureIndicateurTemporaireBuilder } from "@/server/import-indicateur/app/builder/MesureIndicateurTemporaire.builder";
 import { MesureIndicateurRepository } from "@/server/import-indicateur/domain/ports/MesureIndicateurRepository.interface";
-import { PropositionValeurAvancementRepository } from "@/server/import-indicateur/domain/ports/PropositionValeurAvancementRepository";
 import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { ValeurIndicateurTerritoireEvenementBuilder } from "@/server/import-indicateur/app/builder/ValeurIndicateurTerritoireEvenement.builder";
@@ -17,22 +16,18 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
   let mesureIndicateurTemporaireRepository: MockProxy<MesureIndicateurTemporaireRepository>;
   let mesureIndicateurRepository: MesureIndicateurRepository;
 
-  let propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
   let indicateurTerritoireValeurEvenementRepository: MockProxy<IndicateurTerritoireValeurEvenementRepository>;
 
   beforeEach(() => {
     mesureIndicateurRepository = mock<MesureIndicateurRepository>();
     mesureIndicateurTemporaireRepository =
       mock<MesureIndicateurTemporaireRepository>();
-    propositionValeurAvancementRepository =
-      mock<PropositionValeurAvancementRepository>();
     indicateurTerritoireValeurEvenementRepository =
       mock<IndicateurTerritoireValeurEvenementRepository>();
     publierFichierIndicateurImporteUseCase =
       new PublierFichierIndicateurImporteUseCase({
         mesureIndicateurTemporaireRepository,
         mesureIndicateurRepository,
-        propositionValeurAvancementRepository,
         indicateurTerritoireValeurEvenementRepository,
         transaction: new InMemoryTransaction(),
       });
@@ -109,95 +104,6 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(listeMesuresIndicateurs[1].metricType).toEqual("vc");
     expect(listeMesuresIndicateurs[1].metricValue).toEqual("15");
     expect(listeMesuresIndicateurs[1].zoneId).toEqual("D002");
-  });
-
-  it("doit supprimer les propositions de valeurs associés aux va importés", async () => {
-    // Given
-    const propositionsAModifierCaptor1 = captor<{
-      dateValeurImportee: Date;
-      indicId: string;
-      zoneId: string;
-      valeurImportee: number;
-    }>();
-    const propositionsAModifierCaptor2 = captor<{
-      dateValeurImportee: Date;
-      indicId: string;
-      zoneId: string;
-      valeurImportee: number;
-    }>();
-
-    const listeMesuresIndicateursTemporaires = [
-      new MesureIndicateurTemporaireBuilder()
-        .avecIndicId("IND-001")
-        .avecMetricDate("2022-12-01")
-        .avecMetricType("va")
-        .avecMetricValue("12")
-        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
-        .avecZoneId("D01")
-        .build(),
-      new MesureIndicateurTemporaireBuilder()
-        .avecIndicId("IND-002")
-        .avecMetricDate("2024-12-01")
-        .avecMetricType("va")
-        .avecMetricValue("11.3")
-        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
-        .avecZoneId("D01")
-        .build(),
-      new MesureIndicateurTemporaireBuilder()
-        .avecIndicId("IND-002")
-        .avecMetricDate("31/12/2022")
-        .avecMetricType("vc")
-        .avecMetricValue("15")
-        .avecRapportId("20a717e6-2de9-428c-b4e7-80f7b9f36ffc")
-        .avecZoneId("D02")
-        .build(),
-    ];
-
-    mesureIndicateurTemporaireRepository.recupererToutParRapportId.mockResolvedValue(
-      listeMesuresIndicateursTemporaires,
-    );
-    indicateurTerritoireValeurEvenementRepository.recupererParIndicIdTerritoireCodeEtTypeValeur.mockResolvedValue(
-      [],
-    );
-    // When
-    await publierFichierIndicateurImporteUseCase.execute({
-      rapportId: "20a717e6-2de9-428c-b4e7-80f7b9f36ffc",
-      auteurId: "2cde2d5a-a575-48ba-9f18-b450d1aa3f60",
-    });
-
-    // Then
-    expect(
-      mesureIndicateurTemporaireRepository.recupererToutParRapportId,
-    ).toHaveBeenNthCalledWith(1, "20a717e6-2de9-428c-b4e7-80f7b9f36ffc");
-    expect(
-      propositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport,
-    ).toHaveBeenCalledTimes(2);
-    expect(
-      propositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport,
-    ).toHaveBeenNthCalledWith(1, propositionsAModifierCaptor1);
-    expect(
-      propositionValeurAvancementRepository.modifierStatutPropositionsValeurAvancementApresImport,
-    ).toHaveBeenNthCalledWith(2, propositionsAModifierCaptor2);
-    expect(
-      mesureIndicateurTemporaireRepository.supprimerToutParRapportId,
-    ).toHaveBeenNthCalledWith(1, "20a717e6-2de9-428c-b4e7-80f7b9f36ffc");
-
-    const propositionsAModifier1 = propositionsAModifierCaptor1.value;
-    const propositionsAModifier2 = propositionsAModifierCaptor2.value;
-
-    expect(propositionsAModifier1.indicId).toEqual("IND-001");
-    expect(propositionsAModifier1.zoneId).toEqual("D01");
-    expect(propositionsAModifier1.dateValeurImportee).toEqual(
-      new Date("2022-12-01"),
-    );
-    expect(propositionsAModifier1.valeurImportee).toEqual(12);
-
-    expect(propositionsAModifier2.indicId).toEqual("IND-002");
-    expect(propositionsAModifier2.zoneId).toEqual("D01");
-    expect(propositionsAModifier2.dateValeurImportee).toEqual(
-      new Date("2024-12-01"),
-    );
-    expect(propositionsAModifier2.valeurImportee).toEqual(11.3);
   });
 
   it("quand la valeur est nouvelle pour le tuple [indicateur, territoire, date, type], doit créer une ligne d'évènement (VALEUR_CREEE)", async () => {

@@ -15,7 +15,6 @@ const PROPOSITION_VALEUR_EVENEMENTS: $Enums.type_evenement[] = [
 ];
 
 type ActionType =
-  | "PROPOSITION_VALEUR_AVANCEMENT_CREEE"
   | "EVENEMENT_PROPOSITION_VALEUR_CREE"
   | "COMMENTAIRE_CREE"
   | "MESURE_INDICATEUR_IMPORTEE"
@@ -44,11 +43,6 @@ export class E2ETestContext {
               ...action.filters,
               type_evenement: { in: PROPOSITION_VALEUR_EVENEMENTS },
             },
-          });
-          break;
-        case "PROPOSITION_VALEUR_AVANCEMENT_CREEE":
-          await prisma.proposition_valeur_actuelle.deleteMany({
-            where: action.filters,
           });
           break;
         case "COMMENTAIRE_CREE":

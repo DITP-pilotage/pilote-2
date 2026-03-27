@@ -88,8 +88,6 @@ export class IndicateurTerritoireValeurEvenements {
     const aPropositionValeurEnCours =
       evenementsPourCetteDate.evenementPropositionValeurEnCours();
     if (aPropositionValeurEnCours) {
-      // TODO - que fait-on de la vraie table proposition_valeur_actuelle ?
-      //    ici on enregistre les evenements mais d'impact sur la proposition réelle
       nouveauxEvenements.push(
         evenementsPourCetteDate.creerEvenementPropositionValeurIgnoreeValeurModifiee(
           {

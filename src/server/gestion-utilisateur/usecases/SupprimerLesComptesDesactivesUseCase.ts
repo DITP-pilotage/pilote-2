@@ -6,7 +6,6 @@ import { DecisionStrategiqueRepository } from "@/server/gestion-utilisateur/doma
 import { ObjectifRepository } from "@/server/gestion-utilisateur/domain/ports/ObjectifRepository";
 import { RapportRepository } from "@/server/gestion-utilisateur/domain/ports/RapportRepository";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
-import { PropositionValeurAvancementRepository } from "@/server/gestion-utilisateur/domain/ports/PropositionValeurAvancementRepository";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
 import type { Inject } from "@/server/gestion-utilisateur/module";
 
@@ -29,8 +28,6 @@ export class SupprimerLesComptesDesactivesUseCase {
 
   private rapportRepository: RapportRepository;
 
-  private propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
-
   private historisationModification: HistorisationModificationRepository;
 
   constructor({
@@ -41,7 +38,6 @@ export class SupprimerLesComptesDesactivesUseCase {
     decisionStrategiqueRepository,
     objectifRepository,
     rapportRepository,
-    propositionValeurAvancementRepository,
     historisationModification,
   }: Inject<
     | "utilisateurRepository"
@@ -51,7 +47,6 @@ export class SupprimerLesComptesDesactivesUseCase {
     | "decisionStrategiqueRepository"
     | "objectifRepository"
     | "rapportRepository"
-    | "propositionValeurAvancementRepository"
     | "historisationModification"
   >) {
     this.utilisateurRepository = utilisateurRepository;
@@ -61,8 +56,6 @@ export class SupprimerLesComptesDesactivesUseCase {
     this.decisionStrategiqueRepository = decisionStrategiqueRepository;
     this.objectifRepository = objectifRepository;
     this.rapportRepository = rapportRepository;
-    this.propositionValeurAvancementRepository =
-      propositionValeurAvancementRepository;
     this.historisationModification = historisationModification;
   }
 
@@ -111,10 +104,6 @@ export class SupprimerLesComptesDesactivesUseCase {
     );
     await this.rapportRepository.anonymiserAuteurs(
       listeUtilisateurASupprimerEmails,
-      EMAIL_AUTEUR_REMPLACEMENT,
-    );
-    await this.propositionValeurAvancementRepository.anonymiserAuteurs(
-      listeUtilisateurASupprimerIds,
       EMAIL_AUTEUR_REMPLACEMENT,
     );
     await this.historisationModification.anonymiserAuteurs(

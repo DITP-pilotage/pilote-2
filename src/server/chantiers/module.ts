@@ -5,8 +5,6 @@ import { RecupererMesuresIndicateurParPeriodeQuery } from "@/server/chantiers/in
 import { PrismaChantierRepository } from "@/server/chantiers/infrastructure/adapters/PrismaChantierRepository";
 import { PrismaIndicateurRepository } from "@/server/chantiers/infrastructure/adapters/PrismaIndicateurRepository";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
-import { PropositionValeurAvancementRepository } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
-import { PrismaPropositionValeurAvancementRepository } from "@/server/chantiers/infrastructure/adapters/PrismaPropositionValeurAvancementRepository";
 import type { IndicateurTerritoireValeurEvenementExports } from "@/server/indicateur-territoire-valeur-evenement/module";
 import type { DatajobsExecutionExports } from "@/server/datajobs-execution/module";
 import {
@@ -62,7 +60,6 @@ type ChantierOwnCradle = ChantierExports & {
   indicateurRepository: IndicateurRepository;
   territoireRepository: TerritoireRepository;
   ministereRepository: MinistereRepository;
-  propositionValeurAvancementRepository: PropositionValeurAvancementRepository;
   utilisateurRepository: UtilisateurRepository;
   envoieEmailService: EnvoieEmailService;
   recupererDonneesChantierQuery: RecupererDonneesChantierQuery;
@@ -108,9 +105,6 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       indicateurRepository: asModuleClass(PrismaIndicateurRepository),
       territoireRepository: asModuleClass(PrismaTerritoireRepository),
       ministereRepository: asModuleClass(PrismaMinistereRepository),
-      propositionValeurAvancementRepository: asModuleClass(
-        PrismaPropositionValeurAvancementRepository,
-      ),
       utilisateurRepository: asModuleClass(PrismaUtilisateurRepository),
       envoieEmailService: asModuleClass(BrevoEnvoieEmailService),
       recupererDonneesChantierQuery: asModuleClass(

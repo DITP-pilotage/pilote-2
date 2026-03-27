@@ -2,11 +2,13 @@ import { mock, MockProxy } from "vitest-mock-extended";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { UtilisateurRepository } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import { IndicateurRepository } from "@/server/chantiers/domain/ports/IndicateurRepository";
-import { IndicateurTerritoireValeurEvenementRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import {
+  IndicateurTerritoireValeurEvenementRepository,
+  PropositionValeurAvancementRapport,
+} from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 import { RapportPropositionsAvancementRepository } from "@/server/chantiers/domain/ports/RapportPropositionsAvancementRepository";
 import { CreerLesRapportsPropositionsUseCase } from "@/server/chantiers/usecases/CreerLesRapportsPropositionsUseCase";
 import { Utilisateur } from "@/server/chantiers/domain/Utilisateur";
-import { PropositionValeurAvancementRapport } from "@/server/chantiers/domain/ports/PropositionValeurAvancementRepository";
 
 function creerPropositionsParChantier(
   items: {
