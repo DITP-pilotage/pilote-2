@@ -61,14 +61,14 @@
 
       .commit-item {
           animation: slideInLeft 0.3s ease-out both;
-          transition: background-color 0.2s ease, box-shadow 0.2s ease;
-          border-left: 3px solid transparent;
+          transition: box-shadow 0.2s ease;
+          border-left: 3px solid var(--border-action-high-blue-france);
+          background-color: var(--background-alt-grey);
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
       }
 
       .commit-item:hover {
-          background-color: var(--background-alt-grey);
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-          border-left-color: var(--border-action-high-blue-france);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
       }
 
       .loading-dot {
@@ -174,15 +174,33 @@
 
       .pr-card {
           animation: slideInLeft 0.3s ease-out both;
-          transition: background-color 0.2s ease, box-shadow 0.2s ease;
-          border-left: 3px solid transparent;
+          transition: box-shadow 0.2s ease;
+          border-left: 3px solid var(--border-default-grey);
           border-radius: 4px;
+          background-color: var(--background-alt-grey);
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
       }
 
       .pr-card:hover {
-          background-color: var(--background-alt-grey);
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-          border-left-color: var(--border-action-high-blue-france);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      }
+
+      .pr-card--review-requested {
+          border-left-color: var(--border-plain-warning);
+      }
+
+      .pr-card--no-review {
+          border-left-color: var(--border-default-grey);
+      }
+
+      .section-title {
+          font-size: 0.9rem;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          color: var(--text-mention-grey);
+          padding-bottom: 8px;
+          border-bottom: 1px solid var(--border-default-grey);
       }
 
       .pr-label {
@@ -571,9 +589,16 @@
     return "<span class=\"review-status " + info.css + "\">" + info.icon + " " + info.label + "</span>";
   }
 
+  function hasLabel(pr, labelName) {
+    return pr.labels && pr.labels.some(function(l) {
+      return l.name.toLowerCase() === labelName.toLowerCase();
+    });
+  }
+
   function renderPR(pr, reviews, index) {
     var isDraft = pr.draft;
     var draftClass = isDraft ? " pr-draft" : "";
+    var reviewClass = hasLabel(pr, "review-requested") ? " pr-card--review-requested" : " pr-card--no-review";
 
     var avatarHtml = "<img class=\"pr-avatar\" src=\"" + pr.user.avatar_url + "&s=56\" alt=\"" + escapeHtml(pr.user.login) + "\" title=\"" + escapeHtml(pr.user.login) + "\">";
 
@@ -620,7 +645,7 @@
     var draftBadge = isDraft ? " <span class=\"pr-draft-badge\">Draft</span>" : "";
     var branchInfo = "<span class=\"commit-hash\">" + escapeHtml(pr.head.ref) + " → " + escapeHtml(pr.base.ref) + "</span>";
 
-    return "<div class=\"pr-card fr-p-2w fr-mb-1v" + draftClass + "\" style=\"animation-delay:" + (index * 0.05) + "s;\">"
+    return "<div class=\"pr-card fr-p-2w fr-mb-1v" + draftClass + reviewClass + "\" style=\"animation-delay:" + (index * 0.05) + "s;\">"
       + "<div style=\"display:flex;align-items:flex-start;gap:12px;\">"
       + avatarHtml
       + "<div style=\"flex:1;min-width:0;\">"
@@ -691,6 +716,9 @@
           return;
         }
 
+        var reviewRequested = prs.filter(function(pr) { return hasLabel(pr, "review-requested"); });
+        var others = prs.filter(function(pr) { return !hasLabel(pr, "review-requested"); });
+
         var html = "<div class=\"fr-callout fr-callout--green-emeraude fr-mb-3w stats-row\">"
           + "<div style=\"display:flex;align-items:center;gap:16px;flex-wrap:wrap;\">"
           + "<div><span class=\"badge-count badge-ahead\">" + prs.length + "</span>"
@@ -701,9 +729,22 @@
           + "</div>"
           + "</div>";
 
-        prs.forEach(function(pr, index) {
-          html += renderPR(pr, null, index);
-        });
+        if (reviewRequested.length > 0) {
+          html += "<p class=\"section-title fr-mb-2w\">En attente de review (" + reviewRequested.length + ")</p>";
+          reviewRequested.forEach(function(pr, index) {
+            html += renderPR(pr, null, index);
+          });
+        }
+
+        if (others.length > 0) {
+          if (reviewRequested.length > 0) {
+            html += "<div class=\"fr-mt-3w\"></div>";
+          }
+          html += "<p class=\"section-title fr-mb-2w\">Autres (" + others.length + ")</p>";
+          others.forEach(function(pr, index) {
+            html += renderPR(pr, null, index);
+          });
+        }
 
         container.innerHTML = html;
         countBadge.innerHTML = " <span class=\"badge-count badge-ahead\" style=\"font-size:0.75rem;min-width:20px;height:20px;\">" + prs.length + "</span>";
