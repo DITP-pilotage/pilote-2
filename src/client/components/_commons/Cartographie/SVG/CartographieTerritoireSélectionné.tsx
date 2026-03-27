@@ -26,7 +26,8 @@ export const CartographieTerritoireSélectionné: FunctionComponent<{
             getTraceSvg(
               territoire.code,
               {
-                className: "territoire-sélectionné",
+                className:
+                  "fill-none stroke-dsfr-moutarde-main-850 [stroke-width:0.5]",
                 key: territoire.code,
               },
               mailleSelectionnee,
@@ -35,7 +36,8 @@ export const CartographieTerritoireSélectionné: FunctionComponent<{
         : getTraceSvg(
             territoireCode,
             {
-              className: "territoire-sélectionné",
+              className:
+                "fill-none stroke-dsfr-moutarde-main-850 [stroke-width:0.5]",
               key: territoireCode,
             },
             mailleSelectionnee,

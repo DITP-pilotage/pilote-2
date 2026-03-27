@@ -109,7 +109,7 @@ export const CelluleStatutProposition = ({
   }
 
   return (
-    <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm">
+    <td className="fr-mb-0 fr-pl-2w fr-p-1w fr-py-md-1w fr-text--sm min-h-8 align-top">
       <div className="flex align-center selecteur-infobulle-conteneur">
         <span className="texte-proposition font-bold">
           {labelStatutProposition}

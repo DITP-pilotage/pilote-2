@@ -16,7 +16,7 @@ import {
   statutPublie,
 } from "@/client/constants/statut";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
-import { FiltresSélectionUniqueStyled } from "./FiltresSelectionUnique.styled";
+import { clsxm } from "@/utils/clsxm";
 
 type AvailableFiltres = "statut";
 
@@ -111,21 +111,25 @@ export const FiltresSelectionUnique: FunctionComponent<
   };
 
   return (
-    <FiltresSélectionUniqueStyled>
+    <div>
       <button
         aria-controls={`fr-sidemenu-item-${categorieDeFiltre}`}
         aria-expanded="false"
-        className="fr-sidemenu__btn fr-m-0 fr-text--sm fr-py-1w"
+        className="fr-sidemenu__btn fr-m-0 fr-text--sm fr-py-1w w-full text-left"
         type="button"
       >
         {libelle}
       </button>
       <div className="fr-collapse" id={`fr-sidemenu-item-${categorieDeFiltre}`}>
-        <ul className="fr-p-0 fr-m-0 fr-mb-1w fr-pl-1w">
+        <ul className="fr-p-0 fr-m-0 fr-mb-1w fr-pl-1w list-none">
           {valuesFiltres[categorieDeFiltre].valeurDisponible.map((filtre) => (
             <li className="fr-p-0 fr-my-1w fr-mr-0 flex gap-2" key={filtre.id}>
               <button
-                className={`fr-tag fr-tag--icon-left fr-mr-1w ${filtresNew === filtre.id ? "fr-tag-active" : ""}`}
+                className={clsxm(
+                  "fr-tag fr-tag--icon-left fr-mr-1w w-auto min-w-0 text-left",
+                  filtresNew === filtre.id &&
+                    "text-white bg-primary hover:text-white hover:bg-primary hover:cursor-not-allowed",
+                )}
                 id={`${categorieDeFiltre}-${filtre.id}`}
                 key={`${categorieDeFiltre}-${filtre.id}`}
                 onClick={() =>
@@ -142,6 +146,6 @@ export const FiltresSelectionUnique: FunctionComponent<
           ))}
         </ul>
       </div>
-    </FiltresSélectionUniqueStyled>
+    </div>
   );
 };

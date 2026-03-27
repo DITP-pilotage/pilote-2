@@ -1,18 +1,22 @@
 import { FunctionComponent, PropsWithChildren } from "react";
-import BandeauInformationStyled from "./BandeauInformation.styled";
+import { clsxm } from "@/utils/clsxm";
 
-const getBandeauTypeClass = (bandeauType: string) => {
-  switch (bandeauType) {
-    case "INFO": {
-      return "fr-notice--info";
-    }
-    case "WARNING": {
-      return "fr-notice--info fr-notice--warning";
-    }
-    default: {
-      return "fr-notice--info fr-notice--warning";
-    }
+const warningStyle = {
+  color: "var(--background-flat-warning)",
+  backgroundColor: "var(--background-contrast-warning)",
+  "--idle": "transparent",
+  "--hover": "var(--background-contrast-info-hover)",
+  "--active": "var(--background-contrast-info-active)",
+} as const;
+
+const getBandeauTypeConfig = (bandeauType: string) => {
+  if (bandeauType === "INFO") {
+    return { className: "fr-notice--info", style: undefined };
   }
+  return {
+    className: "fr-notice--info fr-notice--warning",
+    style: warningStyle,
+  };
 };
 
 const BandeauInformation: FunctionComponent<
@@ -27,9 +31,13 @@ const BandeauInformation: FunctionComponent<
   fermable = true,
   classNameContainer = "fr-container",
 }) => {
+  const { className, style } = getBandeauTypeConfig(bandeauType);
   return (
-    <BandeauInformationStyled>
-      <div className={`fr-notice ${getBandeauTypeClass(bandeauType)}`}>
+    <section>
+      <div
+        className={clsxm("fr-notice", className)}
+        style={style as React.CSSProperties}
+      >
         <div className={classNameContainer}>
           <div className="fr-notice__body flex">
             <p className="fr-notice__title">{children}</p>
@@ -50,7 +58,7 @@ const BandeauInformation: FunctionComponent<
           </div>
         </div>
       </div>
-    </BandeauInformationStyled>
+    </section>
   );
 };
 

@@ -8,7 +8,6 @@ import { TableauChantiersActionsDeTri } from "@/components/PageAccueil/PageChant
 import TableauRéformesEnTête from "@/client/components/PageAccueil/TableauRéformes/EnTête/TableauRéformesEnTête";
 import { SelecteurGroupementTableauChantier } from "./SelecteurGroupementTableauChantier";
 import TableauChantiersProps from "./TableauChantiers.interface";
-import TableauChantiersStyled from "./TableauChantiers.styled";
 import TableauChantiersContenu from "./Contenu/TableauChantiersContenu";
 
 const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
@@ -33,10 +32,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
   );
 
   return (
-    <TableauChantiersStyled
-      chantiersArchives={chantiersSontArchives}
-      className="fr-table fr-m-0 fr-p-0"
-    >
+    <section className="fr-table fr-m-0 fr-p-0 text-dsfr-grey-50">
       <div className="flex flex-col justify-between md:flex-row gap-4 md:items-end w-full mb-4">
         <div className="flex flex-col md:flex-row gap-4">
           <div className="w-80">
@@ -64,10 +60,11 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
         </div>
       ) : (
         <>
-          <table className="tableau">
+          <table className="tableau table">
             <caption className="fr-sr-only">Liste des chantiers</caption>
             {!estVueTuile ? <TableauRéformesEnTête tableau={tableau} /> : null}
             <TableauChantiersContenu
+              chantiersSontArchives={chantiersSontArchives}
               jalon={jalon}
               tableau={tableau}
               territoireCode={territoireCode}
@@ -80,7 +77,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
           />
         </>
       )}
-    </TableauChantiersStyled>
+    </section>
   );
 };
 

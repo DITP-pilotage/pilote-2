@@ -13,7 +13,7 @@ const TableauPaginationÉlément: FunctionComponent<
     <li>
       <button
         aria-current={estLaPageCourante ? "page" : undefined}
-        className="fr-pagination__link"
+        className="fr-pagination__link rounded"
         onClick={() => changementDePageCallback(numéroDePage)}
         title={numéroDePage.toString()}
         type="button"

@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { render, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 
 describe("Barre de progression", () => {
@@ -12,11 +12,7 @@ describe("Barre de progression", () => {
         variante="primaire"
       />,
     );
-    const pourcentage = document.querySelectorAll(
-      ".pourcentage",
-    )[0] as HTMLElement;
-    const valeur = within(pourcentage).getByText("20 %");
-    expect(valeur).toBeInTheDocument();
+    expect(screen.getByText("20 %")).toBeInTheDocument();
   });
 
   test("la barre de progression n'est pas complété de son pourcentage", () => {
@@ -44,8 +40,7 @@ describe("Barre de progression", () => {
     const barreDeProgression = document.querySelectorAll(
       ".barre-de-progression",
     )[0];
-    expect(barreDeProgression).toHaveClass("texte-dessus");
-    expect(barreDeProgression).toHaveStyle("flex-direction: column-reverse");
+    expect(barreDeProgression).toHaveClass("flex-col-reverse");
   });
 
   test("le pourcentage est placé à côté de la barre de progression", () => {
@@ -60,7 +55,6 @@ describe("Barre de progression", () => {
     const barreDeProgression = document.querySelectorAll(
       ".barre-de-progression",
     )[0];
-    expect(barreDeProgression).toHaveClass("texte-côté");
-    expect(barreDeProgression).toHaveStyle("flex-direction: row");
+    expect(barreDeProgression).toHaveClass("flex-row");
   });
 });

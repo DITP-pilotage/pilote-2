@@ -9,7 +9,6 @@ import {
 import SecureTooltip from "@/components/_commons/SecureTooltip/SecureTooltip";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import CartographieZoomEtDéplacement from "./ZoomEtDéplacement/CartographieZoomEtDéplacement";
-import CartographieSVGStyled from "./CartographieSVG.styled";
 import { CartographieTerritoireSélectionné } from "./CartographieTerritoireSélectionné";
 import { getTraceSvg } from "./CartographieSVGContrat";
 
@@ -50,11 +49,13 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
   };
 
   return (
-    <CartographieSVGStyled>
+    <div className="relative">
       {options.estInteractif ? (
         <CartographieZoomEtDéplacement svgRef={svgRef} viewbox={viewbox} />
       ) : null}
-      <div className={`carte ${contoursGris ? "stroke-dark" : ""}`}>
+      <div
+        className={`max-w-[25rem] mx-auto stroke-white ${contoursGris ? "stroke-dsfr-green-tilleul-verveine-sun" : ""}`}
+      >
         <SecureTooltip
           anchorEl={hoveredElement}
           classNameInfoBulle="infobull--sm"
@@ -83,7 +84,7 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
               getTraceSvg(
                 territoire.code,
                 {
-                  className: `territoire-rempli ${options.estInteractif && territoire.estInteractif && territoire.estApplicable && "territoire-interactif"}`,
+                  className: `[stroke-width:0.15] hover:opacity-[0.72] ${options.estInteractif && territoire.estInteractif && territoire.estApplicable && "cursor-pointer"}`,
                   fill: territoire.remplissage,
                   key: `territoire-${territoire.codeInsee}`,
                   onClick: () => {
@@ -118,7 +119,7 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
               getTraceSvg(
                 frontière.code,
                 {
-                  className: "territoire-frontière",
+                  className: "fill-none [stroke-width:0.4]",
                   key: `frontière-${frontière.codeInsee}`,
                 },
                 mailleSelectionnee,
@@ -133,6 +134,6 @@ export const CartographieSVG: FunctionComponent<CartographieSVGProps> = ({
           </g>
         </svg>
       </div>
-    </CartographieSVGStyled>
+    </div>
   );
 };

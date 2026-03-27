@@ -1,4 +1,3 @@
-import IndicateurBlocIndicateurTuileStyled from "@/components/_commons/IndicateursChantier/Bloc/IndicateurBlocIndicateurTuile.styled";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 import { formaterDate } from "@/client/utils/date/date";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
@@ -25,54 +24,56 @@ const IndicateurBlocIndicateurTuile = () => {
     unite?.toLocaleLowerCase() === "pourcentage" ? " %" : "";
 
   return (
-    <IndicateurBlocIndicateurTuileStyled>
-      <table className="fr-p-0 fr-pb-2w w-full">
-        <thead>
+    <div>
+      <table className="fr-p-0 fr-pb-2w w-full table overflow-hidden bg-white">
+        <thead className="bg-dsfr-blue-france-925 bg-none">
           <tr>
-            <th className="fr-py-1v">Territoire</th>
-            <th className="fr-py-1v">{detailTerritoireSelectionne.nom}</th>
+            <th className="fr-py-1v rounded-tl-lg">Territoire</th>
+            <th className="fr-py-1v rounded-tr-lg">
+              {detailTerritoireSelectionne.nom}
+            </th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="bg-none [&_tr]:!bg-[unset]">
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5">
               Valeur initiale
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1">
               <span>
                 {valeurInitiale !== null && valeurInitiale !== undefined
                   ? valeurInitiale?.toLocaleString() + unitéAffichée
                   : ""}
               </span>
               {dateValeurInitiale !== null ? (
-                <span className="texte-gris">
+                <span className="texte-gris text-[10px]">
                   ({formaterDate(dateValeurInitiale, "MM/YYYY")})
                 </span>
               ) : null}
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5">
               Valeur d'avancement
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 leading-5">
               <span>
                 {valeurAvancement !== null && valeurAvancement !== undefined
                   ? valeurAvancement?.toLocaleString() + unitéAffichée
                   : ""}
               </span>
               {dateValeurAvancement !== null ? (
-                <span className="texte-gris">
+                <span className="texte-gris text-[10px]">
                   ({formaterDate(dateValeurAvancement, "MM/YYYY")})
                 </span>
               ) : null}
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5">
               {"Cible " + new Date().getFullYear().toString()}
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 leading-5">
               <span>
                 {valeurCibleAnnuelle !== null &&
                 valeurCibleAnnuelle !== undefined
@@ -80,17 +81,17 @@ const IndicateurBlocIndicateurTuile = () => {
                   : ""}
               </span>
               {dateValeurCible !== null ? (
-                <span className="texte-gris">
+                <span className="texte-gris text-[10px]">
                   ({formaterDate(dateValeurCibleAnnuelle, "MM/YYYY")})
                 </span>
               ) : null}
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5">
               {"Avancement " + new Date().getFullYear().toString()}
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 leading-5">
               <BarreDeProgression
                 afficherTexte
                 fond="gris-clair"
@@ -102,25 +103,27 @@ const IndicateurBlocIndicateurTuile = () => {
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">Cible 2026</td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 indicateur-bloc--avec-date">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5">
+              Cible 2026
+            </td>
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 flex gap-1 leading-5">
               <span>
                 {Boolean(valeurCible)
                   ? valeurCible?.toLocaleString() + unitéAffichée
                   : ""}
               </span>
               {dateValeurCible !== null ? (
-                <span className="texte-gris">
+                <span className="texte-gris text-[10px]">
                   ({formaterDate(dateValeurCible, "MM/YYYY")})
                 </span>
               ) : null}
             </td>
           </tr>
           <tr>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0 libellés">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 w-36 font-bold leading-5">
               Avancement 2026
             </td>
-            <td className="fr-pt-1w fr-pb-0 fr-pr-0">
+            <td className="fr-pt-1w fr-pb-0 fr-pr-0 leading-5">
               <BarreDeProgression
                 afficherTexte
                 fond="gris-clair"
@@ -133,7 +136,7 @@ const IndicateurBlocIndicateurTuile = () => {
           </tr>
         </tbody>
       </table>
-    </IndicateurBlocIndicateurTuileStyled>
+    </div>
   );
 };
 

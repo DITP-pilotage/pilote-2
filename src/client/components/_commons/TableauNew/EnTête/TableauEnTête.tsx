@@ -1,7 +1,6 @@
 import { flexRender, SortDirection } from "@tanstack/react-table";
 import BoutonsDeTri from "@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri";
 import TableauEnTêteProps from "./TableauEnTête.interface";
-import TableauEnTêteStyled from "./TableauEnTête.styled";
 
 function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
   if (!typeDeTri) return "none";
@@ -16,7 +15,7 @@ function renseignerAttributAriaSort(typeDeTri: false | SortDirection) {
 
 export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
   return (
-    <TableauEnTêteStyled>
+    <thead className="!bg-dsfr-blue-france-925 border border-dsfr-grey-925">
       {tableau.getHeaderGroups().map((headerGroup) => (
         <tr key={headerGroup.id}>
           {headerGroup.headers.map((header) => (
@@ -24,7 +23,7 @@ export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
               aria-sort={renseignerAttributAriaSort(
                 header.column.getIsSorted(),
               )}
-              className="fr-py-1w fr-px-1v fr-px-lg-2w"
+              className="fr-py-1w fr-px-1v fr-px-lg-2w first:rounded-tl-lg last:rounded-tr-lg"
               key={header.id}
               style={{
                 width: header.column.columnDef.meta?.width ?? undefined,
@@ -53,6 +52,6 @@ export default function TableauEnTête<T>({ tableau }: TableauEnTêteProps<T>) {
           ))}
         </tr>
       ))}
-    </TableauEnTêteStyled>
+    </thead>
   );
 }

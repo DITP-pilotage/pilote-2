@@ -1,7 +1,7 @@
 import { FunctionComponent, ReactNode } from "react";
 import { Infobulle } from "@/client/components/_commons/Infobulle/Infobulle";
+import { Progress } from "@/components/shared/Progress";
 import { clsxm } from "@/utils/clsxm";
-import { BarreDeProgressionStyled } from "./BarreDeProgression.styled";
 
 export type BarreDeProgressionVariante =
   | "primaire"
@@ -11,11 +11,52 @@ export type BarreDeProgressionVariante =
   | "rose"
   | "jaune-moutarde"
   | "bleu-clair"
-  | "bleu-dsfr-info";
+  | "bleu-dsfr-info"
+  | "grey-dsfr";
 type BarreDeProgressionTaille = "xxs" | "xs" | "sm" | "md" | "lg";
 type BarreDeProgressionFond = "bleu" | "blanc" | "gris-moyen" | "gris-clair";
 type BarreDeProgressionBordure = "bleu" | "gris-moyen" | null;
 type BarreDeProgressionPositionTexte = "côté" | "dessus";
+
+const HAUTEUR_TAILLE: Record<BarreDeProgressionTaille, string> = {
+  xxs: "h-2",
+  xs: "h-2.5",
+  sm: "h-3",
+  md: "h-3",
+  lg: "h-8",
+};
+
+const COULEUR_FOND: Record<BarreDeProgressionFond, string> = {
+  bleu: "bg-dsfr-blue-ecume-850",
+  blanc: "bg-white",
+  "gris-moyen": "bg-pilote-gris-moyen",
+  "gris-clair": "bg-dsfr-grey-925",
+};
+
+const COULEUR_BORDURE: Record<string, string> = {
+  bleu: "border border-dsfr-blue-ecume-850",
+  "gris-moyen": "border border-pilote-gris-moyen",
+};
+
+const COULEUR_VARIANTE: Record<BarreDeProgressionVariante, string> = {
+  primaire: "bg-primary",
+  "primaire-light": "bg-dsfr-blue-france-sun-113",
+  secondaire: "bg-dsfr-mention-grey",
+  "secondaire-light": "bg-dsfr-grey-625",
+  rose: "bg-dsfr-pink-tuile-main-556",
+  "jaune-moutarde": "bg-dsfr-moutarde-main-679",
+  "bleu-clair": "bg-dsfr-flat-info",
+  "bleu-dsfr-info": "bg-dsfr-info-main-525",
+  "grey-dsfr": "bg-dsfr-grey-200",
+};
+
+const LARGEUR_POURCENTAGE: Record<BarreDeProgressionTaille, string> = {
+  xxs: "w-10",
+  xs: "w-10",
+  sm: "w-10",
+  md: "w-10",
+  lg: "w-[6.5rem]",
+};
 
 interface BarreDeProgressionProps {
   taille: BarreDeProgressionTaille;
@@ -29,13 +70,14 @@ interface BarreDeProgressionProps {
   texteCentre?: boolean;
 }
 
-const dimensions = {
-  xxs: { classNameDsfr: "fr-text--xs" },
-  xs: { classNameDsfr: "fr-text--xs" },
-  sm: { classNameDsfr: "fr-text--xs" },
-  md: { classNameDsfr: "fr-text--sm" },
-  lg: { classNameDsfr: "fr-h1" },
-};
+const dimensions: Record<BarreDeProgressionTaille, { classNameDsfr: string }> =
+  {
+    xxs: { classNameDsfr: "fr-text--xs" },
+    xs: { classNameDsfr: "fr-text--xs" },
+    sm: { classNameDsfr: "fr-text--xs" },
+    md: { classNameDsfr: "fr-text--sm" },
+    lg: { classNameDsfr: "fr-h1" },
+  };
 
 const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
   taille,
@@ -51,27 +93,39 @@ const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
   const pourcentageAffiché = valeur === null ? "- %" : `${valeur.toFixed(0)} %`;
 
   return (
-    <BarreDeProgressionStyled
-      className={`barre-de-progression flex texte-${positionTexte} w-full`}
+    <div
+      className={clsxm(
+        "barre-de-progression flex w-full",
+        positionTexte === "côté" && "flex-row items-center",
+        positionTexte === "dessus" && "flex-col-reverse",
+      )}
     >
-      <div className="barre">
-        <progress
-          className={`progress--${taille} progress--${fond}${bordure ? ` progress--border-${bordure}` : ""}${valeur ? ` progress--${variante}` : ""}`}
-          max="100"
+      <div className="grow">
+        <Progress
+          className={clsxm(
+            HAUTEUR_TAILLE[taille],
+            COULEUR_FOND[fond],
+            bordure && COULEUR_BORDURE[bordure],
+          )}
+          indicatorClassName={valeur ? COULEUR_VARIANTE[variante] : undefined}
+          max={100}
           value={valeur ?? 0}
-        >
-          {pourcentageAffiché}
-        </progress>
+        />
       </div>
       {afficherTexte ? (
         <div
-          className={clsxm(`flex pourcentage texte-${positionTexte}`, {
-            "justify-center": texteCentre,
-            "justify-between": !texteCentre,
-          })}
+          className={clsxm(
+            "flex",
+            positionTexte === "côté" && LARGEUR_POURCENTAGE[taille],
+            texteCentre ? "justify-center" : "justify-between",
+          )}
         >
           <p
-            className={`${dimensions[taille].classNameDsfr} pourcentage--${fond} pourcentage--${taille} fr-mb-0 bold fr-mr-1w`}
+            className={clsxm(
+              "fr-mb-0 bold fr-mr-1w whitespace-nowrap align-middle",
+              dimensions[taille].classNameDsfr,
+              positionTexte === "côté" && "pl-2 text-right",
+            )}
           >
             {pourcentageAffiché}
           </p>
@@ -88,7 +142,7 @@ const BarreDeProgression: FunctionComponent<BarreDeProgressionProps> = ({
           ) : null}
         </div>
       ) : null}
-    </BarreDeProgressionStyled>
+    </div>
   );
 };
 

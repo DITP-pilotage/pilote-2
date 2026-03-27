@@ -12,7 +12,6 @@ import Axe from "@/server/domain/axe/Axe.interface";
 import Ppg from "@/server/domain/ppg/Ppg.interface";
 import { DétailTerritoire } from "@/server/domain/territoire/Territoire.interface";
 import { useEnv } from "@/client/hooks/useEnv";
-import PremièrePageImpressionRapportDétailléStyled from "./PremièrePageImpressionRapportDétaillé.styled";
 
 interface PremièrePageImpressionRapportDétailléProps {
   territoireSélectionné: DétailTerritoire | null;
@@ -137,9 +136,9 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
     .map((axeId) => retrouverNomFiltre(axeId, axes));
 
   return (
-    <PremièrePageImpressionRapportDétailléStyled>
+    <div className="hidden print:block [page-break-after:always]">
       <header className="flex fr-px-12w fr-mb-6w" role="banner">
-        <p className="fr-logo">Gouvernement</p>
+        <p className="fr-logo text-[0.7875rem]">Gouvernement</p>
         <div className="fr-pt-1w fr-ml-5w">
           <p className="fr-text--xl fr-text--bold fr-mb-0">PILOTE</p>
           <p className="fr-text--sm fr-mb-0">
@@ -147,7 +146,7 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
           </p>
         </div>
       </header>
-      <div className="fr-pt-6w fr-pb-3w fond-bleu-clair">
+      <div className="fr-pt-6w fr-pb-3w bg-dsfr-alt-blue-france">
         <div className="fr-mb-6w fr-display--md text-center titre-rapport-détaillé">
           État des lieux de l'avancement
           <br />
@@ -159,27 +158,31 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
           {`Rapport détaillé généré le ${formaterDate(new Date().toISOString(), "DD/MM/YYYY [à] H[h]mm")}`}
         </div>
       </div>
-      <div className="fr-px-12w fr-py-4w filtres-actifs-conteneur">
-        <ul className="fr-pl-0 filtres-actifs">
-          <li>
-            <span className="fr-text--bold">Territoire sélectionné</span>
-            <ul>
-              <li>{territoireSélectionné?.nomAffiché}</li>
+      <div className="fr-px-12w fr-py-4w max-h-[20cm]">
+        <ul className="fr-pl-0 columns-[auto_2] gap-8 [column-fill:auto] list-none">
+          <li className="pb-0">
+            <span className="fr-text--bold text-[1.3rem] leading-7">
+              Territoire sélectionné
+            </span>
+            <ul className="pl-4 [margin-block:0.25rem_0] mb-4">
+              <li className="pb-0">{territoireSélectionné?.nomAffiché}</li>
             </ul>
           </li>
           {[...ministereAvecPerimetreActif].length > 0 ? (
-            <li>
-              <span className="fr-text--bold">
+            <li className="pb-0">
+              <span className="fr-text--bold text-[1.3rem] leading-7">
                 Ministère(s) ou périmètre(s) ministériel(s) sélectionné(s)
               </span>
-              <ul>
+              <ul className="pl-4 [margin-block:0.25rem_0] mb-4">
                 {[...ministereAvecPerimetreActif].map(([, ministère]) => {
                   return (
-                    <li key={ministère.nom}>
+                    <li className="pb-0" key={ministère.nom}>
                       <span className="fr-text--bold">{ministère.nom}</span>
-                      <ul>
+                      <ul className="pl-5 [margin-block:0_0.25rem]">
                         {ministère.perimetres.map((périmètre) => (
-                          <li key={périmètre.id}>{périmètre.nom}</li>
+                          <li className="pb-0" key={périmètre.id}>
+                            {périmètre.nom}
+                          </li>
                         ))}
                       </ul>
                     </li>
@@ -189,40 +192,50 @@ const PremièrePageImpressionRapportDétaillé: FunctionComponent<
             </li>
           ) : null}
           {filtresTypologie.length > 0 && (
-            <li>
-              <span className="fr-text--bold">
+            <li className="pb-0">
+              <span className="fr-text--bold text-[1.3rem] leading-7">
                 Type(s) de chantier sélectionné(s)
               </span>
-              <ul>
+              <ul className="pl-4 [margin-block:0.25rem_0] mb-4">
                 {filtresTypologie.map((typologie) => (
-                  <li key={typologie}>{typologie}</li>
+                  <li className="pb-0" key={typologie}>
+                    {typologie}
+                  </li>
                 ))}
               </ul>
             </li>
           )}
           {filtresAxes.length > 0 && (
-            <li>
-              <span className="fr-text--bold">Axe(s)</span>
-              <ul>
+            <li className="pb-0">
+              <span className="fr-text--bold text-[1.3rem] leading-7">
+                Axe(s)
+              </span>
+              <ul className="pl-4 [margin-block:0.25rem_0] mb-4">
                 {filtresAxes.map((axe) => (
-                  <li key={axe}>{axe}</li>
+                  <li className="pb-0" key={axe}>
+                    {axe}
+                  </li>
                 ))}
               </ul>
             </li>
           )}
           {ffAlertes && filtresAlertes.length > 0 && (
-            <li>
-              <span className="fr-text--bold">Alerte(s) sélectionnée(s)</span>
-              <ul>
+            <li className="pb-0">
+              <span className="fr-text--bold text-[1.3rem] leading-7">
+                Alerte(s) sélectionnée(s)
+              </span>
+              <ul className="pl-4 [margin-block:0.25rem_0] mb-4">
                 {filtresAlertes.map((alerte) => (
-                  <li key={alerte}>{alerte}</li>
+                  <li className="pb-0" key={alerte}>
+                    {alerte}
+                  </li>
                 ))}
               </ul>
             </li>
           )}
         </ul>
       </div>
-    </PremièrePageImpressionRapportDétailléStyled>
+    </div>
   );
 };
 

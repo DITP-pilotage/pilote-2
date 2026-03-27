@@ -6,7 +6,6 @@ import { estLargeurDÉcranActuelleMoinsLargeQue } from "@/stores/useLargeurDÉcr
 import TableauEnTête from "./EnTête/TableauEnTête";
 import TableauContenu from "./Contenu/TableauContenu";
 import TableauPagination from "./Pagination/TableauPagination";
-import TableauStyled from "./Tableau.styled";
 
 interface TableauProps<T extends object> {
   tableau: Table<T>;
@@ -25,7 +24,7 @@ export default function Tableau<T extends object>({
   );
 
   return (
-    <TableauStyled className="fr-table fr-m-0 fr-p-0">
+    <section className="fr-table fr-m-0 fr-p-0 overflow-x-auto">
       {tableau.getRowModel().rows.length === 0 ? (
         <div className="fr-notice fr-notice--info">
           <div className="fr-container">
@@ -37,7 +36,7 @@ export default function Tableau<T extends object>({
         </div>
       ) : (
         <>
-          <table className="tableau">
+          <table className="tableau table">
             <caption className="fr-sr-only">{titre}</caption>
             {!estVueTuile && <TableauEnTête<T> tableau={tableau} />}
             <TableauContenu<T> tableau={tableau} />
@@ -49,6 +48,6 @@ export default function Tableau<T extends object>({
           />
         </>
       )}
-    </TableauStyled>
+    </section>
   );
 }

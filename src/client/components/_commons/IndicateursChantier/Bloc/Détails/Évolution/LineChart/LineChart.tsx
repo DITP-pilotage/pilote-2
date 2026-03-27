@@ -8,7 +8,6 @@ import {
 import * as echarts from "echarts";
 import { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { ECOption } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
-import { LineChartStyled } from "./LineChart.styled";
 import LineChartLegende from "./LineChartLegende/LineChartLegende";
 
 export interface LineChartProps {
@@ -57,8 +56,8 @@ const LineChart: FunctionComponent<LineChartProps> = ({
   }, [modeImpression, getOptions]);
 
   return (
-    <LineChartStyled>
-      <div className="container-graphique" ref={ref} />
+    <div>
+      <div className="w-full h-[360px]" ref={ref} />
       <LineChartLegende
         afficherControls={!modeImpression}
         afficherLesCibles={afficherLesCibles}
@@ -70,7 +69,7 @@ const LineChart: FunctionComponent<LineChartProps> = ({
         territoiresAAfficher={territoiresAAfficher}
         tousLesIndicateursDetails={tousLesIndicateursDetails}
       />
-    </LineChartStyled>
+    </div>
   );
 };
 

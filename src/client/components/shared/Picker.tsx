@@ -155,7 +155,7 @@ export const Picker = <T extends string>({
                         <Select.Label>{group.libelle}</Select.Label>
                         {onValuesChange && (
                           <button
-                            className="text-xs text-[var(--text-action-high-blue-france)] hover:underline px-2 py-1"
+                            className="text-xs text-primary hover:underline px-2 py-1"
                             onPointerDown={(event) => {
                               event.preventDefault();
                               event.stopPropagation();

@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react";
 import BarreDeProgression from "@/components/_commons/BarreDeProgression/BarreDeProgression";
 import { formaterDate } from "@/client/utils/date/date";
-import TableauRéformesAvancementStyled from "@/components/PageAccueil/TableauRéformes/Avancement/TableauRéformesAvancement.styled";
 
 interface TableauRéformesAvancementProps {
   avancement: number | null;
@@ -15,7 +14,7 @@ const TableauRéformesAvancement: FunctionComponent<
   const typeDeRéforme = "chantier";
 
   return (
-    <TableauRéformesAvancementStyled>
+    <div className="grid grid-rows-[2rem_0.75rem] items-center text-[10px] w-full">
       {avancement === null ? (
         <span className="!text-dsfr-mention-grey fr-text--xs">
           Non renseigné
@@ -39,7 +38,7 @@ const TableauRéformesAvancement: FunctionComponent<
           ({formaterDate(dateDeMàjDonnéesQuantitatives, "MM/YYYY")})
         </span>
       )}
-    </TableauRéformesAvancementStyled>
+    </div>
   );
 };
 

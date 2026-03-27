@@ -4,7 +4,6 @@ import Titre from "@/components/_commons/Titre/Titre";
 import { DetailsDroitsUtilisateur } from "@/components/PageUtilisateur/DétailsDroitsUtilisateur/DetailsDroitsUtilisateur";
 import TableauUtilisateur from "@/components/PageUtilisateur/TableauUtilisateur/TableauUtilisateur";
 import useFicheUtilisateur from "@/components/PageUtilisateur/FicheUtilisateur/useFicheUtilisateur";
-import FicheUtilisateurStyled from "@/components/PageUtilisateur/FicheUtilisateur/FicheUtilisateur.styled";
 import { formaterDate } from "@/client/utils/date/date";
 import FicheUtilisateurProps from "./FicheUtilisateur.interface";
 
@@ -14,8 +13,8 @@ const FicheUtilisateur: FunctionComponent<FicheUtilisateurProps> = ({
   const { scopes, chantiers } = useFicheUtilisateur(utilisateur);
 
   return (
-    <FicheUtilisateurStyled>
-      <Titre baliseHtml="h2" className="fr-h5">
+    <div>
+      <Titre baliseHtml="h2" className="fr-h5 text-primary">
         Utilisateur
       </Titre>
       {!!utilisateur.dateDesactivation && (
@@ -56,7 +55,7 @@ const FicheUtilisateur: FunctionComponent<FicheUtilisateurProps> = ({
         territoires={scopes["gestionUtilisateur"].territoires}
         titre="Droits de gestion des utilisateurs"
       />
-    </FicheUtilisateurStyled>
+    </div>
   );
 };
 

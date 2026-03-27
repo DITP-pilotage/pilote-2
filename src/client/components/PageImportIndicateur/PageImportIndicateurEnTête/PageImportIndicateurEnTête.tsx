@@ -2,7 +2,6 @@ import { FunctionComponent } from "react";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import Titre from "@/components/_commons/Titre/Titre";
 import { ChantierInformations } from "@/client/components/PageImportIndicateur/ChantierInformation.interface";
-import PageImportIndicateurEnTêteStyled from "./PageImportIndicateurEnTête.styled";
 
 interface PageImportIndicateurEnTêteProps {
   chantierInformations: ChantierInformations;
@@ -13,7 +12,7 @@ const PageImportIndicateurEnTête: FunctionComponent<
   PageImportIndicateurEnTêteProps
 > = ({ chantierInformations, hrefBoutonRetour }) => {
   return (
-    <PageImportIndicateurEnTêteStyled>
+    <header className="bg-dsfr-blue-france-925">
       <div className="fr-container fr-py-4w">
         <FilAriane
           chemin={[{ nom: "Chantier", lien: hrefBoutonRetour }]}
@@ -23,7 +22,7 @@ const PageImportIndicateurEnTête: FunctionComponent<
           {chantierInformations.nom}
         </Titre>
       </div>
-    </PageImportIndicateurEnTêteStyled>
+    </header>
   );
 };
 

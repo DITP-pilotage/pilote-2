@@ -5,17 +5,22 @@ import { CheckLineIcon } from "@/components/_commons/Icones/CheckLineIcon";
 interface FiltresSélectionnésCatégorieProps {
   titre: string;
   filtres: string[];
+  className?: string;
 }
 
 const FiltresSélectionnésCatégorie: FunctionComponent<
   FiltresSélectionnésCatégorieProps
-> = ({ titre, filtres }) => {
+> = ({ titre, filtres, className }) => {
   if (filtres.length === 0) {
-    return <h3 className="!text-base !mb-1">{`${titre} (Tous)`}</h3>;
+    return (
+      <h3
+        className={`!text-base !mb-1 ${className ?? ""}`}
+      >{`${titre} (Tous)`}</h3>
+    );
   }
 
   return (
-    <div>
+    <div className={className}>
       <h3 className="!text-base !mb-1">{`${titre} (${filtres.length})`}</h3>
       <ul className="!p-0 !m-0">
         {filtres.map((filtre) => (

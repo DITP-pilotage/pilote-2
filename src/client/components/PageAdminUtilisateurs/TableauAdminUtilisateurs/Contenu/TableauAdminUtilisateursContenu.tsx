@@ -22,10 +22,14 @@ const TableauAdminUtilisateursContenu: FunctionComponent<
   return (
     <tbody>
       {tableau.getRowModel().rows.map((row) => (
-        <tr key={row.id} onClick={() => auClicSurLaLigne(row)}>
+        <tr
+          className="cursor-pointer even:hover:bg-dsfr-grey-950-hover odd:hover:bg-dsfr-grey-975-hover"
+          key={row.id}
+          onClick={() => auClicSurLaLigne(row)}
+        >
           {row.getVisibleCells().map((cell) => (
             <td
-              className="fr-py-1w"
+              className="fr-py-1w max-w-[10px] overflow-hidden text-ellipsis whitespace-nowrap"
               key={cell.id}
               title={cell.row.getValue(cell.column.id)}
             >

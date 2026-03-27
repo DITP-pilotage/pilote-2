@@ -14,7 +14,7 @@ import RépartitionMétéo from "@/components/_commons/RépartitionMétéo/Répa
 import { TableauFicheTerritoriale } from "@/components/PageFicheTerritoriale/TableauFicheTerritoriale";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
 import { FicheTerritorialeContrat } from "@/server/fiche-territoriale/app/contrats/FicheTerritorialeContrat";
-import PageFicheTerritorialeStyled from "./PageFicheTerritoriale.styled";
+import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
 
 export const PageFicheTerritoriale: FunctionComponent<
   FicheTerritorialeContrat
@@ -25,13 +25,15 @@ export const PageFicheTerritoriale: FunctionComponent<
   chantiersFicheTerritoriale,
   jalon,
 }) => {
+  usePrintPageStyle("margin: 0.5cm 0 1.5cm");
+
   const now = new Date();
 
   return (
-    <PageFicheTerritorialeStyled>
+    <div className="print:[&_.fr-text--xl]:!text-[0.8rem] print:[&_.fr-text--lg]:!text-[0.9rem] print:[&_.fr-text--md]:!text-[0.8rem] print:[&_.fr-text--md]:!leading-[1.1rem] print:[&_.fr-text--sm]:!text-[0.6rem] print:[&_.fr-text--sm]:!leading-4 print:[&_.fr-text--xs]:!text-[0.6rem] print:[&_.fr-text--xs]:!leading-4 print:[&_div.fr-grid-row]:!text-[0.7rem] print:[&_.bloc__contenu]:!pt-2 print:[&_.fr-logo]:text-[0.8rem] print:[&_.fr-logo]:after:!bg-[position:0_calc(100%+0.875rem)] print:[&_.fr-logo]:after:bg-[size:4.25rem_2.75rem] print:[&_.fr-logo]:before:mb-0 print:[&_.fr-logo]:before:bg-[position:0_-0.0469rem,0_0,0_0] print:[&_.fr-logo]:before:bg-[size:2.0625rem_0.8438rem,2.0625rem_0.75rem,0]">
       <HeaderFicheTerritoriale />
       <main>
-        <div className="fr-container fr-pb-2w fiche-territoriale__container">
+        <div className="fr-container fr-pb-2w pt-4 print:pt-0">
           <Encart>
             <div className="flex justify-between">
               <Titre
@@ -54,7 +56,7 @@ export const PageFicheTerritoriale: FunctionComponent<
             Vue générale
           </Titre>
           <div className="fr-grid-row fr-px-2w">
-            <div className="fr-col-4 fr-pr-1v fiche-territoriale__avancement">
+            <div className="fr-col-4 fr-pr-1v h-full">
               <div className="fiche-territoriale__avancement--moyen fr-mb-1w">
                 <Bloc>
                   <div className="flex flex-column align-center">
@@ -78,8 +80,8 @@ export const PageFicheTerritoriale: FunctionComponent<
                 </Bloc>
               </div>
             </div>
-            <div className="fr-col-8 fr-pl-1v fiche-territoriale__meteo">
-              <Bloc>
+            <div className="fr-col-8 fr-pl-1v">
+              <Bloc className="print:h-full">
                 <div className="fr-grid-row">
                   <TitreInfobulleConteneur>
                     <Titre
@@ -94,7 +96,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                   <ul className="fr-raw-list">
                     <li className="fr-mb-1w">
                       <div className="flex align-center">
-                        <div className="fiche-territoriale__avancement--meteo">
+                        <div className="flex items-center justify-center min-w-12">
                           <MeteoPicto meteo="ORAGE" />
                         </div>
                         <span className="fr-pl-1w fr-text--sm fr-m-0">
@@ -106,7 +108,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                     </li>
                     <li className="fr-mb-1w">
                       <div className="flex align-center">
-                        <div className="fiche-territoriale__avancement--meteo">
+                        <div className="flex items-center justify-center min-w-12">
                           <MeteoPicto meteo="NUAGE" />
                         </div>
                         <span className="fr-pl-1w fr-text--sm fr-m-0">
@@ -119,7 +121,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                     </li>
                     <li className="fr-mb-1w fr-text--sm">
                       <div className="flex align-center">
-                        <div className="fiche-territoriale__avancement--meteo">
+                        <div className="flex items-center justify-center min-w-12">
                           <MeteoPicto meteo="COUVERT" />
                         </div>
                         <span className="fr-pl-1w fr-text--sm fr-m-0">
@@ -131,7 +133,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                     </li>
                     <li className="fr-mb-1w">
                       <div className="flex align-center">
-                        <div className="fiche-territoriale__avancement--meteo">
+                        <div className="flex items-center justify-center min-w-12">
                           <MeteoPicto meteo="SOLEIL" />
                         </div>
                         <span className="fr-pl-1w fr-text--sm fr-m-0">
@@ -141,7 +143,7 @@ export const PageFicheTerritoriale: FunctionComponent<
                       </div>
                     </li>
                   </ul>
-                  <div className="fiche-territoriale__contenu--meteo w-full fr-px-2w fr-mb-1w">
+                  <div className="w-full fr-px-2w fr-mb-1w">
                     <RépartitionMétéo météos={répartitionMétéos} />
                   </div>
                   <span className="fr-mb-0 fr-text--sm">
@@ -183,6 +185,6 @@ export const PageFicheTerritoriale: FunctionComponent<
           </div>
         </div>
       </main>
-    </PageFicheTerritorialeStyled>
+    </div>
   );
 };

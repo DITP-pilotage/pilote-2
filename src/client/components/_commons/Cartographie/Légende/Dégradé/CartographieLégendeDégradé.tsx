@@ -1,5 +1,4 @@
 import { FunctionComponent } from "react";
-import CartographieLégendeDégradéStyled from "./CartographieLégendeDégradé.styled";
 import { CartographieLégendeDégradéContenu } from "./CartographieLégendeDégradé.interface";
 
 interface CartographieLégendeDégradéProps {
@@ -10,15 +9,16 @@ const CartographieLégendeDégradé: FunctionComponent<
   CartographieLégendeDégradéProps
 > = ({ contenu }) => {
   return (
-    <CartographieLégendeDégradéStyled
-      className="fr-mt-1w"
-      couleurMax={contenu.couleurMax}
-      couleurMin={contenu.couleurMin}
-    >
+    <div className="max-w-[25rem] mx-auto fr-mt-1w">
       <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-0">
         {contenu.libellé}
       </p>
-      <div className="dégradé-de-surface" />
+      <div
+        className="h-2"
+        style={{
+          background: `linear-gradient(90deg, ${contenu.couleurMin}, ${contenu.couleurMax})`,
+        }}
+      />
       <div className="flex justify-between">
         <p className="fr-text--xs !text-dsfr-mention-grey fr-mb-0">
           {contenu.valeurMin}
@@ -27,7 +27,7 @@ const CartographieLégendeDégradé: FunctionComponent<
           {contenu.valeurMax}
         </p>
       </div>
-    </CartographieLégendeDégradéStyled>
+    </div>
   );
 };
 

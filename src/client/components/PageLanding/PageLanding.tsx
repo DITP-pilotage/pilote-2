@@ -6,7 +6,6 @@ import téléchargementFichierSvg from "@gouvfr/dsfr/dist/artwork/pictograms/doc
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import Head from "next/head";
-import PageLandingStyled from "@/components/PageLanding/PageLanding.styled";
 import Titre from "@/components/_commons/Titre/Titre";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import captureÉcranPilote from "../../../../public/img/landing/capture-écran-pilote.png";
@@ -18,12 +17,12 @@ const PageLanding = () => {
       <Head>
         <title>PILOTE - Piloter l'action publique par les résultats</title>
       </Head>
-      <PageLandingStyled>
+      <main>
         <section className="bloc-hero">
           <div className="fr-container">
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
               <div className="fr-col-12 fr-col-lg-6 fr-py-8w">
-                <Titre baliseHtml="h1">
+                <Titre baliseHtml="h1" className="!text-black">
                   Piloter l'action publique par les résultats
                 </Titre>
                 <p className="fr-text--xl">
@@ -39,14 +38,14 @@ const PageLanding = () => {
                   feuille de route du Gouvernement.
                 </p>
                 <button
-                  className="fr-btn fr-mr-2w"
+                  className="fr-btn fr-mr-2w rounded"
                   onClick={() => signIn("keycloak")}
                   type="button"
                 >
                   Se connecter
                 </button>
               </div>
-              <div className="fr-col-12 fr-col-lg-6 fr-hidden fr-unhidden-lg conteneur-capture-pilote">
+              <div className="fr-col-12 fr-col-lg-6 fr-hidden fr-unhidden-lg flex justify-center">
                 <Image alt="" priority src={captureÉcranPilote} />
               </div>
             </div>
@@ -73,7 +72,7 @@ const PageLanding = () => {
             </div>
           </div>
         </section>
-        <section className="bloc-pour-qui">
+        <section className="bg-white">
           <div className="fr-container fr-py-8w">
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
               <div className="fr-col-12">
@@ -90,7 +89,7 @@ const PageLanding = () => {
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
               <div className="fr-col-12 fr-col-md-4">
                 <div className="fr-card">
-                  <div className="conteneur-pictogramme">
+                  <div className="relative h-[12.5rem] bg-dsfr-grey-1000">
                     <Image alt="" fill src={carteFranceSvg} />
                   </div>
                   <div className="fr-p-4w">
@@ -110,7 +109,7 @@ const PageLanding = () => {
               </div>
               <div className="fr-col-12 fr-col-md-4">
                 <div className="fr-card">
-                  <div className="conteneur-pictogramme">
+                  <div className="relative h-[12.5rem] bg-dsfr-grey-1000">
                     <Image alt="" fill src={visualisationDonnéesSvg} />
                   </div>
                   <div className="fr-p-4w">
@@ -131,7 +130,7 @@ const PageLanding = () => {
               </div>
               <div className="fr-col-12 fr-col-md-4">
                 <div className="fr-card">
-                  <div className="conteneur-pictogramme">
+                  <div className="relative h-[12.5rem] bg-dsfr-grey-1000">
                     <Image alt="" fill src={téléchargementFichierSvg} />
                   </div>
                   <div className="fr-p-4w">
@@ -152,7 +151,7 @@ const PageLanding = () => {
             </div>
           </div>
         </section>
-        <section className="bloc-pilotage-ppg">
+        <section className="bg-dsfr-grey-1000">
           <div className="fr-container fr-py-8w">
             <div className="fr-grid-row fr-grid-row--gutters fr-grid-row--center">
               <div className="fr-col-12 fr-col-lg-8 fr-pr-md-4w">
@@ -179,7 +178,7 @@ const PageLanding = () => {
                   en œuvre.
                 </p>
                 <Link
-                  className="fr-btn fr-btn--secondary fr-mt-3w"
+                  className="fr-btn fr-btn--secondary fr-mt-3w rounded"
                   href="https://www.modernisation.gouv.fr/transformer-laction-publique/assurer-la-mise-en-oeuvre-des-politiques-prioritaires-du-gouvernement"
                   target="_blank"
                 >
@@ -187,7 +186,7 @@ const PageLanding = () => {
                 </Link>
               </div>
               <div className="fr-col-12 fr-col-lg-4">
-                <div className="fr-card fr-enlarge-link">
+                <div className="fr-card fr-enlarge-link hover:bg-white">
                   <div className="fr-card__body">
                     <div className="fr-card__content">
                       <Titre baliseHtml="h2" className="fr-h3">
@@ -219,9 +218,9 @@ const PageLanding = () => {
             </div>
           </div>
         </section>
-        <section className="bloc-questions">
+        <section className="bg-white">
           <div className="fr-container">
-            <div className="fr-grid-row fr-py-8w conteneur-contact flex items-center">
+            <div className="fr-grid-row fr-py-8w gap-4 flex items-center">
               <Titre baliseHtml="h2" className="fr-h3 fr-m-0">
                 Vous avez des questions ?
               </Titre>
@@ -229,7 +228,7 @@ const PageLanding = () => {
             </div>
           </div>
         </section>
-      </PageLandingStyled>
+      </main>
     </>
   );
 };

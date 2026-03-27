@@ -1,6 +1,5 @@
 import "@gouvfr/dsfr/dist/component/table/table.min.css";
 import { FunctionComponent } from "react";
-import FicheIndicateurStyled from "@/components/PageIndicateur/FicheIndicateur/FicheIndicateur.styled";
 import SectionTableauIndicateur from "@/components/PageIndicateur/FicheIndicateur/SectionTableauIndicateur";
 import SectionDétailsMetadataIndicateur from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataIndicateur";
 import SectionDétailsMetadataParametreCalculIndicateur from "@/components/PageIndicateur/FicheIndicateur/SectionDétailsMetadataParametreCalculIndicateur";
@@ -21,7 +20,7 @@ const FicheIndicateur: FunctionComponent<FicheIndicateurProps> = ({
   chantiers,
 }) => {
   return (
-    <FicheIndicateurStyled>
+    <div>
       <div className="fr-mb-2w">
         <SectionSelectionIndicateur
           estEnCoursDeModification={estEnCoursDeModification}
@@ -125,7 +124,7 @@ const FicheIndicateur: FunctionComponent<FicheIndicateurProps> = ({
           </div>
         </section>
       </div>
-    </FicheIndicateurStyled>
+    </div>
   );
 };
 

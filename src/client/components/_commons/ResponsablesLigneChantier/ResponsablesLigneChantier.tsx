@@ -2,7 +2,6 @@ import { FunctionComponent } from "react";
 import Link from "next/link";
 import { EnveloppeContourIcon } from "@/components/_commons/Icones/EnveloppeContourIcon";
 import { Icone } from "@/components/_commons/Icone";
-import ResponsablesLigneChantierStyled from "./ResponsablesLigneChantier.styled";
 
 interface ResponsablesLigneProps {
   libellé: string;
@@ -20,7 +19,7 @@ const ResponsablesLigneChantier: FunctionComponent<ResponsablesLigneProps> = ({
   const objetCourriel = encodeURIComponent(`PILOTE - PPG - ${libelléChantier}`);
 
   return (
-    <ResponsablesLigneChantierStyled>
+    <section>
       <div className="fr-grid-row fr-grid-row--gutters fr-pb-2w">
         <div className="fr-text--sm fr-text--bold fr-col-8 fr-col-md-4 fr-col-xl-5 fr-m-0 fr-pb-1v fr-py-md-1w">
           {libellé}
@@ -29,7 +28,7 @@ const ResponsablesLigneChantier: FunctionComponent<ResponsablesLigneProps> = ({
           {libelleNomsResponsables || "Non renseigné"}
         </p>
         {libelleEmailsResponsables ? (
-          <div className="fr-col-5 fr-col-md-4 fr-col-xl-2 flex align-start justify-end bouton-format-mobile">
+          <div className="fr-col-5 fr-col-md-4 fr-col-xl-2 flex align-start justify-end max-[450px]:items-end print:hidden">
             <div className="flex align-start">
               <Icone
                 className="fr-mr-1v fr-text-title--blue-france"
@@ -46,7 +45,7 @@ const ResponsablesLigneChantier: FunctionComponent<ResponsablesLigneProps> = ({
           </div>
         ) : null}
       </div>
-    </ResponsablesLigneChantierStyled>
+    </section>
   );
 };
 

@@ -36,7 +36,7 @@ const EtapePublierFichier: FunctionComponent<{
           />
           <div className="fr-mt-3w flex justify-end">
             <Link
-              className="fr-btn"
+              className="fr-btn ml-8"
               href={`/chantier/${chantierId}/indicateurs`}
               title="Importer de nouvelles données"
             >
@@ -59,7 +59,7 @@ const EtapePublierFichier: FunctionComponent<{
                 rapportId={rapportId}
                 setEstFichierPublie={setEstFichierPublie}
               />
-              <table className="fr-table fr-my-3w fr-p-0">
+              <table className="fr-table fr-my-3w fr-p-0 w-full">
                 <thead>
                   <tr>
                     <th>

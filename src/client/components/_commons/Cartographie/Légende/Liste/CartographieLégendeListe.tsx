@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import { CartographieÉlémentDeLégende } from "@/client/components/_commons/Cartographie/Légende/CartographieLégende.interface";
-import CartographieLégendeListeStyled from "./CartographieLégendeListe.styled";
 import CartographieLégendeListeÉlément from "./Élément/CartographieLégendeListeÉlément";
 
 interface CartographieLégendeListeProps {
@@ -11,7 +10,7 @@ const CartographieLégendeListe: FunctionComponent<
   CartographieLégendeListeProps
 > = ({ contenu }) => {
   return (
-    <CartographieLégendeListeStyled className="fr-mt-1w fr-mb-0 fr-pl-0">
+    <ul className="flex flex-wrap max-w-[25rem] mx-auto list-none fr-mt-1w fr-mb-0 fr-pl-0">
       {contenu.map(({ remplissage, libellé, picto }) => (
         <CartographieLégendeListeÉlément
           key={`carto-légende-${libellé}`}
@@ -21,7 +20,7 @@ const CartographieLégendeListe: FunctionComponent<
           {picto ?? null}
         </CartographieLégendeListeÉlément>
       ))}
-    </CartographieLégendeListeStyled>
+    </ul>
   );
 };
 

@@ -12,7 +12,6 @@ import { pageChantier } from "@/components/PageChantier/PageChantierServerSideCo
 import { Icone } from "@/components/_commons/Icone";
 import { Equalizer1Icon } from "@/components/_commons/Icones/Equalizer1Icon";
 import useChoixTerritoire from "./useChoixTerritoire";
-import ChoixTerritoireStyled from "./ChoixTerritoire.styled";
 
 const ChoixTerritoire = () => {
   const { territoireCode, mailleSelectionnee, mailleQuery } =
@@ -47,8 +46,8 @@ const ChoixTerritoire = () => {
         </BarreLatéraleEncart>
       </BarreLatérale>
       <main className="fr-pb-5w">
-        <ChoixTerritoireStyled>
-          <div className="bouton-filtrer fr-hidden-lg fr-py-1w fr-px-1v">
+        <div>
+          <div className="sticky top-0 z-[999] w-full bg-dsfr-alt-blue-france fr-hidden-lg fr-py-1w fr-px-1v">
             <button
               className="fr-btn fr-btn--tertiary-no-outline !text-primary gap-2"
               onClick={() => {
@@ -81,7 +80,7 @@ const ChoixTerritoire = () => {
               </Bloc>
             </div>
           </div>
-        </ChoixTerritoireStyled>
+        </div>
       </main>
     </div>
   );

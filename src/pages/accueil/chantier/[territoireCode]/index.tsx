@@ -37,7 +37,6 @@ import { BoutonSyntheseTerritoire } from "@/components/PageAccueil/BoutonSynthes
 import { BoutonExportDesDonnees } from "@/components/PageAccueil/BoutonExportDesDonnees";
 import { clsxm } from "@/utils/clsxm";
 import { loadAccueilSearchParams } from "@/client/searchParams/accueilSearchParams";
-import IndexStyled from "./index.styled";
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,
@@ -380,7 +379,7 @@ const ChantierLayout = ({
   const pathname = "/accueil/chantier/[territoireCode]";
 
   return (
-    <IndexStyled>
+    <div className="[&_.fr-h2]:!text-[1.875rem] [&_.fr-h2]:!leading-9">
       <Head>
         <title>PILOTE - Piloter l'action publique par les résultats</title>
       </Head>
@@ -430,7 +429,7 @@ const ChantierLayout = ({
           </section>
         </BarreLatérale>
         <div className="w-full">
-          <div className="horizontal-panel fr-background-blue-france-850 fr-grid-row fr-pt-2w">
+          <div className="sticky top-0 z-[1] w-full shadow-[0_6px_18px_var(--shadow-color)] bg-dsfr-blue-france-850 fr-grid-row fr-pt-2w">
             <PanelMenuNavigation
               estAutoriseAVoirLeSelecteurDeMaille={
                 estAutoriseAVoirLeSelecteurDeMaille
@@ -486,7 +485,7 @@ const ChantierLayout = ({
           />
         </div>
       </div>
-    </IndexStyled>
+    </div>
   );
 };
 

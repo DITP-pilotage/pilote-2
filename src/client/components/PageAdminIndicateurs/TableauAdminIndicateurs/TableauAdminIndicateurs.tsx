@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import useTableauPageAdminIndicateurs from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/useTableauAdminIndicateurs";
-import TableauAdminIndicateursStyled from "@/components/PageAdminIndicateurs/TableauAdminIndicateurs/TableauAdminIndicateurs.styled";
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
 import Loader from "@/components/_commons/Loader/Loader";
 import Titre from "@/components/_commons/Titre/Titre";
@@ -27,7 +26,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
   } = useTableauPageAdminIndicateurs();
 
   return (
-    <TableauAdminIndicateursStyled>
+    <section>
       {!!alerte && (
         <div className="fr-mt-2w">
           <Alerte
@@ -40,7 +39,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
       <div className="fr-container--fluid">
         <div className="fr-grid-row fr-grid-row--middle fr-grid-row--gutters">
           <div className="fr-col-12 fr-col-md-6">
-            <div className="barre-de-recherche">
+            <div className="w-full max-w-[20.5rem]">
               <BarreDeRecherche
                 changementDeLaRechercheCallback={
                   changementDeLaRechercheCallback
@@ -51,7 +50,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
           </div>
           <div className="fr-col-12 fr-col-md-6">
             <form
-              className="boutons-formulaire"
+              className="flex flex-col items-center min-[576px]:items-start min-[1050px]:flex-row min-[1050px]:items-center"
               onSubmit={
                 verifierLeFichier as React.FormEventHandler<HTMLFormElement>
               }
@@ -83,7 +82,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
                     : "indicateur"}
                 </Titre>
               </div>
-              <div className="fr-col-12 fr-col-md-6 bouton-export">
+              <div className="fr-col-12 fr-col-md-6 flex justify-center min-[576px]:justify-start min-[1050px]:justify-end">
                 <button
                   className="fr-btn fr-text"
                   disabled={tableau.getFilteredRowModel().rows.length === 0}
@@ -98,7 +97,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
             </div>
           </div>
           <div className="fr-table">
-            <table className="tableau fr-m-0 fr-p-0 w-full">
+            <table className="tableau table fr-m-0 fr-p-0 w-full">
               <caption className="fr-sr-only">Tableau des indicateurs</caption>
               <TableauEnTête<MetadataParametrageIndicateurInformationContrat>
                 tableau={tableau}
@@ -113,7 +112,7 @@ const TableauAdminIndicateurs: FunctionComponent = () => {
           </div>
         </>
       )}
-    </TableauAdminIndicateursStyled>
+    </section>
   );
 };
 

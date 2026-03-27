@@ -4,13 +4,12 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 import { useNouveautés } from "./useNouveautés";
 import "@gouvfr/dsfr/dist/component/accordion/accordion.min.css";
 import "@gouvfr/dsfr/dist/component/input/input.min.css";
-import { NouveautésStyled } from "./Nouveautés.styled";
 
 const Nouveautés: FunctionComponent = () => {
   const { listeNouveautes, estChargementListeNouveautes } = useNouveautés();
 
   return (
-    <NouveautésStyled>
+    <div className="[&_p]:mb-0 [&_h4]:my-2 [&_hr]:!my-2">
       <main>
         <div className="fr-container fr-pb-2w">
           <div className="fr-grid-row fr-py-4w">
@@ -88,7 +87,7 @@ const Nouveautés: FunctionComponent = () => {
           ) : null}
         </div>
       </main>
-    </NouveautésStyled>
+    </div>
   );
 };
 

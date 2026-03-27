@@ -4,7 +4,6 @@ import {
   MeteoSaisissable,
 } from "@/server/domain/météo/Météo.interface";
 import RépartitionMétéoÉlément from "./RépartitionMétéoÉlément/RépartitionMétéoÉlément";
-import RépartitionMétéoStyled from "./RépartitionMétéo.styled";
 
 export type RépartitionMétéos = Record<MeteoSaisissable, number>;
 
@@ -20,7 +19,7 @@ const RépartitionMétéo: FunctionComponent<RépartitionMétéoProps> = ({
   chantiersSontArchives,
 }) => {
   return (
-    <RépartitionMétéoStyled className="flex gap-4">
+    <ul className="flex gap-4 list-none">
       {météosÀAfficher.map((météo) => (
         <li key={libellesMeteos[météo]}>
           <RépartitionMétéoÉlément
@@ -30,7 +29,7 @@ const RépartitionMétéo: FunctionComponent<RépartitionMétéoProps> = ({
           />
         </li>
       ))}
-    </RépartitionMétéoStyled>
+    </ul>
   );
 };
 

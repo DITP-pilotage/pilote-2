@@ -30,14 +30,15 @@ import {
   useTerritoireSelectionne,
 } from "@/components/PageChantier/PageChantierServerSideContext";
 import { BandeauEntetePageChantier } from "@/components/PageChantier/BandeauEntetePageChantier";
+import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
 import AvancementChantier from "./AvancementChantier/AvancementChantier";
 import PageChantierEnTête from "./EnTête/EnTête";
 import Cartes from "./Cartes/Cartes";
-import PageChantierStyled from "./PageChantier.styled";
 import { usePageChantier } from "./usePageChantier";
 import { DécisionsStratégiques } from "./DécisionsStratégiques/DécisionsStratégiques";
 
 const PageChantier = () => {
+  usePrintPageStyle("margin: 12mm 0; size: 280mm 396mm");
   const {
     indicateurs,
     chantier,
@@ -145,7 +146,7 @@ const PageChantier = () => {
       : Object.keys(detailsIndicateursTerritoire);
 
   return (
-    <PageChantierStyled className="flex">
+    <div className="flex bg-dsfr-contrast-grey print:bg-white">
       <BarreLatérale
         estOuvert={estOuverteBarreLatérale}
         setEstOuvert={setEstOuverteBarreLatérale}
@@ -172,11 +173,11 @@ const PageChantier = () => {
         />
       </BarreLatérale>
       <main
-        className={clsx("fr-pb-5w w-full", {
+        className={clsx("fr-pb-5w w-full print:mx-[12mm]", {
           "!bg-dsfr-grey-1000": estChantierArchive,
         })}
       >
-        <div className="horizontal-panel fr-background-blue-france-850 fr-grid-row fr-pt-2w">
+        <div className="sticky top-0 z-[1] w-full shadow-[0_6px_18px_var(--shadow-color)] bg-dsfr-blue-france-850 fr-grid-row fr-pt-2w print:hidden">
           <PanelMenuNavigation
             estAutoriseAVoirLeSelecteurDeMaille={
               estAutoriseAVoirLeSelecteurDeMaille
@@ -192,8 +193,11 @@ const PageChantier = () => {
             alerteMiseAJourIndicateur={alerteMiseAJourIndicateur}
           />
         </div>
-        <div className="fr-container--fluid fr-py-2w fr-px-md-2w titre-chantier-impression">
-          <Titre baliseHtml="h1" className="fr-h2 fr-mb-0 fr-text--center">
+        <div className="fr-container--fluid fr-py-2w fr-px-md-2w hidden print:block print:mb-4 print:[page-break-after:avoid]">
+          <Titre
+            baliseHtml="h1"
+            className="fr-h2 fr-mb-0 fr-text--center !text-[1.875rem] !leading-9"
+          >
             {chantier.nom}
           </Titre>
         </div>
@@ -205,13 +209,22 @@ const PageChantier = () => {
         ) : null}
         <div className="fr-container--fluid fr-py-2w fr-px-md-2w">
           <div
-            className={`grid-template ${territoireSélectionné.maille === "nationale" ? "layout--nat" : "layout--dept-reg"}`}
+            className={clsx(
+              "grid [grid-template-areas:'avancement'_'synthèse'_'responsables'] gap-[0.7rem]",
+              territoireSélectionné.maille === "nationale"
+                ? "md:grid-cols-1 print:[grid-template-areas:'avancement_synthèse'_'responsables_responsables'] print:grid-cols-[auto_minmax(22.5rem,1fr)]"
+                : "",
+            )}
           >
-            <section className="rubrique" id="avancement">
+            <section
+              className="grid grid-rows-[auto_1fr] print:block print:break-inside-avoid [grid-area:avancement]"
+              id="avancement"
+            >
               <TitreInfobulleConteneur className="fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0">
                 <Titre
                   baliseHtml="h2"
                   className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
+                    "text-primary": !estChantierArchive,
                     "!text-dsfr-grey-50": estChantierArchive,
                   })}
                   estInline
@@ -254,11 +267,15 @@ const PageChantier = () => {
                 territoireCode={territoireCode}
               />
             </section>
-            <section className="rubrique" id="synthèse">
+            <section
+              className="grid grid-rows-[auto_1fr] print:block [grid-area:synthèse]"
+              id="synthèse"
+            >
               <TitreInfobulleConteneur className="fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0">
                 <Titre
                   baliseHtml="h2"
                   className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
+                    "text-primary": !estChantierArchive,
                     "!text-dsfr-grey-50": estChantierArchive,
                   })}
                   estInline
@@ -274,12 +291,16 @@ const PageChantier = () => {
                 nomTerritoire={territoireSélectionné.nomAffiché}
               />
             </section>
-            <section className="rubrique" id="responsables">
+            <section
+              className="grid grid-rows-[auto_1fr] print:block print:break-inside-avoid [grid-area:responsables]"
+              id="responsables"
+            >
               <Titre
                 baliseHtml="h2"
                 className={clsx(
                   "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0",
                   {
+                    "text-primary": !estChantierArchive,
                     "!text-dsfr-grey-50": estChantierArchive,
                   },
                 )}
@@ -303,12 +324,16 @@ const PageChantier = () => {
           !!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] ||
           chantier.estTerritorialisé ? (
             <div className="fr-my-2w">
-              <section className="rubrique" id="cartes">
+              <section
+                className="grid grid-rows-[auto_1fr] print:block print:break-inside-avoid"
+                id="cartes"
+              >
                 <Titre
                   baliseHtml="h2"
                   className={clsx(
                     "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0",
                     {
+                      "text-primary": !estChantierArchive,
                       "!text-dsfr-grey-50": estChantierArchive,
                     },
                   )}
@@ -320,11 +345,15 @@ const PageChantier = () => {
             </div>
           ) : null}
           <div className="fr-my-2w">
-            <section className="rubrique" id="objectifs">
+            <section
+              className="grid grid-rows-[auto_1fr] print:block"
+              id="objectifs"
+            >
               <TitreInfobulleConteneur className="fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0">
                 <Titre
                   baliseHtml="h2"
                   className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
+                    "text-primary": !estChantierArchive,
                     "!text-dsfr-grey-50": estChantierArchive,
                   })}
                   estInline
@@ -340,12 +369,16 @@ const PageChantier = () => {
           </div>
           {indicateurs.length > 0 ? (
             <div className="fr-my-2w">
-              <section className="rubrique" id="indicateurs">
+              <section
+                className="grid grid-rows-[auto_1fr] print:block"
+                id="indicateurs"
+              >
                 <Titre
                   baliseHtml="h2"
                   className={clsx(
                     "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0",
                     {
+                      "text-primary": !estChantierArchive,
                       "!text-dsfr-grey-50": estChantierArchive,
                     },
                   )}
@@ -378,7 +411,10 @@ const PageChantier = () => {
           ) : null}
           {territoireSélectionné.maille === "nationale" ? (
             <div className="fr-my-2w">
-              <section className="rubrique" id="décisions-stratégiques">
+              <section
+                className="grid grid-rows-[auto_1fr] print:block"
+                id="décisions-stratégiques"
+              >
                 <TitreInfobulleConteneur className="!mb-4 !mt-3 !md:mt-0 !mx-4 !md:mx-0 flex align-center">
                   <Titre baliseHtml="h2" className="fr-h4 !m-0" estInline>
                     Décisions stratégiques
@@ -395,11 +431,15 @@ const PageChantier = () => {
             </div>
           ) : null}
           <div className="fr-my-2w">
-            <section className="rubrique" id="commentaires">
+            <section
+              className="grid grid-rows-[auto_1fr] print:block"
+              id="commentaires"
+            >
               <TitreInfobulleConteneur className="fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0">
                 <Titre
                   baliseHtml="h2"
                   className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
+                    "text-primary": !estChantierArchive,
                     "!text-dsfr-grey-50": estChantierArchive,
                   })}
                   estInline
@@ -427,7 +467,7 @@ const PageChantier = () => {
           </div>
         </div>
       </main>
-    </PageChantierStyled>
+    </div>
   );
 };
 

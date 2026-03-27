@@ -1,6 +1,5 @@
 import { ComponentProps, forwardRef, ReactNode } from "react";
-import clsx from "clsx";
-import BoutonSousLignéStyled from "@/components/_commons/BoutonSousLigné/BoutonSousLigné.styled";
+import { clsxm } from "@/utils/clsxm";
 
 type Props = ComponentProps<"button"> & {
   dataFrOpened?: boolean;
@@ -12,9 +11,9 @@ export const BoutonSousLigné = forwardRef<HTMLButtonElement, Props>(
     ref,
   ) {
     return (
-      <BoutonSousLignéStyled
-        className={clsx(
-          "!flex items-center gap-2 fr-link override",
+      <button
+        className={clsxm(
+          "!flex items-center gap-2 fr-link h-6 border-0 border-b border-solid border-current hover:enabled:bg-[unset] hover:enabled:border-b-2",
           className,
           {
             "!opacity-80": props.disabled,
@@ -26,7 +25,7 @@ export const BoutonSousLigné = forwardRef<HTMLButtonElement, Props>(
       >
         {iconLeft}
         {children}
-      </BoutonSousLignéStyled>
+      </button>
     );
   },
 );

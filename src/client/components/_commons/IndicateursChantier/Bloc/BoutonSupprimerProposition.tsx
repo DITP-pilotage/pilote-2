@@ -25,7 +25,7 @@ export const BoutonSupprimerProposition = ({
       territoireNom={détailTerritoireSélectionné.nom}
     >
       <button
-        className="fr-btn gap-2 fr-btn--secondary bouton-proposition-valeur-davancement"
+        className="fr-btn gap-2 fr-btn--secondary !text-current ![box-shadow:inset_0_0_0_1px_currentColor]"
         type="button"
       >
         <Icone className="h-4 w-4 text-current" icone={Delete1Icon} />

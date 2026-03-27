@@ -12,7 +12,6 @@ import { Icone } from "@/components/_commons/Icone";
 import { IconeDocumentationIcon } from "@/components/_commons/Icones/IconeDocumentationIcon";
 import { clsxm } from "@/utils/clsxm";
 import { WarningIcon } from "@/client/components/_commons/Icones/WarningIcon";
-import InfobulleStyled from "./Infobulle.styled";
 
 export const Infobulle: FunctionComponent<
   PropsWithChildren<{
@@ -38,7 +37,7 @@ export const Infobulle: FunctionComponent<
   const buttonRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <InfobulleStyled>
+    <div className="relative inline-flex">
       <button
         aria-describedby={randomId}
         className={clsxm(
@@ -87,6 +86,6 @@ export const Infobulle: FunctionComponent<
       >
         {children}
       </SecureTooltip>
-    </InfobulleStyled>
+    </div>
   );
 };

@@ -1,7 +1,6 @@
 import Titre from "@/components/_commons/Titre/Titre";
 import IndicateursProps from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Indicateurs.interface";
 import IndicateurBloc from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Bloc/IndicateurBloc";
-import IndicateursStyled from "@/components/PageRapportDétaillé/Chantier/IndicateursRapportDetaille/Indicateurs.styled";
 import { comparerIndicateur } from "@/client/utils/indicateur/indicateur";
 import { listeRubriquesIndicateursChantier } from "@/client/utils/rubriques";
 
@@ -19,7 +18,7 @@ export default function IndicateursRapportDetaille({
   }
 
   return (
-    <IndicateursStyled>
+    <section>
       {listeRubriquesIndicateursChantier.map((rubriqueIndicateur) => {
         const indicateursDeCetteRubrique =
           categoriesIndicateurRepartition[
@@ -29,7 +28,7 @@ export default function IndicateursRapportDetaille({
         if (indicateursDeCetteRubrique.length > 0) {
           return (
             <section
-              className="fr-mb-3w sous-rubrique-indicateur"
+              className="mb-6 last-of-type:mb-0"
               id={rubriqueIndicateur.ancre}
               key={rubriqueIndicateur.ancre}
             >
@@ -67,6 +66,6 @@ export default function IndicateursRapportDetaille({
           );
         }
       })}
-    </IndicateursStyled>
+    </section>
   );
 }

@@ -45,6 +45,7 @@ const FormulaireIndicateur: FunctionComponent<FormulaireIndicateurProps> = ({
         >
           <InputFichier onChange={définirLeFichier} />
           <SubmitBouton
+            className="ml-8"
             disabled={!file}
             label={
               wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT

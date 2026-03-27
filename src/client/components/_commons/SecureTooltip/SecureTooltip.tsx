@@ -5,39 +5,8 @@ import {
   useRef,
   useState,
 } from "react";
-import styled from "@emotion/styled";
 import { createPortal } from "react-dom";
-
-const TooltipContent = styled.div<{ isVisible: boolean }>`
-  position: fixed;
-  z-index: 10000;
-  min-width: 400px;
-  max-width: 500px;
-  color: var(--text-title-grey);
-  background-color: var(--background-alt-blue-france);
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 2px rgba(0, 0, 0, 0.1);
-  padding: 0.75rem;
-  opacity: ${(props) => (props.isVisible ? 1 : 0)};
-  visibility: ${(props) => (props.isVisible ? "visible" : "hidden")};
-  transition: opacity 0.2s ease-in-out;
-  pointer-events: none;
-  white-space: normal;
-  word-wrap: break-word;
-
-  &.infobull--sm {
-    min-width: 250px;
-    padding: 0;
-  }
-
-  .fr-text--sm {
-    margin: 0 !important;
-  }
-
-  &.tooltip-accordeon {
-    max-width: 50%;
-  }
-`;
+import { clsxm } from "@/utils/clsxm";
 
 interface SecureTooltipProps {
   children: ReactNode;
@@ -127,9 +96,14 @@ const SecureTooltip: FunctionComponent<SecureTooltipProps> = ({
   if (!anchorEl || !portalContainer) return null;
 
   return createPortal(
-    <TooltipContent
-      className={classNameInfoBulle}
-      isVisible={isVisible}
+    <div
+      className={clsxm(
+        "fixed z-[10000] min-w-[400px] max-w-[500px] text-dsfr-grey-50 bg-dsfr-alt-blue-france rounded-lg shadow-[0_4px_2px_rgba(0,0,0,0.1)] p-3 transition-opacity duration-200 pointer-events-none whitespace-normal break-words [&_.fr-text--sm]:!m-0",
+        isVisible ? "opacity-100 visible" : "opacity-0 invisible",
+        classNameInfoBulle === "infobull--sm" && "!min-w-[250px] !p-0",
+        classNameInfoBulle === "tooltip-accordeon" && "!max-w-[50%]",
+        classNameInfoBulle,
+      )}
       ref={tooltipRef}
       style={{
         border,
@@ -138,7 +112,7 @@ const SecureTooltip: FunctionComponent<SecureTooltipProps> = ({
       }}
     >
       {children}
-    </TooltipContent>,
+    </div>,
     portalContainer,
   );
 };

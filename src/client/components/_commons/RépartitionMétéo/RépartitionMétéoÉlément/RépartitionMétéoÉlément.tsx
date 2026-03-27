@@ -15,7 +15,7 @@ const RépartitionMétéoÉlément: FunctionComponent<
   return (
     <div
       className={clsxm(
-        "flex flex-col items-center shadow-lg border border-dsfr-grey-925 rounded gap-2 p-4",
+        "flex flex-col items-center shadow-lg border border-dsfr-grey-925 rounded gap-2 p-4 max-[80rem]:p-0.5 max-[80rem]:px-1",
         {
           "grayscale-100": estArchive,
         },

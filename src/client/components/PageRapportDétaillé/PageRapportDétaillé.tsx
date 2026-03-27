@@ -1,7 +1,7 @@
 import "@gouvfr/dsfr/dist/component/badge/badge.min.css";
 import Link from "next/link";
 import { FunctionComponent, useState } from "react";
-import PageRapportDétailléStyled from "@/components/PageRapportDétaillé/PageRapportDétaillé.styled";
+import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
 import Titre from "@/components/_commons/Titre/Titre";
 import { PublicationsGroupéesParChantier } from "@/components/PageRapportDétaillé/PageRapportDétaillé.interface";
 import RapportDétailléVueDEnsemble from "@/components/PageRapportDétaillé/VueDEnsemble/RapportDétailléVueDEnsemble";
@@ -89,6 +89,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   moyenneTauxAvancementTerritoire,
   masquerIndicateursNonApplicables,
 }) => {
+  usePrintPageStyle("margin: 12mm 0; size: 280mm 396mm");
   const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const [afficherLesChantiers, setAfficherLesChantiers] = useState(false);
@@ -105,10 +106,10 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
         ministères={ministères}
         territoireSélectionné={territoireSélectionné}
       />
-      <PageRapportDétailléStyled>
-        <main>
+      <div className="[&_h2]:text-primary print:m-[12mm] print:[&_table]:overflow-hidden print:[&_table_td]:bg-white">
+        <main className="py-8 overflow-x-hidden print:p-0">
           <div className="fr-container fr-mb-0 fr-px-0 fr-px-md-2w">
-            <div className="fr-px-2w fr-px-md-0 flex justify-between entête-rapport-détaillé">
+            <div className="fr-px-2w fr-px-md-0 flex justify-between print:hidden">
               <Titre baliseHtml="h1" className="fr-h2">
                 {`Rapport détaillé : ${chantiersFiltrés.length} ${chantiersFiltrés.length > 1 ? "chantiers" : "chantier"}`}
               </Titre>
@@ -137,7 +138,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
               ministères={ministères}
               territoireSélectionné={territoireSélectionné}
             />
-            <div className="fr-mb-3w interrupteur-chantiers">
+            <div className="fr-mb-3w print:hidden">
               <Interrupteur
                 checked={afficherLesChantiers}
                 libellé="Afficher le détail des chantiers"
@@ -212,7 +213,7 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
             ) : null}
           </div>
         </main>
-      </PageRapportDétailléStyled>
+      </div>
     </>
   );
 };

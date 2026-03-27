@@ -38,7 +38,12 @@ module.exports = {
         "dsfr-blue-france-925-hover": "#C1C1FB",
         "dsfr-blue-france-950": "#ECECFE",
         "dsfr-blue-france-525": "#6A6AF4",
+        "pilote-ecart-blue": "#8585F6",
+        "pilote-orange": "#FC5D00",
+        "pilote-vert": "#27A658",
+        "pilote-jauge-fond": "#D9D9D9",
         "dsfr-blue-france-sun-113": "#000091",
+        "dsfr-blue-france-sun-113-hover": "#1212FF",
         "dsfr-blue-link": "#5493EF",
         "dsfr-grey-50": "#161616",
         "dsfr-grey-1000": "#F6F6F6",
@@ -55,6 +60,31 @@ module.exports = {
         "dsfr-green-tilleul-verveine-950": "#fceeac",
         "dsfr-green-tilleul-verveine-sun": "#695240",
         "dsfr-grey-900": "#dddddd",
+        "dsfr-grey-975-hover": "#DFDFDF",
+        "dsfr-grey-950-hover": "#D2D2D2",
+        "dsfr-blue-france-950-hover": "#CECEFC",
+        "dsfr-blue-france-975-hover": "#DCDCFC",
+        "dsfr-purple-glycine-main-494": "#A558A0",
+        "dsfr-blue-cumulus-main-526": "#417DC4",
+        "dsfr-yellow-tournesol-main-731": "#C8AA39",
+        "dsfr-pink-macaron-main-689": "#E18B76",
+        "dsfr-blue-ecume-main-400": "#465F9D",
+        "dsfr-brown-caramel-main-648": "#C08C65",
+        "dsfr-orange-terre-battue-main-645": "#E4794A",
+        "dsfr-brown-cafe-creme-main-782": "#D1B781",
+        "dsfr-green-foret": "#1F8D49",
+        "dsfr-pink-tuile-main-556": "#CE614A",
+        "dsfr-green-archipel-main-557": "#009099",
+        "dsfr-beige-gris-galet-main-702": "#AEA397",
+        "dsfr-purple-glycine-950": "#fee7fc",
+        "dsfr-purple-glycine-text": "#6e445a",
+        "dsfr-blue-ecume-850": "#bfccfb",
+        "dsfr-flat-info": "#0063cb",
+        "pilote-gris-moyen": "#bababa",
+        "pilote-loader-green": "#3c763d",
+        "pilote-loader-bg": "#e5e9eb",
+        "pilote-grey-legend": "#999",
+        "pilote-grey-border-print": "#7b7b7b",
       },
       keyframes: {
         "dropdown-fade-in": {
@@ -73,18 +103,36 @@ module.exports = {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.5" },
         },
+        "pulse-opacity": {
+          "0%": { opacity: "0" },
+          "50%": { opacity: "1" },
+          "100%": { opacity: "0" },
+        },
+        "cssload-width": {
+          "0%": { width: "0" },
+          "100%": { width: "100%" },
+        },
       },
       animation: {
         "dropdown-fade-in": "dropdown-fade-in 150ms ease-out",
         "dropdown-fade-out": "dropdown-fade-out 150ms ease-in",
         "fade-in": "fade-in 300ms ease-out",
         "pulse-recording": "pulse-recording 1.5s ease-in-out infinite",
+        "pulse-opacity": "pulse-opacity 2s ease-in-out infinite",
+        "cssload-width": "cssload-width 1s ease-out 1",
       },
     },
   },
   plugins: [
-    plugin(({ addVariant }) => {
+    plugin(({ addVariant, addBase }) => {
       addVariant("children", "& > *");
+      addBase({
+        "@media print": {
+          "@page": {
+            margin: "1.5cm 1cm",
+          },
+        },
+      });
     }),
   ],
 };

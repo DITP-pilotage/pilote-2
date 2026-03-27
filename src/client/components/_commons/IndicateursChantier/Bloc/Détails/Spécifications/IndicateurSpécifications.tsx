@@ -5,7 +5,6 @@ import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndic
 import { EnveloppeContourIcon } from "@/components/_commons/Icones/EnveloppeContourIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { QuestionIcon } from "@/components/_commons/Icones/QuestionIcon";
-import IndicateurSpécificationsStyled from "./IndicateurSpécifications.styled";
 
 interface IndicateurSpécificationsProps {
   dateValeurAvancement: string | null;
@@ -34,37 +33,47 @@ const IndicateurSpécifications: FunctionComponent<
     configurationFeatureFlipping.poserUneQuestionIndicateur;
 
   return (
-    <IndicateurSpécificationsStyled>
-      <p className="fr-text--md sous-titre">Description de l'indicateur</p>
-      <p className="fr-text--sm">
+    <div className="relative">
+      <p className="fr-text--md inline-block mb-1 text-primary">
+        Description de l'indicateur
+      </p>
+      <p className="fr-text--sm mb-0">
         {indicateur.description ?? libelléValeurNull}
       </p>
-      <p className="fr-text--md sous-titre fr-mt-2w">
+      <p className="fr-text--md inline-block mb-1 text-primary fr-mt-2w">
         Typologie de l'indicateur
       </p>
-      <p className="fr-text--sm">
+      <p className="fr-text--sm mb-0">
         {libellesTypologieIndicateur[indicateur.type]}
       </p>
-      <p className="fr-text--md sous-titre fr-mt-2w">Méthode de calcul</p>
-      <p className="fr-text--sm">
+      <p className="fr-text--md inline-block mb-1 text-primary fr-mt-2w">
+        Méthode de calcul
+      </p>
+      <p className="fr-text--sm mb-0">
         {indicateur.modeDeCalcul ?? libelléValeurNull}
       </p>
-      <p className="fr-text--md sous-titre fr-mt-2w">Source</p>
-      <p className="fr-text--sm">{indicateur.source ?? libelléValeurNull}</p>
-      <p className="fr-text--md sous-titre fr-mt-2w">Mise à jour</p>
+      <p className="fr-text--md inline-block mb-1 text-primary fr-mt-2w">
+        Source
+      </p>
+      <p className="fr-text--sm mb-0">
+        {indicateur.source ?? libelléValeurNull}
+      </p>
+      <p className="fr-text--md inline-block mb-1 text-primary fr-mt-2w">
+        Mise à jour
+      </p>
       {!detailIndicateurDuTerritoire.estApplicable ? (
-        <p className="fr-text--sm">
+        <p className="fr-text--sm mb-0">
           L'indicateur n'est pas applicable sur le territoire.
         </p>
       ) : !!dateProchaineDateMaj ? (
         <>
-          <p className="fr-text--sm">
+          <p className="fr-text--sm mb-0">
             La période de mise à jour pour cet indicateur est :{" "}
             <span className="fr-text--bold">
               {indicateur.periodicite ?? libelléValeurNull}
             </span>
           </p>
-          <p className="fr-text--sm">
+          <p className="fr-text--sm mb-0">
             La date de valeur d'avancement de cet indicateur est :{" "}
             <span className="fr-text--bold">
               {`${dateValeurAvancement ?? libelléValeurNull}.`}
@@ -74,7 +83,7 @@ const IndicateurSpécifications: FunctionComponent<
               {`${dateProchaineDateValeurAvancement ?? libelléValeurNull}.`}
             </span>
           </p>
-          <p className="fr-text--sm">
+          <p className="fr-text--sm mb-0">
             La mise à disposition d'une nouvelle valeur pour cet indicateur
             nécessite un délai de disponibilité de{" "}
             <span className="fr-text--bold">
@@ -91,16 +100,16 @@ const IndicateurSpécifications: FunctionComponent<
       ) : (
         <>
           {!!dateValeurAvancement ? (
-            <p className="fr-text--sm">
+            <p className="fr-text--sm mb-0">
               La période de mise à jour pour cet indicateur et/ou le délai de
               disponibilité ne sont pas renseignés.
             </p>
           ) : (
-            <p className="fr-text--sm">
+            <p className="fr-text--sm mb-0">
               La valeur d'avancement de cet indicateur est non renseignée.
             </p>
           )}
-          <p className="fr-text--sm">
+          <p className="fr-text--sm mb-0">
             De ce fait, la mise à jour de la prochaine valeur d'avancement ne
             peut être calculée.
           </p>
@@ -114,10 +123,10 @@ const IndicateurSpécifications: FunctionComponent<
               icone={QuestionIcon}
             />
             <div>
-              <p className="fr-text--md sous-titre">
+              <p className="fr-text--md inline-block mb-1 text-primary">
                 Poser une question sur cet indicateur
               </p>
-              <p className="fr-text fr-text--sm fr-mb-0">
+              <p className="fr-text fr-text--sm mb-0">
                 Des questions ou des remarques sur cet indicateur (définition de
                 l'indicateur, données source, méthode de calcul, mise à jour,
                 etc.) ? Contactez le responsable des données de la politique
@@ -141,7 +150,7 @@ const IndicateurSpécifications: FunctionComponent<
           </div>
         </div>
       ) : null}
-    </IndicateurSpécificationsStyled>
+    </div>
   );
 };
 

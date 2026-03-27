@@ -4,6 +4,16 @@ import {
   JaugeDeProgressionTaille,
 } from "@/components/_commons/JaugeDeProgression/JaugeDeProgression.interface";
 
+const COULEUR_FILL: Record<JaugeDeProgressionCouleur, string> = {
+  bleu: "fill-primary",
+  "bleu-clair": "fill-dsfr-info-main-525",
+  violet: "fill-pilote-ecart-blue",
+  orange: "fill-pilote-orange",
+  vert: "fill-pilote-vert",
+  rose: "fill-dsfr-pink-tuile-main-556",
+  gris: "fill-dsfr-grey-625",
+};
+
 interface JaugeDeProgressionSVGProps {
   couleur: JaugeDeProgressionCouleur;
   pourcentage: number | null;
@@ -89,13 +99,13 @@ const JaugeDeProgressionSVG: FunctionComponent<JaugeDeProgressionSVGProps> = ({
     >
       <g clipPath={`url(#masque-${id})`}>
         <rect
-          className={`jauge-barre-fond jauge-barre-valeur-${couleur}`}
+          className="fill-pilote-jauge-fond"
           height={TAILLE_VIEWBOX}
           width={TAILLE_VIEWBOX}
         />
         {pourcentage ? (
           <path
-            className={`jauge-barre-valeur jauge-barre-valeur--${couleur}`}
+            className={COULEUR_FILL[couleur]}
             d={tracerValeurJauge(pourcentage, taille || "lg")}
             transform={`rotate(${TRACÉS[taille || "lg"].angleDépart} ${CENTRE_VIEWBOX.x} ${CENTRE_VIEWBOX.y})`}
           />

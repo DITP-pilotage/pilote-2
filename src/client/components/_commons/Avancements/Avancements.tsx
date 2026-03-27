@@ -1,6 +1,5 @@
 import { FunctionComponent } from "react";
 import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
-import AvancementsStyled from "@/components/_commons/Avancements/Avancements.styled";
 import AvancementsProps from "./Avancements.interface";
 
 const Avancements: FunctionComponent<AvancementsProps> = ({
@@ -10,7 +9,7 @@ const Avancements: FunctionComponent<AvancementsProps> = ({
   moyenneTauxAvancementTerritoire,
 }) => {
   return (
-    <AvancementsStyled>
+    <div className="flex gap-y-6 gap-x-10 justify-center max-[84rem]:gap-x-4 max-[992px]:basis-full max-[992px]:flex-wrap">
       <JaugeDeProgression
         couleur={chantiersSontArchives ? "gris" : "bleu"}
         libellé={`Taux d'avancement à échéance ${jalon}`}
@@ -18,7 +17,7 @@ const Avancements: FunctionComponent<AvancementsProps> = ({
         taille="lg"
       />
       <div>
-        <div className="jauges-statistiques">
+        <div className="flex gap-x-6 min-[992px]:max-[84rem]:gap-x-2">
           <JaugeDeProgression
             couleur={chantiersSontArchives ? "gris" : "orange"}
             libellé="Minimum"
@@ -41,7 +40,7 @@ const Avancements: FunctionComponent<AvancementsProps> = ({
           />
         </div>
       </div>
-    </AvancementsStyled>
+    </div>
   );
 };
 

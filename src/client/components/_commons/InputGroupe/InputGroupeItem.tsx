@@ -1,5 +1,6 @@
 import "@gouvfr/dsfr/dist/component/checkbox/checkbox.min.css";
 import { FunctionComponent, useId } from "react";
+import { clsxm } from "@/utils/clsxm";
 import { MultiSelectOptionGroupée } from "@/components/_commons/MultiSelect/MultiSelect.interface";
 
 interface MultiSelectGroupeProps {
@@ -21,13 +22,18 @@ const InputGroupeItem: FunctionComponent<MultiSelectGroupeProps> = ({
 
   return (
     <>
-      <p className="list-territoire-titre fr-mb-1w fr-pt-1w fr-pl-2w">
+      <p className="text-dsfr-mention-grey border-t border-black fr-mb-1w fr-pt-1w fr-pl-2w">
         {groupeOptions.label.toUpperCase()}
       </p>
-      <ul className="list-territoire fr-m-">
-        {groupeOptions.options.map((option) => (
+      <ul className="p-0 list-none fr-m-">
+        {groupeOptions.options.map((option, index) => (
           <li
-            className="list-territoire-item fr-py-1w  fr-pl-2w"
+            className={clsxm(
+              "fr-py-1w fr-pl-2w [--idle:transparent]",
+              index % 2 === 1
+                ? "bg-[var(--background-contrast-grey)] [--hover:var(--background-contrast-grey-hover)] [--active:var(--background-contrast-grey-active)]"
+                : "bg-[var(--background-alt-grey)] [--hover:var(--background-alt-grey-hover)] [--active:var(--background-alt-grey-active)]",
+            )}
             key={`${option.value} ${id}`}
           >
             <button

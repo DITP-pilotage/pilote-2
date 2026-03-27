@@ -1,7 +1,6 @@
 import { FunctionComponent } from "react";
-import clsx from "clsx";
 import FlècheDeTri from "@/components/_commons/Tableau/EnTête/FlècheDeTri/FlècheDeTri";
-import BoutonsDeTriStyled from "@/components/_commons/Tableau/EnTête/BoutonsDeTri/BoutonsDeTri.styled";
+import { clsxm } from "@/utils/clsxm";
 
 export type DirectionDeTri = "asc" | "desc" | false;
 
@@ -17,12 +16,14 @@ const BoutonsDeTri: FunctionComponent<BoutonsDeTriProps> = ({
   changementDirectionDeTriCallback,
 }) => {
   return (
-    <BoutonsDeTriStyled>
+    <div className="flex items-center min-[576px]:flex-row min-[576px]:items-start">
       <button
         aria-label={`trier la colonne "${nomColonneÀTrier}" par ordre croissant`}
-        className={clsx("bouton-de-tri fr-mr-1v h-7", {
-          actif: directionDeTri === "asc",
-        })}
+        className={clsxm(
+          "w-6 h-7 bg-dsfr-blue-france-925 border border-white rounded hover:bg-dsfr-blue-france-925-hover fr-mr-1v",
+          directionDeTri === "asc" &&
+            "bg-primary hover:bg-dsfr-blue-france-sun-113-hover",
+        )}
         onClick={() =>
           directionDeTri === "asc"
             ? changementDirectionDeTriCallback(false)
@@ -35,9 +36,11 @@ const BoutonsDeTri: FunctionComponent<BoutonsDeTriProps> = ({
       </button>
       <button
         aria-label={`trier la colonne "${nomColonneÀTrier}" par ordre décroissant`}
-        className={clsx("bouton-de-tri h-7", {
-          actif: directionDeTri === "desc",
-        })}
+        className={clsxm(
+          "w-6 h-7 bg-dsfr-blue-france-925 border border-white rounded hover:bg-dsfr-blue-france-925-hover",
+          directionDeTri === "desc" &&
+            "bg-primary hover:bg-dsfr-blue-france-sun-113-hover",
+        )}
         onClick={() =>
           directionDeTri === "desc"
             ? changementDirectionDeTriCallback(false)
@@ -48,7 +51,7 @@ const BoutonsDeTri: FunctionComponent<BoutonsDeTriProps> = ({
       >
         <FlècheDeTri direction="desc" estActif={directionDeTri === "desc"} />
       </button>
-    </BoutonsDeTriStyled>
+    </div>
   );
 };
 

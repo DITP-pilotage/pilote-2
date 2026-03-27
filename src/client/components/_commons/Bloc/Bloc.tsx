@@ -1,5 +1,4 @@
 import { FunctionComponent, ReactNode } from "react";
-import BlocStyled from "@/components/_commons/Bloc/Bloc.styled";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { clsxm } from "@/utils/clsxm";
 
@@ -21,15 +20,22 @@ const Bloc: FunctionComponent<BlocProps> = ({
   backgroundClassNameTitre,
 }) => {
   return (
-    <BlocStyled className={clsxm("bloc-container", className)}>
+    <div
+      className={clsxm(
+        "bloc-container min-w-full bg-white border border-dsfr-grey-925 rounded-lg print:h-auto print:border-pilote-grey-border-print",
+        className,
+      )}
+    >
       {titre ? (
         <div
           className={clsxm(
-            "titre fr-mb-0 fr-p-2w fr-text--sm fr-text--bold flex align-center justify-start relative w-full",
+            "titre h-16 border-b-2 border-b-dsfr-grey-200 rounded-t-[7px] fr-mb-0 fr-p-2w fr-text--sm fr-text--bold flex align-center justify-start relative w-full print:rounded-t-lg",
             backgroundClassNameTitre,
           )}
         >
-          <div className="titre-ellipsis">{titre}</div>
+          <div className="w-auto overflow-hidden text-ellipsis whitespace-nowrap">
+            {titre}
+          </div>
           <div>
             {titre && contenuInfobulle ? (
               <Infobulle classNameBouton="fr-pl-2w">
@@ -42,7 +48,7 @@ const Bloc: FunctionComponent<BlocProps> = ({
       <div className={clsxm("bloc__contenu", contenuClassesSupplémentaires)}>
         {children}
       </div>
-    </BlocStyled>
+    </div>
   );
 };
 
