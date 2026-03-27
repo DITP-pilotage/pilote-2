@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect, useRef } from "react";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { ArborescenceCentreAide } from "@/components/_commons/CentreAide/ArborescenceCentreAide";
 import { NoeudArbre } from "@/components/_commons/CentreAide/types";
@@ -6,6 +6,15 @@ import { useLectureCentreAide } from "@/components/_commons/CentreAide/useLectur
 
 const estGroupeSansContenu = (noeud: NoeudArbre) =>
   noeud.type === "GROUPE" && noeud.contenu === null;
+
+const trouverPremierePage = (noeuds: NoeudArbre[]): NoeudArbre | undefined => {
+  for (const noeud of noeuds) {
+    if (!estGroupeSansContenu(noeud)) return noeud;
+    const trouvee = trouverPremierePage(noeud.enfants);
+    if (trouvee) return trouvee;
+  }
+  return undefined;
+};
 
 export const PageCentreAidePilote: FunctionComponent = () => {
   const {
@@ -16,6 +25,18 @@ export const PageCentreAidePilote: FunctionComponent = () => {
     estChargement,
   } = useLectureCentreAide();
 
+  const aAutoSelectionne = useRef(false);
+
+  useEffect(() => {
+    if (!estChargement && arbre.length > 0 && !aAutoSelectionne.current) {
+      aAutoSelectionne.current = true;
+      const premiere = trouverPremierePage(arbre);
+      if (premiere) {
+        selectionnerItem(premiere.id);
+      }
+    }
+  }, [estChargement, arbre, selectionnerItem]);
+
   if (estChargement) {
     return <p>Chargement...</p>;
   }
@@ -24,7 +45,7 @@ export const PageCentreAidePilote: FunctionComponent = () => {
     itemSelectionne?.contenu !== null && itemSelectionne?.contenu !== undefined;
 
   return (
-    <main className="px-48 py-4">
+    <main className="px-48 md:px-96 py-4">
       <div className="flex bg-white border border-gray-200 rounded-lg">
         <div className="w-[280px] shrink-0 border-r border-gray-200 flex flex-col overflow-hidden">
           <ArborescenceCentreAide
