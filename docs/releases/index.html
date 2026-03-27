@@ -189,6 +189,14 @@
           border-left-color: var(--border-plain-warning);
       }
 
+      .pr-card--review-done {
+          border-left-color: var(--border-plain-error);
+      }
+
+      .pr-card--ready-to-merge {
+          border-left-color: var(--border-plain-success);
+      }
+
       .pr-card--no-review {
           border-left-color: var(--border-default-grey);
       }
@@ -598,7 +606,10 @@
   function renderPR(pr, reviews, index) {
     var isDraft = pr.draft;
     var draftClass = isDraft ? " pr-draft" : "";
-    var reviewClass = hasLabel(pr, "review-requested") ? " pr-card--review-requested" : " pr-card--no-review";
+    var reviewClass = hasLabel(pr, "ready-to-merge") ? " pr-card--ready-to-merge"
+      : hasLabel(pr, "review-done") ? " pr-card--review-done"
+      : hasLabel(pr, "review-requested") ? " pr-card--review-requested"
+      : " pr-card--no-review";
 
     var avatarHtml = "<img class=\"pr-avatar\" src=\"" + pr.user.avatar_url + "&s=56\" alt=\"" + escapeHtml(pr.user.login) + "\" title=\"" + escapeHtml(pr.user.login) + "\">";
 
@@ -716,8 +727,17 @@
           return;
         }
 
-        var reviewRequested = prs.filter(function(pr) { return hasLabel(pr, "review-requested"); });
-        var others = prs.filter(function(pr) { return !hasLabel(pr, "review-requested"); });
+        var readyToMerge = prs.filter(function(pr) { return hasLabel(pr, "ready-to-merge"); });
+        var reviewDone = prs.filter(function(pr) { return hasLabel(pr, "review-done") && !hasLabel(pr, "ready-to-merge"); });
+        var reviewRequested = prs.filter(function(pr) { return hasLabel(pr, "review-requested") && !hasLabel(pr, "review-done") && !hasLabel(pr, "ready-to-merge"); });
+        var others = prs.filter(function(pr) { return !hasLabel(pr, "review-requested") && !hasLabel(pr, "review-done") && !hasLabel(pr, "ready-to-merge"); });
+
+        var sections = [
+          { title: "Prêt à merge", items: readyToMerge },
+          { title: "À corriger", items: reviewDone },
+          { title: "En attente de review", items: reviewRequested },
+          { title: "Autres", items: others }
+        ];
 
         var html = "<div class=\"fr-callout fr-callout--green-emeraude fr-mb-3w stats-row\">"
           + "<div style=\"display:flex;align-items:center;gap:16px;flex-wrap:wrap;\">"
@@ -729,22 +749,16 @@
           + "</div>"
           + "</div>";
 
-        if (reviewRequested.length > 0) {
-          html += "<p class=\"section-title fr-mb-2w\">En attente de review (" + reviewRequested.length + ")</p>";
-          reviewRequested.forEach(function(pr, index) {
+        var hasPrevious = false;
+        sections.forEach(function(section) {
+          if (section.items.length === 0) return;
+          if (hasPrevious) html += "<div class=\"fr-mt-3w\"></div>";
+          html += "<p class=\"section-title fr-mb-2w\">" + section.title + " (" + section.items.length + ")</p>";
+          section.items.forEach(function(pr, index) {
             html += renderPR(pr, null, index);
           });
-        }
-
-        if (others.length > 0) {
-          if (reviewRequested.length > 0) {
-            html += "<div class=\"fr-mt-3w\"></div>";
-          }
-          html += "<p class=\"section-title fr-mb-2w\">Autres (" + others.length + ")</p>";
-          others.forEach(function(pr, index) {
-            html += renderPR(pr, null, index);
-          });
-        }
+          hasPrevious = true;
+        });
 
         container.innerHTML = html;
         countBadge.innerHTML = " <span class=\"badge-count badge-ahead\" style=\"font-size:0.75rem;min-width:20px;height:20px;\">" + prs.length + "</span>";
