@@ -23,7 +23,7 @@ const FeatureFlipRow: FunctionComponent<{
           </span>
           {modifie && (
             <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-dsfr-warning-950 text-dsfr-warning-425">
-              modifie
+              modifié
             </span>
           )}
         </div>
@@ -109,6 +109,7 @@ export const PagePanelAdministrateurFeatureFlipping: FunctionComponent = () => {
         <input
           className="border !rounded-t !border-b !border-b-gray-600 !bg-white !py-2 !px-4 text-sm w-64"
           onChange={(e) => setRecherche(e.target.value)}
+          aria-label="Rechercher un feature flip"
           placeholder="Rechercher un feature flip..."
           type="text"
           value={recherche}
