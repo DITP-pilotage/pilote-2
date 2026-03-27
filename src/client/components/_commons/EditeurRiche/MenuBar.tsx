@@ -543,11 +543,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
           editor.chain().focus().insertAccordion().run();
         }}
         onInsererCallout={(color) => {
-          editor
-            .chain()
-            .focus()
-            .insertCallout({ color: color as "info" })
-            .run();
+          editor.chain().focus().insertCallout({ color }).run();
         }}
         onOpenChange={setModaleComposant}
         open={modaleComposant}

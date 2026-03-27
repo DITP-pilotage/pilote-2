@@ -1,19 +1,23 @@
 import { useState } from "react";
 import { Modale } from "@/client/components/shared/Modale";
-import { Callout } from "@/client/components/shared/Callout";
+import { Callout, CalloutColor } from "@/client/components/shared/Callout";
 import { Accordion } from "@/client/components/shared/Accordion";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
 import { ErrorWarningIcon } from "@/components/_commons/Icones/ErrorWarningIcon";
 
-const CALLOUT_VARIANTES = [
+const CALLOUT_VARIANTES: readonly {
+  valeur: CalloutColor;
+  label: string;
+  icone: typeof InformationPleineIcon;
+}[] = [
   { valeur: "info", label: "Info", icone: InformationPleineIcon },
   { valeur: "success", label: "Succès", icone: InformationPleineIcon },
   { valeur: "warning", label: "Attention", icone: WarningIcon },
   { valeur: "error", label: "Erreur", icone: ErrorWarningIcon },
   { valeur: "blue", label: "Bleu", icone: InformationPleineIcon },
   { valeur: "moutarde", label: "Moutarde", icone: WarningIcon },
-] as const;
+];
 
 export const ModaleInsertionComposant = ({
   open,
@@ -24,11 +28,11 @@ export const ModaleInsertionComposant = ({
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onInsererCallout: (color: string) => void;
+  onInsererCallout: (color: CalloutColor) => void;
   onInsererAccordion: () => void;
   composantsDisponibles: { callout: boolean; accordion: boolean };
 }) => {
-  const [calloutColor, setCalloutColor] = useState("info");
+  const [calloutColor, setCalloutColor] = useState<CalloutColor>("info");
 
   const varianteCallout = CALLOUT_VARIANTES.find(
     (variante) => variante.valeur === calloutColor,
@@ -64,7 +68,7 @@ export const ModaleInsertionComposant = ({
                 </button>
               ))}
             </div>
-            <Callout.Root color={calloutColor as "info"}>
+            <Callout.Root color={calloutColor}>
               <Callout.Icon icone={varianteCallout?.icone} />
               <Callout.Text>Aperçu du callout</Callout.Text>
             </Callout.Root>

@@ -1,5 +1,5 @@
 import { FunctionComponent } from "react";
-import { NoeudArbre } from "./types";
+import { NoeudArbre, aDesModificationsNonPubliees } from "./types";
 
 const IndicateurSelection: FunctionComponent<{
   estSelectionne: boolean;
@@ -18,10 +18,7 @@ const IndicateurSelection: FunctionComponent<{
 
 const BadgesStatut: FunctionComponent<{ noeud: NoeudArbre }> = ({ noeud }) => {
   const estBrouillon = !noeud.estPublie;
-  const aModifsNonPubliees =
-    noeud.estPublie &&
-    (noeud.titreBrouillon !== noeud.titre ||
-      noeud.contenuBrouillon !== noeud.contenu);
+  const aModifsNonPubliees = aDesModificationsNonPubliees(noeud);
 
   return (
     <div className="flex gap-1 shrink-0 ml-auto">

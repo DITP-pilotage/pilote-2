@@ -31,6 +31,11 @@ function renderNode(node: Node): ReactNode {
   if (node.nodeType !== Node.ELEMENT_NODE) return null;
 
   const element = node as Element;
+
+  if (element.tagName === "BR") {
+    return renderBr(node);
+  }
+
   const dataType = element.getAttribute("data-type");
 
   if (dataType === "callout") {
@@ -106,16 +111,54 @@ function renderNode(node: Node): ReactNode {
   return createElement(tag, props, ...children);
 }
 
+const estDernierEnfantSignificatif = (node: Node): boolean => {
+  let suivant = node.nextSibling;
+  while (suivant) {
+    if (
+      suivant.nodeType === Node.ELEMENT_NODE ||
+      (suivant.nodeType === Node.TEXT_NODE &&
+        suivant.textContent?.trim() !== "")
+    ) {
+      return false;
+    }
+    suivant = suivant.nextSibling;
+  }
+  return true;
+};
+
+const BLOCS_AVEC_BR_FINAL = new Set([
+  "P",
+  "H1",
+  "H2",
+  "H3",
+  "H4",
+  "H5",
+  "H6",
+  "LI",
+  "DIV",
+  "BLOCKQUOTE",
+]);
+
+function renderBr(node: Node): ReactNode {
+  const parent = node.parentElement;
+  if (
+    parent &&
+    BLOCS_AVEC_BR_FINAL.has(parent.tagName) &&
+    estDernierEnfantSignificatif(node)
+  ) {
+    return (
+      <>
+        <br />
+        <br />
+      </>
+    );
+  }
+  return <br />;
+}
+
 export const RenduContenuHtml = ({ html }: { html: string }) => {
   if (!html) return null;
 
-  const htmlAvecBreaksVisibles = html.replace(
-    /<br\s*\/?>(\s*<\/(?:p|h[1-6]|li|div|blockquote)>)/gi,
-    "<br><br>$1",
-  );
-  const doc = new DOMParser().parseFromString(
-    htmlAvecBreaksVisibles,
-    "text/html",
-  );
+  const doc = new DOMParser().parseFromString(html, "text/html");
   return <>{renderChildren(doc.body)}</>;
 };
