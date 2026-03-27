@@ -118,6 +118,13 @@ function renderNode(node: Node): ReactNode {
 export const RenduContenuHtml = ({ html }: { html: string }) => {
   if (!html) return null;
 
-  const doc = new DOMParser().parseFromString(html, "text/html");
+  const htmlAvecBreaksVisibles = html.replace(
+    /<br\s*\/?>(\s*<\/(?:p|h[1-6]|li|div|blockquote)>)/gi,
+    "<br><br>$1",
+  );
+  const doc = new DOMParser().parseFromString(
+    htmlAvecBreaksVisibles,
+    "text/html",
+  );
   return <>{renderChildren(doc.body)}</>;
 };
