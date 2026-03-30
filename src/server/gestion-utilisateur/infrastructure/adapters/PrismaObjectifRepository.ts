@@ -23,28 +23,26 @@ export class PrismaObjectifRepository implements ObjectifRepository {
     });
 
     if (auteurAnonyme) {
-      await Promise.all([
-        this.prisma.objectif.updateMany({
-          where: {
-            auteur_modification_id: {
-              in: auteursAAnonymiserIds,
-            },
+      await this.prisma.objectif.updateMany({
+        where: {
+          auteur_modification_id: {
+            in: auteursAAnonymiserIds,
           },
-          data: {
-            auteur_modification_id: auteurAnonyme.id,
+        },
+        data: {
+          auteur_modification_id: auteurAnonyme.id,
+        },
+      });
+      await this.prisma.objectif.updateMany({
+        where: {
+          auteur_creation_id: {
+            in: auteursAAnonymiserIds,
           },
-        }),
-        this.prisma.objectif.updateMany({
-          where: {
-            auteur_creation_id: {
-              in: auteursAAnonymiserIds,
-            },
-          },
-          data: {
-            auteur_creation_id: auteurAnonyme.id,
-          },
-        }),
-      ]);
+        },
+        data: {
+          auteur_creation_id: auteurAnonyme.id,
+        },
+      });
     }
   }
 }

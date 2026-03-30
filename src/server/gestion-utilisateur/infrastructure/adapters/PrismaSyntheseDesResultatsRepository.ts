@@ -23,28 +23,26 @@ export class PrismaSyntheseDesResultatsRepository implements SyntheseDesResultat
     });
 
     if (auteurAnonyme) {
-      await Promise.all([
-        this.prisma.synthese_des_resultats.updateMany({
-          where: {
-            auteur_creation_id: {
-              in: auteursAAnonymiserIds,
-            },
+      await this.prisma.synthese_des_resultats.updateMany({
+        where: {
+          auteur_creation_id: {
+            in: auteursAAnonymiserIds,
           },
-          data: {
-            auteur_creation_id: auteurAnonyme.id,
+        },
+        data: {
+          auteur_creation_id: auteurAnonyme.id,
+        },
+      });
+      await this.prisma.synthese_des_resultats.updateMany({
+        where: {
+          auteur_modification_id: {
+            in: auteursAAnonymiserIds,
           },
-        }),
-        this.prisma.synthese_des_resultats.updateMany({
-          where: {
-            auteur_modification_id: {
-              in: auteursAAnonymiserIds,
-            },
-          },
-          data: {
-            auteur_modification_id: auteurAnonyme.id,
-          },
-        }),
-      ]);
+        },
+        data: {
+          auteur_modification_id: auteurAnonyme.id,
+        },
+      });
     }
   }
 }

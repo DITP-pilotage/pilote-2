@@ -23,28 +23,26 @@ export class PrismaDecisionStrategiqueRepository implements DecisionStrategiqueR
     });
 
     if (auteurAnonyme) {
-      await Promise.all([
-        this.prisma.decision_strategique.updateMany({
-          where: {
-            auteur_modification_id: {
-              in: auteursAAnonymiserIds,
-            },
+      await this.prisma.decision_strategique.updateMany({
+        where: {
+          auteur_modification_id: {
+            in: auteursAAnonymiserIds,
           },
-          data: {
-            auteur_modification_id: auteurAnonyme.id,
+        },
+        data: {
+          auteur_modification_id: auteurAnonyme.id,
+        },
+      });
+      await this.prisma.decision_strategique.updateMany({
+        where: {
+          auteur_creation_id: {
+            in: auteursAAnonymiserIds,
           },
-        }),
-        this.prisma.decision_strategique.updateMany({
-          where: {
-            auteur_creation_id: {
-              in: auteursAAnonymiserIds,
-            },
-          },
-          data: {
-            auteur_creation_id: auteurAnonyme.id,
-          },
-        }),
-      ]);
+        },
+        data: {
+          auteur_creation_id: auteurAnonyme.id,
+        },
+      });
     }
   }
 }

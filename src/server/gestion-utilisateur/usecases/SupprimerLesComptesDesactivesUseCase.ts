@@ -94,36 +94,34 @@ export class SupprimerLesComptesDesactivesUseCase {
     for (const utilisateur of utilisateursASupprimer) {
       try {
         await this.transaction.run(async () => {
-          await Promise.all([
-            this.commentaireRepository.anonymiserAuteurs(
-              [utilisateur.id],
-              EMAIL_AUTEUR_REMPLACEMENT,
-            ),
-            this.syntheseDesResultatsRepository.anonymiserAuteurs(
-              [utilisateur.id],
-              EMAIL_AUTEUR_REMPLACEMENT,
-            ),
-            this.decisionStrategiqueRepository.anonymiserAuteurs(
-              [utilisateur.id],
-              EMAIL_AUTEUR_REMPLACEMENT,
-            ),
-            this.objectifRepository.anonymiserAuteurs(
-              [utilisateur.id],
-              EMAIL_AUTEUR_REMPLACEMENT,
-            ),
-            this.indicateurTerritoireValeurEvenementRepository.anonymiserAuteurs(
-              [utilisateur.id],
-              EMAIL_AUTEUR_REMPLACEMENT,
-            ),
-            this.historisationModification.anonymiserAuteurs(
-              [utilisateur.id],
-              EMAIL_AUTEUR_REMPLACEMENT,
-            ),
-            this.rapportRepository.anonymiserAuteurs(
-              [utilisateur.email],
-              EMAIL_AUTEUR_REMPLACEMENT,
-            ),
-          ]);
+          await this.commentaireRepository.anonymiserAuteurs(
+            [utilisateur.id],
+            EMAIL_AUTEUR_REMPLACEMENT,
+          );
+          await this.syntheseDesResultatsRepository.anonymiserAuteurs(
+            [utilisateur.id],
+            EMAIL_AUTEUR_REMPLACEMENT,
+          );
+          await this.decisionStrategiqueRepository.anonymiserAuteurs(
+            [utilisateur.id],
+            EMAIL_AUTEUR_REMPLACEMENT,
+          );
+          await this.objectifRepository.anonymiserAuteurs(
+            [utilisateur.id],
+            EMAIL_AUTEUR_REMPLACEMENT,
+          );
+          await this.indicateurTerritoireValeurEvenementRepository.anonymiserAuteurs(
+            [utilisateur.id],
+            EMAIL_AUTEUR_REMPLACEMENT,
+          );
+          await this.historisationModification.anonymiserAuteurs(
+            [utilisateur.id],
+            EMAIL_AUTEUR_REMPLACEMENT,
+          );
+          await this.rapportRepository.anonymiserAuteurs(
+            [utilisateur.email],
+            EMAIL_AUTEUR_REMPLACEMENT,
+          );
 
           await this.utilisateurRepository.anonymiserAuteurs(
             [utilisateur.id],
@@ -131,10 +129,10 @@ export class SupprimerLesComptesDesactivesUseCase {
           );
         });
 
-        await this.utilisateurIAMRepository.supprime(utilisateur.email);
         await this.utilisateurRepository.supprimerListeUtilisateur([
           utilisateur.id,
         ]);
+        await this.utilisateurIAMRepository.supprime(utilisateur.email);
 
         supprimes.push(utilisateur);
       } catch (error) {
