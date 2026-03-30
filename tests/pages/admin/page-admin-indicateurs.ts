@@ -60,7 +60,7 @@ export class PageAdminIndicateurs extends BasePage {
   }
 
   async goto(): Promise<void> {
-    await this.page.goto("/admin/indicateurs");
+    await this.page.goto("/panel-administrateur/indicateurs");
     await this.page
       .getByRole("heading", {
         name: /Gestion des paramètres des indicateurs/,
@@ -110,7 +110,7 @@ export class PageAdminIndicateurs extends BasePage {
       .getByRole("link")
       .first()
       .click();
-    await this.page.waitForURL(`**/admin/indicateurs/${indicateurId}`);
+    await this.page.waitForURL(`**/panel-administrateur/indicateurs/${indicateurId}`);
   }
 
   async expectTitrePage(): Promise<void> {

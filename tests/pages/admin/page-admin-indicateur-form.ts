@@ -54,13 +54,13 @@ export class PageAdminIndicateurForm extends BasePage {
   }
 
   async goto(indicateurId: string): Promise<void> {
-    await this.page.goto(`/admin/indicateurs/${indicateurId}`);
+    await this.page.goto(`/panel-administrateur/indicateurs/${indicateurId}`);
     await this.titreFiche.waitFor({ state: "visible" });
   }
 
   async gotoCreation(indicateurId: string): Promise<void> {
     await this.page.goto(
-      `/admin/indicateurs/${indicateurId}?_action=creer-indicateur`,
+      `/panel-administrateur/indicateurs/${indicateurId}?_action=creer-indicateur`,
     );
     await this.titreFiche.waitFor({ state: "visible" });
   }
@@ -83,7 +83,7 @@ export class PageAdminIndicateurForm extends BasePage {
 
   async clickRetour(): Promise<void> {
     await this.lienRetour.click();
-    await this.page.waitForURL("**/admin/indicateurs");
+    await this.page.waitForURL("**/panel-administrateur/indicateurs");
   }
 
   async ouvrirAccordionParametrages(): Promise<void> {

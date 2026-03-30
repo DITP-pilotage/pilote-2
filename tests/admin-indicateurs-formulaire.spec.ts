@@ -102,7 +102,7 @@ test.describe("Formulaire indicateur — Consultation et modification", () => {
 
     await step("Retour au listing depuis la fiche", async () => {
       await pageForm.clickRetour();
-      await expect(page).toHaveURL(/\/admin\/indicateurs$/);
+      await expect(page).toHaveURL(/\/panel-administrateur\/indicateurs$/);
     });
   });
 });
@@ -439,8 +439,8 @@ test.describe("Formulaire indicateur — Accès refusé", () => {
       "Coordinateur région — accès direct par URL refusé",
       async () => {
         await appActions.loginAs(COORDINATEUR_REGION);
-        await page.goto("/admin/indicateurs/IND-021");
-        await expect(page).not.toHaveURL(/\/admin\/indicateurs\/IND-021/);
+        await page.goto("/panel-administrateur/indicateurs/IND-021");
+        await expect(page).not.toHaveURL(/\/panel-administrateur\/indicateurs\/IND-021/);
       },
     );
 
@@ -448,8 +448,8 @@ test.describe("Formulaire indicateur — Accès refusé", () => {
       "Équipe direction de projet — accès direct par URL refusé",
       async () => {
         await appActions.switchUser(EQUIPE_DIR_PROJET);
-        await page.goto("/admin/indicateurs/IND-021");
-        await expect(page).not.toHaveURL(/\/admin\/indicateurs\/IND-021/);
+        await page.goto("/panel-administrateur/indicateurs/IND-021");
+        await expect(page).not.toHaveURL(/\/panel-administrateur\/indicateurs\/IND-021/);
       },
     );
   });
