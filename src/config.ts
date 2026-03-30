@@ -324,6 +324,12 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_REPARTITION_METEOS_V2",
     },
+    featureFlipAdmin: {
+      format: Boolean,
+      default: false,
+      doc: "Active la lecture des feature flips depuis la DB (gestion_contenu) au lieu des env vars uniquement",
+      env: "FF_FEATURE_FLIP_ADMIN",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",

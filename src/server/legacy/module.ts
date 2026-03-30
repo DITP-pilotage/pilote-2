@@ -58,6 +58,9 @@ import { RecupererTokenAPIInformationUseCase } from "@/server/authentification/u
 import { ListerTokenAPIInformationUseCase } from "@/server/authentification/usecases/ListerTokenAPIInformationUseCase";
 import { RécupérerMessageInformationUseCase } from "@/server/gestion-contenu/usecases/RécupérerMessageInformationUseCase";
 import { ModifierMessageInformationUseCase } from "@/server/gestion-contenu/usecases/ModifierMessageInformationUseCase";
+import { ModifierFeatureFlipUseCase } from "@/server/gestion-contenu/usecases/ModifierFeatureFlipUseCase";
+import { RecupererFeatureFlipsUseCase } from "@/server/gestion-contenu/usecases/RecupererFeatureFlipsUseCase";
+import { RecupererToutesLesVariablesContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererToutesLesVariablesContenuUseCase";
 import { SupprimerTokenAPIUseCase } from "@/server/authentification/usecases/SupprimerTokenAPIUseCase";
 import { UtilisateurAuthentifieJWTService } from "@/server/authentification/infrastructure/adapters/services/UtilisateurAuthentifieJWTService";
 import { CreerTokenAPIUseCase } from "@/server/authentification/usecases/CreerTokenAPIUseCase";
@@ -111,6 +114,9 @@ type LegacyCradle = LegacyExport & {
   listerTokenAPIInformationUseCase: ListerTokenAPIInformationUseCase;
   récupérerMessageInformationUseCase: RécupérerMessageInformationUseCase;
   modifierMessageInformationUseCase: ModifierMessageInformationUseCase;
+  modifierFeatureFlipUseCase: ModifierFeatureFlipUseCase;
+  recupererFeatureFlipsUseCase: RecupererFeatureFlipsUseCase;
+  recupererToutesLesVariablesContenuUseCase: RecupererToutesLesVariablesContenuUseCase;
   supprimerTokenAPIUseCase: SupprimerTokenAPIUseCase;
   utilisateurAuthentifieJWTService: UtilisateurAuthentifieJWTService;
   creerTokenAPIUseCase: CreerTokenAPIUseCase;
@@ -214,6 +220,15 @@ export const legacyModule = defineModule<LegacyExport, LegacyCradle>()({
       ).scoped(),
       modifierMessageInformationUseCase: asModuleClass(
         ModifierMessageInformationUseCase,
+      ).scoped(),
+      modifierFeatureFlipUseCase: asModuleClass(
+        ModifierFeatureFlipUseCase,
+      ).scoped(),
+      recupererFeatureFlipsUseCase: asModuleClass(
+        RecupererFeatureFlipsUseCase,
+      ).scoped(),
+      recupererToutesLesVariablesContenuUseCase: asModuleClass(
+        RecupererToutesLesVariablesContenuUseCase,
       ).scoped(),
       supprimerTokenAPIUseCase: asModuleClass(
         SupprimerTokenAPIUseCase,
