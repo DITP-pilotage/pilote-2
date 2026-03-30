@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
 import Head from "next/head";
 import { GetServerSidePropsContext } from "next";
 import { FunctionComponent } from "react";
@@ -10,6 +9,7 @@ import {
   presenterEnMessageInformationContrat,
 } from "@/server/app/contrats/MessageInformationContrat";
 import { getContainer } from "@/server/dependances";
+import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 
 const NextAdminMessageInformation: FunctionComponent<{
   messageInformation: MessageInformationContrat;
@@ -18,12 +18,14 @@ const NextAdminMessageInformation: FunctionComponent<{
   return (
     <>
       <Head>
-        <title>Message d'information - Pilote</title>
+        <title>Panel Administrateur - Message d&apos;information - PILOTE</title>
       </Head>
-      <PageMessageInformation
-        messageInformation={messageInformation}
-        modificationReussie={modificationReussie}
-      />
+      <NextPanelAdministrateurLayout pageActive="message-information">
+        <PageMessageInformation
+          messageInformation={messageInformation}
+          modificationReussie={modificationReussie}
+        />
+      </NextPanelAdministrateurLayout>
     </>
   );
 };
@@ -33,7 +35,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const { query } = context;
   const session = await auth(context);
   if (!session || !estAutoriséAModifierDesIndicateurs(session.profil)) {
-    throw new Error("Not connected or not authorized ?");
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
   }
 
   const messageInformation = presenterEnMessageInformationContrat(

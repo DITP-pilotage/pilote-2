@@ -15,6 +15,7 @@ import {
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
 import { getContainer } from "@/server/dependances";
 import { InformationHistorisationMetadataIndicateurContrat } from "@/server/parametrage-indicateur/app/InformationDerniereModificationMetadataIndicateurContrat";
+import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 
 export interface NextPageAdminUtilisateurProps {
   indicateur: MetadataParametrageIndicateurContrat;
@@ -123,17 +124,19 @@ const NextPageAdminIndicateur: FunctionComponent<
   return (
     <>
       <Head>
-        <title>Indicateur {indicateur.indicId}- PILOTE</title>
+        <title>Panel Administrateur - Indicateur {indicateur.indicId} - PILOTE</title>
       </Head>
-      <PageIndicateur
-        chantiers={chantiers}
-        creationReussie={creationReussie}
-        estUneCréation={estUneCréation}
-        indicateur={indicateur}
-        informationHistorisationIndicateur={informationHistorisationIndicateur}
-        mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}
-        modificationReussie={modificationReussie}
-      />
+      <NextPanelAdministrateurLayout pageActive="indicateurs">
+        <PageIndicateur
+          chantiers={chantiers}
+          creationReussie={creationReussie}
+          estUneCréation={estUneCréation}
+          indicateur={indicateur}
+          informationHistorisationIndicateur={informationHistorisationIndicateur}
+          mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}
+          modificationReussie={modificationReussie}
+        />
+      </NextPanelAdministrateurLayout>
     </>
   );
 };

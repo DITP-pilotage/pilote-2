@@ -18,21 +18,21 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
     () => [
       {
         label: "Message d'information",
-        href: "/admin/message-information",
+        href: "/panel-administrateur/message-information",
         pageKey: "message-information",
       },
       ...(ffGestionTokenAPI
         ? [
             {
               label: "Token API",
-              href: "/admin/gestion-token-api",
+              href: "/panel-administrateur/gestion-token-api",
               pageKey: "gestion-token-api",
             },
           ]
         : []),
       {
         label: "Indicateurs des chantiers",
-        href: "/admin/indicateurs",
+        href: "/panel-administrateur/indicateurs",
         pageKey: "indicateurs",
       },
       {

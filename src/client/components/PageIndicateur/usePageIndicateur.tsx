@@ -64,7 +64,7 @@ export const usePageIndicateur = (
       onSuccess: () => {
         setEstEnCoursDeModification(false);
         router.push(
-          `/admin/indicateurs/${indicateur.indicId}?_action=modification-reussie`,
+          `/panel-administrateur/indicateurs/${indicateur.indicId}?_action=modification-reussie`,
         );
       },
       onError: (error) => {
@@ -79,7 +79,7 @@ export const usePageIndicateur = (
       onSuccess: () => {
         setEstEnCoursDeModification(false);
         router.push(
-          `/admin/indicateurs/${indicateur.indicId}?_action=creation-reussie`,
+          `/panel-administrateur/indicateurs/${indicateur.indicId}?_action=creation-reussie`,
         );
       },
       onError: (error) => {

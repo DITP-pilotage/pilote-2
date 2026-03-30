@@ -1,4 +1,3 @@
-import "@gouvfr/dsfr/dist/component/sidemenu/sidemenu.min.css";
 import Head from "next/head";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { FunctionComponent } from "react";
@@ -7,6 +6,7 @@ import PageAdminGestionTokenAPI from "@/components/PageAdminGestionTokenAPI/Page
 import { TokenAPIInformationContrat } from "@/server/authentification/app/contrats/TokenAPIInformationContrat";
 import { getContainer } from "@/server/dependances";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
+import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 
 const PROFIL_AUTORISE_A_MODIFIER = new Set([ProfilEnum.DITP_ADMIN]);
 
@@ -25,7 +25,12 @@ export const getServerSideProps: GetServerSideProps<{
     !session ||
     !estAutoriséAModifierLesTokensAPI(session.profil)
   ) {
-    throw new Error("Not connected or not authorized ?");
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
   }
 
   const listeTokenAPIInformation = await getContainer("legacy")
@@ -48,14 +53,14 @@ const NextAdminTokenApi: FunctionComponent<
   return (
     <>
       <Head>
-        <title>Gestion des tokens API - Pilote</title>
+        <title>Panel Administrateur - Gestion des tokens API - PILOTE</title>
       </Head>
-      <div>
+      <NextPanelAdministrateurLayout pageActive="gestion-token-api">
         <PageAdminGestionTokenAPI
           listeTokenAPIInformation={listeTokenAPIInformation}
           suppressionReussie={suppressionReussie}
         />
-      </div>
+      </NextPanelAdministrateurLayout>
     </>
   );
 };

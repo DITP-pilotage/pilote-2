@@ -4,6 +4,7 @@ import { FunctionComponent } from "react";
 import PageAdminIndicateurs from "@/components/PageAdminIndicateurs/PageAdminIndicateurs";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { estAutoriséAModifierDesIndicateurs } from "@/client/utils/indicateur/indicateur";
+import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const redirigerVersPageAccueil = {
@@ -27,9 +28,11 @@ const NextPageIndicateurs: FunctionComponent = () => {
   return (
     <>
       <Head>
-        <title>Gestion des indicateurs - PILOTE</title>
+        <title>Panel Administrateur - Gestion des indicateurs - PILOTE</title>
       </Head>
-      <PageAdminIndicateurs />
+      <NextPanelAdministrateurLayout pageActive="indicateurs">
+        <PageAdminIndicateurs />
+      </NextPanelAdministrateurLayout>
     </>
   );
 };

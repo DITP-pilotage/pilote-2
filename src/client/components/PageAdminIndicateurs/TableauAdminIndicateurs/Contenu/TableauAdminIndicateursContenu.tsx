@@ -27,7 +27,7 @@ const TableauAdminIndicateursContenu: FunctionComponent<
               >
                 <a
                   className="no-underline bg-none"
-                  href={`/admin/indicateurs/${row.original.indicId}`}
+                  href={`/panel-administrateur/indicateurs/${row.original.indicId}`}
                 >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </a>

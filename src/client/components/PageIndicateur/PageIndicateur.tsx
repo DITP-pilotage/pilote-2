@@ -38,7 +38,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
   chantiers,
 }) => {
   const chemin = [
-    { nom: "Gestion des indicateurs", lien: "/admin/indicateurs" },
+    { nom: "Gestion des indicateurs", lien: "/panel-administrateur/indicateurs" },
   ];
 
   const {
@@ -81,7 +81,7 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
                 <Link
                   aria-label="Retour à l'accueil"
                   className="flex items-center gap-2 !text-primary"
-                  href="/admin/indicateurs"
+                  href="/panel-administrateur/indicateurs"
                 >
                   <Icone className="w-4 h-4" icone={ArrowLine3Icon} />
                   Retour
