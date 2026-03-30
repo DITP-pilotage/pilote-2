@@ -1,6 +1,7 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { getPrisma } from "@/server/db/PrismaTransaction";
 import { GetChantiersSignalesQuery } from "@/server/chantiers/infrastructure/queries/GetChantiersSignalesQuery";
 
 describe("GetChantiersSignalesQuery", () => {
@@ -462,6 +463,222 @@ describe("GetChantiersSignalesQuery", () => {
         estEnAlerteAbscenceTauxAvancementDepartemental: 0,
         estEnAlerteMétéoNonRenseignée: 0,
         estEnAlertePossedePropositionsValeurAvancement: 0,
+      });
+    }),
+  );
+
+  it(
+    "compte les PVA depuis les territoires enfants au national",
+    createIntegrationTest(async () => {
+      // Given — PVA = 0 au NAT, mais > 0 sur un DEPT enfant
+      await fixtures.chantierIdentite({
+        id: "CH-001",
+        ministeres: ["MIN-01"],
+      });
+      await fixtures.chantierTerritoire({
+        id: "CH-001",
+        territoire_code: "NAT-FR",
+        code_insee: "FR",
+        maille: "NAT",
+        zone_id: "zone-1",
+        meteo: "SOLEIL",
+        est_applicable: true,
+        nombre_propositions_valeur_actuelle: 0,
+      });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-001",
+        territoire_code: "NAT-FR",
+        code_insee: "FR",
+        maille: "NAT",
+        zone_id: "zone-1",
+        jalon: 2025,
+        taux_avancement: 50,
+      });
+      await fixtures.chantierTerritoire({
+        id: "CH-001",
+        territoire_code: "DEPT-75",
+        code_insee: "75",
+        maille: "DEPT",
+        zone_id: "zone-2",
+        meteo: "SOLEIL",
+        est_applicable: true,
+        nombre_propositions_valeur_actuelle: 3,
+      });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-001",
+        territoire_code: "DEPT-75",
+        code_insee: "75",
+        maille: "DEPT",
+        zone_id: "zone-2",
+        jalon: 2025,
+        taux_avancement: 50,
+      });
+
+      // When
+      const result = await query.execute({
+        chantierIds: ["CH-001"],
+        territoireCode: "NAT-FR",
+        jalonParDefaut: 2025,
+      });
+
+      // Then — PVA compté depuis le DEPT enfant
+      expect(result).toEqual({
+        estEnAlerteÉcart: 0,
+        estEnAlerteBaisse: 0,
+        estEnAlerteTauxAvancementNonCalculé: 0,
+        estEnAlerteAbscenceTauxAvancementDepartemental: 0,
+        estEnAlerteMétéoNonRenseignée: 0,
+        estEnAlertePossedePropositionsValeurAvancement: 1,
+      });
+    }),
+  );
+
+  it(
+    "détecte l'absence de taux d'avancement départemental au national",
+    createIntegrationTest(async () => {
+      // Given — cible_attendue = true, DEPT applicables mais taux_avancement = null
+      await fixtures.chantierIdentite({
+        id: "CH-001",
+        ministeres: ["MIN-01"],
+        cible_attendue: true,
+      });
+      await fixtures.chantierTerritoire({
+        id: "CH-001",
+        territoire_code: "NAT-FR",
+        code_insee: "FR",
+        maille: "NAT",
+        zone_id: "zone-1",
+        meteo: "SOLEIL",
+        est_applicable: true,
+      });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-001",
+        territoire_code: "NAT-FR",
+        code_insee: "FR",
+        maille: "NAT",
+        zone_id: "zone-1",
+        jalon: 2025,
+        taux_avancement: 50,
+      });
+      await fixtures.chantierTerritoire({
+        id: "CH-001",
+        territoire_code: "DEPT-75",
+        code_insee: "75",
+        maille: "DEPT",
+        zone_id: "zone-2",
+        meteo: "SOLEIL",
+        est_applicable: true,
+      });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-001",
+        territoire_code: "DEPT-75",
+        code_insee: "75",
+        maille: "DEPT",
+        zone_id: "zone-2",
+        jalon: 2025,
+        taux_avancement: null,
+      });
+
+      // When
+      const result = await query.execute({
+        chantierIds: ["CH-001"],
+        territoireCode: "NAT-FR",
+        jalonParDefaut: 2025,
+      });
+
+      // Then — absence de taux dept détectée
+      expect(result).toEqual({
+        estEnAlerteÉcart: 0,
+        estEnAlerteBaisse: 0,
+        estEnAlerteTauxAvancementNonCalculé: 0,
+        estEnAlerteAbscenceTauxAvancementDepartemental: 1,
+        estEnAlerteMétéoNonRenseignée: 0,
+        estEnAlertePossedePropositionsValeurAvancement: 0,
+      });
+    }),
+  );
+
+  it(
+    "compte les PVA depuis les territoires enfants au régional",
+    createIntegrationTest(async () => {
+      const prisma = getPrisma();
+
+      // Given — créer le territoire REG avec un DEPT enfant
+      await prisma.territoire.upsert({
+        where: { code: "REG-76" },
+        update: {},
+        create: {
+          code: "REG-76",
+          nom: "Occitanie",
+          nom_affiche: "Occitanie",
+          maille: "REG",
+          code_insee: "76",
+          zone_id: "zone-reg",
+        },
+      });
+      await prisma.territoire.upsert({
+        where: { code: "DEPT-31" },
+        update: { code_parent: "REG-76" },
+        create: {
+          code: "DEPT-31",
+          nom: "Haute-Garonne",
+          nom_affiche: "Haute-Garonne",
+          maille: "DEPT",
+          code_insee: "31",
+          code_parent: "REG-76",
+          zone_id: "zone-dept",
+        },
+      });
+
+      await fixtures.chantierIdentite({
+        id: "CH-001",
+        ministeres: ["MIN-01"],
+      });
+      await fixtures.chantierTerritoire({
+        id: "CH-001",
+        territoire_code: "REG-76",
+        code_insee: "76",
+        maille: "REG",
+        zone_id: "zone-reg",
+        meteo: "SOLEIL",
+        est_applicable: true,
+        nombre_propositions_valeur_actuelle: 0,
+      });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-001",
+        territoire_code: "REG-76",
+        code_insee: "76",
+        maille: "REG",
+        zone_id: "zone-reg",
+        jalon: 2025,
+        taux_avancement: 50,
+      });
+      await fixtures.chantierTerritoire({
+        id: "CH-001",
+        territoire_code: "DEPT-31",
+        code_insee: "31",
+        maille: "DEPT",
+        zone_id: "zone-dept",
+        meteo: "SOLEIL",
+        est_applicable: true,
+        nombre_propositions_valeur_actuelle: 2,
+      });
+
+      // When
+      const result = await query.execute({
+        chantierIds: ["CH-001"],
+        territoireCode: "REG-76",
+        jalonParDefaut: 2025,
+      });
+
+      // Then — PVA compté depuis le DEPT enfant
+      expect(result).toEqual({
+        estEnAlerteÉcart: 0,
+        estEnAlerteBaisse: 0,
+        estEnAlerteTauxAvancementNonCalculé: 0,
+        estEnAlerteAbscenceTauxAvancementDepartemental: 0,
+        estEnAlerteMétéoNonRenseignée: 0,
+        estEnAlertePossedePropositionsValeurAvancement: 1,
       });
     }),
   );

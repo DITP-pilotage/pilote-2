@@ -132,8 +132,8 @@ const TuilesAlertes = ({
     maille === "NAT"
       ? "nationale"
       : maille === "REG"
-        ? "regionale"
-        : "departementale";
+        ? "régionale"
+        : "départementale";
 
   const alertes =
     mailleChantier === "nationale"

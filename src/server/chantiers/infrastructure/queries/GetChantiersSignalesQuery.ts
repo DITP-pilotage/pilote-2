@@ -1,5 +1,6 @@
 import { Inject } from "@/server/chantiers/module";
 import { ChantiersSignalesContrat } from "@/server/chantiers/app/contrats/ChantiersSignalesContrat";
+import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 
 export class GetChantiersSignalesQuery {
   constructor(private readonly deps: Inject<"prisma">) {}
@@ -43,11 +44,7 @@ export class GetChantiersSignalesQuery {
       },
     });
 
-    const maille = params.territoireCode.startsWith("NAT")
-      ? "NAT"
-      : params.territoireCode.startsWith("REG")
-        ? "REG"
-        : "DEPT";
+    const { maille } = territoireCodeVersMailleCodeInsee(params.territoireCode);
 
     const chantierIdsApplicables = chantierTerritoires.map((ct) => ct.id);
 
@@ -58,6 +55,7 @@ export class GetChantiersSignalesQuery {
         where: {
           id: { in: chantierIdsApplicables },
           maille: { in: ["REG", "DEPT"] },
+          est_applicable: true,
           nombre_propositions_valeur_actuelle: { gt: 0 },
         },
         select: { id: true },
@@ -73,6 +71,7 @@ export class GetChantiersSignalesQuery {
         where: {
           id: { in: chantierIdsApplicables },
           territoire_code: { in: [params.territoireCode, ...codesEnfants] },
+          est_applicable: true,
           nombre_propositions_valeur_actuelle: { gt: 0 },
         },
         select: { id: true },
@@ -83,16 +82,19 @@ export class GetChantiersSignalesQuery {
     // Absence taux avancement départemental (uniquement pertinent au national)
     let absenceTauxDeptCount = 0;
     if (maille === "NAT") {
-      for (const ct of chantierTerritoires) {
-        if (!ct.chantier_identite.cible_attendue) continue;
+      const chantierIdsCibleAttendue = chantierTerritoires
+        .filter((ct) => ct.chantier_identite.cible_attendue)
+        .map((ct) => ct.id);
 
+      if (chantierIdsCibleAttendue.length > 0) {
         const deptApplicables = await prisma.chantier_territoire.findMany({
           where: {
-            id: ct.id,
+            id: { in: chantierIdsCibleAttendue },
             maille: "DEPT",
             est_applicable: true,
           },
           select: {
+            id: true,
             chantier_territoire_jalon: {
               where: { jalon: params.jalonParDefaut },
               select: { taux_avancement: true },
@@ -100,16 +102,25 @@ export class GetChantiersSignalesQuery {
           },
         });
 
-        if (deptApplicables.length === 0) continue;
-
-        const aUnTaux = deptApplicables.some((dept) =>
-          dept.chantier_territoire_jalon.some(
-            (jalon) => jalon.taux_avancement !== null,
-          ),
+        const chantiersAvecTaux = new Set(
+          deptApplicables
+            .filter((dept) =>
+              dept.chantier_territoire_jalon.some(
+                (jalon) => jalon.taux_avancement !== null,
+              ),
+            )
+            .map((dept) => dept.id),
         );
 
-        if (!aUnTaux) {
-          absenceTauxDeptCount++;
+        const chantiersAvecDept = new Set(
+          deptApplicables.map((dept) => dept.id),
+        );
+
+        for (const chantierId of chantierIdsCibleAttendue) {
+          if (!chantiersAvecDept.has(chantierId)) continue;
+          if (!chantiersAvecTaux.has(chantierId)) {
+            absenceTauxDeptCount++;
+          }
         }
       }
     }
