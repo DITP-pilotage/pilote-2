@@ -661,4 +661,39 @@ export const fixtures = {
       },
     });
   },
+
+  async historisationModification(
+    overrides: Partial<Prisma.historisation_modificationUncheckedCreateInput> & {
+      id_auteur: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.historisation_modification.create({
+      data: {
+        id: randomUUID(),
+        id_objet_modifie: "",
+        type_de_modification: "creation",
+        date_de_modification: "",
+        table_modifie_id: "metadata_indicateurs",
+        ...overrides,
+      },
+    });
+  },
+
+  async rapportImportMesureIndicateur(
+    overrides: Partial<Prisma.rapport_import_mesure_indicateurUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const utilisateur = overrides.utilisateurEmail
+      ? { email: overrides.utilisateurEmail }
+      : await fixtures.utilisateur();
+    return prisma.rapport_import_mesure_indicateur.create({
+      data: {
+        id: randomUUID(),
+        utilisateurEmail: utilisateur.email,
+        date_creation: new Date(),
+        ...overrides,
+      },
+    });
+  },
 };

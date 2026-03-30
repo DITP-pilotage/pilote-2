@@ -2,7 +2,7 @@ import {
   historisation_modification as HistorisationModificationModel,
   Prisma,
 } from "@prisma/client";
-import { prisma } from "@/server/db/prisma";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { HistorisationModification } from "@/server/domain/historisationModification/HistorisationModification";
 import { HistorisationModificationRepository } from "@/server/domain/historisationModification/HistorisationModificationRepository";
 import { HistorisationModificationDisponible } from "@/server/infrastructure/accès_données/historisationModification/HistorisationModificationDisponible";
@@ -26,6 +26,16 @@ const convertirEnModel = <K extends keyof HistorisationModificationDisponible>(
 };
 
 export class PrismaHistorisationModificationRepository implements HistorisationModificationRepository {
+  private prismaClient: PrismaPilote;
+
+  constructor({ prisma }: { prisma: PrismaPilote }) {
+    this.prismaClient = prisma;
+  }
+
+  get prisma() {
+    return this.prismaClient.getInstance();
+  }
+
   async sauvegarderModificationHistorisation<
     K extends keyof HistorisationModificationDisponible,
   >(historisationModification: HistorisationModification<K>) {
@@ -33,7 +43,7 @@ export class PrismaHistorisationModificationRepository implements HistorisationM
       historisationModification,
     );
 
-    await prisma.historisation_modification.create({
+    await this.prisma.historisation_modification.create({
       data: {
         ...historisationModificationModel,
         ancienne_valeur:
@@ -50,14 +60,14 @@ export class PrismaHistorisationModificationRepository implements HistorisationM
     auteursAAnonymiserIds: string[],
     emailAuteurRemplacement: string,
   ): Promise<void> {
-    const auteurAnonyme = await prisma.utilisateur.findFirst({
+    const auteurAnonyme = await this.prisma.utilisateur.findFirst({
       where: {
         email: emailAuteurRemplacement,
       },
     });
 
     if (auteurAnonyme) {
-      await prisma.historisation_modification.updateMany({
+      await this.prisma.historisation_modification.updateMany({
         where: {
           id_auteur: {
             in: auteursAAnonymiserIds,

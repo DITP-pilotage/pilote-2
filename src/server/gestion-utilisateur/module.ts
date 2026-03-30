@@ -42,6 +42,8 @@ import { PrismaRapportRepository } from "./infrastructure/adapters/PrismaRapport
 import { PrismaSyntheseDesResultatsRepository } from "./infrastructure/adapters/PrismaSyntheseDesResultatsRepository";
 import { SupprimerLesComptesDesactivesUseCase } from "./usecases/SupprimerLesComptesDesactivesUseCase";
 import { RecupererLaListeDesInfomrationsChantiersUse } from "./usecases/RecupererLaListeDesInfomrationsChantiersUse";
+import { IndicateurTerritoireValeurEvenementRepository } from "./domain/ports/IndicateurTerritoireValeurEvenementRepository";
+import { PrismaIndicateurTerritoireValeurEvenementRepository } from "./infrastructure/adapters/PrismaIndicateurTerritoireValeurEvenementRepository";
 import { ContactInfoLettresService } from "./domain/ports/ContactInfoLettresService";
 import { BrevoContactInfoLettresService } from "./infrastructure/adapters/BrevoContactInfoLettresService";
 import CréerOuMettreÀJourUnUtilisateurUseCase from "./usecases/CréerOuMettreÀJourUnUtilisateurUseCase";
@@ -80,6 +82,7 @@ type GestionUtilisateurCradle = GestionUtilisateurExports & {
   objectifRepository: ObjectifRepository;
   rapportRepository: RapportRepository;
   syntheseDesResultatsRepository: SyntheseDesResultatsRepository;
+  indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
   historisationModification: HistorisationModificationRepository;
   supprimerLesComptesDesactivesUseCase: SupprimerLesComptesDesactivesUseCase;
   recupererChantiersSynthetisesUseCase: RecupererChantiersSynthetisesUseCase;
@@ -170,6 +173,9 @@ export const gestionUtilisateurModule = defineModule<
       rapportRepository: asModuleClass(PrismaRapportRepository),
       syntheseDesResultatsRepository: asModuleClass(
         PrismaSyntheseDesResultatsRepository,
+      ),
+      indicateurTerritoireValeurEvenementRepository: asModuleClass(
+        PrismaIndicateurTerritoireValeurEvenementRepository,
       ),
       supprimerLesComptesDesactivesUseCase: asModuleClass(
         SupprimerLesComptesDesactivesUseCase,
