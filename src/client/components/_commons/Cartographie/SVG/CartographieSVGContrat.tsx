@@ -1286,14 +1286,14 @@ const createSvgMap = (contenuSVG: SVGG) => {
   [...(contenuSVG.polygon ? [contenuSVG.polygon] : [])]
     .flat()
     .forEach((polygon) => {
-      svgMap.set(polygon["attr-territoire-code"], (props) => (
-        <polygon points={polygon["attr-points"]} {...props} />
+      svgMap.set(polygon["attr-territoire-code"], ({ key, ...props }) => (
+        <polygon key={key} points={polygon["attr-points"]} {...props} />
       ));
     });
 
   [...(contenuSVG.path ? [contenuSVG.path] : [])].flat().forEach((path) => {
-    svgMap.set(path["attr-territoire-code"], (props) => (
-      <path d={path["attr-d"]} {...props} />
+    svgMap.set(path["attr-territoire-code"], ({ key, ...props }) => (
+      <path key={key} d={path["attr-d"]} {...props} />
     ));
   });
 
