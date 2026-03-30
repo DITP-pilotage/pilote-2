@@ -110,7 +110,9 @@ export class PageAdminIndicateurs extends BasePage {
       .getByRole("link")
       .first()
       .click();
-    await this.page.waitForURL(`**/panel-administrateur/indicateurs/${indicateurId}`);
+    await this.page.waitForURL(
+      `**/panel-administrateur/indicateurs/${indicateurId}`,
+    );
   }
 
   async expectTitrePage(): Promise<void> {

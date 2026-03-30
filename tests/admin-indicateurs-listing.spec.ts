@@ -94,7 +94,9 @@ test.describe("Listing des indicateurs — Admin", () => {
       await pageIndicateurs.allerPage(1);
       await pageIndicateurs.rechercherIndicateur("IND-021");
       await pageIndicateurs.clickIndicateurParId("IND-021");
-      await expect(page).toHaveURL(/\/panel-administrateur\/indicateurs\/IND-021/);
+      await expect(page).toHaveURL(
+        /\/panel-administrateur\/indicateurs\/IND-021/,
+      );
     });
   });
 

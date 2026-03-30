@@ -124,7 +124,9 @@ const NextPageAdminIndicateur: FunctionComponent<
   return (
     <>
       <Head>
-        <title>Panel Administrateur - Indicateur {indicateur.indicId} - PILOTE</title>
+        <title>
+          Panel Administrateur - Indicateur {indicateur.indicId} - PILOTE
+        </title>
       </Head>
       <NextPanelAdministrateurLayout pageActive="indicateurs">
         <PageIndicateur
@@ -132,7 +134,9 @@ const NextPageAdminIndicateur: FunctionComponent<
           creationReussie={creationReussie}
           estUneCréation={estUneCréation}
           indicateur={indicateur}
-          informationHistorisationIndicateur={informationHistorisationIndicateur}
+          informationHistorisationIndicateur={
+            informationHistorisationIndicateur
+          }
           mapInformationMetadataIndicateur={mapInformationMetadataIndicateur}
           modificationReussie={modificationReussie}
         />

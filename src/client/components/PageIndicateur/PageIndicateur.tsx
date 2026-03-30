@@ -38,7 +38,10 @@ const PageIndicateur: FunctionComponent<PageIndicateurProps> = ({
   chantiers,
 }) => {
   const chemin = [
-    { nom: "Gestion des indicateurs", lien: "/panel-administrateur/indicateurs" },
+    {
+      nom: "Gestion des indicateurs",
+      lien: "/panel-administrateur/indicateurs",
+    },
   ];
 
   const {

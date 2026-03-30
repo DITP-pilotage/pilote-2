@@ -18,7 +18,9 @@ const NextAdminMessageInformation: FunctionComponent<{
   return (
     <>
       <Head>
-        <title>Panel Administrateur - Message d&apos;information - PILOTE</title>
+        <title>
+          Panel Administrateur - Message d&apos;information - PILOTE
+        </title>
       </Head>
       <NextPanelAdministrateurLayout pageActive="message-information">
         <PageMessageInformation

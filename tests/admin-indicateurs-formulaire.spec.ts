@@ -440,7 +440,9 @@ test.describe("Formulaire indicateur — Accès refusé", () => {
       async () => {
         await appActions.loginAs(COORDINATEUR_REGION);
         await page.goto("/panel-administrateur/indicateurs/IND-021");
-        await expect(page).not.toHaveURL(/\/panel-administrateur\/indicateurs\/IND-021/);
+        await expect(page).not.toHaveURL(
+          /\/panel-administrateur\/indicateurs\/IND-021/,
+        );
       },
     );
 
@@ -449,7 +451,9 @@ test.describe("Formulaire indicateur — Accès refusé", () => {
       async () => {
         await appActions.switchUser(EQUIPE_DIR_PROJET);
         await page.goto("/panel-administrateur/indicateurs/IND-021");
-        await expect(page).not.toHaveURL(/\/panel-administrateur\/indicateurs\/IND-021/);
+        await expect(page).not.toHaveURL(
+          /\/panel-administrateur\/indicateurs\/IND-021/,
+        );
       },
     );
   });

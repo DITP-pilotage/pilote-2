@@ -45,7 +45,9 @@ export const useGestionTokenAPI = () => {
   const mutationSupprimerTokenAPI =
     api.gestionTokenAPI.supprimerTokenAPI.useMutation({
       onSuccess: () => {
-        router.push("/panel-administrateur/gestion-token-api?_action=suppression-reussie");
+        router.push(
+          "/panel-administrateur/gestion-token-api?_action=suppression-reussie",
+        );
       },
       onError: (error) => {
         if (error.data?.code === "INTERNAL_SERVER_ERROR") {

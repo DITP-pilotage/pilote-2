@@ -45,7 +45,9 @@ export const useMessageInformation = ({
           router.reload();
         } else {
           router
-            .push("/panel-administrateur/message-information?_action=modification-reussie")
+            .push(
+              "/panel-administrateur/message-information?_action=modification-reussie",
+            )
             .then(() => router.reload());
         }
       },
