@@ -94,7 +94,9 @@ test.describe("Listing des indicateurs — Admin", () => {
       await pageIndicateurs.allerPage(1);
       await pageIndicateurs.rechercherIndicateur("IND-021");
       await pageIndicateurs.clickIndicateurParId("IND-021");
-      await expect(page).toHaveURL(/\/admin\/indicateurs\/IND-021/);
+      await expect(page).toHaveURL(
+        /\/panel-administrateur\/indicateurs\/IND-021/,
+      );
     });
   });
 
@@ -110,15 +112,15 @@ test.describe("Listing des indicateurs — Admin", () => {
     await test.step("Coordinateur région — pas de lien navbar ni d'accès par URL", async () => {
       await appActions.loginAs(COORDINATEUR_REGION);
       await pageIndicateurs.expectLienIndicateursDesChantiersNonVisible();
-      await page.goto("/admin/indicateurs");
-      await expect(page).not.toHaveURL(/\/admin\/indicateurs/);
+      await page.goto("/panel-administrateur/indicateurs");
+      await expect(page).not.toHaveURL(/\/panel-administrateur\/indicateurs/);
     });
 
     await test.step("Équipe direction de projet — pas de lien navbar ni d'accès par URL", async () => {
       await appActions.switchUser(EQUIPE_DIR_PROJET);
       await pageIndicateurs.expectLienIndicateursDesChantiersNonVisible();
-      await page.goto("/admin/indicateurs");
-      await expect(page).not.toHaveURL(/\/admin\/indicateurs/);
+      await page.goto("/panel-administrateur/indicateurs");
+      await expect(page).not.toHaveURL(/\/panel-administrateur\/indicateurs/);
     });
   });
 });
