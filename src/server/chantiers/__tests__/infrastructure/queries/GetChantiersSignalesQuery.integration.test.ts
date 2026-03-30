@@ -339,6 +339,7 @@ describe("GetChantiersSignalesQuery", () => {
         zone_id: "zone-2",
         jalon: 2025,
         ecart: -5,
+        taux_avancement: 50,
       });
 
       // When — on demande uniquement NAT-FR
