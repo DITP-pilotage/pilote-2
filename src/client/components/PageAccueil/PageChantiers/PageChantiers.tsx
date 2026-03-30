@@ -206,12 +206,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 />
               </Bloc>
             </section>
-            {featureRepartitionMeteosV2 ? (
-              <WidgetRepartitionMeteos
-                chantierIds={chantierIds}
-                territoireCode={territoireCode}
-              />
-            ) : null}
           </div>
           <div className="fr-col-12 fr-col-lg-5 fr-col-xl-6 fr-pl-xl-1w">
             <Bloc>
@@ -282,7 +276,13 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
           </div>
         )}
         {featureChantiersSignalesV2 ? (
-          <div className="fr-pt-2w fr-px-2w fr-px-md-0">
+          <div className="fr-pt-2w fr-px-2w fr-px-md-0 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {featureRepartitionMeteosV2 ? (
+              <WidgetRepartitionMeteos
+                chantierIds={chantierIds}
+                territoireCode={territoireCode}
+              />
+            ) : null}
             <WidgetChantiersSignales
               chantierIds={chantierIdsSansFiltrageAlertes}
               jalonParDefaut={jalonParDefaut}

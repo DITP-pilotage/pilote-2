@@ -67,8 +67,11 @@ export const WidgetChantiersSignales = ({
   jalonParDefaut: number;
 }) => {
   return (
-    <section className="max-w-fit">
-      <Bloc contenuClassesSupplémentaires="fr-py-2w fr-px-3w">
+    <section className="h-full">
+      <Bloc
+        className="h-full"
+        contenuClassesSupplémentaires="fr-py-2w fr-px-3w"
+      >
         <TitreInfobulleConteneur className="justify-between fr-mb-2w">
           <div className="flex items-center gap-2">
             <BadgeIcône type="warning" />
@@ -138,7 +141,7 @@ const TuilesAlertes = ({
       : alertesTerritoriales(mailleChantier);
 
   return (
-    <ul className="flex flex-col gap-3 list-none p-0 m-0 max-w-[360px]">
+    <ul className="list-none p-0 m-0 flex flex-col gap-3 max-w-[360px] sm:grid sm:grid-cols-2 sm:max-w-none">
       {alertes.map((alerte) => (
         <li key={alerte.nomCritère}>
           <TuileAlerte
@@ -186,7 +189,7 @@ const TuileAlerte = ({
   return (
     <button
       className={clsxm(
-        "flex items-center gap-3 w-full py-4 px-5 border border-dsfr-warning-925 rounded-lg bg-white shadow-lg cursor-pointer transition-colors hover:bg-dsfr-warning-950",
+        "w-full h-full border border-dsfr-warning-925 rounded-lg bg-white shadow-lg cursor-pointer transition-colors hover:bg-dsfr-warning-950 flex items-center gap-3 py-4 px-5 sm:flex-col sm:items-start sm:gap-1",
         {
           "border-dsfr-warning-425 bg-dsfr-warning-950": filtreAlerte,
         },
