@@ -2,15 +2,12 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { keepPreviousData } from "@tanstack/react-query";
-import { $Enums } from "@prisma/client";
 import { Session } from "next-auth";
 import api from "@/server/infrastructure/api/trpc/api";
-import { useCurrentApplication } from "@/client/hooks/useCurrentApplication";
 import { useEnv } from "@/client/hooks/useEnv";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { BoutonContacterEquipePilote } from "@/components/PageAccueil/BoutonContacterEquipePilote";
 import { Utilisateur } from "@/components/_commons/MiseEnPage/EnTete/Utilisateur/Utilisateur";
-import MenuItemGestionContenu from "@/components/_commons/MiseEnPage/Navigation/MenuItemGestionContenu";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 const fermerLaModaleDuMenu = () => {
@@ -22,9 +19,6 @@ const fermerLaModaleDuMenu = () => {
 };
 
 const estAutoriséAParcourirSiIndisponible = (session: Session | null) =>
-  session?.profil === ProfilEnum.DITP_ADMIN;
-
-const estAdministrateur = (session: Session | null) =>
   session?.profil === ProfilEnum.DITP_ADMIN;
 
 export const useNavigation = () => {
@@ -53,8 +47,6 @@ export type LienNavigation = {
 
 export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
   const { data: session } = useSession();
-  const currentApplication = useCurrentApplication();
-
   const router = useRouter();
   const urlActuelle = router.pathname;
 
@@ -138,10 +130,6 @@ export const BaseNavigation = ({ pages }: { pages: LienNavigation[] }) => {
                     </li>
                   ),
               )}
-              {currentApplication === $Enums.application_accessible.PILOTE &&
-              estAdministrateur(session) ? (
-                <MenuItemGestionContenu urlActuelle={urlActuelle} />
-              ) : null}
             </ul>
           ) : null}
         </nav>

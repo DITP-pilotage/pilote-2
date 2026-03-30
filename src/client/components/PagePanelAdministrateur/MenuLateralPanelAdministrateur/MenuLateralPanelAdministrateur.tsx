@@ -1,57 +1,82 @@
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent, useMemo, useState } from "react";
 import Link from "next/link";
+import { useEnv } from "@/client/hooks/useEnv";
 import { clsxm } from "@/utils/clsxm";
 
 interface MenuLateralPanelAdministrateurProps {
   pageActive: string;
 }
 
-const menuItems = [
-  {
-    label: "Paramétrage metadata indicateur",
-    href: "/panel-administrateur/parametrage-metadata-indicateur",
-    pageKey: "parametrage-metadata-indicateur",
-  },
-  {
-    label: "🚧 Paramétrage metadata chantier 🚧",
-    href: "/panel-administrateur/parametrage-metadata-chantier",
-    pageKey: "metadata-chantier",
-  },
-  {
-    label: "Habilitations coordinateurs",
-    href: "/panel-administrateur/habilitations-coordinateur",
-    pageKey: "habilitations-coordinateur",
-  },
-  {
-    label: "Nouveautés",
-    href: "/panel-administrateur/nouveaute",
-    pageKey: "nouveaute",
-  },
-  ...(process.env.NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE === "true"
-    ? [
-        {
-          label: "Centre d'aide",
-          href: "/panel-administrateur/centre-aide",
-          pageKey: "centre-aide",
-        },
-      ]
-    : []),
-  {
-    label: "Albert",
-    href: "/panel-administrateur/albert",
-    pageKey: "albert",
-  },
-  {
-    label: "Feature flipping",
-    href: "/panel-administrateur/feature-flipping",
-    pageKey: "feature-flipping",
-  },
-] as const;
-
 export const MenuLateralPanelAdministrateur: FunctionComponent<
   MenuLateralPanelAdministrateurProps
 > = ({ pageActive }) => {
   const [estReplie, setEstReplie] = useState(false);
+  const ffGestionTokenAPI = useEnv("NEXT_PUBLIC_FF_GESTION_TOKEN_API");
+  const ffCentreAide = useEnv("NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE");
+
+  const menuItems = useMemo(
+    () => [
+      {
+        label: "Message d'information",
+        href: "/admin/message-information",
+        pageKey: "message-information",
+      },
+      ...(ffGestionTokenAPI
+        ? [
+            {
+              label: "Token API",
+              href: "/admin/gestion-token-api",
+              pageKey: "gestion-token-api",
+            },
+          ]
+        : []),
+      {
+        label: "Indicateurs des chantiers",
+        href: "/admin/indicateurs",
+        pageKey: "indicateurs",
+      },
+      {
+        label: "Paramétrage metadata indicateur",
+        href: "/panel-administrateur/parametrage-metadata-indicateur",
+        pageKey: "parametrage-metadata-indicateur",
+      },
+      {
+        label: "🚧 Paramétrage metadata chantier 🚧",
+        href: "/panel-administrateur/parametrage-metadata-chantier",
+        pageKey: "metadata-chantier",
+      },
+      {
+        label: "Habilitations coordinateurs",
+        href: "/panel-administrateur/habilitations-coordinateur",
+        pageKey: "habilitations-coordinateur",
+      },
+      {
+        label: "Nouveautés",
+        href: "/panel-administrateur/nouveaute",
+        pageKey: "nouveaute",
+      },
+      ...(ffCentreAide
+        ? [
+            {
+              label: "Centre d'aide",
+              href: "/panel-administrateur/centre-aide",
+              pageKey: "centre-aide",
+            },
+          ]
+        : []),
+      {
+        label: "Albert",
+        href: "/panel-administrateur/albert",
+        pageKey: "albert",
+      },
+      {
+        label: "Feature flipping",
+        href: "/panel-administrateur/feature-flipping",
+        pageKey: "feature-flipping",
+      },
+    ],
+    [ffGestionTokenAPI, ffCentreAide],
+  );
 
   return (
     <nav
