@@ -47,7 +47,7 @@ export class CreerLesRapportsPropositionsUseCase {
 
     const listeDirecteursDeProjet =
       await this.dependencies.utilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
-        "EQUIPE_DIR_PROJET",
+        ["EQUIPE_DIR_PROJET", "SECRETARIAT_GENERAL"],
         listeChantiersIdsRapport,
       );
 

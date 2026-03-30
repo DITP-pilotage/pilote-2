@@ -428,6 +428,73 @@ describe("CreerLesRapportsPropositionsUseCase", () => {
     });
   });
 
+  it("crée des rapports pour des utilisateurs de profils EQUIPE_DIR_PROJET et SECRETARIAT_GENERAL", async () => {
+    // Given
+    const propositionsParChantier = creerPropositionsParChantier([
+      {
+        chantierId: "CH-001",
+        indicateurId: "IND-001",
+        proposition: {
+          indicateurId: "IND-001",
+          territoireCode: "DEPT-01",
+          dateValeurAvancement: "2026-02-01",
+          valeurAvancementProposee: "75",
+          valeurAvancementReference: "70",
+          nomIndicateur: "Indicateur 1",
+          uniteIndicateur: "%",
+          nomTerritoire: "Ain",
+        },
+      },
+    ]);
+
+    indicateurTerritoireValeurEvenementRepository.recupererLesPropositionsEnCoursParChantierIds.mockResolvedValue(
+      propositionsParChantier,
+    );
+    indicateurRepository.recupererIndicateursNonAJourParChantierId.mockResolvedValue(
+      new Map(),
+    );
+    utilisateurRepository.recupererUtilisateursParProfilEtChantierIds.mockResolvedValue(
+      [
+        Utilisateur.creerUtilisateur({
+          id: "user-dir",
+          email: "directeur@test.com",
+          nom: "Dupont",
+          prenom: "Jean",
+          listeChantiers: ["CH-001"],
+        }),
+        Utilisateur.creerUtilisateur({
+          id: "user-sec",
+          email: "secgeneral@test.com",
+          nom: "Martin",
+          prenom: "Claire",
+          listeChantiers: ["CH-001"],
+        }),
+      ],
+    );
+    chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds.mockResolvedValue(
+      [
+        {
+          id: "CH-001",
+          nom: "Chantier 1",
+          statut: "PUBLIE",
+          conseillerMail: "conseiller@test.com",
+        },
+      ],
+    );
+
+    // When
+    const resultat = await useCase.run();
+
+    // Then
+    expect(
+      rapportPropositionsAvancementRepository.sauvegarder,
+    ).toHaveBeenCalledTimes(2);
+    expect(resultat).toEqual({
+      rapportsCrees: 2,
+      erreursCreation: 0,
+    });
+  });
+
   it("stoppe le script si une erreur survient avant la boucle de création", async () => {
     // Given
     indicateurTerritoireValeurEvenementRepository.recupererLesPropositionsEnCoursParChantierIds.mockRejectedValue(

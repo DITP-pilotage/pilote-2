@@ -4,7 +4,7 @@ import { prisma } from "@/server/db/prisma";
 
 export class PrismaUtilisateurRepository implements UtilisateurRepository {
   async recupererUtilisateursParProfilEtChantierIds(
-    profilCode: string,
+    profilCodes: string[],
     listeChantierIds: string[],
   ): Promise<Utilisateur[]> {
     const chantiers = await prisma.chantier_identite.findMany({
@@ -29,7 +29,7 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
 
     const utilisateurs = await prisma.utilisateur.findMany({
       where: {
-        profilCode: profilCode,
+        profilCode: { in: profilCodes },
         date_desactivation: null,
         habilitation: {
           some: {
