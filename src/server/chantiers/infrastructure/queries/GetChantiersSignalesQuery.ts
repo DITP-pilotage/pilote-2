@@ -1,6 +1,20 @@
 import { Inject } from "@/server/chantiers/module";
 import { ChantiersSignalesContrat } from "@/server/chantiers/app/contrats/ChantiersSignalesContrat";
+import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
+
+type ChantierTerritoireAvecJalon = {
+  id: string;
+  meteo: string | null;
+  tendance: string | null;
+  nombre_propositions_valeur_actuelle: number;
+  maille: string;
+  chantier_identite: { cible_attendue: boolean };
+  chantier_territoire_jalon: {
+    ecart: number | null;
+    taux_avancement: number | null;
+  }[];
+};
 
 export class GetChantiersSignalesQuery {
   constructor(private readonly deps: Inject<"prisma">) {}
@@ -12,17 +26,53 @@ export class GetChantiersSignalesQuery {
   }): Promise<ChantiersSignalesContrat> {
     const prisma = this.deps.prisma.getInstance();
 
-    const baseWhere = {
-      territoire_code: params.territoireCode,
-      est_applicable: true,
-      chantier_identite: {
-        NOT: { ministeres: { isEmpty: true } },
-      },
-      id: { in: params.chantierIds },
-    } as const;
+    const chantierTerritoires = await this.recupererChantierTerritoires(
+      prisma,
+      params,
+    );
 
-    const chantierTerritoires = await prisma.chantier_territoire.findMany({
-      where: baseWhere,
+    const { maille } = territoireCodeVersMailleCodeInsee(params.territoireCode);
+    const chantierIdsApplicables = chantierTerritoires.map((ct) => ct.id);
+
+    const pvaChantierIds = await this.compterPva(
+      prisma,
+      maille,
+      chantierIdsApplicables,
+      params,
+    );
+
+    const absenceTauxDeptCount = await this.compterAbsenceTauxDepartemental(
+      prisma,
+      maille,
+      chantierTerritoires,
+      params.jalonParDefaut,
+    );
+
+    return this.agregerCompteurs(
+      chantierTerritoires,
+      maille,
+      pvaChantierIds,
+      absenceTauxDeptCount,
+    );
+  }
+
+  private async recupererChantierTerritoires(
+    prisma: PilotePrismaClient,
+    params: {
+      chantierIds: string[];
+      territoireCode: string;
+      jalonParDefaut: number;
+    },
+  ) {
+    return prisma.chantier_territoire.findMany({
+      where: {
+        territoire_code: params.territoireCode,
+        est_applicable: true,
+        chantier_identite: {
+          NOT: { ministeres: { isEmpty: true } },
+        },
+        id: { in: params.chantierIds },
+      },
       select: {
         id: true,
         meteo: true,
@@ -30,26 +80,22 @@ export class GetChantiersSignalesQuery {
         nombre_propositions_valeur_actuelle: true,
         maille: true,
         chantier_identite: {
-          select: {
-            cible_attendue: true,
-          },
+          select: { cible_attendue: true },
         },
         chantier_territoire_jalon: {
           where: { jalon: params.jalonParDefaut },
-          select: {
-            ecart: true,
-            taux_avancement: true,
-          },
+          select: { ecart: true, taux_avancement: true },
         },
       },
     });
+  }
 
-    const { maille } = territoireCodeVersMailleCodeInsee(params.territoireCode);
-
-    const chantierIdsApplicables = chantierTerritoires.map((ct) => ct.id);
-
-    // PVA : agréger les territoires enfants (dept+reg pour NAT, dept pour REG, aucun pour DEPT)
-    let pvaChantierIds = new Set<string>();
+  private async compterPva(
+    prisma: PilotePrismaClient,
+    maille: string,
+    chantierIdsApplicables: string[],
+    params: { territoireCode: string },
+  ): Promise<Set<string>> {
     if (maille === "NAT") {
       const enfants = await prisma.chantier_territoire.findMany({
         where: {
@@ -60,8 +106,10 @@ export class GetChantiersSignalesQuery {
         },
         select: { id: true },
       });
-      pvaChantierIds = new Set(enfants.map((e) => e.id));
-    } else if (maille === "REG") {
+      return new Set(enfants.map((e) => e.id));
+    }
+
+    if (maille === "REG") {
       const territoiresEnfants = await prisma.territoire.findMany({
         where: { code_parent: params.territoireCode },
         select: { code: true },
@@ -76,55 +124,67 @@ export class GetChantiersSignalesQuery {
         },
         select: { id: true },
       });
-      pvaChantierIds = new Set(enfants.map((e) => e.id));
+      return new Set(enfants.map((e) => e.id));
     }
 
-    // Absence taux avancement départemental (uniquement pertinent au national)
-    let absenceTauxDeptCount = 0;
-    if (maille === "NAT") {
-      const chantierIdsCibleAttendue = chantierTerritoires
-        .filter((ct) => ct.chantier_identite.cible_attendue)
-        .map((ct) => ct.id);
+    return new Set();
+  }
 
-      if (chantierIdsCibleAttendue.length > 0) {
-        const deptApplicables = await prisma.chantier_territoire.findMany({
-          where: {
-            id: { in: chantierIdsCibleAttendue },
-            maille: "DEPT",
-            est_applicable: true,
-          },
-          select: {
-            id: true,
-            chantier_territoire_jalon: {
-              where: { jalon: params.jalonParDefaut },
-              select: { taux_avancement: true },
-            },
-          },
-        });
+  private async compterAbsenceTauxDepartemental(
+    prisma: PilotePrismaClient,
+    maille: string,
+    chantierTerritoires: ChantierTerritoireAvecJalon[],
+    jalonParDefaut: number,
+  ): Promise<number> {
+    if (maille !== "NAT") return 0;
 
-        const chantiersAvecTaux = new Set(
-          deptApplicables
-            .filter((dept) =>
-              dept.chantier_territoire_jalon.some(
-                (jalon) => jalon.taux_avancement !== null,
-              ),
-            )
-            .map((dept) => dept.id),
-        );
+    const chantierIdsCibleAttendue = chantierTerritoires
+      .filter((ct) => ct.chantier_identite.cible_attendue)
+      .map((ct) => ct.id);
 
-        const chantiersAvecDept = new Set(
-          deptApplicables.map((dept) => dept.id),
-        );
+    if (chantierIdsCibleAttendue.length === 0) return 0;
 
-        for (const chantierId of chantierIdsCibleAttendue) {
-          if (!chantiersAvecDept.has(chantierId)) continue;
-          if (!chantiersAvecTaux.has(chantierId)) {
-            absenceTauxDeptCount++;
-          }
-        }
-      }
+    const deptApplicables = await prisma.chantier_territoire.findMany({
+      where: {
+        id: { in: chantierIdsCibleAttendue },
+        maille: "DEPT",
+        est_applicable: true,
+      },
+      select: {
+        id: true,
+        chantier_territoire_jalon: {
+          where: { jalon: jalonParDefaut },
+          select: { taux_avancement: true },
+        },
+      },
+    });
+
+    const chantiersAvecTaux = new Set(
+      deptApplicables
+        .filter((dept) =>
+          dept.chantier_territoire_jalon.some(
+            (jalon) => jalon.taux_avancement !== null,
+          ),
+        )
+        .map((dept) => dept.id),
+    );
+
+    const chantiersAvecDept = new Set(deptApplicables.map((dept) => dept.id));
+
+    let count = 0;
+    for (const chantierId of chantierIdsCibleAttendue) {
+      if (!chantiersAvecDept.has(chantierId)) continue;
+      if (!chantiersAvecTaux.has(chantierId)) count++;
     }
+    return count;
+  }
 
+  private agregerCompteurs(
+    chantierTerritoires: ChantierTerritoireAvecJalon[],
+    maille: string,
+    pvaChantierIds: Set<string>,
+    absenceTauxDeptCount: number,
+  ): ChantiersSignalesContrat {
     let ecart = 0;
     let baisse = 0;
     let tauxNonCalcule = 0;
