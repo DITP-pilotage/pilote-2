@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useEffect, useMemo, useRef } from "react";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { ArborescenceCentreAide } from "@/components/_commons/CentreAide/ArborescenceCentreAide";
 import { NoeudArbre } from "@/components/_commons/CentreAide/types";
@@ -6,6 +6,24 @@ import { useLectureCentreAide } from "@/components/_commons/CentreAide/useLectur
 
 const estGroupeSansContenu = (noeud: NoeudArbre) =>
   noeud.type === "GROUPE" && noeud.contenu === null;
+
+const filtrerArbrePublie = (noeuds: NoeudArbre[]): NoeudArbre[] => {
+  return noeuds
+    .filter((noeud) => noeud.estPublie && !noeud.estMasque)
+    .map((noeud) => ({
+      ...noeud,
+      enfants: filtrerArbrePublie(noeud.enfants),
+    }));
+};
+
+const trouverPremierePage = (noeuds: NoeudArbre[]): NoeudArbre | undefined => {
+  for (const noeud of noeuds) {
+    if (!estGroupeSansContenu(noeud)) return noeud;
+    const trouvee = trouverPremierePage(noeud.enfants);
+    if (trouvee) return trouvee;
+  }
+  return undefined;
+};
 
 export const PageCentreAidePilote: FunctionComponent = () => {
   const {
@@ -16,6 +34,19 @@ export const PageCentreAidePilote: FunctionComponent = () => {
     estChargement,
   } = useLectureCentreAide();
 
+  const arbrePublie = useMemo(() => filtrerArbrePublie(arbre), [arbre]);
+  const aAutoSelectionne = useRef(false);
+
+  useEffect(() => {
+    if (!estChargement && arbrePublie.length > 0 && !aAutoSelectionne.current) {
+      aAutoSelectionne.current = true;
+      const premiere = trouverPremierePage(arbrePublie);
+      if (premiere) {
+        selectionnerItem(premiere.id);
+      }
+    }
+  }, [estChargement, arbrePublie, selectionnerItem]);
+
   if (estChargement) {
     return <p>Chargement...</p>;
   }
@@ -24,11 +55,14 @@ export const PageCentreAidePilote: FunctionComponent = () => {
     itemSelectionne?.contenu !== null && itemSelectionne?.contenu !== undefined;
 
   return (
-    <main className="px-48 py-4">
-      <div className="flex bg-white border border-gray-200 rounded-lg">
-        <div className="w-[280px] shrink-0 border-r border-gray-200 flex flex-col overflow-hidden">
+    <main className="px-48 md:px-96 py-4">
+      <div className="flex gap-4">
+        <div className="w-[280px] shrink-0 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col overflow-hidden">
+          <h2 className="px-4 pt-4 pb-2 text-base font-bold border-b border-gray-200">
+            Centre d'aide PILOTE
+          </h2>
           <ArborescenceCentreAide
-            arbre={arbre}
+            arbre={arbrePublie}
             estItemDesactive={estGroupeSansContenu}
             itemSelectionneId={itemSelectionneId}
             onSelectionItem={selectionnerItem}
@@ -36,7 +70,7 @@ export const PageCentreAidePilote: FunctionComponent = () => {
         </div>
 
         {itemSelectionne ? (
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 bg-white border border-gray-200 rounded-lg shadow-sm overflow-y-auto p-6">
             <h2 className="text-xl font-bold mb-4">{itemSelectionne.titre}</h2>
             {aContenu ? (
               <div className="[&_p]:mb-0 [&_a]:text-primary [&_h4]:my-2 [&_hr]:!my-2">
@@ -49,7 +83,7 @@ export const PageCentreAidePilote: FunctionComponent = () => {
             )}
           </div>
         ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-400 text-sm">
+          <div className="flex-1 bg-white border border-gray-200 rounded-lg shadow-sm flex items-center justify-center text-gray-400 text-sm">
             Sélectionnez un article pour afficher son contenu.
           </div>
         )}

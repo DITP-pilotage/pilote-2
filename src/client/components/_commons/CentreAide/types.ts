@@ -4,6 +4,17 @@ export type NoeudArbre = ArticleCentreAideContrat & {
   enfants: NoeudArbre[];
 };
 
+export const aDesModificationsNonPubliees = (article: {
+  estPublie: boolean;
+  titreBrouillon: string | null;
+  titre: string;
+  contenuBrouillon: string | null;
+  contenu: string | null;
+}): boolean =>
+  article.estPublie &&
+  (article.titreBrouillon !== article.titre ||
+    article.contenuBrouillon !== article.contenu);
+
 export const construireArbre = (
   articles: ArticleCentreAideContrat[],
 ): NoeudArbre[] => {

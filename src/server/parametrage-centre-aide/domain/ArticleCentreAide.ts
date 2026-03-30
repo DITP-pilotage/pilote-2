@@ -8,11 +8,19 @@ export class ArticleCentreAide {
 
   private _contenu: string | null;
 
+  private _titreBrouillon: string | null;
+
+  private _contenuBrouillon: string | null;
+
   private _type: $Enums.TypeArticleCentreAide;
 
   private _ordre: number;
 
   private _parentId: string | null;
+
+  private _estPublie: boolean;
+
+  private _estMasque: boolean;
 
   private _dateCreation: Date;
 
@@ -22,18 +30,26 @@ export class ArticleCentreAide {
     id: string,
     titre: string,
     contenu: string | null,
+    titreBrouillon: string | null,
+    contenuBrouillon: string | null,
     type: $Enums.TypeArticleCentreAide,
     ordre: number,
     parentId: string | null,
+    estPublie: boolean,
+    estMasque: boolean,
     dateCreation: Date,
     dateModification: Date,
   ) {
     this._id = id;
     this._titre = titre;
     this._contenu = contenu;
+    this._titreBrouillon = titreBrouillon;
+    this._contenuBrouillon = contenuBrouillon;
     this._type = type;
     this._ordre = ordre;
     this._parentId = parentId;
+    this._estPublie = estPublie;
+    this._estMasque = estMasque;
     this._dateCreation = dateCreation;
     this._dateModification = dateModification;
   }
@@ -50,6 +66,14 @@ export class ArticleCentreAide {
     return this._contenu;
   }
 
+  get titreBrouillon(): string | null {
+    return this._titreBrouillon;
+  }
+
+  get contenuBrouillon(): string | null {
+    return this._contenuBrouillon;
+  }
+
   get type(): $Enums.TypeArticleCentreAide {
     return this._type;
   }
@@ -60,6 +84,14 @@ export class ArticleCentreAide {
 
   get parentId(): string | null {
     return this._parentId;
+  }
+
+  get estPublie(): boolean {
+    return this._estPublie;
+  }
+
+  get estMasque(): boolean {
+    return this._estMasque;
   }
 
   get dateCreation(): Date {
@@ -74,18 +106,26 @@ export class ArticleCentreAide {
     id,
     titre,
     contenu,
+    titreBrouillon,
+    contenuBrouillon,
     type,
     ordre,
     parentId,
+    estPublie,
+    estMasque,
     dateCreation,
     dateModification,
   }: {
     id: string;
     titre: string;
     contenu?: string | null;
+    titreBrouillon?: string | null;
+    contenuBrouillon?: string | null;
     type: $Enums.TypeArticleCentreAide;
     ordre: number;
     parentId?: string | null;
+    estPublie?: boolean;
+    estMasque?: boolean;
     dateCreation?: Date;
     dateModification?: Date;
   }): ArticleCentreAide {
@@ -93,9 +133,13 @@ export class ArticleCentreAide {
       id,
       titre,
       contenu ?? null,
+      titreBrouillon ?? null,
+      contenuBrouillon ?? null,
       type,
       ordre,
       parentId ?? null,
+      estPublie ?? false,
+      estMasque ?? false,
       dateCreation ?? new Date(),
       dateModification ?? new Date(),
     );

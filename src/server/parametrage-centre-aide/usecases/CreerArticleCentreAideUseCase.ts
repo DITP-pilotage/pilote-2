@@ -33,11 +33,14 @@ export class CreerArticleCentreAideUseCase {
 
     const article = ArticleCentreAide.creerArticle({
       id,
-      titre,
-      contenu: contenuSanitized,
+      titre: "",
+      contenu: null,
+      titreBrouillon: titre,
+      contenuBrouillon: contenuSanitized,
       type,
       ordre,
       parentId,
+      estPublie: false,
     });
 
     return this.articleCentreAideRepository.creer(article);

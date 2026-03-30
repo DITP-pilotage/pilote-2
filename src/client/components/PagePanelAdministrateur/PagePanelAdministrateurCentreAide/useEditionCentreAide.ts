@@ -1,11 +1,26 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { $Enums } from "@prisma/client";
 import api from "@/server/infrastructure/api/trpc/api";
 import { ArticleCentreAideContrat } from "@/server/parametrage-centre-aide/app/contrats/ArticleCentreAideContrat";
 import { useLectureCentreAide } from "@/components/_commons/CentreAide/useLectureCentreAide";
+import {
+  NoeudArbre,
+  aDesModificationsNonPubliees as calculerModificationsNonPubliees,
+} from "@/components/_commons/CentreAide/types";
 
 export type { NoeudArbre } from "@/components/_commons/CentreAide/types";
+
+const trouverPremierArticle = (
+  noeuds: NoeudArbre[],
+): NoeudArbre | undefined => {
+  for (const noeud of noeuds) {
+    if (noeud.contenuBrouillon !== null || noeud.contenu !== null) return noeud;
+    const trouve = trouverPremierArticle(noeud.enfants);
+    if (trouve) return trouve;
+  }
+  return undefined;
+};
 
 const compterEnfants = (
   parentId: string | null,
@@ -34,14 +49,29 @@ export const useEditionCentreAide = () => {
   const [contenu, setContenu] = useState<string | null>(templateInitial);
   const [type, setType] = useState<$Enums.TypeArticleCentreAide>("PAGE");
 
+  const aAutoSelectionne = useRef(false);
+
+  useEffect(() => {
+    if (!estChargement && arbre.length > 0 && !aAutoSelectionne.current) {
+      aAutoSelectionne.current = true;
+      const premier = trouverPremierArticle(arbre);
+      if (premier) {
+        setItemSelectionneId(premier.id);
+        setTitre(premier.titreBrouillon ?? premier.titre);
+        setContenu(premier.contenuBrouillon ?? premier.contenu);
+        setType(premier.type);
+      }
+    }
+  }, [estChargement, arbre, setItemSelectionneId]);
+
   const selectionnerItem = useCallback(
     (id: string) => {
       const article = articles.find((item) => item.id === id);
       if (!article) return;
 
       setItemSelectionneId(id);
-      setTitre(article.titre);
-      setContenu(article.contenu);
+      setTitre(article.titreBrouillon ?? article.titre);
+      setContenu(article.contenuBrouillon ?? article.contenu);
       setType(article.type);
     },
     [articles, setItemSelectionneId],
@@ -65,7 +95,7 @@ export const useEditionCentreAide = () => {
   const mutationModifier = api.parametrageCentreAide.modifier.useMutation({
     onSuccess: () => {
       refetchListe();
-      toast.success("Article modifié avec succès", {
+      toast.success("Brouillon sauvegardé", {
         duration: 3000,
         position: "top-right",
         richColors: true,
@@ -86,6 +116,40 @@ export const useEditionCentreAide = () => {
       });
     },
   });
+
+  const mutationPublier = api.parametrageCentreAide.publier.useMutation({
+    onSuccess: () => {
+      refetchListe();
+      toast.success("Article publié", {
+        duration: 3000,
+        position: "top-right",
+        richColors: true,
+      });
+    },
+  });
+
+  const mutationDepublier = api.parametrageCentreAide.depublier.useMutation({
+    onSuccess: () => {
+      refetchListe();
+      toast.success("Article dépublié", {
+        duration: 3000,
+        position: "top-right",
+        richColors: true,
+      });
+    },
+  });
+
+  const mutationBasculerVisibilite =
+    api.parametrageCentreAide.basculerVisibilite.useMutation({
+      onSuccess: () => {
+        refetchListe();
+        toast.success("Visibilité modifiée", {
+          duration: 3000,
+          position: "top-right",
+          richColors: true,
+        });
+      },
+    });
 
   const creerGroupe = useCallback(
     (avecContenu: boolean) => {
@@ -135,15 +199,41 @@ export const useEditionCentreAide = () => {
         type: itemSelectionne.type,
         ordre: itemSelectionne.ordre,
         parentId: itemSelectionne.parentId,
+        contenuPublie: itemSelectionne.contenu,
+        titrePublie: itemSelectionne.titre,
+        estPublie: itemSelectionne.estPublie,
+        estMasque: itemSelectionne.estMasque,
       });
     }
   }, [itemSelectionneId, itemSelectionne, titre, contenu, mutationModifier]);
+
+  const publier = useCallback(() => {
+    if (itemSelectionneId) {
+      mutationPublier.mutate({ id: itemSelectionneId });
+    }
+  }, [itemSelectionneId, mutationPublier]);
+
+  const depublier = useCallback(() => {
+    if (itemSelectionneId) {
+      mutationDepublier.mutate({ id: itemSelectionneId });
+    }
+  }, [itemSelectionneId, mutationDepublier]);
+
+  const basculerVisibilite = useCallback(() => {
+    if (itemSelectionneId) {
+      mutationBasculerVisibilite.mutate({ id: itemSelectionneId });
+    }
+  }, [itemSelectionneId, mutationBasculerVisibilite]);
 
   const supprimer = useCallback(() => {
     if (itemSelectionneId) {
       mutationSupprimer.mutate({ id: itemSelectionneId });
     }
   }, [itemSelectionneId, mutationSupprimer]);
+
+  const aDesModificationsNonPubliees = itemSelectionne
+    ? calculerModificationsNonPubliees(itemSelectionne)
+    : false;
 
   return {
     arbre,
@@ -161,5 +251,9 @@ export const useEditionCentreAide = () => {
     type,
     sauvegarder,
     supprimer,
+    publier,
+    depublier,
+    basculerVisibilite,
+    aDesModificationsNonPubliees,
   };
 };

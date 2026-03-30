@@ -70,6 +70,7 @@ export const ArborescenceCentreAideAdmin: FunctionComponent<
       </div>
 
       <ArborescenceCentreAide
+        afficherStatut
         arbre={arbre}
         itemSelectionneId={itemSelectionneId}
         onSelectionItem={onSelectionItem}

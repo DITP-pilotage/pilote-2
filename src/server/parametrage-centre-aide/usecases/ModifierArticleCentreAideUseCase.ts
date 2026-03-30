@@ -19,6 +19,10 @@ export class ModifierArticleCentreAideUseCase {
     type,
     ordre,
     parentId,
+    contenuPublie,
+    titrePublie,
+    estPublie,
+    estMasque,
   }: {
     id: string;
     titre: string;
@@ -26,6 +30,10 @@ export class ModifierArticleCentreAideUseCase {
     type: $Enums.TypeArticleCentreAide;
     ordre: number;
     parentId?: string | null;
+    contenuPublie?: string | null;
+    titrePublie?: string | null;
+    estPublie?: boolean;
+    estMasque?: boolean;
   }) {
     const contenuSanitized = contenu
       ? ArticleCentreAide.sanitizeHtml(contenu)
@@ -33,11 +41,15 @@ export class ModifierArticleCentreAideUseCase {
 
     const article = ArticleCentreAide.creerArticle({
       id,
-      titre,
-      contenu: contenuSanitized,
+      titre: titrePublie ?? "",
+      contenu: contenuPublie ?? null,
+      titreBrouillon: titre,
+      contenuBrouillon: contenuSanitized,
       type,
       ordre,
       parentId,
+      estPublie: estPublie ?? false,
+      estMasque: estMasque ?? false,
     });
 
     return this.articleCentreAideRepository.modifier(article);

@@ -10,6 +10,9 @@ import { ArticleCentreAideRepository } from "./domain/ports/ArticleCentreAideRep
 import { ListerArticlesCentreAideUseCase } from "./usecases/ListerArticlesCentreAideUseCase";
 import { ModifierArticleCentreAideUseCase } from "./usecases/ModifierArticleCentreAideUseCase";
 import { SupprimerArticleCentreAideUseCase } from "./usecases/SupprimerArticleCentreAideUseCase";
+import { PublierArticleCentreAideUseCase } from "./usecases/PublierArticleCentreAideUseCase";
+import { DepublierArticleCentreAideUseCase } from "./usecases/DepublierArticleCentreAideUseCase";
+import { BasculerVisibiliteArticleCentreAideUseCase } from "./usecases/BasculerVisibiliteArticleCentreAideUseCase";
 
 type ParametrageCentreAideCradle = {
   creerArticleCentreAideUseCase: CreerArticleCentreAideUseCase;
@@ -17,6 +20,9 @@ type ParametrageCentreAideCradle = {
   listerArticlesCentreAideUseCase: ListerArticlesCentreAideUseCase;
   modifierArticleCentreAideUseCase: ModifierArticleCentreAideUseCase;
   supprimerArticleCentreAideUseCase: SupprimerArticleCentreAideUseCase;
+  publierArticleCentreAideUseCase: PublierArticleCentreAideUseCase;
+  depublierArticleCentreAideUseCase: DepublierArticleCentreAideUseCase;
+  basculerVisibiliteArticleCentreAideUseCase: BasculerVisibiliteArticleCentreAideUseCase;
 };
 
 export const parametrageCentreAideModule = defineModule<
@@ -42,6 +48,15 @@ export const parametrageCentreAideModule = defineModule<
       ),
       supprimerArticleCentreAideUseCase: asModuleClass(
         SupprimerArticleCentreAideUseCase,
+      ),
+      publierArticleCentreAideUseCase: asModuleClass(
+        PublierArticleCentreAideUseCase,
+      ),
+      depublierArticleCentreAideUseCase: asModuleClass(
+        DepublierArticleCentreAideUseCase,
+      ),
+      basculerVisibiliteArticleCentreAideUseCase: asModuleClass(
+        BasculerVisibiliteArticleCentreAideUseCase,
       ),
     } satisfies VerifyCradle<ParametrageCentreAideCradle>);
   },

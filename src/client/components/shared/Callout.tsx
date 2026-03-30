@@ -11,7 +11,7 @@ import {
 import { clsxm } from "@/utils/clsxm";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 
-type CalloutColor =
+export type CalloutColor =
   | "info"
   | "success"
   | "warning"
