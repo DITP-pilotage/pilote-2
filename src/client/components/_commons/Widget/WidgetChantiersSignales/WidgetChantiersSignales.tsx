@@ -199,10 +199,10 @@ const TuileAlerte = ({
       type="button"
       aria-pressed={filtreAlerte}
     >
-      <span className="text-[1.75rem] font-bold text-dsfr-warning-425 min-w-[2.5rem] text-center">
+      <span className="text-[1.75rem] font-bold text-dsfr-warning-425 min-w-[2.5rem] text-center sm:text-left">
         {nombre}
       </span>
-      <span className="text-sm text-dsfr-grey-200 leading-tight">
+      <span className="text-sm text-dsfr-grey-200 leading-tight text-left">
         {libellé}
       </span>
     </button>
