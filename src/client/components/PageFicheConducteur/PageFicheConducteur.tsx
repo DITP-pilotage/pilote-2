@@ -125,7 +125,10 @@ const PageFicheConducteur: FunctionComponent<
                 <div>
                   {commentaire ? (
                     <div className="fr-text--xs fr-mb-1w print:!text-[10px] print:!leading-4">
-                      <RenduContenuHtml html={commentaire} />
+                      <RenduContenuHtml
+                        className="[&_p]:text-xs [&_p]:mb-1 print:[&_p]:!text-[10px] print:[&_p]:!leading-4"
+                        html={commentaire}
+                      />
                     </div>
                   ) : (
                     <p className="fr-text--xs print:!text-[10px] print:!leading-4">
@@ -271,7 +274,10 @@ const PageFicheConducteur: FunctionComponent<
                     {publication.libellé}
                   </div>
                   <div className="fr-col-10">
-                    <RenduContenuHtml html={publication.valeur} />
+                    <RenduContenuHtml
+                      className="[&_p]:text-xs [&_p]:mb-1 print:[&_p]:!text-[10px] print:[&_p]:!leading-4"
+                      html={publication.valeur}
+                    />
                   </div>
                 </div>
               ))}

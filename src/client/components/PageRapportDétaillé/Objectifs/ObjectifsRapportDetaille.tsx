@@ -43,7 +43,10 @@ export const ObjectifsRapportDetaille = ({
                     {`Mis à jour le ${PiloteDateFormatter.isoDateFranceMetropolitaine(objectif.date)} | Par ${objectif.auteur}`}
                   </p>
                   <div className="fr-text--sm fr-mb-0">
-                    <RenduContenuHtml html={objectif.contenu} />
+                    <RenduContenuHtml
+                      className="[&_p]:text-sm [&_p]:mb-1"
+                      html={objectif.contenu}
+                    />
                   </div>
                 </>
               ) : (

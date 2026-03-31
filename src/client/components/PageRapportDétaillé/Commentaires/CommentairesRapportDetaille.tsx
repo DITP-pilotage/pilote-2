@@ -50,7 +50,10 @@ const CommentairesRapportDetaille: FunctionComponent<
                     {`Mis à jour le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.date)} | Par ${commentaire.auteur}`}
                   </p>
                   <div className="fr-text--sm fr-mb-0">
-                    <RenduContenuHtml html={commentaire.contenu} />
+                    <RenduContenuHtml
+                      className="[&_p]:text-sm [&_p]:mb-1"
+                      html={commentaire.contenu}
+                    />
                   </div>
                 </>
               ) : (

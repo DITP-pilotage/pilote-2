@@ -23,7 +23,10 @@ const SynthèseDesRésultatsAffichage = ({
           ` | Par ${synthèseDesRésultats.auteur}`}
       </p>
       <div className="fr-text--sm fr-mb-0">
-        <RenduContenuHtml html={synthèseDesRésultats.contenu} />
+        <RenduContenuHtml
+          className="[&_p]:text-sm [&_p]:mb-1"
+          html={synthèseDesRésultats.contenu}
+        />
       </div>
     </>
   );

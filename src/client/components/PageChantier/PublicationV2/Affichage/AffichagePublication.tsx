@@ -62,7 +62,10 @@ export const AffichagePublication = ({
         </div>
       ) : null}
       <div className="fr-text--sm mb-1">
-        <RenduContenuHtml html={contenuAAfficher} />
+        <RenduContenuHtml
+          className="[&_p]:text-sm [&_p]:mb-1"
+          html={contenuAAfficher}
+        />
       </div>
       {contenuTronque ? (
         <BoutonsAffichage
