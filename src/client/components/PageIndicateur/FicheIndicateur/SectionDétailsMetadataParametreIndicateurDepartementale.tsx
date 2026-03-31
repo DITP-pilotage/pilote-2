@@ -59,7 +59,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.vi_dept_from.metaPiloteAlias}
+            informationMetadata={mapInfo.vi_dept_from}
             listeValeur={computeListeValeur(mapInfo.vi_dept_from)}
             name="viDeptFrom"
             onChangeSideEffect={(valeur) => {
@@ -82,7 +82,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.va_dept_from.metaPiloteAlias}
+            informationMetadata={mapInfo.va_dept_from}
             listeValeur={computeListeValeur(mapInfo.va_dept_from)}
             name="vaDeptFrom"
             onChangeSideEffect={(valeur) => {
@@ -105,7 +105,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.vc_dept_from.metaPiloteAlias}
+            informationMetadata={mapInfo.vc_dept_from}
             listeValeur={computeListeValeur(mapInfo.vc_dept_from)}
             name="vcDeptFrom"
             onChangeSideEffect={(valeur) => {
@@ -132,7 +132,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursDeptFromDesactiveDeptOp.has(viDeptFromValue)}
             form={form}
-            label={mapInfo.vi_dept_op.metaPiloteAlias}
+            informationMetadata={mapInfo.vi_dept_op}
             listeValeur={computeListeValeur(mapInfo.vi_dept_op)}
             name="viDeptOp"
             valeurAffichee={computeValeurAffichee(
@@ -149,7 +149,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursDeptFromDesactiveDeptOp.has(vaDeptFromValue)}
             form={form}
-            label={mapInfo.va_dept_op.metaPiloteAlias}
+            informationMetadata={mapInfo.va_dept_op}
             listeValeur={computeListeValeur(mapInfo.va_dept_op)}
             name="vaDeptOp"
             valeurAffichee={computeValeurAffichee(
@@ -166,7 +166,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursDeptFromDesactiveDeptOp.has(vcDeptFromValue)}
             form={form}
-            label={mapInfo.vc_dept_op.metaPiloteAlias}
+            informationMetadata={mapInfo.vc_dept_op}
             listeValeur={computeListeValeur(mapInfo.vc_dept_op)}
             name="vcDeptOp"
             valeurAffichee={computeValeurAffichee(

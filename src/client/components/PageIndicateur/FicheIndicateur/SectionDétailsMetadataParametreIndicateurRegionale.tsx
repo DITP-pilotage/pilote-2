@@ -55,7 +55,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.vi_reg_from.metaPiloteAlias}
+            informationMetadata={mapInfo.vi_reg_from}
             listeValeur={computeListeValeur(mapInfo.vi_reg_from)}
             name="viRegFrom"
             onChangeSideEffect={(valeur) => {
@@ -78,7 +78,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.va_reg_from.metaPiloteAlias}
+            informationMetadata={mapInfo.va_reg_from}
             listeValeur={computeListeValeur(mapInfo.va_reg_from)}
             name="vaRegFrom"
             onChangeSideEffect={(valeur) => {
@@ -101,7 +101,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.vc_reg_from.metaPiloteAlias}
+            informationMetadata={mapInfo.vc_reg_from}
             listeValeur={computeListeValeur(mapInfo.vc_reg_from)}
             name="vcRegFrom"
             onChangeSideEffect={(valeur) => {
@@ -128,7 +128,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursRegFromDesactiveRegOp.has(viRegFromValue)}
             form={form}
-            label={mapInfo.vi_reg_op.metaPiloteAlias}
+            informationMetadata={mapInfo.vi_reg_op}
             listeValeur={computeListeValeur(mapInfo.vi_reg_op)}
             name="viRegOp"
             valeurAffichee={computeValeurAffichee(
@@ -145,7 +145,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursRegFromDesactiveRegOp.has(vaRegFromValue)}
             form={form}
-            label={mapInfo.va_reg_op.metaPiloteAlias}
+            informationMetadata={mapInfo.va_reg_op}
             listeValeur={computeListeValeur(mapInfo.va_reg_op)}
             name="vaRegOp"
             valeurAffichee={computeValeurAffichee(
@@ -162,7 +162,7 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursRegFromDesactiveRegOp.has(vcRegFromValue)}
             form={form}
-            label={mapInfo.vc_reg_op.metaPiloteAlias}
+            informationMetadata={mapInfo.vc_reg_op}
             listeValeur={computeListeValeur(mapInfo.vc_reg_op)}
             name="vcRegOp"
             valeurAffichee={computeValeurAffichee(

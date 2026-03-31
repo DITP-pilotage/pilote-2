@@ -13,15 +13,20 @@ import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import SélecteurAvecRecherche from "@/components/_commons/SélecteurAvecRecherche/SélecteurAvecRecherche";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 
+type MetadataChampInfo = {
+  metaPiloteAlias: string;
+  metaPiloteMandatory: boolean;
+  metaPiloteDispDispDesc: boolean;
+  description: string;
+};
+
 type MetadataChampBase<TForm extends FieldValues> = {
   form: UseFormReturn<TForm>;
   name: FieldPath<TForm>;
-  label: string;
+  informationMetadata: MetadataChampInfo;
   estEnCoursDeModification: boolean;
   valeurAffichee: string;
   estMandatory?: boolean;
-  description?: string;
-  afficherDescription?: boolean;
 };
 
 type MetadataChampText<TForm extends FieldValues> = MetadataChampBase<TForm> & {
@@ -61,12 +66,10 @@ function MetadataChampInterne<TForm extends FieldValues>(
   const {
     form,
     name,
-    label,
+    informationMetadata,
     estEnCoursDeModification,
     valeurAffichee,
-    estMandatory = false,
-    description,
-    afficherDescription = false,
+    estMandatory = informationMetadata.metaPiloteMandatory,
   } = props;
 
   const renderInput = () => {
@@ -176,12 +179,14 @@ function MetadataChampInterne<TForm extends FieldValues>(
   return (
     <>
       <div className="fr-text--md bold fr-mb-1v relative flex align-center ">
-        <p className="m-0 overflow-ellipsis">{label}</p>
+        <p className="m-0 overflow-ellipsis">
+          {informationMetadata.metaPiloteAlias}
+        </p>
         {estEnCoursDeModification ? (
           <>
             {estMandatory ? <ChampObligatoire /> : null}
-            {afficherDescription && description ? (
-              <Infobulle>{description}</Infobulle>
+            {informationMetadata.metaPiloteDispDispDesc ? (
+              <Infobulle>{informationMetadata.description}</Infobulle>
             ) : null}
           </>
         ) : null}

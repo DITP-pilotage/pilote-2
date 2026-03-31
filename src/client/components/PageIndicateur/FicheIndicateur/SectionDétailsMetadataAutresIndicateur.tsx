@@ -31,7 +31,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.mailles.metaPiloteAlias}
+            informationMetadata={mapInfo.mailles}
             name="mailles"
             valeurAffichee={computeValeurAffichee(
               mapInfo.mailles,
@@ -45,7 +45,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.frequence_territoriale.metaPiloteAlias}
+            informationMetadata={mapInfo.frequence_territoriale}
             name="frequenceTerritoriale"
             valeurAffichee={computeValeurAffichee(
               mapInfo.frequence_territoriale,
@@ -61,7 +61,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.admin_source.metaPiloteAlias}
+            informationMetadata={mapInfo.admin_source}
             name="adminSource"
             valeurAffichee={computeValeurAffichee(
               mapInfo.admin_source,
@@ -75,7 +75,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.si_source.metaPiloteAlias}
+            informationMetadata={mapInfo.si_source}
             name="siSource"
             valeurAffichee={computeValeurAffichee(
               mapInfo.si_source,
@@ -91,7 +91,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="boolean"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.donnee_ouverte.metaPiloteAlias}
+            informationMetadata={mapInfo.donnee_ouverte}
             name="donneeOuverte"
             valeurAffichee={computeValeurAffichee(
               mapInfo.donnee_ouverte,
@@ -105,7 +105,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.modalites_donnee_ouverte.metaPiloteAlias}
+            informationMetadata={mapInfo.modalites_donnee_ouverte}
             name="modalitesDonneeOuverte"
             valeurAffichee={computeValeurAffichee(
               mapInfo.modalites_donnee_ouverte,
@@ -121,7 +121,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.resp_donnees.metaPiloteAlias}
+            informationMetadata={mapInfo.resp_donnees}
             name="respDonnees"
             valeurAffichee={computeValeurAffichee(
               mapInfo.resp_donnees,
@@ -135,7 +135,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.resp_donnees_email.metaPiloteAlias}
+            informationMetadata={mapInfo.resp_donnees_email}
             name="respDonneesEmail"
             valeurAffichee={computeValeurAffichee(
               mapInfo.resp_donnees_email,
@@ -151,7 +151,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.contact_technique.metaPiloteAlias}
+            informationMetadata={mapInfo.contact_technique}
             name="contactTechnique"
             valeurAffichee={computeValeurAffichee(
               mapInfo.contact_technique,
@@ -165,7 +165,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.contact_technique_email.metaPiloteAlias}
+            informationMetadata={mapInfo.contact_technique_email}
             name="contactTechniqueEmail"
             valeurAffichee={computeValeurAffichee(
               mapInfo.contact_technique_email,
@@ -181,7 +181,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="boolean"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.indic_is_perseverant.metaPiloteAlias}
+            informationMetadata={mapInfo.indic_is_perseverant}
             name="indicIsPerseverant"
             valeurAffichee={computeValeurAffichee(
               mapInfo.indic_is_perseverant,
@@ -195,7 +195,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.reforme_prioritaire.metaPiloteAlias}
+            informationMetadata={mapInfo.reforme_prioritaire}
             name="reformePrioritaire"
             valeurAffichee={computeValeurAffichee(
               mapInfo.reforme_prioritaire,
@@ -211,7 +211,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="boolean"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.projet_annuel_perf.metaPiloteAlias}
+            informationMetadata={mapInfo.projet_annuel_perf}
             name="projetAnnuelPerf"
             valeurAffichee={computeValeurAffichee(
               mapInfo.projet_annuel_perf,
@@ -225,7 +225,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.detail_projet_annuel_perf.metaPiloteAlias}
+            informationMetadata={mapInfo.detail_projet_annuel_perf}
             name="detailProjetAnnuelPerf"
             valeurAffichee={computeValeurAffichee(
               mapInfo.detail_projet_annuel_perf,
@@ -241,7 +241,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="textarea"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.commentaire.metaPiloteAlias}
+            informationMetadata={mapInfo.commentaire}
             name="commentaire"
             valeurAffichee={computeValeurAffichee(
               mapInfo.commentaire,
@@ -255,7 +255,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.methode_collecte.metaPiloteAlias}
+            informationMetadata={mapInfo.methode_collecte}
             name="methodeCollecte"
             valeurAffichee={computeValeurAffichee(
               mapInfo.methode_collecte,
@@ -271,7 +271,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.maille_pilotage.metaPiloteAlias}
+            informationMetadata={mapInfo.maille_pilotage}
             listeValeur={computeListeValeur(mapInfo.maille_pilotage)}
             name="maillePilotage"
             valeurAffichee={computeValeurAffichee(
@@ -286,7 +286,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.couverture_temporelle.metaPiloteAlias}
+            informationMetadata={mapInfo.couverture_temporelle}
             listeValeur={computeListeValeur(mapInfo.couverture_temporelle)}
             name="couvertureTemporelle"
             valeurAffichee={computeValeurAffichee(
@@ -303,7 +303,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="boolean"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.cible_attendue.metaPiloteAlias}
+            informationMetadata={mapInfo.cible_attendue}
             name="cibleAttendue"
             valeurAffichee={computeValeurAffichee(
               mapInfo.cible_attendue,
@@ -317,7 +317,7 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
             editBoxType="boolean"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.indic_is_phare.metaPiloteAlias}
+            informationMetadata={mapInfo.indic_is_phare}
             name="indicIsPhare"
             valeurAffichee={computeValeurAffichee(
               mapInfo.indic_is_phare,

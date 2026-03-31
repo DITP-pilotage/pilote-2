@@ -54,7 +54,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.vi_nat_from.metaPiloteAlias}
+            informationMetadata={mapInfo.vi_nat_from}
             listeValeur={computeListeValeur(mapInfo.vi_nat_from)}
             name="viNatFrom"
             onChangeSideEffect={(valeur) => {
@@ -77,7 +77,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.va_nat_from.metaPiloteAlias}
+            informationMetadata={mapInfo.va_nat_from}
             listeValeur={computeListeValeur(mapInfo.va_nat_from)}
             name="vaNatFrom"
             onChangeSideEffect={(valeur) => {
@@ -100,7 +100,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.vc_nat_from.metaPiloteAlias}
+            informationMetadata={mapInfo.vc_nat_from}
             listeValeur={computeListeValeur(mapInfo.vc_nat_from)}
             name="vcNatFrom"
             onChangeSideEffect={(valeur) => {
@@ -127,7 +127,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursNatFromDesactiveNatOp.has(viNatFromValue)}
             form={form}
-            label={mapInfo.vi_nat_op.metaPiloteAlias}
+            informationMetadata={mapInfo.vi_nat_op}
             listeValeur={computeListeValeur(mapInfo.vi_nat_op)}
             name="viNatOp"
             valeurAffichee={computeValeurAffichee(
@@ -144,7 +144,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursNatFromDesactiveNatOp.has(vaNatFromValue)}
             form={form}
-            label={mapInfo.va_nat_op.metaPiloteAlias}
+            informationMetadata={mapInfo.va_nat_op}
             listeValeur={computeListeValeur(mapInfo.va_nat_op)}
             name="vaNatOp"
             valeurAffichee={computeValeurAffichee(
@@ -161,7 +161,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursNatFromDesactiveNatOp.has(vcNatFromValue)}
             form={form}
-            label={mapInfo.vc_nat_op.metaPiloteAlias}
+            informationMetadata={mapInfo.vc_nat_op}
             listeValeur={computeListeValeur(mapInfo.vc_nat_op)}
             name="vcNatOp"
             valeurAffichee={computeValeurAffichee(

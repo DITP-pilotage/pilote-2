@@ -30,7 +30,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.poids_pourcent_dept_declaree.metaPiloteAlias}
+            informationMetadata={mapInfo.poids_pourcent_dept_declaree}
             name="poidsPourcentDept"
             valeurAffichee={computeValeurAffichee(
               mapInfo.poids_pourcent_dept_declaree,
@@ -45,7 +45,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.poids_pourcent_reg_declaree.metaPiloteAlias}
+            informationMetadata={mapInfo.poids_pourcent_reg_declaree}
             name="poidsPourcentReg"
             valeurAffichee={computeValeurAffichee(
               mapInfo.poids_pourcent_reg_declaree,
@@ -59,7 +59,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.poids_pourcent_nat_declaree.metaPiloteAlias}
+            informationMetadata={mapInfo.poids_pourcent_nat_declaree}
             name="poidsPourcentNat"
             valeurAffichee={computeValeurAffichee(
               mapInfo.poids_pourcent_nat_declaree,
@@ -75,7 +75,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.poids_pourcent_eval_dept_declaree.metaPiloteAlias}
+            informationMetadata={mapInfo.poids_pourcent_eval_dept_declaree}
             name="poidsPourcentEvalDept"
             valeurAffichee={computeValeurAffichee(
               mapInfo.poids_pourcent_eval_dept_declaree,
@@ -89,7 +89,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.poids_pourcent_eval_reg_declaree.metaPiloteAlias}
+            informationMetadata={mapInfo.poids_pourcent_eval_reg_declaree}
             name="poidsPourcentEvalReg"
             valeurAffichee={computeValeurAffichee(
               mapInfo.poids_pourcent_eval_reg_declaree,
@@ -103,7 +103,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.poids_pourcent_eval_nat_declaree.metaPiloteAlias}
+            informationMetadata={mapInfo.poids_pourcent_eval_nat_declaree}
             name="poidsPourcentEvalNat"
             valeurAffichee={computeValeurAffichee(
               mapInfo.poids_pourcent_eval_nat_declaree,

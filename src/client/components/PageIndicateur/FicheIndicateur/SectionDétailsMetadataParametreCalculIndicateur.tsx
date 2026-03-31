@@ -31,7 +31,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.param_vaca_decumul_from.metaPiloteAlias}
+            informationMetadata={mapInfo.param_vaca_decumul_from}
             listeValeur={computeListeValeur(mapInfo.param_vaca_decumul_from)}
             name="paramVacaDecumulFrom"
             onChangeSideEffect={(valeur) => {
@@ -50,7 +50,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.param_vaca_partition_date.metaPiloteAlias}
+            informationMetadata={mapInfo.param_vaca_partition_date}
             listeValeur={computeListeValeur(mapInfo.param_vaca_partition_date)}
             name="paramVacaPartitionDate"
             onChangeSideEffect={(valeur) => {
@@ -78,7 +78,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             estDesactive
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.param_vaca_op.metaPiloteAlias}
+            informationMetadata={mapInfo.param_vaca_op}
             listeValeur={computeListeValeur(mapInfo.param_vaca_op)}
             name="paramVacaOp"
             valeurAffichee={computeValeurAffichee(
@@ -95,7 +95,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.param_vacg_decumul_from.metaPiloteAlias}
+            informationMetadata={mapInfo.param_vacg_decumul_from}
             listeValeur={computeListeValeur(mapInfo.param_vacg_decumul_from)}
             name="paramVacgDecumulFrom"
             onChangeSideEffect={(valeur) => {
@@ -114,7 +114,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.param_vacg_partition_date.metaPiloteAlias}
+            informationMetadata={mapInfo.param_vacg_partition_date}
             listeValeur={computeListeValeur(mapInfo.param_vacg_partition_date)}
             name="paramVacgPartitionDate"
             onChangeSideEffect={(valeur) => {
@@ -142,7 +142,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             estDesactive
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.param_vacg_op.metaPiloteAlias}
+            informationMetadata={mapInfo.param_vacg_op}
             listeValeur={computeListeValeur(mapInfo.param_vacg_op)}
             name="paramVacgOp"
             valeurAffichee={computeValeurAffichee(
@@ -159,7 +159,7 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.tendance.metaPiloteAlias}
+            informationMetadata={mapInfo.tendance}
             listeValeur={computeListeValeur(mapInfo.tendance)}
             name="tendance"
             valeurAffichee={computeValeurAffichee(

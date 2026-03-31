@@ -89,7 +89,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="textarea"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.indic_nom.metaPiloteAlias}
+            informationMetadata={mapInfo.indic_nom}
             name="indicNom"
             valeurAffichee={computeValeurAffichee(
               mapInfo.indic_nom,
@@ -105,7 +105,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.indic_parent_ch.metaPiloteAlias}
+            informationMetadata={mapInfo.indic_parent_ch}
             listeValeur={optionsParentCh}
             name="indicParentCh"
             valeurAffichee={`${indicateur.indicParentCh} - ${chantiers.find((chantier) => chantier.id === indicateur.indicParentCh)?.nom}`}
@@ -117,7 +117,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.indic_parent_indic.metaPiloteAlias}
+            informationMetadata={mapInfo.indic_parent_indic}
             listeValeur={optionsIndicateurParent}
             name="indicParentIndic"
             valeurAffichee={displayParentIndic(indicateur.indicParentIndic)}
@@ -130,7 +130,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="textarea"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.indic_descr.metaPiloteAlias}
+            informationMetadata={mapInfo.indic_descr}
             name="indicDescr"
             valeurAffichee={computeValeurAffichee(
               mapInfo.indic_descr,
@@ -144,7 +144,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="textarea"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.indic_methode_calcul.metaPiloteAlias}
+            informationMetadata={mapInfo.indic_methode_calcul}
             name="indicMethodeCalcul"
             valeurAffichee={computeValeurAffichee(
               mapInfo.indic_methode_calcul,
@@ -160,7 +160,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.indic_type.metaPiloteAlias}
+            informationMetadata={mapInfo.indic_type}
             listeValeur={computeListeValeur(mapInfo.indic_type)}
             name="indicType"
             valeurAffichee={computeValeurAffichee(
@@ -175,7 +175,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.indic_schema.metaPiloteAlias}
+            informationMetadata={mapInfo.indic_schema}
             listeValeur={computeListeValeur(mapInfo.indic_schema)}
             name="indicSchema"
             valeurAffichee={computeValeurAffichee(
@@ -192,7 +192,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.indic_unite.metaPiloteAlias}
+            informationMetadata={mapInfo.indic_unite}
             name="indicUnite"
             valeurAffichee={computeValeurAffichee(
               mapInfo.indic_unite,
@@ -206,7 +206,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.zg_applicable.metaPiloteAlias}
+            informationMetadata={mapInfo.zg_applicable}
             listeValeur={computeListeValeur(mapInfo.zg_applicable)}
             name="zgApplicable"
             valeurAffichee={computeValeurAffichee(
@@ -223,7 +223,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="boolean"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.indic_territorialise.metaPiloteAlias}
+            informationMetadata={mapInfo.indic_territorialise}
             name="indicTerritorialise"
             onChangeSideEffect={(valeur) => {
               if (!valeur) {
@@ -243,7 +243,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="boolean"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.indic_is_baro.metaPiloteAlias}
+            informationMetadata={mapInfo.indic_is_baro}
             name="indicIsBaro"
             valeurAffichee={computeValeurAffichee(
               mapInfo.indic_is_baro,
@@ -260,7 +260,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.indic_nom_baro.metaPiloteAlias}
+            informationMetadata={mapInfo.indic_nom_baro}
             name="indicNomBaro"
             valeurAffichee={computeValeurAffichee(
               mapInfo.indic_nom_baro,
@@ -275,7 +275,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.indic_descr_baro.metaPiloteAlias}
+            informationMetadata={mapInfo.indic_descr_baro}
             name="indicDescrBaro"
             valeurAffichee={computeValeurAffichee(
               mapInfo.indic_descr_baro,
@@ -291,7 +291,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="textarea"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.indic_source.metaPiloteAlias}
+            informationMetadata={mapInfo.indic_source}
             name="indicSource"
             valeurAffichee={computeValeurAffichee(
               mapInfo.indic_source,
@@ -305,7 +305,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.indic_source_url.metaPiloteAlias}
+            informationMetadata={mapInfo.indic_source_url}
             name="indicSourceUrl"
             valeurAffichee={computeValeurAffichee(
               mapInfo.indic_source_url,
@@ -321,7 +321,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.periodicite.metaPiloteAlias}
+            informationMetadata={mapInfo.periodicite}
             listeValeur={computeListeValeur(mapInfo.periodicite)}
             name="periodicite"
             valeurAffichee={computeValeurAffichee(
@@ -336,7 +336,7 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
             editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
             form={form}
-            label={mapInfo.delai_disponibilite.metaPiloteAlias}
+            informationMetadata={mapInfo.delai_disponibilite}
             name="delaiDisponibilite"
             valeurAffichee={computeValeurAffichee(
               mapInfo.delai_disponibilite,
