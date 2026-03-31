@@ -1,5 +1,1 @@
-import { FunctionComponent } from "react";
-
-export const ChampObligatoire: FunctionComponent = () => {
-  return <span className="texte-warning">*</span>;
-};
+export { ChampObligatoire } from "@/components/_commons/ChampObligatoire/ChampObligatoire";

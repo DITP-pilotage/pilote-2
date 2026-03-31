@@ -5,7 +5,7 @@ import {
   FieldValues,
   UseFormReturn,
 } from "react-hook-form";
-import { ChampObligatoire } from "@/components/PageIndicateur/ChampObligatoire";
+import { ChampObligatoire } from "@/components/_commons/ChampObligatoire/ChampObligatoire";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import Input from "@/components/_commons/Input/Input";
 import TextArea from "@/components/_commons/TextArea/TextArea";

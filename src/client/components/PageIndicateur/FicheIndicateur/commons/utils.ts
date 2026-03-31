@@ -24,8 +24,17 @@ export const computeValeurAffichee = (
     }
     case "text":
     case "textarea":
-    default:
-      return rawValue != null ? `${rawValue}` : "_";
+    default: {
+      if (rawValue == null) {
+        return "_";
+      }
+
+      if (typeof rawValue === "string" && rawValue.trim() === "") {
+        return "_";
+      }
+
+      return `${rawValue}`;
+    }
   }
 };
 
