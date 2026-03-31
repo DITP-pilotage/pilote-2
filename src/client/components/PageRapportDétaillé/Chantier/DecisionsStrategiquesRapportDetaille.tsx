@@ -1,8 +1,8 @@
 import Bloc from "@/components/_commons/Bloc/Bloc";
 import { Badge } from "@/components/_commons/Badge";
 import { DécisionStratégique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
-import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
+import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { libellésTypesDécisionStratégique } from "@/client/constants/libellésDécisionStratégique";
 
 export const DecisionsStrategiquesRapportDetaille = ({
@@ -25,14 +25,9 @@ export const DecisionsStrategiquesRapportDetaille = ({
             <p className="text-xs text-dsfr-mention-grey mb-1">
               {`Mis à jour le ${PiloteDateFormatter.isoDateFranceMetropolitaine(décisionStratégique.date)} | Par ${décisionStratégique.auteur}`}
             </p>
-            <p
-              className="fr-text--sm fr-mb-0"
-              dangerouslySetInnerHTML={{
-                __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(
-                  décisionStratégique.contenu,
-                ),
-              }}
-            />
+            <div className="fr-text--sm fr-mb-0">
+              <RenduContenuHtml html={décisionStratégique.contenu} />
+            </div>
           </>
         ) : (
           <Badge type="gris">Non renseigné</Badge>

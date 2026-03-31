@@ -7,8 +7,8 @@ import {
 import { typesObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
 import Objectif from "@/server/domain/chantier/objectif/Objectif.interface";
 import { isDefined } from "@/client/utils/predicates";
-import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { Badge } from "@/components/_commons/Badge";
+import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 
 interface ObjectifsRapportDetailleProps {
@@ -42,14 +42,9 @@ export const ObjectifsRapportDetaille = ({
                   <p className="text-xs text-dsfr-mention-grey mb-1">
                     {`Mis à jour le ${PiloteDateFormatter.isoDateFranceMetropolitaine(objectif.date)} | Par ${objectif.auteur}`}
                   </p>
-                  <p
-                    className="fr-text--sm fr-mb-0"
-                    dangerouslySetInnerHTML={{
-                      __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(
-                        objectif.contenu,
-                      ),
-                    }}
-                  />
+                  <div className="fr-text--sm fr-mb-0">
+                    <RenduContenuHtml html={objectif.contenu} />
+                  </div>
                 </>
               ) : (
                 <Badge type="gris">Non renseigné</Badge>
