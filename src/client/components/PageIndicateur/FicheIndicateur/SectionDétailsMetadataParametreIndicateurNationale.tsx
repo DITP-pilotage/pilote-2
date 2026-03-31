@@ -2,9 +2,13 @@ import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
-import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
+import { MetadataChamp } from "@/components/_commons/MetadataChamp/MetadataChamp";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 import { MetadataIndicateurForm } from "@/components/PageIndicateur/usePageIndicateur";
+import {
+  computeValeurAffichee,
+  computeListeValeur,
+} from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
 
 type ValeurNatFrom = Pick<
   MetadataIndicateurForm,
@@ -18,7 +22,7 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
 }> = ({
   indicateur,
   estEnCoursDeModification,
-  mapInformationMetadataIndicateur,
+  mapInformationMetadataIndicateur: mapInfo,
 }) => {
   const form = useMetadataIndicateurForm();
 
@@ -46,98 +50,125 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.vi_nat_from
-            }
+            form={form}
+            label={mapInfo.vi_nat_from.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.vi_nat_from)}
             name="viNatFrom"
             onChangeSideEffect={(valeur) => {
               ALaModificationValeurNatFrom(
                 "viNatFrom",
-                valeur as string,
+                valeur,
                 "viNatOp",
-                mapInformationMetadataIndicateur.vi_nat_op
-                  .metaPiloteDefaultValue as string,
+                mapInfo.vi_nat_op.metaPiloteDefaultValue as string,
               );
             }}
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.vi_nat_from,
+              indicateur,
+              "viNatFrom",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.va_nat_from
-            }
+            form={form}
+            label={mapInfo.va_nat_from.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.va_nat_from)}
             name="vaNatFrom"
             onChangeSideEffect={(valeur) => {
               ALaModificationValeurNatFrom(
                 "vaNatFrom",
-                valeur as string,
+                valeur,
                 "vaNatOp",
-                mapInformationMetadataIndicateur.va_nat_op
-                  .metaPiloteDefaultValue as string,
+                mapInfo.va_nat_op.metaPiloteDefaultValue as string,
               );
             }}
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.va_nat_from,
+              indicateur,
+              "vaNatFrom",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.vc_nat_from
-            }
+            form={form}
+            label={mapInfo.vc_nat_from.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.vc_nat_from)}
             name="vcNatFrom"
             onChangeSideEffect={(valeur) => {
               ALaModificationValeurNatFrom(
                 "vcNatFrom",
-                valeur as string,
+                valeur,
                 "vcNatOp",
-                mapInformationMetadataIndicateur.va_nat_op
-                  .metaPiloteDefaultValue as string,
+                mapInfo.va_nat_op.metaPiloteDefaultValue as string,
               );
             }}
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.vc_nat_from,
+              indicateur,
+              "vcNatFrom",
+            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estDesactive={valeursNatFromDesactiveNatOp.has(viNatFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursNatFromDesactiveNatOp.has(viNatFromValue)}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.vi_nat_op
-            }
+            form={form}
+            label={mapInfo.vi_nat_op.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.vi_nat_op)}
             name="viNatOp"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.vi_nat_op,
+              indicateur,
+              "viNatOp",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estDesactive={valeursNatFromDesactiveNatOp.has(vaNatFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursNatFromDesactiveNatOp.has(vaNatFromValue)}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.va_nat_op
-            }
+            form={form}
+            label={mapInfo.va_nat_op.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.va_nat_op)}
             name="vaNatOp"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.va_nat_op,
+              indicateur,
+              "vaNatOp",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estDesactive={valeursNatFromDesactiveNatOp.has(vcNatFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursNatFromDesactiveNatOp.has(vcNatFromValue)}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.vc_nat_op
-            }
+            form={form}
+            label={mapInfo.vc_nat_op.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.vc_nat_op)}
             name="vcNatOp"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.vc_nat_op,
+              indicateur,
+              "vcNatOp",
+            )}
           />
         </div>
       </div>

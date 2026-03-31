@@ -2,8 +2,12 @@ import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
+import { MetadataChamp } from "@/components/_commons/MetadataChamp/MetadataChamp";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
+import {
+  computeValeurAffichee,
+  computeListeValeur,
+} from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
 
 const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat;
@@ -12,9 +16,9 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
 }> = ({
   indicateur,
   estEnCoursDeModification,
-  mapInformationMetadataIndicateur,
+  mapInformationMetadataIndicateur: mapInfo,
 }) => {
-  const { setValue } = useMetadataIndicateurForm();
+  const form = useMetadataIndicateurForm();
 
   return (
     <div>
@@ -23,99 +27,146 @@ const SectionDétailsMetadataParametreCalculIndicateur: FunctionComponent<{
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.param_vaca_decumul_from
-            }
+            form={form}
+            label={mapInfo.param_vaca_decumul_from.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.param_vaca_decumul_from)}
             name="paramVacaDecumulFrom"
             onChangeSideEffect={(valeur) => {
-              setValue("paramVacgDecumulFrom", valeur as string);
-              setValue("paramVacaDecumulFrom", valeur as string);
+              form.setValue("paramVacgDecumulFrom", valeur);
+              form.setValue("paramVacaDecumulFrom", valeur);
             }}
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.param_vaca_decumul_from,
+              indicateur,
+              "paramVacaDecumulFrom",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.param_vaca_partition_date
-            }
+            form={form}
+            label={mapInfo.param_vaca_partition_date.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.param_vaca_partition_date)}
             name="paramVacaPartitionDate"
             onChangeSideEffect={(valeur) => {
-              setValue("paramVacaPartitionDate", valeur as string);
-              setValue("paramVacgPartitionDate", valeur as string);
-              setValue("paramVacaOp", valeur === "_" ? "current_value" : "sum");
-              setValue("paramVacgOp", valeur === "_" ? "current_value" : "sum");
+              form.setValue("paramVacaPartitionDate", valeur);
+              form.setValue("paramVacgPartitionDate", valeur);
+              form.setValue(
+                "paramVacaOp",
+                valeur === "_" ? "current_value" : "sum",
+              );
+              form.setValue(
+                "paramVacgOp",
+                valeur === "_" ? "current_value" : "sum",
+              );
             }}
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.param_vaca_partition_date,
+              indicateur,
+              "paramVacaPartitionDate",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estDesactive
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.param_vaca_op
-            }
+            form={form}
+            label={mapInfo.param_vaca_op.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.param_vaca_op)}
             name="paramVacaOp"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.param_vaca_op,
+              indicateur,
+              "paramVacaOp",
+            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.param_vacg_decumul_from
-            }
+            form={form}
+            label={mapInfo.param_vacg_decumul_from.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.param_vacg_decumul_from)}
             name="paramVacgDecumulFrom"
             onChangeSideEffect={(valeur) => {
-              setValue("paramVacgDecumulFrom", valeur as string);
-              setValue("paramVacaDecumulFrom", valeur as string);
+              form.setValue("paramVacgDecumulFrom", valeur);
+              form.setValue("paramVacaDecumulFrom", valeur);
             }}
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.param_vacg_decumul_from,
+              indicateur,
+              "paramVacgDecumulFrom",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.param_vacg_partition_date
-            }
+            form={form}
+            label={mapInfo.param_vacg_partition_date.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.param_vacg_partition_date)}
             name="paramVacgPartitionDate"
             onChangeSideEffect={(valeur) => {
-              setValue("paramVacaPartitionDate", valeur as string);
-              setValue("paramVacaOp", valeur === "_" ? "current_value" : "sum");
-              setValue("paramVacgPartitionDate", valeur as string);
-              setValue("paramVacgOp", valeur === "_" ? "current_value" : "sum");
+              form.setValue("paramVacaPartitionDate", valeur);
+              form.setValue(
+                "paramVacaOp",
+                valeur === "_" ? "current_value" : "sum",
+              );
+              form.setValue("paramVacgPartitionDate", valeur);
+              form.setValue(
+                "paramVacgOp",
+                valeur === "_" ? "current_value" : "sum",
+              );
             }}
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.param_vacg_partition_date,
+              indicateur,
+              "paramVacgPartitionDate",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estDesactive
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.param_vacg_op
-            }
+            form={form}
+            label={mapInfo.param_vacg_op.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.param_vacg_op)}
             name="paramVacgOp"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.param_vacg_op,
+              indicateur,
+              "paramVacgOp",
+            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.tendance
-            }
+            form={form}
+            label={mapInfo.tendance.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.tendance)}
             name="tendance"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.tendance,
+              indicateur,
+              "tendance",
+            )}
           />
         </div>
       </div>

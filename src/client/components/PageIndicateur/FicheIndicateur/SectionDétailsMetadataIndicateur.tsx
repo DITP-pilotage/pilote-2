@@ -2,10 +2,14 @@ import { FunctionComponent } from "react";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { ChantierSynthétisé } from "@/server/domain/chantier/Chantier.interface";
-import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
+import { MetadataChamp } from "@/components/_commons/MetadataChamp/MetadataChamp";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 import { SélecteurOption } from "@/components/_commons/Sélecteur/Sélecteur.interface";
 import api from "@/server/infrastructure/api/trpc/api";
+import {
+  computeValeurAffichee,
+  computeListeValeur,
+} from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
 
 const SectionDétailsMetadataIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat;
@@ -15,18 +19,19 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
 }> = ({
   indicateur,
   estEnCoursDeModification,
-  mapInformationMetadataIndicateur,
+  mapInformationMetadataIndicateur: mapInfo,
   chantiers,
 }) => {
-  const { getValues, setValue } = useMetadataIndicateurForm();
+  const form = useMetadataIndicateurForm();
 
   const { data: metadataIndicateurs = [] } =
     api.metadataIndicateur.récupérerMetadataIndicateurFiltrés.useQuery({
       filtres: {
         chantiers:
-          !getValues("indicParentCh") || getValues("indicParentCh") === "_"
+          !form.getValues("indicParentCh") ||
+          form.getValues("indicParentCh") === "_"
             ? ["Aucun chantier séléctionné"]
-            : [getValues("indicParentCh")],
+            : [form.getValues("indicParentCh")],
         perimetresMinisteriels: [],
         estTerritorialise: false,
         estBarometre: false,
@@ -34,7 +39,10 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
     });
 
   let optionsIndicateurParent: SélecteurOption<string>[];
-  if (!getValues("indicParentCh") || getValues("indicParentCh") === "_") {
+  if (
+    !form.getValues("indicParentCh") ||
+    form.getValues("indicParentCh") === "_"
+  ) {
     optionsIndicateurParent = [
       { valeur: "_", libellé: "Selectionner d'abord un chantier" },
     ];
@@ -77,204 +85,264 @@ const SectionDétailsMetadataIndicateur: FunctionComponent<{
     <div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="textarea"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.indic_nom
-            }
+            form={form}
+            label={mapInfo.indic_nom.metaPiloteAlias}
             name="indicNom"
-          />
-        </div>
-      </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
-            estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.indic_parent_ch
-            }
-            listeValeurOverride={optionsParentCh}
-            name="indicParentCh"
-            valeurAfficheOverride={`${indicateur.indicParentCh} - ${chantiers.find((chantier) => chantier.id === indicateur.indicParentCh)?.nom}`}
-            variante="recherche"
-          />
-        </div>
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
-            estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.indic_parent_indic
-            }
-            listeValeurOverride={optionsIndicateurParent}
-            name="indicParentIndic"
-            valeurAfficheOverride={displayParentIndic(
-              indicateur.indicParentIndic,
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.indic_nom,
+              indicateur,
+              "indicNom",
             )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.indic_descr
-            }
+            form={form}
+            label={mapInfo.indic_parent_ch.metaPiloteAlias}
+            listeValeur={optionsParentCh}
+            name="indicParentCh"
+            valeurAffichee={`${indicateur.indicParentCh} - ${chantiers.find((chantier) => chantier.id === indicateur.indicParentCh)?.nom}`}
+            variante="recherche"
+          />
+        </div>
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="multi-select"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            label={mapInfo.indic_parent_indic.metaPiloteAlias}
+            listeValeur={optionsIndicateurParent}
+            name="indicParentIndic"
+            valeurAffichee={displayParentIndic(indicateur.indicParentIndic)}
+          />
+        </div>
+      </div>
+      <div className="fr-grid-row fr-grid-row--gutters">
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="textarea"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            label={mapInfo.indic_descr.metaPiloteAlias}
             name="indicDescr"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.indic_descr,
+              indicateur,
+              "indicDescr",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="textarea"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.indic_methode_calcul
-            }
+            form={form}
+            label={mapInfo.indic_methode_calcul.metaPiloteAlias}
             name="indicMethodeCalcul"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.indic_methode_calcul,
+              indicateur,
+              "indicMethodeCalcul",
+            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.indic_type
-            }
+            form={form}
+            label={mapInfo.indic_type.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.indic_type)}
             name="indicType"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.indic_type,
+              indicateur,
+              "indicType",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.indic_schema
-            }
+            form={form}
+            label={mapInfo.indic_schema.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.indic_schema)}
             name="indicSchema"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.indic_schema,
+              indicateur,
+              "indicSchema",
+            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.indic_unite
-            }
+            form={form}
+            label={mapInfo.indic_unite.metaPiloteAlias}
             name="indicUnite"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.indic_unite,
+              indicateur,
+              "indicUnite",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.zg_applicable
-            }
+            form={form}
+            label={mapInfo.zg_applicable.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.zg_applicable)}
             name="zgApplicable"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.zg_applicable,
+              indicateur,
+              "zgApplicable",
+            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="boolean"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.indic_territorialise
-            }
+            form={form}
+            label={mapInfo.indic_territorialise.metaPiloteAlias}
             name="indicTerritorialise"
             onChangeSideEffect={(valeur) => {
               if (!valeur) {
-                setValue("poidsPourcentDept", "0");
-                setValue("poidsPourcentReg", "0");
+                form.setValue("poidsPourcentDept", "0");
+                form.setValue("poidsPourcentReg", "0");
               }
             }}
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.indic_territorialise,
+              indicateur,
+              "indicTerritorialise",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="boolean"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.indic_is_baro
-            }
+            form={form}
+            label={mapInfo.indic_is_baro.metaPiloteAlias}
             name="indicIsBaro"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.indic_is_baro,
+              indicateur,
+              "indicIsBaro",
+            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
-            disabled={!getValues("indicIsBaro")}
+          <MetadataChamp
+            disabled={!form.getValues("indicIsBaro")}
+            editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.indic_nom_baro
-            }
+            form={form}
+            label={mapInfo.indic_nom_baro.metaPiloteAlias}
             name="indicNomBaro"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.indic_nom_baro,
+              indicateur,
+              "indicNomBaro",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
-            disabled={!getValues("indicIsBaro")}
+          <MetadataChamp
+            disabled={!form.getValues("indicIsBaro")}
+            editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.indic_descr_baro
-            }
+            form={form}
+            label={mapInfo.indic_descr_baro.metaPiloteAlias}
             name="indicDescrBaro"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.indic_descr_baro,
+              indicateur,
+              "indicDescrBaro",
+            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="textarea"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.indic_source
-            }
+            form={form}
+            label={mapInfo.indic_source.metaPiloteAlias}
             name="indicSource"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.indic_source,
+              indicateur,
+              "indicSource",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.indic_source_url
-            }
+            form={form}
+            label={mapInfo.indic_source_url.metaPiloteAlias}
             name="indicSourceUrl"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.indic_source_url,
+              indicateur,
+              "indicSourceUrl",
+            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.periodicite
-            }
+            form={form}
+            label={mapInfo.periodicite.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.periodicite)}
             name="periodicite"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.periodicite,
+              indicateur,
+              "periodicite",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.delai_disponibilite
-            }
+            form={form}
+            label={mapInfo.delai_disponibilite.metaPiloteAlias}
             name="delaiDisponibilite"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.delai_disponibilite,
+              indicateur,
+              "delaiDisponibilite",
+            )}
           />
         </div>
       </div>

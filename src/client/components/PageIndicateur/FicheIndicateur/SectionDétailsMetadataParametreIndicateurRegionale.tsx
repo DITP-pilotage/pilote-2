@@ -2,9 +2,18 @@ import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
-import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
+import { MetadataChamp } from "@/components/_commons/MetadataChamp/MetadataChamp";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 import { MetadataIndicateurForm } from "@/components/PageIndicateur/usePageIndicateur";
+import {
+  computeValeurAffichee,
+  computeListeValeur,
+} from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
+
+type ValeurRegFrom = Pick<
+  MetadataIndicateurForm,
+  "viRegFrom" | "viRegOp" | "vaRegFrom" | "vaRegOp" | "vcRegFrom" | "vcRegOp"
+>;
 
 const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat;
@@ -13,14 +22,9 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
 }> = ({
   indicateur,
   estEnCoursDeModification,
-  mapInformationMetadataIndicateur,
+  mapInformationMetadataIndicateur: mapInfo,
 }) => {
   const form = useMetadataIndicateurForm();
-
-  type ValeurRegFrom = Pick<
-    MetadataIndicateurForm,
-    "viRegFrom" | "viRegOp" | "vaRegFrom" | "vaRegOp" | "vcRegFrom" | "vcRegOp"
-  >;
 
   const valeursRegFromDesactiveRegOp = new Set(["_", "user_input"]);
 
@@ -47,98 +51,125 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.vi_reg_from
-            }
+            form={form}
+            label={mapInfo.vi_reg_from.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.vi_reg_from)}
             name="viRegFrom"
             onChangeSideEffect={(valeur) => {
               ALaModificationValeurRegFrom(
                 "viRegFrom",
-                valeur as string,
+                valeur,
                 "viRegOp",
-                mapInformationMetadataIndicateur.vi_reg_op
-                  .metaPiloteDefaultValue as string,
+                mapInfo.vi_reg_op.metaPiloteDefaultValue as string,
               );
             }}
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.vi_reg_from,
+              indicateur,
+              "viRegFrom",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.va_reg_from
-            }
+            form={form}
+            label={mapInfo.va_reg_from.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.va_reg_from)}
             name="vaRegFrom"
             onChangeSideEffect={(valeur) => {
               ALaModificationValeurRegFrom(
                 "vaRegFrom",
-                valeur as string,
+                valeur,
                 "vaRegOp",
-                mapInformationMetadataIndicateur.va_reg_op
-                  .metaPiloteDefaultValue as string,
+                mapInfo.va_reg_op.metaPiloteDefaultValue as string,
               );
             }}
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.va_reg_from,
+              indicateur,
+              "vaRegFrom",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.vc_reg_from
-            }
+            form={form}
+            label={mapInfo.vc_reg_from.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.vc_reg_from)}
             name="vcRegFrom"
             onChangeSideEffect={(valeur) => {
               ALaModificationValeurRegFrom(
                 "vcRegFrom",
-                valeur as string,
+                valeur,
                 "vcRegOp",
-                mapInformationMetadataIndicateur.vc_reg_op
-                  .metaPiloteDefaultValue as string,
+                mapInfo.vc_reg_op.metaPiloteDefaultValue as string,
               );
             }}
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.vc_reg_from,
+              indicateur,
+              "vcRegFrom",
+            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estDesactive={valeursRegFromDesactiveRegOp.has(viRegFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursRegFromDesactiveRegOp.has(viRegFromValue)}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.vi_reg_op
-            }
+            form={form}
+            label={mapInfo.vi_reg_op.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.vi_reg_op)}
             name="viRegOp"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.vi_reg_op,
+              indicateur,
+              "viRegOp",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estDesactive={valeursRegFromDesactiveRegOp.has(vaRegFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursRegFromDesactiveRegOp.has(vaRegFromValue)}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.va_reg_op
-            }
+            form={form}
+            label={mapInfo.va_reg_op.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.va_reg_op)}
             name="vaRegOp"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.va_reg_op,
+              indicateur,
+              "vaRegOp",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="multi-select"
             estDesactive={valeursRegFromDesactiveRegOp.has(vcRegFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursRegFromDesactiveRegOp.has(vcRegFromValue)}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.vc_reg_op
-            }
+            form={form}
+            label={mapInfo.vc_reg_op.metaPiloteAlias}
+            listeValeur={computeListeValeur(mapInfo.vc_reg_op)}
             name="vcRegOp"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.vc_reg_op,
+              indicateur,
+              "vcRegOp",
+            )}
           />
         </div>
       </div>

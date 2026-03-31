@@ -2,8 +2,9 @@ import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
+import { MetadataChamp } from "@/components/_commons/MetadataChamp/MetadataChamp";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
+import { computeValeurAffichee } from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
 
 const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat;
@@ -12,7 +13,7 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
 }> = ({
   indicateur,
   estEnCoursDeModification,
-  mapInformationMetadataIndicateur,
+  mapInformationMetadataIndicateur: mapInfo,
 }) => {
   const form = useMetadataIndicateurForm();
   const indicateurEstTerritorialise = form.watch("indicTerritorialise");
@@ -24,67 +25,91 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
             disabled={!indicateurEstTerritorialise}
+            editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.poids_pourcent_dept_declaree
-            }
+            form={form}
+            label={mapInfo.poids_pourcent_dept_declaree.metaPiloteAlias}
             name="poidsPourcentDept"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.poids_pourcent_dept_declaree,
+              indicateur,
+              "poidsPourcentDept",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
             disabled={!indicateurEstTerritorialise}
+            editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.poids_pourcent_reg_declaree
-            }
+            form={form}
+            label={mapInfo.poids_pourcent_reg_declaree.metaPiloteAlias}
             name="poidsPourcentReg"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.poids_pourcent_reg_declaree,
+              indicateur,
+              "poidsPourcentReg",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.poids_pourcent_nat_declaree
-            }
+            form={form}
+            label={mapInfo.poids_pourcent_nat_declaree.metaPiloteAlias}
             name="poidsPourcentNat"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.poids_pourcent_nat_declaree,
+              indicateur,
+              "poidsPourcentNat",
+            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.poids_pourcent_eval_dept_declaree
-            }
+            form={form}
+            label={mapInfo.poids_pourcent_eval_dept_declaree.metaPiloteAlias}
             name="poidsPourcentEvalDept"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.poids_pourcent_eval_dept_declaree,
+              indicateur,
+              "poidsPourcentEvalDept",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.poids_pourcent_eval_reg_declaree
-            }
+            form={form}
+            label={mapInfo.poids_pourcent_eval_reg_declaree.metaPiloteAlias}
             name="poidsPourcentEvalReg"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.poids_pourcent_eval_reg_declaree,
+              indicateur,
+              "poidsPourcentEvalReg",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurChamp
+          <MetadataChamp
+            editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
-            indicateur={indicateur}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.poids_pourcent_eval_nat_declaree
-            }
+            form={form}
+            label={mapInfo.poids_pourcent_eval_nat_declaree.metaPiloteAlias}
             name="poidsPourcentEvalNat"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.poids_pourcent_eval_nat_declaree,
+              indicateur,
+              "poidsPourcentEvalNat",
+            )}
           />
         </div>
       </div>
