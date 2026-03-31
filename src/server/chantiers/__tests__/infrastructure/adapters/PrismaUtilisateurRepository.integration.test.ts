@@ -90,7 +90,7 @@ describe("PrismaUtilisateurRepository", () => {
       // When
       const utilisateurs =
         await prismaUtilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
-          "EQUIPE_DIR_PROJET",
+          ["EQUIPE_DIR_PROJET"],
           ["CH-001", "CH-004"],
         );
       // Then
@@ -163,7 +163,7 @@ describe("PrismaUtilisateurRepository", () => {
       // When
       const utilisateurs =
         await prismaUtilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
-          "EQUIPE_DIR_PROJET",
+          ["EQUIPE_DIR_PROJET"],
           ["CH-100", "CH-101"],
         );
 
@@ -223,7 +223,7 @@ describe("PrismaUtilisateurRepository", () => {
       // When
       const utilisateurs =
         await prismaUtilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
-          "EQUIPE_DIR_PROJET",
+          ["EQUIPE_DIR_PROJET"],
           ["CH-200", "CH-201", "CH-202"],
         );
 
@@ -235,6 +235,74 @@ describe("PrismaUtilisateurRepository", () => {
         "CH-200",
         "CH-201",
       ]);
+    });
+
+    it("doit récupérer les utilisateurs de plusieurs profils en même temps", async () => {
+      // Given
+      await prisma.utilisateur.createMany({
+        data: [
+          {
+            id: "a3f1e2d4-0001-4000-8000-000000000001",
+            email: "dir.projet.mp@test.com",
+            nom: "Projet",
+            prenom: "Dir",
+            profilCode: "EQUIPE_DIR_PROJET",
+            date_creation: new Date(),
+          },
+          {
+            id: "a3f1e2d4-0002-4000-8000-000000000002",
+            email: "sec.general.mp@test.com",
+            nom: "General",
+            prenom: "Sec",
+            profilCode: "SECRETARIAT_GENERAL",
+            date_creation: new Date(),
+          },
+          {
+            id: "a3f1e2d4-0003-4000-8000-000000000003",
+            email: "coord.region.mp@test.com",
+            nom: "Region",
+            prenom: "Coord",
+            profilCode: "COORDINATEUR_REGION",
+            date_creation: new Date(),
+          },
+        ],
+      });
+
+      await prisma.habilitation.createMany({
+        data: [
+          {
+            utilisateurId: "a3f1e2d4-0001-4000-8000-000000000001",
+            scopeCode: "lecture",
+            chantiers: ["CH-MP-001"],
+          },
+          {
+            utilisateurId: "a3f1e2d4-0002-4000-8000-000000000002",
+            scopeCode: "lecture",
+            chantiers: ["CH-MP-001"],
+          },
+          {
+            utilisateurId: "a3f1e2d4-0003-4000-8000-000000000003",
+            scopeCode: "lecture",
+            chantiers: ["CH-MP-001"],
+          },
+        ],
+      });
+
+      // When
+      const utilisateurs =
+        await prismaUtilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
+          ["EQUIPE_DIR_PROJET", "SECRETARIAT_GENERAL"],
+          ["CH-MP-001"],
+        );
+
+      // Then
+      expect(utilisateurs).toHaveLength(2);
+      expect(utilisateurs).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ email: "dir.projet.mp@test.com" }),
+          expect.objectContaining({ email: "sec.general.mp@test.com" }),
+        ]),
+      );
     });
 
     it("ne doit pas récupérer les utilisateurs ayant uniquement des périmètres sans chantiers correspondants", async () => {
@@ -270,7 +338,7 @@ describe("PrismaUtilisateurRepository", () => {
       // When
       const utilisateurs =
         await prismaUtilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
-          "EQUIPE_DIR_PROJET",
+          ["EQUIPE_DIR_PROJET"],
           ["CH-300"],
         );
 

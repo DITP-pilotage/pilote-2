@@ -2,7 +2,7 @@ import { Utilisateur } from "@/server/chantiers/domain/Utilisateur";
 
 export interface UtilisateurRepository {
   recupererUtilisateursParProfilEtChantierIds: (
-    profilCode: string,
+    profilCodes: string[],
     listeChantierIds: string[],
   ) => Promise<Utilisateur[]>;
 }
