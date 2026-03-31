@@ -20,6 +20,7 @@ module.exports = {
         "dsfr-info-main-525": "#0078F3",
         "dsfr-info-950": "#E8EDFF",
         "dsfr-warning-950": "#FFE9E6",
+        "dsfr-warning-925": "#FFDED9",
         "dsfr-warning-425": "#B34000",
         "dsfr-success-425": "#18753C",
         "dsfr-error-425": "#CE0500",

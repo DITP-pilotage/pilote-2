@@ -32,6 +32,7 @@ import { useEnv } from "@/client/hooks/useEnv";
 import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
 import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
 import { WidgetRepartitionMeteos } from "@/components/_commons/Widget/WidgetRepartitionMeteos/WidgetRepartitionMeteos";
+import { WidgetChantiersSignales } from "@/components/_commons/Widget/WidgetChantiersSignales/WidgetChantiersSignales";
 import TableauChantiers from "./TableauChantiers/TableauChantiers";
 import usePageChantiers from "./usePageChantiers";
 import RepartitionsMeteosChantiers from "./FiltresMeteos/RepartitionsMeteosChantiers";
@@ -39,6 +40,7 @@ import RepartitionsMeteosChantiers from "./FiltresMeteos/RepartitionsMeteosChant
 interface PageChantiersProps {
   chantiers: ChantierAccueilContratV2[];
   chantierIds: string[];
+  chantierIdsSansFiltrageAlertes: string[];
   nombreTotalChantiersAvecAlertes: number;
   ministères: Ministère[];
   territoireCode: string;
@@ -48,12 +50,14 @@ interface PageChantiersProps {
   avancementsGlobauxTerritoriauxMoyens: AvancementsGlobauxTerritoriauxMoyensContrat;
   repartitionMeteosChantiers: RepartitionMeteoContrat;
   jalon: number;
+  jalonParDefaut: number;
   moyenneTerritoire: number | null;
 }
 
 const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   chantiers,
   chantierIds,
+  chantierIdsSansFiltrageAlertes,
   nombreTotalChantiersAvecAlertes,
   ministères,
   territoireCode,
@@ -63,6 +67,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   avancementsGlobauxTerritoriauxMoyens,
   repartitionMeteosChantiers,
   jalon,
+  jalonParDefaut,
   moyenneTerritoire,
 }) => {
   const ffAlertesBaisse = useEnv("NEXT_PUBLIC_FF_ALERTES_BAISSE");
@@ -71,6 +76,9 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
   );
   const featureRepartitionMeteosV2 = useEnv(
     "NEXT_PUBLIC_FF_REPARTITION_METEOS_V2",
+  );
+  const featureChantiersSignalesV2 = useEnv(
+    "NEXT_PUBLIC_FF_CHANTIERS_SIGNALES_V2",
   );
   const pathname = "/accueil/chantier/[territoireCode]";
   const { auClicTerritoireCallback } = useCartographie(
@@ -198,12 +206,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
                 />
               </Bloc>
             </section>
-            {featureRepartitionMeteosV2 ? (
-              <WidgetRepartitionMeteos
-                chantierIds={chantierIds}
-                territoireCode={territoireCode}
-              />
-            ) : null}
           </div>
           <div className="fr-col-12 fr-col-lg-5 fr-col-xl-6 fr-pl-xl-1w">
             <Bloc>
@@ -273,6 +275,21 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
             </div>
           </div>
         )}
+        {featureChantiersSignalesV2 ? (
+          <div className="fr-pt-2w fr-px-2w fr-px-md-0 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {featureRepartitionMeteosV2 ? (
+              <WidgetRepartitionMeteos
+                chantierIds={chantierIds}
+                territoireCode={territoireCode}
+              />
+            ) : null}
+            <WidgetChantiersSignales
+              chantierIds={chantierIdsSansFiltrageAlertes}
+              jalonParDefaut={jalonParDefaut}
+              territoireCode={territoireCode}
+            />
+          </div>
+        ) : null}
         <div className="fr-grid-row fr-mt-7v">
           <div className="fr-col-12">
             <Bloc>

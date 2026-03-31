@@ -30,8 +30,11 @@ export const WidgetRepartitionMeteos = ({
   territoireCode: string;
 }) => {
   return (
-    <section className="fr-mr-md-2w fr-mr-xl-0 max-w-fit">
-      <Bloc contenuClassesSupplémentaires="fr-py-2w fr-px-3w">
+    <section className="h-full">
+      <Bloc
+        className="h-full"
+        contenuClassesSupplémentaires="fr-py-2w fr-px-3w"
+      >
         <TitreInfobulleConteneur className="justify-between fr-mb-2w">
           <Titre
             baliseHtml="h2"
@@ -106,12 +109,12 @@ const TuilesMeteos = ({
   );
 
   return (
-    <ul className="flex flex-col gap-3 list-none p-0 m-0 max-w-[360px]">
+    <ul className="list-none p-0 m-0 flex flex-col gap-3 max-w-[360px] sm:grid sm:grid-cols-2 sm:max-w-none">
       {meteosOrdonnees.map((meteo) => (
         <li key={meteo}>
           <button
             className={clsxm(
-              "flex items-center gap-3 w-full py-4 px-5 border border-dsfr-moutarde-main-975 rounded-lg bg-white shadow-lg cursor-pointer transition-colors hover:border-dsfr-moutarde-main-925 hover:bg-dsfr-moutarde-main-975",
+              "w-full h-full border border-dsfr-moutarde-main-975 rounded-lg bg-white shadow-lg cursor-pointer transition-colors hover:border-dsfr-moutarde-main-925 hover:bg-dsfr-moutarde-main-975 flex items-center gap-3 py-4 px-5 sm:flex-col sm:items-start sm:gap-1",
               {
                 "border-dsfr-moutarde-main-850": meteos.includes(meteo),
               },
@@ -123,10 +126,15 @@ const TuilesMeteos = ({
             type="button"
             aria-pressed={meteos.includes(meteo)}
           >
-            <span className="text-[1.75rem] font-bold text-dsfr-moutarde-main-850 min-w-[2.5rem] text-center">
+            <span className="text-[1.75rem] font-bold text-dsfr-moutarde-main-850 min-w-[2.5rem] text-center sm:flex sm:items-center sm:gap-2">
               {repartition[meteo]}
+              <span className="hidden sm:inline">
+                <MeteoPicto meteo={meteo} />
+              </span>
             </span>
-            <MeteoPicto meteo={meteo} />
+            <span className="sm:hidden">
+              <MeteoPicto meteo={meteo} />
+            </span>
             <span className="text-sm text-dsfr-grey-200 leading-tight">
               {libellesMeteos[meteo]}
             </span>
