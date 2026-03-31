@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { BoutonsAffichage } from "@/components/_commons/BoutonsAffichage/BoutonsAffichage";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
@@ -7,6 +6,9 @@ import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonS
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { SyntheseDesResultatsHistoriqueItem } from "@/server/syntheses-des-resultats/queries/RecupererHistoriqueSyntheseDesResultatsQuery";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
+import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
+import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
+import { truncateHtml } from "@/client/utils/html/truncateHtml";
 
 const LIMITE_CARACTERES_AFFICHAGE_SYNTHESE_DES_RESULTATS = 250;
 
@@ -27,16 +29,18 @@ const SynthèseDesRésultatsAffichage = ({
     );
   }
 
+  const source =
+    synthèseDesRésultats.contenuHtml ?? synthèseDesRésultats.contenu;
   const contenuTronque =
-    synthèseDesRésultats.contenu.length >
+    extractVisibleText(source).length >
     LIMITE_CARACTERES_AFFICHAGE_SYNTHESE_DES_RESULTATS;
   const contenuAAfficher =
     afficherContenuComplet || !contenuTronque
-      ? synthèseDesRésultats.contenu
-      : synthèseDesRésultats.contenu.slice(
-          0,
+      ? source
+      : truncateHtml(
+          source,
           LIMITE_CARACTERES_AFFICHAGE_SYNTHESE_DES_RESULTATS,
-        ) + "...";
+        );
 
   return (
     <>
@@ -66,13 +70,9 @@ const SynthèseDesRésultatsAffichage = ({
           </Infobulle>
         </div>
       ) : null}
-      <p
-        className="fr-text--sm mb-1"
-        dangerouslySetInnerHTML={{
-          __html:
-            nettoyerUneChaîneDeCaractèresPourAffichageHTML(contenuAAfficher),
-        }}
-      />
+      <div className="fr-text--sm mb-1">
+        <RenduContenuHtml html={contenuAAfficher} />
+      </div>
       {contenuTronque ? (
         <BoutonsAffichage
           deplie={afficherContenuComplet}
