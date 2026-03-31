@@ -1,6 +1,7 @@
 import { FunctionComponent } from "react";
 import {
   Controller,
+  ControllerRenderProps,
   FieldPath,
   FieldValues,
   UseFormReturn,
@@ -72,108 +73,79 @@ function MetadataChampInterne<TForm extends FieldValues>(
     estMandatory = informationMetadata.metaPiloteMandatory,
   } = props;
 
-  const renderInput = () => {
-    switch (props.editBoxType) {
-      case "text":
-        return (
-          <Controller
-            control={form.control}
-            name={name}
-            render={({ field }) => (
-              <Input
-                disabled={props.disabled}
-                erreurMessage={form.formState.errors[name]?.message as string}
-                htmlName={name}
-                onChange={field.onChange}
-                type="text"
-                value={String(field.value ?? "")}
-              />
-            )}
-          />
-        );
+  const erreurMessage = form.formState.errors[name]?.message as string;
 
-      case "textarea":
-        return (
-          <Controller
-            control={form.control}
-            name={name}
-            render={({ field }) => (
-              <TextArea
-                erreurMessage={form.formState.errors[name]?.message as string}
-                htmlName={name}
-                onChange={field.onChange}
-                value={String(field.value ?? "")}
-              />
-            )}
-          />
-        );
-
-      case "boolean":
-        return (
-          <Controller
-            control={form.control}
-            name={name}
-            render={({ field }) => (
-              <Interrupteur
-                checked={!!field.value}
-                libellé={field.value ? "Oui" : "Non"}
-                onChange={(isChecked) => {
-                  field.onChange(isChecked);
-                  if (props.onChangeSideEffect) {
-                    props.onChangeSideEffect(isChecked);
-                  }
-                }}
-              />
-            )}
-          />
-        );
-
-      case "multi-select":
-        if (props.variante === "recherche") {
-          return (
-            <Controller
-              control={form.control}
-              name={name}
-              render={({ field }) => (
-                <SélecteurAvecRecherche
-                  erreurMessage={form.formState.errors[name]?.message as string}
-                  estVisibleEnMobile
-                  estVueMobile={false}
-                  htmlName={name}
-                  options={props.listeValeur}
-                  valeurModifiéeCallback={field.onChange}
-                  valeurSélectionnée={String(field.value ?? "_")}
-                />
-              )}
-            />
-          );
-        }
-
-        return (
-          <Controller
-            control={form.control}
-            name={name}
-            render={({ field }) => (
-              <Sélecteur
-                errorMessage={form.formState.errors[name]?.message as string}
-                estDesactive={props.estDesactive}
-                htmlName={name}
-                onChange={(value) => {
-                  field.onChange(value);
-                  if (props.onChangeSideEffect) {
-                    props.onChangeSideEffect(value);
-                  }
-                }}
-                options={props.listeValeur}
-                valeurSélectionnée={String(field.value ?? "_")}
-              />
-            )}
-          />
-        );
-
-      default:
-        return null;
+  const renderChamp = (
+    field: ControllerRenderProps<TForm, FieldPath<TForm>>,
+  ) => {
+    if (props.editBoxType === "text") {
+      return (
+        <Input
+          disabled={props.disabled}
+          erreurMessage={erreurMessage}
+          htmlName={name}
+          onChange={field.onChange}
+          type="text"
+          value={String(field.value ?? "")}
+        />
+      );
     }
+
+    if (props.editBoxType === "textarea") {
+      return (
+        <TextArea
+          erreurMessage={erreurMessage}
+          htmlName={name}
+          onChange={field.onChange}
+          value={String(field.value ?? "")}
+        />
+      );
+    }
+
+    if (props.editBoxType === "boolean") {
+      return (
+        <Interrupteur
+          checked={!!field.value}
+          libellé={field.value ? "Oui" : "Non"}
+          onChange={(isChecked) => {
+            field.onChange(isChecked);
+            if (props.onChangeSideEffect) {
+              props.onChangeSideEffect(isChecked);
+            }
+          }}
+        />
+      );
+    }
+
+    if (props.variante === "recherche") {
+      return (
+        <SélecteurAvecRecherche
+          erreurMessage={erreurMessage}
+          estVisibleEnMobile
+          estVueMobile={false}
+          htmlName={name}
+          options={props.listeValeur}
+          valeurModifiéeCallback={field.onChange}
+          valeurSélectionnée={String(field.value ?? "_")}
+        />
+      );
+    }
+
+    return (
+      <Sélecteur
+        errorMessage={erreurMessage}
+        estDesactive={props.estDesactive}
+        htmlName={name}
+        onChange={(value) => {
+          field.onChange(value);
+          if (props.onChangeSideEffect) {
+            props.onChangeSideEffect(value);
+          }
+        }}
+        options={props.listeValeur}
+        valeurSélectionnée={String(field.value ?? "_")}
+      />
+    );
   };
 
   return (
@@ -192,7 +164,13 @@ function MetadataChampInterne<TForm extends FieldValues>(
         ) : null}
       </div>
       {estEnCoursDeModification ? (
-        <div className="fr-mt-1w">{renderInput()}</div>
+        <div className="fr-mt-1w">
+          <Controller
+            control={form.control}
+            name={name}
+            render={({ field }) => renderChamp(field)}
+          />
+        </div>
       ) : (
         <span>{valeurAffichee}</span>
       )}
