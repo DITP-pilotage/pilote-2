@@ -23,6 +23,10 @@ import { SaveIcon } from "@/components/_commons/Icones/SaveIcon";
 import { MeteoSaisissable } from "@/server/domain/météo/Météo.interface";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 import { CONSIGNE_SYNTHÈSE_DES_RÉSULTATS } from "@/client/constants/libellesSyntheseDesResultats";
+import { useEnv } from "@/client/hooks/useEnv";
+import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
+import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
+import { plainTextToHtml } from "@/client/utils/html/plainTextToHtml";
 
 interface ModaleFormulaireSyntheseDesResultatsProps {
   title: string;
@@ -49,6 +53,9 @@ export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
     chantierInformations,
   } = pageChantier.useServerSidePropsContext();
   const territoireSélectionné = useTerritoireSelectionne();
+  const ffEditeurRicheCommentaires = useEnv(
+    "NEXT_PUBLIC_FF_EDITEUR_RICHE_COMMENTAIRES",
+  );
 
   const form = useForm<SyntheseDesResultatsFormulaireInputs>({
     mode: "all",
@@ -57,12 +64,26 @@ export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
       ? {
           defaultValues: { contenu: "", meteo: undefined },
           values: {
-            contenu: syntheseDesResultatsBrouillon.contenu,
+            contenu:
+              syntheseDesResultatsBrouillon.contenuHtml ??
+              syntheseDesResultatsBrouillon.contenu,
             meteo: syntheseDesResultatsBrouillon.meteo as MeteoSaisissable,
           },
         }
       : { defaultValues: { contenu: "", meteo: undefined } }),
   });
+
+  const avecConversionHtml =
+    (
+      handler: SubmitHandler<SyntheseDesResultatsFormulaireInputs>,
+    ): SubmitHandler<SyntheseDesResultatsFormulaireInputs> =>
+    (data) =>
+      handler({
+        ...data,
+        contenu: ffEditeurRicheCommentaires
+          ? data.contenu
+          : plainTextToHtml(data.contenu),
+      });
 
   return (
     <Modale
@@ -100,7 +121,7 @@ export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
 
       <h3 className="text-base font-bold mb-3">Votre nouveau commentaire</h3>
       <p className="text-sm mb-6">{CONSIGNE_SYNTHÈSE_DES_RÉSULTATS}</p>
-      <form onSubmit={form.handleSubmit(onPublier)}>
+      <form onSubmit={form.handleSubmit(avecConversionHtml(onPublier))}>
         <div className="flex gap-4 items-stretch">
           <div className="flex-none w-55">
             <label className="block text-sm mb-2">Météo</label>
@@ -121,11 +142,25 @@ export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
             className={`flex-1 flex flex-col ${form.formState.errors.contenu ? "fr-input-group--error" : ""}`}
           >
             <label className="block text-sm mb-2">Synthèse des résultats</label>
-            <textarea
-              className="fr-input fr-text--sm flex-1 mb-0"
-              rows={6}
-              {...form.register("contenu")}
-            />
+            {ffEditeurRicheCommentaires ? (
+              <Controller
+                control={form.control}
+                name="contenu"
+                render={({ field }) => (
+                  <EditeurSimple
+                    contenu={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                  />
+                )}
+              />
+            ) : (
+              <textarea
+                className="fr-input fr-text--sm flex-1 mb-0"
+                rows={6}
+                {...form.register("contenu")}
+              />
+            )}
             <div className="flex justify-between mt-1">
               <div>
                 {!!form.formState.errors.contenu && (
@@ -135,7 +170,7 @@ export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
                 )}
               </div>
               <CompteurCaractères
-                compte={form.watch("contenu")?.length ?? 0}
+                compte={extractVisibleText(form.watch("contenu") ?? "").length}
                 limiteDeCaractères={LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS}
               />
             </div>
@@ -164,7 +199,9 @@ export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
             iconLeft={
               <Icone className="w-4 h-4 text-current" icone={SaveIcon} />
             }
-            onClick={form.handleSubmit(onEnregistrerBrouillon)}
+            onClick={form.handleSubmit(
+              avecConversionHtml(onEnregistrerBrouillon),
+            )}
             type="button"
           >
             Enregistrer en tant que brouillon
