@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
@@ -22,6 +22,10 @@ import {
   PublicationBrouillon,
   Publication,
 } from "@/components/PageChantier/PublicationV2/Publication.interface";
+import { useEnv } from "@/client/hooks/useEnv";
+import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
+import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
+import { plainTextToHtml } from "@/client/utils/html/plainTextToHtml";
 
 interface ModaleFormulairePublicationProps {
   title: string;
@@ -50,12 +54,26 @@ export const ModaleFormulairePublication = ({
 }: ModaleFormulairePublicationProps) => {
   const { chantierInformations } = pageChantier.useServerSidePropsContext();
   const territoireSélectionné = useTerritoireSelectionne();
+  const ffEditeurRicheCommentaires = useEnv(
+    "NEXT_PUBLIC_FF_EDITEUR_RICHE_COMMENTAIRES",
+  );
 
   const form = useForm<{ contenu: string }>({
     mode: "all",
     resolver: zodResolver(validationCommentaireFormulaire),
-    defaultValues: { contenu: brouillon?.contenu ?? "" },
+    defaultValues: {
+      contenu: brouillon?.contenuHtml ?? brouillon?.contenu ?? "",
+    },
   });
+
+  const avecConversionHtml =
+    (handler: SubmitHandler<{ contenu: string }>): SubmitHandler<{ contenu: string }> =>
+    (data) =>
+      handler({
+        contenu: ffEditeurRicheCommentaires
+          ? data.contenu
+          : plainTextToHtml(data.contenu),
+      });
 
   return (
     <Modale
@@ -79,15 +97,29 @@ export const ModaleFormulairePublication = ({
 
       <h3 className="text-base font-bold mb-3">Votre nouveau commentaire</h3>
       <p className="text-sm mb-6">{consigne}</p>
-      <form onSubmit={form.handleSubmit(onPublier)}>
+      <form onSubmit={form.handleSubmit(avecConversionHtml(onPublier))}>
         <div
           className={`flex flex-col ${form.formState.errors.contenu ? "fr-input-group--error" : ""}`}
         >
-          <textarea
-            className="fr-input fr-text--sm flex-1 mb-0"
-            rows={6}
-            {...form.register("contenu")}
-          />
+          {ffEditeurRicheCommentaires ? (
+            <Controller
+              control={form.control}
+              name="contenu"
+              render={({ field }) => (
+                <EditeurSimple
+                  contenu={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                />
+              )}
+            />
+          ) : (
+            <textarea
+              className="fr-input fr-text--sm flex-1 mb-0"
+              rows={6}
+              {...form.register("contenu")}
+            />
+          )}
           <div className="flex justify-between mt-1">
             <div>
               {!!form.formState.errors.contenu && (
@@ -97,7 +129,7 @@ export const ModaleFormulairePublication = ({
               )}
             </div>
             <CompteurCaractères
-              compte={form.watch("contenu")?.length ?? 0}
+              compte={extractVisibleText(form.watch("contenu") ?? "").length}
               limiteDeCaractères={LIMITE_CARACTÈRES_COMMENTAIRE}
             />
           </div>
@@ -124,7 +156,7 @@ export const ModaleFormulairePublication = ({
             iconLeft={
               <Icone className="w-4 h-4 text-current" icone={SaveIcon} />
             }
-            onClick={form.handleSubmit(onEnregistrerBrouillon)}
+            onClick={form.handleSubmit(avecConversionHtml(onEnregistrerBrouillon))}
             type="button"
           >
             Enregistrer en tant que brouillon

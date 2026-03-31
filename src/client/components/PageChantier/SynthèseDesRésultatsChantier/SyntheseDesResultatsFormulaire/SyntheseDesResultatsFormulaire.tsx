@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { FunctionComponent } from "react";
 import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
 import {
@@ -26,6 +26,10 @@ import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
 import { useModifierSyntheseDesResultats } from "./useModifierSyntheseDesResultats";
 import { SelecteurMeteo } from "./SelecteurMeteo";
+import { useEnv } from "@/client/hooks/useEnv";
+import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
+import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
+import { plainTextToHtml } from "@/client/utils/html/plainTextToHtml";
 
 interface SyntheseDesResultatsFormulaireProps {
   annulationCallback?: () => void;
@@ -40,6 +44,9 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
   const modifierSynthèseDesRésultats = useModifierSyntheseDesResultats({
     onSucess,
   });
+  const ffEditeurRicheCommentaires = useEnv(
+    "NEXT_PUBLIC_FF_EDITEUR_RICHE_COMMENTAIRES",
+  );
 
   const {
     register,
@@ -51,7 +58,8 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
     mode: "all",
     resolver: zodResolver(validationSynthèseDesRésultatsFormulaire),
     defaultValues: {
-      contenu: syntheseDesResultats?.contenu,
+      contenu:
+        syntheseDesResultats?.contenuHtml ?? syntheseDesResultats?.contenu,
       meteo:
         syntheseDesResultats?.meteo &&
         meteosSaisissables.includes(syntheseDesResultats.meteo)
@@ -60,8 +68,18 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
     },
   });
 
+  const soumettre: SubmitHandler<SyntheseDesResultatsFormulaireInputs> = (
+    data,
+  ) =>
+    modifierSynthèseDesRésultats({
+      ...data,
+      contenu: ffEditeurRicheCommentaires
+        ? data.contenu
+        : plainTextToHtml(data.contenu),
+    });
+
   return (
-    <form method="post" onSubmit={handleSubmit(modifierSynthèseDesRésultats)}>
+    <form method="post" onSubmit={handleSubmit(soumettre)}>
       <div className="flex items-center gap-2 fr-mb-1v">
         <Titre baliseHtml="h3" className="text-xl mb-0">
           {`Modifier le commentaire "${LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS}"`}
@@ -91,11 +109,25 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
         <div
           className={`flex-1 flex flex-col fr-mb-0 fr-input-group ${errors.contenu && "fr-input-group--error"}`}
         >
-          <textarea
-            className="fr-input fr-text--sm fr-mb-0 flex-1 max-h-[85vh] resize-y"
-            rows={6}
-            {...register("contenu")}
-          />
+          {ffEditeurRicheCommentaires ? (
+            <Controller
+              control={control}
+              name="contenu"
+              render={({ field }) => (
+                <EditeurSimple
+                  contenu={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                />
+              )}
+            />
+          ) : (
+            <textarea
+              className="fr-input fr-text--sm fr-mb-0 flex-1 max-h-[85vh] resize-y"
+              rows={6}
+              {...register("contenu")}
+            />
+          )}
           <div className="flex justify-between">
             <div>
               {!!errors.contenu && (
@@ -105,7 +137,7 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
               )}
             </div>
             <CompteurCaractères
-              compte={watch("contenu")?.length ?? 0}
+              compte={extractVisibleText(watch("contenu") ?? "").length}
               limiteDeCaractères={LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS}
             />
           </div>
