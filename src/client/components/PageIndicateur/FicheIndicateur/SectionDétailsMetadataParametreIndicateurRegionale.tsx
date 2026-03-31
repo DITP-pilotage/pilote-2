@@ -2,11 +2,7 @@ import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
-import { MetadataIndicateurSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur";
-import {
-  mappingAcceptedValues,
-  mappingDisplayAcceptedValues,
-} from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
+import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 import { MetadataIndicateurForm } from "@/components/PageIndicateur/usePageIndicateur";
 
@@ -51,158 +47,98 @@ const SectionDétailsMetadataParametreIndicateurRegionale: FunctionComponent<{
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vi_reg_from
             }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vi_reg_from",
-            )}
             name="viRegFrom"
             onChangeSideEffect={(valeur) => {
               ALaModificationValeurRegFrom(
                 "viRegFrom",
-                valeur,
+                valeur as string,
                 "viRegOp",
                 mapInformationMetadataIndicateur.vi_reg_op
                   .metaPiloteDefaultValue as string,
               );
             }}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vi_reg_from",
-              "viRegFrom",
-            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.va_reg_from
             }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "va_reg_from",
-            )}
             name="vaRegFrom"
             onChangeSideEffect={(valeur) => {
               ALaModificationValeurRegFrom(
                 "vaRegFrom",
-                valeur,
+                valeur as string,
                 "vaRegOp",
                 mapInformationMetadataIndicateur.va_reg_op
                   .metaPiloteDefaultValue as string,
               );
             }}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "va_reg_from",
-              "vaRegFrom",
-            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vc_reg_from
             }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vc_reg_from",
-            )}
             name="vcRegFrom"
             onChangeSideEffect={(valeur) => {
               ALaModificationValeurRegFrom(
                 "vcRegFrom",
-                valeur,
+                valeur as string,
                 "vcRegOp",
                 mapInformationMetadataIndicateur.vc_reg_op
                   .metaPiloteDefaultValue as string,
               );
             }}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vc_reg_from",
-              "vcRegFrom",
-            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataIndicateurChamp
             estDesactive={valeursRegFromDesactiveRegOp.has(viRegFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursRegFromDesactiveRegOp.has(viRegFromValue)}
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vi_reg_op
             }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vi_reg_op",
-            )}
             name="viRegOp"
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vi_reg_op",
-              "viRegOp",
-            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataIndicateurChamp
             estDesactive={valeursRegFromDesactiveRegOp.has(vaRegFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursRegFromDesactiveRegOp.has(vaRegFromValue)}
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.va_reg_op
             }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "va_reg_op",
-            )}
             name="vaRegOp"
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "va_reg_op",
-              "vaRegOp",
-            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataIndicateurChamp
             estDesactive={valeursRegFromDesactiveRegOp.has(vcRegFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursRegFromDesactiveRegOp.has(vcRegFromValue)}
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vc_reg_op
             }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vc_reg_op",
-            )}
             name="vcRegOp"
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vc_reg_op",
-              "vcRegOp",
-            )}
           />
         </div>
       </div>

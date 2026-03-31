@@ -2,14 +2,7 @@ import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { MetadataIndicateurInput } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInput";
-import { MetadataIndicateurTextArea } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurTextArea";
-import { MetadataIndicateurInterrupteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInterrupteur";
-import { MetadataIndicateurSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur";
-import {
-  mappingAcceptedValues,
-  mappingDisplayAcceptedValues,
-} from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
+import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
 
 const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
   indicateur: MetadataParametrageIndicateurContrat;
@@ -27,162 +20,163 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="mailles"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.mailles
             }
-            valeurAffiché={indicateur.mailles || "_"}
+            name="mailles"
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="frequenceTerritoriale"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.frequence_territoriale
             }
-            valeurAffiché={`${indicateur.frequenceTerritoriale}`}
+            name="frequenceTerritoriale"
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="adminSource"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.admin_source
             }
-            valeurAffiché={indicateur.adminSource || "_"}
+            name="adminSource"
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="siSource"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.si_source
             }
-            valeurAffiché={indicateur.siSource || "_"}
+            name="siSource"
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="donneeOuverte"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.donnee_ouverte
             }
-            valeurAffiché={indicateur.donneeOuverte ? "Oui" : "Non"}
+            name="donneeOuverte"
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="modalitesDonneeOuverte"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.modalites_donnee_ouverte
             }
-            valeurAffiché={indicateur.modalitesDonneeOuverte || "_"}
+            name="modalitesDonneeOuverte"
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="respDonnees"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.resp_donnees
             }
-            valeurAffiché={indicateur.respDonnees || "_"}
+            name="respDonnees"
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="respDonneesEmail"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.resp_donnees_email
             }
-            valeurAffiché={indicateur.respDonneesEmail || "_"}
+            name="respDonneesEmail"
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="contactTechnique"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.contact_technique
             }
-            valeurAffiché={indicateur.contactTechnique || "_"}
+            name="contactTechnique"
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="contactTechniqueEmail"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.contact_technique_email
             }
-            valeurAffiché={indicateur.contactTechniqueEmail || "_"}
+            name="contactTechniqueEmail"
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="indicIsPerseverant"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_is_perseverant
             }
-            valeurAffiché={indicateur.indicIsPerseverant ? "Oui" : "Non"}
+            name="indicIsPerseverant"
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="reformePrioritaire"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.reforme_prioritaire
             }
-            valeurAffiché={indicateur.reformePrioritaire || "_"}
+            name="reformePrioritaire"
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="projetAnnuelPerf"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.projet_annuel_perf
             }
-            valeurAffiché={indicateur.projetAnnuelPerf ? "Oui" : "Non"}
+            name="projetAnnuelPerf"
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="detailProjetAnnuelPerf"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.detail_projet_annuel_perf
             }
-            valeurAffiché={indicateur.detailProjetAnnuelPerf || "_"}
+            name="detailProjetAnnuelPerf"
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurTextArea
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.commentaire
             }
@@ -190,77 +184,57 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="methodeCollecte"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.methode_collecte
             }
-            valeurAffiché={indicateur.methodeCollecte || "_"}
+            name="methodeCollecte"
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurSelecteur
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.maille_pilotage
             }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "maille_pilotage",
-            )}
             name="maillePilotage"
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "maille_pilotage",
-              "maillePilotage",
-            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurSelecteur
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.couverture_temporelle
             }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "couverture_temporelle",
-            )}
             name="couvertureTemporelle"
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "couverture_temporelle",
-              "couvertureTemporelle",
-            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="cibleAttendue"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.cible_attendue
             }
-            valeurAffiché={indicateur.cibleAttendue ? "Oui" : "Non"}
+            name="cibleAttendue"
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="indicIsPhare"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.indic_is_phare
             }
-            valeurAffiché={indicateur.indicIsPhare ? "Oui" : "Non"}
+            name="indicIsPhare"
           />
         </div>
       </div>

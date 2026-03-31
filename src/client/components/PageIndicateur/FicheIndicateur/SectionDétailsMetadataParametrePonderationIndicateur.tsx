@@ -2,7 +2,7 @@ import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { MetadataIndicateurInput } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInput";
+import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 
 const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
@@ -24,67 +24,67 @@ const SectionDétailsMetadataParametrePonderationIndicateur: FunctionComponent<{
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             disabled={!indicateurEstTerritorialise}
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="poidsPourcentDept"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.poids_pourcent_dept_declaree
             }
-            valeurAffiché={`${indicateur.poidsPourcentDept}`}
+            name="poidsPourcentDept"
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             disabled={!indicateurEstTerritorialise}
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="poidsPourcentReg"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.poids_pourcent_reg_declaree
             }
-            valeurAffiché={`${indicateur.poidsPourcentReg}`}
+            name="poidsPourcentReg"
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="poidsPourcentNat"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.poids_pourcent_nat_declaree
             }
-            valeurAffiché={`${indicateur.poidsPourcentNat}`}
+            name="poidsPourcentNat"
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="poidsPourcentEvalDept"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.poids_pourcent_eval_dept_declaree
             }
-            valeurAffiché={`${indicateur.poidsPourcentEvalDept}`}
+            name="poidsPourcentEvalDept"
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="poidsPourcentEvalReg"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.poids_pourcent_eval_reg_declaree
             }
-            valeurAffiché={`${indicateur.poidsPourcentEvalReg}`}
+            name="poidsPourcentEvalReg"
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurInput
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="poidsPourcentEvalNat"
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.poids_pourcent_eval_nat_declaree
             }
-            valeurAffiché={`${indicateur.poidsPourcentEvalNat}`}
+            name="poidsPourcentEvalNat"
           />
         </div>
       </div>

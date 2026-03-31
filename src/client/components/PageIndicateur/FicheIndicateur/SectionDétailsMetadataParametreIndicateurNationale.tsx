@@ -2,11 +2,7 @@ import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
-import { MetadataIndicateurSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur";
-import {
-  mappingAcceptedValues,
-  mappingDisplayAcceptedValues,
-} from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
+import { MetadataIndicateurChamp } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurChamp";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 import { MetadataIndicateurForm } from "@/components/PageIndicateur/usePageIndicateur";
 
@@ -50,158 +46,98 @@ const SectionDétailsMetadataParametreIndicateurNationale: FunctionComponent<{
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vi_nat_from
             }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vi_nat_from",
-            )}
             name="viNatFrom"
             onChangeSideEffect={(valeur) => {
               ALaModificationValeurNatFrom(
                 "viNatFrom",
-                valeur,
+                valeur as string,
                 "viNatOp",
                 mapInformationMetadataIndicateur.vi_nat_op
                   .metaPiloteDefaultValue as string,
               );
             }}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vi_nat_from",
-              "viNatFrom",
-            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.va_nat_from
             }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "va_nat_from",
-            )}
             name="vaNatFrom"
             onChangeSideEffect={(valeur) => {
               ALaModificationValeurNatFrom(
                 "vaNatFrom",
-                valeur,
+                valeur as string,
                 "vaNatOp",
                 mapInformationMetadataIndicateur.va_nat_op
                   .metaPiloteDefaultValue as string,
               );
             }}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "va_nat_from",
-              "vaNatFrom",
-            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataIndicateurChamp
             estEnCoursDeModification={estEnCoursDeModification}
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vc_nat_from
             }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vc_nat_from",
-            )}
             name="vcNatFrom"
             onChangeSideEffect={(valeur) => {
               ALaModificationValeurNatFrom(
                 "vcNatFrom",
-                valeur,
+                valeur as string,
                 "vcNatOp",
                 mapInformationMetadataIndicateur.va_nat_op
                   .metaPiloteDefaultValue as string,
               );
             }}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vc_nat_from",
-              "vcNatFrom",
-            )}
           />
         </div>
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataIndicateurChamp
             estDesactive={valeursNatFromDesactiveNatOp.has(viNatFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursNatFromDesactiveNatOp.has(viNatFromValue)}
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vi_nat_op
             }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vi_nat_op",
-            )}
             name="viNatOp"
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vi_nat_op",
-              "viNatOp",
-            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataIndicateurChamp
             estDesactive={valeursNatFromDesactiveNatOp.has(vaNatFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursNatFromDesactiveNatOp.has(vaNatFromValue)}
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.va_nat_op
             }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "va_nat_op",
-            )}
             name="vaNatOp"
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "va_nat_op",
-              "vaNatOp",
-            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataIndicateurChamp
             estDesactive={valeursNatFromDesactiveNatOp.has(vcNatFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursNatFromDesactiveNatOp.has(vcNatFromValue)}
+            indicateur={indicateur}
             informationMetadataIndicateur={
               mapInformationMetadataIndicateur.vc_nat_op
             }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vc_nat_op",
-            )}
             name="vcNatOp"
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vc_nat_op",
-              "vcNatOp",
-            )}
           />
         </div>
       </div>

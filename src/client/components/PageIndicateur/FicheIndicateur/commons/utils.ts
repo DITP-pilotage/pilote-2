@@ -1,27 +1,39 @@
-import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
+import { InformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 
-export const mappingDisplayAcceptedValues = (
-  mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat,
+export const computeValeurAffichee = (
+  informationMetadataIndicateur: InformationMetadataIndicateurContrat,
   indicateur: MetadataParametrageIndicateurContrat,
-  originValue: keyof MapInformationMetadataIndicateurContrat,
-  mappedValue: keyof MetadataParametrageIndicateurContrat,
-) => {
-  return (
-    mapInformationMetadataIndicateur[originValue].acceptedValues.find(
-      (acceptedValue) => acceptedValue.valeur === indicateur[mappedValue],
-    )?.libellé || "_"
-  );
+  name: keyof MetadataParametrageIndicateurContrat,
+): string => {
+  const rawValue = indicateur[name];
+
+  const editBoxType =
+    informationMetadataIndicateur.dataType === "boolean"
+      ? "boolean"
+      : informationMetadataIndicateur.metaPiloteEditBoxType;
+
+  switch (editBoxType) {
+    case "boolean":
+      return rawValue ? "Oui" : "Non";
+    case "multi-select": {
+      const found = informationMetadataIndicateur.acceptedValues.find(
+        (acceptedValue) => acceptedValue.valeur === rawValue,
+      );
+      return found?.libellé || "_";
+    }
+    case "text":
+    case "textarea":
+    default:
+      return rawValue != null ? `${rawValue}` : "_";
+  }
 };
-export const mappingAcceptedValues = (
-  mapInformationMetadataIndicateur: MapInformationMetadataIndicateurContrat,
-  indicateur: MetadataParametrageIndicateurContrat,
-  originValue: keyof MapInformationMetadataIndicateurContrat,
-) => {
-  return mapInformationMetadataIndicateur[originValue].acceptedValues.map(
-    (acceptedValue) => ({
-      valeur: acceptedValue.valeur,
-      libellé: acceptedValue.libellé,
-    }),
-  );
+
+export const computeListeValeur = (
+  informationMetadataIndicateur: InformationMetadataIndicateurContrat,
+): { valeur: string; libellé: string }[] => {
+  return informationMetadataIndicateur.acceptedValues.map((acceptedValue) => ({
+    valeur: acceptedValue.valeur,
+    libellé: acceptedValue.libellé,
+  }));
 };
