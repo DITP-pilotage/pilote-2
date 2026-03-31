@@ -440,7 +440,7 @@ test.describe("Gestion des comptes utilisateurs", () => {
       await page
         .getByRole("button", { name: /Réinitialiser les filtres/ })
         .click();
-      await page.waitForTimeout(600);
+      await page.waitForTimeout(1000);
     });
 
     await test.step("Réinitialisation avec filtres combinés", async () => {
