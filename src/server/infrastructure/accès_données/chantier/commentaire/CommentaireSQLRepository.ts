@@ -36,6 +36,7 @@ type CommentaireRaw = {
   chantier_id: string;
   type: string;
   contenu: string;
+  contenu_html: string | null;
   date_modification: Date;
   nom: string;
   prenom: string;
@@ -77,6 +78,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
         territoire_code: territoireCode,
         type: CODES_TYPES_COMMENTAIRES[type],
         contenu,
+        contenu_html: contenu,
         statut,
         auteur_creation_id: auteurCreationId,
         date_creation: new Date(dateCreation),
@@ -85,6 +87,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
       },
       update: {
         contenu,
+        contenu_html: contenu,
         statut,
         auteur_modification_id: auteurModificationId,
         date_modification: new Date(dateModification),
@@ -102,6 +105,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
       territoireCode: row.territoire_code,
       type: NOMS_TYPES_COMMENTAIRES[row.type],
       contenu: row.contenu,
+      contenuHtml: row.contenu_html,
       statut: row.statut,
       auteurCreationId: row.auteur_creation_id,
       dateCreation: row.date_creation.toISOString(),
@@ -120,7 +124,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
     const commentairesAvecAuteur = await this.prisma.$queryRaw<
       CommentaireRaw[]
     >`
-      SELECT c.chantier_id, c.contenu, c.type, c.id, c.date_modification, utilisateur.nom, utilisateur.prenom
+      SELECT c.chantier_id, c.contenu, c.contenu_html, c.type, c.id, c.date_modification, utilisateur.nom, utilisateur.prenom
       FROM commentaire c
       LEFT JOIN utilisateur ON utilisateur.id = c.auteur_modification_id
       INNER JOIN (
@@ -147,6 +151,7 @@ export default class CommentaireSQLRepository implements CommentaireRepository {
         return {
           id: commentaireAvecAuteur.id,
           contenu: commentaireAvecAuteur.contenu,
+          contenuHtml: commentaireAvecAuteur.contenu_html,
           date: commentaireAvecAuteur.date_modification.toISOString(),
           auteur: `${commentaireAvecAuteur.prenom} ${commentaireAvecAuteur.nom}`,
           type: NOMS_TYPES_COMMENTAIRES[commentaireAvecAuteur.type],

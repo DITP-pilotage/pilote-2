@@ -201,6 +201,7 @@ describe("RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
             {
               id: commentaireSolutionsNational.id,
               contenu: commentaireSolutionsNational.contenu,
+              contenuHtml: `<p>${commentaireSolutionsNational.contenu}</p>`,
               date: commentaireSolutionsNational.date_modification.toISOString(),
               auteur: "User Test",
               type: "solutionsEtActionsÀVenir",
@@ -208,6 +209,7 @@ describe("RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
             {
               id: commentaireRisquesPlusRécent.id,
               contenu: commentaireRisquesPlusRécent.contenu,
+              contenuHtml: `<p>${commentaireRisquesPlusRécent.contenu}</p>`,
               date: commentaireRisquesPlusRécent.date_modification.toISOString(),
               auteur: "User Test",
               type: "risquesEtFreinsÀLever",
@@ -215,6 +217,7 @@ describe("RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
             {
               id: commentaireExemples.id,
               contenu: commentaireExemples.contenu,
+              contenuHtml: `<p>${commentaireExemples.contenu}</p>`,
               date: commentaireExemples.date_modification.toISOString(),
               auteur: "User Test",
               type: "exemplesConcretsDeRéussite",
@@ -222,6 +225,7 @@ describe("RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
             {
               id: commentaireAutresNonCorrélés.id,
               contenu: commentaireAutresNonCorrélés.contenu,
+              contenuHtml: `<p>${commentaireAutresNonCorrélés.contenu}</p>`,
               date: commentaireAutresNonCorrélés.date_modification.toISOString(),
               auteur: "User Test",
               type: "autresRésultatsObtenusNonCorrélésAuxIndicateurs",
@@ -405,6 +409,7 @@ describe("RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
             {
               id: commentaireSolutionsDept75.id,
               contenu: commentaireSolutionsDept75.contenu,
+              contenuHtml: `<p>${commentaireSolutionsDept75.contenu}</p>`,
               date: commentaireSolutionsDept75.date_modification.toISOString(),
               auteur: "User Test",
               type: "solutionsEtActionsÀVenir",
@@ -412,6 +417,7 @@ describe("RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
             {
               id: commentaireAutresResultatsDept75.id,
               contenu: commentaireAutresResultatsDept75.contenu,
+              contenuHtml: `<p>${commentaireAutresResultatsDept75.contenu}</p>`,
               date: commentaireAutresResultatsDept75.date_modification.toISOString(),
               auteur: "User Test",
               type: "autresRésultatsObtenus",
@@ -419,6 +425,7 @@ describe("RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
             {
               id: commentairesDonnéesDept75.id,
               contenu: commentairesDonnéesDept75.contenu,
+              contenuHtml: `<p>${commentairesDonnéesDept75.contenu}</p>`,
               date: commentairesDonnéesDept75.date_modification.toISOString(),
               auteur: "User Test",
               type: "commentairesSurLesDonnées",

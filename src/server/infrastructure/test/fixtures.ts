@@ -553,10 +553,12 @@ export const fixtures = {
       ? { id: overrides.auteur_creation_id }
       : await fixtures.utilisateur();
     const now = new Date();
+    const contenu = overrides.contenu ?? "Commentaire de test";
     return prisma.commentaire.create({
       data: {
         id: randomUUID(),
-        contenu: "Commentaire de test",
+        contenu,
+        contenu_html: `<p>${contenu}</p>`,
         statut: $Enums.statut_publication.PUBLIE,
         auteur_creation_id: auteur.id,
         date_creation: now,
@@ -578,10 +580,12 @@ export const fixtures = {
       ? { id: overrides.auteur_creation_id }
       : await fixtures.utilisateur();
     const now = new Date();
+    const contenu = overrides.contenu ?? "Objectif de test";
     return prisma.objectif.create({
       data: {
         id: randomUUID(),
-        contenu: "Objectif de test",
+        contenu,
+        contenu_html: `<p>${contenu}</p>`,
         statut: $Enums.statut_publication.PUBLIE,
         auteur_creation_id: auteur.id,
         date_creation: now,
@@ -605,10 +609,12 @@ export const fixtures = {
       ? { id: overrides.auteur_creation_id }
       : await fixtures.utilisateur();
     const now = new Date();
+    const commentaire = overrides.commentaire ?? "Synthèse de test";
     return prisma.synthese_des_resultats.create({
       data: {
         id: randomUUID(),
-        commentaire: "Synthèse de test",
+        commentaire,
+        contenu_html: `<p>${commentaire}</p>`,
         meteo: "SOLEIL",
         auteur_creation_id: auteur.id,
         date_creation: now,
@@ -629,11 +635,13 @@ export const fixtures = {
       ? { id: overrides.auteur_creation_id }
       : await fixtures.utilisateur();
     const now = new Date();
+    const contenu = overrides.contenu ?? "Décision stratégique de test";
     return prisma.decision_strategique.create({
       data: {
         id: randomUUID(),
         type: "suivi_des_decisions",
-        contenu: "Décision stratégique de test",
+        contenu,
+        contenu_html: `<p>${contenu}</p>`,
         statut: $Enums.statut_publication.PUBLIE,
         auteur_creation_id: auteur.id,
         date_creation: now,

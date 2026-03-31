@@ -48,6 +48,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
         id,
         chantier_id: chantierId,
         contenu,
+        contenu_html: contenu,
         type: CODES_TYPES_OBJECTIFS[type],
         statut,
         auteur_creation_id: auteurCreationId,
@@ -57,6 +58,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
       },
       update: {
         contenu,
+        contenu_html: contenu,
         statut,
         auteur_modification_id: auteurModificationId,
         date_modification: new Date(dateModification),
@@ -74,6 +76,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
       chantierId: objectif.chantier_id,
       type: NOMS_TYPES_OBJECTIFS[objectif.type],
       contenu: objectif.contenu,
+      contenuHtml: objectif.contenu_html,
       statut: objectif.statut,
       auteurCreationId: objectif.auteur_creation_id,
       dateCreation: objectif.date_creation.toISOString(),
@@ -122,6 +125,7 @@ export default class ObjectifSQLRepository implements ObjectifRepository {
           id: objectif.id,
           type: NOMS_TYPES_OBJECTIFS[objectif.type],
           contenu: objectif.contenu,
+          contenuHtml: objectif.contenu_html,
           date: objectif.date_modification.toISOString(),
           auteur: `${objectif.auteur_modification.prenom} ${objectif.auteur_modification.nom}`,
         };
