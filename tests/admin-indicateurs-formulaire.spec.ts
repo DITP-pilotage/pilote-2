@@ -92,9 +92,77 @@ test.describe("Formulaire indicateur — Consultation et modification", () => {
       },
     );
 
-    await step("Modification de l'indicateur et soumission", async () => {
+    await step(
+      "Passage en mode modification pour exercer chaque type de champ",
+      async () => {
+        await pageForm.clickModifier();
+        await pageForm.expectModeModification();
+      },
+    );
+
+    await step(
+      "Modification d'un champ texte (Input) — indicUnite",
+      async () => {
+        await pageForm.remplirInput("indicUnite", "kg/m²");
+        await pageForm.expectInputValeur("indicUnite", "kg/m²");
+      },
+    );
+
+    await step("Modification d'un champ textarea — indicDescr", async () => {
+      await pageForm.remplirTextArea(
+        "indicDescr",
+        "Description modifiée pour test E2E",
+      );
+      await pageForm.expectTextAreaValeur(
+        "indicDescr",
+        "Description modifiée pour test E2E",
+      );
+    });
+
+    await step(
+      "Modification d'un sélecteur (multi-select) — periodicite",
+      async () => {
+        await pageForm.ouvrirAccordionAutresInformations();
+        await pageForm.changerSelecteur("periodicite", "Mensuelle");
+        await pageForm.expectSelecteurValeur("periodicite", "Mensuelle");
+      },
+    );
+
+    await step(
+      "Modification d'un interrupteur (boolean) — indicIsPhare",
+      async () => {
+        await pageForm.clickSwitch("Phare");
+      },
+    );
+
+    await step("Soumission des modifications", async () => {
+      await pageForm.clickConfirmerChangements();
+      await pageForm.expectAlerteSuccesModification();
+      await pageForm.expectModeConsultation();
+    });
+
+    await step(
+      "Vérification de la persistance des valeurs modifiées après soumission",
+      async () => {
+        await pageForm.expectDonneeAffichee("kg/m²");
+        await pageForm.expectDonneeAffichee(
+          "Description modifiée pour test E2E",
+        );
+        await pageForm.expectDonneeAffichee("Mensuelle");
+        await pageForm.expectDonneeAffichee("Oui");
+      },
+    );
+
+    await step("Restauration des valeurs d'origine et soumission", async () => {
       await pageForm.clickModifier();
-      await pageForm.expectModeModification();
+      await pageForm.remplirInput("indicUnite", "");
+      await pageForm.remplirTextArea(
+        "indicDescr",
+        "Contrôles « terrain » réalisés au titre des plans de surveillance et de contrôle de l'environnement marin (PSCEM) et des plans interrégionaux des contrôles des pêches (PIRC) pour la pêche à pied loisir et professionnelle ainsi que pour la pêche de loisir embarquée et sous-marine. // Thématiques de contrôle : mouillage individuel ; zone de mouillage et d'équipement léger (ZMEL) ; rejet ; espèces protégées et leurs habitats (faune et flore) ; biens culturels maritimes ; épaves ; activités et manifestations soumises à évaluation d'incidence Natura 2000 ; domanialité publique (circulation et dégradation) ; culture marine ; travaux en milieu marin ; arrêtés à visa environnemental ; arrêté de protection ; réserve naturelle ; parc national ; pêche à pied, pêche de loisir embarqué et sous-marine, etc. // Corps de contrôle : DDT/(A)M / DGTM, Parcs Naturels Marins, Gendarmerie Nationale, Réserves Naturelles, Douane, Gendarmerie Maritime, Parcs Nationaux, Office Français de la Biodiversité, DIRM/DM, DMLC, Conservatoire du littoral, Marine Nationale, Police Municipale, DREAL/DEAL/DRIEAT/DEALM, Police Nationale, autres.",
+      );
+      await pageForm.ouvrirAccordionAutresInformations();
+      await pageForm.changerSelecteur("periodicite", "Trimestrielle");
+      await pageForm.clickSwitch("Phare");
       await pageForm.clickConfirmerChangements();
       await pageForm.expectAlerteSuccesModification();
       await pageForm.expectModeConsultation();

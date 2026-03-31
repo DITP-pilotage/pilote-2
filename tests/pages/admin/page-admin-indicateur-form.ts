@@ -229,6 +229,28 @@ export class PageAdminIndicateurForm extends BasePage {
     await expect(this.inputById(name)).toBeEnabled();
   }
 
+  async expectInputValeur(name: string, valeur: string): Promise<void> {
+    await expect(this.inputById(name)).toHaveValue(valeur);
+  }
+
+  async remplirInput(name: string, valeur: string): Promise<void> {
+    await this.inputById(name).fill(valeur);
+  }
+
+  // --- Interactions avec les textareas ---
+
+  private textareaById(name: string) {
+    return this.page.locator(`textarea#${name}`);
+  }
+
+  async remplirTextArea(name: string, valeur: string): Promise<void> {
+    await this.textareaById(name).fill(valeur);
+  }
+
+  async expectTextAreaValeur(name: string, valeur: string): Promise<void> {
+    await expect(this.textareaById(name)).toHaveValue(valeur);
+  }
+
   // --- Interaction avec les switches (Radix Switch) ---
 
   private switchParTitre(titre: string) {
@@ -240,6 +262,8 @@ export class PageAdminIndicateurForm extends BasePage {
   }
 
   async clickSwitch(titre: string): Promise<void> {
-    await this.switchParTitre(titre).click();
+    const switchElement = this.switchParTitre(titre);
+    await switchElement.scrollIntoViewIfNeeded();
+    await switchElement.click();
   }
 }
