@@ -2,6 +2,13 @@ import { Download, expect } from "@playwright/test";
 import fs from "node:fs";
 import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
+import { getAnneeDateDeBascule } from "../src/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
+
+const jalonParDefaut = getAnneeDateDeBascule(
+  new Date(),
+  process.env.NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE ??
+    "2000-03-31",
+);
 
 test("doit pouvoir exporter les données des chantiers sous format CSV", async ({
   page,
@@ -160,7 +167,7 @@ test("doit pouvoir exporter les données des chantiers sous format CSV", async (
   await test.step("Étape 4 - Récapitulatif et validation - partie téléchargement et vérification du fichier avec valeurs de référence", async () => {
     await test.step("Téléchargement du fichier", async () => {
       await page.goto(
-        `/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&optionsExport=identifiant,valeurs-reference&jalon=2025`,
+        `/accueil/chantier/NAT-FR?isModaleExportCsvOuverte=true&etapeCourante=4&optionsExport=identifiant,valeurs-reference&jalon=${jalonParDefaut}`,
       );
 
       download = await pageAccueil.exportModal.download();
@@ -170,7 +177,7 @@ test("doit pouvoir exporter les données des chantiers sous format CSV", async (
     await test.step("vérification des colonnes valeurs de référence", async () => {
       const contents = await fs.promises.readFile(await download.path());
       expect(contents.toString()).toMatch(
-        '"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier Id";"Chantier";"maximum régional 2025";"médiane régionale 2025";"minimum régional 2025";"maximum départemental 2025";"médiane départementale 2025";"minimum départemental 2025"\n',
+        `"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier Id";"Chantier";"maximum régional ${jalonParDefaut}";"médiane régionale ${jalonParDefaut}";"minimum régional ${jalonParDefaut}";"maximum départemental ${jalonParDefaut}";"médiane départementale ${jalonParDefaut}";"minimum départemental ${jalonParDefaut}"\n`,
       );
     });
   });
