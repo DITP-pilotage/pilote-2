@@ -98,7 +98,7 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
     await test.step("vérification du fichier identifiant et cadrage", async () => {
       const contents = await fs.promises.readFile(await download.path());
       expect(contents.toString()).toMatch(
-        `"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier";"Chantier Id";"Indicateur";"Valeur initiale";"Date valeur initiale";"Valeur cible année ${jalonParDefaut}";"Date valeur cible année ${jalonParDefaut}";"Valeur cible année ${jalonParDefaut}";"Date valeur cible année ${jalonParDefaut}";"Valeur avancement";"Date valeur avancement"\n`,
+        `"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier";"Chantier Id";"Indicateur";"Valeur initiale";"Date valeur initiale";"Valeur cible année ${jalonParDefaut}";"Date valeur cible année ${jalonParDefaut}";"Valeur avancement";"Date valeur avancement"\n`,
       );
     });
   });
