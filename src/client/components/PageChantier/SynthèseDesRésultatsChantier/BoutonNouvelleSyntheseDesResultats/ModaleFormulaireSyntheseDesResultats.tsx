@@ -64,9 +64,7 @@ export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
       ? {
           defaultValues: { contenu: "", meteo: undefined },
           values: {
-            contenu:
-              syntheseDesResultatsBrouillon.contenuHtml ??
-              syntheseDesResultatsBrouillon.contenu,
+            contenu: syntheseDesResultatsBrouillon.contenu,
             meteo: syntheseDesResultatsBrouillon.meteo as MeteoSaisissable,
           },
         }

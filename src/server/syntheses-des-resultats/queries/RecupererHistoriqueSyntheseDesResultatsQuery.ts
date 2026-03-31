@@ -5,7 +5,6 @@ export type SyntheseDesResultatsHistoriqueItem = {
   chantierId: string;
   territoireCode: string;
   contenu: string;
-  contenuHtml?: string | null;
   meteo: Meteo;
   dateCreation: string;
   dateModification: string;
@@ -40,7 +39,6 @@ export class RecupererHistoriqueSyntheseDesResultatsQuery {
       chantierId: synthese.chantier_id,
       territoireCode: synthese.territoire_code,
       contenu: synthese.commentaire ?? "",
-      contenuHtml: synthese.contenu_html,
       meteo: (synthese.meteo as Meteo) ?? "NON_RENSEIGNEE",
       dateCreation: synthese.date_creation.toISOString(),
       dateModification: synthese.date_modification.toISOString(),

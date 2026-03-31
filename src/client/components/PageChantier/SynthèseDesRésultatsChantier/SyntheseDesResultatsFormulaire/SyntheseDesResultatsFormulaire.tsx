@@ -23,13 +23,13 @@ import {
   LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS,
 } from "@/client/constants/libellesSyntheseDesResultats";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
-import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
-import { useModifierSyntheseDesResultats } from "./useModifierSyntheseDesResultats";
-import { SelecteurMeteo } from "./SelecteurMeteo";
 import { useEnv } from "@/client/hooks/useEnv";
 import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
 import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
 import { plainTextToHtml } from "@/client/utils/html/plainTextToHtml";
+import { SelecteurMeteo } from "./SelecteurMeteo";
+import { useModifierSyntheseDesResultats } from "./useModifierSyntheseDesResultats";
+import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
 
 interface SyntheseDesResultatsFormulaireProps {
   annulationCallback?: () => void;
@@ -58,8 +58,7 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
     mode: "all",
     resolver: zodResolver(validationSynthèseDesRésultatsFormulaire),
     defaultValues: {
-      contenu:
-        syntheseDesResultats?.contenuHtml ?? syntheseDesResultats?.contenu,
+      contenu: syntheseDesResultats?.contenu,
       meteo:
         syntheseDesResultats?.meteo &&
         meteosSaisissables.includes(syntheseDesResultats.meteo)

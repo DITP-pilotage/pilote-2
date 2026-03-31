@@ -48,7 +48,7 @@ const FormulairePublication: FunctionComponent<FormulairePublicationProps> = ({
     mode: "all",
     resolver: zodResolver(validationCommentaireFormulaire),
     defaultValues: {
-      contenu: publication?.contenuHtml ?? publication?.contenu ?? "",
+      contenu: publication?.contenu ?? "",
     },
   });
 

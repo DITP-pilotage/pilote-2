@@ -180,7 +180,6 @@ describe("DécisionStratégiqueSQLRepository", () => {
             id: recente.id,
             type: "suiviDesDecisionsStrategiques",
             contenu: "Décision récente",
-            contenuHtml: "<p>Décision récente</p>",
             date: new Date("2025-06-01").toISOString(),
             auteur: "Alice Martin",
           },

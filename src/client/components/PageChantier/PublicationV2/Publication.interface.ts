@@ -2,7 +2,6 @@ import { SubmitHandler } from "react-hook-form";
 
 export interface Publication {
   contenu: string;
-  contenuHtml?: string | null;
   dateCreation: string;
   dateModification: string;
   auteurCreationNom: string;
@@ -12,7 +11,6 @@ export interface Publication {
 export interface PublicationBrouillon {
   id: string;
   contenu: string;
-  contenuHtml?: string | null;
   dateModification: string;
 }
 

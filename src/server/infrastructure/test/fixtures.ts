@@ -558,7 +558,6 @@ export const fixtures = {
       data: {
         id: randomUUID(),
         contenu,
-        contenu_html: `<p>${contenu}</p>`,
         statut: $Enums.statut_publication.PUBLIE,
         auteur_creation_id: auteur.id,
         date_creation: now,
@@ -585,7 +584,6 @@ export const fixtures = {
       data: {
         id: randomUUID(),
         contenu,
-        contenu_html: `<p>${contenu}</p>`,
         statut: $Enums.statut_publication.PUBLIE,
         auteur_creation_id: auteur.id,
         date_creation: now,
@@ -614,7 +612,6 @@ export const fixtures = {
       data: {
         id: randomUUID(),
         commentaire,
-        contenu_html: `<p>${commentaire}</p>`,
         meteo: "SOLEIL",
         auteur_creation_id: auteur.id,
         date_creation: now,
@@ -641,7 +638,6 @@ export const fixtures = {
         id: randomUUID(),
         type: "suivi_des_decisions",
         contenu,
-        contenu_html: `<p>${contenu}</p>`,
         statut: $Enums.statut_publication.PUBLIE,
         auteur_creation_id: auteur.id,
         date_creation: now,

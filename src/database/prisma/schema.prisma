@@ -292,7 +292,7 @@ model synthese_des_resultats {
   statut                 statut_publication  @default(PUBLIE)
   meteo                  String?
   commentaire            String?
-  contenu_html           String?
+  commentaire_depracated String?
   date_creation          DateTime            @db.Timestamp
   auteur_creation_id     String              @db.Uuid
   date_modification      DateTime            @db.Timestamp
@@ -325,7 +325,7 @@ model commentaire {
   chantier_id            String
   type                   String
   contenu                String
-  contenu_html           String?
+  contenu_depracated     String?
   maille                 String
   code_insee             String
   territoire_code        String
@@ -573,7 +573,7 @@ model objectif {
   id                     String             @id
   type                   type_objectif
   contenu                String
-  contenu_html           String?
+  contenu_depracated     String?
   statut                 statut_publication @default(PUBLIE)
   chantier_id            String
   auteur_creation_id     String             @db.Uuid
@@ -597,7 +597,7 @@ model decision_strategique {
   id                     String                    @id
   type                   type_decision_strategique
   contenu                String
-  contenu_html           String?
+  contenu_depracated     String?
   statut                 statut_publication        @default(PUBLIE)
   chantier_id            String
   auteur_creation_id     String                    @db.Uuid

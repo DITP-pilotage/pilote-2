@@ -26,7 +26,7 @@ export const AffichagePublication = ({
     return <Badge type="gris">Non renseigné</Badge>;
   }
 
-  const source = commentaire.contenuHtml ?? commentaire.contenu;
+  const source = commentaire.contenu;
   const contenuTronque =
     extractVisibleText(source).length > LIMITE_CARACTERES_AFFICHAGE_PUBLICATION;
   const contenuAAfficher =

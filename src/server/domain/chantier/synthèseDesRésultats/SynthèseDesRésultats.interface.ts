@@ -4,7 +4,6 @@ import { Meteo } from "@/server/domain/météo/Météo.interface";
 type SynthèseDesRésultats = {
   id: string;
   contenu: string;
-  contenuHtml?: string | null;
   date: string;
   auteur: string;
   météo: Meteo;
@@ -15,7 +14,6 @@ export type SyntheseDesResultatsV2 = {
   territoireCode: string;
   id: string;
   contenu: string;
-  contenuHtml?: string | null;
   meteo: Meteo;
   auteurCreationId: string;
   dateCreation: string;

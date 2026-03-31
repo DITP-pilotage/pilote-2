@@ -29,8 +29,7 @@ const SynthèseDesRésultatsAffichage = ({
     );
   }
 
-  const source =
-    synthèseDesRésultats.contenuHtml ?? synthèseDesRésultats.contenu;
+  const source = synthèseDesRésultats.contenu;
   const contenuTronque =
     extractVisibleText(source).length >
     LIMITE_CARACTERES_AFFICHAGE_SYNTHESE_DES_RESULTATS;

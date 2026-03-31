@@ -62,12 +62,14 @@ export const ModaleFormulairePublication = ({
     mode: "all",
     resolver: zodResolver(validationCommentaireFormulaire),
     defaultValues: {
-      contenu: brouillon?.contenuHtml ?? brouillon?.contenu ?? "",
+      contenu: brouillon?.contenu ?? "",
     },
   });
 
   const avecConversionHtml =
-    (handler: SubmitHandler<{ contenu: string }>): SubmitHandler<{ contenu: string }> =>
+    (
+      handler: SubmitHandler<{ contenu: string }>,
+    ): SubmitHandler<{ contenu: string }> =>
     (data) =>
       handler({
         contenu: ffEditeurRicheCommentaires
@@ -156,7 +158,9 @@ export const ModaleFormulairePublication = ({
             iconLeft={
               <Icone className="w-4 h-4 text-current" icone={SaveIcon} />
             }
-            onClick={form.handleSubmit(avecConversionHtml(onEnregistrerBrouillon))}
+            onClick={form.handleSubmit(
+              avecConversionHtml(onEnregistrerBrouillon),
+            )}
             type="button"
           >
             Enregistrer en tant que brouillon
