@@ -27,7 +27,9 @@ export function truncateHtml(html: string, maxChars: number): string {
       } else if (node.type === "tag") {
         const element = node as Element;
         const truncatedChildren = truncateNodes(element.children as AnyNode[]);
-        result.push(new Element(element.name, element.attribs, truncatedChildren));
+        result.push(
+          new Element(element.name, element.attribs, truncatedChildren),
+        );
       }
     }
     return result;

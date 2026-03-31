@@ -3,6 +3,7 @@ import { $Enums } from "@prisma/client";
 export type Commentaire = {
   id: string;
   contenu: string;
+  contenuHtml?: string | null;
   date: string;
   auteur: string;
   type: TypeCommentaireChantier;
@@ -14,6 +15,7 @@ export type CommentaireV2 = {
   territoireCode: string;
   type: TypeCommentaireChantier;
   contenu: string;
+  contenuHtml?: string | null;
   statut: $Enums.statut_publication;
   auteurCreationId: string;
   dateCreation: string;

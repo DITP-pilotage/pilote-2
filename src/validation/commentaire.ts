@@ -3,6 +3,7 @@ import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
+import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
 
 export const LIMITE_CARACTÈRES_COMMENTAIRE = 5000;
 
@@ -18,11 +19,15 @@ export const validationCommentaireContexte = z.object({
 export const validationCommentaireFormulaire = z.object({
   contenu: z
     .string()
-    .max(
-      LIMITE_CARACTÈRES_COMMENTAIRE,
-      `La limite de ${LIMITE_CARACTÈRES_COMMENTAIRE} caractères a été dépassée`,
+    .refine(
+      (html) => extractVisibleText(html).trim().length >= 1,
+      "Le commentaire ne peut pas être vide",
     )
-    .min(1, "Le commentaire ne peut pas être vide"),
+    .refine(
+      (html) =>
+        extractVisibleText(html).length <= LIMITE_CARACTÈRES_COMMENTAIRE,
+      `La limite de ${LIMITE_CARACTÈRES_COMMENTAIRE} caractères a été dépassée`,
+    ),
 });
 
 export const validationBrouillonCommentaireAPublier = z.object({

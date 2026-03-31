@@ -6,6 +6,7 @@ export type TypeDecisionStrategique = (typeof typesDecisionStrategique)[number];
 export type DécisionStratégique = {
   id: string;
   contenu: string;
+  contenuHtml?: string | null;
   date: string;
   auteur: string;
   type: TypeDecisionStrategique;
@@ -17,6 +18,7 @@ export type DecisionStrategiqueV2 = {
   id: string;
   chantierId: string;
   contenu: string;
+  contenuHtml?: string | null;
   statut: $Enums.statut_publication;
   auteurCreationId: string;
   auteurModificationId: string;

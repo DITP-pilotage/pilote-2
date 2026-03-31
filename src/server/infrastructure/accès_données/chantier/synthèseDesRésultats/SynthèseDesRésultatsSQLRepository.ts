@@ -42,6 +42,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
         code_insee: codeInsee,
         territoire_code: territoireCode,
         commentaire: contenu,
+        contenu_html: contenu,
         meteo,
         auteur_creation_id: auteurCreationId,
         date_creation: new Date(dateCreation),
@@ -51,6 +52,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
       },
       update: {
         commentaire: contenu,
+        contenu_html: contenu,
         meteo,
         auteur_modification_id: auteurModificationId,
         date_modification: new Date(dateModification),
@@ -70,6 +72,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
       chantierId: row.chantier_id,
       territoireCode: row.territoire_code,
       contenu: row.commentaire ?? "",
+      contenuHtml: row.contenu_html,
       meteo: row.meteo as Meteo,
       auteurCreationId: row.auteur_creation_id,
       dateCreation: row.date_creation.toISOString(),
@@ -112,6 +115,7 @@ export class SynthèseDesRésultatsSQLRepository implements SynthèseDesRésulta
         {
           id: synthèseDesRésultats.id,
           contenu: synthèseDesRésultats.commentaire ?? "",
+          contenuHtml: synthèseDesRésultats.contenu_html,
           date: synthèseDesRésultats.date_modification?.toISOString() ?? "",
           auteur: `${synthèseDesRésultats.auteur_prenom} ${synthèseDesRésultats.auteur_nom}`,
           météo: (synthèseDesRésultats.meteo as Meteo) ?? "NON_RENSEIGNEE",

@@ -6,6 +6,7 @@ export type TypeObjectif = (typeof typesObjectif)[number];
 type Objectif = {
   id: string;
   contenu: string;
+  contenuHtml?: string | null;
   date: string;
   auteur: string;
   type: TypeObjectif;
@@ -18,6 +19,7 @@ export type ObjectifV2 = {
   chantierId: string;
   type: TypeObjectif;
   contenu: string;
+  contenuHtml?: string | null;
   statut: $Enums.statut_publication;
   auteurCreationId: string;
   dateCreation: string;
