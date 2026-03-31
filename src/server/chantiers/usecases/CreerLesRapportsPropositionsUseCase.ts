@@ -45,7 +45,7 @@ export class CreerLesRapportsPropositionsUseCase {
       ]),
     ];
 
-    const listeDirecteursDeProjet =
+    const listeDestinatairesRapport =
       await this.dependencies.utilisateurRepository.recupererUtilisateursParProfilEtChantierIds(
         ["EQUIPE_DIR_PROJET", "SECRETARIAT_GENERAL"],
         listeChantiersIdsRapport,
@@ -63,11 +63,11 @@ export class CreerLesRapportsPropositionsUseCase {
     let rapportsCrees = 0;
     let erreursCreation = 0;
 
-    for (const directeur of listeDirecteursDeProjet) {
+    for (const destinataire of listeDestinatairesRapport) {
       try {
         if (
           !this.directeurADesChantiersConcernes(
-            directeur.listeChantiers,
+            destinataire.listeChantiers,
             propositionsParChantier,
             indicateursNonAJourParChantier,
             indicateursAParametrerParChantier,
@@ -77,7 +77,7 @@ export class CreerLesRapportsPropositionsUseCase {
         }
 
         const contenuRapport = genererParametresEnvoieRapportProposition(
-          directeur.listeChantiers,
+          destinataire.listeChantiers,
           mapChantiersPropositionInformation,
           propositionsParChantier,
           indicateursNonAJourParChantier,
@@ -86,8 +86,8 @@ export class CreerLesRapportsPropositionsUseCase {
 
         const rapport = creerRapportPropositionsAvancement({
           utilisateur: {
-            id: directeur.id,
-            email: directeur.email,
+            id: destinataire.id,
+            email: destinataire.email,
           },
           contenuRapport,
           dateCreation: new Date(),
@@ -99,7 +99,7 @@ export class CreerLesRapportsPropositionsUseCase {
         rapportsCrees++;
       } catch (error) {
         logger.error(
-          `Erreur lors de la création du rapport pour ${directeur.email}:`,
+          `Erreur lors de la création du rapport pour ${destinataire.email}:`,
           error,
         );
         erreursCreation++;

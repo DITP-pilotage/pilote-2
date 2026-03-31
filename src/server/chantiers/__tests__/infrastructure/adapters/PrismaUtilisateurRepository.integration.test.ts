@@ -296,10 +296,13 @@ describe("PrismaUtilisateurRepository", () => {
         );
 
       // Then
-      expect(utilisateurs).toEqual([
-        expect.objectContaining({ email: "dir.projet.mp@test.com" }),
-        expect.objectContaining({ email: "sec.general.mp@test.com" }),
-      ]);
+      expect(utilisateurs).toHaveLength(2);
+      expect(utilisateurs).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ email: "dir.projet.mp@test.com" }),
+          expect.objectContaining({ email: "sec.general.mp@test.com" }),
+        ]),
+      );
     });
 
     it("ne doit pas récupérer les utilisateurs ayant uniquement des périmètres sans chantiers correspondants", async () => {

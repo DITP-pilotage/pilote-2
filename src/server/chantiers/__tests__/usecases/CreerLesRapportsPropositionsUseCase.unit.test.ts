@@ -487,6 +487,12 @@ describe("CreerLesRapportsPropositionsUseCase", () => {
 
     // Then
     expect(
+      utilisateurRepository.recupererUtilisateursParProfilEtChantierIds,
+    ).toHaveBeenCalledWith(
+      ["EQUIPE_DIR_PROJET", "SECRETARIAT_GENERAL"],
+      expect.any(Array),
+    );
+    expect(
       rapportPropositionsAvancementRepository.sauvegarder,
     ).toHaveBeenCalledTimes(2);
     expect(resultat).toEqual({
