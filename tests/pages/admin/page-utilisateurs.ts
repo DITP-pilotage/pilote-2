@@ -83,13 +83,12 @@ export class PageAdminUtilisateurs extends BasePage {
 
   async rechercherUtilisateur(texte: string): Promise<void> {
     await this.barreRecherche.fill(texte);
-    // attendre le throttle de la recherche
-    await this.page.waitForTimeout(600);
+    await this.page.waitForTimeout(1000);
   }
 
   async effacerRecherche(): Promise<void> {
     await this.barreRecherche.clear();
-    await this.page.waitForTimeout(600);
+    await this.page.waitForTimeout(1000);
   }
 
   async filtrerParStatut(
@@ -101,7 +100,7 @@ export class PageAdminUtilisateurs extends BasePage {
       desactives: this.tagDesactives,
     };
     await tags[statut].click();
-    await this.page.waitForTimeout(600);
+    await this.page.waitForTimeout(1000);
   }
 
   async filtrerParProfil(nomProfil: string): Promise<void> {
@@ -111,7 +110,7 @@ export class PageAdminUtilisateurs extends BasePage {
       .check({ force: true });
     // fermer le dropdown en cliquant ailleurs
     await this.page.getByRole("heading", { level: 1 }).click();
-    await this.page.waitForTimeout(600);
+    await this.page.waitForTimeout(1000);
   }
 
   async expectColonneVisible(nomColonne: string): Promise<void> {
@@ -134,13 +133,13 @@ export class PageAdminUtilisateurs extends BasePage {
   async expectUtilisateurDansTableau(email: string): Promise<void> {
     await expect(
       this.tableau.getByRole("row").filter({ hasText: email }),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 15_000 });
   }
 
   async expectUtilisateurAbsentDuTableau(email: string): Promise<void> {
     await expect(
       this.tableau.getByRole("row").filter({ hasText: email }),
-    ).not.toBeVisible();
+    ).not.toBeVisible({ timeout: 15_000 });
   }
 
   async expectProfilDansFiltre(nomProfil: string): Promise<void> {

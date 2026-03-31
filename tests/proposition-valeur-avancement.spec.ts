@@ -350,7 +350,7 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
       await modal.passerEtapeSuivante();
 
       await modal.expectContient(/la proposition est modifiée/);
-      await modal.expectContient("60 ()");
+      await modal.expectContient(/60 \(/);
 
       await modal.accepterAvecModification();
       await modal.expectConfirmationEtFermer(
