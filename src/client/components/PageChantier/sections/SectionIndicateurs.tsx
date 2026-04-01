@@ -91,43 +91,38 @@ export const SectionIndicateurs = () => {
   }
 
   return (
-    <div className="fr-my-2w">
-      <section
-        className="grid grid-rows-[auto_1fr] print:block"
-        id="indicateurs"
-      >
-        <Titre
-          baliseHtml="h2"
-          className={clsx(
-            "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0",
-            {
-              "text-primary": !estChantierArchive,
-              "!text-dsfr-grey-50": estChantierArchive,
-            },
-          )}
-        >
-          {`Indicateurs (${indicateursApplicablesIds.length})`}
-        </Titre>
-        {mailleSourceDonnees === "regionale" && (
-          <Alerte
-            classesSupplementaires="fr-mb-2w"
-            message="En l'absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le département."
-            titre="Données régionales"
-            type="info"
-          />
+    <section className="grid grid-rows-[auto_1fr] print:block" id="indicateurs">
+      <Titre
+        baliseHtml="h2"
+        className={clsx(
+          "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0",
+          {
+            "text-primary": !estChantierArchive,
+            "!text-dsfr-grey-50": estChantierArchive,
+          },
         )}
-        <IndicateursChantier
-          alerteMiseAJourIndicateur={alerteMiseAJourIndicateur}
-          categoriesIndicateurRepartition={categoriesIndicateurRepartition}
-          estAutoriseAAccepterLesPropositionsDeValeurAvancement={
-            estAutoriseAAccepterLesPropositionsDeValeurAvancement
-          }
-          estAutoriseAProposerUneValeurAvancement={
-            estAutoriseAProposerUneValeurAvancement
-          }
-          indicateursApplicablesIds={indicateursApplicablesIds}
+      >
+        {`Indicateurs (${indicateursApplicablesIds.length})`}
+      </Titre>
+      {mailleSourceDonnees === "regionale" && (
+        <Alerte
+          classesSupplementaires="fr-mb-2w"
+          message="En l'absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le département."
+          titre="Données régionales"
+          type="info"
         />
-      </section>
-    </div>
+      )}
+      <IndicateursChantier
+        alerteMiseAJourIndicateur={alerteMiseAJourIndicateur}
+        categoriesIndicateurRepartition={categoriesIndicateurRepartition}
+        estAutoriseAAccepterLesPropositionsDeValeurAvancement={
+          estAutoriseAAccepterLesPropositionsDeValeurAvancement
+        }
+        estAutoriseAProposerUneValeurAvancement={
+          estAutoriseAProposerUneValeurAvancement
+        }
+        indicateursApplicablesIds={indicateursApplicablesIds}
+      />
+    </section>
   );
 };

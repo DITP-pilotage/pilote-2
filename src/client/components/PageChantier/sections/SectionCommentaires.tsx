@@ -24,23 +24,21 @@ export const SectionCommentaires = () => {
       : INFOBULLE_CONTENUS.chantier.commentaires.territoireNonNational;
 
   return (
-    <div className="fr-my-2w">
-      <BasePageChantierSection
-        id="commentaires"
-        infobulle={infobulle}
-        titreConteneurClassName="fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0"
-        titre="Commentaires du chantier"
-      >
-        <Commentaires
-          estChantierArchive={estChantierArchive}
-          modeÉcriture={estAutoriseAModifierLesPublications}
-          typesCommentaire={
-            territoireSélectionné.maille === "nationale"
-              ? typesCommentaireMailleNationale
-              : typesCommentaireMailleRégionaleOuDépartementale
-          }
-        />
-      </BasePageChantierSection>
-    </div>
+    <BasePageChantierSection
+      id="commentaires"
+      infobulle={infobulle}
+      titreConteneurClassName="fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0"
+      titre="Commentaires du chantier"
+    >
+      <Commentaires
+        estChantierArchive={estChantierArchive}
+        modeÉcriture={estAutoriseAModifierLesPublications}
+        typesCommentaire={
+          territoireSélectionné.maille === "nationale"
+            ? typesCommentaireMailleNationale
+            : typesCommentaireMailleRégionaleOuDépartementale
+        }
+      />
+    </BasePageChantierSection>
   );
 };

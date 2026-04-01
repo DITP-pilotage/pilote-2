@@ -21,24 +21,22 @@ export const SectionDecisionsStrategiques = () => {
   }
 
   return (
-    <div className="fr-my-2w">
-      <section
-        className="grid grid-rows-[auto_1fr] print:block"
-        id="décisions-stratégiques"
-      >
-        <TitreInfobulleConteneur className="!mb-4 !mt-3 !md:mt-0 !mx-4 !md:mx-0 flex align-center">
-          <Titre baliseHtml="h2" className="fr-h4 !m-0" estInline>
-            Décisions stratégiques
-          </Titre>
-          <Infobulle>
-            {INFOBULLE_CONTENUS.chantier.décisionsStratégiques}
-          </Infobulle>
-        </TitreInfobulleConteneur>
-        <DécisionsStratégiques
-          estChantierArchive={estChantierArchive}
-          modeEcriture={estAutoriseAModifierLesPublications}
-        />
-      </section>
-    </div>
+    <section
+      className="grid grid-rows-[auto_1fr] print:block"
+      id="décisions-stratégiques"
+    >
+      <TitreInfobulleConteneur className="!mb-4 !mt-3 !md:mt-0 !mx-4 !md:mx-0 flex align-center">
+        <Titre baliseHtml="h2" className="fr-h4 !m-0" estInline>
+          Décisions stratégiques
+        </Titre>
+        <Infobulle>
+          {INFOBULLE_CONTENUS.chantier.décisionsStratégiques}
+        </Infobulle>
+      </TitreInfobulleConteneur>
+      <DécisionsStratégiques
+        estChantierArchive={estChantierArchive}
+        modeEcriture={estAutoriseAModifierLesPublications}
+      />
+    </section>
   );
 };

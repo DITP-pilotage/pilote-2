@@ -16,19 +16,17 @@ export const SectionRepartitionGeographique = () => {
   }
 
   return (
-    <div className="fr-my-2w">
-      <BasePageChantierSection
-        id="cartes"
-        sectionClassName="print:break-inside-avoid"
-        titre="Répartition géographique"
-      >
-        <ComparaisonTerritoires
-          chantierId={chantier.id}
-          jalon={jalon}
-          maille={mailleQuery}
-          territoireCode={territoireCode}
-        />
-      </BasePageChantierSection>
-    </div>
+    <BasePageChantierSection
+      id="cartes"
+      sectionClassName="print:break-inside-avoid"
+      titre="Répartition géographique"
+    >
+      <ComparaisonTerritoires
+        chantierId={chantier.id}
+        jalon={jalon}
+        maille={mailleQuery}
+        territoireCode={territoireCode}
+      />
+    </BasePageChantierSection>
   );
 };

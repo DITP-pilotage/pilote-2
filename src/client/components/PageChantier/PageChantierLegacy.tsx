@@ -28,10 +28,18 @@ const PageChantierLegacy = () => {
         <SectionResponsables />
       </div>
       <SectionRepartitionGeographiqueLegacy />
-      <SectionObjectifs />
-      <SectionIndicateurs />
-      <SectionDecisionsStrategiques />
-      <SectionCommentaires />
+      <div className="fr-my-2w">
+        <SectionObjectifs />
+      </div>
+      <div className="fr-my-2w">
+        <SectionIndicateurs />
+      </div>
+      <div className="fr-my-2w">
+        <SectionDecisionsStrategiques />
+      </div>
+      <div className="fr-my-2w">
+        <SectionCommentaires />
+      </div>
     </BasePageChantierLayout>
   );
 };

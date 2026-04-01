@@ -1,8 +1,10 @@
+import { Suspense } from "react";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import {
   pageChantier,
   useTerritoireSelectionne,
 } from "@/components/PageChantier/PageChantierServerSideContext";
+import { AvancementChantierWidget } from "@/components/PageChantier/AvancementChantierWidget/AvancementChantierWidget";
 import { BasePageChantierSection } from "./BasePageChantierSection";
 
 const useInfobulle = () => {
@@ -43,7 +45,9 @@ export const SectionAvancementChantier = () => {
       sectionClassName="print:break-inside-avoid [grid-area:avancement]"
       titre="Avancement du chantier"
     >
-      <p>TODO</p>
+      <Suspense>
+        <AvancementChantierWidget />
+      </Suspense>
     </BasePageChantierSection>
   );
 };
