@@ -2,14 +2,31 @@ import type { LineSeriesOption } from "echarts/charts";
 import { TopLevelFormatterParams } from "echarts/types/dist/shared";
 import { ComposeOption } from "echarts/types/dist/echarts";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import type { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { formaterDate } from "@/client/utils/date/date";
 import { PALETTE_DSFR } from "@/client/utils/couleur/paletteTerritoires";
+import type { ChartDisplayMode, TerritoireEvolutionDonnees } from "./types";
 
 export type ECOption = ComposeOption<LineSeriesOption>;
 
+export const formatMonthAxisLabel = (
+  value: string,
+  chartDisplayMode: ChartDisplayMode,
+) => {
+  if (chartDisplayMode === "compact") {
+    return "";
+  }
+
+  const date = new Date(value);
+
+  if (date.getDate() !== 15) {
+    return "";
+  }
+
+  return (date.getMonth() + 1).toString().padStart(2, "0");
+};
+
 const creerSerie = (
-  indicateur: IndicateurDetailsParTerritoire,
+  indicateur: TerritoireEvolutionDonnees,
   couleur: string,
   territoiresAAfficher: Record<string, boolean>,
 ): LineSeriesOption => ({
@@ -28,7 +45,7 @@ const creerSerie = (
 });
 
 const creerSerieCibles = (
-  indicateur: IndicateurDetailsParTerritoire,
+  indicateur: TerritoireEvolutionDonnees,
   couleur: string,
   territoiresAAfficher: Record<string, boolean>,
   afficherLesCibles: boolean,
@@ -71,8 +88,10 @@ const creerSerieCibles = (
 
 export default function useIndicateurEvolutionNew({
   tousLesIndicateursDetails,
+  jalon,
 }: {
-  tousLesIndicateursDetails: IndicateurDetailsParTerritoire[];
+  tousLesIndicateursDetails: TerritoireEvolutionDonnees[];
+  jalon?: number;
 }) {
   const [afficherLesCibles, setAfficherLesCibles] = useState<boolean>(false);
   const [masquerSlider, setMasquerSlider] = useState<boolean>(false);
@@ -118,16 +137,20 @@ export default function useIndicateurEvolutionNew({
         if (date > max) max = date;
       });
     });
-    if (min === max) {
+    if (max < min) {
+      const annee = jalon ?? new Date().getFullYear();
+      min = new Date(`${annee}-01-01`);
+      max = new Date(`${annee}-01-31`);
+      setMasquerSlider(true);
+    } else if (min === max) {
       setMasquerSlider(true);
     } else {
       setMasquerSlider(false);
     }
     const maxAreturn = new Date(max);
     maxAreturn.setMonth(maxAreturn.getMonth() + 1);
-
     return [min, maxAreturn];
-  }, [tousLesIndicateursDetails]);
+  }, [jalon, tousLesIndicateursDetails]);
 
   const [minYear, maxYear] = useMemo(() => {
     return [new Date(minDate).getFullYear(), maxDate.getFullYear()];
@@ -256,7 +279,13 @@ export default function useIndicateurEvolutionNew({
   const { yMin, yMax } = CalculerBornesAxeY();
 
   const getOptions = useCallback(
-    (modeImpression: boolean) => ({
+    ({
+      modeImpression,
+      chartDisplayMode,
+    }: {
+      modeImpression: boolean;
+      chartDisplayMode: ChartDisplayMode;
+    }) => ({
       tooltip: {
         formatter: formatterLaTooltip,
       },
@@ -284,12 +313,8 @@ export default function useIndicateurEvolutionNew({
             interval: 0,
           },
           axisLabel: {
-            formatter: (value: string) => {
-              const date = new Date(value);
-              return date.getDate() === 15
-                ? (date.getMonth() + 1).toString().padStart(2, "0")
-                : "";
-            },
+            formatter: (value: string) =>
+              formatMonthAxisLabel(value, chartDisplayMode),
           },
           axisLine: { show: false },
           minInterval: 24 * 60 * 60 * 1000,
@@ -298,7 +323,7 @@ export default function useIndicateurEvolutionNew({
         {
           type: "time",
           position: "bottom",
-          offset: 25,
+          offset: chartDisplayMode === "compact" ? 14 : 25,
           min: minDate,
           max: maxDate,
           scale: false,
@@ -367,7 +392,7 @@ export default function useIndicateurEvolutionNew({
         left: 25,
         right: 60,
         top: 10,
-        bottom: 60,
+        bottom: chartDisplayMode === "compact" ? 72 : 60,
         outerBoundsMode: "same",
         outerBoundsContain: "axisLabel",
       },

@@ -20,6 +20,7 @@ import { useDonneesCartographieVA } from "./useDonneesCartographieVA";
 import { LegendeDegradeVA } from "./LegendeDegradeVA";
 import { SuiviValeurAvancement } from "./SuiviValeurAvancement";
 import { TableauEvolutionVA } from "./TableauEvolutionVA";
+import { EvolutionCourbesValeursAvancement } from "./EvolutionCourbesValeursAvancement";
 
 const COULEUR_MIN = "#8bcdb1";
 const COULEUR_MAX = "#083a25";
@@ -214,6 +215,18 @@ export const WidgetCartographieValeurAvancement = ({
                 onSupprimerTerritoire={supprimerTerritoire}
                 jalonActif={jalon}
                 unite={unite}
+              />
+            );
+          }
+          if (vue === "courbes") {
+            return (
+              <EvolutionCourbesValeursAvancement
+                indicateurId={indicateurId}
+                chantierId={chantierId}
+                jalon={jalon}
+                territoiresSelectionnesCodes={territoiresSelectionnes.map(
+                  (territoire) => territoire.territoireCode,
+                )}
               />
             );
           }
