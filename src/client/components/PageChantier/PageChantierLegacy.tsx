@@ -20,7 +20,6 @@ import {
   listeRubriquesChantier,
 } from "@/client/utils/rubriques";
 import Alerte from "@/client/components/_commons/Alerte/Alerte";
-import ResponsablesPageChantier from "@/components/PageChantier/ResponsablesChantier/ResponsablesChantier";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import BandeauInformation from "@/client/components/_commons/BandeauInformation/BandeauInformation";
 import { PanelMenuNavigation } from "@/components/_commons/PanelMenuNavigation/PanelMenuNavigation";
@@ -36,6 +35,7 @@ import Cartes from "./Cartes/Cartes";
 import { usePageChantier } from "./usePageChantier";
 import { DécisionsStratégiques } from "./DécisionsStratégiques/DécisionsStratégiques";
 import { SectionSyntheseDesResultats } from "./sections/SectionSyntheseDesResultats";
+import { SectionResponsables } from "./sections/SectionResponsables";
 
 const PageChantierLegacy = () => {
   usePrintPageStyle("margin: 12mm 0; size: 280mm 396mm");
@@ -268,34 +268,7 @@ const PageChantierLegacy = () => {
               />
             </section>
             <SectionSyntheseDesResultats />
-            <section
-              className="grid grid-rows-[auto_1fr] print:block print:break-inside-avoid [grid-area:responsables]"
-              id="responsables"
-            >
-              <Titre
-                baliseHtml="h2"
-                className={clsx(
-                  "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0",
-                  {
-                    "text-primary": !estChantierArchive,
-                    "!text-dsfr-grey-50": estChantierArchive,
-                  },
-                )}
-              >
-                Responsables
-              </Titre>
-              <ResponsablesPageChantier
-                afficheResponsablesLocaux={
-                  territoireSélectionné.maille !== "nationale"
-                }
-                estChantierArchive={estChantierArchive}
-                libelléChantier={chantier.nom}
-                listeCoordinateursTerritorials={listeCoordinateursTerritorials}
-                listeDirecteursProjets={chantier.responsables.directeursProjet}
-                listeResponsablesLocaux={listeResponsablesLocaux}
-                maille={territoireSélectionné.maille}
-              />
-            </section>
+            <SectionResponsables />
           </div>
           {!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSelectionnee] ||
           !!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] ||

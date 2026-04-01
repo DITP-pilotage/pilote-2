@@ -210,7 +210,7 @@ Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonction
 - Migrer le contenu de la section synthèse du legacy
 - Remplacer dans `PageChantierLegacy` par `<SectionSyntheseDesResultats />`
 
-### Tâche 4 : Extraire `SectionResponsables` — TODO
+### Tâche 4 : Extraire `SectionResponsables` — DONE
 
 - Créer `src/client/components/PageChantier/sections/SectionResponsables.tsx`
 - Remplacer dans `PageChantierLegacy`
