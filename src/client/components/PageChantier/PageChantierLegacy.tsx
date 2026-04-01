@@ -31,11 +31,11 @@ import { BandeauEntetePageChantier } from "@/components/PageChantier/BandeauEnte
 import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
 import AvancementChantier from "./AvancementChantier/AvancementChantier";
 import PageChantierEnTête from "./EnTête/EnTête";
-import Cartes from "./Cartes/Cartes";
 import { usePageChantier } from "./usePageChantier";
 import { DécisionsStratégiques } from "./DécisionsStratégiques/DécisionsStratégiques";
 import { SectionSyntheseDesResultats } from "./sections/SectionSyntheseDesResultats";
 import { SectionResponsables } from "./sections/SectionResponsables";
+import { SectionRepartitionGeographique } from "./sections/SectionRepartitionGeographique";
 
 const PageChantierLegacy = () => {
   usePrintPageStyle("margin: 12mm 0; size: 280mm 396mm");
@@ -270,30 +270,7 @@ const PageChantierLegacy = () => {
             <SectionSyntheseDesResultats />
             <SectionResponsables />
           </div>
-          {!!chantier.tauxAvancementDonnéeTerritorialisée[mailleSelectionnee] ||
-          !!chantier.météoDonnéeTerritorialisée[mailleSelectionnee] ||
-          chantier.estTerritorialisé ? (
-            <div className="fr-my-2w">
-              <section
-                className="grid grid-rows-[auto_1fr] print:block print:break-inside-avoid"
-                id="cartes"
-              >
-                <Titre
-                  baliseHtml="h2"
-                  className={clsx(
-                    "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0",
-                    {
-                      "text-primary": !estChantierArchive,
-                      "!text-dsfr-grey-50": estChantierArchive,
-                    },
-                  )}
-                >
-                  Répartition géographique
-                </Titre>
-                <Cartes mailleSourceDonnees={mailleSourceDonnees} />
-              </section>
-            </div>
-          ) : null}
+          <SectionRepartitionGeographique />
           <div className="fr-my-2w">
             <section
               className="grid grid-rows-[auto_1fr] print:block"

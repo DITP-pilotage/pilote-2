@@ -215,7 +215,7 @@ Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonction
 - Créer `src/client/components/PageChantier/sections/SectionResponsables.tsx`
 - Remplacer dans `PageChantierLegacy`
 
-### Tâche 5 : Extraire `SectionRepartitionGeographique` — TODO
+### Tâche 5 : Extraire `SectionRepartitionGeographique` — DONE
 
 - Créer `src/client/components/PageChantier/sections/SectionRepartitionGeographique.tsx`
 - Inclut la logique conditionnelle d'affichage (données territorialisées)
