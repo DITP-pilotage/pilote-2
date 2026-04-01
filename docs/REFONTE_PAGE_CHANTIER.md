@@ -203,7 +203,7 @@ Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonction
 - Props : `id`, `titre`, `className?`, `infobulle?`, `children`
 - Gère le pattern titre + infobulle + section wrapper
 
-### Tâche 3 : Extraire `SectionSyntheseDesResultats` — TODO
+### Tâche 3 : Extraire `SectionSyntheseDesResultats` — DONE
 
 - Créer `src/client/components/PageChantier/sections/SectionSyntheseDesResultats.tsx`
 - Utilise `BasePageChantierSection`

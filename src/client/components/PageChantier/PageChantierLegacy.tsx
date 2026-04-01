@@ -4,7 +4,6 @@ import clsx from "clsx";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import { Commentaires } from "@/components/PageChantier/Commentaires/Commentaires";
-import SyntheseDesResultats from "@/components/PageChantier/SynthèseDesRésultatsChantier/SyntheseDesResultats";
 import Sommaire from "@/client/components/_commons/Sommaire/Sommaire";
 import Titre from "@/components/_commons/Titre/Titre";
 import { ObjectifsChantier } from "@/components/PageChantier/ObjectifsChantier";
@@ -36,6 +35,7 @@ import PageChantierEnTête from "./EnTête/EnTête";
 import Cartes from "./Cartes/Cartes";
 import { usePageChantier } from "./usePageChantier";
 import { DécisionsStratégiques } from "./DécisionsStratégiques/DécisionsStratégiques";
+import { SectionSyntheseDesResultats } from "./sections/SectionSyntheseDesResultats";
 
 const PageChantierLegacy = () => {
   usePrintPageStyle("margin: 12mm 0; size: 280mm 396mm");
@@ -267,30 +267,7 @@ const PageChantierLegacy = () => {
                 territoireCode={territoireCode}
               />
             </section>
-            <section
-              className="grid grid-rows-[auto_1fr] print:block [grid-area:synthèse]"
-              id="synthèse"
-            >
-              <TitreInfobulleConteneur className="fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0">
-                <Titre
-                  baliseHtml="h2"
-                  className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
-                    "text-primary": !estChantierArchive,
-                    "!text-dsfr-grey-50": estChantierArchive,
-                  })}
-                  estInline
-                >
-                  Météo et synthèse des résultats
-                </Titre>
-                <Infobulle>
-                  {INFOBULLE_CONTENUS.chantier.météoEtSynthèseDesRésultats}
-                </Infobulle>
-              </TitreInfobulleConteneur>
-              <SyntheseDesResultats
-                modeEcriture={estAutoriseAModifierLesPublications}
-                nomTerritoire={territoireSélectionné.nomAffiché}
-              />
-            </section>
+            <SectionSyntheseDesResultats />
             <section
               className="grid grid-rows-[auto_1fr] print:block print:break-inside-avoid [grid-area:responsables]"
               id="responsables"
