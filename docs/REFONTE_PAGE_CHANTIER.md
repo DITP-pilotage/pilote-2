@@ -12,19 +12,32 @@ Refondre la page chantier (`/chantier/[id]/[territoireCode]`) de manière incré
 |---|---|---|
 | `featureFlip.refontePageChantier` | `NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER` | `false` |
 
+### Consommation du feature flag
+
+Le flag est lu côté client via le hook `useEnv` (pattern existant, passe par tRPC `gestionContenu.recupererToutesLesVariablesContenu`). Il n'est **pas** passé via `configurationFeatureFlipping` dans les SSR props.
+
+```tsx
+// Dans le composant qui branche legacy vs nouveau
+const ffRefontePageChantier = useEnv("NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER");
+```
+
 ### Branchement dans la page Next.js
 
 ```tsx
 // src/pages/chantier/[id]/[territoireCode].tsx
 const NextPageChantier = (props) => {
-  const { configurationFeatureFlipping } = props;
+  const { chantierInformations, territoireCode, profil } = props;
+  const ffRefontePageChantier = useEnv("NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER");
+
+  const estUnProfilDROM = profil === ProfilEnum.DROM;
+  const estTerritoireNational = territoireCode === "NAT-FR";
 
   return (
     <pageChantier.ServerSidePropsProvider value={props}>
       <Head>...</Head>
       {estTerritoireNational && estUnProfilDROM && !chantierInformations.estUnChantierDROM ? (
         <ChoixTerritoire />
-      ) : configurationFeatureFlipping.refontePageChantier ? (
+      ) : ffRefontePageChantier ? (
         <PageChantier />
       ) : (
         <PageChantierLegacy />
@@ -179,7 +192,10 @@ Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonction
 
 - Ajouter `refontePageChantier` dans `src/config.ts` (`featureFlip`)
 - Ajouter `NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER=false` dans `.env.test`
-- Vérifier que le type est inféré dans `configurationFeatureFlipping`
+- Ajouter `NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER` dans `VariableContenuDisponible.ts` :
+  - Interface `VARIABLE_CONTENU_DISPONIBLE`
+  - Tableau `FEATURE_FLIP_DEFINITIONS` (envKey, configKey, label)
+- Le flag sera consommé via `useEnv("NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER")` (pas via `configurationFeatureFlipping`)
 
 ### Tâche 2 : Extraire `BasePageChantierSection`
 
