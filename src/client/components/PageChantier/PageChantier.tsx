@@ -4,7 +4,7 @@ import { BasePageChantierLayout } from "./BasePageChantierLayout";
 import { SectionAvancementChantier } from "./sections/SectionAvancementChantier";
 import { SectionSyntheseDesResultats } from "./sections/SectionSyntheseDesResultats";
 import { SectionResponsables } from "./sections/SectionResponsables";
-import { SectionRepartitionGeographique } from "./sections/SectionRepartitionGeographique";
+import { SectionRepartitionGeographiqueLegacy } from "./sections/SectionRepartitionGeographiqueLegacy";
 import { SectionObjectifs } from "./sections/SectionObjectifs";
 import { SectionIndicateurs } from "./sections/SectionIndicateurs";
 import { SectionDecisionsStrategiques } from "./sections/SectionDecisionsStrategiques";
@@ -27,7 +27,7 @@ export const PageChantier = () => {
         <SectionSyntheseDesResultats />
         <SectionResponsables />
       </div>
-      <SectionRepartitionGeographique />
+      <SectionRepartitionGeographiqueLegacy />
       <SectionObjectifs />
       <SectionIndicateurs />
       <SectionDecisionsStrategiques />

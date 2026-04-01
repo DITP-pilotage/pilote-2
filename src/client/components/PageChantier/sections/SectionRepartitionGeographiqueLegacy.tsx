@@ -5,7 +5,7 @@ import {
 import Cartes from "@/components/PageChantier/Cartes/Cartes";
 import { BasePageChantierSection } from "./BasePageChantierSection";
 
-export const SectionRepartitionGeographique = () => {
+export const SectionRepartitionGeographiqueLegacy = () => {
   const { chantier, mailleSelectionnee, territoireCode } =
     pageChantier.useServerSidePropsContext();
   const territoireSélectionné = useTerritoireSelectionne();
