@@ -243,7 +243,7 @@ Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonction
 - Créer `src/client/components/PageChantier/sections/SectionCommentaires.tsx`
 - Remplacer dans `PageChantierLegacy`
 
-### Tâche 10 : Extraire `BasePageChantierLayout` — TODO
+### Tâche 10 : Extraire `BasePageChantierLayout` — DONE
 
 - Créer `src/client/components/PageChantier/BasePageChantierLayout.tsx`
 - Extraire le squelette : barre latérale, main, navigation sticky, titre print, bandeau info
