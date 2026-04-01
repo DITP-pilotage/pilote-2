@@ -201,9 +201,7 @@ describe("RecupererEvolutionValeursAvancementTerritoiresQuery", () => {
         maille: "DEPT",
         zone_id: "D75",
         est_applicable: true,
-        evolution_avancement: [
-          { date: new Date("2025-03-01"), valeur: 50 },
-        ],
+        evolution_avancement: [{ date: new Date("2025-03-01"), valeur: 50 }],
       });
       await fixtures.indicateurTerritoire({
         id: "IND-003",

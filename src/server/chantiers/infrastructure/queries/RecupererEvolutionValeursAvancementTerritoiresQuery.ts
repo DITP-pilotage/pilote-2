@@ -35,7 +35,9 @@ export class RecupererEvolutionValeursAvancementTerritoiresQuery {
     const territoires = Object.entries(details).map(
       ([territoireCode, detail]) => ({
         territoireCode,
-        historiquesValeurs: detail.historiquesValeurs,
+        historiquesValeurs: detail.historiquesValeurs.map(
+          ({ date, valeur }) => ({ date, valeur }),
+        ),
       }),
     );
 
