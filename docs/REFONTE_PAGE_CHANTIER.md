@@ -197,7 +197,7 @@ Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonction
   - Tableau `FEATURE_FLIP_DEFINITIONS` (envKey, configKey, label)
 - Le flag sera consommé via `useEnv("NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER")` (pas via `configurationFeatureFlipping`)
 
-### Tâche 2 : Extraire `BasePageChantierSection` — TODO
+### Tâche 2 : Extraire `BasePageChantierSection` — DONE
 
 - Créer `src/client/components/PageChantier/sections/BasePageChantierSection.tsx`
 - Props : `id`, `titre`, `className?`, `infobulle?`, `children`
