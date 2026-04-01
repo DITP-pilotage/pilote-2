@@ -9,7 +9,9 @@ export const useComparaisonTerritoires = <T extends string>(
   config: UseComparaisonTerritoiresConfig<T>,
 ) => {
   const [panneauGauche, setPanneauGauche] = useState<T>(config.typeParDefaut);
-  const [panneauDroite, setPanneauDroite] = useState<T | null>(null);
+  const [panneauDroite, setPanneauDroite] = useState<T | null>(
+    config.typeAlternatif(panneauGauche),
+  );
 
   const changerTypeCarte = (panneau: "gauche" | "droite", type: T) => {
     startTransition(() => {

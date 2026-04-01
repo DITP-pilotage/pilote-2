@@ -4,15 +4,6 @@ import { WidgetCartographieValeurAvancement } from "@/components/_commons/Widget
 import { WidgetCartographiePVA } from "@/components/_commons/Widget/WidgetCartographiePVA/WidgetCartographiePVA";
 import { ComparaisonTerritoires } from "@/components/_commons/ComparaisonTerritoires/ComparaisonTerritoires";
 
-type ComparaisonTerritoiresIndicateurProps = {
-  indicateurId: string;
-  chantierId: string;
-  jalon: number;
-  maille: MailleInterne;
-  territoireCode: string;
-  unite: string | null;
-};
-
 type TypeCarteIndicateur = "ta" | "valeurAvancement" | "pva";
 
 const options: (
@@ -33,7 +24,14 @@ export const ComparaisonTerritoiresIndicateur = ({
   maille,
   territoireCode,
   unite,
-}: ComparaisonTerritoiresIndicateurProps) => (
+}: {
+  indicateurId: string;
+  chantierId: string;
+  jalon: number;
+  maille: MailleInterne;
+  territoireCode: string;
+  unite: string | null;
+}) => (
   <ComparaisonTerritoires<TypeCarteIndicateur>
     typeParDefaut="ta"
     typeAlternatif={(t) => (t === "ta" ? "valeurAvancement" : "ta")}

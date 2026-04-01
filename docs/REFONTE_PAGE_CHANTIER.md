@@ -263,6 +263,33 @@ Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonction
 - Modifier `src/pages/chantier/[id]/[territoireCode].tsx` pour brancher le feature flag
 - Si `refontePageChantier` → `<PageChantier />`, sinon → `<PageChantierLegacy />`
 
+### Tâche 13 : Migrer la section Répartition géographique vers les nouveaux widgets
+
+La section existante `SectionRepartitionGeographiqueLegacy` rend le composant `Cartes` qui affiche les anciennes cartographies (`CartographieAvecSelecteur`) ET le widget `ComparaisonTerritoires` (derrière le FF `NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES`). On veut séparer legacy et nouveau.
+
+- **Inliner `Cartes` dans `SectionRepartitionGeographiqueLegacy`** : copier le contenu de `Cartes.tsx` directement dans `SectionRepartitionGeographiqueLegacy`. Le sous-composant `Cartes` n'est plus nécessaire pour le legacy.
+- **Créer `SectionRepartitionGeographique`** (`src/client/components/PageChantier/sections/SectionRepartitionGeographique.tsx`) :
+  - Utilise `BasePageChantierSection` avec le même id/titre
+  - Rend uniquement `<ComparaisonTerritoires>` (sans check de feature flag)
+  - Conserve la même logique de visibilité (`estVisible`)
+- **Mettre à jour `PageChantier.tsx`** : remplacer `<SectionRepartitionGeographiqueLegacy />` par `<SectionRepartitionGeographique />`
+- `PageChantierLegacy.tsx` continue d'utiliser `<SectionRepartitionGeographiqueLegacy />`
+
+### Tâche 14 : Créer `IndicateurDetailsContext` pour le mode de rendu
+
+La section Indicateurs est partagée entre les deux pages. Le switch legacy/nouveau se fait dans `IndicateurDétails.tsx` (profondément imbriqué dans `IndicateursChantier/Bloc/Détails/`). Passer le mode via props causerait trop de prop drilling. On utilise un contexte.
+
+- **Créer `IndicateurDetailsContext`** (`src/client/components/PageChantier/IndicateurDetailsContext.tsx`) :
+  - Un contexte React avec une seule valeur : `mode: "widget" | null`
+  - Export du provider `IndicateurDetailsModeProvider` et du hook `useIndicateurDetailsMode`
+  - Default : `null` (comportement legacy, pas besoin de provider)
+- **Modifier `IndicateurDétails.tsx`** :
+  - Consommer `useIndicateurDetailsMode()`
+  - Quand `mode === null` : rendu actuel inchangé (section `CartographieAvecSelecteurIndicateur` + `ComparaisonTerritoiresIndicateur` derrière FF)
+  - Quand `mode === "widget"` : remplacer la section cartographie par `<ComparaisonTerritoiresIndicateur>` directement (sans check du FF `NEXT_PUBLIC_FF_COMPARAISON_TERRITOIRES`)
+- **Modifier `PageChantier.tsx`** : wrapper le contenu avec `<IndicateurDetailsModeProvider mode="widget">`
+- `PageChantierLegacy.tsx` : aucune modification nécessaire (le default `null` correspond au comportement legacy)
+
 ---
 
 ## Arborescence cible
@@ -270,22 +297,25 @@ Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonction
 ```
 src/client/components/PageChantier/
 ├── BasePageChantierLayout.tsx          # Squelette partagé (barre latérale, nav, main)
+├── IndicateurDetailsContext.tsx         # Contexte mode legacy/widget pour IndicateurDétails
 ├── PageChantier.tsx                    # Nouvelle page (feature flag ON)
 ├── PageChantierLegacy.tsx              # Page legacy (feature flag OFF, refactoré)
 ├── PageChantierServerSideContext.tsx    # Contexte SSR (inchangé)
 ├── usePageChantier.ts                  # Hook permissions (inchangé)
 ├── sections/
 │   ├── BasePageChantierSection.tsx     # Primitive section (titre + infobulle + wrapper)
-│   ├── SectionAvancementChantier.tsx   # Avancement legacy
+│   ├── SectionAvancementChantier.tsx   # Avancement (nouveau)
+│   ├── SectionAvancementChantierLegacy.tsx # Avancement legacy
 │   ├── SectionSyntheseDesResultats.tsx
 │   ├── SectionResponsables.tsx
-│   ├── SectionRepartitionGeographique.tsx
+│   ├── SectionRepartitionGeographique.tsx       # Nouveau (ComparaisonTerritoires uniquement)
+│   ├── SectionRepartitionGeographiqueLegacy.tsx # Legacy (Cartes inliné)
 │   ├── SectionObjectifs.tsx
 │   ├── SectionIndicateurs.tsx
 │   ├── SectionDecisionsStrategiques.tsx
 │   └── SectionCommentaires.tsx
 ├── AvancementChantier/                 # Existant (inchangé)
-├── Cartes/                             # Existant (inchangé)
+├── Cartes/                             # Existant (inchangé pour l'instant)
 ├── Commentaires/                       # Existant (inchangé)
 ├── DécisionsStratégiques/              # Existant (inchangé)
 ├── ...
@@ -297,3 +327,5 @@ src/client/components/PageChantier/
 - Le `PageChantierServerSideContext` n'est pas modifié. Le contexte est déjà branché au niveau de la page Next.js.
 - Le `usePageChantier` hook n'est pas modifié. Il est consommé depuis les sections et le layout.
 - La section avancement dans `PageChantier` sera remplacée par un nouveau composant dans un ticket ultérieur. En attendant, on réutilise le composant legacy.
+- Le `IndicateurDetailsContext` permet de switcher le rendu des indicateurs (cartographies legacy vs widgets) sans prop drilling à travers `SectionIndicateurs` → `IndicateursChantier` → `IndicateurBloc` → `IndicateurDétails`.
+- Le composant `Cartes.tsx` reste en place même après l'inlining dans le legacy — il pourra être supprimé lors du nettoyage final (suppression du legacy).
