@@ -9,7 +9,7 @@ import {
 } from "@/components/PageChantier/PageChantierServerSideContext";
 import AvancementChantier from "@/components/PageChantier/AvancementChantier/AvancementChantier";
 
-export const SectionAvancementChantier = () => {
+export const SectionAvancementChantierLegacy = () => {
   const {
     chantier,
     territoireCode,

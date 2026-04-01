@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 import { BasePageChantierLayout } from "./BasePageChantierLayout";
-import { SectionAvancementChantier } from "./sections/SectionAvancementChantier";
+import { SectionAvancementChantierLegacy } from "./sections/SectionAvancementChantierLegacy";
 import { SectionSyntheseDesResultats } from "./sections/SectionSyntheseDesResultats";
 import { SectionResponsables } from "./sections/SectionResponsables";
 import { SectionRepartitionGeographique } from "./sections/SectionRepartitionGeographique";
@@ -23,7 +23,7 @@ const PageChantierLegacy = () => {
             : "",
         )}
       >
-        <SectionAvancementChantier />
+        <SectionAvancementChantierLegacy />
         <SectionSyntheseDesResultats />
         <SectionResponsables />
       </div>

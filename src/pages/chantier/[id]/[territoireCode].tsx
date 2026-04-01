@@ -289,9 +289,7 @@ const NextPageChantier: FunctionComponent<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = (props) => {
   const { chantierInformations, territoireCode, profil } = props;
-  const ffRefontePageChantier = useEnv(
-    "NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER",
-  );
+  const ffRefontePageChantier = useEnv("NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER");
 
   const estUnProfilDROM = profil === ProfilEnum.DROM;
   const estTerritoireNational = territoireCode === "NAT-FR";
