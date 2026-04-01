@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { FunctionComponent } from "react";
 import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
 import {
@@ -23,10 +23,8 @@ import {
   LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS,
 } from "@/client/constants/libellesSyntheseDesResultats";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
-import { useEnv } from "@/client/hooks/useEnv";
 import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
 import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
-import { plainTextToHtml } from "@/client/utils/html/plainTextToHtml";
 import { SelecteurMeteo } from "./SelecteurMeteo";
 import { useModifierSyntheseDesResultats } from "./useModifierSyntheseDesResultats";
 import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
@@ -44,12 +42,8 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
   const modifierSynthèseDesRésultats = useModifierSyntheseDesResultats({
     onSucess,
   });
-  const ffEditeurRicheCommentaires = useEnv(
-    "NEXT_PUBLIC_FF_EDITEUR_RICHE_COMMENTAIRES",
-  );
 
   const {
-    register,
     handleSubmit,
     control,
     formState: { errors, isValid },
@@ -67,19 +61,8 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
     },
   });
 
-  // TODO (TCO: 1/04/2025) : Supprimer à la suppression du FF
-  const soumettre: SubmitHandler<SyntheseDesResultatsFormulaireInputs> = (
-    data,
-  ) =>
-    modifierSynthèseDesRésultats({
-      ...data,
-      contenu: ffEditeurRicheCommentaires
-        ? data.contenu
-        : plainTextToHtml(data.contenu),
-    });
-
   return (
-    <form method="post" onSubmit={handleSubmit(soumettre)}>
+    <form method="post" onSubmit={handleSubmit(modifierSynthèseDesRésultats)}>
       <div className="flex items-center gap-2 fr-mb-1v">
         <Titre baliseHtml="h3" className="text-xl mb-0">
           {`Modifier le commentaire "${LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS}"`}
@@ -109,25 +92,17 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
         <div
           className={`flex-1 flex flex-col fr-mb-0 fr-input-group ${errors.contenu && "fr-input-group--error"}`}
         >
-          {ffEditeurRicheCommentaires ? (
-            <Controller
-              control={control}
-              name="contenu"
-              render={({ field }) => (
-                <EditeurSimple
-                  contenu={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                />
-              )}
-            />
-          ) : (
-            <textarea
-              className="fr-input fr-text--sm fr-mb-0 flex-1 max-h-[85vh] resize-y"
-              rows={6}
-              {...register("contenu")}
-            />
-          )}
+          <Controller
+            control={control}
+            name="contenu"
+            render={({ field }) => (
+              <EditeurSimple
+                contenu={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+              />
+            )}
+          />
           <div className="flex justify-between">
             <div>
               {!!errors.contenu && (

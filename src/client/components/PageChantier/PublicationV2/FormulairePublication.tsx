@@ -14,10 +14,8 @@ import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { Publication } from "@/components/PageChantier/PublicationV2/Publication.interface";
-import { useEnv } from "@/client/hooks/useEnv";
 import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
 import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
-import { plainTextToHtml } from "@/client/utils/html/plainTextToHtml";
 
 interface FormulairePublicationProps {
   publication: Publication | null;
@@ -34,12 +32,7 @@ const FormulairePublication: FunctionComponent<FormulairePublicationProps> = ({
   annulationCallback,
   onModifier,
 }) => {
-  const ffEditeurRicheCommentaires = useEnv(
-    "NEXT_PUBLIC_FF_EDITEUR_RICHE_COMMENTAIRES",
-  );
-
   const {
-    register,
     handleSubmit,
     control,
     formState: { errors, isValid },
@@ -52,16 +45,8 @@ const FormulairePublication: FunctionComponent<FormulairePublicationProps> = ({
     },
   });
 
-  const handleModifier: SubmitHandler<{ contenu: string }> = (data) => {
-    return onModifier({
-      contenu: ffEditeurRicheCommentaires
-        ? data.contenu
-        : plainTextToHtml(data.contenu),
-    });
-  };
-
   return (
-    <form onSubmit={handleSubmit(handleModifier)}>
+    <form onSubmit={handleSubmit(onModifier)}>
       <div className="flex items-center gap-2 fr-mb-1v">
         <Titre baliseHtml="h3" className="text-xl mb-0">
           {`Modifier le commentaire "${libelle}"`}
@@ -74,25 +59,17 @@ const FormulairePublication: FunctionComponent<FormulairePublicationProps> = ({
       <div
         className={`flex flex-col fr-mb-0 fr-input-group ${errors.contenu ? "fr-input-group--error" : ""}`}
       >
-        {ffEditeurRicheCommentaires ? (
-          <Controller
-            control={control}
-            name="contenu"
-            render={({ field }) => (
-              <EditeurSimple
-                contenu={field.value}
-                onChange={field.onChange}
-                onBlur={field.onBlur}
-              />
-            )}
-          />
-        ) : (
-          <textarea
-            className="fr-input fr-text--sm fr-mb-0"
-            rows={6}
-            {...register("contenu")}
-          />
-        )}
+        <Controller
+          control={control}
+          name="contenu"
+          render={({ field }) => (
+            <EditeurSimple
+              contenu={field.value}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+            />
+          )}
+        />
         <div className="flex justify-between">
           <div>
             {!!errors.contenu && (

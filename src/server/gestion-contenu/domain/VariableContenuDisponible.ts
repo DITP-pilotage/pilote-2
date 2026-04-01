@@ -36,7 +36,6 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_PVA_VALEUR_DIFFERENTE: boolean;
   NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO: boolean;
   NEXT_PUBLIC_FF_REPARTITION_METEOS_V2: boolean;
-  NEXT_PUBLIC_FF_EDITEUR_RICHE_COMMENTAIRES: boolean;
   NEXT_PUBLIC_FF_CHANTIERS_SIGNALES_V2: boolean;
 }
 
@@ -201,11 +200,6 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_REPARTITION_METEOS_V2",
     configKey: "repartitionMeteosV2",
     label: "Répartition météos V2",
-  },
-  {
-    envKey: "NEXT_PUBLIC_FF_EDITEUR_RICHE_COMMENTAIRES",
-    configKey: "editeurRicheCommentaires",
-    label: "Éditeur riche commentaires",
   },
   {
     envKey: "NEXT_PUBLIC_FF_CHANTIERS_SIGNALES_V2",
