@@ -188,7 +188,7 @@ const PageChantierLegacy = () => {
 
 Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonctionne à l'identique.
 
-### Tâche 1 : Ajouter le feature flag `REFONTE_PAGE_CHANTIER` — TODO
+### Tâche 1 : Ajouter le feature flag `REFONTE_PAGE_CHANTIER` — DONE
 
 - Ajouter `refontePageChantier` dans `src/config.ts` (`featureFlip`)
 - Ajouter `NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER=false` dans `.env.test`

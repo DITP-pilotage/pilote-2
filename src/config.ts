@@ -335,6 +335,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_CHANTIERS_SIGNALES_V2",
     },
+    refontePageChantier: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",

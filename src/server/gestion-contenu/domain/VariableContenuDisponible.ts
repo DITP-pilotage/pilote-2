@@ -37,6 +37,7 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO: boolean;
   NEXT_PUBLIC_FF_REPARTITION_METEOS_V2: boolean;
   NEXT_PUBLIC_FF_CHANTIERS_SIGNALES_V2: boolean;
+  NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER: boolean;
 }
 
 type FeatureFlipConfig = ReturnType<typeof configurationFeatureFlip>;
@@ -205,6 +206,11 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_CHANTIERS_SIGNALES_V2",
     configKey: "chantiersSignalesV2",
     label: "Chantiers signalés V2",
+  },
+  {
+    envKey: "NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER",
+    configKey: "refontePageChantier",
+    label: "Refonte page chantier",
   },
 ];
 
