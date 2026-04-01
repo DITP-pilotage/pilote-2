@@ -27,19 +27,3 @@ UPDATE "public"."synthese_des_resultats"
 SET commentaire_deprecated = commentaire
 WHERE commentaire IS NOT NULL;
 
--- Conversion plain text → HTML dans les colonnes principales
-UPDATE "public"."commentaire"
-SET contenu = '<p>' || REPLACE(REPLACE(contenu, E'\n\n', '</p><p>'), E'\n', '<br>') || '</p>'
-WHERE contenu IS NOT NULL;
-
-UPDATE "public"."decision_strategique"
-SET contenu = '<p>' || REPLACE(REPLACE(contenu, E'\n\n', '</p><p>'), E'\n', '<br>') || '</p>'
-WHERE contenu IS NOT NULL;
-
-UPDATE "public"."objectif"
-SET contenu = '<p>' || REPLACE(REPLACE(contenu, E'\n\n', '</p><p>'), E'\n', '<br>') || '</p>'
-WHERE contenu IS NOT NULL;
-
-UPDATE "public"."synthese_des_resultats"
-SET commentaire = '<p>' || REPLACE(REPLACE(commentaire, E'\n\n', '</p><p>'), E'\n', '<br>') || '</p>'
-WHERE commentaire IS NOT NULL;
