@@ -105,17 +105,19 @@ export const ModaleFormulairePublication = ({
           className={`flex flex-col ${form.formState.errors.contenu ? "fr-input-group--error" : ""}`}
         >
           {ffEditeurRicheCommentaires ? (
-            <Controller
-              control={form.control}
-              name="contenu"
-              render={({ field }) => (
-                <EditeurSimple
-                  contenu={field.value}
-                  onChange={field.onChange}
-                  onBlur={field.onBlur}
-                />
-              )}
-            />
+            <div className="h-60">
+              <Controller
+                control={form.control}
+                name="contenu"
+                render={({ field }) => (
+                  <EditeurSimple
+                    contenu={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                  />
+                )}
+              />
+            </div>
           ) : (
             <textarea
               className="fr-input fr-text--sm flex-1 mb-0"
