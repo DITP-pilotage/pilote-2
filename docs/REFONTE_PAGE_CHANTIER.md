@@ -188,7 +188,7 @@ const PageChantierLegacy = () => {
 
 Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonctionne à l'identique.
 
-### Tâche 1 : Ajouter le feature flag `REFONTE_PAGE_CHANTIER`
+### Tâche 1 : Ajouter le feature flag `REFONTE_PAGE_CHANTIER` — TODO
 
 - Ajouter `refontePageChantier` dans `src/config.ts` (`featureFlip`)
 - Ajouter `NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER=false` dans `.env.test`
@@ -197,66 +197,66 @@ Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonction
   - Tableau `FEATURE_FLIP_DEFINITIONS` (envKey, configKey, label)
 - Le flag sera consommé via `useEnv("NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER")` (pas via `configurationFeatureFlipping`)
 
-### Tâche 2 : Extraire `BasePageChantierSection`
+### Tâche 2 : Extraire `BasePageChantierSection` — TODO
 
 - Créer `src/client/components/PageChantier/sections/BasePageChantierSection.tsx`
 - Props : `id`, `titre`, `className?`, `infobulle?`, `children`
 - Gère le pattern titre + infobulle + section wrapper
 
-### Tâche 3 : Extraire `SectionSyntheseDesResultats`
+### Tâche 3 : Extraire `SectionSyntheseDesResultats` — TODO
 
 - Créer `src/client/components/PageChantier/sections/SectionSyntheseDesResultats.tsx`
 - Utilise `BasePageChantierSection`
 - Migrer le contenu de la section synthèse du legacy
 - Remplacer dans `PageChantierLegacy` par `<SectionSyntheseDesResultats />`
 
-### Tâche 4 : Extraire `SectionResponsables`
+### Tâche 4 : Extraire `SectionResponsables` — TODO
 
 - Créer `src/client/components/PageChantier/sections/SectionResponsables.tsx`
 - Remplacer dans `PageChantierLegacy`
 
-### Tâche 5 : Extraire `SectionRepartitionGeographique`
+### Tâche 5 : Extraire `SectionRepartitionGeographique` — TODO
 
 - Créer `src/client/components/PageChantier/sections/SectionRepartitionGeographique.tsx`
 - Inclut la logique conditionnelle d'affichage (données territorialisées)
 - Remplacer dans `PageChantierLegacy`
 
-### Tâche 6 : Extraire `SectionObjectifs`
+### Tâche 6 : Extraire `SectionObjectifs` — TODO
 
 - Créer `src/client/components/PageChantier/sections/SectionObjectifs.tsx`
 - Remplacer dans `PageChantierLegacy`
 
-### Tâche 7 : Extraire `SectionIndicateurs`
+### Tâche 7 : Extraire `SectionIndicateurs` — TODO
 
 - Créer `src/client/components/PageChantier/sections/SectionIndicateurs.tsx`
 - Inclut la logique conditionnelle (indicateurs.length > 0), l'alerte maille régionale
 - Remplacer dans `PageChantierLegacy`
 
-### Tâche 8 : Extraire `SectionDecisionsStrategiques`
+### Tâche 8 : Extraire `SectionDecisionsStrategiques` — TODO
 
 - Créer `src/client/components/PageChantier/sections/SectionDecisionsStrategiques.tsx`
 - Inclut la logique conditionnelle (maille nationale uniquement)
 - Remplacer dans `PageChantierLegacy`
 
-### Tâche 9 : Extraire `SectionCommentaires`
+### Tâche 9 : Extraire `SectionCommentaires` — TODO
 
 - Créer `src/client/components/PageChantier/sections/SectionCommentaires.tsx`
 - Remplacer dans `PageChantierLegacy`
 
-### Tâche 10 : Extraire `BasePageChantierLayout`
+### Tâche 10 : Extraire `BasePageChantierLayout` — TODO
 
 - Créer `src/client/components/PageChantier/BasePageChantierLayout.tsx`
 - Extraire le squelette : barre latérale, main, navigation sticky, titre print, bandeau info
 - Accepte `children` pour le contenu
 - Refactorer `PageChantierLegacy` pour utiliser `BasePageChantierLayout` + sections
 
-### Tâche 11 : Extraire la section avancement legacy
+### Tâche 11 : Extraire la section avancement legacy — TODO
 
 - Créer `src/client/components/PageChantier/sections/SectionAvancementChantier.tsx`
 - Extraire la section avancement actuelle (lignes 219-268 du legacy) dans ce composant
 - Remplacer dans `PageChantierLegacy`
 
-### Tâche 12 : Créer `PageChantier` et brancher le feature flag
+### Tâche 12 : Créer `PageChantier` et brancher le feature flag — TODO
 
 - Créer `src/client/components/PageChantier/PageChantier.tsx`
 - Compose `BasePageChantierLayout` + toutes les sections (avec avancement legacy pour l'instant)
