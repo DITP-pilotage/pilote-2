@@ -14,6 +14,7 @@ SELECT
     chantier_id,
     type,
     contenu,
+    NULL::VARCHAR as contenu_depracated,
     date as date_creation,
     (
         CASE 
