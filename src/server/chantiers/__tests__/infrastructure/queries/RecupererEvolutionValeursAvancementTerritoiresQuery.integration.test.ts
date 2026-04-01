@@ -271,22 +271,21 @@ describe("RecupererEvolutionValeursAvancementTerritoiresQuery", () => {
   );
 
   it(
-    "retourne un résultat vide quand l'indicateur n'existe pas",
+    "lance une erreur quand l'indicateur n'existe pas",
     createIntegrationTest(async () => {
       // given
       await fixtures.chantierIdentite({ id: "CH-004" });
 
-      // when
-      const result = await query.execute({
-        indicateurId: "IND-INEXISTANT",
-        chantierId: "CH-004",
-        jalon: 2025,
-        habilitations: habilitationsPourChantier("CH-004", ["DEPT-75"]),
-        profil: ProfilEnum.DITP_ADMIN,
-      });
-
-      // then
-      expect(result).toEqual({ territoires: [] });
+      // when / then
+      await expect(
+        query.execute({
+          indicateurId: "IND-INEXISTANT",
+          chantierId: "CH-004",
+          jalon: 2025,
+          habilitations: habilitationsPourChantier("CH-004", ["DEPT-75"]),
+          profil: ProfilEnum.DITP_ADMIN,
+        }),
+      ).rejects.toThrow("indicateur 'IND-INEXISTANT' non trouvé");
     }),
   );
 });

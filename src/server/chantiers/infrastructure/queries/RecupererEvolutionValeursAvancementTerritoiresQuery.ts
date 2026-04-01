@@ -32,14 +32,14 @@ export class RecupererEvolutionValeursAvancementTerritoiresQuery {
 
     const details = result[params.indicateurId] ?? {};
 
-    const territoires = Object.entries(details).map(
-      ([territoireCode, detail]) => ({
+    const territoires = Object.entries(details)
+      .map(([territoireCode, detail]) => ({
         territoireCode,
         historiquesValeurs: detail.historiquesValeurs.map(
           ({ date, valeur }) => ({ date, valeur }),
         ),
-      }),
-    );
+      }))
+      .filter((territoire) => territoire.historiquesValeurs.length > 0);
 
     return { territoires };
   }
