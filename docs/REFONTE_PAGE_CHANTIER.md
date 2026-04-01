@@ -250,7 +250,7 @@ Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonction
 - Accepte `children` pour le contenu
 - Refactorer `PageChantierLegacy` pour utiliser `BasePageChantierLayout` + sections
 
-### Tâche 11 : Extraire la section avancement legacy — TODO
+### Tâche 11 : Extraire la section avancement legacy — DONE
 
 - Créer `src/client/components/PageChantier/sections/SectionAvancementChantier.tsx`
 - Extraire la section avancement actuelle (lignes 219-268 du legacy) dans ce composant
