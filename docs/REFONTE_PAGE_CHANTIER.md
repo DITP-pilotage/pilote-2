@@ -232,7 +232,7 @@ Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonction
 - Inclut la logique conditionnelle (indicateurs.length > 0), l'alerte maille régionale
 - Remplacer dans `PageChantierLegacy`
 
-### Tâche 8 : Extraire `SectionDecisionsStrategiques` — TODO
+### Tâche 8 : Extraire `SectionDecisionsStrategiques` — DONE
 
 - Créer `src/client/components/PageChantier/sections/SectionDecisionsStrategiques.tsx`
 - Inclut la logique conditionnelle (maille nationale uniquement)

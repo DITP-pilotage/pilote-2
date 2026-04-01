@@ -29,12 +29,12 @@ import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
 import AvancementChantier from "./AvancementChantier/AvancementChantier";
 import PageChantierEnTête from "./EnTête/EnTête";
 import { usePageChantier } from "./usePageChantier";
-import { DécisionsStratégiques } from "./DécisionsStratégiques/DécisionsStratégiques";
 import { SectionSyntheseDesResultats } from "./sections/SectionSyntheseDesResultats";
 import { SectionResponsables } from "./sections/SectionResponsables";
 import { SectionRepartitionGeographique } from "./sections/SectionRepartitionGeographique";
 import { SectionObjectifs } from "./sections/SectionObjectifs";
 import { SectionIndicateurs } from "./sections/SectionIndicateurs";
+import { SectionDecisionsStrategiques } from "./sections/SectionDecisionsStrategiques";
 
 const PageChantierLegacy = () => {
   usePrintPageStyle("margin: 12mm 0; size: 280mm 396mm");
@@ -272,27 +272,7 @@ const PageChantierLegacy = () => {
           <SectionRepartitionGeographique />
           <SectionObjectifs />
           <SectionIndicateurs />
-          {territoireSélectionné.maille === "nationale" ? (
-            <div className="fr-my-2w">
-              <section
-                className="grid grid-rows-[auto_1fr] print:block"
-                id="décisions-stratégiques"
-              >
-                <TitreInfobulleConteneur className="!mb-4 !mt-3 !md:mt-0 !mx-4 !md:mx-0 flex align-center">
-                  <Titre baliseHtml="h2" className="fr-h4 !m-0" estInline>
-                    Décisions stratégiques
-                  </Titre>
-                  <Infobulle>
-                    {INFOBULLE_CONTENUS.chantier.décisionsStratégiques}
-                  </Infobulle>
-                </TitreInfobulleConteneur>
-                <DécisionsStratégiques
-                  estChantierArchive={estChantierArchive}
-                  modeEcriture={estAutoriseAModifierLesPublications}
-                />
-              </section>
-            </div>
-          ) : null}
+          <SectionDecisionsStrategiques />
           <div className="fr-my-2w">
             <section
               className="grid grid-rows-[auto_1fr] print:block"
