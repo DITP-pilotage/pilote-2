@@ -6,7 +6,6 @@ import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLat�
 import { Commentaires } from "@/components/PageChantier/Commentaires/Commentaires";
 import Sommaire from "@/client/components/_commons/Sommaire/Sommaire";
 import Titre from "@/components/_commons/Titre/Titre";
-import { ObjectifsChantier } from "@/components/PageChantier/ObjectifsChantier";
 import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
@@ -36,6 +35,7 @@ import { DécisionsStratégiques } from "./DécisionsStratégiques/DécisionsStr
 import { SectionSyntheseDesResultats } from "./sections/SectionSyntheseDesResultats";
 import { SectionResponsables } from "./sections/SectionResponsables";
 import { SectionRepartitionGeographique } from "./sections/SectionRepartitionGeographique";
+import { SectionObjectifs } from "./sections/SectionObjectifs";
 
 const PageChantierLegacy = () => {
   usePrintPageStyle("margin: 12mm 0; size: 280mm 396mm");
@@ -271,29 +271,7 @@ const PageChantierLegacy = () => {
             <SectionResponsables />
           </div>
           <SectionRepartitionGeographique />
-          <div className="fr-my-2w">
-            <section
-              className="grid grid-rows-[auto_1fr] print:block"
-              id="objectifs"
-            >
-              <TitreInfobulleConteneur className="fr-mb-2w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0">
-                <Titre
-                  baliseHtml="h2"
-                  className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
-                    "text-primary": !estChantierArchive,
-                    "!text-dsfr-grey-50": estChantierArchive,
-                  })}
-                  estInline
-                >
-                  Objectifs
-                </Titre>
-                <Infobulle>{INFOBULLE_CONTENUS.chantier.objectifs}</Infobulle>
-              </TitreInfobulleConteneur>
-              <ObjectifsChantier
-                modeÉcriture={estAutoriseAModifierLesObjectifs}
-              />
-            </section>
-          </div>
+          <SectionObjectifs />
           {indicateurs.length > 0 ? (
             <div className="fr-my-2w">
               <section

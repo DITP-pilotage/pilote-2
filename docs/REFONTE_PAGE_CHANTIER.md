@@ -221,7 +221,7 @@ Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonction
 - Inclut la logique conditionnelle d'affichage (données territorialisées)
 - Remplacer dans `PageChantierLegacy`
 
-### Tâche 6 : Extraire `SectionObjectifs` — TODO
+### Tâche 6 : Extraire `SectionObjectifs` — DONE
 
 - Créer `src/client/components/PageChantier/sections/SectionObjectifs.tsx`
 - Remplacer dans `PageChantierLegacy`
