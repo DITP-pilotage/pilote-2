@@ -238,7 +238,7 @@ Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonction
 - Inclut la logique conditionnelle (maille nationale uniquement)
 - Remplacer dans `PageChantierLegacy`
 
-### Tâche 9 : Extraire `SectionCommentaires` — TODO
+### Tâche 9 : Extraire `SectionCommentaires` — DONE
 
 - Créer `src/client/components/PageChantier/sections/SectionCommentaires.tsx`
 - Remplacer dans `PageChantierLegacy`

@@ -3,13 +3,8 @@ import { useState } from "react";
 import clsx from "clsx";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
-import { Commentaires } from "@/components/PageChantier/Commentaires/Commentaires";
 import Sommaire from "@/client/components/_commons/Sommaire/Sommaire";
 import Titre from "@/components/_commons/Titre/Titre";
-import {
-  typesCommentaireMailleNationale,
-  typesCommentaireMailleRégionaleOuDépartementale,
-} from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
@@ -35,6 +30,7 @@ import { SectionRepartitionGeographique } from "./sections/SectionRepartitionGeo
 import { SectionObjectifs } from "./sections/SectionObjectifs";
 import { SectionIndicateurs } from "./sections/SectionIndicateurs";
 import { SectionDecisionsStrategiques } from "./sections/SectionDecisionsStrategiques";
+import { SectionCommentaires } from "./sections/SectionCommentaires";
 
 const PageChantierLegacy = () => {
   usePrintPageStyle("margin: 12mm 0; size: 280mm 396mm");
@@ -273,41 +269,7 @@ const PageChantierLegacy = () => {
           <SectionObjectifs />
           <SectionIndicateurs />
           <SectionDecisionsStrategiques />
-          <div className="fr-my-2w">
-            <section
-              className="grid grid-rows-[auto_1fr] print:block"
-              id="commentaires"
-            >
-              <TitreInfobulleConteneur className="fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0">
-                <Titre
-                  baliseHtml="h2"
-                  className={clsx("fr-h4 fr-mb-0 fr-py-1v", {
-                    "text-primary": !estChantierArchive,
-                    "!text-dsfr-grey-50": estChantierArchive,
-                  })}
-                  estInline
-                >
-                  Commentaires du chantier
-                </Titre>
-                <Infobulle>
-                  {territoireSélectionné.maille === "nationale"
-                    ? INFOBULLE_CONTENUS.chantier.commentaires
-                        .territoireNational
-                    : INFOBULLE_CONTENUS.chantier.commentaires
-                        .territoireNonNational}
-                </Infobulle>
-              </TitreInfobulleConteneur>
-              <Commentaires
-                estChantierArchive={estChantierArchive}
-                modeÉcriture={estAutoriseAModifierLesPublications}
-                typesCommentaire={
-                  territoireSélectionné.maille === "nationale"
-                    ? typesCommentaireMailleNationale
-                    : typesCommentaireMailleRégionaleOuDépartementale
-                }
-              />
-            </section>
-          </div>
+          <SectionCommentaires />
         </div>
       </main>
     </div>
