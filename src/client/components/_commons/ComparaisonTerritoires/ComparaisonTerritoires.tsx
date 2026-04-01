@@ -29,7 +29,13 @@ export const ComparaisonTerritoires = <T extends string>({
   const estEnComparaison = panneauDroite !== null;
 
   return (
-    <div className={mode === "card" ? "fr-card fr-p-3w flex flex-col gap-4" : "flex flex-col gap-4"}>
+    <div
+      className={
+        mode === "card"
+          ? "fr-card fr-p-3w flex flex-col gap-4"
+          : "flex flex-col gap-4"
+      }
+    >
       {mode === "card" && (
         <span className="fr-text--xl font-bold fr-m-0">
           Comparaison territoriale et évolution

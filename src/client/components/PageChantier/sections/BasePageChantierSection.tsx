@@ -27,7 +27,10 @@ export const BasePageChantierSection = ({
 
   return (
     <section
-      className={clsx("grid grid-rows-[auto_1fr] print:block", sectionClassName)}
+      className={clsx(
+        "grid grid-rows-[auto_1fr] print:block",
+        sectionClassName,
+      )}
       id={id}
     >
       {infobulle ? (

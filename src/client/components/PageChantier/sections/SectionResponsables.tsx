@@ -6,11 +6,8 @@ import {
 import { BasePageChantierSection } from "./BasePageChantierSection";
 
 export const SectionResponsables = () => {
-  const {
-    chantier,
-    listeResponsablesLocaux,
-    listeCoordinateursTerritorials,
-  } = pageChantier.useServerSidePropsContext();
+  const { chantier, listeResponsablesLocaux, listeCoordinateursTerritorials } =
+    pageChantier.useServerSidePropsContext();
   const territoireSélectionné = useTerritoireSelectionne();
   const estChantierArchive = chantier.statut === "ARCHIVE";
 
@@ -21,9 +18,7 @@ export const SectionResponsables = () => {
       titre="Responsables"
     >
       <ResponsablesPageChantier
-        afficheResponsablesLocaux={
-          territoireSélectionné.maille !== "nationale"
-        }
+        afficheResponsablesLocaux={territoireSélectionné.maille !== "nationale"}
         estChantierArchive={estChantierArchive}
         libelléChantier={chantier.nom}
         listeCoordinateursTerritorials={listeCoordinateursTerritorials}
