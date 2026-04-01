@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { typesDecisionStrategique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
-import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
+import { extractVisibleText } from "@/utils/extractVisibleText";
 
 export const LIMITE_CARACTERES_DECISION_STRATEGIQUE = 5000;
 

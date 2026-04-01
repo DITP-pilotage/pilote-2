@@ -24,7 +24,7 @@ import { MeteoSaisissable } from "@/server/domain/météo/Météo.interface";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 import { CONSIGNE_SYNTHÈSE_DES_RÉSULTATS } from "@/client/constants/libellesSyntheseDesResultats";
 import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
-import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
+import { extractVisibleText } from "@/utils/extractVisibleText";
 
 interface ModaleFormulaireSyntheseDesResultatsProps {
   title: string;

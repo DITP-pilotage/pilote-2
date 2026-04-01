@@ -24,7 +24,7 @@ import {
 } from "@/client/constants/libellesSyntheseDesResultats";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
-import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
+import { extractVisibleText } from "@/utils/extractVisibleText";
 import { SelecteurMeteo } from "./SelecteurMeteo";
 import { useModifierSyntheseDesResultats } from "./useModifierSyntheseDesResultats";
 import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";

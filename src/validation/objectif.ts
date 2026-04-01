@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { typesObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
-import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
+import { extractVisibleText } from "@/utils/extractVisibleText";
 
 export const LIMITE_CARACTERES_OBJECTIF = 5000;
 

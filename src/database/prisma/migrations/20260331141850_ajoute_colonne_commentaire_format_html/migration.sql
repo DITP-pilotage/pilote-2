@@ -1,30 +1,30 @@
 -- AlterTable
-ALTER TABLE "public"."commentaire" ADD COLUMN     "contenu_depracated" TEXT;
+ALTER TABLE "public"."commentaire" ADD COLUMN     "contenu_deprecated" TEXT;
 
 -- AlterTable
-ALTER TABLE "public"."decision_strategique" ADD COLUMN     "contenu_depracated" TEXT;
+ALTER TABLE "public"."decision_strategique" ADD COLUMN     "contenu_deprecated" TEXT;
 
 -- AlterTable
-ALTER TABLE "public"."objectif" ADD COLUMN     "contenu_depracated" TEXT;
+ALTER TABLE "public"."objectif" ADD COLUMN     "contenu_deprecated" TEXT;
 
 -- AlterTable
-ALTER TABLE "public"."synthese_des_resultats" ADD COLUMN     "commentaire_depracated" TEXT;
+ALTER TABLE "public"."synthese_des_resultats" ADD COLUMN     "commentaire_deprecated" TEXT;
 
 -- Sauvegarde des valeurs plain text avant conversion
 UPDATE "public"."commentaire"
-SET contenu_depracated = contenu
+SET contenu_deprecated = contenu
 WHERE contenu IS NOT NULL;
 
 UPDATE "public"."decision_strategique"
-SET contenu_depracated = contenu
+SET contenu_deprecated = contenu
 WHERE contenu IS NOT NULL;
 
 UPDATE "public"."objectif"
-SET contenu_depracated = contenu
+SET contenu_deprecated = contenu
 WHERE contenu IS NOT NULL;
 
 UPDATE "public"."synthese_des_resultats"
-SET commentaire_depracated = commentaire
+SET commentaire_deprecated = commentaire
 WHERE commentaire IS NOT NULL;
 
 -- Conversion plain text → HTML dans les colonnes principales

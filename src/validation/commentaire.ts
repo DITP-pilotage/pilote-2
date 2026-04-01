@@ -3,7 +3,7 @@ import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
-import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
+import { extractVisibleText } from "@/utils/extractVisibleText";
 
 export const LIMITE_CARACTÈRES_COMMENTAIRE = 5000;
 

@@ -23,7 +23,7 @@ import {
   Publication,
 } from "@/components/PageChantier/PublicationV2/Publication.interface";
 import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
-import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
+import { extractVisibleText } from "@/utils/extractVisibleText";
 
 interface ModaleFormulairePublicationProps {
   title: string;

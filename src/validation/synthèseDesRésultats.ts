@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { meteosSaisissables } from "@/server/domain/météo/Météo.interface";
-import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
+import { extractVisibleText } from "@/utils/extractVisibleText";
 
 export const LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS = 1000;
 

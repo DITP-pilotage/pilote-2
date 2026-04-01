@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
+import { extractVisibleText } from "@/utils/extractVisibleText";
 import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
