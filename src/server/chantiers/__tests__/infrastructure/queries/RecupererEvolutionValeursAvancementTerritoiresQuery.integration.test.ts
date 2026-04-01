@@ -113,7 +113,7 @@ describe("RecupererEvolutionValeursAvancementTerritoiresQuery", () => {
   );
 
   it(
-    "retourne un tableau vide quand evolution_avancement est null",
+    "exclut les territoires sans historique quand evolution_avancement est null",
     createIntegrationTest(async () => {
       // given
       await fixtures.chantierIdentite({ id: "CH-002" });
@@ -159,13 +159,7 @@ describe("RecupererEvolutionValeursAvancementTerritoiresQuery", () => {
       });
 
       // then
-      const territoire = result.territoires.find(
-        (entry) => entry.territoireCode === "DEPT-92",
-      );
-      expect(territoire).toEqual({
-        territoireCode: "DEPT-92",
-        historiquesValeurs: [],
-      });
+      expect(result).toEqual({ territoires: [] });
     }),
   );
 
