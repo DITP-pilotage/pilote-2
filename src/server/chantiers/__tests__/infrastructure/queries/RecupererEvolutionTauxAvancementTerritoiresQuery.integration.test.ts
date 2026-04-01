@@ -72,8 +72,16 @@ describe("RecupererEvolutionTauxAvancementTerritoiresQuery", () => {
         zone_id: "D75",
         est_applicable: true,
         evolution_avancement: [
-          { date: new Date("2025-01-15"), valeur: 100, taux_avancement_jalon: 45.5 },
-          { date: new Date("2025-06-15"), valeur: 200, taux_avancement_jalon: 67.2 },
+          {
+            date: new Date("2025-01-15"),
+            valeur: 100,
+            taux_avancement_jalon: 45.5,
+          },
+          {
+            date: new Date("2025-06-15"),
+            valeur: 200,
+            taux_avancement_jalon: 67.2,
+          },
         ],
       });
       await fixtures.indicateurTerritoireJalon({
@@ -138,8 +146,16 @@ describe("RecupererEvolutionTauxAvancementTerritoiresQuery", () => {
         zone_id: "D92",
         est_applicable: true,
         evolution_avancement: [
-          { date: new Date("2025-01-15"), valeur: 100, taux_avancement_jalon: 30 },
-          { date: new Date("2025-03-15"), valeur: 150, taux_avancement_jalon: null },
+          {
+            date: new Date("2025-01-15"),
+            valeur: 100,
+            taux_avancement_jalon: 30,
+          },
+          {
+            date: new Date("2025-03-15"),
+            valeur: 150,
+            taux_avancement_jalon: null,
+          },
           { date: new Date("2025-06-15"), valeur: 200 },
         ],
       });
