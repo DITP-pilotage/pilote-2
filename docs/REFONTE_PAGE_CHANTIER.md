@@ -256,7 +256,7 @@ Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonction
 - Extraire la section avancement actuelle (lignes 219-268 du legacy) dans ce composant
 - Remplacer dans `PageChantierLegacy`
 
-### Tâche 12 : Créer `PageChantier` et brancher le feature flag — TODO
+### Tâche 12 : Créer `PageChantier` et brancher le feature flag — DONE
 
 - Créer `src/client/components/PageChantier/PageChantier.tsx`
 - Compose `BasePageChantierLayout` + toutes les sections (avec avancement legacy pour l'instant)
