@@ -226,7 +226,7 @@ Chaque tâche = 1 commit. On ne casse rien à chaque étape ; le legacy fonction
 - Créer `src/client/components/PageChantier/sections/SectionObjectifs.tsx`
 - Remplacer dans `PageChantierLegacy`
 
-### Tâche 7 : Extraire `SectionIndicateurs` — TODO
+### Tâche 7 : Extraire `SectionIndicateurs` — DONE
 
 - Créer `src/client/components/PageChantier/sections/SectionIndicateurs.tsx`
 - Inclut la logique conditionnelle (indicateurs.length > 0), l'alerte maille régionale

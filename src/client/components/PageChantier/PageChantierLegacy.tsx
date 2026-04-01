@@ -13,12 +13,10 @@ import {
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
-import IndicateursChantier from "@/components/_commons/IndicateursChantier/IndicateursChantier";
 import {
   CategoriesIndicateur,
   listeRubriquesChantier,
 } from "@/client/utils/rubriques";
-import Alerte from "@/client/components/_commons/Alerte/Alerte";
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import BandeauInformation from "@/client/components/_commons/BandeauInformation/BandeauInformation";
 import { PanelMenuNavigation } from "@/components/_commons/PanelMenuNavigation/PanelMenuNavigation";
@@ -36,6 +34,7 @@ import { SectionSyntheseDesResultats } from "./sections/SectionSyntheseDesResult
 import { SectionResponsables } from "./sections/SectionResponsables";
 import { SectionRepartitionGeographique } from "./sections/SectionRepartitionGeographique";
 import { SectionObjectifs } from "./sections/SectionObjectifs";
+import { SectionIndicateurs } from "./sections/SectionIndicateurs";
 
 const PageChantierLegacy = () => {
   usePrintPageStyle("margin: 12mm 0; size: 280mm 396mm");
@@ -272,48 +271,7 @@ const PageChantierLegacy = () => {
           </div>
           <SectionRepartitionGeographique />
           <SectionObjectifs />
-          {indicateurs.length > 0 ? (
-            <div className="fr-my-2w">
-              <section
-                className="grid grid-rows-[auto_1fr] print:block"
-                id="indicateurs"
-              >
-                <Titre
-                  baliseHtml="h2"
-                  className={clsx(
-                    "fr-h4 fr-mb-2w fr-mt-3v fr-mt-md-3w fr-mx-2w fr-mx-md-0",
-                    {
-                      "text-primary": !estChantierArchive,
-                      "!text-dsfr-grey-50": estChantierArchive,
-                    },
-                  )}
-                >
-                  {`Indicateurs (${indicateursApplicablesIds.length})`}
-                </Titre>
-                {mailleSourceDonnees === "regionale" && (
-                  <Alerte
-                    classesSupplementaires="fr-mb-2w"
-                    message="En l'absence de données départementales, les valeurs des indicateurs régionaux sont reportées pour le département."
-                    titre="Données régionales"
-                    type="info"
-                  />
-                )}
-                <IndicateursChantier
-                  alerteMiseAJourIndicateur={alerteMiseAJourIndicateur}
-                  categoriesIndicateurRepartition={
-                    categoriesIndicateurRepartition
-                  }
-                  estAutoriseAAccepterLesPropositionsDeValeurAvancement={
-                    estAutoriseAAccepterLesPropositionsDeValeurAvancement
-                  }
-                  estAutoriseAProposerUneValeurAvancement={
-                    estAutoriseAProposerUneValeurAvancement
-                  }
-                  indicateursApplicablesIds={indicateursApplicablesIds}
-                />
-              </section>
-            </div>
-          ) : null}
+          <SectionIndicateurs />
           {territoireSélectionné.maille === "nationale" ? (
             <div className="fr-my-2w">
               <section
