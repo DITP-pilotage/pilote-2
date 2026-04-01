@@ -26,13 +26,17 @@ export const AffichagePublication = ({
     return <Badge type="gris">Non renseigné</Badge>;
   }
 
-  const source = commentaire.contenu;
+  const commentaireComplet = commentaire.contenu;
   const contenuTronque =
-    extractVisibleText(source).length > LIMITE_CARACTERES_AFFICHAGE_PUBLICATION;
+    extractVisibleText(commentaireComplet).length >
+    LIMITE_CARACTERES_AFFICHAGE_PUBLICATION;
   const contenuAAfficher =
     afficherContenuComplet || !contenuTronque
-      ? source
-      : truncateHtml(source, LIMITE_CARACTERES_AFFICHAGE_PUBLICATION);
+      ? commentaireComplet
+      : truncateHtml(
+          commentaireComplet,
+          LIMITE_CARACTERES_AFFICHAGE_PUBLICATION,
+        );
 
   return (
     <>

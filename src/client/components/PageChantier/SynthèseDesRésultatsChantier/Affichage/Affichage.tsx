@@ -29,15 +29,15 @@ const SynthèseDesRésultatsAffichage = ({
     );
   }
 
-  const source = synthèseDesRésultats.contenu;
+  const commentaireComplet = synthèseDesRésultats.contenu;
   const contenuTronque =
-    extractVisibleText(source).length >
+    extractVisibleText(commentaireComplet).length >
     LIMITE_CARACTERES_AFFICHAGE_SYNTHESE_DES_RESULTATS;
   const contenuAAfficher =
     afficherContenuComplet || !contenuTronque
-      ? source
+      ? commentaireComplet
       : truncateHtml(
-          source,
+          commentaireComplet,
           LIMITE_CARACTERES_AFFICHAGE_SYNTHESE_DES_RESULTATS,
         );
 

@@ -67,6 +67,7 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
     },
   });
 
+  // TODO (TCO: 1/04/2025) : Supprimer à la suppression du FF
   const soumettre: SubmitHandler<SyntheseDesResultatsFormulaireInputs> = (
     data,
   ) =>
