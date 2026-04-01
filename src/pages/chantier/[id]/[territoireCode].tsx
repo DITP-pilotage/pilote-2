@@ -2,7 +2,7 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import { FunctionComponent } from "react";
 import assert from "node:assert/strict";
-import PageChantier from "@/components/PageChantier/PageChantier";
+import PageChantierLegacy from "@/components/PageChantier/PageChantierLegacy";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { NonAutorisé } from "@/server/utils/errors";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
@@ -303,7 +303,7 @@ const NextPageChantier: FunctionComponent<
       !chantierInformations.estUnChantierDROM ? (
         <ChoixTerritoire />
       ) : (
-        <PageChantier key={territoireCode} />
+        <PageChantierLegacy key={territoireCode} />
       )}
     </pageChantier.ServerSidePropsProvider>
   );

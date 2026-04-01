@@ -37,7 +37,7 @@ import Cartes from "./Cartes/Cartes";
 import { usePageChantier } from "./usePageChantier";
 import { DécisionsStratégiques } from "./DécisionsStratégiques/DécisionsStratégiques";
 
-const PageChantier = () => {
+const PageChantierLegacy = () => {
   usePrintPageStyle("margin: 12mm 0; size: 280mm 396mm");
   const {
     indicateurs,
@@ -471,4 +471,4 @@ const PageChantier = () => {
   );
 };
 
-export default PageChantier;
+export default PageChantierLegacy;
