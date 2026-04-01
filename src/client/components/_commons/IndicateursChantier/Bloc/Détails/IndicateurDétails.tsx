@@ -158,81 +158,82 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                 />
               </Suspense>
             </>
-          ) : null}
-          <div className="fr-container">
-            <div className="fr-grid-row fr-grid-row--gutters fr-my-1w">
-              {futOuvert &&
-              (donnéesCartographieAvancementTerritorialisées ||
-                donnéesCartographieValeurAvancementTerritorialisées ||
-                chantierEstTerritorialisé) ? (
-                <>
-                  <section className="fr-col-12 fr-col-xl-6">
-                    <CartographieAvecSelecteurIndicateur
-                      aLaSelectionCartographie={(
-                        valeur: CartographieIndicateurType,
-                      ) => setCartographieGaucheSelection(valeur)}
-                      cartographieSelectionnee={cartographieGaucheIndicateur}
-                      detailsIndicateurTerritoire={
-                        detailsIndicateursTerritoire[indicateur.id]
-                      }
-                      jalon={jalon}
-                      listeCartographiesDesactives={[
-                        cartographieDroiteIndicateur,
-                      ]}
-                      mailleQuery={mailleQuery}
-                      territoireCode={territoireCode}
-                      unité={indicateur.unité}
-                    />
-                  </section>
-                  <section className="fr-col-12 fr-col-xl-6">
-                    <CartographieAvecSelecteurIndicateur
-                      aLaSelectionCartographie={(
-                        valeur: CartographieIndicateurType,
-                      ) => setCartographieDroiteSelection(valeur)}
-                      cartographieSelectionnee={cartographieDroiteIndicateur}
-                      detailsIndicateurTerritoire={
-                        detailsIndicateursTerritoire[indicateur.id]
-                      }
-                      jalon={jalon}
-                      listeCartographiesDesactives={[
-                        cartographieGaucheIndicateur,
-                      ]}
-                      mailleQuery={mailleQuery}
-                      territoireCode={territoireCode}
-                      unité={indicateur.unité}
-                    />
-                  </section>
+          ) : (
+            <div className="fr-container">
+              <div className="fr-grid-row fr-grid-row--gutters fr-my-1w">
+                {futOuvert &&
+                (donnéesCartographieAvancementTerritorialisées ||
+                  donnéesCartographieValeurAvancementTerritorialisées ||
+                  chantierEstTerritorialisé) ? (
+                  <>
+                    <section className="fr-col-12 fr-col-xl-6">
+                      <CartographieAvecSelecteurIndicateur
+                        aLaSelectionCartographie={(
+                          valeur: CartographieIndicateurType,
+                        ) => setCartographieGaucheSelection(valeur)}
+                        cartographieSelectionnee={cartographieGaucheIndicateur}
+                        detailsIndicateurTerritoire={
+                          detailsIndicateursTerritoire[indicateur.id]
+                        }
+                        jalon={jalon}
+                        listeCartographiesDesactives={[
+                          cartographieDroiteIndicateur,
+                        ]}
+                        mailleQuery={mailleQuery}
+                        territoireCode={territoireCode}
+                        unité={indicateur.unité}
+                      />
+                    </section>
+                    <section className="fr-col-12 fr-col-xl-6">
+                      <CartographieAvecSelecteurIndicateur
+                        aLaSelectionCartographie={(
+                          valeur: CartographieIndicateurType,
+                        ) => setCartographieDroiteSelection(valeur)}
+                        cartographieSelectionnee={cartographieDroiteIndicateur}
+                        detailsIndicateurTerritoire={
+                          detailsIndicateursTerritoire[indicateur.id]
+                        }
+                        jalon={jalon}
+                        listeCartographiesDesactives={[
+                          cartographieGaucheIndicateur,
+                        ]}
+                        mailleQuery={mailleQuery}
+                        territoireCode={territoireCode}
+                        unité={indicateur.unité}
+                      />
+                    </section>
 
-                  {featureComparaisonTerritoires && (
-                    <div className="fr-mt-2w fr-container">
-                      <Suspense>
-                        <ComparaisonTerritoiresIndicateur
-                          indicateurId={indicateur.id}
-                          chantierId={chantierId}
-                          jalon={jalon}
-                          maille={mailleQuery}
-                          territoireCode={territoireCode}
-                          unite={indicateur.unité}
-                        />
-                      </Suspense>
-                    </div>
-                  )}
-                </>
-              ) : null}
-              {futOuvert && detailIndicateurDuTerritoire ? (
-                <section className="fr-col-12">
-                  <IndicateurEvolution
-                    dateDeMiseAJourIndicateur={
-                      dateDeMiseAJourIndicateur ?? "Non renseignée"
-                    }
-                    indicateurDetailsParTerritoiresCompares={
-                      indicateurDétailsParTerritoiresComparés
-                    }
-                  />
-                </section>
-              ) : null}
+                    {featureComparaisonTerritoires && (
+                      <div className="fr-mt-2w fr-container">
+                        <Suspense>
+                          <ComparaisonTerritoiresIndicateur
+                            indicateurId={indicateur.id}
+                            chantierId={chantierId}
+                            jalon={jalon}
+                            maille={mailleQuery}
+                            territoireCode={territoireCode}
+                            unite={indicateur.unité}
+                          />
+                        </Suspense>
+                      </div>
+                    )}
+                  </>
+                ) : null}
+                {futOuvert && detailIndicateurDuTerritoire ? (
+                  <section className="fr-col-12">
+                    <IndicateurEvolution
+                      dateDeMiseAJourIndicateur={
+                        dateDeMiseAJourIndicateur ?? "Non renseignée"
+                      }
+                      indicateurDetailsParTerritoiresCompares={
+                        indicateurDétailsParTerritoiresComparés
+                      }
+                    />
+                  </section>
+                ) : null}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </section>
     </div>

@@ -33,6 +33,7 @@ export const ComparaisonTerritoiresIndicateur = ({
   unite: string | null;
 }) => (
   <ComparaisonTerritoires<TypeCarteIndicateur>
+    mode="inline"
     typeParDefaut="ta"
     typeAlternatif={(t) => (t === "ta" ? "valeurAvancement" : "ta")}
     options={options(jalon)}
