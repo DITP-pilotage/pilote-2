@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
@@ -8,10 +8,6 @@ import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { Publication } from "@/components/PageChantier/PublicationV2/Publication.interface";
 import { BoutonsAffichage } from "@/components/_commons/BoutonsAffichage/BoutonsAffichage";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
-import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
-import { truncateHtml } from "@/client/utils/html/truncateHtml";
-
-const LIMITE_CARACTERES_AFFICHAGE_PUBLICATION = 250;
 
 export const AffichagePublication = ({
   commentaire,
@@ -21,22 +17,21 @@ export const AffichagePublication = ({
   onModifier?: () => void;
 }) => {
   const [afficherContenuComplet, setAfficherContenuComplet] = useState(false);
+  const [contenuTronque, setContenuTronque] = useState(false);
+  const contenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const contenuElement = contenuRef.current;
+    if (contenuElement) {
+      setContenuTronque(
+        contenuElement.scrollHeight > contenuElement.clientHeight,
+      );
+    }
+  }, [commentaire?.contenu]);
 
   if (!commentaire) {
     return <Badge type="gris">Non renseigné</Badge>;
   }
-
-  const commentaireComplet = commentaire.contenu;
-  const contenuTronque =
-    extractVisibleText(commentaireComplet).length >
-    LIMITE_CARACTERES_AFFICHAGE_PUBLICATION;
-  const contenuAAfficher =
-    afficherContenuComplet || !contenuTronque
-      ? commentaireComplet
-      : truncateHtml(
-          commentaireComplet,
-          LIMITE_CARACTERES_AFFICHAGE_PUBLICATION,
-        );
 
   return (
     <>
@@ -65,13 +60,16 @@ export const AffichagePublication = ({
           </Infobulle>
         </div>
       ) : null}
-      <div className="fr-text--sm mb-1">
+      <div
+        ref={contenuRef}
+        className={`fr-text--sm mb-1 ${!afficherContenuComplet ? "line-clamp-3" : ""}`}
+      >
         <RenduContenuHtml
           className="[&_p]:text-sm [&_p]:mb-1"
-          html={contenuAAfficher}
+          html={commentaire.contenu}
         />
       </div>
-      {contenuTronque ? (
+      {contenuTronque || afficherContenuComplet ? (
         <BoutonsAffichage
           deplie={afficherContenuComplet}
           deplierLeContenu={() => setAfficherContenuComplet(true)}

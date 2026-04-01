@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { BoutonsAffichage } from "@/components/_commons/BoutonsAffichage/BoutonsAffichage";
 import { Icone } from "@/components/_commons/Icone";
 import { Icone1Icon } from "@/components/_commons/Icones/Icone1Icon";
@@ -7,10 +7,6 @@ import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { SyntheseDesResultatsHistoriqueItem } from "@/server/syntheses-des-resultats/queries/RecupererHistoriqueSyntheseDesResultatsQuery";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
-import { extractVisibleText } from "@/client/utils/html/extractVisibleText";
-import { truncateHtml } from "@/client/utils/html/truncateHtml";
-
-const LIMITE_CARACTERES_AFFICHAGE_SYNTHESE_DES_RESULTATS = 250;
 
 const SynthèseDesRésultatsAffichage = ({
   itemHistoriqueSyntheseDesResultats: synthèseDesRésultats,
@@ -20,6 +16,17 @@ const SynthèseDesRésultatsAffichage = ({
   onModifier?: () => void;
 }) => {
   const [afficherContenuComplet, setAfficherContenuComplet] = useState(false);
+  const [contenuTronque, setContenuTronque] = useState(false);
+  const contenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const contenuElement = contenuRef.current;
+    if (contenuElement) {
+      setContenuTronque(
+        contenuElement.scrollHeight > contenuElement.clientHeight,
+      );
+    }
+  }, [synthèseDesRésultats?.contenu]);
 
   if (!synthèseDesRésultats) {
     return (
@@ -28,18 +35,6 @@ const SynthèseDesRésultatsAffichage = ({
       </p>
     );
   }
-
-  const commentaireComplet = synthèseDesRésultats.contenu;
-  const contenuTronque =
-    extractVisibleText(commentaireComplet).length >
-    LIMITE_CARACTERES_AFFICHAGE_SYNTHESE_DES_RESULTATS;
-  const contenuAAfficher =
-    afficherContenuComplet || !contenuTronque
-      ? commentaireComplet
-      : truncateHtml(
-          commentaireComplet,
-          LIMITE_CARACTERES_AFFICHAGE_SYNTHESE_DES_RESULTATS,
-        );
 
   return (
     <>
@@ -69,13 +64,16 @@ const SynthèseDesRésultatsAffichage = ({
           </Infobulle>
         </div>
       ) : null}
-      <div className="fr-text--sm mb-1">
+      <div
+        ref={contenuRef}
+        className={`fr-text--sm mb-1 ${!afficherContenuComplet ? "line-clamp-3" : ""}`}
+      >
         <RenduContenuHtml
           className="[&_p]:text-sm [&_p]:mb-1"
-          html={contenuAAfficher}
+          html={synthèseDesRésultats.contenu}
         />
       </div>
-      {contenuTronque ? (
+      {contenuTronque || afficherContenuComplet ? (
         <BoutonsAffichage
           deplie={afficherContenuComplet}
           deplierLeContenu={() => setAfficherContenuComplet(true)}
