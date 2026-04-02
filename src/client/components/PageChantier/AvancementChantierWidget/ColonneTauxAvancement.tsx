@@ -5,6 +5,7 @@ import { getLabelTerritoire } from "@/client/constants/territoires";
 import api from "@/server/infrastructure/api/trpc/api";
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
 
 const MAILLE_ORDER: Record<string, number> = {
   DEPT: 0,
@@ -15,6 +16,7 @@ const MAILLE_ORDER: Record<string, number> = {
 export const ColonneTauxAvancement: FunctionComponent = () => {
   const { chantierInformations, territoireCode, jalon } =
     pageChantier.useServerSidePropsContext();
+  const widget = useMesureWidget();
 
   const chantierId = chantierInformations.id;
 
@@ -34,7 +36,12 @@ export const ColonneTauxAvancement: FunctionComponent = () => {
         <strong className="fr-mb-0">Taux d'avancement du chantier</strong>
         <span className="fr-text--sm fr-mb-0">{jalon}</span>
       </div>
-      <div className="flex flex-wrap">
+      <div
+        className={clsxm("flex", {
+          "flex-wrap": widget.largeur < 400,
+          "items-center": widget.largeur >= 400,
+        })}
+      >
         {sorted.map((avancement, index) => {
           const isSelected = avancement.territoireCode === territoireCode;
           const couleur = isSelected ? "bleu" : "bleu-clair";
@@ -43,8 +50,9 @@ export const ColonneTauxAvancement: FunctionComponent = () => {
             <div
               key={avancement.territoireCode}
               className={clsxm("px-2 py-1", {
-                "basis-full": index === 0,
-                "basis-1/2": index > 0,
+                grow: widget.largeur >= 400,
+                "basis-full": widget.largeur < 400 && index === 0,
+                "basis-1/2": widget.largeur < 400 && index > 0,
               })}
             >
               <JaugeDeProgression

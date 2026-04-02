@@ -6,6 +6,8 @@ import { formaterDate } from "@/client/utils/date/date";
 import api from "@/server/infrastructure/api/trpc/api";
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
+import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
+import { clsxm } from "@/utils/clsxm";
 
 const getLabelMaille = (territoireCode: string): string => {
   if (territoireCode.startsWith("DEPT-")) return "départements";
@@ -16,6 +18,7 @@ const getLabelMaille = (territoireCode: string): string => {
 export const ColonneSituation: FunctionComponent = () => {
   const { chantierInformations, territoireCode, jalon, chantier } =
     pageChantier.useServerSidePropsContext();
+  const widget = useMesureWidget();
 
   const chantierId = chantierInformations.id;
   const estArchive = chantier.statut === "ARCHIVE";
@@ -27,10 +30,14 @@ export const ColonneSituation: FunctionComponent = () => {
   );
 
   return (
-    <div className="flex flex-col flex-wrap justify-center align-center">
+    <div
+      className={clsxm("grid gap-4", {
+        "grid-cols-2 items-start": widget.largeur >= 400,
+      })}
+    >
       {!isNational && (
         <>
-          <div className="py-2 flex flex-col gap-3 flex-wrap justify-center align-center">
+          <div className="flex flex-col gap-3 flex-wrap justify-center align-center">
             <div className="flex flex-col items-center">
               <strong className="fr-mb-0 text-center">
                 Situation par rapport aux autres{" "}
@@ -53,10 +60,9 @@ export const ColonneSituation: FunctionComponent = () => {
               </p>
             )}
           </div>
-          <hr className="fr-hr py-2" />
         </>
       )}
-      <div className="py-2 flex flex-col gap-3 justify-center align-center">
+      <div className="flex flex-col gap-3 justify-center align-center">
         <div className="flex flex-col items-center">
           <strong className="fr-mb-0 text-center">Evolution temporelle</strong>
           <span>{jalon}</span>
