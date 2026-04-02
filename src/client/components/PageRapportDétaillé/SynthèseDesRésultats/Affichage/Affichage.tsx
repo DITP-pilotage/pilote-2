@@ -1,6 +1,6 @@
 import { formaterDate } from "@/client/utils/date/date";
-import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import SynthèseDesRésultatsInterface from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
+import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 
 interface SynthèseDesRésultatsAffichageProps {
   synthèseDesRésultats: SynthèseDesRésultatsInterface;
@@ -22,14 +22,12 @@ const SynthèseDesRésultatsAffichage = ({
         {!!synthèseDesRésultats.auteur &&
           ` | Par ${synthèseDesRésultats.auteur}`}
       </p>
-      <p
-        className="fr-text--sm fr-mb-0"
-        dangerouslySetInnerHTML={{
-          __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(
-            synthèseDesRésultats.contenu,
-          ),
-        }}
-      />
+      <div className="fr-text--sm fr-mb-0">
+        <RenduContenuHtml
+          className="[&_p]:text-sm [&_p]:mb-1"
+          html={synthèseDesRésultats.contenu}
+        />
+      </div>
     </>
   );
 };

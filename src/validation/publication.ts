@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { extractVisibleText } from "@/utils/extractVisibleText";
 import {
   typesCommentaireMailleNationale,
   typesCommentaireMailleRégionaleOuDépartementale,
@@ -48,11 +49,15 @@ export const validationPublicationFormulaire = validationPublicationContexte
     z.object({
       contenu: z
         .string()
-        .max(
-          LIMITE_CARACTÈRES_PUBLICATION,
-          `La limite maximale de ${LIMITE_CARACTÈRES_PUBLICATION} caractères a été dépassée`,
+        .refine(
+          (html) => extractVisibleText(html).trim().length >= 1,
+          "Ce champ ne peut pas être vide",
         )
-        .min(1, "Ce champ ne peut pas être vide"),
+        .refine(
+          (html) =>
+            extractVisibleText(html).length <= LIMITE_CARACTÈRES_PUBLICATION,
+          `La limite maximale de ${LIMITE_CARACTÈRES_PUBLICATION} caractères a été dépassée`,
+        ),
 
       territoireCode: z.string(),
       réformeId: z.string(),

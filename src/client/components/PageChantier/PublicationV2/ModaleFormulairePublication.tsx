@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { Icone } from "@/components/_commons/Icone";
@@ -22,6 +22,8 @@ import {
   PublicationBrouillon,
   Publication,
 } from "@/components/PageChantier/PublicationV2/Publication.interface";
+import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
+import { extractVisibleText } from "@/utils/extractVisibleText";
 
 interface ModaleFormulairePublicationProps {
   title: string;
@@ -54,7 +56,9 @@ export const ModaleFormulairePublication = ({
   const form = useForm<{ contenu: string }>({
     mode: "all",
     resolver: zodResolver(validationCommentaireFormulaire),
-    defaultValues: { contenu: brouillon?.contenu ?? "" },
+    defaultValues: {
+      contenu: brouillon?.contenu ?? "",
+    },
   });
 
   return (
@@ -83,11 +87,19 @@ export const ModaleFormulairePublication = ({
         <div
           className={`flex flex-col ${form.formState.errors.contenu ? "fr-input-group--error" : ""}`}
         >
-          <textarea
-            className="fr-input fr-text--sm flex-1 mb-0"
-            rows={6}
-            {...form.register("contenu")}
-          />
+          <div className="h-60">
+            <Controller
+              control={form.control}
+              name="contenu"
+              render={({ field }) => (
+                <EditeurSimple
+                  contenu={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                />
+              )}
+            />
+          </div>
           <div className="flex justify-between mt-1">
             <div>
               {!!form.formState.errors.contenu && (
@@ -97,7 +109,7 @@ export const ModaleFormulairePublication = ({
               )}
             </div>
             <CompteurCaractères
-              compte={form.watch("contenu")?.length ?? 0}
+              compte={extractVisibleText(form.watch("contenu") ?? "").length}
               limiteDeCaractères={LIMITE_CARACTÈRES_COMMENTAIRE}
             />
           </div>

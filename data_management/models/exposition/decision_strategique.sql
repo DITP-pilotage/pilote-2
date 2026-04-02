@@ -24,6 +24,7 @@ SELECT
     )::uuid as auteur_modification_id,
     type::type_decision_strategique,
     contenu,
+    NULL::VARCHAR as contenu_deprecated,
     chantier_id,
     'PUBLIE'::statut_publication as statut
 FROM {{ ref('stg_import_massif__commentaires') }}

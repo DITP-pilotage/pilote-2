@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { typesDecisionStrategique } from "@/server/domain/chantier/décisionStratégique/DécisionStratégique.interface";
+import { extractVisibleText } from "@/utils/extractVisibleText";
 
 export const LIMITE_CARACTERES_DECISION_STRATEGIQUE = 5000;
 
@@ -11,11 +12,16 @@ export const validationDecisionStrategiqueContexte = z.object({
 export const validationDecisionStrategiqueFormulaire = z.object({
   contenu: z
     .string()
-    .max(
-      LIMITE_CARACTERES_DECISION_STRATEGIQUE,
-      `La limite de ${LIMITE_CARACTERES_DECISION_STRATEGIQUE} caractères a été dépassée`,
+    .refine(
+      (html) => extractVisibleText(html).trim().length >= 1,
+      "La décision stratégique ne peut pas être vide",
     )
-    .min(1, "La décision stratégique ne peut pas être vide"),
+    .refine(
+      (html) =>
+        extractVisibleText(html).length <=
+        LIMITE_CARACTERES_DECISION_STRATEGIQUE,
+      `La limite de ${LIMITE_CARACTERES_DECISION_STRATEGIQUE} caractères a été dépassée`,
+    ),
 });
 
 export const validationBrouillonDecisionStrategiqueAPublier = z.object({

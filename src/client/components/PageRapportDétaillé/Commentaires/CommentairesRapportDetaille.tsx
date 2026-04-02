@@ -7,8 +7,8 @@ import {
   typesCommentaireMailleRégionaleOuDépartementale,
 } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import { libellesTypesCommentaire } from "@/client/constants/libellesCommentaire";
-import { nettoyerUneChaîneDeCaractèresPourAffichageHTML } from "@/client/utils/strings";
 import { isDefined } from "@/client/utils/predicates";
+import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { Badge } from "@/components/_commons/Badge";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 
@@ -49,14 +49,12 @@ const CommentairesRapportDetaille: FunctionComponent<
                   <p className="text-xs text-dsfr-mention-grey mb-1">
                     {`Mis à jour le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.date)} | Par ${commentaire.auteur}`}
                   </p>
-                  <p
-                    className="fr-text--sm fr-mb-0"
-                    dangerouslySetInnerHTML={{
-                      __html: nettoyerUneChaîneDeCaractèresPourAffichageHTML(
-                        commentaire.contenu,
-                      ),
-                    }}
-                  />
+                  <div className="fr-text--sm fr-mb-0">
+                    <RenduContenuHtml
+                      className="[&_p]:text-sm [&_p]:mb-1"
+                      html={commentaire.contenu}
+                    />
+                  </div>
                 </>
               ) : (
                 <Badge type="gris">Non renseigné</Badge>

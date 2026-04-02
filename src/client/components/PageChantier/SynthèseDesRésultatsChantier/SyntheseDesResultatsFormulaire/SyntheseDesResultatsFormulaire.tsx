@@ -23,9 +23,11 @@ import {
   LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS,
 } from "@/client/constants/libellesSyntheseDesResultats";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
-import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
-import { useModifierSyntheseDesResultats } from "./useModifierSyntheseDesResultats";
+import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
+import { extractVisibleText } from "@/utils/extractVisibleText";
 import { SelecteurMeteo } from "./SelecteurMeteo";
+import { useModifierSyntheseDesResultats } from "./useModifierSyntheseDesResultats";
+import { SyntheseDesResultatsFormulaireInputs } from "./SyntheseDesResultatsFormulaire.interface";
 
 interface SyntheseDesResultatsFormulaireProps {
   annulationCallback?: () => void;
@@ -42,7 +44,6 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
   });
 
   const {
-    register,
     handleSubmit,
     control,
     formState: { errors, isValid },
@@ -91,10 +92,16 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
         <div
           className={`flex-1 flex flex-col fr-mb-0 fr-input-group ${errors.contenu && "fr-input-group--error"}`}
         >
-          <textarea
-            className="fr-input fr-text--sm fr-mb-0 flex-1 max-h-[85vh] resize-y"
-            rows={6}
-            {...register("contenu")}
+          <Controller
+            control={control}
+            name="contenu"
+            render={({ field }) => (
+              <EditeurSimple
+                contenu={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+              />
+            )}
           />
           <div className="flex justify-between">
             <div>
@@ -105,7 +112,7 @@ const SyntheseDesResultatsFormulaire: FunctionComponent<
               )}
             </div>
             <CompteurCaractères
-              compte={watch("contenu")?.length ?? 0}
+              compte={extractVisibleText(watch("contenu") ?? "").length}
               limiteDeCaractères={LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS}
             />
           </div>
