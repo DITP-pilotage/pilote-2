@@ -32,7 +32,7 @@ export const ComparaisonTerritoires = <T extends string>({
     <div
       className={
         mode === "card"
-          ? "fr-card fr-p-3w flex flex-col gap-4"
+          ? "bg-white border border-dsfr-grey-925 rounded-lg p-6 flex flex-col gap-4"
           : "flex flex-col gap-4"
       }
     >
