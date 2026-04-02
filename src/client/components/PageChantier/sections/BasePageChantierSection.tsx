@@ -18,7 +18,7 @@ export const BasePageChantierSection = ({
   id,
   titre,
   sectionClassName,
-  titreConteneurClassName = "fr-mb-1w fr-mt-3v fr-mt-md-0 fr-mx-2w fr-mx-md-0",
+  titreConteneurClassName = "fr-mb-1w fr-mt-3v fr-mt-md-0",
   infobulle,
   children,
 }: BasePageChantierSectionProps) => {

@@ -33,7 +33,7 @@ export const TuileWidget = ({
   const colonnes = Children.toArray(children).length;
 
   return (
-    <div className="fr-card fr-p-3w flex flex-col gap-4">
+    <div className="bg-white border border-dsfr-grey-925 fr-p-3w flex flex-col gap-4 rounded-lg">
       {titre && <span className="fr-text--xl font-bold fr-m-0">{titre}</span>}
       <div
         className="grid max-sm:!grid-cols-1 gap-14"

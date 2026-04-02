@@ -30,17 +30,20 @@ export const ColonneSituation: FunctionComponent = () => {
     <div className="flex flex-col flex-wrap justify-center align-center">
       {!isNational && (
         <>
-          <div className="py-2 flex flex-col flex-wrap justify-center align-center">
-            <strong className="text-xs fr-mb-0 text-center">
-              Situation par rapport aux autres {getLabelMaille(territoireCode)}
-            </strong>
-            <span className="text-sm ml-1 mb-2">{jalon}</span>
+          <div className="py-2 flex flex-col gap-3 flex-wrap justify-center align-center">
+            <div className="flex flex-col items-center">
+              <strong className="fr-mb-0 text-center">
+                Situation par rapport aux autres{" "}
+                {getLabelMaille(territoireCode)}
+              </strong>
+              <span>{jalon}</span>
+            </div>
             <EcartTauxAvancementPPG
               ecart={situation.ecart}
               estArchive={estArchive}
             />
             {situation.mediane !== null && (
-              <p className="text-xs mt-2 text-center">
+              <p className="text-sm text-center fr-mb-0">
                 <strong className="mr-1">écart</strong>
                 du taux d'avancement par rapport à la médiane (
                 <strong className="text-pilote-ecart-blue">
@@ -53,33 +56,34 @@ export const ColonneSituation: FunctionComponent = () => {
           <hr className="fr-hr py-2" />
         </>
       )}
-      <div className="py-2 flex flex-col flex-wrap justify-center align-center">
-        <strong className="text-xs fr-mb-0 text-center">
-          Evolution temporelle
-        </strong>
-        <p className="text-sm ml-1 mb-2">{jalon}</p>
+      <div className="py-2 flex flex-col gap-3 justify-center align-center">
+        <div className="flex flex-col items-center">
+          <strong className="fr-mb-0 text-center">Evolution temporelle</strong>
+          <span>{jalon}</span>
+        </div>
         <BadgeTendance
           estArchive={estArchive}
           tendance={situation.tendance as ChantierTendance | null}
         />
-        <div className="text-xs fr-mb-0 mt-2 text-center">
+        <div className="text-sm text-center">
           <strong className="mr-1">tendance</strong>
           du taux d'avancement par rapport au taux précédemment mesuré
           {situation.tauxAvancementPrecedent !== null &&
           situation.dateTauxAvancementPrecedent !== null ? (
-            <div className="flex justify-center">
-              ({" "}
+            <>
+              {" "}
+              (
               <strong className="text-primary">
                 {situation.tauxAvancementPrecedent.toFixed(0)}%
               </strong>
               {", "}
-              <p className="text-xs fr-text-mention--grey fr-mb-0 ml-1">
+              <span className="fr-text-mention--grey">
                 {formaterDate(situation.dateTauxAvancementPrecedent, "MM/YYYY")}
-              </p>
+              </span>
               )
-            </div>
+            </>
           ) : (
-            <p className="text-xs fr-m-0 bold text-primary">(Non défini)</p>
+            <span className="fr-m-0 bold text-primary">(Non défini)</span>
           )}
         </div>
       </div>
