@@ -39,12 +39,12 @@ const creerSerie = (
     showSymbol: true,
     color: couleur,
     data: territoiresAAfficher[nom]
-    ? indicateur.données.historiquesValeurs.map((valeur) => {
-        const date = new Date(valeur.date);
-        date.setDate(15);
-        return [date, valeur.valeur];
-      })
-    : undefined,
+      ? indicateur.données.historiquesValeurs.map((valeur) => {
+          const date = new Date(valeur.date);
+          date.setDate(15);
+          return [date, valeur.valeur];
+        })
+      : undefined,
   };
 };
 
@@ -68,28 +68,28 @@ const creerSerieCibles = (
     silent: true,
     data:
       afficherLesCibles && territoiresAAfficher[nom]
-      ? indicateur.données.listeValeursCiblesAnnuelles.flatMap(
-          (cibleAnnuelle) => {
-            if (cibleAnnuelle.valeurCible === null) return [];
+        ? indicateur.données.listeValeursCiblesAnnuelles.flatMap(
+            (cibleAnnuelle) => {
+              if (cibleAnnuelle.valeurCible === null) return [];
 
-            const debutAnnee =
-              new Date(`${cibleAnnuelle.annee}-01-01`) < minDate
-                ? minDate
-                : new Date(`${cibleAnnuelle.annee}-01-01`);
+              const debutAnnee =
+                new Date(`${cibleAnnuelle.annee}-01-01`) < minDate
+                  ? minDate
+                  : new Date(`${cibleAnnuelle.annee}-01-01`);
 
-            const finAnnee =
-              new Date(`${cibleAnnuelle.annee}-12-31`) > maxDate
-                ? maxDate
-                : new Date(`${cibleAnnuelle.annee}-12-31`);
+              const finAnnee =
+                new Date(`${cibleAnnuelle.annee}-12-31`) > maxDate
+                  ? maxDate
+                  : new Date(`${cibleAnnuelle.annee}-12-31`);
 
-            return [
-              [debutAnnee, cibleAnnuelle.valeurCible],
-              [finAnnee, cibleAnnuelle.valeurCible],
-              null,
-            ];
-          },
-        )
-      : [],
+              return [
+                [debutAnnee, cibleAnnuelle.valeurCible],
+                [finAnnee, cibleAnnuelle.valeurCible],
+                null,
+              ];
+            },
+          )
+        : [],
   };
 };
 
@@ -405,7 +405,9 @@ export default function useIndicateurEvolutionNew({
       },
       series: [
         ...tousLesIndicateursDetails.flatMap((indicateurDetail) => {
-          const couleur = getCouleurTerritoireParCode(indicateurDetail.territoireCode);
+          const couleur = getCouleurTerritoireParCode(
+            indicateurDetail.territoireCode,
+          );
           return [
             creerSerie(indicateurDetail, couleur, territoiresAAfficher),
             creerSerieCibles(

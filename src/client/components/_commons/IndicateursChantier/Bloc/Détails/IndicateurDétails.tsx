@@ -141,11 +141,9 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
           className="fr-collapse"
           id={`repartition-geographique-et-evolution-${indicateur.id}`}
         >
-          {futOuvert &&
-          (donnéesCartographieAvancementTerritorialisées ||
-            donnéesCartographieValeurAvancementTerritorialisées ||
-            (chantierEstTerritorialisé &&
-              indicateurDetailsMode === "widget")) ? (
+          {donnéesCartographieAvancementTerritorialisées ||
+          donnéesCartographieValeurAvancementTerritorialisées ||
+          (chantierEstTerritorialisé && indicateurDetailsMode === "widget") ? (
             <>
               <Suspense>
                 <ComparaisonTerritoiresIndicateur
