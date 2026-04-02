@@ -1,4 +1,4 @@
-import { Children, FunctionComponent, ReactNode, useMemo, useRef } from "react";
+import { Children, ReactNode, useMemo, useRef } from "react";
 import { useContainerWidth } from "@/client/hooks/useContainerWidth";
 import { calculerModeDisposition, MesureWidgetCtx } from "./useMesureWidget";
 

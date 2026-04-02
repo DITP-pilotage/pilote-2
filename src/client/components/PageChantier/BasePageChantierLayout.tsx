@@ -37,7 +37,6 @@ export const BasePageChantierLayout = ({
     détailsIndicateurs,
     detailsIndicateursTerritoire,
     configurationFeatureFlipping,
-    territoiresCompares,
   } = pageChantier.useServerSidePropsContext();
 
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
