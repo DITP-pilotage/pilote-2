@@ -20,6 +20,7 @@ SELECT
     )::uuid as auteur_modification_id,
     type::type_objectif,
     contenu,
+    NULL::VARCHAR as contenu_deprecated,
     chantier_id,
     'PUBLIE'::statut_publication as statut
 FROM "dev_pilote__6230"."raw_data"."stg_import_massif__commentaires"

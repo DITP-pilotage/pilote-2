@@ -24,6 +24,7 @@ SELECT
     date as date_creation,
     date as date_modification,
     contenu as commentaire,
+    NULL::VARCHAR as commentaire_deprecated,
     CONCAT(maille, '-', code_insee) as territoire_code,
     'PUBLIE'::statut_publication as statut
 FROM "dev_pilote__6230"."raw_data"."stg_import_massif__commentaires"
