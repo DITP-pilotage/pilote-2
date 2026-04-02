@@ -17,10 +17,6 @@ export const PALETTE_DSFR = [
   "#AEA397",
 ];
 
-export function getCouleurTerritoire(index: number): string {
-  return PALETTE_DSFR[index % PALETTE_DSFR.length];
-}
-
 export function getCouleurTerritoireParCode(code: string): string {
   let hash = 5381;
   for (let i = 0; i < code.length; i++) {

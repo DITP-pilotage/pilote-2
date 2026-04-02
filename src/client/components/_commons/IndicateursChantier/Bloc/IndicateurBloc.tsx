@@ -75,7 +75,7 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     return detailTerritoiresCompares
       .map((territoireCompare) => ({
         territoireNom: territoireCompare.nomAffiché,
-        code: territoireCompare.code,
+        territoireCode: territoireCompare.code,
         données: detailsIndicateur[territoireCompare.code],
       }))
       .sort((indicateurDétailsTerritoire1, indicateurDétailsTerritoire2) =>

@@ -1,5 +1,5 @@
 import { Dispatch, FunctionComponent, SetStateAction, useId } from "react";
-import { PALETTE_DSFR } from "@/client/utils/couleur/paletteTerritoires";
+import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
 import type { TerritoireEvolutionDonnees } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import { Checkbox } from "@/components/shared/Checkbox";
@@ -111,9 +111,11 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
             <span>valeur de l'indicateur</span>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2" id={`legend-checkbox-${id}`}>
-          {tousLesIndicateursDetails.map((indicateurDetail, index) => {
-            const color = PALETTE_DSFR[index % PALETTE_DSFR.length];
+        <div className="grid md:grid-cols-2 gap-2" id={`legend-checkbox-${id}`}>
+          {tousLesIndicateursDetails.map((indicateurDetail) => {
+            const color = getCouleurTerritoireParCode(
+              indicateurDetail.territoireCode,
+            );
             const checkboxClass = PALETTE_CHECKBOX_CLASSES[color] ?? "";
             return (
               <label

@@ -5,6 +5,7 @@ export type ChartDisplayMode = "default" | "compact";
 
 export type TerritoireEvolutionDonnees = {
   territoireNom: string;
+  territoireCode: string;
   données: {
     historiquesValeurs: { date: string; valeur: number }[];
     listeValeursCiblesAnnuelles: {

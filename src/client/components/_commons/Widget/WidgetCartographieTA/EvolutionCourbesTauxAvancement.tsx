@@ -39,6 +39,7 @@ export const EvolutionCourbesTauxAvancement = ({
           return {
             territoireNom:
               territoireDetails?.nomAffiché ?? territoire.territoireCode,
+            territoireCode: territoire.territoireCode,
             données: {
               historiquesValeurs: territoire.historiquesValeurs,
               listeValeursCiblesAnnuelles: [],

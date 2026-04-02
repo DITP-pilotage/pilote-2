@@ -3,7 +3,7 @@ import { TopLevelFormatterParams } from "echarts/types/dist/shared";
 import { ComposeOption } from "echarts/types/dist/echarts";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { formaterDate } from "@/client/utils/date/date";
-import { PALETTE_DSFR } from "@/client/utils/couleur/paletteTerritoires";
+import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
 import type { ChartDisplayMode, TerritoireEvolutionDonnees } from "./types";
 
 export type ECOption = ComposeOption<LineSeriesOption>;
@@ -397,8 +397,8 @@ export default function useIndicateurEvolutionNew({
         outerBoundsContain: "axisLabel",
       },
       series: [
-        ...tousLesIndicateursDetails.flatMap((indicateurDetail, index) => {
-          const couleur = PALETTE_DSFR[index % PALETTE_DSFR.length];
+        ...tousLesIndicateursDetails.flatMap((indicateurDetail) => {
+          const couleur = getCouleurTerritoireParCode(indicateurDetail.territoireCode);
           return [
             creerSerie(indicateurDetail, couleur, territoiresAAfficher),
             creerSerieCibles(
