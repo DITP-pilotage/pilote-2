@@ -1,14 +1,14 @@
 import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { MetadataIndicateurSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur";
-import {
-  mappingAcceptedValues,
-  mappingDisplayAcceptedValues,
-} from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
+import { MetadataChamp } from "@/components/_commons/MetadataChamp/MetadataChamp";
 import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 import { MetadataIndicateurForm } from "@/components/PageIndicateur/usePageIndicateur";
+import {
+  computeValeurAffichee,
+  computeListeValeur,
+} from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
 
 type ValeurDeptFrom = Pick<
   MetadataIndicateurForm,
@@ -27,7 +27,7 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
 }> = ({
   indicateur,
   estEnCoursDeModification,
-  mapInformationMetadataIndicateur,
+  mapInformationMetadataIndicateur: mapInfo,
 }) => {
   const form = useMetadataIndicateurForm();
 
@@ -55,88 +55,70 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.vi_dept_from
-            }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vi_dept_from",
-            )}
+            form={form}
+            informationMetadata={mapInfo.vi_dept_from}
+            listeValeur={computeListeValeur(mapInfo.vi_dept_from)}
             name="viDeptFrom"
             onChangeSideEffect={(valeur) => {
               ALaModificationValeurDeptFrom(
                 "viDeptFrom",
                 valeur,
                 "viDeptOp",
-                mapInformationMetadataIndicateur.vi_dept_from
-                  .metaPiloteDefaultValue as string,
+                mapInfo.vi_dept_from.metaPiloteDefaultValue as string,
               );
             }}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.vi_dept_from,
               indicateur,
-              "vi_dept_from",
               "viDeptFrom",
             )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.va_dept_from
-            }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "va_dept_from",
-            )}
+            form={form}
+            informationMetadata={mapInfo.va_dept_from}
+            listeValeur={computeListeValeur(mapInfo.va_dept_from)}
             name="vaDeptFrom"
             onChangeSideEffect={(valeur) => {
               ALaModificationValeurDeptFrom(
                 "vaDeptFrom",
                 valeur,
                 "vaDeptOp",
-                mapInformationMetadataIndicateur.va_dept_from
-                  .metaPiloteDefaultValue as string,
+                mapInfo.va_dept_from.metaPiloteDefaultValue as string,
               );
             }}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.va_dept_from,
               indicateur,
-              "va_dept_from",
               "vaDeptFrom",
             )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.vc_dept_from
-            }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vc_dept_from",
-            )}
+            form={form}
+            informationMetadata={mapInfo.vc_dept_from}
+            listeValeur={computeListeValeur(mapInfo.vc_dept_from)}
             name="vcDeptFrom"
             onChangeSideEffect={(valeur) => {
               ALaModificationValeurDeptFrom(
                 "vcDeptFrom",
                 valeur,
                 "vcDeptOp",
-                mapInformationMetadataIndicateur.vc_dept_from
-                  .metaPiloteDefaultValue as string,
+                mapInfo.vc_dept_from.metaPiloteDefaultValue as string,
               );
             }}
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.vc_dept_from,
               indicateur,
-              "vc_dept_from",
               "vcDeptFrom",
             )}
           />
@@ -144,67 +126,52 @@ const SectionDétailsMetadataParametreIndicateurDepartementale: FunctionComponen
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataChamp
+            editBoxType="multi-select"
             estDesactive={valeursDeptFromDesactiveDeptOp.has(viDeptFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursDeptFromDesactiveDeptOp.has(viDeptFromValue)}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.vi_dept_op
-            }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vi_dept_op",
-            )}
+            form={form}
+            informationMetadata={mapInfo.vi_dept_op}
+            listeValeur={computeListeValeur(mapInfo.vi_dept_op)}
             name="viDeptOp"
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.vi_dept_op,
               indicateur,
-              "vi_dept_op",
               "viDeptOp",
             )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataChamp
+            editBoxType="multi-select"
             estDesactive={valeursDeptFromDesactiveDeptOp.has(vaDeptFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursDeptFromDesactiveDeptOp.has(vaDeptFromValue)}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.va_dept_op
-            }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "va_dept_op",
-            )}
+            form={form}
+            informationMetadata={mapInfo.va_dept_op}
+            listeValeur={computeListeValeur(mapInfo.va_dept_op)}
             name="vaDeptOp"
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.va_dept_op,
               indicateur,
-              "va_dept_op",
               "vaDeptOp",
             )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-4">
-          <MetadataIndicateurSelecteur
+          <MetadataChamp
+            editBoxType="multi-select"
             estDesactive={valeursDeptFromDesactiveDeptOp.has(vcDeptFromValue)}
             estEnCoursDeModification={estEnCoursDeModification}
             estMandatory={!valeursDeptFromDesactiveDeptOp.has(vcDeptFromValue)}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.vc_dept_op
-            }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "vc_dept_op",
-            )}
+            form={form}
+            informationMetadata={mapInfo.vc_dept_op}
+            listeValeur={computeListeValeur(mapInfo.vc_dept_op)}
             name="vcDeptOp"
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.vc_dept_op,
               indicateur,
-              "vc_dept_op",
               "vcDeptOp",
             )}
           />

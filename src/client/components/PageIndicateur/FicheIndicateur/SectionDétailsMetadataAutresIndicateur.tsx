@@ -2,13 +2,11 @@ import { FunctionComponent } from "react";
 import Titre from "@/components/_commons/Titre/Titre";
 import { MetadataParametrageIndicateurContrat } from "@/server/app/contrats/MetadataParametrageIndicateurContrat";
 import { MapInformationMetadataIndicateurContrat } from "@/server/app/contrats/InformationMetadataIndicateurContrat";
-import { MetadataIndicateurInput } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInput";
-import { MetadataIndicateurTextArea } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurTextArea";
-import { MetadataIndicateurInterrupteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurInterrupteur";
-import { MetadataIndicateurSelecteur } from "@/components/PageIndicateur/FicheIndicateur/commons/MetadataIndicateurSelecteur";
+import { MetadataChamp } from "@/components/_commons/MetadataChamp/MetadataChamp";
+import { useMetadataIndicateurForm } from "@/components/PageIndicateur/useMetadataIndicateurForm";
 import {
-  mappingAcceptedValues,
-  mappingDisplayAcceptedValues,
+  computeValeurAffichee,
+  computeListeValeur,
 } from "@/components/PageIndicateur/FicheIndicateur/commons/utils";
 
 const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
@@ -18,8 +16,10 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
 }> = ({
   indicateur,
   estEnCoursDeModification,
-  mapInformationMetadataIndicateur,
+  mapInformationMetadataIndicateur: mapInfo,
 }) => {
+  const form = useMetadataIndicateurForm();
+
   return (
     <div>
       <Titre baliseHtml="h2" className="fr-h5">
@@ -27,216 +27,271 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       </Titre>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
+          <MetadataChamp
+            editBoxType="text"
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="mailles"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.mailles
-            }
-            valeurAffiché={indicateur.mailles || "_"}
-          />
-        </div>
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="frequenceTerritoriale"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.frequence_territoriale
-            }
-            valeurAffiché={`${indicateur.frequenceTerritoriale}`}
-          />
-        </div>
-      </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="adminSource"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.admin_source
-            }
-            valeurAffiché={indicateur.adminSource || "_"}
-          />
-        </div>
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="siSource"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.si_source
-            }
-            valeurAffiché={indicateur.siSource || "_"}
-          />
-        </div>
-      </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="donneeOuverte"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.donnee_ouverte
-            }
-            valeurAffiché={indicateur.donneeOuverte ? "Oui" : "Non"}
-          />
-        </div>
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="modalitesDonneeOuverte"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.modalites_donnee_ouverte
-            }
-            valeurAffiché={indicateur.modalitesDonneeOuverte || "_"}
-          />
-        </div>
-      </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="respDonnees"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.resp_donnees
-            }
-            valeurAffiché={indicateur.respDonnees || "_"}
-          />
-        </div>
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="respDonneesEmail"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.resp_donnees_email
-            }
-            valeurAffiché={indicateur.respDonneesEmail || "_"}
-          />
-        </div>
-      </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="contactTechnique"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.contact_technique
-            }
-            valeurAffiché={indicateur.contactTechnique || "_"}
-          />
-        </div>
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="contactTechniqueEmail"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.contact_technique_email
-            }
-            valeurAffiché={indicateur.contactTechniqueEmail || "_"}
-          />
-        </div>
-      </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="indicIsPerseverant"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.indic_is_perseverant
-            }
-            valeurAffiché={indicateur.indicIsPerseverant ? "Oui" : "Non"}
-          />
-        </div>
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="reformePrioritaire"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.reforme_prioritaire
-            }
-            valeurAffiché={indicateur.reformePrioritaire || "_"}
-          />
-        </div>
-      </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="projetAnnuelPerf"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.projet_annuel_perf
-            }
-            valeurAffiché={indicateur.projetAnnuelPerf ? "Oui" : "Non"}
-          />
-        </div>
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="detailProjetAnnuelPerf"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.detail_projet_annuel_perf
-            }
-            valeurAffiché={indicateur.detailProjetAnnuelPerf || "_"}
-          />
-        </div>
-      </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurTextArea
-            estEnCoursDeModification={estEnCoursDeModification}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.commentaire
-            }
-            name="commentaire"
-          />
-        </div>
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInput
-            estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="methodeCollecte"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.methode_collecte
-            }
-            valeurAffiché={indicateur.methodeCollecte || "_"}
-          />
-        </div>
-      </div>
-      <div className="fr-grid-row fr-grid-row--gutters">
-        <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurSelecteur
-            estEnCoursDeModification={estEnCoursDeModification}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.maille_pilotage
-            }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
+            form={form}
+            informationMetadata={mapInfo.mailles}
+            name="mailles"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.mailles,
               indicateur,
-              "maille_pilotage",
+              "mailles",
             )}
-            name="maillePilotage"
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
+          />
+        </div>
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="text"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            informationMetadata={mapInfo.frequence_territoriale}
+            name="frequenceTerritoriale"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.frequence_territoriale,
               indicateur,
-              "maille_pilotage",
+              "frequenceTerritoriale",
+            )}
+          />
+        </div>
+      </div>
+      <div className="fr-grid-row fr-grid-row--gutters">
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="text"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            informationMetadata={mapInfo.admin_source}
+            name="adminSource"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.admin_source,
+              indicateur,
+              "adminSource",
+            )}
+          />
+        </div>
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="text"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            informationMetadata={mapInfo.si_source}
+            name="siSource"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.si_source,
+              indicateur,
+              "siSource",
+            )}
+          />
+        </div>
+      </div>
+      <div className="fr-grid-row fr-grid-row--gutters">
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="boolean"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            informationMetadata={mapInfo.donnee_ouverte}
+            name="donneeOuverte"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.donnee_ouverte,
+              indicateur,
+              "donneeOuverte",
+            )}
+          />
+        </div>
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="text"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            informationMetadata={mapInfo.modalites_donnee_ouverte}
+            name="modalitesDonneeOuverte"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.modalites_donnee_ouverte,
+              indicateur,
+              "modalitesDonneeOuverte",
+            )}
+          />
+        </div>
+      </div>
+      <div className="fr-grid-row fr-grid-row--gutters">
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="text"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            informationMetadata={mapInfo.resp_donnees}
+            name="respDonnees"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.resp_donnees,
+              indicateur,
+              "respDonnees",
+            )}
+          />
+        </div>
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="text"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            informationMetadata={mapInfo.resp_donnees_email}
+            name="respDonneesEmail"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.resp_donnees_email,
+              indicateur,
+              "respDonneesEmail",
+            )}
+          />
+        </div>
+      </div>
+      <div className="fr-grid-row fr-grid-row--gutters">
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="text"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            informationMetadata={mapInfo.contact_technique}
+            name="contactTechnique"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.contact_technique,
+              indicateur,
+              "contactTechnique",
+            )}
+          />
+        </div>
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="text"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            informationMetadata={mapInfo.contact_technique_email}
+            name="contactTechniqueEmail"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.contact_technique_email,
+              indicateur,
+              "contactTechniqueEmail",
+            )}
+          />
+        </div>
+      </div>
+      <div className="fr-grid-row fr-grid-row--gutters">
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="boolean"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            informationMetadata={mapInfo.indic_is_perseverant}
+            name="indicIsPerseverant"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.indic_is_perseverant,
+              indicateur,
+              "indicIsPerseverant",
+            )}
+          />
+        </div>
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="text"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            informationMetadata={mapInfo.reforme_prioritaire}
+            name="reformePrioritaire"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.reforme_prioritaire,
+              indicateur,
+              "reformePrioritaire",
+            )}
+          />
+        </div>
+      </div>
+      <div className="fr-grid-row fr-grid-row--gutters">
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="boolean"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            informationMetadata={mapInfo.projet_annuel_perf}
+            name="projetAnnuelPerf"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.projet_annuel_perf,
+              indicateur,
+              "projetAnnuelPerf",
+            )}
+          />
+        </div>
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="text"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            informationMetadata={mapInfo.detail_projet_annuel_perf}
+            name="detailProjetAnnuelPerf"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.detail_projet_annuel_perf,
+              indicateur,
+              "detailProjetAnnuelPerf",
+            )}
+          />
+        </div>
+      </div>
+      <div className="fr-grid-row fr-grid-row--gutters">
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="textarea"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            informationMetadata={mapInfo.commentaire}
+            name="commentaire"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.commentaire,
+              indicateur,
+              "commentaire",
+            )}
+          />
+        </div>
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="text"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            informationMetadata={mapInfo.methode_collecte}
+            name="methodeCollecte"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.methode_collecte,
+              indicateur,
+              "methodeCollecte",
+            )}
+          />
+        </div>
+      </div>
+      <div className="fr-grid-row fr-grid-row--gutters">
+        <div className="fr-col-12 fr-col-md-6">
+          <MetadataChamp
+            editBoxType="multi-select"
+            estEnCoursDeModification={estEnCoursDeModification}
+            form={form}
+            informationMetadata={mapInfo.maille_pilotage}
+            listeValeur={computeListeValeur(mapInfo.maille_pilotage)}
+            name="maillePilotage"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.maille_pilotage,
+              indicateur,
               "maillePilotage",
             )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurSelecteur
+          <MetadataChamp
+            editBoxType="multi-select"
             estEnCoursDeModification={estEnCoursDeModification}
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.couverture_temporelle
-            }
-            listeValeur={mappingAcceptedValues(
-              mapInformationMetadataIndicateur,
-              indicateur,
-              "couverture_temporelle",
-            )}
+            form={form}
+            informationMetadata={mapInfo.couverture_temporelle}
+            listeValeur={computeListeValeur(mapInfo.couverture_temporelle)}
             name="couvertureTemporelle"
-            valeurAffiché={mappingDisplayAcceptedValues(
-              mapInformationMetadataIndicateur,
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.couverture_temporelle,
               indicateur,
-              "couverture_temporelle",
               "couvertureTemporelle",
             )}
           />
@@ -244,23 +299,31 @@ const SectionDétailsMetadataAutresIndicateur: FunctionComponent<{
       </div>
       <div className="fr-grid-row fr-grid-row--gutters">
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
+          <MetadataChamp
+            editBoxType="boolean"
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="cibleAttendue"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.cible_attendue
-            }
-            valeurAffiché={indicateur.cibleAttendue ? "Oui" : "Non"}
+            form={form}
+            informationMetadata={mapInfo.cible_attendue}
+            name="cibleAttendue"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.cible_attendue,
+              indicateur,
+              "cibleAttendue",
+            )}
           />
         </div>
         <div className="fr-col-12 fr-col-md-6">
-          <MetadataIndicateurInterrupteur
+          <MetadataChamp
+            editBoxType="boolean"
             estEnCoursDeModification={estEnCoursDeModification}
-            htmlName="indicIsPhare"
-            informationMetadataIndicateur={
-              mapInformationMetadataIndicateur.indic_is_phare
-            }
-            valeurAffiché={indicateur.indicIsPhare ? "Oui" : "Non"}
+            form={form}
+            informationMetadata={mapInfo.indic_is_phare}
+            name="indicIsPhare"
+            valeurAffichee={computeValeurAffichee(
+              mapInfo.indic_is_phare,
+              indicateur,
+              "indicIsPhare",
+            )}
           />
         </div>
       </div>
