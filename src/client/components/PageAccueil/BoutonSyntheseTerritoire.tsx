@@ -32,6 +32,15 @@ export const BoutonSyntheseTerritoire = ({
             message: `Fais moi la synthèse de ${territoire.nomAffiché}`,
             mode: "send",
           },
+          ...(estRegion
+            ? [
+                {
+                  label: `Synthèse de ${territoire.nomAffiché} et ses départements`,
+                  message: `Fais moi la synthèse de ${territoire.nomAffiché} et ses départements`,
+                  mode: "send" as const,
+                },
+              ]
+            : []),
           {
             label: "Analyser les chantiers en retard",
             message: `Analyse les chantiers en retard sur ${territoire.nomAffiché} sur la base des commentaires`,

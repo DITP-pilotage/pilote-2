@@ -16,10 +16,9 @@ const RECIPES: Record<string, Recipe> = {
       "Appelle get_chantiers_en_retard",
       "Appelle get_chantiers_en_difficulte",
       "Tu peux appeler ces 3 outils en parallèle.",
+      "Si l'utilisateur demande la synthèse avec les sous-territoires (ex: région et ses départements), passe include_sous_territoires=true aux 3 outils.",
     ],
     outputFormat: SYNTHESE_TERRITOIRE_OUTPUT_FORMAT,
-    notes:
-      "Pour les REG-XXX, demande d'abord si région seule ou région + départements via display_choices.",
   },
   taux_avancement: {
     steps: ["Appelle get_taux_avancement_territoire"],

@@ -34,4 +34,14 @@ Dans Pilote, le TA {{JALON}} de la région s'établit à {{taux_avancement_globa
 
 Sources analysées : données quantitatives et qualitatives des chantiers publiés sur PILOTE.
 </template>
+
+<template_multi_territoires>
+Si les résultats contiennent plusieurs territoires (include_sous_territoires=true), structure la réponse ainsi :
+- D'abord la synthèse complète du territoire principal (même format que ci-dessus)
+- Puis une section "## Sous-territoires" avec pour chaque sous-territoire un résumé concis :
+  - Nom du territoire
+  - Taux d'avancement et position par rapport à la médiane
+  - Nombre de chantiers en retard et en difficulté
+  - Les chantiers les plus notables (en retard ou en difficulté) avec un résumé condensé
+</template_multi_territoires>
 `;

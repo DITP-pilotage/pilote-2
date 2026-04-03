@@ -6,6 +6,7 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { getContainer } from "@/server/dependances";
+import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 
 const getTauxAvancementTerritoireInputSchema = z.object({
   territoire_code: z
@@ -17,6 +18,13 @@ const getTauxAvancementTerritoireInputSchema = z.object({
     .min(2022)
     .max(new Date().getFullYear())
     .describe("Année du jalon (ex: 2024, 2025)"),
+  include_sous_territoires: z
+    .boolean()
+    .optional()
+    .default(false)
+    .describe(
+      "Si true, inclut les données des sous-territoires (ex: départements d'une région)",
+    ),
 });
 
 export type GetTauxAvancementTerritoireResult = {
@@ -32,7 +40,7 @@ function formatPourcentage(value: number | null | undefined): string {
 }
 
 export type GetTauxAvancementTerritoireOutput =
-  GetTauxAvancementTerritoireResult;
+  GetTauxAvancementTerritoireResult[];
 
 function determineMaille(territoireCode: string): Maille {
   if (territoireCode.startsWith("NAT")) return "nationale";
@@ -42,26 +50,39 @@ function determineMaille(territoireCode: string): Maille {
 
 export function createGetTauxAvancementTerritoireTool({
   prisma,
+  territoireResolver,
 }: {
   prisma: PrismaPilote;
+  territoireResolver: TerritoireResolver;
 }) {
   return ({ habilitations }: { habilitations: Habilitations }) => {
     const territoiresAccessibles = habilitations.lecture.territoires;
 
     return tool({
-      description: `Récupère le taux d'avancement global d'un territoire, la médiane de répartition et la position du territoire par rapport à la médiane.
+      description: `Récupère le taux d'avancement global d'un territoire, la médiane de répartition et la position du territoire par rapport à la m��diane.
+Quand include_sous_territoires=true, retourne aussi les données de chaque sous-territoire.
 
 Utilise cet outil quand l'utilisateur demande :
 - Le taux d'avancement d'un territoire
 - La position d'un territoire par rapport à la médiane
 - Une vue d'ensemble rapide d'un territoire`,
       inputSchema: getTauxAvancementTerritoireInputSchema,
-      execute: async (input): Promise<GetTauxAvancementTerritoireOutput> => {
+      execute: async (
+        input,
+      ): Promise<GetTauxAvancementTerritoireOutput> => {
         if (!territoiresAccessibles.includes(input.territoire_code)) {
           throw new Error(
             `Accès non autorisé au territoire ${input.territoire_code}`,
           );
         }
+
+        const codes = await territoireResolver.resoudre(
+          input.territoire_code,
+          input.include_sous_territoires,
+        );
+        const codesAccessibles = codes.filter((code) =>
+          territoiresAccessibles.includes(code),
+        );
 
         const db = prisma.getInstance();
 
@@ -85,58 +106,65 @@ Utilise cet outil quand l'utilisateur demande :
           input.jalon,
         );
 
-        const maille = determineMaille(input.territoire_code);
-        const territoireData =
-          agregat[maille].territoires[input.territoire_code];
+        const mailles = new Set(codesAccessibles.map(determineMaille));
+        const statsByMaille = new Map<Maille, number | null>();
 
-        const taux_avancement_global =
-          territoireData?.repartition.avancements.annuel.moyenne ?? null;
+        for (const maille of mailles) {
+          const repartitionMaille: Maille =
+            maille === "nationale" ? "departementale" : maille;
 
-        const repartitionMaille: Maille = input.territoire_code.startsWith(
-          "NAT",
-        )
-          ? "departementale"
-          : maille;
-
-        let stats = null;
-        try {
-          stats = await récupérerStatistiquesUseCase.run(
-            chantierIds,
-            repartitionMaille,
-            habilitations,
-            input.jalon,
-          );
-        } catch (error) {
-          if (!(error instanceof MailleNonAutoriséeErreur)) {
-            throw error;
+          try {
+            const stats = await récupérerStatistiquesUseCase.run(
+              chantierIds,
+              repartitionMaille,
+              habilitations,
+              input.jalon,
+            );
+            statsByMaille.set(maille, stats?.médiane ?? null);
+          } catch (error) {
+            if (!(error instanceof MailleNonAutoriséeErreur)) {
+              throw error;
+            }
+            statsByMaille.set(maille, null);
           }
         }
 
-        const mediane_repartition = stats?.médiane ?? null;
+        return codesAccessibles.map((code) => {
+          const maille = determineMaille(code);
+          const territoireData = agregat[maille]?.territoires[code];
 
-        let position_mediane:
-          | "EN_RETARD"
-          | "EN_AVANCE"
-          | "DANS_LA_MEDIANE"
-          | null = null;
-        if (taux_avancement_global !== null && mediane_repartition !== null) {
-          const ecart = taux_avancement_global - mediane_repartition;
-          if (ecart <= -10) {
-            position_mediane = "EN_RETARD";
-          } else if (ecart >= 10) {
-            position_mediane = "EN_AVANCE";
-          } else {
-            position_mediane = "DANS_LA_MEDIANE";
+          const taux_avancement_global =
+            territoireData?.repartition.avancements.annuel.moyenne ?? null;
+
+          const mediane_repartition = statsByMaille.get(maille) ?? null;
+
+          let position_mediane:
+            | "EN_RETARD"
+            | "EN_AVANCE"
+            | "DANS_LA_MEDIANE"
+            | null = null;
+          if (
+            taux_avancement_global !== null &&
+            mediane_repartition !== null
+          ) {
+            const ecart = taux_avancement_global - mediane_repartition;
+            if (ecart <= -10) {
+              position_mediane = "EN_RETARD";
+            } else if (ecart >= 10) {
+              position_mediane = "EN_AVANCE";
+            } else {
+              position_mediane = "DANS_LA_MEDIANE";
+            }
           }
-        }
 
-        return {
-          territoire_code: input.territoire_code,
-          jalon: input.jalon,
-          taux_avancement_global: formatPourcentage(taux_avancement_global),
-          mediane_repartition: formatPourcentage(mediane_repartition),
-          position_mediane,
-        };
+          return {
+            territoire_code: code,
+            jalon: input.jalon,
+            taux_avancement_global: formatPourcentage(taux_avancement_global),
+            mediane_repartition: formatPourcentage(mediane_repartition),
+            position_mediane,
+          };
+        });
       },
     });
   };
