@@ -58,15 +58,6 @@ const presenterEnHistoriqueIndicateurExportContrat = (
       "MM-YYYY",
     ),
     formaterNumériqueOuValeurNonRenseignee(
-      historiqueIndicateurPourExport.valeurCible,
-      historiqueIndicateurPourExport.estApplicable,
-    ),
-    formaterDateHeureOuNonRenseignee(
-      historiqueIndicateurPourExport.dateValeurCible,
-      historiqueIndicateurPourExport.estApplicable,
-      "MM-YYYY",
-    ),
-    formaterNumériqueOuValeurNonRenseignee(
       historiqueIndicateurPourExport.valeurAvancement,
       historiqueIndicateurPourExport.estApplicable,
     ),
@@ -92,8 +83,6 @@ export class ExportCsvDesHistoriquesIndicateursUseCase {
       "Date valeur initiale",
       `Valeur cible année ${jalon}`,
       `Date valeur cible année ${jalon}`,
-      "Valeur cible année 2026",
-      "Date valeur cible année 2026",
       "Valeur avancement",
       "Date valeur avancement",
     ];

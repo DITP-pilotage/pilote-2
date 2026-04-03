@@ -46,7 +46,7 @@ export const ValeursRemarquables = ({
     return null;
 
   return (
-    <div className="mb-4">
+    <div className="mb-4 mx-auto">
       <div
         className={clsxm(
           "flex",

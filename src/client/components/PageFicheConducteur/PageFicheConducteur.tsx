@@ -8,6 +8,7 @@ import Bloc from "@/components/_commons/Bloc/Bloc";
 import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
 import MétéoBadge from "@/components/_commons/Meteo/Badge/MétéoBadge";
 import { MeteoPicto } from "@/components/_commons/Meteo/Picto/MeteoPicto";
+import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { ÉLÉMENTS_LÉGENDE_AVANCEMENT_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieAvancement";
 import CartographieAvancement from "@/components/_commons/Cartographie/CartographieAvancement/CartographieAvancement";
 import { ÉLÉMENTS_LÉGENDE_MÉTÉO_CHANTIERS } from "@/client/constants/légendes/élémentsDeLégendesCartographieMétéo";
@@ -123,16 +124,12 @@ const PageFicheConducteur: FunctionComponent<
                 </div>
                 <div>
                   {commentaire ? (
-                    commentaire
-                      ?.split("\n")
-                      .map((paragrapheCommentaire, index) => (
-                        <p
-                          className="fr-text--xs fr-mb-1w print:!text-[10px] print:!leading-4"
-                          key={`paragraphe-commentaire-${index}`}
-                        >
-                          {paragrapheCommentaire}
-                        </p>
-                      ))
+                    <div className="fr-text--xs fr-mb-1w print:!text-[10px] print:!leading-4">
+                      <RenduContenuHtml
+                        className="[&_p]:text-xs [&_p]:mb-1 print:[&_p]:!text-[10px] print:[&_p]:!leading-4"
+                        html={commentaire}
+                      />
+                    </div>
                   ) : (
                     <p className="fr-text--xs print:!text-[10px] print:!leading-4">
                       Aucune synthèse des résultats
@@ -276,7 +273,12 @@ const PageFicheConducteur: FunctionComponent<
                   <div className="fr-col-2 fr-text--bold flex align-center">
                     {publication.libellé}
                   </div>
-                  <div className="fr-col-10">{publication.valeur}</div>
+                  <div className="fr-col-10">
+                    <RenduContenuHtml
+                      className="[&_p]:text-xs [&_p]:mb-1 print:[&_p]:!text-[10px] print:[&_p]:!leading-4"
+                      html={publication.valeur}
+                    />
+                  </div>
                 </div>
               ))}
             </div>

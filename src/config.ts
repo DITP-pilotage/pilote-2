@@ -330,6 +330,11 @@ const config = convict({
       doc: "Active la lecture des feature flips depuis la DB (gestion_contenu) au lieu des env vars uniquement",
       env: "FF_FEATURE_FLIP_ADMIN",
     },
+    chantiersSignalesV2: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_CHANTIERS_SIGNALES_V2",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",

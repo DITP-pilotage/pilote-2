@@ -6,13 +6,19 @@ import {
   useRef,
 } from "react";
 import * as echarts from "echarts";
-import { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
 import { ECOption } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
+import type {
+  ChartDisplayMode,
+  TerritoireEvolutionDonnees,
+} from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
 import LineChartLegende from "./LineChartLegende/LineChartLegende";
 
 export interface LineChartProps {
-  getOptions: (modeImpression: boolean) => ECOption;
-  tousLesIndicateursDetails: IndicateurDetailsParTerritoire[];
+  getOptions: (args: {
+    modeImpression: boolean;
+    chartDisplayMode: ChartDisplayMode;
+  }) => ECOption;
+  tousLesIndicateursDetails: TerritoireEvolutionDonnees[];
   territoiresAAfficher: Record<string, boolean>;
   setTerritoiresAAfficher: Dispatch<Record<string, boolean>>;
   afficherLesCibles: boolean;
@@ -21,6 +27,8 @@ export interface LineChartProps {
   changerLaPeriodeSelectionnee: (periode: string) => void;
   periodesSelectionnablesZoom: string[];
   modeImpression?: boolean;
+  afficherInterrupteurCibles?: boolean;
+  chartDisplayMode?: ChartDisplayMode;
 }
 
 const LineChart: FunctionComponent<LineChartProps> = ({
@@ -34,6 +42,8 @@ const LineChart: FunctionComponent<LineChartProps> = ({
   changerLaPeriodeSelectionnee,
   periodesSelectionnablesZoom,
   modeImpression = false,
+  afficherInterrupteurCibles = true,
+  chartDisplayMode = "default",
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   const chart = useRef<echarts.EChartsType | null>(null);
@@ -42,7 +52,7 @@ const LineChart: FunctionComponent<LineChartProps> = ({
     if (!ref.current) return;
     chart.current = echarts.init(ref.current);
     chart.current.setOption({
-      ...getOptions(modeImpression),
+      ...getOptions({ modeImpression, chartDisplayMode }),
       animation: !modeImpression,
     });
 
@@ -53,13 +63,14 @@ const LineChart: FunctionComponent<LineChartProps> = ({
       window.removeEventListener("resize", handleResize);
       chart.current?.dispose();
     };
-  }, [modeImpression, getOptions]);
+  }, [chartDisplayMode, modeImpression, getOptions]);
 
   return (
     <div>
       <div className="w-full h-[360px]" ref={ref} />
       <LineChartLegende
         afficherControls={!modeImpression}
+        afficherInterrupteurCibles={afficherInterrupteurCibles}
         afficherLesCibles={afficherLesCibles}
         changerLaPeriodeSelectionnee={changerLaPeriodeSelectionnee}
         periodeSelectionnee={periodeSelectionnee}

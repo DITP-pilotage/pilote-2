@@ -1,6 +1,6 @@
 import { Dispatch, FunctionComponent, SetStateAction, useId } from "react";
 import { PALETTE_DSFR } from "@/client/utils/couleur/paletteTerritoires";
-import { IndicateurDetailsParTerritoire } from "@/client/components/_commons/IndicateursChantier/Bloc/IndicateurBloc.interface";
+import type { TerritoireEvolutionDonnees } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import { Checkbox } from "@/components/shared/Checkbox";
 import { clsxm } from "@/utils/clsxm";
@@ -41,7 +41,7 @@ const PALETTE_CHECKBOX_CLASSES: Record<string, string> = {
 };
 
 interface LineChartLegendeProps {
-  tousLesIndicateursDetails: IndicateurDetailsParTerritoire[];
+  tousLesIndicateursDetails: TerritoireEvolutionDonnees[];
   territoiresAAfficher: Record<string, boolean>;
   setTerritoiresAAfficher: Dispatch<Record<string, boolean>>;
   afficherLesCibles: boolean;
@@ -50,6 +50,7 @@ interface LineChartLegendeProps {
   changerLaPeriodeSelectionnee: (periode: string) => void;
   periodesSelectionnablesZoom: string[];
   afficherControls: boolean;
+  afficherInterrupteurCibles?: boolean;
 }
 
 const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
@@ -62,44 +63,49 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
   changerLaPeriodeSelectionnee,
   periodesSelectionnablesZoom,
   afficherControls,
+  afficherInterrupteurCibles = true,
 }) => {
   const id = useId();
   return (
     <div className="fr-mt-1w fr-ml-8w fr-mr-4w">
       {afficherControls ? (
-        <div className="flex align-center">
-          <Interrupteur
-            checked={afficherLesCibles}
-            direction="inverse"
-            libellé="afficher les valeurs cibles"
-            onChange={() => setAfficherLesCibles(!afficherLesCibles)}
-          />
-          <span className="fr-ml-4w fr-mr-1w">zoomer sur : </span>
-          {periodesSelectionnablesZoom.map((periode) => (
-            <button
-              className={clsxm(
-                "fr-tag fr-mr-1w",
-                periode === periodeSelectionnee && "text-white bg-primary",
-              )}
-              key={periode}
-              onClick={() => changerLaPeriodeSelectionnee(periode)}
-              type="button"
-            >
-              <p className="overflow-hidden text-ellipsis whitespace-nowrap fr-text--sm">
-                {periode}
-              </p>
-            </button>
-          ))}
+        <div className="flex flex-col gap-2">
+          {afficherInterrupteurCibles ? (
+            <Interrupteur
+              checked={afficherLesCibles}
+              direction="inverse"
+              libellé="afficher les valeurs cibles"
+              onChange={() => setAfficherLesCibles(!afficherLesCibles)}
+            />
+          ) : null}
+          <div className="flex items-center flex-wrap gap-2">
+            <span className="text-sm">zoomer sur : </span>
+            {periodesSelectionnablesZoom.map((periode) => (
+              <button
+                className={clsxm(
+                  "fr-tag fr-mr-1w min-h-0",
+                  periode === periodeSelectionnee && "text-white bg-primary",
+                )}
+                key={periode}
+                onClick={() => changerLaPeriodeSelectionnee(periode)}
+                type="button"
+              >
+                <p className="titre-ellipsis text-xs">{periode}</p>
+              </button>
+            ))}
+          </div>
         </div>
       ) : null}
 
-      <div className="fr-text fr-text--bold">Légende :</div>
-      <div className="flex items-start">
-        <div className="flex flex-col whitespace-nowrap fr-mr-4w">
-          <div className="flex items-center fr-mb-1w">
-            <div className="w-[50px] h-0 border-t-[3px] border-dashed border-pilote-grey-legend fr-mr-2w" />
-            <span>valeur cible</span>
-          </div>
+      <div className="fr-text fr-text--bold mt-4">Légende :</div>
+      <div className="flex flex-col gap-4">
+        <div className="fr-mr-4w">
+          {afficherInterrupteurCibles ? (
+            <div className="flex items-center fr-mb-1w">
+              <div className="w-[50px] h-0 border-t-[3px] border-dashed border-pilote-grey-legend fr-mr-2w" />
+              <span>valeur cible</span>
+            </div>
+          ) : null}
           <div className="flex items-center">
             <div className="w-[50px] h-[3px] bg-pilote-grey-legend relative after:content-[''] after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-2 after:h-2 after:bg-gray-500 after:rounded-full after:shadow-[0_0_2px_rgba(0,0,0,0.3)] fr-mr-2w" />
             <span>valeur de l'indicateur</span>

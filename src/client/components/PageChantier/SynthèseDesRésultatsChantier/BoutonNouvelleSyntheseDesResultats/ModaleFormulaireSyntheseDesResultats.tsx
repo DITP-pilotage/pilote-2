@@ -23,6 +23,8 @@ import { SaveIcon } from "@/components/_commons/Icones/SaveIcon";
 import { MeteoSaisissable } from "@/server/domain/météo/Météo.interface";
 import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
 import { CONSIGNE_SYNTHÈSE_DES_RÉSULTATS } from "@/client/constants/libellesSyntheseDesResultats";
+import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
+import { extractVisibleText } from "@/utils/extractVisibleText";
 
 interface ModaleFormulaireSyntheseDesResultatsProps {
   title: string;
@@ -121,10 +123,16 @@ export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
             className={`flex-1 flex flex-col ${form.formState.errors.contenu ? "fr-input-group--error" : ""}`}
           >
             <label className="block text-sm mb-2">Synthèse des résultats</label>
-            <textarea
-              className="fr-input fr-text--sm flex-1 mb-0"
-              rows={6}
-              {...form.register("contenu")}
+            <Controller
+              control={form.control}
+              name="contenu"
+              render={({ field }) => (
+                <EditeurSimple
+                  contenu={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                />
+              )}
             />
             <div className="flex justify-between mt-1">
               <div>
@@ -135,7 +143,7 @@ export const ModaleFormulaireSyntheseDesResultats: FunctionComponent<
                 )}
               </div>
               <CompteurCaractères
-                compte={form.watch("contenu")?.length ?? 0}
+                compte={extractVisibleText(form.watch("contenu") ?? "").length}
                 limiteDeCaractères={LIMITE_CARACTÈRES_SYNTHÈSE_DES_RÉSULTATS}
               />
             </div>

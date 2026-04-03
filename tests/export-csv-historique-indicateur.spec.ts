@@ -2,6 +2,13 @@ import { Download, expect } from "@playwright/test";
 import fs from "node:fs";
 import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
+import { getAnneeDateDeBascule } from "../src/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
+
+const jalonParDefaut = getAnneeDateDeBascule(
+  new Date(),
+  process.env.NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE ??
+    "2000-03-31",
+);
 
 test("doit pouvoir exporter les données des indicateurs sous format CSV", async ({
   page,
@@ -91,7 +98,7 @@ test("doit pouvoir exporter les données des indicateurs sous format CSV", async
     await test.step("vérification du fichier identifiant et cadrage", async () => {
       const contents = await fs.promises.readFile(await download.path());
       expect(contents.toString()).toMatch(
-        '"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier";"Chantier Id";"Indicateur";"Valeur initiale";"Date valeur initiale";"Valeur cible année 2025";"Date valeur cible année 2025";"Valeur cible année 2026";"Date valeur cible année 2026";"Valeur avancement";"Date valeur avancement"\n',
+        `"Maille";"Région";"Département";"Code INSEE - Nom du département";"Chantier";"Chantier Id";"Indicateur";"Valeur initiale";"Date valeur initiale";"Valeur cible année ${jalonParDefaut}";"Date valeur cible année ${jalonParDefaut}";"Valeur avancement";"Date valeur avancement"\n`,
       );
     });
   });

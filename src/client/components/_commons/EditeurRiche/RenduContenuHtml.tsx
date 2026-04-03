@@ -156,9 +156,15 @@ function renderBr(node: Node): ReactNode {
   return <br />;
 }
 
-export const RenduContenuHtml = ({ html }: { html: string }) => {
+export const RenduContenuHtml = ({
+  html,
+  className,
+}: {
+  html: string;
+  className?: string;
+}) => {
   if (!html) return null;
 
   const doc = new DOMParser().parseFromString(html, "text/html");
-  return <>{renderChildren(doc.body)}</>;
+  return <div className={className}>{renderChildren(doc.body)}</div>;
 };

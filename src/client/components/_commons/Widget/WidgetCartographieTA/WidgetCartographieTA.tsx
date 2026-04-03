@@ -24,6 +24,7 @@ import { useDonneesCartographieTA } from "./useDonneesCartographieTA";
 import { useLegendeTA } from "./useLegendeTA";
 import { SuiviTauxAvancement } from "./SuiviTauxAvancement";
 import { TableauEvolutionTA } from "./TableauEvolutionTA";
+import { EvolutionCourbesTauxAvancement } from "./EvolutionCourbesTauxAvancement";
 
 const WidgetCartographieTAContext = createContext<{
   territoiresAvancement: TauxAvancementComparaisonTerritoireViewModel[];
@@ -241,6 +242,18 @@ const WidgetCartographieTAContent = (
                   territoireCode={territoireCode}
                   onSupprimerTerritoire={supprimerTerritoire}
                   jalonActif={jalon}
+                />
+              );
+            }
+            if (vue === "courbes") {
+              return (
+                <EvolutionCourbesTauxAvancement
+                  indicateurId={props.indicateurId}
+                  chantierId={props.chantierId}
+                  jalon={jalon}
+                  territoiresSelectionnesCodes={territoiresSelectionnes.map(
+                    (territoire) => territoire.territoireCode,
+                  )}
                 />
               );
             }

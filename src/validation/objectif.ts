@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { typesObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
+import { extractVisibleText } from "@/utils/extractVisibleText";
 
 export const LIMITE_CARACTERES_OBJECTIF = 5000;
 
@@ -11,11 +12,14 @@ export const validationObjectifContexte = z.object({
 export const validationObjectifFormulaire = z.object({
   contenu: z
     .string()
-    .max(
-      LIMITE_CARACTERES_OBJECTIF,
-      `La limite de ${LIMITE_CARACTERES_OBJECTIF} caractères a été dépassée`,
+    .refine(
+      (html) => extractVisibleText(html).trim().length >= 1,
+      "L'objectif ne peut pas être vide",
     )
-    .min(1, "L'objectif ne peut pas être vide"),
+    .refine(
+      (html) => extractVisibleText(html).length <= LIMITE_CARACTERES_OBJECTIF,
+      `La limite de ${LIMITE_CARACTERES_OBJECTIF} caractères a été dépassée`,
+    ),
 });
 
 export const validationBrouillonObjectifAPublier = z.object({

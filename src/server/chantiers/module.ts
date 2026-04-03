@@ -43,8 +43,11 @@ import { GetValeursRemarquablesValeurAvancementIndicateurTerritoiresQuery } from
 import { RecupererTauxAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/RecupererTauxAvancementIndicateurTerritoiresQuery";
 import { GetStatistiquesTauxAvancementIndicateurTerritoiresQuery } from "./infrastructure/queries/GetStatistiquesTauxAvancementIndicateurTerritoiresQuery";
 import { GetRepartitionMeteoChantiersQuery } from "./infrastructure/queries/GetRepartitionMeteoChantiersQuery";
+import { GetChantiersSignalesQuery } from "./infrastructure/queries/GetChantiersSignalesQuery";
 import { GetStatistiquesAvancementChantiersQuery } from "./infrastructure/queries/GetStatistiquesAvancementChantiersQuery";
 import { GetStatistiquesAvancementChantiersParChantierQuery } from "./infrastructure/queries/GetStatistiquesAvancementChantiersParChantierQuery";
+import { RecupererEvolutionValeursAvancementTerritoiresQuery } from "./infrastructure/queries/RecupererEvolutionValeursAvancementTerritoiresQuery";
+import { RecupererEvolutionTauxAvancementTerritoiresQuery } from "./infrastructure/queries/RecupererEvolutionTauxAvancementTerritoiresQuery";
 
 type ChantierExports = {
   recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
@@ -86,6 +89,9 @@ type ChantierOwnCradle = ChantierExports & {
   getStatistiquesAvancementChantiersQuery: GetStatistiquesAvancementChantiersQuery;
   getStatistiquesAvancementChantiersParChantierQuery: GetStatistiquesAvancementChantiersParChantierQuery;
   getRepartitionMeteoChantiersQuery: GetRepartitionMeteoChantiersQuery;
+  getChantiersSignalesQuery: GetChantiersSignalesQuery;
+  recupererEvolutionValeursAvancementTerritoiresQuery: RecupererEvolutionValeursAvancementTerritoiresQuery;
+  recupererEvolutionTauxAvancementTerritoiresQuery: RecupererEvolutionTauxAvancementTerritoiresQuery;
 };
 
 type ChantierCradle = ChantierOwnCradle & ChantierImports;
@@ -182,6 +188,13 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       ),
       getRepartitionMeteoChantiersQuery: asModuleClass(
         GetRepartitionMeteoChantiersQuery,
+      ),
+      getChantiersSignalesQuery: asModuleClass(GetChantiersSignalesQuery),
+      recupererEvolutionValeursAvancementTerritoiresQuery: asModuleClass(
+        RecupererEvolutionValeursAvancementTerritoiresQuery,
+      ),
+      recupererEvolutionTauxAvancementTerritoiresQuery: asModuleClass(
+        RecupererEvolutionTauxAvancementTerritoiresQuery,
       ),
     } satisfies VerifyCradle<ChantierOwnCradle>);
   },

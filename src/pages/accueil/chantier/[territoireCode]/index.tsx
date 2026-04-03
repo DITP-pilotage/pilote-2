@@ -161,6 +161,9 @@ export const getServerSideProps = async (
     mailleChantier,
     territoireCode,
   );
+  const chantierIdsSansFiltrageAlertes = chantiers.map(
+    (chantier) => chantier.id,
+  );
 
   const chantiersAvecAlertes =
     filtresAlertes.estEnAlerteÉcart ||
@@ -272,11 +275,13 @@ export const getServerSideProps = async (
         return chantier;
       }),
       chantierIds,
+      chantierIdsSansFiltrageAlertes,
       nombreTotalChantiersAvecAlertes,
       ministères,
       axes,
       territoireCode,
       jalon,
+      jalonParDefaut,
       mailleSelectionnee: mailleGlobalTerritoireSelectionnee,
       mailleQuery,
       filtresComptesCalculés,
@@ -317,6 +322,7 @@ const PROFIL_REGIONAUX_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE = new Set(
 const ChantierLayout = ({
   chantiers,
   chantierIds,
+  chantierIdsSansFiltrageAlertes,
   nombreTotalChantiersAvecAlertes,
   axes,
   ministères,
@@ -328,6 +334,7 @@ const ChantierLayout = ({
   avancementsGlobauxTerritoriauxMoyens,
   repartitionMeteosChantiers,
   jalon,
+  jalonParDefaut,
   doitAfficherModaleVideoAccueil,
   doitAfficherLaModaleInfolettre,
   doitAfficherLaFicheTerritoriale,
@@ -457,9 +464,11 @@ const ChantierLayout = ({
               avancementsGlobauxTerritoriauxMoyens
             }
             chantierIds={chantierIds}
+            chantierIdsSansFiltrageAlertes={chantierIdsSansFiltrageAlertes}
             chantiers={chantiers}
             filtresComptesCalculés={filtresComptesCalculés}
             jalon={jalon}
+            jalonParDefaut={jalonParDefaut}
             mailleQuery={mailleQuery}
             ministères={ministères}
             nombreTotalChantiersAvecAlertes={nombreTotalChantiersAvecAlertes}

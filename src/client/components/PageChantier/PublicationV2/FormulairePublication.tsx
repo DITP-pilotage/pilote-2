@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { FunctionComponent } from "react";
 import CompteurCaractères from "@/components/_commons/CompteurCaractères/CompteurCaractères";
 import Titre from "@/components/_commons/Titre/Titre";
@@ -14,6 +14,8 @@ import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { Publication } from "@/components/PageChantier/PublicationV2/Publication.interface";
+import { EditeurSimple } from "@/components/_commons/EditeurRiche/EditeurSimple";
+import { extractVisibleText } from "@/utils/extractVisibleText";
 
 interface FormulairePublicationProps {
   publication: Publication | null;
@@ -31,14 +33,16 @@ const FormulairePublication: FunctionComponent<FormulairePublicationProps> = ({
   onModifier,
 }) => {
   const {
-    register,
     handleSubmit,
+    control,
     formState: { errors, isValid },
     watch,
   } = useForm<{ contenu: string }>({
     mode: "all",
     resolver: zodResolver(validationCommentaireFormulaire),
-    defaultValues: { contenu: publication?.contenu ?? "" },
+    defaultValues: {
+      contenu: publication?.contenu ?? "",
+    },
   });
 
   return (
@@ -55,10 +59,16 @@ const FormulairePublication: FunctionComponent<FormulairePublicationProps> = ({
       <div
         className={`flex flex-col fr-mb-0 fr-input-group ${errors.contenu ? "fr-input-group--error" : ""}`}
       >
-        <textarea
-          className="fr-input fr-text--sm fr-mb-0"
-          rows={6}
-          {...register("contenu")}
+        <Controller
+          control={control}
+          name="contenu"
+          render={({ field }) => (
+            <EditeurSimple
+              contenu={field.value}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+            />
+          )}
         />
         <div className="flex justify-between">
           <div>
@@ -69,7 +79,7 @@ const FormulairePublication: FunctionComponent<FormulairePublicationProps> = ({
             )}
           </div>
           <CompteurCaractères
-            compte={watch("contenu")?.length ?? 0}
+            compte={extractVisibleText(watch("contenu") ?? "").length}
             limiteDeCaractères={LIMITE_CARACTÈRES_COMMENTAIRE}
           />
         </div>
