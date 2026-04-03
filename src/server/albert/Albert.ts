@@ -13,11 +13,18 @@ import { Prisma } from "@prisma/client";
 import { configuration } from "@/config";
 import { prisma } from "@/server/db/prisma";
 import { exportRapportPDF } from "@/server/albert/pdf/genererRapportPDF";
+import { exportRapportMarkdown } from "@/server/albert/markdown/exportRapportMarkdown";
 
 const exportRapportInputSchema = z.object({
   titre: z.string().describe("Titre principal du rapport"),
   date: z.string().describe("Date du rapport au format JJ/MM/AAAA"),
   resume: z.string().describe("Résumé synthétique du rapport en 2-3 phrases"),
+  format: z
+    .enum(["markdown", "pdf"])
+    .default("markdown")
+    .describe(
+      "Format du rapport. Par défaut markdown. Utilise pdf uniquement si l'utilisateur le demande explicitement.",
+    ),
   sections: z
     .array(
       z.object({
@@ -44,14 +51,19 @@ const exportRapportInputSchema = z.object({
     .describe("Sections du rapport"),
 });
 
-export type ExportRapportOutput = { url: string };
+export type ExportRapportOutput = { url: string; format: "markdown" | "pdf" };
 
 export const exportRapportTool = tool({
   description:
-    "Génère un rapport PDF structuré synthétisant la discussion. Appelle cet outil quand l'utilisateur demande d'exporter ou télécharger un rapport. Le rapport doit contenir un titre, une date, un résumé et des sections structurées reprenant les données clés de la conversation.",
+    "Génère un rapport structuré synthétisant la discussion. Appelle cet outil quand l'utilisateur demande d'exporter ou télécharger un rapport. Le rapport doit contenir un titre, une date, un résumé et des sections structurées reprenant les données clés de la conversation.",
   inputSchema: exportRapportInputSchema,
   execute: async (input): Promise<ExportRapportOutput> => {
-    return exportRapportPDF(input);
+    if (input.format === "pdf") {
+      const result = await exportRapportPDF(input);
+      return { ...result, format: "pdf" };
+    }
+    const result = await exportRapportMarkdown(input);
+    return { ...result, format: "markdown" };
   },
 });
 

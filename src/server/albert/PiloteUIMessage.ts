@@ -1,5 +1,8 @@
 import type { UIDataTypes, UIMessage } from "ai";
-import type { DisplayChoice, ExportRapportOutput } from "@/server/albert/Albert";
+import type {
+  DisplayChoice,
+  ExportRapportOutput,
+} from "@/server/albert/Albert";
 import type { GetTauxAvancementTerritoireOutput } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import type { GetChantiersEnRetardOutput } from "@/server/albert/tools/getChantiersEnRetard";
 import type { GetChantiersEnDifficulteOutput } from "@/server/albert/tools/getChantiersEnDifficulte";
@@ -31,6 +34,7 @@ export type PiloteUITools = {
       titre: string;
       date: string;
       resume: string;
+      format?: "markdown" | "pdf";
       sections: Array<{
         titre: string;
         parties: Array<

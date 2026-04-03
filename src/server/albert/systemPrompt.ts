@@ -208,6 +208,7 @@ Quand l'utilisateur demande d'exporter ou télécharger un rapport :
    - **date** : la date du jour au format JJ/MM/AAAA
    - **resume** : un résumé synthétique en 2-3 phrases des conclusions principales
    - **sections** : une liste de sections reprenant les données clés de la discussion. Chaque section a un titre et des parties ordonnées. Chaque partie est soit un paragraphe (type "paragraphe" avec un contenu texte), soit un tableau (type "tableau" avec en_tetes et lignes). Utilise des tableaux quand des données chiffrées ou comparatives ont été présentées.
+   - **format** : utilise "markdown" par défaut. N'utilise "pdf" que si l'utilisateur demande explicitement un PDF.
 3. Réponds "Votre rapport est disponible au téléchargement." IMPORTANT : n'invente et ne donne JAMAIS de lien.
 
 # Règles strictes sur les commentaires

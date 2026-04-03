@@ -13,6 +13,8 @@ import { extractMessageText } from "@/components/_commons/ChatUI/utils";
 import { Icone } from "@/components/_commons/Icone";
 import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
 
+const TOOLS_HIDING_TEXT = ["export_rapport"];
+
 export const AssistantMessage = memo(function AssistantMessage({
   message,
   isStreaming,
@@ -20,6 +22,15 @@ export const AssistantMessage = memo(function AssistantMessage({
   message: PiloteUIMessage;
   isStreaming: boolean;
 }) {
+  const shouldHideText = message.parts?.some((part) =>
+    TOOLS_HIDING_TEXT.some(
+      (toolName) =>
+        part.type === `tool-${toolName}` &&
+        "state" in part &&
+        part.state === "output-available",
+    ),
+  );
+
   const hasText = message.parts?.some(
     (part) => part.type === "text" && part.text.trim().length > 0,
   );
@@ -75,6 +86,7 @@ export const AssistantMessage = memo(function AssistantMessage({
 
       {message.parts?.map((part, index) => {
         if (part.type === "text") {
+          if (shouldHideText) return null;
           return (
             <div key={index} className="max-w-3xl mx-auto relative group/text">
               <AssistantMessageText text={part.text} />
@@ -113,7 +125,10 @@ export const AssistantMessage = memo(function AssistantMessage({
           if (isStreaming || part.state !== "output-available") return null;
           return (
             <div key={index} className="animate-fade-in my-2">
-              <ExportRapportDownload url={part.output.url} />
+              <ExportRapportDownload
+                url={part.output.url}
+                format={part.output.format}
+              />
             </div>
           );
         }

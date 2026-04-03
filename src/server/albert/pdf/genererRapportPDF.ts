@@ -3,10 +3,8 @@ import * as vfs from "pdfmake/build/vfs_fonts";
 import { randomUUID } from "crypto";
 import { mkdir, writeFile } from "fs/promises";
 import { join } from "path";
-import {
-  buildRapportPDFContent,
-  RapportInput,
-} from "@/server/albert/pdf/buildRapportPDFContent";
+import { buildRapportPDFContent } from "@/server/albert/pdf/buildRapportPDFContent";
+import { RapportInput } from "@/server/albert/rapportInput";
 
 function genererRapportPDF(input: RapportInput): Promise<Buffer> {
   const content = buildRapportPDFContent(input);

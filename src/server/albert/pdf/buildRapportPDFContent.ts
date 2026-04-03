@@ -6,29 +6,7 @@ import {
   createText,
 } from "@/server/evaluation/handlers/pdfFactories";
 import { markdownToPdfContent } from "@/server/albert/pdf/markdownToPdfContent";
-
-type ParagraphePartie = {
-  type: "paragraphe";
-  contenu: string;
-};
-
-type TableauPartie = {
-  type: "tableau";
-  en_tetes: string[];
-  lignes: string[][];
-};
-
-type SectionPartie = ParagraphePartie | TableauPartie;
-
-export type RapportInput = {
-  titre: string;
-  date: string;
-  resume: string;
-  sections: Array<{
-    titre: string;
-    parties: SectionPartie[];
-  }>;
-};
+import { RapportInput } from "@/server/albert/rapportInput";
 
 export function buildRapportPDFContent(input: RapportInput): Content[] {
   const content: Content[] = [];
