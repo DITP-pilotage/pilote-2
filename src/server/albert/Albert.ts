@@ -12,18 +12,47 @@ import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { configuration } from "@/config";
 import { prisma } from "@/server/db/prisma";
+import { exportRapportPDF } from "@/server/albert/pdf/genererRapportPDF";
 
 const exportRapportInputSchema = z.object({
-  contenu: z.string().describe("Contenu du rapport en texte brut"),
+  titre: z.string().describe("Titre principal du rapport"),
+  date: z.string().describe("Date du rapport au format JJ/MM/AAAA"),
+  resume: z.string().describe("Résumé synthétique du rapport en 2-3 phrases"),
+  sections: z
+    .array(
+      z.object({
+        titre: z.string().describe("Titre de la section"),
+        parties: z
+          .array(
+            z.discriminatedUnion("type", [
+              z.object({
+                type: z.literal("paragraphe"),
+                contenu: z.string().describe("Texte du paragraphe"),
+              }),
+              z.object({
+                type: z.literal("tableau"),
+                en_tetes: z.array(z.string()).describe("En-têtes des colonnes"),
+                lignes: z
+                  .array(z.array(z.string()))
+                  .describe("Lignes du tableau"),
+              }),
+            ]),
+          )
+          .describe("Parties de la section, dans l'ordre d'affichage"),
+      }),
+    )
+    .describe("Sections du rapport"),
 });
 
-export type ExportRapportOutput = { contenu: string };
+export type ExportRapportOutput = { url: string };
 
 export const exportRapportTool = tool({
   description:
-    "Déclenche le téléchargement d'un rapport en texte brut côté client. Appelle cet outil une fois que tu as assemblé le contenu du rapport à partir des données récupérées.",
+    "Génère un rapport PDF structuré synthétisant la discussion. Appelle cet outil quand l'utilisateur demande d'exporter ou télécharger un rapport. Le rapport doit contenir un titre, une date, un résumé et des sections structurées reprenant les données clés de la conversation.",
   inputSchema: exportRapportInputSchema,
-  execute: async ({ contenu }): Promise<ExportRapportOutput> => ({ contenu }),
+  execute: async (input): Promise<ExportRapportOutput> => {
+    return exportRapportPDF(input);
+  },
 });
 
 const displayChoicesInputSchema = z.object({

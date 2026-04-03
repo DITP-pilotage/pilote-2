@@ -35,7 +35,18 @@ export type PiloteUITools = {
     output: GetValeursIndicateurOutput;
   };
   export_rapport: {
-    input: { contenu: string };
+    input: {
+      titre: string;
+      date: string;
+      resume: string;
+      sections: Array<{
+        titre: string;
+        parties: Array<
+          | { type: "paragraphe"; contenu: string }
+          | { type: "tableau"; en_tetes: string[]; lignes: string[][] }
+        >;
+      }>;
+    };
     output: ExportRapportOutput;
   };
 };
