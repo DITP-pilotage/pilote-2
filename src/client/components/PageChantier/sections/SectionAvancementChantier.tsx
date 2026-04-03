@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import {
   pageChantier,
@@ -45,9 +44,7 @@ export const SectionAvancementChantier = () => {
       sectionClassName="print:break-inside-avoid [grid-area:avancement]"
       titre="Avancement du chantier"
     >
-      <Suspense>
-        <AvancementChantierWidget />
-      </Suspense>
+      <AvancementChantierWidget />
     </BasePageChantierSection>
   );
 };

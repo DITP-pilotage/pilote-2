@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { BasePageChantierLayout } from "./BasePageChantierLayout";
 import { IndicateurDetailsModeProvider } from "./IndicateurDetailsContext";
 import { SectionAvancementChantier } from "./sections/SectionAvancementChantier";
@@ -13,16 +14,18 @@ export const PageChantier = () => {
   return (
     <IndicateurDetailsModeProvider mode="widget">
       <BasePageChantierLayout>
-        <div className="flex flex-col gap-6 px-4">
-          <SectionAvancementChantier />
-          <SectionSyntheseDesResultats />
-          <SectionResponsables />
-          <SectionRepartitionGeographique />
-          <SectionObjectifs />
-          <SectionIndicateurs />
-          <SectionDecisionsStrategiques />
-          <SectionCommentaires />
-        </div>
+        <Suspense>
+          <div className="flex flex-col gap-6 px-4">
+            <SectionAvancementChantier />
+            <SectionSyntheseDesResultats />
+            <SectionResponsables />
+            <SectionRepartitionGeographique />
+            <SectionObjectifs />
+            <SectionIndicateurs />
+            <SectionDecisionsStrategiques />
+            <SectionCommentaires />
+          </div>
+        </Suspense>
       </BasePageChantierLayout>
     </IndicateurDetailsModeProvider>
   );
