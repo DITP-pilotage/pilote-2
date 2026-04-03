@@ -1,9 +1,10 @@
 import { Inject } from "@/server/chantiers/module";
 import { calculerMediane } from "@/client/utils/statistiques/statistiques";
+import { ChantierTendance } from "@/server/domain/chantier/Chantier.interface";
 
 export type SituationChantierViewModel = {
   ecart: number | null;
-  tendance: string | null;
+  tendance: ChantierTendance | null;
   tauxAvancementPrecedent: number | null;
   dateTauxAvancementPrecedent: string | null;
   mediane: number | null;

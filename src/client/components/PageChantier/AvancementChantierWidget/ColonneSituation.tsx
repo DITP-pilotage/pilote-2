@@ -2,12 +2,12 @@ import { FunctionComponent } from "react";
 import EcartTauxAvancementPPG from "@/components/PageChantier/AvancementChantier/EcartTauxAvancementPPG/EcartTauxAvancementPPG";
 import { BadgeTendance } from "@/components/PageAccueil/PageChantiers/TableauChantiers/Tendance/BadgeTendance";
 import { ChantierTendance } from "@/server/domain/chantier/Chantier.interface";
-import { formaterDate } from "@/client/utils/date/date";
 import api from "@/server/infrastructure/api/trpc/api";
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { useMesureWidget } from "@/components/_commons/Widget/TuileWidget/useMesureWidget";
 import { clsxm } from "@/utils/clsxm";
+import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 
 const getLabelMaille = (territoireCode: string): string => {
   if (territoireCode.startsWith("DEPT-")) return "départements";
@@ -67,10 +67,7 @@ export const ColonneSituation: FunctionComponent = () => {
           <strong className="fr-mb-0 text-center">Evolution temporelle</strong>
           <span>{jalon}</span>
         </div>
-        <BadgeTendance
-          estArchive={estArchive}
-          tendance={situation.tendance as ChantierTendance | null}
-        />
+        <BadgeTendance estArchive={estArchive} tendance={situation.tendance} />
         <div className="text-sm text-center">
           <strong className="mr-1">tendance</strong>
           du taux d'avancement par rapport au taux précédemment mesuré
@@ -84,7 +81,9 @@ export const ColonneSituation: FunctionComponent = () => {
               </strong>
               {", "}
               <span className="fr-text-mention--grey">
-                {formaterDate(situation.dateTauxAvancementPrecedent, "MM/YYYY")}
+                {PiloteDateFormatter.isoMonthFranceMetropolitaine(
+                  situation.dateTauxAvancementPrecedent,
+                )}
               </span>
               )
             </>
