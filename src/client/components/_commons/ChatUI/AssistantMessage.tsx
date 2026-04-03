@@ -5,7 +5,6 @@ import { ToolCallIndicator } from "@/components/_commons/ChatUI/ToolCallIndicato
 import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMessageText";
 import { AssistantLoader } from "@/components/_commons/ChatUI/AssistantLoader";
 import { BaseDisplayTool } from "@/components/_commons/ChatUI/BaseDisplayTool";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { ChoicesButtons } from "@/components/_commons/ChatUI/ChoicesButtons";
 import { ExportRapportDownload } from "@/components/_commons/ChatUI/ExportRapportDownload";
 import { ValeursIndicateurTable } from "@/components/_commons/ChatUI/ValeursIndicateurTable";
@@ -13,7 +12,6 @@ import { ValeursIndicateurSkeleton } from "@/components/_commons/ChatUI/ValeursI
 import { extractMessageText } from "@/components/_commons/ChatUI/utils";
 import { Icone } from "@/components/_commons/Icone";
 import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
-import { LoaderIcon } from "@/components/_commons/Icones/LoaderIcon";
 
 const TOOLS_HIDING_TEXT = ["export_rapport"];
 
@@ -124,30 +122,12 @@ export const AssistantMessage = memo(function AssistantMessage({
         }
 
         if (part.type === "tool-export_rapport") {
-          if (part.state === "output-available" && !isStreaming) {
-            return (
-              <div key={index} className="animate-fade-in my-2">
-                <ExportRapportDownload
-                  url={part.output.url}
-                  format={part.output.format}
-                />
-              </div>
-            );
-          }
-          if (part.state !== "output-available" && part.state !== "output-error") {
-            return (
-              <div key={index} className="my-2 max-w-3xl mx-auto flex justify-center">
-                <Bouton
-                  label="Génération en cours..."
-                  iconLeft={<LoaderIcon className="w-4 h-4 animate-spin" />}
-                  variant="primary"
-                  disabled
-                  type="button"
-                />
-              </div>
-            );
-          }
-          return null;
+          if (part.state === "output-error") return null;
+          return (
+            <div key={index} className="my-2">
+              <ExportRapportDownload part={part} isStreaming={isStreaming} />
+            </div>
+          );
         }
 
         return null;
