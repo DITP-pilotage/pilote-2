@@ -1,5 +1,8 @@
-export const SYNTHESE_TERRITOIRE_OUTPUT_FORMAT = `
+import { COMPARAISON_TERRITOIRES_OUTPUT_FORMAT } from "./comparaisonTerritoires";
+
+const SYNTHESE_MONO_TERRITOIRE = `
 <instructions>
+Ce template s'applique quand les résultats des outils contiennent UN SEUL territoire.
 Remplace les variables entre {{ }} par les données réelles issues des résultats des outils get_taux_avancement_territoire, get_chantiers_en_retard et get_chantiers_en_difficulte.
 Pour la liste des chantiers, ne reproduis pas les commentaires bruts in extenso. Extrais uniquement les idées clés de chaque commentaire et condense-les en une ou deux phrases factuelles. N'ajoute aucune interprétation, jugement ou information non présente dans le commentaire original. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".
 Génère la réponse en markdown en suivant le gabarit ci-dessous. Les annotations (pour chaque ...) indiquent une itération sur les données.
@@ -17,10 +20,10 @@ Dans Pilote, le TA {{JALON}} de la région s'établit à {{taux_avancement_globa
 
 (pour chaque chantier_en_retard)
 - **{{chantier.id}} — {{chantier.nom}}**
-  
+
   Écart : {{ecart}} points
   Météo : {{synthese.meteo}}
-  
+
   Résumé de la situation
 
 ## Chantiers en difficulté
@@ -34,14 +37,20 @@ Dans Pilote, le TA {{JALON}} de la région s'établit à {{taux_avancement_globa
 
 Sources analysées : données quantitatives et qualitatives des chantiers publiés sur PILOTE.
 </template>
+`;
 
-<template_multi_territoires>
-Si les résultats contiennent plusieurs territoires (include_sous_territoires=true), structure la réponse ainsi :
-- D'abord la synthèse complète du territoire principal (même format que ci-dessus)
-- Puis une section "## Sous-territoires" avec pour chaque sous-territoire un résumé concis :
-  - Nom du territoire
-  - Taux d'avancement et position par rapport à la médiane
-  - Nombre de chantiers en retard et en difficulté
-  - Les chantiers les plus notables (en retard ou en difficulté) avec un résumé condensé
-</template_multi_territoires>
+export const SYNTHESE_TERRITOIRE_OUTPUT_FORMAT = `
+<selection>
+IMPORTANT : Choisis le bon template en fonction du nombre de territoires dans les résultats des outils.
+- Si les résultats contiennent UN SEUL territoire → utilise le template "mono_territoire"
+- Si les résultats contiennent PLUSIEURS territoires → utilise le template "comparaison"
+</selection>
+
+<mono_territoire>
+${SYNTHESE_MONO_TERRITOIRE}
+</mono_territoire>
+
+<comparaison>
+${COMPARAISON_TERRITOIRES_OUTPUT_FORMAT}
+</comparaison>
 `;
