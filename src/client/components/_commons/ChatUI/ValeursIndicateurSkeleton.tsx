@@ -4,7 +4,7 @@ const SkeletonBar = ({ className }: { className?: string }) => (
 
 export const ValeursIndicateurSkeleton = () => {
   return (
-    <div className="animate-pulse" style={{ height: 350 }}>
+    <div className="animate-pulse overflow-hidden">
       <div className="fr-table fr-p-0 fr-m-0">
         <table className="!table">
           <thead>
