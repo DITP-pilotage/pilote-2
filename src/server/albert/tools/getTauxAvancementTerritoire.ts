@@ -39,8 +39,18 @@ function formatPourcentage(value: number | null | undefined): string {
   return `${value?.toFixed(0) ?? "- "}%`;
 }
 
-export type GetTauxAvancementTerritoireOutput =
-  GetTauxAvancementTerritoireResult[];
+export type GetTauxAvancementTerritoireOutput = {
+  resultats: GetTauxAvancementTerritoireResult[];
+  _output_instructions: string;
+};
+
+const OUTPUT_INSTRUCTIONS = `Présente les données du taux d'avancement de manière claire et structurée.
+Pour chaque territoire, indique :
+- Le taux d'avancement global (TA)
+- La médiane de répartition
+- La position par rapport à la médiane (EN_RETARD, EN_AVANCE, DANS_LA_MEDIANE)
+Si un seul territoire est demandé, rédige un court paragraphe factuel.
+Si plusieurs territoires sont retournés, présente un tableau comparatif.`;
 
 function determineMaille(territoireCode: string): Maille {
   if (territoireCode.startsWith("NAT")) return "nationale";
@@ -129,7 +139,7 @@ Utilise cet outil quand l'utilisateur demande :
           }
         }
 
-        return codesAccessibles.map((code) => {
+        const resultats = codesAccessibles.map((code) => {
           const maille = determineMaille(code);
           const territoireData = agregat[maille]?.territoires[code];
 
@@ -165,6 +175,11 @@ Utilise cet outil quand l'utilisateur demande :
             position_mediane,
           };
         });
+
+        return {
+          resultats,
+          _output_instructions: OUTPUT_INSTRUCTIONS,
+        };
       },
     });
   };

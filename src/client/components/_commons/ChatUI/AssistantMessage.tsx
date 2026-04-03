@@ -7,6 +7,7 @@ import { BaseDisplayTool } from "@/components/_commons/ChatUI/BaseDisplayTool";
 import { ChoicesButtons } from "@/components/_commons/ChatUI/ChoicesButtons";
 import { ExportRapportDownload } from "@/components/_commons/ChatUI/ExportRapportDownload";
 import { ValeursIndicateurTable } from "@/components/_commons/ChatUI/ValeursIndicateurTable";
+import { ValeursIndicateurSkeleton } from "@/components/_commons/ChatUI/ValeursIndicateurSkeleton";
 import { extractMessageText } from "@/components/_commons/ChatUI/utils";
 import { Icone } from "@/components/_commons/Icone";
 import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
@@ -86,18 +87,23 @@ export const AssistantMessage = ({
         {isStreaming && hasDisplayTool && <AssistantLoader />}
       </div>
 
-      {!isStreaming &&
-        message.parts?.map((part, index) => {
-          if (part.type === "tool-display_valeurs_indicateur") {
-            if (part.state !== "output-available") return null;
+      {message.parts?.map((part, index) => {
+        if (part.type === "tool-display_valeurs_indicateur") {
+          if (part.state !== "output-available") {
             return (
               <BaseDisplayTool key={index}>
-                <ValeursIndicateurTable indicateurs={part.output.indicateurs} />
+                <ValeursIndicateurSkeleton />
               </BaseDisplayTool>
             );
           }
-          return null;
-        })}
+          return (
+            <BaseDisplayTool key={index}>
+              <ValeursIndicateurTable indicateurs={part.output.indicateurs} />
+            </BaseDisplayTool>
+          );
+        }
+        return null;
+      })}
       {!isStreaming &&
         hasText &&
         message.parts?.map((part, index) => {

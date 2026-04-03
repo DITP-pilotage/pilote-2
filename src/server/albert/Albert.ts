@@ -75,7 +75,7 @@ export type ValeursIndicateurDisplay = z.infer<
 
 export const displayValeursIndicateurTool = tool({
   description:
-    "Affiche les valeurs des indicateurs dans un tableau visuel. OBLIGATOIRE après get_valeurs_indicateur : passe-lui le tableau d'indicateurs tel quel. IMPORTANT : n'écris JAMAIS les données des indicateurs en texte ou en markdown. Utilise TOUJOURS cet outil pour les afficher.",
+    "Affiche les valeurs des indicateurs dans un tableau visuel. OBLIGATOIRE après get_valeurs_indicateur : passe-lui le tableau d'indicateurs tel quel. IMPORTANT : n'écris AUCUN texte, réponds UNIQUEMENT avec cet appel d'outil. Ne génère JAMAIS les données des indicateurs en texte ou en markdown.",
   inputSchema: displayValeursIndicateurInputSchema,
   execute: async ({
     indicateurs,

@@ -15,7 +15,6 @@ import { getContainer } from "@/server/dependances";
 import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { getInstructionsTool } from "@/server/albert/recipes";
 
 export const albertRouter = créerRouteurTRPC({
   chat: procédureProtégée
@@ -73,7 +72,6 @@ export const albertRouter = créerRouteurTRPC({
         systemPrompt,
         userId: ctx.session.user.id,
         tools: {
-          get_instructions: getInstructionsTool,
           get_taux_avancement_territoire: getTauxAvancementTerritoire,
           get_chantiers_en_retard: getChantiersEnRetard,
           get_chantiers_en_difficulte: getChantiersEnDifficulte,

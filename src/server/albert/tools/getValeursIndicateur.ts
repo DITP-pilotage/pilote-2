@@ -16,7 +16,14 @@ const getValeursIndicateurInputSchema = z.object({
     .describe("Année du jalon (ex: 2024, 2025)"),
 });
 
-export type GetValeursIndicateurOutput = GetValeursIndicateurResult;
+export type GetValeursIndicateurOutput = {
+  resultats: GetValeursIndicateurResult;
+  _output_instructions: string;
+};
+
+const OUTPUT_INSTRUCTIONS = `IMPORTANT — Respecte OBLIGATOIREMENT cette consigne :
+Appelle IMMÉDIATEMENT et UNIQUEMENT le tool display_valeurs_indicateur en lui passant le tableau \`resultats.indicateurs\` reçu tel quel, sans modification.
+Ne génère AUCUN texte avant, après ou autour de l'appel. Réponds UNIQUEMENT avec l'appel à l'outil, rien d'autre.`;
 
 export function createGetValeursIndicateurTool({
   getValeursIndicateurQuery,
@@ -43,11 +50,16 @@ Utilise cet outil quand l'utilisateur demande :
           );
         }
 
-        return getValeursIndicateurQuery.execute({
+        const result = await getValeursIndicateurQuery.execute({
           territoireCode: input.territoire_code,
           chantierId: input.chantier_id,
           jalon: input.jalon,
         });
+
+        return {
+          resultats: result,
+          _output_instructions: OUTPUT_INSTRUCTIONS,
+        };
       },
     });
   };
