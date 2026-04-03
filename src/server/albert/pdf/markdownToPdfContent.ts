@@ -203,7 +203,11 @@ function convertBlockTokens(tokens: Token[]): Content[] {
   return result;
 }
 
+function sanitizeForPdf(text: string): string {
+  return text.replace(/\u202F/g, " ").replace(/\u00A0/g, " ");
+}
+
 export function markdownToPdfContent(markdown: string): Content[] {
-  const tokens = lexer(markdown);
+  const tokens = lexer(sanitizeForPdf(markdown));
   return convertBlockTokens(tokens);
 }

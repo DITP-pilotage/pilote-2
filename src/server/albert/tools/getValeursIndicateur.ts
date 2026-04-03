@@ -22,7 +22,8 @@ export type GetValeursIndicateurOutput = {
 };
 
 const OUTPUT_INSTRUCTIONS = `Les valeurs des indicateurs seront automatiquement affichées dans un tableau visuel dans l'interface.
-Tu peux ajouter un bref commentaire factuel sur les résultats si pertinent.`;
+Ne reproduis JAMAIS les données des indicateurs (VI, VA, VC, TA) dans ta réponse, ni sous forme de tableau, ni sous forme de liste, ni dans le texte.
+Tu peux ajouter un bref commentaire factuel sur les résultats si pertinent, sans répéter les valeurs.`;
 
 export function createGetValeursIndicateurTool({
   getValeursIndicateurQuery,
