@@ -114,7 +114,10 @@ export const chantierRouter = créerRouteurTRPC({
     .query(({ input, ctx }) => {
       new Habilitation(
         ctx.session.habilitations,
-      ).vérifierLesHabilitationsEnLecture(input.chantierId, null);
+      ).vérifierLesHabilitationsEnLecture(
+        input.chantierId,
+        input.territoireCode,
+      );
       return getContainer("chantiers")
         .resolve("getAvancementChantierQuery")
         .execute(input);
@@ -130,7 +133,10 @@ export const chantierRouter = créerRouteurTRPC({
     .query(({ input, ctx }) => {
       new Habilitation(
         ctx.session.habilitations,
-      ).vérifierLesHabilitationsEnLecture(input.chantierId, null);
+      ).vérifierLesHabilitationsEnLecture(
+        input.chantierId,
+        input.territoireCode,
+      );
       return getContainer("chantiers")
         .resolve("getSituationChantierQuery")
         .execute(input);
