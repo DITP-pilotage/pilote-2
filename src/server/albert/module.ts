@@ -6,6 +6,8 @@ import { createGetChantiersEnDifficulteTool } from "@/server/albert/tools/getCha
 import { GetValeursIndicateurQuery } from "@/server/chantiers/query/GetValeursIndicateurQuery";
 import { createGetValeursIndicateurTool } from "@/server/albert/tools/getValeursIndicateur";
 import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase";
+import { PrismaTerritoireResolver } from "@/server/albert/infrastructure/PrismaTerritoireResolver";
+import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import {
   defineModule,
   type ExtractScope,
@@ -17,6 +19,7 @@ import type { SharedDependencies } from "@/server/shared/module";
 type AlbertImports = SharedDependencies;
 
 type AlbertOwnCradle = {
+  territoireResolver: TerritoireResolver;
   createGetTauxAvancementTerritoireTool: ReturnType<
     typeof createGetTauxAvancementTerritoireTool
   >;
@@ -43,6 +46,7 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
   exports: [],
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
+      territoireResolver: asModuleClass(PrismaTerritoireResolver),
       createGetTauxAvancementTerritoireTool: asModuleFunction(
         createGetTauxAvancementTerritoireTool,
       ),
