@@ -56,7 +56,7 @@ export const ChatUI = ({
 
   const { messages, sendMessage, status, error } = useChat<PiloteUIMessage>({
     chat: chatRef.current,
-    experimental_throttle: 50,
+    experimental_throttle: 250,
   });
 
   useEffect(() => {
@@ -141,7 +141,7 @@ export const ChatUI = ({
             {status === "submitted" && (
               <div className="max-w-3xl mx-auto flex justify-start">
                 <div className="text-sm text-gray-500">
-                  <AssistantLoader />
+                  <AssistantLoader label="Réflexion en cours" />
                 </div>
               </div>
             )}

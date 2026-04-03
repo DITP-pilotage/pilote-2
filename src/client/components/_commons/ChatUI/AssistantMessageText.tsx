@@ -1,5 +1,8 @@
 import { memo } from "react";
-import { marked } from "marked";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
+const remarkPlugins = [remarkGfm];
 
 export const AssistantMessageText = memo(function AssistantMessageText({
   text,
@@ -7,11 +10,8 @@ export const AssistantMessageText = memo(function AssistantMessageText({
   text: string;
 }) {
   return (
-    <div
-      className="albert-markdown"
-      dangerouslySetInnerHTML={{
-        __html: marked.parse(text, { async: false }) as string,
-      }}
-    />
+    <div className="albert-markdown">
+      <ReactMarkdown remarkPlugins={remarkPlugins}>{text}</ReactMarkdown>
+    </div>
   );
 });

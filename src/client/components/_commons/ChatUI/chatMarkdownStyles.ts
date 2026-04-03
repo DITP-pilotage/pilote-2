@@ -56,4 +56,20 @@ export const chatMarkdownStyles = `
     margin: 0.5em 0;
     color: #6b7280;
   }
+  .albert-markdown > p,
+  .albert-markdown > h1,
+  .albert-markdown > h2,
+  .albert-markdown > h3,
+  .albert-markdown > ul,
+  .albert-markdown > ol,
+  .albert-markdown > table,
+  .albert-markdown > pre,
+  .albert-markdown > blockquote,
+  .albert-markdown li {
+    animation: md-fade-in 300ms ease-out;
+  }
+  @keyframes md-fade-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 `;
