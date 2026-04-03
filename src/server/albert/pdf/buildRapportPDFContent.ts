@@ -5,15 +5,7 @@ import {
   createTable,
   createText,
 } from "@/server/evaluation/handlers/pdfFactories";
-
-function createParagraph(text: string): Content {
-  return {
-    text,
-    fontSize: 9,
-    color: COLORS.text,
-    margin: [0, 0, 0, 8],
-  };
-}
+import { markdownToPdfContent } from "@/server/albert/pdf/markdownToPdfContent";
 
 type ParagraphePartie = {
   type: "paragraphe";
@@ -69,7 +61,7 @@ export function buildRapportPDFContent(input: RapportInput): Content[] {
 
     for (const partie of section.parties) {
       if (partie.type === "paragraphe") {
-        content.push(createParagraph(partie.contenu));
+        content.push(...markdownToPdfContent(partie.contenu));
       }
 
       if (partie.type === "tableau") {

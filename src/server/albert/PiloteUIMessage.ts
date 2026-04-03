@@ -1,9 +1,5 @@
 import type { UIDataTypes, UIMessage } from "ai";
-import type {
-  DisplayChoice,
-  ExportRapportOutput,
-  ValeursIndicateurDisplay,
-} from "@/server/albert/Albert";
+import type { DisplayChoice, ExportRapportOutput } from "@/server/albert/Albert";
 import type { GetTauxAvancementTerritoireOutput } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import type { GetChantiersEnRetardOutput } from "@/server/albert/tools/getChantiersEnRetard";
 import type { GetChantiersEnDifficulteOutput } from "@/server/albert/tools/getChantiersEnDifficulte";
@@ -13,10 +9,6 @@ export type PiloteUITools = {
   display_choices: {
     input: { choices: DisplayChoice[] };
     output: { choices: DisplayChoice[] };
-  };
-  display_valeurs_indicateur: {
-    input: { indicateurs: ValeursIndicateurDisplay[] };
-    output: { indicateurs: ValeursIndicateurDisplay[] };
   };
   get_taux_avancement_territoire: {
     input: { territoire_code: string; jalon: number };

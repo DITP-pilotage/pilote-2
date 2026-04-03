@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import type { ToolUIPart } from "ai";
 import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
 import { ArrowSLineIcon } from "@/components/_commons/Icones/ArrowSLineIcon";
@@ -38,7 +38,11 @@ const StatusIcon = ({ state }: { state: DataFetchingToolPart["state"] }) => {
   return <AssistantLoader />;
 };
 
-export const ToolCallIndicator = ({ part }: { part: DataFetchingToolPart }) => {
+export const ToolCallIndicator = memo(function ToolCallIndicator({
+  part,
+}: {
+  part: DataFetchingToolPart;
+}) {
   const [expanded, setExpanded] = useState(false);
 
   const label = TOOL_LABELS[part.type] ?? part.type.replace("tool-", "");
@@ -75,4 +79,4 @@ export const ToolCallIndicator = ({ part }: { part: DataFetchingToolPart }) => {
       </AnimateEntry>
     </div>
   );
-};
+});

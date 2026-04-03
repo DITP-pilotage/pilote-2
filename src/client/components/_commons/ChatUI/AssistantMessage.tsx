@@ -1,3 +1,4 @@
+import { Fragment, memo } from "react";
 import { toast } from "sonner";
 import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { ToolCallIndicator } from "@/components/_commons/ChatUI/ToolCallIndicator";
@@ -12,13 +13,13 @@ import { extractMessageText } from "@/components/_commons/ChatUI/utils";
 import { Icone } from "@/components/_commons/Icone";
 import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
 
-export const AssistantMessage = ({
+export const AssistantMessage = memo(function AssistantMessage({
   message,
   isStreaming,
 }: {
   message: PiloteUIMessage;
   isStreaming: boolean;
-}) => {
+}) {
   const hasText = message.parts?.some(
     (part) => part.type === "text" && part.text.trim().length > 0,
   );
@@ -46,10 +47,27 @@ export const AssistantMessage = ({
           if (
             part.type === "tool-get_taux_avancement_territoire" ||
             part.type === "tool-get_chantiers_en_retard" ||
-            part.type === "tool-get_chantiers_en_difficulte" ||
-            part.type === "tool-get_valeurs_indicateur"
+            part.type === "tool-get_chantiers_en_difficulte"
           ) {
             return <ToolCallIndicator key={index} part={part} />;
+          }
+          if (part.type === "tool-get_valeurs_indicateur") {
+            return (
+              <Fragment key={index}>
+                <ToolCallIndicator part={part} />
+                {part.state === "output-available" ? (
+                  <BaseDisplayTool>
+                    <ValeursIndicateurTable
+                      indicateurs={part.output.resultats.indicateurs}
+                    />
+                  </BaseDisplayTool>
+                ) : part.state !== "output-error" ? (
+                  <BaseDisplayTool>
+                    <ValeursIndicateurSkeleton />
+                  </BaseDisplayTool>
+                ) : null}
+              </Fragment>
+            );
           }
           return null;
         })}
@@ -82,22 +100,6 @@ export const AssistantMessage = ({
           );
         }
 
-        if (part.type === "tool-display_valeurs_indicateur") {
-          console.log(part);
-          if (part.state !== "output-available") {
-            return (
-              <BaseDisplayTool key={index}>
-                <ValeursIndicateurSkeleton />
-              </BaseDisplayTool>
-            );
-          }
-          return (
-            <BaseDisplayTool key={index}>
-              <ValeursIndicateurTable indicateurs={part.output.indicateurs} />
-            </BaseDisplayTool>
-          );
-        }
-
         if (part.type === "tool-display_choices") {
           if (isStreaming || part.state !== "output-available") return null;
           return (
@@ -126,4 +128,4 @@ export const AssistantMessage = ({
       )}
     </div>
   );
-};
+});

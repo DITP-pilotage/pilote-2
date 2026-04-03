@@ -56,23 +56,30 @@ export const ChatUI = ({
 
   const { messages, sendMessage, status, error } = useChat<PiloteUIMessage>({
     chat: chatRef.current,
+    experimental_throttle: 50,
   });
 
   useEffect(() => {
+    if (messages.length === 0) return;
+
     if (messages.length !== prevMessageCountRef.current) {
       userHasScrolledRef.current = false;
       prevMessageCountRef.current = messages.length;
     }
-  }, [messages]);
 
-  useEffect(() => {
-    if (messages.length === 0) return;
     if (userHasScrolledRef.current) return;
 
-    setTimeout(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const isStreaming = status !== "ready";
+
+    if (isStreaming) {
+      container.scrollTop = container.scrollHeight;
+    } else {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
-  }, [messages]);
+    }
+  }, [messages, status]);
 
   const handleScroll = useCallback(() => {
     const container = scrollContainerRef.current;
@@ -81,9 +88,7 @@ export const ChatUI = ({
     const { scrollTop, scrollHeight, clientHeight } = container;
     const isNearBottom = scrollHeight - scrollTop - clientHeight < 50;
 
-    if (!isNearBottom) {
-      userHasScrolledRef.current = true;
-    }
+    userHasScrolledRef.current = !isNearBottom;
   }, []);
 
   const fillInput = useCallback((text: string) => {

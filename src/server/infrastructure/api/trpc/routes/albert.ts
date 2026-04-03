@@ -7,7 +7,6 @@ import {
 import {
   Albert,
   displayChoicesTool,
-  displayValeursIndicateurTool,
   exportRapportTool,
 } from "@/server/albert/Albert";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
@@ -77,7 +76,6 @@ export const albertRouter = créerRouteurTRPC({
           get_chantiers_en_difficulte: getChantiersEnDifficulte,
           get_valeurs_indicateur: getValeursIndicateur,
           display_choices: displayChoicesTool,
-          display_valeurs_indicateur: displayValeursIndicateurTool,
           export_rapport: exportRapportTool,
         },
       });

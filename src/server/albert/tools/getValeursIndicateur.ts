@@ -21,9 +21,8 @@ export type GetValeursIndicateurOutput = {
   _output_instructions: string;
 };
 
-const OUTPUT_INSTRUCTIONS = `IMPORTANT — Respecte OBLIGATOIREMENT cette consigne :
-Appelle IMMÉDIATEMENT et UNIQUEMENT le tool display_valeurs_indicateur en lui passant le tableau \`resultats.indicateurs\` reçu tel quel, sans modification.
-Ne génère AUCUN texte avant, après ou autour de l'appel. Réponds UNIQUEMENT avec l'appel à l'outil, rien d'autre.`;
+const OUTPUT_INSTRUCTIONS = `Les valeurs des indicateurs seront automatiquement affichées dans un tableau visuel dans l'interface.
+Tu peux ajouter un bref commentaire factuel sur les résultats si pertinent.`;
 
 export function createGetValeursIndicateurTool({
   getValeursIndicateurQuery,

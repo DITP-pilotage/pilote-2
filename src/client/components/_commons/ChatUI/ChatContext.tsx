@@ -1,4 +1,4 @@
-import { createContext, PropsWithChildren, useContext } from "react";
+import { createContext, PropsWithChildren, useContext, useMemo } from "react";
 import type { ChatStatus } from "ai";
 
 type ChatContextValue = {
@@ -24,7 +24,15 @@ export const useChatContext = () => {
 
 export const ChatContextProvider = ({
   children,
-  ...props
+  sendMessage,
+  fillInput,
+  status,
+  error,
 }: PropsWithChildren<ChatContextValue>) => {
-  return <context.Provider value={props}>{children}</context.Provider>;
+  const value = useMemo(
+    () => ({ sendMessage, fillInput, status, error }),
+    [sendMessage, fillInput, status, error],
+  );
+
+  return <context.Provider value={value}>{children}</context.Provider>;
 };

@@ -1,6 +1,11 @@
+import { memo } from "react";
 import { marked } from "marked";
 
-export const AssistantMessageText = ({ text }: { text: string }) => {
+export const AssistantMessageText = memo(function AssistantMessageText({
+  text,
+}: {
+  text: string;
+}) {
   return (
     <div
       className="albert-markdown"
@@ -9,4 +14,4 @@ export const AssistantMessageText = ({ text }: { text: string }) => {
       }}
     />
   );
-};
+});

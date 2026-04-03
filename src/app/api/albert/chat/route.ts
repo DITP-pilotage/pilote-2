@@ -3,7 +3,6 @@ import { z } from "zod";
 import {
   Albert,
   displayChoicesTool,
-  displayValeursIndicateurTool,
   exportRapportTool,
 } from "@/server/albert/Albert";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
@@ -79,7 +78,6 @@ export async function POST(request: Request) {
         get_chantiers_en_difficulte: getChantiersEnDifficulte,
         get_valeurs_indicateur: getValeursIndicateur,
         display_choices: displayChoicesTool,
-        display_valeurs_indicateur: displayValeursIndicateurTool,
         export_rapport: exportRapportTool,
       },
     });
