@@ -33,7 +33,7 @@ export const BaseDisplayTool = ({
   };
 
   return (
-    <div className="isolate animate-fade-in bg-white p-2 shadow-lg rounded-lg border border-gray-300/30 mt-12 mb-20 relative">
+    <div className="isolate animate-fade-in bg-white p-2 shadow-lg rounded-lg border border-gray-300/30 mt-4 mb-8 relative">
       <div ref={contentRef}>{children}</div>
       <button
         className="absolute top-1 right-1 p-1 rounded bg-white/80 text-gray-500 hover:text-gray-800 hover:bg-gray-100 border border-gray-200"

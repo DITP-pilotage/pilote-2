@@ -43,13 +43,8 @@ export const AssistantMessage = memo(function AssistantMessage({
 
   const lastPart = message.parts?.[message.parts.length - 1];
   const isTextStreaming = lastPart?.type === "text";
-  const hasToolCallPending = message.parts?.some(
-    (part) =>
-      "state" in part &&
-      part.state !== "output-available" &&
-      part.state !== "output-error",
-  );
-  const showLoader = isStreaming && !isTextStreaming && !hasToolCallPending;
+  const hasStreamingText = isTextStreaming && lastPart.text != "";
+  const showLoader = isStreaming && isTextStreaming && !hasStreamingText;
 
   return (
     <div className="text-sm text-gray-900 w-full">

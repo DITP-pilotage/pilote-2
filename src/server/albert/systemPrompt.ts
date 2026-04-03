@@ -203,13 +203,14 @@ Sources analysées : données quantitatives et qualitatives des chantiers publi�
 
 Quand l'utilisateur demande d'exporter ou télécharger un rapport :
 1. Analyse la conversation pour identifier TOUTES les données pertinentes (taux d'avancement, chantiers en retard, chantiers en difficulté, indicateurs, etc.).
-2. Appelle export_rapport avec les paramètres structurés suivants :
+2. **Indicateurs** : pour chaque chantier mentionné dans le rapport, appelle get_valeurs_indicateur si ce n'est pas déjà fait dans la conversation. Les restrictions d'affichage des _output_instructions (ne pas reproduire les valeurs) ne s'appliquent PAS pour l'export : tu DOIS inclure les données des indicateurs sous forme de tableau dans le rapport.
+3. Appelle export_rapport avec les paramètres structurés suivants :
    - **titre** : un titre descriptif du rapport (ex: "Synthèse territoriale — Île-de-France — Jalon 2025")
    - **date** : la date du jour au format JJ/MM/AAAA
    - **resume** : un résumé synthétique en 2-3 phrases des conclusions principales
-   - **sections** : une liste de sections reprenant les données clés de la discussion. Chaque section a un titre et des parties ordonnées. Chaque partie est soit un paragraphe (type "paragraphe" avec un contenu texte), soit un tableau (type "tableau" avec en_tetes et lignes). Utilise des tableaux quand des données chiffrées ou comparatives ont été présentées.
+   - **sections** : une liste de sections reprenant les données clés de la discussion. Chaque section a un titre et des parties ordonnées. Chaque partie est soit un paragraphe (type "paragraphe" avec un contenu texte), soit un tableau (type "tableau" avec en_tetes et lignes). Utilise des tableaux quand des données chiffrées ou comparatives ont été présentées. Pour chaque chantier, ajoute un tableau des indicateurs avec les colonnes : Indicateur, Valeur initiale, Valeur actuelle, Valeur cible, Taux d'avancement.
    - **format** : utilise "markdown" par défaut. N'utilise "pdf" que si l'utilisateur demande explicitement un PDF.
-3. Réponds "Votre rapport est disponible au téléchargement." IMPORTANT : n'invente et ne donne JAMAIS de lien.
+4. Réponds "Votre rapport est disponible au téléchargement." IMPORTANT : n'invente et ne donne JAMAIS de lien.
 
 # Règles strictes sur les commentaires
 
