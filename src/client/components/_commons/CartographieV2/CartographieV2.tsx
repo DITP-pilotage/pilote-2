@@ -41,10 +41,8 @@ export const CartographieV2 = ({
   const getTerritoireProps: GetTerritoireProps = useCallback(
     (territoire) => ({
       key: territoire.code,
-      className: clsxm(
-        "stroke-[var(--grey-1000-50)] stroke-[0.15]",
-        onTerritoireSelect && "cursor-pointer hover:opacity-70",
-      ),
+      className: clsxm(onTerritoireSelect && "cursor-pointer hover:opacity-70"),
+      style: { stroke: "var(--grey-1000-50)", strokeWidth: 0.15 },
       fill: donnees[territoire.code]?.remplissage ?? "#e0e0e0",
       onClick: () => onTerritoireSelect?.(territoire.code),
       onMouseEnter: (event) => {

@@ -1273,6 +1273,7 @@ type RenderSVGProps = {
   key: string;
   className: string;
   fill?: string;
+  style?: React.CSSProperties;
   onClick?: () => void;
   onMouseEnter?: (
     e: React.MouseEvent<SVGPolygonElement | SVGPathElement>,

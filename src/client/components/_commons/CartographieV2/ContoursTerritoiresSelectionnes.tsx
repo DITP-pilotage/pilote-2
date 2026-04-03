@@ -20,8 +20,12 @@ export const ContoursTerritoiresSelectionnes: FunctionComponent<
             code,
             {
               key: `sel-${code}`,
-              className:
-                "fill-none stroke-[var(--yellow-moutarde-850-200)] stroke-[0.5] pointer-events-none",
+              className: "pointer-events-none",
+              fill: "none",
+              style: {
+                stroke: "var(--yellow-moutarde-850-200)",
+                strokeWidth: 0.5,
+              },
             },
             maille,
           ),

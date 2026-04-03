@@ -10,8 +10,9 @@ export const FrontieresRegions: FunctionComponent = () => {
           region.code,
           {
             key: `frontiere-${region.code}`,
-            className:
-              "fill-none stroke-[var(--grey-1000-50)] stroke-[0.4] pointer-events-none",
+            className: "pointer-events-none",
+            fill: "none",
+            style: { stroke: "var(--grey-1000-50)", strokeWidth: 0.4 },
           },
           "departementale",
         ),
