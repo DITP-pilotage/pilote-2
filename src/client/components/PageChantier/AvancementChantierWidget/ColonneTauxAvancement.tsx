@@ -34,7 +34,7 @@ export const ColonneTauxAvancement: FunctionComponent = () => {
     <div className="flex flex-col gap-3">
       <div className="text-center flex flex-col">
         <strong className="fr-mb-0">Taux d'avancement du chantier</strong>
-        <span className="fr-text--sm fr-mb-0">{jalon}</span>
+        <span className="fr-mb-0">{jalon}</span>
       </div>
       <div
         className={clsxm("flex", {
