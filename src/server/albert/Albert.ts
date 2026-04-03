@@ -171,7 +171,7 @@ export class Albert {
       system: systemPrompt,
       messages: modelMessages,
       tools,
-      stopWhen: stepCountIs(15),
+      stopWhen: stepCountIs(50),
       onFinish: (event) => Albert.saveLlmCall({ chatId, userId, event, model }),
     });
   }
