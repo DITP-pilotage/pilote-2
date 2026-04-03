@@ -4,6 +4,7 @@ import {
   procédureProtégée,
 } from "@/server/infrastructure/api/trpc/trpc";
 import { getContainer } from "@/server/dependances";
+import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 
 export const chantierRouter = créerRouteurTRPC({
   récupérerTousSynthétisésAccessiblesEnLecture: procédureProtégée.query(
@@ -42,11 +43,9 @@ export const chantierRouter = créerRouteurTRPC({
       }),
     )
     .query(({ input, ctx }) => {
-      if (
-        !ctx.session.habilitations.lecture.chantiers.includes(input.chantierId)
-      ) {
-        return [];
-      }
+      new Habilitation(
+        ctx.session.habilitations,
+      ).vérifierLesHabilitationsEnLecture(input.chantierId, null);
       return getContainer("chantiers")
         .resolve("getChantierPVACountTerritoiresQuery")
         .execute(input);
@@ -103,6 +102,44 @@ export const chantierRouter = créerRouteurTRPC({
           territoireCode: input.territoireCode,
           jalonParDefaut: input.jalonParDefaut,
         });
+    }),
+  recupererAvancementChantier: procédureProtégée
+    .input(
+      z.object({
+        chantierId: z.string(),
+        jalon: z.number(),
+        territoireCode: z.string(),
+      }),
+    )
+    .query(({ input, ctx }) => {
+      new Habilitation(
+        ctx.session.habilitations,
+      ).vérifierLesHabilitationsEnLecture(
+        input.chantierId,
+        input.territoireCode,
+      );
+      return getContainer("chantiers")
+        .resolve("getAvancementChantierQuery")
+        .execute(input);
+    }),
+  recupererSituationChantier: procédureProtégée
+    .input(
+      z.object({
+        chantierId: z.string(),
+        jalon: z.number(),
+        territoireCode: z.string(),
+      }),
+    )
+    .query(({ input, ctx }) => {
+      new Habilitation(
+        ctx.session.habilitations,
+      ).vérifierLesHabilitationsEnLecture(
+        input.chantierId,
+        input.territoireCode,
+      );
+      return getContainer("chantiers")
+        .resolve("getSituationChantierQuery")
+        .execute(input);
     }),
   recupererStatistiquesAvancement: procédureProtégée
     .input(

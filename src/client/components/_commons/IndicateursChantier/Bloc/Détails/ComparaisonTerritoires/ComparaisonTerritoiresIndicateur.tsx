@@ -4,22 +4,13 @@ import { WidgetCartographieValeurAvancement } from "@/components/_commons/Widget
 import { WidgetCartographiePVA } from "@/components/_commons/Widget/WidgetCartographiePVA/WidgetCartographiePVA";
 import { ComparaisonTerritoires } from "@/components/_commons/ComparaisonTerritoires/ComparaisonTerritoires";
 
-type ComparaisonTerritoiresIndicateurProps = {
-  indicateurId: string;
-  chantierId: string;
-  jalon: number;
-  maille: MailleInterne;
-  territoireCode: string;
-  unite: string | null;
-};
-
-type TypeCarteIndicateur = "ta" | "valeurAvancement" | "pva";
+type TypeCarteIndicateur = "ta" | "va" | "pva";
 
 const options: (
   jalon: number,
 ) => { value: TypeCarteIndicateur; label: string }[] = (jalon) => [
   { value: "ta", label: `Carte des taux d'avancement ${jalon}` },
-  { value: "valeurAvancement", label: "Carte des valeurs d'avancement" },
+  { value: "va", label: "Carte des valeurs d'avancement" },
   {
     value: "pva",
     label: "Carte des propositions de valeur d'avancement",
@@ -33,10 +24,18 @@ export const ComparaisonTerritoiresIndicateur = ({
   maille,
   territoireCode,
   unite,
-}: ComparaisonTerritoiresIndicateurProps) => (
+}: {
+  indicateurId: string;
+  chantierId: string;
+  jalon: number;
+  maille: MailleInterne;
+  territoireCode: string;
+  unite: string | null;
+}) => (
   <ComparaisonTerritoires<TypeCarteIndicateur>
+    mode="inline"
     typeParDefaut="ta"
-    typeAlternatif={(t) => (t === "ta" ? "valeurAvancement" : "ta")}
+    typeAlternatif={(t) => (t === "ta" ? "va" : "ta")}
     options={options(jalon)}
     renderCarte={(type) => {
       if (type === "ta") {
@@ -51,7 +50,7 @@ export const ComparaisonTerritoiresIndicateur = ({
           />
         );
       }
-      if (type === "valeurAvancement") {
+      if (type === "va") {
         return (
           <WidgetCartographieValeurAvancement
             indicateurId={indicateurId}

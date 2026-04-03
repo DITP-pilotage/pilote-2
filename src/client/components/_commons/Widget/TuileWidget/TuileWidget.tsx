@@ -1,11 +1,6 @@
-import { Children, FunctionComponent, ReactNode, useMemo, useRef } from "react";
+import { Children, ReactNode, useMemo, useRef } from "react";
 import { useContainerWidth } from "@/client/hooks/useContainerWidth";
-import { MesureWidgetCtx, calculerModeDisposition } from "./useMesureWidget";
-
-type TuileWidgetProps = {
-  titre: string;
-  children: ReactNode;
-};
+import { calculerModeDisposition, MesureWidgetCtx } from "./useMesureWidget";
 
 export const ColonneMesuree = ({ children }: { children: ReactNode }) => {
   const ref = useRef<HTMLDivElement>(null);
@@ -28,15 +23,18 @@ export const ColonneMesuree = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export const TuileWidget: FunctionComponent<TuileWidgetProps> = ({
+export const TuileWidget = ({
   titre,
   children,
+}: {
+  titre?: string;
+  children: ReactNode;
 }) => {
   const colonnes = Children.toArray(children).length;
 
   return (
-    <div className="fr-card fr-p-3w flex flex-col gap-4">
-      <span className="fr-text--xl font-bold fr-m-0">{titre}</span>
+    <div className="bg-white border border-dsfr-grey-925 fr-p-3w flex flex-col gap-4 rounded-lg">
+      {titre && <span className="fr-text--xl font-bold fr-m-0">{titre}</span>}
       <div
         className="grid max-sm:!grid-cols-1 gap-14"
         style={{ gridTemplateColumns: `repeat(${colonnes}, 1fr)` }}

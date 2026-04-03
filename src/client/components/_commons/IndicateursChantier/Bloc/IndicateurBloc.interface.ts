@@ -2,5 +2,6 @@ import { DétailsIndicateur } from "@/server/domain/indicateur/DétailsIndicateu
 
 export type IndicateurDetailsParTerritoire = {
   territoireNom: string;
+  territoireCode: string;
   données: DétailsIndicateur;
 };

@@ -1,0 +1,47 @@
+import clsx from "clsx";
+import { useTerritoireSelectionne } from "@/components/PageChantier/PageChantierServerSideContext";
+import { BasePageChantierLayout } from "./BasePageChantierLayout";
+import { SectionAvancementChantierLegacy } from "./sections/SectionAvancementChantierLegacy";
+import { SectionSyntheseDesResultats } from "./sections/SectionSyntheseDesResultats";
+import { SectionResponsables } from "./sections/SectionResponsables";
+import { SectionRepartitionGeographiqueLegacy } from "./sections/SectionRepartitionGeographiqueLegacy";
+import { SectionObjectifs } from "./sections/SectionObjectifs";
+import { SectionIndicateurs } from "./sections/SectionIndicateurs";
+import { SectionDecisionsStrategiques } from "./sections/SectionDecisionsStrategiques";
+import { SectionCommentaires } from "./sections/SectionCommentaires";
+
+const PageChantierLegacy = () => {
+  const territoireSélectionné = useTerritoireSelectionne();
+
+  return (
+    <BasePageChantierLayout>
+      <div
+        className={clsx(
+          "grid [grid-template-areas:'avancement'_'synthèse'_'responsables'] gap-[0.7rem]",
+          territoireSélectionné.maille === "nationale"
+            ? "md:grid-cols-1 print:[grid-template-areas:'avancement_synthèse'_'responsables_responsables'] print:grid-cols-[auto_minmax(22.5rem,1fr)]"
+            : "",
+        )}
+      >
+        <SectionAvancementChantierLegacy />
+        <SectionSyntheseDesResultats />
+        <SectionResponsables />
+      </div>
+      <SectionRepartitionGeographiqueLegacy />
+      <div className="fr-my-2w">
+        <SectionObjectifs />
+      </div>
+      <div className="fr-my-2w">
+        <SectionIndicateurs />
+      </div>
+      <div className="fr-my-2w">
+        <SectionDecisionsStrategiques />
+      </div>
+      <div className="fr-my-2w">
+        <SectionCommentaires />
+      </div>
+    </BasePageChantierLayout>
+  );
+};
+
+export default PageChantierLegacy;

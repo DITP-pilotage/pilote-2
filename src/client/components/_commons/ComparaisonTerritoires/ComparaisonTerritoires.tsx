@@ -8,6 +8,7 @@ type ComparaisonTerritoiresProps<T extends string> = {
   typeAlternatif: (typeActuel: T) => T;
   options: { value: T; label: string }[];
   renderCarte: (typeCarte: T) => ReactNode;
+  mode?: "card" | "inline";
 };
 
 export const ComparaisonTerritoires = <T extends string>({
@@ -15,6 +16,7 @@ export const ComparaisonTerritoires = <T extends string>({
   typeAlternatif,
   options,
   renderCarte,
+  mode = "card",
 }: ComparaisonTerritoiresProps<T>) => {
   const {
     panneauGauche,
@@ -27,10 +29,18 @@ export const ComparaisonTerritoires = <T extends string>({
   const estEnComparaison = panneauDroite !== null;
 
   return (
-    <div className="fr-card fr-p-3w flex flex-col gap-4">
-      <span className="fr-text--xl font-bold fr-m-0">
-        Comparaison territoriale et évolution
-      </span>
+    <div
+      className={
+        mode === "card"
+          ? "bg-white border border-dsfr-grey-925 rounded-lg p-6 flex flex-col gap-4"
+          : "flex flex-col gap-4"
+      }
+    >
+      {mode === "card" && (
+        <span className="fr-text--xl font-bold fr-m-0">
+          Comparaison territoriale et évolution
+        </span>
+      )}
       <div
         className="grid max-sm:!grid-cols-1 gap-14"
         style={{

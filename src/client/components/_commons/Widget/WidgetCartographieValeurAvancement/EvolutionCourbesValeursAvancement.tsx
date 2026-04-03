@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
-import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 import type { TerritoireEvolutionDonnees } from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
 import useIndicateurEvolutionNew from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
 import LineChart from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/LineChart/LineChart";
@@ -31,20 +30,13 @@ export const EvolutionCourbesValeursAvancement = ({
         .filter((territoire) =>
           territoiresSelectionnesCodes.includes(territoire.territoireCode),
         )
-        .map((territoire) => {
-          const territoireDetails = récupérerDétailsSurUnTerritoire(
-            territoire.territoireCode,
-          );
-
-          return {
-            territoireNom:
-              territoireDetails?.nomAffiché ?? territoire.territoireCode,
-            données: {
-              historiquesValeurs: territoire.historiquesValeurs,
-              listeValeursCiblesAnnuelles: [],
-            },
-          };
-        });
+        .map((territoire) => ({
+          territoireCode: territoire.territoireCode,
+          données: {
+            historiquesValeurs: territoire.historiquesValeurs,
+            listeValeursCiblesAnnuelles: [],
+          },
+        }));
     }, [evolutionData, territoiresSelectionnesCodes]);
 
   const {

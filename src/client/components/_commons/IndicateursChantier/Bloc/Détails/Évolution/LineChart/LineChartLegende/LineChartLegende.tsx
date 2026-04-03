@@ -1,5 +1,6 @@
 import { Dispatch, FunctionComponent, SetStateAction, useId } from "react";
-import { PALETTE_DSFR } from "@/client/utils/couleur/paletteTerritoires";
+import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
+import { getLabelTerritoire } from "@/client/constants/territoires";
 import type { TerritoireEvolutionDonnees } from "@/client/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import { Checkbox } from "@/components/shared/Checkbox";
@@ -111,27 +112,29 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
             <span>valeur de l'indicateur</span>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2" id={`legend-checkbox-${id}`}>
-          {tousLesIndicateursDetails.map((indicateurDetail, index) => {
-            const color = PALETTE_DSFR[index % PALETTE_DSFR.length];
+        <div className="grid md:grid-cols-2 gap-2" id={`legend-checkbox-${id}`}>
+          {tousLesIndicateursDetails.map((indicateurDetail) => {
+            const color = getCouleurTerritoireParCode(
+              indicateurDetail.territoireCode,
+            );
+            const nom = getLabelTerritoire(indicateurDetail.territoireCode);
             const checkboxClass = PALETTE_CHECKBOX_CLASSES[color] ?? "";
             return (
               <label
                 className="flex items-center gap-1.5 cursor-pointer text-sm"
-                key={indicateurDetail.territoireNom}
+                key={indicateurDetail.territoireCode}
               >
                 <Checkbox
-                  checked={territoiresAAfficher[indicateurDetail.territoireNom]}
+                  checked={territoiresAAfficher[nom]}
                   className={checkboxClass}
                   onCheckedChange={() => {
                     setTerritoiresAAfficher({
                       ...territoiresAAfficher,
-                      [indicateurDetail.territoireNom]:
-                        !territoiresAAfficher[indicateurDetail.territoireNom],
+                      [nom]: !territoiresAAfficher[nom],
                     });
                   }}
                 />
-                {indicateurDetail.territoireNom}
+                {nom}
               </label>
             );
           })}

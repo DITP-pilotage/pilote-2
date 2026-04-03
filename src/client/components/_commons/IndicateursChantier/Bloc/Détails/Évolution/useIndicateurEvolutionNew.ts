@@ -3,7 +3,8 @@ import { TopLevelFormatterParams } from "echarts/types/dist/shared";
 import { ComposeOption } from "echarts/types/dist/echarts";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { formaterDate } from "@/client/utils/date/date";
-import { PALETTE_DSFR } from "@/client/utils/couleur/paletteTerritoires";
+import { getCouleurTerritoireParCode } from "@/client/utils/couleur/paletteTerritoires";
+import { getLabelTerritoire } from "@/client/constants/territoires";
 import type { ChartDisplayMode, TerritoireEvolutionDonnees } from "./types";
 
 export type ECOption = ComposeOption<LineSeriesOption>;
@@ -29,20 +30,23 @@ const creerSerie = (
   indicateur: TerritoireEvolutionDonnees,
   couleur: string,
   territoiresAAfficher: Record<string, boolean>,
-): LineSeriesOption => ({
-  name: indicateur.territoireNom,
-  type: "line",
-  symbol: "circle",
-  showSymbol: true,
-  color: couleur,
-  data: territoiresAAfficher[indicateur.territoireNom]
-    ? indicateur.données.historiquesValeurs.map((valeur) => {
-        const date = new Date(valeur.date);
-        date.setDate(15);
-        return [date, valeur.valeur];
-      })
-    : undefined,
-});
+): LineSeriesOption => {
+  const nom = getLabelTerritoire(indicateur.territoireCode);
+  return {
+    name: nom,
+    type: "line",
+    symbol: "circle",
+    showSymbol: true,
+    color: couleur,
+    data: territoiresAAfficher[nom]
+      ? indicateur.données.historiquesValeurs.map((valeur) => {
+          const date = new Date(valeur.date);
+          date.setDate(15);
+          return [date, valeur.valeur];
+        })
+      : undefined,
+  };
+};
 
 const creerSerieCibles = (
   indicateur: TerritoireEvolutionDonnees,
@@ -51,40 +55,43 @@ const creerSerieCibles = (
   afficherLesCibles: boolean,
   minDate: Date,
   maxDate: Date,
-): LineSeriesOption => ({
-  name: `${indicateur.territoireNom} - Cible`,
-  type: "line",
-  symbol: "none",
-  showSymbol: false,
-  connectNulls: false,
-  color: couleur,
-  lineStyle: { type: "dashed", width: 2 },
-  silent: true,
-  data:
-    afficherLesCibles && territoiresAAfficher[indicateur.territoireNom]
-      ? indicateur.données.listeValeursCiblesAnnuelles.flatMap(
-          (cibleAnnuelle) => {
-            if (cibleAnnuelle.valeurCible === null) return [];
+): LineSeriesOption => {
+  const nom = getLabelTerritoire(indicateur.territoireCode);
+  return {
+    name: `${nom} - Cible`,
+    type: "line",
+    symbol: "none",
+    showSymbol: false,
+    connectNulls: false,
+    color: couleur,
+    lineStyle: { type: "dashed", width: 2 },
+    silent: true,
+    data:
+      afficherLesCibles && territoiresAAfficher[nom]
+        ? indicateur.données.listeValeursCiblesAnnuelles.flatMap(
+            (cibleAnnuelle) => {
+              if (cibleAnnuelle.valeurCible === null) return [];
 
-            const debutAnnee =
-              new Date(`${cibleAnnuelle.annee}-01-01`) < minDate
-                ? minDate
-                : new Date(`${cibleAnnuelle.annee}-01-01`);
+              const debutAnnee =
+                new Date(`${cibleAnnuelle.annee}-01-01`) < minDate
+                  ? minDate
+                  : new Date(`${cibleAnnuelle.annee}-01-01`);
 
-            const finAnnee =
-              new Date(`${cibleAnnuelle.annee}-12-31`) > maxDate
-                ? maxDate
-                : new Date(`${cibleAnnuelle.annee}-12-31`);
+              const finAnnee =
+                new Date(`${cibleAnnuelle.annee}-12-31`) > maxDate
+                  ? maxDate
+                  : new Date(`${cibleAnnuelle.annee}-12-31`);
 
-            return [
-              [debutAnnee, cibleAnnuelle.valeurCible],
-              [finAnnee, cibleAnnuelle.valeurCible],
-              null,
-            ];
-          },
-        )
-      : [],
-});
+              return [
+                [debutAnnee, cibleAnnuelle.valeurCible],
+                [finAnnee, cibleAnnuelle.valeurCible],
+                null,
+              ];
+            },
+          )
+        : [],
+  };
+};
 
 export default function useIndicateurEvolutionNew({
   tousLesIndicateursDetails,
@@ -100,7 +107,7 @@ export default function useIndicateurEvolutionNew({
   >(() =>
     tousLesIndicateursDetails.reduce<Record<string, boolean>>(
       (acc, indicateurDetail) => {
-        acc[indicateurDetail.territoireNom] = true;
+        acc[getLabelTerritoire(indicateurDetail.territoireCode)] = true;
         return acc;
       },
       {},
@@ -111,14 +118,14 @@ export default function useIndicateurEvolutionNew({
     const territoiresManquants = tousLesIndicateursDetails.filter(
       (indicateurDetails) =>
         !Object.keys(territoiresAAfficher).includes(
-          indicateurDetails.territoireNom,
+          getLabelTerritoire(indicateurDetails.territoireCode),
         ),
     );
 
     if (territoiresManquants.length > 0) {
       setTerritoiresAAfficher({
         ...territoiresAAfficher,
-        [territoiresManquants[0].territoireNom]: true,
+        [getLabelTerritoire(territoiresManquants[0].territoireCode)]: true,
       });
     }
   }, [
@@ -397,8 +404,10 @@ export default function useIndicateurEvolutionNew({
         outerBoundsContain: "axisLabel",
       },
       series: [
-        ...tousLesIndicateursDetails.flatMap((indicateurDetail, index) => {
-          const couleur = PALETTE_DSFR[index % PALETTE_DSFR.length];
+        ...tousLesIndicateursDetails.flatMap((indicateurDetail) => {
+          const couleur = getCouleurTerritoireParCode(
+            indicateurDetail.territoireCode,
+          );
           return [
             creerSerie(indicateurDetail, couleur, territoiresAAfficher),
             creerSerieCibles(

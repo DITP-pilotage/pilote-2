@@ -35,7 +35,7 @@ export const BaseCartographieWidgetLayout = ({
     return (
       <div className="flex flex-col gap-8 h-full">
         <div className="grid grid-cols-2 gap-8">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 max-w-[400px] mx-auto">
             {titre}
             {cartographie}
             {complementsCartographie}
