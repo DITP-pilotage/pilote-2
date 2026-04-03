@@ -6,6 +6,7 @@ import { ComparaisonTerritoires as ComparaisonTerritoiresBase } from "@/componen
 
 type ComparaisonTerritoiresProps = {
   chantierId: string;
+  nomChantier: string;
   jalon: number;
   maille: MailleInterne;
   territoireCode: string;
@@ -26,6 +27,7 @@ const options: (
 
 export const ComparaisonTerritoires = ({
   chantierId,
+  nomChantier,
   jalon,
   maille,
   territoireCode,
@@ -34,6 +36,10 @@ export const ComparaisonTerritoires = ({
     typeParDefaut="ta"
     typeAlternatif={(t) => (t === "ta" ? "meteo" : "ta")}
     options={options(jalon)}
+      metadonnees={{
+        titre: `${chantierId} - ${nomChantier}`,
+        nomFichier: `comparaison-territoriale-${chantierId}`,
+      }}
     renderCarte={(type) => {
       if (type === "ta") {
         return (

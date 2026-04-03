@@ -114,6 +114,7 @@ const Cartes: FunctionComponent<CartesProps> = ({
         <div className="mt-4">
           <ComparaisonTerritoires
             chantierId={chantier.id}
+            nomChantier={chantier.nom}
             jalon={jalon}
             maille={mailleQuery}
             territoireCode={territoireCode}
