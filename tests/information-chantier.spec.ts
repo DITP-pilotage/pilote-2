@@ -298,9 +298,9 @@ test.describe("Cartographie PVA — Comparaison territoriale", () => {
   }
 
   async function selectionnerCartePVA(page: import("@playwright/test").Page) {
-    const sectionComparaison = page.locator("div.fr-card").filter({
-      hasText: "Comparaison territoriale et évolution",
-    });
+    const sectionComparaison = page
+      .getByText("Comparaison territoriale et évolution", { exact: true })
+      .locator("..");
 
     await sectionComparaison.getByRole("combobox").first().click();
 
@@ -308,6 +308,7 @@ test.describe("Cartographie PVA — Comparaison territoriale", () => {
       .getByRole("option", {
         name: "Carte des propositions de valeur d'avancement",
       })
+      .first()
       .click();
   }
 
