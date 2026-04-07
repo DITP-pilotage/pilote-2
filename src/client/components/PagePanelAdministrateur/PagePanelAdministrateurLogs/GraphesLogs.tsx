@@ -156,22 +156,22 @@ function useEchartsTimeline(
       series: [
         {
           name: "ERROR",
-          type: "bar",
-          stack: "total",
+          type: "line",
+          smooth: true,
           data: timeline.map((entry) => entry.error),
           color: COULEURS.error,
         },
         {
           name: "WARN",
-          type: "bar",
-          stack: "total",
+          type: "line",
+          smooth: true,
           data: timeline.map((entry) => entry.warn),
           color: COULEURS.warn,
         },
         {
           name: "INFO",
-          type: "bar",
-          stack: "total",
+          type: "line",
+          smooth: true,
           data: timeline.map((entry) => entry.info),
           color: COULEURS.info,
         },
