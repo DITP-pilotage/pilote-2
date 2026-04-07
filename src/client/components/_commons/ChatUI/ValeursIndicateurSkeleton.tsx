@@ -9,13 +9,11 @@ export const ValeursIndicateurSkeleton = () => {
         <table className="!table">
           <thead>
             <tr>
-              {["w-24", "w-28", "w-28", "w-28", "w-32"].map(
-                (width, index) => (
-                  <th key={index} scope="col">
-                    <SkeletonBar className={`h-4 ${width}`} />
-                  </th>
-                ),
-              )}
+              {["w-24", "w-28", "w-28", "w-28", "w-32"].map((width, index) => (
+                <th key={index} scope="col">
+                  <SkeletonBar className={`h-4 ${width}`} />
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>

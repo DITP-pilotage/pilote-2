@@ -36,9 +36,7 @@ export const ExportRapportDownload = ({
       <Bouton
         label={label}
         iconLeft={
-          !isReady ? (
-            <LoaderIcon className="w-4 h-4 animate-spin" />
-          ) : undefined
+          !isReady ? <LoaderIcon className="w-4 h-4 animate-spin" /> : undefined
         }
         variant="primary"
         disabled={!isReady}

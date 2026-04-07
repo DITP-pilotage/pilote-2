@@ -77,9 +77,7 @@ Utilise cet outil quand l'utilisateur demande :
 - La position d'un territoire par rapport à la médiane
 - Une vue d'ensemble rapide d'un territoire`,
       inputSchema: getTauxAvancementTerritoireInputSchema,
-      execute: async (
-        input,
-      ): Promise<GetTauxAvancementTerritoireOutput> => {
+      execute: async (input): Promise<GetTauxAvancementTerritoireOutput> => {
         if (!territoiresAccessibles.includes(input.territoire_code)) {
           throw new Error(
             `Accès non autorisé au territoire ${input.territoire_code}`,
@@ -153,10 +151,7 @@ Utilise cet outil quand l'utilisateur demande :
             | "EN_AVANCE"
             | "DANS_LA_MEDIANE"
             | null = null;
-          if (
-            taux_avancement_global !== null &&
-            mediane_repartition !== null
-          ) {
+          if (taux_avancement_global !== null && mediane_repartition !== null) {
             const ecart = taux_avancement_global - mediane_repartition;
             if (ecart <= -10) {
               position_mediane = "EN_RETARD";
