@@ -10,8 +10,7 @@ export const errorHandler =
     } catch (error) {
       if (error instanceof PiloteError) {
         Logger.error(
-          "(API) Une erreur est survenue",
-          error.type,
+          { categorie: "api", source: "error-handler", statusCode: error.status, type: error.type },
           error.message,
         );
         return res
@@ -19,7 +18,8 @@ export const errorHandler =
           .json({ success: false, message: error.message });
       } else {
         Logger.error(
-          `(API) Une erreur interne est survenue : ${(error as Error).message}`,
+          { categorie: "api", source: "error-handler", statusCode: 500 },
+          `Erreur interne : ${(error as Error).message}`,
         );
         return res.status(500).json({
           success: false,
