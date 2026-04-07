@@ -1,4 +1,4 @@
-import pino, { Logger } from "pino";
+import pino, { type Logger } from "pino";
 
 class AppLogger implements Pick<Logger, "info" | "error" | "warn"> {
   private readonly _logger: Logger;
@@ -6,6 +6,20 @@ class AppLogger implements Pick<Logger, "info" | "error" | "warn"> {
   constructor() {
     this._logger = pino({
       level: "info",
+      transport: {
+        targets: [
+          {
+            target: "pino/file",
+            options: { destination: 1 },
+            level: "info",
+          },
+          {
+            target: "./pino-prisma-transport",
+            options: { databaseUrl: process.env.DATABASE_URL },
+            level: "info",
+          },
+        ],
+      },
     });
   }
 
