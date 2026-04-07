@@ -1,6 +1,6 @@
 import pino, { type Logger } from "pino";
 
-const pinoPrismaTransportPath = require.resolve("./pino-prisma-transport");
+const pinoPrismaTransportPath = require.resolve("./pino-prisma-transport.js");
 
 class AppLogger implements Pick<Logger, "info" | "error" | "warn"> {
   private readonly _logger: Logger;
