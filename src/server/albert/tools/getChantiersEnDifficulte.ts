@@ -28,14 +28,7 @@ export type GetChantiersEnDifficulteOutput = {
   _output_instructions: string;
 };
 
-const OUTPUT_INSTRUCTIONS = `Présente la liste des chantiers en difficulté de manière claire et structurée.
-Pour chaque chantier, indique :
-- Le code et le nom du chantier (format **CH-XXX — Nom**)
-- La météo (ORAGE ou NUAGE)
-- Un résumé condensé du commentaire de synthèse (1-2 phrases factuelles, ne reproduis JAMAIS le commentaire in extenso)
-Si aucun chantier n'est en difficulté, indique-le explicitement.
-Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".
-N'utilise JAMAIS de tableaux.`;
+const OUTPUT_INSTRUCTIONS = `Pour chaque chantier en difficulté, indique la météo (ORAGE ou NUAGE).`;
 
 export function createGetChantiersEnDifficulteTool({
   getChantiersEnDifficulteQuery,

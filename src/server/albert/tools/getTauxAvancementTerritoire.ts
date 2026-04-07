@@ -44,13 +44,7 @@ export type GetTauxAvancementTerritoireOutput = {
   _output_instructions: string;
 };
 
-const OUTPUT_INSTRUCTIONS = `Présente les données du taux d'avancement de manière claire et structurée.
-Pour chaque territoire, indique :
-- Le taux d'avancement global (TA)
-- La médiane de répartition
-- La position par rapport à la médiane (EN_RETARD, EN_AVANCE, DANS_LA_MEDIANE)
-Si un seul territoire est demandé, rédige un court paragraphe factuel.
-Si plusieurs territoires sont retournés, présente un tableau comparatif.`;
+const OUTPUT_INSTRUCTIONS = `Présente le TA, la médiane et la position pour chaque territoire. Un seul territoire → paragraphe factuel. Plusieurs territoires → tableau comparatif.`;
 
 function determineMaille(territoireCode: string): Maille {
   if (territoireCode.startsWith("NAT")) return "nationale";

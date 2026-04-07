@@ -42,13 +42,13 @@ export const BoutonSyntheseTerritoire = ({
               ]
             : []),
           {
-            label: "Analyser les chantiers en retard",
-            message: `Analyse les chantiers en retard sur ${territoire.nomAffiché} sur la base des commentaires`,
+            label: "Chantiers en retard et leurs indicateurs",
+            message: `Analyse les chantiers en retard sur ${territoire.nomAffiché}. Pour chaque chantier en retard, récupère également les valeurs de ses indicateurs.`,
             mode: "send",
           },
           {
-            label: `Rapport de synthèse de ${territoire.nomAffiché} (Markdown)`,
-            message: `Crée un rapport de synthèse du territoire ${territoire.nomAffiché} incluant les chantiers en difficulté et leurs indicateurs. Format Markdown`,
+            label: "Rapport complet (Markdown)",
+            message: `Crée un rapport de synthèse du territoire ${territoire.nomAffiché} incluant le taux d'avancement, les chantiers en retard, les chantiers en difficulté et leurs indicateurs. Format Markdown`,
             mode: "send",
           },
         ],
@@ -84,26 +84,6 @@ export const BoutonSyntheseTerritoire = ({
                 },
               ]
             : []),
-          {
-            label: "Comparer un chantier sur plusieurs territoires",
-            message: `Compare le chantier `,
-            mode: "fill",
-          },
-        ],
-      },
-      {
-        label: "Analyse",
-        scenarios: [
-          {
-            label: "Analyser un chantier sur le territoire",
-            message: `Analyse les indicateurs du chantier `,
-            mode: "fill",
-          },
-          {
-            label: "Identifier les plus grands écarts à la médiane",
-            message: `Identifie les chantiers avec le plus grand écart à la médiane sur ${territoire.nomAffiché}`,
-            mode: "send",
-          },
         ],
       },
     ],

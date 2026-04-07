@@ -28,15 +28,7 @@ export type GetChantiersEnRetardOutput = {
   _output_instructions: string;
 };
 
-const OUTPUT_INSTRUCTIONS = `Présente la liste des chantiers en retard de manière claire et structurée.
-Pour chaque chantier, indique :
-- Le code et le nom du chantier (format **CH-XXX — Nom**)
-- L'écart par rapport à la médiane (en points)
-- La météo de la synthèse si disponible
-- Un résumé condensé du commentaire de synthèse (1-2 phrases factuelles, ne reproduis JAMAIS le commentaire in extenso)
-Si aucun chantier n'est en retard, indique-le explicitement.
-Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".
-N'utilise JAMAIS de tableaux.`;
+const OUTPUT_INSTRUCTIONS = `Pour chaque chantier en retard, indique l'écart par rapport à la médiane (en points) et la météo de la synthèse si disponible.`;
 
 export function createGetChantiersEnRetardTool({
   getChantiersEnRetardQuery,
