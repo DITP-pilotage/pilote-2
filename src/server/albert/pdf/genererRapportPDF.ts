@@ -30,7 +30,7 @@ export function genererRapportPDF(input: RapportInput): Promise<Buffer> {
           bolditalics: "Courier-BoldOblique",
         },
       },
-      vfs,
+      vfs.vfs,
     ).getBuffer(resolve);
   });
 }
