@@ -1,5 +1,5 @@
-import path from "node:path";
 import pino, { type Logger } from "pino";
+import path from "node:path";
 
 const pinoPrismaTransportPath = path.resolve(
   process.cwd(),

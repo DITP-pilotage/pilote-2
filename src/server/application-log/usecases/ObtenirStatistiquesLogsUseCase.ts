@@ -22,11 +22,19 @@ export class ObtenirStatistiquesLogsUseCase {
   }): Promise<StatistiquesLogs> {
     // TODO: temporaire - logs fake pour tester la feature, à supprimer
     logger.info(
-      { categorie: "api", source: "ObtenirStatistiquesLogsUseCase", granularite: input.granularite },
+      {
+        categorie: "api",
+        source: "ObtenirStatistiquesLogsUseCase",
+        granularite: input.granularite,
+      },
       "Consultation des statistiques logs",
     );
     logger.error(
-      { categorie: "auth", source: "ObtenirStatistiquesLogsUseCase", duree_ms: 12500 },
+      {
+        categorie: "auth",
+        source: "ObtenirStatistiquesLogsUseCase",
+        duree_ms: 12500,
+      },
       "Timeout authentification Keycloak après 12.5s",
     );
     return this.applicationLogRepository.obtenirStatistiques(

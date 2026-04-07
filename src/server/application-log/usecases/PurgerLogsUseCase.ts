@@ -31,7 +31,12 @@ export class PurgerLogsUseCase {
 
     // TODO: temporaire - logs fake pour tester la feature, à supprimer
     logger.warn(
-      { categorie: "systeme", source: "PurgerLogsUseCase", nombreSupprime, anterieurA: input.anterieurA.toISOString() },
+      {
+        categorie: "systeme",
+        source: "PurgerLogsUseCase",
+        nombreSupprime,
+        anterieurA: input.anterieurA.toISOString(),
+      },
       "Purge des logs exécutée",
     );
 
