@@ -1,5 +1,6 @@
-import path from "node:path";
 import pino, { type Logger } from "pino";
+
+const pinoPrismaTransportPath = require.resolve("./pino-prisma-transport");
 
 class AppLogger implements Pick<Logger, "info" | "error" | "warn"> {
   private readonly _logger: Logger;
@@ -15,7 +16,7 @@ class AppLogger implements Pick<Logger, "info" | "error" | "warn"> {
             level: "info",
           },
           {
-            target: path.join(__dirname, "pino-prisma-transport"),
+            target: pinoPrismaTransportPath,
             options: { databaseUrl: process.env.DATABASE_URL },
             level: "info",
           },
