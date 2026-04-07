@@ -259,10 +259,10 @@ Dans Pilote, le TA {{JALON}} de la région s'établit à {{taux_avancement_globa
 {{X}} chantiers sont en retard de plus de 10 points par rapport à la médiane nationale :
 
 (pour chaque chantier_en_retard)
-- **{{chantier.id}} — {{chantier.nom}}**
-
-  Écart : {{ecart}} points
-  Météo : {{synthese.meteo}}
+**{{chantier.id}} — {{chantier.nom}}
+ 
+| Écart | {{ecart}} points |
+| Météo | {{synthese.meteo}} |
 
   Résumé de la situation
 
@@ -271,9 +271,10 @@ Dans Pilote, le TA {{JALON}} de la région s'établit à {{taux_avancement_globa
 {{Y}} chantiers sont compromis ou nécessitent un appui :
 
 (pour chaque chantier_en_difficulte)
-- **{{chantier.id}} — {{chantier.nom}}**
-  Météo : {{meteo}}
-  Résumé de la situation
+**{{chantier.id}} — {{chantier.nom}}**
+ 
+| Écart | {{ecart}} points |
+| Météo | {{synthese.meteo}} |
 
 Sources analysées : données quantitatives et qualitatives des chantiers publiés sur PILOTE.
 </template>
@@ -305,17 +306,20 @@ Décris factuellement les écarts de taux d'avancement entre les territoires com
 ### Communs à plusieurs territoires
 
 (pour chaque chantier en retard présent dans au moins 2 territoires)
-- **{{chantier.id}} — {{chantier.nom}}**
-  Territoires concernés : {{liste_territoires}}
-  Résumé de la situation
+**{{chantier.id}} — {{chantier.nom}}**
+
+| Territoires concernés | {{liste_territoires}} |
+Résumé de la situation
 
 ### Spécifiques à {{territoire.nom}}
 
 (pour chaque territoire, lister les chantiers en retard qui lui sont propres)
-- **{{chantier.id}} — {{chantier.nom}}**
-  Écart : {{ecart}} points
-  Météo : {{synthese.meteo}}
-  Résumé de la situation
+**{{chantier.id}} — {{chantier.nom}}**
+
+| Écart | {{ecart}} points |
+| Météo | {{synthese.meteo}} |
+
+Résumé de la situation
 
 ## Chantiers en difficulté
 
@@ -324,17 +328,21 @@ Décris factuellement les écarts de taux d'avancement entre les territoires com
 ### Communs à plusieurs territoires
 
 (pour chaque chantier en difficulté présent dans au moins 2 territoires)
-- **{{chantier.id}} — {{chantier.nom}}**
-  Territoires concernés : {{liste_territoires}}
-  Météo : {{meteo}}
-  Résumé de la situation
+**{{chantier.id}} — {{chantier.nom}}**
+
+| Territoires concernés | {{liste_territoires}} |
+| Météo | {{meteo}} |
+
+Résumé de la situation
 
 ### Spécifiques à {{territoire.nom}}
 
 (pour chaque territoire, lister les chantiers en difficulté qui lui sont propres)
-- **{{chantier.id}} — {{chantier.nom}}**
-  Météo : {{meteo}}
-  Résumé de la situation
+**{{chantier.id}} — {{chantier.nom}}**
+
+| Météo | {{meteo}} |
+
+Résumé de la situation
 
 Sources analysées : données quantitatives et qualitatives des chantiers publiés sur PILOTE.
 </template>
