@@ -6,7 +6,7 @@ import type {
 import type { GetTauxAvancementTerritoireOutput } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import type { GetChantiersEnRetardOutput } from "@/server/albert/tools/getChantiersEnRetard";
 import type { GetChantiersEnDifficulteOutput } from "@/server/albert/tools/getChantiersEnDifficulte";
-import type { GetValeursIndicateurOutput } from "@/server/albert/tools/getValeursIndicateur";
+import type { GetChantierIndicateursOutput } from "@/server/albert/tools/getChantierIndicateurs";
 
 export type PiloteUITools = {
   display_choices: {
@@ -25,14 +25,14 @@ export type PiloteUITools = {
     input: { territoire_code: string; jalon: number };
     output: GetChantiersEnDifficulteOutput;
   };
-  get_valeurs_indicateur: {
+  get_chantier_indicateurs: {
     input: {
       chantier_id: string;
       territoire_code: string;
       jalon: number;
       afficher?: boolean;
     };
-    output: GetValeursIndicateurOutput;
+    output: GetChantierIndicateursOutput;
   };
   export_rapport: {
     input: {

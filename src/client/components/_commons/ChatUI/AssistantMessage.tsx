@@ -7,8 +7,8 @@ import { AssistantLoader } from "@/components/_commons/ChatUI/AssistantLoader";
 import { BaseDisplayTool } from "@/components/_commons/ChatUI/BaseDisplayTool";
 import { ChoicesButtons } from "@/components/_commons/ChatUI/ChoicesButtons";
 import { ExportRapportDownload } from "@/components/_commons/ChatUI/ExportRapportDownload";
-import { ValeursIndicateurTable } from "@/components/_commons/ChatUI/ValeursIndicateurTable";
-import { ValeursIndicateurSkeleton } from "@/components/_commons/ChatUI/ValeursIndicateurSkeleton";
+import { ChantierIndicateursTable } from "@/components/_commons/ChatUI/ChantierIndicateursTable";
+import { ChantierIndicateursSkeleton } from "@/components/_commons/ChatUI/ChantierIndicateursSkeleton";
 import { extractMessageText } from "@/components/_commons/ChatUI/utils";
 import { Icone } from "@/components/_commons/Icone";
 import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
@@ -58,7 +58,7 @@ export const AssistantMessage = memo(function AssistantMessage({
           ) {
             return <ToolCallIndicator key={index} part={part} />;
           }
-          if (part.type === "tool-get_valeurs_indicateur") {
+          if (part.type === "tool-get_chantier_indicateurs") {
             const shouldDisplay =
               part.state !== "input-streaming" &&
               part.input?.afficher !== false;
@@ -68,13 +68,13 @@ export const AssistantMessage = memo(function AssistantMessage({
                 {shouldDisplay &&
                   (part.state === "output-available" ? (
                     <BaseDisplayTool>
-                      <ValeursIndicateurTable
+                      <ChantierIndicateursTable
                         indicateurs={part.output.resultats.indicateurs}
                       />
                     </BaseDisplayTool>
                   ) : part.state !== "output-error" ? (
                     <BaseDisplayTool>
-                      <ValeursIndicateurSkeleton />
+                      <ChantierIndicateursSkeleton />
                     </BaseDisplayTool>
                   ) : null)}
               </Fragment>

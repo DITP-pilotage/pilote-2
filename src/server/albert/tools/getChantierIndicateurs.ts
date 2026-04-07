@@ -1,9 +1,9 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { GetValeursIndicateurQuery } from "@/server/chantiers/query/GetValeursIndicateurQuery";
-import type { GetValeursIndicateurResult } from "@/server/chantiers/query/GetValeursIndicateurQuery";
+import { GetChantierIndicateursQuery } from "@/server/chantiers/query/GetChantierIndicateursQuery";
+import type { GetChantierIndicateursResult } from "@/server/chantiers/query/GetChantierIndicateursQuery";
 
-const getValeursIndicateurInputSchema = z.object({
+const getChantierIndicateursInputSchema = z.object({
   chantier_id: z.string().describe("Identifiant du chantier (ex: CH-001)"),
   territoire_code: z
     .string()
@@ -23,8 +23,8 @@ const getValeursIndicateurInputSchema = z.object({
     ),
 });
 
-export type GetValeursIndicateurOutput = {
-  resultats: GetValeursIndicateurResult;
+export type GetChantierIndicateursOutput = {
+  resultats: GetChantierIndicateursResult;
   _output_instructions: string;
 };
 
@@ -34,10 +34,10 @@ Tu peux ajouter un bref commentaire factuel sur les résultats si pertinent, san
 
 const OUTPUT_INSTRUCTIONS_MASQUER = `Les données des indicateurs ont été récupérées pour un traitement interne. Elles ne seront pas affichées dans l'interface. Utilise-les pour la suite du traitement (ex: génération de rapport).`;
 
-export function createGetValeursIndicateurTool({
-  getValeursIndicateurQuery,
+export function createGetChantierIndicateursTool({
+  getChantierIndicateursQuery,
 }: {
-  getValeursIndicateurQuery: GetValeursIndicateurQuery;
+  getChantierIndicateursQuery: GetChantierIndicateursQuery;
 }) {
   return ({ territoiresAccessibles }: { territoiresAccessibles: string[] }) => {
     return tool({
@@ -51,15 +51,15 @@ Utilise cet outil quand l'utilisateur demande :
 - Les indicateurs d'un chantier spécifique sur un territoire
 - L'état d'avancement détaillé d'un chantier (VA, VC, TA)
 - Une comparaison entre la valeur actuelle et la cible d'un chantier`,
-      inputSchema: getValeursIndicateurInputSchema,
-      execute: async (input): Promise<GetValeursIndicateurOutput> => {
+      inputSchema: getChantierIndicateursInputSchema,
+      execute: async (input): Promise<GetChantierIndicateursOutput> => {
         if (!territoiresAccessibles.includes(input.territoire_code)) {
           throw new Error(
             `Accès non autorisé au territoire ${input.territoire_code}`,
           );
         }
 
-        const result = await getValeursIndicateurQuery.execute({
+        const result = await getChantierIndicateursQuery.execute({
           territoireCode: input.territoire_code,
           chantierId: input.chantier_id,
           jalon: input.jalon,

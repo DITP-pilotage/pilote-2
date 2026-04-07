@@ -1,12 +1,12 @@
 import "@gouvfr/dsfr/dist/component/table/table.min.css";
-import type { GetValeursIndicateurResult } from "@/server/chantiers/query/GetValeursIndicateurQuery";
+import type { GetChantierIndicateursResult } from "@/server/chantiers/query/GetChantierIndicateursQuery";
 import ValeurEtDate from "@/client/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/ValeurEtDate";
 import BarreDeProgression from "@/client/components/_commons/BarreDeProgression/BarreDeProgression";
 
-export const ValeursIndicateurTable = ({
+export const ChantierIndicateursTable = ({
   indicateurs,
 }: {
-  indicateurs: GetValeursIndicateurResult["indicateurs"];
+  indicateurs: GetChantierIndicateursResult["indicateurs"];
 }) => {
   return (
     <div className="fr-table fr-p-0 fr-m-0">

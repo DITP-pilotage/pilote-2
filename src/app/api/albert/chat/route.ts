@@ -41,8 +41,8 @@ export async function POST(request: Request) {
     const createGetChantiersEnDifficulteTool = container.resolve(
       "createGetChantiersEnDifficulteTool",
     );
-    const createGetValeursIndicateurTool = container.resolve(
-      "createGetValeursIndicateurTool",
+    const createGetChantierIndicateursTool = container.resolve(
+      "createGetChantierIndicateursTool",
     );
     const createExportRapportTool = container.resolve(
       "createExportRapportTool",
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
     const getChantiersEnDifficulte = createGetChantiersEnDifficulteTool({
       territoiresAccessibles,
     });
-    const getValeursIndicateur = createGetValeursIndicateurTool({
+    const getChantierIndicateurs = createGetChantierIndicateursTool({
       territoiresAccessibles,
     });
     const exportRapport = createExportRapportTool({
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
         get_taux_avancement_territoire: getTauxAvancementTerritoire,
         get_chantiers_en_retard: getChantiersEnRetard,
         get_chantiers_en_difficulte: getChantiersEnDifficulte,
-        get_valeurs_indicateur: getValeursIndicateur,
+        get_chantier_indicateurs: getChantierIndicateurs,
         display_choices: displayChoicesTool,
         export_rapport: exportRapport,
       },

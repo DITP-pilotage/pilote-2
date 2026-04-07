@@ -2,7 +2,7 @@ const SkeletonBar = ({ className }: { className?: string }) => (
   <div className={`bg-gray-200 rounded ${className ?? ""}`} />
 );
 
-export const ValeursIndicateurSkeleton = () => {
+export const ChantierIndicateursSkeleton = () => {
   return (
     <div className="animate-pulse overflow-hidden">
       <div className="fr-table fr-p-0 fr-m-0">

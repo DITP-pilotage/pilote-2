@@ -203,7 +203,7 @@ Sources analysées : données quantitatives et qualitatives des chantiers publi�
 
 Quand l'utilisateur demande d'exporter ou télécharger un rapport :
 1. Analyse la conversation pour identifier TOUTES les données pertinentes (taux d'avancement, chantiers en retard, chantiers en difficulté, indicateurs, etc.).
-2. **Indicateurs** : pour chaque chantier mentionné dans le rapport, appelle get_valeurs_indicateur si ce n'est pas déjà fait dans la conversation. Les restrictions d'affichage des _output_instructions (ne pas reproduire les valeurs) ne s'appliquent PAS pour l'export : tu DOIS inclure les données des indicateurs sous forme de tableau dans le rapport.
+2. **Indicateurs** : pour chaque chantier mentionné dans le rapport, appelle get_chantier_indicateurs si ce n'est pas déjà fait dans la conversation. Les restrictions d'affichage des _output_instructions (ne pas reproduire les valeurs) ne s'appliquent PAS pour l'export : tu DOIS inclure les données des indicateurs sous forme de tableau dans le rapport.
 3. Appelle export_rapport avec les paramètres structurés suivants :
    - **titre** : un titre descriptif du rapport (ex: "Synthèse territoriale — Île-de-France — Jalon 2025")
    - **date** : la date du jour au format JJ/MM/AAAA
