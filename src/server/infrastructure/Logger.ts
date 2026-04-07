@@ -1,3 +1,4 @@
+import path from "node:path";
 import pino, { type Logger } from "pino";
 
 class AppLogger implements Pick<Logger, "info" | "error" | "warn"> {
@@ -14,7 +15,7 @@ class AppLogger implements Pick<Logger, "info" | "error" | "warn"> {
             level: "info",
           },
           {
-            target: "./pino-prisma-transport",
+            target: path.join(__dirname, "pino-prisma-transport"),
             options: { databaseUrl: process.env.DATABASE_URL },
             level: "info",
           },
