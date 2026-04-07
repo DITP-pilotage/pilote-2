@@ -63,7 +63,7 @@ export function createGetTauxAvancementTerritoireTool({
     const territoiresAccessibles = habilitations.lecture.territoires;
 
     return tool({
-      description: `Récupère le taux d'avancement global d'un territoire, la médiane de répartition et la position du territoire par rapport à la m��diane.
+      description: `Récupère le taux d'avancement global d'un territoire, la médiane de répartition et la position du territoire par rapport à la médiane.
 Quand include_sous_territoires=true, retourne aussi les données de chaque sous-territoire.
 
 Utilise cet outil quand l'utilisateur demande :
