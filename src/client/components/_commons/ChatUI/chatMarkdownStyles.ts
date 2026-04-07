@@ -20,7 +20,7 @@ export const chatMarkdownStyles = `
     border-collapse: collapse;
     width: 100%;
     margin: 0.75em 0;
-    font-size: 0.875em;
+    font-size: 1rem;
   }
   .albert-markdown th, .albert-markdown td {
     border: 1px solid #d1d5db;

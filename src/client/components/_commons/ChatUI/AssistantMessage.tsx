@@ -5,7 +5,6 @@ import { ToolCallIndicator } from "@/components/_commons/ChatUI/ToolCallIndicato
 import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMessageText";
 import { AssistantLoader } from "@/components/_commons/ChatUI/AssistantLoader";
 import { BaseDisplayTool } from "@/components/_commons/ChatUI/BaseDisplayTool";
-import { ChoicesButtons } from "@/components/_commons/ChatUI/ChoicesButtons";
 import { ExportRapportDownload } from "@/components/_commons/ChatUI/ExportRapportDownload";
 import { ChantierIndicateursTable } from "@/components/_commons/ChatUI/ChantierIndicateursTable";
 import { ChantierIndicateursSkeleton } from "@/components/_commons/ChatUI/ChantierIndicateursSkeleton";
@@ -108,15 +107,6 @@ export const AssistantMessage = memo(function AssistantMessage({
                   <Icone className="w-4 h-4" icone={ClipboardIcon} />
                 </button>
               )}
-            </div>
-          );
-        }
-
-        if (part.type === "tool-display_choices") {
-          if (isStreaming || part.state !== "output-available") return null;
-          return (
-            <div key={index} className="animate-fade-in my-2">
-              <ChoicesButtons choices={part.output.choices} />
             </div>
           );
         }

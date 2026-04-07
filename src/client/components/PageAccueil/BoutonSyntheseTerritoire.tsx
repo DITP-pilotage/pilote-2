@@ -58,7 +58,7 @@ export const BoutonSyntheseTerritoire = ({
         scenarios: [
           {
             label: "Comparer avec un autre territoire",
-            message: `Compare le taux d'avancement de ${territoire.nomAffiché} avec `,
+            message: `Compare ${territoire.nomAffiché} avec `,
             mode: "fill",
           },
           {

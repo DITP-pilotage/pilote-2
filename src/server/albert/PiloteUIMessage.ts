@@ -10,8 +10,8 @@ import type { GetChantierIndicateursOutput } from "@/server/albert/tools/getChan
 
 export type PiloteUITools = {
   display_choices: {
-    input: { choices: DisplayChoice[] };
-    output: { choices: DisplayChoice[] };
+    input: { question: string; choices: DisplayChoice[] };
+    output: { question: string; choices: DisplayChoice[] };
   };
   get_taux_avancement_territoire: {
     input: { territoire_code: string; jalon: number };

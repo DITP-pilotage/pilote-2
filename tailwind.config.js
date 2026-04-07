@@ -113,6 +113,10 @@ module.exports = {
           "0%": { width: "0" },
           "100%": { width: "100%" },
         },
+        "slide-up": {
+          "0%": { opacity: "0", transform: "translateY(100%)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "dropdown-fade-in": "dropdown-fade-in 150ms ease-out",
@@ -121,6 +125,7 @@ module.exports = {
         "pulse-recording": "pulse-recording 1.5s ease-in-out infinite",
         "pulse-opacity": "pulse-opacity 2s ease-in-out infinite",
         "cssload-width": "cssload-width 1s ease-out 1",
+        "slide-up": "slide-up 300ms ease-out",
       },
     },
   },
