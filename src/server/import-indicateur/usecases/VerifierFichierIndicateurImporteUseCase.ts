@@ -200,10 +200,30 @@ export class VerifierFichierIndicateurImporteUseCase {
         await this.mesureIndicateurTemporaireRepository.sauvegarder(
           report.listeMesuresIndicateurTemporaire,
         );
+        logger.info(
+          {
+            categorie: "import",
+            source: "VerifierFichierIndicateurImporteUseCase",
+            indicateurId,
+            nomDuFichier,
+            nombreLignes: report.listeMesuresIndicateurTemporaire.length,
+          },
+          "Validation fichier import réussie",
+        );
         return report;
       } else {
         await this.erreurValidationFichierRepository.sauvegarder(
           report.listeErreursValidation,
+        );
+        logger.warn(
+          {
+            categorie: "import",
+            source: "VerifierFichierIndicateurImporteUseCase",
+            indicateurId,
+            nomDuFichier,
+            nombreErreurs: report.listeErreursValidation.length,
+          },
+          "Validation fichier import échouée",
         );
         return DetailValidationFichier.creerDetailValidationFichier({
           estValide: false,
@@ -212,7 +232,15 @@ export class VerifierFichierIndicateurImporteUseCase {
         });
       }
     } catch (error) {
-      logger.error((error as Error).message);
+      logger.error(
+        {
+          categorie: "import",
+          source: "VerifierFichierIndicateurImporteUseCase",
+          indicateurId,
+          nomDuFichier,
+        },
+        (error as Error).message,
+      );
       const listeErreursValidation = [
         ErreurValidationFichier.creerErreurValidationFichier({
           rapportId: report.id,

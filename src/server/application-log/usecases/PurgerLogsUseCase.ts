@@ -1,6 +1,5 @@
 import type { ApplicationLogRepository } from "@/server/application-log/domain/ApplicationLogRepository.interface";
 import type { Inject } from "@/server/application-log/module";
-import logger from "@/server/infrastructure/Logger";
 
 const RETENTION_MINIMUM_JOURS = 7;
 
@@ -28,18 +27,6 @@ export class PurgerLogsUseCase {
     const nombreSupprime = await this.applicationLogRepository.purger(
       input.anterieurA,
     );
-
-    // TODO: temporaire - logs fake pour tester la feature, à supprimer
-    logger.warn(
-      {
-        categorie: "systeme",
-        source: "PurgerLogsUseCase",
-        nombreSupprime,
-        anterieurA: input.anterieurA.toISOString(),
-      },
-      "Purge des logs exécutée",
-    );
-
     return { nombreSupprime };
   }
 }
