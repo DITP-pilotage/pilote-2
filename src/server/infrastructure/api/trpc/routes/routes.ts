@@ -20,6 +20,7 @@ import { profilRouter } from "./profil";
 import { parametrageNouveautesRouter } from "./parametrageNouveautes";
 import { albertRouter } from "./albert";
 import { parametrageCentreAideRouter } from "./parametrageCentreAide";
+import { applicationLogRouter } from "./applicationLog";
 
 export const appRouter = créerRouteurTRPC({
   chantier: chantierRouter,
@@ -43,4 +44,5 @@ export const appRouter = créerRouteurTRPC({
   rapportHebdomadaire: rapportHebdomadaireRouter,
   albert: albertRouter,
   parametrageCentreAide: parametrageCentreAideRouter,
+  applicationLog: applicationLogRouter,
 });
