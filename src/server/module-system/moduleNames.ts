@@ -20,6 +20,7 @@ export const moduleNames = [
   "parametrageCentreAide",
   "datajobsExecution",
   "legacy",
+  "applicationLog",
 ] as const;
 
 export type ModuleName = (typeof moduleNames)[number];

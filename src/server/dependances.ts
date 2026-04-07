@@ -26,6 +26,7 @@ import { albertModule } from "./albert/module";
 import { parametrageCentreAideModule } from "./parametrage-centre-aide/module";
 import { datajobsExecutionModule } from "./datajobs-execution/module";
 import { legacyModule } from "./legacy/module";
+import { applicationLogModule } from "@/server/application-log/module";
 
 const allModules = [
   sharedModule,
@@ -49,6 +50,7 @@ const allModules = [
   parametrageCentreAideModule,
   datajobsExecutionModule,
   legacyModule,
+  applicationLogModule,
 ];
 
 // Compile-time check: errors with missing module name(s) if allModules is not exhaustive
@@ -90,6 +92,7 @@ function registerContainer(): ContainerDependencies {
     importSyntheseDesResultats: getContainer("importSyntheseDesResultats"),
     datajobsExecution: getContainer("datajobsExecution"),
     legacy: getContainer("legacy"),
+    applicationLog: getContainer("applicationLog"),
   };
 }
 
