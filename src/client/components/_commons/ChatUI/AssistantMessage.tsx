@@ -13,7 +13,7 @@ import { extractMessageText } from "@/components/_commons/ChatUI/utils";
 import { Icone } from "@/components/_commons/Icone";
 import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
 
-const TOOLS_HIDING_TEXT = ["export_rapport"];
+const TOOLS_HIDING_TEXT = new Set(["export_rapport"]);
 
 export const AssistantMessage = memo(function AssistantMessage({
   message,
@@ -22,14 +22,15 @@ export const AssistantMessage = memo(function AssistantMessage({
   message: PiloteUIMessage;
   isStreaming: boolean;
 }) {
-  const shouldHideText = message.parts?.some((part) =>
-    TOOLS_HIDING_TEXT.some(
-      (toolName) =>
-        part.type === `tool-${toolName}` &&
-        "state" in part &&
-        part.state === "output-available",
-    ),
-  );
+  const shouldHideText = message.parts?.some((part) => {
+    const toolName = part.type.startsWith("tool-") ? part.type.slice(5) : null;
+    return (
+      toolName !== null &&
+      TOOLS_HIDING_TEXT.has(toolName) &&
+      "state" in part &&
+      part.state === "output-available"
+    );
+  });
 
   const hasText = message.parts?.some(
     (part) => part.type === "text" && part.text.trim().length > 0,
@@ -43,7 +44,7 @@ export const AssistantMessage = memo(function AssistantMessage({
 
   const lastPart = message.parts?.[message.parts.length - 1];
   const isTextStreaming = lastPart?.type === "text";
-  const hasStreamingText = isTextStreaming && lastPart.text != "";
+  const hasStreamingText = isTextStreaming && lastPart.text !== "";
   const showLoader = isStreaming && isTextStreaming && !hasStreamingText;
 
   return (
@@ -58,20 +59,22 @@ export const AssistantMessage = memo(function AssistantMessage({
             return <ToolCallIndicator key={index} part={part} />;
           }
           if (part.type === "tool-get_valeurs_indicateur") {
+            const shouldDisplay = part.input?.afficher !== false;
             return (
               <Fragment key={index}>
                 <ToolCallIndicator part={part} />
-                {part.state === "output-available" ? (
-                  <BaseDisplayTool>
-                    <ValeursIndicateurTable
-                      indicateurs={part.output.resultats.indicateurs}
-                    />
-                  </BaseDisplayTool>
-                ) : part.state !== "output-error" ? (
-                  <BaseDisplayTool>
-                    <ValeursIndicateurSkeleton />
-                  </BaseDisplayTool>
-                ) : null}
+                {shouldDisplay &&
+                  (part.state === "output-available" ? (
+                    <BaseDisplayTool>
+                      <ValeursIndicateurTable
+                        indicateurs={part.output.resultats.indicateurs}
+                      />
+                    </BaseDisplayTool>
+                  ) : part.state !== "output-error" ? (
+                    <BaseDisplayTool>
+                      <ValeursIndicateurSkeleton />
+                    </BaseDisplayTool>
+                  ) : null)}
               </Fragment>
             );
           }

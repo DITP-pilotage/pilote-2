@@ -1,10 +1,6 @@
 import { validateUIMessages } from "ai";
 import { z } from "zod";
-import {
-  Albert,
-  displayChoicesTool,
-  exportRapportTool,
-} from "@/server/albert/Albert";
+import { Albert, displayChoicesTool } from "@/server/albert/Albert";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import { getContainer } from "@/server/dependances";
@@ -48,6 +44,9 @@ export async function POST(request: Request) {
     const createGetValeursIndicateurTool = container.resolve(
       "createGetValeursIndicateurTool",
     );
+    const createExportRapportTool = container.resolve(
+      "createExportRapportTool",
+    );
 
     const systemPrompt = buildChatSystemPrompt({
       territoiresAccessibles,
@@ -65,6 +64,9 @@ export async function POST(request: Request) {
     const getValeursIndicateur = createGetValeursIndicateurTool({
       territoiresAccessibles,
     });
+    const exportRapport = createExportRapportTool({
+      userId: session.user.id,
+    });
 
     const result = await Albert.streamText({
       chatId: body.id,
@@ -78,7 +80,7 @@ export async function POST(request: Request) {
         get_chantiers_en_difficulte: getChantiersEnDifficulte,
         get_valeurs_indicateur: getValeursIndicateur,
         display_choices: displayChoicesTool,
-        export_rapport: exportRapportTool,
+        export_rapport: exportRapport,
       },
     });
 

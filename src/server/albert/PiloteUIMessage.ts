@@ -26,11 +26,17 @@ export type PiloteUITools = {
     output: GetChantiersEnDifficulteOutput;
   };
   get_valeurs_indicateur: {
-    input: { chantier_id: string; territoire_code: string };
+    input: {
+      chantier_id: string;
+      territoire_code: string;
+      jalon: number;
+      afficher?: boolean;
+    };
     output: GetValeursIndicateurOutput;
   };
   export_rapport: {
     input: {
+      nom_fichier: string;
       titre: string;
       date: string;
       resume: string;

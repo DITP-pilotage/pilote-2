@@ -4,11 +4,7 @@ import {
   créerRouteurTRPC,
   procédureProtégée,
 } from "@/server/infrastructure/api/trpc/trpc";
-import {
-  Albert,
-  displayChoicesTool,
-  exportRapportTool,
-} from "@/server/albert/Albert";
+import { Albert, displayChoicesTool } from "@/server/albert/Albert";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import { getContainer } from "@/server/dependances";
 import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
@@ -48,6 +44,9 @@ export const albertRouter = créerRouteurTRPC({
       const createGetValeursIndicateurTool = container.resolve(
         "createGetValeursIndicateurTool",
       );
+      const createExportRapportTool = container.resolve(
+        "createExportRapportTool",
+      );
 
       const systemPrompt = buildChatSystemPrompt({ territoiresAccessibles });
       const getTauxAvancementTerritoire = createGetTauxAvancementTerritoireTool(
@@ -64,6 +63,9 @@ export const albertRouter = créerRouteurTRPC({
       const getValeursIndicateur = createGetValeursIndicateurTool({
         territoiresAccessibles,
       });
+      const exportRapport = createExportRapportTool({
+        userId: ctx.session.user.id,
+      });
 
       return Albert.generateText({
         chatId: input.chatId,
@@ -76,7 +78,7 @@ export const albertRouter = créerRouteurTRPC({
           get_chantiers_en_difficulte: getChantiersEnDifficulte,
           get_valeurs_indicateur: getValeursIndicateur,
           display_choices: displayChoicesTool,
-          export_rapport: exportRapportTool,
+          export_rapport: exportRapport,
         },
       });
     }),

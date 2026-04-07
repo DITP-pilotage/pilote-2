@@ -7,7 +7,10 @@ import { GetValeursIndicateurQuery } from "@/server/chantiers/query/GetValeursIn
 import { createGetValeursIndicateurTool } from "@/server/albert/tools/getValeursIndicateur";
 import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase";
 import { PrismaTerritoireResolver } from "@/server/albert/infrastructure/PrismaTerritoireResolver";
+import { FsRapportFileStorage } from "@/server/albert/infrastructure/FsRapportFileStorage";
+import { createExportRapportTool } from "@/server/albert/Albert";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import type { RapportFileStorage } from "@/server/albert/domain/RapportFileStorage";
 import {
   defineModule,
   type ExtractScope,
@@ -20,6 +23,7 @@ type AlbertImports = SharedDependencies;
 
 type AlbertOwnCradle = {
   territoireResolver: TerritoireResolver;
+  rapportFileStorage: RapportFileStorage;
   createGetTauxAvancementTerritoireTool: ReturnType<
     typeof createGetTauxAvancementTerritoireTool
   >;
@@ -35,6 +39,7 @@ type AlbertOwnCradle = {
   createGetValeursIndicateurTool: ReturnType<
     typeof createGetValeursIndicateurTool
   >;
+  createExportRapportTool: ReturnType<typeof createExportRapportTool>;
   evaluerChatUseCase: EvaluerChatUseCase;
 };
 
@@ -47,6 +52,7 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
       territoireResolver: asModuleClass(PrismaTerritoireResolver),
+      rapportFileStorage: asModuleClass(FsRapportFileStorage),
       createGetTauxAvancementTerritoireTool: asModuleFunction(
         createGetTauxAvancementTerritoireTool,
       ),
@@ -64,6 +70,7 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       createGetValeursIndicateurTool: asModuleFunction(
         createGetValeursIndicateurTool,
       ),
+      createExportRapportTool: asModuleFunction(createExportRapportTool),
       evaluerChatUseCase: asModuleClass(EvaluerChatUseCase),
     } satisfies VerifyCradle<AlbertOwnCradle>);
   },

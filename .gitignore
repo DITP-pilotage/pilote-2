@@ -54,7 +54,6 @@ qodana.yaml
 
 public/centreaide/
 public/_pagefind/
-public/exports/
 
 #submodules
 src/content/

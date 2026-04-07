@@ -10,12 +10,19 @@ import {
 } from "ai";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
+import { randomUUID } from "crypto";
 import { configuration } from "@/config";
 import { prisma } from "@/server/db/prisma";
-import { exportRapportPDF } from "@/server/albert/pdf/genererRapportPDF";
-import { exportRapportMarkdown } from "@/server/albert/markdown/exportRapportMarkdown";
+import { genererRapportPDF } from "@/server/albert/pdf/genererRapportPDF";
+import { buildRapportMarkdown } from "@/server/albert/markdown/buildRapportMarkdown";
+import type { RapportFileStorage } from "@/server/albert/domain/RapportFileStorage";
 
 const exportRapportInputSchema = z.object({
+  nom_fichier: z
+    .string()
+    .describe(
+      "Nom du fichier sans extension, en kebab-case (ex: synthese-ile-de-france-2025)",
+    ),
   titre: z.string().describe("Titre principal du rapport"),
   date: z.string().describe("Date du rapport au format JJ/MM/AAAA"),
   resume: z.string().describe("Résumé synthétique du rapport en 2-3 phrases"),
@@ -53,19 +60,34 @@ const exportRapportInputSchema = z.object({
 
 export type ExportRapportOutput = { url: string; format: "markdown" | "pdf" };
 
-export const exportRapportTool = tool({
-  description:
-    "Génère un rapport structuré synthétisant la discussion. Appelle cet outil quand l'utilisateur demande d'exporter ou télécharger un rapport. Le rapport doit contenir un titre, une date, un résumé et des sections structurées reprenant les données clés de la conversation.",
-  inputSchema: exportRapportInputSchema,
-  execute: async (input): Promise<ExportRapportOutput> => {
-    if (input.format === "pdf") {
-      const result = await exportRapportPDF(input);
-      return { ...result, format: "pdf" };
-    }
-    const result = await exportRapportMarkdown(input);
-    return { ...result, format: "markdown" };
-  },
-});
+export function createExportRapportTool({
+  rapportFileStorage,
+}: {
+  rapportFileStorage: RapportFileStorage;
+}) {
+  return ({ userId }: { userId: string }) => {
+    return tool({
+      description:
+        "Génère un rapport structuré synthétisant la discussion. Appelle cet outil quand l'utilisateur demande d'exporter ou télécharger un rapport. Le rapport doit contenir un titre, une date, un résumé et des sections structurées reprenant les données clés de la conversation.",
+      inputSchema: exportRapportInputSchema,
+      execute: async (input): Promise<ExportRapportOutput> => {
+        const shortId = randomUUID().slice(0, 8);
+        const ext = input.format === "pdf" ? "pdf" : "md";
+        const filename = `${input.nom_fichier}-${shortId}.${ext}`;
+
+        if (input.format === "pdf") {
+          const buffer = await genererRapportPDF(input);
+          const url = await rapportFileStorage.save(userId, filename, buffer);
+          return { url, format: "pdf" };
+        }
+
+        const markdown = buildRapportMarkdown(input);
+        const url = await rapportFileStorage.save(userId, filename, markdown);
+        return { url, format: "markdown" };
+      },
+    });
+  };
+}
 
 const displayChoicesInputSchema = z.object({
   choices: z

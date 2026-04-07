@@ -1,12 +1,9 @@
 import { createPdf } from "pdfmake/build/pdfmake";
 import * as vfs from "pdfmake/build/vfs_fonts";
-import { randomUUID } from "crypto";
-import { mkdir, writeFile } from "fs/promises";
-import { join } from "path";
 import { buildRapportPDFContent } from "@/server/albert/pdf/buildRapportPDFContent";
 import { RapportInput } from "@/server/albert/rapportInput";
 
-function genererRapportPDF(input: RapportInput): Promise<Buffer> {
+export function genererRapportPDF(input: RapportInput): Promise<Buffer> {
   const content = buildRapportPDFContent(input);
 
   const pdf = {
@@ -36,18 +33,4 @@ function genererRapportPDF(input: RapportInput): Promise<Buffer> {
       vfs,
     ).getBuffer(resolve);
   });
-}
-
-export async function exportRapportPDF(
-  input: RapportInput,
-): Promise<{ url: string }> {
-  const buffer = await genererRapportPDF(input);
-
-  const exportId = randomUUID();
-  const exportsDir = join(process.cwd(), "public", "exports");
-
-  await mkdir(exportsDir, { recursive: true });
-  await writeFile(join(exportsDir, `${exportId}.pdf`), buffer);
-
-  return { url: `/exports/${exportId}.pdf` };
 }

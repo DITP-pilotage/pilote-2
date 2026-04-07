@@ -14,6 +14,13 @@ const getValeursIndicateurInputSchema = z.object({
     .min(2022)
     .max(new Date().getFullYear())
     .describe("Année du jalon (ex: 2024, 2025)"),
+  afficher: z
+    .boolean()
+    .optional()
+    .default(true)
+    .describe(
+      "Si true (par défaut), les résultats seront affichés dans un tableau visuel dans l'interface. Mettre à false quand les données sont récupérées pour un traitement interne (ex: génération de rapport via export_rapport).",
+    ),
 });
 
 export type GetValeursIndicateurOutput = {
@@ -21,10 +28,11 @@ export type GetValeursIndicateurOutput = {
   _output_instructions: string;
 };
 
-const OUTPUT_INSTRUCTIONS = `Les valeurs des indicateurs seront automatiquement affichées dans un tableau visuel dans l'interface.
+const OUTPUT_INSTRUCTIONS_AFFICHER = `Les valeurs des indicateurs seront automatiquement affichées dans un tableau visuel dans l'interface.
 Ne reproduis JAMAIS les données des indicateurs (VI, VA, VC, TA) dans ta réponse textuelle, ni sous forme de tableau, ni sous forme de liste, ni dans le texte.
-Tu peux ajouter un bref commentaire factuel sur les résultats si pertinent, sans répéter les valeurs.
-EXCEPTION : lors de la génération d'un rapport (appel à export_rapport), tu DOIS inclure les données des indicateurs sous forme de tableau dans les sections du rapport.`;
+Tu peux ajouter un bref commentaire factuel sur les résultats si pertinent, sans répéter les valeurs.`;
+
+const OUTPUT_INSTRUCTIONS_MASQUER = `Les données des indicateurs ont été récupérées pour un traitement interne. Elles ne seront pas affichées dans l'interface. Utilise-les pour la suite du traitement (ex: génération de rapport).`;
 
 export function createGetValeursIndicateurTool({
   getValeursIndicateurQuery,
@@ -59,7 +67,9 @@ Utilise cet outil quand l'utilisateur demande :
 
         return {
           resultats: result,
-          _output_instructions: OUTPUT_INSTRUCTIONS,
+          _output_instructions: input.afficher
+            ? OUTPUT_INSTRUCTIONS_AFFICHER
+            : OUTPUT_INSTRUCTIONS_MASQUER,
         };
       },
     });
