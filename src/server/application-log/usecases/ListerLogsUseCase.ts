@@ -23,6 +23,10 @@ export class ListerLogsUseCase {
       { categorie: "api", source: "ListerLogsUseCase", page: filtres.page },
       "Consultation des logs admin",
     );
+    logger.error(
+      { categorie: "import", source: "ListerLogsUseCase", fichier: "indicateurs_2026.csv" },
+      "Échec import indicateur : format de date invalide ligne 42",
+    );
     return this.applicationLogRepository.lister(filtres);
   }
 }

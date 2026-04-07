@@ -25,6 +25,10 @@ export class ObtenirStatistiquesLogsUseCase {
       { categorie: "api", source: "ObtenirStatistiquesLogsUseCase", granularite: input.granularite },
       "Consultation des statistiques logs",
     );
+    logger.error(
+      { categorie: "auth", source: "ObtenirStatistiquesLogsUseCase", duree_ms: 12500 },
+      "Timeout authentification Keycloak après 12.5s",
+    );
     return this.applicationLogRepository.obtenirStatistiques(
       input.dateDebut,
       input.dateFin,
