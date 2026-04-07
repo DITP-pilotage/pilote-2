@@ -16,6 +16,7 @@ import { objectifModule } from "@/server/objectifs/module";
 import { importSyntheseDesResultatsModule } from "@/server/syntheses-des-resultats/module";
 import { ficheConducteurModule } from "@/server/fiche-conducteur/module";
 import { piloteEvalModule } from "@/server/evaluation/module";
+import { applicationLogModule } from "@/server/application-log/module";
 import { gestionUtilisateurModule } from "./gestion-utilisateur/module";
 import { parametrageNouveautesModule } from "./parametrage-nouveautes/module";
 import { indicateurTerritoireValeurEvenementModule } from "./indicateur-territoire-valeur-evenement/module";
@@ -26,7 +27,6 @@ import { albertModule } from "./albert/module";
 import { parametrageCentreAideModule } from "./parametrage-centre-aide/module";
 import { datajobsExecutionModule } from "./datajobs-execution/module";
 import { legacyModule } from "./legacy/module";
-import { applicationLogModule } from "@/server/application-log/module";
 
 const allModules = [
   sharedModule,

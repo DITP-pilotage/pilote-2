@@ -77,10 +77,7 @@ export const TableauLogs: FunctionComponent = () => {
           >
             <option value="">Tous</option>
             {Object.values($Enums.log_level).map((level) => (
-              <option
-                key={level}
-                value={level}
-              >
+              <option key={level} value={level}>
                 {level}
               </option>
             ))}
@@ -103,10 +100,7 @@ export const TableauLogs: FunctionComponent = () => {
           >
             <option value="">Toutes</option>
             {CATEGORIES.map((cat) => (
-              <option
-                key={cat}
-                value={cat}
-              >
+              <option key={cat} value={cat}>
                 {cat}
               </option>
             ))}
@@ -201,7 +195,7 @@ export const TableauLogs: FunctionComponent = () => {
                     {log.source}
                   </td>
                   <td className="px-4 py-2">
-                    {log.contexte && (
+                    {log.contexte != null && (
                       <button
                         className="text-gray-400 hover:text-gray-700 transition-colors"
                         onClick={() => toggleExpansion(log.id)}
@@ -212,13 +206,10 @@ export const TableauLogs: FunctionComponent = () => {
                     )}
                   </td>
                 </tr>
-                {logExpanduId === log.id && log.contexte && (
+                {logExpanduId === log.id && log.contexte != null && (
                   <tr>
-                    <td
-                      className="p-4 bg-[#1e1e2e]"
-                      colSpan={6}
-                    >
-                      <pre className="text-[#cdd6f4] font-mono text-xs whitespace-pre-wrap m-0">
+                    <td className="p-4 bg-dsfr-grey-50" colSpan={6}>
+                      <pre className="text-dsfr-grey-925 font-mono text-xs whitespace-pre-wrap m-0">
                         {JSON.stringify(log.contexte, null, 2)}
                       </pre>
                     </td>

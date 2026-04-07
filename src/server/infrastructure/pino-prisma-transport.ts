@@ -1,5 +1,5 @@
 import build from "pino-abstract-transport";
-import { PrismaClient } from "@prisma/client";
+import { type $Enums, Prisma, PrismaClient } from "@prisma/client";
 
 export default async function (opts: { databaseUrl?: string }) {
   const prisma = new PrismaClient({
@@ -18,7 +18,9 @@ export default async function (opts: { databaseUrl?: string }) {
               level,
               categorie: log.categorie ?? "systeme",
               message: log.msg ?? "",
-              contexte: extraireContexte(log),
+              contexte:
+                (extraireContexte(log) as Prisma.InputJsonValue) ??
+                Prisma.JsonNull,
               source: log.source ?? null,
               duree_ms: log.duree_ms ?? null,
             },
@@ -36,7 +38,7 @@ export default async function (opts: { databaseUrl?: string }) {
   );
 }
 
-function mapPinoLevelToEnum(pinoLevel: number): string | null {
+function mapPinoLevelToEnum(pinoLevel: number): $Enums.log_level | null {
   if (pinoLevel >= 50) return "ERROR";
   if (pinoLevel >= 40) return "WARN";
   if (pinoLevel >= 30) return "INFO";
@@ -44,19 +46,25 @@ function mapPinoLevelToEnum(pinoLevel: number): string | null {
   return null;
 }
 
+const CHAMPS_STANDARD_PINO = new Set([
+  "level",
+  "time",
+  "pid",
+  "hostname",
+  "msg",
+  "categorie",
+  "source",
+  "duree_ms",
+]);
+
 function extraireContexte(
   log: Record<string, unknown>,
 ): Record<string, unknown> | null {
-  const {
-    level: _level,
-    time: _time,
-    pid: _pid,
-    hostname: _hostname,
-    msg: _msg,
-    categorie: _categorie,
-    source: _source,
-    duree_ms: _dureeMs,
-    ...contexte
-  } = log;
+  const contexte: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(log)) {
+    if (!CHAMPS_STANDARD_PINO.has(key)) {
+      contexte[key] = value;
+    }
+  }
   return Object.keys(contexte).length > 0 ? contexte : null;
 }

@@ -1,12 +1,12 @@
 import { FunctionComponent, useEffect, useRef } from "react";
 import * as echarts from "echarts";
-import { useGraphesLogs } from "./useGraphesLogs";
 import type { Granularite } from "@/server/application-log/domain/ApplicationLogRepository.interface";
+import { useGraphesLogs } from "./useGraphesLogs";
 
 const COULEURS = {
-  error: "#e3342f",
-  warn: "#f6993f",
-  info: "#3490dc",
+  error: "#CE0500",
+  warn: "#B34000",
+  info: "#0063cb",
 };
 
 export const GraphesLogs: FunctionComponent = () => {
@@ -21,7 +21,8 @@ export const GraphesLogs: FunctionComponent = () => {
     if (!statistiques || !timelineRef.current) return;
 
     const chart = echarts.init(timelineRef.current);
-    const dates = statistiques.timeline.map((entry) =>
+    const { timeline } = statistiques;
+    const dates = timeline.map((entry) =>
       new Date(entry.date).toLocaleDateString("fr-FR", {
         day: "2-digit",
         month: "2-digit",
@@ -38,21 +39,21 @@ export const GraphesLogs: FunctionComponent = () => {
           name: "ERROR",
           type: "bar",
           stack: "total",
-          data: statistiques.timeline.map((entry) => entry.error),
+          data: timeline.map((entry) => entry.error),
           color: COULEURS.error,
         },
         {
           name: "WARN",
           type: "bar",
           stack: "total",
-          data: statistiques.timeline.map((entry) => entry.warn),
+          data: timeline.map((entry) => entry.warn),
           color: COULEURS.warn,
         },
         {
           name: "INFO",
           type: "bar",
           stack: "total",
-          data: statistiques.timeline.map((entry) => entry.info),
+          data: timeline.map((entry) => entry.info),
           color: COULEURS.info,
         },
       ],
@@ -69,6 +70,7 @@ export const GraphesLogs: FunctionComponent = () => {
   useEffect(() => {
     if (!statistiques || !donutRef.current) return;
 
+    const { parLevel } = statistiques;
     const chart = echarts.init(donutRef.current);
     chart.setOption({
       tooltip: { trigger: "item" },
@@ -76,14 +78,13 @@ export const GraphesLogs: FunctionComponent = () => {
         {
           type: "pie",
           radius: ["40%", "70%"],
-          data: statistiques.parLevel.map((entry) => ({
+          data: parLevel.map((entry) => ({
             name: entry.level,
             value: entry.count,
             itemStyle: {
               color:
-                COULEURS[
-                  entry.level.toLowerCase() as keyof typeof COULEURS
-                ] ?? "#888",
+                COULEURS[entry.level.toLowerCase() as keyof typeof COULEURS] ??
+                "#929292",
             },
           })),
           label: { formatter: "{b}: {d}%" },
@@ -102,10 +103,9 @@ export const GraphesLogs: FunctionComponent = () => {
   useEffect(() => {
     if (!statistiques || !barRef.current) return;
 
+    const { parCategorie } = statistiques;
     const chart = echarts.init(barRef.current);
-    const sorted = [...statistiques.parCategorie].sort(
-      (a, b) => a.count - b.count,
-    );
+    const sorted = [...parCategorie].sort((a, b) => a.count - b.count);
 
     chart.setOption({
       tooltip: { trigger: "axis" },
@@ -145,9 +145,7 @@ export const GraphesLogs: FunctionComponent = () => {
           <select
             className="px-3 py-2 border border-gray-300 rounded text-sm bg-white"
             id="periode-graphes"
-            onChange={(event) =>
-              setPeriode(event.target.value as "7j" | "30j")
-            }
+            onChange={(event) => setPeriode(event.target.value as "7j" | "30j")}
             value={periode}
           >
             <option value="7j">7 jours</option>
@@ -180,10 +178,7 @@ export const GraphesLogs: FunctionComponent = () => {
       <h3 className="text-base font-semibold text-gray-800 mb-2">
         Timeline des logs par niveau
       </h3>
-      <div
-        className="w-full h-[360px]"
-        ref={timelineRef}
-      />
+      <div className="w-full h-[360px]" ref={timelineRef} />
 
       {/* Donut + Bar horizontal */}
       <div className="grid grid-cols-2 gap-6 mt-8">
@@ -191,19 +186,13 @@ export const GraphesLogs: FunctionComponent = () => {
           <h3 className="text-base font-semibold text-gray-800 mb-2">
             Répartition par niveau
           </h3>
-          <div
-            className="w-full h-[300px]"
-            ref={donutRef}
-          />
+          <div className="w-full h-[300px]" ref={donutRef} />
         </div>
         <div>
           <h3 className="text-base font-semibold text-gray-800 mb-2">
             Répartition par catégorie
           </h3>
-          <div
-            className="w-full h-[300px]"
-            ref={barRef}
-          />
+          <div className="w-full h-[300px]" ref={barRef} />
         </div>
       </div>
     </div>

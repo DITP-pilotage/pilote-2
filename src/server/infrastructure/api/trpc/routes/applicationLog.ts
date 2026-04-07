@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { $Enums } from "@prisma/client";
 import {
   créerRouteurTRPC,
   procédureProtégée,
@@ -7,7 +8,6 @@ import {
 import { getContainer } from "@/server/dependances";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { UnauthorizedError } from "@/server/app/error-boundary/unauthorized-error";
-import { $Enums } from "@prisma/client";
 
 const zodLogLevel = z.nativeEnum($Enums.log_level);
 const zodGranularite = z.enum(["heure", "jour", "semaine"]);

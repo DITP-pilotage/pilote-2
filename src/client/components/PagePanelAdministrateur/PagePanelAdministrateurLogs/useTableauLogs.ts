@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
-import api from "@/server/infrastructure/api/trpc/api";
 import { $Enums } from "@prisma/client";
+import api from "@/server/infrastructure/api/trpc/api";
 
 export function useTableauLogs() {
   const [page, setPage] = useState(1);
@@ -15,7 +15,7 @@ export function useTableauLogs() {
 
   const taillePage = 50;
 
-  const { data } = api.applicationLog.lister.useSuspenseQuery({
+  const [data] = api.applicationLog.lister.useSuspenseQuery({
     page,
     taillePage,
     filtreLevel,
