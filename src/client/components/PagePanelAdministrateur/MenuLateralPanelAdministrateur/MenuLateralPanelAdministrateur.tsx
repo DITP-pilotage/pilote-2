@@ -74,6 +74,11 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
         href: "/panel-administrateur/feature-flipping",
         pageKey: "feature-flipping",
       },
+      {
+        label: "Logs applicatifs",
+        href: "/panel-administrateur/logs",
+        pageKey: "logs",
+      },
     ],
     [ffGestionTokenAPI, ffCentreAide],
   );
