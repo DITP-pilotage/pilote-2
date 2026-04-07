@@ -3,11 +3,6 @@ import { getContainer } from "@/server/dependances";
 
 const SAFE_FILENAME_REGEX = /^[a-z0-9-]+-[a-f0-9]{8}\.(md|pdf)$/;
 
-const CONTENT_TYPES: Record<string, string> = {
-  md: "text/markdown; charset=utf-8",
-  pdf: "application/pdf",
-};
-
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ userId: string; filename: string }> },
@@ -36,12 +31,9 @@ export async function GET(
     return new Response("Not found", { status: 404 });
   }
 
-  const ext = filename.split(".").pop() ?? "";
-  const contentType = CONTENT_TYPES[ext] ?? result.contentType;
-
   return new Response(result.stream, {
     headers: {
-      "Content-Type": contentType,
+      "Content-Type": result.contentType,
       "Content-Disposition": `attachment; filename="${filename}"`,
     },
   });

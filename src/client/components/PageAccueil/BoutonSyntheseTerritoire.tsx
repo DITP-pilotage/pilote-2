@@ -46,6 +46,11 @@ export const BoutonSyntheseTerritoire = ({
             message: `Analyse les chantiers en retard sur ${territoire.nomAffiché} sur la base des commentaires`,
             mode: "send",
           },
+          {
+            label: `Rapport de synthèse de ${territoire.nomAffiché} (Markdown)`,
+            message: `Crée un rapport de synthèse du territoire ${territoire.nomAffiché} incluant les chantiers en difficulté et leurs indicateurs. Format Markdown`,
+            mode: "send",
+          },
         ],
       },
       {

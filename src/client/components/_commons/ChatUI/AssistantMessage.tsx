@@ -59,7 +59,9 @@ export const AssistantMessage = memo(function AssistantMessage({
             return <ToolCallIndicator key={index} part={part} />;
           }
           if (part.type === "tool-get_valeurs_indicateur") {
-            const shouldDisplay = part.input?.afficher !== false;
+            const shouldDisplay =
+              part.state !== "input-streaming" &&
+              part.input?.afficher !== false;
             return (
               <Fragment key={index}>
                 <ToolCallIndicator part={part} />
