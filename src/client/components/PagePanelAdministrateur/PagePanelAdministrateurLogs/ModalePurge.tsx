@@ -1,12 +1,15 @@
 import { FunctionComponent, useState } from "react";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
+import { Modale } from "@/components/shared/Modale";
 
 type ModalePurgeProps = {
+  open: boolean;
   onFermer: () => void;
 };
 
 export const ModalePurge: FunctionComponent<ModalePurgeProps> = ({
+  open,
   onFermer,
 }) => {
   const [dateStr, setDateStr] = useState("");
@@ -28,85 +31,60 @@ export const ModalePurge: FunctionComponent<ModalePurgeProps> = ({
   };
 
   return (
-    <dialog
-      aria-labelledby="modale-purge-titre"
-      className="fr-modal fr-modal--opened"
-      open
-      role="dialog"
+    <Modale
+      onOpenChange={(isOpen) => {
+        if (!isOpen) onFermer();
+      }}
+      open={open}
+      size="sm"
+      title="Purger les logs"
     >
-      <div className="fr-container fr-container--fluid fr-container-md">
-        <div className="fr-grid-row fr-grid-row--center">
-          <div className="fr-col-12 fr-col-md-6">
-            <div className="fr-modal__body">
-              <div className="fr-modal__header">
-                <button
-                  className="fr-btn--close fr-btn"
-                  onClick={onFermer}
-                  type="button"
-                >
-                  Fermer
-                </button>
-              </div>
-              <div className="fr-modal__content">
-                <h1
-                  className="fr-modal__title"
-                  id="modale-purge-titre"
-                >
-                  Purger les logs
-                </h1>
-                <p>
-                  Supprimer tous les logs antérieurs à la date sélectionnée.
-                  Minimum 7 jours de rétention.
-                </p>
-                <div className="fr-input-group">
-                  <label
-                    className="fr-label"
-                    htmlFor="date-purge"
-                  >
-                    Supprimer les logs antérieurs au
-                  </label>
-                  <input
-                    className="fr-input"
-                    id="date-purge"
-                    onChange={(event) => setDateStr(event.target.value)}
-                    type="date"
-                    value={dateStr}
-                  />
-                </div>
-                {mutation.error && (
-                  <p className="fr-error-text">{mutation.error.message}</p>
-                )}
-                {mutation.isSuccess && (
-                  <p className="fr-valid-text">
-                    {mutation.data.nombreSupprime} logs supprimés.
-                  </p>
-                )}
-              </div>
-              <div className="fr-modal__footer">
-                <div className="fr-btns-group fr-btns-group--right fr-btns-group--inline">
-                  <button
-                    className="fr-btn fr-btn--secondary"
-                    onClick={onFermer}
-                    type="button"
-                  >
-                    Annuler
-                  </button>
-                  <button
-                    className="fr-btn"
-                    disabled={!dateStr || mutation.isPending}
-                    onClick={handlePurger}
-                    type="button"
-                  >
-                    {mutation.isPending
-                      ? "Suppression..."
-                      : "Confirmer la purge"}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="space-y-4">
+        <p className="text-sm text-gray-600">
+          Supprimer tous les logs antérieurs à la date sélectionnée. Minimum 7
+          jours de rétention.
+        </p>
+        <div>
+          <label
+            className="block text-sm font-medium text-gray-700 mb-1"
+            htmlFor="date-purge"
+          >
+            Supprimer les logs antérieurs au
+          </label>
+          <input
+            className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
+            id="date-purge"
+            onChange={(event) => setDateStr(event.target.value)}
+            type="date"
+            value={dateStr}
+          />
+        </div>
+        {mutation.error && (
+          <p className="text-sm text-red-600">{mutation.error.message}</p>
+        )}
+        {mutation.isSuccess && (
+          <p className="text-sm text-green-600">
+            {mutation.data.nombreSupprime} logs supprimés.
+          </p>
+        )}
+        <div className="flex justify-end gap-3 pt-2">
+          <button
+            className="px-4 py-2 text-sm border border-gray-300 rounded hover:bg-gray-50"
+            onClick={onFermer}
+            type="button"
+          >
+            Annuler
+          </button>
+          <button
+            className="px-4 py-2 text-sm bg-red-600 text-white rounded hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={!dateStr || mutation.isPending}
+            onClick={handlePurger}
+            type="button"
+          >
+            {mutation.isPending ? "Suppression..." : "Confirmer la purge"}
+          </button>
         </div>
       </div>
-    </dialog>
+    </Modale>
   );
 };

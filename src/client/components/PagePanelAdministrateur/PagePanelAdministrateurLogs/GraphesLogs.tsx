@@ -10,14 +10,8 @@ const COULEURS = {
 };
 
 export const GraphesLogs: FunctionComponent = () => {
-  const {
-    statistiques,
-    isLoading,
-    periode,
-    setPeriode,
-    granularite,
-    setGranularite,
-  } = useGraphesLogs();
+  const { statistiques, periode, setPeriode, granularite, setGranularite } =
+    useGraphesLogs();
 
   const timelineRef = useRef<HTMLDivElement>(null);
   const donutRef = useRef<HTMLDivElement>(null);
@@ -137,20 +131,19 @@ export const GraphesLogs: FunctionComponent = () => {
     };
   }, [statistiques]);
 
-  if (isLoading) return <p>Chargement...</p>;
-
   return (
     <div>
-      <div className="fr-grid-row fr-grid-row--gutters fr-mb-2w">
-        <div className="fr-col-auto">
+      {/* Filtres */}
+      <div className="flex gap-4 mb-6">
+        <div>
           <label
-            className="fr-label"
+            className="block text-sm font-medium text-gray-700 mb-1"
             htmlFor="periode-graphes"
           >
             Période
           </label>
           <select
-            className="fr-select"
+            className="px-3 py-2 border border-gray-300 rounded text-sm bg-white"
             id="periode-graphes"
             onChange={(event) =>
               setPeriode(event.target.value as "7j" | "30j")
@@ -161,15 +154,15 @@ export const GraphesLogs: FunctionComponent = () => {
             <option value="30j">30 jours</option>
           </select>
         </div>
-        <div className="fr-col-auto">
+        <div>
           <label
-            className="fr-label"
+            className="block text-sm font-medium text-gray-700 mb-1"
             htmlFor="granularite-graphes"
           >
             Granularité
           </label>
           <select
-            className="fr-select"
+            className="px-3 py-2 border border-gray-300 rounded text-sm bg-white"
             id="granularite-graphes"
             onChange={(event) =>
               setGranularite(event.target.value as Granularite)
@@ -183,25 +176,33 @@ export const GraphesLogs: FunctionComponent = () => {
         </div>
       </div>
 
-      <h3 className="fr-h6">Timeline des logs par niveau</h3>
+      {/* Timeline stacked bar */}
+      <h3 className="text-base font-semibold text-gray-800 mb-2">
+        Timeline des logs par niveau
+      </h3>
       <div
+        className="w-full h-[360px]"
         ref={timelineRef}
-        style={{ width: "100%", height: "360px" }}
       />
 
-      <div className="fr-grid-row fr-grid-row--gutters fr-mt-4w">
-        <div className="fr-col-6">
-          <h3 className="fr-h6">Répartition par niveau</h3>
+      {/* Donut + Bar horizontal */}
+      <div className="grid grid-cols-2 gap-6 mt-8">
+        <div>
+          <h3 className="text-base font-semibold text-gray-800 mb-2">
+            Répartition par niveau
+          </h3>
           <div
+            className="w-full h-[300px]"
             ref={donutRef}
-            style={{ width: "100%", height: "300px" }}
           />
         </div>
-        <div className="fr-col-6">
-          <h3 className="fr-h6">Répartition par catégorie</h3>
+        <div>
+          <h3 className="text-base font-semibold text-gray-800 mb-2">
+            Répartition par catégorie
+          </h3>
           <div
+            className="w-full h-[300px]"
             ref={barRef}
-            style={{ width: "100%", height: "300px" }}
           />
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { Fragment, FunctionComponent, useState } from "react";
 import { $Enums } from "@prisma/client";
+import { clsxm } from "@/utils/clsxm";
 import { useTableauLogs } from "./useTableauLogs";
 import { ModalePurge } from "./ModalePurge";
 
@@ -14,11 +15,11 @@ const CATEGORIES = [
   "systeme",
 ];
 
-const BADGE_CLASSES: Record<$Enums.log_level, string> = {
-  ERROR: "fr-badge fr-badge--error fr-badge--no-icon fr-badge--sm",
-  WARN: "fr-badge fr-badge--warning fr-badge--no-icon fr-badge--sm",
-  INFO: "fr-badge fr-badge--info fr-badge--no-icon fr-badge--sm",
-  DEBUG: "fr-badge fr-badge--new fr-badge--no-icon fr-badge--sm",
+const BADGE_STYLES: Record<$Enums.log_level, string> = {
+  ERROR: "bg-red-100 text-red-800",
+  WARN: "bg-orange-100 text-orange-800",
+  INFO: "bg-blue-100 text-blue-800",
+  DEBUG: "bg-gray-100 text-gray-600",
 };
 
 function formaterDate(date: Date | string): string {
@@ -36,7 +37,6 @@ export const TableauLogs: FunctionComponent = () => {
   const {
     logs,
     total,
-    isLoading,
     page,
     setPage,
     totalPages,
@@ -56,16 +56,17 @@ export const TableauLogs: FunctionComponent = () => {
 
   return (
     <div>
-      <div className="fr-grid-row fr-grid-row--gutters fr-mb-2w">
-        <div className="fr-col-3">
+      {/* Filtres */}
+      <div className="grid grid-cols-4 gap-4 mb-4">
+        <div>
           <label
-            className="fr-label"
+            className="block text-sm font-medium text-gray-700 mb-1"
             htmlFor="filtre-level"
           >
             Niveau
           </label>
           <select
-            className="fr-select"
+            className="w-full px-3 py-2 border border-gray-300 rounded text-sm bg-white"
             id="filtre-level"
             onChange={(event) =>
               setFiltreLevel(
@@ -85,15 +86,15 @@ export const TableauLogs: FunctionComponent = () => {
             ))}
           </select>
         </div>
-        <div className="fr-col-3">
+        <div>
           <label
-            className="fr-label"
+            className="block text-sm font-medium text-gray-700 mb-1"
             htmlFor="filtre-categorie"
           >
             Catégorie
           </label>
           <select
-            className="fr-select"
+            className="w-full px-3 py-2 border border-gray-300 rounded text-sm bg-white"
             id="filtre-categorie"
             onChange={(event) =>
               setFiltreCategorie(event.target.value || undefined)
@@ -111,15 +112,15 @@ export const TableauLogs: FunctionComponent = () => {
             ))}
           </select>
         </div>
-        <div className="fr-col-3">
+        <div>
           <label
-            className="fr-label"
+            className="block text-sm font-medium text-gray-700 mb-1"
             htmlFor="filtre-date-debut"
           >
             Date début
           </label>
           <input
-            className="fr-input"
+            className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
             id="filtre-date-debut"
             onChange={(event) =>
               setDateDebut(
@@ -132,15 +133,15 @@ export const TableauLogs: FunctionComponent = () => {
             value={dateDebut ? dateDebut.slice(0, 10) : ""}
           />
         </div>
-        <div className="fr-col-3">
+        <div>
           <label
-            className="fr-label"
+            className="block text-sm font-medium text-gray-700 mb-1"
             htmlFor="filtre-recherche"
           >
             Recherche
           </label>
           <input
-            className="fr-input"
+            className="w-full px-3 py-2 border border-gray-300 rounded text-sm"
             id="filtre-recherche"
             onChange={(event) =>
               setFiltreRecherche(event.target.value || undefined)
@@ -152,151 +153,121 @@ export const TableauLogs: FunctionComponent = () => {
         </div>
       </div>
 
-      {isLoading ? (
-        <p>Chargement...</p>
-      ) : (
-        <>
-          <div className="fr-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Timestamp</th>
-                  <th>Niveau</th>
-                  <th>Catégorie</th>
-                  <th>Message</th>
-                  <th>Source</th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {logs.map((log) => (
-                  <Fragment key={log.id}>
-                    <tr>
-                      <td
-                        style={{
-                          fontFamily: "monospace",
-                          whiteSpace: "nowrap",
-                        }}
+      {/* Tableau */}
+      <div className="overflow-x-auto border border-gray-200 rounded-lg">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th className="px-4 py-3 text-left font-medium text-gray-600">
+                Timestamp
+              </th>
+              <th className="px-4 py-3 text-left font-medium text-gray-600">
+                Niveau
+              </th>
+              <th className="px-4 py-3 text-left font-medium text-gray-600">
+                Catégorie
+              </th>
+              <th className="px-4 py-3 text-left font-medium text-gray-600">
+                Message
+              </th>
+              <th className="px-4 py-3 text-left font-medium text-gray-600">
+                Source
+              </th>
+              <th className="px-4 py-3 w-10" />
+            </tr>
+          </thead>
+          <tbody>
+            {logs.map((log) => (
+              <Fragment key={log.id}>
+                <tr className="border-b border-gray-100 hover:bg-gray-50">
+                  <td className="px-4 py-2 font-mono text-xs whitespace-nowrap">
+                    {formaterDate(log.timestamp)}
+                  </td>
+                  <td className="px-4 py-2">
+                    <span
+                      className={clsxm(
+                        "inline-block px-2 py-0.5 rounded text-xs font-medium",
+                        BADGE_STYLES[log.level],
+                      )}
+                    >
+                      {log.level}
+                    </span>
+                  </td>
+                  <td className="px-4 py-2 text-gray-700">{log.categorie}</td>
+                  <td className="px-4 py-2 max-w-[400px] truncate text-gray-800">
+                    {log.message}
+                  </td>
+                  <td className="px-4 py-2 font-mono text-xs text-gray-500">
+                    {log.source}
+                  </td>
+                  <td className="px-4 py-2">
+                    {log.contexte && (
+                      <button
+                        className="text-gray-400 hover:text-gray-700 transition-colors"
+                        onClick={() => toggleExpansion(log.id)}
+                        type="button"
                       >
-                        {formaterDate(log.timestamp)}
-                      </td>
-                      <td>
-                        <span className={BADGE_CLASSES[log.level]}>
-                          {log.level}
-                        </span>
-                      </td>
-                      <td>{log.categorie}</td>
-                      <td
-                        style={{
-                          maxWidth: "400px",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {log.message}
-                      </td>
-                      <td
-                        style={{
-                          fontFamily: "monospace",
-                          fontSize: "0.85em",
-                        }}
-                      >
-                        {log.source}
-                      </td>
-                      <td>
-                        {log.contexte && (
-                          <button
-                            className="fr-btn fr-btn--sm fr-btn--tertiary-no-outline"
-                            onClick={() => toggleExpansion(log.id)}
-                            type="button"
-                          >
-                            {logExpanduId === log.id ? "▼" : "▶"}
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                    {logExpanduId === log.id && log.contexte && (
-                      <tr>
-                        <td
-                          colSpan={6}
-                          style={{
-                            background: "#1e1e2e",
-                            padding: "1rem",
-                          }}
-                        >
-                          <pre
-                            style={{
-                              color: "#cdd6f4",
-                              fontFamily: "monospace",
-                              fontSize: "0.85em",
-                              margin: 0,
-                              whiteSpace: "pre-wrap",
-                            }}
-                          >
-                            {JSON.stringify(log.contexte, null, 2)}
-                          </pre>
-                        </td>
-                      </tr>
+                        {logExpanduId === log.id ? "▼" : "▶"}
+                      </button>
                     )}
-                  </Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="fr-grid-row fr-grid-row--middle fr-mt-2w">
-            <div className="fr-col">
-              <p className="fr-text--sm fr-mb-0">
-                {total} logs — Page {page} / {totalPages}
-              </p>
-            </div>
-            <div className="fr-col-auto">
-              <nav
-                aria-label="Pagination"
-                className="fr-pagination"
-                role="navigation"
-              >
-                <ul className="fr-pagination__list">
-                  <li>
-                    <button
-                      className="fr-pagination__link fr-pagination__link--prev"
-                      disabled={page <= 1}
-                      onClick={() => setPage(page - 1)}
-                      type="button"
+                  </td>
+                </tr>
+                {logExpanduId === log.id && log.contexte && (
+                  <tr>
+                    <td
+                      className="p-4 bg-[#1e1e2e]"
+                      colSpan={6}
                     >
-                      Précédent
-                    </button>
-                  </li>
-                  <li>
-                    <button
-                      className="fr-pagination__link fr-pagination__link--next"
-                      disabled={page >= totalPages}
-                      onClick={() => setPage(page + 1)}
-                      type="button"
-                    >
-                      Suivant
-                    </button>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-            <div className="fr-col-auto">
-              <button
-                className="fr-btn fr-btn--secondary"
-                onClick={() => setModalePurgeOuverte(true)}
-                type="button"
-              >
-                Purger les logs
-              </button>
-            </div>
-          </div>
-        </>
-      )}
+                      <pre className="text-[#cdd6f4] font-mono text-xs whitespace-pre-wrap m-0">
+                        {JSON.stringify(log.contexte, null, 2)}
+                      </pre>
+                    </td>
+                  </tr>
+                )}
+              </Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-      {modalePurgeOuverte && (
-        <ModalePurge onFermer={() => setModalePurgeOuverte(false)} />
-      )}
+      {/* Pagination */}
+      <div className="flex items-center justify-between mt-4">
+        <p className="text-sm text-gray-600">
+          {total} logs — Page {page} / {totalPages}
+        </p>
+        <div className="flex items-center gap-3">
+          <div className="flex gap-2">
+            <button
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={page <= 1}
+              onClick={() => setPage(page - 1)}
+              type="button"
+            >
+              Précédent
+            </button>
+            <button
+              className="px-3 py-1.5 text-sm border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={page >= totalPages}
+              onClick={() => setPage(page + 1)}
+              type="button"
+            >
+              Suivant
+            </button>
+          </div>
+          <button
+            className="px-3 py-1.5 text-sm border border-red-300 text-red-700 rounded hover:bg-red-50"
+            onClick={() => setModalePurgeOuverte(true)}
+            type="button"
+          >
+            Purger les logs
+          </button>
+        </div>
+      </div>
+
+      <ModalePurge
+        onFermer={() => setModalePurgeOuverte(false)}
+        open={modalePurgeOuverte}
+      />
     </div>
   );
 };

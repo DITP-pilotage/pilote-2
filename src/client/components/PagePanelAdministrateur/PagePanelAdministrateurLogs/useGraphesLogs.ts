@@ -17,7 +17,7 @@ export function useGraphesLogs() {
   const dateDebut = useMemo(() => calculerDateDebut(periode), [periode]);
   const dateFin = useMemo(() => new Date(), []);
 
-  const { data, isLoading } = api.applicationLog.statistiques.useQuery({
+  const { data } = api.applicationLog.statistiques.useSuspenseQuery({
     dateDebut: dateDebut.toISOString(),
     dateFin: dateFin.toISOString(),
     granularite,
@@ -25,7 +25,6 @@ export function useGraphesLogs() {
 
   return {
     statistiques: data,
-    isLoading,
     periode,
     setPeriode,
     granularite,

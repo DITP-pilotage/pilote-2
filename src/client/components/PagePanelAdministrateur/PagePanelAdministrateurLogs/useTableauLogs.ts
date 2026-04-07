@@ -15,7 +15,7 @@ export function useTableauLogs() {
 
   const taillePage = 50;
 
-  const { data, isLoading } = api.applicationLog.lister.useQuery({
+  const { data } = api.applicationLog.lister.useSuspenseQuery({
     page,
     taillePage,
     filtreLevel,
@@ -38,12 +38,11 @@ export function useTableauLogs() {
     setDateFin(undefined);
   }, []);
 
-  const totalPages = data ? Math.ceil(data.total / taillePage) : 0;
+  const totalPages = Math.ceil(data.total / taillePage);
 
   return {
-    logs: data?.logs ?? [],
-    total: data?.total ?? 0,
-    isLoading,
+    logs: data.logs,
+    total: data.total,
     page,
     setPage,
     totalPages,
