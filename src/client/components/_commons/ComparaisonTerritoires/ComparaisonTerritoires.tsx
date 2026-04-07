@@ -8,7 +8,7 @@ type ComparaisonTerritoiresProps<T extends string> = {
   typeAlternatif: (typeActuel: T) => T;
   options: { value: T; label: string }[];
   renderCarte: (typeCarte: T) => ReactNode;
-  metadonnees: { titre: string; nomFichier: string };
+  nomFichier: string;
   mode?: "card" | "inline";
 };
 
@@ -17,7 +17,7 @@ export const ComparaisonTerritoires = <T extends string>({
   typeAlternatif,
   options,
   renderCarte,
-  metadonnees,
+  nomFichier,
   mode = "card",
 }: ComparaisonTerritoiresProps<T>) => {
   const {
@@ -59,7 +59,7 @@ export const ComparaisonTerritoires = <T extends string>({
               onComparer={activerComparaison}
               onSupprimer={() => supprimerPanneau("gauche")}
               renderCarte={renderCarte}
-              metadonnees={metadonnees}
+              nomFichier={nomFichier}
             />
           </Suspense>
         </ColonneMesuree>
@@ -75,7 +75,7 @@ export const ComparaisonTerritoires = <T extends string>({
                 onComparer={activerComparaison}
                 onSupprimer={() => supprimerPanneau("droite")}
                 renderCarte={renderCarte}
-                metadonnees={metadonnees}
+                nomFichier={nomFichier}
               />
             </Suspense>
           </ColonneMesuree>

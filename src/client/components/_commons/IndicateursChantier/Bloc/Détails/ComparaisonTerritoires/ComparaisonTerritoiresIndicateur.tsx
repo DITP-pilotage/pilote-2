@@ -19,7 +19,6 @@ const options: (
 
 export const ComparaisonTerritoiresIndicateur = ({
   indicateurId,
-  nomIndicateur,
   chantierId,
   jalon,
   maille,
@@ -38,10 +37,7 @@ export const ComparaisonTerritoiresIndicateur = ({
     typeParDefaut="ta"
     typeAlternatif={(t) => (t === "ta" ? "va" : "ta")}
     options={options(jalon)}
-    metadonnees={{
-      titre: `${indicateurId} - ${nomIndicateur}`,
-      nomFichier: `comparaison-territoriale-${indicateurId}`,
-    }}
+    nomFichier={`comparaison-territoriale-${indicateurId}`}
     renderCarte={(type) => {
       if (type === "ta") {
         return (
