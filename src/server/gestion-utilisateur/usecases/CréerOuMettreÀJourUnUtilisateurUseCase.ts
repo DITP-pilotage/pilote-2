@@ -26,6 +26,7 @@ import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/po
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import { ConflictError } from "@/server/app/error-boundary/conflict-error";
 import type { Inject } from "@/server/gestion-utilisateur/module";
+import logger from "@/server/infrastructure/Logger";
 
 export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   private utilisateurIAMRepository: UtilisateurIAMRepository;
@@ -139,6 +140,18 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
 
     await this.historisationModification.sauvegarderModificationHistorisation(
       historisationModification,
+    );
+
+    logger.info(
+      {
+        categorie: "utilisateur",
+        source: "CréerOuMettreÀJourUnUtilisateurUseCase",
+        email: utilisateur.email,
+        profil: utilisateur.profil,
+        action: utilisateurExistant ? "modification" : "creation",
+        auteurId,
+      },
+      utilisateurExistant ? "Modification utilisateur" : "Création utilisateur",
     );
 
     if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === "true") {

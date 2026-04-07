@@ -67,8 +67,13 @@ export class EnvoyerLesRelancesUseCase {
           deuxiemesRelancesEnvoyees++;
       } catch (error) {
         logger.error(
-          `Erreur lors de l'envoi de la relance pour ${action.utilisateurId}`,
-          error,
+          {
+            categorie: "utilisateur",
+            source: "EnvoyerLesRelancesUseCase",
+            email: action.utilisateurId,
+            typeAction: action.typeAction,
+          },
+          `Erreur envoi relance : ${error instanceof Error ? error.message : String(error)}`,
         );
 
         const actionEchec = marquerCommeEchec({

@@ -86,7 +86,14 @@ export class SupprimerLesComptesDesactivesUseCase {
       await this.utilisateurRepository.recupererComptesDesactives(
         dateDesactivationMax,
       );
-    logger.info(`${utilisateursASupprimer.length} utilisateurs à supprimer`);
+    logger.info(
+      {
+        categorie: "utilisateur",
+        source: "SupprimerLesComptesDesactivesUseCase",
+        nombreUtilisateurs: utilisateursASupprimer.length,
+      },
+      "Suppression des comptes désactivés démarrée",
+    );
 
     const supprimes: ResultatSuppression["supprimes"] = [];
     const erreurs: ResultatSuppression["erreurs"] = [];
@@ -137,8 +144,12 @@ export class SupprimerLesComptesDesactivesUseCase {
         supprimes.push(utilisateur);
       } catch (error) {
         logger.error(
-          `Erreur lors de la suppression du compte ${utilisateur.email}`,
-          error,
+          {
+            categorie: "utilisateur",
+            source: "SupprimerLesComptesDesactivesUseCase",
+            email: utilisateur.email,
+          },
+          `Erreur suppression compte : ${error instanceof Error ? error.message : String(error)}`,
         );
         erreurs.push({
           ...utilisateur,
