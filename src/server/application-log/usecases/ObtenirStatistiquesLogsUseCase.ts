@@ -4,6 +4,7 @@ import {
   type StatistiquesLogs,
 } from "@/server/application-log/domain/ApplicationLogRepository.interface";
 import type { Inject } from "@/server/application-log/module";
+import logger from "@/server/infrastructure/Logger";
 
 export class ObtenirStatistiquesLogsUseCase {
   private readonly applicationLogRepository: ApplicationLogRepository;
@@ -19,6 +20,11 @@ export class ObtenirStatistiquesLogsUseCase {
     dateFin: Date;
     granularite: Granularite;
   }): Promise<StatistiquesLogs> {
+    // TODO: temporaire - logs fake pour tester la feature, à supprimer
+    logger.info(
+      { categorie: "api", source: "ObtenirStatistiquesLogsUseCase", granularite: input.granularite },
+      "Consultation des statistiques logs",
+    );
     return this.applicationLogRepository.obtenirStatistiques(
       input.dateDebut,
       input.dateFin,
