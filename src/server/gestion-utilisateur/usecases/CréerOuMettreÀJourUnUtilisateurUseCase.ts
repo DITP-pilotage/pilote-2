@@ -142,17 +142,49 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
       historisationModification,
     );
 
-    logger.info(
-      {
-        categorie: "utilisateur",
-        source: "CréerOuMettreÀJourUnUtilisateurUseCase",
-        email: utilisateur.email,
-        profil: utilisateur.profil,
-        action: utilisateurExistant ? "modification" : "creation",
-        auteurId,
-      },
-      utilisateurExistant ? "Modification utilisateur" : "Création utilisateur",
-    );
+    if (utilisateurExistant && utilisateurAvantModification) {
+      const modifications: Record<
+        string,
+        { ancien: unknown; nouveau: unknown }
+      > = {};
+      const champsASuivre = [
+        "profil",
+        "fonction",
+        "service",
+        "saisieIndicateur",
+        "gestionUtilisateur",
+      ] as const;
+
+      for (const champ of champsASuivre) {
+        const ancien = utilisateurAvantModification[champ];
+        const nouveau = utilisateurApresExecution[champ];
+        if (ancien !== nouveau) {
+          modifications[champ] = { ancien, nouveau };
+        }
+      }
+
+      logger.info(
+        {
+          categorie: "utilisateur",
+          source: "CréerOuMettreÀJourUnUtilisateurUseCase",
+          email: utilisateur.email,
+          auteurId,
+          modifications,
+        },
+        "Modification utilisateur",
+      );
+    } else {
+      logger.info(
+        {
+          categorie: "utilisateur",
+          source: "CréerOuMettreÀJourUnUtilisateurUseCase",
+          email: utilisateur.email,
+          profil: utilisateur.profil,
+          auteurId,
+        },
+        "Création utilisateur",
+      );
+    }
 
     if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === "true") {
       if (utilisateurExistant && utilisateurAvantModification) {

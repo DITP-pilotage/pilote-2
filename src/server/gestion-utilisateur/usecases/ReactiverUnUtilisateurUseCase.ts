@@ -117,6 +117,7 @@ export default class ReactiverUnUtilisateurUseCase {
         email,
         profil: utilisateurAReactiver.profil,
         auteurId,
+        modifications: { statut: { ancien: "désactivé", nouveau: "actif" } },
       },
       "Réactivation utilisateur",
     );

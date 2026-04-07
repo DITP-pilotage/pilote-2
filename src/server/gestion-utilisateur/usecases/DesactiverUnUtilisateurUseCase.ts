@@ -111,6 +111,7 @@ export default class DesactiverUnUtilisateurUseCase {
         email,
         profil: utilisateurASupprimer.profil,
         auteurId,
+        modifications: { statut: { ancien: "actif", nouveau: "désactivé" } },
       },
       "Désactivation utilisateur",
     );
