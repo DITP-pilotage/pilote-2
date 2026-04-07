@@ -111,7 +111,8 @@ export const ChatUI = ({
         part.state === "output-available",
     );
 
-    if (!choicesPart || choicesPart.type !== "tool-display_choices") return null;
+    if (!choicesPart || choicesPart.type !== "tool-display_choices")
+      return null;
     if (choicesPart.state !== "output-available") return null;
 
     return {
