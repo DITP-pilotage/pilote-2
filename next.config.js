@@ -21,9 +21,6 @@ const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
   outputFileTracingRoot: __dirname,
-  outputFileTracingIncludes: {
-    "/*": ["./src/server/infrastructure/pino-prisma-transport.js"],
-  },
   bundlePagesRouterDependencies: true,
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
   compiler: {

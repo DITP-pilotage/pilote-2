@@ -132,7 +132,6 @@
     "nuqs": "^2.8.7",
     "pdfmake": "^0.2.20",
     "pino": "^8.11.0",
-    "pino-abstract-transport": "^3.0.0",
     "radix-ui": "^1.4.3",
     "react": "^19.2.3",
     "react-accessible-dropdown-menu-hook": "^4.0.0",

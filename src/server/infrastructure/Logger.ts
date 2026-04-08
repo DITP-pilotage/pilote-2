@@ -1,12 +1,73 @@
-import pino, { type Logger } from "pino";
-import path from "node:path";
+import pino from "pino";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
-// process.cwd() nécessaire car __dirname est virtualisé par Turbopack en dev.
-// Pour le mode standalone, le fichier doit être copié dans le bundle (cf. next.config).
-const pinoPrismaTransportPath = path.resolve(
-  process.cwd(),
-  "src/server/infrastructure/pino-prisma-transport.js",
-);
+const CHAMPS_STANDARD_PINO = new Set([
+  "level",
+  "time",
+  "pid",
+  "hostname",
+  "msg",
+  "categorie",
+  "source",
+  "duree_ms",
+]);
+
+function mapPinoLevelToEnum(pinoLevel: number): string | null {
+  if (pinoLevel >= 50) return "ERROR";
+  if (pinoLevel >= 40) return "WARN";
+  if (pinoLevel >= 30) return "INFO";
+  if (pinoLevel >= 20) return "DEBUG";
+  return null;
+}
+
+function extraireContexte(
+  obj: Record<string, unknown>,
+): Record<string, unknown> | null {
+  const contexte: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(obj)) {
+    if (!CHAMPS_STANDARD_PINO.has(key)) {
+      contexte[key] = value;
+    }
+  }
+  return Object.keys(contexte).length > 0 ? contexte : null;
+}
+
+let prismaPilote: PrismaPilote | null = null;
+
+function getPrismaInstance() {
+  if (!process.env.DATABASE_URL) return null;
+  if (!prismaPilote) {
+    prismaPilote = new PrismaPilote();
+  }
+  return prismaPilote.getInstance();
+}
+
+function persisterEnBase(
+  levelNumber: number,
+  obj: Record<string, unknown>,
+  msg: string,
+): void {
+  const db = getPrismaInstance();
+  if (!db) return;
+
+  const level = mapPinoLevelToEnum(levelNumber);
+  if (!level) return;
+
+  db.application_log
+    .create({
+      data: {
+        level: level as "ERROR" | "WARN" | "INFO" | "DEBUG",
+        categorie: (obj.categorie as string) ?? "systeme",
+        message: msg,
+        contexte: extraireContexte(obj) ?? undefined,
+        source: (obj.source as string) ?? null,
+        duree_ms: (obj.duree_ms as number) ?? null,
+      },
+    })
+    .catch(() => {
+      // silencieux — ne jamais crasher à cause du logging
+    });
+}
 
 interface StructuredLogger {
   info(obj: Record<string, unknown>, msg: string): void;
@@ -16,28 +77,23 @@ interface StructuredLogger {
 }
 
 class AppLogger implements StructuredLogger {
-  private readonly _logger: Logger;
+  private readonly _logger: pino.Logger;
 
   constructor() {
     this._logger = pino({
       level: "info",
-      transport: {
-        targets: [
-          {
-            target: "pino/file",
-            options: { destination: 1 },
-            level: "info",
-          },
-          ...(process.env.DATABASE_URL
-            ? [
-                {
-                  target: pinoPrismaTransportPath,
-                  options: { databaseUrl: process.env.DATABASE_URL },
-                  level: "info",
-                },
-              ]
-            : []),
-        ],
+      hooks: {
+        logMethod(inputArgs, method, level) {
+          const [obj, msg] = inputArgs as [Record<string, unknown>, string];
+          if (
+            typeof obj === "object" &&
+            obj !== null &&
+            typeof msg === "string"
+          ) {
+            persisterEnBase(level, obj, msg);
+          }
+          return method.apply(this, inputArgs as Parameters<typeof method>);
+        },
       },
     });
   }
