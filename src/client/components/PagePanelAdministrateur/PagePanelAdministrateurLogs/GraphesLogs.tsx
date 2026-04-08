@@ -14,10 +14,11 @@ import type {
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { type Periode, useGraphesLogs } from "./useGraphesLogs";
 
+// Valeurs hex issues du tailwind.config.js (ECharts canvas ne supporte pas les CSS variables)
 const COULEURS = {
-  error: "var(--tw-color-error)",
-  warn: "var(--tw-color-warning)",
-  info: "var(--tw-color-primary)",
+  error: "#CE0500",
+  warn: "#B34000",
+  info: "#000091",
 };
 
 function calculerDateDebutISO(periode: Periode): string {
