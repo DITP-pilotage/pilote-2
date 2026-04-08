@@ -28,6 +28,7 @@ export const SelecteurVueWidget = ({
     <>
       <TitreWidget>{titre}</TitreWidget>
       <PillToggleGroup.Root
+        data-html-to-image-ignore="true"
         type="single"
         value={vueActive}
         className={
