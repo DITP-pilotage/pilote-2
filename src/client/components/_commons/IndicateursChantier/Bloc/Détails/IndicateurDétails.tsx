@@ -206,8 +206,7 @@ export const IndicateurDétails: FunctionComponent<IndicateurDétailsProps> = ({
                         <Suspense>
                           <ComparaisonTerritoiresIndicateur
                             indicateurId={indicateur.id}
-                            nomIndicateur={indicateur.nom}
-                          chantierId={chantierId}
+                            chantierId={chantierId}
                             jalon={jalon}
                             maille={mailleQuery}
                             territoireCode={territoireCode}

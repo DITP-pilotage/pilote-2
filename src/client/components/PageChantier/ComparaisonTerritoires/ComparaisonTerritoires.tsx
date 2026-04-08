@@ -34,7 +34,7 @@ export const ComparaisonTerritoires = ({
     typeParDefaut="ta"
     typeAlternatif={(t) => (t === "ta" ? "meteo" : "ta")}
     options={options(jalon)}
-      nomFichier={`comparaison-territoriale-${chantierId}`}
+    nomFichier={`comparaison-territoriale-${chantierId}`}
     renderCarte={(type) => {
       if (type === "ta") {
         return (
