@@ -1,11 +1,13 @@
-import { ReactNode, useRef } from "react";
+import { ReactNode, useCallback, useRef, useState } from "react";
 import { toBlob, toPng } from "html-to-image";
+import { flushSync } from "react-dom";
 import { toast } from "sonner";
 import { Icone } from "@/components/_commons/Icone";
 import { DeleteIcon } from "@/components/_commons/Icones/DeleteIcon";
 import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
 import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
 import { SelecteurTypeCarte } from "./SelecteurTypeCarte";
+import { ModeExportContext } from "./ModeExportContext";
 
 type PanneauCarteProps<T extends string> = {
   typeCarte: T;
@@ -29,6 +31,7 @@ export const PanneauCarte = <T extends string>({
   nomFichier,
 }: PanneauCarteProps<T>) => {
   const carteRef = useRef<HTMLDivElement>(null);
+  const [modeExport, setModeExport] = useState(false);
 
   const filtreExport = (node: Node) =>
     !(node instanceof Element) ||
@@ -40,11 +43,32 @@ export const PanneauCarte = <T extends string>({
     filter: filtreExport,
   };
 
-  const enregistrerCommeImage = async () => {
-    if (!carteRef.current) return;
+  const capturerImage = useCallback(
+    async <T,>(
+      capturer: (element: HTMLDivElement) => Promise<T>,
+    ): Promise<T | null> => {
+      if (!carteRef.current) return null;
 
+      flushSync(() => {
+        setModeExport(true);
+      });
+
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+        return await capturer(carteRef.current);
+      } finally {
+        setModeExport(false);
+      }
+    },
+    [],
+  );
+
+  const enregistrerCommeImage = async () => {
     try {
-      const dataUrl = await toPng(carteRef.current, optionsExport);
+      const dataUrl = await capturerImage((element) =>
+        toPng(element, optionsExport),
+      );
+      if (!dataUrl) return;
 
       const lien = document.createElement("a");
       lien.download = `${nomFichier}.png`;
@@ -57,10 +81,10 @@ export const PanneauCarte = <T extends string>({
   };
 
   const copierDansLePressePapiers = async () => {
-    if (!carteRef.current) return;
-
     try {
-      const blob = await toBlob(carteRef.current, optionsExport);
+      const blob = await capturerImage((element) =>
+        toBlob(element, optionsExport),
+      );
       if (blob == null) return;
 
       await navigator.clipboard.write([
@@ -101,7 +125,9 @@ export const PanneauCarte = <T extends string>({
         )}
       </div>
 
-      <div ref={carteRef}>{renderCarte(typeCarte)}</div>
+      <ModeExportContext.Provider value={modeExport}>
+        <div ref={carteRef}>{renderCarte(typeCarte)}</div>
+      </ModeExportContext.Provider>
 
       <div className="flex items-center justify-end">
         <span className="text-primary text-sm">exporter :</span>

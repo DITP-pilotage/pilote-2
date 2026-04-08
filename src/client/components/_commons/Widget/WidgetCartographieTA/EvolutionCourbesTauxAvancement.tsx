@@ -3,6 +3,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import type { TerritoireEvolutionDonnees } from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
 import useIndicateurEvolutionNew from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
 import LineChart from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/LineChart/LineChart";
+import { useModeExport } from "@/components/_commons/ComparaisonTerritoires/ModeExportContext";
 
 export const EvolutionCourbesTauxAvancement = ({
   indicateurId,
@@ -39,6 +40,8 @@ export const EvolutionCourbesTauxAvancement = ({
         }));
     }, [evolutionData, territoiresSelectionnesCodes]);
 
+  const modeExport = useModeExport();
+
   const {
     afficherLesCibles,
     setAfficherLesCibles,
@@ -64,6 +67,7 @@ export const EvolutionCourbesTauxAvancement = ({
       changerLaPeriodeSelectionnee={changerLaPeriodeSelectionnee}
       chartDisplayMode="compact"
       getOptions={getOptions}
+      modeImpression={modeExport}
       periodeSelectionnee={periodeSelectionnee}
       periodesSelectionnablesZoom={periodesSelectionnablesZoom}
       setAfficherLesCibles={setAfficherLesCibles}
