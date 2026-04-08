@@ -1,4 +1,5 @@
-import pino from "pino";
+import pino, { type LogFn } from "pino";
+import { type Prisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 const CHAMPS_STANDARD_PINO = new Set([
@@ -22,11 +23,11 @@ function mapPinoLevelToEnum(pinoLevel: number): string | null {
 
 function extraireContexte(
   obj: Record<string, unknown>,
-): Record<string, unknown> | null {
-  const contexte: Record<string, unknown> = {};
+): Prisma.InputJsonObject | null {
+  const contexte: Prisma.InputJsonObject = {};
   for (const [key, value] of Object.entries(obj)) {
     if (!CHAMPS_STANDARD_PINO.has(key)) {
-      contexte[key] = value;
+      contexte[key] = value as Prisma.InputJsonValue;
     }
   }
   return Object.keys(contexte).length > 0 ? contexte : null;
@@ -83,16 +84,16 @@ class AppLogger implements StructuredLogger {
     this._logger = pino({
       level: "info",
       hooks: {
-        logMethod(inputArgs, method, level) {
-          const [obj, msg] = inputArgs as [Record<string, unknown>, string];
+        logMethod(inputArgs: Parameters<LogFn>, method: LogFn, level: number) {
+          const [first, second] = inputArgs;
           if (
-            typeof obj === "object" &&
-            obj !== null &&
-            typeof msg === "string"
+            typeof first === "object" &&
+            first !== null &&
+            typeof second === "string"
           ) {
-            persisterEnBase(level, obj, msg);
+            persisterEnBase(level, first as Record<string, unknown>, second);
           }
-          return method.apply(this, inputArgs as Parameters<typeof method>);
+          return method.apply(this, inputArgs);
         },
       },
     });
