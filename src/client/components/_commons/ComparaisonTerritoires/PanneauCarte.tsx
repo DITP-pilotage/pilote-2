@@ -6,6 +6,7 @@ import { Icone } from "@/components/_commons/Icone";
 import { DeleteIcon } from "@/components/_commons/Icones/DeleteIcon";
 import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
 import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
+import { FileText1Icon } from "@/components/_commons/Icones/FileText1Icon";
 import { SelecteurTypeCarte } from "./SelecteurTypeCarte";
 import { ModeExportContext } from "./ModeExportContext";
 
@@ -18,6 +19,7 @@ type PanneauCarteProps<T extends string> = {
   onSupprimer: () => void;
   renderCarte: (typeCarte: T) => ReactNode;
   nomFichier: string;
+  exporterEnCsv?: () => void;
 };
 
 export const PanneauCarte = <T extends string>({
@@ -29,6 +31,7 @@ export const PanneauCarte = <T extends string>({
   onSupprimer,
   renderCarte,
   nomFichier,
+  exporterEnCsv,
 }: PanneauCarteProps<T>) => {
   const carteRef = useRef<HTMLDivElement>(null);
   const [modeExport, setModeExport] = useState(false);
@@ -145,6 +148,15 @@ export const PanneauCarte = <T extends string>({
         >
           <Icone className="w-4 h-4" icone={ClipboardIcon} />
         </button>
+        {exporterEnCsv && (
+          <button
+            onClick={exporterEnCsv}
+            type="button"
+            aria-label="Exporter en CSV"
+          >
+            <Icone className="w-4 h-4" icone={FileText1Icon} />
+          </button>
+        )}
       </div>
     </div>
   );
