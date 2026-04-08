@@ -7,11 +7,14 @@ import { ComparaisonTerritoires as ComparaisonTerritoiresBase } from "@/componen
 import { getLabelTerritoire } from "@/client/constants/territoires";
 import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
 import {
+  formaterDateCsv,
   genererCsv,
   telechargerCsv,
-  formaterDateCsv,
 } from "@/client/utils/csv/genererCsv";
 import api from "@/server/infrastructure/api/trpc/api";
+import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
+import { MeteoTerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierMeteosTerritoiresQuery";
+import { PVATerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierPVACountTerritoiresQuery";
 
 type ComparaisonTerritoiresProps = {
   chantierId: string;
@@ -21,6 +24,8 @@ type ComparaisonTerritoiresProps = {
 };
 
 type TypeCarteChantier = "ta" | "meteo" | "pva";
+
+type ContenuCsv = { colonnes: string[]; lignes: string[][] };
 
 const options: (
   jalon: number,
@@ -32,6 +37,69 @@ const options: (
     label: "Carte des propositions de valeur d'avancement",
   },
 ];
+
+const filtrerTerritoires = <
+  T extends { territoireCode: string; estApplicable: boolean | null },
+>(
+  donnees: T[],
+  codesTerritoiresSelectionnes: string[],
+): T[] =>
+  donnees.filter(
+    (territoire) =>
+      territoire.estApplicable !== false &&
+      codesTerritoiresSelectionnes.includes(territoire.territoireCode),
+  );
+
+export const construireContenuCsv = (
+  type: TypeCarteChantier,
+  donneesTA: TauxAvancementComparaisonTerritoireViewModel[],
+  donneesMeteo: MeteoTerritoireViewModel[],
+  donneesPVA: PVATerritoireViewModel[],
+  codesTerritoiresSelectionnes: string[],
+): ContenuCsv => {
+  if (type === "ta") {
+    return {
+      colonnes: [
+        "Territoire",
+        "Taux d'avancement",
+        "Date de dernière mise à jour",
+      ],
+      lignes: filtrerTerritoires(donneesTA, codesTerritoiresSelectionnes).map(
+        (territoire) => [
+          getLabelTerritoire(territoire.territoireCode),
+          territoire.tauxAvancementJalon !== null
+            ? String(territoire.tauxAvancementJalon)
+            : "Non renseigné",
+          formaterDateCsv(territoire.dateTauxAvancementAnnuel),
+        ],
+      ),
+    };
+  }
+
+  if (type === "meteo") {
+    return {
+      colonnes: ["Territoire", "Niveau de confiance", "Date de publication"],
+      lignes: filtrerTerritoires(
+        donneesMeteo,
+        codesTerritoiresSelectionnes,
+      ).map((territoire) => [
+        getLabelTerritoire(territoire.territoireCode),
+        territoire.meteo,
+        formaterDateCsv(territoire.dateDeMajQualitative),
+      ]),
+    };
+  }
+
+  return {
+    colonnes: ["Territoire", "Nombre de propositions"],
+    lignes: filtrerTerritoires(donneesPVA, codesTerritoiresSelectionnes).map(
+      (territoire) => [
+        getLabelTerritoire(territoire.territoireCode),
+        String(territoire.nombrePropositionsValeur),
+      ],
+    ),
+  };
+};
 
 export const ComparaisonTerritoires = ({
   chantierId,
@@ -48,91 +116,28 @@ export const ComparaisonTerritoires = ({
         territoireCode,
         ...territoiresCompares.split(",").filter(Boolean),
       ];
-      const nomFichier = `comparaison-territoriale-${chantierId}-${type}.csv`;
 
-      if (type === "ta") {
-        const donnees =
-          utils.chantier.recupererTauxAvancementTerritoires.getData({
-            chantierIds: [chantierId],
-            jalon,
-          }) ?? [];
+      const { colonnes, lignes } = construireContenuCsv(
+        type,
+        utils.chantier.recupererTauxAvancementTerritoires.getData({
+          chantierIds: [chantierId],
+          jalon,
+        }) ?? [],
+        utils.chantier.recupererMeteosTerritoires.getData({
+          chantierId,
+          jalon,
+        }) ?? [],
+        utils.chantier.recupererPVAChantierTerritoires.getData({
+          chantierId,
+          jalon,
+        }) ?? [],
+        codesTerritoiresSelectionnes,
+      );
 
-        const lignes = donnees
-          .filter(
-            (territoire) =>
-              territoire.estApplicable !== false &&
-              codesTerritoiresSelectionnes.includes(territoire.territoireCode),
-          )
-          .map((territoire) => [
-            getLabelTerritoire(territoire.territoireCode),
-            territoire.tauxAvancementJalon !== null
-              ? String(territoire.tauxAvancementJalon)
-              : "Non renseigné",
-            formaterDateCsv(territoire.dateTauxAvancementAnnuel),
-          ]);
-
-        telechargerCsv(
-          genererCsv(
-            ["Territoire", "Taux d'avancement", "Date de dernière mise à jour"],
-            lignes,
-          ),
-          nomFichier,
-        );
-        return;
-      }
-
-      if (type === "meteo") {
-        const donnees =
-          utils.chantier.recupererMeteosTerritoires.getData({
-            chantierId,
-            jalon,
-          }) ?? [];
-
-        const lignes = donnees
-          .filter(
-            (territoire) =>
-              territoire.estApplicable !== false &&
-              codesTerritoiresSelectionnes.includes(territoire.territoireCode),
-          )
-          .map((territoire) => [
-            getLabelTerritoire(territoire.territoireCode),
-            territoire.meteo,
-            formaterDateCsv(territoire.dateDeMajQualitative),
-          ]);
-
-        telechargerCsv(
-          genererCsv(
-            ["Territoire", "Niveau de confiance", "Date de publication"],
-            lignes,
-          ),
-          nomFichier,
-        );
-        return;
-      }
-
-      if (type === "pva") {
-        const donnees =
-          utils.chantier.recupererPVAChantierTerritoires.getData({
-            chantierId,
-            jalon,
-          }) ?? [];
-
-        const lignes = donnees
-          .filter(
-            (territoire) =>
-              territoire.estApplicable !== false &&
-              codesTerritoiresSelectionnes.includes(territoire.territoireCode),
-          )
-          .map((territoire) => [
-            getLabelTerritoire(territoire.territoireCode),
-            String(territoire.nombrePropositionsValeur),
-          ]);
-
-        telechargerCsv(
-          genererCsv(["Territoire", "Nombre de propositions"], lignes),
-          nomFichier,
-        );
-      }
+      telechargerCsv(
+        genererCsv(colonnes, lignes),
+        `comparaison-territoriale-${chantierId}-${type}.csv`,
+      );
     },
     [utils, chantierId, jalon, territoireCode, territoiresCompares],
   );

@@ -17,6 +17,125 @@ import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 
 type TypeCarteIndicateur = "ta" | "va" | "pva";
 
+type ContenuCsv = { colonnes: string[]; lignes: string[][] };
+
+type DonneesTauxAvancement = {
+  territoireCode: string;
+  estApplicable: boolean | null;
+  dateTauxAvancementAnnuel: string | null;
+  tauxAvancementJalon: number | null;
+};
+
+type DonneesValeurAvancement = {
+  territoireCode: string;
+  estApplicable: boolean | null;
+  dateValeurAvancement: string | null;
+  valeurAvancement: number | null;
+};
+
+type DonneesPVA = {
+  territoireCode: string;
+  estApplicable: boolean | null;
+  nombrePropositionsValeur: number;
+};
+
+export const construireContenuCsv = (
+  type: TypeCarteIndicateur,
+  donneesParJalonTA: Map<number, DonneesTauxAvancement[]>,
+  donneesParJalonVA: Map<number, DonneesValeurAvancement[]>,
+  donneesPVA: DonneesPVA[],
+  jalons: number[],
+  codesTerritoiresSelectionnes: string[],
+): ContenuCsv => {
+  if (type === "ta") {
+    const colonnes = [
+      "Territoire",
+      ...jalons.flatMap((jalonCourant) => [
+        `date ${jalonCourant}`,
+        `taux ${jalonCourant}`,
+      ]),
+    ];
+
+    const lignes = codesTerritoiresSelectionnes
+      .map((code) => {
+        const premierJalonDonnees = donneesParJalonTA
+          .get(jalons[0])
+          ?.find((territoire) => territoire.territoireCode === code);
+        if (premierJalonDonnees?.estApplicable === false) return null;
+
+        const cellules = jalons.flatMap((jalonCourant) => {
+          const donneesTerritoire = donneesParJalonTA
+            .get(jalonCourant)
+            ?.find((territoire) => territoire.territoireCode === code);
+          return [
+            formaterDateCsv(
+              donneesTerritoire?.dateTauxAvancementAnnuel ?? null,
+            ),
+            donneesTerritoire?.tauxAvancementJalon !== null &&
+            donneesTerritoire?.tauxAvancementJalon !== undefined
+              ? String(donneesTerritoire.tauxAvancementJalon)
+              : "Non renseigné",
+          ];
+        });
+
+        return [getLabelTerritoire(code), ...cellules];
+      })
+      .filter((ligne): ligne is string[] => ligne !== null);
+
+    return { colonnes, lignes };
+  }
+
+  if (type === "va") {
+    const colonnes = [
+      "Territoire",
+      ...jalons.flatMap((jalonCourant) => [
+        `date ${jalonCourant}`,
+        `valeur ${jalonCourant}`,
+      ]),
+    ];
+
+    const lignes = codesTerritoiresSelectionnes
+      .map((code) => {
+        const premierJalonDonnees = donneesParJalonVA
+          .get(jalons[0])
+          ?.find((territoire) => territoire.territoireCode === code);
+        if (premierJalonDonnees?.estApplicable === false) return null;
+
+        const cellules = jalons.flatMap((jalonCourant) => {
+          const donneesTerritoire = donneesParJalonVA
+            .get(jalonCourant)
+            ?.find((territoire) => territoire.territoireCode === code);
+          return [
+            formaterDateCsv(donneesTerritoire?.dateValeurAvancement ?? null),
+            donneesTerritoire?.valeurAvancement !== null &&
+            donneesTerritoire?.valeurAvancement !== undefined
+              ? String(donneesTerritoire.valeurAvancement)
+              : "Non renseigné",
+          ];
+        });
+
+        return [getLabelTerritoire(code), ...cellules];
+      })
+      .filter((ligne): ligne is string[] => ligne !== null);
+
+    return { colonnes, lignes };
+  }
+
+  return {
+    colonnes: ["Territoire", "Nombre de propositions"],
+    lignes: donneesPVA
+      .filter(
+        (territoire) =>
+          territoire.estApplicable !== false &&
+          codesTerritoiresSelectionnes.includes(territoire.territoireCode),
+      )
+      .map((territoire) => [
+        getLabelTerritoire(territoire.territoireCode),
+        String(territoire.nombrePropositionsValeur),
+      ]),
+  };
+};
+
 const options: (
   jalon: number,
 ) => { value: TypeCarteIndicateur; label: string }[] = (jalon) => [
@@ -65,11 +184,11 @@ export const ComparaisonTerritoiresIndicateur = ({
         territoireCode,
         ...territoiresCompares.split(",").filter(Boolean),
       ];
-      const nomFichier = `comparaison-territoriale-${indicateurId}-${type}.csv`;
+      const jalons = buildJalons();
 
-      if (type === "ta") {
-        const jalons = buildJalons();
-        const donneesParJalon = new Map(
+      const { colonnes, lignes } = construireContenuCsv(
+        type,
+        new Map(
           jalons.map((jalonCourant) => [
             jalonCourant,
             utils.indicateur.recupererTauxAvancementTerritoires.getData({
@@ -78,49 +197,8 @@ export const ComparaisonTerritoiresIndicateur = ({
               jalon: jalonCourant,
             }) ?? [],
           ]),
-        );
-
-        const colonnes = [
-          "Territoire",
-          ...jalons.flatMap((jalonCourant) => [
-            `date ${jalonCourant}`,
-            `taux ${jalonCourant}`,
-          ]),
-        ];
-
-        const lignes = codesTerritoiresSelectionnes
-          .map((code) => {
-            const premierJalonDonnees = donneesParJalon
-              .get(jalons[0])
-              ?.find((territoire) => territoire.territoireCode === code);
-            if (premierJalonDonnees?.estApplicable === false) return null;
-
-            const cellules = jalons.flatMap((jalonCourant) => {
-              const donneesTerritoire = donneesParJalon
-                .get(jalonCourant)
-                ?.find((territoire) => territoire.territoireCode === code);
-              return [
-                formaterDateCsv(
-                  donneesTerritoire?.dateTauxAvancementAnnuel ?? null,
-                ),
-                donneesTerritoire?.tauxAvancementJalon !== null &&
-                donneesTerritoire?.tauxAvancementJalon !== undefined
-                  ? String(donneesTerritoire.tauxAvancementJalon)
-                  : "Non renseigné",
-              ];
-            });
-
-            return [getLabelTerritoire(code), ...cellules];
-          })
-          .filter((ligne): ligne is string[] => ligne !== null);
-
-        telechargerCsv(genererCsv(colonnes, lignes), nomFichier);
-        return;
-      }
-
-      if (type === "va") {
-        const jalons = buildJalons();
-        const donneesParJalon = new Map(
+        ),
+        new Map(
           jalons.map((jalonCourant) => [
             jalonCourant,
             utils.indicateur.recupererValeursAvancementTerritoires.getData({
@@ -129,70 +207,20 @@ export const ComparaisonTerritoiresIndicateur = ({
               jalon: jalonCourant,
             }) ?? [],
           ]),
-        );
+        ),
+        utils.indicateur.recupererPVATerritoires.getData({
+          indicateurId,
+          chantierId,
+          jalon,
+        }) ?? [],
+        jalons,
+        codesTerritoiresSelectionnes,
+      );
 
-        const colonnes = [
-          "Territoire",
-          ...jalons.flatMap((jalonCourant) => [
-            `date ${jalonCourant}`,
-            `valeur ${jalonCourant}`,
-          ]),
-        ];
-
-        const lignes = codesTerritoiresSelectionnes
-          .map((code) => {
-            const premierJalonDonnees = donneesParJalon
-              .get(jalons[0])
-              ?.find((territoire) => territoire.territoireCode === code);
-            if (premierJalonDonnees?.estApplicable === false) return null;
-
-            const cellules = jalons.flatMap((jalonCourant) => {
-              const donneesTerritoire = donneesParJalon
-                .get(jalonCourant)
-                ?.find((territoire) => territoire.territoireCode === code);
-              return [
-                formaterDateCsv(
-                  donneesTerritoire?.dateValeurAvancement ?? null,
-                ),
-                donneesTerritoire?.valeurAvancement !== null &&
-                donneesTerritoire?.valeurAvancement !== undefined
-                  ? String(donneesTerritoire.valeurAvancement)
-                  : "Non renseigné",
-              ];
-            });
-
-            return [getLabelTerritoire(code), ...cellules];
-          })
-          .filter((ligne): ligne is string[] => ligne !== null);
-
-        telechargerCsv(genererCsv(colonnes, lignes), nomFichier);
-        return;
-      }
-
-      if (type === "pva") {
-        const donnees =
-          utils.indicateur.recupererPVATerritoires.getData({
-            indicateurId,
-            chantierId,
-            jalon,
-          }) ?? [];
-
-        const lignes = donnees
-          .filter(
-            (territoire) =>
-              territoire.estApplicable !== false &&
-              codesTerritoiresSelectionnes.includes(territoire.territoireCode),
-          )
-          .map((territoire) => [
-            getLabelTerritoire(territoire.territoireCode),
-            String(territoire.nombrePropositionsValeur),
-          ]);
-
-        telechargerCsv(
-          genererCsv(["Territoire", "Nombre de propositions"], lignes),
-          nomFichier,
-        );
-      }
+      telechargerCsv(
+        genererCsv(colonnes, lignes),
+        `comparaison-territoriale-${indicateurId}-${type}.csv`,
+      );
     },
     [
       utils,
