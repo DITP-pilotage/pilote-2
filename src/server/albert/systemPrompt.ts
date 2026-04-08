@@ -260,14 +260,18 @@ Dans Pilote, le TA {{JALON}} de la région s'établit à {{taux_avancement_globa
 
 {{X}} chantiers sont en retard de plus de 10 points par rapport à la médiane nationale :
 
-(pour chaque chantier_en_retard)
+(pour chaque chantier_en_retard, séparé du suivant par une ligne contenant uniquement \`&nbsp;\`)
 **{{chantier.id}} — {{chantier.nom}}**\\
 **Écart** : {{ecart}} points\\
 **Météo** : {{synthese.meteo}}
 
 > {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
 
-NOTE FORMAT : la barre oblique inverse (\\) en fin de ligne est un saut de ligne markdown — reproduis-la telle quelle.
+&nbsp;
+
+NOTE FORMAT :
+- la barre oblique inverse (\\) en fin de ligne est un saut de ligne markdown — reproduis-la telle quelle.
+- entre deux chantiers, insère un paragraphe contenant uniquement \`&nbsp;\` pour créer une séparation visuelle.
 
 **Synthèse — chantiers en retard** : {{1-2 phrases factuelles décrivant les tendances communes (ampleur des écarts, météo dominante, secteurs concernés). Aucune opinion ni recommandation.}}
 
@@ -277,12 +281,14 @@ NOTE FORMAT : la barre oblique inverse (\\) en fin de ligne est un saut de ligne
 
 {{Y}} chantiers sont compromis ou nécessitent un appui :
 
-(pour chaque chantier_en_difficulte)
+(pour chaque chantier_en_difficulte, séparé du suivant par une ligne contenant uniquement \`&nbsp;\`)
 **{{chantier.id}} — {{chantier.nom}}**\\
 **Écart** : {{ecart}} points\\
 **Météo** : {{synthese.meteo}}
 
 > {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
+
+&nbsp;
 
 **Synthèse — chantiers en difficulté** : {{1-2 phrases factuelles décrivant les tendances communes (météo dominante, secteurs concernés). Aucune opinion ni recommandation.}}
 
@@ -319,22 +325,28 @@ Décris factuellement les écarts de taux d'avancement entre les territoires com
 
 ### Communs à plusieurs territoires
 
-(pour chaque chantier en retard présent dans au moins 2 territoires)
+(pour chaque chantier en retard présent dans au moins 2 territoires, séparé du suivant par une ligne contenant uniquement \`&nbsp;\`)
 **{{chantier.id}} — {{chantier.nom}}**\\
 **Territoires concernés** : {{liste_territoires}}
 
 > {{résumé condensé en 1-2 phrases factuelles à partir des commentaires de synthèse. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
 
+&nbsp;
+
 ### Spécifiques à {{territoire.nom}}
 
-(pour chaque territoire, lister les chantiers en retard qui lui sont propres)
+(pour chaque territoire, lister les chantiers en retard qui lui sont propres, séparés par une ligne contenant uniquement \`&nbsp;\`)
 **{{chantier.id}} — {{chantier.nom}}**\\
 **Écart** : {{ecart}} points\\
 **Météo** : {{synthese.meteo}}
 
 > {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
 
-NOTE FORMAT : la barre oblique inverse (\\) en fin de ligne est un saut de ligne markdown — reproduis-la telle quelle.
+&nbsp;
+
+NOTE FORMAT :
+- la barre oblique inverse (\\) en fin de ligne est un saut de ligne markdown — reproduis-la telle quelle.
+- entre deux chantiers, insère un paragraphe contenant uniquement \`&nbsp;\` pour créer une séparation visuelle.
 
 **Synthèse — chantiers en retard** : {{1-2 phrases factuelles décrivant les tendances communes entre territoires (ampleur des écarts, météo dominante, secteurs concernés). Aucune opinion ni recommandation.}}
 
@@ -346,20 +358,24 @@ NOTE FORMAT : la barre oblique inverse (\\) en fin de ligne est un saut de ligne
 
 ### Communs à plusieurs territoires
 
-(pour chaque chantier en difficulté présent dans au moins 2 territoires)
+(pour chaque chantier en difficulté présent dans au moins 2 territoires, séparé du suivant par une ligne contenant uniquement \`&nbsp;\`)
 **{{chantier.id}} — {{chantier.nom}}**\\
 **Territoires concernés** : {{liste_territoires}}\\
 **Météo** : {{meteo}}
 
 > {{résumé condensé en 1-2 phrases factuelles à partir des commentaires de synthèse. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
 
+&nbsp;
+
 ### Spécifiques à {{territoire.nom}}
 
-(pour chaque territoire, lister les chantiers en difficulté qui lui sont propres)
+(pour chaque territoire, lister les chantiers en difficulté qui lui sont propres, séparés par une ligne contenant uniquement \`&nbsp;\`)
 **{{chantier.id}} — {{chantier.nom}}**\\
 **Météo** : {{meteo}}
 
 > {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
+
+&nbsp;
 
 **Synthèse — chantiers en difficulté** : {{1-2 phrases factuelles décrivant les tendances communes entre territoires (météo dominante, secteurs concernés). Aucune opinion ni recommandation.}}
 
