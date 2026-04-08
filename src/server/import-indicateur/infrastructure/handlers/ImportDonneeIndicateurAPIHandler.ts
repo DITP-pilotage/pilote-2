@@ -13,6 +13,7 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { PublierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/PublierFichierIndicateurImporteUseCase";
 import { VerifierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/VerifierFichierIndicateurImporteUseCase";
 import { isENOENTError } from "@/server/utils/errors";
+import logger from "@/server/infrastructure/Logger";
 
 function convertirEnTableauPourCSV(
   donnees: ImportDonneeIndicateurAPIContrat[],
@@ -117,6 +118,15 @@ export class ImportDonneeIndicateurAPIHandler {
           });
         });
       } catch (error) {
+        logger.error(
+          {
+            categorie: "import",
+            source: "ImportDonneeIndicateurAPIHandler",
+            indicateurId: request.query.indicateurId as string,
+            contentType,
+          },
+          `Erreur traitement import JSON : ${(error as Error).message}`,
+        );
         return response.status(400).json({ message: (error as Error).message });
       }
     }

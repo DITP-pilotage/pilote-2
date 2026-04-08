@@ -23,9 +23,13 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
   switch (request.method) {
     case "GET": {
       logger.info(
-        "(API) Export des données indicateur",
-        `Chantier : ${request.query.chantierId}`,
-        `Indicateur : ${request.query.indicateurId}`,
+        {
+          categorie: "api",
+          source: "open-api/donnees-indicateur",
+          chantierId: request.query.chantierId as string,
+          indicateurId: request.query.indicateurId as string,
+        },
+        "Export des données indicateur",
       );
       if (
         !utilisateurAuthentifie.peutAccederAuChantier(
@@ -38,15 +42,25 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
       }
       await handleListerIndicateurs({ request, response });
       logger.info(
-        `(API) Export des données indicateur ${request.query.indicateurId} réussie`,
+        {
+          categorie: "api",
+          source: "open-api/donnees-indicateur",
+          chantierId: request.query.chantierId as string,
+          indicateurId: request.query.indicateurId as string,
+        },
+        "Export des données indicateur réussi",
       );
       break;
     }
     case "POST": {
       logger.info(
-        "(API) Import des données",
-        `Chantier : ${request.query.chantierId}`,
-        `Indicateur : ${request.query.indicateurId}`,
+        {
+          categorie: "api",
+          source: "open-api/donnees-indicateur",
+          chantierId: request.query.chantierId as string,
+          indicateurId: request.query.indicateurId as string,
+        },
+        "Import des données indicateur",
       );
       if (
         !utilisateurAuthentifie.peutAccederEnEcritureAuChantier(
@@ -67,7 +81,13 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
           profil: utilisateurAuthentifie.profil,
         });
       logger.info(
-        `(API) Import des données indicateur ${request.query.indicateurId} réussie`,
+        {
+          categorie: "api",
+          source: "open-api/donnees-indicateur",
+          chantierId: request.query.chantierId as string,
+          indicateurId: request.query.indicateurId as string,
+        },
+        "Import des données indicateur réussi",
       );
       break;
     }

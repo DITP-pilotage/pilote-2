@@ -14,6 +14,7 @@ import {
   ImportCommentaireErrorResponse,
 } from "@/server/commentaires/app/contrats/ImportCommentaireAPIContrat";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
+import logger from "@/server/infrastructure/Logger";
 import type { Inject } from "@/server/commentaires/module";
 
 export class ImportCommentaireAPIHandler {
@@ -37,6 +38,15 @@ export class ImportCommentaireAPIHandler {
     utilisateurAuthentifie: UtilisateurAuthentifie;
   }): Promise<void> {
     if (!utilisateurAuthentifie.peutSaisirCommentaireSurChantier(chantierId)) {
+      logger.warn(
+        {
+          categorie: "api",
+          source: "ImportCommentaireAPIHandler",
+          chantierId,
+          email: utilisateurAuthentifie.email,
+        },
+        "Accès refusé pour saisie de commentaires",
+      );
       response.status(403).json({
         message: `Vous n'êtes pas autorisé à saisir des commentaires pour le chantier ${chantierId}`,
         erreurs: [],
@@ -49,6 +59,10 @@ export class ImportCommentaireAPIHandler {
     try {
       body = await this.parseBody(request);
     } catch {
+      logger.warn(
+        { categorie: "api", source: "ImportCommentaireAPIHandler", chantierId },
+        "Corps de requête JSON invalide",
+      );
       response.status(400).json({
         message: "Le corps de la requête n'est pas un JSON valide",
         erreurs: [],
@@ -59,6 +73,15 @@ export class ImportCommentaireAPIHandler {
     const validationResult = importCommentairesSchema.safeParse(body);
 
     if (!validationResult.success) {
+      logger.warn(
+        {
+          categorie: "api",
+          source: "ImportCommentaireAPIHandler",
+          chantierId,
+          nombreErreurs: validationResult.error.errors.length,
+        },
+        "Validation Zod échouée pour import commentaires",
+      );
       const errorResponse = this.formatZodError(validationResult.error);
       response.status(400).json(errorResponse);
       return;
@@ -71,6 +94,15 @@ export class ImportCommentaireAPIHandler {
     );
 
     if (erreurs.length > 0) {
+      logger.warn(
+        {
+          categorie: "api",
+          source: "ImportCommentaireAPIHandler",
+          chantierId,
+          nombreErreurs: erreurs.length,
+        },
+        "Erreurs de validation métier pour import commentaires",
+      );
       response.status(400).json({
         message: "Une erreur est survenue lors de l'import des commentaires",
         erreurs,

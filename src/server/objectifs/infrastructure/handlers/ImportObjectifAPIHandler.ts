@@ -8,6 +8,7 @@ import {
   ImportObjectifErrorResponse,
 } from "@/server/objectifs/app/contrats/ImportObjectifAPIContrat";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
+import logger from "@/server/infrastructure/Logger";
 import type { Inject } from "@/server/objectifs/module";
 
 export class ImportObjectifAPIHandler {
@@ -31,6 +32,15 @@ export class ImportObjectifAPIHandler {
     utilisateurAuthentifie: UtilisateurAuthentifie;
   }): Promise<void> {
     if (!utilisateurAuthentifie.peutSaisirCommentaireSurChantier(chantierId)) {
+      logger.warn(
+        {
+          categorie: "api",
+          source: "ImportObjectifAPIHandler",
+          chantierId,
+          email: utilisateurAuthentifie.email,
+        },
+        "Accès refusé pour saisie d'objectifs",
+      );
       response.status(403).json({
         message: `Vous n'êtes pas autorisé à saisir des objectifs pour le chantier ${chantierId}`,
         erreurs: [],
@@ -43,6 +53,10 @@ export class ImportObjectifAPIHandler {
     try {
       body = await this.parseBody(request);
     } catch {
+      logger.warn(
+        { categorie: "api", source: "ImportObjectifAPIHandler", chantierId },
+        "Corps de requête JSON invalide",
+      );
       response.status(400).json({
         message: "Le corps de la requête n'est pas un JSON valide",
         erreurs: [],
@@ -53,6 +67,15 @@ export class ImportObjectifAPIHandler {
     const validationResult = importObjectifsSchema.safeParse(body);
 
     if (!validationResult.success) {
+      logger.warn(
+        {
+          categorie: "api",
+          source: "ImportObjectifAPIHandler",
+          chantierId,
+          nombreErreurs: validationResult.error.errors.length,
+        },
+        "Validation Zod échouée pour import objectifs",
+      );
       const errorResponse = this.formatZodError(validationResult.error);
       response.status(400).json(errorResponse);
       return;

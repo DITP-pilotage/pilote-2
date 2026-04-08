@@ -235,7 +235,15 @@ export class ValidataFichierIndicateurValidationService implements FichierIndica
 
       return rapport;
     } catch (error) {
-      logger.error((error as Error).message);
+      logger.error(
+        {
+          categorie: "import",
+          source: "ValidataFichierIndicateurValidationService",
+          nomDuFichier,
+          utilisateurEmail,
+        },
+        (error as Error).message,
+      );
 
       rapport = DetailValidationFichier.creerDetailValidationFichier({
         estValide: false,

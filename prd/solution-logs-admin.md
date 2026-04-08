@@ -82,6 +82,16 @@ Les logs sans `categorie` sont classés dans `"systeme"` par défaut.
 | Supprimer comptes désactivés | `utilisateur` | INFO, ERROR | Suppression réussie/échouée avec email, nombreSupprimés |
 | Envoyer relances | `utilisateur` | ERROR | Erreur envoi relance avec email, typeRelance |
 | Importer utilisateurs | `utilisateur` | INFO | Import batch avec nombreImportés, nombreErreurs |
+| Décodage token API JWT | `auth` | WARN | Échec décodage avec errorMessage |
+| Authentification utilisateur API | `auth` | WARN | Utilisateur introuvable avec email, utilisateurTrouve, tokenTrouve |
+| Endpoints open-api (commentaires, objectifs, décisions stratégiques, synthèses, données chantier, données indicateur) | `api` | INFO | Import/export avec chantierId, indicateurId |
+| Import commentaires handler | `api` | WARN | Accès refusé (403), JSON invalide, validation Zod/métier échouée avec chantierId, email, nombreErreurs |
+| Import objectifs handler | `api` | WARN | Accès refusé (403), JSON invalide, validation Zod échouée avec chantierId, email, nombreErreurs |
+| Import décisions stratégiques handler | `api` | WARN | Accès refusé (403), JSON invalide, validation Zod échouée avec chantierId, email, nombreErreurs |
+| Import synthèses des résultats handler | `api` | WARN | Accès refusé (403), JSON invalide, validation Zod/métier échouée avec chantierId, email, nombreErreurs |
+| Import données indicateur handler | `import` | ERROR | Erreur traitement JSON avec indicateurId, contentType |
+| FetchHttpClient (Validata) | `import` | INFO, ERROR | Soumission/réponse/erreur Validata avec nomDuFichier, errorStack |
+| ValidataFichierIndicateurValidationService | `import` | ERROR | Erreur validation fichier avec nomDuFichier, utilisateurEmail |
 
 ---
 

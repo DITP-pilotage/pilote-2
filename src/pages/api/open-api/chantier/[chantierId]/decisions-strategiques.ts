@@ -23,8 +23,12 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
   switch (request.method) {
     case "POST": {
       logger.info(
-        "(API) Import des décisions stratégiques",
-        `Chantier : ${chantierId}`,
+        {
+          categorie: "api",
+          source: "open-api/decisions-strategiques",
+          chantierId,
+        },
+        "Import des décisions stratégiques",
       );
 
       await getContainer("decisionStrategique")
@@ -37,7 +41,12 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
         });
 
       logger.info(
-        `(API) Import des décisions stratégiques pour le chantier ${chantierId} réussie`,
+        {
+          categorie: "api",
+          source: "open-api/decisions-strategiques",
+          chantierId,
+        },
+        "Import des décisions stratégiques réussi",
       );
       break;
     }

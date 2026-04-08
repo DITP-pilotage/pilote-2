@@ -23,8 +23,12 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
   switch (request.method) {
     case "POST": {
       logger.info(
-        "(API) Import des synthèses des résultats",
-        `Chantier : ${chantierId}`,
+        {
+          categorie: "api",
+          source: "open-api/syntheses-des-resultats",
+          chantierId,
+        },
+        "Import des synthèses des résultats",
       );
 
       await getContainer("importSyntheseDesResultats")
@@ -37,7 +41,12 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
         });
 
       logger.info(
-        `(API) Import des synthèses des résultats pour le chantier ${chantierId} réussie`,
+        {
+          categorie: "api",
+          source: "open-api/syntheses-des-resultats",
+          chantierId,
+        },
+        "Import des synthèses des résultats réussi",
       );
       break;
     }

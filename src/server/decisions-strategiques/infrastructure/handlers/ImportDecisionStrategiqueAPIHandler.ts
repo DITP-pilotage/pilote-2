@@ -8,6 +8,7 @@ import {
   ImportDecisionStrategiqueErrorResponse,
 } from "@/server/decisions-strategiques/app/contrats/ImportDecisionStrategiqueAPIContrat";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
+import logger from "@/server/infrastructure/Logger";
 import type { Inject } from "@/server/decisions-strategiques/module";
 
 export class ImportDecisionStrategiqueAPIHandler {
@@ -32,6 +33,15 @@ export class ImportDecisionStrategiqueAPIHandler {
     utilisateurAuthentifie: UtilisateurAuthentifie;
   }): Promise<void> {
     if (!utilisateurAuthentifie.peutSaisirCommentaireSurChantier(chantierId)) {
+      logger.warn(
+        {
+          categorie: "api",
+          source: "ImportDecisionStrategiqueAPIHandler",
+          chantierId,
+          email: utilisateurAuthentifie.email,
+        },
+        "Accès refusé pour saisie de décisions stratégiques",
+      );
       response.status(403).json({
         message: `Vous n'êtes pas autorisé à saisir des décisions stratégiques pour le chantier ${chantierId}`,
         erreurs: [],
@@ -44,6 +54,14 @@ export class ImportDecisionStrategiqueAPIHandler {
     try {
       body = await this.parseBody(request);
     } catch {
+      logger.warn(
+        {
+          categorie: "api",
+          source: "ImportDecisionStrategiqueAPIHandler",
+          chantierId,
+        },
+        "Corps de requête JSON invalide",
+      );
       response.status(400).json({
         message: "Le corps de la requête n'est pas un JSON valide",
         erreurs: [],
@@ -54,6 +72,15 @@ export class ImportDecisionStrategiqueAPIHandler {
     const validationResult = importDecisionsStrategiquesSchema.safeParse(body);
 
     if (!validationResult.success) {
+      logger.warn(
+        {
+          categorie: "api",
+          source: "ImportDecisionStrategiqueAPIHandler",
+          chantierId,
+          nombreErreurs: validationResult.error.errors.length,
+        },
+        "Validation Zod échouée pour import décisions stratégiques",
+      );
       const errorResponse = this.formatZodError(validationResult.error);
       response.status(400).json(errorResponse);
       return;

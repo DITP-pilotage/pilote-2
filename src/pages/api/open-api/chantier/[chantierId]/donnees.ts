@@ -19,8 +19,12 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
   switch (request.method) {
     case "GET": {
       logger.info(
-        "(API) Export des données chantier",
-        `Chantier : ${request.query.chantierId}`,
+        {
+          categorie: "api",
+          source: "open-api/donnees-chantier",
+          chantierId: request.query.chantierId as string,
+        },
+        "Export des données chantier",
       );
       if (
         !utilisateurAuthentifie.peutAccederAuChantier(

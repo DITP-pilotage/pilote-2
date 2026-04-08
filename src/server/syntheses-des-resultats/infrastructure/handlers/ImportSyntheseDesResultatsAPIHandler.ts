@@ -12,6 +12,7 @@ import {
 } from "@/server/syntheses-des-resultats/app/contrats/ImportSyntheseDesResultatsAPIContrat";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+import logger from "@/server/infrastructure/Logger";
 import type { Inject } from "@/server/syntheses-des-resultats/module";
 
 export class ImportSyntheseDesResultatsAPIHandler {
@@ -36,6 +37,15 @@ export class ImportSyntheseDesResultatsAPIHandler {
     utilisateurAuthentifie: UtilisateurAuthentifie;
   }): Promise<void> {
     if (!utilisateurAuthentifie.peutSaisirCommentaireSurChantier(chantierId)) {
+      logger.warn(
+        {
+          categorie: "api",
+          source: "ImportSyntheseDesResultatsAPIHandler",
+          chantierId,
+          email: utilisateurAuthentifie.email,
+        },
+        "Accès refusé pour saisie de synthèses des résultats",
+      );
       response.status(403).json({
         message: `Vous n'êtes pas autorisé à saisir des synthèses des résultats pour le chantier ${chantierId}`,
         erreurs: [],
@@ -48,6 +58,14 @@ export class ImportSyntheseDesResultatsAPIHandler {
     try {
       body = await this.parseBody(request);
     } catch {
+      logger.warn(
+        {
+          categorie: "api",
+          source: "ImportSyntheseDesResultatsAPIHandler",
+          chantierId,
+        },
+        "Corps de requête JSON invalide",
+      );
       response.status(400).json({
         message: "Le corps de la requête n'est pas un JSON valide",
         erreurs: [],
@@ -58,6 +76,15 @@ export class ImportSyntheseDesResultatsAPIHandler {
     const validationResult = importSynthesesDesResultatsSchema.safeParse(body);
 
     if (!validationResult.success) {
+      logger.warn(
+        {
+          categorie: "api",
+          source: "ImportSyntheseDesResultatsAPIHandler",
+          chantierId,
+          nombreErreurs: validationResult.error.errors.length,
+        },
+        "Validation Zod échouée pour import synthèses des résultats",
+      );
       const errorResponse = this.formatZodError(validationResult.error);
       response.status(400).json(errorResponse);
       return;
@@ -70,6 +97,15 @@ export class ImportSyntheseDesResultatsAPIHandler {
     );
 
     if (erreurs.length > 0) {
+      logger.warn(
+        {
+          categorie: "api",
+          source: "ImportSyntheseDesResultatsAPIHandler",
+          chantierId,
+          nombreErreurs: erreurs.length,
+        },
+        "Erreurs de validation métier pour import synthèses des résultats",
+      );
       response.status(400).json({
         message:
           "Une erreur est survenue lors de l'import des synthèses des résultats",

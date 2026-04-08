@@ -22,7 +22,10 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
 
   switch (request.method) {
     case "POST": {
-      logger.info("(API) Import des objectifs", `Chantier : ${chantierId}`);
+      logger.info(
+        { categorie: "api", source: "open-api/objectifs", chantierId },
+        "Import des objectifs",
+      );
 
       await getContainer("objectif")
         .resolve("importObjectifAPIHandler")
@@ -34,7 +37,8 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
         });
 
       logger.info(
-        `(API) Import des objectifs pour le chantier ${chantierId} réussie`,
+        { categorie: "api", source: "open-api/objectifs", chantierId },
+        "Import des objectifs réussi",
       );
       break;
     }
