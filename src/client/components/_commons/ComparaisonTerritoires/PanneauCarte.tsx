@@ -92,22 +92,21 @@ export const PanneauCarte = <T extends string>({
 
       <div ref={carteRef}>{renderCarte(typeCarte)}</div>
 
-      <div className="flex items-end flex-col gap-3">
+      <div className="flex items-center justify-end">
+        <span className="text-primary text-sm">exporter :</span>
         <button
-          className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm whitespace-nowrap"
           onClick={enregistrerCommeImage}
           type="button"
+          aria-label="Enregistrer comme image"
         >
           <Icone className="w-4 h-4" icone={Download1Icon} />
-          Enregistrer comme image
         </button>
         <button
-          className="flex items-center gap-2 !text-dsfr-blue-france-sun-113 font-medium text-sm whitespace-nowrap"
           onClick={copierDansLePressePapiers}
           type="button"
+          aria-label="Copier dans le presse-papiers"
         >
           <Icone className="w-4 h-4" icone={ClipboardIcon} />
-          Copier dans le presse-papiers
         </button>
       </div>
     </div>
