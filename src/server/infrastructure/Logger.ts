@@ -1,9 +1,11 @@
 import pino, { type Logger } from "pino";
 import path from "node:path";
 
+// process.cwd() nécessaire car __dirname est virtualisé par Turbopack en dev.
+// Pour le mode standalone, le fichier doit être copié dans le bundle (cf. next.config).
 const pinoPrismaTransportPath = path.resolve(
-  __dirname,
-  "pino-prisma-transport.js",
+  process.cwd(),
+  "src/server/infrastructure/pino-prisma-transport.js",
 );
 
 interface StructuredLogger {
