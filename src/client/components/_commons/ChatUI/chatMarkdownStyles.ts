@@ -20,7 +20,7 @@ export const chatMarkdownStyles = `
     border-collapse: collapse;
     width: 100%;
     margin: 0.75em 0;
-    font-size: 0.875em;
+    font-size: 1rem;
   }
   .albert-markdown th, .albert-markdown td {
     border: 1px solid #d1d5db;
@@ -55,5 +55,21 @@ export const chatMarkdownStyles = `
     padding-left: 0.75em;
     margin: 0.5em 0;
     color: #6b7280;
+  }
+  .albert-markdown > p,
+  .albert-markdown > h1,
+  .albert-markdown > h2,
+  .albert-markdown > h3,
+  .albert-markdown > ul,
+  .albert-markdown > ol,
+  .albert-markdown > table,
+  .albert-markdown > pre,
+  .albert-markdown > blockquote,
+  .albert-markdown li {
+    animation: md-fade-in 300ms ease-out;
+  }
+  @keyframes md-fade-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 `;

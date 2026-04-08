@@ -10,23 +10,50 @@ import {
 } from "ai";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
+import { randomUUID } from "crypto";
 import { configuration } from "@/config";
 import { prisma } from "@/server/db/prisma";
+import { genererRapportPDF } from "@/server/albert/pdf/genererRapportPDF";
+import { buildRapportMarkdown } from "@/server/albert/markdown/buildRapportMarkdown";
+import type { RapportFileStorage } from "@/server/albert/domain/RapportFileStorage";
+import {
+  exportRapportInputSchema,
+  ExportRapportOutput,
+} from "@/server/albert/exportRapportSchema";
 
-const exportRapportInputSchema = z.object({
-  contenu: z.string().describe("Contenu du rapport en texte brut"),
-});
+export function createExportRapportTool({
+  rapportFileStorage,
+}: {
+  rapportFileStorage: RapportFileStorage;
+}) {
+  return ({ userId }: { userId: string }) => {
+    return tool({
+      description:
+        "Génère un rapport structuré synthétisant la discussion. Appelle cet outil quand l'utilisateur demande d'exporter ou télécharger un rapport. Le rapport doit contenir un titre, une date, un résumé et des sections structurées reprenant les données clés de la conversation.",
+      inputSchema: exportRapportInputSchema,
+      execute: async (input): Promise<ExportRapportOutput> => {
+        const shortId = randomUUID().slice(0, 8);
+        const ext = input.format === "pdf" ? "pdf" : "md";
+        const filename = `${input.nom_fichier}-${shortId}.${ext}`;
 
-export type ExportRapportOutput = { contenu: string };
+        if (input.format === "pdf") {
+          const buffer = await genererRapportPDF(input);
+          const url = await rapportFileStorage.save(userId, filename, buffer);
+          return { url, format: "pdf" };
+        }
 
-export const exportRapportTool = tool({
-  description:
-    "Déclenche le téléchargement d'un rapport en texte brut côté client. Appelle cet outil une fois que tu as assemblé le contenu du rapport à partir des données récupérées.",
-  inputSchema: exportRapportInputSchema,
-  execute: async ({ contenu }): Promise<ExportRapportOutput> => ({ contenu }),
-});
+        const markdown = buildRapportMarkdown(input);
+        const url = await rapportFileStorage.save(userId, filename, markdown);
+        return { url, format: "markdown" };
+      },
+    });
+  };
+}
 
-const displayChoicesInputSchema = z.object({
+export const displayChoicesInputSchema = z.object({
+  question: z
+    .string()
+    .describe("Question affichée en haut du panneau de choix"),
   choices: z
     .array(
       z.object({
@@ -45,42 +72,14 @@ export type DisplayChoice = z.infer<
 
 export const displayChoicesTool = tool({
   description:
-    "Affiche des choix sous forme de boutons cliquables pour l'utilisateur. Utilise cet outil quand tu veux proposer des options à l'utilisateur. IMPORTANT : écris toujours ton message textuel AVANT d'appeler cet outil. Ne l'appelle jamais sans avoir d'abord rédigé le texte d'accompagnement.",
+    "Affiche des choix dans un panneau pour l'utilisateur. Le paramètre 'question' est la question affichée en haut du panneau. Utilise cet outil quand tu veux proposer des options à l'utilisateur. IMPORTANT : écris toujours ton message textuel AVANT d'appeler cet outil. Ne l'appelle jamais sans avoir d'abord rédigé le texte d'accompagnement.",
   inputSchema: displayChoicesInputSchema,
-  execute: async ({ choices }): Promise<{ choices: DisplayChoice[] }> => ({
-    choices,
-  }),
-});
-
-const displayValeursIndicateurInputSchema = z.object({
-  indicateurs: z.array(
-    z.object({
-      indicateur_id: z.string(),
-      nom: z.string(),
-      unite_mesure: z.string().nullable(),
-      valeur_initiale: z.number().nullable(),
-      date_valeur_initiale: z.string().nullable(),
-      valeur_actuelle: z.number().nullable(),
-      date_valeur_actuelle: z.string().nullable(),
-      valeur_cible: z.number().nullable(),
-      date_valeur_cible: z.string().nullable(),
-      taux_avancement: z.number().nullable(),
-    }),
-  ),
-});
-
-export type ValeursIndicateurDisplay = z.infer<
-  typeof displayValeursIndicateurInputSchema
->["indicateurs"][number];
-
-export const displayValeursIndicateurTool = tool({
-  description:
-    "Affiche les valeurs des indicateurs dans un tableau visuel. OBLIGATOIRE après get_valeurs_indicateur : passe-lui le tableau d'indicateurs tel quel. IMPORTANT : n'écris JAMAIS les données des indicateurs en texte ou en markdown. Utilise TOUJOURS cet outil pour les afficher.",
-  inputSchema: displayValeursIndicateurInputSchema,
   execute: async ({
-    indicateurs,
-  }): Promise<{ indicateurs: ValeursIndicateurDisplay[] }> => ({
-    indicateurs,
+    question,
+    choices,
+  }): Promise<{ question: string; choices: DisplayChoice[] }> => ({
+    question,
+    choices,
   }),
 });
 
@@ -171,7 +170,7 @@ export class Albert {
       system: systemPrompt,
       messages: modelMessages,
       tools,
-      stopWhen: stepCountIs(15),
+      stopWhen: stepCountIs(50),
       onFinish: (event) => Albert.saveLlmCall({ chatId, userId, event, model }),
     });
   }

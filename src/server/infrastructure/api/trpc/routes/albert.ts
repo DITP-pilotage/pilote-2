@@ -4,18 +4,12 @@ import {
   créerRouteurTRPC,
   procédureProtégée,
 } from "@/server/infrastructure/api/trpc/trpc";
-import {
-  Albert,
-  displayChoicesTool,
-  displayValeursIndicateurTool,
-  exportRapportTool,
-} from "@/server/albert/Albert";
+import { Albert, displayChoicesTool } from "@/server/albert/Albert";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import { getContainer } from "@/server/dependances";
 import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-import { getInstructionsTool } from "@/server/albert/recipes";
 
 export const albertRouter = créerRouteurTRPC({
   chat: procédureProtégée
@@ -47,8 +41,11 @@ export const albertRouter = créerRouteurTRPC({
       const createGetChantiersEnDifficulteTool = container.resolve(
         "createGetChantiersEnDifficulteTool",
       );
-      const createGetValeursIndicateurTool = container.resolve(
-        "createGetValeursIndicateurTool",
+      const createGetChantierIndicateursTool = container.resolve(
+        "createGetChantierIndicateursTool",
+      );
+      const createExportRapportTool = container.resolve(
+        "createExportRapportTool",
       );
 
       const systemPrompt = buildChatSystemPrompt({ territoiresAccessibles });
@@ -63,8 +60,11 @@ export const albertRouter = créerRouteurTRPC({
       const getChantiersEnDifficulte = createGetChantiersEnDifficulteTool({
         territoiresAccessibles,
       });
-      const getValeursIndicateur = createGetValeursIndicateurTool({
+      const getChantierIndicateurs = createGetChantierIndicateursTool({
         territoiresAccessibles,
+      });
+      const exportRapport = createExportRapportTool({
+        userId: ctx.session.user.id,
       });
 
       return Albert.generateText({
@@ -73,14 +73,12 @@ export const albertRouter = créerRouteurTRPC({
         systemPrompt,
         userId: ctx.session.user.id,
         tools: {
-          get_instructions: getInstructionsTool,
           get_taux_avancement_territoire: getTauxAvancementTerritoire,
           get_chantiers_en_retard: getChantiersEnRetard,
           get_chantiers_en_difficulte: getChantiersEnDifficulte,
-          get_valeurs_indicateur: getValeursIndicateur,
+          get_chantier_indicateurs: getChantierIndicateurs,
           display_choices: displayChoicesTool,
-          display_valeurs_indicateur: displayValeursIndicateurTool,
-          export_rapport: exportRapportTool,
+          export_rapport: exportRapport,
         },
       });
     }),

@@ -3,9 +3,14 @@ import { GetChantiersEnDifficulteQuery } from "@/server/chantiers/query/GetChant
 import { createGetTauxAvancementTerritoireTool } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import { createGetChantiersEnRetardTool } from "@/server/albert/tools/getChantiersEnRetard";
 import { createGetChantiersEnDifficulteTool } from "@/server/albert/tools/getChantiersEnDifficulte";
-import { GetValeursIndicateurQuery } from "@/server/chantiers/query/GetValeursIndicateurQuery";
-import { createGetValeursIndicateurTool } from "@/server/albert/tools/getValeursIndicateur";
+import { GetChantierIndicateursQuery } from "@/server/chantiers/query/GetChantierIndicateursQuery";
+import { createGetChantierIndicateursTool } from "@/server/albert/tools/getChantierIndicateurs";
 import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase";
+import { PrismaTerritoireResolver } from "@/server/albert/infrastructure/PrismaTerritoireResolver";
+import { FsRapportFileStorage } from "@/server/albert/infrastructure/FsRapportFileStorage";
+import { createExportRapportTool } from "@/server/albert/Albert";
+import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import type { RapportFileStorage } from "@/server/albert/domain/RapportFileStorage";
 import {
   defineModule,
   type ExtractScope,
@@ -17,6 +22,8 @@ import type { SharedDependencies } from "@/server/shared/module";
 type AlbertImports = SharedDependencies;
 
 type AlbertOwnCradle = {
+  territoireResolver: TerritoireResolver;
+  rapportFileStorage: RapportFileStorage;
   createGetTauxAvancementTerritoireTool: ReturnType<
     typeof createGetTauxAvancementTerritoireTool
   >;
@@ -28,10 +35,11 @@ type AlbertOwnCradle = {
   createGetChantiersEnDifficulteTool: ReturnType<
     typeof createGetChantiersEnDifficulteTool
   >;
-  getValeursIndicateurQuery: GetValeursIndicateurQuery;
-  createGetValeursIndicateurTool: ReturnType<
-    typeof createGetValeursIndicateurTool
+  getChantierIndicateursQuery: GetChantierIndicateursQuery;
+  createGetChantierIndicateursTool: ReturnType<
+    typeof createGetChantierIndicateursTool
   >;
+  createExportRapportTool: ReturnType<typeof createExportRapportTool>;
   evaluerChatUseCase: EvaluerChatUseCase;
 };
 
@@ -43,6 +51,8 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
   exports: [],
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
+      territoireResolver: asModuleClass(PrismaTerritoireResolver),
+      rapportFileStorage: asModuleClass(FsRapportFileStorage),
       createGetTauxAvancementTerritoireTool: asModuleFunction(
         createGetTauxAvancementTerritoireTool,
       ),
@@ -56,10 +66,11 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       createGetChantiersEnDifficulteTool: asModuleFunction(
         createGetChantiersEnDifficulteTool,
       ),
-      getValeursIndicateurQuery: asModuleClass(GetValeursIndicateurQuery),
-      createGetValeursIndicateurTool: asModuleFunction(
-        createGetValeursIndicateurTool,
+      getChantierIndicateursQuery: asModuleClass(GetChantierIndicateursQuery),
+      createGetChantierIndicateursTool: asModuleFunction(
+        createGetChantierIndicateursTool,
       ),
+      createExportRapportTool: asModuleFunction(createExportRapportTool),
       evaluerChatUseCase: asModuleClass(EvaluerChatUseCase),
     } satisfies VerifyCradle<AlbertOwnCradle>);
   },

@@ -1,15 +1,9 @@
 import { validateUIMessages } from "ai";
 import { z } from "zod";
-import {
-  Albert,
-  displayChoicesTool,
-  displayValeursIndicateurTool,
-  exportRapportTool,
-} from "@/server/albert/Albert";
+import { Albert, displayChoicesTool } from "@/server/albert/Albert";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import { getContainer } from "@/server/dependances";
-import { getInstructionsTool } from "@/server/albert/recipes";
 
 const chatRequestSchema = z
   .object({
@@ -47,8 +41,11 @@ export async function POST(request: Request) {
     const createGetChantiersEnDifficulteTool = container.resolve(
       "createGetChantiersEnDifficulteTool",
     );
-    const createGetValeursIndicateurTool = container.resolve(
-      "createGetValeursIndicateurTool",
+    const createGetChantierIndicateursTool = container.resolve(
+      "createGetChantierIndicateursTool",
+    );
+    const createExportRapportTool = container.resolve(
+      "createExportRapportTool",
     );
 
     const systemPrompt = buildChatSystemPrompt({
@@ -64,8 +61,11 @@ export async function POST(request: Request) {
     const getChantiersEnDifficulte = createGetChantiersEnDifficulteTool({
       territoiresAccessibles,
     });
-    const getValeursIndicateur = createGetValeursIndicateurTool({
+    const getChantierIndicateurs = createGetChantierIndicateursTool({
       territoiresAccessibles,
+    });
+    const exportRapport = createExportRapportTool({
+      userId: session.user.id,
     });
 
     const result = await Albert.streamText({
@@ -75,14 +75,12 @@ export async function POST(request: Request) {
       userId: session.user.id,
       model: body.model,
       tools: {
-        get_instructions: getInstructionsTool,
         get_taux_avancement_territoire: getTauxAvancementTerritoire,
         get_chantiers_en_retard: getChantiersEnRetard,
         get_chantiers_en_difficulte: getChantiersEnDifficulte,
-        get_valeurs_indicateur: getValeursIndicateur,
+        get_chantier_indicateurs: getChantierIndicateurs,
         display_choices: displayChoicesTool,
-        display_valeurs_indicateur: displayValeursIndicateurTool,
-        export_rapport: exportRapportTool,
+        export_rapport: exportRapport,
       },
     });
 

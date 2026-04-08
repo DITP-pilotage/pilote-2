@@ -1,25 +1,45 @@
+import type { ToolUIPart } from "ai";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { LoaderIcon } from "@/components/_commons/Icones/LoaderIcon";
+import type { PiloteUITools } from "@/server/albert/PiloteUIMessage";
 
-export const ExportRapportDownload = ({ contenu }: { contenu: string }) => {
+type ExportRapportPart = Extract<
+  ToolUIPart<PiloteUITools>,
+  { type: "tool-export_rapport" }
+>;
+
+export const ExportRapportDownload = ({
+  part,
+  isStreaming,
+}: {
+  part: ExportRapportPart;
+  isStreaming: boolean;
+}) => {
+  const isReady = part.state === "output-available" && !isStreaming;
+
   const handleDownload = () => {
-    const date = new Date().toISOString().slice(0, 10);
-    const filename = `rapport-pilote-${date}.txt`;
-    const blob = new Blob([contenu], { type: "text/plain;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-
+    if (!isReady) return;
     const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = filename;
+    anchor.href = part.output.url;
+    anchor.download = "";
     anchor.click();
-
-    URL.revokeObjectURL(url);
   };
+
+  const label = isReady
+    ? part.output.format === "pdf"
+      ? "Télécharger le rapport PDF"
+      : "Télécharger le rapport Markdown"
+    : "Génération en cours...";
 
   return (
     <div className="my-2 max-w-3xl mx-auto flex justify-center">
       <Bouton
-        label="Télécharger le rapport"
+        label={label}
+        iconLeft={
+          !isReady ? <LoaderIcon className="w-4 h-4 animate-spin" /> : undefined
+        }
         variant="primary"
+        disabled={!isReady}
         onClick={handleDownload}
         type="button"
       />

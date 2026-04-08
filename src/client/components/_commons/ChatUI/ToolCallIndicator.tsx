@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { memo, useState } from "react";
 import type { ToolUIPart } from "ai";
 import { ArrowSLine2Icon } from "@/components/_commons/Icones/ArrowSLine2Icon";
 import { ArrowSLineIcon } from "@/components/_commons/Icones/ArrowSLineIcon";
@@ -15,7 +15,7 @@ type DataFetchingToolPart = Extract<
       | "tool-get_taux_avancement_territoire"
       | "tool-get_chantiers_en_retard"
       | "tool-get_chantiers_en_difficulte"
-      | "tool-get_valeurs_indicateur";
+      | "tool-get_chantier_indicateurs";
   }
 >;
 
@@ -25,7 +25,7 @@ const TOOL_LABELS: Record<DataFetchingToolPart["type"], string> = {
   "tool-get_chantiers_en_retard": "Récupération des chantiers en retard",
   "tool-get_chantiers_en_difficulte":
     "Récupération des chantiers en difficulté",
-  "tool-get_valeurs_indicateur": "Récupération des valeurs de l'indicateur",
+  "tool-get_chantier_indicateurs": "Récupération des indicateurs du chantier",
 };
 
 const StatusIcon = ({ state }: { state: DataFetchingToolPart["state"] }) => {
@@ -38,7 +38,11 @@ const StatusIcon = ({ state }: { state: DataFetchingToolPart["state"] }) => {
   return <AssistantLoader />;
 };
 
-export const ToolCallIndicator = ({ part }: { part: DataFetchingToolPart }) => {
+export const ToolCallIndicator = memo(function ToolCallIndicator({
+  part,
+}: {
+  part: DataFetchingToolPart;
+}) {
   const [expanded, setExpanded] = useState(false);
 
   const label = TOOL_LABELS[part.type] ?? part.type.replace("tool-", "");
@@ -75,4 +79,4 @@ export const ToolCallIndicator = ({ part }: { part: DataFetchingToolPart }) => {
       </AnimateEntry>
     </div>
   );
-};
+});

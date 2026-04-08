@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Chat, useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import type { AlbertModel } from "@/components/_commons/ChatUI/ChatInputForm";
@@ -12,6 +12,7 @@ import { ChatInputForm } from "@/components/_commons/ChatUI/ChatInputForm";
 import { chatMarkdownStyles } from "@/components/_commons/ChatUI/chatMarkdownStyles";
 import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { ChatEmptyState } from "@/components/_commons/ChatUI/ChatEmptyState";
+import { ChoicesPanel } from "@/components/_commons/ChatUI/ChoicesPanel";
 import type {
   ChatScenario,
   ChatScenarioGroup,
@@ -56,23 +57,30 @@ export const ChatUI = ({
 
   const { messages, sendMessage, status, error } = useChat<PiloteUIMessage>({
     chat: chatRef.current,
+    experimental_throttle: 250,
   });
 
   useEffect(() => {
+    if (messages.length === 0) return;
+
     if (messages.length !== prevMessageCountRef.current) {
       userHasScrolledRef.current = false;
       prevMessageCountRef.current = messages.length;
     }
-  }, [messages]);
 
-  useEffect(() => {
-    if (messages.length === 0) return;
     if (userHasScrolledRef.current) return;
 
-    setTimeout(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const isStreaming = status !== "ready";
+
+    if (isStreaming) {
+      container.scrollTop = container.scrollHeight;
+    } else {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
-  }, [messages]);
+    }
+  }, [messages, status]);
 
   const handleScroll = useCallback(() => {
     const container = scrollContainerRef.current;
@@ -81,9 +89,7 @@ export const ChatUI = ({
     const { scrollTop, scrollHeight, clientHeight } = container;
     const isNearBottom = scrollHeight - scrollTop - clientHeight < 50;
 
-    if (!isNearBottom) {
-      userHasScrolledRef.current = true;
-    }
+    userHasScrolledRef.current = !isNearBottom;
   }, []);
 
   const fillInput = useCallback((text: string) => {
@@ -93,6 +99,27 @@ export const ChatUI = ({
   const handleModelChange = useCallback((model: AlbertModel) => {
     bodyRef.current.model = model;
   }, []);
+
+  const choicesPanelData = useMemo(() => {
+    if (status !== "ready" || messages.length === 0) return null;
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage.role !== "assistant") return null;
+
+    const choicesPart = lastMessage.parts?.findLast(
+      (part) =>
+        part.type === "tool-display_choices" &&
+        part.state === "output-available",
+    );
+
+    if (!choicesPart || choicesPart.type !== "tool-display_choices")
+      return null;
+    if (choicesPart.state !== "output-available") return null;
+
+    return {
+      question: choicesPart.output.question,
+      choices: choicesPart.output.choices,
+    };
+  }, [messages, status]);
 
   return (
     <ChatContextProvider
@@ -136,7 +163,7 @@ export const ChatUI = ({
             {status === "submitted" && (
               <div className="max-w-3xl mx-auto flex justify-start">
                 <div className="text-sm text-gray-500">
-                  <AssistantLoader />
+                  <AssistantLoader label="Réflexion en cours" />
                 </div>
               </div>
             )}
@@ -152,6 +179,13 @@ export const ChatUI = ({
             <div ref={messagesEndRef} />
           </div>
         </div>
+
+        {choicesPanelData && (
+          <ChoicesPanel
+            question={choicesPanelData.question}
+            choices={choicesPanelData.choices}
+          />
+        )}
 
         {messages.length > 0 && status === "ready" && (
           <FeedbackBar chatId={chatRef.current.id} />

@@ -32,9 +32,23 @@ export const BoutonSyntheseTerritoire = ({
             message: `Fais moi la synthèse de ${territoire.nomAffiché}`,
             mode: "send",
           },
+          ...(estRegion
+            ? [
+                {
+                  label: `Synthèse de ${territoire.nomAffiché} et ses départements`,
+                  message: `Fais moi la synthèse de ${territoire.nomAffiché} et ses départements`,
+                  mode: "send" as const,
+                },
+              ]
+            : []),
           {
-            label: "Analyser les chantiers en retard",
-            message: `Analyse les chantiers en retard sur ${territoire.nomAffiché} sur la base des commentaires`,
+            label: "Chantiers en retard et leurs indicateurs",
+            message: `Analyse les chantiers en retard sur ${territoire.nomAffiché}. Pour chaque chantier en retard, récupère également les valeurs de ses indicateurs.`,
+            mode: "send",
+          },
+          {
+            label: "Rapport complet (Markdown)",
+            message: `Crée un rapport de synthèse du territoire ${territoire.nomAffiché} incluant le taux d'avancement, les chantiers en retard, les chantiers en difficulté et leurs indicateurs. Format Markdown`,
             mode: "send",
           },
         ],
@@ -44,7 +58,7 @@ export const BoutonSyntheseTerritoire = ({
         scenarios: [
           {
             label: "Comparer avec un autre territoire",
-            message: `Compare le taux d'avancement de ${territoire.nomAffiché} avec `,
+            message: `Compare ${territoire.nomAffiché} avec `,
             mode: "fill",
           },
           {
@@ -70,26 +84,6 @@ export const BoutonSyntheseTerritoire = ({
                 },
               ]
             : []),
-          {
-            label: "Comparer un chantier sur plusieurs territoires",
-            message: `Compare le chantier `,
-            mode: "fill",
-          },
-        ],
-      },
-      {
-        label: "Analyse",
-        scenarios: [
-          {
-            label: "Analyser un chantier sur le territoire",
-            message: `Analyse les indicateurs du chantier `,
-            mode: "fill",
-          },
-          {
-            label: "Identifier les plus grands écarts à la médiane",
-            message: `Identifie les chantiers avec le plus grand écart à la médiane sur ${territoire.nomAffiché}`,
-            mode: "send",
-          },
         ],
       },
     ],
@@ -116,7 +110,10 @@ export const BoutonSyntheseTerritoire = ({
             className="h-full"
             placeholder="Posez une question sur ce territoire..."
             scenarios={scenarios}
-            agentContext={{ jalon, territoireCode }}
+            agentContext={{
+              jalon,
+              instructions: `Le territoire courant de l'utilisateur est ${territoire.nomAffiché} (code : ${territoireCode}). Utilise ce territoire par défaut lorsque l'utilisateur ne précise pas de territoire dans sa question.`,
+            }}
           />
         </ModalePleinEcran>
       )}

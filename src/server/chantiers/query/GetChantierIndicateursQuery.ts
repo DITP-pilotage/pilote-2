@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
-export type GetValeursIndicateurResult = {
+export type GetChantierIndicateursResult = {
   territoire_code: string;
   chantier_id: string;
   indicateurs: {
@@ -18,14 +18,14 @@ export type GetValeursIndicateurResult = {
   }[];
 };
 
-export class GetValeursIndicateurQuery {
+export class GetChantierIndicateursQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}
 
   async execute(params: {
     territoireCode: string;
     chantierId: string;
     jalon: number;
-  }): Promise<GetValeursIndicateurResult> {
+  }): Promise<GetChantierIndicateursResult> {
     const prisma = this.deps.prisma.getInstance();
 
     const rows = await prisma.indicateur_territoire.findMany({
