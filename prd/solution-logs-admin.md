@@ -60,7 +60,8 @@ Les logs sans `categorie` sont classés dans `"systeme"` par défaut côté tran
 
 **Contraintes techniques :**
 - Le transport doit être en JS pur (CommonJS) car le worker thread Pino ne passe pas par la compilation Next.js/Turbopack
-- Le chemin du transport est résolu via `__dirname` (et non `process.cwd()`) pour compatibilité avec le mode `output: "standalone"` de Next.js
+- Le chemin du transport est résolu via `process.cwd()` car `__dirname` est virtualisé par Turbopack en dev
+- Pour le mode `output: "standalone"`, le fichier est inclus dans le bundle via `outputFileTracingIncludes` dans `next.config.js`
 - Le transport DB n'est activé que si `DATABASE_URL` est défini (garde-fou pour les tests et environnements incomplets)
 
 ### Catégories de logs
