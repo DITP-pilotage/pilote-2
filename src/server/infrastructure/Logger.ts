@@ -24,13 +24,15 @@ function mapPinoLevelToEnum(pinoLevel: number): string | null {
 function extraireContexte(
   obj: Record<string, unknown>,
 ): Prisma.InputJsonObject | null {
-  const contexte: Prisma.InputJsonObject = {};
+  const contexte: Record<string, Prisma.InputJsonValue | null> = {};
   for (const [key, value] of Object.entries(obj)) {
     if (!CHAMPS_STANDARD_PINO.has(key)) {
       contexte[key] = value as Prisma.InputJsonValue;
     }
   }
-  return Object.keys(contexte).length > 0 ? contexte : null;
+  return Object.keys(contexte).length > 0
+    ? (contexte as Prisma.InputJsonObject)
+    : null;
 }
 
 let prismaPilote: PrismaPilote | null = null;
