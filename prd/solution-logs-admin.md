@@ -44,16 +44,24 @@ Index sur `timestamp`, `categorie`, `level`, et composite `(categorie, timestamp
 
 Le logger existant est enrichi d'un **transport Pino** qui persiste les logs en base via un worker thread séparé (non-bloquant).
 
-L'API du logger ne change pas. On passe les métadonnées via les propriétés structurées Pino :
+Le logger expose une API stricte avec signature **`(obj, msg)`**, conforme à la signature native de Pino. Les deux arguments sont obligatoires, et `obj` doit contenir au minimum `categorie` et `source` :
 
 ```typescript
 logger.info({ categorie: "import", source: "VerifierFichierUseCase" }, "Validation réussie");
-logger.error({ categorie: "auth", duree_ms: 1200 }, "Timeout Keycloak");
+logger.error({ categorie: "auth", source: "TokenAPIJWTService", duree_ms: 1200 }, "Timeout Keycloak");
 ```
 
-Les logs sans `categorie` sont classés dans `"systeme"` par défaut.
+- **`categorie`** (obligatoire) : catégorie métier du log (voir tableau ci-dessous)
+- **`source`** (obligatoire) : fichier ou module d'origine
+- **`msg`** (obligatoire) : message humainement lisible, affiché dans la colonne "Message" du tableau admin
+- Propriétés supplémentaires (email, chantierId, etc.) : passées dans `obj`, stockées dans le champ `contexte` JSON
 
-**Contrainte technique :** le transport doit être en JS pur (CommonJS) car le worker thread Pino ne passe pas par la compilation Next.js/Turbopack.
+Les logs sans `categorie` sont classés dans `"systeme"` par défaut côté transport.
+
+**Contraintes techniques :**
+- Le transport doit être en JS pur (CommonJS) car le worker thread Pino ne passe pas par la compilation Next.js/Turbopack
+- Le chemin du transport est résolu via `__dirname` (et non `process.cwd()`) pour compatibilité avec le mode `output: "standalone"` de Next.js
+- Le transport DB n'est activé que si `DATABASE_URL` est défini (garde-fou pour les tests et environnements incomplets)
 
 ### Catégories de logs
 
@@ -66,6 +74,8 @@ Les logs sans `categorie` sont classés dans `"systeme"` par défaut.
 | `api` | Erreurs API, latences élevées |
 | `indicateur` | Calculs et mises à jour indicateurs |
 | `utilisateur` | Gestion utilisateurs, habilitations |
+| `notification` | Envoi de messages Tchap |
+| `database` | Erreurs repositories Prisma |
 | `systeme` | Événements système (défaut) |
 
 ### Logs déjà branchés
