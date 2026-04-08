@@ -11,7 +11,7 @@ export const errorHandler =
       if (error instanceof PiloteError) {
         Logger.error(
           {
-            categorie: "api",
+            categorie: "systeme",
             source: "error-handler",
             statusCode: error.status,
             type: error.type,
@@ -23,7 +23,7 @@ export const errorHandler =
           .json({ success: false, message: error.message });
       } else {
         Logger.error(
-          { categorie: "api", source: "error-handler", statusCode: 500 },
+          { categorie: "systeme", source: "error-handler", statusCode: 500 },
           `Erreur interne : ${(error as Error).message}`,
         );
         return res.status(500).json({

@@ -35,7 +35,7 @@ export class ImportDecisionStrategiqueAPIHandler {
     if (!utilisateurAuthentifie.peutSaisirCommentaireSurChantier(chantierId)) {
       logger.warn(
         {
-          categorie: "api",
+          categorie: "import",
           source: "ImportDecisionStrategiqueAPIHandler",
           chantierId,
           email: utilisateurAuthentifie.email,
@@ -56,7 +56,7 @@ export class ImportDecisionStrategiqueAPIHandler {
     } catch {
       logger.warn(
         {
-          categorie: "api",
+          categorie: "import",
           source: "ImportDecisionStrategiqueAPIHandler",
           chantierId,
         },
@@ -74,7 +74,7 @@ export class ImportDecisionStrategiqueAPIHandler {
     if (!validationResult.success) {
       logger.warn(
         {
-          categorie: "api",
+          categorie: "import",
           source: "ImportDecisionStrategiqueAPIHandler",
           chantierId,
           nombreErreurs: validationResult.error.errors.length,

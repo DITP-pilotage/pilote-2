@@ -66,18 +66,19 @@ Les logs sans `categorie` sont classés dans `"systeme"` par défaut côté tran
 
 ### Catégories de logs
 
+Les catégories sont 100% métier. L'info technique (couche, module) est portée par le champ `source`.
+
 | Catégorie | Description |
 |-----------|------------|
 | `auth` | Authentification, sessions, Keycloak |
-| `import` | Import de données indicateurs |
-| `pva` | Propositions de valeur d'avancement |
-| `rapport` | Rapports hebdomadaires |
-| `api` | Erreurs API, latences élevées |
-| `indicateur` | Calculs et mises à jour indicateurs |
-| `utilisateur` | Gestion utilisateurs, habilitations |
+| `chantier` | Consultation et export de données chantiers |
+| `import` | Import de données (indicateurs, commentaires, objectifs, décisions, synthèses) |
+| `indicateur` | Calculs, métadonnées et mises à jour indicateurs |
 | `notification` | Envoi de messages Tchap |
-| `database` | Erreurs repositories Prisma |
-| `systeme` | Événements système (défaut) |
+| `pva` | Propositions de valeur d'avancement |
+| `rapport` | Rapports hebdomadaires coordinateurs |
+| `utilisateur` | Gestion utilisateurs, habilitations, comptes |
+| `systeme` | Erreurs transverses (error handler, tRPC) et événements système (défaut) |
 
 ### Logs déjà branchés
 

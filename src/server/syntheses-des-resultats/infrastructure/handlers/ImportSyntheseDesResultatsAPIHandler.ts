@@ -39,7 +39,7 @@ export class ImportSyntheseDesResultatsAPIHandler {
     if (!utilisateurAuthentifie.peutSaisirCommentaireSurChantier(chantierId)) {
       logger.warn(
         {
-          categorie: "api",
+          categorie: "import",
           source: "ImportSyntheseDesResultatsAPIHandler",
           chantierId,
           email: utilisateurAuthentifie.email,
@@ -60,7 +60,7 @@ export class ImportSyntheseDesResultatsAPIHandler {
     } catch {
       logger.warn(
         {
-          categorie: "api",
+          categorie: "import",
           source: "ImportSyntheseDesResultatsAPIHandler",
           chantierId,
         },
@@ -78,7 +78,7 @@ export class ImportSyntheseDesResultatsAPIHandler {
     if (!validationResult.success) {
       logger.warn(
         {
-          categorie: "api",
+          categorie: "import",
           source: "ImportSyntheseDesResultatsAPIHandler",
           chantierId,
           nombreErreurs: validationResult.error.errors.length,
@@ -99,7 +99,7 @@ export class ImportSyntheseDesResultatsAPIHandler {
     if (erreurs.length > 0) {
       logger.warn(
         {
-          categorie: "api",
+          categorie: "import",
           source: "ImportSyntheseDesResultatsAPIHandler",
           chantierId,
           nombreErreurs: erreurs.length,

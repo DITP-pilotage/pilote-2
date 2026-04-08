@@ -23,7 +23,7 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
   switch (request.method) {
     case "POST": {
       logger.info(
-        { categorie: "api", source: "open-api/objectifs", chantierId },
+        { categorie: "import", source: "open-api/objectifs", chantierId },
         "Import des objectifs",
       );
 
@@ -37,7 +37,7 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
         });
 
       logger.info(
-        { categorie: "api", source: "open-api/objectifs", chantierId },
+        { categorie: "import", source: "open-api/objectifs", chantierId },
         "Import des objectifs réussi",
       );
       break;

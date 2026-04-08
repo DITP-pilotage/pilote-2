@@ -10,7 +10,7 @@ export default createNextApiHandler({
   onError: ({ error, ctx, path, input }) =>
     logger.error(
       {
-        categorie: "api",
+        categorie: "systeme",
         source: "trpc",
         type: error.name,
         path: path,

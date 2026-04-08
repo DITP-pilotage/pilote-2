@@ -43,7 +43,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     } catch (error: unknown) {
       Logger.error(
         {
-          categorie: "database",
+          categorie: "indicateur",
           source: "PrismaIndicateurRepository",
           indicId,
         },

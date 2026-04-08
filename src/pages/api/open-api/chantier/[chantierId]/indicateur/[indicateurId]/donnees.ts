@@ -24,7 +24,7 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
     case "GET": {
       logger.info(
         {
-          categorie: "api",
+          categorie: "import",
           source: "open-api/donnees-indicateur",
           chantierId: request.query.chantierId as string,
           indicateurId: request.query.indicateurId as string,
@@ -43,7 +43,7 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
       await handleListerIndicateurs({ request, response });
       logger.info(
         {
-          categorie: "api",
+          categorie: "import",
           source: "open-api/donnees-indicateur",
           chantierId: request.query.chantierId as string,
           indicateurId: request.query.indicateurId as string,
@@ -55,7 +55,7 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
     case "POST": {
       logger.info(
         {
-          categorie: "api",
+          categorie: "import",
           source: "open-api/donnees-indicateur",
           chantierId: request.query.chantierId as string,
           indicateurId: request.query.indicateurId as string,
@@ -82,7 +82,7 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
         });
       logger.info(
         {
-          categorie: "api",
+          categorie: "import",
           source: "open-api/donnees-indicateur",
           chantierId: request.query.chantierId as string,
           indicateurId: request.query.indicateurId as string,

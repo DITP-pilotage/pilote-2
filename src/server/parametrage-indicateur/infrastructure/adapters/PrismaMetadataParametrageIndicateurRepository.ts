@@ -240,7 +240,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
     } catch (error: unknown) {
       Logger.error(
         {
-          categorie: "database",
+          categorie: "indicateur",
           source: "PrismaMetadataParametrageIndicateurRepository",
         },
         `Erreur récupération metadata : ${(error as Error).message}`,
@@ -274,7 +274,7 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
     } catch (error: unknown) {
       Logger.error(
         {
-          categorie: "database",
+          categorie: "indicateur",
           source: "PrismaMetadataParametrageIndicateurRepository",
         },
         `Erreur récupération metadata par indicId : ${(error as Error).message}`,

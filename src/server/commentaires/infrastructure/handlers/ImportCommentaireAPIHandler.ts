@@ -40,7 +40,7 @@ export class ImportCommentaireAPIHandler {
     if (!utilisateurAuthentifie.peutSaisirCommentaireSurChantier(chantierId)) {
       logger.warn(
         {
-          categorie: "api",
+          categorie: "import",
           source: "ImportCommentaireAPIHandler",
           chantierId,
           email: utilisateurAuthentifie.email,
@@ -60,7 +60,11 @@ export class ImportCommentaireAPIHandler {
       body = await this.parseBody(request);
     } catch {
       logger.warn(
-        { categorie: "api", source: "ImportCommentaireAPIHandler", chantierId },
+        {
+          categorie: "import",
+          source: "ImportCommentaireAPIHandler",
+          chantierId,
+        },
         "Corps de requête JSON invalide",
       );
       response.status(400).json({
@@ -75,7 +79,7 @@ export class ImportCommentaireAPIHandler {
     if (!validationResult.success) {
       logger.warn(
         {
-          categorie: "api",
+          categorie: "import",
           source: "ImportCommentaireAPIHandler",
           chantierId,
           nombreErreurs: validationResult.error.errors.length,
@@ -96,7 +100,7 @@ export class ImportCommentaireAPIHandler {
     if (erreurs.length > 0) {
       logger.warn(
         {
-          categorie: "api",
+          categorie: "import",
           source: "ImportCommentaireAPIHandler",
           chantierId,
           nombreErreurs: erreurs.length,

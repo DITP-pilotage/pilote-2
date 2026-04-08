@@ -8,11 +8,12 @@ import { ModalePurge } from "./ModalePurge";
 
 const CATEGORIES = [
   "auth",
+  "chantier",
   "import",
+  "indicateur",
+  "notification",
   "pva",
   "rapport",
-  "api",
-  "indicateur",
   "utilisateur",
   "systeme",
 ];

@@ -20,7 +20,7 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
     case "GET": {
       logger.info(
         {
-          categorie: "api",
+          categorie: "chantier",
           source: "open-api/donnees-chantier",
           chantierId: request.query.chantierId as string,
         },

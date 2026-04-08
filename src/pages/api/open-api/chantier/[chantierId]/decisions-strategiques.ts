@@ -24,7 +24,7 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
     case "POST": {
       logger.info(
         {
-          categorie: "api",
+          categorie: "import",
           source: "open-api/decisions-strategiques",
           chantierId,
         },
@@ -42,7 +42,7 @@ const handle = async (request: NextApiRequest, response: NextApiResponse) => {
 
       logger.info(
         {
-          categorie: "api",
+          categorie: "import",
           source: "open-api/decisions-strategiques",
           chantierId,
         },

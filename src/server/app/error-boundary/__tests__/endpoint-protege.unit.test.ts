@@ -66,7 +66,7 @@ describe("endpointProtege", () => {
       expect(handler).not.toHaveBeenCalled();
       expect(mockLoggerError).toHaveBeenCalledWith(
         expect.objectContaining({
-          categorie: "api",
+          categorie: "systeme",
           source: "error-handler",
           statusCode: 401,
           type: "UnauthorizedError",
@@ -95,7 +95,7 @@ describe("endpointProtege", () => {
       expect(handler).not.toHaveBeenCalled();
       expect(mockLoggerError).toHaveBeenCalledWith(
         expect.objectContaining({
-          categorie: "api",
+          categorie: "systeme",
           source: "error-handler",
           statusCode: 400,
           type: "BadRequestError",
@@ -233,7 +233,7 @@ describe("endpointProtege", () => {
       });
       expect(mockLoggerError).toHaveBeenCalledWith(
         expect.objectContaining({
-          categorie: "api",
+          categorie: "systeme",
           source: "error-handler",
           statusCode: 422,
           type: "BusinessError",
@@ -266,7 +266,7 @@ describe("endpointProtege", () => {
       });
       expect(mockLoggerError).toHaveBeenCalledWith(
         expect.objectContaining({
-          categorie: "api",
+          categorie: "systeme",
           source: "error-handler",
           statusCode: 500,
         }),
