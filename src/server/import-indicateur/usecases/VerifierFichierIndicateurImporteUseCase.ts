@@ -222,6 +222,9 @@ export class VerifierFichierIndicateurImporteUseCase {
             indicateurId,
             nomDuFichier,
             nombreErreurs: report.listeErreursValidation.length,
+            erreurs: report.listeErreursValidation.map(
+              (erreur) => erreur.message,
+            ),
           },
           "Validation fichier import échouée",
         );
