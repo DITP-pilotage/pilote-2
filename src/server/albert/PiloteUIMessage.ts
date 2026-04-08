@@ -1,8 +1,6 @@
 import type { UIDataTypes, UIMessage } from "ai";
-import type {
-  DisplayChoice,
-  ExportRapportOutput,
-} from "@/server/albert/Albert";
+import type { DisplayChoice } from "@/server/albert/Albert";
+import type { ExportRapportOutput } from "@/server/albert/exportRapportSchema";
 import type { GetTauxAvancementTerritoireOutput } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import type { GetChantiersEnRetardOutput } from "@/server/albert/tools/getChantiersEnRetard";
 import type { GetChantiersEnDifficulteOutput } from "@/server/albert/tools/getChantiersEnDifficulte";

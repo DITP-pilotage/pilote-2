@@ -16,49 +16,10 @@ import { prisma } from "@/server/db/prisma";
 import { genererRapportPDF } from "@/server/albert/pdf/genererRapportPDF";
 import { buildRapportMarkdown } from "@/server/albert/markdown/buildRapportMarkdown";
 import type { RapportFileStorage } from "@/server/albert/domain/RapportFileStorage";
-
-const exportRapportInputSchema = z.object({
-  nom_fichier: z
-    .string()
-    .describe(
-      "Nom du fichier sans extension, en kebab-case (ex: synthese-ile-de-france-2025)",
-    ),
-  titre: z.string().describe("Titre principal du rapport"),
-  date: z.string().describe("Date du rapport au format JJ/MM/AAAA"),
-  resume: z.string().describe("Résumé synthétique du rapport en 2-3 phrases"),
-  format: z
-    .enum(["markdown", "pdf"])
-    .default("markdown")
-    .describe(
-      "Format du rapport. Par défaut markdown. Utilise pdf uniquement si l'utilisateur le demande explicitement.",
-    ),
-  sections: z
-    .array(
-      z.object({
-        titre: z.string().describe("Titre de la section"),
-        parties: z
-          .array(
-            z.discriminatedUnion("type", [
-              z.object({
-                type: z.literal("paragraphe"),
-                contenu: z.string().describe("Texte du paragraphe"),
-              }),
-              z.object({
-                type: z.literal("tableau"),
-                en_tetes: z.array(z.string()).describe("En-têtes des colonnes"),
-                lignes: z
-                  .array(z.array(z.string()))
-                  .describe("Lignes du tableau"),
-              }),
-            ]),
-          )
-          .describe("Parties de la section, dans l'ordre d'affichage"),
-      }),
-    )
-    .describe("Sections du rapport"),
-});
-
-export type ExportRapportOutput = { url: string; format: "markdown" | "pdf" };
+import {
+  exportRapportInputSchema,
+  ExportRapportOutput,
+} from "@/server/albert/exportRapportSchema";
 
 export function createExportRapportTool({
   rapportFileStorage,
