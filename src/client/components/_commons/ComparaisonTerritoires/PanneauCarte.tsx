@@ -46,12 +46,14 @@ export const PanneauCarte = <T extends string>({
     new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
   const capturerImage = useCallback(
-    async <T,>(capturer: () => Promise<T>): Promise<T | null> => {
+    async <T,>(
+      capturer: (element: HTMLDivElement) => Promise<T>,
+    ): Promise<T | null> => {
       if (!carteRef.current) return null;
       setModeExport(true);
       await attendreRendu();
       try {
-        return await capturer();
+        return await capturer(carteRef.current);
       } finally {
         setModeExport(false);
       }
@@ -61,8 +63,8 @@ export const PanneauCarte = <T extends string>({
 
   const enregistrerCommeImage = async () => {
     try {
-      const dataUrl = await capturerImage(() =>
-        toPng(carteRef.current!, optionsExport),
+      const dataUrl = await capturerImage((element) =>
+        toPng(element, optionsExport),
       );
       if (!dataUrl) return;
 
@@ -78,8 +80,8 @@ export const PanneauCarte = <T extends string>({
 
   const copierDansLePressePapiers = async () => {
     try {
-      const blob = await capturerImage(() =>
-        toBlob(carteRef.current!, optionsExport),
+      const blob = await capturerImage((element) =>
+        toBlob(element, optionsExport),
       );
       if (blob == null) return;
 
