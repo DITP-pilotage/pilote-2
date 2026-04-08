@@ -1,5 +1,6 @@
 import { ReactNode, useCallback, useRef, useState } from "react";
 import { toBlob, toPng } from "html-to-image";
+import { flushSync } from "react-dom";
 import { toast } from "sonner";
 import { Icone } from "@/components/_commons/Icone";
 import { DeleteIcon } from "@/components/_commons/Icones/DeleteIcon";
@@ -42,17 +43,18 @@ export const PanneauCarte = <T extends string>({
     filter: filtreExport,
   };
 
-  const attendreRendu = () =>
-    new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
-
   const capturerImage = useCallback(
     async <T,>(
       capturer: (element: HTMLDivElement) => Promise<T>,
     ): Promise<T | null> => {
       if (!carteRef.current) return null;
-      setModeExport(true);
-      await attendreRendu();
+
+      flushSync(() => {
+        setModeExport(true);
+      });
+
       try {
+        await new Promise((resolve) => setTimeout(resolve, 100));
         return await capturer(carteRef.current);
       } finally {
         setModeExport(false);
