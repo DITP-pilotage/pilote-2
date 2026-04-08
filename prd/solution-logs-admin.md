@@ -75,6 +75,13 @@ Les logs sans `categorie` sont classés dans `"systeme"` par défaut.
 | Error handler global API | `api` | ERROR | Toutes les erreurs API (PiloteError + erreurs internes) avec statusCode et type |
 | Vérification fichier import | `import` | INFO, WARN, ERROR | Validation réussie/échouée/exception avec indicateurId, nomDuFichier |
 | Publication fichier import | `import` | INFO | Publication réussie avec rapportId, nombreMesures |
+| Créer/modifier utilisateur | `utilisateur` | INFO | Création ou modification avec action, email, profil, ancien/nouveau |
+| Désactiver utilisateur | `utilisateur` | INFO | Désactivation avec email, profil |
+| Réactiver utilisateur | `utilisateur` | INFO | Réactivation avec email, profil |
+| Désactiver comptes inactifs | `utilisateur` | ERROR | Erreur lors de la désactivation batch avec email |
+| Supprimer comptes désactivés | `utilisateur` | INFO, ERROR | Suppression réussie/échouée avec email, nombreSupprimés |
+| Envoyer relances | `utilisateur` | ERROR | Erreur envoi relance avec email, typeRelance |
+| Importer utilisateurs | `utilisateur` | INFO | Import batch avec nombreImportés, nombreErreurs |
 
 ---
 
