@@ -30,12 +30,15 @@ export const PanneauCarte = <T extends string>({
 }: PanneauCarteProps<T>) => {
   const carteRef = useRef<HTMLDivElement>(null);
 
+  const filtreExport = (node: HTMLElement) => !node.dataset?.htmlToImageIgnore;
+
   const enregistrerCommeImage = async () => {
     if (!carteRef.current) return;
 
     const dataUrl = await toPng(carteRef.current, {
       pixelRatio: 2,
       backgroundColor: "#ffffff",
+      filter: filtreExport,
     });
 
     const lien = document.createElement("a");
@@ -50,6 +53,7 @@ export const PanneauCarte = <T extends string>({
     const blob = await toBlob(carteRef.current, {
       pixelRatio: 2,
       backgroundColor: "#ffffff",
+      filter: filtreExport,
     });
     if (blob == null) return;
 
