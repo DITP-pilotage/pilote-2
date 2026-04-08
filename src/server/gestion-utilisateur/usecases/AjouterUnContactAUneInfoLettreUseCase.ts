@@ -1,5 +1,6 @@
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { UtilisateurRepository } from "@/server/gestion-utilisateur/domain/ports/UtilisateurRepository";
+import logger from "@/server/infrastructure/Logger";
 import type { Inject } from "@/server/gestion-utilisateur/module";
 
 export class AjouterUnContactAUneInfoLettreUseCase {
@@ -28,7 +29,15 @@ export class AjouterUnContactAUneInfoLettreUseCase {
         utilisateurEmail,
         [infolettreId],
       );
-    } catch {
+    } catch (error) {
+      logger.warn(
+        {
+          categorie: "utilisateur",
+          source: "AjouterUnContactAUneInfoLettreUseCase",
+          utilisateurId,
+        },
+        `Échec ajout contact infolettre : ${(error as Error).message}`,
+      );
       return false;
     }
 

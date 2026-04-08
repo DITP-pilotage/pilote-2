@@ -41,7 +41,14 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
 
       return convertirEnInformationIndicateur(rawInformationIndicateur[0]);
     } catch (error: unknown) {
-      Logger.error(error);
+      Logger.error(
+        {
+          categorie: "database",
+          source: "PrismaIndicateurRepository",
+          indicId,
+        },
+        `Erreur récupération information indicateur : ${(error as Error).message}`,
+      );
       return convertirEnInformationIndicateur({
         indic_id: indicId,
         indic_schema: "sans-contraintes.json",

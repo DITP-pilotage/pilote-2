@@ -32,7 +32,14 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
         realm: KEYCLOAK_REALM,
         id: utilisateur.id,
       });
-      logger.info(`Utilisateur ${email} supprimé.`);
+      logger.info(
+        {
+          categorie: "utilisateur",
+          source: "UtilisateurIAMKeycloakRepository.legacy",
+          email,
+        },
+        "Utilisateur supprimé de Keycloak",
+      );
     }
   }
 
@@ -76,7 +83,15 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
         emailVerified: true,
         requiredActions: ["UPDATE_PASSWORD"],
       });
-      logger.info(`Utilisateur ${email} créé.`, utilisateurIAM.id);
+      logger.info(
+        {
+          categorie: "utilisateur",
+          source: "UtilisateurIAMKeycloakRepository.legacy",
+          email,
+          keycloakId: utilisateurIAM.id,
+        },
+        "Utilisateur créé dans Keycloak",
+      );
 
       // Note : pour que la redirectUri fonctionne, il faut ajouter le clientId et configurer les Valid redirect URIs
       // pour le client en question (du script d'import donc).
@@ -88,12 +103,33 @@ export default class UtilisateurIAMKeycloakRepository implements UtilisateurIAMR
         lifespan: 7 * DAY_IN_SECONDS,
         actions: ["UPDATE_PASSWORD"],
       });
-      logger.info("Email envoyé à l'utilisateur.");
+      logger.info(
+        {
+          categorie: "utilisateur",
+          source: "UtilisateurIAMKeycloakRepository.legacy",
+          email,
+        },
+        "Email de création envoyé",
+      );
     } catch (error: unknown) {
       if (isUtilisateurDoublonError(error)) {
-        logger.warn(`L'email ${email} existe déjà.`);
+        logger.warn(
+          {
+            categorie: "utilisateur",
+            source: "UtilisateurIAMKeycloakRepository.legacy",
+            email,
+          },
+          "Utilisateur déjà existant dans Keycloak",
+        );
       } else {
-        logger.error(error);
+        logger.error(
+          {
+            categorie: "utilisateur",
+            source: "UtilisateurIAMKeycloakRepository.legacy",
+            email,
+          },
+          `Erreur création utilisateur Keycloak : ${(error as Error).message}`,
+        );
         throw error;
       }
     }

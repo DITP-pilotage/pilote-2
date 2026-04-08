@@ -223,7 +223,10 @@ export default class ImportMasseMetadataIndicateurUseCase {
     );
     supprimerLeFichier(nomDuFichier);
 
-    logger.info("Import de masse en cours");
+    logger.info(
+      { categorie: "import", source: "ImportMasseMetadataIndicateurUseCase" },
+      "Import de masse en cours",
+    );
 
     const informationMetadata =
       await this._récupérerInformationMetadataIndicateurUseCase.run();

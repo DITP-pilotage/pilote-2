@@ -99,8 +99,12 @@ export class CreerLesRapportsPropositionsUseCase {
         rapportsCrees++;
       } catch (error) {
         logger.error(
-          `Erreur lors de la création du rapport pour ${destinataire.email}:`,
-          error,
+          {
+            categorie: "pva",
+            source: "CreerLesRapportsPropositionsUseCase",
+            email: destinataire.email,
+          },
+          `Erreur création rapport : ${(error as Error).message}`,
         );
         erreursCreation++;
       }

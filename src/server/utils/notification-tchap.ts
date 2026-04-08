@@ -25,6 +25,16 @@ export function envoieMessageTchap(
         "Content-Type": "application/json",
       },
     })
-    .then((response) => logger.info("Message tchap envoyé", response.data))
-    .catch((error) => logger.info("Erreur envoie message tchap:", error));
+    .then(() =>
+      logger.info(
+        { categorie: "notification", source: "notification-tchap" },
+        "Message Tchap envoyé",
+      ),
+    )
+    .catch((error) =>
+      logger.error(
+        { categorie: "notification", source: "notification-tchap" },
+        `Erreur envoi message Tchap : ${(error as Error).message}`,
+      ),
+    );
 }
