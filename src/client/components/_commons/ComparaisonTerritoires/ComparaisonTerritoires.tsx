@@ -10,6 +10,7 @@ type ComparaisonTerritoiresProps<T extends string> = {
   renderCarte: (typeCarte: T) => ReactNode;
   nomFichier: string;
   mode?: "card" | "inline";
+  exporterEnCsv?: (typeCarte: T) => void;
 };
 
 export const ComparaisonTerritoires = <T extends string>({
@@ -19,6 +20,7 @@ export const ComparaisonTerritoires = <T extends string>({
   renderCarte,
   nomFichier,
   mode = "card",
+  exporterEnCsv,
 }: ComparaisonTerritoiresProps<T>) => {
   const {
     panneauGauche,
@@ -60,6 +62,9 @@ export const ComparaisonTerritoires = <T extends string>({
               onSupprimer={() => supprimerPanneau("gauche")}
               renderCarte={renderCarte}
               nomFichier={nomFichier}
+              exporterEnCsv={
+                exporterEnCsv ? () => exporterEnCsv(panneauGauche) : undefined
+              }
             />
           </Suspense>
         </ColonneMesuree>
@@ -76,6 +81,9 @@ export const ComparaisonTerritoires = <T extends string>({
                 onSupprimer={() => supprimerPanneau("droite")}
                 renderCarte={renderCarte}
                 nomFichier={nomFichier}
+                exporterEnCsv={
+                  exporterEnCsv ? () => exporterEnCsv(panneauDroite) : undefined
+                }
               />
             </Suspense>
           </ColonneMesuree>

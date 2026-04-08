@@ -1,8 +1,17 @@
+import { useCallback } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
 import { WidgetCartographieMeteo } from "@/components/_commons/Widget/WidgetCartographieMeteo/WidgetCartographieMeteo";
 import { WidgetCartographiePVA } from "@/components/_commons/Widget/WidgetCartographiePVA/WidgetCartographiePVA";
 import { ComparaisonTerritoires as ComparaisonTerritoiresBase } from "@/components/_commons/ComparaisonTerritoires/ComparaisonTerritoires";
+import { getLabelTerritoire } from "@/client/constants/territoires";
+import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
+import {
+  genererCsv,
+  telechargerCsv,
+  formaterDateCsv,
+} from "@/client/utils/csv/genererCsv";
+import api from "@/server/infrastructure/api/trpc/api";
 
 type ComparaisonTerritoiresProps = {
   chantierId: string;
@@ -29,46 +38,147 @@ export const ComparaisonTerritoires = ({
   jalon,
   maille,
   territoireCode,
-}: ComparaisonTerritoiresProps) => (
-  <ComparaisonTerritoiresBase<TypeCarteChantier>
-    typeParDefaut="ta"
-    typeAlternatif={(t) => (t === "ta" ? "meteo" : "ta")}
-    options={options(jalon)}
-    nomFichier={`comparaison-territoriale-${chantierId}`}
-    renderCarte={(type) => {
+}: ComparaisonTerritoiresProps) => {
+  const utils = api.useUtils();
+  const [territoiresCompares] = useTerritoiresCompares();
+
+  const exporterEnCsv = useCallback(
+    (type: TypeCarteChantier) => {
+      const codesTerritoiresSelectionnes = [
+        territoireCode,
+        ...territoiresCompares.split(",").filter(Boolean),
+      ];
+      const nomFichier = `comparaison-territoriale-${chantierId}-${type}.csv`;
+
       if (type === "ta") {
-        return (
-          <WidgetCartographieTA
-            mode="chantiers"
-            chantierIds={[chantierId]}
-            jalon={jalon}
-            maille={maille}
-            territoireCode={territoireCode}
-          />
+        const donnees =
+          utils.chantier.recupererTauxAvancementTerritoires.getData({
+            chantierIds: [chantierId],
+            jalon,
+          }) ?? [];
+
+        const lignes = donnees
+          .filter(
+            (territoire) =>
+              territoire.estApplicable !== false &&
+              codesTerritoiresSelectionnes.includes(territoire.territoireCode),
+          )
+          .map((territoire) => [
+            getLabelTerritoire(territoire.territoireCode),
+            territoire.tauxAvancementJalon !== null
+              ? String(territoire.tauxAvancementJalon)
+              : "Non renseigné",
+            formaterDateCsv(territoire.dateTauxAvancementAnnuel),
+          ]);
+
+        telechargerCsv(
+          genererCsv(
+            ["Territoire", "Taux d'avancement", "Date de dernière mise à jour"],
+            lignes,
+          ),
+          nomFichier,
         );
+        return;
       }
+
       if (type === "meteo") {
-        return (
-          <WidgetCartographieMeteo
-            chantierId={chantierId}
-            jalon={jalon}
-            maille={maille}
-            territoireCode={territoireCode}
-          />
+        const donnees =
+          utils.chantier.recupererMeteosTerritoires.getData({
+            chantierId,
+            jalon,
+          }) ?? [];
+
+        const lignes = donnees
+          .filter(
+            (territoire) =>
+              territoire.estApplicable !== false &&
+              codesTerritoiresSelectionnes.includes(territoire.territoireCode),
+          )
+          .map((territoire) => [
+            getLabelTerritoire(territoire.territoireCode),
+            territoire.meteo,
+            formaterDateCsv(territoire.dateDeMajQualitative),
+          ]);
+
+        telechargerCsv(
+          genererCsv(
+            ["Territoire", "Niveau de confiance", "Date de publication"],
+            lignes,
+          ),
+          nomFichier,
         );
+        return;
       }
+
       if (type === "pva") {
-        return (
-          <WidgetCartographiePVA
-            mode="chantier"
-            chantierId={chantierId}
-            jalon={jalon}
-            maille={maille}
-            territoireCode={territoireCode}
-          />
+        const donnees =
+          utils.chantier.recupererPVAChantierTerritoires.getData({
+            chantierId,
+            jalon,
+          }) ?? [];
+
+        const lignes = donnees
+          .filter(
+            (territoire) =>
+              territoire.estApplicable !== false &&
+              codesTerritoiresSelectionnes.includes(territoire.territoireCode),
+          )
+          .map((territoire) => [
+            getLabelTerritoire(territoire.territoireCode),
+            String(territoire.nombrePropositionsValeur),
+          ]);
+
+        telechargerCsv(
+          genererCsv(["Territoire", "Nombre de propositions"], lignes),
+          nomFichier,
         );
       }
-      return null;
-    }}
-  />
-);
+    },
+    [utils, chantierId, jalon, territoireCode, territoiresCompares],
+  );
+
+  return (
+    <ComparaisonTerritoiresBase<TypeCarteChantier>
+      typeParDefaut="ta"
+      typeAlternatif={(t) => (t === "ta" ? "meteo" : "ta")}
+      options={options(jalon)}
+      nomFichier={`comparaison-territoriale-${chantierId}`}
+      exporterEnCsv={exporterEnCsv}
+      renderCarte={(type) => {
+        if (type === "ta") {
+          return (
+            <WidgetCartographieTA
+              mode="chantiers"
+              chantierIds={[chantierId]}
+              jalon={jalon}
+              maille={maille}
+              territoireCode={territoireCode}
+            />
+          );
+        }
+        if (type === "meteo") {
+          return (
+            <WidgetCartographieMeteo
+              chantierId={chantierId}
+              jalon={jalon}
+              maille={maille}
+              territoireCode={territoireCode}
+            />
+          );
+        }
+        if (type === "pva") {
+          return (
+            <WidgetCartographiePVA
+              mode="chantier"
+              chantierId={chantierId}
+              jalon={jalon}
+              maille={maille}
+              territoireCode={territoireCode}
+            />
+          );
+        }
+        return null;
+      }}
+    />
+  );
+};
