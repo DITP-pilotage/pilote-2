@@ -34,15 +34,17 @@ export const PanneauCarte = <T extends string>({
     !(node instanceof Element) ||
     node.getAttribute("data-html-to-image-ignore") === null;
 
+  const optionsExport = {
+    pixelRatio: 2,
+    backgroundColor: "#ffffff",
+    filter: filtreExport,
+  };
+
   const enregistrerCommeImage = async () => {
     if (!carteRef.current) return;
 
     try {
-      const dataUrl = await toPng(carteRef.current, {
-        pixelRatio: 2,
-        backgroundColor: "#ffffff",
-        filter: filtreExport,
-      });
+      const dataUrl = await toPng(carteRef.current, optionsExport);
 
       const lien = document.createElement("a");
       lien.download = `${nomFichier}.png`;
@@ -58,11 +60,7 @@ export const PanneauCarte = <T extends string>({
     if (!carteRef.current) return;
 
     try {
-      const blob = await toBlob(carteRef.current, {
-        pixelRatio: 2,
-        backgroundColor: "#ffffff",
-        filter: filtreExport,
-      });
+      const blob = await toBlob(carteRef.current, optionsExport);
       if (blob == null) return;
 
       await navigator.clipboard.write([
