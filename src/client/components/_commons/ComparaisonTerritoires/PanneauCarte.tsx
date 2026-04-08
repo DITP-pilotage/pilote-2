@@ -30,7 +30,8 @@ export const PanneauCarte = <T extends string>({
 }: PanneauCarteProps<T>) => {
   const carteRef = useRef<HTMLDivElement>(null);
 
-  const filtreExport = (node: HTMLElement) => !node.dataset?.htmlToImageIgnore;
+  const filtreExport = (node: Node) =>
+    !(node instanceof HTMLElement) || !node.dataset?.htmlToImageIgnore;
 
   const enregistrerCommeImage = async () => {
     if (!carteRef.current) return;
