@@ -37,32 +37,42 @@ export const PanneauCarte = <T extends string>({
   const enregistrerCommeImage = async () => {
     if (!carteRef.current) return;
 
-    const dataUrl = await toPng(carteRef.current, {
-      pixelRatio: 2,
-      backgroundColor: "#ffffff",
-      filter: filtreExport,
-    });
+    try {
+      const dataUrl = await toPng(carteRef.current, {
+        pixelRatio: 2,
+        backgroundColor: "#ffffff",
+        filter: filtreExport,
+      });
 
-    const lien = document.createElement("a");
-    lien.download = `${nomFichier}.png`;
-    lien.href = dataUrl;
-    lien.click();
-    lien.remove();
+      const lien = document.createElement("a");
+      lien.download = `${nomFichier}.png`;
+      lien.href = dataUrl;
+      lien.click();
+      lien.remove();
+    } catch {
+      toast.error("Erreur lors de l'export de l'image");
+    }
   };
 
   const copierDansLePressePapiers = async () => {
     if (!carteRef.current) return;
 
-    const blob = await toBlob(carteRef.current, {
-      pixelRatio: 2,
-      backgroundColor: "#ffffff",
-      filter: filtreExport,
-    });
-    if (blob == null) return;
+    try {
+      const blob = await toBlob(carteRef.current, {
+        pixelRatio: 2,
+        backgroundColor: "#ffffff",
+        filter: filtreExport,
+      });
+      if (blob == null) return;
 
-    await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+      await navigator.clipboard.write([
+        new ClipboardItem({ "image/png": blob }),
+      ]);
 
-    toast.success("Image copiée dans le presse-papiers", { duration: 3000 });
+      toast.success("Image copiée dans le presse-papiers", { duration: 3000 });
+    } catch {
+      toast.error("Erreur lors de la copie dans le presse-papiers");
+    }
   };
 
   return (
