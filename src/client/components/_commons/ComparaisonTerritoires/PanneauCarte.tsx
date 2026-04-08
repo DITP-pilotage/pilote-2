@@ -47,6 +47,7 @@ export const PanneauCarte = <T extends string>({
     lien.download = `${nomFichier}.png`;
     lien.href = dataUrl;
     lien.click();
+    lien.remove();
   };
 
   const copierDansLePressePapiers = async () => {
