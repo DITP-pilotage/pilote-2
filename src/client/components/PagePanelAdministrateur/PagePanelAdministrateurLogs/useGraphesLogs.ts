@@ -1,5 +1,5 @@
 import api from "@/server/infrastructure/api/trpc/api";
-import type { Granularite } from "@/server/application-log/domain/ApplicationLogRepository.interface";
+import type { Granularite } from "@/server/application-log/queries/ObtenirStatistiquesLogsQuery";
 
 export type Periode = "7j" | "30j";
 

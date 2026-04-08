@@ -10,7 +10,7 @@ import * as echarts from "echarts";
 import type {
   Granularite,
   StatistiquesLogs,
-} from "@/server/application-log/domain/ApplicationLogRepository.interface";
+} from "@/server/application-log/queries/ObtenirStatistiquesLogsQuery";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { type Periode, useGraphesLogs } from "./useGraphesLogs";
 

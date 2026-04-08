@@ -5,7 +5,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import type { ApplicationLogEntree } from "@/server/application-log/domain/ApplicationLogRepository.interface";
+import type { ApplicationLogEntree } from "@/server/application-log/queries/ListerLogsQuery";
 import api from "@/server/infrastructure/api/trpc/api";
 
 const columnHelper = createColumnHelper<ApplicationLogEntree>();

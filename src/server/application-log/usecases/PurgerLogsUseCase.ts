@@ -1,4 +1,5 @@
-import type { ApplicationLogRepository } from "@/server/application-log/domain/ApplicationLogRepository.interface";
+import { DateTime } from "luxon";
+import type { ApplicationLogRepository } from "@/server/application-log/domain/ApplicationLogRepository";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 import type { Inject } from "@/server/application-log/module";
 
@@ -16,8 +17,9 @@ export class PurgerLogsUseCase {
   async execute(input: {
     anterieurA: Date;
   }): Promise<{ nombreSupprime: number }> {
-    const dateLimite = new Date();
-    dateLimite.setDate(dateLimite.getDate() - RETENTION_MINIMUM_JOURS);
+    const dateLimite = DateTime.now()
+      .minus({ days: RETENTION_MINIMUM_JOURS })
+      .toJSDate();
 
     if (input.anterieurA > dateLimite) {
       throw new BadRequestError(

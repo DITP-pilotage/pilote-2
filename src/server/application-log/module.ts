@@ -4,16 +4,16 @@ import {
   type NoExports,
   type VerifyCradle,
 } from "@/server/module-system";
-import type { ApplicationLogRepository } from "@/server/application-log/domain/ApplicationLogRepository.interface";
+import type { ApplicationLogRepository } from "@/server/application-log/domain/ApplicationLogRepository";
 import { ApplicationLogSQLRepository } from "@/server/infrastructure/accès_données/application-log/ApplicationLogSQLRepository";
-import { ListerLogsUseCase } from "@/server/application-log/usecases/ListerLogsUseCase";
-import { ObtenirStatistiquesLogsUseCase } from "@/server/application-log/usecases/ObtenirStatistiquesLogsUseCase";
+import { ListerLogsQuery } from "@/server/application-log/queries/ListerLogsQuery";
+import { ObtenirStatistiquesLogsQuery } from "@/server/application-log/queries/ObtenirStatistiquesLogsQuery";
 import { PurgerLogsUseCase } from "@/server/application-log/usecases/PurgerLogsUseCase";
 
 type ApplicationLogCradle = {
   applicationLogRepository: ApplicationLogRepository;
-  listerLogsUseCase: ListerLogsUseCase;
-  obtenirStatistiquesLogsUseCase: ObtenirStatistiquesLogsUseCase;
+  listerLogsQuery: ListerLogsQuery;
+  obtenirStatistiquesLogsQuery: ObtenirStatistiquesLogsQuery;
   purgerLogsUseCase: PurgerLogsUseCase;
 };
 
@@ -27,10 +27,8 @@ export const applicationLogModule = defineModule<
   register: (container, { asModuleClass }) => {
     container.register({
       applicationLogRepository: asModuleClass(ApplicationLogSQLRepository),
-      listerLogsUseCase: asModuleClass(ListerLogsUseCase),
-      obtenirStatistiquesLogsUseCase: asModuleClass(
-        ObtenirStatistiquesLogsUseCase,
-      ),
+      listerLogsQuery: asModuleClass(ListerLogsQuery),
+      obtenirStatistiquesLogsQuery: asModuleClass(ObtenirStatistiquesLogsQuery),
       purgerLogsUseCase: asModuleClass(PurgerLogsUseCase),
     } satisfies VerifyCradle<ApplicationLogCradle>);
   },

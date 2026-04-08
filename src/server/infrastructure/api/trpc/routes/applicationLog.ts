@@ -31,8 +31,8 @@ export const applicationLogRouter = créerRouteurTRPC({
       }
 
       return getContainer("applicationLog")
-        .resolve("listerLogsUseCase")
-        .execute({
+        .resolve("listerLogsQuery")
+        .run({
           page: input.page,
           taillePage: input.taillePage,
           filtreLevel: input.filtreLevel,
@@ -57,8 +57,8 @@ export const applicationLogRouter = créerRouteurTRPC({
       }
 
       return getContainer("applicationLog")
-        .resolve("obtenirStatistiquesLogsUseCase")
-        .execute({
+        .resolve("obtenirStatistiquesLogsQuery")
+        .run({
           dateDebut: new Date(input.dateDebut),
           dateFin: new Date(input.dateFin),
           granularite: input.granularite,
