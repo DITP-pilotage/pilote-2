@@ -47,7 +47,12 @@ export class GetChantiersEnRetardQuery {
         territoire_code: params.territoireCode,
         est_applicable: true,
         chantier_identite: { statut: "PUBLIE" },
-        ecart: { lte: -10 },
+        chantier_territoire_jalon: {
+          some: {
+            jalon: params.jalon,
+            ecart: { lte: -10 },
+          },
+        },
       },
       include: {
         chantier_identite: true,
@@ -70,7 +75,7 @@ export class GetChantiersEnRetardQuery {
           ppg: c.chantier_identite.ppg,
           ministeres: c.chantier_identite.ministeres_acronymes,
         },
-        ecart: c.ecart!,
+        ecart: c.chantier_territoire_jalon[0].ecart!,
         taux_avancement: c.chantier_territoire_jalon[0]?.taux_avancement,
         synthese:
           c.syntheses_des_resultats.length > 0
