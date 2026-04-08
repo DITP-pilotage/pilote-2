@@ -10,7 +10,12 @@ export const errorHandler =
     } catch (error) {
       if (error instanceof PiloteError) {
         Logger.error(
-          { categorie: "api", source: "error-handler", statusCode: error.status, type: error.type },
+          {
+            categorie: "api",
+            source: "error-handler",
+            statusCode: error.status,
+            type: error.type,
+          },
           error.message,
         );
         return res
