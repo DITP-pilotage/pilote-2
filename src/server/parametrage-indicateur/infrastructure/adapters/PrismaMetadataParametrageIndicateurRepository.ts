@@ -238,7 +238,13 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
         convertirEnMetadataParametrageIndicateur,
       );
     } catch (error: unknown) {
-      Logger.error(error);
+      Logger.error(
+        {
+          categorie: "indicateur",
+          source: "PrismaMetadataParametrageIndicateurRepository",
+        },
+        `Erreur récupération metadata : ${(error as Error).message}`,
+      );
       return [];
     }
   }
@@ -266,7 +272,13 @@ export class PrismaMetadataParametrageIndicateurRepository implements MetadataPa
         listeRawMetadataParametrageIndicateur[0],
       );
     } catch (error: unknown) {
-      Logger.error(error);
+      Logger.error(
+        {
+          categorie: "indicateur",
+          source: "PrismaMetadataParametrageIndicateurRepository",
+        },
+        `Erreur récupération metadata par indicId : ${(error as Error).message}`,
+      );
       throw error;
     }
   }

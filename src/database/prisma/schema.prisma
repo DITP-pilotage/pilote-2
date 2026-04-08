@@ -1165,3 +1165,29 @@ model metadata_indicateur_valeur_acceptee {
   @@unique([metadata_indicateur_name, ordre])
   @@schema("public")
 }
+
+enum log_level {
+  INFO
+  WARN
+  ERROR
+  DEBUG
+
+  @@schema("public")
+}
+
+model application_log {
+  id        String    @id @default(uuid())
+  timestamp DateTime  @default(now())
+  level     log_level
+  categorie String
+  message   String
+  contexte  Json?
+  source    String?
+  duree_ms  Int?
+
+  @@index([timestamp])
+  @@index([categorie])
+  @@index([level])
+  @@index([categorie, timestamp])
+  @@schema("public")
+}

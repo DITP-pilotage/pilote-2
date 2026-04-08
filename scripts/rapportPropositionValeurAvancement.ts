@@ -21,17 +21,17 @@ interface ResultatRapportPVA {
 async function main(): Promise<ResultatRapportPVA> {
   const container = getContainer("chantiers");
 
-  logger.info("Phase 1 : Création des rapports");
+  logger.info({ categorie: "rapport", source: "rapportPropositionValeurAvancement" }, "Phase 1 : Création des rapports");
   const resultatCreation = await container
     .resolve("creerLesRapportsPropositionsUseCase")
     .run();
-  logger.info("Phase 1 terminée", resultatCreation);
+  logger.info({ categorie: "rapport", source: "rapportPropositionValeurAvancement", ...resultatCreation }, "Phase 1 terminée");
 
-  logger.info("Phase 2 : Envoi des rapports");
+  logger.info({ categorie: "rapport", source: "rapportPropositionValeurAvancement" }, "Phase 2 : Envoi des rapports");
   const resultatEnvoi = await container
     .resolve("envoyerLesRapportsPropositionsUseCase")
     .run();
-  logger.info("Phase 2 terminée", resultatEnvoi);
+  logger.info({ categorie: "rapport", source: "rapportPropositionValeurAvancement", ...resultatEnvoi }, "Phase 2 terminée");
 
   return { resultatCreation, resultatEnvoi };
 }
@@ -40,7 +40,7 @@ const isMain = eval("require.main === module");
 if (isMain) {
   main()
     .then(async ({ resultatCreation, resultatEnvoi }) => {
-      logger.info("Envoi des rapports hebdomadaires terminé");
+      logger.info({ categorie: "rapport", source: "rapportPropositionValeurAvancement" }, "Envoi des rapports hebdomadaires terminé");
       const message = [
         "## Rapports hebdomadaires des propositions de valeur d'avancement",
         "",
@@ -68,6 +68,6 @@ if (isMain) {
         `- [Logs](${process.env.SCALINGO_LOGS_URL})`,
       ].join("\n");
       envoieMessageTchap(messageEchecSuppression, baseUrl, roomId, accessToken);
-      logger.error(error);
+      logger.error({ categorie: "rapport", source: "rapportPropositionValeurAvancement" }, (error as Error).message);
     });
 }

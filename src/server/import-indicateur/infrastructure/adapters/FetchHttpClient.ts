@@ -28,7 +28,14 @@ export class FetchHttpClient implements HttpClient {
     formData.append("schema", body.schema);
     formData.append("include_resource_data", "true");
 
-    logger.info(`Soumission du fichier ${body.nomDuFichier} à validata`);
+    logger.info(
+      {
+        categorie: "import",
+        source: "FetchHttpClient",
+        nomDuFichier: body.nomDuFichier,
+      },
+      "Soumission du fichier à Validata",
+    );
 
     const result = await new Promise<{
       report: ReportValidata;
@@ -65,7 +72,15 @@ export class FetchHttpClient implements HttpClient {
       );
     })
       .catch((error: Error) => {
-        logger.error(`Erreur: ${error.stack}`);
+        logger.error(
+          {
+            categorie: "import",
+            source: "FetchHttpClient",
+            nomDuFichier: body.nomDuFichier,
+            errorStack: error.stack,
+          },
+          "Erreur lors de la validation Validata",
+        );
         throw error;
       })
       .finally(() => supprimerLeFichier(body.cheminCompletDuFichier));
@@ -76,7 +91,14 @@ export class FetchHttpClient implements HttpClient {
       );
     }
 
-    logger.info("Validation du fichier par validata");
+    logger.info(
+      {
+        categorie: "import",
+        source: "FetchHttpClient",
+        nomDuFichier: body.nomDuFichier,
+      },
+      "Validation du fichier par Validata terminée",
+    );
 
     return {
       ...result.report,

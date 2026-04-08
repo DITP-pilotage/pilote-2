@@ -99,8 +99,12 @@ export class DesactiverLesComptesInactifsUseCase {
         comptesDesactives++;
       } catch (error) {
         logger.error(
-          `Erreur lors de la désactivation du compte ${email}`,
-          error,
+          {
+            categorie: "utilisateur",
+            source: "DesactiverLesComptesInactifsUseCase",
+            email,
+          },
+          `Erreur lors de la désactivation du compte : ${error instanceof Error ? error.message : String(error)}`,
         );
 
         const actionEchec = marquerCommeEchec({

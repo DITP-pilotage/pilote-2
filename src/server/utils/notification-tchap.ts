@@ -25,6 +25,27 @@ export function envoieMessageTchap(
         "Content-Type": "application/json",
       },
     })
-    .then((response) => logger.info("Message tchap envoyé", response.data))
-    .catch((error) => logger.info("Erreur envoie message tchap:", error));
+    .then(() =>
+      logger.info(
+        { categorie: "notification", source: "notification-tchap" },
+        "Message Tchap envoyé",
+      ),
+    )
+    .catch((error) => {
+      const axiosError = error as {
+        response?: { status: number; data: unknown };
+        stack?: string;
+        message: string;
+      };
+      logger.error(
+        {
+          categorie: "notification",
+          source: "notification-tchap",
+          statusCode: axiosError.response?.status,
+          responseData: axiosError.response?.data,
+          errorStack: axiosError.stack,
+        },
+        `Erreur envoi message Tchap : ${axiosError.message}`,
+      );
+    });
 }

@@ -2,6 +2,7 @@ import { decode, encode } from "next-auth/jwt";
 import { TokenAPIService } from "@/server/authentification/domain/ports/TokenAPIService";
 import { TokenAPIInformation } from "@/server/authentification/domain/TokenAPIInformation";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
+import logger from "@/server/infrastructure/Logger";
 
 export class TokenAPIJWTService implements TokenAPIService {
   private readonly secret: string;
@@ -35,7 +36,15 @@ export class TokenAPIJWTService implements TokenAPIService {
           });
         }
       });
-    } catch {
+    } catch (error) {
+      logger.warn(
+        {
+          categorie: "auth",
+          source: "TokenAPIJWTService.decoderTokenAPI",
+          errorMessage: (error as Error).message,
+        },
+        "Échec du décodage du token API JWT",
+      );
       throw new BadRequestError(
         "Le token n'a pas pu être décodé, veuillez vérifier qu'il est conforme au format JWT",
       );

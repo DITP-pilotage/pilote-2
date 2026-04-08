@@ -8,6 +8,7 @@ import { IndicateurTerritoireValeurEvenements } from "@/server/import-indicateur
 import { convertirZoneIdEnTerritoireCode } from "@/server/app/domain/Territoire";
 import { Transaction } from "@/server/db/Transaction";
 import type { Inject } from "@/server/import-indicateur/module";
+import logger from "@/server/infrastructure/Logger";
 
 export class PublierFichierIndicateurImporteUseCase {
   private mesureIndicateurTemporaireRepository: MesureIndicateurTemporaireRepository;
@@ -77,6 +78,17 @@ export class PublierFichierIndicateurImporteUseCase {
         rapportId,
       );
     });
+
+    logger.info(
+      {
+        categorie: "import",
+        source: "PublierFichierIndicateurImporteUseCase",
+        rapportId,
+        nombreMesures: listeIndicateursData.length,
+        nombreEvenements: evenements.length,
+      },
+      "Publication import indicateur réussie",
+    );
   }
 
   private async creerValeurIndicateurTerritoireEvenements(

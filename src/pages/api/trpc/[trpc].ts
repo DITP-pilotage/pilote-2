@@ -8,11 +8,15 @@ export default createNextApiHandler({
   router: appRouter,
   createContext: créerContextTRPC,
   onError: ({ error, ctx, path, input }) =>
-    logger.error({
-      type: error.name,
-      message: error.message,
-      path: path,
-      input: input,
-      utilisateur: ctx?.session?.user.email,
-    }),
+    logger.error(
+      {
+        categorie: "systeme",
+        source: "trpc",
+        type: error.name,
+        path: path,
+        input: input as Record<string, unknown>,
+        utilisateur: ctx?.session?.user.email,
+      },
+      error.message,
+    ),
 });

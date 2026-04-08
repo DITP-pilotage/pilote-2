@@ -55,8 +55,13 @@ export class CreerLesActionsComptesInactifsUseCase {
         if (typeAction === "DESACTIVATION") actionsDesactivation++;
       } catch (error) {
         logger.error(
-          `Erreur lors de la création de l'action ${typeAction} pour ${compte.email}`,
-          error,
+          {
+            categorie: "utilisateur",
+            source: "CreerLesActionsComptesInactifsUseCase",
+            email: compte.email,
+            typeAction,
+          },
+          `Erreur création action : ${(error as Error).message}`,
         );
       }
     }

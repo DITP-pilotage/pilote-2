@@ -56,7 +56,10 @@ async function validateKeycloakToken(token: string): Promise<boolean> {
 
     return response.data?.active === true;
   } catch (error) {
-    logger.error("Error validating Keycloak token:", error);
+    logger.error(
+      { categorie: "auth", source: "proxy.validateKeycloakToken" },
+      `Erreur validation token Keycloak : ${(error as Error).message}`,
+    );
     return false;
   }
 }

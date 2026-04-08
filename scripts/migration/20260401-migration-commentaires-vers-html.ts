@@ -48,18 +48,18 @@ async function migrerTable<T extends { id: string }>(
         await params.update(ligne.id, convertirPlainTextVersHtml(contenuOriginal));
         traites++;
       } catch (error) {
-        logger.error(`[${params.nomTable}] Erreur sur id=${ligne.id}`, error);
+        logger.error({ categorie: "systeme", source: "migration-commentaires-vers-html", table: params.nomTable, id: ligne.id }, (error as Error).message);
         erreurs++;
       }
     }
 
     skip += lignes.length;
-    logger.info(`[${params.nomTable}] Batch traité`, { skip, traites, erreurs });
+    logger.info({ categorie: "systeme", source: "migration-commentaires-vers-html", table: params.nomTable, skip, traites, erreurs }, "Batch traité");
 
     if (lignes.length < BATCH_SIZE) break;
   }
 
-  logger.info(`[${params.nomTable}] Migration terminée`, { traites, erreurs });
+  logger.info({ categorie: "systeme", source: "migration-commentaires-vers-html", table: params.nomTable, traites, erreurs }, "Migration terminée");
 }
 
 async function main() {
@@ -125,9 +125,9 @@ async function main() {
 
 main()
   .then(() => {
-    logger.info("Script de migration commentaires → HTML exécuté avec succès");
+    logger.info({ categorie: "systeme", source: "migration-commentaires-vers-html" }, "Script de migration commentaires vers HTML exécuté avec succès");
   })
   .catch((error) => {
-    logger.error("Échec du script de migration :", error);
+    logger.error({ categorie: "systeme", source: "migration-commentaires-vers-html" }, (error as Error).message);
     throw error;
   });

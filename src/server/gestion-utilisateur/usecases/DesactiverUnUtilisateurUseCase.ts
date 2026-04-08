@@ -11,6 +11,7 @@ import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilita
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import type { Inject } from "@/server/gestion-utilisateur/module";
+import logger from "@/server/infrastructure/Logger";
 
 export default class DesactiverUnUtilisateurUseCase {
   private utilisateurRepository: UtilisateurRepository;
@@ -102,5 +103,17 @@ export default class DesactiverUnUtilisateurUseCase {
     await this.tokenAPIInformationRepository.supprimerTokenAPIInformation({
       email,
     });
+
+    logger.info(
+      {
+        categorie: "utilisateur",
+        source: "DesactiverUnUtilisateurUseCase",
+        email,
+        profil: utilisateurASupprimer.profil,
+        auteurId,
+        modifications: { statut: { ancien: "actif", nouveau: "désactivé" } },
+      },
+      "Désactivation utilisateur",
+    );
   }
 }

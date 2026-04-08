@@ -26,6 +26,7 @@ import { UtilisateurIAMRepository } from "@/server/gestion-utilisateur/domain/po
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import { ConflictError } from "@/server/app/error-boundary/conflict-error";
 import type { Inject } from "@/server/gestion-utilisateur/module";
+import logger from "@/server/infrastructure/Logger";
 
 export default class CréerOuMettreÀJourUnUtilisateurUseCase {
   private utilisateurIAMRepository: UtilisateurIAMRepository;
@@ -141,6 +142,15 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
       historisationModification,
     );
 
+    this.logUtilisateur({
+      utilisateurExistant,
+      utilisateurAvantModification,
+      utilisateurApresExecution,
+      email: utilisateur.email,
+      profil: utilisateur.profil,
+      auteurId,
+    });
+
     if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === "true") {
       if (utilisateurExistant && utilisateurAvantModification) {
         const listesDiffusionAAjouter =
@@ -190,6 +200,66 @@ export default class CréerOuMettreÀJourUnUtilisateurUseCase {
       ];
       await this.utilisateurIAMRepository.ajouteUtilisateurs(
         utilisateursPourIAM,
+      );
+    }
+  }
+
+  private logUtilisateur({
+    utilisateurExistant,
+    utilisateurAvantModification,
+    utilisateurApresExecution,
+    email,
+    profil,
+    auteurId,
+  }: {
+    utilisateurExistant: boolean;
+    utilisateurAvantModification: Utilisateur | null;
+    utilisateurApresExecution: Utilisateur;
+    email: string;
+    profil: string;
+    auteurId: string;
+  }) {
+    if (utilisateurExistant && utilisateurAvantModification) {
+      const modifications: Record<
+        string,
+        { ancien: unknown; nouveau: unknown }
+      > = {};
+      const champsASuivre = [
+        "profil",
+        "fonction",
+        "service",
+        "saisieIndicateur",
+        "gestionUtilisateur",
+      ] as const;
+
+      for (const champ of champsASuivre) {
+        const ancien = utilisateurAvantModification[champ];
+        const nouveau = utilisateurApresExecution[champ];
+        if (ancien !== nouveau) {
+          modifications[champ] = { ancien, nouveau };
+        }
+      }
+
+      logger.info(
+        {
+          categorie: "utilisateur",
+          source: "CréerOuMettreÀJourUnUtilisateurUseCase",
+          email,
+          auteurId,
+          modifications,
+        },
+        "Modification utilisateur",
+      );
+    } else {
+      logger.info(
+        {
+          categorie: "utilisateur",
+          source: "CréerOuMettreÀJourUnUtilisateurUseCase",
+          email,
+          profil,
+          auteurId,
+        },
+        "Création utilisateur",
       );
     }
   }

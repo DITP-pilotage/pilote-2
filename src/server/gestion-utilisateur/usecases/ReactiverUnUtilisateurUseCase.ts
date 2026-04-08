@@ -11,6 +11,7 @@ import { profilsInfolettreCoordinateur } from "@/server/domain/utilisateur/Utili
 import { ContactInfoLettresService } from "@/server/gestion-utilisateur/domain/ports/ContactInfoLettresService";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import type { Inject } from "@/server/gestion-utilisateur/module";
+import logger from "@/server/infrastructure/Logger";
 
 export default class ReactiverUnUtilisateurUseCase {
   private utilisateurRepository: UtilisateurRepository;
@@ -108,5 +109,17 @@ export default class ReactiverUnUtilisateurUseCase {
     ) {
       await this.utilisateurIAMRepository.reactive(email);
     }
+
+    logger.info(
+      {
+        categorie: "utilisateur",
+        source: "ReactiverUnUtilisateurUseCase",
+        email,
+        profil: utilisateurAReactiver.profil,
+        auteurId,
+        modifications: { statut: { ancien: "désactivé", nouveau: "actif" } },
+      },
+      "Réactivation utilisateur",
+    );
   }
 }

@@ -19,7 +19,10 @@ export class EnvoyerRapportsHebdomadairesUseCase {
   ) {}
 
   async run(params: { dateCreationMin?: Date }): Promise<EnvoyerRapportResult> {
-    logger.info("Phase 2 démarrée");
+    logger.info(
+      { categorie: "rapport", source: "EnvoyerRapportsHebdomadairesUseCase" },
+      "Phase 2 démarrée",
+    );
 
     const rapportsAEnvoyer =
       await this.deps.rapportRepository.recupererRapportsParStatut(
@@ -27,9 +30,14 @@ export class EnvoyerRapportsHebdomadairesUseCase {
         params.dateCreationMin,
       );
 
-    logger.info("Rapports à envoyer récupérés", {
-      nombreRapports: rapportsAEnvoyer.length,
-    });
+    logger.info(
+      {
+        categorie: "rapport",
+        source: "EnvoyerRapportsHebdomadairesUseCase",
+        nombreRapports: rapportsAEnvoyer.length,
+      },
+      "Rapports à envoyer récupérés",
+    );
 
     let emailsEnvoyes = 0;
     let emailsEnEchec = 0;
@@ -48,10 +56,15 @@ export class EnvoyerRapportsHebdomadairesUseCase {
       }
     }
 
-    logger.info("Phase 2 terminée", {
-      emailsEnvoyes,
-      emailsEnEchec,
-    });
+    logger.info(
+      {
+        categorie: "rapport",
+        source: "EnvoyerRapportsHebdomadairesUseCase",
+        emailsEnvoyes,
+        emailsEnEchec,
+      },
+      "Phase 2 terminée",
+    );
 
     return {
       emailsEnvoyes,
@@ -77,10 +90,15 @@ export class EnvoyerRapportsHebdomadairesUseCase {
 
       await this.deps.rapportRepository.sauvegarder(rapportEnvoye);
 
-      logger.info("Email envoyé", {
-        rapportId: rapport.id,
-        coordinateurEmail: rapport.coordinateur.email,
-      });
+      logger.info(
+        {
+          categorie: "rapport",
+          source: "EnvoyerRapportsHebdomadairesUseCase",
+          rapportId: rapport.id,
+          coordinateurEmail: rapport.coordinateur.email,
+        },
+        "Email envoyé",
+      );
 
       return { success: true };
     } catch (error) {
@@ -89,6 +107,8 @@ export class EnvoyerRapportsHebdomadairesUseCase {
 
       logger.error(
         {
+          categorie: "rapport",
+          source: "EnvoyerRapportsHebdomadairesUseCase",
           rapportId: rapport.id,
           coordinateurEmail: rapport.coordinateur.email,
           erreur: messageErreur,

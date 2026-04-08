@@ -25,7 +25,14 @@ export class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepositor
         realm: KEYCLOAK_REALM,
         id: utilisateur.id,
       });
-      logger.info(`Utilisateur ${email} supprimé.`);
+      logger.info(
+        {
+          categorie: "utilisateur",
+          source: "UtilisateurIAMKeycloakRepository",
+          email,
+        },
+        "Utilisateur supprimé de Keycloak",
+      );
     }
   }
 
@@ -42,7 +49,14 @@ export class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepositor
         { id: utilisateur.id },
         { enabled: false },
       );
-      logger.info(`Utilisateur ${email} désactivé.`);
+      logger.info(
+        {
+          categorie: "utilisateur",
+          source: "UtilisateurIAMKeycloakRepository",
+          email,
+        },
+        "Utilisateur désactivé dans Keycloak",
+      );
     }
   }
 
@@ -60,7 +74,14 @@ export class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepositor
         { id: utilisateur.id },
         { enabled: true },
       );
-      logger.info(`Utilisateur ${email} réactivé.`);
+      logger.info(
+        {
+          categorie: "utilisateur",
+          source: "UtilisateurIAMKeycloakRepository",
+          email,
+        },
+        "Utilisateur réactivé dans Keycloak",
+      );
       await kcAdminClient.users.executeActionsEmail({
         realm: KEYCLOAK_REALM,
         clientId: configuration().import.clientId,
@@ -69,7 +90,14 @@ export class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepositor
         lifespan: 7 * DAY_IN_SECONDS,
         actions: ["UPDATE_PASSWORD"],
       });
-      logger.info("Email envoyé à l'utilisateur.");
+      logger.info(
+        {
+          categorie: "utilisateur",
+          source: "UtilisateurIAMKeycloakRepository",
+          email,
+        },
+        "Email de réactivation envoyé",
+      );
     }
   }
 
@@ -113,7 +141,15 @@ export class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepositor
         emailVerified: true,
         requiredActions: ["UPDATE_PASSWORD"],
       });
-      logger.info(`Utilisateur ${email} créé.`, utilisateurIAM.id);
+      logger.info(
+        {
+          categorie: "utilisateur",
+          source: "UtilisateurIAMKeycloakRepository",
+          email,
+          keycloakId: utilisateurIAM.id,
+        },
+        "Utilisateur créé dans Keycloak",
+      );
 
       // Note : pour que la redirectUri fonctionne, il faut ajouter le clientId et configurer les Valid redirect URIs
       // pour le client en question (du script d'import donc).
@@ -125,12 +161,33 @@ export class UtilisateurIAMKeycloakRepository implements UtilisateurIAMRepositor
         lifespan: 7 * DAY_IN_SECONDS,
         actions: ["UPDATE_PASSWORD"],
       });
-      logger.info("Email envoyé à l'utilisateur.");
+      logger.info(
+        {
+          categorie: "utilisateur",
+          source: "UtilisateurIAMKeycloakRepository",
+          email,
+        },
+        "Email de création envoyé",
+      );
     } catch (error) {
       if (isUtilisateurDoublonError(error)) {
-        logger.warn(`L'email ${email} existe déjà.`);
+        logger.warn(
+          {
+            categorie: "utilisateur",
+            source: "UtilisateurIAMKeycloakRepository",
+            email,
+          },
+          "Utilisateur déjà existant dans Keycloak",
+        );
       } else {
-        logger.error(error);
+        logger.error(
+          {
+            categorie: "utilisateur",
+            source: "UtilisateurIAMKeycloakRepository",
+            email,
+          },
+          `Erreur création utilisateur Keycloak : ${(error as Error).message}`,
+        );
         throw error;
       }
     }

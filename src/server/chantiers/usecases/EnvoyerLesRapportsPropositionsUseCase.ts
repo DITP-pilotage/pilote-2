@@ -53,7 +53,14 @@ export class EnvoyerLesRapportsPropositionsUseCase {
         );
         rapportsEnvoyes++;
       } catch (error) {
-        logger.error(`Erreur lors de l'envoi du rapport pour ${email}:`, error);
+        logger.error(
+          {
+            categorie: "pva",
+            source: "EnvoyerLesRapportsPropositionsUseCase",
+            email,
+          },
+          `Erreur envoi rapport : ${(error as Error).message}`,
+        );
 
         const rapportEnEchec = marquerRapportCommeEchec({
           rapport,

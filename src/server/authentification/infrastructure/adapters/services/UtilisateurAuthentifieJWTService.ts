@@ -5,6 +5,7 @@ import { TokenAPIJWTService } from "@/server/authentification/infrastructure/ada
 import { TokenAPIInformationRepository } from "@/server/authentification/domain/ports/TokenAPIInformationRepository";
 import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 import { configuration } from "@/config";
+import logger from "@/server/infrastructure/Logger";
 
 export class UtilisateurAuthentifieJWTService {
   private readonly utilisateurRepository: UtilisateurRepository;
@@ -40,6 +41,16 @@ export class UtilisateurAuthentifieJWTService {
       await this.tokenAPIRepository.recupererTokenAPIInformation({ email });
 
     if (!utilisateur || !utilisateurDuToken) {
+      logger.warn(
+        {
+          categorie: "auth",
+          source: "UtilisateurAuthentifieJWTService",
+          email,
+          utilisateurTrouve: !!utilisateur,
+          tokenTrouve: !!utilisateurDuToken,
+        },
+        "Utilisateur introuvable lors de l'authentification API",
+      );
       throw new ForbiddenError(
         "L'utilisateur n'existe pas ou plus dans la base de données utilisateur de pilote",
       );

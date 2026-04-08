@@ -147,9 +147,9 @@ async function sauvegardeNotes() {
 
 sauvegardeNotes()
   .then(() => {
-    logger.info("Script exécuté avec succès");
+    logger.info({ categorie: "systeme", source: "sauvegarde_notes_evaluation_prefet" }, "Script exécuté avec succès");
   })
   .catch((error) => {
-    logger.error("Échec du script :", error);
+    logger.error({ categorie: "systeme", source: "sauvegarde_notes_evaluation_prefet" }, (error as Error).message);
     throw error;
   });

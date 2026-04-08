@@ -32,12 +32,23 @@ export class KeycloakBrevoProfilModifieSideEffects implements ProfilModifieSideE
   async executer(profil: ProfilUtilisateur): Promise<void> {
     await Promise.all([
       this.updateBrevoContact(profil).catch((error) => {
-        logger.error("Erreur lors de la mise à jour du contact Brevo", error);
+        logger.error(
+          {
+            categorie: "utilisateur",
+            source: "KeycloakBrevoProfilModifieSideEffects",
+            email: profil.email,
+          },
+          `Erreur mise à jour contact Brevo : ${(error as Error).message}`,
+        );
       }),
       this.updateKeycloakUser(profil).catch((error) => {
         logger.error(
-          "Erreur lors de la mise à jour de l'utilisateur Keycloak",
-          error,
+          {
+            categorie: "utilisateur",
+            source: "KeycloakBrevoProfilModifieSideEffects",
+            email: profil.email,
+          },
+          `Erreur mise à jour utilisateur Keycloak : ${(error as Error).message}`,
         );
       }),
     ]);

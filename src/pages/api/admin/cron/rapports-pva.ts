@@ -25,19 +25,44 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const container = getContainer("chantiers");
 
-    logger.info("Phase 1 : Création des rapports");
+    logger.info(
+      { categorie: "pva", source: "cron/rapports-pva" },
+      "Phase 1 : Création des rapports",
+    );
     const resultatCreation = await container
       .resolve("creerLesRapportsPropositionsUseCase")
       .run();
-    logger.info("Phase 1 terminée", resultatCreation);
+    logger.info(
+      {
+        categorie: "pva",
+        source: "cron/rapports-pva",
+        rapportsCrees: resultatCreation.rapportsCrees,
+        erreursCreation: resultatCreation.erreursCreation,
+      },
+      "Phase 1 terminée",
+    );
 
-    logger.info("Phase 2 : Envoi des rapports");
+    logger.info(
+      { categorie: "pva", source: "cron/rapports-pva" },
+      "Phase 2 : Envoi des rapports",
+    );
     const resultatEnvoi = await container
       .resolve("envoyerLesRapportsPropositionsUseCase")
       .run();
-    logger.info("Phase 2 terminée", resultatEnvoi);
+    logger.info(
+      {
+        categorie: "pva",
+        source: "cron/rapports-pva",
+        rapportsEnvoyes: resultatEnvoi.rapportsEnvoyes,
+        rapportsEnEchec: resultatEnvoi.rapportsEnEchec,
+      },
+      "Phase 2 terminée",
+    );
 
-    logger.info("Envoi des rapports hebdomadaires terminé");
+    logger.info(
+      { categorie: "pva", source: "cron/rapports-pva" },
+      "Envoi des rapports hebdomadaires terminé",
+    );
 
     const message = [
       "## Rapports hebdomadaires des propositions de valeur d'avancement",
@@ -69,7 +94,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       `- [Logs](${process.env.SCALINGO_LOGS_URL})`,
     ].join("\n");
     envoieMessageTchap(messageEchec, baseUrl, roomId, accessToken);
-    logger.error(error);
+    logger.error(
+      { categorie: "pva", source: "cron/rapports-pva" },
+      `Erreur cron rapports PVA : ${(error as Error).message}`,
+    );
 
     return res
       .status(500)

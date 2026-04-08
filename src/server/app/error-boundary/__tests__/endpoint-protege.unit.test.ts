@@ -65,8 +65,12 @@ describe("endpointProtege", () => {
       });
       expect(handler).not.toHaveBeenCalled();
       expect(mockLoggerError).toHaveBeenCalledWith(
-        "(API) Une erreur est survenue",
-        "UnauthorizedError",
+        expect.objectContaining({
+          categorie: "systeme",
+          source: "error-handler",
+          statusCode: 401,
+          type: "UnauthorizedError",
+        }),
         "Il vous manque le header Authorization avec le token API",
       );
     });
@@ -90,8 +94,12 @@ describe("endpointProtege", () => {
       });
       expect(handler).not.toHaveBeenCalled();
       expect(mockLoggerError).toHaveBeenCalledWith(
-        "(API) Une erreur est survenue",
-        "BadRequestError",
+        expect.objectContaining({
+          categorie: "systeme",
+          source: "error-handler",
+          statusCode: 400,
+          type: "BadRequestError",
+        }),
         "Le token n'existe pas dans le header Authorization",
       );
     });
@@ -224,8 +232,12 @@ describe("endpointProtege", () => {
         message: "Une erreur métier est survenue",
       });
       expect(mockLoggerError).toHaveBeenCalledWith(
-        "(API) Une erreur est survenue",
-        "BusinessError",
+        expect.objectContaining({
+          categorie: "systeme",
+          source: "error-handler",
+          statusCode: 422,
+          type: "BusinessError",
+        }),
         "Une erreur métier est survenue",
       );
     });
@@ -253,7 +265,12 @@ describe("endpointProtege", () => {
           "Une erreur est survenue, veuillez contacter le support pour plus d'information",
       });
       expect(mockLoggerError).toHaveBeenCalledWith(
-        "(API) Une erreur interne est survenue : Une erreur technique inattendue",
+        expect.objectContaining({
+          categorie: "systeme",
+          source: "error-handler",
+          statusCode: 500,
+        }),
+        "Erreur interne : Une erreur technique inattendue",
       );
     });
   });

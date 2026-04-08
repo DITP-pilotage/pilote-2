@@ -14,7 +14,10 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const prisma = getContainer("shared").resolve("prisma");
 
-    logger.info("Récupération des utilisateurs avec service_autre");
+    logger.info(
+      { categorie: "rapport", source: "cron/rapport-service-autre" },
+      "Récupération des utilisateurs avec service_autre",
+    );
 
     const utilisateurs = await prisma.getInstance().utilisateur.findMany({
       where: { service_autre: { not: null } },
@@ -30,7 +33,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       ),
     ].sort();
 
-    logger.info("Données récupérées", { count, valeursDistinctes });
+    logger.info(
+      {
+        categorie: "rapport",
+        source: "cron/rapport-service-autre",
+        count,
+        nombreValeursDistinctes: valeursDistinctes.length,
+      },
+      "Données service_autre récupérées",
+    );
 
     const message = [
       '## Rapport hebdomadaire des services "autre"',
@@ -47,15 +58,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     const result = { count, valeursDistinctes };
     logger.info(
+      { categorie: "rapport", source: "cron/rapport-service-autre", count },
       'Rapport hebdomadaire des services "autre" envoyé avec succès',
-      result,
     );
 
     return res.status(200).json(result);
   } catch (error) {
     logger.error(
-      'Erreur lors de l\'exécution du cron de rapport des services "autre"',
-      error,
+      { categorie: "rapport", source: "cron/rapport-service-autre" },
+      `Erreur cron rapport services "autre" : ${(error as Error).message}`,
     );
 
     const messageErreur = [
