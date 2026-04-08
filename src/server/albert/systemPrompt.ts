@@ -254,27 +254,39 @@ Génère la réponse en markdown en suivant le gabarit ci-dessous. Les annotatio
 
 Dans Pilote, le TA {{JALON}} de la région s'établit à {{taux_avancement_global}}%, pour une médiane des <if territoire is DEPT>départements</if><else>régions</else> à {{mediane_repartition}}%.
 
+---
+
 ## Chantiers en retard
 
 {{X}} chantiers sont en retard de plus de 10 points par rapport à la médiane nationale :
 
 (pour chaque chantier_en_retard)
-**{{chantier.id}} — {{chantier.nom}}
- 
-| Écart | {{ecart}} points |
-| Météo | {{synthese.meteo}} |
+**{{chantier.id}} — {{chantier.nom}}**\\
+**Écart** : {{ecart}} points\\
+**Météo** : {{synthese.meteo}}
 
-  Résumé de la situation
+> {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
+
+NOTE FORMAT : la barre oblique inverse (\\) en fin de ligne est un saut de ligne markdown — reproduis-la telle quelle.
+
+**Synthèse — chantiers en retard** : {{1-2 phrases factuelles décrivant les tendances communes (ampleur des écarts, météo dominante, secteurs concernés). Aucune opinion ni recommandation.}}
+
+---
 
 ## Chantiers en difficulté
 
 {{Y}} chantiers sont compromis ou nécessitent un appui :
 
 (pour chaque chantier_en_difficulte)
-**{{chantier.id}} — {{chantier.nom}}**
- 
-| Écart | {{ecart}} points |
-| Météo | {{synthese.meteo}} |
+**{{chantier.id}} — {{chantier.nom}}**\\
+**Écart** : {{ecart}} points\\
+**Météo** : {{synthese.meteo}}
+
+> {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
+
+**Synthèse — chantiers en difficulté** : {{1-2 phrases factuelles décrivant les tendances communes (météo dominante, secteurs concernés). Aucune opinion ni recommandation.}}
+
+---
 
 Sources analysées : données quantitatives et qualitatives des chantiers publiés sur PILOTE.
 </template>
@@ -299,6 +311,8 @@ Génère la réponse en markdown en suivant le gabarit ci-dessous. Les annotatio
 
 Décris factuellement les écarts de taux d'avancement entre les territoires comparés : qui est en avance, qui est en retard, de combien de points.
 
+---
+
 ## Chantiers en retard
 
 {{X_total}} chantiers sont en retard de plus de 10 points par rapport à la médiane nationale.
@@ -306,20 +320,25 @@ Décris factuellement les écarts de taux d'avancement entre les territoires com
 ### Communs à plusieurs territoires
 
 (pour chaque chantier en retard présent dans au moins 2 territoires)
-**{{chantier.id}} — {{chantier.nom}}**
+**{{chantier.id}} — {{chantier.nom}}**\\
+**Territoires concernés** : {{liste_territoires}}
 
-| Territoires concernés | {{liste_territoires}} |
-Résumé de la situation
+> {{résumé condensé en 1-2 phrases factuelles à partir des commentaires de synthèse. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
 
 ### Spécifiques à {{territoire.nom}}
 
 (pour chaque territoire, lister les chantiers en retard qui lui sont propres)
-**{{chantier.id}} — {{chantier.nom}}**
+**{{chantier.id}} — {{chantier.nom}}**\\
+**Écart** : {{ecart}} points\\
+**Météo** : {{synthese.meteo}}
 
-| Écart | {{ecart}} points |
-| Météo | {{synthese.meteo}} |
+> {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
 
-Résumé de la situation
+NOTE FORMAT : la barre oblique inverse (\\) en fin de ligne est un saut de ligne markdown — reproduis-la telle quelle.
+
+**Synthèse — chantiers en retard** : {{1-2 phrases factuelles décrivant les tendances communes entre territoires (ampleur des écarts, météo dominante, secteurs concernés). Aucune opinion ni recommandation.}}
+
+---
 
 ## Chantiers en difficulté
 
@@ -328,21 +347,23 @@ Résumé de la situation
 ### Communs à plusieurs territoires
 
 (pour chaque chantier en difficulté présent dans au moins 2 territoires)
-**{{chantier.id}} — {{chantier.nom}}**
+**{{chantier.id}} — {{chantier.nom}}**\\
+**Territoires concernés** : {{liste_territoires}}\\
+**Météo** : {{meteo}}
 
-| Territoires concernés | {{liste_territoires}} |
-| Météo | {{meteo}} |
-
-Résumé de la situation
+> {{résumé condensé en 1-2 phrases factuelles à partir des commentaires de synthèse. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
 
 ### Spécifiques à {{territoire.nom}}
 
 (pour chaque territoire, lister les chantiers en difficulté qui lui sont propres)
-**{{chantier.id}} — {{chantier.nom}}**
+**{{chantier.id}} — {{chantier.nom}}**\\
+**Météo** : {{meteo}}
 
-| Météo | {{meteo}} |
+> {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}
 
-Résumé de la situation
+**Synthèse — chantiers en difficulté** : {{1-2 phrases factuelles décrivant les tendances communes entre territoires (météo dominante, secteurs concernés). Aucune opinion ni recommandation.}}
+
+---
 
 Sources analysées : données quantitatives et qualitatives des chantiers publiés sur PILOTE.
 </template>

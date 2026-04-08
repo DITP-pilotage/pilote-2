@@ -8,7 +8,7 @@ export const chatMarkdownStyles = `
   .albert-markdown h1 { font-size: 1.25em; }
   .albert-markdown h2 { font-size: 1.1em; }
   .albert-markdown h3 { font-size: 1em; }
-  .albert-markdown p { margin: 0.5em 0; }
+  .albert-markdown p { margin: 0.7em 0; }
   .albert-markdown ul, .albert-markdown ol {
     padding-left: 1.5em;
     margin: 0.5em 0;
@@ -56,6 +56,10 @@ export const chatMarkdownStyles = `
     margin: 0.5em 0;
     color: #6b7280;
   }
+  .albert-markdown hr {
+    margin: 2rem 0 !important;
+    padding: 1px;
+  }
   .albert-markdown > p,
   .albert-markdown > h1,
   .albert-markdown > h2,
@@ -65,6 +69,7 @@ export const chatMarkdownStyles = `
   .albert-markdown > table,
   .albert-markdown > pre,
   .albert-markdown > blockquote,
+  .albert-markdown > hr,
   .albert-markdown li {
     animation: md-fade-in 300ms ease-out;
   }
