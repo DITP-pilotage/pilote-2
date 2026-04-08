@@ -35,15 +35,28 @@ function _assertResponseOk(
  * perform the action for other providers as well
  */
 async function doFinalSignoutHandshake(token: PiloteJWTPayload) {
-  logger.info({ userId: token.user.id }, "Logout");
-  logger.debug({ token });
+  logger.info(
+    {
+      categorie: "auth",
+      source: "nextauth.doFinalSignoutHandshake",
+      userId: token.user.id,
+    },
+    "Logout",
+  );
   const { provider, idToken } = token;
   if (provider == keycloak.id) {
     try {
       // Add the id_token_hint to the query string
       const params = new URLSearchParams({ id_token_hint: idToken as string });
 
-      logger.debug({ logoutUrl: configuration().keycloak.logoutUrl, params });
+      logger.debug(
+        {
+          categorie: "auth",
+          source: "nextauth.doFinalSignoutHandshake",
+          logoutUrl: configuration().keycloak.logoutUrl,
+        },
+        "Logout URL",
+      );
 
       const response = await axios.post(
         configuration().keycloak.logoutUrl,
@@ -65,9 +78,19 @@ async function doFinalSignoutHandshake(token: PiloteJWTPayload) {
       );
       _assertResponseOk(response, "Failed to logout");
 
-      logger.info("Completed post-logout handshake");
+      logger.info(
+        { categorie: "auth", source: "nextauth.doFinalSignoutHandshake" },
+        "Completed post-logout handshake",
+      );
     } catch (error: unknown) {
-      logger.error(error, "Unable to perform post-logout handshake");
+      logger.error(
+        {
+          categorie: "auth",
+          source: "nextauth.doFinalSignoutHandshake",
+          errorMessage: (error as Error).message,
+        },
+        "Unable to perform post-logout handshake",
+      );
     }
   }
 }
@@ -100,7 +123,14 @@ type PiloteJWTPayload = {
 async function refreshAccessToken(
   token: PiloteJWTPayload,
 ): Promise<PiloteJWTPayload> {
-  logger.info({ userId: token.user.id }, "Refreshing access token...");
+  logger.info(
+    {
+      categorie: "auth",
+      source: "nextauth.refreshAccessToken",
+      userId: token.user.id,
+    },
+    "Refreshing access token...",
+  );
   const { provider, refreshToken } = token as JWT & { refreshToken: string };
 
   if (provider == keycloak.id) {
@@ -126,7 +156,14 @@ async function refreshAccessToken(
       _assertResponseOk(response, "Failed to refresh token");
 
       const openIdTokenResponse = response.data as OpenIdTokenResponse;
-      logger.debug({ openIdTokenResponse }, "openid-connect/token response");
+      logger.debug(
+        {
+          categorie: "auth",
+          source: "nextauth.refreshAccessToken",
+          openIdTokenResponse,
+        },
+        "openid-connect/token response",
+      );
 
       const result = {
         ...token,
@@ -136,13 +173,21 @@ async function refreshAccessToken(
         idToken: openIdTokenResponse.id_token ?? token.idToken,
       };
 
-      logger.info("Refresh token réussi");
-      logger.debug({ result }, "Refresh token result");
+      logger.info(
+        { categorie: "auth", source: "nextauth.refreshAccessToken" },
+        "Refresh token réussi",
+      );
       return result;
     } catch (error) {
       const errorMessage = "Bad in refresh_token";
-      logger.error({ error }, errorMessage);
-      logger.debug({ token }, errorMessage);
+      logger.error(
+        {
+          categorie: "auth",
+          source: "nextauth.refreshAccessToken",
+          error: (error as Error).message,
+        },
+        errorMessage,
+      );
       return {
         ...token,
         error: "RefreshAccessTokenError",
@@ -150,8 +195,10 @@ async function refreshAccessToken(
     }
   } else {
     const errorMessage = "Provider: Not Supported";
-    logger.error({ provider }, errorMessage);
-    logger.debug({ token }, errorMessage);
+    logger.error(
+      { categorie: "auth", source: "nextauth.refreshAccessToken", provider },
+      errorMessage,
+    );
     return {
       ...token,
       error: "RefreshAccessTokenError",
@@ -246,13 +293,18 @@ export const authConfig: NextAuthConfig = {
     },
   },
   callbacks: {
-    async jwt({ token, account, user, profile }) {
+    async jwt({ token, account, user }) {
       if (account != null && user != null) {
         logger.info(
-          { userId: user.id },
-          "NextAuth JWT callback called from login",
+          {
+            categorie: "auth",
+            source: "nextauth.jwt",
+            userId: user.id,
+            email: user.email,
+            provider: account.provider,
+          },
+          "Connexion utilisateur",
         );
-        logger.debug({ token, user, account, profile });
 
         if (user.email) {
           const { getContainer } = await import("@/server/dependances");
@@ -282,13 +334,17 @@ export const authConfig: NextAuthConfig = {
       }
 
       logger.info(
+        { categorie: "auth", source: "nextauth.jwt" },
         "NextAuth JWT callback triggers refreshing (Access Token has expired)",
       );
       const refreshedToken = await refreshAccessTokenAvecDeduplication(
         toPiloteJWTPayload(token),
       );
       if (refreshedToken.error === "RefreshAccessTokenError") {
-        logger.error("Failed to refresh access token, invalidating session");
+        logger.error(
+          { categorie: "auth", source: "nextauth.jwt" },
+          "Failed to refresh access token, invalidating session",
+        );
         return null;
       }
       return refreshedToken;

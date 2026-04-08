@@ -40,15 +40,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     envoieMessageTchap(message.join("\n"), baseUrl, roomId, accessToken);
 
     logger.info(
+      {
+        categorie: "utilisateur",
+        source: "cron/suppression-comptes",
+        nombreSupprimés: resultat.supprimes.length,
+      },
       "Script de suppression des comptes désactivés terminé",
-      resultat,
     );
 
     return res.status(200).json(resultat);
   } catch (error) {
     logger.error(
-      "Erreur lors de l'exécution du cron de suppression des comptes désactivés",
-      error,
+      { categorie: "utilisateur", source: "cron/suppression-comptes" },
+      `Erreur cron suppression comptes : ${(error as Error).message}`,
     );
 
     const messageErreur = [

@@ -1,4 +1,5 @@
 import type { ApplicationLogRepository } from "@/server/application-log/domain/ApplicationLogRepository.interface";
+import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 import type { Inject } from "@/server/application-log/module";
 
 const RETENTION_MINIMUM_JOURS = 7;
@@ -19,7 +20,7 @@ export class PurgerLogsUseCase {
     dateLimite.setDate(dateLimite.getDate() - RETENTION_MINIMUM_JOURS);
 
     if (input.anterieurA > dateLimite) {
-      throw new Error(
+      throw new BadRequestError(
         `Impossible de purger des logs de moins de ${RETENTION_MINIMUM_JOURS} jours`,
       );
     }

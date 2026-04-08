@@ -23,9 +23,7 @@ function parseOptionalDateArg(arg: string | undefined): Date {
 async function main() {
   const maintenant = parseOptionalDateArg(process.argv[2]);
 
-  logger.info("Génération des rapports hebdomadaires", {
-    dateExecution: maintenant.toISOString(),
-  });
+  logger.info({ categorie: "rapport", source: "rapportHebdomadaireCoordinateurs", dateExecution: maintenant.toISOString() }, "Génération des rapports hebdomadaires");
 
   const container = getContainer("rapportsHebdomadaires");
 
@@ -85,7 +83,7 @@ const isMain = eval("require.main === module");
 if (isMain) {
   main()
     .then((result) => {
-      logger.info("Exécution terminée", result);
+      logger.info({ categorie: "rapport", source: "rapportHebdomadaireCoordinateurs", ...result }, "Exécution terminée");
       process.exit(0);
     })
     .catch((error) => {
@@ -99,7 +97,7 @@ if (isMain) {
       ].join("\n");
 
       envoieMessageTchap(messageErreur, baseUrl, roomId, accessToken);
-      logger.error(error);
+      logger.error({ categorie: "rapport", source: "rapportHebdomadaireCoordinateurs" }, (error as Error).message);
       process.exit(1);
     });
 }

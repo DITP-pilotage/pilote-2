@@ -1,6 +1,16 @@
-import { useState, useCallback } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { $Enums } from "@prisma/client";
+import {
+  createColumnHelper,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import type { ApplicationLogEntree } from "@/server/application-log/domain/ApplicationLogRepository.interface";
 import api from "@/server/infrastructure/api/trpc/api";
+
+const columnHelper = createColumnHelper<ApplicationLogEntree>();
+
+const TAILLE_PAGE = 50;
 
 export function useTableauLogs() {
   const [page, setPage] = useState(1);
@@ -11,13 +21,11 @@ export function useTableauLogs() {
   const [filtreRecherche, setFiltreRecherche] = useState<string | undefined>();
   const [dateDebut, setDateDebut] = useState<string | undefined>();
   const [dateFin, setDateFin] = useState<string | undefined>();
-  const [logExpanduId, setLogExpanduId] = useState<string | null>(null);
-
-  const taillePage = 50;
+  const [logsExpandus, setLogsExpandus] = useState<Set<string>>(new Set());
 
   const [data] = api.applicationLog.lister.useSuspenseQuery({
     page,
-    taillePage,
+    taillePage: TAILLE_PAGE,
     filtreLevel,
     filtreCategorie,
     filtreRecherche,
@@ -26,22 +34,75 @@ export function useTableauLogs() {
   });
 
   const toggleExpansion = useCallback((id: string) => {
-    setLogExpanduId((prev) => (prev === id ? null : id));
+    setLogsExpandus((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
   }, []);
 
-  const reinitialiserFiltres = useCallback(() => {
-    setPage(1);
-    setFiltreLevel(undefined);
-    setFiltreCategorie(undefined);
-    setFiltreRecherche(undefined);
-    setDateDebut(undefined);
-    setDateFin(undefined);
-  }, []);
+  const totalPages = Math.ceil(data.total / TAILLE_PAGE);
 
-  const totalPages = Math.ceil(data.total / taillePage);
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor("timestamp", {
+        header: "Timestamp",
+        id: "timestamp",
+      }),
+      columnHelper.accessor("level", {
+        header: "Niveau",
+        id: "level",
+      }),
+      columnHelper.accessor("categorie", {
+        header: "Catégorie",
+        id: "categorie",
+      }),
+      columnHelper.accessor("message", {
+        header: "Message",
+        id: "message",
+      }),
+      columnHelper.accessor("source", {
+        header: "Source",
+        id: "source",
+      }),
+      columnHelper.display({
+        id: "expand",
+        header: "",
+      }),
+    ],
+    [],
+  );
+
+  const table = useReactTable({
+    data: data.logs,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    manualPagination: true,
+    pageCount: totalPages,
+    state: {
+      pagination: {
+        pageIndex: page - 1,
+        pageSize: TAILLE_PAGE,
+      },
+    },
+    onPaginationChange: (updater) => {
+      if (typeof updater === "function") {
+        const newState = updater({
+          pageIndex: page - 1,
+          pageSize: TAILLE_PAGE,
+        });
+        setPage(newState.pageIndex + 1);
+      }
+    },
+    getRowId: (row) => row.id,
+  });
 
   return {
-    logs: data.logs,
+    table,
     total: data.total,
     page,
     setPage,
@@ -56,8 +117,7 @@ export function useTableauLogs() {
     setDateDebut,
     dateFin,
     setDateFin,
-    logExpanduId,
+    logsExpandus,
     toggleExpansion,
-    reinitialiserFiltres,
   };
 }

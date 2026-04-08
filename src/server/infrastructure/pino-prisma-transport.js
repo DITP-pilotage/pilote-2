@@ -33,9 +33,10 @@ function extraireContexte(log) {
 }
 
 module.exports = async function (opts) {
-  const prisma = new PrismaClient({
-    datasourceUrl: opts.databaseUrl,
-  });
+  const prismaOptions = opts.databaseUrl
+    ? { datasourceUrl: opts.databaseUrl }
+    : {};
+  const prisma = new PrismaClient(prismaOptions);
 
   return build(
     async function (source) {

@@ -99,16 +99,21 @@ export class ProduireRapportsHebdomadairesUseCase {
 
     await this.deps.rapportRepository.sauvegarder(rapport);
 
-    logger.info("Rapport créé", {
-      rapportId: rapport.id,
-      coordinateurEmail: coordinateur.email,
-      nombreComptesCrees: comptesCrees.length,
-      nombreComptesDesactives: comptesDesactives.length,
-      nombreChangementsChantiers: chantiers.reduce(
-        (total, chantier) => total + chantier.indicateurs.length,
-        0,
-      ),
-    });
+    logger.info(
+      {
+        categorie: "rapport",
+        source: "ProduireRapportsHebdomadairesUseCase",
+        rapportId: rapport.id,
+        coordinateurEmail: coordinateur.email,
+        nombreComptesCrees: comptesCrees.length,
+        nombreComptesDesactives: comptesDesactives.length,
+        nombreChangementsChantiers: chantiers.reduce(
+          (total, chantier) => total + chantier.indicateurs.length,
+          0,
+        ),
+      },
+      "Rapport créé",
+    );
 
     return rapport;
   }
@@ -188,11 +193,16 @@ export class ProduireRapportsHebdomadairesUseCase {
   private calculerEtLoggerPeriode(maintenant: Date) {
     const periode = calculerPeriodeDernierLundiNeufHeures({ maintenant });
 
-    logger.info("Phase 1 démarrée", {
-      dateExecution: maintenant.toISOString(),
-      periodeDebut: periode.dateDebut.toISOString(),
-      periodeFin: periode.dateFin.toISOString(),
-    });
+    logger.info(
+      {
+        categorie: "rapport",
+        source: "ProduireRapportsHebdomadairesUseCase",
+        dateExecution: maintenant.toISOString(),
+        periodeDebut: periode.dateDebut.toISOString(),
+        periodeFin: periode.dateFin.toISOString(),
+      },
+      "Phase 1 démarrée",
+    );
 
     return periode;
   }
@@ -204,9 +214,14 @@ export class ProduireRapportsHebdomadairesUseCase {
         "COORDINATEUR_DEPARTEMENT",
       ]);
 
-    logger.info("Coordinateurs récupérés", {
-      nombreCoordinateurs: coordinateurs.length,
-    });
+    logger.info(
+      {
+        categorie: "rapport",
+        source: "ProduireRapportsHebdomadairesUseCase",
+        nombreCoordinateurs: coordinateurs.length,
+      },
+      "Coordinateurs récupérés",
+    );
 
     return coordinateurs;
   }
@@ -223,9 +238,14 @@ export class ProduireRapportsHebdomadairesUseCase {
         profilCodes: PROFILS_CONCERNES,
       });
 
-    logger.info("Activité globale récupérée", {
-      nombreEvenements: activiteGlobale.length,
-    });
+    logger.info(
+      {
+        categorie: "rapport",
+        source: "ProduireRapportsHebdomadairesUseCase",
+        nombreEvenements: activiteGlobale.length,
+      },
+      "Activité globale récupérée",
+    );
 
     return activiteGlobale;
   }
@@ -264,6 +284,8 @@ export class ProduireRapportsHebdomadairesUseCase {
       } catch (error) {
         logger.error(
           {
+            categorie: "rapport",
+            source: "ProduireRapportsHebdomadairesUseCase",
             coordinateurEmail: coordinateur.email,
             erreur: error instanceof Error ? error.message : String(error),
           },
@@ -272,9 +294,14 @@ export class ProduireRapportsHebdomadairesUseCase {
       }
     }
 
-    logger.info("Phase 1 terminée", {
-      rapportsCrees,
-    });
+    logger.info(
+      {
+        categorie: "rapport",
+        source: "ProduireRapportsHebdomadairesUseCase",
+        rapportsCrees,
+      },
+      "Phase 1 terminée",
+    );
 
     return {
       rapportsCrees,

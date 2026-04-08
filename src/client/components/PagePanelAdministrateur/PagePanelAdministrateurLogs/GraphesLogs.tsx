@@ -1,4 +1,5 @@
 import {
+  Fragment,
   FunctionComponent,
   Suspense,
   useEffect,
@@ -10,12 +11,13 @@ import type {
   Granularite,
   StatistiquesLogs,
 } from "@/server/application-log/domain/ApplicationLogRepository.interface";
+import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { type Periode, useGraphesLogs } from "./useGraphesLogs";
 
 const COULEURS = {
-  error: "#CE0500",
-  warn: "#B34000",
-  info: "#0063cb",
+  error: "var(--tw-color-error)",
+  warn: "var(--tw-color-warning)",
+  info: "var(--tw-color-primary)",
 };
 
 function calculerDateDebutISO(periode: Periode): string {
@@ -28,15 +30,19 @@ export const GraphesLogs: FunctionComponent = () => {
   const [periode, setPeriode] = useState<Periode>("7j");
   const [granularite, setGranularite] = useState<Granularite>("jour");
   const [dateDebut, setDateDebut] = useState(() => calculerDateDebutISO("7j"));
-  const [dateFin] = useState(() => new Date().toISOString());
+  const [dateFin, setDateFin] = useState(() => new Date().toISOString());
 
   const handleSetPeriode = (newPeriode: Periode) => {
     setPeriode(newPeriode);
     setDateDebut(calculerDateDebutISO(newPeriode));
   };
 
+  useEffect(() => {
+    setDateFin(new Date().toISOString());
+  }, [periode, granularite]);
+
   return (
-    <div>
+    <Fragment>
       <div className="flex gap-4 mb-6">
         <div>
           <label
@@ -88,7 +94,7 @@ export const GraphesLogs: FunctionComponent = () => {
           granularite={granularite}
         />
       </Suspense>
-    </div>
+    </Fragment>
   );
 };
 
@@ -142,10 +148,9 @@ function useEchartsTimeline(
     const chart = echarts.init(ref.current);
     const { timeline } = statistiques;
     const dates = timeline.map((entry) =>
-      new Date(entry.date).toLocaleDateString("fr-FR", {
-        day: "2-digit",
-        month: "2-digit",
-      }),
+      PiloteDateFormatter.isoDateFranceMetropolitaine(
+        new Date(entry.date).toISOString(),
+      ),
     );
 
     chart.setOption({
@@ -232,9 +237,9 @@ function useEchartsBarCategorie(
     if (!ref.current) return;
 
     const chart = echarts.init(ref.current);
-    const sorted = [...statistiques.parCategorie].sort(
-      (a, b) => a.count - b.count,
-    );
+    const sorted = [...statistiques.parCategorie]
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 10);
 
     chart.setOption({
       tooltip: { trigger: "axis" },

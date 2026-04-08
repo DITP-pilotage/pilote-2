@@ -40,18 +40,20 @@ async function seedUsers() {
         }
 
         logger.info(
-          `Utilisateur et ses habilitations créés avec succès : ${utilisateur.email}`,
+          { categorie: "utilisateur", source: "seedUtilisateursTest", email: utilisateur.email },
+          "Utilisateur et ses habilitations créés avec succès",
         );
       });
     }
 
     logger.info(
+      { categorie: "utilisateur", source: "seedUtilisateursTest" },
       "Initialisation des utilisateurs de tests terminée avec succès !",
     );
   } catch (error) {
     logger.error(
-      "Erreur lors de l'initialisation des utilisateurs de tests :",
-      error,
+      { categorie: "utilisateur", source: "seedUtilisateursTest" },
+      `Erreur lors de l'initialisation des utilisateurs de tests : ${(error as Error).message}`,
     );
     throw error;
   }
@@ -59,9 +61,9 @@ async function seedUsers() {
 
 seedUsers()
   .then(() => {
-    logger.info("Script exécuté avec succès");
+    logger.info({ categorie: "utilisateur", source: "seedUtilisateursTest" }, "Script exécuté avec succès");
   })
   .catch((error) => {
-    logger.error("Échec du script :", error);
+    logger.error({ categorie: "utilisateur", source: "seedUtilisateursTest" }, (error as Error).message);
     throw error;
   });

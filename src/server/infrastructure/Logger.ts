@@ -2,11 +2,18 @@ import pino, { type Logger } from "pino";
 import path from "node:path";
 
 const pinoPrismaTransportPath = path.resolve(
-  process.cwd(),
-  "src/server/infrastructure/pino-prisma-transport.js",
+  __dirname,
+  "pino-prisma-transport.js",
 );
 
-class AppLogger implements Pick<Logger, "info" | "error" | "warn"> {
+interface StructuredLogger {
+  info(obj: Record<string, unknown>, msg: string): void;
+  error(obj: Record<string, unknown>, msg: string): void;
+  warn(obj: Record<string, unknown>, msg: string): void;
+  debug(obj: Record<string, unknown>, msg: string): void;
+}
+
+class AppLogger implements StructuredLogger {
   private readonly _logger: Logger;
 
   constructor() {
@@ -19,30 +26,34 @@ class AppLogger implements Pick<Logger, "info" | "error" | "warn"> {
             options: { destination: 1 },
             level: "info",
           },
-          {
-            target: pinoPrismaTransportPath,
-            options: { databaseUrl: process.env.DATABASE_URL },
-            level: "info",
-          },
+          ...(process.env.DATABASE_URL
+            ? [
+                {
+                  target: pinoPrismaTransportPath,
+                  options: { databaseUrl: process.env.DATABASE_URL },
+                  level: "info",
+                },
+              ]
+            : []),
         ],
       },
     });
   }
 
-  info(...obj: unknown[]) {
-    this._logger.info(obj);
+  info(obj: Record<string, unknown>, msg: string): void {
+    this._logger.info(obj, msg);
   }
 
-  error(...obj: unknown[]) {
-    this._logger.error(obj);
+  error(obj: Record<string, unknown>, msg: string): void {
+    this._logger.error(obj, msg);
   }
 
-  warn(...obj: unknown[]) {
-    this._logger.warn(obj);
+  warn(obj: Record<string, unknown>, msg: string): void {
+    this._logger.warn(obj, msg);
   }
 
-  debug(...obj: unknown[]) {
-    this._logger.debug(obj);
+  debug(obj: Record<string, unknown>, msg: string): void {
+    this._logger.debug(obj, msg);
   }
 }
 

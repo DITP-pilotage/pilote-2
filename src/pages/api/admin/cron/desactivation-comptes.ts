@@ -20,23 +20,53 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     const container = getContainer("gestionUtilisateur");
 
-    logger.info("Phase 1 : Création des actions pour les comptes inactifs");
+    logger.info(
+      { categorie: "utilisateur", source: "cron/desactivation-comptes" },
+      "Phase 1 : Création des actions pour les comptes inactifs",
+    );
     const resultatCreation = await container
       .resolve("creerLesActionsComptesInactifsUseCase")
       .run();
-    logger.info("Phase 1 terminée", resultatCreation);
+    logger.info(
+      {
+        categorie: "utilisateur",
+        source: "cron/desactivation-comptes",
+        ...resultatCreation,
+      },
+      "Phase 1 terminée",
+    );
 
-    logger.info("Phase 2 : Envoi des relances");
+    logger.info(
+      { categorie: "utilisateur", source: "cron/desactivation-comptes" },
+      "Phase 2 : Envoi des relances",
+    );
     const resultatRelances = await container
       .resolve("envoyerLesRelancesUseCase")
       .run();
-    logger.info("Phase 2 terminée", resultatRelances);
+    logger.info(
+      {
+        categorie: "utilisateur",
+        source: "cron/desactivation-comptes",
+        ...resultatRelances,
+      },
+      "Phase 2 terminée",
+    );
 
-    logger.info("Phase 3 : Désactivation des comptes");
+    logger.info(
+      { categorie: "utilisateur", source: "cron/desactivation-comptes" },
+      "Phase 3 : Désactivation des comptes",
+    );
     const resultatDesactivation = await container
       .resolve("desactiverLesComptesInactifsUseCase")
       .run();
-    logger.info("Phase 3 terminée", resultatDesactivation);
+    logger.info(
+      {
+        categorie: "utilisateur",
+        source: "cron/desactivation-comptes",
+        ...resultatDesactivation,
+      },
+      "Phase 3 terminée",
+    );
 
     const totalErreurs =
       resultatRelances.erreurs + resultatDesactivation.erreurs;
@@ -71,15 +101,19 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       resultatDesactivation,
     };
     logger.info(
+      {
+        categorie: "utilisateur",
+        source: "cron/desactivation-comptes",
+        ...result,
+      },
       "Script de désactivation des comptes inactifs terminé avec succès",
-      result,
     );
 
     return res.status(200).json(result);
   } catch (error) {
     logger.error(
-      "Erreur lors de l'exécution du cron de désactivation des comptes inactifs",
-      error,
+      { categorie: "utilisateur", source: "cron/desactivation-comptes" },
+      `Erreur lors de l'exécution du cron de désactivation des comptes inactifs : ${(error as Error).message}`,
     );
 
     const messageErreur = [

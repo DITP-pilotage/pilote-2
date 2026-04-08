@@ -50,7 +50,7 @@ async function main() {
     filename,
   ).parseComptesADesactiver();
   for (const email of emailsADesactiver) {
-    logger.info(`Désactivation du compte: ${email}`);
+    logger.info({ categorie: "utilisateur", source: "desactivationUtilisateursCSV", email }, "Désactivation du compte");
     await utilisateurRepository.desactiver(email, auteurGenerique.id);
 
     if (process.env.NEXT_PUBLIC_FF_LIEN_CONTACT_BREVO === "true") {
@@ -71,10 +71,10 @@ const isMain = eval("require.main === module");
 if (isMain) {
   main()
     .then(() => {
-      logger.info("Désactivation OK.");
+      logger.info({ categorie: "utilisateur", source: "desactivationUtilisateursCSV" }, "Désactivation OK.");
     })
     .catch((error) => {
-      logger.error(error);
+      logger.error({ categorie: "utilisateur", source: "desactivationUtilisateursCSV" }, (error as Error).message);
       throw new Error("Désactivation échouée.", { cause: error });
     });
 }

@@ -11,7 +11,10 @@ beforeEach(async () => {
       "INSERT INTO scope VALUES ('responsabilite', 'Responsabilité') ON CONFLICT DO NOTHING;",
     );
   } catch {
-    logger.info("Le scope responsabilité existe déjà");
+    logger.info(
+      { categorie: "systeme", source: "integrationTestSetup" },
+      "Le scope responsabilité existe déjà",
+    );
   }
 
   const tablenames = await prisma.$queryRaw<

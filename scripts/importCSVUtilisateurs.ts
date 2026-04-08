@@ -68,10 +68,10 @@ const isMain = eval("require.main === module");
 if (isMain) {
   main()
     .then(() => {
-      logger.info("Import OK.");
+      logger.info({ categorie: "utilisateur", source: "importCSVUtilisateurs" }, "Import OK.");
     })
     .catch((error) => {
-      logger.error(error);
+      logger.error({ categorie: "utilisateur", source: "importCSVUtilisateurs" }, (error as Error).message);
       throw new Error("Import échoué.", { cause: error });
     });
 }

@@ -36,9 +36,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const { date: maintenant } = querySchema.parse(req.query);
 
-  logger.info("Génération des rapports hebdomadaires", {
-    dateExecution: maintenant.toISOString(),
-  });
+  logger.info(
+    {
+      categorie: "rapport",
+      source: "cron/rapports-coordinateurs",
+      dateExecution: maintenant.toISOString(),
+    },
+    "Génération des rapports hebdomadaires",
+  );
 
   const container = getContainer("rapportsHebdomadaires");
 
@@ -89,7 +94,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   );
 
   const result = { production: resultProduction, envoi: resultEnvoi };
-  logger.info("Exécution terminée", result);
+  logger.info(
+    {
+      categorie: "rapport",
+      source: "cron/rapports-coordinateurs",
+      rapportsCrees: result.production.rapportsCrees,
+      emailsEnvoyes: result.envoi.emailsEnvoyes,
+    },
+    "Exécution terminée",
+  );
 
   return res.status(200).json(result);
 }

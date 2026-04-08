@@ -13,23 +13,23 @@ const accessToken = process.env.TCHAP_ACCESS_TOKEN ?? "";
 async function main() {
   const container = getContainer("gestionUtilisateur");
 
-  logger.info("Phase 1 : Création des actions pour les comptes inactifs");
+  logger.info({ categorie: "utilisateur", source: "desactivationComptesInactifs" }, "Phase 1 : Création des actions pour les comptes inactifs");
   const resultatCreation = await container
     .resolve("creerLesActionsComptesInactifsUseCase")
     .run();
-  logger.info("Phase 1 terminée", resultatCreation);
+  logger.info({ categorie: "utilisateur", source: "desactivationComptesInactifs", ...resultatCreation }, "Phase 1 terminée");
 
-  logger.info("Phase 2 : Envoi des relances");
+  logger.info({ categorie: "utilisateur", source: "desactivationComptesInactifs" }, "Phase 2 : Envoi des relances");
   const resultatRelances = await container
     .resolve("envoyerLesRelancesUseCase")
     .run();
-  logger.info("Phase 2 terminée", resultatRelances);
+  logger.info({ categorie: "utilisateur", source: "desactivationComptesInactifs", ...resultatRelances }, "Phase 2 terminée");
 
-  logger.info("Phase 3 : Désactivation des comptes");
+  logger.info({ categorie: "utilisateur", source: "desactivationComptesInactifs" }, "Phase 3 : Désactivation des comptes");
   const resultatDesactivation = await container
     .resolve("desactiverLesComptesInactifsUseCase")
     .run();
-  logger.info("Phase 3 terminée", resultatDesactivation);
+  logger.info({ categorie: "utilisateur", source: "desactivationComptesInactifs", ...resultatDesactivation }, "Phase 3 terminée");
 
   return { resultatCreation, resultatRelances, resultatDesactivation };
 }
@@ -39,6 +39,7 @@ if (isMain) {
   main()
     .then(({ resultatCreation, resultatRelances, resultatDesactivation }) => {
       logger.info(
+        { categorie: "utilisateur", source: "desactivationComptesInactifs" },
         "Script de désactivation des comptes inactifs terminé avec succès",
       );
 
@@ -71,8 +72,8 @@ if (isMain) {
     })
     .catch((error) => {
       logger.error(
-        "Erreur lors de l'exécution du script de désactivation des comptes inactifs",
-        error,
+        { categorie: "utilisateur", source: "desactivationComptesInactifs" },
+        `Erreur lors de l'exécution du script de désactivation des comptes inactifs : ${(error as Error).message}`,
       );
 
       const messageErreur = [
