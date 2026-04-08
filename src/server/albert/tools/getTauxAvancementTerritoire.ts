@@ -8,7 +8,7 @@ import { Maille } from "@/server/domain/maille/Maille.interface";
 import { getContainer } from "@/server/dependances";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 
-const getTauxAvancementTerritoireInputSchema = z.object({
+export const getTauxAvancementTerritoireInputSchema = z.object({
   territoire_code: z
     .string()
     .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)"),

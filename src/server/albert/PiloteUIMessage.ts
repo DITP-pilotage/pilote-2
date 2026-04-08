@@ -1,52 +1,51 @@
 import type { UIDataTypes, UIMessage } from "ai";
+import type { z } from "zod";
+import { displayChoicesInputSchema } from "@/server/albert/Albert";
 import type { DisplayChoice } from "@/server/albert/Albert";
-import type { ExportRapportOutput } from "@/server/albert/exportRapportSchema";
-import type { GetTauxAvancementTerritoireOutput } from "@/server/albert/tools/getTauxAvancementTerritoire";
-import type { GetChantiersEnRetardOutput } from "@/server/albert/tools/getChantiersEnRetard";
-import type { GetChantiersEnDifficulteOutput } from "@/server/albert/tools/getChantiersEnDifficulte";
-import type { GetChantierIndicateursOutput } from "@/server/albert/tools/getChantierIndicateurs";
+import {
+  exportRapportInputSchema,
+  type ExportRapportOutput,
+} from "@/server/albert/exportRapportSchema";
+import {
+  getTauxAvancementTerritoireInputSchema,
+  type GetTauxAvancementTerritoireOutput,
+} from "@/server/albert/tools/getTauxAvancementTerritoire";
+import {
+  getChantiersEnRetardInputSchema,
+  type GetChantiersEnRetardOutput,
+} from "@/server/albert/tools/getChantiersEnRetard";
+import {
+  getChantiersEnDifficulteInputSchema,
+  type GetChantiersEnDifficulteOutput,
+} from "@/server/albert/tools/getChantiersEnDifficulte";
+import {
+  getChantierIndicateursInputSchema,
+  type GetChantierIndicateursOutput,
+} from "@/server/albert/tools/getChantierIndicateurs";
 
 export type PiloteUITools = {
   display_choices: {
-    input: { question: string; choices: DisplayChoice[] };
+    input: z.input<typeof displayChoicesInputSchema>;
     output: { question: string; choices: DisplayChoice[] };
   };
   get_taux_avancement_territoire: {
-    input: { territoire_code: string; jalon: number };
+    input: z.input<typeof getTauxAvancementTerritoireInputSchema>;
     output: GetTauxAvancementTerritoireOutput;
   };
   get_chantiers_en_retard: {
-    input: { territoire_code: string; jalon: number };
+    input: z.input<typeof getChantiersEnRetardInputSchema>;
     output: GetChantiersEnRetardOutput;
   };
   get_chantiers_en_difficulte: {
-    input: { territoire_code: string; jalon: number };
+    input: z.input<typeof getChantiersEnDifficulteInputSchema>;
     output: GetChantiersEnDifficulteOutput;
   };
   get_chantier_indicateurs: {
-    input: {
-      chantier_id: string;
-      territoire_code: string;
-      jalon: number;
-      afficher?: boolean;
-    };
+    input: z.input<typeof getChantierIndicateursInputSchema>;
     output: GetChantierIndicateursOutput;
   };
   export_rapport: {
-    input: {
-      nom_fichier: string;
-      titre: string;
-      date: string;
-      resume: string;
-      format?: "markdown" | "pdf";
-      sections: Array<{
-        titre: string;
-        parties: Array<
-          | { type: "paragraphe"; contenu: string }
-          | { type: "tableau"; en_tetes: string[]; lignes: string[][] }
-        >;
-      }>;
-    };
+    input: z.input<typeof exportRapportInputSchema>;
     output: ExportRapportOutput;
   };
 };

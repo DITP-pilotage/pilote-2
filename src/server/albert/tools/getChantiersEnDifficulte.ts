@@ -4,7 +4,7 @@ import { GetChantiersEnDifficulteQuery } from "@/server/chantiers/query/GetChant
 import type { GetChantiersEnDifficulteResult } from "@/server/chantiers/query/GetChantiersEnDifficulteQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 
-const getChantiersEnDifficulteInputSchema = z.object({
+export const getChantiersEnDifficulteInputSchema = z.object({
   territoire_code: z
     .string()
     .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)"),

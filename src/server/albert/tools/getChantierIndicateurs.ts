@@ -3,7 +3,7 @@ import { z } from "zod";
 import { GetChantierIndicateursQuery } from "@/server/chantiers/query/GetChantierIndicateursQuery";
 import type { GetChantierIndicateursResult } from "@/server/chantiers/query/GetChantierIndicateursQuery";
 
-const getChantierIndicateursInputSchema = z.object({
+export const getChantierIndicateursInputSchema = z.object({
   chantier_id: z.string().describe("Identifiant du chantier (ex: CH-001)"),
   territoire_code: z
     .string()

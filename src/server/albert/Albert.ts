@@ -50,7 +50,7 @@ export function createExportRapportTool({
   };
 }
 
-const displayChoicesInputSchema = z.object({
+export const displayChoicesInputSchema = z.object({
   question: z
     .string()
     .describe("Question affichée en haut du panneau de choix"),
