@@ -79,7 +79,10 @@ const LineChartLegende: FunctionComponent<LineChartLegendeProps> = ({
               onChange={() => setAfficherLesCibles(!afficherLesCibles)}
             />
           ) : null}
-          <div className="flex items-center flex-wrap gap-2">
+          <div
+            className="flex items-center flex-wrap gap-2"
+            data-html-to-image-ignore="true"
+          >
             <span className="text-sm">zoomer sur : </span>
             {periodesSelectionnablesZoom.map((periode) => (
               <button

@@ -28,7 +28,7 @@ export const AjouterTerritoirePicker = ({
   }
 
   return (
-    <div className="mt-auto">
+    <div className="mt-auto" data-html-to-image-ignore="true">
       <Picker
         key={territoiresSelectionnesCodes.length}
         onValueChange={(valeur) => onAjouterTerritoire(valeur)}

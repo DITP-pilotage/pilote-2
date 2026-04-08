@@ -1,6 +1,10 @@
-import { ReactNode } from "react";
+import { ReactNode, useRef } from "react";
+import { toBlob, toPng } from "html-to-image";
+import { toast } from "sonner";
 import { Icone } from "@/components/_commons/Icone";
 import { DeleteIcon } from "@/components/_commons/Icones/DeleteIcon";
+import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
+import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
 import { SelecteurTypeCarte } from "./SelecteurTypeCarte";
 
 type PanneauCarteProps<T extends string> = {
@@ -11,6 +15,7 @@ type PanneauCarteProps<T extends string> = {
   onComparer: () => void;
   onSupprimer: () => void;
   renderCarte: (typeCarte: T) => ReactNode;
+  nomFichier: string;
 };
 
 export const PanneauCarte = <T extends string>({
@@ -21,7 +26,53 @@ export const PanneauCarte = <T extends string>({
   onComparer,
   onSupprimer,
   renderCarte,
+  nomFichier,
 }: PanneauCarteProps<T>) => {
+  const carteRef = useRef<HTMLDivElement>(null);
+
+  const filtreExport = (node: Node) =>
+    !(node instanceof Element) ||
+    node.getAttribute("data-html-to-image-ignore") === null;
+
+  const optionsExport = {
+    pixelRatio: 2,
+    backgroundColor: "#ffffff",
+    filter: filtreExport,
+  };
+
+  const enregistrerCommeImage = async () => {
+    if (!carteRef.current) return;
+
+    try {
+      const dataUrl = await toPng(carteRef.current, optionsExport);
+
+      const lien = document.createElement("a");
+      lien.download = `${nomFichier}.png`;
+      lien.href = dataUrl;
+      lien.click();
+      lien.remove();
+    } catch {
+      toast.error("Erreur lors de l'export de l'image");
+    }
+  };
+
+  const copierDansLePressePapiers = async () => {
+    if (!carteRef.current) return;
+
+    try {
+      const blob = await toBlob(carteRef.current, optionsExport);
+      if (blob == null) return;
+
+      await navigator.clipboard.write([
+        new ClipboardItem({ "image/png": blob }),
+      ]);
+
+      toast.success("Image copiée dans le presse-papiers", { duration: 3000 });
+    } catch {
+      toast.error("Erreur lors de la copie dans le presse-papiers");
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col justify-between gap-2">
@@ -50,7 +101,25 @@ export const PanneauCarte = <T extends string>({
         )}
       </div>
 
-      {renderCarte(typeCarte)}
+      <div ref={carteRef}>{renderCarte(typeCarte)}</div>
+
+      <div className="flex items-center justify-end">
+        <span className="text-primary text-sm">exporter :</span>
+        <button
+          onClick={enregistrerCommeImage}
+          type="button"
+          aria-label="Enregistrer comme image"
+        >
+          <Icone className="w-4 h-4" icone={Download1Icon} />
+        </button>
+        <button
+          onClick={copierDansLePressePapiers}
+          type="button"
+          aria-label="Copier dans le presse-papiers"
+        >
+          <Icone className="w-4 h-4" icone={ClipboardIcon} />
+        </button>
+      </div>
     </div>
   );
 };
