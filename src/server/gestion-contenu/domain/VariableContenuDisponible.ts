@@ -39,6 +39,7 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_REPARTITION_METEOS_V2: boolean;
   NEXT_PUBLIC_FF_CHANTIERS_SIGNALES_V2: boolean;
   NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER: boolean;
+  NEXT_PUBLIC_FF_REORGANISATION_PAGE_ACCUEIL: boolean;
 }
 
 type FeatureFlipConfig = ReturnType<typeof configurationFeatureFlip>;
@@ -217,6 +218,11 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER",
     configKey: "refontePageChantier",
     label: "Refonte page chantier",
+  },
+  {
+    envKey: "NEXT_PUBLIC_FF_REORGANISATION_PAGE_ACCUEIL",
+    configKey: "reorganisationPageAccueil",
+    label: "Reorganisation page accueil en sections",
   },
 ];
 

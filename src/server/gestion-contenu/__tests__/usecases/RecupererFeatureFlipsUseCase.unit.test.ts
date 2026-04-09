@@ -58,6 +58,7 @@ describe("RecupererFeatureFlipsUseCase", () => {
       voirHistoriqueProposition: false,
       pvaValeurDifferente: false,
       lienContactBrevo: false,
+      reorganisationPageAccueil: false,
     } as ReturnType<typeof configurationFeatureFlip>);
 
     // When
@@ -110,6 +111,7 @@ describe("RecupererFeatureFlipsUseCase", () => {
       voirHistoriqueProposition: false,
       pvaValeurDifferente: false,
       lienContactBrevo: false,
+      reorganisationPageAccueil: false,
     } as ReturnType<typeof configurationFeatureFlip>);
 
     // DB override : alertes passe à false, nouvellePageAccueil passe à true
