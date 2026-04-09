@@ -1,5 +1,6 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { keepPreviousData } from "@tanstack/react-query";
+import { parseAsString, useQueryState } from "nuqs";
 import api from "@/server/infrastructure/api/trpc/api";
 import { construireArbre } from "./types";
 
@@ -12,8 +13,12 @@ export const useLectureCentreAide = () => {
     placeholderData: keepPreviousData,
   });
 
-  const [itemSelectionneId, setItemSelectionneId] = useState<string | null>(
-    null,
+  const [itemSelectionneId, setItemSelectionneId] = useQueryState(
+    "article",
+    parseAsString.withOptions({
+      history: "replace",
+      clearOnDefault: true,
+    }),
   );
 
   const articles = listeArticles ?? [];
@@ -29,7 +34,7 @@ export const useLectureCentreAide = () => {
       if (!article) return;
       setItemSelectionneId(id);
     },
-    [articles],
+    [articles, setItemSelectionneId],
   );
 
   return {

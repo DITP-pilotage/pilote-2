@@ -41,14 +41,19 @@ export const PageCentreAidePilote: FunctionComponent = () => {
   const aAutoSelectionne = useRef(false);
 
   useEffect(() => {
-    if (!estChargement && arbrePublie.length > 0 && !aAutoSelectionne.current) {
+    if (
+      !estChargement &&
+      arbrePublie.length > 0 &&
+      !aAutoSelectionne.current &&
+      !itemSelectionneId
+    ) {
       aAutoSelectionne.current = true;
       const premiere = trouverPremierePage(arbrePublie);
       if (premiere) {
         selectionnerItem(premiere.id);
       }
     }
-  }, [estChargement, arbrePublie, selectionnerItem]);
+  }, [estChargement, arbrePublie, selectionnerItem, itemSelectionneId]);
 
   if (estChargement) {
     return <p>Chargement...</p>;
