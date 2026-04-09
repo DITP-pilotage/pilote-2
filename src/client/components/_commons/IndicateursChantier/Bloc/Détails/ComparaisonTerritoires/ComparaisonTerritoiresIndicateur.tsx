@@ -7,6 +7,8 @@ import { ComparaisonTerritoires } from "@/components/_commons/ComparaisonTerrito
 import { getLabelTerritoire } from "@/client/constants/territoires";
 import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
 import {
+  ContenuCsv,
+  filtrerTerritoires,
   formaterDateCsv,
   genererCsv,
   telechargerCsv,
@@ -17,33 +19,31 @@ import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 
 type TypeCarteIndicateur = "ta" | "va" | "pva";
 
-type ContenuCsv = { colonnes: string[]; lignes: string[][] };
-
-type DonneesTauxAvancement = {
-  territoireCode: string;
-  estApplicable: boolean | null;
-  dateTauxAvancementAnnuel: string | null;
-  tauxAvancementJalon: number | null;
-};
-
-type DonneesValeurAvancement = {
-  territoireCode: string;
-  estApplicable: boolean | null;
-  dateValeurAvancement: string | null;
-  valeurAvancement: number | null;
-};
-
-type DonneesPVA = {
-  territoireCode: string;
-  estApplicable: boolean | null;
-  nombrePropositionsValeur: number;
-};
-
 export const construireContenuCsv = (
   type: TypeCarteIndicateur,
-  donneesParJalonTA: Map<number, DonneesTauxAvancement[]>,
-  donneesParJalonVA: Map<number, DonneesValeurAvancement[]>,
-  donneesPVA: DonneesPVA[],
+  donneesParJalonTA: Map<
+    number,
+    {
+      territoireCode: string;
+      estApplicable: boolean | null;
+      dateTauxAvancementAnnuel: string | null;
+      tauxAvancementJalon: number | null;
+    }[]
+  >,
+  donneesParJalonVA: Map<
+    number,
+    {
+      territoireCode: string;
+      estApplicable: boolean | null;
+      dateValeurAvancement: string | null;
+      valeurAvancement: number | null;
+    }[]
+  >,
+  donneesPVA: {
+    territoireCode: string;
+    estApplicable: boolean | null;
+    nombrePropositionsValeur: number;
+  }[],
   jalons: number[],
   codesTerritoiresSelectionnes: string[],
 ): ContenuCsv => {
@@ -123,16 +123,12 @@ export const construireContenuCsv = (
 
   return {
     colonnes: ["Territoire", "Nombre de propositions"],
-    lignes: donneesPVA
-      .filter(
-        (territoire) =>
-          territoire.estApplicable !== false &&
-          codesTerritoiresSelectionnes.includes(territoire.territoireCode),
-      )
-      .map((territoire) => [
+    lignes: filtrerTerritoires(donneesPVA, codesTerritoiresSelectionnes).map(
+      (territoire) => [
         getLabelTerritoire(territoire.territoireCode),
         String(territoire.nombrePropositionsValeur),
-      ]),
+      ],
+    ),
   };
 };
 

@@ -1,5 +1,19 @@
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 
+export type ContenuCsv = { colonnes: string[]; lignes: string[][] };
+
+export const filtrerTerritoires = <
+  T extends { territoireCode: string; estApplicable: boolean | null },
+>(
+  donnees: T[],
+  codesTerritoiresSelectionnes: string[],
+): T[] =>
+  donnees.filter(
+    (territoire) =>
+      territoire.estApplicable !== false &&
+      codesTerritoiresSelectionnes.includes(territoire.territoireCode),
+  );
+
 export const genererCsv = (colonnes: string[], lignes: string[][]): string => {
   const entete = colonnes.join(";");
   const corps = lignes.map((ligne) => ligne.join(";")).join("\n");

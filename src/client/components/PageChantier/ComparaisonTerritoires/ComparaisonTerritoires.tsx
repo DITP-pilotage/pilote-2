@@ -7,6 +7,8 @@ import { ComparaisonTerritoires as ComparaisonTerritoiresBase } from "@/componen
 import { getLabelTerritoire } from "@/client/constants/territoires";
 import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
 import {
+  ContenuCsv,
+  filtrerTerritoires,
   formaterDateCsv,
   genererCsv,
   telechargerCsv,
@@ -25,8 +27,6 @@ type ComparaisonTerritoiresProps = {
 
 type TypeCarteChantier = "ta" | "meteo" | "pva";
 
-type ContenuCsv = { colonnes: string[]; lignes: string[][] };
-
 const options: (
   jalon: number,
 ) => { value: TypeCarteChantier; label: string }[] = (jalon) => [
@@ -37,18 +37,6 @@ const options: (
     label: "Carte des propositions de valeur d'avancement",
   },
 ];
-
-const filtrerTerritoires = <
-  T extends { territoireCode: string; estApplicable: boolean | null },
->(
-  donnees: T[],
-  codesTerritoiresSelectionnes: string[],
-): T[] =>
-  donnees.filter(
-    (territoire) =>
-      territoire.estApplicable !== false &&
-      codesTerritoiresSelectionnes.includes(territoire.territoireCode),
-  );
 
 export const construireContenuCsv = (
   type: TypeCarteChantier,
