@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { keepPreviousData } from "@tanstack/react-query";
 import { parseAsString, useQueryState } from "nuqs";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -21,7 +21,7 @@ export const useLectureCentreAide = () => {
     }),
   );
 
-  const articles = listeArticles ?? [];
+  const articles = useMemo(() => listeArticles ?? [], [listeArticles]);
   const arbre = construireArbre(articles);
 
   const itemSelectionne = articles.find(
