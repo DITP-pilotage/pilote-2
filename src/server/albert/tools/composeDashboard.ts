@@ -139,7 +139,7 @@ const widgetCartographieTauxAvancement = z
     width: z
       .union([z.literal(6), z.literal(8), z.literal(12)])
       .optional()
-      .describe("default_width=12, allowed_widths=[6,8,12]"),
+      .describe("default_width=6, allowed_widths=[6,8,12]"),
   })
   .strict();
 
@@ -153,7 +153,7 @@ const widgetCartographieMeteo = z
     width: z
       .union([z.literal(6), z.literal(8), z.literal(12)])
       .optional()
-      .describe("default_width=12, allowed_widths=[6,8,12]"),
+      .describe("default_width=6, allowed_widths=[6,8,12]"),
   })
   .strict();
 
@@ -167,7 +167,7 @@ const widgetCartographiePropositionsValeurAvancement = z
     width: z
       .union([z.literal(6), z.literal(8), z.literal(12)])
       .optional()
-      .describe("default_width=12, allowed_widths=[6,8,12]"),
+      .describe("default_width=6, allowed_widths=[6,8,12]"),
   })
   .strict();
 
