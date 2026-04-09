@@ -6,6 +6,7 @@ import {
 } from "@/server/infrastructure/api/trpc/trpc";
 import { Albert, displayChoicesTool } from "@/server/albert/Albert";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
+import { detecterCapacities } from "@/server/albert/detecteurIntention";
 import { getContainer } from "@/server/dependances";
 import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
@@ -48,7 +49,12 @@ export const albertRouter = créerRouteurTRPC({
         "createExportRapportTool",
       );
 
-      const systemPrompt = buildChatSystemPrompt({ territoiresAccessibles });
+      const capacities = detecterCapacities(input.prompt);
+
+      const systemPrompt = buildChatSystemPrompt({
+        territoiresAccessibles,
+        capacities,
+      });
       const getTauxAvancementTerritoire = createGetTauxAvancementTerritoireTool(
         {
           habilitations: ctx.session.habilitations,
@@ -67,19 +73,21 @@ export const albertRouter = créerRouteurTRPC({
         userId: ctx.session.user.id,
       });
 
+      const tools = {
+        get_taux_avancement_territoire: getTauxAvancementTerritoire,
+        get_chantiers_en_retard: getChantiersEnRetard,
+        get_chantiers_en_difficulte: getChantiersEnDifficulte,
+        get_chantier_indicateurs: getChantierIndicateurs,
+        display_choices: displayChoicesTool,
+        ...(capacities.exportRapport ? { export_rapport: exportRapport } : {}),
+      };
+
       return Albert.generateText({
         chatId: input.chatId,
         prompt: input.prompt,
         systemPrompt,
         userId: ctx.session.user.id,
-        tools: {
-          get_taux_avancement_territoire: getTauxAvancementTerritoire,
-          get_chantiers_en_retard: getChantiersEnRetard,
-          get_chantiers_en_difficulte: getChantiersEnDifficulte,
-          get_chantier_indicateurs: getChantierIndicateurs,
-          display_choices: displayChoicesTool,
-          export_rapport: exportRapport,
-        },
+        tools,
       });
     }),
 

@@ -1,6 +1,6 @@
 import api from "@/server/infrastructure/api/trpc/api";
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
-import { DashboardKpiCard, formatPourcentage } from "./DashboardKpiCard";
+import { DashboardJaugeCard } from "./DashboardJaugeCard";
 
 export const DashboardWidgetMedianeAvancementTerritoire = ({
   territoireCode,
@@ -16,9 +16,10 @@ export const DashboardWidgetMedianeAvancementTerritoire = ({
     );
 
   return (
-    <DashboardKpiCard
+    <DashboardJaugeCard
       label="Médiane de répartition"
-      value={formatPourcentage(data.statistiques?.médiane)}
+      couleur="violet"
+      pourcentage={data.statistiques?.médiane ?? null}
       footer={`${territoireCode} · jalon ${jalon}`}
     />
   );

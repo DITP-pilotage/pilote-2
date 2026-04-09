@@ -5,6 +5,7 @@ import type {
 } from "@/server/albert/tools/composeDashboard";
 import { DEFAULT_WIDTHS } from "@/server/albert/tools/composeDashboardLayout";
 import { ColonneMesuree } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
+import { clsxm } from "@/utils/clsxm";
 import { DashboardWidgetRegistry } from "./DashboardWidgets/DashboardWidgetRegistry";
 import { DashboardWidgetErrorBoundary } from "./DashboardWidgets/DashboardWidgetErrorBoundary";
 import { DashboardLoader } from "./DashboardWidgets/DashboardLoader";
@@ -41,9 +42,12 @@ export const DashboardRender = ({
               const width = resolveWidgetWidth(widget);
               const innerClassName = WIDTH_TO_CLASS[width] ?? "col-span-12";
               return (
-                <div key={widgetIndex} className={innerClassName}>
+                <div
+                  key={widgetIndex}
+                  className={clsxm("h-full", innerClassName)}
+                >
                   <DashboardWidgetErrorBoundary>
-                    <ColonneMesuree>
+                    <ColonneMesuree className="h-full">
                       <DashboardWidgetRegistry widget={widget} />
                     </ColonneMesuree>
                   </DashboardWidgetErrorBoundary>

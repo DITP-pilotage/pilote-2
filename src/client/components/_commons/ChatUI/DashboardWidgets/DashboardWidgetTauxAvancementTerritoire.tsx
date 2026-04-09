@@ -1,6 +1,6 @@
 import api from "@/server/infrastructure/api/trpc/api";
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
-import { DashboardKpiCard, formatPourcentage } from "./DashboardKpiCard";
+import { DashboardJaugeCard } from "./DashboardJaugeCard";
 
 export const DashboardWidgetTauxAvancementTerritoire = ({
   territoireCode,
@@ -16,9 +16,10 @@ export const DashboardWidgetTauxAvancementTerritoire = ({
     );
 
   return (
-    <DashboardKpiCard
+    <DashboardJaugeCard
       label="Taux d'avancement"
-      value={formatPourcentage(data.taux_avancement)}
+      couleur="bleu"
+      pourcentage={data.taux_avancement}
       footer={`${territoireCode} · jalon ${jalon}`}
     />
   );

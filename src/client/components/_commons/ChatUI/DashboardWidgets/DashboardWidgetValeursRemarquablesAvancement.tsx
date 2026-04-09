@@ -1,11 +1,7 @@
+import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
 import api from "@/server/infrastructure/api/trpc/api";
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
-import { ValeursRemarquables } from "@/components/_commons/Widget/ValeursRemarquables";
-
-const formatValeurTA = (valeur: number | null | undefined): string | null => {
-  if (valeur === null || valeur === undefined) return null;
-  return `${Math.round(valeur)}%`;
-};
+import { DashboardCardShell } from "./DashboardCardShell";
 
 export const DashboardWidgetValeursRemarquablesAvancement = ({
   territoireCode,
@@ -20,26 +16,33 @@ export const DashboardWidgetValeursRemarquablesAvancement = ({
       { staleTime: WIDGET_STALE_TIME },
     );
 
-  const valeurs = {
-    minimum: formatValeurTA(data.statistiques?.minimum),
-    mediane: formatValeurTA(data.statistiques?.médiane),
-    maximum: formatValeurTA(data.statistiques?.maximum),
-  };
+  const statistiques = data.statistiques;
 
   return (
-    <div className="h-full rounded-lg border border-gray-200 bg-white p-4">
-      <div className="text-xs uppercase tracking-wide text-gray-500 mb-3">
-        Valeurs remarquables · {territoireCode} · jalon {jalon}
+    <DashboardCardShell
+      label="Répartition territoriale"
+      footer={`${territoireCode} · jalon ${jalon}`}
+    >
+      <div className="flex w-full items-center justify-around gap-4 flex-wrap">
+        <JaugeDeProgression
+          couleur="orange"
+          libellé="Minimum"
+          pourcentage={statistiques?.minimum ?? null}
+          taille="md"
+        />
+        <JaugeDeProgression
+          couleur="violet"
+          libellé="Médiane"
+          pourcentage={statistiques?.médiane ?? null}
+          taille="md"
+        />
+        <JaugeDeProgression
+          couleur="vert"
+          libellé="Maximum"
+          pourcentage={statistiques?.maximum ?? null}
+          taille="md"
+        />
       </div>
-      <ValeursRemarquables
-        valeurs={valeurs}
-        palette={{
-          minimum: "#cbcbe8",
-          mediane: "#6666bd",
-          maximum: "#000091",
-        }}
-        maille="departementale"
-      />
-    </div>
+    </DashboardCardShell>
   );
 };

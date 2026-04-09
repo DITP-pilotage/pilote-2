@@ -1,8 +1,15 @@
 import { Children, ReactNode, useMemo, useRef } from "react";
 import { useContainerWidth } from "@/client/hooks/useContainerWidth";
+import { clsxm } from "@/utils/clsxm";
 import { calculerModeDisposition, MesureWidgetCtx } from "./useMesureWidget";
 
-export const ColonneMesuree = ({ children }: { children: ReactNode }) => {
+export const ColonneMesuree = ({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) => {
   const ref = useRef<HTMLDivElement>(null);
   const largeur = useContainerWidth(ref);
 
@@ -16,7 +23,7 @@ export const ColonneMesuree = ({ children }: { children: ReactNode }) => {
 
   return (
     <MesureWidgetCtx.Provider value={contextValue}>
-      <div ref={ref} className="flex flex-col gap-4">
+      <div ref={ref} className={clsxm("flex flex-col gap-4", className)}>
         {children}
       </div>
     </MesureWidgetCtx.Provider>
