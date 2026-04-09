@@ -141,12 +141,12 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
   {
     envKey: "NEXT_PUBLIC_FF_CENTRE_AIDE_ADMIN",
     configKey: "centreAideAdmin",
-    label: "Centre d'aide Admin",
+    label: "Centre d'aide — onglet dans le panel admin",
   },
   {
     envKey: "NEXT_PUBLIC_FF_CENTRE_AIDE_PILOTE",
     configKey: "centreAidePilote",
-    label: "Centre d'aide Pilote",
+    label: "Centre d'aide — onglet dans la navigation utilisateur",
   },
   {
     envKey: "NEXT_PUBLIC_FF_PILOTE_EVAL",
