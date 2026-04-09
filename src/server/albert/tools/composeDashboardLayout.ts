@@ -21,8 +21,8 @@ export const DEFAULT_WIDTHS: Record<WidgetType, number> = {
   widget_tableau_indicateurs_chantier: 12,
   widget_liste_chantiers_en_retard: 6,
   widget_liste_chantiers_en_difficulte: 6,
-  widget_cartographie_taux_avancement: 12,
-  widget_cartographie_meteo: 12,
-  widget_cartographie_propositions_valeur_avancement: 12,
+  widget_cartographie_taux_avancement: 6,
+  widget_cartographie_meteo: 6,
+  widget_cartographie_propositions_valeur_avancement: 6,
   widget_titre_section: 12,
 };

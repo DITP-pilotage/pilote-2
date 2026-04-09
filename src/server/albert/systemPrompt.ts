@@ -237,9 +237,9 @@ Un dashboard est une **liste ordonnée de containers empilés verticalement**. C
 | \`widget_tableau_indicateurs_chantier\` | VI/VA/VC/TA d'un chantier | chantier_id, territoire_code, jalon | 12 | [12] |
 | \`widget_liste_chantiers_en_retard\` | Liste compacte des chantiers en retard (écart ≤ -10 pts) | territoire_code, jalon | 6 | [6,12] |
 | \`widget_liste_chantiers_en_difficulte\` | Liste compacte des chantiers en difficulté (météo ORAGE/NUAGE) | territoire_code, jalon | 6 | [6,12] |
-| \`widget_cartographie_taux_avancement\` | Carte de France du TA par territoire | maille, territoire_code, jalon, chantier_ids | 12 | [6,8,12] |
-| \`widget_cartographie_meteo\` | Carte de France des météos par territoire | maille, territoire_code, chantier_id, jalon | 12 | [6,8,12] |
-| \`widget_cartographie_propositions_valeur_avancement\` | Carte de France des propositions de valeurs d'avancement (PVA) d'un chantier | maille, territoire_code, chantier_id, jalon | 12 | [6,8,12] |
+| \`widget_cartographie_taux_avancement\` | Carte de France du TA par territoire | maille, territoire_code, jalon, chantier_ids | 6 | [6,8,12] |
+| \`widget_cartographie_meteo\` | Carte de France des météos par territoire | maille, territoire_code, chantier_id, jalon | 6 | [6,8,12] |
+| \`widget_cartographie_propositions_valeur_avancement\` | Carte de France des propositions de valeurs d'avancement (PVA) d'un chantier | maille, territoire_code, chantier_id, jalon | 6 | [6,8,12] |
 | \`widget_titre_section\` | Titre de section (AUCUN chiffre) | titre, description? | 12 | [6,12] |
 
 Le **nom** du widget est l'intention. Aucun enum de métrique, aucun row_group, aucun filler. La seule enum de périmètre est \`maille ∈ {regionale, departementale}\` pour les cartographies.
