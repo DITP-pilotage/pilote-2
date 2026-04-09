@@ -38,6 +38,10 @@ interface NoeudArbreProps {
   afficherStatut?: boolean;
   groupesOuverts: Set<string>;
   onToggleGroupe: (id: string) => void;
+  onDeplacer?: (
+    id: string,
+    action: "monter" | "descendre" | "sortir" | "entrer",
+  ) => void;
 }
 
 const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
@@ -49,6 +53,7 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
   afficherStatut,
   groupesOuverts,
   onToggleGroupe,
+  onDeplacer,
 }) => {
   const estGroupe = noeud.type === "GROUPE";
   const estSelectionne = noeud.id === itemSelectionneId;
@@ -61,7 +66,7 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
   return (
     <div>
       <div
-        className={`flex items-stretch transition-colors border-l-3 ${
+        className={`group/noeud flex items-stretch transition-colors border-l-3 ${
           estDesactive
             ? "border-l-transparent"
             : estSelectionne
@@ -92,6 +97,56 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
           </span>
           {afficherStatut && <BadgesStatut noeud={noeud} />}
         </button>
+        {onDeplacer && (
+          <div className="shrink-0 flex gap-0.5 opacity-0 group-hover/noeud:opacity-100 transition-opacity">
+            <button
+              className="p-0.5 text-gray-400 hover:text-gray-600"
+              onClick={(event) => {
+                event.stopPropagation();
+                onDeplacer(noeud.id, "monter");
+              }}
+              title="Monter"
+              type="button"
+            >
+              <span className="text-xs">&#x25B2;</span>
+            </button>
+            <button
+              className="p-0.5 text-gray-400 hover:text-gray-600"
+              onClick={(event) => {
+                event.stopPropagation();
+                onDeplacer(noeud.id, "descendre");
+              }}
+              title="Descendre"
+              type="button"
+            >
+              <span className="text-xs">&#x25BC;</span>
+            </button>
+            {noeud.parentId && (
+              <button
+                className="p-0.5 text-gray-400 hover:text-gray-600"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onDeplacer(noeud.id, "sortir");
+                }}
+                title="Sortir du groupe"
+                type="button"
+              >
+                <span className="text-xs">&#x25C0;</span>
+              </button>
+            )}
+            <button
+              className="p-0.5 text-gray-400 hover:text-gray-600"
+              onClick={(event) => {
+                event.stopPropagation();
+                onDeplacer(noeud.id, "entrer");
+              }}
+              title="Entrer dans le groupe voisin"
+              type="button"
+            >
+              <span className="text-xs">&#x25B6;</span>
+            </button>
+          </div>
+        )}
         {estGroupe && noeud.enfants.length > 0 && (
           <button
             className="shrink-0 px-3 text-gray-400 hover:text-gray-600"
@@ -121,6 +176,7 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
                 key={enfant.id}
                 niveau={niveau + 1}
                 noeud={enfant}
+                onDeplacer={onDeplacer}
                 onSelectionItem={onSelectionItem}
                 onToggleGroupe={onToggleGroupe}
               />
@@ -137,6 +193,10 @@ interface ArborescenceCentreAideProps {
   onSelectionItem: (id: string) => void;
   estItemDesactive?: (noeud: NoeudArbre) => boolean;
   afficherStatut?: boolean;
+  onDeplacer?: (
+    id: string,
+    action: "monter" | "descendre" | "sortir" | "entrer",
+  ) => void;
 }
 
 export const ArborescenceCentreAide: FunctionComponent<
@@ -147,6 +207,7 @@ export const ArborescenceCentreAide: FunctionComponent<
   onSelectionItem,
   estItemDesactive,
   afficherStatut,
+  onDeplacer,
 }) => {
   const [groupesOuverts, setGroupesOuverts] = useState<Set<string>>(() => {
     const tousLesGroupes = new Set<string>();
@@ -185,6 +246,7 @@ export const ArborescenceCentreAide: FunctionComponent<
           key={noeud.id}
           niveau={0}
           noeud={noeud}
+          onDeplacer={onDeplacer}
           onSelectionItem={onSelectionItem}
           onToggleGroupe={toggleGroupe}
         />

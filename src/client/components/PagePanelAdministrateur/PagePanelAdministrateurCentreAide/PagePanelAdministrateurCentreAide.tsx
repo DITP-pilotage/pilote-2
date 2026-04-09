@@ -32,6 +32,7 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
     supprimer,
     publier,
     basculerVisibilite,
+    deplacerArticle,
     aDesModificationsNonPubliees,
   } = useEditionCentreAide();
 
@@ -87,6 +88,7 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
               itemSelectionneId={itemSelectionneId}
               onCreerGroupe={creerGroupe}
               onCreerPage={creerPage}
+              onDeplacer={deplacerArticle}
               onSelectionItem={selectionnerItem}
             />
           </div>

@@ -159,6 +159,17 @@ export const useEditionCentreAide = () => {
       },
     });
 
+  const mutationDeplacer = api.parametrageCentreAide.deplacer.useMutation({
+    onSuccess: () => {
+      refetchListe();
+      toast.success("Article déplacé", {
+        duration: 3000,
+        position: "top-right",
+        richColors: true,
+      });
+    },
+  });
+
   const creerGroupe = useCallback(
     (avecContenu: boolean) => {
       const parentId =
@@ -242,6 +253,13 @@ export const useEditionCentreAide = () => {
     }
   }, [itemSelectionneId, mutationBasculerVisibilite]);
 
+  const deplacerArticle = useCallback(
+    (id: string, action: "monter" | "descendre" | "sortir" | "entrer") => {
+      mutationDeplacer.mutate({ id, action });
+    },
+    [mutationDeplacer],
+  );
+
   const supprimer = useCallback(() => {
     if (itemSelectionneId) {
       mutationSupprimer.mutate({ id: itemSelectionneId });
@@ -273,6 +291,7 @@ export const useEditionCentreAide = () => {
     publier,
     depublier,
     basculerVisibilite,
+    deplacerArticle,
     aDesModificationsNonPubliees,
   };
 };

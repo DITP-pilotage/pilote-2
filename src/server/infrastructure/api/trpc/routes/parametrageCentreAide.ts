@@ -134,4 +134,19 @@ export const parametrageCentreAideRouter = créerRouteurTRPC({
         .resolve("basculerVisibiliteArticleCentreAideUseCase")
         .execute({ id: input.id });
     }),
+
+  deplacer: procédureProtégée
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        action: z.enum(["monter", "descendre", "sortir", "entrer"]),
+      }),
+    )
+    .mutation(async ({ input, ctx }) => {
+      vérifierAdmin(ctx.session.profil);
+
+      return getContainer("parametrageCentreAide")
+        .resolve("deplacerArticleCentreAideUseCase")
+        .execute({ id: input.id, action: input.action });
+    }),
 });

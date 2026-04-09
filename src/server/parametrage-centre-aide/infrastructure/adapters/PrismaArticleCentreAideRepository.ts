@@ -85,4 +85,23 @@ export class PrismaArticleCentreAideRepository implements ArticleCentreAideRepos
       where: { id },
     });
   }
+
+  async listerParParent(parentId: string | null): Promise<ArticleCentreAide[]> {
+    const articles = await this.prisma.article_centre_aide.findMany({
+      where: { parent_id: parentId },
+      orderBy: { ordre: "asc" },
+    });
+    return articles.map(convertirEnDomaine);
+  }
+
+  async modifierOrdreEtParent(
+    id: string,
+    ordre: number,
+    parentId: string | null,
+  ): Promise<void> {
+    await this.prisma.article_centre_aide.update({
+      where: { id },
+      data: { ordre, parent_id: parentId },
+    });
+  }
 }

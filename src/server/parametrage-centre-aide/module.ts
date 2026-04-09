@@ -13,6 +13,7 @@ import { SupprimerArticleCentreAideUseCase } from "./usecases/SupprimerArticleCe
 import { PublierArticleCentreAideUseCase } from "./usecases/PublierArticleCentreAideUseCase";
 import { DepublierArticleCentreAideUseCase } from "./usecases/DepublierArticleCentreAideUseCase";
 import { BasculerVisibiliteArticleCentreAideUseCase } from "./usecases/BasculerVisibiliteArticleCentreAideUseCase";
+import { DeplacerArticleCentreAideUseCase } from "./usecases/DeplacerArticleCentreAideUseCase";
 
 type ParametrageCentreAideCradle = {
   creerArticleCentreAideUseCase: CreerArticleCentreAideUseCase;
@@ -23,6 +24,7 @@ type ParametrageCentreAideCradle = {
   publierArticleCentreAideUseCase: PublierArticleCentreAideUseCase;
   depublierArticleCentreAideUseCase: DepublierArticleCentreAideUseCase;
   basculerVisibiliteArticleCentreAideUseCase: BasculerVisibiliteArticleCentreAideUseCase;
+  deplacerArticleCentreAideUseCase: DeplacerArticleCentreAideUseCase;
 };
 
 export const parametrageCentreAideModule = defineModule<
@@ -57,6 +59,9 @@ export const parametrageCentreAideModule = defineModule<
       ),
       basculerVisibiliteArticleCentreAideUseCase: asModuleClass(
         BasculerVisibiliteArticleCentreAideUseCase,
+      ),
+      deplacerArticleCentreAideUseCase: asModuleClass(
+        DeplacerArticleCentreAideUseCase,
       ),
     } satisfies VerifyCradle<ParametrageCentreAideCradle>);
   },
