@@ -109,11 +109,11 @@ export class Albert {
       create: {
         id: chatId,
         model,
-        transcript: event as unknown as Prisma.InputJsonValue,
+        transcript: JSON.stringify(event),
         utilisateur_id: userId,
       },
       update: {
-        transcript: event as unknown as Prisma.InputJsonValue,
+        transcript: JSON.stringify(event),
       },
     });
   }

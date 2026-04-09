@@ -50,10 +50,18 @@ import { RecupererEvolutionValeursAvancementTerritoiresQuery } from "./infrastru
 import { RecupererEvolutionTauxAvancementTerritoiresQuery } from "./infrastructure/queries/RecupererEvolutionTauxAvancementTerritoiresQuery";
 import { GetAvancementChantierQuery } from "./infrastructure/queries/GetAvancementChantierQuery";
 import { GetSituationChantierQuery } from "./infrastructure/queries/GetSituationChantierQuery";
+import { GetChantiersEnRetardQuery } from "./query/GetChantiersEnRetardQuery";
+import { GetChantiersEnDifficulteQuery } from "./query/GetChantiersEnDifficulteQuery";
+import { GetChantierIndicateursQuery } from "./query/GetChantierIndicateursQuery";
+import { RecupererTauxAvancementTerritoireQuery } from "./query/RecupererTauxAvancementTerritoireQuery";
+import { RecupererStatistiquesAvancementTousChantiersPubliesQuery } from "./query/RecupererStatistiquesAvancementTousChantiersPubliesQuery";
 
 type ChantierExports = {
   recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
   mesuresIndicateurQuery: RecupererMesuresIndicateurParPeriodeQuery;
+  getChantiersEnRetardQuery: GetChantiersEnRetardQuery;
+  getChantiersEnDifficulteQuery: GetChantiersEnDifficulteQuery;
+  getChantierIndicateursQuery: GetChantierIndicateursQuery;
 };
 
 type ChantierImports = IndicateurTerritoireValeurEvenementExports &
@@ -96,6 +104,8 @@ type ChantierOwnCradle = ChantierExports & {
   recupererEvolutionTauxAvancementTerritoiresQuery: RecupererEvolutionTauxAvancementTerritoiresQuery;
   getAvancementChantierQuery: GetAvancementChantierQuery;
   getSituationChantierQuery: GetSituationChantierQuery;
+  recupererTauxAvancementTerritoireQuery: RecupererTauxAvancementTerritoireQuery;
+  recupererStatistiquesAvancementTousChantiersPubliesQuery: RecupererStatistiquesAvancementTousChantiersPubliesQuery;
 };
 
 type ChantierCradle = ChantierOwnCradle & ChantierImports;
@@ -108,7 +118,13 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
     "datajobsExecution",
     "legacy",
   ],
-  exports: ["recupererChantiersQuery", "mesuresIndicateurQuery"],
+  exports: [
+    "recupererChantiersQuery",
+    "mesuresIndicateurQuery",
+    "getChantiersEnRetardQuery",
+    "getChantiersEnDifficulteQuery",
+    "getChantierIndicateursQuery",
+  ],
   register: (container, { asModuleClass }) => {
     container.register({
       chantierRepository: asModuleClass(PrismaChantierRepository),
@@ -202,6 +218,17 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       ),
       getAvancementChantierQuery: asModuleClass(GetAvancementChantierQuery),
       getSituationChantierQuery: asModuleClass(GetSituationChantierQuery),
+      getChantiersEnRetardQuery: asModuleClass(GetChantiersEnRetardQuery),
+      getChantiersEnDifficulteQuery: asModuleClass(
+        GetChantiersEnDifficulteQuery,
+      ),
+      getChantierIndicateursQuery: asModuleClass(GetChantierIndicateursQuery),
+      recupererTauxAvancementTerritoireQuery: asModuleClass(
+        RecupererTauxAvancementTerritoireQuery,
+      ),
+      recupererStatistiquesAvancementTousChantiersPubliesQuery: asModuleClass(
+        RecupererStatistiquesAvancementTousChantiersPubliesQuery,
+      ),
     } satisfies VerifyCradle<ChantierOwnCradle>);
   },
 });

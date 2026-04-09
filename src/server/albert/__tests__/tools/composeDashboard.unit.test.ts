@@ -1,8 +1,37 @@
-import { composeDashboardInputSchema } from "@/server/albert/tools/composeDashboard";
+import {
+  composeDashboardInputSchema,
+  createComposeDashboardTool,
+} from "@/server/albert/tools/composeDashboard";
+import type { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
+
+const buildHabilitations = (territoires: string[]): Habilitations => ({
+  lecture: { chantiers: [], territoires, périmètres: [] },
+  saisieCommentaire: { chantiers: [], territoires: [], périmètres: [] },
+  saisieIndicateur: { chantiers: [], territoires: [], périmètres: [] },
+  responsabilite: { chantiers: [], territoires: [], périmètres: [] },
+  gestionUtilisateur: { chantiers: [], territoires: [], périmètres: [] },
+});
+
+const buildTool = (territoires: string[]) =>
+  createComposeDashboardTool()({
+    habilitations: buildHabilitations(territoires),
+  });
+
+const executeTool = async (
+  territoires: string[],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  input: any,
+) => {
+  const tool = buildTool(territoires);
+  return tool.execute!(input, {
+    toolCallId: "test",
+    messages: [],
+  });
+};
 
 describe("composeDashboardInputSchema", () => {
-  describe("dashboard valide", () => {
-    test("accepte un dashboard avec un container et un kpi_card minimal", () => {
+  describe("widgets KPI atomiques", () => {
+    test("accepte widget_taux_avancement_territoire minimal", () => {
       // Given
       const input = {
         titre: "Cockpit Bretagne",
@@ -10,8 +39,7 @@ describe("composeDashboardInputSchema", () => {
           {
             widgets: [
               {
-                type: "kpi_card",
-                metric: "ta_global",
+                type: "widget_taux_avancement_territoire",
                 territoire_code: "REG-53",
                 jalon: 2025,
               },
@@ -27,7 +55,7 @@ describe("composeDashboardInputSchema", () => {
       expect(result.success).toBe(true);
     });
 
-    test("accepte un container avec 4 kpi_card homogènes", () => {
+    test("accepte widget_mediane_avancement_territoire avec width 4", () => {
       // Given
       const input = {
         titre: "Cockpit",
@@ -35,28 +63,10 @@ describe("composeDashboardInputSchema", () => {
           {
             widgets: [
               {
-                type: "kpi_card",
-                metric: "ta_global",
-                territoire_code: "REG-53",
-                jalon: 2025,
-              },
-              {
-                type: "kpi_card",
-                metric: "mediane",
-                territoire_code: "REG-53",
-                jalon: 2025,
-              },
-              {
-                type: "kpi_card",
-                metric: "nb_chantiers_en_retard",
-                territoire_code: "REG-53",
-                jalon: 2025,
-              },
-              {
-                type: "kpi_card",
-                metric: "ta_global",
-                territoire_code: "DEPT-35",
-                jalon: 2025,
+                type: "widget_mediane_avancement_territoire",
+                territoire_code: "NAT-FR",
+                jalon: 2024,
+                width: 4,
               },
             ],
           },
@@ -70,7 +80,7 @@ describe("composeDashboardInputSchema", () => {
       expect(result.success).toBe(true);
     });
 
-    test("accepte un container avec un kpi_card et un filler (row_group compatible)", () => {
+    test("accepte widget_nombre_chantiers_en_retard", () => {
       // Given
       const input = {
         titre: "Cockpit",
@@ -78,100 +88,8 @@ describe("composeDashboardInputSchema", () => {
           {
             widgets: [
               {
-                type: "kpi_card",
-                metric: "ta_global",
-                territoire_code: "REG-53",
-                jalon: 2025,
-              },
-              {
-                type: "filler",
-                width: 9,
-              },
-            ],
-          },
-        ],
-      };
-
-      // When
-      const result = composeDashboardInputSchema.safeParse(input);
-
-      // Then
-      expect(result.success).toBe(true);
-    });
-
-    test("accepte un texte_section solo dans un container", () => {
-      // Given
-      const input = {
-        titre: "Cockpit",
-        containers: [
-          {
-            widgets: [
-              {
-                type: "texte_section",
-                titre: "Vue d'ensemble",
-              },
-            ],
-          },
-        ],
-      };
-
-      // When
-      const result = composeDashboardInputSchema.safeParse(input);
-
-      // Then
-      expect(result.success).toBe(true);
-    });
-
-    test("accepte un texte_section avec titre et description", () => {
-      // Given
-      const input = {
-        titre: "Cockpit",
-        containers: [
-          {
-            widgets: [
-              {
-                type: "texte_section",
-                titre: "Alertes",
-                description:
-                  "Chantiers nécessitant une attention particulière.",
-                width: 6,
-              },
-            ],
-          },
-        ],
-      };
-
-      // When
-      const result = composeDashboardInputSchema.safeParse(input);
-
-      // Then
-      expect(result.success).toBe(true);
-    });
-
-    test("accepte un stack de plusieurs containers", () => {
-      // Given
-      const input = {
-        titre: "Cockpit stack",
-        containers: [
-          {
-            widgets: [{ type: "texte_section", titre: "KPIs" }],
-          },
-          {
-            widgets: [
-              {
-                type: "kpi_card",
-                metric: "ta_global",
-                territoire_code: "REG-53",
-                jalon: 2025,
-              },
-            ],
-          },
-          {
-            widgets: [
-              {
-                type: "tableau_indicateurs",
-                chantier_id: "CH-001",
-                territoire_code: "REG-53",
+                type: "widget_nombre_chantiers_en_retard",
+                territoire_code: "DEPT-75",
                 jalon: 2025,
               },
             ],
@@ -187,8 +105,8 @@ describe("composeDashboardInputSchema", () => {
     });
   });
 
-  describe("dashboard invalide", () => {
-    test("rejette un container mélangeant kpi et tableau (row_group conflict)", () => {
+  describe("widget valeurs remarquables, listes et tableau", () => {
+    test("accepte widget_valeurs_remarquables_avancement avec width 8", () => {
       // Given
       const input = {
         titre: "Cockpit",
@@ -196,15 +114,34 @@ describe("composeDashboardInputSchema", () => {
           {
             widgets: [
               {
-                type: "kpi_card",
-                metric: "ta_global",
+                type: "widget_valeurs_remarquables_avancement",
                 territoire_code: "REG-53",
                 jalon: 2025,
+                width: 8,
               },
+            ],
+          },
+        ],
+      };
+
+      // When
+      const result = composeDashboardInputSchema.safeParse(input);
+
+      // Then
+      expect(result.success).toBe(true);
+    });
+
+    test("accepte widget_tableau_indicateurs_chantier", () => {
+      // Given
+      const input = {
+        titre: "Cockpit",
+        containers: [
+          {
+            widgets: [
               {
-                type: "tableau_indicateurs",
+                type: "widget_tableau_indicateurs_chantier",
                 chantier_id: "CH-001",
-                territoire_code: "REG-53",
+                territoire_code: "NAT-FR",
                 jalon: 2025,
               },
             ],
@@ -216,10 +153,10 @@ describe("composeDashboardInputSchema", () => {
       const result = composeDashboardInputSchema.safeParse(input);
 
       // Then
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
     });
 
-    test("rejette un container mélangeant kpi et liste_chantiers_alerte", () => {
+    test("accepte widget_liste_chantiers_en_retard et widget_liste_chantiers_en_difficulte cote a cote", () => {
       // Given
       const input = {
         titre: "Cockpit",
@@ -227,163 +164,13 @@ describe("composeDashboardInputSchema", () => {
           {
             widgets: [
               {
-                type: "kpi_card",
-                metric: "ta_global",
+                type: "widget_liste_chantiers_en_retard",
                 territoire_code: "REG-53",
                 jalon: 2025,
+                width: 6,
               },
               {
-                type: "liste_chantiers_alerte",
-                territoire_code: "REG-53",
-                type_alerte: "retard",
-                jalon: 2025,
-              },
-            ],
-          },
-        ],
-      };
-
-      // When
-      const result = composeDashboardInputSchema.safeParse(input);
-
-      // Then
-      expect(result.success).toBe(false);
-    });
-
-    test("rejette un container composé uniquement de fillers", () => {
-      // Given
-      const input = {
-        titre: "Cockpit",
-        containers: [
-          {
-            widgets: [
-              { type: "filler", width: 6 },
-              { type: "filler", width: 6 },
-            ],
-          },
-        ],
-      };
-
-      // When
-      const result = composeDashboardInputSchema.safeParse(input);
-
-      // Then
-      expect(result.success).toBe(false);
-    });
-
-    test("rejette un dashboard avec 0 container", () => {
-      // Given
-      const input = {
-        titre: "Cockpit vide",
-        containers: [],
-      };
-
-      // When
-      const result = composeDashboardInputSchema.safeParse(input);
-
-      // Then
-      expect(result.success).toBe(false);
-    });
-
-    test("rejette un container avec 0 widget", () => {
-      // Given
-      const input = {
-        titre: "Cockpit",
-        containers: [{ widgets: [] }],
-      };
-
-      // When
-      const result = composeDashboardInputSchema.safeParse(input);
-
-      // Then
-      expect(result.success).toBe(false);
-    });
-
-    test("rejette un kpi_card sans metric", () => {
-      // Given
-      const input = {
-        titre: "Cockpit",
-        containers: [
-          {
-            widgets: [
-              {
-                type: "kpi_card",
-                territoire_code: "REG-53",
-                jalon: 2025,
-              },
-            ],
-          },
-        ],
-      };
-
-      // When
-      const result = composeDashboardInputSchema.safeParse(input);
-
-      // Then
-      expect(result.success).toBe(false);
-    });
-
-    test("rejette un kpi_card avec une metric inconnue", () => {
-      // Given
-      const input = {
-        titre: "Cockpit",
-        containers: [
-          {
-            widgets: [
-              {
-                type: "kpi_card",
-                metric: "valeur_inconnue",
-                territoire_code: "REG-53",
-                jalon: 2025,
-              },
-            ],
-          },
-        ],
-      };
-
-      // When
-      const result = composeDashboardInputSchema.safeParse(input);
-
-      // Then
-      expect(result.success).toBe(false);
-    });
-
-    test("rejette un kpi_card avec width=12 (hors allowed_widths)", () => {
-      // Given
-      const input = {
-        titre: "Cockpit",
-        containers: [
-          {
-            widgets: [
-              {
-                type: "kpi_card",
-                metric: "ta_global",
-                territoire_code: "REG-53",
-                jalon: 2025,
-                width: 12,
-              },
-            ],
-          },
-        ],
-      };
-
-      // When
-      const result = composeDashboardInputSchema.safeParse(input);
-
-      // Then
-      expect(result.success).toBe(false);
-    });
-
-    test("rejette un tableau_indicateurs avec width=6 (seul 12 autorisé)", () => {
-      // Given
-      const input = {
-        titre: "Cockpit",
-        containers: [
-          {
-            widgets: [
-              {
-                type: "tableau_indicateurs",
-                chantier_id: "CH-001",
+                type: "widget_liste_chantiers_en_difficulte",
                 territoire_code: "REG-53",
                 jalon: 2025,
                 width: 6,
@@ -397,10 +184,12 @@ describe("composeDashboardInputSchema", () => {
       const result = composeDashboardInputSchema.safeParse(input);
 
       // Then
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
     });
+  });
 
-    test("rejette un type_alerte inconnu", () => {
+  describe("widgets cartographie", () => {
+    test("accepte widget_cartographie_taux_avancement avec chantier_ids", () => {
       // Given
       const input = {
         titre: "Cockpit",
@@ -408,14 +197,181 @@ describe("composeDashboardInputSchema", () => {
           {
             widgets: [
               {
-                type: "liste_chantiers_alerte",
-                territoire_code: "REG-53",
-                type_alerte: "compromis",
+                type: "widget_cartographie_taux_avancement",
+                maille: "regionale",
+                territoire_code: "NAT-FR",
+                jalon: 2025,
+                chantier_ids: ["CH-001", "CH-002"],
+              },
+            ],
+          },
+        ],
+      };
+
+      // When
+      const result = composeDashboardInputSchema.safeParse(input);
+
+      // Then
+      expect(result.success).toBe(true);
+    });
+
+    test("rejette widget_cartographie_taux_avancement avec chantier_ids vide", () => {
+      // Given
+      const input = {
+        titre: "Cockpit",
+        containers: [
+          {
+            widgets: [
+              {
+                type: "widget_cartographie_taux_avancement",
+                maille: "regionale",
+                territoire_code: "NAT-FR",
+                jalon: 2025,
+                chantier_ids: [],
+              },
+            ],
+          },
+        ],
+      };
+
+      // When
+      const result = composeDashboardInputSchema.safeParse(input);
+
+      // Then
+      expect(result.success).toBe(false);
+    });
+
+    test("accepte widget_cartographie_meteo", () => {
+      // Given
+      const input = {
+        titre: "Cockpit",
+        containers: [
+          {
+            widgets: [
+              {
+                type: "widget_cartographie_meteo",
+                maille: "departementale",
+                territoire_code: "NAT-FR",
+                chantier_id: "CH-001",
                 jalon: 2025,
               },
             ],
           },
         ],
+      };
+
+      // When
+      const result = composeDashboardInputSchema.safeParse(input);
+
+      // Then
+      expect(result.success).toBe(true);
+    });
+  });
+
+  describe("widget_titre_section", () => {
+    test("accepte widget_titre_section avec titre seul", () => {
+      // Given
+      const input = {
+        titre: "Cockpit",
+        containers: [
+          {
+            widgets: [
+              {
+                type: "widget_titre_section",
+                titre: "Vue d'ensemble",
+              },
+            ],
+          },
+        ],
+      };
+
+      // When
+      const result = composeDashboardInputSchema.safeParse(input);
+
+      // Then
+      expect(result.success).toBe(true);
+    });
+
+    test("accepte widget_titre_section avec titre et description", () => {
+      // Given
+      const input = {
+        titre: "Cockpit",
+        containers: [
+          {
+            widgets: [
+              {
+                type: "widget_titre_section",
+                titre: "Synthèse",
+                description: "Vue compacte des indicateurs clés du territoire.",
+              },
+            ],
+          },
+        ],
+      };
+
+      // When
+      const result = composeDashboardInputSchema.safeParse(input);
+
+      // Then
+      expect(result.success).toBe(true);
+    });
+  });
+
+  describe("validation stricte", () => {
+    test("rejette un widget avec un type inconnu", () => {
+      // Given
+      const input = {
+        titre: "Cockpit",
+        containers: [
+          {
+            widgets: [
+              {
+                type: "widget_inexistant",
+                territoire_code: "REG-53",
+                jalon: 2025,
+              },
+            ],
+          },
+        ],
+      };
+
+      // When
+      const result = composeDashboardInputSchema.safeParse(input);
+
+      // Then
+      expect(result.success).toBe(false);
+    });
+
+    test("rejette un widget avec un champ inconnu (.strict)", () => {
+      // Given
+      const input = {
+        titre: "Cockpit",
+        containers: [
+          {
+            widgets: [
+              {
+                type: "widget_taux_avancement_territoire",
+                territoire_code: "REG-53",
+                jalon: 2025,
+                champ_inconnu: "valeur",
+              },
+            ],
+          },
+        ],
+      };
+
+      // When
+      const result = composeDashboardInputSchema.safeParse(input);
+
+      // Then
+      expect(result.success).toBe(false);
+    });
+
+    test("rejette un container vide", () => {
+      // Given
+      const input = {
+        titre: "Cockpit",
+        containers: [{ widgets: [] }],
       };
 
       // When
@@ -432,8 +388,7 @@ describe("composeDashboardInputSchema", () => {
           {
             widgets: [
               {
-                type: "kpi_card",
-                metric: "ta_global",
+                type: "widget_taux_avancement_territoire",
                 territoire_code: "REG-53",
                 jalon: 2025,
               },
@@ -448,44 +403,12 @@ describe("composeDashboardInputSchema", () => {
       // Then
       expect(result.success).toBe(false);
     });
+  });
+});
 
-    test("rejette un widget avec un type inconnu", () => {
-      // Given
-      const input = {
-        titre: "Cockpit",
-        containers: [
-          {
-            widgets: [{ type: "bar_chart_libre", territoire_code: "REG-53" }],
-          },
-        ],
-      };
-
-      // When
-      const result = composeDashboardInputSchema.safeParse(input);
-
-      // Then
-      expect(result.success).toBe(false);
-    });
-
-    test("rejette un texte_section sans titre", () => {
-      // Given
-      const input = {
-        titre: "Cockpit",
-        containers: [
-          {
-            widgets: [{ type: "texte_section", description: "Sans titre" }],
-          },
-        ],
-      };
-
-      // When
-      const result = composeDashboardInputSchema.safeParse(input);
-
-      // Then
-      expect(result.success).toBe(false);
-    });
-
-    test("rejette un filler sans width", () => {
+describe("createComposeDashboardTool execute", () => {
+  describe("habilitations territoriales", () => {
+    test("rejette un widget dont le territoire_code n'est pas dans les habilitations en lecture", async () => {
       // Given
       const input = {
         titre: "Cockpit",
@@ -493,25 +416,52 @@ describe("composeDashboardInputSchema", () => {
           {
             widgets: [
               {
-                type: "kpi_card",
-                metric: "ta_global",
+                type: "widget_taux_avancement_territoire",
+                territoire_code: "REG-99",
+                jalon: 2025,
+              },
+            ],
+          },
+        ],
+      };
+
+      // When / Then
+      await expect(executeTool(["REG-53"], input)).rejects.toThrow(
+        /Accès non autorisé au territoire REG-99/,
+      );
+    });
+
+    test("accepte un widget dont le territoire_code est habilité", async () => {
+      // Given
+      const input = {
+        titre: "Cockpit",
+        containers: [
+          {
+            widgets: [
+              {
+                type: "widget_taux_avancement_territoire",
                 territoire_code: "REG-53",
                 jalon: 2025,
               },
-              { type: "filler" },
             ],
           },
         ],
       };
 
       // When
-      const result = composeDashboardInputSchema.safeParse(input);
+      const result = await executeTool(["REG-53"], input);
 
       // Then
-      expect(result.success).toBe(false);
+      expect(result).toEqual({
+        titre: "Cockpit",
+        containers: input.containers,
+        _output_instructions: expect.any(String),
+      });
     });
+  });
 
-    test("rejette un filler avec une largeur hors enum", () => {
+  describe("linter anti-chiffres sur widget_titre_section", () => {
+    test("rejette un titre contenant un pourcentage", async () => {
       // Given
       const input = {
         titre: "Cockpit",
@@ -519,36 +469,113 @@ describe("composeDashboardInputSchema", () => {
           {
             widgets: [
               {
-                type: "kpi_card",
-                metric: "ta_global",
+                type: "widget_titre_section",
+                titre: "TA 45%",
+              },
+            ],
+          },
+        ],
+      };
+
+      // When / Then
+      await expect(executeTool([], input)).rejects.toThrow(
+        /widget_titre_section ne doit contenir aucune valeur chiffrée \("45%"\)/,
+      );
+    });
+
+    test("rejette une description contenant des points", async () => {
+      // Given
+      const input = {
+        titre: "Cockpit",
+        containers: [
+          {
+            widgets: [
+              {
+                type: "widget_titre_section",
+                titre: "Synthèse",
+                description: "Écart de 12 points par rapport à la médiane.",
+              },
+            ],
+          },
+        ],
+      };
+
+      // When / Then
+      await expect(executeTool([], input)).rejects.toThrow(
+        /widget_titre_section ne doit contenir aucune valeur chiffrée \("12 points"\)/,
+      );
+    });
+
+    test("accepte un titre sans valeur chiffrée", async () => {
+      // Given
+      const input = {
+        titre: "Cockpit",
+        containers: [
+          {
+            widgets: [
+              {
+                type: "widget_titre_section",
+                titre: "Vue d'ensemble du territoire",
+                description: "Synthèse des principaux indicateurs.",
+              },
+            ],
+          },
+        ],
+      };
+
+      // When
+      const result = await executeTool([], input);
+
+      // Then
+      expect(result).toEqual({
+        titre: "Cockpit",
+        containers: input.containers,
+        _output_instructions: expect.any(String),
+      });
+    });
+  });
+
+  describe("retour identité", () => {
+    test("renvoie les containers à l'identique pour un dashboard valide complet", async () => {
+      // Given
+      const input = {
+        titre: "Cockpit Bretagne",
+        containers: [
+          {
+            widgets: [
+              {
+                type: "widget_titre_section",
+                titre: "Synthèse Bretagne",
+              },
+            ],
+          },
+          {
+            widgets: [
+              {
+                type: "widget_taux_avancement_territoire",
                 territoire_code: "REG-53",
                 jalon: 2025,
               },
-              { type: "filler", width: 5 },
+              {
+                type: "widget_nombre_chantiers_en_retard",
+                territoire_code: "REG-53",
+                jalon: 2025,
+              },
+              {
+                type: "widget_valeurs_remarquables_avancement",
+                territoire_code: "REG-53",
+                jalon: 2025,
+              },
             ],
           },
-        ],
-      };
-
-      // When
-      const result = composeDashboardInputSchema.safeParse(input);
-
-      // Then
-      expect(result.success).toBe(false);
-    });
-
-    test("rejette un jalon hors bornes", () => {
-      // Given
-      const input = {
-        titre: "Cockpit",
-        containers: [
           {
             widgets: [
               {
-                type: "kpi_card",
-                metric: "ta_global",
+                type: "widget_cartographie_taux_avancement",
+                maille: "departementale",
                 territoire_code: "REG-53",
-                jalon: 2010,
+                jalon: 2025,
+                chantier_ids: ["CH-001"],
               },
             ],
           },
@@ -556,10 +583,14 @@ describe("composeDashboardInputSchema", () => {
       };
 
       // When
-      const result = composeDashboardInputSchema.safeParse(input);
+      const result = await executeTool(["REG-53"], input);
 
       // Then
-      expect(result.success).toBe(false);
+      expect(result).toEqual({
+        titre: "Cockpit Bretagne",
+        containers: input.containers,
+        _output_instructions: expect.any(String),
+      });
     });
   });
 });

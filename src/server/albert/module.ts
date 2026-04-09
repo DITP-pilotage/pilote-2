@@ -1,11 +1,9 @@
-import { GetChantiersEnRetardQuery } from "@/server/chantiers/query/GetChantiersEnRetardQuery";
-import { GetChantiersEnDifficulteQuery } from "@/server/chantiers/query/GetChantiersEnDifficulteQuery";
 import { createGetTauxAvancementTerritoireTool } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import { createGetChantiersEnRetardTool } from "@/server/albert/tools/getChantiersEnRetard";
 import { createGetChantiersEnDifficulteTool } from "@/server/albert/tools/getChantiersEnDifficulte";
-import { GetChantierIndicateursQuery } from "@/server/chantiers/query/GetChantierIndicateursQuery";
 import { createGetChantierIndicateursTool } from "@/server/albert/tools/getChantierIndicateurs";
 import { createComposeDashboardTool } from "@/server/albert/tools/composeDashboard";
+import type { ChantierExports } from "@/server/chantiers/module";
 import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase";
 import { PrismaTerritoireResolver } from "@/server/albert/infrastructure/PrismaTerritoireResolver";
 import { FsRapportFileStorage } from "@/server/albert/infrastructure/FsRapportFileStorage";
@@ -20,7 +18,7 @@ import {
 } from "@/server/module-system";
 import type { SharedDependencies } from "@/server/shared/module";
 
-type AlbertImports = SharedDependencies;
+type AlbertImports = SharedDependencies & ChantierExports;
 
 type AlbertOwnCradle = {
   territoireResolver: TerritoireResolver;
@@ -28,15 +26,12 @@ type AlbertOwnCradle = {
   createGetTauxAvancementTerritoireTool: ReturnType<
     typeof createGetTauxAvancementTerritoireTool
   >;
-  getChantiersEnRetardQuery: GetChantiersEnRetardQuery;
   createGetChantiersEnRetardTool: ReturnType<
     typeof createGetChantiersEnRetardTool
   >;
-  getChantiersEnDifficulteQuery: GetChantiersEnDifficulteQuery;
   createGetChantiersEnDifficulteTool: ReturnType<
     typeof createGetChantiersEnDifficulteTool
   >;
-  getChantierIndicateursQuery: GetChantierIndicateursQuery;
   createGetChantierIndicateursTool: ReturnType<
     typeof createGetChantierIndicateursTool
   >;
@@ -49,7 +44,7 @@ type AlbertCradle = AlbertOwnCradle & AlbertImports;
 
 export const albertModule = defineModule<NoExports, AlbertCradle>()({
   name: "albert",
-  imports: ["shared"],
+  imports: ["shared", "chantiers"],
   exports: [],
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
@@ -58,17 +53,12 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       createGetTauxAvancementTerritoireTool: asModuleFunction(
         createGetTauxAvancementTerritoireTool,
       ),
-      getChantiersEnRetardQuery: asModuleClass(GetChantiersEnRetardQuery),
       createGetChantiersEnRetardTool: asModuleFunction(
         createGetChantiersEnRetardTool,
-      ),
-      getChantiersEnDifficulteQuery: asModuleClass(
-        GetChantiersEnDifficulteQuery,
       ),
       createGetChantiersEnDifficulteTool: asModuleFunction(
         createGetChantiersEnDifficulteTool,
       ),
-      getChantierIndicateursQuery: asModuleClass(GetChantierIndicateursQuery),
       createGetChantierIndicateursTool: asModuleFunction(
         createGetChantierIndicateursTool,
       ),
