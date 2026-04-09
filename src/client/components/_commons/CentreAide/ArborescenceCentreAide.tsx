@@ -1,4 +1,4 @@
-import { FunctionComponent, useMemo, useState } from "react";
+import { FunctionComponent, useEffect, useMemo, useState } from "react";
 import {
   NoeudArbre,
   aDesModificationsNonPubliees,
@@ -99,8 +99,9 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
           {afficherStatut && <BadgesStatut noeud={noeud} />}
         </button>
         {onDeplacer && (
-          <div className="shrink-0 flex gap-0.5 opacity-0 group-hover/noeud:opacity-100 transition-opacity">
+          <div className="shrink-0 flex gap-0.5 opacity-0 group-hover/noeud:opacity-100 group-focus-within/noeud:opacity-100 transition-opacity">
             <button
+              aria-label="Monter"
               className="p-0.5 text-gray-400 hover:text-gray-600"
               onClick={(event) => {
                 event.stopPropagation();
@@ -112,6 +113,7 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
               <span className="text-xs">&#x25B2;</span>
             </button>
             <button
+              aria-label="Descendre"
               className="p-0.5 text-gray-400 hover:text-gray-600"
               onClick={(event) => {
                 event.stopPropagation();
@@ -124,6 +126,7 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
             </button>
             {noeud.parentId && (
               <button
+                aria-label="Sortir du groupe"
                 className="p-0.5 text-gray-400 hover:text-gray-600"
                 onClick={(event) => {
                   event.stopPropagation();
@@ -136,6 +139,7 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
               </button>
             )}
             <button
+              aria-label="Entrer dans le groupe voisin"
               className="p-0.5 text-gray-400 hover:text-gray-600"
               onClick={(event) => {
                 event.stopPropagation();
@@ -217,19 +221,36 @@ export const ArborescenceCentreAide: FunctionComponent<
     [arbre, recherche],
   );
 
-  const [groupesOuverts, setGroupesOuverts] = useState<Set<string>>(() => {
-    const tousLesGroupes = new Set<string>();
-    const collecterGroupes = (noeuds: NoeudArbre[]) => {
-      for (const noeud of noeuds) {
+  const collecterGroupes = (noeuds: NoeudArbre[]): Set<string> => {
+    const groupes = new Set<string>();
+    const parcourir = (liste: NoeudArbre[]) => {
+      for (const noeud of liste) {
         if (noeud.type === "GROUPE") {
-          tousLesGroupes.add(noeud.id);
-          collecterGroupes(noeud.enfants);
+          groupes.add(noeud.id);
+          parcourir(noeud.enfants);
         }
       }
     };
-    collecterGroupes(arbre);
-    return tousLesGroupes;
-  });
+    parcourir(noeuds);
+    return groupes;
+  };
+
+  const [groupesOuverts, setGroupesOuverts] = useState<Set<string>>(() =>
+    collecterGroupes(arbre),
+  );
+
+  useEffect(() => {
+    const groupesActuels = collecterGroupes(arbre);
+    setGroupesOuverts((previous) => {
+      const suivant = new Set(previous);
+      for (const groupeId of groupesActuels) {
+        if (!previous.has(groupeId)) {
+          suivant.add(groupeId);
+        }
+      }
+      return suivant;
+    });
+  }, [arbre]);
 
   const toggleGroupe = (id: string) => {
     setGroupesOuverts((previous) => {
@@ -247,6 +268,7 @@ export const ArborescenceCentreAide: FunctionComponent<
     <>
       <div className="px-3 pt-2 pb-1">
         <input
+          aria-label="Rechercher dans l'arborescence"
           className="w-full px-2 py-1.5 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
           onChange={(event) => setRecherche(event.target.value)}
           placeholder="Rechercher..."

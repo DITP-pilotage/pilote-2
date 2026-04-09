@@ -4,6 +4,8 @@ import {
   type NoExports,
   type VerifyCradle,
 } from "@/server/module-system";
+import { Transaction } from "@/server/db/Transaction";
+import { PrismaTransaction } from "@/server/db/PrismaTransaction";
 import { CreerArticleCentreAideUseCase } from "./usecases/CreerArticleCentreAideUseCase";
 import { PrismaArticleCentreAideRepository } from "./infrastructure/adapters/PrismaArticleCentreAideRepository";
 import { ArticleCentreAideRepository } from "./domain/ports/ArticleCentreAideRepository";
@@ -25,6 +27,7 @@ type ParametrageCentreAideCradle = {
   depublierArticleCentreAideUseCase: DepublierArticleCentreAideUseCase;
   basculerVisibiliteArticleCentreAideUseCase: BasculerVisibiliteArticleCentreAideUseCase;
   deplacerArticleCentreAideUseCase: DeplacerArticleCentreAideUseCase;
+  transaction: Transaction;
 };
 
 export const parametrageCentreAideModule = defineModule<
@@ -63,6 +66,7 @@ export const parametrageCentreAideModule = defineModule<
       deplacerArticleCentreAideUseCase: asModuleClass(
         DeplacerArticleCentreAideUseCase,
       ),
+      transaction: asModuleClass(PrismaTransaction),
     } satisfies VerifyCradle<ParametrageCentreAideCradle>);
   },
 });
