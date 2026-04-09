@@ -14,7 +14,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   };
 
-  if (!session || !configurationFeatureFlip().centreAideCustomPilote) {
+  if (!session || !configurationFeatureFlip().centreAideAdmin) {
     return redirigerVersPageAccueil;
   }
 

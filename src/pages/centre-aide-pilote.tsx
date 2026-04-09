@@ -8,7 +8,7 @@ import { configurationFeatureFlip } from "@/config";
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await auth(context);
 
-  if (!session || !configurationFeatureFlip().centreAideCustomPilote) {
+  if (!session || !configurationFeatureFlip().centreAidePilote) {
     return {
       redirect: {
         destination: "/",

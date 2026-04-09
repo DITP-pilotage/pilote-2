@@ -48,9 +48,7 @@ export const NavigationPilote = () => {
   const router = useRouter();
 
   const ffRapportCoordinateurs = useEnv("NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS");
-  const ffCentreAideCustomPilote = useEnv(
-    "NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE",
-  );
+  const ffCentreAidePilote = useEnv("NEXT_PUBLIC_FF_CENTRE_AIDE_PILOTE");
   const { vérifierSuiviCompletudeEstDisponibleEstIndisponible } =
     useNavigation();
 
@@ -125,7 +123,7 @@ export const NavigationPilote = () => {
           nom: "Centre d'aide Pilote",
           lien: "/centre-aide-pilote",
           matcher: "/centre-aide-pilote",
-          accessible: ffCentreAideCustomPilote,
+          accessible: ffCentreAidePilote,
           prefetch: false,
           target: "_self",
         },

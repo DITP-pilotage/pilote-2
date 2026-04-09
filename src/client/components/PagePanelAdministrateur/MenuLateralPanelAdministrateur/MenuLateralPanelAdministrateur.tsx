@@ -12,7 +12,7 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
 > = ({ pageActive }) => {
   const [estReplie, setEstReplie] = useState(false);
   const ffGestionTokenAPI = useEnv("NEXT_PUBLIC_FF_GESTION_TOKEN_API");
-  const ffCentreAide = useEnv("NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE");
+  const ffCentreAide = useEnv("NEXT_PUBLIC_FF_CENTRE_AIDE_ADMIN");
 
   const menuItems = useMemo(
     () => [
