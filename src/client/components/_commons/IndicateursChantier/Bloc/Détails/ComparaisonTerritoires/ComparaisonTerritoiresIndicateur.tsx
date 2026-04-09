@@ -1,137 +1,15 @@
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
 import { WidgetCartographieValeurAvancement } from "@/components/_commons/Widget/WidgetCartographieValeurAvancement/WidgetCartographieValeurAvancement";
 import { WidgetCartographiePVA } from "@/components/_commons/Widget/WidgetCartographiePVA/WidgetCartographiePVA";
 import { ComparaisonTerritoires } from "@/components/_commons/ComparaisonTerritoires/ComparaisonTerritoires";
-import { getLabelTerritoire } from "@/client/constants/territoires";
-import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
-import {
-  ContenuCsv,
-  filtrerTerritoires,
-  formaterDateCsv,
-  genererCsv,
-  telechargerCsv,
-} from "@/client/utils/csv/genererCsv";
 import { buildJalons } from "@/client/utils/jalons";
 import api from "@/server/infrastructure/api/trpc/api";
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
-import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
-import { ValeurAvancementIndicateurTerritoire } from "@/server/chantiers/infrastructure/queries/RecupererValeursAvancementIndicateurTerritoiresQuery";
-import { PVATerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierPVACountTerritoiresQuery";
+import { useExporterComparaisonIndicateurEnCsv } from "./useExporterComparaisonIndicateurEnCsv";
 
-type TypeCarteIndicateur = "ta" | "va" | "pva";
-
-export const construireContenuCsv = (
-  params:
-    | {
-        type: "ta";
-        donneesParJalonTA: Map<
-          number,
-          TauxAvancementComparaisonTerritoireViewModel[]
-        >;
-        jalons: number[];
-        codesTerritoiresSelectionnes: string[];
-      }
-    | {
-        type: "va";
-        donneesParJalonVA: Map<number, ValeurAvancementIndicateurTerritoire[]>;
-        jalons: number[];
-        codesTerritoiresSelectionnes: string[];
-      }
-    | {
-        type: "pva";
-        donneesPVA: PVATerritoireViewModel[];
-        codesTerritoiresSelectionnes: string[];
-      },
-): ContenuCsv => {
-  if (params.type === "ta") {
-    const { donneesParJalonTA, jalons, codesTerritoiresSelectionnes } = params;
-    const colonnes = [
-      "Territoire",
-      ...jalons.flatMap((jalonCourant) => [
-        `date ${jalonCourant}`,
-        `taux ${jalonCourant}`,
-      ]),
-    ];
-
-    const lignes = codesTerritoiresSelectionnes
-      .map((code) => {
-        const premierJalonDonnees = donneesParJalonTA
-          .get(jalons[0])
-          ?.find((territoire) => territoire.territoireCode === code);
-        if (premierJalonDonnees?.estApplicable === false) return null;
-
-        const cellules = jalons.flatMap((jalonCourant) => {
-          const donneesTerritoire = donneesParJalonTA
-            .get(jalonCourant)
-            ?.find((territoire) => territoire.territoireCode === code);
-          return [
-            formaterDateCsv(
-              donneesTerritoire?.dateTauxAvancementAnnuel ?? null,
-            ),
-            donneesTerritoire?.tauxAvancementJalon !== null &&
-            donneesTerritoire?.tauxAvancementJalon !== undefined
-              ? String(donneesTerritoire.tauxAvancementJalon)
-              : "Non renseigné",
-          ];
-        });
-
-        return [getLabelTerritoire(code), ...cellules];
-      })
-      .filter((ligne): ligne is string[] => ligne !== null);
-
-    return { colonnes, lignes };
-  }
-
-  if (params.type === "va") {
-    const { donneesParJalonVA, jalons, codesTerritoiresSelectionnes } = params;
-    const colonnes = [
-      "Territoire",
-      ...jalons.flatMap((jalonCourant) => [
-        `date ${jalonCourant}`,
-        `valeur ${jalonCourant}`,
-      ]),
-    ];
-
-    const lignes = codesTerritoiresSelectionnes
-      .map((code) => {
-        const premierJalonDonnees = donneesParJalonVA
-          .get(jalons[0])
-          ?.find((territoire) => territoire.territoireCode === code);
-        if (premierJalonDonnees?.estApplicable === false) return null;
-
-        const cellules = jalons.flatMap((jalonCourant) => {
-          const donneesTerritoire = donneesParJalonVA
-            .get(jalonCourant)
-            ?.find((territoire) => territoire.territoireCode === code);
-          return [
-            formaterDateCsv(donneesTerritoire?.dateValeurAvancement ?? null),
-            donneesTerritoire?.valeurAvancement !== null &&
-            donneesTerritoire?.valeurAvancement !== undefined
-              ? String(donneesTerritoire.valeurAvancement)
-              : "Non renseigné",
-          ];
-        });
-
-        return [getLabelTerritoire(code), ...cellules];
-      })
-      .filter((ligne): ligne is string[] => ligne !== null);
-
-    return { colonnes, lignes };
-  }
-
-  const { donneesPVA, codesTerritoiresSelectionnes } = params;
-  return {
-    colonnes: ["Territoire", "Nombre de propositions"],
-    lignes: filtrerTerritoires(donneesPVA, codesTerritoiresSelectionnes).map(
-      (territoire) => [
-        getLabelTerritoire(territoire.territoireCode),
-        String(territoire.nombrePropositionsValeur),
-      ],
-    ),
-  };
-};
+export type TypeCarteIndicateur = "ta" | "va" | "pva";
 
 const options: (
   jalon: number,
@@ -160,7 +38,6 @@ export const ComparaisonTerritoiresIndicateur = ({
   unite: string | null;
 }) => {
   const utils = api.useUtils();
-  const [territoiresCompares] = useTerritoiresCompares();
 
   useEffect(() => {
     for (const jalonCourant of buildJalons()) {
@@ -175,77 +52,12 @@ export const ComparaisonTerritoiresIndicateur = ({
     }
   }, [utils, indicateurId, chantierId]);
 
-  const exporterEnCsv = useCallback(
-    (type: TypeCarteIndicateur) => {
-      const codesTerritoiresSelectionnes = [
-        territoireCode,
-        ...territoiresCompares.split(",").filter(Boolean),
-      ];
-      const nomFichier = `comparaison-territoriale-${indicateurId}-${type}.csv`;
-
-      if (type === "ta") {
-        const jalons = buildJalons();
-        const { colonnes, lignes } = construireContenuCsv({
-          type,
-          donneesParJalonTA: new Map(
-            jalons.map((jalonCourant) => [
-              jalonCourant,
-              utils.indicateur.recupererTauxAvancementTerritoires.getData({
-                indicateurId,
-                chantierId,
-                jalon: jalonCourant,
-              }) ?? [],
-            ]),
-          ),
-          jalons,
-          codesTerritoiresSelectionnes,
-        });
-        telechargerCsv(genererCsv(colonnes, lignes), nomFichier);
-        return;
-      }
-
-      if (type === "va") {
-        const jalons = buildJalons();
-        const { colonnes, lignes } = construireContenuCsv({
-          type,
-          donneesParJalonVA: new Map(
-            jalons.map((jalonCourant) => [
-              jalonCourant,
-              utils.indicateur.recupererValeursAvancementTerritoires.getData({
-                indicateurId,
-                chantierId,
-                jalon: jalonCourant,
-              }) ?? [],
-            ]),
-          ),
-          jalons,
-          codesTerritoiresSelectionnes,
-        });
-        telechargerCsv(genererCsv(colonnes, lignes), nomFichier);
-        return;
-      }
-
-      const { colonnes, lignes } = construireContenuCsv({
-        type,
-        donneesPVA:
-          utils.indicateur.recupererPVATerritoires.getData({
-            indicateurId,
-            chantierId,
-            jalon,
-          }) ?? [],
-        codesTerritoiresSelectionnes,
-      });
-      telechargerCsv(genererCsv(colonnes, lignes), nomFichier);
-    },
-    [
-      utils,
-      indicateurId,
-      chantierId,
-      jalon,
-      territoireCode,
-      territoiresCompares,
-    ],
-  );
+  const exporterEnCsv = useExporterComparaisonIndicateurEnCsv({
+    indicateurId,
+    chantierId,
+    jalon,
+    territoireCode,
+  });
 
   return (
     <ComparaisonTerritoires<TypeCarteIndicateur>
