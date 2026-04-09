@@ -50,23 +50,26 @@ export const useEditionCentreAide = () => {
   const [contenu, setContenu] = useState<string | null>(templateInitial);
   const [type, setType] = useState<$Enums.TypeArticleCentreAide>("PAGE");
 
-  const aAutoSelectionne = useRef(false);
+  const aInitialise = useRef(false);
 
   useEffect(() => {
-    if (!estChargement && arbre.length > 0 && !aAutoSelectionne.current) {
-      aAutoSelectionne.current = true;
-      const premier = trouverPremierArticle(arbre);
-      if (premier) {
-        setItemSelectionneId(premier.id);
-        setTitre(premier.titreBrouillon ?? premier.titre);
-        setTitreAffiche(
-          premier.titreAfficheBrouillon ?? premier.titreAffiche ?? "",
-        );
-        setContenu(premier.contenuBrouillon ?? premier.contenu);
-        setType(premier.type);
-      }
-    }
-  }, [estChargement, arbre, setItemSelectionneId]);
+    if (estChargement || articles.length === 0 || aInitialise.current) return;
+    aInitialise.current = true;
+
+    const article = itemSelectionneId
+      ? articles.find((item) => item.id === itemSelectionneId)
+      : trouverPremierArticle(arbre);
+
+    if (!article) return;
+
+    setItemSelectionneId(article.id);
+    setTitre(article.titreBrouillon ?? article.titre);
+    setTitreAffiche(
+      article.titreAfficheBrouillon ?? article.titreAffiche ?? "",
+    );
+    setContenu(article.contenuBrouillon ?? article.contenu);
+    setType(article.type);
+  }, [estChargement, articles, arbre, itemSelectionneId, setItemSelectionneId]);
 
   const selectionnerItem = useCallback(
     (id: string) => {
