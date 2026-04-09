@@ -1,12 +1,8 @@
-import { useEffect } from "react";
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
 import { WidgetCartographieValeurAvancement } from "@/components/_commons/Widget/WidgetCartographieValeurAvancement/WidgetCartographieValeurAvancement";
 import { WidgetCartographiePVA } from "@/components/_commons/Widget/WidgetCartographiePVA/WidgetCartographiePVA";
 import { ComparaisonTerritoires } from "@/components/_commons/ComparaisonTerritoires/ComparaisonTerritoires";
-import { buildJalons } from "@/client/utils/jalons";
-import api from "@/server/infrastructure/api/trpc/api";
-import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 import { useExporterComparaisonIndicateurEnCsv } from "./useExporterComparaisonIndicateurEnCsv";
 
 export type TypeCarteIndicateur = "ta" | "va" | "pva";
@@ -37,21 +33,6 @@ export const ComparaisonTerritoiresIndicateur = ({
   territoireCode: string;
   unite: string | null;
 }) => {
-  const utils = api.useUtils();
-
-  useEffect(() => {
-    for (const jalonCourant of buildJalons()) {
-      void utils.indicateur.recupererTauxAvancementTerritoires.prefetch(
-        { indicateurId, chantierId, jalon: jalonCourant },
-        { staleTime: WIDGET_STALE_TIME },
-      );
-      void utils.indicateur.recupererValeursAvancementTerritoires.prefetch(
-        { indicateurId, chantierId, jalon: jalonCourant },
-        { staleTime: WIDGET_STALE_TIME },
-      );
-    }
-  }, [utils, indicateurId, chantierId]);
-
   const exporterEnCsv = useExporterComparaisonIndicateurEnCsv({
     indicateurId,
     chantierId,

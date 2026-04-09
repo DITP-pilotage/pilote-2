@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { getLabelTerritoire } from "@/client/constants/territoires";
 import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
 import {
@@ -9,6 +10,7 @@ import {
 } from "@/client/utils/csv/genererCsv";
 import { buildJalons } from "@/client/utils/jalons";
 import api from "@/server/infrastructure/api/trpc/api";
+import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
 import { ValeurAvancementIndicateurTerritoire } from "@/server/chantiers/infrastructure/queries/RecupererValeursAvancementIndicateurTerritoiresQuery";
 import { PVATerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierPVACountTerritoiresQuery";
@@ -42,8 +44,8 @@ const construireContenuCsv = (
     const colonnes = [
       "Territoire",
       ...jalons.flatMap((jalonCourant) => [
-        `date ${jalonCourant}`,
-        `taux ${jalonCourant}`,
+        `Date de mise à jour ${jalonCourant}`,
+        `Taux d'avancement ${jalonCourant}`,
       ]),
     ];
 
@@ -81,8 +83,8 @@ const construireContenuCsv = (
     const colonnes = [
       "Territoire",
       ...jalons.flatMap((jalonCourant) => [
-        `date ${jalonCourant}`,
-        `valeur ${jalonCourant}`,
+        `Date de mise à jour ${jalonCourant}`,
+        `Valeur d'avancement ${jalonCourant}`,
       ]),
     ];
 
@@ -138,6 +140,19 @@ export const useExporterComparaisonIndicateurEnCsv = ({
 }) => {
   const utils = api.useUtils();
   const [territoiresCompares] = useTerritoiresCompares();
+
+  useEffect(() => {
+    for (const jalonCourant of buildJalons()) {
+      void utils.indicateur.recupererTauxAvancementTerritoires.prefetch(
+        { indicateurId, chantierId, jalon: jalonCourant },
+        { staleTime: WIDGET_STALE_TIME },
+      );
+      void utils.indicateur.recupererValeursAvancementTerritoires.prefetch(
+        { indicateurId, chantierId, jalon: jalonCourant },
+        { staleTime: WIDGET_STALE_TIME },
+      );
+    }
+  }, [utils, indicateurId, chantierId]);
 
   return (type: TypeCarteIndicateur) => {
     const codesTerritoiresSelectionnes = [

@@ -28,7 +28,7 @@ export const telechargerCsv = (contenu: string, nomFichier: string): void => {
   lien.download = nomFichier;
   lien.click();
   lien.remove();
-  URL.revokeObjectURL(url);
+  setTimeout(() => URL.revokeObjectURL(url), 0);
 };
 
 export const formaterDateCsv = (dateIso: string | null): string => {
