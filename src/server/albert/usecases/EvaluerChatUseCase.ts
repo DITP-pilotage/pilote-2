@@ -18,8 +18,16 @@ export class EvaluerChatUseCase {
     evaluation: $Enums.llm_call_evaluation;
     commentaire?: string;
   }) {
+    const dernierTour = await this.prisma.getInstance().llm_calls.findFirst({
+      where: { chat_id: chatId },
+      orderBy: { created_at: "desc" },
+      select: { id: true },
+    });
+
+    if (!dernierTour) return;
+
     await this.prisma.getInstance().llm_calls.update({
-      where: { id: chatId },
+      where: { id: dernierTour.id },
       data: { evaluation, commentaire },
     });
   }
