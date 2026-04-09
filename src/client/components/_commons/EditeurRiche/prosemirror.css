@@ -11,16 +11,17 @@
 
   ul,
   ol {
-    padding: 0 1rem;
-    margin-left: 1rem;
+    padding-left: 1.5rem;
+    list-style-position: outside;
   }
 
   ul {
-    list-style: disc;
+    list-style-type: disc;
   }
 
   ol {
-    list-style: decimal;
+    list-style-type: decimal;
+    padding-left: 2rem;
   }
 
   p {
