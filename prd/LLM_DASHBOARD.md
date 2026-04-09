@@ -89,6 +89,46 @@ Hypothèses sous-jacentes à valider via le POC :
 
 ---
 
+## 5bis. Retours d'expérience du premier prototype (avril 2026)
+
+Un premier prototype (commit `feat: prototype`) a implémenté un outil `compose_dashboard` avec un catalogue initial (`kpi_card` paramétré par un enum de métriques, `tableau_indicateurs`, `liste_chantiers_alerte` paramétré par un enum de type d'alerte, `texte_section`, `filler`) et un flux de clarification en 5 étapes (« Pattern (g) » historique). Il a permis de valider l'architecture conteneurs/grille mais a révélé trois problèmes structurels qui imposent de réviser plusieurs choix de ce PRD.
+
+### 5bis.1. Les widgets paramétrés par un enum sont encore trop génériques
+
+Le catalogue contenait un widget `kpi_card` avec un enum `metric ∈ {ta_global, mediane, nb_chantiers_en_retard}`. Sur le papier, c'est l'approche « spécifique mais paramétrique » défendue au §7.3. En pratique, le LLM :
+
+- confond les métriques (demande `ta_global` quand l'utilisateur voulait la médiane, ou inversement),
+- mélange dans un même container un `kpi_card` et un widget d'un autre `row_group` sans percevoir que les containers n'acceptent qu'un seul groupe,
+- ne reconnaît pas l'**intention métier** derrière un `kpi_card` tant qu'il doit encore choisir une métrique — c'est une forme d'appel générique déguisée en appel métier.
+
+Même phénomène sur `liste_chantiers_alerte` avec son enum `type_alerte ∈ {retard, difficulte}` : le LLM hésite, ou choisit le mauvais, ou passe le premier dans l'alphabet.
+
+**Leçon** : l'unité du catalogue doit être l'**intention métier atomique**, pas une famille paramétrée par un enum. `kpi_card.metric="ta_global"` devient un widget à part entière nommé `widget_taux_avancement_territoire`. Le nom du widget **est** l'intention, et le LLM n'a plus qu'à choisir le bon outil dans un catalogue nominal — exactement comme il le fait déjà pour les outils de lecture (`get_taux_avancement_territoire`, `get_chantiers_en_retard`, …). C'est un renforcement de la recommandation du §7.3, pas un revirement : on passe de « spécifique paramétré par le périmètre » à « une intention, un widget ».
+
+### 5bis.2. Le tool embarquait les données, en contradiction avec §7.6
+
+Le prototype a fait exactement l'inverse de la recommandation §7.6 : l'`execute` de `compose_dashboard` appelait `GetChantiersEnRetardQuery`, `GetChantierIndicateursQuery`, `RécupérerStatistiquesUseCase` et embarquait les valeurs résolues directement dans le `tool_result`. Le composant React `DashboardRender` recevait ces données toutes prêtes et ne faisait que de la présentation passive.
+
+C'est un raccourci tentant — « le tool a déjà tout ce qu'il faut » — mais il cumule trois coûts :
+
+- **un outil massif** (~580 lignes de code serveur) qui recompose à la main une logique déjà exprimée par les queries tRPC existantes ;
+- **une incohérence avec le reste du front PILOTE**, où les composants `_commons/Widget/*` récupèrent leurs données via `api.useSuspenseQueries(...)` et bénéficient automatiquement du cache, de la revalidation, du batching et du prefetch ;
+- **les dashboards ne se rafraîchissent pas** au fil du temps sans rappeler le LLM — exactement le défaut que §7.6 avait déjà identifié comme rédhibitoire.
+
+**Leçon** : la décision §7.6 (Option 2) doit être **appliquée à la lettre**. Le tool `compose_dashboard` ne fait **aucun fetch**. Son rôle est uniquement (1) de valider la structure JSON proposée par le LLM via Zod, (2) de renvoyer cette structure telle quelle comme tool result. Le registre d'adaptateurs React lit la structure et chaque composant widget réutilise le pattern de fetch déjà en place dans `_commons/Widget/*` — exactement comme `WidgetCartographieTA` fait aujourd'hui avec `api.useSuspenseQueries`.
+
+Conséquence directe sur le code du tool : l'`execute` devient un simple `return input` (avec éventuellement un `_output_instructions`), plus aucun accès base de données ni aux use cases métier dans le tool lui-même. La DI (`prisma`, `getChantiersEnRetardQuery`, etc.) disparaît de la fabrique `createComposeDashboardTool`.
+
+### 5bis.3. Le LLM posait trop de questions, souvent creuses
+
+Le Pattern (g) initial décrivait 5 étapes : identifier les paramètres manquants, poser une question par paramètre (via `display_choices` ou texte), reformuler un plan en 3 lignes, demander confirmation textuelle, puis composer. En pratique, cette chorégraphie produit des conversations longues où le LLM demande le jalon, puis le territoire, puis la liste de chantiers, puis demande encore confirmation avant d'agir. L'utilisateur se lasse avant même d'avoir vu son premier dashboard — et les questions portent le plus souvent sur des paramètres que le modèle pourrait déduire du contexte agent ou poser en une seule fois.
+
+**Leçon** : revenir à un protocole minimal. Pour la V1, le flux tient en **2 tours** : (1) demande de l'utilisateur, (2) réponse unique d'Albert qui présente brièvement les widgets disponibles et pose **une seule question ouverte** pour récupérer le contexte manquant ; puis composition directe sans étape « plan + confirmation ». L'utilisateur corrige après coup sur le dashboard rendu — c'est possible parce que la composition est bon marché (Option 2 §7.6 : pas de re-fetch, juste un nouveau rewrite JSON). La phase « plan + confirmation » est réintroduite uniquement si l'usage démontre qu'elle est nécessaire.
+
+Les sections §7.2 (catalogue), §7.3 (philosophie), §7.4 (layout), §7.6 (qui charge les données) et §8 (flux d'interaction) ont été mises à jour en conséquence.
+
+---
+
 ## 6. Exploration des approches techniques
 
 Quatre options sur la table, de la plus permissive à la plus contrainte. Le choix de référence pour le POC est l'**Option C** (composition typée à partir d'un catalogue), qui s'inscrit dans la continuité de l'architecture Albert existante.
@@ -122,13 +162,13 @@ Une bibliothèque de tableaux de bord prédéfinis (« cockpit chantier », « c
 Le LLM appelle un outil `compose_dashboard` dont l'`inputSchema` Zod décrit :
 
 - les **métadonnées** du dashboard (titre, description, filtres globaux : territoire, jalon),
-- une **liste de widgets**, chacun étant une union discriminée par `type` (`kpi_card`, `bar_chart_ta_par_territoire`, `meteo_carte`, `liste_chantiers_alerte`, `tableau_indicateurs`, `comparaison_territoires`, …),
-- pour chaque widget, ses **paramètres typés** (référence chantier, indicateur, jalon, dimension de découpage…) — **jamais de valeurs**.
+- une **liste de widgets**, chacun étant une union discriminée par `type` (`widget_taux_avancement_territoire`, `widget_cartographie_taux_avancement`, `widget_cartographie_meteo`, `widget_liste_chantiers_en_retard`, `widget_tableau_indicateurs_chantier`, …),
+- pour chaque widget, ses **paramètres typés** (référence chantier, indicateur, jalon, maille…) — **jamais de valeurs**.
 
 Le frontend dispose d'un **registre d'adaptateurs React** : à chaque `type` de widget correspond un composant qui sait lire les paramètres et appeler la query backend correspondante (via tRPC, comme le reste de l'app).
 
 - ✅ Cohérent avec l'architecture Albert : un outil de plus, validation Zod, rendu déclenché par un type de tool part.
-- ✅ Garantit la factualité : les valeurs sont résolues côté serveur, le LLM ne touche jamais aux chiffres.
+- ✅ Garantit la factualité : les valeurs sont résolues au rendu côté widget, le LLM ne touche jamais aux chiffres.
 - ✅ Cohérent avec la charte DSFR (les composants existent déjà).
 - ✅ Évolutif : ajouter un type de widget = (1) nouveau cas dans l'union Zod, (2) nouveau composant, (3) une ligne dans le system prompt.
 - ⚠️ Le LLM doit apprendre la grammaire du catalogue (à mitiger via prompt + exemples + retours d'erreur structurés).
@@ -166,20 +206,37 @@ Utilisateur ─► Albert ─► clarification (display_choices / question ouver
                                                                     sa query tRPC dédiée
 ```
 
-### 7.2. Catalogue de widgets (proposition initiale)
+### 7.2. Catalogue de widgets (proposition révisée post-prototype)
 
-| Widget | Intention métier | Paramètres clés |
-|---|---|---|
-| `kpi_card` | « Une métrique clé en gros » (TA d'un territoire, médiane, nombre de chantiers en retard) | métrique, territoire, jalon |
-| `tableau_indicateurs` | Reprend `ChantierIndicateursTable` existant | chantier, territoire |
-| `liste_chantiers_alerte` | Liste compacte de chantiers en retard ou en difficulté | territoire, type d'alerte |
-| `meteo_carte` | Carte de France colorée par météo pour un chantier | chantier, niveau de maille |
-| `bar_chart_ta_par_territoire` | Comparaison du TA entre plusieurs territoires | liste de territoires, jalon, chantier ou agrégat |
-| `evolution_ta` | Évolution du TA sur plusieurs jalons | territoire (ou chantier), liste de jalons |
-| `comparaison_territoires` | Mini-tableau comparatif (TA, médiane, position) | liste de territoires, jalon |
-| `texte_libre` | Bloc markdown pour titre / commentaire / contexte | contenu (texte produit par Albert, **pas de valeurs chiffrées**) |
+> **Principe directeur, renforcé après le POC** : *une intention métier = un widget*. Pas d'enum interne qui multiplie les intentions au sein d'un même type. Le **nom du widget** encode l'intention métier, ses **paramètres n'encodent que le périmètre** (territoire, chantier, jalon, mode d'affichage). Voir §5bis.1 pour le retour d'expérience qui motive ce choix.
 
-Règle : tout widget qui affiche un chiffre doit pointer vers une query existante. `texte_libre` est explicitement contraint dans le system prompt à ne pas embarquer de chiffres.
+Le catalogue est aligné sur les composants déjà présents dans `src/client/components/_commons/Widget/*` — un widget du catalogue est, dans la plupart des cas, un wrapper mince autour d'un widget existant qui sait déjà faire son propre fetch via `api.useSuspenseQueries`.
+
+| Widget | Intention métier | Paramètres (références uniquement) | Composant `_commons` réutilisé |
+|---|---|---|---|
+| `widget_taux_avancement_territoire` | « Le TA agrégé d'un territoire en gros » | `territoire_code`, `jalon` | KPI dédié (nouveau, léger) |
+| `widget_mediane_avancement_territoire` | « La médiane de répartition sur un territoire » | `territoire_code`, `jalon` | KPI dédié (nouveau, léger) |
+| `widget_nombre_chantiers_en_retard` | « Combien de chantiers en retard sur un territoire » | `territoire_code`, `jalon` | KPI dédié (nouveau, léger) |
+| `widget_valeurs_remarquables_avancement` | « Distribution du TA sur les sous-territoires : minimum, médiane, maximum » | `territoire_code`, `jalon` (maille déduite) | `ValeursRemarquables` (déjà utilisé par `WidgetCartographieTA`) |
+| `widget_tableau_indicateurs_chantier` | Tableau des indicateurs d'un chantier sur un territoire | `chantier_id`, `territoire_code`, `jalon` | `ChantierIndicateursTable` |
+| `widget_liste_chantiers_en_retard` | Liste compacte des chantiers en retard (critère quantitatif : écart ≤ -10 pts) | `territoire_code`, `jalon` | (nouveau, query existante) |
+| `widget_liste_chantiers_en_difficulte` | Liste compacte des chantiers en difficulté (critère qualitatif : météo ORAGE/NUAGE) | `territoire_code`, `jalon` | (nouveau, query existante) |
+| `widget_cartographie_taux_avancement` | Carte de France du TA par territoire, pour un ensemble de chantiers | `maille`, `territoire_code`, `jalon`, `chantier_ids` | `WidgetCartographieTA` (mode `chantiers`) |
+| `widget_cartographie_meteo` | Carte de France des météos par territoire pour un chantier | `maille`, `territoire_code`, `chantier_id`, `jalon` | `WidgetCartographieMeteo` |
+| `widget_titre_section` | Titre + description courte pour structurer visuellement le dashboard | `titre`, `description` (ni l'un ni l'autre ne contient de chiffre) | (nouveau, purement présentationnel) |
+
+Conséquences de ce découpage par rapport au catalogue initial :
+
+- **3 widgets KPI atomiques + 1 widget distribution au lieu d'un `kpi_card` paramétré par un enum.** Le LLM n'a plus à choisir une métrique dans un enum, il choisit un type de widget. Coûteux en nombre de lignes dans la discriminated union Zod, mais chaque cas est trivial à comprendre pour le modèle, et la surface d'erreur sur le choix de métrique tombe à zéro.
+- **`widget_valeurs_remarquables_avancement` est un « KPI composite » déjà existant dans le code.** Il reprend le composant `ValeursRemarquables` qui affiche côte à côte le minimum, la médiane et le maximum du TA sur les sous-territoires d'un territoire donné (départements pour une région, régions pour la France entière). C'est la forme préférée pour montrer une distribution résumée : le LLM n'a plus à hésiter entre « un KPI médiane seul » et « trois KPI alignés » — il a un widget dédié, sémantiquement correct. `widget_mediane_avancement_territoire` reste disponible pour les cas où l'utilisateur ne veut *que* la médiane en petit, mais dans un cockpit standard, c'est `widget_valeurs_remarquables_avancement` qui est la bonne réponse.
+- **Listes en retard / en difficulté séparées.** Le prototype avait un `liste_chantiers_alerte` avec `type_alerte ∈ {retard, difficulte}`. Même conclusion que pour les KPI : ce sont deux intentions distinctes, deux queries différentes côté serveur, deux widgets distincts dans le catalogue.
+- **Ajout des widgets cartographie.** Ils manquaient cruellement au catalogue initial — or une bonne part des demandes « je veux voir X par territoire » trouve sa meilleure forme dans une carte. Réutilisation directe de `WidgetCartographieTA` et `WidgetCartographieMeteo` déjà en place dans `_commons/Widget/`, qui savent déjà fetcher leurs données via `api.useSuspenseQueries` — leur wrapper n'a rien à faire de plus qu'à passer les props.
+- **Disparition de `filler`.** Un widget vide était un palliatif à la rigidité du layout, pas une intention métier. Si la grille interne d'un container laisse un trou, c'est acceptable visuellement (et les `allowed_widths` de chaque widget permettent au LLM de ne pas en créer).
+- **Disparition de `texte_libre` au profit de `widget_titre_section`.** Même rôle de structuration sémantique, mais le nom est explicite (« ce widget est un titre de section, pas un paragraphe libre ») et le linter anti-chiffres reste en place (cf. §9) — si le LLM veut afficher une valeur, il doit utiliser un des widgets KPI, pas coller le chiffre dans un titre.
+
+**Règle de factualité inchangée** : tout widget qui affiche un chiffre doit pointer vers une query existante via ses références. Aucune valeur chiffrée ne passe jamais par le LLM. Les widgets KPI atomiques le garantissent par construction — leur schéma Zod n'expose pas de champ `value`.
+
+**Extensibilité** : ajouter une intention métier = (1) nouveau cas dans l'union Zod, (2) nouveau composant dans le registre d'adaptateurs (souvent un wrapper sur un composant de `_commons/Widget/*`), (3) une ligne dans la table ci-dessus du system prompt. Pas de code serveur dans le tool `compose_dashboard` lui-même (cf. §7.6).
 
 ### 7.3. Philosophie du catalogue : widgets métier ou primitives génériques ?
 
@@ -249,6 +306,21 @@ Pas avant d'avoir au moins :
 
 Et même à ce moment-là, l'extension naturelle n'est pas forcément « ajoutons des primitives génériques », c'est plutôt **« ajoutons une variante paramétrique d'un widget métier existant »** — par exemple `bar_chart_par_dimension` où la dimension est choisie dans un enum fermé (territoire / jalon / météo / axe stratégique). On élargit le paramétrage avant d'ouvrir le mapping.
 
+#### Addendum post-prototype : jusqu'où pousser la nominalisation ?
+
+Le premier prototype (cf. §5bis.1) a montré que la recommandation « spécifique mais paramétrique » n'est pas assez stricte. Même un enum fermé de métriques métier (`kpi_card.metric ∈ {ta_global, mediane, nb_chantiers_en_retard}`) est trop de liberté pour le LLM, qui confond les métriques et choisit au hasard.
+
+La V1 va donc un cran plus loin : **un widget = une intention nominalement nommée**, sans enum qui multiplie les intentions à l'intérieur d'un même type. Les paramètres d'un widget se limitent au **périmètre** (territoire, chantier, jalon, maille) — jamais à la **nature** de ce qui est montré.
+
+Cela signifie par exemple :
+
+- Pas un `kpi_card` paramétré par un enum de métrique, mais trois widgets distincts `widget_taux_avancement_territoire`, `widget_mediane_avancement_territoire`, `widget_nombre_chantiers_en_retard`.
+- Pas un `liste_chantiers_alerte` paramétré par un enum de `type_alerte`, mais deux widgets distincts `widget_liste_chantiers_en_retard` et `widget_liste_chantiers_en_difficulte`.
+
+Le coût en lignes dans la discriminated union Zod augmente (3 cas au lieu d'1 pour les KPI), mais chaque cas est trivialement compréhensible pour le modèle, et la surface d'erreur sur le choix d'intention tombe à zéro. Le LLM se retrouve en terrain connu : il choisit un outil dans un catalogue nominal, exactement comme il le fait déjà avec les outils de lecture de PILOTE (`get_taux_avancement_territoire`, `get_chantiers_en_retard`, …).
+
+Cette règle n'interdit pas *tous* les enums. Elle interdit les enums qui changent la **nature sémantique** de ce qu'affiche le widget. Un enum de périmètre (ex : `maille ∈ {regionale, departementale}` sur une cartographie) reste acceptable parce qu'il ne change pas l'intention, seulement le zoom.
+
 ### 7.4. Layout : grille, tailles et placement
 
 Pour qu'un dashboard ait un rendu propre et lisible — et pour qu'Albert puisse raisonner sur la composition sans réinventer un moteur de mise en page à chaque appel — il faut un système de layout simple, prédictible, et **dont les contraintes sont connues du LLM**.
@@ -266,18 +338,20 @@ Dans la définition Zod du catalogue, chaque type de widget déclare :
 - une **largeur par défaut** en colonnes de la grille (`default_width`),
 - une **liste de largeurs autorisées** (`allowed_widths`), choisie dans un enum fermé (3, 4, 6, 8, 12).
 
-Exemples plausibles, à valider en POC :
+Tailles pour le catalogue révisé §7.2 :
 
 | Widget | `default_width` | `allowed_widths` | Justification |
 |---|---|---|---|
-| `kpi_card` | 3 | `[3, 4, 6]` | Petit, on peut en aligner 4 par rangée |
-| `liste_chantiers_alerte` | 6 | `[6, 12]` | Liste verticale, demi ou pleine largeur |
-| `tableau_indicateurs` | 12 | `[12]` | Beaucoup de colonnes, demande la pleine largeur |
-| `comparaison_territoires` | 12 | `[8, 12]` | Tableau comparatif large |
-| `bar_chart_ta_par_territoire` | 6 | `[6, 8, 12]` | Souple selon le nombre de barres |
-| `evolution_ta` | 6 | `[6, 12]` | Graphique en ligne |
-| `meteo_carte` | 6 | `[6, 8, 12]` | Carte SVG, lit mieux en grand |
-| `texte_libre` | 12 | `[6, 12]` | Bloc texte / titre / commentaire |
+| `widget_taux_avancement_territoire` | 3 | `[3, 4, 6]` | KPI court, 4 par rangée possible |
+| `widget_mediane_avancement_territoire` | 3 | `[3, 4, 6]` | idem |
+| `widget_nombre_chantiers_en_retard` | 3 | `[3, 4, 6]` | idem |
+| `widget_valeurs_remarquables_avancement` | 6 | `[4, 6, 8]` | Trio min/médiane/max aligné, demande un peu plus d'espace qu'un KPI atomique |
+| `widget_liste_chantiers_en_retard` | 6 | `[6, 12]` | Liste verticale, demi ou pleine largeur |
+| `widget_liste_chantiers_en_difficulte` | 6 | `[6, 12]` | idem |
+| `widget_tableau_indicateurs_chantier` | 12 | `[12]` | Beaucoup de colonnes, pleine largeur obligatoire |
+| `widget_cartographie_taux_avancement` | 12 | `[6, 8, 12]` | Carte SVG, lit mieux en grand |
+| `widget_cartographie_meteo` | 12 | `[6, 8, 12]` | idem |
+| `widget_titre_section` | 12 | `[6, 12]` | Bloc titre / introduction de section |
 
 Le LLM peut **choisir une largeur dans le set autorisé** pour chaque instance, via un champ `width` optionnel sur le widget. S'il ne le précise pas, on prend le `default_width`. S'il propose une largeur hors du set autorisé, la validation Zod renvoie une erreur structurée et l'agent corrige.
 
@@ -290,7 +364,7 @@ Pour que le LLM compose intelligemment (ne pas empiler 5 tableaux pleine largeur
 1. **Description Zod** — chaque widget a un `.describe()` qui mentionne explicitement sa largeur par défaut et ses largeurs autorisées. Le AI SDK transmet ces descriptions au LLM via le schéma de l'outil, sans intervention supplémentaire.
 2. **Section du system prompt** — le même tableau récapitulatif que ci-dessus est inclus dans le prompt, pour que le LLM puisse raisonner sur la composition avant d'écrire le JSON. Redondant avec les `.describe()` mais utile : le LLM voit la grille des tailles d'un coup d'œil.
 3. **Heuristiques de mise en page** explicites dans le system prompt, par exemple :
-   > *« Préfère regrouper les KPI cards en début de dashboard, 3 ou 4 par rangée. Les widgets pleine largeur (`tableau_indicateurs`, `comparaison_territoires`) viennent ensuite. Termine par les blocs `texte_libre` de commentaire. Évite plus de 2 widgets pleine largeur consécutifs sans rangée intermédiaire. »*
+   > *« Commence le dashboard par un `widget_titre_section`. Regroupe les KPI atomiques (`widget_taux_avancement_territoire`, `widget_nombre_chantiers_en_retard`) et un `widget_valeurs_remarquables_avancement` dans un même container en début de dashboard. Les widgets pleine largeur (`widget_tableau_indicateurs_chantier`, `widget_cartographie_taux_avancement`) viennent ensuite. Évite plus de 2 widgets pleine largeur consécutifs sans rangée intermédiaire. »*
 
 Ces heuristiques ne sont pas un schéma — ce sont des règles éditoriales que le LLM applique en best-effort. La validation Zod ne les fait pas respecter. C'est volontaire : on accepte une dérive minoritaire sur la mise en page parce que le coût d'erreur (un dashboard moins joli) est faible et qu'une grille rigide étoufferait l'inventivité dont on a besoin pour les cas complexes.
 
@@ -302,7 +376,7 @@ Une variante consiste à structurer le dashboard en **sections nommées** (titre
 - ✅ Aide la lecture : le titre de section guide l'œil.
 - ⚠️ Ajoute un niveau dans le schéma (`dashboard.sections[].widgets[]` au lieu de `dashboard.widgets[]`) et donc un niveau de raisonnement de plus pour le LLM.
 
-Décision proposée pour le POC : **commencer sans sections**, et n'ajouter le niveau « section » que si les retours utilisateurs montrent que les dashboards à plus de 6-8 widgets deviennent illisibles. Cohérent avec le principe de minimalisme du POC. Le bloc `texte_libre` (largeur 12) joue déjà un rôle de séparateur sémantique léger en attendant.
+Décision proposée pour le POC : **commencer sans sections**, et n'ajouter le niveau « section » que si les retours utilisateurs montrent que les dashboards à plus de 6-8 widgets deviennent illisibles. Cohérent avec le principe de minimalisme du POC. Le bloc `widget_titre_section` (largeur 12) joue déjà un rôle de séparateur sémantique léger en attendant.
 
 #### Responsive
 
@@ -335,7 +409,7 @@ Albert appelle ses outils de lecture (`getTauxAvancementTerritoire`, `getChantie
 
 #### Option 2 — Le LLM passe des références, le widget charge
 
-Albert n'émet que des **références** (`{ type: "kpi_card", metric: "taux_avancement_global", territoire: "REG-53", jalon: 2025 }`). Au rendu, chaque adaptateur React appelle la query tRPC correspondante, exactement comme le ferait n'importe quelle page existante de PILOTE.
+Albert n'émet que des **références** (`{ type: "widget_taux_avancement_territoire", territoire_code: "REG-53", jalon: 2025 }`). Au rendu, chaque adaptateur React appelle la query tRPC correspondante, exactement comme le ferait n'importe quelle page existante de PILOTE.
 
 - ✅ **Données toujours fraîches.** Le dashboard est vivant par construction.
 - ✅ **Factualité garantie de bout en bout.** Le LLM ne touche jamais aux chiffres, donc ne peut pas en inventer ni en altérer. C'est exactement la même garantie que celle d'`_output_instructions` aujourd'hui pour `ChantierIndicateursTable`.
@@ -364,7 +438,20 @@ C'est la seule option qui :
 3. permet le partage en toute sécurité,
 4. rend l'édition conversationnelle bon marché.
 
-Conséquence pour le system prompt : la consigne du pattern (g) doit interdire explicitement à Albert de copier des valeurs chiffrées dans la définition. Conséquence pour la validation Zod : le champ `texte_libre.contenu` doit être linté côté serveur pour rejeter les chiffres avec unité (`%`, valeurs numériques en contexte de TA), comme déjà évoqué au §9.
+#### Application stricte : le tool ne fait rien d'autre que valider
+
+Le premier prototype (§5bis.2) a dérogé à cette recommandation : l'`execute` de `compose_dashboard` appelait les queries serveur et embarquait les données dans le `tool_result`. La V1 revient à une application stricte de l'Option 2, et cette application a des conséquences concrètes sur l'implémentation du tool :
+
+- **Le tool `compose_dashboard` n'a pas de dépendances** (pas de `prisma`, pas de query, pas de use case injecté dans sa factory). Sa signature se limite à `{ habilitations }` — et encore, uniquement pour rejeter au plus tôt les `territoire_code` hors périmètre de l'utilisateur, pas pour lire des données.
+- **Son `execute` est trivial** : il valide l'input via Zod (déjà fait par le AI SDK), vérifie que les `territoire_code` référencés sont accessibles à l'utilisateur, et renvoie la structure telle quelle accompagnée des `_output_instructions`. Pas de résolution de valeurs, pas de `KpiCardData`, pas de `TableauIndicateursData`, pas de `ListeChantiersAlerteData` dans le tool result.
+- **Le type `ComposeDashboardOutput`** se simplifie à `{ titre, containers: Array<{ widgets: WidgetDefinition[] }>, _output_instructions }`. Plus aucun type `ResolvedWidget` qui combine définition + data.
+- **Le registre d'adaptateurs React** est la seule pièce qui connaît les queries tRPC. Chaque adaptateur est un composant qui prend les **références** du widget (issues du tool result) et appelle la query correspondante via `api.useSuspenseQueries`, exactement comme `WidgetCartographieTA` le fait aujourd'hui au §3.2.2 de `_commons/Widget/WidgetCartographieTA/WidgetCartographieTA.tsx`. Un adaptateur est typiquement un wrapper de ~20 lignes autour d'un widget existant ou un petit composant KPI.
+- **Un Suspense boundary unique** au niveau du `DashboardRender`, avec un fallback volontairement simple : un rectangle à la taille du dashboard avec un loader centré. On ne cherche pas à streamer widget par widget ni à dessiner un skeleton par type de widget — ce sont des raffinements coûteux en code pour un gain visuel marginal sur un POC. Tout le dashboard apparaît d'un coup quand toutes les queries sont résolues ; si ça devient perceptiblement lent sur certains cockpits, on introduira un Suspense par widget en V2.
+- **Les erreurs de résolution** (référence invalide, habilitation refusée au moment de la lecture) sont gérées widget par widget via `ErrorBoundary`, sans casser le rendu global du dashboard. Cohérent avec le principe « habilitations vérifiées au rendu » du §7.5.
+
+Conséquence sur le system prompt : la consigne du pattern (g) interdit explicitement à Albert de copier des valeurs chiffrées dans la définition (principe déjà en place). Conséquence sur la validation Zod : les champs texte de `widget_titre_section` (titre, description) sont lintés côté serveur pour rejeter les chiffres avec unité (`%`, points), comme déjà évoqué au §9.
+
+Ce que cette réécriture **supprime** du prototype : les 577 lignes de `composeDashboard.ts` qui appelaient `GetChantiersEnRetardQuery`, `GetChantierIndicateursQuery`, `récupérerStatistiquesAvancementChantiersUseCase`, `agregerAvancementsChantiersUseCase`, etc. Ces appels sont replongés au niveau du widget React, qui bénéficie alors du cache tRPC, du batching, du prefetch et de l'auto-revalidation — exactement comme le reste de PILOTE.
 
 ### 7.7. Persistance
 
@@ -387,38 +474,54 @@ L'expérience montre que les LLMs sont meilleurs pour **réécrire un objet enti
 
 ## 8. Flux d'interaction LLM ↔ utilisateur
 
-L'enjeu central pointé par la demande initiale : *« comment pousser le LLM à poser assez de questions pour produire un dashboard utile ? »*
+L'enjeu central pointé par la demande initiale : *« comment pousser le LLM à produire un dashboard utile sans qu'il ne se lance trop vite ni qu'il ne noie l'utilisateur sous les questions ? »*. Le retour d'expérience §5bis.3 a montré que le premier réflexe (« pose une question par paramètre manquant, puis reformule un plan, puis demande confirmation ») produit des conversations longues et irritantes. La V1 revient à un flux minimal en 2 tours.
 
-### 8.1. Quatre phases conversationnelles
+### 8.1. Flux en 2 tours, pas en 4
 
-1. **Intention** — l'utilisateur exprime son besoin (« je veux suivre mes chantiers prioritaires en région »).
-2. **Clarification** — Albert identifie les **paramètres manquants obligatoires** et les pose. Pour chaque paramètre, soit `display_choices` (liste fermée), soit question ouverte.
-3. **Plan** — Albert reformule en langage naturel ce qu'il s'apprête à composer, et **demande confirmation** avant d'appeler `compose_dashboard`. C'est un garde-fou contre les hallucinations structurelles : l'utilisateur peut corriger « non pas la météo, le TA » avant de payer le coût d'une composition complète.
-4. **Composition + itération** — Albert appelle l'outil, le dashboard apparaît dans le chat (et est persisté). L'utilisateur ajuste en conversation (« remplace la carte par un graphique »). Albert réécrit la définition.
+1. **Demande initiale** — l'utilisateur exprime son besoin (« construis-moi un cockpit pour suivre la Bretagne »).
+2. **Réponse unique d'Albert** — en **un seul message**, Albert :
+   - annonce qu'il peut composer un dashboard et présente en 3-4 lignes les **widgets disponibles pertinents** au regard de la demande (pas tout le catalogue, une sélection raisonnée),
+   - pose **une seule question ouverte** qui rassemble tous les paramètres manquants essentiels (typiquement : *« Quel territoire et quel jalon veux-tu suivre ? »*),
+   - ne compose rien tant que le périmètre minimum (territoire + jalon) n'est pas connu.
+3. **Composition directe** — dès que l'utilisateur répond, Albert appelle `compose_dashboard` **sans étape intermédiaire** de « plan + confirmation ». L'utilisateur voit immédiatement le dashboard rendu avec ses vraies données (fetch côté widget, cf. §7.6).
+4. **Itération en conversation** — l'utilisateur ajuste (« enlève la carte », « ajoute le tableau des indicateurs de CH-014 », « passe en 2024 »). Albert rappelle `compose_dashboard` avec une définition complète modifiée. Le coût d'itération est **faible** : pas de re-fetch côté LLM, juste un nouveau JSON qui remplace l'ancien.
 
-### 8.2. Comment forcer la phase de clarification
+### 8.2. Pourquoi pas de phase « plan + confirmation » ?
 
-C'est la partie la plus délicate. Plusieurs leviers, à empiler :
+Le prototype intégrait une étape explicite de reformulation en 3 lignes suivie d'une demande de confirmation textuelle avant tout appel au tool. Elle avait l'ambition d'être un garde-fou contre les compositions ratées. En pratique elle produit deux effets indésirables :
 
-- **Liste explicite de paramètres requis dans le system prompt**, par catégorie de dashboard. Exemple : *« Avant tout appel à compose_dashboard, tu DOIS connaître : (a) le périmètre territorial, (b) le jalon, (c) la liste des chantiers OU le critère de sélection automatique, (d) au moins un indicateur cible si l'utilisateur veut un suivi fin. Si l'un de ces paramètres manque, pose la question via display_choices ou en texte libre. »*
-- **`_output_instructions` spécifique sur les outils de lecture** — quand Albert appelle `getTauxAvancementTerritoire` dans le contexte d'une composition de dashboard, l'instruction de sortie peut rappeler : « ces données serviront à composer un dashboard, ne les restitue pas en texte, demande à l'utilisateur quels indicateurs il souhaite mettre en avant ».
-- **Validation Zod stricte côté serveur** — si le LLM tente d'appeler `compose_dashboard` avec un widget mal paramétré (ex : `kpi_card` sans `territoire_code`), l'erreur Zod est renvoyée comme tool result avec un message structuré, et la boucle agent demande au LLM de corriger. Cela transforme la rigueur du schéma en signal d'apprentissage en cours de session.
-- **Pattern de workflow nommé** dans le system prompt, sur le modèle des patterns (a) à (f) actuels :
-  > *Pattern (g) — Construction d'un tableau de bord*
-  > 1. Identifier les paramètres manquants parmi {périmètre, jalon, chantiers, indicateurs}.
-  > 2. Poser une question par paramètre manquant, via `display_choices` quand c'est une liste fermée.
-  > 3. Reformuler le plan en 3 lignes maximum et demander confirmation textuelle.
-  > 4. Appeler `compose_dashboard` une seule fois, avec la définition complète.
-  > 5. Ne pas commenter le contenu chiffré du dashboard — il est rendu visuellement.
-- **Templates de départ** — proposer immédiatement, dès qu'une intention floue est détectée, un `display_choices` avec 3 ou 4 dashboards pré-câblés (« cockpit territoire », « focus chantier », « comparaison »). Cela amorce la phase 2 sans imposer une longue série de questions.
+- **Elle double le nombre de tours** avant que l'utilisateur ne voie quoi que ce soit. Dans la majorité des cas, la composition que le LLM va produire est assez prévisible pour qu'une confirmation préalable soit du bruit.
+- **Elle est inefficace comme garde-fou** parce que l'utilisateur valide du texte et pas une UI — le texte peut parfaitement décrire un dashboard qui, une fois rendu, ne correspond pas à ce qu'il attendait.
 
-### 8.3. Quand l'agent doit-il décider seul ?
+La correction directe sur le dashboard rendu (« remplace la carte par un tableau ») est plus naturelle et moins coûteuse que la validation préalable d'une description textuelle. Elle n'est possible que parce que la composition elle-même est bon marché : l'Option 2 du §7.6 garantit qu'un rewrite complet ne déclenche aucun appel de données par le LLM, donc aucune latence inutile.
 
-Tout n'est pas à demander. Heuristique proposée :
+### 8.3. Pattern (g) — Construction d'un tableau de bord (V1 simplifiée)
 
-- **Décide seul** : choix d'icônes, ordre d'affichage des widgets dans le layout par défaut, intitulés courts, choix d'une carte vs un graphique pour une donnée géographique.
-- **Demande confirmation** : périmètre territorial (impact sur la lisibilité), liste des chantiers, jalon, indicateurs précis.
-- **Bloque** : tout paramètre qui implique un accès à des données pour lesquelles il faut vérifier les habilitations — Albert doit alors appeler l'outil de lecture pour valider que le territoire / chantier est accessible avant d'inclure une référence dans le dashboard.
+> **Déclencheur** : l'utilisateur demande de *construire*, *composer*, *assembler* ou *afficher* un tableau de bord, un cockpit, une vue personnalisée.
+>
+> 1. **Si le périmètre minimum est connu** (territoire ET jalon, soit par le contexte agent, soit par les tours précédents de la conversation) : appelle `compose_dashboard` directement avec une composition par défaut adaptée à la demande. Ne pose pas de question.
+>
+> 2. **Sinon** : réponds en **un seul message** qui combine (a) une phrase courte expliquant que tu vas composer un dashboard, (b) une liste nominale de 4-6 widgets disponibles pertinents au regard de la demande (pour informer le choix de l'utilisateur, pas pour lui demander de les choisir un par un), (c) **une seule question ouverte** pour récupérer le périmètre manquant. **N'enchaîne pas plusieurs questions**, même si plusieurs paramètres manquent — regroupe-les dans une seule formulation.
+>
+> 3. **Ne reformule pas de plan, ne demande pas de confirmation textuelle** avant de composer. Compose directement dès que le périmètre minimum est connu — l'utilisateur corrigera après coup sur le dashboard rendu.
+>
+> 4. **Ne commente pas le contenu chiffré** une fois le dashboard composé. Une phrase courte d'introduction suffit (*« Voici le dashboard demandé. »*).
+>
+> 5. **En cas d'itération** (« change le jalon », « enlève la carte », « ajoute une liste des chantiers en difficulté ») : rappelle `compose_dashboard` avec une nouvelle définition complète qui reprend les containers à conserver et applique les changements. Pas de patch incrémental, pas de question préalable.
+
+### 8.4. Ce que le LLM décide seul
+
+- **Le choix des widgets** à inclure par défaut pour une demande donnée. Un cockpit territoire est un assemblage connu — typiquement : un `widget_titre_section`, puis un container qui mélange un `widget_taux_avancement_territoire` et un `widget_nombre_chantiers_en_retard` (KPIs atomiques) avec un `widget_valeurs_remarquables_avancement` (distribution sur les sous-territoires), puis un container avec un `widget_cartographie_taux_avancement`, puis un container avec `widget_liste_chantiers_en_retard` et `widget_liste_chantiers_en_difficulte` côte à côte en largeur 6.
+- L'ordre des containers, les largeurs de chaque widget dans les enums autorisés, les titres de section.
+- L'ajout opportun d'un `widget_titre_section` pour structurer un dashboard volumineux.
+
+### 8.5. Ce qui déclenche encore une question
+
+- **Périmètre territorial manquant** et non déductible du contexte agent — question ouverte unique.
+- **Jalon manquant** — intégré à la **même** question ouverte que le territoire.
+- **Choix d'un chantier précis** quand l'utilisateur a demandé un focus chantier mais sans dire lequel. Dans ce cas, et dans ce cas uniquement, Albert peut utiliser `display_choices` pour lister les chantiers accessibles.
+
+Tout le reste est décidé par le LLM. Si le résultat ne plaît pas, l'utilisateur le dit et Albert recompose — c'est le parti pris de la V1.
 
 ---
 
@@ -426,8 +529,8 @@ Tout n'est pas à demander. Heuristique proposée :
 
 | Risque | Mitigation |
 |---|---|
-| LLM invente une référence (chantier inexistant, territoire fantôme) | Validation Zod + vérification d'existence côté serveur lors de la composition (lookup en base avant persistance). Réponse d'erreur structurée renvoyée comme tool result si la référence est invalide. |
-| LLM embarque des valeurs chiffrées dans un `texte_libre` | Règle explicite dans le system prompt + linter automatique sur le contenu texte (regex sur chiffres avec %). Si détecté, renvoi d'une erreur structurée pour forcer la réécriture. |
+| LLM invente une référence (chantier inexistant, territoire fantôme) | Validation Zod au niveau du tool + vérification d'habilitation sur les `territoire_code` lors de l'appel de `compose_dashboard`. L'existence effective des chantiers / indicateurs / jalons est validée naturellement au moment du fetch côté widget : la query tRPC correspondante retourne une erreur, capturée par l'`ErrorBoundary` du widget concerné (cf. §12). |
+| LLM embarque des valeurs chiffrées dans un `widget_titre_section` | Règle explicite dans le system prompt + linter automatique sur les champs `titre` et `description` (regex sur chiffres avec `%` ou `points`). Si détecté, le tool renvoie une erreur structurée pour forcer la réécriture. |
 | Dashboard partagé révèle des données pour lesquelles le destinataire n'a pas les droits | Habilitations vérifiées **au rendu de chaque widget**, pas à la composition. Les widgets dont les références ne sont pas accessibles affichent un message « non autorisé ». |
 | Surface d'attaque schéma | Schéma Zod strict (`.strict()` sur tous les objets), tests de parsing exhaustifs. Aucun champ libre côté layout (pas de `style`, pas de `className`). |
 | Ratelimit / coût | Une composition de dashboard ≠ chaque ouverture du dashboard. Les queries de rendu sont les queries tRPC déjà existantes, donc pas d'inflation côté backend. |
@@ -464,24 +567,28 @@ Tout n'est pas à demander. Heuristique proposée :
 
 ### Inclus
 
-- 1 nouvel outil Albert : `compose_dashboard`, avec un schéma Zod couvrant 4 à 5 types de widgets (`kpi_card`, `tableau_indicateurs`, `liste_chantiers_alerte`, `comparaison_territoires`, `meteo_carte`).
-- Le pattern de workflow (g) ajouté au system prompt avec une liste explicite de paramètres requis et un protocole de clarification.
+- 1 outil Albert `compose_dashboard` **purement déclaratif** : validation Zod uniquement, vérification des habilitations territoriales sur les `territoire_code` référencés, et renvoi de la structure telle quelle comme tool result. **Aucun fetch de données côté tool, aucune query métier injectée dans sa factory.** Schéma couvrant le catalogue révisé §7.2 (10 widgets métier atomiques).
+- Le Pattern (g) **simplifié** du §8.3 ajouté au system prompt : flux en 2 tours, une seule question ouverte en cas de périmètre manquant, pas de « plan + confirmation », composition directe.
 - 1 nouvelle entité de persistance `dashboard_albert` minimale (sans partage, sans versioning).
-- 1 page de rendu de dashboard avec un registre d'adaptateurs React qui réutilise les composants `_commons` existants et appelle les queries tRPC déjà en place.
-- 1 moteur de layout en grille 12 colonnes avec packing implicite (cf. §7.4), chaque widget déclarant sa `default_width` et ses `allowed_widths` dans son schéma Zod.
+- 1 registre d'adaptateurs React qui, à partir de la structure renvoyée par le tool, instancie le bon composant widget pour chaque entrée et lui passe les **références** (territoire, chantier, jalon, maille). **Chaque adaptateur fetch ses propres données** via les queries tRPC déjà en place, suivant le pattern `api.useSuspenseQueries` utilisé aujourd'hui par `WidgetCartographieTA` et les autres widgets de `_commons/Widget/*`.
+- 1 moteur de layout en containers + grille 12 colonnes (cf. §7.4), chaque widget déclarant sa `default_width` et ses `allowed_widths` dans son schéma Zod.
+- 1 `Suspense` boundary **unique** autour du `DashboardRender` avec un fallback simple (rectangle + loader centré). Pas de skeleton par widget, pas de rendu progressif — à réintroduire en V2 uniquement si la latence perçue devient un problème.
+- 1 `ErrorBoundary` par widget, pour qu'un échec de résolution (référence invalide, habilitation refusée au rendu) n'empêche pas l'affichage des autres widgets.
 - 1 affichage in-chat du dashboard fraîchement composé (réutilisation du pattern `BaseDisplayTool`).
 - Réécriture complète sur édition (pas de patch incrémental).
 - Feature flag dédié, ouvert d'abord à un panel restreint.
 
 ### Hors périmètre du POC
 
-- Génération de widgets non prévus dans le catalogue.
+- Génération de widgets non prévus dans le catalogue §7.2.
+- Widgets qui embarqueraient des valeurs issues d'agrégations côté serveur dans le tool result (c'est précisément ce qu'on sort du POC, cf. §5bis.2 et §7.6).
 - Partage entre utilisateurs, gestion fine des droits.
 - Versioning, undo conversationnel multi-étapes.
-- Snapshots gelés.
+- Snapshots gelés (Option 3 du §7.6).
 - Export PDF du dashboard.
 - UI d'édition manuelle (drag & drop).
 - Templates pré-câblés (option D) — à viser en V2.
+- Patch incrémental (`update_dashboard`) — à viser en V2 uniquement si le coût du rewrite devient un problème.
 
 ---
 
