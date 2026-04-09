@@ -771,17 +771,7 @@ interface NoeudArbreProps {
   <span className="text-gray-400 shrink-0 text-xs">
     {noeud.enfants.length > 0 ? "▸" : "▹"}
   </span>
-) : (
-  <span className="text-gray-400 shrink-0 text-xs">›</span>
-)}
-```
-
-Remplacer par :
-
-```tsx
-{!estGroupe && (
-  <span className="text-gray-400 shrink-0 text-xs">›</span>
-)}
+) :  null}
 ```
 
 Et ajouter le chevron à droite du bouton (après `{afficherStatut && <BadgesStatut noeud={noeud} />}`) :

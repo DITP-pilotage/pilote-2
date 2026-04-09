@@ -91,9 +91,6 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
           style={{ paddingLeft: `${niveau * 16 + 12}px` }}
           type="button"
         >
-          {!estGroupe && (
-            <span className="text-gray-400 shrink-0 text-xs">›</span>
-          )}
           <span
             className={`text-sm truncate ${estGroupe ? "font-semibold" : ""}`}
           >
