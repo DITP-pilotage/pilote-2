@@ -21,6 +21,8 @@ export class PublierArticleCentreAideUseCase {
       contenu: existant.contenuBrouillon,
       titreBrouillon: existant.titreBrouillon,
       contenuBrouillon: existant.contenuBrouillon,
+      titreAffiche: existant.titreAfficheBrouillon,
+      titreAfficheBrouillon: existant.titreAfficheBrouillon,
       type: existant.type,
       ordre: existant.ordre,
       parentId: existant.parentId,

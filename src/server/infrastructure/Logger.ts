@@ -50,26 +50,28 @@ function persisterEnBase(
   obj: Record<string, unknown>,
   msg: string,
 ): void {
-  const db = getPrismaInstance();
-  if (!db) return;
+  try {
+    const db = getPrismaInstance();
+    if (!db?.application_log) return;
 
-  const level = mapPinoLevelToEnum(levelNumber);
-  if (!level) return;
+    const level = mapPinoLevelToEnum(levelNumber);
+    if (!level) return;
 
-  db.application_log
-    .create({
-      data: {
-        level: level as "ERROR" | "WARN" | "INFO" | "DEBUG",
-        categorie: (obj.categorie as string) ?? "systeme",
-        message: msg,
-        contexte: extraireContexte(obj) ?? undefined,
-        source: (obj.source as string) ?? null,
-        duree_ms: (obj.duree_ms as number) ?? null,
-      },
-    })
-    .catch(() => {
-      // silencieux — ne jamais crasher à cause du logging
-    });
+    db.application_log
+      .create({
+        data: {
+          level: level as "ERROR" | "WARN" | "INFO" | "DEBUG",
+          categorie: (obj.categorie as string) ?? "systeme",
+          message: msg,
+          contexte: extraireContexte(obj) ?? undefined,
+          source: (obj.source as string) ?? null,
+          duree_ms: (obj.duree_ms as number) ?? null,
+        },
+      })
+      .catch(() => {});
+  } catch {
+    // silencieux — ne jamais crasher à cause du logging
+  }
 }
 
 interface StructuredLogger {

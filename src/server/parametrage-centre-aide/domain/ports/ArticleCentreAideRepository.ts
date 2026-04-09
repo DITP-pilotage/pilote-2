@@ -6,4 +6,10 @@ export interface ArticleCentreAideRepository {
   recupererParId(id: string): Promise<ArticleCentreAide | null>;
   modifier(article: ArticleCentreAide): Promise<void>;
   supprimer(id: string): Promise<void>;
+  listerParParent(parentId: string | null): Promise<ArticleCentreAide[]>;
+  modifierOrdreEtParent(
+    id: string,
+    ordre: number,
+    parentId: string | null,
+  ): Promise<void>;
 }

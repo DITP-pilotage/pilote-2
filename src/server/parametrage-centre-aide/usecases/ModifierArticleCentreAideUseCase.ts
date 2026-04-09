@@ -21,6 +21,8 @@ export class ModifierArticleCentreAideUseCase {
     parentId,
     contenuPublie,
     titrePublie,
+    titreAffichePublie,
+    titreAffiche,
     estPublie,
     estMasque,
   }: {
@@ -32,6 +34,8 @@ export class ModifierArticleCentreAideUseCase {
     parentId?: string | null;
     contenuPublie?: string | null;
     titrePublie?: string | null;
+    titreAffichePublie?: string | null;
+    titreAffiche?: string | null;
     estPublie?: boolean;
     estMasque?: boolean;
   }) {
@@ -45,6 +49,8 @@ export class ModifierArticleCentreAideUseCase {
       contenu: contenuPublie ?? null,
       titreBrouillon: titre,
       contenuBrouillon: contenuSanitized,
+      titreAffiche: titreAffichePublie ?? null,
+      titreAfficheBrouillon: titreAffiche ?? null,
       type,
       ordre,
       parentId,

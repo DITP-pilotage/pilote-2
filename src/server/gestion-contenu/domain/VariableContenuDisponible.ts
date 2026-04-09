@@ -23,7 +23,8 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_PANEL_ADMIN: boolean;
   NEXT_PUBLIC_FF_MON_PROFIL: boolean;
   NEXT_PUBLIC_FF_ASK_AI: boolean;
-  NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE: boolean;
+  NEXT_PUBLIC_FF_CENTRE_AIDE_ADMIN: boolean;
+  NEXT_PUBLIC_FF_CENTRE_AIDE_PILOTE: boolean;
   NEXT_PUBLIC_FF_PILOTE_EVAL: boolean;
   NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS: boolean;
   NEXT_PUBLIC_FF_RAPPORT_PVA: boolean;
@@ -138,9 +139,14 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
   },
   { envKey: "NEXT_PUBLIC_FF_ASK_AI", configKey: "askAI", label: "Ask AI" },
   {
-    envKey: "NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE",
-    configKey: "centreAideCustomPilote",
-    label: "Centre d'aide custom Pilote",
+    envKey: "NEXT_PUBLIC_FF_CENTRE_AIDE_ADMIN",
+    configKey: "centreAideAdmin",
+    label: "Centre d'aide — onglet dans le panel admin",
+  },
+  {
+    envKey: "NEXT_PUBLIC_FF_CENTRE_AIDE_PILOTE",
+    configKey: "centreAidePilote",
+    label: "Centre d'aide — onglet dans la navigation utilisateur",
   },
   {
     envKey: "NEXT_PUBLIC_FF_PILOTE_EVAL",

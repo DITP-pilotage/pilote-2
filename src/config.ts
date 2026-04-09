@@ -304,10 +304,15 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_ASK_AI",
     },
-    centreAideCustomPilote: {
+    centreAideAdmin: {
       format: Boolean,
       default: false,
-      env: "NEXT_PUBLIC_FF_CENTRE_AIDE_CUSTOM_PILOTE",
+      env: "NEXT_PUBLIC_FF_CENTRE_AIDE_ADMIN",
+    },
+    centreAidePilote: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_CENTRE_AIDE_PILOTE",
     },
     accesPilote: {
       format: Boolean,

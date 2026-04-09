@@ -46,23 +46,30 @@ export const useEditionCentreAide = () => {
   } = useLectureCentreAide();
 
   const [titre, setTitre] = useState("");
+  const [titreAffiche, setTitreAffiche] = useState("");
   const [contenu, setContenu] = useState<string | null>(templateInitial);
   const [type, setType] = useState<$Enums.TypeArticleCentreAide>("PAGE");
 
-  const aAutoSelectionne = useRef(false);
+  const aInitialise = useRef(false);
 
   useEffect(() => {
-    if (!estChargement && arbre.length > 0 && !aAutoSelectionne.current) {
-      aAutoSelectionne.current = true;
-      const premier = trouverPremierArticle(arbre);
-      if (premier) {
-        setItemSelectionneId(premier.id);
-        setTitre(premier.titreBrouillon ?? premier.titre);
-        setContenu(premier.contenuBrouillon ?? premier.contenu);
-        setType(premier.type);
-      }
-    }
-  }, [estChargement, arbre, setItemSelectionneId]);
+    if (estChargement || articles.length === 0 || aInitialise.current) return;
+    aInitialise.current = true;
+
+    const article = itemSelectionneId
+      ? articles.find((item) => item.id === itemSelectionneId)
+      : trouverPremierArticle(arbre);
+
+    if (!article) return;
+
+    setItemSelectionneId(article.id);
+    setTitre(article.titreBrouillon ?? article.titre);
+    setTitreAffiche(
+      article.titreAfficheBrouillon ?? article.titreAffiche ?? "",
+    );
+    setContenu(article.contenuBrouillon ?? article.contenu);
+    setType(article.type);
+  }, [estChargement, articles, arbre, itemSelectionneId, setItemSelectionneId]);
 
   const selectionnerItem = useCallback(
     (id: string) => {
@@ -71,6 +78,9 @@ export const useEditionCentreAide = () => {
 
       setItemSelectionneId(id);
       setTitre(article.titreBrouillon ?? article.titre);
+      setTitreAffiche(
+        article.titreAfficheBrouillon ?? article.titreAffiche ?? "",
+      );
       setContenu(article.contenuBrouillon ?? article.contenu);
       setType(article.type);
     },
@@ -82,6 +92,7 @@ export const useEditionCentreAide = () => {
       refetchListe();
       setItemSelectionneId(variables.id);
       setTitre(variables.titre);
+      setTitreAffiche("");
       setContenu(variables.contenu ?? null);
       setType(variables.type);
       toast.success("Article créé avec succès", {
@@ -151,6 +162,17 @@ export const useEditionCentreAide = () => {
       },
     });
 
+  const mutationDeplacer = api.parametrageCentreAide.deplacer.useMutation({
+    onSuccess: () => {
+      refetchListe();
+      toast.success("Article déplacé", {
+        duration: 3000,
+        position: "top-right",
+        richColors: true,
+      });
+    },
+  });
+
   const creerGroupe = useCallback(
     (avecContenu: boolean) => {
       const parentId =
@@ -201,11 +223,20 @@ export const useEditionCentreAide = () => {
         parentId: itemSelectionne.parentId,
         contenuPublie: itemSelectionne.contenu,
         titrePublie: itemSelectionne.titre,
+        titreAffiche,
+        titreAffichePublie: itemSelectionne.titreAffiche,
         estPublie: itemSelectionne.estPublie,
         estMasque: itemSelectionne.estMasque,
       });
     }
-  }, [itemSelectionneId, itemSelectionne, titre, contenu, mutationModifier]);
+  }, [
+    itemSelectionneId,
+    itemSelectionne,
+    titre,
+    titreAffiche,
+    contenu,
+    mutationModifier,
+  ]);
 
   const publier = useCallback(() => {
     if (itemSelectionneId) {
@@ -224,6 +255,13 @@ export const useEditionCentreAide = () => {
       mutationBasculerVisibilite.mutate({ id: itemSelectionneId });
     }
   }, [itemSelectionneId, mutationBasculerVisibilite]);
+
+  const deplacerArticle = useCallback(
+    (id: string, action: "monter" | "descendre" | "sortir" | "entrer") => {
+      mutationDeplacer.mutate({ id, action });
+    },
+    [mutationDeplacer],
+  );
 
   const supprimer = useCallback(() => {
     if (itemSelectionneId) {
@@ -246,6 +284,8 @@ export const useEditionCentreAide = () => {
     estChargement,
     titre,
     setTitre,
+    titreAffiche,
+    setTitreAffiche,
     contenu,
     setContenu,
     type,
@@ -254,6 +294,7 @@ export const useEditionCentreAide = () => {
     publier,
     depublier,
     basculerVisibilite,
+    deplacerArticle,
     aDesModificationsNonPubliees,
   };
 };

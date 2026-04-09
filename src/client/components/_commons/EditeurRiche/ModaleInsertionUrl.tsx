@@ -44,13 +44,16 @@ export const ModaleInsertionUrl = ({
   titre: string;
   type: TypeInsertion;
 }) => {
-  const [mode, setMode] = useState<"direct" | "constructeur">("direct");
+  const [mode, setMode] = useState<"direct" | "constructeur" | "email">(
+    "direct",
+  );
   const [urlDirecte, setUrlDirecte] = useState("");
   const [urlFichier, setUrlFichier] = useState("");
   const [nomFichier, setNomFichier] = useState("");
   const [extension, setExtension] = useState<string>(
     EXTENSIONS_PAR_TYPE[type][0] ?? "",
   );
+  const [email, setEmail] = useState("");
   const [erreur, setErreur] = useState("");
 
   const reinitialiser = () => {
@@ -58,6 +61,7 @@ export const ModaleInsertionUrl = ({
     setUrlFichier("");
     setNomFichier("");
     setExtension(EXTENSIONS_PAR_TYPE[type][0] ?? "");
+    setEmail("");
     setErreur("");
     setMode("direct");
   };
@@ -65,6 +69,17 @@ export const ModaleInsertionUrl = ({
   const valider = (event: FormEvent) => {
     event.preventDefault();
     setErreur("");
+
+    if (mode === "email") {
+      if (!email.trim()) {
+        setErreur("L'adresse email est requise.");
+        return;
+      }
+      onValider(`mailto:${email.trim()}`);
+      reinitialiser();
+      onOpenChange(false);
+      return;
+    }
 
     if (mode === "direct") {
       if (!urlDirecte.trim()) {
@@ -118,7 +133,7 @@ export const ModaleInsertionUrl = ({
       size="sm"
       title={titre}
     >
-      {aDesExtensions && (
+      {(aDesExtensions || type === "lien") && (
         <div className="flex gap-2 mb-4">
           <button
             className={`px-3 py-1 rounded text-sm border ${mode === "direct" ? "!bg-primary !text-white !border-primary" : "!bg-white !text-dsfr-grey-200 !border-dsfr-grey-900"}`}
@@ -140,11 +155,37 @@ export const ModaleInsertionUrl = ({
           >
             Fichiers numériques
           </button>
+          {type === "lien" && (
+            <button
+              className={`px-3 py-1 rounded text-sm border ${mode === "email" ? "!bg-primary !text-white !border-primary" : "!bg-white !text-dsfr-grey-200 !border-dsfr-grey-900"}`}
+              onClick={() => {
+                setMode("email");
+                setErreur("");
+              }}
+              type="button"
+            >
+              Email
+            </button>
+          )}
         </div>
       )}
 
       <form className="flex flex-col gap-3" onSubmit={valider}>
-        {mode === "direct" ? (
+        {mode === "email" ? (
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium" htmlFor="email">
+              Adresse email
+            </label>
+            <input
+              className="border rounded px-3 py-2 text-sm"
+              id="email"
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="contact@exemple.fr"
+              type="email"
+              value={email}
+            />
+          </div>
+        ) : mode === "direct" ? (
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium" htmlFor="url-directe">
               URL

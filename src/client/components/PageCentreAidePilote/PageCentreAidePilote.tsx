@@ -1,5 +1,8 @@
 import { FunctionComponent, useEffect, useMemo, useRef } from "react";
-import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
+import {
+  classesRenduContenuHtml,
+  RenduContenuHtml,
+} from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { ArborescenceCentreAide } from "@/components/_commons/CentreAide/ArborescenceCentreAide";
 import { NoeudArbre } from "@/components/_commons/CentreAide/types";
 import { useLectureCentreAide } from "@/components/_commons/CentreAide/useLectureCentreAide";
@@ -38,14 +41,19 @@ export const PageCentreAidePilote: FunctionComponent = () => {
   const aAutoSelectionne = useRef(false);
 
   useEffect(() => {
-    if (!estChargement && arbrePublie.length > 0 && !aAutoSelectionne.current) {
+    if (
+      !estChargement &&
+      arbrePublie.length > 0 &&
+      !aAutoSelectionne.current &&
+      !itemSelectionneId
+    ) {
       aAutoSelectionne.current = true;
       const premiere = trouverPremierePage(arbrePublie);
       if (premiere) {
         selectionnerItem(premiere.id);
       }
     }
-  }, [estChargement, arbrePublie, selectionnerItem]);
+  }, [estChargement, arbrePublie, selectionnerItem, itemSelectionneId]);
 
   if (estChargement) {
     return <p>Chargement...</p>;
@@ -55,7 +63,7 @@ export const PageCentreAidePilote: FunctionComponent = () => {
     itemSelectionne?.contenu !== null && itemSelectionne?.contenu !== undefined;
 
   return (
-    <main className="px-48 md:px-96 py-4">
+    <main className="max-w-screen-xl mx-auto px-6 py-4">
       <div className="flex gap-4">
         <div className="w-[280px] shrink-0 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col overflow-hidden">
           <h2 className="px-4 pt-4 pb-2 text-base font-bold border-b border-gray-200">
@@ -71,9 +79,11 @@ export const PageCentreAidePilote: FunctionComponent = () => {
 
         {itemSelectionne ? (
           <div className="flex-1 bg-white border border-gray-200 rounded-lg shadow-sm overflow-y-auto p-6">
-            <h2 className="text-xl font-bold mb-4">{itemSelectionne.titre}</h2>
+            <h2 className="text-xl font-bold mb-4">
+              {itemSelectionne.titreAffiche || itemSelectionne.titre}
+            </h2>
             {aContenu ? (
-              <div className="[&_p]:mb-0 [&_a]:text-primary [&_h4]:my-2 [&_hr]:!my-2">
+              <div className={classesRenduContenuHtml}>
                 <RenduContenuHtml html={itemSelectionne.contenu!} />
               </div>
             ) : (

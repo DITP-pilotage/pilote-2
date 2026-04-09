@@ -4,6 +4,8 @@ import {
   type NoExports,
   type VerifyCradle,
 } from "@/server/module-system";
+import { Transaction } from "@/server/db/Transaction";
+import { PrismaTransaction } from "@/server/db/PrismaTransaction";
 import { CreerArticleCentreAideUseCase } from "./usecases/CreerArticleCentreAideUseCase";
 import { PrismaArticleCentreAideRepository } from "./infrastructure/adapters/PrismaArticleCentreAideRepository";
 import { ArticleCentreAideRepository } from "./domain/ports/ArticleCentreAideRepository";
@@ -13,6 +15,7 @@ import { SupprimerArticleCentreAideUseCase } from "./usecases/SupprimerArticleCe
 import { PublierArticleCentreAideUseCase } from "./usecases/PublierArticleCentreAideUseCase";
 import { DepublierArticleCentreAideUseCase } from "./usecases/DepublierArticleCentreAideUseCase";
 import { BasculerVisibiliteArticleCentreAideUseCase } from "./usecases/BasculerVisibiliteArticleCentreAideUseCase";
+import { DeplacerArticleCentreAideUseCase } from "./usecases/DeplacerArticleCentreAideUseCase";
 
 type ParametrageCentreAideCradle = {
   creerArticleCentreAideUseCase: CreerArticleCentreAideUseCase;
@@ -23,6 +26,8 @@ type ParametrageCentreAideCradle = {
   publierArticleCentreAideUseCase: PublierArticleCentreAideUseCase;
   depublierArticleCentreAideUseCase: DepublierArticleCentreAideUseCase;
   basculerVisibiliteArticleCentreAideUseCase: BasculerVisibiliteArticleCentreAideUseCase;
+  deplacerArticleCentreAideUseCase: DeplacerArticleCentreAideUseCase;
+  transaction: Transaction;
 };
 
 export const parametrageCentreAideModule = defineModule<
@@ -58,6 +63,10 @@ export const parametrageCentreAideModule = defineModule<
       basculerVisibiliteArticleCentreAideUseCase: asModuleClass(
         BasculerVisibiliteArticleCentreAideUseCase,
       ),
+      deplacerArticleCentreAideUseCase: asModuleClass(
+        DeplacerArticleCentreAideUseCase,
+      ),
+      transaction: asModuleClass(PrismaTransaction),
     } satisfies VerifyCradle<ParametrageCentreAideCradle>);
   },
 });

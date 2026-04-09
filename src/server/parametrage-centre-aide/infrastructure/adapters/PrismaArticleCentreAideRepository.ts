@@ -13,6 +13,8 @@ const convertirEnModel = (
     contenu: article.contenu,
     titre_brouillon: article.titreBrouillon,
     contenu_brouillon: article.contenuBrouillon,
+    titre_affiche: article.titreAffiche,
+    titre_affiche_brouillon: article.titreAfficheBrouillon,
     type: article.type,
     ordre: article.ordre,
     parent_id: article.parentId,
@@ -32,6 +34,8 @@ const convertirEnDomaine = (
     contenu: model.contenu,
     titreBrouillon: model.titre_brouillon,
     contenuBrouillon: model.contenu_brouillon,
+    titreAffiche: model.titre_affiche,
+    titreAfficheBrouillon: model.titre_affiche_brouillon,
     type: model.type,
     ordre: model.ordre,
     parentId: model.parent_id,
@@ -79,6 +83,25 @@ export class PrismaArticleCentreAideRepository implements ArticleCentreAideRepos
   async supprimer(id: string): Promise<void> {
     await this.prisma.article_centre_aide.delete({
       where: { id },
+    });
+  }
+
+  async listerParParent(parentId: string | null): Promise<ArticleCentreAide[]> {
+    const articles = await this.prisma.article_centre_aide.findMany({
+      where: { parent_id: parentId },
+      orderBy: { ordre: "asc" },
+    });
+    return articles.map(convertirEnDomaine);
+  }
+
+  async modifierOrdreEtParent(
+    id: string,
+    ordre: number,
+    parentId: string | null,
+  ): Promise<void> {
+    await this.prisma.article_centre_aide.update({
+      where: { id },
+      data: { ordre, parent_id: parentId },
     });
   }
 }

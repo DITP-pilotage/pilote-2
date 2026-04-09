@@ -1,5 +1,9 @@
-import { FunctionComponent } from "react";
-import { NoeudArbre, aDesModificationsNonPubliees } from "./types";
+import { FunctionComponent, useEffect, useMemo, useState } from "react";
+import {
+  NoeudArbre,
+  aDesModificationsNonPubliees,
+  filtrerArbreParRecherche,
+} from "./types";
 
 const BadgesStatut: FunctionComponent<{ noeud: NoeudArbre }> = ({ noeud }) => {
   const estBrouillon = !noeud.estPublie;
@@ -36,6 +40,12 @@ interface NoeudArbreProps {
   onSelectionItem: (id: string) => void;
   estItemDesactive?: (noeud: NoeudArbre) => boolean;
   afficherStatut?: boolean;
+  groupesOuverts: Set<string>;
+  onToggleGroupe: (id: string) => void;
+  onDeplacer?: (
+    id: string,
+    action: "monter" | "descendre" | "sortir" | "entrer",
+  ) => void;
 }
 
 const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
@@ -45,6 +55,9 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
   onSelectionItem,
   estItemDesactive,
   afficherStatut,
+  groupesOuverts,
+  onToggleGroupe,
+  onDeplacer,
 }) => {
   const estGroupe = noeud.type === "GROUPE";
   const estSelectionne = noeud.id === itemSelectionneId;
@@ -56,49 +69,125 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
 
   return (
     <div>
-      <button
-        className={`w-full text-left py-2 pr-3 flex items-center gap-2 transition-colors border-l-3 ${
+      <div
+        className={`group/noeud flex items-stretch transition-colors border-l-3 ${
           estDesactive
-            ? "cursor-default text-gray-500 border-l-transparent"
+            ? "border-l-transparent"
             : estSelectionne
-              ? "bg-blue-50 text-blue-700 border-l-blue-600 font-medium"
-              : "hover:bg-gray-50 text-gray-700 border-l-transparent"
+              ? "bg-blue-50 border-l-blue-600"
+              : "hover:bg-gray-50 border-l-transparent"
         } ${afficherStatut && noeud.estMasque ? "opacity-50" : ""}`}
-        disabled={estDesactive}
-        onClick={() => onSelectionItem(noeud.id)}
-        style={{ paddingLeft: `${niveau * 16 + 12}px` }}
-        type="button"
       >
-        {estGroupe ? (
-          <span className="text-gray-400 shrink-0 text-xs">
-            {noeud.enfants.length > 0 ? "▸" : "▹"}
-          </span>
-        ) : (
-          <span className="text-gray-400 shrink-0 text-xs">›</span>
-        )}
-        <span
-          className={`text-sm truncate ${estGroupe ? "font-semibold" : ""}`}
+        <button
+          className={`flex-1 text-left py-2 flex items-center gap-2 min-w-0 ${
+            estDesactive
+              ? "cursor-default text-gray-500"
+              : estSelectionne
+                ? "text-blue-700 font-medium"
+                : "text-gray-700"
+          }`}
+          disabled={estDesactive}
+          onClick={() => onSelectionItem(noeud.id)}
+          style={{ paddingLeft: `${niveau * 16 + 12}px` }}
+          type="button"
         >
-          {titre}
-        </span>
-        {afficherStatut && <BadgesStatut noeud={noeud} />}
-      </button>
+          <span
+            className={`text-sm truncate ${estGroupe ? "font-semibold" : ""}`}
+          >
+            {titre}
+          </span>
+          {afficherStatut && <BadgesStatut noeud={noeud} />}
+        </button>
+        {onDeplacer && (
+          <div className="shrink-0 flex gap-0.5 opacity-0 group-hover/noeud:opacity-100 group-focus-within/noeud:opacity-100 transition-opacity">
+            <button
+              aria-label="Monter"
+              className="p-0.5 text-gray-400 hover:text-gray-600"
+              onClick={(event) => {
+                event.stopPropagation();
+                onDeplacer(noeud.id, "monter");
+              }}
+              title="Monter"
+              type="button"
+            >
+              <span className="text-xs">&#x25B2;</span>
+            </button>
+            <button
+              aria-label="Descendre"
+              className="p-0.5 text-gray-400 hover:text-gray-600"
+              onClick={(event) => {
+                event.stopPropagation();
+                onDeplacer(noeud.id, "descendre");
+              }}
+              title="Descendre"
+              type="button"
+            >
+              <span className="text-xs">&#x25BC;</span>
+            </button>
+            {noeud.parentId && (
+              <button
+                aria-label="Sortir du groupe"
+                className="p-0.5 text-gray-400 hover:text-gray-600"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onDeplacer(noeud.id, "sortir");
+                }}
+                title="Sortir du groupe"
+                type="button"
+              >
+                <span className="text-xs">&#x25C0;</span>
+              </button>
+            )}
+            <button
+              aria-label="Entrer dans le groupe voisin"
+              className="p-0.5 text-gray-400 hover:text-gray-600"
+              onClick={(event) => {
+                event.stopPropagation();
+                onDeplacer(noeud.id, "entrer");
+              }}
+              title="Entrer dans le groupe voisin"
+              type="button"
+            >
+              <span className="text-xs">&#x25B6;</span>
+            </button>
+          </div>
+        )}
+        {estGroupe && noeud.enfants.length > 0 && (
+          <button
+            className="shrink-0 px-3 text-gray-400 hover:text-gray-600"
+            onClick={() => onToggleGroupe(noeud.id)}
+            title={groupesOuverts.has(noeud.id) ? "Replier" : "Déplier"}
+            type="button"
+          >
+            <span
+              className={`text-xs inline-block transition-transform ${groupesOuverts.has(noeud.id) ? "rotate-90" : ""}`}
+            >
+              ▸
+            </span>
+          </button>
+        )}
+      </div>
 
-      {estGroupe && noeud.enfants.length > 0 && (
-        <div>
-          {noeud.enfants.map((enfant) => (
-            <NoeudArbreItem
-              afficherStatut={afficherStatut}
-              estItemDesactive={estItemDesactive}
-              itemSelectionneId={itemSelectionneId}
-              key={enfant.id}
-              niveau={niveau + 1}
-              noeud={enfant}
-              onSelectionItem={onSelectionItem}
-            />
-          ))}
-        </div>
-      )}
+      {estGroupe &&
+        noeud.enfants.length > 0 &&
+        groupesOuverts.has(noeud.id) && (
+          <div>
+            {noeud.enfants.map((enfant) => (
+              <NoeudArbreItem
+                afficherStatut={afficherStatut}
+                estItemDesactive={estItemDesactive}
+                groupesOuverts={groupesOuverts}
+                itemSelectionneId={itemSelectionneId}
+                key={enfant.id}
+                niveau={niveau + 1}
+                noeud={enfant}
+                onDeplacer={onDeplacer}
+                onSelectionItem={onSelectionItem}
+                onToggleGroupe={onToggleGroupe}
+              />
+            ))}
+          </div>
+        )}
     </div>
   );
 };
@@ -109,6 +198,10 @@ interface ArborescenceCentreAideProps {
   onSelectionItem: (id: string) => void;
   estItemDesactive?: (noeud: NoeudArbre) => boolean;
   afficherStatut?: boolean;
+  onDeplacer?: (
+    id: string,
+    action: "monter" | "descendre" | "sortir" | "entrer",
+  ) => void;
 }
 
 export const ArborescenceCentreAide: FunctionComponent<
@@ -119,20 +212,86 @@ export const ArborescenceCentreAide: FunctionComponent<
   onSelectionItem,
   estItemDesactive,
   afficherStatut,
+  onDeplacer,
 }) => {
+  const [recherche, setRecherche] = useState("");
+
+  const arbreFiltreParRecherche = useMemo(
+    () => filtrerArbreParRecherche(arbre, recherche),
+    [arbre, recherche],
+  );
+
+  const collecterGroupes = (noeuds: NoeudArbre[]): Set<string> => {
+    const groupes = new Set<string>();
+    const parcourir = (liste: NoeudArbre[]) => {
+      for (const noeud of liste) {
+        if (noeud.type === "GROUPE") {
+          groupes.add(noeud.id);
+          parcourir(noeud.enfants);
+        }
+      }
+    };
+    parcourir(noeuds);
+    return groupes;
+  };
+
+  const [groupesOuverts, setGroupesOuverts] = useState<Set<string>>(() =>
+    collecterGroupes(arbre),
+  );
+
+  useEffect(() => {
+    const groupesActuels = collecterGroupes(arbre);
+    setGroupesOuverts((previous) => {
+      const suivant = new Set(previous);
+      for (const groupeId of groupesActuels) {
+        if (!previous.has(groupeId)) {
+          suivant.add(groupeId);
+        }
+      }
+      return suivant;
+    });
+  }, [arbre]);
+
+  const toggleGroupe = (id: string) => {
+    setGroupesOuverts((previous) => {
+      const suivant = new Set(previous);
+      if (suivant.has(id)) {
+        suivant.delete(id);
+      } else {
+        suivant.add(id);
+      }
+      return suivant;
+    });
+  };
+
   return (
-    <div className="overflow-y-auto flex-1 py-2">
-      {arbre.map((noeud) => (
-        <NoeudArbreItem
-          afficherStatut={afficherStatut}
-          estItemDesactive={estItemDesactive}
-          itemSelectionneId={itemSelectionneId}
-          key={noeud.id}
-          niveau={0}
-          noeud={noeud}
-          onSelectionItem={onSelectionItem}
+    <>
+      <div className="px-3 pt-2 pb-1">
+        <input
+          aria-label="Rechercher dans l'arborescence"
+          className="w-full px-2 py-1.5 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+          onChange={(event) => setRecherche(event.target.value)}
+          placeholder="Rechercher..."
+          type="text"
+          value={recherche}
         />
-      ))}
-    </div>
+      </div>
+      <div className="overflow-y-auto flex-1 py-2">
+        {arbreFiltreParRecherche.map((noeud) => (
+          <NoeudArbreItem
+            afficherStatut={afficherStatut}
+            estItemDesactive={estItemDesactive}
+            groupesOuverts={groupesOuverts}
+            itemSelectionneId={itemSelectionneId}
+            key={noeud.id}
+            niveau={0}
+            noeud={noeud}
+            onDeplacer={onDeplacer}
+            onSelectionItem={onSelectionItem}
+            onToggleGroupe={toggleGroupe}
+          />
+        ))}
+      </div>
+    </>
   );
 };
