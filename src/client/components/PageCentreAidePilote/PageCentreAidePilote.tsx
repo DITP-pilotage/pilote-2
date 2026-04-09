@@ -58,7 +58,7 @@ export const PageCentreAidePilote: FunctionComponent = () => {
     itemSelectionne?.contenu !== null && itemSelectionne?.contenu !== undefined;
 
   return (
-    <main className="px-48 md:px-96 py-4">
+    <main className="max-w-screen-xl mx-auto px-6 py-4">
       <div className="flex gap-4">
         <div className="w-[280px] shrink-0 bg-white border border-gray-200 rounded-lg shadow-sm flex flex-col overflow-hidden">
           <h2 className="px-4 pt-4 pb-2 text-base font-bold border-b border-gray-200">
