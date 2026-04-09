@@ -1,4 +1,4 @@
-import { FunctionComponent } from "react";
+import { FunctionComponent, useState } from "react";
 import { NoeudArbre, aDesModificationsNonPubliees } from "./types";
 
 const BadgesStatut: FunctionComponent<{ noeud: NoeudArbre }> = ({ noeud }) => {
@@ -36,6 +36,8 @@ interface NoeudArbreProps {
   onSelectionItem: (id: string) => void;
   estItemDesactive?: (noeud: NoeudArbre) => boolean;
   afficherStatut?: boolean;
+  groupesOuverts: Set<string>;
+  onToggleGroupe: (id: string) => void;
 }
 
 const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
@@ -45,6 +47,8 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
   onSelectionItem,
   estItemDesactive,
   afficherStatut,
+  groupesOuverts,
+  onToggleGroupe,
 }) => {
   const estGroupe = noeud.type === "GROUPE";
   const estSelectionne = noeud.id === itemSelectionneId;
@@ -56,49 +60,73 @@ const NoeudArbreItem: FunctionComponent<NoeudArbreProps> = ({
 
   return (
     <div>
-      <button
-        className={`w-full text-left py-2 pr-3 flex items-center gap-2 transition-colors border-l-3 ${
+      <div
+        className={`flex items-stretch transition-colors border-l-3 ${
           estDesactive
-            ? "cursor-default text-gray-500 border-l-transparent"
+            ? "border-l-transparent"
             : estSelectionne
-              ? "bg-blue-50 text-blue-700 border-l-blue-600 font-medium"
-              : "hover:bg-gray-50 text-gray-700 border-l-transparent"
+              ? "bg-blue-50 border-l-blue-600"
+              : "hover:bg-gray-50 border-l-transparent"
         } ${afficherStatut && noeud.estMasque ? "opacity-50" : ""}`}
-        disabled={estDesactive}
-        onClick={() => onSelectionItem(noeud.id)}
-        style={{ paddingLeft: `${niveau * 16 + 12}px` }}
-        type="button"
       >
-        {estGroupe ? (
-          <span className="text-gray-400 shrink-0 text-xs">
-            {noeud.enfants.length > 0 ? "▸" : "▹"}
-          </span>
-        ) : (
-          <span className="text-gray-400 shrink-0 text-xs">›</span>
-        )}
-        <span
-          className={`text-sm truncate ${estGroupe ? "font-semibold" : ""}`}
+        <button
+          className={`flex-1 text-left py-2 flex items-center gap-2 min-w-0 ${
+            estDesactive
+              ? "cursor-default text-gray-500"
+              : estSelectionne
+                ? "text-blue-700 font-medium"
+                : "text-gray-700"
+          }`}
+          disabled={estDesactive}
+          onClick={() => onSelectionItem(noeud.id)}
+          style={{ paddingLeft: `${niveau * 16 + 12}px` }}
+          type="button"
         >
-          {titre}
-        </span>
-        {afficherStatut && <BadgesStatut noeud={noeud} />}
-      </button>
+          {!estGroupe && (
+            <span className="text-gray-400 shrink-0 text-xs">›</span>
+          )}
+          <span
+            className={`text-sm truncate ${estGroupe ? "font-semibold" : ""}`}
+          >
+            {titre}
+          </span>
+          {afficherStatut && <BadgesStatut noeud={noeud} />}
+        </button>
+        {estGroupe && noeud.enfants.length > 0 && (
+          <button
+            className="shrink-0 px-3 text-gray-400 hover:text-gray-600"
+            onClick={() => onToggleGroupe(noeud.id)}
+            title={groupesOuverts.has(noeud.id) ? "Replier" : "Déplier"}
+            type="button"
+          >
+            <span
+              className={`text-xs inline-block transition-transform ${groupesOuverts.has(noeud.id) ? "rotate-90" : ""}`}
+            >
+              ▸
+            </span>
+          </button>
+        )}
+      </div>
 
-      {estGroupe && noeud.enfants.length > 0 && (
-        <div>
-          {noeud.enfants.map((enfant) => (
-            <NoeudArbreItem
-              afficherStatut={afficherStatut}
-              estItemDesactive={estItemDesactive}
-              itemSelectionneId={itemSelectionneId}
-              key={enfant.id}
-              niveau={niveau + 1}
-              noeud={enfant}
-              onSelectionItem={onSelectionItem}
-            />
-          ))}
-        </div>
-      )}
+      {estGroupe &&
+        noeud.enfants.length > 0 &&
+        groupesOuverts.has(noeud.id) && (
+          <div>
+            {noeud.enfants.map((enfant) => (
+              <NoeudArbreItem
+                afficherStatut={afficherStatut}
+                estItemDesactive={estItemDesactive}
+                groupesOuverts={groupesOuverts}
+                itemSelectionneId={itemSelectionneId}
+                key={enfant.id}
+                niveau={niveau + 1}
+                noeud={enfant}
+                onSelectionItem={onSelectionItem}
+                onToggleGroupe={onToggleGroupe}
+              />
+            ))}
+          </div>
+        )}
     </div>
   );
 };
@@ -120,17 +148,45 @@ export const ArborescenceCentreAide: FunctionComponent<
   estItemDesactive,
   afficherStatut,
 }) => {
+  const [groupesOuverts, setGroupesOuverts] = useState<Set<string>>(() => {
+    const tousLesGroupes = new Set<string>();
+    const collecterGroupes = (noeuds: NoeudArbre[]) => {
+      for (const noeud of noeuds) {
+        if (noeud.type === "GROUPE") {
+          tousLesGroupes.add(noeud.id);
+          collecterGroupes(noeud.enfants);
+        }
+      }
+    };
+    collecterGroupes(arbre);
+    return tousLesGroupes;
+  });
+
+  const toggleGroupe = (id: string) => {
+    setGroupesOuverts((previous) => {
+      const suivant = new Set(previous);
+      if (suivant.has(id)) {
+        suivant.delete(id);
+      } else {
+        suivant.add(id);
+      }
+      return suivant;
+    });
+  };
+
   return (
     <div className="overflow-y-auto flex-1 py-2">
       {arbre.map((noeud) => (
         <NoeudArbreItem
           afficherStatut={afficherStatut}
           estItemDesactive={estItemDesactive}
+          groupesOuverts={groupesOuverts}
           itemSelectionneId={itemSelectionneId}
           key={noeud.id}
           niveau={0}
           noeud={noeud}
           onSelectionItem={onSelectionItem}
+          onToggleGroupe={toggleGroupe}
         />
       ))}
     </div>
