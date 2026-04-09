@@ -5,6 +5,7 @@ import { createGetChantiersEnRetardTool } from "@/server/albert/tools/getChantie
 import { createGetChantiersEnDifficulteTool } from "@/server/albert/tools/getChantiersEnDifficulte";
 import { GetChantierIndicateursQuery } from "@/server/chantiers/query/GetChantierIndicateursQuery";
 import { createGetChantierIndicateursTool } from "@/server/albert/tools/getChantierIndicateurs";
+import { createComposeDashboardTool } from "@/server/albert/tools/composeDashboard";
 import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase";
 import { PrismaTerritoireResolver } from "@/server/albert/infrastructure/PrismaTerritoireResolver";
 import { FsRapportFileStorage } from "@/server/albert/infrastructure/FsRapportFileStorage";
@@ -39,6 +40,7 @@ type AlbertOwnCradle = {
   createGetChantierIndicateursTool: ReturnType<
     typeof createGetChantierIndicateursTool
   >;
+  createComposeDashboardTool: ReturnType<typeof createComposeDashboardTool>;
   createExportRapportTool: ReturnType<typeof createExportRapportTool>;
   evaluerChatUseCase: EvaluerChatUseCase;
 };
@@ -70,6 +72,7 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       createGetChantierIndicateursTool: asModuleFunction(
         createGetChantierIndicateursTool,
       ),
+      createComposeDashboardTool: asModuleFunction(createComposeDashboardTool),
       createExportRapportTool: asModuleFunction(createExportRapportTool),
       evaluerChatUseCase: asModuleClass(EvaluerChatUseCase),
     } satisfies VerifyCradle<AlbertOwnCradle>);
