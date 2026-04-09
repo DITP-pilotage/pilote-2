@@ -156,6 +156,9 @@ function renderBr(node: Node): ReactNode {
   return <br />;
 }
 
+export const classesRenduContenuHtml =
+  "[&_p]:mb-0 [&_a]:text-primary [&_h4]:my-2 [&_hr]:!my-2 [&_ul]:ml-6 [&_ol]:ml-6 [&_ul]:list-disc [&_ol]:list-decimal [&_blockquote]:border-l-4 [&_blockquote]:border-blue-400 [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-gray-600 [&_blockquote]:my-2";
+
 export const RenduContenuHtml = ({
   html,
   className,
