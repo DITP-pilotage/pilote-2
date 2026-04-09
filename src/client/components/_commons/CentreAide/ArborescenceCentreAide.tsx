@@ -1,5 +1,9 @@
-import { FunctionComponent, useState } from "react";
-import { NoeudArbre, aDesModificationsNonPubliees } from "./types";
+import { FunctionComponent, useMemo, useState } from "react";
+import {
+  NoeudArbre,
+  aDesModificationsNonPubliees,
+  filtrerArbreParRecherche,
+} from "./types";
 
 const BadgesStatut: FunctionComponent<{ noeud: NoeudArbre }> = ({ noeud }) => {
   const estBrouillon = !noeud.estPublie;
@@ -209,6 +213,13 @@ export const ArborescenceCentreAide: FunctionComponent<
   afficherStatut,
   onDeplacer,
 }) => {
+  const [recherche, setRecherche] = useState("");
+
+  const arbreFiltreParRecherche = useMemo(
+    () => filtrerArbreParRecherche(arbre, recherche),
+    [arbre, recherche],
+  );
+
   const [groupesOuverts, setGroupesOuverts] = useState<Set<string>>(() => {
     const tousLesGroupes = new Set<string>();
     const collecterGroupes = (noeuds: NoeudArbre[]) => {
@@ -236,21 +247,32 @@ export const ArborescenceCentreAide: FunctionComponent<
   };
 
   return (
-    <div className="overflow-y-auto flex-1 py-2">
-      {arbre.map((noeud) => (
-        <NoeudArbreItem
-          afficherStatut={afficherStatut}
-          estItemDesactive={estItemDesactive}
-          groupesOuverts={groupesOuverts}
-          itemSelectionneId={itemSelectionneId}
-          key={noeud.id}
-          niveau={0}
-          noeud={noeud}
-          onDeplacer={onDeplacer}
-          onSelectionItem={onSelectionItem}
-          onToggleGroupe={toggleGroupe}
+    <>
+      <div className="px-3 pt-2 pb-1">
+        <input
+          className="w-full px-2 py-1.5 text-sm border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
+          onChange={(event) => setRecherche(event.target.value)}
+          placeholder="Rechercher..."
+          type="text"
+          value={recherche}
         />
-      ))}
-    </div>
+      </div>
+      <div className="overflow-y-auto flex-1 py-2">
+        {arbreFiltreParRecherche.map((noeud) => (
+          <NoeudArbreItem
+            afficherStatut={afficherStatut}
+            estItemDesactive={estItemDesactive}
+            groupesOuverts={groupesOuverts}
+            itemSelectionneId={itemSelectionneId}
+            key={noeud.id}
+            niveau={0}
+            noeud={noeud}
+            onDeplacer={onDeplacer}
+            onSelectionItem={onSelectionItem}
+            onToggleGroupe={toggleGroupe}
+          />
+        ))}
+      </div>
+    </>
   );
 };

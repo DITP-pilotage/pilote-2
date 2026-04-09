@@ -43,3 +43,30 @@ export const construireArbre = (
 
   return racines;
 };
+
+export const filtrerArbreParRecherche = (
+  noeuds: NoeudArbre[],
+  recherche: string,
+): NoeudArbre[] => {
+  if (!recherche.trim()) return noeuds;
+
+  const rechercheLower = recherche.toLowerCase();
+
+  const filtrer = (noeuds: NoeudArbre[]): NoeudArbre[] => {
+    return noeuds
+      .map((noeud) => {
+        const enfantsFiltres = filtrer(noeud.enfants);
+        const correspondAuNom = noeud.titre
+          .toLowerCase()
+          .includes(rechercheLower);
+
+        if (correspondAuNom || enfantsFiltres.length > 0) {
+          return { ...noeud, enfants: enfantsFiltres };
+        }
+        return null;
+      })
+      .filter((noeud): noeud is NoeudArbre => noeud !== null);
+  };
+
+  return filtrer(noeuds);
+};
