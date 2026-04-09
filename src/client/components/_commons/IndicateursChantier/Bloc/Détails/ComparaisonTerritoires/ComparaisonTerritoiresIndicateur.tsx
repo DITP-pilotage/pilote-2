@@ -19,42 +19,48 @@ import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 
 type TypeCarteIndicateur = "ta" | "va" | "pva";
 
-export const construireContenuCsv = ({
-  type,
-  donneesParJalonTA,
-  donneesParJalonVA,
-  donneesPVA,
-  jalons,
-  codesTerritoiresSelectionnes,
-}: {
-  type: TypeCarteIndicateur;
-  donneesParJalonTA: Map<
-    number,
-    {
-      territoireCode: string;
-      estApplicable: boolean | null;
-      dateTauxAvancementAnnuel: string | null;
-      tauxAvancementJalon: number | null;
-    }[]
-  >;
-  donneesParJalonVA: Map<
-    number,
-    {
-      territoireCode: string;
-      estApplicable: boolean | null;
-      dateValeurAvancement: string | null;
-      valeurAvancement: number | null;
-    }[]
-  >;
-  donneesPVA: {
-    territoireCode: string;
-    estApplicable: boolean | null;
-    nombrePropositionsValeur: number;
-  }[];
-  jalons: number[];
-  codesTerritoiresSelectionnes: string[];
-}): ContenuCsv => {
-  if (type === "ta") {
+export const construireContenuCsv = (
+  params:
+    | {
+        type: "ta";
+        donneesParJalonTA: Map<
+          number,
+          {
+            territoireCode: string;
+            estApplicable: boolean | null;
+            dateTauxAvancementAnnuel: string | null;
+            tauxAvancementJalon: number | null;
+          }[]
+        >;
+        jalons: number[];
+        codesTerritoiresSelectionnes: string[];
+      }
+    | {
+        type: "va";
+        donneesParJalonVA: Map<
+          number,
+          {
+            territoireCode: string;
+            estApplicable: boolean | null;
+            dateValeurAvancement: string | null;
+            valeurAvancement: number | null;
+          }[]
+        >;
+        jalons: number[];
+        codesTerritoiresSelectionnes: string[];
+      }
+    | {
+        type: "pva";
+        donneesPVA: {
+          territoireCode: string;
+          estApplicable: boolean | null;
+          nombrePropositionsValeur: number;
+        }[];
+        codesTerritoiresSelectionnes: string[];
+      },
+): ContenuCsv => {
+  if (params.type === "ta") {
+    const { donneesParJalonTA, jalons, codesTerritoiresSelectionnes } = params;
     const colonnes = [
       "Territoire",
       ...jalons.flatMap((jalonCourant) => [
@@ -92,7 +98,8 @@ export const construireContenuCsv = ({
     return { colonnes, lignes };
   }
 
-  if (type === "va") {
+  if (params.type === "va") {
+    const { donneesParJalonVA, jalons, codesTerritoiresSelectionnes } = params;
     const colonnes = [
       "Territoire",
       ...jalons.flatMap((jalonCourant) => [
@@ -128,6 +135,7 @@ export const construireContenuCsv = ({
     return { colonnes, lignes };
   }
 
+  const { donneesPVA, codesTerritoiresSelectionnes } = params;
   return {
     colonnes: ["Territoire", "Nombre de propositions"],
     lignes: filtrerTerritoires(donneesPVA, codesTerritoiresSelectionnes).map(
@@ -187,44 +195,61 @@ export const ComparaisonTerritoiresIndicateur = ({
         territoireCode,
         ...territoiresCompares.split(",").filter(Boolean),
       ];
-      const jalons = buildJalons();
+      const nomFichier = `comparaison-territoriale-${indicateurId}-${type}.csv`;
+
+      if (type === "ta") {
+        const jalons = buildJalons();
+        const { colonnes, lignes } = construireContenuCsv({
+          type,
+          donneesParJalonTA: new Map(
+            jalons.map((jalonCourant) => [
+              jalonCourant,
+              utils.indicateur.recupererTauxAvancementTerritoires.getData({
+                indicateurId,
+                chantierId,
+                jalon: jalonCourant,
+              }) ?? [],
+            ]),
+          ),
+          jalons,
+          codesTerritoiresSelectionnes,
+        });
+        telechargerCsv(genererCsv(colonnes, lignes), nomFichier);
+        return;
+      }
+
+      if (type === "va") {
+        const jalons = buildJalons();
+        const { colonnes, lignes } = construireContenuCsv({
+          type,
+          donneesParJalonVA: new Map(
+            jalons.map((jalonCourant) => [
+              jalonCourant,
+              utils.indicateur.recupererValeursAvancementTerritoires.getData({
+                indicateurId,
+                chantierId,
+                jalon: jalonCourant,
+              }) ?? [],
+            ]),
+          ),
+          jalons,
+          codesTerritoiresSelectionnes,
+        });
+        telechargerCsv(genererCsv(colonnes, lignes), nomFichier);
+        return;
+      }
 
       const { colonnes, lignes } = construireContenuCsv({
         type,
-        donneesParJalonTA: new Map(
-          jalons.map((jalonCourant) => [
-            jalonCourant,
-            utils.indicateur.recupererTauxAvancementTerritoires.getData({
-              indicateurId,
-              chantierId,
-              jalon: jalonCourant,
-            }) ?? [],
-          ]),
-        ),
-        donneesParJalonVA: new Map(
-          jalons.map((jalonCourant) => [
-            jalonCourant,
-            utils.indicateur.recupererValeursAvancementTerritoires.getData({
-              indicateurId,
-              chantierId,
-              jalon: jalonCourant,
-            }) ?? [],
-          ]),
-        ),
         donneesPVA:
           utils.indicateur.recupererPVATerritoires.getData({
             indicateurId,
             chantierId,
             jalon,
           }) ?? [],
-        jalons,
         codesTerritoiresSelectionnes,
       });
-
-      telechargerCsv(
-        genererCsv(colonnes, lignes),
-        `comparaison-territoriale-${indicateurId}-${type}.csv`,
-      );
+      telechargerCsv(genererCsv(colonnes, lignes), nomFichier);
     },
     [
       utils,

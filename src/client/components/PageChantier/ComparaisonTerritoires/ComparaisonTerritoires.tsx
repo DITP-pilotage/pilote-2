@@ -38,20 +38,26 @@ const options: (
   },
 ];
 
-export const construireContenuCsv = ({
-  type,
-  donneesTA,
-  donneesMeteo,
-  donneesPVA,
-  codesTerritoiresSelectionnes,
-}: {
-  type: TypeCarteChantier;
-  donneesTA: TauxAvancementComparaisonTerritoireViewModel[];
-  donneesMeteo: MeteoTerritoireViewModel[];
-  donneesPVA: PVATerritoireViewModel[];
-  codesTerritoiresSelectionnes: string[];
-}): ContenuCsv => {
-  if (type === "ta") {
+export const construireContenuCsv = (
+  params:
+    | {
+        type: "ta";
+        donneesTA: TauxAvancementComparaisonTerritoireViewModel[];
+        codesTerritoiresSelectionnes: string[];
+      }
+    | {
+        type: "meteo";
+        donneesMeteo: MeteoTerritoireViewModel[];
+        codesTerritoiresSelectionnes: string[];
+      }
+    | {
+        type: "pva";
+        donneesPVA: PVATerritoireViewModel[];
+        codesTerritoiresSelectionnes: string[];
+      },
+): ContenuCsv => {
+  if (params.type === "ta") {
+    const { donneesTA, codesTerritoiresSelectionnes } = params;
     return {
       colonnes: [
         "Territoire",
@@ -70,7 +76,8 @@ export const construireContenuCsv = ({
     };
   }
 
-  if (type === "meteo") {
+  if (params.type === "meteo") {
+    const { donneesMeteo, codesTerritoiresSelectionnes } = params;
     return {
       colonnes: ["Territoire", "Niveau de confiance", "Date de publication"],
       lignes: filtrerTerritoires(
@@ -84,6 +91,7 @@ export const construireContenuCsv = ({
     };
   }
 
+  const { donneesPVA, codesTerritoiresSelectionnes } = params;
   return {
     colonnes: ["Territoire", "Nombre de propositions"],
     lignes: filtrerTerritoires(donneesPVA, codesTerritoiresSelectionnes).map(
@@ -110,19 +118,38 @@ export const ComparaisonTerritoires = ({
         territoireCode,
         ...territoiresCompares.split(",").filter(Boolean),
       ];
+      const nomFichier = `comparaison-territoriale-${chantierId}-${type}.csv`;
+
+      if (type === "ta") {
+        const { colonnes, lignes } = construireContenuCsv({
+          type,
+          donneesTA:
+            utils.chantier.recupererTauxAvancementTerritoires.getData({
+              chantierIds: [chantierId],
+              jalon,
+            }) ?? [],
+          codesTerritoiresSelectionnes,
+        });
+        telechargerCsv(genererCsv(colonnes, lignes), nomFichier);
+        return;
+      }
+
+      if (type === "meteo") {
+        const { colonnes, lignes } = construireContenuCsv({
+          type,
+          donneesMeteo:
+            utils.chantier.recupererMeteosTerritoires.getData({
+              chantierId,
+              jalon,
+            }) ?? [],
+          codesTerritoiresSelectionnes,
+        });
+        telechargerCsv(genererCsv(colonnes, lignes), nomFichier);
+        return;
+      }
 
       const { colonnes, lignes } = construireContenuCsv({
         type,
-        donneesTA:
-          utils.chantier.recupererTauxAvancementTerritoires.getData({
-            chantierIds: [chantierId],
-            jalon,
-          }) ?? [],
-        donneesMeteo:
-          utils.chantier.recupererMeteosTerritoires.getData({
-            chantierId,
-            jalon,
-          }) ?? [],
         donneesPVA:
           utils.chantier.recupererPVAChantierTerritoires.getData({
             chantierId,
@@ -130,11 +157,7 @@ export const ComparaisonTerritoires = ({
           }) ?? [],
         codesTerritoiresSelectionnes,
       });
-
-      telechargerCsv(
-        genererCsv(colonnes, lignes),
-        `comparaison-territoriale-${chantierId}-${type}.csv`,
-      );
+      telechargerCsv(genererCsv(colonnes, lignes), nomFichier);
     },
     [utils, chantierId, jalon, territoireCode, territoiresCompares],
   );
