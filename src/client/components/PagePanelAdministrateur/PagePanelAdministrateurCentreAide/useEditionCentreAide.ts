@@ -46,6 +46,7 @@ export const useEditionCentreAide = () => {
   } = useLectureCentreAide();
 
   const [titre, setTitre] = useState("");
+  const [titreAffiche, setTitreAffiche] = useState("");
   const [contenu, setContenu] = useState<string | null>(templateInitial);
   const [type, setType] = useState<$Enums.TypeArticleCentreAide>("PAGE");
 
@@ -58,6 +59,9 @@ export const useEditionCentreAide = () => {
       if (premier) {
         setItemSelectionneId(premier.id);
         setTitre(premier.titreBrouillon ?? premier.titre);
+        setTitreAffiche(
+          premier.titreAfficheBrouillon ?? premier.titreAffiche ?? "",
+        );
         setContenu(premier.contenuBrouillon ?? premier.contenu);
         setType(premier.type);
       }
@@ -71,6 +75,9 @@ export const useEditionCentreAide = () => {
 
       setItemSelectionneId(id);
       setTitre(article.titreBrouillon ?? article.titre);
+      setTitreAffiche(
+        article.titreAfficheBrouillon ?? article.titreAffiche ?? "",
+      );
       setContenu(article.contenuBrouillon ?? article.contenu);
       setType(article.type);
     },
@@ -82,6 +89,7 @@ export const useEditionCentreAide = () => {
       refetchListe();
       setItemSelectionneId(variables.id);
       setTitre(variables.titre);
+      setTitreAffiche("");
       setContenu(variables.contenu ?? null);
       setType(variables.type);
       toast.success("Article créé avec succès", {
@@ -201,11 +209,20 @@ export const useEditionCentreAide = () => {
         parentId: itemSelectionne.parentId,
         contenuPublie: itemSelectionne.contenu,
         titrePublie: itemSelectionne.titre,
+        titreAffiche,
+        titreAffichePublie: itemSelectionne.titreAffiche,
         estPublie: itemSelectionne.estPublie,
         estMasque: itemSelectionne.estMasque,
       });
     }
-  }, [itemSelectionneId, itemSelectionne, titre, contenu, mutationModifier]);
+  }, [
+    itemSelectionneId,
+    itemSelectionne,
+    titre,
+    titreAffiche,
+    contenu,
+    mutationModifier,
+  ]);
 
   const publier = useCallback(() => {
     if (itemSelectionneId) {
@@ -246,6 +263,8 @@ export const useEditionCentreAide = () => {
     estChargement,
     titre,
     setTitre,
+    titreAffiche,
+    setTitreAffiche,
     contenu,
     setContenu,
     type,

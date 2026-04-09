@@ -752,7 +752,9 @@ model article_centre_aide {
   titre             String
   contenu           String?
   titre_brouillon   String?
-  contenu_brouillon String?
+  contenu_brouillon       String?
+  titre_affiche           String?
+  titre_affiche_brouillon String?
   type              TypeArticleCentreAide
   ordre             Int
   parent_id         String?               @db.Uuid

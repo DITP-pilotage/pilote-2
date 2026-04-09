@@ -10,10 +10,13 @@ export const aDesModificationsNonPubliees = (article: {
   titre: string;
   contenuBrouillon: string | null;
   contenu: string | null;
+  titreAfficheBrouillon: string | null;
+  titreAffiche: string | null;
 }): boolean =>
   article.estPublie &&
   (article.titreBrouillon !== article.titre ||
-    article.contenuBrouillon !== article.contenu);
+    article.contenuBrouillon !== article.contenu ||
+    article.titreAfficheBrouillon !== article.titreAffiche);
 
 export const construireArbre = (
   articles: ArticleCentreAideContrat[],

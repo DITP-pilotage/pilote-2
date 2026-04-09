@@ -7,6 +7,8 @@ export type ArticleCentreAideContrat = {
   contenu: string | null;
   titreBrouillon: string | null;
   contenuBrouillon: string | null;
+  titreAffiche: string | null;
+  titreAfficheBrouillon: string | null;
   type: $Enums.TypeArticleCentreAide;
   ordre: number;
   parentId: string | null;
@@ -23,6 +25,8 @@ export const presenterEnArticleCentreAideContrat = (
     contenu: article.contenu,
     titreBrouillon: article.titreBrouillon,
     contenuBrouillon: article.contenuBrouillon,
+    titreAffiche: article.titreAffiche,
+    titreAfficheBrouillon: article.titreAfficheBrouillon,
     type: article.type,
     ordre: article.ordre,
     parentId: article.parentId,

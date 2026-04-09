@@ -79,7 +79,9 @@ export const PageCentreAidePilote: FunctionComponent = () => {
 
         {itemSelectionne ? (
           <div className="flex-1 bg-white border border-gray-200 rounded-lg shadow-sm overflow-y-auto p-6">
-            <h2 className="text-xl font-bold mb-4">{itemSelectionne.titre}</h2>
+            <h2 className="text-xl font-bold mb-4">
+              {itemSelectionne.titreAffiche || itemSelectionne.titre}
+            </h2>
             {aContenu ? (
               <div className={classesRenduContenuHtml}>
                 <RenduContenuHtml html={itemSelectionne.contenu!} />

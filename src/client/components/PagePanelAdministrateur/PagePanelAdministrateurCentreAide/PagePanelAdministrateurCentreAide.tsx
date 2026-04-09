@@ -24,6 +24,8 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
     estChargement,
     titre,
     setTitre,
+    titreAffiche,
+    setTitreAffiche,
     contenu,
     setContenu,
     sauvegarder,
@@ -122,7 +124,7 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
                   <div className="flex items-end gap-4">
                     <div className="flex-1">
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Titre
+                        Nom (arborescence)
                       </label>
                       <input
                         className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -130,6 +132,20 @@ export const PagePanelAdministrateurCentreAide: FunctionComponent = () => {
                         placeholder="Titre de l'article"
                         type="text"
                         value={titre}
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Titre affiché (contenu)
+                      </label>
+                      <input
+                        className="w-full px-3 py-2 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        onChange={(event) =>
+                          setTitreAffiche(event.target.value)
+                        }
+                        placeholder="Titre affiché dans le contenu de l'article"
+                        type="text"
+                        value={titreAffiche}
                       />
                     </div>
                     <div className="flex gap-2 shrink-0">

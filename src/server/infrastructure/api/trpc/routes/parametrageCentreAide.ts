@@ -64,6 +64,8 @@ export const parametrageCentreAideRouter = créerRouteurTRPC({
         parentId: z.string().uuid().nullish(),
         contenuPublie: z.string().nullish(),
         titrePublie: z.string().nullish(),
+        titreAffichePublie: z.string().nullish(),
+        titreAffiche: z.string().nullish(),
         estPublie: z.boolean().optional(),
         estMasque: z.boolean().optional(),
       }),
@@ -82,6 +84,8 @@ export const parametrageCentreAideRouter = créerRouteurTRPC({
           parentId: input.parentId,
           contenuPublie: input.contenuPublie,
           titrePublie: input.titrePublie,
+          titreAffichePublie: input.titreAffichePublie,
+          titreAffiche: input.titreAffiche,
           estPublie: input.estPublie,
           estMasque: input.estMasque,
         });

@@ -12,6 +12,10 @@ export class ArticleCentreAide {
 
   private _contenuBrouillon: string | null;
 
+  private _titreAffiche: string | null;
+
+  private _titreAfficheBrouillon: string | null;
+
   private _type: $Enums.TypeArticleCentreAide;
 
   private _ordre: number;
@@ -32,6 +36,8 @@ export class ArticleCentreAide {
     contenu: string | null,
     titreBrouillon: string | null,
     contenuBrouillon: string | null,
+    titreAffiche: string | null,
+    titreAfficheBrouillon: string | null,
     type: $Enums.TypeArticleCentreAide,
     ordre: number,
     parentId: string | null,
@@ -45,6 +51,8 @@ export class ArticleCentreAide {
     this._contenu = contenu;
     this._titreBrouillon = titreBrouillon;
     this._contenuBrouillon = contenuBrouillon;
+    this._titreAffiche = titreAffiche;
+    this._titreAfficheBrouillon = titreAfficheBrouillon;
     this._type = type;
     this._ordre = ordre;
     this._parentId = parentId;
@@ -72,6 +80,14 @@ export class ArticleCentreAide {
 
   get contenuBrouillon(): string | null {
     return this._contenuBrouillon;
+  }
+
+  get titreAffiche(): string | null {
+    return this._titreAffiche;
+  }
+
+  get titreAfficheBrouillon(): string | null {
+    return this._titreAfficheBrouillon;
   }
 
   get type(): $Enums.TypeArticleCentreAide {
@@ -108,6 +124,8 @@ export class ArticleCentreAide {
     contenu,
     titreBrouillon,
     contenuBrouillon,
+    titreAffiche,
+    titreAfficheBrouillon,
     type,
     ordre,
     parentId,
@@ -121,6 +139,8 @@ export class ArticleCentreAide {
     contenu?: string | null;
     titreBrouillon?: string | null;
     contenuBrouillon?: string | null;
+    titreAffiche?: string | null;
+    titreAfficheBrouillon?: string | null;
     type: $Enums.TypeArticleCentreAide;
     ordre: number;
     parentId?: string | null;
@@ -135,6 +155,8 @@ export class ArticleCentreAide {
       contenu ?? null,
       titreBrouillon ?? null,
       contenuBrouillon ?? null,
+      titreAffiche ?? null,
+      titreAfficheBrouillon ?? null,
       type,
       ordre,
       parentId ?? null,
