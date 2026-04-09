@@ -38,13 +38,19 @@ const options: (
   },
 ];
 
-export const construireContenuCsv = (
-  type: TypeCarteChantier,
-  donneesTA: TauxAvancementComparaisonTerritoireViewModel[],
-  donneesMeteo: MeteoTerritoireViewModel[],
-  donneesPVA: PVATerritoireViewModel[],
-  codesTerritoiresSelectionnes: string[],
-): ContenuCsv => {
+export const construireContenuCsv = ({
+  type,
+  donneesTA,
+  donneesMeteo,
+  donneesPVA,
+  codesTerritoiresSelectionnes,
+}: {
+  type: TypeCarteChantier;
+  donneesTA: TauxAvancementComparaisonTerritoireViewModel[];
+  donneesMeteo: MeteoTerritoireViewModel[];
+  donneesPVA: PVATerritoireViewModel[];
+  codesTerritoiresSelectionnes: string[];
+}): ContenuCsv => {
   if (type === "ta") {
     return {
       colonnes: [
@@ -105,22 +111,25 @@ export const ComparaisonTerritoires = ({
         ...territoiresCompares.split(",").filter(Boolean),
       ];
 
-      const { colonnes, lignes } = construireContenuCsv(
+      const { colonnes, lignes } = construireContenuCsv({
         type,
-        utils.chantier.recupererTauxAvancementTerritoires.getData({
-          chantierIds: [chantierId],
-          jalon,
-        }) ?? [],
-        utils.chantier.recupererMeteosTerritoires.getData({
-          chantierId,
-          jalon,
-        }) ?? [],
-        utils.chantier.recupererPVAChantierTerritoires.getData({
-          chantierId,
-          jalon,
-        }) ?? [],
+        donneesTA:
+          utils.chantier.recupererTauxAvancementTerritoires.getData({
+            chantierIds: [chantierId],
+            jalon,
+          }) ?? [],
+        donneesMeteo:
+          utils.chantier.recupererMeteosTerritoires.getData({
+            chantierId,
+            jalon,
+          }) ?? [],
+        donneesPVA:
+          utils.chantier.recupererPVAChantierTerritoires.getData({
+            chantierId,
+            jalon,
+          }) ?? [],
         codesTerritoiresSelectionnes,
-      );
+      });
 
       telechargerCsv(
         genererCsv(colonnes, lignes),

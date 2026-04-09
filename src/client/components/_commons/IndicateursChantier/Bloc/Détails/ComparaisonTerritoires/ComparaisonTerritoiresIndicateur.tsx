@@ -19,8 +19,15 @@ import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 
 type TypeCarteIndicateur = "ta" | "va" | "pva";
 
-export const construireContenuCsv = (
-  type: TypeCarteIndicateur,
+export const construireContenuCsv = ({
+  type,
+  donneesParJalonTA,
+  donneesParJalonVA,
+  donneesPVA,
+  jalons,
+  codesTerritoiresSelectionnes,
+}: {
+  type: TypeCarteIndicateur;
   donneesParJalonTA: Map<
     number,
     {
@@ -29,7 +36,7 @@ export const construireContenuCsv = (
       dateTauxAvancementAnnuel: string | null;
       tauxAvancementJalon: number | null;
     }[]
-  >,
+  >;
   donneesParJalonVA: Map<
     number,
     {
@@ -38,15 +45,15 @@ export const construireContenuCsv = (
       dateValeurAvancement: string | null;
       valeurAvancement: number | null;
     }[]
-  >,
+  >;
   donneesPVA: {
     territoireCode: string;
     estApplicable: boolean | null;
     nombrePropositionsValeur: number;
-  }[],
-  jalons: number[],
-  codesTerritoiresSelectionnes: string[],
-): ContenuCsv => {
+  }[];
+  jalons: number[];
+  codesTerritoiresSelectionnes: string[];
+}): ContenuCsv => {
   if (type === "ta") {
     const colonnes = [
       "Territoire",
@@ -182,9 +189,9 @@ export const ComparaisonTerritoiresIndicateur = ({
       ];
       const jalons = buildJalons();
 
-      const { colonnes, lignes } = construireContenuCsv(
+      const { colonnes, lignes } = construireContenuCsv({
         type,
-        new Map(
+        donneesParJalonTA: new Map(
           jalons.map((jalonCourant) => [
             jalonCourant,
             utils.indicateur.recupererTauxAvancementTerritoires.getData({
@@ -194,7 +201,7 @@ export const ComparaisonTerritoiresIndicateur = ({
             }) ?? [],
           ]),
         ),
-        new Map(
+        donneesParJalonVA: new Map(
           jalons.map((jalonCourant) => [
             jalonCourant,
             utils.indicateur.recupererValeursAvancementTerritoires.getData({
@@ -204,14 +211,15 @@ export const ComparaisonTerritoiresIndicateur = ({
             }) ?? [],
           ]),
         ),
-        utils.indicateur.recupererPVATerritoires.getData({
-          indicateurId,
-          chantierId,
-          jalon,
-        }) ?? [],
+        donneesPVA:
+          utils.indicateur.recupererPVATerritoires.getData({
+            indicateurId,
+            chantierId,
+            jalon,
+          }) ?? [],
         jalons,
         codesTerritoiresSelectionnes,
-      );
+      });
 
       telechargerCsv(
         genererCsv(colonnes, lignes),
