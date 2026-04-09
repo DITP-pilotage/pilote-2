@@ -16,6 +16,9 @@ import {
 import { buildJalons } from "@/client/utils/jalons";
 import api from "@/server/infrastructure/api/trpc/api";
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
+import { TauxAvancementComparaisonTerritoireViewModel } from "@/server/chantiers/app/contrats/TauxAvancementComparaisonTerritoireViewModel";
+import { ValeurAvancementIndicateurTerritoire } from "@/server/chantiers/infrastructure/queries/RecupererValeursAvancementIndicateurTerritoiresQuery";
+import { PVATerritoireViewModel } from "@/server/chantiers/infrastructure/queries/GetChantierPVACountTerritoiresQuery";
 
 type TypeCarteIndicateur = "ta" | "va" | "pva";
 
@@ -25,37 +28,20 @@ export const construireContenuCsv = (
         type: "ta";
         donneesParJalonTA: Map<
           number,
-          {
-            territoireCode: string;
-            estApplicable: boolean | null;
-            dateTauxAvancementAnnuel: string | null;
-            tauxAvancementJalon: number | null;
-          }[]
+          TauxAvancementComparaisonTerritoireViewModel[]
         >;
         jalons: number[];
         codesTerritoiresSelectionnes: string[];
       }
     | {
         type: "va";
-        donneesParJalonVA: Map<
-          number,
-          {
-            territoireCode: string;
-            estApplicable: boolean | null;
-            dateValeurAvancement: string | null;
-            valeurAvancement: number | null;
-          }[]
-        >;
+        donneesParJalonVA: Map<number, ValeurAvancementIndicateurTerritoire[]>;
         jalons: number[];
         codesTerritoiresSelectionnes: string[];
       }
     | {
         type: "pva";
-        donneesPVA: {
-          territoireCode: string;
-          estApplicable: boolean | null;
-          nombrePropositionsValeur: number;
-        }[];
+        donneesPVA: PVATerritoireViewModel[];
         codesTerritoiresSelectionnes: string[];
       },
 ): ContenuCsv => {
