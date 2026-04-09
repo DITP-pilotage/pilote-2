@@ -232,7 +232,6 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
         </div>
         {featureComparaisonTerritoires ? (
           <TuileWidget titre="Comparaison territoriale et évolution">
-            <div />
             <ExportableWidget nomFichier="comparaison-territoriale">
               <WidgetCartographieTA
                 mode="chantiers"
