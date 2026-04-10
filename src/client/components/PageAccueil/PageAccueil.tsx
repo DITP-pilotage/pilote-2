@@ -6,7 +6,7 @@ import {
 } from "@/components/PageAccueil/PageAccueilContext";
 import { BasePageAccueilLayout } from "@/components/PageAccueil/BasePageAccueilLayout";
 import { SectionAvancementMoyen } from "@/components/PageAccueil/sections/SectionAvancementMoyen";
-import { SectionComparaisonTerritoires } from "@/components/PageAccueil/sections/SectionComparaisonTerritoires";
+import { SectionCartographieTA } from "@/components/PageAccueil/sections/SectionCartographieTA";
 import { SectionWidgetsChantiersSignales } from "@/components/PageAccueil/sections/SectionWidgetsChantiersSignales";
 import { SectionTableauChantiers } from "@/components/PageAccueil/sections/SectionTableauChantiers";
 import type { getServerSideProps } from "@/pages/accueil/chantier/[territoireCode]/index";
@@ -47,7 +47,7 @@ export const PageAccueil: FunctionComponent<PageAccueilProps> = (props) => {
         territoireCode={props.territoireCode}
       >
         <SectionAvancementMoyen />
-        <SectionComparaisonTerritoires />
+        <SectionCartographieTA />
         <SectionWidgetsChantiersSignales />
         <SectionTableauChantiers />
       </BasePageAccueilLayout>
