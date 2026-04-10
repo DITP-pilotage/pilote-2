@@ -30,6 +30,7 @@ import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelec
 import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
 import { useEnv } from "@/client/hooks/useEnv";
 import { WidgetCartographieTAComparaison } from "@/components/_commons/Widget/WidgetCartographieTAComparaison/WidgetCartographieTAComparaison";
+import { BoutonExportCsvTA } from "@/components/_commons/Widget/WidgetCartographieTA/BoutonExportCsvTA";
 import { ExportableWidget } from "@/components/_commons/Widget/ExportableWidget";
 import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
 import { WidgetRepartitionMeteos } from "@/components/_commons/Widget/WidgetRepartitionMeteos/WidgetRepartitionMeteos";
@@ -232,7 +233,17 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
         </div>
         {featureComparaisonTerritoires ? (
           <TuileWidget titre="Comparaison territoriale et évolution">
-            <ExportableWidget nomFichier="comparaison-territoriale">
+            <ExportableWidget
+              boutonExportCsv={
+                <BoutonExportCsvTA
+                  chantierIds={chantierIds}
+                  jalon={jalon}
+                  nomFichier="comparaison-territoriale"
+                  territoireCode={territoireCode}
+                />
+              }
+              nomFichier="comparaison-territoriale"
+            >
               <WidgetCartographieTAComparaison
                 mode="chantiers"
                 chantierIds={chantierIds}
