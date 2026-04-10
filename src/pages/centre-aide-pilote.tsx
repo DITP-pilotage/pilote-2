@@ -3,12 +3,12 @@ import { GetServerSideProps } from "next";
 import { FunctionComponent } from "react";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { PageCentreAidePilote } from "@/components/PageCentreAidePilote/PageCentreAidePilote";
-import { configurationFeatureFlip } from "@/config";
+import { useEnv } from "@/client/hooks/useEnv";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await auth(context);
 
-  if (!session || !configurationFeatureFlip().centreAidePilote) {
+  if (!session) {
     return {
       redirect: {
         destination: "/",
@@ -23,6 +23,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const NextPageCentreAidePilote: FunctionComponent = () => {
+  const ffCentreAidePilote = useEnv("NEXT_PUBLIC_FF_CENTRE_AIDE_PILOTE");
+
+  if (!ffCentreAidePilote) {
+    return null;
+  }
+
   return (
     <>
       <Head>
