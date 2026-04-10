@@ -1,3 +1,15 @@
+export const filtrerLesTerritoires = <
+  T extends { estApplicable: boolean | null; territoireCode: string },
+>(
+  donnees: T[],
+  territoiresPourExport: string[],
+): T[] =>
+  donnees.filter(
+    (t) =>
+      t.estApplicable !== false &&
+      territoiresPourExport.includes(t.territoireCode),
+  );
+
 export const genererContenuCsv = (lignes: string[][]): string => {
   const bom = "\uFEFF";
   const corps = lignes

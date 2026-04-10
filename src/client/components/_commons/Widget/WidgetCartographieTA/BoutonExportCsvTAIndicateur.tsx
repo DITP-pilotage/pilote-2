@@ -2,6 +2,7 @@ import { BoutonExportCsv } from "@/components/_commons/Widget/BoutonExportCsv";
 import { getLabelTerritoire } from "@/client/constants/territoires";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { useExportCsv } from "@/client/hooks/useExportCsv";
+import { filtrerLesTerritoires } from "@/client/utils/csv";
 import { buildJalons } from "@/client/utils/jalons";
 import api from "@/server/infrastructure/api/trpc/api";
 
@@ -34,13 +35,10 @@ export const BoutonExportCsvTAIndicateur = ({
         ),
       );
 
-      const territoiresApplicables = donneesParJalon[0]
-        .filter(
-          (territoire) =>
-            territoire.estApplicable !== false &&
-            territoiresPourExport.includes(territoire.territoireCode),
-        )
-        .map((territoire) => territoire.territoireCode);
+      const territoiresApplicables = filtrerLesTerritoires(
+        donneesParJalon[0],
+        territoiresPourExport,
+      ).map((territoire) => territoire.territoireCode);
 
       return [
         [

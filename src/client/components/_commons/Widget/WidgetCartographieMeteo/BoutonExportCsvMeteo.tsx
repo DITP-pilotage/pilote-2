@@ -2,6 +2,7 @@ import { BoutonExportCsv } from "@/components/_commons/Widget/BoutonExportCsv";
 import { getLabelTerritoire } from "@/client/constants/territoires";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { useExportCsv } from "@/client/hooks/useExportCsv";
+import { filtrerLesTerritoires } from "@/client/utils/csv";
 import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import api from "@/server/infrastructure/api/trpc/api";
 
@@ -29,13 +30,8 @@ export const BoutonExportCsvMeteo = ({
 
       return [
         ["Territoire", "Niveau de confiance", "Date de publication"],
-        ...donnees
-          .filter(
-            (territoire) =>
-              territoire.estApplicable !== false &&
-              territoiresPourExport.includes(territoire.territoireCode),
-          )
-          .map((territoire) => [
+        ...filtrerLesTerritoires(donnees, territoiresPourExport).map(
+          (territoire) => [
             getLabelTerritoire(territoire.territoireCode),
             territoire.meteo !== null
               ? (libellesMeteos[territoire.meteo] ?? "Non renseignée")
@@ -45,7 +41,8 @@ export const BoutonExportCsvMeteo = ({
                   territoire.dateDeMajQualitative,
                 )
               : "Non renseignée",
-          ]),
+          ],
+        ),
       ];
     },
   });

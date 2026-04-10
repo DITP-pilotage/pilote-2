@@ -2,6 +2,7 @@ import { BoutonExportCsv } from "@/components/_commons/Widget/BoutonExportCsv";
 import { getLabelTerritoire } from "@/client/constants/territoires";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { useExportCsv } from "@/client/hooks/useExportCsv";
+import { filtrerLesTerritoires } from "@/client/utils/csv";
 import api from "@/server/infrastructure/api/trpc/api";
 
 export const BoutonExportCsvTA = ({
@@ -29,13 +30,8 @@ export const BoutonExportCsvTA = ({
 
       return [
         ["Territoire", "Taux d'avancement", "Date"],
-        ...donnees
-          .filter(
-            (territoire) =>
-              territoire.estApplicable !== false &&
-              territoiresPourExport.includes(territoire.territoireCode),
-          )
-          .map((territoire) => [
+        ...filtrerLesTerritoires(donnees, territoiresPourExport).map(
+          (territoire) => [
             getLabelTerritoire(territoire.territoireCode),
             territoire.tauxAvancementJalon !== null
               ? String(Math.round(territoire.tauxAvancementJalon))
@@ -45,7 +41,8 @@ export const BoutonExportCsvTA = ({
                   territoire.dateTauxAvancementAnnuel,
                 )
               : "Non renseignée",
-          ]),
+          ],
+        ),
       ];
     },
   });

@@ -1,4 +1,40 @@
-import { genererContenuCsv, telechargerCsv } from "@/client/utils/csv";
+import {
+  filtrerLesTerritoires,
+  genererContenuCsv,
+  telechargerCsv,
+} from "@/client/utils/csv";
+
+describe("filtrerParTerritoires", () => {
+  it("ne retourne que les territoires applicables présents dans la liste d'export", () => {
+    // Given
+    const donnees = [
+      { territoireCode: "DEP-01", estApplicable: true },
+      { territoireCode: "DEP-02", estApplicable: true },
+      { territoireCode: "DEP-03", estApplicable: false },
+      { territoireCode: "DEP-04", estApplicable: null },
+    ];
+
+    // When
+    const result = filtrerLesTerritoires(donnees, ["DEP-01", "DEP-02", "DEP-03"]);
+
+    // Then
+    expect(result).toEqual([
+      { territoireCode: "DEP-01", estApplicable: true },
+      { territoireCode: "DEP-02", estApplicable: true },
+    ]);
+  });
+
+  it("retourne un tableau vide si aucun territoire ne correspond", () => {
+    // Given
+    const donnees = [{ territoireCode: "DEP-01", estApplicable: true }];
+
+    // When
+    const result = filtrerLesTerritoires(donnees, ["DEP-99"]);
+
+    // Then
+    expect(result).toEqual([]);
+  });
+});
 
 describe("genererContenuCsv", () => {
   it("génère un CSV avec BOM UTF-8, séparateur ; et valeurs entre guillemets", () => {
