@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Icone } from "@/components/_commons/Icone";
-import { Table2Icon } from "@/components/_commons/Icones/Table2Icon";
+import { BoutonExportCsv } from "@/components/_commons/Widget/BoutonExportCsv";
 import { getLabelTerritoire } from "@/client/constants/territoires";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { genererContenuCsv, telechargerCsv } from "@/client/utils/csv";
@@ -64,15 +63,5 @@ export const BoutonExportCsvTA = ({
     }
   };
 
-  return (
-    <button
-      aria-busy={enCours}
-      aria-label="Exporter en CSV"
-      disabled={enCours}
-      onClick={handleClick}
-      type="button"
-    >
-      <Icone className="w-4 h-4" icone={Table2Icon} />
-    </button>
-  );
+  return <BoutonExportCsv enCours={enCours} onClick={handleClick} />;
 };
