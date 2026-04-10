@@ -18,10 +18,10 @@ export const BoutonExportCsvTAIndicateur = ({
 }) => {
   const utils = api.useUtils();
 
-  const { enCours, handleClick } = useExportCsv(
+  const { enCours, handleClick } = useExportCsv({
     nomFichier,
     territoireCode,
-    async (territoiresPourExport) => {
+    construireLignes: async (territoiresPourExport) => {
       const jalons = buildJalons();
 
       const donneesParJalon = await Promise.all(
@@ -34,23 +34,23 @@ export const BoutonExportCsvTAIndicateur = ({
         ),
       );
 
-      const tousLesCodes = new Set(
-        donneesParJalon
-          .flat()
-          .filter(
-            (territoire) =>
-              territoire.estApplicable !== false &&
-              territoiresPourExport.includes(territoire.territoireCode),
-          )
-          .map((territoire) => territoire.territoireCode),
-      );
+      const territoiresApplicables = donneesParJalon[0]
+        .filter(
+          (territoire) =>
+            territoire.estApplicable !== false &&
+            territoiresPourExport.includes(territoire.territoireCode),
+        )
+        .map((territoire) => territoire.territoireCode);
 
       return [
         [
           "Territoire",
-          ...jalons.flatMap((jalon) => [`TA ${jalon}`, `Date ${jalon}`]),
+          ...jalons.flatMap((jalon) => [
+            `Taux d'avancement ${jalon}`,
+            `Date ${jalon}`,
+          ]),
         ],
-        ...[...tousLesCodes].map((code) => [
+        ...territoiresApplicables.map((code) => [
           getLabelTerritoire(code),
           ...jalons.flatMap((jalon, index) => {
             const donneesTerritoire = donneesParJalon[index].find(
@@ -71,7 +71,7 @@ export const BoutonExportCsvTAIndicateur = ({
         ]),
       ];
     },
-  );
+  });
 
   return <BoutonExportCsv enCours={enCours} onClick={handleClick} />;
 };

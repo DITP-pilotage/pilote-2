@@ -16,10 +16,10 @@ export const BoutonExportCsvPVA = ({
 }) => {
   const utils = api.useUtils();
 
-  const { enCours, handleClick } = useExportCsv(
+  const { enCours, handleClick } = useExportCsv({
     nomFichier,
     territoireCode,
-    async (territoiresPourExport) => {
+    construireLignes: async (territoiresPourExport) => {
       const donnees =
         await utils.chantier.recupererPVAChantierTerritoires.fetch({
           chantierId,
@@ -40,7 +40,7 @@ export const BoutonExportCsvPVA = ({
           ]),
       ];
     },
-  );
+  });
 
   return <BoutonExportCsv enCours={enCours} onClick={handleClick} />;
 };

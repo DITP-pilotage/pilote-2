@@ -3,11 +3,15 @@ import { toast } from "sonner";
 import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
 import { genererContenuCsv, telechargerCsv } from "@/client/utils/csv";
 
-export const useExportCsv = (
-  nomFichier: string,
-  territoireCode: string,
-  construireLignes: (territoiresPourExport: string[]) => Promise<string[][]>,
-) => {
+export const useExportCsv = ({
+  nomFichier,
+  territoireCode,
+  construireLignes,
+}: {
+  nomFichier: string;
+  territoireCode: string;
+  construireLignes: (territoiresPourExport: string[]) => Promise<string[][]>;
+}) => {
   const [enCours, setEnCours] = useState(false);
   const [territoiresCompares] = useTerritoiresCompares();
 
@@ -17,8 +21,8 @@ export const useExportCsv = (
     try {
       const territoiresPourExport = [
         territoireCode,
-        ...territoiresCompares.split(",").filter(Boolean),
-      ].filter((code, index, self) => self.indexOf(code) === index);
+        ...territoiresCompares.split(","),
+      ];
 
       const lignes = await construireLignes(territoiresPourExport);
       telechargerCsv(genererContenuCsv(lignes), nomFichier);
