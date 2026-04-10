@@ -3,6 +3,7 @@ import { WidgetCartographieTAComparaison } from "@/components/_commons/Widget/Wi
 import { WidgetCartographieMeteo } from "@/components/_commons/Widget/WidgetCartographieMeteo/WidgetCartographieMeteo";
 import { WidgetCartographiePVA } from "@/components/_commons/Widget/WidgetCartographiePVA/WidgetCartographiePVA";
 import { BoutonExportCsvTA } from "@/components/_commons/Widget/WidgetCartographieTA/BoutonExportCsvTA";
+import { BoutonExportCsvMeteo } from "@/components/_commons/Widget/WidgetCartographieMeteo/BoutonExportCsvMeteo";
 import { ComparaisonTerritoires as ComparaisonTerritoiresBase } from "@/components/_commons/ComparaisonTerritoires/ComparaisonTerritoires";
 
 type ComparaisonTerritoiresProps = {
@@ -41,6 +42,16 @@ export const ComparaisonTerritoires = ({
         return (
           <BoutonExportCsvTA
             chantierIds={[chantierId]}
+            jalon={jalon}
+            nomFichier={`comparaison-territoriale-${chantierId}`}
+            territoireCode={territoireCode}
+          />
+        );
+      }
+      if (type === "meteo") {
+        return (
+          <BoutonExportCsvMeteo
+            chantierId={chantierId}
             jalon={jalon}
             nomFichier={`comparaison-territoriale-${chantierId}`}
             territoireCode={territoireCode}
