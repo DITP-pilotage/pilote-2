@@ -3,19 +3,18 @@ import { GetServerSideProps } from "next";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 import { PagePanelAdministrateurCentreAide } from "@/components/PagePanelAdministrateur/PagePanelAdministrateurCentreAide/PagePanelAdministrateurCentreAide";
-import { configurationFeatureFlip } from "@/config";
+import { useEnv } from "@/client/hooks/useEnv";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await auth(context);
-  const redirigerVersPageAccueil = {
-    redirect: {
-      destination: "/",
-      permanent: false,
-    },
-  };
 
-  if (!session || !configurationFeatureFlip().centreAideAdmin) {
-    return redirigerVersPageAccueil;
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
   }
 
   return {
@@ -24,6 +23,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 const NextPagePanelAdministrateurCentreAide = () => {
+  const ffCentreAideAdmin = useEnv("NEXT_PUBLIC_FF_CENTRE_AIDE_ADMIN");
+
+  if (!ffCentreAideAdmin) {
+    return null;
+  }
+
   return (
     <>
       <Head>
