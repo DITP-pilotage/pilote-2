@@ -1,5 +1,5 @@
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
+import { WidgetCartographieTAComparaison } from "@/components/_commons/Widget/WidgetCartographieTAComparaison/WidgetCartographieTAComparaison";
 import { WidgetCartographieValeurAvancement } from "@/components/_commons/Widget/WidgetCartographieValeurAvancement/WidgetCartographieValeurAvancement";
 import { WidgetCartographiePVA } from "@/components/_commons/Widget/WidgetCartographiePVA/WidgetCartographiePVA";
 import { ComparaisonTerritoires } from "@/components/_commons/ComparaisonTerritoires/ComparaisonTerritoires";
@@ -41,7 +41,7 @@ export const ComparaisonTerritoiresIndicateur = ({
     renderCarte={(type) => {
       if (type === "ta") {
         return (
-          <WidgetCartographieTA
+          <WidgetCartographieTAComparaison
             mode="indicateur"
             indicateurId={indicateurId}
             chantierId={chantierId}

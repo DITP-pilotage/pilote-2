@@ -1,6 +1,6 @@
 import { useEnv } from "@/client/hooks/useEnv";
 import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
-import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
+import { WidgetCartographieTAComparaison } from "@/components/_commons/Widget/WidgetCartographieTAComparaison/WidgetCartographieTAComparaison";
 import { usePageAccueilContext } from "@/components/PageAccueil/PageAccueilContext";
 
 export const SectionComparaisonTerritoires = () => {
@@ -15,7 +15,7 @@ export const SectionComparaisonTerritoires = () => {
   return (
     <section id="comparaison-territoires" className="pt-4">
       <TuileWidget titre="Comparaison territoriale et évolution">
-        <WidgetCartographieTA
+        <WidgetCartographieTAComparaison
           chantierIds={chantierIds}
           jalon={jalon}
           maille={mailleQuery}

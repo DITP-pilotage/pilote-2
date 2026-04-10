@@ -276,7 +276,7 @@ const WidgetCartographieTAContent = (
 
 // --- Public API ---
 
-type WidgetCartographieTAProps = {
+type WidgetCartographieTAComparaisonProps = {
   maille: MailleInterne;
   territoireCode: string;
   jalon: number;
@@ -285,7 +285,9 @@ type WidgetCartographieTAProps = {
   | { mode: "indicateur"; indicateurId: string; chantierId: string }
 );
 
-export const WidgetCartographieTA = (props: WidgetCartographieTAProps) => {
+export const WidgetCartographieTAComparaison = (
+  props: WidgetCartographieTAComparaisonProps,
+) => {
   if (props.mode === "indicateur") {
     return (
       <IndicateurProvider

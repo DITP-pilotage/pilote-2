@@ -29,7 +29,7 @@ import { RepartitionMeteoContrat } from "@/server/fiche-territoriale/app/contrat
 import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelecteurJalon";
 import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
 import { useEnv } from "@/client/hooks/useEnv";
-import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
+import { WidgetCartographieTAComparaison } from "@/components/_commons/Widget/WidgetCartographieTAComparaison/WidgetCartographieTAComparaison";
 import { ExportableWidget } from "@/components/_commons/Widget/ExportableWidget";
 import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
 import { WidgetRepartitionMeteos } from "@/components/_commons/Widget/WidgetRepartitionMeteos/WidgetRepartitionMeteos";
@@ -233,7 +233,7 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
         {featureComparaisonTerritoires ? (
           <TuileWidget titre="Comparaison territoriale et évolution">
             <ExportableWidget nomFichier="comparaison-territoriale">
-              <WidgetCartographieTA
+              <WidgetCartographieTAComparaison
                 mode="chantiers"
                 chantierIds={chantierIds}
                 jalon={jalon}
