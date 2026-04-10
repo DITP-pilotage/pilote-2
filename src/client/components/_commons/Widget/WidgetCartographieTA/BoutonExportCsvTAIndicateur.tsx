@@ -1,9 +1,7 @@
-import { useState } from "react";
 import { BoutonExportCsv } from "@/components/_commons/Widget/BoutonExportCsv";
 import { getLabelTerritoire } from "@/client/constants/territoires";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
-import { genererContenuCsv, telechargerCsv } from "@/client/utils/csv";
-import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
+import { useExportCsv } from "@/client/hooks/useExportCsv";
 import { buildJalons } from "@/client/utils/jalons";
 import api from "@/server/infrastructure/api/trpc/api";
 
@@ -18,20 +16,13 @@ export const BoutonExportCsvTAIndicateur = ({
   nomFichier: string;
   territoireCode: string;
 }) => {
-  const [enCours, setEnCours] = useState(false);
   const utils = api.useUtils();
-  const [territoiresCompares] = useTerritoiresCompares();
 
-  const handleClick = async () => {
-    if (enCours) return;
-    setEnCours(true);
-    try {
+  const { enCours, handleClick } = useExportCsv(
+    nomFichier,
+    territoireCode,
+    async (territoiresPourExport) => {
       const jalons = buildJalons();
-
-      const territoiresPourExport = [
-        territoireCode,
-        ...territoiresCompares.split(",").filter(Boolean),
-      ].filter((code, index, self) => self.indexOf(code) === index);
 
       const donneesParJalon = await Promise.all(
         jalons.map((jalon) =>
@@ -54,41 +45,33 @@ export const BoutonExportCsvTAIndicateur = ({
           .map((territoire) => territoire.territoireCode),
       );
 
-      const entetes = [
-        "Territoire",
-        ...jalons.flatMap((jalon) => [`TA ${jalon}`, `Date ${jalon}`]),
-      ];
-
-      const lignes: string[][] = [
-        entetes,
-        ...[...tousLesCodes].map((code) => {
-          const colonnesJalons = jalons.flatMap((jalon, index) => {
+      return [
+        [
+          "Territoire",
+          ...jalons.flatMap((jalon) => [`TA ${jalon}`, `Date ${jalon}`]),
+        ],
+        ...[...tousLesCodes].map((code) => [
+          getLabelTerritoire(code),
+          ...jalons.flatMap((jalon, index) => {
             const donneesTerritoire = donneesParJalon[index].find(
               (territoire) => territoire.territoireCode === code,
             );
             const ta =
-              donneesTerritoire?.tauxAvancementJalon !== null &&
-              donneesTerritoire?.tauxAvancementJalon !== undefined
+              donneesTerritoire?.tauxAvancementJalon != null
                 ? String(Math.round(donneesTerritoire.tauxAvancementJalon))
                 : "Non renseignée";
             const date =
-              donneesTerritoire?.dateTauxAvancementAnnuel !== null &&
-              donneesTerritoire?.dateTauxAvancementAnnuel !== undefined
+              donneesTerritoire?.dateTauxAvancementAnnuel != null
                 ? PiloteDateFormatter.isoDateFranceMetropolitaine(
                     donneesTerritoire.dateTauxAvancementAnnuel,
                   )
                 : "Non renseignée";
             return [ta, date];
-          });
-          return [getLabelTerritoire(code), ...colonnesJalons];
-        }),
+          }),
+        ]),
       ];
-
-      telechargerCsv(genererContenuCsv(lignes), nomFichier);
-    } finally {
-      setEnCours(false);
-    }
-  };
+    },
+  );
 
   return <BoutonExportCsv enCours={enCours} onClick={handleClick} />;
 };

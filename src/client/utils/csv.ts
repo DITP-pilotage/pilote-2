@@ -14,6 +14,8 @@ export const telechargerCsv = (contenu: string, nomFichier: string): void => {
   const lien = document.createElement("a");
   lien.href = url;
   lien.download = `${nomFichier}.csv`;
+  document.body.appendChild(lien);
   lien.click();
+  document.body.removeChild(lien);
   URL.revokeObjectURL(url);
 };

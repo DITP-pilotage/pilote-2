@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { BoutonExportCsv } from "@/components/_commons/Widget/BoutonExportCsv";
 import { getLabelTerritoire } from "@/client/constants/territoires";
-import { genererContenuCsv, telechargerCsv } from "@/client/utils/csv";
-import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
+import { useExportCsv } from "@/client/hooks/useExportCsv";
 import api from "@/server/infrastructure/api/trpc/api";
 
 export const BoutonExportCsvPVA = ({
@@ -16,44 +14,33 @@ export const BoutonExportCsvPVA = ({
   nomFichier: string;
   territoireCode: string;
 }) => {
-  const [enCours, setEnCours] = useState(false);
   const utils = api.useUtils();
-  const [territoiresCompares] = useTerritoiresCompares();
 
-  const handleClick = async () => {
-    if (enCours) return;
-    setEnCours(true);
-    try {
-      const territoiresPourExport = [
-        territoireCode,
-        ...territoiresCompares.split(",").filter(Boolean),
-      ].filter((code, index, self) => self.indexOf(code) === index);
-
+  const { enCours, handleClick } = useExportCsv(
+    nomFichier,
+    territoireCode,
+    async (territoiresPourExport) => {
       const donnees =
         await utils.chantier.recupererPVAChantierTerritoires.fetch({
           chantierId,
           jalon,
         });
 
-      const lignesFiltrees = donnees.filter(
-        (territoire) =>
-          territoire.estApplicable !== false &&
-          territoiresPourExport.includes(territoire.territoireCode),
-      );
-
-      const lignes: string[][] = [
+      return [
         ["Territoire", "Nombre de propositions"],
-        ...lignesFiltrees.map((territoire) => [
-          getLabelTerritoire(territoire.territoireCode),
-          String(territoire.nombrePropositionsValeur),
-        ]),
+        ...donnees
+          .filter(
+            (territoire) =>
+              territoire.estApplicable !== false &&
+              territoiresPourExport.includes(territoire.territoireCode),
+          )
+          .map((territoire) => [
+            getLabelTerritoire(territoire.territoireCode),
+            String(territoire.nombrePropositionsValeur),
+          ]),
       ];
-
-      telechargerCsv(genererContenuCsv(lignes), nomFichier);
-    } finally {
-      setEnCours(false);
-    }
-  };
+    },
+  );
 
   return <BoutonExportCsv enCours={enCours} onClick={handleClick} />;
 };

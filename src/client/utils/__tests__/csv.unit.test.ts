@@ -41,13 +41,15 @@ describe("genererContenuCsv", () => {
 });
 
 describe("telechargerCsv", () => {
-  it("crée un lien de téléchargement avec le bon nom de fichier et le déclenche", () => {
+  it("attache le lien au DOM, déclenche le téléchargement, puis nettoie", () => {
     // Given
     const createObjectURL = vi.fn(() => "blob:fake-url");
     const revokeObjectURL = vi.fn();
     global.URL.createObjectURL = createObjectURL;
     global.URL.revokeObjectURL = revokeObjectURL;
 
+    const appendChildMock = vi.spyOn(document.body, "appendChild");
+    const removeChildMock = vi.spyOn(document.body, "removeChild");
     const clickMock = vi.fn();
     vi.spyOn(document, "createElement").mockReturnValue({
       href: "",
@@ -59,7 +61,9 @@ describe("telechargerCsv", () => {
     telechargerCsv("contenu", "mon-export");
 
     // Then
+    expect(appendChildMock).toHaveBeenCalledTimes(1);
     expect(clickMock).toHaveBeenCalledTimes(1);
+    expect(removeChildMock).toHaveBeenCalledTimes(1);
     expect(revokeObjectURL).toHaveBeenCalledWith("blob:fake-url");
   });
 });

@@ -1,9 +1,7 @@
-import { useState } from "react";
 import { BoutonExportCsv } from "@/components/_commons/Widget/BoutonExportCsv";
 import { getLabelTerritoire } from "@/client/constants/territoires";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
-import { genererContenuCsv, telechargerCsv } from "@/client/utils/csv";
-import { useTerritoiresCompares } from "@/client/hooks/useTerritoiresCompares";
+import { useExportCsv } from "@/client/hooks/useExportCsv";
 import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
 import api from "@/server/infrastructure/api/trpc/api";
 
@@ -18,50 +16,39 @@ export const BoutonExportCsvMeteo = ({
   nomFichier: string;
   territoireCode: string;
 }) => {
-  const [enCours, setEnCours] = useState(false);
   const utils = api.useUtils();
-  const [territoiresCompares] = useTerritoiresCompares();
 
-  const handleClick = async () => {
-    if (enCours) return;
-    setEnCours(true);
-    try {
-      const territoiresPourExport = [
-        territoireCode,
-        ...territoiresCompares.split(",").filter(Boolean),
-      ].filter((code, index, self) => self.indexOf(code) === index);
-
+  const { enCours, handleClick } = useExportCsv(
+    nomFichier,
+    territoireCode,
+    async (territoiresPourExport) => {
       const donnees = await utils.chantier.recupererMeteosTerritoires.fetch({
         chantierId,
         jalon,
       });
 
-      const lignesFiltrees = donnees.filter(
-        (territoire) =>
-          territoire.estApplicable !== false &&
-          territoiresPourExport.includes(territoire.territoireCode),
-      );
-
-      const lignes: string[][] = [
+      return [
         ["Territoire", "Niveau de confiance", "Date de publication"],
-        ...lignesFiltrees.map((territoire) => [
-          getLabelTerritoire(territoire.territoireCode),
-          territoire.meteo !== null
-            ? (libellesMeteos[territoire.meteo] ?? "Non renseignée")
-            : "Non renseignée",
-          territoire.dateDeMajQualitative !== null
-            ? PiloteDateFormatter.isoDateFranceMetropolitaine(
-                territoire.dateDeMajQualitative,
-              )
-            : "Non renseignée",
-        ]),
+        ...donnees
+          .filter(
+            (territoire) =>
+              territoire.estApplicable !== false &&
+              territoiresPourExport.includes(territoire.territoireCode),
+          )
+          .map((territoire) => [
+            getLabelTerritoire(territoire.territoireCode),
+            territoire.meteo !== null
+              ? (libellesMeteos[territoire.meteo] ?? "Non renseignée")
+              : "Non renseignée",
+            territoire.dateDeMajQualitative !== null
+              ? PiloteDateFormatter.isoDateFranceMetropolitaine(
+                  territoire.dateDeMajQualitative,
+                )
+              : "Non renseignée",
+          ]),
       ];
-
-      telechargerCsv(genererContenuCsv(lignes), nomFichier);
-    } finally {
-      setEnCours(false);
-    }
-  };
+    },
+  );
 
   return <BoutonExportCsv enCours={enCours} onClick={handleClick} />;
 };
