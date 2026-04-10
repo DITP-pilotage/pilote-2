@@ -3,7 +3,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import type { TerritoireEvolutionDonnees } from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/types";
 import useIndicateurEvolutionNew from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/useIndicateurEvolutionNew";
 import LineChart from "@/components/_commons/IndicateursChantier/Bloc/Détails/Évolution/LineChart/LineChart";
-import { useModeExport } from "@/components/_commons/ComparaisonTerritoires/ModeExportContext";
+import { useModeExport } from "@/components/_commons/Widget/ModeExportContext";
 
 export const EvolutionCourbesValeursAvancement = ({
   indicateurId,

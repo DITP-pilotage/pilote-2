@@ -30,6 +30,7 @@ import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelec
 import { ChantierAccueilContratV2 } from "@/server/chantiers/app/contrats/ChantierAccueilContratV2";
 import { useEnv } from "@/client/hooks/useEnv";
 import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
+import { ExportableWidget } from "@/components/_commons/Widget/ExportableWidget";
 import { TuileWidget } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
 import { WidgetRepartitionMeteos } from "@/components/_commons/Widget/WidgetRepartitionMeteos/WidgetRepartitionMeteos";
 import { WidgetChantiersSignales } from "@/components/_commons/Widget/WidgetChantiersSignales/WidgetChantiersSignales";
@@ -232,13 +233,15 @@ const PageChantiers: FunctionComponent<PageChantiersProps> = ({
         {featureComparaisonTerritoires ? (
           <TuileWidget titre="Comparaison territoriale et évolution">
             <div />
-            <WidgetCartographieTA
-              mode="chantiers"
-              chantierIds={chantierIds}
-              jalon={jalon}
-              maille={mailleQuery}
-              territoireCode={territoireCode}
-            />
+            <ExportableWidget nomFichier="comparaison-territoriale">
+              <WidgetCartographieTA
+                mode="chantiers"
+                chantierIds={chantierIds}
+                jalon={jalon}
+                maille={mailleQuery}
+                territoireCode={territoireCode}
+              />
+            </ExportableWidget>
           </TuileWidget>
         ) : null}
         {!chantiersSontArchives && (
