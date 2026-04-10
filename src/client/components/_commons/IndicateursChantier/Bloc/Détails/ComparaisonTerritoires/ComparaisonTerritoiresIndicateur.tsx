@@ -3,6 +3,7 @@ import { WidgetCartographieTAComparaison } from "@/components/_commons/Widget/Wi
 import { WidgetCartographieValeurAvancement } from "@/components/_commons/Widget/WidgetCartographieValeurAvancement/WidgetCartographieValeurAvancement";
 import { WidgetCartographiePVA } from "@/components/_commons/Widget/WidgetCartographiePVA/WidgetCartographiePVA";
 import { BoutonExportCsvTAIndicateur } from "@/components/_commons/Widget/WidgetCartographieTA/BoutonExportCsvTAIndicateur";
+import { BoutonExportCsvVA } from "@/components/_commons/Widget/WidgetCartographieValeurAvancement/BoutonExportCsvVA";
 import { ComparaisonTerritoires } from "@/components/_commons/ComparaisonTerritoires/ComparaisonTerritoires";
 
 type TypeCarteIndicateur = "ta" | "va" | "pva";
@@ -43,6 +44,16 @@ export const ComparaisonTerritoiresIndicateur = ({
       if (type === "ta") {
         return (
           <BoutonExportCsvTAIndicateur
+            indicateurId={indicateurId}
+            chantierId={chantierId}
+            nomFichier={`comparaison-territoriale-${indicateurId}`}
+            territoireCode={territoireCode}
+          />
+        );
+      }
+      if (type === "va") {
+        return (
+          <BoutonExportCsvVA
             indicateurId={indicateurId}
             chantierId={chantierId}
             nomFichier={`comparaison-territoriale-${indicateurId}`}
