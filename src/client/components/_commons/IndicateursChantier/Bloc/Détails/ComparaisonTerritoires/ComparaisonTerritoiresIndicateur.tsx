@@ -2,6 +2,7 @@ import { MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { WidgetCartographieTAComparaison } from "@/components/_commons/Widget/WidgetCartographieTAComparaison/WidgetCartographieTAComparaison";
 import { WidgetCartographieValeurAvancement } from "@/components/_commons/Widget/WidgetCartographieValeurAvancement/WidgetCartographieValeurAvancement";
 import { WidgetCartographiePVA } from "@/components/_commons/Widget/WidgetCartographiePVA/WidgetCartographiePVA";
+import { BoutonExportCsvTAIndicateur } from "@/components/_commons/Widget/WidgetCartographieTA/BoutonExportCsvTAIndicateur";
 import { ComparaisonTerritoires } from "@/components/_commons/ComparaisonTerritoires/ComparaisonTerritoires";
 
 type TypeCarteIndicateur = "ta" | "va" | "pva";
@@ -38,6 +39,19 @@ export const ComparaisonTerritoiresIndicateur = ({
     typeAlternatif={(t) => (t === "ta" ? "va" : "ta")}
     options={options(jalon)}
     nomFichier={`comparaison-territoriale-${indicateurId}`}
+    renderBoutonExportCsv={(type) => {
+      if (type === "ta") {
+        return (
+          <BoutonExportCsvTAIndicateur
+            indicateurId={indicateurId}
+            chantierId={chantierId}
+            nomFichier={`comparaison-territoriale-${indicateurId}`}
+            territoireCode={territoireCode}
+          />
+        );
+      }
+      return null;
+    }}
     renderCarte={(type) => {
       if (type === "ta") {
         return (
