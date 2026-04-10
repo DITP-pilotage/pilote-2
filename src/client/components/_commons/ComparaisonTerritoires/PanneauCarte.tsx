@@ -12,7 +12,7 @@ type PanneauCarteProps<T extends string> = {
   onComparer: () => void;
   onSupprimer: () => void;
   renderCarte: (typeCarte: T) => ReactNode;
-  renderBoutonExportCsv?: (typeCarte: T) => ReactNode;
+  renderBoutonExportCsv: (typeCarte: T) => ReactNode;
   nomFichier: string;
 };
 
@@ -56,7 +56,7 @@ export const PanneauCarte = <T extends string>({
       </div>
 
       <ExportableWidget
-        boutonExportCsv={renderBoutonExportCsv?.(typeCarte)}
+        boutonExportCsv={renderBoutonExportCsv(typeCarte)}
         nomFichier={nomFichier}
       >
         {renderCarte(typeCarte)}

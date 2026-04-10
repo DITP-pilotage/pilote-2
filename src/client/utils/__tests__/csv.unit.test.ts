@@ -15,7 +15,11 @@ describe("filtrerParTerritoires", () => {
     ];
 
     // When
-    const result = filtrerLesTerritoires(donnees, ["DEP-01", "DEP-02", "DEP-03"]);
+    const result = filtrerLesTerritoires(donnees, [
+      "DEP-01",
+      "DEP-02",
+      "DEP-03",
+    ]);
 
     // Then
     expect(result).toEqual([

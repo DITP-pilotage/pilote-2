@@ -8,7 +8,7 @@ type ComparaisonTerritoiresProps<T extends string> = {
   typeAlternatif: (typeActuel: T) => T;
   options: { value: T; label: string }[];
   renderCarte: (typeCarte: T) => ReactNode;
-  renderBoutonExportCsv?: (typeCarte: T) => ReactNode;
+  renderBoutonExportCsv: (typeCarte: T) => ReactNode;
   nomFichier: string;
   mode?: "card" | "inline";
 };
