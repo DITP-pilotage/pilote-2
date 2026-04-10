@@ -315,7 +315,29 @@ Tu produis du JSON STRICT conforme au schéma. INTERDIT :
 - Aucune clé non quotée.
 - Aucun texte explicatif en dehors de l'objet JSON racine.
 
-Ne copie JAMAIS des fragments "pseudo-code" ou des commentaires explicatifs dans ta réponse : produis uniquement l'objet JSON valide attendu par le schéma.`,
+Ne copie JAMAIS des fragments "pseudo-code" ou des commentaires explicatifs dans ta réponse : produis uniquement l'objet JSON valide attendu par le schéma.
+
+## Exemples de dashboards valides
+
+Les trois exemples ci-dessous illustrent les principaux patterns de composition. **Valeurs illustratives** : adapte systématiquement \`territoire_code\`, \`jalon\`, \`chantier_id\` et \`chantier_ids\` aux paramètres réels du contexte utilisateur. Ne réutilise jamais \`REG-76\`, \`DEPT-42\` ou \`2026\` par défaut.
+
+### Exemple 1 — Cockpit synthétique d'un territoire
+Pattern : titre, rangée de KPI compacts, carte large, deux listes côte à côte.
+\`\`\`json
+{"titre":"Dashboard Occitanie – 2026","containers":[{"widgets":[{"type":"widget_titre_section","titre":"Occitanie – Synthèse 2026","description":"Vue d'ensemble du taux d'avancement et des alertes","width":12}]},{"widgets":[{"type":"widget_taux_avancement_territoire","territoire_code":"REG-76","jalon":2026,"width":3},{"type":"widget_nombre_chantiers_en_retard","territoire_code":"REG-76","jalon":2026,"width":3},{"type":"widget_valeurs_remarquables_avancement","territoire_code":"REG-76","jalon":2026,"width":6}]},{"widgets":[{"type":"widget_cartographie_taux_avancement","maille":"regionale","territoire_code":"REG-76","jalon":2026,"chantier_ids":["CH-071","CH-121","CH-078","CH-166","CH-004","CH-139"],"width":12}]},{"widgets":[{"type":"widget_liste_chantiers_en_retard","territoire_code":"REG-76","jalon":2026,"width":6},{"type":"widget_liste_chantiers_en_difficulte","territoire_code":"REG-76","jalon":2026,"width":6}]}]}
+\`\`\`
+
+### Exemple 2 — Ventilation par sous-territoires
+Pattern : pour chaque sous-territoire, un container titre + un container avec 3 KPI sur une rangée. Le bloc *(titre de section + rangée de 3 KPI)* est à **répéter pour chaque sous-territoire demandé** (l'exemple n'en montre que 2 pour rester court, mais tu dois en générer autant que nécessaire).
+\`\`\`json
+{"titre":"Dashboard Occitanie – Départements 2026","containers":[{"widgets":[{"type":"widget_titre_section","titre":"Département 09 – Ariège","width":12}]},{"widgets":[{"type":"widget_taux_avancement_territoire","territoire_code":"DEPT-09","jalon":2026,"width":4},{"type":"widget_nombre_chantiers_en_retard","territoire_code":"DEPT-09","jalon":2026,"width":4},{"type":"widget_nombre_chantiers_en_difficulte","territoire_code":"DEPT-09","jalon":2026,"width":4}]},{"widgets":[{"type":"widget_titre_section","titre":"Département 11 – Aude","width":12}]},{"widgets":[{"type":"widget_taux_avancement_territoire","territoire_code":"DEPT-11","jalon":2026,"width":4},{"type":"widget_nombre_chantiers_en_retard","territoire_code":"DEPT-11","jalon":2026,"width":4},{"type":"widget_nombre_chantiers_en_difficulte","territoire_code":"DEPT-11","jalon":2026,"width":4}]}]}
+\`\`\`
+
+### Exemple 3 — Focus chantier sur un territoire
+Pattern : titre du chantier, tableau d'indicateurs, puis cartographies thématiques. Le champ \`width\` est omis volontairement : la \`default_width\` de chaque widget s'applique automatiquement.
+\`\`\`json
+{"titre":"Dashboard des chantiers en difficulté - DEPT-42","containers":[{"widgets":[{"type":"widget_titre_section","titre":"Garantir 50% de produits bio, de qualité ou durables dans la restauration collective (Egalim)"}]},{"widgets":[{"type":"widget_tableau_indicateurs_chantier","chantier_id":"CH-064","territoire_code":"DEPT-42","jalon":2026}]},{"widgets":[{"type":"widget_cartographie_meteo","maille":"departementale","territoire_code":"DEPT-42","chantier_id":"CH-064","jalon":2026}]},{"widgets":[{"type":"widget_cartographie_taux_avancement","maille":"departementale","territoire_code":"DEPT-42","jalon":2026,"chantier_ids":["CH-064"]},{"type":"widget_cartographie_propositions_valeur_avancement","maille":"departementale","territoire_code":"DEPT-42","chantier_id":"CH-064","jalon":2026}]}]}
+\`\`\``,
       inputSchema: composeDashboardInputSchema,
       execute: async (input): Promise<ComposeDashboardOutput> => {
         for (const container of input.containers) {
