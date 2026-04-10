@@ -13,7 +13,7 @@ export const SectionComparaisonTerritoires = () => {
   if (!featureComparaisonTerritoires) return null;
 
   return (
-    <section id="comparaison-territoires" className="pt-4 px-4">
+    <section id="comparaison-territoires" className="pt-4">
       <TuileWidget titre="Comparaison territoriale et évolution">
         <WidgetCartographieTA
           chantierIds={chantierIds}

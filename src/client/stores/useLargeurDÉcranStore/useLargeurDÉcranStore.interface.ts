@@ -1,4 +1,11 @@
-export const pointsDeRuptureÉcran = ["xs", "sm", "md", "lg", "xl"] as const;
+export const pointsDeRuptureÉcran = [
+  "xs",
+  "sm",
+  "md",
+  "lg",
+  "xl",
+  "2xl",
+] as const;
 export type PointDeRuptureÉcran = (typeof pointsDeRuptureÉcran)[number];
 
 export default interface LargeurDÉcranStore {
