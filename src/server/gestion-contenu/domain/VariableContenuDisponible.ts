@@ -222,7 +222,7 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
   {
     envKey: "NEXT_PUBLIC_FF_REORGANISATION_PAGE_ACCUEIL",
     configKey: "reorganisationPageAccueil",
-    label: "Reorganisation page accueil en sections",
+    label: "Réorganisation page accueil en sections",
   },
 ];
 
