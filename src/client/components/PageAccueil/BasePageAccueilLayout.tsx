@@ -123,7 +123,7 @@ export const BasePageAccueilLayout: FunctionComponent<
   const pathname = "/accueil/chantier/[territoireCode]";
 
   return (
-    <div className="[&_.fr-h2]:!text-[1.875rem] [&_.fr-h2]:!leading-9">
+    <div>
       <Head>
         <title>PILOTE - Piloter l'action publique par les résultats</title>
       </Head>
@@ -172,7 +172,7 @@ export const BasePageAccueilLayout: FunctionComponent<
             />
           </section>
         </BarreLatérale>
-        <div className="w-full">
+        <main className="w-full">
           <div className="sticky top-0 z-[1] w-full shadow-[0_6px_18px_var(--shadow-color)] bg-dsfr-blue-france-850 fr-grid-row fr-pt-2w">
             <PanelMenuNavigation
               estAutoriseAVoirLeSelecteurDeMaille={
@@ -195,7 +195,9 @@ export const BasePageAccueilLayout: FunctionComponent<
               />
             ) : null}
           </div>
-          {children}
+          <div className="fr-container--fluid fr-py-2w fr-px-md-2w">
+            {children}
+          </div>
           <ModaleVideoAccueil
             onOpenChange={setIsModaleVideoAccueilOpen}
             open={isModaleVideoAccueilOpen}
@@ -212,7 +214,7 @@ export const BasePageAccueilLayout: FunctionComponent<
               isModaleInfolettreOpen
             }
           />
-        </div>
+        </main>
       </div>
     </div>
   );

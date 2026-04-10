@@ -1,5 +1,4 @@
 import { parseAsStringLiteral, useQueryStates } from "nuqs";
-import Bloc from "@/components/_commons/Bloc/Bloc";
 import INFOBULLE_CONTENUS from "@/client/constants/infobulles";
 import JaugeDeProgression from "@/components/_commons/JaugeDeProgression/JaugeDeProgression";
 import { useSelecteurJalon } from "@/components/_commons/SelecteurJalon/useSelecteurJalon";
@@ -28,16 +27,14 @@ export const SectionAvancementMoyen = () => {
       infobulle={INFOBULLE_CONTENUS.chantiers.jauges}
       titre="Taux d'avancement moyen"
     >
-      <Bloc className="w-full h-full" contenuClassesSupplémentaires="fr-p-2w">
-        <div className="flex w-full justify-center px-1 mt-2">
-          <JaugeDeProgression
-            couleur={chantiersSontArchives ? "gris" : "bleu"}
-            libellé={`Taux d'avancement à échéance ${jalon}`}
-            pourcentage={moyenneTerritoire}
-            taille="lg"
-          />
-        </div>
-      </Bloc>
+      <div className="flex w-full justify-center px-1 mt-2">
+        <JaugeDeProgression
+          couleur={chantiersSontArchives ? "gris" : "bleu"}
+          libellé={`Taux d'avancement à échéance ${jalon}`}
+          pourcentage={moyenneTerritoire}
+          taille="lg"
+        />
+      </div>
     </BasePageAccueilSection>
   );
 };
