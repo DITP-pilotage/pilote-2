@@ -37,12 +37,14 @@ export const ModaleInsertionUrl = ({
   onValider,
   titre,
   type,
+  avecFichiersNumeriques = true,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onValider: (url: string) => void;
   titre: string;
   type: TypeInsertion;
+  avecFichiersNumeriques?: boolean;
 }) => {
   const [mode, setMode] = useState<"direct" | "constructeur" | "email">(
     "direct",
@@ -145,16 +147,18 @@ export const ModaleInsertionUrl = ({
           >
             URL directe
           </button>
-          <button
-            className={`px-3 py-1 rounded text-sm border ${mode === "constructeur" ? "!bg-primary !text-white !border-primary" : "!bg-white !text-dsfr-grey-200 !border-dsfr-grey-900"}`}
-            onClick={() => {
-              setMode("constructeur");
-              setErreur("");
-            }}
-            type="button"
-          >
-            Fichiers numériques
-          </button>
+          {avecFichiersNumeriques && (
+            <button
+              className={`px-3 py-1 rounded text-sm border ${mode === "constructeur" ? "!bg-primary !text-white !border-primary" : "!bg-white !text-dsfr-grey-200 !border-dsfr-grey-900"}`}
+              onClick={() => {
+                setMode("constructeur");
+                setErreur("");
+              }}
+              type="button"
+            >
+              Fichiers numériques
+            </button>
+          )}
           {type === "lien" && (
             <button
               className={`px-3 py-1 rounded text-sm border ${mode === "email" ? "!bg-primary !text-white !border-primary" : "!bg-white !text-dsfr-grey-200 !border-dsfr-grey-900"}`}

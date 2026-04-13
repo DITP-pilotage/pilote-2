@@ -18,6 +18,7 @@ export interface EditeurRicheProps {
   placeholder?: string;
   estEnLectureSeule?: boolean;
   editeurRef?: RefObject<TextareaRef | null>;
+  avecFichiersNumeriques?: boolean;
 }
 
 export const EditeurRiche: FunctionComponent<EditeurRicheProps> = ({
@@ -29,6 +30,7 @@ export const EditeurRiche: FunctionComponent<EditeurRicheProps> = ({
   estEnLectureSeule = false,
   editeurRef,
   onFocus,
+  avecFichiersNumeriques = true,
 }) => {
   const editor = useEditor({
     extensions: [
@@ -56,7 +58,10 @@ export const EditeurRiche: FunctionComponent<EditeurRicheProps> = ({
 
   return (
     <div className="relative flex flex-1 flex-col h-full overflow-y-auto !bg-dsfr-contrast-grey">
-      <MenuBar editor={editor} />
+      <MenuBar
+        avecFichiersNumeriques={avecFichiersNumeriques}
+        editor={editor}
+      />
       <EditorContent
         className="flex-1 [&_.tiptap]:min-h-full [&_.tiptap]:p-2"
         editor={editor}

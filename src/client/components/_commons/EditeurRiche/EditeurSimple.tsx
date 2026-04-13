@@ -22,5 +22,11 @@ const extensions = [
 export const EditeurSimple: FunctionComponent<
   Omit<EditeurRicheProps, "extensions">
 > = (props) => {
-  return <EditeurRiche extensions={extensions} {...props} />;
+  return (
+    <EditeurRiche
+      avecFichiersNumeriques={false}
+      extensions={extensions}
+      {...props}
+    />
+  );
 };
