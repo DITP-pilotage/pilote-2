@@ -21,7 +21,7 @@ export const useExportCsv = ({
     try {
       const territoiresPourExport = [
         territoireCode,
-        ...territoiresCompares.split(","),
+        ...territoiresCompares.split(",").filter(Boolean),
       ];
 
       const lignes = await construireLignes(territoiresPourExport);
