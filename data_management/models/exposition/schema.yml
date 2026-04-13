@@ -77,3 +77,14 @@ models:
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_perimetre"
       - name: ministere_id
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_perimetre"
+  - name: synthese_des_resultats
+    columns:
+      - name: id
+        description: "Identifiant unique de la synthese"
+        data_tests:
+          - unique
+          - not_null
+      - name: maille
+        description: "Maille de la synthese"
+        data_tests:
+          - not_null

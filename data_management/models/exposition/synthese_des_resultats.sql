@@ -5,32 +5,54 @@ SELECT
                  'maille',
                  'code_insee',
                  'date']
-             ) }} as id, --TODO date_meteo a ajouter lorsqu'elle sera présente dans l'import massif
+             ) }} AS id,
     chantier_id,
-    COALESCE(maille, 'NAT') as maille, --TODO supprimer le coalesce car la maille est sensé etre renseignée
-    COALESCE(code_insee, 'FR') as code_insee, --TODO supprimer le coalesce car le code_insee est sensé etre renseigné
+    maille,
+    code_insee,
     (
-        CASE 
-            WHEN (SELECT id FROM utilisateur WHERE email = auteur_email) IS NOT NULL THEN 
-                (SELECT id FROM utilisateur WHERE email = auteur_email)
-            ELSE 
-                (SELECT id FROM utilisateur WHERE email = 'import.csv@modernisation.gouv.fr')
+        CASE
+            WHEN
+                (
+                    SELECT id FROM utilisateur
+                    WHERE email = auteur_email
+                ) IS NOT NULL
+                THEN
+                    (
+                        SELECT id FROM utilisateur
+                        WHERE email = auteur_email
+                    )
+            ELSE
+                (
+                    SELECT id FROM utilisateur
+                    WHERE email = 'import.csv@modernisation.gouv.fr'
+                )
         END
-    )::uuid as auteur_creation_id,
+    )::UUID AS auteur_creation_id,
     (
-        CASE 
-            WHEN (SELECT id FROM utilisateur WHERE email = auteur_email) IS NOT NULL THEN 
-                (SELECT id FROM utilisateur WHERE email = auteur_email)
-            ELSE 
-                (SELECT id FROM utilisateur WHERE email = 'import.csv@modernisation.gouv.fr')
+        CASE
+            WHEN
+                (
+                    SELECT id FROM utilisateur
+                    WHERE email = auteur_email
+                ) IS NOT NULL
+                THEN
+                    (
+                        SELECT id FROM utilisateur
+                        WHERE email = auteur_email
+                    )
+            ELSE
+                (
+                    SELECT id FROM utilisateur
+                    WHERE email = 'import.csv@modernisation.gouv.fr'
+                )
         END
-    )::uuid as auteur_modification_id,
-    COALESCE(meteo, 'NON_RENSEIGNEE') as meteo,
-    date as date_creation,
-    date as date_modification,
-    contenu as commentaire,
-    NULL::VARCHAR as commentaire_deprecated,
-    CONCAT(maille, '-', code_insee) as territoire_code,
-    'PUBLIE'::statut_publication as statut
+    )::UUID AS auteur_modification_id,
+    COALESCE(meteo, 'NON_RENSEIGNEE') AS meteo,
+    date AS date_creation,
+    date AS date_modification,
+    contenu AS commentaire,
+    NULL::VARCHAR AS commentaire_deprecated,
+    CONCAT(maille, '-', code_insee) AS territoire_code,
+    'PUBLIE'::STATUT_PUBLICATION AS statut
 FROM {{ ref('stg_import_massif__commentaires') }}
-WHERE type='synthese_des_resultats'
+WHERE type = 'synthese_des_resultats'
