@@ -10,10 +10,10 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { useMemo } from "react";
-import pick from "lodash.pick";
 import { parseAsArrayOf, parseAsString, useQueryStates } from "nuqs";
 import { $Enums } from "@prisma/client";
 import { TableauEvaluationRow } from "@/components/Evaluation/TableauEvaluation";
+import { pick } from "@/server/utils/pick";
 import { Rattachement } from "@/server/evaluation/queries/types";
 import { CelluleEvaluation } from "@/components/Evaluation/CelluleEvaluation";
 import { useGetCritere } from "@/components/Evaluation/CriteresProvider";

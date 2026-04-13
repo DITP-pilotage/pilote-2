@@ -1,7 +1,7 @@
 import { $Enums } from "@prisma/client";
-import pick from "lodash.pick";
 import { randomUUID } from "node:crypto";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { pick } from "@/server/utils/pick";
 import {
   Critere,
   Evaluation,
