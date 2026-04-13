@@ -90,12 +90,9 @@ describe("telechargerCsv", () => {
 
     const appendChildMock = vi.spyOn(document.body, "appendChild");
     const removeChildMock = vi.spyOn(document.body, "removeChild");
-    const clickMock = vi.fn();
-    vi.spyOn(document, "createElement").mockReturnValue({
-      href: "",
-      download: "",
-      click: clickMock,
-    } as unknown as HTMLAnchorElement);
+    const anchor = document.createElement("a");
+    const clickMock = vi.spyOn(anchor, "click").mockImplementation(() => {});
+    vi.spyOn(document, "createElement").mockReturnValue(anchor);
 
     // When
     telechargerCsv("contenu", "mon-export");
