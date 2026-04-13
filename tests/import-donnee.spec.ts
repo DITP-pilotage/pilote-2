@@ -4,8 +4,6 @@ import { test } from "./fixtures";
 import { AppActions } from "./actions/app.actions";
 
 test("doit pouvoir importer des données", async ({ page, e2eContext }) => {
-  test.setTimeout(150_000);
-
   const chantier = {
     id: "129",
     nom: "Moderniser la gestion des ressources",

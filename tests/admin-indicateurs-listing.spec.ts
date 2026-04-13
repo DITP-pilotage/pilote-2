@@ -12,8 +12,6 @@ test.describe("Listing des indicateurs — Admin", () => {
     page,
     e2eContext,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageIndicateurs = new PageAdminIndicateurs(page, e2eContext);
 
@@ -104,8 +102,6 @@ test.describe("Listing des indicateurs — Admin", () => {
     page,
     e2eContext,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageIndicateurs = new PageAdminIndicateurs(page, e2eContext);
 

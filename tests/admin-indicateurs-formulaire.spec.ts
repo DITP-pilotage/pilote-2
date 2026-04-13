@@ -12,8 +12,6 @@ test.describe("Formulaire indicateur — Consultation et modification", () => {
     e2eContext,
     step,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageForm = new PageAdminIndicateurForm(page, e2eContext);
 
@@ -181,8 +179,6 @@ test.describe("Formulaire indicateur — Règles d'activation/désactivation des
     e2eContext,
     step,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageForm = new PageAdminIndicateurForm(page, e2eContext);
 
@@ -286,8 +282,6 @@ test.describe("Formulaire indicateur — Règles d'activation/désactivation des
     e2eContext,
     step,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageForm = new PageAdminIndicateurForm(page, e2eContext);
 
@@ -380,8 +374,6 @@ test.describe("Formulaire indicateur — Règles d'activation/désactivation des
     e2eContext,
     step,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageForm = new PageAdminIndicateurForm(page, e2eContext);
 
@@ -427,8 +419,6 @@ test.describe("Formulaire indicateur — Création", () => {
     e2eContext,
     step,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageForm = new PageAdminIndicateurForm(page, e2eContext);
 
@@ -463,8 +453,6 @@ test.describe("Formulaire indicateur — Navigation depuis le listing", () => {
     e2eContext,
     step,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageIndicateurs = new PageAdminIndicateurs(page, e2eContext);
     const pageForm = new PageAdminIndicateurForm(page, e2eContext);
@@ -499,8 +487,6 @@ test.describe("Formulaire indicateur — Accès refusé", () => {
     e2eContext,
     step,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
 
     await step(

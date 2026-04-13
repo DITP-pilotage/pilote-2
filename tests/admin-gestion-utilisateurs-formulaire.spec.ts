@@ -9,7 +9,6 @@ test("doit valider les champs obligatoires Service et Fonction à la création",
   e2eContext,
   step,
 }) => {
-  test.setTimeout(300_000);
   const appActions = new AppActions(page, e2eContext);
   const pageFormulaire = new PageUtilisateurFormulaire(page, e2eContext);
 
@@ -60,7 +59,6 @@ test("doit valider les champs obligatoires à la modification et supprimer la mo
   e2eContext,
   step,
 }) => {
-  test.setTimeout(300_000);
   const appActions = new AppActions(page, e2eContext);
   const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
   const pageFormulaire = new PageUtilisateurFormulaire(page, e2eContext);

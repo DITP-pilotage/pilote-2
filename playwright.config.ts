@@ -18,6 +18,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: 2,
+  timeout: 90_000,
   globalTimeout: 2_000_000,
   outputDir: process.env.CI ? "test-results" : "/tmp/pilote-playwright/results",
   /* Run serially for test isolation */
@@ -49,7 +50,7 @@ export default defineConfig({
     video: process.env.E2E_VIDEO === "on" ? "on" : "retain-on-failure",
     screenshot: "only-on-failure",
     actionTimeout: 30_000,
-    navigationTimeout: 150_000,
+    navigationTimeout: 45_000,
     acceptDownloads: true,
   },
 

@@ -7,7 +7,6 @@ test("doit afficher et modifier le profil utilisateur", async ({
   e2eContext,
   step,
 }) => {
-  test.setTimeout(300_000);
   const appActions = new AppActions(page, e2eContext);
   const pageMonProfil = new PageMonProfilUtilisateur(page, e2eContext);
 

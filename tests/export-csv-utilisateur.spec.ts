@@ -8,7 +8,6 @@ test("doit pouvoir exporter les données des utilisateurs sous format CSV", asyn
   page,
   e2eContext,
 }) => {
-  test.setTimeout(150_000);
   const appActions = new AppActions(page, e2eContext);
   await appActions.loginAs();
 

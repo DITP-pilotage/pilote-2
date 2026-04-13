@@ -14,7 +14,6 @@ test("doit pouvoir exporter les données des chantiers sous format CSV", async (
   page,
   e2eContext,
 }) => {
-  test.setTimeout(150_000);
   const appActions = new AppActions(page, e2eContext);
   const pageAccueil = await appActions.loginAs();
 

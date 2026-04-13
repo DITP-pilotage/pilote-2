@@ -16,8 +16,6 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
     page,
     e2eContext,
   }) => {
-    test.setTimeout(300_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageChantier = new PageChantier(page, e2eContext);
     const indicId = "IND-021";
@@ -192,8 +190,6 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
     page,
     e2eContext,
   }) => {
-    test.setTimeout(300_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageChantier = new PageChantier(page, e2eContext);
     const indicId = "IND-022";
@@ -297,8 +293,6 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
     page,
     e2eContext,
   }) => {
-    test.setTimeout(300_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageChantier = new PageChantier(page, e2eContext);
     const indicId = "IND-023";
@@ -390,8 +384,6 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
     page,
     e2eContext,
   }) => {
-    test.setTimeout(300_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageChantier = new PageChantier(page, e2eContext);
     const indicId = "IND-024";
@@ -527,8 +519,6 @@ test.describe("Proposition de valeur d'avancement (PVA)", () => {
     page,
     e2eContext,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageChantier = new PageChantier(page, e2eContext);
     const indicId = "IND-021";
