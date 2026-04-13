@@ -4,7 +4,7 @@ import {
   telechargerCsv,
 } from "@/client/utils/csv";
 
-describe("filtrerParTerritoires", () => {
+describe("filtrerLesTerritoires", () => {
   it("ne retourne que les territoires applicables présents dans la liste d'export", () => {
     // Given
     const donnees = [
