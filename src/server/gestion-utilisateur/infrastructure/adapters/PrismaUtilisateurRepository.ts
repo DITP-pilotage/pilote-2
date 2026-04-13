@@ -279,6 +279,10 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
       },
       data: {
         date_desactivation: null,
+        date_premiere_relance_desactivation: null,
+        date_deuxieme_relance_desactivation: null,
+        date_desactivation_programee: null,
+        date_derniere_connexion: new Date(),
         date_modification: new Date(),
         auteur_id_modification: auteurId,
       },
