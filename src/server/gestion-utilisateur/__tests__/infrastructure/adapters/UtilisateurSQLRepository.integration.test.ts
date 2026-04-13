@@ -208,6 +208,42 @@ describe("PrismaUtilisateurRepository", () => {
         );
       }),
     );
+
+    it(
+      "si l'email existe, réinitialise toutes les dates liées au cycle de désactivation",
+      createIntegrationTest(async (tx) => {
+        // Given
+        const auteur = await fixtures.utilisateur();
+        // Utilisateur dont le compte a été désactivé par le cron avec toutes les dates de relance renseignées
+        const utilisateur = await fixtures.utilisateur({
+          date_desactivation: new Date("2026-01-31"),
+          date_premiere_relance_desactivation: new Date("2026-01-01"),
+          date_deuxieme_relance_desactivation: new Date("2026-01-15"),
+          date_desactivation_programee: new Date("2026-01-31"),
+        });
+
+        // When
+        await repository.reactiver(utilisateur.email, auteur.id);
+
+        // Then
+        const utilisateurReactive = await tx.utilisateur.findFirst({
+          where: { email: utilisateur.email },
+        });
+
+        expect(utilisateurReactive).not.toBeNull();
+        expect(utilisateurReactive?.date_desactivation).toBeNull();
+        expect(
+          utilisateurReactive?.date_premiere_relance_desactivation,
+        ).toBeNull();
+        expect(
+          utilisateurReactive?.date_deuxieme_relance_desactivation,
+        ).toBeNull();
+        expect(utilisateurReactive?.date_desactivation_programee).toBeNull();
+        expect(
+          utilisateurReactive?.date_derniere_connexion?.toDateString(),
+        ).toStrictEqual(new Date().toDateString());
+      }),
+    );
   });
 
   describe("recupererComptesInactifs", function () {
