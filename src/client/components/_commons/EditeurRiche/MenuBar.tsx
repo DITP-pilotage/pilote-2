@@ -33,7 +33,13 @@ import { ModaleInsertionUrl } from "./ModaleInsertionUrl";
 import { ModaleInsertionIcone } from "./ModaleInsertionIcone";
 import { ModaleInsertionComposant } from "./ModaleInsertionComposant";
 
-export const MenuBar = ({ editor }: { editor: Editor }) => {
+export const MenuBar = ({
+  editor,
+  avecFichiersNumeriques = true,
+}: {
+  editor: Editor;
+  avecFichiersNumeriques?: boolean;
+}) => {
   const [modaleImage, setModaleImage] = useState(false);
   const [modaleLien, setModaleLien] = useState(false);
   const [modaleVideo, setModaleVideo] = useState(false);
@@ -501,6 +507,7 @@ export const MenuBar = ({ editor }: { editor: Editor }) => {
         type="image"
       />
       <ModaleInsertionUrl
+        avecFichiersNumeriques={avecFichiersNumeriques}
         onOpenChange={setModaleLien}
         onValider={(url) => {
           editor
