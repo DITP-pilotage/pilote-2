@@ -1,4 +1,3 @@
 
 
-SELECT
-    '0.20.1' as dbt_pkg_version
+select '0.23.0' as dbt_pkg_version

@@ -1,14 +1,9 @@
+with
+    dbt_run_results as (select * from "dev_pilote__6230"."elementary"."dbt_run_results"),
 
+    dbt_models as (select * from "dev_pilote__6230"."elementary"."dbt_models")
 
-with dbt_run_results as (
-    select * from "dev_pilote__6230"."elementary"."dbt_run_results"
-),
-
-dbt_models as (
-    select * from "dev_pilote__6230"."elementary"."dbt_models"
-)
-
-SELECT
+select
     run_results.model_execution_id,
     run_results.unique_id,
     run_results.invocation_id,
@@ -36,19 +31,43 @@ SELECT
     models.original_path,
     models.owner,
     models.alias,
-    ROW_NUMBER() OVER (PARTITION BY run_results.unique_id ORDER BY run_results.generated_at DESC) AS model_invocation_reverse_index,
-    CASE WHEN FIRST_VALUE(invocation_id) OVER (PARTITION BY 
-    date_trunc('day', cast(run_results.generated_at as timestamp))
- ORDER BY run_results.generated_at ASC ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING ) = invocation_id
-              THEN TRUE
-              ELSE FALSE 
-         END                                                               AS is_the_first_invocation_of_the_day,
-    CASE WHEN LAST_VALUE(invocation_id) OVER (PARTITION BY 
-    date_trunc('day', cast(run_results.generated_at as timestamp))
- ORDER BY run_results.generated_at ASC ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING ) = invocation_id
-              THEN TRUE
-              ELSE FALSE 
-         END                                                               AS is_the_last_invocation_of_the_day
+    row_number() over (
+        partition by run_results.unique_id order by run_results.generated_at desc
+    ) as model_invocation_reverse_index,
     
-FROM dbt_run_results run_results
-JOIN dbt_models models ON run_results.unique_id = models.unique_id
+    case
+        when first_value(invocation_id) over (partition by 
+    date_trunc(
+        'day',
+        cast(run_results.generated_at as timestamp)
+    )
+ order by run_results.generated_at asc rows between unbounded preceding and unbounded following) = invocation_id
+        then 
+     true 
+
+        else 
+     false
+
+    end
+
+    as is_the_first_invocation_of_the_day,
+    
+    case
+        when last_value(invocation_id) over (partition by 
+    date_trunc(
+        'day',
+        cast(run_results.generated_at as timestamp)
+    )
+ order by run_results.generated_at asc rows between unbounded preceding and unbounded following) = invocation_id
+        then 
+     true 
+
+        else 
+     false
+
+    end
+
+    as is_the_last_invocation_of_the_day
+
+from dbt_run_results run_results
+join dbt_models models on run_results.unique_id = models.unique_id

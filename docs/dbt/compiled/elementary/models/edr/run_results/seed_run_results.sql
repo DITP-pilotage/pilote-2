@@ -1,14 +1,11 @@
 
 
-with dbt_run_results as (
-    select * from "dev_pilote__6230"."elementary"."dbt_run_results"
-),
+with
+    dbt_run_results as (select * from "dev_pilote__6230"."elementary"."dbt_run_results"),
 
-dbt_seeds as (
-    select * from "dev_pilote__6230"."elementary"."dbt_seeds"
-)
+    dbt_seeds as (select * from "dev_pilote__6230"."elementary"."dbt_seeds")
 
-SELECT
+select
     run_results.model_execution_id,
     run_results.unique_id,
     run_results.invocation_id,
@@ -36,5 +33,5 @@ SELECT
     seeds.original_path,
     seeds.owner,
     seeds.alias
-FROM dbt_run_results run_results
-JOIN dbt_seeds seeds ON run_results.unique_id = seeds.unique_id
+from dbt_run_results run_results
+join dbt_seeds seeds on run_results.unique_id = seeds.unique_id

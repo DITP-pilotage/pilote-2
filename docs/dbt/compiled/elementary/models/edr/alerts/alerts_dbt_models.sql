@@ -1,8 +1,10 @@
 
 
-with error_models as (
-  
-    select  model_execution_id,
+with
+    error_models as (
+
+        select
+            model_execution_id,
             unique_id,
             invocation_id,
             name,
@@ -24,12 +26,13 @@ with error_models as (
             path,
             original_path,
             owner,
-            alias 
-    from "dev_pilote__6230"."elementary"."model_run_results"
-  
-    union all
-  
-    select  model_execution_id,
+            alias
+        from "dev_pilote__6230"."elementary"."model_run_results"
+
+        union all
+
+        select
+            model_execution_id,
             unique_id,
             invocation_id,
             name,
@@ -51,24 +54,30 @@ with error_models as (
             path,
             original_path,
             owner,
-            alias  
-  from "dev_pilote__6230"."elementary"."snapshot_run_results"
-)
+            alias
+        from "dev_pilote__6230"."elementary"."snapshot_run_results"
+    )
 
-
-select model_execution_id as alert_id,
-       unique_id,
-       cast(generated_at as timestamp) as detected_at,
-       database_name,
-       materialization,
-       path,
-       original_path,
-       schema_name,
-       message,
-       owner as owners,
-       tags,
-       alias,
-       status,
-       full_refresh
+select
+    model_execution_id as alert_id,
+    unique_id,
+    cast(generated_at as timestamp) as detected_at,
+    database_name,
+    materialization,
+    path,
+    original_path,
+    schema_name,
+    message,
+    owner as owners,
+    tags,
+    alias,
+    status,
+    full_refresh
 from error_models
-where True and lower(status) != 'success'and lower(status) != 'skipped'
+where
+    
+    
+      (1 = 1)
+    
+
+    and lower(status) != 'success'and lower(status) != 'skipped'
