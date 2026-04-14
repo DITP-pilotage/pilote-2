@@ -26,6 +26,8 @@ const MOTS_CLES_DASHBOARD = [
   "affiche",
   "montre",
   "visualise",
+  "indicateur",
+  "indicateurs",
 ];
 
 const MOTS_CLES_EXPORT = [
