@@ -11,8 +11,6 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
     e2eContext,
     step,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     await appActions.loginAs("ditp.admin@example.com");
 
@@ -49,8 +47,6 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
     e2eContext,
     step,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     await appActions.loginAs("premiere.ministre@example.com");
 
@@ -87,8 +83,6 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
     e2eContext,
     step,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     await appActions.loginAs("equipe.dir.projet@example.com");
 
@@ -136,8 +130,6 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
     e2eContext,
     step,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     await appActions.loginAs("pva.coordinateur.dept@example.com");
 
@@ -180,8 +172,6 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
     e2eContext,
     step,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     await appActions.loginAs("chantier.prefet.reg@example.com");
 
@@ -221,8 +211,6 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
     e2eContext,
     step,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     await appActions.loginAs("coordinateur.departement@example.com");
 
@@ -255,8 +243,6 @@ test.describe("Consultation des données d'un chantier — Isolation par profil"
     e2eContext,
     step,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     await appActions.loginAs("prefet.region@example.com");
 
@@ -317,8 +303,6 @@ test.describe("Cartographie PVA — Comparaison territoriale", () => {
     e2eContext,
     step,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     await appActions.loginAs("ditp.admin@example.com");
 
@@ -380,8 +364,6 @@ test.describe("Cartographie PVA — Comparaison territoriale", () => {
     e2eContext,
     step,
   }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     await appActions.loginAs("ditp.admin@example.com");
 

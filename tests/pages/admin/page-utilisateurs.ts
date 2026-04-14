@@ -83,10 +83,28 @@ export class PageAdminUtilisateurs extends BasePage {
 
   async rechercherUtilisateur(texte: string): Promise<void> {
     await this.barreRecherche.fill(texte);
+    await expect(this.barreRecherche).toHaveValue(texte);
+    await this.page.waitForLoadState("networkidle");
   }
 
   async effacerRecherche(): Promise<void> {
-    await this.barreRecherche.clear();
+    // Le clear peut être écrasé par une synchro URL ↔ state (nuqs) qui
+    // réinjecte l'ancienne valeur après coup. On force un blur (Tab) pour
+    // commiter immédiatement, puis on vérifie que la valeur reste vide.
+    await expect(async () => {
+      await this.barreRecherche.clear();
+      await this.barreRecherche.press("Tab");
+      await this.page.waitForTimeout(300);
+      await expect(this.barreRecherche).toHaveValue("");
+    }).toPass({ timeout: 10_000 });
+    await this.page.waitForLoadState("networkidle");
+  }
+
+  private async ensureRechercheVide(): Promise<void> {
+    const valeurActuelle = await this.barreRecherche.inputValue();
+    if (valeurActuelle !== "") {
+      await this.effacerRecherche();
+    }
   }
 
   async filtrerParStatut(
@@ -98,15 +116,26 @@ export class PageAdminUtilisateurs extends BasePage {
       desactives: this.tagDesactives,
     };
     await tags[statut].click();
+    await this.page.waitForLoadState("networkidle");
   }
 
   async filtrerParProfil(nomProfil: string): Promise<void> {
-    await this.page.getByLabel("Profil(s)").click();
-    await this.page
-      .getByRole("checkbox", { name: nomProfil })
-      .check({ force: true });
+    await this.ensureRechercheVide();
+
+    const dropdownProfil = this.page.getByLabel("Profil(s)");
+    const checkbox = this.page.getByRole("checkbox", { name: nomProfil });
+    const label = this.page.locator("label").filter({ hasText: nomProfil });
+
+    await expect(async () => {
+      await dropdownProfil.click();
+      await label.waitFor({ state: "visible", timeout: 2_000 });
+    }).toPass({ timeout: 10_000 });
+
+    await label.click();
+    await expect(checkbox).toBeChecked();
     // fermer le dropdown en cliquant ailleurs
     await this.page.getByRole("heading", { level: 1 }).click();
+    await this.page.waitForLoadState("networkidle");
   }
 
   async expectColonneVisible(nomColonne: string): Promise<void> {

@@ -1,8 +1,8 @@
 import { $Enums } from "@prisma/client";
-import pick from "lodash.pick";
 import { randomUUID } from "node:crypto";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/evaluation/module";
+import { pick } from "@/server/utils/pick";
 
 export interface Critere {
   id: string;

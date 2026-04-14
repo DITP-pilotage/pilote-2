@@ -20,8 +20,6 @@ test.describe("Gestion des comptes utilisateurs", () => {
     page,
     e2eContext,
   }) => {
-    test.setTimeout(300_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
 
@@ -101,8 +99,6 @@ test.describe("Gestion des comptes utilisateurs", () => {
     page,
     e2eContext,
   }) => {
-    test.setTimeout(300_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
 
@@ -201,8 +197,6 @@ test.describe("Gestion des comptes utilisateurs", () => {
     page,
     e2eContext,
   }) => {
-    test.setTimeout(300_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
 
@@ -275,8 +269,6 @@ test.describe("Gestion des comptes utilisateurs", () => {
   });
 
   test("Secrétariat Général — Par chantiers", async ({ page, e2eContext }) => {
-    test.setTimeout(300_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
 
@@ -323,8 +315,6 @@ test.describe("Gestion des comptes utilisateurs", () => {
   });
 
   test("Profils sans accès — Redirection", async ({ page, e2eContext }) => {
-    test.setTimeout(150_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
 
@@ -351,8 +341,6 @@ test.describe("Gestion des comptes utilisateurs", () => {
   });
 
   test("Désactivation et réactivation", async ({ page, e2eContext }) => {
-    test.setTimeout(300_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
     let pageDetail: PageUtilisateurDetail;
@@ -398,8 +386,6 @@ test.describe("Gestion des comptes utilisateurs", () => {
   });
 
   test("Filtres et recherche", async ({ page, e2eContext }) => {
-    test.setTimeout(300_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
 
@@ -456,8 +442,6 @@ test.describe("Gestion des comptes utilisateurs", () => {
   });
 
   test("Restriction multi-territoires", async ({ page, e2eContext }) => {
-    test.setTimeout(300_000);
-
     const appActions = new AppActions(page, e2eContext);
     const pageUtilisateurs = new PageAdminUtilisateurs(page, e2eContext);
 
