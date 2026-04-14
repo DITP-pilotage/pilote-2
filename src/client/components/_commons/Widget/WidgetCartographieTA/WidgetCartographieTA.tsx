@@ -18,6 +18,7 @@ type WidgetCartographieTAProps = {
   chantierIds: string[];
   maille: MailleInterne;
   jalon: number;
+  territoireCode: string;
 };
 
 const formatValeurTA = (valeur: number | null | undefined): string | null => {
@@ -29,6 +30,7 @@ export const WidgetCartographieTA = ({
   chantierIds,
   maille,
   jalon,
+  territoireCode,
 }: WidgetCartographieTAProps) => {
   const router = useRouter();
 
@@ -85,7 +87,7 @@ export const WidgetCartographieTA = ({
           onTerritoireSelect={naviguerVersTerritoire}
           donnees={donneesCartographie}
           maille={maille}
-          territoiresSelectionnes={[]}
+          territoiresSelectionnes={[territoireCode]}
         />
       }
       complementsCartographie={
