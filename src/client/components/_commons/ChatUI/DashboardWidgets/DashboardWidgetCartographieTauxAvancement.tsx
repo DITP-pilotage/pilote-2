@@ -1,5 +1,5 @@
-import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
 import type { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { WidgetCartographieTAComparaison } from "@/components/_commons/Widget/WidgetCartographieTAComparaison/WidgetCartographieTAComparaison";
 import { DashboardPanel } from "./DashboardPanel";
 
 export const DashboardWidgetCartographieTauxAvancement = ({
@@ -14,7 +14,7 @@ export const DashboardWidgetCartographieTauxAvancement = ({
   chantierIds: string[];
 }) => (
   <DashboardPanel>
-    <WidgetCartographieTA
+    <WidgetCartographieTAComparaison
       mode="chantiers"
       chantierIds={chantierIds}
       maille={maille}
