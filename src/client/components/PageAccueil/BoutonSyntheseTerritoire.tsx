@@ -97,7 +97,7 @@ export const BoutonSyntheseTerritoire = ({
   return (
     <>
       <button
-        className="flex self-center mb-4 ml-auto gap-2 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/5 rounded-lg transition-colors"
+        className="flex gap-2 px-4 py-2 text-sm font-medium text-primary hover:bg-primary/5 rounded-lg transition-colors"
         onClick={() => setIsOpen(true)}
         type="button"
       >

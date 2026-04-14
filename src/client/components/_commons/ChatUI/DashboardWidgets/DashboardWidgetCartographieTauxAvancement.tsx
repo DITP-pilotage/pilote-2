@@ -1,5 +1,6 @@
 import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
 import type { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { DashboardPanel } from "./DashboardPanel";
 
 export const DashboardWidgetCartographieTauxAvancement = ({
   maille,
@@ -12,7 +13,7 @@ export const DashboardWidgetCartographieTauxAvancement = ({
   jalon: number;
   chantierIds: string[];
 }) => (
-  <div className="h-full rounded-lg border border-gray-200 bg-white p-4">
+  <DashboardPanel>
     <WidgetCartographieTA
       mode="chantiers"
       chantierIds={chantierIds}
@@ -20,5 +21,5 @@ export const DashboardWidgetCartographieTauxAvancement = ({
       territoireCode={territoireCode}
       jalon={jalon}
     />
-  </div>
+  </DashboardPanel>
 );

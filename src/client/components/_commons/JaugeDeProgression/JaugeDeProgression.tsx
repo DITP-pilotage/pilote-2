@@ -25,7 +25,7 @@ const TAILLE_TRACÉ: Record<JaugeDeProgressionTaille, string> = {
 
 interface JaugeDeProgressionProps {
   couleur: JaugeDeProgressionCouleur;
-  libellé: string;
+  libellé?: string;
   date?: string | null;
   pourcentage: number | null | undefined;
   taille: JaugeDeProgressionTaille;

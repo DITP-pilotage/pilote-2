@@ -1,5 +1,6 @@
 import { WidgetCartographieMeteo } from "@/components/_commons/Widget/WidgetCartographieMeteo/WidgetCartographieMeteo";
 import type { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { DashboardPanel } from "./DashboardPanel";
 
 export const DashboardWidgetCartographieMeteo = ({
   maille,
@@ -12,12 +13,12 @@ export const DashboardWidgetCartographieMeteo = ({
   chantierId: string;
   jalon: number;
 }) => (
-  <div className="h-full rounded-lg border border-gray-200 bg-white p-4">
+  <DashboardPanel>
     <WidgetCartographieMeteo
       chantierId={chantierId}
       maille={maille}
       territoireCode={territoireCode}
       jalon={jalon}
     />
-  </div>
+  </DashboardPanel>
 );

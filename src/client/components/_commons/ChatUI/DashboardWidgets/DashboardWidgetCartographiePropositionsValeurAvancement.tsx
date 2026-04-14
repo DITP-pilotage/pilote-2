@@ -1,5 +1,6 @@
 import { WidgetCartographiePVA } from "@/components/_commons/Widget/WidgetCartographiePVA/WidgetCartographiePVA";
 import type { MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { DashboardPanel } from "./DashboardPanel";
 
 export const DashboardWidgetCartographiePropositionsValeurAvancement = ({
   maille,
@@ -12,7 +13,7 @@ export const DashboardWidgetCartographiePropositionsValeurAvancement = ({
   chantierId: string;
   jalon: number;
 }) => (
-  <div className="h-full rounded-lg border border-gray-200 bg-white p-4">
+  <DashboardPanel>
     <WidgetCartographiePVA
       mode="chantier"
       chantierId={chantierId}
@@ -20,5 +21,5 @@ export const DashboardWidgetCartographiePropositionsValeurAvancement = ({
       territoireCode={territoireCode}
       jalon={jalon}
     />
-  </div>
+  </DashboardPanel>
 );

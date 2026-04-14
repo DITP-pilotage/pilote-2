@@ -16,7 +16,6 @@ export const DashboardJaugeCard = ({
   <DashboardCardShell label={label} footer={footer}>
     <JaugeDeProgression
       couleur={couleur}
-      libellé=""
       pourcentage={pourcentage}
       taille="md"
     />

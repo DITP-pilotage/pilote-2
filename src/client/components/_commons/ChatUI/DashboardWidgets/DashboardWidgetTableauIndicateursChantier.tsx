@@ -1,6 +1,7 @@
 import api from "@/server/infrastructure/api/trpc/api";
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
 import { ChantierIndicateursTable } from "@/components/_commons/ChatUI/ChantierIndicateursTable";
+import { DashboardPanel } from "./DashboardPanel";
 
 export const DashboardWidgetTableauIndicateursChantier = ({
   chantierId,
@@ -17,7 +18,7 @@ export const DashboardWidgetTableauIndicateursChantier = ({
   );
 
   return (
-    <div className="h-full rounded-lg border border-gray-200 bg-white p-4">
+    <DashboardPanel>
       <div className="text-xs uppercase tracking-wide text-gray-500 mb-3">
         Indicateurs · {chantierId} · {territoireCode}
       </div>
@@ -28,6 +29,6 @@ export const DashboardWidgetTableauIndicateursChantier = ({
       ) : (
         <ChantierIndicateursTable indicateurs={data.indicateurs} />
       )}
-    </div>
+    </DashboardPanel>
   );
 };
