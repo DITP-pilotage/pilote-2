@@ -1,4 +1,4 @@
-import { generateText, Output, stepCountIs, tool, type ToolSet } from "ai";
+import { generateText, Output, tool } from "ai";
 import { z } from "zod";
 import {
   composeDashboardInputSchema,
@@ -18,18 +18,12 @@ export const createDashboardInputSchema = z.object({
 
 export type CreateDashboardOutput = ComposeDashboardOutput;
 
-type CreateDashboardToolDeps = {
-  subagentTools: ToolSet;
-};
-
 const OUTPUT_INSTRUCTIONS = `Le dashboard a été composé et sera affiché visuellement sous forme de widgets dans l'interface.
 Ne reproduis JAMAIS de valeurs chiffrées dans ta réponse textuelle (les chiffres sont résolus au rendu côté client).
 Tu peux ajouter une phrase courte d'introduction ("Voici le dashboard demandé.") mais pas de commentaire sur les chiffres.
 Si l'utilisateur demande à modifier le dashboard, rappelle create_dashboard avec une nouvelle description.`;
 
-export function createCreateDashboardTool({
-  subagentTools,
-}: CreateDashboardToolDeps) {
+export function createCreateDashboardTool() {
   const albertProvider = Albert.createProvider();
 
   return tool({
@@ -43,9 +37,7 @@ Décris précisément ce que l'utilisateur veut visualiser.`,
         model: albertProvider.chat("openweight-large"),
         system: buildDashboardSystemPrompt(),
         prompt: task,
-        tools: subagentTools,
         output: Output.object({ schema: composeDashboardInputSchema }),
-        stopWhen: stepCountIs(10),
         abortSignal,
       });
 

@@ -87,16 +87,7 @@ export async function POST(request: Request) {
       userId: session.user.id,
     });
 
-    const subagentDataTools = {
-      get_taux_avancement_territoire: getTauxAvancementTerritoire,
-      get_chantiers_en_retard: getChantiersEnRetard,
-      get_chantiers_en_difficulte: getChantiersEnDifficulte,
-      get_chantier_indicateurs: getChantierIndicateurs,
-    };
-
-    const createDashboard = createCreateDashboardTool({
-      subagentTools: subagentDataTools,
-    });
+    const createDashboard = createCreateDashboardTool();
 
     const tools = {
       get_taux_avancement_territoire: getTauxAvancementTerritoire,
