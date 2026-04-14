@@ -20,7 +20,7 @@ export const DashboardWidgetTableauIndicateursChantier = ({
   return (
     <DashboardPanel>
       <div className="text-xs uppercase tracking-wide text-gray-500 mb-3">
-        Indicateurs · {chantierId} · {territoireCode}
+        Indicateurs · {chantierId} · {territoireCode} · {jalon}
       </div>
       {data.indicateurs.length === 0 ? (
         <div className="text-sm text-gray-500">
