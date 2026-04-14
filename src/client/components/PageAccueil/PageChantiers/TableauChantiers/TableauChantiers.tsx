@@ -33,8 +33,8 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
 
   return (
     <section className="fr-table fr-m-0 fr-p-0 text-dsfr-grey-50">
-      <div className="flex flex-col justify-between md:flex-row gap-4 md:items-end w-full mb-4">
-        <div className="flex flex-col md:flex-row gap-4">
+      <div className="flex flex-col justify-between 2xl:flex-row gap-4 2xl:items-end w-full mb-4">
+        <div className="flex flex-col 2xl:flex-row gap-4">
           <div className="w-80">
             <BarreDeRecherche
               changementDeLaRechercheCallback={changementDeLaRechercheCallback}
@@ -42,7 +42,7 @@ const TableauChantiers: FunctionComponent<TableauChantiersProps> = ({
             />
           </div>
         </div>
-        <div className="flex md:flex-row gap-4 items-end">
+        <div className="flex 2xl:flex-row gap-4 items-end">
           <SelecteurGroupementTableauChantier />
           <TableauChantiersActionsDeTri />
         </div>

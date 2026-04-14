@@ -345,6 +345,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_REFONTE_PAGE_CHANTIER",
     },
+    reorganisationPageAccueil: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_REORGANISATION_PAGE_ACCUEIL",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",

@@ -26,7 +26,7 @@ export const BaseCartographieWidgetLayout = ({
   titre?: ReactNode;
   cartographie: ReactNode;
   complementsCartographie?: ReactNode;
-  children: ReactNode;
+  children?: ReactNode;
   footer?: ReactNode;
 }) => {
   const { isModeG } = useMesureWidget();
@@ -34,13 +34,20 @@ export const BaseCartographieWidgetLayout = ({
   if (isModeG) {
     return (
       <div className="flex flex-col gap-8 h-full">
-        <div className="grid grid-cols-2 gap-8">
+        <div
+          className={clsxm("grid gap-8", {
+            "grid-cols-2": children !== undefined,
+            "grid-cols-1": children === undefined,
+          })}
+        >
           <div className="flex flex-col gap-4 max-w-[400px] mx-auto">
             {titre}
             {cartographie}
             {complementsCartographie}
           </div>
-          <div className="flex flex-col gap-2">{children}</div>
+          {children !== undefined && (
+            <div className="flex flex-col gap-2">{children}</div>
+          )}
         </div>
         {footer}
       </div>
@@ -52,7 +59,9 @@ export const BaseCartographieWidgetLayout = ({
       {titre}
       <div className="w-full max-w-[400px] mx-auto">{cartographie}</div>
       {complementsCartographie}
-      <div className="flex flex-col gap-2 grow">{children}</div>
+      {children !== undefined && (
+        <div className="flex flex-col gap-2 grow">{children}</div>
+      )}
       {footer}
     </div>
   );

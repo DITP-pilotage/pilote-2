@@ -1,5 +1,5 @@
 import { MailleInterne } from "@/server/domain/maille/Maille.interface";
-import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartographieTA/WidgetCartographieTA";
+import { WidgetCartographieTAComparaison } from "@/components/_commons/Widget/WidgetCartographieTAComparaison/WidgetCartographieTAComparaison";
 import { WidgetCartographieMeteo } from "@/components/_commons/Widget/WidgetCartographieMeteo/WidgetCartographieMeteo";
 import { WidgetCartographiePVA } from "@/components/_commons/Widget/WidgetCartographiePVA/WidgetCartographiePVA";
 import { ComparaisonTerritoires as ComparaisonTerritoiresBase } from "@/components/_commons/ComparaisonTerritoires/ComparaisonTerritoires";
@@ -38,7 +38,7 @@ export const ComparaisonTerritoires = ({
     renderCarte={(type) => {
       if (type === "ta") {
         return (
-          <WidgetCartographieTA
+          <WidgetCartographieTAComparaison
             mode="chantiers"
             chantierIds={[chantierId]}
             jalon={jalon}

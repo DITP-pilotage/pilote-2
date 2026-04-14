@@ -78,7 +78,7 @@ export const useTableauChantiers = (
 
   const [expanded, setExpanded] = useState<ExpandedState>(true);
 
-  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue("md");
+  const estVueTuile = estLargeurDÉcranActuelleMoinsLargeQue("lg");
 
   const reactTableColonnesHelper =
     createColumnHelper<DonnéesTableauChantiers>();
