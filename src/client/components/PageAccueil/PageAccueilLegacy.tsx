@@ -180,10 +180,12 @@ export const PageAccueilLegacy = ({
               ministères={ministères}
             />
             {ffAskAI || session?.profil === ProfilEnum.DITP_ADMIN ? (
-              <BoutonSyntheseTerritoire
-                territoireCode={territoireCode}
-                jalon={jalon}
-              />
+              <div className="ml-auto flex items-center h-full pr-2 pt-1">
+                <BoutonSyntheseTerritoire
+                  territoireCode={territoireCode}
+                  jalon={jalon}
+                />
+              </div>
             ) : null}
           </div>
           <PageChantiers
