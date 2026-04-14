@@ -15,6 +15,10 @@ const querySchema = z.object({
       const parsed = Date.parse(val);
       return Number.isNaN(parsed) ? new Date() : new Date(parsed);
     }),
+  force: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((val) => val === "true"),
 });
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -22,9 +26,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   const roomId = configuration().tchap.roomIdRapportCoordinateurs;
   const accessToken = configuration().tchap.accessToken;
 
+  const { date: maintenant, force } = querySchema.parse(req.query);
+
   if (
-    !configurationFeatureFlip().rapportCoordinateurs ||
-    configuration().scalingoEnvironment !== "PROD"
+    !force &&
+    (!configurationFeatureFlip().rapportCoordinateurs ||
+      configuration().scalingoEnvironment !== "PROD")
   ) {
     return res.status(200).json({
       skipped: true,
@@ -33,8 +40,6 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         : "Environment is not PROD",
     });
   }
-
-  const { date: maintenant } = querySchema.parse(req.query);
 
   logger.info(
     {
