@@ -141,7 +141,7 @@ const TuilesAlertes = ({
       : alertesTerritoriales(mailleChantier);
 
   return (
-    <ul className="list-none p-0 m-0 flex flex-col gap-3 max-w-[360px] sm:grid sm:grid-cols-2 sm:max-w-none">
+    <ul className="list-none p-0 m-0 flex flex-col gap-3">
       {alertes.map((alerte) => (
         <li key={alerte.nomCritère}>
           <TuileAlerte
@@ -189,7 +189,7 @@ const TuileAlerte = ({
   return (
     <button
       className={clsxm(
-        "w-full h-full border border-dsfr-warning-925 rounded-lg bg-white shadow-lg cursor-pointer transition-colors hover:bg-dsfr-warning-950 flex items-center gap-3 py-4 px-5 sm:flex-col sm:items-start sm:gap-1",
+        "w-full h-full border border-dsfr-warning-925 rounded-lg bg-white shadow-lg cursor-pointer transition-colors hover:bg-dsfr-warning-950 flex items-center gap-3 py-4 px-5",
         {
           "border-dsfr-warning-425 bg-dsfr-warning-950": filtreAlerte,
         },
@@ -199,7 +199,7 @@ const TuileAlerte = ({
       type="button"
       aria-pressed={filtreAlerte}
     >
-      <span className="text-[1.75rem] font-bold text-dsfr-warning-425 min-w-[2.5rem] text-center sm:text-left">
+      <span className="text-[1.75rem] font-bold text-dsfr-warning-425 min-w-[2.5rem] text-center">
         {nombre}
       </span>
       <span className="text-sm text-dsfr-grey-200 leading-tight text-left">

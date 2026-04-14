@@ -109,12 +109,12 @@ const TuilesMeteos = ({
   );
 
   return (
-    <ul className="list-none p-0 m-0 flex flex-col gap-3 max-w-[360px] sm:grid sm:grid-cols-2 sm:max-w-none">
+    <ul className="list-none p-0 m-0 flex flex-col gap-3">
       {meteosOrdonnees.map((meteo) => (
         <li key={meteo}>
           <button
             className={clsxm(
-              "w-full h-full border border-dsfr-moutarde-main-975 rounded-lg bg-white shadow-lg cursor-pointer transition-colors hover:border-dsfr-moutarde-main-925 hover:bg-dsfr-moutarde-main-975 flex items-center gap-3 py-4 px-5 sm:flex-col sm:items-start sm:gap-1",
+              "w-full h-full border border-dsfr-moutarde-main-975 rounded-lg bg-white shadow-lg cursor-pointer transition-colors hover:border-dsfr-moutarde-main-925 hover:bg-dsfr-moutarde-main-975 flex items-center gap-3 py-4 px-5",
               {
                 "border-dsfr-moutarde-main-850": meteos.includes(meteo),
               },
@@ -126,13 +126,10 @@ const TuilesMeteos = ({
             type="button"
             aria-pressed={meteos.includes(meteo)}
           >
-            <span className="text-[1.75rem] font-bold text-dsfr-moutarde-main-850 min-w-[2.5rem] text-center sm:flex sm:items-center sm:gap-2">
+            <span className="text-[1.75rem] font-bold text-dsfr-moutarde-main-850 min-w-[2.5rem] text-center">
               {repartition[meteo]}
-              <span className="hidden sm:inline">
-                <MeteoPicto meteo={meteo} />
-              </span>
             </span>
-            <span className="sm:hidden">
+            <span>
               <MeteoPicto meteo={meteo} />
             </span>
             <span className="text-sm text-dsfr-grey-200 leading-tight">

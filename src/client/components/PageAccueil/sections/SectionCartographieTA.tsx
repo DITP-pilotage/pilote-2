@@ -3,15 +3,17 @@ import { WidgetCartographieTA } from "@/components/_commons/Widget/WidgetCartogr
 import { usePageAccueilContext } from "@/components/PageAccueil/PageAccueilContext";
 
 export const SectionCartographieTA = () => {
-  const { chantierIds, jalon, mailleQuery } = usePageAccueilContext();
+  const { chantierIds, jalon, mailleQuery, territoireCode } =
+    usePageAccueilContext();
 
   return (
-    <section id="taux-avancement-territoires" className="pt-4">
-      <TuileWidget titre="Taux d'avancement des chantiers par territoire">
+    <section id="repartition-territoriale">
+      <TuileWidget titre="Répartition territoriale">
         <WidgetCartographieTA
           chantierIds={chantierIds}
           jalon={jalon}
           maille={mailleQuery}
+          territoireCode={territoireCode}
         />
       </TuileWidget>
     </section>
