@@ -2,6 +2,9 @@
   "jobs": [
     {
       "command": "0 * * * * /bin/bash scripts/run_datajobs.sh"
+    },
+    {
+      "command": "0 0 * * * pipenv run dbt test"
     }
   ]
 }

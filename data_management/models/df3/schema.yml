@@ -9,11 +9,13 @@ models:
         - gestion des valeurs null et cast de la metric_value en numeric pour éviter les soucis d'arrondis. 
     data_tests:
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - indic_id
-            - metric_type
-            - metric_date
-            - zone_id
+          arguments:
+            combination_of_columns:
+              - date_import
+              - indic_id
+              - metric_type
+              - metric_date
+              - zone_id
   - name: mesure_last
     config:
       materialized: table
@@ -24,11 +26,12 @@ models:
         - On remplace la date de la metric date par le premier jour du mois
     data_tests:
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns:
-            - indic_id
-            - metric_type
-            - metric_date
-            - zone_id
+          arguments:
+            combination_of_columns:
+              - indic_id
+              - metric_type
+              - metric_date
+              - zone_id
   - name: agg_dept
     description: |
         Sélection des valeurs et calculs des aggrégation pour le niveau DEPT en fonction des paramètres. Règles:
