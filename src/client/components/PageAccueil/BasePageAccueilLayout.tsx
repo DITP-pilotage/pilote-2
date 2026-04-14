@@ -189,10 +189,12 @@ export const BasePageAccueilLayout: FunctionComponent<
               ministères={ministères}
             />
             {ffAskAI || session?.profil === ProfilEnum.DITP_ADMIN ? (
-              <BoutonSyntheseTerritoire
-                jalon={jalon}
-                territoireCode={territoireCode}
-              />
+              <div className="h-full flex items-center pt-1 pr-2 ml-auto">
+                <BoutonSyntheseTerritoire
+                  jalon={jalon}
+                  territoireCode={territoireCode}
+                />
+              </div>
             ) : null}
           </div>
           <div className="fr-container--fluid fr-py-2w fr-px-md-2w">

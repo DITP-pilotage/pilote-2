@@ -22,6 +22,10 @@ import {
   getChantierIndicateursInputSchema,
   type GetChantierIndicateursOutput,
 } from "@/server/albert/tools/getChantierIndicateurs";
+import {
+  composeDashboardInputSchema,
+  type ComposeDashboardOutput,
+} from "@/server/albert/tools/composeDashboard";
 
 export type PiloteUITools = {
   display_choices: {
@@ -43,6 +47,10 @@ export type PiloteUITools = {
   get_chantier_indicateurs: {
     input: z.input<typeof getChantierIndicateursInputSchema>;
     output: GetChantierIndicateursOutput;
+  };
+  compose_dashboard: {
+    input: z.input<typeof composeDashboardInputSchema>;
+    output: ComposeDashboardOutput;
   };
   export_rapport: {
     input: z.input<typeof exportRapportInputSchema>;

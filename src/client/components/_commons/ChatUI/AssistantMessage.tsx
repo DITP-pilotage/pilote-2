@@ -8,6 +8,8 @@ import { BaseDisplayTool } from "@/components/_commons/ChatUI/BaseDisplayTool";
 import { ExportRapportDownload } from "@/components/_commons/ChatUI/ExportRapportDownload";
 import { ChantierIndicateursTable } from "@/components/_commons/ChatUI/ChantierIndicateursTable";
 import { ChantierIndicateursSkeleton } from "@/components/_commons/ChatUI/ChantierIndicateursSkeleton";
+import { DashboardRender } from "@/components/_commons/ChatUI/DashboardRender";
+import { DashboardLoader } from "@/components/_commons/ChatUI/DashboardWidgets/DashboardLoader";
 import { extractMessageText } from "@/components/_commons/ChatUI/utils";
 import { Icone } from "@/components/_commons/Icone";
 import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
@@ -116,6 +118,22 @@ export const AssistantMessage = memo(function AssistantMessage({
           return (
             <div key={index} className="my-2">
               <ExportRapportDownload part={part} isStreaming={isStreaming} />
+            </div>
+          );
+        }
+
+        if (part.type === "tool-compose_dashboard") {
+          if (part.state === "output-error") return null;
+          if (part.state === "output-available") {
+            return (
+              <div key={index} className="max-w-6xl mx-auto">
+                <DashboardRender output={part.output} />
+              </div>
+            );
+          }
+          return (
+            <div key={index} className="max-w-6xl mx-auto">
+              <DashboardLoader />
             </div>
           );
         }

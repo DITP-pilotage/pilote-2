@@ -104,16 +104,27 @@ export class Albert {
     event: unknown;
     model?: string;
   }) {
-    await prisma.llm_calls.upsert({
-      where: { id: chatId },
-      create: {
-        id: chatId,
+    // Round-trip JSON pour produire un objet plain : JSON.stringify skippe
+    // silencieusement les schémas Zod attachés aux outils, alors que le
+    // sérialiseur interne de Prisma plantait sur leur toJSON (addIssue).
+    const transcript = JSON.parse(
+      JSON.stringify(event),
+    ) as Prisma.InputJsonValue;
+
+    const usage = (
+      event as {
+        usage?: { inputTokens?: number; outputTokens?: number };
+      }
+    )?.usage;
+
+    await prisma.llm_calls.create({
+      data: {
+        chat_id: chatId,
         model,
-        transcript: event as unknown as Prisma.InputJsonValue,
+        transcript,
+        input_tokens: usage?.inputTokens ?? 0,
+        output_tokens: usage?.outputTokens ?? 0,
         utilisateur_id: userId,
-      },
-      update: {
-        transcript: event as unknown as Prisma.InputJsonValue,
       },
     });
   }

@@ -3,6 +3,13 @@ import { z } from "zod";
 import { Albert, displayChoicesTool } from "@/server/albert/Albert";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
+import {
+  Capacities,
+  dashboardDejaCompose,
+  detecterCapacities,
+  extraireTexteDernierMessageUtilisateur,
+} from "@/server/albert/detecteurIntention";
+import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { getContainer } from "@/server/dependances";
 
 const chatRequestSchema = z
@@ -44,13 +51,27 @@ export async function POST(request: Request) {
     const createGetChantierIndicateursTool = container.resolve(
       "createGetChantierIndicateursTool",
     );
+    const createComposeDashboardTool = container.resolve(
+      "createComposeDashboardTool",
+    );
     const createExportRapportTool = container.resolve(
       "createExportRapportTool",
     );
 
+    const messagesPilote = messages as PiloteUIMessage[];
+    const texteDernierMessage =
+      extraireTexteDernierMessageUtilisateur(messagesPilote);
+    const capacitiesDetectees = detecterCapacities(texteDernierMessage);
+    const capacities: Capacities = {
+      ...capacitiesDetectees,
+      dashboard:
+        capacitiesDetectees.dashboard || dashboardDejaCompose(messagesPilote),
+    };
+
     const systemPrompt = buildChatSystemPrompt({
       territoiresAccessibles,
       agentContext,
+      capacities,
     });
     const getTauxAvancementTerritoire = createGetTauxAvancementTerritoireTool({
       habilitations: session.habilitations,
@@ -64,9 +85,22 @@ export async function POST(request: Request) {
     const getChantierIndicateurs = createGetChantierIndicateursTool({
       territoiresAccessibles,
     });
+    const composeDashboard = createComposeDashboardTool({
+      habilitations: session.habilitations,
+    });
     const exportRapport = createExportRapportTool({
       userId: session.user.id,
     });
+
+    const tools = {
+      get_taux_avancement_territoire: getTauxAvancementTerritoire,
+      get_chantiers_en_retard: getChantiersEnRetard,
+      get_chantiers_en_difficulte: getChantiersEnDifficulte,
+      get_chantier_indicateurs: getChantierIndicateurs,
+      display_choices: displayChoicesTool,
+      ...(capacities.dashboard ? { compose_dashboard: composeDashboard } : {}),
+      ...(capacities.exportRapport ? { export_rapport: exportRapport } : {}),
+    };
 
     const result = await Albert.streamText({
       chatId: body.id,
@@ -74,14 +108,7 @@ export async function POST(request: Request) {
       systemPrompt,
       userId: session.user.id,
       model: body.model,
-      tools: {
-        get_taux_avancement_territoire: getTauxAvancementTerritoire,
-        get_chantiers_en_retard: getChantiersEnRetard,
-        get_chantiers_en_difficulte: getChantiersEnDifficulte,
-        get_chantier_indicateurs: getChantierIndicateurs,
-        display_choices: displayChoicesTool,
-        export_rapport: exportRapport,
-      },
+      tools,
     });
 
     return result.toUIMessageStreamResponse();

@@ -25,7 +25,7 @@ const TAILLE_TRACÉ: Record<JaugeDeProgressionTaille, string> = {
 
 interface JaugeDeProgressionProps {
   couleur: JaugeDeProgressionCouleur;
-  libellé: string;
+  libellé?: string;
   date?: string | null;
   pourcentage: number | null | undefined;
   taille: JaugeDeProgressionTaille;
@@ -78,24 +78,28 @@ const JaugeDeProgression: FunctionComponent<JaugeDeProgressionProps> = ({
           {`${pourcentage?.toFixed(0) ?? "- "}%`}
         </p>
       </div>
-      <p
-        className={clsxm(
-          "fr-text--xs fr-mb-0 text-center",
-          classesÀPartirDeTaille[taille].libellé,
-          noWrap && "no-wrap",
-        )}
-      >
-        {libellé}
-      </p>
-      <p
-        className={clsxm(
-          "fr-text--xs fr-mb-0 text-center",
-          classesÀPartirDeTaille[taille].libellé,
-          noWrap && "no-wrap",
-        )}
-      >
-        {date ? `(${formaterDate(date, "MM/YYYY")})` : " "}
-      </p>
+      {libellé && (
+        <p
+          className={clsxm(
+            "fr-text--xs fr-mb-0 text-center",
+            classesÀPartirDeTaille[taille].libellé,
+            noWrap && "no-wrap",
+          )}
+        >
+          {libellé}
+        </p>
+      )}
+      {date && (
+        <p
+          className={clsxm(
+            "fr-text--xs fr-mb-0 text-center",
+            classesÀPartirDeTaille[taille].libellé,
+            noWrap && "no-wrap",
+          )}
+        >
+          {date ? `(${formaterDate(date, "MM/YYYY")})` : " "}
+        </p>
+      )}
     </div>
   );
 };
