@@ -111,9 +111,11 @@ export class Albert {
       JSON.stringify(event),
     ) as Prisma.InputJsonValue;
 
-    const usage = (event as {
-      usage?: { inputTokens?: number; outputTokens?: number };
-    })?.usage;
+    const usage = (
+      event as {
+        usage?: { inputTokens?: number; outputTokens?: number };
+      }
+    )?.usage;
 
     await prisma.llm_calls.create({
       data: {
