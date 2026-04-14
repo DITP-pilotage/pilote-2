@@ -35,9 +35,9 @@ const widgetTauxAvancementTerritoire = z
     territoire_code: territoireCodeSchema,
     jalon: jalonSchema,
     width: z
-      .union([z.literal(3), z.literal(4), z.literal(6)])
+      .union([z.literal(1), z.literal(2)])
       .optional()
-      .describe("default_width=3, allowed_widths=[3,4,6]"),
+      .describe("default_width=1, allowed_widths=[1,2]"),
   })
   .strict();
 
@@ -47,9 +47,9 @@ const widgetMedianeAvancementTerritoire = z
     territoire_code: territoireCodeSchema,
     jalon: jalonSchema,
     width: z
-      .union([z.literal(3), z.literal(4), z.literal(6)])
+      .union([z.literal(1), z.literal(2)])
       .optional()
-      .describe("default_width=3, allowed_widths=[3,4,6]"),
+      .describe("default_width=1, allowed_widths=[1,2]"),
   })
   .strict();
 
@@ -59,9 +59,9 @@ const widgetNombreChantiersEnRetard = z
     territoire_code: territoireCodeSchema,
     jalon: jalonSchema,
     width: z
-      .union([z.literal(3), z.literal(4), z.literal(6)])
+      .union([z.literal(1), z.literal(2)])
       .optional()
-      .describe("default_width=3, allowed_widths=[3,4,6]"),
+      .describe("default_width=1, allowed_widths=[1,2]"),
   })
   .strict();
 
@@ -71,9 +71,9 @@ const widgetNombreChantiersEnDifficulte = z
     territoire_code: territoireCodeSchema,
     jalon: jalonSchema,
     width: z
-      .union([z.literal(3), z.literal(4), z.literal(6)])
+      .union([z.literal(1), z.literal(2)])
       .optional()
-      .describe("default_width=3, allowed_widths=[3,4,6]"),
+      .describe("default_width=1, allowed_widths=[1,2]"),
   })
   .strict();
 
@@ -83,9 +83,9 @@ const widgetValeursRemarquablesAvancement = z
     territoire_code: territoireCodeSchema,
     jalon: jalonSchema,
     width: z
-      .union([z.literal(4), z.literal(6), z.literal(8)])
+      .union([z.literal(2), z.literal(3), z.literal(4)])
       .optional()
-      .describe("default_width=6, allowed_widths=[4,6,8]"),
+      .describe("default_width=2, allowed_widths=[2,3,4]"),
   })
   .strict();
 
@@ -96,9 +96,9 @@ const widgetTableauIndicateursChantier = z
     territoire_code: territoireCodeSchema,
     jalon: jalonSchema,
     width: z
-      .literal(12)
+      .literal(4)
       .optional()
-      .describe("default_width=12, allowed_widths=[12]"),
+      .describe("default_width=4, allowed_widths=[4]"),
   })
   .strict();
 
@@ -108,9 +108,9 @@ const widgetListeChantiersEnRetard = z
     territoire_code: territoireCodeSchema,
     jalon: jalonSchema,
     width: z
-      .union([z.literal(6), z.literal(12)])
+      .union([z.literal(2), z.literal(4)])
       .optional()
-      .describe("default_width=6, allowed_widths=[6,12]"),
+      .describe("default_width=2, allowed_widths=[2,4]"),
   })
   .strict();
 
@@ -120,9 +120,9 @@ const widgetListeChantiersEnDifficulte = z
     territoire_code: territoireCodeSchema,
     jalon: jalonSchema,
     width: z
-      .union([z.literal(6), z.literal(12)])
+      .union([z.literal(2), z.literal(4)])
       .optional()
-      .describe("default_width=6, allowed_widths=[6,12]"),
+      .describe("default_width=2, allowed_widths=[2,4]"),
   })
   .strict();
 
@@ -137,9 +137,9 @@ const widgetCartographieTauxAvancement = z
       .min(1)
       .describe("Sous-ensemble de chantiers à agréger sur la carte."),
     width: z
-      .union([z.literal(6), z.literal(8), z.literal(12)])
+      .union([z.literal(2), z.literal(3), z.literal(4)])
       .optional()
-      .describe("default_width=6, allowed_widths=[6,8,12]"),
+      .describe("default_width=2, allowed_widths=[2,3,4]"),
   })
   .strict();
 
@@ -151,9 +151,9 @@ const widgetCartographieMeteo = z
     chantier_id: chantierIdSchema,
     jalon: jalonSchema,
     width: z
-      .union([z.literal(6), z.literal(8), z.literal(12)])
+      .union([z.literal(2), z.literal(3), z.literal(4)])
       .optional()
-      .describe("default_width=6, allowed_widths=[6,8,12]"),
+      .describe("default_width=2, allowed_widths=[2,3,4]"),
   })
   .strict();
 
@@ -165,9 +165,9 @@ const widgetCartographiePropositionsValeurAvancement = z
     chantier_id: chantierIdSchema,
     jalon: jalonSchema,
     width: z
-      .union([z.literal(6), z.literal(8), z.literal(12)])
+      .union([z.literal(2), z.literal(3), z.literal(4)])
       .optional()
-      .describe("default_width=6, allowed_widths=[6,8,12]"),
+      .describe("default_width=2, allowed_widths=[2,3,4]"),
   })
   .strict();
 
@@ -189,9 +189,9 @@ const widgetTitreSection = z
         "Description facultative — AUCUN chiffre (ni %, ni points). 2-3 phrases max.",
       ),
     width: z
-      .union([z.literal(6), z.literal(12)])
+      .union([z.literal(2), z.literal(4)])
       .optional()
-      .describe("default_width=12, allowed_widths=[6,12]"),
+      .describe("default_width=4, allowed_widths=[2,4]"),
   })
   .strict();
 
@@ -221,7 +221,7 @@ const containerInputSchema = z
       .min(1)
       .max(12)
       .describe(
-        "Widgets du container, placés sur un grid interne 12 colonnes selon leur largeur.",
+        "Widgets du container, placés sur un grid interne 4 colonnes selon leur largeur.",
       ),
   })
   .strict();
@@ -277,35 +277,35 @@ Utilise cet outil quand l'utilisateur demande explicitement de **construire**, *
 
 ## Concept de container
 
-Un dashboard est une liste ordonnée de containers **empilés verticalement**, chacun occupant la pleine largeur du dashboard (grid 12 colonnes). Chaque container contient ses propres widgets placés sur son grid interne 12 colonnes. L'ordre des containers détermine l'ordre vertical d'affichage.
+Un dashboard est une liste ordonnée de containers **empilés verticalement**, chacun occupant la pleine largeur du dashboard (grid 4 colonnes). Chaque container contient ses propres widgets placés sur son grid interne 4 colonnes. L'ordre des containers détermine l'ordre vertical d'affichage.
 
 ## Catalogue de widgets (12 intentions métier nominales)
 
 | Widget | Intention | Paramètres | default_width | allowed_widths |
 |---|---|---|---|---|
-| widget_taux_avancement_territoire | TA agrégé d'un territoire | territoire_code, jalon | 3 | [3,4,6] |
-| widget_mediane_avancement_territoire | Médiane du TA sur les sous-territoires | territoire_code, jalon | 3 | [3,4,6] |
-| widget_nombre_chantiers_en_retard | Nombre de chantiers en retard | territoire_code, jalon | 3 | [3,4,6] |
-| widget_nombre_chantiers_en_difficulte | Nombre de chantiers en difficulté (météo ORAGE/NUAGE) | territoire_code, jalon | 3 | [3,4,6] |
-| widget_valeurs_remarquables_avancement | Min/médiane/max du TA sur les sous-territoires | territoire_code, jalon | 6 | [4,6,8] |
-| widget_tableau_indicateurs_chantier | VI/VA/VC/TA d'un chantier | chantier_id, territoire_code, jalon | 12 | [12] |
-| widget_liste_chantiers_en_retard | Liste compacte chantiers en retard (écart ≤ -10 pts) | territoire_code, jalon | 6 | [6,12] |
-| widget_liste_chantiers_en_difficulte | Liste compacte chantiers en difficulté (météo ORAGE/NUAGE) | territoire_code, jalon | 6 | [6,12] |
-| widget_cartographie_taux_avancement | Carte de France du TA par territoire | maille, territoire_code, jalon, chantier_ids | 6 | [6,8,12] |
-| widget_cartographie_meteo | Carte de France des météos par territoire | maille, territoire_code, chantier_id, jalon | 6 | [6,8,12] |
-| widget_cartographie_propositions_valeur_avancement | Carte de France des propositions de valeurs d'avancement (PVA) d'un chantier | maille, territoire_code, chantier_id, jalon | 6 | [6,8,12] |
-| widget_titre_section | Titre + description courte (AUCUN chiffre) | titre, description? | 12 | [6,12] |
+| widget_taux_avancement_territoire | TA agrégé d'un territoire | territoire_code, jalon | 1 | [1,2] |
+| widget_mediane_avancement_territoire | Médiane du TA sur les sous-territoires | territoire_code, jalon | 1 | [1,2] |
+| widget_nombre_chantiers_en_retard | Nombre de chantiers en retard | territoire_code, jalon | 1 | [1,2] |
+| widget_nombre_chantiers_en_difficulte | Nombre de chantiers en difficulté (météo ORAGE/NUAGE) | territoire_code, jalon | 1 | [1,2] |
+| widget_valeurs_remarquables_avancement | Min/médiane/max du TA sur les sous-territoires | territoire_code, jalon | 2 | [2,3,4] |
+| widget_tableau_indicateurs_chantier | VI/VA/VC/TA d'un chantier | chantier_id, territoire_code, jalon | 4 | [4] |
+| widget_liste_chantiers_en_retard | Liste compacte chantiers en retard (écart ≤ -10 pts) | territoire_code, jalon | 2 | [2,4] |
+| widget_liste_chantiers_en_difficulte | Liste compacte chantiers en difficulté (météo ORAGE/NUAGE) | territoire_code, jalon | 2 | [2,4] |
+| widget_cartographie_taux_avancement | Carte de France du TA par territoire | maille, territoire_code, jalon, chantier_ids | 2 | [2,3,4] |
+| widget_cartographie_meteo | Carte de France des météos par territoire | maille, territoire_code, chantier_id, jalon | 2 | [2,3,4] |
+| widget_cartographie_propositions_valeur_avancement | Carte de France des propositions de valeurs d'avancement (PVA) d'un chantier | maille, territoire_code, chantier_id, jalon | 2 | [2,3,4] |
+| widget_titre_section | Titre + description courte (AUCUN chiffre) | titre, description? | 4 | [2,4] |
 
 Le **nom** du widget est l'intention. Aucun enum de métrique, aucun row_group, aucun filler.
 
 ## Structure recommandée d'un cockpit territoire
 
 1. Un container avec un \`widget_titre_section\`.
-2. Un container avec \`widget_taux_avancement_territoire\` + \`widget_nombre_chantiers_en_retard\` + \`widget_valeurs_remarquables_avancement\` (trois widgets compacts sur une rangée).
-3. Un container avec \`widget_cartographie_taux_avancement\`.
-4. Un container avec \`widget_liste_chantiers_en_retard\` et \`widget_liste_chantiers_en_difficulte\` côte à côte en width 6.
+2. Un container avec \`widget_taux_avancement_territoire\` + \`widget_nombre_chantiers_en_retard\` + \`widget_valeurs_remarquables_avancement\` (trois widgets compacts sur une rangée : 1+1+2=4).
+3. Un container avec \`widget_cartographie_taux_avancement\` en width 4.
+4. Un container avec \`widget_liste_chantiers_en_retard\` et \`widget_liste_chantiers_en_difficulte\` côte à côte en width 2.
 
-Règle générale : un widget solo dans un container de 12 colonnes gâche de la place si sa default_width est inférieure à 12. Regroupe les widgets compatibles dans un seul container pour remplir naturellement la largeur.
+Règle générale : un widget solo dans un container de 4 colonnes gâche de la place si sa default_width est inférieure à 4. Regroupe les widgets compatibles dans un seul container pour remplir naturellement la largeur.
 
 ## Règles JSON strictes
 
@@ -322,15 +322,15 @@ Ne copie JAMAIS des fragments "pseudo-code" ou des commentaires explicatifs dans
 Les trois exemples ci-dessous illustrent les principaux patterns de composition. **Valeurs illustratives** : adapte systématiquement \`territoire_code\`, \`jalon\`, \`chantier_id\` et \`chantier_ids\` aux paramètres réels du contexte utilisateur. Ne réutilise jamais \`REG-76\`, \`DEPT-42\` ou \`2026\` par défaut.
 
 ### Exemple 1 — Cockpit synthétique d'un territoire
-Pattern : titre, rangée de KPI compacts, carte large, deux listes côte à côte.
+Pattern : titre, rangée de KPI compacts (1+1+2=4), carte pleine largeur, deux listes côte à côte.
 \`\`\`json
-{"titre":"Dashboard Occitanie – 2026","containers":[{"widgets":[{"type":"widget_titre_section","titre":"Occitanie – Synthèse 2026","description":"Vue d'ensemble du taux d'avancement et des alertes","width":12}]},{"widgets":[{"type":"widget_taux_avancement_territoire","territoire_code":"REG-76","jalon":2026,"width":3},{"type":"widget_nombre_chantiers_en_retard","territoire_code":"REG-76","jalon":2026,"width":3},{"type":"widget_valeurs_remarquables_avancement","territoire_code":"REG-76","jalon":2026,"width":6}]},{"widgets":[{"type":"widget_cartographie_taux_avancement","maille":"regionale","territoire_code":"REG-76","jalon":2026,"chantier_ids":["CH-071","CH-121","CH-078","CH-166","CH-004","CH-139"],"width":12}]},{"widgets":[{"type":"widget_liste_chantiers_en_retard","territoire_code":"REG-76","jalon":2026,"width":6},{"type":"widget_liste_chantiers_en_difficulte","territoire_code":"REG-76","jalon":2026,"width":6}]}]}
+{"titre":"Dashboard Occitanie – 2026","containers":[{"widgets":[{"type":"widget_titre_section","titre":"Occitanie – Synthèse 2026","description":"Vue d'ensemble du taux d'avancement et des alertes","width":4}]},{"widgets":[{"type":"widget_taux_avancement_territoire","territoire_code":"REG-76","jalon":2026,"width":1},{"type":"widget_nombre_chantiers_en_retard","territoire_code":"REG-76","jalon":2026,"width":1},{"type":"widget_valeurs_remarquables_avancement","territoire_code":"REG-76","jalon":2026,"width":2}]},{"widgets":[{"type":"widget_cartographie_taux_avancement","maille":"regionale","territoire_code":"REG-76","jalon":2026,"chantier_ids":["CH-071","CH-121","CH-078","CH-166","CH-004","CH-139"],"width":4}]},{"widgets":[{"type":"widget_liste_chantiers_en_retard","territoire_code":"REG-76","jalon":2026,"width":2},{"type":"widget_liste_chantiers_en_difficulte","territoire_code":"REG-76","jalon":2026,"width":2}]}]}
 \`\`\`
 
 ### Exemple 2 — Ventilation par sous-territoires
-Pattern : pour chaque sous-territoire, un container titre + un container avec 3 KPI sur une rangée. Le bloc *(titre de section + rangée de 3 KPI)* est à **répéter pour chaque sous-territoire demandé** (l'exemple n'en montre que 2 pour rester court, mais tu dois en générer autant que nécessaire).
+Pattern : pour chaque sous-territoire, un container titre + un container avec 3 KPI sur une rangée (1+1+1=3, la 4e colonne reste vide). Le bloc *(titre de section + rangée de 3 KPI)* est à **répéter pour chaque sous-territoire demandé** (l'exemple n'en montre que 2 pour rester court, mais tu dois en générer autant que nécessaire).
 \`\`\`json
-{"titre":"Dashboard Occitanie – Départements 2026","containers":[{"widgets":[{"type":"widget_titre_section","titre":"Département 09 – Ariège","width":12}]},{"widgets":[{"type":"widget_taux_avancement_territoire","territoire_code":"DEPT-09","jalon":2026,"width":4},{"type":"widget_nombre_chantiers_en_retard","territoire_code":"DEPT-09","jalon":2026,"width":4},{"type":"widget_nombre_chantiers_en_difficulte","territoire_code":"DEPT-09","jalon":2026,"width":4}]},{"widgets":[{"type":"widget_titre_section","titre":"Département 11 – Aude","width":12}]},{"widgets":[{"type":"widget_taux_avancement_territoire","territoire_code":"DEPT-11","jalon":2026,"width":4},{"type":"widget_nombre_chantiers_en_retard","territoire_code":"DEPT-11","jalon":2026,"width":4},{"type":"widget_nombre_chantiers_en_difficulte","territoire_code":"DEPT-11","jalon":2026,"width":4}]}]}
+{"titre":"Dashboard Occitanie – Départements 2026","containers":[{"widgets":[{"type":"widget_titre_section","titre":"Département 09 – Ariège","width":4}]},{"widgets":[{"type":"widget_taux_avancement_territoire","territoire_code":"DEPT-09","jalon":2026,"width":1},{"type":"widget_nombre_chantiers_en_retard","territoire_code":"DEPT-09","jalon":2026,"width":1},{"type":"widget_nombre_chantiers_en_difficulte","territoire_code":"DEPT-09","jalon":2026,"width":1}]},{"widgets":[{"type":"widget_titre_section","titre":"Département 11 – Aude","width":4}]},{"widgets":[{"type":"widget_taux_avancement_territoire","territoire_code":"DEPT-11","jalon":2026,"width":1},{"type":"widget_nombre_chantiers_en_retard","territoire_code":"DEPT-11","jalon":2026,"width":1},{"type":"widget_nombre_chantiers_en_difficulte","territoire_code":"DEPT-11","jalon":2026,"width":1}]}]}
 \`\`\`
 
 ### Exemple 3 — Focus chantier sur un territoire

@@ -11,18 +11,17 @@ import { DashboardWidgetErrorBoundary } from "./DashboardWidgets/DashboardWidget
 import { DashboardLoader } from "./DashboardWidgets/DashboardLoader";
 
 const WIDTH_TO_CLASS: Record<number, string> = {
-  3: "col-span-12 md:col-span-3",
-  4: "col-span-12 md:col-span-4",
-  6: "col-span-12 md:col-span-6",
-  8: "col-span-12 md:col-span-8",
-  12: "col-span-12",
+  1: "col-span-4 md:col-span-1",
+  2: "col-span-4 md:col-span-2",
+  3: "col-span-4 md:col-span-3",
+  4: "col-span-4",
 };
 
 const resolveWidgetWidth = (widget: WidgetDefinition): number => {
   if ("width" in widget && widget.width !== undefined) {
     return widget.width;
   }
-  return DEFAULT_WIDTHS[widget.type] ?? 12;
+  return DEFAULT_WIDTHS[widget.type] ?? 4;
 };
 
 export const DashboardRender = ({
@@ -37,10 +36,10 @@ export const DashboardRender = ({
     <Suspense fallback={<DashboardLoader />}>
       <div className="space-y-3">
         {output.containers.map((container, containerIndex) => (
-          <div key={containerIndex} className="grid grid-cols-12 gap-2">
+          <div key={containerIndex} className="grid grid-cols-4 gap-2">
             {container.widgets.map((widget, widgetIndex) => {
               const width = resolveWidgetWidth(widget);
-              const innerClassName = WIDTH_TO_CLASS[width] ?? "col-span-12";
+              const innerClassName = WIDTH_TO_CLASS[width] ?? "col-span-4";
               return (
                 <div
                   key={widgetIndex}
