@@ -7,8 +7,8 @@ export const SectionCartographieTA = () => {
     usePageAccueilContext();
 
   return (
-    <section id="taux-avancement-territoires" className="pt-4">
-      <TuileWidget titre="Taux d'avancement des chantiers par territoire">
+    <section id="repartition-territoriale">
+      <TuileWidget titre="Répartition territoriale">
         <WidgetCartographieTA
           chantierIds={chantierIds}
           jalon={jalon}

@@ -7,7 +7,8 @@ import {
 import { BasePageAccueilLayout } from "@/components/PageAccueil/BasePageAccueilLayout";
 import { SectionAvancementMoyen } from "@/components/PageAccueil/sections/SectionAvancementMoyen";
 import { SectionCartographieTA } from "@/components/PageAccueil/sections/SectionCartographieTA";
-import { SectionWidgetsChantiersSignales } from "@/components/PageAccueil/sections/SectionWidgetsChantiersSignales";
+import { SectionRepartitionMeteos } from "@/components/PageAccueil/sections/SectionRepartitionMeteos";
+import { SectionChantiersSignales } from "@/components/PageAccueil/sections/SectionChantiersSignales";
 import { SectionTableauChantiers } from "@/components/PageAccueil/sections/SectionTableauChantiers";
 import type { getServerSideProps } from "@/pages/accueil/chantier/[territoireCode]/index";
 
@@ -46,9 +47,16 @@ export const PageAccueil: FunctionComponent<PageAccueilProps> = (props) => {
         nombreTotalChantiersAvecAlertes={props.nombreTotalChantiersAvecAlertes}
         territoireCode={props.territoireCode}
       >
-        <SectionAvancementMoyen />
-        <SectionCartographieTA />
-        <SectionWidgetsChantiersSignales />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-4">
+            <SectionAvancementMoyen />
+            <SectionCartographieTA />
+          </div>
+          <div className="flex flex-col gap-4">
+            <SectionRepartitionMeteos />
+            <SectionChantiersSignales />
+          </div>
+        </div>
         <SectionTableauChantiers />
       </BasePageAccueilLayout>
     </PageAccueilProvider>
