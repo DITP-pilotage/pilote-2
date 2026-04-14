@@ -55,7 +55,7 @@ describe("composeDashboardInputSchema", () => {
       expect(result.success).toBe(true);
     });
 
-    test("accepte widget_mediane_avancement_territoire avec width 4", () => {
+    test("accepte widget_mediane_avancement_territoire avec width 2", () => {
       // Given
       const input = {
         titre: "Cockpit",
@@ -66,7 +66,7 @@ describe("composeDashboardInputSchema", () => {
                 type: "widget_mediane_avancement_territoire",
                 territoire_code: "NAT-FR",
                 jalon: 2024,
-                width: 4,
+                width: 2,
               },
             ],
           },
@@ -106,7 +106,7 @@ describe("composeDashboardInputSchema", () => {
   });
 
   describe("widget valeurs remarquables, listes et tableau", () => {
-    test("accepte widget_valeurs_remarquables_avancement avec width 8", () => {
+    test("accepte widget_valeurs_remarquables_avancement avec width 4", () => {
       // Given
       const input = {
         titre: "Cockpit",
@@ -117,7 +117,7 @@ describe("composeDashboardInputSchema", () => {
                 type: "widget_valeurs_remarquables_avancement",
                 territoire_code: "REG-53",
                 jalon: 2025,
-                width: 8,
+                width: 4,
               },
             ],
           },
@@ -167,13 +167,13 @@ describe("composeDashboardInputSchema", () => {
                 type: "widget_liste_chantiers_en_retard",
                 territoire_code: "REG-53",
                 jalon: 2025,
-                width: 6,
+                width: 2,
               },
               {
                 type: "widget_liste_chantiers_en_difficulte",
                 territoire_code: "REG-53",
                 jalon: 2025,
-                width: 6,
+                width: 2,
               },
             ],
           },
