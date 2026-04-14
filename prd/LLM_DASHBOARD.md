@@ -129,6 +129,49 @@ Les sections §7.2 (catalogue), §7.3 (philosophie), §7.4 (layout), §7.6 (qui 
 
 ---
 
+## 5ter. Ajustements opérés pendant l'implémentation V1 (PR `proto-llm-dashboard`)
+
+Le document `docs/LLM_DASHBOARD_ITERATION_2.md` détaille la planification de la V1 — section §15 de ce document liste les écarts par rapport au plan détaillé. Cette section résume les ajustements **structurants** opérés pendant l'implémentation, ceux qui impactent ce PRD au-delà du simple détail technique.
+
+### 5ter.1. Catalogue passé de 10 à 12 widgets
+
+Deux widgets ajoutés en cours d'implémentation pour combler des incohérences ou des manques :
+
+- **`widget_nombre_chantiers_en_difficulte`** — KPI atomique symétrique de `widget_nombre_chantiers_en_retard`. L'asymétrie initiale (un seul KPI compteur, pas son équivalent en difficulté) était une incohérence puisque les deux catégories existent comme listes (`widget_liste_chantiers_en_*`).
+- **`widget_cartographie_propositions_valeur_avancement`** — carte des PVA d'un chantier, sur le même modèle que `widget_cartographie_meteo`. Réutilise un composant et un endpoint tRPC déjà existants. Ajouté pour couvrir le cas d'usage « focus chantier » qui apparaît dans plusieurs scénarios utilisateur.
+
+Les sections §7.2 et §7.4 reflètent maintenant les 12 widgets.
+
+### 5ter.2. Le savoir produit migre du system prompt vers la `description` du tool
+
+La V1 planifiée prévoyait de **réécrire** le Pattern (g) du `systemPrompt.ts` avec le nouveau catalogue (cf. §8.3 historique). En cours d'implémentation, on est allé un cran plus loin : **le Pattern (g) a été entièrement supprimé du system prompt**, et toute la connaissance produit (catalogue de widgets, structure des containers, structure recommandée d'un cockpit, règles JSON strictes, exemples) vit désormais uniquement dans la `description` du tool `compose_dashboard`.
+
+Trois raisons cumulées :
+
+1. **DRY** — la version planifiée demandait de dupliquer le tableau du catalogue, les heuristiques de mise en page et les règles JSON dans deux endroits visibles par le LLM (le system prompt **et** la description du tool). Risque permanent de désynchronisation.
+2. **Localité** — le SDK AI propage le `description` d'un tool au modèle au moment où il décide d'appeler ce tool. Mettre les règles d'usage *dans le tool lui-même* est l'endroit le plus pertinent pour qu'elles soient lues et appliquées au bon moment.
+3. **Allègement** — le system prompt est envoyé à chaque tour de la conversation. Sortir 60 lignes de spécifications dashboard de la version envoyée à chaque tour réduit la pression sur le contexte (et la facture tokens), pour un savoir qui n'est pertinent que quand l'utilisateur évoque un dashboard.
+
+Conséquence : le §8 (flux d'interaction) reste valide en tant que **vision produit** du flux conversationnel, mais le Pattern (g) historique n'est plus implémenté littéralement dans le system prompt. Le LLM s'appuie sur la description du tool pour comprendre ce qu'il doit faire.
+
+### 5ter.3. KPI à pourcentage en jauge plutôt qu'en grand chiffre
+
+Le plan prévoyait un KPI atomique générique « grand chiffre + label ». L'implémentation a basculé les KPI à pourcentage (`widget_taux_avancement_territoire`, `widget_mediane_avancement_territoire`) sur une **jauge de progression colorée** (`DashboardJaugeCard` qui wrappe le composant DSFR `JaugeDeProgression`). Justification : un pourcentage gagne en lisibilité et en signal visuel quand il est rendu en jauge — l'ordre de grandeur est immédiatement perceptible sans avoir à lire le chiffre. Les KPI à valeur entière (`widget_nombre_chantiers_en_*`) gardent un grand chiffre.
+
+### 5ter.4. Exemples JSON dans la description du tool
+
+Pendant l'usage, le LLM produisait des dashboards parfois mal structurés (oubli de container, mauvaise répartition). Pour fiabiliser la génération, **trois exemples JSON compactés** ont été ajoutés à la `description` du tool : cockpit synthétique d'une région, ventilation par sous-territoires (pattern à répéter), focus chantier. Une note de garde-fou rappelle que les valeurs sont illustratives.
+
+### 5ter.5. Bouton « Tableau de bord du territoire » dans `BoutonSyntheseTerritoire`
+
+Le composant `BoutonSyntheseTerritoire` (point d'entrée Albert depuis les pages territoires) expose un set de scénarios pré-câblés. Un nouveau scénario **« Tableau de bord du territoire »** a été ajouté qui injecte un prompt structuré pour déclencher `compose_dashboard` avec un cockpit complet (KPI + cartographie + sections par chantier en difficulté). C'est un point d'entrée direct pour les utilisateurs qui ne connaîtraient pas la formulation à utiliser.
+
+### 5ter.6. Tweak des `default_width` cartographies (12 → 6)
+
+Le plan prévoyait `default_width=12` pour les widgets cartographie. Le tweak vers `default_width=6` permet au LLM de poser deux cartes côte à côte (TA + météo, TA + PVA) sans avoir à spécifier `width` explicitement — devenu le pattern courant des dashboards focus chantier.
+
+---
+
 ## 6. Exploration des approches techniques
 
 Quatre options sur la table, de la plus permissive à la plus contrainte. Le choix de référence pour le POC est l'**Option C** (composition typée à partir d'un catalogue), qui s'inscrit dans la continuité de l'architecture Albert existante.
@@ -214,23 +257,27 @@ Le catalogue est aligné sur les composants déjà présents dans `src/client/co
 
 | Widget | Intention métier | Paramètres (références uniquement) | Composant `_commons` réutilisé |
 |---|---|---|---|
-| `widget_taux_avancement_territoire` | « Le TA agrégé d'un territoire en gros » | `territoire_code`, `jalon` | KPI dédié (nouveau, léger) |
-| `widget_mediane_avancement_territoire` | « La médiane de répartition sur un territoire » | `territoire_code`, `jalon` | KPI dédié (nouveau, léger) |
-| `widget_nombre_chantiers_en_retard` | « Combien de chantiers en retard sur un territoire » | `territoire_code`, `jalon` | KPI dédié (nouveau, léger) |
+| `widget_taux_avancement_territoire` | « Le TA agrégé d'un territoire en gros » | `territoire_code`, `jalon` | `DashboardJaugeCard` (jauge bleue) |
+| `widget_mediane_avancement_territoire` | « La médiane de répartition sur un territoire » | `territoire_code`, `jalon` | `DashboardJaugeCard` (jauge violette) |
+| `widget_nombre_chantiers_en_retard` | « Combien de chantiers en retard sur un territoire » | `territoire_code`, `jalon` | `DashboardKpiCard` (grand chiffre) |
+| `widget_nombre_chantiers_en_difficulte` | « Combien de chantiers en difficulté (météo ORAGE/NUAGE) sur un territoire » | `territoire_code`, `jalon` | `DashboardKpiCard` (grand chiffre) |
 | `widget_valeurs_remarquables_avancement` | « Distribution du TA sur les sous-territoires : minimum, médiane, maximum » | `territoire_code`, `jalon` (maille déduite) | `ValeursRemarquables` (déjà utilisé par `WidgetCartographieTA`) |
 | `widget_tableau_indicateurs_chantier` | Tableau des indicateurs d'un chantier sur un territoire | `chantier_id`, `territoire_code`, `jalon` | `ChantierIndicateursTable` |
-| `widget_liste_chantiers_en_retard` | Liste compacte des chantiers en retard (critère quantitatif : écart ≤ -10 pts) | `territoire_code`, `jalon` | (nouveau, query existante) |
-| `widget_liste_chantiers_en_difficulte` | Liste compacte des chantiers en difficulté (critère qualitatif : météo ORAGE/NUAGE) | `territoire_code`, `jalon` | (nouveau, query existante) |
+| `widget_liste_chantiers_en_retard` | Liste compacte des chantiers en retard (critère quantitatif : écart ≤ -10 pts) | `territoire_code`, `jalon` | `DashboardChantiersListe` (nouveau) |
+| `widget_liste_chantiers_en_difficulte` | Liste compacte des chantiers en difficulté (critère qualitatif : météo ORAGE/NUAGE) | `territoire_code`, `jalon` | `DashboardChantiersListe` (nouveau) |
 | `widget_cartographie_taux_avancement` | Carte de France du TA par territoire, pour un ensemble de chantiers | `maille`, `territoire_code`, `jalon`, `chantier_ids` | `WidgetCartographieTA` (mode `chantiers`) |
 | `widget_cartographie_meteo` | Carte de France des météos par territoire pour un chantier | `maille`, `territoire_code`, `chantier_id`, `jalon` | `WidgetCartographieMeteo` |
+| `widget_cartographie_propositions_valeur_avancement` | Carte de France des propositions de valeurs d'avancement (PVA) d'un chantier | `maille`, `territoire_code`, `chantier_id`, `jalon` | `WidgetCartographiePVA` (mode `chantier`) |
 | `widget_titre_section` | Titre + description courte pour structurer visuellement le dashboard | `titre`, `description` (ni l'un ni l'autre ne contient de chiffre) | (nouveau, purement présentationnel) |
+
+> **État au moment de la PR `proto-llm-dashboard`** : 12 widgets implémentés. Le catalogue planifié à 10 widgets a été enrichi en cours d'implémentation de `widget_nombre_chantiers_en_difficulte` (symétrique du KPI « en retard ») et `widget_cartographie_propositions_valeur_avancement` (carte des PVA d'un chantier). Voir aussi `docs/LLM_DASHBOARD_ITERATION_2.md` §15 pour le détail des écarts post-rédaction.
 
 Conséquences de ce découpage par rapport au catalogue initial :
 
-- **3 widgets KPI atomiques + 1 widget distribution au lieu d'un `kpi_card` paramétré par un enum.** Le LLM n'a plus à choisir une métrique dans un enum, il choisit un type de widget. Coûteux en nombre de lignes dans la discriminated union Zod, mais chaque cas est trivial à comprendre pour le modèle, et la surface d'erreur sur le choix de métrique tombe à zéro.
+- **4 widgets KPI atomiques + 1 widget distribution au lieu d'un `kpi_card` paramétré par un enum.** Le LLM n'a plus à choisir une métrique dans un enum, il choisit un type de widget. Coûteux en nombre de lignes dans la discriminated union Zod, mais chaque cas est trivial à comprendre pour le modèle, et la surface d'erreur sur le choix de métrique tombe à zéro. Les KPI à pourcentage (`widget_taux_avancement_territoire`, `widget_mediane_avancement_territoire`) sont rendus en **jauge de progression colorée** plutôt qu'en grand chiffre — la jauge donne immédiatement l'ordre de grandeur visuellement, sans avoir à lire le chiffre. Les KPI à valeur entière (`widget_nombre_chantiers_en_*`) gardent un grand chiffre.
 - **`widget_valeurs_remarquables_avancement` est un « KPI composite » déjà existant dans le code.** Il reprend le composant `ValeursRemarquables` qui affiche côte à côte le minimum, la médiane et le maximum du TA sur les sous-territoires d'un territoire donné (départements pour une région, régions pour la France entière). C'est la forme préférée pour montrer une distribution résumée : le LLM n'a plus à hésiter entre « un KPI médiane seul » et « trois KPI alignés » — il a un widget dédié, sémantiquement correct. `widget_mediane_avancement_territoire` reste disponible pour les cas où l'utilisateur ne veut *que* la médiane en petit, mais dans un cockpit standard, c'est `widget_valeurs_remarquables_avancement` qui est la bonne réponse.
-- **Listes en retard / en difficulté séparées.** Le prototype avait un `liste_chantiers_alerte` avec `type_alerte ∈ {retard, difficulte}`. Même conclusion que pour les KPI : ce sont deux intentions distinctes, deux queries différentes côté serveur, deux widgets distincts dans le catalogue.
-- **Ajout des widgets cartographie.** Ils manquaient cruellement au catalogue initial — or une bonne part des demandes « je veux voir X par territoire » trouve sa meilleure forme dans une carte. Réutilisation directe de `WidgetCartographieTA` et `WidgetCartographieMeteo` déjà en place dans `_commons/Widget/`, qui savent déjà fetcher leurs données via `api.useSuspenseQueries` — leur wrapper n'a rien à faire de plus qu'à passer les props.
+- **Listes en retard / en difficulté séparées.** Le prototype avait un `liste_chantiers_alerte` avec `type_alerte ∈ {retard, difficulte}`. Même conclusion que pour les KPI : ce sont deux intentions distinctes, deux queries différentes côté serveur, deux widgets distincts dans le catalogue. Cette même symétrie a été appliquée aux KPI compteurs (`widget_nombre_chantiers_en_retard` et `widget_nombre_chantiers_en_difficulte`) pendant l'implémentation.
+- **Ajout des widgets cartographie.** Ils manquaient cruellement au catalogue initial — or une bonne part des demandes « je veux voir X par territoire » trouve sa meilleure forme dans une carte. Trois cartes au final : `widget_cartographie_taux_avancement`, `widget_cartographie_meteo` et `widget_cartographie_propositions_valeur_avancement` (PVA d'un chantier, ajoutée pendant l'implémentation). Réutilisation directe de `WidgetCartographieTA`, `WidgetCartographieMeteo` et `WidgetCartographiePVA` déjà en place dans `_commons/Widget/`, qui savent déjà fetcher leurs données via `api.useSuspenseQueries` — leur wrapper n'a rien à faire de plus qu'à passer les props.
 - **Disparition de `filler`.** Un widget vide était un palliatif à la rigidité du layout, pas une intention métier. Si la grille interne d'un container laisse un trou, c'est acceptable visuellement (et les `allowed_widths` de chaque widget permettent au LLM de ne pas en créer).
 - **Disparition de `texte_libre` au profit de `widget_titre_section`.** Même rôle de structuration sémantique, mais le nom est explicite (« ce widget est un titre de section, pas un paragraphe libre ») et le linter anti-chiffres reste en place (cf. §9) — si le LLM veut afficher une valeur, il doit utiliser un des widgets KPI, pas coller le chiffre dans un titre.
 
@@ -342,15 +389,17 @@ Tailles pour le catalogue révisé §7.2 :
 
 | Widget | `default_width` | `allowed_widths` | Justification |
 |---|---|---|---|
-| `widget_taux_avancement_territoire` | 3 | `[3, 4, 6]` | KPI court, 4 par rangée possible |
-| `widget_mediane_avancement_territoire` | 3 | `[3, 4, 6]` | idem |
-| `widget_nombre_chantiers_en_retard` | 3 | `[3, 4, 6]` | idem |
+| `widget_taux_avancement_territoire` | 3 | `[3, 4, 6]` | KPI court (jauge), 4 par rangée possible |
+| `widget_mediane_avancement_territoire` | 3 | `[3, 4, 6]` | idem (jauge) |
+| `widget_nombre_chantiers_en_retard` | 3 | `[3, 4, 6]` | KPI court (chiffre) |
+| `widget_nombre_chantiers_en_difficulte` | 3 | `[3, 4, 6]` | KPI court (chiffre) |
 | `widget_valeurs_remarquables_avancement` | 6 | `[4, 6, 8]` | Trio min/médiane/max aligné, demande un peu plus d'espace qu'un KPI atomique |
 | `widget_liste_chantiers_en_retard` | 6 | `[6, 12]` | Liste verticale, demi ou pleine largeur |
 | `widget_liste_chantiers_en_difficulte` | 6 | `[6, 12]` | idem |
 | `widget_tableau_indicateurs_chantier` | 12 | `[12]` | Beaucoup de colonnes, pleine largeur obligatoire |
-| `widget_cartographie_taux_avancement` | 12 | `[6, 8, 12]` | Carte SVG, lit mieux en grand |
-| `widget_cartographie_meteo` | 12 | `[6, 8, 12]` | idem |
+| `widget_cartographie_taux_avancement` | 6 | `[6, 8, 12]` | Carte SVG, par défaut en demi-largeur pour permettre la juxtaposition de deux cartes |
+| `widget_cartographie_meteo` | 6 | `[6, 8, 12]` | idem |
+| `widget_cartographie_propositions_valeur_avancement` | 6 | `[6, 8, 12]` | idem |
 | `widget_titre_section` | 12 | `[6, 12]` | Bloc titre / introduction de section |
 
 Le LLM peut **choisir une largeur dans le set autorisé** pour chaque instance, via un champ `width` optionnel sur le widget. S'il ne le précise pas, on prend le `default_width`. S'il propose une largeur hors du set autorisé, la validation Zod renvoie une erreur structurée et l'agent corrige.
@@ -567,8 +616,8 @@ Tout le reste est décidé par le LLM. Si le résultat ne plaît pas, l'utilisat
 
 ### Inclus
 
-- 1 outil Albert `compose_dashboard` **purement déclaratif** : validation Zod uniquement, vérification des habilitations territoriales sur les `territoire_code` référencés, et renvoi de la structure telle quelle comme tool result. **Aucun fetch de données côté tool, aucune query métier injectée dans sa factory.** Schéma couvrant le catalogue révisé §7.2 (10 widgets métier atomiques).
-- Le Pattern (g) **simplifié** du §8.3 ajouté au system prompt : flux en 2 tours, une seule question ouverte en cas de périmètre manquant, pas de « plan + confirmation », composition directe.
+- 1 outil Albert `compose_dashboard` **purement déclaratif** : validation Zod uniquement, vérification des habilitations territoriales sur les `territoire_code` référencés, et renvoi de la structure telle quelle comme tool result. **Aucun fetch de données côté tool, aucune query métier injectée dans sa factory.** Schéma couvrant le catalogue révisé §7.2 (12 widgets métier atomiques).
+- **Toute la connaissance produit (catalogue, structure recommandée d'un cockpit, règles JSON strictes, exemples) vit dans la `description` du tool `compose_dashboard`.** Le système prompt ne contient aucune section dashboard — décision prise pendant l'implémentation pour éviter de dupliquer le savoir entre deux endroits visibles par le LLM (cf. `docs/LLM_DASHBOARD_ITERATION_2.md` §7 et §15.3).
 - 1 nouvelle entité de persistance `dashboard_albert` minimale (sans partage, sans versioning).
 - 1 registre d'adaptateurs React qui, à partir de la structure renvoyée par le tool, instancie le bon composant widget pour chaque entrée et lui passe les **références** (territoire, chantier, jalon, maille). **Chaque adaptateur fetch ses propres données** via les queries tRPC déjà en place, suivant le pattern `api.useSuspenseQueries` utilisé aujourd'hui par `WidgetCartographieTA` et les autres widgets de `_commons/Widget/*`.
 - 1 moteur de layout en containers + grille 12 colonnes (cf. §7.4), chaque widget déclarant sa `default_width` et ses `allowed_widths` dans son schéma Zod.

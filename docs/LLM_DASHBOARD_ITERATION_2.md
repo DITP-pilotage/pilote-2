@@ -23,7 +23,9 @@ Le prototype expose 5 widgets dont 2 paramétrés par un enum qui change la **na
 - `texte_section` reste utilisable mais sera renommé `widget_titre_section` pour expliciter son rôle.
 - `tableau_indicateurs` reste conceptuellement bon mais sera renommé `widget_tableau_indicateurs_chantier`.
 
-La V2 remplace le catalogue par **10 widgets nominalement nommés**, aucun enum qui change la nature affichée. Les seuls enums tolérés sont les enums de **périmètre** (ex : `maille`).
+La V2 remplace le catalogue par **12 widgets nominalement nommés**, aucun enum qui change la nature affichée. Les seuls enums tolérés sont les enums de **périmètre** (ex : `maille`).
+
+> Note : la version initiale de ce document planifiait 10 widgets. Pendant l'implémentation, deux widgets ont été ajoutés : `widget_nombre_chantiers_en_difficulte` (symétrique de `widget_nombre_chantiers_en_retard`) et `widget_cartographie_propositions_valeur_avancement` (carte des PVA d'un chantier). Voir §15 pour le détail des écarts post-rédaction.
 
 ### 1.2. Qui charge les données : l'inverse de §7.6 (§5bis.2)
 
@@ -83,22 +85,24 @@ Le Pattern (g) actuel du `systemPrompt.ts` impose 5 étapes : identifier paramè
 
 ---
 
-## 3. Catalogue révisé — les 10 widgets
+## 3. Catalogue révisé — les 12 widgets
 
 Colonnes : **widget** · **intention métier** · **paramètres (références uniquement)** · **composant client réutilisé** · **source de données (tRPC)**.
 
 | # | Widget | Intention | Paramètres | Composant `_commons` réutilisé | Query tRPC |
 |---|---|---|---|---|---|
-| 1 | `widget_taux_avancement_territoire` | « Le TA agrégé d'un territoire, en gros » | `territoire_code`, `jalon` | (nouveau KPI atomique) | `chantier.recupererTauxAvancementTerritoire` (NOUVEAU) |
-| 2 | `widget_mediane_avancement_territoire` | « La médiane de répartition sur un territoire » | `territoire_code`, `jalon` | (nouveau KPI atomique) | `chantier.recupererStatistiquesAvancement` (existant) |
-| 3 | `widget_nombre_chantiers_en_retard` | « Combien de chantiers sont en retard » | `territoire_code`, `jalon` | (nouveau KPI atomique) | `chantier.recupererChantiersEnRetard` (NOUVEAU, on lit `.length`) |
-| 4 | `widget_valeurs_remarquables_avancement` | « Distribution du TA sur les sous-territoires : min / médiane / max » | `territoire_code`, `jalon` | `ValeursRemarquables` | `chantier.recupererStatistiquesAvancement` (existant) |
-| 5 | `widget_tableau_indicateurs_chantier` | « Les indicateurs VI/VA/VC/TA d'un chantier sur un territoire » | `chantier_id`, `territoire_code`, `jalon` | `ChantierIndicateursTable` (déjà utilisé dans ChatUI) | `chantier.recupererIndicateursChantier` (NOUVEAU) |
-| 6 | `widget_liste_chantiers_en_retard` | « Liste compacte des chantiers en retard » | `territoire_code`, `jalon` | (nouveau, liste simple) | `chantier.recupererChantiersEnRetard` (NOUVEAU) |
-| 7 | `widget_liste_chantiers_en_difficulte` | « Liste compacte des chantiers en difficulté » | `territoire_code`, `jalon` | (nouveau, liste simple) | `chantier.recupererChantiersEnDifficulte` (NOUVEAU) |
-| 8 | `widget_cartographie_taux_avancement` | « Carte de France du TA par territoire pour un ensemble de chantiers » | `maille` (`regionale` \| `departementale`), `territoire_code`, `jalon`, `chantier_ids` | `WidgetCartographieTA` (mode `chantiers`) | déjà câblé dans le composant |
-| 9 | `widget_cartographie_meteo` | « Carte des météos par territoire pour un chantier » | `maille`, `territoire_code`, `chantier_id`, `jalon` | `WidgetCartographieMeteo` | déjà câblé dans le composant |
-| 10 | `widget_titre_section` | Titre + description courte pour structurer le dashboard (aucun chiffre) | `titre`, `description?` | (nouveau, purement présentationnel) | — |
+| 1 | `widget_taux_avancement_territoire` | « Le TA agrégé d'un territoire, en gros » | `territoire_code`, `jalon` | `DashboardJaugeCard` (jauge bleue) | `chantier.recupererTauxAvancementTerritoire` (NOUVEAU) |
+| 2 | `widget_mediane_avancement_territoire` | « La médiane de répartition sur un territoire » | `territoire_code`, `jalon` | `DashboardJaugeCard` (jauge violette) | `chantier.recupererStatistiquesAvancementTousChantiersPublies` (NOUVEAU) |
+| 3 | `widget_nombre_chantiers_en_retard` | « Combien de chantiers sont en retard » | `territoire_code`, `jalon` | `DashboardKpiCard` (grand chiffre) | `chantier.recupererChantiersEnRetard` (NOUVEAU, on lit `.length`) |
+| 4 | `widget_nombre_chantiers_en_difficulte` | « Combien de chantiers sont en difficulté (météo ORAGE/NUAGE) » | `territoire_code`, `jalon` | `DashboardKpiCard` (grand chiffre) | `chantier.recupererChantiersEnDifficulte` (NOUVEAU, on lit `.length`) |
+| 5 | `widget_valeurs_remarquables_avancement` | « Distribution du TA sur les sous-territoires : min / médiane / max » | `territoire_code`, `jalon` | `ValeursRemarquables` | `chantier.recupererStatistiquesAvancementTousChantiersPublies` (NOUVEAU) |
+| 6 | `widget_tableau_indicateurs_chantier` | « Les indicateurs VI/VA/VC/TA d'un chantier sur un territoire » | `chantier_id`, `territoire_code`, `jalon` | `ChantierIndicateursTable` (déjà utilisé dans ChatUI) | `chantier.recupererIndicateursChantier` (NOUVEAU) |
+| 7 | `widget_liste_chantiers_en_retard` | « Liste compacte des chantiers en retard » | `territoire_code`, `jalon` | `DashboardChantiersListe` (nouveau) | `chantier.recupererChantiersEnRetard` (NOUVEAU) |
+| 8 | `widget_liste_chantiers_en_difficulte` | « Liste compacte des chantiers en difficulté » | `territoire_code`, `jalon` | `DashboardChantiersListe` (nouveau) | `chantier.recupererChantiersEnDifficulte` (NOUVEAU) |
+| 9 | `widget_cartographie_taux_avancement` | « Carte de France du TA par territoire pour un ensemble de chantiers » | `maille` (`regionale` \| `departementale`), `territoire_code`, `jalon`, `chantier_ids` | `WidgetCartographieTA` (mode `chantiers`) | déjà câblé dans le composant |
+| 10 | `widget_cartographie_meteo` | « Carte des météos par territoire pour un chantier » | `maille`, `territoire_code`, `chantier_id`, `jalon` | `WidgetCartographieMeteo` | déjà câblé dans le composant |
+| 11 | `widget_cartographie_propositions_valeur_avancement` | « Carte des propositions de valeurs d'avancement (PVA) d'un chantier » | `maille`, `territoire_code`, `chantier_id`, `jalon` | `WidgetCartographiePVA` (mode `chantier`) | endpoint `recupererPVAChantierTerritoires` (existant) |
+| 12 | `widget_titre_section` | Titre + description courte pour structurer le dashboard (aucun chiffre) | `titre`, `description?` | (nouveau, purement présentationnel) | — |
 
 ### 3.1. Widgets supprimés par rapport au prototype
 
@@ -111,16 +115,20 @@ Colonnes : **widget** · **intention métier** · **paramètres (références un
 
 | Widget | `default_width` | `allowed_widths` | Justification |
 |---|---|---|---|
-| `widget_taux_avancement_territoire` | 3 | `[3, 4, 6]` | KPI court |
-| `widget_mediane_avancement_territoire` | 3 | `[3, 4, 6]` | idem |
-| `widget_nombre_chantiers_en_retard` | 3 | `[3, 4, 6]` | idem |
+| `widget_taux_avancement_territoire` | 3 | `[3, 4, 6]` | KPI court (jauge) |
+| `widget_mediane_avancement_territoire` | 3 | `[3, 4, 6]` | idem (jauge) |
+| `widget_nombre_chantiers_en_retard` | 3 | `[3, 4, 6]` | KPI court (chiffre) |
+| `widget_nombre_chantiers_en_difficulte` | 3 | `[3, 4, 6]` | KPI court (chiffre) |
 | `widget_valeurs_remarquables_avancement` | 6 | `[4, 6, 8]` | Trio min/médiane/max |
 | `widget_tableau_indicateurs_chantier` | 12 | `[12]` | Beaucoup de colonnes |
 | `widget_liste_chantiers_en_retard` | 6 | `[6, 12]` | Liste verticale |
 | `widget_liste_chantiers_en_difficulte` | 6 | `[6, 12]` | idem |
-| `widget_cartographie_taux_avancement` | 12 | `[6, 8, 12]` | SVG, lit mieux en grand |
-| `widget_cartographie_meteo` | 12 | `[6, 8, 12]` | idem |
+| `widget_cartographie_taux_avancement` | 6 | `[6, 8, 12]` | SVG, par défaut en demi-largeur pour permettre la juxtaposition |
+| `widget_cartographie_meteo` | 6 | `[6, 8, 12]` | idem |
+| `widget_cartographie_propositions_valeur_avancement` | 6 | `[6, 8, 12]` | idem |
 | `widget_titre_section` | 12 | `[6, 12]` | Séparateur sémantique |
+
+> Note : la version initiale planifiait `default_width=12` pour les cartographies. Le tweak vers `default_width=6` (commit `65d609efb`) permet au LLM de poser deux cartes côte à côte (TA + météo, ou TA + PVA) sans avoir à spécifier la largeur explicitement, ce qui est devenu le pattern courant.
 
 ---
 
@@ -153,7 +161,7 @@ Plus aucune query ni use case métier injecté. La factory n'a plus rien à fair
 
 Côté `src/server/albert/module.ts` : la ligne `createComposeDashboardTool: asModuleFunction(createComposeDashboardTool)` reste fonctionnelle puisque la factory n'a plus de dépendances, mais on peut tout aussi bien la réécrire en `asValue(() => createComposeDashboardTool())` ou la retirer du cradle et l'importer directement dans la route. **Recommandé** : garder `asModuleFunction` pour minimiser la diff côté wiring et rester cohérent avec les autres tools.
 
-### 4.2. Schéma Zod — discriminated union à 10 cas
+### 4.2. Schéma Zod — discriminated union à 12 cas
 
 Le schéma est structuré par fichiers dédiés pour limiter la longueur :
 
@@ -213,6 +221,13 @@ const widgetMedianeAvancementTerritoire = z.object({
 
 const widgetNombreChantiersEnRetard = z.object({
   type: z.literal("widget_nombre_chantiers_en_retard"),
+  territoire_code: territoireCodeSchema,
+  jalon: jalonSchema,
+  width: z.union([z.literal(3), z.literal(4), z.literal(6)]).optional(),
+}).strict();
+
+const widgetNombreChantiersEnDifficulte = z.object({
+  type: z.literal("widget_nombre_chantiers_en_difficulte"),
   territoire_code: territoireCodeSchema,
   jalon: jalonSchema,
   width: z.union([z.literal(3), z.literal(4), z.literal(6)]).optional(),
@@ -277,6 +292,15 @@ const widgetCartographieMeteo = z.object({
   jalon: jalonSchema,
   width: z.union([z.literal(6), z.literal(8), z.literal(12)]).optional(),
 }).strict();
+
+const widgetCartographiePropositionsValeurAvancement = z.object({
+  type: z.literal("widget_cartographie_propositions_valeur_avancement"),
+  maille: mailleSchema,
+  territoire_code: territoireCodeSchema,
+  chantier_id: chantierIdSchema,
+  jalon: jalonSchema,
+  width: z.union([z.literal(6), z.literal(8), z.literal(12)]).optional(),
+}).strict();
 ```
 
 #### 4.2.6. Widget titre
@@ -299,12 +323,14 @@ const widgetInputSchema = z.discriminatedUnion("type", [
   widgetTauxAvancementTerritoire,
   widgetMedianeAvancementTerritoire,
   widgetNombreChantiersEnRetard,
+  widgetNombreChantiersEnDifficulte,
   widgetValeursRemarquablesAvancement,
   widgetTableauIndicateursChantier,
   widgetListeChantiersEnRetard,
   widgetListeChantiersEnDifficulte,
   widgetCartographieTauxAvancement,
   widgetCartographieMeteo,
+  widgetCartographiePropositionsValeurAvancement,
   widgetTitreSection,
 ]);
 
@@ -396,7 +422,7 @@ execute: async (input): Promise<ComposeDashboardOutput> => {
 
 La `description` injectée dans `tool({...})` doit :
 
-- Remplacer le tableau des 5 widgets par le tableau des 10 widgets (sans colonne `row_group`).
+- Remplacer le tableau des 5 widgets par le tableau des 12 widgets (sans colonne `row_group`).
 - Supprimer toute mention de « row_group homogène », de `filler`, de `kpi_card.metric`.
 - Supprimer les références au Pattern (g) en 5 étapes : remplacer par une consigne courte rappelant que l'outil n'embarque **aucun** chiffre (référence seulement) et que l'édition se fait par rewrite complet.
 - Conserver la section « Règles JSON strictes » (pas de commentaires, pas de virgules traînantes, …) — cf. `composeDashboard.ts:346-354`, elle a fait ses preuves.
@@ -520,20 +546,26 @@ Chacun des 4 nouveaux endpoints applique les habilitations via `new Habilitation
 
 ```
 src/client/components/_commons/ChatUI/DashboardWidgets/
-  index.ts                                           ← export du registre
   DashboardWidgetRegistry.tsx                        ← dispatcher par type
   DashboardWidgetTauxAvancementTerritoire.tsx
   DashboardWidgetMedianeAvancementTerritoire.tsx
   DashboardWidgetNombreChantiersEnRetard.tsx
+  DashboardWidgetNombreChantiersEnDifficulte.tsx     ← ajouté en cours d'implémentation
   DashboardWidgetValeursRemarquablesAvancement.tsx
   DashboardWidgetTableauIndicateursChantier.tsx
   DashboardWidgetListeChantiersEnRetard.tsx
   DashboardWidgetListeChantiersEnDifficulte.tsx
   DashboardWidgetCartographieTauxAvancement.tsx
   DashboardWidgetCartographieMeteo.tsx
+  DashboardWidgetCartographiePropositionsValeurAvancement.tsx ← ajouté en cours d'implémentation
   DashboardWidgetTitreSection.tsx
-  DashboardWidgetError.tsx                           ← fallback ErrorBoundary
-  DashboardWidgetLoader.tsx                          ← fallback Suspense global
+  DashboardCardShell.tsx                             ← shell partagé KPI/jauge (label + footer + slot central)
+  DashboardKpiCard.tsx                               ← présentation « grand chiffre »
+  DashboardJaugeCard.tsx                             ← présentation « jauge de progression colorée »
+  DashboardChantiersListe.tsx                        ← composant visuel partagé pour les deux listes
+  DashboardWidgetError.tsx                           ← fallback visuel ErrorBoundary
+  DashboardWidgetErrorBoundary.tsx                   ← class component custom (pas de dépendance externe)
+  DashboardLoader.tsx                                ← fallback Suspense global
 ```
 
 Rationale de l'arborescence :
@@ -543,12 +575,13 @@ Rationale de l'arborescence :
 
 ### 6.2. Pattern d'un adaptateur
 
-Modèle de référence pour un KPI atomique (le plus simple) :
+Modèle de référence pour un KPI atomique avec jauge (le pattern dominant pour les pourcentages) :
 
 ```tsx
 // DashboardWidgetTauxAvancementTerritoire.tsx
 import api from "@/server/infrastructure/api/trpc/api";
 import { WIDGET_STALE_TIME } from "@/components/_commons/Widget/constants";
+import { DashboardJaugeCard } from "./DashboardJaugeCard";
 
 export const DashboardWidgetTauxAvancementTerritoire = ({
   territoireCode,
@@ -557,22 +590,29 @@ export const DashboardWidgetTauxAvancementTerritoire = ({
   territoireCode: string;
   jalon: number;
 }) => {
-  const [data] = api.chantier.recupererTauxAvancementTerritoire.useSuspenseQuery(
-    { territoireCode, jalon },
-    { staleTime: WIDGET_STALE_TIME },
-  );
+  const [data] =
+    api.chantier.recupererTauxAvancementTerritoire.useSuspenseQuery(
+      { territoireCode, jalon },
+      { staleTime: WIDGET_STALE_TIME },
+    );
 
   return (
-    <KpiCard
+    <DashboardJaugeCard
       label="Taux d'avancement"
-      value={formatPourcentage(data.taux_avancement)}
+      couleur="bleu"
+      pourcentage={data.taux_avancement}
       footer={`${territoireCode} · jalon ${jalon}`}
     />
   );
 };
 ```
 
-Les deux autres KPI atomiques (`mediane`, `nombre_chantiers_en_retard`) suivent exactement le même pattern en changeant l'endpoint appelé et le formatage de la valeur.
+Les deux familles de KPI atomiques :
+
+- **KPI à pourcentage** (`widget_taux_avancement_territoire`, `widget_mediane_avancement_territoire`) → `DashboardJaugeCard` qui rend une `JaugeDeProgression` colorée. Le mapping `widget → couleur de jauge` est fait dans l'adaptateur (bleu pour le TA, violet pour la médiane).
+- **KPI à entier** (`widget_nombre_chantiers_en_retard`, `widget_nombre_chantiers_en_difficulte`) → `DashboardKpiCard` qui rend un grand chiffre.
+
+Les deux composants partagent le même `DashboardCardShell` (label en haut, footer en bas, slot central pour le contenu) — l'unité visuelle entre KPI/jauge est garantie au niveau du shell.
 
 ### 6.3. Adaptateurs composites (réutilisation directe)
 
@@ -656,6 +696,10 @@ export const DashboardWidgetRegistry = ({ widget }: { widget: WidgetDefinition }
       return <DashboardWidgetNombreChantiersEnRetard
         territoireCode={widget.territoire_code}
         jalon={widget.jalon} />;
+    case "widget_nombre_chantiers_en_difficulte":
+      return <DashboardWidgetNombreChantiersEnDifficulte
+        territoireCode={widget.territoire_code}
+        jalon={widget.jalon} />;
     case "widget_valeurs_remarquables_avancement":
       return <DashboardWidgetValeursRemarquablesAvancement
         territoireCode={widget.territoire_code}
@@ -685,6 +729,12 @@ export const DashboardWidgetRegistry = ({ widget }: { widget: WidgetDefinition }
         territoireCode={widget.territoire_code}
         chantierId={widget.chantier_id}
         jalon={widget.jalon} />;
+    case "widget_cartographie_propositions_valeur_avancement":
+      return <DashboardWidgetCartographiePropositionsValeurAvancement
+        maille={widget.maille}
+        territoireCode={widget.territoire_code}
+        chantierId={widget.chantier_id}
+        jalon={widget.jalon} />;
     case "widget_titre_section":
       return <DashboardWidgetTitreSection
         titre={widget.titre}
@@ -706,14 +756,15 @@ Le fichier actuel (412 lignes) fait trois choses :
 
 ```tsx
 import { Suspense } from "react";
-import { ErrorBoundary } from "react-error-boundary";
 import type {
   ComposeDashboardOutput,
   WidgetDefinition,
 } from "@/server/albert/tools/composeDashboard";
 import { DEFAULT_WIDTHS } from "@/server/albert/tools/composeDashboardLayout";
+import { ColonneMesuree } from "@/components/_commons/Widget/TuileWidget/TuileWidget";
+import { clsxm } from "@/utils/clsxm";
 import { DashboardWidgetRegistry } from "./DashboardWidgets/DashboardWidgetRegistry";
-import { DashboardWidgetError } from "./DashboardWidgets/DashboardWidgetError";
+import { DashboardWidgetErrorBoundary } from "./DashboardWidgets/DashboardWidgetErrorBoundary";
 import { DashboardLoader } from "./DashboardWidgets/DashboardLoader";
 
 const WIDTH_TO_CLASS: Record<number, string> = {
@@ -724,16 +775,17 @@ const WIDTH_TO_CLASS: Record<number, string> = {
   12: "col-span-12",
 };
 
-function resolveWidgetWidth(widget: WidgetDefinition): number {
-  return ("width" in widget && widget.width !== undefined)
-    ? widget.width
-    : DEFAULT_WIDTHS[widget.type] ?? 12;
-}
+const resolveWidgetWidth = (widget: WidgetDefinition): number => {
+  if ("width" in widget && widget.width !== undefined) {
+    return widget.width;
+  }
+  return DEFAULT_WIDTHS[widget.type] ?? 12;
+};
 
 export const DashboardRender = ({ output }: { output: ComposeDashboardOutput }) => (
   <div className="my-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
     <h3 className="text-base font-semibold text-gray-900 mb-3">{output.titre}</h3>
-    <Suspense fallback={<DashboardLoader containersCount={output.containers.length} />}>
+    <Suspense fallback={<DashboardLoader />}>
       <div className="space-y-3">
         {output.containers.map((container, containerIndex) => (
           <div key={containerIndex} className="grid grid-cols-12 gap-2">
@@ -741,10 +793,15 @@ export const DashboardRender = ({ output }: { output: ComposeDashboardOutput }) 
               const width = resolveWidgetWidth(widget);
               const innerClassName = WIDTH_TO_CLASS[width] ?? "col-span-12";
               return (
-                <div key={widgetIndex} className={innerClassName}>
-                  <ErrorBoundary FallbackComponent={DashboardWidgetError}>
-                    <DashboardWidgetRegistry widget={widget} />
-                  </ErrorBoundary>
+                <div
+                  key={widgetIndex}
+                  className={clsxm("h-full", innerClassName)}
+                >
+                  <DashboardWidgetErrorBoundary>
+                    <ColonneMesuree className="h-full">
+                      <DashboardWidgetRegistry widget={widget} />
+                    </ColonneMesuree>
+                  </DashboardWidgetErrorBoundary>
                 </div>
               );
             })}
@@ -759,8 +816,8 @@ export const DashboardRender = ({ output }: { output: ComposeDashboardOutput }) 
 **À noter** :
 
 - **Un seul** `Suspense` boundary au niveau du `DashboardRender`, avec un fallback simple (rectangle + loader centré), cf. PRD §7.6 « Application stricte ». Pas de skeleton per-widget.
-- **Un** `ErrorBoundary` **par widget** — un `territoire_code` refusé ou un `chantier_id` inexistant ne casse pas tout le dashboard.
-- `react-error-boundary` est déjà disponible dans le projet (à confirmer, sinon fallback sur un composant class maison — mais l'écosystème l'a déjà très probablement).
+- **Un** `DashboardWidgetErrorBoundary` **par widget** — un `territoire_code` refusé ou un `chantier_id` inexistant ne casse pas tout le dashboard. Implémenté en class component custom plutôt que via `react-error-boundary` pour éviter d'ajouter une dépendance.
+- **`ColonneMesuree`** wrappe chaque widget pour propager le contexte de mesure attendu par les widgets PILOTE déjà existants (`WidgetCartographieTA`, `WidgetCartographieMeteo`, `WidgetCartographiePVA`, `ValeursRemarquables`). Ces composants utilisent `useMesureColonne()` pour ajuster leur rendu au pixel près à la largeur disponible — sans ce wrapper, ils tombent en erreur ou rendent à la mauvaise taille.
 - Plus de lecture de `widget.definition` : on lit directement `widget.territoire_code` etc. depuis la `WidgetDefinition` renvoyée telle quelle par le tool.
 
 ### 6.7. Sort de `DashboardSkeleton`
@@ -808,62 +865,44 @@ On garde ainsi les anciens endpoints intacts et on expose des endpoints « haute
 
 ---
 
-## 7. Système de prompt — réécriture du Pattern (g)
+## 7. Système de prompt — décision finale : pas de Pattern (g)
 
-Le Pattern (g) actuel (lignes 221-281 de `systemPrompt.ts`) fait ~60 lignes et décrit : containers, row_groups, catalogue avec enums, structure recommandée, heuristiques, règles JSON strictes, édition. Il doit être **remplacé en bloc**.
+> **Écart majeur par rapport au plan initial.** Cette section avait initialement prévu de **réécrire** le Pattern (g) du `systemPrompt.ts`. Pendant l'implémentation (commit `6138cbd69 refactor: system prompt plus light`), nous sommes allés un cran plus loin : **le Pattern (g) a été entièrement supprimé du system prompt**. Toute la connaissance produit (catalogue de widgets, structure des containers, structure recommandée d'un cockpit, règles JSON strictes) vit désormais **uniquement dans la `description` du tool `compose_dashboard`**.
 
-### 7.1. Nouveau catalogue dans le prompt
+### 7.1. Pourquoi avoir supprimé le Pattern (g) du system prompt
 
-Remplacer le tableau (lignes 230-239) par :
+Trois raisons cumulées :
 
-```markdown
-**Catalogue de widgets** (10 intentions métier nominalement nommées) :
+1. **DRY** — la version planifiée demandait de dupliquer le tableau du catalogue, les heuristiques de mise en page et les règles JSON dans deux endroits visibles par le LLM (le system prompt **et** la description du tool). À chaque évolution du catalogue il aurait fallu maintenir les deux en parallèle, avec un risque permanent de désynchronisation.
+2. **Localité** — le SDK AI propage le `description` d'un tool au modèle au moment où il décide d'appeler ce tool. Mettre les règles d'usage *dans le tool lui-même* est l'endroit le plus pertinent pour qu'elles soient lues et appliquées au bon moment, plutôt que perdues parmi les autres patterns du system prompt.
+3. **Allègement** — le system prompt est envoyé à chaque tour de la conversation. Sortir 60 lignes de spécifications dashboard de la version envoyée à chaque tour réduit la pression sur le contexte (et la facture tokens), pour un savoir qui n'est pertinent que quand l'utilisateur évoque un dashboard.
 
-| Widget | Intention | Paramètres (références uniquement) | default_width | allowed_widths |
-|---|---|---|---|---|
-| `widget_taux_avancement_territoire` | TA agrégé d'un territoire | territoire_code, jalon | 3 | [3,4,6] |
-| `widget_mediane_avancement_territoire` | Médiane du TA sur les sous-territoires | territoire_code, jalon | 3 | [3,4,6] |
-| `widget_nombre_chantiers_en_retard` | Nombre de chantiers en retard | territoire_code, jalon | 3 | [3,4,6] |
-| `widget_valeurs_remarquables_avancement` | Min/médiane/max du TA sur les sous-territoires | territoire_code, jalon | 6 | [4,6,8] |
-| `widget_tableau_indicateurs_chantier` | VI/VA/VC/TA d'un chantier | chantier_id, territoire_code, jalon | 12 | [12] |
-| `widget_liste_chantiers_en_retard` | Liste compacte chantiers en retard (écart ≤ -10 pts) | territoire_code, jalon | 6 | [6,12] |
-| `widget_liste_chantiers_en_difficulte` | Liste compacte chantiers en difficulté (météo ORAGE/NUAGE) | territoire_code, jalon | 6 | [6,12] |
-| `widget_cartographie_taux_avancement` | Carte de France du TA | maille, territoire_code, jalon, chantier_ids | 12 | [6,8,12] |
-| `widget_cartographie_meteo` | Carte de France des météos | maille, territoire_code, chantier_id, jalon | 12 | [6,8,12] |
-| `widget_titre_section` | Titre de section (AUCUN chiffre) | titre, description? | 12 | [6,12] |
-```
+### 7.2. Où vit le savoir dashboard maintenant
 
-**Aucune colonne `row_group`**, **aucun enum de métrique**, **aucun `filler`**. Le nom **est** l'intention.
+Toute la connaissance produit est concentrée dans la description du tool `compose_dashboard` (cf. `src/server/albert/tools/composeDashboard.ts:267-353`) :
 
-### 7.2. Nouveau Pattern (g) — flux 2 tours
+- Le **catalogue complet** des 12 widgets, format markdown, avec colonnes `default_width` / `allowed_widths`.
+- Le **concept de container** (un dashboard = liste ordonnée de containers empilés verticalement, chacun sur une grille interne 12 colonnes).
+- La **structure recommandée d'un cockpit territoire** (titre, rangée KPI, carte, listes côte à côte).
+- Les **règles JSON strictes** (pas de commentaires, pas de virgules traînantes, JSON conforme au schéma uniquement).
+- Trois **exemples JSON compactés** (cockpit régional, ventilation par sous-territoires, focus chantier) — voir §15.5.
+- La **règle de factualité** : aucune valeur chiffrée dans les paramètres, uniquement des références.
 
-Remplacer les lignes 246-281 par (extrait adapté du §8.3 du PRD) :
+### 7.3. Ce qui reste dans le system prompt
 
-```markdown
-**Protocole (flux en 2 tours)** :
+Rien de spécifique au dashboard. Le system prompt actuel (`src/server/albert/systemPrompt.ts`) ne contient **aucune mention** du compose_dashboard, du catalogue de widgets, des containers ou de la structure d'un cockpit. Il garde uniquement :
 
-1. **Si le périmètre minimum est connu** (territoire ET jalon, soit par le contexte agent, soit par les tours précédents) : appelle `compose_dashboard` directement avec une composition par défaut adaptée à la demande. Ne pose pas de question.
-
-2. **Sinon** : réponds en **un seul message** qui combine (a) une phrase courte expliquant que tu vas composer un dashboard, (b) une liste nominale de 4-6 widgets disponibles pertinents au regard de la demande (pour informer, pas pour que l'utilisateur les choisisse un par un), (c) **une seule question ouverte** pour récupérer le périmètre manquant. **N'enchaîne pas plusieurs questions**, même si plusieurs paramètres manquent — regroupe-les dans une seule formulation.
-
-3. **Ne reformule pas de plan, ne demande pas de confirmation textuelle** avant de composer. Compose directement dès que le périmètre minimum est connu — l'utilisateur corrigera après coup sur le dashboard rendu.
-
-4. **Ne commente pas le contenu chiffré** une fois le dashboard composé. Une phrase courte d'introduction suffit ("Voici le dashboard demandé.").
-
-5. **Édition en conversation** : rappelle `compose_dashboard` avec une nouvelle définition complète qui reprend les containers à conserver et applique les changements. Pas de patch incrémental, pas de question préalable.
-
-**Structure recommandée d'un cockpit territoire** : un `widget_titre_section`, puis un container avec `widget_taux_avancement_territoire` + `widget_nombre_chantiers_en_retard` + `widget_valeurs_remarquables_avancement` (trois widgets compacts sur une rangée), puis un container avec `widget_cartographie_taux_avancement`, puis un container avec `widget_liste_chantiers_en_retard` et `widget_liste_chantiers_en_difficulte` côte à côte en largeur 6.
-
-**Règle de factualité** : tu ne passes JAMAIS de valeur chiffrée dans les paramètres — uniquement des références (territoire_code, chantier_id, jalon, maille). Les chiffres sont résolus au rendu côté client.
-```
-
-### 7.3. Règles JSON strictes
-
-Les lignes 265-271 (« Règles JSON strictes ») **restent telles quelles**. Elles adressent un problème orthogonal au catalogue et ont prouvé leur utilité dans le prototype.
+- l'identité Albert et le périmètre,
+- les règles fondamentales (factualité, commentaires, format des chantiers),
+- le glossaire métier,
+- la liste des territoires accessibles à l'utilisateur,
+- les patterns de workflow génériques (synthèse complète, comparaison temporelle, rapport complet),
+- la règle critique « jamais d'appel d'outil en pseudo-code »,
+- le gabarit de synthèse territoriale (orthogonal au dashboard).
 
 ### 7.4. AssistantMessageText — liste des tool names
 
-`AssistantMessageText.tsx:9-17` contient un `TOOL_NAMES` utilisé pour `stripPseudoToolCalls`. **Rien à changer** : `compose_dashboard` y est déjà, et le changement de schéma du tool n'affecte pas son nom.
+`AssistantMessageText.tsx` contient un `TOOL_NAMES` utilisé pour `stripPseudoToolCalls`. **Rien à changer** : `compose_dashboard` y est déjà, et le déplacement du savoir vers la description du tool n'affecte pas son nom.
 
 ---
 
@@ -878,7 +917,7 @@ type ComposeDashboardInput = {
   }>;
 };
 
-// WidgetDefinition = discriminated union sur `type` avec 10 cas
+// WidgetDefinition = discriminated union sur `type` avec 12 cas
 
 // Output (ce que le tool renvoie — pratiquement identique à l'input)
 type ComposeDashboardOutput = {
@@ -989,41 +1028,55 @@ Ces tests ne sont **pas bloquants** pour shipper la V1 du POC, mais sont recomma
 
 ### 11.1. Créations
 
+**Serveur — queries** :
+
 - `src/server/chantiers/query/RecupererTauxAvancementTerritoireQuery.ts` — nouvelle query, encapsule `agregerAvancementsChantiersUseCase` pour un territoire unique.
 - `src/server/chantiers/query/RecupererStatistiquesAvancementTousChantiersPubliesQuery.ts` — nouvelle query, wrappe `récupérerStatistiquesAvancementChantiersUseCase` en auto-résolvant les chantiers publiés.
+
+**Client — adaptateurs widgets (12)** :
+
 - `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardWidgetRegistry.tsx`
 - `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardWidgetTauxAvancementTerritoire.tsx`
 - `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardWidgetMedianeAvancementTerritoire.tsx`
 - `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardWidgetNombreChantiersEnRetard.tsx`
+- `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardWidgetNombreChantiersEnDifficulte.tsx`
 - `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardWidgetValeursRemarquablesAvancement.tsx`
 - `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardWidgetTableauIndicateursChantier.tsx`
 - `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardWidgetListeChantiersEnRetard.tsx`
 - `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardWidgetListeChantiersEnDifficulte.tsx`
 - `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardWidgetCartographieTauxAvancement.tsx`
 - `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardWidgetCartographieMeteo.tsx`
+- `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardWidgetCartographiePropositionsValeurAvancement.tsx`
 - `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardWidgetTitreSection.tsx`
-- `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardChantiersListe.tsx` — composant visuel partagé pour les deux listes, extrait de l'ancien `ListeChantiersAlerteWidget`.
-- `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardWidgetError.tsx` — fallback d'ErrorBoundary.
-- `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardLoader.tsx` — fallback Suspense + loader streaming.
-- `src/client/components/_commons/ChatUI/DashboardWidgets/index.ts` — point d'entrée / barrel.
+
+**Client — composants partagés et infrastructure** :
+
+- `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardCardShell.tsx` — shell visuel commun aux KPI et jauges (label en haut, footer en bas, slot central).
+- `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardKpiCard.tsx` — présentation « grand chiffre » (utilisée par les KPI à valeur entière). Exporte aussi `formatPourcentage`.
+- `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardJaugeCard.tsx` — présentation « jauge de progression colorée » (utilisée par les KPI à pourcentage). Wrappe `JaugeDeProgression`.
+- `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardChantiersListe.tsx` — composant visuel partagé pour les deux listes (en retard / en difficulté).
+- `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardWidgetError.tsx` — fallback visuel affiché par l'error boundary.
+- `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardWidgetErrorBoundary.tsx` — class component custom (pas de dépendance externe à `react-error-boundary`).
+- `src/client/components/_commons/ChatUI/DashboardWidgets/DashboardLoader.tsx` — fallback Suspense + loader « Composition du dashboard… ».
 
 ### 11.2. Modifications majeures
 
 - `src/server/albert/tools/composeDashboard.ts`
-  - Passe d'environ 577 lignes à ~200 lignes.
+  - Passe d'environ 577 lignes à ~350 lignes (incluant les exemples JSON dans la `description`).
   - Plus de fonction `resolveKpiCard`, `resolveListeChantiersAlerte`, `determineMaille`, `formatPourcentage`.
   - Plus d'imports `PrismaPilote`, `GetChantiers*Query`, `GetChantierIndicateursQuery`, `getContainer`, `Maille`, `MailleNonAutoriséeErreur`.
-  - Nouveau schéma Zod aux 10 widgets.
+  - Nouveau schéma Zod aux **12 widgets** (incluant `widget_nombre_chantiers_en_difficulte` et `widget_cartographie_propositions_valeur_avancement`).
   - `execute` trivial.
   - Nouveau `ComposeDashboardOutput` sans `ResolvedWidget`.
+  - **Toute la connaissance produit** (catalogue, structure recommandée, règles JSON, exemples) vit dans la `description` du tool — voir §7.
 
 - `src/server/albert/tools/composeDashboardLayout.ts`
-  - Nouveau `WidgetType` à 10 valeurs.
-  - `DEFAULT_WIDTHS` mis à jour.
+  - Nouveau `WidgetType` à 12 valeurs.
+  - `DEFAULT_WIDTHS` mis à jour (cartographies à 6, pas 12).
   - **Suppression** de `ROW_GROUPS` et du type `RowGroup`.
 
 - `src/server/albert/systemPrompt.ts`
-  - Section Pattern (g) (lignes 221-281) réécrite en bloc avec le nouveau catalogue 10 widgets, le flux 2 tours, et la disparition des row_groups / filler / enum de métrique.
+  - **Pattern (g) entièrement supprimé** (commit `6138cbd69`). Aucune mention du dashboard, du catalogue ou des containers ne subsiste dans le system prompt — toute la connaissance dashboard a migré dans la `description` du tool. Voir §7 pour la justification.
 
 - `src/server/albert/module.ts`
   - `AlbertOwnCradle` : retrait de `getChantiersEnRetardQuery`, `getChantiersEnDifficulteQuery`, `getChantierIndicateursQuery` (ils viennent maintenant des imports).
@@ -1071,7 +1124,7 @@ Un ordre qui permet de valider chaque étape indépendamment sans casser la bran
 1. **Migration DI des queries chantier** (§9) — déplacer `GetChantiersEnRetardQuery`, `GetChantiersEnDifficulteQuery`, `GetChantierIndicateursQuery` de `albertModule` à `chantiersModule` + exports. À ce stade, les tests existants doivent passer à l'identique (les tools Albert continuent à les recevoir via le cradle).
 2. **Nouveaux endpoints tRPC** (§5) — ajouter les 4-5 nouveaux endpoints sur `chantierRouter` en appelant les queries via DI. Les nouveaux endpoints peuvent être testés côté client de façon isolée (ex : via un petit `story` ou simplement via le devtools React Query) avant d'être branchés sur les adaptateurs.
 3. **Nouvelle query `RecupererTauxAvancementTerritoireQuery`** et éventuellement `RecupererStatistiquesAvancementTousChantiersPubliesQuery` — écriture + test unitaire + enregistrement + exposition tRPC.
-4. **Refonte du schéma tool `compose_dashboard`** (§4) — nouveau Zod aux 10 widgets, suppression de `ResolvedWidget`, `execute` trivial, suppression des imports morts. Tests unitaires du tool réécrits (§10).
+4. **Refonte du schéma tool `compose_dashboard`** (§4) — nouveau Zod aux 12 widgets, suppression de `ResolvedWidget`, `execute` trivial, suppression des imports morts. Tests unitaires du tool réécrits (§10).
 5. **Adaptateurs React + registry** (§6) — un adaptateur à la fois, en commençant par le plus simple (`widget_titre_section`) puis les KPI atomiques, puis les listes, puis les cartographies, puis le tableau d'indicateurs. Chaque adaptateur s'intègre immédiatement dans le `DashboardWidgetRegistry`.
 6. **Refonte de `DashboardRender`** (§6.6) — bascule sur le registry, suppression du `DashboardSkeleton`.
 7. **System prompt** (§7) — nouvelle Pattern (g), nouveau catalogue. Exécuter quelques prompts sentinelles pour vérifier que le LLM ne mélange plus les métriques.
@@ -1129,3 +1182,69 @@ Un ordre qui permet de valider chaque étape indépendamment sans casser la bran
 ```
 
 Le widget ne contient **aucune valeur**. Le `"67%"` vit maintenant uniquement dans la réponse de la query tRPC consommée par l'adaptateur React, qui se rafraîchit automatiquement à chaque ouverture du dashboard — exactement ce que le PRD §7.6 appelle un « dashboard vivant ».
+
+---
+
+## 15. Écarts par rapport au plan initial
+
+Cette section consigne les ajustements opérés pendant l'implémentation, par rapport à la version initiale de ce document. Elle sert de trace lisible pour quiconque relit le doc après coup et veut comprendre pourquoi le code ne correspond pas exactement au plan.
+
+### 15.1. Catalogue : 10 → 12 widgets
+
+Deux widgets ont été ajoutés au catalogue pendant l'implémentation :
+
+- **`widget_nombre_chantiers_en_difficulte`** — KPI atomique symétrique de `widget_nombre_chantiers_en_retard`. L'asymétrie initiale (un seul KPI « nombre de chantiers en retard », pas son équivalent en difficulté) était une incohérence : les deux catégories existent comme listes (`widget_liste_chantiers_en_*`), il était attendu d'avoir aussi les deux KPI compteurs.
+- **`widget_cartographie_propositions_valeur_avancement`** — carte de France des PVA d'un chantier, sur le même modèle que `widget_cartographie_meteo`. Réutilise le composant `WidgetCartographiePVA` déjà présent dans `_commons/Widget/` et l'endpoint tRPC `recupererPVAChantierTerritoires` (existant). Ajouté pour couvrir le cas d'usage « focus chantier » qui apparaît dans plusieurs scénarios utilisateur.
+
+Les sections §3, §3.2, §4.2, §6.5 et §11 ont été mises à jour pour refléter ces deux ajouts.
+
+### 15.2. KPI à pourcentage rendus en jauges colorées
+
+Le plan initial prévoyait un seul composant KPI atomique générique (« grand chiffre + label »). Pendant l'implémentation, les KPI à pourcentage (`widget_taux_avancement_territoire`, `widget_mediane_avancement_territoire`) ont été basculés sur **`DashboardJaugeCard`**, qui rend une `JaugeDeProgression` colorée à la place du grand chiffre :
+
+- Bleue pour le TA agrégé d'un territoire.
+- Violette pour la médiane.
+
+La justification : un pourcentage gagne énormément en lisibilité et en signal visuel quand il est représenté en jauge plutôt qu'en chiffre nu — la jauge donne immédiatement l'ordre de grandeur (« plein, à moitié, vide ») sans avoir besoin de lire le chiffre. Les KPI à valeur entière (`widget_nombre_chantiers_en_*`) gardent un grand chiffre via `DashboardKpiCard`.
+
+Trois composants partagés au lieu d'un :
+
+- **`DashboardCardShell`** — shell visuel commun (label en haut, footer en bas, slot central).
+- **`DashboardKpiCard`** — slot central = grand chiffre.
+- **`DashboardJaugeCard`** — slot central = `JaugeDeProgression`.
+
+L'unité visuelle entre les deux familles est garantie au niveau du shell.
+
+### 15.3. System prompt : Pattern (g) entièrement supprimé
+
+Le plan prévoyait de **réécrire** le Pattern (g) du `systemPrompt.ts`. La décision finale (commit `6138cbd69`) est plus radicale : le Pattern (g) est **entièrement supprimé**, et toute la connaissance produit (catalogue, containers, structure recommandée, règles JSON, exemples) vit désormais uniquement dans la `description` du tool `compose_dashboard`. Voir §7 pour la justification détaillée (DRY, localité, allègement).
+
+### 15.4. Default width des cartographies : 12 → 6
+
+Le plan prévoyait `default_width=12` pour les trois widgets cartographie. Le tweak (commit `65d609efb`) abaisse la valeur à `6`, ce qui permet au LLM de poser deux cartes côte à côte (par exemple TA + météo, ou TA + PVA pour un focus chantier) sans avoir à spécifier `width` explicitement. C'est devenu le pattern courant des dashboards générés.
+
+### 15.5. Exemples JSON dans la description du tool
+
+Pendant l'usage, le LLM produisait des dashboards parfois mal structurés (oubli de container, mauvaise répartition des widgets). Pour fiabiliser la génération, **trois exemples JSON compactés** ont été ajoutés à la `description` du tool (commit `7954bf043`) :
+
+1. **Cockpit synthétique d'une région** — titre, rangée KPI, carte large, deux listes côte à côte.
+2. **Ventilation par sous-territoires** — pour chaque sous-territoire, un container titre + un container avec 3 KPI sur une rangée. Tronqué à 2 sous-territoires avec note de répétition.
+3. **Focus chantier** — titre, tableau d'indicateurs, cartographies thématiques. N'utilise pas `width` (illustre que `default_width` s'applique automatiquement).
+
+Une note de garde-fou commune rappelle que les valeurs sont illustratives et qu'il faut adapter `territoire_code` / `jalon` / `chantier_id` au contexte réel.
+
+### 15.6. Bouton « Tableau de bord du territoire » dans `BoutonSyntheseTerritoire`
+
+Le composant `src/client/components/PageAccueil/BoutonSyntheseTerritoire.tsx` expose un set de scénarios pré-câblés (synthèse, comparaison, rapport complet). Un nouveau scénario **« Tableau de bord du territoire »** a été ajouté (commit `53d792dc7`) qui injecte un prompt structuré demandant à Albert de composer un dashboard avec une première section de KPI + cartographie, puis une section dédiée par chantier en difficulté avec son tableau d'indicateurs et sa carte météo. C'est un point d'entrée direct vers `compose_dashboard` pour les utilisateurs qui ne connaîtraient pas la formulation à utiliser.
+
+### 15.7. ErrorBoundary : implémentation custom au lieu de `react-error-boundary`
+
+Le plan prévoyait d'utiliser `react-error-boundary`. Pendant l'implémentation, on a opté pour une **class component custom** (`DashboardWidgetErrorBoundary`) qui rend `DashboardWidgetError` en cas d'erreur. Évite d'ajouter une dépendance pour ~25 lignes de code.
+
+### 15.8. Wrapper `ColonneMesuree` dans `DashboardRender`
+
+Non mentionné dans le plan : chaque widget est wrappé dans `<ColonneMesuree>` côté `DashboardRender`. Ce wrapper propage le contexte de mesure (largeur disponible en pixels) attendu par les widgets PILOTE déjà existants — `WidgetCartographieTA`, `WidgetCartographieMeteo`, `WidgetCartographiePVA`, `ValeursRemarquables` utilisent tous `useMesureColonne()` pour ajuster leur rendu au pixel près. Sans ce wrapper, ces composants tombent en erreur ou rendent à la mauvaise taille.
+
+### 15.9. Endpoint tRPC PVA réutilisé (pas de nouvel endpoint)
+
+Le widget `widget_cartographie_propositions_valeur_avancement` réutilise l'endpoint `recupererPVAChantierTerritoires` qui existait déjà avant la PR (utilisé par les pages chantier). Pas de nouvel endpoint à créer pour ce widget — le composant `WidgetCartographiePVA` se charge du fetch via `api.useSuspenseQueries` comme les autres widgets cartographie.
