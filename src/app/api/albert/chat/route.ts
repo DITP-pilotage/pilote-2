@@ -11,6 +11,7 @@ import {
 } from "@/server/albert/detecteurIntention";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { getContainer } from "@/server/dependances";
+import { createCreateDashboardTool } from "@/server/albert/tools/createDashboard";
 
 const chatRequestSchema = z
   .object({
@@ -92,13 +93,27 @@ export async function POST(request: Request) {
       userId: session.user.id,
     });
 
+    const subagentDataTools = {
+      get_taux_avancement_territoire: getTauxAvancementTerritoire,
+      get_chantiers_en_retard: getChantiersEnRetard,
+      get_chantiers_en_difficulte: getChantiersEnDifficulte,
+      get_chantier_indicateurs: getChantierIndicateurs,
+      compose_dashboard: composeDashboard,
+    };
+
+    const createDashboard = createCreateDashboardTool({
+      subagentTools: subagentDataTools,
+      userId: session.user.id,
+      chatId: body.id,
+    });
+
     const tools = {
       get_taux_avancement_territoire: getTauxAvancementTerritoire,
       get_chantiers_en_retard: getChantiersEnRetard,
       get_chantiers_en_difficulte: getChantiersEnDifficulte,
       get_chantier_indicateurs: getChantierIndicateurs,
       display_choices: displayChoicesTool,
-      ...(capacities.dashboard ? { compose_dashboard: composeDashboard } : {}),
+      ...(capacities.dashboard ? { create_dashboard: createDashboard } : {}),
       ...(capacities.exportRapport ? { export_rapport: exportRapport } : {}),
     };
 

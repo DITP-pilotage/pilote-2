@@ -227,7 +227,7 @@ describe("dashboardDejaCompose", () => {
     expect(result).toBe(false);
   });
 
-  it("retourne true quand un message assistant contient un tool-compose_dashboard", () => {
+  it("retourne true quand un message assistant contient un tool-create_dashboard", () => {
     // given
     const messages: PiloteUIMessage[] = [
       {
@@ -241,10 +241,10 @@ describe("dashboardDejaCompose", () => {
         parts: [
           { type: "text", text: "Voici le dashboard demandé." },
           {
-            type: "tool-compose_dashboard",
+            type: "tool-create_dashboard",
             toolCallId: "call-1",
             state: "output-available",
-            input: { titre: "Test", containers: [] },
+            input: { task: "Cockpit Bretagne" },
             output: {
               titre: "Test",
               containers: [],

@@ -78,7 +78,7 @@ export function dashboardDejaCompose(messages: PiloteUIMessage[]): boolean {
     (message) =>
       message.role === "assistant" &&
       (message.parts ?? []).some(
-        (part) => part.type === "tool-compose_dashboard",
+        (part) => part.type === "tool-create_dashboard",
       ),
   );
 }

@@ -8,6 +8,7 @@ const remarkPlugins = [remarkGfm];
 // à la ToolSet dans src/app/api/albert/chat/route.ts.
 const TOOL_NAMES = [
   "display_choices",
+  "create_dashboard",
   "compose_dashboard",
   "export_rapport",
   "get_taux_avancement_territoire",

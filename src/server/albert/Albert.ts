@@ -86,7 +86,7 @@ export const displayChoicesTool = tool({
 const DEFAULT_MODEL = "openweight-large";
 
 export class Albert {
-  private static createProvider() {
+  static createProvider() {
     return createOpenAI({
       baseURL: "https://albert.api.etalab.gouv.fr/v1",
       apiKey: configuration().albert.apiKey,
@@ -135,27 +135,26 @@ export class Albert {
     systemPrompt,
     tools,
     userId,
+    abortSignal,
   }: {
     chatId: string;
     prompt: string;
     systemPrompt: string;
     tools?: ToolSet;
     userId: string;
+    abortSignal?: AbortSignal;
   }) {
     const albertProvider = this.createProvider();
 
-    const response = await aiGenerateText({
+    return aiGenerateText({
       model: albertProvider.chat(DEFAULT_MODEL),
       system: systemPrompt,
       prompt: prompt,
-      stopWhen: stepCountIs(5),
+      stopWhen: stepCountIs(50),
       onFinish: (event) => Albert.saveLlmCall({ chatId, userId, event }),
       tools,
+      abortSignal,
     });
-
-    return {
-      text: response.text,
-    };
   }
 
   static async streamText({
