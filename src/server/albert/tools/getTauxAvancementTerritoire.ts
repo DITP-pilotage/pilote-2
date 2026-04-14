@@ -7,6 +7,7 @@ import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilita
 import { Maille } from "@/server/domain/maille/Maille.interface";
 import { getContainer } from "@/server/dependances";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import { determineMaille } from "@/server/domain/maille/determineMaille";
 
 export const getTauxAvancementTerritoireInputSchema = z.object({
   territoire_code: z
@@ -45,12 +46,6 @@ export type GetTauxAvancementTerritoireOutput = {
 };
 
 const OUTPUT_INSTRUCTIONS = `Présente le TA, la médiane et la position pour chaque territoire. Un seul territoire → paragraphe factuel. Plusieurs territoires → tableau comparatif.`;
-
-function determineMaille(territoireCode: string): Maille {
-  if (territoireCode.startsWith("NAT")) return "nationale";
-  if (territoireCode.startsWith("REG")) return "regionale";
-  return "departementale";
-}
 
 export function createGetTauxAvancementTerritoireTool({
   prisma,

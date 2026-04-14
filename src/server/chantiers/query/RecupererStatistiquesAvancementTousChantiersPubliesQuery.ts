@@ -2,6 +2,7 @@ import { $Enums } from "@prisma/client";
 import { AvancementsStatistiques } from "@/client/components/_commons/Avancements/Avancements.interface";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
+import { determineMaille } from "@/server/domain/maille/determineMaille";
 import { Inject } from "@/server/chantiers/module";
 
 export type RecupererStatistiquesAvancementTousChantiersPubliesResult = {
@@ -9,12 +10,6 @@ export type RecupererStatistiquesAvancementTousChantiersPubliesResult = {
   jalon: number;
   statistiques: AvancementsStatistiques;
 };
-
-function determineMaille(territoireCode: string): Maille {
-  if (territoireCode.startsWith("NAT")) return "nationale";
-  if (territoireCode.startsWith("REG")) return "regionale";
-  return "departementale";
-}
 
 function determineMailleRepartition(territoireCode: string): Maille {
   const maille = determineMaille(territoireCode);

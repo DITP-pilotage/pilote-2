@@ -1,18 +1,12 @@
 import { $Enums } from "@prisma/client";
 import { Inject } from "@/server/chantiers/module";
-import { Maille } from "@/server/domain/maille/Maille.interface";
+import { determineMaille } from "@/server/domain/maille/determineMaille";
 
 export type RecupererTauxAvancementTerritoireResult = {
   territoire_code: string;
   jalon: number;
   taux_avancement: number | null;
 };
-
-function determineMaille(territoireCode: string): Maille {
-  if (territoireCode.startsWith("NAT")) return "nationale";
-  if (territoireCode.startsWith("REG")) return "regionale";
-  return "departementale";
-}
 
 export class RecupererTauxAvancementTerritoireQuery {
   constructor(
