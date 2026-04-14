@@ -1,4 +1,5 @@
 import { DashboardPanel } from "./DashboardPanel";
+import { DashboardWidgetTitle } from "./DashboardWidgetTitle";
 
 const METEO_LABELS: Record<string, string> = {
   SOLEIL: "☀️ Soleil",
@@ -45,9 +46,7 @@ export const DashboardChantiersListe = ({
   lignes: DashboardChantierLigne[];
 }) => (
   <DashboardPanel>
-    <div className="text-xs uppercase tracking-wide text-gray-500 mb-3">
-      {titre} · {territoireCode}
-    </div>
+    <DashboardWidgetTitle segments={[titre, territoireCode]} className="mb-3" />
     {lignes.length === 0 ? (
       <div className="text-sm text-gray-500">Aucun chantier signalé.</div>
     ) : (
