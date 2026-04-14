@@ -20,7 +20,6 @@ export const AssistantMessage = memo(function AssistantMessage({
   message: PiloteUIMessage;
   isStreaming: boolean;
 }) {
-  console.log(message);
   const shouldHideText = message.parts?.some((part) => {
     const toolName = part.type.startsWith("tool-") ? part.type.slice(5) : null;
     return (
