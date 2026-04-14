@@ -129,13 +129,14 @@ export class Albert {
     });
   }
 
-  static async generateText({
+  static async generateText<OUTPUT>({
     chatId,
     prompt,
     systemPrompt,
     tools,
     userId,
     abortSignal,
+    output,
   }: {
     chatId: string;
     prompt: string;
@@ -143,6 +144,7 @@ export class Albert {
     tools?: ToolSet;
     userId: string;
     abortSignal?: AbortSignal;
+    output?: OUTPUT;
   }) {
     const albertProvider = this.createProvider();
 
@@ -154,6 +156,7 @@ export class Albert {
       onFinish: (event) => Albert.saveLlmCall({ chatId, userId, event }),
       tools,
       abortSignal,
+      output: output as Parameters<typeof aiGenerateText>[0]["output"],
     });
   }
 

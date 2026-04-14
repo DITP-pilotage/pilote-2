@@ -92,6 +92,5 @@ Pattern : titre du chantier, tableau d'indicateurs, puis cartographies thématiq
 
 1. Analyse la demande
 2. Si tu as besoin de contexte (quels chantiers sont en retard, etc.), appelle les outils de données
-3. Appelle \`compose_dashboard\` avec la structure complète
-4. Ta réponse textuelle finale sera ignorée — seul le résultat de \`compose_dashboard\` est retourné au parent`;
+3. Produis ta réponse finale : le JSON du dashboard conforme au schéma (titre + containers + widgets). Ta réponse sera parsée automatiquement comme structured output.`;
 }

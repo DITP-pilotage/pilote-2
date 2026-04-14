@@ -1,6 +1,9 @@
-import { generateText, stepCountIs, tool, type ToolSet } from "ai";
+import { generateText, Output, stepCountIs, tool, type ToolSet } from "ai";
 import { z } from "zod";
-import type { ComposeDashboardOutput } from "@/server/albert/tools/composeDashboard";
+import {
+  composeDashboardInputSchema,
+  type ComposeDashboardOutput,
+} from "@/server/albert/tools/composeDashboard";
 import { buildDashboardSystemPrompt } from "@/server/albert/subagents/dashboardSystemPrompt";
 import { Albert } from "@/server/albert/Albert";
 
@@ -17,30 +20,18 @@ export type CreateDashboardOutput = ComposeDashboardOutput;
 
 type CreateDashboardToolDeps = {
   subagentTools: ToolSet;
-  userId: string;
-  chatId: string;
 };
 
-function extractDashboardOutput(
-  steps: { toolCalls: Array<{ toolName: string; result?: unknown }> }[],
-): CreateDashboardOutput {
-  console.log(steps.flatMap((step) => step.toolCalls));
-  const composeDashboardCall = steps
-    .flatMap((step) => step.toolCalls)
-    .findLast((call) => call.toolName === "compose_dashboard");
-
-  if (!composeDashboardCall?.result) {
-    throw new Error("Le subagent n'a pas pu composer de dashboard.");
-  }
-
-  return composeDashboardCall.result as CreateDashboardOutput;
-}
+const OUTPUT_INSTRUCTIONS = `Le dashboard a été composé et sera affiché visuellement sous forme de widgets dans l'interface.
+Ne reproduis JAMAIS de valeurs chiffrées dans ta réponse textuelle (les chiffres sont résolus au rendu côté client).
+Tu peux ajouter une phrase courte d'introduction ("Voici le dashboard demandé.") mais pas de commentaire sur les chiffres.
+Si l'utilisateur demande à modifier le dashboard, rappelle create_dashboard avec une nouvelle description.`;
 
 export function createCreateDashboardTool({
   subagentTools,
-  userId,
-  chatId,
 }: CreateDashboardToolDeps) {
+  const albertProvider = Albert.createProvider();
+
   return tool({
     description: `Délègue la composition d'un dashboard à un agent spécialisé.
 Utilise ce tool quand l'utilisateur demande un dashboard, un cockpit,
@@ -48,28 +39,25 @@ un tableau de bord visuel, ou d'afficher les indicateurs d'un chantier.
 Décris précisément ce que l'utilisateur veut visualiser.`,
     inputSchema: createDashboardInputSchema,
     execute: async ({ task }, { abortSignal }) => {
-      try {
-        console.log("---------------");
-        console.log("Début de la génération...");
-        const result = await Albert.generateText({
-          systemPrompt: buildDashboardSystemPrompt(),
-          prompt: task,
-          tools: subagentTools,
-          abortSignal,
-          userId,
-          chatId,
-        });
+      const result = await generateText({
+        model: albertProvider.chat("openweight-large"),
+        system: buildDashboardSystemPrompt(),
+        prompt: task,
+        tools: subagentTools,
+        output: Output.object({ schema: composeDashboardInputSchema }),
+        stopWhen: stepCountIs(10),
+        abortSignal,
+      });
 
-        // console.log(result.);
-
-        return extractDashboardOutput(result.steps);
-      } catch (e) {
-        console.log("--------------------------------");
-        console.log(e);
-        console.log("--------------------------------");
-
-        throw e;
+      if (!result.output) {
+        throw new Error("Le subagent n'a pas pu composer de dashboard.");
       }
+
+      return {
+        titre: result.output.titre,
+        containers: result.output.containers,
+        _output_instructions: OUTPUT_INSTRUCTIONS,
+      };
     },
   });
 }
