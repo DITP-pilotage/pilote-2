@@ -82,6 +82,26 @@ describe("detecterCapacities", () => {
     expect(result.dashboard).toBe(true);
   });
 
+  it("détecte une demande de dashboard via 'indicateurs'", () => {
+    // when
+    const result = detecterCapacities(
+      "Montre-moi les indicateurs du chantier CH-064",
+    );
+
+    // then
+    expect(result.dashboard).toBe(true);
+  });
+
+  it("détecte une demande de dashboard via 'indicateur'", () => {
+    // when
+    const result = detecterCapacities(
+      "Affiche l'indicateur principal du territoire",
+    );
+
+    // then
+    expect(result.dashboard).toBe(true);
+  });
+
   it("détecte un export via 'exporte'", () => {
     // when
     const result = detecterCapacities("Exporte ce rapport en PDF");
