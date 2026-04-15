@@ -70,6 +70,7 @@ export const ModaleInsertionUrl = ({
 
   const valider = (event: FormEvent) => {
     event.preventDefault();
+    event.stopPropagation();
     setErreur("");
 
     if (mode === "email") {
