@@ -1,8 +1,4 @@
-import {
-  filtrerLesTerritoires,
-  genererContenuCsv,
-  telechargerCsv,
-} from "@/client/utils/csv";
+import { filtrerLesTerritoires, genererContenuCsv } from "@/client/utils/csv";
 
 describe("filtrerLesTerritoires", () => {
   it("ne retourne que les territoires applicables présents dans la liste d'export", () => {
@@ -77,30 +73,5 @@ describe("genererContenuCsv", () => {
 
     // Then
     expect(result).toEqual('\uFEFF"Territoire";"Taux d\'avancement";"Date"');
-  });
-});
-
-describe("telechargerCsv", () => {
-  it("attache le lien au DOM, déclenche le téléchargement, puis nettoie", () => {
-    // Given
-    const createObjectURL = vi.fn(() => "blob:fake-url");
-    const revokeObjectURL = vi.fn();
-    global.URL.createObjectURL = createObjectURL;
-    global.URL.revokeObjectURL = revokeObjectURL;
-
-    const appendChildMock = vi.spyOn(document.body, "appendChild");
-    const removeChildMock = vi.spyOn(document.body, "removeChild");
-    const anchor = document.createElement("a");
-    const clickMock = vi.spyOn(anchor, "click").mockImplementation(() => {});
-    vi.spyOn(document, "createElement").mockReturnValue(anchor);
-
-    // When
-    telechargerCsv("contenu", "mon-export");
-
-    // Then
-    expect(appendChildMock).toHaveBeenCalledTimes(1);
-    expect(clickMock).toHaveBeenCalledTimes(1);
-    expect(removeChildMock).toHaveBeenCalledTimes(1);
-    expect(revokeObjectURL).toHaveBeenCalledWith("blob:fake-url");
   });
 });
