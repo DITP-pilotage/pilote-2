@@ -92,6 +92,7 @@ export const WidgetCartographieTA = ({
       }
       complementsCartographie={
         <ComplementsCartographie>
+          <LegendeCartographie items={legende} />
           <ValeursRemarquables
             valeurs={valeursRemarquables}
             palette={{
@@ -101,7 +102,6 @@ export const WidgetCartographieTA = ({
             }}
             maille={maille}
           />
-          <LegendeCartographie items={legende} />
         </ComplementsCartographie>
       }
     />

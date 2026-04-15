@@ -196,6 +196,7 @@ const WidgetCartographieTAContent = (
       }
       complementsCartographie={
         <ComplementsCartographie>
+          <LegendeCartographie items={legende} />
           <ValeursRemarquables
             valeurs={valeursRemarquables}
             palette={{
@@ -205,7 +206,6 @@ const WidgetCartographieTAContent = (
             }}
             maille={maille}
           />
-          <LegendeCartographie items={legende} />
         </ComplementsCartographie>
       }
       footer={
