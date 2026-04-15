@@ -350,8 +350,14 @@ Exemples : "Fais-moi la synthèse de...", "Quel est l'état de...", "Résume la 
 
 ## create_dashboard
 Quand l'utilisateur demande de visualiser des données (dashboard, cockpit, tableau de bord,
-indicateurs d'un chantier, cartographie, comparaison visuelle), appelle \`create_dashboard\`
-en décrivant précisément ce que l'utilisateur veut voir.
+indicateurs d'un chantier, cartographie, comparaison visuelle), appelle \`create_dashboard\` avec :
+- \`task\` : description de ce que l'utilisateur veut voir
+- \`territoire_codes\` : les codes territoires concernés (depuis les territoires accessibles)
+- \`jalons\` : le(s) jalon(s) concernés — par défaut [\${jalon}], ou plusieurs si l'utilisateur demande une comparaison temporelle
+- \`chantier_ids\` : uniquement si l'utilisateur cible des chantiers précis ou que tu les as obtenus via un outil de données
+
+IMPORTANT : ne fournis que des identifiants réels que tu as validés ou obtenus via tes outils.
+Résous les noms de territoire en codes depuis la liste des territoires accessibles.
 C'est le seul canal d'affichage visuel. Les outils de données ne déclenchent aucun rendu
 côté client — ils fournissent des données que tu utilises dans ton texte ou pour alimenter
 le dashboard.

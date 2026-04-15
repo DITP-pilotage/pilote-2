@@ -244,7 +244,11 @@ describe("dashboardDejaCompose", () => {
             type: "tool-create_dashboard",
             toolCallId: "call-1",
             state: "output-available",
-            input: { task: "Cockpit Bretagne" },
+            input: {
+              task: "Cockpit Bretagne",
+              territoire_codes: ["REG-53"],
+              jalons: [2026],
+            },
             output: {
               titre: "Test",
               containers: [],
