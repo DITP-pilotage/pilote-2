@@ -23,9 +23,6 @@ const nextConfig = {
   outputFileTracingRoot: __dirname,
   bundlePagesRouterDependencies: true,
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
-  compiler: {
-    emotion: true,
-  },
   turbopack: {
     rules: {
       "*.yaml": {

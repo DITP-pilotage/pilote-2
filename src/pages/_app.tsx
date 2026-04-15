@@ -18,7 +18,7 @@ import { Tooltip } from "@/components/shared/Tooltip";
 
 const DELAI_AVANT_APPARITION_DU_LOADER_EN_MS = 500;
 
-// Props spécifiques pour l'AppComponent incluant emotionCache
+// Props spécifiques pour l'AppComponent
 interface MyAppProps extends AppProps {
   nonce?: string;
 }

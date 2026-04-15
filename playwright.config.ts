@@ -33,7 +33,7 @@ export default defineConfig({
         ],
       ],
   webServer: {
-    command: "npm run test:e2e:server",
+    command: "pnpm test:e2e:server",
     timeout: 120_000,
     url: process.env.BASE_URL!,
     reuseExistingServer: !process.env.CI,

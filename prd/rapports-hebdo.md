@@ -476,8 +476,8 @@ Ajout dans `cron.json` :
 # scripts/run_rapport_coordinateurs.sh
 if [ "$NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS" == "true" ] && [ $ENVIRONMENT == "PROD" ]; then
   export NPM_CONFIG_PRODUCTION=false
-  npm ci
-  npx tsx scripts/rapportHebdomadaireCoordinateurs.ts
+  pnpm install --frozen-lockfile
+  pnpm exec tsx scripts/rapportHebdomadaireCoordinateurs.ts
 fi
 ```
 
@@ -796,7 +796,7 @@ En cas d'échec, un rapport reste en statut `ECHEC` dans la base. Il peut être 
 
 **Option 1 : Script de rejeu manuel** (hors scope V1)
 ```bash
-npm run script:rejouer-rapport-hebdo -- --rapport-id=<uuid>
+pnpm script:rejouer-rapport-hebdo -- --rapport-id=<uuid>
 ```
 
 **Option 2 : Via interface admin** (hors scope V1)

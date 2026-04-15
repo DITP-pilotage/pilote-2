@@ -10,7 +10,7 @@ set -a
 source "$PROJECT_ROOT/${ENV_FILE:-.env.e2e}"
 set +a
 
-npx prisma migrate reset --force
+pnpm exec prisma migrate reset --force
 
 psql -q -d "$DATABASE_URL" -f "$SCRIPT_DIR/schema.sql"
 

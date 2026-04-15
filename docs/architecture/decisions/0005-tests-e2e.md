@@ -564,7 +564,7 @@ La fixture `step` remplace `test.step` et ajoute, quand `E2E_VIDEO=on`, un bande
 
 **Activation :**
 ```bash
-E2E_VIDEO=on npx playwright test mon-test.spec.ts --project=chromium
+E2E_VIDEO=on pnpm exec playwright test mon-test.spec.ts --project=chromium
 ```
 
 La variable `E2E_VIDEO` active deux comportements dans `playwright.config.ts` et `fixtures.ts` :

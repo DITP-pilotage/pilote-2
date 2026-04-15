@@ -11,13 +11,13 @@ docker compose run --rm pilote_webapp /bin/bash scripts/prisma_reset_migrate_see
 /bin/bash scripts/prisma_reset_migrate_seed.sh
 ```
 
-Les commandes `npm` (*lint, test, ...*) sont également éxécutables via Docker:
+Les commandes `pnpm` (*lint, test, ...*) sont également éxécutables via Docker:
 
 ```sh
-# Commande npm [docker]
-docker compose run --rm pilote_webapp npm run lint
+# Commande pnpm [docker]
+docker compose run --rm pilote_webapp pnpm lint
 # [local]
-npm run lint
+pnpm lint
 ```
 
 ## Descente de prod
