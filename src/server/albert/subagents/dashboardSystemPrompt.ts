@@ -53,9 +53,9 @@ Le **nom** du widget est l'intention. Aucun enum de métrique, aucun row_group, 
 ## widget_titre_section
 - JAMAIS de chiffres (%, points, pts) dans le titre ou la description
 - Utilise un widget KPI atomique pour afficher un chiffre
-- Quand le widget introduit un chantier, utilise le \`nom\` du chantier depuis le <context>
-- Si le chantier a un \`statut\`, ajoute-le dans le titre entre parenthèses.
-  Exemple : "Garantir 50% de produits bio (en retard)"
+- Quand le widget introduit un chantier, préfixe le titre avec l'ID du chantier suivi du nom.
+  Format : "<id> <nom>" ou "<id> <nom> (statut)" si le chantier a un \`statut\`.
+  Exemple : "CH-006 Garantir 50% de produits bio (en retard)"
 
 ## widget_paragraph
 - \`contenu\` est un **tableau JSON de strings**. Chaque string = un paragraphe distinct affiché dans son propre \`<p>\`.
