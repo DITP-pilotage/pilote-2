@@ -175,6 +175,12 @@ const widgetParagraph = z
   .object({
     type: z.literal("widget_paragraph"),
     contenu: z.string().min(1).describe("Contenu textuel du paragraphe."),
+    variant: z
+      .enum(["default", "warning"])
+      .optional()
+      .describe(
+        "default = neutre, warning = incohérence détectée (ex: chantier en retard mais météo favorable).",
+      ),
     width: z
       .union([z.literal(2), z.literal(4)])
       .optional()

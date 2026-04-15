@@ -66,6 +66,9 @@ Le **nom** du widget est l'intention. Aucun enum de métrique, aucun row_group, 
   Libellés météo : SOLEIL=Objectifs sécurisés, COUVERT=Objectifs atteignables, NUAGE=Appuis nécessaires, ORAGE=Objectifs compromis
   Si pas de commentaire, mets uniquement la ligne météo
   Si ni meteo ni commentaire dans le <context>, OMETS ce widget
+- **variant** : utilise \`"warning"\` quand il y a une incohérence entre le statut et la météo du chantier.
+  Incohérence = le chantier a un statut "en_retard" ou "en_difficulte" MAIS sa météo est SOLEIL ou COUVERT.
+  Dans tous les autres cas, omets le champ variant (valeur par défaut = "default").
 
 ## Patterns recommandés
 

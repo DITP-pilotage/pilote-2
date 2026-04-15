@@ -111,6 +111,11 @@ export const DashboardWidgetRegistry = ({
         />
       );
     case "widget_paragraph":
-      return <DashboardWidgetParagraph contenu={widget.contenu} />;
+      return (
+        <DashboardWidgetParagraph
+          contenu={widget.contenu}
+          variant={widget.variant}
+        />
+      );
   }
 };
