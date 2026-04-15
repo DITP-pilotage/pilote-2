@@ -6,6 +6,6 @@ FROM
     {{ source('parametrage_indicateurs', 'metadata_indicateurs_hidden') }}
         AS metadata_hidden
 LEFT JOIN
-    {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }}
+    {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }} -- noqa: LT05
         AS metadata_complementaire
     ON metadata_hidden.indic_id = metadata_complementaire.indic_id

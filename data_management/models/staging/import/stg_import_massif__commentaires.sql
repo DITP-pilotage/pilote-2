@@ -12,9 +12,9 @@ renamed AS (
 
     SELECT
         chantier_id,
-        type,
+        "type",
         contenu,
-        TO_DATE(date, 'DD/MM/YYYY') AS date,
+        TO_DATE("date", 'DD/MM/YYYY') AS "date",
         NULL::TEXT AS auteur,
         auteur_email,
         maille,
