@@ -1,6 +1,6 @@
 # Subagent Dashboard — Composition UI déléguée
 
-**Statut** : exploration
+**Statut** : implémenté
 
 ---
 
@@ -8,9 +8,9 @@
 
 ### 1.1 Problème actuel
 
-Le system prompt d'Albert concentre aujourd'hui l'ensemble des responsabilités :
+Le system prompt d'Albert concentrait l'ensemble des responsabilités :
 analyse métier, glossaire territorial, protocoles d'orchestration des tools,
-**et** toutes les règles de composition de dashboard (12 types de widgets, grille
+**et** toutes les règles de composition de dashboard (13 types de widgets, grille
 4 colonnes, contraintes de layout, exemples JSON).
 
 Ce constat est documenté dans `SYSTEM_PROMPT.md` qui qualifie le prompt de
@@ -25,17 +25,16 @@ une structure JSON déclarative.
 
 ### 1.2 Opportunité
 
-Le AI SDK (Vercel) propose depuis peu un pattern **subagent** (`ToolLoopAgent`) :
-un agent spécialisé, invoqué comme un tool par l'agent principal, qui tourne dans
-son propre contexte et retourne un résultat structuré.
-
-cf. https://ai-sdk.dev/docs/agents/subagents
+Le AI SDK (Vercel) propose un pattern **structured output** via `Output.object()` :
+un appel `generateText` qui retourne directement un objet JSON validé par un schéma Zod,
+sans tool loop.
 
 Ce pattern correspond exactement au cas de la composition dashboard :
 - Tâche autonome et bien définie
 - Résultat déclaratif (références, pas données)
 - Instructions volumineuses et spécialisées
 - Bénéfice direct à isoler du contexte principal
+- Un seul appel LLM suffit (pas besoin d'outils internes)
 
 ---
 
@@ -66,7 +65,7 @@ Utilisateur : "Montre-moi un dashboard pour la Bretagne"
 │  System prompt allégé :                     │
 │  - identité, glossaire, règles métier       │
 │  - protocole synthèse                       │
-│  - PAS de règles dashboard                  │
+│  - PAS de règles dashboard détaillées       │
 │                                             │
 │  Tools :                                    │
 │  - get_taux_avancement_territoire           │
@@ -79,29 +78,30 @@ Utilisateur : "Montre-moi un dashboard pour la Bretagne"
 │                                             │
 └──────────────┬──────────────────────────────┘
                │ appel tool create_dashboard
-               │ input: { task: "Dashboard avancement Bretagne" }
+               │ input: { task, territoire_codes,
+               │          jalons, chantiers? }
                ▼
 ┌─────────────────────────────────────────────┐
-│  Subagent Dashboard                         │
+│  Subagent Dashboard (1 appel LLM)           │
 │                                             │
 │  System prompt dédié :                      │
-│  - catalogue des 12 widgets                 │
+│  - catalogue des 13 widgets                 │
 │  - règles de grille (4 colonnes)            │
 │  - patterns de composition                  │
 │  - exemples few-shot                        │
 │  - contraintes (pas de chiffres dans titres)│
 │                                             │
-│  Tools :                                    │
-│  - compose_dashboard                        │
-│  - get_taux_avancement_territoire           │
-│  - get_chantiers_en_retard                  │
-│  - get_chantiers_en_difficulte              │
-│  - get_chantier_indicateurs                 │
+│  Pas de tools — structured output :         │
+│  Output.object({ schema:                    │
+│    composeDashboardInputSchema })           │
 │                                             │
-│  Exécution autonome :                       │
-│  1. Appelle les tools data si nécessaire    │
-│  2. Compose le dashboard via compose_dashboard│
-│  3. Retourne le JSON au parent              │
+│  Reçoit un prompt avec bloc <context>       │
+│  contenant territoire_codes, jalons,        │
+│  chantiers (id, nom, statut, meteo,         │
+│  commentaire)                               │
+│                                             │
+│  Post-validation :                          │
+│  validateDashboardIdentifiers()             │
 └──────────────┬──────────────────────────────┘
                │ output: { titre, containers, ... }
                ▼
@@ -120,8 +120,8 @@ Utilisateur : "Montre-moi un dashboard pour la Bretagne"
 
 ### 3.2 Pas de streaming intermédiaire
 
-Le subagent utilise `generate` (pas `stream`). Le client ne voit pas les étapes
-internes du subagent (appels data, composition). Il voit uniquement :
+Le subagent utilise `generateText` (pas `streamText`). Le client ne voit pas
+l'exécution interne du subagent. Il voit uniquement :
 
 1. **Tool call démarre** (`state: input-available`) → placeholder "Composition du dashboard..."
 2. **Tool call terminé** (`state: output-available`) → JSON dashboard → rendu
@@ -134,35 +134,25 @@ complexité sans bénéfice UX perceptible.
 
 ## 4. Architecture technique
 
-### 4.1 Subagent Dashboard
+### 4.1 Approche retenue : Structured Output (pas ToolLoopAgent)
+
+L'exploration initiale envisageait `ToolLoopAgent` (un subagent avec ses propres tools
+data). En pratique, un **seul appel LLM** avec `Output.object()` suffit : l'agent
+principal collecte d'abord les données (chantiers en retard, météo, etc.) puis les
+passe au subagent dans un bloc `<context>` du prompt. Le subagent n'a besoin d'aucun
+outil — il compose le JSON directement.
 
 ```typescript
-// src/server/albert/subagents/dashboardSubagent.ts
+// src/server/albert/tools/createDashboard.ts
 
-import { ToolLoopAgent } from 'ai';
-
-export type CreateDashboardSubagentDeps = {
-  model: LanguageModel;
-  composeDashboardTool: Tool;
-  getTauxAvancementTerritoireTool: Tool;
-  getChantiersEnRetardTool: Tool;
-  getChantiersEnDifficulteTool: Tool;
-  getChantierIndicateursTool: Tool;
-};
-
-export function createDashboardSubagent(deps: CreateDashboardSubagentDeps) {
-  return new ToolLoopAgent({
-    model: deps.model,
-    instructions: buildDashboardSystemPrompt(),
-    tools: {
-      compose_dashboard: deps.composeDashboardTool,
-      get_taux_avancement_territoire: deps.getTauxAvancementTerritoireTool,
-      get_chantiers_en_retard: deps.getChantiersEnRetardTool,
-      get_chantiers_en_difficulte: deps.getChantiersEnDifficulteTool,
-      get_chantier_indicateurs: deps.getChantierIndicateursTool,
-    },
-  });
-}
+const result = await generateText({
+  model: withOptionalDevTools(albertProvider.chat("openweight-large")),
+  system: buildDashboardSystemPrompt(),
+  prompt: buildSubagentPrompt(task, territoire_codes, jalons, chantiers),
+  stopWhen: stepCountIs(5),
+  output: Output.object({ schema: composeDashboardInputSchema }),
+  abortSignal,
+});
 ```
 
 ### 4.2 Tool `create_dashboard`
@@ -172,100 +162,103 @@ Exposé à l'agent principal, il encapsule l'appel au subagent :
 ```typescript
 // src/server/albert/tools/createDashboard.ts
 
-import { tool } from 'ai';
-import { z } from 'zod';
-
-export function createCreateDashboardTool(subagent: ToolLoopAgent) {
-  return tool({
-    description: `Délègue la composition d'un dashboard à un agent spécialisé.
-Utilise ce tool quand l'utilisateur demande un dashboard, un cockpit,
-ou un tableau de bord visuel.`,
-    parameters: z.object({
-      task: z.string().describe(
-        "Description de ce que l'utilisateur veut visualiser, "
-        + "incluant le(s) territoire(s), le jalon, et le type d'analyse souhaitée."
-      ),
-    }),
-    execute: async ({ task }, { abortSignal }) => {
-      const result = await subagent.generate({
-        prompt: task,
-        abortSignal,
-      });
-      return extractDashboardOutput(result);
-    },
-  });
-}
+export const createDashboardInputSchema = z.object({
+  task: z.string().describe("Description de ce que l'utilisateur veut visualiser."),
+  territoire_codes: z.array(z.string()).min(1).describe("Codes des territoires concernés."),
+  jalons: z.array(z.number().int()).min(1).describe("Années des jalons."),
+  chantiers: z.array(chantierContextSchema).optional().describe(
+    "Chantiers ciblés avec nom, statut, meteo, commentaire."
+  ),
+});
 ```
 
-### 4.3 Extraction du résultat
+L'agent principal résout les identifiants (territoires, jalons, chantiers) et les
+passe au subagent. Le subagent ne fait que composer le layout à partir de ces données.
 
-Le subagent produit potentiellement du texte + des tool calls. On extrait
-l'output du tool `compose_dashboard` :
+### 4.3 Bloc `<context>` et prompt du subagent
+
+Le prompt du subagent est construit par `buildSubagentPrompt()` qui injecte un bloc
+`<context>` contenant les identifiants résolus :
 
 ```typescript
-function extractDashboardOutput(result: GenerateResult): DashboardOutput {
-  // Chercher le dernier tool call compose_dashboard dans les steps
-  const composeDashboardCall = result.steps
-    .flatMap(step => step.toolCalls)
-    .findLast(call => call.toolName === 'compose_dashboard');
-
-  if (!composeDashboardCall) {
-    return { error: 'Le subagent n\'a pas pu composer de dashboard.' };
-  }
-
-  return composeDashboardCall.result;
+function buildSubagentPrompt(
+  task: string,
+  territoireCodes: string[],
+  jalons: number[],
+  chantiers: ChantierContext[] | undefined,
+): string {
+  const contextLines = [
+    "<context>",
+    `territoire_codes: ${JSON.stringify(territoireCodes)}`,
+    `jalons: ${JSON.stringify(jalons)}`,
+    ...(chantiers?.length ? [`chantiers: ${JSON.stringify(chantiers)}`] : []),
+    "</context>",
+  ];
+  return `${task}\n\n${contextLines.join("\n")}`;
 }
 ```
 
 ### 4.4 System prompt du subagent
 
-Le prompt du subagent est **focalisé uniquement sur la composition dashboard**.
-Il contient :
+Le prompt du subagent (`src/server/albert/subagents/dashboardSystemPrompt.ts`) est
+**focalisé uniquement sur la composition dashboard**. Il contient :
 
 | Section | Contenu |
 |---|---|
 | Identité | "Tu es un spécialiste de la composition de dashboards PILOTE" |
-| Catalogue widgets | Les 12 types avec description, paramètres, `default_width` |
+| Bloc `<context>` | Explication du format (territoire_codes, jalons, chantiers) |
+| Catalogue widgets | Les 13 types avec description, paramètres, `default_width` |
 | Règles de grille | 4 colonnes, containers empilés verticalement |
-| Patterns de composition | Par type de demande (mono-territoire, comparaison, focus chantier) |
-| Exemples few-shot | 2-3 dashboards complets en JSON |
-| Contraintes | Pas de chiffres dans `widget_titre_section`, permissions territoire |
-| Protocole | Appeler les tools data d'abord si besoin de contexte, puis `compose_dashboard` |
+| `widget_titre_section` | Jamais de chiffres, format du titre chantier |
+| `widget_paragraph` | Contenu string[], règle anti-newlines, météo + commentaire, variant warning |
+| Patterns de composition | Cockpit mono-territoire, ventilation sous-territoires, focus chantier, indicateurs |
+| Exemples few-shot | 2 dashboards complets en JSON |
+| Protocole | Utiliser exclusivement les identifiants du `<context>` |
 
 **Ce qui n'est PAS dans ce prompt** : glossaire métier détaillé, règles de synthèse,
 protocole de dialogue, gestion d'erreurs conversationnelles. Le subagent n'interagit
-pas avec l'utilisateur.
+pas avec l'utilisateur et n'a pas accès à des outils.
 
-### 4.5 Injection des dépendances
+### 4.5 Validation post-génération
 
-Les tools data du subagent sont les **mêmes instances** que ceux de l'agent principal,
-construits avec les mêmes habilitations et territoires accessibles :
+Après que le subagent a produit le JSON dashboard, `validateDashboardIdentifiers()`
+vérifie que tous les identifiants utilisés dans les widgets sont bien dans le périmètre
+autorisé :
 
 ```typescript
-// Dans la route API /api/albert/chat
+export function validateDashboardIdentifiers(
+  output: ComposeDashboardInput,
+  allowedTerritoires: string[],
+  allowedJalons: number[],
+  allowedChantiers: ChantierContext[] | undefined,
+): void
+```
+
+Cette validation parcourt tous les widgets et vérifie :
+- `territoire_code` ∈ `allowedTerritoires`
+- `jalon` ∈ `allowedJalons`
+- `chantier_id` et `chantier_ids` ∈ `allowedChantiers` (et que `allowedChantiers` est défini)
+
+En cas de violation, une erreur est levée et le subagent échoue proprement.
+
+### 4.6 Câblage dans la route API
+
+Le subagent ne nécessite pas d'injection de dépendances — il crée son propre provider
+et n'a pas de tools :
+
+```typescript
+// src/app/api/albert/chat/route.ts
+
+const createDashboard = createCreateDashboardTool();
 
 const tools = {
-  get_taux_avancement_territoire: createGetTauxTool({ habilitations, ... }),
-  get_chantiers_en_retard: createGetRetardTool({ habilitations, ... }),
-  // ...
-};
-
-const dashboardSubagent = createDashboardSubagent({
-  model,
-  composeDashboardTool: tools.compose_dashboard,
-  getTauxAvancementTerritoireTool: tools.get_taux_avancement_territoire,
-  getChantiersEnRetardTool: tools.get_chantiers_en_retard,
-  getChantiersEnDifficulteTool: tools.get_chantiers_en_difficulte,
-  getChantierIndicateursTool: tools.get_chantier_indicateurs,
-});
-
-const createDashboardTool = createCreateDashboardTool(dashboardSubagent);
-
-// L'agent principal reçoit create_dashboard au lieu de compose_dashboard
-const mainTools = {
-  ...tools,
-  create_dashboard: createDashboardTool,
-  // compose_dashboard n'est plus exposé au parent
+  get_taux_avancement_territoire: getTauxAvancementTerritoire,
+  get_chantiers_en_retard: getChantiersEnRetard,
+  get_chantiers_en_difficulte: getChantiersEnDifficulte,
+  get_chantier_indicateurs: getChantierIndicateurs,
+  display_choices: displayChoicesTool,
+  ...(capacities.dashboard ? { create_dashboard: createDashboard } : {}),
+  ...(capacities.exportRapport ? { export_rapport: exportRapport } : {}),
 };
 ```
 
@@ -280,7 +273,7 @@ Les instructions de composition dashboard sont réparties en **deux endroits** :
 | Emplacement | Contenu | Volume |
 |---|---|---|
 | `systemPrompt.ts` | Références à `compose_dashboard` dans la règle pseudo-code (l.316) et le protocole d'outils | ~5 lignes |
-| `composeDashboard.ts` (tool description) | Catalogue des 12 widgets, structure recommandée, règles JSON, 3 exemples complets | ~70 lignes |
+| `composeDashboard.ts` (tool description) | Catalogue des 13 widgets, structure recommandée, règles JSON, 3 exemples complets | ~70 lignes |
 
 Le gros du savoir dashboard est dans la **description du tool**, pas dans le system prompt.
 Mais cette description est injectée dans le contexte du LLM principal à chaque message
@@ -384,90 +377,31 @@ Ce tool est vu par l'**agent principal**. Sa description est courte :
 ```
 Délègue la composition d'un dashboard à un agent spécialisé.
 Utilise ce tool quand l'utilisateur demande un dashboard, un cockpit,
-ou un tableau de bord visuel. Décris précisément ce que l'utilisateur
-veut visualiser : territoire(s), jalon, type d'analyse.
+un tableau de bord visuel, ou d'afficher les indicateurs d'un chantier.
+Fournis la description de ce que l'utilisateur veut visualiser ainsi que
+les identifiants résolus (territoire_codes, jalons, chantiers).
 ```
 
-Un seul paramètre : `task: string`.
+Paramètres :
+- `task: string` — description de ce que l'utilisateur veut visualiser
+- `territoire_codes: string[]` — codes des territoires concernés (obligatoire)
+- `jalons: number[]` — années des jalons (obligatoire)
+- `chantiers?: ChantierContext[]` — chantiers ciblés avec `{id, nom, statut?, meteo?, commentaire?}`
 
 ### 5.5 System prompt du subagent — Nouveau
 
-Ce prompt concentre tout le savoir dashboard qui était auparavant dispersé :
+Ce prompt (`src/server/albert/subagents/dashboardSystemPrompt.ts`) concentre tout
+le savoir dashboard qui était auparavant dispersé. Le subagent n'a **pas de tools** —
+il reçoit un prompt avec un bloc `<context>` et produit directement la structure JSON
+via structured output.
 
-```
-Tu es un spécialiste de la composition de dashboards pour PILOTE,
-l'outil de suivi des politiques prioritaires du gouvernement français.
-
-# Ta mission
-
-Tu reçois une description de ce que l'utilisateur veut visualiser.
-Tu dois composer un dashboard structuré en appelant `compose_dashboard`.
-
-Si tu as besoin de contexte pour décider quels widgets inclure
-(ex: savoir quels chantiers sont en retard), appelle d'abord les outils
-de données disponibles, puis compose le dashboard.
-
-# Catalogue de widgets
-
-| Widget | Intention | Paramètres | default_width | allowed_widths |
-|---|---|---|---|---|
-| widget_taux_avancement_territoire | TA agrégé d'un territoire | territoire_code, jalon | 1 | [1,2] |
-| widget_mediane_avancement_territoire | Médiane du TA | territoire_code, jalon | 1 | [1,2] |
-| widget_nombre_chantiers_en_retard | Nombre en retard | territoire_code, jalon | 1 | [1,2] |
-| widget_nombre_chantiers_en_difficulte | Nombre en difficulté | territoire_code, jalon | 1 | [1,2] |
-| widget_valeurs_remarquables_avancement | Min/médiane/max du TA | territoire_code, jalon | 2 | [2,3,4] |
-| widget_tableau_indicateurs_chantier | VI/VA/VC/TA d'un chantier | chantier_id, territoire_code, jalon | 4 | [4] |
-| widget_liste_chantiers_en_retard | Liste chantiers en retard | territoire_code, jalon | 2 | [2,4] |
-| widget_liste_chantiers_en_difficulte | Liste chantiers en difficulté | territoire_code, jalon | 2 | [2,4] |
-| widget_cartographie_taux_avancement | Carte du TA | maille, territoire_code, jalon, chantier_ids | 2 | [2,3,4] |
-| widget_cartographie_meteo | Carte des météos | maille, territoire_code, chantier_id, jalon | 2 | [2,3,4] |
-| widget_cartographie_propositions_valeur_avancement | Carte des PVA | maille, territoire_code, chantier_id, jalon | 2 | [2,3,4] |
-| widget_titre_section | Titre + description (AUCUN chiffre) | titre, description? | 4 | [2,4] |
-
-# Règles de composition
-
-## Grille
-- Un dashboard = liste ordonnée de containers empilés verticalement
-- Chaque container a un grid interne de 4 colonnes
-- Les widgets sont placés selon leur `width` (par défaut `default_width`)
-- Un widget seul dans un container de 4 colonnes gâche de la place
-  si sa default_width < 4. Regroupe les widgets compatibles.
-
-## widget_titre_section
-- JAMAIS de chiffres (%, points, pts) dans le titre ou la description
-- Utilise un widget KPI atomique pour afficher un chiffre
-
-## Patterns recommandés
-
-### Cockpit synthétique (mono-territoire)
-1. Container : `widget_titre_section`
-2. Container : `widget_taux_avancement_territoire` (1) + `widget_nombre_chantiers_en_retard` (1) + `widget_valeurs_remarquables_avancement` (2) = 4 colonnes
-3. Container : `widget_cartographie_taux_avancement` (4)
-4. Container : `widget_liste_chantiers_en_retard` (2) + `widget_liste_chantiers_en_difficulte` (2)
-
-### Ventilation par sous-territoires
-Pour chaque sous-territoire, répéter :
-1. Container : `widget_titre_section` avec nom du sous-territoire
-2. Container : 3 KPI compacts (1+1+1=3, 4e colonne vide)
-
-### Focus chantier
-1. Container : `widget_titre_section` avec nom du chantier
-2. Container : `widget_tableau_indicateurs_chantier` (4)
-3. Container : cartographies thématiques (météo, TA, PVA)
-
-# Exemples
-
-[mêmes 3 exemples JSON que l'actuel compose_dashboard description]
-
-# Protocole
-
-1. Analyse la demande
-2. Si tu as besoin de contexte (quels chantiers sont en retard, etc.),
-   appelle les outils de données
-3. Appelle `compose_dashboard` avec la structure complète
-4. Ta réponse textuelle finale sera ignorée — seul le résultat
-   de `compose_dashboard` est retourné au parent
-```
+Sections clés du prompt :
+- **Bloc `<context>`** : format des données (territoire_codes, jalons, chantiers avec id/nom/statut/meteo/commentaire)
+- **Règle anti-hallucination** : utiliser exclusivement les identifiants du `<context>`
+- **Catalogue de 13 widgets** (12 originaux + `widget_paragraph`)
+- **`widget_paragraph`** : contenu string[], règle anti-newlines, météo + commentaire d'un chantier, variant warning pour incohérences
+- **Patterns de composition** : cockpit, ventilation, focus chantier, indicateurs
+- **Exemples few-shot** : 2 dashboards JSON complets
 
 ### 5.6 Résumé du transfert
 
@@ -499,7 +433,7 @@ Pour chaque sous-territoire, répéter :
                                      NOUVEAU      │  system      │
                                    ◄─────────     │  prompt      │
                                                   │              │
-                                                  │  ~80 lignes  │
+                                                  │  ~137 lignes │
                                                   │  catalogue   │
                                                   │  patterns    │
                                                   │  exemples    │
@@ -515,9 +449,9 @@ Pour chaque sous-territoire, répéter :
 | Tool desc `compose_dashboard` | ~70 lignes | ~3 lignes (-67) |
 | Tool desc `create_dashboard` | — | ~4 lignes (+4) |
 | **Total injecté par message** | **~445 lignes** | **~317 lignes (-128)** |
-| Subagent (uniquement si invoqué) | — | ~80 lignes |
+| Subagent (uniquement si invoqué) | — | ~137 lignes |
 
-Le subagent prompt (~80 lignes) n'est consommé que lorsque l'utilisateur demande
+Le subagent prompt (~137 lignes) n'est consommé que lorsque l'utilisateur demande
 effectivement un dashboard — pas à chaque message de la conversation.
 
 ---
@@ -589,34 +523,24 @@ Agent principal
 
 ### 6.4 Impact sur `PiloteUITools`
 
-Le type `PiloteUITools` (consommé par le client) se simplifie :
+Le type `PiloteUITools` conserve les 7 entrées (les tools data restent déclarés
+car le client affiche un `ToolCallIndicator` pour chaque appel de données) :
 
 ```typescript
-// Avant — le client doit savoir rendre chaque tool
 export type PiloteUITools = {
   display_choices: { input: ...; output: ... };
   get_taux_avancement_territoire: { input: ...; output: ... };
   get_chantiers_en_retard: { input: ...; output: ... };
   get_chantiers_en_difficulte: { input: ...; output: ... };
-  get_chantier_indicateurs: { input: ...; output: ... };   // ◄── rendu client
-  compose_dashboard: { input: ...; output: ... };           // ◄── rendu client
-  export_rapport: { input: ...; output: ... };
-};
-
-// Après — seuls les tools avec rendu visuel restent
-export type PiloteUITools = {
-  display_choices: { input: ...; output: ... };
-  create_dashboard: { input: ...; output: CreateDashboardOutput };
+  get_chantier_indicateurs: { input: ...; output: ... };
+  create_dashboard: { input: ...; output: CreateDashboardOutput };  // ◄── remplace compose_dashboard
   export_rapport: { input: ...; output: ... };
 };
 ```
 
-Les tools data (`get_taux_avancement_territoire`, `get_chantiers_en_retard`,
-`get_chantiers_en_difficulte`, `get_chantier_indicateurs`) **disparaissent de
-`PiloteUITools`** car le client n'a plus besoin de les rendre.
-
-**Bénéfice** : le client n'a plus que 3 types de rendu à gérer (choices,
-dashboard, export) au lieu de 7. Moins de composants, moins de cas à maintenir.
+Le changement principal : `compose_dashboard` est remplacé par `create_dashboard`.
+Les tools data ne déclenchent plus de rendu riche (tableau, carte) mais affichent
+un indicateur compact (nom de l'outil + état).
 
 ### 6.5 Impact sur le system prompt
 
@@ -645,16 +569,17 @@ Le workflow "rapport complet" (§c du protocole actuel) évolue aussi :
 | Composant | Avant | Après |
 |---|---|---|
 | System prompt principal | Contient les règles dashboard (~100 lignes) | Allégé, mentionne juste "utilise `create_dashboard`" |
-| Tool exposé au parent | `compose_dashboard` | `create_dashboard` (encapsule le subagent) |
-| `detecteurIntention.ts` | `capacities.dashboard` active `compose_dashboard` | `capacities.dashboard` active `create_dashboard` |
+| Tool exposé au parent | `compose_dashboard` | `create_dashboard` (structured output via subagent) |
+| `detecteurIntention.ts` | `capacities.dashboard` active `compose_dashboard` | `capacities.dashboard` active `create_dashboard`, mots-clés "indicateur"/"indicateurs" ajoutés |
 | `get_chantier_indicateurs` | Paramètre `afficher`, rendu conditionnel client | Données pures, `afficher` supprimé |
 | Client : nom du tool | Rend `compose_dashboard` + `get_chantier_indicateurs` | Rend `create_dashboard` uniquement |
 | Client : structure output | `{ titre, containers }` | Identique : `{ titre, containers }` |
+| Nouveau widget | — | `widget_paragraph` (contenu string[], variant warning) |
 
 ### 7.2 Ce qui ne change pas
 
-- **Catalogue de widgets** : les 12 types restent identiques
-- **`compose_dashboard` tool** : existe toujours, utilisé en interne par le subagent
+- **Catalogue de widgets** : les 12 types originaux restent identiques, `widget_paragraph` ajouté (13 total)
+- **`compose_dashboard` tool** : existe toujours, son schéma Zod sert de contrat pour le structured output
 - **Composants React de rendu du dashboard** : inchangés, reçoivent la même structure JSON
 - **Tools data** : inchangés (sauf suppression de `afficher`), mêmes factories, mêmes habilitations
 - **`_output_instructions`** : pattern conservé dans les tools data
@@ -662,26 +587,17 @@ Le workflow "rapport complet" (§c du protocole actuel) évolue aussi :
 
 ### 7.3 Client
 
-Le client se simplifie : seuls 3 tools ont un rendu visuel.
+Le client se simplifie côté rendu riche : les tools data n'affichent plus qu'un
+`ToolCallIndicator` (icône + état) au lieu d'un rendu complet.
 
 ```typescript
-// Avant — 7 tools à gérer côté client
-switch (part.toolName) {
-  case 'display_choices': ...
-  case 'get_taux_avancement_territoire': ...
-  case 'get_chantiers_en_retard': ...
-  case 'get_chantiers_en_difficulte': ...
-  case 'get_chantier_indicateurs': ...      // ◄── supprimé
-  case 'compose_dashboard': ...              // ◄── remplacé
-  case 'export_rapport': ...
-}
+// Avant — rendu riche pour get_chantier_indicateurs et compose_dashboard
+case 'get_chantier_indicateurs': // tableau d'indicateurs  ◄── supprimé
+case 'compose_dashboard': // dashboard complet              ◄── remplacé
 
-// Après — 3 tools à gérer côté client
-switch (part.toolName) {
-  case 'display_choices': ...
-  case 'create_dashboard': ...               // ◄── nouveau
-  case 'export_rapport': ...
-}
+// Après — seul create_dashboard a un rendu dashboard
+case 'create_dashboard': // dashboard complet               ◄── nouveau
+// get_chantier_indicateurs → simple ToolCallIndicator
 ```
 
 Le placeholder affiché pendant le chargement du dashboard peut exploiter
@@ -697,61 +613,13 @@ Le fichier `PiloteUIMessage.ts` définit le type `PiloteUITools` qui mappe chaqu
 tool name vers ses types `input`/`output`. C'est ce type qui assure la type safety
 côté client quand on consomme les `ToolCallPart`.
 
-**Avant** :
+**Changement** : `compose_dashboard` est remplacé par `create_dashboard` dans `PiloteUITools`.
+Les tools data restent dans le type (pour les `ToolCallIndicator`).
 
 ```typescript
-export type PiloteUITools = {
-  display_choices: {
-    input: z.input<typeof displayChoicesInputSchema>;
-    output: { question: string; choices: DisplayChoice[] };
-  };
-  get_taux_avancement_territoire: {
-    input: z.input<typeof getTauxAvancementTerritoireInputSchema>;
-    output: GetTauxAvancementTerritoireOutput;
-  };
-  get_chantiers_en_retard: {
-    input: z.input<typeof getChantiersEnRetardInputSchema>;
-    output: GetChantiersEnRetardOutput;
-  };
-  get_chantiers_en_difficulte: {
-    input: z.input<typeof getChantiersEnDifficulteInputSchema>;
-    output: GetChantiersEnDifficulteOutput;
-  };
-  get_chantier_indicateurs: {
-    input: z.input<typeof getChantierIndicateursInputSchema>;
-    output: GetChantierIndicateursOutput;
-  };
-  compose_dashboard: {
-    input: z.input<typeof composeDashboardInputSchema>;
-    output: ComposeDashboardOutput;
-  };
-  export_rapport: {
-    input: z.input<typeof exportRapportInputSchema>;
-    output: ExportRapportOutput;
-  };
-};
-```
-
-**Après** :
-
-```typescript
-import { createDashboardInputSchema, type CreateDashboardOutput }
-  from "@/server/albert/tools/createDashboard";
-
-export type PiloteUITools = {
-  display_choices: {
-    input: z.input<typeof displayChoicesInputSchema>;
-    output: { question: string; choices: DisplayChoice[] };
-  };
-  create_dashboard: {
-    input: z.input<typeof createDashboardInputSchema>;
-    output: CreateDashboardOutput;
-  };
-  export_rapport: {
-    input: z.input<typeof exportRapportInputSchema>;
-    output: ExportRapportOutput;
-  };
-};
+// Remplacement dans PiloteUITools
+- compose_dashboard: { input: composeDashboardInputSchema; output: ComposeDashboardOutput }
++ create_dashboard: { input: createDashboardInputSchema; output: CreateDashboardOutput }
 ```
 
 Avec :
@@ -761,19 +629,17 @@ Avec :
 
 export const createDashboardInputSchema = z.object({
   task: z.string(),
+  territoire_codes: z.array(z.string()).min(1),
+  jalons: z.array(z.number().int()).min(1),
+  chantiers: z.array(chantierContextSchema).optional(),
 });
 
-// L'output est le même que ComposeDashboardOutput — c'est le résultat
-// extrait du tool call compose_dashboard interne au subagent
+// L'output est le même que ComposeDashboardOutput
 export type CreateDashboardOutput = ComposeDashboardOutput;
 ```
 
-**Conséquence** : `PiloteUITools` passe de 7 entrées à 3. Le client est typé
-de bout en bout — `part.output` pour `create_dashboard` est
-`{ titre: string; containers: ContainerDefinition[]; _output_instructions: string }`.
-
-**Type `input` visible dans le placeholder** : `{ task: string }` permet d'afficher
-un message contextuel pendant le chargement, par exemple `part.input.task`.
+**Type `input` visible dans le placeholder** : `{ task, territoire_codes, jalons, chantiers? }`
+permet d'afficher un message contextuel pendant le chargement, par exemple `part.input.task`.
 
 ---
 
@@ -781,11 +647,11 @@ un message contextuel pendant le chargement, par exemple `part.input.task`.
 
 ### 8.1 Latence
 
-Le subagent ajoute un appel LLM supplémentaire. En pratique :
+Le subagent ajoute un appel LLM supplémentaire (un seul `generateText`). En pratique :
 
 - L'agent principal fait déjà plusieurs tool calls avant de composer le dashboard
 - Le subagent remplace la composition directe par le principal (pas d'appel en plus pour la composition elle-même)
-- Le surcoût net est le temps de "réflexion" du subagent pour décider quels tools data appeler et comment composer
+- Le surcoût net est le temps du structured output (1 appel LLM sans tools)
 
 **Mitigation** : le placeholder côté client masque la latence perçue.
 
@@ -798,48 +664,34 @@ contexte principal.
 **Avantage** : le contexte principal est allégé des ~100 lignes de règles dashboard
 à chaque message, même quand l'utilisateur ne demande pas de dashboard.
 
-### 8.3 `ToolLoopAgent` — disponibilité
+### 8.3 Choix de `Output.object()` plutôt que `ToolLoopAgent`
 
-`ToolLoopAgent` est une API récente du AI SDK. Si la version utilisée dans le projet
-ne la supporte pas encore, le même pattern peut être implémenté manuellement :
+L'exploration initiale envisageait `ToolLoopAgent` (subagent avec ses propres tools data).
+En pratique, `Output.object()` (structured output) a été retenu :
 
-```typescript
-// Fallback sans ToolLoopAgent
-async function runDashboardSubagent(prompt: string, tools: Tools, signal: AbortSignal) {
-  const result = await generateText({
-    model,
-    system: buildDashboardSystemPrompt(),
-    prompt,
-    tools,
-    maxSteps: 10,
-    abortSignal: signal,
-  });
-  return extractDashboardOutput(result);
-}
-```
+- Le subagent n'a pas besoin de tools — l'agent principal collecte les données en amont
+- Un seul appel LLM suffit, pas de boucle d'outils
+- Le schéma Zod (`composeDashboardInputSchema`) valide directement le JSON retourné
+- `stepCountIs(5)` sert de garde-fou (retries internes du structured output)
 
 ### 8.4 Erreurs
 
-Si le subagent échoue (timeout, pas de `compose_dashboard` dans les steps),
-le tool `create_dashboard` retourne une erreur structurée. L'agent principal
-peut alors informer l'utilisateur ou retenter avec des instructions ajustées.
-
-### 8.5 `needsApproval`
-
-La doc AI SDK précise que les tools d'un subagent ne peuvent pas utiliser
-`needsApproval`. Ce n'est pas un problème : aucun tool actuel ne l'utilise.
+Si le subagent échoue (timeout, structured output non parsable après retries),
+le tool `create_dashboard` lève une erreur. L'agent principal peut alors informer
+l'utilisateur. La validation post-génération (`validateDashboardIdentifiers`) peut
+aussi rejeter un dashboard contenant des identifiants hallucinés.
 
 ---
 
 ## 9. Evolutions futures
 
-### 8.1 Subagent Export Rapport
+### 9.1 Subagent Export Rapport
 
 Le même pattern peut s'appliquer à `export_rapport` : un subagent spécialisé
 dans la rédaction et la mise en forme de rapports (markdown/PDF), avec son propre
 prompt contenant des exemples de bons rapports et des règles de rédaction.
 
-### 8.2 Enrichissement du prompt dashboard
+### 9.2 Enrichissement du prompt dashboard
 
 Une fois le subagent en place, on peut enrichir son prompt sans impacter l'agent
 principal :
@@ -848,7 +700,7 @@ principal :
 - Règles de responsive / adaptation au nombre de territoires
 - Instructions de mise en page avancées
 
-### 8.3 Modèle dédié
+### 9.3 Modèle dédié
 
 Le subagent pourrait utiliser un modèle différent de l'agent principal : un modèle
 plus petit et rapide suffirait pour la composition structurée, réduisant la latence
@@ -860,24 +712,27 @@ et le coût.
 
 ### Fonctionnel
 
-- [ ] L'utilisateur peut demander un dashboard en langage naturel et obtenir le même résultat qu'aujourd'hui
-- [ ] Le placeholder "Composition du dashboard..." s'affiche pendant l'exécution du subagent
-- [ ] Le dashboard rendu est identique en structure et en widgets à l'implémentation actuelle
-- [ ] Les permissions territoriales sont respectées par le subagent
-- [ ] En cas d'erreur du subagent, l'agent principal informe l'utilisateur
-- [ ] L'affichage des indicateurs d'un chantier passe par un dashboard (`widget_tableau_indicateurs_chantier`)
+- [x] L'utilisateur peut demander un dashboard en langage naturel et obtenir le même résultat qu'aujourd'hui
+- [x] Le placeholder "Composition du dashboard..." s'affiche pendant l'exécution du subagent
+- [x] Le dashboard rendu est identique en structure et en widgets à l'implémentation actuelle
+- [x] Les permissions territoriales sont respectées par le subagent (validation post-génération)
+- [x] En cas d'erreur du subagent, l'agent principal informe l'utilisateur
+- [x] L'affichage des indicateurs d'un chantier passe par un dashboard (`widget_tableau_indicateurs_chantier`)
+- [x] Météo + commentaire de synthèse affichés sous chaque chantier via `widget_paragraph`
+- [x] Incohérence météo/statut signalée via variant `warning` sur `widget_paragraph`
 
 ### Technique
 
-- [ ] Le system prompt principal ne contient plus de règles de composition dashboard
-- [ ] Le subagent a son propre system prompt focalisé
-- [ ] Les tools data sont partagés (mêmes instances, mêmes habilitations)
-- [ ] Le tool `create_dashboard` est conditionné par `capacities.dashboard`
-- [ ] Le client rend le dashboard via le même composant, branché sur `create_dashboard`
-- [ ] Le `compose_dashboard` tool n'est plus exposé à l'agent principal
-- [ ] Le paramètre `afficher` de `get_chantier_indicateurs` est supprimé
-- [ ] Les tools data ne déclenchent plus de rendu côté client
-- [ ] `PiloteUITools` ne contient que les tools avec rendu visuel (`display_choices`, `create_dashboard`, `export_rapport`)
+- [x] Le system prompt principal ne contient plus de règles de composition dashboard
+- [x] Le subagent a son propre system prompt focalisé (`dashboardSystemPrompt.ts`)
+- [x] Le subagent utilise `Output.object()` (structured output) — pas de tools internes
+- [x] Le tool `create_dashboard` est conditionné par `capacities.dashboard`
+- [x] Le client rend le dashboard via le même composant, branché sur `create_dashboard`
+- [x] Le `compose_dashboard` tool n'est plus exposé à l'agent principal
+- [x] Le paramètre `afficher` de `get_chantier_indicateurs` est supprimé
+- [x] Les tools data ne déclenchent plus de rendu riche côté client (simple `ToolCallIndicator`)
+- [x] `validateDashboardIdentifiers` vérifie les identifiants post-génération
+- [x] `widget_paragraph` ajouté au catalogue (contenu string[], variant warning)
 
 ---
 
@@ -886,8 +741,6 @@ et le coût.
 - **Faut-il passer l'historique de conversation au subagent ?** Par défaut non (isolation).
   Mais si le contexte conversationnel est nécessaire (ex: "ajoute les indicateurs du
   chantier dont on parlait"), on pourrait injecter un résumé dans le prompt du subagent.
-- **Quel `maxSteps` pour le subagent ?** Le subagent fait au maximum ~5 tool calls
-  (4 data + 1 compose). Un `maxSteps: 10` semble suffisant.
 - **Faut-il un fallback vers la composition directe ?** Si le subagent échoue
   systématiquement, on pourrait revenir au mode actuel (compose_dashboard exposé
-  au parent). A évaluer après les premiers tests.
+  au parent). À évaluer après les premiers tests en conditions réelles.
