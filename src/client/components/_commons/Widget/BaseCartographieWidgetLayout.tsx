@@ -33,7 +33,7 @@ export const BaseCartographieWidgetLayout = ({
 
   if (isModeG) {
     return (
-      <div className="flex flex-col gap-8 h-full">
+      <div className="flex flex-col gap-2 h-full">
         <div
           className={clsxm("grid gap-8", {
             "grid-cols-2": children !== undefined,
@@ -55,7 +55,7 @@ export const BaseCartographieWidgetLayout = ({
   }
 
   return (
-    <div className="flex flex-col gap-8 h-full">
+    <div className="flex flex-col gap-2 h-full">
       {titre}
       <div className="w-full max-w-[400px] mx-auto">{cartographie}</div>
       {complementsCartographie}
