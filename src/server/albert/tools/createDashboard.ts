@@ -8,6 +8,25 @@ import {
 import { buildDashboardSystemPrompt } from "@/server/albert/subagents/dashboardSystemPrompt";
 import { Albert, withOptionalDevTools } from "@/server/albert/Albert";
 
+const chantierContextSchema = z.object({
+  id: z.string().describe("Identifiant du chantier (ex: CH-064)"),
+  nom: z.string().describe("Nom complet du chantier"),
+  statut: z
+    .enum(["en_retard", "en_difficulte"])
+    .optional()
+    .describe("Statut du chantier si connu (en_retard ou en_difficulte)"),
+  meteo: z
+    .string()
+    .optional()
+    .describe("Météo du chantier (SOLEIL, COUVERT, NUAGE, ORAGE)"),
+  commentaire: z
+    .string()
+    .optional()
+    .describe("Commentaire de synthèse du chantier"),
+});
+
+export type ChantierContext = z.infer<typeof chantierContextSchema>;
+
 export const createDashboardInputSchema = z.object({
   task: z
     .string()
@@ -26,11 +45,11 @@ export const createDashboardInputSchema = z.object({
     .describe(
       "Années des jalons pour le dashboard (ex: [2025, 2026]). Supporte le multi-jalon.",
     ),
-  chantier_ids: z
-    .array(z.string())
+  chantiers: z
+    .array(chantierContextSchema)
     .optional()
     .describe(
-      "Identifiants des chantiers ciblés (ex: ['CH-064']). Uniquement si l'utilisateur cible des chantiers précis.",
+      "Chantiers ciblés avec leur nom et statut. Uniquement si l'utilisateur cible des chantiers précis ou obtenus via un outil de données.",
     ),
 });
 
@@ -45,12 +64,12 @@ export function validateDashboardIdentifiers(
   output: ComposeDashboardInput,
   allowedTerritoires: string[],
   allowedJalons: number[],
-  allowedChantierIds: string[] | undefined,
+  allowedChantiers: ChantierContext[] | undefined,
 ): void {
   const territoireSet = new Set(allowedTerritoires);
   const jalonSet = new Set(allowedJalons);
-  const chantierSet = allowedChantierIds
-    ? new Set(allowedChantierIds)
+  const chantierIdSet = allowedChantiers
+    ? new Set(allowedChantiers.map((c) => c.id))
     : undefined;
 
   for (const container of output.containers) {
@@ -71,28 +90,28 @@ export function validateDashboardIdentifiers(
       }
 
       if ("chantier_id" in widget) {
-        if (!chantierSet) {
+        if (!chantierIdSet) {
           throw new Error(
             `Le subagent a utilisé un chantier_id (${widget.chantier_id}) alors qu'aucun n'a été fourni.`,
           );
         }
-        if (!chantierSet.has(widget.chantier_id)) {
+        if (!chantierIdSet.has(widget.chantier_id)) {
           throw new Error(
-            `Le subagent a utilisé un chantier_id non autorisé : ${widget.chantier_id}. Chantiers autorisés : ${allowedChantierIds!.join(", ")}`,
+            `Le subagent a utilisé un chantier_id non autorisé : ${widget.chantier_id}. Chantiers autorisés : ${[...chantierIdSet].join(", ")}`,
           );
         }
       }
 
       if ("chantier_ids" in widget && Array.isArray(widget.chantier_ids)) {
         for (const id of widget.chantier_ids) {
-          if (!chantierSet) {
+          if (!chantierIdSet) {
             throw new Error(
               `Le subagent a utilisé des chantier_ids (${id}) alors qu'aucun n'a été fourni.`,
             );
           }
-          if (!chantierSet.has(id)) {
+          if (!chantierIdSet.has(id)) {
             throw new Error(
-              `Le subagent a utilisé un chantier_id non autorisé : ${id}. Chantiers autorisés : ${allowedChantierIds!.join(", ")}`,
+              `Le subagent a utilisé un chantier_id non autorisé : ${id}. Chantiers autorisés : ${[...chantierIdSet].join(", ")}`,
             );
           }
         }
@@ -105,15 +124,13 @@ function buildSubagentPrompt(
   task: string,
   territoireCodes: string[],
   jalons: number[],
-  chantierIds: string[] | undefined,
+  chantiers: ChantierContext[] | undefined,
 ): string {
   const contextLines = [
     "<context>",
     `territoire_codes: ${JSON.stringify(territoireCodes)}`,
     `jalons: ${JSON.stringify(jalons)}`,
-    ...(chantierIds?.length
-      ? [`chantier_ids: ${JSON.stringify(chantierIds)}`]
-      : []),
+    ...(chantiers?.length ? [`chantiers: ${JSON.stringify(chantiers)}`] : []),
     "</context>",
   ];
 
@@ -127,16 +144,16 @@ export function createCreateDashboardTool() {
     description: `Délègue la composition d'un dashboard à un agent spécialisé.
 Utilise ce tool quand l'utilisateur demande un dashboard, un cockpit,
 un tableau de bord visuel, ou d'afficher les indicateurs d'un chantier.
-Fournis la description de ce que l'utilisateur veut visualiser ainsi que les identifiants résolus (territoire_codes, jalons, chantier_ids).`,
+Fournis la description de ce que l'utilisateur veut visualiser ainsi que les identifiants résolus (territoire_codes, jalons, chantiers).`,
     inputSchema: createDashboardInputSchema,
     execute: async (
-      { task, territoire_codes, jalons, chantier_ids },
+      { task, territoire_codes, jalons, chantiers },
       { abortSignal },
     ) => {
       const result = await generateText({
         model: withOptionalDevTools(albertProvider.chat("openweight-large")),
         system: buildDashboardSystemPrompt(),
-        prompt: buildSubagentPrompt(task, territoire_codes, jalons, chantier_ids),
+        prompt: buildSubagentPrompt(task, territoire_codes, jalons, chantiers),
         output: Output.object({ schema: composeDashboardInputSchema }),
         abortSignal,
       });
@@ -149,7 +166,7 @@ Fournis la description de ce que l'utilisateur veut visualiser ainsi que les ide
         result.output,
         territoire_codes,
         jalons,
-        chantier_ids,
+        chantiers,
       );
 
       return {

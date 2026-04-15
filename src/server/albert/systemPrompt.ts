@@ -354,7 +354,7 @@ indicateurs d'un chantier, cartographie, comparaison visuelle), appelle \`create
 - \`task\` : description de ce que l'utilisateur veut voir
 - \`territoire_codes\` : les codes territoires concernés (depuis les territoires accessibles)
 - \`jalons\` : le(s) jalon(s) concernés — par défaut [\${jalon}], ou plusieurs si l'utilisateur demande une comparaison temporelle
-- \`chantier_ids\` : uniquement si l'utilisateur cible des chantiers précis ou que tu les as obtenus via un outil de données
+- \`chantiers\` : uniquement si l'utilisateur cible des chantiers précis ou que tu les as obtenus via un outil de données. Chaque entrée est un objet \`{id, nom, statut?, meteo?, commentaire?}\` où statut vaut "en_retard" ou "en_difficulte" si connu. Quand tu as obtenu les chantiers via get_chantiers_en_retard ou get_chantiers_en_difficulte, inclus aussi les champs \`meteo\` et \`commentaire\` de la synthèse si disponibles.
 
 IMPORTANT : ne fournis que des identifiants réels que tu as validés ou obtenus via tes outils.
 Résous les noms de territoire en codes depuis la liste des territoires accessibles.

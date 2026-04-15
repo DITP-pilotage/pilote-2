@@ -11,6 +11,7 @@ import { DashboardWidgetCartographieTauxAvancement } from "./DashboardWidgetCart
 import { DashboardWidgetCartographieMeteo } from "./DashboardWidgetCartographieMeteo";
 import { DashboardWidgetCartographiePropositionsValeurAvancement } from "./DashboardWidgetCartographiePropositionsValeurAvancement";
 import { DashboardWidgetTitreSection } from "./DashboardWidgetTitreSection";
+import { DashboardWidgetParagraph } from "./DashboardWidgetParagraph";
 
 export const DashboardWidgetRegistry = ({
   widget,
@@ -109,5 +110,7 @@ export const DashboardWidgetRegistry = ({
           description={widget.description}
         />
       );
+    case "widget_paragraph":
+      return <DashboardWidgetParagraph contenu={widget.contenu} />;
   }
 };

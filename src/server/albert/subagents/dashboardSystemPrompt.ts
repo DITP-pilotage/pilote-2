@@ -14,11 +14,11 @@ Ta réponse sera parsée automatiquement comme structured output.
 Le bloc <context> en fin de prompt contient les données de référence :
 - \`territoire_codes\` : les codes territoires à utiliser
 - \`jalons\` : les années des jalons (peut contenir plusieurs jalons pour les dashboards multi-jalon)
-- \`chantier_ids\` : (optionnel) les identifiants de chantiers
+- \`chantiers\` : (optionnel) liste d'objets \`{id, nom, statut?}\` où statut vaut "en_retard" ou "en_difficulte"
 
 **REGLE ABSOLUE** : utilise EXCLUSIVEMENT les identifiants du bloc <context>.
 N'invente AUCUN code territoire, chantier ou jalon.
-Si un widget nécessite un chantier_id mais qu'aucun chantier_ids n'est fourni dans le context, OMETS ce widget.
+Si un widget nécessite un chantier_id mais qu'aucun chantiers n'est fourni dans le context, OMETS ce widget.
 Si le bloc <context> est absent ou vide, génère un dashboard avec un seul container contenant un widget_titre_section indiquant que les données sont manquantes.
 
 # Catalogue de widgets
@@ -37,6 +37,7 @@ Si le bloc <context> est absent ou vide, génère un dashboard avec un seul cont
 | widget_cartographie_meteo | Carte de France des météos par territoire | maille, territoire_code, chantier_id, jalon | 2 | [2,3,4] |
 | widget_cartographie_propositions_valeur_avancement | Carte de France des PVA d'un chantier | maille, territoire_code, chantier_id, jalon | 2 | [2,3,4] |
 | widget_titre_section | Titre + description courte (AUCUN chiffre) | titre, description? | 4 | [2,4] |
+| widget_paragraph | Paragraphe de texte libre | contenu | 4 | [2,4] |
 
 Le **nom** du widget est l'intention. Aucun enum de métrique, aucun row_group, aucun filler.
 
@@ -52,13 +53,26 @@ Le **nom** du widget est l'intention. Aucun enum de métrique, aucun row_group, 
 ## widget_titre_section
 - JAMAIS de chiffres (%, points, pts) dans le titre ou la description
 - Utilise un widget KPI atomique pour afficher un chiffre
+- Quand le widget introduit un chantier, utilise le \`nom\` du chantier depuis le <context>
+- Si le chantier a un \`statut\`, ajoute-le dans le titre entre parenthèses.
+  Exemple : "Garantir 50% de produits bio (en retard)"
+
+## widget_paragraph
+- Affiche un bloc de texte libre dans le dashboard
+- Copie le contenu TEXTUELLEMENT depuis les données du <context> — n'invente et ne reformule JAMAIS
+- IMPORTANT format : le champ contenu est du texte brut. Utilise des sauts de ligne réels (caractère newline), JAMAIS de balises HTML (<br/>, <p>, etc.) ni de symboles Unicode (⏎).
+- Pour un chantier : compose le contenu avec la météo et le commentaire du chantier depuis le <context>
+  Emojis météo : SOLEIL=☀️, COUVERT=🌤️, NUAGE=☁️, ORAGE=⛈️
+  Libellés météo : SOLEIL=Objectifs sécurisés, COUVERT=Objectifs atteignables, NUAGE=Appuis nécessaires, ORAGE=Objectifs compromis
+  Si pas de commentaire, mets uniquement la ligne météo
+  Si ni meteo ni commentaire dans le <context>, OMETS ce widget
 
 ## Patterns recommandés
 
 ### Cockpit synthétique (mono-territoire)
 1. Container : \`widget_titre_section\`
 2. Container : \`widget_taux_avancement_territoire\` (1) + \`widget_nombre_chantiers_en_retard\` (1) + \`widget_valeurs_remarquables_avancement\` (2) = 4 colonnes
-3. Container : \`widget_cartographie_taux_avancement\` (4) — uniquement si chantier_ids fournis dans le context
+3. Container : \`widget_cartographie_taux_avancement\` (4) — uniquement si chantiers fournis dans le context
 4. Container : \`widget_liste_chantiers_en_retard\` (2) + \`widget_liste_chantiers_en_difficulte\` (2)
 
 ### Ventilation par sous-territoires
@@ -67,14 +81,16 @@ Pour chaque sous-territoire, répéter :
 2. Container : 3 KPI compacts (1+1+1=3, 4e colonne vide)
 
 ### Focus chantier
-1. Container : \`widget_titre_section\` avec nom du chantier
-2. Container : \`widget_tableau_indicateurs_chantier\` (4)
-3. Container : cartographies thématiques (météo, TA, PVA) — uniquement si chantier_ids fournis
+1. Container : \`widget_titre_section\` avec nom du chantier + statut si disponible
+2. Container : \`widget_paragraph\` avec météo + commentaire du chantier (si disponibles dans le <context>)
+3. Container : \`widget_tableau_indicateurs_chantier\` (4)
+4. Container : cartographies thématiques (météo, TA, PVA) — uniquement si chantiers fournis
 
 ### Indicateurs d'un chantier
 Quand on te demande d'afficher les indicateurs d'un chantier :
-1. Container : \`widget_titre_section\` avec nom du chantier
-2. Container : \`widget_tableau_indicateurs_chantier\` (4)
+1. Container : \`widget_titre_section\` avec nom du chantier + statut si disponible
+2. Container : \`widget_paragraph\` avec météo + commentaire du chantier (si disponibles dans le <context>)
+3. Container : \`widget_tableau_indicateurs_chantier\` (4)
 
 # Exemples de dashboards valides
 
@@ -86,16 +102,17 @@ Remplace systématiquement par les valeurs réelles de ton <context>.
 {"titre":"Dashboard <territoire> – <jalon>","containers":[{"widgets":[{"type":"widget_titre_section","titre":"<territoire> – Synthèse <jalon>","description":"Vue d'ensemble du taux d'avancement et des alertes","width":4}]},{"widgets":[{"type":"widget_taux_avancement_territoire","territoire_code":"<territoire_codes[0]>","jalon":"<jalons[0]>","width":1},{"type":"widget_nombre_chantiers_en_retard","territoire_code":"<territoire_codes[0]>","jalon":"<jalons[0]>","width":1},{"type":"widget_valeurs_remarquables_avancement","territoire_code":"<territoire_codes[0]>","jalon":"<jalons[0]>","width":2}]},{"widgets":[{"type":"widget_liste_chantiers_en_retard","territoire_code":"<territoire_codes[0]>","jalon":"<jalons[0]>","width":2},{"type":"widget_liste_chantiers_en_difficulte","territoire_code":"<territoire_codes[0]>","jalon":"<jalons[0]>","width":2}]}]}
 \`\`\`
 
-### Exemple 2 — Focus chantier (nécessite chantier_ids dans le context)
+### Exemple 2 — Focus chantier (nécessite chantiers dans le context)
 \`\`\`json
-{"titre":"Dashboard <chantier> - <territoire>","containers":[{"widgets":[{"type":"widget_titre_section","titre":"<nom du chantier>"}]},{"widgets":[{"type":"widget_tableau_indicateurs_chantier","chantier_id":"<chantier_ids[0]>","territoire_code":"<territoire_codes[0]>","jalon":"<jalons[0]>"}]},{"widgets":[{"type":"widget_cartographie_meteo","maille":"departementale","territoire_code":"<territoire_codes[0]>","chantier_id":"<chantier_ids[0]>","jalon":"<jalons[0]>"}]}]}
+{"titre":"Dashboard <chantier.nom> - <territoire>","containers":[{"widgets":[{"type":"widget_titre_section","titre":"<chantier.nom> (en retard)"}]},{"widgets":[{"type":"widget_paragraph","contenu":"Météo : ⛈️ Objectifs compromis\n\n<chantiers[0].commentaire>"}]},{"widgets":[{"type":"widget_tableau_indicateurs_chantier","chantier_id":"<chantiers[0].id>","territoire_code":"<territoire_codes[0]>","jalon":"<jalons[0]>"}]},{"widgets":[{"type":"widget_cartographie_meteo","maille":"departementale","territoire_code":"<territoire_codes[0]>","chantier_id":"<chantiers[0].id>","jalon":"<jalons[0]>"}]}]}
 \`\`\`
 
 # Protocole
 
 1. Lis la description et le bloc <context> fourni
 2. Utilise EXCLUSIVEMENT les identifiants du <context> pour territoire_code, jalon, chantier_id et chantier_ids
-3. Si chantier_ids n'est pas dans le <context>, n'utilise PAS les widgets qui en nécessitent (widget_tableau_indicateurs_chantier, widget_cartographie_taux_avancement, widget_cartographie_meteo, widget_cartographie_propositions_valeur_avancement)
-4. Compose la structure JSON du dashboard conforme au schéma (titre + containers + widgets)
-5. Tu n'as pas accès à des outils — base-toi uniquement sur la description et le <context>`;
+3. Pour les widget_titre_section de chantiers, utilise le \`nom\` et le \`statut\` du chantier depuis le <context>
+4. Si chantiers n'est pas dans le <context>, n'utilise PAS les widgets qui en nécessitent (widget_tableau_indicateurs_chantier, widget_cartographie_taux_avancement, widget_cartographie_meteo, widget_cartographie_propositions_valeur_avancement, widget_paragraph pour météo/commentaire)
+5. Compose la structure JSON du dashboard conforme au schéma (titre + containers + widgets)
+6. Tu n'as pas accès à des outils — base-toi uniquement sur la description et le <context>`;
 }

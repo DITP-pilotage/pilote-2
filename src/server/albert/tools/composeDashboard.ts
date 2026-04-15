@@ -171,6 +171,17 @@ const widgetCartographiePropositionsValeurAvancement = z
   })
   .strict();
 
+const widgetParagraph = z
+  .object({
+    type: z.literal("widget_paragraph"),
+    contenu: z.string().min(1).describe("Contenu textuel du paragraphe."),
+    width: z
+      .union([z.literal(2), z.literal(4)])
+      .optional()
+      .describe("default_width=4, allowed_widths=[2,4]"),
+  })
+  .strict();
+
 const widgetTitreSection = z
   .object({
     type: z.literal("widget_titre_section"),
@@ -209,6 +220,7 @@ const widgetInputSchema = z
     widgetCartographieMeteo,
     widgetCartographiePropositionsValeurAvancement,
     widgetTitreSection,
+    widgetParagraph,
   ])
   .describe(
     "Widget du dashboard. Le type est l'intention métier. Aucune valeur chiffrée n'est jamais passée — uniquement des références (territoire_code, chantier_id, jalon, maille). Les valeurs sont résolues au rendu côté client.",
