@@ -10,14 +10,17 @@ vi_non_null_sorted AS (
         zone_id,
         metric_date,
         vi,
-        rank()
-            OVER (PARTITION BY indic_id, zone_id ORDER BY date_import DESC, metric_date ASC, random())
-        AS r
+        RANK()
+            OVER (
+                PARTITION BY indic_id, zone_id
+                ORDER BY date_import DESC, metric_date ASC, RANDOM()
+            )
+            AS r
     FROM {{ ref('pivot_mesures') }}
     -- vi NON NULL
-    WHERE vi IS NOT null
+    WHERE vi IS NOT NULL
     -- vig_min_date: aucune VI globale ne pourra être avant cette date
-    AND metric_date >= '{{ var('vig_min_date') }}'::date
+    AND metric_date >= '{{ var('vig_min_date') }}'::DATE
 ),
 
 -- La première VI pour chaque [indic,zone]
@@ -35,17 +38,17 @@ get_vig AS (
 -- DELETED: sinon =>            on prend la 1e VA et set is_from_vi=FALSE
 -- EN COURS: On prend toujours la VI de get_vig, et JAMAIS la 1e VA
 SELECT
-    true AS is_from_vi,
-    coalesce(a.indic_id, null) AS indic_id,
+    TRUE AS is_from_vi,
+    COALESCE(a.indic_id, NULL) AS indic_id,
     -- selection de la valeur
-    coalesce(a.zone_id, null) AS zone_id,
+    COALESCE(a.zone_id, NULL) AS zone_id,
     -- selection de la date - on prend TOUJOURS vig_date
-    coalesce(a.vig, null) AS vig,
+    COALESCE(a.vig, NULL) AS vig,
     -- is_from_vi: 
     --  + VRAI si la valeur est issue d'une VI, 
     --  + FAUX si elle est issue d'une VA
     CASE
-        WHEN true THEN a.vig_date
+        WHEN TRUE THEN a.vig_date
         --else b.va_earliest_date
     END AS vig_date
 FROM get_vig AS a

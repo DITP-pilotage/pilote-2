@@ -74,13 +74,13 @@ synthese_triee_par_date AS (
         code_insee,
         maille,
         meteo,
-        date_modification as date_meteo,
+        date_modification AS date_meteo,
         ROW_NUMBER()
             OVER (
                 PARTITION BY chantier_id, code_insee, maille
                 ORDER BY date_modification DESC
             )
-        AS row_id_by_date_meteo_desc
+            AS row_id_by_date_meteo_desc
     FROM {{ source('db_schema_public', 'synthese_des_resultats') }}
 ),
 
@@ -90,21 +90,20 @@ ch_has_meteo AS (
         chantier_id,
         BOOL_OR(meteo IS NOT NULL) FILTER (
             WHERE
-                maille = 'DEPT'
+            maille = 'DEPT'
         ) AS has_meteo_dept,
         BOOL_OR(meteo IS NOT NULL) FILTER (
             WHERE
-                maille = 'REG'
+            maille = 'REG'
         ) AS has_meteo_reg,
         BOOL_OR(meteo IS NOT NULL) FILTER (
             WHERE
-                maille = 'NAT'
+            maille = 'NAT'
         ) AS has_meteo_nat
     FROM synthese_triee_par_date
     GROUP BY
         chantier_id
 )
-
 
 SELECT
     meta_ch.id,
@@ -124,19 +123,25 @@ SELECT
     dir_projets.email AS directeurs_projet_mails,
     chantier_est_barometre.est_barometre,
     meta_ch.est_territorialise,
-    LOWER(meta_ch.ate)::type_ate AS ate,
+    LOWER(meta_ch.ate)::TYPE_ATE AS ate,
     has_ta.has_ta_dept AS possede_taux_avancement_departemental,
     has_ta.has_ta_reg AS possede_taux_avancement_regional,
     ch_has_meteo.has_meteo_dept AS possede_meteo_departemental,
     ch_has_meteo.has_meteo_reg AS possede_meteo_regional,
     -- Si ch_cible_attendue=NULL -> on le considère TRUE
-    COALESCE(meta_ch.statut::type_statut, 'PUBLIE') AS statut,
+    COALESCE(meta_ch.statut::TYPE_STATUT, 'PUBLIE') AS statut,
     COALESCE(meta_ch.ch_cible_attendue, TRUE) AS cible_attendue,
     ARRAY(
-        SELECT LOWER(maille)::maille
+        SELECT LOWER(maille)::MAILLE
         FROM UNNEST(
-            CASE 
-                WHEN meta_ch.est_territorialise THEN COALESCE(meta_ch.maille_applicable_declaree, ARRAY['NAT', 'REG', 'DEPT'])
+            CASE
+                WHEN
+                    meta_ch.est_territorialise
+                    THEN
+                        COALESCE(
+                            meta_ch.maille_applicable_declaree,
+                            ARRAY['NAT', 'REG', 'DEPT']
+                        )
                 ELSE ARRAY['NAT']
             END
         ) AS maille

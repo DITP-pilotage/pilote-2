@@ -1,8 +1,12 @@
-with src as (
-	select * from {{ ref('int_ponderation_reelle') }}
+WITH src AS (
+    SELECT * FROM {{ ref('int_ponderation_reelle') }}
 )
 
-select chantier_id, zone_id, count(zone_id) as n_indic_in_ta_expected from src
-where poids_zone_reel > 0
-group by chantier_id, zone_id
-order by chantier_id, zone_id
+SELECT
+    chantier_id,
+    zone_id,
+    COUNT(zone_id) AS n_indic_in_ta_expected
+FROM src
+WHERE poids_zone_reel > 0
+GROUP BY chantier_id, zone_id
+ORDER BY chantier_id, zone_id

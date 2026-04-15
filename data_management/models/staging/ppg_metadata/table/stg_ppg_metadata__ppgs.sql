@@ -1,24 +1,24 @@
-with
+WITH
 
-source as (
+source AS (
 
-    select * from {{ source('python_load', 'metadata_ppgs') }}
+    SELECT * FROM {{ source('python_load', 'metadata_ppgs') }}
 
 ),
 
-renamed as (
+renamed AS (
 
-    select
-        ppg_id as id,
-        ppg_axe as axe_id,
-        ppg_code as code,
-        ppg_desc as description,
-        ppg_nom as nom,
-        string_to_array(porteur_shorts, ' | ') as porteur_noms_court,
-        string_to_array(porteur_ids, ' | ') as porteur_ids
+    SELECT
+        ppg_id AS id,
+        ppg_axe AS axe_id,
+        ppg_code AS code,
+        ppg_desc AS description,
+        ppg_nom AS nom,
+        STRING_TO_ARRAY(porteur_shorts, ' | ') AS porteur_noms_court,
+        STRING_TO_ARRAY(porteur_ids, ' | ') AS porteur_ids
 
-    from source
+    FROM source
 
 )
 
-select * from renamed
+SELECT * FROM renamed

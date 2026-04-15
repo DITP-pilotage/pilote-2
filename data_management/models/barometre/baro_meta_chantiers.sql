@@ -2,7 +2,7 @@ WITH chantiers_baro AS (
 -- ID des chantiers dans le baromètre
     SELECT
         indic_parent_ch AS chantier_id,
-        count(*) AS n
+        COUNT(*) AS n
     FROM {{ ref('baro_meta_indicateurs') }}
     GROUP BY indic_parent_ch
     ORDER BY indic_parent_ch

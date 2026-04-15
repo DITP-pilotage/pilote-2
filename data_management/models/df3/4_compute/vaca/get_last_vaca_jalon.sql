@@ -40,19 +40,25 @@ intermediate AS (
         END AS date_vaca_filled,
         ROW_NUMBER() OVER (
             PARTITION BY a.indic_id, a.zone_id, a.jalon_a_completer
-            ORDER BY 
-                CASE 
+            ORDER BY
+                CASE
                     WHEN (
                         CASE
-                            WHEN b.jalon = a.jalon_a_completer THEN b.metric_date
-                            WHEN a.dernier_jalon < a.jalon_a_completer THEN a.derniere_date_vaca
+                            WHEN
+                                b.jalon = a.jalon_a_completer
+                                THEN b.metric_date
+                            WHEN
+                                a.dernier_jalon < a.jalon_a_completer
+                                THEN a.derniere_date_vaca
                         END
                     ) IS NULL THEN 1 ELSE 0
                 END ASC,
                 (
                     CASE
                         WHEN b.jalon = a.jalon_a_completer THEN b.metric_date
-                        WHEN a.dernier_jalon < a.jalon_a_completer THEN a.derniere_date_vaca
+                        WHEN
+                            a.dernier_jalon < a.jalon_a_completer
+                            THEN a.derniere_date_vaca
                     END
                 ) DESC
         ) AS r
@@ -73,11 +79,11 @@ SELECT
     vaca_filled AS vaca,
     date_vaca_filled AS date_vaca
 FROM intermediate
-    -- ne retourne pas de ligne pour des valeurs qui n'ont pas été remplies, exemple 2022 si la dernière VACA est en 2023
+-- ne retourne pas de ligne pour des valeurs qui n'ont pas été remplies, exemple 2022 si la dernière VACA est en 2023
 WHERE
-    vaca_filled IS NOT null
+    vaca_filled IS NOT NULL
     AND r = 1
-order by
+ORDER BY
     indic_id,
     zone_id,
     jalon_a_completer

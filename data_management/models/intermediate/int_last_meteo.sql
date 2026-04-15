@@ -13,7 +13,7 @@ synthese_triee_par_date AS (
                 PARTITION BY chantier_id, code_insee, maille
                 ORDER BY date_modification DESC
             )
-        AS row_id_by_date_meteo_desc
+            AS row_id_by_date_meteo_desc
     FROM {{ source('db_schema_public', 'synthese_des_resultats') }}
 )
 
@@ -21,8 +21,8 @@ SELECT
     a.chantier_id,
     t.code AS territoire_code,
     meteo,
-    date_modification as date_meteo
+    date_modification AS date_meteo
 FROM synthese_triee_par_date AS a
 LEFT JOIN {{ source('db_schema_public', 'territoire') }} AS t
-    ON t.maille = LOWER(a.maille)::maille AND t.code_insee = a.code_insee
+    ON t.maille = LOWER(a.maille)::MAILLE AND a.code_insee = t.code_insee
 WHERE row_id_by_date_meteo_desc = 1

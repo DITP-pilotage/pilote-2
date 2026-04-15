@@ -55,5 +55,5 @@ SELECT
     date_vacg_filled AS date_vacg
 FROM intermediate
 -- ne retourne pas de ligne pour des valeurs qui n'ont pas été remplies, exemple 2022 si la dernière VACG est en 2023
-WHERE vacg_filled IS NOT null
-order by indic_id, zone_id, jalon_a_completer
+WHERE vacg_filled IS NOT NULL
+ORDER BY indic_id, zone_id, jalon_a_completer

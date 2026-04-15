@@ -3,8 +3,8 @@
 
 WITH get_val_jalons AS (
     SELECT
-        meta_indic.id as indic_id,
-        zones.id as zone_id,
+        meta_indic.id AS indic_id,
+        zones.id AS zone_id,
         jalons.jalon,
         a.vaca,
         a.date_vaca,
@@ -16,11 +16,11 @@ WITH get_val_jalons AS (
         f.vca_date,
         h.vcg,
         h.vcg_date,
-        prop.valeur_avancement_proposee as vacp,
-        prop.date_valeur_avancement as date_valeur_proposition
+        prop.valeur_avancement_proposee AS vacp,
+        prop.date_valeur_avancement AS date_valeur_proposition
     FROM {{ ref('stg_ppg_metadata__zones') }} AS zones
     CROSS JOIN {{ ref('stg_ppg_metadata__indicateurs') }} AS meta_indic
-    CROSS JOIN {{ ref('jalons_a_etudier') }} as jalons
+    CROSS JOIN {{ ref('jalons_a_etudier') }} AS jalons
     LEFT JOIN {{ ref('get_last_vaca_jalon') }} AS a
         ON
             meta_indic.id = a.indic_id
@@ -49,49 +49,22 @@ WITH get_val_jalons AS (
         ON
             meta_indic.id = prop.indic_id
             AND zones.id = prop.zone_id
-            AND jalons.jalon >= EXTRACT(YEAR FROM prop.date_valeur_avancement) 
+            AND jalons.jalon >= EXTRACT(YEAR FROM prop.date_valeur_avancement)
 
 ),
 
 get_unbounded_ta AS (
     SELECT
-        a.*,
-        CASE
-            WHEN
-                b.tendance IN ('HAUSSE', 'STABLE')
-                THEN {{ compute_ta_hausse_macro('vig', 'vca', 'vaca') }}
-            WHEN
-                b.tendance IN ('BAISSE')
-                THEN {{ compute_ta_baisse_macro('vig', 'vca', 'vaca') }}
-        END AS unbounded_taa,
-        CASE
-            WHEN
-                b.tendance IN ('HAUSSE', 'STABLE')
-                THEN {{ compute_ta_hausse_macro('vig', 'vca', 'vacp') }}
-            WHEN
-                b.tendance IN ('BAISSE')
-                THEN {{ compute_ta_baisse_macro('vig', 'vca', 'vacp') }}
-        END AS unbounded_taa_proposition,
-        CASE
-            WHEN
-                b.tendance IN ('HAUSSE', 'STABLE')
-                THEN {{ compute_ta_hausse_macro('vig', 'vcg', 'vacg') }}
-            WHEN
-                b.tendance IN ('BAISSE')
-                THEN {{ compute_ta_baisse_macro('vig', 'vcg', 'vacg') }}
-        END AS unbounded_tag,
-        CASE
-            WHEN
-                b.tendance IN ('HAUSSE', 'STABLE')
-                THEN {{ compute_ta_hausse_macro('vig', 'vcg', 'vacp') }}
-            WHEN
-                b.tendance IN ('BAISSE')
-                THEN {{ compute_ta_baisse_macro('vig', 'vcg', 'vacp') }}
-        END AS unbounded_tag_proposition
-    FROM get_val_jalons AS a
-    RIGHT JOIN
-        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} AS b
-        ON a.indic_id = b.indic_id
+        computed_values_jalon.*,
+        {{ compute_ta('computed_values_jalon.vig', 'computed_values_jalon.vca', 'computed_values_jalon.vaca', 'parametre_indic.tendance') }} AS unbounded_taa, -- noqa: LT05
+        {{ compute_ta('computed_values_jalon.vig', 'computed_values_jalon.vca', 'computed_values_jalon.vacp', 'parametre_indic.tendance') }} AS unbounded_taa_proposition, -- noqa: LT05
+        {{ compute_ta('computed_values_jalon.vig', 'computed_values_jalon.vcg', 'computed_values_jalon.vacg', 'parametre_indic.tendance') }} AS unbounded_tag, -- noqa: LT05
+        {{ compute_ta('computed_values_jalon.vig', 'computed_values_jalon.vcg', 'computed_values_jalon.vacp', 'parametre_indic.tendance') }} AS unbounded_tag_proposition -- noqa: LT05
+    FROM get_val_jalons AS computed_values_jalon
+    LEFT OUTER JOIN
+        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }}
+            AS parametre_indic
+        ON computed_values_jalon.indic_id = parametre_indic.indic_id
 ),
 
 -- Compute bounded TA
@@ -99,32 +72,32 @@ get_bounded_ta AS (
     SELECT
         *,
         CASE
-            WHEN unbounded_taa IS null THEN null
-            ELSE greatest(least(unbounded_taa, 100), 0)::numeric
+            WHEN unbounded_taa IS NULL THEN NULL
+            ELSE GREATEST(LEAST(unbounded_taa, 100), 0)::NUMERIC
         END AS taa,
         CASE
-            WHEN unbounded_taa_proposition IS null THEN null
-            ELSE greatest(
-                least(
+            WHEN unbounded_taa_proposition IS NULL THEN NULL
+            ELSE GREATEST(
+                LEAST(
                     unbounded_taa_proposition,
                     100
                 ),
                 0
-            )::numeric
+            )::NUMERIC
         END AS taa_proposition,
         CASE
-            WHEN unbounded_tag IS null THEN null
-            ELSE greatest(least(unbounded_tag, 100), 0)::numeric
+            WHEN unbounded_tag IS NULL THEN NULL
+            ELSE GREATEST(LEAST(unbounded_tag, 100), 0)::NUMERIC
         END AS tag,
         CASE
-            WHEN unbounded_tag_proposition IS null THEN null
-            ELSE greatest(
-                least(
+            WHEN unbounded_tag_proposition IS NULL THEN NULL
+            ELSE GREATEST(
+                LEAST(
                     unbounded_tag_proposition,
                     100
                 ),
                 0
-            )::numeric
+            )::NUMERIC
         END AS tag_proposition
     FROM get_unbounded_ta
 )

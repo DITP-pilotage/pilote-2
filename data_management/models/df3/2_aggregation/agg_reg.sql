@@ -158,7 +158,7 @@ compute_op_sum_avg AS (
 compute_op_selected AS (
     SELECT
         compute_op_sum_avg.id,
-		compute_op_sum_avg.date_import,
+        compute_op_sum_avg.date_import,
         compute_op_sum_avg.zone_parent,
         compute_op_sum_avg.indic_id1,
         compute_op_sum_avg.metric_date,
@@ -173,18 +173,36 @@ compute_op_selected AS (
         indic_agg_from_dept.vc_reg_from,
         indic_agg_from_dept.vc_reg_op,
         CASE
-            WHEN compute_op_sum_avg.metric_type = 'vi' AND indic_agg_from_dept.vi_reg_op = 'sum' THEN op_sum
-            WHEN compute_op_sum_avg.metric_type = 'vi' AND indic_agg_from_dept.vi_reg_op = 'avg' THEN op_avg
-            WHEN compute_op_sum_avg.metric_type = 'va' AND indic_agg_from_dept.va_reg_op = 'sum' THEN op_sum
-            WHEN compute_op_sum_avg.metric_type = 'va' AND indic_agg_from_dept.va_reg_op = 'avg' THEN op_avg
-            WHEN compute_op_sum_avg.metric_type = 'vc' AND indic_agg_from_dept.vc_reg_op = 'sum' THEN op_sum
-            WHEN compute_op_sum_avg.metric_type = 'vc' AND indic_agg_from_dept.vc_reg_op = 'avg' THEN op_avg
+            WHEN
+                compute_op_sum_avg.metric_type = 'vi'
+                AND indic_agg_from_dept.vi_reg_op = 'sum'
+                THEN op_sum
+            WHEN
+                compute_op_sum_avg.metric_type = 'vi'
+                AND indic_agg_from_dept.vi_reg_op = 'avg'
+                THEN op_avg
+            WHEN
+                compute_op_sum_avg.metric_type = 'va'
+                AND indic_agg_from_dept.va_reg_op = 'sum'
+                THEN op_sum
+            WHEN
+                compute_op_sum_avg.metric_type = 'va'
+                AND indic_agg_from_dept.va_reg_op = 'avg'
+                THEN op_avg
+            WHEN
+                compute_op_sum_avg.metric_type = 'vc'
+                AND indic_agg_from_dept.vc_reg_op = 'sum'
+                THEN op_sum
+            WHEN
+                compute_op_sum_avg.metric_type = 'vc'
+                AND indic_agg_from_dept.vc_reg_op = 'avg'
+                THEN op_avg
             -- Si opération non supportée, ie hors de [sum, avg]
             ELSE -1.212121
         END AS op_selected
     FROM compute_op_sum_avg
-	LEFT JOIN indic_agg_from_dept
-		ON compute_op_sum_avg.indic_id1 = indic_agg_from_dept.indic_id
+    LEFT JOIN indic_agg_from_dept
+        ON compute_op_sum_avg.indic_id1 = indic_agg_from_dept.indic_id
 ),
 
 -- On sélectionne qq colonne puis tri

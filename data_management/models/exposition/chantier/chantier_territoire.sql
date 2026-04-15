@@ -25,6 +25,7 @@ mailles_applicables AS (
             END AS maille_applicable
     ) AS m
 ),
+
 mediane_par_chantier AS (
     SELECT
         chantier_id,
@@ -40,19 +41,24 @@ mediane_par_chantier AS (
     GROUP BY
         chantier_id, z.zone_type
 ),
+
 proposition_valeur_actuelle_chantier AS (
-    SELECT 
-        ipv.territoire_code, 
-        spmi.chantier_id, 
+    SELECT
+        ipv.territoire_code,
+        spmi.chantier_id,
         COUNT(*) AS nombre_propositions_valeur_actuelle,
-        SUM(CASE WHEN ipr.poids_zone_reel > 0 THEN 1 ELSE 0 END) AS nombre_propositions_valeur_actuelle_ponderee
-    FROM {{ ref('int_propositions_valeurs')}} ipv
-    LEFT JOIN {{ source('db_schema_public', 'territoire') }}  t ON t.code = ipv.territoire_code 
-    LEFT JOIN {{ ref('int_ponderation_reelle') }} ipr 
-        ON ipr.indic_id = ipv.indic_id 
-        AND ipr.zone_id = t.zone_id
-    LEFT JOIN {{ ref('stg_ppg_metadata__indicateurs') }} spmi 
-        ON spmi.id = ipv.indic_id
+        SUM(CASE WHEN ipr.poids_zone_reel > 0 THEN 1 ELSE 0 END)
+            AS nombre_propositions_valeur_actuelle_ponderee
+    FROM {{ ref('int_propositions_valeurs') }} AS ipv
+    LEFT JOIN
+        {{ source('db_schema_public', 'territoire') }} AS t
+        ON ipv.territoire_code = t.code
+    LEFT JOIN {{ ref('int_ponderation_reelle') }} AS ipr
+        ON
+            ipv.indic_id = ipr.indic_id
+            AND t.zone_id = ipr.zone_id
+    LEFT JOIN {{ ref('stg_ppg_metadata__indicateurs') }} AS spmi
+        ON ipv.indic_id = spmi.id
     WHERE spmi.est_cache_dans_pilote IS FALSE
     GROUP BY ipv.territoire_code, spmi.chantier_id
 )
@@ -61,7 +67,7 @@ SELECT
     meta_ch.id,
     t.code AS territoire_code,
     t.code_insee,
-    t.maille AS maille,
+    t.maille,
     z.zone_id,
     ta_ch_today.tag_ch AS taux_avancement_mandat,
     ta_ch_today.date_ta AS date_taux_avancement_mandat,
@@ -77,21 +83,21 @@ SELECT
     coord_territoriaux.nom AS coordinateurs_territoriaux,
     resp_locaux.email AS responsables_locaux_mails,
     coord_territoriaux.email AS coordinateurs_territoriaux_mails,
-    sr.date_meteo::date AS derniere_maj_date_qualitative,
+    sr.date_meteo::DATE AS derniere_maj_date_qualitative,
     CASE
         WHEN
             ta_ch_today.tag_ch IS NULL
-            THEN NULL::type_tendance
+            THEN NULL::TYPE_TENDANCE
         WHEN
             ta_ch_prev_month.tag_ch IS NULL
             OR ta_ch_today.tag_ch = ta_ch_prev_month.tag_ch
-            THEN 'STAGNATION'::type_tendance
+            THEN 'STAGNATION'::TYPE_TENDANCE
         WHEN
             ta_ch_today.tag_ch > ta_ch_prev_month.tag_ch
-            THEN 'HAUSSE'::type_tendance
+            THEN 'HAUSSE'::TYPE_TENDANCE
         WHEN
             ta_ch_today.tag_ch < ta_ch_prev_month.tag_ch
-            THEN 'BAISSE'::type_tendance
+            THEN 'BAISSE'::TYPE_TENDANCE
     END AS tendance,
     CASE
         WHEN
@@ -110,27 +116,33 @@ SELECT
     END AS tendance_int_index,
     ROUND(
         (
-            ta_ch_today.tag_ch::numeric - mediane_par_chantier.mediane::numeric
-        )::numeric,
+            ta_ch_today.tag_ch::NUMERIC - mediane_par_chantier.mediane::NUMERIC
+        )::NUMERIC,
         1
     ) AS ecart,
-    ('{"ORAGE": 1, "NUAGE": 2, "COUVERT": 3, "SOLEIL": 4}'::json->>sr.meteo)::int as meteo_int_index,
+    (
+        '{"ORAGE": 1, "NUAGE": 2, "COUVERT": 3, "SOLEIL": 4}'::JSON ->> sr.meteo
+    )::INT AS meteo_int_index,
     CASE
         -- values replicated REG->DEPT
         WHEN
-            UPPER(meta_ch.replicate_val_reg_to) = 'DEPT' AND z.zone_type = 'DEPT'
-            THEN 'reg'::maille
+            UPPER(meta_ch.replicate_val_reg_to) = 'DEPT'
+            AND z.zone_type = 'DEPT'
+            THEN 'reg'::MAILLE
         -- values replicated NAT->DEPT
         WHEN
-            UPPER(meta_ch.replicate_val_nat_to) = 'DEPT' AND z.zone_type = 'DEPT'
-            THEN 'nat'::maille
+            UPPER(meta_ch.replicate_val_nat_to) = 'DEPT'
+            AND z.zone_type = 'DEPT'
+            THEN 'nat'::MAILLE
         -- values replicated NAT->REG
         WHEN
             UPPER(meta_ch.replicate_val_nat_to) = 'REG' AND z.zone_type = 'REG'
-            THEN 'reg'::maille
+            THEN 'reg'::MAILLE
     END AS donnees_maille_source,
-    COALESCE(pva.nombre_propositions_valeur_actuelle, 0) as nombre_propositions_valeur_actuelle,
-    COALESCE(pva.nombre_propositions_valeur_actuelle_ponderee, 0) as nombre_propositions_valeur_actuelle_ponderee
+    COALESCE(pva.nombre_propositions_valeur_actuelle, 0)
+        AS nombre_propositions_valeur_actuelle,
+    COALESCE(pva.nombre_propositions_valeur_actuelle_ponderee, 0)
+        AS nombre_propositions_valeur_actuelle_ponderee
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
 CROSS JOIN {{ source('db_schema_public', 'territoire') }} AS t
 LEFT JOIN
@@ -142,12 +154,14 @@ LEFT JOIN {{ ref('int_last_meteo') }} AS sr
         AND t.code = sr.territoire_code
 LEFT JOIN
     (
-        SELECT * FROM {{ ref('compute_ta_ch') }} WHERE valid_on = 'today'
+        SELECT * FROM {{ ref('compute_ta_ch') }}
+        WHERE valid_on = 'today'
     ) AS ta_ch_today
     ON meta_ch.id = ta_ch_today.chantier_id AND z.zone_id = ta_ch_today.zone_id
 LEFT JOIN
     (
-        SELECT * FROM {{ ref('compute_ta_ch') }} WHERE valid_on = 'prev_month'
+        SELECT * FROM {{ ref('compute_ta_ch') }}
+        WHERE valid_on = 'prev_month'
     ) AS ta_ch_prev_month
     ON
         meta_ch.id = ta_ch_prev_month.chantier_id
@@ -174,8 +188,8 @@ LEFT JOIN
         meta_ch.id = mediane_par_chantier.chantier_id
         AND z.zone_type = mediane_par_chantier.maille
 LEFT JOIN
-    proposition_valeur_actuelle_chantier pva
+    proposition_valeur_actuelle_chantier AS pva
     ON
-        pva.chantier_id = meta_ch.id
-        AND pva.territoire_code = t.code
+        meta_ch.id = pva.chantier_id
+        AND t.code = pva.territoire_code
 --ORDER by meta_ch.id, z.zone_type
