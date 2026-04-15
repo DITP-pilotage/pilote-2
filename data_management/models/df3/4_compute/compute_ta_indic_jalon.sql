@@ -6,8 +6,8 @@ WITH get_val_jalons AS (
         meta_indic.id AS indic_id,
         zones.id AS zone_id,
         jalons.jalon,
-        a.vaca,
-        a.date_vaca,
+        last_vaca_jalon.vaca,
+        last_vaca_jalon.date_vaca,
         g.vacg,
         g.date_vacg,
         e.vig,
@@ -21,11 +21,11 @@ WITH get_val_jalons AS (
     FROM {{ ref('stg_ppg_metadata__zones') }} AS zones
     CROSS JOIN {{ ref('stg_ppg_metadata__indicateurs') }} AS meta_indic
     CROSS JOIN {{ ref('jalons_a_etudier') }} AS jalons
-    LEFT JOIN {{ ref('get_last_vaca_jalon') }} AS a
+    LEFT JOIN {{ ref('get_last_vaca_jalon') }} AS last_vaca_jalon
         ON
-            meta_indic.id = a.indic_id
-            AND zones.id = a.zone_id
-            AND jalons.jalon = a.jalon
+            meta_indic.id = last_vaca_jalon.indic_id
+            AND zones.id = last_vaca_jalon.zone_id
+            AND jalons.jalon = last_vaca_jalon.jalon
     LEFT JOIN
         {{ ref('get_last_vacg_jalon') }} AS g
         ON
@@ -65,6 +65,7 @@ get_unbounded_ta AS (
         {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }}
             AS parametre_indic
         ON computed_values_jalon.indic_id = parametre_indic.indic_id
+    WHERE parametre_indic.tendance IS NOT NULL
 ),
 
 -- Compute bounded TA

@@ -3,15 +3,15 @@
 -- on joint les mesures avec les params associés
 WITH mesures_and_params AS (
     SELECT
-        a.*,
-        b.param_vaca_decumul_from,
-        b.param_vaca_partition_date,
-        b.param_vaca_op
-    FROM {{ ref('pivot_mesures') }} AS a
+        pivot_mesures.*,
+        parametre_indic.param_vaca_decumul_from,
+        parametre_indic.param_vaca_partition_date,
+        parametre_indic.param_vaca_op
+    FROM {{ ref('pivot_mesures') }} AS pivot_mesures
     LEFT JOIN
         {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }}
-            AS b
-        ON a.indic_id = b.indic_id
+            AS parametre_indic
+        ON pivot_mesures.indic_id = parametre_indic.indic_id
 ),
 
 -- On détermine la date de décumul des VA
@@ -60,7 +60,8 @@ perform_decumul AS (
             WHEN va IS NULL THEN NULL
             -- Si '_' -> on retourne va car pas de décumul demandé
             WHEN param_vaca_decumul_from = '_' THEN va
-            -- Sinon, on soustrait la va courante à la va précédente, dans la limite de la fenetre définie par decumul_vaa_date
+            -- Sinon, on soustrait la va courante à la va précédente,
+            -- dans la limite de la fenetre définie par decumul_vaa_date
             ELSE COALESCE(
                 va - LAG(va, 1) OVER (
                     PARTITION BY
@@ -82,10 +83,11 @@ compute_vaca AS (
         CASE
         -- pas de calcul de vaca si pas de va 
             WHEN va IS NULL THEN NULL
-            -- Si 'current_value' -> on retourne directement va_decumul sans plus de calcul 
+            -- Si 'current_value' on retourne va_decumul
             WHEN param_vaca_op = 'current_value' THEN va_decumul
             WHEN param_vaca_partition_date = '_' THEN va_decumul
-            -- TODO : Use macro ? Sum using case when instead of window functions ?
+            -- TODO : Use macro ?
+            -- Sum using case when instead of window functions ?
             -- sum avec les différentes fenetres autorisées
             WHEN
                 param_vaca_partition_date = 'from_previous_month::48'

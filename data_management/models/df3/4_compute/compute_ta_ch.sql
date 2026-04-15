@@ -5,90 +5,107 @@ WITH
 -- TA de chaque {indic-zone} à chaque date
 ta_zone_indic AS (
     SELECT
-        b.chantier_id,
-        a.zone_id,
-        z.maille,
-        metric_date,
-        a.indic_id,
-        vaca,
-        vig,
-        vca_courant,
-        vca_adate,
-        vca_adate_date,
-        vcg,
-        taa_courant,
-        taa_adate,
-        tag
-    FROM {{ ref('compute_ta_indic') }} AS a
+        indicateurs.chantier_id,
+        computed_values.zone_id,
+        zones.maille,
+        computed_values.metric_date,
+        computed_values.indic_id,
+        computed_values.vaca,
+        computed_values.vig,
+        computed_values.vca_courant,
+        computed_values.vca_adate,
+        computed_values.vca_adate_date,
+        computed_values.vcg,
+        computed_values.taa_courant,
+        computed_values.taa_adate,
+        computed_values.tag
+    FROM {{ ref('compute_ta_indic') }} AS computed_values
     LEFT JOIN
-        {{ ref('stg_ppg_metadata__indicateurs') }} AS b
-        ON a.indic_id = b.id
-    LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} AS z ON a.zone_id = z.id
---order by chantier_id, zone_id, metric_date, indic_id
+        {{ ref('stg_ppg_metadata__indicateurs') }} AS indicateurs
+        ON computed_values.indic_id = indicateurs.id
+    LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} AS zones
+        ON computed_values.zone_id = zones.id
 ),
 
 -- Calcul du TA pondéré
 --	On va pondérer chaque TA par sa pondération à cette maille
 ta_zone_indic_pond AS (
     SELECT
-        a.*,
-        b.poids_zone_reel,
-        taa_courant * 0.01 * b.poids_zone_reel AS taa_courant_pond,
-        taa_adate * 0.01 * b.poids_zone_reel AS taa_adate_pond,
-        tag * 0.01 * b.poids_zone_reel AS tag_pond
-    FROM ta_zone_indic AS a
+        ta_zone_indic.*,
+        ponderation.poids_zone_reel,
+        ta_zone_indic.taa_courant
+        * 0.01
+        * ponderation.poids_zone_reel AS taa_courant_pond,
+        ta_zone_indic.taa_adate
+        * 0.01
+        * ponderation.poids_zone_reel AS taa_adate_pond,
+        ta_zone_indic.tag * 0.01 * ponderation.poids_zone_reel AS tag_pond
+    FROM ta_zone_indic
     LEFT JOIN
-        {{ ref('int_ponderation_reelle') }} AS b
-        ON a.indic_id = b.indic_id AND a.zone_id = b.zone_id
-    ORDER BY chantier_id, zone_id, metric_date, indic_id
+        {{ ref('int_ponderation_reelle') }} AS ponderation
+        ON
+            ta_zone_indic.indic_id = ponderation.indic_id
+            AND ta_zone_indic.zone_id = ponderation.zone_id
 ),
 
 -- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente avec date<=max_date_taa_courant_today
+ta_zone_indic_pond_today_ordered AS (
+    SELECT
+        ta_zone_indic_pond.*,
+        RANK()
+            OVER (
+                PARTITION BY
+                    ta_zone_indic_pond.zone_id, ta_zone_indic_pond.indic_id
+                ORDER BY ta_zone_indic_pond.metric_date DESC
+            )
+            AS rang,
+        max_date_vaca_ch.max_date_taa_courant_today AS max_date,
+        'today' AS valid_on
+    FROM ta_zone_indic_pond
+    LEFT JOIN
+        {{ ref('get_max_date_vaca_ch') }} AS max_date_vaca_ch
+        ON
+            ta_zone_indic_pond.chantier_id = max_date_vaca_ch.chantier_id
+            AND ta_zone_indic_pond.zone_id = max_date_vaca_ch.zone_id
+    WHERE
+        vaca IS NOT NULL
+        AND metric_date <= max_date_taa_courant_today
+),
+
 ta_zone_indic_pond_today AS (
-    SELECT * FROM (
-        SELECT
-            a.*,
-            RANK()
-                OVER (
-                    PARTITION BY a.zone_id, a.indic_id
-                    ORDER BY a.metric_date DESC
-                )
-                AS r,
-            b.max_date_taa_courant_today AS max_date,
-            'today' AS valid_on
-        FROM ta_zone_indic_pond AS a
-        LEFT JOIN
-            {{ ref('get_max_date_vaca_ch') }} AS b
-            ON a.chantier_id = b.chantier_id AND a.zone_id = b.zone_id
-        WHERE
-            vaca IS NOT NULL
-            AND metric_date <= max_date_taa_courant_today
-    ) AS a
-    WHERE a.r = 1
+    SELECT *
+    FROM ta_zone_indic_pond_today_ordered
+    WHERE ta_zone_indic_pond_today_ordered.rang = 1
 ),
 
 -- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente avec date<=max_date_taa_courant_previous
+ta_zone_indic_pond_prev_month_ordered AS (
+    SELECT
+        ta_zone_indic_pond.*,
+        RANK()
+            OVER (
+                PARTITION BY
+                    ta_zone_indic_pond.zone_id,
+                    ta_zone_indic_pond.indic_id
+                ORDER BY ta_zone_indic_pond.metric_date DESC
+            )
+            AS rang,
+        max_date_vaca_ch.max_date_taa_courant_previous AS max_date,
+        'prev_month' AS valid_on
+    FROM ta_zone_indic_pond
+    LEFT JOIN
+        {{ ref('get_max_date_vaca_ch') }} AS max_date_vaca_ch
+        ON
+            ta_zone_indic_pond.chantier_id = max_date_vaca_ch.chantier_id
+            AND ta_zone_indic_pond.zone_id = max_date_vaca_ch.zone_id
+    WHERE
+        vaca IS NOT NULL
+        AND metric_date <= max_date_taa_courant_previous
+),
+
 ta_zone_indic_pond_prev_month AS (
-    SELECT * FROM (
-        SELECT
-            a.*,
-            RANK()
-                OVER (
-                    PARTITION BY a.zone_id, a.indic_id
-                    ORDER BY a.metric_date DESC
-                )
-                AS r,
-            b.max_date_taa_courant_previous AS max_date,
-            'prev_month' AS valid_on
-        FROM ta_zone_indic_pond AS a
-        LEFT JOIN
-            {{ ref('get_max_date_vaca_ch') }} AS b
-            ON a.chantier_id = b.chantier_id AND a.zone_id = b.zone_id
-        WHERE
-            vaca IS NOT NULL
-            AND metric_date <= max_date_taa_courant_previous
-    ) AS a
-    WHERE a.r = 1
+    SELECT * FROM ta_zone_indic_pond_prev_month_ordered
+    WHERE ta_zone_indic_pond_prev_month_ordered.rang = 1
 ),
 
 -- Calcul du TA chantier intermediaire 

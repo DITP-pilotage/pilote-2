@@ -3,16 +3,16 @@
 WITH
 indic_taa_courant_dispo AS (
     SELECT
-        b.chantier_id,
-        indic_id,
-        zone_id,
-        metric_date,
-        taa_courant
-    FROM {{ ref('compute_ta_indic') }} AS a
+        indicateurs.chantier_id,
+        ta_indic.indic_id,
+        ta_indic.zone_id,
+        ta_indic.metric_date,
+        ta_indic.taa_courant
+    FROM {{ ref('compute_ta_indic') }} AS ta_indic
     LEFT JOIN
-        {{ ref('stg_ppg_metadata__indicateurs') }} AS b
-        ON a.indic_id = b.id
-    WHERE vaca IS NOT NULL
+        {{ ref('stg_ppg_metadata__indicateurs') }} AS indicateurs
+        ON ta_indic.indic_id = indicateurs.id
+    WHERE ta_indic.vaca IS NOT NULL
 ),
 
 ch_count_taa_courant_par_date AS (
@@ -23,7 +23,6 @@ ch_count_taa_courant_par_date AS (
         COUNT(indic_id) AS n_taa_dispos
     FROM indic_taa_courant_dispo
     GROUP BY chantier_id, zone_id, metric_date
---order by chantier_id, zone_id, metric_date desc
 ),
 
 rank_dates_taa_ch_dispo AS (
