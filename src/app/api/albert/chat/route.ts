@@ -1,6 +1,7 @@
 import { validateUIMessages } from "ai";
 import { z } from "zod";
-import { Albert, displayChoicesTool } from "@/server/albert/Albert";
+import { Albert } from "@/server/albert/Albert";
+import { displayChoicesTool } from "@/server/albert/tools/displayChoices";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import {

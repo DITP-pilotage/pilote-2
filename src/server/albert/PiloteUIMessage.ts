@@ -1,7 +1,9 @@
 import type { UIDataTypes, UIMessage } from "ai";
 import type { z } from "zod";
-import { displayChoicesInputSchema } from "@/server/albert/Albert";
-import type { DisplayChoice } from "@/server/albert/Albert";
+import {
+  displayChoicesInputSchema,
+  type DisplayChoice,
+} from "@/server/albert/tools/displayChoices";
 import {
   exportRapportInputSchema,
   type ExportRapportOutput,
