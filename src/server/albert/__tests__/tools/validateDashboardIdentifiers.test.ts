@@ -101,9 +101,7 @@ describe("validateDashboardIdentifiers", () => {
 
   it("lève une erreur quand chantier_id n'est pas dans la liste autorisée", () => {
     // given
-    const chantiers: ChantierContext[] = [
-      { id: "CH-001", nom: "Chantier 1" },
-    ];
+    const chantiers: ChantierContext[] = [{ id: "CH-001", nom: "Chantier 1" }];
     const output: ComposeDashboardInput = {
       titre: "Cockpit",
       containers: [
@@ -129,9 +127,7 @@ describe("validateDashboardIdentifiers", () => {
 
   it("lève une erreur quand chantier_ids contient un id inconnu", () => {
     // given
-    const chantiers: ChantierContext[] = [
-      { id: "CH-001", nom: "Chantier 1" },
-    ];
+    const chantiers: ChantierContext[] = [{ id: "CH-001", nom: "Chantier 1" }];
     const output: ComposeDashboardInput = {
       titre: "Cockpit",
       containers: [
@@ -179,9 +175,7 @@ describe("validateDashboardIdentifiers", () => {
 
   it("ne lève pas d'erreur pour des containers avec widgets valides mixtes", () => {
     // given
-    const chantiers: ChantierContext[] = [
-      { id: "CH-001", nom: "Chantier 1" },
-    ];
+    const chantiers: ChantierContext[] = [{ id: "CH-001", nom: "Chantier 1" }];
     const output: ComposeDashboardInput = {
       titre: "Cockpit",
       containers: [
