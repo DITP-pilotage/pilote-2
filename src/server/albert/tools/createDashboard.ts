@@ -1,4 +1,4 @@
-import { generateText, Output, tool } from "ai";
+import { generateText, Output, stepCountIs, tool } from "ai";
 import { z } from "zod";
 import {
   composeDashboardInputSchema,
@@ -154,6 +154,7 @@ Fournis la description de ce que l'utilisateur veut visualiser ainsi que les ide
         model: withOptionalDevTools(albertProvider.chat("openweight-large")),
         system: buildDashboardSystemPrompt(),
         prompt: buildSubagentPrompt(task, territoire_codes, jalons, chantiers),
+        stopWhen: stepCountIs(5),
         output: Output.object({ schema: composeDashboardInputSchema }),
         abortSignal,
       });
