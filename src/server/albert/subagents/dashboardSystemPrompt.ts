@@ -58,19 +58,33 @@ Le **nom** du widget est l'intention. Aucun enum de métrique, aucun row_group, 
   Exemple : "Garantir 50% de produits bio (en retard)"
 
 ## widget_paragraph
-- Affiche un bloc de texte libre dans le dashboard
-- Copie le contenu TEXTUELLEMENT depuis les données du <context> — n'invente et ne reformule JAMAIS
-- Le champ \`contenu\` est un tableau de strings. Chaque entrée est rendue dans un paragraphe \`<p>\` séparé.
-- Pour un chantier : compose le contenu avec la météo en premier élément et le commentaire en second élément.
-  Premier élément : "Météo : <emoji> <libellé>"
-  Second élément : le commentaire copié textuellement depuis le <context>
-  Emojis météo : SOLEIL=☀️, COUVERT=🌤️, NUAGE=☁️, ORAGE=⛈️
-  Libellés météo : SOLEIL=Objectifs sécurisés, COUVERT=Objectifs atteignables, NUAGE=Appuis nécessaires, ORAGE=Objectifs compromis
-  Si pas de commentaire, un seul élément avec la ligne météo
-  Si ni meteo ni commentaire dans le <context>, OMETS ce widget
-- **variant** : utilise \`"warning"\` quand il y a une incohérence entre le statut et la météo du chantier.
-  Incohérence = le chantier a un statut "en_retard" ou "en_difficulte" MAIS sa météo est SOLEIL ou COUVERT.
-  Dans tous les autres cas, omets le champ variant (valeur par défaut = "default").
+- \`contenu\` est un **tableau JSON de strings**. Chaque string = un paragraphe distinct affiché dans son propre \`<p>\`.
+- **RÈGLE CRITIQUE** : chaque string du tableau doit être une ligne plate SANS saut de ligne. Pas de \\n, pas de <br/>, pas de ⏎, pas de ↵ à l'intérieur d'un élément. Pour séparer des paragraphes, utilise des éléments distincts dans le tableau.
+- Copie le contenu TEXTUELLEMENT depuis les données du <context> — n'invente et ne reformule JAMAIS.
+
+### Météo + commentaire d'un chantier
+Quand tu introduis un chantier avec widget_titre_section, place un widget_paragraph juste après avec :
+- Élément 1 : "Météo : <emoji> <libellé>" — une seule ligne, pas de retour chariot
+- Élément 2 (si commentaire disponible) : le commentaire copié mot pour mot depuis le champ \`commentaire\` du chantier dans le <context>
+- Si pas de commentaire : tableau à 1 élément (juste la météo)
+- Si ni meteo ni commentaire dans le <context> : OMETS le widget_paragraph
+
+Emojis : SOLEIL=☀️, COUVERT=🌤️, NUAGE=☁️, ORAGE=⛈️
+Libellés : SOLEIL=Objectifs sécurisés, COUVERT=Objectifs atteignables, NUAGE=Appuis nécessaires, ORAGE=Objectifs compromis
+
+Exemple correct :
+\`\`\`json
+{"type":"widget_paragraph","contenu":["Météo : ⛈️ Objectifs compromis","Le dispositif a connu peu d'évolutions depuis la dernière mise à jour."]}
+\`\`\`
+
+Exemple INCORRECT (tout dans un seul élément) :
+\`\`\`json
+{"type":"widget_paragraph","contenu":["Météo : ⛈️ Objectifs compromis\\nLe dispositif a connu peu d'évolutions."]}
+\`\`\`
+
+### Variant warning
+Utilise \`"variant":"warning"\` quand le chantier a un statut "en_retard" ou "en_difficulte" MAIS une météo SOLEIL ou COUVERT.
+Dans tous les autres cas, omets le champ variant.
 
 ## Patterns recommandés
 

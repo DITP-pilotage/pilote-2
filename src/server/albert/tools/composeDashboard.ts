@@ -177,7 +177,9 @@ const widgetParagraph = z
     contenu: z
       .array(z.string())
       .min(1)
-      .describe("Parties du paragraphe, chacune rendue dans un <p> séparé."),
+      .describe(
+        "Tableau de paragraphes. Chaque élément = un paragraphe séparé. JAMAIS de saut de ligne dans un élément.",
+      ),
     variant: z
       .enum(["default", "warning"])
       .optional()
