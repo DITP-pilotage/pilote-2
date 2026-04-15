@@ -149,19 +149,6 @@ export const WidgetCartographieValeurAvancement = ({
       }
       complementsCartographie={
         <ComplementsCartographie>
-          <ValeursRemarquables
-            valeurs={{
-              minimum: formatValeurVA(statistiques.minimum, unite),
-              mediane: formatValeurVA(statistiques.médiane, unite),
-              maximum: formatValeurVA(statistiques.maximum, unite),
-            }}
-            palette={{
-              minimum: "#8bcdb1",
-              mediane: "#47a882",
-              maximum: "#083a25",
-            }}
-            maille={maille}
-          />
           <LegendeDegradeVA
             libelle={libelleDegrade}
             valeurMin={
@@ -176,6 +163,19 @@ export const WidgetCartographieValeurAvancement = ({
             }
             couleurMin={COULEUR_MIN}
             couleurMax={COULEUR_MAX}
+          />
+          <ValeursRemarquables
+            valeurs={{
+              minimum: formatValeurVA(statistiques.minimum, unite),
+              mediane: formatValeurVA(statistiques.médiane, unite),
+              maximum: formatValeurVA(statistiques.maximum, unite),
+            }}
+            palette={{
+              minimum: "#8bcdb1",
+              mediane: "#47a882",
+              maximum: "#083a25",
+            }}
+            maille={maille}
           />
           <LegendeCartographie items={legendeItems} />
         </ComplementsCartographie>
