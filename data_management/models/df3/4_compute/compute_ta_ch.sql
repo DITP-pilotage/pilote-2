@@ -48,7 +48,9 @@ ta_zone_indic_pond AS (
             AND ta_zone_indic.zone_id = ponderation.zone_id
 ),
 
--- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente avec date<=max_date_taa_courant_today
+-- Pour chaque indic-zone,
+-- on garde la ligne avec une vaca la plus récente
+-- avec date<=max_date_taa_courant_today
 ta_zone_indic_pond_today_ordered AS (
     SELECT
         ta_zone_indic_pond.*,
@@ -68,17 +70,20 @@ ta_zone_indic_pond_today_ordered AS (
             ta_zone_indic_pond.chantier_id = max_date_vaca_ch.chantier_id
             AND ta_zone_indic_pond.zone_id = max_date_vaca_ch.zone_id
     WHERE
-        vaca IS NOT NULL
-        AND metric_date <= max_date_taa_courant_today
+        ta_zone_indic_pond.vaca IS NOT NULL
+        AND ta_zone_indic_pond.metric_date
+        <= max_date_vaca_ch.max_date_taa_courant_today
 ),
 
 ta_zone_indic_pond_today AS (
     SELECT *
     FROM ta_zone_indic_pond_today_ordered
-    WHERE ta_zone_indic_pond_today_ordered.rang = 1
+    WHERE rang = 1
 ),
 
--- Pour chaque indic-zone, on garde la ligne avec une vaca la plus récente avec date<=max_date_taa_courant_previous
+-- Pour chaque indic-zone,
+-- on garde la ligne avec une vaca la plus récente
+-- avec date<=max_date_taa_courant_previous
 ta_zone_indic_pond_prev_month_ordered AS (
     SELECT
         ta_zone_indic_pond.*,
@@ -99,17 +104,18 @@ ta_zone_indic_pond_prev_month_ordered AS (
             ta_zone_indic_pond.chantier_id = max_date_vaca_ch.chantier_id
             AND ta_zone_indic_pond.zone_id = max_date_vaca_ch.zone_id
     WHERE
-        vaca IS NOT NULL
-        AND metric_date <= max_date_taa_courant_previous
+        ta_zone_indic_pond.vaca IS NOT NULL
+        AND ta_zone_indic_pond.metric_date
+        <= max_date_vaca_ch.max_date_taa_courant_previous
 ),
 
 ta_zone_indic_pond_prev_month AS (
     SELECT * FROM ta_zone_indic_pond_prev_month_ordered
-    WHERE ta_zone_indic_pond_prev_month_ordered.rang = 1
+    WHERE rang = 1
 ),
 
 -- Calcul du TA chantier intermediaire 
---		car sans prendre en compte le nombre de TA indic remontés pour ce CH (PIL-227)
+-- car sans prendre en compte le nb de TA indic remontés pour ce CH (PIL-227)
 ta_ch_int AS (
     SELECT
         a.chantier_id,
@@ -131,32 +137,55 @@ ta_ch_int AS (
         ARRAY_AGG(a.taa_adate_pond) AS taa_adate_pond_agg,
         ARRAY_AGG(a.tag) AS tag_agg,
         ARRAY_AGG(a.tag_pond) AS tag_pond_agg,
-        -- Calcul du TA par somme des TA pondérés et bornage dans [0,100] (+handle null)
+        -- Calcul du TA par somme des TA pondérés et bornage dans [0,100]
         CASE
             WHEN BOOL_OR(a.taa_courant_pond IS NULL) THEN NULL
-            WHEN SUM(a.taa_courant_pond) > 100 THEN 100
-            WHEN SUM(a.taa_courant_pond) < 0 THEN 0
-            ELSE ROUND(SUM(a.taa_courant_pond)::NUMERIC, 3)
+            ELSE ROUND(
+                LEAST(
+                    GREATEST(
+                        SUM(a.taa_courant_pond)::NUMERIC,
+                        0
+                    ),
+                    100
+                ),
+                3
+            )
         END AS taa_courant_ch_int,
-        -- [adate] Calcul du TA par somme des TA pondérés et bornage dans [0,100] (+handle null)
+        -- [adate] Calcul TA par somme des TA pondérés et bornage dans [0,100]
         CASE
             WHEN BOOL_OR(a.taa_adate_pond IS NULL) THEN NULL
-            WHEN SUM(a.taa_adate_pond) > 100 THEN 100
-            WHEN SUM(a.taa_adate_pond) < 0 THEN 0
-            ELSE ROUND(SUM(a.taa_adate_pond)::NUMERIC, 3)
+            ELSE ROUND(
+                LEAST(
+                    GREATEST(
+                        SUM(a.taa_adate_pond)::NUMERIC,
+                        0
+                    ),
+                    100
+                ),
+                3
+            )
         END AS taa_adate_ch_int,
         CASE
             WHEN BOOL_OR(a.tag_pond IS NULL) THEN NULL
-            WHEN SUM(a.tag_pond) > 100 THEN 100
-            WHEN SUM(a.tag_pond) < 0 THEN 0
-            ELSE ROUND(SUM(a.tag_pond)::NUMERIC, 3)
+            ELSE ROUND(
+                LEAST(
+                    GREATEST(
+                        SUM(a.tag_pond)::NUMERIC,
+                        0
+                    ),
+                    100
+                ),
+                3
+            )
         END AS tag_ch_int,
         -- (PIL-253) Date du TA= date la plus tardive des VA indic du chantier
         MAX(a.metric_date) AS date_ta_int
     FROM
         (
-            -- On ne considère que les TA dont les indicateurs ont une pondération réelle > 0
-            -- 	pour le calcul du TA chantier (ie la somme des TA indicateurs pondérés)
+            -- On ne considère que les TA dont les indicateurs
+            -- ont une pondération réelle > 0
+            -- pour le calcul du TA chantier
+            -- (ie la somme des TA indicateurs pondérés)
             SELECT * FROM ta_zone_indic_pond_today
             WHERE poids_zone_reel > 0
             UNION
@@ -170,38 +199,47 @@ ta_ch_int AS (
 -- Ajout du code territoire_code
 ta_ch_int_terr_code AS (
     SELECT
-        a.*,
-        t.code AS territoire_code
-    FROM ta_ch_int AS a
+        ta_ch_int.*,
+        territoire.code AS territoire_code
+    FROM ta_ch_int
     LEFT JOIN
-        {{ source('db_schema_public', 'territoire') }} AS t
-        ON a.zone_id = t.zone_id
+        {{ source('db_schema_public', 'territoire') }} AS territoire
+        ON ta_ch_int.zone_id = territoire.zone_id
 ),
 
--- Ajout du nombre d'indics attendus pour chaque {chantier-zone}: n_indic_in_ta_expected
+-- Ajout du nombre d'indics attendus pour chaque {chantier-zone}:
+-- n_indic_in_ta_expected
 ta_ch_terr_code_indic_expected AS (
     SELECT
-        a.*,
-        b.n_indic_in_ta_expected
-    FROM ta_ch_int_terr_code AS a
+        ta_ch_int_terr_code.*,
+        get_n_indic_in_ta_expected.n_indic_in_ta_expected
+    FROM ta_ch_int_terr_code
     LEFT JOIN
-        {{ ref('get_n_indic_in_ta_expected') }} AS b
-        ON a.chantier_id = b.chantier_id AND a.zone_id = b.zone_id
+        {{ ref('get_n_indic_in_ta_expected') }} AS get_n_indic_in_ta_expected
+        ON
+            ta_ch_int_terr_code.chantier_id
+            = get_n_indic_in_ta_expected.chantier_id
+            AND ta_ch_int_terr_code.zone_id = get_n_indic_in_ta_expected.zone_id
 ),
 
 ta_ch_no_date AS (
--- (PIL-227) Ici, on va vérifier pour chaque {zone-chantier} que l'on a bien combiné le nombre de TA indic que l'on attendait.
---		On compare le nombre de TA indic combiné, avec le nombre d'indics ayant une pondération non vide
+-- (PIL-227) Ici, on va vérifier pour chaque {zone-chantier}
+-- que l'on a bien combiné le nombre de TA indic que l'on attendait.
+-- On compare le nb de TA indic combiné,
+-- avec le nb d'indics ayant une pondération non vide
     SELECT
         *,
         CASE
-            WHEN n_indic_in_ta = n_indic_in_ta_expected THEN taa_courant_ch_int
+            WHEN n_indic_in_ta = n_indic_in_ta_expected
+                THEN taa_courant_ch_int
         END AS taa_courant_ch,
         CASE
-            WHEN n_indic_in_ta = n_indic_in_ta_expected THEN taa_adate_ch_int
+            WHEN n_indic_in_ta = n_indic_in_ta_expected
+                THEN taa_adate_ch_int
         END AS taa_adate_ch,
         CASE
-            WHEN n_indic_in_ta = n_indic_in_ta_expected THEN tag_ch_int
+            WHEN n_indic_in_ta = n_indic_in_ta_expected
+                THEN tag_ch_int
         END AS tag_ch
     FROM ta_ch_terr_code_indic_expected
 ),

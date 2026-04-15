@@ -27,11 +27,13 @@ unnest_parents AS (
 ),
 
 find_children AS (
-    SELECT *
-    FROM get_child_zone_types AS a
+    SELECT
+        get_child_zone_types.*,
+        unnest_parents.*
+    FROM get_child_zone_types
     LEFT JOIN
-        unnest_parents AS b
-        ON a.zone_parent = b.parent AND a.child_zone_type = b.zone_type
+        unnest_parents AS unnest_parents
+        ON get_child_zone_types.zone_parent = unnest_parents.parent AND get_child_zone_types.child_zone_type = unnest_parents.zone_type
 ),
 
 fill_zone_no_child AS (

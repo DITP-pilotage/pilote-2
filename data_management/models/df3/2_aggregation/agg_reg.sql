@@ -24,7 +24,7 @@ mesure_last_params_reg AS (
         {{ ref('mesure_last') }}
             AS mesure_lastvalmonth
     LEFT JOIN
-        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }}
+        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} -- noqa: LT05
             AS metadata_indic
         ON mesure_lastvalmonth.indic_id = metadata_indic.indic_id
 ),
@@ -67,7 +67,7 @@ mesure_last_params_reg_user AS (
         AND metadata_zones.maille = 'REG'
 ),
 
--- Liste des indicateurs qui ont un paramétrage d'aggrégation pour les valeurs REG
+-- Liste des indicateurs qui ont un paramétrage d'aggrég pr les valeurs REG
 indic_agg_from_dept AS (
     SELECT
         metadata_indic.indic_id,
@@ -78,7 +78,7 @@ indic_agg_from_dept AS (
         metadata_indic.vc_reg_from,
         metadata_indic.vc_reg_op
     FROM
-        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }}
+        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} -- noqa: LT05
             AS metadata_indic
     WHERE
         metadata_indic.vi_reg_from NOT IN ('_', 'user_input')
@@ -110,13 +110,11 @@ mesure_last_params_reg_from_dept AS (
         indic_agg_from_dept.va_reg_op,
         indic_agg_from_dept.vc_reg_from,
         indic_agg_from_dept.vc_reg_op
-    FROM
-        {{ ref('mesure_last') }}
-            AS mesure_lastvalmonth
+    FROM indic_agg_from_dept
+    LEFT OUTER JOIN {{ ref('mesure_last') }} AS mesure_lastvalmonth
+        ON indic_agg_from_dept.indic_id = mesure_lastvalmonth.indic_id
     INNER JOIN {{ ref('zone_parent') }} AS zone_parent
         ON mesure_lastvalmonth.zone_id = zone_parent.zone_id
-    RIGHT JOIN indic_agg_from_dept
-        ON mesure_lastvalmonth.indic_id = indic_agg_from_dept.indic_id
     WHERE
         -- uniquement des données DEPT avec parent REG
         zone_parent.zone_type = 'DEPT' AND zone_parent.zone_parent_type = 'REG'
@@ -141,7 +139,8 @@ mesure_last_params_reg_from_dept AS (
 --	La sélection de la valeur correcte se fera ensuite en fonction des paramètres
 compute_op_sum_avg AS (
     SELECT
-        -- On met id=NULL lorsque la valeur est générée par aggrégation et non issue d'une mesure saisie
+        -- On met id=NULL lorsque la valeur est générée par aggrégation
+        -- et non issue d'une mesure saisie
         NULL::UUID AS id,
         MAX(date_import) AS date_import,
         zone_parent,
@@ -176,27 +175,27 @@ compute_op_selected AS (
             WHEN
                 compute_op_sum_avg.metric_type = 'vi'
                 AND indic_agg_from_dept.vi_reg_op = 'sum'
-                THEN op_sum
+                THEN compute_op_sum_avg.op_sum
             WHEN
                 compute_op_sum_avg.metric_type = 'vi'
                 AND indic_agg_from_dept.vi_reg_op = 'avg'
-                THEN op_avg
+                THEN compute_op_sum_avg.op_avg
             WHEN
                 compute_op_sum_avg.metric_type = 'va'
                 AND indic_agg_from_dept.va_reg_op = 'sum'
-                THEN op_sum
+                THEN compute_op_sum_avg.op_sum
             WHEN
                 compute_op_sum_avg.metric_type = 'va'
                 AND indic_agg_from_dept.va_reg_op = 'avg'
-                THEN op_avg
+                THEN compute_op_sum_avg.op_avg
             WHEN
                 compute_op_sum_avg.metric_type = 'vc'
                 AND indic_agg_from_dept.vc_reg_op = 'sum'
-                THEN op_sum
+                THEN compute_op_sum_avg.op_sum
             WHEN
                 compute_op_sum_avg.metric_type = 'vc'
                 AND indic_agg_from_dept.vc_reg_op = 'avg'
-                THEN op_avg
+                THEN compute_op_sum_avg.op_avg
             -- Si opération non supportée, ie hors de [sum, avg]
             ELSE -1.212121
         END AS op_selected
@@ -216,7 +215,6 @@ mesure_last_params_reg_aggregated AS (
         metric_type,
         op_selected AS metric_value
     FROM compute_op_selected
-    --order by indic_id, zone_id, metric_date, metric_type
 )
 
 -- On retourne donc les valeurs REG saisies, et attendues comme tel

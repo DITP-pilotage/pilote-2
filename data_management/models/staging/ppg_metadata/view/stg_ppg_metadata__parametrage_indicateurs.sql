@@ -4,7 +4,7 @@ source AS (
 
     SELECT *
     FROM
-        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }}
+        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} -- noqa: LT05
 
 ),
 
