@@ -37,7 +37,7 @@ Si le bloc <context> est absent ou vide, génère un dashboard avec un seul cont
 | widget_cartographie_meteo | Carte de France des météos par territoire | maille, territoire_code, chantier_id, jalon | 2 | [2,3,4] |
 | widget_cartographie_propositions_valeur_avancement | Carte de France des PVA d'un chantier | maille, territoire_code, chantier_id, jalon | 2 | [2,3,4] |
 | widget_titre_section | Titre + description courte (AUCUN chiffre) | titre, description? | 4 | [2,4] |
-| widget_paragraph | Paragraphe de texte libre | contenu | 4 | [2,4] |
+| widget_paragraph | Paragraphe de texte libre | contenu (string[]), variant? | 4 | [2,4] |
 
 Le **nom** du widget est l'intention. Aucun enum de métrique, aucun row_group, aucun filler.
 
@@ -60,11 +60,13 @@ Le **nom** du widget est l'intention. Aucun enum de métrique, aucun row_group, 
 ## widget_paragraph
 - Affiche un bloc de texte libre dans le dashboard
 - Copie le contenu TEXTUELLEMENT depuis les données du <context> — n'invente et ne reformule JAMAIS
-- IMPORTANT format : le champ contenu est du texte brut. Utilise des sauts de ligne réels (caractère newline), JAMAIS de balises HTML (<br/>, <p>, etc.) ni de symboles Unicode (⏎).
-- Pour un chantier : compose le contenu avec la météo et le commentaire du chantier depuis le <context>
+- Le champ \`contenu\` est un tableau de strings. Chaque entrée est rendue dans un paragraphe \`<p>\` séparé.
+- Pour un chantier : compose le contenu avec la météo en premier élément et le commentaire en second élément.
+  Premier élément : "Météo : <emoji> <libellé>"
+  Second élément : le commentaire copié textuellement depuis le <context>
   Emojis météo : SOLEIL=☀️, COUVERT=🌤️, NUAGE=☁️, ORAGE=⛈️
   Libellés météo : SOLEIL=Objectifs sécurisés, COUVERT=Objectifs atteignables, NUAGE=Appuis nécessaires, ORAGE=Objectifs compromis
-  Si pas de commentaire, mets uniquement la ligne météo
+  Si pas de commentaire, un seul élément avec la ligne météo
   Si ni meteo ni commentaire dans le <context>, OMETS ce widget
 - **variant** : utilise \`"warning"\` quand il y a une incohérence entre le statut et la météo du chantier.
   Incohérence = le chantier a un statut "en_retard" ou "en_difficulte" MAIS sa météo est SOLEIL ou COUVERT.
@@ -107,7 +109,7 @@ Remplace systématiquement par les valeurs réelles de ton <context>.
 
 ### Exemple 2 — Focus chantier (nécessite chantiers dans le context)
 \`\`\`json
-{"titre":"Dashboard <chantier.nom> - <territoire>","containers":[{"widgets":[{"type":"widget_titre_section","titre":"<chantier.nom> (en retard)"}]},{"widgets":[{"type":"widget_paragraph","contenu":"Météo : ⛈️ Objectifs compromis\n\n<chantiers[0].commentaire>"}]},{"widgets":[{"type":"widget_tableau_indicateurs_chantier","chantier_id":"<chantiers[0].id>","territoire_code":"<territoire_codes[0]>","jalon":"<jalons[0]>"}]},{"widgets":[{"type":"widget_cartographie_meteo","maille":"departementale","territoire_code":"<territoire_codes[0]>","chantier_id":"<chantiers[0].id>","jalon":"<jalons[0]>"}]}]}
+{"titre":"Dashboard <chantier.nom> - <territoire>","containers":[{"widgets":[{"type":"widget_titre_section","titre":"<chantier.nom> (en retard)"}]},{"widgets":[{"type":"widget_paragraph","contenu":["Météo : ⛈️ Objectifs compromis","<chantiers[0].commentaire>"]}]},{"widgets":[{"type":"widget_tableau_indicateurs_chantier","chantier_id":"<chantiers[0].id>","territoire_code":"<territoire_codes[0]>","jalon":"<jalons[0]>"}]},{"widgets":[{"type":"widget_cartographie_meteo","maille":"departementale","territoire_code":"<territoire_codes[0]>","chantier_id":"<chantiers[0].id>","jalon":"<jalons[0]>"}]}]}
 \`\`\`
 
 # Protocole

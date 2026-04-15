@@ -174,7 +174,10 @@ const widgetCartographiePropositionsValeurAvancement = z
 const widgetParagraph = z
   .object({
     type: z.literal("widget_paragraph"),
-    contenu: z.string().min(1).describe("Contenu textuel du paragraphe."),
+    contenu: z
+      .array(z.string())
+      .min(1)
+      .describe("Parties du paragraphe, chacune rendue dans un <p> séparé."),
     variant: z
       .enum(["default", "warning"])
       .optional()
