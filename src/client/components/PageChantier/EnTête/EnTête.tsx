@@ -47,7 +47,10 @@ const PageChantierEnTête: FunctionComponent<{
     )
     .filter(Boolean);
 
-  const queryParamString = getQueryParamString(getFiltresActifs());
+  const queryParamString = getQueryParamString({
+    ...getFiltresActifs(),
+    jalon,
+  });
   const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ""}`;
 
   const chantierEstArchive = chantier.statut === "ARCHIVE";
