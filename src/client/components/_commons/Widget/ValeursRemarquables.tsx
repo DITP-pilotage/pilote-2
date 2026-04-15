@@ -14,7 +14,7 @@ const ValeurRemarquable = ({
   value: string;
   color: string;
 }) => (
-  <div className="fr-mb-0 items-center flex flex-col p-2 basis-1/2 grow">
+  <div className="fr-mb-0 items-center flex flex-col p-0.5 basis-1/2 grow">
     <strong className="text-xl" style={{ color }}>
       {value}
     </strong>

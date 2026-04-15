@@ -47,12 +47,12 @@ export const PageAccueil: FunctionComponent<PageAccueilProps> = (props) => {
         nombreTotalChantiersAvecAlertes={props.nombreTotalChantiersAvecAlertes}
         territoireCode={props.territoireCode}
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="flex flex-col gap-2">
             <SectionAvancementMoyen />
             <SectionCartographieTA />
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
             <SectionRepartitionMeteos />
             <SectionChantiersSignales />
           </div>
