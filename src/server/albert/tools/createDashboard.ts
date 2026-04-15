@@ -5,7 +5,7 @@ import {
   type ComposeDashboardOutput,
 } from "@/server/albert/tools/composeDashboard";
 import { buildDashboardSystemPrompt } from "@/server/albert/subagents/dashboardSystemPrompt";
-import { Albert } from "@/server/albert/Albert";
+import { Albert, withOptionalDevTools } from "@/server/albert/Albert";
 
 export const createDashboardInputSchema = z.object({
   task: z
@@ -34,7 +34,7 @@ Décris précisément ce que l'utilisateur veut visualiser.`,
     inputSchema: createDashboardInputSchema,
     execute: async ({ task }, { abortSignal }) => {
       const result = await generateText({
-        model: albertProvider.chat("openweight-large"),
+        model: withOptionalDevTools(albertProvider.chat("openweight-large")),
         system: buildDashboardSystemPrompt(),
         prompt: task,
         output: Output.object({ schema: composeDashboardInputSchema }),

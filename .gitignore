@@ -57,3 +57,4 @@ public/_pagefind/
 
 #submodules
 src/content/
+.devtools

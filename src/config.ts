@@ -516,6 +516,12 @@ const config = convict({
       doc: "Clé API pour le service Albert (LLM Etalab)",
       env: "ALBERT_API_KEY",
     },
+    devTools: {
+      format: Boolean,
+      default: false,
+      doc: "Active le middleware devTools pour le monitoring des appels LLM Albert",
+      env: "ALBERT_DEV_TOOLS",
+    },
   },
 });
 

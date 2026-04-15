@@ -1,15 +1,18 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import {
+  convertToModelMessages,
   generateText as aiGenerateText,
-  streamText as aiStreamText,
   stepCountIs,
+  streamText as aiStreamText,
   tool,
   ToolSet,
   UIMessage,
-  convertToModelMessages,
+  wrapLanguageModel,
 } from "ai";
+import type { LanguageModelV3 } from "@ai-sdk/provider";
 import { z } from "zod";
 import { Prisma } from "@prisma/client";
+import { devToolsMiddleware } from "@ai-sdk/devtools";
 import { randomUUID } from "crypto";
 import { configuration } from "@/config";
 import { prisma } from "@/server/db/prisma";
@@ -20,6 +23,13 @@ import {
   exportRapportInputSchema,
   ExportRapportOutput,
 } from "@/server/albert/exportRapportSchema";
+
+export function withOptionalDevTools(model: LanguageModelV3): LanguageModelV3 {
+  if (!configuration().albert.devTools) {
+    return model;
+  }
+  return wrapLanguageModel({ model, middleware: devToolsMiddleware() });
+}
 
 export function createExportRapportTool({
   rapportFileStorage,
@@ -179,7 +189,7 @@ export class Albert {
     const modelMessages = await convertToModelMessages(messages);
 
     return aiStreamText({
-      model: albertProvider.chat(model),
+      model: withOptionalDevTools(albertProvider.chat(model)),
       system: systemPrompt,
       messages: modelMessages,
       tools,
