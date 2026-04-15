@@ -1,7 +1,6 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import {
   convertToModelMessages,
-  generateText as aiGenerateText,
   stepCountIs,
   streamText as aiStreamText,
   tool,
@@ -31,6 +30,7 @@ export function withOptionalDevTools(model: LanguageModelV3): LanguageModelV3 {
   return wrapLanguageModel({ model, middleware: devToolsMiddleware() });
 }
 
+// TODO : extraire dans son propre fichier
 export function createExportRapportTool({
   rapportFileStorage,
 }: {
@@ -60,6 +60,7 @@ export function createExportRapportTool({
   };
 }
 
+// TODO : extraire dans son propre fichier
 export const displayChoicesInputSchema = z.object({
   question: z
     .string()
@@ -136,37 +137,6 @@ export class Albert {
         output_tokens: usage?.outputTokens ?? 0,
         utilisateur_id: userId,
       },
-    });
-  }
-
-  static async generateText<OUTPUT>({
-    chatId,
-    prompt,
-    systemPrompt,
-    tools,
-    userId,
-    abortSignal,
-    output,
-  }: {
-    chatId: string;
-    prompt: string;
-    systemPrompt: string;
-    tools?: ToolSet;
-    userId: string;
-    abortSignal?: AbortSignal;
-    output?: OUTPUT;
-  }) {
-    const albertProvider = this.createProvider();
-
-    return aiGenerateText({
-      model: albertProvider.chat(DEFAULT_MODEL),
-      system: systemPrompt,
-      prompt: prompt,
-      stopWhen: stepCountIs(50),
-      onFinish: (event) => Albert.saveLlmCall({ chatId, userId, event }),
-      tools,
-      abortSignal,
-      output: output as Parameters<typeof aiGenerateText>[0]["output"],
     });
   }
 
