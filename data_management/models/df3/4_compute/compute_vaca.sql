@@ -9,7 +9,7 @@ WITH mesures_and_params AS (
         parametre_indic.param_vaca_op
     FROM {{ ref('pivot_mesures') }} AS pivot_mesures
     LEFT JOIN
-        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }}
+        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} -- noqa: LT05
             AS parametre_indic
         ON pivot_mesures.indic_id = parametre_indic.indic_id
 ),

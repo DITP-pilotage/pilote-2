@@ -3,15 +3,15 @@
 -- on joint les mesures avec les params associés
 WITH mesures_and_params AS (
     SELECT
-        a.*,
-        b.param_vacg_decumul_from,
-        b.param_vacg_partition_date,
-        b.param_vacg_op
-    FROM {{ ref('pivot_mesures') }} AS a
+        pivot_mesures.*,
+        parametre_indic.param_vacg_decumul_from,
+        parametre_indic.param_vacg_partition_date,
+        parametre_indic.param_vacg_op
+    FROM {{ ref('pivot_mesures') }} AS pivot_mesures
     LEFT JOIN
-        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }}
-            AS b
-        ON a.indic_id = b.indic_id
+        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} -- noqa: LT05
+            AS parametre_indic
+        ON pivot_mesures.indic_id = parametre_indic.indic_id
 ),
 
 -- On détermine la date de décumul des VA
@@ -60,12 +60,16 @@ perform_decumul AS (
             WHEN va IS NULL THEN NULL
             -- Si '_' -> on retourne va car pas de décumul demandé
             WHEN param_vacg_decumul_from = '_' THEN va
-            -- Sinon, on soustraite la va courante à la va précédente, dans la limite de la fenetre définie par decumul_vag_date
+            -- Sinon, on soustrait la va courante à la va précédente,
+            -- dans la limite de la fenetre définie par decumul_vag_date
             ELSE
                 COALESCE(
                     va
                     - LAG(va, 1)
-                        OVER (PARTITION BY indic_id, zone_id, decumul_vag_date ORDER BY metric_date),
+                        OVER (
+                            PARTITION BY indic_id, zone_id, decumul_vag_date
+                            ORDER BY metric_date
+                        ),
                     va
                 )
         END AS va_decumul
@@ -79,7 +83,7 @@ compute_vacg AS (
         CASE
         -- pas de calcul de vacg si pas de va 
             WHEN va IS NULL THEN NULL
-            -- Si 'current_value' -> on retourne directement va_decumul sans plus de calcul 
+            -- Si 'current_value' -> on retourne va_decumul
             WHEN param_vacg_op = 'current_value' THEN va_decumul
             WHEN param_vacg_partition_date = '_' THEN va_decumul
             -- sum avec les différentes fenetres autorisées

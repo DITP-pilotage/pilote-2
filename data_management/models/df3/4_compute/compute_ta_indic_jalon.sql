@@ -8,14 +8,14 @@ WITH get_val_jalons AS (
         jalons.jalon,
         last_vaca_jalon.vaca,
         last_vaca_jalon.date_vaca,
-        g.vacg,
-        g.date_vacg,
-        e.vig,
-        e.vig_date,
-        f.vca,
-        f.vca_date,
-        h.vcg,
-        h.vcg_date,
+        last_vacg_jalon.vacg,
+        last_vacg_jalon.date_vacg,
+        get_vig.vig,
+        get_vig.vig_date,
+        vca_jalon.vca,
+        vca_jalon.vca_date,
+        get_vcg.vcg,
+        get_vcg.vcg_date,
         prop.valeur_avancement_proposee AS vacp,
         prop.date_valeur_avancement AS date_valeur_proposition
     FROM {{ ref('stg_ppg_metadata__zones') }} AS zones
@@ -27,23 +27,23 @@ WITH get_val_jalons AS (
             AND zones.id = last_vaca_jalon.zone_id
             AND jalons.jalon = last_vaca_jalon.jalon
     LEFT JOIN
-        {{ ref('get_last_vacg_jalon') }} AS g
+        {{ ref('get_last_vacg_jalon') }} AS last_vacg_jalon
         ON
-            meta_indic.id = g.indic_id
-            AND zones.id = g.zone_id
-            AND jalons.jalon = g.jalon
+            meta_indic.id = last_vacg_jalon.indic_id
+            AND zones.id = last_vacg_jalon.zone_id
+            AND jalons.jalon = last_vacg_jalon.jalon
     LEFT JOIN
-        {{ ref('get_vig') }} AS e
-        ON meta_indic.id = e.indic_id AND zones.id = e.zone_id
+        {{ ref('get_vig') }} AS get_vig
+        ON meta_indic.id = get_vig.indic_id AND zones.id = get_vig.zone_id
     LEFT JOIN
-        {{ ref('get_vca_jalon') }} AS f
+        {{ ref('get_vca_jalon') }} AS vca_jalon
         ON
-            meta_indic.id = f.indic_id
-            AND zones.id = f.zone_id
-            AND jalons.jalon = f.jalon
+            meta_indic.id = vca_jalon.indic_id
+            AND zones.id = vca_jalon.zone_id
+            AND jalons.jalon = vca_jalon.jalon
     LEFT JOIN
-        {{ ref('get_vcg') }} AS h
-        ON meta_indic.id = h.indic_id AND zones.id = h.zone_id
+        {{ ref('get_vcg') }} AS get_vcg
+        ON meta_indic.id = get_vcg.indic_id AND zones.id = get_vcg.zone_id
     LEFT JOIN
         {{ ref('int_propositions_valeurs') }} AS prop
         ON
