@@ -50,8 +50,7 @@ import { RecupererEvolutionValeursAvancementTerritoiresQuery } from "./infrastru
 import { RecupererEvolutionTauxAvancementTerritoiresQuery } from "./infrastructure/queries/RecupererEvolutionTauxAvancementTerritoiresQuery";
 import { GetAvancementChantierQuery } from "./infrastructure/queries/GetAvancementChantierQuery";
 import { GetSituationChantierQuery } from "./infrastructure/queries/GetSituationChantierQuery";
-import { GetChantiersEnRetardQuery } from "./query/GetChantiersEnRetardQuery";
-import { GetChantiersEnDifficulteQuery } from "./query/GetChantiersEnDifficulteQuery";
+import { GetChantiersQuery } from "./query/GetChantiersQuery";
 import { GetChantierIndicateursQuery } from "./query/GetChantierIndicateursQuery";
 import { RecupererTauxAvancementTerritoireQuery } from "./query/RecupererTauxAvancementTerritoireQuery";
 import { RecupererStatistiquesAvancementTousChantiersPubliesQuery } from "./query/RecupererStatistiquesAvancementTousChantiersPubliesQuery";
@@ -59,8 +58,7 @@ import { RecupererStatistiquesAvancementTousChantiersPubliesQuery } from "./quer
 type ChantierExports = {
   recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
   mesuresIndicateurQuery: RecupererMesuresIndicateurParPeriodeQuery;
-  getChantiersEnRetardQuery: GetChantiersEnRetardQuery;
-  getChantiersEnDifficulteQuery: GetChantiersEnDifficulteQuery;
+  getChantiersQuery: GetChantiersQuery;
   getChantierIndicateursQuery: GetChantierIndicateursQuery;
 };
 
@@ -121,8 +119,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
   exports: [
     "recupererChantiersQuery",
     "mesuresIndicateurQuery",
-    "getChantiersEnRetardQuery",
-    "getChantiersEnDifficulteQuery",
+    "getChantiersQuery",
     "getChantierIndicateursQuery",
   ],
   register: (container, { asModuleClass }) => {
@@ -218,10 +215,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       ),
       getAvancementChantierQuery: asModuleClass(GetAvancementChantierQuery),
       getSituationChantierQuery: asModuleClass(GetSituationChantierQuery),
-      getChantiersEnRetardQuery: asModuleClass(GetChantiersEnRetardQuery),
-      getChantiersEnDifficulteQuery: asModuleClass(
-        GetChantiersEnDifficulteQuery,
-      ),
+      getChantiersQuery: asModuleClass(GetChantiersQuery),
       getChantierIndicateursQuery: asModuleClass(GetChantierIndicateursQuery),
       recupererTauxAvancementTerritoireQuery: asModuleClass(
         RecupererTauxAvancementTerritoireQuery,

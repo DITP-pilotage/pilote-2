@@ -1,6 +1,5 @@
 import { createGetTauxAvancementTerritoireTool } from "@/server/albert/tools/getTauxAvancementTerritoire";
-import { createGetChantiersEnRetardTool } from "@/server/albert/tools/getChantiersEnRetard";
-import { createGetChantiersEnDifficulteTool } from "@/server/albert/tools/getChantiersEnDifficulte";
+import { createGetChantiersTool } from "@/server/albert/tools/getChantiers";
 import { createGetChantierIndicateursTool } from "@/server/albert/tools/getChantierIndicateurs";
 import { createComposeDashboardTool } from "@/server/albert/tools/composeDashboard";
 import type { ChantierExports } from "@/server/chantiers/module";
@@ -26,12 +25,7 @@ type AlbertOwnCradle = {
   createGetTauxAvancementTerritoireTool: ReturnType<
     typeof createGetTauxAvancementTerritoireTool
   >;
-  createGetChantiersEnRetardTool: ReturnType<
-    typeof createGetChantiersEnRetardTool
-  >;
-  createGetChantiersEnDifficulteTool: ReturnType<
-    typeof createGetChantiersEnDifficulteTool
-  >;
+  createGetChantiersTool: ReturnType<typeof createGetChantiersTool>;
   createGetChantierIndicateursTool: ReturnType<
     typeof createGetChantierIndicateursTool
   >;
@@ -53,12 +47,7 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       createGetTauxAvancementTerritoireTool: asModuleFunction(
         createGetTauxAvancementTerritoireTool,
       ),
-      createGetChantiersEnRetardTool: asModuleFunction(
-        createGetChantiersEnRetardTool,
-      ),
-      createGetChantiersEnDifficulteTool: asModuleFunction(
-        createGetChantiersEnDifficulteTool,
-      ),
+      createGetChantiersTool: asModuleFunction(createGetChantiersTool),
       createGetChantierIndicateursTool: asModuleFunction(
         createGetChantierIndicateursTool,
       ),

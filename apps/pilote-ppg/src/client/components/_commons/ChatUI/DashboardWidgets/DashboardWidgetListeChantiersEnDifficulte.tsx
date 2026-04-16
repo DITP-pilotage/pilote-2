@@ -18,7 +18,7 @@ export const DashboardWidgetListeChantiersEnDifficulte = ({
     <DashboardChantiersListe
       titre="Chantiers en difficulté"
       territoireCode={territoireCode}
-      lignes={data.chantiers_en_difficulte.map((chantier) => ({
+      lignes={data.chantiers.map((chantier) => ({
         id: chantier.chantier.id,
         nom: chantier.chantier.nom,
         ecart: chantier.ecart,
