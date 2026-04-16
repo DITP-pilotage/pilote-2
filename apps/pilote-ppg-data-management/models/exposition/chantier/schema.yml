@@ -15,7 +15,53 @@ models:
     description: |
         Table d'exposition (utilisée par l'app web) des chantiers et de leurs propriétés
     columns:
-      - name: jalon
-        description: "Jalon pour lequel le TA chantier est retourné"
-      - name: taux_avancement
-        description: "TA annuel du chantier pour le jalon."
+      - name: id
+        description: "Identifiant unique du chantier."
+        data_tests:
+          - unique
+          - not_null
+      - name: nom
+        description: "Nom du chantier."
+      - name: perimetre_ids
+        description: "Liste des identifiants de périmètres associés au chantier."
+      - name: directeurs_administration_centrale
+        description: "Liste des noms des directeurs de l'administration centrale associés au chantier."
+      - name: directions_administration_centrale
+        description: "Liste des acronymes des directions de l'administration centrale associées au chantier."
+      - name: ministeres
+        description: "Liste des identifiants des ministères concernés par le chantier."
+      - name: ministeres_acronymes
+        description: "Liste des acronymes des ministères concernés par le chantier."
+      - name: directeurs_projet
+        description: "Nom du ou des directeurs de projet responsables du chantier."
+      - name: axe
+        description: "Nom de l'axe stratégique auquel le chantier est rattaché."
+      - name: ppg
+        description: "Nom de la PPG (Politique Prioritaire du Gouvernement) auquel le chantier est rattaché."
+      - name: directeurs_projet_mails
+        description: "Adresse email du ou des directeurs de projet responsables du chantier."
+      - name: est_barometre
+        description: "Indicateur booléen précisant si le chantier est suivi par un baromètre."
+      - name: est_territorialise
+        description: "Indicateur booléen précisant si le chantier est territorialisé."
+      - name: ate
+        description: >
+          Type d'ATE (ate, hors_ate_deconcentre, hors_ate_centralise) associé au chantier, en minuscules.
+      - name: possede_taux_avancement_departemental
+        description: "Indicateur booléen précisant si le chantier possède un taux d'avancement au niveau départemental."
+      - name: possede_taux_avancement_regional
+        description: "Indicateur booléen précisant si le chantier possède un taux d'avancement au niveau régional."
+      - name: possede_meteo_departemental
+        description: "Indicateur booléen précisant si le chantier possède une météo (indicateurs de suivi) au niveau départemental."
+      - name: possede_meteo_regional
+        description: "Indicateur booléen précisant si le chantier possède une météo (indicateurs de suivi) au niveau régional."
+      - name: statut
+        description: "Statut du chantier, par défaut 'PUBLIE' si non renseigné."
+      - name: cible_attendue
+        description: "Indicateur booléen précisant si le chantier a une cible attendue. Par défaut TRUE si non renseigné."
+      - name: mailles_applicables
+        description: "Liste des mailles géographiques applicables au chantier (NAT, REG, DEPT) selon sa territorialisation."
+      - name: conseiller_mail
+        description: "Adresse email du conseiller associé au chantier."
+      - name: a_supprimer
+        description: "Indicateur booléen utilisé pour marquer les chantiers à supprimer, toujours FALSE dans ce modèle."
