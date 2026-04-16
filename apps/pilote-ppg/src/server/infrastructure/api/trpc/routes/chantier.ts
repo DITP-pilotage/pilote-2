@@ -67,7 +67,7 @@ export const chantierRouter = créerRouteurTRPC({
               ctx.session.habilitations.lecture.chantiers.includes(id),
             )
           : await getContainer("chantiers")
-              .resolve("getChantierIdsDeBaseQuery")
+              .resolve("getChantiersHabilitesQuery")
               .execute(ctx.session.habilitations);
 
       return getContainer("chantiers")
@@ -165,17 +165,12 @@ export const chantierRouter = créerRouteurTRPC({
         input.chantierIds.length > 0
           ? input.chantierIds
           : await getContainer("chantiers")
-              .resolve("getChantierIdsDeBaseQuery")
+              .resolve("getChantiersHabilitesQuery")
               .execute(ctx.session.habilitations);
 
       return getContainer("chantiers")
         .resolve("récupérerStatistiquesAvancementChantiersUseCase")
-        .run(
-          chantierIds,
-          input.maille,
-          ctx.session.habilitations,
-          input.jalon,
-        );
+        .run(chantierIds, input.maille, ctx.session.habilitations, input.jalon);
     }),
   recupererTauxAvancementTerritoire: procédureProtégée
     .input(
@@ -234,13 +229,11 @@ export const chantierRouter = créerRouteurTRPC({
       ) {
         throw new TerritoireNonAutoriséErreur();
       }
-      return getContainer("chantiers")
-        .resolve("getChantiersQuery")
-        .execute({
-          territoireCode: input.territoireCode,
-          jalon: input.jalon,
-          view: "en_retard",
-        });
+      return getContainer("chantiers").resolve("getChantiersQuery").execute({
+        territoireCode: input.territoireCode,
+        jalon: input.jalon,
+        view: "en_retard",
+      });
     }),
   recupererChantiersEnDifficulte: procédureProtégée
     .input(
@@ -257,13 +250,11 @@ export const chantierRouter = créerRouteurTRPC({
       ) {
         throw new TerritoireNonAutoriséErreur();
       }
-      return getContainer("chantiers")
-        .resolve("getChantiersQuery")
-        .execute({
-          territoireCode: input.territoireCode,
-          jalon: input.jalon,
-          view: "en_difficulte",
-        });
+      return getContainer("chantiers").resolve("getChantiersQuery").execute({
+        territoireCode: input.territoireCode,
+        jalon: input.jalon,
+        view: "en_difficulte",
+      });
     }),
   recupererIndicateursChantier: procédureProtégée
     .input(

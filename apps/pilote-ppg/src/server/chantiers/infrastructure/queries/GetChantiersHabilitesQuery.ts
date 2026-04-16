@@ -1,13 +1,13 @@
+import { $Enums } from "@prisma/client";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
-import { $Enums } from "@prisma/client";
 import type { Inject } from "@/server/chantiers/module";
 
-export class GetChantierIdsDeBaseQuery {
+export class GetChantiersHabilitesQuery {
   constructor(private readonly deps: Inject<"prisma">) {}
 
   async execute(habilitations: Habilitations): Promise<string[]> {
-    const chantiersAutorisés = new Habilitation(
+    const chantiersAutorises = new Habilitation(
       habilitations,
     ).récupérerListeChantiersIdsAccessiblesEnLecture();
 
@@ -15,7 +15,7 @@ export class GetChantierIdsDeBaseQuery {
       .getInstance()
       .chantier_identite.findMany({
         where: {
-          id: { in: chantiersAutorisés },
+          id: { in: chantiersAutorises },
           statut: $Enums.type_statut.PUBLIE,
           NOT: { ministeres: { isEmpty: true } },
         },
