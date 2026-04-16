@@ -18,17 +18,17 @@ loadEnvConfig(projectDir); // ⚠️ À appeler avant nos imports, because Confi
       Durand,Pierre,dp.dir@example.com,DIR_PROJET,saisieCommentaire,NAT-FR,,CH-001,
       Durand,Pierre,dp.dir@example.com,DIR_PROJET,saisieIndicateur,TOUS,,,
 
- - Comment tester l'import d'un fichier CSV en local : 
+ - Comment tester l'import d'un fichier CSV en local :
       S'assurer d'avoir les variables d'env IMPORT_CLIENT_ID - IMPORT_CLIENT_SECRET - IMPORT_KEYCLOAK_URL configurées
-      npx ts-node scripts/importCSVUtilisateurs.ts /chemin/fichier/local/import.csv | npx pino-pretty
+      pnpm exec ts-node scripts/importCSVUtilisateurs.ts /chemin/fichier/local/import.csv | pnpm exec pino-pretty
 
- - Comment executer le script sur le serveur de prod :
-      scalingo --region osc-secnum-fr1 -a prod-pilote-ditp run bash 
+ - Comment exécuter le script sur le serveur de prod :
+      scalingo --region osc-secnum-fr1 -a prod-pilote-ditp run bash
       export NPM_CONFIG_PRODUCTION=false
-      npm ci
+      pnpm install --frozen-lockfile
       vim /tmp/import.csv
       copier le contenu du CSV local dans ce fichier et sauvegarder
-      npx ts-node scripts/importCSVUtilisateurs.ts /tmp/import.csv | npx pino-pretty | tee -a /tmp/import.log
+      pnpm exec ts-node scripts/importCSVUtilisateurs.ts /tmp/import.csv | pnpm exec pino-pretty | tee -a /tmp/import.log
 
   - Remarques :
       Le CSV doit être encodé en utf8, et nous n'avons testé que sans BOM.

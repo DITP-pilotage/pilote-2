@@ -7,8 +7,8 @@
 # 
 
 echo ">> Reset db"
-npm run database:init
-# npm run database:init-force pour éviter le prompt :p (Colin)
+pnpm database:init
+# pnpm database:init-force pour éviter le prompt :p (Colin)
 echo ">> Descente de prod"
 bash scripts/ddp_dump.sh
 bash scripts/ddp_restore.sh

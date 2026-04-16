@@ -38,23 +38,26 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          cache: "npm"
+          node-version-file: 'package.json'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
-        run: npx playwright install chromium --with-deps
+        run: pnpm exec playwright install chromium --with-deps
 
       - name: Run E2E tests
         id: playwright-tests
         run: |
           set -e
-          npx playwright test --workers=1
+          pnpm exec playwright test --workers=1
         env:
           CI: true
           PLAYWRIGHT_HEADLESS: true

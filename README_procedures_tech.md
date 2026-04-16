@@ -56,7 +56,7 @@ En local:
 # [local]
 ## (1) Lancer une db postgres
 ## (2) Lancer la webapp
-npm run dev
+pnpm dev
 ## (3) Initialiser la base de données
 bash scripts/prisma_reset_migrate_seed.sh
 ## (4) Lancer les datajobs en mode *full*
@@ -91,8 +91,8 @@ TODO refresh
 Afin de s'assurer que tous les tests et que les linters sont au vert avant de démarrer le développement lancer les deux commandes 
 
 ```sh
-npm run test 
-npm run lint
+pnpm test 
+pnpm lint
 ```
 
 
@@ -111,8 +111,8 @@ En local:
 
 ```sh
 # [local]
-npm run build
-npm run start
+pnpm build
+pnpm start
 ```
 
 ## Commandes utiles
@@ -121,26 +121,26 @@ TODO nettoyer les commandes inutiles (+ dans package.json):
 
 | Commande                                    | Fonction                                                                                    |
 |---------------------------------------------|---------------------------------------------------------------------------------------------|
-| npm run dev                                 | Lance le site en mode développeur (avec hot reload)                                         |
-| npm run build                               | Prépare les fichiers (optimisations) afin de pouvoir les mettre en prod                     |
-| npm run start                               | Lance un serveur en local qui utilise les fichiers créés pour la production (cf build)      |
-| npm run lint                                | Lance le linter ESLint, Typescript et Stylelint                                             |
-| npm run lint:fix                            | Lance le linter ESLint et Stylelint et tente de corriger les erreurs automatiquement        |
-| npm run lint:eslint                         | Lance le linter ESLint                                                                      |
-| npm run lint:tsc                            | Lance le linter Typescript                                                                  |
-| npm run lint:stylelint                      | Lance le linter Stylelint                                                                   |
-| npm run test                                | Lance tous les tests (front et back)                                                        |
-| npm run test:client                         | Lance tous les tests côté front (dossier src/client)                                        |
-| npm run test:client:unit                    | Lance les tests unitaires côté front (dossier src/client)                                   |
-| npm run test:client:integration             | Lance les tests d'intégration côté front (dossier src/client)                               |
-| npm run test:client:coverage                | Lance les tests d'intégration côté front et permet d'obtenir le code coverage               |
-| npm run test:server                         | Lance tous les tests côté back (dossier src/server)                                         |
-| npm run test:server:unit                    | Lance les tests unitaires côté back (dossier src/server)                                    |
-| npm run test:server:integration             | Lance les tests d'intégration côté back (dossier src/server)                                |
-| npm run test:server:domain:coverage         | Lance les tests du dossier domain dans le back et permet d'obtenir le code coverage         |
-| npm run test:server:infrastructure:coverage | Lance les tests du dossier infrastructure dans le back et permet d'obtenir le code coverage |
-| npm run test:database:init                  | Permet de réinitialiser la base de donnée de test sans aucune données                       |
-| npm run database:init                       | Permet de réinitialiser la base de donnée sans aucune données                               |
-| npm run database:seed                       | Permet de réinitialiser la base de donnée et de la populer avec un jeu de test              |
-| npm run postdeploy                          | Utilisé automatiquement lors du déploiement sur Scalingo afin de jouer les migrations Prisma|
-| npm ci                                      | Installation et mise à jour des dépendance node                                             |
+| pnpm dev                                 | Lance le site en mode développeur (avec hot reload)                                         |
+| pnpm build                               | Prépare les fichiers (optimisations) afin de pouvoir les mettre en prod                     |
+| pnpm start                               | Lance un serveur en local qui utilise les fichiers créés pour la production (cf build)      |
+| pnpm lint                                | Lance le linter ESLint, Typescript et Stylelint                                             |
+| pnpm lint:fix                            | Lance le linter ESLint et Stylelint et tente de corriger les erreurs automatiquement        |
+| pnpm lint:eslint                         | Lance le linter ESLint                                                                      |
+| pnpm lint:tsc                            | Lance le linter Typescript                                                                  |
+| pnpm lint:stylelint                      | Lance le linter Stylelint                                                                   |
+| pnpm test                                | Lance tous les tests (front et back)                                                        |
+| pnpm test:client                         | Lance tous les tests côté front (dossier src/client)                                        |
+| pnpm test:client:unit                    | Lance les tests unitaires côté front (dossier src/client)                                   |
+| pnpm test:client:integration             | Lance les tests d'intégration côté front (dossier src/client)                               |
+| pnpm test:client:coverage                | Lance les tests d'intégration côté front et permet d'obtenir le code coverage               |
+| pnpm test:server                         | Lance tous les tests côté back (dossier src/server)                                         |
+| pnpm test:server:unit                    | Lance les tests unitaires côté back (dossier src/server)                                    |
+| pnpm test:server:integration             | Lance les tests d'intégration côté back (dossier src/server)                                |
+| pnpm test:server:domain:coverage         | Lance les tests du dossier domain dans le back et permet d'obtenir le code coverage         |
+| pnpm test:server:infrastructure:coverage | Lance les tests du dossier infrastructure dans le back et permet d'obtenir le code coverage |
+| pnpm test:database:init                  | Permet de réinitialiser la base de donnée de test sans aucune données                       |
+| pnpm database:init                       | Permet de réinitialiser la base de donnée sans aucune données                               |
+| pnpm database:seed                       | Permet de réinitialiser la base de donnée et de la populer avec un jeu de test              |
+| pnpm postdeploy                          | Utilisé automatiquement lors du déploiement sur Scalingo afin de jouer les migrations Prisma|
+| pnpm install --frozen-lockfile                                      | Installation et mise à jour des dépendance node                                             |

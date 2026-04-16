@@ -7,7 +7,7 @@
 
 
 echo ">> Reset db"
-npm run database:init-force
+pnpm database:init-force
 
 bash scripts/ddp_dump.sh
 bash scripts/ddp_restore.sh

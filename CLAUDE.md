@@ -15,49 +15,55 @@ This is a Next.js application with:
 
 ## Development Commands
 
+### Prérequis
+Installer pnpm 10 globalement avant le premier install :
+```bash
+npm install -g pnpm@10
+```
+
 ### Essential Commands
 ```bash
 # Development server with pretty logging
-npm run dev
+pnpm dev
 
 # Build for production (includes migrations and seeding)
-npm run build
+pnpm build
 
 # Production server
-npm run start
+pnpm start
 
 # Database initialization (development)
-npm run database:init
+pnpm database:init
 
 # Database migration
-npm run database:migration
+pnpm database:migration
 ```
 
 ### Testing Commands
 ```bash
 # Run all tests
-npm run test
+pnpm test
 
 # Client-side tests only
-npm run test:client
+pnpm test:client
 
-# Server-side tests only  
-npm run test:server
+# Server-side tests only
+pnpm test:server
 
 # E2E tests with Playwright
-npm run test:e2e
+pnpm test:e2e
 ```
 
 ### Code Quality Commands
 ```bash
 # Run all linters (ESLint, TypeScript, Stylelint)
-npm run lint
+pnpm lint
 
 # Auto-fix linting issues
-npm run lint:fix
+pnpm lint:fix
 
 # Format code with Prettier
-npm run format
+pnpm format
 ```
 
 ## Architecture

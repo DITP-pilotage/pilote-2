@@ -1,3 +1,2 @@
-export NPM_CONFIG_PRODUCTION=false
-npm ci
-npx tsx scripts/suppressionUtilisateursDesactives.ts
+pnpm install --frozen-lockfile
+pnpm exec tsx scripts/suppressionUtilisateursDesactives.ts
