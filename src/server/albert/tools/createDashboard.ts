@@ -1,4 +1,4 @@
-import { generateText, Output, stepCountIs, tool } from "ai";
+import { tool } from "ai";
 import { z } from "zod";
 import {
   composeDashboardInputSchema,
@@ -6,7 +6,7 @@ import {
   type ComposeDashboardOutput,
 } from "@/server/albert/tools/composeDashboard";
 import { buildDashboardSystemPrompt } from "@/server/albert/subagents/dashboardSystemPrompt";
-import { Albert, withOptionalDevTools } from "@/server/albert/Albert";
+import { Albert } from "@/server/albert/Albert";
 
 const chantierContextSchema = z.object({
   id: z.string().describe("Identifiant du chantier (ex: CH-064)"),
@@ -138,8 +138,6 @@ function buildSubagentPrompt(
 }
 
 export function createCreateDashboardTool() {
-  const albertProvider = Albert.createProvider();
-
   return tool({
     description: `Délègue la composition d'un dashboard à un agent spécialisé.
 Utilise ce tool quand l'utilisateur demande un dashboard, un cockpit,
@@ -150,29 +148,18 @@ Fournis la description de ce que l'utilisateur veut visualiser ainsi que les ide
       { task, territoire_codes, jalons, chantiers },
       { abortSignal },
     ) => {
-      const result = await generateText({
-        model: withOptionalDevTools(albertProvider.chat("openweight-large")),
-        system: buildDashboardSystemPrompt(),
+      const output = await Albert.generateStructuredOutput({
+        systemPrompt: buildDashboardSystemPrompt(),
         prompt: buildSubagentPrompt(task, territoire_codes, jalons, chantiers),
-        stopWhen: stepCountIs(5),
-        output: Output.object({ schema: composeDashboardInputSchema }),
+        schema: composeDashboardInputSchema,
         abortSignal,
       });
 
-      if (!result.output) {
-        throw new Error("Le subagent n'a pas pu composer de dashboard.");
-      }
-
-      validateDashboardIdentifiers(
-        result.output,
-        territoire_codes,
-        jalons,
-        chantiers,
-      );
+      validateDashboardIdentifiers(output, territoire_codes, jalons, chantiers);
 
       return {
-        titre: result.output.titre,
-        containers: result.output.containers,
+        titre: output.titre,
+        containers: output.containers,
         _output_instructions: OUTPUT_INSTRUCTIONS,
       };
     },

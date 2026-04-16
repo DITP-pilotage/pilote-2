@@ -1,6 +1,8 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import {
   convertToModelMessages,
+  generateText,
+  Output,
   stepCountIs,
   streamText as aiStreamText,
   ToolSet,
@@ -10,6 +12,7 @@ import {
 import type { LanguageModelV3 } from "@ai-sdk/provider";
 import { Prisma } from "@prisma/client";
 import { devToolsMiddleware } from "@ai-sdk/devtools";
+import { z } from "zod";
 import { configuration } from "@/config";
 import { prisma } from "@/server/db/prisma";
 
@@ -64,6 +67,29 @@ export class Albert {
         utilisateur_id: userId,
       },
     });
+  }
+
+  static async generateStructuredOutput<T extends z.ZodType>({
+    systemPrompt,
+    prompt,
+    schema,
+    abortSignal,
+  }: {
+    systemPrompt: string;
+    prompt: string;
+    schema: T;
+    abortSignal?: AbortSignal;
+  }): Promise<z.infer<T>> {
+    const albertProvider = this.createProvider();
+    const result = await generateText({
+      model: withOptionalDevTools(albertProvider.chat(DEFAULT_MODEL)),
+      system: systemPrompt,
+      prompt,
+      stopWhen: stepCountIs(5),
+      output: Output.object({ schema }),
+      abortSignal,
+    });
+    return result.output;
   }
 
   static async streamText({
