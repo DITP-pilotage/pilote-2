@@ -67,6 +67,7 @@ describe("GetChantiersQuery — view en_retard", () => {
           est_en_retard: true,
           est_en_difficulte: false,
           synthese: null,
+          commentaires: { donnees: null, autresResultats: null },
         },
       ]);
     }),
@@ -505,6 +506,137 @@ describe("GetChantiersQuery — view en_retard", () => {
             date_meteo: "2025-06-01T00:00:00.000Z",
             date_commentaire: "2025-06-01T00:00:00.000Z",
           },
+        }),
+      ]);
+    }),
+  );
+
+  it(
+    "retourne les derniers commentaires publiés (données et autres résultats)",
+    createIntegrationTest(async () => {
+      // Given
+      await fixtures.chantierIdentite({
+        id: "CH-001",
+        ministeres_acronymes: ["MIN-01"],
+        statut: "PUBLIE",
+      });
+      await fixtures.chantierTerritoire({
+        id: "CH-001",
+        territoire_code: "NAT-FR",
+        code_insee: "FR",
+        maille: "NAT",
+        zone_id: "FRANCE",
+        est_applicable: true,
+      });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-001",
+        territoire_code: "NAT-FR",
+        code_insee: "FR",
+        maille: "NAT",
+        zone_id: "FRANCE",
+        jalon: 2025,
+        ecart: -15,
+      });
+      await fixtures.commentaire({
+        chantier_id: "CH-001",
+        territoire_code: "NAT-FR",
+        maille: "NAT",
+        code_insee: "FR",
+        type: "commentaires_sur_les_donnees",
+        contenu: "Ancien commentaire données",
+        date_modification: new Date("2025-01-01T00:00:00Z"),
+      });
+      await fixtures.commentaire({
+        chantier_id: "CH-001",
+        territoire_code: "NAT-FR",
+        maille: "NAT",
+        code_insee: "FR",
+        type: "commentaires_sur_les_donnees",
+        contenu: "Dernier commentaire données",
+        date_modification: new Date("2025-06-01T00:00:00Z"),
+      });
+      await fixtures.commentaire({
+        chantier_id: "CH-001",
+        territoire_code: "NAT-FR",
+        maille: "NAT",
+        code_insee: "FR",
+        type: "autres_resultats_obtenus",
+        contenu: "Autres résultats",
+        date_modification: new Date("2025-03-01T00:00:00Z"),
+      });
+
+      // When
+      const result = await query.execute({
+        territoireCode: "NAT-FR",
+        jalon: 2025,
+        view: "en_retard",
+      });
+
+      // Then
+      expect(result.chantiers).toEqual([
+        expect.objectContaining({
+          commentaires: {
+            donnees: {
+              contenu: "Dernier commentaire données",
+              date: "2025-06-01T00:00:00.000Z",
+            },
+            autresResultats: {
+              contenu: "Autres résultats",
+              date: "2025-03-01T00:00:00.000Z",
+            },
+          },
+        }),
+      ]);
+    }),
+  );
+
+  it(
+    "exclut les commentaires en brouillon",
+    createIntegrationTest(async () => {
+      // Given
+      await fixtures.chantierIdentite({
+        id: "CH-001",
+        ministeres_acronymes: ["MIN-01"],
+        statut: "PUBLIE",
+      });
+      await fixtures.chantierTerritoire({
+        id: "CH-001",
+        territoire_code: "NAT-FR",
+        code_insee: "FR",
+        maille: "NAT",
+        zone_id: "FRANCE",
+        est_applicable: true,
+      });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-001",
+        territoire_code: "NAT-FR",
+        code_insee: "FR",
+        maille: "NAT",
+        zone_id: "FRANCE",
+        jalon: 2025,
+        ecart: -15,
+      });
+      await fixtures.commentaire({
+        chantier_id: "CH-001",
+        territoire_code: "NAT-FR",
+        maille: "NAT",
+        code_insee: "FR",
+        type: "commentaires_sur_les_donnees",
+        contenu: "Brouillon",
+        statut: "BROUILLON",
+      });
+
+      // When
+      const result = await query.execute({
+        territoireCode: "NAT-FR",
+        jalon: 2025,
+        view: "en_retard",
+      });
+
+      // Then
+      expect(result.chantiers).toEqual([
+        expect.objectContaining({
+          commentaires: { donnees: null, autresResultats: null },
         }),
       ]);
     }),

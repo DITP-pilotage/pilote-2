@@ -16,6 +16,11 @@ type SyntheseResultat = {
   date_commentaire: string | null;
 };
 
+type CommentaireResult = {
+  contenu: string;
+  date: string;
+};
+
 export type ChantierResult = {
   chantier: ChantierIdentite;
   meteo: string | null;
@@ -25,6 +30,10 @@ export type ChantierResult = {
   est_en_retard: boolean;
   est_en_difficulte: boolean;
   synthese: SyntheseResultat | null;
+  commentaires: {
+    donnees: CommentaireResult | null;
+    autresResultats: CommentaireResult | null;
+  };
 };
 
 export type GetChantiersResult = {
@@ -67,6 +76,13 @@ export class GetChantiersQuery {
           orderBy: { date_modification: "desc" },
           take: 1,
         },
+        commentaires: {
+          where: {
+            statut: "PUBLIE",
+            type: { in: ["commentaires_sur_les_donnees", "autres_resultats_obtenus"] },
+          },
+          orderBy: { date_modification: "desc" },
+        },
       },
     });
 
@@ -77,6 +93,13 @@ export class GetChantiersQuery {
       const estEnRetard = ecart !== null && ecart <= -10;
       const estEnDifficulte =
         !estEnRetard && (meteo === "ORAGE" || meteo === "NUAGE");
+
+      const commentaireDonnees = ct.commentaires.find(
+        (c) => c.type === "commentaires_sur_les_donnees",
+      );
+      const commentaireAutresResultats = ct.commentaires.find(
+        (c) => c.type === "autres_resultats_obtenus",
+      );
 
       return {
         chantier: {
@@ -105,6 +128,20 @@ export class GetChantiersQuery {
                   null,
               }
             : null,
+        commentaires: {
+          donnees: commentaireDonnees
+            ? {
+                contenu: commentaireDonnees.contenu,
+                date: commentaireDonnees.date_modification.toISOString(),
+              }
+            : null,
+          autresResultats: commentaireAutresResultats
+            ? {
+                contenu: commentaireAutresResultats.contenu,
+                date: commentaireAutresResultats.date_modification.toISOString(),
+              }
+            : null,
+        },
       };
     });
 
