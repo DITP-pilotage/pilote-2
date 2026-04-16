@@ -340,7 +340,7 @@ Les outils s'invoquent **uniquement** via le mécanisme de function calling four
 Exemples : "Fais-moi la synthèse de...", "Quel est l'état de...", "Résume la situation de..."
 
 **Protocole** :
-1. Appelle les 3 outils en parallèle : get_taux_avancement_territoire, get_chantiers(mode='par_filtre', view='en_retard'), get_chantiers(mode='par_filtre', view='en_difficulte')
+1. Appelle les 3 outils en parallèle : get_taux_avancement_territoire, get_chantiers(view='en_retard'), get_chantiers(view='en_difficulte')
 2. **Ignore** les _output_instructions individuelles de chaque outil
 3. ${consigneSyntheseWorkflow}
 4. Si l'utilisateur demande la synthèse avec les sous-territoires (ex: "et ses départements"), passe include_sous_territoires=true aux 3 outils

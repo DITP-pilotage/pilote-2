@@ -34,23 +34,14 @@ export type GetChantiersResult = {
   chantiers: ChantierResult[];
 };
 
-type GetChantiersParId = {
-  mode: "par_id";
+export type GetChantiersParams = {
   territoireCode: string;
   jalon: number;
-  chantierIds: string[];
-};
-
-type GetChantiersParFiltre = {
-  mode: "par_filtre";
-  territoireCode: string;
-  jalon: number;
-  view: "all" | "en_retard" | "en_difficulte";
+  chantierIds?: string[];
+  view?: "all" | "en_retard" | "en_difficulte";
   tendance?: "HAUSSE" | "BAISSE" | "STAGNATION";
   meteo?: "SOLEIL" | "COUVERT" | "NUAGE" | "ORAGE";
 };
-
-export type GetChantiersParams = GetChantiersParId | GetChantiersParFiltre;
 
 export class GetChantiersQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}
@@ -63,6 +54,7 @@ export class GetChantiersQuery {
     });
 
     const where = this.buildWhere(params);
+    const view = params.view;
 
     const chantiersTerritoire = await prisma.chantier_territoire.findMany({
       where,
@@ -117,7 +109,6 @@ export class GetChantiersQuery {
       };
     });
 
-    const view = params.mode === "par_filtre" ? params.view : undefined;
     const sorted = this.sort(chantiers, view);
 
     return {
@@ -137,11 +128,11 @@ export class GetChantiersQuery {
       chantier_identite: { statut: "PUBLIE" },
     };
 
-    if (params.mode === "par_id") {
-      return { ...base, id: { in: params.chantierIds } };
-    }
-
     const filters: Prisma.chantier_territoireWhereInput[] = [];
+
+    if (params.chantierIds && params.chantierIds.length > 0) {
+      filters.push({ id: { in: params.chantierIds } });
+    }
 
     if (params.view === "en_retard") {
       filters.push({

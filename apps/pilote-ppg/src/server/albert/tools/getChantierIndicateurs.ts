@@ -33,7 +33,7 @@ export function createGetChantierIndicateursTool({
     return tool({
       description: `Récupère les valeurs des indicateurs de suivi (VI, VA, VC, TA) d'un chantier sur un territoire donné.
 
-⚠️ Cet outil ne sert PAS à obtenir les informations générales d'un chantier (météo, écart, tendance, synthèse). Pour cela, utilise get_chantiers en mode par_id.
+⚠️ Cet outil ne sert PAS à obtenir les informations générales d'un chantier (météo, écart, tendance, synthèse). Pour cela, utilise get_chantiers avec chantier_ids.
 
 Utilise cet outil UNIQUEMENT quand l'utilisateur demande explicitement :
 - Les indicateurs de suivi d'un chantier
