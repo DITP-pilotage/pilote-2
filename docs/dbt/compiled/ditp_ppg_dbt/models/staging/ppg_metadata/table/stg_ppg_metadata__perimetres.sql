@@ -1,23 +1,23 @@
-with
+WITH
 
-source as (
+source AS (
 
-    select * from "dev_pilote__6230"."raw_data"."metadata_perimetres"
+    SELECT * FROM "dev_pilote__6230"."raw_data"."metadata_perimetres"
 
 ),
 
-renamed as (
+renamed AS (
 
-    select
-        perimetre_id as id,
-        per_nom as nom,
-        per_short as polygramme,
-        per_picto as pictogramme,
-        per_porteur_id::text as ministere_id,
-        per_porteur_name_short as ministere_nom
+    SELECT
+        perimetre_id AS id,
+        per_nom AS nom,
+        per_short AS polygramme,
+        per_picto AS pictogramme,
+        per_porteur_id::TEXT AS ministere_id,
+        per_porteur_name_short AS ministere_nom
 
-    from source
+    FROM source
 
 )
 
-select * from renamed
+SELECT * FROM renamed

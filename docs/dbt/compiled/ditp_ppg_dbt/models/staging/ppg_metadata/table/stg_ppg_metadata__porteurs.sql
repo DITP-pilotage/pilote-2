@@ -1,27 +1,27 @@
-with
+WITH
 
-source as (
+source AS (
 
-    select * from "dev_pilote__6230"."raw_data"."metadata_porteurs"
+    SELECT * FROM "dev_pilote__6230"."raw_data"."metadata_porteurs"
 
 ),
 
-renamed as (
+renamed AS (
 
-    select
-        porteur_id::text as id,
-        porteur_short as acronyme,
-        porteur_name as nom,
-        porteur_desc as description,
-        porteur_type_id as porteur_type_id,
-        porteur_type_short as porteur_type_acronyme,
-        porteur_type_name as porteur_type_nom,
-        porteur_directeur as directeur,
-        porteur_name_short as nom_court,
-        porteur_picto as icone
+    SELECT
+        porteur_id::TEXT AS id,
+        porteur_short AS acronyme,
+        porteur_name AS nom,
+        porteur_desc AS description,
+        porteur_type_id,
+        porteur_type_short AS porteur_type_acronyme,
+        porteur_type_name AS porteur_type_nom,
+        porteur_directeur AS directeur,
+        porteur_name_short AS nom_court,
+        porteur_picto AS icone
 
-    from source
+    FROM source
 
 )
 
-select * from renamed
+SELECT * FROM renamed

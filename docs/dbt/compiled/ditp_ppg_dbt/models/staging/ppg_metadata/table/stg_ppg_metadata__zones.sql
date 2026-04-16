@@ -1,31 +1,32 @@
-with
+WITH
 
-source as (
+source AS (
 
-    select * from "dev_pilote__6230"."raw_data"."metadata_zones"
+    SELECT * FROM "dev_pilote__6230"."raw_data"."metadata_zones"
 
 ),
 
-renamed as (
+renamed AS (
 
-    select
-        zone_id as id,
+    SELECT
+        zone_id AS id,
         nom,
-        zone_code as code_insee,
-        zone_type as maille,
+        zone_code AS code_insee,
+        zone_type AS maille,
         zone_parent,
-        string_to_array(zone_parent, ' | ') as zone_parent_id
+        STRING_TO_ARRAY(zone_parent, ' | ') AS zone_parent_id
 
-    from source
+    FROM source
 
 ),
 
-filtered as (
+filtered AS (
 
-    select
-        *
-    from renamed
-    where zone_parent_id is NULL or (code_insee <> 'COM' and not 'COM' = ANY(zone_parent_id))
+    SELECT *
+    FROM renamed
+    WHERE
+        zone_parent_id IS NULL
+        OR (code_insee <> 'COM' AND NOT 'COM' = ANY(zone_parent_id))
 )
 
-select * from filtered
+SELECT * FROM filtered

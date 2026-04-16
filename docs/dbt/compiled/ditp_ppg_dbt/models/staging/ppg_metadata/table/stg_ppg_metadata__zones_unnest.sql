@@ -1,21 +1,22 @@
-with
+WITH
 
-source as (
+source AS (
 
-    select * from "dev_pilote__6230"."raw_data"."metadata_zones"
+    SELECT * FROM "dev_pilote__6230"."raw_data"."metadata_zones"
 
 ),
 
-renamed as (
+renamed AS (
 
     SELECT
         zone_id,
-        nom as zone_nom,
+        nom AS zone_nom,
         zone_code,
         zone_type,
-        UNNEST(string_to_array(COALESCE(trim(zone_parent), 'N/A'), ' | ')) as zone_id_parent
+        UNNEST(STRING_TO_ARRAY(COALESCE(TRIM(zone_parent), 'N/A'), ' | '))
+            AS zone_id_parent
     FROM source
 
 )
 
-select * from renamed
+SELECT * FROM renamed

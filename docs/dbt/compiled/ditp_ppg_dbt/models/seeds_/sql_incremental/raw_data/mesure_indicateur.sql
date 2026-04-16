@@ -1,9 +1,13 @@
 -- depends_on: "dev_pilote__6230"."public"."rapport_import_mesure_indicateur"
 
-select 
-    "date_import"::timestamptz(3),
-    "indic_id","metric_date","metric_type","metric_value","zone_id",
-    "id"::uuid,
-    "rapport_id"::uuid
+SELECT
+    date_import::TIMESTAMPTZ (3),
+    indic_id,
+    metric_date,
+    metric_type,
+    metric_value,
+    zone_id,
+    id::UUID,
+    rapport_id::UUID
 
-from "dev_pilote__6230"."seeds"."mesure_indicateur_py"
+FROM "dev_pilote__6230"."seeds"."mesure_indicateur_py"

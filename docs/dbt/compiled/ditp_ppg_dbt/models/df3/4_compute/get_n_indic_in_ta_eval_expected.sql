@@ -1,11 +1,11 @@
-select
+SELECT
     chantier_id,
     zone_id,
-    count(zone_id) as n_indic_in_ta_expected
-from "dev_pilote__6230"."marts"."int_ponderation_reelle"
-where
+    COUNT(zone_id) AS n_indic_in_ta_expected
+FROM "dev_pilote__6230"."marts"."int_ponderation_reelle"
+WHERE
     poids_eval_zone_reel > 0
-group by
+GROUP BY
     chantier_id,
     zone_id
-order by chantier_id, zone_id
+ORDER BY chantier_id, zone_id

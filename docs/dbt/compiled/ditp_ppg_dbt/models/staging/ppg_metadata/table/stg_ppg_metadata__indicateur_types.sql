@@ -1,21 +1,21 @@
-with
+WITH
 
-source as (
+source AS (
 
-    select * from "dev_pilote__6230"."raw_data"."metadata_indicateur_types"
+    SELECT * FROM "dev_pilote__6230"."raw_data"."metadata_indicateur_types"
 
 ),
 
-renamed as (
+renamed AS (
 
-    select
-        indic_type_id as id,
-        indic_type_name as nom,
-        indic_type_descr as description,
-        indic_type_rank as rang
+    SELECT
+        indic_type_id AS id,
+        indic_type_name AS nom,
+        indic_type_descr AS description,
+        indic_type_rank AS rang
 
-    from source
+    FROM source
 
 )
 
-select * from renamed
+SELECT * FROM renamed

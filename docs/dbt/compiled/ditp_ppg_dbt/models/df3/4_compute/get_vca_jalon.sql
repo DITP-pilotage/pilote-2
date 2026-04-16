@@ -9,19 +9,18 @@ vca_non_null_sorted AS (
         zone_id,
         metric_date,
         vc,
-        date_part('year', metric_date) AS jalon,
-        rank()
+        DATE_PART('year', metric_date) AS jalon,
+        RANK()
             OVER (
                 PARTITION BY
-                    indic_id, zone_id, date_part('year', metric_date)
+                    indic_id, zone_id, DATE_PART('year', metric_date)
                 ORDER BY metric_date DESC
             )
-        AS r
+            AS r
     FROM "dev_pilote__6230"."df3"."pivot_mesures"
     -- vc NON NULL
-    WHERE vc IS NOT null
+    WHERE vc IS NOT NULL
 )
-
 
 SELECT
     indic_id,

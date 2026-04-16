@@ -4,37 +4,77 @@
 --  VACA, VACG, VCA, VCG, VIG
 
 WITH current_year_vca AS (
-    select indic_id, zone_id, vca, vca_date
-    from "dev_pilote__6230"."df3"."get_vca_jalon"
-    where jalon = date_part('year', now())
+    SELECT
+        indic_id,
+        zone_id,
+        vca,
+        vca_date
+    FROM "dev_pilote__6230"."df3"."get_vca_jalon"
+    WHERE jalon = DATE_PART('year', NOW())
 )
 
-select
-a.id,
-a.date_import,
-a.indic_id,
-a.zone_id,
-a.metric_date,
-a.vi,
-a.va,
-a.vc,
-b.vaca,
-c.vacg,
-vacp.vacp as vacp,
-vacp.metric_date as date_valeur_proposition,
--- VCA pour l'année COURANTE (rule::620)
-d2.vca as vca_courant, d2.vca_date as vca_courant_date,
--- VCA pour l'année de la a.metric_date (pas utilisé, mais valeur avant rule::620)
-d.vca as vca_adate, d.vca_date as vca_adate_date,
-e.vig, e.vig_date,
-f.vcg, f.vcg_date
-from "dev_pilote__6230"."df3"."pivot_mesures" a
-left join "dev_pilote__6230"."df3"."compute_vaca" b on a.indic_id = b.indic_id and a.zone_id = b.zone_id and a.metric_date = b.metric_date
-left join "dev_pilote__6230"."df3"."compute_vacg" c on a.indic_id = c.indic_id and a.zone_id = c.zone_id and a.metric_date = c.metric_date
-left join "dev_pilote__6230"."df3"."compute_vacp" vacp on a.indic_id = vacp.indic_id and a.zone_id = vacp.zone_id
--- La VCA ici est à l'année de la VA (année de a.metric_date)
-left join "dev_pilote__6230"."df3"."get_vca_jalon" d on a.indic_id = d.indic_id and a.zone_id = d.zone_id and date_part('year', a.metric_date) = d.jalon
+SELECT
+    pivot_mesures.id,
+    pivot_mesures.date_import,
+    pivot_mesures.indic_id,
+    pivot_mesures.zone_id,
+    pivot_mesures.metric_date,
+    pivot_mesures.vi,
+    pivot_mesures.va,
+    pivot_mesures.vc,
+    vaca.vaca,
+    vacg.vacg,
+    vacp.vacp,
+    vacp.metric_date AS date_valeur_proposition,
+    -- VCA pour l'année COURANTE (rule::620)
+    current_year_vca.vca AS vca_courant,
+    current_year_vca.vca_date AS vca_courant_date,
+    -- VCA pour l'année de la pivot_mesures.metric_date
+    -- (pas utilisé, mais valeur avant rule::620)
+    vca_jalon.vca AS vca_adate,
+    vca_jalon.vca_date AS vca_adate_date,
+    get_vig.vig,
+    get_vig.vig_date,
+    get_vcg.vcg,
+    get_vcg.vcg_date
+FROM "dev_pilote__6230"."df3"."pivot_mesures" AS pivot_mesures
+LEFT JOIN
+    "dev_pilote__6230"."df3"."compute_vaca" AS vaca
+    ON
+        pivot_mesures.indic_id = vaca.indic_id
+        AND pivot_mesures.zone_id = vaca.zone_id
+        AND pivot_mesures.metric_date = vaca.metric_date
+LEFT JOIN
+    "dev_pilote__6230"."df3"."compute_vacg" AS vacg
+    ON
+        pivot_mesures.indic_id = vacg.indic_id
+        AND pivot_mesures.zone_id = vacg.zone_id
+        AND pivot_mesures.metric_date = vacg.metric_date
+LEFT JOIN
+    "dev_pilote__6230"."df3"."compute_vacp" AS vacp
+    ON
+        pivot_mesures.indic_id = vacp.indic_id
+        AND pivot_mesures.zone_id = vacp.zone_id
+-- La VCA ici est à l'année de la VA (année de pivot_mesures.metric_date)
+LEFT JOIN
+    "dev_pilote__6230"."df3"."get_vca_jalon" AS vca_jalon
+    ON
+        pivot_mesures.indic_id = vca_jalon.indic_id
+        AND pivot_mesures.zone_id = vca_jalon.zone_id
+        AND DATE_PART('year', pivot_mesures.metric_date) = vca_jalon.jalon
 -- La VCA ici est en date de l'année courante
-left join current_year_vca d2 on a.indic_id = d2.indic_id and a.zone_id = d2.zone_id
-left join "dev_pilote__6230"."df3"."get_vig" e on a.indic_id = e.indic_id and a.zone_id = e.zone_id
-left join "dev_pilote__6230"."df3"."get_vcg" f on a.indic_id = f.indic_id and a.zone_id = f.zone_id
+LEFT JOIN
+    current_year_vca
+    ON
+        pivot_mesures.indic_id = current_year_vca.indic_id
+        AND pivot_mesures.zone_id = current_year_vca.zone_id
+LEFT JOIN
+    "dev_pilote__6230"."df3"."get_vig" AS get_vig
+    ON
+        pivot_mesures.indic_id = get_vig.indic_id
+        AND pivot_mesures.zone_id = get_vig.zone_id
+LEFT JOIN
+    "dev_pilote__6230"."df3"."get_vcg" AS get_vcg
+    ON
+        pivot_mesures.indic_id = get_vcg.indic_id
+        AND pivot_mesures.zone_id = get_vcg.zone_id

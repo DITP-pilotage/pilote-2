@@ -1,21 +1,21 @@
-with
+WITH
 
-source as (
+source AS (
 
-    select * from "dev_pilote__6230"."raw_data"."metadata_axes"
+    SELECT * FROM "dev_pilote__6230"."raw_data"."metadata_axes"
 
 ),
 
-renamed as (
+renamed AS (
 
-    select
-        axe_id as id,
-        axe_short as nom_court,
-        axe_name as nom,
-        axe_desc as description
+    SELECT
+        axe_id AS id,
+        axe_short AS nom_court,
+        axe_name AS nom,
+        axe_desc AS description
 
-    from source
+    FROM source
 
 )
 
-select * from renamed
+SELECT * FROM renamed

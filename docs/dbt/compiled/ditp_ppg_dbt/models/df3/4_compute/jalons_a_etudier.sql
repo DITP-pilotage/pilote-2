@@ -1,4 +1,4 @@
 SELECT
-    generate_series(
-        2022, date_part('year', now())::int, 1
+    GENERATE_SERIES(
+        2022, DATE_PART('year', NOW())::INT, 1
     ) AS jalon

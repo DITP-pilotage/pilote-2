@@ -1,3 +1,5 @@
 
 
-SELECT gen_random_uuid() as id, now() as derniere_date_execution
+SELECT
+    GEN_RANDOM_UUID() AS id,
+    NOW() AS derniere_date_execution

@@ -24,7 +24,7 @@ renamed AS (
         indic_hidden_pilote AS est_cache_dans_pilote,
         CAST(zg_applicable AS TEXT) AS zone_groupe_applicable,
         indic_territorialise AS est_territorialise,
-        CASE 
+        CASE
             WHEN indic_territorialise THEN mailles
             ELSE 'NAT'
         END AS maille_la_plus_fine

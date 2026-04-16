@@ -6,25 +6,41 @@
 --  VACA, VACG, VCA, VCG, VIG
 
 SELECT
-    COALESCE(a.indic_id, b.indic_id) AS indic_id,
-    COALESCE(a.zone_id, b.zone_id) AS zone_id,
-    COALESCE(a.jalon, b.jalon) AS jalon,
-    COALESCE(a.date_vaca, b.date_vacg) AS date_valeur,
-    a.vaca,
-    b.vacg,
-    vca.vca as vca_courant, 
-    vca.vca_date as vca_courant_date,
-    e.vig, e.vig_date,
-    f.vcg, f.vcg_date
-FROM 
-"dev_pilote__6230"."df3"."get_last_vaca_jalon" AS a
+    COALESCE(last_vaca_jalon.indic_id, last_vacg_jalon.indic_id) AS indic_id,
+    COALESCE(last_vaca_jalon.zone_id, last_vacg_jalon.zone_id) AS zone_id,
+    COALESCE(last_vaca_jalon.jalon, last_vacg_jalon.jalon) AS jalon,
+    COALESCE(last_vaca_jalon.date_vaca, last_vacg_jalon.date_vacg)
+        AS date_valeur,
+    last_vaca_jalon.vaca,
+    last_vacg_jalon.vacg,
+    vca_jalon.vca AS vca_courant,
+    vca_jalon.vca_date AS vca_courant_date,
+    get_vig.vig,
+    get_vig.vig_date,
+    get_vcg.vcg,
+    get_vcg.vcg_date
+FROM
+    "dev_pilote__6230"."df3"."get_last_vaca_jalon" AS last_vaca_jalon
 LEFT JOIN
-    "dev_pilote__6230"."df3"."get_last_vacg_jalon" AS b
+    "dev_pilote__6230"."df3"."get_last_vacg_jalon" AS last_vacg_jalon
     ON
-        a.indic_id = b.indic_id
-        AND a.zone_id = b.zone_id
-        AND a.date_vaca = b.date_vacg
-        AND a.jalon = b.jalon
-left join "dev_pilote__6230"."df3"."get_vca_jalon" vca on a.indic_id =vca.indic_id and a.zone_id =vca.zone_id and a.jalon=vca.jalon 
-left join "dev_pilote__6230"."df3"."get_vig" e on a.indic_id =e.indic_id and a.zone_id =e.zone_id
-left join "dev_pilote__6230"."df3"."get_vcg" f on a.indic_id =f.indic_id and a.zone_id =f.zone_id
+        last_vaca_jalon.indic_id = last_vacg_jalon.indic_id
+        AND last_vaca_jalon.zone_id = last_vacg_jalon.zone_id
+        AND last_vaca_jalon.date_vaca = last_vacg_jalon.date_vacg
+        AND last_vaca_jalon.jalon = last_vacg_jalon.jalon
+LEFT JOIN
+    "dev_pilote__6230"."df3"."get_vca_jalon" AS vca_jalon
+    ON
+        last_vaca_jalon.indic_id = vca_jalon.indic_id
+        AND last_vaca_jalon.zone_id = vca_jalon.zone_id
+        AND last_vaca_jalon.jalon = vca_jalon.jalon
+LEFT JOIN
+    "dev_pilote__6230"."df3"."get_vig" AS get_vig
+    ON
+        last_vaca_jalon.indic_id = get_vig.indic_id
+        AND last_vaca_jalon.zone_id = get_vig.zone_id
+LEFT JOIN
+    "dev_pilote__6230"."df3"."get_vcg" AS get_vcg
+    ON
+        last_vaca_jalon.indic_id = get_vcg.indic_id
+        AND last_vaca_jalon.zone_id = get_vcg.zone_id

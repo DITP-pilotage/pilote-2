@@ -1,18 +1,18 @@
-select 
-    "id"::uuid,
-    "email",
-    "nom",
-    "prenom",
-    "profil_code",
-    NULL::uuid as auteur_id_creation,
-    NULL::uuid as auteur_id_modification,
-    "date_modification"::timestamp(3),
-    "date_creation"::timestamp(3),
-    "fonction",
-    NULL::timestamp(3) as date_desactivation,
-    NULL::timestamp(3) as date_visualisation_video_accueil,
-    NULL::text as auteur_email_modification,
-    NULL::text as auteur_email_creation,
-    NULL::timestamp(3) as date_visualisation_popup_infolettre,
-    NULL::timestamp(3) as date_inscription_infolettre
-from "dev_pilote__6230"."seeds"."utilisateur_py"
+SELECT
+    id::UUID,
+    email,
+    nom,
+    prenom,
+    profil_code,
+    NULL::UUID AS auteur_id_creation,
+    NULL::UUID AS auteur_id_modification,
+    date_modification::TIMESTAMP(3),
+    date_creation::TIMESTAMP(3),
+    fonction,
+    NULL::TIMESTAMP(3) AS date_desactivation,
+    NULL::TIMESTAMP(3) AS date_visualisation_video_accueil,
+    NULL::TEXT AS auteur_email_modification,
+    NULL::TEXT AS auteur_email_creation,
+    NULL::TIMESTAMP(3) AS date_visualisation_popup_infolettre,
+    NULL::TIMESTAMP(3) AS date_inscription_infolettre
+FROM "dev_pilote__6230"."seeds"."utilisateur_py"

@@ -1,28 +1,28 @@
 
 
-with
+WITH
 
-source as (
+source AS (
 
-    select * from "dev_pilote__6230"."raw_data"."commentaires"
+    SELECT * FROM "dev_pilote__6230"."raw_data"."commentaires"
 
 ),
 
-renamed as (
+renamed AS (
 
-    select
+    SELECT
         chantier_id,
-        type,
+        "type",
         contenu,
-        TO_DATE(date,'DD/MM/YYYY') as date,
-        NULL::TEXT as auteur,
+        TO_DATE("date", 'DD/MM/YYYY') AS "date",
+        NULL::TEXT AS auteur,
         auteur_email,
         maille,
-        CAST(code_insee as VARCHAR) as code_insee,
-        TO_DATE(date_meteo,'DD/MM/YYYY') as date_meteo,
+        code_insee::VARCHAR AS code_insee,
+        TO_DATE(date_meteo, 'DD/MM/YYYY') AS date_meteo,
         meteo
-    from source
+    FROM source
 
 )
 
-select * from renamed
+SELECT * FROM renamed

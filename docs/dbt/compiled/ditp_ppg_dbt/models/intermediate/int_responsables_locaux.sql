@@ -43,7 +43,7 @@ LEFT JOIN
     "dev_pilote__6230"."public"."territoire" AS territoire
     ON resp_locaux.territoire_code = territoire.code
 LEFT JOIN "dev_pilote__6230"."raw_data"."stg_ppg_metadata__zones" AS zones
-    ON zones.id = territoire.zone_id
+    ON territoire.zone_id = zones.id
 WHERE
     (
         resp_locaux.profil_code IN (
