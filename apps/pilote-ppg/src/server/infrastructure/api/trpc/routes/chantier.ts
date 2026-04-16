@@ -58,13 +58,21 @@ export const chantierRouter = créerRouteurTRPC({
         jalon: z.number(),
       }),
     )
-    .query(({ input, ctx }) => {
-      const chantierIdsAutorisés = input.chantierIds.filter((id) =>
-        ctx.session.habilitations.lecture.chantiers.includes(id),
-      );
+    .query(async ({ input, ctx }) => {
+      // Quand aucun chantier n'est spécifié, on utilise tous les chantiers de base
+      // (publiés, avec ministère, autorisés) pour être cohérent avec la page d'accueil
+      const chantierIds =
+        input.chantierIds.length > 0
+          ? input.chantierIds.filter((id) =>
+              ctx.session.habilitations.lecture.chantiers.includes(id),
+            )
+          : await getContainer("chantiers")
+              .resolve("getChantierIdsDeBaseQuery")
+              .execute(ctx.session.habilitations);
+
       return getContainer("chantiers")
         .resolve("recupererTauxAvancementsChantierTerritoiresQuery")
-        .run({ chantierIds: chantierIdsAutorisés, jalon: input.jalon });
+        .run({ chantierIds, jalon: input.jalon });
     }),
   recupererRepartitionMeteos: procédureProtégée
     .input(
@@ -150,11 +158,20 @@ export const chantierRouter = créerRouteurTRPC({
         jalon: z.number(),
       }),
     )
-    .query(({ input, ctx }) => {
+    .query(async ({ input, ctx }) => {
+      // Quand aucun chantier n'est spécifié, on utilise tous les chantiers de base
+      // (publiés, avec ministère, autorisés) pour être cohérent avec la page d'accueil
+      const chantierIds =
+        input.chantierIds.length > 0
+          ? input.chantierIds
+          : await getContainer("chantiers")
+              .resolve("getChantierIdsDeBaseQuery")
+              .execute(ctx.session.habilitations);
+
       return getContainer("chantiers")
         .resolve("récupérerStatistiquesAvancementChantiersUseCase")
         .run(
-          input.chantierIds,
+          chantierIds,
           input.maille,
           ctx.session.habilitations,
           input.jalon,
