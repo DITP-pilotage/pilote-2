@@ -7,9 +7,11 @@ import { useExportImage } from "./useExportImage";
 
 export const ExportableWidget = ({
   nomFichier,
+  boutonExportCsv,
   children,
 }: {
   nomFichier: string;
+  boutonExportCsv?: ReactNode;
   children: ReactNode;
 }) => {
   const { ref, modeExport, enregistrerCommeImage, copierDansLePressePapiers } =
@@ -37,6 +39,7 @@ export const ExportableWidget = ({
         >
           <Icone className="w-4 h-4" icone={ClipboardIcon} />
         </button>
+        {boutonExportCsv}
       </div>
     </div>
   );

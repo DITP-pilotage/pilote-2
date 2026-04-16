@@ -8,6 +8,7 @@ type ComparaisonTerritoiresProps<T extends string> = {
   typeAlternatif: (typeActuel: T) => T;
   options: { value: T; label: string }[];
   renderCarte: (typeCarte: T) => ReactNode;
+  renderBoutonExportCsv: (typeCarte: T) => ReactNode;
   nomFichier: string;
   mode?: "card" | "inline";
 };
@@ -17,6 +18,7 @@ export const ComparaisonTerritoires = <T extends string>({
   typeAlternatif,
   options,
   renderCarte,
+  renderBoutonExportCsv,
   nomFichier,
   mode = "card",
 }: ComparaisonTerritoiresProps<T>) => {
@@ -59,6 +61,7 @@ export const ComparaisonTerritoires = <T extends string>({
               onComparer={activerComparaison}
               onSupprimer={() => supprimerPanneau("gauche")}
               renderCarte={renderCarte}
+              renderBoutonExportCsv={renderBoutonExportCsv}
               nomFichier={nomFichier}
             />
           </Suspense>
@@ -75,6 +78,7 @@ export const ComparaisonTerritoires = <T extends string>({
                 onComparer={activerComparaison}
                 onSupprimer={() => supprimerPanneau("droite")}
                 renderCarte={renderCarte}
+                renderBoutonExportCsv={renderBoutonExportCsv}
                 nomFichier={nomFichier}
               />
             </Suspense>
