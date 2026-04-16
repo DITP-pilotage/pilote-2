@@ -1,4 +1,4 @@
-import { Dispatch, FormEventHandler, SetStateAction } from "react";
+import { Dispatch, FormEventHandler, SetStateAction, useState } from "react";
 import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
 
 type UploadFichierFormulaireElement = {
@@ -11,10 +11,13 @@ export const usePublierIndicateur = (
   rapportId: string,
   setEstFichierPublie: Dispatch<SetStateAction<boolean>>,
 ) => {
+  const [isPending, setIsPending] = useState(false);
+
   const publierLeFichier: FormEventHandler<
     UploadFichierFormulaireElement
   > = async (event) => {
     event.preventDefault();
+    setIsPending(true);
 
     await fetch(
       `/api/chantier/${chantierId}/indicateur/${indicateurId}?rapportId=${rapportId}`,
@@ -29,8 +32,11 @@ export const usePublierIndicateur = (
       .then((response) => {
         setEstFichierPublie(true);
         return response.json() as Promise<DetailValidationFichierContrat>;
+      })
+      .finally(() => {
+        setIsPending(false);
       });
   };
 
-  return { publierLeFichier };
+  return { publierLeFichier, isPending };
 };

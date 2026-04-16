@@ -13,7 +13,7 @@ interface FormulairePublierImportIndicateurProps {
 const FormulairePublierImportIndicateur: FunctionComponent<
   FormulairePublierImportIndicateurProps
 > = ({ chantierId, indicateurId, rapportId, setEstFichierPublie }) => {
-  const { publierLeFichier } = usePublierIndicateur(
+  const { publierLeFichier, isPending } = usePublierIndicateur(
     chantierId,
     indicateurId,
     rapportId,
@@ -27,9 +27,12 @@ const FormulairePublierImportIndicateur: FunctionComponent<
     >
       <SubmitBouton
         className="ml-8"
+        disabled={isPending}
         label={
-          wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
-            .ETAPE_PUBLIER_FICHIER.LABEL_BOUTON_PROCHAINE_ETAPE
+          isPending
+            ? "Publication en cours..."
+            : wording.PAGE_IMPORT_MESURE_INDICATEUR.SECTION_ETAPE_IMPORT
+                .ETAPE_PUBLIER_FICHIER.LABEL_BOUTON_PROCHAINE_ETAPE
         }
       />
     </form>
