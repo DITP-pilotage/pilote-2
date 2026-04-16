@@ -122,6 +122,9 @@ pipenv run sqlfluff lint <path-to-file>
 pipenv run sqlfluff fix <path-to-file>
 ```
 
+Afin de merger une PR, il est nécessaire qu'il n'y ait aucune erreur de lint. 
+Il est possible de lancer séquentiellement les commandes de fix et de lint via la commande `make lint-sql`.
+
 ## Hypothèses actuelles pour les transformations
 
 - Les données sources sont importées dans le schéma `raw_data` par l'étape précédente (job d'import);
