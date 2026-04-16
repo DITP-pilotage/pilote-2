@@ -72,6 +72,7 @@ export async function POST(request: Request) {
     });
     const getChantiers = createGetChantiersTool({
       territoiresAccessibles,
+      chantiersAccessibles: session.habilitations.lecture.chantiers,
     });
     const getChantierIndicateurs = createGetChantierIndicateursTool({
       territoiresAccessibles,
