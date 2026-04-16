@@ -1,5 +1,5 @@
-import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Prisma } from "@prisma/client";
+import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 type ChantierIdentite = {
   id: string;
@@ -76,8 +76,7 @@ export class GetChantiersQuery {
       const meteo = ct.meteo;
       const estEnRetard = ecart !== null && ecart <= -10;
       const estEnDifficulte =
-        !estEnRetard &&
-        (meteo === "ORAGE" || meteo === "NUAGE");
+        !estEnRetard && (meteo === "ORAGE" || meteo === "NUAGE");
 
       return {
         chantier: {
