@@ -108,7 +108,13 @@ export function createGetChantiersTool({
   getChantiersQuery: GetChantiersQuery;
   territoireResolver: TerritoireResolver;
 }) {
-  return ({ territoiresAccessibles }: { territoiresAccessibles: string[] }) => {
+  return ({
+    territoiresAccessibles,
+    chantiersAccessibles,
+  }: {
+    territoiresAccessibles: string[];
+    chantiersAccessibles: string[];
+  }) => {
     return tool({
       description: `Outil principal pour obtenir des données sur les chantiers (PPG). C'est l'outil à utiliser dès qu'un utilisateur mentionne un chantier (CH-XXX) ou demande des informations sur des chantiers.
 
@@ -129,6 +135,27 @@ Quand include_sous_territoires=true, retourne aussi les chantiers de chaque sous
           );
         }
 
+        const filteredInput =
+          input.mode === "par_id"
+            ? {
+                ...input,
+                chantier_ids: input.chantier_ids.filter((id) =>
+                  chantiersAccessibles.includes(id),
+                ),
+              }
+            : input;
+
+        if (
+          filteredInput.mode === "par_id" &&
+          filteredInput.chantier_ids.length === 0
+        ) {
+          return {
+            resultats: [],
+            _output_instructions:
+              "Aucun des chantiers demandés n'est accessible pour cet utilisateur.",
+          };
+        }
+
         const codes = await territoireResolver.resoudre(
           input.territoire_code,
           input.include_sous_territoires,
@@ -139,7 +166,7 @@ Quand include_sous_territoires=true, retourne aussi les chantiers de chaque sous
 
         const resultats = await Promise.all(
           codesAccessibles.map((code) =>
-            getChantiersQuery.execute(toQueryParams(input, code)),
+            getChantiersQuery.execute(toQueryParams(filteredInput, code)),
           ),
         );
 
