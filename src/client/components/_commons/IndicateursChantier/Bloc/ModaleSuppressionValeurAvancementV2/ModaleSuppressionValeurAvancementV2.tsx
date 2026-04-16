@@ -35,6 +35,7 @@ export const ModaleSuppressionValeurAvancementV2: FunctionComponent<
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
     etapeSuivanteEstDesactive,
+    isPending,
   } = useModaleSuppressionValeurAvancementV2({
     indicateur,
     detailIndicateur,
@@ -233,8 +234,14 @@ export const ModaleSuppressionValeurAvancementV2: FunctionComponent<
                     >
                       Étape précédente
                     </button>
-                    <button className="fr-btn" type="submit">
-                      Supprimer la proposition
+                    <button
+                      className="fr-btn"
+                      disabled={isPending}
+                      type="submit"
+                    >
+                      {isPending
+                        ? "Suppression en cours..."
+                        : "Supprimer la proposition"}
                     </button>
                   </div>
                 </>

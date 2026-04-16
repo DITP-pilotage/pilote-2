@@ -257,6 +257,10 @@ const useModalePropositionValeurAvancementV2 = () => {
     ],
   );
 
+  const isPending =
+    mutationCreerPropositonValeurAvancement.isPending ||
+    mutationModifierPropositonValeurAvancement.isPending;
+
   return {
     reactHookForm,
     creerPropositonValeurAvancement,
@@ -265,6 +269,7 @@ const useModalePropositionValeurAvancementV2 = () => {
     EtapeSuivanteEstDesactive,
     estUneModificationDeProposition,
     optionsMois,
+    isPending,
   };
 };
 
