@@ -237,7 +237,6 @@ export const chantierRouter = créerRouteurTRPC({
       return getContainer("chantiers")
         .resolve("getChantiersQuery")
         .execute({
-          mode: "par_filtre",
           territoireCode: input.territoireCode,
           jalon: input.jalon,
           view: "en_retard",
@@ -261,7 +260,6 @@ export const chantierRouter = créerRouteurTRPC({
       return getContainer("chantiers")
         .resolve("getChantiersQuery")
         .execute({
-          mode: "par_filtre",
           territoireCode: input.territoireCode,
           jalon: input.jalon,
           view: "en_difficulte",
