@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import { DashboardPanel } from "./DashboardPanel";
+import { DashboardWidgetTitle } from "./DashboardWidgetTitle";
 
 export const DashboardCardShell = ({
   label,
@@ -11,7 +12,7 @@ export const DashboardCardShell = ({
   children: ReactNode;
 }) => (
   <DashboardPanel className="flex flex-col justify-between">
-    <div className="text-xs uppercase tracking-wide text-gray-500">{label}</div>
+    <DashboardWidgetTitle segments={[label]} />
     <div className="flex-1 flex items-center justify-center mt-2">
       {children}
     </div>

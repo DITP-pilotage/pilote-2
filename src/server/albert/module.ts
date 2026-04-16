@@ -7,7 +7,7 @@ import type { ChantierExports } from "@/server/chantiers/module";
 import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase";
 import { PrismaTerritoireResolver } from "@/server/albert/infrastructure/PrismaTerritoireResolver";
 import { FsRapportFileStorage } from "@/server/albert/infrastructure/FsRapportFileStorage";
-import { createExportRapportTool } from "@/server/albert/Albert";
+import { createExportRapportTool } from "@/server/albert/tools/exportRapport";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import type { RapportFileStorage } from "@/server/albert/domain/RapportFileStorage";
 import {

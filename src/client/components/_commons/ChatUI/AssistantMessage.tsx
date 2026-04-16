@@ -1,13 +1,10 @@
-import { Fragment, memo } from "react";
+import { memo } from "react";
 import { toast } from "sonner";
 import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { ToolCallIndicator } from "@/components/_commons/ChatUI/ToolCallIndicator";
 import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMessageText";
 import { AssistantLoader } from "@/components/_commons/ChatUI/AssistantLoader";
-import { BaseDisplayTool } from "@/components/_commons/ChatUI/BaseDisplayTool";
 import { ExportRapportDownload } from "@/components/_commons/ChatUI/ExportRapportDownload";
-import { ChantierIndicateursTable } from "@/components/_commons/ChatUI/ChantierIndicateursTable";
-import { ChantierIndicateursSkeleton } from "@/components/_commons/ChatUI/ChantierIndicateursSkeleton";
 import { DashboardRender } from "@/components/_commons/ChatUI/DashboardRender";
 import { DashboardLoader } from "@/components/_commons/ChatUI/DashboardWidgets/DashboardLoader";
 import { extractMessageText } from "@/components/_commons/ChatUI/utils";
@@ -55,31 +52,10 @@ export const AssistantMessage = memo(function AssistantMessage({
           if (
             part.type === "tool-get_taux_avancement_territoire" ||
             part.type === "tool-get_chantiers_en_retard" ||
-            part.type === "tool-get_chantiers_en_difficulte"
+            part.type === "tool-get_chantiers_en_difficulte" ||
+            part.type === "tool-get_chantier_indicateurs"
           ) {
             return <ToolCallIndicator key={index} part={part} />;
-          }
-          if (part.type === "tool-get_chantier_indicateurs") {
-            const shouldDisplay =
-              part.state !== "input-streaming" &&
-              part.input?.afficher !== false;
-            return (
-              <Fragment key={index}>
-                <ToolCallIndicator part={part} />
-                {shouldDisplay &&
-                  (part.state === "output-available" ? (
-                    <BaseDisplayTool>
-                      <ChantierIndicateursTable
-                        indicateurs={part.output.resultats.indicateurs}
-                      />
-                    </BaseDisplayTool>
-                  ) : part.state !== "output-error" ? (
-                    <BaseDisplayTool>
-                      <ChantierIndicateursSkeleton />
-                    </BaseDisplayTool>
-                  ) : null)}
-              </Fragment>
-            );
           }
           return null;
         })}
@@ -122,7 +98,7 @@ export const AssistantMessage = memo(function AssistantMessage({
           );
         }
 
-        if (part.type === "tool-compose_dashboard") {
+        if (part.type === "tool-create_dashboard") {
           if (part.state === "output-error") return null;
           if (part.state === "output-available") {
             return (

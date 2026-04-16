@@ -1,6 +1,7 @@
 import { validateUIMessages } from "ai";
 import { z } from "zod";
-import { Albert, displayChoicesTool } from "@/server/albert/Albert";
+import { Albert } from "@/server/albert/Albert";
+import { displayChoicesTool } from "@/server/albert/tools/displayChoices";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
 import {
@@ -11,6 +12,7 @@ import {
 } from "@/server/albert/detecteurIntention";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { getContainer } from "@/server/dependances";
+import { createCreateDashboardTool } from "@/server/albert/tools/createDashboard";
 
 const chatRequestSchema = z
   .object({
@@ -51,9 +53,6 @@ export async function POST(request: Request) {
     const createGetChantierIndicateursTool = container.resolve(
       "createGetChantierIndicateursTool",
     );
-    const createComposeDashboardTool = container.resolve(
-      "createComposeDashboardTool",
-    );
     const createExportRapportTool = container.resolve(
       "createExportRapportTool",
     );
@@ -85,12 +84,11 @@ export async function POST(request: Request) {
     const getChantierIndicateurs = createGetChantierIndicateursTool({
       territoiresAccessibles,
     });
-    const composeDashboard = createComposeDashboardTool({
-      habilitations: session.habilitations,
-    });
     const exportRapport = createExportRapportTool({
       userId: session.user.id,
     });
+
+    const createDashboard = createCreateDashboardTool();
 
     const tools = {
       get_taux_avancement_territoire: getTauxAvancementTerritoire,
@@ -98,7 +96,7 @@ export async function POST(request: Request) {
       get_chantiers_en_difficulte: getChantiersEnDifficulte,
       get_chantier_indicateurs: getChantierIndicateurs,
       display_choices: displayChoicesTool,
-      ...(capacities.dashboard ? { compose_dashboard: composeDashboard } : {}),
+      ...(capacities.dashboard ? { create_dashboard: createDashboard } : {}),
       ...(capacities.exportRapport ? { export_rapport: exportRapport } : {}),
     };
 

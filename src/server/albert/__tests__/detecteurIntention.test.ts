@@ -82,6 +82,26 @@ describe("detecterCapacities", () => {
     expect(result.dashboard).toBe(true);
   });
 
+  it("détecte une demande de dashboard via 'indicateurs'", () => {
+    // when
+    const result = detecterCapacities(
+      "Montre-moi les indicateurs du chantier CH-064",
+    );
+
+    // then
+    expect(result.dashboard).toBe(true);
+  });
+
+  it("détecte une demande de dashboard via 'indicateur'", () => {
+    // when
+    const result = detecterCapacities(
+      "Affiche l'indicateur principal du territoire",
+    );
+
+    // then
+    expect(result.dashboard).toBe(true);
+  });
+
   it("détecte un export via 'exporte'", () => {
     // when
     const result = detecterCapacities("Exporte ce rapport en PDF");
@@ -227,7 +247,7 @@ describe("dashboardDejaCompose", () => {
     expect(result).toBe(false);
   });
 
-  it("retourne true quand un message assistant contient un tool-compose_dashboard", () => {
+  it("retourne true quand un message assistant contient un tool-create_dashboard", () => {
     // given
     const messages: PiloteUIMessage[] = [
       {
@@ -241,10 +261,14 @@ describe("dashboardDejaCompose", () => {
         parts: [
           { type: "text", text: "Voici le dashboard demandé." },
           {
-            type: "tool-compose_dashboard",
+            type: "tool-create_dashboard",
             toolCallId: "call-1",
             state: "output-available",
-            input: { titre: "Test", containers: [] },
+            input: {
+              task: "Cockpit Bretagne",
+              territoire_codes: ["REG-53"],
+              jalons: [2026],
+            },
             output: {
               titre: "Test",
               containers: [],

@@ -4,93 +4,9 @@ import {
   créerRouteurTRPC,
   procédureProtégée,
 } from "@/server/infrastructure/api/trpc/trpc";
-import { Albert, displayChoicesTool } from "@/server/albert/Albert";
-import { buildChatSystemPrompt } from "@/server/albert/systemPrompt";
-import { detecterCapacities } from "@/server/albert/detecteurIntention";
 import { getContainer } from "@/server/dependances";
-import { RecupererVariableContenuUseCase } from "@/server/gestion-contenu/usecases/RecupererVariableContenuUseCase";
-import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 export const albertRouter = créerRouteurTRPC({
-  chat: procédureProtégée
-    .input(
-      z.object({
-        chatId: z.string().min(1),
-        prompt: z.string().min(1),
-      }),
-    )
-    .mutation(async ({ input, ctx }) => {
-      const estAskAiActif = new RecupererVariableContenuUseCase().run({
-        nomVariableContenu: "NEXT_PUBLIC_FF_ASK_AI",
-      }) as boolean;
-
-      if (!estAskAiActif && ctx.session.profil !== ProfilEnum.DITP_ADMIN) {
-        throw new NotFoundError("Not found");
-      }
-
-      const territoiresAccessibles =
-        ctx.session.habilitations.lecture.territoires;
-
-      const container = getContainer("albert");
-      const createGetTauxAvancementTerritoireTool = container.resolve(
-        "createGetTauxAvancementTerritoireTool",
-      );
-      const createGetChantiersEnRetardTool = container.resolve(
-        "createGetChantiersEnRetardTool",
-      );
-      const createGetChantiersEnDifficulteTool = container.resolve(
-        "createGetChantiersEnDifficulteTool",
-      );
-      const createGetChantierIndicateursTool = container.resolve(
-        "createGetChantierIndicateursTool",
-      );
-      const createExportRapportTool = container.resolve(
-        "createExportRapportTool",
-      );
-
-      const capacities = detecterCapacities(input.prompt);
-
-      const systemPrompt = buildChatSystemPrompt({
-        territoiresAccessibles,
-        capacities,
-      });
-      const getTauxAvancementTerritoire = createGetTauxAvancementTerritoireTool(
-        {
-          habilitations: ctx.session.habilitations,
-        },
-      );
-      const getChantiersEnRetard = createGetChantiersEnRetardTool({
-        territoiresAccessibles,
-      });
-      const getChantiersEnDifficulte = createGetChantiersEnDifficulteTool({
-        territoiresAccessibles,
-      });
-      const getChantierIndicateurs = createGetChantierIndicateursTool({
-        territoiresAccessibles,
-      });
-      const exportRapport = createExportRapportTool({
-        userId: ctx.session.user.id,
-      });
-
-      const tools = {
-        get_taux_avancement_territoire: getTauxAvancementTerritoire,
-        get_chantiers_en_retard: getChantiersEnRetard,
-        get_chantiers_en_difficulte: getChantiersEnDifficulte,
-        get_chantier_indicateurs: getChantierIndicateurs,
-        display_choices: displayChoicesTool,
-        ...(capacities.exportRapport ? { export_rapport: exportRapport } : {}),
-      };
-
-      return Albert.generateText({
-        chatId: input.chatId,
-        prompt: input.prompt,
-        systemPrompt,
-        userId: ctx.session.user.id,
-        tools,
-      });
-    }),
-
   evaluer: procédureProtégée
     .input(
       z.discriminatedUnion("evaluation", [

@@ -1,11 +1,17 @@
 import type { UIDataTypes, UIMessage } from "ai";
 import type { z } from "zod";
-import { displayChoicesInputSchema } from "@/server/albert/Albert";
-import type { DisplayChoice } from "@/server/albert/Albert";
+import {
+  displayChoicesInputSchema,
+  type DisplayChoice,
+} from "@/server/albert/tools/displayChoices";
 import {
   exportRapportInputSchema,
   type ExportRapportOutput,
 } from "@/server/albert/exportRapportSchema";
+import {
+  createDashboardInputSchema,
+  type CreateDashboardOutput,
+} from "@/server/albert/tools/createDashboard";
 import {
   getTauxAvancementTerritoireInputSchema,
   type GetTauxAvancementTerritoireOutput,
@@ -22,10 +28,6 @@ import {
   getChantierIndicateursInputSchema,
   type GetChantierIndicateursOutput,
 } from "@/server/albert/tools/getChantierIndicateurs";
-import {
-  composeDashboardInputSchema,
-  type ComposeDashboardOutput,
-} from "@/server/albert/tools/composeDashboard";
 
 export type PiloteUITools = {
   display_choices: {
@@ -48,9 +50,9 @@ export type PiloteUITools = {
     input: z.input<typeof getChantierIndicateursInputSchema>;
     output: GetChantierIndicateursOutput;
   };
-  compose_dashboard: {
-    input: z.input<typeof composeDashboardInputSchema>;
-    output: ComposeDashboardOutput;
+  create_dashboard: {
+    input: z.input<typeof createDashboardInputSchema>;
+    output: CreateDashboardOutput;
   };
   export_rapport: {
     input: z.input<typeof exportRapportInputSchema>;

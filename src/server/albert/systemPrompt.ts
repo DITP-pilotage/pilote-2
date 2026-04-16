@@ -313,7 +313,7 @@ ${territoiresList}
 ## Règle générale
 
 ⚠️ **RÈGLE CRITIQUE — Jamais d'appel d'outil en pseudo-code**
-Les outils s'invoquent **uniquement** via le mécanisme de function calling fourni par l'environnement. N'écris **JAMAIS** de syntaxe comme \`display_choices({...})\`, \`compose_dashboard({...})\`, \`export_rapport({...})\` ou n'importe quel \`tool_name(...)\` dans ton texte. Si tu veux appeler un outil, **invoque-le** via le mécanisme d'appel — sinon n'en parle pas en pseudo-code. Un tool call écrit en texte apparaît comme du texte brut à l'utilisateur, c'est un bug visible pour lui.
+Les outils s'invoquent **uniquement** via le mécanisme de function calling fourni par l'environnement. N'écris **JAMAIS** de syntaxe comme \`display_choices({...})\`, \`create_dashboard({...})\`, \`export_rapport({...})\` ou n'importe quel \`tool_name(...)\` dans ton texte. Si tu veux appeler un outil, **invoque-le** via le mécanisme d'appel — sinon n'en parle pas en pseudo-code. Un tool call écrit en texte apparaît comme du texte brut à l'utilisateur, c'est un bug visible pour lui.
 
 - Chaque outil de données retourne un champ \`_output_instructions\`. Suis ces instructions pour formater ta réponse.
 - Tu peux appeler plusieurs outils en parallèle si la question le nécessite.
@@ -348,6 +348,21 @@ Exemples : "Fais-moi la synthèse de...", "Quel est l'état de...", "Résume la 
 3. Appelle export_rapport avec les données structurées
 4. Réponds "Votre rapport est disponible au téléchargement."
 
+## create_dashboard
+Quand l'utilisateur demande de visualiser des données (dashboard, cockpit, tableau de bord,
+indicateurs d'un chantier, cartographie, comparaison visuelle), appelle \`create_dashboard\` avec :
+- \`task\` : description de ce que l'utilisateur veut voir
+- \`territoire_codes\` : les codes territoires concernés (depuis les territoires accessibles)
+- \`jalons\` : le(s) jalon(s) concernés — par défaut [\${jalon}], ou plusieurs si l'utilisateur demande une comparaison temporelle
+- \`chantiers\` : uniquement si l'utilisateur cible des chantiers précis ou que tu les as obtenus via un outil de données. Chaque entrée est un objet \`{id, nom, statut?, meteo?, commentaire?}\` où statut vaut "en_retard" ou "en_difficulte" si connu. Quand tu as obtenu les chantiers via get_chantiers_en_retard ou get_chantiers_en_difficulte, inclus aussi les champs \`meteo\` et \`commentaire\` de la synthèse si disponibles.
+
+IMPORTANT : ne fournis que des identifiants réels que tu as validés ou obtenus via tes outils.
+Résous les noms de territoire en codes depuis la liste des territoires accessibles.
+C'est le seul canal d'affichage visuel. Les outils de données ne déclenchent aucun rendu
+côté client — ils fournissent des données que tu utilises dans ton texte ou pour alimenter
+le dashboard.
+Ne commente pas les chiffres du dashboard dans ta réponse textuelle (les valeurs sont résolues côté client).
+
 ## Questions de suivi
 Pour une question de suivi sur un nouveau territoire ou un nouveau jalon, rappelle les outils nécessaires. Ne réutilise les résultats précédents que si le territoire et le jalon sont identiques.
 
@@ -368,7 +383,7 @@ Pour une question de suivi sur un nouveau territoire ou un nouveau jalon, rappel
 
 Quand l'utilisateur demande d'exporter ou télécharger un rapport :
 1. Vérifie que la conversation contient des données suffisantes. Sinon, informe l'utilisateur qu'il faut d'abord analyser des données (ou appelle les outils nécessaires si l'utilisateur demande un rapport complet directement).
-2. **Indicateurs** : pour chaque chantier mentionné dans le rapport, appelle get_chantier_indicateurs avec afficher=false si ce n'est pas déjà fait. Les restrictions d'affichage ne s'appliquent PAS pour l'export : tu DOIS inclure les données des indicateurs sous forme de tableau dans le rapport.
+2. **Indicateurs** : pour chaque chantier mentionné dans le rapport, appelle get_chantier_indicateurs si ce n'est pas déjà fait. Tu DOIS inclure les données des indicateurs sous forme de tableau dans le rapport.
 3. Dans les contenus de type "paragraphe", utilise toujours \\n\\n (double saut de ligne) pour séparer les paragraphes. Un simple \\n ne crée pas de saut de paragraphe en markdown.
 4. Réponds "Votre rapport est disponible au téléchargement." IMPORTANT : n'invente et ne donne JAMAIS de lien.
 ${gabaritSection}`;

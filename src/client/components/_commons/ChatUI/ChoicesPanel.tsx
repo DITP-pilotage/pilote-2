@@ -1,5 +1,5 @@
 import { FormEvent, useState } from "react";
-import type { DisplayChoice } from "@/server/albert/Albert";
+import type { DisplayChoice } from "@/server/albert/tools/displayChoices";
 import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
 import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
 

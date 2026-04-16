@@ -26,6 +26,8 @@ const MOTS_CLES_DASHBOARD = [
   "affiche",
   "montre",
   "visualise",
+  "indicateur",
+  "indicateurs",
 ];
 
 const MOTS_CLES_EXPORT = [
@@ -78,7 +80,7 @@ export function dashboardDejaCompose(messages: PiloteUIMessage[]): boolean {
     (message) =>
       message.role === "assistant" &&
       (message.parts ?? []).some(
-        (part) => part.type === "tool-compose_dashboard",
+        (part) => part.type === "tool-create_dashboard",
       ),
   );
 }

@@ -1,92 +1,32 @@
 import { createOpenAI } from "@ai-sdk/openai";
 import {
-  generateText as aiGenerateText,
-  streamText as aiStreamText,
+  convertToModelMessages,
+  generateText,
+  Output,
   stepCountIs,
-  tool,
+  streamText as aiStreamText,
   ToolSet,
   UIMessage,
-  convertToModelMessages,
+  wrapLanguageModel,
 } from "ai";
-import { z } from "zod";
+import type { LanguageModelV3 } from "@ai-sdk/provider";
 import { Prisma } from "@prisma/client";
-import { randomUUID } from "crypto";
+import { devToolsMiddleware } from "@ai-sdk/devtools";
+import { z } from "zod";
 import { configuration } from "@/config";
 import { prisma } from "@/server/db/prisma";
-import { genererRapportPDF } from "@/server/albert/pdf/genererRapportPDF";
-import { buildRapportMarkdown } from "@/server/albert/markdown/buildRapportMarkdown";
-import type { RapportFileStorage } from "@/server/albert/domain/RapportFileStorage";
-import {
-  exportRapportInputSchema,
-  ExportRapportOutput,
-} from "@/server/albert/exportRapportSchema";
 
-export function createExportRapportTool({
-  rapportFileStorage,
-}: {
-  rapportFileStorage: RapportFileStorage;
-}) {
-  return ({ userId }: { userId: string }) => {
-    return tool({
-      description:
-        "Génère un rapport structuré synthétisant la discussion. Appelle cet outil quand l'utilisateur demande d'exporter ou télécharger un rapport. Le rapport doit contenir un titre, une date, un résumé et des sections structurées reprenant les données clés de la conversation.",
-      inputSchema: exportRapportInputSchema,
-      execute: async (input): Promise<ExportRapportOutput> => {
-        const shortId = randomUUID().slice(0, 8);
-        const ext = input.format === "pdf" ? "pdf" : "md";
-        const filename = `${input.nom_fichier}-${shortId}.${ext}`;
-
-        if (input.format === "pdf") {
-          const buffer = await genererRapportPDF(input);
-          const url = await rapportFileStorage.save(userId, filename, buffer);
-          return { url, format: "pdf" };
-        }
-
-        const markdown = buildRapportMarkdown(input);
-        const url = await rapportFileStorage.save(userId, filename, markdown);
-        return { url, format: "markdown" };
-      },
-    });
-  };
+export function withOptionalDevTools(model: LanguageModelV3): LanguageModelV3 {
+  if (!configuration().albert.devTools) {
+    return model;
+  }
+  return wrapLanguageModel({ model, middleware: devToolsMiddleware() });
 }
-
-export const displayChoicesInputSchema = z.object({
-  question: z
-    .string()
-    .describe("Question affichée en haut du panneau de choix"),
-  choices: z
-    .array(
-      z.object({
-        label: z.string().describe("Texte à afficher sur le bouton"),
-        value: z
-          .string()
-          .describe("Valeur à renvoyer lorsque le bouton est cliqué"),
-      }),
-    )
-    .describe("Liste des choix à proposer"),
-});
-
-export type DisplayChoice = z.infer<
-  typeof displayChoicesInputSchema
->["choices"][number];
-
-export const displayChoicesTool = tool({
-  description:
-    "Affiche des choix dans un panneau pour l'utilisateur. Le paramètre 'question' est la question affichée en haut du panneau. Utilise cet outil quand tu veux proposer des options à l'utilisateur. IMPORTANT : écris toujours ton message textuel AVANT d'appeler cet outil. Ne l'appelle jamais sans avoir d'abord rédigé le texte d'accompagnement.",
-  inputSchema: displayChoicesInputSchema,
-  execute: async ({
-    question,
-    choices,
-  }): Promise<{ question: string; choices: DisplayChoice[] }> => ({
-    question,
-    choices,
-  }),
-});
 
 const DEFAULT_MODEL = "openweight-large";
 
 export class Albert {
-  private static createProvider() {
+  static createProvider() {
     return createOpenAI({
       baseURL: "https://albert.api.etalab.gouv.fr/v1",
       apiKey: configuration().albert.apiKey,
@@ -129,33 +69,27 @@ export class Albert {
     });
   }
 
-  static async generateText({
-    chatId,
-    prompt,
+  static async generateStructuredOutput<T extends z.ZodType>({
     systemPrompt,
-    tools,
-    userId,
+    prompt,
+    schema,
+    abortSignal,
   }: {
-    chatId: string;
-    prompt: string;
     systemPrompt: string;
-    tools?: ToolSet;
-    userId: string;
-  }) {
+    prompt: string;
+    schema: T;
+    abortSignal?: AbortSignal;
+  }): Promise<z.infer<T>> {
     const albertProvider = this.createProvider();
-
-    const response = await aiGenerateText({
-      model: albertProvider.chat(DEFAULT_MODEL),
+    const result = await generateText({
+      model: withOptionalDevTools(albertProvider.chat(DEFAULT_MODEL)),
       system: systemPrompt,
-      prompt: prompt,
+      prompt,
       stopWhen: stepCountIs(5),
-      onFinish: (event) => Albert.saveLlmCall({ chatId, userId, event }),
-      tools,
+      output: Output.object({ schema }),
+      abortSignal,
     });
-
-    return {
-      text: response.text,
-    };
+    return result.output;
   }
 
   static async streamText({
@@ -177,7 +111,7 @@ export class Albert {
     const modelMessages = await convertToModelMessages(messages);
 
     return aiStreamText({
-      model: albertProvider.chat(model),
+      model: withOptionalDevTools(albertProvider.chat(model)),
       system: systemPrompt,
       messages: modelMessages,
       tools,
