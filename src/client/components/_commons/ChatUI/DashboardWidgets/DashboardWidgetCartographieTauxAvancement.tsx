@@ -6,17 +6,15 @@ export const DashboardWidgetCartographieTauxAvancement = ({
   maille,
   territoireCode,
   jalon,
-  chantierIds,
 }: {
   maille: MailleInterne;
   territoireCode: string;
   jalon: number;
-  chantierIds: string[];
 }) => (
   <DashboardPanel>
     <WidgetCartographieTAComparaison
       mode="chantiers"
-      chantierIds={chantierIds}
+      chantierIds={[]}
       maille={maille}
       territoireCode={territoireCode}
       jalon={jalon}

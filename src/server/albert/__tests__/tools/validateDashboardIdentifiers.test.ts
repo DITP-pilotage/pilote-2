@@ -125,32 +125,6 @@ describe("validateDashboardIdentifiers", () => {
     ).toThrow(/chantier_id non autorisé : CH-999/);
   });
 
-  it("lève une erreur quand chantier_ids contient un id inconnu", () => {
-    // given
-    const chantiers: ChantierContext[] = [{ id: "CH-001", nom: "Chantier 1" }];
-    const output: ComposeDashboardInput = {
-      titre: "Cockpit",
-      containers: [
-        {
-          widgets: [
-            {
-              type: "widget_cartographie_taux_avancement",
-              maille: "regionale",
-              territoire_code: "REG-53",
-              jalon: 2025,
-              chantier_ids: ["CH-001", "CH-999"],
-            },
-          ],
-        },
-      ],
-    };
-
-    // when / then
-    expect(() =>
-      validateDashboardIdentifiers(output, ["REG-53"], [2025], chantiers),
-    ).toThrow(/chantier_id non autorisé : CH-999/);
-  });
-
   it("ne lève pas d'erreur pour des widgets sans identifiants", () => {
     // given
     const output: ComposeDashboardInput = {
