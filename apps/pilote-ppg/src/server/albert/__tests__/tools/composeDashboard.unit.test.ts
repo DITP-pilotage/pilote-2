@@ -189,7 +189,7 @@ describe("composeDashboardInputSchema", () => {
   });
 
   describe("widgets cartographie", () => {
-    test("accepte widget_cartographie_taux_avancement avec chantier_ids", () => {
+    test("accepte widget_cartographie_taux_avancement", () => {
       // Given
       const input = {
         titre: "Cockpit",
@@ -201,7 +201,6 @@ describe("composeDashboardInputSchema", () => {
                 maille: "regionale",
                 territoire_code: "NAT-FR",
                 jalon: 2025,
-                chantier_ids: ["CH-001", "CH-002"],
               },
             ],
           },
@@ -213,32 +212,6 @@ describe("composeDashboardInputSchema", () => {
 
       // Then
       expect(result.success).toBe(true);
-    });
-
-    test("rejette widget_cartographie_taux_avancement avec chantier_ids vide", () => {
-      // Given
-      const input = {
-        titre: "Cockpit",
-        containers: [
-          {
-            widgets: [
-              {
-                type: "widget_cartographie_taux_avancement",
-                maille: "regionale",
-                territoire_code: "NAT-FR",
-                jalon: 2025,
-                chantier_ids: [],
-              },
-            ],
-          },
-        ],
-      };
-
-      // When
-      const result = composeDashboardInputSchema.safeParse(input);
-
-      // Then
-      expect(result.success).toBe(false);
     });
 
     test("accepte widget_cartographie_meteo", () => {
