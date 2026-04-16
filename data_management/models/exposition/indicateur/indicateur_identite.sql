@@ -30,7 +30,8 @@ SELECT
     FALSE AS a_supprimer,
     meta_indic.unite AS unite_mesure,
     meta_indic.indicateur_parent_id AS parent_id,
-    -- WARN: ce n'est pas EXACTEMENT le delai dispo de la table indic car depend de la maille
+    -- WARN: ce n'est pas EXACTEMENT le delai dispo
+    -- de la table indic car depend de la maille
     complementaires.delai_disponibilite,
     complementaires.periodicite,
     STRING_TO_ARRAY(REPLACE(complementaires.resp_donnees_email, ' ', ''), ',')
@@ -52,7 +53,7 @@ LEFT JOIN
         AS meta_parametrage_indicateurs
     ON meta_indic.id = meta_parametrage_indicateurs.indicateur_id
 LEFT JOIN
-    {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }}
+    {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }} -- noqa: LT05
         AS complementaires
     ON meta_indic.id = complementaires.indic_id
 LEFT JOIN

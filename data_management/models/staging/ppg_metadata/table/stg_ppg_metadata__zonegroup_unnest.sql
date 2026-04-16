@@ -43,14 +43,9 @@ fill_zone_no_child AS (
         *,
         COALESCE(zone_id, zg_zones_unnest) AS zone_id_filled
     FROM find_children
-),
-
-clean_results AS (
-    SELECT
-        zone_group_id,
-        zone_id_filled AS child_zone_id
-    FROM fill_zone_no_child
 )
 
-SELECT * FROM clean_results
-ORDER BY zone_group_id
+SELECT
+    zone_group_id,
+    zone_id_filled AS child_zone_id
+FROM fill_zone_no_child

@@ -18,11 +18,13 @@ synthese_triee_par_date AS (
 )
 
 SELECT
-    a.chantier_id,
-    t.code AS territoire_code,
-    meteo,
-    date_modification AS date_meteo
-FROM synthese_triee_par_date AS a
-LEFT JOIN {{ source('db_schema_public', 'territoire') }} AS t
-    ON t.maille = LOWER(a.maille)::MAILLE AND a.code_insee = t.code_insee
-WHERE row_id_by_date_meteo_desc = 1
+    synthese_triee_par_date.chantier_id,
+    territoire.code AS territoire_code,
+    synthese_triee_par_date.meteo,
+    synthese_triee_par_date.date_modification AS date_meteo
+FROM synthese_triee_par_date
+LEFT JOIN {{ source('db_schema_public', 'territoire') }} AS territoire
+    ON
+        territoire.maille = LOWER(synthese_triee_par_date.maille)::MAILLE
+        AND synthese_triee_par_date.code_insee = territoire.code_insee
+WHERE synthese_triee_par_date.row_id_by_date_meteo_desc = 1

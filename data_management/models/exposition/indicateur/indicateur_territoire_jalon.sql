@@ -20,10 +20,8 @@ SELECT
     tous_jalons.taa_proposition AS taux_avancement_proposition,
     tous_jalons.date_vaca AS date_valeur_actuelle,
     tous_jalons.vaca AS valeur_actuelle
-FROM {{ ref('compute_ta_indic_jalon') }} AS tous_jalons
+FROM {{ ref('jalons_a_etudier') }} AS jalons
+LEFT OUTER JOIN {{ ref('compute_ta_indic_jalon') }} AS tous_jalons
+    ON jalons.jalon = tous_jalons.jalon
 INNER JOIN {{ source('db_schema_public', 'territoire') }} AS territoire
     ON tous_jalons.zone_id = territoire.zone_id
-RIGHT JOIN
-    {{ ref('jalons_a_etudier') }} AS jalons
-    ON tous_jalons.jalon = jalons.jalon
-ORDER BY id, territoire_code, jalons.jalon

@@ -1,15 +1,15 @@
 WITH chantiers_zone_applicables AS (
     SELECT DISTINCT
         chantiers.id AS chantier_id,
-        zg.child_zone_id AS zone_id,
+        zonegroup.child_zone_id AS zone_id,
         TRUE AS est_applicable
     FROM
         {{ ref('stg_ppg_metadata__chantiers') }} AS chantiers
     LEFT JOIN
-        raw_data.stg_ppg_metadata__zonegroup_unnest AS zg
-        ON chantiers.zone_groupe_applicable = zg.zone_group_id
+        {{ ref('stg_ppg_metadata__zonegroup_unnest') }} AS zonegroup
+        ON chantiers.zone_groupe_applicable = zonegroup.zone_group_id
     WHERE
-        zone_groupe_applicable IS NOT NULL
+        chantiers.zone_groupe_applicable IS NOT NULL
 ),
 
 chantiers_za_toutes_zone AS (
@@ -27,7 +27,7 @@ SELECT
     chantiers_za_toutes_zone.zone_id,
     COALESCE(chantiers_zone_applicables.est_applicable, FALSE)
         AS zone_est_applicable,
-    maille
+    chantiers_za_toutes_zone.maille
 FROM
     chantiers_za_toutes_zone
 LEFT JOIN chantiers_zone_applicables

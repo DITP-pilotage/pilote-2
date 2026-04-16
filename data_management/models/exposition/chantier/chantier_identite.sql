@@ -11,19 +11,20 @@ WITH
 
 ch_unnest_porteurs_dac AS (
     SELECT
-        mc.id AS chantier_id,
-        UNNEST(mc.directeurs_administration_centrale_ids) AS pi
-    FROM {{ ref('stg_ppg_metadata__chantiers') }} AS mc
+        id AS chantier_id,
+        UNNEST(directeurs_administration_centrale_ids) AS pi
+    FROM {{ ref('stg_ppg_metadata__chantiers') }}
 ),
 
 ch_unnest_porteurs_dac_pnames AS (
     SELECT
-        a.*,
-        mp.directeur,
+        ch_unnest_porteurs_dac.*,
+        porteurs.directeur,
         -- Affichage de '-' si pas d'acronyme de porteur
-        COALESCE(mp.acronyme, '-') AS acronyme
-    FROM ch_unnest_porteurs_dac AS a
-    LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} AS mp ON a.pi = mp.id
+        COALESCE(porteurs.acronyme, '-') AS acronyme
+    FROM ch_unnest_porteurs_dac
+    LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} AS porteurs
+        ON ch_unnest_porteurs_dac.pi = porteurs.id
 ),
 
 ch_unnest_porteurs_dac_pnames_agg AS (
@@ -47,24 +48,24 @@ chantier_est_barometre AS (
 -- Indique pour chaque chantier s'il existe un TA à chaque maille
 ch_maille_has_ta_pivot_clean AS (
     SELECT
-        a.chantier_id,
-        BOOL_OR(a.tag_ch IS NOT NULL) FILTER (
-            WHERE z.zone_type = 'DEPT'
+        ta_chantier.chantier_id,
+        BOOL_OR(ta_chantier.tag_ch IS NOT NULL) FILTER (
+            WHERE zones.zone_type = 'DEPT'
         ) AS has_ta_dept,
-        BOOL_OR(a.tag_ch IS NOT NULL) FILTER (
-            WHERE z.zone_type = 'REG'
+        BOOL_OR(ta_chantier.tag_ch IS NOT NULL) FILTER (
+            WHERE zones.zone_type = 'REG'
         ) AS has_ta_reg,
-        BOOL_OR(a.tag_ch IS NOT NULL) FILTER (
-            WHERE z.zone_type = 'NAT'
+        BOOL_OR(ta_chantier.tag_ch IS NOT NULL) FILTER (
+            WHERE zones.zone_type = 'NAT'
         ) AS has_ta_nat
-    FROM {{ ref('compute_ta_ch') }} AS a
+    FROM {{ ref('compute_ta_ch') }} AS ta_chantier
     LEFT JOIN
-        {{ source('db_schema_public', 'territoire') }} AS t
-        ON a.territoire_code = t.code
+        {{ source('db_schema_public', 'territoire') }} AS territoire
+        ON ta_chantier.territoire_code = territoire.code
     LEFT JOIN
-        {{ source('python_load', 'metadata_zones') }} AS z
-        ON t.zone_id = z.zone_id
-    GROUP BY a.chantier_id
+        {{ source('python_load', 'metadata_zones') }} AS zones
+        ON territoire.zone_id = zones.zone_id
+    GROUP BY ta_chantier.chantier_id
 ),
 
 -- Table des synthèses triée par date
@@ -118,8 +119,8 @@ SELECT
     meta_ch.ministeres_ids AS ministeres,
     meta_ch.ministeres_polygrammes AS ministeres_acronymes,
     dir_projets.nom AS directeurs_projet,
-    ax.axe_name AS axe,
-    ppg.ppg_nom AS ppg,
+    axes.axe_name AS axe,
+    ppgs.ppg_nom AS ppg,
     dir_projets.email AS directeurs_projet_mails,
     chantier_est_barometre.est_barometre,
     meta_ch.est_territorialise,
@@ -157,16 +158,16 @@ LEFT JOIN
     {{ ref('int_directeurs_projets') }} AS dir_projets
     ON meta_ch.id = dir_projets.chantier_id
 LEFT JOIN
-    {{ source('python_load', 'metadata_ppgs') }} AS ppg
-    ON meta_ch.ppg_id = ppg.ppg_id
+    {{ source('python_load', 'metadata_ppgs') }} AS ppgs
+    ON meta_ch.ppg_id = ppgs.ppg_id
 LEFT JOIN
-    {{ source('python_load', 'metadata_axes') }} AS ax
-    ON ppg.ppg_axe = ax.axe_id
+    {{ source('python_load', 'metadata_axes') }} AS axes
+    ON ppgs.ppg_axe = axes.axe_id
 LEFT JOIN
     chantier_est_barometre
     ON meta_ch.id = chantier_est_barometre.chantier_id
 LEFT JOIN
     ch_maille_has_ta_pivot_clean AS has_ta
     ON meta_ch.id = has_ta.chantier_id
-LEFT JOIN ch_has_meteo ON meta_ch.id = ch_has_meteo.chantier_id
-ORDER BY meta_ch.id
+LEFT JOIN ch_has_meteo
+    ON meta_ch.id = ch_has_meteo.chantier_id

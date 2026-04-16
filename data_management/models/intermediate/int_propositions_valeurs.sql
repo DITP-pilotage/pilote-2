@@ -14,7 +14,7 @@ WITH dernier_evenement_proposition AS (
             'PROPOSITION_VALEUR_IGNOREE_VALEUR_HISTORISEE',
             'PROPOSITION_VALEUR_ACCEPTEE_AVEC_MODIFICATION'
         )
-     ORDER BY indic_id ASC, territoire_code ASC, date_valeur ASC, ordre DESC
+    ORDER BY indic_id ASC, territoire_code ASC, date_valeur ASC, ordre DESC
 )
 
 SELECT

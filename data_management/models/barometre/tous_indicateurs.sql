@@ -1,39 +1,43 @@
 WITH
 -- Liste des indicateurs du baromètre
 indic_baro AS (
-    SELECT id FROM {{ ref('stg_ppg_metadata__indicateurs') }}
+    SELECT id
+    FROM {{ ref('stg_ppg_metadata__indicateurs') }}
     WHERE est_barometre
 ),
 
 -- Données des indicateurs du baromètre
 donnees AS (
     SELECT
-        i.*,
-        z.maille AS zone_type
-    FROM
-        {{ ref('indicateur_territoire') }} AS i
+        indicateur_territoire.*,
+        zones.maille AS zone_type
     -- On ne garde que les indicateurs au baromètres
-    RIGHT JOIN indic_baro AS b ON i.id = b.id
+    FROM indic_baro
+    LEFT OUTER JOIN {{ ref('indicateur_territoire') }} AS indicateur_territoire
+        ON indic_baro.id = indicateur_territoire.id
     -- pour: Ajout de la zone_type (maille)
-    LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} AS z ON i.zone_id = z.id
+    LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} AS zones
+        ON indicateur_territoire.zone_id = zones.id
 ),
 
 -- Données VA
 export_va AS (
     SELECT
-        a.id AS indic_id,
-        a.zone_id AS enforce_zone_id,
-        a.zone_type AS maille,
+        donnees.id AS indic_id,
+        donnees.zone_id AS enforce_zone_id,
+        donnees.zone_type AS maille,
         -- Unnest des valeurs des VA
-        va_date_unnest_computed AS metric_enforce_date,
+        va_indic.va_date_unnest_computed AS metric_enforce_date,
         -- Unnest des dates des VA
-        va_unnest_computed AS indic_va
-    FROM donnees AS a
+        va_indic.va_unnest_computed AS indic_va
+    FROM donnees
     LEFT JOIN
-        {{ ref('df3_indicateur_unnest_va') }} AS b
-        ON a.id = b.id AND a.territoire_code = b.territoire_code
+        {{ ref('df3_indicateur_unnest_va') }} AS va_indic
+        ON
+            donnees.id = va_indic.id
+            AND donnees.territoire_code = va_indic.territoire_code
     -- On ne garde que les lignes où une VA est dispo
-    WHERE evolution_avancement IS NOT NULL
+    WHERE donnees.evolution_avancement IS NOT NULL
 ),
 
 -- Données VI
@@ -81,60 +85,65 @@ export_ta AS (
 -- Combinaison des VI,VA,VC,TA
 merge_exports AS (
     SELECT
-        COALESCE(a.indic_id, b.indic_id, c.indic_id, d.indic_id) AS indic_id,
         COALESCE(
-            a.enforce_zone_id,
-            b.enforce_zone_id,
-            c.enforce_zone_id,
-            d.enforce_zone_id
+            export_va.indic_id,
+            export_vi.indic_id,
+            export_vc.indic_id,
+            export_ta.indic_id
+        ) AS indic_id,
+        COALESCE(
+            export_va.enforce_zone_id,
+            export_vi.enforce_zone_id,
+            export_vc.enforce_zone_id,
+            export_ta.enforce_zone_id
         ) AS enforce_zone_id,
         COALESCE(
-            a.metric_enforce_date,
-            b.metric_enforce_date,
-            c.metric_enforce_date,
-            d.metric_enforce_date
+            export_va.metric_enforce_date,
+            export_vi.metric_enforce_date,
+            export_vc.metric_enforce_date,
+            export_ta.metric_enforce_date
         ) AS metric_enforce_date,
-        COALESCE(a.maille, b.maille, c.maille, d.maille) AS maille,
-        b.indic_vi,
-        a.indic_va,
-        c.indic_vc,
-        d.indic_ta
+        COALESCE(
+            export_va.maille,
+            export_vi.maille,
+            export_vc.maille,
+            export_ta.maille
+        ) AS maille,
+        export_vi.indic_vi,
+        export_va.indic_va,
+        export_vc.indic_vc,
+        export_ta.indic_ta
     FROM
-        export_va AS a
+        export_va
     FULL JOIN
-        export_vi AS b
+        export_vi
         ON
-            a.indic_id = b.indic_id
-            AND a.enforce_zone_id = b.enforce_zone_id
-            AND a.metric_enforce_date = b.metric_enforce_date
+            export_va.indic_id = export_vi.indic_id
+            AND export_va.enforce_zone_id = export_vi.enforce_zone_id
+            AND export_va.metric_enforce_date = export_vi.metric_enforce_date
     FULL JOIN
-        export_vc AS c
+        export_vc
         ON
-            a.indic_id = c.indic_id
-            AND a.enforce_zone_id = c.enforce_zone_id
-            AND a.metric_enforce_date = c.metric_enforce_date
+            export_va.indic_id = export_vc.indic_id
+            AND export_va.enforce_zone_id = export_vc.enforce_zone_id
+            AND export_va.metric_enforce_date = export_vc.metric_enforce_date
     FULL JOIN
-        export_ta AS d
+        export_ta
         ON
-            a.indic_id = d.indic_id
-            AND a.enforce_zone_id = d.enforce_zone_id
-            AND a.metric_enforce_date = d.metric_enforce_date
-),
-
--- On arrondit les VI,VA,VC,TA à deux décimales
-round_2_dec AS (
-    SELECT
-        indic_id,
-        enforce_zone_id,
-        metric_enforce_date,
-        maille,
-        ROUND(indic_vi::NUMERIC, 2) AS indic_vi,
-        ROUND(indic_va::NUMERIC, 2) AS indic_va,
-        ROUND(indic_vc::NUMERIC, 2) AS indic_vc,
-        ROUND(indic_ta::NUMERIC, 2) AS indic_ta
-    FROM merge_exports
+            export_va.indic_id = export_ta.indic_id
+            AND export_va.enforce_zone_id = export_ta.enforce_zone_id
+            AND export_va.metric_enforce_date = export_ta.metric_enforce_date
 )
 
-SELECT *
-FROM round_2_dec
-ORDER BY indic_id, maille, enforce_zone_id, metric_enforce_date
+-- On arrondit les VI,VA,VC,TA à deux décimales
+
+SELECT
+    indic_id,
+    enforce_zone_id,
+    metric_enforce_date,
+    maille,
+    ROUND(indic_vi::NUMERIC, 2) AS indic_vi,
+    ROUND(indic_va::NUMERIC, 2) AS indic_va,
+    ROUND(indic_vc::NUMERIC, 2) AS indic_vc,
+    ROUND(indic_ta::NUMERIC, 2) AS indic_ta
+FROM merge_exports

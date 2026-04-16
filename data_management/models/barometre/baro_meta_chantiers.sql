@@ -5,13 +5,13 @@ WITH chantiers_baro AS (
         COUNT(*) AS n
     FROM {{ ref('baro_meta_indicateurs') }}
     GROUP BY indic_parent_ch
-    ORDER BY indic_parent_ch
 )
 
 -- On ajoute le nom et l'engagement correspondant pour chaque chantier
 SELECT
-    a.chantier_id,
-    b.nom AS ch_nom,
-    b.nom_engagement AS engagement_short
-FROM chantiers_baro AS a
-LEFT JOIN {{ ref('stg_ppg_metadata__chantiers') }} AS b ON a.chantier_id = b.id
+    chantiers_baro.chantier_id,
+    chantiers.nom AS ch_nom,
+    chantiers.nom_engagement AS engagement_short
+FROM chantiers_baro
+LEFT JOIN {{ ref('stg_ppg_metadata__chantiers') }} AS chantiers
+    ON chantiers_baro.chantier_id = chantiers.id
