@@ -14,7 +14,6 @@ export const DashboardWidgetCartographieTauxAvancement = ({
   <DashboardPanel>
     <WidgetCartographieTAComparaison
       mode="chantiers"
-      chantierIds={[]}
       maille={maille}
       territoireCode={territoireCode}
       jalon={jalon}
