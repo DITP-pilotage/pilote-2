@@ -66,9 +66,7 @@ describe("GetChantiersHabilitesQuery", () => {
       });
 
       // When — seul CH-001 est habilité
-      const result = await query.execute(
-        habilitationsAvecLecture(["CH-001"]),
-      );
+      const result = await query.execute(habilitationsAvecLecture(["CH-001"]));
 
       // Then
       expect(result).toEqual(["CH-001"]);
