@@ -56,7 +56,7 @@ jobs:
         run: pnpm lint
 
   lint-sql:
-    name: Run linters on dbt models
+    name: Run SQL linter on dbt models
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
