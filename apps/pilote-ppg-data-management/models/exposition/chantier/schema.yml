@@ -11,3 +11,11 @@ models:
         description: "Jalon pour lequel le TA chantier est retourné"
       - name: taux_avancement
         description: "TA annuel du chantier pour le jalon."
+  - name: chantier_identite
+    description: |
+        Table d'exposition (utilisée par l'app web) des chantiers et de leurs propriétés
+    columns:
+      - name: jalon
+        description: "Jalon pour lequel le TA chantier est retourné"
+      - name: taux_avancement
+        description: "TA annuel du chantier pour le jalon."
