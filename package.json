@@ -8,8 +8,8 @@
   },
   "scripts": {
     "dev": "next dev | pino-pretty",
-    "build": "bash scripts/clone_centre_aide.sh && next build && pnpm exec pagefind --site .next/server/app --output-path public/_pagefind && node copy-assets.js && prisma migrate deploy && prisma db seed",
-    "build:dev": "next build && pnpm exec pagefind --site .next/server/app --output-path public/_pagefind && node copy-assets.js && prisma migrate deploy && prisma db seed",
+    "build": "prisma generate && bash scripts/clone_centre_aide.sh && next build && pnpm exec pagefind --site .next/server/app --output-path public/_pagefind && node copy-assets.js && prisma migrate deploy && prisma db seed",
+    "build:dev": "prisma generate && next build && pnpm exec pagefind --site .next/server/app --output-path public/_pagefind && node copy-assets.js && prisma migrate deploy && prisma db seed",
     "start": "node --max-old-space-size=${MAX_OLD_SPACE_SIZE:-768} .next/standalone/server.js",
     "lint": "prisma generate && pnpm lint:eslint && pnpm lint:tsc",
     "lint:fix": "pnpm lint:eslint -- --fix",
