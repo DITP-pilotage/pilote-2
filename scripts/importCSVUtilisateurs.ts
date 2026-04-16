@@ -22,7 +22,7 @@ loadEnvConfig(projectDir); // ⚠️ À appeler avant nos imports, because Confi
       S'assurer d'avoir les variables d'env IMPORT_CLIENT_ID - IMPORT_CLIENT_SECRET - IMPORT_KEYCLOAK_URL configurées
       pnpm exec ts-node scripts/importCSVUtilisateurs.ts /chemin/fichier/local/import.csv | pnpm exec pino-pretty
 
- - Comment executer le script sur le serveur de prod :
+ - Comment exécuter le script sur le serveur de prod :
       scalingo --region osc-secnum-fr1 -a prod-pilote-ditp run bash
       export NPM_CONFIG_PRODUCTION=false
       pnpm install --frozen-lockfile
