@@ -31,6 +31,7 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
     EtapeSuivanteEstDesactive,
     estUneModificationDeProposition,
     optionsMois,
+    isPending,
   } = useModalePropositionValeurAvancementV2();
 
   const refreshRouter = useRefreshRouter();
@@ -412,8 +413,14 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
                     >
                       Étape précédente
                     </button>
-                    <button className="fr-btn" type="submit">
-                      Publier la proposition
+                    <button
+                      className="fr-btn"
+                      disabled={isPending}
+                      type="submit"
+                    >
+                      {isPending
+                        ? "Publication en cours..."
+                        : "Publier la proposition"}
                     </button>
                   </div>
                 </>

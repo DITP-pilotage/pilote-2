@@ -173,11 +173,17 @@ export const useModaleAccepterPropositionValeurAvancement = ({
 
   const etapeSuivanteEstDesactive = !reactHookForm.formState.isValid;
 
+  const isPending =
+    mutationAccepterPropositonValeurAvancement.isPending ||
+    mutationRefuserPropositonValeurAvancement.isPending ||
+    mutationAccepterAvecModificationPropositonValeurAvancement.isPending;
+
   return {
     reactHookForm,
     traiterDecision,
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
     etapeSuivanteEstDesactive,
+    isPending,
   };
 };

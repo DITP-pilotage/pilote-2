@@ -37,6 +37,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
     setEtapeAccuserReception,
     etapeSuivanteEstDesactive,
     traiterAccuseReception,
+    isPending,
   } = useModaleAccuserReceptionPropositionValeurAvancement({
     indicateur,
     detailIndicateur,
@@ -224,8 +225,14 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                     >
                       Étape précédente
                     </button>
-                    <button className="fr-btn" type="submit">
-                      Confirmer l'envoi de l'accusé de réception
+                    <button
+                      className="fr-btn"
+                      disabled={isPending}
+                      type="submit"
+                    >
+                      {isPending
+                        ? "Envoi en cours..."
+                        : "Confirmer l'envoi de l'accusé de réception"}
                     </button>
                   </div>
                 </>

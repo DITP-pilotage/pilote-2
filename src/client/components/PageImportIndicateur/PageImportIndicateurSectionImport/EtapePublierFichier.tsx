@@ -4,6 +4,7 @@ import { RapportContrat } from "@/server/app/contrats/RapportContrat";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import { wording } from "@/client/utils/i18n/i18n";
 import FormulairePublierImportIndicateur from "@/components/PageImportIndicateur/PageImportIndicateurSectionImport/FormulaireImportIndicateur/FormulairePublierImportIndicateur";
+import { usePublierIndicateur } from "@/hooks/usePublierIndicateur";
 
 const EtapePublierFichier: FunctionComponent<{
   estFichierPublie: boolean;
@@ -20,6 +21,12 @@ const EtapePublierFichier: FunctionComponent<{
   setEstFichierPublie,
   rapportImport,
 }) => {
+  const { publierLeFichier, isPending } = usePublierIndicateur(
+    chantierId,
+    indicateurId,
+    rapportId,
+    setEstFichierPublie,
+  );
   return (
     <div>
       {estFichierPublie ? (
@@ -54,10 +61,8 @@ const EtapePublierFichier: FunctionComponent<{
           {rapportImport?.listeMesuresIndicateurTemporaire.length ? (
             <>
               <FormulairePublierImportIndicateur
-                chantierId={chantierId}
-                indicateurId={indicateurId}
-                rapportId={rapportId}
-                setEstFichierPublie={setEstFichierPublie}
+                isPending={isPending}
+                publierLeFichier={publierLeFichier}
               />
               <table className="fr-table fr-my-3w fr-p-0 w-full">
                 <thead>
@@ -118,10 +123,8 @@ const EtapePublierFichier: FunctionComponent<{
                 </tbody>
               </table>
               <FormulairePublierImportIndicateur
-                chantierId={chantierId}
-                indicateurId={indicateurId}
-                rapportId={rapportId}
-                setEstFichierPublie={setEstFichierPublie}
+                isPending={isPending}
+                publierLeFichier={publierLeFichier}
               />
             </>
           ) : (

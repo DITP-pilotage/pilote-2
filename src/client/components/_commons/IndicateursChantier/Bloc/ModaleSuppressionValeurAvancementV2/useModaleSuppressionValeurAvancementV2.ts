@@ -90,6 +90,7 @@ const useModaleSuppressionValeurAvancementV2 = ({
     etapePropositionValeurAvancement,
     setEtapePropositionValeurAvancement,
     etapeSuivanteEstDesactive: !reactHookForm.formState.isValid,
+    isPending: mutationSupprimerPropositionValeurAvancement.isPending,
   };
 };
 

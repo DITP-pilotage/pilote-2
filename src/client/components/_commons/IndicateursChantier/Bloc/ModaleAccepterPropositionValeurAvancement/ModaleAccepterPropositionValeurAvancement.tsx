@@ -38,6 +38,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
     setEtapePropositionValeurAvancement,
     etapeSuivanteEstDesactive: EtapeSuivanteEstDesactive,
     traiterDecision,
+    isPending,
   } = useModaleAccepterPropositionValeurAvancement({
     indicateur,
     detailIndicateur,
@@ -346,12 +347,18 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                     >
                       Étape précédente
                     </button>
-                    <button className="fr-btn" type="submit">
-                      {decision === "refuser"
-                        ? "Valider la décision"
-                        : decision === "accepter-avec-modification"
-                          ? "Accepter avec modification"
-                          : "Accepter la proposition"}
+                    <button
+                      className="fr-btn"
+                      disabled={isPending}
+                      type="submit"
+                    >
+                      {isPending
+                        ? "Traitement en cours..."
+                        : decision === "refuser"
+                          ? "Valider la décision"
+                          : decision === "accepter-avec-modification"
+                            ? "Accepter avec modification"
+                            : "Accepter la proposition"}
                     </button>
                   </div>
                 </>
