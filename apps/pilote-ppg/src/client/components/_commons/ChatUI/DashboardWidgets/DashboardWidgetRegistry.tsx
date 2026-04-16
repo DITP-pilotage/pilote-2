@@ -82,7 +82,6 @@ export const DashboardWidgetRegistry = ({
           maille={widget.maille}
           territoireCode={widget.territoire_code}
           jalon={widget.jalon}
-          chantierIds={widget.chantier_ids}
         />
       );
     case "widget_cartographie_meteo":
