@@ -83,7 +83,8 @@ export const useModaleAccuserReceptionPropositionValeurAvancement = ({
 
   const etapeSuivanteEstDesactive = !reactHookForm.formState.isValid;
 
-  const isPending = mutationAccuserReceptionPropositionValeurAvancement.isPending;
+  const isPending =
+    mutationAccuserReceptionPropositionValeurAvancement.isPending;
 
   return {
     reactHookForm,

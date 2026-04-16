@@ -1,30 +1,17 @@
-import { Dispatch, FunctionComponent, SetStateAction } from "react";
+import { FunctionComponent, SubmitEventHandler } from "react";
 import { SubmitBouton } from "@/components/_commons/SubmitBouton/SubmitBouton";
-import { usePublierIndicateur } from "@/hooks/usePublierIndicateur";
 import { wording } from "@/client/utils/i18n/i18n";
 
 interface FormulairePublierImportIndicateurProps {
-  chantierId: string;
-  indicateurId: string;
-  rapportId: string;
-  setEstFichierPublie: Dispatch<SetStateAction<boolean>>;
+  isPending: boolean;
+  publierLeFichier: SubmitEventHandler<HTMLFormElement>;
 }
 
 const FormulairePublierImportIndicateur: FunctionComponent<
   FormulairePublierImportIndicateurProps
-> = ({ chantierId, indicateurId, rapportId, setEstFichierPublie }) => {
-  const { publierLeFichier, isPending } = usePublierIndicateur(
-    chantierId,
-    indicateurId,
-    rapportId,
-    setEstFichierPublie,
-  );
-
+> = ({ isPending, publierLeFichier }) => {
   return (
-    <form
-      className="flex justify-end"
-      onSubmit={publierLeFichier as React.FormEventHandler<HTMLFormElement>}
-    >
+    <form className="flex justify-end" onSubmit={publierLeFichier}>
       <SubmitBouton
         className="ml-8"
         disabled={isPending}

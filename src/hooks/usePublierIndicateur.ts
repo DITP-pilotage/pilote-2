@@ -1,9 +1,5 @@
-import { Dispatch, FormEventHandler, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, SubmitEventHandler, useState } from "react";
 import { DetailValidationFichierContrat } from "@/server/app/contrats/DetailValidationFichierContrat.interface";
-
-type UploadFichierFormulaireElement = {
-  "file-upload": HTMLInputElement;
-} & HTMLFormElement;
 
 export const usePublierIndicateur = (
   chantierId: string,
@@ -13,9 +9,9 @@ export const usePublierIndicateur = (
 ) => {
   const [isPending, setIsPending] = useState(false);
 
-  const publierLeFichier: FormEventHandler<
-    UploadFichierFormulaireElement
-  > = async (event) => {
+  const publierLeFichier: SubmitEventHandler<HTMLFormElement> = async (
+    event,
+  ) => {
     event.preventDefault();
     setIsPending(true);
 
