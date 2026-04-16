@@ -79,7 +79,9 @@ export class GetChantiersQuery {
         commentaires: {
           where: {
             statut: "PUBLIE",
-            type: { in: ["commentaires_sur_les_donnees", "autres_resultats_obtenus"] },
+            type: {
+              in: ["commentaires_sur_les_donnees", "autres_resultats_obtenus"],
+            },
           },
           orderBy: { date_modification: "desc" },
         },
