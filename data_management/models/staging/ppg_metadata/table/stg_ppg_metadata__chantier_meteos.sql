@@ -1,21 +1,21 @@
-with
+WITH
 
-source as (
+source AS (
 
-    select * from {{ source('python_load', 'metadata_chantier_meteos') }}
+    SELECT * FROM {{ source('python_load', 'metadata_chantier_meteos') }}
 
 ),
 
-renamed as (
+renamed AS (
 
-    select
-        ch_meteo_id as id,
-        ch_meteo_name as nom,
-        ch_meteo_descr as description,
-        ch_meteo_name_dfakto as nom_dfakto
+    SELECT
+        ch_meteo_id AS id,
+        ch_meteo_name AS nom,
+        ch_meteo_descr AS description,
+        ch_meteo_name_dfakto AS nom_dfakto
 
-    from source
+    FROM source
 
 )
 
-select * from renamed
+SELECT * FROM renamed

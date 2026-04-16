@@ -1,46 +1,51 @@
-WITH 
+WITH
 
 init AS (
-    SELECT  * FROM {{ source('python_load', 'metadata_zonegroup') }}
+    SELECT * FROM {{ source('python_load', 'metadata_zonegroup') }}
 ),
 
 unnest_trgt AS (
-    SELECT *, UNNEST(string_to_array(zg_zones, ' | ')) AS zg_zones_unnest FROM init
+    SELECT
+        *,
+        UNNEST(STRING_TO_ARRAY(zg_zones, ' | ')) AS zg_zones_unnest
+    FROM init
 ),
 
 get_child_zone_types AS (
-    SELECT 
-        *, 
-        split_part(zg_zones_unnest, '.', 1) AS zone_parent,
-        split_part(zg_zones_unnest, '.', 2) AS child_zone_type
+    SELECT
+        *,
+        SPLIT_PART(zg_zones_unnest, '.', 1) AS zone_parent,
+        SPLIT_PART(zg_zones_unnest, '.', 2) AS child_zone_type
     FROM unnest_trgt
 ),
 
 unnest_parents AS (
-    SELECT 
+    SELECT
         *,
-        UNNEST(string_to_array(zone_parent, ' | ')) AS parent 
-    FROM {{ source('python_load', 'metadata_zones') }} 
+        UNNEST(STRING_TO_ARRAY(zone_parent, ' | ')) AS parent
+    FROM {{ source('python_load', 'metadata_zones') }}
 ),
 
 find_children AS (
-    SELECT * 
-    FROM get_child_zone_types a
-    LEFT JOIN unnest_parents b ON a.zone_parent=b.parent AND a.child_zone_type=b.zone_type
-), 
+    SELECT
+        get_child_zone_types.*,
+        unnest_parents.*
+    FROM get_child_zone_types
+    LEFT JOIN
+        unnest_parents AS unnest_parents
+        ON
+            get_child_zone_types.zone_parent = unnest_parents.parent
+            AND get_child_zone_types.child_zone_type = unnest_parents.zone_type
+),
 
 fill_zone_no_child AS (
-	SELECT 
+    SELECT
         *,
         COALESCE(zone_id, zg_zones_unnest) AS zone_id_filled
     FROM find_children
-),
-
-clean_results AS (
-    SELECT
-        zone_group_id,
-        zone_id_filled AS child_zone_id
-    FROM fill_zone_no_child
 )
 
-SELECT * FROM clean_results ORDER BY zone_group_id
+SELECT
+    zone_group_id,
+    zone_id_filled AS child_zone_id
+FROM fill_zone_no_child

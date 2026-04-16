@@ -191,7 +191,7 @@ mesure_last_params_nat_from_dept AS (
 -- Union des valeurs aggrégées depuis DEPT et REG
 mesure_last_params_nat_from_dept_or_reg AS (
     SELECT
-	    id,
+        id,
         date_import,
         indic_id1,
         metric_date,
@@ -211,7 +211,7 @@ mesure_last_params_nat_from_dept_or_reg AS (
     FROM mesure_last_params_nat_from_dept
     UNION ALL
     SELECT
-	    id,
+        id,
         date_import,
         indic_id1,
         metric_date,

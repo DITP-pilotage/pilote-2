@@ -3,7 +3,6 @@ version: 2
 sources:
   - name: parametrage_indicateurs
     description: "Cette base correspond aux tables de paramétrage des indicateurs"
-    database: "{{ env_var('PGDATABASE') }}"
     schema: raw_data
     tables:
       - name: metadata_indicateurs
@@ -1914,7 +1913,6 @@ sources:
 
   - name: import_from_files
     description: "Cette base de données correspond à la base Pilote de production."
-    database: "{{ env_var('PGDATABASE') }}"
     schema: raw_data
     tables:
       - name: mesure_indicateur
@@ -1938,7 +1936,6 @@ sources:
             description: "ID unique du rapport associé à l'import de cette donnée."
   - name: db_schema_public
     description: "Cette base de données correspond à la base Pilote de production."
-    database: "{{ env_var('PGDATABASE') }}"
     schema: public
     tables:
       - name: rapport_import_mesure_indicateur
