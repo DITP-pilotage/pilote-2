@@ -7,23 +7,19 @@
     )
 }}
 
-WITH
-mailles_applicables AS (
+WITH mailles_applicables AS (
     SELECT
         meta_ch.id AS chantier_id,
         TRUE AS maille_est_applicable,
-        UNNEST(m.maille_applicable) AS maille_applicable
-    FROM
-        {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
-    CROSS JOIN LATERAL (
-        SELECT
+        UNNEST(
             CASE
-                WHEN
-                    meta_ch.est_territorialise
+                WHEN meta_ch.est_territorialise
                     THEN COALESCE(meta_ch.maille_applicable, '{NAT,DEPT,REG}')
                 ELSE COALESCE(meta_ch.maille_applicable, '{NAT}')
-            END AS maille_applicable
-    ) AS m
+            END
+        ) AS maille_applicable
+    FROM
+        {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
 ),
 
 mediane_par_chantier AS (
@@ -64,6 +60,16 @@ proposition_valeur_actuelle_chantier AS (
         ON proposition_valeur.indic_id = indic.id
     WHERE indic.est_cache_dans_pilote IS FALSE
     GROUP BY proposition_valeur.territoire_code, indic.chantier_id
+),
+
+ta_ch_today AS (
+    SELECT * FROM {{ ref('compute_ta_ch') }}
+    WHERE valid_on = 'today'
+),
+
+ta_ch_prev_month AS (
+    SELECT * FROM {{ ref('compute_ta_ch') }}
+    WHERE valid_on = 'prev_month'
 )
 
 SELECT
@@ -157,19 +163,11 @@ LEFT JOIN {{ ref('int_last_meteo') }} AS last_meteo
     ON
         meta_ch.id = last_meteo.chantier_id
         AND territoire.code = last_meteo.territoire_code
-LEFT JOIN
-    (
-        SELECT * FROM {{ ref('compute_ta_ch') }}
-        WHERE valid_on = 'today'
-    ) AS ta_ch_today
+LEFT JOIN ta_ch_today
     ON
         meta_ch.id = ta_ch_today.chantier_id
         AND zones.zone_id = ta_ch_today.zone_id
-LEFT JOIN
-    (
-        SELECT * FROM {{ ref('compute_ta_ch') }}
-        WHERE valid_on = 'prev_month'
-    ) AS ta_ch_prev_month
+LEFT JOIN ta_ch_prev_month
     ON
         meta_ch.id = ta_ch_prev_month.chantier_id
         AND zones.zone_id = ta_ch_prev_month.zone_id
