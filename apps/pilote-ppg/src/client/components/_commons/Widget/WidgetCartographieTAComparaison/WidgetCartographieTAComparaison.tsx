@@ -281,7 +281,7 @@ type WidgetCartographieTAComparaisonProps = {
   territoireCode: string;
   jalon: number;
 } & (
-  | { mode: "chantiers"; chantierIds: string[] }
+  | { mode: "chantiers"; chantierIds?: string[] }
   | { mode: "indicateur"; indicateurId: string; chantierId: string }
 );
 
@@ -310,7 +310,7 @@ export const WidgetCartographieTAComparaison = (
 
   return (
     <ChantiersProvider
-      chantierIds={props.chantierIds}
+      chantierIds={props.chantierIds ?? []}
       maille={props.maille}
       jalon={props.jalon}
     >
