@@ -17,7 +17,7 @@ export const DashboardWidgetNombreChantiersEnRetard = ({
   return (
     <DashboardKpiCard
       label="Chantiers en retard"
-      value={String(data.chantiers_en_retard.length)}
+      value={String(data.chantiers.length)}
       footer={`${territoireCode} · jalon ${jalon}`}
     />
   );

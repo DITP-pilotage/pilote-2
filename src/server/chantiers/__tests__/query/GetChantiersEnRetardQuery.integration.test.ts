@@ -1,13 +1,13 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { GetChantiersEnRetardQuery } from "@/server/chantiers/query/GetChantiersEnRetardQuery";
+import { GetChantiersQuery } from "@/server/chantiers/query/GetChantiersQuery";
 
-describe("GetChantiersEnRetardQuery", () => {
-  let query: GetChantiersEnRetardQuery;
+describe("GetChantiersQuery — view en_retard", () => {
+  let query: GetChantiersQuery;
 
   beforeEach(() => {
-    query = new GetChantiersEnRetardQuery({
+    query = new GetChantiersQuery({
       prisma: new PrismaPilote(),
     });
   });
@@ -45,12 +45,14 @@ describe("GetChantiersEnRetardQuery", () => {
 
       // When
       const result = await query.execute({
+        mode: "par_filtre",
         territoireCode: "NAT-FR",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then
-      expect(result.chantiers_en_retard).toEqual([
+      expect(result.chantiers).toEqual([
         {
           chantier: {
             id: "CH-001",
@@ -61,6 +63,10 @@ describe("GetChantiersEnRetardQuery", () => {
           },
           ecart: -15,
           taux_avancement: 30,
+          meteo: "NON_RENSEIGNEE",
+          tendance: null,
+          est_en_retard: true,
+          est_en_difficulte: false,
           synthese: null,
         },
       ]);
@@ -97,12 +103,14 @@ describe("GetChantiersEnRetardQuery", () => {
 
       // When
       const result = await query.execute({
+        mode: "par_filtre",
         territoireCode: "NAT-FR",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then
-      expect(result.chantiers_en_retard).toEqual([]);
+      expect(result.chantiers).toEqual([]);
     }),
   );
 
@@ -137,12 +145,14 @@ describe("GetChantiersEnRetardQuery", () => {
 
       // When
       const result = await query.execute({
+        mode: "par_filtre",
         territoireCode: "NAT-FR",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then — l'écart retourné est celui du jalon, pas du mandat
-      expect(result.chantiers_en_retard).toEqual([
+      expect(result.chantiers).toEqual([
         expect.objectContaining({
           chantier: expect.objectContaining({ id: "CH-001" }),
           ecart: -15,
@@ -189,21 +199,25 @@ describe("GetChantiersEnRetardQuery", () => {
 
       // When — query sur jalon 2025
       const resultat2025 = await query.execute({
+        mode: "par_filtre",
         territoireCode: "NAT-FR",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then
-      expect(resultat2025.chantiers_en_retard).toEqual([]);
+      expect(resultat2025.chantiers).toEqual([]);
 
       // When — query sur jalon 2024
       const resultat2024 = await query.execute({
+        mode: "par_filtre",
         territoireCode: "NAT-FR",
         jalon: 2024,
+        view: "en_retard",
       });
 
       // Then
-      expect(resultat2024.chantiers_en_retard).toEqual([
+      expect(resultat2024.chantiers).toEqual([
         expect.objectContaining({
           chantier: expect.objectContaining({ id: "CH-001" }),
           ecart: -20,
@@ -241,12 +255,14 @@ describe("GetChantiersEnRetardQuery", () => {
 
       // When
       const result = await query.execute({
+        mode: "par_filtre",
         territoireCode: "NAT-FR",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then
-      expect(result.chantiers_en_retard).toEqual([]);
+      expect(result.chantiers).toEqual([]);
     }),
   );
 
@@ -279,12 +295,14 @@ describe("GetChantiersEnRetardQuery", () => {
 
       // When
       const result = await query.execute({
+        mode: "par_filtre",
         territoireCode: "NAT-FR",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then
-      expect(result.chantiers_en_retard).toEqual([]);
+      expect(result.chantiers).toEqual([]);
     }),
   );
 
@@ -334,12 +352,14 @@ describe("GetChantiersEnRetardQuery", () => {
 
       // When — on demande uniquement DEPT-75
       const result = await query.execute({
+        mode: "par_filtre",
         territoireCode: "DEPT-75",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then
-      expect(result.chantiers_en_retard).toEqual([
+      expect(result.chantiers).toEqual([
         expect.objectContaining({ ecart: -25 }),
       ]);
     }),
@@ -418,12 +438,14 @@ describe("GetChantiersEnRetardQuery", () => {
 
       // When
       const result = await query.execute({
+        mode: "par_filtre",
         territoireCode: "NAT-FR",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then — tri du plus bas écart au plus haut
-      expect(result.chantiers_en_retard.map((c) => c.chantier.id)).toEqual([
+      expect(result.chantiers.map((c) => c.chantier.id)).toEqual([
         "CH-002",
         "CH-003",
         "CH-001",
@@ -478,12 +500,14 @@ describe("GetChantiersEnRetardQuery", () => {
 
       // When
       const result = await query.execute({
+        mode: "par_filtre",
         territoireCode: "NAT-FR",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then — la synthèse la plus récente est retournée
-      expect(result.chantiers_en_retard).toEqual([
+      expect(result.chantiers).toEqual([
         expect.objectContaining({
           synthese: {
             meteo: "ORAGE",

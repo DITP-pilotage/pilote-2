@@ -12,9 +12,8 @@ const TOOL_NAMES = [
   "compose_dashboard",
   "export_rapport",
   "get_taux_avancement_territoire",
-  "get_chantiers_en_retard",
-  "get_chantiers_en_difficulte",
-  "get_chantier_indicateurs",
+  "get_chantiers",
+  "get_indicateurs",
 ];
 
 const TOOL_CALL_START_REGEX = new RegExp(

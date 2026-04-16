@@ -218,8 +218,13 @@ export const chantierRouter = créerRouteurTRPC({
         throw new TerritoireNonAutoriséErreur();
       }
       return getContainer("chantiers")
-        .resolve("getChantiersEnRetardQuery")
-        .execute(input);
+        .resolve("getChantiersQuery")
+        .execute({
+          mode: "par_filtre",
+          territoireCode: input.territoireCode,
+          jalon: input.jalon,
+          view: "en_retard",
+        });
     }),
   recupererChantiersEnDifficulte: procédureProtégée
     .input(
@@ -237,8 +242,13 @@ export const chantierRouter = créerRouteurTRPC({
         throw new TerritoireNonAutoriséErreur();
       }
       return getContainer("chantiers")
-        .resolve("getChantiersEnDifficulteQuery")
-        .execute(input);
+        .resolve("getChantiersQuery")
+        .execute({
+          mode: "par_filtre",
+          territoireCode: input.territoireCode,
+          jalon: input.jalon,
+          view: "en_difficulte",
+        });
     }),
   recupererIndicateursChantier: procédureProtégée
     .input(

@@ -17,7 +17,7 @@ export const DashboardWidgetNombreChantiersEnDifficulte = ({
   return (
     <DashboardKpiCard
       label="Chantiers en difficulté"
-      value={String(data.chantiers_en_difficulte.length)}
+      value={String(data.chantiers.length)}
       footer={`${territoireCode} · jalon ${jalon}`}
     />
   );

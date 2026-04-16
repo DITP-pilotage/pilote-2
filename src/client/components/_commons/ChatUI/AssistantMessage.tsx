@@ -51,9 +51,8 @@ export const AssistantMessage = memo(function AssistantMessage({
         {message.parts?.map((part, index) => {
           if (
             part.type === "tool-get_taux_avancement_territoire" ||
-            part.type === "tool-get_chantiers_en_retard" ||
-            part.type === "tool-get_chantiers_en_difficulte" ||
-            part.type === "tool-get_chantier_indicateurs"
+            part.type === "tool-get_chantiers" ||
+            part.type === "tool-get_indicateurs"
           ) {
             return <ToolCallIndicator key={index} part={part} />;
           }

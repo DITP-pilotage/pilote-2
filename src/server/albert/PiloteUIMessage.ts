@@ -17,13 +17,9 @@ import {
   type GetTauxAvancementTerritoireOutput,
 } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import {
-  getChantiersEnRetardInputSchema,
-  type GetChantiersEnRetardOutput,
-} from "@/server/albert/tools/getChantiersEnRetard";
-import {
-  getChantiersEnDifficulteInputSchema,
-  type GetChantiersEnDifficulteOutput,
-} from "@/server/albert/tools/getChantiersEnDifficulte";
+  getChantiersInputSchema,
+  type GetChantiersOutput,
+} from "@/server/albert/tools/getChantiers";
 import {
   getChantierIndicateursInputSchema,
   type GetChantierIndicateursOutput,
@@ -38,15 +34,11 @@ export type PiloteUITools = {
     input: z.input<typeof getTauxAvancementTerritoireInputSchema>;
     output: GetTauxAvancementTerritoireOutput;
   };
-  get_chantiers_en_retard: {
-    input: z.input<typeof getChantiersEnRetardInputSchema>;
-    output: GetChantiersEnRetardOutput;
+  get_chantiers: {
+    input: z.input<typeof getChantiersInputSchema>;
+    output: GetChantiersOutput;
   };
-  get_chantiers_en_difficulte: {
-    input: z.input<typeof getChantiersEnDifficulteInputSchema>;
-    output: GetChantiersEnDifficulteOutput;
-  };
-  get_chantier_indicateurs: {
+  get_indicateurs: {
     input: z.input<typeof getChantierIndicateursInputSchema>;
     output: GetChantierIndicateursOutput;
   };
