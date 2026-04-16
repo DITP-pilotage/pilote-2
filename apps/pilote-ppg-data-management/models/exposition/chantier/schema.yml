@@ -46,13 +46,16 @@ models:
         description: "Indicateur booléen précisant si le chantier est territorialisé."
       - name: ate
         description: >
-          Type d'ATE (ate, hors_ate_deconcentre, hors_ate_centralise) associé au chantier, en minuscules.
+          Indique le niveau de saisie des commentaires:  
+          - `ate` (=Administration Territoriale de l'Etat) : saisie par les responsables locaux sous l'autorité des préfets
+          - `hors_ate_centralise` : saisie par l'administration centrale
+          - `hors_ate_deconcentre` : saisie par les responsables locaux sous l'autorité de l'administration centrale
       - name: possede_taux_avancement_departemental
         description: "Indicateur booléen précisant si le chantier possède un taux d'avancement au niveau départemental."
       - name: possede_taux_avancement_regional
         description: "Indicateur booléen précisant si le chantier possède un taux d'avancement au niveau régional."
       - name: possede_meteo_departemental
-        description: "Indicateur booléen précisant si le chantier possède une météo (indicateurs de suivi) au niveau départemental."
+        description: "Indicateur booléen précisant si le chantier possède une météo (indicateur de suivi) au niveau départemental."
       - name: possede_meteo_regional
         description: "Indicateur booléen précisant si le chantier possède une météo (indicateurs de suivi) au niveau régional."
       - name: statut
