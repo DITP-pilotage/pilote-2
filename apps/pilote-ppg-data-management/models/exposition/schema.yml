@@ -5,24 +5,14 @@ models:
     columns:
       - name: id
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_axe"
-        data_tests:
-          - unique
-          - not_null
       - name: nom
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_axe"
-        data_tests:
-          - not_null
   - name: ppg
     columns:
       - name: id
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_ppg"
-        data_tests:
-          - unique
-          - not_null
       - name: nom
         description: "source de données à date du 07/07/2023 : ppg_metadata.view_meta_ppg"
-        data_tests:
-          - not_null
   - name: commentaire
     columns:
       - name: id

@@ -1,6 +1,25 @@
 version: 2
 
 models:
+  - name: stg_ppg_metadata__axes
+    columns:
+      - name: id
+        description: "Identifiant unique de l'axe"
+        data_tests:
+          - unique
+          - not_null
+      - name: nom_court
+        description: "Nom court de l'axe (ex. Transition écologique)"
+        data_tests:
+          - not_null
+      - name: nom
+        description: "Nom complet de l'axe (ex. Planifier et accélérer la transition écologique)"
+        data_tests:
+          - not_null
+      - name: description
+        description: "Description de l'axe"
+        data_tests:
+          - not_null
   - name: stg_ppg_metadata__chantiers
     description: >
       Table de staging pour la table source `metadata_chantiers`.
@@ -124,3 +143,31 @@ models:
         description: "Description détaillée de la signification de la météo"
         data_tests:
           - not_null
+  - name: stg_ppg_metadata__ppgs
+    columns:
+      - name: id
+        description: "Identifiant unique de la PPG (Politique Prioritaire du Gouvernement)"
+        data_tests:
+          - unique
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: 'SIMILAR TO ''PPG-(\d|[A-Z]){1,3}'''
+      - name: axe_id
+        description: "Identifiant unique de l'axe de la PPG (Politique Prioritaire du Gouvernement)"
+        data_tests:
+          - not_null
+      - name: code
+        description: "Code de la PPG (souvent null). Ex. 'SNU'"
+      - name: description
+        description: "Description de la PPG, souvent null."
+      - name: nom
+        description: "Nom complet de la PPG"
+      - name: porteur_noms_court
+        description: > 
+          Liste des acronymes des ministères porteurs. Ex: ["MIOM", "MTE"]
+          Souvent null.
+      - name: porteur_ids
+        description: > 
+          Liste des ids des ministères porteurs. Ex: [200, 343]
+          Souvent null.
