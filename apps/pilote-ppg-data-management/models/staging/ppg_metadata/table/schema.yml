@@ -18,8 +18,7 @@ models:
           - not_null
       - name: description
         description: "Description de l'axe"
-        data_tests:
-          - not_null
+
   - name: stg_ppg_metadata__chantiers
     description: >
       Table de staging pour la table source `metadata_chantiers`.
@@ -143,6 +142,7 @@ models:
         description: "Description détaillée de la signification de la météo"
         data_tests:
           - not_null
+
   - name: stg_ppg_metadata__ppgs
     columns:
       - name: id

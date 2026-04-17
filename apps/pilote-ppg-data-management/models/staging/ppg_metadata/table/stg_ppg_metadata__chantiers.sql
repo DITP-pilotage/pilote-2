@@ -32,7 +32,7 @@ renamed AS (
             "porteur_ids_DAC", ' | '
         ) AS directeurs_administration_centrale_ids,
         STRING_TO_ARRAY(ch_per, ' | ') AS perimetre_ids,
-         -- Géré via gestion des comptes désormais
+        -- Géré via gestion des comptes désormais
         -- STRING_TO_ARRAY(ch_dp, ' | ') AS directeurs_projet_noms,
         -- STRING_TO_ARRAY(ch_dp_mail, ' | ') AS directeurs_projet_mails,
         -- Maille applicable déclarée
