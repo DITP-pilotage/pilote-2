@@ -11,8 +11,8 @@ renamed AS (
     SELECT
         ch_meteo_id AS id,
         ch_meteo_name AS nom,
-        ch_meteo_descr AS description,
-        ch_meteo_name_dfakto AS nom_dfakto
+        ch_meteo_descr AS description
+        -- ch_meteo_name_dfakto AS nom_dfakto déprécié
 
     FROM source
 

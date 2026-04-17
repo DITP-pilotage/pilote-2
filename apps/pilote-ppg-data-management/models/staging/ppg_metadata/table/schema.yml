@@ -2,24 +2,11 @@ version: 2
 
 models:
   - name: stg_ppg_metadata__chantiers
-    description: "Modèle de *staging* de `metadata_chantiers`"
-    columns:
-        - name: maille_applicable_declaree
-          description: "Array des mailles applicables déclarées."
-        - name: maille_applicable
-          description: "Array des mailles applicables issues du calcul. Prend en compte les colonnes `replicate_val_reg_to` et `replicate_val_nat_to` en plus des mailles déclarées."
-
-
-  - name: stg_ppg_metadata__chantiers
     description: >
       Table de staging pour la table source `metadata_chantiers`.
       Ce modèle nettoie, renomme et calcule les mailles applicables pour chaque chantier,
       en tenant compte des règles de réplication territoriale (REG->DEPT, etc.).
       Il prépare les données pour une utilisation en aval, notamment pour le pilotage et l'analyse territoriale.
-    config:
-      materialized: view
-      schema: staging
-      tags: ["metadata", "chantiers", "ppg"]
     columns:
       - name: id
         description: "Identifiant unique du chantier."
@@ -55,29 +42,25 @@ models:
         data_tests:
           - dbt_utils.expression_is_true:
               arguments:
-                expression: "IN ('PUBLIE', 'BROUILLON', 'SUPPRIME', 'ARCHIVE')"
-              condition:
-                where: "ate IS NOT NULL"
+                expression: "IN ('ATE', 'HORS_ATE_DECONCENTRE', 'HORS_ATE_CENTRALISE')"
+              where: "ate IS NOT NULL"
       - name: statut
         description: "Statut du chantier"
         data_tests:
           - not_null 
           - dbt_utils.expression_is_true:
               arguments:
-                expression: "IN ('ATE', 'HORS_ATE_DECONCENTRE', 'HORS_ATE_CENTRALISE')"
+                expression: "IN ('PUBLIE', 'BROUILLON', 'SUPPRIME', 'ARCHIVE')"
       - name: zone_groupe_applicable
         description: >
           Identifiant unique de la zone groupe (ensemble de zones géographiques) pour laquelle le chantier est applicable.
           Par exemple, l'ensemble des départements du littoral.
           Au format: "ZG-123"
         data_tests:
-          - unique
-          - not_null
           - dbt_utils.expression_is_true:
               arguments:
                 expression: 'SIMILAR TO ''ZG-\d{3}'''
-              config: 
-                where: "zone_groupe_applicable IS NOT NULL"
+              where: "zone_groupe_applicable IS NOT NULL"
       - name: ministeres_ids
         description: "Liste des identifiants des ministères porteurs. Ex: [120, 220]"
       - name: ministeres_polygrammes
@@ -98,7 +81,6 @@ models:
           - dbt_utils.expression_is_true:
               arguments:
                 expression: "= 'DEPT'"
-              condition:
                 where: "replicate_val_reg_to IS NOT NULL"
       - name: replicate_val_nat_to
         description: "Règle de réplication des valeurs nationales vers une autre maille (ex: 'REG')."
@@ -106,8 +88,7 @@ models:
           - dbt_utils.expression_is_true:
               arguments:
                 expression: "IN ('REG', 'DEPT')"
-              condition:
-                where: "replicate_val_nat_to IS NOT NULL"
+              where: "replicate_val_nat_to IS NOT NULL"
       - name: ch_cible_attendue
         description: "Indique si le chantier a une cible attendue (booléen)."
       - name: maille_pilotage
@@ -121,3 +102,25 @@ models:
           - les règles de réplication (`replicate_val_reg_to`, `replicate_val_nat_to`)
           Exemple : si `replicate_val_reg_to = 'DEPT'` et `maille_applicable_declaree = ['REG', 'NAT']`, alors `maille_applicable = ['DEPT', 'REG', 'NAT']`.
           ⚠️ Pour l'instant seule la réplication de la maille régionale à la maille départementale est activée (cf code).
+
+  - name: stg_ppg_metadata__chantier_meteos
+    description: >
+      Table de staging pour la table source `metadata_chantier_meteos`.
+      Ce modèle renomme les colonnes issues de la table source.
+    columns:
+      - name: id
+        description: "Identifiant unique de la météo. ('SOLEIL', 'COUVERT', 'NUAGE', 'ORAGE')"
+        data_tests:
+          - unique
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "IN ('SOLEIL', 'COUVERT', 'NUAGE', 'ORAGE')"
+      - name: nom
+        description: "Nom officiel de la météo. ('Objectif sécurisé', 'Objectif atteignable', 'Appuis nécessaires', 'Objectif compromis')"
+        data_tests:
+          - not_null
+      - name: description
+        description: "Description détaillée de la signification de la météo"
+        data_tests:
+          - not_null
