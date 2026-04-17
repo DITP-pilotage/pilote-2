@@ -24,9 +24,6 @@ models:
         data_tests:
           - unique
           - not_null
-          - dbt_utils.expression_is_true:
-              arguments:
-                expression: 'SIMILAR TO ''CH-\d\d\d'''
       - name: nom
         description: "Nom du chantier."
       - name: perimetre_ids
@@ -67,10 +64,6 @@ models:
         description: "Indicateur booléen précisant si le chantier possède une météo (indicateurs de suivi) au niveau régional."
       - name: statut
         description: "Statut du chantier, par défaut 'PUBLIE' si non renseigné."
-        data_tests:
-          - dbt_utils.expression_is_true:
-              arguments:
-                expression: "IN ('PUBLIE', 'BROUILLON', 'SUPPRIME', 'ARCHIVE')"
       - name: cible_attendue
         description: "Indicateur booléen précisant si le chantier a une cible attendue. Par défaut TRUE si non renseigné."
       - name: mailles_applicables

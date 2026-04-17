@@ -41,6 +41,9 @@ models:
     columns:
         - name: chantier_id
           description: Identifiant du chantier
+          data_tests:
+            - unique
+            - not_null
         - name: ch_nom
           description: Nom du chantier (dans Pilote)
         - name: engagement_short
