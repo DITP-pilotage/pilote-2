@@ -22,8 +22,6 @@ export default tseslint.config(
       "node_modules/**",
       "out/**",
       "public/**",
-      "auth/**",
-      "data_management/**",
       "scripts/**/*.js",
       "*.config.js",
       "*.config.mjs",

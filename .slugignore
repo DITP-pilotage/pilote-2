@@ -17,8 +17,8 @@ apps/pilote-ppg/.eslintrc.json
 apps/pilote-ppg/jest*
 apps/pilote-ppg/README*
 node_modules
-apps/pilote-ppg/data_management
-apps/pilote-ppg/auth
+apps/data-management
+apps/auth
 apps/pilote-ppg/tests
 apps/pilote-ppg/.next/cache
 apps/pilote-ppg/public/
