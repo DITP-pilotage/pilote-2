@@ -94,7 +94,10 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const [afficherLesChantiers, setAfficherLesChantiers] = useState(false);
 
-  const queryParamString = getQueryParamString(getFiltresActifs());
+  const queryParamString = getQueryParamString({
+    ...getFiltresActifs(),
+    jalon,
+  });
 
   const hrefBoutonRetour = `/accueil/chantier/${territoireCode}${queryParamString.length > 0 ? `?${queryParamString}` : ""}`;
 
