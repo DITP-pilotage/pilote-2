@@ -1,11 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { DateTime } from "luxon";
 import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
 import { getContainer } from "@/server/dependances";
 import logger from "@/server/infrastructure/Logger";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const anterieurA = new Date();
-  anterieurA.setDate(anterieurA.getDate() - 30);
+  const anterieurA = DateTime.now().minus({ days: 14 }).toJSDate();
 
   try {
     logger.info(
