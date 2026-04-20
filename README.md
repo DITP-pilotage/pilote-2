@@ -11,8 +11,8 @@ pilote/
 │   │   ├── src/              Code source (client + server)
 │   │   ├── tests/            Tests E2E (Playwright)
 │   │   └── ...
-│   ├── auth/                 Keycloak (authentification)
-│   └── data-management/      Pipeline dbt (Python)
+│   ├── pilote-ppg-auth/       Keycloak (authentification)
+│   └── pilote-ppg-data-management/  Pipeline dbt (Python)
 ├── package.json              Scripts d'alias vers le workspace actif
 ├── pnpm-workspace.yaml       Configuration workspaces
 └── pnpm-lock.yaml            Lockfile unique
@@ -86,9 +86,9 @@ Trois applications sont déployées depuis ce repo :
 
 | App | Type | Variable |
 |-----|------|----------|
-| **webapp** | Node.js (Next.js) | — (racine, lit `package.json` root) |
-| **auth** | Keycloak | `PROJECT_DIR=apps/auth` |
-| **data-management** | Python/dbt | `PROJECT_DIR=apps/data-management` |
+| **webapp** | Node.js (Next.js) | `PROJECT_DIR=apps/pilote-ppg` |
+| **auth** | Keycloak | `PROJECT_DIR=apps/pilote-ppg-auth` |
+| **data-management** | Python/dbt | `PROJECT_DIR=apps/pilote-ppg-data-management` |
 
 La webapp utilise les scripts du `package.json` racine qui délèguent au workspace via `pnpm -F`. Pour déployer une app différente, configurer `APP_PACKAGE` sur Scalingo.
 
