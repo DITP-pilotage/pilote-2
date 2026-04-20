@@ -2,10 +2,10 @@ const fs = require('fs').promises;
 const path = require('path');
 
 const staticSrcPath = path.join(__dirname, '.next/static');
-const staticDestPath = path.join(__dirname, '.next/standalone/.next/static');
+const staticDestPath = path.join(__dirname, '.next/standalone/apps/pilote-ppg/.next/static');
 
 const publicSrcPath = path.join(__dirname, 'public');
-const publicDestPath = path.join(__dirname, '.next/standalone/public');
+const publicDestPath = path.join(__dirname, '.next/standalone/apps/pilote-ppg/public');
 
 function copyAssets(src, dest) {
   return fs.mkdir(dest, { recursive: true })

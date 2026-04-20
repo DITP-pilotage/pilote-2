@@ -66,10 +66,10 @@ jobs:
       - name: Install SQLFluff
         run: "pip install sqlfluff~=4.1.0 sqlfluff-templater-dbt~=4.1.0 dbt-core~=1.10.20 dbt-duckdb~=1.9.0"
       - name: Install dbt deps
-        working-directory: data_management
+        working-directory: apps/pilote-ppg-data-management
         run: "dbt deps"
       - name: Lint models
-        working-directory: data_management
+        working-directory: apps/pilote-ppg-data-management
         env:
           DBT_TARGET: local
         run: "sqlfluff lint models/ -v"

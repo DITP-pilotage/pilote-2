@@ -1,17 +1,7 @@
 # dependencies
-/node_modules
-/.pnp
+node_modules/
+.pnp
 .pnp.js
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
 
 # misc
 .DS_Store
@@ -26,35 +16,25 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # local env files
-.env*.local
-
-# vercel
-.vercel
-
-# typescript
-*.tsbuildinfo
-
-/db/
 .env
+.env*.local
 .env.prod
+
+# IDE
 .idea/
 .vscode/
 .cursor/
 .claude/
 !.claude/skills/feature/SKILL.md
+
+# misc
 qodana.yaml
 *.pgsql
-
-/uploads
-
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-
-public/centreaide/
-public/_pagefind/
-
-#submodules
-src/content/
+*.tsbuildinfo
 .devtools
+
+# build artifacts
+.next
+
+# uploads
+/uploads

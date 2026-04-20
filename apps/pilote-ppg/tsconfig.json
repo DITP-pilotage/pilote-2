@@ -44,9 +44,6 @@
       "@/validation/*": [
         "validation/*"
       ],
-      "@/ppg_metadata/*": [
-        "/data_management/models/raw/ppg_metadata/"
-      ],
       "@/config": [
         "config.ts"
       ]
@@ -61,7 +58,6 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "/data_management/models/raw/ppg_metadata/schema.yml",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts"
   ],

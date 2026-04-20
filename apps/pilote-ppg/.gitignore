@@ -1,0 +1,31 @@
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# testing
+/coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# uploads
+/uploads
+
+# typescript
+*.tsbuildinfo
+
+# generated
+public/centreaide/
+public/_pagefind/
+
+# submodule (cloné au build)
+src/content/
+
+# local env
+.env
+.env.e2e
+.env.test

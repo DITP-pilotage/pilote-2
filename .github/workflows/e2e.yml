@@ -51,13 +51,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Playwright browsers
-        run: pnpm exec playwright install chromium --with-deps
+        run: pnpm -F @pilote/ppg exec playwright install chromium --with-deps
 
       - name: Run E2E tests
         id: playwright-tests
         run: |
           set -e
-          pnpm exec playwright test --workers=1
+          pnpm -F @pilote/ppg exec playwright test --workers=1
         env:
           CI: true
           PLAYWRIGHT_HEADLESS: true
@@ -66,17 +66,18 @@ jobs:
         id: test-results
         if: failure()
         run: |
-          if [ -f test-results/results.json ]; then
+          RESULTS_FILE="apps/pilote-ppg/test-results/results.json"
+          if [ -f "$RESULTS_FILE" ]; then
             # Extraire les informations des tests
-            TOTAL_TESTS=$(jq '.stats.expected + .stats.unexpected + .stats.flaky + .stats.skipped' test-results/results.json 2>/dev/null || echo "0")
-            PASSED_TESTS=$(jq '.stats.expected' test-results/results.json 2>/dev/null || echo "0")
-            FAILED_TESTS=$(jq '.stats.unexpected' test-results/results.json 2>/dev/null || echo "0")
-            FLAKY_TESTS=$(jq '.stats.flaky' test-results/results.json 2>/dev/null || echo "0")
-            SKIPPED_TESTS=$(jq '.stats.skipped' test-results/results.json 2>/dev/null || echo "0")
-            DURATION=$(jq '.stats.duration' test-results/results.json 2>/dev/null || echo "0")
+            TOTAL_TESTS=$(jq '.stats.expected + .stats.unexpected + .stats.flaky + .stats.skipped' "$RESULTS_FILE" 2>/dev/null || echo "0")
+            PASSED_TESTS=$(jq '.stats.expected' "$RESULTS_FILE" 2>/dev/null || echo "0")
+            FAILED_TESTS=$(jq '.stats.unexpected' "$RESULTS_FILE" 2>/dev/null || echo "0")
+            FLAKY_TESTS=$(jq '.stats.flaky' "$RESULTS_FILE" 2>/dev/null || echo "0")
+            SKIPPED_TESTS=$(jq '.stats.skipped' "$RESULTS_FILE" 2>/dev/null || echo "0")
+            DURATION=$(jq '.stats.duration' "$RESULTS_FILE" 2>/dev/null || echo "0")
             
             # Extraire les tests échoués
-            FAILED_TEST_NAMES=$(jq -r '.suites[]?.specs[]? | select(.tests[]?.results[]?.status == "failed") | .title' test-results/results.json 2>/dev/null | head -5 | sed 's/^/• /' | tr '\n' '|' | sed 's/|$//')
+            FAILED_TEST_NAMES=$(jq -r '.suites[]?.specs[]? | select(.tests[]?.results[]?.status == "failed") | .title' "$RESULTS_FILE" 2>/dev/null | head -5 | sed 's/^/• /' | tr '\n' '|' | sed 's/|$//')
             
             echo "total_tests=$TOTAL_TESTS" >> $GITHUB_OUTPUT
             echo "passed_tests=$PASSED_TESTS" >> $GITHUB_OUTPUT
@@ -102,8 +103,8 @@ jobs:
         with:
           name: playwright-report-${{ github.run_number }}
           path: |
-            playwright-report/
-            test-results/
+            apps/pilote-ppg/playwright-report/
+            apps/pilote-ppg/test-results/
           retention-days: 2
 
       - name: Notify Tchap on failure
