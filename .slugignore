@@ -18,6 +18,12 @@ apps/pilote-ppg-auth
 apps/pilote-ppg-data-management
 apps/pilote-ppg/tests
 apps/pilote-ppg/.next/cache
+apps/pilote-ppg/.next/server
+apps/pilote-ppg/.next/static
+apps/pilote-ppg/.next/types
+apps/pilote-ppg/src
+apps/pilote-ppg/vitest*
+apps/pilote-ppg/docs
 apps/pilote-ppg/public/
 apps/pilote-ppg/next.config.js
 apps/pilote-ppg/next-env.d.ts
