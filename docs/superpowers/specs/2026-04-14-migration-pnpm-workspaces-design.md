@@ -2,7 +2,7 @@
 
 Date : 2026-04-14
 Statut : Design validé, prêt pour plan d'implémentation
-Dépend de : PIL-1461 (migration npm → pnpm)
+Dépend de : PIL-1461 (migration npm → pnpm) — terminé
 
 ## Contexte
 
@@ -13,10 +13,9 @@ L'objectif à moyen terme est d'accueillir plusieurs applications dans le même 
 - `apps/pilote` — une future application générique (ticket ultérieur)
 - `apps/shared` — code partagé entre apps (ticket ultérieur)
 
-Ce ticket s'exécute **après** PIL-1461. Son contenu peut être légèrement ajusté selon
-l'état final de PIL-1461 (dépendances explicites ajoutées pour les phantom deps,
-contenu exact de `.npmrc`, version pnpm figée, etc.). Le design est précis sur la
-structure cible et reste générique sur les détails qui dépendent de PIL-1461.
+Ce ticket s'exécute **après** PIL-1461 (terminé). pnpm 10.28.2 est figé via
+`packageManager`, pas de `.npmrc` (les valeurs par défaut suffisent), le
+`pnpm-lock.yaml` existe. Le design est précis sur la structure cible.
 
 ## Objectif
 
@@ -55,6 +54,13 @@ restent internes à `@pilote/ppg` (redéfinis dans
 `apps/pilote-ppg/tsconfig.json` comme `./src/*`). Pas de ré-écriture d'imports
 dans le code applicatif. Les futurs packages partagés utiliseront leur propre
 scope (`@pilote/shared/*`).
+
+**Cas particulier `@/ppg_metadata/*`** : cet alias pointe actuellement vers
+`/data_management/models/raw/ppg_metadata/` (chemin absolu filesystem). Comme
+`data_management/` descend aussi dans `apps/pilote-ppg/`, l'alias doit devenir
+un chemin relatif depuis `baseUrl` (→ `../data_management/models/raw/ppg_metadata/`).
+L'entrée `include` correspondante dans le `tsconfig.json` doit suivre le même
+ajustement.
 
 ### Orchestration des commandes
 Scripts d'alias dans le `package.json` racine qui filtrent vers
@@ -106,7 +112,7 @@ pilote/
 ├── package.json                   (racine, minimal + scripts d'alias)
 ├── pnpm-workspace.yaml
 ├── pnpm-lock.yaml
-├── .npmrc                         (hérite de PIL-1461, enrichi si besoin)
+├── .npmrc                         (créé si besoin, pas de `.npmrc` actuellement)
 ├── .slugignore                    (chemins mis à jour)
 ├── .gitignore
 ├── .gitmodules                    (chemin submodule mis à jour)
@@ -161,7 +167,13 @@ Tout ce qui référence un chemin relatif/absolu doit être vérifié :
      racine du monorepo
    - Vérifier le reste des chemins (assets, middlewares, etc.)
 3. **`playwright.config.ts`** : `testDir`, `webServer.cwd` si présent
-4. **`tsconfig.json`** : `baseUrl` = `.`, paths `@/*` → `./src/*`
+4. **`tsconfig.json`** :
+   - `baseUrl` reste `./src`, pas de changement (relatif au package)
+   - `paths` `@/*` → inchangés (relatifs à `baseUrl`)
+   - `paths` `@/ppg_metadata/*` → remplacer `/data_management/…` par
+     `../data_management/models/raw/ppg_metadata/` (relatif à `baseUrl`)
+   - `include` → remplacer `/data_management/…` par chemin relatif
+   - `files` → vérifier que `vitest.d.ts` et `jest-extended.d.ts` sont relatifs OK
 5. **`eslint.config.mjs`** : patterns de fichiers scannés
 6. **`copy-assets.js`** : chemins source/destination
 7. **`scripts/clone_centre_aide.sh`** : vérifier l'absence de chemins en dur
@@ -175,13 +187,30 @@ Stratégie retenue : garder les jobs à la racine et utiliser les commandes
 etc.). Pas de `working-directory` implicite.
 
 Fichiers à adapter :
-- `testAndLint.yml` : commandes déjà en `pnpm` après PIL-1461, vérifier qu'elles
-  pointent vers les alias racine
-- `e2e.yml` : idem
-- `pr-merged-dev.yml` : adaptation des chemins `data_management/` (cf. section
+- **`testAndLint.yml`** :
+  - Jobs `test` et `lint` : commandes déjà en `pnpm` (alias racine), aucune
+    modification nécessaire si on garde les alias
+  - Job `lint-sql` : `working-directory: data_management` →
+    `working-directory: apps/pilote-ppg/data_management`
+- **`e2e.yml`** :
+  - Commandes `pnpm` : OK via alias racine
+  - `node-version-file: 'package.json'` : OK (le root `package.json` conserve
+    `packageManager`, ajouter `engines.node` au root si besoin)
+  - Chemins d'artifacts : `test-results/` et `playwright-report/` sont relatifs
+    au CWD. Comme Playwright est lancé depuis la racine (via alias `pnpm test:e2e`),
+    mais le `playwright.config.ts` vit dans `apps/pilote-ppg/`, les artifacts
+    seront générés dans `apps/pilote-ppg/test-results/` etc. Les paths
+    `upload-artifact` doivent être mis à jour en conséquence.
+    **Note** : à terme avec plusieurs projets, les artifacts E2E par projet
+    devront être cadrés (convention de nommage, paths distincts).
+- **`pr-merged-dev.yml`** : adaptation des chemins `data_management/` (cf. section
   Scalingo)
-- `trigger-dj-dev.yml` : vérifier d'éventuels chemins `data_management/` en dur
-- `pr-review-requested.yml` : vérifier
+- **`trigger-dj-dev.yml`** : le `scalingo run /bin/bash scripts/run_datajobs.sh`
+  s'exécute dans le container Scalingo. Avec `PROJECT_DIR=apps/pilote-ppg/data_management`,
+  le CWD du container sera ce sous-dossier. Le chemin `scripts/run_datajobs.sh`
+  fait référence au dossier `scripts/` de `data_management/`, pas du root app.
+  À vérifier que le script existe bien à ce chemin relatif dans data_management.
+- `pr-review-requested.yml` : aucun chemin en dur, pas de modification
 
 ## Déploiement Scalingo
 
@@ -257,18 +286,32 @@ Trois applications Scalingo déployées depuis le même repo Git :
 
 1. **Submodule `src/content/`** : `.gitmodules` référence aujourd'hui
    `src/content` → devient `apps/pilote-ppg/src/content`. À corriger.
-2. **Scripts d'app** : `scripts/clone_centre_aide.sh` doit être vérifié pour
-   l'absence de chemins en dur.
+2. **Scripts d'app** : `scripts/clone_centre_aide.sh` utilise des chemins
+   relatifs (`src/content`). Comme pnpm exécute les scripts filtrés dans le CWD
+   du package (`apps/pilote-ppg/`), ces chemins restent valides. À vérifier.
 3. **`.env` en local** : Next lit `.env` depuis son cwd (qui sera
    `apps/pilote-ppg/`). Les devs doivent rapatrier leurs `.env*` locaux lors du
    pull. Documenter dans la PR description.
-4. **Prisma + pnpm isolated** : si PIL-1461 a posé un
-   `public-hoist-pattern[]=*prisma*`, le `.npmrc` racine du monorepo doit le
-   contenir (pnpm lit `.npmrc` depuis la racine du workspace).
-5. **Data management (`apps/pilote-ppg/data_management/`)** : son Docker et
+4. **`.npmrc`** : pas de `.npmrc` actuellement (valeurs par défaut pnpm suffisent
+   après PIL-1461). Si pnpm workspaces introduisent un besoin (ex: hoisting
+   Prisma), créer un `.npmrc` racine à ce moment. Tester `pnpm install` sans
+   `.npmrc` en premier.
+5. **`.gitignore`** : le `.gitignore` actuel utilise des chemins ancrés à la
+   racine (`/.next/`, `/node_modules`, `/test-results/`). Après migration, ces
+   patterns ne matcheront plus les fichiers dans `apps/pilote-ppg/`. Stratégie :
+   garder le `.gitignore` racine pour les patterns globaux (`node_modules`,
+   `.DS_Store`, `.env*.local`) et déplacer les patterns app-spécifiques
+   (`.next/`, `test-results/`, `public/_pagefind/`, `src/content/`) dans un
+   `.gitignore` à `apps/pilote-ppg/`. Passe de nettoyage post-migration.
+6. **Data management (`apps/pilote-ppg/data_management/`)** : son Docker et
    ses scripts Python ont leurs propres chemins relatifs. Vérifier que le
    déplacement ne casse rien côté CI et côté déploiement Scalingo.
-6. **Commit strategy** : un seul gros commit `refactor: move code to apps/pilote-ppg`
+7. **`copy-assets.js`** : utilise `__dirname` partout (dynamique), pas de chemin
+   en dur. Aucune modification attendue.
+8. **Vitest config** : `vitest.config.ts` et ses sous-projets dans
+   `vitest.projects/` utilisent des chemins relatifs (`./`). Comme ils bougent
+   avec l'app, pas de changement attendu.
+9. **Commit strategy** : un seul gros commit `refactor: move code to apps/pilote-ppg`
    ou plusieurs (move pur puis adjustments) — à décider au moment de
    l'implémentation. Le `git mv` doit être préservé pour l'historique.
 
@@ -296,8 +339,9 @@ Exécuté depuis la racine du monorepo :
   `outputFileTracingRoot`), `playwright.config.ts`, `eslint.config.mjs`
   ajustés
 - `.gitmodules` mis à jour (chemin submodule)
+- `.gitignore` racine nettoyé + `.gitignore` app-spécifique dans `apps/pilote-ppg/`
 - `.slugignore` mis à jour
-- `.github/workflows/testAndLint.yml` adapté
+- `.github/workflows/testAndLint.yml` adapté (dont `working-directory` SQL lint)
 - `.github/workflows/e2e.yml` adapté
 - `.github/workflows/pr-merged-dev.yml` adapté (chemins data_management)
 - `.github/workflows/trigger-dj-dev.yml` vérifié/adapté
@@ -327,12 +371,13 @@ Exécuté depuis la racine du monorepo :
 
 ## Ce qui reste volontairement flou
 
-- Version exacte de pnpm (reprise de PIL-1461)
-- Contenu exact de `.npmrc` racine (dépend des `public-hoist-pattern` posés
-  dans PIL-1461)
 - Stratégie finale de commit (un gros commit vs plusieurs)
 - Noms exacts des apps Scalingo dev/prod (à récupérer au moment de
   l'implémentation)
+- Comportement exact de `.slugignore` avec `PROJECT_DIR` sur Scalingo
+  (s'applique-t-il avant ou après le `cd` dans `PROJECT_DIR` ?)
+- Convention de nommage des artifacts E2E par projet (à cadrer quand le 2e
+  projet arrivera)
 
 ## Prochaines étapes (hors scope)
 
