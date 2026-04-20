@@ -40,3 +40,13 @@ scalingo
 tailwind.config.js
 theme.config.centreaide.tsx
 yml.d.ts
+scripts
+.env.e2e
+.env.test
+.adr-dir
+.eslintrc.json.backup
+DEPENDENCIES.md
+comparaison-territoires.md
+prd
+tsconfig.json
+eslint.config.mjs
