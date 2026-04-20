@@ -23,7 +23,10 @@ jest*
 README*
 node_modules
 tests
+.next/build
 .next/cache
+.next/dev
+.next/diagnostics
 .next/server
 .next/static
 .next/types
