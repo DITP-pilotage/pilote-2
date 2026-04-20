@@ -7,15 +7,16 @@ Outil de pilotage territorial pour le suivi des politiques publiques.
 ```
 pilote/
 ├── apps/
-│   ├── pilote-ppg/           Application PPG (Politiques Prioritaires du Gouvernement)
-│   │   ├── src/              Code source (client + server)
-│   │   ├── tests/            Tests E2E (Playwright)
+│   ├── pilote-ppg/                  Application PPG (Politiques Prioritaires du Gouvernement)
+│   │   ├── src/                     Code source (client + server)
+│   │   ├── tests/                   Tests E2E (Playwright)
 │   │   └── ...
-│   ├── pilote-ppg-auth/       Keycloak (authentification)
+│   ├── pilote-ppg-auth/             Keycloak (authentification)
 │   └── pilote-ppg-data-management/  Pipeline dbt (Python)
-├── package.json              Scripts d'alias vers le workspace actif
-├── pnpm-workspace.yaml       Configuration workspaces
-└── pnpm-lock.yaml            Lockfile unique
+├── package.json                     Scripts d'alias vers le workspace actif
+├── pnpm-workspace.yaml              Configuration workspaces
+├── pnpm-lock.yaml                   Lockfile unique
+└── .slugignore                      Exclusions slug Scalingo
 ```
 
 ## Prérequis
@@ -82,22 +83,31 @@ pnpm format               # Prettier
 
 ## Déploiement (Scalingo)
 
-Trois applications sont déployées depuis ce repo :
+| App | Type | Configuration |
+|-----|------|---------------|
+| **pilote-ppg** | Node.js (Next.js) | Pas de `PROJECT_DIR` — buildpack à la racine, `APP_PACKAGE=@pilote/ppg` |
+| **pilote-ppg-auth** | Keycloak | `PROJECT_DIR=apps/pilote-ppg-auth` |
+| **pilote-ppg-data-management** | Python/dbt | `PROJECT_DIR=apps/pilote-ppg-data-management` |
 
-| App | Type | Variable |
-|-----|------|----------|
-| **webapp** | Node.js (Next.js) | `PROJECT_DIR=apps/pilote-ppg` |
-| **auth** | Keycloak | `PROJECT_DIR=apps/pilote-ppg-auth` |
-| **data-management** | Python/dbt | `PROJECT_DIR=apps/pilote-ppg-data-management` |
+### Comment ça marche pour les apps Node.js
 
-La webapp utilise les scripts du `package.json` racine qui délèguent au workspace via `pnpm -F`. Pour déployer une app différente, configurer `APP_PACKAGE` sur Scalingo.
+Le buildpack tourne à la racine du repo, détecte pnpm via `pnpm-lock.yaml`, exécute `pnpm install` puis `pnpm build` et `pnpm start`. Ces scripts dans le `package.json` racine délèguent au workspace ciblé via `pnpm -F ${APP_PACKAGE:-@pilote/ppg}`.
 
-## Ajouter une nouvelle app
+Le `.slugignore` à la racine exclut les fichiers non nécessaires au runtime (tests, sources, cache, etc.).
+
+### Ajouter une nouvelle app Node.js sur Scalingo
+
+1. Créer l'app Scalingo
+2. `scalingo --app <app-name> env-set APP_PACKAGE=@pilote/<nom>`
+3. Le buildpack utilisera les alias scripts racine qui délèguent au bon workspace
+
+## Ajouter une nouvelle app au monorepo
 
 1. Créer le dossier dans `apps/` (ex: `apps/pilote-core/`)
 2. Ajouter un `package.json` avec `"name": "@pilote/core"`
 3. `pnpm install` depuis la racine
-4. Pour cibler la nouvelle app : `APP_PACKAGE=@pilote/core pnpm dev`
+4. Pour cibler la nouvelle app localement : `APP_PACKAGE=@pilote/core pnpm dev`
+5. Sur Scalingo : `APP_PACKAGE=@pilote/core`
 
 ## Documentation
 
