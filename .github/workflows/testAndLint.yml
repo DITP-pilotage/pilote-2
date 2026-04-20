@@ -10,8 +10,29 @@ env:
   NODE_VERSION: 24.9.0
 
 jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-latest
+    outputs:
+      pilote-ppg: ${{ steps.filter.outputs.pilote-ppg }}
+      pilote-ppg-data-management: ${{ steps.filter.outputs.pilote-ppg-data-management }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            pilote-ppg:
+              - 'apps/pilote-ppg/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+            pilote-ppg-data-management:
+              - 'apps/pilote-ppg-data-management/**'
+
   test:
     name: Run tests
+    needs: changes
+    if: needs.changes.outputs['pilote-ppg'] == 'true'
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -43,6 +64,8 @@ jobs:
 
   lint:
     name: Run linters for code
+    needs: changes
+    if: needs.changes.outputs['pilote-ppg'] == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -57,6 +80,8 @@ jobs:
 
   lint-sql:
     name: Run SQL linter on dbt models
+    needs: changes
+    if: needs.changes.outputs['pilote-ppg-data-management'] == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
