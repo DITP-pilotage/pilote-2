@@ -6,7 +6,9 @@ settings:
 
 importers:
 
-  .:
+  .: {}
+
+  apps/pilote-ppg:
     dependencies:
       '@ai-sdk/devtools':
         specifier: ^0.0.15
