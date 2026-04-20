@@ -30,6 +30,11 @@ yarn-error.log*
 # misc
 qodana.yaml
 *.pgsql
+*.tsbuildinfo
 .devtools
 
+# build artifacts
 .next
+
+# uploads
+/uploads
