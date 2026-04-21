@@ -7,10 +7,12 @@ import {
 import { BrevoNewsletterRepository } from "./infrastructure/adapters/BrevoNewsletterRepository";
 import { NewsletterRepository } from "./domain/ports/NewsletterRepository";
 import { ListerNewslettersUseCase } from "./usecases/ListerNewslettersUseCase";
+import { RecupererNewsletterUseCase } from "./usecases/RecupererNewsletterUseCase";
 
 type ActualitesCradle = {
   newsletterRepository: NewsletterRepository;
   listerNewslettersUseCase: ListerNewslettersUseCase;
+  recupererNewsletterUseCase: RecupererNewsletterUseCase;
 };
 
 export const actualitesModule = defineModule<NoExports, ActualitesCradle>()({
@@ -23,6 +25,7 @@ export const actualitesModule = defineModule<NoExports, ActualitesCradle>()({
         () => new BrevoNewsletterRepository(),
       ),
       listerNewslettersUseCase: asModuleClass(ListerNewslettersUseCase),
+      recupererNewsletterUseCase: asModuleClass(RecupererNewsletterUseCase),
     } satisfies VerifyCradle<ActualitesCradle>);
   },
 });
