@@ -68,12 +68,19 @@ function persisterEnBase(
     const level = mapPinoLevelToEnum(levelNumber);
     if (!level) return;
 
-    const contexte = extraireContexte(obj) ?? {};
-    if (level === "ERROR" || level === "WARN") {
-      const errorStack =
-        (obj.errorStack as string) ?? (obj.stack as string) ?? null;
-      contexte.stack_trace = errorStack || captureStackTrace();
-    }
+    const contexte = extraireContexte(obj);
+    const stackTrace =
+      level === "ERROR" || level === "WARN"
+        ? (obj.errorStack as string) ?? (obj.stack as string) ?? captureStackTrace()
+        : null;
+
+    const contexteAvecStack: Prisma.InputJsonObject | undefined =
+      contexte || stackTrace
+        ? ({
+            ...(contexte ?? {}),
+            ...(stackTrace ? { stack_trace: stackTrace } : {}),
+          } as Prisma.InputJsonObject)
+        : undefined;
 
     db.application_log
       .create({
@@ -81,10 +88,7 @@ function persisterEnBase(
           level: level as "ERROR" | "WARN" | "INFO" | "DEBUG",
           categorie: (obj.categorie as string) ?? "systeme",
           message: msg,
-          contexte:
-            Object.keys(contexte).length > 0
-              ? (contexte as Prisma.InputJsonObject)
-              : undefined,
+          contexte: contexteAvecStack,
           source: (obj.source as string) ?? null,
           duree_ms: (obj.duree_ms as number) ?? null,
         },
