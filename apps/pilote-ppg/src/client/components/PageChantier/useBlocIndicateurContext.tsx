@@ -7,8 +7,6 @@ import {
   DétailsIndicateur,
   DétailsIndicateurs,
 } from "@/server/domain/indicateur/DétailsIndicateur.interface";
-import { configurationFeatureFlip } from "@/config";
-
 type UseBlocIndicateurContext = {
   chantier: Chantier;
   indicateur: Indicateur;
@@ -18,7 +16,6 @@ type UseBlocIndicateurContext = {
   datajobsExecution: DatajobsExecution;
   détailsIndicateurs: DétailsIndicateurs;
   detailIndicateurDuTerritoire: DétailsIndicateur;
-  configurationFeatureFlipping: ReturnType<typeof configurationFeatureFlip>;
 };
 
 const context = createContext<UseBlocIndicateurContext | null>(null);

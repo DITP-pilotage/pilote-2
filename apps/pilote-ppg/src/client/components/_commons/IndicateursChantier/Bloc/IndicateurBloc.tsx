@@ -45,7 +45,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
     cartographieDroiteIndicateur,
     cartographieGaucheIndicateur,
     datajobsExecution,
-    configurationFeatureFlipping,
   } = pageChantier.useServerSidePropsContext();
   const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
 
@@ -132,7 +131,6 @@ const IndicateurBloc: FunctionComponent<IndicateurBlocProps> = ({
   return (
     <BlocIndicateurProvider
       chantier={chantier}
-      configurationFeatureFlipping={configurationFeatureFlipping}
       datajobsExecution={datajobsExecution}
       detailIndicateurDuTerritoire={detailIndicateurDuTerritoire}
       détailsIndicateurs={détailsIndicateurs}
