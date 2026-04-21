@@ -14,6 +14,7 @@ import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
+import { useEnv } from "@/client/hooks/useEnv";
 import { SelecteurNew } from "@/components/_commons/SelecteurNew/SelecteurNew";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 
@@ -42,8 +43,8 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
       codeInsee: territoireCodeInsee,
       nom: territoireNom,
     },
-    configurationFeatureFlipping,
   } = useBlocIndicateurContext();
+  const pvaValeurDifferente = useEnv("NEXT_PUBLIC_FF_PVA_VALEUR_DIFFERENTE");
 
   return (
     <Modale
@@ -209,8 +210,7 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
                       </div>
                     </div>
                   </div>
-                  {configurationFeatureFlipping.pvaValeurDifferente &&
-                  !estUneModificationDeProposition ? (
+                  {pvaValeurDifferente && !estUneModificationDeProposition ? (
                     <div className="fr-mt-2w">
                       <SelecteurNew
                         erreurMessage={

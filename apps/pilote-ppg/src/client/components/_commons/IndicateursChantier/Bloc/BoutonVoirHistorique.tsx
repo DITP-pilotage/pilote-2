@@ -1,13 +1,15 @@
 import { BoutonSousLigné } from "@/components/_commons/BoutonSousLigné/BoutonSousLigné";
 import { ModaleHistoriqueIndicateurTerritoireValeurEvenement } from "@/components/_commons/IndicateursChantier/Bloc/ModaleHistoriqueIndicateurTerritoireValeurEvenement/ModaleHistoriqueIndicateurTerritoireValeurEvenement";
-import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
 import { Icone } from "@/components/_commons/Icone";
 import { Time1Icon } from "@/components/_commons/Icones/Time1Icon";
+import { useEnv } from "@/client/hooks/useEnv";
 
 export const BoutonVoirHistorique = () => {
-  const { configurationFeatureFlipping } = useBlocIndicateurContext();
+  const voirHistoriqueProposition = useEnv(
+    "NEXT_PUBLIC_FF_PROPOSITION_VOIR_HISTORIQUE",
+  );
 
-  if (!configurationFeatureFlipping.voirHistoriqueProposition) return null;
+  if (!voirHistoriqueProposition) return null;
 
   return (
     <ModaleHistoriqueIndicateurTerritoireValeurEvenement>
