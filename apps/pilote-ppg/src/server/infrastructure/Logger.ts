@@ -71,7 +71,9 @@ function persisterEnBase(
     const contexte = extraireContexte(obj);
     const stackTrace =
       level === "ERROR" || level === "WARN"
-        ? (obj.errorStack as string) ?? (obj.stack as string) ?? captureStackTrace()
+        ? ((obj.errorStack as string) ??
+          (obj.stack as string) ??
+          captureStackTrace())
         : null;
 
     const contexteAvecStack: Prisma.InputJsonObject | undefined =
