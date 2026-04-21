@@ -16,6 +16,30 @@ export const keycloak = KeycloakProvider({
   token: { url: configuration().keycloak.tokenUrl },
 });
 
+const proConnectEnabled = !!configuration().proConnect.clientId;
+
+const proConnectProvider = proConnectEnabled
+  ? ({
+      id: "proconnect",
+      name: "ProConnect",
+      type: "oidc",
+      wellKnown: `${configuration().proConnect.issuer}/.well-known/openid-configuration`,
+      clientId: configuration().proConnect.clientId,
+      clientSecret: configuration().proConnect.clientSecret,
+      authorization: { params: { scope: "openid email profile" } },
+      idToken: true,
+      profile(profile: Record<string, unknown>) {
+        return {
+          id: profile["sub"] as string,
+          email: profile["email"] as string,
+          name: `${profile["given_name"]} ${profile["usual_name"]}`,
+        };
+      },
+    } satisfies import("next-auth/providers").OAuthConfig<
+      Record<string, unknown>
+    >)
+  : null;
+
 function _assertResponseOk(
   response: { status: number; data: unknown },
   errorMessage: string,
@@ -90,6 +114,46 @@ async function doFinalSignoutHandshake(token: PiloteJWTPayload) {
           errorMessage: (error as Error).message,
         },
         "Unable to perform post-logout handshake",
+      );
+    }
+  } else if (provider == "proconnect") {
+    try {
+      const params = new URLSearchParams({ id_token_hint: idToken as string });
+
+      logger.debug(
+        {
+          categorie: "auth",
+          source: "nextauth.doFinalSignoutHandshake",
+          logoutUrl: configuration().proConnect.logoutUrl,
+        },
+        "ProConnect Logout URL",
+      );
+
+      const response = await axios.post(
+        configuration().proConnect.logoutUrl,
+        params.toString(),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          validateStatus: () => true,
+        },
+      );
+
+      _assertResponseOk(response, "Failed to logout from ProConnect");
+
+      logger.info(
+        { categorie: "auth", source: "nextauth.doFinalSignoutHandshake" },
+        "Completed ProConnect post-logout handshake",
+      );
+    } catch (error: unknown) {
+      logger.error(
+        {
+          categorie: "auth",
+          source: "nextauth.doFinalSignoutHandshake",
+          errorMessage: (error as Error).message,
+        },
+        "Unable to perform ProConnect post-logout handshake",
       );
     }
   }
@@ -269,7 +333,7 @@ const credentialsProvider = CredentialsProvider({
 });
 
 function _hasExpired(token: PiloteJWTPayload): Boolean {
-  if (token.provider == "credentials") {
+  if (token.provider == "credentials" || token.provider == "proconnect") {
     return false;
   }
   const now = Date.now();
@@ -280,7 +344,9 @@ const toPiloteJWTPayload = (token: JWT) => token as PiloteJWTPayload;
 
 export const authConfig: NextAuthConfig = {
   trustHost: true,
-  providers: !!configuration().devPassword ? [credentialsProvider] : [keycloak],
+  providers: !!configuration().devPassword
+    ? [credentialsProvider]
+    : [keycloak, proConnectProvider].filter(Boolean),
   debug: configuration().nextAuth.debug,
   session: {
     maxAge: configuration().nextAuth.sessionMaxAge,
