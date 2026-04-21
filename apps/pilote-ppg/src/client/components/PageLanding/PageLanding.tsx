@@ -37,13 +37,22 @@ const PageLanding = () => {
                   nécessaires pour garantir l'atteinte des objectifs de la
                   feuille de route du Gouvernement.
                 </p>
-                <button
-                  className="fr-btn fr-mr-2w rounded"
-                  onClick={() => signIn("keycloak")}
-                  type="button"
-                >
-                  Se connecter
-                </button>
+                <div className="flex gap-4">
+                  <button
+                    className="fr-btn rounded"
+                    onClick={() => signIn("keycloak")}
+                    type="button"
+                  >
+                    Se connecter
+                  </button>
+                  <button
+                    className="fr-btn fr-btn--secondary rounded"
+                    onClick={() => signIn("proconnect")}
+                    type="button"
+                  >
+                    Se connecter avec ProConnect
+                  </button>
+                </div>
               </div>
               <div className="fr-col-12 fr-col-lg-6 fr-hidden fr-unhidden-lg flex justify-center">
                 <Image alt="" priority src={captureÉcranPilote} />
