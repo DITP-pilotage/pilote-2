@@ -4,7 +4,7 @@ import {
   FEATURE_FLIP_CONFIG_KEY_MAP,
   FeatureFlipMap,
 } from "@/server/gestion-contenu/domain/VariableContenuDisponible";
-import { configuration, configurationFeatureFlip } from "@/config";
+import { configuration } from "@/config";
 import type { Inject } from "@/server/legacy/module";
 
 export class RecupererFeatureFlipsUseCase {
@@ -17,7 +17,7 @@ export class RecupererFeatureFlipsUseCase {
   }
 
   async run(): Promise<FeatureFlipMap> {
-    const featureFlipConfig = configurationFeatureFlip();
+    const featureFlipConfig = configuration().featureFlip;
 
     // Construire les valeurs depuis la config (env vars)
     const result = {} as FeatureFlipMap;
