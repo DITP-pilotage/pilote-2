@@ -455,7 +455,7 @@ const config = convict({
   schemaValidataUrl: {
     format: String,
     default:
-      "https://raw.githubusercontent.com/DITP-pilotage/pilote-2/dev/public/schema/",
+      "https://raw.githubusercontent.com/DITP-pilotage/pilote-2/dev/apps/pilote-ppg/public/schema/",
     env: "NEXT_PUBLIC_SCHEMA_VALIDATA_URL",
   },
   e2e: {

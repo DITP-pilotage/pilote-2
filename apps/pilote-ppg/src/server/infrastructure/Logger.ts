@@ -45,6 +45,17 @@ function getPrismaInstance() {
   return prismaPilote.getInstance();
 }
 
+function captureStackTrace(): string {
+  const stack = new Error().stack;
+  if (!stack) return "";
+  return stack
+    .split("\n")
+    .slice(4)
+    .filter((line) => !line.includes("node_modules"))
+    .slice(0, 10)
+    .join("\n");
+}
+
 function persisterEnBase(
   levelNumber: number,
   obj: Record<string, unknown>,
@@ -57,13 +68,29 @@ function persisterEnBase(
     const level = mapPinoLevelToEnum(levelNumber);
     if (!level) return;
 
+    const contexte = extraireContexte(obj);
+    const stackTrace =
+      level === "ERROR" || level === "WARN"
+        ? ((obj.errorStack as string) ??
+          (obj.stack as string) ??
+          captureStackTrace())
+        : null;
+
+    const contexteAvecStack: Prisma.InputJsonObject | undefined =
+      contexte || stackTrace
+        ? ({
+            ...(contexte ?? {}),
+            ...(stackTrace ? { stack_trace: stackTrace } : {}),
+          } as Prisma.InputJsonObject)
+        : undefined;
+
     db.application_log
       .create({
         data: {
           level: level as "ERROR" | "WARN" | "INFO" | "DEBUG",
           categorie: (obj.categorie as string) ?? "systeme",
           message: msg,
-          contexte: extraireContexte(obj) ?? undefined,
+          contexte: contexteAvecStack,
           source: (obj.source as string) ?? null,
           duree_ms: (obj.duree_ms as number) ?? null,
         },
