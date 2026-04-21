@@ -51,11 +51,6 @@ export const RepartitionNiveauxDeConfiance = ({
 
         {territoiresTries.map((territoire) => {
           const meteo = territoire.meteo;
-          const dateMaj = territoire.dateDeMajQualitative
-            ? new Date(territoire.dateDeMajQualitative).toLocaleDateString(
-                "fr-FR",
-              )
-            : "—";
           const estInitial = territoire.territoireCode === territoireCode;
           const couleur = getCouleurTerritoireParCode(
             territoire.territoireCode,
@@ -88,9 +83,12 @@ export const RepartitionNiveauxDeConfiance = ({
                 </div>
               </div>
               <div
-                className={clsxm("py-2 flex items-center flex-col border-b", {
-                  "flex-row gap-4": !isModeP,
-                })}
+                className={clsxm(
+                  "py-2 flex items-center justify-center flex-col border-b",
+                  {
+                    "flex-row gap-4": !isModeP,
+                  },
+                )}
               >
                 <div className="flex items-center gap-2">
                   <MeteoPicto meteo={meteo} size="sm" />
@@ -100,9 +98,6 @@ export const RepartitionNiveauxDeConfiance = ({
                       : libellesMeteos[meteo]}
                   </span>
                 </div>
-                <span className="text-[10px] !text-dsfr-grey-625">
-                  ({dateMaj})
-                </span>
               </div>
             </Fragment>
           );

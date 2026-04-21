@@ -8,7 +8,11 @@ export const TerritoireLabel = ({
   onSupprimer?: () => void;
 }) => (
   <div className="flex items-center gap-1">
-    <span className="text-right flex-1 truncate" style={{ color: couleur }}>
+    <span
+      className="text-right flex-1 truncate"
+      title={nom}
+      style={{ color: couleur }}
+    >
       {nom}
     </span>
     <div className="w-4 shrink-0 flex justify-center">
