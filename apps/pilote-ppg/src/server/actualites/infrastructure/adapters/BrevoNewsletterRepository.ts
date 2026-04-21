@@ -14,6 +14,14 @@ export class BrevoNewsletterRepository implements NewsletterRepository {
   constructor() {
     this.emailCampaignsApi = new EmailCampaignsApi();
     this.emailCampaignsApi.setApiKey(0, configuration().brevo.apiKey);
+    // Workaround: bug SDK Brevo — getEmailCampaign passe campaignId en `data` sur une requête GET,
+    // ce qui fait planter Axios ("Data after transformation must be a string…")
+    this.emailCampaignsApi.addInterceptor((requestOptions) => {
+      if (requestOptions.method === "GET") {
+        delete requestOptions.data;
+      }
+      return Promise.resolve();
+    });
   }
 
   async listerNewsletters(): Promise<Newsletter[]> {
@@ -46,31 +54,10 @@ export class BrevoNewsletterRepository implements NewsletterRepository {
   }
 
   async recupererParId(id: number): Promise<Newsletter | null> {
-    const response = await fetch(
-      `https://api.brevo.com/v3/emailCampaigns/${id}`,
-      {
-        headers: {
-          "api-key": configuration().brevo.apiKey,
-          accept: "application/json",
-        },
-      },
-    );
-
-    if (!response.ok) {
-      return null;
-    }
-
-    const body = (await response.json()) as {
-      id?: number;
-      name?: string;
-      subject?: string;
-      sentDate?: string;
-      shareLink?: string;
-    };
+    const { body } = await this.emailCampaignsApi.getEmailCampaign(id);
 
     if (
       !estUneCampagneMinutePilote(body.name) ||
-      body.id == null ||
       body.subject == null ||
       body.sentDate == null ||
       body.shareLink == null
