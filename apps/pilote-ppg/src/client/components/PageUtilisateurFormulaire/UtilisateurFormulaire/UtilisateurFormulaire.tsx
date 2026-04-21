@@ -21,9 +21,9 @@ import {
 } from "./UtilisateurFormulaire.interface";
 import SaisieDesInformationsUtilisateur from "./SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur";
 
-const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireContainerProps> = ({
-  utilisateur,
-}) => {
+const UtilisateurFormulaire: FunctionComponent<
+  UtilisateurFormulaireContainerProps
+> = ({ utilisateur }) => {
   const étapes = [
     "Identifier l'utilisateur",
     "Vérifier les droits attribués au compte",

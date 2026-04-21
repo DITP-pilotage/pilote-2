@@ -46,7 +46,9 @@ const RapportDétailléChantier: FunctionComponent<
   jalon,
   listeIndicateursPrisEnCompteAvancement,
 }) => {
-  const masquerIndicateursNonApplicables = useEnv("NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES");
+  const masquerIndicateursNonApplicables = useEnv(
+    "NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES",
+  );
   const listeResponsablesLocaux =
     chantier?.responsableLocalTerritoireSélectionné ?? [];
   const listeCoordinateursTerritorials =

@@ -29,7 +29,6 @@ import { Icone } from "@/components/_commons/Icone";
 import { Printer1Icon } from "@/components/_commons/Icones/Printer1Icon";
 import { ChantierRapportDetailleContrat } from "@/server/chantiers/app/contrats/ChantierRapportDetailleContratV2";
 import { useTerritoireHabilitation } from "@/client/hooks/useTerritoireHabilitation";
-import { useEnv } from "@/client/hooks/useEnv";
 import FiltresSélectionnés from "./FiltresSélectionnés/FiltresSélectionnés";
 
 interface PageRapportDétailléProps {
@@ -89,7 +88,6 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   moyenneTauxAvancementTerritoire,
 }) => {
   usePrintPageStyle("margin: 12mm 0; size: 280mm 396mm");
-  const masquerIndicateursNonApplicables = useEnv("NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES");
   const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
   const territoireSélectionné = récupérerDétailsSurUnTerritoire(territoireCode);
   const [afficherLesChantiers, setAfficherLesChantiers] = useState(false);
