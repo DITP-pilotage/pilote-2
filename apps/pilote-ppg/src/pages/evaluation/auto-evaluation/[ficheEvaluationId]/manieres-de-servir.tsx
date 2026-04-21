@@ -4,7 +4,6 @@ import { z } from "zod";
 import { $Enums } from "@prisma/client";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
-import { configurationFeatureFlip } from "@/config";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { FormulaireAutoEvaluationManieresDeServir } from "@/components/PageAutoEvaluation/manieres-de-servir/FormulaireAutoEvaluationManieresDeServir";
 import { pageAutoEvaluationManieresDeServir } from "@/components/PageAutoEvaluation/manieres-de-servir/PageAutoEvaluationManieresDeServirServerSideContext";
@@ -18,7 +17,9 @@ export const getServerSideProps = async (
 
   assert(session);
 
-  const featureFlipping = configurationFeatureFlip();
+  const featureFlips = await getContainer("legacy")
+    .resolve("recupererFeatureFlipsUseCase")
+    .run();
 
   const peutAccederEtapeAutoEvaluation = await getContainer("piloteEval")
     .resolve("accesFicheEvaluationService")
@@ -28,7 +29,7 @@ export const getServerSideProps = async (
     });
 
   if (
-    !featureFlipping.piloteEval ||
+    !featureFlips["NEXT_PUBLIC_FF_PILOTE_EVAL"] ||
     !session.applicationsAccessibles.includes(
       $Enums.application_accessible.PILOTE_EVAL,
     ) ||

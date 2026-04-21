@@ -4,7 +4,6 @@ import Head from "next/head";
 import assert from "node:assert";
 import { getContainer } from "@/server/dependances";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { configurationFeatureFlip } from "@/config";
 import { pageAppreciation } from "@/components/PageAppreciation/PageAppreciationServerSideContext";
 import { InformationEnteteAppreciation } from "@/components/PageAppreciation/InformationEnteteAppreciation";
 import { ListePhaseEvaluation } from "@/components/PageAppreciation/ListePhaseEvaluation";
@@ -20,7 +19,9 @@ export const getServerSideProps = async (
   const session = await auth(context);
   assert(session);
 
-  const featureFlipping = configurationFeatureFlip();
+  const featureFlips = await getContainer("legacy")
+    .resolve("recupererFeatureFlipsUseCase")
+    .run();
 
   const container = getContainer("piloteEval");
 
@@ -31,7 +32,7 @@ export const getServerSideProps = async (
     });
 
   if (
-    !featureFlipping.piloteEval ||
+    !featureFlips["NEXT_PUBLIC_FF_PILOTE_EVAL"] ||
     !session.applicationsAccessibles.includes(
       $Enums.application_accessible.PILOTE_EVAL,
     ) ||
