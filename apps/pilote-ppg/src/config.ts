@@ -88,6 +88,28 @@ const config = convict({
       default: "ToBeDefined",
     },
   },
+  proConnect: {
+    doc: "(optionnel) Pour se connecter via ProConnect (AgentConnect). Incompatible avec DEV_PASSWORD",
+    clientId: {
+      format: String,
+      default: "",
+      env: "PROCONNECT_CLIENT_ID",
+    },
+    clientSecret: {
+      format: String,
+      default: "",
+      env: "PROCONNECT_CLIENT_SECRET",
+    },
+    issuer: {
+      format: String,
+      default: "",
+      env: "PROCONNECT_ISSUER",
+    },
+    logoutUrl: {
+      format: String,
+      default: "",
+    },
+  },
   import: {
     keycloakUrl: {
       format: String,
@@ -537,6 +559,13 @@ config.set(
   "keycloak.logoutUrl",
   config.get("keycloak.issuer") + "/protocol/openid-connect/logout",
 );
+
+if (config.get("proConnect.issuer")) {
+  config.set(
+    "proConnect.logoutUrl",
+    config.get("proConnect.issuer") + "/session/end",
+  );
+}
 
 // Force disable emails in test environment
 if (config.get("env") === "test") {
