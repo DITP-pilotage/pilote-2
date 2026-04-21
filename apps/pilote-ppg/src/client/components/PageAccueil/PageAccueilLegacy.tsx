@@ -63,9 +63,8 @@ export const PageAccueilLegacy = ({
   repartitionMeteosChantiers,
   jalon,
   jalonParDefaut,
-  doitAfficherModaleVideoAccueil,
+  aDejaVuVideoAccueil,
   doitAfficherLaModaleInfolettre,
-  doitAfficherLaFicheTerritoriale,
   moyenneTerritoire,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const { data: session } = useSession();
@@ -77,6 +76,10 @@ export const PageAccueilLegacy = ({
       session?.profil || "",
     );
 
+  const estVideoAccueilActive = useEnv("NEXT_PUBLIC_FF_VIDEO_ACCUEIL");
+  const doitAfficherLaFicheTerritoriale = useEnv(
+    "NEXT_PUBLIC_FF_FICHE_TERRITORIALE",
+  );
   const profil = useProfilUtilisateurConnecte();
   const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
   const ffAskAI = useEnv("NEXT_PUBLIC_FF_ASK_AI");
@@ -89,7 +92,7 @@ export const PageAccueilLegacy = ({
     doitAfficherLaModaleInfolettre,
   );
   const [isModaleVideoAccueilOpen, setIsModaleVideoAccueilOpen] = useState(
-    doitAfficherModaleVideoAccueil,
+    estVideoAccueilActive && !aDejaVuVideoAccueil,
   );
   const [isModaleRenseignerServiceOpen, setIsModaleRenseignerServiceOpen] =
     useState(doitAfficherModaleRenseignerService);
