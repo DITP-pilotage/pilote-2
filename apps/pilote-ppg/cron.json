@@ -14,6 +14,9 @@
     },
     {
       "command": "0 3 * * * curl -X POST -H \"Authorization: Bearer $CRON_AUTH_SECRET\" \"$APP_URL/api/admin/cron/nettoyage-rapports\""
+    },
+    {
+      "command": "0 8 * * * curl -X POST -H \"Authorization: Bearer $CRON_AUTH_SECRET\" \"$APP_URL/api/admin/cron/purge-logs\""
     }
   ]
 }
