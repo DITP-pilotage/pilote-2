@@ -25,6 +25,7 @@ import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { DonneesComparaisonDuTauxDAvancementType } from "@/server/domain/territoire/Territoire.interface";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
+import { useEnv } from "@/client/hooks/useEnv";
 
 const RapportDétailléChantier: FunctionComponent<
   RapportDétailléChantierProps
@@ -44,8 +45,8 @@ const RapportDétailléChantier: FunctionComponent<
   donnéesCartographieMétéo,
   jalon,
   listeIndicateursPrisEnCompteAvancement,
-  masquerIndicateursNonApplicables,
 }) => {
+  const masquerIndicateursNonApplicables = useEnv("NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES");
   const listeResponsablesLocaux =
     chantier?.responsableLocalTerritoireSélectionné ?? [];
   const listeCoordinateursTerritorials =
