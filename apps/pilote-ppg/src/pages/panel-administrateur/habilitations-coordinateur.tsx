@@ -6,7 +6,6 @@ import { getContainer } from "@/server/dependances";
 import PageHabilitationsCoordinateur from "@/components/PageHabilitationsCoordinateur/PageHabilitationsCoordinateur";
 import { pageHabilitationsCoordinateur } from "@/components/PageHabilitationsCoordinateur/PageHabilitationsCoordinateurServerSideContext";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
-import { configurationFeatureFlip } from "@/config";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 
 export const getServerSideProps = async (
@@ -14,9 +13,11 @@ export const getServerSideProps = async (
 ) => {
   const session = await auth(context);
 
-  const featureFlipping = configurationFeatureFlip();
+  const featureFlips = await getContainer("legacy")
+    .resolve("recupererFeatureFlipsUseCase")
+    .run();
 
-  if (!featureFlipping.panelAdmin) {
+  if (!featureFlips["NEXT_PUBLIC_FF_PANEL_ADMIN"]) {
     return {
       redirect: {
         destination: "/404",
