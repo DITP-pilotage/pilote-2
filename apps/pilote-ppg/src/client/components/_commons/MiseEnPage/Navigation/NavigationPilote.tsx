@@ -112,6 +112,14 @@ export const NavigationPilote = () => {
           target: "_self",
         },
         {
+          nom: "Actualités",
+          lien: "/actualites",
+          matcher: "/actualites",
+          accessible: true,
+          prefetch: false,
+          target: "_self",
+        },
+        {
           nom: "Centre d'aide",
           lien: "/centre-aide-pilote-2/centre-aide",
           matcher: "/centre-aide-pilote-2/centre-aide",
