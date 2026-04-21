@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { NewsletterDetailContrat } from "@/server/actualites/app/contrats/NewsletterContrat";
+import { NewsletterContrat } from "@/server/actualites/app/contrats/NewsletterContrat";
 
 const formaterDate = (iso: string): string =>
   new Date(iso).toLocaleDateString("fr-FR", {
@@ -9,7 +9,7 @@ const formaterDate = (iso: string): string =>
   });
 
 type PageNewsletterDetailProps = {
-  newsletter: NewsletterDetailContrat;
+  newsletter: NewsletterContrat;
 };
 
 export const PageNewsletterDetail = ({
@@ -36,7 +36,7 @@ export const PageNewsletterDetail = ({
       </div>
       <iframe
         className="w-full flex-1 border-0"
-        srcDoc={newsletter.htmlContent}
+        src={newsletter.lienArchive}
         title={newsletter.sujet}
       />
     </main>

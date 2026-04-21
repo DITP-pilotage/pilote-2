@@ -1,7 +1,6 @@
 import { EmailCampaignsApi } from "@getbrevo/brevo";
 import { configuration } from "@/config";
 import { Newsletter } from "@/server/actualites/domain/Newsletter";
-import { NewsletterDetail } from "@/server/actualites/domain/NewsletterDetail";
 import { NewsletterRepository } from "@/server/actualites/domain/ports/NewsletterRepository";
 
 const FILTRE_NOM_CAMPAGNE = "MINUTE PILOTE";
@@ -44,7 +43,7 @@ export class BrevoNewsletterRepository implements NewsletterRepository {
       }));
   }
 
-  async recupererParId(id: number): Promise<NewsletterDetail | null> {
+  async recupererParId(id: number): Promise<Newsletter | null> {
     const response = await fetch(
       `https://api.brevo.com/v3/emailCampaigns/${id}`,
       {
@@ -65,7 +64,6 @@ export class BrevoNewsletterRepository implements NewsletterRepository {
       subject?: string;
       sentDate?: string;
       shareLink?: string;
-      htmlContent?: string;
     };
 
     if (
@@ -73,8 +71,7 @@ export class BrevoNewsletterRepository implements NewsletterRepository {
       body.id == null ||
       body.subject == null ||
       body.sentDate == null ||
-      body.shareLink == null ||
-      body.htmlContent == null
+      body.shareLink == null
     ) {
       return null;
     }
@@ -84,7 +81,6 @@ export class BrevoNewsletterRepository implements NewsletterRepository {
       sujet: body.subject,
       dateEnvoi: new Date(body.sentDate),
       lienArchive: body.shareLink,
-      htmlContent: body.htmlContent,
     };
   }
 }

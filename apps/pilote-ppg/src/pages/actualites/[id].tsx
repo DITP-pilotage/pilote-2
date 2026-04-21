@@ -2,7 +2,7 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { getContainer } from "@/server/dependances";
-import { presenterEnNewsletterDetailContrat } from "@/server/actualites/app/contrats/NewsletterContrat";
+import { presenterEnNewsletterContrat } from "@/server/actualites/app/contrats/NewsletterContrat";
 import { PageNewsletterDetail } from "@/components/PageActualites/PageNewsletterDetail";
 
 export const getServerSideProps = async (
@@ -25,7 +25,7 @@ export const getServerSideProps = async (
     .execute({ id: idParam });
 
   return {
-    props: { newsletter: presenterEnNewsletterDetailContrat(newsletter) },
+    props: { newsletter: presenterEnNewsletterContrat(newsletter) },
   };
 };
 
