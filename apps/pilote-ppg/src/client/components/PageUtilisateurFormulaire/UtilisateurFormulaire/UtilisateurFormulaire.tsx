@@ -13,16 +13,16 @@ import RécapitulatifUtilisateur from "@/components/PageUtilisateurFormulaire/Ut
 import api from "@/server/infrastructure/api/trpc/api";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
+import { useEnv } from "@/client/hooks/useEnv";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import {
   UtilisateurFormInputs,
-  UtilisateurFormulaireProps,
+  UtilisateurFormulaireContainerProps,
 } from "./UtilisateurFormulaire.interface";
 import SaisieDesInformationsUtilisateur from "./SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur";
 
-const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
+const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireContainerProps> = ({
   utilisateur,
-  estAutoriseAVoirLeSelecteurApplication,
-  creationCompteArsActive,
 }) => {
   const étapes = [
     "Identifier l'utilisateur",
@@ -30,6 +30,10 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
   ];
   const [etapeCourante, setEtapeCourante] = useState(1);
   const { data: session } = useSession();
+  const estPiloteEvalActif = useEnv("NEXT_PUBLIC_FF_PILOTE_EVAL");
+  const creationCompteArsActive = useEnv("NEXT_PUBLIC_FF_CREATION_COMPTE_ARS");
+  const estAutoriseAVoirLeSelecteurApplication =
+    estPiloteEvalActif && [ProfilEnum.DITP_ADMIN].includes(session!.profil);
   const { data: chantiers } =
     api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(
       undefined,

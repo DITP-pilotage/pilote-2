@@ -7,6 +7,8 @@ export interface UtilisateurFormulaireProps {
   creationCompteArsActive: boolean;
 }
 
+export type UtilisateurFormulaireContainerProps = Pick<UtilisateurFormulaireProps, "utilisateur">;
+
 export type UtilisateurFormInputs = Omit<
   RouterInputs["utilisateur"]["créer"],
   "csrf"

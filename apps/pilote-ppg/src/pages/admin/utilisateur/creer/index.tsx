@@ -4,8 +4,6 @@ import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import PageCréerUtilisateur from "@/components/PageUtilisateurFormulaire/PageCréerUtilisateur/PageCréerUtilisateur";
 import { pageCreerUtilisateur } from "@/components/PageUtilisateurFormulaire/PageCréerUtilisateur/PageCreerUtilisateurServerSideContext";
-import { configurationFeatureFlip } from "@/config";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const redirigerVersPageAccueil = {
@@ -28,12 +26,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   return {
-    props: {
-      estAutoriseAVoirLeSelecteurApplication:
-        configurationFeatureFlip().piloteEval &&
-        [ProfilEnum.DITP_ADMIN].includes(session.profil),
-      creationCompteArsActive: configurationFeatureFlip().creationCompteArs,
-    },
+    props: {},
   };
 }
 
