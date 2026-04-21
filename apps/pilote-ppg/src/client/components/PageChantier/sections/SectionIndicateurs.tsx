@@ -9,6 +9,7 @@ import {
   useTerritoireSelectionne,
 } from "@/components/PageChantier/PageChantierServerSideContext";
 import { usePageChantier } from "@/components/PageChantier/usePageChantier";
+import { useEnv } from "@/client/hooks/useEnv";
 
 export const SectionIndicateurs = () => {
   const {
@@ -17,9 +18,12 @@ export const SectionIndicateurs = () => {
     territoireCode,
     détailsIndicateurs,
     detailsIndicateursTerritoire,
-    configurationFeatureFlipping,
     territoiresCompares,
   } = pageChantier.useServerSidePropsContext();
+  const ffAlerteMAJIndicateur = useEnv("NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR");
+  const masquerIndicateursNonApplicables = useEnv(
+    "NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES",
+  );
 
   const territoireSélectionné = useTerritoireSelectionne();
 
@@ -37,7 +41,7 @@ export const SectionIndicateurs = () => {
 
   const alerteMiseAJourIndicateur =
     estAutoriseAVoirLesAlertesMAJIndicateurs &&
-    !!configurationFeatureFlipping.alerteMAJIndicateur &&
+    !!ffAlerteMAJIndicateur &&
     Object.values(détailsIndicateurs)
       .flatMap((values) => Object.values(values))
       .reduce((acc, val) => {
@@ -76,15 +80,14 @@ export const SectionIndicateurs = () => {
   );
 
   const territoiresCibles = [territoireCode, ...territoiresCompares];
-  const indicateursApplicablesIds =
-    configurationFeatureFlipping.masquerIndicateursNonApplicables
-      ? Object.keys(detailsIndicateursTerritoire).filter((indicateurId) =>
-          Object.entries(detailsIndicateursTerritoire[indicateurId] ?? {}).some(
-            ([key, value]) =>
-              territoiresCibles.includes(key) && value.estApplicable === true,
-          ),
-        )
-      : Object.keys(detailsIndicateursTerritoire);
+  const indicateursApplicablesIds = masquerIndicateursNonApplicables
+    ? Object.keys(detailsIndicateursTerritoire).filter((indicateurId) =>
+        Object.entries(detailsIndicateursTerritoire[indicateurId] ?? {}).some(
+          ([key, value]) =>
+            territoiresCibles.includes(key) && value.estApplicable === true,
+        ),
+      )
+    : Object.keys(detailsIndicateursTerritoire);
 
   if (indicateurs.length === 0) {
     return null;

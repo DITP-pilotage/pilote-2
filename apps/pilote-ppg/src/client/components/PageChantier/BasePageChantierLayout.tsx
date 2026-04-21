@@ -18,6 +18,7 @@ import {
 } from "@/components/PageChantier/PageChantierServerSideContext";
 import { BandeauEntetePageChantier } from "@/components/PageChantier/BandeauEntetePageChantier";
 import { usePrintPageStyle } from "@/client/hooks/usePrintPageStyle";
+import { useEnv } from "@/client/hooks/useEnv";
 import PageChantierEnTête from "./EnTête/EnTête";
 import { usePageChantier } from "./usePageChantier";
 
@@ -36,8 +37,8 @@ export const BasePageChantierLayout = ({
     mailleQuery,
     détailsIndicateurs,
     detailsIndicateursTerritoire,
-    configurationFeatureFlipping,
   } = pageChantier.useServerSidePropsContext();
+  const ffAlerteMAJIndicateur = useEnv("NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR");
 
   const [estOuverteBarreLatérale, setEstOuverteBarreLatérale] = useState(false);
 
@@ -52,7 +53,7 @@ export const BasePageChantierLayout = ({
 
   const alerteMiseAJourIndicateur =
     estAutoriseAVoirLesAlertesMAJIndicateurs &&
-    !!configurationFeatureFlipping.alerteMAJIndicateur &&
+    !!ffAlerteMAJIndicateur &&
     Object.values(détailsIndicateurs)
       .flatMap((values) => Object.values(values))
       .reduce((acc, val) => {
