@@ -6,7 +6,8 @@ import { PageFicheTerritoriale } from "@/components/PageFicheTerritoriale/PageFi
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { estAutoriséAConsulterLaFicheTerritoriale } from "@/client/utils/fiche-territoriale/fiche-territoriale";
 import { ficheTerritorialeHandler } from "@/server/fiche-territoriale/infrastructure/handlers/FicheTerritorialeHandler";
-import { configuration, configurationFeatureFlip } from "@/config";
+import { configuration } from "@/config";
+import { getContainer } from "@/server/dependances";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 
 const loadSearchParams = createLoader({
@@ -18,7 +19,11 @@ export const getServerSideProps = async (
   context: GetServerSidePropsContext,
 ) => {
   const { query } = context;
-  if (!configurationFeatureFlip().ficheTerritoriale) {
+  const featureFlips = await getContainer("legacy")
+    .resolve("recupererFeatureFlipsUseCase")
+    .run();
+
+  if (!featureFlips["NEXT_PUBLIC_FF_FICHE_TERRITORIALE"]) {
     return {
       redirect: {
         destination: "/404",
