@@ -24,6 +24,8 @@ export class BrevoNewsletterRepository implements NewsletterRepository {
       undefined,
       undefined,
       50,
+      undefined,
+      "desc",
     );
 
     return (body.campaigns ?? [])
@@ -38,7 +40,7 @@ export class BrevoNewsletterRepository implements NewsletterRepository {
       .map((campaign) => ({
         id: campaign.id!,
         sujet: campaign.subject!,
-        dateEnvoi: new Date(campaign.sentDate!),
+        dateEnvoi: new Date(campaign.sentDate!).toISOString(),
         lienArchive: campaign.shareLink!,
       }));
   }
@@ -79,7 +81,7 @@ export class BrevoNewsletterRepository implements NewsletterRepository {
     return {
       id: body.id,
       sujet: body.subject,
-      dateEnvoi: new Date(body.sentDate),
+      dateEnvoi: new Date(body.sentDate).toISOString(),
       lienArchive: body.shareLink,
     };
   }

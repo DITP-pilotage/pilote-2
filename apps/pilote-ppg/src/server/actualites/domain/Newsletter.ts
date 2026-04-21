@@ -1,6 +1,6 @@
 export type Newsletter = {
   id: number;
   sujet: string;
-  dateEnvoi: Date;
+  dateEnvoi: string;
   lienArchive: string;
 };

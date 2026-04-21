@@ -1,16 +1,9 @@
 import Link from "next/link";
-import { NewsletterContrat } from "@/server/actualites/app/contrats/NewsletterContrat";
-
-const formaterDate = (iso: string): string => {
-  return new Date(iso).toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-};
+import { Newsletter } from "@/server/actualites/domain/Newsletter";
+import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 
 type CarteNewsletterProps = {
-  newsletter: NewsletterContrat;
+  newsletter: Newsletter;
 };
 
 export const CarteNewsletter = ({ newsletter }: CarteNewsletterProps) => {
@@ -20,7 +13,7 @@ export const CarteNewsletter = ({ newsletter }: CarteNewsletterProps) => {
       href={`/actualites/${newsletter.id}`}
     >
       <p className="text-sm text-gray-500">
-        {formaterDate(newsletter.dateEnvoi)}
+        {PiloteDateFormatter.isoDateFranceMetropolitaine(newsletter.dateEnvoi)}
       </p>
       <h2 className="text-base font-semibold text-gray-900 group-hover:text-blue-600">
         {newsletter.sujet}

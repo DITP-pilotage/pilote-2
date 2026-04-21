@@ -10,9 +10,6 @@ export class ListerNewslettersUseCase {
   }
 
   async execute(): Promise<Newsletter[]> {
-    const newsletters = await this.newsletterRepository.listerNewsletters();
-    return newsletters.sort(
-      (a, b) => b.dateEnvoi.getTime() - a.dateEnvoi.getTime(),
-    );
+    return this.newsletterRepository.listerNewsletters();
   }
 }
