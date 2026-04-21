@@ -3,20 +3,24 @@ import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
 import { getContainer } from "@/server/dependances";
 import logger from "@/server/infrastructure/Logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
-import { configuration, configurationFeatureFlip } from "@/config";
+import { configuration } from "@/config";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const baseUrl = configuration().tchap.baseUrl;
   const roomId = configuration().tchap.roomIdRapportPva;
   const accessToken = configuration().tchap.accessToken;
 
+  const featureFlips = await getContainer("legacy")
+    .resolve("recupererFeatureFlipsUseCase")
+    .run();
+
   if (
-    !configurationFeatureFlip().rapportPva ||
+    !featureFlips["NEXT_PUBLIC_FF_RAPPORT_PVA"] ||
     configuration().scalingoEnvironment !== "PROD"
   ) {
     return res.status(200).json({
       skipped: true,
-      reason: !configurationFeatureFlip().rapportPva
+      reason: !featureFlips["NEXT_PUBLIC_FF_RAPPORT_PVA"]
         ? "Feature flag NEXT_PUBLIC_FF_RAPPORT_PVA is disabled"
         : "Environment is not PROD",
     });
