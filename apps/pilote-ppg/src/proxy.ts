@@ -81,7 +81,7 @@ export async function proxy(request: NextRequest) {
   ) {
     response.headers.set(
       "Content-Security-Policy",
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://fichiers.numerique.gouv.fr/; font-src 'self'; connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self' ws: wss:; frame-src 'self' https://video.finances.gouv.fr/ http://sh1.sendinblue.com https://*.sendinblue.com; object-src 'none'; base-uri 'self'; form-action 'self'; media-src 'self' https://video.finances.gouv.fr/",
+      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://fichiers.numerique.gouv.fr/; font-src 'self'; connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self' ws: wss:; frame-src 'self' https://video.finances.gouv.fr/ http://sh1.sendinblue.com; object-src 'none'; base-uri 'self'; form-action 'self'; media-src 'self' https://video.finances.gouv.fr/",
     );
   } else {
     response.headers.set(
@@ -92,7 +92,7 @@ export async function proxy(request: NextRequest) {
        img-src 'self' data: blob: https://fichiers.numerique.gouv.fr/;
        font-src 'self' data:;
        connect-src https://api.validata.etalab.studio/ https://stats.beta.gouv.fr/ 'self';
-       frame-src 'self' https://video.finances.gouv.fr/ http://sh1.sendinblue.com https://*.sendinblue.com;
+       frame-src 'self' https://video.finances.gouv.fr/ http://sh1.sendinblue.com;
        object-src 'none';
        base-uri 'self';
        media-src 'self' https://video.finances.gouv.fr/;
