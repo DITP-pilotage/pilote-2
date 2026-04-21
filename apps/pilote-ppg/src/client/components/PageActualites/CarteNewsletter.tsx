@@ -9,17 +9,20 @@ type CarteNewsletterProps = {
 export const CarteNewsletter = ({ newsletter }: CarteNewsletterProps) => {
   return (
     <Link
-      className="group flex flex-col gap-3 rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition hover:border-blue-600 hover:shadow-md"
+      className="group flex min-h-48 flex-col rounded border border-gray-200 bg-white p-6 transition hover:border-blue-700"
       href={`/actualites/${newsletter.id}`}
     >
-      <p className="text-sm text-gray-500">
-        {PiloteDateFormatter.isoDateFranceMetropolitaine(newsletter.dateEnvoi)}
-      </p>
-      <h2 className="text-base font-semibold text-gray-900 group-hover:text-blue-600">
+      <h2 className="text-lg font-bold leading-snug text-blue-900 group-hover:text-blue-700">
         {newsletter.sujet}
       </h2>
-      <span className="mt-auto text-sm font-medium text-blue-600">
-        Lire la newsletter →
+      <p className="mt-3 text-sm text-gray-500">
+        Publié le{" "}
+        {PiloteDateFormatter.dateFrancaiseLongue(
+          new Date(newsletter.dateEnvoi),
+        )}
+      </p>
+      <span className="mt-auto self-end text-xl font-light text-blue-700">
+        →
       </span>
     </Link>
   );
