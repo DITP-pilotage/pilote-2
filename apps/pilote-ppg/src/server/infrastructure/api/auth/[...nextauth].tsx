@@ -23,10 +23,12 @@ const proConnectProvider = proConnectEnabled
       id: "proconnect",
       name: "ProConnect",
       type: "oidc",
-      wellKnown: `${configuration().proConnect.issuer}/.well-known/openid-configuration`,
+      issuer: configuration().proConnect.issuer,
       clientId: configuration().proConnect.clientId,
       clientSecret: configuration().proConnect.clientSecret,
       authorization: { params: { scope: "openid email profile" } },
+      checks: ["state", "nonce"],
+      client: { token_endpoint_auth_method: "client_secret_post" },
       idToken: true,
       profile(profile: Record<string, unknown>) {
         return {
