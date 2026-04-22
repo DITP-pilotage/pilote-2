@@ -8,6 +8,7 @@ import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-even
 import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
 import { UtilisateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/UtilisateurRepository";
 import { EnvoieEmailService } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/EnvoieEmailService";
+import { BREVO_TEMPLATE_IDS } from "@/server/indicateur-territoire-valeur-evenement/domain/brevoEmailTemplateIds";
 
 describe("RefuserPropositionValeurAvancementUseCase", () => {
   let refuserPropositionValeurAvancementUseCase: RefuserPropositionValeurAvancementUseCase;
@@ -171,7 +172,7 @@ describe("RefuserPropositionValeurAvancementUseCase", () => {
       envoieEmailService.envoieNotificationProposition,
     ).toHaveBeenCalledWith({
       destinataires: [{ email: "auteur1@example.com" }],
-      templateId: 42,
+      templateId: BREVO_TEMPLATE_IDS.PROPOSITION_VALEUR_REFUSEE,
       parametres: {
         chantierId: "CH-001",
         chantierNom: "Nom du chantier",
@@ -187,7 +188,7 @@ describe("RefuserPropositionValeurAvancementUseCase", () => {
       envoieEmailService.envoieNotificationProposition,
     ).toHaveBeenCalledWith({
       destinataires: [{ email: "auteur2@example.com" }],
-      templateId: 42,
+      templateId: BREVO_TEMPLATE_IDS.PROPOSITION_VALEUR_REFUSEE,
       parametres: {
         chantierId: "CH-001",
         chantierNom: "Nom du chantier",
@@ -203,7 +204,7 @@ describe("RefuserPropositionValeurAvancementUseCase", () => {
       envoieEmailService.envoieNotificationProposition,
     ).toHaveBeenCalledWith({
       destinataires: [{ email: "coordinateur2@example.com" }],
-      templateId: 42,
+      templateId: BREVO_TEMPLATE_IDS.PROPOSITION_VALEUR_REFUSEE,
       parametres: {
         chantierId: "CH-001",
         chantierNom: "Nom du chantier",

@@ -8,6 +8,7 @@ import { formaterNombre } from "@/client/utils/nombre/nombre";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
+import { BREVO_TEMPLATE_IDS } from "@/server/indicateur-territoire-valeur-evenement/domain/brevoEmailTemplateIds";
 
 export class AccuserReceptionPropositionValeurUseCase {
   private readonly indicateurTerritoireValeurEvenementRepository: IndicateurTerritoireValeurEvenementRepository;
@@ -118,7 +119,7 @@ export class AccuserReceptionPropositionValeurUseCase {
       await this.envoieEmailService.envoieNotificationProposition<"PROPOSITION_VALEUR_ACCUSEE_RECEPTION">(
         {
           destinataires: [{ email: emailDestinataire }],
-          templateId: 43,
+          templateId: BREVO_TEMPLATE_IDS.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
           parametres: {
             chantierId: informationIndicateur!.chantierId,
             chantierNom: informationIndicateur!.chantierNom,
@@ -133,6 +134,12 @@ export class AccuserReceptionPropositionValeurUseCase {
               1,
             ),
             valeurProposee: formaterNombre(evenement.valeur, 1),
+            dateProposition: formaterDate(
+              evenementsSurDate
+                .evenementsPropositionValeurCreeeOuModifiee()[0]
+                .dateCreation.toISOString(),
+              "DD/MM/YYYY",
+            )!,
           },
         },
       );
