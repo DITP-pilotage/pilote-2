@@ -58,8 +58,8 @@ NOTE FORMAT :
 {{Y}} chantiers sont compromis ou nécessitent un appui :
 
 (pour chaque chantier_en_difficulte, séparé du suivant par une ligne contenant uniquement \`&nbsp;\`)
-**{{chantier.id}} — {{chantier.nom}}**\
-**Écart** : {{ecart}} points\
+**{{chantier.id}} — {{chantier.nom}}**\\
+**Écart** : {{ecart}} points\\
 **Météo** : {{synthese.meteo}}
 
 > {{résumé condensé en 1-2 phrases factuelles à partir du commentaire de la synthèse du chantier. OBLIGATOIRE pour CHAQUE chantier. Si aucun commentaire n'est disponible, écris "Pas de commentaire disponible".}}

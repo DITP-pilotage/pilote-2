@@ -60,7 +60,7 @@ function getOutputInstructions(input: GetChantiersInput): string {
   }
 
   if (input.view === "en_difficulte") {
-    return "Pour chaque chantier en difficulté, indique la météo (ORAGE ou NUAGE).";
+    return "Pour chaque chantier en difficulté, indique la météo avec son libellé utilisateur (Objectifs compromis, Appuis nécessaires), sans afficher les codes internes.";
   }
 
   if (input.chantier_ids && input.chantier_ids.length > 0) {
