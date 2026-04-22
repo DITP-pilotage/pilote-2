@@ -1,7 +1,7 @@
 import { Suspense } from "react";
-import Loader from "@/components/_commons/Loader/Loader";
 import api from "@/server/infrastructure/api/trpc/api";
 import { CarteNewsletter } from "./CarteNewsletter";
+import { ListeNewslettersSkeleton } from "./CarteNewsletterSkeleton";
 
 const ListeNewsletters = () => {
   const [newsletters] = api.actualites.listerNewsletters.useSuspenseQuery(
@@ -30,7 +30,7 @@ export const PageActualites = () => {
   return (
     <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <h1 className="mb-8 text-3xl font-bold text-gray-900">Actualités</h1>
-      <Suspense fallback={<Loader />}>
+      <Suspense fallback={<ListeNewslettersSkeleton />}>
         <ListeNewsletters />
       </Suspense>
     </main>
