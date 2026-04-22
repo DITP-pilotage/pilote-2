@@ -13,10 +13,7 @@
       "command": "30 11 * * 1 test \"$APP_PACKAGE\" = \"@pilote/ppg\" && curl -X POST -H \"Authorization: Bearer $CRON_AUTH_SECRET\" \"$APP_URL/api/admin/cron/rapport-service-autre\""
     },
     {
-      "command": "0 3 * * * test \"$APP_PACKAGE\" = \"@pilote/ppg\" && curl -X POST -H \"Authorization: Bearer $CRON_AUTH_SECRET\" \"$APP_URL/api/admin/cron/nettoyage-rapports\""
-    },
-    {
-      "command": "0 8 * * * test \"$APP_PACKAGE\" = \"@pilote/ppg\" && curl -X POST -H \"Authorization: Bearer $CRON_AUTH_SECRET\" \"$APP_URL/api/admin/cron/purge-logs\""
+      "command": "0 3 * * * test \"$APP_PACKAGE\" = \"@pilote/ppg\" && curl -X POST -H \"Authorization: Bearer $CRON_AUTH_SECRET\" \"$APP_URL/api/admin/cron/nettoyage-rapports\" && curl -X POST -H \"Authorization: Bearer $CRON_AUTH_SECRET\" \"$APP_URL/api/admin/cron/purge-logs\""
     }
   ]
 }
