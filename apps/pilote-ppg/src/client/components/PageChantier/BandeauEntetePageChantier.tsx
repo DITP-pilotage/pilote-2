@@ -9,8 +9,8 @@ export const BandeauEntetePageChantier = ({
   alerteMiseAJourIndicateur: boolean;
 }) => {
   const { chantier } = pageChantier.useServerSidePropsContext();
-  const ppgArchive = useEnv("NEXT_PUBLIC_FF_PPG_ARCHIVE");
-  if (ppgArchive && chantier.statut === "ARCHIVE") {
+  const ffPpgArchive = useEnv("NEXT_PUBLIC_FF_PPG_ARCHIVE");
+  if (ffPpgArchive && chantier.statut === "ARCHIVE") {
     return <BandeauChantierEstArchive />;
   }
   return (

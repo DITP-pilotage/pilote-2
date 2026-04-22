@@ -24,7 +24,7 @@ const IndicateurSpécifications: FunctionComponent<
 }) => {
   const { detailIndicateurDuTerritoire, indicateur } =
     useBlocIndicateurContext();
-  const variableContenuFFPoserUneQuestion = useEnv(
+  const ffPoserUneQuestionIndicateur = useEnv(
     "NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR",
   );
 
@@ -114,7 +114,7 @@ const IndicateurSpécifications: FunctionComponent<
           </p>
         </>
       )}
-      {variableContenuFFPoserUneQuestion ? (
+      {ffPoserUneQuestionIndicateur ? (
         <div className="fr-mt-3w fr-ml-7w fr-p-2w bg-dsfr-grey-925">
           <div className="flex">
             <Icone

@@ -76,10 +76,8 @@ export const PageAccueilLegacy = ({
       session?.profil || "",
     );
 
-  const estVideoAccueilActive = useEnv("NEXT_PUBLIC_FF_VIDEO_ACCUEIL");
-  const doitAfficherLaFicheTerritoriale = useEnv(
-    "NEXT_PUBLIC_FF_FICHE_TERRITORIALE",
-  );
+  const ffVideoAccueil = useEnv("NEXT_PUBLIC_FF_VIDEO_ACCUEIL");
+  const ffFicheTerritoriale = useEnv("NEXT_PUBLIC_FF_FICHE_TERRITORIALE");
   const profil = useProfilUtilisateurConnecte();
   const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
   const ffAskAI = useEnv("NEXT_PUBLIC_FF_ASK_AI");
@@ -92,7 +90,7 @@ export const PageAccueilLegacy = ({
     doitAfficherLaModaleInfolettre,
   );
   const [isModaleVideoAccueilOpen, setIsModaleVideoAccueilOpen] = useState(
-    estVideoAccueilActive && !aDejaVuVideoAccueil,
+    ffVideoAccueil && !aDejaVuVideoAccueil,
   );
   const [isModaleRenseignerServiceOpen, setIsModaleRenseignerServiceOpen] =
     useState(doitAfficherModaleRenseignerService);
@@ -139,7 +137,7 @@ export const PageAccueilLegacy = ({
               {`${nombreTotalChantiersAvecAlertes} ${nombreTotalChantiersAvecAlertes >= 2 ? "chantiers" : "chantier"}`}
             </Titre>
             <div className="inline-flex flex-column gap-1">
-              {doitAfficherLaFicheTerritoriale &&
+              {ffFicheTerritoriale &&
               estAutoriséAConsulterLaFicheTerritoriale(
                 session?.profil || "",
               ) ? (

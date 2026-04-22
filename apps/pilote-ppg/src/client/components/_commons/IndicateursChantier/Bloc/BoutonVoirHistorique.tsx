@@ -5,11 +5,11 @@ import { Time1Icon } from "@/components/_commons/Icones/Time1Icon";
 import { useEnv } from "@/client/hooks/useEnv";
 
 export const BoutonVoirHistorique = () => {
-  const voirHistoriqueProposition = useEnv(
+  const ffVoirHistoriqueProposition = useEnv(
     "NEXT_PUBLIC_FF_PROPOSITION_VOIR_HISTORIQUE",
   );
 
-  if (!voirHistoriqueProposition) return null;
+  if (!ffVoirHistoriqueProposition) return null;
 
   return (
     <ModaleHistoriqueIndicateurTerritoireValeurEvenement>

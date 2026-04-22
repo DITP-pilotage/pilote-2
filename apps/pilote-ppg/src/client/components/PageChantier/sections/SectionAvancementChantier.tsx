@@ -10,9 +10,9 @@ import { BasePageChantierSection } from "./BasePageChantierSection";
 const useInfobulle = () => {
   const { indicateurPondérations } = pageChantier.useServerSidePropsContext();
   const territoireSélectionné = useTerritoireSelectionne();
-  const infobullePonderation = useEnv("NEXT_PUBLIC_FF_INFOBULLE_PONDERATION");
+  const ffInfobullePonderation = useEnv("NEXT_PUBLIC_FF_INFOBULLE_PONDERATION");
 
-  if (!infobullePonderation) {
+  if (!ffInfobullePonderation) {
     return null;
   }
 

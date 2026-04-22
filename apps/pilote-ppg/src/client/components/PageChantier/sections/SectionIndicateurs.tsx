@@ -21,7 +21,7 @@ export const SectionIndicateurs = () => {
     territoiresCompares,
   } = pageChantier.useServerSidePropsContext();
   const ffAlerteMAJIndicateur = useEnv("NEXT_PUBLIC_FF_ALERTE_MAJ_INDICATEUR");
-  const masquerIndicateursNonApplicables = useEnv(
+  const ffMasquerIndicateursNonApplicables = useEnv(
     "NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES",
   );
 
@@ -80,7 +80,7 @@ export const SectionIndicateurs = () => {
   );
 
   const territoiresCibles = [territoireCode, ...territoiresCompares];
-  const indicateursApplicablesIds = masquerIndicateursNonApplicables
+  const indicateursApplicablesIds = ffMasquerIndicateursNonApplicables
     ? Object.keys(detailsIndicateursTerritoire).filter((indicateurId) =>
         Object.entries(detailsIndicateursTerritoire[indicateurId] ?? {}).some(
           ([key, value]) =>

@@ -79,10 +79,8 @@ export const BasePageAccueilLayout: FunctionComponent<
   doitAfficherLaModaleInfolettre: doitAfficherLaModaleInfolettreInitial,
   children,
 }) => {
-  const estVideoAccueilActive = useEnv("NEXT_PUBLIC_FF_VIDEO_ACCUEIL");
-  const doitAfficherLaFicheTerritoriale = useEnv(
-    "NEXT_PUBLIC_FF_FICHE_TERRITORIALE",
-  );
+  const ffVideoAccueil = useEnv("NEXT_PUBLIC_FF_VIDEO_ACCUEIL");
+  const ffFicheTerritoriale = useEnv("NEXT_PUBLIC_FF_FICHE_TERRITORIALE");
   const { data: session } = useSession();
   const profil = useProfilUtilisateurConnecte();
   const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
@@ -106,7 +104,7 @@ export const BasePageAccueilLayout: FunctionComponent<
     doitAfficherLaModaleInfolettreInitial,
   );
   const [isModaleVideoAccueilOpen, setIsModaleVideoAccueilOpen] = useState(
-    estVideoAccueilActive && !aDejaVuVideoAccueil,
+    ffVideoAccueil && !aDejaVuVideoAccueil,
   );
   const [isModaleRenseignerServiceOpen, setIsModaleRenseignerServiceOpen] =
     useState(doitAfficherModaleRenseignerService);
@@ -147,7 +145,7 @@ export const BasePageAccueilLayout: FunctionComponent<
               {`${nombreTotalChantiersAvecAlertes} ${nombreTotalChantiersAvecAlertes >= 2 ? "chantiers" : "chantier"}`}
             </Titre>
             <div className="inline-flex flex-col gap-1">
-              {doitAfficherLaFicheTerritoriale &&
+              {ffFicheTerritoriale &&
               estAutoriséAConsulterLaFicheTerritoriale(
                 session?.profil || "",
               ) ? (

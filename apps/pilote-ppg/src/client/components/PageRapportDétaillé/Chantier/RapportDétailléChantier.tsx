@@ -46,7 +46,7 @@ const RapportDétailléChantier: FunctionComponent<
   jalon,
   listeIndicateursPrisEnCompteAvancement,
 }) => {
-  const masquerIndicateursNonApplicables = useEnv(
+  const ffMasquerIndicateursNonApplicables = useEnv(
     "NEXT_PUBLIC_FF_MASQUER_INDICATEURS_NON_APPLICABLES",
   );
   const listeResponsablesLocaux =
@@ -65,7 +65,7 @@ const RapportDétailléChantier: FunctionComponent<
         chantier.dateTauxAvancementMandatValeurPrecedente,
     };
 
-  const indicateursApplicables = masquerIndicateursNonApplicables
+  const indicateursApplicables = ffMasquerIndicateursNonApplicables
     ? indicateurs.filter(
         (indicateur) =>
           détailsIndicateurs[indicateur.id]?.[territoireCode]?.estApplicable ===

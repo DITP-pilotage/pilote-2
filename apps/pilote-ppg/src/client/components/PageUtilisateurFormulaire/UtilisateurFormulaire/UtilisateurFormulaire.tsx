@@ -30,10 +30,10 @@ const UtilisateurFormulaire: FunctionComponent<
   ];
   const [etapeCourante, setEtapeCourante] = useState(1);
   const { data: session } = useSession();
-  const estPiloteEvalActif = useEnv("NEXT_PUBLIC_FF_PILOTE_EVAL");
-  const creationCompteArsActive = useEnv("NEXT_PUBLIC_FF_CREATION_COMPTE_ARS");
+  const ffPiloteEval = useEnv("NEXT_PUBLIC_FF_PILOTE_EVAL");
+  const ffCreationCompteArs = useEnv("NEXT_PUBLIC_FF_CREATION_COMPTE_ARS");
   const estAutoriseAVoirLeSelecteurApplication =
-    estPiloteEvalActif && [ProfilEnum.DITP_ADMIN].includes(session!.profil);
+    ffPiloteEval && [ProfilEnum.DITP_ADMIN].includes(session!.profil);
   const { data: chantiers } =
     api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(
       undefined,
@@ -46,10 +46,7 @@ const UtilisateurFormulaire: FunctionComponent<
 
   const reactHookForm = useForm<UtilisateurFormInputs>({
     resolver: zodResolver(
-      donneValidationInfosBaseUtilisateur(
-        session!.profil,
-        creationCompteArsActive,
-      ),
+      donneValidationInfosBaseUtilisateur(session!.profil, ffCreationCompteArs),
       // il faut split des schemas en 3, la on a des if dans les schema zod s'y perd
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) as any,
@@ -128,7 +125,7 @@ const UtilisateurFormulaire: FunctionComponent<
             <form onSubmit={reactHookForm.handleSubmit(passerAuRécapitulatif)}>
               {etapeCourante === 1 && (
                 <SaisieDesInformationsUtilisateur
-                  creationCompteArsActive={creationCompteArsActive}
+                  ffCreationCompteArs={ffCreationCompteArs}
                   estAutoriseAVoirLeSelecteurApplication={
                     estAutoriseAVoirLeSelecteurApplication
                   }

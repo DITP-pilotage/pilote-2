@@ -21,7 +21,7 @@ export const SectionAvancementChantierLegacy = () => {
     jalon,
     donneesComparaisonDuTauxDAvancement,
   } = pageChantier.useServerSidePropsContext();
-  const infobullePonderation = useEnv("NEXT_PUBLIC_FF_INFOBULLE_PONDERATION");
+  const ffInfobullePonderation = useEnv("NEXT_PUBLIC_FF_INFOBULLE_PONDERATION");
 
   const territoireSélectionné = useTerritoireSelectionne();
 
@@ -43,7 +43,7 @@ export const SectionAvancementChantierLegacy = () => {
         >
           Avancement du chantier
         </Titre>
-        {infobullePonderation ? (
+        {ffInfobullePonderation ? (
           indicateurPondérations.length === 0 ? (
             <Infobulle>
               {INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(

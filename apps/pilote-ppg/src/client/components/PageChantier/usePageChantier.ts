@@ -21,7 +21,7 @@ const PROFIL_INTERDIT_DE_VOIR_LE_SELECTEUR_DE_MAILLE = new Set([
 export const usePageChantier = () => {
   const { data: session } = useSession();
   const { chantier, territoireCode } = pageChantier.useServerSidePropsContext();
-  const ficheConducteur = useEnv("NEXT_PUBLIC_FF_FICHE_CONDUCTEUR");
+  const ffFicheConducteur = useEnv("NEXT_PUBLIC_FF_FICHE_CONDUCTEUR");
 
   const { listeTerritoires, récupérerDétailsSurUnTerritoire } =
     useTerritoireHabilitation();
@@ -84,7 +84,7 @@ export const usePageChantier = () => {
       chantier.statut !== "ARCHIVE");
 
   const estAutoriseAVoirLeBoutonFicheConducteur =
-    !!ficheConducteur &&
+    !!ffFicheConducteur &&
     estAutoriséAConsulterLaFicheConducteur(session!.profil);
 
   const estAutoriseAVoirLesAlertesMAJIndicateurs =

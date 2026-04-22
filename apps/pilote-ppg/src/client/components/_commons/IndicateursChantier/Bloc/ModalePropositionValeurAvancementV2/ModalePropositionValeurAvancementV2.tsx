@@ -44,7 +44,7 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
       nom: territoireNom,
     },
   } = useBlocIndicateurContext();
-  const pvaValeurDifferente = useEnv("NEXT_PUBLIC_FF_PVA_VALEUR_DIFFERENTE");
+  const ffPvaValeurDifferente = useEnv("NEXT_PUBLIC_FF_PVA_VALEUR_DIFFERENTE");
 
   return (
     <Modale
@@ -210,7 +210,7 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
                       </div>
                     </div>
                   </div>
-                  {pvaValeurDifferente && !estUneModificationDeProposition ? (
+                  {ffPvaValeurDifferente && !estUneModificationDeProposition ? (
                     <div className="fr-mt-2w">
                       <SelecteurNew
                         erreurMessage={
