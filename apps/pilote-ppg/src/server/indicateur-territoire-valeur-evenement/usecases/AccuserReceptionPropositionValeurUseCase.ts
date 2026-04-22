@@ -118,7 +118,7 @@ export class AccuserReceptionPropositionValeurUseCase {
       await this.envoieEmailService.envoieNotificationProposition<"PROPOSITION_VALEUR_ACCUSEE_RECEPTION">(
         {
           destinataires: [{ email: emailDestinataire }],
-          templateId: 43,
+          templateId: 74,
           parametres: {
             chantierId: informationIndicateur!.chantierId,
             chantierNom: informationIndicateur!.chantierNom,
@@ -133,6 +133,12 @@ export class AccuserReceptionPropositionValeurUseCase {
               1,
             ),
             valeurProposee: formaterNombre(evenement.valeur, 1),
+            dateProposition: formaterDate(
+              evenementsSurDate
+                .evenementsPropositionValeurCreeeOuModifiee()[0]
+                .dateCreation.toISOString(),
+              "DD/MM/YYYY",
+            )!,
           },
         },
       );
