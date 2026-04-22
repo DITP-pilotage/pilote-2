@@ -7,6 +7,14 @@ import { PageNewsletterDetail } from "@/components/PageActualites/PageNewsletter
 export const getServerSideProps = async (
   context: GetServerSidePropsContext<{ id: string }>,
 ) => {
+  const variables = await getContainer("legacy")
+    .resolve("recupererToutesLesVariablesContenuUseCase")
+    .run();
+
+  if (!variables.NEXT_PUBLIC_FF_PAGE_ACTUALITES) {
+    return { redirect: { destination: "/404" } };
+  }
+
   const session = await auth(context);
 
   if (!session || !session.user) {
