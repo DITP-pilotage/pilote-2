@@ -6,6 +6,7 @@ import {
 
 vi.mock("@/config", () => ({
   configuration: vi.fn(() => ({
+    logLevel: "warn",
     cron: {
       authSecret: "valid-secret",
     },
