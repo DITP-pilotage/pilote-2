@@ -1,6 +1,7 @@
 import pino, { type LogFn } from "pino";
 import { type Prisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { configuration } from "@/config";
 
 const CHAMPS_STANDARD_PINO = new Set([
   "level",
@@ -56,11 +57,16 @@ function captureStackTrace(): string {
     .join("\n");
 }
 
+const dbLogMinLevel =
+  pino.levels.values[configuration().logLevel.toLowerCase()] ?? 40;
+
 function persisterEnBase(
   levelNumber: number,
   obj: Record<string, unknown>,
   msg: string,
 ): void {
+  if (levelNumber < dbLogMinLevel) return;
+
   try {
     const db = getPrismaInstance();
     if (!db?.application_log) return;

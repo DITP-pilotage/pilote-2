@@ -1,7 +1,6 @@
 .cache
 apps/pilote-ppg/CLAUDE.md
 apps/pilote-ppg/copy-assets.js
-apps/pilote-ppg/cron.json
 apps/pilote-ppg/doc
 apps/pilote-ppg/docker
 apps/pilote-ppg/docker-compose.prod.yml
