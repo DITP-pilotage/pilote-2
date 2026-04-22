@@ -9,6 +9,7 @@ import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
 import { UtilisateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/UtilisateurRepository";
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
 import { EnvoieEmailService } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/EnvoieEmailService";
+import { BREVO_TEMPLATE_IDS } from "@/server/indicateur-territoire-valeur-evenement/domain/brevoEmailTemplateIds";
 
 describe("AccepterPropositionValeurAvancementUseCase", () => {
   let accepterPropositionValeurAvancementUseCase: AccepterPropositionValeurAvancementUseCase;
@@ -189,7 +190,7 @@ describe("AccepterPropositionValeurAvancementUseCase", () => {
       envoieEmailService.envoieNotificationProposition,
     ).toHaveBeenCalledWith({
       destinataires: [{ email: "auteur1@example.com" }],
-      templateId: 40,
+      templateId: BREVO_TEMPLATE_IDS.PROPOSITION_VALEUR_ACCEPTEE,
       parametres: {
         chantierId: "CH-001",
         chantierNom: "Nom du chantier",
@@ -204,7 +205,7 @@ describe("AccepterPropositionValeurAvancementUseCase", () => {
       envoieEmailService.envoieNotificationProposition,
     ).toHaveBeenCalledWith({
       destinataires: [{ email: "auteur2@example.com" }],
-      templateId: 40,
+      templateId: BREVO_TEMPLATE_IDS.PROPOSITION_VALEUR_ACCEPTEE,
       parametres: {
         chantierId: "CH-001",
         chantierNom: "Nom du chantier",
@@ -219,7 +220,7 @@ describe("AccepterPropositionValeurAvancementUseCase", () => {
       envoieEmailService.envoieNotificationProposition,
     ).toHaveBeenCalledWith({
       destinataires: [{ email: "coordinateur2@example.com" }],
-      templateId: 40,
+      templateId: BREVO_TEMPLATE_IDS.PROPOSITION_VALEUR_ACCEPTEE,
       parametres: {
         chantierId: "CH-001",
         chantierNom: "Nom du chantier",

@@ -6,6 +6,7 @@ import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territo
 import { IndicateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurRepository";
 import { UtilisateurRepository } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/UtilisateurRepository";
 import { EnvoieEmailService } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/EnvoieEmailService";
+import { BREVO_TEMPLATE_IDS } from "@/server/indicateur-territoire-valeur-evenement/domain/brevoEmailTemplateIds";
 
 describe("AccuserReceptionPropositionValeurUseCase", () => {
   let accuserReceptionPropositionValeurUseCase: AccuserReceptionPropositionValeurUseCase;
@@ -51,7 +52,7 @@ describe("AccuserReceptionPropositionValeurUseCase", () => {
           idAuteurModification: "user-1",
           correlationId: "corr-1",
           ordre: 1,
-          dateCreation: new Date("2022-01-01"),
+          dateCreation: new Date("2021-01-01"),
           donneesComplementaires: undefined,
         },
       ),
@@ -66,7 +67,7 @@ describe("AccuserReceptionPropositionValeurUseCase", () => {
           idAuteurModification: "user-1",
           correlationId: "corr-1",
           ordre: 2,
-          dateCreation: new Date("2022-01-01"),
+          dateCreation: new Date("2021-01-01"),
           donneesComplementaires: {
             motif: "Motif de la proposition",
             sourceDonneeEtMethodeCalcul:
@@ -160,7 +161,7 @@ describe("AccuserReceptionPropositionValeurUseCase", () => {
       envoieEmailService.envoieNotificationProposition,
     ).toHaveBeenCalledWith({
       destinataires: [{ email: "auteur1@example.com" }],
-      templateId: 43,
+      templateId: BREVO_TEMPLATE_IDS.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
       parametres: {
         chantierId: "CH-001",
         chantierNom: "Nom du chantier",
@@ -169,13 +170,14 @@ describe("AccuserReceptionPropositionValeurUseCase", () => {
         dateValeur: "06-2024",
         valeurProposee: "20",
         valeurAvancement: "3",
+        dateProposition: "01/01/2022",
       },
     });
     expect(
       envoieEmailService.envoieNotificationProposition,
     ).toHaveBeenCalledWith({
       destinataires: [{ email: "auteur2@example.com" }],
-      templateId: 43,
+      templateId: BREVO_TEMPLATE_IDS.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
       parametres: {
         chantierId: "CH-001",
         chantierNom: "Nom du chantier",
@@ -184,13 +186,14 @@ describe("AccuserReceptionPropositionValeurUseCase", () => {
         dateValeur: "06-2024",
         valeurProposee: "20",
         valeurAvancement: "3",
+        dateProposition: "01/01/2022",
       },
     });
     expect(
       envoieEmailService.envoieNotificationProposition,
     ).toHaveBeenCalledWith({
       destinataires: [{ email: "coordinateur2@example.com" }],
-      templateId: 43,
+      templateId: BREVO_TEMPLATE_IDS.PROPOSITION_VALEUR_ACCUSEE_RECEPTION,
       parametres: {
         chantierId: "CH-001",
         chantierNom: "Nom du chantier",
@@ -199,6 +202,7 @@ describe("AccuserReceptionPropositionValeurUseCase", () => {
         dateValeur: "06-2024",
         valeurProposee: "20",
         valeurAvancement: "3",
+        dateProposition: "01/01/2022",
       },
     });
   });

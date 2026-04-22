@@ -7,6 +7,7 @@ import type { Inject } from "@/server/indicateur-territoire-valeur-evenement/mod
 import { formaterDate } from "@/client/utils/date/date";
 import { formaterNombre } from "@/client/utils/nombre/nombre";
 import { EvenementsSurDate } from "@/server/import-indicateur/domain/EvenementsSurDate";
+import { BREVO_TEMPLATE_IDS } from "@/server/indicateur-territoire-valeur-evenement/domain/brevoEmailTemplateIds";
 import { IndicateurTerritoireValeurEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/IndicateurTerritoireValeurEvenement";
 import { TypeEvenement } from "@/server/indicateur-territoire-valeur-evenement/domain/TypeEvenement";
 
@@ -129,7 +130,7 @@ export class RefuserPropositionValeurAvancementUseCase {
       await this.envoieEmailService.envoieNotificationProposition<"PROPOSITION_VALEUR_REFUSEE">(
         {
           destinataires: [{ email: emailDestinataire }],
-          templateId: 42,
+          templateId: BREVO_TEMPLATE_IDS.PROPOSITION_VALEUR_REFUSEE,
           parametres: {
             chantierId: informationIndicateur!.chantierId,
             chantierNom: informationIndicateur!.chantierNom,
