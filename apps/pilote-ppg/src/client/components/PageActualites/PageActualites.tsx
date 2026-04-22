@@ -1,10 +1,13 @@
 import { Suspense } from "react";
 import Loader from "@/components/_commons/Loader/Loader";
+import api from "@/server/infrastructure/api/trpc/api";
 import { CarteNewsletter } from "./CarteNewsletter";
-import { usePageActualites } from "./usePageActualites";
 
 const ListeNewsletters = () => {
-  const { newsletters } = usePageActualites();
+  const [newsletters] = api.actualites.listerNewsletters.useSuspenseQuery(
+    undefined,
+    { staleTime: 3_600_000 },
+  );
 
   if (newsletters.length === 0) {
     return (
