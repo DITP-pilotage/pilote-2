@@ -1,13 +1,13 @@
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { GetChantiersEnRetardQuery } from "@/server/chantiers/query/GetChantiersEnRetardQuery";
+import { GetChantiersQuery } from "@/server/chantiers/query/GetChantiersQuery";
 
-describe("GetChantiersEnRetardQuery", () => {
-  let query: GetChantiersEnRetardQuery;
+describe("GetChantiersQuery — view en_retard", () => {
+  let query: GetChantiersQuery;
 
   beforeEach(() => {
-    query = new GetChantiersEnRetardQuery({
+    query = new GetChantiersQuery({
       prisma: new PrismaPilote(),
     });
   });
@@ -47,10 +47,11 @@ describe("GetChantiersEnRetardQuery", () => {
       const result = await query.execute({
         territoireCode: "NAT-FR",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then
-      expect(result.chantiers_en_retard).toEqual([
+      expect(result.chantiers).toEqual([
         {
           chantier: {
             id: "CH-001",
@@ -61,7 +62,12 @@ describe("GetChantiersEnRetardQuery", () => {
           },
           ecart: -15,
           taux_avancement: 30,
+          meteo: "NON_RENSEIGNEE",
+          tendance: null,
+          est_en_retard: true,
+          est_en_difficulte: false,
           synthese: null,
+          commentaires: { donnees: null, autresResultats: null },
         },
       ]);
     }),
@@ -99,10 +105,11 @@ describe("GetChantiersEnRetardQuery", () => {
       const result = await query.execute({
         territoireCode: "NAT-FR",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then
-      expect(result.chantiers_en_retard).toEqual([]);
+      expect(result.chantiers).toEqual([]);
     }),
   );
 
@@ -139,10 +146,11 @@ describe("GetChantiersEnRetardQuery", () => {
       const result = await query.execute({
         territoireCode: "NAT-FR",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then — l'écart retourné est celui du jalon, pas du mandat
-      expect(result.chantiers_en_retard).toEqual([
+      expect(result.chantiers).toEqual([
         expect.objectContaining({
           chantier: expect.objectContaining({ id: "CH-001" }),
           ecart: -15,
@@ -191,19 +199,21 @@ describe("GetChantiersEnRetardQuery", () => {
       const resultat2025 = await query.execute({
         territoireCode: "NAT-FR",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then
-      expect(resultat2025.chantiers_en_retard).toEqual([]);
+      expect(resultat2025.chantiers).toEqual([]);
 
       // When — query sur jalon 2024
       const resultat2024 = await query.execute({
         territoireCode: "NAT-FR",
         jalon: 2024,
+        view: "en_retard",
       });
 
       // Then
-      expect(resultat2024.chantiers_en_retard).toEqual([
+      expect(resultat2024.chantiers).toEqual([
         expect.objectContaining({
           chantier: expect.objectContaining({ id: "CH-001" }),
           ecart: -20,
@@ -243,10 +253,11 @@ describe("GetChantiersEnRetardQuery", () => {
       const result = await query.execute({
         territoireCode: "NAT-FR",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then
-      expect(result.chantiers_en_retard).toEqual([]);
+      expect(result.chantiers).toEqual([]);
     }),
   );
 
@@ -281,10 +292,11 @@ describe("GetChantiersEnRetardQuery", () => {
       const result = await query.execute({
         territoireCode: "NAT-FR",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then
-      expect(result.chantiers_en_retard).toEqual([]);
+      expect(result.chantiers).toEqual([]);
     }),
   );
 
@@ -336,10 +348,11 @@ describe("GetChantiersEnRetardQuery", () => {
       const result = await query.execute({
         territoireCode: "DEPT-75",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then
-      expect(result.chantiers_en_retard).toEqual([
+      expect(result.chantiers).toEqual([
         expect.objectContaining({ ecart: -25 }),
       ]);
     }),
@@ -420,10 +433,11 @@ describe("GetChantiersEnRetardQuery", () => {
       const result = await query.execute({
         territoireCode: "NAT-FR",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then — tri du plus bas écart au plus haut
-      expect(result.chantiers_en_retard.map((c) => c.chantier.id)).toEqual([
+      expect(result.chantiers.map((c) => c.chantier.id)).toEqual([
         "CH-002",
         "CH-003",
         "CH-001",
@@ -480,10 +494,11 @@ describe("GetChantiersEnRetardQuery", () => {
       const result = await query.execute({
         territoireCode: "NAT-FR",
         jalon: 2025,
+        view: "en_retard",
       });
 
       // Then — la synthèse la plus récente est retournée
-      expect(result.chantiers_en_retard).toEqual([
+      expect(result.chantiers).toEqual([
         expect.objectContaining({
           synthese: {
             meteo: "ORAGE",
@@ -491,6 +506,137 @@ describe("GetChantiersEnRetardQuery", () => {
             date_meteo: "2025-06-01T00:00:00.000Z",
             date_commentaire: "2025-06-01T00:00:00.000Z",
           },
+        }),
+      ]);
+    }),
+  );
+
+  it(
+    "retourne les derniers commentaires publiés (données et autres résultats)",
+    createIntegrationTest(async () => {
+      // Given
+      await fixtures.chantierIdentite({
+        id: "CH-001",
+        ministeres_acronymes: ["MIN-01"],
+        statut: "PUBLIE",
+      });
+      await fixtures.chantierTerritoire({
+        id: "CH-001",
+        territoire_code: "NAT-FR",
+        code_insee: "FR",
+        maille: "NAT",
+        zone_id: "FRANCE",
+        est_applicable: true,
+      });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-001",
+        territoire_code: "NAT-FR",
+        code_insee: "FR",
+        maille: "NAT",
+        zone_id: "FRANCE",
+        jalon: 2025,
+        ecart: -15,
+      });
+      await fixtures.commentaire({
+        chantier_id: "CH-001",
+        territoire_code: "NAT-FR",
+        maille: "NAT",
+        code_insee: "FR",
+        type: "commentaires_sur_les_donnees",
+        contenu: "Ancien commentaire données",
+        date_modification: new Date("2025-01-01T00:00:00Z"),
+      });
+      await fixtures.commentaire({
+        chantier_id: "CH-001",
+        territoire_code: "NAT-FR",
+        maille: "NAT",
+        code_insee: "FR",
+        type: "commentaires_sur_les_donnees",
+        contenu: "Dernier commentaire données",
+        date_modification: new Date("2025-06-01T00:00:00Z"),
+      });
+      await fixtures.commentaire({
+        chantier_id: "CH-001",
+        territoire_code: "NAT-FR",
+        maille: "NAT",
+        code_insee: "FR",
+        type: "autres_resultats_obtenus",
+        contenu: "Autres résultats",
+        date_modification: new Date("2025-03-01T00:00:00Z"),
+      });
+
+      // When
+      const result = await query.execute({
+        territoireCode: "NAT-FR",
+        jalon: 2025,
+        view: "en_retard",
+      });
+
+      // Then
+      expect(result.chantiers).toEqual([
+        expect.objectContaining({
+          commentaires: {
+            donnees: {
+              contenu: "Dernier commentaire données",
+              date: "2025-06-01T00:00:00.000Z",
+            },
+            autresResultats: {
+              contenu: "Autres résultats",
+              date: "2025-03-01T00:00:00.000Z",
+            },
+          },
+        }),
+      ]);
+    }),
+  );
+
+  it(
+    "exclut les commentaires en brouillon",
+    createIntegrationTest(async () => {
+      // Given
+      await fixtures.chantierIdentite({
+        id: "CH-001",
+        ministeres_acronymes: ["MIN-01"],
+        statut: "PUBLIE",
+      });
+      await fixtures.chantierTerritoire({
+        id: "CH-001",
+        territoire_code: "NAT-FR",
+        code_insee: "FR",
+        maille: "NAT",
+        zone_id: "FRANCE",
+        est_applicable: true,
+      });
+      await fixtures.chantierTerritoireJalon({
+        id: "CH-001",
+        territoire_code: "NAT-FR",
+        code_insee: "FR",
+        maille: "NAT",
+        zone_id: "FRANCE",
+        jalon: 2025,
+        ecart: -15,
+      });
+      await fixtures.commentaire({
+        chantier_id: "CH-001",
+        territoire_code: "NAT-FR",
+        maille: "NAT",
+        code_insee: "FR",
+        type: "commentaires_sur_les_donnees",
+        contenu: "Brouillon",
+        statut: "BROUILLON",
+      });
+
+      // When
+      const result = await query.execute({
+        territoireCode: "NAT-FR",
+        jalon: 2025,
+        view: "en_retard",
+      });
+
+      // Then
+      expect(result.chantiers).toEqual([
+        expect.objectContaining({
+          commentaires: { donnees: null, autresResultats: null },
         }),
       ]);
     }),

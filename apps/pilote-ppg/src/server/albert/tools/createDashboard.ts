@@ -101,21 +101,6 @@ export function validateDashboardIdentifiers(
           );
         }
       }
-
-      if ("chantier_ids" in widget && Array.isArray(widget.chantier_ids)) {
-        for (const id of widget.chantier_ids) {
-          if (!chantierIdSet) {
-            throw new Error(
-              `Le subagent a utilisé des chantier_ids (${id}) alors qu'aucun n'a été fourni.`,
-            );
-          }
-          if (!chantierIdSet.has(id)) {
-            throw new Error(
-              `Le subagent a utilisé un chantier_id non autorisé : ${id}. Chantiers autorisés : ${[...chantierIdSet].join(", ")}`,
-            );
-          }
-        }
-      }
     }
   }
 }

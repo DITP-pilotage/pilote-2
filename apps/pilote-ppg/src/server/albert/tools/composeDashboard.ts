@@ -132,10 +132,6 @@ const widgetCartographieTauxAvancement = z
     maille: mailleSchema,
     territoire_code: territoireCodeSchema,
     jalon: jalonSchema,
-    chantier_ids: z
-      .array(chantierIdSchema)
-      .min(1)
-      .describe("Sous-ensemble de chantiers à agréger sur la carte."),
     width: z
       .union([z.literal(2), z.literal(3), z.literal(4)])
       .optional()
