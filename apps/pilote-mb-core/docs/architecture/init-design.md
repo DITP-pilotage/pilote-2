@@ -205,9 +205,11 @@ Tests co-localisés : `foo.ts` + `foo.test.ts` côte-à-côte.
 ### 6.1 Dependency Injection — module-system Awilix (copié/adapté de pilote-ppg)
 
 pilote-mb-core reprend le **module-system** mis en place sur pilote-ppg. Il apporte trois bénéfices majeurs par rapport à un registre Awilix plat :
-- **Découpage par bounded-context** : chaque module déclare son propre cradle typé et ne touche qu'à ses propres dépendances
+- **Découpage par module fonctionnel** : chaque module déclare son propre cradle typé et ne touche qu'à ses propres dépendances
 - **Graphe de dépendances explicite** via `imports` / `exports` — on contrôle ce qui fuit entre modules
 - **Typage fort des injections** via `Inject<K>` — chaque classe déclare précisément les dépendances qu'elle consomme
+
+> **Note terminologique :** dans pilote-mb-core, un **module** (au sens module-system / Awilix) est un **groupement fonctionnel** pour organiser le câblage DI. Il peut toucher plusieurs entités (ex: `authentication` câble les repos de `api_key` et `utilisateur` + le `TokenSigner`). À ne pas confondre avec un **bounded context** au sens DDD stratégique, que notre archi ne matérialise pas (cf. section 5.2 — on a rejeté ce découpage au profit d'une organisation par couche + entité).
 
 #### Structure du framework
 
@@ -311,7 +313,7 @@ export const moduleNames = [
 export type ModuleName = (typeof moduleNames)[number]
 ```
 
-On étend cette liste à chaque nouveau bounded-context (ex: `'entity'`, `'indicateur'`, `'territoire'`).
+On étend cette liste à chaque nouveau module fonctionnel (ex: `'entity'`, `'indicateur'`, `'territoire'`).
 
 #### Convention de vie des dépendances
 
@@ -454,7 +456,7 @@ Crash dur au démarrage si variable manquante ou invalide.
 
 ### 6.6 Pattern d'injection `Inject<K>` dans les classes
 
-Chaque module expose un alias `Inject<K>` typé, construit depuis son `ExtractScope`. Les classes du bounded-context consomment uniquement les clés dont elles ont besoin — précisément typées, auto-complétées, sans re-déclarer la signature.
+Chaque module expose un alias `Inject<K>` typé, construit depuis son `ExtractScope`. Les classes qui appartiennent au module consomment uniquement les clés dont elles ont besoin — précisément typées, auto-complétées, sans re-déclarer la signature.
 
 ```ts
 // Dans authentication.module.ts
@@ -492,7 +494,7 @@ export class CreateSessionHandler {
 **Règles à figer :**
 - Toute classe instanciée par Awilix (`asModuleClass`) **déclare ses deps via `Inject<K>`**, jamais via un type ad-hoc inline
 - Une classe ne peut consommer **que des clés de son propre scope** (shared deps + cradle du module) — le typage de `Inject<K>` le force à la compilation
-- Dans un fichier `*.repository.ts` ou `*.handler.ts`, l'import de `Inject` pointe vers le `module.ts` du bounded-context auquel la classe appartient
+- Dans un fichier `*.repository.ts` ou `*.handler.ts`, l'import de `Inject` pointe vers le `module.ts` du module qui déclare ces dépendances
 - **Pas d'abus** : `Inject<'a' | 'b' | 'c' | 'd' | 'e' | 'f'>` signale qu'une classe fait trop de choses — à découper en deux
 
 ---
