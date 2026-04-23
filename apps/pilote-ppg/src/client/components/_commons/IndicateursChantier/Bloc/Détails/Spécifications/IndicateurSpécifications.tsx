@@ -2,6 +2,7 @@ import { FunctionComponent } from "react";
 import Link from "next/dist/client/link";
 import { libellesTypologieIndicateur } from "@/client/utils/indicateur/indicateur";
 import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndicateurContext";
+import { useEnv } from "@/client/hooks/useEnv";
 import { EnveloppeContourIcon } from "@/components/_commons/Icones/EnveloppeContourIcon";
 import { Icone } from "@/components/_commons/Icone";
 import { QuestionIcon } from "@/components/_commons/Icones/QuestionIcon";
@@ -21,16 +22,14 @@ const IndicateurSpécifications: FunctionComponent<
   dateValeurAvancement,
   responsablesMails,
 }) => {
-  const {
-    detailIndicateurDuTerritoire,
-    indicateur,
-    configurationFeatureFlipping,
-  } = useBlocIndicateurContext();
+  const { detailIndicateurDuTerritoire, indicateur } =
+    useBlocIndicateurContext();
+  const ffPoserUneQuestionIndicateur = useEnv(
+    "NEXT_PUBLIC_FF_POSER_UNE_QUESTION_INDICATEUR",
+  );
 
   const libelléValeurNull = "Non renseignée";
   const objectMail = `PILOTE - Indicateur ${indicateur.nom} (${indicateur.id})`;
-  const variableContenuFFPoserUneQuestion =
-    configurationFeatureFlipping.poserUneQuestionIndicateur;
 
   return (
     <div className="relative">
@@ -115,7 +114,7 @@ const IndicateurSpécifications: FunctionComponent<
           </p>
         </>
       )}
-      {variableContenuFFPoserUneQuestion ? (
+      {ffPoserUneQuestionIndicateur ? (
         <div className="fr-mt-3w fr-ml-7w fr-p-2w bg-dsfr-grey-925">
           <div className="flex">
             <Icone

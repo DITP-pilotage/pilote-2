@@ -11,7 +11,7 @@ import { Chantier } from "@/server/chantiers/domain/Chantier";
 import { FiltreQueryParams } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { presenterEnRépartitionsMétéosChantiersContrat } from "@/server/chantiers/app/contrats/RepartitionMeteoChantiersContrat";
 import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
-import { configuration, configurationFeatureFlip } from "@/config";
+import { configuration } from "@/config";
 import { getContainer } from "@/server/dependances";
 import { loadAccueilSearchParams } from "@/client/searchParams/accueilSearchParams";
 import { PageAccueil } from "@/components/PageAccueil/PageAccueil";
@@ -231,10 +231,6 @@ export const getServerSideProps = async (
     pageSize,
   );
 
-  const estVideoAccueilActive = configurationFeatureFlip().videoAccueil;
-  const estFicheTerritorialeActive =
-    configurationFeatureFlip().ficheTerritoriale;
-
   const doitAfficherModaleVideoAccueil = await getContainer(
     "gestionUtilisateur",
   )
@@ -267,10 +263,8 @@ export const getServerSideProps = async (
       avancementsAgrégés,
       avancementsGlobauxTerritoriauxMoyens,
       repartitionMeteosChantiers,
-      doitAfficherModaleVideoAccueil:
-        estVideoAccueilActive && !doitAfficherModaleVideoAccueil,
+      aDejaVuVideoAccueil: doitAfficherModaleVideoAccueil,
       doitAfficherLaModaleInfolettre,
-      doitAfficherLaFicheTerritoriale: estFicheTerritorialeActive,
       moyenneTerritoire,
     },
   };

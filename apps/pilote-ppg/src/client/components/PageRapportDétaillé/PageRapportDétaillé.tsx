@@ -58,7 +58,6 @@ interface PageRapportDétailléProps {
   listeIndicateursPrisEnCompteAvancement: string[];
   chantiersSontArchives: boolean;
   moyenneTauxAvancementTerritoire: number | null;
-  masquerIndicateursNonApplicables: boolean;
 }
 
 export const htmlId = {
@@ -87,7 +86,6 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
   listeIndicateursPrisEnCompteAvancement,
   chantiersSontArchives,
   moyenneTauxAvancementTerritoire,
-  masquerIndicateursNonApplicables,
 }) => {
   usePrintPageStyle("margin: 12mm 0; size: 280mm 396mm");
   const { récupérerDétailsSurUnTerritoire } = useTerritoireHabilitation();
@@ -196,9 +194,6 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
                     }
                     mailleSelectionnee={mailleSelectionnee}
                     mapChantierStatistiques={mapChantierStatistiques}
-                    masquerIndicateursNonApplicables={
-                      masquerIndicateursNonApplicables
-                    }
                     objectifs={
                       publicationsGroupéesParChantier.objectifs[chantier.id] ??
                       []

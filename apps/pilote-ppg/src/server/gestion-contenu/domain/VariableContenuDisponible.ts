@@ -1,4 +1,4 @@
-import { configurationFeatureFlip } from "@/config";
+import { configuration } from "@/config";
 
 export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_BD_FF_BANDEAU_INDISPONIBILITE: boolean;
@@ -42,7 +42,7 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_REORGANISATION_PAGE_ACCUEIL: boolean;
 }
 
-type FeatureFlipConfig = ReturnType<typeof configurationFeatureFlip>;
+type FeatureFlipConfig = ReturnType<typeof configuration>["featureFlip"];
 
 interface FeatureFlipDefinition {
   envKey: string;

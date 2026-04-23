@@ -60,9 +60,8 @@ interface BasePageAccueilLayoutProps {
   mailleQuery: MailleInterne;
   jalon: number;
   nombreTotalChantiersAvecAlertes: number;
-  doitAfficherModaleVideoAccueil: boolean;
+  aDejaVuVideoAccueil: boolean;
   doitAfficherLaModaleInfolettre: boolean;
-  doitAfficherLaFicheTerritoriale: boolean;
   children: ReactNode;
 }
 
@@ -76,11 +75,12 @@ export const BasePageAccueilLayout: FunctionComponent<
   mailleQuery,
   jalon,
   nombreTotalChantiersAvecAlertes,
-  doitAfficherModaleVideoAccueil: doitAfficherModaleVideoAccueilInitial,
+  aDejaVuVideoAccueil,
   doitAfficherLaModaleInfolettre: doitAfficherLaModaleInfolettreInitial,
-  doitAfficherLaFicheTerritoriale,
   children,
 }) => {
+  const ffVideoAccueil = useEnv("NEXT_PUBLIC_FF_VIDEO_ACCUEIL");
+  const ffFicheTerritoriale = useEnv("NEXT_PUBLIC_FF_FICHE_TERRITORIALE");
   const { data: session } = useSession();
   const profil = useProfilUtilisateurConnecte();
   const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
@@ -104,7 +104,7 @@ export const BasePageAccueilLayout: FunctionComponent<
     doitAfficherLaModaleInfolettreInitial,
   );
   const [isModaleVideoAccueilOpen, setIsModaleVideoAccueilOpen] = useState(
-    doitAfficherModaleVideoAccueilInitial,
+    ffVideoAccueil && !aDejaVuVideoAccueil,
   );
   const [isModaleRenseignerServiceOpen, setIsModaleRenseignerServiceOpen] =
     useState(doitAfficherModaleRenseignerService);
@@ -145,7 +145,7 @@ export const BasePageAccueilLayout: FunctionComponent<
               {`${nombreTotalChantiersAvecAlertes} ${nombreTotalChantiersAvecAlertes >= 2 ? "chantiers" : "chantier"}`}
             </Titre>
             <div className="inline-flex flex-col gap-1">
-              {doitAfficherLaFicheTerritoriale &&
+              {ffFicheTerritoriale &&
               estAutoriséAConsulterLaFicheTerritoriale(
                 session?.profil || "",
               ) ? (

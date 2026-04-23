@@ -8,6 +8,7 @@ import {
   useTerritoireSelectionne,
 } from "@/components/PageChantier/PageChantierServerSideContext";
 import AvancementChantier from "@/components/PageChantier/AvancementChantier/AvancementChantier";
+import { useEnv } from "@/client/hooks/useEnv";
 
 export const SectionAvancementChantierLegacy = () => {
   const {
@@ -19,8 +20,8 @@ export const SectionAvancementChantierLegacy = () => {
     indicateurPondérations,
     jalon,
     donneesComparaisonDuTauxDAvancement,
-    configurationFeatureFlipping,
   } = pageChantier.useServerSidePropsContext();
+  const ffInfobullePonderation = useEnv("NEXT_PUBLIC_FF_INFOBULLE_PONDERATION");
 
   const territoireSélectionné = useTerritoireSelectionne();
 
@@ -42,7 +43,7 @@ export const SectionAvancementChantierLegacy = () => {
         >
           Avancement du chantier
         </Titre>
-        {configurationFeatureFlipping.infobullePonderation ? (
+        {ffInfobullePonderation ? (
           indicateurPondérations.length === 0 ? (
             <Infobulle>
               {INFOBULLE_CONTENUS.chantier.avancement.aucunIndicateur(

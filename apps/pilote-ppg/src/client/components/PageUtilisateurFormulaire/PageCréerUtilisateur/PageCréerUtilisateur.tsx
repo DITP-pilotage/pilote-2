@@ -3,8 +3,7 @@ import FilAriane from "@/client/components/_commons/FilAriane/FilAriane";
 import { pageCreerUtilisateur } from "@/components/PageUtilisateurFormulaire/PageCréerUtilisateur/PageCreerUtilisateurServerSideContext";
 
 const PageCréerUtilisateur = () => {
-  const { estAutoriseAVoirLeSelecteurApplication, creationCompteArsActive } =
-    pageCreerUtilisateur.useServerSidePropsContext();
+  pageCreerUtilisateur.useServerSidePropsContext();
   const chemin = [{ nom: "Gestion des comptes", lien: "/admin/utilisateurs" }];
 
   return (
@@ -12,12 +11,7 @@ const PageCréerUtilisateur = () => {
       <main className="fr-container">
         <FilAriane chemin={chemin} libelléPageCourante="Ajouter un compte" />
         <div className="fr-pb-4w">
-          <UtilisateurFormulaire
-            estAutoriseAVoirLeSelecteurApplication={
-              estAutoriseAVoirLeSelecteurApplication
-            }
-            creationCompteArsActive={creationCompteArsActive}
-          />
+          <UtilisateurFormulaire />
         </div>
       </main>
     </div>

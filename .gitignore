@@ -38,3 +38,8 @@ qodana.yaml
 
 # uploads
 /uploads
+
+docs/superpowers/
+
+# superpowers specs/plans
+docs/superpowers/

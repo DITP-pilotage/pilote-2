@@ -273,7 +273,6 @@ export const getServerSideProps = async (
         cartographieGaucheIndicateur,
         donneesComparaisonDuTauxDAvancement,
         datajobsExecution,
-        configurationFeatureFlipping: configuration().featureFlip,
       },
     };
   } catch (error) {

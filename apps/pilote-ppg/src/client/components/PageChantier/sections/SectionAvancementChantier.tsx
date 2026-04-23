@@ -4,14 +4,15 @@ import {
   useTerritoireSelectionne,
 } from "@/components/PageChantier/PageChantierServerSideContext";
 import { AvancementChantierWidget } from "@/components/PageChantier/AvancementChantierWidget/AvancementChantierWidget";
+import { useEnv } from "@/client/hooks/useEnv";
 import { BasePageChantierSection } from "./BasePageChantierSection";
 
 const useInfobulle = () => {
-  const { indicateurPondérations, configurationFeatureFlipping } =
-    pageChantier.useServerSidePropsContext();
+  const { indicateurPondérations } = pageChantier.useServerSidePropsContext();
   const territoireSélectionné = useTerritoireSelectionne();
+  const ffInfobullePonderation = useEnv("NEXT_PUBLIC_FF_INFOBULLE_PONDERATION");
 
-  if (!configurationFeatureFlipping.infobullePonderation) {
+  if (!ffInfobullePonderation) {
     return null;
   }
 

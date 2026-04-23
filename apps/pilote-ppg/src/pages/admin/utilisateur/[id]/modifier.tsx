@@ -7,8 +7,6 @@ import PageModifierUtilisateur from "@/components/PageUtilisateurFormulaire/Page
 import { commenceParUneVoyelle } from "@/client/utils/strings";
 import { getContainer } from "@/server/dependances";
 import { pageModifierUtilisateur } from "@/components/PageUtilisateurFormulaire/PageModifierUtilisateur/PageModifierUtilisateurServerSideContext";
-import { configurationFeatureFlip } from "@/config";
-import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext<{ id: Utilisateur["id"] }>,
@@ -51,10 +49,6 @@ export const getServerSideProps = async (
   return {
     props: {
       utilisateur: utilisateurDemandé,
-      estAutoriseAVoirLeSelecteurApplication:
-        configurationFeatureFlip().piloteEval &&
-        [ProfilEnum.DITP_ADMIN].includes(session.profil),
-      creationCompteArsActive: configurationFeatureFlip().creationCompteArs,
     },
   };
 };

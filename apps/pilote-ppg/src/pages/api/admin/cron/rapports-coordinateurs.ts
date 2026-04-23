@@ -4,7 +4,7 @@ import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
 import { getContainer } from "@/server/dependances";
 import logger from "@/server/infrastructure/Logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
-import { configuration, configurationFeatureFlip } from "@/config";
+import { configuration } from "@/config";
 
 const querySchema = z.object({
   date: z
@@ -28,14 +28,18 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   const { date: maintenant, force } = querySchema.parse(req.query);
 
+  const featureFlips = await getContainer("legacy")
+    .resolve("recupererFeatureFlipsUseCase")
+    .run();
+
   if (
     !force &&
-    (!configurationFeatureFlip().rapportCoordinateurs ||
+    (!featureFlips["NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS"] ||
       configuration().scalingoEnvironment !== "PROD")
   ) {
     return res.status(200).json({
       skipped: true,
-      reason: !configurationFeatureFlip().rapportCoordinateurs
+      reason: !featureFlips["NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS"]
         ? "Feature flag NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS is disabled"
         : "Environment is not PROD",
     });

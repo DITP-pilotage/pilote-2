@@ -6,7 +6,7 @@ import carteFranceSvg from "@gouvfr/dsfr/dist/artwork/pictograms/map/location-fr
 import visualisationDonnéesSvg from "@gouvfr/dsfr/dist/artwork/pictograms/digital/data-visualization.svg";
 import cityHallSvg from "@gouvfr/dsfr/dist/artwork/pictograms/buildings/city-hall.svg";
 import assert from "node:assert";
-import { configurationFeatureFlip } from "@/config";
+import { getContainer } from "@/server/dependances";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 
 export const getServerSideProps = async (
@@ -16,10 +16,12 @@ export const getServerSideProps = async (
 
   assert(session);
 
-  const featureFlipping = configurationFeatureFlip();
+  const featureFlips = await getContainer("legacy")
+    .resolve("recupererFeatureFlipsUseCase")
+    .run();
 
   if (
-    !featureFlipping.piloteEval ||
+    !featureFlips["NEXT_PUBLIC_FF_PILOTE_EVAL"] ||
     !session.applicationsAccessibles.includes(
       $Enums.application_accessible.PILOTE_EVAL,
     )

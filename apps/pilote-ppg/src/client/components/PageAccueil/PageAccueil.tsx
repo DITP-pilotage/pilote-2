@@ -37,9 +37,8 @@ export const PageAccueil: FunctionComponent<PageAccueilProps> = (props) => {
     <PageAccueilProvider value={contextValue}>
       <BasePageAccueilLayout
         axes={props.axes}
-        doitAfficherLaFicheTerritoriale={props.doitAfficherLaFicheTerritoriale}
+        aDejaVuVideoAccueil={props.aDejaVuVideoAccueil}
         doitAfficherLaModaleInfolettre={props.doitAfficherLaModaleInfolettre}
-        doitAfficherModaleVideoAccueil={props.doitAfficherModaleVideoAccueil}
         jalon={props.jalon}
         mailleQuery={props.mailleQuery}
         mailleSelectionnee={props.mailleSelectionnee}

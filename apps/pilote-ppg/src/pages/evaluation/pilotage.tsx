@@ -5,7 +5,6 @@ import { getContainer } from "@/server/dependances";
 import { pagePilotage } from "@/components/PagePilotage/PagePilotageServerSideContext";
 import { TableauPilotage } from "@/components/PagePilotage/TableauPilotage";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { configurationFeatureFlip } from "@/config";
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,
@@ -14,10 +13,12 @@ export const getServerSideProps = async (
 
   assert(session);
 
-  const featureFlipping = configurationFeatureFlip();
+  const featureFlips = await getContainer("legacy")
+    .resolve("recupererFeatureFlipsUseCase")
+    .run();
 
   if (
-    !featureFlipping.piloteEval ||
+    !featureFlips["NEXT_PUBLIC_FF_PILOTE_EVAL"] ||
     !session.applicationsAccessibles.includes(
       $Enums.application_accessible.PILOTE_EVAL_PILOTAGE,
     )

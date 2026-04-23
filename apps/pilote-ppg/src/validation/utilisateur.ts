@@ -124,22 +124,22 @@ const DOMAINES_AUTORISES_COORDINATEUR_BASE = [
 ];
 
 const domainesAutorisesCoordinateur = (
-  creationCompteArsActive: boolean,
+  ffCreationCompteArs: boolean,
 ): string[] => [
   ...DOMAINES_AUTORISES_COORDINATEUR_BASE,
-  ...(creationCompteArsActive ? ["ars.sante.fr"] : []),
+  ...(ffCreationCompteArs ? ["ars.sante.fr"] : []),
 ];
 
 const adresseEstValideCoordinateur = (
   adresse: string,
-  creationCompteArsActive: boolean,
+  ffCreationCompteArs: boolean,
 ): boolean =>
-  domainesAutorisesCoordinateur(creationCompteArsActive).some((domaine) =>
+  domainesAutorisesCoordinateur(ffCreationCompteArs).some((domaine) =>
     adresse.endsWith(domaine),
   );
 
 export const validationInfosBaseUtilisateurCoordinateur = (
-  creationCompteArsActive: boolean,
+  ffCreationCompteArs: boolean,
 ) =>
   z
     .object({
@@ -149,8 +149,7 @@ export const validationInfosBaseUtilisateurCoordinateur = (
         .min(1)
         .max(100)
         .refine(
-          (value) =>
-            adresseEstValideCoordinateur(value, creationCompteArsActive),
+          (value) => adresseEstValideCoordinateur(value, ffCreationCompteArs),
           {
             message: customErrorMail,
           },
@@ -233,11 +232,11 @@ export const codesTerritoiresDROM = [
 
 export const donneValidationInfosBaseUtilisateur = (
   profil: ProfilCode,
-  creationCompteArsActive: boolean = false,
+  ffCreationCompteArs: boolean = false,
 ) => {
   return [ProfilEnum.DITP_ADMIN, ProfilEnum.DITP_PILOTAGE].includes(profil)
     ? validationInfosBaseUtilisateur
     : profil === ProfilEnum.SECRETARIAT_GENERAL
       ? validationInfosBaseUtilisateurSecretariatGeneral
-      : validationInfosBaseUtilisateurCoordinateur(creationCompteArsActive);
+      : validationInfosBaseUtilisateurCoordinateur(ffCreationCompteArs);
 };

@@ -4,8 +4,13 @@ import { RouterInputs } from "@/server/infrastructure/api/trpc/trpc.interface";
 export interface UtilisateurFormulaireProps {
   utilisateur?: Utilisateur;
   estAutoriseAVoirLeSelecteurApplication: boolean;
-  creationCompteArsActive: boolean;
+  ffCreationCompteArs: boolean;
 }
+
+export type UtilisateurFormulaireContainerProps = Pick<
+  UtilisateurFormulaireProps,
+  "utilisateur"
+>;
 
 export type UtilisateurFormInputs = Omit<
   RouterInputs["utilisateur"]["créer"],

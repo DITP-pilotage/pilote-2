@@ -13,23 +13,27 @@ import RécapitulatifUtilisateur from "@/components/PageUtilisateurFormulaire/Ut
 import api from "@/server/infrastructure/api/trpc/api";
 import { Icone } from "@/components/_commons/Icone";
 import { ArrowLine3Icon } from "@/components/_commons/Icones/ArrowLine3Icon";
+import { useEnv } from "@/client/hooks/useEnv";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import {
   UtilisateurFormInputs,
-  UtilisateurFormulaireProps,
+  UtilisateurFormulaireContainerProps,
 } from "./UtilisateurFormulaire.interface";
 import SaisieDesInformationsUtilisateur from "./SaisieDesInformationsUtilisateur/SaisieDesInformationsUtilisateur";
 
-const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
-  utilisateur,
-  estAutoriseAVoirLeSelecteurApplication,
-  creationCompteArsActive,
-}) => {
+const UtilisateurFormulaire: FunctionComponent<
+  UtilisateurFormulaireContainerProps
+> = ({ utilisateur }) => {
   const étapes = [
     "Identifier l'utilisateur",
     "Vérifier les droits attribués au compte",
   ];
   const [etapeCourante, setEtapeCourante] = useState(1);
   const { data: session } = useSession();
+  const ffPiloteEval = useEnv("NEXT_PUBLIC_FF_PILOTE_EVAL");
+  const ffCreationCompteArs = useEnv("NEXT_PUBLIC_FF_CREATION_COMPTE_ARS");
+  const estAutoriseAVoirLeSelecteurApplication =
+    ffPiloteEval && [ProfilEnum.DITP_ADMIN].includes(session!.profil);
   const { data: chantiers } =
     api.chantier.récupérerTousSynthétisésAccessiblesEnLecture.useQuery(
       undefined,
@@ -42,10 +46,7 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
 
   const reactHookForm = useForm<UtilisateurFormInputs>({
     resolver: zodResolver(
-      donneValidationInfosBaseUtilisateur(
-        session!.profil,
-        creationCompteArsActive,
-      ),
+      donneValidationInfosBaseUtilisateur(session!.profil, ffCreationCompteArs),
       // il faut split des schemas en 3, la on a des if dans les schema zod s'y perd
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ) as any,
@@ -124,7 +125,7 @@ const UtilisateurFormulaire: FunctionComponent<UtilisateurFormulaireProps> = ({
             <form onSubmit={reactHookForm.handleSubmit(passerAuRécapitulatif)}>
               {etapeCourante === 1 && (
                 <SaisieDesInformationsUtilisateur
-                  creationCompteArsActive={creationCompteArsActive}
+                  ffCreationCompteArs={ffCreationCompteArs}
                   estAutoriseAVoirLeSelecteurApplication={
                     estAutoriseAVoirLeSelecteurApplication
                   }
