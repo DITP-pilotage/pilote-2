@@ -7,10 +7,14 @@ const filtreExport = (node: Node) =>
   !(node instanceof Element) ||
   node.getAttribute("data-html-to-image-ignore") === null;
 
+// Firefox crashes when html-to-image accesses `.font` on non-CSSFontFaceRule rules
+const isFirefox = navigator.userAgent.includes("Firefox");
+
 const optionsExport = {
   pixelRatio: 2,
   backgroundColor: "#ffffff",
   filter: filtreExport,
+  skipFonts: isFirefox,
 };
 
 export const useExportImage = (nomFichier: string) => {
