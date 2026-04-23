@@ -35,7 +35,7 @@ export const PageNewsletterDetail = ({
       <iframe
         sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox"
         className="w-full flex-1 border-0"
-        src={newsletter.lienArchive}
+        src={newsletter.lienArchive.replace(/^http:\/\//i, "https://")}
         title={newsletter.sujet}
       />
     </main>
