@@ -350,6 +350,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_REORGANISATION_PAGE_ACCUEIL",
     },
+    pageActualites: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_PAGE_ACTUALITES",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",
