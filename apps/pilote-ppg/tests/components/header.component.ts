@@ -40,7 +40,7 @@ export class HeaderComponent {
       // puis redirige. On attend que la navigation déclenchée par signOut
       // soit terminée avant de vérifier l'état des cookies — sinon notre
       // goto de fallback racerait avec la navigation en cours (ERR_ABORTED).
-      await this.page.waitForLoadState("networkidle");
+      await this.page.waitForLoadState("load");
 
       // Dans next-auth v5 beta, le cookie de session (authjs.session-token)
       // peut persister après la redirection à cause d'une race avec une
