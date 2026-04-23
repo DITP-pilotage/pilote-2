@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { toBlob, toPng } from "html-to-image";
 import { flushSync } from "react-dom";
 import { toast } from "sonner";
@@ -7,19 +7,20 @@ const filtreExport = (node: Node) =>
   !(node instanceof Element) ||
   node.getAttribute("data-html-to-image-ignore") === null;
 
-// Firefox crashes when html-to-image accesses `.font` on non-CSSFontFaceRule rules
-const isFirefox = navigator.userAgent.includes("Firefox");
-
-const optionsExport = {
-  pixelRatio: 2,
-  backgroundColor: "#ffffff",
-  filter: filtreExport,
-  skipFonts: isFirefox,
-};
-
 export const useExportImage = (nomFichier: string) => {
   const ref = useRef<HTMLDivElement>(null);
   const [modeExport, setModeExport] = useState(false);
+
+  // Firefox crashes when html-to-image accesses `.font` on non-CSSFontFaceRule rules
+  const optionsExport = useMemo(
+    () => ({
+      pixelRatio: 2,
+      backgroundColor: "#ffffff",
+      filter: filtreExport,
+      skipFonts: navigator.userAgent.includes("Firefox"),
+    }),
+    [],
+  );
 
   const capturerImage = useCallback(
     async <T>(
@@ -56,7 +57,7 @@ export const useExportImage = (nomFichier: string) => {
     } catch {
       toast.error("Erreur lors de l'export de l'image");
     }
-  }, [capturerImage, nomFichier]);
+  }, [capturerImage, nomFichier, optionsExport]);
 
   const copierDansLePressePapiers = useCallback(async () => {
     try {
@@ -73,7 +74,7 @@ export const useExportImage = (nomFichier: string) => {
     } catch {
       toast.error("Erreur lors de la copie dans le presse-papiers");
     }
-  }, [capturerImage]);
+  }, [capturerImage, optionsExport]);
 
   return { ref, modeExport, enregistrerCommeImage, copierDansLePressePapiers };
 };
