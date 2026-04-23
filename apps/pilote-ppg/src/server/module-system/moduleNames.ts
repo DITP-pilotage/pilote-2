@@ -21,6 +21,7 @@ export const moduleNames = [
   "datajobsExecution",
   "legacy",
   "applicationLog",
+  "actualites",
 ] as const;
 
 export type ModuleName = (typeof moduleNames)[number];

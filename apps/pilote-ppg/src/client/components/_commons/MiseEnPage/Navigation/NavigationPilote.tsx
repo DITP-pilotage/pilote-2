@@ -49,6 +49,7 @@ export const NavigationPilote = () => {
 
   const ffRapportCoordinateurs = useEnv("NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS");
   const ffCentreAidePilote = useEnv("NEXT_PUBLIC_FF_CENTRE_AIDE_PILOTE");
+  const ffPageActualites = useEnv("NEXT_PUBLIC_FF_PAGE_ACTUALITES");
   const { vérifierSuiviCompletudeEstDisponibleEstIndisponible } =
     useNavigation();
 
@@ -108,6 +109,14 @@ export const NavigationPilote = () => {
           lien: "/nouveautes",
           matcher: "/nouveautes",
           accessible: true,
+          prefetch: false,
+          target: "_self",
+        },
+        {
+          nom: "Actualités",
+          lien: "/actualites",
+          matcher: "/actualites",
+          accessible: ffPageActualites,
           prefetch: false,
           target: "_self",
         },
