@@ -60,11 +60,11 @@ Ce document décrit l'**initialisation du backend** (`pilote-mb-core`), premier 
 - Logs persistés en DB initialement (pas d'APM disponible) via un sink dédié, remplaçable sans refacto du code métier
 
 ### Authentification
-- **API Keys** en DB pour les agents/services machine-to-machine (impl complète)
+- **API Keys** en DB pour les agents/services machine-to-machine (impl complète), hashées en **SHA-256 déterministe** (lookup par index, cf. section 9.2)
 - **ProConnect OIDC** pour les users humains (scaffolding dans ce ticket, intégration dans un ticket suivant)
 - **jsonwebtoken** pour le JWT interne (HS256, TTL 8h)
 - **openid-client** pour le flow OIDC (à intégrer dans le ticket suivant)
-- **bcrypt** pour hasher les API keys
+- Pas de bcrypt — aucun password n'est stocké côté backend (auth users exclusivement via ProConnect)
 
 ### Tests
 - **Vitest** (backend et futur front)
@@ -127,9 +127,10 @@ apps/pilote-mb-core/
 │   │   ├── http/
 │   │   │   ├── app.ts                       # buildApp — assemble Hono + OpenAPI + middlewares
 │   │   │   ├── middlewares/
+│   │   │   │   ├── request-id.middleware.ts # génère/propage le requestId (corrélation logs)
+│   │   │   │   ├── logger.middleware.ts     # log start/end de chaque requête
 │   │   │   │   ├── auth.middleware.ts       # dispatch API-Key / JWT par format
 │   │   │   │   ├── require-scope.middleware.ts
-│   │   │   │   ├── logger.middleware.ts
 │   │   │   │   └── error-handler.middleware.ts
 │   │   │   ├── schemas/
 │   │   │   │   ├── error.schema.ts          # ErrorSchema partagé
@@ -138,8 +139,7 @@ apps/pilote-mb-core/
 │   │   │   ├── respond-with-result.ts       # helper Result → Response
 │   │   │   └── routes/
 │   │   │       ├── health.route.ts
-│   │   │       ├── create-session.route.ts
-│   │   │       └── me.route.ts
+│   │   │       └── create-session.route.ts   # retourne 501 — scaffolding ProConnect
 │   │   ├── logging/
 │   │   │   ├── composite-logger.ts
 │   │   │   ├── log-sink.ts                  # interface
@@ -147,7 +147,7 @@ apps/pilote-mb-core/
 │   │   │       ├── pino-stdout.sink.ts
 │   │   │       └── database.sink.ts
 │   │   ├── crypto/
-│   │   │   ├── bcrypt-password-hasher.ts    # hash des API keys
+│   │   │   ├── sha256-api-key-hasher.ts     # hash déterministe des API keys
 │   │   │   └── jsonwebtoken-token-signer.ts
 │   │   ├── proconnect/
 │   │   │   └── proconnect-client.ts         # scaffolding (à compléter ticket suivant)
@@ -155,16 +155,16 @@ apps/pilote-mb-core/
 │   │   │   ├── module-system/               # framework DI (adapté de pilote-ppg)
 │   │   │   │   ├── define-module.ts
 │   │   │   │   ├── boot-modules.ts
-│   │   │   │   ├── module-names.ts
-│   │   │   │   └── index.ts
+│   │   │   │   └── module-names.ts
 │   │   │   ├── modules/
-│   │   │   │   ├── shared.module.ts         # prisma, transaction, logger, config, tokenSigner, passwordHasher
+│   │   │   │   ├── shared.module.ts         # prisma, transaction, logger, config, tokenSigner, apiKeyHasher
 │   │   │   │   ├── authentication.module.ts
 │   │   │   │   └── healthcheck.module.ts
 │   │   │   └── build-app-container.ts       # orchestrateur appelant bootModules
 │   │   ├── scripts/
 │   │   │   └── create-api-key.ts            # CLI
 │   │   └── test/
+│   │       ├── vitest.setup.ts             # setup global (applique les migrations, ferme Prisma en teardown)
 │   │       ├── with-test-transaction.ts
 │   │       ├── test-context.ts
 │   │       └── fixtures/
@@ -232,7 +232,7 @@ type SharedCradle = {
   logger: Logger
   config: Config
   tokenSigner: TokenSigner
-  passwordHasher: PasswordHasher
+  apiKeyHasher: ApiKeyHasher
 }
 
 export type SharedDependencies = SharedCradle
@@ -243,12 +243,12 @@ export const sharedModule = defineModule<NoExports, SharedCradle>()({
   exports: [],
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
-      prisma:         asModuleFunction(() => new PrismaPilote()).singleton(),
-      transaction:    asModuleFunction(() => new PrismaTransaction()).singleton(),
-      logger:         asModuleFunction(() => buildLogger(config)).singleton(),
-      config:         asModuleFunction(() => config).singleton(),
-      tokenSigner:    asModuleClass(JsonwebtokenTokenSigner).singleton(),
-      passwordHasher: asModuleClass(BcryptPasswordHasher).singleton(),
+      prisma:       asModuleFunction(() => new PrismaPilote()).singleton(),
+      transaction:  asModuleFunction(() => new PrismaTransaction()).singleton(),
+      logger:       asModuleFunction(() => buildLogger(config)).singleton(),
+      config:       asModuleFunction(() => config).singleton(),
+      tokenSigner:  asModuleClass(JsonwebtokenTokenSigner).singleton(),
+      apiKeyHasher: asModuleClass(Sha256ApiKeyHasher).singleton(),
     } satisfies VerifyCradle<SharedCradle>)
   },
 })
@@ -374,17 +374,21 @@ Les handlers ne throw pas pour les erreurs métier — ils retournent un `Result
 
 ```ts
 import { err, ok, Result } from 'neverthrow'
+import { type Inject } from '@/infrastructure/container/modules/authentication.module'
 
 export class CreateSessionHandler {
+  constructor(private readonly deps: Inject<'utilisateurRepository' | 'tokenSigner'>) {}
+
   async executer(command: CreateSessionCommand): Promise<Result<Session, AuthenticationError>> {
     if (!command.idToken) return err(new MissingIdTokenError())
-    // TODO: intégrer ProConnect (ticket suivant)
+    // TODO: intégrer ProConnect (ticket suivant) — valider l'id_token via JWKS,
+    // upsert utilisateur, émettre JWT via this.deps.tokenSigner.sign(...)
     return err(new NotImplementedError('ProConnect integration — voir ticket suivant'))
   }
 }
 ```
 
-Throws réservés aux erreurs techniques (DB down, config invalide, etc.) qui remontent au middleware d'erreur global.
+Throws réservés aux erreurs techniques (DB down, config invalide, etc.) qui remontent au middleware d'erreur global (cf. section 16).
 
 ### 6.4 Logger — sinks composables
 
@@ -419,14 +423,9 @@ export class CompositeLogger implements Logger {
 - `PinoStdoutSink` — pino vers stdout (JSON en prod, pretty en dev)
 - `DatabaseSink` — insert dans `application_log`, best-effort (jamais crash)
 
-**Wiring au boot :**
-```ts
-const sinks: LogSink[] = [new PinoStdoutSink()]
-if (config.LOG_TO_DATABASE) sinks.push(new DatabaseSink())
-container.register({ logger: asValue(new CompositeLogger(sinks)) })
-```
+**Wiring** : fait dans `shared.module.ts` via une factory `buildLogger(config)` qui compose les sinks selon `config.LOG_TO_DATABASE`. Chaque test/environnement peut avoir sa propre composition en branchant d'autres sinks sans toucher au reste du code.
 
-**Évolution future** : ajouter un sink APM / HTTP vers app satellite de logs = `sinks.push(new DatadogSink())` au wiring. Zéro refacto.
+**Évolution future** : ajouter un sink APM / HTTP vers app satellite de logs = nouvelle ligne dans `buildLogger`. Zéro refacto côté métier.
 
 ### 6.5 Config — Zod validée au boot
 
@@ -440,7 +439,6 @@ const ConfigSchema = z.object({
   LOG_TO_DATABASE: z.coerce.boolean().default(true),
   JWT_SECRET: z.string().min(32),
   JWT_TTL_HOURS: z.coerce.number().int().positive().default(8),
-  BCRYPT_ROUNDS: z.coerce.number().int().positive().default(12),
   // Prévus pour le ticket ProConnect :
   PROCONNECT_ISSUER_URL: z.string().url().optional(),
   PROCONNECT_CLIENT_ID: z.string().optional(),
@@ -586,11 +584,18 @@ export function registerCreateSessionRoute(app: OpenAPIHono, container: AwilixCo
     const body = context.req.valid('json')
     const handler = container.resolve<CreateSessionHandler>('createSessionHandler')
     const result = await handler.executer({ idToken: body.id_token })
-    if (result.isErr) return context.json({ code: result.error.code, message: result.error.message }, 501)
-    return context.json({ jwt: result.value.jwt, utilisateur: UtilisateurMapper.toHttp(result.value.utilisateur) }, 201)
+
+    return respondWithResult(context, result, (session) =>
+      context.json({
+        jwt: session.jwt,
+        utilisateur: UtilisateurMapper.toHttp(session.utilisateur),
+      }, 201),
+    )
   })
 }
 ```
+
+Pour le scaffolding ProConnect, le handler retourne `err(new NotImplementedError(...))` dont le `kind = 'not-implemented'` mappe sur **501** via la table de mapping HTTP (cf. section 16.2).
 
 ---
 
@@ -599,7 +604,7 @@ export function registerCreateSessionRoute(app: OpenAPIHono, container: AwilixCo
 ### 9.1 Deux stratégies parallèles, middleware unifié
 
 Un seul middleware `auth.middleware.ts` détecte le format du Bearer token et délègue à la bonne stratégie :
-- Token préfixé `pmb_live_` ou `pmb_test_` → **API Key** (agents/services)
+- Token préfixé `pmb_live_` ou `pmb_test_` → **API Key** (agents/services). Le préfixe est purement informatif (identifie l'environnement visuellement pour les devs/ops). Le middleware traite les deux strictement pareil — **aucune vérification de cohérence préfixe / NODE_ENV**, volontairement, car un même token pourrait être utilisé pour tester prod en bouchon local.
 - Token JWT (3 segments séparés par `.`) → **session user**
 
 Le middleware pose sur le contexte Hono :
@@ -608,12 +613,28 @@ Le middleware pose sur le contexte Hono :
 
 ### 9.2 API Keys (impl complète dans ce ticket)
 
+**Convention du préfixe :**
+- `pmb_live_*` — clés pour les environnements de production (prod)
+- `pmb_test_*` — clés pour tous les autres environnements (dev, staging, test, CI)
+
+Le préfixe est purement informatif (aide visuelle à identifier l'environnement). Le middleware d'auth traite les deux pareil. Le CLI `create-api-key` prend un flag `--env live|test` qui détermine le préfixe généré.
+
+**Choix du hash : SHA-256, pas bcrypt**
+
+Les API keys sont **hashées avec SHA-256 déterministe**, pas bcrypt. Raison :
+- bcrypt est non-déterministe (salt unique par hash) → impossible de faire un `WHERE key_hash = X` pour lookup. Il faudrait un `findMany` + `bcrypt.compare` sur chaque row : inacceptable en perf.
+- Les API keys ont une **haute entropie** (256 bits générés via `crypto.randomBytes`) → SHA-256 sans salt est suffisamment sécurisé (pas de rainbow table possible).
+- Lookup `WHERE key_hash = sha256(token)` + index B-tree = O(1) à toute échelle.
+
+bcrypt serait pertinent pour des passwords user (faible entropie), mais on n'a **pas de password** côté backend (auth users = ProConnect). Donc bcrypt est globalement inutile pour pilote-mb-core.
+
 **Table Prisma :**
 ```prisma
 model api_key {
   id                        String    @id @default(uuid())
   nom                       String
-  key_hash                  String    @unique
+  key_hash                  String    @unique  // SHA-256 hex du token complet
+  key_prefix                String    // ex: "pmb_live_abc" — pour affichage admin, jamais le token complet
   scopes                    String[]
   active                    Boolean   @default(true)
   date_creation             DateTime  @default(now())
@@ -621,16 +642,37 @@ model api_key {
 }
 ```
 
-**Flow :**
-1. Le client envoie `Authorization: Bearer pmb_live_xxxxxxxx...`
-2. Le middleware hash le token (bcrypt compare) et cherche en DB
-3. Vérifie `active = true`, pose l'api-key sur le contexte
-4. Update `date_derniere_utilisation` (best-effort, async)
+**Port `ApiKeyHasher` dans `domain/shared/` + adapter `Sha256ApiKeyHasher` dans `infrastructure/crypto/`** :
+```ts
+export interface ApiKeyHasher {
+  hash(token: string): string              // déterministe
+}
 
-**Création via CLI** :
+export class Sha256ApiKeyHasher implements ApiKeyHasher {
+  hash(token: string): string {
+    return crypto.createHash('sha256').update(token).digest('hex')
+  }
+}
+```
+
+**Génération d'un nouveau token :**
+```ts
+const rawToken = `pmb_${env}_${crypto.randomBytes(32).toString('hex')}`   // 64 chars hex = 256 bits
+const keyHash = apiKeyHasher.hash(rawToken)
+const keyPrefix = rawToken.slice(0, 12)    // ex: "pmb_live_abc"
+```
+
+**Flow de vérification (middleware auth) :**
+1. Le client envoie `Authorization: Bearer pmb_live_xxxxxxxx...`
+2. Le middleware calcule `apiKeyHasher.hash(token)`
+3. Lookup `findUnique({ where: { key_hash } })`
+4. Vérifie `active = true`, pose l'api-key sur le contexte Hono
+5. Update `date_derniere_utilisation` (best-effort, async, pas bloquant)
+
+**Création via CLI :**
 ```bash
-pnpm create-api-key --nom "agent-satellite-prod" --scopes "entities:read,indicateurs:read"
-# Affiche le token en clair UNE SEULE FOIS, le hash seul va en DB
+pnpm create-api-key --nom "agent-satellite-prod" --env live --scopes "entities:read,indicateurs:read"
+# Affiche le token en clair UNE SEULE FOIS dans stdout ; seuls key_hash + key_prefix vont en DB
 ```
 
 ### 9.3 Authentification user — ProConnect (scaffolding seul)
@@ -691,8 +733,8 @@ enum statut_acces_enum {
 - Value object `StatutAcces` et domain model `Utilisateur`
 - Repository Prisma `UtilisateurPrismaRepository`
 - Port `TokenSigner` + adapter `JsonwebtokenTokenSigner` (vérif et émission JWT interne **fonctionnels**, testés)
-- Middleware `auth.middleware.ts` avec dispatch API Key / JWT (branche JWT valide la signature, résout l'utilisateur)
-- `CreateSessionHandler` créé avec la structure CQRS complète, mais son impl contient un `TODO: intégrer ProConnect` et retourne `err(new NotImplementedError(...))`
+- Middleware `auth.middleware.ts` avec dispatch API Key / JWT (branche JWT valide la signature, résout l'utilisateur). **Note** : tant que `POST /auth/sessions` retourne 501, aucun JWT valide ne peut être émis par le backend — la branche JWT du middleware est testée via des tokens signés manuellement avec `JWT_SECRET` dans les tests d'intégration.
+- `CreateSessionHandler` créé avec la structure CQRS complète, mais son impl contient un `TODO: intégrer ProConnect` et retourne `err(new NotImplementedError(...))` (kind `'not-implemented'` → 501 via `respondWithResult`)
 - Route `POST /auth/sessions` retourne 501 Not Implemented avec message clair pointant le ticket suivant
 
 **Ce qui est explicitement hors scope (ticket suivant)** :
@@ -720,17 +762,37 @@ Toutes les autres routes nécessitent une auth valide (API Key ou JWT user).
 
 ### 10.2 withTestTransaction
 
+Le helper initialise le container applicatif via `buildAppContainer()` (singleton partagé entre tests), ouvre une vraie transaction Prisma via le `PrismaPilote` injecté, pose la transaction dans le `txStore` AsyncLocalStorage, exécute le test, puis force un rollback via une exception contrôlée.
+
 ```ts
 // src/infrastructure/test/with-test-transaction.ts
+import { buildAppContainer } from '@/infrastructure/container/build-app-container'
+import { txStore } from '@/infrastructure/persistence/prisma/prisma-transaction'
+import { PrismaPilote } from '@/infrastructure/persistence/prisma/prisma-pilote'
+import { TestContext } from './test-context'
+
+class RollbackSignal extends Error {}
+
+// Un seul container pour toute la suite de tests (lazy, thread-safe via Vitest worker).
+let cachedContainer: ReturnType<typeof buildAppContainer> | null = null
+function getTestContainer() {
+  if (!cachedContainer) cachedContainer = buildAppContainer()
+  return cachedContainer
+}
+
 export function withTestTransaction(
   runTest: (testContext: TestContext) => Promise<void>,
 ): () => Promise<void> {
   return async () => {
-    class RollbackSignal extends Error {}
+    const { getContainer } = getTestContainer()
+    const sharedContainer = getContainer('shared')
+    const prismaPilote = sharedContainer.resolve<PrismaPilote>('prisma')
+    const prismaClient = prismaPilote.getInstance()   // client racine (pas de tx active ici)
+
     try {
-      await prisma.$transaction(async (tx) => {
+      await prismaClient.$transaction(async (tx) => {
         await txStore.run(tx, async () => {
-          const testContext = new TestContext(rootContainer)
+          const testContext = new TestContext(getContainer)
           await runTest(testContext)
           throw new RollbackSignal()
         })
@@ -738,6 +800,21 @@ export function withTestTransaction(
     } catch (error) {
       if (!(error instanceof RollbackSignal)) throw error
     }
+  }
+}
+```
+
+`TestContext` est un wrapper léger autour de `getContainer` qui expose des raccourcis typés :
+```ts
+// src/infrastructure/test/test-context.ts
+export class TestContext {
+  constructor(private readonly getContainer: ReturnType<typeof buildAppContainer>['getContainer']) {}
+
+  resolveRepository<T>(moduleName: ModuleName, key: string): T {
+    return this.getContainer(moduleName).resolve<T>(key)
+  }
+  resolveHandler<T>(moduleName: ModuleName, key: string): T {
+    return this.getContainer(moduleName).resolve<T>(key)
   }
 }
 ```
@@ -758,18 +835,30 @@ describe('ApiKeyPrismaRepository', () => {
 
 ### 10.3 Factories
 
-Un fichier par entité dans `src/infrastructure/test/fixtures/` :
+Un fichier par entité dans `src/infrastructure/test/fixtures/`. Ce sont des **fonctions utilitaires**, pas des classes injectées par Awilix.
+
+**Exception documentée à la règle 6.2** : les fixtures peuvent utiliser `getPrisma()` directement (import depuis `prisma-transaction.ts`). Raison : les fixtures ne sont pas instanciées via Awilix et on veut éviter le boilerplate d'injection pour des helpers de test. `getPrisma()` retourne automatiquement la transaction courante (celle de `withTestTransaction`) ou le client racine.
 
 ```ts
 // src/infrastructure/test/fixtures/api-key.fixture.ts
+import { getPrisma } from '@/infrastructure/persistence/prisma/prisma-transaction'
+import { randomUUID, createHash, randomBytes } from 'node:crypto'
+
 export async function createApiKeyFixture(
   overrides: Partial<Prisma.api_keyUncheckedCreateInput> = {},
 ) {
+  const rawToken = overrides.key_hash
+    ? undefined   // caller a fourni un hash custom
+    : `pmb_test_${randomBytes(32).toString('hex')}`
+  const keyHash = overrides.key_hash ?? createHash('sha256').update(rawToken!).digest('hex')
+  const keyPrefix = rawToken ? rawToken.slice(0, 12) : (overrides.key_prefix ?? 'pmb_test_xxx')
+
   return getPrisma().api_key.create({
     data: {
       id: randomUUID(),
       nom: `test-key-${randomUUID().slice(0, 6)}`,
-      key_hash: await bcrypt.hash(`pmb_test_${randomUUID()}`, 10),
+      key_hash: keyHash,
+      key_prefix: keyPrefix,
       scopes: [],
       active: true,
       ...overrides,
@@ -778,7 +867,7 @@ export async function createApiKeyFixture(
 }
 ```
 
-Les factories utilisent `getPrisma()` → marchent à la fois en test (dans la tx) et en prod (hors tx) sans adaptation.
+Les factories marchent à la fois en test (dans la tx ouverte par `withTestTransaction`) et en prod/scripts (hors tx) sans adaptation.
 
 ### 10.4 Règles non-négociables de test
 
@@ -818,9 +907,36 @@ Basé sur `apps/pilote-ppg/docker-compose.yml`, adapté :
 ### 11.2 Prisma schema initial
 
 Tables minimales nécessaires pour healthcheck + auth :
-- `api_key`
-- `utilisateur` + enum `statut_acces_enum`
-- `application_log` (destination du `DatabaseSink`)
+
+**`api_key`** — définie en section 9.2 (avec `key_hash` SHA-256 + `key_prefix`).
+
+**`utilisateur`** + enum `statut_acces_enum` — définis en section 9.3.
+
+**`application_log`** — destination du `DatabaseSink` (reprise minimaliste du schema pilote-ppg) :
+```prisma
+model application_log {
+  id         BigInt                     @id @default(autoincrement())
+  level      application_log_level_enum
+  categorie  String                     @default("systeme")
+  message    String
+  contexte   Json?
+  source     String?
+  duree_ms   Int?
+  request_id String?                    // corrélation requête (cf. section 16)
+  date       DateTime                   @default(now())
+
+  @@index([date])
+  @@index([level, date])
+  @@index([request_id])
+}
+
+enum application_log_level_enum {
+  ERROR
+  WARN
+  INFO
+  DEBUG
+}
+```
 
 Première migration `0001_init` crée ces tables.
 
@@ -1004,10 +1120,10 @@ Pour que les jobs fonctionnent, `apps/pilote-mb-core/package.json` doit exposer 
 6. **`PrismaPilote` wrapper** injectable + `PrismaTransaction` + `txStore` (`AsyncLocalStorage`)
 7. Logger sinks composables (`CompositeLogger` + `PinoStdoutSink` + `DatabaseSink`)
 8. `withTestTransaction` helper + `TestContext` + fixtures `api-key` / `utilisateur`
-9. Middleware auth avec dispatch API Key / JWT
-10. **Error handling complet** : `DomainError` + `DomainErrorKind`, mapping `kind → HTTP status`, `app.onError` + `app.notFound`, helper `respondWithResult`
-11. **API Key impl complète** : repository, middleware, CLI de création, tests d'intégration
-12. **Scaffolding user + JWT** : entité `Utilisateur`, `StatutAcces`, `UtilisateurPrismaRepository`, `TokenSigner` + adapter, `CreateSessionHandler` stubé
+9. Middlewares HTTP : `request-id`, `logger`, `auth` (dispatch API Key / JWT), `require-scope`, `error-handler`
+10. **Error handling complet** : `DomainError` + `DomainErrorKind` (avec `'not-implemented'`), mapping `kind → HTTP status`, `app.onError` + `app.notFound`, helper `respondWithResult`
+11. **API Key impl complète** : port `ApiKeyHasher` + adapter `Sha256ApiKeyHasher`, `ApiKeyPrismaRepository`, `VerifyApiKeyHandler`, middleware auth, CLI de création, tests d'intégration
+12. **Scaffolding user + JWT** : entité `Utilisateur`, value object `StatutAcces`, `UtilisateurPrismaRepository`, port `TokenSigner` + adapter `JsonwebtokenTokenSigner` (impl fonctionnelle et testée pour émission/vérification du JWT interne), `CreateSessionHandler` stubé
 13. **Endpoint `GET /health`** (public, DB ping `SELECT 1`) + test d'intégration
 14. **Endpoint `POST /auth/sessions`** retournant 501 avec message clair
 15. Swagger UI (`/api/docs`) et JSON (`/api/openapi.json`)
@@ -1046,8 +1162,11 @@ Pour que les jobs fonctionnent, `apps/pilote-mb-core/package.json` doit exposer 
 - ✅ `curl http://localhost:3000/api/openapi.json` retourne un OpenAPI 3.1 valide
 - ✅ `http://localhost:3000/api/docs` affiche Swagger UI avec les routes documentées
 - ✅ `curl -X POST http://localhost:3000/auth/sessions ...` retourne 501 avec message explicite
-- ✅ Une requête sur une route protégée sans Bearer → 401
+- ✅ Une requête sur une route protégée sans Bearer → 401 via `app.onError` (pas de if manuel dans la route)
 - ✅ Une requête avec un `pmb_live_*` valide → 200 (si scope OK)
+- ✅ Une route qui throw en interne → 500 via `app.onError`, stack loggué mais jamais exposé dans la réponse
+- ✅ Une route inexistante → 404 avec `ErrorSchema { code: 'ROUTE_NOT_FOUND', ... }` via `app.notFound`
+- ✅ Toutes les réponses d'erreur suivent le format `ErrorSchema { code, message, details? }` — zéro exception
 - ✅ Les tests d'intégration du healthcheck et des API keys passent, en parallèle
 - ✅ `pnpm lint` passe (eslint + tsc --noEmit)
 - ✅ CLAUDE.md et ADR 0002 en place
@@ -1071,6 +1190,7 @@ export type DomainErrorKind =
   | 'conflict'
   | 'forbidden'
   | 'unauthorized'
+  | 'not-implemented'
   | 'internal'
 
 export abstract class DomainError extends Error {
@@ -1106,12 +1226,13 @@ Table unique, centralisée, testable isolément :
 ```ts
 // src/infrastructure/http/error-mapping.ts
 const KIND_TO_STATUS: Record<DomainErrorKind, number> = {
-  'not-found':    404,
-  'validation':   400,
-  'conflict':     409,
-  'forbidden':    403,
-  'unauthorized': 401,
-  'internal':     500,
+  'not-found':       404,
+  'validation':      400,
+  'conflict':        409,
+  'forbidden':       403,
+  'unauthorized':    401,
+  'not-implemented': 501,
+  'internal':        500,
 }
 
 export const mapDomainErrorToHttpStatus = (error: DomainError): number =>
