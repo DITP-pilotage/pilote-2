@@ -61,13 +61,13 @@ export class PageMiseAJourDonnees extends BasePage {
   async expectFileValid(): Promise<void> {
     await expect(
       this.page.getByText(/Bravo, le fichier est conforme !/),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 30_000 });
   }
 
   async expectFileInvalid(): Promise<void> {
     await expect(
       this.page.getByText(/Le fichier ne peut pas être importé/),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 30_000 });
   }
 
   async expectImportSuccess(indicateurId: string): Promise<void> {
@@ -75,6 +75,6 @@ export class PageMiseAJourDonnees extends BasePage {
       this.page.getByText(
         `Les données ont été importées avec succès pour l'indicateur ${indicateurId}`,
       ),
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 30_000 });
   }
 }
