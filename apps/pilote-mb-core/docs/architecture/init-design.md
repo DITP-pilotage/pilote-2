@@ -98,6 +98,7 @@ apps/pilote-mb-core/
 │   │   ├── shared/                          # Result, DomainError, Clock, UUID, Transaction port, Logger port
 │   │   │   ├── transaction.ts
 │   │   │   ├── logger.ts
+│   │   │   ├── domain-error.ts              # classe de base + kind pour mapping HTTP
 │   │   │   └── ...
 │   │   ├── api-key/
 │   │   │   ├── api-key.ts
@@ -119,8 +120,8 @@ apps/pilote-mb-core/
 │   ├── infrastructure/
 │   │   ├── persistence/
 │   │   │   └── prisma/
-│   │   │       ├── prisma.ts                # PrismaClient singleton
-│   │   │       ├── prisma-transaction.ts    # AsyncLocalStorage + getPrisma + PrismaTransaction
+│   │   │       ├── prisma-transaction.ts    # AsyncLocalStorage + txStore + PrismaTransaction
+│   │   │       ├── prisma-pilote.ts         # wrapper injectable (client racine + tx courante via txStore)
 │   │   │       ├── api-key.prisma-repository.ts
 │   │   │       └── utilisateur.prisma-repository.ts
 │   │   ├── http/
@@ -133,6 +134,8 @@ apps/pilote-mb-core/
 │   │   │   ├── schemas/
 │   │   │   │   ├── error.schema.ts          # ErrorSchema partagé
 │   │   │   │   └── pagination.schema.ts
+│   │   │   ├── error-mapping.ts             # DomainErrorKind → HTTP status
+│   │   │   ├── respond-with-result.ts       # helper Result → Response
 │   │   │   └── routes/
 │   │   │       ├── health.route.ts
 │   │   │       ├── create-session.route.ts
@@ -149,10 +152,16 @@ apps/pilote-mb-core/
 │   │   ├── proconnect/
 │   │   │   └── proconnect-client.ts         # scaffolding (à compléter ticket suivant)
 │   │   ├── container/
-│   │   │   ├── awilix.container.ts          # buildContainer
-│   │   │   ├── register-infrastructure.ts
-│   │   │   ├── register-repositories.ts
-│   │   │   └── register-handlers.ts
+│   │   │   ├── module-system/               # framework DI (adapté de pilote-ppg)
+│   │   │   │   ├── define-module.ts
+│   │   │   │   ├── boot-modules.ts
+│   │   │   │   ├── module-names.ts
+│   │   │   │   └── index.ts
+│   │   │   ├── modules/
+│   │   │   │   ├── shared.module.ts         # prisma, transaction, logger, config, tokenSigner, passwordHasher
+│   │   │   │   ├── authentication.module.ts
+│   │   │   │   └── healthcheck.module.ts
+│   │   │   └── build-app-container.ts       # orchestrateur appelant bootModules
 │   │   ├── scripts/
 │   │   │   └── create-api-key.ts            # CLI
 │   │   └── test/
@@ -193,24 +202,125 @@ Tests co-localisés : `foo.ts` + `foo.test.ts` côte-à-côte.
 
 ## 6. Patterns fondamentaux
 
-### 6.1 Dependency Injection — Awilix ProxyInjection, singletons
+### 6.1 Dependency Injection — module-system Awilix (copié/adapté de pilote-ppg)
+
+pilote-mb-core reprend le **module-system** mis en place sur pilote-ppg. Il apporte trois bénéfices majeurs par rapport à un registre Awilix plat :
+- **Découpage par bounded-context** : chaque module déclare son propre cradle typé et ne touche qu'à ses propres dépendances
+- **Graphe de dépendances explicite** via `imports` / `exports` — on contrôle ce qui fuit entre modules
+- **Typage fort des injections** via `Inject<K>` — chaque classe déclare précisément les dépendances qu'elle consomme
+
+#### Structure du framework
+
+Le framework vit dans `src/infrastructure/container/module-system/` :
+- `define-module.ts` — factory curryfiée `defineModule<TExports, TCradle>()({...})` avec inférence des types
+- `boot-modules.ts` — orchestrateur en 2 phases :
+  - Phase 1 : crée un container racine pour le module sans imports (`shared`), puis un scope par autre module (héritant des deps transverses)
+  - Phase 2 : résout eagerly les exports de chaque module importé et les ré-enregistre comme `asValue` dans le container consommateur (évite les boucles de résolution d'Awilix)
+- `module-names.ts` — liste canonique typée des modules du projet
+
+Adaptations par rapport à pilote-ppg :
+- Renommage des fichiers/types en **camelCase** et noms **anglais** (sauf entités métier) pour respecter la convention de pilote-mb
+- `PROXY` + `strict: true` sur le container racine (identique)
+
+#### Module `shared` (racine)
 
 ```ts
-// src/infrastructure/container/awilix.container.ts
-export function buildContainer() {
-  const container = createContainer({ injectionMode: InjectionMode.PROXY })
-  registerInfrastructure(container)
-  registerRepositories(container)
-  registerHandlers(container)
-  return container
+// src/infrastructure/container/modules/shared.module.ts
+type SharedCradle = {
+  prisma: PrismaPilote
+  transaction: Transaction
+  logger: Logger
+  config: Config
+  tokenSigner: TokenSigner
+  passwordHasher: PasswordHasher
+}
+
+export type SharedDependencies = SharedCradle
+
+export const sharedModule = defineModule<NoExports, SharedCradle>()({
+  name: 'shared',
+  imports: [],
+  exports: [],
+  register: (container, { asModuleFunction, asModuleClass }) => {
+    container.register({
+      prisma:         asModuleFunction(() => new PrismaPilote()).singleton(),
+      transaction:    asModuleFunction(() => new PrismaTransaction()).singleton(),
+      logger:         asModuleFunction(() => buildLogger(config)).singleton(),
+      config:         asModuleFunction(() => config).singleton(),
+      tokenSigner:    asModuleClass(JsonwebtokenTokenSigner).singleton(),
+      passwordHasher: asModuleClass(BcryptPasswordHasher).singleton(),
+    } satisfies VerifyCradle<SharedCradle>)
+  },
+})
+```
+
+#### Module métier consommateur
+
+```ts
+// src/infrastructure/container/modules/authentication.module.ts
+type AuthenticationCradle = {
+  apiKeyRepository: ApiKeyRepository
+  utilisateurRepository: UtilisateurRepository
+  verifyApiKeyHandler: VerifyApiKeyHandler
+  verifyJwtHandler: VerifyJwtHandler
+  createSessionHandler: CreateSessionHandler
+}
+
+export const authenticationModule = defineModule<NoExports, AuthenticationCradle>()({
+  name: 'authentication',
+  imports: ['shared'],
+  exports: [],
+  register: (container, { asModuleClass }) => {
+    container.register({
+      apiKeyRepository:     asModuleClass(ApiKeyPrismaRepository).singleton(),
+      utilisateurRepository: asModuleClass(UtilisateurPrismaRepository).singleton(),
+      verifyApiKeyHandler:  asModuleClass(VerifyApiKeyHandler).singleton(),
+      verifyJwtHandler:     asModuleClass(VerifyJwtHandler).singleton(),
+      createSessionHandler: asModuleClass(CreateSessionHandler).singleton(),
+    } satisfies VerifyCradle<AuthenticationCradle>)
+  },
+})
+
+type Scope = ExtractScope<typeof authenticationModule>
+export type Inject<K extends keyof Scope> = Pick<Scope, K>
+```
+
+#### Bootstrap
+
+```ts
+// src/infrastructure/container/build-app-container.ts
+export function buildAppContainer() {
+  return bootModules([
+    sharedModule,
+    authenticationModule,
+    healthcheckModule,
+  ])
 }
 ```
 
-- Toutes les dépendances en **singleton** (pas de scope par requête)
-- `PrismaClient` et `Logger` enregistrés via `asValue(...)`
-- Les classes reçoivent leurs deps en ProxyInjection : `constructor({ utilisateurRepository, logger }) { ... }`
+#### Liste des modules de l'init
 
-### 6.2 Transactions — AsyncLocalStorage + getPrisma()
+```ts
+// src/infrastructure/container/module-system/module-names.ts
+export const moduleNames = [
+  'shared',
+  'authentication',
+  'healthcheck',
+] as const
+
+export type ModuleName = (typeof moduleNames)[number]
+```
+
+On étend cette liste à chaque nouveau bounded-context (ex: `'entity'`, `'indicateur'`, `'territoire'`).
+
+#### Convention de vie des dépendances
+
+- **Tout en singleton** (pas de scope par requête — les transactions passent par `AsyncLocalStorage`, pas par Awilix scope)
+- **Mode Proxy Injection** (un seul argument objet dans le constructeur, déstructuré par le pattern `Inject<K>` ci-dessous)
+
+### 6.2 Transactions — AsyncLocalStorage via `PrismaPilote` injecté
+
+On reprend le pattern pilote-ppg : un `AsyncLocalStorage<PilotePrismaClient>` porte la transaction courante à travers la chaîne d'appels async, et un **wrapper `PrismaPilote`** lu via Awilix encapsule la résolution "tx courante OR client racine". Les repositories **ne touchent jamais** à `PrismaClient` ni à `getPrisma()` directement — ils consomment un `prisma: PrismaPilote` via `Inject<'prisma'>`.
 
 ```ts
 // src/infrastructure/persistence/prisma/prisma-transaction.ts
@@ -222,23 +332,41 @@ export class PrismaTransaction implements Transaction {
     return prisma.$transaction((tx) => txStore.run(tx, scope))
   }
 }
-
-export const getPrisma = () => txStore.getStore() ?? prisma
 ```
 
-**Règle d'or** : aucun repository ne dépend directement de `PrismaClient`. Tous appellent `getPrisma()` qui retourne la transaction courante ou le client racine.
+```ts
+// src/infrastructure/persistence/prisma/prisma-pilote.ts
+export class PrismaPilote {
+  private instance: PrismaClient | null = null
+
+  getInstance(): PilotePrismaClient {
+    if (!this.instance) this.instance = new PrismaClient()
+    return txStore.getStore() ?? this.instance
+  }
+}
+```
+
+**Règle d'or** : aucun repository ne dépend directement de `PrismaClient` ni de `getPrisma()`. Tous consomment `this.deps.prisma.getInstance()` via le wrapper injecté.
 
 ```ts
 // src/infrastructure/persistence/prisma/api-key.prisma-repository.ts
+import { type Inject } from '@/infrastructure/container/modules/authentication.module'
+
 export class ApiKeyPrismaRepository implements ApiKeyRepository {
+  constructor(private readonly deps: Inject<'prisma'>) {}
+
   async findByKeyHash(keyHash: string): Promise<ApiKey | null> {
-    const row = await getPrisma().api_key.findUnique({ where: { key_hash: keyHash } })
+    const row = await this.deps.prisma.getInstance().api_key.findUnique({
+      where: { key_hash: keyHash },
+    })
     return row ? ApiKeyMapper.toDomain(row) : null
   }
 }
 ```
 
-Un handler qui a besoin d'une transaction injecte le port `Transaction` et appelle `transaction.run(async () => { ... })`. Toute la chaîne async dans le callback bénéficie automatiquement de la tx via `getPrisma()`.
+Un handler qui a besoin d'une transaction consomme le port `Transaction` via `Inject<'transaction'>` et appelle `this.deps.transaction.run(async () => { ... })`. Toute la chaîne async dans le callback bénéficie automatiquement de la tx courante via `AsyncLocalStorage` — les repos appellent `this.deps.prisma.getInstance()` et obtiennent la tx sans connaître son existence.
+
+**Bénéfice vs import direct de `getPrisma()`** : les dépendances sont explicites dans le constructeur, les tests peuvent injecter un fake `PrismaPilote` trivialement, et on reste cohérent avec le pattern Awilix de toute l'app.
 
 ### 6.3 Result type — neverthrow
 
@@ -325,6 +453,49 @@ export type Config = typeof config
 ```
 
 Crash dur au démarrage si variable manquante ou invalide.
+
+### 6.6 Pattern d'injection `Inject<K>` dans les classes
+
+Chaque module expose un alias `Inject<K>` typé, construit depuis son `ExtractScope`. Les classes du bounded-context consomment uniquement les clés dont elles ont besoin — précisément typées, auto-complétées, sans re-déclarer la signature.
+
+```ts
+// Dans authentication.module.ts
+type Scope = ExtractScope<typeof authenticationModule>
+export type Inject<K extends keyof Scope> = Pick<Scope, K>
+```
+
+**Usage dans un repository :**
+```ts
+export class ApiKeyPrismaRepository implements ApiKeyRepository {
+  constructor(private readonly deps: Inject<'prisma'>) {}
+  async findByKeyHash(keyHash: string): Promise<ApiKey | null> {
+    const row = await this.deps.prisma.getInstance().api_key.findUnique({ where: { key_hash: keyHash } })
+    return row ? ApiKeyMapper.toDomain(row) : null
+  }
+}
+```
+
+**Usage dans un handler qui a plusieurs deps :**
+```ts
+export class CreateSessionHandler {
+  constructor(
+    private readonly deps: Inject<'utilisateurRepository' | 'tokenSigner' | 'transaction' | 'logger'>,
+  ) {}
+
+  async executer(command: CreateSessionCommand): Promise<Result<Session, AuthenticationError>> {
+    return this.deps.transaction.run(async () => {
+      // TODO: intégrer ProConnect (ticket suivant)
+      return err(new NotImplementedError('ProConnect integration — voir ticket suivant'))
+    })
+  }
+}
+```
+
+**Règles à figer :**
+- Toute classe instanciée par Awilix (`asModuleClass`) **déclare ses deps via `Inject<K>`**, jamais via un type ad-hoc inline
+- Une classe ne peut consommer **que des clés de son propre scope** (shared deps + cradle du module) — le typage de `Inject<K>` le force à la compilation
+- Dans un fichier `*.repository.ts` ou `*.handler.ts`, l'import de `Inject` pointe vers le `module.ts` du bounded-context auquel la classe appartient
+- **Pas d'abus** : `Inject<'a' | 'b' | 'c' | 'd' | 'e' | 'f'>` signale qu'une classe fait trop de choses — à découper en deux
 
 ---
 
@@ -829,20 +1000,21 @@ Pour que les jobs fonctionnent, `apps/pilote-mb-core/package.json` doit exposer 
 2. Fichiers de config : `package.json`, `tsconfig.json`, `vitest.config.ts`, `.eslintrc.cjs`, `.prettierrc`, `docker-compose.yml`
 3. Schema Prisma + première migration (`0001_init`)
 4. Config Zod-validée (`src/config.ts`)
-5. Container Awilix (`buildContainer` + `register-*`)
-6. Logger sinks composables (`CompositeLogger` + `PinoStdoutSink` + `DatabaseSink`)
-7. Transactions (`AsyncLocalStorage` + `PrismaTransaction` + `getPrisma`)
+5. **Module-system** copié/adapté de pilote-ppg (`define-module`, `boot-modules`, `module-names`) + 3 modules (`shared`, `authentication`, `healthcheck`) + `build-app-container`
+6. **`PrismaPilote` wrapper** injectable + `PrismaTransaction` + `txStore` (`AsyncLocalStorage`)
+7. Logger sinks composables (`CompositeLogger` + `PinoStdoutSink` + `DatabaseSink`)
 8. `withTestTransaction` helper + `TestContext` + fixtures `api-key` / `utilisateur`
 9. Middleware auth avec dispatch API Key / JWT
-10. **API Key impl complète** : repository, middleware, CLI de création, tests d'intégration
-11. **Scaffolding user + JWT** : entité `Utilisateur`, `StatutAcces`, `UtilisateurPrismaRepository`, `TokenSigner` + adapter, `CreateSessionHandler` stubé
-12. **Endpoint `GET /health`** (public, DB ping `SELECT 1`) + test d'intégration
-13. **Endpoint `POST /auth/sessions`** retournant 501 avec message clair
-14. Swagger UI (`/api/docs`) et JSON (`/api/openapi.json`)
-15. CLAUDE.md du projet (reprend les règles de ce design)
-16. `docs/architecture/decisions/0001-record-architecture-decisions.md` (ADR base)
-17. `docs/architecture/decisions/0002-architecture-init-pilote-mb-core.md` (résume ce design)
-18. Mise à jour de `.github/workflows/testAndLint.yml` (ajout filter + jobs `test-mb-core` + `lint-mb-core`)
+10. **Error handling complet** : `DomainError` + `DomainErrorKind`, mapping `kind → HTTP status`, `app.onError` + `app.notFound`, helper `respondWithResult`
+11. **API Key impl complète** : repository, middleware, CLI de création, tests d'intégration
+12. **Scaffolding user + JWT** : entité `Utilisateur`, `StatutAcces`, `UtilisateurPrismaRepository`, `TokenSigner` + adapter, `CreateSessionHandler` stubé
+13. **Endpoint `GET /health`** (public, DB ping `SELECT 1`) + test d'intégration
+14. **Endpoint `POST /auth/sessions`** retournant 501 avec message clair
+15. Swagger UI (`/api/docs`) et JSON (`/api/openapi.json`)
+16. CLAUDE.md du projet (reprend les règles de ce design)
+17. `docs/architecture/decisions/0001-record-architecture-decisions.md` (ADR base)
+18. `docs/architecture/decisions/0002-architecture-init-pilote-mb-core.md` (résume ce design)
+19. Mise à jour de `.github/workflows/testAndLint.yml` (ajout filter + jobs `test-mb-core` + `lint-mb-core`)
 
 ### Hors scope (tickets suivants)
 - **Intégration ProConnect** (flow OIDC complet, validation JWKS, upsert user depuis claims, endpoint `POST /auth/sessions` fonctionnel, `/auth/me`, `/auth/acces/demande`)
@@ -880,3 +1052,185 @@ Pour que les jobs fonctionnent, `apps/pilote-mb-core/package.json` doit exposer 
 - ✅ `pnpm lint` passe (eslint + tsc --noEmit)
 - ✅ CLAUDE.md et ADR 0002 en place
 - ✅ Les jobs CI `test-mb-core` et `lint-mb-core` passent vert sur la PR
+
+---
+
+## 16. Gestion des erreurs
+
+L'erreur doit remonter du domaine à l'utilisateur avec un format stable, un statut HTTP cohérent, et un logging adapté. L'architecture est en 4 niveaux.
+
+### 16.1 Niveau 1 — `DomainError` typée (dans `domain/shared/`)
+
+Base abstraite portée par toutes les erreurs métier. Chaque sous-classe déclare un `code` stable (pour les consommateurs API/agents) et un `kind` (pour le mapping HTTP).
+
+```ts
+// src/domain/shared/domain-error.ts
+export type DomainErrorKind =
+  | 'not-found'
+  | 'validation'
+  | 'conflict'
+  | 'forbidden'
+  | 'unauthorized'
+  | 'internal'
+
+export abstract class DomainError extends Error {
+  abstract readonly code: string
+  abstract readonly kind: DomainErrorKind
+  readonly details?: Record<string, unknown>
+
+  constructor(message: string, details?: Record<string, unknown>) {
+    super(message)
+    this.name = this.constructor.name
+    this.details = details
+  }
+}
+
+// Exemples concrets (vivent dans les sous-dossiers domain/<entity>/errors/)
+export class EntityNotFoundError extends DomainError {
+  readonly code = 'ENTITY_NOT_FOUND'
+  readonly kind = 'not-found' as const
+}
+
+export class InvalidIndicateurTypeError extends DomainError {
+  readonly code = 'INVALID_INDICATEUR_TYPE'
+  readonly kind = 'validation' as const
+}
+```
+
+**Règle** : toute erreur métier = une classe dédiée. Jamais de `throw new Error('...')` dans le domain.
+
+### 16.2 Niveau 2 — Mapping `kind` → HTTP status
+
+Table unique, centralisée, testable isolément :
+
+```ts
+// src/infrastructure/http/error-mapping.ts
+const KIND_TO_STATUS: Record<DomainErrorKind, number> = {
+  'not-found':    404,
+  'validation':   400,
+  'conflict':     409,
+  'forbidden':    403,
+  'unauthorized': 401,
+  'internal':     500,
+}
+
+export const mapDomainErrorToHttpStatus = (error: DomainError): number =>
+  KIND_TO_STATUS[error.kind]
+```
+
+### 16.3 Niveau 3 — Error boundary global via `app.onError`
+
+Hono expose un hook `app.onError((error, context) => ...)` qui intercepte **tout throw non attrapé** dans l'app — c'est l'error-boundary qui wrap les routes. Il gère quatre cas :
+
+```ts
+// src/infrastructure/http/middlewares/error-handler.middleware.ts
+export function registerErrorHandler(app: OpenAPIHono, container: AwilixContainer) {
+  const logger = container.resolve<Logger>('logger')
+
+  app.onError((error, context) => {
+    const requestId = context.get('requestId') ?? undefined
+    const url = context.req.url
+    const method = context.req.method
+
+    // 1. DomainError catchée (safety net — normalement retournée via Result)
+    if (error instanceof DomainError) {
+      logger.warn({ code: error.code, url, method, requestId }, error.message)
+      return context.json({
+        code: error.code,
+        message: error.message,
+        details: error.details,
+      }, mapDomainErrorToHttpStatus(error))
+    }
+
+    // 2. HTTPException Hono (levée par les middlewares auth, body parser, etc.)
+    if (error instanceof HTTPException) {
+      logger.warn({ url, method, requestId, status: error.status }, error.message)
+      return context.json({
+        code: error.status === 401 ? 'UNAUTHORIZED'
+            : error.status === 403 ? 'FORBIDDEN'
+            : 'HTTP_EXCEPTION',
+        message: error.message,
+      }, error.status)
+    }
+
+    // 3. ZodError (validation d'entrée)
+    if (error instanceof ZodError) {
+      logger.warn({ url, method, requestId, issues: error.issues }, 'Validation error')
+      return context.json({
+        code: 'VALIDATION_ERROR',
+        message: 'Les données fournies sont invalides',
+        details: { issues: error.issues },
+      }, 400)
+    }
+
+    // 4. Erreur technique inattendue — 500, stack loggué, jamais exposé au client
+    logger.error(
+      { url, method, requestId, stack: error.stack, name: error.name },
+      `Unhandled error: ${error.message}`,
+    )
+    return context.json({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'Une erreur interne est survenue',
+    }, 500)
+  })
+
+  // Convention 404 standard
+  app.notFound((context) => context.json({
+    code: 'ROUTE_NOT_FOUND',
+    message: `Route ${context.req.method} ${context.req.url} introuvable`,
+  }, 404))
+}
+```
+
+**Règles non-négociables :**
+- **Jamais de stack trace dans la réponse HTTP** — loggué côté serveur uniquement
+- **Réponse prod identique à la réponse staging** (pas de divergence qui brouille le debug)
+- **Tout est loggué** avec niveau adapté (warn pour 4xx, error pour 5xx)
+- **`requestId`** posé par un middleware en amont et propagé dans tous les logs pour corrélation
+
+### 16.4 Niveau 4 — Helper `respondWithResult` pour factoriser les routes
+
+Pour éviter le boilerplate `if (result.isErr) ... else ...` dans chaque route :
+
+```ts
+// src/infrastructure/http/respond-with-result.ts
+export async function respondWithResult<TValue, TError extends DomainError, TResponse>(
+  context: Context,
+  result: Result<TValue, TError>,
+  onSuccess: (value: TValue) => TResponse,
+): Promise<TResponse | Response> {
+  if (result.isErr) {
+    return context.json({
+      code: result.error.code,
+      message: result.error.message,
+      details: result.error.details,
+    }, mapDomainErrorToHttpStatus(result.error))
+  }
+  return onSuccess(result.value)
+}
+```
+
+**Usage dans une route :**
+
+```ts
+app.openapi(createEntityRoute, async (context) => {
+  const body = context.req.valid('json')
+  const handler = container.resolve<CreateEntityHandler>('createEntityHandler')
+  const result = await handler.executer({ nom: body.nom })
+
+  return respondWithResult(context, result, (entity) =>
+    context.json({ id: entity.id, nom: entity.nom }, 201),
+  )
+})
+```
+
+→ Code de route minimal, un seul chemin de mapping d'erreur, impossible d'oublier un status.
+
+### 16.5 Conventions à figer
+
+- ❗ Toute erreur métier = classe héritée de `DomainError`, avec `code` stable + `kind`
+- ❗ Tout handler retourne `Result<T, DomainError>` — pas de throw métier
+- ❗ Toute route utilise `respondWithResult` (ou équivalent inline si vraiment justifié, mais le helper est la convention)
+- ❗ Les throws techniques remontent à `app.onError` qui loggue et renvoie une réponse `ErrorSchema` propre
+- ❗ Pas de stack trace exposée côté HTTP, jamais
+- ❗ `requestId` présent dans tous les logs liés à une requête
