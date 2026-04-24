@@ -1654,6 +1654,7 @@ La liste "Hors scope" est mise à jour ci-dessous avec les précisions DDD.
 - **Idempotency-Key header** : convention prête à être ajoutée, mais pas implémentée tant qu'on n'a pas de mutation critique.
 - **Règle lint cross-layer** : pas d'outillage automatique au démarrage, revue manuelle. À ajouter si la convention dérape.
 - **ProConnect en maintenance** : au moment de la rédaction de ce design, ProConnect est en maintenance, ce qui justifie le scaffolding différé. Le ticket d'intégration sera lancé dès le retour du service.
+- **Luxon différé** : le port `Clock` retourne `Date` native à l'init. Luxon sera introduit dans le ticket du premier BC qui manipule beaucoup de dates (probablement `pilotage` pour les jalons ou `rapport` pour les périodes/formatage FR). À ce moment, choix entre "Luxon en complément" ou "migrer `Clock.now()` vers `DateTime`".
 
 ---
 
