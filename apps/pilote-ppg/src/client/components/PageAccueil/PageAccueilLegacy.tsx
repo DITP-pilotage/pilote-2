@@ -81,7 +81,7 @@ export const PageAccueilLegacy = ({
   const ffFicheTerritoriale = useEnv("NEXT_PUBLIC_FF_FICHE_TERRITORIALE");
   const profil = useProfilUtilisateurConnecte();
   const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
-  const { peutUtiliserAskAI } = useAskAIAccess();
+  const { peutUtiliserAskAI, estDITPAdmin } = useAskAIAccess();
   const doitAfficherModaleRenseignerService =
     !!monProfilEstDisponible &&
     (profil.service == null || profil.fonction == null);
@@ -186,6 +186,7 @@ export const PageAccueilLegacy = ({
                 <BoutonSyntheseTerritoire
                   territoireCode={territoireCode}
                   jalon={jalon}
+                  estDITPAdmin={estDITPAdmin}
                 />
               </div>
             ) : null}

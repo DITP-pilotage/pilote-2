@@ -85,7 +85,7 @@ export const BasePageAccueilLayout: FunctionComponent<
   const { data: session } = useSession();
   const profil = useProfilUtilisateurConnecte();
   const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
-  const { peutUtiliserAskAI } = useAskAIAccess();
+  const { peutUtiliserAskAI, estDITPAdmin } = useAskAIAccess();
 
   const estProfilTerritorialise =
     PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || "");
@@ -194,6 +194,7 @@ export const BasePageAccueilLayout: FunctionComponent<
                 <BoutonSyntheseTerritoire
                   jalon={jalon}
                   territoireCode={territoireCode}
+                  estDITPAdmin={estDITPAdmin}
                 />
               </div>
             ) : null}
