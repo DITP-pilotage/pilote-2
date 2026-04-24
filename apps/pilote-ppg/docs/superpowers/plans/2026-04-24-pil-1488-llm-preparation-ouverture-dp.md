@@ -307,10 +307,14 @@ Insérer dans le groupe `Synthèse`, juste après la 1re tuile :
 ```typescript
 {
   label: "Synthèse d'un chantier sur un territoire",
-  message: `Fais moi la synthèse du chantier CH-XXX sur ${territoire.nomAffiché}`,
+  message: `Fais moi la synthèse du chantier CH-XXX sur le territoire NOM_TERRITOIRE
+Comment se situe ce chantier par rapport aux autres territoires ?
+Quelles sont les principales difficultés remontées dans les commentaires ?`,
   mode: "fill",
 },
 ```
+
+Note : les deux placeholders `CH-XXX` et `NOM_TERRITOIRE` sont volontaires — l'utilisateur les remplace à la main avant d'envoyer. Le bloc complet part en un seul message au LLM (synthèse + 2 questions de suivi).
 
 - [ ] **Step 4: Conditionner les tuiles prototypes sur `estDITPAdmin`**
 
@@ -362,9 +366,9 @@ Scénarios à vérifier en naviguant sur une page accueil territoire :
 1. Connecté DITP_ADMIN : bouton visible, 6 tuiles du groupe Synthèse (cf. Step 5) + Comparaison.
 2. Connecté EQUIPE_DIR_PROJET : bouton visible, 4 tuiles du groupe Synthèse (sans Rapport complet ni Tableau de bord) + Comparaison.
 3. Connecté autre profil, `NEXT_PUBLIC_FF_ASK_AI=false` : bouton **non visible**.
-4. Connecté autre profil, `NEXT_PUBLIC_FF_ASK_AI=true` : bouton visible, mêmes tuiles que EQUIPE_DIR_PROJET (pas de Rapport / Tableau).
+4. Connecté autre profil, `NEXT_PUBLIC_FF_ASK_AI=true` sans FF profilé activé : bouton **non visible** (le master seul ne suffit pas ; l'accès exige aussi un FF profilé matchant le profil de l'utilisateur).
 5. Sur un département : la tuile "Synthèse de X et ses départements" n'apparaît pas.
-6. Clic sur "Synthèse d'un territoire" : input pré-rempli avec `Fais moi la synthèse du territoire ` (espace final, curseur au bout). Clic sur "Synthèse d'un chantier sur un territoire" : input pré-rempli avec `Fais moi la synthèse du chantier CH-XXX sur <territoire>`.
+6. Clic sur "Synthèse d'un territoire" : input pré-rempli avec `Fais moi la synthèse du territoire ` (espace final, curseur au bout). Clic sur "Synthèse d'un chantier sur un territoire" : input pré-rempli avec le bloc de 3 lignes (demande + 2 questions de suivi) contenant les placeholders `CH-XXX` et `NOM_TERRITOIRE` à remplacer à la main.
 
 - [ ] **Step 8: Commit**
 
@@ -406,4 +410,4 @@ git push -u origin PIL-1488-llm-preparation-ouverture-aux-dp
 ## Notes
 
 - Pas de test unitaire front ajouté : le changement est de la plomberie de rendu conditionnel. Les chemins sensibles (règle d'accès) sont centralisés dans `useAskAIAccess`, et pourront être testés unitairement si un besoin émerge (mock de `useSession` + `useEnv`).
-- La règle métier est intentionnellement centralisée dans `PROFILS_ASK_AI_PRIVILEGIES`. Ajouter un profil supplémentaire à l'avenir = éditer cette constante uniquement.
+- La règle métier est intentionnellement centralisée dans `useAskAIAccess.ts`, via la fonction `profilAutoriseParFeatureFlip`. Ajouter un profil supplémentaire à l'avenir = ajouter un FF dédié (`config.ts` + `VariableContenuDisponible.ts`) et une clause dans cette fonction. Quand Ask AI sera ouvert à tous, on supprime la fonction et on garde uniquement `peutUtiliserAskAI = Boolean(ffAskAI)`.
