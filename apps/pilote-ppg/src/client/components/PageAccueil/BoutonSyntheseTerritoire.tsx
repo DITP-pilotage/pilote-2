@@ -8,9 +8,11 @@ import { ModalePleinEcran } from "@/components/shared/ModalePleinEcran";
 export const BoutonSyntheseTerritoire = ({
   territoireCode,
   jalon,
+  estDITPAdmin,
 }: {
   territoireCode: string;
   jalon: number;
+  estDITPAdmin: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const territoire = récupérerDétailsSurUnTerritoire(territoireCode);
@@ -28,9 +30,16 @@ export const BoutonSyntheseTerritoire = ({
         label: "Synthèse",
         scenarios: [
           {
-            label: `Synthèse de ${territoire.nomAffiché}`,
-            message: `Fais moi la synthèse de ${territoire.nomAffiché}`,
-            mode: "send",
+            label: "Synthèse d'un territoire",
+            message: "Fais moi la synthèse du territoire ",
+            mode: "fill",
+          },
+          {
+            label: "Synthèse d'un chantier sur un territoire",
+            message: `Fais moi la synthèse du chantier CH-XXX sur le territoire NOM_TERRITOIRE
+Comment se situe ce chantier par rapport aux autres territoires ?
+Quelles sont les principales difficultés remontées dans les commentaires ?`,
+            mode: "fill",
           },
           ...(estRegion
             ? [
@@ -46,16 +55,20 @@ export const BoutonSyntheseTerritoire = ({
             message: `Analyse les chantiers en retard sur ${territoire.nomAffiché}. Pour chaque chantier en retard, récupère également les valeurs de ses indicateurs.`,
             mode: "send",
           },
-          {
-            label: "Rapport complet (Markdown)",
-            message: `Crée un rapport de synthèse du territoire ${territoire.nomAffiché} incluant le taux d'avancement, les chantiers en retard, les chantiers en difficulté et leurs indicateurs. Format Markdown`,
-            mode: "send",
-          },
-          {
-            label: "Tableau de bord du territoire",
-            message: `Compose un tableau de bord pour ${territoire.nomAffiché}. Commence par une première section contenant le taux d'avancement du territoire, le nombre de chantiers en retard, le nombre de chantiers en difficulté et la cartographie du taux d'avancement. Ensuite, récupère la liste des chantiers en difficulté et en retard sur ce territoire, et pour chacun, ajoute une section dédiée avec un titre reprenant le nom du chantier, la météo et le commentaire de synthèse, la cartographie météo en pleine largeur et le tableau de ses indicateurs.`,
-            mode: "send",
-          },
+          ...(estDITPAdmin
+            ? [
+                {
+                  label: "Rapport complet (Markdown)",
+                  message: `Crée un rapport de synthèse du territoire ${territoire.nomAffiché} incluant le taux d'avancement, les chantiers en retard, les chantiers en difficulté et leurs indicateurs. Format Markdown`,
+                  mode: "send" as const,
+                },
+                {
+                  label: "Tableau de bord du territoire",
+                  message: `Compose un tableau de bord pour ${territoire.nomAffiché}. Commence par une première section contenant le taux d'avancement du territoire, le nombre de chantiers en retard, le nombre de chantiers en difficulté et la cartographie du taux d'avancement. Ensuite, récupère la liste des chantiers en difficulté et en retard sur ce territoire, et pour chacun, ajoute une section dédiée avec un titre reprenant le nom du chantier, la météo et le commentaire de synthèse, la cartographie météo en pleine largeur et le tableau de ses indicateurs.`,
+                  mode: "send" as const,
+                },
+              ]
+            : []),
         ],
       },
       {

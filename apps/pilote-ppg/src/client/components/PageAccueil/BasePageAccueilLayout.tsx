@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 import { useEnv } from "@/client/hooks/useEnv";
+import { useAskAIAccess } from "@/components/PageAccueil/useAskAIAccess";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import { Filtres } from "@/components/PageAccueil/Filtres/Filtres";
@@ -84,7 +85,7 @@ export const BasePageAccueilLayout: FunctionComponent<
   const { data: session } = useSession();
   const profil = useProfilUtilisateurConnecte();
   const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
-  const ffAskAI = useEnv("NEXT_PUBLIC_FF_ASK_AI");
+  const { peutUtiliserAskAI, estDITPAdmin } = useAskAIAccess();
 
   const estProfilTerritorialise =
     PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || "");
@@ -188,11 +189,12 @@ export const BasePageAccueilLayout: FunctionComponent<
               mailleSelectionnee={mailleSelectionnee}
               ministères={ministères}
             />
-            {ffAskAI || session?.profil === ProfilEnum.DITP_ADMIN ? (
+            {peutUtiliserAskAI ? (
               <div className="h-full flex items-center pt-1 pr-2 ml-auto">
                 <BoutonSyntheseTerritoire
                   jalon={jalon}
                   territoireCode={territoireCode}
+                  estDITPAdmin={estDITPAdmin}
                 />
               </div>
             ) : null}

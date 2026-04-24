@@ -304,6 +304,16 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_ASK_AI",
     },
+    askAIDitpAdmin: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN",
+    },
+    askAIEquipeDirProjet: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET",
+    },
     centreAideAdmin: {
       format: Boolean,
       default: false,
