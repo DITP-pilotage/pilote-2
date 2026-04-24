@@ -8,12 +8,28 @@
 
 **Tech Stack:** React 18 + Next.js + NextAuth (`useSession`) + feature flag via `useEnv("NEXT_PUBLIC_FF_ASK_AI")` + `ProfilEnum` (`src/server/app/enum/profil.enum.ts`).
 
-**Règle d'accès retenue :** `[DITP_ADMIN, EQUIPE_DIR_PROJET].includes(profil) || ffAskAI` (option β). DITP_ADMIN et EQUIPE_DIR_PROJET ont toujours accès ; le FF reste un toggle pour ouvrir plus largement.
+**Règle d'accès retenue (pivot du 2026-04-24) :** pilotage par 3 feature flips imbriqués pour permettre une ouverture progressive contrôlable en DB sans redeploy.
+
+```
+if (!ffAskAI) return false;                                           // master kill switch
+if (ffAskAIDitpAdmin && profil === DITP_ADMIN) return true;
+if (ffAskAIEquipeDirProjet && profil === EQUIPE_DIR_PROJET) return true;
+return false;
+```
+
+Nouveaux FFs :
+- `NEXT_PUBLIC_FF_ASK_AI` — master (existant, inchangé)
+- `NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN` — ouverture au profil DITP_ADMIN
+- `NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET` — ouverture au profil EQUIPE_DIR_PROJET
+
+La logique de check par profil est isolée dans une fonction `profilAutoriseParFeatureFlip()` à l'intérieur de `useAskAIAccess.ts` : quand Ask AI sera ouvert à tout le monde, on supprime cette fonction et on garde juste `peutUtiliserAskAI = Boolean(ffAskAI)`.
 
 ---
 
 ## File Structure
 
+- **Modify** `src/config.ts` — déclarer 2 nouveaux FFs (`askAIDitpAdmin`, `askAIEquipeDirProjet`).
+- **Modify** `src/server/gestion-contenu/domain/VariableContenuDisponible.ts` — ajouter les 2 env keys dans l'interface et dans `FEATURE_FLIP_DEFINITIONS`.
 - **Create** `src/client/components/PageAccueil/useAskAIAccess.ts` — hook qui retourne `{peutUtiliserAskAI, estDITPAdmin, profil}`.
 - **Modify** `src/client/components/PageAccueil/BoutonSyntheseTerritoire.tsx` — accepte une prop `estDITPAdmin: boolean`, change la 1re tuile, ajoute la tuile chantier, conditionne les tuiles prototypes.
 - **Modify** `src/client/components/PageAccueil/BasePageAccueilLayout.tsx:87-191` — utilise `useAskAIAccess()`.
@@ -21,55 +37,118 @@
 
 ---
 
-## Task 1: Hook `useAskAIAccess`
+## Task 1: Feature flips + hook `useAskAIAccess`
 
 **Files:**
+- Modify: `apps/pilote-ppg/src/config.ts`
+- Modify: `apps/pilote-ppg/src/server/gestion-contenu/domain/VariableContenuDisponible.ts`
 - Create: `apps/pilote-ppg/src/client/components/PageAccueil/useAskAIAccess.ts`
 
-- [ ] **Step 1: Créer le hook**
+- [ ] **Step 1: Déclarer les 2 nouveaux FFs dans `config.ts`**
+
+Juste après le bloc `askAI:` :
+
+```typescript
+askAIDitpAdmin: {
+  format: Boolean,
+  default: false,
+  env: "NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN",
+},
+askAIEquipeDirProjet: {
+  format: Boolean,
+  default: false,
+  env: "NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET",
+},
+```
+
+- [ ] **Step 2: Exposer les FFs côté contenu dans `VariableContenuDisponible.ts`**
+
+Ajouter dans l'interface `VARIABLE_CONTENU_DISPONIBLE` après la ligne `NEXT_PUBLIC_FF_ASK_AI` :
+
+```typescript
+NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN: boolean;
+NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET: boolean;
+```
+
+Puis dans `FEATURE_FLIP_DEFINITIONS`, juste après l'entrée Ask AI :
+
+```typescript
+{
+  envKey: "NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN",
+  configKey: "askAIDitpAdmin",
+  label: "Ask AI — ouverture DITP Admin",
+},
+{
+  envKey: "NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET",
+  configKey: "askAIEquipeDirProjet",
+  label: "Ask AI — ouverture Équipe Direction de Projet",
+},
+```
+
+- [ ] **Step 3: Créer le hook**
+
+Le chemin réel de `useEnv` est `@/client/hooks/useEnv` (vérifié dans le repo).
 
 ```typescript
 import { useSession } from "next-auth/react";
-import { useEnv } from "@/client/utils/env/useEnv";
+import { useEnv } from "@/client/hooks/useEnv";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
-export const PROFILS_ASK_AI_PRIVILEGIES = [
-  ProfilEnum.DITP_ADMIN,
-  ProfilEnum.EQUIPE_DIR_PROJET,
-] as const;
+function profilAutoriseParFeatureFlip(params: {
+  profil: string | null;
+  ffAskAIDitpAdmin: boolean;
+  ffAskAIEquipeDirProjet: boolean;
+}): boolean {
+  if (params.ffAskAIDitpAdmin && params.profil === ProfilEnum.DITP_ADMIN) {
+    return true;
+  }
+  if (
+    params.ffAskAIEquipeDirProjet &&
+    params.profil === ProfilEnum.EQUIPE_DIR_PROJET
+  ) {
+    return true;
+  }
+  return false;
+}
 
 export function useAskAIAccess() {
   const { data: session } = useSession();
   const ffAskAI = useEnv("NEXT_PUBLIC_FF_ASK_AI");
+  const ffAskAIDitpAdmin = useEnv("NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN");
+  const ffAskAIEquipeDirProjet = useEnv(
+    "NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET",
+  );
 
   const profil = session?.profil ?? null;
-  const estProfilPrivilegie =
-    profil !== null &&
-    (PROFILS_ASK_AI_PRIVILEGIES as readonly string[]).includes(profil);
+
+  const peutUtiliserAskAI =
+    Boolean(ffAskAI) &&
+    profilAutoriseParFeatureFlip({
+      profil,
+      ffAskAIDitpAdmin: Boolean(ffAskAIDitpAdmin),
+      ffAskAIEquipeDirProjet: Boolean(ffAskAIEquipeDirProjet),
+    });
 
   return {
-    peutUtiliserAskAI: Boolean(ffAskAI) || estProfilPrivilegie,
+    peutUtiliserAskAI,
     estDITPAdmin: profil === ProfilEnum.DITP_ADMIN,
     profil,
   };
 }
 ```
 
-- [ ] **Step 2: Vérifier le chemin `useEnv`**
-
-Run: `grep -rn "from \"@/client/utils/env/useEnv\"\|from \"@/.*/useEnv\"" apps/pilote-ppg/src/client/components/PageAccueil | head -3`
-Expected: au moins une occurrence important `useEnv` depuis un chemin stable. Si différent, adapter l'import du hook en conséquence.
-
-- [ ] **Step 3: Lint**
+- [ ] **Step 4: Lint**
 
 Run: `cd apps/pilote-ppg && pnpm lint`
-Expected: pas d'erreur sur le nouveau fichier.
+Expected: pas d'erreur.
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
-git add apps/pilote-ppg/src/client/components/PageAccueil/useAskAIAccess.ts
-git commit -m "feat(llm): ajoute le hook useAskAIAccess (PIL-1488)"
+git add apps/pilote-ppg/src/config.ts \
+        apps/pilote-ppg/src/server/gestion-contenu/domain/VariableContenuDisponible.ts \
+        apps/pilote-ppg/src/client/components/PageAccueil/useAskAIAccess.ts
+git commit -m "feat(llm): FF Ask AI par profil + hook useAskAIAccess (PIL-1488)"
 ```
 
 ---
