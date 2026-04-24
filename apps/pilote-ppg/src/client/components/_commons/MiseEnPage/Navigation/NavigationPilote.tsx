@@ -113,14 +113,6 @@ export const NavigationPilote = () => {
           target: "_self",
         },
         {
-          nom: "Actualités",
-          lien: "/actualites",
-          matcher: "/actualites",
-          accessible: ffPageActualites,
-          prefetch: false,
-          target: "_self",
-        },
-        {
           nom: "Centre d'aide",
           lien: "/centre-aide-pilote-2/centre-aide",
           matcher: "/centre-aide-pilote-2/centre-aide",
@@ -145,6 +137,14 @@ export const NavigationPilote = () => {
             estAdministrateurOuPilotage(session!),
           prefetch: false,
           target: "_blank",
+        },
+        {
+          nom: "Actualités",
+          lien: "/actualites",
+          matcher: "/actualites",
+          accessible: ffPageActualites,
+          prefetch: false,
+          target: "_self",
         },
       ]}
     />
