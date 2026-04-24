@@ -6,6 +6,7 @@ import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 import { useEnv } from "@/client/hooks/useEnv";
 import PageChantiers from "@/components/PageAccueil/PageChantiers/PageChantiers";
+import { useAskAIAccess } from "@/components/PageAccueil/useAskAIAccess";
 import BarreLatérale from "@/components/_commons/BarreLatérale/BarreLatérale";
 import BarreLatéraleEncart from "@/components/_commons/BarreLatérale/BarreLatéraleEncart/BarreLatéraleEncart";
 import { Filtres } from "@/components/PageAccueil/Filtres/Filtres";
@@ -80,7 +81,7 @@ export const PageAccueilLegacy = ({
   const ffFicheTerritoriale = useEnv("NEXT_PUBLIC_FF_FICHE_TERRITORIALE");
   const profil = useProfilUtilisateurConnecte();
   const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
-  const ffAskAI = useEnv("NEXT_PUBLIC_FF_ASK_AI");
+  const { peutUtiliserAskAI } = useAskAIAccess();
   const doitAfficherModaleRenseignerService =
     !!monProfilEstDisponible &&
     (profil.service == null || profil.fonction == null);
@@ -180,7 +181,7 @@ export const PageAccueilLegacy = ({
               mailleSelectionnee={mailleSelectionnee}
               ministères={ministères}
             />
-            {ffAskAI || session?.profil === ProfilEnum.DITP_ADMIN ? (
+            {peutUtiliserAskAI ? (
               <div className="ml-auto flex items-center h-full pr-2 pt-1">
                 <BoutonSyntheseTerritoire
                   territoireCode={territoireCode}
