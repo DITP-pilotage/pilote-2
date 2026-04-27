@@ -4,10 +4,17 @@ import { createGetChantierIndicateursTool } from "@/server/albert/tools/getChant
 import { createComposeDashboardTool } from "@/server/albert/tools/composeDashboard";
 import type { ChantierExports } from "@/server/chantiers/module";
 import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase";
+import { EnregistrerConversationUseCase } from "@/server/albert/usecases/EnregistrerConversationUseCase";
+import { ListerConversationsUseCase } from "@/server/albert/usecases/ListerConversationsUseCase";
+import { RecupererConversationUseCase } from "@/server/albert/usecases/RecupererConversationUseCase";
+import { SupprimerConversationUseCase } from "@/server/albert/usecases/SupprimerConversationUseCase";
+import { PurgerConversationsExpireesUseCase } from "@/server/albert/usecases/PurgerConversationsExpireesUseCase";
 import { PrismaTerritoireResolver } from "@/server/albert/infrastructure/PrismaTerritoireResolver";
+import { PrismaChatConversationRepository } from "@/server/albert/infrastructure/PrismaChatConversationRepository";
 import { FsRapportFileStorage } from "@/server/albert/infrastructure/FsRapportFileStorage";
 import { createExportRapportTool } from "@/server/albert/tools/exportRapport";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
+import type { ChatConversationRepository } from "@/server/albert/domain/ChatConversationRepository";
 import type { RapportFileStorage } from "@/server/albert/domain/RapportFileStorage";
 import {
   defineModule,
@@ -32,6 +39,12 @@ type AlbertOwnCradle = {
   createComposeDashboardTool: ReturnType<typeof createComposeDashboardTool>;
   createExportRapportTool: ReturnType<typeof createExportRapportTool>;
   evaluerChatUseCase: EvaluerChatUseCase;
+  chatConversationRepository: ChatConversationRepository;
+  enregistrerConversationUseCase: EnregistrerConversationUseCase;
+  listerConversationsUseCase: ListerConversationsUseCase;
+  recupererConversationUseCase: RecupererConversationUseCase;
+  supprimerConversationUseCase: SupprimerConversationUseCase;
+  purgerConversationsExpireesUseCase: PurgerConversationsExpireesUseCase;
 };
 
 type AlbertCradle = AlbertOwnCradle & AlbertImports;
@@ -54,6 +67,18 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       createComposeDashboardTool: asModuleFunction(createComposeDashboardTool),
       createExportRapportTool: asModuleFunction(createExportRapportTool),
       evaluerChatUseCase: asModuleClass(EvaluerChatUseCase),
+      chatConversationRepository: asModuleClass(
+        PrismaChatConversationRepository,
+      ),
+      enregistrerConversationUseCase: asModuleClass(
+        EnregistrerConversationUseCase,
+      ),
+      listerConversationsUseCase: asModuleClass(ListerConversationsUseCase),
+      recupererConversationUseCase: asModuleClass(RecupererConversationUseCase),
+      supprimerConversationUseCase: asModuleClass(SupprimerConversationUseCase),
+      purgerConversationsExpireesUseCase: asModuleClass(
+        PurgerConversationsExpireesUseCase,
+      ),
     } satisfies VerifyCradle<AlbertOwnCradle>);
   },
 });

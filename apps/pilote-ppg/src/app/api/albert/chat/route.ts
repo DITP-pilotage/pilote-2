@@ -101,7 +101,26 @@ export async function POST(request: Request) {
       tools,
     });
 
-    return result.toUIMessageStreamResponse();
+    const enregistrerConversation = container.resolve(
+      "enregistrerConversationUseCase",
+    );
+
+    return result.toUIMessageStreamResponse<PiloteUIMessage>({
+      originalMessages: messagesPilote,
+      onFinish: async ({ messages: messagesFinaux }) => {
+        await enregistrerConversation.execute({
+          id: body.id,
+          utilisateurId: session.user.id,
+          messages: messagesFinaux,
+          territoireCode:
+            typeof agentContext?.territoireCode === "string"
+              ? agentContext.territoireCode
+              : null,
+          jalon:
+            typeof agentContext?.jalon === "number" ? agentContext.jalon : null,
+        });
+      },
+    });
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error("Error in Albert chat stream:", error);
