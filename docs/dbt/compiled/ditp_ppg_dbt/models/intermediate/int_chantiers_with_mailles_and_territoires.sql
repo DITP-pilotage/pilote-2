@@ -29,10 +29,7 @@ chantiers_territorialises AS (
                 ON direction.id = m_porteurs.id
             ORDER BY direction.i
         ) AS directions_administration_centrale,
-        m_chantiers.directeurs_projet_noms AS directeurs_projet,
-        m_chantiers.directeurs_projet_mails,
         m_chantiers.est_territorialise,
-        m_chantiers.id_chantier_perseverant,
         m_chantiers.directeurs_administration_centrale_ids,
         m_chantiers.ppg_id,
         m_zones.id AS zone_id,
@@ -78,10 +75,7 @@ chantiers_non_territorialises AS (
                 ON direction.id = m_porteurs.id
             ORDER BY direction.i
         ) AS directions_administration_centrale,
-        m_chantiers.directeurs_projet_noms AS directeurs_projet,
-        m_chantiers.directeurs_projet_mails,
         m_chantiers.est_territorialise,
-        m_chantiers.id_chantier_perseverant,
         m_chantiers.directeurs_administration_centrale_ids,
         m_chantiers.ppg_id,
         m_zones.id AS zone_id,
