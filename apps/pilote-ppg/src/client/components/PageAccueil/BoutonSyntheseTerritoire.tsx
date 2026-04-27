@@ -7,6 +7,12 @@ import { ChatScenarios, ChatUI } from "@/components/_commons/ChatUI/ChatUI";
 import { ConversationHistoryDrawer } from "@/components/_commons/ChatUI/ConversationHistoryDrawer";
 import { ModalePleinEcran } from "@/components/shared/ModalePleinEcran";
 import api from "@/server/infrastructure/api/trpc/api";
+import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
+
+type EtatConversation = {
+  id: string;
+  initialMessages?: PiloteUIMessage[];
+};
 
 export const BoutonSyntheseTerritoire = ({
   territoireCode,
@@ -20,8 +26,8 @@ export const BoutonSyntheseTerritoire = ({
   const [isOpen, setIsOpen] = useState(false);
   const ffHistorique = useEnv("NEXT_PUBLIC_FF_HISTORIQUE_ALBERT");
   const utilsTrpc = api.useUtils();
-  const [conversationId, setConversationId] = useState<string>(() =>
-    crypto.randomUUID(),
+  const [etatConversation, setEtatConversation] = useState<EtatConversation>(
+    () => ({ id: crypto.randomUUID() }),
   );
   const [conversationIdAVouloirCharger, setConversationIdAVouloirCharger] =
     useState<string | null>(null);
@@ -35,12 +41,15 @@ export const BoutonSyntheseTerritoire = ({
       conversationChargee &&
       conversationChargee.id === conversationIdAVouloirCharger
     ) {
-      setConversationId(conversationChargee.id);
+      setEtatConversation({
+        id: conversationChargee.id,
+        initialMessages: conversationChargee.messages,
+      });
       setConversationIdAVouloirCharger(null);
     }
   }, [conversationChargee, conversationIdAVouloirCharger]);
   const demarrerNouvelleConversation = () => {
-    setConversationId(crypto.randomUUID());
+    setEtatConversation({ id: crypto.randomUUID() });
     setConversationIdAVouloirCharger(null);
   };
   const rafraichirHistorique = () => {
@@ -158,20 +167,16 @@ Quelles sont les principales difficultés remontées dans les commentaires ?`,
           <div className="flex h-full">
             {ffHistorique ? (
               <ConversationHistoryDrawer
-                conversationIdCourant={conversationId}
+                conversationIdCourant={etatConversation.id}
                 onSelectionner={setConversationIdAVouloirCharger}
                 onNouvelleConversation={demarrerNouvelleConversation}
               />
             ) : null}
             <div className="flex-1">
               <ChatUI
-                key={conversationId}
-                conversationId={conversationId}
-                initialMessages={
-                  conversationChargee?.id === conversationId
-                    ? conversationChargee.messages
-                    : undefined
-                }
+                key={etatConversation.id}
+                conversationId={etatConversation.id}
+                initialMessages={etatConversation.initialMessages}
                 onConversationUpdated={
                   ffHistorique ? rafraichirHistorique : undefined
                 }
