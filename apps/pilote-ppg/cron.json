@@ -17,6 +17,9 @@
     },
     {
       "command": "0 8 * * * curl -X POST -H \"Authorization: Bearer $CRON_AUTH_SECRET\" \"$APP_URL/api/admin/cron/purge-logs\""
+    },
+    {
+      "command": "0 4 * * * curl -X POST -H \"Authorization: Bearer $CRON_AUTH_SECRET\" \"$APP_URL/api/admin/cron/purge-conversations-albert\""
     }
   ]
 }
