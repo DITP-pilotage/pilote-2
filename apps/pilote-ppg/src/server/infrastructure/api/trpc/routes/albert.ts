@@ -1,3 +1,4 @@
+import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { $Enums } from "@prisma/client";
 import {
@@ -5,6 +6,46 @@ import {
   procédureProtégée,
 } from "@/server/infrastructure/api/trpc/trpc";
 import { getContainer } from "@/server/dependances";
+
+const conversationsRouter = créerRouteurTRPC({
+  lister: procédureProtégée.query(async ({ ctx }) => {
+    const useCase = getContainer("albert").resolve(
+      "listerConversationsUseCase",
+    );
+    return useCase.execute({ utilisateurId: ctx.session.user.id });
+  }),
+
+  recuperer: procédureProtégée
+    .input(z.object({ id: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const useCase = getContainer("albert").resolve(
+        "recupererConversationUseCase",
+      );
+      const conversation = await useCase.execute({
+        id: input.id,
+        utilisateurId: ctx.session.user.id,
+      });
+      if (!conversation) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Conversation introuvable",
+        });
+      }
+      return conversation;
+    }),
+
+  supprimer: procédureProtégée
+    .input(z.object({ id: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const useCase = getContainer("albert").resolve(
+        "supprimerConversationUseCase",
+      );
+      await useCase.execute({
+        id: input.id,
+        utilisateurId: ctx.session.user.id,
+      });
+    }),
+});
 
 export const albertRouter = créerRouteurTRPC({
   evaluer: procédureProtégée
@@ -33,4 +74,5 @@ export const albertRouter = créerRouteurTRPC({
             : undefined,
       });
     }),
+  conversations: conversationsRouter,
 });
