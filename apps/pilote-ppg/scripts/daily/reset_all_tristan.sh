@@ -8,11 +8,11 @@
 
 echo ">> Reset db"
 pnpm database:init
-# pnpm database:init-force pour éviter le prompt :p (Colin)
+cd apps/pilote-ppg
 echo ">> Descente de prod"
 bash scripts/ddp_dump.sh
 bash scripts/ddp_restore.sh
 bash scripts/anonymisation_utilisateurs.sh
 echo ">> Run dj prod"
-cd data_management
+cd ../pilote-ppg-data-management
 FULL_DJ=false pipenv run /bin/bash scripts/run_datajobs.sh

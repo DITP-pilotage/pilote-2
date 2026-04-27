@@ -113,6 +113,7 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith("/centre-aide-pilote-2") ||
     pathname.startsWith("/centreaide") ||
     pathname.startsWith("/api/admin/cron") ||
+    pathname.startsWith("/api/admin/unitaire") ||
     routesTrpcPubliques.some((route) => pathname.startsWith(route));
 
   if (!estRoutePublique) {
