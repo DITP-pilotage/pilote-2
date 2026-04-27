@@ -27,12 +27,18 @@ export const ChatUI = ({
   className = "h-[calc(100vh-200px)]",
   scenarios,
   agentContext,
+  conversationId,
+  initialMessages,
+  onConversationUpdated,
 }: {
   endpoint: string;
   placeholder?: string;
   className?: string;
   scenarios?: ChatScenarios;
   agentContext?: Record<string, unknown>;
+  conversationId?: string;
+  initialMessages?: PiloteUIMessage[];
+  onConversationUpdated?: () => void;
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -48,6 +54,8 @@ export const ChatUI = ({
   });
   const chatRef = useRef(
     new Chat<PiloteUIMessage>({
+      ...(conversationId ? { id: conversationId } : {}),
+      ...(initialMessages ? { messages: initialMessages } : {}),
       transport: new DefaultChatTransport<PiloteUIMessage>({
         api: endpoint,
         body: bodyRef.current,
@@ -81,6 +89,15 @@ export const ChatUI = ({
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages, status]);
+
+  const lastNotifiedCountRef = useRef(initialMessages?.length ?? 0);
+  useEffect(() => {
+    if (status !== "ready") return;
+    if (messages.length === 0) return;
+    if (messages.length === lastNotifiedCountRef.current) return;
+    lastNotifiedCountRef.current = messages.length;
+    onConversationUpdated?.();
+  }, [status, messages.length, initialMessages, onConversationUpdated]);
 
   const handleScroll = useCallback(() => {
     const container = scrollContainerRef.current;
