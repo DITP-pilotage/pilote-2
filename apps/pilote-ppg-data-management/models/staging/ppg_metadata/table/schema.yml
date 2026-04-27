@@ -1,10 +1,173 @@
 version: 2
 
 models:
-  - name: stg_ppg_metadata__chantiers
-    description: "Table de *staging* de `metadata_chantiers`"
+  - name: stg_ppg_metadata__axes
     columns:
-        - name: maille_applicable_declaree
-          description: "Array des mailles applicables déclarées."
-        - name: maille_applicable
-          description: "Array des mailles applicables issues du calcul. Prend en compte les colonnes `replicate_val_reg_to` et `replicate_val_nat_to` en plus des mailles déclarées."
+      - name: id
+        description: "Identifiant unique de l'axe"
+        data_tests:
+          - unique
+          - not_null
+      - name: nom_court
+        description: "Nom court de l'axe (ex. Transition écologique)"
+        data_tests:
+          - not_null
+      - name: nom
+        description: "Nom complet de l'axe (ex. Planifier et accélérer la transition écologique)"
+        data_tests:
+          - not_null
+      - name: description
+        description: "Description de l'axe"
+
+  - name: stg_ppg_metadata__chantiers
+    description: >
+      Table de staging pour la table source `metadata_chantiers`.
+      Ce modèle nettoie, renomme et calcule les mailles applicables pour chaque chantier,
+      en tenant compte des règles de réplication territoriale (REG->DEPT, etc.).
+      Il prépare les données pour une utilisation en aval, notamment pour le pilotage et l'analyse territoriale.
+    columns:
+      - name: id
+        description: "Identifiant unique du chantier."
+        data_tests:
+          - unique
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: 'SIMILAR TO ''CH-\d{3}'''
+      - name: description
+        description: "Description de l'historique du chantier (création, fusion...)."
+      - name: nom
+        description: "Nom du chantier."
+      - name: ppg_id
+        description: "Identifiant de la PPG (Politique Prioritaire du Gouvernement) associée."
+        data_tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: 'SIMILAR TO ''PPG-(\d|[A-Z]){1,3}'''
+      - name: est_territorialise
+        description: "Indique si le chantier est territorialisé (booléen)."
+      - name: nom_engagement
+        description: "Nom court de l'engagement associé au chantier. (utilisé pour le baromètre ?)"
+      - name: est_cache_dans_pilote
+        description: "Indique si le chantier est masqué dans PILOTE (booléen)."
+      - name: ate
+        description: >
+          Indique le niveau de saisie des commentaires:  
+          - `ate` (=Administration Territoriale de l'Etat) : saisie par les responsables locaux sous l'autorité des préfets
+          - `hors_ate_centralise` : saisie par l'administration centrale
+          - `hors_ate_deconcentre` : saisie par les responsables locaux sous l'autorité de l'administration centrale
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "IN ('ATE', 'HORS_ATE_DECONCENTRE', 'HORS_ATE_CENTRALISE')"
+              where: "ate IS NOT NULL"
+      - name: statut
+        description: "Statut du chantier"
+        data_tests:
+          - not_null 
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "IN ('PUBLIE', 'BROUILLON', 'SUPPRIME', 'ARCHIVE')"
+      - name: zone_groupe_applicable
+        description: >
+          Identifiant unique de la zone groupe (ensemble de zones géographiques) pour laquelle le chantier est applicable.
+          Par exemple, l'ensemble des départements du littoral.
+          Au format: "ZG-123"
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: 'SIMILAR TO ''ZG-\d{3}'''
+              where: "zone_groupe_applicable IS NOT NULL"
+      - name: ministeres_ids
+        description: "Liste des identifiants des ministères porteurs. Ex: [120, 220]"
+      - name: ministeres_polygrammes
+        description: > 
+          Liste des acronymes des ministères porteurs. Ex: ["MTSS", "MINJ"]
+      - name: directeurs_administration_centrale_polygrammes
+        description: >
+          Liste des acronymes des directions d'administration centrale (DAC) porteurs. Ex: ["DSS"]
+      - name: directeurs_administration_centrale_ids
+        description: "Liste des identifiants uniques des directions d'administration centrale (DAC) porteurs. Ex: [2058]"
+      - name: perimetre_ids
+        description: "Liste des identifiants de périmètres associés au chantier. Ex: [PER-005]"
+      - name: maille_applicable_declaree
+        description: "Liste des mailles applicables déclarées dans la source (ex: ['REG', 'NAT'])."
+      - name: replicate_val_reg_to
+        description: "Règle de réplication des valeurs régionales vers une autre maille (ex: 'DEPT')."
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "= 'DEPT'"
+                where: "replicate_val_reg_to IS NOT NULL"
+      - name: replicate_val_nat_to
+        description: "Règle de réplication des valeurs nationales vers une autre maille (ex: 'REG')."
+        data_tests:
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "IN ('REG', 'DEPT')"
+              where: "replicate_val_nat_to IS NOT NULL"
+      - name: ch_cible_attendue
+        description: "Indique si le chantier a une cible attendue (booléen)."
+      - name: maille_pilotage
+        description: "Maille de pilotage calculée (DEPT, REG ou NAT) selon la territorialisation et les mailles applicables."
+      - name: conseiller_mail
+        description: "Adresse mail du conseiller associé au chantier."
+      - name: maille_applicable
+        description: >
+          Liste des mailles applicables calculées, prenant en compte :
+          - les mailles déclarées (`maille_applicable_declaree`)
+          - les règles de réplication (`replicate_val_reg_to`, `replicate_val_nat_to`)
+          Exemple : si `replicate_val_reg_to = 'DEPT'` et `maille_applicable_declaree = ['REG', 'NAT']`, alors `maille_applicable = ['DEPT', 'REG', 'NAT']`.
+          ⚠️ Pour l'instant seule la réplication de la maille régionale à la maille départementale est activée (cf code).
+
+  - name: stg_ppg_metadata__chantier_meteos
+    description: >
+      Table de staging pour la table source `metadata_chantier_meteos`.
+      Ce modèle renomme les colonnes issues de la table source.
+    columns:
+      - name: id
+        description: "Identifiant unique de la météo. ('SOLEIL', 'COUVERT', 'NUAGE', 'ORAGE')"
+        data_tests:
+          - unique
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "IN ('SOLEIL', 'COUVERT', 'NUAGE', 'ORAGE')"
+      - name: nom
+        description: "Nom officiel de la météo. ('Objectif sécurisé', 'Objectif atteignable', 'Appuis nécessaires', 'Objectif compromis')"
+        data_tests:
+          - not_null
+      - name: description
+        description: "Description détaillée de la signification de la météo"
+        data_tests:
+          - not_null
+
+  - name: stg_ppg_metadata__ppgs
+    columns:
+      - name: id
+        description: "Identifiant unique de la PPG (Politique Prioritaire du Gouvernement)"
+        data_tests:
+          - unique
+          - not_null
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: 'SIMILAR TO ''PPG-(\d|[A-Z]){1,3}'''
+      - name: axe_id
+        description: "Identifiant unique de l'axe de la PPG (Politique Prioritaire du Gouvernement)"
+        data_tests:
+          - not_null
+      - name: code
+        description: "Code de la PPG (souvent null). Ex. 'SNU'"
+      - name: description
+        description: "Description de la PPG, souvent null."
+      - name: nom
+        description: "Nom complet de la PPG"
+      - name: porteur_noms_court
+        description: > 
+          Liste des acronymes des ministères porteurs. Ex: ["MIOM", "MTE"]
+          Souvent null.
+      - name: porteur_ids
+        description: > 
+          Liste des ids des ministères porteurs. Ex: [200, 343]
+          Souvent null.
