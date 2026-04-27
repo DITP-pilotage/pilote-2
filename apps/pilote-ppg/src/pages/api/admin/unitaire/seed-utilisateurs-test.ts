@@ -23,8 +23,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
   for (const utilisateur of seedsUtilisateursTest) {
     await prisma.$transaction(async (tx) => {
-      const utilisateurCree = await tx.utilisateur.create({
-        data: {
+      const utilisateurCree = await tx.utilisateur.upsert({
+        where: { email: utilisateur.email },
+        create: {
           email: utilisateur.email,
           nom: utilisateur.nom,
           prenom: utilisateur.prenom,
@@ -36,13 +37,31 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
           auteur_id_creation: auteurImport?.id,
           auteur_id_modification: auteurImport?.id,
         },
+        update: {
+          nom: utilisateur.nom,
+          prenom: utilisateur.prenom,
+          profilCode: utilisateur.profilCode,
+          date_modification: new Date(),
+          auteur_id_modification: auteurImport?.id,
+        },
       });
 
       for (const habilitation of utilisateur.habilitations) {
-        await tx.habilitation.create({
-          data: {
+        await tx.habilitation.upsert({
+          where: {
+            utilisateurId_scopeCode: {
+              utilisateurId: utilisateurCree.id,
+              scopeCode: habilitation.scopeCode,
+            },
+          },
+          create: {
             utilisateurId: utilisateurCree.id,
             scopeCode: habilitation.scopeCode,
+            territoires: habilitation.territoires,
+            perimetres: habilitation.perimetres,
+            chantiers: habilitation.chantiers,
+          },
+          update: {
             territoires: habilitation.territoires,
             perimetres: habilitation.perimetres,
             chantiers: habilitation.chantiers,
