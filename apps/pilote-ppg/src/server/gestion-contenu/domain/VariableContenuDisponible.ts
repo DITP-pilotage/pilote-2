@@ -25,6 +25,7 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_ASK_AI: boolean;
   NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN: boolean;
   NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET: boolean;
+  NEXT_PUBLIC_FF_HISTORIQUE_ALBERT: boolean;
   NEXT_PUBLIC_FF_CENTRE_AIDE_ADMIN: boolean;
   NEXT_PUBLIC_FF_CENTRE_AIDE_PILOTE: boolean;
   NEXT_PUBLIC_FF_PILOTE_EVAL: boolean;
@@ -151,6 +152,11 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET",
     configKey: "askAIEquipeDirProjet",
     label: "Ask AI — ouverture Équipe Direction de Projet",
+  },
+  {
+    envKey: "NEXT_PUBLIC_FF_HISTORIQUE_ALBERT",
+    configKey: "historiqueAlbert",
+    label: "Albert — historique des conversations",
   },
   {
     envKey: "NEXT_PUBLIC_FF_CENTRE_AIDE_ADMIN",
