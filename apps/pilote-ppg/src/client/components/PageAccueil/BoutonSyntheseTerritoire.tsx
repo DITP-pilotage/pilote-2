@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useEnv } from "@/client/hooks/useEnv";
 import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 import { Icone } from "@/components/_commons/Icone";
 import { SparklingIcon } from "@/components/_commons/Icones/SparklingIcon";
 import { ChatScenarios, ChatUI } from "@/components/_commons/ChatUI/ChatUI";
+import { ConversationHistoryDrawer } from "@/components/_commons/ChatUI/ConversationHistoryDrawer";
 import { ModalePleinEcran } from "@/components/shared/ModalePleinEcran";
+import api from "@/server/infrastructure/api/trpc/api";
 
 export const BoutonSyntheseTerritoire = ({
   territoireCode,
@@ -15,6 +18,35 @@ export const BoutonSyntheseTerritoire = ({
   estDITPAdmin: boolean;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const ffHistorique = useEnv("NEXT_PUBLIC_FF_HISTORIQUE_ALBERT");
+  const utilsTrpc = api.useUtils();
+  const [conversationId, setConversationId] = useState<string>(() =>
+    crypto.randomUUID(),
+  );
+  const [conversationIdAVouloirCharger, setConversationIdAVouloirCharger] =
+    useState<string | null>(null);
+  const { data: conversationChargee } =
+    api.albert.conversations.recuperer.useQuery(
+      { id: conversationIdAVouloirCharger ?? "" },
+      { enabled: conversationIdAVouloirCharger !== null },
+    );
+  useEffect(() => {
+    if (
+      conversationChargee &&
+      conversationChargee.id === conversationIdAVouloirCharger
+    ) {
+      setConversationId(conversationChargee.id);
+      setConversationIdAVouloirCharger(null);
+    }
+  }, [conversationChargee, conversationIdAVouloirCharger]);
+  const demarrerNouvelleConversation = () => {
+    setConversationId(crypto.randomUUID());
+    setConversationIdAVouloirCharger(null);
+  };
+  const rafraichirHistorique = () => {
+    utilsTrpc.albert.conversations.lister.invalidate();
+  };
+
   const territoire = récupérerDétailsSurUnTerritoire(territoireCode);
   const estDepartement = territoire.maille === "departementale";
   const estRegion = territoire.maille === "regionale";
@@ -123,16 +155,38 @@ Quelles sont les principales difficultés remontées dans les commentaires ?`,
           onOpenChange={setIsOpen}
           title="Synthèse de territoire"
         >
-          <ChatUI
-            endpoint="/api/albert/chat"
-            className="h-full"
-            placeholder="Posez une question sur ce territoire..."
-            scenarios={scenarios}
-            agentContext={{
-              jalon,
-              instructions: `Le territoire courant de l'utilisateur est ${territoire.nomAffiché} (code : ${territoireCode}). Utilise ce territoire par défaut lorsque l'utilisateur ne précise pas de territoire dans sa question.`,
-            }}
-          />
+          <div className="flex h-full">
+            {ffHistorique ? (
+              <ConversationHistoryDrawer
+                conversationIdCourant={conversationId}
+                onSelectionner={setConversationIdAVouloirCharger}
+                onNouvelleConversation={demarrerNouvelleConversation}
+              />
+            ) : null}
+            <div className="flex-1">
+              <ChatUI
+                key={conversationId}
+                conversationId={conversationId}
+                initialMessages={
+                  conversationChargee?.id === conversationId
+                    ? conversationChargee.messages
+                    : undefined
+                }
+                onConversationUpdated={
+                  ffHistorique ? rafraichirHistorique : undefined
+                }
+                endpoint="/api/albert/chat"
+                className="h-full"
+                placeholder="Posez une question sur ce territoire..."
+                scenarios={scenarios}
+                agentContext={{
+                  jalon,
+                  territoireCode,
+                  instructions: `Le territoire courant de l'utilisateur est ${territoire.nomAffiché} (code : ${territoireCode}). Utilise ce territoire par défaut lorsque l'utilisateur ne précise pas de territoire dans sa question.`,
+                }}
+              />
+            </div>
+          </div>
         </ModalePleinEcran>
       )}
     </>
