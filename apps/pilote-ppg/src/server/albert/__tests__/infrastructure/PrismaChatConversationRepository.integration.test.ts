@@ -11,7 +11,7 @@ describe("PrismaChatConversationRepository", () => {
     new PrismaChatConversationRepository({ prisma: prismaPilote });
 
   it(
-    "upsert puis recupererParId doit retourner la conversation",
+    "save puis recupererParId doit retourner la conversation",
     createIntegrationTest(async () => {
       // Given
       const utilisateur = await fixtures.utilisateur({});
@@ -22,13 +22,12 @@ describe("PrismaChatConversationRepository", () => {
       ];
 
       // When
-      await repository.upsert({
+      await repository.save({
         id,
         utilisateurId: utilisateur.id,
         titre: "Synthèse Bretagne",
         messages,
-        territoireCode: "REG-53",
-        jalon: 2025,
+        contexte: { jalon: 2025, territoireCode: "REG-53" },
       });
       const result = await repository.recupererParId({
         id,
@@ -41,11 +40,46 @@ describe("PrismaChatConversationRepository", () => {
         utilisateurId: utilisateur.id,
         titre: "Synthèse Bretagne",
         messages,
-        territoireCode: "REG-53",
-        jalon: 2025,
+        contexte: { jalon: 2025, territoireCode: "REG-53" },
         createdAt: expect.any(Date),
         updatedAt: expect.any(Date),
       });
+    }),
+  );
+
+  it(
+    "save refuse de modifier une conversation appartenant à un autre utilisateur",
+    createIntegrationTest(async () => {
+      // Given
+      const utilisateurA = await fixtures.utilisateur({});
+      const utilisateurB = await fixtures.utilisateur({});
+      const repository = buildRepository();
+      const id = randomUUID();
+      await repository.save({
+        id,
+        utilisateurId: utilisateurA.id,
+        titre: "conv de A",
+        messages: [],
+        contexte: null,
+      });
+
+      // When / Then
+      await expect(
+        repository.save({
+          id,
+          utilisateurId: utilisateurB.id,
+          titre: "intrusion",
+          messages: [],
+          contexte: null,
+        }),
+      ).rejects.toThrow();
+
+      // Then : la conversation initiale est intacte
+      const conversation = await repository.recupererParId({
+        id,
+        utilisateurId: utilisateurA.id,
+      });
+      expect(conversation?.titre).toEqual("conv de A");
     }),
   );
 
@@ -57,29 +91,26 @@ describe("PrismaChatConversationRepository", () => {
       const utilisateurB = await fixtures.utilisateur({});
       const repository = buildRepository();
 
-      await repository.upsert({
+      await repository.save({
         id: randomUUID(),
         utilisateurId: utilisateurA.id,
         titre: "A-1",
         messages: [],
-        territoireCode: null,
-        jalon: null,
+        contexte: null,
       });
-      await repository.upsert({
+      await repository.save({
         id: randomUUID(),
         utilisateurId: utilisateurA.id,
         titre: "A-2",
         messages: [],
-        territoireCode: null,
-        jalon: null,
+        contexte: null,
       });
-      await repository.upsert({
+      await repository.save({
         id: randomUUID(),
         utilisateurId: utilisateurB.id,
         titre: "B-1",
         messages: [],
-        territoireCode: null,
-        jalon: null,
+        contexte: null,
       });
 
       // When
@@ -105,13 +136,12 @@ describe("PrismaChatConversationRepository", () => {
       const utilisateurB = await fixtures.utilisateur({});
       const repository = buildRepository();
       const id = randomUUID();
-      await repository.upsert({
+      await repository.save({
         id,
         utilisateurId: utilisateurA.id,
         titre: "X",
         messages: [],
-        territoireCode: null,
-        jalon: null,
+        contexte: null,
       });
 
       // When : un autre utilisateur tente de supprimer
@@ -146,13 +176,12 @@ describe("PrismaChatConversationRepository", () => {
       const repository = buildRepository();
 
       const idAncien = randomUUID();
-      await repository.upsert({
+      await repository.save({
         id: idAncien,
         utilisateurId: utilisateur.id,
         titre: "ancien",
         messages: [],
-        territoireCode: null,
-        jalon: null,
+        contexte: null,
       });
       await tx.chat_conversation.update({
         where: { id: idAncien },
@@ -160,13 +189,12 @@ describe("PrismaChatConversationRepository", () => {
       });
 
       const idRecent = randomUUID();
-      await repository.upsert({
+      await repository.save({
         id: idRecent,
         utilisateurId: utilisateur.id,
         titre: "recent",
         messages: [],
-        territoireCode: null,
-        jalon: null,
+        contexte: null,
       });
 
       // When

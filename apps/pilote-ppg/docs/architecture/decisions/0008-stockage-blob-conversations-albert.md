@@ -45,8 +45,7 @@ chat_conversation (
   utilisateur_id UUID,
   titre TEXT,
   messages JSONB,
-  territoire_code TEXT NULL,
-  jalon INT NULL,
+  contexte JSONB NULL,
   created_at TIMESTAMP,
   updated_at TIMESTAMP
 )
@@ -54,6 +53,11 @@ chat_conversation (
 
 Index sur `(utilisateur_id, updated_at DESC)` pour la liste par utilisateur, et
 sur `updated_at` pour la purge.
+
+Le champ `contexte` stocke l'`agentContext` complet envoyé par le client (jalon,
+territoireCode, instructions système...). On évite ainsi des colonnes
+spécifiques qui devraient évoluer à chaque nouveau cas d'usage (synthèse
+chantier, comparaison multi-territoires, etc.).
 
 ## Conséquences
 

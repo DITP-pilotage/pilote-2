@@ -13,29 +13,41 @@ export class PrismaChatConversationRepository implements ChatConversationReposit
     this.prisma = prisma;
   }
 
-  async upsert(params: {
+  async save(params: {
     id: string;
     utilisateurId: string;
     titre: string;
     messages: unknown;
-    territoireCode: string | null;
-    jalon: number | null;
+    contexte: Record<string, unknown> | null;
   }): Promise<void> {
-    await this.prisma.getInstance().chat_conversation.upsert({
+    const db = this.prisma.getInstance();
+    const resultatMiseAJour = await db.chat_conversation.updateMany({
+      where: { id: params.id, utilisateur_id: params.utilisateurId },
+      data: {
+        titre: params.titre,
+        messages: params.messages as never,
+        contexte: (params.contexte ?? null) as never,
+      },
+    });
+    if (resultatMiseAJour.count > 0) return;
+
+    const conversationExistante = await db.chat_conversation.findUnique({
       where: { id: params.id },
-      create: {
+      select: { utilisateur_id: true },
+    });
+    if (conversationExistante) {
+      throw new Error(
+        "Conversation appartenant à un autre utilisateur — modification refusée.",
+      );
+    }
+
+    await db.chat_conversation.create({
+      data: {
         id: params.id,
         utilisateur_id: params.utilisateurId,
         titre: params.titre,
         messages: params.messages as never,
-        territoire_code: params.territoireCode,
-        jalon: params.jalon,
-      },
-      update: {
-        titre: params.titre,
-        messages: params.messages as never,
-        territoire_code: params.territoireCode,
-        jalon: params.jalon,
+        contexte: (params.contexte ?? null) as never,
       },
     });
   }
@@ -53,8 +65,7 @@ export class PrismaChatConversationRepository implements ChatConversationReposit
       utilisateurId: row.utilisateur_id,
       titre: row.titre,
       messages: row.messages as unknown as PiloteUIMessage[],
-      territoireCode: row.territoire_code,
-      jalon: row.jalon,
+      contexte: row.contexte as Record<string, unknown> | null,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     };
@@ -72,8 +83,7 @@ export class PrismaChatConversationRepository implements ChatConversationReposit
         id: true,
         utilisateur_id: true,
         titre: true,
-        territoire_code: true,
-        jalon: true,
+        contexte: true,
         created_at: true,
         updated_at: true,
       },
@@ -82,8 +92,7 @@ export class PrismaChatConversationRepository implements ChatConversationReposit
       id: row.id,
       utilisateurId: row.utilisateur_id,
       titre: row.titre,
-      territoireCode: row.territoire_code,
-      jalon: row.jalon,
+      contexte: row.contexte as Record<string, unknown> | null,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
     }));

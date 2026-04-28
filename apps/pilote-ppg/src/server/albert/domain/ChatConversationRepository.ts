@@ -4,13 +4,12 @@ import type {
 } from "./ChatConversation";
 
 export interface ChatConversationRepository {
-  upsert(params: {
+  save(params: {
     id: string;
     utilisateurId: string;
     titre: string;
     messages: unknown;
-    territoireCode: string | null;
-    jalon: number | null;
+    contexte: Record<string, unknown> | null;
   }): Promise<void>;
 
   recupererParId(params: {

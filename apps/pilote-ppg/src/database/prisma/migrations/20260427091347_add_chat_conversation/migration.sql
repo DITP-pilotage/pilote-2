@@ -7,8 +7,7 @@ CREATE TABLE "public"."chat_conversation" (
     "utilisateur_id" UUID NOT NULL,
     "titre" TEXT NOT NULL,
     "messages" JSONB NOT NULL,
-    "territoire_code" TEXT,
-    "jalon" INTEGER,
+    "contexte" JSONB,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 

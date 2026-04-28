@@ -17,18 +17,16 @@ export class EnregistrerConversationUseCase {
     id: string;
     utilisateurId: string;
     messages: PiloteUIMessage[];
-    territoireCode: string | null;
-    jalon: number | null;
+    contexte: Record<string, unknown> | null;
   }): Promise<void> {
     if (params.messages.length === 0) return;
 
-    await this.chatConversationRepository.upsert({
+    await this.chatConversationRepository.save({
       id: params.id,
       utilisateurId: params.utilisateurId,
       titre: deriverTitre(params.messages),
       messages: params.messages,
-      territoireCode: params.territoireCode,
-      jalon: params.jalon,
+      contexte: params.contexte,
     });
   }
 }

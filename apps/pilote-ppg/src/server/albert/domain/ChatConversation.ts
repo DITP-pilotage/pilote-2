@@ -5,8 +5,7 @@ export type ChatConversation = {
   utilisateurId: string;
   titre: string;
   messages: PiloteUIMessage[];
-  territoireCode: string | null;
-  jalon: number | null;
+  contexte: Record<string, unknown> | null;
   createdAt: Date;
   updatedAt: Date;
 };
