@@ -59,12 +59,12 @@ export const ConversationHistoryDrawer = ({
               <button
                 type="button"
                 onClick={() => onSelectionner(conversation.id)}
-                className="flex-1 min-w-0 text-left"
+                className="flex-1 min-w-0 text-left hover:bg-transparent"
               >
-                <p className="truncate font-medium text-gray-900">
+                <p className="truncate font-medium text-gray-900 fr-mb-0">
                   {conversation.titre}
                 </p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 fr-mb-0">
                   {formatRelative(conversation.updatedAt)}
                 </p>
               </button>
