@@ -3,7 +3,6 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { NonAutorisé } from "@/server/utils/errors";
 import { PiloteError } from "@/server/app/error-boundary/pilote-error";
 import { CreateContextOptions } from "./trpc.interface";
 
@@ -31,26 +30,16 @@ const trpc = initTRPC.context<typeof créerContextTRPC>().create({
   errorFormatter({ shape, error }) {
     const formattedData = { ...shape.data };
     delete formattedData.stack;
-    const isInternalServerError =
-      !NonAutorisé.isNonAutorisé(error.cause) &&
-      !PiloteError.isPiloteError(error.cause);
+    const piloteCause = PiloteError.isPiloteError(error.cause)
+      ? error.cause
+      : null;
     return {
       ...shape,
-      message: isInternalServerError
-        ? "Une erreur est survenue"
-        : shape.message,
+      message: piloteCause ? shape.message : "Une erreur est survenue",
       data: {
         ...formattedData,
-        httpStatus: isInternalServerError
-          ? 500
-          : PiloteError.isPiloteError(error.cause)
-            ? error.cause.status
-            : 403,
-        code: isInternalServerError
-          ? "INTERNAL_SERVER_ERROR"
-          : PiloteError.isPiloteError(error.cause)
-            ? error.cause.type
-            : "UNAUTHORIZED",
+        httpStatus: piloteCause?.status ?? formattedData.httpStatus,
+        code: piloteCause?.type ?? formattedData.code,
         zodError:
           error.cause instanceof ZodError ? error.cause.flatten() : null,
       },

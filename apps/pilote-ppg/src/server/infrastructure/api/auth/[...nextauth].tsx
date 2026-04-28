@@ -21,10 +21,7 @@ function _assertResponseOk(
   errorMessage: string,
 ): void {
   if (response.status < 200 || response.status >= 300) {
-    logger.error(
-      { status: response.status, data: response.data },
-      errorMessage,
-    );
+    logger.warn({ status: response.status, data: response.data }, errorMessage);
     throw new Error(errorMessage);
   }
 }
@@ -180,7 +177,7 @@ async function refreshAccessToken(
       return result;
     } catch (error) {
       const errorMessage = "Bad in refresh_token";
-      logger.error(
+      logger.warn(
         {
           categorie: "auth",
           source: "nextauth.refreshAccessToken",
@@ -341,7 +338,7 @@ export const authConfig: NextAuthConfig = {
         toPiloteJWTPayload(token),
       );
       if (refreshedToken.error === "RefreshAccessTokenError") {
-        logger.error(
+        logger.warn(
           { categorie: "auth", source: "nextauth.jwt" },
           "Failed to refresh access token, invalidating session",
         );

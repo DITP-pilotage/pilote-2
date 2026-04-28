@@ -6,7 +6,7 @@ import PageChantierLegacy from "@/components/PageChantier/PageChantierLegacy";
 import { PageChantier } from "@/components/PageChantier/PageChantier";
 import { useEnv } from "@/client/hooks/useEnv";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
-import { NonAutorisé } from "@/server/utils/errors";
+import { PiloteError } from "@/server/app/error-boundary/pilote-error";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import ChoixTerritoire from "@/components/PageChantier/ChoixTerritoire/ChoixTerritoire";
 import calculerChantierAvancements from "@/client/utils/chantier/avancement/calculerChantierAvancementsNew";
@@ -276,7 +276,7 @@ export const getServerSideProps = async (
       },
     };
   } catch (error) {
-    if (error instanceof NonAutorisé) {
+    if (error instanceof PiloteError && error.status === 403) {
       return { notFound: true };
     } else {
       throw error;

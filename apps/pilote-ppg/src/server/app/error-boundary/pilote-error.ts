@@ -23,7 +23,11 @@ export class PiloteError extends Error {
   }
 
   static isPiloteError(error: unknown): error is PiloteError {
-    return (error as PiloteError)._tag === "PiloteError";
+    return (
+      error !== null &&
+      typeof error === "object" &&
+      (error as PiloteError)._tag === "PiloteError"
+    );
   }
 
   get message() {
