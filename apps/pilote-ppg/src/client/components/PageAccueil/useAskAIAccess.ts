@@ -6,6 +6,7 @@ function profilAutoriseParFeatureFlip(params: {
   profil: string | null;
   ffAskAIDitpAdmin: boolean;
   ffAskAIEquipeDirProjet: boolean;
+  ffAskAIDitpPilotage: boolean;
 }): boolean {
   if (params.ffAskAIDitpAdmin && params.profil === ProfilEnum.DITP_ADMIN) {
     return true;
@@ -13,6 +14,12 @@ function profilAutoriseParFeatureFlip(params: {
   if (
     params.ffAskAIEquipeDirProjet &&
     params.profil === ProfilEnum.EQUIPE_DIR_PROJET
+  ) {
+    return true;
+  }
+  if (
+    params.ffAskAIDitpPilotage &&
+    params.profil === ProfilEnum.DITP_PILOTAGE
   ) {
     return true;
   }
@@ -26,6 +33,7 @@ export function useAskAIAccess() {
   const ffAskAIEquipeDirProjet = useEnv(
     "NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET",
   );
+  const ffAskAIDitpPilotage = useEnv("NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE");
 
   const profil = session?.profil ?? null;
 
@@ -35,6 +43,7 @@ export function useAskAIAccess() {
       profil,
       ffAskAIDitpAdmin: Boolean(ffAskAIDitpAdmin),
       ffAskAIEquipeDirProjet: Boolean(ffAskAIEquipeDirProjet),
+      ffAskAIDitpPilotage: Boolean(ffAskAIDitpPilotage),
     });
 
   return {

@@ -314,6 +314,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET",
     },
+    askAIDitpPilotage: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE",
+    },
     historiqueAlbert: {
       format: Boolean,
       default: false,
