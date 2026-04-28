@@ -6,6 +6,39 @@ import {
 } from "@/server/infrastructure/api/trpc/trpc";
 import { getContainer } from "@/server/dependances";
 
+const conversationsRouter = créerRouteurTRPC({
+  lister: procédureProtégée.query(async ({ ctx }) => {
+    const useCase = getContainer("albert").resolve(
+      "listerConversationsUseCase",
+    );
+    return useCase.execute({ utilisateurId: ctx.session.user.id });
+  }),
+
+  recuperer: procédureProtégée
+    .input(z.object({ id: z.string().uuid() }))
+    .query(async ({ ctx, input }) => {
+      const useCase = getContainer("albert").resolve(
+        "recupererConversationUseCase",
+      );
+      return useCase.execute({
+        id: input.id,
+        utilisateurId: ctx.session.user.id,
+      });
+    }),
+
+  supprimer: procédureProtégée
+    .input(z.object({ id: z.string().uuid() }))
+    .mutation(async ({ ctx, input }) => {
+      const useCase = getContainer("albert").resolve(
+        "supprimerConversationUseCase",
+      );
+      await useCase.execute({
+        id: input.id,
+        utilisateurId: ctx.session.user.id,
+      });
+    }),
+});
+
 export const albertRouter = créerRouteurTRPC({
   evaluer: procédureProtégée
     .input(
@@ -33,4 +66,5 @@ export const albertRouter = créerRouteurTRPC({
             : undefined,
       });
     }),
+  conversations: conversationsRouter,
 });

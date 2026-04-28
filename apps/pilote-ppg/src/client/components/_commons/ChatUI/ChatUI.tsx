@@ -27,12 +27,18 @@ export const ChatUI = ({
   className = "h-[calc(100vh-200px)]",
   scenarios,
   agentContext,
+  chatId,
+  initialMessages,
+  onChatFinish,
 }: {
   endpoint: string;
   placeholder?: string;
   className?: string;
   scenarios?: ChatScenarios;
   agentContext?: Record<string, unknown>;
+  chatId?: string;
+  initialMessages?: PiloteUIMessage[];
+  onChatFinish?: () => void;
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -46,12 +52,17 @@ export const ChatUI = ({
     ...(agentContext ? { agentContext } : {}),
     model: "openweight-large",
   });
+  const onChatFinishRef = useRef(onChatFinish);
+  onChatFinishRef.current = onChatFinish;
   const chatRef = useRef(
     new Chat<PiloteUIMessage>({
+      ...(chatId ? { id: chatId } : {}),
+      ...(initialMessages ? { messages: initialMessages } : {}),
       transport: new DefaultChatTransport<PiloteUIMessage>({
         api: endpoint,
         body: bodyRef.current,
       }),
+      onFinish: () => onChatFinishRef.current?.(),
     }),
   );
 

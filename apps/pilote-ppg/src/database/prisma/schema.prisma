@@ -1197,3 +1197,17 @@ model application_log {
   @@index([categorie, timestamp])
   @@schema("public")
 }
+
+model chat_conversation {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  utilisateur_id String   @db.Uuid
+  titre          String
+  messages       Json
+  contexte       Json?
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  @@index([utilisateur_id, updated_at(sort: Desc)])
+  @@index([updated_at])
+  @@schema("public")
+}

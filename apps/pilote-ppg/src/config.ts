@@ -314,6 +314,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET",
     },
+    historiqueAlbert: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_HISTORIQUE_ALBERT",
+    },
     centreAideAdmin: {
       format: Boolean,
       default: false,

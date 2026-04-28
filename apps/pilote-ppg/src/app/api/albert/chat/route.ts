@@ -16,7 +16,7 @@ import { createCreateDashboardTool } from "@/server/albert/tools/createDashboard
 
 const chatRequestSchema = z
   .object({
-    id: z.string().min(1),
+    id: z.string().uuid(),
     messages: z.array(z.any()),
     agentContext: z.record(z.string(), z.unknown()).nullable().optional(),
     model: z
@@ -101,7 +101,31 @@ export async function POST(request: Request) {
       tools,
     });
 
-    return result.toUIMessageStreamResponse();
+    const variables = await getContainer("legacy")
+      .resolve("recupererToutesLesVariablesContenuUseCase")
+      .run();
+    const persistanceActive =
+      variables.NEXT_PUBLIC_FF_HISTORIQUE_ALBERT === true;
+
+    if (!persistanceActive) {
+      return result.toUIMessageStreamResponse();
+    }
+
+    const enregistrerConversation = container.resolve(
+      "enregistrerConversationUseCase",
+    );
+
+    return result.toUIMessageStreamResponse<PiloteUIMessage>({
+      originalMessages: messagesPilote,
+      onFinish: async ({ messages: messagesFinaux }) => {
+        await enregistrerConversation.execute({
+          id: body.id,
+          utilisateurId: session.user.id,
+          messages: messagesFinaux,
+          contexte: agentContext ?? null,
+        });
+      },
+    });
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error("Error in Albert chat stream:", error);
