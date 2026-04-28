@@ -1,5 +1,6 @@
 {
   "name": "@pilote/ppg",
+  "portless": "pilote-ppg",
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@10.28.2",
@@ -7,7 +8,7 @@
     "node": "24.9.0"
   },
   "scripts": {
-    "dev": "next dev | pino-pretty",
+    "dev": "portless run next dev | pino-pretty",
     "build": "prisma generate && bash scripts/clone_centre_aide.sh && next build && pnpm exec pagefind --site .next/server/app --output-path public/_pagefind && node copy-assets.js && prisma migrate deploy && prisma db seed",
     "build:dev": "prisma generate && next build && pnpm exec pagefind --site .next/server/app --output-path public/_pagefind && node copy-assets.js && prisma migrate deploy && prisma db seed",
     "start": "node --max-old-space-size=${MAX_OLD_SPACE_SIZE:-768} .next/standalone/apps/pilote-ppg/server.js",
@@ -197,6 +198,7 @@
     "pagefind": "^1.5.2",
     "pino-pretty": "^10.0.0",
     "playwright-core": "1.59.1",
+    "portless": "^0.11.1",
     "prettier": "^3.6.2",
     "prisma": "6.2.1",
     "proj4": "^2.9.0",
