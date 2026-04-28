@@ -27,7 +27,7 @@
     "test:e2e": "pnpm exec playwright test --workers=1",
     "test:e2e:seed": "./tests/seed/seed.sh",
     "test:e2e:ui": "pnpm exec playwright test --ui",
-    "test:e2e:server": "dotenv -e .env.e2e pnpm dev",
+    "test:e2e:server": "dotenv -e .env.e2e next dev",
     "test:e2e:database:init": "dotenv -e .env.e2e -- pnpm database:init-force",
     "test:server:unit": "vitest run --project server-unit",
     "test:server:integration": "vitest run --project server-integration",
