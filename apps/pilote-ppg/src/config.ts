@@ -365,6 +365,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_PAGE_ACTUALITES",
     },
+    exportCsvWidgets: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_EXPORT_CSV_WIDGETS",
+    },
   },
   analytics: {
     doc: "Matomo Analytics",

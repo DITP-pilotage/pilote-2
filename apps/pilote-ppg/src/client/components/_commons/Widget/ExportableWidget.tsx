@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { Icone } from "@/components/_commons/Icone";
 import { Download1Icon } from "@/components/_commons/Icones/Download1Icon";
 import { ClipboardIcon } from "@/components/_commons/Icones/ClipboardIcon";
+import { useEnv } from "@/client/hooks/useEnv";
 import { ModeExportContext } from "./ModeExportContext";
 import { useExportImage } from "./useExportImage";
 
@@ -14,6 +15,7 @@ export const ExportableWidget = ({
   boutonExportCsv?: ReactNode;
   children: ReactNode;
 }) => {
+  const ffExportWidgets = useEnv("NEXT_PUBLIC_FF_EXPORT_CSV_WIDGETS");
   const { ref, modeExport, enregistrerCommeImage, copierDansLePressePapiers } =
     useExportImage(nomFichier);
 
@@ -39,7 +41,7 @@ export const ExportableWidget = ({
         >
           <Icone className="w-4 h-4" icone={ClipboardIcon} />
         </button>
-        {boutonExportCsv}
+        {ffExportWidgets && boutonExportCsv}
       </div>
     </div>
   );
