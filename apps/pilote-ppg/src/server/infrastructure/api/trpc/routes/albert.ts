@@ -1,4 +1,3 @@
-import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { $Enums } from "@prisma/client";
 import {
@@ -21,17 +20,10 @@ const conversationsRouter = créerRouteurTRPC({
       const useCase = getContainer("albert").resolve(
         "recupererConversationUseCase",
       );
-      const conversation = await useCase.execute({
+      return useCase.execute({
         id: input.id,
         utilisateurId: ctx.session.user.id,
       });
-      if (!conversation) {
-        throw new TRPCError({
-          code: "NOT_FOUND",
-          message: "Conversation introuvable",
-        });
-      }
-      return conversation;
     }),
 
   supprimer: procédureProtégée

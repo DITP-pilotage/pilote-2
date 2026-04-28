@@ -12,11 +12,12 @@ import {
 } from "@/server/albert/detecteurIntention";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { getContainer } from "@/server/dependances";
+import { configuration } from "@/config";
 import { createCreateDashboardTool } from "@/server/albert/tools/createDashboard";
 
 const chatRequestSchema = z
   .object({
-    id: z.string().min(1),
+    id: z.string().uuid(),
     messages: z.array(z.any()),
     agentContext: z.record(z.string(), z.unknown()).nullable().optional(),
     model: z
@@ -101,6 +102,12 @@ export async function POST(request: Request) {
       tools,
     });
 
+    const persistanceActive = configuration().featureFlip.historiqueAlbert;
+
+    if (!persistanceActive) {
+      return result.toUIMessageStreamResponse();
+    }
+
     const enregistrerConversation = container.resolve(
       "enregistrerConversationUseCase",
     );
@@ -112,12 +119,7 @@ export async function POST(request: Request) {
           id: body.id,
           utilisateurId: session.user.id,
           messages: messagesFinaux,
-          territoireCode:
-            typeof agentContext?.territoireCode === "string"
-              ? agentContext.territoireCode
-              : null,
-          jalon:
-            typeof agentContext?.jalon === "number" ? agentContext.jalon : null,
+          contexte: agentContext ?? null,
         });
       },
     });
