@@ -6,7 +6,8 @@
     "node": "24.9.0"
   },
   "scripts": {
-    "dev": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} dev",
+    "dev:ppg": "pnpm -F @pilote/ppg dev",
+    "dev:mb": "pnpm -F @pilote/mb-api dev",
     "build": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} build",
     "build:dev": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} build:dev",
     "start": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} start",

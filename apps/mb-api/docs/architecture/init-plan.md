@@ -1,14 +1,14 @@
-# Plan d'implémentation — Initialisation de pilote-mb-core
+# Plan d'implémentation — Initialisation de mb-api
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Mettre en place le backend `pilote-mb-core` (Hono + CQS lite + functional core / imperative shell + API Keys complètes + scaffolding ProConnect) avec un endpoint `GET /health` fonctionnel et `POST /auth/sessions` retournant 501.
+**Goal:** Mettre en place le backend `mb-api` (Hono + CQS lite + functional core / imperative shell + API Keys complètes + scaffolding ProConnect) avec un endpoint `GET /health` fonctionnel et `POST /auth/sessions` retournant 501.
 
 **Architecture:** Modules Awilix — `framework` (tech transverse), `authentication` (métier), `healthcheck` (utilitaire). **Pas de DDD by the book** : pas d'AggregateRoot, pas de Domain Events, pas de bounded contexts. Modèles = types + factory functions pures (functional core). Use cases = handlers (imperative shell). Ports & adapters côté écriture, queries plus libres côté lecture. ResultAsync + railway oriented programming. AsyncLocalStorage pour transactions ET pour identité authentifiée. ApiModel comme published language back/front.
 
 **Tech Stack:** TypeScript strict, Hono + `@hono/zod-openapi` + `@hono/swagger-ui`, Prisma 6 + PostgreSQL, Awilix (module-system adapté de pilote-ppg), neverthrow (Result + ResultAsync), pino (sinks composables), Vitest (parallèle via `withTestTransaction`), `dependency-cruiser`.
 
-**Spec de référence :** `apps/pilote-mb-core/docs/architecture/init-design.md`
+**Spec de référence :** `apps/mb-api/docs/architecture/init-design.md`
 
 **Conventions obligatoires (voir CLAUDE.md + design doc) :**
 
@@ -45,15 +45,15 @@
 
 ## Phase 1 — Fondations projet
 
-### Tâche 1 : Enregistrer pilote-mb-core dans le monorepo
+### Tâche 1 : Enregistrer mb-api dans le monorepo
 
-**Files:** Create: `apps/pilote-mb-core/package.json`
+**Files:** Create: `apps/mb-api/package.json`
 
 - [ ] **Step 1: Créer `package.json`**
 
 ```json
 {
-  "name": "@pilote-mb/core",
+  "name": "@pilote/mb-api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -75,27 +75,27 @@
 }
 ```
 
-- [ ] **Step 2: Vérifier détection** — `pnpm -F @pilote-mb/core exec pwd`
+- [ ] **Step 2: Vérifier détection** — `pnpm -F @pilote/mb-api exec pwd`
 - [ ] **Step 3: Commit**
 
 ```bash
-git commit -m "[DITP-pilotage/pilote-2] feature: creer le package @pilote-mb/core"
+git commit -m "[DITP-pilotage/pilote-2] feature: creer le package @pilote/mb-api"
 ```
 
 ---
 
 ### Tâche 2 : Installer les dépendances
 
-- [ ] **Step 1: Runtime** — `pnpm -F @pilote-mb/core add hono @hono/zod-openapi @hono/swagger-ui zod neverthrow awilix pino @prisma/client jsonwebtoken openid-client`
-- [ ] **Step 2: Dev** — `pnpm -F @pilote-mb/core add -D typescript @types/node @types/jsonwebtoken tsx prisma vitest eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin prettier dependency-cruiser pino-pretty`
+- [ ] **Step 1: Runtime** — `pnpm -F @pilote/mb-api add hono @hono/zod-openapi @hono/swagger-ui zod neverthrow awilix pino @prisma/client jsonwebtoken openid-client`
+- [ ] **Step 2: Dev** — `pnpm -F @pilote/mb-api add -D typescript @types/node @types/jsonwebtoken tsx prisma vitest eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin prettier dependency-cruiser pino-pretty`
 - [ ] **Step 3: Vérifier** — `pnpm install`
-- [ ] **Step 4: Commit** — `feature: installer les dependances de pilote-mb-core`
+- [ ] **Step 4: Commit** — `feature: installer les dependances de mb-api`
 
 ---
 
 ### Tâche 3 : Configurer TypeScript
 
-**Files:** Create: `apps/pilote-mb-core/tsconfig.json`
+**Files:** Create: `apps/mb-api/tsconfig.json`
 
 - [ ] **Step 1: Écrire `tsconfig.json`**
 
@@ -129,8 +129,8 @@ git commit -m "[DITP-pilotage/pilote-2] feature: creer le package @pilote-mb/cor
 }
 ```
 
-- [ ] **Step 2: Vérifier** — `pnpm -F @pilote-mb/core exec tsc --noEmit`
-- [ ] **Step 3: Commit** — `feature: configurer typescript pour pilote-mb-core`
+- [ ] **Step 2: Vérifier** — `pnpm -F @pilote/mb-api exec tsc --noEmit`
+- [ ] **Step 3: Commit** — `feature: configurer typescript pour mb-api`
 
 ---
 
@@ -138,10 +138,10 @@ git commit -m "[DITP-pilotage/pilote-2] feature: creer le package @pilote-mb/cor
 
 **Files:**
 
-- Create: `apps/pilote-mb-core/vitest.config.ts`
-- Create: `apps/pilote-mb-core/.eslintrc.cjs`
-- Create: `apps/pilote-mb-core/.prettierrc`
-- Create: `apps/pilote-mb-core/.dependency-cruiser.cjs`
+- Create: `apps/mb-api/vitest.config.ts`
+- Create: `apps/mb-api/.eslintrc.cjs`
+- Create: `apps/mb-api/.prettierrc`
+- Create: `apps/mb-api/.dependency-cruiser.cjs`
 
 - [ ] **Step 1: Écrire `vitest.config.ts`**
 
@@ -295,7 +295,7 @@ module.exports = {
 };
 ```
 
-- [ ] **Step 5: Vérifier** — `pnpm -F @pilote-mb/core lint`
+- [ ] **Step 5: Vérifier** — `pnpm -F @pilote/mb-api lint`
 - [ ] **Step 6: Commit** — `feature: configurer vitest, eslint, prettier et dependency-cruiser`
 
 ---
@@ -304,8 +304,8 @@ module.exports = {
 
 **Files:**
 
-- Create: `apps/pilote-mb-core/docker-compose.yml`
-- Create: `apps/pilote-mb-core/.env.example`
+- Create: `apps/mb-api/docker-compose.yml`
+- Create: `apps/mb-api/.env.example`
 
 - [ ] **Step 1: Écrire `docker-compose.yml`**
 
@@ -360,14 +360,14 @@ JWT_TTL_HOURS=8
 # PROCONNECT_REDIRECT_URI=
 ```
 
-- [ ] **Step 3: Lancer la DB locale** — `cd apps/pilote-mb-core && docker compose up -d postgres`
+- [ ] **Step 3: Lancer la DB locale** — `cd apps/mb-api && docker compose up -d postgres`
 - [ ] **Step 4: Commit** — `feature: ajouter docker-compose avec DB dev et test`
 
 ---
 
 ### Tâche 6 : Prisma schema initial + première migration
 
-**Files:** Create: `apps/pilote-mb-core/prisma/schema.prisma`
+**Files:** Create: `apps/mb-api/prisma/schema.prisma`
 
 - [ ] **Step 1: Écrire `schema.prisma`**
 
@@ -438,7 +438,7 @@ enum application_log_level_enum {
 }
 ```
 
-- [ ] **Step 2: Migrer** — `cd apps/pilote-mb-core && export DATABASE_URL=... && pnpm prisma migrate dev --name init`
+- [ ] **Step 2: Migrer** — `cd apps/mb-api && export DATABASE_URL=... && pnpm prisma migrate dev --name init`
 - [ ] **Step 3: Commit** — `feature: schema prisma initial avec api_key, utilisateur, application_log`
 
 ---
@@ -447,8 +447,8 @@ enum application_log_level_enum {
 
 **Files:**
 
-- Create: `apps/pilote-mb-core/src/config.ts`
-- Create: `apps/pilote-mb-core/src/config.test.ts`
+- Create: `apps/mb-api/src/config.ts`
+- Create: `apps/mb-api/src/config.test.ts`
 
 - [ ] **Step 1: Écrire le test** (3 cas : valide avec defaults, JWT_SECRET trop court, DATABASE_URL manquante)
 - [ ] **Step 2: Lancer (échec)**
@@ -491,7 +491,7 @@ export const config = parseConfig(process.env);
 
 ### Tâche 8 : Result + ResultAsync (re-exports neverthrow)
 
-**Files:** Create: `apps/pilote-mb-core/src/framework/result/index.ts`
+**Files:** Create: `apps/mb-api/src/framework/result/index.ts`
 
 - [ ] **Step 1: Écrire les re-exports**
 
@@ -509,10 +509,10 @@ export type { Ok, Err } from "neverthrow";
 
 **Files:**
 
-- Create: `apps/pilote-mb-core/src/framework/errors/kinds.ts`
-- Create: `apps/pilote-mb-core/src/framework/errors/app-error.ts`
-- Create: `apps/pilote-mb-core/src/framework/errors/app-error.test.ts`
-- Create: `apps/pilote-mb-core/src/framework/errors/common-errors.ts` — `UnauthenticatedError`, `ForbiddenError`, `NotImplementedError`, `RepositoryError`
+- Create: `apps/mb-api/src/framework/errors/kinds.ts`
+- Create: `apps/mb-api/src/framework/errors/app-error.ts`
+- Create: `apps/mb-api/src/framework/errors/app-error.test.ts`
+- Create: `apps/mb-api/src/framework/errors/common-errors.ts` — `UnauthenticatedError`, `ForbiddenError`, `NotImplementedError`, `RepositoryError`
 
 - [ ] **Step 1: Écrire `kinds.ts`**
 
@@ -583,11 +583,11 @@ export class RepositoryError extends AppError {
 
 **Files:**
 
-- Create: `apps/pilote-mb-core/src/framework/clock/clock.ts`
-- Create: `apps/pilote-mb-core/src/framework/persistence/prisma/transaction.ts`
-- Create: `apps/pilote-mb-core/src/framework/logging/logger.ts`
-- Create: `apps/pilote-mb-core/src/framework/auth-context/auth-context.ts`
-- Create: `apps/pilote-mb-core/src/framework/auth-context/auth.ts` — types `Auth`, `ApiKeyAuth`, `UserAuth`
+- Create: `apps/mb-api/src/framework/clock/clock.ts`
+- Create: `apps/mb-api/src/framework/persistence/prisma/transaction.ts`
+- Create: `apps/mb-api/src/framework/logging/logger.ts`
+- Create: `apps/mb-api/src/framework/auth-context/auth-context.ts`
+- Create: `apps/mb-api/src/framework/auth-context/auth.ts` — types `Auth`, `ApiKeyAuth`, `UserAuth`
 
 - [ ] **Step 1: `clock.ts`**
 
@@ -664,8 +664,8 @@ export interface AuthContext {
 
 **Files:**
 
-- Create: `apps/pilote-mb-core/src/framework/persistence/prisma/prisma-transaction.ts`
-- Create: `apps/pilote-mb-core/src/framework/persistence/prisma/prisma-pilote.ts`
+- Create: `apps/mb-api/src/framework/persistence/prisma/prisma-transaction.ts`
+- Create: `apps/mb-api/src/framework/persistence/prisma/prisma-pilote.ts`
 
 - [ ] **Step 1: Écrire `prisma-transaction.ts`**
 
@@ -718,8 +718,8 @@ export class PrismaPilote {
 
 **Files:**
 
-- Create: `apps/pilote-mb-core/src/framework/clock/system-clock.ts`
-- Create: `apps/pilote-mb-core/src/framework/clock/system-clock.test.ts`
+- Create: `apps/mb-api/src/framework/clock/system-clock.ts`
+- Create: `apps/mb-api/src/framework/clock/system-clock.test.ts`
 
 - [ ] **Step 1: Test** (vérifie `clock.now()` retourne une `Date` cohérente avec `Date.now()`)
 - [ ] **Step 2: Implémentation**
@@ -1214,7 +1214,7 @@ export function buildApp(container: AwilixContainer): OpenAPIHono {
 
   app.doc("/api/openapi.json", {
     openapi: "3.1.0",
-    info: { title: "pilote-mb-core", version: "0.1.0" },
+    info: { title: "mb-api", version: "0.1.0" },
   });
   app.get("/api/docs", swaggerUI({ url: "/api/openapi.json" }));
 
@@ -2471,7 +2471,7 @@ main().catch((error) => {
 });
 ```
 
-- [ ] **Step 2: Test manuel** — `pnpm -F @pilote-mb/core create-api-key --nom test --env test --scopes entities:read`
+- [ ] **Step 2: Test manuel** — `pnpm -F @pilote/mb-api create-api-key --nom test --env test --scopes entities:read`
 - [ ] **Step 3: Commit** — `feature: authentication infra — CLI create-api-key`
 
 ---
@@ -2511,7 +2511,7 @@ registerCreateSessionRoute(app, getContainer("authentication"));
 
 serve({ fetch: app.fetch, port: config.PORT }, (info) => {
   // eslint-disable-next-line no-console
-  console.log(`pilote-mb-core listening on :${info.port}`);
+  console.log(`mb-api listening on :${info.port}`);
 });
 ```
 
@@ -2555,34 +2555,34 @@ serve({ fetch: app.fetch, port: config.PORT }, (info) => {
 
 ## Phase 15 — Documentation + CI
 
-### Tâche 61 : CLAUDE.md de pilote-mb-core
+### Tâche 61 : CLAUDE.md de mb-api
 
-**Files:** Create: `apps/pilote-mb-core/CLAUDE.md`
+**Files:** Create: `apps/mb-api/CLAUDE.md`
 
 - [ ] **Step 1: Contenu** — résumé de l'arch (modules, functional core, ports & adapters, ApiModels, ResultAsync, AuthContext), conventions code, pyramide tests, commandes essentielles
-- [ ] **Step 2: Commit** — `docs: CLAUDE.md de pilote-mb-core`
+- [ ] **Step 2: Commit** — `docs: CLAUDE.md de mb-api`
 
 ---
 
 ### Tâche 62 : ADR 0001 (record-architecture-decisions)
 
-**Files:** Create: `apps/pilote-mb-core/docs/architecture/decisions/0001-record-architecture-decisions.md`
+**Files:** Create: `apps/mb-api/docs/architecture/decisions/0001-record-architecture-decisions.md`
 
 - [ ] **Step 1: Recopier** la structure standard (cf. `apps/pilote-ppg/docs/architecture/decisions/0001-...`)
 - [ ] **Step 2: Commit** — `docs: ADR 0001 record architecture decisions`
 
 ---
 
-### Tâche 63 : ADR 0002 (architecture init pilote-mb-core)
+### Tâche 63 : ADR 0002 (architecture init mb-api)
 
-**Files:** Create: `apps/pilote-mb-core/docs/architecture/decisions/0002-architecture-init-pilote-mb-core.md`
+**Files:** Create: `apps/mb-api/docs/architecture/decisions/0002-architecture-init-mb-api.md`
 
 - [ ] **Step 1: Contenu** :
   - **Statut** : Accepté
-  - **Contexte** : décrire pourquoi on initialise pilote-mb-core, la posture Marque Blanche
+  - **Contexte** : décrire pourquoi on initialise mb-api, la posture Marque Blanche
   - **Décision** : poser CQS lite + functional core / imperative shell + modules Awilix + ports & adapters côté écriture + ApiModels + AuthContext via ALS + ResultAsync. Justifier explicitement le **non-choix de DDD by the book** (scope produit non stabilisé, TS full-stack, équipe unique).
   - **Conséquences** : modèles immuables sérialisables, tests purs sur le functional core, bascule possible vers DDD plus tactique si invariants émergent, refactor si on doit séparer command/query facade
-- [ ] **Step 2: Commit** — `docs: ADR 0002 architecture init pilote-mb-core`
+- [ ] **Step 2: Commit** — `docs: ADR 0002 architecture init mb-api`
 
 ---
 
@@ -2590,7 +2590,7 @@ serve({ fetch: app.fetch, port: config.PORT }, (info) => {
 
 **Files:** Modify: `.github/workflows/testAndLint.yml`
 
-- [ ] **Step 1: Ajouter** le filter `pilote-mb-core` (cf. design 12.2)
+- [ ] **Step 1: Ajouter** le filter `mb-api` (cf. design 12.2)
 - [ ] **Step 2: Ajouter** les jobs `test-mb-core` et `lint-mb-core`
 - [ ] **Step 3: Commit** — `ci: ajouter jobs test-mb-core et lint-mb-core`
 - [ ] **Step 4: Push + observer le run CI**

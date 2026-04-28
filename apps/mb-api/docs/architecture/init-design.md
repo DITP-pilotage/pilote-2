@@ -1,4 +1,4 @@
-# Design — Initialisation de pilote-mb-core (backend Marque Blanche)
+# Design — Initialisation de mb-api (backend Marque Blanche)
 
 Date : 2026-04-23
 Mise à jour : 2026-04-28 — pivot architecture suite revue PR #2093
@@ -13,7 +13,7 @@ L'évolution souhaitée, `pilote-mb` ("Marque Blanche"), vise une version **gén
 - Les entités contiennent des **indicateurs de différents types**
 - L'objectif est qu'elle puisse être déployée par différents clients avec leur propre paramétrage métier
 
-Ce document décrit l'**initialisation du backend** (`pilote-mb-core`), premier composant de l'app. Le frontend (`pilote-mb-webapp`, Vite + React + TanStack Query) viendra dans un ticket séparé.
+Ce document décrit l'**initialisation du backend** (`mb-api`), premier composant de l'app. Le frontend (`pilote-mb-webapp`, Vite + React + TanStack Query) viendra dans un ticket séparé.
 
 ## 2. Objectifs de l'init
 
@@ -28,7 +28,7 @@ Ce document décrit l'**initialisation du backend** (`pilote-mb-core`), premier 
 | Terme | Définition |
 |---|---|
 | pilote-mb / Marque Blanche | Version générique paramétrable de pilote-ppg |
-| pilote-mb-core | Backend Hono de pilote-mb |
+| mb-api | Backend Hono de pilote-mb |
 | pilote-mb-webapp | Futur front Vite + React (hors scope de ce ticket) |
 | PPG | Politique Prioritaire du Gouvernement (vocabulaire pilote-ppg) |
 | Entity | Nouvelle entité générique de pilote-mb (remplace "chantier") |
@@ -83,10 +83,10 @@ Ce document décrit l'**initialisation du backend** (`pilote-mb-core`), premier 
 
 ### 5.1 Posture architecturale : CQS lite + functional core / imperative shell
 
-pilote-mb-core démarre **sans DDD by the book** : pas d'aggregate roots, pas de domain events, pas de bounded contexts ni de context map. La justification est pragmatique :
+mb-api démarre **sans DDD by the book** : pas d'aggregate roots, pas de domain events, pas de bounded contexts ni de context map. La justification est pragmatique :
 
 - **L'app est neuve, le scope produit n'est pas encore stabilisé** : on ne connaît ni les invariants métier (probablement peu : c'est principalement CRUD + quelques calculs), ni les frontières naturelles entre sous-domaines, ni la roadmap au-delà des pages "indicateur" et "panier".
-- **TS full-stack avec types partagés back/front** : modéliser les entités via des classes (AggregateRoot, ValueObject) introduit un coût de sérialisation et empêche de partager simplement les types entre `pilote-mb-core` et `pilote-mb-webapp`. Des types nus + factory functions sont strictement plus simples et plus partageables.
+- **TS full-stack avec types partagés back/front** : modéliser les entités via des classes (AggregateRoot, ValueObject) introduit un coût de sérialisation et empêche de partager simplement les types entre `mb-api` et `pilote-mb-webapp`. Des types nus + factory functions sont strictement plus simples et plus partageables.
 - **Une seule équipe, pas de problème de communication inter-équipes** : le context mapping DDD résout des frictions humaines qu'on n'a pas. Importé prématurément, il ajoute de l'indirection sans bénéfice.
 
 On adopte donc :
@@ -142,7 +142,7 @@ La règle architecturale unique qui se substitue au Context Map est dans 5.5 : *
 ### 5.4 Structure des dossiers
 
 ```
-apps/pilote-mb-core/
+apps/mb-api/
 ├── src/
 │   ├── framework/                              # tech transverse (pas un module métier)
 │   │   ├── persistence/prisma/
@@ -271,7 +271,7 @@ apps/pilote-mb-core/
 │   └── architecture/
 │       └── decisions/
 │           ├── 0001-record-architecture-decisions.md
-│           └── 0002-architecture-init-pilote-mb-core.md
+│           └── 0002-architecture-init-mb-api.md
 ├── docker-compose.yml
 ├── package.json
 ├── tsconfig.json
@@ -326,7 +326,7 @@ import type { AuthenticationFacade } from '@/authentication/public/authenticatio
 
 ### 5.6 Published language : ApiModel
 
-On n'a pas de Published Language au sens DDD (pas de BC à frontières strictes), mais on a un besoin réel : **partager des types entre `pilote-mb-core` et `pilote-mb-webapp`** pour profiter de l'inférence end-to-end.
+On n'a pas de Published Language au sens DDD (pas de BC à frontières strictes), mais on a un besoin réel : **partager des types entre `mb-api` et `pilote-mb-webapp`** pour profiter de l'inférence end-to-end.
 
 La forme partagée s'appelle **`ApiModel`**. Convention :
 
@@ -574,7 +574,7 @@ Règle ESLint : interdit `new Date()` dans `model/`, `commands/`, `queries/`.
 
 ### 6.1 Dependency Injection — module-system Awilix (copié/adapté de pilote-ppg)
 
-pilote-mb-core reprend le **module-system** mis en place sur pilote-ppg. Trois bénéfices :
+mb-api reprend le **module-system** mis en place sur pilote-ppg. Trois bénéfices :
 - **Découpage par module** : chaque module Awilix correspond à un module applicatif et déclare son propre cradle typé
 - **Graphe de dépendances explicite** via `imports` / `exports` — seules les facades des `exports` fuient
 - **Typage fort** via `Inject<K>` — chaque classe déclare précisément les dépendances qu'elle consomme
@@ -1129,7 +1129,7 @@ pnpm create-api-key --nom "agent-satellite-prod" --env live --scopes "entities:r
 3. ProConnect authentifie, redirige vers webapp avec ?code=xxx
 4. Webapp échange le code contre un id_token
 5. Webapp → POST /auth/sessions { id_token }
-6. pilote-mb-core :
+6. mb-api :
    a. Valide signature id_token via JWKS ProConnect (cached)
    b. Extrait sub, email, given_name, family_name
    c. Upsert utilisateur (clé : sub_proconnect)
@@ -1511,7 +1511,7 @@ jobs:
     outputs:
       pilote-ppg: ${{ steps.filter.outputs.pilote-ppg }}
       pilote-ppg-data-management: ${{ steps.filter.outputs.pilote-ppg-data-management }}
-      pilote-mb-core: ${{ steps.filter.outputs.pilote-mb-core }}
+      mb-api: ${{ steps.filter.outputs.mb-api }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -1524,19 +1524,19 @@ jobs:
               - 'pnpm-lock.yaml'
             pilote-ppg-data-management:
               - 'apps/pilote-ppg-data-management/**'
-            pilote-mb-core:
-              - 'apps/pilote-mb-core/**'
+            mb-api:
+              - 'apps/mb-api/**'
               - 'package.json'
               - 'pnpm-lock.yaml'
 ```
 
-**Deux jobs pour pilote-mb-core :**
+**Deux jobs pour mb-api :**
 
 ```yaml
   test-mb-core:
-    name: Run tests (pilote-mb-core)
+    name: Run tests (mb-api)
     needs: changes
-    if: needs.changes.outputs['pilote-mb-core'] == 'true'
+    if: needs.changes.outputs['mb-api'] == 'true'
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -1563,14 +1563,14 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Apply Prisma migrations
-        run: pnpm -F @pilote-mb/core prisma migrate deploy
+        run: pnpm -F @pilote/mb-api prisma migrate deploy
       - name: Run tests
-        run: pnpm -F @pilote-mb/core test
+        run: pnpm -F @pilote/mb-api test
 
   lint-mb-core:
-    name: Run linters (pilote-mb-core)
+    name: Run linters (mb-api)
     needs: changes
-    if: needs.changes.outputs['pilote-mb-core'] == 'true'
+    if: needs.changes.outputs['mb-api'] == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -1578,7 +1578,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
       - name: Run lint
-        run: pnpm -F @pilote-mb/core lint
+        run: pnpm -F @pilote/mb-api lint
 ```
 
 ### 12.3 Points importants
@@ -1599,7 +1599,7 @@ Configurer `test-mb-core` et `lint-mb-core` comme required sur `dev` (et `main` 
 ### Livrables
 
 **Fondations projet :**
-1. `apps/pilote-mb-core/` enregistré dans le monorepo (`pnpm-workspace.yaml`)
+1. `apps/mb-api/` enregistré dans le monorepo (`pnpm-workspace.yaml`)
 2. Configs : `package.json`, `tsconfig.json`, `vitest.config.ts`, `.eslintrc.cjs`, `.prettierrc`, `.dependency-cruiser.cjs`, `docker-compose.yml`
 3. Schema Prisma + migration `0001_init` (`api_key`, `utilisateur`, `application_log`)
 4. Config Zod-validée (`src/config.ts`)
@@ -1641,7 +1641,7 @@ Configurer `test-mb-core` et `lint-mb-core` comme required sur `dev` (et `main` 
 **Documentation :**
 27. CLAUDE.md du projet
 28. `docs/architecture/decisions/0001-record-architecture-decisions.md`
-29. `docs/architecture/decisions/0002-architecture-init-pilote-mb-core.md` (synthèse de ce design)
+29. `docs/architecture/decisions/0002-architecture-init-mb-api.md` (synthèse de ce design)
 
 **CI :**
 30. Mise à jour de `.github/workflows/testAndLint.yml`
