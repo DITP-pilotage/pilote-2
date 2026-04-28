@@ -2,18 +2,19 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Mettre en place le backend `pilote-mb-core` (Hono + DDD by the book + API Keys complètes + scaffolding ProConnect) avec un endpoint `GET /health` fonctionnel et `POST /auth/sessions` retournant 501.
+**Goal:** Mettre en place le backend `pilote-mb-core` (Hono + CQS lite + functional core / imperative shell + API Keys complètes + scaffolding ProConnect) avec un endpoint `GET /health` fonctionnel et `POST /auth/sessions` retournant 501.
 
-**Architecture:** Context-first (1 dossier racine par BC). DDD stratégique + tactique complet. BCs : `platform` (infra technique transverse), `authentication` (complet), `healthcheck` (minimal). `shared-kernel/` pour les primitives DDD.
+**Architecture:** Modules Awilix — `framework` (tech transverse), `authentication` (métier), `healthcheck` (utilitaire). **Pas de DDD by the book** : pas d'AggregateRoot, pas de Domain Events, pas de bounded contexts. Modèles = types + factory functions pures (functional core). Use cases = handlers (imperative shell). Ports & adapters côté écriture, queries plus libres côté lecture. ResultAsync + railway oriented programming. AsyncLocalStorage pour transactions ET pour identité authentifiée. ApiModel comme published language back/front.
 
-**Tech Stack:** TypeScript strict, Hono + `@hono/zod-openapi` + `@hono/swagger-ui`, Prisma 6 + PostgreSQL, Awilix (module-system adapté de pilote-ppg), neverthrow, pino (sinks composables), Vitest (parallèle via `withTestTransaction`), `dependency-cruiser`.
+**Tech Stack:** TypeScript strict, Hono + `@hono/zod-openapi` + `@hono/swagger-ui`, Prisma 6 + PostgreSQL, Awilix (module-system adapté de pilote-ppg), neverthrow (Result + ResultAsync), pino (sinks composables), Vitest (parallèle via `withTestTransaction`), `dependency-cruiser`.
 
 **Spec de référence :** `apps/pilote-mb-core/docs/architecture/init-design.md`
 
 **Conventions obligatoires (voir CLAUDE.md + design doc) :**
 - Verbes/tech en anglais, entités en français (`getIndicateurById`, `CreateEntityHandler`)
-- Pas de `export default` (sauf config tierces)
-- Pas de barrel files
+- Pas de classes pour les modèles — types + factory functions + branded types
+- Pas d'`export default` (sauf config tierces)
+- Pas de barrel files (sauf `public/`)
 - Tests en TDD strict, parallèle, `withTestTransaction`
 - Commits : pas de `Co-Authored-By`, convention `[DITP-pilotage/pilote-2] <type>: <description>`
 
@@ -24,19 +25,20 @@
 | Phase | Contenu | Tâches |
 |---|---|---|
 | **1. Fondations projet** | Workspace, configs, docker, Prisma, config app | T1–T7 |
-| **2. shared-kernel** | Primitives DDD (AggregateRoot, ValueObject, DomainEvent, ports) | T8–T14 |
-| **3. Platform infra** | PrismaPilote, Logger, Clock, EventPublisher, module-system | T15–T23 |
-| **4. HTTP platform** | Error handling, middlewares, buildApp, Swagger | T24–T30 |
-| **5. Test infrastructure** | vitest.setup, FakeClock, withTestTransaction, TestContext | T31–T34 |
-| **6. BC healthcheck** | Handler, route, module | T35–T37 |
-| **7. BC authentication — domain api-key** | VOs, Errors, Events, AggregateRoot, Repository interface | T38–T42 |
-| **8. BC authentication — domain utilisateur** | VOs, Events, AggregateRoot, Repository interface | T43–T45 |
-| **9. BC authentication — infrastructure** | Adapters crypto, Prisma repositories, ProConnect stub | T46–T52 |
-| **10. BC authentication — application** | Handlers CQRS, Facade | T53–T57 |
-| **11. BC authentication — public + module** | Published Language, module.ts | T58–T60 |
-| **12. BC authentication — HTTP + CLI** | Route, middleware auth, CLI create-api-key | T61–T64 |
-| **13. Bootstrap + assemblage final** | `index.ts`, enregistrement workspace, tests E2E | T65–T68 |
-| **14. Documentation + CI** | CLAUDE.md, ADRs, workflow CI | T69–T72 |
+| **2. Framework — primitives** | Result, AppError, ports (Clock, Transaction, Logger, AuthContext) | T8–T10 |
+| **3. Framework — infrastructure** | PrismaPilote, SystemClock, Logger sinks, AsyncLocalStorageAuthContext | T11–T15 |
+| **4. Framework — module-system + container** | define-module, boot-modules, frameworkModule, build-app-container | T16–T19 |
+| **5. Framework — HTTP** | error-mapping, respondWithResult, middlewares, buildApp, Swagger | T20–T26 |
+| **6. Test infrastructure** | vitest.setup, FakeClock, withTestTransaction, TestContext | T27–T30 |
+| **7. Module healthcheck** | Handler, route, module | T31–T33 |
+| **8. Module authentication — functional core** | Branded types, types `ApiKey`/`Utilisateur`, factory functions pures, errors | T34–T38 |
+| **9. Module authentication — ports** | ApiKeyHasher, TokenGenerator, TokenSigner, repositories | T39 |
+| **10. Module authentication — infrastructure** | Adapters crypto, repositories Prisma + mappers, ProConnect stub, CLI | T40–T46 |
+| **11. Module authentication — use cases** | VerifyApiKeyHandler, VerifyJwtHandler, CreateSessionHandler stub | T47–T49 |
+| **12. Module authentication — public + module** | ApiModels + facade + authentication.module.ts | T50–T52 |
+| **13. Module authentication — HTTP + CLI** | Route create-session, middlewares auth + auth-context, CLI create-api-key | T53–T56 |
+| **14. Bootstrap + assemblage final** | `index.ts`, enregistrement workspace, tests E2E | T57–T60 |
+| **15. Documentation + CI** | CLAUDE.md, ADRs, workflow CI | T61–T64 |
 
 ---
 
@@ -44,11 +46,9 @@
 
 ### Tâche 1 : Enregistrer pilote-mb-core dans le monorepo
 
-**Files:**
-- Create: `apps/pilote-mb-core/package.json`
-- Modify: `pnpm-workspace.yaml` (pas d'action — le glob `apps/*` couvre déjà)
+**Files:** Create: `apps/pilote-mb-core/package.json`
 
-- [ ] **Step 1: Créer `apps/pilote-mb-core/package.json`**
+- [ ] **Step 1: Créer `package.json`**
 
 ```json
 {
@@ -56,9 +56,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "engines": {
-    "node": "24.9.0"
-  },
+  "engines": { "node": "24.9.0" },
   "scripts": {
     "dev": "tsx watch src/index.ts | pino-pretty",
     "build": "tsc",
@@ -76,71 +74,27 @@
 }
 ```
 
-- [ ] **Step 2: Vérifier que pnpm détecte le package**
-
-Run: `pnpm -F @pilote-mb/core exec pwd`
-Expected: affiche `/Users/.../apps/pilote-mb-core`
-
+- [ ] **Step 2: Vérifier détection** — `pnpm -F @pilote-mb/core exec pwd`
 - [ ] **Step 3: Commit**
 
 ```bash
-git add apps/pilote-mb-core/package.json
-git commit -m "[DITP-pilotage/pilote-2] feature: creer le package @pilote-mb/core
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, init
-Files-changed: 1"
+git commit -m "[DITP-pilotage/pilote-2] feature: creer le package @pilote-mb/core"
 ```
 
 ---
 
 ### Tâche 2 : Installer les dépendances
 
-**Files:**
-- Modify: `apps/pilote-mb-core/package.json`
-
-- [ ] **Step 1: Ajouter les dépendances runtime**
-
-```bash
-pnpm -F @pilote-mb/core add hono @hono/zod-openapi @hono/swagger-ui zod neverthrow awilix pino @prisma/client jsonwebtoken openid-client
-```
-
-- [ ] **Step 2: Ajouter les dépendances dev**
-
-```bash
-pnpm -F @pilote-mb/core add -D typescript @types/node @types/jsonwebtoken tsx prisma vitest eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin prettier dependency-cruiser pino-pretty
-```
-
-- [ ] **Step 3: Vérifier que `pnpm install` passe sans erreur**
-
-Run: `pnpm install`
-Expected: Lockfile updated, 0 errors
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add apps/pilote-mb-core/package.json pnpm-lock.yaml
-git commit -m "[DITP-pilotage/pilote-2] feature: installer les dependances de pilote-mb-core
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, dependencies
-Files-changed: 2"
-```
+- [ ] **Step 1: Runtime** — `pnpm -F @pilote-mb/core add hono @hono/zod-openapi @hono/swagger-ui zod neverthrow awilix pino @prisma/client jsonwebtoken openid-client`
+- [ ] **Step 2: Dev** — `pnpm -F @pilote-mb/core add -D typescript @types/node @types/jsonwebtoken tsx prisma vitest eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin prettier dependency-cruiser pino-pretty`
+- [ ] **Step 3: Vérifier** — `pnpm install`
+- [ ] **Step 4: Commit** — `feature: installer les dependances de pilote-mb-core`
 
 ---
 
 ### Tâche 3 : Configurer TypeScript
 
-**Files:**
-- Create: `apps/pilote-mb-core/tsconfig.json`
+**Files:** Create: `apps/pilote-mb-core/tsconfig.json`
 
 - [ ] **Step 1: Écrire `tsconfig.json`**
 
@@ -162,8 +116,7 @@ Files-changed: 2"
     "rootDir": "src",
     "baseUrl": ".",
     "paths": {
-      "@/shared-kernel/*": ["src/shared-kernel/*"],
-      "@/platform/*": ["src/platform/*"],
+      "@/framework/*": ["src/framework/*"],
       "@/authentication/*": ["src/authentication/*"],
       "@/healthcheck/*": ["src/healthcheck/*"],
       "@/test/*": ["src/test/*"],
@@ -175,25 +128,8 @@ Files-changed: 2"
 }
 ```
 
-- [ ] **Step 2: Vérifier que tsc ne trouve rien à compiler (src/ vide)**
-
-Run: `pnpm -F @pilote-mb/core exec tsc --noEmit`
-Expected: passe sans erreur (ou erreur "No inputs were found" — OK, on y reviendra)
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add apps/pilote-mb-core/tsconfig.json
-git commit -m "[DITP-pilotage/pilote-2] feature: configurer typescript pour pilote-mb-core
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, config
-Files-changed: 1"
-```
+- [ ] **Step 2: Vérifier** — `pnpm -F @pilote-mb/core exec tsc --noEmit`
+- [ ] **Step 3: Commit** — `feature: configurer typescript pour pilote-mb-core`
 
 ---
 
@@ -221,8 +157,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@/shared-kernel': resolve(__dirname, 'src/shared-kernel'),
-      '@/platform': resolve(__dirname, 'src/platform'),
+      '@/framework': resolve(__dirname, 'src/framework'),
       '@/authentication': resolve(__dirname, 'src/authentication'),
       '@/healthcheck': resolve(__dirname, 'src/healthcheck'),
       '@/test': resolve(__dirname, 'src/test'),
@@ -254,7 +189,7 @@ module.exports = {
       },
       {
         selector: "NewExpression[callee.name='Date']",
-        message: "new Date() is forbidden in domain/application. Inject Clock instead.",
+        message: "new Date() is forbidden in model/commands/queries. Inject Clock instead.",
       },
     ],
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
@@ -265,7 +200,12 @@ module.exports = {
       rules: { 'no-restricted-syntax': 'off' },
     },
     {
-      files: ['**/infrastructure/persistence/**/*.ts', '**/*.test.ts', '**/*.fixture.ts'],
+      files: [
+        '**/infrastructure/persistence/**/*.ts',
+        '**/framework/**/*.ts',
+        '**/*.test.ts',
+        '**/*.fixture.ts',
+      ],
       rules: {
         'no-restricted-syntax': [
           'error',
@@ -295,38 +235,43 @@ module.exports = {
 module.exports = {
   forbidden: [
     {
-      name: 'no-cross-bc-internals',
+      name: 'no-cross-module-internals',
       severity: 'error',
-      comment: 'A BC cannot import internals from another BC — only from its public/ folder.',
+      comment: 'A module cannot import internals from another module — only from its public/.',
       from: { path: '^src/(authentication|healthcheck)/' },
       to: {
         path: '^src/(authentication|healthcheck)/',
-        pathNot: [
-          '^src/(authentication|healthcheck)/public/',
-        ],
+        pathNot: ['^src/(authentication|healthcheck)/public/'],
       },
       pathNot: '(.*)/\\1/',
     },
     {
-      name: 'no-bc-module-import-outside-bootstrap',
+      name: 'no-module-import-outside-bootstrap',
       severity: 'error',
-      comment: 'Only build-app-container.ts can import <bc>.module.ts.',
-      from: { pathNot: '^src/platform/container/build-app-container\\.ts$' },
+      comment: 'Only build-app-container.ts can import <module>.module.ts.',
+      from: { pathNot: '^src/framework/container/build-app-container\\.ts$' },
       to: { path: '^src/[^/]+/[^/]+\\.module\\.ts$' },
     },
     {
-      name: 'shared-kernel-stays-pure',
+      name: 'framework-stays-neutral',
       severity: 'error',
-      comment: 'shared-kernel cannot depend on platform or any BC.',
-      from: { path: '^src/shared-kernel/' },
-      to: { path: '^src/(platform|authentication|healthcheck)/' },
+      comment: 'framework/ cannot depend on any business module.',
+      from: { path: '^src/framework/' },
+      to: { path: '^src/(authentication|healthcheck)/' },
     },
     {
-      name: 'public-folder-depends-only-on-shared-kernel',
+      name: 'public-folder-depends-only-on-framework',
       severity: 'error',
-      comment: 'A BC public/ folder can only depend on shared-kernel.',
+      comment: 'A module public/ folder can only depend on framework/.',
       from: { path: '^src/[^/]+/public/' },
-      to: { pathNot: ['^src/shared-kernel/', '^src/[^/]+/public/'] },
+      to: { pathNot: ['^src/framework/', '^src/[^/]+/public/'] },
+    },
+    {
+      name: 'model-stays-pure',
+      severity: 'error',
+      comment: 'model/ cannot depend on infrastructure, commands, queries, http.',
+      from: { path: '^src/[^/]+/model/' },
+      to: { path: '^src/[^/]+/(infrastructure|commands|queries)/' },
     },
     {
       name: 'no-circular',
@@ -342,25 +287,8 @@ module.exports = {
 }
 ```
 
-- [ ] **Step 5: Vérifier que le lint tourne**
-
-Run: `pnpm -F @pilote-mb/core lint`
-Expected: pas d'erreur (ou "No files matched" — OK tant que ça ne crash pas)
-
-- [ ] **Step 6: Commit**
-
-```bash
-git add apps/pilote-mb-core/vitest.config.ts apps/pilote-mb-core/.eslintrc.cjs apps/pilote-mb-core/.prettierrc apps/pilote-mb-core/.dependency-cruiser.cjs
-git commit -m "[DITP-pilotage/pilote-2] feature: configurer vitest, eslint, prettier et dependency-cruiser
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, config, tooling
-Files-changed: 4"
-```
+- [ ] **Step 5: Vérifier** — `pnpm -F @pilote-mb/core lint`
+- [ ] **Step 6: Commit** — `feature: configurer vitest, eslint, prettier et dependency-cruiser`
 
 ---
 
@@ -423,32 +351,14 @@ JWT_TTL_HOURS=8
 # PROCONNECT_REDIRECT_URI=
 ```
 
-- [ ] **Step 3: Lancer la DB locale**
-
-Run: `cd apps/pilote-mb-core && docker compose up -d postgres`
-Expected: container `pilote_mb_postgres` up, port 5434 ouvert
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add apps/pilote-mb-core/docker-compose.yml apps/pilote-mb-core/.env.example
-git commit -m "[DITP-pilotage/pilote-2] feature: ajouter docker-compose avec DB dev et test
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: docker
-Tags: pilote-mb, backend, database
-Files-changed: 2"
-```
+- [ ] **Step 3: Lancer la DB locale** — `cd apps/pilote-mb-core && docker compose up -d postgres`
+- [ ] **Step 4: Commit** — `feature: ajouter docker-compose avec DB dev et test`
 
 ---
 
 ### Tâche 6 : Prisma schema initial + première migration
 
-**Files:**
-- Create: `apps/pilote-mb-core/prisma/schema.prisma`
+**Files:** Create: `apps/pilote-mb-core/prisma/schema.prisma`
 
 - [ ] **Step 1: Écrire `schema.prisma`**
 
@@ -519,30 +429,8 @@ enum application_log_level_enum {
 }
 ```
 
-- [ ] **Step 2: Créer la première migration**
-
-Run:
-```bash
-cd apps/pilote-mb-core
-export DATABASE_URL="postgresql://postgres:postgres@localhost:5434/pilote_mb"
-pnpm prisma migrate dev --name init
-```
-Expected: migration `0001_init` créée dans `prisma/migrations/`, client Prisma généré
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add apps/pilote-mb-core/prisma/
-git commit -m "[DITP-pilotage/pilote-2] feature: schema prisma initial avec api_key, utilisateur, application_log
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: prisma
-Tags: pilote-mb, backend, database
-Files-changed: 2"
-```
+- [ ] **Step 2: Migrer** — `cd apps/pilote-mb-core && export DATABASE_URL=... && pnpm prisma migrate dev --name init`
+- [ ] **Step 3: Commit** — `feature: schema prisma initial avec api_key, utilisateur, application_log`
 
 ---
 
@@ -552,70 +440,8 @@ Files-changed: 2"
 - Create: `apps/pilote-mb-core/src/config.ts`
 - Create: `apps/pilote-mb-core/src/config.test.ts`
 
-- [ ] **Step 1: Écrire le test**
-
-```ts
-// src/config.test.ts
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-
-describe('config', () => {
-  const originalEnv = { ...process.env }
-
-  beforeEach(() => {
-    process.env = { ...originalEnv }
-  })
-
-  afterEach(() => {
-    process.env = originalEnv
-  })
-
-  it('parse une config valide avec defaults', async () => {
-    // Given
-    process.env.NODE_ENV = 'test'
-    process.env.DATABASE_URL = 'postgresql://postgres:postgres@localhost:5435/pilote_mb_test'
-    process.env.JWT_SECRET = 'a'.repeat(32)
-
-    // When
-    const { parseConfig } = await import('./config')
-    const result = parseConfig(process.env)
-
-    // Then
-    expect(result.NODE_ENV).toEqual('test')
-    expect(result.PORT).toEqual(3000)
-    expect(result.LOG_LEVEL).toEqual('info')
-    expect(result.LOG_TO_DATABASE).toEqual(true)
-    expect(result.JWT_TTL_HOURS).toEqual(8)
-  })
-
-  it('throw si JWT_SECRET est trop court', async () => {
-    // Given
-    process.env.NODE_ENV = 'test'
-    process.env.DATABASE_URL = 'postgresql://postgres:postgres@localhost:5435/pilote_mb_test'
-    process.env.JWT_SECRET = 'short'
-
-    // When / Then
-    const { parseConfig } = await import('./config')
-    expect(() => parseConfig(process.env)).toThrow()
-  })
-
-  it('throw si DATABASE_URL est manquante', async () => {
-    // Given
-    process.env.NODE_ENV = 'test'
-    delete process.env.DATABASE_URL
-    process.env.JWT_SECRET = 'a'.repeat(32)
-
-    // When / Then
-    const { parseConfig } = await import('./config')
-    expect(() => parseConfig(process.env)).toThrow()
-  })
-})
-```
-
-- [ ] **Step 2: Lancer le test (échec attendu)**
-
-Run: `pnpm -F @pilote-mb/core test src/config.test.ts`
-Expected: échec car `parseConfig` n'existe pas encore
-
+- [ ] **Step 1: Écrire le test** (3 cas : valide avec defaults, JWT_SECRET trop court, DATABASE_URL manquante)
+- [ ] **Step 2: Lancer (échec)**
 - [ ] **Step 3: Écrire l'implémentation**
 
 ```ts
@@ -645,123 +471,60 @@ export function parseConfig(source: NodeJS.ProcessEnv): Config {
 export const config = parseConfig(process.env)
 ```
 
-- [ ] **Step 4: Lancer les tests (doivent passer)**
-
-Run: `pnpm -F @pilote-mb/core test src/config.test.ts`
-Expected: 3 tests passent
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/config.ts apps/pilote-mb-core/src/config.test.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: config zod-validee au boot
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, zod
-Tags: pilote-mb, backend, config
-Files-changed: 2"
-```
+- [ ] **Step 4: Lancer (pass) + commit** — `feature: config zod-validee au boot`
 
 ---
 
-## Phase 2 — shared-kernel (primitives DDD)
+## Phase 2 — Framework — primitives
 
-### Tâche 8 : Result (re-export neverthrow)
+### Tâche 8 : Result + ResultAsync (re-exports neverthrow)
 
-**Files:**
-- Create: `apps/pilote-mb-core/src/shared-kernel/result.ts`
+**Files:** Create: `apps/pilote-mb-core/src/framework/result/index.ts`
 
-- [ ] **Step 1: Écrire le fichier de re-export**
+- [ ] **Step 1: Écrire les re-exports**
 
 ```ts
-// src/shared-kernel/result.ts
-export { ok, err, Result } from 'neverthrow'
+// src/framework/result/index.ts
+export { ok, err, okAsync, errAsync, Result, ResultAsync } from 'neverthrow'
 export type { Ok, Err } from 'neverthrow'
 ```
 
-- [ ] **Step 2: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/shared-kernel/result.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: shared-kernel — re-export neverthrow comme Result
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, shared-kernel, ddd
-Files-changed: 1"
-```
+- [ ] **Step 2: Commit** — `feature: framework — re-export neverthrow (Result + ResultAsync)`
 
 ---
 
-### Tâche 9 : DomainError + DomainErrorKind
+### Tâche 9 : AppError + ErrorKind
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/shared-kernel/domain-error.ts`
-- Create: `apps/pilote-mb-core/src/shared-kernel/domain-error.test.ts`
+- Create: `apps/pilote-mb-core/src/framework/errors/kinds.ts`
+- Create: `apps/pilote-mb-core/src/framework/errors/app-error.ts`
+- Create: `apps/pilote-mb-core/src/framework/errors/app-error.test.ts`
+- Create: `apps/pilote-mb-core/src/framework/errors/common-errors.ts` — `UnauthenticatedError`, `ForbiddenError`, `NotImplementedError`, `RepositoryError`
 
-- [ ] **Step 1: Écrire le test**
-
-```ts
-// src/shared-kernel/domain-error.test.ts
-import { describe, it, expect } from 'vitest'
-import { DomainError } from './domain-error'
-
-class FakeNotFoundError extends DomainError {
-  readonly code = 'FAKE_NOT_FOUND'
-  readonly kind = 'not-found' as const
-}
-
-describe('DomainError', () => {
-  it('expose code, kind, message, details et name', () => {
-    // Given
-    const error = new FakeNotFoundError('Resource not found', { resourceId: 'abc' })
-
-    // Then
-    expect(error.code).toEqual('FAKE_NOT_FOUND')
-    expect(error.kind).toEqual('not-found')
-    expect(error.message).toEqual('Resource not found')
-    expect(error.details).toEqual({ resourceId: 'abc' })
-    expect(error.name).toEqual('FakeNotFoundError')
-    expect(error).toBeInstanceOf(Error)
-  })
-
-  it('permet details optionnel', () => {
-    // Given
-    const error = new FakeNotFoundError('msg')
-
-    // Then
-    expect(error.details).toBeUndefined()
-  })
-})
-```
-
-- [ ] **Step 2: Lancer le test (échec)**
-
-Run: `pnpm -F @pilote-mb/core test src/shared-kernel/domain-error.test.ts`
-Expected: échec (module introuvable)
-
-- [ ] **Step 3: Écrire l'implémentation**
+- [ ] **Step 1: Écrire `kinds.ts`**
 
 ```ts
-// src/shared-kernel/domain-error.ts
-export type DomainErrorKind =
+// src/framework/errors/kinds.ts
+export type ErrorKind =
   | 'not-found'
   | 'validation'
   | 'conflict'
   | 'forbidden'
-  | 'unauthorized'
+  | 'unauthenticated'
   | 'not-implemented'
   | 'internal'
+```
 
-export abstract class DomainError extends Error {
+- [ ] **Step 2: Écrire le test sur `app-error.ts`** (vérifie `code`, `kind`, `message`, `details`, `name`, `instanceof Error`)
+- [ ] **Step 3: Implémentation `app-error.ts`**
+
+```ts
+// src/framework/errors/app-error.ts
+import { type ErrorKind } from './kinds'
+
+export abstract class AppError extends Error {
   abstract readonly code: string
-  abstract readonly kind: DomainErrorKind
+  abstract readonly kind: ErrorKind
   readonly details?: Record<string, unknown>
 
   constructor(message: string, details?: Record<string, unknown>) {
@@ -772,394 +535,66 @@ export abstract class DomainError extends Error {
 }
 ```
 
-- [ ] **Step 4: Lancer le test (pass)**
+- [ ] **Step 4: Implémentation `common-errors.ts`**
 
-Run: `pnpm -F @pilote-mb/core test src/shared-kernel/domain-error.test.ts`
-Expected: 2 tests passent
+```ts
+// src/framework/errors/common-errors.ts
+import { AppError } from './app-error'
 
-- [ ] **Step 5: Commit**
+export class UnauthenticatedError extends AppError {
+  readonly code = 'UNAUTHENTICATED'
+  readonly kind = 'unauthenticated' as const
+}
 
-```bash
-git add apps/pilote-mb-core/src/shared-kernel/domain-error.ts apps/pilote-mb-core/src/shared-kernel/domain-error.test.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: shared-kernel — DomainError base class + DomainErrorKind
+export class ForbiddenError extends AppError {
+  readonly code = 'FORBIDDEN'
+  readonly kind = 'forbidden' as const
+}
 
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, shared-kernel, ddd
-Files-changed: 2"
+export class NotImplementedError extends AppError {
+  readonly code = 'NOT_IMPLEMENTED'
+  readonly kind = 'not-implemented' as const
+}
+
+export class RepositoryError extends AppError {
+  readonly code = 'REPOSITORY_ERROR'
+  readonly kind = 'internal' as const
+}
 ```
+
+- [ ] **Step 5: Commit** — `feature: framework — AppError + ErrorKind + erreurs communes`
 
 ---
 
-### Tâche 10 : DomainEvent interface + DomainEventPublisher port
+### Tâche 10 : Ports techniques (Clock, Transaction, Logger, AuthContext)
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/shared-kernel/domain-event.ts`
-- Create: `apps/pilote-mb-core/src/shared-kernel/domain-event-publisher.ts`
-- Create: `apps/pilote-mb-core/src/shared-kernel/domain-event-handler.ts`
+- Create: `apps/pilote-mb-core/src/framework/clock/clock.ts`
+- Create: `apps/pilote-mb-core/src/framework/persistence/prisma/transaction.ts`
+- Create: `apps/pilote-mb-core/src/framework/logging/logger.ts`
+- Create: `apps/pilote-mb-core/src/framework/auth-context/auth-context.ts`
+- Create: `apps/pilote-mb-core/src/framework/auth-context/auth.ts` — types `Auth`, `ApiKeyAuth`, `UserAuth`
 
-- [ ] **Step 1: Écrire `domain-event.ts`**
-
-```ts
-// src/shared-kernel/domain-event.ts
-export interface DomainEvent {
-  readonly type: string
-  readonly occurredAt: Date
-  readonly aggregateId: string
-}
-```
-
-- [ ] **Step 2: Écrire `domain-event-publisher.ts`**
+- [ ] **Step 1: `clock.ts`**
 
 ```ts
-// src/shared-kernel/domain-event-publisher.ts
-import { type DomainEvent } from './domain-event'
-
-export interface DomainEventPublisher {
-  publish(events: ReadonlyArray<DomainEvent>): Promise<void>
-}
+// src/framework/clock/clock.ts
+export interface Clock { now(): Date }
 ```
 
-- [ ] **Step 3: Écrire `domain-event-handler.ts`**
+- [ ] **Step 2: `transaction.ts`**
 
 ```ts
-// src/shared-kernel/domain-event-handler.ts
-import { type DomainEvent } from './domain-event'
-
-export interface DomainEventHandler<TEvent extends DomainEvent = DomainEvent> {
-  readonly eventType: string
-  handle(event: TEvent): Promise<void>
-}
-```
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/shared-kernel/domain-event.ts apps/pilote-mb-core/src/shared-kernel/domain-event-publisher.ts apps/pilote-mb-core/src/shared-kernel/domain-event-handler.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: shared-kernel — DomainEvent + ports Publisher/Handler
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, shared-kernel, ddd, events
-Files-changed: 3"
-```
-
----
-
-### Tâche 11 : AggregateRoot base class
-
-**Files:**
-- Create: `apps/pilote-mb-core/src/shared-kernel/aggregate-root.ts`
-- Create: `apps/pilote-mb-core/src/shared-kernel/aggregate-root.test.ts`
-
-- [ ] **Step 1: Écrire le test**
-
-```ts
-// src/shared-kernel/aggregate-root.test.ts
-import { describe, it, expect } from 'vitest'
-import { AggregateRoot } from './aggregate-root'
-import { type DomainEvent } from './domain-event'
-
-class FakeEvent implements DomainEvent {
-  readonly type = 'FAKE_EVENT'
-  constructor(readonly aggregateId: string, readonly occurredAt: Date) {}
-}
-
-class FakeAggregate extends AggregateRoot<string> {
-  constructor(id: string) { super(id) }
-  doSomething(): void {
-    this.recordEvent(new FakeEvent(this.id, new Date('2026-04-24T10:00:00Z')))
-  }
-}
-
-describe('AggregateRoot', () => {
-  it('accumule les events via recordEvent', () => {
-    // Given
-    const aggregate = new FakeAggregate('agg-1')
-
-    // When
-    aggregate.doSomething()
-    aggregate.doSomething()
-
-    // Then
-    const events = aggregate.pullPendingEvents()
-    expect(events).toHaveLength(2)
-    expect(events[0]!.type).toEqual('FAKE_EVENT')
-  })
-
-  it('pullPendingEvents vide le buffer', () => {
-    // Given
-    const aggregate = new FakeAggregate('agg-1')
-    aggregate.doSomething()
-
-    // When
-    aggregate.pullPendingEvents()
-    const secondPull = aggregate.pullPendingEvents()
-
-    // Then
-    expect(secondPull).toEqual([])
-  })
-
-  it('expose id en readonly', () => {
-    const aggregate = new FakeAggregate('agg-1')
-    expect(aggregate.id).toEqual('agg-1')
-  })
-})
-```
-
-- [ ] **Step 2: Lancer le test (échec)**
-
-Run: `pnpm -F @pilote-mb/core test src/shared-kernel/aggregate-root.test.ts`
-Expected: échec
-
-- [ ] **Step 3: Écrire l'implémentation**
-
-```ts
-// src/shared-kernel/aggregate-root.ts
-import { type DomainEvent } from './domain-event'
-
-export abstract class AggregateRoot<TId> {
-  private readonly pendingEvents: DomainEvent[] = []
-
-  protected constructor(readonly id: TId) {}
-
-  protected recordEvent(event: DomainEvent): void {
-    this.pendingEvents.push(event)
-  }
-
-  pullPendingEvents(): ReadonlyArray<DomainEvent> {
-    const events = [...this.pendingEvents]
-    this.pendingEvents.length = 0
-    return events
-  }
-}
-```
-
-- [ ] **Step 4: Lancer le test (pass)**
-
-Run: `pnpm -F @pilote-mb/core test src/shared-kernel/aggregate-root.test.ts`
-Expected: 3 tests passent
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/shared-kernel/aggregate-root.ts apps/pilote-mb-core/src/shared-kernel/aggregate-root.test.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: shared-kernel — AggregateRoot avec pendingEvents
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, shared-kernel, ddd, aggregate
-Files-changed: 2"
-```
-
----
-
-### Tâche 12 : ValueObject base class
-
-**Files:**
-- Create: `apps/pilote-mb-core/src/shared-kernel/value-object.ts`
-- Create: `apps/pilote-mb-core/src/shared-kernel/value-object.test.ts`
-
-- [ ] **Step 1: Écrire le test**
-
-```ts
-// src/shared-kernel/value-object.test.ts
-import { describe, it, expect } from 'vitest'
-import { ValueObject } from './value-object'
-
-class FakeEmail extends ValueObject<string> {
-  constructor(email: string) {
-    if (!email.includes('@')) throw new Error('Invalid email')
-    super(email)
-  }
-}
-
-describe('ValueObject', () => {
-  it('equals retourne true pour deux VO de même valeur', () => {
-    const a = new FakeEmail('foo@bar.com')
-    const b = new FakeEmail('foo@bar.com')
-    expect(a.equals(b)).toEqual(true)
-  })
-
-  it('equals retourne false pour deux VO de valeurs différentes', () => {
-    const a = new FakeEmail('foo@bar.com')
-    const b = new FakeEmail('other@bar.com')
-    expect(a.equals(b)).toEqual(false)
-  })
-
-  it('valueOf retourne la valeur brute', () => {
-    const email = new FakeEmail('foo@bar.com')
-    expect(email.valueOf()).toEqual('foo@bar.com')
-  })
-
-  it('throw si la valeur ne respecte pas les invariants du sous-type', () => {
-    expect(() => new FakeEmail('invalid')).toThrow('Invalid email')
-  })
-})
-```
-
-- [ ] **Step 2: Lancer le test (échec)**
-
-Run: `pnpm -F @pilote-mb/core test src/shared-kernel/value-object.test.ts`
-Expected: échec
-
-- [ ] **Step 3: Écrire l'implémentation**
-
-```ts
-// src/shared-kernel/value-object.ts
-export abstract class ValueObject<T> {
-  constructor(protected readonly value: T) {}
-
-  equals(other: ValueObject<T>): boolean {
-    return JSON.stringify(this.value) === JSON.stringify(other.value)
-  }
-
-  valueOf(): T {
-    return this.value
-  }
-}
-```
-
-- [ ] **Step 4: Lancer le test (pass)**
-
-Run: `pnpm -F @pilote-mb/core test src/shared-kernel/value-object.test.ts`
-Expected: 4 tests passent
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/shared-kernel/value-object.ts apps/pilote-mb-core/src/shared-kernel/value-object.test.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: shared-kernel — ValueObject base class
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, shared-kernel, ddd
-Files-changed: 2"
-```
-
----
-
-### Tâche 13 : Uuid VO
-
-**Files:**
-- Create: `apps/pilote-mb-core/src/shared-kernel/uuid.ts`
-- Create: `apps/pilote-mb-core/src/shared-kernel/uuid.test.ts`
-
-- [ ] **Step 1: Écrire le test**
-
-```ts
-// src/shared-kernel/uuid.test.ts
-import { describe, it, expect } from 'vitest'
-import { Uuid } from './uuid'
-
-describe('Uuid', () => {
-  it('generate produit un UUID v4 valide', () => {
-    const uuid = Uuid.generate()
-    expect(uuid.valueOf()).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/)
-  })
-
-  it('from accepte un UUID valide', () => {
-    const uuid = Uuid.from('550e8400-e29b-41d4-a716-446655440000')
-    expect(uuid.valueOf()).toEqual('550e8400-e29b-41d4-a716-446655440000')
-  })
-
-  it('from throw si UUID invalide', () => {
-    expect(() => Uuid.from('not-a-uuid')).toThrow()
-  })
-})
-```
-
-- [ ] **Step 2: Lancer le test (échec)**
-
-Run: `pnpm -F @pilote-mb/core test src/shared-kernel/uuid.test.ts`
-Expected: échec
-
-- [ ] **Step 3: Écrire l'implémentation**
-
-```ts
-// src/shared-kernel/uuid.ts
-import { randomUUID } from 'node:crypto'
-import { ValueObject } from './value-object'
-
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-
-export class Uuid extends ValueObject<string> {
-  static generate(): Uuid {
-    return new Uuid(randomUUID())
-  }
-
-  static from(value: string): Uuid {
-    if (!UUID_REGEX.test(value)) {
-      throw new Error(`Invalid UUID: ${value}`)
-    }
-    return new Uuid(value)
-  }
-}
-```
-
-- [ ] **Step 4: Lancer le test (pass)**
-
-Run: `pnpm -F @pilote-mb/core test src/shared-kernel/uuid.test.ts`
-Expected: 3 tests passent
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/shared-kernel/uuid.ts apps/pilote-mb-core/src/shared-kernel/uuid.test.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: shared-kernel — Uuid VO
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, shared-kernel, ddd
-Files-changed: 2"
-```
-
----
-
-### Tâche 14 : Ports techniques (Clock, Transaction, Logger)
-
-**Files:**
-- Create: `apps/pilote-mb-core/src/shared-kernel/clock.ts`
-- Create: `apps/pilote-mb-core/src/shared-kernel/transaction.ts`
-- Create: `apps/pilote-mb-core/src/shared-kernel/logger.ts`
-
-- [ ] **Step 1: Écrire `clock.ts`**
-
-```ts
-// src/shared-kernel/clock.ts
-export interface Clock {
-  now(): Date
-}
-```
-
-- [ ] **Step 2: Écrire `transaction.ts`**
-
-```ts
-// src/shared-kernel/transaction.ts
+// src/framework/persistence/prisma/transaction.ts
 export interface Transaction {
   run<T>(scope: () => Promise<T>): Promise<T>
 }
 ```
 
-- [ ] **Step 3: Écrire `logger.ts`**
+- [ ] **Step 3: `logger.ts`**
 
 ```ts
-// src/shared-kernel/logger.ts
+// src/framework/logging/logger.ts
 export interface Logger {
   info(context: Record<string, unknown>, message: string): void
   warn(context: Record<string, unknown>, message: string): void
@@ -1168,40 +603,60 @@ export interface Logger {
 }
 ```
 
-- [ ] **Step 4: Commit**
+- [ ] **Step 4: `auth.ts`** — types
 
-```bash
-git add apps/pilote-mb-core/src/shared-kernel/clock.ts apps/pilote-mb-core/src/shared-kernel/transaction.ts apps/pilote-mb-core/src/shared-kernel/logger.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: shared-kernel — ports techniques Clock, Transaction, Logger
+```ts
+// src/framework/auth-context/auth.ts
+export type ApiKeyAuth = {
+  readonly kind: 'api-key'
+  readonly apiKeyId: string
+  readonly nom: string
+  readonly scopes: ReadonlyArray<string>
+}
 
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, shared-kernel, ddd
-Files-changed: 3"
+export type UserAuth = {
+  readonly kind: 'user'
+  readonly utilisateurId: string
+  readonly email: string
+  readonly nomComplet: string
+  readonly statutAcces: string
+  readonly roles: ReadonlyArray<string>
+}
+
+export type Auth = ApiKeyAuth | UserAuth
 ```
 
----
+- [ ] **Step 5: `auth-context.ts`** — port
+
+```ts
+// src/framework/auth-context/auth-context.ts
+import { type Auth } from './auth'
+
+export interface AuthContext {
+  run<T>(auth: Auth, scope: () => Promise<T>): Promise<T>
+  current(): Auth | undefined
+}
+```
+
+- [ ] **Step 6: Commit** — `feature: framework — ports techniques (Clock, Transaction, Logger, AuthContext)`
 
 ---
 
-## Phase 3 — Platform infrastructure
+## Phase 3 — Framework — infrastructure
 
-### Tâche 15 : PrismaPilote wrapper + PrismaTransaction
+### Tâche 11 : PrismaPilote wrapper + PrismaTransaction
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/platform/persistence/prisma/prisma-transaction.ts`
-- Create: `apps/pilote-mb-core/src/platform/persistence/prisma/prisma-pilote.ts`
+- Create: `apps/pilote-mb-core/src/framework/persistence/prisma/prisma-transaction.ts`
+- Create: `apps/pilote-mb-core/src/framework/persistence/prisma/prisma-pilote.ts`
 
 - [ ] **Step 1: Écrire `prisma-transaction.ts`**
 
 ```ts
-// src/platform/persistence/prisma/prisma-transaction.ts
+// src/framework/persistence/prisma/prisma-transaction.ts
 import { AsyncLocalStorage } from 'node:async_hooks'
 import { PrismaClient } from '@prisma/client'
-import { type Transaction } from '@/shared-kernel/transaction'
+import { type Transaction } from './transaction'
 
 const prisma = new PrismaClient()
 
@@ -1215,13 +670,13 @@ export class PrismaTransaction implements Transaction {
 }
 
 export { prisma as prismaClient }
+export const getPrisma = (): PilotePrismaClient => txStore.getStore() ?? prismaClient
 ```
 
 - [ ] **Step 2: Écrire `prisma-pilote.ts`**
 
 ```ts
-// src/platform/persistence/prisma/prisma-pilote.ts
-import { PrismaClient } from '@prisma/client'
+// src/framework/persistence/prisma/prisma-pilote.ts
 import { txStore, type PilotePrismaClient, prismaClient } from './prisma-transaction'
 
 export class PrismaPilote {
@@ -1231,165 +686,70 @@ export class PrismaPilote {
 }
 ```
 
-- [ ] **Step 3: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/platform/persistence/prisma/
-git commit -m "[DITP-pilotage/pilote-2] feature: platform — PrismaPilote wrapper + PrismaTransaction
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, prisma
-Tags: pilote-mb, backend, platform, persistence
-Files-changed: 2"
-```
+- [ ] **Step 3: Commit** — `feature: framework — PrismaPilote wrapper + PrismaTransaction`
 
 ---
 
-### Tâche 16 : SystemClock adapter
+### Tâche 12 : SystemClock adapter
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/platform/clock/system-clock.ts`
-- Create: `apps/pilote-mb-core/src/platform/clock/system-clock.test.ts`
+- Create: `apps/pilote-mb-core/src/framework/clock/system-clock.ts`
+- Create: `apps/pilote-mb-core/src/framework/clock/system-clock.test.ts`
 
-- [ ] **Step 1: Écrire le test**
-
-```ts
-// src/platform/clock/system-clock.test.ts
-import { describe, it, expect } from 'vitest'
-import { SystemClock } from './system-clock'
-
-describe('SystemClock', () => {
-  it('retourne la date courante', () => {
-    const clock = new SystemClock()
-    const before = Date.now()
-    const now = clock.now().getTime()
-    const after = Date.now()
-    expect(now).toBeGreaterThanOrEqual(before)
-    expect(now).toBeLessThanOrEqual(after)
-  })
-})
-```
-
-- [ ] **Step 2: Lancer le test (échec)**
-
-Run: `pnpm -F @pilote-mb/core test src/platform/clock/system-clock.test.ts`
-Expected: échec
-
-- [ ] **Step 3: Écrire l'implémentation**
+- [ ] **Step 1: Test** (vérifie `clock.now()` retourne une `Date` cohérente avec `Date.now()`)
+- [ ] **Step 2: Implémentation**
 
 ```ts
-// src/platform/clock/system-clock.ts
+// src/framework/clock/system-clock.ts
 /* eslint-disable no-restricted-syntax */
-import { type Clock } from '@/shared-kernel/clock'
+import { type Clock } from './clock'
 
 export class SystemClock implements Clock {
-  now(): Date {
-    return new Date()
-  }
+  now(): Date { return new Date() }
 }
 ```
 
-- [ ] **Step 4: Lancer le test (pass) et commit**
-
-Run: `pnpm -F @pilote-mb/core test src/platform/clock/system-clock.test.ts`
-
-```bash
-git add apps/pilote-mb-core/src/platform/clock/
-git commit -m "[DITP-pilotage/pilote-2] feature: platform — SystemClock adapter
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, platform
-Files-changed: 2"
-```
+- [ ] **Step 3: Commit** — `feature: framework — SystemClock adapter`
 
 ---
 
-### Tâche 17 : LogSink interface + PinoStdoutSink + DatabaseSink + CompositeLogger
+### Tâche 13 : Logger sinks composables
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/platform/logging/log-sink.ts`
-- Create: `apps/pilote-mb-core/src/platform/logging/sinks/pino-stdout.sink.ts`
-- Create: `apps/pilote-mb-core/src/platform/logging/sinks/database.sink.ts`
-- Create: `apps/pilote-mb-core/src/platform/logging/composite-logger.ts`
-- Create: `apps/pilote-mb-core/src/platform/logging/composite-logger.test.ts`
-- Create: `apps/pilote-mb-core/src/platform/logging/build-logger.ts`
+- Create: `src/framework/logging/log-sink.ts`
+- Create: `src/framework/logging/sinks/pino-stdout.sink.ts`
+- Create: `src/framework/logging/sinks/database.sink.ts`
+- Create: `src/framework/logging/composite-logger.ts`
+- Create: `src/framework/logging/composite-logger.test.ts`
+- Create: `src/framework/logging/build-logger.ts`
 
-- [ ] **Step 1: Écrire `log-sink.ts`**
+- [ ] **Step 1: `log-sink.ts`** — `LogLevel`, `LogEntry`, `LogSink`
 
 ```ts
-// src/platform/logging/log-sink.ts
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error'
-
 export interface LogEntry {
   readonly level: LogLevel
   readonly timestamp: Date
   readonly message: string
   readonly context: Record<string, unknown>
 }
-
-export interface LogSink {
-  write(entry: LogEntry): void
-}
+export interface LogSink { write(entry: LogEntry): void }
 ```
 
-- [ ] **Step 2: Écrire le test du CompositeLogger**
+- [ ] **Step 2: Test du `CompositeLogger`** (dispatche à tous les sinks, niveau correct)
+- [ ] **Step 3: `composite-logger.ts`**
 
 ```ts
-// src/platform/logging/composite-logger.test.ts
-import { describe, it, expect } from 'vitest'
-import { CompositeLogger } from './composite-logger'
-import { type LogSink, type LogEntry } from './log-sink'
-
-class CapturingSink implements LogSink {
-  readonly entries: LogEntry[] = []
-  write(entry: LogEntry): void { this.entries.push(entry) }
-}
-
-describe('CompositeLogger', () => {
-  it('dispatche info vers tous les sinks', () => {
-    const sinkA = new CapturingSink()
-    const sinkB = new CapturingSink()
-    const logger = new CompositeLogger([sinkA, sinkB])
-
-    logger.info({ userId: '42' }, 'hello')
-
-    expect(sinkA.entries).toHaveLength(1)
-    expect(sinkA.entries[0]!.level).toEqual('info')
-    expect(sinkA.entries[0]!.message).toEqual('hello')
-    expect(sinkA.entries[0]!.context).toEqual({ userId: '42' })
-    expect(sinkB.entries).toEqual(sinkA.entries)
-  })
-
-  it('dispatche error avec bon niveau', () => {
-    const sink = new CapturingSink()
-    const logger = new CompositeLogger([sink])
-    logger.error({ reason: 'boom' }, 'failed')
-    expect(sink.entries[0]!.level).toEqual('error')
-  })
-})
-```
-
-- [ ] **Step 3: Écrire `composite-logger.ts`**
-
-```ts
-// src/platform/logging/composite-logger.ts
-import { type Logger } from '@/shared-kernel/logger'
+// src/framework/logging/composite-logger.ts
+import { type Logger } from './logger'
 import { type LogSink, type LogLevel } from './log-sink'
 
 export class CompositeLogger implements Logger {
   constructor(private readonly sinks: ReadonlyArray<LogSink>) {}
-
-  info(context: Record<string, unknown>, message: string): void { this.emit('info', context, message) }
-  warn(context: Record<string, unknown>, message: string): void { this.emit('warn', context, message) }
-  error(context: Record<string, unknown>, message: string): void { this.emit('error', context, message) }
-  debug(context: Record<string, unknown>, message: string): void { this.emit('debug', context, message) }
+  info(context, message)  { this.emit('info',  context, message) }
+  warn(context, message)  { this.emit('warn',  context, message) }
+  error(context, message) { this.emit('error', context, message) }
+  debug(context, message) { this.emit('debug', context, message) }
 
   private emit(level: LogLevel, context: Record<string, unknown>, message: string): void {
     const entry = { level, timestamp: new Date(), message, context }
@@ -1398,1154 +758,637 @@ export class CompositeLogger implements Logger {
 }
 ```
 
-- [ ] **Step 4: Écrire `pino-stdout.sink.ts`**
+- [ ] **Step 4: `pino-stdout.sink.ts`** — wraps pino, JSON en prod, pretty en dev
+- [ ] **Step 5: `database.sink.ts`** — insert dans `application_log` via `getPrisma()`, best-effort (try/catch silencieux)
+- [ ] **Step 6: `build-logger.ts`**
 
 ```ts
-// src/platform/logging/sinks/pino-stdout.sink.ts
-import pino from 'pino'
-import { type LogSink, type LogEntry } from '../log-sink'
-
-export class PinoStdoutSink implements LogSink {
-  private readonly pino: pino.Logger
-
-  constructor(level: string) {
-    this.pino = pino({ level })
-  }
-
-  write(entry: LogEntry): void {
-    this.pino[entry.level](entry.context, entry.message)
-  }
-}
-```
-
-- [ ] **Step 5: Écrire `database.sink.ts`**
-
-```ts
-// src/platform/logging/sinks/database.sink.ts
-import { type LogSink, type LogEntry, type LogLevel } from '../log-sink'
-import { type PrismaPilote } from '@/platform/persistence/prisma/prisma-pilote'
-
-const LEVEL_MAP: Record<LogLevel, 'DEBUG' | 'INFO' | 'WARN' | 'ERROR'> = {
-  debug: 'DEBUG',
-  info: 'INFO',
-  warn: 'WARN',
-  error: 'ERROR',
-}
-
-export class DatabaseSink implements LogSink {
-  constructor(private readonly prisma: PrismaPilote) {}
-
-  write(entry: LogEntry): void {
-    const requestId = typeof entry.context.requestId === 'string' ? entry.context.requestId : null
-    const source = typeof entry.context.source === 'string' ? entry.context.source : null
-    const categorie = typeof entry.context.categorie === 'string' ? entry.context.categorie : 'systeme'
-    const dureeMs = typeof entry.context.duree_ms === 'number' ? entry.context.duree_ms : null
-
-    void this.prisma
-      .getInstance()
-      .application_log.create({
-        data: {
-          level: LEVEL_MAP[entry.level],
-          categorie,
-          message: entry.message,
-          contexte: entry.context as object,
-          source,
-          duree_ms: dureeMs,
-          request_id: requestId,
-        },
-      })
-      .catch(() => { /* best-effort — never crash the app on logging */ })
-  }
-}
-```
-
-- [ ] **Step 6: Écrire `build-logger.ts`**
-
-```ts
-// src/platform/logging/build-logger.ts
+// src/framework/logging/build-logger.ts
 import { type Config } from '@/config'
 import { CompositeLogger } from './composite-logger'
 import { PinoStdoutSink } from './sinks/pino-stdout.sink'
 import { DatabaseSink } from './sinks/database.sink'
-import { type PrismaPilote } from '@/platform/persistence/prisma/prisma-pilote'
 import { type LogSink } from './log-sink'
 
-export function buildLogger(config: Config, prisma: PrismaPilote): CompositeLogger {
-  const sinks: LogSink[] = [new PinoStdoutSink(config.LOG_LEVEL)]
-  if (config.LOG_TO_DATABASE) sinks.push(new DatabaseSink(prisma))
+export function buildLogger(config: Config): CompositeLogger {
+  const sinks: LogSink[] = [new PinoStdoutSink(config)]
+  if (config.LOG_TO_DATABASE) sinks.push(new DatabaseSink())
   return new CompositeLogger(sinks)
 }
 ```
 
-- [ ] **Step 7: Lancer les tests et commit**
-
-Run: `pnpm -F @pilote-mb/core test src/platform/logging/`
-
-```bash
-git add apps/pilote-mb-core/src/platform/logging/
-git commit -m "[DITP-pilotage/pilote-2] feature: platform — CompositeLogger avec sinks composables
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, pino
-Tags: pilote-mb, backend, platform, logging
-Files-changed: 6"
-```
+- [ ] **Step 7: Commit** — `feature: framework — logger composable avec sinks pino + database`
 
 ---
 
-### Tâche 18 : InMemoryDomainEventPublisher + AuditLogEventHandler
+### Tâche 14 : AsyncLocalStorageAuthContext + helpers
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/platform/events/in-memory-domain-event-publisher.ts`
-- Create: `apps/pilote-mb-core/src/platform/events/in-memory-domain-event-publisher.test.ts`
-- Create: `apps/pilote-mb-core/src/platform/events/audit-log-event-handler.ts`
+- Create: `src/framework/auth-context/async-local-storage-auth-context.ts`
+- Create: `src/framework/auth-context/current-auth.ts`
+- Create: `src/framework/auth-context/current-auth.test.ts`
 
-- [ ] **Step 1: Écrire le test**
+- [ ] **Step 1: Test** — vérifier que dans un `run(auth, scope)`, `current()` et `requireUser()` retournent l'identité ; hors scope, `requireUser()` throw `UnauthenticatedError`
 
-```ts
-// src/platform/events/in-memory-domain-event-publisher.test.ts
-import { describe, it, expect } from 'vitest'
-import { InMemoryDomainEventPublisher } from './in-memory-domain-event-publisher'
-import { type DomainEventHandler } from '@/shared-kernel/domain-event-handler'
-import { type DomainEvent } from '@/shared-kernel/domain-event'
-
-class CapturingHandler implements DomainEventHandler {
-  readonly received: DomainEvent[] = []
-  constructor(readonly eventType: string) {}
-  async handle(event: DomainEvent): Promise<void> { this.received.push(event) }
-}
-
-describe('InMemoryDomainEventPublisher', () => {
-  it('dispatche chaque event aux handlers qui ont le bon eventType', async () => {
-    const fooHandler = new CapturingHandler('FOO')
-    const barHandler = new CapturingHandler('BAR')
-    const publisher = new InMemoryDomainEventPublisher([fooHandler, barHandler])
-
-    const events: DomainEvent[] = [
-      { type: 'FOO', occurredAt: new Date(), aggregateId: 'a1' },
-      { type: 'BAR', occurredAt: new Date(), aggregateId: 'a2' },
-      { type: 'FOO', occurredAt: new Date(), aggregateId: 'a3' },
-    ]
-    await publisher.publish(events)
-
-    expect(fooHandler.received).toHaveLength(2)
-    expect(barHandler.received).toHaveLength(1)
-  })
-
-  it('ignore les events sans handler enregistré', async () => {
-    const publisher = new InMemoryDomainEventPublisher([])
-    await expect(publisher.publish([
-      { type: 'UNKNOWN', occurredAt: new Date(), aggregateId: 'x' },
-    ])).resolves.toBeUndefined()
-  })
-})
-```
-
-- [ ] **Step 2: Lancer le test (échec)**
-
-Run: `pnpm -F @pilote-mb/core test src/platform/events/`
-Expected: échec
-
-- [ ] **Step 3: Écrire le publisher**
+- [ ] **Step 2: `async-local-storage-auth-context.ts`**
 
 ```ts
-// src/platform/events/in-memory-domain-event-publisher.ts
-import { type DomainEvent } from '@/shared-kernel/domain-event'
-import { type DomainEventPublisher } from '@/shared-kernel/domain-event-publisher'
-import { type DomainEventHandler } from '@/shared-kernel/domain-event-handler'
+// src/framework/auth-context/async-local-storage-auth-context.ts
+import { AsyncLocalStorage } from 'node:async_hooks'
+import { type Auth } from './auth'
+import { type AuthContext } from './auth-context'
 
-export class InMemoryDomainEventPublisher implements DomainEventPublisher {
-  private readonly handlersByType: Map<string, DomainEventHandler[]>
+export const authStore = new AsyncLocalStorage<Auth>()
 
-  constructor(handlers: ReadonlyArray<DomainEventHandler>) {
-    this.handlersByType = new Map()
-    for (const handler of handlers) {
-      const existing = this.handlersByType.get(handler.eventType) ?? []
-      existing.push(handler)
-      this.handlersByType.set(handler.eventType, existing)
-    }
+export class AsyncLocalStorageAuthContext implements AuthContext {
+  run<T>(auth: Auth, scope: () => Promise<T>): Promise<T> {
+    return authStore.run(auth, scope)
   }
-
-  async publish(events: ReadonlyArray<DomainEvent>): Promise<void> {
-    for (const event of events) {
-      const handlers = this.handlersByType.get(event.type) ?? []
-      await Promise.all(handlers.map((handler) => handler.handle(event)))
-    }
+  current(): Auth | undefined {
+    return authStore.getStore()
   }
 }
 ```
 
-- [ ] **Step 4: Écrire `audit-log-event-handler.ts`**
+- [ ] **Step 3: `current-auth.ts`** — helpers globaux
 
 ```ts
-// src/platform/events/audit-log-event-handler.ts
-import { type DomainEvent } from '@/shared-kernel/domain-event'
-import { type DomainEventHandler } from '@/shared-kernel/domain-event-handler'
-import { type Logger } from '@/shared-kernel/logger'
+// src/framework/auth-context/current-auth.ts
+import { authStore } from './async-local-storage-auth-context'
+import { type Auth, type ApiKeyAuth, type UserAuth } from './auth'
+import { UnauthenticatedError } from '@/framework/errors/common-errors'
 
-const AUDITED_EVENT_TYPES = ['API_KEY_CREATED', 'API_KEY_REVOKED', 'UTILISATEUR_CREATED'] as const
+export const currentAuth = (): Auth | undefined => authStore.getStore()
 
-export class AuditLogEventHandler implements DomainEventHandler {
-  readonly eventType = '*'
-  private readonly audited = new Set<string>(AUDITED_EVENT_TYPES)
+export const requireUser = (): UserAuth => {
+  const auth = currentAuth()
+  if (auth?.kind !== 'user') throw new UnauthenticatedError('user authentication required')
+  return auth
+}
 
-  constructor(private readonly logger: Logger) {}
-
-  async handle(event: DomainEvent): Promise<void> {
-    if (!this.audited.has(event.type)) return
-    this.logger.info(
-      {
-        categorie: 'audit',
-        source: 'domain-event',
-        eventType: event.type,
-        aggregateId: event.aggregateId,
-      },
-      `Domain event: ${event.type}`,
-    )
-  }
+export const requireApiKey = (): ApiKeyAuth => {
+  const auth = currentAuth()
+  if (auth?.kind !== 'api-key') throw new UnauthenticatedError('api-key authentication required')
+  return auth
 }
 ```
 
-**Note :** on utilise `eventType = '*'` comme convention pour "handler universel". Le publisher doit alors aussi matcher `*`. Met à jour le publisher pour supporter ça :
-
-- [ ] **Step 5: Mettre à jour le publisher pour supporter `'*'`**
-
-```ts
-// Dans InMemoryDomainEventPublisher.publish, remplacer la boucle par :
-async publish(events: ReadonlyArray<DomainEvent>): Promise<void> {
-  const wildcardHandlers = this.handlersByType.get('*') ?? []
-  for (const event of events) {
-    const typedHandlers = this.handlersByType.get(event.type) ?? []
-    await Promise.all([...typedHandlers, ...wildcardHandlers].map((h) => h.handle(event)))
-  }
-}
-```
-
-Met à jour le test pour couvrir le cas wildcard :
-
-```ts
-// Ajouter dans in-memory-domain-event-publisher.test.ts
-it('dispatche aux handlers wildcard', async () => {
-  const wildcardHandler = new CapturingHandler('*')
-  const publisher = new InMemoryDomainEventPublisher([wildcardHandler])
-  await publisher.publish([
-    { type: 'FOO', occurredAt: new Date(), aggregateId: 'a1' },
-    { type: 'BAR', occurredAt: new Date(), aggregateId: 'a2' },
-  ])
-  expect(wildcardHandler.received).toHaveLength(2)
-})
-```
-
-- [ ] **Step 6: Lancer les tests et commit**
-
-Run: `pnpm -F @pilote-mb/core test src/platform/events/`
-
-```bash
-git add apps/pilote-mb-core/src/platform/events/
-git commit -m "[DITP-pilotage/pilote-2] feature: platform — InMemoryDomainEventPublisher + AuditLogEventHandler
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, platform, events, ddd
-Files-changed: 3"
-```
+- [ ] **Step 4: Commit** — `feature: framework — AuthContext via AsyncLocalStorage + requireUser/requireApiKey`
 
 ---
 
-### Tâche 19 : Module-system (define-module, boot-modules, module-names)
+### Tâche 15 : DomainEventPublisher remplacé — pas d'event bus à l'init
+
+**Note** : pas de tâche dédiée. Le design (5.11) explicite l'absence d'events bus à l'init. Si on a besoin d'un audit log, on l'écrit en **logging structuré** dans le use case correspondant. Plus tard, un module `audit` pourra émerger comme consommateur de logs structurés ou via un mécanisme dédié.
+
+---
+
+## Phase 4 — Framework — module-system + container
+
+### Tâche 16 : Adapter le module-system depuis pilote-ppg
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/platform/container/module-system/module-names.ts`
-- Create: `apps/pilote-mb-core/src/platform/container/module-system/define-module.ts`
-- Create: `apps/pilote-mb-core/src/platform/container/module-system/boot-modules.ts`
+- Create: `src/framework/module-system/define-module.ts`
+- Create: `src/framework/module-system/boot-modules.ts`
+- Create: `src/framework/module-system/module-names.ts`
+- Create: `src/framework/module-system/types.ts`
 
-**Note d'implémentation :** copier/adapter depuis `apps/pilote-ppg/src/server/module-system/` (cf. fichiers `ModuleDef.ts`, `bootModules.ts`, `moduleNames.ts`).
-
-- [ ] **Step 1: Écrire `module-names.ts`**
+- [ ] **Step 1: Lire le module-system de pilote-ppg** (`apps/pilote-ppg/src/server/.../module-system/` ou équivalent) pour comprendre le pattern existant
+- [ ] **Step 2: `module-names.ts`**
 
 ```ts
-// src/platform/container/module-system/module-names.ts
-export const moduleNames = [
-  'platform',
-  'authentication',
-  'healthcheck',
-] as const
-
+// src/framework/module-system/module-names.ts
+export const moduleNames = ['framework', 'authentication', 'healthcheck'] as const
 export type ModuleName = (typeof moduleNames)[number]
 ```
 
-- [ ] **Step 2: Écrire `define-module.ts`**
-
-Copier le contenu depuis `apps/pilote-ppg/src/server/module-system/ModuleDef.ts`, en adaptant :
-- Remplacer l'import `"./moduleNames"` par `"./module-names"` et le type `ModuleName` vient du fichier local
-- Remplacer l'import `"@/server/shared/module"` par `"@/platform/platform.module"` (le type `PlatformDependencies` sera exporté par `platform.module.ts` créé en T23)
-- Garder tous les types `TypedAsFunction`, `TypedAsClass`, `ModuleScope`, `ModuleHelpers`, `ModuleDef`, `defineModule`, `VerifyCradle`, `NoExports`, `ExtractScope`
-
-```ts
-// src/platform/container/module-system/define-module.ts
-import {
-  type AwilixContainer,
-  type BuildResolver,
-  type BuildResolverOptions,
-  type DisposableResolver,
-} from 'awilix'
-import type { PlatformDependencies } from '@/platform/platform.module'
-import type { ModuleName } from './module-names'
-
-export type TypedAsFunction<TCradle> = <T>(
-  fn: (cradle: TCradle) => T,
-) => BuildResolver<T> & DisposableResolver<T>
-
-export type TypedAsClass<TScope> = <T>(
-  Type: new (deps: TScope) => T,
-  opts?: BuildResolverOptions<T>,
-) => BuildResolver<T> & DisposableResolver<T>
-
-export type ModuleScope<TCradle> = PlatformDependencies & TCradle
-
-export type ModuleHelpers<TCradle> = {
-  asModuleFunction: TypedAsFunction<TCradle>
-  asModuleClass: TypedAsClass<ModuleScope<TCradle>>
-}
-
-export type RemoveIndexSignature<T> = {
-  [K in keyof T as string extends K ? never : K]: T[K]
-}
-
-export type ModuleDef<
-  TName extends ModuleName,
-  TExports extends Record<string, unknown>,
-  TCradle extends TExports,
-> = {
-  name: TName
-  imports: ModuleName[]
-  exports: (keyof TExports)[]
-  register: (
-    container: AwilixContainer<RemoveIndexSignature<TCradle>>,
-    helpers: ModuleHelpers<TCradle>,
-  ) => void
-}
-
-export const defineModule =
-  <TExports extends Record<string, unknown>, TCradle extends TExports>() =>
-  <TName extends ModuleName>(def: ModuleDef<TName, TExports, TCradle>): ModuleDef<TName, TExports, TCradle> =>
-    def
-
-export type VerifyCradle<T> = Record<keyof T, unknown>
-
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type NoExports = {}
-
-export type ExtractScope<M> =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  M extends ModuleDef<ModuleName, any, infer C> ? ModuleScope<C> : never
-```
-
-- [ ] **Step 3: Écrire `boot-modules.ts`**
-
-Même principe : copier depuis `bootModules.ts` de pilote-ppg, renommer les imports pour matcher nos fichiers locaux.
-
-```ts
-// src/platform/container/module-system/boot-modules.ts
-import {
-  asClass,
-  asFunction,
-  asValue,
-  type AwilixContainer,
-  createContainer,
-  InjectionMode,
-} from 'awilix'
-import type { ModuleDef, TypedAsClass, TypedAsFunction } from './define-module'
-import type { ModuleName } from './module-names'
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AnyModuleDef = ModuleDef<ModuleName, any, any>
-
-export type ExtractCradle<M> =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  M extends ModuleDef<ModuleName, any, infer C> ? C : never
-
-export const bootModules = <TModules extends readonly AnyModuleDef[]>(
-  modules: [...TModules],
-): {
-  getContainer: <N extends TModules[number]['name']>(
-    name: N,
-  ) => AwilixContainer<ExtractCradle<Extract<TModules[number], { name: N }>>>
-} => {
-  const containers = new Map<string, AwilixContainer>()
-
-  const rootModule = modules.find((m) => m.imports.length === 0)
-  if (!rootModule) throw new Error('No root module found (a module with empty imports is required)')
-
-  const rootContainer = createContainer({ injectionMode: InjectionMode.PROXY, strict: true })
-
-  const helpers = {
-    asModuleFunction: asFunction as unknown as TypedAsFunction<never>,
-    asModuleClass: asClass as unknown as TypedAsClass<never>,
-  }
-
-  rootModule.register(rootContainer, helpers)
-  containers.set(rootModule.name, rootContainer)
-
-  for (const mod of modules) {
-    if (mod === rootModule) continue
-    const scope = rootContainer.createScope()
-    mod.register(scope, helpers)
-    containers.set(mod.name, scope)
-  }
-
-  for (const mod of modules) {
-    if (mod === rootModule) continue
-    const container = containers.get(mod.name)!
-    for (const importName of mod.imports) {
-      if (importName === rootModule.name) continue
-      const importedModule = modules.find((m) => m.name === importName)
-      if (!importedModule) throw new Error(`Module "${mod.name}" imports unknown module "${importName}"`)
-      const importedContainer = containers.get(importName)!
-      for (const exportKey of importedModule.exports) {
-        container.register({
-          [exportKey as string]: asValue(importedContainer.resolve(exportKey as string)),
-        })
-      }
-    }
-  }
-
-  return {
-    getContainer: (name) => {
-      const container = containers.get(name)
-      if (!container) throw new Error(`Module "${name}" not found`)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return container as any
-    },
-  }
-}
-```
-
-- [ ] **Step 4: Vérifier la compilation**
-
-Run: `pnpm -F @pilote-mb/core exec tsc --noEmit`
-Expected: erreur attendue sur `@/platform/platform.module` (pas encore créé) — acceptable, sera résolu en T23
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/platform/container/module-system/
-git commit -m "[DITP-pilotage/pilote-2] feature: platform — module-system adapte de pilote-ppg
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, awilix
-Tags: pilote-mb, backend, platform, di
-Files-changed: 3"
-```
+- [ ] **Step 3: `types.ts`** — `NoExports`, `VerifyCradle`, `ExtractScope`, `ModuleDefinition`
+- [ ] **Step 4: `define-module.ts`** — factory curryfiée typée
+- [ ] **Step 5: `boot-modules.ts`** — orchestrateur 2 phases (container racine + scopes par module + résolution eager des exports)
+- [ ] **Step 6: Tests d'intégration du boot** (un module simple `A` exporte vers `B`, vérifier que B reçoit la valeur résolue)
+- [ ] **Step 7: Commit** — `feature: framework — module-system Awilix adapte de pilote-ppg`
 
 ---
 
-### Tâche 20 : platform.module.ts
+### Tâche 17 : frameworkModule (cradle root)
 
-**Files:**
-- Create: `apps/pilote-mb-core/src/platform/platform.module.ts`
+**Files:** Create: `src/framework/framework.module.ts`
 
-- [ ] **Step 1: Écrire `platform.module.ts`**
+- [ ] **Step 1: Écrire le module**
 
 ```ts
-// src/platform/platform.module.ts
-import { defineModule, type NoExports, type VerifyCradle } from './container/module-system/define-module'
-import { type Clock } from '@/shared-kernel/clock'
-import { type Transaction } from '@/shared-kernel/transaction'
-import { type Logger } from '@/shared-kernel/logger'
-import { type DomainEventPublisher } from '@/shared-kernel/domain-event-publisher'
-import { type Config } from '@/config'
-import { config } from '@/config'
+// src/framework/framework.module.ts
+import { defineModule } from './module-system/define-module'
+import type { NoExports, VerifyCradle, ExtractScope } from './module-system/types'
+import { config, type Config } from '@/config'
 import { PrismaPilote } from './persistence/prisma/prisma-pilote'
 import { PrismaTransaction } from './persistence/prisma/prisma-transaction'
+import type { Transaction } from './persistence/prisma/transaction'
+import type { Clock } from './clock/clock'
 import { SystemClock } from './clock/system-clock'
+import type { Logger } from './logging/logger'
 import { buildLogger } from './logging/build-logger'
-import { InMemoryDomainEventPublisher } from './events/in-memory-domain-event-publisher'
-import { AuditLogEventHandler } from './events/audit-log-event-handler'
+import type { AuthContext } from './auth-context/auth-context'
+import { AsyncLocalStorageAuthContext } from './auth-context/async-local-storage-auth-context'
 
-type PlatformCradle = {
+export type FrameworkCradle = {
   prisma: PrismaPilote
   transaction: Transaction
   logger: Logger
   config: Config
   clock: Clock
-  domainEventPublisher: DomainEventPublisher
+  authContext: AuthContext
 }
 
-export type PlatformDependencies = PlatformCradle
-
-export const platformModule = defineModule<NoExports, PlatformCradle>()({
-  name: 'platform',
+export const frameworkModule = defineModule<NoExports, FrameworkCradle>()({
+  name: 'framework',
   imports: [],
   exports: [],
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
-      prisma: asModuleFunction(() => new PrismaPilote()).singleton(),
-      transaction: asModuleFunction(() => new PrismaTransaction()).singleton(),
-      config: asModuleFunction(() => config).singleton(),
-      clock: asModuleClass(SystemClock).singleton(),
-      logger: asModuleFunction(({ prisma }) => buildLogger(config, prisma as PrismaPilote)).singleton(),
-      domainEventPublisher: asModuleFunction(({ logger }) =>
-        new InMemoryDomainEventPublisher([new AuditLogEventHandler(logger as Logger)]),
-      ).singleton(),
-    } satisfies VerifyCradle<PlatformCradle>)
+      prisma:       asModuleFunction(() => new PrismaPilote()).singleton(),
+      transaction:  asModuleFunction(() => new PrismaTransaction()).singleton(),
+      logger:       asModuleFunction(() => buildLogger(config)).singleton(),
+      config:       asModuleFunction(() => config).singleton(),
+      clock:        asModuleClass(SystemClock).singleton(),
+      authContext:  asModuleClass(AsyncLocalStorageAuthContext).singleton(),
+    } satisfies VerifyCradle<FrameworkCradle>)
   },
 })
+
+type Scope = ExtractScope<typeof frameworkModule>
+export type Inject<K extends keyof Scope> = Pick<Scope, K>
 ```
 
-- [ ] **Step 2: Vérifier la compilation**
-
-Run: `pnpm -F @pilote-mb/core exec tsc --noEmit`
-Expected: compilation OK
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/platform/platform.module.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: platform — platform.module.ts avec cradle typé
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, awilix
-Tags: pilote-mb, backend, platform, di
-Files-changed: 1"
-```
+- [ ] **Step 2: Commit** — `feature: framework — frameworkModule racine avec cradle technique`
 
 ---
 
-## Phase 4 — HTTP platform (error handling + middlewares + app)
+### Tâche 18 : build-app-container (placeholder, modules ajoutés au fur et à mesure)
 
-### Tâche 21 : Error mapping + respond-with-result helper
+**Files:** Create: `src/framework/container/build-app-container.ts`
 
-**Files:**
-- Create: `apps/pilote-mb-core/src/platform/http/error-mapping.ts`
-- Create: `apps/pilote-mb-core/src/platform/http/error-mapping.test.ts`
-- Create: `apps/pilote-mb-core/src/platform/http/respond-with-result.ts`
-- Create: `apps/pilote-mb-core/src/platform/http/schemas/error.schema.ts`
-
-- [ ] **Step 1: Écrire `error.schema.ts`**
+- [ ] **Step 1: Écrire la version initiale (framework seul)**
 
 ```ts
-// src/platform/http/schemas/error.schema.ts
+// src/framework/container/build-app-container.ts
+import { bootModules } from '@/framework/module-system/boot-modules'
+import { frameworkModule } from '@/framework/framework.module'
+
+export function buildAppContainer() {
+  return bootModules([frameworkModule])
+}
+```
+
+- [ ] **Step 2: Test d'intégration** — résoudre `prisma`, `clock`, `logger`, `authContext` du container `framework`
+- [ ] **Step 3: Commit** — `feature: framework — build-app-container initial avec frameworkModule`
+
+---
+
+### Tâche 19 : Vérifier le bootstrap fonctionne via un test
+
+- [ ] **Step 1: Test d'intégration** — initialiser `buildAppContainer()`, résoudre les services, vérifier que `transaction.run()` propage la tx
+- [ ] **Step 2: Commit** (s'il y a des ajustements nécessaires sur les modules)
+
+---
+
+## Phase 5 — Framework — HTTP
+
+### Tâche 20 : ErrorSchema + error-mapping
+
+**Files:**
+- Create: `src/framework/http/schemas/error.schema.ts`
+- Create: `src/framework/http/error-mapping.ts`
+- Create: `src/framework/http/error-mapping.test.ts`
+
+- [ ] **Step 1: `error.schema.ts`**
+
+```ts
+// src/framework/http/schemas/error.schema.ts
 import { z } from '@hono/zod-openapi'
 
 export const ErrorSchema = z.object({
-  code: z.string().describe('Code stable identifiant le type d\'erreur (ex: ENTITY_NOT_FOUND)'),
-  message: z.string().describe('Message français lisible pour un humain'),
-  details: z.record(z.string(), z.unknown()).optional().describe('Détails additionnels optionnels'),
-}).openapi('Error')
-
-export type ErrorResponse = z.infer<typeof ErrorSchema>
+  code: z.string(),
+  message: z.string(),
+  details: z.unknown().optional(),
+}).openapi('ErrorSchema')
 ```
 
-- [ ] **Step 2: Écrire le test du mapping**
+- [ ] **Step 2: Test du mapping** (chaque kind → status correct)
+- [ ] **Step 3: `error-mapping.ts`**
 
 ```ts
-// src/platform/http/error-mapping.test.ts
-import { describe, it, expect } from 'vitest'
-import { mapDomainErrorToHttpStatus } from './error-mapping'
-import { DomainError } from '@/shared-kernel/domain-error'
+// src/framework/http/error-mapping.ts
+import { type ErrorKind } from '@/framework/errors/kinds'
+import { type AppError } from '@/framework/errors/app-error'
 
-class FakeError extends DomainError {
-  readonly code = 'FAKE'
-  constructor(readonly kind: DomainError['kind']) { super('fake') }
-}
-
-describe('mapDomainErrorToHttpStatus', () => {
-  it.each([
-    ['not-found', 404],
-    ['validation', 400],
-    ['conflict', 409],
-    ['forbidden', 403],
-    ['unauthorized', 401],
-    ['not-implemented', 501],
-    ['internal', 500],
-  ] as const)('%s -> %d', (kind, expected) => {
-    const error = new FakeError(kind)
-    expect(mapDomainErrorToHttpStatus(error)).toEqual(expected)
-  })
-})
-```
-
-- [ ] **Step 3: Écrire `error-mapping.ts`**
-
-```ts
-// src/platform/http/error-mapping.ts
-import { type DomainError, type DomainErrorKind } from '@/shared-kernel/domain-error'
-
-const KIND_TO_STATUS: Record<DomainErrorKind, number> = {
+const KIND_TO_STATUS: Record<ErrorKind, number> = {
   'not-found': 404,
   'validation': 400,
   'conflict': 409,
   'forbidden': 403,
-  'unauthorized': 401,
+  'unauthenticated': 401,
   'not-implemented': 501,
   'internal': 500,
 }
 
-export const mapDomainErrorToHttpStatus = (error: DomainError): number => KIND_TO_STATUS[error.kind]
+export const mapAppErrorToHttpStatus = (error: AppError): number => KIND_TO_STATUS[error.kind]
 ```
 
-- [ ] **Step 4: Écrire `respond-with-result.ts`**
+- [ ] **Step 4: Commit** — `feature: framework http — ErrorSchema + mapping kind vers HTTP status`
+
+---
+
+### Tâche 21 : respondWithResult helper
+
+**Files:**
+- Create: `src/framework/http/respond-with-result.ts`
+- Create: `src/framework/http/respond-with-result.test.ts`
+
+- [ ] **Step 1: Test** (cas Result ok, cas Result err, cas ResultAsync ok/err)
+- [ ] **Step 2: Implémentation**
 
 ```ts
-// src/platform/http/respond-with-result.ts
-import { type Context } from 'hono'
-import { type Result } from '@/shared-kernel/result'
-import { type DomainError } from '@/shared-kernel/domain-error'
-import { mapDomainErrorToHttpStatus } from './error-mapping'
+// src/framework/http/respond-with-result.ts
+import type { Context } from 'hono'
+import { type Result, type ResultAsync } from '@/framework/result'
+import { type AppError } from '@/framework/errors/app-error'
+import { mapAppErrorToHttpStatus } from './error-mapping'
 
-export async function respondWithResult<TValue, TError extends DomainError>(
+export async function respondWithResult<TValue, TError extends AppError>(
   context: Context,
-  result: Result<TValue, TError>,
+  source: Result<TValue, TError> | ResultAsync<TValue, TError>,
   onSuccess: (value: TValue) => Response,
 ): Promise<Response> {
+  const result = 'isErr' in source ? source : await source
   if (result.isErr()) {
+    const error = result.error
     return context.json(
-      {
-        code: result.error.code,
-        message: result.error.message,
-        details: result.error.details,
-      },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      mapDomainErrorToHttpStatus(result.error) as any,
+      { code: error.code, message: error.message, details: error.details },
+      mapAppErrorToHttpStatus(error),
     )
   }
   return onSuccess(result.value)
 }
 ```
 
-- [ ] **Step 5: Lancer les tests et commit**
-
-Run: `pnpm -F @pilote-mb/core test src/platform/http/`
-
-```bash
-git add apps/pilote-mb-core/src/platform/http/
-git commit -m "[DITP-pilotage/pilote-2] feature: platform — error mapping + respond-with-result + ErrorSchema
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, hono, zod
-Tags: pilote-mb, backend, platform, http, errors
-Files-changed: 4"
-```
+- [ ] **Step 3: Commit** — `feature: framework http — helper respondWithResult avec support Result et ResultAsync`
 
 ---
 
-### Tâche 22 : Middlewares HTTP (request-id, logger, error-handler)
+### Tâche 22 : Middlewares HTTP — request-id, logger, error-handler
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/platform/http/middlewares/request-id.middleware.ts`
-- Create: `apps/pilote-mb-core/src/platform/http/middlewares/logger.middleware.ts`
-- Create: `apps/pilote-mb-core/src/platform/http/middlewares/error-handler.middleware.ts`
+- Create: `src/framework/http/middlewares/request-id.middleware.ts`
+- Create: `src/framework/http/middlewares/logger.middleware.ts`
+- Create: `src/framework/http/middlewares/error-handler.middleware.ts`
 
-- [ ] **Step 1: Écrire `request-id.middleware.ts`**
-
-```ts
-// src/platform/http/middlewares/request-id.middleware.ts
-import { randomUUID } from 'node:crypto'
-import { type MiddlewareHandler } from 'hono'
-
-export const requestIdMiddleware = (): MiddlewareHandler => async (context, next) => {
-  const incoming = context.req.header('x-request-id')
-  const requestId = incoming && incoming.length > 0 ? incoming : randomUUID()
-  context.set('requestId', requestId)
-  context.header('x-request-id', requestId)
-  await next()
-}
-```
-
-- [ ] **Step 2: Écrire `logger.middleware.ts`**
-
-```ts
-// src/platform/http/middlewares/logger.middleware.ts
-import { type MiddlewareHandler } from 'hono'
-import { type Logger } from '@/shared-kernel/logger'
-
-export const loggerMiddleware = (logger: Logger): MiddlewareHandler => async (context, next) => {
-  const start = Date.now()
-  const requestId = context.get('requestId')
-  const method = context.req.method
-  const url = context.req.url
-
-  logger.info({ requestId, method, url, source: 'http' }, 'request started')
-
-  await next()
-
-  const duree_ms = Date.now() - start
-  const status = context.res.status
-  logger.info(
-    { requestId, method, url, status, duree_ms, source: 'http' },
-    `request completed ${status}`,
-  )
-}
-```
-
-- [ ] **Step 3: Écrire `error-handler.middleware.ts`**
-
-```ts
-// src/platform/http/middlewares/error-handler.middleware.ts
-import { type OpenAPIHono } from '@hono/zod-openapi'
-import { HTTPException } from 'hono/http-exception'
-import { ZodError } from 'zod'
-import { DomainError } from '@/shared-kernel/domain-error'
-import { type Logger } from '@/shared-kernel/logger'
-import { mapDomainErrorToHttpStatus } from '../error-mapping'
-
-export function registerErrorHandler(app: OpenAPIHono, logger: Logger): void {
-  app.onError((error, context) => {
-    const requestId = context.get('requestId') ?? undefined
-    const url = context.req.url
-    const method = context.req.method
-
-    if (error instanceof DomainError) {
-      logger.warn({ code: error.code, url, method, requestId }, error.message)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return context.json(
-        { code: error.code, message: error.message, details: error.details },
-        mapDomainErrorToHttpStatus(error) as any,
-      )
-    }
-
-    if (error instanceof HTTPException) {
-      logger.warn({ url, method, requestId, status: error.status }, error.message)
-      const code = error.status === 401 ? 'UNAUTHORIZED' : error.status === 403 ? 'FORBIDDEN' : 'HTTP_EXCEPTION'
-      return context.json({ code, message: error.message }, error.status)
-    }
-
-    if (error instanceof ZodError) {
-      logger.warn({ url, method, requestId, issues: error.issues }, 'Validation error')
-      return context.json(
-        { code: 'VALIDATION_ERROR', message: 'Les données fournies sont invalides', details: { issues: error.issues } },
-        400,
-      )
-    }
-
-    logger.error(
-      { url, method, requestId, stack: error.stack, name: error.name },
-      `Unhandled error: ${error.message}`,
-    )
-    return context.json({ code: 'INTERNAL_SERVER_ERROR', message: 'Une erreur interne est survenue' }, 500)
-  })
-
-  app.notFound((context) =>
-    context.json(
-      { code: 'ROUTE_NOT_FOUND', message: `Route ${context.req.method} ${context.req.url} introuvable` },
-      404,
-    ),
-  )
-}
-```
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/platform/http/middlewares/
-git commit -m "[DITP-pilotage/pilote-2] feature: platform — middlewares request-id, logger, error-handler
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, hono
-Tags: pilote-mb, backend, platform, http, middlewares
-Files-changed: 3"
-```
+- [ ] **Step 1: `request-id.middleware.ts`** — génère un UUID, pose `c.set('requestId', ...)`
+- [ ] **Step 2: `logger.middleware.ts`** — log d'entrée/sortie (méthode, URL, status, durée, requestId)
+- [ ] **Step 3: `error-handler.middleware.ts`** — `app.onError` + `app.notFound` (cf. design 16.3)
+- [ ] **Step 4: Test** d'intégration via `app.request()` (route qui throw → 500 ; route qui throw `AppError` → status mappé)
+- [ ] **Step 5: Commit** — `feature: framework http — middlewares request-id, logger, error-handler`
 
 ---
 
-### Tâche 23 : buildApp avec Swagger UI
+### Tâche 23 : Middleware auth-context
 
-**Files:**
-- Create: `apps/pilote-mb-core/src/platform/http/app.ts`
+**Files:** Create: `src/framework/http/middlewares/auth-context.middleware.ts`
 
-- [ ] **Step 1: Écrire `app.ts`**
+- [ ] **Step 1: Implémentation**
 
 ```ts
-// src/platform/http/app.ts
+// src/framework/http/middlewares/auth-context.middleware.ts
+import type { Context, Next } from 'hono'
+import { type AuthContext } from '@/framework/auth-context/auth-context'
+import { type Auth } from '@/framework/auth-context/auth'
+
+export function authContextMiddleware(deps: { authContext: AuthContext }) {
+  return async (context: Context, next: Next): Promise<Response | void> => {
+    const auth = context.get('auth') as Auth | undefined
+    if (!auth) {
+      await next()
+      return
+    }
+    await deps.authContext.run(auth, () => next())
+  }
+}
+```
+
+- [ ] **Step 2: Test** — middleware exécuté avec `auth` ; un `requireUser()` appelé en aval retourne l'identité
+- [ ] **Step 3: Commit** — `feature: framework http — middleware auth-context (alimente AsyncLocalStorage)`
+
+---
+
+### Tâche 24 : Middleware require-scope
+
+**Files:** Create: `src/framework/http/middlewares/require-scope.middleware.ts`
+
+- [ ] **Step 1: Implémentation**
+
+```ts
+// src/framework/http/middlewares/require-scope.middleware.ts
+import type { Context, Next } from 'hono'
+import { ForbiddenError, UnauthenticatedError } from '@/framework/errors/common-errors'
+import { currentAuth } from '@/framework/auth-context/current-auth'
+
+export function requireScope(scope: string) {
+  return async (_context: Context, next: Next) => {
+    const auth = currentAuth()
+    if (!auth) throw new UnauthenticatedError('authentication required')
+    if (auth.kind !== 'api-key' || !auth.scopes.includes(scope)) {
+      throw new ForbiddenError(`scope ${scope} required`)
+    }
+    await next()
+  }
+}
+```
+
+- [ ] **Step 2: Tests** — sans auth → 401 ; user (pas api-key) → 403 ; api-key sans scope → 403 ; api-key avec scope → 200
+- [ ] **Step 3: Commit** — `feature: framework http — middleware require-scope`
+
+---
+
+### Tâche 25 : buildApp avec Swagger UI
+
+**Files:**
+- Create: `src/framework/http/app.ts`
+- Create: `src/framework/http/schemas/pagination.schema.ts`
+
+- [ ] **Step 1: `pagination.schema.ts`**
+
+```ts
+import { z } from '@hono/zod-openapi'
+
+export const PaginationQuerySchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  pageSize: z.coerce.number().int().positive().max(100).default(20),
+})
+```
+
+- [ ] **Step 2: `app.ts`** — `buildApp(container)` qui crée un `OpenAPIHono`, enregistre middlewares (request-id, logger, auth-context, error-handler), expose `/api/openapi.json` et `/api/docs` (swagger-ui)
+
+```ts
+// src/framework/http/app.ts
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { swaggerUI } from '@hono/swagger-ui'
-import { type AwilixContainer } from 'awilix'
+import type { AwilixContainer } from 'awilix'
 import { requestIdMiddleware } from './middlewares/request-id.middleware'
 import { loggerMiddleware } from './middlewares/logger.middleware'
+import { authContextMiddleware } from './middlewares/auth-context.middleware'
 import { registerErrorHandler } from './middlewares/error-handler.middleware'
-import { type Logger } from '@/shared-kernel/logger'
 
-export type RegisterRoutes = (app: OpenAPIHono) => void
-
-export function buildApp(params: {
-  logger: Logger
-  authMiddleware: (app: OpenAPIHono) => void
-  registrations: ReadonlyArray<RegisterRoutes>
-}): OpenAPIHono {
+export function buildApp(container: AwilixContainer): OpenAPIHono {
   const app = new OpenAPIHono()
-
   app.use('*', requestIdMiddleware())
-  app.use('*', loggerMiddleware(params.logger))
-
-  params.authMiddleware(app)
-
-  for (const register of params.registrations) register(app)
-
-  registerErrorHandler(app, params.logger)
+  app.use('*', loggerMiddleware(container.resolve('logger')))
+  app.use('*', authContextMiddleware({ authContext: container.resolve('authContext') }))
+  registerErrorHandler(app, container)
 
   app.doc('/api/openapi.json', {
     openapi: '3.1.0',
-    info: { title: 'Pilote MB Core API', version: '0.1.0' },
-    tags: [
-      { name: 'Health', description: 'Healthcheck' },
-      { name: 'Authentication', description: 'Gestion des sessions et API keys' },
-    ],
+    info: { title: 'pilote-mb-core', version: '0.1.0' },
   })
-
   app.get('/api/docs', swaggerUI({ url: '/api/openapi.json' }))
 
   return app
 }
 ```
 
-- [ ] **Step 2: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/platform/http/app.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: platform — buildApp + Swagger UI + OpenAPI JSON
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, hono
-Tags: pilote-mb, backend, platform, http, openapi
-Files-changed: 1"
-```
+- [ ] **Step 3: Test** — `app.request('/api/openapi.json')` retourne 200 + JSON OpenAPI
+- [ ] **Step 4: Commit** — `feature: framework http — buildApp avec middlewares + Swagger UI`
 
 ---
 
-### Tâche 24 : build-app-container
+### Tâche 26 : Auth middleware (cadre, sans implémentation des stratégies)
 
-**Files:**
-- Create: `apps/pilote-mb-core/src/platform/container/build-app-container.ts`
+**Files:** Create: `src/framework/http/middlewares/auth.middleware.ts`
 
-- [ ] **Step 1: Écrire `build-app-container.ts`**
+- [ ] **Step 1: Implémentation cadre**
 
 ```ts
-// src/platform/container/build-app-container.ts
-import { bootModules } from './module-system/boot-modules'
-import { platformModule } from '@/platform/platform.module'
-import { authenticationModule } from '@/authentication/authentication.module'
-import { healthcheckModule } from '@/healthcheck/healthcheck.module'
+// src/framework/http/middlewares/auth.middleware.ts
+import type { Context, Next } from 'hono'
+import { UnauthenticatedError } from '@/framework/errors/common-errors'
+import type { AuthenticationFacade } from '@/authentication/public/authentication.facade'
+import type { Auth } from '@/framework/auth-context/auth'
 
-export function buildAppContainer() {
-  return bootModules([platformModule, authenticationModule, healthcheckModule])
+const PUBLIC_ROUTES = ['/health', '/api/openapi.json', '/api/docs']
+
+export function authMiddleware(deps: { authenticationFacade: AuthenticationFacade }) {
+  return async (context: Context, next: Next) => {
+    if (PUBLIC_ROUTES.some((route) => context.req.path.startsWith(route))) return next()
+
+    const header = context.req.header('Authorization')
+    if (!header?.startsWith('Bearer ')) throw new UnauthenticatedError('Bearer token required')
+    const token = header.slice('Bearer '.length)
+
+    const auth: Auth | undefined = await resolveAuth(token, deps.authenticationFacade)
+    if (!auth) throw new UnauthenticatedError('Invalid or revoked credentials')
+
+    context.set('auth', auth)
+    await next()
+  }
+}
+
+async function resolveAuth(
+  token: string,
+  facade: AuthenticationFacade,
+): Promise<Auth | undefined> {
+  if (token.startsWith('pmb_live_') || token.startsWith('pmb_test_')) {
+    const result = await facade.verifyApiKey(token)
+    if (result.isErr() || !result.value) return undefined
+    return { kind: 'api-key', apiKeyId: result.value.id, nom: result.value.nom, scopes: result.value.scopes }
+  }
+  if (token.split('.').length === 3) {
+    const result = await facade.verifyJwt(token)
+    if (result.isErr() || !result.value) return undefined
+    const utilisateur = result.value
+    return {
+      kind: 'user',
+      utilisateurId: utilisateur.id,
+      email: utilisateur.email,
+      nomComplet: utilisateur.nomComplet,
+      statutAcces: utilisateur.statutAcces,
+      roles: utilisateur.roles,
+    }
+  }
+  return undefined
 }
 ```
 
-**Note :** les imports de `authenticationModule` et `healthcheckModule` échoueront tant que ces modules ne sont pas créés. Laisser le fichier avec ces imports — les erreurs de compilation seront résolues à T37 et T60.
-
-- [ ] **Step 2: Commit (même si le TS ne compile pas encore entièrement)**
-
-```bash
-git add apps/pilote-mb-core/src/platform/container/build-app-container.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: platform — build-app-container (imports encore en attente des BCs)
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, awilix
-Tags: pilote-mb, backend, platform, di
-Files-changed: 1"
-```
+- [ ] **Step 2: Note** — l'implémentation finale dépend de la facade `authentication` (créée en Phase 12). Le test d'intégration est différé jusqu'à la Phase 14.
+- [ ] **Step 3: Commit** — `feature: framework http — middleware auth qui dispatch API key vs JWT`
 
 ---
 
-## Phase 5 — Test infrastructure
+## Phase 6 — Test infrastructure
 
-### Tâche 25 : FakeClock
+### Tâche 27 : vitest.setup.ts
+
+**Files:** Create: `src/test/vitest.setup.ts`
+
+- [ ] **Step 1: Implémentation** — charge `dotenv` (`.env.test`), affirme `NODE_ENV === 'test'`, garantit que les migrations sont appliquées
+- [ ] **Step 2: Commit** — `feature: test — vitest.setup.ts initial`
+
+---
+
+### Tâche 28 : FakeClock
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/test/fake-clock.ts`
-- Create: `apps/pilote-mb-core/src/test/fake-clock.test.ts`
+- Create: `src/test/fake-clock.ts`
+- Create: `src/test/fake-clock.test.ts`
 
-- [ ] **Step 1: Écrire le test**
-
-```ts
-// src/test/fake-clock.test.ts
-import { describe, it, expect } from 'vitest'
-import { FakeClock } from './fake-clock'
-
-describe('FakeClock', () => {
-  it('retourne la date fixée à la construction', () => {
-    const clock = new FakeClock(new Date('2026-04-24T10:00:00Z'))
-    expect(clock.now()).toEqual(new Date('2026-04-24T10:00:00Z'))
-  })
-
-  it('setNow change la date retournée', () => {
-    const clock = new FakeClock(new Date('2026-04-24T10:00:00Z'))
-    clock.setNow(new Date('2026-04-25T00:00:00Z'))
-    expect(clock.now()).toEqual(new Date('2026-04-25T00:00:00Z'))
-  })
-})
-```
-
-- [ ] **Step 2: Écrire l'implémentation**
+- [ ] **Step 1: Test** — `set(date)` puis `now()` retourne la date figée ; `tick(ms)` avance
+- [ ] **Step 2: Implémentation**
 
 ```ts
 // src/test/fake-clock.ts
-/* eslint-disable no-restricted-syntax */
-import { type Clock } from '@/shared-kernel/clock'
+import { type Clock } from '@/framework/clock/clock'
 
 export class FakeClock implements Clock {
-  private current: Date
-
-  constructor(initial: Date) {
-    this.current = new Date(initial.getTime())
-  }
-
-  now(): Date {
-    return new Date(this.current.getTime())
-  }
-
-  setNow(newDate: Date): void {
-    this.current = new Date(newDate.getTime())
-  }
+  constructor(private current: Date = new Date('2026-01-01T00:00:00Z')) {}
+  now(): Date { return new Date(this.current) }
+  set(date: Date): void { this.current = date }
+  tick(milliseconds: number): void { this.current = new Date(this.current.getTime() + milliseconds) }
 }
 ```
 
-- [ ] **Step 3: Lancer les tests et commit**
-
-Run: `pnpm -F @pilote-mb/core test src/test/fake-clock.test.ts`
-
-```bash
-git add apps/pilote-mb-core/src/test/fake-clock.ts apps/pilote-mb-core/src/test/fake-clock.test.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: test — FakeClock pour tests deterministes
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, test, tooling
-Files-changed: 2"
-```
+- [ ] **Step 3: Commit** — `feature: test — FakeClock figé pour tests deterministes`
 
 ---
 
-### Tâche 26 : withTestTransaction + TestContext
+### Tâche 29 : withTestTransaction + TestContext
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/test/test-context.ts`
-- Create: `apps/pilote-mb-core/src/test/with-test-transaction.ts`
-- Create: `apps/pilote-mb-core/src/test/vitest.setup.ts`
+- Create: `src/test/test-context.ts`
+- Create: `src/test/with-test-transaction.ts`
+- Create: `src/test/with-test-transaction.test.ts`
 
-- [ ] **Step 1: Écrire `test-context.ts`**
+- [ ] **Step 1: `test-context.ts`**
 
 ```ts
 // src/test/test-context.ts
-import { type AwilixContainer } from 'awilix'
-import { type ModuleName } from '@/platform/container/module-system/module-names'
-import { type buildAppContainer } from '@/platform/container/build-app-container'
-
-type GetContainer = ReturnType<typeof buildAppContainer>['getContainer']
+import type { ModuleName } from '@/framework/module-system/module-names'
 
 export class TestContext {
-  constructor(private readonly getContainerFn: GetContainer) {}
-
-  container<N extends ModuleName>(name: N): AwilixContainer {
-    return this.getContainerFn(name)
+  constructor(private readonly getContainer: (name: ModuleName) => any) {}
+  resolveHandler<T>(moduleName: ModuleName, key: string): T {
+    return this.getContainer(moduleName).resolve(key) as T
   }
-
-  resolve<T>(moduleName: ModuleName, key: string): T {
-    return this.getContainerFn(moduleName).resolve<T>(key)
+  resolveRepository<T>(moduleName: ModuleName, key: string): T {
+    return this.getContainer(moduleName).resolve(key) as T
   }
 }
 ```
 
-- [ ] **Step 2: Écrire `with-test-transaction.ts`**
-
-```ts
-// src/test/with-test-transaction.ts
-import { buildAppContainer } from '@/platform/container/build-app-container'
-import { txStore, prismaClient } from '@/platform/persistence/prisma/prisma-transaction'
-import { TestContext } from './test-context'
-
-class RollbackSignal extends Error {
-  constructor() { super('ROLLBACK') }
-}
-
-let cachedBoot: ReturnType<typeof buildAppContainer> | null = null
-function getBootedContainer(): ReturnType<typeof buildAppContainer> {
-  if (!cachedBoot) cachedBoot = buildAppContainer()
-  return cachedBoot
-}
-
-export function withTestTransaction(
-  runTest: (testContext: TestContext) => Promise<void>,
-): () => Promise<void> {
-  return async () => {
-    const boot = getBootedContainer()
-    try {
-      await prismaClient.$transaction(async (tx) => {
-        await txStore.run(tx, async () => {
-          const testContext = new TestContext(boot.getContainer)
-          await runTest(testContext)
-          throw new RollbackSignal()
-        })
-      })
-    } catch (error) {
-      if (!(error instanceof RollbackSignal)) throw error
-    }
-  }
-}
-```
-
-- [ ] **Step 3: Écrire `vitest.setup.ts`**
-
-```ts
-// src/test/vitest.setup.ts
-import { afterAll } from 'vitest'
-import { prismaClient } from '@/platform/persistence/prisma/prisma-transaction'
-
-afterAll(async () => {
-  await prismaClient.$disconnect()
-})
-```
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/test/
-git commit -m "[DITP-pilotage/pilote-2] feature: test — withTestTransaction + TestContext + vitest.setup
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, vitest
-Tags: pilote-mb, backend, test, tooling
-Files-changed: 3"
-```
+- [ ] **Step 2: `with-test-transaction.ts`** (cf. design 10.3)
+- [ ] **Step 3: Test** — créer une row dans la tx, vérifier qu'elle est rollback en sortie de test
+- [ ] **Step 4: Commit** — `feature: test — withTestTransaction + TestContext`
 
 ---
 
+### Tâche 30 : Fixtures (squelette commun)
+
+**Files:** Create: `src/test/fixtures/.gitkeep` (les fixtures concrètes arrivent dans les Phases métier)
+
+- [ ] **Step 1:** placeholder, créé pour valider la structure
+- [ ] **Step 2: Commit** — `chore: test — placeholder pour fixtures`
+
 ---
 
-## Phase 6 — BC healthcheck
+## Phase 7 — Module healthcheck
 
-### Tâche 27 : CheckHealthHandler + test
+### Tâche 31 : CheckHealthHandler
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/healthcheck/application/queries/check-health/check-health.handler.ts`
-- Create: `apps/pilote-mb-core/src/healthcheck/application/queries/check-health/check-health.handler.test.ts`
+- Create: `src/healthcheck/queries/check-health/check-health.handler.ts`
+- Create: `src/healthcheck/queries/check-health/check-health.handler.test.ts`
 
-- [ ] **Step 1: Écrire le test**
-
-```ts
-// src/healthcheck/application/queries/check-health/check-health.handler.test.ts
-import { describe, it, expect } from 'vitest'
-import { withTestTransaction } from '@/test/with-test-transaction'
-import { CheckHealthHandler } from './check-health.handler'
-
-describe('CheckHealthHandler', () => {
-  it('retourne status ok quand la DB répond', withTestTransaction(async (testContext) => {
-    // Given
-    const handler = testContext.resolve<CheckHealthHandler>('healthcheck', 'checkHealthHandler')
-
-    // When
-    const result = await handler.executer()
-
-    // Then
-    expect(result.status).toEqual('ok')
-    expect(result.database).toEqual('reachable')
-  }))
-})
-```
-
-- [ ] **Step 2: Écrire l'implémentation**
+- [ ] **Step 1: Test** — `withTestTransaction` qui résout le handler et vérifie `executer()` retourne `{ status: 'ok' }`
+- [ ] **Step 2: Implémentation**
 
 ```ts
-// src/healthcheck/application/queries/check-health/check-health.handler.ts
+// src/healthcheck/queries/check-health/check-health.handler.ts
 import { type Inject } from '@/healthcheck/healthcheck.module'
-
-export type HealthStatus = {
-  status: 'ok' | 'degraded'
-  database: 'reachable' | 'unreachable'
-}
 
 export class CheckHealthHandler {
   constructor(private readonly deps: Inject<'prisma'>) {}
 
-  async executer(): Promise<HealthStatus> {
-    try {
-      await this.deps.prisma.getInstance().$queryRaw`SELECT 1`
-      return { status: 'ok', database: 'reachable' }
-    } catch {
-      return { status: 'degraded', database: 'unreachable' }
-    }
+  async executer(): Promise<{ status: 'ok' }> {
+    await this.deps.prisma.getInstance().$queryRaw`SELECT 1`
+    return { status: 'ok' }
   }
 }
 ```
 
-- [ ] **Step 3: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/healthcheck/application/
-git commit -m "[DITP-pilotage/pilote-2] feature: healthcheck — CheckHealthHandler avec ping DB
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, healthcheck
-Files-changed: 2"
-```
+- [ ] **Step 3: Commit** — `feature: healthcheck — CheckHealthHandler ping DB`
 
 ---
 
-### Tâche 28 : healthcheck.module.ts + route
+### Tâche 32 : Route GET /health
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/healthcheck/healthcheck.module.ts`
-- Create: `apps/pilote-mb-core/src/healthcheck/infrastructure/http/routes/health.route.ts`
-- Create: `apps/pilote-mb-core/src/healthcheck/public/healthcheck.facade.ts`
+- Create: `src/healthcheck/infrastructure/http/routes/health.route.ts`
 
-- [ ] **Step 1: Écrire `healthcheck.facade.ts`**
+- [ ] **Step 1: Implémentation**
 
 ```ts
-// src/healthcheck/public/healthcheck.facade.ts
-export interface HealthcheckFacade {
-  isHealthy(): Promise<boolean>
+// src/healthcheck/infrastructure/http/routes/health.route.ts
+import { createRoute, z, type OpenAPIHono } from '@hono/zod-openapi'
+import type { AwilixContainer } from 'awilix'
+import { CheckHealthHandler } from '@/healthcheck/queries/check-health/check-health.handler'
+
+const HealthSchema = z.object({ status: z.literal('ok') }).openapi('HealthApiModel')
+
+const healthRoute = createRoute({
+  method: 'get',
+  path: '/health',
+  tags: ['Health'],
+  summary: 'Vérifie la santé du backend',
+  description: 'Ping DB et retourne ok. Route publique.',
+  responses: {
+    200: { description: 'OK', content: { 'application/json': { schema: HealthSchema } } },
+  },
+})
+
+export function registerHealthRoute(app: OpenAPIHono, container: AwilixContainer) {
+  app.openapi(healthRoute, async (context) => {
+    const handler = container.resolve<CheckHealthHandler>('checkHealthHandler')
+    const result = await handler.executer()
+    return context.json(result, 200)
+  })
 }
 ```
 
-- [ ] **Step 2: Écrire `healthcheck.module.ts`**
+- [ ] **Step 2: Commit** — `feature: healthcheck — route GET /health publique`
+
+---
+
+### Tâche 33 : healthcheck.module.ts + branchement
+
+**Files:**
+- Create: `src/healthcheck/healthcheck.module.ts`
+- Modify: `src/framework/container/build-app-container.ts`
+- Modify: `src/framework/module-system/module-names.ts`
+
+- [ ] **Step 1: `healthcheck.module.ts`**
 
 ```ts
 // src/healthcheck/healthcheck.module.ts
-import { defineModule, type ExtractScope, type NoExports, type VerifyCradle } from '@/platform/container/module-system/define-module'
-import { CheckHealthHandler } from './application/queries/check-health/check-health.handler'
+import { defineModule } from '@/framework/module-system/define-module'
+import type { VerifyCradle, ExtractScope } from '@/framework/module-system/types'
+import { CheckHealthHandler } from './queries/check-health/check-health.handler'
 
 type HealthcheckCradle = {
   checkHealthHandler: CheckHealthHandler
 }
 
-export const healthcheckModule = defineModule<NoExports, HealthcheckCradle>()({
+type HealthcheckExports = Record<string, never>
+
+export const healthcheckModule = defineModule<HealthcheckExports, HealthcheckCradle>()({
   name: 'healthcheck',
-  imports: ['platform'],
+  imports: ['framework'],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({
@@ -2558,1749 +1401,721 @@ type Scope = ExtractScope<typeof healthcheckModule>
 export type Inject<K extends keyof Scope> = Pick<Scope, K>
 ```
 
-- [ ] **Step 3: Écrire `health.route.ts`**
-
-```ts
-// src/healthcheck/infrastructure/http/routes/health.route.ts
-import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
-import { type AwilixContainer } from 'awilix'
-import { type CheckHealthHandler } from '@/healthcheck/application/queries/check-health/check-health.handler'
-
-const HealthResponseSchema = z.object({
-  status: z.enum(['ok', 'degraded']),
-  database: z.enum(['reachable', 'unreachable']),
-}).openapi('Health')
-
-const healthRoute = createRoute({
-  method: 'get',
-  path: '/health',
-  tags: ['Health'],
-  summary: 'Healthcheck technique',
-  description: 'Vérifie que le backend répond et que la base de données est joignable. Route publique (pas d\'auth requise).',
-  responses: {
-    200: { description: 'Service en bonne santé', content: { 'application/json': { schema: HealthResponseSchema } } },
-  },
-})
-
-export function registerHealthRoute(app: OpenAPIHono, container: AwilixContainer): void {
-  app.openapi(healthRoute, async (context) => {
-    const handler = container.resolve<CheckHealthHandler>('checkHealthHandler')
-    const result = await handler.executer()
-    return context.json(result, 200)
-  })
-}
-```
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/healthcheck/
-git commit -m "[DITP-pilotage/pilote-2] feature: healthcheck — module.ts + facade + route GET /health
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, hono
-Tags: pilote-mb, backend, healthcheck
-Files-changed: 3"
-```
+- [ ] **Step 2: Brancher dans `build-app-container.ts`** + ajouter `'healthcheck'` aux `module-names.ts`
+- [ ] **Step 3: Test E2E via `app.request('/health')` → 200 `{ status: 'ok' }`**
+- [ ] **Step 4: Commit** — `feature: healthcheck — module + branchement bootstrap`
 
 ---
 
-## Phase 7 — BC authentication : domain api-key
+## Phase 8 — Module authentication — functional core
 
-### Tâche 29 : VOs api-key-id + scope
+### Tâche 34 : Branded types pour les IDs et VOs simples
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/authentication/domain/api-key/api-key-id.ts`
-- Create: `apps/pilote-mb-core/src/authentication/domain/api-key/api-key-id.test.ts`
-- Create: `apps/pilote-mb-core/src/authentication/domain/api-key/scope.ts`
-- Create: `apps/pilote-mb-core/src/authentication/domain/api-key/scope.test.ts`
+- Create: `src/authentication/model/api-key-id.ts` + test
+- Create: `src/authentication/model/utilisateur-id.ts` + test
+- Create: `src/authentication/model/email.ts` + test
+- Create: `src/authentication/model/scope.ts` + test
+- Create: `src/authentication/model/statut-acces.ts`
 
-- [ ] **Step 1: Écrire `api-key-id.ts` avec son test**
+- [ ] **Step 1: Test `api-key-id.ts`** (UUID valide → ok ; invalide → err)
+- [ ] **Step 2: Implémentation `api-key-id.ts`**
 
-Test :
 ```ts
-// src/authentication/domain/api-key/api-key-id.test.ts
-import { describe, it, expect } from 'vitest'
-import { ApiKeyId } from './api-key-id'
+// src/authentication/model/api-key-id.ts
+import { randomUUID } from 'node:crypto'
+import { ok, err, type Result } from '@/framework/result'
+import { AppError } from '@/framework/errors/app-error'
 
-describe('ApiKeyId', () => {
-  it('generate produit un nouvel ApiKeyId', () => {
-    const id = ApiKeyId.generate()
-    expect(id.valueOf()).toMatch(/^[0-9a-f-]{36}$/)
-  })
+export type ApiKeyId = string & { readonly __brand: 'ApiKeyId' }
 
-  it('from accepte un UUID valide', () => {
-    const id = ApiKeyId.from('550e8400-e29b-41d4-a716-446655440000')
-    expect(id.valueOf()).toEqual('550e8400-e29b-41d4-a716-446655440000')
-  })
-})
-```
+const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
-Impl :
-```ts
-// src/authentication/domain/api-key/api-key-id.ts
-import { Uuid } from '@/shared-kernel/uuid'
-
-export class ApiKeyId extends Uuid {
-  static override generate(): ApiKeyId {
-    return new ApiKeyId(Uuid.generate().valueOf())
-  }
-  static override from(value: string): ApiKeyId {
-    return new ApiKeyId(Uuid.from(value).valueOf())
-  }
+export class InvalidApiKeyIdError extends AppError {
+  readonly code = 'INVALID_API_KEY_ID'
+  readonly kind = 'validation' as const
 }
-```
 
-- [ ] **Step 2: Écrire `scope.ts` avec son test**
-
-Test :
-```ts
-// src/authentication/domain/api-key/scope.test.ts
-import { describe, it, expect } from 'vitest'
-import { Scope } from './scope'
-
-describe('Scope', () => {
-  it('accepte le format resource:action', () => {
-    const scope = Scope.from('entities:read')
-    expect(scope.valueOf()).toEqual('entities:read')
-  })
-
-  it('throw si format invalide', () => {
-    expect(() => Scope.from('invalid')).toThrow()
-    expect(() => Scope.from('no_action:')).toThrow()
-    expect(() => Scope.from(':no_resource')).toThrow()
-  })
-
-  it('equals compare les valeurs', () => {
-    expect(Scope.from('a:b').equals(Scope.from('a:b'))).toEqual(true)
-    expect(Scope.from('a:b').equals(Scope.from('a:c'))).toEqual(false)
-  })
-})
-```
-
-Impl :
-```ts
-// src/authentication/domain/api-key/scope.ts
-import { ValueObject } from '@/shared-kernel/value-object'
-
-const SCOPE_REGEX = /^[a-z][a-z0-9_-]*:[a-z][a-z0-9_-]*$/
-
-export class Scope extends ValueObject<string> {
-  static from(value: string): Scope {
-    if (!SCOPE_REGEX.test(value)) throw new Error(`Invalid scope format: ${value}`)
-    return new Scope(value)
-  }
+export const apiKeyId = (raw: string): Result<ApiKeyId, InvalidApiKeyIdError> => {
+  if (!UUID_REGEX.test(raw)) return err(new InvalidApiKeyIdError(`invalid uuid: ${raw}`))
+  return ok(raw as ApiKeyId)
 }
+
+export const generateApiKeyId = (): ApiKeyId => randomUUID() as ApiKeyId
 ```
 
-- [ ] **Step 3: Commit**
+- [ ] **Step 3: Idem pour `utilisateur-id.ts`**, `email.ts` (validation regex email), `scope.ts` (format `<resource>:<action>`)
+- [ ] **Step 4: `statut-acces.ts`** — union de littéraux
 
-```bash
-git add apps/pilote-mb-core/src/authentication/domain/api-key/api-key-id.ts apps/pilote-mb-core/src/authentication/domain/api-key/api-key-id.test.ts apps/pilote-mb-core/src/authentication/domain/api-key/scope.ts apps/pilote-mb-core/src/authentication/domain/api-key/scope.test.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — VOs ApiKeyId + Scope
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, authentication, domain, ddd
-Files-changed: 4"
+```ts
+// src/authentication/model/statut-acces.ts
+export const STATUT_ACCES_VALUES = ['EN_ATTENTE_ACCES', 'ACTIF', 'REFUSE', 'DESACTIVE'] as const
+export type StatutAcces = (typeof STATUT_ACCES_VALUES)[number]
 ```
+
+- [ ] **Step 5: Commit** — `feature: authentication — branded types ApiKeyId, UtilisateurId, Email, Scope, StatutAcces`
 
 ---
 
-### Tâche 30 : Errors api-key (3 erreurs domain)
+### Tâche 35 : Erreurs métier authentication
 
-**Files:**
-- Create: `apps/pilote-mb-core/src/authentication/domain/api-key/errors/invalid-api-key-name.error.ts`
-- Create: `apps/pilote-mb-core/src/authentication/domain/api-key/errors/api-key-scopes-required.error.ts`
-- Create: `apps/pilote-mb-core/src/authentication/domain/api-key/errors/api-key-already-revoked.error.ts`
+**Files:** Create: `src/authentication/model/errors.ts`
 
-- [ ] **Step 1: Écrire les 3 erreurs**
+- [ ] **Step 1: Implémentation**
 
 ```ts
-// src/authentication/domain/api-key/errors/invalid-api-key-name.error.ts
-import { DomainError } from '@/shared-kernel/domain-error'
+// src/authentication/model/errors.ts
+import { AppError } from '@/framework/errors/app-error'
 
-export class InvalidApiKeyNameError extends DomainError {
+export class InvalidApiKeyNameError extends AppError {
   readonly code = 'INVALID_API_KEY_NAME'
   readonly kind = 'validation' as const
-  constructor() { super('Le nom de la clé API ne peut pas être vide') }
 }
-```
 
-```ts
-// src/authentication/domain/api-key/errors/api-key-scopes-required.error.ts
-import { DomainError } from '@/shared-kernel/domain-error'
-
-export class ApiKeyScopesRequiredError extends DomainError {
+export class ApiKeyScopesRequiredError extends AppError {
   readonly code = 'API_KEY_SCOPES_REQUIRED'
   readonly kind = 'validation' as const
-  constructor() { super('Au moins un scope est requis pour créer une clé API') }
 }
-```
 
-```ts
-// src/authentication/domain/api-key/errors/api-key-already-revoked.error.ts
-import { DomainError } from '@/shared-kernel/domain-error'
-
-export class ApiKeyAlreadyRevokedError extends DomainError {
+export class ApiKeyAlreadyRevokedError extends AppError {
   readonly code = 'API_KEY_ALREADY_REVOKED'
   readonly kind = 'conflict' as const
-  constructor() { super('Cette clé API est déjà révoquée') }
+}
+
+export class MissingIdTokenError extends AppError {
+  readonly code = 'MISSING_ID_TOKEN'
+  readonly kind = 'validation' as const
 }
 ```
 
-- [ ] **Step 2: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/authentication/domain/api-key/errors/
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — errors domain pour ApiKey
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, authentication, domain, ddd
-Files-changed: 3"
-```
+- [ ] **Step 2: Commit** — `feature: authentication — erreurs metier`
 
 ---
 
-### Tâche 31 : Events api-key (created + revoked)
+### Tâche 36 : Type ApiKey + factory functions pures
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/authentication/domain/api-key/events/api-key-created.event.ts`
-- Create: `apps/pilote-mb-core/src/authentication/domain/api-key/events/api-key-revoked.event.ts`
+- Create: `src/authentication/model/api-key.ts`
+- Create: `src/authentication/model/api-key.test.ts`
 
-- [ ] **Step 1: Écrire les events**
+- [ ] **Step 1: Tests** :
+  - `createApiKey` refuse nom vide → `InvalidApiKeyNameError`
+  - `createApiKey` refuse scopes vides → `ApiKeyScopesRequiredError`
+  - `createApiKey` génère un token préfixé `pmb_live_` ou `pmb_test_`
+  - `createApiKey` retourne `apiKey.keyHash === hasher.hash(rawToken)`
+  - `createApiKey` enregistre `dateCreation === clock.now()`
+  - `revokeApiKey(active)` retourne `{ ...apiKey, active: false }`
+  - `revokeApiKey(revoked)` retourne `ApiKeyAlreadyRevokedError`
 
-```ts
-// src/authentication/domain/api-key/events/api-key-created.event.ts
-import { type DomainEvent } from '@/shared-kernel/domain-event'
-
-export class ApiKeyCreatedEvent implements DomainEvent {
-  readonly type = 'API_KEY_CREATED'
-  constructor(
-    readonly aggregateId: string,
-    readonly nom: string,
-    readonly occurredAt: Date,
-  ) {}
-}
-```
+- [ ] **Step 2: Implémentation**
 
 ```ts
-// src/authentication/domain/api-key/events/api-key-revoked.event.ts
-import { type DomainEvent } from '@/shared-kernel/domain-event'
+// src/authentication/model/api-key.ts
+import { ok, err, type Result } from '@/framework/result'
+import { type ApiKeyId, generateApiKeyId } from './api-key-id'
+import { type Scope } from './scope'
+import { type Clock } from '@/framework/clock/clock'
+import { type ApiKeyHasher } from '@/authentication/ports/api-key-hasher'
+import { type TokenGenerator } from '@/authentication/ports/token-generator'
+import {
+  InvalidApiKeyNameError,
+  ApiKeyScopesRequiredError,
+  ApiKeyAlreadyRevokedError,
+} from './errors'
 
-export class ApiKeyRevokedEvent implements DomainEvent {
-  readonly type = 'API_KEY_REVOKED'
-  constructor(readonly aggregateId: string, readonly occurredAt: Date) {}
+export type ApiKey = {
+  readonly id: ApiKeyId
+  readonly nom: string
+  readonly keyHash: string
+  readonly keyPrefix: string
+  readonly scopes: ReadonlyArray<Scope>
+  readonly active: boolean
+  readonly dateCreation: Date
+  readonly dateDerniereUtilisation?: Date
 }
+
+export type CreateApiKeyParams = {
+  readonly nom: string
+  readonly scopes: ReadonlyArray<Scope>
+  readonly environment: 'live' | 'test'
+  readonly hasher: ApiKeyHasher
+  readonly tokenGenerator: TokenGenerator
+  readonly clock: Clock
+}
+
+export type CreateApiKeyError = InvalidApiKeyNameError | ApiKeyScopesRequiredError
+
+export const createApiKey = (
+  params: CreateApiKeyParams,
+): Result<{ apiKey: ApiKey; rawToken: string }, CreateApiKeyError> => {
+  if (params.nom.trim() === '') return err(new InvalidApiKeyNameError('nom is empty'))
+  if (params.scopes.length === 0) return err(new ApiKeyScopesRequiredError('at least one scope required'))
+
+  const prefix = params.environment === 'live' ? 'pmb_live_' : 'pmb_test_'
+  const rawToken = params.tokenGenerator.generate(prefix)
+  const keyHash = params.hasher.hash(rawToken)
+  const keyPrefix = rawToken.slice(0, 12)
+
+  const apiKey: ApiKey = {
+    id: generateApiKeyId(),
+    nom: params.nom,
+    keyHash,
+    keyPrefix,
+    scopes: params.scopes,
+    active: true,
+    dateCreation: params.clock.now(),
+  }
+  return ok({ apiKey, rawToken })
+}
+
+export const revokeApiKey = (apiKey: ApiKey): Result<ApiKey, ApiKeyAlreadyRevokedError> => {
+  if (!apiKey.active) return err(new ApiKeyAlreadyRevokedError(`${apiKey.id} already revoked`))
+  return ok({ ...apiKey, active: false })
+}
+
+export const apiKeyHasScope = (apiKey: ApiKey, scope: Scope): boolean =>
+  apiKey.scopes.includes(scope)
 ```
 
-- [ ] **Step 2: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/authentication/domain/api-key/events/
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — events ApiKeyCreated + ApiKeyRevoked
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, authentication, domain, ddd, events
-Files-changed: 2"
-```
+- [ ] **Step 3: Tests passent en pur unit (sans container, sans DB, sans mock — `hasher`/`tokenGenerator`/`clock` fournis comme stubs simples)**
+- [ ] **Step 4: Commit** — `feature: authentication model — type ApiKey + factory functions pures`
 
 ---
 
-### Tâche 32 : Ports api-key-hasher + token-generator + api-key-repository
+### Tâche 37 : Type Utilisateur + factory functions (stubées)
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/authentication/domain/api-key/api-key-hasher.ts`
-- Create: `apps/pilote-mb-core/src/authentication/domain/api-key/token-generator.ts`
-- Create: `apps/pilote-mb-core/src/authentication/domain/api-key/api-key.repository.ts`
+- Create: `src/authentication/model/utilisateur.ts`
+- Create: `src/authentication/model/utilisateur.test.ts`
 
-- [ ] **Step 1: Écrire les ports**
+- [ ] **Step 1: Tests** :
+  - `createUtilisateurFromProConnect(claims, clock)` retourne un `Utilisateur` avec `statutAcces = 'EN_ATTENTE_ACCES'`, `tokenVersion = 1`, `dateCreation === clock.now()`
+  - Test sur invariant minimal (email vide → erreur)
+
+- [ ] **Step 2: Implémentation (factory partielle, le mapping ProConnect réel arrive plus tard)**
 
 ```ts
-// src/authentication/domain/api-key/api-key-hasher.ts
-export interface ApiKeyHasher {
-  hash(token: string): string
+// src/authentication/model/utilisateur.ts
+import { ok, err, type Result } from '@/framework/result'
+import { generateUtilisateurId, type UtilisateurId } from './utilisateur-id'
+import { parseEmail, type Email } from './email'
+import { type StatutAcces } from './statut-acces'
+import { type Clock } from '@/framework/clock/clock'
+
+export type Utilisateur = {
+  readonly id: UtilisateurId
+  readonly subProconnect: string
+  readonly email: Email
+  readonly nom: string
+  readonly prenom: string
+  readonly statutAcces: StatutAcces
+  readonly roles: ReadonlyArray<string>
+  readonly tokenVersion: number
+  readonly dateCreation: Date
+  readonly dateDerniereConnexion?: Date
+}
+
+export type ProConnectClaims = {
+  readonly sub: string
+  readonly email: string
+  readonly given_name: string
+  readonly family_name: string
+}
+
+export const createUtilisateurFromProConnect = (
+  claims: ProConnectClaims,
+  clock: Clock,
+): Result<Utilisateur, Error> => {
+  const emailResult = parseEmail(claims.email)
+  if (emailResult.isErr()) return err(emailResult.error)
+  return ok({
+    id: generateUtilisateurId(),
+    subProconnect: claims.sub,
+    email: emailResult.value,
+    nom: claims.family_name,
+    prenom: claims.given_name,
+    statutAcces: 'EN_ATTENTE_ACCES',
+    roles: [],
+    tokenVersion: 1,
+    dateCreation: clock.now(),
+  })
 }
 ```
 
+- [ ] **Step 3: Commit** — `feature: authentication model — type Utilisateur + factory createUtilisateurFromProConnect (scaffolding)`
+
+---
+
+### Tâche 38 : Mappers pures domain ↔ persistence
+
+**Files:**
+- Create: `src/authentication/infrastructure/persistence/api-key.mapper.ts`
+- Create: `src/authentication/infrastructure/persistence/utilisateur.mapper.ts`
+
+- [ ] **Step 1: Implémenter les fonctions pures `apiKeyToPersistence` / `apiKeyFromPersistence` (idem Utilisateur)**
+- [ ] **Step 2: Tests unitaires sur les mappers (round-trip)**
+- [ ] **Step 3: Commit** — `feature: authentication infra — mappers ApiKey/Utilisateur ↔ persistence`
+
+---
+
+## Phase 9 — Module authentication — ports
+
+### Tâche 39 : Ports (hasher, generator, signer, repositories)
+
+**Files:**
+- Create: `src/authentication/ports/api-key-hasher.ts`
+- Create: `src/authentication/ports/token-generator.ts`
+- Create: `src/authentication/ports/token-signer.ts`
+- Create: `src/authentication/ports/api-key.repository.ts`
+- Create: `src/authentication/ports/utilisateur.repository.ts`
+
+- [ ] **Step 1: Écrire les interfaces**
+
 ```ts
-// src/authentication/domain/api-key/token-generator.ts
+// api-key-hasher.ts
+export interface ApiKeyHasher { hash(token: string): string }
+
+// token-generator.ts
 export interface TokenGenerator {
   generate(prefix: 'pmb_live_' | 'pmb_test_'): string
 }
-```
 
-```ts
-// src/authentication/domain/api-key/api-key.repository.ts
-import { type ApiKey } from './api-key'
-
-export interface ApiKeyRepository {
-  save(aggregate: ApiKey): Promise<void>
-  findByKeyHash(keyHash: string): Promise<ApiKey | null>
-  findById(id: string): Promise<ApiKey | null>
+// token-signer.ts
+import { type ResultAsync } from '@/framework/result'
+import { AppError } from '@/framework/errors/app-error'
+export class JwtVerificationError extends AppError {
+  readonly code = 'JWT_INVALID'
+  readonly kind = 'unauthenticated' as const
 }
-```
-
-- [ ] **Step 2: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/authentication/domain/api-key/api-key-hasher.ts apps/pilote-mb-core/src/authentication/domain/api-key/token-generator.ts apps/pilote-mb-core/src/authentication/domain/api-key/api-key.repository.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — ports ApiKeyHasher, TokenGenerator, ApiKeyRepository
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, authentication, domain, ddd
-Files-changed: 3"
-```
-
----
-
-### Tâche 33 : AggregateRoot ApiKey + factory create + revoke
-
-**Files:**
-- Create: `apps/pilote-mb-core/src/authentication/domain/api-key/api-key.ts`
-- Create: `apps/pilote-mb-core/src/authentication/domain/api-key/api-key.test.ts`
-
-- [ ] **Step 1: Écrire le test**
-
-```ts
-// src/authentication/domain/api-key/api-key.test.ts
-import { describe, it, expect } from 'vitest'
-import { ApiKey } from './api-key'
-import { Scope } from './scope'
-import { FakeClock } from '@/test/fake-clock'
-import { type ApiKeyHasher } from './api-key-hasher'
-import { type TokenGenerator } from './token-generator'
-import { InvalidApiKeyNameError } from './errors/invalid-api-key-name.error'
-import { ApiKeyScopesRequiredError } from './errors/api-key-scopes-required.error'
-import { ApiKeyAlreadyRevokedError } from './errors/api-key-already-revoked.error'
-
-const fakeHasher: ApiKeyHasher = { hash: (token) => `hashed:${token}` }
-const fakeTokenGenerator: TokenGenerator = { generate: (prefix) => `${prefix}rawtoken123456` }
-const fixedClock = new FakeClock(new Date('2026-04-24T10:00:00Z'))
-
-describe('ApiKey.create', () => {
-  it('crée un agrégat et retourne le token brut + émet un event', () => {
-    // When
-    const result = ApiKey.create({
-      nom: 'agent-satellite',
-      scopes: [Scope.from('entities:read')],
-      environment: 'live',
-      hasher: fakeHasher,
-      tokenGenerator: fakeTokenGenerator,
-      clock: fixedClock,
-    })
-
-    // Then
-    expect(result.isOk()).toEqual(true)
-    const value = result._unsafeUnwrap()
-    expect(value.rawToken).toEqual('pmb_live_rawtoken123456')
-    const events = value.aggregate.pullPendingEvents()
-    expect(events).toHaveLength(1)
-    expect(events[0]!.type).toEqual('API_KEY_CREATED')
-    expect(events[0]!.occurredAt).toEqual(new Date('2026-04-24T10:00:00Z'))
-  })
-
-  it('retourne InvalidApiKeyNameError si le nom est vide', () => {
-    const result = ApiKey.create({
-      nom: '   ',
-      scopes: [Scope.from('a:b')],
-      environment: 'live',
-      hasher: fakeHasher,
-      tokenGenerator: fakeTokenGenerator,
-      clock: fixedClock,
-    })
-    expect(result.isErr()).toEqual(true)
-    expect(result._unsafeUnwrapErr()).toBeInstanceOf(InvalidApiKeyNameError)
-  })
-
-  it('retourne ApiKeyScopesRequiredError si la liste de scopes est vide', () => {
-    const result = ApiKey.create({
-      nom: 'x',
-      scopes: [],
-      environment: 'live',
-      hasher: fakeHasher,
-      tokenGenerator: fakeTokenGenerator,
-      clock: fixedClock,
-    })
-    expect(result.isErr()).toEqual(true)
-    expect(result._unsafeUnwrapErr()).toBeInstanceOf(ApiKeyScopesRequiredError)
-  })
-})
-
-describe('ApiKey.revoke', () => {
-  it('passe active à false et émet ApiKeyRevokedEvent', () => {
-    const created = ApiKey.create({
-      nom: 'x',
-      scopes: [Scope.from('a:b')],
-      environment: 'live',
-      hasher: fakeHasher,
-      tokenGenerator: fakeTokenGenerator,
-      clock: fixedClock,
-    })._unsafeUnwrap().aggregate
-    created.pullPendingEvents()
-
-    const result = created.revoke(fixedClock)
-
-    expect(result.isOk()).toEqual(true)
-    expect(created.estActive()).toEqual(false)
-    const events = created.pullPendingEvents()
-    expect(events[0]!.type).toEqual('API_KEY_REVOKED')
-  })
-
-  it('retourne ApiKeyAlreadyRevokedError si déjà révoquée', () => {
-    const created = ApiKey.create({
-      nom: 'x',
-      scopes: [Scope.from('a:b')],
-      environment: 'live',
-      hasher: fakeHasher,
-      tokenGenerator: fakeTokenGenerator,
-      clock: fixedClock,
-    })._unsafeUnwrap().aggregate
-    created.revoke(fixedClock)
-
-    const result = created.revoke(fixedClock)
-
-    expect(result.isErr()).toEqual(true)
-    expect(result._unsafeUnwrapErr()).toBeInstanceOf(ApiKeyAlreadyRevokedError)
-  })
-})
-```
-
-- [ ] **Step 2: Écrire l'implémentation**
-
-```ts
-// src/authentication/domain/api-key/api-key.ts
-import { AggregateRoot } from '@/shared-kernel/aggregate-root'
-import { ok, err, type Result } from '@/shared-kernel/result'
-import { type Clock } from '@/shared-kernel/clock'
-import { type DomainError } from '@/shared-kernel/domain-error'
-import { ApiKeyId } from './api-key-id'
-import { Scope } from './scope'
-import { type ApiKeyHasher } from './api-key-hasher'
-import { type TokenGenerator } from './token-generator'
-import { ApiKeyCreatedEvent } from './events/api-key-created.event'
-import { ApiKeyRevokedEvent } from './events/api-key-revoked.event'
-import { InvalidApiKeyNameError } from './errors/invalid-api-key-name.error'
-import { ApiKeyScopesRequiredError } from './errors/api-key-scopes-required.error'
-import { ApiKeyAlreadyRevokedError } from './errors/api-key-already-revoked.error'
-
-export type ApiKeyPersistenceShape = {
-  id: string
-  nom: string
-  key_hash: string
-  key_prefix: string
-  scopes: string[]
-  active: boolean
-  date_creation: Date
-  date_derniere_utilisation: Date | null
-}
-
-export class ApiKey extends AggregateRoot<ApiKeyId> {
-  private constructor(
-    id: ApiKeyId,
-    readonly nom: string,
-    readonly keyHash: string,
-    readonly keyPrefix: string,
-    readonly scopes: ReadonlyArray<Scope>,
-    private active: boolean,
-    readonly dateCreation: Date,
-    readonly dateDerniereUtilisation: Date | null,
-  ) { super(id) }
-
-  static create(params: {
-    nom: string
-    scopes: Scope[]
-    environment: 'live' | 'test'
-    hasher: ApiKeyHasher
-    tokenGenerator: TokenGenerator
-    clock: Clock
-  }): Result<{ aggregate: ApiKey; rawToken: string }, DomainError> {
-    if (params.nom.trim() === '') return err(new InvalidApiKeyNameError())
-    if (params.scopes.length === 0) return err(new ApiKeyScopesRequiredError())
-
-    const prefix: 'pmb_live_' | 'pmb_test_' = params.environment === 'live' ? 'pmb_live_' : 'pmb_test_'
-    const rawToken = params.tokenGenerator.generate(prefix)
-    const keyHash = params.hasher.hash(rawToken)
-    const keyPrefix = rawToken.slice(0, 12)
-    const now = params.clock.now()
-
-    const aggregate = new ApiKey(
-      ApiKeyId.generate(),
-      params.nom.trim(),
-      keyHash,
-      keyPrefix,
-      params.scopes,
-      true,
-      now,
-      null,
-    )
-    aggregate.recordEvent(new ApiKeyCreatedEvent(aggregate.id.valueOf(), aggregate.nom, now))
-    return ok({ aggregate, rawToken })
-  }
-
-  static reconstitute(row: ApiKeyPersistenceShape): ApiKey {
-    return new ApiKey(
-      ApiKeyId.from(row.id),
-      row.nom,
-      row.key_hash,
-      row.key_prefix,
-      row.scopes.map((scope) => Scope.from(scope)),
-      row.active,
-      row.date_creation,
-      row.date_derniere_utilisation,
-    )
-  }
-
-  revoke(clock: Clock): Result<void, DomainError> {
-    if (!this.active) return err(new ApiKeyAlreadyRevokedError())
-    this.active = false
-    this.recordEvent(new ApiKeyRevokedEvent(this.id.valueOf(), clock.now()))
-    return ok(undefined)
-  }
-
-  estActive(): boolean {
-    return this.active
-  }
-
-  hasScope(expected: Scope): boolean {
-    return this.scopes.some((scope) => scope.equals(expected))
-  }
-}
-```
-
-- [ ] **Step 3: Ajouter une exception ESLint pour le fichier `api-key.ts`**
-
-Dans `.eslintrc.cjs`, section `overrides`, ajouter :
-```js
-{
-  files: ['**/api-key.ts', '**/utilisateur.ts'],
-  rules: {
-    'no-restricted-syntax': ['error', { selector: "ExportDefaultDeclaration", message: "export default is forbidden." }],
-  },
-},
-```
-
-(Le fichier `api-key.ts` utilise `new ApiKey(...)` dans son constructeur privé et dans `reconstitute`, qui doit être autorisé.)
-
-- [ ] **Step 4: Lancer les tests et commit**
-
-Run: `pnpm -F @pilote-mb/core test src/authentication/domain/api-key/api-key.test.ts`
-
-```bash
-git add apps/pilote-mb-core/src/authentication/domain/api-key/api-key.ts apps/pilote-mb-core/src/authentication/domain/api-key/api-key.test.ts apps/pilote-mb-core/.eslintrc.cjs
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — AggregateRoot ApiKey avec create/revoke + events
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, authentication, domain, ddd, aggregate
-Files-changed: 3"
-```
-
----
-
-## Phase 8 — BC authentication : domain utilisateur
-
-### Tâche 34 : VOs utilisateur-id + email + statut-acces
-
-**Files:**
-- Create: `apps/pilote-mb-core/src/authentication/domain/utilisateur/utilisateur-id.ts`
-- Create: `apps/pilote-mb-core/src/authentication/domain/utilisateur/email.ts`
-- Create: `apps/pilote-mb-core/src/authentication/domain/utilisateur/email.test.ts`
-- Create: `apps/pilote-mb-core/src/authentication/domain/utilisateur/statut-acces.ts`
-
-- [ ] **Step 1: `utilisateur-id.ts`**
-
-```ts
-// src/authentication/domain/utilisateur/utilisateur-id.ts
-import { Uuid } from '@/shared-kernel/uuid'
-
-export class UtilisateurId extends Uuid {
-  static override generate(): UtilisateurId { return new UtilisateurId(Uuid.generate().valueOf()) }
-  static override from(value: string): UtilisateurId { return new UtilisateurId(Uuid.from(value).valueOf()) }
-}
-```
-
-- [ ] **Step 2: `email.ts` + test**
-
-Test :
-```ts
-// src/authentication/domain/utilisateur/email.test.ts
-import { describe, it, expect } from 'vitest'
-import { Email } from './email'
-
-describe('Email', () => {
-  it('accepte un email valide', () => {
-    const email = Email.from('user@example.com')
-    expect(email.valueOf()).toEqual('user@example.com')
-  })
-
-  it('normalise en lowercase', () => {
-    expect(Email.from('User@Example.COM').valueOf()).toEqual('user@example.com')
-  })
-
-  it('throw si format invalide', () => {
-    expect(() => Email.from('invalid')).toThrow()
-    expect(() => Email.from('@nodomain')).toThrow()
-    expect(() => Email.from('no-at-sign.com')).toThrow()
-  })
-})
-```
-
-Impl :
-```ts
-// src/authentication/domain/utilisateur/email.ts
-import { ValueObject } from '@/shared-kernel/value-object'
-
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-export class Email extends ValueObject<string> {
-  static from(value: string): Email {
-    const normalized = value.trim().toLowerCase()
-    if (!EMAIL_REGEX.test(normalized)) throw new Error(`Invalid email: ${value}`)
-    return new Email(normalized)
-  }
-}
-```
-
-- [ ] **Step 3: `statut-acces.ts`**
-
-```ts
-// src/authentication/domain/utilisateur/statut-acces.ts
-export const STATUTS_ACCES = ['EN_ATTENTE_ACCES', 'ACTIF', 'REFUSE', 'DESACTIVE'] as const
-export type StatutAccesValue = (typeof STATUTS_ACCES)[number]
-
-export class StatutAcces {
-  private constructor(readonly value: StatutAccesValue) {}
-  static from(value: StatutAccesValue): StatutAcces { return new StatutAcces(value) }
-  static EN_ATTENTE_ACCES = new StatutAcces('EN_ATTENTE_ACCES')
-  static ACTIF = new StatutAcces('ACTIF')
-  static REFUSE = new StatutAcces('REFUSE')
-  static DESACTIVE = new StatutAcces('DESACTIVE')
-  estActif(): boolean { return this.value === 'ACTIF' }
-  estEnAttente(): boolean { return this.value === 'EN_ATTENTE_ACCES' }
-  equals(other: StatutAcces): boolean { return this.value === other.value }
-}
-```
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/authentication/domain/utilisateur/
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — VOs UtilisateurId + Email + StatutAcces
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, authentication, domain, ddd
-Files-changed: 4"
-```
-
----
-
-### Tâche 35 : AggregateRoot Utilisateur + event UtilisateurCreated + repository interface
-
-**Files:**
-- Create: `apps/pilote-mb-core/src/authentication/domain/utilisateur/events/utilisateur-created.event.ts`
-- Create: `apps/pilote-mb-core/src/authentication/domain/utilisateur/utilisateur.repository.ts`
-- Create: `apps/pilote-mb-core/src/authentication/domain/utilisateur/utilisateur.ts`
-
-- [ ] **Step 1: `utilisateur-created.event.ts`**
-
-```ts
-// src/authentication/domain/utilisateur/events/utilisateur-created.event.ts
-import { type DomainEvent } from '@/shared-kernel/domain-event'
-
-export class UtilisateurCreatedEvent implements DomainEvent {
-  readonly type = 'UTILISATEUR_CREATED'
-  constructor(
-    readonly aggregateId: string,
-    readonly email: string,
-    readonly occurredAt: Date,
-  ) {}
-}
-```
-
-- [ ] **Step 2: `utilisateur.repository.ts`**
-
-```ts
-// src/authentication/domain/utilisateur/utilisateur.repository.ts
-import { type Utilisateur } from './utilisateur'
-
-export interface UtilisateurRepository {
-  save(aggregate: Utilisateur): Promise<void>
-  findById(id: string): Promise<Utilisateur | null>
-  findBySubProconnect(sub: string): Promise<Utilisateur | null>
-}
-```
-
-- [ ] **Step 3: `utilisateur.ts`**
-
-```ts
-// src/authentication/domain/utilisateur/utilisateur.ts
-import { AggregateRoot } from '@/shared-kernel/aggregate-root'
-import { UtilisateurId } from './utilisateur-id'
-import { Email } from './email'
-import { StatutAcces, type StatutAccesValue } from './statut-acces'
-import { UtilisateurCreatedEvent } from './events/utilisateur-created.event'
-import { type Clock } from '@/shared-kernel/clock'
-
-export type UtilisateurPersistenceShape = {
-  id: string
-  sub_proconnect: string
-  email: string
-  nom: string
-  prenom: string
-  statut_acces: StatutAccesValue
-  roles: string[]
-  token_version: number
-  date_creation: Date
-  date_derniere_connexion: Date | null
-}
-
-export class Utilisateur extends AggregateRoot<UtilisateurId> {
-  private constructor(
-    id: UtilisateurId,
-    readonly subProconnect: string,
-    readonly email: Email,
-    readonly nom: string,
-    readonly prenom: string,
-    readonly statutAcces: StatutAcces,
-    readonly roles: ReadonlyArray<string>,
-    readonly tokenVersion: number,
-    readonly dateCreation: Date,
-    readonly dateDerniereConnexion: Date | null,
-  ) { super(id) }
-
-  static createFromProConnect(params: {
-    subProconnect: string
-    email: Email
-    nom: string
-    prenom: string
-    clock: Clock
-  }): Utilisateur {
-    const now = params.clock.now()
-    const aggregate = new Utilisateur(
-      UtilisateurId.generate(),
-      params.subProconnect,
-      params.email,
-      params.nom,
-      params.prenom,
-      StatutAcces.EN_ATTENTE_ACCES,
-      [],
-      1,
-      now,
-      null,
-    )
-    aggregate.recordEvent(new UtilisateurCreatedEvent(aggregate.id.valueOf(), params.email.valueOf(), now))
-    return aggregate
-  }
-
-  static reconstitute(row: UtilisateurPersistenceShape): Utilisateur {
-    return new Utilisateur(
-      UtilisateurId.from(row.id),
-      row.sub_proconnect,
-      Email.from(row.email),
-      row.nom,
-      row.prenom,
-      StatutAcces.from(row.statut_acces),
-      row.roles,
-      row.token_version,
-      row.date_creation,
-      row.date_derniere_connexion,
-    )
-  }
-
-  nomComplet(): string {
-    return `${this.prenom} ${this.nom}`
-  }
-}
-```
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/authentication/domain/utilisateur/
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — AggregateRoot Utilisateur + event + repository interface
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, authentication, domain, ddd, aggregate
-Files-changed: 3"
-```
-
----
-
-## Phase 9 — BC authentication : infrastructure
-
-### Tâche 36 : Adapters crypto (Sha256ApiKeyHasher + CryptoTokenGenerator + JsonwebtokenTokenSigner)
-
-**Files:**
-- Create: `apps/pilote-mb-core/src/authentication/infrastructure/crypto/sha256-api-key-hasher.ts`
-- Create: `apps/pilote-mb-core/src/authentication/infrastructure/crypto/sha256-api-key-hasher.test.ts`
-- Create: `apps/pilote-mb-core/src/authentication/infrastructure/crypto/crypto-token-generator.ts`
-- Create: `apps/pilote-mb-core/src/authentication/infrastructure/crypto/token-signer.ts` (port dans domain/jwt/)
-
-**Note :** le port `TokenSigner` pour les JWT internes vit dans `authentication/domain/jwt/` puisqu'il est utilisé par le domain. Déplacer si besoin.
-
-- [ ] **Step 1: Créer le port TokenSigner**
-
-```ts
-// src/authentication/domain/jwt/token-signer.ts
 export type JwtPayload = {
-  sub: string
-  email: string
-  roles: string[]
+  utilisateurId: string
   statutAcces: string
+  roles: ReadonlyArray<string>
   tokenVersion: number
 }
-
 export interface TokenSigner {
-  sign(payload: JwtPayload, ttlSeconds: number): string
-  verify(token: string): JwtPayload | null
+  sign(payload: JwtPayload): string
+  verify(token: string): ResultAsync<JwtPayload, JwtVerificationError>
+}
+
+// api-key.repository.ts
+import { type ResultAsync } from '@/framework/result'
+import { type RepositoryError } from '@/framework/errors/common-errors'
+import { type ApiKey } from '@/authentication/model/api-key'
+import { type ApiKeyId } from '@/authentication/model/api-key-id'
+export interface ApiKeyRepository {
+  save(apiKey: ApiKey): ResultAsync<void, RepositoryError>
+  findByKeyHash(keyHash: string): ResultAsync<ApiKey | null, RepositoryError>
+  findById(id: ApiKeyId): ResultAsync<ApiKey | null, RepositoryError>
+}
+
+// utilisateur.repository.ts
+import { type Utilisateur } from '@/authentication/model/utilisateur'
+import { type UtilisateurId } from '@/authentication/model/utilisateur-id'
+export interface UtilisateurRepository {
+  save(utilisateur: Utilisateur): ResultAsync<void, RepositoryError>
+  findById(id: UtilisateurId): ResultAsync<Utilisateur | null, RepositoryError>
+  findBySubProconnect(sub: string): ResultAsync<Utilisateur | null, RepositoryError>
 }
 ```
 
-- [ ] **Step 2: `sha256-api-key-hasher.ts` + test**
-
-Test :
-```ts
-// src/authentication/infrastructure/crypto/sha256-api-key-hasher.test.ts
-import { describe, it, expect } from 'vitest'
-import { Sha256ApiKeyHasher } from './sha256-api-key-hasher'
-
-describe('Sha256ApiKeyHasher', () => {
-  it('hash deterministe (même entrée = même sortie)', () => {
-    const hasher = new Sha256ApiKeyHasher()
-    expect(hasher.hash('pmb_live_abc')).toEqual(hasher.hash('pmb_live_abc'))
-  })
-
-  it('hash différent pour entrées différentes', () => {
-    const hasher = new Sha256ApiKeyHasher()
-    expect(hasher.hash('a')).not.toEqual(hasher.hash('b'))
-  })
-
-  it('retourne 64 chars hex (SHA-256)', () => {
-    const hasher = new Sha256ApiKeyHasher()
-    expect(hasher.hash('x')).toMatch(/^[0-9a-f]{64}$/)
-  })
-})
-```
-
-Impl :
-```ts
-// src/authentication/infrastructure/crypto/sha256-api-key-hasher.ts
-import { createHash } from 'node:crypto'
-import { type ApiKeyHasher } from '@/authentication/domain/api-key/api-key-hasher'
-
-export class Sha256ApiKeyHasher implements ApiKeyHasher {
-  hash(token: string): string {
-    return createHash('sha256').update(token).digest('hex')
-  }
-}
-```
-
-- [ ] **Step 3: `crypto-token-generator.ts`**
-
-```ts
-// src/authentication/infrastructure/crypto/crypto-token-generator.ts
-import { randomBytes } from 'node:crypto'
-import { type TokenGenerator } from '@/authentication/domain/api-key/token-generator'
-
-export class CryptoTokenGenerator implements TokenGenerator {
-  generate(prefix: 'pmb_live_' | 'pmb_test_'): string {
-    return `${prefix}${randomBytes(32).toString('hex')}`
-  }
-}
-```
-
-- [ ] **Step 4: `jsonwebtoken-token-signer.ts` + test**
-
-Test :
-```ts
-// src/authentication/infrastructure/crypto/jsonwebtoken-token-signer.test.ts
-import { describe, it, expect } from 'vitest'
-import { JsonwebtokenTokenSigner } from './jsonwebtoken-token-signer'
-
-describe('JsonwebtokenTokenSigner', () => {
-  const secret = 'a'.repeat(32)
-  const signer = new JsonwebtokenTokenSigner(secret)
-  const payload = {
-    sub: '550e8400-e29b-41d4-a716-446655440000',
-    email: 'u@x.com',
-    roles: ['admin'],
-    statutAcces: 'ACTIF',
-    tokenVersion: 1,
-  }
-
-  it('sign puis verify retourne le payload', () => {
-    const token = signer.sign(payload, 3600)
-    expect(signer.verify(token)).toMatchObject(payload)
-  })
-
-  it('verify retourne null pour un token invalide', () => {
-    expect(signer.verify('not.a.jwt')).toBeNull()
-  })
-
-  it('verify retourne null pour un token signé avec une autre clé', () => {
-    const other = new JsonwebtokenTokenSigner('b'.repeat(32))
-    const token = other.sign(payload, 3600)
-    expect(signer.verify(token)).toBeNull()
-  })
-})
-```
-
-Impl :
-```ts
-// src/authentication/infrastructure/crypto/jsonwebtoken-token-signer.ts
-import jsonwebtoken from 'jsonwebtoken'
-import { type JwtPayload, type TokenSigner } from '@/authentication/domain/jwt/token-signer'
-
-export class JsonwebtokenTokenSigner implements TokenSigner {
-  constructor(private readonly secret: string) {}
-
-  sign(payload: JwtPayload, ttlSeconds: number): string {
-    return jsonwebtoken.sign(payload, this.secret, { algorithm: 'HS256', expiresIn: ttlSeconds })
-  }
-
-  verify(token: string): JwtPayload | null {
-    try {
-      const decoded = jsonwebtoken.verify(token, this.secret, { algorithms: ['HS256'] })
-      if (typeof decoded === 'string') return null
-      return decoded as unknown as JwtPayload
-    } catch {
-      return null
-    }
-  }
-}
-```
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/authentication/domain/jwt/ apps/pilote-mb-core/src/authentication/infrastructure/crypto/
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — adapters crypto (SHA-256, CryptoTokenGenerator, JWT signer)
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, jsonwebtoken
-Tags: pilote-mb, backend, authentication, crypto
-Files-changed: 6"
-```
+- [ ] **Step 2: Commit** — `feature: authentication ports — hasher, generator, signer, repositories`
 
 ---
 
-### Tâche 37 : ApiKey mapper + ApiKeyPrismaRepository + test d'intégration
+## Phase 10 — Module authentication — infrastructure
+
+### Tâche 40 : Sha256ApiKeyHasher
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/authentication/infrastructure/persistence/api-key.mapper.ts`
-- Create: `apps/pilote-mb-core/src/authentication/infrastructure/persistence/api-key.prisma-repository.ts`
-- Create: `apps/pilote-mb-core/src/authentication/infrastructure/persistence/api-key.prisma-repository.test.ts`
-- Create: `apps/pilote-mb-core/src/test/fixtures/api-key.fixture.ts`
+- Create: `src/authentication/infrastructure/crypto/sha256-api-key-hasher.ts`
+- Create: `src/authentication/infrastructure/crypto/sha256-api-key-hasher.test.ts`
 
-- [ ] **Step 1: `api-key.fixture.ts`**
+- [ ] **Step 1: Test** — vérifier déterminisme (`hash(t) === hash(t)`)
+- [ ] **Step 2: Implémentation** (cf. design 9.2)
+- [ ] **Step 3: Commit** — `feature: authentication infra — Sha256ApiKeyHasher`
 
-```ts
-// src/test/fixtures/api-key.fixture.ts
-import { randomUUID, createHash, randomBytes } from 'node:crypto'
-import type { Prisma } from '@prisma/client'
-import { getPrisma } from '@/platform/persistence/prisma/prisma-pilote-helpers'
+---
 
-// Helper wrapper : expose getPrisma pour les fixtures uniquement
-// (exception à la règle 6.2 — fixtures hors Awilix)
-```
+### Tâche 41 : CryptoTokenGenerator
 
-**Note :** on a besoin d'un helper `getPrisma()` qui retourne le client (tx ou racine) pour les fixtures. Le crée dans `platform/persistence/prisma/prisma-pilote-helpers.ts`.
+**Files:**
+- Create: `src/authentication/infrastructure/crypto/crypto-token-generator.ts`
+- Create: `src/authentication/infrastructure/crypto/crypto-token-generator.test.ts`
 
-Crée d'abord :
-```ts
-// src/platform/persistence/prisma/prisma-pilote-helpers.ts
-import { txStore, prismaClient } from './prisma-transaction'
+- [ ] **Step 1: Test** — vérifier longueur ≥ 64, préfixe correct, deux appels différents
+- [ ] **Step 2: Implémentation** (cf. design 9.2)
+- [ ] **Step 3: Commit** — `feature: authentication infra — CryptoTokenGenerator`
 
-export const getPrisma = () => txStore.getStore() ?? prismaClient
-```
+---
 
-Puis la fixture :
-```ts
-// src/test/fixtures/api-key.fixture.ts
-import { randomUUID, createHash, randomBytes } from 'node:crypto'
-import type { Prisma } from '@prisma/client'
-import { getPrisma } from '@/platform/persistence/prisma/prisma-pilote-helpers'
+### Tâche 42 : JsonwebtokenTokenSigner
 
-export type ApiKeyFixtureOverrides = Partial<Prisma.api_keyUncheckedCreateInput> & {
-  rawToken?: string
-}
+**Files:**
+- Create: `src/authentication/infrastructure/crypto/jsonwebtoken-token-signer.ts`
+- Create: `src/authentication/infrastructure/crypto/jsonwebtoken-token-signer.test.ts`
 
-export async function createApiKeyFixture(overrides: ApiKeyFixtureOverrides = {}) {
-  const rawToken = overrides.rawToken ?? `pmb_test_${randomBytes(32).toString('hex')}`
-  const keyHash = overrides.key_hash ?? createHash('sha256').update(rawToken).digest('hex')
-  const keyPrefix = overrides.key_prefix ?? rawToken.slice(0, 12)
+- [ ] **Step 1: Tests** — round-trip (`sign(payload) → verify` retourne le payload), token altéré → `JwtVerificationError`, token expiré → erreur, payload incorrect → erreur
+- [ ] **Step 2: Implémentation** (utilise `jsonwebtoken`, HS256, lit `JWT_SECRET` + `JWT_TTL_HOURS` via config injectée, retourne `ResultAsync` pour `verify`)
+- [ ] **Step 3: Commit** — `feature: authentication infra — JsonwebtokenTokenSigner avec ResultAsync`
 
-  const { rawToken: _r, ...rest } = overrides
+---
 
-  const row = await getPrisma().api_key.create({
-    data: {
-      id: randomUUID(),
-      nom: `test-key-${randomUUID().slice(0, 6)}`,
-      key_hash: keyHash,
-      key_prefix: keyPrefix,
-      scopes: ['entities:read'],
-      active: true,
-      ...rest,
-    },
-  })
-  return { row, rawToken }
-}
-```
+### Tâche 43 : ApiKeyPrismaRepository
 
-- [ ] **Step 2: `api-key.mapper.ts`**
+**Files:**
+- Create: `src/authentication/infrastructure/persistence/api-key.prisma-repository.ts`
+- Create: `src/authentication/infrastructure/persistence/api-key.prisma-repository.test.ts`
 
-```ts
-// src/authentication/infrastructure/persistence/api-key.mapper.ts
-import type { api_key } from '@prisma/client'
-import { ApiKey, type ApiKeyPersistenceShape } from '@/authentication/domain/api-key/api-key'
-
-export class ApiKeyMapper {
-  static toDomain(row: api_key): ApiKey {
-    return ApiKey.reconstitute({
-      id: row.id,
-      nom: row.nom,
-      key_hash: row.key_hash,
-      key_prefix: row.key_prefix,
-      scopes: row.scopes,
-      active: row.active,
-      date_creation: row.date_creation,
-      date_derniere_utilisation: row.date_derniere_utilisation,
-    })
-  }
-
-  static toPersistence(aggregate: ApiKey): ApiKeyPersistenceShape {
-    return {
-      id: aggregate.id.valueOf(),
-      nom: aggregate.nom,
-      key_hash: aggregate.keyHash,
-      key_prefix: aggregate.keyPrefix,
-      scopes: aggregate.scopes.map((scope) => scope.valueOf()),
-      active: aggregate.estActive(),
-      date_creation: aggregate.dateCreation,
-      date_derniere_utilisation: aggregate.dateDerniereUtilisation,
-    }
-  }
-}
-```
-
-- [ ] **Step 3: Test d'intégration du repository**
-
-```ts
-// src/authentication/infrastructure/persistence/api-key.prisma-repository.test.ts
-import { describe, it, expect } from 'vitest'
-import { withTestTransaction } from '@/test/with-test-transaction'
-import { createApiKeyFixture } from '@/test/fixtures/api-key.fixture'
-import { type ApiKeyRepository } from '@/authentication/domain/api-key/api-key.repository'
-import { ApiKey } from '@/authentication/domain/api-key/api-key'
-import { Scope } from '@/authentication/domain/api-key/scope'
-import { Sha256ApiKeyHasher } from '@/authentication/infrastructure/crypto/sha256-api-key-hasher'
-import { CryptoTokenGenerator } from '@/authentication/infrastructure/crypto/crypto-token-generator'
-import { FakeClock } from '@/test/fake-clock'
-
-describe('ApiKeyPrismaRepository', () => {
-  it('findByKeyHash retourne null si inexistant', withTestTransaction(async (testContext) => {
-    const repo = testContext.resolve<ApiKeyRepository>('authentication', 'apiKeyRepository')
-    expect(await repo.findByKeyHash('inexistant')).toBeNull()
-  }))
-
-  it('findByKeyHash retourne un agrégat si la clé existe', withTestTransaction(async (testContext) => {
-    const repo = testContext.resolve<ApiKeyRepository>('authentication', 'apiKeyRepository')
-    const { row } = await createApiKeyFixture({ nom: 'target', active: true })
-
-    const found = await repo.findByKeyHash(row.key_hash)
-
-    expect(found).not.toBeNull()
-    expect(found!.nom).toEqual('target')
-    expect(found!.estActive()).toEqual(true)
-  }))
-
-  it('save persiste un nouvel agrégat et publie ses events', withTestTransaction(async (testContext) => {
-    const repo = testContext.resolve<ApiKeyRepository>('authentication', 'apiKeyRepository')
-    const clock = new FakeClock(new Date('2026-04-24T10:00:00Z'))
-    const { aggregate } = ApiKey.create({
-      nom: 'new-key',
-      scopes: [Scope.from('entities:read')],
-      environment: 'test',
-      hasher: new Sha256ApiKeyHasher(),
-      tokenGenerator: new CryptoTokenGenerator(),
-      clock,
-    })._unsafeUnwrap()
-
-    await repo.save(aggregate)
-
-    const persisted = await repo.findById(aggregate.id.valueOf())
-    expect(persisted).not.toBeNull()
-    expect(persisted!.nom).toEqual('new-key')
-  }))
-})
-```
-
-- [ ] **Step 4: `api-key.prisma-repository.ts`**
+- [ ] **Step 1: Tests `withTestTransaction`** — `save` puis `findByKeyHash` retourne l'`ApiKey` ; `findByKeyHash` non existant → `null` ; `save` upsert (idempotent)
+- [ ] **Step 2: Implémentation**
 
 ```ts
 // src/authentication/infrastructure/persistence/api-key.prisma-repository.ts
+import { ResultAsync } from '@/framework/result'
+import { RepositoryError } from '@/framework/errors/common-errors'
 import { type Inject } from '@/authentication/authentication.module'
-import { type ApiKey } from '@/authentication/domain/api-key/api-key'
-import { type ApiKeyRepository } from '@/authentication/domain/api-key/api-key.repository'
-import { ApiKeyMapper } from './api-key.mapper'
+import { type ApiKey } from '@/authentication/model/api-key'
+import { type ApiKeyId } from '@/authentication/model/api-key-id'
+import { type ApiKeyRepository } from '@/authentication/ports/api-key.repository'
+import { apiKeyToPersistence, apiKeyFromPersistence } from './api-key.mapper'
 
 export class ApiKeyPrismaRepository implements ApiKeyRepository {
-  constructor(private readonly deps: Inject<'prisma' | 'domainEventPublisher'>) {}
+  constructor(private readonly deps: Inject<'prisma'>) {}
 
-  async save(aggregate: ApiKey): Promise<void> {
-    const data = ApiKeyMapper.toPersistence(aggregate)
-    await this.deps.prisma.getInstance().api_key.upsert({
-      where: { id: data.id },
-      create: data,
-      update: data,
-    })
-    await this.deps.domainEventPublisher.publish(aggregate.pullPendingEvents())
+  save(apiKey: ApiKey): ResultAsync<void, RepositoryError> {
+    const data = apiKeyToPersistence(apiKey)
+    return ResultAsync.fromPromise(
+      this.deps.prisma.getInstance().api_key
+        .upsert({ where: { id: data.id }, create: data, update: data })
+        .then(() => undefined),
+      (cause) => new RepositoryError('save api_key failed', { cause }),
+    )
   }
 
-  async findByKeyHash(keyHash: string): Promise<ApiKey | null> {
-    const row = await this.deps.prisma.getInstance().api_key.findUnique({ where: { key_hash: keyHash } })
-    return row ? ApiKeyMapper.toDomain(row) : null
+  findByKeyHash(keyHash: string): ResultAsync<ApiKey | null, RepositoryError> {
+    return ResultAsync.fromPromise(
+      this.deps.prisma.getInstance().api_key.findUnique({ where: { key_hash: keyHash } }),
+      (cause) => new RepositoryError('findByKeyHash failed', { cause }),
+    ).map((row) => row ? apiKeyFromPersistence(row) : null)
   }
 
-  async findById(id: string): Promise<ApiKey | null> {
-    const row = await this.deps.prisma.getInstance().api_key.findUnique({ where: { id } })
-    return row ? ApiKeyMapper.toDomain(row) : null
+  findById(id: ApiKeyId): ResultAsync<ApiKey | null, RepositoryError> {
+    return ResultAsync.fromPromise(
+      this.deps.prisma.getInstance().api_key.findUnique({ where: { id } }),
+      (cause) => new RepositoryError('findById failed', { cause }),
+    ).map((row) => row ? apiKeyFromPersistence(row) : null)
   }
 }
 ```
 
-- [ ] **Step 5: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/platform/persistence/prisma/prisma-pilote-helpers.ts apps/pilote-mb-core/src/test/fixtures/api-key.fixture.ts apps/pilote-mb-core/src/authentication/infrastructure/persistence/
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — ApiKeyPrismaRepository + mapper + fixture
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, prisma
-Tags: pilote-mb, backend, authentication, persistence
-Files-changed: 5"
-```
+- [ ] **Step 3: Commit** — `feature: authentication infra — ApiKeyPrismaRepository avec ResultAsync`
 
 ---
 
-### Tâche 38 : UtilisateurPrismaRepository + mapper + fixture
+### Tâche 44 : UtilisateurPrismaRepository
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/authentication/infrastructure/persistence/utilisateur.mapper.ts`
-- Create: `apps/pilote-mb-core/src/authentication/infrastructure/persistence/utilisateur.prisma-repository.ts`
-- Create: `apps/pilote-mb-core/src/test/fixtures/utilisateur.fixture.ts`
+- Create: `src/authentication/infrastructure/persistence/utilisateur.prisma-repository.ts`
+- Create: `src/authentication/infrastructure/persistence/utilisateur.prisma-repository.test.ts`
 
-- [ ] **Step 1: `utilisateur.mapper.ts`**
+- [ ] **Step 1: Tests `withTestTransaction`** — `save` + `findById` + `findBySubProconnect` ; row absente → `null`
+- [ ] **Step 2: Implémentation** (similaire à `ApiKeyPrismaRepository`)
+- [ ] **Step 3: Commit** — `feature: authentication infra — UtilisateurPrismaRepository`
 
-```ts
-// src/authentication/infrastructure/persistence/utilisateur.mapper.ts
-import type { utilisateur } from '@prisma/client'
-import { Utilisateur, type UtilisateurPersistenceShape } from '@/authentication/domain/utilisateur/utilisateur'
-import type { StatutAccesValue } from '@/authentication/domain/utilisateur/statut-acces'
+---
 
-export class UtilisateurMapper {
-  static toDomain(row: utilisateur): Utilisateur {
-    return Utilisateur.reconstitute({
-      id: row.id,
-      sub_proconnect: row.sub_proconnect,
-      email: row.email,
-      nom: row.nom,
-      prenom: row.prenom,
-      statut_acces: row.statut_acces as StatutAccesValue,
-      roles: row.roles,
-      token_version: row.token_version,
-      date_creation: row.date_creation,
-      date_derniere_connexion: row.date_derniere_connexion,
-    })
-  }
+### Tâche 45 : ProConnect client (scaffolding)
 
-  static toPersistence(aggregate: Utilisateur): UtilisateurPersistenceShape {
-    return {
-      id: aggregate.id.valueOf(),
-      sub_proconnect: aggregate.subProconnect,
-      email: aggregate.email.valueOf(),
-      nom: aggregate.nom,
-      prenom: aggregate.prenom,
-      statut_acces: aggregate.statutAcces.value,
-      roles: [...aggregate.roles],
-      token_version: aggregate.tokenVersion,
-      date_creation: aggregate.dateCreation,
-      date_derniere_connexion: aggregate.dateDerniereConnexion,
-    }
-  }
-}
-```
+**Files:** Create: `src/authentication/infrastructure/proconnect/proconnect-client.ts`
 
-- [ ] **Step 2: `utilisateur.prisma-repository.ts`**
+- [ ] **Step 1: Implémentation stub** — méthodes `validateIdToken(idToken): ResultAsync<ProConnectClaims, …>` qui retourne `errAsync(NotImplementedError)`. Imports `openid-client` mais ne crée pas encore le client (config optionnelle).
+- [ ] **Step 2: Commit** — `feature: authentication infra — ProconnectClient scaffolding`
+
+---
+
+### Tâche 46 : Fixtures api-key + utilisateur
+
+**Files:**
+- Create: `src/test/fixtures/api-key.fixture.ts`
+- Create: `src/test/fixtures/utilisateur.fixture.ts`
+
+- [ ] **Step 1: Implémentations** (cf. design 10.6 — utilise `getPrisma()` directement, override possible)
+- [ ] **Step 2: Commit** — `feature: test — fixtures api-key et utilisateur`
+
+---
+
+## Phase 11 — Module authentication — use cases
+
+### Tâche 47 : VerifyApiKeyHandler (query)
+
+**Files:**
+- Create: `src/authentication/queries/verify-api-key/verify-api-key.handler.ts`
+- Create: `src/authentication/queries/verify-api-key/verify-api-key.handler.test.ts`
+
+- [ ] **Step 1: Tests `withTestTransaction`** :
+  - Token inconnu → `null`
+  - Token connu et actif → retourne l'`ApiKey`
+  - Token connu mais révoqué → `null`
+
+- [ ] **Step 2: Implémentation**
 
 ```ts
-// src/authentication/infrastructure/persistence/utilisateur.prisma-repository.ts
+// src/authentication/queries/verify-api-key/verify-api-key.handler.ts
+import { type ResultAsync } from '@/framework/result'
+import { type RepositoryError } from '@/framework/errors/common-errors'
 import { type Inject } from '@/authentication/authentication.module'
-import { type Utilisateur } from '@/authentication/domain/utilisateur/utilisateur'
-import { type UtilisateurRepository } from '@/authentication/domain/utilisateur/utilisateur.repository'
-import { UtilisateurMapper } from './utilisateur.mapper'
-
-export class UtilisateurPrismaRepository implements UtilisateurRepository {
-  constructor(private readonly deps: Inject<'prisma' | 'domainEventPublisher'>) {}
-
-  async save(aggregate: Utilisateur): Promise<void> {
-    const data = UtilisateurMapper.toPersistence(aggregate)
-    await this.deps.prisma.getInstance().utilisateur.upsert({
-      where: { id: data.id },
-      create: data,
-      update: data,
-    })
-    await this.deps.domainEventPublisher.publish(aggregate.pullPendingEvents())
-  }
-
-  async findById(id: string): Promise<Utilisateur | null> {
-    const row = await this.deps.prisma.getInstance().utilisateur.findUnique({ where: { id } })
-    return row ? UtilisateurMapper.toDomain(row) : null
-  }
-
-  async findBySubProconnect(sub: string): Promise<Utilisateur | null> {
-    const row = await this.deps.prisma.getInstance().utilisateur.findUnique({ where: { sub_proconnect: sub } })
-    return row ? UtilisateurMapper.toDomain(row) : null
-  }
-}
-```
-
-- [ ] **Step 3: `utilisateur.fixture.ts`**
-
-```ts
-// src/test/fixtures/utilisateur.fixture.ts
-import { randomUUID } from 'node:crypto'
-import type { Prisma } from '@prisma/client'
-import { getPrisma } from '@/platform/persistence/prisma/prisma-pilote-helpers'
-
-export async function createUtilisateurFixture(
-  overrides: Partial<Prisma.utilisateurUncheckedCreateInput> = {},
-) {
-  const id = overrides.id ?? randomUUID()
-  return getPrisma().utilisateur.create({
-    data: {
-      id,
-      sub_proconnect: overrides.sub_proconnect ?? `sub-${id}`,
-      email: overrides.email ?? `user-${id.slice(0, 6)}@example.com`,
-      nom: 'Test',
-      prenom: 'User',
-      statut_acces: 'ACTIF',
-      roles: [],
-      token_version: 1,
-      ...overrides,
-    },
-  })
-}
-```
-
-- [ ] **Step 4: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/authentication/infrastructure/persistence/utilisateur.mapper.ts apps/pilote-mb-core/src/authentication/infrastructure/persistence/utilisateur.prisma-repository.ts apps/pilote-mb-core/src/test/fixtures/utilisateur.fixture.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — UtilisateurPrismaRepository + mapper + fixture
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, prisma
-Tags: pilote-mb, backend, authentication, persistence
-Files-changed: 3"
-```
-
----
-
-### Tâche 39 : Proconnect client scaffolding
-
-**Files:**
-- Create: `apps/pilote-mb-core/src/authentication/infrastructure/proconnect/proconnect-client.ts`
-
-- [ ] **Step 1: Scaffolding minimal**
-
-```ts
-// src/authentication/infrastructure/proconnect/proconnect-client.ts
-// Scaffolding — impl complète dans le ticket ProConnect (voir docs/architecture/init-design.md section 9.3)
-
-import { type Config } from '@/config'
-
-export interface ProconnectClient {
-  verifyIdToken(idToken: string): Promise<null> // retourne null tant que l'impl n'est pas faite
-}
-
-export class NotImplementedProconnectClient implements ProconnectClient {
-  constructor(_config: Config) {}
-  async verifyIdToken(_idToken: string): Promise<null> {
-    return null
-  }
-}
-```
-
-- [ ] **Step 2: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/authentication/infrastructure/proconnect/
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — scaffolding ProConnect client
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, authentication, proconnect, scaffolding
-Files-changed: 1"
-```
-
----
-
-## Phase 10 — BC authentication : application
-
-### Tâche 40 : VerifyApiKeyHandler + test d'intégration
-
-**Files:**
-- Create: `apps/pilote-mb-core/src/authentication/application/queries/verify-api-key/verify-api-key.handler.ts`
-- Create: `apps/pilote-mb-core/src/authentication/application/queries/verify-api-key/verify-api-key.handler.test.ts`
-
-- [ ] **Step 1: Test**
-
-```ts
-// src/authentication/application/queries/verify-api-key/verify-api-key.handler.test.ts
-import { describe, it, expect } from 'vitest'
-import { withTestTransaction } from '@/test/with-test-transaction'
-import { VerifyApiKeyHandler } from './verify-api-key.handler'
-import { createApiKeyFixture } from '@/test/fixtures/api-key.fixture'
-
-describe('VerifyApiKeyHandler', () => {
-  it('retourne une référence si le token matche une clé active', withTestTransaction(async (testContext) => {
-    const handler = testContext.resolve<VerifyApiKeyHandler>('authentication', 'verifyApiKeyHandler')
-    const { rawToken, row } = await createApiKeyFixture({ nom: 'target' })
-
-    const result = await handler.executer({ rawToken })
-
-    expect(result).not.toBeNull()
-    expect(result!.id).toEqual(row.id)
-    expect(result!.nom).toEqual('target')
-  }))
-
-  it('retourne null si le token est inconnu', withTestTransaction(async (testContext) => {
-    const handler = testContext.resolve<VerifyApiKeyHandler>('authentication', 'verifyApiKeyHandler')
-    expect(await handler.executer({ rawToken: 'pmb_test_fake' })).toBeNull()
-  }))
-
-  it('retourne null si la clé est désactivée', withTestTransaction(async (testContext) => {
-    const handler = testContext.resolve<VerifyApiKeyHandler>('authentication', 'verifyApiKeyHandler')
-    const { rawToken } = await createApiKeyFixture({ active: false })
-    expect(await handler.executer({ rawToken })).toBeNull()
-  }))
-})
-```
-
-- [ ] **Step 2: Impl**
-
-```ts
-// src/authentication/application/queries/verify-api-key/verify-api-key.handler.ts
-import { type Inject } from '@/authentication/authentication.module'
-import { type ApiKeyReference } from '@/authentication/public/api-key-reference'
+import { type ApiKey } from '@/authentication/model/api-key'
 
 export class VerifyApiKeyHandler {
-  constructor(private readonly deps: Inject<'apiKeyRepository' | 'apiKeyHasher'>) {}
+  constructor(private readonly deps: Inject<'apiKeyHasher' | 'apiKeyRepository'>) {}
 
-  async executer(input: { rawToken: string }): Promise<ApiKeyReference | null> {
-    const keyHash = this.deps.apiKeyHasher.hash(input.rawToken)
-    const aggregate = await this.deps.apiKeyRepository.findByKeyHash(keyHash)
-    if (!aggregate || !aggregate.estActive()) return null
-    return {
-      id: aggregate.id.valueOf(),
-      nom: aggregate.nom,
-      scopes: aggregate.scopes.map((scope) => scope.valueOf()),
-    }
+  executer(rawToken: string): ResultAsync<ApiKey | null, RepositoryError> {
+    const keyHash = this.deps.apiKeyHasher.hash(rawToken)
+    return this.deps.apiKeyRepository.findByKeyHash(keyHash)
+      .map((apiKey) => apiKey?.active ? apiKey : null)
   }
 }
 ```
 
-- [ ] **Step 3: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/authentication/application/queries/verify-api-key/
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — VerifyApiKeyHandler
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, authentication, application
-Files-changed: 2"
-```
+- [ ] **Step 3: Commit** — `feature: authentication query — VerifyApiKeyHandler avec railway oriented`
 
 ---
 
-### Tâche 41 : VerifyJwtHandler + test
+### Tâche 48 : VerifyJwtHandler (query)
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/authentication/application/queries/verify-jwt/verify-jwt.handler.ts`
-- Create: `apps/pilote-mb-core/src/authentication/application/queries/verify-jwt/verify-jwt.handler.test.ts`
+- Create: `src/authentication/queries/verify-jwt/verify-jwt.handler.ts`
+- Create: `src/authentication/queries/verify-jwt/verify-jwt.handler.test.ts`
 
-- [ ] **Step 1: Test**
+- [ ] **Step 1: Tests** :
+  - JWT signé manuellement avec `JWT_SECRET` + utilisateur en DB → retourne l'`Utilisateur`
+  - JWT altéré → `JwtVerificationError`
+  - JWT valide mais utilisateur supprimé → `null` (ou erreur typée)
+  - JWT avec `tokenVersion` obsolète → `null`
 
-```ts
-// src/authentication/application/queries/verify-jwt/verify-jwt.handler.test.ts
-import { describe, it, expect } from 'vitest'
-import { withTestTransaction } from '@/test/with-test-transaction'
-import { VerifyJwtHandler } from './verify-jwt.handler'
-import { createUtilisateurFixture } from '@/test/fixtures/utilisateur.fixture'
-import { JsonwebtokenTokenSigner } from '@/authentication/infrastructure/crypto/jsonwebtoken-token-signer'
-import { config } from '@/config'
-
-describe('VerifyJwtHandler', () => {
-  it('retourne la référence utilisateur si le JWT est valide', withTestTransaction(async (testContext) => {
-    const handler = testContext.resolve<VerifyJwtHandler>('authentication', 'verifyJwtHandler')
-    const utilisateur = await createUtilisateurFixture({ statut_acces: 'ACTIF' })
-    const signer = new JsonwebtokenTokenSigner(config.JWT_SECRET)
-    const token = signer.sign(
-      { sub: utilisateur.id, email: utilisateur.email, roles: [], statutAcces: 'ACTIF', tokenVersion: 1 },
-      3600,
-    )
-
-    const result = await handler.executer({ rawJwt: token })
-
-    expect(result).not.toBeNull()
-    expect(result!.id).toEqual(utilisateur.id)
-  }))
-
-  it('retourne null pour un JWT invalide', withTestTransaction(async (testContext) => {
-    const handler = testContext.resolve<VerifyJwtHandler>('authentication', 'verifyJwtHandler')
-    expect(await handler.executer({ rawJwt: 'invalid.jwt.token' })).toBeNull()
-  }))
-})
-```
-
-- [ ] **Step 2: Impl**
+- [ ] **Step 2: Implémentation railway**
 
 ```ts
-// src/authentication/application/queries/verify-jwt/verify-jwt.handler.ts
+// src/authentication/queries/verify-jwt/verify-jwt.handler.ts
+import { type ResultAsync, errAsync } from '@/framework/result'
 import { type Inject } from '@/authentication/authentication.module'
-import { type UtilisateurReference } from '@/authentication/public/utilisateur-reference'
+import { type Utilisateur } from '@/authentication/model/utilisateur'
+import { utilisateurId } from '@/authentication/model/utilisateur-id'
+import { JwtVerificationError } from '@/authentication/ports/token-signer'
+
+export type VerifyJwtError = JwtVerificationError | RepositoryError
 
 export class VerifyJwtHandler {
   constructor(private readonly deps: Inject<'tokenSigner' | 'utilisateurRepository'>) {}
 
-  async executer(input: { rawJwt: string }): Promise<UtilisateurReference | null> {
-    const payload = this.deps.tokenSigner.verify(input.rawJwt)
-    if (!payload) return null
-    const utilisateur = await this.deps.utilisateurRepository.findById(payload.sub)
-    if (!utilisateur) return null
-    if (utilisateur.tokenVersion !== payload.tokenVersion) return null
-    return {
-      id: utilisateur.id.valueOf(),
-      email: utilisateur.email.valueOf(),
-      nomComplet: utilisateur.nomComplet(),
-    }
+  executer(rawJwt: string): ResultAsync<Utilisateur | null, VerifyJwtError> {
+    return this.deps.tokenSigner.verify(rawJwt)
+      .andThen((payload) => {
+        const idResult = utilisateurId(payload.utilisateurId)
+        if (idResult.isErr()) return errAsync(new JwtVerificationError('invalid utilisateurId'))
+        return this.deps.utilisateurRepository.findById(idResult.value)
+          .map((utilisateur) => {
+            if (!utilisateur) return null
+            if (utilisateur.tokenVersion !== payload.tokenVersion) return null
+            return utilisateur
+          })
+      })
   }
 }
 ```
 
-- [ ] **Step 3: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/authentication/application/queries/verify-jwt/
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — VerifyJwtHandler
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, authentication, application
-Files-changed: 2"
-```
+- [ ] **Step 3: Commit** — `feature: authentication query — VerifyJwtHandler railway`
 
 ---
 
-### Tâche 42 : CreateSessionHandler stub + NotImplementedError
+### Tâche 49 : CreateSessionHandler (command, scaffolding)
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/authentication/domain/session/errors/not-implemented.error.ts`
-- Create: `apps/pilote-mb-core/src/authentication/application/commands/create-session/create-session.command.ts`
-- Create: `apps/pilote-mb-core/src/authentication/application/commands/create-session/create-session.handler.ts`
-- Create: `apps/pilote-mb-core/src/authentication/application/commands/create-session/create-session.handler.test.ts`
+- Create: `src/authentication/commands/create-session/create-session.command.ts`
+- Create: `src/authentication/commands/create-session/create-session.handler.ts`
+- Create: `src/authentication/commands/create-session/create-session.handler.test.ts`
 
-- [ ] **Step 1: `not-implemented.error.ts`**
+- [ ] **Step 1: Tests** :
+  - `idToken` vide → `MissingIdTokenError`
+  - `idToken` non vide → `NotImplementedError` (kind `not-implemented`)
+
+- [ ] **Step 2: Implémentation**
 
 ```ts
-// src/authentication/domain/session/errors/not-implemented.error.ts
-import { DomainError } from '@/shared-kernel/domain-error'
-
-export class NotImplementedError extends DomainError {
-  readonly code = 'NOT_IMPLEMENTED'
-  readonly kind = 'not-implemented' as const
-  constructor(featureDescription: string) {
-    super(`Fonctionnalité non implémentée : ${featureDescription}`)
-  }
-}
+// src/authentication/commands/create-session/create-session.command.ts
+export type CreateSessionCommand = { readonly idToken: string }
 ```
 
-- [ ] **Step 2: `create-session.command.ts`**
-
 ```ts
-// src/authentication/application/commands/create-session/create-session.command.ts
-export type CreateSessionCommand = {
-  readonly idToken: string
-}
-```
-
-- [ ] **Step 3: Test**
-
-```ts
-// src/authentication/application/commands/create-session/create-session.handler.test.ts
-import { describe, it, expect } from 'vitest'
-import { withTestTransaction } from '@/test/with-test-transaction'
-import { CreateSessionHandler } from './create-session.handler'
-import { NotImplementedError } from '@/authentication/domain/session/errors/not-implemented.error'
-
-describe('CreateSessionHandler', () => {
-  it('retourne NotImplementedError (scaffolding ProConnect)', withTestTransaction(async (testContext) => {
-    const handler = testContext.resolve<CreateSessionHandler>('authentication', 'createSessionHandler')
-    const result = await handler.executer({ idToken: 'any' })
-    expect(result.isErr()).toEqual(true)
-    expect(result._unsafeUnwrapErr()).toBeInstanceOf(NotImplementedError)
-  }))
-})
-```
-
-- [ ] **Step 4: Impl**
-
-```ts
-// src/authentication/application/commands/create-session/create-session.handler.ts
-import { err, type Result } from '@/shared-kernel/result'
-import { type DomainError } from '@/shared-kernel/domain-error'
+// src/authentication/commands/create-session/create-session.handler.ts
+import { type ResultAsync, errAsync } from '@/framework/result'
+import { NotImplementedError } from '@/framework/errors/common-errors'
 import { type Inject } from '@/authentication/authentication.module'
-import { NotImplementedError } from '@/authentication/domain/session/errors/not-implemented.error'
+import { MissingIdTokenError } from '@/authentication/model/errors'
 import { type CreateSessionCommand } from './create-session.command'
-import { type UtilisateurReference } from '@/authentication/public/utilisateur-reference'
 
 export type Session = {
   readonly jwt: string
-  readonly utilisateur: UtilisateurReference
+  readonly utilisateur: { id: string; email: string; nomComplet: string; statutAcces: string; roles: ReadonlyArray<string> }
 }
+
+export type CreateSessionError = MissingIdTokenError | NotImplementedError
 
 export class CreateSessionHandler {
   constructor(
-    private readonly deps: Inject<'utilisateurRepository' | 'tokenSigner' | 'clock' | 'config'>,
+    private readonly deps: Inject<'utilisateurRepository' | 'tokenSigner' | 'transaction' | 'logger' | 'clock'>,
   ) {}
 
-  async executer(_command: CreateSessionCommand): Promise<Result<Session, DomainError>> {
-    // TODO: intégrer ProConnect (ticket suivant)
-    //  1. Valider id_token via JWKS ProConnect
-    //  2. Upsert utilisateur depuis claims (sub, email, given_name, family_name)
-    //  3. Émettre JWT interne via this.deps.tokenSigner.sign(...)
-    return err(new NotImplementedError('intégration ProConnect — voir docs/architecture/init-design.md §9.3'))
+  executer(command: CreateSessionCommand): ResultAsync<Session, CreateSessionError> {
+    if (!command.idToken) return errAsync(new MissingIdTokenError('idToken is required'))
+    return errAsync(new NotImplementedError('ProConnect — voir ticket suivant'))
   }
 }
 ```
 
-- [ ] **Step 5: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/authentication/domain/session/ apps/pilote-mb-core/src/authentication/application/commands/create-session/
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — CreateSessionHandler stub + NotImplementedError
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, authentication, application, scaffolding
-Files-changed: 4"
-```
+- [ ] **Step 3: Commit** — `feature: authentication command — CreateSessionHandler stub avec NotImplementedError`
 
 ---
 
-### Tâche 43 : AuthenticationFacadeImpl
+## Phase 12 — Module authentication — public + module
+
+### Tâche 50 : ApiModels publics (UtilisateurApiModel, ApiKeyApiModel, SessionApiModel)
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/authentication/application/facades/authentication.facade.impl.ts`
+- Create: `src/authentication/public/utilisateur.api-model.ts`
+- Create: `src/authentication/public/api-key.api-model.ts`
+- Create: `src/authentication/public/session.api-model.ts`
 
-- [ ] **Step 1: Impl**
+- [ ] **Step 1: Implémentation**
 
 ```ts
-// src/authentication/application/facades/authentication.facade.impl.ts
+// src/authentication/public/utilisateur.api-model.ts
+import { z } from '@hono/zod-openapi'
+
+export const UtilisateurApiModelSchema = z.object({
+  id: z.string().uuid(),
+  email: z.string().email(),
+  nomComplet: z.string(),
+  statutAcces: z.enum(['EN_ATTENTE_ACCES', 'ACTIF', 'REFUSE', 'DESACTIVE']),
+  roles: z.array(z.string()),
+}).openapi('UtilisateurApiModel')
+
+export type UtilisateurApiModel = z.infer<typeof UtilisateurApiModelSchema>
+
+// src/authentication/public/api-key.api-model.ts
+export const ApiKeyApiModelSchema = z.object({
+  id: z.string().uuid(),
+  nom: z.string(),
+  scopes: z.array(z.string()),
+}).openapi('ApiKeyApiModel')
+export type ApiKeyApiModel = z.infer<typeof ApiKeyApiModelSchema>
+
+// src/authentication/public/session.api-model.ts
+export const SessionApiModelSchema = z.object({
+  jwt: z.string(),
+  utilisateur: UtilisateurApiModelSchema,
+}).openapi('SessionApiModel')
+export type SessionApiModel = z.infer<typeof SessionApiModelSchema>
+```
+
+- [ ] **Step 2: Commit** — `feature: authentication public — ApiModels (utilisateur, api-key, session)`
+
+---
+
+### Tâche 51 : AuthenticationFacade interface + impl
+
+**Files:**
+- Create: `src/authentication/public/authentication.facade.ts`
+- Create: `src/authentication/infrastructure/facades/authentication.facade.impl.ts`
+
+- [ ] **Step 1: Interface**
+
+```ts
+// src/authentication/public/authentication.facade.ts
+import { type ResultAsync } from '@/framework/result'
+import { type AppError } from '@/framework/errors/app-error'
+import { type ApiKeyApiModel } from './api-key.api-model'
+import { type UtilisateurApiModel } from './utilisateur.api-model'
+
+export interface AuthenticationFacade {
+  verifyApiKey(rawToken: string): ResultAsync<ApiKeyApiModel | null, AppError>
+  verifyJwt(rawJwt: string): ResultAsync<UtilisateurApiModel | null, AppError>
+  getUtilisateurParId(utilisateurId: string): ResultAsync<UtilisateurApiModel | null, AppError>
+}
+```
+
+- [ ] **Step 2: Implémentation**
+
+```ts
+// src/authentication/infrastructure/facades/authentication.facade.impl.ts
+import { type ResultAsync, okAsync, errAsync } from '@/framework/result'
+import { type AppError } from '@/framework/errors/app-error'
 import { type Inject } from '@/authentication/authentication.module'
 import { type AuthenticationFacade } from '@/authentication/public/authentication.facade'
-import { type UtilisateurReference } from '@/authentication/public/utilisateur-reference'
-import { type ApiKeyReference } from '@/authentication/public/api-key-reference'
+import { utilisateurId } from '@/authentication/model/utilisateur-id'
+import { apiKeyToApiModel } from './api-key-to-api-model'
+import { utilisateurToApiModel } from './utilisateur-to-api-model'
 
 export class AuthenticationFacadeImpl implements AuthenticationFacade {
   constructor(
     private readonly deps: Inject<
-      'utilisateurRepository' | 'verifyApiKeyHandler' | 'verifyJwtHandler'
+      'verifyApiKeyHandler' | 'verifyJwtHandler' | 'utilisateurRepository'
     >,
   ) {}
 
-  async utilisateurExiste(utilisateurId: string): Promise<boolean> {
-    return (await this.deps.utilisateurRepository.findById(utilisateurId)) !== null
+  verifyApiKey(rawToken: string) {
+    return this.deps.verifyApiKeyHandler.executer(rawToken)
+      .map((apiKey) => apiKey ? apiKeyToApiModel(apiKey) : null)
   }
 
-  async getUtilisateurReference(utilisateurId: string): Promise<UtilisateurReference | null> {
-    const utilisateur = await this.deps.utilisateurRepository.findById(utilisateurId)
-    if (!utilisateur) return null
-    return {
-      id: utilisateur.id.valueOf(),
-      email: utilisateur.email.valueOf(),
-      nomComplet: utilisateur.nomComplet(),
-    }
+  verifyJwt(rawJwt: string) {
+    return this.deps.verifyJwtHandler.executer(rawJwt)
+      .map((utilisateur) => utilisateur ? utilisateurToApiModel(utilisateur) : null)
   }
 
-  async verifyApiKey(rawToken: string): Promise<ApiKeyReference | null> {
-    return this.deps.verifyApiKeyHandler.executer({ rawToken })
-  }
-
-  async verifyJwt(rawJwt: string): Promise<UtilisateurReference | null> {
-    return this.deps.verifyJwtHandler.executer({ rawJwt })
+  getUtilisateurParId(rawId: string) {
+    const idResult = utilisateurId(rawId)
+    if (idResult.isErr()) return okAsync(null)
+    return this.deps.utilisateurRepository.findById(idResult.value)
+      .map((utilisateur) => utilisateur ? utilisateurToApiModel(utilisateur) : null)
   }
 }
 ```
 
-- [ ] **Step 2: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/authentication/application/facades/
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — AuthenticationFacadeImpl
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, authentication, application, facade
-Files-changed: 1"
-```
+- [ ] **Step 3: Mappers `apiKeyToApiModel` et `utilisateurToApiModel`** dans `src/authentication/infrastructure/facades/`
+- [ ] **Step 4: Commit** — `feature: authentication public — AuthenticationFacade interface + impl`
 
 ---
 
-## Phase 11 — BC authentication : public + module
-
-### Tâche 44 : Published Language (DTOs + facade interface)
+### Tâche 52 : authentication.module.ts + branchement
 
 **Files:**
-- Create: `apps/pilote-mb-core/src/authentication/public/utilisateur-reference.ts`
-- Create: `apps/pilote-mb-core/src/authentication/public/api-key-reference.ts`
-- Create: `apps/pilote-mb-core/src/authentication/public/authentication.facade.ts`
+- Create: `src/authentication/authentication.module.ts`
+- Modify: `src/framework/container/build-app-container.ts`
+- Modify: `src/framework/module-system/module-names.ts`
 
-- [ ] **Step 1: DTOs**
-
-```ts
-// src/authentication/public/utilisateur-reference.ts
-export type UtilisateurReference = {
-  readonly id: string
-  readonly email: string
-  readonly nomComplet: string
-}
-```
-
-```ts
-// src/authentication/public/api-key-reference.ts
-export type ApiKeyReference = {
-  readonly id: string
-  readonly nom: string
-  readonly scopes: ReadonlyArray<string>
-}
-```
-
-- [ ] **Step 2: Facade**
-
-```ts
-// src/authentication/public/authentication.facade.ts
-import { type UtilisateurReference } from './utilisateur-reference'
-import { type ApiKeyReference } from './api-key-reference'
-
-export interface AuthenticationFacade {
-  utilisateurExiste(utilisateurId: string): Promise<boolean>
-  getUtilisateurReference(utilisateurId: string): Promise<UtilisateurReference | null>
-  verifyApiKey(rawToken: string): Promise<ApiKeyReference | null>
-  verifyJwt(rawJwt: string): Promise<UtilisateurReference | null>
-}
-```
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/authentication/public/
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — Published Language (DTOs + facade interface)
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, authentication, public, ddd
-Files-changed: 3"
-```
-
----
-
-### Tâche 45 : authentication.module.ts
-
-**Files:**
-- Create: `apps/pilote-mb-core/src/authentication/authentication.module.ts`
-
-- [ ] **Step 1: Impl**
+- [ ] **Step 1: Module**
 
 ```ts
 // src/authentication/authentication.module.ts
-import { defineModule, type ExtractScope, type VerifyCradle } from '@/platform/container/module-system/define-module'
-import { type ApiKeyHasher } from './domain/api-key/api-key-hasher'
-import { type TokenGenerator } from './domain/api-key/token-generator'
-import { type ApiKeyRepository } from './domain/api-key/api-key.repository'
-import { type UtilisateurRepository } from './domain/utilisateur/utilisateur.repository'
-import { type TokenSigner } from './domain/jwt/token-signer'
-import { type AuthenticationFacade } from './public/authentication.facade'
+import { defineModule } from '@/framework/module-system/define-module'
+import type { VerifyCradle, ExtractScope } from '@/framework/module-system/types'
 import { Sha256ApiKeyHasher } from './infrastructure/crypto/sha256-api-key-hasher'
 import { CryptoTokenGenerator } from './infrastructure/crypto/crypto-token-generator'
 import { JsonwebtokenTokenSigner } from './infrastructure/crypto/jsonwebtoken-token-signer'
 import { ApiKeyPrismaRepository } from './infrastructure/persistence/api-key.prisma-repository'
 import { UtilisateurPrismaRepository } from './infrastructure/persistence/utilisateur.prisma-repository'
-import { VerifyApiKeyHandler } from './application/queries/verify-api-key/verify-api-key.handler'
-import { VerifyJwtHandler } from './application/queries/verify-jwt/verify-jwt.handler'
-import { CreateSessionHandler } from './application/commands/create-session/create-session.handler'
-import { AuthenticationFacadeImpl } from './application/facades/authentication.facade.impl'
-import { asFunction } from 'awilix'
-import { config } from '@/config'
+import { VerifyApiKeyHandler } from './queries/verify-api-key/verify-api-key.handler'
+import { VerifyJwtHandler } from './queries/verify-jwt/verify-jwt.handler'
+import { CreateSessionHandler } from './commands/create-session/create-session.handler'
+import { AuthenticationFacadeImpl } from './infrastructure/facades/authentication.facade.impl'
+import type { ApiKeyHasher } from './ports/api-key-hasher'
+import type { TokenGenerator } from './ports/token-generator'
+import type { TokenSigner } from './ports/token-signer'
+import type { ApiKeyRepository } from './ports/api-key.repository'
+import type { UtilisateurRepository } from './ports/utilisateur.repository'
+import type { AuthenticationFacade } from './public/authentication.facade'
 
 type AuthenticationCradle = {
   apiKeyHasher: ApiKeyHasher
@@ -4314,25 +2129,23 @@ type AuthenticationCradle = {
   authenticationFacade: AuthenticationFacade
 }
 
-type AuthenticationExports = {
-  authenticationFacade: AuthenticationFacade
-}
+type AuthenticationExports = { authenticationFacade: AuthenticationFacade }
 
 export const authenticationModule = defineModule<AuthenticationExports, AuthenticationCradle>()({
   name: 'authentication',
-  imports: ['platform'],
+  imports: ['framework'],
   exports: ['authenticationFacade'],
   register: (container, { asModuleClass }) => {
     container.register({
-      apiKeyHasher: asModuleClass(Sha256ApiKeyHasher).singleton(),
-      tokenGenerator: asModuleClass(CryptoTokenGenerator).singleton(),
-      tokenSigner: asFunction(() => new JsonwebtokenTokenSigner(config.JWT_SECRET)).singleton(),
-      apiKeyRepository: asModuleClass(ApiKeyPrismaRepository).singleton(),
+      apiKeyHasher:          asModuleClass(Sha256ApiKeyHasher).singleton(),
+      tokenGenerator:        asModuleClass(CryptoTokenGenerator).singleton(),
+      tokenSigner:           asModuleClass(JsonwebtokenTokenSigner).singleton(),
+      apiKeyRepository:      asModuleClass(ApiKeyPrismaRepository).singleton(),
       utilisateurRepository: asModuleClass(UtilisateurPrismaRepository).singleton(),
-      verifyApiKeyHandler: asModuleClass(VerifyApiKeyHandler).singleton(),
-      verifyJwtHandler: asModuleClass(VerifyJwtHandler).singleton(),
-      createSessionHandler: asModuleClass(CreateSessionHandler).singleton(),
-      authenticationFacade: asModuleClass(AuthenticationFacadeImpl).singleton(),
+      verifyApiKeyHandler:   asModuleClass(VerifyApiKeyHandler).singleton(),
+      verifyJwtHandler:      asModuleClass(VerifyJwtHandler).singleton(),
+      createSessionHandler:  asModuleClass(CreateSessionHandler).singleton(),
+      authenticationFacade:  asModuleClass(AuthenticationFacadeImpl).singleton(),
     } satisfies VerifyCradle<AuthenticationCradle>)
   },
 })
@@ -4341,686 +2154,261 @@ type Scope = ExtractScope<typeof authenticationModule>
 export type Inject<K extends keyof Scope> = Pick<Scope, K>
 ```
 
-- [ ] **Step 2: Vérifier la compilation complète**
-
-Run: `pnpm -F @pilote-mb/core exec tsc --noEmit`
-Expected: compilation OK
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/authentication/authentication.module.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — module.ts avec cradle typé et facade exportée
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, awilix
-Tags: pilote-mb, backend, authentication, di
-Files-changed: 1"
-```
+- [ ] **Step 2: Brancher dans `build-app-container.ts`** + ajouter `'authentication'` aux `module-names.ts`
+- [ ] **Step 3: Test E2E** — `buildAppContainer()` résout `authenticationFacade` depuis le scope `framework` après bootstrap (résolution eager des exports)
+- [ ] **Step 4: Commit** — `feature: authentication — module + branchement bootstrap`
 
 ---
 
-## Phase 12 — BC authentication : HTTP + middleware + CLI
+## Phase 13 — Module authentication — HTTP + CLI
 
-### Tâche 46 : Route POST /auth/sessions (retourne 501)
+### Tâche 53 : Route POST /auth/sessions
 
-**Files:**
-- Create: `apps/pilote-mb-core/src/authentication/infrastructure/http/routes/create-session.route.ts`
+**Files:** Create: `src/authentication/infrastructure/http/routes/create-session.route.ts`
 
-- [ ] **Step 1: Impl**
-
-```ts
-// src/authentication/infrastructure/http/routes/create-session.route.ts
-import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
-import { type AwilixContainer } from 'awilix'
-import { ErrorSchema } from '@/platform/http/schemas/error.schema'
-import { respondWithResult } from '@/platform/http/respond-with-result'
-import { type CreateSessionHandler } from '@/authentication/application/commands/create-session/create-session.handler'
-
-const CreateSessionInputSchema = z.object({
-  id_token: z.string().describe('id_token OIDC émis par ProConnect'),
-}).openapi('CreateSessionInput')
-
-const SessionSchema = z.object({
-  jwt: z.string(),
-  utilisateur: z.object({
-    id: z.string().uuid(),
-    email: z.string(),
-    nomComplet: z.string(),
-  }),
-}).openapi('Session')
-
-const createSessionRoute = createRoute({
-  method: 'post',
-  path: '/auth/sessions',
-  tags: ['Authentication'],
-  summary: "Échange un id_token ProConnect contre un JWT interne",
-  description: "Valide la signature de l'id_token via JWKS ProConnect, upsert l'utilisateur en DB, retourne un JWT interne HS256. Actuellement retourne 501 en attendant l'intégration ProConnect (voir docs/architecture/init-design.md §9.3).",
-  request: { body: { content: { 'application/json': { schema: CreateSessionInputSchema } } } },
-  responses: {
-    201: { description: 'Session créée', content: { 'application/json': { schema: SessionSchema } } },
-    400: { description: 'Requête invalide', content: { 'application/json': { schema: ErrorSchema } } },
-    501: { description: 'Non implémenté (scaffolding ProConnect)', content: { 'application/json': { schema: ErrorSchema } } },
-  },
-})
-
-export function registerCreateSessionRoute(app: OpenAPIHono, container: AwilixContainer): void {
-  app.openapi(createSessionRoute, async (context) => {
-    const body = context.req.valid('json')
-    const handler = container.resolve<CreateSessionHandler>('createSessionHandler')
-    const result = await handler.executer({ idToken: body.id_token })
-    return respondWithResult(context, result, (session) =>
-      context.json({
-        jwt: session.jwt,
-        utilisateur: session.utilisateur,
-      }, 201),
-    )
-  })
-}
-```
-
-- [ ] **Step 2: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/authentication/infrastructure/http/routes/
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — route POST /auth/sessions (501)
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, hono
-Tags: pilote-mb, backend, authentication, http
-Files-changed: 1"
-```
+- [ ] **Step 1: Implémentation** (cf. design 8.3 — retourne 501 via `respondWithResult`)
+- [ ] **Step 2: Commit** — `feature: authentication http — route POST /auth/sessions retourne 501`
 
 ---
 
-### Tâche 47 : auth middleware + require-scope middleware
+### Tâche 54 : Brancher le middleware auth + auth-context dans buildApp
 
-**Files:**
-- Create: `apps/pilote-mb-core/src/platform/http/middlewares/auth.middleware.ts`
-- Create: `apps/pilote-mb-core/src/platform/http/middlewares/require-scope.middleware.ts`
+**Files:** Modify: `src/framework/http/app.ts`
 
-- [ ] **Step 1: `auth.middleware.ts`**
+- [ ] **Step 1: Ajouter `authMiddleware` après `authContextMiddleware`**
 
 ```ts
-// src/platform/http/middlewares/auth.middleware.ts
-import { type MiddlewareHandler } from 'hono'
-import { HTTPException } from 'hono/http-exception'
-import { type AuthenticationFacade } from '@/authentication/public/authentication.facade'
-
-const API_KEY_PREFIXES = ['pmb_live_', 'pmb_test_']
-const PUBLIC_PATHS = new Set(['/health', '/api/openapi.json', '/api/docs'])
-
-export const authMiddleware = (facade: AuthenticationFacade): MiddlewareHandler => async (context, next) => {
-  const path = new URL(context.req.url).pathname
-  if (PUBLIC_PATHS.has(path) || path.startsWith('/api/docs')) {
-    await next()
-    return
-  }
-
-  const header = context.req.header('authorization')
-  if (!header || !header.startsWith('Bearer ')) {
-    throw new HTTPException(401, { message: 'Authorization Bearer header required' })
-  }
-  const token = header.slice(7)
-
-  if (API_KEY_PREFIXES.some((prefix) => token.startsWith(prefix))) {
-    const apiKey = await facade.verifyApiKey(token)
-    if (!apiKey) throw new HTTPException(401, { message: 'Invalid API key' })
-    context.set('auth', { type: 'api-key', apiKey })
-  } else if (token.split('.').length === 3) {
-    const utilisateur = await facade.verifyJwt(token)
-    if (!utilisateur) throw new HTTPException(401, { message: 'Invalid JWT' })
-    context.set('auth', { type: 'user', utilisateur })
-  } else {
-    throw new HTTPException(401, { message: 'Unknown token format' })
-  }
-
-  await next()
-}
+app.use('*', authMiddleware({
+  authenticationFacade: container.resolve('authenticationFacade'),
+}))
 ```
 
-- [ ] **Step 2: `require-scope.middleware.ts`**
+- [ ] **Step 2: Tests E2E** :
+  - `GET /health` sans Bearer → 200 (route publique)
+  - `POST /auth/sessions` sans Bearer → 401
+  - `POST /auth/sessions` avec API key valide → 501
+  - `POST /auth/sessions` avec API key révoquée → 401
+  - `POST /auth/sessions` avec JWT manuellement signé → 501
 
-```ts
-// src/platform/http/middlewares/require-scope.middleware.ts
-import { type MiddlewareHandler } from 'hono'
-import { HTTPException } from 'hono/http-exception'
-
-export const requireScope = (scope: string): MiddlewareHandler => async (context, next) => {
-  const auth = context.get('auth') as { type: 'api-key' | 'user'; apiKey?: { scopes: string[] } } | undefined
-  if (!auth) throw new HTTPException(401, { message: 'Not authenticated' })
-  if (auth.type === 'api-key' && (!auth.apiKey?.scopes.includes(scope))) {
-    throw new HTTPException(403, { message: `Missing required scope: ${scope}` })
-  }
-  await next()
-}
-```
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/platform/http/middlewares/auth.middleware.ts apps/pilote-mb-core/src/platform/http/middlewares/require-scope.middleware.ts
-git commit -m "[DITP-pilotage/pilote-2] feature: platform — auth middleware dispatch API-Key/JWT + require-scope
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, hono
-Tags: pilote-mb, backend, platform, http, auth
-Files-changed: 2"
-```
+- [ ] **Step 3: Commit** — `feature: framework — brancher auth + auth-context middlewares dans buildApp`
 
 ---
 
-### Tâche 48 : CLI create-api-key
+### Tâche 55 : CLI create-api-key
 
-**Files:**
-- Create: `apps/pilote-mb-core/src/authentication/infrastructure/scripts/create-api-key.ts`
+**Files:** Create: `src/authentication/infrastructure/scripts/create-api-key.ts`
 
-- [ ] **Step 1: Impl**
+- [ ] **Step 1: Implémentation**
 
 ```ts
 // src/authentication/infrastructure/scripts/create-api-key.ts
-import { parseArgs } from 'node:util'
-import { buildAppContainer } from '@/platform/container/build-app-container'
-import { ApiKey } from '@/authentication/domain/api-key/api-key'
-import { Scope } from '@/authentication/domain/api-key/scope'
-import { type ApiKeyRepository } from '@/authentication/domain/api-key/api-key.repository'
-import { type ApiKeyHasher } from '@/authentication/domain/api-key/api-key-hasher'
-import { type TokenGenerator } from '@/authentication/domain/api-key/token-generator'
-import { type Clock } from '@/shared-kernel/clock'
+import { buildAppContainer } from '@/framework/container/build-app-container'
+import { createApiKey } from '@/authentication/model/api-key'
+import { scope as parseScope } from '@/authentication/model/scope'
+import type { ApiKeyHasher } from '@/authentication/ports/api-key-hasher'
+import type { TokenGenerator } from '@/authentication/ports/token-generator'
+import type { ApiKeyRepository } from '@/authentication/ports/api-key.repository'
+import type { Clock } from '@/framework/clock/clock'
 
-async function main(): Promise<void> {
-  const { values } = parseArgs({
-    options: {
-      nom: { type: 'string' },
-      env: { type: 'string' },
-      scopes: { type: 'string' },
-    },
-  })
-
-  if (!values.nom || !values.env || !values.scopes) {
-    console.error('Usage: pnpm create-api-key --nom <nom> --env live|test --scopes "resource:action,resource:action"')
-    process.exit(1)
-  }
-  if (values.env !== 'live' && values.env !== 'test') {
-    console.error('--env doit être "live" ou "test"')
-    process.exit(1)
-  }
-
+async function main() {
+  const args = parseArgs(process.argv.slice(2))
   const { getContainer } = buildAppContainer()
-  const auth = getContainer('authentication')
-  const platform = getContainer('platform')
 
-  const scopes = values.scopes.split(',').map((scope) => Scope.from(scope.trim()))
-  const result = ApiKey.create({
-    nom: values.nom,
-    scopes,
-    environment: values.env,
-    hasher: auth.resolve<ApiKeyHasher>('apiKeyHasher'),
-    tokenGenerator: auth.resolve<TokenGenerator>('tokenGenerator'),
-    clock: platform.resolve<Clock>('clock'),
+  const authContainer = getContainer('authentication')
+  const frameworkContainer = getContainer('framework')
+
+  const hasher = authContainer.resolve<ApiKeyHasher>('apiKeyHasher')
+  const tokenGenerator = authContainer.resolve<TokenGenerator>('tokenGenerator')
+  const repository = authContainer.resolve<ApiKeyRepository>('apiKeyRepository')
+  const clock = frameworkContainer.resolve<Clock>('clock')
+
+  const scopes = args.scopes.split(',').map((raw) => {
+    const result = parseScope(raw.trim())
+    if (result.isErr()) {
+      console.error(`Invalid scope: ${raw}`)
+      process.exit(1)
+    }
+    return result.value
   })
 
+  const result = createApiKey({
+    nom: args.nom,
+    scopes,
+    environment: args.env,
+    hasher,
+    tokenGenerator,
+    clock,
+  })
   if (result.isErr()) {
-    console.error(`Erreur : ${result.error.code} — ${result.error.message}`)
+    console.error(`Failed to create API key: ${result.error.message}`)
     process.exit(1)
   }
 
-  const { aggregate, rawToken } = result.value
-  await auth.resolve<ApiKeyRepository>('apiKeyRepository').save(aggregate)
+  const saveResult = await repository.save(result.value.apiKey)
+  if (saveResult.isErr()) {
+    console.error(`Failed to persist API key: ${saveResult.error.message}`)
+    process.exit(1)
+  }
 
-  console.log('API Key créée avec succès.')
-  console.log(`Nom       : ${aggregate.nom}`)
-  console.log(`Prefix    : ${aggregate.keyPrefix}`)
-  console.log(`Token     : ${rawToken}`)
-  console.log('⚠️  Ce token ne sera plus jamais affiché. Conserve-le en lieu sûr.')
+  console.log('--- API KEY CREATED — SAVE THIS, IT WILL NOT BE SHOWN AGAIN ---')
+  console.log(`Token: ${result.value.rawToken}`)
+  console.log(`Id:    ${result.value.apiKey.id}`)
+  console.log(`Nom:   ${result.value.apiKey.nom}`)
+  console.log(`Env:   ${args.env}`)
+  console.log(`Scopes: ${scopes.join(', ')}`)
 }
 
-main().then(() => process.exit(0)).catch((error) => {
-  console.error('Erreur inattendue :', error)
+function parseArgs(argv: ReadonlyArray<string>) { /* parse --nom --env --scopes */ }
+
+main().catch((error) => {
+  console.error(error)
   process.exit(1)
 })
 ```
 
-- [ ] **Step 2: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/authentication/infrastructure/scripts/
-git commit -m "[DITP-pilotage/pilote-2] feature: authentication — CLI create-api-key
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript
-Tags: pilote-mb, backend, authentication, cli
-Files-changed: 1"
-```
+- [ ] **Step 2: Test manuel** — `pnpm -F @pilote-mb/core create-api-key --nom test --env test --scopes entities:read`
+- [ ] **Step 3: Commit** — `feature: authentication infra — CLI create-api-key`
 
 ---
 
-## Phase 13 — Bootstrap + assemblage final
+### Tâche 56 : Test E2E auth API key
 
-### Tâche 49 : index.ts (bootstrap du serveur)
+**Files:** Create: `src/test/e2e/auth-api-key.test.ts`
 
-**Files:**
-- Create: `apps/pilote-mb-core/src/index.ts`
+- [ ] **Step 1: Test** — créer une API key via fixture, faire `app.request('/auth/sessions', { headers: { Authorization: 'Bearer pmb_test_xxx' } })`, vérifier 501 (token reconnu, route appelée). Tester aussi rejet 401 si token inconnu/révoqué.
+- [ ] **Step 2: Commit** — `test: e2e auth flow API key`
 
-- [ ] **Step 1: Impl**
+---
+
+## Phase 14 — Bootstrap + assemblage final
+
+### Tâche 57 : index.ts (entrypoint serveur)
+
+**Files:** Create: `src/index.ts`
+
+- [ ] **Step 1: Implémentation**
 
 ```ts
 // src/index.ts
 import { serve } from '@hono/node-server'
-import { buildAppContainer } from '@/platform/container/build-app-container'
-import { buildApp } from '@/platform/http/app'
-import { authMiddleware } from '@/platform/http/middlewares/auth.middleware'
+import { config } from '@/config'
+import { buildAppContainer } from '@/framework/container/build-app-container'
+import { buildApp } from '@/framework/http/app'
 import { registerHealthRoute } from '@/healthcheck/infrastructure/http/routes/health.route'
 import { registerCreateSessionRoute } from '@/authentication/infrastructure/http/routes/create-session.route'
-import { type Logger } from '@/shared-kernel/logger'
-import { type AuthenticationFacade } from '@/authentication/public/authentication.facade'
-import { config } from '@/config'
 
 const { getContainer } = buildAppContainer()
-const platformContainer = getContainer('platform')
-const authenticationContainer = getContainer('authentication')
-const healthcheckContainer = getContainer('healthcheck')
+const frameworkContainer = getContainer('framework')
 
-const logger = platformContainer.resolve<Logger>('logger')
-const authenticationFacade = authenticationContainer.resolve<AuthenticationFacade>('authenticationFacade')
-
-const app = buildApp({
-  logger,
-  authMiddleware: (app) => app.use('*', authMiddleware(authenticationFacade)),
-  registrations: [
-    (app) => registerHealthRoute(app, healthcheckContainer),
-    (app) => registerCreateSessionRoute(app, authenticationContainer),
-  ],
-})
+const app = buildApp(frameworkContainer)
+registerHealthRoute(app, getContainer('healthcheck'))
+registerCreateSessionRoute(app, getContainer('authentication'))
 
 serve({ fetch: app.fetch, port: config.PORT }, (info) => {
-  logger.info({ port: info.port, source: 'bootstrap' }, `pilote-mb-core listening on :${info.port}`)
+  // eslint-disable-next-line no-console
+  console.log(`pilote-mb-core listening on :${info.port}`)
 })
 ```
 
-- [ ] **Step 2: Installer `@hono/node-server`**
-
-Run: `pnpm -F @pilote-mb/core add @hono/node-server`
-
-- [ ] **Step 3: Vérifier que le build passe**
-
-Run: `pnpm -F @pilote-mb/core build`
-Expected: compilation OK, pas d'erreur
-
-- [ ] **Step 4: Lancer le serveur en dev et tester manuellement**
-
-Run (terminal 1): `pnpm -F @pilote-mb/core dev`
-
-Run (terminal 2):
-```bash
-curl -sS http://localhost:3000/health
-# Expected: {"status":"ok","database":"reachable"}
-
-curl -sS http://localhost:3000/api/openapi.json | head -c 200
-# Expected: JSON OpenAPI 3.1
-
-curl -sS -X POST http://localhost:3000/auth/sessions -H 'Content-Type: application/json' -d '{"id_token":"foo"}'
-# Expected: {"code":"NOT_IMPLEMENTED","message":"Fonctionnalité non implémentée : intégration ProConnect..."}
-```
-
-Arrêter le serveur (Ctrl+C).
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/index.ts apps/pilote-mb-core/package.json pnpm-lock.yaml
-git commit -m "[DITP-pilotage/pilote-2] feature: bootstrap — index.ts assemble le serveur complet
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, hono
-Tags: pilote-mb, backend, bootstrap
-Files-changed: 3"
-```
+- [ ] **Step 2: Commit** — `feature: bootstrap — index.ts entrypoint serveur`
 
 ---
 
-### Tâche 50 : Test E2E healthcheck via HTTP
+### Tâche 58 : Vérifier lancement local
 
-**Files:**
-- Create: `apps/pilote-mb-core/src/healthcheck/infrastructure/http/routes/health.route.test.ts`
-
-- [ ] **Step 1: Test E2E**
-
-```ts
-// src/healthcheck/infrastructure/http/routes/health.route.test.ts
-import { describe, it, expect } from 'vitest'
-import { OpenAPIHono } from '@hono/zod-openapi'
-import { buildAppContainer } from '@/platform/container/build-app-container'
-import { registerHealthRoute } from './health.route'
-
-describe('GET /health', () => {
-  it('retourne 200 avec status ok quand la DB est joignable', async () => {
-    const { getContainer } = buildAppContainer()
-    const app = new OpenAPIHono()
-    registerHealthRoute(app, getContainer('healthcheck'))
-
-    const response = await app.request('/health')
-
-    expect(response.status).toEqual(200)
-    const body = await response.json() as { status: string; database: string }
-    expect(body.status).toEqual('ok')
-    expect(body.database).toEqual('reachable')
-  })
-})
-```
-
-- [ ] **Step 2: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/healthcheck/infrastructure/http/routes/health.route.test.ts
-git commit -m "[DITP-pilotage/pilote-2] test: e2e GET /health retourne 200
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, vitest, hono
-Tags: pilote-mb, backend, healthcheck, e2e
-Files-changed: 1"
-```
+- [ ] **Step 1: Démarrer la DB locale** — `docker compose up -d postgres`
+- [ ] **Step 2: Migrer** — `pnpm prisma migrate dev`
+- [ ] **Step 3: Lancer le serveur** — `pnpm dev`
+- [ ] **Step 4: Smoke tests manuels** :
+  - `curl localhost:3000/health` → 200
+  - `curl localhost:3000/api/openapi.json` → 200
+  - `curl localhost:3000/api/docs` → 200
+  - `curl -X POST localhost:3000/auth/sessions -H 'Authorization: Bearer pmb_test_xxx' -d '{}'` → 401 (token inconnu)
+  - Créer une API key via CLI puis re-tester avec → 501
 
 ---
 
-### Tâche 51 : Test E2E auth middleware (401 sans bearer, 200 avec API key)
+### Tâche 59 : Vérifier suite tests complète
 
-**Files:**
-- Create: `apps/pilote-mb-core/src/platform/http/middlewares/auth.middleware.test.ts`
-
-- [ ] **Step 1: Test**
-
-```ts
-// src/platform/http/middlewares/auth.middleware.test.ts
-import { describe, it, expect } from 'vitest'
-import { OpenAPIHono } from '@hono/zod-openapi'
-import { withTestTransaction } from '@/test/with-test-transaction'
-import { authMiddleware } from './auth.middleware'
-import { registerErrorHandler } from './error-handler.middleware'
-import { createApiKeyFixture } from '@/test/fixtures/api-key.fixture'
-import { type AuthenticationFacade } from '@/authentication/public/authentication.facade'
-import { type Logger } from '@/shared-kernel/logger'
-
-describe('auth middleware', () => {
-  it('401 si aucun bearer', withTestTransaction(async (testContext) => {
-    const facade = testContext.resolve<AuthenticationFacade>('authentication', 'authenticationFacade')
-    const logger = testContext.resolve<Logger>('platform', 'logger')
-    const app = new OpenAPIHono()
-    app.use('*', authMiddleware(facade))
-    app.get('/protected', (context) => context.json({ ok: true }))
-    registerErrorHandler(app, logger)
-
-    const response = await app.request('/protected')
-
-    expect(response.status).toEqual(401)
-    const body = await response.json() as { code: string }
-    expect(body.code).toEqual('UNAUTHORIZED')
-  }))
-
-  it('200 avec une API key valide', withTestTransaction(async (testContext) => {
-    const facade = testContext.resolve<AuthenticationFacade>('authentication', 'authenticationFacade')
-    const logger = testContext.resolve<Logger>('platform', 'logger')
-    const { rawToken } = await createApiKeyFixture({ active: true })
-    const app = new OpenAPIHono()
-    app.use('*', authMiddleware(facade))
-    app.get('/protected', (context) => context.json({ ok: true }))
-    registerErrorHandler(app, logger)
-
-    const response = await app.request('/protected', {
-      headers: { authorization: `Bearer ${rawToken}` },
-    })
-
-    expect(response.status).toEqual(200)
-  }))
-
-  it('laisse passer /health sans bearer', withTestTransaction(async (testContext) => {
-    const facade = testContext.resolve<AuthenticationFacade>('authentication', 'authenticationFacade')
-    const app = new OpenAPIHono()
-    app.use('*', authMiddleware(facade))
-    app.get('/health', (context) => context.json({ status: 'ok' }))
-
-    const response = await app.request('/health')
-
-    expect(response.status).toEqual(200)
-  }))
-})
-```
-
-- [ ] **Step 2: Commit**
-
-```bash
-git add apps/pilote-mb-core/src/platform/http/middlewares/auth.middleware.test.ts
-git commit -m "[DITP-pilotage/pilote-2] test: auth middleware — 401/200 + routes publiques
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: typescript, vitest, hono
-Tags: pilote-mb, backend, platform, auth, e2e
-Files-changed: 1"
-```
+- [ ] **Step 1: Postgres test up** — `docker compose up -d postgres_test`
+- [ ] **Step 2: Migrer** — `DATABASE_URL=...test pnpm prisma migrate deploy`
+- [ ] **Step 3: Lancer** — `pnpm test`
+- [ ] **Step 4: Vérifier** que tous les tests passent en parallèle, pas de timeout, pas de fuite de connexion
 
 ---
 
-## Phase 14 — Documentation + CI
+### Tâche 60 : Vérifier lint + dependency-cruiser
 
-### Tâche 52 : CLAUDE.md du projet pilote-mb-core
-
-**Files:**
-- Create: `apps/pilote-mb-core/CLAUDE.md`
-
-- [ ] **Step 1: Écrire le CLAUDE.md**
-
-Contenu : reprendre les règles de l'init-design (conventions nommage, DDD stratégique + tactique, module-system, Published Language / ACL, règle getPrisma interdite sauf fixtures, règle no-barrel, règle no-export-default, règle no-`new Date()` hors platform/test, `withTestTransaction` obligatoire pour tests d'intégration, parallélisme max, ports locaux 5434/5435, commandes `pnpm dev`/`test`/`lint`/`create-api-key`, liens vers init-design.md).
-
-Structure recommandée (copier depuis `apps/pilote-ppg/CLAUDE.md` puis adapter) :
-- Project Overview
-- Development Commands
-- Architecture (lien vers init-design)
-- Patterns fondamentaux (DDD by the book, module-system, transactions, logger, config)
-- Conventions (nommage, exports, barrel, comments)
-- API design (8 règles agent-ready)
-- Authentication
-- Testing (parallèle, withTestTransaction, factories, règles)
-- Project advices (DRY, YAGNI, TDD, `expect(result).toEqual(...)`, pas de variables 1-2 char)
-
-- [ ] **Step 2: Commit**
-
-```bash
-git add apps/pilote-mb-core/CLAUDE.md
-git commit -m "[DITP-pilotage/pilote-2] docs: CLAUDE.md pour pilote-mb-core
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: markdown
-Tags: pilote-mb, backend, documentation
-Files-changed: 1"
-```
+- [ ] **Step 1: `pnpm lint`** — eslint + tsc + depcruise
+- [ ] **Step 2: Vérifier** que les règles bloquent bien :
+  - Import direct de `@/authentication/model/api-key` depuis `healthcheck/` → erreur
+  - `new Date()` dans `model/` → erreur ESLint
+  - `export default` → erreur ESLint
+- [ ] **Step 3: Commit** d'éventuels fix
 
 ---
 
-### Tâche 53 : ADRs 0001 + 0002
+## Phase 15 — Documentation + CI
 
-**Files:**
-- Create: `apps/pilote-mb-core/docs/architecture/decisions/0001-record-architecture-decisions.md`
-- Create: `apps/pilote-mb-core/docs/architecture/decisions/0002-architecture-init-pilote-mb-core.md`
+### Tâche 61 : CLAUDE.md de pilote-mb-core
 
-- [ ] **Step 1: Copier l'ADR 0001 depuis pilote-ppg**
+**Files:** Create: `apps/pilote-mb-core/CLAUDE.md`
 
-Reprendre le contenu de `apps/pilote-ppg/docs/architecture/decisions/0001-record-architecture-decisions.md`, mettre la date du jour.
-
-- [ ] **Step 2: Écrire l'ADR 0002**
-
-```markdown
-# 2. Architecture initiale de pilote-mb-core
-
-Date : <date du jour>
-
-## Statut
-
-Accepté
-
-## Contexte
-
-Création du backend `pilote-mb-core`, version générique et paramétrable de `pilote-ppg`. Besoin de poser des fondations solides pour une app prévue pour durer et grossir, potentiellement multi-tenant et consommée par un agent IA satellite.
-
-## Décision
-
-Nous adoptons :
-- **DDD by the book** (stratégique + tactique complet) avec bounded contexts isolés
-- **Architecture context-first** (1 dossier racine par BC)
-- **Module-system Awilix** adapté de pilote-ppg pour le câblage DI
-- **Stack Hono + Prisma + Vitest + neverthrow + pino**
-- **API-first design** avec Swagger exposé en prod
-- **Authentification à deux stratégies** : API Keys (SHA-256, complet) + ProConnect OIDC (scaffolding)
-
-Les détails exhaustifs sont dans `docs/architecture/init-design.md`.
-
-## Conséquences
-
-- Code isolé par BC, mutations dans un BC sans impact sur les autres
-- Overhead upfront (~15-20% de code supplémentaire vs archi plate) mais dette technique quasi nulle
-- Extraction future en microservices facilitée
-- `dependency-cruiser` obligatoire pour maintenir l'isolation
-- Tous les nouveaux BCs suivront ce template (cf. `authentication/` comme référence)
-```
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add apps/pilote-mb-core/docs/architecture/decisions/
-git commit -m "[DITP-pilotage/pilote-2] docs: ADRs 0001 + 0002 pour pilote-mb-core
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: feature
-Stack: markdown
-Tags: pilote-mb, backend, documentation, adr
-Files-changed: 2"
-```
+- [ ] **Step 1: Contenu** — résumé de l'arch (modules, functional core, ports & adapters, ApiModels, ResultAsync, AuthContext), conventions code, pyramide tests, commandes essentielles
+- [ ] **Step 2: Commit** — `docs: CLAUDE.md de pilote-mb-core`
 
 ---
 
-### Tâche 54 : Mise à jour de `.github/workflows/testAndLint.yml`
+### Tâche 62 : ADR 0001 (record-architecture-decisions)
 
-**Files:**
-- Modify: `.github/workflows/testAndLint.yml`
+**Files:** Create: `apps/pilote-mb-core/docs/architecture/decisions/0001-record-architecture-decisions.md`
 
-- [ ] **Step 1: Ajouter le filter `pilote-mb-core`**
-
-Dans la section `jobs.changes.steps[1].with.filters`, ajouter :
-```yaml
-pilote-mb-core:
-  - 'apps/pilote-mb-core/**'
-  - 'package.json'
-  - 'pnpm-lock.yaml'
-```
-
-Et dans `jobs.changes.outputs`, ajouter :
-```yaml
-pilote-mb-core: ${{ steps.filter.outputs.pilote-mb-core }}
-```
-
-- [ ] **Step 2: Ajouter les jobs `test-mb-core` et `lint-mb-core`**
-
-Après le job `lint`, ajouter (cf. init-design §12.2 pour le bloc complet) :
-```yaml
-  test-mb-core:
-    name: Run tests (pilote-mb-core)
-    needs: changes
-    if: needs.changes.outputs['pilote-mb-core'] == 'true'
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16.6-alpine
-        env:
-          POSTGRES_DB: postgres
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
-        ports:
-          - 5435:5432
-    env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5435/postgres?connection_limit=50
-      JWT_SECRET: ci-jwt-secret-at-least-32-characters-long-placeholder
-      NODE_ENV: test
-      LOG_TO_DATABASE: 'false'
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setupNodeAndPackages
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Apply Prisma migrations
-        run: pnpm -F @pilote-mb/core prisma migrate deploy
-      - name: Run tests
-        run: pnpm -F @pilote-mb/core test
-
-  lint-mb-core:
-    name: Run linters (pilote-mb-core)
-    needs: changes
-    if: needs.changes.outputs['pilote-mb-core'] == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setupNodeAndPackages
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Run lint
-        run: pnpm -F @pilote-mb/core lint
-```
-
-- [ ] **Step 3: Commit**
-
-```bash
-git add .github/workflows/testAndLint.yml
-git commit -m "[DITP-pilotage/pilote-2] ci: ajouter jobs test et lint pour pilote-mb-core
-
-Refs:
-Project: pilote-2
-Client: DITP-pilotage
-Category: infra
-Stack: github-actions
-Tags: pilote-mb, backend, ci
-Files-changed: 1"
-```
+- [ ] **Step 1: Recopier** la structure standard (cf. `apps/pilote-ppg/docs/architecture/decisions/0001-...`)
+- [ ] **Step 2: Commit** — `docs: ADR 0001 record architecture decisions`
 
 ---
 
-## Self-review checklist
+### Tâche 63 : ADR 0002 (architecture init pilote-mb-core)
 
-Avant de considérer le ticket comme terminé, vérifier :
+**Files:** Create: `apps/pilote-mb-core/docs/architecture/decisions/0002-architecture-init-pilote-mb-core.md`
 
-- [ ] **Spec coverage** : chacune des 15 sections du design a un(des) livrable(s) implémenté(s)
-- [ ] **Tous les critères de succès de l'init-design.md §15 sont vérifiés** (curl /health, curl /api/docs, 401 sans bearer, 200 avec API key, etc.)
-- [ ] **`pnpm -F @pilote-mb/core lint`** passe (eslint + tsc + dependency-cruiser)
-- [ ] **`pnpm -F @pilote-mb/core test`** : tous les tests passent en parallèle
-- [ ] **`pnpm -F @pilote-mb/core build`** : compilation OK
-- [ ] **Workflows CI** `test-mb-core` et `lint-mb-core` passent vert sur la PR
-- [ ] **`dependency-cruiser`** : tenter un import interdit (ex: `import { UtilisateurRepository } from '@/authentication/domain/...'` depuis `@/healthcheck/`) doit échouer au lint
-- [ ] **ESLint `new ApiKey()`** : tenter une instanciation directe hors `api-key.ts` ou tests doit échouer au lint
-- [ ] **Event audit** : créer une API key via CLI doit logguer `API_KEY_CREATED` dans `application_log`
-- [ ] **Isolation tests** : lancer 20 tests en parallèle sans collision
+- [ ] **Step 1: Contenu** :
+  - **Statut** : Accepté
+  - **Contexte** : décrire pourquoi on initialise pilote-mb-core, la posture Marque Blanche
+  - **Décision** : poser CQS lite + functional core / imperative shell + modules Awilix + ports & adapters côté écriture + ApiModels + AuthContext via ALS + ResultAsync. Justifier explicitement le **non-choix de DDD by the book** (scope produit non stabilisé, TS full-stack, équipe unique).
+  - **Conséquences** : modèles immuables sérialisables, tests purs sur le functional core, bascule possible vers DDD plus tactique si invariants émergent, refactor si on doit séparer command/query facade
+- [ ] **Step 2: Commit** — `docs: ADR 0002 architecture init pilote-mb-core`
 
+---
+
+### Tâche 64 : Workflow CI
+
+**Files:** Modify: `.github/workflows/testAndLint.yml`
+
+- [ ] **Step 1: Ajouter** le filter `pilote-mb-core` (cf. design 12.2)
+- [ ] **Step 2: Ajouter** les jobs `test-mb-core` et `lint-mb-core`
+- [ ] **Step 3: Commit** — `ci: ajouter jobs test-mb-core et lint-mb-core`
+- [ ] **Step 4: Push + observer le run CI**
+- [ ] **Step 5: (Manuel)** Configurer `test-mb-core` et `lint-mb-core` comme **required status checks** sur la branche `dev`
+
+---
+
+## Critères de validation finale
+
+- ✅ `pnpm dev` démarre sans erreur, log pretty
+- ✅ `curl /health` → 200
+- ✅ `curl /api/openapi.json` → contenu OpenAPI 3.1 valide
+- ✅ `/api/docs` affiche Swagger UI
+- ✅ `POST /auth/sessions` → 501 avec body `{ code: 'NOT_IMPLEMENTED', ... }`
+- ✅ Route protégée sans Bearer → 401
+- ✅ Route protégée avec API key valide → status attendu (200 ou 501 selon route)
+- ✅ Route inexistante → 404 `{ code: 'ROUTE_NOT_FOUND', ... }`
+- ✅ `pnpm test` passe en parallèle
+- ✅ Tests `model/*.test.ts` passent **sans container ni DB**
+- ✅ Tests `commands/`, `queries/`, `repositories/` passent dans `withTestTransaction`
+- ✅ `pnpm lint` passe (eslint + tsc + depcruise)
+- ✅ Import cross-module hors `public/` → bloqué par depcruise
+- ✅ `new Date()` dans `model/`, `commands/`, `queries/` → bloqué par ESLint
+- ✅ CI verte sur la PR
+- ✅ ADR 0002 explique la posture architecturale
+- ✅ CLAUDE.md à jour

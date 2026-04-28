@@ -1,6 +1,7 @@
 # Design — Initialisation de pilote-mb-core (backend Marque Blanche)
 
 Date : 2026-04-23
+Mise à jour : 2026-04-28 — pivot architecture suite revue PR #2093
 Statut : Proposition validée, à implémenter
 
 ## 1. Contexte
@@ -16,7 +17,7 @@ Ce document décrit l'**initialisation du backend** (`pilote-mb-core`), premier 
 
 ## 2. Objectifs de l'init
 
-1. Mettre en place le squelette du backend avec une architecture propre dès le départ
+1. Mettre en place le squelette du backend avec une architecture pragmatique, sans sur-design
 2. Livrer un premier endpoint `GET /health` fonctionnel
 3. Figer les conventions d'architecture dans un CLAUDE.md et un ADR
 4. Préparer l'intégration future avec un agent IA satellite consommant l'API
@@ -33,6 +34,9 @@ Ce document décrit l'**initialisation du backend** (`pilote-mb-core`), premier 
 | Entity | Nouvelle entité générique de pilote-mb (remplace "chantier") |
 | Indicateur | Mesure associée à une Entity |
 | ProConnect | IdP gouvernemental (ex-AgentConnect) pour les users humains |
+| Module | Unité de découpage de l'app (`authentication`, `healthcheck`, …) — granularité Awilix `defineModule`. Pas un bounded context. |
+| Functional core / Imperative shell | Cœur métier = fonctions pures sur des types ; bord = use cases qui orchestrent I/O |
+| ApiModel | Forme JSON exposée par l'API (published language entre back et front), réutilisée pour l'inférence end-to-end type-safe |
 
 ## 4. Stack technique
 
@@ -53,7 +57,7 @@ Ce document décrit l'**initialisation du backend** (`pilote-mb-core`), premier 
 ### Domaine et logique applicative
 - **Awilix** pour Dependency Injection (mode ProxyInjection, tout singleton)
 - **Zod** pour validation
-- **neverthrow** pour `Result<T, E>`
+- **neverthrow** pour `Result<T, E>` et `ResultAsync<T, E>` — orchestration en railway oriented programming, pas d'`isErr` partout
 
 ### Observabilité
 - **pino** pour le logging via pattern de sinks composables
@@ -64,155 +68,158 @@ Ce document décrit l'**initialisation du backend** (`pilote-mb-core`), premier 
 - **ProConnect OIDC** pour les users humains (scaffolding dans ce ticket, intégration dans un ticket suivant)
 - **jsonwebtoken** pour le JWT interne (HS256, TTL 8h)
 - **openid-client** pour le flow OIDC (à intégrer dans le ticket suivant)
+- **AsyncLocalStorage** pour porter l'identité authentifiée à travers la pile async (`requireUser()` accessible depuis les use cases sans la passer en argument)
 - Pas de bcrypt — aucun password n'est stocké côté backend (auth users exclusivement via ProConnect)
 
 ### Tests
 - **Vitest** (backend et futur front)
 - `test.sequence.concurrent: true` — parallélisme max par défaut
 - `withTestTransaction` — chaque test dans sa propre transaction, rollback automatique
+- Pyramide explicite : functional core unit, use cases (commands/queries) en intégration
 
 ---
 
 ## 5. Architecture
 
-### 5.1 DDD by the book — stratégique ET tactique
+### 5.1 Posture architecturale : CQS lite + functional core / imperative shell
 
-pilote-mb-core adopte le **Domain-Driven Design complet**, à la fois stratégique et tactique :
+pilote-mb-core démarre **sans DDD by the book** : pas d'aggregate roots, pas de domain events, pas de bounded contexts ni de context map. La justification est pragmatique :
 
-- **Stratégique** : subdomains alignés sur des bounded contexts, Published Language explicite entre contexts, Anti-Corruption Layer quand les modèles divergent, Context Map documenté
-- **Tactique** : Aggregate Roots avec invariants, Value Objects formalisés, Domain Events publiés par les agrégats, Repositories scopés à l'agrégat, Factories pour les créations contrôlées, Domain Services pour la logique transverse (selon besoin), Clock injectable
+- **L'app est neuve, le scope produit n'est pas encore stabilisé** : on ne connaît ni les invariants métier (probablement peu : c'est principalement CRUD + quelques calculs), ni les frontières naturelles entre sous-domaines, ni la roadmap au-delà des pages "indicateur" et "panier".
+- **TS full-stack avec types partagés back/front** : modéliser les entités via des classes (AggregateRoot, ValueObject) introduit un coût de sérialisation et empêche de partager simplement les types entre `pilote-mb-core` et `pilote-mb-webapp`. Des types nus + factory functions sont strictement plus simples et plus partageables.
+- **Une seule équipe, pas de problème de communication inter-équipes** : le context mapping DDD résout des frictions humaines qu'on n'a pas. Importé prématurément, il ajoute de l'indirection sans bénéfice.
 
-**Pourquoi by the book plutôt qu'un sous-ensemble pragmatique ?**
-- Application neuve sans dette — moment unique pour figer les fondations
-- Le subdomain/BC alignement est **difficile à rétrofitter** après coup
-- Pilote-mb est pensé pour durer et grossir (multi-tenant, agent IA, extraction future potentielle en services)
-- La douleur ressentie sur pilote-ppg avec le "partage de repos cross-context" était le **symptôme d'un DDD incomplet** (pas d'ACL, pas de Published Language) — la bonne réponse est d'aller plus loin, pas de reculer
+On adopte donc :
 
-**CQRS logique conservé** : séparation explicite `commands/` (écriture, change l'état) et `queries/` (lecture, retourne des vues dédiées). Même base, pas d'event sourcing.
+1. **CQS lite** — séparation explicite des `commands/` (écriture, change l'état) et `queries/` (lecture, retourne des vues dédiées). Même base, pas d'event sourcing, pas de read model dédié à ce stade.
+2. **Functional core / imperative shell** — le cœur métier est constitué de **types** + **fonctions pures** (factory functions, transformations, calculs) ; les use cases (commands/queries) sont l'imperative shell qui orchestre les I/O.
+3. **Modules** — l'app est découpée en modules Awilix (`framework`, `authentication`, `healthcheck`). Ce sont des unités d'**organisation et d'injection**, pas des bounded contexts. Chaque module est autonome côté code, mais un seul modèle métier traverse l'app (pas de traduction inter-modules).
+4. **Une contrainte forte d'architecture** — les modules ne piochent **jamais** dans les tables Prisma d'un autre module. La communication cross-module passe par des **ports** (interfaces métier) exposés par le module source dans son `public/`. Côté queries, on s'autorise plus de souplesse (cf. 5.5) : un module peut exposer une fonction de query, ou plus rarement laisser un autre module l'appeler directement, tant qu'on ne reproduit pas l'anti-pattern pilote-ppg du `prisma.autreContexte` partout.
 
-### 5.2 Subdomains de pilote-mb et Bounded Contexts
+**Ce qu'on ne fait PAS à l'init :**
+- Pas d'`AggregateRoot`, pas de `ValueObject` base class, pas de `DomainEvent`, pas d'event bus métier
+- Pas de classes pour les modèles métier — uniquement des **types** et des **factory functions**
+- Pas de bounded contexts ni de context map (un seul modèle, pas de Published Language au sens DDD)
+- Pas d'Anti-Corruption Layer (rien à traduire entre modules)
+- Pas de `shared-kernel` — voir 5.4 sur le renommage en `framework`
 
-Les subdomains identifiés pour pilote-mb, classés selon la taxonomie Evans (Core / Supporting / Generic) :
+**Ce qu'on garde du DDD :**
+- Le **vocabulaire métier** dans le code (entités en français : `Indicateur`, `Entity`, `Utilisateur`)
+- La discipline d'**isoler les I/O** (ports & adapters côté écriture)
+- Des **fonctions de domaine pures** testables sans mock ni DB
 
-| Subdomain | Classification | BC matérialisé | Présent à l'init ? |
+### 5.2 Modules de l'init
+
+| Module | Type | Rôle | Présent à l'init |
 |---|---|---|---|
-| **Pilotage** (entities paramétrables + indicateurs + collecte) | **Core** | `pilotage` | ❌ ticket suivant |
-| **Paramétrage Marque Blanche** (méta-modèle client) | **Core** | `parametrage` | ❌ tickets suivants |
-| Authentification | Supporting | `authentication` | ✅ BC complet |
-| Territorialisation | Supporting | `territorialisation` | ❌ tickets suivants |
-| Reporting | Supporting | `rapport` | ❌ tickets suivants |
-| Notification | Generic | `notification` | ❌ tickets suivants |
-| Audit | Generic | `audit` | ❌ tickets suivants |
-| Healthcheck | (infra) | `healthcheck` | ✅ BC minimal |
+| `framework` | tech | Plateforme technique transverse : Prisma, HTTP, logging, container, result, auth context, clock | ✅ |
+| `authentication` | métier | API Keys + scaffolding utilisateurs ProConnect | ✅ |
+| `healthcheck` | tech/util | Endpoint `GET /health` | ✅ |
 
-Le **Core domain** (`pilotage` + `parametrage`) porte la valeur différenciante de pilote-mb — ce sera l'effort de modélisation DDD le plus soutenu. Les subdomains supporting et generic sont traités avec la même rigueur stratégique (frontières strictes, Published Language) mais potentiellement moins de raffinement tactique (pas forcément tous les patterns).
+Le module `framework` regroupe **tout ce qui est technique et transverse** : il remplace l'ancien découpage `shared-kernel` + `platform`. On évite le terme "shared-kernel" qui en DDD désigne un BC métier partagé — ici ce n'est pas un BC, c'est notre tuyauterie. Le terme `framework` (ou `platform`) est plus juste : on y trouve le `module-system` Awilix, le wrapper Prisma, le logger, le mapping d'erreurs HTTP, le port `Clock`, l'`AuthContext` AsyncLocalStorage, etc.
 
-Pour l'init, **seul `authentication` est implémenté comme BC DDD complet** (stratégique + tactique au grand complet). Le BC `healthcheck` est minimal (pas d'entité, juste une query technique). Ils servent de **template concret** pour les futurs BCs qui arriveront dans leurs tickets dédiés.
+Modules à venir (tickets ultérieurs) — listés ici pour fixer le vocabulaire, pas pour figer un découpage stratégique :
+- `pilotage` — entities paramétrables, indicateurs, collecte
+- `parametrage` — méta-modèle Marque Blanche
+- `territorialisation` — hiérarchie territoriale
+- `rapport` — bilans, exports
+- `notification` — emails (Brevo)
+- `audit` — historique consolidé (probablement consommateur de logs structurés, pas d'events)
 
-### 5.3 Context Map
+À l'init, on a **deux modules métier-ish** (`authentication`, `healthcheck`) et **un module technique** (`framework`). Ils servent de template concret pour les futurs modules.
 
-Relations entre BCs documentées explicitement :
+### 5.3 Pas de context map
 
-| Source → Cible | Relation DDD | Mécanisme concret |
-|---|---|---|
-| `pilotage` → `authentication` | Customer/Supplier (downstream) | Consomme `AuthenticationFacade` + DTO `UtilisateurReference` via ACL |
-| `pilotage` → `territorialisation` | Customer/Supplier | `TerritorialisationFacade` + `TerritoireReference` |
-| `rapport` → `pilotage` | Conformist (read-only) | `PilotageFacade` |
-| `audit` → tous | Conformist (subscriber) | Écoute les Domain Events publiés via le bus |
-| tous → `shared-kernel` | Shared Kernel | Primitives DDD : `AggregateRoot`, `ValueObject`, `DomainEvent`, `Result`, `Clock` |
-| tous → `platform` | Shared Kernel technique | Infra : Prisma, logger, HTTP, container, event publisher |
+Conséquence de 5.1 : on ne documente pas de Context Map DDD. Il n'y a pas plusieurs équipes, pas plusieurs modèles à réconcilier. Les relations entre modules sont des dépendances de code classiques :
 
-À l'init, seules les relations `authentication → platform` et `healthcheck → platform` sont actives. Le reste est documenté pour cadrer les tickets suivants.
+- `framework` est sans dépendance (racine du graphe Awilix)
+- `authentication` dépend de `framework`
+- `healthcheck` dépend de `framework`
+- Plus tard, `pilotage` dépendra de `framework` et consommera des **ports** exposés par `authentication` (ex: `RequireUtilisateur`, `VerifyApiKey`) et — quand ce module existera — `territorialisation`
+
+La règle architecturale unique qui se substitue au Context Map est dans 5.5 : **pas d'accès direct aux tables Prisma d'un autre module**.
 
 ### 5.4 Structure des dossiers
 
 ```
 apps/pilote-mb-core/
 ├── src/
-│   ├── shared-kernel/                         # primitives DDD stables, partagées par tous les BCs
-│   │   ├── aggregate-root.ts                  # base class + pendingEvents
-│   │   ├── value-object.ts                    # base class + equals
-│   │   ├── domain-event.ts                    # interface DomainEvent
-│   │   ├── domain-event-publisher.ts          # port (interface)
-│   │   ├── domain-event-handler.ts            # interface pour listeners
-│   │   ├── domain-error.ts                    # classe de base + DomainErrorKind
-│   │   ├── result.ts                          # re-export neverthrow pour cohérence
-│   │   ├── uuid.ts                            # VO UUID
-│   │   ├── clock.ts                           # port injectable (évite new Date() dans le domain)
-│   │   ├── transaction.ts                     # port Transaction
-│   │   └── logger.ts                          # port Logger
-│   │
-│   ├── platform/                              # infra technique transverse (pas un BC métier)
+│   ├── framework/                              # tech transverse (pas un module métier)
 │   │   ├── persistence/prisma/
-│   │   │   ├── prisma-transaction.ts          # AsyncLocalStorage + txStore + PrismaTransaction
-│   │   │   └── prisma-pilote.ts               # wrapper injectable
+│   │   │   ├── prisma-transaction.ts           # AsyncLocalStorage + txStore + PrismaTransaction
+│   │   │   └── prisma-pilote.ts                # wrapper injectable
 │   │   ├── http/
-│   │   │   ├── app.ts                         # buildApp (assemble routes de tous les BCs)
+│   │   │   ├── app.ts                          # buildApp (assemble routes des modules)
 │   │   │   ├── middlewares/
 │   │   │   │   ├── request-id.middleware.ts
 │   │   │   │   ├── logger.middleware.ts
-│   │   │   │   ├── auth.middleware.ts         # consomme AuthenticationFacade via Published Language
+│   │   │   │   ├── auth-context.middleware.ts  # alimente AsyncLocalStorage authentifié
+│   │   │   │   ├── auth.middleware.ts          # consomme la facade authentication
 │   │   │   │   ├── require-scope.middleware.ts
 │   │   │   │   └── error-handler.middleware.ts
 │   │   │   ├── schemas/
 │   │   │   │   ├── error.schema.ts
 │   │   │   │   └── pagination.schema.ts
-│   │   │   ├── error-mapping.ts               # DomainErrorKind → HTTP status
+│   │   │   ├── error-mapping.ts                # ErrorKind → HTTP status
 │   │   │   └── respond-with-result.ts
+│   │   ├── auth-context/
+│   │   │   ├── auth-context.ts                 # AsyncLocalStorage<Auth>
+│   │   │   ├── current-auth.ts                 # currentAuth(), requireUser(), requireApiKey()
+│   │   │   └── errors.ts                       # UnauthenticatedError, ForbiddenError
+│   │   ├── result/
+│   │   │   └── index.ts                        # re-export ok/err/Result/ResultAsync de neverthrow
+│   │   ├── errors/
+│   │   │   ├── app-error.ts                    # base + ErrorKind
+│   │   │   └── kinds.ts
 │   │   ├── logging/
+│   │   │   ├── logger.ts                       # interface Logger
 │   │   │   ├── composite-logger.ts
 │   │   │   └── sinks/
 │   │   │       ├── pino-stdout.sink.ts
 │   │   │       └── database.sink.ts
-│   │   ├── events/
-│   │   │   ├── in-memory-domain-event-publisher.ts   # adapter du port
-│   │   │   └── audit-log-event-handler.ts            # handler → application_log
 │   │   ├── clock/
-│   │   │   └── system-clock.ts                # adapter Clock (wrap Date)
+│   │   │   ├── clock.ts                        # interface Clock
+│   │   │   └── system-clock.ts                 # adapter (Date natif ou Luxon — cf. 6.5)
+│   │   ├── module-system/                      # adapté de pilote-ppg
+│   │   │   ├── define-module.ts
+│   │   │   ├── boot-modules.ts
+│   │   │   └── module-names.ts
 │   │   ├── container/
-│   │   │   ├── module-system/                 # adapté de pilote-ppg
-│   │   │   │   ├── define-module.ts
-│   │   │   │   ├── boot-modules.ts
-│   │   │   │   └── module-names.ts
-│   │   │   └── build-app-container.ts         # bootstrap : assemble tous les modules des BCs
-│   │   └── platform.module.ts                 # cradle transverse (prisma, transaction, logger, clock, eventPublisher, …)
+│   │   │   └── build-app-container.ts          # bootstrap : assemble tous les modules
+│   │   └── framework.module.ts                 # cradle : prisma, transaction, logger, clock, …
 │   │
-│   ├── authentication/                        # BC Authentication (DDD complet)
-│   │   ├── domain/
-│   │   │   ├── api-key/
-│   │   │   │   ├── api-key.ts                 # AggregateRoot + factory create()
-│   │   │   │   ├── api-key-id.ts              # VO
-│   │   │   │   ├── scope.ts                   # VO
-│   │   │   │   ├── api-key.repository.ts      # INTERFACE (scopée à l'agrégat)
-│   │   │   │   ├── errors/
-│   │   │   │   │   ├── invalid-api-key-name.error.ts
-│   │   │   │   │   ├── api-key-scopes-required.error.ts
-│   │   │   │   │   └── api-key-already-revoked.error.ts
-│   │   │   │   └── events/
-│   │   │   │       ├── api-key-created.event.ts
-│   │   │   │       └── api-key-revoked.event.ts
-│   │   │   └── utilisateur/
-│   │   │       ├── utilisateur.ts             # AggregateRoot + factory
-│   │   │       ├── utilisateur-id.ts          # VO
-│   │   │       ├── email.ts                   # VO (validation format)
-│   │   │       ├── statut-acces.ts            # VO
-│   │   │       ├── utilisateur.repository.ts  # INTERFACE
-│   │   │       ├── errors/
-│   │   │       └── events/
-│   │   │           └── utilisateur-created.event.ts
-│   │   ├── application/
-│   │   │   ├── commands/create-session/       # ProConnect — scaffolding, stub
+│   ├── authentication/                         # module métier
+│   │   ├── model/                              # functional core : types + factory functions pures
+│   │   │   ├── api-key.ts                      # type ApiKey + createApiKey() + revokeApiKey()
+│   │   │   ├── api-key.test.ts                 # unit
+│   │   │   ├── api-key-id.ts                   # branded type ApiKeyId
+│   │   │   ├── scope.ts                        # branded type Scope ("resource:action")
+│   │   │   ├── utilisateur.ts                  # type Utilisateur + factory + transitions
+│   │   │   ├── utilisateur-id.ts
+│   │   │   ├── email.ts                        # branded type Email + parseEmail()
+│   │   │   └── statut-acces.ts                 # enum / union de littéraux
+│   │   ├── ports/                              # interfaces consommées par les use cases
+│   │   │   ├── api-key-hasher.ts
+│   │   │   ├── token-generator.ts
+│   │   │   ├── token-signer.ts
+│   │   │   ├── api-key.repository.ts
+│   │   │   └── utilisateur.repository.ts
+│   │   ├── commands/                           # use cases d'écriture (imperative shell)
+│   │   │   ├── create-session/
 │   │   │   │   ├── create-session.command.ts
-│   │   │   │   ├── create-session.handler.ts
+│   │   │   │   ├── create-session.handler.ts   # ResultAsync, scaffolding
 │   │   │   │   └── create-session.handler.test.ts
-│   │   │   ├── queries/
-│   │   │   │   ├── verify-api-key/
-│   │   │   │   └── verify-jwt/
-│   │   │   └── facades/
-│   │   │       └── authentication.facade.impl.ts      # implémente AuthenticationFacade
+│   │   │   └── revoke-api-key/                 # ticket suivant — exemple de structure
+│   │   ├── queries/                            # use cases lecture
+│   │   │   ├── verify-api-key/
+│   │   │   │   ├── verify-api-key.handler.ts
+│   │   │   │   └── verify-api-key.handler.test.ts
+│   │   │   └── verify-jwt/
+│   │   │       ├── verify-jwt.handler.ts
+│   │   │       └── verify-jwt.handler.test.ts
 │   │   ├── infrastructure/
 │   │   │   ├── persistence/
-│   │   │   │   ├── api-key.mapper.ts          # domain ↔ Prisma row
+│   │   │   │   ├── api-key.mapper.ts
 │   │   │   │   ├── api-key.prisma-repository.ts
 │   │   │   │   ├── utilisateur.mapper.ts
 │   │   │   │   └── utilisateur.prisma-repository.ts
@@ -221,39 +228,41 @@ apps/pilote-mb-core/
 │   │   │   │   ├── crypto-token-generator.ts
 │   │   │   │   └── jsonwebtoken-token-signer.ts
 │   │   │   ├── http/
+│   │   │   │   ├── api-models/
+│   │   │   │   │   ├── utilisateur.api-model.ts
+│   │   │   │   │   ├── api-key.api-model.ts
+│   │   │   │   │   └── session.api-model.ts
 │   │   │   │   └── routes/
 │   │   │   │       └── create-session.route.ts
 │   │   │   ├── proconnect/
-│   │   │   │   └── proconnect-client.ts       # scaffolding (ticket suivant)
+│   │   │   │   └── proconnect-client.ts        # scaffolding (ticket suivant)
 │   │   │   └── scripts/
-│   │   │       └── create-api-key.ts          # CLI
-│   │   ├── public/                            # 🔑 PUBLISHED LANGUAGE
-│   │   │   ├── utilisateur-reference.ts       # DTO minimal exposé aux autres BCs
-│   │   │   ├── api-key-reference.ts
-│   │   │   └── authentication.facade.ts       # interface des capabilities exposées
-│   │   └── authentication.module.ts           # cradle + exports
+│   │   │       └── create-api-key.ts           # CLI
+│   │   ├── public/                             # exports cross-module
+│   │   │   ├── authentication.facade.ts        # interface des opérations exposées
+│   │   │   ├── api-key.api-model.ts            # types ApiModel partagés (fonts/back)
+│   │   │   └── utilisateur.api-model.ts
+│   │   └── authentication.module.ts            # cradle + exports
 │   │
-│   ├── healthcheck/                           # BC minimal (pas d'entité, juste une query)
-│   │   ├── application/queries/check-health/
+│   ├── healthcheck/                            # module minimal
+│   │   ├── queries/check-health/
 │   │   │   ├── check-health.handler.ts
 │   │   │   └── check-health.handler.test.ts
 │   │   ├── infrastructure/http/routes/
 │   │   │   └── health.route.ts
-│   │   ├── public/
-│   │   │   └── healthcheck.facade.ts          # exposé si d'autres BCs veulent s'en servir
 │   │   └── healthcheck.module.ts
 │   │
-│   ├── test/                                  # helpers transverses (pas un BC)
-│   │   ├── vitest.setup.ts                    # setup global
+│   ├── test/                                   # helpers transverses (pas un module)
+│   │   ├── vitest.setup.ts
 │   │   ├── with-test-transaction.ts
 │   │   ├── test-context.ts
-│   │   ├── fake-clock.ts                      # Clock figé pour tests
-│   │   └── fixtures/                          # une factory par AggregateRoot
+│   │   ├── fake-clock.ts
+│   │   └── fixtures/
 │   │       ├── api-key.fixture.ts
 │   │       └── utilisateur.fixture.ts
 │   │
-│   ├── config.ts                              # Config Zod-validée
-│   └── index.ts                               # bootstrap
+│   ├── config.ts                               # Config Zod-validée
+│   └── index.ts                                # bootstrap
 │
 ├── prisma/
 │   ├── schema.prisma
@@ -267,7 +276,7 @@ apps/pilote-mb-core/
 ├── package.json
 ├── tsconfig.json
 ├── vitest.config.ts
-├── .dependency-cruiser.cjs                    # règles d'architecture (obligatoire)
+├── .dependency-cruiser.cjs
 ├── .eslintrc.cjs
 ├── .prettierrc
 └── CLAUDE.md
@@ -275,246 +284,289 @@ apps/pilote-mb-core/
 
 Tests co-localisés : `foo.ts` + `foo.test.ts` côte-à-côte.
 
-**Points clés de cette structure :**
-- **Un dossier racine par BC** — `authentication/`, `healthcheck/`, plus tard `pilotage/`, `territorialisation/`, etc.
-- **Chaque BC est autonome** : ses propres couches (`domain/`, `application/`, `infrastructure/`) + son `public/` + son `<bc>.module.ts`
-- **`shared-kernel/`** : primitives DDD neutres (AggregateRoot, ValueObject, DomainEvent, ports techniques) — importable de partout
-- **`platform/`** : infra technique transverse (Prisma, HTTP, logging, events, container) — **pas un BC métier**
-- **`public/`** par BC : l'**unique** porte d'entrée pour les autres BCs (DTOs + facades)
-- **`test/`** : helpers transverses, hors BC
+**Points clés :**
+- **Un dossier racine par module** — `framework/`, `authentication/`, `healthcheck/`
+- **`framework/`** : tuyauterie technique, importable de partout, sans dépendance vers les modules métier
+- **`model/`** : functional core d'un module — types et fonctions pures uniquement, **aucun I/O**
+- **`ports/`** : interfaces consommées par les use cases (repos, adapters externes)
+- **`commands/`** + **`queries/`** : imperative shell — use cases qui orchestrent I/O
+- **`infrastructure/`** : adapters concrets (Prisma, crypto, HTTP, scripts)
+- **`public/`** : la **seule** porte d'entrée pour les autres modules — facade + ApiModels partagés
 
-### 5.5 Règles de dépendances et outillage
+### 5.5 Règles de dépendances
 
-**Règle cardinale :** aucun import cross-BC autorisé sauf via le dossier `public/` du BC source.
+**Règle cardinale (côté écriture) :** un module ne touche **jamais** les tables Prisma d'un autre module en écriture. Les opérations d'écriture cross-module passent par une fonction exposée dans le `public/` du module propriétaire (port métier, pas requête SQL).
+
+**Règle souple (côté lecture) :** les queries peuvent être plus libres. Trois options par ordre de préférence :
+1. La query vit dans le module propriétaire et est appelée via la facade `public/`
+2. Le module consommateur a une fonction privée dans ses queries qui lit de manière ciblée — acceptable tant que c'est un read et qu'on ne reproduit pas l'anti-pattern "spaghetti SQL inter-modules"
+3. Une query transverse exposée par un module dédié (ex: `rapport`) — plus tard quand le besoin émerge
+
+Concrètement à l'init, **rien ne traverse les frontières de modules** sauf le module HTTP qui assemble tout. Mais la règle est figée pour les tickets suivants.
+
+**Imports interdits par dependency-cruiser :**
+- `@/<moduleA>/{model,commands,queries,infrastructure,ports}` depuis `<moduleB>` (sauf `framework` qui est libre)
+- Import d'un fichier `<module>.module.ts` depuis un autre module (seul `framework/container/build-app-container.ts` y a droit)
+- Import d'un module métier depuis `framework/` (le framework reste neutre)
+- Import d'`infrastructure/` depuis `model/` ou `ports/` (le functional core reste pur)
 
 ```ts
-// ❌ INTERDIT — import interne d'un autre BC
-import { UtilisateurRepository } from '@/authentication/domain/utilisateur/utilisateur.repository'
-import { CreateSessionHandler } from '@/authentication/application/commands/create-session/create-session.handler'
+// ❌ INTERDIT — import direct du modèle d'un autre module
+import { Utilisateur } from '@/authentication/model/utilisateur'
 
-// ✅ AUTORISÉ — import du Published Language
-import type { UtilisateurReference } from '@/authentication/public/utilisateur-reference'
+// ✅ AUTORISÉ — import du public/
+import type { UtilisateurApiModel } from '@/authentication/public/utilisateur.api-model'
 import type { AuthenticationFacade } from '@/authentication/public/authentication.facade'
 ```
 
 **Outillage obligatoire dès l'init :**
+1. **`dependency-cruiser`** (run en CI) — applique les règles ci-dessus
+2. **ESLint `no-restricted-syntax`** — interdit `export default` (sauf whitelist), interdit `new Date()` dans `model/`, `commands/`, `queries/` (force le `Clock`)
+3. **Convention no-barrel** documentée dans CLAUDE.md (sauf `public/` qui peut exposer via des fichiers nommés explicites, jamais `index.ts`)
 
-1. **`dependency-cruiser`** (config `.dependency-cruiser.cjs`, run en CI) — interdit par règles :
-   - Imports depuis un BC vers `@/<autre-bc>/{domain,application,infrastructure}/**`
-   - Imports depuis un BC vers `@/<autre-bc>/<bc>.module.ts` (seul `platform/container/build-app-container.ts` y a droit)
-   - Imports de `platform/` ou d'un BC dans `shared-kernel/` (shared-kernel reste pur, côté domaine uniquement)
+### 5.6 Published language : ApiModel
 
-2. **Règle ESLint `no-restricted-syntax`** :
-   - Interdit `export default` sauf whitelist
-   - Interdit `new <AggregateRoot>()` direct en dehors des fichiers `*.repository.ts` et `*.test.ts` — force le passage par les factories `Entity.create(...)`
+On n'a pas de Published Language au sens DDD (pas de BC à frontières strictes), mais on a un besoin réel : **partager des types entre `pilote-mb-core` et `pilote-mb-webapp`** pour profiter de l'inférence end-to-end.
 
-3. **Convention no-barrel** documentée dans CLAUDE.md (sauf `public/` de chaque BC et `shared-kernel/` qui peuvent exposer via des fichiers nommés explicites, jamais `index.ts`)
+La forme partagée s'appelle **`ApiModel`**. Convention :
 
-**Règles intra-BC (au sein d'un même BC) :**
-- `domain/` importe `shared-kernel/` et son propre `domain/` uniquement
-- `application/` importe `domain/` de son BC + `shared-kernel/` + **les facades publiques d'autres BCs** (via `@/autre-bc/public/...`)
-- `infrastructure/` peut tout importer (son BC entier + `platform/` + `shared-kernel/` + facades publiques)
-- `public/` n'importe que `shared-kernel/` — jamais de fuite d'infra/application/domain interne
-
-### 5.6 Published Language et Anti-Corruption Layer
-
-**Published Language** : chaque BC expose dans `public/` :
-- **DTOs minimaux** (`UtilisateurReference` ≠ `Utilisateur` entité complète)
-- **Interfaces de facades** (`AuthenticationFacade`) décrivant les capabilities que les autres BCs peuvent appeler
-
-Les **DTOs** sont volontairement **pauvres** : ils ne doivent pas fuiter l'état interne du BC source.
+- **`<Entity>ApiModel`** = la forme JSON exposée par les endpoints `/<entity>` de l'API
+- Vit dans `<module>/public/<entity>.api-model.ts`
+- Construite à partir d'un schéma Zod nommé via `.openapi('<Entity>ApiModel')` pour apparaître proprement dans le contrat OpenAPI
+- Le type TS est dérivé : `export type UtilisateurApiModel = z.infer<typeof UtilisateurApiModelSchema>`
+- Importable par n'importe quel module **et** par le webapp (via un package partagé ou par référence directe au repo selon le packaging final)
 
 ```ts
-// src/authentication/public/utilisateur-reference.ts
-export type UtilisateurReference = {
-  readonly id: string
-  readonly email: string
-  readonly nomComplet: string
-}
-// Notez ce qui N'est PAS exposé : statut_acces, token_version, sub_proconnect, roles
-// → concepts internes à authentication, les autres BCs n'ont rien à en savoir
+// src/authentication/public/utilisateur.api-model.ts
+import { z } from '@hono/zod-openapi'
+
+export const UtilisateurApiModelSchema = z.object({
+  id: z.string().uuid(),
+  email: z.string().email(),
+  nomComplet: z.string(),
+}).openapi('UtilisateurApiModel')
+
+export type UtilisateurApiModel = z.infer<typeof UtilisateurApiModelSchema>
 ```
+
+L'ApiModel est volontairement **pauvre** par rapport au modèle interne : pas de `statutAcces`, pas de `tokenVersion`, pas de `subProconnect` — concepts internes au module `authentication`, qui n'ont pas à fuiter dans l'API publique. Si un autre module a besoin d'une vue plus riche, il appelle la facade dédiée (cf. 5.7).
+
+Différence vs DTO classique : un ApiModel **est** la représentation publique stable, on ne le mappe pas vers un autre type interne — il est lu directement en sortie de query, et écrit en entrée de command via Zod.
+
+### 5.7 Facade module
+
+Chaque module métier expose une **facade** dans son `public/` : une interface listant les opérations cross-module disponibles. Elle est résolvable via Awilix par les autres modules qui l'importent.
 
 ```ts
 // src/authentication/public/authentication.facade.ts
+import type { ResultAsync } from '@/framework/result'
+import type { ApiKeyApiModel, UtilisateurApiModel } from '.'
+import type { AuthError } from './errors'
+
 export interface AuthenticationFacade {
-  utilisateurExiste(utilisateurId: string): Promise<boolean>
-  getUtilisateurReference(utilisateurId: string): Promise<UtilisateurReference | null>
-  verifyApiKey(rawToken: string): Promise<ApiKeyReference | null>
-  verifyJwt(rawJwt: string): Promise<UtilisateurReference | null>
+  verifyApiKey(rawToken: string): ResultAsync<ApiKeyApiModel, AuthError>
+  verifyJwt(rawJwt: string): ResultAsync<UtilisateurApiModel, AuthError>
+  getUtilisateurParId(utilisateurId: string): ResultAsync<UtilisateurApiModel | null, AuthError>
 }
 ```
 
-L'implémentation vit dans `authentication/application/facades/` et consomme les repos internes — c'est la seule place où on traverse la frontière du Published Language à l'intérieur du BC.
+L'implémentation vit dans `authentication/infrastructure/` (ou directement composée dans `authentication.module.ts` à partir des handlers existants — selon ce qui est plus lisible).
 
-**Anti-Corruption Layer (ACL)** : quand un BC consommateur a besoin d'un concept **avec sa propre sémantique métier**, il traduit le Published Language en son propre modèle via un Translator dans `infrastructure/acl/`.
+**Pour la lecture, deux options acceptables :**
+1. La facade expose la query (`getUtilisateurParId`) — recommandé quand le consommateur la veut "telle quelle"
+2. Le consommateur écrit sa propre query privée qui lit la table — toléré quand le besoin est très spécifique et le SQL clair, à condition de respecter la règle écriture (5.5)
 
-Exemple prospectif (ticket futur) :
+À l'init, seul le cas (1) est mobilisé via le middleware d'auth qui consomme `authenticationFacade.verifyApiKey()` / `verifyJwt()`.
+
+### 5.8 Modèles : types + factory functions, pas de classes
+
+Les modèles métier sont des **types TS** + des **factory functions pures** qui valident et construisent. Aucune classe, aucun héritage, aucun mutateur d'état caché.
+
 ```ts
-// src/pilotage/infrastructure/acl/utilisateur-to-responsable.translator.ts
-export class UtilisateurToResponsableTranslator {
-  toResponsable(reference: UtilisateurReference): Responsable {
-    return Responsable.reconstitute({
-      id: ResponsableId.from(reference.id),
-      nomComplet: new NomComplet(reference.nomComplet),
-    })
-  }
+// src/authentication/model/api-key-id.ts
+export type ApiKeyId = string & { readonly __brand: 'ApiKeyId' }
+
+export const apiKeyId = (raw: string): Result<ApiKeyId, InvalidApiKeyIdError> => {
+  if (!isUuid(raw)) return err(new InvalidApiKeyIdError(raw))
+  return ok(raw as ApiKeyId)
 }
 ```
 
-→ Le BC `pilotage` ne parle **jamais** d'`UtilisateurReference` dans son `domain/` — uniquement de `Responsable`. Isolation sémantique réelle.
-
-### 5.7 Patterns tactiques DDD
-
-#### 5.7.1 Aggregate Root
-
-Toute entité avec identité propre hérite d'`AggregateRoot`. Les invariants de consistance sont scopés à l'agrégat, checkés lors des mutations.
-
 ```ts
-// src/shared-kernel/aggregate-root.ts
-export abstract class AggregateRoot<TId> {
-  protected constructor(readonly id: TId) {}
-  private readonly pendingEvents: DomainEvent[] = []
+// src/authentication/model/api-key.ts
+export type ApiKey = {
+  readonly id: ApiKeyId
+  readonly nom: string
+  readonly keyHash: string
+  readonly keyPrefix: string
+  readonly scopes: ReadonlyArray<Scope>
+  readonly active: boolean
+  readonly dateCreation: Date
+}
 
-  protected recordEvent(event: DomainEvent): void {
-    this.pendingEvents.push(event)
-  }
+export type CreateApiKeyParams = {
+  nom: string
+  scopes: Scope[]
+  environment: 'live' | 'test'
+  hasher: ApiKeyHasher
+  tokenGenerator: TokenGenerator
+  clock: Clock
+}
 
-  pullPendingEvents(): ReadonlyArray<DomainEvent> {
-    const events = [...this.pendingEvents]
-    this.pendingEvents.length = 0
-    return events
+export const createApiKey = (
+  params: CreateApiKeyParams,
+): Result<{ apiKey: ApiKey; rawToken: string }, CreateApiKeyError> => {
+  if (params.nom.trim() === '') return err(new InvalidApiKeyNameError())
+  if (params.scopes.length === 0) return err(new ApiKeyScopesRequiredError())
+
+  const prefix = params.environment === 'live' ? 'pmb_live_' : 'pmb_test_'
+  const rawToken = params.tokenGenerator.generate(prefix)
+  const keyHash = params.hasher.hash(rawToken)
+  const keyPrefix = rawToken.slice(0, 12)
+
+  const apiKey: ApiKey = {
+    id: ApiKeyId.generate(),
+    nom: params.nom,
+    keyHash,
+    keyPrefix,
+    scopes: params.scopes,
+    active: true,
+    dateCreation: params.clock.now(),
   }
+  return ok({ apiKey, rawToken })
+}
+
+export const revokeApiKey = (apiKey: ApiKey): Result<ApiKey, ApiKeyAlreadyRevokedError> => {
+  if (!apiKey.active) return err(new ApiKeyAlreadyRevokedError())
+  return ok({ ...apiKey, active: false })
 }
 ```
 
-Agrégats de l'init : `ApiKey`, `Utilisateur`.
+**Conséquences :**
+- Les transitions sont des fonctions pures (`(state, params) => Result<state', error>`)
+- Les modèles sont **immuables** par construction (`readonly`, on retourne un nouvel objet à chaque transition)
+- Sérialisation triviale (objet JSON pur), partage front/back natif
+- Tests unitaires sans mock ni DB — on appelle la factory, on assert sur le retour
 
-#### 5.7.2 Value Object
+**Branded types** pour les IDs et VOs courts (Email, Scope) : sécurité de typage sans le coût d'une classe. Une fonction `parseEmail(raw): Result<Email, …>` valide à la frontière, ensuite on travaille sur le type `Email`.
 
-Immuables, égalité par valeur, validation à la construction.
+**Pas de Domain Events** à l'init. Si on a un jour besoin de réagir à des transitions (audit, notification), on le fait par :
+- Logging structuré dans le use case (pour l'audit lisible)
+- Appel explicite à un autre module via sa facade
+- Mécanisme dédié quand un cas concret apparaît (probablement pas un event bus interne)
+
+### 5.9 Repositories : ports & adapters côté écriture
+
+Pour respecter la contrainte 5.5, **toutes les écritures DB d'un module passent par un port repository**. Le port vit dans `model/ports/` (ou `ports/` à la racine du module). L'adapter Prisma vit dans `infrastructure/persistence/`.
 
 ```ts
-// src/shared-kernel/value-object.ts
-export abstract class ValueObject<T> {
-  constructor(protected readonly value: T) {}
-  equals(other: ValueObject<T>): boolean {
-    return JSON.stringify(this.value) === JSON.stringify(other.value)
-  }
-  valueOf(): T { return this.value }
+// src/authentication/ports/api-key.repository.ts
+export interface ApiKeyRepository {
+  save(apiKey: ApiKey): ResultAsync<void, RepositoryError>
+  findByKeyHash(keyHash: string): ResultAsync<ApiKey | null, RepositoryError>
+  findById(id: ApiKeyId): ResultAsync<ApiKey | null, RepositoryError>
 }
 ```
 
-VOs de l'init : `ApiKeyId`, `UtilisateurId`, `Email` (avec regex de validation), `StatutAcces` (enum), `Scope` (format `<resource>:<action>`).
-
-#### 5.7.3 Domain Event
-
-Les AggregateRoots enregistrent leurs events via `recordEvent()`. Les repos les publient via le bus **après un `save()` réussi** (dans la même transaction logique).
-
 ```ts
-// src/shared-kernel/domain-event.ts
-export interface DomainEvent {
-  readonly type: string
-  readonly occurredAt: Date
-  readonly aggregateId: string
-}
-```
-
-Events de l'init (cas concrets, pas cosmétiques) :
-- `ApiKeyCreatedEvent` — émis par `ApiKey.create()`
-- `ApiKeyRevokedEvent` — émis par `ApiKey.revoke()`
-- `UtilisateurCreatedEvent` — émis par la future factory `Utilisateur.createFromProConnect()` (scaffolding)
-
-Handler initial : `AuditLogEventHandler` dans `platform/events/` qui persiste tous les events dans `application_log` (trace d'audit). Prouve le pattern end-to-end.
-
-#### 5.7.4 Factory (static method)
-
-Création d'un agrégat **uniquement** via `Entity.create(...)` :
-- Check les invariants
-- Génère l'id
-- Enregistre l'event de création
-
-Reconstruction depuis DB uniquement via `Entity.reconstitute(...)` (utilisée par le repo).
-
-```ts
-export class ApiKey extends AggregateRoot<ApiKeyId> {
-  private constructor(/* privé — pas d'instanciation directe */) { super(id) }
-
-  static create(params: {
-    nom: string
-    scopes: Scope[]
-    hasher: ApiKeyHasher
-    tokenGenerator: TokenGenerator
-    clock: Clock
-  }): Result<{ aggregate: ApiKey; rawToken: string }, DomainError> {
-    if (params.nom.trim() === '') return err(new InvalidApiKeyNameError())
-    if (params.scopes.length === 0) return err(new ApiKeyScopesRequiredError())
-
-    const rawToken = params.tokenGenerator.generate()
-    const keyHash = params.hasher.hash(rawToken)
-    const keyPrefix = rawToken.slice(0, 12)
-    const aggregate = new ApiKey(ApiKeyId.generate(), params.nom, keyHash, keyPrefix, params.scopes, true)
-
-    aggregate.recordEvent(new ApiKeyCreatedEvent(aggregate.id.valueOf(), params.clock.now()))
-    return ok({ aggregate, rawToken })
-  }
-
-  static reconstitute(row: /* DB shape */): ApiKey { /* ... */ }
-
-  revoke(clock: Clock): Result<void, DomainError> {
-    if (!this.active) return err(new ApiKeyAlreadyRevokedError())
-    this.active = false
-    this.recordEvent(new ApiKeyRevokedEvent(this.id.valueOf(), clock.now()))
-    return ok(undefined)
-  }
-}
-```
-
-Une règle ESLint interdit `new ApiKey(...)` en dehors de `api-key.ts` et des tests.
-
-#### 5.7.5 Repository (scopé à l'agrégat)
-
-**Un repo par AggregateRoot**, jamais par entité interne. Le repo sauvegarde l'agrégat entier et **publie ses events post-save**.
-
-```ts
+// src/authentication/infrastructure/persistence/api-key.prisma-repository.ts
 export class ApiKeyPrismaRepository implements ApiKeyRepository {
-  constructor(private readonly deps: Inject<'prisma' | 'domainEventPublisher'>) {}
+  constructor(private readonly deps: Inject<'prisma'>) {}
 
-  async save(aggregate: ApiKey): Promise<void> {
-    const data = ApiKeyMapper.toPersistence(aggregate)
-    await this.deps.prisma.getInstance().api_key.upsert({
-      where: { id: data.id },
-      create: data,
-      update: data,
-    })
-    await this.deps.domainEventPublisher.publish(aggregate.pullPendingEvents())
+  save(apiKey: ApiKey): ResultAsync<void, RepositoryError> {
+    const data = apiKeyToPersistence(apiKey)
+    return ResultAsync.fromPromise(
+      this.deps.prisma.getInstance().api_key.upsert({
+        where: { id: data.id },
+        create: data,
+        update: data,
+      }).then(() => undefined),
+      (cause) => new RepositoryError('save api_key failed', { cause }),
+    )
   }
 
-  async findByKeyHash(keyHash: string): Promise<ApiKey | null> {
-    const row = await this.deps.prisma.getInstance().api_key.findUnique({ where: { key_hash: keyHash } })
-    return row ? ApiKeyMapper.toDomain(row) : null
+  findByKeyHash(keyHash: string): ResultAsync<ApiKey | null, RepositoryError> {
+    return ResultAsync.fromPromise(
+      this.deps.prisma.getInstance().api_key.findUnique({ where: { key_hash: keyHash } }),
+      (cause) => new RepositoryError('findByKeyHash failed', { cause }),
+    ).map((row) => row ? apiKeyFromPersistence(row) : null)
   }
 }
 ```
 
-#### 5.7.6 Domain Service
+Les **mappers** sont des fonctions pures (`toPersistence(model)`, `fromPersistence(row)`) — pas de classe.
 
-Logique métier qui ne rentre pas naturellement dans un AggregateRoot ou un VO. Vit dans `<bc>/domain/<agg>/services/` (lié à un agrégat) ou `<bc>/domain/services/` (transverse au BC, rare).
+### 5.10 Use cases : commands et queries
 
-**À l'init : zéro Domain Service** justifié. La règle est documentée, applicable au cas par cas dans les futurs BCs.
+#### Commands (écriture)
 
-#### 5.7.7 Clock injectable
-
-Tous les timestamps du domain passent par un port `Clock` injecté, jamais `new Date()` direct dans `domain/` ou `application/`. Permet :
-- Tests déterministes via `FakeClock`
-- Centralisation du format temporel si besoin
+Une command est une **classe handler** instanciée par Awilix avec ses dépendances. Le métier est dans son `executer()` qui retourne un `ResultAsync<T, E>`. Le code privilégie le **railway oriented programming** (`andThen`, `map`, `mapErr`) plutôt qu'un labyrinthe de `if (result.isErr)`.
 
 ```ts
-// src/shared-kernel/clock.ts
+// src/authentication/commands/create-session/create-session.handler.ts
+export class CreateSessionHandler {
+  constructor(
+    private readonly deps: Inject<
+      'utilisateurRepository' | 'tokenSigner' | 'transaction' | 'logger' | 'clock'
+    >,
+  ) {}
+
+  executer(command: CreateSessionCommand): ResultAsync<Session, CreateSessionError> {
+    if (!command.idToken) return errAsync(new MissingIdTokenError())
+    return errAsync(new NotImplementedError('ProConnect — voir ticket suivant'))
+    // À l'arrivée du ticket ProConnect :
+    // return validateIdToken(command.idToken, this.deps.proconnectClient)
+    //   .andThen((claims) => upsertUtilisateur(claims, this.deps.utilisateurRepository, this.deps.clock))
+    //   .andThen((utilisateur) => signSession(utilisateur, this.deps.tokenSigner, this.deps.clock))
+  }
+}
+```
+
+Throws réservés aux erreurs **techniques inattendues** (DB down, config invalide). Tout le métier passe par `Result`/`ResultAsync`.
+
+#### Queries (lecture)
+
+Même forme (`*.handler.ts` avec `executer()`), retournent généralement directement la donnée ou un `Result` selon la richesse d'erreurs métier (souvent un simple `Promise<T | null>` suffit pour une query ; `ResultAsync` quand on veut typer les erreurs de validation/permission).
+
+```ts
+// src/authentication/queries/verify-api-key/verify-api-key.handler.ts
+export class VerifyApiKeyHandler {
+  constructor(private readonly deps: Inject<'apiKeyRepository' | 'apiKeyHasher' | 'clock'>) {}
+
+  executer(rawToken: string): ResultAsync<ApiKey | null, VerifyApiKeyError> {
+    const keyHash = this.deps.apiKeyHasher.hash(rawToken)
+    return this.deps.apiKeyRepository.findByKeyHash(keyHash)
+      .map((apiKey) => apiKey?.active ? apiKey : null)
+  }
+}
+```
+
+Une query peut aussi être une **fonction pure exportée** (pas de classe) si elle n'a pas besoin d'état d'instance — c'est OK tant que la DI passe les deps à l'appel. À l'init, on garde la forme classe pour cohérence avec les commands.
+
+### 5.11 Pas d'AggregateRoot, pas de Domain Events
+
+À l'init, **aucun events** ni **AggregateRoot**. Les "root entities" (`ApiKey`, `Utilisateur`) sont des types — on les traite **comme des agrégats côté repository** (un repo par root entity, le repo charge/sauve l'objet entier) sans hériter d'une base class ni publier d'events.
+
+Si plus tard un cas nécessite events ou invariants complexes, on l'introduira sur **le modèle concerné**, pas comme primitive globale.
+
+### 5.12 Domain services / fonctions transverses
+
+Pas de "Domain Service" formalisé. Les calculs transverses (ex: agrégation de plusieurs indicateurs pour un panier, à venir dans `pilotage`) seront des **fonctions pures** dans `model/` (ou un sous-dossier `model/services/` si la lisibilité l'exige).
+
+À l'init : zéro fonction transverse — on a uniquement `createApiKey`, `revokeApiKey`, `parseEmail` et factories utilisateur stubées.
+
+### 5.13 Clock injectable
+
+Tous les timestamps passent par un port `Clock` injecté, jamais `new Date()` direct dans `model/`, `commands/`, `queries/`. Permet :
+- Tests déterministes via `FakeClock`
+- Centralisation du format temporel (passage à Luxon facilité — cf. 6.5)
+
+```ts
+// src/framework/clock/clock.ts
 export interface Clock { now(): Date }
 ```
 
-Règle ESLint : interdit `new Date()` dans `domain/` et `application/`.
+Règle ESLint : interdit `new Date()` dans `model/`, `commands/`, `queries/`.
 
 ---
 
@@ -522,63 +574,57 @@ Règle ESLint : interdit `new Date()` dans `domain/` et `application/`.
 
 ### 6.1 Dependency Injection — module-system Awilix (copié/adapté de pilote-ppg)
 
-pilote-mb-core reprend le **module-system** mis en place sur pilote-ppg. Il apporte trois bénéfices majeurs par rapport à un registre Awilix plat :
-- **Découpage par bounded context** : chaque module correspond à un BC DDD et déclare son propre cradle typé
-- **Graphe de dépendances explicite** via `imports` / `exports` — seules les facades des `exports` fuient entre BCs
-- **Typage fort des injections** via `Inject<K>` — chaque classe déclare précisément les dépendances qu'elle consomme
+pilote-mb-core reprend le **module-system** mis en place sur pilote-ppg. Trois bénéfices :
+- **Découpage par module** : chaque module Awilix correspond à un module applicatif et déclare son propre cradle typé
+- **Graphe de dépendances explicite** via `imports` / `exports` — seules les facades des `exports` fuient
+- **Typage fort** via `Inject<K>` — chaque classe déclare précisément les dépendances qu'elle consomme
 
-> **Note terminologique :** dans pilote-mb-core, **1 module module-system = 1 bounded context DDD**. Le module `authentication` est le BC Authentication, le module `pilotage` sera le BC Pilotage, etc. Le module `platform` est l'exception : c'est une couche d'infra technique transverse (pas un BC métier), nommée ainsi pour éviter le terme vague "shared". Cf. section 5.2 pour la liste des BCs et leur classification (Core/Supporting/Generic).
+> **Note terminologique :** un module applicatif = un module Awilix `defineModule`. Ce n'est **pas** un bounded context DDD. Le module `framework` est l'exception : c'est de la tech transverse, pas un domaine.
 
 #### Structure du framework
 
-Le framework vit dans `src/platform/container/module-system/` :
-- `define-module.ts` — factory curryfiée `defineModule<TExports, TCradle>()({...})` avec inférence des types
+Le framework vit dans `src/framework/module-system/` :
+- `define-module.ts` — factory curryfiée `defineModule<TExports, TCradle>()({...})`
 - `boot-modules.ts` — orchestrateur en 2 phases :
-  - Phase 1 : crée un container racine pour le module sans imports (`platform`), puis un scope par autre module (héritant des deps transverses)
-  - Phase 2 : résout eagerly les exports de chaque module importé et les ré-enregistre comme `asValue` dans le container consommateur (évite les boucles de résolution d'Awilix)
-- `module-names.ts` — liste canonique typée des modules du projet
+  - Phase 1 : container racine pour `framework` (sans imports), puis un scope par autre module
+  - Phase 2 : résout eagerly les exports de chaque module et les ré-enregistre comme `asValue` dans le container consommateur (évite les boucles de résolution Awilix)
+- `module-names.ts` — liste canonique typée
 
-Adaptations par rapport à pilote-ppg :
-- Renommage des fichiers/types en **camelCase** et noms **anglais** (sauf entités métier) pour respecter la convention de pilote-mb
+Adaptations vs pilote-ppg :
+- Renommage en **camelCase / anglais** (sauf entités métier) pour respecter la convention de pilote-mb
 - `PROXY` + `strict: true` sur le container racine (identique)
 
-#### Module `platform` (racine, infra technique transverse)
+#### Module `framework` (racine, infra technique transverse)
 
 ```ts
-// src/platform/platform.module.ts
-type PlatformCradle = {
+// src/framework/framework.module.ts
+type FrameworkCradle = {
   prisma: PrismaPilote
   transaction: Transaction
   logger: Logger
   config: Config
   clock: Clock
-  domainEventPublisher: DomainEventPublisher
+  authContext: AuthContext
 }
 
-export type PlatformDependencies = PlatformCradle
-
-export const platformModule = defineModule<NoExports, PlatformCradle>()({
-  name: 'platform',
+export const frameworkModule = defineModule<NoExports, FrameworkCradle>()({
+  name: 'framework',
   imports: [],
   exports: [],
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
-      prisma:               asModuleFunction(() => new PrismaPilote()).singleton(),
-      transaction:          asModuleFunction(() => new PrismaTransaction()).singleton(),
-      logger:               asModuleFunction(() => buildLogger(config)).singleton(),
-      config:               asModuleFunction(() => config).singleton(),
-      clock:                asModuleClass(SystemClock).singleton(),
-      domainEventPublisher: asModuleFunction(({ logger }) =>
-        new InMemoryDomainEventPublisher([
-          new AuditLogEventHandler({ logger, prisma: /* injecté */ }),
-        ]),
-      ).singleton(),
-    } satisfies VerifyCradle<PlatformCradle>)
+      prisma:       asModuleFunction(() => new PrismaPilote()).singleton(),
+      transaction:  asModuleFunction(() => new PrismaTransaction()).singleton(),
+      logger:       asModuleFunction(() => buildLogger(config)).singleton(),
+      config:       asModuleFunction(() => config).singleton(),
+      clock:        asModuleClass(SystemClock).singleton(),
+      authContext:  asModuleClass(AsyncLocalStorageAuthContext).singleton(),
+    } satisfies VerifyCradle<FrameworkCradle>)
   },
 })
 ```
 
-`platform` remplace l'ancien `shared` et porte les services techniques transverses. Les services liés à un BC spécifique (ex: `TokenSigner`, `ApiKeyHasher`) migrent dans le cradle de leur BC (ici `authentication`).
+`framework` remplace l'ancien découpage `shared` + `platform` en un seul module. Les services liés à un module métier (ex: `TokenSigner`, `ApiKeyHasher`) vivent dans le cradle de leur module (`authentication`).
 
 #### Module métier consommateur
 
@@ -593,7 +639,7 @@ type AuthenticationCradle = {
   verifyApiKeyHandler: VerifyApiKeyHandler
   verifyJwtHandler: VerifyJwtHandler
   createSessionHandler: CreateSessionHandler
-  authenticationFacade: AuthenticationFacade   // 🔑 Published Language
+  authenticationFacade: AuthenticationFacade
 }
 
 type AuthenticationExports = {
@@ -602,7 +648,7 @@ type AuthenticationExports = {
 
 export const authenticationModule = defineModule<AuthenticationExports, AuthenticationCradle>()({
   name: 'authentication',
-  imports: ['platform'],
+  imports: ['framework'],
   exports: ['authenticationFacade'],
   register: (container, { asModuleClass }) => {
     container.register({
@@ -623,18 +669,13 @@ type Scope = ExtractScope<typeof authenticationModule>
 export type Inject<K extends keyof Scope> = Pick<Scope, K>
 ```
 
-**Notez :**
-- Tout ce qui est **lié à l'authentication** (hasher, token generator/signer, repos, handlers, facade) vit dans le cradle de `authentication`, pas dans `platform`
-- Le champ `exports: ['authenticationFacade']` **autorise** les autres modules à consommer la facade via leur `imports: ['authentication']`
-- Les autres BCs n'ont **aucun moyen** de récupérer `apiKeyRepository` ou autre interne — seule `authenticationFacade` est résolvable cross-module
-
 #### Bootstrap
 
 ```ts
-// src/platform/container/build-app-container.ts
+// src/framework/container/build-app-container.ts
 export function buildAppContainer() {
   return bootModules([
-    platformModule,
+    frameworkModule,
     authenticationModule,
     healthcheckModule,
   ])
@@ -644,9 +685,9 @@ export function buildAppContainer() {
 #### Liste des modules de l'init
 
 ```ts
-// src/platform/container/module-system/module-names.ts
+// src/framework/module-system/module-names.ts
 export const moduleNames = [
-  'platform',
+  'framework',
   'authentication',
   'healthcheck',
 ] as const
@@ -654,19 +695,17 @@ export const moduleNames = [
 export type ModuleName = (typeof moduleNames)[number]
 ```
 
-On étend cette liste à chaque nouveau BC (`'pilotage'`, `'territorialisation'`, `'rapport'`, `'parametrage'`, `'notification'`, `'audit'`, ...).
-
 #### Convention de vie des dépendances
 
-- **Tout en singleton** (pas de scope par requête — les transactions passent par `AsyncLocalStorage`, pas par Awilix scope)
-- **Mode Proxy Injection** (un seul argument objet dans le constructeur, déstructuré par le pattern `Inject<K>` ci-dessous)
+- **Tout en singleton** — les transactions et l'auth context passent par `AsyncLocalStorage`, pas par des scopes Awilix par requête
+- **Mode Proxy Injection** — un seul argument objet dans le constructeur, déstructuré via `Inject<K>`
 
 ### 6.2 Transactions — AsyncLocalStorage via `PrismaPilote` injecté
 
-On reprend le pattern pilote-ppg : un `AsyncLocalStorage<PilotePrismaClient>` porte la transaction courante à travers la chaîne d'appels async, et un **wrapper `PrismaPilote`** lu via Awilix encapsule la résolution "tx courante OR client racine". Les repositories **ne touchent jamais** à `PrismaClient` ni à `getPrisma()` directement — ils consomment un `prisma: PrismaPilote` via `Inject<'prisma'>`.
+Pattern repris de pilote-ppg : un `AsyncLocalStorage<PilotePrismaClient>` porte la transaction courante à travers la chaîne async, et un wrapper `PrismaPilote` injecté résout "tx courante OR client racine". Les repositories ne touchent jamais à `PrismaClient` ni à `getPrisma()` directement.
 
 ```ts
-// src/platform/persistence/prisma/prisma-transaction.ts
+// src/framework/persistence/prisma/prisma-transaction.ts
 export type PilotePrismaClient = Parameters<Parameters<typeof prisma.$transaction>[0]>[0]
 export const txStore = new AsyncLocalStorage<PilotePrismaClient>()
 
@@ -678,7 +717,7 @@ export class PrismaTransaction implements Transaction {
 ```
 
 ```ts
-// src/platform/persistence/prisma/prisma-pilote.ts
+// src/framework/persistence/prisma/prisma-pilote.ts
 export class PrismaPilote {
   private instance: PrismaClient | null = null
 
@@ -689,56 +728,107 @@ export class PrismaPilote {
 }
 ```
 
-**Règle d'or** : aucun repository ne dépend directement de `PrismaClient` ni de `getPrisma()`. Tous consomment `this.deps.prisma.getInstance()` via le wrapper injecté.
+Un handler qui veut une transaction injecte `Transaction` et appelle `transaction.run(async () => { ... })`. Toute la chaîne async dans le callback hérite automatiquement de la tx via l'ALS — les repos appellent `prisma.getInstance()` et obtiennent la tx sans le savoir.
+
+### 6.3 Auth context — AsyncLocalStorage
+
+Le pattern transaction est généralisé à l'**identité authentifiée**. Un middleware Hono pose l'identité dans un `AuthContext` (ALS), puis n'importe quel use case en aval peut appeler `requireUser()` ou `requireApiKey()` sans que l'identité circule comme paramètre explicite.
+
+**Compatibilité Hono** : Hono est un framework Node.js (et bun/deno), `AsyncLocalStorage` est natif Node 18+. Le `c.set('auth', ...)` Hono est utile pour les middlewares qui veulent un accès local, mais pour propager l'identité **profondément** dans la pile async (handlers, repos pour audit, services), un `AsyncLocalStorage` est strictement supérieur — pas de prop drilling, pas de couplage à `Context` Hono dans le métier. Pattern validé sur Express/Fastify, fonctionne identiquement avec Hono.
 
 ```ts
-// src/platform/persistence/prisma/api-key.prisma-repository.ts
-import { type Inject } from '@/authentication/authentication.module'
+// src/framework/auth-context/auth-context.ts
+export type Auth =
+  | { kind: 'api-key'; apiKey: ApiKeyApiModel }
+  | { kind: 'user'; utilisateur: UtilisateurApiModel }
 
-export class ApiKeyPrismaRepository implements ApiKeyRepository {
-  constructor(private readonly deps: Inject<'prisma'>) {}
+const authStore = new AsyncLocalStorage<Auth>()
 
-  async findByKeyHash(keyHash: string): Promise<ApiKey | null> {
-    const row = await this.deps.prisma.getInstance().api_key.findUnique({
-      where: { key_hash: keyHash },
-    })
-    return row ? ApiKeyMapper.toDomain(row) : null
+export interface AuthContext {
+  run<T>(auth: Auth, scope: () => Promise<T>): Promise<T>
+  current(): Auth | undefined
+}
+
+export class AsyncLocalStorageAuthContext implements AuthContext {
+  run<T>(auth: Auth, scope: () => Promise<T>): Promise<T> {
+    return authStore.run(auth, scope)
+  }
+  current(): Auth | undefined {
+    return authStore.getStore()
   }
 }
 ```
 
-Un handler qui a besoin d'une transaction consomme le port `Transaction` via `Inject<'transaction'>` et appelle `this.deps.transaction.run(async () => { ... })`. Toute la chaîne async dans le callback bénéficie automatiquement de la tx courante via `AsyncLocalStorage` — les repos appellent `this.deps.prisma.getInstance()` et obtiennent la tx sans connaître son existence.
+```ts
+// src/framework/auth-context/current-auth.ts
+export const currentAuth = (): Auth | undefined => authStore.getStore()
 
-**Bénéfice vs import direct de `getPrisma()`** : les dépendances sont explicites dans le constructeur, les tests peuvent injecter un fake `PrismaPilote` trivialement, et on reste cohérent avec le pattern Awilix de toute l'app.
+export const requireUser = (): UtilisateurApiModel => {
+  const auth = currentAuth()
+  if (auth?.kind !== 'user') throw new UnauthenticatedError('user required')
+  return auth.utilisateur
+}
 
-### 6.3 Result type — neverthrow
+export const requireApiKey = (): ApiKeyApiModel => {
+  const auth = currentAuth()
+  if (auth?.kind !== 'api-key') throw new UnauthenticatedError('api-key required')
+  return auth.apiKey
+}
+```
 
-Les handlers ne throw pas pour les erreurs métier — ils retournent un `Result`.
+**Middleware HTTP qui alimente l'ALS :**
 
 ```ts
-import { err, ok, Result } from 'neverthrow'
-import { type Inject } from '@/authentication/authentication.module'
-
-export class CreateSessionHandler {
-  constructor(private readonly deps: Inject<'utilisateurRepository' | 'tokenSigner'>) {}
-
-  async executer(command: CreateSessionCommand): Promise<Result<Session, AuthenticationError>> {
-    if (!command.idToken) return err(new MissingIdTokenError())
-    // TODO: intégrer ProConnect (ticket suivant) — valider l'id_token via JWKS,
-    // upsert utilisateur, émettre JWT via this.deps.tokenSigner.sign(...)
-    return err(new NotImplementedError('ProConnect integration — voir ticket suivant'))
+// src/framework/http/middlewares/auth-context.middleware.ts
+export function authContextMiddleware(deps: { authContext: AuthContext }) {
+  return async (context: Context, next: Next) => {
+    const auth = context.get('auth') as Auth | undefined
+    if (!auth) return next()
+    await deps.authContext.run(auth, () => next())
   }
 }
 ```
 
-Throws réservés aux erreurs techniques (DB down, config invalide, etc.) qui remontent au middleware d'erreur global (cf. section 16).
+`UnauthenticatedError`/`ForbiddenError` sont des `AppError` — catchées par le middleware d'erreur global qui répond 401/403. Aucune gymnastique dans les use cases : `requireUser()` lance, le système répond proprement.
 
-### 6.4 Logger — sinks composables
+**Trade-off vs `c.get('auth')` Hono uniquement :** l'ALS coûte un peu plus en mémoire (stockage par chaîne async). Bénéfice : on découpe le métier de Hono (le métier ne connaît pas `Context`). On garde aussi le `c.set('auth')` pour les middlewares qui restent dans la couche HTTP.
 
-Port `Logger` dans `src/domain/shared/logger.ts`, implémenté par `CompositeLogger` qui dispatch vers N sinks.
+### 6.4 Result type — neverthrow + ResultAsync (railway oriented)
+
+Les handlers ne throw pas pour les erreurs métier — ils retournent `Result` ou `ResultAsync`. Le code privilégie le chaînage railway (`andThen`, `map`, `mapErr`, `orElse`) plutôt que des arbres `if (result.isErr)`.
 
 ```ts
-// src/domain/shared/logger.ts
+// Mauvais : isErr partout
+const apiKeyResult = await this.deps.apiKeyRepository.findByKeyHash(hash)
+if (apiKeyResult.isErr()) return err(apiKeyResult.error)
+const apiKey = apiKeyResult.value
+if (!apiKey) return err(new NotFoundError())
+if (!apiKey.active) return err(new RevokedError())
+return ok(apiKey)
+
+// Bon : railway
+return this.deps.apiKeyRepository
+  .findByKeyHash(hash)
+  .andThen((apiKey) => apiKey ? ok(apiKey) : err(new NotFoundError()))
+  .andThen((apiKey) => apiKey.active ? ok(apiKey) : err(new RevokedError()))
+```
+
+Throws réservés aux **erreurs techniques inattendues** (DB down, config invalide, port HTTP indisponible). Ils remontent au middleware d'erreur global (cf. section 16) qui loggue et répond 500.
+
+`UnauthenticatedError` et `ForbiddenError` levées par `requireUser()` font exception : elles sont throwées délibérément (pour permettre l'API ergonomique de `requireUser()`) et catchées par le middleware d'erreur. C'est un cas isolé, documenté.
+
+Re-export centralisé :
+```ts
+// src/framework/result/index.ts
+export { ok, err, okAsync, errAsync, Result, ResultAsync, type Err, type Ok } from 'neverthrow'
+```
+
+### 6.5 Logger — sinks composables
+
+Port `Logger` dans `framework/logging/logger.ts`, implémenté par `CompositeLogger` qui dispatch vers N sinks.
+
+```ts
+// src/framework/logging/logger.ts
 export interface Logger {
   info(context: Record<string, unknown>, message: string): void
   warn(context: Record<string, unknown>, message: string): void
@@ -748,13 +838,13 @@ export interface Logger {
 ```
 
 ```ts
-// src/platform/logging/composite-logger.ts
+// src/framework/logging/composite-logger.ts
 export class CompositeLogger implements Logger {
   constructor(private readonly sinks: LogSink[]) {}
-  info(context, msg)  { this.emit('info',  context, msg) }
-  warn(context, msg)  { this.emit('warn',  context, msg) }
-  error(context, msg) { this.emit('error', context, msg) }
-  debug(context, msg) { this.emit('debug', context, msg) }
+  info(context, message)  { this.emit('info',  context, message) }
+  warn(context, message)  { this.emit('warn',  context, message) }
+  error(context, message) { this.emit('error', context, message) }
+  debug(context, message) { this.emit('debug', context, message) }
   private emit(level, context, message) {
     const entry = { level, timestamp: new Date(), message, context }
     for (const sink of this.sinks) sink.write(entry)
@@ -762,15 +852,25 @@ export class CompositeLogger implements Logger {
 }
 ```
 
-**Sinks initiaux** :
+**Sinks initiaux :**
 - `PinoStdoutSink` — pino vers stdout (JSON en prod, pretty en dev)
 - `DatabaseSink` — insert dans `application_log`, best-effort (jamais crash)
 
-**Wiring** : fait dans `shared.module.ts` via une factory `buildLogger(config)` qui compose les sinks selon `config.LOG_TO_DATABASE`. Chaque test/environnement peut avoir sa propre composition en branchant d'autres sinks sans toucher au reste du code.
+**Wiring** : factory `buildLogger(config)` qui compose les sinks selon `config.LOG_TO_DATABASE`.
 
-**Évolution future** : ajouter un sink APM / HTTP vers app satellite de logs = nouvelle ligne dans `buildLogger`. Zéro refacto côté métier.
+**Évolution future** : ajouter un sink APM/HTTP = nouvelle ligne dans `buildLogger`. Zéro refacto métier.
 
-### 6.5 Config — Zod validée au boot
+### 6.6 Dates — Date natif à l'init, Luxon en option différée
+
+À l'init, `Clock.now()` retourne une `Date` native. Cela suffit pour les besoins actuels (timestamps DB, JWT iat/exp, dates de création/révocation API keys).
+
+**Luxon** sera introduit dès qu'un module manipule sérieusement des dates (formats FR, périodes, timezones, calculs de jalons) — probablement `pilotage` ou `rapport`. Deux options à ce moment :
+1. **Luxon en complément** — `Clock` reste sur `Date`, on convertit en `DateTime` aux endroits ciblés
+2. **Migration `Clock`** — `Clock.now(): DateTime`, on assume Luxon partout
+
+Le choix se prendra dans le ticket concerné. Le port `Clock` sert de point de bascule unique. La règle ESLint qui interdit `new Date()` reste en place et capture `DateTime.now()` si on bascule.
+
+### 6.7 Config — Zod validée au boot
 
 ```ts
 // src/config.ts
@@ -795,9 +895,9 @@ export type Config = typeof config
 
 Crash dur au démarrage si variable manquante ou invalide.
 
-### 6.6 Pattern d'injection `Inject<K>` dans les classes
+### 6.8 Pattern d'injection `Inject<K>`
 
-Chaque module expose un alias `Inject<K>` typé, construit depuis son `ExtractScope`. Les classes qui appartiennent au module consomment uniquement les clés dont elles ont besoin — précisément typées, auto-complétées, sans re-déclarer la signature.
+Chaque module expose un alias `Inject<K>` typé construit depuis son `ExtractScope`. Les classes consomment uniquement les clés dont elles ont besoin — précisément typées.
 
 ```ts
 // Dans authentication.module.ts
@@ -805,38 +905,19 @@ type Scope = ExtractScope<typeof authenticationModule>
 export type Inject<K extends keyof Scope> = Pick<Scope, K>
 ```
 
-**Usage dans un repository :**
-```ts
-export class ApiKeyPrismaRepository implements ApiKeyRepository {
-  constructor(private readonly deps: Inject<'prisma'>) {}
-  async findByKeyHash(keyHash: string): Promise<ApiKey | null> {
-    const row = await this.deps.prisma.getInstance().api_key.findUnique({ where: { key_hash: keyHash } })
-    return row ? ApiKeyMapper.toDomain(row) : null
-  }
-}
-```
-
-**Usage dans un handler qui a plusieurs deps :**
+**Usage :**
 ```ts
 export class CreateSessionHandler {
   constructor(
     private readonly deps: Inject<'utilisateurRepository' | 'tokenSigner' | 'transaction' | 'logger'>,
   ) {}
-
-  async executer(command: CreateSessionCommand): Promise<Result<Session, AuthenticationError>> {
-    return this.deps.transaction.run(async () => {
-      // TODO: intégrer ProConnect (ticket suivant)
-      return err(new NotImplementedError('ProConnect integration — voir ticket suivant'))
-    })
-  }
 }
 ```
 
 **Règles à figer :**
-- Toute classe instanciée par Awilix (`asModuleClass`) **déclare ses deps via `Inject<K>`**, jamais via un type ad-hoc inline
-- Une classe ne peut consommer **que des clés de son propre scope** (shared deps + cradle du module) — le typage de `Inject<K>` le force à la compilation
-- Dans un fichier `*.repository.ts` ou `*.handler.ts`, l'import de `Inject` pointe vers le `module.ts` du module qui déclare ces dépendances
-- **Pas d'abus** : `Inject<'a' | 'b' | 'c' | 'd' | 'e' | 'f'>` signale qu'une classe fait trop de choses — à découper en deux
+- Toute classe instanciée par Awilix (`asModuleClass`) déclare ses deps via `Inject<K>`, jamais via un type ad-hoc
+- Une classe ne peut consommer que des clés de son propre scope (ses `imports` + son cradle)
+- **Pas d'abus** : `Inject<'a' | 'b' | 'c' | 'd' | 'e' | 'f'>` signale qu'une classe fait trop — à découper
 
 ---
 
@@ -859,22 +940,28 @@ export class CreateSessionHandler {
 - Les ADR sont écrits en **français**
 
 ### 7.4 Variables et types
-- Pas de variables à 1 ou 2 caractères (ex: `error` et non `e`, `event` et non `ev`)
+- Pas de variables à 1 ou 2 caractères (`error` et non `e`, `event` et non `ev`)
 - Préférer `$Enums` de Prisma pour les enums DB
 - `expect(result).toEqual([{...}])` plutôt que `toHaveLength + index access`
+
+### 7.5 Modèles
+- **Pas de classes** pour les modèles métier — types + factory functions pures
+- **Branded types** pour les identifiants et VOs simples (`type ApiKeyId = string & { __brand: 'ApiKeyId' }`)
+- Validation à la frontière via `parseEmail`, `apiKeyId`, etc., qui retournent `Result`
+- Immutabilité par `readonly` ; transitions = `(state, params) => Result<state', error>`
 
 ---
 
 ## 8. API design — règles "agent-ready"
 
-L'API sera consommée par un **agent IA satellite** (et plus tard par le webapp). Chaque endpoint doit donc être un "tool potentiel" pour un LLM.
+L'API sera consommée par un **agent IA satellite** (et plus tard par le webapp). Chaque endpoint = "tool potentiel" pour un LLM.
 
 ### 8.1 Règles non-négociables
 
-1. **Atomicité** — un endpoint, une responsabilité. Pas de méga-endpoint multi-usage.
-2. **Descriptions riches** — `.describe()` obligatoire sur chaque champ Zod. `summary` + `description` ≥ 1 phrase obligatoires sur chaque route, disant **quand** utiliser cet endpoint.
+1. **Atomicité** — un endpoint, une responsabilité.
+2. **Descriptions riches** — `.describe()` obligatoire sur chaque champ Zod. `summary` + `description` ≥ 1 phrase obligatoires sur chaque route.
 3. **Outputs structurés** — JSON plat, pas de string multilignes, pas de HATEOAS.
-4. **Filtres combinables** — pas de vues en dur via URLs différentes. Un endpoint de listing, plusieurs filtres combinables (dont un `view` si besoin).
+4. **Filtres combinables** — un endpoint de listing, plusieurs filtres combinables.
 5. **Convention REST stricte** :
    ```
    GET    /entities              # list
@@ -886,37 +973,37 @@ L'API sera consommée par un **agent IA satellite** (et plus tard par le webapp)
    GET    /entities/recherche    # queries spécifiques si vraiment besoin
    ```
 6. **Erreurs structurées** — `ErrorSchema { code: string, message: string, details?: unknown }`. `code` = enum stable (ex: `ENTITY_NOT_FOUND`). `message` en français pour UI humaine.
-7. **Idempotence partout où possible** — `PUT /entities/{id}` plutôt que `POST /entities/duplicate`. Support `Idempotency-Key` header sur mutations critiques (plus tard).
-8. **Pas d'`_output_instructions`** — l'agent satellite gère ses propres instructions côté lui. L'API reste pur REST/JSON.
+7. **Idempotence** — `PUT` plutôt que `POST /…/duplicate`. Header `Idempotency-Key` plus tard.
+8. **Pas d'`_output_instructions`** — l'agent satellite gère ses propres instructions côté lui.
 
 ### 8.2 Organisation OpenAPI
 - **1 tag = 1 entité** (`Entity`, `Indicateur`, `Territoire`, `Health`, `Authentication`…)
-- Schémas Zod **locaux aux routes** quand spécifiques, **partagés dans `src/platform/http/schemas/`** quand réutilisés
-- Chaque schéma Zod nommé via `.openapi('NomDuSchema')` → référencement propre dans le JSON
+- **Schémas ApiModel** dans `<module>/public/<entity>.api-model.ts` — nommés via `.openapi('<Entity>ApiModel')`
+- Schémas locaux aux routes pour les inputs/outputs spécifiques (ex: `CreateEntityInput`)
 - `/api/openapi.json` et `/api/docs` **accessibles en prod aussi** (objectif produit)
 
 ### 8.3 Pattern d'une route
 
 ```ts
-// src/platform/http/routes/create-session.route.ts
+// src/authentication/infrastructure/http/routes/create-session.route.ts
 const CreateSessionInputSchema = z.object({
   id_token: z.string().describe("id_token OIDC émis par ProConnect"),
 }).openapi('CreateSessionInput')
 
-const SessionSchema = z.object({
+const SessionApiModelSchema = z.object({
   jwt: z.string(),
-  utilisateur: UtilisateurSchema,
-}).openapi('Session')
+  utilisateur: UtilisateurApiModelSchema,
+}).openapi('SessionApiModel')
 
 const createSessionRoute = createRoute({
   method: 'post',
   path: '/auth/sessions',
   tags: ['Authentication'],
   summary: "Échange un id_token ProConnect contre un JWT interne",
-  description: "Valide la signature de l'id_token via JWKS ProConnect, upsert l'utilisateur en DB, et retourne un JWT interne HS256.",
+  description: "Valide la signature de l'id_token via JWKS ProConnect, upsert l'utilisateur, et retourne un JWT interne HS256.",
   request: { body: { content: { 'application/json': { schema: CreateSessionInputSchema } } } },
   responses: {
-    201: { description: 'Session créée', content: { 'application/json': { schema: SessionSchema } } },
+    201: { description: 'Session créée', content: { 'application/json': { schema: SessionApiModelSchema } } },
     400: { description: 'id_token invalide', content: { 'application/json': { schema: ErrorSchema } } },
     501: { description: 'Non implémenté (scaffolding)', content: { 'application/json': { schema: ErrorSchema } } },
   },
@@ -929,16 +1016,13 @@ export function registerCreateSessionRoute(app: OpenAPIHono, container: AwilixCo
     const result = await handler.executer({ idToken: body.id_token })
 
     return respondWithResult(context, result, (session) =>
-      context.json({
-        jwt: session.jwt,
-        utilisateur: UtilisateurMapper.toHttp(session.utilisateur),
-      }, 201),
+      context.json(sessionToApiModel(session), 201),
     )
   })
 }
 ```
 
-Pour le scaffolding ProConnect, le handler retourne `err(new NotImplementedError(...))` dont le `kind = 'not-implemented'` mappe sur **501** via la table de mapping HTTP (cf. section 16.2).
+Pour le scaffolding, le handler retourne `errAsync(new NotImplementedError(...))` (kind `'not-implemented'` → 501 via la table de mapping HTTP).
 
 ---
 
@@ -947,37 +1031,37 @@ Pour le scaffolding ProConnect, le handler retourne `err(new NotImplementedError
 ### 9.1 Deux stratégies parallèles, middleware unifié
 
 Un seul middleware `auth.middleware.ts` détecte le format du Bearer token et délègue à la bonne stratégie :
-- Token préfixé `pmb_live_` ou `pmb_test_` → **API Key** (agents/services). Le préfixe est purement informatif (identifie l'environnement visuellement pour les devs/ops). Le middleware traite les deux strictement pareil — **aucune vérification de cohérence préfixe / NODE_ENV**, volontairement, car un même token pourrait être utilisé pour tester prod en bouchon local.
+- Token préfixé `pmb_live_` ou `pmb_test_` → **API Key**. Le préfixe est purement informatif (identifie l'environnement). Le middleware traite les deux strictement pareil — **aucune vérification de cohérence préfixe / NODE_ENV** (un même token peut être utilisé pour tester prod en bouchon local).
 - Token JWT (3 segments séparés par `.`) → **session user**
 
-Le middleware pose sur le contexte Hono :
-- `c.set('auth', { type: 'api-key', apiKey })`
-- `c.set('auth', { type: 'user', utilisateur, jwt })`
+Le middleware :
+1. Pose `c.set('auth', { kind: 'api-key', apiKey })` ou `{ kind: 'user', utilisateur }`
+2. Le middleware suivant (`authContextMiddleware`) lit `c.get('auth')` et alimente l'ALS — les use cases en aval peuvent appeler `requireUser()` ou `requireApiKey()`
 
 ### 9.2 API Keys (impl complète dans ce ticket)
 
 **Convention du préfixe :**
-- `pmb_live_*` — clés pour les environnements de production (prod)
-- `pmb_test_*` — clés pour tous les autres environnements (dev, staging, test, CI)
+- `pmb_live_*` — production
+- `pmb_test_*` — dev, staging, test, CI
 
-Le préfixe est purement informatif (aide visuelle à identifier l'environnement). Le middleware d'auth traite les deux pareil. Le CLI `create-api-key` prend un flag `--env live|test` qui détermine le préfixe généré.
+Le préfixe est purement informatif. Le CLI `create-api-key` prend `--env live|test`.
 
 **Choix du hash : SHA-256, pas bcrypt**
 
-Les API keys sont **hashées avec SHA-256 déterministe**, pas bcrypt. Raison :
-- bcrypt est non-déterministe (salt unique par hash) → impossible de faire un `WHERE key_hash = X` pour lookup. Il faudrait un `findMany` + `bcrypt.compare` sur chaque row : inacceptable en perf.
-- Les API keys ont une **haute entropie** (256 bits générés via `crypto.randomBytes`) → SHA-256 sans salt est suffisamment sécurisé (pas de rainbow table possible).
-- Lookup `WHERE key_hash = sha256(token)` + index B-tree = O(1) à toute échelle.
+Les API keys sont **hashées avec SHA-256 déterministe**. Raison :
+- bcrypt est non-déterministe (salt unique par hash) → impossible de faire `WHERE key_hash = X`. Il faudrait un `findMany` + `bcrypt.compare` sur chaque row : inacceptable en perf.
+- Les API keys ont une **haute entropie** (256 bits via `crypto.randomBytes`) → SHA-256 sans salt est suffisamment sécurisé.
+- Lookup `WHERE key_hash = sha256(token)` + index B-tree = O(1).
 
-bcrypt serait pertinent pour des passwords user (faible entropie), mais on n'a **pas de password** côté backend (auth users = ProConnect). Donc bcrypt est globalement inutile pour pilote-mb-core.
+bcrypt serait pertinent pour des passwords (faible entropie) ; on n'en a pas (auth users = ProConnect).
 
 **Table Prisma :**
 ```prisma
 model api_key {
   id                        String    @id @default(uuid())
   nom                       String
-  key_hash                  String    @unique  // SHA-256 hex du token complet
-  key_prefix                String    // ex: "pmb_live_abc" — pour affichage admin, jamais le token complet
+  key_hash                  String    @unique
+  key_prefix                String
   scopes                    String[]
   active                    Boolean   @default(true)
   date_creation             DateTime  @default(now())
@@ -985,14 +1069,12 @@ model api_key {
 }
 ```
 
-**Ports dans `authentication/domain/api-key/` :**
+**Ports dans `authentication/ports/` :**
 ```ts
-// api-key-hasher.ts — contrat domain (pas d'impl)
 export interface ApiKeyHasher {
-  hash(token: string): string              // déterministe
+  hash(token: string): string
 }
 
-// token-generator.ts — contrat domain
 export interface TokenGenerator {
   generate(prefix: 'pmb_live_' | 'pmb_test_'): string
 }
@@ -1000,14 +1082,12 @@ export interface TokenGenerator {
 
 **Adapters dans `authentication/infrastructure/crypto/` :**
 ```ts
-// sha256-api-key-hasher.ts
 export class Sha256ApiKeyHasher implements ApiKeyHasher {
   hash(token: string): string {
     return crypto.createHash('sha256').update(token).digest('hex')
   }
 }
 
-// crypto-token-generator.ts
 export class CryptoTokenGenerator implements TokenGenerator {
   generate(prefix: 'pmb_live_' | 'pmb_test_'): string {
     return `${prefix}${crypto.randomBytes(32).toString('hex')}`
@@ -1015,117 +1095,50 @@ export class CryptoTokenGenerator implements TokenGenerator {
 }
 ```
 
-**AggregateRoot `ApiKey` dans `authentication/domain/api-key/api-key.ts` :**
-```ts
-import { AggregateRoot, Clock, err, ok, Result } from '@/shared-kernel/...'
-import { ApiKeyCreatedEvent } from './events/api-key-created.event'
-import { ApiKeyRevokedEvent } from './events/api-key-revoked.event'
-import { InvalidApiKeyNameError } from './errors/invalid-api-key-name.error'
-import { ApiKeyScopesRequiredError } from './errors/api-key-scopes-required.error'
-import { ApiKeyAlreadyRevokedError } from './errors/api-key-already-revoked.error'
-
-export class ApiKey extends AggregateRoot<ApiKeyId> {
-  private constructor(
-    id: ApiKeyId,
-    private readonly nom: string,
-    private readonly keyHash: string,
-    private readonly keyPrefix: string,
-    private readonly scopes: ReadonlyArray<Scope>,
-    private active: boolean,
-    private readonly dateCreation: Date,
-  ) { super(id) }
-
-  static create(params: {
-    nom: string
-    scopes: Scope[]
-    environment: 'live' | 'test'
-    hasher: ApiKeyHasher
-    tokenGenerator: TokenGenerator
-    clock: Clock
-  }): Result<{ aggregate: ApiKey; rawToken: string }, DomainError> {
-    if (params.nom.trim() === '') return err(new InvalidApiKeyNameError())
-    if (params.scopes.length === 0) return err(new ApiKeyScopesRequiredError())
-
-    const prefix = params.environment === 'live' ? 'pmb_live_' : 'pmb_test_'
-    const rawToken = params.tokenGenerator.generate(prefix)
-    const keyHash = params.hasher.hash(rawToken)
-    const keyPrefix = rawToken.slice(0, 12)
-
-    const now = params.clock.now()
-    const aggregate = new ApiKey(
-      ApiKeyId.generate(),
-      params.nom,
-      keyHash,
-      keyPrefix,
-      params.scopes,
-      true,
-      now,
-    )
-    aggregate.recordEvent(new ApiKeyCreatedEvent(aggregate.id.valueOf(), params.nom, now))
-    return ok({ aggregate, rawToken })
-  }
-
-  static reconstitute(row: ApiKeyPersistenceShape): ApiKey {
-    return new ApiKey(/* ... depuis row ... */)
-  }
-
-  revoke(clock: Clock): Result<void, DomainError> {
-    if (!this.active) return err(new ApiKeyAlreadyRevokedError())
-    this.active = false
-    this.recordEvent(new ApiKeyRevokedEvent(this.id.valueOf(), clock.now()))
-    return ok(undefined)
-  }
-
-  estActive(): boolean { return this.active }
-  hasScope(scope: Scope): boolean { return this.scopes.some((s) => s.equals(scope)) }
-}
-```
+**Modèle `ApiKey` dans `authentication/model/api-key.ts` :** voir 5.8 (factory `createApiKey`, transition `revokeApiKey`).
 
 **Flow de vérification (middleware auth) :**
 1. Le client envoie `Authorization: Bearer pmb_live_xxxxxxxx...`
-2. Le middleware appelle `authenticationFacade.verifyApiKey(token)` (via Published Language)
-3. La facade délègue au `VerifyApiKeyHandler` qui : hash le token, lookup via `ApiKeyRepository.findByKeyHash()`, vérifie `estActive()`, retourne un `ApiKeyReference` ou null
-4. Le middleware pose `c.set('auth', { type: 'api-key', reference })` ou répond 401 via `app.onError` (lève `HTTPException`)
+2. Le middleware appelle `authenticationFacade.verifyApiKey(token)` qui délègue à `VerifyApiKeyHandler`
+3. Le handler hash le token, lookup via `ApiKeyRepository.findByKeyHash()`, vérifie `active`, retourne un `ApiKeyApiModel` ou null
+4. Le middleware pose `c.set('auth', { kind: 'api-key', apiKey })` (ou répond 401 via `app.onError`)
 
 **Création via CLI :**
 ```bash
 pnpm create-api-key --nom "agent-satellite-prod" --env live --scopes "entities:read,indicateurs:read"
 # Le script :
-#   1. Résout `authenticationModule` + `platformModule` via buildAppContainer()
-#   2. Appelle ApiKey.create(...) avec les deps injectées
-#   3. Appelle apiKeyRepository.save(aggregate) → déclenche ApiKeyCreatedEvent → AuditLogEventHandler
+#   1. Résout authenticationModule + frameworkModule via buildAppContainer()
+#   2. Appelle createApiKey(...) avec les deps injectées
+#   3. Appelle apiKeyRepository.save(apiKey)
 #   4. Affiche rawToken UNE SEULE FOIS en stdout
 ```
 
 ### 9.3 Authentification user — ProConnect (scaffolding seul)
 
-**Décision stratégique** : pas de login intégré (pas de table password, pas de `POST /auth/login`). L'authentification user passe exclusivement par **ProConnect** (IdP gouvernemental, ex-AgentConnect). Le backend valide les id_token émis par ProConnect et ré-émet son propre JWT interne.
+**Décision stratégique** : pas de login intégré (pas de table password, pas de `POST /auth/login`). L'authentification user passe exclusivement par **ProConnect**. Le backend valide les id_token émis par ProConnect et ré-émet son propre JWT interne.
 
-**Pourquoi ré-émettre un JWT interne plutôt qu'utiliser directement l'id_token ProConnect ?**
-- Les specs OIDC recommandent que l'id_token reste côté client
-- Notre JWT interne porte **nos rôles + notre `statut_acces`** — concepts applicatifs que ProConnect ne connaît pas
-- Révocation possible côté backend (via `token_version` sur l'utilisateur)
-- Performance : pas besoin d'appeler ProConnect à chaque requête (JWKS cached)
+**Pourquoi ré-émettre un JWT interne ?**
+- Notre JWT porte **nos rôles + notre `statut_acces`** — concepts applicatifs que ProConnect ne connaît pas
+- Révocation côté backend (via `token_version`)
+- Performance : pas d'appel ProConnect à chaque requête (JWKS cached)
 
 **Flow complet (à implémenter dans le ticket ProConnect) :**
 ```
-1. User clique "Se connecter avec ProConnect" sur webapp
+1. User clique "Se connecter avec ProConnect"
 2. Webapp redirige vers ProConnect (OAuth Authorization Code Flow + PKCE)
 3. ProConnect authentifie, redirige vers webapp avec ?code=xxx
-4. Webapp échange le code contre un id_token (appel ProConnect /token)
+4. Webapp échange le code contre un id_token
 5. Webapp → POST /auth/sessions { id_token }
 6. pilote-mb-core :
    a. Valide signature id_token via JWKS ProConnect (cached)
    b. Extrait sub, email, given_name, family_name
-   c. Upsert utilisateur en DB (clé : sub_proconnect)
+   c. Upsert utilisateur (clé : sub_proconnect)
       - si nouveau : statut_acces = 'EN_ATTENTE_ACCES'
-      - sinon : statut_acces préservé
-   d. Émet un JWT interne HS256 (payload: utilisateur_id, statut_acces, roles, token_version)
+   d. Émet un JWT interne HS256 (utilisateur_id, statut_acces, roles, token_version)
    e. Retourne { jwt, utilisateur }
-7. Webapp stocke le JWT interne et l'utilise pour toutes les requêtes suivantes
 ```
 
-**Page "Demander l'accès à Pilote"** : un utilisateur ProConnect qui se connecte pour la première fois arrive avec `statut_acces = 'EN_ATTENTE_ACCES'`. Le JWT est émis mais les routes métier sont bloquées par un middleware de statut. Le front route l'utilisateur vers une page de justification (formulaire → notif email admin). Un admin approuve/refuse ensuite via `PATCH /auth/utilisateurs/{id}/acces`.
+**Page "Demander l'accès"** : un user `EN_ATTENTE_ACCES` reçoit un JWT mais les routes métier sont bloquées par un middleware de statut. Le front route vers une page de justification. Un admin approuve via `PATCH /auth/utilisateurs/{id}/acces`.
 
 **Table Prisma :**
 ```prisma
@@ -1150,20 +1163,20 @@ enum statut_acces_enum {
 }
 ```
 
-**Ce qui est livré dans ce ticket (scaffolding)** :
-- Table `utilisateur` + enum `statut_acces_enum`
-- Value object `StatutAcces` et domain model `Utilisateur`
-- Repository Prisma `UtilisateurPrismaRepository`
-- Port `TokenSigner` + adapter `JsonwebtokenTokenSigner` (vérif et émission JWT interne **fonctionnels**, testés)
-- Middleware `auth.middleware.ts` avec dispatch API Key / JWT (branche JWT valide la signature, résout l'utilisateur). **Note** : tant que `POST /auth/sessions` retourne 501, aucun JWT valide ne peut être émis par le backend — la branche JWT du middleware est testée via des tokens signés manuellement avec `JWT_SECRET` dans les tests d'intégration.
-- `CreateSessionHandler` créé avec la structure CQRS complète, mais son impl contient un `TODO: intégrer ProConnect` et retourne `err(new NotImplementedError(...))` (kind `'not-implemented'` → 501 via `respondWithResult`)
-- Route `POST /auth/sessions` retourne 501 Not Implemented avec message clair pointant le ticket suivant
+**Livré dans ce ticket (scaffolding) :**
+- Table `utilisateur` + enum
+- Modèle `Utilisateur` (type + factory + transitions stubées)
+- `UtilisateurPrismaRepository`
+- Port `TokenSigner` + adapter `JsonwebtokenTokenSigner` (vérif/émission JWT **fonctionnels**, testés)
+- Middleware `auth.middleware.ts` avec dispatch API Key / JWT (la branche JWT valide signature, résout l'utilisateur via repository — testée avec tokens signés manuellement)
+- `CreateSessionHandler` avec structure complète, `executer()` retourne `errAsync(new NotImplementedError(...))`
+- Route `POST /auth/sessions` retourne 501 avec message clair pointant le ticket suivant
 
-**Ce qui est explicitement hors scope (ticket suivant)** :
-- Intégration `openid-client` + validation JWKS ProConnect
-- Upsert utilisateur depuis claims ProConnect
-- Endpoints `GET /auth/me`, `POST /auth/acces/demande`, `PATCH /auth/utilisateurs/{id}/acces`
-- Middleware de blocage pour `statut_acces = EN_ATTENTE_ACCES`
+**Hors scope (ticket suivant) :**
+- Intégration `openid-client` + JWKS ProConnect
+- Upsert utilisateur depuis claims
+- `GET /auth/me`, `POST /auth/acces/demande`, `PATCH /auth/utilisateurs/{id}/acces`
+- Middleware de blocage `EN_ATTENTE_ACCES`
 - Page "Demander l'accès" côté webapp
 
 ### 9.4 Routes publiques (exemptées d'auth)
@@ -1171,31 +1184,49 @@ enum statut_acces_enum {
 - `GET /api/openapi.json`
 - `GET /api/docs`
 
-Toutes les autres routes nécessitent une auth valide (API Key ou JWT user).
-
 ---
 
 ## 10. Tests
 
-### 10.1 Stratégie globale
-- **Vitest** avec `test.sequence.concurrent: true` → parallélisme maximum dès le départ
-- Tests co-localisés : `foo.ts` + `foo.test.ts`
-- Pas de séparation artificielle unit/integration : un test qui hit la DB est OK tant qu'il est dans `withTestTransaction`
+### 10.1 Pyramide explicite
 
-### 10.2 withTestTransaction
+| Couche | Type de test | Outils |
+|---|---|---|
+| `model/` (functional core) | **Unit** purs (pas de DB, pas de mock) | Vitest |
+| `commands/` + `queries/` (use cases) | **Intégration** (vraie DB via `withTestTransaction`) | Vitest + Prisma + container |
+| Repositories Prisma | **Intégration** (côté implicite via use cases ; tests directs si logique non triviale) | Vitest + Prisma |
+| Routes HTTP | **Intégration** (Hono `app.request()` end-to-end) | Vitest + Hono test client |
 
-Le helper initialise le container applicatif via `buildAppContainer()` (singleton partagé entre tests), ouvre une vraie transaction Prisma via le `PrismaPilote` injecté, pose la transaction dans le `txStore` AsyncLocalStorage, exécute le test, puis force un rollback via une exception contrôlée.
+Pas de séparation artificielle unit vs integration : un test qui hit la DB est OK tant qu'il est dans `withTestTransaction`. La discrimination utile est **pure vs avec I/O**.
+
+### 10.2 Configuration Vitest
+
+```ts
+// vitest.config.ts
+export default defineConfig({
+  test: {
+    sequence: { concurrent: true },
+    pool: 'threads',
+    poolOptions: { threads: { maxThreads: 10 } },
+    testTimeout: 30_000,
+    setupFiles: ['src/test/vitest.setup.ts'],
+  },
+})
+```
+
+### 10.3 withTestTransaction
+
+Le helper initialise le container applicatif via `buildAppContainer()` (singleton partagé), ouvre une transaction Prisma, pose la tx dans le `txStore` ALS, exécute le test, force un rollback.
 
 ```ts
 // src/test/with-test-transaction.ts
-import { buildAppContainer } from '@/platform/container/build-app-container'
-import { txStore } from '@/platform/persistence/prisma/prisma-transaction'
-import { PrismaPilote } from '@/platform/persistence/prisma/prisma-pilote'
+import { buildAppContainer } from '@/framework/container/build-app-container'
+import { txStore } from '@/framework/persistence/prisma/prisma-transaction'
+import { PrismaPilote } from '@/framework/persistence/prisma/prisma-pilote'
 import { TestContext } from './test-context'
 
 class RollbackSignal extends Error {}
 
-// Un seul container pour toute la suite de tests (lazy, thread-safe via Vitest worker).
 let cachedContainer: ReturnType<typeof buildAppContainer> | null = null
 function getTestContainer() {
   if (!cachedContainer) cachedContainer = buildAppContainer()
@@ -1207,9 +1238,9 @@ export function withTestTransaction(
 ): () => Promise<void> {
   return async () => {
     const { getContainer } = getTestContainer()
-    const platformContainer = getContainer('platform')
-    const prismaPilote = platformContainer.resolve<PrismaPilote>('prisma')
-    const prismaClient = prismaPilote.getInstance()   // client racine (pas de tx active ici)
+    const frameworkContainer = getContainer('framework')
+    const prismaPilote = frameworkContainer.resolve<PrismaPilote>('prisma')
+    const prismaClient = prismaPilote.getInstance()
 
     try {
       await prismaClient.$transaction(async (tx) => {
@@ -1226,51 +1257,82 @@ export function withTestTransaction(
 }
 ```
 
-`TestContext` est un wrapper léger autour de `getContainer` qui expose des raccourcis typés :
+### 10.4 Tests du functional core (unit purs)
+
+```ts
+// src/authentication/model/api-key.test.ts
+describe('createApiKey', () => {
+  it('refuse un nom vide', () => {
+    // Given
+    const params = makeParams({ nom: '   ' })
+    // When
+    const result = createApiKey(params)
+    // Then
+    expect(result.isErr()).toBe(true)
+    expect(result.error).toBeInstanceOf(InvalidApiKeyNameError)
+  })
+
+  it('génère un token préfixé selon environment', () => {
+    // Given
+    const params = makeParams({ environment: 'live' })
+    // When
+    const result = createApiKey(params)
+    // Then
+    expect(result.value.rawToken).toMatch(/^pmb_live_/)
+  })
+})
+```
+
+Pas de container, pas de DB, pas de mock — `makeParams()` retourne directement les ports stubbés (`hasher`, `tokenGenerator`, `clock`).
+
+### 10.5 Tests use cases (intégration)
+
+```ts
+// src/authentication/queries/verify-api-key/verify-api-key.handler.test.ts
+describe('VerifyApiKeyHandler', () => {
+  it('retourne null si la clé est révoquée', withTestTransaction(async (testContext) => {
+    // Given
+    await createApiKeyFixture({ active: false })
+    const handler = testContext.resolveHandler<VerifyApiKeyHandler>('authentication', 'verifyApiKeyHandler')
+    // When
+    const result = await handler.executer('pmb_test_revoked_token_xxxx')
+    // Then
+    expect(result.isOk()).toBe(true)
+    expect(result.value).toBeNull()
+  }))
+})
+```
+
+`TestContext` :
 ```ts
 // src/test/test-context.ts
 export class TestContext {
   constructor(private readonly getContainer: ReturnType<typeof buildAppContainer>['getContainer']) {}
-
-  resolveRepository<T>(moduleName: ModuleName, key: string): T {
+  resolveHandler<T>(moduleName: ModuleName, key: string): T {
     return this.getContainer(moduleName).resolve<T>(key)
   }
-  resolveHandler<T>(moduleName: ModuleName, key: string): T {
+  resolveRepository<T>(moduleName: ModuleName, key: string): T {
     return this.getContainer(moduleName).resolve<T>(key)
   }
 }
 ```
 
-**Usage :**
-```ts
-describe('ApiKeyPrismaRepository', () => {
-  it("retourne null si la clé n'existe pas", withTestTransaction(async (testContext) => {
-    // Given
-    const repository = testContext.resolveRepository<ApiKeyRepository>('apiKeyRepository')
-    // When
-    const result = await repository.findByKeyHash('inexistante')
-    // Then
-    expect(result).toBeNull()
-  }))
-})
-```
+### 10.6 Factories
 
-### 10.3 Factories
+Un fichier par entité dans `src/test/fixtures/`. Fonctions utilitaires (pas de classes Awilix).
 
-Un fichier par entité dans `src/test/fixtures/`. Ce sont des **fonctions utilitaires**, pas des classes injectées par Awilix.
-
-**Exception documentée à la règle 6.2** : les fixtures peuvent utiliser `getPrisma()` directement (import depuis `prisma-transaction.ts`). Raison : les fixtures ne sont pas instanciées via Awilix et on veut éviter le boilerplate d'injection pour des helpers de test. `getPrisma()` retourne automatiquement la transaction courante (celle de `withTestTransaction`) ou le client racine.
+**Exception documentée à la règle 5.5** : les fixtures peuvent utiliser `getPrisma()` directement. Raison : pas de DI, on évite le boilerplate. `getPrisma()` retourne automatiquement la transaction courante (celle de `withTestTransaction`).
 
 ```ts
 // src/test/fixtures/api-key.fixture.ts
-import { getPrisma } from '@/platform/persistence/prisma/prisma-transaction'
+import { getPrisma } from '@/framework/persistence/prisma/prisma-transaction'
 import { randomUUID, createHash, randomBytes } from 'node:crypto'
 
 export async function createApiKeyFixture(
   overrides: Partial<Prisma.api_keyUncheckedCreateInput> = {},
 ) {
   const rawToken = overrides.key_hash
-    ? undefined   // caller a fourni un hash custom
+    ? undefined
     : `pmb_test_${randomBytes(32).toString('hex')}`
   const keyHash = overrides.key_hash ?? createHash('sha256').update(rawToken!).digest('hex')
   const keyPrefix = rawToken ? rawToken.slice(0, 12) : (overrides.key_prefix ?? 'pmb_test_xxx')
@@ -1289,30 +1351,13 @@ export async function createApiKeyFixture(
 }
 ```
 
-Les factories marchent à la fois en test (dans la tx ouverte par `withTestTransaction`) et en prod/scripts (hors tx) sans adaptation.
-
-### 10.4 Règles non-négociables de test
+### 10.7 Règles non-négociables de test
 
 - ❌ Pas de mutation DB dans `beforeAll` / `afterAll`
-- ❌ Pas d'override des timeouts Prisma par défaut (5s tx / 2s maxWait). Si un test dépasse, c'est un smell à corriger.
+- ❌ Pas d'override des timeouts Prisma par défaut (5s tx / 2s maxWait)
 - ✅ Chaque test crée ses propres données via factories dans sa tx
 - ✅ `connection_limit` Prisma aligné avec `maxThreads` Vitest
 - ✅ Postgres de test lancé avec `max_connections=500 -c shared_buffers=256MB`
-
-### 10.5 Configuration Vitest
-
-```ts
-// vitest.config.ts
-export default defineConfig({
-  test: {
-    sequence: { concurrent: true },
-    pool: 'threads',
-    poolOptions: { threads: { maxThreads: 10 } },
-    testTimeout: 30_000,
-    setupFiles: ['src/test/vitest.setup.ts'],
-  },
-})
-```
 
 ---
 
@@ -1321,20 +1366,19 @@ export default defineConfig({
 ### 11.1 Docker-compose
 
 Basé sur `apps/pilote-ppg/docker-compose.yml`, adapté :
-- 2 bases PostgreSQL : `postgres` (local dev, port 5434) et `postgres_test` (port 5435) — ports distincts de pilote-ppg (5432/5433) pour permettre de tourner les deux en parallèle
+- 2 bases PostgreSQL : `postgres` (local dev, port 5434) et `postgres_test` (port 5435) — ports distincts de pilote-ppg (5432/5433) pour parallélisme
 - Postgres test démarré avec `max_connections=500 -c shared_buffers=256MB`
-- Pas de traefik initial (pas de routage nécessaire pour un backend seul)
-- Volume persisté sur `postgres` uniquement (pas sur `postgres_test`)
+- Pas de traefik initial
+- Volume persisté sur `postgres` uniquement
 
 ### 11.2 Prisma schema initial
 
-Tables minimales nécessaires pour healthcheck + auth :
+Tables minimales pour healthcheck + auth :
 
-**`api_key`** — définie en section 9.2 (avec `key_hash` SHA-256 + `key_prefix`).
+- **`api_key`** — section 9.2
+- **`utilisateur`** + enum `statut_acces_enum` — section 9.3
+- **`application_log`** — destination du `DatabaseSink` :
 
-**`utilisateur`** + enum `statut_acces_enum` — définis en section 9.3.
-
-**`application_log`** — destination du `DatabaseSink` (reprise minimaliste du schema pilote-ppg) :
 ```prisma
 model application_log {
   id         BigInt                     @id @default(autoincrement())
@@ -1344,7 +1388,7 @@ model application_log {
   contexte   Json?
   source     String?
   duree_ms   Int?
-  request_id String?                    // corrélation requête (cf. section 16)
+  request_id String?
   date       DateTime                   @default(now())
 
   @@index([date])
@@ -1378,8 +1422,7 @@ Première migration `0001_init` crée ces tables.
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "@/shared-kernel/*": ["src/shared-kernel/*"],
-      "@/platform/*": ["src/platform/*"],
+      "@/framework/*": ["src/framework/*"],
       "@/authentication/*": ["src/authentication/*"],
       "@/healthcheck/*": ["src/healthcheck/*"],
       "@/test/*": ["src/test/*"],
@@ -1392,41 +1435,40 @@ Première migration `0001_init` crée ces tables.
 ### 11.4 ESLint + dependency-cruiser
 
 **ESLint — règles clés :**
-- `no-restricted-syntax` interdisant `export default` (whitelist pour fichiers de config tierces)
-- `no-restricted-syntax` interdisant `new Date()` dans `src/**/domain/**` et `src/**/application/**` (on doit passer par le port `Clock` injecté)
-- `no-restricted-syntax` interdisant `new <AggregateRoot>()` sauf dans le fichier de définition de l'agrégat et les tests (force le passage par les static factories `Entity.create()` et `Entity.reconstitute()`)
-- Convention no-barrel documentée dans CLAUDE.md
+- `no-restricted-syntax` interdisant `export default` (whitelist pour configs tierces)
+- `no-restricted-syntax` interdisant `new Date()` dans `src/**/model/**`, `src/**/commands/**`, `src/**/queries/**`
+- `no-restricted-imports` interdisant `import { PrismaClient }` hors `framework/persistence/`
 - Règles TypeScript strict standard
 
-**dependency-cruiser — règles d'architecture (obligatoires, run en CI) :**
+**dependency-cruiser — règles d'architecture :**
 
-Fichier `.dependency-cruiser.cjs` avec les règles suivantes :
+Fichier `.dependency-cruiser.cjs` :
 
-1. **Interdire les imports cross-BC vers les internals** :
+1. **Cross-module internals interdits** :
    ```js
    {
-     name: 'no-cross-bc-internals',
+     name: 'no-cross-module-internals',
      severity: 'error',
-     from: { path: '^src/(?!shared-kernel|platform|test)(?<bc>[^/]+)/' },
+     from: { path: '^src/(?!framework|test)(?<source>[^/]+)/' },
      to: {
-       path: '^src/(?!shared-kernel|platform|test)(?<targetBc>[^/]+)/',
+       path: '^src/(?!framework|test)(?<target>[^/]+)/',
        pathNot: [
-         '^src/$1/',                          // même BC autorisé
-         '^src/[^/]+/public/',                // public/ des autres BCs autorisé
+         '^src/$1/',                          // même module autorisé
+         '^src/[^/]+/public/',                // public/ des autres modules autorisé
        ],
      },
    }
    ```
 
-2. **Interdire les imports de `<bc>.module.ts` depuis un autre BC** (seul `build-app-container.ts` peut le faire).
+2. **Imports de `<module>.module.ts` cross-module interdits** (seul `build-app-container.ts` y a droit)
 
-3. **Interdire les imports de `platform/` ou d'un BC dans `shared-kernel/`** (shared-kernel reste domain-pur).
+3. **`framework/` ne dépend d'aucun module métier**
 
-4. **Interdire les imports de `infrastructure/` d'un BC vers `domain/` ou `application/` d'un autre BC** (redondant avec #1 mais plus explicite).
+4. **`model/` ne dépend pas d'`infrastructure/` ni de `commands|queries|http`** (functional core pur)
 
-5. **Interdire les imports depuis `<bc>/public/` vers le reste du BC** (le public ne doit dépendre que de `shared-kernel/`).
+5. **`<module>/public/` ne dépend que de `framework/`** (pas de fuite d'interne)
 
-`dependency-cruiser` est appelé dans le script `lint` (`depcruise --config .dependency-cruiser.cjs src`).
+`dependency-cruiser` est appelé dans le script `lint`.
 
 ### 11.5 Scripts package.json
 
@@ -1455,24 +1497,21 @@ Fichier `.dependency-cruiser.cjs` avec les règles suivantes :
 
 ### 12.1 Convention du monorepo
 
-Les workflows vivent dans `.github/workflows/` à la racine. Deux éléments clés déjà en place que pilote-mb-core réutilise :
-- **Workflow unique `testAndLint.yml`** : détecte les apps impactées via `dorny/paths-filter` et ne lance les jobs que pour les apps concernées.
-- **Action composite réutilisable `.github/actions/setupNodeAndPackages`** : Setup pnpm + Node (version injectée) + `pnpm install --frozen-lockfile` cached.
-
-Cette organisation évite de dupliquer du setup entre apps et limite les builds inutiles sur les PR qui ne touchent qu'une seule app du monorepo.
+Les workflows vivent dans `.github/workflows/`. Deux éléments réutilisés :
+- **Workflow unique `testAndLint.yml`** — détecte les apps impactées via `dorny/paths-filter`
+- **Action composite `.github/actions/setupNodeAndPackages`** — pnpm + Node + install cached
 
 ### 12.2 Ajouts à `testAndLint.yml`
 
-**Étendre la détection de changements :**
+**Étendre la détection :**
 ```yaml
 jobs:
   changes:
-    name: Detect changes
     runs-on: ubuntu-latest
     outputs:
       pilote-ppg: ${{ steps.filter.outputs.pilote-ppg }}
       pilote-ppg-data-management: ${{ steps.filter.outputs.pilote-ppg-data-management }}
-      pilote-mb-core: ${{ steps.filter.outputs.pilote-mb-core }}      # NOUVEAU
+      pilote-mb-core: ${{ steps.filter.outputs.pilote-mb-core }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -1485,13 +1524,13 @@ jobs:
               - 'pnpm-lock.yaml'
             pilote-ppg-data-management:
               - 'apps/pilote-ppg-data-management/**'
-            pilote-mb-core:                                           # NOUVEAU
+            pilote-mb-core:
               - 'apps/pilote-mb-core/**'
               - 'package.json'
               - 'pnpm-lock.yaml'
 ```
 
-**Ajouter deux jobs pour pilote-mb-core :**
+**Deux jobs pour pilote-mb-core :**
 
 ```yaml
   test-mb-core:
@@ -1544,23 +1583,14 @@ jobs:
 
 ### 12.3 Points importants
 
-- **Service Postgres en port 5435** (même port que `postgres_test` du docker-compose local) pour rester cohérent. Valeurs de user/password standard `postgres/postgres` — distinctes de la DB de dev, jamais des secrets.
-- **Pas d'augmentation de `max_connections`** côté service Postgres GitHub Actions (non configurable directement via la syntaxe `services:`). Le parallélisme Vitest est réglé par `connection_limit=50` sur `DATABASE_URL`. Si on voit des timeouts `maxWait` en CI, on baissera `maxThreads` Vitest ou on passera à un container Postgres custom.
-- **`LOG_TO_DATABASE: false` en CI** — on évite que le `DatabaseSink` écrive en DB pendant les tests (pollution + conflits de transactions).
-- **`prisma migrate deploy`** avant `pnpm test` — nécessaire pour que le schéma soit présent dans le Postgres éphémère du job.
-- **Pas de job E2E** pour l'instant — pas de front, pas de Playwright.
-- **Pas de workflow `e2e.yml` adapté** à pilote-mb-core tant qu'il n'y a pas de webapp. Le jour où `pilote-mb-webapp` arrive, on ajoutera un workflow dédié (scheduled + manuel) comme le fait pilote-ppg.
+- **Service Postgres en port 5435** (cohérent avec `postgres_test` local). User/password `postgres/postgres` — distinct de la DB de dev, pas un secret.
+- **`LOG_TO_DATABASE: false` en CI** — évite que `DatabaseSink` écrive en DB pendant les tests.
+- **`prisma migrate deploy`** avant `pnpm test`.
+- **Pas de job E2E** (pas de front).
 
 ### 12.4 Required status checks
 
-Sur GitHub, configurer `test-mb-core` et `lint-mb-core` comme **required status checks** sur la branche `dev` (et `main` si applicable) — étape manuelle côté settings du repo, pas dans le fichier de workflow. À noter dans le ticket.
-
-### 12.5 Scripts `package.json` attendus par la CI
-
-Pour que les jobs fonctionnent, `apps/pilote-mb-core/package.json` doit exposer :
-- `"test": "vitest run"` (et non `vitest` en watch)
-- `"lint": "eslint src && tsc --noEmit"`
-- Prisma accessible via `pnpm -F @pilote-mb/core prisma ...` (standard via la dépendance `prisma` en devDep)
+Configurer `test-mb-core` et `lint-mb-core` comme required sur `dev` (et `main` si applicable) — étape manuelle côté settings.
 
 ---
 
@@ -1570,91 +1600,88 @@ Pour que les jobs fonctionnent, `apps/pilote-mb-core/package.json` doit exposer 
 
 **Fondations projet :**
 1. `apps/pilote-mb-core/` enregistré dans le monorepo (`pnpm-workspace.yaml`)
-2. Fichiers de config : `package.json`, `tsconfig.json`, `vitest.config.ts`, `.eslintrc.cjs`, `.prettierrc`, `.dependency-cruiser.cjs`, `docker-compose.yml`
-3. Schema Prisma + première migration (`0001_init`) incluant `api_key`, `utilisateur`, `application_log`
+2. Configs : `package.json`, `tsconfig.json`, `vitest.config.ts`, `.eslintrc.cjs`, `.prettierrc`, `.dependency-cruiser.cjs`, `docker-compose.yml`
+3. Schema Prisma + migration `0001_init` (`api_key`, `utilisateur`, `application_log`)
 4. Config Zod-validée (`src/config.ts`)
 
-**shared-kernel (primitives DDD) :**
-5. `AggregateRoot<TId>` base class + `ValueObject<T>` base class
-6. `DomainEvent` interface + `DomainEventPublisher` port + `DomainEventHandler` interface
-7. `DomainError` + `DomainErrorKind` (avec `'not-implemented'`)
-8. `Result` (re-export neverthrow) + `Uuid` VO
-9. Ports : `Clock`, `Transaction`, `Logger`
+**Module `framework` :**
+5. **Module-system** adapté de pilote-ppg (`define-module`, `boot-modules`, `module-names`) + `frameworkModule` + `build-app-container`
+6. **`PrismaPilote` wrapper** + `PrismaTransaction` + `txStore` AsyncLocalStorage
+7. Logger sinks composables : `CompositeLogger` + `PinoStdoutSink` + `DatabaseSink`
+8. Clock : interface + `SystemClock`
+9. **Auth context** : `AsyncLocalStorageAuthContext` + `requireUser()` / `requireApiKey()` / `currentAuth()`
+10. **Result** : re-exports neverthrow (`ok`, `err`, `okAsync`, `errAsync`, `Result`, `ResultAsync`)
+11. **AppError** + `ErrorKind` (avec `'not-implemented'`, `'unauthenticated'`, `'forbidden'`)
+12. Middlewares HTTP : `request-id`, `logger`, `auth-context`, `auth`, `require-scope`, `error-handler`
+13. **Error handling** : mapping `kind → HTTP status`, `app.onError` + `app.notFound`, helper `respondWithResult`, `ErrorSchema` partagé
+14. **App Hono** : `buildApp` + Swagger UI (`/api/docs`) + JSON (`/api/openapi.json`)
 
-**BC platform (infra transverse) :**
-10. **Module-system** adapté de pilote-ppg (`define-module`, `boot-modules`, `module-names`) + `platformModule` + `build-app-container`
-11. **`PrismaPilote` wrapper** + `PrismaTransaction` + `txStore` AsyncLocalStorage
-12. Logger sinks composables : `CompositeLogger` + `PinoStdoutSink` + `DatabaseSink`
-13. **Event bus** : `InMemoryDomainEventPublisher` + `AuditLogEventHandler` (persiste tous les events dans `application_log`)
-14. Clock : `SystemClock` adapter
-15. Middlewares HTTP : `request-id`, `logger`, `auth` (consomme `AuthenticationFacade` du BC `authentication`), `require-scope`, `error-handler`
-16. **Error handling complet** : mapping `kind → HTTP status`, `app.onError` + `app.notFound`, helper `respondWithResult`, `ErrorSchema` partagé
-17. **App Hono** : `buildApp` + Swagger UI (`/api/docs`) + JSON (`/api/openapi.json`)
+**Module `authentication` :**
+15. **Functional core `model/`** :
+    - Types + branded types : `ApiKey`, `ApiKeyId`, `Scope`, `Utilisateur`, `UtilisateurId`, `Email`, `StatutAcces`
+    - Factory functions pures : `createApiKey`, `revokeApiKey`, `parseEmail`, `apiKeyId`, factories `Utilisateur` (stubées)
+    - 3 erreurs API key (`InvalidApiKeyNameError`, `ApiKeyScopesRequiredError`, `ApiKeyAlreadyRevokedError`)
+    - Tests unit purs sur les factories
+16. **Ports `ports/`** : `ApiKeyHasher`, `TokenGenerator`, `TokenSigner`, `ApiKeyRepository`, `UtilisateurRepository`
+17. **Infrastructure** : `ApiKeyPrismaRepository` + mapper, `UtilisateurPrismaRepository` + mapper, adapters `Sha256ApiKeyHasher` / `CryptoTokenGenerator` / `JsonwebtokenTokenSigner`, scaffolding `ProconnectClient`, CLI `create-api-key.ts`
+18. **Commands** : `CreateSessionHandler` (stub `errAsync(NotImplementedError)`)
+19. **Queries** : `VerifyApiKeyHandler`, `VerifyJwtHandler` (fonctionnels, testés)
+20. **Public** : `AuthenticationFacade` interface + `AuthenticationFacadeImpl`, `ApiKeyApiModelSchema` + `UtilisateurApiModelSchema`
+21. Route HTTP `POST /auth/sessions` (retourne 501)
+22. `authentication.module.ts` avec cradle typé + export de `authenticationFacade`
 
-**BC authentication (DDD complet) :**
-18. Domain `api-key` : AggregateRoot `ApiKey` avec factory `create()` + `revoke()`, VOs `ApiKeyId` / `Scope`, ports `ApiKeyHasher` / `TokenGenerator`, repository interface, 3 errors (`InvalidApiKeyNameError`, `ApiKeyScopesRequiredError`, `ApiKeyAlreadyRevokedError`), 2 events (`ApiKeyCreatedEvent`, `ApiKeyRevokedEvent`)
-19. Domain `utilisateur` : AggregateRoot `Utilisateur` (factory partiellement stubée en attendant ProConnect), VOs `UtilisateurId` / `Email` / `StatutAcces`, repository interface, 1 event (`UtilisateurCreatedEvent`)
-20. Infrastructure : `ApiKeyPrismaRepository` + mapper, `UtilisateurPrismaRepository` + mapper, adapters `Sha256ApiKeyHasher` / `CryptoTokenGenerator` / `JsonwebtokenTokenSigner`, scaffolding `ProconnectClient`, CLI `create-api-key.ts`
-21. Application : `VerifyApiKeyHandler`, `VerifyJwtHandler`, `CreateSessionHandler` stub (kind `not-implemented`), `AuthenticationFacadeImpl`
-22. **Published Language** : `UtilisateurReference`, `ApiKeyReference`, `AuthenticationFacade` interface
-23. Route HTTP `POST /auth/sessions` (retourne 501 via `respondWithResult`)
-24. `authentication.module.ts` avec cradle typé + export de `authenticationFacade`
-
-**BC healthcheck :**
-25. `CheckHealthHandler` (ping DB via `SELECT 1`), route `GET /health` (publique)
-26. `healthcheck.module.ts`
+**Module `healthcheck` :**
+23. `CheckHealthHandler` (ping DB via `SELECT 1`), route `GET /health` (publique)
+24. `healthcheck.module.ts`
 
 **Tests & helpers :**
-27. `vitest.setup.ts`, `withTestTransaction`, `TestContext`, `FakeClock`
-28. Fixtures : `api-key.fixture.ts`, `utilisateur.fixture.ts`
+25. `vitest.setup.ts`, `withTestTransaction`, `TestContext`, `FakeClock`
+26. Fixtures : `api-key.fixture.ts`, `utilisateur.fixture.ts`
 
 **Documentation :**
-29. CLAUDE.md du projet (reprend les règles de ce design)
-30. `docs/architecture/decisions/0001-record-architecture-decisions.md` (ADR base)
-31. `docs/architecture/decisions/0002-architecture-init-pilote-mb-core.md` (résume ce design)
+27. CLAUDE.md du projet
+28. `docs/architecture/decisions/0001-record-architecture-decisions.md`
+29. `docs/architecture/decisions/0002-architecture-init-pilote-mb-core.md` (synthèse de ce design)
 
 **CI :**
-32. Mise à jour de `.github/workflows/testAndLint.yml` (ajout filter + jobs `test-mb-core` + `lint-mb-core`)
+30. Mise à jour de `.github/workflows/testAndLint.yml`
 
 ---
 
-### Hors scope (tickets suivants — notes de traçabilité)
-
-La liste "Hors scope" est mise à jour ci-dessous avec les précisions DDD.
-
 ### Hors scope (tickets suivants)
 
-**BCs à créer :**
-- BC `pilotage` (Core) : `Entity` AggregateRoot paramétrable, `Indicateur` AggregateRoot, collecte de données, facades + PublishedLanguage
-- BC `parametrage` (Core) : méta-modèle Marque Blanche (définition des types d'entités/indicateurs spécifiques à chaque client)
-- BC `territorialisation` (Supporting) : hiérarchie territoriale, résolution de codes
-- BC `rapport` (Supporting) : génération de bilans, export CSV/XLSX
-- BC `notification` (Generic) : emails via Brevo
-- BC `audit` (Generic) : historique persisté (consommateur des Domain Events)
+**Modules à créer :**
+- `pilotage` : `Entity` paramétrable, `Indicateur`, collecte
+- `parametrage` : méta-modèle Marque Blanche
+- `territorialisation` : hiérarchie territoriale
+- `rapport` : bilans, exports CSV/XLSX
+- `notification` : emails via Brevo
+- `audit` : historique consolidé
 
-**Complétions du BC authentication :**
-- **Intégration ProConnect** (flow OIDC complet, validation JWKS, upsert user depuis claims, `CreateSessionHandler` fonctionnel)
+**Complétions du module `authentication` :**
+- **Intégration ProConnect** (flow OIDC complet, JWKS, upsert user)
 - Endpoints `GET /auth/me`, `POST /auth/acces/demande`, `PATCH /auth/utilisateurs/{id}/acces`
-- Middleware de blocage pour `statut_acces = EN_ATTENTE_ACCES`
-- Refresh tokens (si nécessaire quand le front sera en place)
+- Middleware de blocage `EN_ATTENTE_ACCES`
+- Refresh tokens (si nécessaire)
 
-**Autres hors scope :**
-- Front `pilote-mb-webapp` (Vite + React + TanStack Query)
-- CI/CD (déploiement, pipeline de release)
-- Monitoring/APM (on reste sur DatabaseSink en attendant contractualisation)
-- Page "Demander l'accès à Pilote" (dépend du ticket ProConnect)
-- Gestion des rôles fine-grained / RBAC avancé
+**Autres :**
+- Front `pilote-mb-webapp`
+- CI/CD (déploiement)
+- Monitoring/APM
+- Page "Demander l'accès"
+- RBAC fine-grained
 
 ---
 
 ## 14. Questions ouvertes / décisions différées
 
-- **Nom du schéma Postgres** : on reste sur `public` par défaut. Multi-tenant (un schéma par client) = ticket dédié si pertinent un jour.
-- **Refresh tokens** : pas nécessaire pour le MVP, TTL de 8h suffit. À revoir quand le front sera en place.
-- **Idempotency-Key header** : convention prête à être ajoutée, mais pas implémentée tant qu'on n'a pas de mutation critique.
-- **Règle lint cross-layer** : pas d'outillage automatique au démarrage, revue manuelle. À ajouter si la convention dérape.
-- **ProConnect en maintenance** : au moment de la rédaction de ce design, ProConnect est en maintenance, ce qui justifie le scaffolding différé. Le ticket d'intégration sera lancé dès le retour du service.
-- **Luxon différé** : le port `Clock` retourne `Date` native à l'init. Luxon sera introduit dans le ticket du premier BC qui manipule beaucoup de dates (probablement `pilotage` pour les jalons ou `rapport` pour les périodes/formatage FR). À ce moment, choix entre "Luxon en complément" ou "migrer `Clock.now()` vers `DateTime`".
+- **Nom du schéma Postgres** : on reste sur `public`. Multi-tenant = ticket dédié si pertinent.
+- **Refresh tokens** : pas nécessaire pour le MVP, TTL 8h.
+- **Idempotency-Key header** : convention prête, pas implémentée tant qu'on n'a pas de mutation critique.
+- **Luxon différé** : Date native à l'init (cf. 6.6). Bascule au premier module qui manipule beaucoup de dates.
+- **ProConnect en maintenance** : ticket d'intégration lancé dès le retour du service.
+- **Facade write vs query** : on garde une seule `AuthenticationFacade` (combine les deux). Si la facade grossit, on séparera `AuthenticationCommandFacade` / `AuthenticationQueryFacade`. Question repoussée.
+- **Migration vers fonctions pures pour les use cases** : à l'init on garde des classes (`*Handler`) pour la cohérence Awilix. Si on observe que les classes n'ajoutent rien de plus que `function executer(deps, command)`, on bascule sur des fonctions pures + factory de handler. À ré-évaluer après 2-3 modules métier.
 
 ---
 
@@ -1663,50 +1690,53 @@ La liste "Hors scope" est mise à jour ci-dessous avec les précisions DDD.
 - ✅ `pnpm dev` lance le serveur avec logs pretty
 - ✅ `curl http://localhost:3000/health` retourne 200 avec body JSON
 - ✅ `curl http://localhost:3000/api/openapi.json` retourne un OpenAPI 3.1 valide
-- ✅ `http://localhost:3000/api/docs` affiche Swagger UI avec les routes documentées
+- ✅ `http://localhost:3000/api/docs` affiche Swagger UI
 - ✅ `curl -X POST http://localhost:3000/auth/sessions ...` retourne 501 avec message explicite
-- ✅ Une requête sur une route protégée sans Bearer → 401 via `app.onError` (pas de if manuel dans la route)
+- ✅ Une requête sur une route protégée sans Bearer → 401 via `app.onError`
 - ✅ Une requête avec un `pmb_live_*` valide → 200 (si scope OK)
-- ✅ Une route qui throw en interne → 500 via `app.onError`, stack loggué mais jamais exposé dans la réponse
-- ✅ Une route inexistante → 404 avec `ErrorSchema { code: 'ROUTE_NOT_FOUND', ... }` via `app.notFound`
-- ✅ Toutes les réponses d'erreur suivent le format `ErrorSchema { code, message, details? }` — zéro exception
-- ✅ Les tests d'intégration du healthcheck et des API keys passent, en parallèle
-- ✅ `pnpm lint` passe (eslint + tsc --noEmit + dependency-cruiser)
+- ✅ Une route qui throw → 500 via `app.onError`, stack loggué jamais exposé
+- ✅ Une route inexistante → 404 avec `ErrorSchema { code: 'ROUTE_NOT_FOUND', ... }`
+- ✅ Toutes les réponses d'erreur suivent `ErrorSchema { code, message, details? }`
+- ✅ Les tests passent en parallèle (functional core unit + use cases integration)
+- ✅ `pnpm lint` passe (eslint + tsc + dependency-cruiser)
 - ✅ CLAUDE.md et ADR 0002 en place
 - ✅ Les jobs CI `test-mb-core` et `lint-mb-core` passent vert sur la PR
 
-**Critères DDD spécifiques :**
-- ✅ Créer une API key via le CLI **publie** un `ApiKeyCreatedEvent`, **persisté** dans `application_log` via `AuditLogEventHandler`
-- ✅ Tenter d'instancier `new ApiKey(...)` en dehors du fichier `api-key.ts` ou d'un test **échoue au lint** (règle ESLint `no-restricted-syntax`)
-- ✅ Importer `ApiKeyRepository` depuis en dehors du BC `authentication` **échoue à `depcruise`**
-- ✅ Importer `UtilisateurReference` depuis `@/authentication/public/utilisateur-reference` **fonctionne** depuis n'importe quel BC
-- ✅ Dans un test, remplacer `Clock` par `FakeClock` dans le container **permet de figer les timestamps** émis par les agrégats
-- ✅ Le Context Map de la section 5.3 est à jour avec ce qui est réellement implémenté
+**Critères architecturaux spécifiques :**
+- ✅ Tester `createApiKey()` se fait sans container, sans DB, en pur unit
+- ✅ Importer `ApiKeyRepository` depuis en dehors du module `authentication` **échoue à `depcruise`**
+- ✅ Importer `UtilisateurApiModel` depuis `@/authentication/public/utilisateur.api-model` **fonctionne** depuis n'importe quel module
+- ✅ Dans un test, remplacer `Clock` par `FakeClock` permet de figer les timestamps
+- ✅ Un use case peut appeler `requireUser()` sans recevoir l'identité en paramètre — résolue via l'ALS
+- ✅ Une command qui crée une API key utilise `transaction.run()` ; tous les repos appelés en aval voient automatiquement la tx via l'ALS
 
 ---
 
 ## 16. Gestion des erreurs
 
-L'erreur doit remonter du domaine à l'utilisateur avec un format stable, un statut HTTP cohérent, et un logging adapté. L'architecture est en 4 niveaux.
+L'erreur doit remonter du fonctionnel core à l'utilisateur avec un format stable, un statut HTTP cohérent, et un logging adapté.
 
-### 16.1 Niveau 1 — `DomainError` typée (dans `domain/shared/`)
+### 16.1 Niveau 1 — `AppError` typée (dans `framework/errors/`)
 
-Base abstraite portée par toutes les erreurs métier. Chaque sous-classe déclare un `code` stable (pour les consommateurs API/agents) et un `kind` (pour le mapping HTTP).
+Base abstraite portée par toutes les erreurs métier ou techniques typées. Chaque sous-classe déclare un `code` stable et un `kind` pour le mapping HTTP.
 
 ```ts
-// src/domain/shared/domain-error.ts
-export type DomainErrorKind =
+// src/framework/errors/kinds.ts
+export type ErrorKind =
   | 'not-found'
   | 'validation'
   | 'conflict'
   | 'forbidden'
-  | 'unauthorized'
+  | 'unauthenticated'
   | 'not-implemented'
   | 'internal'
+```
 
-export abstract class DomainError extends Error {
+```ts
+// src/framework/errors/app-error.ts
+export abstract class AppError extends Error {
   abstract readonly code: string
-  abstract readonly kind: DomainErrorKind
+  abstract readonly kind: ErrorKind
   readonly details?: Record<string, unknown>
 
   constructor(message: string, details?: Record<string, unknown>) {
@@ -1716,46 +1746,52 @@ export abstract class DomainError extends Error {
   }
 }
 
-// Exemples concrets (vivent dans les sous-dossiers domain/<entity>/errors/)
-export class EntityNotFoundError extends DomainError {
+// Exemples concrets dans les modules
+export class EntityNotFoundError extends AppError {
   readonly code = 'ENTITY_NOT_FOUND'
   readonly kind = 'not-found' as const
 }
 
-export class InvalidIndicateurTypeError extends DomainError {
-  readonly code = 'INVALID_INDICATEUR_TYPE'
+export class InvalidApiKeyNameError extends AppError {
+  readonly code = 'INVALID_API_KEY_NAME'
   readonly kind = 'validation' as const
+}
+
+export class UnauthenticatedError extends AppError {
+  readonly code = 'UNAUTHENTICATED'
+  readonly kind = 'unauthenticated' as const
+}
+
+export class NotImplementedError extends AppError {
+  readonly code = 'NOT_IMPLEMENTED'
+  readonly kind = 'not-implemented' as const
 }
 ```
 
-**Règle** : toute erreur métier = une classe dédiée. Jamais de `throw new Error('...')` dans le domain.
+**Règle** : toute erreur métier = une classe dédiée. Jamais de `throw new Error('...')` dans `model/`, `commands/`, `queries/`.
 
 ### 16.2 Niveau 2 — Mapping `kind` → HTTP status
 
-Table unique, centralisée, testable isolément :
-
 ```ts
-// src/platform/http/error-mapping.ts
-const KIND_TO_STATUS: Record<DomainErrorKind, number> = {
+// src/framework/http/error-mapping.ts
+const KIND_TO_STATUS: Record<ErrorKind, number> = {
   'not-found':       404,
   'validation':      400,
   'conflict':        409,
   'forbidden':       403,
-  'unauthorized':    401,
+  'unauthenticated': 401,
   'not-implemented': 501,
   'internal':        500,
 }
 
-export const mapDomainErrorToHttpStatus = (error: DomainError): number =>
+export const mapAppErrorToHttpStatus = (error: AppError): number =>
   KIND_TO_STATUS[error.kind]
 ```
 
 ### 16.3 Niveau 3 — Error boundary global via `app.onError`
 
-Hono expose un hook `app.onError((error, context) => ...)` qui intercepte **tout throw non attrapé** dans l'app — c'est l'error-boundary qui wrap les routes. Il gère quatre cas :
-
 ```ts
-// src/platform/http/middlewares/error-handler.middleware.ts
+// src/framework/http/middlewares/error-handler.middleware.ts
 export function registerErrorHandler(app: OpenAPIHono, container: AwilixContainer) {
   const logger = container.resolve<Logger>('logger')
 
@@ -1764,28 +1800,27 @@ export function registerErrorHandler(app: OpenAPIHono, container: AwilixContaine
     const url = context.req.url
     const method = context.req.method
 
-    // 1. DomainError catchée (safety net — normalement retournée via Result)
-    if (error instanceof DomainError) {
-      logger.warn({ code: error.code, url, method, requestId }, error.message)
+    if (error instanceof AppError) {
+      const status = mapAppErrorToHttpStatus(error)
+      const level = status >= 500 ? 'error' : 'warn'
+      logger[level]({ code: error.code, url, method, requestId }, error.message)
       return context.json({
         code: error.code,
         message: error.message,
         details: error.details,
-      }, mapDomainErrorToHttpStatus(error))
+      }, status)
     }
 
-    // 2. HTTPException Hono (levée par les middlewares auth, body parser, etc.)
     if (error instanceof HTTPException) {
       logger.warn({ url, method, requestId, status: error.status }, error.message)
       return context.json({
-        code: error.status === 401 ? 'UNAUTHORIZED'
+        code: error.status === 401 ? 'UNAUTHENTICATED'
             : error.status === 403 ? 'FORBIDDEN'
             : 'HTTP_EXCEPTION',
         message: error.message,
       }, error.status)
     }
 
-    // 3. ZodError (validation d'entrée)
     if (error instanceof ZodError) {
       logger.warn({ url, method, requestId, issues: error.issues }, 'Validation error')
       return context.json({
@@ -1795,7 +1830,6 @@ export function registerErrorHandler(app: OpenAPIHono, container: AwilixContaine
       }, 400)
     }
 
-    // 4. Erreur technique inattendue — 500, stack loggué, jamais exposé au client
     logger.error(
       { url, method, requestId, stack: error.stack, name: error.name },
       `Unhandled error: ${error.message}`,
@@ -1806,7 +1840,6 @@ export function registerErrorHandler(app: OpenAPIHono, container: AwilixContaine
     }, 500)
   })
 
-  // Convention 404 standard
   app.notFound((context) => context.json({
     code: 'ROUTE_NOT_FOUND',
     message: `Route ${context.req.method} ${context.req.url} introuvable`,
@@ -1815,40 +1848,39 @@ export function registerErrorHandler(app: OpenAPIHono, container: AwilixContaine
 ```
 
 **Règles non-négociables :**
-- **Jamais de stack trace dans la réponse HTTP** — loggué côté serveur uniquement
-- **Réponse prod identique à la réponse staging** (pas de divergence qui brouille le debug)
-- **Tout est loggué** avec niveau adapté (warn pour 4xx, error pour 5xx)
-- **`requestId`** posé par un middleware en amont et propagé dans tous les logs pour corrélation
+- **Jamais de stack trace dans la réponse HTTP**
+- **Réponse prod identique à la réponse staging**
+- **Tout est loggué** (warn pour 4xx, error pour 5xx)
+- **`requestId`** posé par un middleware en amont, propagé dans tous les logs
 
-### 16.4 Niveau 4 — Helper `respondWithResult` pour factoriser les routes
-
-Pour éviter le boilerplate `if (result.isErr) ... else ...` dans chaque route :
+### 16.4 Niveau 4 — Helper `respondWithResult` pour les routes
 
 ```ts
-// src/platform/http/respond-with-result.ts
-export async function respondWithResult<TValue, TError extends DomainError, TResponse>(
+// src/framework/http/respond-with-result.ts
+export async function respondWithResult<TValue, TError extends AppError, TResponse>(
   context: Context,
-  result: Result<TValue, TError>,
+  result: Result<TValue, TError> | ResultAsync<TValue, TError>,
   onSuccess: (value: TValue) => TResponse,
 ): Promise<TResponse | Response> {
-  if (result.isErr) {
+  const resolved = 'isErr' in result ? result : await result
+  if (resolved.isErr()) {
+    const error = resolved.error
     return context.json({
-      code: result.error.code,
-      message: result.error.message,
-      details: result.error.details,
-    }, mapDomainErrorToHttpStatus(result.error))
+      code: error.code,
+      message: error.message,
+      details: error.details,
+    }, mapAppErrorToHttpStatus(error))
   }
-  return onSuccess(result.value)
+  return onSuccess(resolved.value)
 }
 ```
 
-**Usage dans une route :**
-
+**Usage :**
 ```ts
 app.openapi(createEntityRoute, async (context) => {
   const body = context.req.valid('json')
   const handler = container.resolve<CreateEntityHandler>('createEntityHandler')
-  const result = await handler.executer({ nom: body.nom })
+  const result = handler.executer({ nom: body.nom })
 
   return respondWithResult(context, result, (entity) =>
     context.json({ id: entity.id, nom: entity.nom }, 201),
@@ -1856,13 +1888,12 @@ app.openapi(createEntityRoute, async (context) => {
 })
 ```
 
-→ Code de route minimal, un seul chemin de mapping d'erreur, impossible d'oublier un status.
-
 ### 16.5 Conventions à figer
 
-- ❗ Toute erreur métier = classe héritée de `DomainError`, avec `code` stable + `kind`
-- ❗ Tout handler retourne `Result<T, DomainError>` — pas de throw métier
-- ❗ Toute route utilise `respondWithResult` (ou équivalent inline si vraiment justifié, mais le helper est la convention)
-- ❗ Les throws techniques remontent à `app.onError` qui loggue et renvoie une réponse `ErrorSchema` propre
-- ❗ Pas de stack trace exposée côté HTTP, jamais
+- ❗ Toute erreur métier ou typée = classe héritée d'`AppError` avec `code` stable + `kind`
+- ❗ Tout handler retourne `Result<T, E>` ou `ResultAsync<T, E>` — pas de throw métier
+- ❗ Toute route utilise `respondWithResult`
+- ❗ Les throws techniques remontent à `app.onError` qui loggue et renvoie une réponse `ErrorSchema`
+- ❗ Pas de stack trace exposée côté HTTP
 - ❗ `requestId` présent dans tous les logs liés à une requête
+- ❗ `requireUser()` / `requireApiKey()` throw `UnauthenticatedError` — c'est l'unique exception au "pas de throw métier", justifiée par l'ergonomie d'API (catché par `app.onError`, mappé sur 401)
