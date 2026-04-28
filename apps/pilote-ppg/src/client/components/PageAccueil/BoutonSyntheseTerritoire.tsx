@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useEnv } from "@/client/hooks/useEnv";
 import { récupérerDétailsSurUnTerritoire } from "@/client/constants/territoires";
 import { Icone } from "@/components/_commons/Icone";
@@ -7,12 +7,6 @@ import { ChatScenarios, ChatUI } from "@/components/_commons/ChatUI/ChatUI";
 import { ConversationHistoryDrawer } from "@/components/_commons/ChatUI/ConversationHistoryDrawer";
 import { ModalePleinEcran } from "@/components/shared/ModalePleinEcran";
 import api from "@/server/infrastructure/api/trpc/api";
-import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
-
-type EtatConversation = {
-  id: string;
-  initialMessages?: PiloteUIMessage[];
-};
 
 export const BoutonSyntheseTerritoire = ({
   territoireCode,
@@ -26,31 +20,16 @@ export const BoutonSyntheseTerritoire = ({
   const [isOpen, setIsOpen] = useState(false);
   const ffHistorique = useEnv("NEXT_PUBLIC_FF_HISTORIQUE_ALBERT");
   const utilsTrpc = api.useUtils();
-  const [etatConversation, setEtatConversation] = useState<EtatConversation>(
-    () => ({ id: crypto.randomUUID() }),
+  const [activeChatId, setActiveChatId] = useState<string>(() =>
+    crypto.randomUUID(),
   );
-  const [conversationIdAVouloirCharger, setConversationIdAVouloirCharger] =
-    useState<string | null>(null);
   const { data: conversationChargee } =
     api.albert.conversations.recuperer.useQuery(
-      { id: conversationIdAVouloirCharger ?? "" },
-      { enabled: conversationIdAVouloirCharger !== null },
+      { id: activeChatId },
+      { enabled: ffHistorique === true && isOpen, retry: false },
     );
-  useEffect(() => {
-    if (
-      conversationChargee &&
-      conversationChargee.id === conversationIdAVouloirCharger
-    ) {
-      setEtatConversation({
-        id: conversationChargee.id,
-        initialMessages: conversationChargee.messages,
-      });
-      setConversationIdAVouloirCharger(null);
-    }
-  }, [conversationChargee, conversationIdAVouloirCharger]);
   const demarrerNouvelleConversation = () => {
-    setEtatConversation({ id: crypto.randomUUID() });
-    setConversationIdAVouloirCharger(null);
+    setActiveChatId(crypto.randomUUID());
   };
   const rafraichirHistorique = () => {
     utilsTrpc.albert.conversations.lister.invalidate();
@@ -167,19 +146,17 @@ Quelles sont les principales difficultés remontées dans les commentaires ?`,
           <div className="flex h-full">
             {ffHistorique ? (
               <ConversationHistoryDrawer
-                conversationIdCourant={etatConversation.id}
-                onSelectionner={setConversationIdAVouloirCharger}
+                chatIdCourant={activeChatId}
+                onSelectionner={setActiveChatId}
                 onNouvelleConversation={demarrerNouvelleConversation}
               />
             ) : null}
             <div className="flex-1">
               <ChatUI
-                key={etatConversation.id}
-                conversationId={etatConversation.id}
-                initialMessages={etatConversation.initialMessages}
-                onConversationUpdated={
-                  ffHistorique ? rafraichirHistorique : undefined
-                }
+                key={activeChatId}
+                chatId={activeChatId}
+                initialMessages={conversationChargee?.messages}
+                onChatFinish={ffHistorique ? rafraichirHistorique : undefined}
                 endpoint="/api/albert/chat"
                 className="h-full"
                 placeholder="Posez une question sur ce territoire..."

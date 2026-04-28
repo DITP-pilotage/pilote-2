@@ -3,7 +3,7 @@ import { Icone } from "@/components/_commons/Icone";
 import { DeleteIcon } from "@/components/_commons/Icones/DeleteIcon";
 
 type Props = {
-  conversationIdCourant: string | null;
+  chatIdCourant: string | null;
   onSelectionner: (id: string) => void;
   onNouvelleConversation: () => void;
 };
@@ -18,7 +18,7 @@ const formatRelative = (date: Date): string => {
 };
 
 export const ConversationHistoryDrawer = ({
-  conversationIdCourant,
+  chatIdCourant,
   onSelectionner,
   onNouvelleConversation,
 }: Props) => {
@@ -48,7 +48,7 @@ export const ConversationHistoryDrawer = ({
           <p className="text-xs text-gray-500 px-3">Aucune conversation.</p>
         )}
         {conversations.map((conversation) => {
-          const estActive = conversation.id === conversationIdCourant;
+          const estActive = conversation.id === chatIdCourant;
           return (
             <div
               key={conversation.id}
@@ -71,7 +71,7 @@ export const ConversationHistoryDrawer = ({
               <button
                 type="button"
                 aria-label="Supprimer"
-                className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500"
+                className="opacity-0 group-hover:opacity-100 focus:opacity-100 focus-visible:opacity-100 text-gray-400 hover:text-red-500"
                 onClick={() => handleSupprimer(conversation.id)}
               >
                 <Icone className="w-4 h-4" icone={DeleteIcon} />
