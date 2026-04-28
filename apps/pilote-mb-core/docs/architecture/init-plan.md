@@ -11,6 +11,7 @@
 **Spec de référence :** `apps/pilote-mb-core/docs/architecture/init-design.md`
 
 **Conventions obligatoires (voir CLAUDE.md + design doc) :**
+
 - Verbes/tech en anglais, entités en français (`getIndicateurById`, `CreateEntityHandler`)
 - Pas de classes pour les modèles — types + factory functions + branded types
 - Pas d'`export default` (sauf config tierces)
@@ -22,23 +23,23 @@
 
 ## Vue d'ensemble des phases
 
-| Phase | Contenu | Tâches |
-|---|---|---|
-| **1. Fondations projet** | Workspace, configs, docker, Prisma, config app | T1–T7 |
-| **2. Framework — primitives** | Result, AppError, ports (Clock, Transaction, Logger, AuthContext) | T8–T10 |
-| **3. Framework — infrastructure** | PrismaPilote, SystemClock, Logger sinks, AsyncLocalStorageAuthContext | T11–T15 |
-| **4. Framework — module-system + container** | define-module, boot-modules, frameworkModule, build-app-container | T16–T19 |
-| **5. Framework — HTTP** | error-mapping, respondWithResult, middlewares, buildApp, Swagger | T20–T26 |
-| **6. Test infrastructure** | vitest.setup, FakeClock, withTestTransaction, TestContext | T27–T30 |
-| **7. Module healthcheck** | Handler, route, module | T31–T33 |
-| **8. Module authentication — functional core** | Branded types, types `ApiKey`/`Utilisateur`, factory functions pures, errors | T34–T38 |
-| **9. Module authentication — ports** | ApiKeyHasher, TokenGenerator, TokenSigner, repositories | T39 |
-| **10. Module authentication — infrastructure** | Adapters crypto, repositories Prisma + mappers, ProConnect stub, CLI | T40–T46 |
-| **11. Module authentication — use cases** | VerifyApiKeyHandler, VerifyJwtHandler, CreateSessionHandler stub | T47–T49 |
-| **12. Module authentication — public + module** | ApiModels + facade + authentication.module.ts | T50–T52 |
-| **13. Module authentication — HTTP + CLI** | Route create-session, middlewares auth + auth-context, CLI create-api-key | T53–T56 |
-| **14. Bootstrap + assemblage final** | `index.ts`, enregistrement workspace, tests E2E | T57–T60 |
-| **15. Documentation + CI** | CLAUDE.md, ADRs, workflow CI | T61–T64 |
+| Phase                                           | Contenu                                                                      | Tâches  |
+| ----------------------------------------------- | ---------------------------------------------------------------------------- | ------- |
+| **1. Fondations projet**                        | Workspace, configs, docker, Prisma, config app                               | T1–T7   |
+| **2. Framework — primitives**                   | Result, AppError, ports (Clock, Transaction, Logger, AuthContext)            | T8–T10  |
+| **3. Framework — infrastructure**               | PrismaPilote, SystemClock, Logger sinks, AsyncLocalStorageAuthContext        | T11–T15 |
+| **4. Framework — module-system + container**    | define-module, boot-modules, frameworkModule, build-app-container            | T16–T19 |
+| **5. Framework — HTTP**                         | error-mapping, respondWithResult, middlewares, buildApp, Swagger             | T20–T26 |
+| **6. Test infrastructure**                      | vitest.setup, FakeClock, withTestTransaction, TestContext                    | T27–T30 |
+| **7. Module healthcheck**                       | Handler, route, module                                                       | T31–T33 |
+| **8. Module authentication — functional core**  | Branded types, types `ApiKey`/`Utilisateur`, factory functions pures, errors | T34–T38 |
+| **9. Module authentication — ports**            | ApiKeyHasher, TokenGenerator, TokenSigner, repositories                      | T39     |
+| **10. Module authentication — infrastructure**  | Adapters crypto, repositories Prisma + mappers, ProConnect stub, CLI         | T40–T46 |
+| **11. Module authentication — use cases**       | VerifyApiKeyHandler, VerifyJwtHandler, CreateSessionHandler stub             | T47–T49 |
+| **12. Module authentication — public + module** | ApiModels + facade + authentication.module.ts                                | T50–T52 |
+| **13. Module authentication — HTTP + CLI**      | Route create-session, middlewares auth + auth-context, CLI create-api-key    | T53–T56 |
+| **14. Bootstrap + assemblage final**            | `index.ts`, enregistrement workspace, tests E2E                              | T57–T60 |
+| **15. Documentation + CI**                      | CLAUDE.md, ADRs, workflow CI                                                 | T61–T64 |
 
 ---
 
@@ -136,6 +137,7 @@ git commit -m "[DITP-pilotage/pilote-2] feature: creer le package @pilote-mb/cor
 ### Tâche 4 : Configurer Vitest, ESLint, Prettier, dependency-cruiser
 
 **Files:**
+
 - Create: `apps/pilote-mb-core/vitest.config.ts`
 - Create: `apps/pilote-mb-core/.eslintrc.cjs`
 - Create: `apps/pilote-mb-core/.prettierrc`
@@ -144,27 +146,27 @@ git commit -m "[DITP-pilotage/pilote-2] feature: creer le package @pilote-mb/cor
 - [ ] **Step 1: Écrire `vitest.config.ts`**
 
 ```ts
-import { defineConfig } from 'vitest/config'
-import { resolve } from 'node:path'
+import { defineConfig } from "vitest/config";
+import { resolve } from "node:path";
 
 export default defineConfig({
   test: {
     sequence: { concurrent: true },
-    pool: 'threads',
+    pool: "threads",
     poolOptions: { threads: { maxThreads: 10 } },
     testTimeout: 30_000,
-    setupFiles: ['src/test/vitest.setup.ts'],
+    setupFiles: ["src/test/vitest.setup.ts"],
   },
   resolve: {
     alias: {
-      '@/framework': resolve(__dirname, 'src/framework'),
-      '@/authentication': resolve(__dirname, 'src/authentication'),
-      '@/healthcheck': resolve(__dirname, 'src/healthcheck'),
-      '@/test': resolve(__dirname, 'src/test'),
-      '@/config': resolve(__dirname, 'src/config'),
+      "@/framework": resolve(__dirname, "src/framework"),
+      "@/authentication": resolve(__dirname, "src/authentication"),
+      "@/healthcheck": resolve(__dirname, "src/healthcheck"),
+      "@/test": resolve(__dirname, "src/test"),
+      "@/config": resolve(__dirname, "src/config"),
     },
   },
-})
+});
 ```
 
 - [ ] **Step 2: Écrire `.eslintrc.cjs`**
@@ -172,49 +174,53 @@ export default defineConfig({
 ```js
 module.exports = {
   root: true,
-  parser: '@typescript-eslint/parser',
-  parserOptions: { project: './tsconfig.json', tsconfigRootDir: __dirname },
-  plugins: ['@typescript-eslint'],
+  parser: "@typescript-eslint/parser",
+  parserOptions: { project: "./tsconfig.json", tsconfigRootDir: __dirname },
+  plugins: ["@typescript-eslint"],
   extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
   ],
   rules: {
-    'no-restricted-syntax': [
-      'error',
+    "no-restricted-syntax": [
+      "error",
       {
         selector: "ExportDefaultDeclaration",
         message: "export default is forbidden (use named exports instead).",
       },
       {
         selector: "NewExpression[callee.name='Date']",
-        message: "new Date() is forbidden in model/commands/queries. Inject Clock instead.",
+        message:
+          "new Date() is forbidden in model/commands/queries. Inject Clock instead.",
       },
     ],
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
   },
   overrides: [
     {
-      files: ['*.config.ts', '*.config.cjs', '*.config.js', '.eslintrc.cjs'],
-      rules: { 'no-restricted-syntax': 'off' },
+      files: ["*.config.ts", "*.config.cjs", "*.config.js", ".eslintrc.cjs"],
+      rules: { "no-restricted-syntax": "off" },
     },
     {
       files: [
-        '**/infrastructure/persistence/**/*.ts',
-        '**/framework/**/*.ts',
-        '**/*.test.ts',
-        '**/*.fixture.ts',
+        "**/infrastructure/persistence/**/*.ts",
+        "**/framework/**/*.ts",
+        "**/*.test.ts",
+        "**/*.fixture.ts",
       ],
       rules: {
-        'no-restricted-syntax': [
-          'error',
-          { selector: "ExportDefaultDeclaration", message: "export default is forbidden." },
+        "no-restricted-syntax": [
+          "error",
+          {
+            selector: "ExportDefaultDeclaration",
+            message: "export default is forbidden.",
+          },
         ],
       },
     },
   ],
-}
+};
 ```
 
 - [ ] **Step 3: Écrire `.prettierrc`**
@@ -235,56 +241,58 @@ module.exports = {
 module.exports = {
   forbidden: [
     {
-      name: 'no-cross-module-internals',
-      severity: 'error',
-      comment: 'A module cannot import internals from another module — only from its public/.',
-      from: { path: '^src/(authentication|healthcheck)/' },
+      name: "no-cross-module-internals",
+      severity: "error",
+      comment:
+        "A module cannot import internals from another module — only from its public/.",
+      from: { path: "^src/(authentication|healthcheck)/" },
       to: {
-        path: '^src/(authentication|healthcheck)/',
-        pathNot: ['^src/(authentication|healthcheck)/public/'],
+        path: "^src/(authentication|healthcheck)/",
+        pathNot: ["^src/(authentication|healthcheck)/public/"],
       },
-      pathNot: '(.*)/\\1/',
+      pathNot: "(.*)/\\1/",
     },
     {
-      name: 'no-module-import-outside-bootstrap',
-      severity: 'error',
-      comment: 'Only build-app-container.ts can import <module>.module.ts.',
-      from: { pathNot: '^src/framework/container/build-app-container\\.ts$' },
-      to: { path: '^src/[^/]+/[^/]+\\.module\\.ts$' },
+      name: "no-module-import-outside-bootstrap",
+      severity: "error",
+      comment: "Only build-app-container.ts can import <module>.module.ts.",
+      from: { pathNot: "^src/framework/container/build-app-container\\.ts$" },
+      to: { path: "^src/[^/]+/[^/]+\\.module\\.ts$" },
     },
     {
-      name: 'framework-stays-neutral',
-      severity: 'error',
-      comment: 'framework/ cannot depend on any business module.',
-      from: { path: '^src/framework/' },
-      to: { path: '^src/(authentication|healthcheck)/' },
+      name: "framework-stays-neutral",
+      severity: "error",
+      comment: "framework/ cannot depend on any business module.",
+      from: { path: "^src/framework/" },
+      to: { path: "^src/(authentication|healthcheck)/" },
     },
     {
-      name: 'public-folder-depends-only-on-framework',
-      severity: 'error',
-      comment: 'A module public/ folder can only depend on framework/.',
-      from: { path: '^src/[^/]+/public/' },
-      to: { pathNot: ['^src/framework/', '^src/[^/]+/public/'] },
+      name: "public-folder-depends-only-on-framework",
+      severity: "error",
+      comment: "A module public/ folder can only depend on framework/.",
+      from: { path: "^src/[^/]+/public/" },
+      to: { pathNot: ["^src/framework/", "^src/[^/]+/public/"] },
     },
     {
-      name: 'model-stays-pure',
-      severity: 'error',
-      comment: 'model/ cannot depend on infrastructure, commands, queries, http.',
-      from: { path: '^src/[^/]+/model/' },
-      to: { path: '^src/[^/]+/(infrastructure|commands|queries)/' },
+      name: "model-stays-pure",
+      severity: "error",
+      comment:
+        "model/ cannot depend on infrastructure, commands, queries, http.",
+      from: { path: "^src/[^/]+/model/" },
+      to: { path: "^src/[^/]+/(infrastructure|commands|queries)/" },
     },
     {
-      name: 'no-circular',
-      severity: 'error',
+      name: "no-circular",
+      severity: "error",
       from: {},
       to: { circular: true },
     },
   ],
   options: {
-    tsConfig: { fileName: 'tsconfig.json' },
-    doNotFollow: { path: 'node_modules' },
+    tsConfig: { fileName: "tsconfig.json" },
+    doNotFollow: { path: "node_modules" },
   },
-}
+};
 ```
 
 - [ ] **Step 5: Vérifier** — `pnpm -F @pilote-mb/core lint`
@@ -295,6 +303,7 @@ module.exports = {
 ### Tâche 5 : Docker-compose avec DB de dev et de test
 
 **Files:**
+
 - Create: `apps/pilote-mb-core/docker-compose.yml`
 - Create: `apps/pilote-mb-core/.env.example`
 
@@ -437,6 +446,7 @@ enum application_log_level_enum {
 ### Tâche 7 : Config Zod-validée au boot
 
 **Files:**
+
 - Create: `apps/pilote-mb-core/src/config.ts`
 - Create: `apps/pilote-mb-core/src/config.test.ts`
 
@@ -446,13 +456,15 @@ enum application_log_level_enum {
 
 ```ts
 // src/config.ts
-import { z } from 'zod'
+import { z } from "zod";
 
 const ConfigSchema = z.object({
-  NODE_ENV: z.enum(['development', 'staging', 'production', 'test']),
+  NODE_ENV: z.enum(["development", "staging", "production", "test"]),
   PORT: z.coerce.number().int().positive().default(3000),
   DATABASE_URL: z.string().url(),
-  LOG_LEVEL: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal']).default('info'),
+  LOG_LEVEL: z
+    .enum(["trace", "debug", "info", "warn", "error", "fatal"])
+    .default("info"),
   LOG_TO_DATABASE: z.coerce.boolean().default(true),
   JWT_SECRET: z.string().min(32),
   JWT_TTL_HOURS: z.coerce.number().int().positive().default(8),
@@ -460,15 +472,15 @@ const ConfigSchema = z.object({
   PROCONNECT_CLIENT_ID: z.string().optional(),
   PROCONNECT_CLIENT_SECRET: z.string().optional(),
   PROCONNECT_REDIRECT_URI: z.string().url().optional(),
-})
+});
 
-export type Config = z.infer<typeof ConfigSchema>
+export type Config = z.infer<typeof ConfigSchema>;
 
 export function parseConfig(source: NodeJS.ProcessEnv): Config {
-  return ConfigSchema.parse(source)
+  return ConfigSchema.parse(source);
 }
 
-export const config = parseConfig(process.env)
+export const config = parseConfig(process.env);
 ```
 
 - [ ] **Step 4: Lancer (pass) + commit** — `feature: config zod-validee au boot`
@@ -485,8 +497,8 @@ export const config = parseConfig(process.env)
 
 ```ts
 // src/framework/result/index.ts
-export { ok, err, okAsync, errAsync, Result, ResultAsync } from 'neverthrow'
-export type { Ok, Err } from 'neverthrow'
+export { ok, err, okAsync, errAsync, Result, ResultAsync } from "neverthrow";
+export type { Ok, Err } from "neverthrow";
 ```
 
 - [ ] **Step 2: Commit** — `feature: framework — re-export neverthrow (Result + ResultAsync)`
@@ -496,6 +508,7 @@ export type { Ok, Err } from 'neverthrow'
 ### Tâche 9 : AppError + ErrorKind
 
 **Files:**
+
 - Create: `apps/pilote-mb-core/src/framework/errors/kinds.ts`
 - Create: `apps/pilote-mb-core/src/framework/errors/app-error.ts`
 - Create: `apps/pilote-mb-core/src/framework/errors/app-error.test.ts`
@@ -506,13 +519,13 @@ export type { Ok, Err } from 'neverthrow'
 ```ts
 // src/framework/errors/kinds.ts
 export type ErrorKind =
-  | 'not-found'
-  | 'validation'
-  | 'conflict'
-  | 'forbidden'
-  | 'unauthenticated'
-  | 'not-implemented'
-  | 'internal'
+  | "not-found"
+  | "validation"
+  | "conflict"
+  | "forbidden"
+  | "unauthenticated"
+  | "not-implemented"
+  | "internal";
 ```
 
 - [ ] **Step 2: Écrire le test sur `app-error.ts`** (vérifie `code`, `kind`, `message`, `details`, `name`, `instanceof Error`)
@@ -520,17 +533,17 @@ export type ErrorKind =
 
 ```ts
 // src/framework/errors/app-error.ts
-import { type ErrorKind } from './kinds'
+import { type ErrorKind } from "./kinds";
 
 export abstract class AppError extends Error {
-  abstract readonly code: string
-  abstract readonly kind: ErrorKind
-  readonly details?: Record<string, unknown>
+  abstract readonly code: string;
+  abstract readonly kind: ErrorKind;
+  readonly details?: Record<string, unknown>;
 
   constructor(message: string, details?: Record<string, unknown>) {
-    super(message)
-    this.name = this.constructor.name
-    this.details = details
+    super(message);
+    this.name = this.constructor.name;
+    this.details = details;
   }
 }
 ```
@@ -539,26 +552,26 @@ export abstract class AppError extends Error {
 
 ```ts
 // src/framework/errors/common-errors.ts
-import { AppError } from './app-error'
+import { AppError } from "./app-error";
 
 export class UnauthenticatedError extends AppError {
-  readonly code = 'UNAUTHENTICATED'
-  readonly kind = 'unauthenticated' as const
+  readonly code = "UNAUTHENTICATED";
+  readonly kind = "unauthenticated" as const;
 }
 
 export class ForbiddenError extends AppError {
-  readonly code = 'FORBIDDEN'
-  readonly kind = 'forbidden' as const
+  readonly code = "FORBIDDEN";
+  readonly kind = "forbidden" as const;
 }
 
 export class NotImplementedError extends AppError {
-  readonly code = 'NOT_IMPLEMENTED'
-  readonly kind = 'not-implemented' as const
+  readonly code = "NOT_IMPLEMENTED";
+  readonly kind = "not-implemented" as const;
 }
 
 export class RepositoryError extends AppError {
-  readonly code = 'REPOSITORY_ERROR'
-  readonly kind = 'internal' as const
+  readonly code = "REPOSITORY_ERROR";
+  readonly kind = "internal" as const;
 }
 ```
 
@@ -569,6 +582,7 @@ export class RepositoryError extends AppError {
 ### Tâche 10 : Ports techniques (Clock, Transaction, Logger, AuthContext)
 
 **Files:**
+
 - Create: `apps/pilote-mb-core/src/framework/clock/clock.ts`
 - Create: `apps/pilote-mb-core/src/framework/persistence/prisma/transaction.ts`
 - Create: `apps/pilote-mb-core/src/framework/logging/logger.ts`
@@ -579,7 +593,9 @@ export class RepositoryError extends AppError {
 
 ```ts
 // src/framework/clock/clock.ts
-export interface Clock { now(): Date }
+export interface Clock {
+  now(): Date;
+}
 ```
 
 - [ ] **Step 2: `transaction.ts`**
@@ -587,7 +603,7 @@ export interface Clock { now(): Date }
 ```ts
 // src/framework/persistence/prisma/transaction.ts
 export interface Transaction {
-  run<T>(scope: () => Promise<T>): Promise<T>
+  run<T>(scope: () => Promise<T>): Promise<T>;
 }
 ```
 
@@ -596,10 +612,10 @@ export interface Transaction {
 ```ts
 // src/framework/logging/logger.ts
 export interface Logger {
-  info(context: Record<string, unknown>, message: string): void
-  warn(context: Record<string, unknown>, message: string): void
-  error(context: Record<string, unknown>, message: string): void
-  debug(context: Record<string, unknown>, message: string): void
+  info(context: Record<string, unknown>, message: string): void;
+  warn(context: Record<string, unknown>, message: string): void;
+  error(context: Record<string, unknown>, message: string): void;
+  debug(context: Record<string, unknown>, message: string): void;
 }
 ```
 
@@ -608,33 +624,33 @@ export interface Logger {
 ```ts
 // src/framework/auth-context/auth.ts
 export type ApiKeyAuth = {
-  readonly kind: 'api-key'
-  readonly apiKeyId: string
-  readonly nom: string
-  readonly scopes: ReadonlyArray<string>
-}
+  readonly kind: "api-key";
+  readonly apiKeyId: string;
+  readonly nom: string;
+  readonly scopes: ReadonlyArray<string>;
+};
 
 export type UserAuth = {
-  readonly kind: 'user'
-  readonly utilisateurId: string
-  readonly email: string
-  readonly nomComplet: string
-  readonly statutAcces: string
-  readonly roles: ReadonlyArray<string>
-}
+  readonly kind: "user";
+  readonly utilisateurId: string;
+  readonly email: string;
+  readonly nomComplet: string;
+  readonly statutAcces: string;
+  readonly roles: ReadonlyArray<string>;
+};
 
-export type Auth = ApiKeyAuth | UserAuth
+export type Auth = ApiKeyAuth | UserAuth;
 ```
 
 - [ ] **Step 5: `auth-context.ts`** — port
 
 ```ts
 // src/framework/auth-context/auth-context.ts
-import { type Auth } from './auth'
+import { type Auth } from "./auth";
 
 export interface AuthContext {
-  run<T>(auth: Auth, scope: () => Promise<T>): Promise<T>
-  current(): Auth | undefined
+  run<T>(auth: Auth, scope: () => Promise<T>): Promise<T>;
+  current(): Auth | undefined;
 }
 ```
 
@@ -647,6 +663,7 @@ export interface AuthContext {
 ### Tâche 11 : PrismaPilote wrapper + PrismaTransaction
 
 **Files:**
+
 - Create: `apps/pilote-mb-core/src/framework/persistence/prisma/prisma-transaction.ts`
 - Create: `apps/pilote-mb-core/src/framework/persistence/prisma/prisma-pilote.ts`
 
@@ -654,34 +671,41 @@ export interface AuthContext {
 
 ```ts
 // src/framework/persistence/prisma/prisma-transaction.ts
-import { AsyncLocalStorage } from 'node:async_hooks'
-import { PrismaClient } from '@prisma/client'
-import { type Transaction } from './transaction'
+import { AsyncLocalStorage } from "node:async_hooks";
+import { PrismaClient } from "@prisma/client";
+import { type Transaction } from "./transaction";
 
-const prisma = new PrismaClient()
+const prisma = new PrismaClient();
 
-export type PilotePrismaClient = Parameters<Parameters<typeof prisma.$transaction>[0]>[0]
-export const txStore = new AsyncLocalStorage<PilotePrismaClient>()
+export type PilotePrismaClient = Parameters<
+  Parameters<typeof prisma.$transaction>[0]
+>[0];
+export const txStore = new AsyncLocalStorage<PilotePrismaClient>();
 
 export class PrismaTransaction implements Transaction {
   async run<T>(scope: () => Promise<T>): Promise<T> {
-    return prisma.$transaction((tx) => txStore.run(tx, scope))
+    return prisma.$transaction((tx) => txStore.run(tx, scope));
   }
 }
 
-export { prisma as prismaClient }
-export const getPrisma = (): PilotePrismaClient => txStore.getStore() ?? prismaClient
+export { prisma as prismaClient };
+export const getPrisma = (): PilotePrismaClient =>
+  txStore.getStore() ?? prismaClient;
 ```
 
 - [ ] **Step 2: Écrire `prisma-pilote.ts`**
 
 ```ts
 // src/framework/persistence/prisma/prisma-pilote.ts
-import { txStore, type PilotePrismaClient, prismaClient } from './prisma-transaction'
+import {
+  txStore,
+  type PilotePrismaClient,
+  prismaClient,
+} from "./prisma-transaction";
 
 export class PrismaPilote {
   getInstance(): PilotePrismaClient {
-    return txStore.getStore() ?? prismaClient
+    return txStore.getStore() ?? prismaClient;
   }
 }
 ```
@@ -693,6 +717,7 @@ export class PrismaPilote {
 ### Tâche 12 : SystemClock adapter
 
 **Files:**
+
 - Create: `apps/pilote-mb-core/src/framework/clock/system-clock.ts`
 - Create: `apps/pilote-mb-core/src/framework/clock/system-clock.test.ts`
 
@@ -702,10 +727,12 @@ export class PrismaPilote {
 ```ts
 // src/framework/clock/system-clock.ts
 /* eslint-disable no-restricted-syntax */
-import { type Clock } from './clock'
+import { type Clock } from "./clock";
 
 export class SystemClock implements Clock {
-  now(): Date { return new Date() }
+  now(): Date {
+    return new Date();
+  }
 }
 ```
 
@@ -716,6 +743,7 @@ export class SystemClock implements Clock {
 ### Tâche 13 : Logger sinks composables
 
 **Files:**
+
 - Create: `src/framework/logging/log-sink.ts`
 - Create: `src/framework/logging/sinks/pino-stdout.sink.ts`
 - Create: `src/framework/logging/sinks/database.sink.ts`
@@ -726,14 +754,16 @@ export class SystemClock implements Clock {
 - [ ] **Step 1: `log-sink.ts`** — `LogLevel`, `LogEntry`, `LogSink`
 
 ```ts
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error'
+export type LogLevel = "debug" | "info" | "warn" | "error";
 export interface LogEntry {
-  readonly level: LogLevel
-  readonly timestamp: Date
-  readonly message: string
-  readonly context: Record<string, unknown>
+  readonly level: LogLevel;
+  readonly timestamp: Date;
+  readonly message: string;
+  readonly context: Record<string, unknown>;
 }
-export interface LogSink { write(entry: LogEntry): void }
+export interface LogSink {
+  write(entry: LogEntry): void;
+}
 ```
 
 - [ ] **Step 2: Test du `CompositeLogger`** (dispatche à tous les sinks, niveau correct)
@@ -741,19 +771,31 @@ export interface LogSink { write(entry: LogEntry): void }
 
 ```ts
 // src/framework/logging/composite-logger.ts
-import { type Logger } from './logger'
-import { type LogSink, type LogLevel } from './log-sink'
+import { type Logger } from "./logger";
+import { type LogSink, type LogLevel } from "./log-sink";
 
 export class CompositeLogger implements Logger {
   constructor(private readonly sinks: ReadonlyArray<LogSink>) {}
-  info(context, message)  { this.emit('info',  context, message) }
-  warn(context, message)  { this.emit('warn',  context, message) }
-  error(context, message) { this.emit('error', context, message) }
-  debug(context, message) { this.emit('debug', context, message) }
+  info(context, message) {
+    this.emit("info", context, message);
+  }
+  warn(context, message) {
+    this.emit("warn", context, message);
+  }
+  error(context, message) {
+    this.emit("error", context, message);
+  }
+  debug(context, message) {
+    this.emit("debug", context, message);
+  }
 
-  private emit(level: LogLevel, context: Record<string, unknown>, message: string): void {
-    const entry = { level, timestamp: new Date(), message, context }
-    for (const sink of this.sinks) sink.write(entry)
+  private emit(
+    level: LogLevel,
+    context: Record<string, unknown>,
+    message: string
+  ): void {
+    const entry = { level, timestamp: new Date(), message, context };
+    for (const sink of this.sinks) sink.write(entry);
   }
 }
 ```
@@ -764,16 +806,16 @@ export class CompositeLogger implements Logger {
 
 ```ts
 // src/framework/logging/build-logger.ts
-import { type Config } from '@/config'
-import { CompositeLogger } from './composite-logger'
-import { PinoStdoutSink } from './sinks/pino-stdout.sink'
-import { DatabaseSink } from './sinks/database.sink'
-import { type LogSink } from './log-sink'
+import { type Config } from "@/config";
+import { CompositeLogger } from "./composite-logger";
+import { PinoStdoutSink } from "./sinks/pino-stdout.sink";
+import { DatabaseSink } from "./sinks/database.sink";
+import { type LogSink } from "./log-sink";
 
 export function buildLogger(config: Config): CompositeLogger {
-  const sinks: LogSink[] = [new PinoStdoutSink(config)]
-  if (config.LOG_TO_DATABASE) sinks.push(new DatabaseSink())
-  return new CompositeLogger(sinks)
+  const sinks: LogSink[] = [new PinoStdoutSink(config)];
+  if (config.LOG_TO_DATABASE) sinks.push(new DatabaseSink());
+  return new CompositeLogger(sinks);
 }
 ```
 
@@ -784,6 +826,7 @@ export function buildLogger(config: Config): CompositeLogger {
 ### Tâche 14 : AsyncLocalStorageAuthContext + helpers
 
 **Files:**
+
 - Create: `src/framework/auth-context/async-local-storage-auth-context.ts`
 - Create: `src/framework/auth-context/current-auth.ts`
 - Create: `src/framework/auth-context/current-auth.test.ts`
@@ -794,18 +837,18 @@ export function buildLogger(config: Config): CompositeLogger {
 
 ```ts
 // src/framework/auth-context/async-local-storage-auth-context.ts
-import { AsyncLocalStorage } from 'node:async_hooks'
-import { type Auth } from './auth'
-import { type AuthContext } from './auth-context'
+import { AsyncLocalStorage } from "node:async_hooks";
+import { type Auth } from "./auth";
+import { type AuthContext } from "./auth-context";
 
-export const authStore = new AsyncLocalStorage<Auth>()
+export const authStore = new AsyncLocalStorage<Auth>();
 
 export class AsyncLocalStorageAuthContext implements AuthContext {
   run<T>(auth: Auth, scope: () => Promise<T>): Promise<T> {
-    return authStore.run(auth, scope)
+    return authStore.run(auth, scope);
   }
   current(): Auth | undefined {
-    return authStore.getStore()
+    return authStore.getStore();
   }
 }
 ```
@@ -814,23 +857,25 @@ export class AsyncLocalStorageAuthContext implements AuthContext {
 
 ```ts
 // src/framework/auth-context/current-auth.ts
-import { authStore } from './async-local-storage-auth-context'
-import { type Auth, type ApiKeyAuth, type UserAuth } from './auth'
-import { UnauthenticatedError } from '@/framework/errors/common-errors'
+import { authStore } from "./async-local-storage-auth-context";
+import { type Auth, type ApiKeyAuth, type UserAuth } from "./auth";
+import { UnauthenticatedError } from "@/framework/errors/common-errors";
 
-export const currentAuth = (): Auth | undefined => authStore.getStore()
+export const currentAuth = (): Auth | undefined => authStore.getStore();
 
 export const requireUser = (): UserAuth => {
-  const auth = currentAuth()
-  if (auth?.kind !== 'user') throw new UnauthenticatedError('user authentication required')
-  return auth
-}
+  const auth = currentAuth();
+  if (auth?.kind !== "user")
+    throw new UnauthenticatedError("user authentication required");
+  return auth;
+};
 
 export const requireApiKey = (): ApiKeyAuth => {
-  const auth = currentAuth()
-  if (auth?.kind !== 'api-key') throw new UnauthenticatedError('api-key authentication required')
-  return auth
-}
+  const auth = currentAuth();
+  if (auth?.kind !== "api-key")
+    throw new UnauthenticatedError("api-key authentication required");
+  return auth;
+};
 ```
 
 - [ ] **Step 4: Commit** — `feature: framework — AuthContext via AsyncLocalStorage + requireUser/requireApiKey`
@@ -848,6 +893,7 @@ export const requireApiKey = (): ApiKeyAuth => {
 ### Tâche 16 : Adapter le module-system depuis pilote-ppg
 
 **Files:**
+
 - Create: `src/framework/module-system/define-module.ts`
 - Create: `src/framework/module-system/boot-modules.ts`
 - Create: `src/framework/module-system/module-names.ts`
@@ -858,8 +904,12 @@ export const requireApiKey = (): ApiKeyAuth => {
 
 ```ts
 // src/framework/module-system/module-names.ts
-export const moduleNames = ['framework', 'authentication', 'healthcheck'] as const
-export type ModuleName = (typeof moduleNames)[number]
+export const moduleNames = [
+  "framework",
+  "authentication",
+  "healthcheck",
+] as const;
+export type ModuleName = (typeof moduleNames)[number];
 ```
 
 - [ ] **Step 3: `types.ts`** — `NoExports`, `VerifyCradle`, `ExtractScope`, `ModuleDefinition`
@@ -878,46 +928,50 @@ export type ModuleName = (typeof moduleNames)[number]
 
 ```ts
 // src/framework/framework.module.ts
-import { defineModule } from './module-system/define-module'
-import type { NoExports, VerifyCradle, ExtractScope } from './module-system/types'
-import { config, type Config } from '@/config'
-import { PrismaPilote } from './persistence/prisma/prisma-pilote'
-import { PrismaTransaction } from './persistence/prisma/prisma-transaction'
-import type { Transaction } from './persistence/prisma/transaction'
-import type { Clock } from './clock/clock'
-import { SystemClock } from './clock/system-clock'
-import type { Logger } from './logging/logger'
-import { buildLogger } from './logging/build-logger'
-import type { AuthContext } from './auth-context/auth-context'
-import { AsyncLocalStorageAuthContext } from './auth-context/async-local-storage-auth-context'
+import { defineModule } from "./module-system/define-module";
+import type {
+  NoExports,
+  VerifyCradle,
+  ExtractScope,
+} from "./module-system/types";
+import { config, type Config } from "@/config";
+import { PrismaPilote } from "./persistence/prisma/prisma-pilote";
+import { PrismaTransaction } from "./persistence/prisma/prisma-transaction";
+import type { Transaction } from "./persistence/prisma/transaction";
+import type { Clock } from "./clock/clock";
+import { SystemClock } from "./clock/system-clock";
+import type { Logger } from "./logging/logger";
+import { buildLogger } from "./logging/build-logger";
+import type { AuthContext } from "./auth-context/auth-context";
+import { AsyncLocalStorageAuthContext } from "./auth-context/async-local-storage-auth-context";
 
 export type FrameworkCradle = {
-  prisma: PrismaPilote
-  transaction: Transaction
-  logger: Logger
-  config: Config
-  clock: Clock
-  authContext: AuthContext
-}
+  prisma: PrismaPilote;
+  transaction: Transaction;
+  logger: Logger;
+  config: Config;
+  clock: Clock;
+  authContext: AuthContext;
+};
 
 export const frameworkModule = defineModule<NoExports, FrameworkCradle>()({
-  name: 'framework',
+  name: "framework",
   imports: [],
   exports: [],
   register: (container, { asModuleFunction, asModuleClass }) => {
     container.register({
-      prisma:       asModuleFunction(() => new PrismaPilote()).singleton(),
-      transaction:  asModuleFunction(() => new PrismaTransaction()).singleton(),
-      logger:       asModuleFunction(() => buildLogger(config)).singleton(),
-      config:       asModuleFunction(() => config).singleton(),
-      clock:        asModuleClass(SystemClock).singleton(),
-      authContext:  asModuleClass(AsyncLocalStorageAuthContext).singleton(),
-    } satisfies VerifyCradle<FrameworkCradle>)
+      prisma: asModuleFunction(() => new PrismaPilote()).singleton(),
+      transaction: asModuleFunction(() => new PrismaTransaction()).singleton(),
+      logger: asModuleFunction(() => buildLogger(config)).singleton(),
+      config: asModuleFunction(() => config).singleton(),
+      clock: asModuleClass(SystemClock).singleton(),
+      authContext: asModuleClass(AsyncLocalStorageAuthContext).singleton(),
+    } satisfies VerifyCradle<FrameworkCradle>);
   },
-})
+});
 
-type Scope = ExtractScope<typeof frameworkModule>
-export type Inject<K extends keyof Scope> = Pick<Scope, K>
+type Scope = ExtractScope<typeof frameworkModule>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;
 ```
 
 - [ ] **Step 2: Commit** — `feature: framework — frameworkModule racine avec cradle technique`
@@ -932,11 +986,11 @@ export type Inject<K extends keyof Scope> = Pick<Scope, K>
 
 ```ts
 // src/framework/container/build-app-container.ts
-import { bootModules } from '@/framework/module-system/boot-modules'
-import { frameworkModule } from '@/framework/framework.module'
+import { bootModules } from "@/framework/module-system/boot-modules";
+import { frameworkModule } from "@/framework/framework.module";
 
 export function buildAppContainer() {
-  return bootModules([frameworkModule])
+  return bootModules([frameworkModule]);
 }
 ```
 
@@ -957,6 +1011,7 @@ export function buildAppContainer() {
 ### Tâche 20 : ErrorSchema + error-mapping
 
 **Files:**
+
 - Create: `src/framework/http/schemas/error.schema.ts`
 - Create: `src/framework/http/error-mapping.ts`
 - Create: `src/framework/http/error-mapping.test.ts`
@@ -965,13 +1020,15 @@ export function buildAppContainer() {
 
 ```ts
 // src/framework/http/schemas/error.schema.ts
-import { z } from '@hono/zod-openapi'
+import { z } from "@hono/zod-openapi";
 
-export const ErrorSchema = z.object({
-  code: z.string(),
-  message: z.string(),
-  details: z.unknown().optional(),
-}).openapi('ErrorSchema')
+export const ErrorSchema = z
+  .object({
+    code: z.string(),
+    message: z.string(),
+    details: z.unknown().optional(),
+  })
+  .openapi("ErrorSchema");
 ```
 
 - [ ] **Step 2: Test du mapping** (chaque kind → status correct)
@@ -979,20 +1036,21 @@ export const ErrorSchema = z.object({
 
 ```ts
 // src/framework/http/error-mapping.ts
-import { type ErrorKind } from '@/framework/errors/kinds'
-import { type AppError } from '@/framework/errors/app-error'
+import { type ErrorKind } from "@/framework/errors/kinds";
+import { type AppError } from "@/framework/errors/app-error";
 
 const KIND_TO_STATUS: Record<ErrorKind, number> = {
-  'not-found': 404,
-  'validation': 400,
-  'conflict': 409,
-  'forbidden': 403,
-  'unauthenticated': 401,
-  'not-implemented': 501,
-  'internal': 500,
-}
+  "not-found": 404,
+  validation: 400,
+  conflict: 409,
+  forbidden: 403,
+  unauthenticated: 401,
+  "not-implemented": 501,
+  internal: 500,
+};
 
-export const mapAppErrorToHttpStatus = (error: AppError): number => KIND_TO_STATUS[error.kind]
+export const mapAppErrorToHttpStatus = (error: AppError): number =>
+  KIND_TO_STATUS[error.kind];
 ```
 
 - [ ] **Step 4: Commit** — `feature: framework http — ErrorSchema + mapping kind vers HTTP status`
@@ -1002,6 +1060,7 @@ export const mapAppErrorToHttpStatus = (error: AppError): number => KIND_TO_STAT
 ### Tâche 21 : respondWithResult helper
 
 **Files:**
+
 - Create: `src/framework/http/respond-with-result.ts`
 - Create: `src/framework/http/respond-with-result.test.ts`
 
@@ -1010,25 +1069,25 @@ export const mapAppErrorToHttpStatus = (error: AppError): number => KIND_TO_STAT
 
 ```ts
 // src/framework/http/respond-with-result.ts
-import type { Context } from 'hono'
-import { type Result, type ResultAsync } from '@/framework/result'
-import { type AppError } from '@/framework/errors/app-error'
-import { mapAppErrorToHttpStatus } from './error-mapping'
+import type { Context } from "hono";
+import { type Result, type ResultAsync } from "@/framework/result";
+import { type AppError } from "@/framework/errors/app-error";
+import { mapAppErrorToHttpStatus } from "./error-mapping";
 
 export async function respondWithResult<TValue, TError extends AppError>(
   context: Context,
   source: Result<TValue, TError> | ResultAsync<TValue, TError>,
-  onSuccess: (value: TValue) => Response,
+  onSuccess: (value: TValue) => Response
 ): Promise<Response> {
-  const result = 'isErr' in source ? source : await source
+  const result = "isErr" in source ? source : await source;
   if (result.isErr()) {
-    const error = result.error
+    const error = result.error;
     return context.json(
       { code: error.code, message: error.message, details: error.details },
-      mapAppErrorToHttpStatus(error),
-    )
+      mapAppErrorToHttpStatus(error)
+    );
   }
-  return onSuccess(result.value)
+  return onSuccess(result.value);
 }
 ```
 
@@ -1039,6 +1098,7 @@ export async function respondWithResult<TValue, TError extends AppError>(
 ### Tâche 22 : Middlewares HTTP — request-id, logger, error-handler
 
 **Files:**
+
 - Create: `src/framework/http/middlewares/request-id.middleware.ts`
 - Create: `src/framework/http/middlewares/logger.middleware.ts`
 - Create: `src/framework/http/middlewares/error-handler.middleware.ts`
@@ -1059,19 +1119,19 @@ export async function respondWithResult<TValue, TError extends AppError>(
 
 ```ts
 // src/framework/http/middlewares/auth-context.middleware.ts
-import type { Context, Next } from 'hono'
-import { type AuthContext } from '@/framework/auth-context/auth-context'
-import { type Auth } from '@/framework/auth-context/auth'
+import type { Context, Next } from "hono";
+import { type AuthContext } from "@/framework/auth-context/auth-context";
+import { type Auth } from "@/framework/auth-context/auth";
 
 export function authContextMiddleware(deps: { authContext: AuthContext }) {
   return async (context: Context, next: Next): Promise<Response | void> => {
-    const auth = context.get('auth') as Auth | undefined
+    const auth = context.get("auth") as Auth | undefined;
     if (!auth) {
-      await next()
-      return
+      await next();
+      return;
     }
-    await deps.authContext.run(auth, () => next())
-  }
+    await deps.authContext.run(auth, () => next());
+  };
 }
 ```
 
@@ -1088,19 +1148,22 @@ export function authContextMiddleware(deps: { authContext: AuthContext }) {
 
 ```ts
 // src/framework/http/middlewares/require-scope.middleware.ts
-import type { Context, Next } from 'hono'
-import { ForbiddenError, UnauthenticatedError } from '@/framework/errors/common-errors'
-import { currentAuth } from '@/framework/auth-context/current-auth'
+import type { Context, Next } from "hono";
+import {
+  ForbiddenError,
+  UnauthenticatedError,
+} from "@/framework/errors/common-errors";
+import { currentAuth } from "@/framework/auth-context/current-auth";
 
 export function requireScope(scope: string) {
   return async (_context: Context, next: Next) => {
-    const auth = currentAuth()
-    if (!auth) throw new UnauthenticatedError('authentication required')
-    if (auth.kind !== 'api-key' || !auth.scopes.includes(scope)) {
-      throw new ForbiddenError(`scope ${scope} required`)
+    const auth = currentAuth();
+    if (!auth) throw new UnauthenticatedError("authentication required");
+    if (auth.kind !== "api-key" || !auth.scopes.includes(scope)) {
+      throw new ForbiddenError(`scope ${scope} required`);
     }
-    await next()
-  }
+    await next();
+  };
 }
 ```
 
@@ -1112,46 +1175,50 @@ export function requireScope(scope: string) {
 ### Tâche 25 : buildApp avec Swagger UI
 
 **Files:**
+
 - Create: `src/framework/http/app.ts`
 - Create: `src/framework/http/schemas/pagination.schema.ts`
 
 - [ ] **Step 1: `pagination.schema.ts`**
 
 ```ts
-import { z } from '@hono/zod-openapi'
+import { z } from "@hono/zod-openapi";
 
 export const PaginationQuerySchema = z.object({
   page: z.coerce.number().int().positive().default(1),
   pageSize: z.coerce.number().int().positive().max(100).default(20),
-})
+});
 ```
 
 - [ ] **Step 2: `app.ts`** — `buildApp(container)` qui crée un `OpenAPIHono`, enregistre middlewares (request-id, logger, auth-context, error-handler), expose `/api/openapi.json` et `/api/docs` (swagger-ui)
 
 ```ts
 // src/framework/http/app.ts
-import { OpenAPIHono } from '@hono/zod-openapi'
-import { swaggerUI } from '@hono/swagger-ui'
-import type { AwilixContainer } from 'awilix'
-import { requestIdMiddleware } from './middlewares/request-id.middleware'
-import { loggerMiddleware } from './middlewares/logger.middleware'
-import { authContextMiddleware } from './middlewares/auth-context.middleware'
-import { registerErrorHandler } from './middlewares/error-handler.middleware'
+import { OpenAPIHono } from "@hono/zod-openapi";
+import { swaggerUI } from "@hono/swagger-ui";
+import type { AwilixContainer } from "awilix";
+import { requestIdMiddleware } from "./middlewares/request-id.middleware";
+import { loggerMiddleware } from "./middlewares/logger.middleware";
+import { authContextMiddleware } from "./middlewares/auth-context.middleware";
+import { registerErrorHandler } from "./middlewares/error-handler.middleware";
 
 export function buildApp(container: AwilixContainer): OpenAPIHono {
-  const app = new OpenAPIHono()
-  app.use('*', requestIdMiddleware())
-  app.use('*', loggerMiddleware(container.resolve('logger')))
-  app.use('*', authContextMiddleware({ authContext: container.resolve('authContext') }))
-  registerErrorHandler(app, container)
+  const app = new OpenAPIHono();
+  app.use("*", requestIdMiddleware());
+  app.use("*", loggerMiddleware(container.resolve("logger")));
+  app.use(
+    "*",
+    authContextMiddleware({ authContext: container.resolve("authContext") })
+  );
+  registerErrorHandler(app, container);
 
-  app.doc('/api/openapi.json', {
-    openapi: '3.1.0',
-    info: { title: 'pilote-mb-core', version: '0.1.0' },
-  })
-  app.get('/api/docs', swaggerUI({ url: '/api/openapi.json' }))
+  app.doc("/api/openapi.json", {
+    openapi: "3.1.0",
+    info: { title: "pilote-mb-core", version: "0.1.0" },
+  });
+  app.get("/api/docs", swaggerUI({ url: "/api/openapi.json" }));
 
-  return app
+  return app;
 }
 ```
 
@@ -1168,52 +1235,64 @@ export function buildApp(container: AwilixContainer): OpenAPIHono {
 
 ```ts
 // src/framework/http/middlewares/auth.middleware.ts
-import type { Context, Next } from 'hono'
-import { UnauthenticatedError } from '@/framework/errors/common-errors'
-import type { AuthenticationFacade } from '@/authentication/public/authentication.facade'
-import type { Auth } from '@/framework/auth-context/auth'
+import type { Context, Next } from "hono";
+import { UnauthenticatedError } from "@/framework/errors/common-errors";
+import type { AuthenticationFacade } from "@/authentication/public/authentication.facade";
+import type { Auth } from "@/framework/auth-context/auth";
 
-const PUBLIC_ROUTES = ['/health', '/api/openapi.json', '/api/docs']
+const PUBLIC_ROUTES = ["/health", "/api/openapi.json", "/api/docs"];
 
-export function authMiddleware(deps: { authenticationFacade: AuthenticationFacade }) {
+export function authMiddleware(deps: {
+  authenticationFacade: AuthenticationFacade;
+}) {
   return async (context: Context, next: Next) => {
-    if (PUBLIC_ROUTES.some((route) => context.req.path.startsWith(route))) return next()
+    if (PUBLIC_ROUTES.some((route) => context.req.path.startsWith(route)))
+      return next();
 
-    const header = context.req.header('Authorization')
-    if (!header?.startsWith('Bearer ')) throw new UnauthenticatedError('Bearer token required')
-    const token = header.slice('Bearer '.length)
+    const header = context.req.header("Authorization");
+    if (!header?.startsWith("Bearer "))
+      throw new UnauthenticatedError("Bearer token required");
+    const token = header.slice("Bearer ".length);
 
-    const auth: Auth | undefined = await resolveAuth(token, deps.authenticationFacade)
-    if (!auth) throw new UnauthenticatedError('Invalid or revoked credentials')
+    const auth: Auth | undefined = await resolveAuth(
+      token,
+      deps.authenticationFacade
+    );
+    if (!auth) throw new UnauthenticatedError("Invalid or revoked credentials");
 
-    context.set('auth', auth)
-    await next()
-  }
+    context.set("auth", auth);
+    await next();
+  };
 }
 
 async function resolveAuth(
   token: string,
-  facade: AuthenticationFacade,
+  facade: AuthenticationFacade
 ): Promise<Auth | undefined> {
-  if (token.startsWith('pmb_live_') || token.startsWith('pmb_test_')) {
-    const result = await facade.verifyApiKey(token)
-    if (result.isErr() || !result.value) return undefined
-    return { kind: 'api-key', apiKeyId: result.value.id, nom: result.value.nom, scopes: result.value.scopes }
-  }
-  if (token.split('.').length === 3) {
-    const result = await facade.verifyJwt(token)
-    if (result.isErr() || !result.value) return undefined
-    const utilisateur = result.value
+  if (token.startsWith("pmb_live_") || token.startsWith("pmb_test_")) {
+    const result = await facade.verifyApiKey(token);
+    if (result.isErr() || !result.value) return undefined;
     return {
-      kind: 'user',
+      kind: "api-key",
+      apiKeyId: result.value.id,
+      nom: result.value.nom,
+      scopes: result.value.scopes,
+    };
+  }
+  if (token.split(".").length === 3) {
+    const result = await facade.verifyJwt(token);
+    if (result.isErr() || !result.value) return undefined;
+    const utilisateur = result.value;
+    return {
+      kind: "user",
       utilisateurId: utilisateur.id,
       email: utilisateur.email,
       nomComplet: utilisateur.nomComplet,
       statutAcces: utilisateur.statutAcces,
       roles: utilisateur.roles,
-    }
+    };
   }
-  return undefined
+  return undefined;
 }
 ```
 
@@ -1236,6 +1315,7 @@ async function resolveAuth(
 ### Tâche 28 : FakeClock
 
 **Files:**
+
 - Create: `src/test/fake-clock.ts`
 - Create: `src/test/fake-clock.test.ts`
 
@@ -1244,13 +1324,19 @@ async function resolveAuth(
 
 ```ts
 // src/test/fake-clock.ts
-import { type Clock } from '@/framework/clock/clock'
+import { type Clock } from "@/framework/clock/clock";
 
 export class FakeClock implements Clock {
-  constructor(private current: Date = new Date('2026-01-01T00:00:00Z')) {}
-  now(): Date { return new Date(this.current) }
-  set(date: Date): void { this.current = date }
-  tick(milliseconds: number): void { this.current = new Date(this.current.getTime() + milliseconds) }
+  constructor(private current: Date = new Date("2026-01-01T00:00:00Z")) {}
+  now(): Date {
+    return new Date(this.current);
+  }
+  set(date: Date): void {
+    this.current = date;
+  }
+  tick(milliseconds: number): void {
+    this.current = new Date(this.current.getTime() + milliseconds);
+  }
 }
 ```
 
@@ -1261,6 +1347,7 @@ export class FakeClock implements Clock {
 ### Tâche 29 : withTestTransaction + TestContext
 
 **Files:**
+
 - Create: `src/test/test-context.ts`
 - Create: `src/test/with-test-transaction.ts`
 - Create: `src/test/with-test-transaction.test.ts`
@@ -1269,15 +1356,15 @@ export class FakeClock implements Clock {
 
 ```ts
 // src/test/test-context.ts
-import type { ModuleName } from '@/framework/module-system/module-names'
+import type { ModuleName } from "@/framework/module-system/module-names";
 
 export class TestContext {
   constructor(private readonly getContainer: (name: ModuleName) => any) {}
   resolveHandler<T>(moduleName: ModuleName, key: string): T {
-    return this.getContainer(moduleName).resolve(key) as T
+    return this.getContainer(moduleName).resolve(key) as T;
   }
   resolveRepository<T>(moduleName: ModuleName, key: string): T {
-    return this.getContainer(moduleName).resolve(key) as T
+    return this.getContainer(moduleName).resolve(key) as T;
   }
 }
 ```
@@ -1302,22 +1389,23 @@ export class TestContext {
 ### Tâche 31 : CheckHealthHandler
 
 **Files:**
+
 - Create: `src/healthcheck/queries/check-health/check-health.handler.ts`
 - Create: `src/healthcheck/queries/check-health/check-health.handler.test.ts`
 
-- [ ] **Step 1: Test** — `withTestTransaction` qui résout le handler et vérifie `executer()` retourne `{ status: 'ok' }`
+- [ ] **Step 1: Test** — `withTestTransaction` qui résout le handler et vérifie `execute()` retourne `{ status: 'ok' }`
 - [ ] **Step 2: Implémentation**
 
 ```ts
 // src/healthcheck/queries/check-health/check-health.handler.ts
-import { type Inject } from '@/healthcheck/healthcheck.module'
+import { type Inject } from "@/healthcheck/healthcheck.module";
 
 export class CheckHealthHandler {
-  constructor(private readonly deps: Inject<'prisma'>) {}
+  constructor(private readonly deps: Inject<"prisma">) {}
 
-  async executer(): Promise<{ status: 'ok' }> {
-    await this.deps.prisma.getInstance().$queryRaw`SELECT 1`
-    return { status: 'ok' }
+  async execute(): Promise<{ status: "ok" }> {
+    await this.deps.prisma.getInstance().$queryRaw`SELECT 1`;
+    return { status: "ok" };
   }
 }
 ```
@@ -1329,35 +1417,44 @@ export class CheckHealthHandler {
 ### Tâche 32 : Route GET /health
 
 **Files:**
+
 - Create: `src/healthcheck/infrastructure/http/routes/health.route.ts`
 
 - [ ] **Step 1: Implémentation**
 
 ```ts
 // src/healthcheck/infrastructure/http/routes/health.route.ts
-import { createRoute, z, type OpenAPIHono } from '@hono/zod-openapi'
-import type { AwilixContainer } from 'awilix'
-import { CheckHealthHandler } from '@/healthcheck/queries/check-health/check-health.handler'
+import { createRoute, z, type OpenAPIHono } from "@hono/zod-openapi";
+import type { AwilixContainer } from "awilix";
+import { CheckHealthHandler } from "@/healthcheck/queries/check-health/check-health.handler";
 
-const HealthSchema = z.object({ status: z.literal('ok') }).openapi('HealthApiModel')
+const HealthSchema = z
+  .object({ status: z.literal("ok") })
+  .openapi("HealthApiModel");
 
 const healthRoute = createRoute({
-  method: 'get',
-  path: '/health',
-  tags: ['Health'],
-  summary: 'Vérifie la santé du backend',
-  description: 'Ping DB et retourne ok. Route publique.',
+  method: "get",
+  path: "/health",
+  tags: ["Health"],
+  summary: "Vérifie la santé du backend",
+  description: "Ping DB et retourne ok. Route publique.",
   responses: {
-    200: { description: 'OK', content: { 'application/json': { schema: HealthSchema } } },
+    200: {
+      description: "OK",
+      content: { "application/json": { schema: HealthSchema } },
+    },
   },
-})
+});
 
-export function registerHealthRoute(app: OpenAPIHono, container: AwilixContainer) {
+export function registerHealthRoute(
+  app: OpenAPIHono,
+  container: AwilixContainer
+) {
   app.openapi(healthRoute, async (context) => {
-    const handler = container.resolve<CheckHealthHandler>('checkHealthHandler')
-    const result = await handler.executer()
-    return context.json(result, 200)
-  })
+    const handler = container.resolve<CheckHealthHandler>("checkHealthHandler");
+    const result = await handler.execute();
+    return context.json(result, 200);
+  });
 }
 ```
 
@@ -1368,6 +1465,7 @@ export function registerHealthRoute(app: OpenAPIHono, container: AwilixContainer
 ### Tâche 33 : healthcheck.module.ts + branchement
 
 **Files:**
+
 - Create: `src/healthcheck/healthcheck.module.ts`
 - Modify: `src/framework/container/build-app-container.ts`
 - Modify: `src/framework/module-system/module-names.ts`
@@ -1376,29 +1474,35 @@ export function registerHealthRoute(app: OpenAPIHono, container: AwilixContainer
 
 ```ts
 // src/healthcheck/healthcheck.module.ts
-import { defineModule } from '@/framework/module-system/define-module'
-import type { VerifyCradle, ExtractScope } from '@/framework/module-system/types'
-import { CheckHealthHandler } from './queries/check-health/check-health.handler'
+import { defineModule } from "@/framework/module-system/define-module";
+import type {
+  VerifyCradle,
+  ExtractScope,
+} from "@/framework/module-system/types";
+import { CheckHealthHandler } from "./queries/check-health/check-health.handler";
 
 type HealthcheckCradle = {
-  checkHealthHandler: CheckHealthHandler
-}
+  checkHealthHandler: CheckHealthHandler;
+};
 
-type HealthcheckExports = Record<string, never>
+type HealthcheckExports = Record<string, never>;
 
-export const healthcheckModule = defineModule<HealthcheckExports, HealthcheckCradle>()({
-  name: 'healthcheck',
-  imports: ['framework'],
+export const healthcheckModule = defineModule<
+  HealthcheckExports,
+  HealthcheckCradle
+>()({
+  name: "healthcheck",
+  imports: ["framework"],
   exports: [],
   register: (container, { asModuleClass }) => {
     container.register({
       checkHealthHandler: asModuleClass(CheckHealthHandler).singleton(),
-    } satisfies VerifyCradle<HealthcheckCradle>)
+    } satisfies VerifyCradle<HealthcheckCradle>);
   },
-})
+});
 
-type Scope = ExtractScope<typeof healthcheckModule>
-export type Inject<K extends keyof Scope> = Pick<Scope, K>
+type Scope = ExtractScope<typeof healthcheckModule>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;
 ```
 
 - [ ] **Step 2: Brancher dans `build-app-container.ts`** + ajouter `'healthcheck'` aux `module-names.ts`
@@ -1412,6 +1516,7 @@ export type Inject<K extends keyof Scope> = Pick<Scope, K>
 ### Tâche 34 : Branded types pour les IDs et VOs simples
 
 **Files:**
+
 - Create: `src/authentication/model/api-key-id.ts` + test
 - Create: `src/authentication/model/utilisateur-id.ts` + test
 - Create: `src/authentication/model/email.ts` + test
@@ -1423,25 +1528,29 @@ export type Inject<K extends keyof Scope> = Pick<Scope, K>
 
 ```ts
 // src/authentication/model/api-key-id.ts
-import { randomUUID } from 'node:crypto'
-import { ok, err, type Result } from '@/framework/result'
-import { AppError } from '@/framework/errors/app-error'
+import { randomUUID } from "node:crypto";
+import { ok, err, type Result } from "@/framework/result";
+import { AppError } from "@/framework/errors/app-error";
 
-export type ApiKeyId = string & { readonly __brand: 'ApiKeyId' }
+export type ApiKeyId = string & { readonly __brand: "ApiKeyId" };
 
-const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+const UUID_REGEX =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 export class InvalidApiKeyIdError extends AppError {
-  readonly code = 'INVALID_API_KEY_ID'
-  readonly kind = 'validation' as const
+  readonly code = "INVALID_API_KEY_ID";
+  readonly kind = "validation" as const;
 }
 
-export const apiKeyId = (raw: string): Result<ApiKeyId, InvalidApiKeyIdError> => {
-  if (!UUID_REGEX.test(raw)) return err(new InvalidApiKeyIdError(`invalid uuid: ${raw}`))
-  return ok(raw as ApiKeyId)
-}
+export const apiKeyId = (
+  raw: string
+): Result<ApiKeyId, InvalidApiKeyIdError> => {
+  if (!UUID_REGEX.test(raw))
+    return err(new InvalidApiKeyIdError(`invalid uuid: ${raw}`));
+  return ok(raw as ApiKeyId);
+};
 
-export const generateApiKeyId = (): ApiKeyId => randomUUID() as ApiKeyId
+export const generateApiKeyId = (): ApiKeyId => randomUUID() as ApiKeyId;
 ```
 
 - [ ] **Step 3: Idem pour `utilisateur-id.ts`**, `email.ts` (validation regex email), `scope.ts` (format `<resource>:<action>`)
@@ -1449,8 +1558,13 @@ export const generateApiKeyId = (): ApiKeyId => randomUUID() as ApiKeyId
 
 ```ts
 // src/authentication/model/statut-acces.ts
-export const STATUT_ACCES_VALUES = ['EN_ATTENTE_ACCES', 'ACTIF', 'REFUSE', 'DESACTIVE'] as const
-export type StatutAcces = (typeof STATUT_ACCES_VALUES)[number]
+export const STATUT_ACCES_VALUES = [
+  "EN_ATTENTE_ACCES",
+  "ACTIF",
+  "REFUSE",
+  "DESACTIVE",
+] as const;
+export type StatutAcces = (typeof STATUT_ACCES_VALUES)[number];
 ```
 
 - [ ] **Step 5: Commit** — `feature: authentication — branded types ApiKeyId, UtilisateurId, Email, Scope, StatutAcces`
@@ -1465,26 +1579,26 @@ export type StatutAcces = (typeof STATUT_ACCES_VALUES)[number]
 
 ```ts
 // src/authentication/model/errors.ts
-import { AppError } from '@/framework/errors/app-error'
+import { AppError } from "@/framework/errors/app-error";
 
 export class InvalidApiKeyNameError extends AppError {
-  readonly code = 'INVALID_API_KEY_NAME'
-  readonly kind = 'validation' as const
+  readonly code = "INVALID_API_KEY_NAME";
+  readonly kind = "validation" as const;
 }
 
 export class ApiKeyScopesRequiredError extends AppError {
-  readonly code = 'API_KEY_SCOPES_REQUIRED'
-  readonly kind = 'validation' as const
+  readonly code = "API_KEY_SCOPES_REQUIRED";
+  readonly kind = "validation" as const;
 }
 
 export class ApiKeyAlreadyRevokedError extends AppError {
-  readonly code = 'API_KEY_ALREADY_REVOKED'
-  readonly kind = 'conflict' as const
+  readonly code = "API_KEY_ALREADY_REVOKED";
+  readonly kind = "conflict" as const;
 }
 
 export class MissingIdTokenError extends AppError {
-  readonly code = 'MISSING_ID_TOKEN'
-  readonly kind = 'validation' as const
+  readonly code = "MISSING_ID_TOKEN";
+  readonly kind = "validation" as const;
 }
 ```
 
@@ -1495,10 +1609,12 @@ export class MissingIdTokenError extends AppError {
 ### Tâche 36 : Type ApiKey + factory functions pures
 
 **Files:**
+
 - Create: `src/authentication/model/api-key.ts`
 - Create: `src/authentication/model/api-key.test.ts`
 
 - [ ] **Step 1: Tests** :
+
   - `createApiKey` refuse nom vide → `InvalidApiKeyNameError`
   - `createApiKey` refuse scopes vides → `ApiKeyScopesRequiredError`
   - `createApiKey` génère un token préfixé `pmb_live_` ou `pmb_test_`
@@ -1511,50 +1627,54 @@ export class MissingIdTokenError extends AppError {
 
 ```ts
 // src/authentication/model/api-key.ts
-import { ok, err, type Result } from '@/framework/result'
-import { type ApiKeyId, generateApiKeyId } from './api-key-id'
-import { type Scope } from './scope'
-import { type Clock } from '@/framework/clock/clock'
-import { type ApiKeyHasher } from '@/authentication/ports/api-key-hasher'
-import { type TokenGenerator } from '@/authentication/ports/token-generator'
+import { ok, err, type Result } from "@/framework/result";
+import { type ApiKeyId, generateApiKeyId } from "./api-key-id";
+import { type Scope } from "./scope";
+import { type Clock } from "@/framework/clock/clock";
+import { type ApiKeyHasher } from "@/authentication/ports/api-key-hasher";
+import { type TokenGenerator } from "@/authentication/ports/token-generator";
 import {
   InvalidApiKeyNameError,
   ApiKeyScopesRequiredError,
   ApiKeyAlreadyRevokedError,
-} from './errors'
+} from "./errors";
 
 export type ApiKey = {
-  readonly id: ApiKeyId
-  readonly nom: string
-  readonly keyHash: string
-  readonly keyPrefix: string
-  readonly scopes: ReadonlyArray<Scope>
-  readonly active: boolean
-  readonly dateCreation: Date
-  readonly dateDerniereUtilisation?: Date
-}
+  readonly id: ApiKeyId;
+  readonly nom: string;
+  readonly keyHash: string;
+  readonly keyPrefix: string;
+  readonly scopes: ReadonlyArray<Scope>;
+  readonly active: boolean;
+  readonly dateCreation: Date;
+  readonly dateDerniereUtilisation?: Date;
+};
 
 export type CreateApiKeyParams = {
-  readonly nom: string
-  readonly scopes: ReadonlyArray<Scope>
-  readonly environment: 'live' | 'test'
-  readonly hasher: ApiKeyHasher
-  readonly tokenGenerator: TokenGenerator
-  readonly clock: Clock
-}
+  readonly nom: string;
+  readonly scopes: ReadonlyArray<Scope>;
+  readonly environment: "live" | "test";
+  readonly hasher: ApiKeyHasher;
+  readonly tokenGenerator: TokenGenerator;
+  readonly clock: Clock;
+};
 
-export type CreateApiKeyError = InvalidApiKeyNameError | ApiKeyScopesRequiredError
+export type CreateApiKeyError =
+  | InvalidApiKeyNameError
+  | ApiKeyScopesRequiredError;
 
 export const createApiKey = (
-  params: CreateApiKeyParams,
+  params: CreateApiKeyParams
 ): Result<{ apiKey: ApiKey; rawToken: string }, CreateApiKeyError> => {
-  if (params.nom.trim() === '') return err(new InvalidApiKeyNameError('nom is empty'))
-  if (params.scopes.length === 0) return err(new ApiKeyScopesRequiredError('at least one scope required'))
+  if (params.nom.trim() === "")
+    return err(new InvalidApiKeyNameError("nom is empty"));
+  if (params.scopes.length === 0)
+    return err(new ApiKeyScopesRequiredError("at least one scope required"));
 
-  const prefix = params.environment === 'live' ? 'pmb_live_' : 'pmb_test_'
-  const rawToken = params.tokenGenerator.generate(prefix)
-  const keyHash = params.hasher.hash(rawToken)
-  const keyPrefix = rawToken.slice(0, 12)
+  const prefix = params.environment === "live" ? "pmb_live_" : "pmb_test_";
+  const rawToken = params.tokenGenerator.generate(prefix);
+  const keyHash = params.hasher.hash(rawToken);
+  const keyPrefix = rawToken.slice(0, 12);
 
   const apiKey: ApiKey = {
     id: generateApiKeyId(),
@@ -1564,17 +1684,20 @@ export const createApiKey = (
     scopes: params.scopes,
     active: true,
     dateCreation: params.clock.now(),
-  }
-  return ok({ apiKey, rawToken })
-}
+  };
+  return ok({ apiKey, rawToken });
+};
 
-export const revokeApiKey = (apiKey: ApiKey): Result<ApiKey, ApiKeyAlreadyRevokedError> => {
-  if (!apiKey.active) return err(new ApiKeyAlreadyRevokedError(`${apiKey.id} already revoked`))
-  return ok({ ...apiKey, active: false })
-}
+export const revokeApiKey = (
+  apiKey: ApiKey
+): Result<ApiKey, ApiKeyAlreadyRevokedError> => {
+  if (!apiKey.active)
+    return err(new ApiKeyAlreadyRevokedError(`${apiKey.id} already revoked`));
+  return ok({ ...apiKey, active: false });
+};
 
 export const apiKeyHasScope = (apiKey: ApiKey, scope: Scope): boolean =>
-  apiKey.scopes.includes(scope)
+  apiKey.scopes.includes(scope);
 ```
 
 - [ ] **Step 3: Tests passent en pur unit (sans container, sans DB, sans mock — `hasher`/`tokenGenerator`/`clock` fournis comme stubs simples)**
@@ -1585,10 +1708,12 @@ export const apiKeyHasScope = (apiKey: ApiKey, scope: Scope): boolean =>
 ### Tâche 37 : Type Utilisateur + factory functions (stubées)
 
 **Files:**
+
 - Create: `src/authentication/model/utilisateur.ts`
 - Create: `src/authentication/model/utilisateur.test.ts`
 
 - [ ] **Step 1: Tests** :
+
   - `createUtilisateurFromProConnect(claims, clock)` retourne un `Utilisateur` avec `statutAcces = 'EN_ATTENTE_ACCES'`, `tokenVersion = 1`, `dateCreation === clock.now()`
   - Test sur invariant minimal (email vide → erreur)
 
@@ -1596,50 +1721,50 @@ export const apiKeyHasScope = (apiKey: ApiKey, scope: Scope): boolean =>
 
 ```ts
 // src/authentication/model/utilisateur.ts
-import { ok, err, type Result } from '@/framework/result'
-import { generateUtilisateurId, type UtilisateurId } from './utilisateur-id'
-import { parseEmail, type Email } from './email'
-import { type StatutAcces } from './statut-acces'
-import { type Clock } from '@/framework/clock/clock'
+import { ok, err, type Result } from "@/framework/result";
+import { generateUtilisateurId, type UtilisateurId } from "./utilisateur-id";
+import { parseEmail, type Email } from "./email";
+import { type StatutAcces } from "./statut-acces";
+import { type Clock } from "@/framework/clock/clock";
 
 export type Utilisateur = {
-  readonly id: UtilisateurId
-  readonly subProconnect: string
-  readonly email: Email
-  readonly nom: string
-  readonly prenom: string
-  readonly statutAcces: StatutAcces
-  readonly roles: ReadonlyArray<string>
-  readonly tokenVersion: number
-  readonly dateCreation: Date
-  readonly dateDerniereConnexion?: Date
-}
+  readonly id: UtilisateurId;
+  readonly subProconnect: string;
+  readonly email: Email;
+  readonly nom: string;
+  readonly prenom: string;
+  readonly statutAcces: StatutAcces;
+  readonly roles: ReadonlyArray<string>;
+  readonly tokenVersion: number;
+  readonly dateCreation: Date;
+  readonly dateDerniereConnexion?: Date;
+};
 
 export type ProConnectClaims = {
-  readonly sub: string
-  readonly email: string
-  readonly given_name: string
-  readonly family_name: string
-}
+  readonly sub: string;
+  readonly email: string;
+  readonly given_name: string;
+  readonly family_name: string;
+};
 
 export const createUtilisateurFromProConnect = (
   claims: ProConnectClaims,
-  clock: Clock,
+  clock: Clock
 ): Result<Utilisateur, Error> => {
-  const emailResult = parseEmail(claims.email)
-  if (emailResult.isErr()) return err(emailResult.error)
+  const emailResult = parseEmail(claims.email);
+  if (emailResult.isErr()) return err(emailResult.error);
   return ok({
     id: generateUtilisateurId(),
     subProconnect: claims.sub,
     email: emailResult.value,
     nom: claims.family_name,
     prenom: claims.given_name,
-    statutAcces: 'EN_ATTENTE_ACCES',
+    statutAcces: "EN_ATTENTE_ACCES",
     roles: [],
     tokenVersion: 1,
     dateCreation: clock.now(),
-  })
-}
+  });
+};
 ```
 
 - [ ] **Step 3: Commit** — `feature: authentication model — type Utilisateur + factory createUtilisateurFromProConnect (scaffolding)`
@@ -1649,6 +1774,7 @@ export const createUtilisateurFromProConnect = (
 ### Tâche 38 : Mappers pures domain ↔ persistence
 
 **Files:**
+
 - Create: `src/authentication/infrastructure/persistence/api-key.mapper.ts`
 - Create: `src/authentication/infrastructure/persistence/utilisateur.mapper.ts`
 
@@ -1663,6 +1789,7 @@ export const createUtilisateurFromProConnect = (
 ### Tâche 39 : Ports (hasher, generator, signer, repositories)
 
 **Files:**
+
 - Create: `src/authentication/ports/api-key-hasher.ts`
 - Create: `src/authentication/ports/token-generator.ts`
 - Create: `src/authentication/ports/token-signer.ts`
@@ -1673,49 +1800,53 @@ export const createUtilisateurFromProConnect = (
 
 ```ts
 // api-key-hasher.ts
-export interface ApiKeyHasher { hash(token: string): string }
+export interface ApiKeyHasher {
+  hash(token: string): string;
+}
 
 // token-generator.ts
 export interface TokenGenerator {
-  generate(prefix: 'pmb_live_' | 'pmb_test_'): string
+  generate(prefix: "pmb_live_" | "pmb_test_"): string;
 }
 
 // token-signer.ts
-import { type ResultAsync } from '@/framework/result'
-import { AppError } from '@/framework/errors/app-error'
+import { type ResultAsync } from "@/framework/result";
+import { AppError } from "@/framework/errors/app-error";
 export class JwtVerificationError extends AppError {
-  readonly code = 'JWT_INVALID'
-  readonly kind = 'unauthenticated' as const
+  readonly code = "JWT_INVALID";
+  readonly kind = "unauthenticated" as const;
 }
 export type JwtPayload = {
-  utilisateurId: string
-  statutAcces: string
-  roles: ReadonlyArray<string>
-  tokenVersion: number
-}
+  utilisateurId: string;
+  statutAcces: string;
+  roles: ReadonlyArray<string>;
+  tokenVersion: number;
+};
 export interface TokenSigner {
-  sign(payload: JwtPayload): string
-  verify(token: string): ResultAsync<JwtPayload, JwtVerificationError>
+  sign(payload: JwtPayload): string;
+  verify(token: string): ResultAsync<JwtPayload, JwtVerificationError>;
 }
 
 // api-key.repository.ts
-import { type ResultAsync } from '@/framework/result'
-import { type RepositoryError } from '@/framework/errors/common-errors'
-import { type ApiKey } from '@/authentication/model/api-key'
-import { type ApiKeyId } from '@/authentication/model/api-key-id'
+import { type ResultAsync } from "@/framework/result";
+import { type RepositoryError } from "@/framework/errors/common-errors";
+import { type ApiKey } from "@/authentication/model/api-key";
+import { type ApiKeyId } from "@/authentication/model/api-key-id";
 export interface ApiKeyRepository {
-  save(apiKey: ApiKey): ResultAsync<void, RepositoryError>
-  findByKeyHash(keyHash: string): ResultAsync<ApiKey | null, RepositoryError>
-  findById(id: ApiKeyId): ResultAsync<ApiKey | null, RepositoryError>
+  save(apiKey: ApiKey): ResultAsync<void, RepositoryError>;
+  findByKeyHash(keyHash: string): ResultAsync<ApiKey | null, RepositoryError>;
+  findById(id: ApiKeyId): ResultAsync<ApiKey | null, RepositoryError>;
 }
 
 // utilisateur.repository.ts
-import { type Utilisateur } from '@/authentication/model/utilisateur'
-import { type UtilisateurId } from '@/authentication/model/utilisateur-id'
+import { type Utilisateur } from "@/authentication/model/utilisateur";
+import { type UtilisateurId } from "@/authentication/model/utilisateur-id";
 export interface UtilisateurRepository {
-  save(utilisateur: Utilisateur): ResultAsync<void, RepositoryError>
-  findById(id: UtilisateurId): ResultAsync<Utilisateur | null, RepositoryError>
-  findBySubProconnect(sub: string): ResultAsync<Utilisateur | null, RepositoryError>
+  save(utilisateur: Utilisateur): ResultAsync<void, RepositoryError>;
+  findById(id: UtilisateurId): ResultAsync<Utilisateur | null, RepositoryError>;
+  findBySubProconnect(
+    sub: string
+  ): ResultAsync<Utilisateur | null, RepositoryError>;
 }
 ```
 
@@ -1728,6 +1859,7 @@ export interface UtilisateurRepository {
 ### Tâche 40 : Sha256ApiKeyHasher
 
 **Files:**
+
 - Create: `src/authentication/infrastructure/crypto/sha256-api-key-hasher.ts`
 - Create: `src/authentication/infrastructure/crypto/sha256-api-key-hasher.test.ts`
 
@@ -1740,6 +1872,7 @@ export interface UtilisateurRepository {
 ### Tâche 41 : CryptoTokenGenerator
 
 **Files:**
+
 - Create: `src/authentication/infrastructure/crypto/crypto-token-generator.ts`
 - Create: `src/authentication/infrastructure/crypto/crypto-token-generator.test.ts`
 
@@ -1752,6 +1885,7 @@ export interface UtilisateurRepository {
 ### Tâche 42 : JsonwebtokenTokenSigner
 
 **Files:**
+
 - Create: `src/authentication/infrastructure/crypto/jsonwebtoken-token-signer.ts`
 - Create: `src/authentication/infrastructure/crypto/jsonwebtoken-token-signer.test.ts`
 
@@ -1764,6 +1898,7 @@ export interface UtilisateurRepository {
 ### Tâche 43 : ApiKeyPrismaRepository
 
 **Files:**
+
 - Create: `src/authentication/infrastructure/persistence/api-key.prisma-repository.ts`
 - Create: `src/authentication/infrastructure/persistence/api-key.prisma-repository.test.ts`
 
@@ -1772,39 +1907,42 @@ export interface UtilisateurRepository {
 
 ```ts
 // src/authentication/infrastructure/persistence/api-key.prisma-repository.ts
-import { ResultAsync } from '@/framework/result'
-import { RepositoryError } from '@/framework/errors/common-errors'
-import { type Inject } from '@/authentication/authentication.module'
-import { type ApiKey } from '@/authentication/model/api-key'
-import { type ApiKeyId } from '@/authentication/model/api-key-id'
-import { type ApiKeyRepository } from '@/authentication/ports/api-key.repository'
-import { apiKeyToPersistence, apiKeyFromPersistence } from './api-key.mapper'
+import { ResultAsync } from "@/framework/result";
+import { RepositoryError } from "@/framework/errors/common-errors";
+import { type Inject } from "@/authentication/authentication.module";
+import { type ApiKey } from "@/authentication/model/api-key";
+import { type ApiKeyId } from "@/authentication/model/api-key-id";
+import { type ApiKeyRepository } from "@/authentication/ports/api-key.repository";
+import { apiKeyToPersistence, apiKeyFromPersistence } from "./api-key.mapper";
 
 export class ApiKeyPrismaRepository implements ApiKeyRepository {
-  constructor(private readonly deps: Inject<'prisma'>) {}
+  constructor(private readonly deps: Inject<"prisma">) {}
 
   save(apiKey: ApiKey): ResultAsync<void, RepositoryError> {
-    const data = apiKeyToPersistence(apiKey)
+    const data = apiKeyToPersistence(apiKey);
     return ResultAsync.fromPromise(
-      this.deps.prisma.getInstance().api_key
-        .upsert({ where: { id: data.id }, create: data, update: data })
+      this.deps.prisma
+        .getInstance()
+        .api_key.upsert({ where: { id: data.id }, create: data, update: data })
         .then(() => undefined),
-      (cause) => new RepositoryError('save api_key failed', { cause }),
-    )
+      (cause) => new RepositoryError("save api_key failed", { cause })
+    );
   }
 
   findByKeyHash(keyHash: string): ResultAsync<ApiKey | null, RepositoryError> {
     return ResultAsync.fromPromise(
-      this.deps.prisma.getInstance().api_key.findUnique({ where: { key_hash: keyHash } }),
-      (cause) => new RepositoryError('findByKeyHash failed', { cause }),
-    ).map((row) => row ? apiKeyFromPersistence(row) : null)
+      this.deps.prisma
+        .getInstance()
+        .api_key.findUnique({ where: { key_hash: keyHash } }),
+      (cause) => new RepositoryError("findByKeyHash failed", { cause })
+    ).map((row) => (row ? apiKeyFromPersistence(row) : null));
   }
 
   findById(id: ApiKeyId): ResultAsync<ApiKey | null, RepositoryError> {
     return ResultAsync.fromPromise(
       this.deps.prisma.getInstance().api_key.findUnique({ where: { id } }),
-      (cause) => new RepositoryError('findById failed', { cause }),
-    ).map((row) => row ? apiKeyFromPersistence(row) : null)
+      (cause) => new RepositoryError("findById failed", { cause })
+    ).map((row) => (row ? apiKeyFromPersistence(row) : null));
   }
 }
 ```
@@ -1816,6 +1954,7 @@ export class ApiKeyPrismaRepository implements ApiKeyRepository {
 ### Tâche 44 : UtilisateurPrismaRepository
 
 **Files:**
+
 - Create: `src/authentication/infrastructure/persistence/utilisateur.prisma-repository.ts`
 - Create: `src/authentication/infrastructure/persistence/utilisateur.prisma-repository.test.ts`
 
@@ -1837,6 +1976,7 @@ export class ApiKeyPrismaRepository implements ApiKeyRepository {
 ### Tâche 46 : Fixtures api-key + utilisateur
 
 **Files:**
+
 - Create: `src/test/fixtures/api-key.fixture.ts`
 - Create: `src/test/fixtures/utilisateur.fixture.ts`
 
@@ -1850,10 +1990,12 @@ export class ApiKeyPrismaRepository implements ApiKeyRepository {
 ### Tâche 47 : VerifyApiKeyHandler (query)
 
 **Files:**
+
 - Create: `src/authentication/queries/verify-api-key/verify-api-key.handler.ts`
 - Create: `src/authentication/queries/verify-api-key/verify-api-key.handler.test.ts`
 
 - [ ] **Step 1: Tests `withTestTransaction`** :
+
   - Token inconnu → `null`
   - Token connu et actif → retourne l'`ApiKey`
   - Token connu mais révoqué → `null`
@@ -1862,18 +2004,21 @@ export class ApiKeyPrismaRepository implements ApiKeyRepository {
 
 ```ts
 // src/authentication/queries/verify-api-key/verify-api-key.handler.ts
-import { type ResultAsync } from '@/framework/result'
-import { type RepositoryError } from '@/framework/errors/common-errors'
-import { type Inject } from '@/authentication/authentication.module'
-import { type ApiKey } from '@/authentication/model/api-key'
+import { type ResultAsync } from "@/framework/result";
+import { type RepositoryError } from "@/framework/errors/common-errors";
+import { type Inject } from "@/authentication/authentication.module";
+import { type ApiKey } from "@/authentication/model/api-key";
 
 export class VerifyApiKeyHandler {
-  constructor(private readonly deps: Inject<'apiKeyHasher' | 'apiKeyRepository'>) {}
+  constructor(
+    private readonly deps: Inject<"apiKeyHasher" | "apiKeyRepository">
+  ) {}
 
-  executer(rawToken: string): ResultAsync<ApiKey | null, RepositoryError> {
-    const keyHash = this.deps.apiKeyHasher.hash(rawToken)
-    return this.deps.apiKeyRepository.findByKeyHash(keyHash)
-      .map((apiKey) => apiKey?.active ? apiKey : null)
+  execute(rawToken: string): ResultAsync<ApiKey | null, RepositoryError> {
+    const keyHash = this.deps.apiKeyHasher.hash(rawToken);
+    return this.deps.apiKeyRepository
+      .findByKeyHash(keyHash)
+      .map((apiKey) => (apiKey?.active ? apiKey : null));
   }
 }
 ```
@@ -1885,10 +2030,12 @@ export class VerifyApiKeyHandler {
 ### Tâche 48 : VerifyJwtHandler (query)
 
 **Files:**
+
 - Create: `src/authentication/queries/verify-jwt/verify-jwt.handler.ts`
 - Create: `src/authentication/queries/verify-jwt/verify-jwt.handler.test.ts`
 
 - [ ] **Step 1: Tests** :
+
   - JWT signé manuellement avec `JWT_SECRET` + utilisateur en DB → retourne l'`Utilisateur`
   - JWT altéré → `JwtVerificationError`
   - JWT valide mais utilisateur supprimé → `null` (ou erreur typée)
@@ -1898,29 +2045,32 @@ export class VerifyApiKeyHandler {
 
 ```ts
 // src/authentication/queries/verify-jwt/verify-jwt.handler.ts
-import { type ResultAsync, errAsync } from '@/framework/result'
-import { type Inject } from '@/authentication/authentication.module'
-import { type Utilisateur } from '@/authentication/model/utilisateur'
-import { utilisateurId } from '@/authentication/model/utilisateur-id'
-import { JwtVerificationError } from '@/authentication/ports/token-signer'
+import { type ResultAsync, errAsync } from "@/framework/result";
+import { type Inject } from "@/authentication/authentication.module";
+import { type Utilisateur } from "@/authentication/model/utilisateur";
+import { utilisateurId } from "@/authentication/model/utilisateur-id";
+import { JwtVerificationError } from "@/authentication/ports/token-signer";
 
-export type VerifyJwtError = JwtVerificationError | RepositoryError
+export type VerifyJwtError = JwtVerificationError | RepositoryError;
 
 export class VerifyJwtHandler {
-  constructor(private readonly deps: Inject<'tokenSigner' | 'utilisateurRepository'>) {}
+  constructor(
+    private readonly deps: Inject<"tokenSigner" | "utilisateurRepository">
+  ) {}
 
-  executer(rawJwt: string): ResultAsync<Utilisateur | null, VerifyJwtError> {
-    return this.deps.tokenSigner.verify(rawJwt)
-      .andThen((payload) => {
-        const idResult = utilisateurId(payload.utilisateurId)
-        if (idResult.isErr()) return errAsync(new JwtVerificationError('invalid utilisateurId'))
-        return this.deps.utilisateurRepository.findById(idResult.value)
-          .map((utilisateur) => {
-            if (!utilisateur) return null
-            if (utilisateur.tokenVersion !== payload.tokenVersion) return null
-            return utilisateur
-          })
-      })
+  execute(rawJwt: string): ResultAsync<Utilisateur | null, VerifyJwtError> {
+    return this.deps.tokenSigner.verify(rawJwt).andThen((payload) => {
+      const idResult = utilisateurId(payload.utilisateurId);
+      if (idResult.isErr())
+        return errAsync(new JwtVerificationError("invalid utilisateurId"));
+      return this.deps.utilisateurRepository
+        .findById(idResult.value)
+        .map((utilisateur) => {
+          if (!utilisateur) return null;
+          if (utilisateur.tokenVersion !== payload.tokenVersion) return null;
+          return utilisateur;
+        });
+    });
   }
 }
 ```
@@ -1932,11 +2082,13 @@ export class VerifyJwtHandler {
 ### Tâche 49 : CreateSessionHandler (command, scaffolding)
 
 **Files:**
+
 - Create: `src/authentication/commands/create-session/create-session.command.ts`
 - Create: `src/authentication/commands/create-session/create-session.handler.ts`
 - Create: `src/authentication/commands/create-session/create-session.handler.test.ts`
 
 - [ ] **Step 1: Tests** :
+
   - `idToken` vide → `MissingIdTokenError`
   - `idToken` non vide → `NotImplementedError` (kind `not-implemented`)
 
@@ -1944,32 +2096,49 @@ export class VerifyJwtHandler {
 
 ```ts
 // src/authentication/commands/create-session/create-session.command.ts
-export type CreateSessionCommand = { readonly idToken: string }
+export type CreateSessionCommand = { readonly idToken: string };
 ```
 
 ```ts
 // src/authentication/commands/create-session/create-session.handler.ts
-import { type ResultAsync, errAsync } from '@/framework/result'
-import { NotImplementedError } from '@/framework/errors/common-errors'
-import { type Inject } from '@/authentication/authentication.module'
-import { MissingIdTokenError } from '@/authentication/model/errors'
-import { type CreateSessionCommand } from './create-session.command'
+import { type ResultAsync, errAsync } from "@/framework/result";
+import { NotImplementedError } from "@/framework/errors/common-errors";
+import { type Inject } from "@/authentication/authentication.module";
+import { MissingIdTokenError } from "@/authentication/model/errors";
+import { type CreateSessionCommand } from "./create-session.command";
 
 export type Session = {
-  readonly jwt: string
-  readonly utilisateur: { id: string; email: string; nomComplet: string; statutAcces: string; roles: ReadonlyArray<string> }
-}
+  readonly jwt: string;
+  readonly utilisateur: {
+    id: string;
+    email: string;
+    nomComplet: string;
+    statutAcces: string;
+    roles: ReadonlyArray<string>;
+  };
+};
 
-export type CreateSessionError = MissingIdTokenError | NotImplementedError
+export type CreateSessionError = MissingIdTokenError | NotImplementedError;
 
 export class CreateSessionHandler {
   constructor(
-    private readonly deps: Inject<'utilisateurRepository' | 'tokenSigner' | 'transaction' | 'logger' | 'clock'>,
+    private readonly deps: Inject<
+      | "utilisateurRepository"
+      | "tokenSigner"
+      | "transaction"
+      | "logger"
+      | "clock"
+    >
   ) {}
 
-  executer(command: CreateSessionCommand): ResultAsync<Session, CreateSessionError> {
-    if (!command.idToken) return errAsync(new MissingIdTokenError('idToken is required'))
-    return errAsync(new NotImplementedError('ProConnect — voir ticket suivant'))
+  execute(
+    command: CreateSessionCommand
+  ): ResultAsync<Session, CreateSessionError> {
+    if (!command.idToken)
+      return errAsync(new MissingIdTokenError("idToken is required"));
+    return errAsync(
+      new NotImplementedError("ProConnect — voir ticket suivant")
+    );
   }
 }
 ```
@@ -1983,6 +2152,7 @@ export class CreateSessionHandler {
 ### Tâche 50 : ApiModels publics (UtilisateurApiModel, ApiKeyApiModel, SessionApiModel)
 
 **Files:**
+
 - Create: `src/authentication/public/utilisateur.api-model.ts`
 - Create: `src/authentication/public/api-key.api-model.ts`
 - Create: `src/authentication/public/session.api-model.ts`
@@ -1991,32 +2161,38 @@ export class CreateSessionHandler {
 
 ```ts
 // src/authentication/public/utilisateur.api-model.ts
-import { z } from '@hono/zod-openapi'
+import { z } from "@hono/zod-openapi";
 
-export const UtilisateurApiModelSchema = z.object({
-  id: z.string().uuid(),
-  email: z.string().email(),
-  nomComplet: z.string(),
-  statutAcces: z.enum(['EN_ATTENTE_ACCES', 'ACTIF', 'REFUSE', 'DESACTIVE']),
-  roles: z.array(z.string()),
-}).openapi('UtilisateurApiModel')
+export const UtilisateurApiModelSchema = z
+  .object({
+    id: z.string().uuid(),
+    email: z.string().email(),
+    nomComplet: z.string(),
+    statutAcces: z.enum(["EN_ATTENTE_ACCES", "ACTIF", "REFUSE", "DESACTIVE"]),
+    roles: z.array(z.string()),
+  })
+  .openapi("UtilisateurApiModel");
 
-export type UtilisateurApiModel = z.infer<typeof UtilisateurApiModelSchema>
+export type UtilisateurApiModel = z.infer<typeof UtilisateurApiModelSchema>;
 
 // src/authentication/public/api-key.api-model.ts
-export const ApiKeyApiModelSchema = z.object({
-  id: z.string().uuid(),
-  nom: z.string(),
-  scopes: z.array(z.string()),
-}).openapi('ApiKeyApiModel')
-export type ApiKeyApiModel = z.infer<typeof ApiKeyApiModelSchema>
+export const ApiKeyApiModelSchema = z
+  .object({
+    id: z.string().uuid(),
+    nom: z.string(),
+    scopes: z.array(z.string()),
+  })
+  .openapi("ApiKeyApiModel");
+export type ApiKeyApiModel = z.infer<typeof ApiKeyApiModelSchema>;
 
 // src/authentication/public/session.api-model.ts
-export const SessionApiModelSchema = z.object({
-  jwt: z.string(),
-  utilisateur: UtilisateurApiModelSchema,
-}).openapi('SessionApiModel')
-export type SessionApiModel = z.infer<typeof SessionApiModelSchema>
+export const SessionApiModelSchema = z
+  .object({
+    jwt: z.string(),
+    utilisateur: UtilisateurApiModelSchema,
+  })
+  .openapi("SessionApiModel");
+export type SessionApiModel = z.infer<typeof SessionApiModelSchema>;
 ```
 
 - [ ] **Step 2: Commit** — `feature: authentication public — ApiModels (utilisateur, api-key, session)`
@@ -2026,6 +2202,7 @@ export type SessionApiModel = z.infer<typeof SessionApiModelSchema>
 ### Tâche 51 : AuthenticationFacade interface + impl
 
 **Files:**
+
 - Create: `src/authentication/public/authentication.facade.ts`
 - Create: `src/authentication/infrastructure/facades/authentication.facade.impl.ts`
 
@@ -2033,15 +2210,17 @@ export type SessionApiModel = z.infer<typeof SessionApiModelSchema>
 
 ```ts
 // src/authentication/public/authentication.facade.ts
-import { type ResultAsync } from '@/framework/result'
-import { type AppError } from '@/framework/errors/app-error'
-import { type ApiKeyApiModel } from './api-key.api-model'
-import { type UtilisateurApiModel } from './utilisateur.api-model'
+import { type ResultAsync } from "@/framework/result";
+import { type AppError } from "@/framework/errors/app-error";
+import { type ApiKeyApiModel } from "./api-key.api-model";
+import { type UtilisateurApiModel } from "./utilisateur.api-model";
 
 export interface AuthenticationFacade {
-  verifyApiKey(rawToken: string): ResultAsync<ApiKeyApiModel | null, AppError>
-  verifyJwt(rawJwt: string): ResultAsync<UtilisateurApiModel | null, AppError>
-  getUtilisateurParId(utilisateurId: string): ResultAsync<UtilisateurApiModel | null, AppError>
+  verifyApiKey(rawToken: string): ResultAsync<ApiKeyApiModel | null, AppError>;
+  verifyJwt(rawJwt: string): ResultAsync<UtilisateurApiModel | null, AppError>;
+  getUtilisateurParId(
+    utilisateurId: string
+  ): ResultAsync<UtilisateurApiModel | null, AppError>;
 }
 ```
 
@@ -2049,36 +2228,43 @@ export interface AuthenticationFacade {
 
 ```ts
 // src/authentication/infrastructure/facades/authentication.facade.impl.ts
-import { type ResultAsync, okAsync, errAsync } from '@/framework/result'
-import { type AppError } from '@/framework/errors/app-error'
-import { type Inject } from '@/authentication/authentication.module'
-import { type AuthenticationFacade } from '@/authentication/public/authentication.facade'
-import { utilisateurId } from '@/authentication/model/utilisateur-id'
-import { apiKeyToApiModel } from './api-key-to-api-model'
-import { utilisateurToApiModel } from './utilisateur-to-api-model'
+import { type ResultAsync, okAsync, errAsync } from "@/framework/result";
+import { type AppError } from "@/framework/errors/app-error";
+import { type Inject } from "@/authentication/authentication.module";
+import { type AuthenticationFacade } from "@/authentication/public/authentication.facade";
+import { utilisateurId } from "@/authentication/model/utilisateur-id";
+import { apiKeyToApiModel } from "./api-key-to-api-model";
+import { utilisateurToApiModel } from "./utilisateur-to-api-model";
 
 export class AuthenticationFacadeImpl implements AuthenticationFacade {
   constructor(
     private readonly deps: Inject<
-      'verifyApiKeyHandler' | 'verifyJwtHandler' | 'utilisateurRepository'
-    >,
+      "verifyApiKeyHandler" | "verifyJwtHandler" | "utilisateurRepository"
+    >
   ) {}
 
   verifyApiKey(rawToken: string) {
-    return this.deps.verifyApiKeyHandler.executer(rawToken)
-      .map((apiKey) => apiKey ? apiKeyToApiModel(apiKey) : null)
+    return this.deps.verifyApiKeyHandler
+      .execute(rawToken)
+      .map((apiKey) => (apiKey ? apiKeyToApiModel(apiKey) : null));
   }
 
   verifyJwt(rawJwt: string) {
-    return this.deps.verifyJwtHandler.executer(rawJwt)
-      .map((utilisateur) => utilisateur ? utilisateurToApiModel(utilisateur) : null)
+    return this.deps.verifyJwtHandler
+      .execuexecuteter(rawJwt)
+      .map((utilisateur) =>
+        utilisateur ? utilisateurToApiModel(utilisateur) : null
+      );
   }
 
   getUtilisateurParId(rawId: string) {
-    const idResult = utilisateurId(rawId)
-    if (idResult.isErr()) return okAsync(null)
-    return this.deps.utilisateurRepository.findById(idResult.value)
-      .map((utilisateur) => utilisateur ? utilisateurToApiModel(utilisateur) : null)
+    const idResult = utilisateurId(rawId);
+    if (idResult.isErr()) return okAsync(null);
+    return this.deps.utilisateurRepository
+      .findById(idResult.value)
+      .map((utilisateur) =>
+        utilisateur ? utilisateurToApiModel(utilisateur) : null
+      );
   }
 }
 ```
@@ -2091,6 +2277,7 @@ export class AuthenticationFacadeImpl implements AuthenticationFacade {
 ### Tâche 52 : authentication.module.ts + branchement
 
 **Files:**
+
 - Create: `src/authentication/authentication.module.ts`
 - Modify: `src/framework/container/build-app-container.ts`
 - Modify: `src/framework/module-system/module-names.ts`
@@ -2099,59 +2286,67 @@ export class AuthenticationFacadeImpl implements AuthenticationFacade {
 
 ```ts
 // src/authentication/authentication.module.ts
-import { defineModule } from '@/framework/module-system/define-module'
-import type { VerifyCradle, ExtractScope } from '@/framework/module-system/types'
-import { Sha256ApiKeyHasher } from './infrastructure/crypto/sha256-api-key-hasher'
-import { CryptoTokenGenerator } from './infrastructure/crypto/crypto-token-generator'
-import { JsonwebtokenTokenSigner } from './infrastructure/crypto/jsonwebtoken-token-signer'
-import { ApiKeyPrismaRepository } from './infrastructure/persistence/api-key.prisma-repository'
-import { UtilisateurPrismaRepository } from './infrastructure/persistence/utilisateur.prisma-repository'
-import { VerifyApiKeyHandler } from './queries/verify-api-key/verify-api-key.handler'
-import { VerifyJwtHandler } from './queries/verify-jwt/verify-jwt.handler'
-import { CreateSessionHandler } from './commands/create-session/create-session.handler'
-import { AuthenticationFacadeImpl } from './infrastructure/facades/authentication.facade.impl'
-import type { ApiKeyHasher } from './ports/api-key-hasher'
-import type { TokenGenerator } from './ports/token-generator'
-import type { TokenSigner } from './ports/token-signer'
-import type { ApiKeyRepository } from './ports/api-key.repository'
-import type { UtilisateurRepository } from './ports/utilisateur.repository'
-import type { AuthenticationFacade } from './public/authentication.facade'
+import { defineModule } from "@/framework/module-system/define-module";
+import type {
+  VerifyCradle,
+  ExtractScope,
+} from "@/framework/module-system/types";
+import { Sha256ApiKeyHasher } from "./infrastructure/crypto/sha256-api-key-hasher";
+import { CryptoTokenGenerator } from "./infrastructure/crypto/crypto-token-generator";
+import { JsonwebtokenTokenSigner } from "./infrastructure/crypto/jsonwebtoken-token-signer";
+import { ApiKeyPrismaRepository } from "./infrastructure/persistence/api-key.prisma-repository";
+import { UtilisateurPrismaRepository } from "./infrastructure/persistence/utilisateur.prisma-repository";
+import { VerifyApiKeyHandler } from "./queries/verify-api-key/verify-api-key.handler";
+import { VerifyJwtHandler } from "./queries/verify-jwt/verify-jwt.handler";
+import { CreateSessionHandler } from "./commands/create-session/create-session.handler";
+import { AuthenticationFacadeImpl } from "./infrastructure/facades/authentication.facade.impl";
+import type { ApiKeyHasher } from "./ports/api-key-hasher";
+import type { TokenGenerator } from "./ports/token-generator";
+import type { TokenSigner } from "./ports/token-signer";
+import type { ApiKeyRepository } from "./ports/api-key.repository";
+import type { UtilisateurRepository } from "./ports/utilisateur.repository";
+import type { AuthenticationFacade } from "./public/authentication.facade";
 
 type AuthenticationCradle = {
-  apiKeyHasher: ApiKeyHasher
-  tokenGenerator: TokenGenerator
-  tokenSigner: TokenSigner
-  apiKeyRepository: ApiKeyRepository
-  utilisateurRepository: UtilisateurRepository
-  verifyApiKeyHandler: VerifyApiKeyHandler
-  verifyJwtHandler: VerifyJwtHandler
-  createSessionHandler: CreateSessionHandler
-  authenticationFacade: AuthenticationFacade
-}
+  apiKeyHasher: ApiKeyHasher;
+  tokenGenerator: TokenGenerator;
+  tokenSigner: TokenSigner;
+  apiKeyRepository: ApiKeyRepository;
+  utilisateurRepository: UtilisateurRepository;
+  verifyApiKeyHandler: VerifyApiKeyHandler;
+  verifyJwtHandler: VerifyJwtHandler;
+  createSessionHandler: CreateSessionHandler;
+  authenticationFacade: AuthenticationFacade;
+};
 
-type AuthenticationExports = { authenticationFacade: AuthenticationFacade }
+type AuthenticationExports = { authenticationFacade: AuthenticationFacade };
 
-export const authenticationModule = defineModule<AuthenticationExports, AuthenticationCradle>()({
-  name: 'authentication',
-  imports: ['framework'],
-  exports: ['authenticationFacade'],
+export const authenticationModule = defineModule<
+  AuthenticationExports,
+  AuthenticationCradle
+>()({
+  name: "authentication",
+  imports: ["framework"],
+  exports: ["authenticationFacade"],
   register: (container, { asModuleClass }) => {
     container.register({
-      apiKeyHasher:          asModuleClass(Sha256ApiKeyHasher).singleton(),
-      tokenGenerator:        asModuleClass(CryptoTokenGenerator).singleton(),
-      tokenSigner:           asModuleClass(JsonwebtokenTokenSigner).singleton(),
-      apiKeyRepository:      asModuleClass(ApiKeyPrismaRepository).singleton(),
-      utilisateurRepository: asModuleClass(UtilisateurPrismaRepository).singleton(),
-      verifyApiKeyHandler:   asModuleClass(VerifyApiKeyHandler).singleton(),
-      verifyJwtHandler:      asModuleClass(VerifyJwtHandler).singleton(),
-      createSessionHandler:  asModuleClass(CreateSessionHandler).singleton(),
-      authenticationFacade:  asModuleClass(AuthenticationFacadeImpl).singleton(),
-    } satisfies VerifyCradle<AuthenticationCradle>)
+      apiKeyHasher: asModuleClass(Sha256ApiKeyHasher).singleton(),
+      tokenGenerator: asModuleClass(CryptoTokenGenerator).singleton(),
+      tokenSigner: asModuleClass(JsonwebtokenTokenSigner).singleton(),
+      apiKeyRepository: asModuleClass(ApiKeyPrismaRepository).singleton(),
+      utilisateurRepository: asModuleClass(
+        UtilisateurPrismaRepository
+      ).singleton(),
+      verifyApiKeyHandler: asModuleClass(VerifyApiKeyHandler).singleton(),
+      verifyJwtHandler: asModuleClass(VerifyJwtHandler).singleton(),
+      createSessionHandler: asModuleClass(CreateSessionHandler).singleton(),
+      authenticationFacade: asModuleClass(AuthenticationFacadeImpl).singleton(),
+    } satisfies VerifyCradle<AuthenticationCradle>);
   },
-})
+});
 
-type Scope = ExtractScope<typeof authenticationModule>
-export type Inject<K extends keyof Scope> = Pick<Scope, K>
+type Scope = ExtractScope<typeof authenticationModule>;
+export type Inject<K extends keyof Scope> = Pick<Scope, K>;
 ```
 
 - [ ] **Step 2: Brancher dans `build-app-container.ts`** + ajouter `'authentication'` aux `module-names.ts`
@@ -2178,12 +2373,16 @@ export type Inject<K extends keyof Scope> = Pick<Scope, K>
 - [ ] **Step 1: Ajouter `authMiddleware` après `authContextMiddleware`**
 
 ```ts
-app.use('*', authMiddleware({
-  authenticationFacade: container.resolve('authenticationFacade'),
-}))
+app.use(
+  "*",
+  authMiddleware({
+    authenticationFacade: container.resolve("authenticationFacade"),
+  })
+);
 ```
 
 - [ ] **Step 2: Tests E2E** :
+
   - `GET /health` sans Bearer → 200 (route publique)
   - `POST /auth/sessions` sans Bearer → 401
   - `POST /auth/sessions` avec API key valide → 501
@@ -2202,34 +2401,36 @@ app.use('*', authMiddleware({
 
 ```ts
 // src/authentication/infrastructure/scripts/create-api-key.ts
-import { buildAppContainer } from '@/framework/container/build-app-container'
-import { createApiKey } from '@/authentication/model/api-key'
-import { scope as parseScope } from '@/authentication/model/scope'
-import type { ApiKeyHasher } from '@/authentication/ports/api-key-hasher'
-import type { TokenGenerator } from '@/authentication/ports/token-generator'
-import type { ApiKeyRepository } from '@/authentication/ports/api-key.repository'
-import type { Clock } from '@/framework/clock/clock'
+import { buildAppContainer } from "@/framework/container/build-app-container";
+import { createApiKey } from "@/authentication/model/api-key";
+import { scope as parseScope } from "@/authentication/model/scope";
+import type { ApiKeyHasher } from "@/authentication/ports/api-key-hasher";
+import type { TokenGenerator } from "@/authentication/ports/token-generator";
+import type { ApiKeyRepository } from "@/authentication/ports/api-key.repository";
+import type { Clock } from "@/framework/clock/clock";
 
 async function main() {
-  const args = parseArgs(process.argv.slice(2))
-  const { getContainer } = buildAppContainer()
+  const args = parseArgs(process.argv.slice(2));
+  const { getContainer } = buildAppContainer();
 
-  const authContainer = getContainer('authentication')
-  const frameworkContainer = getContainer('framework')
+  const authContainer = getContainer("authentication");
+  const frameworkContainer = getContainer("framework");
 
-  const hasher = authContainer.resolve<ApiKeyHasher>('apiKeyHasher')
-  const tokenGenerator = authContainer.resolve<TokenGenerator>('tokenGenerator')
-  const repository = authContainer.resolve<ApiKeyRepository>('apiKeyRepository')
-  const clock = frameworkContainer.resolve<Clock>('clock')
+  const hasher = authContainer.resolve<ApiKeyHasher>("apiKeyHasher");
+  const tokenGenerator =
+    authContainer.resolve<TokenGenerator>("tokenGenerator");
+  const repository =
+    authContainer.resolve<ApiKeyRepository>("apiKeyRepository");
+  const clock = frameworkContainer.resolve<Clock>("clock");
 
-  const scopes = args.scopes.split(',').map((raw) => {
-    const result = parseScope(raw.trim())
+  const scopes = args.scopes.split(",").map((raw) => {
+    const result = parseScope(raw.trim());
     if (result.isErr()) {
-      console.error(`Invalid scope: ${raw}`)
-      process.exit(1)
+      console.error(`Invalid scope: ${raw}`);
+      process.exit(1);
     }
-    return result.value
-  })
+    return result.value;
+  });
 
   const result = createApiKey({
     nom: args.nom,
@@ -2238,32 +2439,36 @@ async function main() {
     hasher,
     tokenGenerator,
     clock,
-  })
+  });
   if (result.isErr()) {
-    console.error(`Failed to create API key: ${result.error.message}`)
-    process.exit(1)
+    console.error(`Failed to create API key: ${result.error.message}`);
+    process.exit(1);
   }
 
-  const saveResult = await repository.save(result.value.apiKey)
+  const saveResult = await repository.save(result.value.apiKey);
   if (saveResult.isErr()) {
-    console.error(`Failed to persist API key: ${saveResult.error.message}`)
-    process.exit(1)
+    console.error(`Failed to persist API key: ${saveResult.error.message}`);
+    process.exit(1);
   }
 
-  console.log('--- API KEY CREATED — SAVE THIS, IT WILL NOT BE SHOWN AGAIN ---')
-  console.log(`Token: ${result.value.rawToken}`)
-  console.log(`Id:    ${result.value.apiKey.id}`)
-  console.log(`Nom:   ${result.value.apiKey.nom}`)
-  console.log(`Env:   ${args.env}`)
-  console.log(`Scopes: ${scopes.join(', ')}`)
+  console.log(
+    "--- API KEY CREATED — SAVE THIS, IT WILL NOT BE SHOWN AGAIN ---"
+  );
+  console.log(`Token: ${result.value.rawToken}`);
+  console.log(`Id:    ${result.value.apiKey.id}`);
+  console.log(`Nom:   ${result.value.apiKey.nom}`);
+  console.log(`Env:   ${args.env}`);
+  console.log(`Scopes: ${scopes.join(", ")}`);
 }
 
-function parseArgs(argv: ReadonlyArray<string>) { /* parse --nom --env --scopes */ }
+function parseArgs(argv: ReadonlyArray<string>) {
+  /* parse --nom --env --scopes */
+}
 
 main().catch((error) => {
-  console.error(error)
-  process.exit(1)
-})
+  console.error(error);
+  process.exit(1);
+});
 ```
 
 - [ ] **Step 2: Test manuel** — `pnpm -F @pilote-mb/core create-api-key --nom test --env test --scopes entities:read`
@@ -2290,24 +2495,24 @@ main().catch((error) => {
 
 ```ts
 // src/index.ts
-import { serve } from '@hono/node-server'
-import { config } from '@/config'
-import { buildAppContainer } from '@/framework/container/build-app-container'
-import { buildApp } from '@/framework/http/app'
-import { registerHealthRoute } from '@/healthcheck/infrastructure/http/routes/health.route'
-import { registerCreateSessionRoute } from '@/authentication/infrastructure/http/routes/create-session.route'
+import { serve } from "@hono/node-server";
+import { config } from "@/config";
+import { buildAppContainer } from "@/framework/container/build-app-container";
+import { buildApp } from "@/framework/http/app";
+import { registerHealthRoute } from "@/healthcheck/infrastructure/http/routes/health.route";
+import { registerCreateSessionRoute } from "@/authentication/infrastructure/http/routes/create-session.route";
 
-const { getContainer } = buildAppContainer()
-const frameworkContainer = getContainer('framework')
+const { getContainer } = buildAppContainer();
+const frameworkContainer = getContainer("framework");
 
-const app = buildApp(frameworkContainer)
-registerHealthRoute(app, getContainer('healthcheck'))
-registerCreateSessionRoute(app, getContainer('authentication'))
+const app = buildApp(frameworkContainer);
+registerHealthRoute(app, getContainer("healthcheck"));
+registerCreateSessionRoute(app, getContainer("authentication"));
 
 serve({ fetch: app.fetch, port: config.PORT }, (info) => {
   // eslint-disable-next-line no-console
-  console.log(`pilote-mb-core listening on :${info.port}`)
-})
+  console.log(`pilote-mb-core listening on :${info.port}`);
+});
 ```
 
 - [ ] **Step 2: Commit** — `feature: bootstrap — index.ts entrypoint serveur`
