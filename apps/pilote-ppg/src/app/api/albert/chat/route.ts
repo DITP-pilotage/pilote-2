@@ -12,7 +12,6 @@ import {
 } from "@/server/albert/detecteurIntention";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { getContainer } from "@/server/dependances";
-import { configuration } from "@/config";
 import { createCreateDashboardTool } from "@/server/albert/tools/createDashboard";
 
 const chatRequestSchema = z
@@ -102,7 +101,11 @@ export async function POST(request: Request) {
       tools,
     });
 
-    const persistanceActive = configuration().featureFlip.historiqueAlbert;
+    const variables = await getContainer("legacy")
+      .resolve("recupererToutesLesVariablesContenuUseCase")
+      .run();
+    const persistanceActive =
+      variables.NEXT_PUBLIC_FF_HISTORIQUE_ALBERT === true;
 
     if (!persistanceActive) {
       return result.toUIMessageStreamResponse();
