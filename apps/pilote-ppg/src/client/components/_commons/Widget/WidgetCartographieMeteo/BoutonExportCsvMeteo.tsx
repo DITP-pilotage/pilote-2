@@ -1,6 +1,5 @@
 import { BoutonExportCsv } from "@/components/_commons/Widget/BoutonExportCsv";
 import { getLabelTerritoire } from "@/client/constants/territoires";
-import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { useExportCsv } from "@/client/hooks/useExportCsv";
 import { filtrerLesTerritoires } from "@/client/utils/csv";
 import { libellesMeteos } from "@/server/domain/météo/Météo.interface";
@@ -29,17 +28,12 @@ export const BoutonExportCsvMeteo = ({
       });
 
       return [
-        ["Territoire", "Niveau de confiance", "Date de publication"],
+        ["Territoire", "Niveau de confiance"],
         ...filtrerLesTerritoires(donnees, territoiresPourExport).map(
           (territoire) => [
             getLabelTerritoire(territoire.territoireCode),
             territoire.meteo !== null
               ? (libellesMeteos[territoire.meteo] ?? "Non renseignée")
-              : "Non renseignée",
-            territoire.dateDeMajQualitative !== null
-              ? PiloteDateFormatter.isoDateFranceMetropolitaine(
-                  territoire.dateDeMajQualitative,
-                )
               : "Non renseignée",
           ],
         ),
