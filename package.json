@@ -8,9 +8,9 @@
   "scripts": {
     "dev:ppg": "pnpm -F @pilote/ppg dev",
     "dev:mb": "pnpm -F @pilote/mb-api dev",
-    "build": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} build",
+    "build": "bash scripts/generate-slugignore.sh && pnpm -F ${APP_PACKAGE:-@pilote/ppg} build && bash scripts/post-build.sh",
     "build:dev": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} build:dev",
-    "start": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} start",
+    "start": "bash scripts/start.sh",
     "lint": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} lint",
     "lint:fix": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} lint:fix",
     "format": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} format",

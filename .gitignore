@@ -35,6 +35,7 @@ qodana.yaml
 
 # build artifacts
 .next
+/mb-api-deploy
 
 # uploads
 /uploads
