@@ -1,32 +1,25 @@
 import { z } from "zod";
+import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 
-export class NonAutorisé extends Error {
-  private readonly _tag = "NonAutorisé";
-
-  static isNonAutorisé(error: unknown): error is NonAutorisé {
-    return (error as NonAutorisé)._tag === "NonAutorisé";
-  }
-}
-
-export class TerritoireNonAutoriséErreur extends NonAutorisé {
+export class TerritoireNonAutoriséErreur extends ForbiddenError {
   constructor() {
     super("Territoire non autorisé");
   }
 }
 
-export class ChantierNonAutoriséErreur extends NonAutorisé {
+export class ChantierNonAutoriséErreur extends ForbiddenError {
   constructor() {
     super("Chantier non autorisé");
   }
 }
 
-export class MailleNonAutoriséeErreur extends NonAutorisé {
+export class MailleNonAutoriséeErreur extends ForbiddenError {
   constructor() {
     super("Maille non autorisée");
   }
 }
 
-export class ChantiersNonAutorisésCreationModificationUtilisateurErreur extends NonAutorisé {
+export class ChantiersNonAutorisésCreationModificationUtilisateurErreur extends ForbiddenError {
   constructor() {
     super(
       "Au moins un des chantiers n'est pas autorisé pour la création ou modification de l'utilisateur",
@@ -34,7 +27,7 @@ export class ChantiersNonAutorisésCreationModificationUtilisateurErreur extends
   }
 }
 
-export class TerritoiresNonAutorisésCreationModificationUtilisateurErreur extends NonAutorisé {
+export class TerritoiresNonAutorisésCreationModificationUtilisateurErreur extends ForbiddenError {
   constructor() {
     super(
       "Au moins un des territoires n'est pas autorisé pour la création ou modification de l'utilisateur",
@@ -42,7 +35,7 @@ export class TerritoiresNonAutorisésCreationModificationUtilisateurErreur exten
   }
 }
 
-export class ChantiersNonAutorisésSuppressionUtilisateurErreur extends NonAutorisé {
+export class ChantiersNonAutorisésSuppressionUtilisateurErreur extends ForbiddenError {
   constructor() {
     super(
       "Au moins un des chantiers n'est pas autorisé pour la supression de l'utilisateur",
@@ -50,7 +43,7 @@ export class ChantiersNonAutorisésSuppressionUtilisateurErreur extends NonAutor
   }
 }
 
-export class TerritoiresNonAutorisésSuppressionUtilisateurErreur extends NonAutorisé {
+export class TerritoiresNonAutorisésSuppressionUtilisateurErreur extends ForbiddenError {
   constructor() {
     super(
       "Au moins un des territoires n'est pas autorisé pour la suppression de l'utilisateur",
@@ -58,7 +51,7 @@ export class TerritoiresNonAutorisésSuppressionUtilisateurErreur extends NonAut
   }
 }
 
-export class ProfilNonAutorisésSuppressionUtilisateurErreur extends NonAutorisé {
+export class ProfilNonAutorisésSuppressionUtilisateurErreur extends ForbiddenError {
   constructor() {
     super("Le profil n'est pas autorisé pour la suppression de l'utilisateur");
   }

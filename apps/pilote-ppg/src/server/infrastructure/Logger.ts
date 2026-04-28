@@ -120,6 +120,12 @@ class AppLogger implements StructuredLogger {
   constructor() {
     this._logger = pino({
       level: "info",
+      ...(process.env.NODE_ENV !== "production" && {
+        transport: {
+          target: "pino-pretty",
+          options: { colorize: true, translateTime: "SYS:HH:MM:ss.l" },
+        },
+      }),
       hooks: {
         logMethod(inputArgs: Parameters<LogFn>, method: LogFn, level: number) {
           const [first, second] = inputArgs;
