@@ -7,7 +7,6 @@ apps/mb-api
 apps/pilote-ppg
 apps/pilote-ppg-auth
 apps/pilote-ppg-data-management
-cron.json
 mb-api-deploy
 node_modules
 public

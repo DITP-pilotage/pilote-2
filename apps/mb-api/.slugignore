@@ -4,7 +4,6 @@
 .gitignore
 .gitmodules
 apps
-cron.json
 node_modules
 pnpm-lock.yaml
 pnpm-workspace.yaml
