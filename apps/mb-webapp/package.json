@@ -21,8 +21,12 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@pilote/mb-shared": "workspace:*",
+    "@tanstack/react-query": "^5.62.7",
+    "ky": "^1.7.5",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react-dom": "^19.2.5",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
