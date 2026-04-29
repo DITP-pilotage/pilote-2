@@ -18,6 +18,7 @@
       "@/framework/*": ["src/framework/*"],
       "@/authentication/*": ["src/authentication/*"],
       "@/healthcheck/*": ["src/healthcheck/*"],
+      "@/generated/*": ["src/generated/*"],
       "@/test/*": ["src/test/*"],
       "@/config": ["src/config"]
     }

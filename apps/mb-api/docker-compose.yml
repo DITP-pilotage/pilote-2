@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:17.9-alpine
+    container_name: pilote_mb_postgres
+    ports:
+      - "${POSTGRES_PORT:-5434}:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db_pilote_mb:/var/lib/postgresql/data
+
+  postgres_test:
+    image: postgres:17.9-alpine
+    container_name: pilote_mb_postgres_test
+    ports:
+      - "${POSTGRES_TEST_PORT:-5435}:5432"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    command: postgres -c max_connections=500 -c shared_buffers=256MB
+
+volumes:
+  db_pilote_mb:
+    driver: local

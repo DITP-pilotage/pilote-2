@@ -12,25 +12,38 @@
   },
   "scripts": {
     "dev": "portless run tsx watch src/index.ts",
-    "build": "tsc",
+    "build": "prisma generate && tsc",
     "start": "node dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint src && tsc --noEmit",
     "lint:fix": "eslint src --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "prisma:generate": "prisma generate",
+    "database:init": "prisma migrate reset --force",
+    "database:migration": "prisma migrate dev"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",
-    "hono": "^4.6.14"
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "7.8.0",
+    "dotenv": "16.4.5",
+    "hono": "^4.6.14",
+    "neverthrow": "^8.2.0",
+    "pg": "^8.20.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
     "@types/node": "^22.12.0",
+    "@types/pg": "^8.20.0",
     "eslint": "^9.39.0",
-    "prettier": "^3.6.2",
     "portless": "^0.11.1",
+    "prettier": "^3.6.2",
+    "prisma": "7.8.0",
     "tsx": "^4.19.3",
     "typescript": "5.9.3",
     "typescript-eslint": "^8.53.0",
