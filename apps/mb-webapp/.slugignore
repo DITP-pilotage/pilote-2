@@ -1,0 +1,15 @@
+.cache
+.editorconfig
+.github
+.gitignore
+.gitmodules
+apps/mb-api
+apps/pilote-ppg
+apps/pilote-ppg-auth
+apps/pilote-ppg-data-management
+mb-api-deploy
+node_modules
+public
+README.md
+scripts
+uploads
