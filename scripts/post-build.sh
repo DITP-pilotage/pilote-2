@@ -11,6 +11,11 @@ case "$APP_PACKAGE" in
     pnpm deploy --filter @pilote/mb-api --prod --legacy mb-api-deploy
     echo "mb-api-deploy/ produced"
     ;;
+  "@pilote/mb-webapp")
+    cd "$ROOT_DIR"
+    cp apps/mb-webapp/nginx.conf nginx.conf
+    echo "nginx.conf copied to slug root for Scalingo nginx-buildpack"
+    ;;
   *)
     ;;
 esac

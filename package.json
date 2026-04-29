@@ -8,6 +8,7 @@
   "scripts": {
     "dev:ppg": "pnpm -F @pilote/ppg dev",
     "dev:mb": "pnpm -F @pilote/mb-api dev",
+    "dev:mb-webapp": "pnpm -F @pilote/mb-webapp dev",
     "build": "bash scripts/generate-slugignore.sh && pnpm -F ${APP_PACKAGE:-@pilote/ppg} build && bash scripts/post-build.sh",
     "build:dev": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} build:dev",
     "start": "bash scripts/start.sh",

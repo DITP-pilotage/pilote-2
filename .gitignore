@@ -36,6 +36,7 @@ qodana.yaml
 # build artifacts
 .next
 /mb-api-deploy
+/nginx.conf
 
 # uploads
 /uploads

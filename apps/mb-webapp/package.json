@@ -1,0 +1,47 @@
+{
+  "name": "@pilote/mb-webapp",
+  "portless": "mb-webapp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.9.0"
+  },
+  "scripts": {
+    "dev": "portless run vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "lint": "eslint src && tsc --noEmit",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@tailwindcss/vite": "^4.2.4",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^22.12.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^9.39.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "jsdom": "^29.1.0",
+    "portless": "^0.11.1",
+    "prettier": "^3.6.2",
+    "tailwindcss": "^4.2.4",
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.53.0",
+    "vite": "^8.0.10",
+    "vitest": "^4.1.5"
+  }
+}
