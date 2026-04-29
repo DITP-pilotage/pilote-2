@@ -3,7 +3,7 @@ import 'dotenv/config'
 import { swaggerUI } from '@hono/swagger-ui'
 import { OpenAPIHono } from '@hono/zod-openapi'
 
-import { health } from '@/healthcheck/routes/health.js'
+import { health } from '@/healthcheck/routes/health'
 
 export const app = new OpenAPIHono()
 

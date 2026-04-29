@@ -1,6 +1,6 @@
 import { ResultAsync } from 'neverthrow'
 
-import { prisma } from '@/framework/persistence/prisma.js'
+import { prisma } from '@/framework/persistence/prisma'
 
 export type HealthStatus = { status: 'ok'; database: 'ok' }
 export type HealthError = { status: 'error'; database: 'error'; cause: unknown }

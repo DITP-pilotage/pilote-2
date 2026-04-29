@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2023",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "lib": ["ES2023"],
     "strict": true,
     "noUncheckedIndexedAccess": true,
@@ -11,18 +11,16 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "dist",
-    "rootDir": "src",
-    "baseUrl": ".",
+    "noEmit": true,
     "paths": {
-      "@/framework/*": ["src/framework/*"],
-      "@/authentication/*": ["src/authentication/*"],
-      "@/healthcheck/*": ["src/healthcheck/*"],
-      "@/generated/*": ["src/generated/*"],
-      "@/test/*": ["src/test/*"],
-      "@/config": ["src/config"]
+      "@/framework/*": ["./src/framework/*"],
+      "@/authentication/*": ["./src/authentication/*"],
+      "@/healthcheck/*": ["./src/healthcheck/*"],
+      "@/generated/*": ["./src/generated/*"],
+      "@/test/*": ["./src/test/*"],
+      "@/config": ["./src/config"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "vite.config.ts", "vitest.config.ts", "prisma.config.ts", "eslint.config.mjs"],
   "exclude": ["dist", "node_modules"]
 }

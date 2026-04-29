@@ -1,7 +1,7 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 
-import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse.js'
-import { getHealth } from '@/healthcheck/queries/getHealth.js'
+import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { getHealth } from '@/healthcheck/queries/getHealth'
 
 const HealthOkSchema = z
   .object({

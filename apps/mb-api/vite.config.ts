@@ -2,9 +2,7 @@ import devServer from '@hono/vite-dev-server'
 import { defineConfig } from 'vite'
 
 export default defineConfig({
-  resolve: {
-    tsconfigPaths: true,
-  },
+  resolve: { tsconfigPaths: true },
   build: {
     target: 'node24',
     ssr: 'src/index.ts',
