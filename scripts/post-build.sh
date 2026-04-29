@@ -13,8 +13,10 @@ case "$APP_PACKAGE" in
     ;;
   "@pilote/mb-webapp")
     cd "$ROOT_DIR"
+    rm -rf mb-webapp-deploy
+    pnpm deploy --filter @pilote/mb-webapp --prod --legacy mb-webapp-deploy
     cp apps/mb-webapp/nginx.conf nginx.conf
-    echo "nginx.conf copied to slug root for Scalingo nginx-buildpack"
+    echo "mb-webapp-deploy/ produced, nginx.conf copied to slug root"
     ;;
   *)
     ;;
