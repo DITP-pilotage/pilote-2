@@ -1,5 +1,6 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 
+import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse.js'
 import { getHealth } from '@/healthcheck/queries/getHealth.js'
 
 const HealthOkSchema = z
@@ -37,7 +38,7 @@ export const health = new OpenAPIHono()
 
 health.openapi(healthRoute, async (context) => {
   return getHealth().match(
-    (ok) => context.json(ok, 200),
-    (error) => context.json({ status: error.status, database: error.database }, 503),
+    (data) => jsonResponseOk({ context, data, schema: HealthOkSchema, status: 200 }),
+    (error) => jsonResponseError({ context, error, schema: HealthErrorSchema, status: 503 }),
   )
 })
