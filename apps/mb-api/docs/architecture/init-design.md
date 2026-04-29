@@ -189,67 +189,60 @@ apps/mb-api/
 │   │   └── framework.module.ts                 # cradle : prisma, transaction, logger, clock, …
 │   │
 │   ├── authentication/                         # module métier
-│   │   ├── model/                              # functional core : types + factory functions pures
-│   │   │   ├── api-key.ts                      # type ApiKey + createApiKey() + revokeApiKey()
-│   │   │   ├── api-key.test.ts                 # unit
-│   │   │   ├── api-key-id.ts                   # branded type ApiKeyId
+│   │   ├── model/                              # functional core : types, factories pures, ports (interfaces)
+│   │   │   ├── apiKey.ts                       # type ApiKey + createApiKey() + revokeApiKey()
+│   │   │   ├── apiKey.test.ts                  # unit
+│   │   │   ├── apiKeyId.ts                     # branded type ApiKeyId
 │   │   │   ├── scope.ts                        # branded type Scope ("resource:action")
 │   │   │   ├── utilisateur.ts                  # type Utilisateur + factory + transitions
-│   │   │   ├── utilisateur-id.ts
+│   │   │   ├── utilisateurId.ts
 │   │   │   ├── email.ts                        # branded type Email + parseEmail()
-│   │   │   └── statut-acces.ts                 # enum / union de littéraux
-│   │   ├── ports/                              # interfaces consommées par les use cases
-│   │   │   ├── api-key-hasher.ts
-│   │   │   ├── token-generator.ts
-│   │   │   ├── token-signer.ts
-│   │   │   ├── api-key.repository.ts
-│   │   │   └── utilisateur.repository.ts
+│   │   │   ├── statutAcces.ts                  # enum / union de littéraux
+│   │   │   ├── apiKeyHasher.ts                 # port (interface)
+│   │   │   ├── tokenGenerator.ts               # port
+│   │   │   ├── tokenSigner.ts                  # port
+│   │   │   ├── apiKeyRepository.ts             # port
+│   │   │   └── utilisateurRepository.ts        # port
 │   │   ├── commands/                           # use cases d'écriture (imperative shell)
-│   │   │   ├── create-session/
-│   │   │   │   ├── create-session.command.ts
-│   │   │   │   ├── create-session.handler.ts   # ResultAsync, scaffolding
-│   │   │   │   └── create-session.handler.test.ts
-│   │   │   └── revoke-api-key/                 # ticket suivant — exemple de structure
+│   │   │   ├── createSession/
+│   │   │   │   ├── createSession.ts            # ResultAsync, scaffolding
+│   │   │   │   └── createSession.test.ts
+│   │   │   └── revokeApiKey/                   # ticket suivant — exemple de structure
 │   │   ├── queries/                            # use cases lecture
-│   │   │   ├── verify-api-key/
-│   │   │   │   ├── verify-api-key.handler.ts
-│   │   │   │   └── verify-api-key.handler.test.ts
-│   │   │   └── verify-jwt/
-│   │   │       ├── verify-jwt.handler.ts
-│   │   │       └── verify-jwt.handler.test.ts
-│   │   ├── infrastructure/
+│   │   │   ├── verifyApiKey/
+│   │   │   │   ├── verifyApiKey.ts
+│   │   │   │   └── verifyApiKey.test.ts
+│   │   │   └── verifyJwt/
+│   │   │       ├── verifyJwt.ts
+│   │   │       └── verifyJwt.test.ts
+│   │   ├── routes/                             # routes Hono (un fichier = une route)
+│   │   │   └── createSession.ts
+│   │   ├── infrastructure/                     # adapters concrets non-HTTP
 │   │   │   ├── persistence/
-│   │   │   │   ├── api-key.mapper.ts
-│   │   │   │   ├── api-key.prisma-repository.ts
-│   │   │   │   ├── utilisateur.mapper.ts
-│   │   │   │   └── utilisateur.prisma-repository.ts
+│   │   │   │   ├── apiKeyMapper.ts
+│   │   │   │   ├── apiKeyPrismaRepository.ts
+│   │   │   │   ├── utilisateurMapper.ts
+│   │   │   │   └── utilisateurPrismaRepository.ts
 │   │   │   ├── crypto/
-│   │   │   │   ├── sha256-api-key-hasher.ts
-│   │   │   │   ├── crypto-token-generator.ts
-│   │   │   │   └── jsonwebtoken-token-signer.ts
-│   │   │   ├── http/
-│   │   │   │   ├── api-models/
-│   │   │   │   │   ├── utilisateur.api-model.ts
-│   │   │   │   │   ├── api-key.api-model.ts
-│   │   │   │   │   └── session.api-model.ts
-│   │   │   │   └── routes/
-│   │   │   │       └── create-session.route.ts
+│   │   │   │   ├── sha256ApiKeyHasher.ts
+│   │   │   │   ├── cryptoTokenGenerator.ts
+│   │   │   │   └── jsonwebtokenTokenSigner.ts
 │   │   │   ├── proconnect/
-│   │   │   │   └── proconnect-client.ts        # scaffolding (ticket suivant)
+│   │   │   │   └── proconnectClient.ts         # scaffolding (ticket suivant)
 │   │   │   └── scripts/
-│   │   │       └── create-api-key.ts           # CLI
+│   │   │       └── createApiKey.ts             # CLI
 │   │   ├── public/                             # exports cross-module
-│   │   │   ├── authentication.facade.ts        # interface des opérations exposées
-│   │   │   ├── api-key.api-model.ts            # types ApiModel partagés (fonts/back)
-│   │   │   └── utilisateur.api-model.ts
+│   │   │   ├── authenticationFacade.ts         # interface des opérations exposées
+│   │   │   ├── apiKeyApiModel.ts               # types ApiModel partagés (front/back)
+│   │   │   └── utilisateurApiModel.ts
 │   │   └── authentication.module.ts            # cradle + exports
 │   │
 │   ├── healthcheck/                            # module minimal
-│   │   ├── queries/check-health/
-│   │   │   ├── check-health.handler.ts
-│   │   │   └── check-health.handler.test.ts
-│   │   ├── infrastructure/http/routes/
-│   │   │   └── health.route.ts
+│   │   ├── queries/
+│   │   │   ├── getHealth.ts
+│   │   │   └── getHealth.test.ts
+│   │   ├── routes/
+│   │   │   └── health.ts
 │   │   └── healthcheck.module.ts
 │   │
 │   ├── test/                                   # helpers transverses (pas un module)
@@ -284,13 +277,15 @@ apps/mb-api/
 
 Tests co-localisés : `foo.ts` + `foo.test.ts` côte-à-côte.
 
+**Convention de nommage :** un fichier exporte une chose, et **le nom du fichier = le nom de la chose exportée** (ex: `getHealth.ts` exporte `getHealth`, `health.ts` exporte `health`). Pas de suffixe redondant avec le dossier (`routes/health.ts`, pas `routes/health.route.ts`).
+
 **Points clés :**
 - **Un dossier racine par module** — `framework/`, `authentication/`, `healthcheck/`
 - **`framework/`** : tuyauterie technique, importable de partout, sans dépendance vers les modules métier
-- **`model/`** : functional core d'un module — types et fonctions pures uniquement, **aucun I/O**
-- **`ports/`** : interfaces consommées par les use cases (repos, adapters externes)
+- **`model/`** : functional core d'un module — types, factories pures, **et ports (interfaces)** consommés par les use cases. **Aucun I/O.**
 - **`commands/`** + **`queries/`** : imperative shell — use cases qui orchestrent I/O
-- **`infrastructure/`** : adapters concrets (Prisma, crypto, HTTP, scripts)
+- **`routes/`** : routes HTTP (Hono) du module, à la racine du module (pas sous `infrastructure/`)
+- **`infrastructure/`** : adapters concrets non-HTTP (Prisma, crypto, scripts CLI, clients externes)
 - **`public/`** : la **seule** porte d'entrée pour les autres modules — facade + ApiModels partagés
 
 ### 5.5 Règles de dépendances
@@ -305,10 +300,10 @@ Tests co-localisés : `foo.ts` + `foo.test.ts` côte-à-côte.
 Concrètement à l'init, **rien ne traverse les frontières de modules** sauf le module HTTP qui assemble tout. Mais la règle est figée pour les tickets suivants.
 
 **Imports interdits par dependency-cruiser :**
-- `@/<moduleA>/{model,commands,queries,infrastructure,ports}` depuis `<moduleB>` (sauf `framework` qui est libre)
+- `@/<moduleA>/{model,commands,queries,routes,infrastructure}` depuis `<moduleB>` (sauf `framework` qui est libre)
 - Import d'un fichier `<module>.module.ts` depuis un autre module (seul `framework/container/build-app-container.ts` y a droit)
 - Import d'un module métier depuis `framework/` (le framework reste neutre)
-- Import d'`infrastructure/` depuis `model/` ou `ports/` (le functional core reste pur)
+- Import d'`infrastructure/`, `routes/`, `commands/` ou `queries/` depuis `model/` (le functional core reste pur)
 
 ```ts
 // ❌ INTERDIT — import direct du modèle d'un autre module
@@ -457,10 +452,10 @@ export const revokeApiKey = (apiKey: ApiKey): Result<ApiKey, ApiKeyAlreadyRevoke
 
 ### 5.9 Repositories : ports & adapters côté écriture
 
-Pour respecter la contrainte 5.5, **toutes les écritures DB d'un module passent par un port repository**. Le port vit dans `model/ports/` (ou `ports/` à la racine du module). L'adapter Prisma vit dans `infrastructure/persistence/`.
+Pour respecter la contrainte 5.5, **toutes les écritures DB d'un module passent par un port repository**. Le port (interface) vit dans `model/` du module. L'adapter Prisma vit dans `infrastructure/persistence/`.
 
 ```ts
-// src/authentication/ports/api-key.repository.ts
+// src/authentication/model/apiKeyRepository.ts
 export interface ApiKeyRepository {
   save(apiKey: ApiKey): ResultAsync<void, RepositoryError>
   findByKeyHash(keyHash: string): ResultAsync<ApiKey | null, RepositoryError>
@@ -985,7 +980,7 @@ L'API sera consommée par un **agent IA satellite** (et plus tard par le webapp)
 ### 8.3 Pattern d'une route
 
 ```ts
-// src/authentication/infrastructure/http/routes/create-session.route.ts
+// src/authentication/routes/createSession.ts
 const CreateSessionInputSchema = z.object({
   id_token: z.string().describe("id_token OIDC émis par ProConnect"),
 }).openapi('CreateSessionInput')
@@ -1069,7 +1064,7 @@ model api_key {
 }
 ```
 
-**Ports dans `authentication/ports/` :**
+**Ports dans `authentication/model/` :**
 ```ts
 export interface ApiKeyHasher {
   hash(token: string): string
@@ -1622,7 +1617,7 @@ Configurer `test-mb-core` et `lint-mb-core` comme required sur `dev` (et `main` 
     - Factory functions pures : `createApiKey`, `revokeApiKey`, `parseEmail`, `apiKeyId`, factories `Utilisateur` (stubées)
     - 3 erreurs API key (`InvalidApiKeyNameError`, `ApiKeyScopesRequiredError`, `ApiKeyAlreadyRevokedError`)
     - Tests unit purs sur les factories
-16. **Ports `ports/`** : `ApiKeyHasher`, `TokenGenerator`, `TokenSigner`, `ApiKeyRepository`, `UtilisateurRepository`
+16. **Ports (dans `model/`)** : `ApiKeyHasher`, `TokenGenerator`, `TokenSigner`, `ApiKeyRepository`, `UtilisateurRepository`
 17. **Infrastructure** : `ApiKeyPrismaRepository` + mapper, `UtilisateurPrismaRepository` + mapper, adapters `Sha256ApiKeyHasher` / `CryptoTokenGenerator` / `JsonwebtokenTokenSigner`, scaffolding `ProconnectClient`, CLI `create-api-key.ts`
 18. **Commands** : `CreateSessionHandler` (stub `errAsync(NotImplementedError)`)
 19. **Queries** : `VerifyApiKeyHandler`, `VerifyJwtHandler` (fonctionnels, testés)

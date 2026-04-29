@@ -1,10 +1,41 @@
-import { Hono } from 'hono'
+import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 
 import { getHealth } from '@/healthcheck/queries/getHealth.js'
 
-export const health = new Hono()
+const HealthOkSchema = z
+  .object({
+    status: z.literal('ok'),
+    database: z.literal('ok'),
+  })
+  .openapi('HealthOk')
 
-health.get('/health', async (context) => {
+const HealthErrorSchema = z
+  .object({
+    status: z.literal('error'),
+    database: z.literal('error'),
+  })
+  .openapi('HealthError')
+
+const healthRoute = createRoute({
+  method: 'get',
+  path: '/health',
+  tags: ['Healthcheck'],
+  summary: 'Vérifier la santé du service',
+  responses: {
+    200: {
+      content: { 'application/json': { schema: HealthOkSchema } },
+      description: 'Service en bonne santé',
+    },
+    503: {
+      content: { 'application/json': { schema: HealthErrorSchema } },
+      description: 'Service indisponible',
+    },
+  },
+})
+
+export const health = new OpenAPIHono()
+
+health.openapi(healthRoute, async (context) => {
   return getHealth().match(
     (ok) => context.json(ok, 200),
     (error) => context.json({ status: error.status, database: error.database }, 503),
