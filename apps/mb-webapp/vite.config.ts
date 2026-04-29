@@ -11,6 +11,10 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  build: {
+    outDir: 'dist/client',
+    emptyOutDir: true,
+  },
   test: {
     environment: 'jsdom',
     globals: true,

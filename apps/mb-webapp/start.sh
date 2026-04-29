@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-exec bin/start-nginx
+exec node mb-webapp-deploy/dist/server/index.js
