@@ -3,12 +3,12 @@ import 'dotenv/config'
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
 
-import { healthRoute } from '@/healthcheck/infrastructure/http/routes/health.route.js'
+import { health } from '@/healthcheck/routes/health.js'
 
 const app = new Hono()
 
 app.get('/', (context) => context.json({ hello: 'world' }))
-app.route('/', healthRoute)
+app.route('/', health)
 
 const port = Number(process.env.PORT ?? 3000)
 
