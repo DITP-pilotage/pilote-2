@@ -9,7 +9,9 @@
   },
   "scripts": {
     "dev": "portless run vite",
+    "deploy:prepare": "bash deploy-prepare.sh",
     "build": "tsc --noEmit && vite build",
+    "deploy:bundle": "bash deploy-bundle.sh",
     "preview": "vite preview",
     "lint": "eslint src && tsc --noEmit",
     "lint:fix": "eslint src --fix",

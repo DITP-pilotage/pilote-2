@@ -10,5 +10,5 @@ pnpm-lock.yaml
 pnpm-workspace.yaml
 public
 README.md
-scripts/dumps
+scripts
 uploads

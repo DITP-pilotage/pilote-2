@@ -9,8 +9,10 @@
   },
   "scripts": {
     "dev": "portless ${PORTLESS_NAME:-}pilote-ppg next dev",
+    "deploy:prepare": "bash deploy-prepare.sh",
     "build": "prisma generate && bash scripts/clone_centre_aide.sh && next build && pnpm exec pagefind --site .next/server/app --output-path public/_pagefind && node copy-assets.js && prisma migrate deploy && prisma db seed",
     "build:dev": "prisma generate && next build && pnpm exec pagefind --site .next/server/app --output-path public/_pagefind && node copy-assets.js && prisma migrate deploy && prisma db seed",
+    "deploy:bundle": "bash deploy-bundle.sh",
     "start": "node --max-old-space-size=${MAX_OLD_SPACE_SIZE:-768} .next/standalone/apps/pilote-ppg/server.js",
     "lint": "prisma generate && pnpm lint:eslint && pnpm lint:tsc",
     "lint:fix": "pnpm lint:eslint --fix",

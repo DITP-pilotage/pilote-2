@@ -12,5 +12,5 @@ mb-api-deploy
 node_modules
 public
 README.md
-scripts/dumps
+scripts
 uploads
