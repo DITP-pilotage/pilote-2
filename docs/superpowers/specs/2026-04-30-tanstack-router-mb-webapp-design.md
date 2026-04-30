@@ -251,6 +251,15 @@ Chaque page intègre un panneau **"Diagnostic TanStack Router"** (style App.tsx 
   - Tentative d'accès à `/indicateurs` sans auth → redirect `/login`
 - Pas de tests E2E dans cette itération (suffisant pour valider l'archi)
 
+## Follow-ups identifiés (post-merge)
+
+Issues remontées au final review et différées en tickets :
+
+- **M2 — Auth réactive** : `auth.isAuthenticated` est un getter sur un objet mutable, sans `useSyncExternalStore`. Les composants ne re-rendent pas automatiquement sur login/logout. À régler dans le cadre de la migration ProConnect (le vrai `Auth` devra être backé par `useSyncExternalStore` ou une query react-query).
+- **M6 — Tests routing : assertions sur fetchMock** : le test "redirige vers /login" repose implicitement sur le fait que le loader ne se déclenche pas. Ajouter `expect(fetchMock).not.toHaveBeenCalled()` pour verrouiller l'invariant.
+- **M7 — Tests contract URL → loader** : aucun test n'asserte que `?cursor=5` dans l'URL produit un appel `fetchIndicateurs({ cursor: '5' })`. Ajouter un cas qui mock fetch et inspecte les `searchParams` envoyés.
+- **M8 — Tests route détail** : ni le parsing `params.id → number`, ni le 404 ne sont testés côté front. Ajouter un test qui mount `/indicateurs/$id` avec un id valide et un id inexistant (mock fetch avec 404).
+
 ## Hors-scope
 
 - ProConnect (auth réelle) — viendra dans une itération dédiée
