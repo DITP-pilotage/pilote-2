@@ -25,7 +25,8 @@ L'objectif de cette première itération : intégrer TanStack Router avec son se
 ```
 @tanstack/react-router          # router
 @tanstack/router-plugin         # vite plugin (devDep)
-@tanstack/router-devtools       # devtools overlay (devDep)
+@tanstack/react-router-devtools # devtools overlay (devDep)
+@tanstack/router-cli            # tsr generate CLI for CI (devDep)
 ```
 
 ### Configuration Vite
@@ -120,25 +121,25 @@ export const auth: Auth = /* singleton avec lecture/écriture localStorage */
 **Factory générique pour les listes paginées :**
 
 ```ts
-export const createPaginatedAPIListSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
+export const createPaginatedApiListSchema = <T extends z.ZodTypeAny>(itemSchema: T) =>
   z.object({
     items: z.array(itemSchema),
     pagination: z.object({
-      cursor: z.string().nullable(),
+      cursor: z.string().min(1).nullable(),
       hasMore: z.boolean(),
     }),
     total: z.number(),
   })
 
-export type PaginatedAPIList<T extends z.ZodTypeAny> = z.infer<
-  ReturnType<typeof createPaginatedAPIListSchema<T>>
+export type PaginatedApiList<T extends z.ZodTypeAny> = z.infer<
+  ReturnType<typeof createPaginatedApiListSchema<T>>
 >
 ```
 
 **Schéma indicateur API :**
 
 ```ts
-export const indicateurAPISchema = z.object({
+export const indicateurApiModelSchema = z.object({
   id: z.number(),
   nom: z.string(),
   valeur: z.number(),
@@ -148,10 +149,21 @@ export const indicateurAPISchema = z.object({
   createdAt: z.string(), // ISO date
   updatedAt: z.string(), // ISO date
 })
-export type IndicateurAPI = z.infer<typeof indicateurAPISchema>
-
-export const indicateurListAPISchema = createPaginatedAPIListSchema(indicateurAPISchema)
+export type IndicateurApiModel = z.infer<typeof indicateurApiModelSchema>
 ```
+
+**Schéma d'erreur partagé** (per spec init-design section 8.1.6) :
+
+```ts
+export const errorApiModelSchema = z.object({
+  code: z.string(),
+  message: z.string(),
+  details: z.unknown().optional(),
+})
+export type ErrorApiModel = z.infer<typeof errorApiModelSchema>
+```
+
+> Note : la composition `indicateurListApiModelSchema = createPaginatedApiListSchema(indicateurApiModelSchema)` n'est plus pré-faite dans `mb-shared`. Chaque consommateur compose localement (mb-api avec `.openapi('IndicateurListApiModel')` pour l'enregistrement OpenAPI, mb-webapp pour le parsing).
 
 ### Ajouts dans `mb-api`
 
