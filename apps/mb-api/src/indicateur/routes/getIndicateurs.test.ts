@@ -4,14 +4,44 @@ import { describe, expect, it } from 'vitest'
 import { getIndicateurs } from '@/indicateur/routes/getIndicateurs'
 
 describe('GET /indicateurs', () => {
-  it('retourne tous les indicateurs sans filtre', async () => {
+  it('retourne la première page sans filtre (5 items, hasMore=true)', async () => {
     const response = await getIndicateurs.request('/indicateurs')
     const body = (await response.json()) as IndicateurListAPI
 
     expect(response.status).toBe(200)
-    expect(body.items).toHaveLength(8)
-    expect(body.pagination.hasMore).toBe(false)
+    expect(body.items).toHaveLength(5)
+    expect(body.items[0]?.id).toBe(1)
+    expect(body.pagination.hasMore).toBe(true)
+    expect(body.pagination.cursor).toBe('5')
     expect(body.total).toBe(8)
+  })
+
+  it('paginate end-to-end : suit le cursor jusqu\'à hasMore=false', async () => {
+    const r1 = await getIndicateurs.request('/indicateurs')
+    const b1 = (await r1.json()) as IndicateurListAPI
+    expect(b1.pagination.hasMore).toBe(true)
+    expect(b1.pagination.cursor).not.toBeNull()
+
+    const r2 = await getIndicateurs.request(
+      `/indicateurs?cursor=${b1.pagination.cursor}`,
+    )
+    const b2 = (await r2.json()) as IndicateurListAPI
+
+    expect(b2.items).toHaveLength(3)
+    expect(b2.items.every((i) => i.id > 5)).toBe(true)
+    expect(b2.pagination.hasMore).toBe(false)
+    expect(b2.pagination.cursor).toBeNull()
+    expect(b2.total).toBe(8)
+  })
+
+  it('cursor au-delà du dernier id retourne une page vide', async () => {
+    const response = await getIndicateurs.request('/indicateurs?cursor=9999')
+    const body = (await response.json()) as IndicateurListAPI
+
+    expect(response.status).toBe(200)
+    expect(body.items).toHaveLength(0)
+    expect(body.pagination.hasMore).toBe(false)
+    expect(body.pagination.cursor).toBeNull()
   })
 
   it('filtre par statut', async () => {
@@ -21,6 +51,7 @@ describe('GET /indicateurs', () => {
     expect(response.status).toBe(200)
     expect(body.items).toHaveLength(1)
     expect(body.items[0]?.statut).toBe('archive')
+    expect(body.total).toBe(1)
   })
 
   it('filtre par recherche (nom, case-insensitive)', async () => {
@@ -32,14 +63,16 @@ describe('GET /indicateurs', () => {
     expect(body.items[0]?.nom).toContain('fibre')
   })
 
-  it('pagine avec cursor (taille de page 3)', async () => {
-    const r1 = await getIndicateurs.request('/indicateurs')
-    const b1 = (await r1.json()) as IndicateurListAPI
-    expect(b1.items).toHaveLength(8)
+  it('retourne une liste vide quand aucune correspondance', async () => {
+    const response = await getIndicateurs.request(
+      '/indicateurs?recherche=zzzzznoresult',
+    )
+    const body = (await response.json()) as IndicateurListAPI
 
-    const r2 = await getIndicateurs.request('/indicateurs?cursor=3')
-    const b2 = (await r2.json()) as IndicateurListAPI
-    expect(b2.items.length).toBeGreaterThan(0)
-    expect(b2.items[0]?.id).toBeGreaterThan(3)
+    expect(response.status).toBe(200)
+    expect(body.items).toHaveLength(0)
+    expect(body.total).toBe(0)
+    expect(body.pagination.hasMore).toBe(false)
+    expect(body.pagination.cursor).toBeNull()
   })
 })

@@ -12,7 +12,17 @@ const querySchema = z.object({
   cursor: z.string().optional(),
 })
 
-const PAGE_SIZE = 100
+/**
+ * Pagination cursor (current implementation): the cursor is simply the
+ * last-seen indicateur id, stringified. Items with `id > cursor` form the
+ * next page. This is intentional for the demo while data is in-memory and
+ * sorted by id; it should be replaced by an opaque encoded token (e.g.
+ * base64 of `{ id, version }`) when this endpoint hits a real database.
+ *
+ * `PAGE_SIZE` is intentionally small to force real pagination behaviour
+ * with the 8 in-memory fixtures (yields 2 pages).
+ */
+const PAGE_SIZE = 5
 
 const getIndicateursRoute = createRoute({
   method: 'get',
