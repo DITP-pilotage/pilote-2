@@ -26,6 +26,16 @@ export default tseslint.config(
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'error',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      '@typescript-eslint/only-throw-error': [
+        'error',
+        {
+          allow: [
+            { from: 'package', name: 'Redirect', package: '@tanstack/router-core' },
+            { from: 'package', name: 'Redirect', package: '@tanstack/react-router' },
+            { from: 'package', name: 'AnyRedirect', package: '@tanstack/router-core' },
+          ],
+        },
+      ],
       'no-restricted-syntax': [
         'error',
         {

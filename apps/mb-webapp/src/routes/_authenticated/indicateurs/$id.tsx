@@ -20,11 +20,13 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
       Chargement de l'indicateur…
     </div>
   ),
-  errorComponent: ({ error }) => (
+  errorComponent: ({ error }: { error: unknown }) => (
     <div className="space-y-3">
       <div className="rounded border border-red-200 bg-red-50 p-6 text-red-800">
         <p className="font-medium">Indicateur introuvable</p>
-        <p className="mt-1 text-sm">{error.message}</p>
+        <p className="mt-1 text-sm">
+          {error instanceof Error ? error.message : String(error)}
+        </p>
       </div>
       <Link
         to="/indicateurs"

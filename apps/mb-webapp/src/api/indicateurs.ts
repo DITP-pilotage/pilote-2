@@ -9,9 +9,9 @@ import {
 import { apiClient } from '@/api/client'
 
 export type IndicateursQueryParams = {
-  recherche?: string
-  statut?: IndicateurStatut
-  cursor?: string
+  recherche?: string | undefined
+  statut?: IndicateurStatut | undefined
+  cursor?: string | undefined
 }
 
 export const fetchIndicateurs = async (

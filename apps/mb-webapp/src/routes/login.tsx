@@ -23,7 +23,7 @@ function LoginComponent() {
 
   const handleLogin = () => {
     auth.login()
-    navigate({ to: '/indicateurs', search: {} })
+    void navigate({ to: '/indicateurs', search: {} })
   }
 
   return (

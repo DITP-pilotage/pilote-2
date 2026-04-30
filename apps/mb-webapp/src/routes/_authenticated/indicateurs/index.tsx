@@ -21,10 +21,12 @@ export const Route = createFileRoute('/_authenticated/indicateurs/')({
       Chargement des indicateurs…
     </div>
   ),
-  errorComponent: ({ error, reset }) => (
+  errorComponent: ({ error, reset }: { error: unknown; reset: () => void }) => (
     <div className="rounded border border-red-200 bg-red-50 p-6 text-red-800">
       <p className="font-medium">Erreur lors du chargement</p>
-      <p className="mt-1 text-sm">{error.message}</p>
+      <p className="mt-1 text-sm">
+        {error instanceof Error ? error.message : String(error)}
+      </p>
       <button
         type="button"
         onClick={reset}
@@ -58,7 +60,7 @@ function IndicateursListComponent() {
           value={search.recherche ?? ''}
           onChange={(e) => {
             const recherche = e.target.value || undefined
-            navigate({ search: (prev) => ({ ...prev, recherche, cursor: undefined }) })
+            void navigate({ search: (prev) => ({ ...prev, recherche, cursor: undefined }) })
           }}
           className="rounded border border-slate-300 px-3 py-1 text-sm"
         />
@@ -70,7 +72,7 @@ function IndicateursListComponent() {
               value === 'actif' || value === 'inactif' || value === 'archive'
                 ? value
                 : undefined
-            navigate({ search: (prev) => ({ ...prev, statut, cursor: undefined }) })
+            void navigate({ search: (prev) => ({ ...prev, statut, cursor: undefined }) })
           }}
           className="rounded border border-slate-300 px-3 py-1 text-sm"
         >
@@ -113,7 +115,7 @@ function IndicateursListComponent() {
           type="button"
           onClick={() => {
             const next = data.pagination.cursor
-            if (next) navigate({ search: (prev) => ({ ...prev, cursor: next }) })
+            if (next) void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
           }}
           className="rounded border border-slate-300 px-3 py-1 text-sm text-slate-700 hover:bg-slate-100"
         >
@@ -135,7 +137,7 @@ function IndicateursListComponent() {
           type="button"
           onClick={() => {
             // Force une erreur en envoyant un statut invalide
-            navigate({
+            void navigate({
               search: (prev) => ({
                 ...prev,
                 statut: 'broken' as never,
