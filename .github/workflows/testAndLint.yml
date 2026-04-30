@@ -16,6 +16,9 @@ jobs:
     outputs:
       pilote-ppg: ${{ steps.filter.outputs.pilote-ppg }}
       pilote-ppg-data-management: ${{ steps.filter.outputs.pilote-ppg-data-management }}
+      mb-api: ${{ steps.filter.outputs.mb-api }}
+      mb-webapp: ${{ steps.filter.outputs.mb-webapp }}
+      mb-shared: ${{ steps.filter.outputs.mb-shared }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -28,6 +31,16 @@ jobs:
               - 'pnpm-lock.yaml'
             pilote-ppg-data-management:
               - 'apps/pilote-ppg-data-management/**'
+            mb-api:
+              - 'apps/mb-api/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+            mb-webapp:
+              - 'apps/mb-webapp/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
+            mb-shared:
+              - 'packages/mb-shared/**'
 
   test:
     name: Run tests
@@ -77,6 +90,98 @@ jobs:
 
       - name: Run lint command
         run: pnpm lint
+
+  test-mb-api:
+    name: Run tests for mb-api
+    needs: changes
+    if: needs.changes.outputs['mb-api'] == 'true' || needs.changes.outputs['mb-shared'] == 'true'
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17.9-alpine
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5435:5432
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Generate Prisma client
+        run: pnpm -F @pilote/mb-api prisma:generate
+
+      - name: Run test command
+        run: pnpm test
+        env:
+          APP_PACKAGE: '@pilote/mb-api'
+
+  lint-mb-api:
+    name: Run linters for mb-api
+    needs: changes
+    if: needs.changes.outputs['mb-api'] == 'true' || needs.changes.outputs['mb-shared'] == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Generate Prisma client
+        run: pnpm -F @pilote/mb-api prisma:generate
+
+      - name: Run lint command
+        run: pnpm lint
+        env:
+          APP_PACKAGE: '@pilote/mb-api'
+
+  test-mb-webapp:
+    name: Run tests for mb-webapp
+    needs: changes
+    if: needs.changes.outputs['mb-webapp'] == 'true' || needs.changes.outputs['mb-shared'] == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Run test command
+        run: pnpm test
+        env:
+          APP_PACKAGE: '@pilote/mb-webapp'
+
+  lint-mb-webapp:
+    name: Run linters for mb-webapp
+    needs: changes
+    if: needs.changes.outputs['mb-webapp'] == 'true' || needs.changes.outputs['mb-shared'] == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Run lint command
+        run: pnpm lint
+        env:
+          APP_PACKAGE: '@pilote/mb-webapp'
 
   lint-sql:
     name: Run SQL linter on dbt models
