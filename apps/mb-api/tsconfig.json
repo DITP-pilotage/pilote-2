@@ -16,6 +16,7 @@
       "@/framework/*": ["./src/framework/*"],
       "@/authentication/*": ["./src/authentication/*"],
       "@/healthcheck/*": ["./src/healthcheck/*"],
+      "@/indicateur/*": ["./src/indicateur/*"],
       "@/shared/*": ["./src/shared/*"],
       "@/generated/*": ["./src/generated/*"],
       "@/test/*": ["./src/test/*"],

@@ -96,6 +96,8 @@ jobs:
     needs: changes
     if: needs.changes.outputs['mb-api'] == 'true' || needs.changes.outputs['mb-shared'] == 'true'
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5435/postgres?connection_limit=50
     services:
       postgres:
         image: postgres:17.9-alpine
@@ -131,6 +133,9 @@ jobs:
     needs: changes
     if: needs.changes.outputs['mb-api'] == 'true' || needs.changes.outputs['mb-shared'] == 'true'
     runs-on: ubuntu-latest
+    env:
+      # Dummy URL: prisma generate only validates the config schema, no DB connection needed
+      DATABASE_URL: postgresql://prisma:prisma@localhost:5432/prisma
     steps:
       - uses: actions/checkout@v4
 
@@ -164,6 +169,9 @@ jobs:
         run: pnpm test
         env:
           APP_PACKAGE: '@pilote/mb-webapp'
+          # mb-webapp validates VITE_API_URL at module load (env.ts via Zod).
+          # Tests stub fetch globally so no real backend is hit; this only needs to be a valid URL.
+          VITE_API_URL: http://localhost:3000
 
   lint-mb-webapp:
     name: Run linters for mb-webapp

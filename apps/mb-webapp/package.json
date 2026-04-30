@@ -13,21 +13,24 @@
   "scripts": {
     "dev": "portless run vite",
     "deploy:prepare": "bash deploy-prepare.sh",
-    "build": "rm -rf dist && tsc --noEmit && vite build && vite build -c vite.server.config.ts",
+    "routes:generate": "tsr generate",
+    "build": "rm -rf dist && tsr generate && tsc --noEmit && vite build && vite build -c vite.server.config.ts",
     "deploy:bundle": "bash deploy-bundle.sh",
     "start": "node dist/server/index.js",
     "preview": "vite preview",
-    "lint": "eslint src && tsc --noEmit",
-    "lint:fix": "eslint src --fix",
+    "lint": "tsr generate && eslint src && tsc --noEmit",
+    "lint:fix": "tsr generate && eslint src --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test": "tsr generate && vitest run",
+    "test:watch": "tsr generate && vitest"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",
     "@pilote/mb-shared": "workspace:*",
     "@tanstack/react-query": "^5.62.7",
+    "@tanstack/react-router": "^1.168.26",
+    "@tanstack/react-router-devtools": "^1.166.13",
     "hono": "^4.6.14",
     "ky": "^1.7.5",
     "react": "^19.2.5",
@@ -37,6 +40,8 @@
   "devDependencies": {
     "@eslint/js": "^9.39.0",
     "@tailwindcss/vite": "^4.2.4",
+    "@tanstack/router-cli": "^1.166.38",
+    "@tanstack/router-plugin": "^1.167.29",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",

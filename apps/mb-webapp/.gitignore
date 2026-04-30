@@ -4,3 +4,4 @@ coverage/
 *.tsbuildinfo
 .env
 .env.local
+src/routeTree.gen.ts

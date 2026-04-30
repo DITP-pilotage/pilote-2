@@ -3,7 +3,9 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
 
 import { env } from '@/env'
+import { registerErrorHandler } from '@/framework/errors/errorHandler'
 import { health } from '@/healthcheck/routes/health'
+import { indicateurRoutes } from '@/indicateur/routes'
 import { sharedMessage } from '@/shared/routes/sharedMessage'
 
 export const app = new OpenAPIHono()
@@ -13,6 +15,7 @@ app.use('*', cors({ origin: env.CORS_ORIGINS, credentials: true }))
 app.get('/', (context) => context.json({ hello: 'world' }))
 app.route('/', health)
 app.route('/', sharedMessage)
+app.route('/', indicateurRoutes)
 
 app.doc('/openapi.json', {
   openapi: '3.0.0',
@@ -20,3 +23,5 @@ app.doc('/openapi.json', {
 })
 
 app.get('/docs', swaggerUI({ url: '/openapi.json' }))
+
+registerErrorHandler(app)
