@@ -3,12 +3,7 @@ import { afterAll, afterEach, beforeAll, vi } from 'vitest'
 
 const fetchMock = vi.fn()
 
-beforeAll(() => {
-  vi.stubGlobal('fetch', fetchMock)
-})
-
-afterEach(() => {
-  fetchMock.mockReset()
+const setDefaultFetchResponse = () => {
   fetchMock.mockResolvedValue(
     new Response(
       JSON.stringify({
@@ -19,6 +14,16 @@ afterEach(() => {
       { status: 200, headers: { 'content-type': 'application/json' } },
     ),
   )
+}
+
+beforeAll(() => {
+  vi.stubGlobal('fetch', fetchMock)
+  setDefaultFetchResponse()
+})
+
+afterEach(() => {
+  fetchMock.mockReset()
+  setDefaultFetchResponse()
 })
 
 afterAll(() => {

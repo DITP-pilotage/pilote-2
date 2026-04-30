@@ -10,6 +10,17 @@ const loginSearchSchema = z.object({
   redirect: z.string().optional(),
 })
 
+const isInternalPath = (target: string): boolean => {
+  // Must start with `/` (path-relative)
+  if (!target.startsWith('/')) return false
+  // Must NOT start with `//` (protocol-relative URL — could be cross-origin)
+  if (target.startsWith('//')) return false
+  // Reject things like `/javascript:foo` or `/data:foo` — no colon allowed
+  // before the first `/` boundary after the leading slash.
+  if (/^\/[^/]*:/.test(target)) return false
+  return true
+}
+
 export const Route = createFileRoute('/login')({
   validateSearch: loginSearchSchema,
   beforeLoad: ({ context }) => {
@@ -28,8 +39,12 @@ function LoginComponent() {
 
   const handleLogin = () => {
     auth.login()
-    if (search.redirect) {
-      router.history.push(search.redirect)
+    const target =
+      search.redirect && isInternalPath(search.redirect)
+        ? search.redirect
+        : null
+    if (target) {
+      router.history.push(target)
     } else {
       void navigate({ to: '/indicateurs', search: {} })
     }

@@ -17,12 +17,9 @@ export type IndicateursQueryParams = {
 export const fetchIndicateurs = async (
   params: IndicateursQueryParams,
 ): Promise<IndicateurListApiModel> => {
-  const searchParams = new URLSearchParams()
-  if (params.recherche) searchParams.set('recherche', params.recherche)
-  if (params.statut) searchParams.set('statut', params.statut)
-  if (params.cursor) searchParams.set('cursor', params.cursor)
-
-  const json = await apiClient.get('indicateurs', { searchParams }).json()
+  // ky filters out `undefined` values from object-form searchParams (see
+  // Ky.#normalizeSearchParams), so we can pass `params` directly.
+  const json = await apiClient.get('indicateurs', { searchParams: params }).json()
   return indicateurListApiModelSchema.parse(json)
 }
 

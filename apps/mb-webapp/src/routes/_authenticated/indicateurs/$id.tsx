@@ -1,11 +1,9 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import {
-  createFileRoute,
-  type ErrorComponentProps,
-  Link,
-} from '@tanstack/react-router'
+import { createFileRoute, Link } from '@tanstack/react-router'
 import { z } from 'zod'
 
+import { RouteError } from '@/components/RouteError'
+import { RouteLoading } from '@/components/RouteLoading'
 import { indicateurQueryOptions } from '@/queries/indicateurs'
 
 const paramsSchema = z.object({
@@ -21,27 +19,9 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
   // not a search param). TanStack Router reruns the loader automatically when
   // the param changes.
   loader: ({ context, params }) =>
-    context.queryClient.ensureQueryData(indicateurQueryOptions(params.id)),
-  pendingComponent: () => (
-    <div className="rounded border border-slate-200 bg-white p-6 text-slate-500">
-      Chargement de l'indicateur…
-    </div>
-  ),
-  errorComponent: ({ error }: ErrorComponentProps) => (
-    <div className="space-y-3">
-      <div className="rounded border border-red-200 bg-red-50 p-6 text-red-800">
-        <p className="font-medium">Indicateur introuvable</p>
-        <p className="mt-1 text-sm">{error.message}</p>
-      </div>
-      <Link
-        to="/indicateurs"
-        search={{}}
-        className="inline-block text-sm text-slate-700 underline hover:text-slate-900"
-      >
-        ← Retour à la liste
-      </Link>
-    </div>
-  ),
+    context.queryClient.fetchQuery(indicateurQueryOptions(params.id)),
+  pendingComponent: () => <RouteLoading message="Chargement de l'indicateur…" />,
+  errorComponent: RouteError,
   component: IndicateurDetailComponent,
 })
 

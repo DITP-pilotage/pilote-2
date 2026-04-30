@@ -1,12 +1,13 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import {
   createFileRoute,
-  type ErrorComponentProps,
   Link,
   useNavigate,
 } from '@tanstack/react-router'
 import { z } from 'zod'
 
+import { RouteError } from '@/components/RouteError'
+import { RouteLoading } from '@/components/RouteLoading'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
 
 const indicateursSearchSchema = z.object({
@@ -19,25 +20,9 @@ export const Route = createFileRoute('/_authenticated/indicateurs/')({
   validateSearch: indicateursSearchSchema,
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps }) =>
-    context.queryClient.ensureQueryData(indicateursQueryOptions(deps)),
-  pendingComponent: () => (
-    <div className="rounded border border-slate-200 bg-white p-6 text-slate-500">
-      Chargement des indicateurs…
-    </div>
-  ),
-  errorComponent: ({ error, reset }: ErrorComponentProps) => (
-    <div className="rounded border border-red-200 bg-red-50 p-6 text-red-800">
-      <p className="font-medium">Erreur lors du chargement</p>
-      <p className="mt-1 text-sm">{error.message}</p>
-      <button
-        type="button"
-        onClick={reset}
-        className="mt-3 rounded bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"
-      >
-        Réessayer
-      </button>
-    </div>
-  ),
+    context.queryClient.fetchQuery(indicateursQueryOptions(deps)),
+  pendingComponent: () => <RouteLoading message="Chargement des indicateurs…" />,
+  errorComponent: RouteError,
   component: IndicateursListComponent,
 })
 
