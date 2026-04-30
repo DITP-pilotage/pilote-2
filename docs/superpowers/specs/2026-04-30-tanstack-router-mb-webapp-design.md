@@ -145,6 +145,7 @@ export const indicateurAPISchema = z.object({
   unite: z.string(),
   statut: z.enum(['actif', 'inactif', 'archive']),
   description: z.string(),
+  createdAt: z.string(), // ISO date
   updatedAt: z.string(), // ISO date
 })
 export type IndicateurAPI = z.infer<typeof indicateurAPISchema>

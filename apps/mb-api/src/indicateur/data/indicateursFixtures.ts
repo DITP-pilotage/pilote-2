@@ -9,6 +9,7 @@ export const indicateursFixtures: IndicateurAPI[] = [
     unite: '%',
     statut: 'actif',
     description: 'Taux de chômage au sens du BIT, France entière',
+    createdAt: '2024-01-15T09:00:00Z',
     updatedAt: '2026-04-15T10:00:00Z',
   },
   {
@@ -18,6 +19,7 @@ export const indicateursFixtures: IndicateurAPI[] = [
     unite: 'Mt',
     statut: 'actif',
     description: 'Émissions annuelles de CO2 du secteur industriel',
+    createdAt: '2023-06-20T14:00:00Z',
     updatedAt: '2026-04-10T08:00:00Z',
   },
   {
@@ -27,6 +29,7 @@ export const indicateursFixtures: IndicateurAPI[] = [
     unite: '%',
     statut: 'actif',
     description: 'Pourcentage des logements éligibles à la fibre',
+    createdAt: '2023-09-05T11:00:00Z',
     updatedAt: '2026-04-20T12:00:00Z',
   },
   {
@@ -36,6 +39,7 @@ export const indicateursFixtures: IndicateurAPI[] = [
     unite: 'jours',
     statut: 'actif',
     description: 'Délai moyen de traitement des dossiers en préfecture',
+    createdAt: '2024-02-12T08:30:00Z',
     updatedAt: '2026-04-05T09:00:00Z',
   },
   {
@@ -45,6 +49,7 @@ export const indicateursFixtures: IndicateurAPI[] = [
     unite: 'agents',
     statut: 'actif',
     description: 'Effectif total de la police nationale',
+    createdAt: '2023-03-10T10:00:00Z',
     updatedAt: '2026-03-28T14:00:00Z',
   },
   {
@@ -54,6 +59,7 @@ export const indicateursFixtures: IndicateurAPI[] = [
     unite: 'unités',
     statut: 'archive',
     description: 'Indicateur pilote archivé en 2024',
+    createdAt: '2022-05-01T09:00:00Z',
     updatedAt: '2025-12-31T23:59:59Z',
   },
   {
@@ -63,6 +69,7 @@ export const indicateursFixtures: IndicateurAPI[] = [
     unite: 'unités',
     statut: 'inactif',
     description: 'Indicateur temporairement suspendu',
+    createdAt: '2024-08-15T11:00:00Z',
     updatedAt: '2026-02-10T11:00:00Z',
   },
   {
@@ -72,6 +79,7 @@ export const indicateursFixtures: IndicateurAPI[] = [
     unite: '/10',
     statut: 'actif',
     description: 'Note moyenne de satisfaction',
+    createdAt: '2023-11-22T13:00:00Z',
     updatedAt: '2026-04-25T16:00:00Z',
   },
 ]

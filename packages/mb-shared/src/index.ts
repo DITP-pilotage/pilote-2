@@ -39,6 +39,7 @@ export const indicateurAPISchema = z.object({
   unite: z.string(),
   statut: indicateurStatutSchema,
   description: z.string(),
+  createdAt: z.string(),
   updatedAt: z.string(),
 })
 export type IndicateurAPI = z.infer<typeof indicateurAPISchema>

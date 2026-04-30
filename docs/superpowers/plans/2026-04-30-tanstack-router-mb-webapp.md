@@ -113,6 +113,7 @@ export const indicateurAPISchema = z.object({
   unite: z.string(),
   statut: indicateurStatutSchema,
   description: z.string(),
+  createdAt: z.string(),
   updatedAt: z.string(),
 })
 export type IndicateurAPI = z.infer<typeof indicateurAPISchema>
@@ -1456,6 +1457,9 @@ function IndicateurDetailComponent() {
       </section>
 
       <section className="rounded border border-slate-200 bg-white p-6 text-sm text-slate-600">
+        <p>
+          Créé le {new Date(data.createdAt).toLocaleString('fr-FR')}
+        </p>
         <p>
           Mis à jour le {new Date(data.updatedAt).toLocaleString('fr-FR')}
         </p>
