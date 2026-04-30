@@ -96,6 +96,8 @@ jobs:
     needs: changes
     if: needs.changes.outputs['mb-api'] == 'true' || needs.changes.outputs['mb-shared'] == 'true'
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5435/postgres?connection_limit=50
     services:
       postgres:
         image: postgres:17.9-alpine
@@ -131,6 +133,9 @@ jobs:
     needs: changes
     if: needs.changes.outputs['mb-api'] == 'true' || needs.changes.outputs['mb-shared'] == 'true'
     runs-on: ubuntu-latest
+    env:
+      # Dummy URL: prisma generate only validates the config schema, no DB connection needed
+      DATABASE_URL: postgresql://prisma:prisma@localhost:5432/prisma
     steps:
       - uses: actions/checkout@v4
 
