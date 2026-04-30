@@ -1,12 +1,13 @@
-import type { IndicateurAPI } from '@pilote/mb-shared'
+// Import the route first so @hono/zod-openapi extends the Zod prototype
+// before mb-shared schemas are evaluated.
+import { getIndicateurById, NotFoundSchema } from '@/indicateur/routes/getIndicateurById'
+import { indicateurAPISchema } from '@pilote/mb-shared'
 import { describe, expect, it } from 'vitest'
-
-import { getIndicateurById } from '@/indicateur/routes/getIndicateurById'
 
 describe('GET /indicateurs/:id', () => {
   it('retourne un indicateur par id', async () => {
     const response = await getIndicateurById.request('/indicateurs/1')
-    const body = (await response.json()) as IndicateurAPI
+    const body = indicateurAPISchema.parse(await response.json())
 
     expect(response.status).toBe(200)
     expect(body.id).toBe(1)
@@ -15,7 +16,7 @@ describe('GET /indicateurs/:id', () => {
 
   it('retourne 404 si l’indicateur n’existe pas', async () => {
     const response = await getIndicateurById.request('/indicateurs/9999')
-    const body = (await response.json()) as { error: string }
+    const body = NotFoundSchema.parse(await response.json())
 
     expect(response.status).toBe(404)
     expect(body.error).toBe('Indicateur introuvable')

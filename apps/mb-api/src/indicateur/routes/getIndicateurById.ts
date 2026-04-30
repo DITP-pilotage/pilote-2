@@ -6,7 +6,7 @@ import { indicateursFixtures } from '@/indicateur/data/indicateursFixtures'
 
 const IndicateurSchema = indicateurAPISchema.openapi('Indicateur')
 
-const NotFoundSchema = z
+export const NotFoundSchema = z
   .object({ error: z.literal('Indicateur introuvable') })
   .openapi('IndicateurNotFound')
 
