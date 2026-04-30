@@ -1,11 +1,8 @@
 import { createMiddleware } from 'hono/factory'
 
 import { type AuthenticatedUser, verifyAccessToken } from '@/authentication/jwks'
+import { runWithUser } from '@/framework/auth/userContext'
 import { logger } from '@/framework/logger/logger'
-
-export type AuthVariables = {
-  user: AuthenticatedUser
-}
 
 const BEARER_REGEX = /^Bearer\s+(.+)$/i
 
@@ -17,24 +14,24 @@ const extractBearerToken = (header: string | undefined): string | null => {
   return token && token.length > 0 ? token : null
 }
 
-export const requireUser = createMiddleware<{ Variables: AuthVariables }>(async (context, next) => {
-  const token = extractBearerToken(context.req.header('Authorization'))
-
-  if (!token) {
-    logger.warn({ event: 'auth.jwt.missing' }, 'Missing or malformed Authorization header')
-    return context.json({ error: 'unauthorized' }, 401)
-  }
+const resolveUser = async (
+  authorization: string | undefined,
+): Promise<AuthenticatedUser | undefined> => {
+  const token = extractBearerToken(authorization)
+  if (!token) return undefined
 
   try {
-    const user = await verifyAccessToken(token)
-    context.set('user', user)
-    await next()
-    return
+    return await verifyAccessToken(token)
   } catch (error) {
     logger.warn(
       { event: 'auth.jwt.invalid', reason: error instanceof Error ? error.message : 'unknown' },
       'JWT verification failed',
     )
-    return context.json({ error: 'unauthorized' }, 401)
+    return undefined
   }
+}
+
+export const authContext = createMiddleware(async (context, next) => {
+  const user = await resolveUser(context.req.header('Authorization'))
+  await runWithUser(user, next)
 })

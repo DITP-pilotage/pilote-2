@@ -1,15 +1,8 @@
-import { z } from 'zod'
+import { type MeApiModel, meApiModelSchema } from '@pilote/mb-shared/api'
 
 import { apiClient } from '@/api/client'
 
-const meSchema = z.object({
-  id: z.string(),
-  source: z.literal('jwt'),
-})
-
-export type Me = z.infer<typeof meSchema>
-
-export const fetchMe = async (): Promise<Me> => {
+export const fetchMe = async (): Promise<MeApiModel> => {
   const json = await apiClient.get('me').json()
-  return meSchema.parse(json)
+  return meApiModelSchema.parse(json)
 }

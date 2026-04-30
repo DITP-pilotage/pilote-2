@@ -5,7 +5,7 @@ import { env } from '@/env'
 const jwks = createRemoteJWKSet(new URL(env.OIDC_JWKS_URI))
 
 export type AuthenticatedUser = {
-  id: string
+  userId: string
   source: 'jwt'
 }
 
@@ -29,7 +29,7 @@ export const verifyAccessToken = async (token: string): Promise<AuthenticatedUse
     throw new Error('Missing sub claim')
   }
 
-  return { id: payload.sub, source: 'jwt' }
+  return { userId: payload.sub, source: 'jwt' }
 }
 
 const isAuthorizedParty = (payload: JWTPayload) =>
