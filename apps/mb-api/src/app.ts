@@ -1,14 +1,18 @@
-import 'dotenv/config'
-
 import { swaggerUI } from '@hono/swagger-ui'
 import { OpenAPIHono } from '@hono/zod-openapi'
+import { cors } from 'hono/cors'
 
+import { env } from '@/env'
 import { health } from '@/healthcheck/routes/health'
+import { sharedMessage } from '@/shared/routes/sharedMessage'
 
 export const app = new OpenAPIHono()
 
+app.use('*', cors({ origin: env.CORS_ORIGINS, credentials: true }))
+
 app.get('/', (context) => context.json({ hello: 'world' }))
 app.route('/', health)
+app.route('/', sharedMessage)
 
 app.doc('/openapi.json', {
   openapi: '3.0.0',

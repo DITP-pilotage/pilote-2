@@ -37,7 +37,6 @@ qodana.yaml
 .next
 /mb-api-deploy
 /mb-webapp-deploy
-/nginx.conf
 /.slugignore
 /start.sh
 /cron.json

@@ -27,5 +27,10 @@
     },
     "types": ["vite/client", "node", "@testing-library/jest-dom"]
   },
-  "include": ["src", "vite.config.ts", "vitest.setup.ts"]
+  "include": [
+    "src",
+    "vite.config.ts",
+    "vite.server.config.ts",
+    "vitest.setup.ts"
+  ]
 }

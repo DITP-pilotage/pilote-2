@@ -16,9 +16,11 @@
       "@/framework/*": ["./src/framework/*"],
       "@/authentication/*": ["./src/authentication/*"],
       "@/healthcheck/*": ["./src/healthcheck/*"],
+      "@/shared/*": ["./src/shared/*"],
       "@/generated/*": ["./src/generated/*"],
       "@/test/*": ["./src/test/*"],
-      "@/config": ["./src/config"]
+      "@/config": ["./src/config"],
+      "@/env": ["./src/env"]
     }
   },
   "include": ["src/**/*", "vite.config.ts", "vitest.config.ts", "prisma.config.ts", "eslint.config.mjs"],

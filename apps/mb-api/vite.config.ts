@@ -3,6 +3,9 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
+  ssr: {
+    noExternal: ['@pilote/mb-shared'],
+  },
   build: {
     target: 'node24',
     ssr: 'src/index.ts',
