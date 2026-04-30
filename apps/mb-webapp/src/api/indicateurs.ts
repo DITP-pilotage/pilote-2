@@ -1,0 +1,32 @@
+import {
+  type IndicateurAPI,
+  indicateurAPISchema,
+  type IndicateurListAPI,
+  indicateurListAPISchema,
+  type IndicateurStatut,
+} from '@pilote/mb-shared'
+
+import { apiClient } from '@/api/client'
+
+export type IndicateursQueryParams = {
+  recherche?: string
+  statut?: IndicateurStatut
+  cursor?: string
+}
+
+export const fetchIndicateurs = async (
+  params: IndicateursQueryParams,
+): Promise<IndicateurListAPI> => {
+  const searchParams = new URLSearchParams()
+  if (params.recherche) searchParams.set('recherche', params.recherche)
+  if (params.statut) searchParams.set('statut', params.statut)
+  if (params.cursor) searchParams.set('cursor', params.cursor)
+
+  const json = await apiClient.get('indicateurs', { searchParams }).json()
+  return indicateurListAPISchema.parse(json)
+}
+
+export const fetchIndicateurById = async (id: number): Promise<IndicateurAPI> => {
+  const json = await apiClient.get(`indicateurs/${id}`).json()
+  return indicateurAPISchema.parse(json)
+}
