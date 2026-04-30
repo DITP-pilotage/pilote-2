@@ -1,6 +1,6 @@
-import type { IndicateurAPI } from '@pilote/mb-shared'
+import type { IndicateurApiModel } from '@pilote/mb-shared'
 
-export const indicateursFixtures: IndicateurAPI[] = [
+export const indicateursFixtures: IndicateurApiModel[] = [
   {
     id: 1,
     nom: 'Taux de chômage',

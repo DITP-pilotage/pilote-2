@@ -1,13 +1,13 @@
 // Import the route first so @hono/zod-openapi extends the Zod prototype
 // before mb-shared schemas are evaluated.
 import { getIndicateurs } from '@/indicateur/routes/getIndicateurs'
-import { indicateurListAPISchema } from '@pilote/mb-shared'
+import { indicateurListApiModelSchema } from '@pilote/mb-shared'
 import { describe, expect, it } from 'vitest'
 
 describe('GET /indicateurs', () => {
   it('retourne la première page sans filtre (5 items, hasMore=true)', async () => {
     const response = await getIndicateurs.request('/indicateurs')
-    const body = indicateurListAPISchema.parse(await response.json())
+    const body = indicateurListApiModelSchema.parse(await response.json())
 
     expect(response.status).toBe(200)
     expect(body.items).toHaveLength(5)
@@ -19,14 +19,14 @@ describe('GET /indicateurs', () => {
 
   it('paginate end-to-end : suit le cursor jusqu\'à hasMore=false', async () => {
     const r1 = await getIndicateurs.request('/indicateurs')
-    const b1 = indicateurListAPISchema.parse(await r1.json())
+    const b1 = indicateurListApiModelSchema.parse(await r1.json())
     expect(b1.pagination.hasMore).toBe(true)
     expect(b1.pagination.cursor).not.toBeNull()
 
     const r2 = await getIndicateurs.request(
       `/indicateurs?cursor=${b1.pagination.cursor}`,
     )
-    const b2 = indicateurListAPISchema.parse(await r2.json())
+    const b2 = indicateurListApiModelSchema.parse(await r2.json())
 
     expect(b2.items).toHaveLength(3)
     expect(b2.items.every((i) => i.id > 5)).toBe(true)
@@ -37,7 +37,7 @@ describe('GET /indicateurs', () => {
 
   it('cursor au-delà du dernier id retourne une page vide', async () => {
     const response = await getIndicateurs.request('/indicateurs?cursor=9999')
-    const body = indicateurListAPISchema.parse(await response.json())
+    const body = indicateurListApiModelSchema.parse(await response.json())
 
     expect(response.status).toBe(200)
     expect(body.items).toHaveLength(0)
@@ -47,7 +47,7 @@ describe('GET /indicateurs', () => {
 
   it('filtre par statut', async () => {
     const response = await getIndicateurs.request('/indicateurs?statut=archive')
-    const body = indicateurListAPISchema.parse(await response.json())
+    const body = indicateurListApiModelSchema.parse(await response.json())
 
     expect(response.status).toBe(200)
     expect(body.items).toHaveLength(1)
@@ -57,7 +57,7 @@ describe('GET /indicateurs', () => {
 
   it('filtre par recherche (nom, case-insensitive)', async () => {
     const response = await getIndicateurs.request('/indicateurs?recherche=fibre')
-    const body = indicateurListAPISchema.parse(await response.json())
+    const body = indicateurListApiModelSchema.parse(await response.json())
 
     expect(response.status).toBe(200)
     expect(body.items).toHaveLength(1)
@@ -68,7 +68,7 @@ describe('GET /indicateurs', () => {
     const response = await getIndicateurs.request(
       '/indicateurs?recherche=zzzzznoresult',
     )
-    const body = indicateurListAPISchema.parse(await response.json())
+    const body = indicateurListApiModelSchema.parse(await response.json())
 
     expect(response.status).toBe(200)
     expect(body.items).toHaveLength(0)

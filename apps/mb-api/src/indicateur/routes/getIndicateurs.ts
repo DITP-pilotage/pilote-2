@@ -1,15 +1,24 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
-import { indicateurListAPISchema, indicateurStatutSchema } from '@pilote/mb-shared'
+import {
+  indicateurListApiModelSchema,
+  indicateurStatutSchema,
+} from '@pilote/mb-shared'
 
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { indicateursFixtures } from '@/indicateur/data/indicateursFixtures'
 
-const IndicateurListSchema = indicateurListAPISchema.openapi('IndicateurList')
+const IndicateurListApiModelSchema = indicateurListApiModelSchema.openapi('IndicateurListApiModel')
 
 const querySchema = z.object({
-  recherche: z.string().optional(),
-  statut: indicateurStatutSchema.optional(),
-  cursor: z.string().optional(),
+  recherche: z
+    .string()
+    .optional()
+    .describe('Filtre case-insensitive sur le nom de l\'indicateur.'),
+  statut: indicateurStatutSchema.optional().describe('Filtre exact par statut.'),
+  cursor: z
+    .string()
+    .optional()
+    .describe('Cursor de pagination (renvoyé par la réponse précédente). Vide pour la première page.'),
 })
 
 /**
@@ -18,9 +27,6 @@ const querySchema = z.object({
  * next page. This is intentional for the demo while data is in-memory and
  * sorted by id; it should be replaced by an opaque encoded token (e.g.
  * base64 of `{ id, version }`) when this endpoint hits a real database.
- *
- * `PAGE_SIZE` is intentionally small to force real pagination behaviour
- * with the 8 in-memory fixtures (yields 2 pages).
  */
 const PAGE_SIZE = 5
 
@@ -29,10 +35,12 @@ const getIndicateursRoute = createRoute({
   path: '/indicateurs',
   tags: ['Indicateur'],
   summary: 'Lister les indicateurs',
+  description:
+    'Retourne la liste paginée des indicateurs avec filtres combinables (recherche par nom, statut). La pagination est cursor-based : passez `cursor` (renvoyé dans la réponse précédente) pour obtenir la page suivante. `hasMore` indique s\'il reste des pages.',
   request: { query: querySchema },
   responses: {
     200: {
-      content: { 'application/json': { schema: IndicateurListSchema } },
+      content: { 'application/json': { schema: IndicateurListApiModelSchema } },
       description: 'Liste paginée des indicateurs',
     },
   },
@@ -53,7 +61,6 @@ getIndicateurs.openapi(getIndicateursRoute, (context) => {
   }
 
   const total = filtered.length
-
   const cursorId = cursor ? Number(cursor) : 0
   const remaining = filtered.filter((i) => i.id > cursorId)
   const paged = remaining.slice(0, PAGE_SIZE)
@@ -70,7 +77,7 @@ getIndicateurs.openapi(getIndicateursRoute, (context) => {
   return jsonResponseOk({
     context,
     data,
-    schema: IndicateurListSchema,
+    schema: IndicateurListApiModelSchema,
     status: 200,
   })
 })

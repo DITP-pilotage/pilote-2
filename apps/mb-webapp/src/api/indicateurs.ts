@@ -1,8 +1,8 @@
 import {
-  type IndicateurAPI,
-  indicateurAPISchema,
-  type IndicateurListAPI,
-  indicateurListAPISchema,
+  type IndicateurApiModel,
+  indicateurApiModelSchema,
+  type IndicateurListApiModel,
+  indicateurListApiModelSchema,
   type IndicateurStatut,
 } from '@pilote/mb-shared'
 
@@ -16,17 +16,17 @@ export type IndicateursQueryParams = {
 
 export const fetchIndicateurs = async (
   params: IndicateursQueryParams,
-): Promise<IndicateurListAPI> => {
+): Promise<IndicateurListApiModel> => {
   const searchParams = new URLSearchParams()
   if (params.recherche) searchParams.set('recherche', params.recherche)
   if (params.statut) searchParams.set('statut', params.statut)
   if (params.cursor) searchParams.set('cursor', params.cursor)
 
   const json = await apiClient.get('indicateurs', { searchParams }).json()
-  return indicateurListAPISchema.parse(json)
+  return indicateurListApiModelSchema.parse(json)
 }
 
-export const fetchIndicateurById = async (id: number): Promise<IndicateurAPI> => {
+export const fetchIndicateurById = async (id: number): Promise<IndicateurApiModel> => {
   const json = await apiClient.get(`indicateurs/${id}`).json()
-  return indicateurAPISchema.parse(json)
+  return indicateurApiModelSchema.parse(json)
 }
