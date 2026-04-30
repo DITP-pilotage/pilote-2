@@ -17,6 +17,9 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     parse: (raw) => paramsSchema.parse(raw),
     stringify: ({ id }) => ({ id: String(id) }),
   },
+  // No loaderDeps needed: this route depends only on `params.id` (a route param,
+  // not a search param). TanStack Router reruns the loader automatically when
+  // the param changes.
   loader: ({ context, params }) =>
     context.queryClient.ensureQueryData(indicateurQueryOptions(params.id)),
   pendingComponent: () => (

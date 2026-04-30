@@ -4,6 +4,8 @@ import {
   createRootRouteWithContext,
   Link,
   Outlet,
+  useNavigate,
+  useRouter,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 
@@ -20,6 +22,8 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootComponent() {
   const { auth } = Route.useRouteContext()
+  const navigate = useNavigate()
+  const router = useRouter()
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -46,7 +50,8 @@ function RootComponent() {
                   type="button"
                   onClick={() => {
                     auth.logout()
-                    window.location.assign('/')
+                    void router.invalidate()
+                    void navigate({ to: '/' })
                   }}
                   className="rounded border border-slate-300 px-3 py-1 text-slate-700 hover:bg-slate-100"
                 >

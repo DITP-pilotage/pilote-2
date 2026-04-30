@@ -12,7 +12,7 @@ export type SharedMessage = z.infer<typeof sharedMessageSchema>
 // --- Paginated lists ---
 
 export const paginationSchema = z.object({
-  cursor: z.string().nullable(),
+  cursor: z.string().min(1).nullable(),
   hasMore: z.boolean(),
 })
 

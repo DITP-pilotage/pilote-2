@@ -136,21 +136,23 @@ function IndicateursListComponent() {
           <li>✓ useSuspenseQuery branché</li>
           <li>🔒 Guard _authenticated franchi</li>
         </ul>
-        <button
-          type="button"
-          onClick={() => {
-            // Force une erreur en envoyant un statut invalide
-            void navigate({
-              search: (prev) => ({
-                ...prev,
-                statut: 'broken' as never,
-              }),
-            })
-          }}
-          className="mt-3 rounded border border-red-300 px-3 py-1 text-xs text-red-700 hover:bg-red-50"
-        >
-          🐛 Forcer une erreur (search param invalide)
-        </button>
+        {import.meta.env.DEV && (
+          <button
+            type="button"
+            onClick={() => {
+              // Force une erreur en envoyant un statut invalide
+              void navigate({
+                search: (prev) => ({
+                  ...prev,
+                  statut: 'broken' as never,
+                }),
+              })
+            }}
+            className="mt-3 rounded border border-red-300 px-3 py-1 text-xs text-red-700 hover:bg-red-50"
+          >
+            🐛 Forcer une erreur (search param invalide)
+          </button>
+        )}
       </section>
     </div>
   )
