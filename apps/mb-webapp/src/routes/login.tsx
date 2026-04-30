@@ -1,5 +1,10 @@
 // apps/mb-webapp/src/routes/login.tsx
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  redirect,
+  useNavigate,
+  useRouter,
+} from '@tanstack/react-router'
 import { z } from 'zod'
 
 const loginSearchSchema = z.object({
@@ -20,10 +25,15 @@ function LoginComponent() {
   const { auth } = Route.useRouteContext()
   const search = Route.useSearch()
   const navigate = useNavigate()
+  const router = useRouter()
 
   const handleLogin = () => {
     auth.login()
-    void navigate({ to: '/indicateurs', search: {} })
+    if (search.redirect) {
+      router.history.push(search.redirect)
+    } else {
+      void navigate({ to: '/indicateurs', search: {} })
+    }
   }
 
   return (
@@ -57,7 +67,8 @@ function LoginComponent() {
         <ul className="mt-2 list-inside list-disc text-slate-700">
           <li>✓ beforeLoad redirect fonctionnel (si déjà connecté → redirect)</li>
           <li>
-            search.redirect : <code>{search.redirect ?? '(vide)'}</code>
+            search.redirect (cible post-login) :{' '}
+            <code>{search.redirect ?? '(vide → /indicateurs)'}</code>
           </li>
         </ul>
       </div>

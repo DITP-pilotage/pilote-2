@@ -1,5 +1,9 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  type ErrorComponentProps,
+  Link,
+} from '@tanstack/react-router'
 import { z } from 'zod'
 
 import { indicateurQueryOptions } from '@/queries/indicateurs'
@@ -20,13 +24,11 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
       Chargement de l'indicateur…
     </div>
   ),
-  errorComponent: ({ error }: { error: unknown }) => (
+  errorComponent: ({ error }: ErrorComponentProps) => (
     <div className="space-y-3">
       <div className="rounded border border-red-200 bg-red-50 p-6 text-red-800">
         <p className="font-medium">Indicateur introuvable</p>
-        <p className="mt-1 text-sm">
-          {error instanceof Error ? error.message : String(error)}
-        </p>
+        <p className="mt-1 text-sm">{error.message}</p>
       </div>
       <Link
         to="/indicateurs"

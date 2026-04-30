@@ -1,8 +1,12 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  type ErrorComponentProps,
+  Link,
+  useNavigate,
+} from '@tanstack/react-router'
 import { z } from 'zod'
 
-import { auth } from '@/auth'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
 
 const indicateursSearchSchema = z.object({
@@ -21,12 +25,10 @@ export const Route = createFileRoute('/_authenticated/indicateurs/')({
       Chargement des indicateurs…
     </div>
   ),
-  errorComponent: ({ error, reset }: { error: unknown; reset: () => void }) => (
+  errorComponent: ({ error, reset }: ErrorComponentProps) => (
     <div className="rounded border border-red-200 bg-red-50 p-6 text-red-800">
       <p className="font-medium">Erreur lors du chargement</p>
-      <p className="mt-1 text-sm">
-        {error instanceof Error ? error.message : String(error)}
-      </p>
+      <p className="mt-1 text-sm">{error.message}</p>
       <button
         type="button"
         onClick={reset}
@@ -40,6 +42,7 @@ export const Route = createFileRoute('/_authenticated/indicateurs/')({
 })
 
 function IndicateursListComponent() {
+  const { auth } = Route.useRouteContext()
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const { data } = useSuspenseQuery(indicateursQueryOptions(search))

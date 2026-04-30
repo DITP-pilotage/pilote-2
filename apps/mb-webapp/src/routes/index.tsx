@@ -4,13 +4,13 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 
 import { fetchSharedMessage } from '@/api/sharedMessage'
-import { auth } from '@/auth'
 
 export const Route = createFileRoute('/')({
   component: HomeComponent,
 })
 
 function HomeComponent() {
+  const { auth } = Route.useRouteContext()
   const { data, isPending, isError, error } = useQuery({
     queryKey: ['shared-message'],
     queryFn: fetchSharedMessage,
