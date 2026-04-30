@@ -1,22 +1,25 @@
 // Route module imported first so @hono/zod-openapi extends Zod's prototype
 // before any mb-shared schemas are evaluated. Once mb-shared switches to
 // schema factories (no module-level z.object() calls), this can be relaxed.
-import {
-  ErrorApiModelSchema,
-  INDICATEUR_NOT_FOUND_CODE,
-  indicateurRoutes,
-} from '@/indicateur/routes'
+import { ErrorApiModelSchema, indicateurRoutes } from '@/indicateur/routes'
+import { OpenAPIHono } from '@hono/zod-openapi'
 import {
   createPaginatedApiListSchema,
   indicateurApiModelSchema,
 } from '@pilote/mb-shared'
 import { describe, expect, it } from 'vitest'
 
+import { registerErrorHandler } from '@/framework/errors/errorHandler'
+
+const testApp = new OpenAPIHono()
+testApp.route('/', indicateurRoutes)
+registerErrorHandler(testApp)
+
 const indicateurListApiModelSchema = createPaginatedApiListSchema(indicateurApiModelSchema)
 
 describe('GET /indicateurs', () => {
   it('retourne la première page sans filtre (5 items, hasMore=true)', async () => {
-    const response = await indicateurRoutes.request('/indicateurs')
+    const response = await testApp.request('/indicateurs')
     const body = indicateurListApiModelSchema.parse(await response.json())
 
     expect(response.status).toBe(200)
@@ -28,11 +31,11 @@ describe('GET /indicateurs', () => {
   })
 
   it('paginate end-to-end : suit le cursor jusqu\'à hasMore=false', async () => {
-    const r1 = await indicateurRoutes.request('/indicateurs')
+    const r1 = await testApp.request('/indicateurs')
     const b1 = indicateurListApiModelSchema.parse(await r1.json())
     expect(b1.pagination.hasMore).toBe(true)
 
-    const r2 = await indicateurRoutes.request(
+    const r2 = await testApp.request(
       `/indicateurs?cursor=${b1.pagination.cursor}`,
     )
     const b2 = indicateurListApiModelSchema.parse(await r2.json())
@@ -43,7 +46,7 @@ describe('GET /indicateurs', () => {
   })
 
   it('cursor au-delà du dernier id retourne une page vide', async () => {
-    const response = await indicateurRoutes.request('/indicateurs?cursor=9999')
+    const response = await testApp.request('/indicateurs?cursor=9999')
     const body = indicateurListApiModelSchema.parse(await response.json())
 
     expect(response.status).toBe(200)
@@ -53,12 +56,12 @@ describe('GET /indicateurs', () => {
   })
 
   it('cursor invalide (non numérique) retourne 400', async () => {
-    const response = await indicateurRoutes.request('/indicateurs?cursor=abc')
+    const response = await testApp.request('/indicateurs?cursor=abc')
     expect(response.status).toBe(400)
   })
 
   it('filtre par statut', async () => {
-    const response = await indicateurRoutes.request('/indicateurs?statut=archive')
+    const response = await testApp.request('/indicateurs?statut=archive')
     const body = indicateurListApiModelSchema.parse(await response.json())
 
     expect(response.status).toBe(200)
@@ -68,7 +71,7 @@ describe('GET /indicateurs', () => {
   })
 
   it('filtre par recherche (nom, case-insensitive)', async () => {
-    const response = await indicateurRoutes.request('/indicateurs?recherche=fibre')
+    const response = await testApp.request('/indicateurs?recherche=fibre')
     const body = indicateurListApiModelSchema.parse(await response.json())
 
     expect(response.status).toBe(200)
@@ -77,7 +80,7 @@ describe('GET /indicateurs', () => {
   })
 
   it('retourne une liste vide quand aucune correspondance', async () => {
-    const response = await indicateurRoutes.request(
+    const response = await testApp.request(
       '/indicateurs?recherche=zzzzznoresult',
     )
     const body = indicateurListApiModelSchema.parse(await response.json())
@@ -92,7 +95,7 @@ describe('GET /indicateurs', () => {
 
 describe('GET /indicateurs/:id', () => {
   it('retourne un indicateur par id', async () => {
-    const response = await indicateurRoutes.request('/indicateurs/1')
+    const response = await testApp.request('/indicateurs/1')
     const body = indicateurApiModelSchema.parse(await response.json())
 
     expect(response.status).toBe(200)
@@ -100,17 +103,17 @@ describe('GET /indicateurs/:id', () => {
     expect(body.nom).toBe('Taux de chômage')
   })
 
-  it('retourne 404 avec un code stable si l\'indicateur n\'existe pas', async () => {
-    const response = await indicateurRoutes.request('/indicateurs/9999')
+  it("retourne 404 ENTITY_NOT_FOUND si l'indicateur n'existe pas", async () => {
+    const response = await testApp.request('/indicateurs/9999')
     const body = ErrorApiModelSchema.parse(await response.json())
 
     expect(response.status).toBe(404)
-    expect(body.code).toBe(INDICATEUR_NOT_FOUND_CODE)
+    expect(body.code).toBe('ENTITY_NOT_FOUND')
     expect(body.message).toBe('Indicateur introuvable')
   })
 
   it('retourne 400 si l\'id n\'est pas un nombre', async () => {
-    const response = await indicateurRoutes.request('/indicateurs/abc')
+    const response = await testApp.request('/indicateurs/abc')
     expect(response.status).toBe(400)
   })
 })

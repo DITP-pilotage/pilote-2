@@ -6,7 +6,8 @@ import {
   indicateurStatutSchema,
 } from '@pilote/mb-shared'
 
-import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { EntityNotFoundError } from '@/framework/errors/AppError'
+import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { indicateursFixtures } from '@/indicateur/data/indicateursFixtures'
 
 const IndicateurApiModelSchema = indicateurApiModelSchema.openapi('IndicateurApiModel')
@@ -14,8 +15,6 @@ const IndicateurListApiModelSchema = createPaginatedApiListSchema(
   indicateurApiModelSchema,
 ).openapi('IndicateurListApiModel')
 export const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
-
-export const INDICATEUR_NOT_FOUND_CODE = 'INDICATEUR_NOT_FOUND' as const
 
 /**
  * Pagination cursor (current implementation): the cursor is the last-seen
@@ -79,7 +78,7 @@ const getIndicateurByIdRoute = createRoute({
   tags: ['Indicateur'],
   summary: 'Récupérer un indicateur par id',
   description:
-    'Retourne un indicateur identifié par son id numérique. Renvoie 404 (`INDICATEUR_NOT_FOUND`) si aucun indicateur ne correspond.',
+    'Retourne un indicateur identifié par son id numérique. Renvoie 404 (`ENTITY_NOT_FOUND`) si aucun indicateur ne correspond.',
   request: { params: detailParamsSchema },
   responses: {
     200: {
@@ -136,15 +135,7 @@ indicateurRoutes.openapi(getIndicateurByIdRoute, (context) => {
   const found = indicateursFixtures.find((indicateur) => indicateur.id === id)
 
   if (!found) {
-    return jsonResponseError({
-      context,
-      error: {
-        code: INDICATEUR_NOT_FOUND_CODE,
-        message: 'Indicateur introuvable',
-      },
-      schema: ErrorApiModelSchema,
-      status: 404,
-    })
+    throw new EntityNotFoundError('Indicateur introuvable', { id })
   }
 
   return jsonResponseOk({

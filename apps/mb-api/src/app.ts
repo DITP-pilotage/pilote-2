@@ -3,6 +3,7 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
 
 import { env } from '@/env'
+import { registerErrorHandler } from '@/framework/errors/errorHandler'
 import { health } from '@/healthcheck/routes/health'
 import { indicateurRoutes } from '@/indicateur/routes'
 import { sharedMessage } from '@/shared/routes/sharedMessage'
@@ -22,3 +23,5 @@ app.doc('/openapi.json', {
 })
 
 app.get('/docs', swaggerUI({ url: '/openapi.json' }))
+
+registerErrorHandler(app)
