@@ -169,6 +169,9 @@ jobs:
         run: pnpm test
         env:
           APP_PACKAGE: '@pilote/mb-webapp'
+          # mb-webapp validates VITE_API_URL at module load (env.ts via Zod).
+          # Tests stub fetch globally so no real backend is hit; this only needs to be a valid URL.
+          VITE_API_URL: http://localhost:3000
 
   lint-mb-webapp:
     name: Run linters for mb-webapp
