@@ -4,6 +4,7 @@ import { cors } from 'hono/cors'
 
 import { env } from '@/env'
 import { health } from '@/healthcheck/routes/health'
+import { getIndicateurById } from '@/indicateur/routes/getIndicateurById'
 import { getIndicateurs } from '@/indicateur/routes/getIndicateurs'
 import { sharedMessage } from '@/shared/routes/sharedMessage'
 
@@ -15,6 +16,7 @@ app.get('/', (context) => context.json({ hello: 'world' }))
 app.route('/', health)
 app.route('/', sharedMessage)
 app.route('/', getIndicateurs)
+app.route('/', getIndicateurById)
 
 app.doc('/openapi.json', {
   openapi: '3.0.0',
