@@ -73,7 +73,7 @@ Set-Cookie: mb_session=<chiffré>;
 Middleware `requireUser` (`apps/mb-api/src/authentication/middleware/requireUser.ts`) appliqué **par route** (`route.use(requireUser, handler)`), pas globalement, pour préserver `/health` sans exception :
 
 - `Authorization: Bearer <jwt>` (case-insensitive, RFC 6750) → validation via JWKS (`createRemoteJWKSet` mémoïsé, `apps/mb-api/src/authentication/jwks.ts`)
-- Vérifie `iss`, `aud === OIDC_AUDIENCE` (mapper Keycloak côté client `dev-pilote-mb` requis), `azp === OIDC_AUTHORIZED_PARTY` (double check)
+- Vérifie `iss`, `aud === OIDC_AUDIENCE` (= `dev-pilote-mb`, qui est ajouté nativement par Keycloak dans `aud`), `azp === OIDC_AUTHORIZED_PARTY` (double check)
 - `algorithms: ['RS256']` explicite
 - `typ` autorisé : `Bearer` ou `at+jwt` (refuse les `id_token` qui ont `typ: 'ID'`)
 - `clockTolerance: 30`
@@ -115,8 +115,9 @@ Cible :
 
 ### Configuration Keycloak requise
 
-- **Audience mapper** sur le client `dev-pilote-mb` qui ajoute `mb-api` dans le claim `aud` des access tokens. Sans ce mapper, le check `aud === OIDC_AUDIENCE` côté mb-api refuse tous les tokens.
 - **Revoke Refresh Token + Max Reuse = 0** : Realm Settings → Tokens.
+
+> **Note `aud`** : on s'appuie aujourd'hui sur le `aud` natif Keycloak (`dev-pilote-mb`, le client_id), sans audience mapper dédié. Trade-off : on accepte tout access token émis pour ce client, sans distinction de resource server. Tant que mb-api est le seul resource server consommé par ce client, c'est OK. Le jour où un second backend partage le même client, il faudra ajouter un Audience mapper avec une valeur custom (ex. `mb-api`) et basculer `OIDC_AUDIENCE` dessus. Le double check `azp === OIDC_AUTHORIZED_PARTY` reste actif comme couche complémentaire.
 
 ## Libs utilisées
 
