@@ -49,6 +49,25 @@ describe.sequential('refreshAccessToken', () => {
     expect(tokenStore.get()).toBeNull()
   })
 
+  it('clears the token and returns null when the response is malformed', async () => {
+    tokenStore.set('stale')
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() =>
+        Promise.resolve(
+          new Response(JSON.stringify({ unexpected: 'shape' }), {
+            status: 200,
+            headers: { 'content-type': 'application/json' },
+          }),
+        ),
+      ),
+    )
+
+    const token = await refreshAccessToken()
+    expect(token).toBeNull()
+    expect(tokenStore.get()).toBeNull()
+  })
+
   it('allows a new refresh after the previous one settles', async () => {
     const fetchSpy = vi.fn(() =>
       Promise.resolve(

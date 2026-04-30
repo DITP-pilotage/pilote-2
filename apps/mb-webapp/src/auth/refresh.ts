@@ -1,9 +1,11 @@
+import { z } from 'zod'
+
 import { tokenStore } from '@/auth/tokenStore'
 
-type RefreshResponse = {
-  accessToken: string
-  expiresIn: number | null
-}
+const refreshResponseSchema = z.object({
+  accessToken: z.string().min(1),
+  expiresIn: z.number().nullable(),
+})
 
 let inFlight: Promise<string | null> | null = null
 
@@ -21,9 +23,15 @@ export const refreshAccessToken = (): Promise<string | null> => {
       return null
     }
 
-    const data = (await response.json()) as RefreshResponse
-    tokenStore.set(data.accessToken)
-    return data.accessToken
+    const json: unknown = await response.json().catch(() => null)
+    const parsed = refreshResponseSchema.safeParse(json)
+    if (!parsed.success) {
+      tokenStore.clear()
+      return null
+    }
+
+    tokenStore.set(parsed.data.accessToken)
+    return parsed.data.accessToken
   })().finally(() => {
     inFlight = null
   })

@@ -5,6 +5,15 @@ import { tokenStore } from '@/auth/tokenStore'
 import { env } from '@/env'
 
 const RETRY_FLAG = 'x-mb-retried'
+const apiOrigin = new URL(env.apiUrl).origin
+
+export const isApiOrigin = (url: string): boolean => {
+  try {
+    return new URL(url).origin === apiOrigin
+  } catch {
+    return false
+  }
+}
 
 export const apiClient = ky.create({
   prefixUrl: env.apiUrl,
@@ -12,6 +21,7 @@ export const apiClient = ky.create({
   hooks: {
     beforeRequest: [
       (request) => {
+        if (!isApiOrigin(request.url)) return
         const token = tokenStore.get()
         if (token) {
           request.headers.set('Authorization', `Bearer ${token}`)
@@ -23,6 +33,7 @@ export const apiClient = ky.create({
         if (response.status !== 401 || request.headers.get(RETRY_FLAG)) {
           return response
         }
+        if (!isApiOrigin(request.url)) return response
 
         const token = await refreshAccessToken()
         if (!token) {

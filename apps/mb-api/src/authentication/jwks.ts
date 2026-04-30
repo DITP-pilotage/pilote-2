@@ -10,10 +10,20 @@ export type AuthenticatedUser = {
 }
 
 export const verifyAccessToken = async (token: string): Promise<AuthenticatedUser> => {
-  const { payload } = await jwtVerify(token, jwks, {
+  const { payload, protectedHeader } = await jwtVerify(token, jwks, {
     issuer: env.OIDC_ISSUER_URL,
+    audience: env.OIDC_AUDIENCE,
+    algorithms: ['RS256'],
     clockTolerance: 30,
   })
+
+  if (
+    protectedHeader.typ !== undefined &&
+    protectedHeader.typ !== 'Bearer' &&
+    protectedHeader.typ !== 'at+jwt'
+  ) {
+    throw new Error(`Unexpected JWT typ: ${protectedHeader.typ}`)
+  }
 
   if (!isAuthorizedParty(payload)) {
     throw new Error('Unexpected authorized party')

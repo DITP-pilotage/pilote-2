@@ -16,6 +16,7 @@ export type SessionPayload = {
 export type PkcePayload = {
   codeVerifier: string
   state: string
+  nonce: string
 }
 
 const sealOptions = { password: serverEnv.SESSION_SECRET }

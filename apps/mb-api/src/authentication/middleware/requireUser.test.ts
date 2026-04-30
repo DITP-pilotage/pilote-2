@@ -57,4 +57,14 @@ describe.sequential('requireUser middleware', () => {
     expect(response.status).toBe(200)
     expect(await response.json()).toEqual({ id: 'sub-123', source: 'jwt' })
   })
+
+  it('accepts the Bearer scheme case-insensitively (RFC 6750)', async () => {
+    verify.mockResolvedValue({ id: 'sub-123', source: 'jwt' })
+    const app = buildApp()
+    const response = await app.request('/protected', {
+      headers: { Authorization: 'bearer good.token' },
+    })
+    expect(response.status).toBe(200)
+    expect(verify).toHaveBeenCalledWith('good.token')
+  })
 })

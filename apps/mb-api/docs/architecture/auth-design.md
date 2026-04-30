@@ -72,10 +72,13 @@ Set-Cookie: mb_session=<chiffré>;
 
 Middleware `requireUser` (`apps/mb-api/src/authentication/middleware/requireUser.ts`) appliqué **par route** (`route.use(requireUser, handler)`), pas globalement, pour préserver `/health` sans exception :
 
-- `Authorization: Bearer <jwt>` → validation via JWKS (`createRemoteJWKSet` mémoïsé, `apps/mb-api/src/authentication/jwks.ts`)
-- Vérifie `iss` + check manuel `payload.azp === OIDC_AUTHORIZED_PARTY` (cf. limite ci-dessous sur `aud`)
+- `Authorization: Bearer <jwt>` (case-insensitive, RFC 6750) → validation via JWKS (`createRemoteJWKSet` mémoïsé, `apps/mb-api/src/authentication/jwks.ts`)
+- Vérifie `iss`, `aud === OIDC_AUDIENCE` (mapper Keycloak côté client `dev-pilote-mb` requis), `azp === OIDC_AUTHORIZED_PARTY` (double check)
+- `algorithms: ['RS256']` explicite
+- `typ` autorisé : `Bearer` ou `at+jwt` (refuse les `id_token` qui ont `typ: 'ID'`)
 - `clockTolerance: 30`
 - Pose `c.set('user', { id: payload.sub, source: 'jwt' })`
+- Logs `auth.jwt.invalid` / `auth.jwt.missing` via pino sur erreur
 - `X-Api-Key: <key>` : non implémenté pour le prototype (cf. Hors scope)
 
 ## Modèle utilisateur
@@ -99,11 +102,21 @@ Cible :
 
 ## Sécurité
 
-- **CSRF** : `SameSite=Lax` + POST sur `/auth/refresh` & `/auth/logout` + check `Origin`/`Referer`. Pas de token CSRF nécessaire (origine unique).
-- **CORS API** : whitelist de l'origine webapp (`CORS_ORIGINS=https://mb-webapp.localhost`) ; les partenaires ne sont pas concernés (server-to-server).
+- **Headers HTTP** : `hono/secure-headers` côté BFF mb-webapp — CSP stricte (`default-src 'self'`, `frame-ancestors 'none'`, `connect-src 'self' <api>`), HSTS preload, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`.
+- **CSRF** : `SameSite=Lax` + POST sur `/auth/refresh` & `/auth/logout` + check `Origin === PUBLIC_BASE_URL` (helper `assertSameOrigin`). Pas de token CSRF nécessaire (origine unique).
+- **CORS API** : whitelist de l'origine webapp (`CORS_ORIGINS=https://mb-webapp.localhost`), `credentials: false` (l'API est purement Bearer, aucun cookie attendu) ; les partenaires ne sont pas concernés (server-to-server).
+- **Token leak prevention** : le client `ky` (`apps/mb-webapp/src/api/client.ts`) n'attache `Authorization` que si l'origine cible match `env.apiUrl`.
+- **Nonce OIDC** : généré au login, stocké chiffré dans le cookie `mb_pkce`, validé via `expectedNonce` au callback.
+- **Rate limit** : `hono-rate-limiter` sur `/auth/login` (10/min/IP), `/auth/refresh` (60/min/IP), `/auth/logout` (30/min/IP). Store in-memory pour le proto — passer Redis pour multi-instance.
+- **Audit trail** : pino côté API et BFF, events `auth.*` (start/success/failed). Tokens et cookies redacted dans les logs.
 - **Clock skew** : marge ~30s sur la validation `exp`.
 - **Rotation refresh** : activée côté Keycloak (Realm settings → Tokens → Revoke Refresh Token + Max Reuse=0).
 - **Kill-switch global** : rotation de la clé de chiffrement du cookie (`SESSION_SECRET`) → invalide toutes les sessions.
+
+### Configuration Keycloak requise
+
+- **Audience mapper** sur le client `dev-pilote-mb` qui ajoute `mb-api` dans le claim `aud` des access tokens. Sans ce mapper, le check `aud === OIDC_AUDIENCE` côté mb-api refuse tous les tokens.
+- **Revoke Refresh Token + Max Reuse = 0** : Realm Settings → Tokens.
 
 ## Libs utilisées
 
@@ -136,6 +149,7 @@ Choses à connaître si tu touches au code :
 - Keycloak local en docker-compose (on dépend du Keycloak distant pour l'instant) — **point ouvert**
 - Politique multi-device explicite à acter ou pas — **point ouvert**
 
-## Décision à durcir avant merge non-prototype
+## Points ouverts à durcir
 
-**Validation JWT** : le prototype check `payload.azp === OIDC_AUTHORIZED_PARTY` (= `client_id` du BFF) au lieu de l'`aud` standard, pour éviter de configurer un audience mapper Keycloak. À remplacer par un vrai check `aud === 'mb-api'` avec mapper Keycloak côté client `dev-pilote-mb`.
+- **`id_token_hint` sur logout** : `buildEndSessionUrl` ne passe pas `id_token_hint` ; à ajouter pour éviter le prompt de confirmation Keycloak (nécessite de stocker l'id_token dans la session).
+- **Race refresh entre onglets** : le mutex `inFlight` est par-onglet. Deux onglets ouverts → 2 refresh simultanés → la rotation Keycloak invalide la session. Solutions à explorer : `BroadcastChannel` côté webapp, ou lock côté BFF.
