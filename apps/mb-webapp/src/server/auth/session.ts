@@ -17,6 +17,7 @@ export type PkcePayload = {
   codeVerifier: string
   state: string
   nonce: string
+  redirect?: string
 }
 
 const sealOptions = { password: serverEnv.SESSION_SECRET }

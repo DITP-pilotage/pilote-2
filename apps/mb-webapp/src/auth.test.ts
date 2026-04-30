@@ -1,17 +1,11 @@
+import { http, HttpResponse } from 'msw'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { auth, refreshAccessToken } from '@/auth'
 import { tokenStore } from '@/auth/tokenStore'
-
-const jsonResponse = (body: unknown, status = 200): Response =>
-  new Response(JSON.stringify(body), {
-    status,
-    headers: { 'content-type': 'application/json' },
-  })
-
-const meBody = (userId: string) => ({ userId, source: 'jwt' })
-const refreshBody = (token: string) => ({ accessToken: token, expiresIn: 60 })
-const logoutBody = (logoutUrl: string | null) => ({ logoutUrl })
+import { buildMe } from '@/tests/factories/api'
+import { buildLogoutResponse, buildRefreshResponse } from '@/tests/factories/bff'
+import { apiUrl, bffUrl, server } from '@/tests/server'
 
 describe.sequential('auth singleton', () => {
   beforeEach(() => {
@@ -29,10 +23,7 @@ describe.sequential('auth singleton', () => {
 
   describe('bootstrap', () => {
     it('leaves the user anonymous when refresh fails', async () => {
-      vi.stubGlobal(
-        'fetch',
-        vi.fn(() => Promise.resolve(new Response(null, { status: 401 }))),
-      )
+      server.use(http.post(bffUrl('/auth/refresh'), () => new HttpResponse(null, { status: 401 })))
 
       await auth.bootstrap()
 
@@ -42,14 +33,12 @@ describe.sequential('auth singleton', () => {
     })
 
     it('authenticates the user when refresh + me succeed', async () => {
-      const fetchMock = vi.fn<typeof fetch>((input) => {
-        const url = input instanceof Request ? input.url : String(input)
-        if (url.endsWith('/auth/refresh')) {
-          return Promise.resolve(jsonResponse(refreshBody('access-1')))
-        }
-        return Promise.resolve(jsonResponse(meBody('sub-123')))
-      })
-      vi.stubGlobal('fetch', fetchMock)
+      server.use(
+        http.post(bffUrl('/auth/refresh'), () =>
+          HttpResponse.json(buildRefreshResponse({ accessToken: 'access-1' })),
+        ),
+        http.get(apiUrl('/me'), () => HttpResponse.json(buildMe({ userId: 'sub-123' }))),
+      )
 
       await auth.bootstrap()
 
@@ -61,14 +50,18 @@ describe.sequential('auth singleton', () => {
 
   describe('refreshAccessToken', () => {
     it('coalesces concurrent calls into a single network request', async () => {
-      let resolveRequest: ((value: Response) => void) | undefined
-      const fetchSpy = vi.fn(
-        () =>
-          new Promise<Response>((resolve) => {
-            resolveRequest = resolve
-          }),
+      let callCount = 0
+      let resolveRequest: (() => void) | undefined
+      const gate = new Promise<void>((resolve) => {
+        resolveRequest = resolve
+      })
+      server.use(
+        http.post(bffUrl('/auth/refresh'), async () => {
+          callCount += 1
+          await gate
+          return HttpResponse.json(buildRefreshResponse({ accessToken: 'new-token' }))
+        }),
       )
-      vi.stubGlobal('fetch', fetchSpy)
 
       const calls = Promise.all([
         refreshAccessToken(),
@@ -77,70 +70,94 @@ describe.sequential('auth singleton', () => {
       ])
 
       await vi.waitFor(() => {
-        expect(fetchSpy).toHaveBeenCalledTimes(1)
+        expect(callCount).toBe(1)
       })
 
-      resolveRequest!(jsonResponse(refreshBody('new-token')))
-
+      resolveRequest!()
       const tokens = await calls
       expect(tokens).toEqual(['new-token', 'new-token', 'new-token'])
-      expect(fetchSpy).toHaveBeenCalledTimes(1)
+      expect(callCount).toBe(1)
       expect(tokenStore.get()).toBe('new-token')
     })
 
     it('clears the token and returns null on 401', async () => {
       tokenStore.set('stale')
-      vi.stubGlobal(
-        'fetch',
-        vi.fn(() => Promise.resolve(new Response(null, { status: 401 }))),
-      )
+      server.use(http.post(bffUrl('/auth/refresh'), () => new HttpResponse(null, { status: 401 })))
 
       const token = await refreshAccessToken()
+
       expect(token).toBeNull()
       expect(tokenStore.get()).toBeNull()
     })
 
     it('keeps the token on 5xx (transient server failure)', async () => {
       tokenStore.set('still-valid')
-      vi.stubGlobal(
-        'fetch',
-        vi.fn(() => Promise.resolve(new Response(null, { status: 503 }))),
-      )
+      server.use(http.post(bffUrl('/auth/refresh'), () => new HttpResponse(null, { status: 503 })))
 
       const token = await refreshAccessToken()
+
       expect(token).toBeNull()
       expect(tokenStore.get()).toBe('still-valid')
     })
 
     it('clears the token and returns null when the response is malformed', async () => {
       tokenStore.set('stale')
-      vi.stubGlobal(
-        'fetch',
-        vi.fn(() => Promise.resolve(jsonResponse({ unexpected: 'shape' }))),
+      server.use(
+        http.post(bffUrl('/auth/refresh'), () => HttpResponse.json({ unexpected: 'shape' })),
       )
 
       const token = await refreshAccessToken()
+
       expect(token).toBeNull()
       expect(tokenStore.get()).toBeNull()
     })
 
     it('allows a new refresh after the previous one settles', async () => {
-      const fetchSpy = vi.fn(() => Promise.resolve(jsonResponse(refreshBody('a'))))
-      vi.stubGlobal('fetch', fetchSpy)
+      let callCount = 0
+      server.use(
+        http.post(bffUrl('/auth/refresh'), () => {
+          callCount += 1
+          return HttpResponse.json(buildRefreshResponse({ accessToken: 'a' }))
+        }),
+      )
 
       await refreshAccessToken()
       await refreshAccessToken()
-      expect(fetchSpy).toHaveBeenCalledTimes(2)
+
+      expect(callCount).toBe(2)
+    })
+  })
+
+  describe('login', () => {
+    it("redirige vers le BFF /auth/login sans param quand aucun redirect n'est fourni", () => {
+      const assignSpy = vi.fn()
+      vi.stubGlobal('window', { ...window, location: { assign: assignSpy } })
+
+      auth.login()
+
+      expect(assignSpy).toHaveBeenCalledWith('/auth/login')
+    })
+
+    it('passe le param redirect encodé au BFF', () => {
+      const assignSpy = vi.fn()
+      vi.stubGlobal('window', { ...window, location: { assign: assignSpy } })
+
+      auth.login('/indicateurs?statut=actif')
+
+      expect(assignSpy).toHaveBeenCalledWith(
+        `/auth/login?redirect=${encodeURIComponent('/indicateurs?statut=actif')}`,
+      )
     })
   })
 
   describe('logout', () => {
     it('clears state and redirects to the IdP end-session URL', async () => {
       tokenStore.set('whatever')
-      const fetchSpy = vi.fn(() =>
-        Promise.resolve(jsonResponse(logoutBody('https://idp/end-session'))),
+      server.use(
+        http.post(bffUrl('/auth/logout'), () =>
+          HttpResponse.json(buildLogoutResponse({ logoutUrl: 'https://idp/end-session' })),
+        ),
       )
-      vi.stubGlobal('fetch', fetchSpy)
       const assignSpy = vi.fn()
       vi.stubGlobal('window', { ...window, location: { assign: assignSpy } })
 
@@ -153,10 +170,7 @@ describe.sequential('auth singleton', () => {
 
     it('falls back to "/" when the BFF logout call fails', async () => {
       tokenStore.set('whatever')
-      vi.stubGlobal(
-        'fetch',
-        vi.fn(() => Promise.resolve(new Response(null, { status: 500 }))),
-      )
+      server.use(http.post(bffUrl('/auth/logout'), () => new HttpResponse(null, { status: 500 })))
       const assignSpy = vi.fn()
       vi.stubGlobal('window', { ...window, location: { assign: assignSpy } })
 

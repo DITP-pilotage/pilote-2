@@ -8,6 +8,8 @@ import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   server: {
+    // Vite désactivé pour laisser Hono gérer CORS (cookies httpOnly + Lax,
+    // headers de sécurité). Sans ça, Vite réécrit les headers en dev.
     cors: false,
   },
   plugins: [

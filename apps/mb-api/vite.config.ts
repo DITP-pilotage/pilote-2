@@ -4,6 +4,8 @@ import { defineConfig } from 'vite'
 export default defineConfig({
   resolve: { tsconfigPaths: true },
   server: {
+    // Vite désactivé pour ne pas écraser les headers CORS posés par Hono
+    // (credentials, allowed origins). Le middleware Hono gère le CORS seul.
     cors: false,
   },
   ssr: {

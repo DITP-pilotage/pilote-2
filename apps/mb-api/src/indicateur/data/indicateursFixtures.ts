@@ -1,4 +1,4 @@
-import type { IndicateurApiModel } from '@pilote/mb-shared'
+import type { IndicateurApiModel } from '@pilote/mb-shared/api'
 
 export const indicateursFixtures: IndicateurApiModel[] = [
   {

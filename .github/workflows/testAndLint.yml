@@ -152,8 +152,6 @@ jobs:
 
       - name: Generate Prisma client
         run: pnpm -F @pilote/mb-api prisma:generate
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5435/postgres
 
       - name: Run lint command
         run: pnpm lint

@@ -4,7 +4,7 @@ import {
   errorApiModelSchema,
   indicateurApiModelSchema,
   indicateurStatutSchema,
-} from '@pilote/mb-shared'
+} from '@pilote/mb-shared/api'
 
 import { EntityNotFoundError } from '@/framework/errors/AppError'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'

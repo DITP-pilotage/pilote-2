@@ -12,7 +12,7 @@ export type Auth = {
   isAuthenticated: boolean
   user: AuthUser | null
   bootstrap: () => Promise<void>
-  login: () => void
+  login: (redirect?: string) => void
   logout: () => Promise<void>
 }
 
@@ -83,8 +83,11 @@ export const auth: Auth = {
       state.user = null
     }
   },
-  login() {
-    window.location.assign('/auth/login')
+  login(redirect) {
+    const url = redirect
+      ? `/auth/login?redirect=${encodeURIComponent(redirect)}`
+      : '/auth/login'
+    window.location.assign(url)
   },
   async logout() {
     let logoutUrl: string | null = null

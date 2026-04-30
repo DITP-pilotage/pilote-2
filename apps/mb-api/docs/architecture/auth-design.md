@@ -70,15 +70,15 @@ Set-Cookie: mb_session=<chiffré>;
 
 ## Côté API (mb-api)
 
-Middleware `requireUser` (`apps/mb-api/src/authentication/middleware/requireUser.ts`) appliqué **par route** (`route.use(requireUser, handler)`), pas globalement, pour préserver `/health` sans exception :
+Middleware `authContext` (`apps/mb-api/src/framework/auth/authContext.ts`) appliqué **globalement** : il parse le header `Authorization` si présent et initialise un `AsyncLocalStorage` avec `user | undefined` pour la requête. Aucune route n'est rejetée par ce middleware — c'est `requireUser()` (`apps/mb-api/src/framework/auth/userContext.ts`), appelé par les handlers qui en ont besoin, qui jette un `UnauthorizedError` mappé en 401 par le `ErrorHandler` global.
 
 - `Authorization: Bearer <jwt>` (case-insensitive, RFC 6750) → validation via JWKS (`createRemoteJWKSet` mémoïsé, `apps/mb-api/src/authentication/jwks.ts`)
 - Vérifie `iss`, `aud === OIDC_AUDIENCE` (= `dev-pilote-mb`, qui est ajouté nativement par Keycloak dans `aud`), `azp === OIDC_AUTHORIZED_PARTY` (double check)
 - `algorithms: ['RS256']` explicite
-- `typ` autorisé : `Bearer` ou `at+jwt` (refuse les `id_token` qui ont `typ: 'ID'`)
+- `typ` autorisé : `Bearer` (refuse les `id_token` qui ont `typ: 'ID'`)
 - `clockTolerance: 30`
-- Pose `c.set('user', { id: payload.sub, source: 'jwt' })`
-- Logs `auth.jwt.invalid` / `auth.jwt.missing` via pino sur erreur
+- Stocke `{ userId: payload.sub, source: 'jwt' }` dans l'`AsyncLocalStorage` ; `requireUser()` le lit
+- Logs `auth.jwt.invalid` via pino sur erreur de validation (le bearer absent/mal formé reste anonyme, pas de log)
 - `X-Api-Key: <key>` : non implémenté pour le prototype (cf. Hors scope)
 
 ## Modèle utilisateur

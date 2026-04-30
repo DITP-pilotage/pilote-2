@@ -12,7 +12,7 @@ import { sharedMessage } from '@/shared/routes/sharedMessage'
 
 export const app = new OpenAPIHono()
 
-app.use('*', cors({ origin: env.CORS_ORIGINS, credentials: true }))
+app.use('*', cors({ origin: env.CORS_ORIGINS, credentials: false }))
 app.use('*', authContext)
 
 app.get('/', (context) => context.json({ hello: 'world' }))

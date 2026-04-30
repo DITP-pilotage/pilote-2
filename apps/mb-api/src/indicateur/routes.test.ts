@@ -6,7 +6,7 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import {
   createPaginatedApiListSchema,
   indicateurApiModelSchema,
-} from '@pilote/mb-shared'
+} from '@pilote/mb-shared/api'
 import { describe, expect, it } from 'vitest'
 
 import { registerErrorHandler } from '@/framework/errors/errorHandler'

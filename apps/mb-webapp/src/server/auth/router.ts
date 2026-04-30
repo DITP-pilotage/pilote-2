@@ -25,6 +25,14 @@ const sessionTtlSeconds = (refreshExpiresIn: unknown): number => {
   return Number.isFinite(value) && value > 0 ? value : DEFAULT_SESSION_TTL_SECONDS
 }
 
+const SAFE_INTERNAL_PATH = /^\/(?:[^/\\].*)?$/
+
+const safeRedirectPath = (raw: string | undefined): string | undefined => {
+  if (!raw) return undefined
+  if (raw.length > 512) return undefined
+  return SAFE_INTERNAL_PATH.test(raw) ? raw : undefined
+}
+
 const sanitizeCallbackUrl = (incomingUrl: string): URL => {
   const parsed = new URL(incomingUrl)
   const target = new URL(serverEnv.OIDC_REDIRECT_URI)
@@ -76,8 +84,14 @@ authRouter.get('/login', loginLimiter, async (context) => {
   const codeChallenge = await client.calculatePKCECodeChallenge(codeVerifier)
   const state = client.randomState()
   const nonce = client.randomNonce()
+  const redirectPath = safeRedirectPath(context.req.query('redirect'))
 
-  await writePkce(context, { codeVerifier, state, nonce })
+  await writePkce(context, {
+    codeVerifier,
+    state,
+    nonce,
+    ...(redirectPath ? { redirect: redirectPath } : {}),
+  })
 
   const authorizationUrl = client.buildAuthorizationUrl(config, {
     redirect_uri: serverEnv.OIDC_REDIRECT_URI,
@@ -88,14 +102,14 @@ authRouter.get('/login', loginLimiter, async (context) => {
     nonce,
   })
 
-  logger.info({ event: 'auth.login.start' }, 'Starting OIDC login')
+  logger.debug({ event: 'auth.login.start' }, 'Starting OIDC login')
   return context.redirect(authorizationUrl.toString())
 })
 
 authRouter.get('/callback', async (context) => {
   const pkce = await readPkce(context)
   if (!pkce) {
-    logger.warn({ event: 'auth.callback.no_pkce' }, 'Callback received without PKCE state')
+    logger.error({ event: 'auth.callback.no_pkce' }, 'Callback received without PKCE state')
     return context.text('Invalid auth state', 400)
   }
   clearPkce(context)
@@ -120,7 +134,7 @@ authRouter.get('/callback', async (context) => {
 
   const claims = tokens.claims()
   if (!claims?.sub || !tokens.refresh_token) {
-    logger.warn({ event: 'auth.callback.missing_tokens' }, 'Missing claims or refresh token')
+    logger.error({ event: 'auth.callback.missing_tokens' }, 'Missing claims or refresh token')
     return context.text('Authentication failed', 401)
   }
 
@@ -130,8 +144,11 @@ authRouter.get('/callback', async (context) => {
     sessionTtlSeconds(tokens.refresh_expires_in),
   )
 
-  logger.info({ event: 'auth.login.success' }, 'OIDC login completed')
-  return context.redirect(serverEnv.PUBLIC_BASE_URL)
+  logger.debug({ event: 'auth.login.success' }, 'OIDC login completed')
+  const target = pkce.redirect
+    ? new URL(pkce.redirect, serverEnv.PUBLIC_BASE_URL).toString()
+    : serverEnv.PUBLIC_BASE_URL
+  return context.redirect(target)
 })
 
 authRouter.post('/refresh', refreshLimiter, async (context) => {
@@ -158,20 +175,22 @@ authRouter.post('/refresh', refreshLimiter, async (context) => {
   }
 
   if (!tokens.access_token) {
-    logger.warn({ event: 'auth.refresh.no_access_token' }, 'Refresh response without access token')
+    logger.error({ event: 'auth.refresh.no_access_token' }, 'Refresh response without access token')
     clearSession(context)
     return context.json({ error: 'unauthorized' }, 401)
   }
 
-  if (tokens.refresh_token) {
-    await writeSession(
-      context,
-      { refreshToken: tokens.refresh_token, sub: session.sub },
-      sessionTtlSeconds(tokens.refresh_expires_in),
-    )
-  }
+  await writeSession(
+    context,
+    {
+      refreshToken: tokens.refresh_token ?? session.refreshToken,
+      sub: session.sub,
+    },
+    sessionTtlSeconds(tokens.refresh_expires_in),
+  )
 
   logger.debug({ event: 'auth.refresh.success' }, 'Refresh succeeded')
+  context.header('Cache-Control', 'no-store')
   return context.json({
     accessToken: tokens.access_token,
     expiresIn: tokens.expires_in ?? null,
@@ -204,6 +223,6 @@ authRouter.post('/logout', logoutLimiter, async (context) => {
     post_logout_redirect_uri: serverEnv.OIDC_POST_LOGOUT_REDIRECT_URI,
   })
 
-  logger.info({ event: 'auth.logout.success' }, 'User logged out')
+  logger.debug({ event: 'auth.logout.success' }, 'User logged out')
   return context.json({ logoutUrl: endSessionUrl.toString() })
 })

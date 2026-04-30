@@ -48,13 +48,13 @@ function RootComponent() {
                 </button>
               </span>
             ) : (
-              <Link
-                to="/login"
-                search={{}}
+              <button
+                type="button"
+                onClick={() => auth.login()}
                 className="rounded bg-slate-900 px-3 py-1 text-white hover:bg-slate-700"
               >
                 Se connecter
-              </Link>
+              </button>
             )}
           </nav>
         </div>
