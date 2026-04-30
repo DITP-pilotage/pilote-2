@@ -1,4 +1,3 @@
-// packages/mb-shared/src/index.ts
 import { z } from 'zod'
 
 export const SHARED_GREETING = 'Hello from @pilote/mb-shared'

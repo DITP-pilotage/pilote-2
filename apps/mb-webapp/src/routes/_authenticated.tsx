@@ -1,4 +1,3 @@
-// apps/mb-webapp/src/routes/_authenticated.tsx
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authenticated')({

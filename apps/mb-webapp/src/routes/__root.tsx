@@ -1,4 +1,3 @@
-// apps/mb-webapp/src/routes/__root.tsx
 import type { QueryClient } from '@tanstack/react-query'
 import {
   createRootRouteWithContext,

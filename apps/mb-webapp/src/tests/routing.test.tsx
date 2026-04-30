@@ -1,4 +1,3 @@
-// apps/mb-webapp/src/tests/routing.test.tsx
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {
   createMemoryHistory,

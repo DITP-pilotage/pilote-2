@@ -1,4 +1,3 @@
-// apps/mb-webapp/src/routes/login.tsx
 import {
   createFileRoute,
   redirect,

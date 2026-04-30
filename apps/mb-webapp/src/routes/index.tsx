@@ -1,4 +1,3 @@
-// apps/mb-webapp/src/routes/index.tsx
 import { SHARED_GREETING } from '@pilote/mb-shared'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'

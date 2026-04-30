@@ -1,4 +1,3 @@
-// apps/mb-api/src/indicateur/data/indicateursFixtures.ts
 import type { IndicateurAPI } from '@pilote/mb-shared'
 
 export const indicateursFixtures: IndicateurAPI[] = [
