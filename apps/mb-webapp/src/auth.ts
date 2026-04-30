@@ -1,35 +1,21 @@
-const STORAGE_KEY = 'mb-auth'
+import { fetchMe } from '@/api/me'
+import { refreshAccessToken } from '@/auth/refresh'
+import { tokenStore } from '@/auth/tokenStore'
 
 export type AuthUser = {
-  name: string
-  email: string
+  id: string
 }
 
 export type Auth = {
   isAuthenticated: boolean
   user: AuthUser | null
+  bootstrap: () => Promise<void>
   login: () => void
-  logout: () => void
-}
-
-const FAKE_USER: AuthUser = {
-  name: 'Marie Curie',
-  email: 'marie@pilote-mb.fr',
-}
-
-const readStorage = (): AuthUser | null => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return null
-    const parsed = JSON.parse(raw) as AuthUser
-    return parsed
-  } catch {
-    return null
-  }
+  logout: () => Promise<void>
 }
 
 const state: { user: AuthUser | null } = {
-  user: readStorage(),
+  user: null,
 }
 
 export const auth: Auth = {
@@ -39,12 +25,39 @@ export const auth: Auth = {
   get user() {
     return state.user
   },
-  login() {
-    state.user = FAKE_USER
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(FAKE_USER))
+  async bootstrap() {
+    const token = await refreshAccessToken()
+    if (!token) {
+      state.user = null
+      return
+    }
+    try {
+      const me = await fetchMe()
+      state.user = { id: me.id }
+    } catch {
+      tokenStore.clear()
+      state.user = null
+    }
   },
-  logout() {
-    state.user = null
-    localStorage.removeItem(STORAGE_KEY)
+  login() {
+    window.location.assign('/auth/login')
+  },
+  async logout() {
+    try {
+      const response = await fetch('/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      })
+      const data = (await response.json().catch(() => null)) as
+        | { logoutUrl: string | null }
+        | null
+      tokenStore.clear()
+      state.user = null
+      window.location.assign(data?.logoutUrl ?? '/')
+    } catch {
+      tokenStore.clear()
+      state.user = null
+      window.location.assign('/')
+    }
   },
 }

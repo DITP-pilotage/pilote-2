@@ -27,10 +27,14 @@ declare module '@tanstack/react-router' {
   }
 }
 
-createRoot(rootElement).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
-  </StrictMode>,
-)
+const root = createRoot(rootElement)
+
+void auth.bootstrap().finally(() => {
+  root.render(
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </StrictMode>,
+  )
+})
