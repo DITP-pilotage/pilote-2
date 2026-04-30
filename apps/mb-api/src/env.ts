@@ -14,6 +14,9 @@ const envSchema = z.object({
         .map((origin) => origin.trim())
         .filter(Boolean),
     ),
+  OIDC_ISSUER_URL: z.url(),
+  OIDC_JWKS_URI: z.url(),
+  OIDC_AUTHORIZED_PARTY: z.string().min(1),
 })
 
 export const env = envSchema.parse(process.env)

@@ -3,6 +3,9 @@ import { defineConfig } from 'vite'
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
+  server: {
+    cors: false,
+  },
   ssr: {
     noExternal: ['@pilote/mb-shared'],
   },
