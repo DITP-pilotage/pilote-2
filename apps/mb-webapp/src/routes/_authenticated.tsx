@@ -7,6 +7,7 @@ export const Route = createFileRoute('/_authenticated')({
       const target = `${location.pathname}${location.searchStr}${hash}`
       throw redirect({
         href: `/auth/login?redirect=${encodeURIComponent(target)}`,
+        reloadDocument: true,
       })
     }
   },
