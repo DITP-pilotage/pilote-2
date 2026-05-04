@@ -4,7 +4,7 @@ import {
   type IndicateurListApiModel,
   indicateurListApiModelSchema,
   type IndicateurStatut,
-} from '@pilote/mb-shared'
+} from '@pilote/mb-shared/api'
 
 import { apiClient } from '@/api/client'
 

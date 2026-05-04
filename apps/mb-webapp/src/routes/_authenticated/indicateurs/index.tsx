@@ -37,7 +37,7 @@ function IndicateursListComponent() {
       <header className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Indicateurs</h1>
         <span className="rounded bg-emerald-100 px-2 py-1 text-xs text-emerald-800">
-          🔒 Authentifié comme {auth.user?.name}
+          🔒 Authentifié — sub: {auth.user?.id}
         </span>
       </header>
 

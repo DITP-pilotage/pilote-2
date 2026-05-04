@@ -1,11 +1,5 @@
 import type { QueryClient } from '@tanstack/react-query'
-import {
-  createRootRouteWithContext,
-  Link,
-  Outlet,
-  useNavigate,
-  useRouter,
-} from '@tanstack/react-router'
+import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 
 import type { Auth } from '@/auth'
@@ -21,8 +15,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootComponent() {
   const { auth } = Route.useRouteContext()
-  const navigate = useNavigate()
-  const router = useRouter()
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
@@ -44,13 +36,11 @@ function RootComponent() {
             </Link>
             {auth.isAuthenticated ? (
               <span className="flex items-center gap-2">
-                <span className="text-slate-600">{auth.user?.name}</span>
+                <span className="text-slate-600">{auth.user?.id}</span>
                 <button
                   type="button"
                   onClick={() => {
-                    auth.logout()
-                    void router.invalidate()
-                    void navigate({ to: '/' })
+                    void auth.logout()
                   }}
                   className="rounded border border-slate-300 px-3 py-1 text-slate-700 hover:bg-slate-100"
                 >
@@ -58,13 +48,13 @@ function RootComponent() {
                 </button>
               </span>
             ) : (
-              <Link
-                to="/login"
-                search={{}}
+              <button
+                type="button"
+                onClick={() => auth.login()}
                 className="rounded bg-slate-900 px-3 py-1 text-white hover:bg-slate-700"
               >
                 Se connecter
-              </Link>
+              </button>
             )}
           </nav>
         </div>

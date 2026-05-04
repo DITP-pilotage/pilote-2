@@ -1,31 +1,16 @@
 import '@testing-library/jest-dom/vitest'
-import { afterAll, afterEach, beforeAll, vi } from 'vitest'
+import { afterAll, afterEach, beforeAll } from 'vitest'
 
-const fetchMock = vi.fn()
-
-const setDefaultFetchResponse = () => {
-  fetchMock.mockResolvedValue(
-    new Response(
-      JSON.stringify({
-        items: [],
-        pagination: { cursor: null, hasMore: false },
-        total: 0,
-      }),
-      { status: 200, headers: { 'content-type': 'application/json' } },
-    ),
-  )
-}
+import { server } from '@/tests/server'
 
 beforeAll(() => {
-  vi.stubGlobal('fetch', fetchMock)
-  setDefaultFetchResponse()
+  server.listen({ onUnhandledRequest: 'error' })
 })
 
 afterEach(() => {
-  fetchMock.mockReset()
-  setDefaultFetchResponse()
+  server.resetHandlers()
 })
 
 afterAll(() => {
-  vi.unstubAllGlobals()
+  server.close()
 })
