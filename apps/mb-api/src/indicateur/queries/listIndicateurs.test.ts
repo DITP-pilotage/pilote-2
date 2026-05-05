@@ -4,9 +4,9 @@ import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 
-describe('listIndicateurs', () => {
+describe.concurrent('listIndicateurs', () => {
   it(
-    'retourne une liste vide quand aucun indicateur n\'existe',
+    "retourne une liste vide quand aucun indicateur n'existe",
     integrationTest(async () => {
       // When
       const result = await listIndicateurs({})
@@ -43,7 +43,7 @@ describe('listIndicateurs', () => {
   )
 
   it(
-    'pagine quand le nombre d\'indicateurs dépasse la taille de page',
+    "pagine quand le nombre d'indicateurs dépasse la taille de page",
     integrationTest(async () => {
       // Given
       await fixtures.indicateur(

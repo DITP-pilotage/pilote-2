@@ -4,7 +4,7 @@ import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPub
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 
-describe('getIndicateurByPublicId', () => {
+describe.concurrent('getIndicateurByPublicId', () => {
   it(
     "retourne l'indicateur correspondant au publicId",
     integrationTest(async () => {
