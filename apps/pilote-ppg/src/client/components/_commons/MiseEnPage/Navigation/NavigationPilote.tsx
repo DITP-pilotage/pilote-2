@@ -10,6 +10,7 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import Habilitation from "@/server/domain/utilisateur/habilitation/Habilitation";
 import HabilitationGestionUtilisateur from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { useEnv } from "@/client/hooks/useEnv";
+import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 import {
   BaseNavigation,
   LienNavigation,
@@ -55,11 +56,20 @@ export const NavigationPilote = () => {
 
   const filtresActifs = getFiltresActifs();
 
+  const dateBasculeValeurAnneePrecedente = useEnv(
+    "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE",
+  );
+
   const territoireCodeURL = router.query.territoireCode as string | undefined;
   const jalonUrl = router.query.jalon as string | undefined;
 
+  const jalonParDefaut = getAnneeDateDeBascule(
+    new Date(),
+    dateBasculeValeurAnneePrecedente,
+  ).toString();
+
   const init: Partial<FiltreAccueil> = {
-    jalon: jalonUrl,
+    jalon: jalonUrl || filtresActifs.jalon || jalonParDefaut,
   };
 
   const territoireCodeStore = Boolean(filtresActifs?.territoireCode)
