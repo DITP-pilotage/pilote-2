@@ -1,6 +1,5 @@
-import { randomUUID } from 'node:crypto'
-
 import { describe, expect, it } from 'vitest'
+import { uuidv7 } from 'uuidv7'
 
 import { db } from '@/framework/persistence/dbStore'
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
@@ -11,18 +10,17 @@ describe('getIndicateurByPublicId', () => {
     "retourne l'indicateur correspondant au publicId",
     integrationTest(async () => {
       // Given
-      const publicId = `IND-${Math.floor(Math.random() * 1_000_000)}`
       const created = await db().indicateur.create({
-        data: { id: randomUUID(), publicId, nom: 'Indicateur de test' },
+        data: { id: uuidv7(), publicId: 'IND-1', nom: 'Indicateur de test' },
       })
 
       // When
-      const result = await getIndicateurByPublicId(publicId)
+      const result = await getIndicateurByPublicId('IND-1')
 
       // Then
       expect(result.isOk()).toBe(true)
       expect(result._unsafeUnwrap()).toEqual({
-        id: publicId,
+        id: 'IND-1',
         nom: 'Indicateur de test',
         createdAt: created.createdAt.toISOString(),
         updatedAt: created.updatedAt.toISOString(),
@@ -33,11 +31,8 @@ describe('getIndicateurByPublicId', () => {
   it(
     'lève une erreur Prisma quand aucun indicateur ne correspond',
     integrationTest(async () => {
-      // Given
-      const publicId = `IND-${Math.floor(Math.random() * 1_000_000)}`
-
       // When / Then
-      await expect(getIndicateurByPublicId(publicId)).rejects.toThrow()
+      await expect(getIndicateurByPublicId('IND-404')).rejects.toThrow()
     }),
   )
 })
