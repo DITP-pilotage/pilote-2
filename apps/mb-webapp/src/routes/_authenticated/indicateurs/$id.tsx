@@ -1,3 +1,4 @@
+import { indicateurPublicIdSchema } from '@pilote/mb-shared/api'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { z } from 'zod'
@@ -7,17 +8,14 @@ import { RouteLoading } from '@/components/RouteLoading'
 import { indicateurQueryOptions } from '@/queries/indicateurs'
 
 const paramsSchema = z.object({
-  id: z.coerce.number().int().positive(),
+  id: indicateurPublicIdSchema,
 })
 
 export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
   params: {
     parse: (raw) => paramsSchema.parse(raw),
-    stringify: ({ id }) => ({ id: String(id) }),
+    stringify: ({ id }) => ({ id }),
   },
-  // No loaderDeps needed: this route depends only on `params.id` (a route param,
-  // not a search param). TanStack Router reruns the loader automatically when
-  // the param changes.
   loader: ({ context, params }) =>
     context.queryClient.fetchQuery(indicateurQueryOptions(params.id)),
   pendingComponent: () => <RouteLoading message="Chargement de l'indicateur…" />,
@@ -41,35 +39,21 @@ function IndicateurDetailComponent() {
 
       <header>
         <span className="text-xs uppercase tracking-wide text-slate-500">
-          {data.statut}
+          {data.id}
         </span>
         <h1 className="text-3xl font-semibold">{data.nom}</h1>
-        <p className="mt-1 text-2xl text-slate-700">
-          {data.valeur} <span className="text-base text-slate-500">{data.unite}</span>
-        </p>
       </header>
 
-      <section className="rounded border border-slate-200 bg-white p-6">
-        <h2 className="text-sm font-medium text-slate-500">Description</h2>
-        <p className="mt-2 text-slate-800">{data.description}</p>
-      </section>
-
       <section className="rounded border border-slate-200 bg-white p-6 text-sm text-slate-600">
-        <p>
-          Créé le {new Date(data.createdAt).toLocaleString('fr-FR')}
-        </p>
-        <p>
-          Mis à jour le {new Date(data.updatedAt).toLocaleString('fr-FR')}
-        </p>
-        <p>ID interne : {data.id}</p>
+        <p>Créé le {new Date(data.createdAt).toLocaleString('fr-FR')}</p>
+        <p>Mis à jour le {new Date(data.updatedAt).toLocaleString('fr-FR')}</p>
       </section>
 
       <section className="rounded border border-slate-200 bg-slate-100 p-4 text-sm">
         <p className="font-medium">Diagnostic TanStack Router</p>
         <ul className="mt-2 list-inside list-disc text-slate-700">
           <li>
-            ✓ Route param <code>id</code> parsé en number :{' '}
-            <strong>{id}</strong> (typeof : {typeof id})
+            ✓ Route param <code>id</code> = <strong>{id}</strong>
           </li>
           <li>✓ Loader détail exécuté</li>
           <li>✓ useSuspenseQuery (cache partagé avec liste)</li>

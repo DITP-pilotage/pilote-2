@@ -1,3 +1,4 @@
+import { type IndicateurPublicId } from '@pilote/mb-shared/api'
 import { queryOptions } from '@tanstack/react-query'
 
 import {
@@ -15,7 +16,7 @@ export const indicateursQueryOptions = (params: IndicateursQueryParams) =>
     staleTime: DEFAULT_STALE_TIME,
   })
 
-export const indicateurQueryOptions = (id: number) =>
+export const indicateurQueryOptions = (id: IndicateurPublicId) =>
   queryOptions({
     queryKey: ['indicateur', id],
     queryFn: () => fetchIndicateurById(id),
