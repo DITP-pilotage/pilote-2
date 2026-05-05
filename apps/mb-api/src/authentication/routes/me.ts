@@ -24,5 +24,10 @@ export const me = new OpenAPIHono()
 
 me.openapi(meRoute, (context) => {
   const user = requireUser()
-  return jsonResponseOk({ context, data: user, schema: MeOkSchema, status: 200 })
+  return jsonResponseOk({
+    context,
+    data: { userId: user.id, source: 'jwt' as const },
+    schema: MeOkSchema,
+    status: 200,
+  })
 })
