@@ -6,6 +6,7 @@ import { me } from '@/authentication/routes/me'
 import { env } from '@/env'
 import { authContext } from '@/framework/auth/authContext'
 import { registerErrorHandler } from '@/framework/errors/errorHandler'
+import { databaseContext } from '@/framework/persistence/databaseContext'
 import { health } from '@/healthcheck/routes/health'
 import { indicateurRoutes } from '@/indicateur/routes'
 import { sharedMessage } from '@/shared/routes/sharedMessage'
@@ -13,6 +14,7 @@ import { sharedMessage } from '@/shared/routes/sharedMessage'
 export const app = new OpenAPIHono()
 
 app.use('*', cors({ origin: env.CORS_ORIGINS, credentials: false }))
+app.use('*', databaseContext)
 app.use('*', authContext)
 
 app.get('/', (context) => context.json({ hello: 'world' }))

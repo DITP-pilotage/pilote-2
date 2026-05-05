@@ -15,7 +15,7 @@ export const indicateursQueryOptions = (params: IndicateursQueryParams) =>
     staleTime: DEFAULT_STALE_TIME,
   })
 
-export const indicateurQueryOptions = (id: number) =>
+export const indicateurQueryOptions = (id: string) =>
   queryOptions({
     queryKey: ['indicateur', id],
     queryFn: () => fetchIndicateurById(id),

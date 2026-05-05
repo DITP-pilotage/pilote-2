@@ -12,7 +12,6 @@ import { indicateursQueryOptions } from '@/queries/indicateurs'
 
 const indicateursSearchSchema = z.object({
   recherche: z.string().optional(),
-  statut: z.enum(['actif', 'inactif', 'archive']).optional(),
   cursor: z.string().optional(),
 })
 
@@ -52,23 +51,6 @@ function IndicateursListComponent() {
           }}
           className="rounded border border-slate-300 px-3 py-1 text-sm"
         />
-        <select
-          value={search.statut ?? ''}
-          onChange={(e) => {
-            const value = e.target.value
-            const statut =
-              value === 'actif' || value === 'inactif' || value === 'archive'
-                ? value
-                : undefined
-            void navigate({ search: (prev) => ({ ...prev, statut, cursor: undefined }) })
-          }}
-          className="rounded border border-slate-300 px-3 py-1 text-sm"
-        >
-          <option value="">Tous statuts</option>
-          <option value="actif">Actif</option>
-          <option value="inactif">Inactif</option>
-          <option value="archive">Archivé</option>
-        </select>
       </div>
 
       <ul className="divide-y divide-slate-200 rounded border border-slate-200 bg-white">
@@ -81,13 +63,10 @@ function IndicateursListComponent() {
             >
               <div className="flex items-baseline justify-between">
                 <span className="font-medium text-slate-900">{indicateur.nom}</span>
-                <span className="text-sm text-slate-500">
-                  {indicateur.valeur} {indicateur.unite}
+                <span className="text-xs uppercase tracking-wide text-slate-500">
+                  {indicateur.id}
                 </span>
               </div>
-              <span className="text-xs uppercase tracking-wide text-slate-500">
-                {indicateur.statut}
-              </span>
             </Link>
           </li>
         ))}
@@ -121,23 +100,6 @@ function IndicateursListComponent() {
           <li>✓ useSuspenseQuery branché</li>
           <li>🔒 Guard _authenticated franchi</li>
         </ul>
-        {import.meta.env.DEV && (
-          <button
-            type="button"
-            onClick={() => {
-              // Force une erreur en envoyant un statut invalide
-              void navigate({
-                search: (prev) => ({
-                  ...prev,
-                  statut: 'broken' as never,
-                }),
-              })
-            }}
-            className="mt-3 rounded border border-red-300 px-3 py-1 text-xs text-red-700 hover:bg-red-50"
-          >
-            🐛 Forcer une erreur (search param invalide)
-          </button>
-        )}
       </section>
     </div>
   )

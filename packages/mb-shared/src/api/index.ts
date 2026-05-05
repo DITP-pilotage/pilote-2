@@ -8,8 +8,9 @@ export { errorApiModelSchema, type ErrorApiModel } from './error'
 export {
   indicateurApiModelSchema,
   indicateurListApiModelSchema,
-  indicateurStatutSchema,
+  indicateurPublicIdSchema,
+  listIndicateursQuerySchema,
   type IndicateurApiModel,
   type IndicateurListApiModel,
-  type IndicateurStatut,
+  type ListIndicateursQuery,
 } from './indicateur'
