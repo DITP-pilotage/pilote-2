@@ -1,9 +1,10 @@
 import { serve } from '@hono/node-server'
 
 import { env } from '@/env'
+import { logger } from '@/framework/logger/logger'
 
 import { app } from './app'
 
 serve({ fetch: app.fetch, port: env.PORT }, (info) => {
-  console.log(`mb-api listening on http://localhost:${info.port}`)
+  logger.info({ port: info.port }, 'mb-api listening')
 })

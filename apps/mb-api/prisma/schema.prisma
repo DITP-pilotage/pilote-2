@@ -33,3 +33,29 @@ model Indicateur {
 
   @@map("indicateur")
 }
+
+enum ApplicationLogLevel {
+  ERROR
+  WARN
+  INFO
+  DEBUG
+
+  @@map("application_log_level_enum")
+}
+
+model ApplicationLog {
+  id        BigInt              @id @default(autoincrement())
+  level     ApplicationLogLevel
+  categorie String              @default("systeme")
+  message   String
+  contexte  Json?
+  source    String?
+  dureeMs   Int?                @map("duree_ms")
+  requestId String?             @map("request_id")
+  date      DateTime            @default(now())
+
+  @@index([date])
+  @@index([level, date])
+  @@index([requestId])
+  @@map("application_log")
+}

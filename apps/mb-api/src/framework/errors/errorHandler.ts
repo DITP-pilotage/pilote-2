@@ -4,6 +4,7 @@ import { ZodError } from 'zod'
 
 import { AppError } from '@/framework/errors/AppError'
 import type { ErrorKind } from '@/framework/errors/kinds'
+import { logger } from '@/framework/logger/logger'
 import { Prisma } from '@/generated/prisma/client'
 
 const KIND_TO_STATUS: Record<ErrorKind, 400 | 401 | 403 | 404 | 409 | 500 | 501> = {
@@ -25,8 +26,11 @@ export const registerErrorHandler = (app: OpenAPIHono): void => {
 
     if (error instanceof AppError) {
       const status = mapAppErrorToHttpStatus(error)
-      const logFn = status >= 500 ? console.error : console.warn
-      logFn(`[${method} ${url}] ${error.code}: ${error.message}`)
+      const logFn = status >= 500 ? logger.error.bind(logger) : logger.warn.bind(logger)
+      logFn(
+        { method, url, code: error.code, status, details: error.details },
+        error.message,
+      )
       return context.json(
         {
           code: error.code,
@@ -38,7 +42,7 @@ export const registerErrorHandler = (app: OpenAPIHono): void => {
     }
 
     if (error instanceof HTTPException) {
-      console.warn(`[${method} ${url}] HTTPException ${error.status}: ${error.message}`)
+      logger.warn({ method, url, status: error.status }, error.message)
       return context.json(
         {
           code:
@@ -54,7 +58,7 @@ export const registerErrorHandler = (app: OpenAPIHono): void => {
     }
 
     if (error instanceof ZodError) {
-      console.warn(`[${method} ${url}] Validation error`, error.issues)
+      logger.warn({ method, url, issues: error.issues }, 'Validation error')
       return context.json(
         {
           code: 'VALIDATION_ERROR',
@@ -69,7 +73,7 @@ export const registerErrorHandler = (app: OpenAPIHono): void => {
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === 'P2025'
     ) {
-      console.warn(`[${method} ${url}] Prisma not found: ${error.message}`)
+      logger.warn({ method, url, prismaCode: error.code }, error.message)
       return context.json(
         {
           code: 'ENTITY_NOT_FOUND',
@@ -79,10 +83,7 @@ export const registerErrorHandler = (app: OpenAPIHono): void => {
       )
     }
 
-    console.error(
-      `[${method} ${url}] Unhandled error: ${error.message}`,
-      error.stack,
-    )
+    logger.error({ method, url, err: error }, 'Unhandled error')
     return context.json(
       {
         code: 'INTERNAL_SERVER_ERROR',
