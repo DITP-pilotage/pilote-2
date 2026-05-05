@@ -11,5 +11,4 @@ export {
   indicateurPublicIdSchema,
   type IndicateurApiModel,
   type IndicateurListApiModel,
-  type IndicateurPublicId,
 } from './indicateur'
