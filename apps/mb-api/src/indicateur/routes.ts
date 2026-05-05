@@ -6,23 +6,20 @@ import {
   indicateurPublicIdSchema,
 } from '@pilote/mb-shared/api'
 
+import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
 import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
 
 const IndicateurApiModelSchema = indicateurApiModelSchema.openapi('IndicateurApiModel')
-const IndicateurListApiModelSchema = createPaginatedApiListSchema(
-  indicateurApiModelSchema,
-).openapi('IndicateurListApiModel')
+const IndicateurListApiModelSchema =
+  createPaginatedApiListSchema(indicateurApiModelSchema).openapi('IndicateurListApiModel')
 export const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 // --- GET /indicateurs --------------------------------------------------------
 
 const listQuerySchema = z.object({
-  recherche: z
-    .string()
-    .optional()
-    .describe('Filtre case-insensitive sur le nom de l\'indicateur.'),
+  recherche: z.string().optional().describe("Filtre case-insensitive sur le nom de l'indicateur."),
   cursor: indicateurPublicIdSchema
     .optional()
     .describe(
@@ -36,7 +33,7 @@ const getIndicateursRoute = createRoute({
   tags: ['Indicateur'],
   summary: 'Lister les indicateurs',
   description:
-    'Retourne la liste paginée des indicateurs avec un filtre de recherche par nom. La pagination est cursor-based : passez `cursor` (renvoyé dans la réponse précédente) pour obtenir la page suivante. `hasMore` indique s\'il reste des pages.',
+    "Retourne la liste paginée des indicateurs avec un filtre de recherche par nom. La pagination est cursor-based : passez `cursor` (renvoyé dans la réponse précédente) pour obtenir la page suivante. `hasMore` indique s'il reste des pages.",
   request: { query: listQuerySchema },
   responses: {
     200: {
@@ -83,9 +80,7 @@ export const indicateurRoutes = new OpenAPIHono()
 indicateurRoutes.openapi(getIndicateursRoute, async (context) => {
   const { recherche, cursor } = context.req.valid('query')
 
-  const result = await listIndicateurs({ recherche, cursor })
-
-  return result.match(
+  return listIndicateurs({ recherche, cursor }).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -93,18 +88,14 @@ indicateurRoutes.openapi(getIndicateursRoute, async (context) => {
         schema: IndicateurListApiModelSchema,
         status: 200,
       }),
-    () => {
-      throw new Error('unreachable')
-    },
+    never,
   )
 })
 
 indicateurRoutes.openapi(getIndicateurByIdRoute, async (context) => {
   const { id } = context.req.valid('param')
 
-  const result = await getIndicateurByPublicId(id)
-
-  return result.match(
+  return getIndicateurByPublicId(id).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -112,8 +103,6 @@ indicateurRoutes.openapi(getIndicateurByIdRoute, async (context) => {
         schema: IndicateurApiModelSchema,
         status: 200,
       }),
-    () => {
-      throw new Error('unreachable')
-    },
+    never,
   )
 })
