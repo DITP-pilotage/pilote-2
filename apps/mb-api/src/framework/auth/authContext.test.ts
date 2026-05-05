@@ -9,14 +9,14 @@ import { getCurrentUser, requireUser } from '@/framework/auth/userContext'
 vi.mock('@/authentication/jwks', () => ({
   verifyAccessToken: vi.fn(),
 }))
-vi.mock('@/authentication/queries/getUserByProvider', () => ({
-  getUserByProvider: vi.fn(),
+vi.mock('@/authentication/queries/getUtilisateurByProvider', () => ({
+  getUtilisateurByProvider: vi.fn(),
 }))
 
 const { verifyAccessToken } = await import('@/authentication/jwks')
-const { getUserByProvider } = await import('@/authentication/queries/getUserByProvider')
+const { getUtilisateurByProvider } = await import('@/authentication/queries/getUtilisateurByProvider')
 const verify = vi.mocked(verifyAccessToken)
-const lookup = vi.mocked(getUserByProvider)
+const lookup = vi.mocked(getUtilisateurByProvider)
 
 const buildApp = () => {
   const app = new Hono()

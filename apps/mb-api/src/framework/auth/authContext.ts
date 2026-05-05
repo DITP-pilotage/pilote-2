@@ -2,7 +2,7 @@ import { createMiddleware } from 'hono/factory'
 import { okAsync } from 'neverthrow'
 
 import { verifyAccessToken } from '@/authentication/jwks'
-import { getUserByProvider } from '@/authentication/queries/getUserByProvider'
+import { getUtilisateurByProvider } from '@/authentication/queries/getUtilisateurByProvider'
 import { runWithUser } from '@/framework/auth/userContext'
 import { logger } from '@/framework/logger/logger'
 
@@ -31,7 +31,7 @@ const resolveUser = async (authorization: string | undefined) => {
     return okAsync(null)
   }
 
-  return getUserByProvider(verifiedTokenInfo).orTee((error) =>
+  return getUtilisateurByProvider(verifiedTokenInfo).orTee((error) =>
     logger.warn(
       { event: 'auth.user.lookup_failed', err: error },
       'User lookup failed during authentication',

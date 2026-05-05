@@ -2,20 +2,20 @@ import { ResultAsync } from 'neverthrow'
 
 import { prisma } from '@/framework/persistence/prisma'
 
-export type AuthenticatedUser = {
+export type UtilisateurAuthentifie = {
   id: string
   providerSub: string
   providerType: 'keycloak'
 }
 
-export const getUserByProvider = (params: {
+export const getUtilisateurByProvider = (params: {
   providerSub: string
   providerType: 'keycloak'
-}): ResultAsync<AuthenticatedUser | null, never> =>
+}): ResultAsync<UtilisateurAuthentifie | null, never> =>
   ResultAsync.fromSafePromise(
-    prisma.user.findUnique({
+    prisma.utilisateur.findUnique({
       where: {
-        user_provider_sub_type_unique: {
+        utilisateur_provider_sub_type_unique: {
           providerSub: params.providerSub,
           providerType: params.providerType,
         },
