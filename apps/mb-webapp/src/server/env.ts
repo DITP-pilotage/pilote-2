@@ -5,6 +5,7 @@ import { z } from 'zod'
 const envSchema = z.object({
   PORT: z.coerce.number().default(4000),
   VITE_API_URL: z.url(),
+  API_BASE_URL: z.url(),
   OIDC_ISSUER_URL: z.url(),
   OIDC_CLIENT_ID: z.string().min(1),
   OIDC_CLIENT_SECRET: z.string().min(1),
