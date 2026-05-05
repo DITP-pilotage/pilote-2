@@ -4,12 +4,13 @@ import { env } from '@/env'
 
 const jwks = createRemoteJWKSet(new URL(env.OIDC_JWKS_URI))
 
-export type AuthenticatedUser = {
-  userId: string
-  source: 'jwt'
+export type VerifiedTokenInfo = {
+  providerSub: string
+  providerType: 'keycloak'
 }
 
-export const verifyAccessToken = async (token: string): Promise<AuthenticatedUser> => {
+export const verifyAccessToken = async (token: string): Promise<VerifiedTokenInfo> => {
+  // Quand on aura plusieurs OIDC, il faudra vérifier le issuer en fonction du provider
   const { payload } = await jwtVerify(token, jwks, {
     issuer: env.OIDC_ISSUER_URL,
     audience: env.OIDC_AUDIENCE,
@@ -29,7 +30,7 @@ export const verifyAccessToken = async (token: string): Promise<AuthenticatedUse
     throw new Error('Missing sub claim')
   }
 
-  return { userId: payload.sub, source: 'jwt' }
+  return { providerSub: payload.sub, providerType: 'keycloak' }
 }
 
 const isAuthorizedParty = (payload: JWTPayload) =>

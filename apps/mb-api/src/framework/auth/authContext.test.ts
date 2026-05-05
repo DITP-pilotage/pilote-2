@@ -1,4 +1,5 @@
 import { Hono } from 'hono'
+import { okAsync } from 'neverthrow'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { authContext } from '@/framework/auth/authContext'
@@ -8,9 +9,14 @@ import { getCurrentUser, requireUser } from '@/framework/auth/userContext'
 vi.mock('@/authentication/jwks', () => ({
   verifyAccessToken: vi.fn(),
 }))
+vi.mock('@/authentication/queries/getUserByProvider', () => ({
+  getUserByProvider: vi.fn(),
+}))
 
 const { verifyAccessToken } = await import('@/authentication/jwks')
+const { getUserByProvider } = await import('@/authentication/queries/getUserByProvider')
 const verify = vi.mocked(verifyAccessToken)
+const lookup = vi.mocked(getUserByProvider)
 
 const buildApp = () => {
   const app = new Hono()
@@ -31,17 +37,19 @@ const buildApp = () => {
 describe.sequential('authContext middleware', () => {
   beforeEach(() => {
     verify.mockReset()
+    lookup.mockReset()
   })
 
-  it('initializes the ALS with undefined when no Authorization header is present', async () => {
+  it('initializes the ALS with null when no Authorization header is present', async () => {
     const app = buildApp()
     const response = await app.request('/anonymous')
     expect(response.status).toBe(200)
     expect(await response.json()).toEqual({ user: null })
     expect(verify).not.toHaveBeenCalled()
+    expect(lookup).not.toHaveBeenCalled()
   })
 
-  it('initializes the ALS with undefined when the scheme is not Bearer', async () => {
+  it('initializes the ALS with null when the scheme is not Bearer', async () => {
     const app = buildApp()
     const response = await app.request('/anonymous', {
       headers: { Authorization: 'Basic abc' },
@@ -51,7 +59,7 @@ describe.sequential('authContext middleware', () => {
     expect(verify).not.toHaveBeenCalled()
   })
 
-  it('initializes the ALS with undefined when the JWT verification fails', async () => {
+  it('initializes the ALS with null when the JWT verification fails', async () => {
     verify.mockRejectedValue(new Error('boom'))
     const app = buildApp()
     const response = await app.request('/anonymous', {
@@ -60,20 +68,53 @@ describe.sequential('authContext middleware', () => {
     expect(response.status).toBe(200)
     expect(await response.json()).toEqual({ user: null })
     expect(verify).toHaveBeenCalledOnce()
+    expect(lookup).not.toHaveBeenCalled()
   })
 
-  it('exposes the user to handlers when verification succeeds', async () => {
-    verify.mockResolvedValue({ userId: 'sub-123', source: 'jwt' })
+  it('returns 401 on /protected when token is valid but user is not provisioned', async () => {
+    verify.mockResolvedValue({ providerSub: 'sub-123', providerType: 'keycloak' })
+    lookup.mockReturnValue(okAsync(null))
+    const app = buildApp()
+    const response = await app.request('/protected', {
+      headers: { Authorization: 'Bearer good.token' },
+    })
+    expect(response.status).toBe(401)
+    expect(lookup).toHaveBeenCalledWith({
+      providerSub: 'sub-123',
+      providerType: 'keycloak',
+    })
+  })
+
+  it('exposes the user to handlers when the lookup succeeds', async () => {
+    verify.mockResolvedValue({ providerSub: 'sub-123', providerType: 'keycloak' })
+    lookup.mockReturnValue(
+      okAsync({
+        id: '01906f5e-1234-7000-8abc-000000000001',
+        providerSub: 'sub-123',
+        providerType: 'keycloak' as const,
+      }),
+    )
     const app = buildApp()
     const response = await app.request('/protected', {
       headers: { Authorization: 'Bearer good.token' },
     })
     expect(response.status).toBe(200)
-    expect(await response.json()).toEqual({ userId: 'sub-123', source: 'jwt' })
+    expect(await response.json()).toEqual({
+      id: '01906f5e-1234-7000-8abc-000000000001',
+      providerSub: 'sub-123',
+      providerType: 'keycloak',
+    })
   })
 
   it('accepts the Bearer scheme case-insensitively (RFC 6750)', async () => {
-    verify.mockResolvedValue({ userId: 'sub-123', source: 'jwt' })
+    verify.mockResolvedValue({ providerSub: 'sub-123', providerType: 'keycloak' })
+    lookup.mockReturnValue(
+      okAsync({
+        id: '01906f5e-1234-7000-8abc-000000000001',
+        providerSub: 'sub-123',
+        providerType: 'keycloak' as const,
+      }),
+    )
     const app = buildApp()
     const response = await app.request('/protected', {
       headers: { Authorization: 'bearer good.token' },
