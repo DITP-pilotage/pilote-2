@@ -23,3 +23,13 @@ model Utilisateur {
   @@unique([providerSub, providerType], name: "utilisateur_provider_sub_type_unique")
   @@map("utilisateur")
 }
+
+model Indicateur {
+  id        String   @id @db.Uuid
+  publicId  String   @unique @map("public_id")
+  nom       String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt      @map("updated_at")
+
+  @@map("indicateur")
+}
