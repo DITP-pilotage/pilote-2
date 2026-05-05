@@ -2,9 +2,8 @@ import { type IndicateurListApiModel, type ListIndicateursQuery } from '@pilote/
 import { ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'
+import { buildPaginationArgs, toPaginatedResponse } from '@/framework/persistence/paginate'
 import { toIndicateurApiModel } from '@/indicateur/utils'
-
-const PAGE_SIZE = 5
 
 export const listIndicateurs = (
   params: ListIndicateursQuery,
@@ -16,20 +15,11 @@ export const listIndicateurs = (
   const fetchPage = db().indicateur.findMany({
     where,
     orderBy: { id: 'asc' },
-    take: PAGE_SIZE + 1,
-    ...(params.cursor && { cursor: { publicId: params.cursor }, skip: 1 }),
+    ...buildPaginationArgs(params.cursor, 'publicId'),
   })
   const fetchTotal = db().indicateur.count({ where })
 
-  return ResultAsync.fromSafePromise(Promise.all([fetchPage, fetchTotal])).map(([rows, total]) => {
-    const hasMore = rows.length > PAGE_SIZE
-    const items = (hasMore ? rows.slice(0, PAGE_SIZE) : rows).map(toIndicateurApiModel)
-    const nextCursor = hasMore && items.length > 0 ? items[items.length - 1]!.id : null
-
-    return {
-      items,
-      pagination: { cursor: nextCursor, hasMore },
-      total,
-    }
-  })
+  return ResultAsync.fromSafePromise(Promise.all([fetchPage, fetchTotal])).map(([rows, total]) =>
+    toPaginatedResponse(rows, total, toIndicateurApiModel),
+  )
 }
