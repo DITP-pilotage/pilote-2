@@ -4,6 +4,7 @@ import { ZodError } from 'zod'
 
 import { AppError } from '@/framework/errors/AppError'
 import type { ErrorKind } from '@/framework/errors/kinds'
+import { Prisma } from '@/generated/prisma/client'
 
 const KIND_TO_STATUS: Record<ErrorKind, 400 | 401 | 403 | 404 | 409 | 500 | 501> = {
   'not-found': 404,
@@ -61,6 +62,20 @@ export const registerErrorHandler = (app: OpenAPIHono): void => {
           details: { issues: error.issues },
         },
         400,
+      )
+    }
+
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2025'
+    ) {
+      console.warn(`[${method} ${url}] Prisma not found: ${error.message}`)
+      return context.json(
+        {
+          code: 'ENTITY_NOT_FOUND',
+          message: 'Ressource introuvable',
+        },
+        404,
       )
     }
 
