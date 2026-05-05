@@ -3,6 +3,9 @@ import type { Context, MiddlewareHandler } from 'hono'
 import { rateLimiter } from 'hono-rate-limiter'
 import * as client from 'openid-client'
 
+import { errAsync, okAsync, ResultAsync } from 'neverthrow'
+import ky, { HTTPError } from 'ky'
+
 import { getOidcConfig } from '@/server/auth/oidc'
 import {
   clearPkce,
@@ -76,6 +79,22 @@ const loginLimiter = buildLimiter(10)
 const refreshLimiter = buildLimiter(60)
 const logoutLimiter = buildLimiter(30)
 
+const checkUserProvisioned = (accessToken: string) =>
+  ResultAsync.fromPromise(
+    ky.get(`${serverEnv.API_BASE_URL}/me`, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      retry: 0,
+      timeout: 5000,
+    }),
+    (error) => error,
+  )
+    .map(() => true)
+    .orElse((error) =>
+      error instanceof HTTPError && error.response.status === 401
+        ? okAsync(false)
+        : errAsync(error),
+    )
+
 export const authRouter = new Hono()
 
 authRouter.get('/login', loginLimiter, async (context) => {
@@ -138,17 +157,49 @@ authRouter.get('/callback', async (context) => {
     return context.text('Authentication failed', 401)
   }
 
-  await writeSession(
-    context,
-    { refreshToken: tokens.refresh_token, sub: claims.sub },
-    sessionTtlSeconds(tokens.refresh_expires_in),
-  )
+  if (!tokens.access_token) {
+    logger.error(
+      { event: 'auth.callback.missing_access_token' },
+      'Missing access token in OIDC response',
+    )
+    return context.text('Authentication failed', 401)
+  }
 
-  logger.debug({ event: 'auth.login.success' }, 'OIDC login completed')
-  const target = pkce.redirect
-    ? new URL(pkce.redirect, serverEnv.PUBLIC_BASE_URL).toString()
-    : serverEnv.PUBLIC_BASE_URL
-  return context.redirect(target)
+  const sub = claims.sub
+  const refreshToken = tokens.refresh_token
+  const accessToken = tokens.access_token
+
+  return checkUserProvisioned(accessToken).match(
+    async (provisioned) => {
+      if (!provisioned) {
+        logger.warn(
+          { event: 'auth.login.user_not_found', sub },
+          'PMB user not found',
+        )
+        return context.redirect('/login-error')
+      }
+
+      await writeSession(
+        context,
+        { refreshToken, sub },
+        sessionTtlSeconds(tokens.refresh_expires_in),
+      )
+
+      logger.debug({ event: 'auth.login.success' }, 'PMB login completed')
+
+      const target = pkce.redirect
+        ? new URL(pkce.redirect, serverEnv.PUBLIC_BASE_URL).toString()
+        : serverEnv.PUBLIC_BASE_URL
+      return context.redirect(target)
+    },
+    (error) => {
+      logger.error(
+        { event: 'auth.callback.me_failed', err: error },
+        'Failed to verify user provisioning',
+      )
+      return context.text('Authentication failed', 502)
+    },
+  )
 })
 
 authRouter.post('/refresh', refreshLimiter, async (context) => {
@@ -214,7 +265,10 @@ authRouter.post('/logout', logoutLimiter, async (context) => {
     await client.tokenRevocation(config, session.refreshToken)
   } catch (error) {
     logger.warn(
-      { event: 'auth.logout.revocation_failed', reason: error instanceof Error ? error.message : 'unknown' },
+      {
+        event: 'auth.logout.revocation_failed',
+        reason: error instanceof Error ? error.message : 'unknown',
+      },
       'IdP token revocation failed (best effort)',
     )
   }

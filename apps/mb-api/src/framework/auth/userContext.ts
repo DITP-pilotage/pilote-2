@@ -1,21 +1,20 @@
 import { AsyncLocalStorage } from 'node:async_hooks'
 
-import type { AuthenticatedUser } from '@/authentication/jwks'
+import type { UtilisateurAuthentifie } from '@/authentication/queries/getUtilisateurByProvider'
 import { UnauthorizedError } from '@/framework/auth/UnauthorizedError'
 
-type UserStore = { user: AuthenticatedUser | undefined }
+type UserStore = { user: UtilisateurAuthentifie | null }
 
 const storage = new AsyncLocalStorage<UserStore>()
 
-export const runWithUser = <T>(user: AuthenticatedUser | undefined, fn: () => T): T =>
+export const runWithUser = <T>(user: UtilisateurAuthentifie | null, fn: () => T): T =>
   storage.run({ user }, fn)
 
-export const getCurrentUser = (): AuthenticatedUser | undefined => storage.getStore()?.user
+export const getCurrentUser = (): UtilisateurAuthentifie | null =>
+  storage.getStore()?.user ?? null
 
-export const requireUser = (): AuthenticatedUser => {
+export const requireUser = (): UtilisateurAuthentifie => {
   const user = getCurrentUser()
-  if (!user) {
-    throw new UnauthorizedError('Authentification requise')
-  }
+  if (!user) throw new UnauthorizedError('Authentification requise')
   return user
 }

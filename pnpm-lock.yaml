@@ -49,6 +49,9 @@ importers:
       pino-http:
         specifier: ^11
         version: 11.0.0
+      uuidv7:
+        specifier: ^1.2.1
+        version: 1.2.1
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -131,6 +134,9 @@ importers:
       ky:
         specifier: ^1.7.5
         version: 1.14.3
+      neverthrow:
+        specifier: ^8.2.0
+        version: 8.2.0
       openid-client:
         specifier: ^6.8.4
         version: 6.8.4
@@ -8774,6 +8780,10 @@ packages:
 
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
+    hasBin: true
+
+  uuidv7@1.2.1:
+    resolution: {integrity: sha512-4kPkK3/XTQW9Hbm4CaqfICn+kY9LJtDVEOfgsRRra/+n2Ofg4NqzRFceAkxvQ/Ud/6BpHOPzj8cirqM7TzTN5Q==}
     hasBin: true
 
   v8-compile-cache-lib@3.0.1:
@@ -18651,6 +18661,8 @@ snapshots:
   uuid@11.1.0: {}
 
   uuid@8.3.2: {}
+
+  uuidv7@1.2.1: {}
 
   v8-compile-cache-lib@3.0.1: {}
 
