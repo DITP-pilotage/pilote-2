@@ -5,6 +5,7 @@ import {
   parseAsBoolean,
 } from "nuqs";
 import { FiltreAccueil } from "@/stores/useFiltresStoreNew/useFiltresStoreNew";
+import { buildJalons } from "@/client/utils/jalons";
 
 const listeKeyPositiveBooleanExclusion = new Set(["brouillon"]);
 
@@ -46,7 +47,7 @@ export const useGetFullQueryParamString = (): string => {
       "BROUILLON_ET_PUBLIE",
       "ARCHIVE",
     ]),
-    jalon: parseAsStringLiteral(["2024", "2025"]),
+    jalon: parseAsStringLiteral(buildJalons().map(String)),
   });
 
   const [filtresAlertes] = useQueryStates({

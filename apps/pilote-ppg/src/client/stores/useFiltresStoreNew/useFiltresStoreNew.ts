@@ -1,4 +1,6 @@
 import { create } from "zustand";
+import { configuration } from "@/config";
+import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
 
 export interface FiltreAccueil {
   territoireCode: string;
@@ -39,7 +41,10 @@ const etatInitial = {
   territorialisation: [] as string[],
   q: "",
   statut: "PUBLIE",
-  jalon: "2025",
+  jalon: getAnneeDateDeBascule(
+    new Date(),
+    configuration().dateBasculeAffichageValeursAnneePrecedente,
+  ).toString(),
   groupeParMinistere: false,
   estBarometre: false,
   estTerritorialise: false,
