@@ -16,3 +16,13 @@ export type IndicateurApiModel = z.infer<typeof indicateurApiModelSchema>
 
 export const indicateurListApiModelSchema = createPaginatedApiListSchema(indicateurApiModelSchema)
 export type IndicateurListApiModel = z.infer<typeof indicateurListApiModelSchema>
+
+export const listIndicateursQuerySchema = z.object({
+  recherche: z.string().optional().describe("Filtre case-insensitive sur le nom de l'indicateur."),
+  cursor: indicateurPublicIdSchema
+    .optional()
+    .describe(
+      'Cursor de pagination (renvoyé par la réponse précédente). Vide pour la première page.',
+    ),
+})
+export type ListIndicateursQuery = z.infer<typeof listIndicateursQuerySchema>

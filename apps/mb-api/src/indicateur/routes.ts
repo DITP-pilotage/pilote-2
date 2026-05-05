@@ -4,6 +4,7 @@ import {
   errorApiModelSchema,
   indicateurApiModelSchema,
   indicateurPublicIdSchema,
+  listIndicateursQuerySchema,
 } from '@pilote/mb-shared/api'
 
 import { never } from '@/framework/errors/never'
@@ -18,15 +19,6 @@ export const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 // --- GET /indicateurs --------------------------------------------------------
 
-const listQuerySchema = z.object({
-  recherche: z.string().optional().describe("Filtre case-insensitive sur le nom de l'indicateur."),
-  cursor: indicateurPublicIdSchema
-    .optional()
-    .describe(
-      'Cursor de pagination (renvoyé par la réponse précédente). Vide pour la première page.',
-    ),
-})
-
 const getIndicateursRoute = createRoute({
   method: 'get',
   path: '/indicateurs',
@@ -34,7 +26,7 @@ const getIndicateursRoute = createRoute({
   summary: 'Lister les indicateurs',
   description:
     "Retourne la liste paginée des indicateurs avec un filtre de recherche par nom. La pagination est cursor-based : passez `cursor` (renvoyé dans la réponse précédente) pour obtenir la page suivante. `hasMore` indique s'il reste des pages.",
-  request: { query: listQuerySchema },
+  request: { query: listIndicateursQuerySchema },
   responses: {
     200: {
       content: { 'application/json': { schema: IndicateurListApiModelSchema } },

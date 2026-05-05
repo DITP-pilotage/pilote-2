@@ -9,6 +9,8 @@ export {
   indicateurApiModelSchema,
   indicateurListApiModelSchema,
   indicateurPublicIdSchema,
+  listIndicateursQuerySchema,
   type IndicateurApiModel,
   type IndicateurListApiModel,
+  type ListIndicateursQuery,
 } from './indicateur'
