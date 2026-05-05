@@ -22,6 +22,10 @@ const indicateursSeed: ReadonlyArray<{ publicId: string; nom: string }> = [
   { publicId: 'IND-008', nom: 'Satisfaction usagers services publics' },
 ]
 
+const utilisateursSeed: ReadonlyArray<{ providerSub: string; providerType: 'keycloak' }> = [
+  { providerSub: 'ee35b706-7840-4df0-9493-01d272af8778', providerType: 'keycloak' },
+]
+
 const main = async () => {
   for (const item of indicateursSeed) {
     await prisma.indicateur.upsert({
@@ -30,7 +34,25 @@ const main = async () => {
       create: { id: uuidv7(), publicId: item.publicId, nom: item.nom },
     })
   }
-  console.log(`Seed terminé : ${indicateursSeed.length} indicateurs.`)
+  for (const item of utilisateursSeed) {
+    await prisma.utilisateur.upsert({
+      where: {
+        utilisateur_provider_sub_type_unique: {
+          providerSub: item.providerSub,
+          providerType: item.providerType,
+        },
+      },
+      update: {},
+      create: {
+        id: uuidv7(),
+        providerSub: item.providerSub,
+        providerType: item.providerType,
+      },
+    })
+  }
+  console.log(
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs.`,
+  )
 }
 
 main()
