@@ -31,6 +31,7 @@ export default defineConfig({
         /^\/src\/.+/,
         /^\/$/,
         /^\/index\.html$/,
+        /^\/login-error($|\/|\?)/,
       ],
     }),
   ],
