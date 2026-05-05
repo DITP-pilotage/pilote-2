@@ -176,7 +176,7 @@ authRouter.get('/callback', async (context) => {
           { event: 'auth.login.user_not_found', sub },
           'PMB user not found',
         )
-        return context.redirect('/auth/login-error')
+        return context.redirect('/login-error')
       }
 
       await writeSession(
