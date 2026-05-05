@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { uuidv7 } from 'uuidv7'
 
-import { db } from '@/framework/persistence/dbStore'
 import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
+import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 
 describe('listIndicateurs', () => {
@@ -26,9 +25,11 @@ describe('listIndicateurs', () => {
     'retourne tous les indicateurs quand leur nombre est inférieur à la taille de page',
     integrationTest(async () => {
       // Given
-      await db().indicateur.create({ data: { id: uuidv7(), publicId: 'IND-1', nom: 'Alpha' } })
-      await db().indicateur.create({ data: { id: uuidv7(), publicId: 'IND-2', nom: 'Bravo' } })
-      await db().indicateur.create({ data: { id: uuidv7(), publicId: 'IND-3', nom: 'Charlie' } })
+      await fixtures.indicateur(
+        { publicId: 'IND-1', nom: 'Alpha' },
+        { publicId: 'IND-2', nom: 'Bravo' },
+        { publicId: 'IND-3', nom: 'Charlie' },
+      )
 
       // When
       const result = await listIndicateurs({})
@@ -45,11 +46,14 @@ describe('listIndicateurs', () => {
     'pagine quand le nombre d\'indicateurs dépasse la taille de page',
     integrationTest(async () => {
       // Given
-      for (let n = 1; n <= 6; n++) {
-        await db().indicateur.create({
-          data: { id: uuidv7(), publicId: `IND-${n}`, nom: `Indicateur ${n}` },
-        })
-      }
+      await fixtures.indicateur(
+        { publicId: 'IND-1' },
+        { publicId: 'IND-2' },
+        { publicId: 'IND-3' },
+        { publicId: 'IND-4' },
+        { publicId: 'IND-5' },
+        { publicId: 'IND-6' },
+      )
 
       // When
       const result = await listIndicateurs({})
@@ -66,11 +70,14 @@ describe('listIndicateurs', () => {
     'retourne la page suivante en utilisant le cursor',
     integrationTest(async () => {
       // Given
-      for (let n = 1; n <= 6; n++) {
-        await db().indicateur.create({
-          data: { id: uuidv7(), publicId: `IND-${n}`, nom: `Indicateur ${n}` },
-        })
-      }
+      await fixtures.indicateur(
+        { publicId: 'IND-1' },
+        { publicId: 'IND-2' },
+        { publicId: 'IND-3' },
+        { publicId: 'IND-4' },
+        { publicId: 'IND-5' },
+        { publicId: 'IND-6' },
+      )
 
       // When
       const result = await listIndicateurs({ cursor: 'IND-5' })
@@ -87,15 +94,11 @@ describe('listIndicateurs', () => {
     'filtre les indicateurs par recherche de manière case-insensitive',
     integrationTest(async () => {
       // Given
-      await db().indicateur.create({
-        data: { id: uuidv7(), publicId: 'IND-1', nom: 'Taux de satisfaction' },
-      })
-      await db().indicateur.create({
-        data: { id: uuidv7(), publicId: 'IND-2', nom: 'Délai moyen' },
-      })
-      await db().indicateur.create({
-        data: { id: uuidv7(), publicId: 'IND-3', nom: 'SATISFACTION client' },
-      })
+      await fixtures.indicateur(
+        { publicId: 'IND-1', nom: 'Taux de satisfaction' },
+        { publicId: 'IND-2', nom: 'Délai moyen' },
+        { publicId: 'IND-3', nom: 'SATISFACTION client' },
+      )
 
       // When
       const result = await listIndicateurs({ recherche: 'satisfaction' })
@@ -112,14 +115,15 @@ describe('listIndicateurs', () => {
     'combine la recherche et la pagination',
     integrationTest(async () => {
       // Given
-      for (let n = 1; n <= 6; n++) {
-        await db().indicateur.create({
-          data: { id: uuidv7(), publicId: `IND-${n}`, nom: `Satisfaction ${n}` },
-        })
-      }
-      await db().indicateur.create({
-        data: { id: uuidv7(), publicId: 'IND-99', nom: 'Délai moyen' },
-      })
+      await fixtures.indicateur(
+        { publicId: 'IND-1', nom: 'Satisfaction 1' },
+        { publicId: 'IND-2', nom: 'Satisfaction 2' },
+        { publicId: 'IND-3', nom: 'Satisfaction 3' },
+        { publicId: 'IND-4', nom: 'Satisfaction 4' },
+        { publicId: 'IND-5', nom: 'Satisfaction 5' },
+        { publicId: 'IND-6', nom: 'Satisfaction 6' },
+        { publicId: 'IND-99', nom: 'Délai moyen' },
+      )
 
       // When
       const result = await listIndicateurs({ recherche: 'satisfaction' })

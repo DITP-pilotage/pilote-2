@@ -1,8 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { uuidv7 } from 'uuidv7'
 
-import { db } from '@/framework/persistence/dbStore'
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
+import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 
 describe('getIndicateurByPublicId', () => {
@@ -10,9 +9,7 @@ describe('getIndicateurByPublicId', () => {
     "retourne l'indicateur correspondant au publicId",
     integrationTest(async () => {
       // Given
-      const created = await db().indicateur.create({
-        data: { id: uuidv7(), publicId: 'IND-1', nom: 'Indicateur de test' },
-      })
+      const created = await fixtures.indicateur({ publicId: 'IND-1', nom: 'Indicateur de test' })
 
       // When
       const result = await getIndicateurByPublicId('IND-1')
