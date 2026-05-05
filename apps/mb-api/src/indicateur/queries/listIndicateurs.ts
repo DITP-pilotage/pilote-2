@@ -1,8 +1,4 @@
-import {
-  type IndicateurApiModel,
-  type IndicateurListApiModel,
-  type IndicateurPublicId,
-} from '@pilote/mb-shared/api'
+import { type IndicateurApiModel, type IndicateurListApiModel } from '@pilote/mb-shared/api'
 import { ResultAsync } from 'neverthrow'
 
 import { prisma } from '@/framework/persistence/prisma'
@@ -11,7 +7,7 @@ const PAGE_SIZE = 5
 
 type ListIndicateursParams = {
   recherche?: string | undefined
-  cursor?: IndicateurPublicId | undefined
+  cursor?: string | undefined
 }
 
 type IndicateurRow = {
@@ -44,18 +40,15 @@ export const listIndicateurs = (
   })
   const fetchTotal = prisma.indicateur.count({ where })
 
-  return ResultAsync.fromSafePromise(Promise.all([fetchPage, fetchTotal])).map(
-    ([rows, total]) => {
-      const hasMore = rows.length > PAGE_SIZE
-      const items = (hasMore ? rows.slice(0, PAGE_SIZE) : rows).map(toApiModel)
-      const nextCursor =
-        hasMore && items.length > 0 ? items[items.length - 1]!.id : null
+  return ResultAsync.fromSafePromise(Promise.all([fetchPage, fetchTotal])).map(([rows, total]) => {
+    const hasMore = rows.length > PAGE_SIZE
+    const items = (hasMore ? rows.slice(0, PAGE_SIZE) : rows).map(toApiModel)
+    const nextCursor = hasMore && items.length > 0 ? items[items.length - 1]!.id : null
 
-      return {
-        items,
-        pagination: { cursor: nextCursor, hasMore },
-        total,
-      }
-    },
-  )
+    return {
+      items,
+      pagination: { cursor: nextCursor, hasMore },
+      total,
+    }
+  })
 }

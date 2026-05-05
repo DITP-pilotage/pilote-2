@@ -1,14 +1,9 @@
-import {
-  type IndicateurApiModel,
-  type IndicateurPublicId,
-} from '@pilote/mb-shared/api'
+import { type IndicateurApiModel } from '@pilote/mb-shared/api'
 import { ResultAsync } from 'neverthrow'
 
 import { prisma } from '@/framework/persistence/prisma'
 
-export const getIndicateurByPublicId = (
-  publicId: IndicateurPublicId,
-): ResultAsync<IndicateurApiModel, never> =>
+export const getIndicateurByPublicId = (publicId: string): ResultAsync<IndicateurApiModel, never> =>
   ResultAsync.fromSafePromise(
     prisma.indicateur.findUniqueOrThrow({
       where: { publicId },

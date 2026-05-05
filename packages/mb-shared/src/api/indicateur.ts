@@ -6,8 +6,6 @@ export const indicateurPublicIdSchema = z
   .string()
   .regex(/^IND-\d+$/, 'Identifiant public attendu au format IND-XXX')
   .describe('Identifiant public de l\'indicateur (format IND-XXX).')
-export type IndicateurPublicId = z.infer<typeof indicateurPublicIdSchema>
-
 export const indicateurApiModelSchema = z.object({
   id: indicateurPublicIdSchema,
   nom: z.string().describe('Nom lisible de l\'indicateur.'),
