@@ -206,7 +206,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v2
         with:
-          python-version: "3.10"
+          python-version: "3.11"
       - name: Install SQLFluff
         run: "pip install sqlfluff~=4.1.0 sqlfluff-templater-dbt~=4.1.0 dbt-core~=1.10.20 dbt-duckdb~=1.9.0"
       - name: Install dbt deps
