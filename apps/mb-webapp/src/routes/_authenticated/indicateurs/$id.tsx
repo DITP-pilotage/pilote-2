@@ -78,16 +78,17 @@ function IndicateurDetailComponent() {
 
   return (
     <div className="space-y-6">
-      <Link
-        to="/indicateurs"
-        search={{}}
-        className="text-sm text-secondary-foreground underline hover:text-text"
-      >
-        ← Retour à la liste
-      </Link>
+      <div>
+        <Link
+          to="/indicateurs"
+          search={{}}
+          className="text-sm text-secondary-foreground underline hover:text-text"
+        >
+          ← Retour à la liste
+        </Link>
+      </div>
 
       <header>
-        <span className="text-xs uppercase tracking-wide text-text-muted">{indicateur.id}</span>
         <h1 className="text-3xl font-semibold text-text">{indicateur.nom}</h1>
       </header>
 
