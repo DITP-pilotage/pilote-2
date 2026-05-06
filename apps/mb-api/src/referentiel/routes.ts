@@ -57,17 +57,12 @@ const getReferentielByIdRoute = createRoute({
   path: '/referentiels/{id}',
   tags: ['Referentiel'],
   summary: 'Récupérer un référentiel par identifiant public',
-  description:
-    'Retourne un référentiel identifié par son identifiant public (format `REF-<slug>`). Renvoie 404 (`ENTITY_NOT_FOUND`) si aucun référentiel ne correspond.',
+  description: 'Retourne un référentiel identifié par son identifiant public (format `REF-<SLUG>`).',
   request: { params: detailParamsSchema },
   responses: {
     200: {
       content: { 'application/json': { schema: ReferentielApiModelSchema } },
       description: 'Référentiel trouvé',
-    },
-    404: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Référentiel introuvable',
     },
   },
 })
@@ -89,10 +84,6 @@ const getIndividusForReferentielRoute = createRoute({
     200: {
       content: { 'application/json': { schema: IndividuListApiModelSchema } },
       description: 'Liste paginée des individus du référentiel',
-    },
-    404: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Référentiel introuvable',
     },
   },
 })

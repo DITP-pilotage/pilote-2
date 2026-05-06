@@ -37,18 +37,34 @@ describe.concurrent('listIndividusWithValeurs', () => {
 
       const result = await listIndividusWithValeurs('IND-001', {})
 
-      const value = result._unsafeUnwrap()
-      const byId = new Map(value.items.map((row) => [row.individu.id, row]))
-      expect([...byId.keys()].sort()).toEqual(['DEPT-13', 'DEPT-84'])
-      expect(byId.get('DEPT-84')).toMatchObject({
-        derniereValeur: { date: '2024-06-01', valeur: 2.5 },
-        nombreValeurs: 2,
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [
+          {
+            individu: {
+              id: 'DEPT-84',
+              nom: 'Vaucluse',
+              referentiels: [],
+              createdAt: expect.any(String) as string,
+              updatedAt: expect.any(String) as string,
+            },
+            derniereValeur: { date: '2024-06-01', valeur: 2.5 },
+            nombreValeurs: 2,
+          },
+          {
+            individu: {
+              id: 'DEPT-13',
+              nom: 'BdR',
+              referentiels: [],
+              createdAt: expect.any(String) as string,
+              updatedAt: expect.any(String) as string,
+            },
+            derniereValeur: { date: '2024-01-01', valeur: 5 },
+            nombreValeurs: 1,
+          },
+        ],
+        pagination: { cursor: null, hasMore: false },
+        total: 2,
       })
-      expect(byId.get('DEPT-13')).toMatchObject({
-        derniereValeur: { date: '2024-01-01', valeur: 5 },
-        nombreValeurs: 1,
-      })
-      expect(value.total).toBe(2)
     }),
   )
 
@@ -85,9 +101,23 @@ describe.concurrent('listIndividusWithValeurs', () => {
 
       const result = await listIndividusWithValeurs('IND-001', { referentiel: 'REF-REG' })
 
-      const value = result._unsafeUnwrap()
-      expect(value.items.map((row) => row.individu.id)).toEqual(['REG-93'])
-      expect(value.total).toBe(1)
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [
+          {
+            individu: {
+              id: 'REG-93',
+              nom: 'PACA',
+              referentiels: ['REF-REG'],
+              createdAt: expect.any(String) as string,
+              updatedAt: expect.any(String) as string,
+            },
+            derniereValeur: { date: '2024-01-01', valeur: 2 },
+            nombreValeurs: 1,
+          },
+        ],
+        pagination: { cursor: null, hasMore: false },
+        total: 1,
+      })
     }),
   )
 

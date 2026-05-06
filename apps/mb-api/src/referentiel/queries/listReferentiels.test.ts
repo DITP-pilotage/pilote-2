@@ -24,8 +24,8 @@ describe.concurrent('listReferentiels', () => {
     'retourne les référentiels avec leur nombre d\'individus',
     integrationTest(async () => {
       await fixtures.referentiel(
-        { publicId: 'REF-ALPHA', nom: 'Alpha' },
-        { publicId: 'REF-BETA', nom: 'Beta' },
+        { publicId: 'REF-ALPHA', nom: 'Alpha', description: null },
+        { publicId: 'REF-BETA', nom: 'Beta', description: null },
       )
       await fixtures.individu({ publicId: 'A-1' }, { publicId: 'A-2' })
       await fixtures.referentielIndividu(
@@ -35,12 +35,28 @@ describe.concurrent('listReferentiels', () => {
 
       const result = await listReferentiels({})
 
-      const value = result._unsafeUnwrap()
-      expect(value.items.map((r) => ({ id: r.id, nombreIndividus: r.nombreIndividus }))).toEqual([
-        { id: 'REF-ALPHA', nombreIndividus: 2 },
-        { id: 'REF-BETA', nombreIndividus: 0 },
-      ])
-      expect(value.total).toBe(2)
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [
+          {
+            id: 'REF-ALPHA',
+            nom: 'Alpha',
+            description: null,
+            nombreIndividus: 2,
+            createdAt: expect.any(String) as string,
+            updatedAt: expect.any(String) as string,
+          },
+          {
+            id: 'REF-BETA',
+            nom: 'Beta',
+            description: null,
+            nombreIndividus: 0,
+            createdAt: expect.any(String) as string,
+            updatedAt: expect.any(String) as string,
+          },
+        ],
+        pagination: { cursor: null, hasMore: false },
+        total: 2,
+      })
     }),
   )
 
@@ -55,9 +71,20 @@ describe.concurrent('listReferentiels', () => {
 
       const result = await listReferentiels({ recherche: 'régions' })
 
-      const value = result._unsafeUnwrap()
-      expect(value.items.map((r) => r.id)).toEqual(['REF-REG'])
-      expect(value.total).toBe(1)
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [
+          {
+            id: 'REF-REG',
+            nom: 'Régions de France',
+            description: null,
+            nombreIndividus: 0,
+            createdAt: expect.any(String) as string,
+            updatedAt: expect.any(String) as string,
+          },
+        ],
+        pagination: { cursor: null, hasMore: false },
+        total: 1,
+      })
     }),
   )
 
@@ -76,13 +103,8 @@ describe.concurrent('listReferentiels', () => {
       const result = await listReferentiels({})
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((r) => r.id)).toEqual([
-        'REF-1',
-        'REF-2',
-        'REF-3',
-        'REF-4',
-        'REF-5',
-      ])
+      expect(value.items).toHaveLength(5)
+      expect(value.items.map((r) => r.id)).toEqual(['REF-1', 'REF-2', 'REF-3', 'REF-4', 'REF-5'])
       expect(value.pagination).toEqual({ cursor: encodeCursor('REF-5'), hasMore: true })
       expect(value.total).toBe(6)
     }),

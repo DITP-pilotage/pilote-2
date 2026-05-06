@@ -1,16 +1,11 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
-import {
-  errorApiModelSchema,
-  individuApiModelSchema,
-  individuPublicIdSchema,
-} from '@pilote/mb-shared/api'
+import { individuApiModelSchema, individuPublicIdSchema } from '@pilote/mb-shared/api'
 
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { getIndividuByPublicId } from '@/individu/queries/getIndividuByPublicId'
 
 const IndividuApiModelSchema = individuApiModelSchema.openapi('IndividuApiModel')
-const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 const detailParamsSchema = z.object({
   id: individuPublicIdSchema,
@@ -28,10 +23,6 @@ const getIndividuByIdRoute = createRoute({
     200: {
       content: { 'application/json': { schema: IndividuApiModelSchema } },
       description: 'Individu trouvé',
-    },
-    404: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Individu introuvable',
     },
   },
 })

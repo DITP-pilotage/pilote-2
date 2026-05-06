@@ -25,9 +25,26 @@ describe.concurrent('listIndividusForReferentiel', () => {
 
       const result = await listIndividusForReferentiel('REF-POP', {})
 
-      const value = result._unsafeUnwrap()
-      expect(value.items.map((i) => i.id)).toEqual(['P-1', 'P-2'])
-      expect(value.total).toBe(2)
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [
+          {
+            id: 'P-1',
+            nom: 'Premier',
+            referentiels: ['REF-POP'],
+            createdAt: expect.any(String) as string,
+            updatedAt: expect.any(String) as string,
+          },
+          {
+            id: 'P-2',
+            nom: 'Second',
+            referentiels: ['REF-POP'],
+            createdAt: expect.any(String) as string,
+            updatedAt: expect.any(String) as string,
+          },
+        ],
+        pagination: { cursor: null, hasMore: false },
+        total: 2,
+      })
     }),
   )
 
@@ -68,9 +85,26 @@ describe.concurrent('listIndividusForReferentiel', () => {
 
       const result = await listIndividusForReferentiel('REF-SEARCH', { recherche: 'alpha' })
 
-      const value = result._unsafeUnwrap()
-      expect(value.items.map((i) => i.id).sort()).toEqual(['A-1', 'A-3'])
-      expect(value.total).toBe(2)
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [
+          {
+            id: 'A-1',
+            nom: 'Alpha',
+            referentiels: ['REF-SEARCH'],
+            createdAt: expect.any(String) as string,
+            updatedAt: expect.any(String) as string,
+          },
+          {
+            id: 'A-3',
+            nom: 'ALPHA majuscule',
+            referentiels: ['REF-SEARCH'],
+            createdAt: expect.any(String) as string,
+            updatedAt: expect.any(String) as string,
+          },
+        ],
+        pagination: { cursor: null, hasMore: false },
+        total: 2,
+      })
     }),
   )
 

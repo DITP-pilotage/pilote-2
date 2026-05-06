@@ -48,10 +48,6 @@ const getValeursForIndicateurRoute = createRoute({
       content: { 'application/json': { schema: ErrorApiModelSchema } },
       description: 'Paramètres de requête invalides (ex. `individus` absent ou date invalide)',
     },
-    404: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Indicateur introuvable',
-    },
   },
 })
 
@@ -76,10 +72,6 @@ const getIndividusWithValeursRoute = createRoute({
     400: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },
       description: 'Paramètres de requête invalides',
-    },
-    404: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Indicateur ou référentiel introuvable',
     },
   },
 })
