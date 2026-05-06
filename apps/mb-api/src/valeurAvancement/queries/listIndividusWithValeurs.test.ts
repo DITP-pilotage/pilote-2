@@ -124,7 +124,7 @@ describe.concurrent('listIndividusWithValeurs', () => {
   it(
     "retourne une liste vide quand l'indicateur est introuvable",
     integrationTest(async () => {
-      const result = await listIndividusWithValeurs('IND-9999', {})
+      const result = await listIndividusWithValeurs(testIndicateurId(), {})
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [],

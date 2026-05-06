@@ -31,7 +31,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
     'lève une erreur Prisma quand aucun indicateur ne correspond',
     integrationTest(async () => {
       // When / Then
-      await expect(getIndicateurByPublicId('IND-9999')).rejects.toThrow()
+      await expect(getIndicateurByPublicId(testIndicateurId())).rejects.toThrow()
     }),
   )
 })

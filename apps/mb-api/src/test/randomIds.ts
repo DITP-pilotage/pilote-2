@@ -40,7 +40,7 @@ type FixedTuple<N extends number, T, Acc extends T[] = []> =
 const uniqueIds = <N extends number>(factory: () => string, count: N): FixedTuple<N, string> => {
   const ids = new Set<string>()
   while (ids.size < count) ids.add(factory())
-  return [...ids] as FixedTuple<N, string>
+  return [...ids].sort() as FixedTuple<N, string>
 }
 
 export const testIndicateurId = (): string =>

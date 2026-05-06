@@ -24,17 +24,17 @@ describe.concurrent('listIndicateurs', () => {
   it(
     'retourne tous les indicateurs quand leur nombre est inférieur à la taille de page',
     integrationTest(async () => {
-      const [id1, id2, id3] = testIndicateurIds(3)
+      const [ind1, ind2, ind3] = testIndicateurIds(3)
       await fixtures.indicateur(
-        { publicId: id1, nom: 'Alpha' },
-        { publicId: id2, nom: 'Bravo' },
-        { publicId: id3, nom: 'Charlie' },
+        { publicId: ind1, nom: 'Alpha' },
+        { publicId: ind2, nom: 'Bravo' },
+        { publicId: ind3, nom: 'Charlie' },
       )
 
       const result = await listIndicateurs({})
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((i) => i.id)).toEqual([id1, id2, id3])
+      expect(value.items.map((i) => i.id)).toEqual([ind1, ind2, ind3])
       expect(value.pagination).toEqual({ cursor: null, hasMore: false })
       expect(value.total).toBe(3)
     }),
@@ -87,17 +87,17 @@ describe.concurrent('listIndicateurs', () => {
   it(
     'filtre les indicateurs par recherche de manière case-insensitive',
     integrationTest(async () => {
-      const [id1, id2, id3] = testIndicateurIds(3)
+      const [ind1, ind2, ind3] = testIndicateurIds(3)
       await fixtures.indicateur(
-        { publicId: id1, nom: 'Taux de satisfaction' },
-        { publicId: id2, nom: 'Délai moyen' },
-        { publicId: id3, nom: 'SATISFACTION client' },
+        { publicId: ind1, nom: 'Taux de satisfaction' },
+        { publicId: ind2, nom: 'Délai moyen' },
+        { publicId: ind3, nom: 'SATISFACTION client' },
       )
 
       const result = await listIndicateurs({ recherche: 'satisfaction' })
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((i) => i.id)).toEqual([id1, id3])
+      expect(value.items.map((i) => i.id)).toEqual([ind1, ind3])
       expect(value.pagination).toEqual({ cursor: null, hasMore: false })
       expect(value.total).toBe(2)
     }),

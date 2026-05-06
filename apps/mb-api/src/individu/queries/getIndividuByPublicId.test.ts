@@ -35,7 +35,7 @@ describe.concurrent('getIndividuByPublicId', () => {
   it(
     'rejette quand l\'individu est introuvable',
     integrationTest(async () => {
-      await expect(getIndividuByPublicId('INCONNU-1')).rejects.toThrow()
+      await expect(getIndividuByPublicId(testDeptId())).rejects.toThrow()
     }),
   )
 })
