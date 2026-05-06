@@ -95,7 +95,7 @@ model ValeurAvancement {
   indicateurId String   @map("indicateur_id") @db.Uuid
   individuId   String   @map("individu_id")   @db.Uuid
   date         String
-  valeur       Decimal  @db.Decimal(18, 6)
+  valeur       Float
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt      @map("updated_at")
 

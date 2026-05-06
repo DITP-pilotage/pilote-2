@@ -3,20 +3,22 @@ import { describe, expect, it } from 'vitest'
 import { getReferentielByPublicId } from '@/referentiel/queries/getReferentielByPublicId'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
+import { testDeptIds } from '@/test/randomIds'
 
 describe.concurrent('getReferentielByPublicId', () => {
   it(
     'retourne le référentiel avec sa population',
     integrationTest(async () => {
-      await fixtures.referentiel({
-        publicId: 'REF-TEST',
-        nom: 'Référentiel de test',
-        description: 'Description test',
-      })
-      await fixtures.individu({ publicId: 'X-1' }, { publicId: 'X-2' })
+      const [d1, d2] = testDeptIds(2)
       await fixtures.referentielIndividu(
-        { referentielPublicId: 'REF-TEST', individuPublicId: 'X-1' },
-        { referentielPublicId: 'REF-TEST', individuPublicId: 'X-2' },
+        {
+          referentiel: { publicId: 'REF-TEST', nom: 'Référentiel de test', description: 'Description test' },
+          individu: { publicId: d1 },
+        },
+        {
+          referentiel: { publicId: 'REF-TEST' },
+          individu: { publicId: d2 },
+        },
       )
 
       const result = await getReferentielByPublicId('REF-TEST')

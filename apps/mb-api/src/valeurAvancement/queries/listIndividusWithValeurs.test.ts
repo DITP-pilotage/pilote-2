@@ -2,61 +2,61 @@ import { describe, expect, it } from 'vitest'
 
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
+import { testDeptId, testIndicateurId, testRegId } from '@/test/randomIds'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
 
 describe.concurrent('listIndividusWithValeurs', () => {
   it(
     'retourne les individus ayant au moins une valeur avec dernière valeur et nombre',
     integrationTest(async () => {
-      await fixtures.indicateur({ publicId: 'IND-001', nom: 'T' })
-      await fixtures.individu(
-        { publicId: 'DEPT-84', nom: 'Vaucluse' },
-        { publicId: 'DEPT-13', nom: 'BdR' },
-        { publicId: 'DEPT-06', nom: 'AM' },
-      )
+      const indId = testIndicateurId()
+      const dept1 = testDeptId()
+      const dept2 = testDeptId()
+      const dept3 = testDeptId()
+      await fixtures.individu({ publicId: dept3, nom: 'AM' })
       await fixtures.valeurAvancement(
         {
-          indicateurPublicId: 'IND-001',
-          individuPublicId: 'DEPT-84',
+          indicateur: { publicId: indId, nom: 'T' },
+          individu: { publicId: dept1, nom: 'Vaucluse' },
           date: '2024-01-01',
-          valeur: '1.000000',
+          valeur: 1,
         },
         {
-          indicateurPublicId: 'IND-001',
-          individuPublicId: 'DEPT-84',
+          indicateur: { publicId: indId },
+          individu: { publicId: dept1 },
           date: '2024-06-01',
-          valeur: '2.500000',
+          valeur: 2.5,
         },
         {
-          indicateurPublicId: 'IND-001',
-          individuPublicId: 'DEPT-13',
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2, nom: 'BdR' },
           date: '2024-01-01',
-          valeur: '5.000000',
+          valeur: 5,
         },
       )
 
-      const result = await listIndividusWithValeurs('IND-001', {})
+      const result = await listIndividusWithValeurs(indId, {})
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [
           {
             individu: {
-              id: 'DEPT-84',
+              id: dept1,
               nom: 'Vaucluse',
               referentiels: [],
-              createdAt: expect.any(String) as string,
-              updatedAt: expect.any(String) as string,
+              createdAt: expect.any(String),
+              updatedAt: expect.any(String),
             },
             derniereValeur: { date: '2024-06-01', valeur: 2.5 },
             nombreValeurs: 2,
           },
           {
             individu: {
-              id: 'DEPT-13',
+              id: dept2,
               nom: 'BdR',
               referentiels: [],
-              createdAt: expect.any(String) as string,
-              updatedAt: expect.any(String) as string,
+              createdAt: expect.any(String),
+              updatedAt: expect.any(String),
             },
             derniereValeur: { date: '2024-01-01', valeur: 5 },
             nombreValeurs: 1,
@@ -71,45 +71,45 @@ describe.concurrent('listIndividusWithValeurs', () => {
   it(
     'filtre par référentiel',
     integrationTest(async () => {
-      await fixtures.indicateur({ publicId: 'IND-001', nom: 'T' })
-      await fixtures.referentiel(
-        { publicId: 'REF-DEPT', nom: 'Dept' },
-        { publicId: 'REF-REG', nom: 'Reg' },
-      )
-      await fixtures.individu(
-        { publicId: 'DEPT-84', nom: 'Vaucluse' },
-        { publicId: 'REG-93', nom: 'PACA' },
-      )
+      const indId = testIndicateurId()
+      const deptId = testDeptId()
+      const regId = testRegId()
       await fixtures.referentielIndividu(
-        { referentielPublicId: 'REF-DEPT', individuPublicId: 'DEPT-84' },
-        { referentielPublicId: 'REF-REG', individuPublicId: 'REG-93' },
+        {
+          referentiel: { publicId: 'REF-DEPT', nom: 'Dept' },
+          individu: { publicId: deptId, nom: 'Vaucluse' },
+        },
+        {
+          referentiel: { publicId: 'REF-REG', nom: 'Reg' },
+          individu: { publicId: regId, nom: 'PACA' },
+        },
       )
       await fixtures.valeurAvancement(
         {
-          indicateurPublicId: 'IND-001',
-          individuPublicId: 'DEPT-84',
+          indicateur: { publicId: indId, nom: 'T' },
+          individu: { publicId: deptId },
           date: '2024-01-01',
-          valeur: '1.000000',
+          valeur: 1,
         },
         {
-          indicateurPublicId: 'IND-001',
-          individuPublicId: 'REG-93',
+          indicateur: { publicId: indId },
+          individu: { publicId: regId },
           date: '2024-01-01',
-          valeur: '2.000000',
+          valeur: 2,
         },
       )
 
-      const result = await listIndividusWithValeurs('IND-001', { referentiel: 'REF-REG' })
+      const result = await listIndividusWithValeurs(indId, { referentiel: 'REF-REG' })
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [
           {
             individu: {
-              id: 'REG-93',
+              id: regId,
               nom: 'PACA',
               referentiels: ['REF-REG'],
-              createdAt: expect.any(String) as string,
-              updatedAt: expect.any(String) as string,
+              createdAt: expect.any(String),
+              updatedAt: expect.any(String),
             },
             derniereValeur: { date: '2024-01-01', valeur: 2 },
             nombreValeurs: 1,
@@ -124,7 +124,7 @@ describe.concurrent('listIndividusWithValeurs', () => {
   it(
     "retourne une liste vide quand l'indicateur est introuvable",
     integrationTest(async () => {
-      const result = await listIndividusWithValeurs('IND-999', {})
+      const result = await listIndividusWithValeurs('IND-9999', {})
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [],
@@ -137,9 +137,10 @@ describe.concurrent('listIndividusWithValeurs', () => {
   it(
     'retourne une liste vide quand le référentiel filtré est introuvable',
     integrationTest(async () => {
-      await fixtures.indicateur({ publicId: 'IND-001', nom: 'T' })
+      const indId = testIndicateurId()
+      await fixtures.indicateur({ publicId: indId, nom: 'T' })
 
-      const result = await listIndividusWithValeurs('IND-001', { referentiel: 'REF-INCONNU' })
+      const result = await listIndividusWithValeurs(indId, { referentiel: 'REF-INCONNU' })
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [],

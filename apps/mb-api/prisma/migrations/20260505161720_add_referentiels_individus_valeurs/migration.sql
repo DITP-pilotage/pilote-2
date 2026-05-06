@@ -45,7 +45,7 @@ CREATE TABLE "valeur_avancement" (
     "indicateur_id" UUID NOT NULL,
     "individu_id" UUID NOT NULL,
     "date" TEXT NOT NULL,
-    "valeur" DECIMAL(18,6) NOT NULL,
+    "valeur" DOUBLE PRECISION NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 

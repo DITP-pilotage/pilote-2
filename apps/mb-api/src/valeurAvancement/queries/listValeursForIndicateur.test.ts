@@ -2,45 +2,36 @@ import { describe, expect, it } from 'vitest'
 
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
+import { testDeptId, testIndicateurId } from '@/test/randomIds'
 import { listValeursForIndicateur } from '@/valeurAvancement/queries/listValeursForIndicateur'
 
 describe.concurrent('listValeursForIndicateur', () => {
   it(
     'retourne la série temporelle pour un seul individu',
     integrationTest(async () => {
-      await fixtures.indicateur({ publicId: 'IND-001', nom: 'Test' })
-      await fixtures.individu({ publicId: 'DEPT-84', nom: 'Vaucluse' })
+      const indId = testIndicateurId()
+      const deptId = testDeptId()
       await fixtures.valeurAvancement(
         {
-          indicateurPublicId: 'IND-001',
-          individuPublicId: 'DEPT-84',
-          date: '2024-01-01',
-          valeur: '7.500000',
-        },
-        {
-          indicateurPublicId: 'IND-001',
-          individuPublicId: 'DEPT-84',
-          date: '2024-06-01',
-          valeur: '7.800000',
-        },
-      )
-
-      const result = await listValeursForIndicateur('IND-001', { individus: ['DEPT-84'] })
-
-      const value = result._unsafeUnwrap()
-      expect(value.items).toEqual([
-        {
-          indicateur: 'IND-001',
-          individu: 'DEPT-84',
+          indicateur: { publicId: indId, nom: 'Test' },
+          individu: { publicId: deptId, nom: 'Vaucluse' },
           date: '2024-01-01',
           valeur: 7.5,
         },
         {
-          indicateur: 'IND-001',
-          individu: 'DEPT-84',
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
           date: '2024-06-01',
           valeur: 7.8,
         },
+      )
+
+      const result = await listValeursForIndicateur(indId, { individus: [deptId] })
+
+      const value = result._unsafeUnwrap()
+      expect(value.items).toEqual([
+        { indicateur: indId, individu: deptId, date: '2024-01-01', valeur: 7.5 },
+        { indicateur: indId, individu: deptId, date: '2024-06-01', valeur: 7.8 },
       ])
     }),
   )
@@ -48,78 +39,74 @@ describe.concurrent('listValeursForIndicateur', () => {
   it(
     'retourne le batch multi-individus',
     integrationTest(async () => {
-      await fixtures.indicateur({ publicId: 'IND-001', nom: 'T' })
-      await fixtures.individu(
-        { publicId: 'DEPT-84', nom: 'Vaucluse' },
-        { publicId: 'DEPT-13', nom: 'Bouches-du-Rhône' },
-        { publicId: 'DEPT-06', nom: 'Alpes-Maritimes' },
-      )
+      const indId = testIndicateurId()
+      const dept1 = testDeptId()
+      const dept2 = testDeptId()
+      const dept3 = testDeptId()
       await fixtures.valeurAvancement(
         {
-          indicateurPublicId: 'IND-001',
-          individuPublicId: 'DEPT-84',
+          indicateur: { publicId: indId, nom: 'T' },
+          individu: { publicId: dept1, nom: 'Vaucluse' },
           date: '2024-01-01',
-          valeur: '1.000000',
+          valeur: 1,
         },
         {
-          indicateurPublicId: 'IND-001',
-          individuPublicId: 'DEPT-13',
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2, nom: 'Bouches-du-Rhône' },
           date: '2024-01-01',
-          valeur: '2.000000',
+          valeur: 2,
         },
         {
-          indicateurPublicId: 'IND-001',
-          individuPublicId: 'DEPT-06',
+          indicateur: { publicId: indId },
+          individu: { publicId: dept3, nom: 'Alpes-Maritimes' },
           date: '2024-01-01',
-          valeur: '3.000000',
+          valeur: 3,
         },
       )
 
-      const result = await listValeursForIndicateur('IND-001', {
-        individus: ['DEPT-84', 'DEPT-13'],
-      })
+      const result = await listValeursForIndicateur(indId, { individus: [dept1, dept2] })
 
       const value = result._unsafeUnwrap()
       const individus = value.items.map((v) => v.individu).sort()
-      expect(individus).toEqual(['DEPT-13', 'DEPT-84'])
-      expect(value.items.find((v) => v.individu === 'DEPT-06')).toBeUndefined()
+      expect(individus).toEqual([dept1, dept2].sort())
+      expect(value.items.find((v) => v.individu === dept3)).toBeUndefined()
     }),
   )
 
   it(
     'filtre par dateDebut et dateFin (inclusifs)',
     integrationTest(async () => {
-      await fixtures.indicateur({ publicId: 'IND-001', nom: 'T' })
-      await fixtures.individu({ publicId: 'DEPT-84', nom: 'Vaucluse' })
+      const indId = testIndicateurId()
+      const deptId = testDeptId()
       await fixtures.valeurAvancement(
         {
-          indicateurPublicId: 'IND-001',
-          individuPublicId: 'DEPT-84',
+          indicateur: { publicId: indId, nom: 'T' },
+          individu: { publicId: deptId, nom: 'Vaucluse' },
           date: '2023-12-31',
-          valeur: '1.000000',
+          valeur: 1,
         },
         {
-          indicateurPublicId: 'IND-001',
-          individuPublicId: 'DEPT-84',
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
           date: '2024-01-01',
-          valeur: '2.000000',
+          valeur: 2,
         },
         {
-          indicateurPublicId: 'IND-001',
-          individuPublicId: 'DEPT-84',
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
           date: '2024-06-30',
-          valeur: '3.000000',
+          valeur: 3,
         },
         {
-          indicateurPublicId: 'IND-001',
-          individuPublicId: 'DEPT-84',
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
           date: '2024-07-01',
-          valeur: '4.000000',
+          valeur: 4,
         },
       )
 
-      const result = await listValeursForIndicateur('IND-001', {
-        individus: ['DEPT-84'],
+      const result = await listValeursForIndicateur(indId, {
+        individus: [deptId],
         dateDebut: '2024-01-01',
         dateFin: '2024-06-30',
       })
@@ -132,10 +119,12 @@ describe.concurrent('listValeursForIndicateur', () => {
   it(
     'retourne une liste vide pour un individu sans valeur',
     integrationTest(async () => {
-      await fixtures.indicateur({ publicId: 'IND-001', nom: 'T' })
-      await fixtures.individu({ publicId: 'DEPT-84', nom: 'Vaucluse' })
+      const indId = testIndicateurId()
+      const deptId = testDeptId()
+      await fixtures.indicateur({ publicId: indId, nom: 'T' })
+      await fixtures.individu({ publicId: deptId, nom: 'Vaucluse' })
 
-      const result = await listValeursForIndicateur('IND-001', { individus: ['DEPT-84'] })
+      const result = await listValeursForIndicateur(indId, { individus: [deptId] })
 
       const value = result._unsafeUnwrap()
       expect(value.items).toEqual([])
@@ -146,7 +135,7 @@ describe.concurrent('listValeursForIndicateur', () => {
     'rejette quand l\'indicateur est introuvable',
     integrationTest(async () => {
       await expect(
-        listValeursForIndicateur('IND-999', { individus: ['DEPT-84'] }),
+        listValeursForIndicateur('IND-9999', { individus: [testDeptId()] }),
       ).rejects.toThrow()
     }),
   )

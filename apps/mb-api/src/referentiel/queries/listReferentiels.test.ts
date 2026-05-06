@@ -23,15 +23,17 @@ describe.concurrent('listReferentiels', () => {
   it(
     'retourne les référentiels avec leur nombre d\'individus',
     integrationTest(async () => {
-      await fixtures.referentiel(
-        { publicId: 'REF-ALPHA', nom: 'Alpha', description: null },
-        { publicId: 'REF-BETA', nom: 'Beta', description: null },
-      )
-      await fixtures.individu({ publicId: 'A-1' }, { publicId: 'A-2' })
       await fixtures.referentielIndividu(
-        { referentielPublicId: 'REF-ALPHA', individuPublicId: 'A-1' },
-        { referentielPublicId: 'REF-ALPHA', individuPublicId: 'A-2' },
+        {
+          referentiel: { publicId: 'REF-ALPHA', nom: 'Alpha' },
+          individu: { publicId: 'A-1' },
+        },
+        {
+          referentiel: { publicId: 'REF-ALPHA' },
+          individu: { publicId: 'A-2' },
+        },
       )
+      await fixtures.referentiel({ publicId: 'REF-BETA', nom: 'Beta' })
 
       const result = await listReferentiels({})
 
@@ -42,16 +44,16 @@ describe.concurrent('listReferentiels', () => {
             nom: 'Alpha',
             description: null,
             nombreIndividus: 2,
-            createdAt: expect.any(String) as string,
-            updatedAt: expect.any(String) as string,
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
           },
           {
             id: 'REF-BETA',
             nom: 'Beta',
             description: null,
             nombreIndividus: 0,
-            createdAt: expect.any(String) as string,
-            updatedAt: expect.any(String) as string,
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
           },
         ],
         pagination: { cursor: null, hasMore: false },
@@ -78,8 +80,8 @@ describe.concurrent('listReferentiels', () => {
             nom: 'Régions de France',
             description: null,
             nombreIndividus: 0,
-            createdAt: expect.any(String) as string,
-            updatedAt: expect.any(String) as string,
+            createdAt: expect.any(String),
+            updatedAt: expect.any(String),
           },
         ],
         pagination: { cursor: null, hasMore: false },

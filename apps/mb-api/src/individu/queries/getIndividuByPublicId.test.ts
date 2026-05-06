@@ -3,26 +3,29 @@ import { describe, expect, it } from 'vitest'
 import { getIndividuByPublicId } from '@/individu/queries/getIndividuByPublicId'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
+import { testDeptId } from '@/test/randomIds'
 
 describe.concurrent('getIndividuByPublicId', () => {
   it(
     'retourne l\'individu avec ses référentiels',
     integrationTest(async () => {
-      await fixtures.referentiel(
-        { publicId: 'REF-DEPT', nom: 'Départements' },
-        { publicId: 'REF-PACA', nom: 'PACA' },
-      )
-      await fixtures.individu({ publicId: 'DEPT-84', nom: 'Vaucluse' })
+      const deptId = testDeptId()
       await fixtures.referentielIndividu(
-        { referentielPublicId: 'REF-DEPT', individuPublicId: 'DEPT-84' },
-        { referentielPublicId: 'REF-PACA', individuPublicId: 'DEPT-84' },
+        {
+          referentiel: { publicId: 'REF-DEPT', nom: 'Départements' },
+          individu: { publicId: deptId, nom: 'Vaucluse' },
+        },
+        {
+          referentiel: { publicId: 'REF-PACA', nom: 'PACA' },
+          individu: { publicId: deptId },
+        },
       )
 
-      const result = await getIndividuByPublicId('DEPT-84')
+      const result = await getIndividuByPublicId(deptId)
 
       const value = result._unsafeUnwrap()
       expect(value).toMatchObject({
-        id: 'DEPT-84',
+        id: deptId,
         nom: 'Vaucluse',
       })
       expect(value.referentiels.sort()).toEqual(['REF-DEPT', 'REF-PACA'])

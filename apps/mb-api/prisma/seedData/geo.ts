@@ -70,17 +70,17 @@ const buildDeptValeurs = (indicateurPublicId: string, baseValeur: number, step: 
       indicateurPublicId,
       individuPublicId,
       date,
-      valeur: (baseValeur + departementIndex * step + dateIndex * (step / 2)).toFixed(6),
+      valeur: baseValeur + departementIndex * step + dateIndex * (step / 2),
     })),
   )
 
 const ind008Regions = [
-  { indicateurPublicId: 'IND-008', individuPublicId: 'REG-11', date: '2024-06-01', valeur: '72.500000' },
-  { indicateurPublicId: 'IND-008', individuPublicId: 'REG-93', date: '2024-06-01', valeur: '68.300000' },
-  { indicateurPublicId: 'IND-008', individuPublicId: 'REG-84', date: '2024-06-01', valeur: '70.100000' },
-  { indicateurPublicId: 'IND-008', individuPublicId: 'REG-11', date: '2025-01-01', valeur: '74.000000' },
-  { indicateurPublicId: 'IND-008', individuPublicId: 'REG-93', date: '2025-01-01', valeur: '69.000000' },
-  { indicateurPublicId: 'IND-008', individuPublicId: 'REG-84', date: '2025-01-01', valeur: '71.500000' },
+  { indicateurPublicId: 'IND-008', individuPublicId: 'REG-11', date: '2024-06-01', valeur: 72.5 },
+  { indicateurPublicId: 'IND-008', individuPublicId: 'REG-93', date: '2024-06-01', valeur: 68.3 },
+  { indicateurPublicId: 'IND-008', individuPublicId: 'REG-84', date: '2024-06-01', valeur: 70.1 },
+  { indicateurPublicId: 'IND-008', individuPublicId: 'REG-11', date: '2025-01-01', valeur: 74.0 },
+  { indicateurPublicId: 'IND-008', individuPublicId: 'REG-93', date: '2025-01-01', valeur: 69.0 },
+  { indicateurPublicId: 'IND-008', individuPublicId: 'REG-84', date: '2025-01-01', valeur: 71.5 },
 ] as const
 
 export const valeursAvancementSeed = [

@@ -10,9 +10,25 @@ import {
   type ValeurAvancementModel,
 } from '@/generated/prisma/models'
 
+// --- Indicateur --------------------------------------------------------------
+
 type IndicateurOverrides = Partial<{ id: string; publicId: string; nom: string }>
 
 const DEFAULT_INDICATEUR = { publicId: 'IND-1', nom: 'Indicateur de test' } as const
+
+const upsertIndicateur = async (o: IndicateurOverrides = {}) => {
+  const create = { id: uuidv7(), ...DEFAULT_INDICATEUR, ...o }
+  const { id: _id, publicId: _pub, ...update } = o
+  if (Object.keys(update).length === 0) {
+    const existing = await db().indicateur.findUnique({ where: { publicId: create.publicId } })
+    if (existing) return existing
+  }
+  return db().indicateur.upsert({
+    where: { publicId: create.publicId },
+    update,
+    create,
+  })
+}
 
 function indicateur(): Promise<IndicateurModel>
 function indicateur(override: IndicateurOverrides): Promise<IndicateurModel>
@@ -24,18 +40,13 @@ function indicateur(
 async function indicateur(
   ...overrides: IndicateurOverrides[]
 ): Promise<IndicateurModel | IndicateurModel[]> {
-  const upsert = (o: IndicateurOverrides = {}) => {
-    const data = { id: uuidv7(), ...DEFAULT_INDICATEUR, ...o }
-    return db().indicateur.upsert({
-      where: { publicId: data.publicId },
-      update: { nom: data.nom },
-      create: data,
-    })
-  }
-
-  if (overrides.length <= 1) return upsert(overrides[0])
-  return Promise.all(overrides.map(upsert))
+  if (overrides.length <= 1) return upsertIndicateur(overrides[0])
+  const results: IndicateurModel[] = []
+  for (const o of overrides) results.push(await upsertIndicateur(o))
+  return results
 }
+
+// --- Référentiel -------------------------------------------------------------
 
 type ReferentielOverrides = Partial<{
   id: string
@@ -50,6 +61,20 @@ const DEFAULT_REFERENTIEL = {
   description: null,
 } as const
 
+const upsertReferentiel = async (o: ReferentielOverrides = {}) => {
+  const create = { id: uuidv7(), ...DEFAULT_REFERENTIEL, ...o }
+  const { id: _id, publicId: _pub, ...update } = o
+  if (Object.keys(update).length === 0) {
+    const existing = await db().referentiel.findUnique({ where: { publicId: create.publicId } })
+    if (existing) return existing
+  }
+  return db().referentiel.upsert({
+    where: { publicId: create.publicId },
+    update,
+    create,
+  })
+}
+
 function referentiel(): Promise<ReferentielModel>
 function referentiel(override: ReferentielOverrides): Promise<ReferentielModel>
 function referentiel(
@@ -60,18 +85,13 @@ function referentiel(
 async function referentiel(
   ...overrides: ReferentielOverrides[]
 ): Promise<ReferentielModel | ReferentielModel[]> {
-  const upsert = (o: ReferentielOverrides = {}) => {
-    const data = { id: uuidv7(), ...DEFAULT_REFERENTIEL, ...o }
-    return db().referentiel.upsert({
-      where: { publicId: data.publicId },
-      update: { nom: data.nom, description: data.description },
-      create: data,
-    })
-  }
-
-  if (overrides.length <= 1) return upsert(overrides[0])
-  return Promise.all(overrides.map(upsert))
+  if (overrides.length <= 1) return upsertReferentiel(overrides[0])
+  const results: ReferentielModel[] = []
+  for (const o of overrides) results.push(await upsertReferentiel(o))
+  return results
 }
+
+// --- Individu ----------------------------------------------------------------
 
 type IndividuOverrides = Partial<{ id: string; publicId: string; nom: string }>
 
@@ -79,6 +99,20 @@ const DEFAULT_INDIVIDU = {
   publicId: 'TEST-1',
   nom: 'Individu de test',
 } as const
+
+const upsertIndividu = async (o: IndividuOverrides = {}) => {
+  const create = { id: uuidv7(), ...DEFAULT_INDIVIDU, ...o }
+  const { id: _id, publicId: _pub, ...update } = o
+  if (Object.keys(update).length === 0) {
+    const existing = await db().individu.findUnique({ where: { publicId: create.publicId } })
+    if (existing) return existing
+  }
+  return db().individu.upsert({
+    where: { publicId: create.publicId },
+    update,
+    create,
+  })
+}
 
 function individu(): Promise<IndividuModel>
 function individu(override: IndividuOverrides): Promise<IndividuModel>
@@ -90,39 +124,22 @@ function individu(
 async function individu(
   ...overrides: IndividuOverrides[]
 ): Promise<IndividuModel | IndividuModel[]> {
-  const upsert = (o: IndividuOverrides = {}) => {
-    const merged = { id: uuidv7(), ...DEFAULT_INDIVIDU, ...o }
-    return db().individu.upsert({
-      where: { publicId: merged.publicId },
-      update: { nom: merged.nom },
-      create: { id: merged.id, publicId: merged.publicId, nom: merged.nom },
-    })
-  }
-
-  if (overrides.length <= 1) return upsert(overrides[0])
-  return Promise.all(overrides.map(upsert))
+  if (overrides.length <= 1) return upsertIndividu(overrides[0])
+  const results: IndividuModel[] = []
+  for (const o of overrides) results.push(await upsertIndividu(o))
+  return results
 }
 
-type ReferentielIndividuOverrides = Partial<{
-  referentielPublicId: string
-  individuPublicId: string
-}>
+// --- ReferentielIndividu (deps requises) -------------------------------------
 
-const DEFAULT_REFERENTIEL_INDIVIDU = {
-  referentielPublicId: DEFAULT_REFERENTIEL.publicId,
-  individuPublicId: DEFAULT_INDIVIDU.publicId,
-} as const
+type ReferentielIndividuOverrides = {
+  referentiel: ReferentielOverrides
+  individu: IndividuOverrides
+}
 
-const upsertReferentielIndividu = async (o: ReferentielIndividuOverrides = {}) => {
-  const merged = { ...DEFAULT_REFERENTIEL_INDIVIDU, ...o }
-  const referentielRow = await db().referentiel.findUniqueOrThrow({
-    where: { publicId: merged.referentielPublicId },
-    select: { id: true },
-  })
-  const individuRow = await db().individu.findUniqueOrThrow({
-    where: { publicId: merged.individuPublicId },
-    select: { id: true },
-  })
+const upsertReferentielIndividu = async (o: ReferentielIndividuOverrides) => {
+  const referentielRow = await upsertReferentiel(o.referentiel)
+  const individuRow = await upsertIndividu(o.individu)
   return db().referentielIndividu.upsert({
     where: {
       referentielId_individuId: {
@@ -135,7 +152,6 @@ const upsertReferentielIndividu = async (o: ReferentielIndividuOverrides = {}) =
   })
 }
 
-function referentielIndividu(): Promise<ReferentielIndividuModel>
 function referentielIndividu(
   override: ReferentielIndividuOverrides,
 ): Promise<ReferentielIndividuModel>
@@ -147,31 +163,22 @@ function referentielIndividu(
 async function referentielIndividu(
   ...overrides: ReferentielIndividuOverrides[]
 ): Promise<ReferentielIndividuModel | ReferentielIndividuModel[]> {
-  if (overrides.length <= 1) return upsertReferentielIndividu(overrides[0])
-  return Promise.all(overrides.map(upsertReferentielIndividu))
+  if (overrides.length === 1) return upsertReferentielIndividu(overrides[0]!)
+  const results: ReferentielIndividuModel[] = []
+  for (const o of overrides) results.push(await upsertReferentielIndividu(o))
+  return results
 }
 
-type RelationOverrides = Partial<{
-  id: string
-  parentPublicId: string
-  childPublicId: string
-}>
+// --- Relation (deps requises) ------------------------------------------------
 
-const DEFAULT_RELATION = {
-  parentPublicId: 'PARENT-1',
-  childPublicId: 'CHILD-1',
-} as const
+type RelationOverrides = {
+  parent: IndividuOverrides
+  child: IndividuOverrides
+} & Partial<{ id: string }>
 
-const upsertRelation = async (o: RelationOverrides = {}) => {
-  const merged = { id: uuidv7(), ...DEFAULT_RELATION, ...o }
-  const parent = await db().individu.findUniqueOrThrow({
-    where: { publicId: merged.parentPublicId },
-    select: { id: true },
-  })
-  const child = await db().individu.findUniqueOrThrow({
-    where: { publicId: merged.childPublicId },
-    select: { id: true },
-  })
+const upsertRelation = async (o: RelationOverrides) => {
+  const parent = await upsertIndividu(o.parent)
+  const child = await upsertIndividu(o.child)
   return db().relation.upsert({
     where: {
       parentId_childId: {
@@ -180,11 +187,10 @@ const upsertRelation = async (o: RelationOverrides = {}) => {
       },
     },
     update: {},
-    create: { id: merged.id, parentId: parent.id, childId: child.id },
+    create: { id: o.id ?? uuidv7(), parentId: parent.id, childId: child.id },
   })
 }
 
-function relation(): Promise<RelationModel>
 function relation(override: RelationOverrides): Promise<RelationModel>
 function relation(
   o1: RelationOverrides,
@@ -194,55 +200,46 @@ function relation(
 async function relation(
   ...overrides: RelationOverrides[]
 ): Promise<RelationModel | RelationModel[]> {
-  if (overrides.length <= 1) return upsertRelation(overrides[0])
-  return Promise.all(overrides.map(upsertRelation))
+  if (overrides.length === 1) return upsertRelation(overrides[0]!)
+  const results: RelationModel[] = []
+  for (const o of overrides) results.push(await upsertRelation(o))
+  return results
 }
 
-type ValeurAvancementOverrides = Partial<{
-  id: string
-  indicateurPublicId: string
-  individuPublicId: string
-  date: string
-  valeur: string
-}>
+// --- ValeurAvancement (deps requises) ----------------------------------------
 
-const DEFAULT_VALEUR_AVANCEMENT = {
-  indicateurPublicId: DEFAULT_INDICATEUR.publicId,
-  individuPublicId: DEFAULT_INDIVIDU.publicId,
-  date: '2024-01-01',
-  valeur: '10.000000',
-} as const
+type ValeurAvancementOverrides = {
+  indicateur: IndicateurOverrides
+  individu: IndividuOverrides
+} & Partial<{ id: string; date: string; valeur: number }>
 
-const upsertValeurAvancement = async (o: ValeurAvancementOverrides = {}) => {
-  const merged = { id: uuidv7(), ...DEFAULT_VALEUR_AVANCEMENT, ...o }
-  const indicateurRow = await db().indicateur.findUniqueOrThrow({
-    where: { publicId: merged.indicateurPublicId },
-    select: { id: true },
-  })
-  const individuRow = await db().individu.findUniqueOrThrow({
-    where: { publicId: merged.individuPublicId },
-    select: { id: true },
-  })
+const DEFAULT_VALEUR_AVANCEMENT_DATE = '2024-01-01'
+const DEFAULT_VALEUR_AVANCEMENT_VALEUR = 10
+
+const upsertValeurAvancement = async (o: ValeurAvancementOverrides) => {
+  const indicateurRow = await upsertIndicateur(o.indicateur)
+  const individuRow = await upsertIndividu(o.individu)
+  const date = o.date ?? DEFAULT_VALEUR_AVANCEMENT_DATE
+  const valeur = o.valeur ?? DEFAULT_VALEUR_AVANCEMENT_VALEUR
   return db().valeurAvancement.upsert({
     where: {
       valeur_avancement_unique: {
         indicateurId: indicateurRow.id,
         individuId: individuRow.id,
-        date: merged.date,
+        date,
       },
     },
-    update: { valeur: merged.valeur },
+    update: { valeur },
     create: {
-      id: merged.id,
+      id: o.id ?? uuidv7(),
       indicateurId: indicateurRow.id,
       individuId: individuRow.id,
-      date: merged.date,
-      valeur: merged.valeur,
+      date,
+      valeur,
     },
   })
 }
 
-function valeurAvancement(): Promise<ValeurAvancementModel>
 function valeurAvancement(override: ValeurAvancementOverrides): Promise<ValeurAvancementModel>
 function valeurAvancement(
   o1: ValeurAvancementOverrides,
@@ -252,8 +249,10 @@ function valeurAvancement(
 async function valeurAvancement(
   ...overrides: ValeurAvancementOverrides[]
 ): Promise<ValeurAvancementModel | ValeurAvancementModel[]> {
-  if (overrides.length <= 1) return upsertValeurAvancement(overrides[0])
-  return Promise.all(overrides.map(upsertValeurAvancement))
+  if (overrides.length === 1) return upsertValeurAvancement(overrides[0]!)
+  const results: ValeurAvancementModel[] = []
+  for (const o of overrides) results.push(await upsertValeurAvancement(o))
+  return results
 }
 
 export const fixtures = {
