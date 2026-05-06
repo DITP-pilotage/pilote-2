@@ -1,7 +1,13 @@
 import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
 import { individuPublicIdSchema } from '@pilote/mb-shared/individu'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Link,
+  redirect,
+  useNavigate,
+} from '@tanstack/react-router'
+import { startTransition } from 'react'
 import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
@@ -39,11 +45,29 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     stringify: ({ id }) => ({ id }),
   },
   validateSearch: searchSchema,
-  loader: ({ context, params }) =>
-    Promise.all([
+  loaderDeps: ({ search }) => ({ individu: search.individu }),
+  loader: async ({ context, params, deps }) => {
+    const [indicateur, individus] = await Promise.all([
       context.queryClient.fetchQuery(indicateurQueryOptions(params.id)),
       context.queryClient.fetchQuery(indicateurIndividusQueryOptions(params.id)),
-    ]),
+    ])
+
+    if (individus.length > 0) {
+      const isValid =
+        deps.individu !== undefined &&
+        individus.some((i) => i.individu.id === deps.individu)
+      if (!isValid) {
+        throw redirect({
+          to: '/indicateurs/$id',
+          params,
+          search: { individu: individus[0]!.individu.id },
+          replace: true,
+        })
+      }
+    }
+
+    return [indicateur, individus] as const
+  },
   pendingComponent: () => <RouteLoading message="Chargement de l'indicateur…" />,
   errorComponent: RouteError,
   component: IndicateurDetailComponent,
@@ -59,10 +83,10 @@ function IndicateurDetailComponent() {
     indicateurIndividusQueryOptions(id),
   )
 
-  const selectedIndividu =
-    (search.individu && individus.find((i) => i.individu.id === search.individu)) ||
-    individus[0] ||
-    undefined
+  // Le loader garantit que `search.individu` est défini et valide dès lors que la liste n'est pas vide.
+  const selectedIndividu = search.individu
+    ? individus.find((i) => i.individu.id === search.individu)
+    : undefined
 
   return (
     <div className="space-y-6">
@@ -94,8 +118,10 @@ function IndicateurDetailComponent() {
             <Select
               value={selectedIndividu.individu.id}
               onValueChange={(value) => {
-                void navigate({
-                  search: (prev) => ({ ...prev, individu: value }),
+                startTransition(() => {
+                  void navigate({
+                    search: (prev) => ({ ...prev, individu: value }),
+                  })
                 })
               }}
             >
