@@ -22,6 +22,9 @@ const envSchema = z.object({
   LOG_LEVEL: z
     .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
     .default('info'),
+  LOG_TO_DATABASE: z.stringbool().default(false),
 })
+
+export type Env = z.infer<typeof envSchema>
 
 export const env = envSchema.parse(process.env)
