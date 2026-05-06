@@ -1,13 +1,8 @@
 import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
 import { individuPublicIdSchema } from '@pilote/mb-shared/individu'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import {
-  createFileRoute,
-  Link,
-  redirect,
-  useNavigate,
-} from '@tanstack/react-router'
-import { startTransition, Suspense } from 'react'
+import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
+import { startTransition } from 'react'
 import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
@@ -19,12 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/Select'
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@/components/ui/Tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import {
   indicateurIndividusQueryOptions,
   indicateurQueryOptions,
@@ -64,9 +54,7 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     }
 
     // Préfetch des valeurs : useSuspenseQuery dans le composant tape le cache.
-    await context.queryClient.fetchQuery(
-      indicateurValeursQueryOptions(params.id, deps.individu),
-    )
+    await context.queryClient.fetchQuery(indicateurValeursQueryOptions(params.id, deps.individu))
 
     return { indicateur, individus }
   },
@@ -81,9 +69,7 @@ function IndicateurDetailComponent() {
   const navigate = useNavigate({ from: Route.fullPath })
 
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(id))
-  const { data: individus } = useSuspenseQuery(
-    indicateurIndividusQueryOptions(id),
-  )
+  const { data: individus } = useSuspenseQuery(indicateurIndividusQueryOptions(id))
 
   // Le loader garantit que `search.individu` est défini et valide dès lors que la liste n'est pas vide.
   const selectedIndividu = search.individu
@@ -101,9 +87,7 @@ function IndicateurDetailComponent() {
       </Link>
 
       <header>
-        <span className="text-xs uppercase tracking-wide text-text-muted">
-          {indicateur.id}
-        </span>
+        <span className="text-xs uppercase tracking-wide text-text-muted">{indicateur.id}</span>
         <h1 className="text-3xl font-semibold text-text">{indicateur.nom}</h1>
       </header>
 
@@ -147,18 +131,7 @@ function IndicateurDetailComponent() {
             </TabsList>
 
             <TabsContent value="valeurs">
-              <Suspense
-                fallback={
-                  <p className="rounded border border-border bg-surface p-6 text-sm text-text-muted">
-                    Chargement des valeurs…
-                  </p>
-                }
-              >
-                <ValeursTable
-                  indicateurId={id}
-                  individuId={selectedIndividu.individu.id}
-                />
-              </Suspense>
+              <ValeursTable indicateurId={id} individuId={selectedIndividu.individu.id} />
             </TabsContent>
 
             <TabsContent value="metadonnees">
@@ -171,20 +144,10 @@ function IndicateurDetailComponent() {
   )
 }
 
-function ValeursTable({
-  indicateurId,
-  individuId,
-}: {
-  indicateurId: string
-  individuId: string
-}) {
-  const { data } = useSuspenseQuery(
-    indicateurValeursQueryOptions(indicateurId, individuId),
-  )
+function ValeursTable({ indicateurId, individuId }: { indicateurId: string; individuId: string }) {
+  const { data } = useSuspenseQuery(indicateurValeursQueryOptions(indicateurId, individuId))
 
-  const rows = [...data.items].sort((a, b) =>
-    a.date < b.date ? 1 : a.date > b.date ? -1 : 0,
-  )
+  const rows = [...data.items].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
 
   if (rows.length === 0) {
     return (
@@ -234,14 +197,10 @@ function MetadonneesPanel({
       <dd className="text-text">{indicateur.nom}</dd>
 
       <dt className="text-text-muted">Créé le</dt>
-      <dd className="text-text">
-        {new Date(indicateur.createdAt).toLocaleString('fr-FR')}
-      </dd>
+      <dd className="text-text">{new Date(indicateur.createdAt).toLocaleString('fr-FR')}</dd>
 
       <dt className="text-text-muted">Mis à jour le</dt>
-      <dd className="text-text">
-        {new Date(indicateur.updatedAt).toLocaleString('fr-FR')}
-      </dd>
+      <dd className="text-text">{new Date(indicateur.updatedAt).toLocaleString('fr-FR')}</dd>
     </dl>
   )
 }
