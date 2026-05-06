@@ -1,24 +1,33 @@
 export const PAGE_SIZE = 5
 
-export const buildPaginationArgs = <F extends string>(
-  cursor: string | undefined,
-  cursorField: F,
-) => ({
-  take: PAGE_SIZE + 1,
-  ...(cursor && { cursor: { [cursorField]: cursor } as Record<F, string>, skip: 1 }),
-})
+export const encodeCursor = (value: string): string =>
+  Buffer.from(value, 'utf8').toString('base64url')
 
-export const toPaginatedResponse = <Row, Item extends { id: string }>(
+export const decodeCursor = (cursor: string | undefined): string | undefined => {
+  if (!cursor) return undefined
+  return Buffer.from(cursor, 'base64url').toString('utf8')
+}
+
+export const buildPaginationArgs = (cursor: string | undefined) => {
+  const decoded = decodeCursor(cursor)
+  return {
+    take: PAGE_SIZE + 1,
+    ...(decoded && { cursor: { id: decoded }, skip: 1 }),
+  }
+}
+
+export const toPaginatedResponse = <Row extends { id: string }, Item>(
   rows: Row[],
   total: number,
   mapItem: (row: Row) => Item,
 ) => {
   const hasMore = rows.length > PAGE_SIZE
-  const items = (hasMore ? rows.slice(0, PAGE_SIZE) : rows).map(mapItem)
-  const nextCursor = hasMore && items.length > 0 ? items[items.length - 1]!.id : null
+  const trimmedRows = hasMore ? rows.slice(0, PAGE_SIZE) : rows
+  const lastRow = trimmedRows[trimmedRows.length - 1]
+  const nextCursor = hasMore && lastRow ? encodeCursor(lastRow.id) : null
 
   return {
-    items,
+    items: trimmedRows.map(mapItem),
     pagination: { cursor: nextCursor, hasMore },
     total,
   }

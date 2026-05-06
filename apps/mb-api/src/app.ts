@@ -9,7 +9,10 @@ import { registerErrorHandler } from '@/framework/errors/errorHandler'
 import { databaseContext } from '@/framework/persistence/databaseContext'
 import { health } from '@/healthcheck/routes/health'
 import { indicateurRoutes } from '@/indicateur/routes'
+import { individuRoutes } from '@/individu/routes'
+import { referentielRoutes } from '@/referentiel/routes'
 import { sharedMessage } from '@/shared/routes/sharedMessage'
+import { valeurAvancementRoutes } from '@/valeurAvancement/routes'
 
 export const app = new OpenAPIHono()
 
@@ -21,6 +24,9 @@ app.get('/', (context) => context.json({ hello: 'world' }))
 app.route('/', health)
 app.route('/', sharedMessage)
 app.route('/', indicateurRoutes)
+app.route('/', valeurAvancementRoutes)
+app.route('/', referentielRoutes)
+app.route('/', individuRoutes)
 app.route('/', me)
 
 app.doc('/openapi.json', {

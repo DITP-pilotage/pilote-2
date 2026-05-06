@@ -11,6 +11,34 @@
     "./api": {
       "types": "./src/api/index.ts",
       "default": "./src/api/index.ts"
+    },
+    "./api/error": {
+      "types": "./src/api/error.ts",
+      "default": "./src/api/error.ts"
+    },
+    "./api/indicateur": {
+      "types": "./src/api/indicateur.ts",
+      "default": "./src/api/indicateur.ts"
+    },
+    "./api/individu": {
+      "types": "./src/api/individu.ts",
+      "default": "./src/api/individu.ts"
+    },
+    "./api/me": {
+      "types": "./src/api/me.ts",
+      "default": "./src/api/me.ts"
+    },
+    "./api/pagination": {
+      "types": "./src/api/pagination.ts",
+      "default": "./src/api/pagination.ts"
+    },
+    "./api/referentiel": {
+      "types": "./src/api/referentiel.ts",
+      "default": "./src/api/referentiel.ts"
+    },
+    "./api/valeurAvancement": {
+      "types": "./src/api/valeurAvancement.ts",
+      "default": "./src/api/valeurAvancement.ts"
     }
   },
   "files": [
