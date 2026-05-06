@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptId, testIndicateurId, testRegId } from '@/test/randomIds'
+import { testDeptId, testDeptIds, testIndicateurId, testRegId } from '@/test/randomIds'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
 
 describe.concurrent('listIndividusWithValeurs', () => {
@@ -10,9 +10,7 @@ describe.concurrent('listIndividusWithValeurs', () => {
     'retourne les individus ayant au moins une valeur avec dernière valeur et nombre',
     integrationTest(async () => {
       const indId = testIndicateurId()
-      const dept1 = testDeptId()
-      const dept2 = testDeptId()
-      const dept3 = testDeptId()
+      const [dept1, dept2, dept3] = testDeptIds(3)
       await fixtures.individu({ publicId: dept3, nom: 'AM' })
       await fixtures.valeurAvancement(
         {

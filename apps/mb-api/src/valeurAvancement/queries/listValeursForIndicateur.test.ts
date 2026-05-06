@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptId, testIndicateurId } from '@/test/randomIds'
+import { testDeptId, testDeptIds, testIndicateurId } from '@/test/randomIds'
 import { listValeursForIndicateur } from '@/valeurAvancement/queries/listValeursForIndicateur'
 
 describe.concurrent('listValeursForIndicateur', () => {
@@ -40,9 +40,7 @@ describe.concurrent('listValeursForIndicateur', () => {
     'retourne le batch multi-individus',
     integrationTest(async () => {
       const indId = testIndicateurId()
-      const dept1 = testDeptId()
-      const dept2 = testDeptId()
-      const dept3 = testDeptId()
+      const [dept1, dept2, dept3] = testDeptIds(3)
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId, nom: 'T' },
