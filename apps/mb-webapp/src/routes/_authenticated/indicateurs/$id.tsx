@@ -7,7 +7,7 @@ import {
   redirect,
   useNavigate,
 } from '@tanstack/react-router'
-import { startTransition } from 'react'
+import { startTransition, Suspense } from 'react'
 import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
@@ -145,10 +145,18 @@ function IndicateurDetailComponent() {
             </TabsList>
 
             <TabsContent value="valeurs">
-              <ValeursTable
-                indicateurId={id}
-                individuId={selectedIndividu.individu.id}
-              />
+              <Suspense
+                fallback={
+                  <p className="rounded border border-border bg-surface p-6 text-sm text-text-muted">
+                    Chargement des valeurs…
+                  </p>
+                }
+              >
+                <ValeursTable
+                  indicateurId={id}
+                  individuId={selectedIndividu.individu.id}
+                />
+              </Suspense>
             </TabsContent>
 
             <TabsContent value="metadonnees">
