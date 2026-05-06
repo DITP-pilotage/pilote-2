@@ -1,7 +1,9 @@
 import type { QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
+import { LogOut } from 'lucide-react'
 
+import { Button } from '@/components/ui/Button'
 import type { Auth } from '@/auth'
 
 export type RouterContext = {
@@ -17,12 +19,12 @@ function RootComponent() {
   const { auth } = Route.useRouteContext()
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="border-b border-slate-200 bg-white">
+    <div className="min-h-screen bg-background text-text">
+      <header className="border-b border-border bg-surface">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
           <Link
             to="/"
-            className="text-lg font-semibold text-slate-900 hover:text-slate-600"
+            className="text-lg font-semibold text-text hover:text-text-muted"
           >
             Pilote MB
           </Link>
@@ -30,31 +32,28 @@ function RootComponent() {
             <Link
               to="/indicateurs"
               search={{}}
-              className="text-slate-700 hover:text-slate-900"
+              className="text-secondary-foreground hover:text-text"
             >
               Indicateurs
             </Link>
             {auth.isAuthenticated ? (
               <span className="flex items-center gap-2">
-                <span className="text-slate-600">{auth.user?.id}</span>
-                <button
+                <span className="text-text-muted">{auth.user?.id}</span>
+                <Button
+                  variant="secondary"
+                  size="sm"
                   type="button"
                   onClick={() => {
                     void auth.logout()
                   }}
-                  className="rounded border border-slate-300 px-3 py-1 text-slate-700 hover:bg-slate-100"
                 >
-                  Se déconnecter
-                </button>
+                  <LogOut /> Se déconnecter
+                </Button>
               </span>
             ) : (
-              <button
-                type="button"
-                onClick={() => auth.login()}
-                className="rounded bg-slate-900 px-3 py-1 text-white hover:bg-slate-700"
-              >
+              <Button size="sm" type="button" onClick={() => auth.login()}>
                 Se connecter
-              </button>
+              </Button>
             )}
           </nav>
         </div>
