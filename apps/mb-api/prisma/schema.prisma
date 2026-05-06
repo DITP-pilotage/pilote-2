@@ -31,7 +31,84 @@ model Indicateur {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt      @map("updated_at")
 
+  valeurs ValeurAvancement[]
+
   @@map("indicateur")
+}
+
+model Referentiel {
+  id          String   @id @db.Uuid
+  publicId    String   @unique @map("public_id")
+  nom         String
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt      @map("updated_at")
+
+  individus ReferentielIndividu[]
+
+  @@map("referentiel")
+}
+
+model Individu {
+  id        String   @id @db.Uuid
+  publicId  String   @unique @map("public_id")
+  nom       String
+  metadata  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt      @map("updated_at")
+
+  referentiels      ReferentielIndividu[]
+  relationsAsParent Relation[]            @relation("relationParent")
+  relationsAsChild  Relation[]            @relation("relationChild")
+  valeurs           ValeurAvancement[]
+
+  @@map("individu")
+}
+
+model ReferentielIndividu {
+  referentielId String @map("referentiel_id") @db.Uuid
+  individuId    String @map("individu_id")    @db.Uuid
+
+  referentiel Referentiel @relation(fields: [referentielId], references: [id], onDelete: Cascade)
+  individu    Individu    @relation(fields: [individuId],    references: [id], onDelete: Cascade)
+
+  @@id([referentielId, individuId])
+  @@index([individuId])
+  @@map("referentiel_individu")
+}
+
+model Relation {
+  id        String   @id @db.Uuid
+  type      String
+  parentId  String   @map("parent_id") @db.Uuid
+  childId   String   @map("child_id")  @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  parent Individu @relation("relationParent", fields: [parentId], references: [id], onDelete: Cascade)
+  child  Individu @relation("relationChild",  fields: [childId],  references: [id], onDelete: Cascade)
+
+  @@unique([type, parentId, childId])
+  @@index([parentId, type])
+  @@index([childId, type])
+  @@map("relation")
+}
+
+model ValeurAvancement {
+  id              String   @id @db.Uuid
+  indicateurId    String   @map("indicateur_id") @db.Uuid
+  individuId      String   @map("individu_id")   @db.Uuid
+  dateObservation String   @map("date_observation")
+  valeur          Decimal  @db.Decimal(18, 6)
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt      @map("updated_at")
+
+  indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
+  individu   Individu   @relation(fields: [individuId],   references: [id], onDelete: Restrict)
+
+  @@unique([indicateurId, individuId, dateObservation], name: "valeur_avancement_unique_obs")
+  @@index([indicateurId, dateObservation])
+  @@index([individuId, dateObservation])
+  @@map("valeur_avancement")
 }
 
 enum ApplicationLogLevel {

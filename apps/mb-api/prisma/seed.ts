@@ -3,6 +3,13 @@ import { uuidv7 } from 'uuidv7'
 
 import { PrismaClient } from '../src/generated/prisma/client.js'
 
+import {
+  individusSeed,
+  referentielsSeed,
+  relationsSeed,
+  valeursAvancementSeed,
+} from './seedData/geo.js'
+
 const databaseUrl = process.env['DATABASE_URL']
 if (!databaseUrl) {
   throw new Error('DATABASE_URL is required to run the seed script.')
@@ -50,8 +57,113 @@ const main = async () => {
       },
     })
   }
+
+  for (const item of referentielsSeed) {
+    await prisma.referentiel.upsert({
+      where: { publicId: item.publicId },
+      update: { nom: item.nom, description: item.description },
+      create: {
+        id: uuidv7(),
+        publicId: item.publicId,
+        nom: item.nom,
+        description: item.description,
+      },
+    })
+  }
+
+  for (const item of individusSeed) {
+    await prisma.individu.upsert({
+      where: { publicId: item.publicId },
+      update: { nom: item.nom, metadata: item.metadata ?? undefined },
+      create: {
+        id: uuidv7(),
+        publicId: item.publicId,
+        nom: item.nom,
+        metadata: item.metadata ?? undefined,
+      },
+    })
+  }
+
+  for (const item of individusSeed) {
+    const individu = await prisma.individu.findUniqueOrThrow({
+      where: { publicId: item.publicId },
+      select: { id: true },
+    })
+    for (const referentielPublicId of item.referentiels) {
+      const referentiel = await prisma.referentiel.findUniqueOrThrow({
+        where: { publicId: referentielPublicId },
+        select: { id: true },
+      })
+      await prisma.referentielIndividu.upsert({
+        where: {
+          referentielId_individuId: {
+            referentielId: referentiel.id,
+            individuId: individu.id,
+          },
+        },
+        update: {},
+        create: { referentielId: referentiel.id, individuId: individu.id },
+      })
+    }
+  }
+
+  for (const item of relationsSeed) {
+    const parent = await prisma.individu.findUniqueOrThrow({
+      where: { publicId: item.parent },
+      select: { id: true },
+    })
+    const child = await prisma.individu.findUniqueOrThrow({
+      where: { publicId: item.child },
+      select: { id: true },
+    })
+    await prisma.relation.upsert({
+      where: {
+        type_parentId_childId: {
+          type: item.type,
+          parentId: parent.id,
+          childId: child.id,
+        },
+      },
+      update: {},
+      create: {
+        id: uuidv7(),
+        type: item.type,
+        parentId: parent.id,
+        childId: child.id,
+      },
+    })
+  }
+
+  for (const item of valeursAvancementSeed) {
+    const indicateur = await prisma.indicateur.findUniqueOrThrow({
+      where: { publicId: item.indicateurPublicId },
+      select: { id: true },
+    })
+    const individu = await prisma.individu.findUniqueOrThrow({
+      where: { publicId: item.individuPublicId },
+      select: { id: true },
+    })
+    await prisma.valeurAvancement.upsert({
+      where: {
+        valeur_avancement_unique_obs: {
+          indicateurId: indicateur.id,
+          individuId: individu.id,
+          dateObservation: item.dateObservation,
+        },
+      },
+      update: { valeur: item.valeur },
+      create: {
+        id: uuidv7(),
+        indicateurId: indicateur.id,
+        individuId: individu.id,
+        dateObservation: item.dateObservation,
+        valeur: item.valeur,
+      },
+    })
+  }
+
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs.`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${relationsSeed.length} relations, ${valeursAvancementSeed.length} valeurs.`,
   )
 }
 
