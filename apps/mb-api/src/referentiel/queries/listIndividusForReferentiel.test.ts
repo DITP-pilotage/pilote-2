@@ -109,9 +109,15 @@ describe.concurrent('listIndividusForReferentiel', () => {
   )
 
   it(
-    'rejette quand le référentiel est introuvable',
+    'retourne une liste vide quand le référentiel est introuvable',
     integrationTest(async () => {
-      await expect(listIndividusForReferentiel('REF-INCONNU', {})).rejects.toThrow()
+      const result = await listIndividusForReferentiel('REF-INCONNU', {})
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [],
+        pagination: { cursor: null, hasMore: false },
+        total: 0,
+      })
     }),
   )
 })

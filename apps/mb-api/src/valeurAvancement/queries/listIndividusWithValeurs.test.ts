@@ -122,20 +122,30 @@ describe.concurrent('listIndividusWithValeurs', () => {
   )
 
   it(
-    'rejette quand l\'indicateur est introuvable',
+    "retourne une liste vide quand l'indicateur est introuvable",
     integrationTest(async () => {
-      await expect(listIndividusWithValeurs('IND-999', {})).rejects.toThrow()
+      const result = await listIndividusWithValeurs('IND-999', {})
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [],
+        pagination: { cursor: null, hasMore: false },
+        total: 0,
+      })
     }),
   )
 
   it(
-    'rejette quand le référentiel filtré est introuvable',
+    'retourne une liste vide quand le référentiel filtré est introuvable',
     integrationTest(async () => {
       await fixtures.indicateur({ publicId: 'IND-001', nom: 'T' })
 
-      await expect(
-        listIndividusWithValeurs('IND-001', { referentiel: 'REF-INCONNU' }),
-      ).rejects.toThrow()
+      const result = await listIndividusWithValeurs('IND-001', { referentiel: 'REF-INCONNU' })
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [],
+        pagination: { cursor: null, hasMore: false },
+        total: 0,
+      })
     }),
   )
 })

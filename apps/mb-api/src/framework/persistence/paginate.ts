@@ -19,17 +19,18 @@ export const buildPaginationArgs = <F extends string>(
   }
 }
 
-export const toPaginatedResponse = <Row, Item extends { id: string }>(
+export const toPaginatedResponse = <Row extends { publicId: string }, Item>(
   rows: Row[],
   total: number,
   mapItem: (row: Row) => Item,
 ) => {
   const hasMore = rows.length > PAGE_SIZE
-  const items = (hasMore ? rows.slice(0, PAGE_SIZE) : rows).map(mapItem)
-  const nextCursor = hasMore && items.length > 0 ? encodeCursor(items[items.length - 1]!.id) : null
+  const trimmedRows = hasMore ? rows.slice(0, PAGE_SIZE) : rows
+  const lastRow = trimmedRows[trimmedRows.length - 1]
+  const nextCursor = hasMore && lastRow ? encodeCursor(lastRow.publicId) : null
 
   return {
-    items,
+    items: trimmedRows.map(mapItem),
     pagination: { cursor: nextCursor, hasMore },
     total,
   }
