@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 
 import { fetchSharedMessage } from '@/api/sharedMessage'
+import { Button } from '@/components/ui/Button'
 
 export const Route = createFileRoute('/')({
   component: HomeComponent,
@@ -19,7 +20,7 @@ function HomeComponent() {
     <div className="space-y-8">
       <section>
         <h1 className="text-4xl font-semibold tracking-tight">Pilote MB</h1>
-        <p className="mt-3 text-slate-600">
+        <p className="mt-3 text-text-muted">
           Webapp Marque Blanche — squelette initial avec TanStack Router.
         </p>
       </section>
@@ -38,28 +39,22 @@ function HomeComponent() {
 
       <section className="space-y-3">
         <h2 className="text-xl font-semibold">Diagnostic TanStack Router</h2>
-        <ul className="rounded border border-slate-200 bg-white p-4 text-sm">
+        <ul className="rounded border border-border bg-surface p-4 text-sm">
           <li>✓ Router initialisé</li>
           <li>
             État auth : <strong>{auth.isAuthenticated ? 'authentifié' : 'anonyme'}</strong>
           </li>
         </ul>
         <div className="flex gap-3">
-          <Link
-            to="/indicateurs"
-            search={{}}
-            className="rounded bg-slate-900 px-4 py-2 text-sm text-white hover:bg-slate-700"
-          >
-            Voir les indicateurs
-          </Link>
+          <Button asChild>
+            <Link to="/indicateurs" search={{}}>
+              Voir les indicateurs
+            </Link>
+          </Button>
           {!auth.isAuthenticated && (
-            <button
-              type="button"
-              onClick={() => auth.login()}
-              className="rounded border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
-            >
+            <Button variant="secondary" type="button" onClick={() => auth.login()}>
               Se connecter
-            </button>
+            </Button>
           )}
         </div>
       </section>

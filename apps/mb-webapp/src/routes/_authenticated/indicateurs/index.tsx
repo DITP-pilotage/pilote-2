@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-router'
 import { z } from 'zod'
 
+import { Button } from '@/components/ui/Button'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
@@ -49,21 +50,21 @@ function IndicateursListComponent() {
             const recherche = e.target.value || undefined
             void navigate({ search: (prev) => ({ ...prev, recherche, cursor: undefined }) })
           }}
-          className="rounded border border-slate-300 px-3 py-1 text-sm"
+          className="rounded border border-secondary-border px-3 py-1 text-sm"
         />
       </div>
 
-      <ul className="divide-y divide-slate-200 rounded border border-slate-200 bg-white">
+      <ul className="divide-y divide-border rounded border border-border bg-surface">
         {data.items.map((indicateur) => (
           <li key={indicateur.id}>
             <Link
               to="/indicateurs/$id"
               params={{ id: indicateur.id }}
-              className="block px-4 py-3 hover:bg-slate-50"
+              className="block px-4 py-3 hover:bg-secondary-hover"
             >
               <div className="flex items-baseline justify-between">
-                <span className="font-medium text-slate-900">{indicateur.nom}</span>
-                <span className="text-xs uppercase tracking-wide text-slate-500">
+                <span className="font-medium text-text">{indicateur.nom}</span>
+                <span className="text-xs uppercase tracking-wide text-text-muted">
                   {indicateur.id}
                 </span>
               </div>
@@ -71,28 +72,29 @@ function IndicateursListComponent() {
           </li>
         ))}
         {data.items.length === 0 && (
-          <li className="px-4 py-6 text-center text-sm text-slate-500">
+          <li className="px-4 py-6 text-center text-sm text-text-muted">
             Aucun indicateur ne correspond aux filtres.
           </li>
         )}
       </ul>
 
       {data.pagination.hasMore && data.pagination.cursor && (
-        <button
+        <Button
+          variant="secondary"
+          size="sm"
           type="button"
           onClick={() => {
             const next = data.pagination.cursor
             if (next) void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
           }}
-          className="rounded border border-slate-300 px-3 py-1 text-sm text-slate-700 hover:bg-slate-100"
         >
           Page suivante
-        </button>
+        </Button>
       )}
 
-      <section className="rounded border border-slate-200 bg-slate-100 p-4 text-sm">
+      <section className="rounded border border-border bg-slate-100 p-4 text-sm">
         <p className="font-medium">Diagnostic TanStack Router</p>
-        <ul className="mt-2 list-inside list-disc text-slate-700">
+        <ul className="mt-2 list-inside list-disc text-secondary-foreground">
           <li>✓ Loader exécuté ({data.total} indicateur(s) chargés)</li>
           <li>
             Search params parsés : <code>{JSON.stringify(search)}</code>

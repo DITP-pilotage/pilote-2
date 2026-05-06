@@ -1,1 +1,29 @@
 @import 'tailwindcss';
+
+@theme {
+  /* Surfaces / texte généraux */
+  --color-background: var(--color-slate-50);
+  --color-surface: #fff;
+  --color-border: var(--color-slate-200);
+  --color-text: var(--color-slate-900);
+  --color-text-muted: var(--color-slate-600);
+
+  /* Action primary — CTA principal */
+  --color-primary: var(--color-slate-900);
+  --color-primary-hover: var(--color-slate-700);
+  --color-primary-foreground: #fff;
+
+  /* Action secondary — bouton outline / action secondaire */
+  --color-secondary: #fff;
+  --color-secondary-hover: var(--color-slate-100);
+  --color-secondary-foreground: var(--color-slate-700);
+  --color-secondary-border: var(--color-slate-300);
+
+  /* Action tertiary — ghost (pas de fond, hover discret) */
+  --color-tertiary-hover: var(--color-slate-100);
+  --color-tertiary-foreground: var(--color-slate-700);
+
+  /* État disabled — commun à tous les variants */
+  --color-disabled: var(--color-slate-200);
+  --color-disabled-foreground: var(--color-slate-400);
+}
