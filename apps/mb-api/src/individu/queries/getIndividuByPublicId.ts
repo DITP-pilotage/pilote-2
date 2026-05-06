@@ -1,4 +1,4 @@
-import { type IndividuApiModel } from '@pilote/mb-shared/api'
+import { type IndividuApiModel } from '@pilote/mb-shared/individu'
 import { ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'

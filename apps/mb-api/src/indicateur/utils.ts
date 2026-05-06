@@ -1,4 +1,4 @@
-import { type IndicateurApiModel } from '@pilote/mb-shared/api'
+import { type IndicateurApiModel } from '@pilote/mb-shared/indicateur'
 
 import { type IndicateurModel } from '@/generated/prisma/models'
 

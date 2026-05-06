@@ -8,37 +8,33 @@
       "types": "./src/index.ts",
       "default": "./src/index.ts"
     },
-    "./api": {
-      "types": "./src/api/index.ts",
-      "default": "./src/api/index.ts"
+    "./error": {
+      "types": "./src/error.ts",
+      "default": "./src/error.ts"
     },
-    "./api/error": {
-      "types": "./src/api/error.ts",
-      "default": "./src/api/error.ts"
+    "./indicateur": {
+      "types": "./src/indicateur.ts",
+      "default": "./src/indicateur.ts"
     },
-    "./api/indicateur": {
-      "types": "./src/api/indicateur.ts",
-      "default": "./src/api/indicateur.ts"
+    "./individu": {
+      "types": "./src/individu.ts",
+      "default": "./src/individu.ts"
     },
-    "./api/individu": {
-      "types": "./src/api/individu.ts",
-      "default": "./src/api/individu.ts"
+    "./me": {
+      "types": "./src/me.ts",
+      "default": "./src/me.ts"
     },
-    "./api/me": {
-      "types": "./src/api/me.ts",
-      "default": "./src/api/me.ts"
+    "./pagination": {
+      "types": "./src/pagination.ts",
+      "default": "./src/pagination.ts"
     },
-    "./api/pagination": {
-      "types": "./src/api/pagination.ts",
-      "default": "./src/api/pagination.ts"
+    "./referentiel": {
+      "types": "./src/referentiel.ts",
+      "default": "./src/referentiel.ts"
     },
-    "./api/referentiel": {
-      "types": "./src/api/referentiel.ts",
-      "default": "./src/api/referentiel.ts"
-    },
-    "./api/valeurAvancement": {
-      "types": "./src/api/valeurAvancement.ts",
-      "default": "./src/api/valeurAvancement.ts"
+    "./valeurAvancement": {
+      "types": "./src/valeurAvancement.ts",
+      "default": "./src/valeurAvancement.ts"
     }
   },
   "files": [

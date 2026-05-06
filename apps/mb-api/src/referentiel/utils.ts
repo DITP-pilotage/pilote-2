@@ -1,4 +1,4 @@
-import { type ReferentielApiModel } from '@pilote/mb-shared/api'
+import { type ReferentielApiModel } from '@pilote/mb-shared/referentiel'
 
 import { type ReferentielModel } from '@/generated/prisma/models'
 

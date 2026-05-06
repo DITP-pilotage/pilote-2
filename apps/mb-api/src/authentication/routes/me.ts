@@ -1,5 +1,5 @@
 import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
-import { meApiModelSchema } from '@pilote/mb-shared/api'
+import { meApiModelSchema } from '@pilote/mb-shared/me'
 
 import { requireUser } from '@/framework/auth/userContext'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'

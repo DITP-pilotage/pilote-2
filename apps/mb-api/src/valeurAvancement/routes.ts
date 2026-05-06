@@ -1,13 +1,13 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import { errorApiModelSchema } from '@pilote/mb-shared/error'
+import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
+import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
 import {
-  createPaginatedApiListSchema,
-  errorApiModelSchema,
-  indicateurPublicIdSchema,
   individuAvecValeursApiModelSchema,
   listIndividusWithValeursQuerySchema,
   listValeursForIndicateurQuerySchema,
   valeurAvancementListApiModelSchema,
-} from '@pilote/mb-shared/api'
+} from '@pilote/mb-shared/valeurAvancement'
 
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'

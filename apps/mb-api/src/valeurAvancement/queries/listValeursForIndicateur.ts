@@ -1,7 +1,7 @@
 import {
   type ListValeursForIndicateurQuery,
   type ValeurAvancementListApiModel,
-} from '@pilote/mb-shared/api'
+} from '@pilote/mb-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'
