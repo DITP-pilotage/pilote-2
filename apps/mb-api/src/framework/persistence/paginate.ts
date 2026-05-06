@@ -8,18 +8,15 @@ export const decodeCursor = (cursor: string | undefined): string | undefined => 
   return Buffer.from(cursor, 'base64url').toString('utf8')
 }
 
-export const buildPaginationArgs = <F extends string>(
-  cursor: string | undefined,
-  cursorField: F,
-) => {
+export const buildPaginationArgs = (cursor: string | undefined) => {
   const decoded = decodeCursor(cursor)
   return {
     take: PAGE_SIZE + 1,
-    ...(decoded && { cursor: { [cursorField]: decoded } as Record<F, string>, skip: 1 }),
+    ...(decoded && { cursor: { id: decoded }, skip: 1 }),
   }
 }
 
-export const toPaginatedResponse = <Row extends { publicId: string }, Item>(
+export const toPaginatedResponse = <Row extends { id: string }, Item>(
   rows: Row[],
   total: number,
   mapItem: (row: Row) => Item,
@@ -27,7 +24,7 @@ export const toPaginatedResponse = <Row extends { publicId: string }, Item>(
   const hasMore = rows.length > PAGE_SIZE
   const trimmedRows = hasMore ? rows.slice(0, PAGE_SIZE) : rows
   const lastRow = trimmedRows[trimmedRows.length - 1]
-  const nextCursor = hasMore && lastRow ? encodeCursor(lastRow.publicId) : null
+  const nextCursor = hasMore && lastRow ? encodeCursor(lastRow.id) : null
 
   return {
     items: trimmedRows.map(mapItem),

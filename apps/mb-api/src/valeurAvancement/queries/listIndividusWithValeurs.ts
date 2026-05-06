@@ -32,7 +32,7 @@ export const listIndividusWithValeurs = (
       },
       _count: { select: { valeurs: { where: indicateurFilter } } },
     },
-    ...buildPaginationArgs(params.cursor, 'publicId'),
+    ...buildPaginationArgs(params.cursor),
   })
   const fetchTotal = db().individu.count({ where })
 

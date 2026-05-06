@@ -23,7 +23,7 @@ export const listIndividusForReferentiel = (
     where,
     orderBy: { id: 'asc' },
     include: { referentiels: { include: { referentiel: true } } },
-    ...buildPaginationArgs(params.cursor, 'publicId'),
+    ...buildPaginationArgs(params.cursor),
   })
   const fetchTotal = db().individu.count({ where })
 

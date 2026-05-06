@@ -47,7 +47,7 @@ describe.concurrent('listIndicateurs', () => {
     "pagine quand le nombre d'indicateurs dépasse la taille de page",
     integrationTest(async () => {
       // Given
-      await fixtures.indicateur(
+      const created = await fixtures.indicateur(
         { publicId: 'IND-1' },
         { publicId: 'IND-2' },
         { publicId: 'IND-3' },
@@ -62,7 +62,7 @@ describe.concurrent('listIndicateurs', () => {
       // Then
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual(['IND-1', 'IND-2', 'IND-3', 'IND-4', 'IND-5'])
-      expect(value.pagination).toEqual({ cursor: encodeCursor('IND-5'), hasMore: true })
+      expect(value.pagination).toEqual({ cursor: encodeCursor(created[4]!.id), hasMore: true })
       expect(value.total).toBe(6)
     }),
   )
@@ -71,7 +71,7 @@ describe.concurrent('listIndicateurs', () => {
     'retourne la page suivante en utilisant le cursor',
     integrationTest(async () => {
       // Given
-      await fixtures.indicateur(
+      const created = await fixtures.indicateur(
         { publicId: 'IND-1' },
         { publicId: 'IND-2' },
         { publicId: 'IND-3' },
@@ -81,7 +81,7 @@ describe.concurrent('listIndicateurs', () => {
       )
 
       // When
-      const result = await listIndicateurs({ cursor: encodeCursor('IND-5') })
+      const result = await listIndicateurs({ cursor: encodeCursor(created[4]!.id) })
 
       // Then
       const value = result._unsafeUnwrap()
@@ -116,7 +116,7 @@ describe.concurrent('listIndicateurs', () => {
     'combine la recherche et la pagination',
     integrationTest(async () => {
       // Given
-      await fixtures.indicateur(
+      const created = await fixtures.indicateur(
         { publicId: 'IND-1', nom: 'Satisfaction 1' },
         { publicId: 'IND-2', nom: 'Satisfaction 2' },
         { publicId: 'IND-3', nom: 'Satisfaction 3' },
@@ -132,7 +132,7 @@ describe.concurrent('listIndicateurs', () => {
       // Then
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual(['IND-1', 'IND-2', 'IND-3', 'IND-4', 'IND-5'])
-      expect(value.pagination).toEqual({ cursor: encodeCursor('IND-5'), hasMore: true })
+      expect(value.pagination).toEqual({ cursor: encodeCursor(created[4]!.id), hasMore: true })
       expect(value.total).toBe(6)
     }),
   )
