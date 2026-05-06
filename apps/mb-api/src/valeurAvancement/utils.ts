@@ -1,7 +1,7 @@
 import {
   type IndividuAvecValeursApiModel,
   type ValeurAvancementApiModel,
-} from '@pilote/mb-shared/api'
+} from '@pilote/mb-shared/valeurAvancement'
 
 import { type ValeurAvancementModel } from '@/generated/prisma/models'
 import { type IndividuWithReferentiels, toIndividuApiModel } from '@/individu/utils'

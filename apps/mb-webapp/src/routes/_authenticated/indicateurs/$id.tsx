@@ -1,4 +1,4 @@
-import { indicateurPublicIdSchema } from '@pilote/mb-shared/api'
+import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { z } from 'zod'

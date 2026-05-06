@@ -1,7 +1,7 @@
 import {
   type IndividuListApiModel,
   type ListIndividusForReferentielQuery,
-} from '@pilote/mb-shared/api'
+} from '@pilote/mb-shared/individu'
 import { ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'

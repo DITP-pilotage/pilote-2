@@ -1,4 +1,4 @@
-import { type IndicateurListApiModel, type ListIndicateursQuery } from '@pilote/mb-shared/api'
+import { type IndicateurListApiModel, type ListIndicateursQuery } from '@pilote/mb-shared/indicateur'
 import { ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'

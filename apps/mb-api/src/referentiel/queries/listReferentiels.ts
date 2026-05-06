@@ -1,7 +1,7 @@
 import {
   type ListReferentielsQuery,
   type ReferentielListApiModel,
-} from '@pilote/mb-shared/api'
+} from '@pilote/mb-shared/referentiel'
 import { ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'

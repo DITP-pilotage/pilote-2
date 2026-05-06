@@ -1,4 +1,4 @@
-import { type IndividuApiModel } from '@pilote/mb-shared/api'
+import { type IndividuApiModel } from '@pilote/mb-shared/individu'
 
 import { type IndividuModel, type ReferentielIndividuModel } from '@/generated/prisma/models'
 

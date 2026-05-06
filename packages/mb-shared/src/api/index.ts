@@ -1,7 +1,0 @@
-export * from './error'
-export * from './indicateur'
-export * from './individu'
-export * from './me'
-export * from './pagination'
-export * from './referentiel'
-export * from './valeurAvancement'

@@ -1,4 +1,4 @@
-import { type MeApiModel, meApiModelSchema } from '@pilote/mb-shared/api'
+import { type MeApiModel, meApiModelSchema } from '@pilote/mb-shared/me'
 
 import { apiClient } from '@/api/client'
 

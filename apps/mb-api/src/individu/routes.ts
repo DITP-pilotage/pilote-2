@@ -1,5 +1,5 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
-import { individuApiModelSchema, individuPublicIdSchema } from '@pilote/mb-shared/api'
+import { individuApiModelSchema, individuPublicIdSchema } from '@pilote/mb-shared/individu'
 
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'

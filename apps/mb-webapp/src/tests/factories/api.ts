@@ -1,9 +1,5 @@
-import {
-  type IndicateurApiModel,
-  indicateurApiModelSchema,
-  type MeApiModel,
-  meApiModelSchema,
-} from '@pilote/mb-shared/api'
+import { type IndicateurApiModel, indicateurApiModelSchema } from '@pilote/mb-shared/indicateur'
+import { type MeApiModel, meApiModelSchema } from '@pilote/mb-shared/me'
 
 export const buildMe = (override: Partial<MeApiModel> = {}): MeApiModel =>
   meApiModelSchema.parse({

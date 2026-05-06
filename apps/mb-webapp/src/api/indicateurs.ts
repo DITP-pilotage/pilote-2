@@ -3,7 +3,7 @@ import {
   indicateurApiModelSchema,
   type IndicateurListApiModel,
   indicateurListApiModelSchema,
-} from '@pilote/mb-shared/api'
+} from '@pilote/mb-shared/indicateur'
 
 import { apiClient } from '@/api/client'
 
