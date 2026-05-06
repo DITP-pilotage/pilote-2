@@ -1,3 +1,13 @@
+descente:
+	cd ../pilote-ppg &&\
+	pnpm i &&\
+	bash scripts/daily/romain.sh
+
+docker-up:
+	cd ../pilote-ppg &&\
+	docker compose up
+
+lint-sql:
 lint-sql:
 	pipenv sync &&\
 	pipenv run sqlfluff fix models/ || \
@@ -5,8 +15,3 @@ lint-sql:
 
 tunnel-dev:
 	scalingo -a dev-pilote-ditp --region osc-secnum-fr1 db-tunnel SCALINGO_POSTGRESQL_URL
-
-descente:
-	cd ../pilote-ppg &&\
-	pnpm i &&\
-	bash scripts/daily/romain.sh
