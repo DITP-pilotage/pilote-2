@@ -1,5 +1,5 @@
 import {
-  type IndividuAvecObservationsApiModel,
+  type IndividuAvecValeursApiModel,
   type ValeurAvancementApiModel,
 } from '@pilote/mb-shared/api'
 
@@ -16,30 +16,30 @@ export const toValeurAvancementApiModel = (
 ): ValeurAvancementApiModel => ({
   indicateur: valeur.indicateur.publicId,
   individu: valeur.individu.publicId,
-  dateObservation: valeur.dateObservation,
+  date: valeur.date,
   valeur: valeur.valeur.toNumber(),
 })
 
-export type IndividuAvecObservationsRow = IndividuWithReferentiels & {
+export type IndividuAvecValeursRow = IndividuWithReferentiels & {
   valeurs: ValeurAvancementModel[]
   _count: { valeurs: number }
 }
 
-export const toIndividuAvecObservationsApiModel = (
-  row: IndividuAvecObservationsRow,
-): IndividuAvecObservationsApiModel => {
+export const toIndividuAvecValeursApiModel = (
+  row: IndividuAvecValeursRow,
+): IndividuAvecValeursApiModel => {
   const derniere = row.valeurs[0]
   if (!derniere) {
     throw new Error(
-      `Individu ${row.publicId} a un nombreObservations > 0 mais aucune valeur dans le payload — incohérence interne.`,
+      `Individu ${row.publicId} a un nombreValeurs > 0 mais aucune valeur dans le payload — incohérence interne.`,
     )
   }
   return {
     individu: toIndividuApiModel(row),
-    derniereObservation: {
-      dateObservation: derniere.dateObservation,
+    derniereValeur: {
+      date: derniere.date,
       valeur: derniere.valeur.toNumber(),
     },
-    nombreObservations: row._count.valeurs,
+    nombreValeurs: row._count.valeurs,
   }
 }

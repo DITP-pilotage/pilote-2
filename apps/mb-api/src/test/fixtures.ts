@@ -45,7 +45,7 @@ type ReferentielOverrides = Partial<{
 }>
 
 const DEFAULT_REFERENTIEL = {
-  publicId: 'REF-test',
+  publicId: 'REF-TEST',
   nom: 'Référentiel de test',
   description: null,
 } as const
@@ -76,7 +76,7 @@ async function referentiel(
 type IndividuOverrides = Partial<{ id: string; publicId: string; nom: string }>
 
 const DEFAULT_INDIVIDU = {
-  publicId: 'Test-1',
+  publicId: 'TEST-1',
   nom: 'Individu de test',
 } as const
 
@@ -153,15 +153,13 @@ async function referentielIndividu(
 
 type RelationOverrides = Partial<{
   id: string
-  type: string
   parentPublicId: string
   childPublicId: string
 }>
 
 const DEFAULT_RELATION = {
-  type: 'parent-child',
-  parentPublicId: 'Parent-1',
-  childPublicId: 'Child-1',
+  parentPublicId: 'PARENT-1',
+  childPublicId: 'CHILD-1',
 } as const
 
 const upsertRelation = async (o: RelationOverrides = {}) => {
@@ -176,14 +174,13 @@ const upsertRelation = async (o: RelationOverrides = {}) => {
   })
   return db().relation.upsert({
     where: {
-      type_parentId_childId: {
-        type: merged.type,
+      parentId_childId: {
         parentId: parent.id,
         childId: child.id,
       },
     },
     update: {},
-    create: { id: merged.id, type: merged.type, parentId: parent.id, childId: child.id },
+    create: { id: merged.id, parentId: parent.id, childId: child.id },
   })
 }
 
@@ -205,14 +202,14 @@ type ValeurAvancementOverrides = Partial<{
   id: string
   indicateurPublicId: string
   individuPublicId: string
-  dateObservation: string
+  date: string
   valeur: string
 }>
 
 const DEFAULT_VALEUR_AVANCEMENT = {
   indicateurPublicId: DEFAULT_INDICATEUR.publicId,
   individuPublicId: DEFAULT_INDIVIDU.publicId,
-  dateObservation: '2024-01-01',
+  date: '2024-01-01',
   valeur: '10.000000',
 } as const
 
@@ -228,10 +225,10 @@ const upsertValeurAvancement = async (o: ValeurAvancementOverrides = {}) => {
   })
   return db().valeurAvancement.upsert({
     where: {
-      valeur_avancement_unique_obs: {
+      valeur_avancement_unique: {
         indicateurId: indicateurRow.id,
         individuId: individuRow.id,
-        dateObservation: merged.dateObservation,
+        date: merged.date,
       },
     },
     update: { valeur: merged.valeur },
@@ -239,7 +236,7 @@ const upsertValeurAvancement = async (o: ValeurAvancementOverrides = {}) => {
       id: merged.id,
       indicateurId: indicateurRow.id,
       individuId: individuRow.id,
-      dateObservation: merged.dateObservation,
+      date: merged.date,
       valeur: merged.valeur,
     },
   })

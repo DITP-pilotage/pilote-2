@@ -5,8 +5,8 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'
-import { buildPaginationArgs, PAGE_SIZE } from '@/framework/persistence/paginate'
-import { toIndividuAvecObservationsApiModel } from '@/valeurAvancement/utils'
+import { buildPaginationArgs, encodeCursor, PAGE_SIZE } from '@/framework/persistence/paginate'
+import { toIndividuAvecValeursApiModel } from '@/valeurAvancement/utils'
 
 const resolveReferentielId = (
   referentielPublicId: string | undefined,
@@ -45,7 +45,7 @@ export const listIndividusWithValeurs = (
           },
           valeurs: {
             where: { indicateurId: indicateur.id },
-            orderBy: [{ dateObservation: 'desc' }, { id: 'desc' }],
+            orderBy: [{ date: 'desc' }, { id: 'desc' }],
             take: 1,
           },
           _count: {
@@ -63,9 +63,9 @@ export const listIndividusWithValeurs = (
           const hasMore = rows.length > PAGE_SIZE
           const trimmedRows = hasMore ? rows.slice(0, PAGE_SIZE) : rows
           const lastRow = trimmedRows[trimmedRows.length - 1]
-          const nextCursor = hasMore && lastRow ? lastRow.publicId : null
+          const nextCursor = hasMore && lastRow ? encodeCursor(lastRow.publicId) : null
           return {
-            items: trimmedRows.map(toIndividuAvecObservationsApiModel),
+            items: trimmedRows.map(toIndividuAvecValeursApiModel),
             pagination: { cursor: nextCursor, hasMore },
             total,
           }

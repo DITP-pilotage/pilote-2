@@ -74,12 +74,11 @@ const main = async () => {
   for (const item of individusSeed) {
     await prisma.individu.upsert({
       where: { publicId: item.publicId },
-      update: { nom: item.nom, metadata: item.metadata ?? undefined },
+      update: { nom: item.nom },
       create: {
         id: uuidv7(),
         publicId: item.publicId,
         nom: item.nom,
-        metadata: item.metadata ?? undefined,
       },
     })
   }
@@ -118,8 +117,7 @@ const main = async () => {
     })
     await prisma.relation.upsert({
       where: {
-        type_parentId_childId: {
-          type: item.type,
+        parentId_childId: {
           parentId: parent.id,
           childId: child.id,
         },
@@ -127,7 +125,6 @@ const main = async () => {
       update: {},
       create: {
         id: uuidv7(),
-        type: item.type,
         parentId: parent.id,
         childId: child.id,
       },
@@ -145,10 +142,10 @@ const main = async () => {
     })
     await prisma.valeurAvancement.upsert({
       where: {
-        valeur_avancement_unique_obs: {
+        valeur_avancement_unique: {
           indicateurId: indicateur.id,
           individuId: individu.id,
-          dateObservation: item.dateObservation,
+          date: item.date,
         },
       },
       update: { valeur: item.valeur },
@@ -156,7 +153,7 @@ const main = async () => {
         id: uuidv7(),
         indicateurId: indicateur.id,
         individuId: individu.id,
-        dateObservation: item.dateObservation,
+        date: item.date,
         valeur: item.valeur,
       },
     })

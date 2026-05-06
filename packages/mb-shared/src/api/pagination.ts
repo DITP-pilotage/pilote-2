@@ -1,9 +1,14 @@
 import { z } from 'zod'
 
+export const paginationCursorSchema = z
+  .string()
+  .min(1)
+  .describe(
+    'Cursor opaque (base64) renvoyé par la réponse précédente. Vide pour la première page.',
+  )
+
 export const paginationSchema = z.object({
-  cursor: z
-    .string()
-    .min(1)
+  cursor: paginationCursorSchema
     .nullable()
     .describe('Cursor opaque à passer pour récupérer la page suivante. null si dernière page.'),
   hasMore: z.boolean().describe("Vrai s'il existe une page suivante."),
@@ -19,3 +24,9 @@ export const createPaginatedApiListSchema = <T extends z.ZodTypeAny>(itemSchema:
 export type PaginatedApiList<T extends z.ZodTypeAny> = z.infer<
   ReturnType<typeof createPaginatedApiListSchema<T>>
 >
+
+export const listQuerySchema = z.object({
+  recherche: z.string().optional().describe('Filtre case-insensitive sur le nom.'),
+  cursor: paginationCursorSchema.optional(),
+})
+export type ListQuery = z.infer<typeof listQuerySchema>

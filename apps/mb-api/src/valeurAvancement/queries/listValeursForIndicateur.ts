@@ -20,7 +20,7 @@ export const listValeursForIndicateur = (
     const dateRange =
       params.dateDebut || params.dateFin
         ? {
-            dateObservation: {
+            date: {
               ...(params.dateDebut ? { gte: params.dateDebut } : {}),
               ...(params.dateFin ? { lte: params.dateFin } : {}),
             },
@@ -34,7 +34,7 @@ export const listValeursForIndicateur = (
           individu: { publicId: { in: params.individus } },
           ...dateRange,
         },
-        orderBy: [{ individuId: 'asc' }, { dateObservation: 'asc' }],
+        orderBy: [{ individuId: 'asc' }, { date: 'asc' }],
         include: {
           indicateur: { select: { publicId: true } },
           individu: { select: { publicId: true } },

@@ -15,7 +15,6 @@ CREATE TABLE "individu" (
     "id" UUID NOT NULL,
     "public_id" TEXT NOT NULL,
     "nom" TEXT NOT NULL,
-    "metadata" JSONB,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -33,7 +32,6 @@ CREATE TABLE "referentiel_individu" (
 -- CreateTable
 CREATE TABLE "relation" (
     "id" UUID NOT NULL,
-    "type" TEXT NOT NULL,
     "parent_id" UUID NOT NULL,
     "child_id" UUID NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -46,7 +44,7 @@ CREATE TABLE "valeur_avancement" (
     "id" UUID NOT NULL,
     "indicateur_id" UUID NOT NULL,
     "individu_id" UUID NOT NULL,
-    "date_observation" TEXT NOT NULL,
+    "date" TEXT NOT NULL,
     "valeur" DECIMAL(18,6) NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -64,22 +62,19 @@ CREATE UNIQUE INDEX "individu_public_id_key" ON "individu"("public_id");
 CREATE INDEX "referentiel_individu_individu_id_idx" ON "referentiel_individu"("individu_id");
 
 -- CreateIndex
-CREATE INDEX "relation_parent_id_type_idx" ON "relation"("parent_id", "type");
+CREATE INDEX "relation_child_id_idx" ON "relation"("child_id");
 
 -- CreateIndex
-CREATE INDEX "relation_child_id_type_idx" ON "relation"("child_id", "type");
+CREATE UNIQUE INDEX "relation_parent_id_child_id_key" ON "relation"("parent_id", "child_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "relation_type_parent_id_child_id_key" ON "relation"("type", "parent_id", "child_id");
+CREATE INDEX "valeur_avancement_indicateur_id_date_idx" ON "valeur_avancement"("indicateur_id", "date");
 
 -- CreateIndex
-CREATE INDEX "valeur_avancement_indicateur_id_date_observation_idx" ON "valeur_avancement"("indicateur_id", "date_observation");
+CREATE INDEX "valeur_avancement_individu_id_date_idx" ON "valeur_avancement"("individu_id", "date");
 
 -- CreateIndex
-CREATE INDEX "valeur_avancement_individu_id_date_observation_idx" ON "valeur_avancement"("individu_id", "date_observation");
-
--- CreateIndex
-CREATE UNIQUE INDEX "valeur_avancement_indicateur_id_individu_id_date_observatio_key" ON "valeur_avancement"("indicateur_id", "individu_id", "date_observation");
+CREATE UNIQUE INDEX "valeur_avancement_indicateur_id_individu_id_date_key" ON "valeur_avancement"("indicateur_id", "individu_id", "date");
 
 -- AddForeignKey
 ALTER TABLE "referentiel_individu" ADD CONSTRAINT "referentiel_individu_referentiel_id_fkey" FOREIGN KEY ("referentiel_id") REFERENCES "referentiel"("id") ON DELETE CASCADE ON UPDATE CASCADE;

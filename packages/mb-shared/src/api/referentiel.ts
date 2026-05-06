@@ -1,11 +1,14 @@
 import { z } from 'zod'
 
-import { createPaginatedApiListSchema } from './pagination'
+import { createPaginatedApiListSchema, listQuerySchema } from './pagination'
 
 export const referentielPublicIdSchema = z
   .string()
-  .regex(/^REF-[a-z0-9-]+$/, 'Identifiant public attendu au format REF-<slug>')
-  .describe('Identifiant public du référentiel (format REF-<slug>, ex. REF-departements).')
+  .regex(
+    /^REF-[A-Z0-9-]{1,16}$/,
+    'Identifiant public attendu au format REF-<SLUG> (max 20 caractères)',
+  )
+  .describe('Identifiant public du référentiel (format REF-<SLUG>, ex. REF-DEPT). Max 20 caractères.')
 
 export const referentielApiModelSchema = z.object({
   id: referentielPublicIdSchema,
@@ -24,12 +27,5 @@ export type ReferentielApiModel = z.infer<typeof referentielApiModelSchema>
 export const referentielListApiModelSchema = createPaginatedApiListSchema(referentielApiModelSchema)
 export type ReferentielListApiModel = z.infer<typeof referentielListApiModelSchema>
 
-export const listReferentielsQuerySchema = z.object({
-  recherche: z.string().optional().describe('Filtre case-insensitive sur le nom du référentiel.'),
-  cursor: referentielPublicIdSchema
-    .optional()
-    .describe(
-      'Cursor de pagination (renvoyé par la réponse précédente). Vide pour la première page.',
-    ),
-})
+export const listReferentielsQuerySchema = listQuerySchema
 export type ListReferentielsQuery = z.infer<typeof listReferentielsQuerySchema>

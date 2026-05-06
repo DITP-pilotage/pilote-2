@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { encodeCursor } from '@/framework/persistence/paginate'
 import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
@@ -61,7 +62,7 @@ describe.concurrent('listIndicateurs', () => {
       // Then
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual(['IND-1', 'IND-2', 'IND-3', 'IND-4', 'IND-5'])
-      expect(value.pagination).toEqual({ cursor: 'IND-5', hasMore: true })
+      expect(value.pagination).toEqual({ cursor: encodeCursor('IND-5'), hasMore: true })
       expect(value.total).toBe(6)
     }),
   )
@@ -80,7 +81,7 @@ describe.concurrent('listIndicateurs', () => {
       )
 
       // When
-      const result = await listIndicateurs({ cursor: 'IND-5' })
+      const result = await listIndicateurs({ cursor: encodeCursor('IND-5') })
 
       // Then
       const value = result._unsafeUnwrap()
@@ -131,7 +132,7 @@ describe.concurrent('listIndicateurs', () => {
       // Then
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual(['IND-1', 'IND-2', 'IND-3', 'IND-4', 'IND-5'])
-      expect(value.pagination).toEqual({ cursor: 'IND-5', hasMore: true })
+      expect(value.pagination).toEqual({ cursor: encodeCursor('IND-5'), hasMore: true })
       expect(value.total).toBe(6)
     }),
   )

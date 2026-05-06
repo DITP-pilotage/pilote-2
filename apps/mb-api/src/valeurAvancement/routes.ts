@@ -3,7 +3,7 @@ import {
   createPaginatedApiListSchema,
   errorApiModelSchema,
   indicateurPublicIdSchema,
-  individuAvecObservationsApiModelSchema,
+  individuAvecValeursApiModelSchema,
   listIndividusWithValeursQuerySchema,
   listValeursForIndicateurQuerySchema,
   valeurAvancementListApiModelSchema,
@@ -18,7 +18,7 @@ const ValeurAvancementListApiModelSchema = valeurAvancementListApiModelSchema.op
   'ValeurAvancementListApiModel',
 )
 const IndividusWithValeursListApiModelSchema = createPaginatedApiListSchema(
-  individuAvecObservationsApiModelSchema,
+  individuAvecValeursApiModelSchema,
 ).openapi('IndividusWithValeursListApiModel')
 const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
@@ -32,9 +32,9 @@ const getValeursForIndicateurRoute = createRoute({
   method: 'get',
   path: '/indicateurs/{id}/valeurs',
   tags: ['Indicateur'],
-  summary: 'Lister les valeurs observées pour un indicateur sur des individus',
+  summary: 'Lister les valeurs pour un indicateur sur des individus',
   description:
-    "Retourne les observations (valeurs saisies) pour l'indicateur sur la liste d'individus fournie. Le paramètre `individus` est obligatoire (1..N identifiants séparés par une virgule, ex. `Dept-84,Dept-13`). Filtres optionnels `dateDebut`/`dateFin` (ISO `YYYY-MM-DD`, inclusifs). La réponse n'est pas paginée — le volume est borné par la liste d'individus.",
+    "Retourne les valeurs saisies pour l'indicateur sur la liste d'individus fournie. Le paramètre `individus` est obligatoire (1..N identifiants séparés par une virgule, ex. `DEPT-84,DEPT-13`). Filtres optionnels `dateDebut`/`dateFin` (ISO `YYYY-MM-DD`, inclusifs). La réponse n'est pas paginée — le volume est borné par la liste d'individus.",
   request: {
     params: indicateurParamsSchema,
     query: listValeursForIndicateurQuerySchema,
@@ -42,7 +42,7 @@ const getValeursForIndicateurRoute = createRoute({
   responses: {
     200: {
       content: { 'application/json': { schema: ValeurAvancementListApiModelSchema } },
-      description: 'Observations pour les individus demandés',
+      description: 'Valeurs pour les individus demandés',
     },
     400: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },
@@ -61,9 +61,9 @@ const getIndividusWithValeursRoute = createRoute({
   method: 'get',
   path: '/indicateurs/{id}/individus',
   tags: ['Indicateur'],
-  summary: "Lister les individus disposant d'observations pour un indicateur",
+  summary: "Lister les individus disposant de valeurs pour un indicateur",
   description:
-    "Retourne la liste paginée des individus ayant au moins une observation pour l'indicateur. Filtre optionnel `referentiel` pour ne conserver que les individus appartenant à la population d'un référentiel donné. Chaque item inclut la dernière observation et le nombre total d'observations.",
+    "Retourne la liste paginée des individus ayant au moins une valeur pour l'indicateur. Filtre optionnel `referentiel` pour ne conserver que les individus appartenant à la population d'un référentiel donné. Chaque item inclut la dernière valeur et le nombre total de valeurs.",
   request: {
     params: indicateurParamsSchema,
     query: listIndividusWithValeursQuerySchema,
@@ -71,7 +71,7 @@ const getIndividusWithValeursRoute = createRoute({
   responses: {
     200: {
       content: { 'application/json': { schema: IndividusWithValeursListApiModelSchema } },
-      description: "Individus avec observations pour l'indicateur",
+      description: "Individus avec valeurs pour l'indicateur",
     },
     400: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },

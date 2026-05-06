@@ -9,21 +9,21 @@ describe.concurrent('getReferentielByPublicId', () => {
     'retourne le référentiel avec sa population',
     integrationTest(async () => {
       await fixtures.referentiel({
-        publicId: 'REF-test',
+        publicId: 'REF-TEST',
         nom: 'Référentiel de test',
         description: 'Description test',
       })
       await fixtures.individu({ publicId: 'X-1' }, { publicId: 'X-2' })
       await fixtures.referentielIndividu(
-        { referentielPublicId: 'REF-test', individuPublicId: 'X-1' },
-        { referentielPublicId: 'REF-test', individuPublicId: 'X-2' },
+        { referentielPublicId: 'REF-TEST', individuPublicId: 'X-1' },
+        { referentielPublicId: 'REF-TEST', individuPublicId: 'X-2' },
       )
 
-      const result = await getReferentielByPublicId('REF-test')
+      const result = await getReferentielByPublicId('REF-TEST')
 
       const value = result._unsafeUnwrap()
       expect(value).toMatchObject({
-        id: 'REF-test',
+        id: 'REF-TEST',
         nom: 'Référentiel de test',
         description: 'Description test',
         nombreIndividus: 2,
@@ -34,7 +34,7 @@ describe.concurrent('getReferentielByPublicId', () => {
   it(
     'rejette quand le référentiel est introuvable',
     integrationTest(async () => {
-      await expect(getReferentielByPublicId('REF-inconnu')).rejects.toThrow()
+      await expect(getReferentielByPublicId('REF-INCONNU')).rejects.toThrow()
     }),
   )
 })
