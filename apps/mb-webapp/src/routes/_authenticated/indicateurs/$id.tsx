@@ -52,21 +52,23 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
       context.queryClient.fetchQuery(indicateurIndividusQueryOptions(params.id)),
     ])
 
-    if (individus.length > 0) {
-      const isValid =
-        deps.individu !== undefined &&
-        individus.some((i) => i.individu.id === deps.individu)
-      if (!isValid) {
-        throw redirect({
-          to: '/indicateurs/$id',
-          params,
-          search: { individu: individus[0]!.individu.id },
-          replace: true,
-        })
-      }
+    if (individus.length === 0) return { indicateur, individus }
+
+    if (!deps.individu || !individus.some((i) => i.individu.id === deps.individu)) {
+      throw redirect({
+        to: '/indicateurs/$id',
+        params,
+        search: { individu: individus[0]!.individu.id },
+        replace: true,
+      })
     }
 
-    return [indicateur, individus] as const
+    // Préfetch des valeurs : useSuspenseQuery dans le composant tape le cache.
+    await context.queryClient.fetchQuery(
+      indicateurValeursQueryOptions(params.id, deps.individu),
+    )
+
+    return { indicateur, individus }
   },
   pendingComponent: () => <RouteLoading message="Chargement de l'indicateur…" />,
   errorComponent: RouteError,
