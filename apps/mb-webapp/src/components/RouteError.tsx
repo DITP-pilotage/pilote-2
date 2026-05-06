@@ -1,6 +1,9 @@
 import type { ErrorComponentProps } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
 import { HTTPError } from 'ky'
+import { ArrowLeft } from 'lucide-react'
+
+import { Button } from '@/components/ui/Button'
 
 const isNotFoundError = (error: Error): boolean => {
   return error instanceof HTTPError && error.response.status === 404
@@ -16,13 +19,12 @@ export function RouteError({ error, reset }: ErrorComponentProps) {
             La ressource demandée n'existe pas ou a été supprimée.
           </p>
         </div>
-        <Link
-          to="/indicateurs"
-          search={{}}
-          className="inline-block text-sm text-slate-700 underline hover:text-slate-900"
-        >
-          ← Retour à la liste
-        </Link>
+        <Button variant="tertiary" size="sm" asChild>
+          <Link to="/indicateurs" search={{}}>
+            <ArrowLeft />
+            Retour à la liste
+          </Link>
+        </Button>
       </div>
     )
   }

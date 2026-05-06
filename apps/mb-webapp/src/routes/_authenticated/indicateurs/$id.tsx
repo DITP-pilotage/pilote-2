@@ -2,11 +2,13 @@ import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
 import { individuPublicIdSchema } from '@pilote/mb-shared/individu'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
+import { ArrowLeft } from 'lucide-react'
 import { startTransition } from 'react'
 import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
+import { Button } from '@/components/ui/Button'
 import {
   Select,
   SelectContent,
@@ -79,13 +81,12 @@ function IndicateurDetailComponent() {
   return (
     <div className="space-y-6">
       <div>
-        <Link
-          to="/indicateurs"
-          search={{}}
-          className="text-sm text-secondary-foreground underline hover:text-text"
-        >
-          ← Retour à la liste
-        </Link>
+        <Button variant="tertiary" size="sm" asChild>
+          <Link to="/indicateurs" search={{}}>
+            <ArrowLeft />
+            Retour à la liste
+          </Link>
+        </Button>
       </div>
 
       <header>
