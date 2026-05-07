@@ -7,11 +7,13 @@ import {
 import { render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
-import type { Auth, AuthUser } from '@/auth'
+import type { MeApiModel } from '@pilote/mb-shared/me'
+
+import type { Auth } from '@/auth'
 import { tokenStore } from '@/auth/tokenStore'
 import { routeTree } from '@/routeTree.gen'
 
-const stubAuth = (user: AuthUser | null): Auth => ({
+const stubAuth = (user: MeApiModel | null): Auth => ({
   get isAuthenticated() {
     return user !== null
   },
@@ -66,7 +68,7 @@ describe('routing', () => {
   })
 
   it("permet d'accéder à /indicateurs après login", async () => {
-    renderAt('/indicateurs', stubAuth({ prenom: 'Admin', nom: 'DITP' }))
+    renderAt('/indicateurs', stubAuth({ userId: 'sub-1', prenom: 'Admin', nom: 'DITP' }))
     await waitFor(() => {
       expect(
         screen.getByRole('heading', { level: 1, name: 'Indicateurs' }),

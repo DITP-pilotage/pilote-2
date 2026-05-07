@@ -4,7 +4,8 @@ import { type MeApiModel, meApiModelSchema } from '@pilote/mb-shared/me'
 export const buildMe = (override: Partial<MeApiModel> = {}): MeApiModel =>
   meApiModelSchema.parse({
     userId: 'sub-test',
-    source: 'jwt',
+    prenom: 'Admin',
+    nom: 'DITP',
     ...override,
   })
 

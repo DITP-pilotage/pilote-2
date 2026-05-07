@@ -1,17 +1,13 @@
 import ky, { HTTPError } from 'ky'
+import type { MeApiModel } from '@pilote/mb-shared/me'
 import { z } from 'zod'
 
 import { fetchMe } from '@/api/me'
 import { tokenStore } from '@/auth/tokenStore'
 
-export type AuthUser = {
-  prenom: string | undefined
-  nom: string | undefined
-}
-
 export type Auth = {
   isAuthenticated: boolean
-  user: AuthUser | null
+  user: MeApiModel | null
   bootstrap: () => Promise<void>
   login: (redirect?: string) => void
   logout: () => Promise<void>
@@ -31,7 +27,7 @@ const logoutResponseSchema = z.object({
   logoutUrl: z.string().nullable(),
 })
 
-const state: { user: AuthUser | null } = {
+const state: { user: MeApiModel | null } = {
   user: null,
 }
 
@@ -77,8 +73,7 @@ export const auth: Auth = {
         state.user = null
         return
       }
-      const me = await fetchMe()
-      state.user = { prenom: me.prenom, nom: me.nom }
+      state.user = await fetchMe()
     } catch {
       tokenStore.clear()
       state.user = null

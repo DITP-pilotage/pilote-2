@@ -1,11 +1,13 @@
 import { AsyncLocalStorage } from 'node:async_hooks'
 
-import type { UtilisateurEnregistre } from '@/authentication/queries/getUtilisateurByProvider'
 import { UnauthorizedError } from '@/framework/auth/UnauthorizedError'
 
-export type UtilisateurAuthentifie = UtilisateurEnregistre & {
-  prenom: string | undefined
-  nom: string | undefined
+export type UtilisateurAuthentifie = {
+  id: string
+  providerSub: string
+  providerType: 'keycloak'
+  prenom: string
+  nom: string
 }
 
 type UserStore = { user: UtilisateurAuthentifie | null }

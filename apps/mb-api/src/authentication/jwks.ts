@@ -9,15 +9,15 @@ const jwtPayloadSchema = z.object({
   typ: z.literal('Bearer'),
   azp: z.literal(env.OIDC_AUTHORIZED_PARTY),
   sub: z.string().min(1),
-  given_name: z.string().min(1).optional(),
-  family_name: z.string().min(1).optional(),
+  given_name: z.string().min(1),
+  family_name: z.string().min(1),
 })
 
 export type VerifiedTokenInfo = {
   providerSub: string
   providerType: 'keycloak'
-  prenom: string | undefined
-  nom: string | undefined
+  prenom: string
+  nom: string
 }
 
 export const verifyAccessToken = async (token: string): Promise<VerifiedTokenInfo> => {

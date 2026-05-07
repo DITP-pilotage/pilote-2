@@ -30,7 +30,6 @@ me.openapi(meRoute, (context) => {
       userId: user.id,
       prenom: user.prenom,
       nom: user.nom,
-      source: 'jwt' as const,
     },
     schema: MeOkSchema,
     status: 200,

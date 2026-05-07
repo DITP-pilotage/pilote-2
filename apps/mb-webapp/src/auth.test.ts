@@ -45,7 +45,7 @@ describe.sequential('auth singleton', () => {
       await auth.bootstrap()
 
       expect(auth.isAuthenticated).toBe(true)
-      expect(auth.user).toEqual({ prenom: 'Admin', nom: 'DITP' })
+      expect(auth.user).toEqual({ userId: 'sub-123', prenom: 'Admin', nom: 'DITP' })
       expect(tokenStore.get()).toBe('access-1')
     })
   })
