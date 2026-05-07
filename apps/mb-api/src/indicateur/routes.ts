@@ -4,18 +4,21 @@ import {
   indicateurApiModelSchema,
   indicateurPublicIdSchema,
   listIndicateursQuerySchema,
+  upsertIndicateurBodySchema,
 } from '@pilote/mb-shared/indicateur'
 import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { upsertIndicateur } from '@/indicateur/commands/upsertIndicateur'
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
 import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
 
 const IndicateurApiModelSchema = indicateurApiModelSchema.openapi('IndicateurApiModel')
 const IndicateurListApiModelSchema =
   createPaginatedApiListSchema(indicateurApiModelSchema).openapi('IndicateurListApiModel')
+const UpsertIndicateurBodySchema = upsertIndicateurBodySchema.openapi('UpsertIndicateurBody')
 export const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 // --- GET /indicateurs --------------------------------------------------------
@@ -68,6 +71,34 @@ const getIndicateurByIdRoute = createRoute({
   },
 })
 
+// --- PUT /indicateurs --------------------------------------------------------
+
+const upsertIndicateurRoute = createRoute({
+  method: 'put',
+  path: '/indicateurs',
+  tags: ['Indicateur'],
+  summary: 'Créer ou remplacer un indicateur',
+  description:
+    "Crée l'indicateur s'il n'existe pas, ou remplace son `nom` si un indicateur avec le même `publicId` existe déjà. Opération idempotente.",
+  middleware: [requireAuthentication],
+  request: {
+    body: {
+      content: { 'application/json': { schema: UpsertIndicateurBodySchema } },
+      required: true,
+    },
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: IndicateurApiModelSchema } },
+      description: 'Indicateur créé ou mis à jour',
+    },
+    400: {
+      content: { 'application/json': { schema: ErrorApiModelSchema } },
+      description: 'Corps de requête invalide',
+    },
+  },
+})
+
 // --- App registration --------------------------------------------------------
 
 export const indicateurRoutes = new OpenAPIHono()
@@ -91,6 +122,21 @@ indicateurRoutes.openapi(getIndicateurByIdRoute, async (context) => {
   const { id } = context.req.valid('param')
 
   return getIndicateurByPublicId(id).match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: IndicateurApiModelSchema,
+        status: 200,
+      }),
+    never,
+  )
+})
+
+indicateurRoutes.openapi(upsertIndicateurRoute, async (context) => {
+  const body = context.req.valid('json')
+
+  return upsertIndicateur(body).match(
     (data) =>
       jsonResponseOk({
         context,

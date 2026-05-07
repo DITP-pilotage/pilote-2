@@ -19,3 +19,9 @@ export type IndicateurListApiModel = z.infer<typeof indicateurListApiModelSchema
 
 export const listIndicateursQuerySchema = listQuerySchema
 export type ListIndicateursQuery = z.infer<typeof listIndicateursQuerySchema>
+
+export const upsertIndicateurBodySchema = z.object({
+  publicId: indicateurPublicIdSchema,
+  nom: z.string().min(1).describe('Nom lisible de l\'indicateur.'),
+})
+export type UpsertIndicateurBody = z.infer<typeof upsertIndicateurBodySchema>
