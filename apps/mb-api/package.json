@@ -13,7 +13,7 @@
   "scripts": {
     "dev": "portless run vite",
     "deploy:prepare": "bash deploy-prepare.sh",
-    "build": "prisma generate && vite build",
+    "build": "prisma generate && prisma migrate deploy && prisma db seed && vite build",
     "deploy:bundle": "bash deploy-bundle.sh",
     "start": "node dist/index.js",
     "test": "vitest run",
