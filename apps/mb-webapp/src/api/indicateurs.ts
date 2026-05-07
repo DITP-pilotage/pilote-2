@@ -4,6 +4,12 @@ import {
   type IndicateurListApiModel,
   indicateurListApiModelSchema,
 } from '@pilote/mb-shared/indicateur'
+import {
+  type IndividusWithValeursListApiModel,
+  individusWithValeursListApiModelSchema,
+  type ValeurAvancementListApiModel,
+  valeurAvancementListApiModelSchema,
+} from '@pilote/mb-shared/valeurAvancement'
 
 import { apiClient } from '@/api/client'
 
@@ -24,4 +30,26 @@ export const fetchIndicateurs = async (
 export const fetchIndicateurById = async (id: string): Promise<IndicateurApiModel> => {
   const json = await apiClient.get(`indicateurs/${id}`).json()
   return indicateurApiModelSchema.parse(json)
+}
+
+export const fetchIndividusForIndicateur = async (
+  indicateurId: string,
+  params: { cursor?: string } = {},
+): Promise<IndividusWithValeursListApiModel> => {
+  const json = await apiClient
+    .get(`indicateurs/${indicateurId}/individus`, { searchParams: params })
+    .json()
+  return individusWithValeursListApiModelSchema.parse(json)
+}
+
+export const fetchValeursForIndicateur = async (
+  indicateurId: string,
+  params: { individus: string[] },
+): Promise<ValeurAvancementListApiModel> => {
+  const json = await apiClient
+    .get(`indicateurs/${indicateurId}/valeurs`, {
+      searchParams: { individus: params.individus.join(',') },
+    })
+    .json()
+  return valeurAvancementListApiModelSchema.parse(json)
 }

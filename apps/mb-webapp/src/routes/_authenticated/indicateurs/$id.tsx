@@ -1,14 +1,34 @@
 import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
+import { individuPublicIdSchema } from '@pilote/mb-shared/individu'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
+import { ArrowLeft } from 'lucide-react'
+import { startTransition } from 'react'
 import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
-import { indicateurQueryOptions } from '@/queries/indicateurs'
+import { Button } from '@/components/ui/Button'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/Select'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import {
+  indicateurIndividusQueryOptions,
+  indicateurQueryOptions,
+  indicateurValeursQueryOptions,
+} from '@/queries/indicateurs'
 
 const paramsSchema = z.object({
   id: indicateurPublicIdSchema,
+})
+
+const searchSchema = z.object({
+  individu: individuPublicIdSchema.optional(),
 })
 
 export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
@@ -16,8 +36,30 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     parse: (raw) => paramsSchema.parse(raw),
     stringify: ({ id }) => ({ id }),
   },
-  loader: ({ context, params }) =>
-    context.queryClient.fetchQuery(indicateurQueryOptions(params.id)),
+  validateSearch: searchSchema,
+  loaderDeps: ({ search }) => ({ individu: search.individu }),
+  loader: async ({ context, params, deps }) => {
+    const [indicateur, individus] = await Promise.all([
+      context.queryClient.fetchQuery(indicateurQueryOptions(params.id)),
+      context.queryClient.fetchQuery(indicateurIndividusQueryOptions(params.id)),
+    ])
+
+    if (individus.length === 0) return { indicateur, individus }
+
+    if (!deps.individu || !individus.some((i) => i.individu.id === deps.individu)) {
+      throw redirect({
+        to: '/indicateurs/$id',
+        params,
+        search: { individu: individus[0]!.individu.id },
+        replace: true,
+      })
+    }
+
+    // Préfetch des valeurs : useSuspenseQuery dans le composant tape le cache.
+    await context.queryClient.fetchQuery(indicateurValeursQueryOptions(params.id, deps.individu))
+
+    return { indicateur, individus }
+  },
   pendingComponent: () => <RouteLoading message="Chargement de l'indicateur…" />,
   errorComponent: RouteError,
   component: IndicateurDetailComponent,
@@ -25,40 +67,142 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
 
 function IndicateurDetailComponent() {
   const { id } = Route.useParams()
-  const { data } = useSuspenseQuery(indicateurQueryOptions(id))
+  const search = Route.useSearch()
+  const navigate = useNavigate({ from: Route.fullPath })
+
+  const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(id))
+  const { data: individus } = useSuspenseQuery(indicateurIndividusQueryOptions(id))
+
+  // Le loader garantit que `search.individu` est défini et valide dès lors que la liste n'est pas vide.
+  const selectedIndividu = search.individu
+    ? individus.find((i) => i.individu.id === search.individu)
+    : undefined
 
   return (
     <div className="space-y-6">
-      <Link
-        to="/indicateurs"
-        search={{}}
-        className="text-sm text-slate-700 underline hover:text-slate-900"
-      >
-        ← Retour à la liste
-      </Link>
+      <div>
+        <Button variant="tertiary" size="sm" asChild>
+          <Link to="/indicateurs" search={{}}>
+            <ArrowLeft />
+            Retour à la liste
+          </Link>
+        </Button>
+      </div>
 
       <header>
-        <span className="text-xs uppercase tracking-wide text-slate-500">
-          {data.id}
-        </span>
-        <h1 className="text-3xl font-semibold">{data.nom}</h1>
+        <h1 className="text-3xl font-semibold text-text">{indicateur.nom}</h1>
       </header>
 
-      <section className="rounded border border-slate-200 bg-white p-6 text-sm text-slate-600">
-        <p>Créé le {new Date(data.createdAt).toLocaleString('fr-FR')}</p>
-        <p>Mis à jour le {new Date(data.updatedAt).toLocaleString('fr-FR')}</p>
-      </section>
+      {selectedIndividu === undefined ? (
+        <p className="rounded border border-border bg-surface p-6 text-sm text-text-muted">
+          Aucun individu n'a de valeur pour cet indicateur.
+        </p>
+      ) : (
+        <>
+          <div className="flex items-center gap-3">
+            <label className="text-sm text-text-muted" htmlFor="individu-select">
+              Individu
+            </label>
+            <Select
+              value={selectedIndividu.individu.id}
+              onValueChange={(value) => {
+                startTransition(() => {
+                  void navigate({
+                    search: (prev) => ({ ...prev, individu: value }),
+                  })
+                })
+              }}
+            >
+              <SelectTrigger id="individu-select" className="min-w-[16rem]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {individus.map(({ individu }) => (
+                  <SelectItem key={individu.id} value={individu.id}>
+                    {individu.nom}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-      <section className="rounded border border-slate-200 bg-slate-100 p-4 text-sm">
-        <p className="font-medium">Diagnostic TanStack Router</p>
-        <ul className="mt-2 list-inside list-disc text-slate-700">
-          <li>
-            ✓ Route param <code>id</code> = <strong>{id}</strong>
-          </li>
-          <li>✓ Loader détail exécuté</li>
-          <li>✓ useSuspenseQuery (cache partagé avec liste)</li>
-        </ul>
-      </section>
+          <Tabs defaultValue="valeurs">
+            <TabsList>
+              <TabsTrigger value="valeurs">Valeurs</TabsTrigger>
+              <TabsTrigger value="metadonnees">Métadonnées</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="valeurs">
+              <ValeursTable indicateurId={id} individuId={selectedIndividu.individu.id} />
+            </TabsContent>
+
+            <TabsContent value="metadonnees">
+              <MetadonneesPanel indicateur={indicateur} />
+            </TabsContent>
+          </Tabs>
+        </>
+      )}
     </div>
+  )
+}
+
+function ValeursTable({ indicateurId, individuId }: { indicateurId: string; individuId: string }) {
+  const { data } = useSuspenseQuery(indicateurValeursQueryOptions(indicateurId, individuId))
+
+  const rows = [...data.items].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+
+  if (rows.length === 0) {
+    return (
+      <p className="rounded border border-border bg-surface p-6 text-sm text-text-muted">
+        Aucune valeur pour cet individu.
+      </p>
+    )
+  }
+
+  return (
+    <div className="overflow-hidden rounded border border-border bg-surface">
+      <table className="w-full text-sm">
+        <thead className="bg-secondary-hover text-text">
+          <tr>
+            <th className="px-4 py-2 text-left font-medium">Date</th>
+            <th className="px-4 py-2 text-right font-medium">Valeur</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-border">
+          {rows.map((row) => (
+            <tr key={row.date}>
+              <td className="px-4 py-2 text-text">
+                {new Date(row.date).toLocaleDateString('fr-FR')}
+              </td>
+              <td className="px-4 py-2 text-right text-text">
+                {row.valeur.toLocaleString('fr-FR')}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+function MetadonneesPanel({
+  indicateur,
+}: {
+  indicateur: { id: string; nom: string; createdAt: string; updatedAt: string }
+}) {
+  return (
+    <dl className="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 rounded border border-border bg-surface p-6 text-sm">
+      <dt className="text-text-muted">ID</dt>
+      <dd className="text-text">{indicateur.id}</dd>
+
+      <dt className="text-text-muted">Nom</dt>
+      <dd className="text-text">{indicateur.nom}</dd>
+
+      <dt className="text-text-muted">Créé le</dt>
+      <dd className="text-text">{new Date(indicateur.createdAt).toLocaleString('fr-FR')}</dd>
+
+      <dt className="text-text-muted">Mis à jour le</dt>
+      <dd className="text-text">{new Date(indicateur.updatedAt).toLocaleString('fr-FR')}</dd>
+    </dl>
   )
 }
