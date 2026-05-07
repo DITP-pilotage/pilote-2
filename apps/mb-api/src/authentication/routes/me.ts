@@ -26,7 +26,11 @@ me.openapi(meRoute, (context) => {
   const user = requireUser()
   return jsonResponseOk({
     context,
-    data: { userId: user.id, source: 'jwt' as const },
+    data: {
+      userId: user.id,
+      prenom: user.prenom,
+      nom: user.nom,
+    },
     schema: MeOkSchema,
     status: 200,
   })

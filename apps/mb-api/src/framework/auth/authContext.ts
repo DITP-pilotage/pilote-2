@@ -1,9 +1,9 @@
 import { createMiddleware } from 'hono/factory'
-import { okAsync } from 'neverthrow'
+import { okAsync, ResultAsync } from 'neverthrow'
 
 import { verifyAccessToken } from '@/authentication/jwks'
 import { getUtilisateurByProvider } from '@/authentication/queries/getUtilisateurByProvider'
-import { runWithUser } from '@/framework/auth/userContext'
+import { runWithUser, type UtilisateurAuthentifie } from '@/framework/auth/userContext'
 import { logger } from '@/framework/logger/logger'
 
 const BEARER_REGEX = /^Bearer\s+(.+)$/i
@@ -16,30 +16,36 @@ const extractBearerToken = (header: string | undefined): string | null => {
   return token && token.length > 0 ? token : null
 }
 
-const resolveUser = async (authorization: string | undefined) => {
+const resolveUser = (
+  authorization: string | undefined,
+): ResultAsync<UtilisateurAuthentifie | null, unknown> => {
   const token = extractBearerToken(authorization)
   if (!token) return okAsync(null)
 
-  let verifiedTokenInfo
-  try {
-    verifiedTokenInfo = await verifyAccessToken(token)
-  } catch (error) {
-    logger.warn(
-      { event: 'auth.jwt.invalid', reason: error instanceof Error ? error.message : 'unknown' },
-      'JWT verification failed',
+  return ResultAsync.fromPromise(verifyAccessToken(token), (error) => error)
+    .orTee((error) =>
+      logger.warn(
+        { event: 'auth.jwt.invalid', reason: error instanceof Error ? error.message : 'unknown' },
+        'JWT verification failed',
+      ),
     )
-    return okAsync(null)
-  }
-
-  return getUtilisateurByProvider(verifiedTokenInfo).orTee((error) =>
-    logger.warn(
-      { event: 'auth.user.lookup_failed', err: error },
-      'User lookup failed during authentication',
-    ),
-  )
+    .andThen((verifiedTokenInfo) =>
+      getUtilisateurByProvider(verifiedTokenInfo)
+        .map((utilisateur): UtilisateurAuthentifie | null =>
+          utilisateur
+            ? { ...utilisateur, prenom: verifiedTokenInfo.prenom, nom: verifiedTokenInfo.nom }
+            : null,
+        )
+        .orTee((error) =>
+          logger.warn(
+            { event: 'auth.user.lookup_failed', err: error },
+            'User lookup failed during authentication',
+          ),
+        ),
+    )
 }
 
 export const authContext = createMiddleware(async (context, next) => {
-  const user = await resolveUser(context.req.header('Authorization'))
-  await runWithUser(user.unwrapOr(null), next)
+  const user = await resolveUser(context.req.header('Authorization')).unwrapOr(null)
+  await runWithUser(user, next)
 })

@@ -38,7 +38,9 @@ function RootComponent() {
             </Link>
             {auth.isAuthenticated ? (
               <span className="flex items-center gap-2">
-                <span className="text-text-muted">{auth.user?.id}</span>
+                <span className="text-text-muted">
+                  {auth.user?.prenom} {auth.user?.nom}
+                </span>
                 <Button
                   variant="secondary"
                   size="sm"
