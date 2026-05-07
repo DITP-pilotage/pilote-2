@@ -11,6 +11,7 @@ import {
   referentielPublicIdSchema,
 } from '@pilote/mb-shared/referentiel'
 
+import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { getReferentielByPublicId } from '@/referentiel/queries/getReferentielByPublicId'
@@ -93,6 +94,8 @@ const getIndividusForReferentielRoute = createRoute({
 // --- App registration --------------------------------------------------------
 
 export const referentielRoutes = new OpenAPIHono()
+
+referentielRoutes.use('*', requireAuthentication)
 
 referentielRoutes.openapi(getReferentielsRoute, async (context) => {
   const { recherche, cursor, pageSize } = context.req.valid('query')

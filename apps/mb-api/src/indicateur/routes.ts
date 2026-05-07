@@ -7,6 +7,7 @@ import {
 } from '@pilote/mb-shared/indicateur'
 import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
 
+import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
@@ -68,6 +69,8 @@ const getIndicateurByIdRoute = createRoute({
 // --- App registration --------------------------------------------------------
 
 export const indicateurRoutes = new OpenAPIHono()
+
+indicateurRoutes.use('*', requireAuthentication)
 
 indicateurRoutes.openapi(getIndicateursRoute, async (context) => {
   const { recherche, cursor, pageSize } = context.req.valid('query')

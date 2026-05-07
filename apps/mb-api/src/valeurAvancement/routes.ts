@@ -9,6 +9,7 @@ import {
   valeurAvancementListApiModelSchema,
 } from '@pilote/mb-shared/valeurAvancement'
 
+import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
@@ -79,6 +80,8 @@ const getIndividusWithValeursRoute = createRoute({
 // --- App registration --------------------------------------------------------
 
 export const valeurAvancementRoutes = new OpenAPIHono()
+
+valeurAvancementRoutes.use('*', requireAuthentication)
 
 valeurAvancementRoutes.openapi(getValeursForIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')

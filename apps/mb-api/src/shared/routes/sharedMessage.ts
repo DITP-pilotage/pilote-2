@@ -1,6 +1,7 @@
 import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
 import { SHARED_GREETING, type SharedMessage, sharedMessageSchema } from '@pilote/mb-shared'
 
+import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 
 const SharedMessageSchema = sharedMessageSchema.openapi('SharedMessage')
@@ -19,6 +20,8 @@ const sharedMessageRoute = createRoute({
 })
 
 export const sharedMessage = new OpenAPIHono()
+
+sharedMessage.use('*', requireAuthentication)
 
 sharedMessage.openapi(sharedMessageRoute, (context) => {
   const data: SharedMessage = { greeting: SHARED_GREETING }
