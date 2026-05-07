@@ -75,6 +75,7 @@ describe.sequential('authContext middleware', () => {
     verify.mockResolvedValue({
       providerSub: 'sub-123',
       providerType: 'proconnect',
+      email: 'agent@example.com',
       prenom: 'Admin',
       nom: 'DITP',
     })
@@ -87,6 +88,7 @@ describe.sequential('authContext middleware', () => {
     expect(lookup).toHaveBeenCalledWith({
       providerSub: 'sub-123',
       providerType: 'proconnect',
+      email: 'agent@example.com',
       prenom: 'Admin',
       nom: 'DITP',
     })
@@ -96,14 +98,14 @@ describe.sequential('authContext middleware', () => {
     verify.mockResolvedValue({
       providerSub: 'sub-123',
       providerType: 'proconnect',
+      email: 'agent@example.com',
       prenom: 'Admin',
       nom: 'DITP',
     })
     lookup.mockReturnValue(
       okAsync({
         id: '01906f5e-1234-7000-8abc-000000000001',
-        providerSub: 'sub-123',
-        providerType: 'proconnect' as const,
+        email: 'agent@example.com',
       }),
     )
     const app = buildApp()
@@ -113,8 +115,7 @@ describe.sequential('authContext middleware', () => {
     expect(response.status).toBe(200)
     expect(await response.json()).toEqual({
       id: '01906f5e-1234-7000-8abc-000000000001',
-      providerSub: 'sub-123',
-      providerType: 'proconnect',
+      email: 'agent@example.com',
       prenom: 'Admin',
       nom: 'DITP',
     })
@@ -124,14 +125,14 @@ describe.sequential('authContext middleware', () => {
     verify.mockResolvedValue({
       providerSub: 'sub-123',
       providerType: 'proconnect',
+      email: 'agent@example.com',
       prenom: 'Admin',
       nom: 'DITP',
     })
     lookup.mockReturnValue(
       okAsync({
         id: '01906f5e-1234-7000-8abc-000000000001',
-        providerSub: 'sub-123',
-        providerType: 'proconnect' as const,
+        email: 'agent@example.com',
       }),
     )
     const app = buildApp()

@@ -11,11 +11,13 @@ const jwtPayloadSchema = z.object({
   sub: z.string().min(1),
   given_name: z.string().min(1),
   usual_name: z.string().min(1),
+  email: z.string().min(1),
 })
 
 export type VerifiedTokenInfo = {
   providerSub: string
   providerType: 'proconnect'
+  email: string
   prenom: string
   nom: string
 }
@@ -49,6 +51,7 @@ export const verifyAccessToken = async (token: string): Promise<VerifiedTokenInf
   const result: VerifiedTokenInfo = {
     providerSub: claims.sub,
     providerType: 'proconnect',
+    email: claims.email,
     prenom: claims.given_name,
     nom: claims.usual_name,
   }

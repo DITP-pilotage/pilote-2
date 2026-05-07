@@ -29,8 +29,8 @@ const indicateursSeed: ReadonlyArray<{ publicId: string; nom: string }> = [
   { publicId: 'IND-008', nom: 'Satisfaction usagers services publics' },
 ]
 
-const utilisateursSeed: ReadonlyArray<{ providerSub: string; providerType: 'proconnect' }> = [
-  { providerSub: '530f9db1-7ade-4ef2-9b3b-693e5614e2e4', providerType: 'proconnect' },
+const utilisateursSeed: ReadonlyArray<{ email: string }> = [
+  { email: 'ditp.admin@example.com' },
 ]
 
 const main = async () => {
@@ -43,17 +43,11 @@ const main = async () => {
   }
   for (const item of utilisateursSeed) {
     await prisma.utilisateur.upsert({
-      where: {
-        utilisateur_provider_sub_type_unique: {
-          providerSub: item.providerSub,
-          providerType: item.providerType,
-        },
-      },
+      where: { email: item.email },
       update: {},
       create: {
         id: uuidv7(),
-        providerSub: item.providerSub,
-        providerType: item.providerType,
+        email: item.email,
       },
     })
   }

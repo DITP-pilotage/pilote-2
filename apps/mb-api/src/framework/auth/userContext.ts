@@ -4,8 +4,7 @@ import { UnauthorizedError } from '@/framework/auth/UnauthorizedError'
 
 export type UtilisateurAuthentifie = {
   id: string
-  providerSub: string
-  providerType: 'keycloak'
+  email: string
   prenom: string
   nom: string
 }
