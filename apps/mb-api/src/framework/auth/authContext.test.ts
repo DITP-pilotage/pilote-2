@@ -74,7 +74,6 @@ describe.sequential('authContext middleware', () => {
   it('returns 401 on /protected when token is valid but user is not provisioned', async () => {
     verify.mockResolvedValue({
       providerSub: 'sub-123',
-      providerType: 'proconnect',
       email: 'agent@example.com',
       prenom: 'Admin',
       nom: 'DITP',
@@ -87,7 +86,6 @@ describe.sequential('authContext middleware', () => {
     expect(response.status).toBe(401)
     expect(lookup).toHaveBeenCalledWith({
       providerSub: 'sub-123',
-      providerType: 'proconnect',
       email: 'agent@example.com',
       prenom: 'Admin',
       nom: 'DITP',
@@ -97,7 +95,6 @@ describe.sequential('authContext middleware', () => {
   it('exposes the user to handlers when the lookup succeeds', async () => {
     verify.mockResolvedValue({
       providerSub: 'sub-123',
-      providerType: 'proconnect',
       email: 'agent@example.com',
       prenom: 'Admin',
       nom: 'DITP',
@@ -124,7 +121,6 @@ describe.sequential('authContext middleware', () => {
   it('accepts the Bearer scheme case-insensitively (RFC 6750)', async () => {
     verify.mockResolvedValue({
       providerSub: 'sub-123',
-      providerType: 'proconnect',
       email: 'agent@example.com',
       prenom: 'Admin',
       nom: 'DITP',

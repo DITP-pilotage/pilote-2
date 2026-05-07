@@ -18,37 +18,30 @@ const resolveUtilisateur = async (
   token: VerifiedTokenInfo,
 ): Promise<UtilisateurEnregistre | null> => {
   const bySub = await prisma.utilisateur.findUnique({
-    where: {
-      utilisateur_provider_sub_type_unique: {
-        providerSub: token.providerSub,
-        providerType: token.providerType,
-      },
-    },
+    where: { providerSub: token.providerSub },
     select: { id: true, email: true },
   })
   if (bySub) return bySub
 
   const byEmail = await prisma.utilisateur.findUnique({
     where: { email: token.email },
-    select: { id: true, email: true, providerSub: true, providerType: true },
+    select: { id: true, email: true, providerSub: true },
   })
   if (!byEmail) return null
 
-  if (byEmail.providerSub !== token.providerSub || byEmail.providerType !== token.providerType) {
+  if (byEmail.providerSub !== token.providerSub) {
     logger.info(
       {
         event: 'auth.sub.rotated',
         utilisateurId: byEmail.id,
         previousProviderSub: byEmail.providerSub,
-        previousProviderType: byEmail.providerType,
         nextProviderSub: token.providerSub,
-        nextProviderType: token.providerType,
       },
       'Linked verified email to a new provider sub',
     )
     await prisma.utilisateur.update({
       where: { id: byEmail.id },
-      data: { providerSub: token.providerSub, providerType: token.providerType },
+      data: { providerSub: token.providerSub },
     })
   }
 
