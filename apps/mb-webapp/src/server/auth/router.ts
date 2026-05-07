@@ -18,7 +18,7 @@ import {
 import { serverEnv } from '@/server/env'
 import { logger } from '@/server/logger'
 
-const SCOPES = 'openid given_name usual_name email uid siret'
+const SCOPES = 'openid given_name usual_name email uid'
 const DEFAULT_SESSION_TTL_SECONDS = 60 * 60 * 24 * 30
 const ALLOWED_CALLBACK_PARAMS = ['code', 'state', 'iss', 'error', 'error_description'] as const
 const PUBLIC_ORIGIN = new URL(serverEnv.PUBLIC_BASE_URL).origin
