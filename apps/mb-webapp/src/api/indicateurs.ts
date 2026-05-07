@@ -4,6 +4,7 @@ import {
   type IndicateurListApiModel,
   indicateurListApiModelSchema,
 } from '@pilote/mb-shared/indicateur'
+import { type PaginateQuery } from '@pilote/mb-shared/pagination'
 import {
   type IndividusWithValeursListApiModel,
   individusWithValeursListApiModelSchema,
@@ -13,10 +14,8 @@ import {
 
 import { apiClient } from '@/api/client'
 
-export type IndicateursQueryParams = {
+export type IndicateursQueryParams = PaginateQuery & {
   recherche?: string | undefined
-  cursor?: string | undefined
-  pageSize?: number | undefined
 }
 
 export const fetchIndicateurs = async (

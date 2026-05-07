@@ -33,6 +33,11 @@ export const pageSizeSchema = z.coerce
   .optional()
   .describe("Nombre d'items par page (défaut serveur, max 100).")
 
+export type PaginateQuery = {
+  cursor?: string | undefined
+  pageSize?: number | undefined
+}
+
 export const listQuerySchema = z.object({
   recherche: z.string().optional().describe('Filtre case-insensitive sur le nom.'),
   cursor: paginationCursorSchema.optional(),
