@@ -1,8 +1,17 @@
-import { createRemoteJWKSet, jwtVerify, type JWTPayload } from 'jose'
+import { createRemoteJWKSet, jwtVerify } from 'jose'
+import { z } from 'zod'
 
 import { env } from '@/env'
 
 const jwks = createRemoteJWKSet(new URL(env.OIDC_JWKS_URI))
+
+const jwtPayloadSchema = z.object({
+  typ: z.literal('Bearer'),
+  azp: z.literal(env.OIDC_AUTHORIZED_PARTY),
+  sub: z.string().min(1),
+  given_name: z.string().min(1).optional(),
+  family_name: z.string().min(1).optional(),
+})
 
 export type VerifiedTokenInfo = {
   providerSub: string
@@ -18,20 +27,7 @@ export const verifyAccessToken = async (token: string): Promise<VerifiedTokenInf
     clockTolerance: 30,
   })
 
-  if (payload.typ !== 'Bearer') {
-    throw new Error(`Unexpected token typ claim: ${String(payload.typ)}`)
-  }
+  const claims = jwtPayloadSchema.parse(payload)
 
-  if (!isAuthorizedParty(payload)) {
-    throw new Error('Unexpected authorized party')
-  }
-
-  if (typeof payload.sub !== 'string' || payload.sub.length === 0) {
-    throw new Error('Missing sub claim')
-  }
-
-  return { providerSub: payload.sub, providerType: 'keycloak' }
+  return { providerSub: claims.sub, providerType: 'keycloak' }
 }
-
-const isAuthorizedParty = (payload: JWTPayload) =>
-  typeof payload.azp === 'string' && payload.azp === env.OIDC_AUTHORIZED_PARTY
