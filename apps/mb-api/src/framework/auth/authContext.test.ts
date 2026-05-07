@@ -72,7 +72,12 @@ describe.sequential('authContext middleware', () => {
   })
 
   it('returns 401 on /protected when token is valid but user is not provisioned', async () => {
-    verify.mockResolvedValue({ providerSub: 'sub-123', providerType: 'keycloak' })
+    verify.mockResolvedValue({
+      providerSub: 'sub-123',
+      providerType: 'keycloak',
+      prenom: 'Admin',
+      nom: 'DITP',
+    })
     lookup.mockReturnValue(okAsync(null))
     const app = buildApp()
     const response = await app.request('/protected', {
@@ -82,11 +87,18 @@ describe.sequential('authContext middleware', () => {
     expect(lookup).toHaveBeenCalledWith({
       providerSub: 'sub-123',
       providerType: 'keycloak',
+      prenom: 'Admin',
+      nom: 'DITP',
     })
   })
 
   it('exposes the user to handlers when the lookup succeeds', async () => {
-    verify.mockResolvedValue({ providerSub: 'sub-123', providerType: 'keycloak' })
+    verify.mockResolvedValue({
+      providerSub: 'sub-123',
+      providerType: 'keycloak',
+      prenom: 'Admin',
+      nom: 'DITP',
+    })
     lookup.mockReturnValue(
       okAsync({
         id: '01906f5e-1234-7000-8abc-000000000001',
@@ -107,7 +119,12 @@ describe.sequential('authContext middleware', () => {
   })
 
   it('accepts the Bearer scheme case-insensitively (RFC 6750)', async () => {
-    verify.mockResolvedValue({ providerSub: 'sub-123', providerType: 'keycloak' })
+    verify.mockResolvedValue({
+      providerSub: 'sub-123',
+      providerType: 'keycloak',
+      prenom: 'Admin',
+      nom: 'DITP',
+    })
     lookup.mockReturnValue(
       okAsync({
         id: '01906f5e-1234-7000-8abc-000000000001',

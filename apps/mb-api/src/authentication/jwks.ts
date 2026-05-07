@@ -16,6 +16,8 @@ const jwtPayloadSchema = z.object({
 export type VerifiedTokenInfo = {
   providerSub: string
   providerType: 'keycloak'
+  prenom: string | undefined
+  nom: string | undefined
 }
 
 export const verifyAccessToken = async (token: string): Promise<VerifiedTokenInfo> => {
@@ -29,5 +31,10 @@ export const verifyAccessToken = async (token: string): Promise<VerifiedTokenInf
 
   const claims = jwtPayloadSchema.parse(payload)
 
-  return { providerSub: claims.sub, providerType: 'keycloak' }
+  return {
+    providerSub: claims.sub,
+    providerType: 'keycloak',
+    prenom: claims.given_name,
+    nom: claims.family_name,
+  }
 }
