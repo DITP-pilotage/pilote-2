@@ -1,14 +1,10 @@
-import { type ReferentielApiModel, type UpsertReferentielBody } from '@pilote/mb-shared/referentiel'
+import { type UpsertReferentielBody } from '@pilote/mb-shared/referentiel'
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
 import { db } from '@/framework/persistence/dbStore'
-import { toReferentielApiModel, type ReferentielWithCount } from '@/referentiel/utils'
 
-const performUpsert = async (
-  publicId: string,
-  body: UpsertReferentielBody,
-): Promise<ReferentielWithCount> => {
+const performUpsert = async (publicId: string, body: UpsertReferentielBody): Promise<void> => {
   const referentiel = await db().referentiel.upsert({
     where: { publicId },
     update: { nom: body.nom, description: body.description },
@@ -37,15 +33,9 @@ const performUpsert = async (
       create: { referentielId: referentiel.id, individuId: individu.id },
     })
   }
-
-  return db().referentiel.findUniqueOrThrow({
-    where: { id: referentiel.id },
-    include: { _count: { select: { individus: true } } },
-  })
 }
 
 export const upsertReferentiel = (
   publicId: string,
   body: UpsertReferentielBody,
-): ResultAsync<ReferentielApiModel, never> =>
-  ResultAsync.fromSafePromise(performUpsert(publicId, body)).map(toReferentielApiModel)
+): ResultAsync<void, never> => ResultAsync.fromSafePromise(performUpsert(publicId, body))

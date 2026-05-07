@@ -11,6 +11,7 @@ import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { withTransaction } from '@/framework/persistence/withTransaction'
 import { upsertIndicateur } from '@/indicateur/commands/upsertIndicateur'
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
 import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
@@ -138,7 +139,12 @@ indicateurRoutes.openapi(upsertIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  return upsertIndicateur(id, body).match(
+  const result = await withTransaction(async () => {
+    await upsertIndicateur(id, body)
+    return getIndicateurByPublicId(id)
+  })
+
+  return result.match(
     (data) =>
       jsonResponseOk({
         context,

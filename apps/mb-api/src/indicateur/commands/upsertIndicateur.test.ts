@@ -18,10 +18,6 @@ describe.concurrent('upsertIndicateur', () => {
 
       // Then
       expect(result.isOk()).toBe(true)
-      expect(result._unsafeUnwrap()).toMatchObject({
-        id: indId,
-        nom: 'Nouvel indicateur',
-      })
       const persisted = await db().indicateur.findUniqueOrThrow({ where: { publicId: indId } })
       expect(persisted.nom).toBe('Nouvel indicateur')
     }),
@@ -39,12 +35,10 @@ describe.concurrent('upsertIndicateur', () => {
 
       // Then
       expect(result.isOk()).toBe(true)
-      expect(result._unsafeUnwrap()).toMatchObject({
-        id: indId,
-        nom: 'Nom mis à jour',
-        createdAt: original.createdAt.toISOString(),
-      })
-      expect(result._unsafeUnwrap().updatedAt >= original.updatedAt.toISOString()).toBe(true)
+      const persisted = await db().indicateur.findUniqueOrThrow({ where: { publicId: indId } })
+      expect(persisted.nom).toBe('Nom mis à jour')
+      expect(persisted.createdAt).toEqual(original.createdAt)
+      expect(persisted.updatedAt >= original.updatedAt).toBe(true)
     }),
   )
 })

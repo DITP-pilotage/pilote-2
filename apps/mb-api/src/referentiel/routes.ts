@@ -164,7 +164,10 @@ referentielRoutes.openapi(upsertReferentielRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  const result = await withTransaction(async () => upsertReferentiel(id, body))
+  const result = await withTransaction(async () => {
+    await upsertReferentiel(id, body)
+    return getReferentielByPublicId(id)
+  })
 
   return result.match(
     (data) =>

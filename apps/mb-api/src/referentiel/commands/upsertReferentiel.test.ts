@@ -18,12 +18,6 @@ describe.concurrent('upsertReferentiel', () => {
 
       // Then
       expect(result.isOk()).toBe(true)
-      expect(result._unsafeUnwrap()).toMatchObject({
-        id: 'REF-NEW',
-        nom: 'Nouveau référentiel',
-        description: 'Description initiale',
-        nombreIndividus: 0,
-      })
       const persisted = await db().referentiel.findUniqueOrThrow({ where: { publicId: 'REF-NEW' } })
       expect(persisted.nom).toBe('Nouveau référentiel')
       expect(persisted.description).toBe('Description initiale')
@@ -48,14 +42,11 @@ describe.concurrent('upsertReferentiel', () => {
 
       // Then
       expect(result.isOk()).toBe(true)
-      const value = result._unsafeUnwrap()
-      expect(value).toMatchObject({
-        id: 'REF-UPD',
-        nom: 'Nouveau nom',
-        description: null,
-        createdAt: original.createdAt.toISOString(),
-      })
-      expect(value.updatedAt >= original.updatedAt.toISOString()).toBe(true)
+      const persisted = await db().referentiel.findUniqueOrThrow({ where: { publicId: 'REF-UPD' } })
+      expect(persisted.nom).toBe('Nouveau nom')
+      expect(persisted.description).toBeNull()
+      expect(persisted.createdAt).toEqual(original.createdAt)
+      expect(persisted.updatedAt >= original.updatedAt).toBe(true)
     }),
   )
 
@@ -66,7 +57,7 @@ describe.concurrent('upsertReferentiel', () => {
       const [dept1, dept2] = testDeptIds(2)
 
       // When
-      const result = await upsertReferentiel('REF-INDS', {
+      await upsertReferentiel('REF-INDS', {
         nom: 'Avec individus',
         description: null,
         individus: [
@@ -76,7 +67,6 @@ describe.concurrent('upsertReferentiel', () => {
       })
 
       // Then
-      expect(result._unsafeUnwrap().nombreIndividus).toBe(2)
       const persistedDept1 = await db().individu.findUniqueOrThrow({ where: { publicId: dept1 } })
       expect(persistedDept1.nom).toBe('Premier')
       const liaisons = await db().referentielIndividu.findMany({
@@ -94,14 +84,13 @@ describe.concurrent('upsertReferentiel', () => {
       await fixtures.individu({ publicId: dept1, nom: 'Ancien nom individu' })
 
       // When
-      const result = await upsertReferentiel('REF-LINK', {
+      await upsertReferentiel('REF-LINK', {
         nom: 'Référentiel',
         description: null,
         individus: [{ publicId: dept1, nom: 'Nouveau nom individu' }],
       })
 
       // Then
-      expect(result._unsafeUnwrap().nombreIndividus).toBe(1)
       const persisted = await db().individu.findUniqueOrThrow({ where: { publicId: dept1 } })
       expect(persisted.nom).toBe('Nouveau nom individu')
       const liaison = await db().referentielIndividu.findFirstOrThrow({
@@ -125,14 +114,17 @@ describe.concurrent('upsertReferentiel', () => {
       )
 
       // When
-      const result = await upsertReferentiel('REF-MERGE', {
+      await upsertReferentiel('REF-MERGE', {
         nom: 'Référentiel de test',
         description: null,
         individus: [{ publicId: dept1, nom: 'Individu de test' }],
       })
 
       // Then : les deux liaisons sont toujours là
-      expect(result._unsafeUnwrap().nombreIndividus).toBe(2)
+      const liaisons = await db().referentielIndividu.findMany({
+        where: { referentiel: { publicId: 'REF-MERGE' } },
+      })
+      expect(liaisons).toHaveLength(2)
     }),
   )
 
@@ -173,7 +165,11 @@ describe.concurrent('upsertReferentiel', () => {
       })
 
       // Then
-      expect(result._unsafeUnwrap().nombreIndividus).toBe(0)
+      expect(result.isOk()).toBe(true)
+      const persisted = await db().referentiel.findUniqueOrThrow({
+        where: { publicId: 'REF-EMPTY' },
+      })
+      expect(persisted.nom).toBe('Sans individus')
     }),
   )
 })
