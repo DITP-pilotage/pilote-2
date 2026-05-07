@@ -17,17 +17,13 @@ vi.mock('@/authentication/jwks', () => ({
 vi.mock('@/authentication/queries/getUtilisateurByProvider', () => ({
   getUtilisateurByProvider: vi.fn(),
 }))
-vi.mock('@/framework/auth/apiKey', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@/framework/auth/apiKey')>()
-  return {
-    ...actual,
-    verifyApiKey: vi.fn(),
-  }
-})
+vi.mock('@/framework/auth/verifyApiKey', () => ({
+  verifyApiKey: vi.fn(),
+}))
 
 const { verifyAccessToken } = await import('@/authentication/jwks')
 const { getUtilisateurByProvider } = await import('@/authentication/queries/getUtilisateurByProvider')
-const { verifyApiKey } = await import('@/framework/auth/apiKey')
+const { verifyApiKey } = await import('@/framework/auth/verifyApiKey')
 const verifyJwt = vi.mocked(verifyAccessToken)
 const lookup = vi.mocked(getUtilisateurByProvider)
 const verifyKey = vi.mocked(verifyApiKey)
@@ -183,7 +179,7 @@ describe.sequential('authContext middleware', () => {
       kind: 'apiKey',
       apiKey: { id: 'api-key-id-1', label: 'partner-x' },
     })
-    expect(verifyKey).toHaveBeenCalledWith('mb_live_abc123')
+    expect(verifyKey).toHaveBeenCalledWith('mb_live_abc123', expect.any(String))
     expect(verifyJwt).not.toHaveBeenCalled()
   })
 

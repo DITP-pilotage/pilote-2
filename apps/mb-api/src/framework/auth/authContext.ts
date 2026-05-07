@@ -3,8 +3,10 @@ import { okAsync, ResultAsync } from 'neverthrow'
 
 import { verifyAccessToken } from '@/authentication/jwks'
 import { getUtilisateurByProvider } from '@/authentication/queries/getUtilisateurByProvider'
-import { looksLikeApiKey, verifyApiKey } from '@/framework/auth/apiKey'
+import { env } from '@/env'
+import { looksLikeApiKey } from '@/framework/auth/apiKey'
 import { type Principal, runWithPrincipal } from '@/framework/auth/userContext'
+import { verifyApiKey } from '@/framework/auth/verifyApiKey'
 import { logger } from '@/framework/logger/logger'
 
 const BEARER_REGEX = /^Bearer\s+(.+)$/i
@@ -48,7 +50,7 @@ const resolveJwtPrincipal = (token: string): ResultAsync<Principal | null, unkno
     )
 
 const resolveApiKeyPrincipal = (token: string): ResultAsync<Principal | null, never> =>
-  verifyApiKey(token).map((apiKey): Principal | null =>
+  verifyApiKey(token, env.API_KEY_HMAC_SECRET).map((apiKey): Principal | null =>
     apiKey ? { kind: 'apiKey', apiKey } : null,
   )
 

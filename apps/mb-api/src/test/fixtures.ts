@@ -1,5 +1,6 @@
 import { uuidv7 } from 'uuidv7'
 
+import { env } from '@/env'
 import { hashApiKey } from '@/framework/auth/apiKey'
 import { db } from '@/framework/persistence/dbStore'
 import {
@@ -277,7 +278,7 @@ const DEFAULT_API_KEY = {
 
 const upsertApiKey = async (o: ApiKeyOverrides = {}) => {
   const rawKey = o.rawKey ?? DEFAULT_API_KEY.rawKey
-  const keyHash = hashApiKey(rawKey)
+  const keyHash = hashApiKey(rawKey, env.API_KEY_HMAC_SECRET)
   const create = {
     id: o.id ?? uuidv7(),
     label: o.label ?? DEFAULT_API_KEY.label,
