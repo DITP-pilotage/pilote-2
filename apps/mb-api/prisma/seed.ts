@@ -70,12 +70,48 @@ const utilisateursSeed: ReadonlyArray<{ providerSub: string; providerType: 'keyc
   { providerSub: 'ee35b706-7840-4df0-9493-01d272af8778', providerType: 'keycloak' },
 ]
 
+// Clusters de mise à jour : plusieurs indicateurs peuvent partager la même
+// date de mise à jour (réaliste : on bouge plusieurs fiches le même jour).
+const indicateurUpdatedAtClusters = [
+  '2024-02-12T09:30:00Z',
+  '2024-05-22T14:15:00Z',
+  '2024-08-08T11:00:00Z',
+  '2024-10-30T16:45:00Z',
+  '2024-12-18T08:20:00Z',
+  '2025-02-05T13:10:00Z',
+  '2025-04-17T10:50:00Z',
+  '2025-07-03T15:40:00Z',
+  '2025-09-25T12:30:00Z',
+  '2025-12-10T09:15:00Z',
+  '2026-01-28T17:20:00Z',
+  '2026-03-14T11:35:00Z',
+  '2026-04-22T08:00:00Z',
+] as const
+
+const indicateurDates = (
+  index: number,
+): { createdAt: Date; updatedAt: Date } => {
+  const updatedAt = new Date(
+    indicateurUpdatedAtClusters[index % indicateurUpdatedAtClusters.length]!,
+  )
+  const offsetDays = 30 + ((index * 17) % 300)
+  const createdAt = new Date(updatedAt.getTime() - offsetDays * 86_400_000)
+  return { createdAt, updatedAt }
+}
+
 const main = async () => {
-  for (const item of indicateursSeed) {
+  for (const [index, item] of indicateursSeed.entries()) {
+    const { createdAt, updatedAt } = indicateurDates(index)
     await prisma.indicateur.upsert({
       where: { publicId: item.publicId },
-      update: { nom: item.nom },
-      create: { id: uuidv7(), publicId: item.publicId, nom: item.nom },
+      update: { nom: item.nom, updatedAt },
+      create: {
+        id: uuidv7(),
+        publicId: item.publicId,
+        nom: item.nom,
+        createdAt,
+        updatedAt,
+      },
     })
   }
   for (const item of utilisateursSeed) {
