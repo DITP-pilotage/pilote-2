@@ -32,11 +32,11 @@ export const listIndividusWithValeurs = (
       },
       _count: { select: { valeurs: { where: indicateurFilter } } },
     },
-    ...buildPaginationArgs(params.cursor),
+    ...buildPaginationArgs(params.cursor, params.pageSize),
   })
   const fetchTotal = db().individu.count({ where })
 
   return ResultAsync.fromSafePromise(Promise.all([fetchPage, fetchTotal])).map(([rows, total]) =>
-    toPaginatedResponse(rows, total, toIndividuAvecValeursApiModel),
+    toPaginatedResponse(rows, total, toIndividuAvecValeursApiModel, params.pageSize),
   )
 }

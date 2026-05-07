@@ -23,11 +23,11 @@ export const listIndividusForReferentiel = (
     where,
     orderBy: { id: 'asc' },
     include: { referentiels: { include: { referentiel: true } } },
-    ...buildPaginationArgs(params.cursor),
+    ...buildPaginationArgs(params.cursor, params.pageSize),
   })
   const fetchTotal = db().individu.count({ where })
 
   return ResultAsync.fromSafePromise(Promise.all([fetchPage, fetchTotal])).map(([rows, total]) =>
-    toPaginatedResponse(rows, total, toIndividuApiModel),
+    toPaginatedResponse(rows, total, toIndividuApiModel, params.pageSize),
   )
 }

@@ -15,11 +15,11 @@ export const listIndicateurs = (
   const fetchPage = db().indicateur.findMany({
     where,
     orderBy: { id: 'asc' },
-    ...buildPaginationArgs(params.cursor),
+    ...buildPaginationArgs(params.cursor, params.pageSize),
   })
   const fetchTotal = db().indicateur.count({ where })
 
   return ResultAsync.fromSafePromise(Promise.all([fetchPage, fetchTotal])).map(([rows, total]) =>
-    toPaginatedResponse(rows, total, toIndicateurApiModel),
+    toPaginatedResponse(rows, total, toIndicateurApiModel, params.pageSize),
   )
 }

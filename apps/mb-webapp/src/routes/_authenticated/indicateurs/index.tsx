@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-router'
 import { z } from 'zod'
 
-import { Button } from '@/components/ui/Button'
+import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@/components/ui/Pagination'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
@@ -14,6 +14,7 @@ import { indicateursQueryOptions } from '@/queries/indicateurs'
 const indicateursSearchSchema = z.object({
   recherche: z.string().optional(),
   cursor: z.string().optional(),
+  pageSize: z.coerce.number().int().min(1).max(100).optional(),
 })
 
 export const Route = createFileRoute('/_authenticated/indicateurs/')({
@@ -26,78 +27,88 @@ export const Route = createFileRoute('/_authenticated/indicateurs/')({
   component: IndicateursListComponent,
 })
 
+const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
+  month: '2-digit',
+  year: 'numeric',
+})
+
+function formatMiseAJour(iso: string) {
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return '—'
+  return dateFormatter.format(date)
+}
+
 function IndicateursListComponent() {
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const { data } = useSuspenseQuery(indicateursQueryOptions(search))
 
   return (
-    <div className="space-y-6">
-      <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Indicateurs</h1>
+    <div className="space-y-8">
+      <header className="space-y-1">
+        <h1 className="text-2xl font-semibold text-text">Liste des indicateurs</h1>
+        <p className="text-sm text-text-muted">
+          Consultez et gérez l&apos;ensemble de vos indicateurs.
+        </p>
       </header>
 
-      <div className="flex flex-wrap gap-3">
-        <input
-          type="search"
-          placeholder="Rechercher par nom…"
-          value={search.recherche ?? ''}
-          onChange={(e) => {
-            const recherche = e.target.value || undefined
-            void navigate({ search: (prev) => ({ ...prev, recherche, cursor: undefined }) })
-          }}
-          className="rounded border border-secondary-border px-3 py-1 text-sm"
-        />
-      </div>
+      <section className="space-y-6 rounded-lg border border-border bg-surface p-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-text-muted">
+            {data.total} indicateur{data.total > 1 ? 's' : ''}
+          </p>
+          <input
+            type="search"
+            aria-label="Rechercher un indicateur par nom"
+            placeholder="Rechercher par nom…"
+            value={search.recherche ?? ''}
+            onChange={(e) => {
+              const recherche = e.target.value || undefined
+              void navigate({ search: (prev) => ({ ...prev, recherche, cursor: undefined }) })
+            }}
+            className="w-full max-w-xs rounded-md border border-secondary-border bg-surface px-3 py-1.5 text-sm placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20"
+          />
+        </div>
 
-      <ul className="divide-y divide-border rounded border border-border bg-surface">
-        {data.items.map((indicateur) => (
-          <li key={indicateur.id}>
-            <Link
-              to="/indicateurs/$id"
-              params={{ id: indicateur.id }}
-              className="block px-4 py-3 hover:bg-secondary-hover"
-            >
-              <div className="flex items-baseline justify-between">
-                <span className="font-medium text-text">{indicateur.nom}</span>
-                <span className="text-xs uppercase tracking-wide text-text-muted">
-                  {indicateur.id}
-                </span>
-              </div>
-            </Link>
-          </li>
-        ))}
-        {data.items.length === 0 && (
-          <li className="px-4 py-6 text-center text-sm text-text-muted">
+        {data.items.length === 0 ? (
+          <p className="py-12 text-center text-sm text-text-muted">
             Aucun indicateur ne correspond aux filtres.
-          </li>
+          </p>
+        ) : (
+          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {data.items.map((indicateur) => (
+              <li key={indicateur.id}>
+                <Link
+                  to="/indicateurs/$id"
+                  params={{ id: indicateur.id }}
+                  className="group flex h-full flex-col gap-3 rounded-lg border border-border bg-surface p-4 transition-colors hover:border-secondary-border hover:bg-secondary-hover"
+                >
+                  <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
+                    {indicateur.id}
+                  </span>
+                  <h2 className="text-base font-semibold text-text group-hover:text-primary">
+                    {indicateur.nom}
+                  </h2>
+                  <p className="mt-auto text-xs text-text-muted">
+                    Mise à jour : {formatMiseAJour(indicateur.updatedAt)}
+                  </p>
+                </Link>
+              </li>
+            ))}
+          </ul>
         )}
-      </ul>
 
-      {data.pagination.hasMore && data.pagination.cursor && (
-        <Button
-          variant="secondary"
-          size="sm"
-          type="button"
-          onClick={() => {
+        <Pagination
+          hasNext={data.pagination.hasMore}
+          onNext={() => {
             const next = data.pagination.cursor
             if (next) void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
           }}
-        >
-          Page suivante
-        </Button>
-      )}
-
-      <section className="rounded border border-border bg-slate-100 p-4 text-sm">
-        <p className="font-medium">Diagnostic TanStack Router</p>
-        <ul className="mt-2 list-inside list-disc text-secondary-foreground">
-          <li>✓ Loader exécuté ({data.total} indicateur(s) chargés)</li>
-          <li>
-            Search params parsés : <code>{JSON.stringify(search)}</code>
-          </li>
-          <li>✓ useSuspenseQuery branché</li>
-          <li>🔒 Guard _authenticated franchi</li>
-        </ul>
+          pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+          onPageSizeChange={(pageSize) => {
+            void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
+          }}
+        />
       </section>
     </div>
   )

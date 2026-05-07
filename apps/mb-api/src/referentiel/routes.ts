@@ -95,9 +95,9 @@ const getIndividusForReferentielRoute = createRoute({
 export const referentielRoutes = new OpenAPIHono()
 
 referentielRoutes.openapi(getReferentielsRoute, async (context) => {
-  const { recherche, cursor } = context.req.valid('query')
+  const { recherche, cursor, pageSize } = context.req.valid('query')
 
-  return listReferentiels({ recherche, cursor }).match(
+  return listReferentiels({ recherche, cursor, pageSize }).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -126,9 +126,9 @@ referentielRoutes.openapi(getReferentielByIdRoute, async (context) => {
 
 referentielRoutes.openapi(getIndividusForReferentielRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { recherche, cursor } = context.req.valid('query')
+  const { recherche, cursor, pageSize } = context.req.valid('query')
 
-  return listIndividusForReferentiel(id, { recherche, cursor }).match(
+  return listIndividusForReferentiel(id, { recherche, cursor, pageSize }).match(
     (data) =>
       jsonResponseOk({
         context,

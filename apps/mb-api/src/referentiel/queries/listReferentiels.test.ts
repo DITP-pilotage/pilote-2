@@ -102,7 +102,7 @@ describe.concurrent('listReferentiels', () => {
         { publicId: 'REF-6', nom: 'R6' },
       )
 
-      const result = await listReferentiels({})
+      const result = await listReferentiels({ pageSize: 5 })
 
       const value = result._unsafeUnwrap()
       expect(value.items).toHaveLength(5)

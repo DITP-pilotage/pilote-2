@@ -53,7 +53,7 @@ describe.concurrent('listIndicateurs', () => {
         { publicId: ids[5] },
       )
 
-      const result = await listIndicateurs({})
+      const result = await listIndicateurs({ pageSize: 5 })
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual(ids.slice(0, 5))
@@ -117,7 +117,7 @@ describe.concurrent('listIndicateurs', () => {
         { publicId: ids[6], nom: 'Délai moyen' },
       )
 
-      const result = await listIndicateurs({ recherche: 'satisfaction' })
+      const result = await listIndicateurs({ recherche: 'satisfaction', pageSize: 5 })
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual(ids.slice(0, 5))

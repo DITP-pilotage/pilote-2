@@ -70,9 +70,9 @@ const getIndicateurByIdRoute = createRoute({
 export const indicateurRoutes = new OpenAPIHono()
 
 indicateurRoutes.openapi(getIndicateursRoute, async (context) => {
-  const { recherche, cursor } = context.req.valid('query')
+  const { recherche, cursor, pageSize } = context.req.valid('query')
 
-  return listIndicateurs({ recherche, cursor }).match(
+  return listIndicateurs({ recherche, cursor, pageSize }).match(
     (data) =>
       jsonResponseOk({
         context,
