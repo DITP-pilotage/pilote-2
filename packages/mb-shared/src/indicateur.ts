@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { createPaginatedApiListSchema, paginationCursorSchema } from './pagination'
+import { createPaginatedApiListSchema, listQuerySchema } from './pagination'
 
 export const indicateurPublicIdSchema = z
   .string()
@@ -17,8 +17,5 @@ export type IndicateurApiModel = z.infer<typeof indicateurApiModelSchema>
 export const indicateurListApiModelSchema = createPaginatedApiListSchema(indicateurApiModelSchema)
 export type IndicateurListApiModel = z.infer<typeof indicateurListApiModelSchema>
 
-export const listIndicateursQuerySchema = z.object({
-  recherche: z.string().optional().describe("Filtre case-insensitive sur le nom de l'indicateur."),
-  cursor: paginationCursorSchema.optional(),
-})
+export const listIndicateursQuerySchema = listQuerySchema
 export type ListIndicateursQuery = z.infer<typeof listIndicateursQuerySchema>

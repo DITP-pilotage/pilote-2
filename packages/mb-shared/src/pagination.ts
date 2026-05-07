@@ -25,8 +25,17 @@ export type PaginatedApiList<T extends z.ZodTypeAny> = z.infer<
   ReturnType<typeof createPaginatedApiListSchema<T>>
 >
 
+export const pageSizeSchema = z.coerce
+  .number()
+  .int()
+  .min(1)
+  .max(100)
+  .optional()
+  .describe("Nombre d'items par page (défaut serveur, max 100).")
+
 export const listQuerySchema = z.object({
   recherche: z.string().optional().describe('Filtre case-insensitive sur le nom.'),
   cursor: paginationCursorSchema.optional(),
+  pageSize: pageSizeSchema,
 })
 export type ListQuery = z.infer<typeof listQuerySchema>

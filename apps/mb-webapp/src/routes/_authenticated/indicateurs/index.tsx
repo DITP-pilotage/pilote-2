@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-router'
 import { z } from 'zod'
 
-import { Button } from '@/components/ui/Button'
+import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@/components/ui/Pagination'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
@@ -14,6 +14,7 @@ import { indicateursQueryOptions } from '@/queries/indicateurs'
 const indicateursSearchSchema = z.object({
   recherche: z.string().optional(),
   cursor: z.string().optional(),
+  pageSize: z.coerce.number().int().min(1).max(100).optional(),
 })
 
 export const Route = createFileRoute('/_authenticated/indicateurs/')({
@@ -96,21 +97,17 @@ function IndicateursListComponent() {
           </ul>
         )}
 
-        {data.pagination.hasMore && data.pagination.cursor && (
-          <div className="flex justify-center">
-            <Button
-              variant="secondary"
-              size="sm"
-              type="button"
-              onClick={() => {
-                const next = data.pagination.cursor
-                if (next) void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
-              }}
-            >
-              Page suivante
-            </Button>
-          </div>
-        )}
+        <Pagination
+          hasNext={data.pagination.hasMore}
+          onNext={() => {
+            const next = data.pagination.cursor
+            if (next) void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
+          }}
+          pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+          onPageSizeChange={(pageSize) => {
+            void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
+          }}
+        />
       </section>
     </div>
   )

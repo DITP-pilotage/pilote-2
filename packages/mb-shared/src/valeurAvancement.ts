@@ -2,7 +2,11 @@ import { z } from 'zod'
 
 import { indicateurPublicIdSchema } from './indicateur'
 import { individuApiModelSchema, individuPublicIdSchema } from './individu'
-import { createPaginatedApiListSchema, paginationCursorSchema } from './pagination'
+import {
+  createPaginatedApiListSchema,
+  pageSizeSchema,
+  paginationCursorSchema,
+} from './pagination'
 import { referentielPublicIdSchema } from './referentiel'
 
 const isValidCalendarDate = (value: string): boolean => {
@@ -111,5 +115,6 @@ export const listIndividusWithValeursQuerySchema = z.object({
     .optional()
     .describe('Filtre sur la population du référentiel donné.'),
   cursor: paginationCursorSchema.optional(),
+  pageSize: pageSizeSchema,
 })
 export type ListIndividusWithValeursQuery = z.infer<typeof listIndividusWithValeursQuerySchema>

@@ -16,6 +16,7 @@ import { apiClient } from '@/api/client'
 export type IndicateursQueryParams = {
   recherche?: string | undefined
   cursor?: string | undefined
+  pageSize?: number | undefined
 }
 
 export const fetchIndicateurs = async (

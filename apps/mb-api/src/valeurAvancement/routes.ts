@@ -98,9 +98,9 @@ valeurAvancementRoutes.openapi(getValeursForIndicateurRoute, async (context) => 
 
 valeurAvancementRoutes.openapi(getIndividusWithValeursRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { referentiel, cursor } = context.req.valid('query')
+  const { referentiel, cursor, pageSize } = context.req.valid('query')
 
-  return listIndividusWithValeurs(id, { referentiel, cursor }).match(
+  return listIndividusWithValeurs(id, { referentiel, cursor, pageSize }).match(
     (data) =>
       jsonResponseOk({
         context,
