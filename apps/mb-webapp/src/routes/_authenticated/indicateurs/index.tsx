@@ -59,6 +59,7 @@ function IndicateursListComponent() {
           </p>
           <input
             type="search"
+            aria-label="Rechercher un indicateur par nom"
             placeholder="Rechercher par nom…"
             value={search.recherche ?? ''}
             onChange={(e) => {

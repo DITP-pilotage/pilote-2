@@ -1,4 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useId } from 'react'
 
 import { Button } from '@/components/ui/Button'
 import {
@@ -33,6 +34,7 @@ export function Pagination({
   onPageSizeChange,
   className,
 }: PaginationProps) {
+  const pageSizeId = useId()
   const showPageSize = pageSize !== undefined && onPageSizeChange !== undefined
   return (
     <nav
@@ -41,12 +43,12 @@ export function Pagination({
     >
       {showPageSize ? (
         <div className="flex items-center gap-2 text-sm text-text-muted">
-          <label htmlFor="pagination-page-size">Items par page</label>
+          <label htmlFor={pageSizeId}>Items par page</label>
           <Select
             value={String(pageSize)}
             onValueChange={(value) => onPageSizeChange(Number(value))}
           >
-            <SelectTrigger id="pagination-page-size" className="py-1">
+            <SelectTrigger id={pageSizeId} className="py-1">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
