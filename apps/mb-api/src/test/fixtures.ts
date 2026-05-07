@@ -1,7 +1,9 @@
 import { uuidv7 } from 'uuidv7'
 
+import { hashApiKey } from '@/framework/auth/apiKey'
 import { db } from '@/framework/persistence/dbStore'
 import {
+  type ApiKeyModel,
   type IndicateurModel,
   type IndividuModel,
   type ReferentielIndividuModel,
@@ -255,6 +257,64 @@ async function valeurAvancement(
   return results
 }
 
+// --- ApiKey ------------------------------------------------------------------
+
+type ApiKeyOverrides = Partial<{
+  id: string
+  label: string
+  rawKey: string
+  prefix: string
+  expiresAt: Date | null
+  revokedAt: Date | null
+  lastUsedAt: Date | null
+}>
+
+const DEFAULT_API_KEY = {
+  label: 'API key de test',
+  rawKey: 'mb_live_test_default_key_value_xx',
+  prefix: 'mb_live_test_def',
+} as const
+
+const upsertApiKey = async (o: ApiKeyOverrides = {}) => {
+  const rawKey = o.rawKey ?? DEFAULT_API_KEY.rawKey
+  const keyHash = hashApiKey(rawKey)
+  const create = {
+    id: o.id ?? uuidv7(),
+    label: o.label ?? DEFAULT_API_KEY.label,
+    keyHash,
+    prefix: o.prefix ?? DEFAULT_API_KEY.prefix,
+    expiresAt: o.expiresAt ?? null,
+    revokedAt: o.revokedAt ?? null,
+    lastUsedAt: o.lastUsedAt ?? null,
+  }
+  const { id: _id, rawKey: _raw, ...update } = o
+  if (Object.keys(update).length === 0) {
+    const existing = await db().apiKey.findUnique({ where: { keyHash } })
+    if (existing) return existing
+  }
+  return db().apiKey.upsert({
+    where: { keyHash },
+    update,
+    create,
+  })
+}
+
+function apiKey(): Promise<ApiKeyModel>
+function apiKey(override: ApiKeyOverrides): Promise<ApiKeyModel>
+function apiKey(
+  o1: ApiKeyOverrides,
+  o2: ApiKeyOverrides,
+  ...rest: ApiKeyOverrides[]
+): Promise<ApiKeyModel[]>
+async function apiKey(
+  ...overrides: ApiKeyOverrides[]
+): Promise<ApiKeyModel | ApiKeyModel[]> {
+  if (overrides.length <= 1) return upsertApiKey(overrides[0])
+  const results: ApiKeyModel[] = []
+  for (const o of overrides) results.push(await upsertApiKey(o))
+  return results
+}
+
 export const fixtures = {
   indicateur,
   referentiel,
@@ -262,4 +322,5 @@ export const fixtures = {
   referentielIndividu,
   relation,
   valeurAvancement,
+  apiKey,
 }

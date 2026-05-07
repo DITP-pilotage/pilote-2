@@ -37,7 +37,8 @@ app.doc('/openapi.json', {
 app.openAPIRegistry.registerComponent('securitySchemes', 'bearer', {
   type: 'http',
   scheme: 'bearer',
-  bearerFormat: 'JWT',
+  description:
+    "Accepte un access token JWT (utilisateur OIDC) ou une API key au format `mb_live_<secret>`.",
 })
 
 app.get('/docs', swaggerUI({ url: '/openapi.json' }))

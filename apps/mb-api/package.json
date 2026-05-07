@@ -18,13 +18,14 @@
     "start": "node dist/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "eslint src && tsc --noEmit",
-    "lint:fix": "eslint src --fix",
+    "lint": "eslint src scripts && tsc --noEmit",
+    "lint:fix": "eslint src scripts --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prisma:generate": "prisma generate",
     "database:init": "prisma migrate reset --force",
-    "database:migration": "prisma migrate dev"
+    "database:migration": "prisma migrate dev",
+    "api-key:generate": "tsx scripts/generate-api-key.ts"
   },
   "prisma": {
     "schema": "prisma/schema.prisma"
