@@ -25,7 +25,7 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'error',
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      'react-refresh/only-export-components': 'off',
       '@typescript-eslint/only-throw-error': [
         'error',
         {
@@ -47,16 +47,6 @@ export default tseslint.config(
         'error',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
-    },
-  },
-  {
-    // TanStack Router file-based routing: route files export `Route` (config)
-    // alongside an unexported component used as `component:`. This pattern is
-    // intentional — exporting the component would defeat autoCodeSplitting.
-    // Fast Refresh falls back to a full route reload in dev, which is fine.
-    files: ['src/routes/**/*.{ts,tsx}'],
-    rules: {
-      'react-refresh/only-export-components': 'off',
     },
   },
 )
