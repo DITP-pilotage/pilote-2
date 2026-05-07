@@ -27,7 +27,6 @@ export const Route = createFileRoute('/_authenticated/indicateurs/')({
 })
 
 function IndicateursListComponent() {
-  const { auth } = Route.useRouteContext()
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const { data } = useSuspenseQuery(indicateursQueryOptions(search))
@@ -36,9 +35,6 @@ function IndicateursListComponent() {
     <div className="space-y-6">
       <header className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Indicateurs</h1>
-        <span className="rounded bg-emerald-100 px-2 py-1 text-xs text-emerald-800">
-          🔒 Authentifié — sub: {auth.user?.id}
-        </span>
       </header>
 
       <div className="flex flex-wrap gap-3">

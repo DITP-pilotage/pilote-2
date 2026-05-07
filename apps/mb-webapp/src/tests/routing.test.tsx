@@ -66,7 +66,7 @@ describe('routing', () => {
   })
 
   it("permet d'accéder à /indicateurs après login", async () => {
-    renderAt('/indicateurs', stubAuth({ id: 'sub-1' }))
+    renderAt('/indicateurs', stubAuth({ prenom: 'Admin', nom: 'DITP' }))
     await waitFor(() => {
       expect(
         screen.getByRole('heading', { level: 1, name: 'Indicateurs' }),

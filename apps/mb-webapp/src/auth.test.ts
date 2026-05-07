@@ -37,13 +37,15 @@ describe.sequential('auth singleton', () => {
         http.post(bffUrl('/auth/refresh'), () =>
           HttpResponse.json(buildRefreshResponse({ accessToken: 'access-1' })),
         ),
-        http.get(apiUrl('/me'), () => HttpResponse.json(buildMe({ userId: 'sub-123' }))),
+        http.get(apiUrl('/me'), () =>
+          HttpResponse.json(buildMe({ userId: 'sub-123', prenom: 'Admin', nom: 'DITP' })),
+        ),
       )
 
       await auth.bootstrap()
 
       expect(auth.isAuthenticated).toBe(true)
-      expect(auth.user).toEqual({ id: 'sub-123' })
+      expect(auth.user).toEqual({ prenom: 'Admin', nom: 'DITP' })
       expect(tokenStore.get()).toBe('access-1')
     })
   })

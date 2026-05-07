@@ -115,6 +115,8 @@ describe.sequential('authContext middleware', () => {
       id: '01906f5e-1234-7000-8abc-000000000001',
       providerSub: 'sub-123',
       providerType: 'keycloak',
+      prenom: 'Admin',
+      nom: 'DITP',
     })
   })
 

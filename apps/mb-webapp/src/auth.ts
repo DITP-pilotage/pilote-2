@@ -5,7 +5,8 @@ import { fetchMe } from '@/api/me'
 import { tokenStore } from '@/auth/tokenStore'
 
 export type AuthUser = {
-  id: string
+  prenom: string | undefined
+  nom: string | undefined
 }
 
 export type Auth = {
@@ -77,7 +78,7 @@ export const auth: Auth = {
         return
       }
       const me = await fetchMe()
-      state.user = { id: me.userId }
+      state.user = { prenom: me.prenom, nom: me.nom }
     } catch {
       tokenStore.clear()
       state.user = null
