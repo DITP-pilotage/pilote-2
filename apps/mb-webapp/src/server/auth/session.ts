@@ -11,6 +11,7 @@ const COOKIE_PATH = '/auth'
 export type SessionPayload = {
   refreshToken: string
   sub: string
+  idToken: string
 }
 
 export type PkcePayload = {

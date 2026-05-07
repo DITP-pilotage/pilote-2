@@ -10,7 +10,7 @@ datasource db {
 }
 
 enum ProviderType {
-  keycloak
+  proconnect
 }
 
 model Utilisateur {

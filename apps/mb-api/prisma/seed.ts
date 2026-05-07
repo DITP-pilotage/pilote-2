@@ -29,8 +29,8 @@ const indicateursSeed: ReadonlyArray<{ publicId: string; nom: string }> = [
   { publicId: 'IND-008', nom: 'Satisfaction usagers services publics' },
 ]
 
-const utilisateursSeed: ReadonlyArray<{ providerSub: string; providerType: 'keycloak' }> = [
-  { providerSub: 'ee35b706-7840-4df0-9493-01d272af8778', providerType: 'keycloak' },
+const utilisateursSeed: ReadonlyArray<{ providerSub: string; providerType: 'proconnect' }> = [
+  { providerSub: '530f9db1-7ade-4ef2-9b3b-693e5614e2e4', providerType: 'proconnect' },
 ]
 
 const main = async () => {

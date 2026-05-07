@@ -74,7 +74,7 @@ describe.sequential('authContext middleware', () => {
   it('returns 401 on /protected when token is valid but user is not provisioned', async () => {
     verify.mockResolvedValue({
       providerSub: 'sub-123',
-      providerType: 'keycloak',
+      providerType: 'proconnect',
       prenom: 'Admin',
       nom: 'DITP',
     })
@@ -86,7 +86,7 @@ describe.sequential('authContext middleware', () => {
     expect(response.status).toBe(401)
     expect(lookup).toHaveBeenCalledWith({
       providerSub: 'sub-123',
-      providerType: 'keycloak',
+      providerType: 'proconnect',
       prenom: 'Admin',
       nom: 'DITP',
     })
@@ -95,7 +95,7 @@ describe.sequential('authContext middleware', () => {
   it('exposes the user to handlers when the lookup succeeds', async () => {
     verify.mockResolvedValue({
       providerSub: 'sub-123',
-      providerType: 'keycloak',
+      providerType: 'proconnect',
       prenom: 'Admin',
       nom: 'DITP',
     })
@@ -103,7 +103,7 @@ describe.sequential('authContext middleware', () => {
       okAsync({
         id: '01906f5e-1234-7000-8abc-000000000001',
         providerSub: 'sub-123',
-        providerType: 'keycloak' as const,
+        providerType: 'proconnect' as const,
       }),
     )
     const app = buildApp()
@@ -114,7 +114,7 @@ describe.sequential('authContext middleware', () => {
     expect(await response.json()).toEqual({
       id: '01906f5e-1234-7000-8abc-000000000001',
       providerSub: 'sub-123',
-      providerType: 'keycloak',
+      providerType: 'proconnect',
       prenom: 'Admin',
       nom: 'DITP',
     })
@@ -123,7 +123,7 @@ describe.sequential('authContext middleware', () => {
   it('accepts the Bearer scheme case-insensitively (RFC 6750)', async () => {
     verify.mockResolvedValue({
       providerSub: 'sub-123',
-      providerType: 'keycloak',
+      providerType: 'proconnect',
       prenom: 'Admin',
       nom: 'DITP',
     })
@@ -131,7 +131,7 @@ describe.sequential('authContext middleware', () => {
       okAsync({
         id: '01906f5e-1234-7000-8abc-000000000001',
         providerSub: 'sub-123',
-        providerType: 'keycloak' as const,
+        providerType: 'proconnect' as const,
       }),
     )
     const app = buildApp()

@@ -5,12 +5,12 @@ import { prisma } from '@/framework/persistence/prisma'
 export type UtilisateurEnregistre = {
   id: string
   providerSub: string
-  providerType: 'keycloak'
+  providerType: 'proconnect'
 }
 
 export const getUtilisateurByProvider = (params: {
   providerSub: string
-  providerType: 'keycloak'
+  providerType: 'proconnect'
 }): ResultAsync<UtilisateurEnregistre | null, never> =>
   ResultAsync.fromSafePromise(
     prisma.utilisateur.findUnique({
