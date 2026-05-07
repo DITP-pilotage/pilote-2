@@ -27,6 +27,7 @@ const getIndicateursRoute = createRoute({
   summary: 'Lister les indicateurs',
   description:
     "Retourne la liste paginée des indicateurs avec un filtre de recherche par nom. La pagination est cursor-based : passez `cursor` (renvoyé dans la réponse précédente) pour obtenir la page suivante. `hasMore` indique s'il reste des pages.",
+  middleware: [requireAuthentication],
   request: { query: listIndicateursQuerySchema },
   responses: {
     200: {
@@ -53,6 +54,7 @@ const getIndicateurByIdRoute = createRoute({
   summary: 'Récupérer un indicateur par identifiant public',
   description:
     'Retourne un indicateur identifié par son identifiant public (format `IND-XXX`). Renvoie 404 (`ENTITY_NOT_FOUND`) si aucun indicateur ne correspond.',
+  middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {
     200: {
@@ -69,8 +71,6 @@ const getIndicateurByIdRoute = createRoute({
 // --- App registration --------------------------------------------------------
 
 export const indicateurRoutes = new OpenAPIHono()
-
-indicateurRoutes.use('*', requireAuthentication)
 
 indicateurRoutes.openapi(getIndicateursRoute, async (context) => {
   const { recherche, cursor, pageSize } = context.req.valid('query')

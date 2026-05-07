@@ -12,6 +12,7 @@ const meRoute = createRoute({
   path: '/me',
   tags: ['Authentication'],
   summary: "Renvoyer l'utilisateur authentifié",
+  middleware: [requireAuthentication],
   responses: {
     200: {
       content: { 'application/json': { schema: MeOkSchema } },
@@ -21,8 +22,6 @@ const meRoute = createRoute({
 })
 
 export const me = new OpenAPIHono()
-
-me.use('*', requireAuthentication)
 
 me.openapi(meRoute, (context) => {
   const user = requireUser()

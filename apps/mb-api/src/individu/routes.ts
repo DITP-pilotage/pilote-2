@@ -19,6 +19,7 @@ const getIndividuByIdRoute = createRoute({
   summary: 'Récupérer un individu par identifiant public',
   description:
     "Retourne un individu identifié par son identifiant public (ex. `DEPT-84`, `REG-93`, `FR`). Le payload inclut les référentiels auxquels l'individu appartient.",
+  middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {
     200: {
@@ -29,8 +30,6 @@ const getIndividuByIdRoute = createRoute({
 })
 
 export const individuRoutes = new OpenAPIHono()
-
-individuRoutes.use('*', requireAuthentication)
 
 individuRoutes.openapi(getIndividuByIdRoute, async (context) => {
   const { id } = context.req.valid('param')

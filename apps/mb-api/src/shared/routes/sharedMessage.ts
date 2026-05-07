@@ -11,6 +11,7 @@ const sharedMessageRoute = createRoute({
   path: '/shared-message',
   tags: ['Shared'],
   summary: 'Retourner la constante partagée',
+  middleware: [requireAuthentication],
   responses: {
     200: {
       content: { 'application/json': { schema: SharedMessageSchema } },
@@ -20,8 +21,6 @@ const sharedMessageRoute = createRoute({
 })
 
 export const sharedMessage = new OpenAPIHono()
-
-sharedMessage.use('*', requireAuthentication)
 
 sharedMessage.openapi(sharedMessageRoute, (context) => {
   const data: SharedMessage = { greeting: SHARED_GREETING }
