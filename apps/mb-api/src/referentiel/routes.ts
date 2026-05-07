@@ -11,6 +11,7 @@ import {
   referentielPublicIdSchema,
 } from '@pilote/mb-shared/referentiel'
 
+import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { getReferentielByPublicId } from '@/referentiel/queries/getReferentielByPublicId'
@@ -35,6 +36,7 @@ const getReferentielsRoute = createRoute({
   summary: 'Lister les référentiels',
   description:
     "Retourne la liste paginée des référentiels avec un filtre de recherche par nom. La pagination est cursor-based : passez `cursor` (renvoyé dans la réponse précédente) pour obtenir la page suivante. Chaque item inclut `nombreIndividus` (population du référentiel).",
+  middleware: [requireAuthentication],
   request: { query: listReferentielsQuerySchema },
   responses: {
     200: {
@@ -60,6 +62,7 @@ const getReferentielByIdRoute = createRoute({
   tags: ['Referentiel'],
   summary: 'Récupérer un référentiel par identifiant public',
   description: 'Retourne un référentiel identifié par son identifiant public (format `REF-<SLUG>`).',
+  middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {
     200: {
@@ -78,6 +81,7 @@ const getIndividusForReferentielRoute = createRoute({
   summary: "Lister les individus d'un référentiel",
   description:
     "Retourne la liste paginée des individus appartenant à la population du référentiel donné. Filtre optionnel `recherche` sur le nom. Pagination cursor-based.",
+  middleware: [requireAuthentication],
   request: {
     params: detailParamsSchema,
     query: listIndividusForReferentielQuerySchema,

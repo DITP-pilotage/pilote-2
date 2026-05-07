@@ -9,6 +9,7 @@ import {
   valeurAvancementListApiModelSchema,
 } from '@pilote/mb-shared/valeurAvancement'
 
+import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
@@ -35,6 +36,7 @@ const getValeursForIndicateurRoute = createRoute({
   summary: 'Lister les valeurs pour un indicateur sur des individus',
   description:
     "Retourne les valeurs saisies pour l'indicateur sur la liste d'individus fournie. Le paramètre `individus` est obligatoire (1..N identifiants séparés par une virgule, ex. `DEPT-84,DEPT-13`). Filtres optionnels `dateDebut`/`dateFin` (ISO `YYYY-MM-DD`, inclusifs). La réponse n'est pas paginée — le volume est borné par la liste d'individus.",
+  middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
     query: listValeursForIndicateurQuerySchema,
@@ -60,6 +62,7 @@ const getIndividusWithValeursRoute = createRoute({
   summary: "Lister les individus disposant de valeurs pour un indicateur",
   description:
     "Retourne la liste paginée des individus ayant au moins une valeur pour l'indicateur. Filtre optionnel `referentiel` pour ne conserver que les individus appartenant à la population d'un référentiel donné. Chaque item inclut la dernière valeur et le nombre total de valeurs.",
+  middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
     query: listIndividusWithValeursQuerySchema,

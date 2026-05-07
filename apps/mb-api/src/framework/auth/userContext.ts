@@ -9,15 +9,35 @@ export type UtilisateurAuthentifie = {
   nom: string
 }
 
-type UserStore = { user: UtilisateurAuthentifie | null }
+export type ApiKeyAuthentifiee = {
+  id: string
+  label: string
+}
 
-const storage = new AsyncLocalStorage<UserStore>()
+export type Principal =
+  | { kind: 'user'; user: UtilisateurAuthentifie }
+  | { kind: 'apiKey'; apiKey: ApiKeyAuthentifiee }
 
-export const runWithUser = <T>(user: UtilisateurAuthentifie | null, fn: () => T): T =>
-  storage.run({ user }, fn)
+type Store = { principal: Principal | null }
 
-export const getCurrentUser = (): UtilisateurAuthentifie | null =>
-  storage.getStore()?.user ?? null
+const storage = new AsyncLocalStorage<Store>()
+
+export const runWithPrincipal = <T>(principal: Principal | null, fn: () => T): T =>
+  storage.run({ principal }, fn)
+
+export const getCurrentPrincipal = (): Principal | null =>
+  storage.getStore()?.principal ?? null
+
+export const requirePrincipal = (): Principal => {
+  const principal = getCurrentPrincipal()
+  if (!principal) throw new UnauthorizedError('Authentification requise')
+  return principal
+}
+
+export const getCurrentUser = (): UtilisateurAuthentifie | null => {
+  const principal = getCurrentPrincipal()
+  return principal?.kind === 'user' ? principal.user : null
+}
 
 export const requireUser = (): UtilisateurAuthentifie => {
   const user = getCurrentUser()

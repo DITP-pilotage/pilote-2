@@ -20,6 +20,13 @@ app.use('*', cors({ origin: env.CORS_ORIGINS, credentials: false }))
 app.use('*', databaseContext)
 app.use('*', authContext)
 
+app.openAPIRegistry.registerComponent('securitySchemes', 'bearer', {
+  type: 'http',
+  scheme: 'bearer',
+  description:
+    "Accepte un access token JWT (utilisateur OIDC) ou une API key au format `pilote_live_<secret>`.",
+})
+
 app.get('/', (context) => context.json({ hello: 'world' }))
 app.route('/', health)
 app.route('/', sharedMessage)
@@ -32,12 +39,7 @@ app.route('/', me)
 app.doc('/openapi.json', {
   openapi: '3.0.0',
   info: { title: 'Pilote API', version: '0.1.0' },
-})
-
-app.openAPIRegistry.registerComponent('securitySchemes', 'bearer', {
-  type: 'http',
-  scheme: 'bearer',
-  bearerFormat: 'JWT',
+  security: [{ bearer: [] }],
 })
 
 app.get('/docs', swaggerUI({ url: '/openapi.json' }))

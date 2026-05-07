@@ -1,6 +1,7 @@
 import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
 import { meApiModelSchema } from '@pilote/mb-shared/me'
 
+import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { requireUser } from '@/framework/auth/userContext'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 
@@ -11,7 +12,7 @@ const meRoute = createRoute({
   path: '/me',
   tags: ['Authentication'],
   summary: "Renvoyer l'utilisateur authentifié",
-  security: [{ bearer: [] }],
+  middleware: [requireAuthentication],
   responses: {
     200: {
       content: { 'application/json': { schema: MeOkSchema } },
