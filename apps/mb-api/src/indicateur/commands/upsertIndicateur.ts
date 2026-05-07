@@ -6,12 +6,13 @@ import { db } from '@/framework/persistence/dbStore'
 import { toIndicateurApiModel } from '@/indicateur/utils'
 
 export const upsertIndicateur = (
+  publicId: string,
   body: UpsertIndicateurBody,
 ): ResultAsync<IndicateurApiModel, never> =>
   ResultAsync.fromSafePromise(
     db().indicateur.upsert({
-      where: { publicId: body.publicId },
+      where: { publicId },
       update: { nom: body.nom },
-      create: { id: uuidv7(), publicId: body.publicId, nom: body.nom },
+      create: { id: uuidv7(), publicId, nom: body.nom },
     }),
   ).map(toIndicateurApiModel)

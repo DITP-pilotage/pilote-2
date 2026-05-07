@@ -1,14 +1,9 @@
 import { z } from 'zod'
 
 import { createPaginatedApiListSchema, listQuerySchema } from './pagination'
+import { individuPublicIdSchema, referentielPublicIdSchema } from './publicIds'
 
-export const referentielPublicIdSchema = z
-  .string()
-  .regex(
-    /^REF-[A-Z0-9-]{1,16}$/,
-    'Identifiant public attendu au format REF-<SLUG> (max 20 caractères)',
-  )
-  .describe('Identifiant public du référentiel (format REF-<SLUG>, ex. REF-DEPT). Max 20 caractères.')
+export { referentielPublicIdSchema } from './publicIds'
 
 export const referentielApiModelSchema = z.object({
   id: referentielPublicIdSchema,
@@ -29,3 +24,21 @@ export type ReferentielListApiModel = z.infer<typeof referentielListApiModelSche
 
 export const listReferentielsQuerySchema = listQuerySchema
 export type ListReferentielsQuery = z.infer<typeof listReferentielsQuerySchema>
+
+export const upsertReferentielIndividuItemSchema = z.object({
+  publicId: individuPublicIdSchema,
+  nom: z.string().min(1).describe("Nom lisible de l'individu."),
+})
+export type UpsertReferentielIndividuItem = z.infer<typeof upsertReferentielIndividuItemSchema>
+
+export const upsertReferentielBodySchema = z.object({
+  nom: z.string().min(1).describe('Nom lisible du référentiel.'),
+  description: z.string().nullable().describe('Description du référentiel (peut être null).'),
+  individus: z
+    .array(upsertReferentielIndividuItemSchema)
+    .optional()
+    .describe(
+      "Individus à upsert et lier au référentiel. Sémantique merge : les individus déjà liés mais absents du body ne sont pas retirés.",
+    ),
+})
+export type UpsertReferentielBody = z.infer<typeof upsertReferentielBodySchema>
