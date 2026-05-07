@@ -74,7 +74,7 @@ describe.sequential('authContext middleware', () => {
   it('returns 401 on /protected when token is valid but user is not provisioned', async () => {
     verify.mockResolvedValue({
       providerSub: 'sub-123',
-      providerType: 'keycloak',
+      email: 'agent@example.com',
       prenom: 'Admin',
       nom: 'DITP',
     })
@@ -86,7 +86,7 @@ describe.sequential('authContext middleware', () => {
     expect(response.status).toBe(401)
     expect(lookup).toHaveBeenCalledWith({
       providerSub: 'sub-123',
-      providerType: 'keycloak',
+      email: 'agent@example.com',
       prenom: 'Admin',
       nom: 'DITP',
     })
@@ -95,15 +95,14 @@ describe.sequential('authContext middleware', () => {
   it('exposes the user to handlers when the lookup succeeds', async () => {
     verify.mockResolvedValue({
       providerSub: 'sub-123',
-      providerType: 'keycloak',
+      email: 'agent@example.com',
       prenom: 'Admin',
       nom: 'DITP',
     })
     lookup.mockReturnValue(
       okAsync({
         id: '01906f5e-1234-7000-8abc-000000000001',
-        providerSub: 'sub-123',
-        providerType: 'keycloak' as const,
+        email: 'agent@example.com',
       }),
     )
     const app = buildApp()
@@ -113,8 +112,7 @@ describe.sequential('authContext middleware', () => {
     expect(response.status).toBe(200)
     expect(await response.json()).toEqual({
       id: '01906f5e-1234-7000-8abc-000000000001',
-      providerSub: 'sub-123',
-      providerType: 'keycloak',
+      email: 'agent@example.com',
       prenom: 'Admin',
       nom: 'DITP',
     })
@@ -123,15 +121,14 @@ describe.sequential('authContext middleware', () => {
   it('accepts the Bearer scheme case-insensitively (RFC 6750)', async () => {
     verify.mockResolvedValue({
       providerSub: 'sub-123',
-      providerType: 'keycloak',
+      email: 'agent@example.com',
       prenom: 'Admin',
       nom: 'DITP',
     })
     lookup.mockReturnValue(
       okAsync({
         id: '01906f5e-1234-7000-8abc-000000000001',
-        providerSub: 'sub-123',
-        providerType: 'keycloak' as const,
+        email: 'agent@example.com',
       }),
     )
     const app = buildApp()

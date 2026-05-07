@@ -9,18 +9,13 @@ datasource db {
   provider = "postgresql"
 }
 
-enum ProviderType {
-  keycloak
-}
-
 model Utilisateur {
-  id           String       @id @db.Uuid
-  providerSub  String       @map("provider_sub")
-  providerType ProviderType @map("provider_type")
-  createdAt    DateTime     @default(now()) @map("created_at")
-  updatedAt    DateTime     @updatedAt      @map("updated_at")
+  id          String   @id @db.Uuid
+  email       String   @unique
+  providerSub String?  @unique @map("provider_sub")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt      @map("updated_at")
 
-  @@unique([providerSub, providerType], name: "utilisateur_provider_sub_type_unique")
   @@map("utilisateur")
 }
 

@@ -66,8 +66,8 @@ const indicateursSeed: ReadonlyArray<{ publicId: string; nom: string }> = [
   { publicId: 'IND-045', nom: "Cyberattaques traitées par l'ANSSI" },
 ]
 
-const utilisateursSeed: ReadonlyArray<{ providerSub: string; providerType: 'keycloak' }> = [
-  { providerSub: 'ee35b706-7840-4df0-9493-01d272af8778', providerType: 'keycloak' },
+const utilisateursSeed: ReadonlyArray<{ email: string }> = [
+  { email: 'ditp.admin@example.com' },
 ]
 
 // Clusters de mise à jour : plusieurs indicateurs peuvent partager la même
@@ -116,17 +116,11 @@ const main = async () => {
   }
   for (const item of utilisateursSeed) {
     await prisma.utilisateur.upsert({
-      where: {
-        utilisateur_provider_sub_type_unique: {
-          providerSub: item.providerSub,
-          providerType: item.providerType,
-        },
-      },
+      where: { email: item.email },
       update: {},
       create: {
         id: uuidv7(),
-        providerSub: item.providerSub,
-        providerType: item.providerType,
+        email: item.email,
       },
     })
   }

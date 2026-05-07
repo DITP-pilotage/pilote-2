@@ -18,7 +18,7 @@ import {
 import { serverEnv } from '@/server/env'
 import { logger } from '@/server/logger'
 
-const SCOPES = 'openid profile email offline_access'
+const SCOPES = 'openid given_name usual_name email uid'
 const DEFAULT_SESSION_TTL_SECONDS = 60 * 60 * 24 * 30
 const ALLOWED_CALLBACK_PARAMS = ['code', 'state', 'iss', 'error', 'error_description'] as const
 const PUBLIC_ORIGIN = new URL(serverEnv.PUBLIC_BASE_URL).origin
@@ -152,8 +152,8 @@ authRouter.get('/callback', async (context) => {
   }
 
   const claims = tokens.claims()
-  if (!claims?.sub || !tokens.refresh_token) {
-    logger.error({ event: 'auth.callback.missing_tokens' }, 'Missing claims or refresh token')
+  if (!claims?.sub || !tokens.refresh_token || !tokens.id_token) {
+    logger.error({ event: 'auth.callback.missing_tokens' }, 'Missing claims, refresh token or id token')
     return context.text('Authentication failed', 401)
   }
 
@@ -168,6 +168,7 @@ authRouter.get('/callback', async (context) => {
   const sub = claims.sub
   const refreshToken = tokens.refresh_token
   const accessToken = tokens.access_token
+  const idToken = tokens.id_token
 
   return checkUserProvisioned(accessToken).match(
     async (provisioned) => {
@@ -181,7 +182,7 @@ authRouter.get('/callback', async (context) => {
 
       await writeSession(
         context,
-        { refreshToken, sub },
+        { refreshToken, sub, idToken },
         sessionTtlSeconds(tokens.refresh_expires_in),
       )
 
@@ -236,6 +237,7 @@ authRouter.post('/refresh', refreshLimiter, async (context) => {
     {
       refreshToken: tokens.refresh_token ?? session.refreshToken,
       sub: session.sub,
+      idToken: tokens.id_token ?? session.idToken,
     },
     sessionTtlSeconds(tokens.refresh_expires_in),
   )
@@ -275,6 +277,8 @@ authRouter.post('/logout', logoutLimiter, async (context) => {
 
   const endSessionUrl = client.buildEndSessionUrl(config, {
     post_logout_redirect_uri: serverEnv.OIDC_POST_LOGOUT_REDIRECT_URI,
+    id_token_hint: session.idToken,
+    state: client.randomState(),
   })
 
   logger.debug({ event: 'auth.logout.success' }, 'User logged out')
