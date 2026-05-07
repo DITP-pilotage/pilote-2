@@ -1,4 +1,6 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose'
+import ky from 'ky'
+import { LRUCache } from 'lru-cache'
 import { z } from 'zod'
 
 import { env } from '@/env'
@@ -18,42 +20,23 @@ export type VerifiedTokenInfo = {
   nom: string
 }
 
-const USERINFO_CACHE_TTL_MS = 30_000
-const USERINFO_CACHE_MAX_ENTRIES = 5_000
-
-type CacheEntry = { value: VerifiedTokenInfo; expiresAt: number }
-const userinfoCache = new Map<string, CacheEntry>()
-
-const readCache = (token: string): VerifiedTokenInfo | null => {
-  const entry = userinfoCache.get(token)
-  if (!entry) return null
-  if (entry.expiresAt <= Date.now()) {
-    userinfoCache.delete(token)
-    return null
-  }
-  return entry.value
-}
-
-const writeCache = (token: string, value: VerifiedTokenInfo): void => {
-  if (userinfoCache.size >= USERINFO_CACHE_MAX_ENTRIES) {
-    const firstKey = userinfoCache.keys().next().value
-    if (firstKey !== undefined) userinfoCache.delete(firstKey)
-  }
-  userinfoCache.set(token, { value, expiresAt: Date.now() + USERINFO_CACHE_TTL_MS })
-}
+const userinfoCache = new LRUCache<string, VerifiedTokenInfo>({
+  max: 5_000,
+  ttl: 30_000,
+})
 
 export const verifyAccessToken = async (token: string): Promise<VerifiedTokenInfo> => {
-  const cached = readCache(token)
+  const cached = userinfoCache.get(token)
   if (cached) return cached
 
-  const response = await fetch(env.OIDC_USERINFO_URL, {
-    headers: { Authorization: `Bearer ${token}` },
-  })
-  if (!response.ok) {
-    throw new Error(`userinfo request failed: ${response.status}`)
-  }
+  const userinfoJwt = await ky
+    .get(env.OIDC_USERINFO_URL, {
+      headers: { Authorization: `Bearer ${token}` },
+      retry: 0,
+      timeout: 5000,
+    })
+    .text()
 
-  const userinfoJwt = await response.text()
   const { payload } = await jwtVerify(userinfoJwt, jwks, {
     issuer: env.OIDC_ISSUER_URL,
     audience: env.OIDC_AUDIENCE,
@@ -69,6 +52,6 @@ export const verifyAccessToken = async (token: string): Promise<VerifiedTokenInf
     prenom: claims.given_name,
     nom: claims.usual_name,
   }
-  writeCache(token, result)
+  userinfoCache.set(token, result)
   return result
 }
