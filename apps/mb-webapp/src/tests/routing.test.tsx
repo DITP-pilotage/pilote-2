@@ -63,7 +63,7 @@ describe('routing', () => {
     renderAt('/indicateurs', stubAuth(null))
     await new Promise((resolve) => setTimeout(resolve, 50))
     expect(
-      screen.queryByRole('heading', { level: 1, name: 'Indicateurs' }),
+      screen.queryByRole('heading', { level: 1, name: 'Liste des indicateurs' }),
     ).toBeNull()
   })
 
@@ -71,7 +71,7 @@ describe('routing', () => {
     renderAt('/indicateurs', stubAuth({ userId: 'sub-1', prenom: 'Admin', nom: 'DITP' }))
     await waitFor(() => {
       expect(
-        screen.getByRole('heading', { level: 1, name: 'Indicateurs' }),
+        screen.getByRole('heading', { level: 1, name: 'Liste des indicateurs' }),
       ).toBeInTheDocument()
     })
   })
