@@ -7,15 +7,15 @@ import { integrationTest } from '@/test/integrationTest'
 
 describe.concurrent('verifyApiKey', () => {
   it(
-    'returns the api key principal when the key exists and is active',
+    'renvoie le principal API key quand la clé existe et est active',
     integrationTest(async () => {
       const row = await fixtures.apiKey({
-        rawKey: 'mb_live_active_key_for_test_value',
+        rawKey: 'pilote_live_active_key_for_test_value',
         label: 'partenaire X',
       })
 
       const result = await verifyApiKey(
-        'mb_live_active_key_for_test_value',
+        'pilote_live_active_key_for_test_value',
         env.API_KEY_HMAC_SECRET,
       )
 
@@ -25,10 +25,10 @@ describe.concurrent('verifyApiKey', () => {
   )
 
   it(
-    'returns null when the key is unknown',
+    'renvoie null quand la clé est inconnue',
     integrationTest(async () => {
       const result = await verifyApiKey(
-        'mb_live_unknown_key_value_xx',
+        'pilote_live_unknown_key_value_xx',
         env.API_KEY_HMAC_SECRET,
       )
       expect(result._unsafeUnwrap()).toBeNull()
@@ -36,15 +36,15 @@ describe.concurrent('verifyApiKey', () => {
   )
 
   it(
-    'returns null when the key is revoked',
+    'renvoie null quand la clé a été révoquée',
     integrationTest(async () => {
       await fixtures.apiKey({
-        rawKey: 'mb_live_revoked_key_for_test_value',
+        rawKey: 'pilote_live_revoked_key_for_test_value',
         revokedAt: new Date('2026-01-01'),
       })
 
       const result = await verifyApiKey(
-        'mb_live_revoked_key_for_test_value',
+        'pilote_live_revoked_key_for_test_value',
         env.API_KEY_HMAC_SECRET,
       )
 
@@ -53,15 +53,15 @@ describe.concurrent('verifyApiKey', () => {
   )
 
   it(
-    'returns null when the key has expired',
+    'renvoie null quand la clé a expiré',
     integrationTest(async () => {
       await fixtures.apiKey({
-        rawKey: 'mb_live_expired_key_for_test_value',
+        rawKey: 'pilote_live_expired_key_for_test_value',
         expiresAt: new Date('2020-01-01'),
       })
 
       const result = await verifyApiKey(
-        'mb_live_expired_key_for_test_value',
+        'pilote_live_expired_key_for_test_value',
         env.API_KEY_HMAC_SECRET,
       )
 

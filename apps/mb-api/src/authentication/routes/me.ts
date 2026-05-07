@@ -11,7 +11,6 @@ const meRoute = createRoute({
   path: '/me',
   tags: ['Authentication'],
   summary: "Renvoyer l'utilisateur authentifié",
-  security: [{ bearer: [] }],
   responses: {
     200: {
       content: { 'application/json': { schema: MeOkSchema } },

@@ -22,6 +22,7 @@ const healthRoute = createRoute({
   path: '/health',
   tags: ['Healthcheck'],
   summary: 'Vérifier la santé du service',
+  security: [],
   responses: {
     200: {
       content: { 'application/json': { schema: HealthOkSchema } },

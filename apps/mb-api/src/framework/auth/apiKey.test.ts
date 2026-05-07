@@ -6,44 +6,46 @@ const TEST_SECRET = 'unit-test-secret-must-be-32-bytes-min'
 
 describe.concurrent('apiKey', () => {
   describe('looksLikeApiKey', () => {
-    it('returns true when the token starts with the public prefix', () => {
-      expect(looksLikeApiKey('mb_live_abc')).toBe(true)
+    it('renvoie true quand le token commence par le préfixe public', () => {
+      expect(looksLikeApiKey('pilote_live_abc')).toBe(true)
     })
 
-    it('returns false for a JWT-shaped token', () => {
+    it("renvoie false pour un token de format JWT", () => {
       expect(looksLikeApiKey('eyJhbGciOiJSUzI1NiJ9.payload.signature')).toBe(false)
     })
   })
 
   describe('hashApiKey', () => {
-    it('is deterministic and produces a 64-char hex digest', () => {
-      const first = hashApiKey('mb_live_some_value', TEST_SECRET)
-      const second = hashApiKey('mb_live_some_value', TEST_SECRET)
+    it('est déterministe et produit un digest hex de 64 caractères', () => {
+      const first = hashApiKey('pilote_live_some_value', TEST_SECRET)
+      const second = hashApiKey('pilote_live_some_value', TEST_SECRET)
       expect(first).toBe(second)
       expect(first).toMatch(/^[a-f0-9]{64}$/)
     })
 
-    it('produces different hashes for different inputs', () => {
-      expect(hashApiKey('mb_live_a', TEST_SECRET)).not.toBe(hashApiKey('mb_live_b', TEST_SECRET))
+    it('produit des hashs différents pour des entrées différentes', () => {
+      expect(hashApiKey('pilote_live_a', TEST_SECRET)).not.toBe(
+        hashApiKey('pilote_live_b', TEST_SECRET),
+      )
     })
 
-    it('produces different hashes for different secrets', () => {
-      const a = hashApiKey('mb_live_same', TEST_SECRET)
-      const b = hashApiKey('mb_live_same', 'another-secret-must-be-32-bytes-min')
+    it('produit des hashs différents pour des secrets différents', () => {
+      const a = hashApiKey('pilote_live_same', TEST_SECRET)
+      const b = hashApiKey('pilote_live_same', 'another-secret-must-be-32-bytes-min')
       expect(a).not.toBe(b)
     })
   })
 
   describe('buildApiKey', () => {
-    it('builds a key with the public prefix and a matching hash', () => {
+    it('construit une clé avec le préfixe public et un hash cohérent', () => {
       const generated = buildApiKey(TEST_SECRET)
       expect(generated.rawKey.startsWith(API_KEY_PREFIX)).toBe(true)
       expect(generated.keyHash).toBe(hashApiKey(generated.rawKey, TEST_SECRET))
-      expect(generated.prefix).toHaveLength(16)
-      expect(generated.prefix).toBe(generated.rawKey.slice(0, 16))
+      expect(generated.prefix).toHaveLength(API_KEY_PREFIX.length + 8)
+      expect(generated.prefix).toBe(generated.rawKey.slice(0, API_KEY_PREFIX.length + 8))
     })
 
-    it('produces unique keys on each call', () => {
+    it('produit des clés uniques à chaque appel', () => {
       const a = buildApiKey(TEST_SECRET)
       const b = buildApiKey(TEST_SECRET)
       expect(a.rawKey).not.toBe(b.rawKey)

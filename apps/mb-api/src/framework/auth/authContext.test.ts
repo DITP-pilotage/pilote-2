@@ -55,14 +55,14 @@ const buildApp = () => {
   return app
 }
 
-describe.sequential('authContext middleware', () => {
+describe.sequential('middleware authContext', () => {
   beforeEach(() => {
     verifyJwt.mockReset()
     lookup.mockReset()
     verifyKey.mockReset()
   })
 
-  it('initializes the ALS with null when no Authorization header is present', async () => {
+  it("initialise l'ALS à null en l'absence de header Authorization", async () => {
     const app = buildApp()
     const response = await app.request('/anonymous')
     expect(response.status).toBe(200)
@@ -71,7 +71,7 @@ describe.sequential('authContext middleware', () => {
     expect(verifyKey).not.toHaveBeenCalled()
   })
 
-  it('initializes the ALS with null when the scheme is not Bearer', async () => {
+  it("initialise l'ALS à null quand le scheme n'est pas Bearer", async () => {
     const app = buildApp()
     const response = await app.request('/anonymous', {
       headers: { Authorization: 'Basic abc' },
@@ -82,7 +82,7 @@ describe.sequential('authContext middleware', () => {
     expect(verifyKey).not.toHaveBeenCalled()
   })
 
-  it('initializes the ALS with null when the JWT verification fails', async () => {
+  it("initialise l'ALS à null quand la vérification du JWT échoue", async () => {
     verifyJwt.mockRejectedValue(new Error('boom'))
     const app = buildApp()
     const response = await app.request('/anonymous', {
@@ -94,7 +94,7 @@ describe.sequential('authContext middleware', () => {
     expect(lookup).not.toHaveBeenCalled()
   })
 
-  it('returns 401 on /protected-user when token is valid but user is not provisioned', async () => {
+  it("renvoie 401 sur /protected-user quand le token est valide mais l'utilisateur n'est pas provisionné", async () => {
     verifyJwt.mockResolvedValue({
       providerSub: 'sub-123',
       email: 'agent@example.com',
@@ -115,7 +115,7 @@ describe.sequential('authContext middleware', () => {
     })
   })
 
-  it('exposes the user to handlers when the lookup succeeds', async () => {
+  it("expose l'utilisateur aux handlers quand le lookup réussit", async () => {
     verifyJwt.mockResolvedValue({
       providerSub: 'sub-123',
       email: 'agent@example.com',
@@ -141,7 +141,7 @@ describe.sequential('authContext middleware', () => {
     })
   })
 
-  it('accepts the Bearer scheme case-insensitively (RFC 6750)', async () => {
+  it('accepte le scheme Bearer de manière insensible à la casse (RFC 6750)', async () => {
     verifyJwt.mockResolvedValue({
       providerSub: 'sub-123',
       email: 'agent@example.com',
@@ -162,51 +162,51 @@ describe.sequential('authContext middleware', () => {
     expect(verifyJwt).toHaveBeenCalledWith('good.token')
   })
 
-  it('makes requireUser() throw UnauthorizedError on anonymous requests to protected handlers', async () => {
+  it('fait throw UnauthorizedError sur requireUser() pour une requête anonyme', async () => {
     const app = buildApp()
     const response = await app.request('/protected-user')
     expect(response.status).toBe(401)
   })
 
-  it('routes mb_live_ tokens to the API key verifier', async () => {
+  it("route les tokens préfixés pilote_live_ vers le vérificateur d'API key", async () => {
     verifyKey.mockReturnValue(okAsync({ id: 'api-key-id-1', label: 'partner-x' }))
     const app = buildApp()
     const response = await app.request('/protected-principal', {
-      headers: { Authorization: 'Bearer mb_live_abc123' },
+      headers: { Authorization: 'Bearer pilote_live_abc123' },
     })
     expect(response.status).toBe(200)
     expect(await response.json()).toEqual({
       kind: 'apiKey',
       apiKey: { id: 'api-key-id-1', label: 'partner-x' },
     })
-    expect(verifyKey).toHaveBeenCalledWith('mb_live_abc123', expect.any(String))
+    expect(verifyKey).toHaveBeenCalledWith('pilote_live_abc123', expect.any(String))
     expect(verifyJwt).not.toHaveBeenCalled()
   })
 
-  it('returns null principal when the API key is unknown or revoked', async () => {
+  it("renvoie un principal null quand l'API key est inconnue ou révoquée", async () => {
     verifyKey.mockReturnValue(okAsync(null))
     const app = buildApp()
     const response = await app.request('/anonymous', {
-      headers: { Authorization: 'Bearer mb_live_unknown' },
+      headers: { Authorization: 'Bearer pilote_live_unknown' },
     })
     expect(response.status).toBe(200)
     expect(await response.json()).toEqual({ user: null, principal: null })
   })
 
-  it('makes requireUser() throw UnauthorizedError when the principal is an API key', async () => {
+  it('fait throw UnauthorizedError sur requireUser() quand le principal est une API key', async () => {
     verifyKey.mockReturnValue(okAsync({ id: 'api-key-id-1', label: 'partner-x' }))
     const app = buildApp()
     const response = await app.request('/protected-user', {
-      headers: { Authorization: 'Bearer mb_live_abc123' },
+      headers: { Authorization: 'Bearer pilote_live_abc123' },
     })
     expect(response.status).toBe(401)
   })
 
-  it('makes requirePrincipal() succeed for an API key principal', async () => {
+  it('fait passer requirePrincipal() avec un principal API key', async () => {
     verifyKey.mockReturnValue(okAsync({ id: 'api-key-id-1', label: 'partner-x' }))
     const app = buildApp()
     const response = await app.request('/protected-principal', {
-      headers: { Authorization: 'Bearer mb_live_abc123' },
+      headers: { Authorization: 'Bearer pilote_live_abc123' },
     })
     expect(response.status).toBe(200)
   })

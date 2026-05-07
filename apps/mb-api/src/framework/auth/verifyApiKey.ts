@@ -16,10 +16,7 @@ const resolveApiKey = async (
   secret: string,
 ): Promise<ApiKeyAuthentifiee | null> => {
   const keyHash = hashApiKey(rawKey, secret)
-  const row = await db().apiKey.findUnique({
-    where: { keyHash },
-    select: { id: true, label: true, revokedAt: true, expiresAt: true },
-  })
+  const row = await db().apiKey.findUnique({ where: { keyHash } })
   if (!row) return null
 
   if (row.revokedAt) {
@@ -38,17 +35,17 @@ const resolveApiKey = async (
     return null
   }
 
-  void db()
-    .apiKey.update({
+  try {
+    await db().apiKey.update({
       where: { id: row.id },
       data: { lastUsedAt: new Date() },
     })
-    .catch((error: unknown) => {
-      logger.warn(
-        { event: 'auth.api_key.last_used_update_failed', err: error },
-        'Failed to update API key lastUsedAt',
-      )
-    })
+  } catch (error: unknown) {
+    logger.warn(
+      { event: 'auth.api_key.last_used_update_failed', err: error },
+      'Failed to update API key lastUsedAt',
+    )
+  }
 
   return { id: row.id, label: row.label }
 }

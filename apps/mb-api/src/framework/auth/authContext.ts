@@ -1,8 +1,11 @@
 import { createMiddleware } from 'hono/factory'
 import { okAsync, ResultAsync } from 'neverthrow'
 
-import { verifyAccessToken } from '@/authentication/jwks'
-import { getUtilisateurByProvider } from '@/authentication/queries/getUtilisateurByProvider'
+import { type VerifiedTokenInfo, verifyAccessToken } from '@/authentication/jwks'
+import {
+  getUtilisateurByProvider,
+  type UtilisateurEnregistre,
+} from '@/authentication/queries/getUtilisateurByProvider'
 import { env } from '@/env'
 import { looksLikeApiKey } from '@/framework/auth/apiKey'
 import { type Principal, runWithPrincipal } from '@/framework/auth/userContext'
@@ -19,6 +22,14 @@ const extractBearerToken = (header: string | undefined): string | null => {
   return token && token.length > 0 ? token : null
 }
 
+const buildUserPrincipal = (
+  utilisateur: UtilisateurEnregistre,
+  tokenInfo: VerifiedTokenInfo,
+): Principal => ({
+  kind: 'user',
+  user: { ...utilisateur, prenom: tokenInfo.prenom, nom: tokenInfo.nom },
+})
+
 const resolveJwtPrincipal = (token: string): ResultAsync<Principal | null, unknown> =>
   ResultAsync.fromPromise(verifyAccessToken(token), (error) => error)
     .orTee((error) =>
@@ -27,19 +38,10 @@ const resolveJwtPrincipal = (token: string): ResultAsync<Principal | null, unkno
         'JWT verification failed',
       ),
     )
-    .andThen((verifiedTokenInfo) =>
-      getUtilisateurByProvider(verifiedTokenInfo)
+    .andThen((tokenInfo) =>
+      getUtilisateurByProvider(tokenInfo)
         .map((utilisateur): Principal | null =>
-          utilisateur
-            ? {
-                kind: 'user',
-                user: {
-                  ...utilisateur,
-                  prenom: verifiedTokenInfo.prenom,
-                  nom: verifiedTokenInfo.nom,
-                },
-              }
-            : null,
+          utilisateur ? buildUserPrincipal(utilisateur, tokenInfo) : null,
         )
         .orTee((error) =>
           logger.warn(

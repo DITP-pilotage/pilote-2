@@ -272,8 +272,8 @@ type ApiKeyOverrides = Partial<{
 
 const DEFAULT_API_KEY = {
   label: 'API key de test',
-  rawKey: 'mb_live_test_default_key_value_xx',
-  prefix: 'mb_live_test_def',
+  rawKey: 'pilote_live_test_default_key_value_xx',
+  prefix: 'pilote_live_test_def',
 } as const
 
 const upsertApiKey = async (o: ApiKeyOverrides = {}) => {

@@ -2,9 +2,9 @@ import { createHmac, randomBytes } from 'node:crypto'
 
 import { uuidv7 } from 'uuidv7'
 
-export const API_KEY_PREFIX = 'mb_live_'
+export const API_KEY_PREFIX = 'pilote_live_'
 
-const PREFIX_VISIBLE_LENGTH = 16
+const PREFIX_VISIBLE_LENGTH = API_KEY_PREFIX.length + 8
 
 export const looksLikeApiKey = (token: string): boolean => token.startsWith(API_KEY_PREFIX)
 
