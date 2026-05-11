@@ -14,14 +14,10 @@ describe.concurrent('upsertIndicateur', () => {
       const indId = testIndicateurId()
 
       // When
-      const result = await upsertIndicateur({ publicId: indId, nom: 'Nouvel indicateur' })
+      const result = await upsertIndicateur(indId, { nom: 'Nouvel indicateur' })
 
       // Then
       expect(result.isOk()).toBe(true)
-      expect(result._unsafeUnwrap()).toMatchObject({
-        id: indId,
-        nom: 'Nouvel indicateur',
-      })
       const persisted = await db().indicateur.findUniqueOrThrow({ where: { publicId: indId } })
       expect(persisted.nom).toBe('Nouvel indicateur')
     }),
@@ -35,16 +31,14 @@ describe.concurrent('upsertIndicateur', () => {
       const original = await fixtures.indicateur({ publicId: indId, nom: 'Ancien nom' })
 
       // When
-      const result = await upsertIndicateur({ publicId: indId, nom: 'Nom mis à jour' })
+      const result = await upsertIndicateur(indId, { nom: 'Nom mis à jour' })
 
       // Then
       expect(result.isOk()).toBe(true)
-      expect(result._unsafeUnwrap()).toMatchObject({
-        id: indId,
-        nom: 'Nom mis à jour',
-        createdAt: original.createdAt.toISOString(),
-      })
-      expect(result._unsafeUnwrap().updatedAt >= original.updatedAt.toISOString()).toBe(true)
+      const persisted = await db().indicateur.findUniqueOrThrow({ where: { publicId: indId } })
+      expect(persisted.nom).toBe('Nom mis à jour')
+      expect(persisted.createdAt).toEqual(original.createdAt)
+      expect(persisted.updatedAt >= original.updatedAt).toBe(true)
     }),
   )
 })

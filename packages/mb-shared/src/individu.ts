@@ -1,17 +1,9 @@
 import { z } from 'zod'
 
 import { createPaginatedApiListSchema, listQuerySchema } from './pagination'
-import { referentielPublicIdSchema } from './referentiel'
+import { individuPublicIdSchema, referentielPublicIdSchema } from './publicIds'
 
-export const individuPublicIdSchema = z
-  .string()
-  .regex(
-    /^[A-Z][A-Z0-9-]{0,19}$/,
-    'Identifiant public d\'individu attendu (lettre majuscule suivie de lettres/chiffres/tirets, max 20 caractères)',
-  )
-  .describe(
-    "Identifiant public d'individu, format humain-friendly (ex. DEPT-84, REG-93, FR). Lettre majuscule puis lettres/chiffres/tirets, max 20 caractères.",
-  )
+export { individuPublicIdSchema } from './publicIds'
 
 export const individuApiModelSchema = z.object({
   id: individuPublicIdSchema,

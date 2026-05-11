@@ -11,6 +11,7 @@ import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { withTransaction } from '@/framework/persistence/withTransaction'
 import { upsertIndicateur } from '@/indicateur/commands/upsertIndicateur'
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
 import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
@@ -71,17 +72,18 @@ const getIndicateurByIdRoute = createRoute({
   },
 })
 
-// --- PUT /indicateurs --------------------------------------------------------
+// --- PUT /indicateurs/:id ----------------------------------------------------
 
 const upsertIndicateurRoute = createRoute({
   method: 'put',
-  path: '/indicateurs',
+  path: '/indicateurs/{id}',
   tags: ['Indicateur'],
   summary: 'Créer ou remplacer un indicateur',
   description:
-    "Crée l'indicateur s'il n'existe pas, ou remplace son `nom` si un indicateur avec le même `publicId` existe déjà. Opération idempotente.",
+    "Crée l'indicateur s'il n'existe pas, ou remplace son `nom` si un indicateur avec le même identifiant public existe déjà. Opération idempotente.",
   middleware: [requireAuthentication],
   request: {
+    params: detailParamsSchema,
     body: {
       content: { 'application/json': { schema: UpsertIndicateurBodySchema } },
       required: true,
@@ -94,7 +96,7 @@ const upsertIndicateurRoute = createRoute({
     },
     400: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Corps de requête invalide',
+      description: 'Requête invalide',
     },
   },
 })
@@ -134,9 +136,15 @@ indicateurRoutes.openapi(getIndicateurByIdRoute, async (context) => {
 })
 
 indicateurRoutes.openapi(upsertIndicateurRoute, async (context) => {
+  const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  return upsertIndicateur(body).match(
+  const result = await withTransaction(async () => {
+    await upsertIndicateur(id, body)
+    return getIndicateurByPublicId(id)
+  })
+
+  return result.match(
     (data) =>
       jsonResponseOk({
         context,
