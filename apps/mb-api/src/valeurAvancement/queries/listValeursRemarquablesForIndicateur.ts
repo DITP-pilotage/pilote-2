@@ -15,6 +15,31 @@ const computeVariation = (valeurs: ReadonlyArray<{ valeur: Prisma.Decimal }>): n
   return recente!.valeur.minus(precedenteValeur).toNumber()
 }
 
+const fetchItemsAvecVariation = (indicateurId: string, individus: ReadonlyArray<string>) =>
+  db().individu.findMany({
+    where: { publicId: { in: [...individus] } },
+    orderBy: { publicId: 'asc' },
+    include: {
+      valeurs: {
+        where: { indicateurId },
+        orderBy: [{ date: 'desc' }, { id: 'desc' }],
+        take: 2,
+      },
+    },
+  })
+
+const fetchValeursRecentesPopulation = (indicateurId: string) =>
+  db().individu.findMany({
+    where: { valeurs: { some: { indicateurId } } },
+    include: {
+      valeurs: {
+        where: { indicateurId },
+        orderBy: [{ date: 'desc' }, { id: 'desc' }],
+        take: 1,
+      },
+    },
+  })
+
 export const listValeursRemarquablesForIndicateur = (
   indicateurPublicId: string,
   params: ListValeursRemarquablesForIndicateurQuery,
@@ -27,33 +52,11 @@ export const listValeursRemarquablesForIndicateur = (
   ).andThen((indicateur) =>
     ResultAsync.fromSafePromise(
       Promise.all([
-        db().individu.findMany({
-          where: { publicId: { in: params.individus } },
-          orderBy: { publicId: 'asc' },
-          select: {
-            publicId: true,
-            valeurs: {
-              where: { indicateurId: indicateur.id },
-              orderBy: [{ date: 'desc' }, { id: 'desc' }],
-              take: 2,
-              select: { valeur: true },
-            },
-          },
-        }),
-        db().individu.findMany({
-          where: { valeurs: { some: { indicateurId: indicateur.id } } },
-          select: {
-            valeurs: {
-              where: { indicateurId: indicateur.id },
-              orderBy: [{ date: 'desc' }, { id: 'desc' }],
-              take: 1,
-              select: { valeur: true },
-            },
-          },
-        }),
+        fetchItemsAvecVariation(indicateur.id, params.individus),
+        fetchValeursRecentesPopulation(indicateur.id),
       ]),
-    ).map(([rows, allRecents]) => {
-      const dernieresValeurs = allRecents
+    ).map(([itemsRows, populationRows]) => {
+      const dernieresValeurs = populationRows
         .map((row) => row.valeurs[0]?.valeur.toNumber())
         .filter((v): v is number => v !== undefined)
       const min = dernieresValeurs.length === 0 ? null : Math.min(...dernieresValeurs)
@@ -61,7 +64,7 @@ export const listValeursRemarquablesForIndicateur = (
       const mediane = computeMediane(dernieresValeurs)
 
       return {
-        items: rows.map((row) => ({
+        items: itemsRows.map((row) => ({
           individu: row.publicId,
           variation: computeVariation(row.valeurs),
         })),

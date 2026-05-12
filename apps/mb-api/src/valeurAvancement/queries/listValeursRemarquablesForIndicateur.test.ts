@@ -7,7 +7,7 @@ import { listValeursRemarquablesForIndicateur } from '@/valeurAvancement/queries
 
 describe.concurrent('listValeursRemarquablesForIndicateur', () => {
   it(
-    'retourne variation = null et stats à null pour un individu sans valeur',
+    "retourne variation = null et stats à null quand aucun individu n'a de valeur pour l'indicateur",
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
@@ -21,6 +21,31 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
         min: null,
         max: null,
         mediane: null,
+      })
+    }),
+  )
+
+  it(
+    "retourne variation = null pour un individu sans valeur mais stats non nulles si d'autres individus ont des valeurs",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const [dept1, dept2] = testDeptIds(2)
+      await fixtures.indicateur({ publicId: indId, nom: 'T' })
+      await fixtures.individu({ publicId: dept1, nom: 'Sans valeur' })
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId },
+        individu: { publicId: dept2, nom: 'Avec valeur' },
+        date: '2026-01-01',
+        valeur: 42,
+      })
+
+      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [dept1] })
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [{ individu: dept1, variation: null }],
+        min: 42,
+        max: 42,
+        mediane: 42,
       })
     }),
   )
