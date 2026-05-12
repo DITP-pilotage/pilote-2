@@ -1,7 +1,7 @@
 import { PrismaPg } from '@prisma/adapter-pg'
 import { uuidv7 } from 'uuidv7'
 
-import { PrismaClient } from '../src/generated/prisma/client.js'
+import { Prisma, PrismaClient } from '../src/generated/prisma/client.js'
 
 import {
   individusSeed,
@@ -203,6 +203,7 @@ const main = async () => {
       where: { publicId: item.individuPublicId },
       select: { id: true },
     })
+    const valeur = new Prisma.Decimal(item.valeur)
     await prisma.valeurAvancement.upsert({
       where: {
         valeur_avancement_unique: {
@@ -211,13 +212,13 @@ const main = async () => {
           date: item.date,
         },
       },
-      update: { valeur: item.valeur },
+      update: { valeur },
       create: {
         id: uuidv7(),
         indicateurId: indicateur.id,
         individuId: individu.id,
         date: item.date,
-        valeur: item.valeur,
+        valeur,
       },
     })
   }

@@ -5,11 +5,13 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'
+import { Prisma } from '@/generated/prisma/client'
 
-const computeVariation = (valeurs: ReadonlyArray<{ valeur: number }>): number | null => {
+const computeVariation = (valeurs: ReadonlyArray<{ valeur: Prisma.Decimal }>): number | null => {
   if (valeurs.length === 0) return null
   const [recente, precedente] = valeurs
-  return recente!.valeur - (precedente?.valeur ?? 0)
+  const precedenteValeur = precedente?.valeur ?? new Prisma.Decimal(0)
+  return recente!.valeur.minus(precedenteValeur).toNumber()
 }
 
 export const listValeursRemarquablesForIndicateur = (

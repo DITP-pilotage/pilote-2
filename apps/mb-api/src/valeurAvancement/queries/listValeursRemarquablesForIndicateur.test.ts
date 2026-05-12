@@ -233,6 +233,34 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
   )
 
   it(
+    'évite les erreurs de précision IEEE 754 sur la soustraction de décimaux',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const deptId = testDeptId()
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId, nom: 'T' },
+          individu: { publicId: deptId, nom: 'Vaucluse' },
+          date: '2026-01-01',
+          valeur: 0.15,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
+          date: '2026-02-01',
+          valeur: 0.3,
+        },
+      )
+
+      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [deptId] })
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [{ individu: deptId, variation: 0.15 }],
+      })
+    }),
+  )
+
+  it(
     "rejette quand l'indicateur est introuvable",
     integrationTest(async () => {
       await expect(
