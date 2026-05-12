@@ -13,10 +13,7 @@ export const fetchAllPaginatedItems = async <T>(
   do {
     const page = await fetchPage(cursor)
     items.push(...page.items)
-    cursor =
-      page.pagination.hasMore && page.pagination.cursor
-        ? page.pagination.cursor
-        : undefined
+    cursor = page.pagination.hasMore && page.pagination.cursor ? page.pagination.cursor : undefined
   } while (cursor)
   return items
 }

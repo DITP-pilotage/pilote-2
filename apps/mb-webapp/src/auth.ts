@@ -80,9 +80,7 @@ export const auth: Auth = {
     }
   },
   login(redirect) {
-    const url = redirect
-      ? `/auth/login?redirect=${encodeURIComponent(redirect)}`
-      : '/auth/login'
+    const url = redirect ? `/auth/login?redirect=${encodeURIComponent(redirect)}` : '/auth/login'
     window.location.assign(url)
   },
   async logout() {

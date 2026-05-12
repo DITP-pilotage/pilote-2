@@ -22,10 +22,26 @@ describe('CompositeLogger', () => {
 
     for (const write of [a.write, b.write]) {
       expect(write).toHaveBeenCalledTimes(4)
-      expect(write.mock.calls[0]?.[0]).toMatchObject({ level: 'debug', message: 'debug message', context: { k: 'd' } })
-      expect(write.mock.calls[1]?.[0]).toMatchObject({ level: 'info', message: 'info message', context: { k: 'i' } })
-      expect(write.mock.calls[2]?.[0]).toMatchObject({ level: 'warn', message: 'warn message', context: { k: 'w' } })
-      expect(write.mock.calls[3]?.[0]).toMatchObject({ level: 'error', message: 'error message', context: { k: 'e' } })
+      expect(write.mock.calls[0]?.[0]).toMatchObject({
+        level: 'debug',
+        message: 'debug message',
+        context: { k: 'd' },
+      })
+      expect(write.mock.calls[1]?.[0]).toMatchObject({
+        level: 'info',
+        message: 'info message',
+        context: { k: 'i' },
+      })
+      expect(write.mock.calls[2]?.[0]).toMatchObject({
+        level: 'warn',
+        message: 'warn message',
+        context: { k: 'w' },
+      })
+      expect(write.mock.calls[3]?.[0]).toMatchObject({
+        level: 'error',
+        message: 'error message',
+        context: { k: 'e' },
+      })
     }
   })
 

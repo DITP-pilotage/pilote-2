@@ -307,9 +307,7 @@ function apiKey(
   o2: ApiKeyOverrides,
   ...rest: ApiKeyOverrides[]
 ): Promise<ApiKeyModel[]>
-async function apiKey(
-  ...overrides: ApiKeyOverrides[]
-): Promise<ApiKeyModel | ApiKeyModel[]> {
+async function apiKey(...overrides: ApiKeyOverrides[]): Promise<ApiKeyModel | ApiKeyModel[]> {
   if (overrides.length <= 1) return upsertApiKey(overrides[0])
   const results: ApiKeyModel[] = []
   for (const o of overrides) results.push(await upsertApiKey(o))

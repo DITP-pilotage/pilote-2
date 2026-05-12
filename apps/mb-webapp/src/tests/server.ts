@@ -2,11 +2,7 @@ import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 
 import { env } from '@/env'
-import {
-  buildIndicateur,
-  buildIndicateursList,
-  buildMe,
-} from '@/tests/factories/api'
+import { buildIndicateur, buildIndicateursList, buildMe } from '@/tests/factories/api'
 import { buildLogoutResponse, buildRefreshResponse } from '@/tests/factories/bff'
 
 const apiOrigin = new URL(env.apiUrl).origin

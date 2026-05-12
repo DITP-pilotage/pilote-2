@@ -1,9 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import {
-  createMemoryHistory,
-  createRouter,
-  RouterProvider,
-} from '@tanstack/react-router'
+import { createMemoryHistory, createRouter, RouterProvider } from '@tanstack/react-router'
 import { render, screen, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -53,18 +49,14 @@ describe('routing', () => {
   it("rend la page d'accueil", async () => {
     renderAt('/', stubAuth(null))
     await waitFor(() => {
-      expect(
-        screen.getByRole('heading', { level: 1, name: 'Pilote MB' }),
-      ).toBeInTheDocument()
+      expect(screen.getByRole('heading', { level: 1, name: 'Pilote MB' })).toBeInTheDocument()
     })
   })
 
   it('ne rend pas /indicateurs sans être authentifié (le beforeLoad bloque le rendu)', async () => {
     renderAt('/indicateurs', stubAuth(null))
     await new Promise((resolve) => setTimeout(resolve, 50))
-    expect(
-      screen.queryByRole('heading', { level: 1, name: 'Liste des indicateurs' }),
-    ).toBeNull()
+    expect(screen.queryByRole('heading', { level: 1, name: 'Liste des indicateurs' })).toBeNull()
   })
 
   it("permet d'accéder à /indicateurs après login", async () => {

@@ -59,7 +59,7 @@ const getIndividusWithValeursRoute = createRoute({
   method: 'get',
   path: '/indicateurs/{id}/individus',
   tags: ['Indicateur'],
-  summary: "Lister les individus disposant de valeurs pour un indicateur",
+  summary: 'Lister les individus disposant de valeurs pour un indicateur',
   description:
     "Retourne la liste paginée des individus ayant au moins une valeur pour l'indicateur. Filtre optionnel `referentiel` pour ne conserver que les individus appartenant à la population d'un référentiel donné. Chaque item inclut la dernière valeur et le nombre total de valeurs.",
   middleware: [requireAuthentication],

@@ -22,7 +22,8 @@ vi.mock('@/framework/auth/verifyApiKey', () => ({
 }))
 
 const { verifyAccessToken } = await import('@/authentication/jwks')
-const { getUtilisateurByProvider } = await import('@/authentication/queries/getUtilisateurByProvider')
+const { getUtilisateurByProvider } =
+  await import('@/authentication/queries/getUtilisateurByProvider')
 const { verifyApiKey } = await import('@/framework/auth/verifyApiKey')
 const verifyJwt = vi.mocked(verifyAccessToken)
 const lookup = vi.mocked(getUtilisateurByProvider)

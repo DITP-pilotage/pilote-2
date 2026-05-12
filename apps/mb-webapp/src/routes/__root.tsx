@@ -22,10 +22,7 @@ function RootComponent() {
     <div className="min-h-screen bg-background text-text">
       <header className="border-b border-border bg-surface">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
-          <Link
-            to="/"
-            className="text-lg font-semibold text-text hover:text-text-muted"
-          >
+          <Link to="/" className="text-lg font-semibold text-text hover:text-text-muted">
             Pilote MB
           </Link>
           <nav className="flex items-center gap-4 text-sm">

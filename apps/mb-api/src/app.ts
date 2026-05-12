@@ -24,7 +24,7 @@ app.openAPIRegistry.registerComponent('securitySchemes', 'bearer', {
   type: 'http',
   scheme: 'bearer',
   description:
-    "Accepte un access token JWT (utilisateur OIDC) ou une API key au format `pilote_live_<secret>`.",
+    'Accepte un access token JWT (utilisateur OIDC) ou une API key au format `pilote_live_<secret>`.',
 })
 
 app.get('/', (context) => context.json({ hello: 'world' }))

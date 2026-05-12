@@ -19,9 +19,7 @@ const envSchema = z.object({
       'SESSION_SECRET still uses the placeholder value — set a real secret.',
     ),
   PUBLIC_BASE_URL: z.url(),
-  LOG_LEVEL: z
-    .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
-    .default('info'),
+  LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
 })
 
 export const serverEnv = envSchema.parse(process.env)

@@ -75,13 +75,7 @@ export function Pagination({
           <ChevronLeft />
           Page précédente
         </Button>
-        <Button
-          variant="secondary"
-          size="sm"
-          type="button"
-          disabled={!hasNext}
-          onClick={onNext}
-        >
+        <Button variant="secondary" size="sm" type="button" disabled={!hasNext} onClick={onNext}>
           Page suivante
           <ChevronRight />
         </Button>

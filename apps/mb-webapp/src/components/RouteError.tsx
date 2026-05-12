@@ -15,9 +15,7 @@ export function RouteError({ error, reset }: ErrorComponentProps) {
       <div className="space-y-3">
         <div className="rounded border border-amber-200 bg-amber-50 p-6 text-amber-900">
           <p className="font-medium">Ressource introuvable</p>
-          <p className="mt-1 text-sm">
-            La ressource demandée n'existe pas ou a été supprimée.
-          </p>
+          <p className="mt-1 text-sm">La ressource demandée n'existe pas ou a été supprimée.</p>
         </div>
         <Button variant="tertiary" size="sm" asChild>
           <Link to="/indicateurs" search={{}}>

@@ -153,7 +153,10 @@ authRouter.get('/callback', async (context) => {
 
   const claims = tokens.claims()
   if (!claims?.sub || !tokens.refresh_token || !tokens.id_token) {
-    logger.error({ event: 'auth.callback.missing_tokens' }, 'Missing claims, refresh token or id token')
+    logger.error(
+      { event: 'auth.callback.missing_tokens' },
+      'Missing claims, refresh token or id token',
+    )
     return context.text('Authentication failed', 401)
   }
 
@@ -173,10 +176,7 @@ authRouter.get('/callback', async (context) => {
   return checkUserProvisioned(accessToken).match(
     async (provisioned) => {
       if (!provisioned) {
-        logger.warn(
-          { event: 'auth.login.user_not_found', sub },
-          'PMB user not found',
-        )
+        logger.warn({ event: 'auth.login.user_not_found', sub }, 'PMB user not found')
         return context.redirect('/login-error')
       }
 

@@ -27,9 +27,7 @@ function HomeComponent() {
 
       <section className="space-y-3">
         <h2 className="text-xl font-semibold">Démo TanStack Query (préservée)</h2>
-        <pre className="rounded bg-slate-900 p-4 text-sm text-slate-100">
-          {SHARED_GREETING}
-        </pre>
+        <pre className="rounded bg-slate-900 p-4 text-sm text-slate-100">{SHARED_GREETING}</pre>
         <pre className="rounded bg-slate-100 p-4 text-sm text-slate-800">
           {isPending && 'Chargement…'}
           {isError && `Erreur: ${error.message}`}

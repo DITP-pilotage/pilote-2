@@ -27,10 +27,7 @@ export const registerErrorHandler = (app: OpenAPIHono): void => {
     if (error instanceof AppError) {
       const status = mapAppErrorToHttpStatus(error)
       const logFn = status >= 500 ? logger.error.bind(logger) : logger.warn.bind(logger)
-      logFn(
-        { method, url, code: error.code, status, details: error.details },
-        error.message,
-      )
+      logFn({ method, url, code: error.code, status, details: error.details }, error.message)
       return context.json(
         {
           code: error.code,
@@ -69,10 +66,7 @@ export const registerErrorHandler = (app: OpenAPIHono): void => {
       )
     }
 
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === 'P2025'
-    ) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
       logger.warn({ method, url, prismaCode: error.code }, error.message)
       return context.json(
         {

@@ -66,9 +66,7 @@ const indicateursSeed: ReadonlyArray<{ publicId: string; nom: string }> = [
   { publicId: 'IND-045', nom: "Cyberattaques traitées par l'ANSSI" },
 ]
 
-const utilisateursSeed: ReadonlyArray<{ email: string }> = [
-  { email: 'ditp.admin@example.com' },
-]
+const utilisateursSeed: ReadonlyArray<{ email: string }> = [{ email: 'ditp.admin@example.com' }]
 
 // Clusters de mise à jour : plusieurs indicateurs peuvent partager la même
 // date de mise à jour (réaliste : on bouge plusieurs fiches le même jour).
@@ -88,9 +86,7 @@ const indicateurUpdatedAtClusters = [
   '2026-04-22T08:00:00Z',
 ] as const
 
-const indicateurDates = (
-  index: number,
-): { createdAt: Date; updatedAt: Date } => {
+const indicateurDates = (index: number): { createdAt: Date; updatedAt: Date } => {
   const updatedAt = new Date(
     indicateurUpdatedAtClusters[index % indicateurUpdatedAtClusters.length]!,
   )

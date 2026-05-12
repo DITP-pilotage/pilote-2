@@ -3,7 +3,7 @@ services:
     image: postgres:17.9-alpine
     container_name: pilote_mb_postgres
     ports:
-      - "${POSTGRES_PORT:-5434}:5432"
+      - '${POSTGRES_PORT:-5434}:5432'
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
@@ -15,7 +15,7 @@ services:
     image: postgres:17.9-alpine
     container_name: pilote_mb_postgres_test
     ports:
-      - "${POSTGRES_TEST_PORT:-5435}:5432"
+      - '${POSTGRES_TEST_PORT:-5435}:5432'
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
