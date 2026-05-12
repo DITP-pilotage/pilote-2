@@ -120,6 +120,34 @@ const main = async () => {
     ])
   }
 
+  const ditpAdmin = await prisma.utilisateur.findUniqueOrThrow({
+    where: { email: 'ditp.admin@example.com' },
+    select: { id: true },
+  })
+  for (const item of indicateursSeed.slice(0, 5)) {
+    const indicateur = await prisma.indicateur.findUniqueOrThrow({
+      where: { publicId: item.publicId },
+      select: { id: true },
+    })
+    for (const action of ['READ', 'WRITE'] as const) {
+      await prisma.indicateurPermission.upsert({
+        where: {
+          principalId_indicateurId_action: {
+            principalId: ditpAdmin.id,
+            indicateurId: indicateur.id,
+            action,
+          },
+        },
+        update: {},
+        create: {
+          principalId: ditpAdmin.id,
+          indicateurId: indicateur.id,
+          action,
+        },
+      })
+    }
+  }
+
   for (const item of referentielsSeed) {
     await prisma.referentiel.upsert({
       where: { publicId: item.publicId },
@@ -222,8 +250,9 @@ const main = async () => {
     })
   }
 
+  const permissionsCount = 5 * 2
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${relationsSeed.length} relations, ${valeursAvancementSeed.length} valeurs.`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${relationsSeed.length} relations, ${valeursAvancementSeed.length} valeurs.`,
   )
 }
 
