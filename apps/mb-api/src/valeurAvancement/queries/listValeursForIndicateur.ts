@@ -6,10 +6,8 @@ import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
-import { PermissionAction } from '@/generated/prisma/enums'
+import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { toValeurAvancementApiModel } from '@/valeurAvancement/utils'
-
-const READ_ACTIONS: PermissionAction[] = [PermissionAction.READ, PermissionAction.WRITE]
 
 export const listValeursForIndicateur = (
   indicateurPublicId: string,
@@ -18,10 +16,7 @@ export const listValeursForIndicateur = (
   const principalId = requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(
     db().indicateur.findFirstOrThrow({
-      where: {
-        publicId: indicateurPublicId,
-        permissions: { some: { principalId, action: { in: READ_ACTIONS } } },
-      },
+      where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
       select: { id: true },
     }),
   ).andThen((indicateur) => {

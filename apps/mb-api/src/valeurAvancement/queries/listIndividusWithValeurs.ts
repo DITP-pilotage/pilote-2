@@ -7,10 +7,8 @@ import { ResultAsync } from 'neverthrow'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import { buildPaginationArgs, toPaginatedResponse } from '@/framework/persistence/paginate'
-import { PermissionAction } from '@/generated/prisma/enums'
+import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { toIndividuAvecValeursApiModel } from '@/valeurAvancement/utils'
-
-const READ_ACTIONS: PermissionAction[] = [PermissionAction.READ, PermissionAction.WRITE]
 
 export const listIndividusWithValeurs = (
   indicateurPublicId: string,
@@ -18,10 +16,7 @@ export const listIndividusWithValeurs = (
 ): ResultAsync<IndividusWithValeursListApiModel, never> => {
   const principalId = requireCurrentPrincipalId()
   const indicateurFilter = {
-    indicateur: {
-      publicId: indicateurPublicId,
-      permissions: { some: { principalId, action: { in: READ_ACTIONS } } },
-    },
+    indicateur: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
   }
   const where = {
     valeurs: { some: indicateurFilter },
