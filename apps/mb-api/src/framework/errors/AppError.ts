@@ -21,3 +21,8 @@ export class ForbiddenError extends AppError {
   readonly code = 'FORBIDDEN'
   readonly kind = 'forbidden' as const
 }
+
+export class ValidationError extends AppError {
+  readonly code = 'VALIDATION_ERROR'
+  readonly kind = 'validation' as const
+}
