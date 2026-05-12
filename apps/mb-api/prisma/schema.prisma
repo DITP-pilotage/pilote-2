@@ -55,10 +55,24 @@ model Indicateur {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt      @map("updated_at")
 
-  valeurs     ValeurAvancement[]
-  permissions IndicateurPermission[]
+  valeurs      ValeurAvancement[]
+  referentiels IndicateurReferentiel[]
+  permissions  IndicateurPermission[]
 
   @@map("indicateur")
+}
+
+model IndicateurReferentiel {
+  indicateurId  String   @map("indicateur_id")  @db.Uuid
+  referentielId String   @map("referentiel_id") @db.Uuid
+  createdAt     DateTime @default(now())        @map("created_at")
+
+  indicateur  Indicateur  @relation(fields: [indicateurId],  references: [id], onDelete: Cascade)
+  referentiel Referentiel @relation(fields: [referentielId], references: [id], onDelete: Cascade)
+
+  @@id([indicateurId, referentielId])
+  @@index([referentielId])
+  @@map("indicateur_referentiel")
 }
 
 enum PermissionAction {
@@ -90,7 +104,8 @@ model Referentiel {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt      @map("updated_at")
 
-  individus Individu[]
+  individus   Individu[]
+  indicateurs IndicateurReferentiel[]
 
   @@map("referentiel")
 }
