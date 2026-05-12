@@ -106,6 +106,11 @@ function IndicateurDetailComponent() {
         </p>
       ) : (
         <>
+          <StatistiquesPopulationSection
+            indicateurId={id}
+            individuId={selectedIndividu.individu.id}
+          />
+
           <div className="flex items-center gap-3">
             <label className="text-sm text-text-muted" htmlFor="individu-select">
               Individu
@@ -156,6 +161,36 @@ function IndicateurDetailComponent() {
         </>
       )}
     </div>
+  )
+}
+
+function StatistiquesPopulationSection({
+  indicateurId,
+  individuId,
+}: {
+  indicateurId: string
+  individuId: string
+}) {
+  const { data } = useSuspenseQuery(
+    indicateurValeursRemarquablesQueryOptions(indicateurId, individuId),
+  )
+
+  const numberFormatter = new Intl.NumberFormat('fr-FR')
+  const formatStat = (value: number | null): string =>
+    value === null ? '—' : numberFormatter.format(value)
+
+  return (
+    <section className="grid gap-4 sm:grid-cols-3">
+      <StatCard label="Minimum">
+        <p className="text-3xl font-semibold text-text">{formatStat(data.min)}</p>
+      </StatCard>
+      <StatCard label="Maximum">
+        <p className="text-3xl font-semibold text-text">{formatStat(data.max)}</p>
+      </StatCard>
+      <StatCard label="Médiane">
+        <p className="text-3xl font-semibold text-text">{formatStat(data.mediane)}</p>
+      </StatCard>
+    </section>
   )
 }
 

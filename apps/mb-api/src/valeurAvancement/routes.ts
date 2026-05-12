@@ -97,7 +97,10 @@ const getValeursRemarquablesForIndicateurRoute = createRoute({
     'Le paramètre `individus` est obligatoire (1..N identifiants séparés par une virgule, ex. `DEPT-84,DEPT-13`). ' +
     'Les individus inexistants sont omis de la réponse. ' +
     'La variation est calculée sur la base de la date de la valeur (pas de la date de saisie) : null si aucune valeur, ' +
-    'égale à la valeur la plus récente si une seule (comparée à 0), sinon différence avec la valeur précédente.',
+    'égale à la valeur la plus récente si une seule (comparée à 0), sinon différence avec la valeur précédente. ' +
+    "La réponse inclut également `min`/`max`/`mediane` calculés sur la valeur la plus récente de l'ensemble des " +
+    "individus ayant au moins une valeur pour l'indicateur (indépendamment du paramètre `individus`). " +
+    "Ces trois champs sont à `null` si aucun individu n'a de valeur pour l'indicateur.",
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,

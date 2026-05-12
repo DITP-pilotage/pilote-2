@@ -6,6 +6,9 @@ import { ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
+import { computeMax } from '@/valeurAvancement/computeMax'
+import { computeMediane } from '@/valeurAvancement/computeMediane'
+import { computeMin } from '@/valeurAvancement/computeMin'
 
 const computeVariation = (valeurs: ReadonlyArray<{ valeur: Prisma.Decimal }>): number | null => {
   if (valeurs.length === 0) return null
@@ -13,6 +16,31 @@ const computeVariation = (valeurs: ReadonlyArray<{ valeur: Prisma.Decimal }>): n
   const precedenteValeur = precedente?.valeur ?? new Prisma.Decimal(0)
   return recente!.valeur.minus(precedenteValeur).toNumber()
 }
+
+const fetchItemsPourVariation = (indicateurId: string, individus: ReadonlyArray<string>) =>
+  db().individu.findMany({
+    where: { publicId: { in: [...individus] } },
+    orderBy: { publicId: 'asc' },
+    include: {
+      valeurs: {
+        where: { indicateurId },
+        orderBy: [{ date: 'desc' }, { id: 'desc' }],
+        take: 2,
+      },
+    },
+  })
+
+const fetchValeursRecentesPopulation = (indicateurId: string) =>
+  db().individu.findMany({
+    where: { valeurs: { some: { indicateurId } } },
+    include: {
+      valeurs: {
+        where: { indicateurId },
+        orderBy: [{ date: 'desc' }, { id: 'desc' }],
+        take: 1,
+      },
+    },
+  })
 
 export const listValeursRemarquablesForIndicateur = (
   indicateurPublicId: string,
@@ -25,23 +53,23 @@ export const listValeursRemarquablesForIndicateur = (
     }),
   ).andThen((indicateur) =>
     ResultAsync.fromSafePromise(
-      db().individu.findMany({
-        where: { publicId: { in: params.individus } },
-        orderBy: { publicId: 'asc' },
-        select: {
-          publicId: true,
-          valeurs: {
-            where: { indicateurId: indicateur.id },
-            orderBy: [{ date: 'desc' }, { id: 'desc' }],
-            take: 2,
-            select: { valeur: true },
-          },
-        },
-      }),
-    ).map((rows) => ({
-      items: rows.map((row) => ({
-        individu: row.publicId,
-        variation: computeVariation(row.valeurs),
-      })),
-    })),
+      Promise.all([
+        fetchItemsPourVariation(indicateur.id, params.individus),
+        fetchValeursRecentesPopulation(indicateur.id),
+      ]),
+    ).map(([itemsRows, populationRows]) => {
+      const dernieresValeurs = populationRows
+        .map((row) => row.valeurs[0]?.valeur.toNumber())
+        .filter((v): v is number => v !== undefined)
+
+      return {
+        items: itemsRows.map((row) => ({
+          individu: row.publicId,
+          variation: computeVariation(row.valeurs),
+        })),
+        min: computeMin(dernieresValeurs),
+        max: computeMax(dernieresValeurs),
+        mediane: computeMediane(dernieresValeurs),
+      }
+    }),
   )
