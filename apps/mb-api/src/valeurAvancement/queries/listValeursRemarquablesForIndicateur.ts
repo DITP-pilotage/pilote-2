@@ -15,7 +15,7 @@ const computeVariation = (valeurs: ReadonlyArray<{ valeur: Prisma.Decimal }>): n
   return recente!.valeur.minus(precedenteValeur).toNumber()
 }
 
-const fetchItemsAvecVariation = (indicateurId: string, individus: ReadonlyArray<string>) =>
+const fetchItemsPourVariation = (indicateurId: string, individus: ReadonlyArray<string>) =>
   db().individu.findMany({
     where: { publicId: { in: [...individus] } },
     orderBy: { publicId: 'asc' },
@@ -52,7 +52,7 @@ export const listValeursRemarquablesForIndicateur = (
   ).andThen((indicateur) =>
     ResultAsync.fromSafePromise(
       Promise.all([
-        fetchItemsAvecVariation(indicateur.id, params.individus),
+        fetchItemsPourVariation(indicateur.id, params.individus),
         fetchValeursRecentesPopulation(indicateur.id),
       ]),
     ).map(([itemsRows, populationRows]) => {
