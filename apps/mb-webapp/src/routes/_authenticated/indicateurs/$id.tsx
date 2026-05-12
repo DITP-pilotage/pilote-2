@@ -1,5 +1,6 @@
 import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
 import { individuPublicIdSchema } from '@pilote/mb-shared/individu'
+import { type ValeurDateApiModel } from '@pilote/mb-shared/valeurAvancement'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
@@ -21,6 +22,7 @@ import {
   indicateurIndividusQueryOptions,
   indicateurQueryOptions,
   indicateurValeursQueryOptions,
+  indicateurValeursRemarquablesQueryOptions,
 } from '@/queries/indicateurs'
 
 const paramsSchema = z.object({
@@ -56,7 +58,12 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     }
 
     // Préfetch des valeurs : useSuspenseQuery dans le composant tape le cache.
-    await context.queryClient.fetchQuery(indicateurValeursQueryOptions(params.id, deps.individu))
+    await Promise.all([
+      context.queryClient.fetchQuery(indicateurValeursQueryOptions(params.id, deps.individu)),
+      context.queryClient.fetchQuery(
+        indicateurValeursRemarquablesQueryOptions(params.id, deps.individu),
+      ),
+    ])
 
     return { indicateur, individus }
   },
@@ -126,6 +133,12 @@ function IndicateurDetailComponent() {
             </Select>
           </div>
 
+          <ValeursRemarquablesSection
+            indicateurId={id}
+            individuId={selectedIndividu.individu.id}
+            derniereValeur={selectedIndividu.derniereValeur}
+          />
+
           <Tabs defaultValue="valeurs">
             <TabsList>
               <TabsTrigger value="valeurs">Valeurs</TabsTrigger>
@@ -142,6 +155,57 @@ function IndicateurDetailComponent() {
           </Tabs>
         </>
       )}
+    </div>
+  )
+}
+
+function ValeursRemarquablesSection({
+  indicateurId,
+  individuId,
+  derniereValeur,
+}: {
+  indicateurId: string
+  individuId: string
+  derniereValeur: ValeurDateApiModel
+}) {
+  const { data } = useSuspenseQuery(
+    indicateurValeursRemarquablesQueryOptions(indicateurId, individuId),
+  )
+  const variation = data.items[0]?.variation ?? null
+
+  const numberFormatter = new Intl.NumberFormat('fr-FR')
+  const variationFormatter = new Intl.NumberFormat('fr-FR', { signDisplay: 'exceptZero' })
+
+  return (
+    <section className="grid gap-4 sm:grid-cols-2">
+      <StatCard label="Valeur la plus récente">
+        <p className="text-3xl font-semibold text-text">
+          {numberFormatter.format(derniereValeur.valeur)}
+        </p>
+        <p className="mt-1 text-xs text-text-muted">
+          au {new Date(derniereValeur.date).toLocaleDateString('fr-FR')}
+        </p>
+      </StatCard>
+
+      <StatCard label="Variation depuis la dernière MAJ">
+        <p className={`text-3xl font-semibold ${variationColorClass(variation)}`}>
+          {variation === null ? '—' : variationFormatter.format(variation)}
+        </p>
+      </StatCard>
+    </section>
+  )
+}
+
+const variationColorClass = (variation: number | null): string => {
+  if (variation === null || variation === 0) return 'text-text-muted'
+  return variation > 0 ? 'text-emerald-600' : 'text-rose-600'
+}
+
+function StatCard({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded border border-border bg-surface p-6">
+      <h2 className="text-sm font-medium text-text-muted">{label}</h2>
+      <div className="mt-2">{children}</div>
     </div>
   )
 }
