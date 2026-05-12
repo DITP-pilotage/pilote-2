@@ -17,7 +17,7 @@ export const toValeurAvancementApiModel = (
   indicateur: valeur.indicateur.publicId,
   individu: valeur.individu.publicId,
   date: valeur.date,
-  valeur: valeur.valeur,
+  valeur: valeur.valeur.toNumber(),
 })
 
 export type IndividuAvecValeursRow = IndividuWithReferentiels & {
@@ -38,7 +38,7 @@ export const toIndividuAvecValeursApiModel = (
     individu: toIndividuApiModel(row),
     derniereValeur: {
       date: derniere.date,
-      valeur: derniere.valeur,
+      valeur: derniere.valeur.toNumber(),
     },
     nombreValeurs: row._count.valeurs,
   }

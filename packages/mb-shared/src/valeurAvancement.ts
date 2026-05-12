@@ -90,6 +90,36 @@ export const listValeursForIndicateurQuerySchema = z
   )
 export type ListValeursForIndicateurQuery = z.infer<typeof listValeursForIndicateurQuerySchema>
 
+export const valeurRemarquableApiModelSchema = z.object({
+  individu: individuPublicIdSchema,
+  variation: z
+    .number()
+    .nullable()
+    .describe(
+      "Variation absolue entre la valeur la plus récente et la précédente (par date de la valeur). " +
+        "null si l'individu n'a aucune valeur ; égale à la valeur la plus récente s'il n'en a qu'une (comparée à 0).",
+    ),
+})
+export type ValeurRemarquableApiModel = z.infer<typeof valeurRemarquableApiModelSchema>
+
+export const valeursRemarquablesListApiModelSchema = z.object({
+  items: z
+    .array(valeurRemarquableApiModelSchema)
+    .describe('Valeurs remarquables pour chaque individu demandé ayant été trouvé.'),
+})
+export type ValeursRemarquablesListApiModel = z.infer<
+  typeof valeursRemarquablesListApiModelSchema
+>
+
+export const listValeursRemarquablesForIndicateurQuerySchema = z.object({
+  individus: individusCsvSchema.describe(
+    `Liste d'identifiants d'individus séparés par une virgule (ex. DEPT-84,DEPT-13). 1..${MAX_INDIVIDUS_PAR_REQUETE} identifiants.`,
+  ),
+})
+export type ListValeursRemarquablesForIndicateurQuery = z.infer<
+  typeof listValeursRemarquablesForIndicateurQuerySchema
+>
+
 export const individuAvecValeursApiModelSchema = z.object({
   individu: individuApiModelSchema,
   derniereValeur: valeurDateApiModelSchema.describe(

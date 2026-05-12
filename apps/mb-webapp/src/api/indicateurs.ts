@@ -10,6 +10,8 @@ import {
   individusWithValeursListApiModelSchema,
   type ValeurAvancementListApiModel,
   valeurAvancementListApiModelSchema,
+  type ValeursRemarquablesListApiModel,
+  valeursRemarquablesListApiModelSchema,
 } from '@pilote/mb-shared/valeurAvancement'
 
 import { apiClient } from '@/api/client'
@@ -52,4 +54,16 @@ export const fetchValeursForIndicateur = async (
     })
     .json()
   return valeurAvancementListApiModelSchema.parse(json)
+}
+
+export const fetchValeursRemarquablesForIndicateur = async (
+  indicateurId: string,
+  params: { individus: string[] },
+): Promise<ValeursRemarquablesListApiModel> => {
+  const json = await apiClient
+    .get(`indicateurs/${indicateurId}/valeurs-remarquables`, {
+      searchParams: { individus: params.individus.join(',') },
+    })
+    .json()
+  return valeursRemarquablesListApiModelSchema.parse(json)
 }

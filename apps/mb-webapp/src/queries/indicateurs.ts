@@ -5,6 +5,7 @@ import {
   fetchIndicateurs,
   fetchIndividusForIndicateur,
   fetchValeursForIndicateur,
+  fetchValeursRemarquablesForIndicateur,
   type IndicateursQueryParams,
 } from '@/api/indicateurs'
 
@@ -38,5 +39,15 @@ export const indicateurValeursQueryOptions = (indicateurId: string, individuId: 
   queryOptions({
     queryKey: ['indicateur', indicateurId, 'valeurs', individuId],
     queryFn: () => fetchValeursForIndicateur(indicateurId, { individus: [individuId] }),
+    staleTime: DEFAULT_STALE_TIME,
+  })
+
+export const indicateurValeursRemarquablesQueryOptions = (
+  indicateurId: string,
+  individuId: string,
+) =>
+  queryOptions({
+    queryKey: ['indicateur', indicateurId, 'valeurs-remarquables', individuId],
+    queryFn: () => fetchValeursRemarquablesForIndicateur(indicateurId, { individus: [individuId] }),
     staleTime: DEFAULT_STALE_TIME,
   })

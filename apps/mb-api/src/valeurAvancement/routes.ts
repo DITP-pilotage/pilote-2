@@ -6,7 +6,9 @@ import {
   individuAvecValeursApiModelSchema,
   listIndividusWithValeursQuerySchema,
   listValeursForIndicateurQuerySchema,
+  listValeursRemarquablesForIndicateurQuerySchema,
   valeurAvancementListApiModelSchema,
+  valeursRemarquablesListApiModelSchema,
 } from '@pilote/mb-shared/valeurAvancement'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
@@ -14,6 +16,7 @@ import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
 import { listValeursForIndicateur } from '@/valeurAvancement/queries/listValeursForIndicateur'
+import { listValeursRemarquablesForIndicateur } from '@/valeurAvancement/queries/listValeursRemarquablesForIndicateur'
 
 const ValeurAvancementListApiModelSchema = valeurAvancementListApiModelSchema.openapi(
   'ValeurAvancementListApiModel',
@@ -21,6 +24,9 @@ const ValeurAvancementListApiModelSchema = valeurAvancementListApiModelSchema.op
 const IndividusWithValeursListApiModelSchema = createPaginatedApiListSchema(
   individuAvecValeursApiModelSchema,
 ).openapi('IndividusWithValeursListApiModel')
+const ValeursRemarquablesListApiModelSchema = valeursRemarquablesListApiModelSchema.openapi(
+  'ValeursRemarquablesListApiModel',
+)
 const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 const indicateurParamsSchema = z.object({
@@ -79,6 +85,36 @@ const getIndividusWithValeursRoute = createRoute({
   },
 })
 
+// --- GET /indicateurs/:id/valeurs-remarquables -------------------------------
+
+const getValeursRemarquablesForIndicateurRoute = createRoute({
+  method: 'get',
+  path: '/indicateurs/{id}/valeurs-remarquables',
+  tags: ['Indicateur'],
+  summary: 'Lister les valeurs remarquables pour un indicateur sur des individus',
+  description:
+    "Retourne, pour chaque individu demandé, une vue agrégée des valeurs remarquables de l'indicateur (variation depuis la dernière mise à jour). " +
+    'Le paramètre `individus` est obligatoire (1..N identifiants séparés par une virgule, ex. `DEPT-84,DEPT-13`). ' +
+    'Les individus inexistants sont omis de la réponse. ' +
+    'La variation est calculée sur la base de la date de la valeur (pas de la date de saisie) : null si aucune valeur, ' +
+    'égale à la valeur la plus récente si une seule (comparée à 0), sinon différence avec la valeur précédente.',
+  middleware: [requireAuthentication],
+  request: {
+    params: indicateurParamsSchema,
+    query: listValeursRemarquablesForIndicateurQuerySchema,
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: ValeursRemarquablesListApiModelSchema } },
+      description: 'Valeurs remarquables pour les individus demandés',
+    },
+    400: {
+      content: { 'application/json': { schema: ErrorApiModelSchema } },
+      description: 'Paramètres de requête invalides (ex. `individus` absent)',
+    },
+  },
+})
+
 // --- App registration --------------------------------------------------------
 
 export const valeurAvancementRoutes = new OpenAPIHono()
@@ -109,6 +145,22 @@ valeurAvancementRoutes.openapi(getIndividusWithValeursRoute, async (context) => 
         context,
         data,
         schema: IndividusWithValeursListApiModelSchema,
+        status: 200,
+      }),
+    never,
+  )
+})
+
+valeurAvancementRoutes.openapi(getValeursRemarquablesForIndicateurRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  const { individus } = context.req.valid('query')
+
+  return listValeursRemarquablesForIndicateur(id, { individus }).match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: ValeursRemarquablesListApiModelSchema,
         status: 200,
       }),
     never,
