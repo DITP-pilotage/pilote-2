@@ -17,6 +17,14 @@ const computeVariation = (valeurs: ReadonlyArray<{ valeur: Prisma.Decimal }>): n
   return recente!.valeur.minus(precedenteValeur).toNumber()
 }
 
+const computeEcartMediane = (
+  derniereValeur: Prisma.Decimal | undefined,
+  mediane: number | null,
+): number | null => {
+  if (derniereValeur === undefined || mediane === null) return null
+  return derniereValeur.minus(mediane).toNumber()
+}
+
 const fetchItemsPourVariation = (indicateurId: string, individus: ReadonlyArray<string>) =>
   db().individu.findMany({
     where: { publicId: { in: [...individus] } },
@@ -62,14 +70,17 @@ export const listValeursRemarquablesForIndicateur = (
         .map((row) => row.valeurs[0]?.valeur.toNumber())
         .filter((v): v is number => v !== undefined)
 
+      const mediane = computeMediane(dernieresValeurs)
+
       return {
         items: itemsRows.map((row) => ({
           individu: row.publicId,
           variation: computeVariation(row.valeurs),
+          ecartMediane: computeEcartMediane(row.valeurs[0]?.valeur, mediane),
         })),
         min: computeMin(dernieresValeurs),
         max: computeMax(dernieresValeurs),
-        mediane: computeMediane(dernieresValeurs),
+        mediane,
       }
     }),
   )

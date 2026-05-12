@@ -99,6 +99,14 @@ export const valeurRemarquableApiModelSchema = z.object({
       "Variation absolue entre la valeur la plus récente et la précédente (par date de la valeur). " +
         "null si l'individu n'a aucune valeur ; égale à la valeur la plus récente s'il n'en a qu'une (comparée à 0).",
     ),
+  ecartMediane: z
+    .number()
+    .nullable()
+    .describe(
+      "Écart entre la valeur la plus récente de l'individu et la médiane des valeurs les plus récentes " +
+        "de tous les individus ayant au moins une valeur pour l'indicateur. " +
+        "null si l'individu n'a aucune valeur ou si la médiane n'est pas calculable.",
+    ),
 })
 export type ValeurRemarquableApiModel = z.infer<typeof valeurRemarquableApiModelSchema>
 

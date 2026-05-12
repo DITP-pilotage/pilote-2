@@ -17,7 +17,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const result = await listValeursRemarquablesForIndicateur(indId, { individus: [deptId] })
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: null }],
+        items: [{ individu: deptId, variation: null, ecartMediane: null }],
         min: null,
         max: null,
         mediane: null,
@@ -42,7 +42,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const result = await listValeursRemarquablesForIndicateur(indId, { individus: [dept1] })
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: dept1, variation: null }],
+        items: [{ individu: dept1, variation: null, ecartMediane: null }],
         min: 42,
         max: 42,
         mediane: 42,
@@ -65,7 +65,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const result = await listValeursRemarquablesForIndicateur(indId, { individus: [deptId] })
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: 50 }],
+        items: [{ individu: deptId, variation: 50, ecartMediane: 0 }],
         min: 50,
         max: 50,
         mediane: 50,
@@ -102,7 +102,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const result = await listValeursRemarquablesForIndicateur(indId, { individus: [deptId] })
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: 50 }],
+        items: [{ individu: deptId, variation: 50, ecartMediane: 0 }],
         min: 75,
         max: 75,
         mediane: 75,
@@ -133,7 +133,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const result = await listValeursRemarquablesForIndicateur(indId, { individus: [deptId] })
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: -25 }],
+        items: [{ individu: deptId, variation: -25, ecartMediane: 0 }],
         min: 25,
         max: 25,
         mediane: 25,
@@ -171,7 +171,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const result = await listValeursRemarquablesForIndicateur(indId, { individus: [deptId] })
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: 65 }],
+        items: [{ individu: deptId, variation: 65, ecartMediane: 0 }],
         min: 75,
         max: 75,
         mediane: 75,
@@ -213,9 +213,9 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [
-          { individu: dept1, variation: 20 },
-          { individu: dept2, variation: 5 },
-          { individu: dept3, variation: null },
+          { individu: dept1, variation: 20, ecartMediane: 12.5 },
+          { individu: dept2, variation: 5, ecartMediane: -12.5 },
+          { individu: dept3, variation: null, ecartMediane: null },
         ],
         min: 5,
         max: 30,
@@ -247,7 +247,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const result = await listValeursRemarquablesForIndicateur(indId, { individus: [deptId] })
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: 100 }],
+        items: [{ individu: deptId, variation: 100, ecartMediane: 0 }],
         min: 100,
         max: 100,
         mediane: 100,
@@ -273,7 +273,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       })
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: 42 }],
+        items: [{ individu: deptId, variation: 42, ecartMediane: 0 }],
         min: 42,
         max: 42,
         mediane: 42,
@@ -304,7 +304,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const result = await listValeursRemarquablesForIndicateur(indId, { individus: [deptId] })
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: 0.15 }],
+        items: [{ individu: deptId, variation: 0.15, ecartMediane: 0 }],
         min: 0.3,
         max: 0.3,
         mediane: 0.3,
@@ -427,7 +427,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const result = await listValeursRemarquablesForIndicateur(indId, { individus: [dept2] })
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: dept2, variation: 50 }],
+        items: [{ individu: dept2, variation: 50, ecartMediane: 0 }],
         min: 5,
         max: 100,
         mediane: 50,
@@ -477,6 +477,173 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       await expect(
         listValeursRemarquablesForIndicateur(testIndicateurId(), { individus: [testDeptId()] }),
       ).rejects.toThrow()
+    }),
+  )
+
+  it(
+    "calcule l'écart à la médiane pour chaque individu demandé (population impaire)",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const [dept1, dept2, dept3] = testDeptIds(3)
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId, nom: 'T' },
+          individu: { publicId: dept1, nom: 'A' },
+          date: '2026-01-01',
+          valeur: 10,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2, nom: 'B' },
+          date: '2026-01-01',
+          valeur: 50,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept3, nom: 'C' },
+          date: '2026-01-01',
+          valeur: 30,
+        },
+      )
+
+      const result = await listValeursRemarquablesForIndicateur(indId, {
+        individus: [dept1, dept2, dept3],
+      })
+
+      // mediane = 30 → ecartMediane: dept1=-20, dept2=20, dept3=0
+      expect(result._unsafeUnwrap()).toMatchObject({
+        items: [
+          { individu: dept1, ecartMediane: -20 },
+          { individu: dept2, ecartMediane: 20 },
+          { individu: dept3, ecartMediane: 0 },
+        ],
+        mediane: 30,
+      })
+    }),
+  )
+
+  it(
+    "calcule l'écart à la médiane quand la médiane est la moyenne de deux centrales (population paire)",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const [dept1, dept2, dept3, dept4] = testDeptIds(4)
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId, nom: 'T' },
+          individu: { publicId: dept1, nom: 'A' },
+          date: '2026-01-01',
+          valeur: 10,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2, nom: 'B' },
+          date: '2026-01-01',
+          valeur: 20,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept3, nom: 'C' },
+          date: '2026-01-01',
+          valeur: 30,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept4, nom: 'D' },
+          date: '2026-01-01',
+          valeur: 40,
+        },
+      )
+
+      const result = await listValeursRemarquablesForIndicateur(indId, {
+        individus: [dept1, dept4],
+      })
+
+      // mediane = (20 + 30) / 2 = 25 → dept1=-15, dept4=15
+      expect(result._unsafeUnwrap()).toMatchObject({
+        items: [
+          { individu: dept1, ecartMediane: -15 },
+          { individu: dept4, ecartMediane: 15 },
+        ],
+        mediane: 25,
+      })
+    }),
+  )
+
+  it(
+    "l'écart à la médiane utilise la valeur la plus récente de l'individu",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const [dept1, dept2, dept3] = testDeptIds(3)
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId, nom: 'T' },
+          individu: { publicId: dept1, nom: 'A' },
+          date: '2026-01-01',
+          valeur: 100,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept1 },
+          date: '2026-02-01',
+          valeur: 40,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2, nom: 'B' },
+          date: '2026-01-01',
+          valeur: 50,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept3, nom: 'C' },
+          date: '2026-01-01',
+          valeur: 30,
+        },
+      )
+
+      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [dept1] })
+
+      // valeurs récentes: dept1=40, dept2=50, dept3=30 → mediane=40 → ecart dept1=0
+      expect(result._unsafeUnwrap()).toMatchObject({
+        items: [{ individu: dept1, ecartMediane: 0 }],
+        mediane: 40,
+      })
+    }),
+  )
+
+  it(
+    "évite les erreurs de précision IEEE 754 sur l'écart à la médiane",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const [dept1, dept2, dept3] = testDeptIds(3)
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId, nom: 'T' },
+          individu: { publicId: dept1, nom: 'A' },
+          date: '2026-01-01',
+          valeur: 0.3,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2, nom: 'B' },
+          date: '2026-01-01',
+          valeur: 0.15,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept3, nom: 'C' },
+          date: '2026-01-01',
+          valeur: 0.45,
+        },
+      )
+
+      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [dept1] })
+
+      // mediane = 0.3 → ecart dept1 = 0
+      expect(result._unsafeUnwrap()).toMatchObject({
+        items: [{ individu: dept1, ecartMediane: 0 }],
+        mediane: 0.3,
+      })
     }),
   )
 })
