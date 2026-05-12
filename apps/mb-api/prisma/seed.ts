@@ -178,6 +178,46 @@ const main = async () => {
     })
   }
 
+  const indicateurReferentielsSeed: ReadonlyArray<{
+    indicateurPublicId: string
+    referentielPublicIds: ReadonlyArray<string>
+  }> = [
+    { indicateurPublicId: 'IND-001', referentielPublicIds: ['REF-DEPT'] },
+    { indicateurPublicId: 'IND-002', referentielPublicIds: ['REF-DEPT', 'REF-REG'] },
+    { indicateurPublicId: 'IND-003', referentielPublicIds: ['REF-REG'] },
+    { indicateurPublicId: 'IND-004', referentielPublicIds: ['REF-DEPT'] },
+    { indicateurPublicId: 'IND-005', referentielPublicIds: ['REF-REG'] },
+  ]
+
+  for (const item of indicateurReferentielsSeed) {
+    const indicateur = await prisma.indicateur.findUniqueOrThrow({
+      where: { publicId: item.indicateurPublicId },
+      select: { id: true },
+    })
+    for (const referentielPublicId of item.referentielPublicIds) {
+      const referentiel = await prisma.referentiel.findUniqueOrThrow({
+        where: { publicId: referentielPublicId },
+        select: { id: true },
+      })
+      await prisma.indicateurReferentiel.upsert({
+        where: {
+          indicateurId_referentielId: {
+            indicateurId: indicateur.id,
+            referentielId: referentiel.id,
+          },
+        },
+        update: {},
+        create: { indicateurId: indicateur.id, referentielId: referentiel.id },
+      })
+    }
+  }
+
+  const liaisonsCount = indicateurReferentielsSeed.reduce(
+    (acc, item) => acc + item.referentielPublicIds.length,
+    0,
+  )
+
+
   for (const item of relationsSeed) {
     const parent = await prisma.individu.findUniqueOrThrow({
       where: { publicId: item.parent },
@@ -234,7 +274,7 @@ const main = async () => {
 
   const permissionsCount = 5 * 2
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${relationsSeed.length} relations, ${valeursAvancementSeed.length} valeurs.`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursAvancementSeed.length} valeurs.`,
   )
 }
 
