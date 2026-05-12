@@ -9,9 +9,7 @@ const storage = new AsyncLocalStorage<DbClient>()
 export const db = (): DbClient => {
   const client = storage.getStore()
   if (!client) {
-    throw new Error(
-      'dbStore is empty — wrap the call site with withAppDatabase or withTransaction',
-    )
+    throw new Error('dbStore is empty — wrap the call site with withAppDatabase or withTransaction')
   }
   return client
 }

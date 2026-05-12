@@ -7,7 +7,7 @@ const printUsage = () => {
     [
       'Usage: tsx scripts/generate-api-key.ts --secret=<hmac-secret> [--label=<label>] [--expires-at=YYYY-MM-DD]',
       '',
-      "  --secret      Secret HMAC à utiliser pour calculer le hash (obligatoire ; sinon lu depuis API_KEY_HMAC_SECRET).",
+      '  --secret      Secret HMAC à utiliser pour calculer le hash (obligatoire ; sinon lu depuis API_KEY_HMAC_SECRET).',
       "  --label       Étiquette à utiliser dans la commande SQL d'insertion (optionnel ; défaut: 'à renseigner').",
       "  --expires-at  Date d'expiration ISO (optionnel ; sans cette option, la clé n'expire pas).",
       '',
@@ -50,7 +50,7 @@ const main = (): void => {
   const secret = values.secret ?? process.env['API_KEY_HMAC_SECRET']
   if (!secret || secret.length < 32) {
     process.stderr.write(
-      "Secret HMAC manquant ou trop court (32 chars min). Passez --secret=… ou définissez API_KEY_HMAC_SECRET.\n",
+      'Secret HMAC manquant ou trop court (32 chars min). Passez --secret=… ou définissez API_KEY_HMAC_SECRET.\n',
     )
     process.exit(2)
   }

@@ -19,7 +19,7 @@ export const referentielsSeed = [
 export const individusSeed = [
   { publicId: 'FR', nom: 'France', referentiels: ['REF-NAT'] },
   { publicId: 'REG-11', nom: 'Île-de-France', referentiels: ['REF-REG'] },
-  { publicId: 'REG-93', nom: 'Provence-Alpes-Côte d\'Azur', referentiels: ['REF-REG'] },
+  { publicId: 'REG-93', nom: "Provence-Alpes-Côte d'Azur", referentiels: ['REF-REG'] },
   { publicId: 'REG-84', nom: 'Auvergne-Rhône-Alpes', referentiels: ['REF-REG'] },
   { publicId: 'DEPT-75', nom: 'Paris', referentiels: ['REF-DEPT'] },
   { publicId: 'DEPT-77', nom: 'Seine-et-Marne', referentiels: ['REF-DEPT'] },

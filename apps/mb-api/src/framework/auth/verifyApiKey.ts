@@ -20,18 +20,12 @@ const resolveApiKey = async (
   if (!row) return null
 
   if (row.revokedAt) {
-    logger.warn(
-      { event: 'auth.api_key.revoked', apiKeyId: row.id },
-      'Revoked API key used',
-    )
+    logger.warn({ event: 'auth.api_key.revoked', apiKeyId: row.id }, 'Revoked API key used')
     return null
   }
 
   if (row.expiresAt && row.expiresAt.getTime() <= Date.now()) {
-    logger.warn(
-      { event: 'auth.api_key.expired', apiKeyId: row.id },
-      'Expired API key used',
-    )
+    logger.warn({ event: 'auth.api_key.expired', apiKeyId: row.id }, 'Expired API key used')
     return null
   }
 

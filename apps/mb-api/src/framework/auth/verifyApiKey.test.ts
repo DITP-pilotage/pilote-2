@@ -27,10 +27,7 @@ describe.concurrent('verifyApiKey', () => {
   it(
     'renvoie null quand la clé est inconnue',
     integrationTest(async () => {
-      const result = await verifyApiKey(
-        'pilote_live_unknown_key_value_xx',
-        env.API_KEY_HMAC_SECRET,
-      )
+      const result = await verifyApiKey('pilote_live_unknown_key_value_xx', env.API_KEY_HMAC_SECRET)
       expect(result._unsafeUnwrap()).toBeNull()
     }),
   )

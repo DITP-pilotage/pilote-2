@@ -8,7 +8,13 @@ export const logger = pino({
   level: serverEnv.LOG_LEVEL,
   base: { app: 'mb-webapp-bff' },
   redact: {
-    paths: ['req.headers.authorization', 'req.headers.cookie', 'token', '*.token', '*.refreshToken'],
+    paths: [
+      'req.headers.authorization',
+      'req.headers.cookie',
+      'token',
+      '*.token',
+      '*.refreshToken',
+    ],
     censor: '[REDACTED]',
   },
   ...(isDev

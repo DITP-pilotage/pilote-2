@@ -12,7 +12,11 @@ describe.concurrent('getReferentielByPublicId', () => {
       const [dept1, dept2] = testDeptIds(2)
       await fixtures.referentielIndividu(
         {
-          referentiel: { publicId: 'REF-TEST', nom: 'Référentiel de test', description: 'Description test' },
+          referentiel: {
+            publicId: 'REF-TEST',
+            nom: 'Référentiel de test',
+            description: 'Description test',
+          },
           individu: { publicId: dept1 },
         },
         {

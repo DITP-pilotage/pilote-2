@@ -3,10 +3,7 @@ import { describe, expect, it } from 'vitest'
 
 import { UnauthorizedError } from '@/framework/auth/UnauthorizedError'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
-import {
-  type Principal,
-  runWithPrincipal,
-} from '@/framework/auth/userContext'
+import { type Principal, runWithPrincipal } from '@/framework/auth/userContext'
 
 const buildApp = (principal: Principal | null) => {
   const app = new Hono()

@@ -65,11 +65,7 @@ describe.sequential('auth singleton', () => {
         }),
       )
 
-      const calls = Promise.all([
-        refreshAccessToken(),
-        refreshAccessToken(),
-        refreshAccessToken(),
-      ])
+      const calls = Promise.all([refreshAccessToken(), refreshAccessToken(), refreshAccessToken()])
 
       await vi.waitFor(() => {
         expect(callCount).toBe(1)

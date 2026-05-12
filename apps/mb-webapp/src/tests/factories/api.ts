@@ -9,9 +9,7 @@ export const buildMe = (override: Partial<MeApiModel> = {}): MeApiModel =>
     ...override,
   })
 
-export const buildIndicateur = (
-  override: Partial<IndicateurApiModel> = {},
-): IndicateurApiModel =>
+export const buildIndicateur = (override: Partial<IndicateurApiModel> = {}): IndicateurApiModel =>
   indicateurApiModelSchema.parse({
     id: 1,
     nom: 'Indicateur test',

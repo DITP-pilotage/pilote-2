@@ -130,7 +130,7 @@ describe.concurrent('listValeursForIndicateur', () => {
   )
 
   it(
-    'rejette quand l\'indicateur est introuvable',
+    "rejette quand l'indicateur est introuvable",
     integrationTest(async () => {
       await expect(
         listValeursForIndicateur(testIndicateurId(), { individus: [testDeptId()] }),

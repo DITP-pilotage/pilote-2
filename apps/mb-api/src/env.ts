@@ -20,9 +20,7 @@ const envSchema = z.object({
   OIDC_JWKS_URI: z.url(),
   OIDC_AUDIENCE: z.string().min(1),
   API_KEY_HMAC_SECRET: z.string().min(32),
-  LOG_LEVEL: z
-    .enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent'])
-    .default('info'),
+  LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
   LOG_TO_DATABASE: z.stringbool().default(false),
 })
 

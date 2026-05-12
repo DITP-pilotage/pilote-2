@@ -7,7 +7,7 @@ import { testDeptId } from '@/test/randomIds'
 
 describe.concurrent('getIndividuByPublicId', () => {
   it(
-    'retourne l\'individu avec ses référentiels',
+    "retourne l'individu avec ses référentiels",
     integrationTest(async () => {
       const deptId = testDeptId()
       await fixtures.referentielIndividu(
@@ -33,7 +33,7 @@ describe.concurrent('getIndividuByPublicId', () => {
   )
 
   it(
-    'rejette quand l\'individu est introuvable',
+    "rejette quand l'individu est introuvable",
     integrationTest(async () => {
       await expect(getIndividuByPublicId(testDeptId())).rejects.toThrow()
     }),

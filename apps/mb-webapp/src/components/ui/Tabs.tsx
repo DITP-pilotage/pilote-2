@@ -5,22 +5,13 @@ import { clsxm } from '@/lib/clsxm'
 
 export const Tabs = TabsPrimitive.Root
 
-export function TabsList({
-  className,
-  ...props
-}: ComponentProps<typeof TabsPrimitive.List>) {
+export function TabsList({ className, ...props }: ComponentProps<typeof TabsPrimitive.List>) {
   return (
-    <TabsPrimitive.List
-      className={clsxm('flex border-b border-border', className)}
-      {...props}
-    />
+    <TabsPrimitive.List className={clsxm('flex border-b border-border', className)} {...props} />
   )
 }
 
-export function TabsTrigger({
-  className,
-  ...props
-}: ComponentProps<typeof TabsPrimitive.Trigger>) {
+export function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsPrimitive.Trigger>) {
   return (
     <TabsPrimitive.Trigger
       className={clsxm(
@@ -35,10 +26,7 @@ export function TabsTrigger({
   )
 }
 
-export function TabsContent({
-  className,
-  ...props
-}: ComponentProps<typeof TabsPrimitive.Content>) {
+export function TabsContent({ className, ...props }: ComponentProps<typeof TabsPrimitive.Content>) {
   return (
     <TabsPrimitive.Content
       className={clsxm('pt-4 focus-visible:outline-none', className)}

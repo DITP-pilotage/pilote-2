@@ -6,9 +6,7 @@ export type ReferentielWithCount = ReferentielModel & {
   _count: { individus: number }
 }
 
-export const toReferentielApiModel = (
-  referentiel: ReferentielWithCount,
-): ReferentielApiModel => ({
+export const toReferentielApiModel = (referentiel: ReferentielWithCount): ReferentielApiModel => ({
   id: referentiel.publicId,
   nom: referentiel.nom,
   description: referentiel.description,

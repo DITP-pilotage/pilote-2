@@ -1,9 +1,5 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import {
-  createFileRoute,
-  Link,
-  useNavigate,
-} from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { z } from 'zod'
 
 import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@/components/ui/Pagination'
@@ -20,8 +16,7 @@ const indicateursSearchSchema = z.object({
 export const Route = createFileRoute('/_authenticated/indicateurs/')({
   validateSearch: indicateursSearchSchema,
   loaderDeps: ({ search }) => search,
-  loader: ({ context, deps }) =>
-    context.queryClient.fetchQuery(indicateursQueryOptions(deps)),
+  loader: ({ context, deps }) => context.queryClient.fetchQuery(indicateursQueryOptions(deps)),
   pendingComponent: () => <RouteLoading message="Chargement des indicateurs…" />,
   errorComponent: RouteError,
   component: IndicateursListComponent,

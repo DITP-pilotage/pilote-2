@@ -10,7 +10,7 @@ describe.concurrent('apiKey', () => {
       expect(looksLikeApiKey('pilote_live_abc')).toBe(true)
     })
 
-    it("renvoie false pour un token de format JWT", () => {
+    it('renvoie false pour un token de format JWT', () => {
       expect(looksLikeApiKey('eyJhbGciOiJSUzI1NiJ9.payload.signature')).toBe(false)
     })
   })

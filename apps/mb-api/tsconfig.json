@@ -27,6 +27,13 @@
       "@/env": ["./src/env"]
     }
   },
-  "include": ["src/**/*", "scripts/**/*", "vite.config.ts", "vitest.config.ts", "prisma.config.ts", "eslint.config.mjs"],
+  "include": [
+    "src/**/*",
+    "scripts/**/*",
+    "vite.config.ts",
+    "vitest.config.ts",
+    "prisma.config.ts",
+    "eslint.config.mjs"
+  ],
   "exclude": ["dist", "node_modules"]
 }

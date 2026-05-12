@@ -13,7 +13,13 @@ export class PinoStdoutSink implements LogSink {
       level: env.LOG_LEVEL,
       base: { app: 'mb-api' },
       redact: {
-        paths: ['req.headers.authorization', 'req.headers.cookie', 'token', '*.token', '*.refreshToken'],
+        paths: [
+          'req.headers.authorization',
+          'req.headers.cookie',
+          'token',
+          '*.token',
+          '*.refreshToken',
+        ],
         censor: '[REDACTED]',
       },
       ...(isDev

@@ -38,21 +38,9 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
     ref?: Ref<HTMLButtonElement>
   }
 
-export function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  ref,
-  ...props
-}: ButtonProps) {
+export function Button({ className, variant, size, asChild = false, ref, ...props }: ButtonProps) {
   const Comp = asChild ? Slot : 'button'
   return (
-    <Comp
-      ref={ref}
-      className={clsxm(buttonVariants({ variant, size }), className)}
-      {...props}
-    />
+    <Comp ref={ref} className={clsxm(buttonVariants({ variant, size }), className)} {...props} />
   )
 }
-

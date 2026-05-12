@@ -25,8 +25,7 @@ const storage = new AsyncLocalStorage<Store>()
 export const runWithPrincipal = <T>(principal: Principal | null, fn: () => T): T =>
   storage.run({ principal }, fn)
 
-export const getCurrentPrincipal = (): Principal | null =>
-  storage.getStore()?.principal ?? null
+export const getCurrentPrincipal = (): Principal | null => storage.getStore()?.principal ?? null
 
 export const requirePrincipal = (): Principal => {
   const principal = getCurrentPrincipal()

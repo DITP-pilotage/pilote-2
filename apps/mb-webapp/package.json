@@ -18,7 +18,7 @@
     "deploy:bundle": "bash deploy-bundle.sh",
     "start": "node dist/server/index.js",
     "preview": "vite preview",
-    "lint": "tsr generate && eslint src && tsc --noEmit",
+    "lint": "tsr generate && eslint src && tsc --noEmit && prettier --check .",
     "lint:fix": "tsr generate && eslint src --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
