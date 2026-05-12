@@ -7,7 +7,18 @@ import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { PermissionAction } from '@/generated/prisma/enums'
 
-const assertWritePermission = async (indicateurId: string, principalId: string): Promise<void> => {
+type UpsertIndicateurParams = {
+  publicId: string
+  body: UpsertIndicateurBody
+}
+
+const assertWritePermission = async ({
+  indicateurId,
+  principalId,
+}: {
+  indicateurId: string
+  principalId: string
+}): Promise<void> => {
   const hasWrite = await db().indicateurPermission.findUnique({
     where: {
       principalId_indicateurId_action: {
@@ -16,28 +27,36 @@ const assertWritePermission = async (indicateurId: string, principalId: string):
         action: PermissionAction.WRITE,
       },
     },
-    select: { action: true },
   })
   if (!hasWrite) {
     throw new ForbiddenError("Vous n'avez pas la permission de modifier cet indicateur")
   }
 }
 
-const updateExisting = async (
-  publicId: string,
-  indicateurId: string,
-  body: UpsertIndicateurBody,
-  principalId: string,
-): Promise<void> => {
-  await assertWritePermission(indicateurId, principalId)
+const updateExisting = async ({
+  publicId,
+  indicateurId,
+  body,
+  principalId,
+}: {
+  publicId: string
+  indicateurId: string
+  body: UpsertIndicateurBody
+  principalId: string
+}): Promise<void> => {
+  await assertWritePermission({ indicateurId, principalId })
   await db().indicateur.update({ where: { publicId }, data: { nom: body.nom } })
 }
 
-const createWithGrants = async (
-  publicId: string,
-  body: UpsertIndicateurBody,
-  principalId: string,
-): Promise<void> => {
+const createWithGrants = async ({
+  publicId,
+  body,
+  principalId,
+}: {
+  publicId: string
+  body: UpsertIndicateurBody
+  principalId: string
+}): Promise<void> => {
   const id = uuidv7()
   await db().indicateur.create({ data: { id, publicId, nom: body.nom } })
   await db().indicateurPermission.createMany({
@@ -48,20 +67,15 @@ const createWithGrants = async (
   })
 }
 
-const performUpsert = async (publicId: string, body: UpsertIndicateurBody): Promise<void> => {
+const performUpsert = async ({ publicId, body }: UpsertIndicateurParams): Promise<void> => {
   const principalId = requireCurrentPrincipalId()
-  const existing = await db().indicateur.findUnique({
-    where: { publicId },
-    select: { id: true },
-  })
+  const existing = await db().indicateur.findUnique({ where: { publicId } })
   if (existing) {
-    await updateExisting(publicId, existing.id, body, principalId)
+    await updateExisting({ publicId, indicateurId: existing.id, body, principalId })
     return
   }
-  await createWithGrants(publicId, body, principalId)
+  await createWithGrants({ publicId, body, principalId })
 }
 
-export const upsertIndicateur = (
-  publicId: string,
-  body: UpsertIndicateurBody,
-): ResultAsync<void, never> => ResultAsync.fromSafePromise(performUpsert(publicId, body))
+export const upsertIndicateur = (params: UpsertIndicateurParams): ResultAsync<void, never> =>
+  ResultAsync.fromSafePromise(performUpsert(params))

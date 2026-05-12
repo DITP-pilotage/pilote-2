@@ -15,7 +15,7 @@ describe.concurrent('upsertIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertIndicateur(indId, { nom: 'Nouvel indicateur' }),
+        upsertIndicateur({ publicId: indId, body: { nom: 'Nouvel indicateur' } }),
       )
 
       expect(result.isOk()).toBe(true)
@@ -39,7 +39,7 @@ describe.concurrent('upsertIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertIndicateur(indId, { nom: 'Nom mis à jour' }),
+        upsertIndicateur({ publicId: indId, body: { nom: 'Nom mis à jour' } }),
       )
 
       expect(result.isOk()).toBe(true)
@@ -60,7 +60,9 @@ describe.concurrent('upsertIndicateur', () => {
       })
 
       await expect(
-        runAsPrincipal(apiKey.id, () => upsertIndicateur(indId, { nom: 'Nom mis à jour' })),
+        runAsPrincipal(apiKey.id, () =>
+          upsertIndicateur({ publicId: indId, body: { nom: 'Nom mis à jour' } }),
+        ),
       ).rejects.toThrow(/permission/i)
     }),
   )

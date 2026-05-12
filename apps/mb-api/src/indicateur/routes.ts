@@ -140,7 +140,7 @@ indicateurRoutes.openapi(upsertIndicateurRoute, async (context) => {
   const body = context.req.valid('json')
 
   const result = await withTransaction(async () => {
-    await upsertIndicateur(id, body)
+    await upsertIndicateur({ publicId: id, body })
     return getIndicateurByPublicId(id)
   })
 
