@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { db } from '@/framework/persistence/dbStore'
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
@@ -8,25 +9,33 @@ import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('getIndicateurByPublicId', () => {
   it(
-    "retourne l'indicateur quand le principal a la permission READ",
+    "retourne l'indicateur avec ses référentiels liés triés par publicId",
     integrationTest(async () => {
-      // Given
       const indId = testIndicateurId()
-      const created = await fixtures.indicateur({ publicId: indId, nom: 'Indicateur de test' })
+      const indicateur = await fixtures.indicateur({ publicId: indId, nom: 'Indicateur de test' })
+      const [refA, refB] = await fixtures.referentiel(
+        { publicId: 'REF-DETAIL-B' },
+        { publicId: 'REF-DETAIL-A' },
+      )
+      await db().indicateurReferentiel.createMany({
+        data: [
+          { indicateurId: indicateur.id, referentielId: refA!.id },
+          { indicateurId: indicateur.id, referentielId: refB!.id },
+        ],
+      })
       const apiKey = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
       })
 
-      // When
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
 
-      // Then
       expect(result.isOk()).toBe(true)
       expect(result._unsafeUnwrap()).toEqual({
         id: indId,
         nom: 'Indicateur de test',
-        createdAt: created.createdAt.toISOString(),
-        updatedAt: created.updatedAt.toISOString(),
+        referentielIds: ['REF-DETAIL-A', 'REF-DETAIL-B'],
+        createdAt: indicateur.createdAt.toISOString(),
+        updatedAt: indicateur.updatedAt.toISOString(),
       })
     }),
   )
@@ -43,6 +52,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
 
       expect(result.isOk()).toBe(true)
+      expect(result._unsafeUnwrap().referentielIds).toEqual([])
     }),
   )
 
