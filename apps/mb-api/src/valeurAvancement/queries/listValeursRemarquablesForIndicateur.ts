@@ -6,7 +6,9 @@ import { ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
+import { computeMax } from '@/valeurAvancement/computeMax'
 import { computeMediane } from '@/valeurAvancement/computeMediane'
+import { computeMin } from '@/valeurAvancement/computeMin'
 
 const computeVariation = (valeurs: ReadonlyArray<{ valeur: Prisma.Decimal }>): number | null => {
   if (valeurs.length === 0) return null
@@ -59,18 +61,15 @@ export const listValeursRemarquablesForIndicateur = (
       const dernieresValeurs = populationRows
         .map((row) => row.valeurs[0]?.valeur.toNumber())
         .filter((v): v is number => v !== undefined)
-      const min = dernieresValeurs.length === 0 ? null : Math.min(...dernieresValeurs)
-      const max = dernieresValeurs.length === 0 ? null : Math.max(...dernieresValeurs)
-      const mediane = computeMediane(dernieresValeurs)
 
       return {
         items: itemsRows.map((row) => ({
           individu: row.publicId,
           variation: computeVariation(row.valeurs),
         })),
-        min,
-        max,
-        mediane,
+        min: computeMin(dernieresValeurs),
+        max: computeMax(dernieresValeurs),
+        mediane: computeMediane(dernieresValeurs),
       }
     }),
   )
