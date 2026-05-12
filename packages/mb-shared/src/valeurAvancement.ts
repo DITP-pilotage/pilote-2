@@ -106,6 +106,28 @@ export const valeursRemarquablesListApiModelSchema = z.object({
   items: z
     .array(valeurRemarquableApiModelSchema)
     .describe('Valeurs remarquables pour chaque individu demandé ayant été trouvé.'),
+  min: z
+    .number()
+    .nullable()
+    .describe(
+      "Plus petite valeur la plus récente parmi l'ensemble des individus ayant au moins une valeur " +
+        "pour l'indicateur. null si aucun individu n'a de valeur.",
+    ),
+  max: z
+    .number()
+    .nullable()
+    .describe(
+      "Plus grande valeur la plus récente parmi l'ensemble des individus ayant au moins une valeur " +
+        "pour l'indicateur. null si aucun individu n'a de valeur.",
+    ),
+  mediane: z
+    .number()
+    .nullable()
+    .describe(
+      "Médiane des valeurs les plus récentes parmi l'ensemble des individus ayant au moins une valeur " +
+        "pour l'indicateur. Moyenne des deux valeurs centrales si le nombre d'individus est pair. " +
+        "null si aucun individu n'a de valeur.",
+    ),
 })
 export type ValeursRemarquablesListApiModel = z.infer<
   typeof valeursRemarquablesListApiModelSchema

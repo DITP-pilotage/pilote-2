@@ -6,6 +6,7 @@ import { ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
+import { computeMediane } from '@/valeurAvancement/computeMediane'
 
 const computeVariation = (valeurs: ReadonlyArray<{ valeur: Prisma.Decimal }>): number | null => {
   if (valeurs.length === 0) return null
@@ -25,23 +26,48 @@ export const listValeursRemarquablesForIndicateur = (
     }),
   ).andThen((indicateur) =>
     ResultAsync.fromSafePromise(
-      db().individu.findMany({
-        where: { publicId: { in: params.individus } },
-        orderBy: { publicId: 'asc' },
-        select: {
-          publicId: true,
-          valeurs: {
-            where: { indicateurId: indicateur.id },
-            orderBy: [{ date: 'desc' }, { id: 'desc' }],
-            take: 2,
-            select: { valeur: true },
+      Promise.all([
+        db().individu.findMany({
+          where: { publicId: { in: params.individus } },
+          orderBy: { publicId: 'asc' },
+          select: {
+            publicId: true,
+            valeurs: {
+              where: { indicateurId: indicateur.id },
+              orderBy: [{ date: 'desc' }, { id: 'desc' }],
+              take: 2,
+              select: { valeur: true },
+            },
           },
-        },
-      }),
-    ).map((rows) => ({
-      items: rows.map((row) => ({
-        individu: row.publicId,
-        variation: computeVariation(row.valeurs),
-      })),
-    })),
+        }),
+        db().individu.findMany({
+          where: { valeurs: { some: { indicateurId: indicateur.id } } },
+          select: {
+            valeurs: {
+              where: { indicateurId: indicateur.id },
+              orderBy: [{ date: 'desc' }, { id: 'desc' }],
+              take: 1,
+              select: { valeur: true },
+            },
+          },
+        }),
+      ]),
+    ).map(([rows, allRecents]) => {
+      const dernieresValeurs = allRecents
+        .map((row) => row.valeurs[0]?.valeur.toNumber())
+        .filter((v): v is number => v !== undefined)
+      const min = dernieresValeurs.length === 0 ? null : Math.min(...dernieresValeurs)
+      const max = dernieresValeurs.length === 0 ? null : Math.max(...dernieresValeurs)
+      const mediane = computeMediane(dernieresValeurs)
+
+      return {
+        items: rows.map((row) => ({
+          individu: row.publicId,
+          variation: computeVariation(row.valeurs),
+        })),
+        min,
+        max,
+        mediane,
+      }
+    }),
   )
