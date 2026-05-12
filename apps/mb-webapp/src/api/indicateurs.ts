@@ -4,6 +4,7 @@ import {
   type IndicateurListApiModel,
   indicateurListApiModelSchema,
 } from '@pilote/mb-shared/indicateur'
+import { type IndividuListApiModel, individuListApiModelSchema } from '@pilote/mb-shared/individu'
 import { type PaginateQuery } from '@pilote/mb-shared/pagination'
 import {
   type IndividusWithValeursListApiModel,
@@ -54,6 +55,16 @@ export const fetchValeursForIndicateur = async (
     })
     .json()
   return valeurAvancementListApiModelSchema.parse(json)
+}
+
+export const fetchIndividusForReferentiel = async (
+  referentielId: string,
+  params: { cursor?: string } = {},
+): Promise<IndividuListApiModel> => {
+  const json = await apiClient
+    .get(`referentiels/${referentielId}/individus`, { searchParams: params })
+    .json()
+  return individuListApiModelSchema.parse(json)
 }
 
 export const fetchValeursRemarquablesForIndicateur = async (

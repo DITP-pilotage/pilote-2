@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/Select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import {
-  indicateurIndividusQueryOptions,
+  indicateurAuthorizedIndividusQueryOptions,
   indicateurQueryOptions,
   indicateurValeursQueryOptions,
   indicateurValeursRemarquablesQueryOptions,
@@ -41,23 +41,25 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
   validateSearch: searchSchema,
   loaderDeps: ({ search }) => ({ individu: search.individu }),
   loader: async ({ context, params, deps }) => {
-    const [indicateur, individus] = await Promise.all([
-      context.queryClient.fetchQuery(indicateurQueryOptions(params.id)),
-      context.queryClient.fetchQuery(indicateurIndividusQueryOptions(params.id)),
-    ])
+    const indicateur = await context.queryClient.fetchQuery(indicateurQueryOptions(params.id))
+
+    if (indicateur.referentielIds.length === 0) return { indicateur, individus: [] }
+
+    const individus = await context.queryClient.fetchQuery(
+      indicateurAuthorizedIndividusQueryOptions(params.id, indicateur.referentielIds),
+    )
 
     if (individus.length === 0) return { indicateur, individus }
 
-    if (!deps.individu || !individus.some((i) => i.individu.id === deps.individu)) {
+    if (!deps.individu || !individus.some((i) => i.id === deps.individu)) {
       throw redirect({
         to: '/indicateurs/$id',
         params,
-        search: { individu: individus[0]!.individu.id },
+        search: { individu: individus[0]!.id },
         replace: true,
       })
     }
 
-    // Préfetch des valeurs : useSuspenseQuery dans le composant tape le cache.
     await Promise.all([
       context.queryClient.fetchQuery(indicateurValeursQueryOptions(params.id, deps.individu)),
       context.queryClient.fetchQuery(
@@ -78,12 +80,16 @@ function IndicateurDetailComponent() {
   const navigate = useNavigate({ from: Route.fullPath })
 
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(id))
-  const { data: individus } = useSuspenseQuery(indicateurIndividusQueryOptions(id))
+  const { data: individus } = useSuspenseQuery(
+    indicateurAuthorizedIndividusQueryOptions(id, indicateur.referentielIds),
+  )
 
-  // Le loader garantit que `search.individu` est défini et valide dès lors que la liste n'est pas vide.
   const selectedIndividu = search.individu
-    ? individus.find((i) => i.individu.id === search.individu)
+    ? individus.find((i) => i.id === search.individu)
     : undefined
+
+  const noReferentiel = indicateur.referentielIds.length === 0
+  const noIndividu = !noReferentiel && individus.length === 0
 
   return (
     <div className="space-y-6">
@@ -100,23 +106,24 @@ function IndicateurDetailComponent() {
         <h1 className="text-3xl font-semibold text-text">{indicateur.nom}</h1>
       </header>
 
-      {selectedIndividu === undefined ? (
+      {noReferentiel ? (
         <p className="rounded border border-border bg-surface p-6 text-sm text-text-muted">
-          Aucun individu n'a de valeur pour cet indicateur.
+          Aucun référentiel associé à cet indicateur.
         </p>
-      ) : (
+      ) : noIndividu ? (
+        <p className="rounded border border-border bg-surface p-6 text-sm text-text-muted">
+          Aucun individu disponible dans les référentiels liés.
+        </p>
+      ) : selectedIndividu === undefined ? null : (
         <>
-          <StatistiquesPopulationSection
-            indicateurId={id}
-            individuId={selectedIndividu.individu.id}
-          />
+          <StatistiquesPopulationSection indicateurId={id} individuId={selectedIndividu.id} />
 
           <div className="flex items-center gap-3">
             <label className="text-sm text-text-muted" htmlFor="individu-select">
               Individu
             </label>
             <Select
-              value={selectedIndividu.individu.id}
+              value={selectedIndividu.id}
               onValueChange={(value) => {
                 startTransition(() => {
                   void navigate({
@@ -129,7 +136,7 @@ function IndicateurDetailComponent() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {individus.map(({ individu }) => (
+                {individus.map((individu) => (
                   <SelectItem key={individu.id} value={individu.id}>
                     {individu.nom}
                   </SelectItem>
@@ -138,11 +145,7 @@ function IndicateurDetailComponent() {
             </Select>
           </div>
 
-          <ValeursRemarquablesSection
-            indicateurId={id}
-            individuId={selectedIndividu.individu.id}
-            derniereValeur={selectedIndividu.derniereValeur}
-          />
+          <ValeursRemarquablesSection indicateurId={id} individuId={selectedIndividu.id} />
 
           <Tabs defaultValue="valeurs">
             <TabsList>
@@ -151,7 +154,7 @@ function IndicateurDetailComponent() {
             </TabsList>
 
             <TabsContent value="valeurs">
-              <ValeursTable indicateurId={id} individuId={selectedIndividu.individu.id} />
+              <ValeursTable indicateurId={id} individuId={selectedIndividu.id} />
             </TabsContent>
 
             <TabsContent value="metadonnees">
@@ -197,16 +200,19 @@ function StatistiquesPopulationSection({
 function ValeursRemarquablesSection({
   indicateurId,
   individuId,
-  derniereValeur,
 }: {
   indicateurId: string
   individuId: string
-  derniereValeur: ValeurDateApiModel
 }) {
-  const { data } = useSuspenseQuery(
+  const { data: remarquables } = useSuspenseQuery(
     indicateurValeursRemarquablesQueryOptions(indicateurId, individuId),
   )
-  const variation = data.items[0]?.variation ?? null
+  const { data: valeurs } = useSuspenseQuery(
+    indicateurValeursQueryOptions(indicateurId, individuId),
+  )
+
+  const derniereValeur = derniereValeurFromItems(valeurs.items)
+  const variation = remarquables.items[0]?.variation ?? null
 
   const numberFormatter = new Intl.NumberFormat('fr-FR')
   const variationFormatter = new Intl.NumberFormat('fr-FR', { signDisplay: 'exceptZero' })
@@ -214,12 +220,18 @@ function ValeursRemarquablesSection({
   return (
     <section className="grid gap-4 sm:grid-cols-2">
       <StatCard label="Valeur la plus récente">
-        <p className="text-3xl font-semibold text-text">
-          {numberFormatter.format(derniereValeur.valeur)}
-        </p>
-        <p className="mt-1 text-xs text-text-muted">
-          au {new Date(derniereValeur.date).toLocaleDateString('fr-FR')}
-        </p>
+        {derniereValeur ? (
+          <>
+            <p className="text-3xl font-semibold text-text">
+              {numberFormatter.format(derniereValeur.valeur)}
+            </p>
+            <p className="mt-1 text-xs text-text-muted">
+              au {new Date(derniereValeur.date).toLocaleDateString('fr-FR')}
+            </p>
+          </>
+        ) : (
+          <p className="text-3xl font-semibold text-text-muted">—</p>
+        )}
       </StatCard>
 
       <StatCard label="Variation depuis la dernière MAJ">
@@ -229,6 +241,14 @@ function ValeursRemarquablesSection({
       </StatCard>
     </section>
   )
+}
+
+const derniereValeurFromItems = (
+  items: ReadonlyArray<{ date: string; valeur: number }>,
+): ValeurDateApiModel | undefined => {
+  if (items.length === 0) return undefined
+  const sorted = [...items].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+  return { date: sorted[0]!.date, valeur: sorted[0]!.valeur }
 }
 
 const variationColorClass = (variation: number | null): string => {
