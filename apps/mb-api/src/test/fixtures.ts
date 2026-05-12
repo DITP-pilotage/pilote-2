@@ -6,12 +6,15 @@ import { db } from '@/framework/persistence/dbStore'
 import {
   type ApiKeyModel,
   type IndicateurModel,
+  type IndicateurPermissionModel,
   type IndividuModel,
   type ReferentielIndividuModel,
   type ReferentielModel,
   type RelationModel,
+  type UtilisateurModel,
   type ValeurAvancementModel,
 } from '@/generated/prisma/models'
+import { PermissionAction } from '@/generated/prisma/enums'
 
 // --- Indicateur --------------------------------------------------------------
 
@@ -260,6 +263,11 @@ async function valeurAvancement(
 
 // --- ApiKey ------------------------------------------------------------------
 
+type PrincipalIndicateurPermissionOverrides = {
+  indicateur: IndicateurOverrides
+  action: PermissionAction
+}
+
 type ApiKeyOverrides = Partial<{
   id: string
   label: string
@@ -268,6 +276,7 @@ type ApiKeyOverrides = Partial<{
   expiresAt: Date | null
   revokedAt: Date | null
   lastUsedAt: Date | null
+  permissions: PrincipalIndicateurPermissionOverrides[]
 }>
 
 const DEFAULT_API_KEY = {
@@ -275,6 +284,16 @@ const DEFAULT_API_KEY = {
   rawKey: 'pilote_live_test_default_key_value_xx',
   prefix: 'pilote_live_test_def',
 } as const
+
+const grantPermissions = async (
+  principalId: string,
+  permissions: PrincipalIndicateurPermissionOverrides[] | undefined,
+): Promise<void> => {
+  if (!permissions || permissions.length === 0) return
+  for (const p of permissions) {
+    await upsertIndicateurPermission({ principalId, ...p })
+  }
+}
 
 const upsertApiKey = async (o: ApiKeyOverrides = {}) => {
   const rawKey = o.rawKey ?? DEFAULT_API_KEY.rawKey
@@ -288,16 +307,17 @@ const upsertApiKey = async (o: ApiKeyOverrides = {}) => {
     revokedAt: o.revokedAt ?? null,
     lastUsedAt: o.lastUsedAt ?? null,
   }
-  const { id: _id, rawKey: _raw, ...update } = o
-  if (Object.keys(update).length === 0) {
-    const existing = await db().apiKey.findUnique({ where: { keyHash } })
-    if (existing) return existing
+  const { id: _id, rawKey: _raw, permissions, ...update } = o
+  const existing = await db().apiKey.findUnique({ where: { keyHash } })
+  if (existing) {
+    await grantPermissions(existing.id, permissions)
+    if (Object.keys(update).length === 0) return existing
+    return db().apiKey.update({ where: { keyHash }, data: update })
   }
-  return db().apiKey.upsert({
-    where: { keyHash },
-    update,
-    create,
-  })
+  await db().principal.create({ data: { id: create.id } })
+  const created = await db().apiKey.create({ data: create })
+  await grantPermissions(created.id, permissions)
+  return created
 }
 
 function apiKey(): Promise<ApiKeyModel>
@@ -314,6 +334,101 @@ async function apiKey(...overrides: ApiKeyOverrides[]): Promise<ApiKeyModel | Ap
   return results
 }
 
+// --- Utilisateur -------------------------------------------------------------
+
+type UtilisateurOverrides = Partial<{
+  id: string
+  email: string
+  providerSub: string | null
+  permissions: PrincipalIndicateurPermissionOverrides[]
+}>
+
+const DEFAULT_UTILISATEUR = {
+  email: 'utilisateur-test@example.com',
+  providerSub: null,
+} as const
+
+const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
+  const email = o.email ?? DEFAULT_UTILISATEUR.email
+  const existing = await db().utilisateur.findUnique({ where: { email } })
+  if (existing) {
+    await grantPermissions(existing.id, o.permissions)
+    const { id: _id, email: _email, permissions: _p, ...update } = o
+    if (Object.keys(update).length === 0) return existing
+    return db().utilisateur.update({ where: { email }, data: update })
+  }
+  const id = o.id ?? uuidv7()
+  const create = {
+    id,
+    email,
+    providerSub: o.providerSub ?? DEFAULT_UTILISATEUR.providerSub,
+  }
+  await db().principal.create({ data: { id } })
+  const created = await db().utilisateur.create({ data: create })
+  await grantPermissions(created.id, o.permissions)
+  return created
+}
+
+function utilisateur(): Promise<UtilisateurModel>
+function utilisateur(override: UtilisateurOverrides): Promise<UtilisateurModel>
+function utilisateur(
+  o1: UtilisateurOverrides,
+  o2: UtilisateurOverrides,
+  ...rest: UtilisateurOverrides[]
+): Promise<UtilisateurModel[]>
+async function utilisateur(
+  ...overrides: UtilisateurOverrides[]
+): Promise<UtilisateurModel | UtilisateurModel[]> {
+  if (overrides.length <= 1) return upsertUtilisateur(overrides[0])
+  const results: UtilisateurModel[] = []
+  for (const o of overrides) results.push(await upsertUtilisateur(o))
+  return results
+}
+
+// --- IndicateurPermission (deps requises) ------------------------------------
+
+type IndicateurPermissionOverrides = {
+  principalId: string
+  indicateur: IndicateurOverrides
+  action: PermissionAction
+}
+
+const upsertIndicateurPermission = async (o: IndicateurPermissionOverrides) => {
+  const indicateurRow = await upsertIndicateur(o.indicateur)
+  return db().indicateurPermission.upsert({
+    where: {
+      principalId_indicateurId_action: {
+        principalId: o.principalId,
+        indicateurId: indicateurRow.id,
+        action: o.action,
+      },
+    },
+    update: {},
+    create: {
+      principalId: o.principalId,
+      indicateurId: indicateurRow.id,
+      action: o.action,
+    },
+  })
+}
+
+function indicateurPermission(
+  override: IndicateurPermissionOverrides,
+): Promise<IndicateurPermissionModel>
+function indicateurPermission(
+  o1: IndicateurPermissionOverrides,
+  o2: IndicateurPermissionOverrides,
+  ...rest: IndicateurPermissionOverrides[]
+): Promise<IndicateurPermissionModel[]>
+async function indicateurPermission(
+  ...overrides: IndicateurPermissionOverrides[]
+): Promise<IndicateurPermissionModel | IndicateurPermissionModel[]> {
+  if (overrides.length === 1) return upsertIndicateurPermission(overrides[0]!)
+  const results: IndicateurPermissionModel[] = []
+  for (const o of overrides) results.push(await upsertIndicateurPermission(o))
+  return results
+}
+
 export const fixtures = {
   indicateur,
   referentiel,
@@ -322,4 +437,6 @@ export const fixtures = {
   relation,
   valeurAvancement,
   apiKey,
+  utilisateur,
+  indicateurPermission,
 }

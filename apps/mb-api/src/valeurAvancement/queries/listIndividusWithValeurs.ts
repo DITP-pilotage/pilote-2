@@ -4,15 +4,25 @@ import {
 } from '@pilote/mb-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
+import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import { buildPaginationArgs, toPaginatedResponse } from '@/framework/persistence/paginate'
+import { PermissionAction } from '@/generated/prisma/enums'
 import { toIndividuAvecValeursApiModel } from '@/valeurAvancement/utils'
+
+const READ_ACTIONS: PermissionAction[] = [PermissionAction.READ, PermissionAction.WRITE]
 
 export const listIndividusWithValeurs = (
   indicateurPublicId: string,
   params: ListIndividusWithValeursQuery,
 ): ResultAsync<IndividusWithValeursListApiModel, never> => {
-  const indicateurFilter = { indicateur: { publicId: indicateurPublicId } }
+  const principalId = requireCurrentPrincipalId()
+  const indicateurFilter = {
+    indicateur: {
+      publicId: indicateurPublicId,
+      permissions: { some: { principalId, action: { in: READ_ACTIONS } } },
+    },
+  }
   const where = {
     valeurs: { some: indicateurFilter },
     ...(params.referentiel

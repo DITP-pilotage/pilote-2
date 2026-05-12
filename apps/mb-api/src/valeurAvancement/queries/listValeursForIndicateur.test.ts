@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testDeptId, testDeptIds, testIndicateurId } from '@/test/randomIds'
+import { runAsPrincipal } from '@/test/runAsPrincipal'
 import { listValeursForIndicateur } from '@/valeurAvancement/queries/listValeursForIndicateur'
 
 describe.concurrent('listValeursForIndicateur', () => {
@@ -25,8 +26,13 @@ describe.concurrent('listValeursForIndicateur', () => {
           valeur: 7.8,
         },
       )
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
 
-      const result = await listValeursForIndicateur(indId, { individus: [deptId] })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listValeursForIndicateur(indId, { individus: [deptId] }),
+      )
 
       const value = result._unsafeUnwrap()
       expect(value.items).toEqual([
@@ -61,8 +67,13 @@ describe.concurrent('listValeursForIndicateur', () => {
           valeur: 3,
         },
       )
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
 
-      const result = await listValeursForIndicateur(indId, { individus: [dept1, dept2] })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listValeursForIndicateur(indId, { individus: [dept1, dept2] }),
+      )
 
       const value = result._unsafeUnwrap()
       const individus = value.items.map((v) => v.individu).sort()
@@ -102,12 +113,17 @@ describe.concurrent('listValeursForIndicateur', () => {
           valeur: 4,
         },
       )
-
-      const result = await listValeursForIndicateur(indId, {
-        individus: [deptId],
-        dateDebut: '2024-01-01',
-        dateFin: '2024-06-30',
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
       })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listValeursForIndicateur(indId, {
+          individus: [deptId],
+          dateDebut: '2024-01-01',
+          dateFin: '2024-06-30',
+        }),
+      )
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((v) => v.date)).toEqual(['2024-01-01', '2024-06-30'])
@@ -121,8 +137,13 @@ describe.concurrent('listValeursForIndicateur', () => {
       const deptId = testDeptId()
       await fixtures.indicateur({ publicId: indId, nom: 'T' })
       await fixtures.individu({ publicId: deptId, nom: 'Vaucluse' })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
 
-      const result = await listValeursForIndicateur(indId, { individus: [deptId] })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listValeursForIndicateur(indId, { individus: [deptId] }),
+      )
 
       const value = result._unsafeUnwrap()
       expect(value.items).toEqual([])
@@ -132,8 +153,30 @@ describe.concurrent('listValeursForIndicateur', () => {
   it(
     "rejette quand l'indicateur est introuvable",
     integrationTest(async () => {
+      const apiKey = await fixtures.apiKey()
       await expect(
-        listValeursForIndicateur(testIndicateurId(), { individus: [testDeptId()] }),
+        runAsPrincipal(apiKey.id, () =>
+          listValeursForIndicateur(testIndicateurId(), { individus: [testDeptId()] }),
+        ),
+      ).rejects.toThrow()
+    }),
+  )
+
+  it(
+    "rejette quand le principal n'a pas READ sur l'indicateur",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const deptId = testDeptId()
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId },
+        individu: { publicId: deptId },
+        date: '2024-01-01',
+        valeur: 1,
+      })
+      const apiKey = await fixtures.apiKey()
+
+      await expect(
+        runAsPrincipal(apiKey.id, () => listValeursForIndicateur(indId, { individus: [deptId] })),
       ).rejects.toThrow()
     }),
   )

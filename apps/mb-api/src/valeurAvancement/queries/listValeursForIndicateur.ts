@@ -4,16 +4,24 @@ import {
 } from '@pilote/mb-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
+import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
+import { PermissionAction } from '@/generated/prisma/enums'
 import { toValeurAvancementApiModel } from '@/valeurAvancement/utils'
+
+const READ_ACTIONS: PermissionAction[] = [PermissionAction.READ, PermissionAction.WRITE]
 
 export const listValeursForIndicateur = (
   indicateurPublicId: string,
   params: ListValeursForIndicateurQuery,
-): ResultAsync<ValeurAvancementListApiModel, never> =>
-  ResultAsync.fromSafePromise(
-    db().indicateur.findUniqueOrThrow({
-      where: { publicId: indicateurPublicId },
+): ResultAsync<ValeurAvancementListApiModel, never> => {
+  const principalId = requireCurrentPrincipalId()
+  return ResultAsync.fromSafePromise(
+    db().indicateur.findFirstOrThrow({
+      where: {
+        publicId: indicateurPublicId,
+        permissions: { some: { principalId, action: { in: READ_ACTIONS } } },
+      },
       select: { id: true },
     }),
   ).andThen((indicateur) => {
@@ -44,3 +52,4 @@ export const listValeursForIndicateur = (
       items: rows.map(toValeurAvancementApiModel),
     }))
   })
+}

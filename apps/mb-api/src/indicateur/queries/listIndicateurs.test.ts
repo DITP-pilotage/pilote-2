@@ -5,12 +5,14 @@ import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurIds } from '@/test/randomIds'
+import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listIndicateurs', () => {
   it(
     "retourne une liste vide quand aucun indicateur n'existe",
     integrationTest(async () => {
-      const result = await listIndicateurs({})
+      const apiKey = await fixtures.apiKey()
+      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
 
       expect(result.isOk()).toBe(true)
       expect(result._unsafeUnwrap()).toEqual({
@@ -22,7 +24,24 @@ describe.concurrent('listIndicateurs', () => {
   )
 
   it(
-    'retourne tous les indicateurs quand leur nombre est inférieur à la taille de page',
+    "n'inclut que les indicateurs sur lesquels le principal a une permission",
+    integrationTest(async () => {
+      const [accessible, hidden] = testIndicateurIds(2)
+      await fixtures.indicateur({ publicId: accessible }, { publicId: hidden })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: accessible }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
+
+      const value = result._unsafeUnwrap()
+      expect(value.items.map((i) => i.id)).toEqual([accessible])
+      expect(value.total).toBe(1)
+    }),
+  )
+
+  it(
+    'retourne tous les indicateurs autorisés quand leur nombre est inférieur à la taille de page',
     integrationTest(async () => {
       const [ind1, ind2, ind3] = testIndicateurIds(3)
       await fixtures.indicateur(
@@ -30,8 +49,15 @@ describe.concurrent('listIndicateurs', () => {
         { publicId: ind2, nom: 'Bravo' },
         { publicId: ind3, nom: 'Charlie' },
       )
+      const apiKey = await fixtures.apiKey({
+        permissions: [
+          { indicateur: { publicId: ind1 }, action: 'READ' },
+          { indicateur: { publicId: ind2 }, action: 'READ' },
+          { indicateur: { publicId: ind3 }, action: 'READ' },
+        ],
+      })
 
-      const result = await listIndicateurs({})
+      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual([ind1, ind2, ind3])
@@ -52,8 +78,14 @@ describe.concurrent('listIndicateurs', () => {
         { publicId: ids[4] },
         { publicId: ids[5] },
       )
+      const apiKey = await fixtures.apiKey({
+        permissions: ids.map((publicId) => ({
+          indicateur: { publicId },
+          action: 'READ' as const,
+        })),
+      })
 
-      const result = await listIndicateurs({ pageSize: 5 })
+      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({ pageSize: 5 }))
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual(ids.slice(0, 5))
@@ -74,8 +106,16 @@ describe.concurrent('listIndicateurs', () => {
         { publicId: ids[4] },
         { publicId: ids[5] },
       )
+      const apiKey = await fixtures.apiKey({
+        permissions: ids.map((publicId) => ({
+          indicateur: { publicId },
+          action: 'READ' as const,
+        })),
+      })
 
-      const result = await listIndicateurs({ cursor: encodeCursor(created[4]!.id) })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listIndicateurs({ cursor: encodeCursor(created[4]!.id) }),
+      )
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual([ids[5]])
@@ -93,8 +133,17 @@ describe.concurrent('listIndicateurs', () => {
         { publicId: ind2, nom: 'Délai moyen' },
         { publicId: ind3, nom: 'SATISFACTION client' },
       )
+      const apiKey = await fixtures.apiKey({
+        permissions: [
+          { indicateur: { publicId: ind1 }, action: 'READ' },
+          { indicateur: { publicId: ind2 }, action: 'READ' },
+          { indicateur: { publicId: ind3 }, action: 'READ' },
+        ],
+      })
 
-      const result = await listIndicateurs({ recherche: 'satisfaction' })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listIndicateurs({ recherche: 'satisfaction' }),
+      )
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual([ind1, ind3])
@@ -116,8 +165,16 @@ describe.concurrent('listIndicateurs', () => {
         { publicId: ids[5], nom: 'Satisfaction 6' },
         { publicId: ids[6], nom: 'Délai moyen' },
       )
+      const apiKey = await fixtures.apiKey({
+        permissions: ids.map((publicId) => ({
+          indicateur: { publicId },
+          action: 'READ' as const,
+        })),
+      })
 
-      const result = await listIndicateurs({ recherche: 'satisfaction', pageSize: 5 })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listIndicateurs({ recherche: 'satisfaction', pageSize: 5 }),
+      )
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((i) => i.id)).toEqual(ids.slice(0, 5))
