@@ -1,4 +1,4 @@
-import { type ReferentielApiModel } from '@pilote/mb-shared/referentiel'
+import { type ReferentielsForIndicateurApiModel } from '@pilote/mb-shared/referentiel'
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
@@ -8,7 +8,7 @@ import { toReferentielApiModel } from '@/referentiel/utils'
 
 export const listReferentielsForIndicateur = (
   indicateurPublicId: string,
-): ResultAsync<{ items: ReferentielApiModel[] }, never> => {
+): ResultAsync<ReferentielsForIndicateurApiModel, never> => {
   const principalId = requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(
     db().indicateur.findFirstOrThrow({

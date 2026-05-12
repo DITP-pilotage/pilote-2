@@ -7,7 +7,7 @@ import {
   upsertIndicateurBodySchema,
 } from '@pilote/mb-shared/indicateur'
 import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
-import { referentielApiModelSchema } from '@pilote/mb-shared/referentiel'
+import { referentielsForIndicateurApiModelSchema } from '@pilote/mb-shared/referentiel'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
@@ -22,9 +22,9 @@ const IndicateurApiModelSchema = indicateurApiModelSchema.openapi('IndicateurApi
 const IndicateurListApiModelSchema =
   createPaginatedApiListSchema(indicateurApiModelSchema).openapi('IndicateurListApiModel')
 const UpsertIndicateurBodySchema = upsertIndicateurBodySchema.openapi('UpsertIndicateurBody')
-const ReferentielsForIndicateurApiModelSchema = z
-  .object({ items: z.array(referentielApiModelSchema) })
-  .openapi('ReferentielsForIndicateurApiModel')
+const ReferentielsForIndicateurApiModelSchema = referentielsForIndicateurApiModelSchema.openapi(
+  'ReferentielsForIndicateurApiModel',
+)
 export const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 // --- GET /indicateurs --------------------------------------------------------
@@ -62,7 +62,7 @@ const getIndicateurByIdRoute = createRoute({
   tags: ['Indicateur'],
   summary: 'Récupérer un indicateur par identifiant public',
   description:
-    "Retourne un indicateur identifié par son identifiant public (format `IND-XXX`). La réponse inclut `referentielIds` (référentiels liés, triés par publicId ASC). Renvoie 404 (`ENTITY_NOT_FOUND`) si aucun indicateur ne correspond.",
+    'Retourne un indicateur identifié par son identifiant public (format `IND-XXX`). La réponse inclut `referentielIds` (référentiels liés, triés par publicId ASC). Renvoie 404 (`ENTITY_NOT_FOUND`) si aucun indicateur ne correspond.',
   middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {
@@ -112,7 +112,7 @@ const getReferentielsForIndicateurRoute = createRoute({
   method: 'get',
   path: '/indicateurs/{id}/referentiels',
   tags: ['Indicateur'],
-  summary: "Lister les référentiels liés à un indicateur",
+  summary: 'Lister les référentiels liés à un indicateur',
   description:
     "Retourne les ressources complètes des référentiels liés à l'indicateur, triées par identifiant public ASC. Réponse non paginée (le volume est borné par le nombre de référentiels liés à un indicateur).",
   middleware: [requireAuthentication],
