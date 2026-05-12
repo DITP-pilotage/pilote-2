@@ -9,12 +9,25 @@ datasource db {
   provider = "postgresql"
 }
 
+model Principal {
+  id        String   @id @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  utilisateur          Utilisateur?
+  apiKey               ApiKey?
+  indicateurPermissions IndicateurPermission[]
+
+  @@map("principal")
+}
+
 model Utilisateur {
   id          String   @id @db.Uuid
   email       String   @unique
   providerSub String?  @unique @map("provider_sub")
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt      @map("updated_at")
+
+  principal Principal @relation(fields: [id], references: [id], onDelete: Cascade)
 
   @@map("utilisateur")
 }
@@ -29,6 +42,8 @@ model ApiKey {
   revokedAt  DateTime? @map("revoked_at")
   lastUsedAt DateTime? @map("last_used_at")
 
+  principal Principal @relation(fields: [id], references: [id], onDelete: Cascade)
+
   @@index([prefix])
   @@map("api_key")
 }
@@ -40,9 +55,31 @@ model Indicateur {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt      @map("updated_at")
 
-  valeurs ValeurAvancement[]
+  valeurs     ValeurAvancement[]
+  permissions IndicateurPermission[]
 
   @@map("indicateur")
+}
+
+enum PermissionAction {
+  READ
+  WRITE
+
+  @@map("permission_action_enum")
+}
+
+model IndicateurPermission {
+  principalId  String           @map("principal_id")  @db.Uuid
+  indicateurId String           @map("indicateur_id") @db.Uuid
+  action       PermissionAction
+  createdAt    DateTime         @default(now()) @map("created_at")
+
+  principal  Principal  @relation(fields: [principalId],  references: [id], onDelete: Cascade)
+  indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
+
+  @@id([principalId, indicateurId, action])
+  @@index([indicateurId])
+  @@map("indicateur_permission")
 }
 
 model Referentiel {

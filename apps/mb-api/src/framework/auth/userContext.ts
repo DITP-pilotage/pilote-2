@@ -33,6 +33,11 @@ export const requirePrincipal = (): Principal => {
   return principal
 }
 
+export const requireCurrentPrincipalId = (): string => {
+  const principal = requirePrincipal()
+  return principal.kind === 'user' ? principal.user.id : principal.apiKey.id
+}
+
 export const getCurrentUser = (): UtilisateurAuthentifie | null => {
   const principal = getCurrentPrincipal()
   return principal?.kind === 'user' ? principal.user : null

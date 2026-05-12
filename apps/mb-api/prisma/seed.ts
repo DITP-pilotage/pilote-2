@@ -111,14 +111,13 @@ const main = async () => {
     })
   }
   for (const item of utilisateursSeed) {
-    await prisma.utilisateur.upsert({
-      where: { email: item.email },
-      update: {},
-      create: {
-        id: uuidv7(),
-        email: item.email,
-      },
-    })
+    const existing = await prisma.utilisateur.findUnique({ where: { email: item.email } })
+    if (existing) continue
+    const id = uuidv7()
+    await prisma.$transaction([
+      prisma.principal.create({ data: { id } }),
+      prisma.utilisateur.create({ data: { id, email: item.email } }),
+    ])
   }
 
   for (const item of referentielsSeed) {

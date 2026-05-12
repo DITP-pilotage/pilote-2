@@ -4,17 +4,21 @@ import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPub
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurId } from '@/test/randomIds'
+import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('getIndicateurByPublicId', () => {
   it(
-    "retourne l'indicateur correspondant au publicId",
+    "retourne l'indicateur quand le principal a la permission READ",
     integrationTest(async () => {
       // Given
       const indId = testIndicateurId()
       const created = await fixtures.indicateur({ publicId: indId, nom: 'Indicateur de test' })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
 
       // When
-      const result = await getIndicateurByPublicId(indId)
+      const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
 
       // Then
       expect(result.isOk()).toBe(true)
@@ -28,10 +32,40 @@ describe.concurrent('getIndicateurByPublicId', () => {
   )
 
   it(
-    'lève une erreur Prisma quand aucun indicateur ne correspond',
+    "retourne l'indicateur quand le principal a la permission WRITE (WRITE implique READ)",
     integrationTest(async () => {
-      // When / Then
-      await expect(getIndicateurByPublicId(testIndicateurId())).rejects.toThrow()
+      const indId = testIndicateurId()
+      await fixtures.indicateur({ publicId: indId })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
+
+      expect(result.isOk()).toBe(true)
+    }),
+  )
+
+  it(
+    "lève une erreur quand le principal n'a aucune permission sur l'indicateur",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      await fixtures.indicateur({ publicId: indId })
+      const apiKey = await fixtures.apiKey()
+
+      await expect(
+        runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId)),
+      ).rejects.toThrow()
+    }),
+  )
+
+  it(
+    'lève une erreur quand aucun indicateur ne correspond',
+    integrationTest(async () => {
+      const apiKey = await fixtures.apiKey()
+      await expect(
+        runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(testIndicateurId())),
+      ).rejects.toThrow()
     }),
   )
 })

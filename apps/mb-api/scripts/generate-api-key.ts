@@ -59,10 +59,14 @@ const main = (): void => {
   const expiresAt = parseExpiresAt(values['expires-at'])
   const generated = buildApiKey(secret)
 
-  const sqlInsert =
+  const sqlInsert = [
+    'BEGIN;',
+    `INSERT INTO principal (id) VALUES (${sqlString(generated.id)});`,
     `INSERT INTO api_key (id, label, key_hash, prefix, expires_at) VALUES (` +
-    `${sqlString(generated.id)}, ${sqlString(label)}, ${sqlString(generated.keyHash)}, ${sqlString(generated.prefix)}, ` +
-    `${expiresAt ? sqlString(expiresAt.toISOString()) : 'NULL'});`
+      `${sqlString(generated.id)}, ${sqlString(label)}, ${sqlString(generated.keyHash)}, ${sqlString(generated.prefix)}, ` +
+      `${expiresAt ? sqlString(expiresAt.toISOString()) : 'NULL'});`,
+    'COMMIT;',
+  ].join('\n  ')
 
   process.stdout.write(
     [
