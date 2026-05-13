@@ -3,6 +3,7 @@ import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
+import { diff } from '@/framework/collections/diff'
 import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { PermissionAction } from '@/generated/prisma/enums'
@@ -20,10 +21,10 @@ const resolveReferentielIds = async (publicIds: readonly string[]): Promise<stri
     select: { id: true, publicId: true },
   })
   const foundPublicIds = new Set(found.map((r) => r.publicId))
-  const unknown = unique.filter((id) => !foundPublicIds.has(id))
-  if (unknown.length > 0) {
+  const unknownIds = unique.filter((id) => !foundPublicIds.has(id))
+  if (unknownIds.length > 0) {
     throw new ValidationError('Référentiels inconnus', {
-      unknownReferentielIds: unknown.sort(),
+      unknownReferentielIds: unknownIds.sort(),
     })
   }
   return found.map((r) => r.id)
@@ -37,11 +38,10 @@ const replaceReferentielLinks = async (
     where: { indicateurId },
     select: { referentielId: true },
   })
-  const existingSet = new Set(existing.map((link) => link.referentielId))
-  const desiredSet = new Set(referentielIds)
-
-  const toAdd = referentielIds.filter((id) => !existingSet.has(id))
-  const toRemove = [...existingSet].filter((id) => !desiredSet.has(id))
+  const { toAdd, toRemove } = diff(
+    referentielIds,
+    existing.map((link) => link.referentielId),
+  )
 
   if (toRemove.length > 0) {
     await db().indicateurReferentiel.deleteMany({
