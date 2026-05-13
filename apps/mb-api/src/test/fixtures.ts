@@ -7,6 +7,7 @@ import {
   type ApiKeyModel,
   type IndicateurModel,
   type IndicateurPermissionModel,
+  type IndicateurReferentielModel,
   type IndividuModel,
   type ReferentielModel,
   type RelationModel,
@@ -149,6 +150,45 @@ async function individu(
   if (overrides.length <= 1) return upsertIndividu(overrides[0])
   const results: IndividuModel[] = []
   for (const o of overrides) results.push(await upsertIndividu(o))
+  return results
+}
+
+// --- IndicateurReferentiel (deps requises) -----------------------------------
+
+type IndicateurReferentielOverrides = {
+  indicateur: IndicateurOverrides
+  referentiel: ReferentielOverrides
+}
+
+const upsertIndicateurReferentiel = async (o: IndicateurReferentielOverrides) => {
+  const indicateurRow = await upsertIndicateur(o.indicateur)
+  const referentielRow = await upsertReferentiel(o.referentiel)
+  return db().indicateurReferentiel.upsert({
+    where: {
+      indicateurId_referentielId: {
+        indicateurId: indicateurRow.id,
+        referentielId: referentielRow.id,
+      },
+    },
+    update: {},
+    create: { indicateurId: indicateurRow.id, referentielId: referentielRow.id },
+  })
+}
+
+function indicateurReferentiel(
+  override: IndicateurReferentielOverrides,
+): Promise<IndicateurReferentielModel>
+function indicateurReferentiel(
+  o1: IndicateurReferentielOverrides,
+  o2: IndicateurReferentielOverrides,
+  ...rest: IndicateurReferentielOverrides[]
+): Promise<IndicateurReferentielModel[]>
+async function indicateurReferentiel(
+  ...overrides: IndicateurReferentielOverrides[]
+): Promise<IndicateurReferentielModel | IndicateurReferentielModel[]> {
+  if (overrides.length === 1) return upsertIndicateurReferentiel(overrides[0]!)
+  const results: IndicateurReferentielModel[] = []
+  for (const o of overrides) results.push(await upsertIndicateurReferentiel(o))
   return results
 }
 
@@ -410,6 +450,7 @@ export const fixtures = {
   indicateur,
   referentiel,
   individu,
+  indicateurReferentiel,
   relation,
   valeurAvancement,
   apiKey,

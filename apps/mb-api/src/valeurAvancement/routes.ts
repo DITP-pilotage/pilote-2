@@ -84,10 +84,8 @@ const upsertValeurAvancementRoute = createRoute({
   summary: 'Saisir ou mettre à jour une valeur ponctuelle pour un individu',
   description:
     "Upsert d'une valeur unique sur la clé `(indicateur, individu, date)`. Si le triplet existe, la `valeur` est remplacée ; sinon une nouvelle valeur est créée. " +
-    'La `valeur` est tronquée vers zéro à 2 décimales pour respecter la précision stockée (Decimal(20,2)). ' +
-    "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `VALIDATION_ERROR` avec `details.unknownOrUnauthorizedIndividu`). " +
-    "Renvoie 404 si l'indicateur n'existe pas et 403 si le principal n'a pas la permission WRITE sur l'indicateur. " +
-    'Pour supprimer une valeur, utilisez la route DELETE dédiée (hors scope de cette route).',
+    "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `INDIVIDU_INCONNU` avec `details.unknownOrUnauthorizedIndividu`). " +
+    "Renvoie 403 si le principal n'a pas la permission WRITE sur l'indicateur.",
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -108,10 +106,6 @@ const upsertValeurAvancementRoute = createRoute({
     403: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },
       description: 'Pas de permission WRITE sur cet indicateur',
-    },
-    404: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Indicateur introuvable',
     },
   },
 })
@@ -239,7 +233,9 @@ valeurAvancementRoutes.openapi(upsertValeurAvancementRoute, async (context) => {
         schema: ValeurAvancementApiModelSchema,
         status: 200,
       }),
-    never,
+    (error) => {
+      throw error
+    },
   )
 })
 

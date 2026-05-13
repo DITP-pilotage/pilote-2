@@ -4,8 +4,9 @@ import { uuidv7 } from 'uuidv7'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { diff } from '@/framework/collections/diff'
-import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
+import { ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
+import { ensureIndicateurWritePermission } from '@/indicateur/permissions'
 import { PermissionAction } from '@/generated/prisma/enums'
 
 type UpsertIndicateurParams = {
@@ -55,27 +56,6 @@ const replaceReferentielLinks = async (
   }
 }
 
-const assertWritePermission = async ({
-  indicateurId,
-  principalId,
-}: {
-  indicateurId: string
-  principalId: string
-}): Promise<void> => {
-  const hasWrite = await db().indicateurPermission.findUnique({
-    where: {
-      principalId_indicateurId_action: {
-        principalId,
-        indicateurId,
-        action: PermissionAction.WRITE,
-      },
-    },
-  })
-  if (!hasWrite) {
-    throw new ForbiddenError("Vous n'avez pas la permission de modifier cet indicateur")
-  }
-}
-
 const updateExisting = async ({
   publicId,
   indicateurId,
@@ -87,7 +67,8 @@ const updateExisting = async ({
   body: UpsertIndicateurBody
   principalId: string
 }): Promise<void> => {
-  await assertWritePermission({ indicateurId, principalId })
+  const writeCheck = await ensureIndicateurWritePermission({ indicateurId, principalId })
+  if (writeCheck.isErr()) throw writeCheck.error
   const referentielIds = await resolveReferentielIds(body.referentielIds)
   await db().indicateur.update({ where: { publicId }, data: { nom: body.nom } })
   await replaceReferentielLinks(indicateurId, referentielIds)
