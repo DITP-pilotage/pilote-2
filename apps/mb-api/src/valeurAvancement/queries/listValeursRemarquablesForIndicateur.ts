@@ -4,40 +4,29 @@ import {
 } from '@pilote/mb-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
+import { type Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
-import { Prisma } from '@/generated/prisma/client'
 import { computeMax } from '@/valeurAvancement/computeMax'
 import { computeMediane } from '@/valeurAvancement/computeMediane'
 import { computeMin } from '@/valeurAvancement/computeMin'
 
-const computeVariation = (valeurs: ReadonlyArray<{ valeur: Prisma.Decimal }>): number | null => {
-  if (valeurs.length === 0) return null
-  const [recente, precedente] = valeurs
-  const precedenteValeur = precedente?.valeur ?? new Prisma.Decimal(0)
-  return recente!.valeur.minus(precedenteValeur).toNumber()
-}
-
-const fetchItemsPourVariation = (indicateurId: string, individus: ReadonlyArray<string>) =>
-  db().individu.findMany({
-    where: { publicId: { in: [...individus] } },
+const fetchReferentielsAvecValeursRecentes = (
+  indicateurId: string,
+  referentiels: ReadonlyArray<string>,
+) =>
+  db().referentiel.findMany({
+    where: { publicId: { in: [...referentiels] } },
     orderBy: { publicId: 'asc' },
     include: {
-      valeurs: {
-        where: { indicateurId },
-        orderBy: [{ date: 'desc' }, { id: 'desc' }],
-        take: 2,
-      },
-    },
-  })
-
-const fetchValeursRecentesPopulation = (indicateurId: string) =>
-  db().individu.findMany({
-    where: { valeurs: { some: { indicateurId } } },
-    include: {
-      valeurs: {
-        where: { indicateurId },
-        orderBy: [{ date: 'desc' }, { id: 'desc' }],
-        take: 1,
+      individus: {
+        where: { valeurs: { some: { indicateurId } } },
+        include: {
+          valeurs: {
+            where: { indicateurId },
+            orderBy: [{ date: 'desc' }, { id: 'desc' }],
+            take: 1,
+          },
+        },
       },
     },
   })
@@ -51,25 +40,22 @@ export const listValeursRemarquablesForIndicateur = (
       where: { publicId: indicateurPublicId },
       select: { id: true },
     }),
-  ).andThen((indicateur) =>
-    ResultAsync.fromSafePromise(
-      Promise.all([
-        fetchItemsPourVariation(indicateur.id, params.individus),
-        fetchValeursRecentesPopulation(indicateur.id),
-      ]),
-    ).map(([itemsRows, populationRows]) => {
-      const dernieresValeurs = populationRows
-        .map((row) => row.valeurs[0]?.valeur.toNumber())
-        .filter((v): v is number => v !== undefined)
-
-      return {
-        items: itemsRows.map((row) => ({
-          individu: row.publicId,
-          variation: computeVariation(row.valeurs),
-        })),
-        min: computeMin(dernieresValeurs),
-        max: computeMax(dernieresValeurs),
-        mediane: computeMediane(dernieresValeurs),
-      }
-    }),
   )
+    .andThen((indicateur) =>
+      ResultAsync.fromSafePromise(
+        fetchReferentielsAvecValeursRecentes(indicateur.id, params.referentiels),
+      ),
+    )
+    .map((rows) => ({
+      items: rows.map((row) => {
+        const dernieresValeurs = row.individus
+          .map((i) => i.valeurs[0]?.valeur)
+          .filter((v): v is Decimal => v !== undefined)
+        return {
+          referentiel: row.publicId,
+          min: computeMin(dernieresValeurs),
+          max: computeMax(dernieresValeurs),
+          mediane: computeMediane(dernieresValeurs),
+        }
+      }),
+    }))

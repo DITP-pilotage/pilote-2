@@ -1,17 +1,18 @@
+import { type ListIndicateursQuery } from '@pilote/mb-shared/indicateur'
 import { queryOptions } from '@tanstack/react-query'
 
 import {
   fetchIndicateurById,
   fetchIndicateurs,
   fetchIndividusForIndicateur,
+  fetchSyntheseIndividus,
   fetchValeursForIndicateur,
   fetchValeursRemarquablesForIndicateur,
-  type IndicateursQueryParams,
 } from '@/api/indicateurs'
 
 import { DEFAULT_STALE_TIME, fetchAllPaginatedItems } from './utils'
 
-export const indicateursQueryOptions = (params: IndicateursQueryParams) =>
+export const indicateursQueryOptions = (params: ListIndicateursQuery) =>
   queryOptions({
     queryKey: ['indicateurs', params],
     queryFn: () => fetchIndicateurs(params),
@@ -44,10 +45,18 @@ export const indicateurValeursQueryOptions = (indicateurId: string, individuId: 
 
 export const indicateurValeursRemarquablesQueryOptions = (
   indicateurId: string,
-  individuId: string,
+  referentielId: string,
 ) =>
   queryOptions({
-    queryKey: ['indicateur', indicateurId, 'valeurs-remarquables', individuId],
-    queryFn: () => fetchValeursRemarquablesForIndicateur(indicateurId, { individus: [individuId] }),
+    queryKey: ['indicateur', indicateurId, 'valeurs-remarquables', referentielId],
+    queryFn: () =>
+      fetchValeursRemarquablesForIndicateur(indicateurId, { referentiels: [referentielId] }),
+    staleTime: DEFAULT_STALE_TIME,
+  })
+
+export const indicateurSyntheseIndividuQueryOptions = (indicateurId: string, individuId: string) =>
+  queryOptions({
+    queryKey: ['indicateur', indicateurId, 'synthese-individus', individuId],
+    queryFn: () => fetchSyntheseIndividus(indicateurId, { individus: [individuId] }),
     staleTime: DEFAULT_STALE_TIME,
   })

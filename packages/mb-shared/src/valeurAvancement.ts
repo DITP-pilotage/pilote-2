@@ -90,7 +90,75 @@ export const listValeursForIndicateurQuerySchema = z
   )
 export type ListValeursForIndicateurQuery = z.infer<typeof listValeursForIndicateurQuerySchema>
 
-export const valeurRemarquableApiModelSchema = z.object({
+const MAX_REFERENTIELS_PAR_REQUETE = 100
+
+const referentielsCsvSchema = z
+  .string()
+  .min(1, 'Au moins un identifiant de référentiel est requis')
+  .transform((value) =>
+    value
+      .split(',')
+      .map((segment) => segment.trim())
+      .filter((segment) => segment.length > 0),
+  )
+  .pipe(
+    z
+      .array(referentielPublicIdSchema)
+      .min(1)
+      .max(
+        MAX_REFERENTIELS_PAR_REQUETE,
+        `Au plus ${MAX_REFERENTIELS_PAR_REQUETE} référentiels par requête`,
+      ),
+  )
+
+export const valeursRemarquablesReferentielApiModelSchema = z.object({
+  referentiel: referentielPublicIdSchema,
+  min: z
+    .number()
+    .nullable()
+    .describe(
+      "Plus petite valeur la plus récente parmi les individus du référentiel ayant au moins une valeur " +
+        "pour l'indicateur. null si aucun individu n'a de valeur.",
+    ),
+  max: z
+    .number()
+    .nullable()
+    .describe(
+      "Plus grande valeur la plus récente parmi les individus du référentiel ayant au moins une valeur " +
+        "pour l'indicateur. null si aucun individu n'a de valeur.",
+    ),
+  mediane: z
+    .number()
+    .nullable()
+    .describe(
+      "Médiane des valeurs les plus récentes des individus du référentiel ayant au moins une valeur " +
+        "pour l'indicateur. Moyenne des deux valeurs centrales si le nombre d'individus est pair. " +
+        "null si aucun individu n'a de valeur.",
+    ),
+})
+export type ValeursRemarquablesReferentielApiModel = z.infer<
+  typeof valeursRemarquablesReferentielApiModelSchema
+>
+
+export const valeursRemarquablesListApiModelSchema = z.object({
+  items: z
+    .array(valeursRemarquablesReferentielApiModelSchema)
+    .describe('Valeurs remarquables agrégées pour chaque référentiel demandé existant.'),
+})
+export type ValeursRemarquablesListApiModel = z.infer<
+  typeof valeursRemarquablesListApiModelSchema
+>
+
+export const listValeursRemarquablesForIndicateurQuerySchema = z.object({
+  referentiels: referentielsCsvSchema.describe(
+    `Liste d'identifiants de référentiels séparés par une virgule (ex. REF-DEPT,REF-REG). 1..${MAX_REFERENTIELS_PAR_REQUETE} identifiants.`,
+  ),
+})
+export type ListValeursRemarquablesForIndicateurQuery = z.infer<
+  typeof listValeursRemarquablesForIndicateurQuerySchema
+>
+
+export const syntheseIndividuApiModelSchema = z.object({
   individu: individuPublicIdSchema,
   variation: z
     .number()
@@ -99,48 +167,30 @@ export const valeurRemarquableApiModelSchema = z.object({
       "Variation absolue entre la valeur la plus récente et la précédente (par date de la valeur). " +
         "null si l'individu n'a aucune valeur ; égale à la valeur la plus récente s'il n'en a qu'une (comparée à 0).",
     ),
+  ecartMediane: z
+    .number()
+    .nullable()
+    .describe(
+      "Écart entre la valeur la plus récente de l'individu et la médiane des valeurs les plus récentes " +
+        "des individus de son référentiel ayant au moins une valeur pour l'indicateur. " +
+        "null si l'individu n'a aucune valeur ou si la médiane n'est pas calculable.",
+    ),
 })
-export type ValeurRemarquableApiModel = z.infer<typeof valeurRemarquableApiModelSchema>
+export type SyntheseIndividuApiModel = z.infer<typeof syntheseIndividuApiModelSchema>
 
-export const valeursRemarquablesListApiModelSchema = z.object({
+export const syntheseIndividusListApiModelSchema = z.object({
   items: z
-    .array(valeurRemarquableApiModelSchema)
-    .describe('Valeurs remarquables pour chaque individu demandé ayant été trouvé.'),
-  min: z
-    .number()
-    .nullable()
-    .describe(
-      "Plus petite valeur la plus récente parmi l'ensemble des individus ayant au moins une valeur " +
-        "pour l'indicateur. null si aucun individu n'a de valeur.",
-    ),
-  max: z
-    .number()
-    .nullable()
-    .describe(
-      "Plus grande valeur la plus récente parmi l'ensemble des individus ayant au moins une valeur " +
-        "pour l'indicateur. null si aucun individu n'a de valeur.",
-    ),
-  mediane: z
-    .number()
-    .nullable()
-    .describe(
-      "Médiane des valeurs les plus récentes parmi l'ensemble des individus ayant au moins une valeur " +
-        "pour l'indicateur. Moyenne des deux valeurs centrales si le nombre d'individus est pair. " +
-        "null si aucun individu n'a de valeur.",
-    ),
+    .array(syntheseIndividuApiModelSchema)
+    .describe('Synthèse pour chaque individu demandé ayant été trouvé.'),
 })
-export type ValeursRemarquablesListApiModel = z.infer<
-  typeof valeursRemarquablesListApiModelSchema
->
+export type SyntheseIndividusListApiModel = z.infer<typeof syntheseIndividusListApiModelSchema>
 
-export const listValeursRemarquablesForIndicateurQuerySchema = z.object({
+export const listSyntheseIndividusQuerySchema = z.object({
   individus: individusCsvSchema.describe(
     `Liste d'identifiants d'individus séparés par une virgule (ex. DEPT-84,DEPT-13). 1..${MAX_INDIVIDUS_PAR_REQUETE} identifiants.`,
   ),
 })
-export type ListValeursRemarquablesForIndicateurQuery = z.infer<
-  typeof listValeursRemarquablesForIndicateurQuerySchema
->
+export type ListSyntheseIndividusQuery = z.infer<typeof listSyntheseIndividusQuerySchema>
 
 export const individuAvecValeursApiModelSchema = z.object({
   individu: individuApiModelSchema,
