@@ -7,7 +7,6 @@ import {
   upsertIndicateurBodySchema,
 } from '@pilote/mb-shared/indicateur'
 import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
-import { referentielsForIndicateurApiModelSchema } from '@pilote/mb-shared/referentiel'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
@@ -16,15 +15,11 @@ import { withTransaction } from '@/framework/persistence/withTransaction'
 import { upsertIndicateur } from '@/indicateur/commands/upsertIndicateur'
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
 import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
-import { listReferentielsForIndicateur } from '@/indicateur/queries/listReferentielsForIndicateur'
 
 const IndicateurApiModelSchema = indicateurApiModelSchema.openapi('IndicateurApiModel')
 const IndicateurListApiModelSchema =
   createPaginatedApiListSchema(indicateurApiModelSchema).openapi('IndicateurListApiModel')
 const UpsertIndicateurBodySchema = upsertIndicateurBodySchema.openapi('UpsertIndicateurBody')
-const ReferentielsForIndicateurApiModelSchema = referentielsForIndicateurApiModelSchema.openapi(
-  'ReferentielsForIndicateurApiModel',
-)
 export const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 // --- GET /indicateurs --------------------------------------------------------
@@ -106,29 +101,6 @@ const upsertIndicateurRoute = createRoute({
   },
 })
 
-// --- GET /indicateurs/:id/referentiels --------------------------------------
-
-const getReferentielsForIndicateurRoute = createRoute({
-  method: 'get',
-  path: '/indicateurs/{id}/referentiels',
-  tags: ['Indicateur'],
-  summary: 'Lister les référentiels liés à un indicateur',
-  description:
-    "Retourne les ressources complètes des référentiels liés à l'indicateur, triées par identifiant public ASC. Réponse non paginée (le volume est borné par le nombre de référentiels liés à un indicateur).",
-  middleware: [requireAuthentication],
-  request: { params: detailParamsSchema },
-  responses: {
-    200: {
-      content: { 'application/json': { schema: ReferentielsForIndicateurApiModelSchema } },
-      description: "Référentiels liés à l'indicateur (peut être vide)",
-    },
-    404: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Indicateur introuvable',
-    },
-  },
-})
-
 // --- App registration --------------------------------------------------------
 
 export const indicateurRoutes = new OpenAPIHono()
@@ -178,21 +150,6 @@ indicateurRoutes.openapi(upsertIndicateurRoute, async (context) => {
         context,
         data,
         schema: IndicateurApiModelSchema,
-        status: 200,
-      }),
-    never,
-  )
-})
-
-indicateurRoutes.openapi(getReferentielsForIndicateurRoute, async (context) => {
-  const { id } = context.req.valid('param')
-
-  return listReferentielsForIndicateur(id).match(
-    (data) =>
-      jsonResponseOk({
-        context,
-        data,
-        schema: ReferentielsForIndicateurApiModelSchema,
         status: 200,
       }),
     never,

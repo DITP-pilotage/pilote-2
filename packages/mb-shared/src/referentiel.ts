@@ -42,14 +42,3 @@ export const upsertReferentielBodySchema = z.object({
     ),
 })
 export type UpsertReferentielBody = z.infer<typeof upsertReferentielBodySchema>
-
-export const referentielsForIndicateurApiModelSchema = z.object({
-  items: z
-    .array(referentielApiModelSchema)
-    .describe(
-      "Référentiels liés à l'indicateur, triés par identifiant public ASC. Tableau vide si aucun lien.",
-    ),
-})
-export type ReferentielsForIndicateurApiModel = z.infer<
-  typeof referentielsForIndicateurApiModelSchema
->

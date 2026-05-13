@@ -1,7 +1,8 @@
 import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
-import { individuPublicIdSchema } from '@pilote/mb-shared/individu'
+import { type IndividuApiModel, individuPublicIdSchema } from '@pilote/mb-shared/individu'
+import { referentielPublicIdSchema } from '@pilote/mb-shared/referentiel'
 import { type ValeurDateApiModel } from '@pilote/mb-shared/valeurAvancement'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 import { startTransition } from 'react'
@@ -19,10 +20,10 @@ import {
 } from '@/components/ui/Select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import {
-  indicateurAuthorizedIndividusQueryOptions,
   indicateurQueryOptions,
   indicateurValeursQueryOptions,
   indicateurValeursRemarquablesQueryOptions,
+  referentielIndividusQueryOptions,
 } from '@/queries/indicateurs'
 
 const paramsSchema = z.object({
@@ -31,7 +32,19 @@ const paramsSchema = z.object({
 
 const searchSchema = z.object({
   individu: individuPublicIdSchema.optional(),
+  referentiel: referentielPublicIdSchema.optional(),
 })
+
+const aggregateIndividus = (
+  lists: ReadonlyArray<ReadonlyArray<IndividuApiModel>>,
+): IndividuApiModel[] => {
+  const dedup = new Map<string, IndividuApiModel>()
+  for (const list of lists) for (const ind of list) if (!dedup.has(ind.id)) dedup.set(ind.id, ind)
+  return [...dedup.values()].sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
+}
+
+const firstReferentielFor = (individu: IndividuApiModel): string | undefined =>
+  individu.referentiels[0]
 
 export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
   params: {
@@ -43,31 +56,36 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
   loader: async ({ context, params, deps }) => {
     const indicateur = await context.queryClient.fetchQuery(indicateurQueryOptions(params.id))
 
-    if (indicateur.referentielIds.length === 0) return { indicateur, individus: [] }
+    if (indicateur.referentielIds.length === 0) return { indicateur }
 
-    const individus = await context.queryClient.fetchQuery(
-      indicateurAuthorizedIndividusQueryOptions(params.id, indicateur.referentielIds),
+    const lists = await Promise.all(
+      indicateur.referentielIds.map((refId) =>
+        context.queryClient.fetchQuery(referentielIndividusQueryOptions(refId)),
+      ),
     )
+    const individus = aggregateIndividus(lists)
 
-    if (individus.length === 0) return { indicateur, individus }
+    if (individus.length === 0) return { indicateur }
 
-    if (!deps.individu || !individus.some((i) => i.id === deps.individu)) {
+    const selected = deps.individu ? individus.find((i) => i.id === deps.individu) : undefined
+    if (!selected) {
+      const first = individus[0]!
       throw redirect({
         to: '/indicateurs/$id',
         params,
-        search: { individu: individus[0]!.id },
+        search: { individu: first.id, referentiel: firstReferentielFor(first) },
         replace: true,
       })
     }
 
     await Promise.all([
-      context.queryClient.fetchQuery(indicateurValeursQueryOptions(params.id, deps.individu)),
+      context.queryClient.fetchQuery(indicateurValeursQueryOptions(params.id, deps.individu!)),
       context.queryClient.fetchQuery(
-        indicateurValeursRemarquablesQueryOptions(params.id, deps.individu),
+        indicateurValeursRemarquablesQueryOptions(params.id, deps.individu!),
       ),
     ])
 
-    return { indicateur, individus }
+    return { indicateur }
   },
   pendingComponent: () => <RouteLoading message="Chargement de l'indicateur…" />,
   errorComponent: RouteError,
@@ -80,9 +98,10 @@ function IndicateurDetailComponent() {
   const navigate = useNavigate({ from: Route.fullPath })
 
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(id))
-  const { data: individus } = useSuspenseQuery(
-    indicateurAuthorizedIndividusQueryOptions(id, indicateur.referentielIds),
-  )
+  const individus = useSuspenseQueries({
+    queries: indicateur.referentielIds.map((refId) => referentielIndividusQueryOptions(refId)),
+    combine: (results) => aggregateIndividus(results.map((r) => r.data)),
+  })
 
   const selectedIndividu = search.individu
     ? individus.find((i) => i.id === search.individu)
@@ -125,9 +144,14 @@ function IndicateurDetailComponent() {
             <Select
               value={selectedIndividu.id}
               onValueChange={(value) => {
+                const next = individus.find((i) => i.id === value)
                 startTransition(() => {
                   void navigate({
-                    search: (prev) => ({ ...prev, individu: value }),
+                    search: (prev) => ({
+                      ...prev,
+                      individu: value,
+                      referentiel: next ? firstReferentielFor(next) : prev.referentiel,
+                    }),
                   })
                 })
               }}

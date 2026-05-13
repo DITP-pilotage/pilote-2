@@ -1,4 +1,3 @@
-import { type IndividuApiModel } from '@pilote/mb-shared/individu'
 import { queryOptions } from '@tanstack/react-query'
 
 import {
@@ -37,28 +36,13 @@ export const indicateurIndividusQueryOptions = (indicateurId: string) =>
     staleTime: DEFAULT_STALE_TIME,
   })
 
-const fetchAuthorizedIndividusForIndicateur = async (
-  referentielIds: ReadonlyArray<string>,
-): Promise<IndividuApiModel[]> => {
-  const lists = await Promise.all(
-    referentielIds.map((refId) =>
-      fetchAllPaginatedItems((cursor) =>
-        fetchIndividusForReferentiel(refId, cursor ? { cursor } : {}),
-      ),
-    ),
-  )
-  const dedup = new Map<string, IndividuApiModel>()
-  for (const list of lists) for (const ind of list) if (!dedup.has(ind.id)) dedup.set(ind.id, ind)
-  return [...dedup.values()].sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
-}
-
-export const indicateurAuthorizedIndividusQueryOptions = (
-  indicateurId: string,
-  referentielIds: ReadonlyArray<string>,
-) =>
+export const referentielIndividusQueryOptions = (referentielId: string) =>
   queryOptions({
-    queryKey: ['indicateur', indicateurId, 'individus-autorises', [...referentielIds].sort()],
-    queryFn: () => fetchAuthorizedIndividusForIndicateur(referentielIds),
+    queryKey: ['referentiel', referentielId, 'individus'],
+    queryFn: () =>
+      fetchAllPaginatedItems((cursor) =>
+        fetchIndividusForReferentiel(referentielId, cursor ? { cursor } : {}),
+      ),
     staleTime: DEFAULT_STALE_TIME,
   })
 
