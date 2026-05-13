@@ -6,6 +6,16 @@ import { clsxm } from '@/lib/clsxm'
 
 export const Select = SelectPrimitive.Root
 export const SelectValue = SelectPrimitive.Value
+export const SelectGroup = SelectPrimitive.Group
+
+export function SelectLabel({ className, ...props }: ComponentProps<typeof SelectPrimitive.Label>) {
+  return (
+    <SelectPrimitive.Label
+      className={clsxm('px-2 py-1.5 text-xs font-medium text-text-muted', className)}
+      {...props}
+    />
+  )
+}
 
 export function SelectTrigger({
   className,

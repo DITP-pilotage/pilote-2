@@ -4,7 +4,6 @@ import {
   fetchIndicateurById,
   fetchIndicateurs,
   fetchIndividusForIndicateur,
-  fetchIndividusForReferentiel,
   fetchValeursForIndicateur,
   fetchValeursRemarquablesForIndicateur,
   type IndicateursQueryParams,
@@ -32,16 +31,6 @@ export const indicateurIndividusQueryOptions = (indicateurId: string) =>
     queryFn: () =>
       fetchAllPaginatedItems((cursor) =>
         fetchIndividusForIndicateur(indicateurId, cursor ? { cursor } : {}),
-      ),
-    staleTime: DEFAULT_STALE_TIME,
-  })
-
-export const referentielIndividusQueryOptions = (referentielId: string) =>
-  queryOptions({
-    queryKey: ['referentiel', referentielId, 'individus'],
-    queryFn: () =>
-      fetchAllPaginatedItems((cursor) =>
-        fetchIndividusForReferentiel(referentielId, cursor ? { cursor } : {}),
       ),
     staleTime: DEFAULT_STALE_TIME,
   })

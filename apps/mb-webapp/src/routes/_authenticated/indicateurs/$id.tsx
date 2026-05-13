@@ -1,6 +1,6 @@
 import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
 import { type IndividuApiModel, individuPublicIdSchema } from '@pilote/mb-shared/individu'
-import { referentielPublicIdSchema } from '@pilote/mb-shared/referentiel'
+import { type ReferentielApiModel, referentielPublicIdSchema } from '@pilote/mb-shared/referentiel'
 import { type ValeurDateApiModel } from '@pilote/mb-shared/valeurAvancement'
 import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
@@ -14,7 +14,9 @@ import { Button } from '@/components/ui/Button'
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/Select'
@@ -23,8 +25,8 @@ import {
   indicateurQueryOptions,
   indicateurValeursQueryOptions,
   indicateurValeursRemarquablesQueryOptions,
-  referentielIndividusQueryOptions,
 } from '@/queries/indicateurs'
+import { referentielIndividusQueryOptions, referentielQueryOptions } from '@/queries/referentiels'
 
 const paramsSchema = z.object({
   id: indicateurPublicIdSchema,
@@ -35,16 +37,27 @@ const searchSchema = z.object({
   referentiel: referentielPublicIdSchema.optional(),
 })
 
-const aggregateIndividus = (
-  lists: ReadonlyArray<ReadonlyArray<IndividuApiModel>>,
-): IndividuApiModel[] => {
+type ReferentielGroupe = {
+  referentiel: ReferentielApiModel
+  individus: ReadonlyArray<IndividuApiModel>
+}
+
+// TODO: à supprimer lors du passage à la contrainte "1 individu = 1 référentiel" :
+// le `flatMap` + dédup sera remplacé par un simple `find` sur le référentiel direct
+// de l'indicateur (1 référentiel = la source unique des individus).
+const flattenAndSort = (groupes: ReadonlyArray<ReferentielGroupe>): IndividuApiModel[] => {
   const dedup = new Map<string, IndividuApiModel>()
-  for (const list of lists) for (const ind of list) if (!dedup.has(ind.id)) dedup.set(ind.id, ind)
+  for (const groupe of groupes)
+    for (const individu of groupe.individus)
+      if (!dedup.has(individu.id)) dedup.set(individu.id, individu)
   return [...dedup.values()].sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
 }
 
-const firstReferentielFor = (individu: IndividuApiModel): string | undefined =>
-  individu.referentiels[0]
+const groupeContenant = (
+  groupes: ReadonlyArray<ReferentielGroupe>,
+  individuId: string,
+): ReferentielGroupe | undefined =>
+  groupes.find((g) => g.individus.some((i) => i.id === individuId))
 
 export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
   params: {
@@ -58,22 +71,29 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
 
     if (indicateur.referentielIds.length === 0) return { indicateur }
 
-    const lists = await Promise.all(
-      indicateur.referentielIds.map((refId) =>
-        context.queryClient.fetchQuery(referentielIndividusQueryOptions(refId)),
-      ),
+    // TODO: à supprimer lors du passage à la contrainte "1 individu = 1 référentiel" :
+    // l'agrégation multi-référentiels disparaîtra au profit d'une seule query.
+    const groupes: ReferentielGroupe[] = await Promise.all(
+      indicateur.referentielIds.map(async (refId) => {
+        const [referentiel, individus] = await Promise.all([
+          context.queryClient.fetchQuery(referentielQueryOptions(refId)),
+          context.queryClient.fetchQuery(referentielIndividusQueryOptions(refId)),
+        ])
+        return { referentiel, individus }
+      }),
     )
-    const individus = aggregateIndividus(lists)
 
+    const individus = flattenAndSort(groupes)
     if (individus.length === 0) return { indicateur }
 
     const selected = deps.individu ? individus.find((i) => i.id === deps.individu) : undefined
     if (!selected) {
       const first = individus[0]!
+      const groupe = groupeContenant(groupes, first.id)
       throw redirect({
         to: '/indicateurs/$id',
         params,
-        search: { individu: first.id, referentiel: firstReferentielFor(first) },
+        search: { individu: first.id, referentiel: groupe?.referentiel.id },
         replace: true,
       })
     }
@@ -98,17 +118,26 @@ function IndicateurDetailComponent() {
   const navigate = useNavigate({ from: Route.fullPath })
 
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(id))
-  const individus = useSuspenseQueries({
-    queries: indicateur.referentielIds.map((refId) => referentielIndividusQueryOptions(refId)),
-    combine: (results) => aggregateIndividus(results.map((r) => r.data)),
+  const referentiels = useSuspenseQueries({
+    queries: indicateur.referentielIds.map((refId) => referentielQueryOptions(refId)),
+    combine: (results) => results.map((r) => r.data),
   })
+  const individusByReferentiel = useSuspenseQueries({
+    queries: indicateur.referentielIds.map((refId) => referentielIndividusQueryOptions(refId)),
+    combine: (results) => results.map((r) => r.data),
+  })
+  const groupes: ReferentielGroupe[] = indicateur.referentielIds.map((_, i) => ({
+    referentiel: referentiels[i]!,
+    individus: individusByReferentiel[i]!,
+  }))
 
+  const individus = flattenAndSort(groupes)
   const selectedIndividu = search.individu
     ? individus.find((i) => i.id === search.individu)
     : undefined
 
-  const noReferentiel = indicateur.referentielIds.length === 0
-  const noIndividu = !noReferentiel && individus.length === 0
+  const indicateurAAucunReferentiel = indicateur.referentielIds.length === 0
+  const referentielAAucunIndividu = !indicateurAAucunReferentiel && individus.length === 0
 
   return (
     <div className="space-y-6">
@@ -125,11 +154,11 @@ function IndicateurDetailComponent() {
         <h1 className="text-3xl font-semibold text-text">{indicateur.nom}</h1>
       </header>
 
-      {noReferentiel ? (
+      {indicateurAAucunReferentiel ? (
         <p className="rounded border border-border bg-surface p-6 text-sm text-text-muted">
           Aucun référentiel associé à cet indicateur.
         </p>
-      ) : noIndividu ? (
+      ) : referentielAAucunIndividu ? (
         <p className="rounded border border-border bg-surface p-6 text-sm text-text-muted">
           Aucun individu disponible dans les référentiels liés.
         </p>
@@ -144,13 +173,13 @@ function IndicateurDetailComponent() {
             <Select
               value={selectedIndividu.id}
               onValueChange={(value) => {
-                const next = individus.find((i) => i.id === value)
+                const groupe = groupeContenant(groupes, value)
                 startTransition(() => {
                   void navigate({
                     search: (prev) => ({
                       ...prev,
                       individu: value,
-                      referentiel: next ? firstReferentielFor(next) : prev.referentiel,
+                      referentiel: groupe?.referentiel.id ?? prev.referentiel,
                     }),
                   })
                 })
@@ -160,10 +189,15 @@ function IndicateurDetailComponent() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {individus.map((individu) => (
-                  <SelectItem key={individu.id} value={individu.id}>
-                    {individu.nom}
-                  </SelectItem>
+                {groupes.map((groupe) => (
+                  <SelectGroup key={groupe.referentiel.id}>
+                    <SelectLabel>{groupe.referentiel.nom}</SelectLabel>
+                    {groupe.individus.map((individu) => (
+                      <SelectItem key={individu.id} value={individu.id}>
+                        {individu.nom}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
                 ))}
               </SelectContent>
             </Select>
@@ -228,7 +262,7 @@ function ValeursRemarquablesSection({
   indicateurId: string
   individuId: string
 }) {
-  const { data: remarquables } = useSuspenseQuery(
+  const { data: valeursRemarquables } = useSuspenseQuery(
     indicateurValeursRemarquablesQueryOptions(indicateurId, individuId),
   )
   const { data: valeurs } = useSuspenseQuery(
@@ -236,7 +270,7 @@ function ValeursRemarquablesSection({
   )
 
   const derniereValeur = derniereValeurFromItems(valeurs.items)
-  const variation = remarquables.items[0]?.variation ?? null
+  const variation = valeursRemarquables.items[0]?.variation ?? null
 
   const numberFormatter = new Intl.NumberFormat('fr-FR')
   const variationFormatter = new Intl.NumberFormat('fr-FR', { signDisplay: 'exceptZero' })
