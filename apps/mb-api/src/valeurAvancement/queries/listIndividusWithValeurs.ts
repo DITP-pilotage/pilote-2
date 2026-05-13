@@ -27,7 +27,7 @@ export const listIndividusWithValeurs = (
     where,
     orderBy: { id: 'asc' },
     include: {
-      referentiel: { select: { publicId: true } },
+      referentiel: true,
       valeurs: {
         where: indicateurFilter,
         orderBy: [{ date: 'desc' }, { id: 'desc' }],

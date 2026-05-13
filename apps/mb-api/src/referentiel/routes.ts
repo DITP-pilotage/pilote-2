@@ -12,11 +12,16 @@ import {
   upsertReferentielBodySchema,
 } from '@pilote/mb-shared/referentiel'
 
+import { err, ok, type Result } from 'neverthrow'
+
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
-import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { withTransaction } from '@/framework/persistence/withTransaction'
-import { upsertReferentiel } from '@/referentiel/commands/upsertReferentiel'
+import {
+  type UpsertReferentielError,
+  upsertReferentiel,
+} from '@/referentiel/commands/upsertReferentiel'
 import { getReferentielByPublicId } from '@/referentiel/queries/getReferentielByPublicId'
 import { listIndividusForReferentiel } from '@/referentiel/queries/listIndividusForReferentiel'
 import { listReferentiels } from '@/referentiel/queries/listReferentiels'
@@ -168,9 +173,12 @@ referentielRoutes.openapi(upsertReferentielRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  const result = await withTransaction(async () => {
-    await upsertReferentiel(id, body)
-    return getReferentielByPublicId(id)
+  type Outcome = Result<z.infer<typeof ReferentielApiModelSchema>, UpsertReferentielError>
+  const result = await withTransaction(async (): Promise<Outcome> => {
+    const upsertResult = await upsertReferentiel(id, body)
+    if (upsertResult.isErr()) return err(upsertResult.error)
+    const data = (await getReferentielByPublicId(id))._unsafeUnwrap()
+    return ok(data)
   })
 
   return result.match(
@@ -181,7 +189,17 @@ referentielRoutes.openapi(upsertReferentielRoute, async (context) => {
         schema: ReferentielApiModelSchema,
         status: 200,
       }),
-    never,
+    (error) =>
+      jsonResponseError({
+        context,
+        error: {
+          code: error.type,
+          message: `Les individus suivants sont déjà rattachés à un autre référentiel : ${error.individuIds.join(', ')}`,
+          details: { individuIds: error.individuIds },
+        },
+        schema: ErrorApiModelSchema,
+        status: 409,
+      }),
   )
 })
 

@@ -1,16 +1,44 @@
 import { type UpsertReferentielBody } from '@pilote/mb-shared/referentiel'
-import { ResultAsync } from 'neverthrow'
+import { err, ok, type Result, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { AppError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 
-export class IndividuAlreadyAttachedError extends AppError {
-  readonly code = 'INDIVIDU_ALREADY_ATTACHED'
-  readonly kind = 'conflict' as const
+export type UpsertReferentielError = {
+  type: 'INDIVIDUS_ALREADY_ATTACHED'
+  individuIds: string[]
 }
 
-const performUpsert = async (publicId: string, body: UpsertReferentielBody): Promise<void> => {
+const detectConflicts = async (
+  referentielId: string | undefined,
+  individuPublicIds: string[],
+): Promise<string[]> => {
+  if (individuPublicIds.length === 0) return []
+  const existing = await db().individu.findMany({
+    where: { publicId: { in: individuPublicIds } },
+    select: { publicId: true, referentielId: true },
+  })
+  return existing
+    .filter((row) => row.referentielId !== referentielId)
+    .map((row) => row.publicId)
+    .sort()
+}
+
+const performUpsert = async (
+  publicId: string,
+  body: UpsertReferentielBody,
+): Promise<Result<void, UpsertReferentielError>> => {
+  const existingReferentiel = await db().referentiel.findUnique({
+    where: { publicId },
+    select: { id: true },
+  })
+
+  const individuPublicIds = body.individus?.map((i) => i.publicId) ?? []
+  const conflicts = await detectConflicts(existingReferentiel?.id, individuPublicIds)
+  if (conflicts.length > 0) {
+    return err({ type: 'INDIVIDUS_ALREADY_ATTACHED', individuIds: conflicts })
+  }
+
   const referentiel = await db().referentiel.upsert({
     where: { publicId },
     update: { nom: body.nom, description: body.description },
@@ -23,19 +51,10 @@ const performUpsert = async (publicId: string, body: UpsertReferentielBody): Pro
   })
 
   for (const item of body.individus ?? []) {
-    const existing = await db().individu.findUnique({ where: { publicId: item.publicId } })
-    if (existing && existing.referentielId !== referentiel.id) {
-      throw new IndividuAlreadyAttachedError(
-        `L'individu ${item.publicId} est déjà rattaché à un autre référentiel.`,
-        { individuPublicId: item.publicId },
-      )
-    }
-    if (existing) {
-      await db().individu.update({ where: { id: existing.id }, data: { nom: item.nom } })
-      continue
-    }
-    await db().individu.create({
-      data: {
+    await db().individu.upsert({
+      where: { publicId: item.publicId },
+      update: { nom: item.nom },
+      create: {
         id: uuidv7(),
         publicId: item.publicId,
         nom: item.nom,
@@ -43,9 +62,12 @@ const performUpsert = async (publicId: string, body: UpsertReferentielBody): Pro
       },
     })
   }
+
+  return ok()
 }
 
 export const upsertReferentiel = (
   publicId: string,
   body: UpsertReferentielBody,
-): ResultAsync<void, never> => ResultAsync.fromSafePromise(performUpsert(publicId, body))
+): ResultAsync<void, UpsertReferentielError> =>
+  ResultAsync.fromSafePromise(performUpsert(publicId, body)).andThen((r) => r)

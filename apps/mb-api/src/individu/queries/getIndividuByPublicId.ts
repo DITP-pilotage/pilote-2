@@ -8,6 +8,6 @@ export const getIndividuByPublicId = (publicId: string): ResultAsync<IndividuApi
   ResultAsync.fromSafePromise(
     db().individu.findUniqueOrThrow({
       where: { publicId },
-      include: { referentiel: { select: { publicId: true } } },
+      include: { referentiel: true },
     }),
   ).map(toIndividuApiModel)

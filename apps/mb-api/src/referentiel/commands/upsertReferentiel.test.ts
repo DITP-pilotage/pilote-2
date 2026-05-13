@@ -1,10 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { db } from '@/framework/persistence/dbStore'
-import {
-  IndividuAlreadyAttachedError,
-  upsertReferentiel,
-} from '@/referentiel/commands/upsertReferentiel'
+import { upsertReferentiel } from '@/referentiel/commands/upsertReferentiel'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testDeptIds } from '@/test/randomIds'
@@ -113,23 +110,34 @@ describe.concurrent('upsertReferentiel', () => {
   )
 
   it(
-    'rejette quand un individu listé est déjà rattaché à un autre référentiel',
+    'retourne une erreur listant tous les individus déjà rattachés à un autre référentiel',
     integrationTest(async () => {
       // Given
-      const [dept1] = testDeptIds(1)
-      await fixtures.individu({
-        publicId: dept1,
-        referentiel: { publicId: 'REF-OTHER' },
+      const [dept1, dept2, dept3] = testDeptIds(3)
+      await fixtures.individu(
+        { publicId: dept1, referentiel: { publicId: 'REF-OTHER-A' } },
+        { publicId: dept2, referentiel: { publicId: 'REF-OTHER-B' } },
+      )
+
+      // When
+      const result = await upsertReferentiel('REF-NEW2', {
+        nom: 'Nouveau référentiel',
+        description: null,
+        individus: [
+          { publicId: dept1, nom: 'Premier' },
+          { publicId: dept2, nom: 'Second' },
+          { publicId: dept3, nom: 'Troisième (libre)' },
+        ],
       })
 
-      // When / Then
-      await expect(
-        upsertReferentiel('REF-NEW2', {
-          nom: 'Nouveau référentiel',
-          description: null,
-          individus: [{ publicId: dept1, nom: 'Individu de test' }],
-        }),
-      ).rejects.toBeInstanceOf(IndividuAlreadyAttachedError)
+      // Then : dept1 et dept2 listés, dept3 ignoré (pas en conflit) ; aucune écriture
+      expect(result.isErr()).toBe(true)
+      expect(result._unsafeUnwrapErr()).toEqual({
+        type: 'INDIVIDUS_ALREADY_ATTACHED',
+        individuIds: [dept1, dept2].sort(),
+      })
+      const created = await db().referentiel.findUnique({ where: { publicId: 'REF-NEW2' } })
+      expect(created).toBeNull()
     }),
   )
 
