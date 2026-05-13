@@ -124,7 +124,7 @@ const main = async () => {
     where: { email: 'ditp.admin@example.com' },
     select: { id: true },
   })
-  for (const item of indicateursSeed.slice(0, 5)) {
+  for (const item of indicateursSeed.slice(0, 8)) {
     const indicateur = await prisma.indicateur.findUniqueOrThrow({
       where: { publicId: item.publicId },
       select: { id: true },
@@ -187,6 +187,10 @@ const main = async () => {
     { indicateurPublicId: 'IND-003', referentielPublicIds: ['REF-REG'] },
     { indicateurPublicId: 'IND-004', referentielPublicIds: ['REF-DEPT'] },
     { indicateurPublicId: 'IND-005', referentielPublicIds: ['REF-REG'] },
+    // Indicateurs liés à REF-EMPTY pour exercer le fallback "aucun individu disponible".
+    { indicateurPublicId: 'IND-006', referentielPublicIds: ['REF-EMPTY'] },
+    { indicateurPublicId: 'IND-007', referentielPublicIds: ['REF-EMPTY'] },
+    { indicateurPublicId: 'IND-008', referentielPublicIds: ['REF-EMPTY'] },
   ]
 
   for (const item of indicateurReferentielsSeed) {
@@ -272,7 +276,7 @@ const main = async () => {
     })
   }
 
-  const permissionsCount = 5 * 2
+  const permissionsCount = 8 * 2
   console.log(
     `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursAvancementSeed.length} valeurs.`,
   )
