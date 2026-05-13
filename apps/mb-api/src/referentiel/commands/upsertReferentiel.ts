@@ -14,14 +14,15 @@ const detectConflicts = async (
   individuPublicIds: string[],
 ): Promise<string[]> => {
   if (individuPublicIds.length === 0) return []
-  const existing = await db().individu.findMany({
-    where: { publicId: { in: individuPublicIds } },
-    select: { publicId: true, referentielId: true },
+  const conflicts = await db().individu.findMany({
+    where: {
+      publicId: { in: individuPublicIds },
+      ...(referentielId ? { referentielId: { not: referentielId } } : {}),
+    },
+    select: { publicId: true },
+    orderBy: { publicId: 'asc' },
   })
-  return existing
-    .filter((row) => row.referentielId !== referentielId)
-    .map((row) => row.publicId)
-    .sort()
+  return conflicts.map((row) => row.publicId)
 }
 
 const performUpsert = async (
