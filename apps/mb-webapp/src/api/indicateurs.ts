@@ -3,11 +3,15 @@ import {
   indicateurApiModelSchema,
   type IndicateurListApiModel,
   indicateurListApiModelSchema,
+  type ListIndicateursQuery,
 } from '@pilote/mb-shared/indicateur'
-import { type PaginateQuery } from '@pilote/mb-shared/pagination'
 import {
   type IndividusWithValeursListApiModel,
   individusWithValeursListApiModelSchema,
+  type ListIndividusWithValeursQuery,
+  type ListSyntheseIndividusQuery,
+  type ListValeursForIndicateurQuery,
+  type ListValeursRemarquablesForIndicateurQuery,
   type SyntheseIndividusListApiModel,
   syntheseIndividusListApiModelSchema,
   type ValeurAvancementListApiModel,
@@ -18,12 +22,8 @@ import {
 
 import { apiClient } from '@/api/client'
 
-export type IndicateursQueryParams = PaginateQuery & {
-  recherche?: string | undefined
-}
-
 export const fetchIndicateurs = async (
-  params: IndicateursQueryParams,
+  params: ListIndicateursQuery,
 ): Promise<IndicateurListApiModel> => {
   // ky filters out `undefined` values from object-form searchParams (see
   // Ky.#normalizeSearchParams), so we can pass `params` directly.
@@ -38,7 +38,7 @@ export const fetchIndicateurById = async (id: string): Promise<IndicateurApiMode
 
 export const fetchIndividusForIndicateur = async (
   indicateurId: string,
-  params: { cursor?: string } = {},
+  params: ListIndividusWithValeursQuery,
 ): Promise<IndividusWithValeursListApiModel> => {
   const json = await apiClient
     .get(`indicateurs/${indicateurId}/individus`, { searchParams: params })
@@ -48,11 +48,15 @@ export const fetchIndividusForIndicateur = async (
 
 export const fetchValeursForIndicateur = async (
   indicateurId: string,
-  params: { individus: string[] },
+  params: ListValeursForIndicateurQuery,
 ): Promise<ValeurAvancementListApiModel> => {
   const json = await apiClient
     .get(`indicateurs/${indicateurId}/valeurs`, {
-      searchParams: { individus: params.individus.join(',') },
+      searchParams: {
+        individus: params.individus.join(','),
+        ...(params.dateDebut ? { dateDebut: params.dateDebut } : {}),
+        ...(params.dateFin ? { dateFin: params.dateFin } : {}),
+      },
     })
     .json()
   return valeurAvancementListApiModelSchema.parse(json)
@@ -60,7 +64,7 @@ export const fetchValeursForIndicateur = async (
 
 export const fetchValeursRemarquablesForIndicateur = async (
   indicateurId: string,
-  params: { referentiels: string[] },
+  params: ListValeursRemarquablesForIndicateurQuery,
 ): Promise<ValeursRemarquablesListApiModel> => {
   const json = await apiClient
     .get(`indicateurs/${indicateurId}/valeurs-remarquables`, {
@@ -72,7 +76,7 @@ export const fetchValeursRemarquablesForIndicateur = async (
 
 export const fetchSyntheseIndividus = async (
   indicateurId: string,
-  params: { individus: string[] },
+  params: ListSyntheseIndividusQuery,
 ): Promise<SyntheseIndividusListApiModel> => {
   const json = await apiClient
     .get(`indicateurs/${indicateurId}/synthese-individus`, {

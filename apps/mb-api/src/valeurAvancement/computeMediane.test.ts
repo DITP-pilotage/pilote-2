@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
 
-import { computeMediane } from '@/valeurAvancement/computeMediane'
+import { Prisma } from '@/generated/prisma/client'
+import {
+  computeMediane,
+  computeMedianeFromDecimals,
+  groupMedianesByKey,
+} from '@/valeurAvancement/computeMediane'
+
+const d = (n: number): Prisma.Decimal => new Prisma.Decimal(n)
 
 describe('computeMediane', () => {
   it('retourne null pour un tableau vide', () => {
@@ -43,5 +50,59 @@ describe('computeMediane', () => {
 
   it('trie numériquement (pas lexicographiquement) pour distinguer 2 et 10', () => {
     expect(computeMediane([10, 2, 1])).toBe(2)
+  })
+})
+
+describe('computeMedianeFromDecimals', () => {
+  it('retourne null pour un tableau vide', () => {
+    expect(computeMedianeFromDecimals([])).toBeNull()
+  })
+
+  it('calcule la médiane sur les Decimal mappés en number', () => {
+    expect(computeMedianeFromDecimals([{ valeur: d(10) }, { valeur: d(30) }])).toBe(20)
+    expect(computeMedianeFromDecimals([{ valeur: d(1) }, { valeur: d(2) }, { valeur: d(3) }])).toBe(
+      2,
+    )
+  })
+
+  it('gère les décimaux Decimal sans perte de précision', () => {
+    expect(computeMedianeFromDecimals([{ valeur: d(0.1) }, { valeur: d(0.2) }])).toBeCloseTo(0.15)
+  })
+})
+
+describe('groupMedianesByKey', () => {
+  it('retourne une map vide pour une entrée vide', () => {
+    expect(
+      groupMedianesByKey<{ key: string; valeur: Prisma.Decimal }, string>(
+        [],
+        (r) => r.key,
+        (r) => r.valeur,
+      ),
+    ).toEqual(new Map())
+  })
+
+  it('calcule la médiane indépendamment par groupe', () => {
+    const rows = [
+      { ref: 'A', valeur: d(10) },
+      { ref: 'A', valeur: d(30) },
+      { ref: 'B', valeur: d(100) },
+      { ref: 'B', valeur: d(200) },
+    ]
+    const result = groupMedianesByKey(
+      rows,
+      (r) => r.ref,
+      (r) => r.valeur,
+    )
+    expect(result.get('A')).toBe(20)
+    expect(result.get('B')).toBe(150)
+  })
+
+  it('retourne la valeur unique quand un groupe a un seul élément', () => {
+    const result = groupMedianesByKey(
+      [{ ref: 'A', valeur: d(42) }],
+      (r) => r.ref,
+      (r) => r.valeur,
+    )
+    expect(result.get('A')).toBe(42)
   })
 })

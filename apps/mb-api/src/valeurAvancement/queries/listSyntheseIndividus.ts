@@ -4,9 +4,10 @@ import {
 } from '@pilote/mb-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
+import { unique } from '@/framework/array'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
-import { computeMediane } from '@/valeurAvancement/computeMediane'
+import { groupMedianesByKey } from '@/valeurAvancement/computeMediane'
 
 const computeVariation = (valeurs: ReadonlyArray<{ valeur: Prisma.Decimal }>): number | null => {
   if (valeurs.length === 0) return null
@@ -23,13 +24,17 @@ const computeEcartMediane = (
   return derniereValeur.minus(mediane).toNumber()
 }
 
-const fetchItemsDemandes = (indicateurId: string, individus: ReadonlyArray<string>) =>
+const fetchLatestValeursIndividus = ({
+  indicateurId,
+  individuPublicIds,
+}: {
+  indicateurId: string
+  individuPublicIds: ReadonlyArray<string>
+}) =>
   db().individu.findMany({
-    where: { publicId: { in: [...individus] } },
+    where: { publicId: { in: [...individuPublicIds] } },
     orderBy: { publicId: 'asc' },
-    select: {
-      publicId: true,
-      referentielId: true,
+    include: {
       valeurs: {
         where: { indicateurId },
         orderBy: [{ date: 'desc' }, { id: 'desc' }],
@@ -38,73 +43,66 @@ const fetchItemsDemandes = (indicateurId: string, individus: ReadonlyArray<strin
     },
   })
 
-const fetchValeursRecentesParReferentielId = (
-  indicateurId: string,
-  referentielIds: ReadonlyArray<string>,
-) =>
+const fetchLatestValeursParReferentiel = ({
+  indicateurId,
+  referentielIds,
+}: {
+  indicateurId: string
+  referentielIds: ReadonlyArray<string>
+}) =>
   db().individu.findMany({
     where: {
       referentielId: { in: [...referentielIds] },
       valeurs: { some: { indicateurId } },
     },
-    select: {
-      referentielId: true,
+    include: {
       valeurs: {
         where: { indicateurId },
         orderBy: [{ date: 'desc' }, { id: 'desc' }],
         take: 1,
-        select: { valeur: true },
       },
     },
   })
 
-const computeMedianesParReferentiel = (
-  populationRows: ReadonlyArray<{
-    referentielId: string
-    valeurs: { valeur: Prisma.Decimal }[]
-  }>,
-): Map<string, number | null> => {
-  const valeursParRef = new Map<string, number[]>()
-  for (const row of populationRows) {
-    const valeur = row.valeurs[0]?.valeur.toNumber()
-    if (valeur === undefined) continue
-    const arr = valeursParRef.get(row.referentielId) ?? []
-    arr.push(valeur)
-    valeursParRef.set(row.referentielId, arr)
+const buildSynthese = async (
+  indicateurPublicId: string,
+  params: ListSyntheseIndividusQuery,
+): Promise<SyntheseIndividusListApiModel> => {
+  const indicateur = await db().indicateur.findUniqueOrThrow({
+    where: { publicId: indicateurPublicId },
+    select: { id: true },
+  })
+  const itemsRows = await fetchLatestValeursIndividus({
+    indicateurId: indicateur.id,
+    individuPublicIds: params.individus,
+  })
+  const referentielIds = unique(itemsRows.map((row) => row.referentielId))
+  const populationRows = referentielIds.length
+    ? await fetchLatestValeursParReferentiel({ indicateurId: indicateur.id, referentielIds })
+    : []
+  const valeursParRef = populationRows.flatMap((row) =>
+    row.valeurs.map((v) => ({ referentielId: row.referentielId, valeur: v.valeur })),
+  )
+  const medianeParRef = groupMedianesByKey(
+    valeursParRef,
+    (row) => row.referentielId,
+    (row) => row.valeur,
+  )
+
+  return {
+    items: itemsRows.map((row) => ({
+      individu: row.publicId,
+      variation: computeVariation(row.valeurs),
+      ecartMediane: computeEcartMediane(
+        row.valeurs[0]?.valeur,
+        medianeParRef.get(row.referentielId) ?? null,
+      ),
+    })),
   }
-  const medianeParRef = new Map<string, number | null>()
-  for (const [refId, valeurs] of valeursParRef) {
-    medianeParRef.set(refId, computeMediane(valeurs))
-  }
-  return medianeParRef
 }
 
 export const listSyntheseIndividus = (
   indicateurPublicId: string,
   params: ListSyntheseIndividusQuery,
 ): ResultAsync<SyntheseIndividusListApiModel, never> =>
-  ResultAsync.fromSafePromise(
-    (async () => {
-      const indicateur = await db().indicateur.findUniqueOrThrow({
-        where: { publicId: indicateurPublicId },
-        select: { id: true },
-      })
-      const itemsRows = await fetchItemsDemandes(indicateur.id, params.individus)
-      const referentielIds = [...new Set(itemsRows.map((row) => row.referentielId))]
-      const populationRows = referentielIds.length
-        ? await fetchValeursRecentesParReferentielId(indicateur.id, referentielIds)
-        : []
-      const medianeParRef = computeMedianesParReferentiel(populationRows)
-
-      return {
-        items: itemsRows.map((row) => ({
-          individu: row.publicId,
-          variation: computeVariation(row.valeurs),
-          ecartMediane: computeEcartMediane(
-            row.valeurs[0]?.valeur,
-            medianeParRef.get(row.referentielId) ?? null,
-          ),
-        })),
-      }
-    })(),
-  )
+  ResultAsync.fromSafePromise(buildSynthese(indicateurPublicId, params))

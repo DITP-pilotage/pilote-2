@@ -16,16 +16,14 @@ const fetchReferentielsAvecValeursRecentes = (
   db().referentiel.findMany({
     where: { publicId: { in: [...referentiels] } },
     orderBy: { publicId: 'asc' },
-    select: {
-      publicId: true,
+    include: {
       individus: {
         where: { valeurs: { some: { indicateurId } } },
-        select: {
+        include: {
           valeurs: {
             where: { indicateurId },
             orderBy: [{ date: 'desc' }, { id: 'desc' }],
             take: 1,
-            select: { valeur: true },
           },
         },
       },

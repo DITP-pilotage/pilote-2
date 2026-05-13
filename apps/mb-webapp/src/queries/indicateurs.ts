@@ -1,3 +1,4 @@
+import { type ListIndicateursQuery } from '@pilote/mb-shared/indicateur'
 import { queryOptions } from '@tanstack/react-query'
 
 import {
@@ -7,12 +8,11 @@ import {
   fetchSyntheseIndividus,
   fetchValeursForIndicateur,
   fetchValeursRemarquablesForIndicateur,
-  type IndicateursQueryParams,
 } from '@/api/indicateurs'
 
 import { DEFAULT_STALE_TIME, fetchAllPaginatedItems } from './utils'
 
-export const indicateursQueryOptions = (params: IndicateursQueryParams) =>
+export const indicateursQueryOptions = (params: ListIndicateursQuery) =>
   queryOptions({
     queryKey: ['indicateurs', params],
     queryFn: () => fetchIndicateurs(params),
