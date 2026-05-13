@@ -5,8 +5,10 @@ import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
 import {
   individuAvecValeursApiModelSchema,
   listIndividusWithValeursQuerySchema,
+  listSyntheseIndividusQuerySchema,
   listValeursForIndicateurQuerySchema,
   listValeursRemarquablesForIndicateurQuerySchema,
+  syntheseIndividusListApiModelSchema,
   valeurAvancementListApiModelSchema,
   valeursRemarquablesListApiModelSchema,
 } from '@pilote/mb-shared/valeurAvancement'
@@ -15,6 +17,7 @@ import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
+import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
 import { listValeursForIndicateur } from '@/valeurAvancement/queries/listValeursForIndicateur'
 import { listValeursRemarquablesForIndicateur } from '@/valeurAvancement/queries/listValeursRemarquablesForIndicateur'
 
@@ -26,6 +29,9 @@ const IndividusWithValeursListApiModelSchema = createPaginatedApiListSchema(
 ).openapi('IndividusWithValeursListApiModel')
 const ValeursRemarquablesListApiModelSchema = valeursRemarquablesListApiModelSchema.openapi(
   'ValeursRemarquablesListApiModel',
+)
+const SyntheseIndividusListApiModelSchema = syntheseIndividusListApiModelSchema.openapi(
+  'SyntheseIndividusListApiModel',
 )
 const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
@@ -91,16 +97,12 @@ const getValeursRemarquablesForIndicateurRoute = createRoute({
   method: 'get',
   path: '/indicateurs/{id}/valeurs-remarquables',
   tags: ['Indicateur'],
-  summary: 'Lister les valeurs remarquables pour un indicateur sur des individus',
+  summary: 'Lister les valeurs remarquables pour un indicateur par référentiel',
   description:
-    "Retourne, pour chaque individu demandé, une vue agrégée des valeurs remarquables de l'indicateur (variation depuis la dernière mise à jour). " +
-    'Le paramètre `individus` est obligatoire (1..N identifiants séparés par une virgule, ex. `DEPT-84,DEPT-13`). ' +
-    'Les individus inexistants sont omis de la réponse. ' +
-    'La variation est calculée sur la base de la date de la valeur (pas de la date de saisie) : null si aucune valeur, ' +
-    'égale à la valeur la plus récente si une seule (comparée à 0), sinon différence avec la valeur précédente. ' +
-    "La réponse inclut également `min`/`max`/`mediane` calculés sur la valeur la plus récente de l'ensemble des " +
-    "individus ayant au moins une valeur pour l'indicateur (indépendamment du paramètre `individus`). " +
-    "Ces trois champs sont à `null` si aucun individu n'a de valeur pour l'indicateur.",
+    "Retourne, pour chaque référentiel demandé existant, les stats `min`/`max`/`mediane` calculées sur la valeur la plus récente de chaque individu du référentiel ayant au moins une valeur pour l'indicateur. " +
+    'Le paramètre `referentiels` est obligatoire (1..N identifiants séparés par une virgule, ex. `REF-DEPT,REF-REG`). ' +
+    'Les référentiels inexistants sont omis de la réponse. ' +
+    "Si un référentiel n'a aucun individu avec valeur pour l'indicateur, les trois champs sont à `null` mais l'item est présent.",
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -109,7 +111,39 @@ const getValeursRemarquablesForIndicateurRoute = createRoute({
   responses: {
     200: {
       content: { 'application/json': { schema: ValeursRemarquablesListApiModelSchema } },
-      description: 'Valeurs remarquables pour les individus demandés',
+      description: 'Valeurs remarquables agrégées pour les référentiels demandés',
+    },
+    400: {
+      content: { 'application/json': { schema: ErrorApiModelSchema } },
+      description: 'Paramètres de requête invalides (ex. `referentiels` absent)',
+    },
+  },
+})
+
+// --- GET /indicateurs/:id/synthese-individus ---------------------------------
+
+const getSyntheseIndividusRoute = createRoute({
+  method: 'get',
+  path: '/indicateurs/{id}/synthese-individus',
+  tags: ['Indicateur'],
+  summary: 'Lister la synthèse pour un indicateur sur des individus',
+  description:
+    'Retourne, pour chaque individu demandé existant, sa variation depuis la dernière mise à jour et son écart à la médiane de son référentiel. ' +
+    'Le paramètre `individus` est obligatoire (1..N identifiants séparés par une virgule, ex. `DEPT-84,DEPT-13`). ' +
+    'Les individus inexistants sont omis de la réponse. ' +
+    'La variation est calculée sur la base de la date de la valeur (pas de la date de saisie) : null si aucune valeur, ' +
+    'égale à la valeur la plus récente si une seule (comparée à 0), sinon différence avec la valeur précédente. ' +
+    "L'écart à la médiane est calculé par rapport à la médiane des valeurs récentes des individus du même référentiel " +
+    "ayant au moins une valeur pour l'indicateur ; null si l'individu n'a aucune valeur.",
+  middleware: [requireAuthentication],
+  request: {
+    params: indicateurParamsSchema,
+    query: listSyntheseIndividusQuerySchema,
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: SyntheseIndividusListApiModelSchema } },
+      description: 'Synthèse pour les individus demandés',
     },
     400: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },
@@ -156,14 +190,30 @@ valeurAvancementRoutes.openapi(getIndividusWithValeursRoute, async (context) => 
 
 valeurAvancementRoutes.openapi(getValeursRemarquablesForIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { individus } = context.req.valid('query')
+  const { referentiels } = context.req.valid('query')
 
-  return listValeursRemarquablesForIndicateur(id, { individus }).match(
+  return listValeursRemarquablesForIndicateur(id, { referentiels }).match(
     (data) =>
       jsonResponseOk({
         context,
         data,
         schema: ValeursRemarquablesListApiModelSchema,
+        status: 200,
+      }),
+    never,
+  )
+})
+
+valeurAvancementRoutes.openapi(getSyntheseIndividusRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  const { individus } = context.req.valid('query')
+
+  return listSyntheseIndividus(id, { individus }).match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: SyntheseIndividusListApiModelSchema,
         status: 200,
       }),
     never,

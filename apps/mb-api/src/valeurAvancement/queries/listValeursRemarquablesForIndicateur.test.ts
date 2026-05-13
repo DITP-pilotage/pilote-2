@@ -7,320 +7,50 @@ import { listValeursRemarquablesForIndicateur } from '@/valeurAvancement/queries
 
 describe.concurrent('listValeursRemarquablesForIndicateur', () => {
   it(
-    "retourne variation = null et stats à null quand aucun individu n'a de valeur pour l'indicateur",
+    'retourne des stats null pour un référentiel sans individu',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      await fixtures.indicateur({ publicId: indId, nom: 'T' })
+      await fixtures.referentiel({ publicId: 'REF-VIDE', nom: 'Vide' })
+
+      const result = await listValeursRemarquablesForIndicateur(indId, {
+        referentiels: ['REF-VIDE'],
+      })
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [{ referentiel: 'REF-VIDE', min: null, max: null, mediane: null }],
+      })
+    }),
+  )
+
+  it(
+    "retourne des stats null pour un référentiel dont aucun individu n'a de valeur",
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
       await fixtures.indicateur({ publicId: indId, nom: 'T' })
-      await fixtures.individu({ publicId: deptId, nom: 'Vaucluse' })
+      await fixtures.individu({
+        publicId: deptId,
+        referentiel: { publicId: 'REF-A', nom: 'A' },
+      })
 
-      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [deptId] })
+      const result = await listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] })
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: null, ecartMediane: null }],
-        min: null,
-        max: null,
-        mediane: null,
+        items: [{ referentiel: 'REF-A', min: null, max: null, mediane: null }],
       })
     }),
   )
 
   it(
-    "retourne variation = null pour un individu sans valeur mais stats non nulles si d'autres individus ont des valeurs",
-    integrationTest(async () => {
-      const indId = testIndicateurId()
-      const [dept1, dept2] = testDeptIds(2)
-      await fixtures.indicateur({ publicId: indId, nom: 'T' })
-      await fixtures.individu({ publicId: dept1, nom: 'Sans valeur' })
-      await fixtures.valeurAvancement({
-        indicateur: { publicId: indId },
-        individu: { publicId: dept2, nom: 'Avec valeur' },
-        date: '2026-01-01',
-        valeur: 42,
-      })
-
-      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [dept1] })
-
-      expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: dept1, variation: null, ecartMediane: null }],
-        min: 42,
-        max: 42,
-        mediane: 42,
-      })
-    }),
-  )
-
-  it(
-    "retourne variation = valeur lorsqu'il n'y a qu'une seule valeur",
-    integrationTest(async () => {
-      const indId = testIndicateurId()
-      const deptId = testDeptId()
-      await fixtures.valeurAvancement({
-        indicateur: { publicId: indId, nom: 'T' },
-        individu: { publicId: deptId, nom: 'Vaucluse' },
-        date: '2026-01-01',
-        valeur: 50,
-      })
-
-      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [deptId] })
-
-      expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: 50, ecartMediane: 0 }],
-        min: 50,
-        max: 50,
-        mediane: 50,
-      })
-    }),
-  )
-
-  it(
-    'retourne la variation entre les deux valeurs les plus récentes (positive)',
-    integrationTest(async () => {
-      const indId = testIndicateurId()
-      const deptId = testDeptId()
-      await fixtures.valeurAvancement(
-        {
-          indicateur: { publicId: indId, nom: 'T' },
-          individu: { publicId: deptId, nom: 'Vaucluse' },
-          date: '2026-01-01',
-          valeur: 50,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: deptId },
-          date: '2026-02-01',
-          valeur: 25,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: deptId },
-          date: '2026-03-01',
-          valeur: 75,
-        },
-      )
-
-      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [deptId] })
-
-      expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: 50, ecartMediane: 0 }],
-        min: 75,
-        max: 75,
-        mediane: 75,
-      })
-    }),
-  )
-
-  it(
-    'retourne la variation entre les deux valeurs les plus récentes (négative)',
-    integrationTest(async () => {
-      const indId = testIndicateurId()
-      const deptId = testDeptId()
-      await fixtures.valeurAvancement(
-        {
-          indicateur: { publicId: indId, nom: 'T' },
-          individu: { publicId: deptId, nom: 'Vaucluse' },
-          date: '2026-01-01',
-          valeur: 50,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: deptId },
-          date: '2026-02-01',
-          valeur: 25,
-        },
-      )
-
-      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [deptId] })
-
-      expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: -25, ecartMediane: 0 }],
-        min: 25,
-        max: 25,
-        mediane: 25,
-      })
-    }),
-  )
-
-  it(
-    "se base sur la date de la valeur, pas la date de saisie (ordre d'insertion non pertinent)",
-    integrationTest(async () => {
-      const indId = testIndicateurId()
-      const deptId = testDeptId()
-      // Insérée en dernier mais avec une date antérieure → ne doit pas influencer l'affichage
-      await fixtures.valeurAvancement(
-        {
-          indicateur: { publicId: indId, nom: 'T' },
-          individu: { publicId: deptId, nom: 'Vaucluse' },
-          date: '2026-02-01',
-          valeur: 10,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: deptId },
-          date: '2026-03-01',
-          valeur: 75,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: deptId },
-          date: '2026-01-01',
-          valeur: 50,
-        },
-      )
-
-      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [deptId] })
-
-      expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: 65, ecartMediane: 0 }],
-        min: 75,
-        max: 75,
-        mediane: 75,
-      })
-    }),
-  )
-
-  it(
-    'retourne un item par individu existant, triés par publicId',
+    'calcule min/max/médiane sur la valeur la plus récente de chaque individu du référentiel',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const [dept1, dept2, dept3] = testDeptIds(3)
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId, nom: 'T' },
-          individu: { publicId: dept1, nom: 'A' },
-          date: '2026-01-01',
-          valeur: 10,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: dept1 },
-          date: '2026-02-01',
-          valeur: 30,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: dept2, nom: 'B' },
-          date: '2026-01-01',
-          valeur: 5,
-        },
-      )
-      // dept3 sans valeur mais existe
-      await fixtures.individu({ publicId: dept3, nom: 'C' })
-
-      const result = await listValeursRemarquablesForIndicateur(indId, {
-        individus: [dept3, dept1, dept2],
-      })
-
-      expect(result._unsafeUnwrap()).toEqual({
-        items: [
-          { individu: dept1, variation: 20, ecartMediane: 12.5 },
-          { individu: dept2, variation: 5, ecartMediane: -12.5 },
-          { individu: dept3, variation: null, ecartMediane: null },
-        ],
-        min: 5,
-        max: 30,
-        mediane: 17.5,
-      })
-    }),
-  )
-
-  it(
-    "ignore les valeurs d'autres indicateurs",
-    integrationTest(async () => {
-      const [indId, autreIndId] = [testIndicateurId(), testIndicateurId()]
-      const deptId = testDeptId()
-      await fixtures.valeurAvancement(
-        {
-          indicateur: { publicId: indId, nom: 'T' },
-          individu: { publicId: deptId, nom: 'Vaucluse' },
-          date: '2026-01-01',
-          valeur: 100,
-        },
-        {
-          indicateur: { publicId: autreIndId, nom: 'Autre' },
-          individu: { publicId: deptId },
-          date: '2026-02-01',
-          valeur: 9999,
-        },
-      )
-
-      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [deptId] })
-
-      expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: 100, ecartMediane: 0 }],
-        min: 100,
-        max: 100,
-        mediane: 100,
-      })
-    }),
-  )
-
-  it(
-    'omet les individus inexistants',
-    integrationTest(async () => {
-      const indId = testIndicateurId()
-      const deptId = testDeptId()
-      const inconnu = testDeptId()
-      await fixtures.valeurAvancement({
-        indicateur: { publicId: indId, nom: 'T' },
-        individu: { publicId: deptId, nom: 'Vaucluse' },
-        date: '2026-01-01',
-        valeur: 42,
-      })
-
-      const result = await listValeursRemarquablesForIndicateur(indId, {
-        individus: [deptId, inconnu],
-      })
-
-      expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: 42, ecartMediane: 0 }],
-        min: 42,
-        max: 42,
-        mediane: 42,
-      })
-    }),
-  )
-
-  it(
-    'évite les erreurs de précision IEEE 754 sur la soustraction de décimaux',
-    integrationTest(async () => {
-      const indId = testIndicateurId()
-      const deptId = testDeptId()
-      await fixtures.valeurAvancement(
-        {
-          indicateur: { publicId: indId, nom: 'T' },
-          individu: { publicId: deptId, nom: 'Vaucluse' },
-          date: '2026-01-01',
-          valeur: 0.15,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: deptId },
-          date: '2026-02-01',
-          valeur: 0.3,
-        },
-      )
-
-      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [deptId] })
-
-      expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: deptId, variation: 0.15, ecartMediane: 0 }],
-        min: 0.3,
-        max: 0.3,
-        mediane: 0.3,
-      })
-    }),
-  )
-
-  it(
-    'calcule min/max/médiane sur la valeur la plus récente de chaque individu (nombre impair)',
-    integrationTest(async () => {
-      const indId = testIndicateurId()
-      const [dept1, dept2, dept3] = testDeptIds(3)
-      await fixtures.valeurAvancement(
-        {
-          indicateur: { publicId: indId, nom: 'T' },
-          individu: { publicId: dept1, nom: 'A' },
+          individu: { publicId: dept1, nom: 'A', referentiel: { publicId: 'REF-A', nom: 'A' } },
           date: '2026-01-01',
           valeur: 100,
         },
@@ -332,25 +62,23 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept2, nom: 'B' },
+          individu: { publicId: dept2, nom: 'B', referentiel: { publicId: 'REF-A' } },
           date: '2026-01-01',
           valeur: 50,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept3, nom: 'C' },
+          individu: { publicId: dept3, nom: 'C', referentiel: { publicId: 'REF-A' } },
           date: '2026-01-01',
           valeur: 30,
         },
       )
 
-      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [dept1] })
+      const result = await listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] })
 
       // Valeurs récentes: dept1=10, dept2=50, dept3=30
-      expect(result._unsafeUnwrap()).toMatchObject({
-        min: 10,
-        max: 50,
-        mediane: 30,
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [{ referentiel: 'REF-A', min: 10, max: 50, mediane: 30 }],
       })
     }),
   )
@@ -363,93 +91,206 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId, nom: 'T' },
-          individu: { publicId: dept1, nom: 'A' },
+          individu: { publicId: dept1, nom: 'A', referentiel: { publicId: 'REF-A', nom: 'A' } },
           date: '2026-01-01',
           valeur: 10,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept2, nom: 'B' },
+          individu: { publicId: dept2, nom: 'B', referentiel: { publicId: 'REF-A' } },
           date: '2026-01-01',
           valeur: 20,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept3, nom: 'C' },
+          individu: { publicId: dept3, nom: 'C', referentiel: { publicId: 'REF-A' } },
           date: '2026-01-01',
           valeur: 30,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept4, nom: 'D' },
+          individu: { publicId: dept4, nom: 'D', referentiel: { publicId: 'REF-A' } },
           date: '2026-01-01',
           valeur: 40,
         },
       )
 
-      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [dept1] })
+      const result = await listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] })
 
-      expect(result._unsafeUnwrap()).toMatchObject({
-        min: 10,
-        max: 40,
-        mediane: 25,
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [{ referentiel: 'REF-A', min: 10, max: 40, mediane: 25 }],
       })
     }),
   )
 
   it(
-    "min/max/médiane sont calculés sur tous les individus de l'indicateur, pas seulement ceux demandés",
+    "ignore les individus du référentiel n'ayant aucune valeur pour l'indicateur",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const [dept1, dept2] = testDeptIds(2)
+      await fixtures.indicateur({ publicId: indId, nom: 'T' })
+      // dept1 sans valeur dans REF-A
+      await fixtures.individu({
+        publicId: dept1,
+        nom: 'A',
+        referentiel: { publicId: 'REF-A', nom: 'A' },
+      })
+      // dept2 avec valeur dans REF-A
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId },
+        individu: { publicId: dept2, nom: 'B', referentiel: { publicId: 'REF-A' } },
+        date: '2026-01-01',
+        valeur: 42,
+      })
+
+      const result = await listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] })
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [{ referentiel: 'REF-A', min: 42, max: 42, mediane: 42 }],
+      })
+    }),
+  )
+
+  it(
+    'calcule des stats indépendantes pour chaque référentiel demandé',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const [dept1, dept2, dept3] = testDeptIds(3)
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId, nom: 'T' },
-          individu: { publicId: dept1, nom: 'A' },
+          individu: { publicId: dept1, nom: 'A', referentiel: { publicId: 'REF-A', nom: 'A' } },
           date: '2026-01-01',
-          valeur: 5,
+          valeur: 10,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept2, nom: 'B' },
+          individu: { publicId: dept2, nom: 'B', referentiel: { publicId: 'REF-A' } },
           date: '2026-01-01',
-          valeur: 50,
+          valeur: 30,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept3, nom: 'C' },
+          individu: { publicId: dept3, nom: 'C', referentiel: { publicId: 'REF-B', nom: 'B' } },
           date: '2026-01-01',
           valeur: 100,
         },
       )
 
-      // Ne demande qu'un seul individu mais les stats portent sur les 3
-      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [dept2] })
+      const result = await listValeursRemarquablesForIndicateur(indId, {
+        referentiels: ['REF-A', 'REF-B'],
+      })
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ individu: dept2, variation: 50, ecartMediane: 0 }],
-        min: 5,
-        max: 100,
-        mediane: 50,
+        items: [
+          { referentiel: 'REF-A', min: 10, max: 30, mediane: 20 },
+          { referentiel: 'REF-B', min: 100, max: 100, mediane: 100 },
+        ],
       })
     }),
   )
 
   it(
-    "min/max/médiane ignorent les valeurs d'autres indicateurs",
+    'omet les référentiels inexistants',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const deptId = testDeptId()
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId, nom: 'T' },
+        individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
+        date: '2026-01-01',
+        valeur: 42,
+      })
+
+      const result = await listValeursRemarquablesForIndicateur(indId, {
+        referentiels: ['REF-A', 'REF-INCONNU'],
+      })
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [{ referentiel: 'REF-A', min: 42, max: 42, mediane: 42 }],
+      })
+    }),
+  )
+
+  it(
+    'trie les items par publicId de référentiel (asc)',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const [dept1, dept2] = testDeptIds(2)
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId, nom: 'T' },
+          individu: { publicId: dept1, referentiel: { publicId: 'REF-Z', nom: 'Z' } },
+          date: '2026-01-01',
+          valeur: 1,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          date: '2026-01-01',
+          valeur: 2,
+        },
+      )
+
+      const result = await listValeursRemarquablesForIndicateur(indId, {
+        referentiels: ['REF-Z', 'REF-A'],
+      })
+
+      const items = result._unsafeUnwrap().items
+      expect(items.map((i) => i.referentiel)).toEqual(['REF-A', 'REF-Z'])
+    }),
+  )
+
+  it(
+    'se base sur la date de la valeur, pas la date de saisie',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const deptId = testDeptId()
+      // Insérée en dernier mais avec une date antérieure
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId, nom: 'T' },
+          individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          date: '2026-02-01',
+          valeur: 10,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
+          date: '2026-03-01',
+          valeur: 75,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
+          date: '2026-01-01',
+          valeur: 50,
+        },
+      )
+
+      const result = await listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] })
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [{ referentiel: 'REF-A', min: 75, max: 75, mediane: 75 }],
+      })
+    }),
+  )
+
+  it(
+    "ignore les valeurs d'autres indicateurs",
     integrationTest(async () => {
       const [indId, autreIndId] = [testIndicateurId(), testIndicateurId()]
       const [dept1, dept2] = testDeptIds(2)
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId, nom: 'T' },
-          individu: { publicId: dept1, nom: 'A' },
+          individu: { publicId: dept1, referentiel: { publicId: 'REF-A', nom: 'A' } },
           date: '2026-01-01',
           valeur: 10,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept2, nom: 'B' },
+          individu: { publicId: dept2, referentiel: { publicId: 'REF-A' } },
           date: '2026-01-01',
           valeur: 20,
         },
@@ -461,12 +302,38 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
         },
       )
 
-      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [dept1] })
+      const result = await listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] })
 
-      expect(result._unsafeUnwrap()).toMatchObject({
-        min: 10,
-        max: 20,
-        mediane: 15,
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [{ referentiel: 'REF-A', min: 10, max: 20, mediane: 15 }],
+      })
+    }),
+  )
+
+  it(
+    'ignore les individus appartenant à un autre référentiel',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const [dept1, dept2] = testDeptIds(2)
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId, nom: 'T' },
+          individu: { publicId: dept1, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          date: '2026-01-01',
+          valeur: 10,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2, referentiel: { publicId: 'REF-B', nom: 'B' } },
+          date: '2026-01-01',
+          valeur: 9999,
+        },
+      )
+
+      const result = await listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] })
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [{ referentiel: 'REF-A', min: 10, max: 10, mediane: 10 }],
       })
     }),
   )
@@ -474,176 +341,10 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
   it(
     "rejette quand l'indicateur est introuvable",
     integrationTest(async () => {
+      await fixtures.referentiel({ publicId: 'REF-A', nom: 'A' })
       await expect(
-        listValeursRemarquablesForIndicateur(testIndicateurId(), { individus: [testDeptId()] }),
+        listValeursRemarquablesForIndicateur(testIndicateurId(), { referentiels: ['REF-A'] }),
       ).rejects.toThrow()
-    }),
-  )
-
-  it(
-    "calcule l'écart à la médiane pour chaque individu demandé (population impaire)",
-    integrationTest(async () => {
-      const indId = testIndicateurId()
-      const [dept1, dept2, dept3] = testDeptIds(3)
-      await fixtures.valeurAvancement(
-        {
-          indicateur: { publicId: indId, nom: 'T' },
-          individu: { publicId: dept1, nom: 'A' },
-          date: '2026-01-01',
-          valeur: 10,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: dept2, nom: 'B' },
-          date: '2026-01-01',
-          valeur: 50,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: dept3, nom: 'C' },
-          date: '2026-01-01',
-          valeur: 30,
-        },
-      )
-
-      const result = await listValeursRemarquablesForIndicateur(indId, {
-        individus: [dept1, dept2, dept3],
-      })
-
-      // mediane = 30 → ecartMediane: dept1=-20, dept2=20, dept3=0
-      expect(result._unsafeUnwrap()).toMatchObject({
-        items: [
-          { individu: dept1, ecartMediane: -20 },
-          { individu: dept2, ecartMediane: 20 },
-          { individu: dept3, ecartMediane: 0 },
-        ],
-        mediane: 30,
-      })
-    }),
-  )
-
-  it(
-    "calcule l'écart à la médiane quand la médiane est la moyenne de deux centrales (population paire)",
-    integrationTest(async () => {
-      const indId = testIndicateurId()
-      const [dept1, dept2, dept3, dept4] = testDeptIds(4)
-      await fixtures.valeurAvancement(
-        {
-          indicateur: { publicId: indId, nom: 'T' },
-          individu: { publicId: dept1, nom: 'A' },
-          date: '2026-01-01',
-          valeur: 10,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: dept2, nom: 'B' },
-          date: '2026-01-01',
-          valeur: 20,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: dept3, nom: 'C' },
-          date: '2026-01-01',
-          valeur: 30,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: dept4, nom: 'D' },
-          date: '2026-01-01',
-          valeur: 40,
-        },
-      )
-
-      const result = await listValeursRemarquablesForIndicateur(indId, {
-        individus: [dept1, dept4],
-      })
-
-      // mediane = (20 + 30) / 2 = 25 → dept1=-15, dept4=15
-      expect(result._unsafeUnwrap()).toMatchObject({
-        items: [
-          { individu: dept1, ecartMediane: -15 },
-          { individu: dept4, ecartMediane: 15 },
-        ],
-        mediane: 25,
-      })
-    }),
-  )
-
-  it(
-    "l'écart à la médiane utilise la valeur la plus récente de l'individu",
-    integrationTest(async () => {
-      const indId = testIndicateurId()
-      const [dept1, dept2, dept3] = testDeptIds(3)
-      await fixtures.valeurAvancement(
-        {
-          indicateur: { publicId: indId, nom: 'T' },
-          individu: { publicId: dept1, nom: 'A' },
-          date: '2026-01-01',
-          valeur: 100,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: dept1 },
-          date: '2026-02-01',
-          valeur: 40,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: dept2, nom: 'B' },
-          date: '2026-01-01',
-          valeur: 50,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: dept3, nom: 'C' },
-          date: '2026-01-01',
-          valeur: 30,
-        },
-      )
-
-      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [dept1] })
-
-      // valeurs récentes: dept1=40, dept2=50, dept3=30 → mediane=40 → ecart dept1=0
-      expect(result._unsafeUnwrap()).toMatchObject({
-        items: [{ individu: dept1, ecartMediane: 0 }],
-        mediane: 40,
-      })
-    }),
-  )
-
-  it(
-    "évite les erreurs de précision IEEE 754 sur l'écart à la médiane",
-    integrationTest(async () => {
-      const indId = testIndicateurId()
-      const [dept1, dept2, dept3] = testDeptIds(3)
-      await fixtures.valeurAvancement(
-        {
-          indicateur: { publicId: indId, nom: 'T' },
-          individu: { publicId: dept1, nom: 'A' },
-          date: '2026-01-01',
-          valeur: 0.3,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: dept2, nom: 'B' },
-          date: '2026-01-01',
-          valeur: 0.15,
-        },
-        {
-          indicateur: { publicId: indId },
-          individu: { publicId: dept3, nom: 'C' },
-          date: '2026-01-01',
-          valeur: 0.45,
-        },
-      )
-
-      const result = await listValeursRemarquablesForIndicateur(indId, { individus: [dept1] })
-
-      // mediane = 0.3 → ecart dept1 = 0
-      expect(result._unsafeUnwrap()).toMatchObject({
-        items: [{ individu: dept1, ecartMediane: 0 }],
-        mediane: 0.3,
-      })
     }),
   )
 })

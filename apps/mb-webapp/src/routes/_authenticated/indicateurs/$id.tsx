@@ -23,6 +23,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import {
   indicateurQueryOptions,
+  indicateurSyntheseIndividuQueryOptions,
   indicateurValeursQueryOptions,
   indicateurValeursRemarquablesQueryOptions,
 } from '@/queries/indicateurs'
@@ -84,10 +85,11 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     }
 
     await Promise.all([
-      context.queryClient.fetchQuery(indicateurValeursQueryOptions(params.id, deps.individu!)),
+      context.queryClient.fetchQuery(indicateurValeursQueryOptions(params.id, selected.id)),
       context.queryClient.fetchQuery(
-        indicateurValeursRemarquablesQueryOptions(params.id, deps.individu!),
+        indicateurValeursRemarquablesQueryOptions(params.id, selected.referentiel),
       ),
+      context.queryClient.fetchQuery(indicateurSyntheseIndividuQueryOptions(params.id, selected.id)),
     ])
 
     return { indicateur }
@@ -149,7 +151,10 @@ function IndicateurDetailComponent() {
         </p>
       ) : selectedIndividu === undefined ? null : (
         <>
-          <StatistiquesPopulationSection indicateurId={id} individuId={selectedIndividu.id} />
+          <StatistiquesPopulationSection
+            indicateurId={id}
+            referentielId={selectedIndividu.referentiel}
+          />
 
           <div className="flex items-center gap-3">
             <label className="text-sm text-text-muted" htmlFor="individu-select">
@@ -212,14 +217,15 @@ function IndicateurDetailComponent() {
 
 function StatistiquesPopulationSection({
   indicateurId,
-  individuId,
+  referentielId,
 }: {
   indicateurId: string
-  individuId: string
+  referentielId: string
 }) {
   const { data } = useSuspenseQuery(
-    indicateurValeursRemarquablesQueryOptions(indicateurId, individuId),
+    indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId),
   )
+  const stats = data.items[0] ?? { min: null, max: null, mediane: null }
 
   const numberFormatter = new Intl.NumberFormat('fr-FR')
   const formatStat = (value: number | null): string =>
@@ -228,13 +234,13 @@ function StatistiquesPopulationSection({
   return (
     <section className="grid gap-4 sm:grid-cols-3">
       <StatCard label="Minimum">
-        <p className="text-3xl font-semibold text-text">{formatStat(data.min)}</p>
+        <p className="text-3xl font-semibold text-text">{formatStat(stats.min)}</p>
       </StatCard>
       <StatCard label="Maximum">
-        <p className="text-3xl font-semibold text-text">{formatStat(data.max)}</p>
+        <p className="text-3xl font-semibold text-text">{formatStat(stats.max)}</p>
       </StatCard>
       <StatCard label="Médiane">
-        <p className="text-3xl font-semibold text-text">{formatStat(data.mediane)}</p>
+        <p className="text-3xl font-semibold text-text">{formatStat(stats.mediane)}</p>
       </StatCard>
     </section>
   )
@@ -247,15 +253,15 @@ function ValeursRemarquablesSection({
   indicateurId: string
   individuId: string
 }) {
-  const { data: valeursRemarquables } = useSuspenseQuery(
-    indicateurValeursRemarquablesQueryOptions(indicateurId, individuId),
+  const { data: synthese } = useSuspenseQuery(
+    indicateurSyntheseIndividuQueryOptions(indicateurId, individuId),
   )
   const { data: valeurs } = useSuspenseQuery(
     indicateurValeursQueryOptions(indicateurId, individuId),
   )
 
   const derniereValeur = derniereValeurFromItems(valeurs.items)
-  const variation = valeursRemarquables.items[0]?.variation ?? null
+  const variation = synthese.items[0]?.variation ?? null
 
   const numberFormatter = new Intl.NumberFormat('fr-FR')
   const variationFormatter = new Intl.NumberFormat('fr-FR', { signDisplay: 'exceptZero' })

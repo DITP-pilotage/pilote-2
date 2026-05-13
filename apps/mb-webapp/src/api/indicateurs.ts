@@ -8,6 +8,8 @@ import { type PaginateQuery } from '@pilote/mb-shared/pagination'
 import {
   type IndividusWithValeursListApiModel,
   individusWithValeursListApiModelSchema,
+  type SyntheseIndividusListApiModel,
+  syntheseIndividusListApiModelSchema,
   type ValeurAvancementListApiModel,
   valeurAvancementListApiModelSchema,
   type ValeursRemarquablesListApiModel,
@@ -58,12 +60,24 @@ export const fetchValeursForIndicateur = async (
 
 export const fetchValeursRemarquablesForIndicateur = async (
   indicateurId: string,
-  params: { individus: string[] },
+  params: { referentiels: string[] },
 ): Promise<ValeursRemarquablesListApiModel> => {
   const json = await apiClient
     .get(`indicateurs/${indicateurId}/valeurs-remarquables`, {
-      searchParams: { individus: params.individus.join(',') },
+      searchParams: { referentiels: params.referentiels.join(',') },
     })
     .json()
   return valeursRemarquablesListApiModelSchema.parse(json)
+}
+
+export const fetchSyntheseIndividus = async (
+  indicateurId: string,
+  params: { individus: string[] },
+): Promise<SyntheseIndividusListApiModel> => {
+  const json = await apiClient
+    .get(`indicateurs/${indicateurId}/synthese-individus`, {
+      searchParams: { individus: params.individus.join(',') },
+    })
+    .json()
+  return syntheseIndividusListApiModelSchema.parse(json)
 }
