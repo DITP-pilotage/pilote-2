@@ -89,7 +89,9 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
       context.queryClient.fetchQuery(
         indicateurValeursRemarquablesQueryOptions(params.id, selected.referentiel),
       ),
-      context.queryClient.fetchQuery(indicateurSyntheseIndividuQueryOptions(params.id, selected.id)),
+      context.queryClient.fetchQuery(
+        indicateurSyntheseIndividuQueryOptions(params.id, selected.id),
+      ),
     ])
 
     return { indicateur }

@@ -6,23 +6,9 @@ import { ResultAsync } from 'neverthrow'
 
 import { unique } from '@/framework/array'
 import { db } from '@/framework/persistence/dbStore'
-import { Prisma } from '@/generated/prisma/client'
+import { computeEcartMediane } from '@/valeurAvancement/computeEcartMediane'
 import { groupMedianesByKey } from '@/valeurAvancement/computeMediane'
-
-const computeVariation = (valeurs: ReadonlyArray<{ valeur: Prisma.Decimal }>): number | null => {
-  if (valeurs.length === 0) return null
-  const [recente, precedente] = valeurs
-  const precedenteValeur = precedente?.valeur ?? new Prisma.Decimal(0)
-  return recente!.valeur.minus(precedenteValeur).toNumber()
-}
-
-const computeEcartMediane = (
-  derniereValeur: Prisma.Decimal | undefined,
-  mediane: number | null,
-): number | null => {
-  if (derniereValeur === undefined || mediane === null) return null
-  return derniereValeur.minus(mediane).toNumber()
-}
+import { computeVariation } from '@/valeurAvancement/computeVariation'
 
 const fetchLatestValeursIndividus = ({
   indicateurId,

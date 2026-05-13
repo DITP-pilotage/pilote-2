@@ -4,6 +4,7 @@ import {
 } from '@pilote/mb-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
+import { type Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
 import { computeMax } from '@/valeurAvancement/computeMax'
 import { computeMediane } from '@/valeurAvancement/computeMediane'
@@ -48,8 +49,8 @@ export const listValeursRemarquablesForIndicateur = (
     .map((rows) => ({
       items: rows.map((row) => {
         const dernieresValeurs = row.individus
-          .map((i) => i.valeurs[0]?.valeur.toNumber())
-          .filter((v): v is number => v !== undefined)
+          .map((i) => i.valeurs[0]?.valeur)
+          .filter((v): v is Decimal => v !== undefined)
         return {
           referentiel: row.publicId,
           min: computeMin(dernieresValeurs),
