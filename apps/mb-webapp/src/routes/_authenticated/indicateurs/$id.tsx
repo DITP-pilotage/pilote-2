@@ -175,11 +175,8 @@ function IndicateurDetailComponent() {
               </SelectTrigger>
               <SelectContent>
                 {groupes.map((groupe) => (
-                  <SelectGroup
-                    key={groupe.referentiel.id}
-                    className="my-1 rounded bg-background p-1 first:mt-0 last:mb-0"
-                  >
-                    <SelectLabel>{groupe.referentiel.nom}</SelectLabel>
+                  <SelectGroup key={groupe.referentiel.id}>
+                    <SelectLabel className="bg-background">{groupe.referentiel.nom}</SelectLabel>
                     {groupe.individus.map((individu) => (
                       <SelectItem key={individu.id} value={individu.id}>
                         {individu.nom}
