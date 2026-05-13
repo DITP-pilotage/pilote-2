@@ -17,20 +17,20 @@ export const referentielsSeed = [
 ] as const
 
 export const individusSeed = [
-  { publicId: 'FR', nom: 'France', referentiels: ['REF-NAT'] },
-  { publicId: 'REG-11', nom: 'Île-de-France', referentiels: ['REF-REG'] },
-  { publicId: 'REG-93', nom: "Provence-Alpes-Côte d'Azur", referentiels: ['REF-REG'] },
-  { publicId: 'REG-84', nom: 'Auvergne-Rhône-Alpes', referentiels: ['REF-REG'] },
-  { publicId: 'DEPT-75', nom: 'Paris', referentiels: ['REF-DEPT'] },
-  { publicId: 'DEPT-77', nom: 'Seine-et-Marne', referentiels: ['REF-DEPT'] },
-  { publicId: 'DEPT-78', nom: 'Yvelines', referentiels: ['REF-DEPT'] },
-  { publicId: 'DEPT-13', nom: 'Bouches-du-Rhône', referentiels: ['REF-DEPT'] },
-  { publicId: 'DEPT-83', nom: 'Var', referentiels: ['REF-DEPT'] },
-  { publicId: 'DEPT-84', nom: 'Vaucluse', referentiels: ['REF-DEPT'] },
-  { publicId: 'DEPT-06', nom: 'Alpes-Maritimes', referentiels: ['REF-DEPT'] },
-  { publicId: 'DEPT-69', nom: 'Rhône', referentiels: ['REF-DEPT'] },
-  { publicId: 'DEPT-38', nom: 'Isère', referentiels: ['REF-DEPT'] },
-  { publicId: 'DEPT-73', nom: 'Savoie', referentiels: ['REF-DEPT'] },
+  { publicId: 'FR', nom: 'France', referentiel: 'REF-NAT' },
+  { publicId: 'REG-11', nom: 'Île-de-France', referentiel: 'REF-REG' },
+  { publicId: 'REG-93', nom: "Provence-Alpes-Côte d'Azur", referentiel: 'REF-REG' },
+  { publicId: 'REG-84', nom: 'Auvergne-Rhône-Alpes', referentiel: 'REF-REG' },
+  { publicId: 'DEPT-75', nom: 'Paris', referentiel: 'REF-DEPT' },
+  { publicId: 'DEPT-77', nom: 'Seine-et-Marne', referentiel: 'REF-DEPT' },
+  { publicId: 'DEPT-78', nom: 'Yvelines', referentiel: 'REF-DEPT' },
+  { publicId: 'DEPT-13', nom: 'Bouches-du-Rhône', referentiel: 'REF-DEPT' },
+  { publicId: 'DEPT-83', nom: 'Var', referentiel: 'REF-DEPT' },
+  { publicId: 'DEPT-84', nom: 'Vaucluse', referentiel: 'REF-DEPT' },
+  { publicId: 'DEPT-06', nom: 'Alpes-Maritimes', referentiel: 'REF-DEPT' },
+  { publicId: 'DEPT-69', nom: 'Rhône', referentiel: 'REF-DEPT' },
+  { publicId: 'DEPT-38', nom: 'Isère', referentiel: 'REF-DEPT' },
+  { publicId: 'DEPT-73', nom: 'Savoie', referentiel: 'REF-DEPT' },
 ] as const
 
 export const relationsSeed = [

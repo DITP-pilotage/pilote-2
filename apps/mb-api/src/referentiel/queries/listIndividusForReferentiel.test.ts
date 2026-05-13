@@ -8,18 +8,21 @@ describe.concurrent('listIndividusForReferentiel', () => {
   it(
     'retourne les individus de la population du référentiel',
     integrationTest(async () => {
-      await fixtures.referentielIndividu(
+      await fixtures.individu(
         {
+          publicId: 'P-1',
+          nom: 'Premier',
           referentiel: { publicId: 'REF-POP', nom: 'Pop' },
-          individu: { publicId: 'P-1', nom: 'Premier' },
         },
         {
+          publicId: 'P-2',
+          nom: 'Second',
           referentiel: { publicId: 'REF-POP' },
-          individu: { publicId: 'P-2', nom: 'Second' },
         },
         {
+          publicId: 'O-1',
+          nom: 'Hors population',
           referentiel: { publicId: 'REF-OTHER', nom: 'Other' },
-          individu: { publicId: 'O-1', nom: 'Hors population' },
         },
       )
 
@@ -30,14 +33,14 @@ describe.concurrent('listIndividusForReferentiel', () => {
           {
             id: 'P-1',
             nom: 'Premier',
-            referentiels: ['REF-POP'],
+            referentiel: 'REF-POP',
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
           },
           {
             id: 'P-2',
             nom: 'Second',
-            referentiels: ['REF-POP'],
+            referentiel: 'REF-POP',
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
           },
@@ -49,35 +52,23 @@ describe.concurrent('listIndividusForReferentiel', () => {
   )
 
   it(
-    'inclut les autres référentiels auxquels appartient un individu',
-    integrationTest(async () => {
-      await fixtures.referentielIndividu(
-        { referentiel: { publicId: 'REF-A', nom: 'A' }, individu: { publicId: 'I-1' } },
-        { referentiel: { publicId: 'REF-B', nom: 'B' }, individu: { publicId: 'I-1' } },
-      )
-
-      const result = await listIndividusForReferentiel('REF-A', {})
-
-      const value = result._unsafeUnwrap()
-      expect(value.items[0]?.referentiels.sort()).toEqual(['REF-A', 'REF-B'])
-    }),
-  )
-
-  it(
     'filtre par recherche sur le nom',
     integrationTest(async () => {
-      await fixtures.referentielIndividu(
+      await fixtures.individu(
         {
+          publicId: 'A-1',
+          nom: 'Alpha',
           referentiel: { publicId: 'REF-SEARCH', nom: 'Search' },
-          individu: { publicId: 'A-1', nom: 'Alpha' },
         },
         {
+          publicId: 'A-2',
+          nom: 'Bravo',
           referentiel: { publicId: 'REF-SEARCH' },
-          individu: { publicId: 'A-2', nom: 'Bravo' },
         },
         {
+          publicId: 'A-3',
+          nom: 'ALPHA majuscule',
           referentiel: { publicId: 'REF-SEARCH' },
-          individu: { publicId: 'A-3', nom: 'ALPHA majuscule' },
         },
       )
 
@@ -88,14 +79,14 @@ describe.concurrent('listIndividusForReferentiel', () => {
           {
             id: 'A-1',
             nom: 'Alpha',
-            referentiels: ['REF-SEARCH'],
+            referentiel: 'REF-SEARCH',
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
           },
           {
             id: 'A-3',
             nom: 'ALPHA majuscule',
-            referentiels: ['REF-SEARCH'],
+            referentiel: 'REF-SEARCH',
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
           },

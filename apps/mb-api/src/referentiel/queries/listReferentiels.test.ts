@@ -23,14 +23,14 @@ describe.concurrent('listReferentiels', () => {
   it(
     "retourne les référentiels avec leur nombre d'individus",
     integrationTest(async () => {
-      await fixtures.referentielIndividu(
+      await fixtures.individu(
         {
+          publicId: 'A-1',
           referentiel: { publicId: 'REF-ALPHA', nom: 'Alpha' },
-          individu: { publicId: 'A-1' },
         },
         {
+          publicId: 'A-2',
           referentiel: { publicId: 'REF-ALPHA' },
-          individu: { publicId: 'A-2' },
         },
       )
       await fixtures.referentiel({ publicId: 'REF-BETA', nom: 'Beta' })

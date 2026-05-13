@@ -90,36 +90,26 @@ model Referentiel {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt      @map("updated_at")
 
-  individus ReferentielIndividu[]
+  individus Individu[]
 
   @@map("referentiel")
 }
 
 model Individu {
-  id        String   @id @db.Uuid
-  publicId  String   @unique @map("public_id")
-  nom       String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt      @map("updated_at")
+  id            String   @id @db.Uuid
+  publicId      String   @unique @map("public_id")
+  nom           String
+  referentielId String   @map("referentiel_id") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt      @map("updated_at")
 
-  referentiels      ReferentielIndividu[]
-  relationsAsParent Relation[]            @relation("relationParent")
-  relationsAsChild  Relation[]            @relation("relationChild")
+  referentiel       Referentiel        @relation(fields: [referentielId], references: [id], onDelete: Restrict)
+  relationsAsParent Relation[]         @relation("relationParent")
+  relationsAsChild  Relation[]         @relation("relationChild")
   valeurs           ValeurAvancement[]
 
+  @@index([referentielId])
   @@map("individu")
-}
-
-model ReferentielIndividu {
-  referentielId String @map("referentiel_id") @db.Uuid
-  individuId    String @map("individu_id")    @db.Uuid
-
-  referentiel Referentiel @relation(fields: [referentielId], references: [id], onDelete: Cascade)
-  individu    Individu    @relation(fields: [individuId],    references: [id], onDelete: Cascade)
-
-  @@id([referentielId, individuId])
-  @@index([individuId])
-  @@map("referentiel_individu")
 }
 
 model Relation {

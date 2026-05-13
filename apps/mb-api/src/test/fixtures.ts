@@ -8,7 +8,6 @@ import {
   type IndicateurModel,
   type IndicateurPermissionModel,
   type IndividuModel,
-  type ReferentielIndividuModel,
   type ReferentielModel,
   type RelationModel,
   type UtilisateurModel,
@@ -99,7 +98,12 @@ async function referentiel(
 
 // --- Individu ----------------------------------------------------------------
 
-type IndividuOverrides = Partial<{ id: string; publicId: string; nom: string }>
+type IndividuOverrides = Partial<{
+  id: string
+  publicId: string
+  nom: string
+  referentiel: ReferentielOverrides
+}>
 
 const DEFAULT_INDIVIDU = {
   publicId: 'TEST-1',
@@ -107,16 +111,28 @@ const DEFAULT_INDIVIDU = {
 } as const
 
 const upsertIndividu = async (o: IndividuOverrides = {}) => {
-  const create = { id: uuidv7(), ...DEFAULT_INDIVIDU, ...o }
-  const { id: _id, publicId: _pub, ...update } = o
-  if (Object.keys(update).length === 0) {
-    const existing = await db().individu.findUnique({ where: { publicId: create.publicId } })
-    if (existing) return existing
+  const publicId = o.publicId ?? DEFAULT_INDIVIDU.publicId
+  const existing = await db().individu.findUnique({ where: { publicId } })
+
+  // Pas d'override referentiel et l'individu existe : on touche pas au rattachement.
+  if (existing && !o.referentiel) {
+    const { id: _id, publicId: _pub, referentiel: _ref, ...update } = o
+    if (Object.keys(update).length === 0) return existing
+    return db().individu.update({ where: { id: existing.id }, data: update })
   }
+
+  const referentielRow = await upsertReferentiel(o.referentiel)
+  const { id: _id, publicId: _pub, referentiel: _ref, ...rest } = o
+  const update = { ...rest, referentielId: referentielRow.id }
   return db().individu.upsert({
-    where: { publicId: create.publicId },
+    where: { publicId },
     update,
-    create,
+    create: {
+      id: o.id ?? uuidv7(),
+      publicId,
+      nom: o.nom ?? DEFAULT_INDIVIDU.nom,
+      referentielId: referentielRow.id,
+    },
   })
 }
 
@@ -133,45 +149,6 @@ async function individu(
   if (overrides.length <= 1) return upsertIndividu(overrides[0])
   const results: IndividuModel[] = []
   for (const o of overrides) results.push(await upsertIndividu(o))
-  return results
-}
-
-// --- ReferentielIndividu (deps requises) -------------------------------------
-
-type ReferentielIndividuOverrides = {
-  referentiel: ReferentielOverrides
-  individu: IndividuOverrides
-}
-
-const upsertReferentielIndividu = async (o: ReferentielIndividuOverrides) => {
-  const referentielRow = await upsertReferentiel(o.referentiel)
-  const individuRow = await upsertIndividu(o.individu)
-  return db().referentielIndividu.upsert({
-    where: {
-      referentielId_individuId: {
-        referentielId: referentielRow.id,
-        individuId: individuRow.id,
-      },
-    },
-    update: {},
-    create: { referentielId: referentielRow.id, individuId: individuRow.id },
-  })
-}
-
-function referentielIndividu(
-  override: ReferentielIndividuOverrides,
-): Promise<ReferentielIndividuModel>
-function referentielIndividu(
-  o1: ReferentielIndividuOverrides,
-  o2: ReferentielIndividuOverrides,
-  ...rest: ReferentielIndividuOverrides[]
-): Promise<ReferentielIndividuModel[]>
-async function referentielIndividu(
-  ...overrides: ReferentielIndividuOverrides[]
-): Promise<ReferentielIndividuModel | ReferentielIndividuModel[]> {
-  if (overrides.length === 1) return upsertReferentielIndividu(overrides[0]!)
-  const results: ReferentielIndividuModel[] = []
-  for (const o of overrides) results.push(await upsertReferentielIndividu(o))
   return results
 }
 
@@ -433,7 +410,6 @@ export const fixtures = {
   indicateur,
   referentiel,
   individu,
-  referentielIndividu,
   relation,
   valeurAvancement,
   apiKey,

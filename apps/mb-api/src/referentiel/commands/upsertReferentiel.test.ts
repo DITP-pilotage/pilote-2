@@ -51,7 +51,7 @@ describe.concurrent('upsertReferentiel', () => {
   )
 
   it(
-    'crée et lie de nouveaux individus',
+    'crée et rattache de nouveaux individus',
     integrationTest(async () => {
       // Given
       const [dept1, dept2] = testDeptIds(2)
@@ -67,91 +67,77 @@ describe.concurrent('upsertReferentiel', () => {
       })
 
       // Then
-      const persistedDept1 = await db().individu.findUniqueOrThrow({ where: { publicId: dept1 } })
+      const persistedDept1 = await db().individu.findUniqueOrThrow({
+        where: { publicId: dept1 },
+        include: { referentiel: { select: { publicId: true } } },
+      })
       expect(persistedDept1.nom).toBe('Premier')
-      const liaisons = await db().referentielIndividu.findMany({
+      expect(persistedDept1.referentiel.publicId).toBe('REF-INDS')
+      const individusForRef = await db().individu.findMany({
         where: { referentiel: { publicId: 'REF-INDS' } },
       })
-      expect(liaisons).toHaveLength(2)
+      expect(individusForRef).toHaveLength(2)
     }),
   )
 
   it(
-    "met à jour le nom d'un individu existant et ajoute la liaison",
+    "met à jour le nom d'un individu existant déjà rattaché au référentiel cible",
     integrationTest(async () => {
       // Given
       const [dept1] = testDeptIds(1)
-      await fixtures.individu({ publicId: dept1, nom: 'Ancien nom individu' })
+      await fixtures.individu({
+        publicId: dept1,
+        nom: 'Ancien nom individu',
+        referentiel: { publicId: 'REF-LINK' },
+      })
 
       // When
-      await upsertReferentiel('REF-LINK', {
+      const result = await upsertReferentiel('REF-LINK', {
         nom: 'Référentiel',
         description: null,
         individus: [{ publicId: dept1, nom: 'Nouveau nom individu' }],
       })
 
       // Then
-      const persisted = await db().individu.findUniqueOrThrow({ where: { publicId: dept1 } })
-      expect(persisted.nom).toBe('Nouveau nom individu')
-      const liaison = await db().referentielIndividu.findFirstOrThrow({
-        where: {
-          referentiel: { publicId: 'REF-LINK' },
-          individu: { publicId: dept1 },
-        },
+      expect(result.isOk()).toBe(true)
+      const persisted = await db().individu.findUniqueOrThrow({
+        where: { publicId: dept1 },
+        include: { referentiel: { select: { publicId: true } } },
       })
-      expect(liaison).toBeDefined()
+      expect(persisted.nom).toBe('Nouveau nom individu')
+      expect(persisted.referentiel.publicId).toBe('REF-LINK')
     }),
   )
 
   it(
-    'ne retire pas les individus déjà liés mais absents du body (merge)',
+    'retourne une erreur listant tous les individus déjà rattachés à un autre référentiel',
     integrationTest(async () => {
       // Given
-      const [dept1, dept2] = testDeptIds(2)
-      await fixtures.referentielIndividu(
-        { referentiel: { publicId: 'REF-MERGE' }, individu: { publicId: dept1 } },
-        { referentiel: { publicId: 'REF-MERGE' }, individu: { publicId: dept2 } },
+      const [dept1, dept2, dept3] = testDeptIds(3)
+      await fixtures.individu(
+        { publicId: dept1, referentiel: { publicId: 'REF-OTHER-A' } },
+        { publicId: dept2, referentiel: { publicId: 'REF-OTHER-B' } },
       )
 
       // When
-      await upsertReferentiel('REF-MERGE', {
-        nom: 'Référentiel de test',
-        description: null,
-        individus: [{ publicId: dept1, nom: 'Individu de test' }],
-      })
-
-      // Then : les deux liaisons sont toujours là
-      const liaisons = await db().referentielIndividu.findMany({
-        where: { referentiel: { publicId: 'REF-MERGE' } },
-      })
-      expect(liaisons).toHaveLength(2)
-    }),
-  )
-
-  it(
-    "préserve les liaisons d'un individu vers d'autres référentiels",
-    integrationTest(async () => {
-      // Given
-      const [dept1] = testDeptIds(1)
-      await fixtures.referentielIndividu({
-        referentiel: { publicId: 'REF-OTHER' },
-        individu: { publicId: dept1 },
-      })
-
-      // When
-      await upsertReferentiel('REF-NEW2', {
+      const result = await upsertReferentiel('REF-NEW2', {
         nom: 'Nouveau référentiel',
         description: null,
-        individus: [{ publicId: dept1, nom: 'Individu de test' }],
+        individus: [
+          { publicId: dept1, nom: 'Premier' },
+          { publicId: dept2, nom: 'Second' },
+          { publicId: dept3, nom: 'Troisième (libre)' },
+        ],
       })
 
-      // Then : l'individu reste lié à REF-OTHER ET REF-NEW2
-      const liaisons = await db().referentielIndividu.findMany({
-        where: { individu: { publicId: dept1 } },
-        include: { referentiel: true },
+      // Then : dept1 et dept2 listés, dept3 ignoré (pas en conflit) ; aucune écriture
+      expect(result.isErr()).toBe(true)
+      expect(result._unsafeUnwrapErr()).toEqual({
+        type: 'INDIVIDUS_ALREADY_ATTACHED',
+        individuIds: [dept1, dept2].sort(),
       })
-      const refIds = liaisons.map((l) => l.referentiel.publicId).sort()
-      expect(refIds).toEqual(['REF-NEW2', 'REF-OTHER'])
+      const created = await db().referentiel.findUnique({ where: { publicId: 'REF-NEW2' } })
+      expect(created).toBeNull()
     }),
   )
 

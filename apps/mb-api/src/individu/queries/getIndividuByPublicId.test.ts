@@ -7,19 +7,14 @@ import { testDeptId } from '@/test/randomIds'
 
 describe.concurrent('getIndividuByPublicId', () => {
   it(
-    "retourne l'individu avec ses référentiels",
+    "retourne l'individu avec son référentiel",
     integrationTest(async () => {
       const deptId = testDeptId()
-      await fixtures.referentielIndividu(
-        {
-          referentiel: { publicId: 'REF-DEPT', nom: 'Départements' },
-          individu: { publicId: deptId, nom: 'Vaucluse' },
-        },
-        {
-          referentiel: { publicId: 'REF-PACA', nom: 'PACA' },
-          individu: { publicId: deptId },
-        },
-      )
+      await fixtures.individu({
+        publicId: deptId,
+        nom: 'Vaucluse',
+        referentiel: { publicId: 'REF-DEPT', nom: 'Départements' },
+      })
 
       const result = await getIndividuByPublicId(deptId)
 
@@ -27,8 +22,8 @@ describe.concurrent('getIndividuByPublicId', () => {
       expect(value).toMatchObject({
         id: deptId,
         nom: 'Vaucluse',
+        referentiel: 'REF-DEPT',
       })
-      expect(value.referentiels.sort()).toEqual(['REF-DEPT', 'REF-PACA'])
     }),
   )
 
