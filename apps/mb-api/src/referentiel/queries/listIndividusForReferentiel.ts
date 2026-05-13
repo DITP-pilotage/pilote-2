@@ -13,7 +13,7 @@ export const listIndividusForReferentiel = (
   params: ListIndividusForReferentielQuery,
 ): ResultAsync<IndividuListApiModel, never> => {
   const where = {
-    referentiels: { some: { referentiel: { publicId: referentielPublicId } } },
+    referentiel: { publicId: referentielPublicId },
     ...(params.recherche
       ? { nom: { contains: params.recherche, mode: 'insensitive' as const } }
       : {}),
@@ -22,7 +22,7 @@ export const listIndividusForReferentiel = (
   const fetchPage = db().individu.findMany({
     where,
     orderBy: { id: 'asc' },
-    include: { referentiels: { include: { referentiel: true } } },
+    include: { referentiel: { select: { publicId: true } } },
     ...buildPaginationArgs(params.cursor, params.pageSize),
   })
   const fetchTotal = db().individu.count({ where })

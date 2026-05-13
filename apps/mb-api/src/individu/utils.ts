@@ -1,15 +1,15 @@
 import { type IndividuApiModel } from '@pilote/mb-shared/individu'
 
-import { type IndividuModel, type ReferentielIndividuModel } from '@/generated/prisma/models'
+import { type IndividuModel } from '@/generated/prisma/models'
 
-export type IndividuWithReferentiels = IndividuModel & {
-  referentiels: Array<ReferentielIndividuModel & { referentiel: { publicId: string } }>
+export type IndividuWithReferentiel = IndividuModel & {
+  referentiel: { publicId: string }
 }
 
-export const toIndividuApiModel = (individu: IndividuWithReferentiels): IndividuApiModel => ({
+export const toIndividuApiModel = (individu: IndividuWithReferentiel): IndividuApiModel => ({
   id: individu.publicId,
   nom: individu.nom,
-  referentiels: individu.referentiels.map((rel) => rel.referentiel.publicId),
+  referentiel: individu.referentiel.publicId,
   createdAt: individu.createdAt.toISOString(),
   updatedAt: individu.updatedAt.toISOString(),
 })

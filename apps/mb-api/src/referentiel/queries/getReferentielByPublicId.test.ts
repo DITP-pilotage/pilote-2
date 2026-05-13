@@ -10,18 +10,18 @@ describe.concurrent('getReferentielByPublicId', () => {
     'retourne le référentiel avec sa population',
     integrationTest(async () => {
       const [dept1, dept2] = testDeptIds(2)
-      await fixtures.referentielIndividu(
+      await fixtures.individu(
         {
+          publicId: dept1,
           referentiel: {
             publicId: 'REF-TEST',
             nom: 'Référentiel de test',
             description: 'Description test',
           },
-          individu: { publicId: dept1 },
         },
         {
+          publicId: dept2,
           referentiel: { publicId: 'REF-TEST' },
-          individu: { publicId: dept2 },
         },
       )
 

@@ -4,7 +4,7 @@ import {
 } from '@pilote/mb-shared/valeurAvancement'
 
 import { type ValeurAvancementModel } from '@/generated/prisma/models'
-import { type IndividuWithReferentiels, toIndividuApiModel } from '@/individu/utils'
+import { type IndividuWithReferentiel, toIndividuApiModel } from '@/individu/utils'
 
 export type ValeurAvancementWithRelations = ValeurAvancementModel & {
   indicateur: { publicId: string }
@@ -20,7 +20,7 @@ export const toValeurAvancementApiModel = (
   valeur: valeur.valeur.toNumber(),
 })
 
-export type IndividuAvecValeursRow = IndividuWithReferentiels & {
+export type IndividuAvecValeursRow = IndividuWithReferentiel & {
   valeurs: ValeurAvancementModel[]
   _count: { valeurs: number }
 }

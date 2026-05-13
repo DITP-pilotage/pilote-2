@@ -162,38 +162,20 @@ const main = async () => {
   }
 
   for (const item of individusSeed) {
+    const referentiel = await prisma.referentiel.findUniqueOrThrow({
+      where: { publicId: item.referentiel },
+      select: { id: true },
+    })
     await prisma.individu.upsert({
       where: { publicId: item.publicId },
-      update: { nom: item.nom },
+      update: { nom: item.nom, referentielId: referentiel.id },
       create: {
         id: uuidv7(),
         publicId: item.publicId,
         nom: item.nom,
+        referentielId: referentiel.id,
       },
     })
-  }
-
-  for (const item of individusSeed) {
-    const individu = await prisma.individu.findUniqueOrThrow({
-      where: { publicId: item.publicId },
-      select: { id: true },
-    })
-    for (const referentielPublicId of item.referentiels) {
-      const referentiel = await prisma.referentiel.findUniqueOrThrow({
-        where: { publicId: referentielPublicId },
-        select: { id: true },
-      })
-      await prisma.referentielIndividu.upsert({
-        where: {
-          referentielId_individuId: {
-            referentielId: referentiel.id,
-            individuId: individu.id,
-          },
-        },
-        update: {},
-        create: { referentielId: referentiel.id, individuId: individu.id },
-      })
-    }
   }
 
   for (const item of relationsSeed) {

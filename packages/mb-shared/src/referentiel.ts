@@ -38,7 +38,7 @@ export const upsertReferentielBodySchema = z.object({
     .array(upsertReferentielIndividuItemSchema)
     .optional()
     .describe(
-      "Individus à upsert et lier au référentiel. Sémantique merge : les individus déjà liés mais absents du body ne sont pas retirés.",
+      "Individus à upsert et rattacher à ce référentiel. Un individu ne peut appartenir qu'à un seul référentiel : si un individu listé existe déjà et est rattaché à un autre référentiel, la requête est rejetée (409).",
     ),
 })
 export type UpsertReferentielBody = z.infer<typeof upsertReferentielBodySchema>

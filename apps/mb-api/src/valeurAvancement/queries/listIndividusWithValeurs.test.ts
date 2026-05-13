@@ -12,11 +12,27 @@ describe.concurrent('listIndividusWithValeurs', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const [dept1, dept2, dept3] = testDeptIds(3)
-      await fixtures.individu({ publicId: dept3, nom: 'AM' })
+      await fixtures.individu(
+        {
+          publicId: dept1,
+          nom: 'Vaucluse',
+          referentiel: { publicId: 'REF-DEPT', nom: 'Dept' },
+        },
+        {
+          publicId: dept2,
+          nom: 'BdR',
+          referentiel: { publicId: 'REF-DEPT' },
+        },
+        {
+          publicId: dept3,
+          nom: 'AM',
+          referentiel: { publicId: 'REF-DEPT' },
+        },
+      )
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId, nom: 'T' },
-          individu: { publicId: dept1, nom: 'Vaucluse' },
+          individu: { publicId: dept1 },
           date: '2024-01-01',
           valeur: 1,
         },
@@ -28,7 +44,7 @@ describe.concurrent('listIndividusWithValeurs', () => {
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept2, nom: 'BdR' },
+          individu: { publicId: dept2 },
           date: '2024-01-01',
           valeur: 5,
         },
@@ -45,7 +61,7 @@ describe.concurrent('listIndividusWithValeurs', () => {
             individu: {
               id: dept1,
               nom: 'Vaucluse',
-              referentiels: [],
+              referentiel: 'REF-DEPT',
               createdAt: expect.any(String),
               updatedAt: expect.any(String),
             },
@@ -56,7 +72,7 @@ describe.concurrent('listIndividusWithValeurs', () => {
             individu: {
               id: dept2,
               nom: 'BdR',
-              referentiels: [],
+              referentiel: 'REF-DEPT',
               createdAt: expect.any(String),
               updatedAt: expect.any(String),
             },
@@ -76,14 +92,16 @@ describe.concurrent('listIndividusWithValeurs', () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
       const regId = testRegId()
-      await fixtures.referentielIndividu(
+      await fixtures.individu(
         {
+          publicId: deptId,
+          nom: 'Vaucluse',
           referentiel: { publicId: 'REF-DEPT', nom: 'Dept' },
-          individu: { publicId: deptId, nom: 'Vaucluse' },
         },
         {
+          publicId: regId,
+          nom: 'PACA',
           referentiel: { publicId: 'REF-REG', nom: 'Reg' },
-          individu: { publicId: regId, nom: 'PACA' },
         },
       )
       await fixtures.valeurAvancement(
@@ -114,7 +132,7 @@ describe.concurrent('listIndividusWithValeurs', () => {
             individu: {
               id: regId,
               nom: 'PACA',
-              referentiels: ['REF-REG'],
+              referentiel: 'REF-REG',
               createdAt: expect.any(String),
               updatedAt: expect.any(String),
             },

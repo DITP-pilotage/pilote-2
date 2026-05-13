@@ -20,16 +20,14 @@ export const listIndividusWithValeurs = (
   }
   const where = {
     valeurs: { some: indicateurFilter },
-    ...(params.referentiel
-      ? { referentiels: { some: { referentiel: { publicId: params.referentiel } } } }
-      : {}),
+    ...(params.referentiel ? { referentiel: { publicId: params.referentiel } } : {}),
   }
 
   const fetchPage = db().individu.findMany({
     where,
     orderBy: { id: 'asc' },
     include: {
-      referentiels: { include: { referentiel: true } },
+      referentiel: { select: { publicId: true } },
       valeurs: {
         where: indicateurFilter,
         orderBy: [{ date: 'desc' }, { id: 'desc' }],

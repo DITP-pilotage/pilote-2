@@ -8,9 +8,7 @@ export { individuPublicIdSchema } from './publicIds'
 export const individuApiModelSchema = z.object({
   id: individuPublicIdSchema,
   nom: z.string().describe("Nom lisible de l'individu."),
-  referentiels: z
-    .array(referentielPublicIdSchema)
-    .describe("Référentiels auxquels l'individu appartient."),
+  referentiel: referentielPublicIdSchema.describe("Référentiel auquel l'individu appartient."),
   createdAt: z.string().datetime().describe('Date ISO 8601 de création.'),
   updatedAt: z.string().datetime().describe('Date ISO 8601 de dernière mise à jour.'),
 })

@@ -18,7 +18,7 @@ const getIndividuByIdRoute = createRoute({
   tags: ['Individu'],
   summary: 'Récupérer un individu par identifiant public',
   description:
-    "Retourne un individu identifié par son identifiant public (ex. `DEPT-84`, `REG-93`, `FR`). Le payload inclut les référentiels auxquels l'individu appartient.",
+    "Retourne un individu identifié par son identifiant public (ex. `DEPT-84`, `REG-93`, `FR`). Le payload inclut le référentiel auquel l'individu appartient.",
   middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {
