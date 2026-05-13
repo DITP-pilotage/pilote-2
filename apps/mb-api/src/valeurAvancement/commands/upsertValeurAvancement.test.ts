@@ -3,13 +3,10 @@ import { describe, expect, it } from 'vitest'
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
-import {
-  IndividuInconnuError,
-  upsertValeurAvancement,
-} from '@/valeurAvancement/commands/upsertValeurAvancement'
+import { upsertValeurAvancement } from '@/valeurAvancement/commands/upsertValeurAvancement'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptId, testIndicateurId } from '@/test/randomIds'
+import { testDeptId, testIndicateurId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('upsertValeurAvancement', () => {
@@ -17,14 +14,15 @@ describe.concurrent('upsertValeurAvancement', () => {
     "crée la valeur quand le triplet (indicateur, individu, date) n'existe pas",
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refId = testReferentielId()
       const individuId = testDeptId()
       const link = await fixtures.indicateurReferentiel({
         indicateur: { publicId: indId },
-        referentiel: { publicId: 'REF-UPSERT-CREATE' },
+        referentiel: { publicId: refId },
       })
       const individu = await fixtures.individu({
         publicId: individuId,
-        referentiel: { publicId: 'REF-UPSERT-CREATE' },
+        referentiel: { publicId: refId },
       })
       const apiKey = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
@@ -59,18 +57,19 @@ describe.concurrent('upsertValeurAvancement', () => {
     'met à jour la valeur existante quand le triplet est déjà présent',
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refId = testReferentielId()
       const individuId = testDeptId()
       const link = await fixtures.indicateurReferentiel({
         indicateur: { publicId: indId },
-        referentiel: { publicId: 'REF-UPSERT-UPDATE' },
+        referentiel: { publicId: refId },
       })
       const individu = await fixtures.individu({
         publicId: individuId,
-        referentiel: { publicId: 'REF-UPSERT-UPDATE' },
+        referentiel: { publicId: refId },
       })
       await fixtures.valeurAvancement({
         indicateur: { publicId: indId },
-        individu: { publicId: individuId, referentiel: { publicId: 'REF-UPSERT-UPDATE' } },
+        individu: { publicId: individuId, referentiel: { publicId: refId } },
         date: '2025-03-01',
         valeur: 5,
       })
@@ -103,10 +102,11 @@ describe.concurrent('upsertValeurAvancement', () => {
     "rejette avec 404 quand l'indicateur n'existe pas",
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refId = testReferentielId()
       const individuId = testDeptId()
       await fixtures.individu({
         publicId: individuId,
-        referentiel: { publicId: 'REF-UPSERT-404' },
+        referentiel: { publicId: refId },
       })
       const apiKey = await fixtures.apiKey()
 
@@ -128,14 +128,15 @@ describe.concurrent('upsertValeurAvancement', () => {
     "rejette avec 404 quand le principal n'a aucune permission sur l'indicateur",
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refId = testReferentielId()
       const individuId = testDeptId()
       await fixtures.indicateurReferentiel({
         indicateur: { publicId: indId },
-        referentiel: { publicId: 'REF-UPSERT-NO-PERM' },
+        referentiel: { publicId: refId },
       })
       await fixtures.individu({
         publicId: individuId,
-        referentiel: { publicId: 'REF-UPSERT-NO-PERM' },
+        referentiel: { publicId: refId },
       })
       const apiKey = await fixtures.apiKey()
 
@@ -157,14 +158,15 @@ describe.concurrent('upsertValeurAvancement', () => {
     "rejette avec 403 quand le principal n'a que la permission READ",
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refId = testReferentielId()
       const individuId = testDeptId()
       await fixtures.indicateurReferentiel({
         indicateur: { publicId: indId },
-        referentiel: { publicId: 'REF-UPSERT-403' },
+        referentiel: { publicId: refId },
       })
       await fixtures.individu({
         publicId: individuId,
-        referentiel: { publicId: 'REF-UPSERT-403' },
+        referentiel: { publicId: refId },
       })
       const apiKey = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
@@ -186,9 +188,10 @@ describe.concurrent('upsertValeurAvancement', () => {
     "rejette avec INDIVIDU_INCONNU quand l'individu n'existe pas",
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refId = testReferentielId()
       await fixtures.indicateurReferentiel({
         indicateur: { publicId: indId },
-        referentiel: { publicId: 'REF-UPSERT-UNKNOWN' },
+        referentiel: { publicId: refId },
       })
       const apiKey = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
@@ -202,10 +205,10 @@ describe.concurrent('upsertValeurAvancement', () => {
       )
 
       expect(result.isErr()).toBe(true)
-      const error = result._unsafeUnwrapErr()
-      expect(error).toBeInstanceOf(IndividuInconnuError)
-      expect(error.code).toBe('INDIVIDU_INCONNU')
-      expect(error.details).toEqual({ unknownOrUnauthorizedIndividu: 'DEPT-999' })
+      expect(result._unsafeUnwrapErr()).toEqual({
+        type: 'INDIVIDU_INCONNU',
+        individu: 'DEPT-999',
+      })
     }),
   )
 
@@ -213,14 +216,16 @@ describe.concurrent('upsertValeurAvancement', () => {
     "rejette avec INDIVIDU_INCONNU quand l'individu n'est pas dans un référentiel lié à l'indicateur",
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refLie = testReferentielId()
+      const refOrphelin = testReferentielId()
       const individuId = testDeptId()
       await fixtures.indicateurReferentiel({
         indicateur: { publicId: indId },
-        referentiel: { publicId: 'REF-UPSERT-LINKED' },
+        referentiel: { publicId: refLie },
       })
       await fixtures.individu({
         publicId: individuId,
-        referentiel: { publicId: 'REF-UPSERT-ORPHAN' },
+        referentiel: { publicId: refOrphelin },
       })
       const apiKey = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
@@ -234,10 +239,10 @@ describe.concurrent('upsertValeurAvancement', () => {
       )
 
       expect(result.isErr()).toBe(true)
-      const error = result._unsafeUnwrapErr()
-      expect(error).toBeInstanceOf(IndividuInconnuError)
-      expect(error.code).toBe('INDIVIDU_INCONNU')
-      expect(error.details).toEqual({ unknownOrUnauthorizedIndividu: individuId })
+      expect(result._unsafeUnwrapErr()).toEqual({
+        type: 'INDIVIDU_INCONNU',
+        individu: individuId,
+      })
     }),
   )
 })

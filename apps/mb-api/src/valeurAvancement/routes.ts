@@ -16,8 +16,9 @@ import {
 } from '@pilote/mb-shared/valeurAvancement'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
+import { ForbiddenError } from '@/framework/errors/AppError'
 import { never } from '@/framework/errors/never'
-import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { upsertValeurAvancement } from '@/valeurAvancement/commands/upsertValeurAvancement'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
@@ -84,8 +85,7 @@ const upsertValeurAvancementRoute = createRoute({
   summary: 'Saisir ou mettre à jour une valeur ponctuelle pour un individu',
   description:
     "Upsert d'une valeur unique sur la clé `(indicateur, individu, date)`. Si le triplet existe, la `valeur` est remplacée ; sinon une nouvelle valeur est créée. " +
-    "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `INDIVIDU_INCONNU` avec `details.unknownOrUnauthorizedIndividu`). " +
-    "Renvoie 403 si le principal n'a pas la permission WRITE sur l'indicateur.",
+    "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `INDIVIDU_INCONNU`).",
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -234,7 +234,24 @@ valeurAvancementRoutes.openapi(upsertValeurAvancementRoute, async (context) => {
         status: 200,
       }),
     (error) => {
-      throw error
+      if (error instanceof ForbiddenError) {
+        return jsonResponseError({
+          context,
+          error: { code: error.code, message: error.message },
+          schema: ErrorApiModelSchema,
+          status: 403,
+        })
+      }
+      return jsonResponseError({
+        context,
+        error: {
+          code: error.type,
+          message: "L'individu est inconnu ou n'est pas rattaché à un référentiel lié à l'indicateur",
+          details: { individu: error.individu },
+        },
+        schema: ErrorApiModelSchema,
+        status: 400,
+      })
     },
   )
 })

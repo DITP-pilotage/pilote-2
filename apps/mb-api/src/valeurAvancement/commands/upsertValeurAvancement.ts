@@ -7,7 +7,7 @@ import { uuidv7 } from 'uuidv7'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { Decimal } from '@/framework/decimal'
-import { AppError, type ForbiddenError } from '@/framework/errors/AppError'
+import { type ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import {
   ensureIndicateurWritePermission,
@@ -15,10 +15,7 @@ import {
 } from '@/indicateur/permissions'
 import { toValeurAvancementApiModel } from '@/valeurAvancement/utils'
 
-export class IndividuInconnuError extends AppError {
-  readonly code = 'INDIVIDU_INCONNU'
-  readonly kind = 'validation' as const
-}
+export type UpsertValeurAvancementError = { type: 'INDIVIDU_INCONNU'; individu: string }
 
 type UpsertValeurAvancementParams = {
   indicateurPublicId: string
@@ -31,11 +28,11 @@ const resolveAuthorizedIndividu = ({
 }: {
   indicateurId: string
   individuPublicId: string
-}): ResultAsync<{ id: string; publicId: string }, IndividuInconnuError> => {
-  const unknownOrUnauthorized = () =>
-    new IndividuInconnuError('Individu inconnu ou non autorisé sur cet indicateur', {
-      unknownOrUnauthorizedIndividu: individuPublicId,
-    })
+}): ResultAsync<{ id: string; publicId: string }, UpsertValeurAvancementError> => {
+  const unknownOrUnauthorized = (): UpsertValeurAvancementError => ({
+    type: 'INDIVIDU_INCONNU',
+    individu: individuPublicId,
+  })
   return ResultAsync.fromSafePromise(
     db().individu.findUnique({
       where: { publicId: individuPublicId },
@@ -66,7 +63,7 @@ export const upsertValeurAvancement = ({
   body,
 }: UpsertValeurAvancementParams): ResultAsync<
   ValeurAvancementApiModel,
-  IndividuInconnuError | ForbiddenError
+  UpsertValeurAvancementError | ForbiddenError
 > => {
   const principalId = requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(

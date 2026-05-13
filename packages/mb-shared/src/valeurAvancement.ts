@@ -47,11 +47,7 @@ export type ValeurAvancementApiModel = z.infer<typeof valeurAvancementApiModelSc
 export const upsertValeurAvancementBodySchema = z.object({
   individu: individuPublicIdSchema,
   date: dateSchema,
-  valeur: z
-    .number()
-    .describe(
-      'Valeur observée. Tronquée vers zéro à 2 décimales côté base pour respecter la précision stockée (Decimal(20,2)).',
-    ),
+  valeur: z.number().describe('Valeur observée.'),
 })
 export type UpsertValeurAvancementBody = z.infer<typeof upsertValeurAvancementBodySchema>
 
