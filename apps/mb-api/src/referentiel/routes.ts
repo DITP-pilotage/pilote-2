@@ -12,16 +12,11 @@ import {
   upsertReferentielBodySchema,
 } from '@pilote/mb-shared/referentiel'
 
-import { err, ok, type Result } from 'neverthrow'
-
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { withTransaction } from '@/framework/persistence/withTransaction'
-import {
-  type UpsertReferentielError,
-  upsertReferentiel,
-} from '@/referentiel/commands/upsertReferentiel'
+import { upsertReferentiel } from '@/referentiel/commands/upsertReferentiel'
 import { getReferentielByPublicId } from '@/referentiel/queries/getReferentielByPublicId'
 import { listIndividusForReferentiel } from '@/referentiel/queries/listIndividusForReferentiel'
 import { listReferentiels } from '@/referentiel/queries/listReferentiels'
@@ -173,15 +168,11 @@ referentielRoutes.openapi(upsertReferentielRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
-  type Outcome = Result<z.infer<typeof ReferentielApiModelSchema>, UpsertReferentielError>
-  const result = await withTransaction(async (): Promise<Outcome> => {
-    const upsertResult = await upsertReferentiel(id, body)
-    if (upsertResult.isErr()) return err(upsertResult.error)
-    const data = (await getReferentielByPublicId(id))._unsafeUnwrap()
-    return ok(data)
-  })
-
-  return result.match(
+  return (
+    await withTransaction(async () =>
+      upsertReferentiel(id, body).andThen(() => getReferentielByPublicId(id)),
+    )
+  ).match(
     (data) =>
       jsonResponseOk({
         context,
