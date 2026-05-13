@@ -7,11 +7,7 @@ import { uuidv7 } from 'uuidv7'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { Decimal } from '@/framework/decimal'
-import {
-  EntityNotFoundError,
-  ForbiddenError,
-  ValidationError,
-} from '@/framework/errors/AppError'
+import { EntityNotFoundError, ForbiddenError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { PermissionAction } from '@/generated/prisma/enums'
 import { toValeurAvancementApiModel } from '@/valeurAvancement/utils'

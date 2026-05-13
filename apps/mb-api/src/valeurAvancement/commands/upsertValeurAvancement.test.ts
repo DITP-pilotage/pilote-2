@@ -1,10 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import {
-  EntityNotFoundError,
-  ForbiddenError,
-  ValidationError,
-} from '@/framework/errors/AppError'
+import { EntityNotFoundError, ForbiddenError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { upsertValeurAvancement } from '@/valeurAvancement/commands/upsertValeurAvancement'
 import { fixtures } from '@/test/fixtures'
