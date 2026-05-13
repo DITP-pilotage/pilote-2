@@ -42,22 +42,10 @@ type ReferentielGroupe = {
   individus: ReadonlyArray<IndividuApiModel>
 }
 
-// TODO: à supprimer lors du passage à la contrainte "1 individu = 1 référentiel" :
-// le `flatMap` + dédup sera remplacé par un simple `find` sur le référentiel direct
-// de l'indicateur (1 référentiel = la source unique des individus).
-const flattenAndSort = (groupes: ReadonlyArray<ReferentielGroupe>): IndividuApiModel[] => {
-  const dedup = new Map<string, IndividuApiModel>()
-  for (const groupe of groupes)
-    for (const individu of groupe.individus)
-      if (!dedup.has(individu.id)) dedup.set(individu.id, individu)
-  return [...dedup.values()].sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
-}
-
-const groupeContenant = (
-  groupes: ReadonlyArray<ReferentielGroupe>,
-  individuId: string,
-): ReferentielGroupe | undefined =>
-  groupes.find((g) => g.individus.some((i) => i.id === individuId))
+const flattenAndSort = (groupes: ReadonlyArray<ReferentielGroupe>): IndividuApiModel[] =>
+  groupes
+    .flatMap((groupe) => [...groupe.individus])
+    .sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
 
 export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
   params: {
@@ -71,8 +59,6 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
 
     if (indicateur.referentielIds.length === 0) return { indicateur }
 
-    // TODO: à supprimer lors du passage à la contrainte "1 individu = 1 référentiel" :
-    // l'agrégation multi-référentiels disparaîtra au profit d'une seule query.
     const groupes: ReferentielGroupe[] = await Promise.all(
       indicateur.referentielIds.map(async (refId) => {
         const [referentiel, individus] = await Promise.all([
@@ -89,11 +75,10 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     const selected = deps.individu ? individus.find((i) => i.id === deps.individu) : undefined
     if (!selected) {
       const first = individus[0]!
-      const groupe = groupeContenant(groupes, first.id)
       throw redirect({
         to: '/indicateurs/$id',
         params,
-        search: { individu: first.id, referentiel: groupe?.referentiel.id },
+        search: { individu: first.id, referentiel: first.referentiel },
         replace: true,
       })
     }
@@ -173,13 +158,13 @@ function IndicateurDetailComponent() {
             <Select
               value={selectedIndividu.id}
               onValueChange={(value) => {
-                const groupe = groupeContenant(groupes, value)
+                const next = individus.find((i) => i.id === value)
                 startTransition(() => {
                   void navigate({
                     search: (prev) => ({
                       ...prev,
                       individu: value,
-                      referentiel: groupe?.referentiel.id ?? prev.referentiel,
+                      referentiel: next?.referentiel ?? prev.referentiel,
                     }),
                   })
                 })
