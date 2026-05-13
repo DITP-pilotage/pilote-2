@@ -221,7 +221,6 @@ const main = async () => {
     0,
   )
 
-
   for (const item of relationsSeed) {
     const parent = await prisma.individu.findUniqueOrThrow({
       where: { publicId: item.parent },

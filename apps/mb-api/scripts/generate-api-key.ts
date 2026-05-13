@@ -65,6 +65,11 @@ const main = (): void => {
     `INSERT INTO api_key (id, label, key_hash, prefix, expires_at) VALUES (` +
       `${sqlString(generated.id)}, ${sqlString(label)}, ${sqlString(generated.keyHash)}, ${sqlString(generated.prefix)}, ` +
       `${expiresAt ? sqlString(expiresAt.toISOString()) : 'NULL'});`,
+    `-- Grants READ + WRITE sur les 10 premiers indicateurs (ordre publicId ASC)`,
+    `INSERT INTO indicateur_permission (principal_id, indicateur_id, action)`,
+    `SELECT ${sqlString(generated.id)}, i.id, a.action`,
+    `FROM (SELECT id FROM indicateur ORDER BY public_id ASC LIMIT 10) AS i`,
+    `CROSS JOIN (VALUES ('READ'::permission_action_enum), ('WRITE'::permission_action_enum)) AS a(action);`,
     'COMMIT;',
   ].join('\n  ')
 
