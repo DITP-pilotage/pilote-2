@@ -182,11 +182,11 @@ const main = async () => {
     indicateurPublicId: string
     referentielPublicIds: ReadonlyArray<string>
   }> = [
-    { indicateurPublicId: 'IND-001', referentielPublicIds: ['REF-DEPT'] },
+    { indicateurPublicId: 'IND-001', referentielPublicIds: ['REF-DEPT', 'REF-NAT'] },
     { indicateurPublicId: 'IND-002', referentielPublicIds: ['REF-DEPT', 'REF-REG'] },
-    { indicateurPublicId: 'IND-003', referentielPublicIds: ['REF-REG'] },
+    { indicateurPublicId: 'IND-003', referentielPublicIds: ['REF-REG', 'REF-DEPT'] },
     { indicateurPublicId: 'IND-004', referentielPublicIds: ['REF-DEPT'] },
-    { indicateurPublicId: 'IND-005', referentielPublicIds: ['REF-REG'] },
+    { indicateurPublicId: 'IND-005', referentielPublicIds: ['REF-REG', 'REF-NAT'] },
     // Indicateurs liés à REF-EMPTY pour exercer le fallback "aucun individu disponible".
     { indicateurPublicId: 'IND-006', referentielPublicIds: ['REF-EMPTY'] },
     { indicateurPublicId: 'IND-007', referentielPublicIds: ['REF-EMPTY'] },
