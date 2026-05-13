@@ -44,6 +44,24 @@ export const valeurAvancementApiModelSchema = valeurDateApiModelSchema.extend({
 })
 export type ValeurAvancementApiModel = z.infer<typeof valeurAvancementApiModelSchema>
 
+const truncateTo2Decimals = (value: number): number => {
+  const scaled = Math.round(value * 1e10) / 1e8
+  return Math.trunc(scaled) / 100
+}
+
+export const upsertValeurAvancementBodySchema = z.object({
+  individu: individuPublicIdSchema,
+  date: dateSchema,
+  valeur: z
+    .number()
+    .finite()
+    .transform(truncateTo2Decimals)
+    .describe(
+      'Valeur observée. Tronquée vers zéro à 2 décimales côté serveur pour respecter la précision stockée (Decimal(20,2)).',
+    ),
+})
+export type UpsertValeurAvancementBody = z.infer<typeof upsertValeurAvancementBodySchema>
+
 export const valeurAvancementListApiModelSchema = z.object({
   items: z
     .array(valeurAvancementApiModelSchema)

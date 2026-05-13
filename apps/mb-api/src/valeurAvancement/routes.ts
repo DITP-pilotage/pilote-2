@@ -9,6 +9,8 @@ import {
   listValeursForIndicateurQuerySchema,
   listValeursRemarquablesForIndicateurQuerySchema,
   syntheseIndividusListApiModelSchema,
+  upsertValeurAvancementBodySchema,
+  valeurAvancementApiModelSchema,
   valeurAvancementListApiModelSchema,
   valeursRemarquablesListApiModelSchema,
 } from '@pilote/mb-shared/valeurAvancement'
@@ -16,13 +18,21 @@ import {
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { withTransaction } from '@/framework/persistence/withTransaction'
+import { upsertValeurAvancement } from '@/valeurAvancement/commands/upsertValeurAvancement'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
 import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
 import { listValeursForIndicateur } from '@/valeurAvancement/queries/listValeursForIndicateur'
 import { listValeursRemarquablesForIndicateur } from '@/valeurAvancement/queries/listValeursRemarquablesForIndicateur'
 
+const ValeurAvancementApiModelSchema = valeurAvancementApiModelSchema.openapi(
+  'ValeurAvancementApiModel',
+)
 const ValeurAvancementListApiModelSchema = valeurAvancementListApiModelSchema.openapi(
   'ValeurAvancementListApiModel',
+)
+const UpsertValeurAvancementBodySchema = upsertValeurAvancementBodySchema.openapi(
+  'UpsertValeurAvancementBody',
 )
 const IndividusWithValeursListApiModelSchema = createPaginatedApiListSchema(
   individuAvecValeursApiModelSchema,
@@ -61,6 +71,47 @@ const getValeursForIndicateurRoute = createRoute({
     400: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },
       description: 'Paramètres de requête invalides (ex. `individus` absent ou date invalide)',
+    },
+  },
+})
+
+// --- PUT /indicateurs/:id/valeurs --------------------------------------------
+
+const upsertValeurAvancementRoute = createRoute({
+  method: 'put',
+  path: '/indicateurs/{id}/valeurs',
+  tags: ['Indicateur'],
+  summary: 'Saisir ou mettre à jour une valeur ponctuelle pour un individu',
+  description:
+    "Upsert d'une valeur unique sur la clé `(indicateur, individu, date)`. Si le triplet existe, la `valeur` est remplacée ; sinon une nouvelle valeur est créée. " +
+    "La `valeur` est tronquée vers zéro à 2 décimales pour respecter la précision stockée (Decimal(20,2)). " +
+    "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `VALIDATION_ERROR` avec `details.unknownOrUnauthorizedIndividu`). " +
+    "Renvoie 404 si l'indicateur n'existe pas et 403 si le principal n'a pas la permission WRITE sur l'indicateur. " +
+    "Pour supprimer une valeur, utilisez la route DELETE dédiée (hors scope de cette route).",
+  middleware: [requireAuthentication],
+  request: {
+    params: indicateurParamsSchema,
+    body: {
+      content: { 'application/json': { schema: UpsertValeurAvancementBodySchema } },
+      required: true,
+    },
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: ValeurAvancementApiModelSchema } },
+      description: 'Valeur créée ou mise à jour',
+    },
+    400: {
+      content: { 'application/json': { schema: ErrorApiModelSchema } },
+      description: 'Requête invalide (body invalide ou individu inconnu/non autorisé)',
+    },
+    403: {
+      content: { 'application/json': { schema: ErrorApiModelSchema } },
+      description: 'Pas de permission WRITE sur cet indicateur',
+    },
+    404: {
+      content: { 'application/json': { schema: ErrorApiModelSchema } },
+      description: 'Indicateur introuvable',
     },
   },
 })
@@ -166,6 +217,26 @@ valeurAvancementRoutes.openapi(getValeursForIndicateurRoute, async (context) => 
         context,
         data,
         schema: ValeurAvancementListApiModelSchema,
+        status: 200,
+      }),
+    never,
+  )
+})
+
+valeurAvancementRoutes.openapi(upsertValeurAvancementRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  const body = context.req.valid('json')
+
+  const result = await withTransaction(async () =>
+    upsertValeurAvancement({ indicateurPublicId: id, body }),
+  )
+
+  return result.match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: ValeurAvancementApiModelSchema,
         status: 200,
       }),
     never,
