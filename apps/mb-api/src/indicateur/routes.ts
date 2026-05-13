@@ -30,7 +30,7 @@ const getIndicateursRoute = createRoute({
   tags: ['Indicateur'],
   summary: 'Lister les indicateurs',
   description:
-    "Retourne la liste paginée des indicateurs avec un filtre de recherche par nom. La pagination est cursor-based : passez `cursor` (renvoyé dans la réponse précédente) pour obtenir la page suivante. `hasMore` indique s'il reste des pages.",
+    "Retourne la liste paginée des indicateurs avec un filtre de recherche par nom. La pagination est cursor-based : passez `cursor` (renvoyé dans la réponse précédente) pour obtenir la page suivante. `hasMore` indique s'il reste des pages. Chaque item inclut `referentielIds` (triés par identifiant public ASC).",
   middleware: [requireAuthentication],
   request: { query: listIndicateursQuerySchema },
   responses: {
@@ -57,7 +57,7 @@ const getIndicateurByIdRoute = createRoute({
   tags: ['Indicateur'],
   summary: 'Récupérer un indicateur par identifiant public',
   description:
-    'Retourne un indicateur identifié par son identifiant public (format `IND-XXX`). Renvoie 404 (`ENTITY_NOT_FOUND`) si aucun indicateur ne correspond.',
+    'Retourne un indicateur identifié par son identifiant public (format `IND-XXX`). La réponse inclut `referentielIds` (référentiels liés, triés par publicId ASC). Renvoie 404 (`ENTITY_NOT_FOUND`) si aucun indicateur ne correspond.',
   middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {
@@ -78,9 +78,9 @@ const upsertIndicateurRoute = createRoute({
   method: 'put',
   path: '/indicateurs/{id}',
   tags: ['Indicateur'],
-  summary: 'Créer ou remplacer un indicateur',
+  summary: 'Créer ou remplacer un indicateur (nom + référentiels liés)',
   description:
-    "Crée l'indicateur s'il n'existe pas, ou remplace son `nom` si un indicateur avec le même identifiant public existe déjà. Opération idempotente.",
+    "Crée l'indicateur s'il n'existe pas, ou met à jour son `nom` si déjà présent. Le champ `referentielIds` est obligatoire et applique une sémantique replace-all : l'ensemble des liens devient strictement celui décrit dans le body (tableau vide pour aucun lien). Les doublons sont silencieusement dédupliqués. Si un `referentielId` n'existe pas, l'appel échoue avec 400 `VALIDATION_ERROR` et `details.unknownReferentielIds`. L'opération est atomique (transaction unique).",
   middleware: [requireAuthentication],
   request: {
     params: detailParamsSchema,
@@ -96,7 +96,7 @@ const upsertIndicateurRoute = createRoute({
     },
     400: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Requête invalide',
+      description: 'Requête invalide (body ou référentiels inconnus)',
     },
   },
 })

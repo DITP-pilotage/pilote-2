@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { db } from '@/framework/persistence/dbStore'
 import { encodeCursor } from '@/framework/persistence/paginate'
 import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
 import { fixtures } from '@/test/fixtures'
@@ -180,6 +181,35 @@ describe.concurrent('listIndicateurs', () => {
       expect(value.items.map((i) => i.id)).toEqual(ids.slice(0, 5))
       expect(value.pagination).toEqual({ cursor: encodeCursor(created[4]!.id), hasMore: true })
       expect(value.total).toBe(6)
+    }),
+  )
+
+  it(
+    'expose referentielIds triés par publicId ASC sur chaque item',
+    integrationTest(async () => {
+      const [accessible] = testIndicateurIds(1)
+      const indicateur = await fixtures.indicateur({ publicId: accessible })
+      const [refA, refB] = await fixtures.referentiel(
+        { publicId: 'REF-LIST-Z' },
+        { publicId: 'REF-LIST-M' },
+      )
+      await db().indicateurReferentiel.createMany({
+        data: [
+          { indicateurId: indicateur.id, referentielId: refA!.id },
+          { indicateurId: indicateur.id, referentielId: refB!.id },
+        ],
+      })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: accessible }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
+
+      const value = result._unsafeUnwrap()
+      expect(value.items.find((i) => i.id === accessible)?.referentielIds).toEqual([
+        'REF-LIST-M',
+        'REF-LIST-Z',
+      ])
     }),
   )
 })

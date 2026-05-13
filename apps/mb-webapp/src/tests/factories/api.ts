@@ -17,6 +17,7 @@ export const buildIndicateur = (override: Partial<IndicateurApiModel> = {}): Ind
     unite: '%',
     statut: 'actif',
     description: 'Description test',
+    referentielIds: [],
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
     ...override,

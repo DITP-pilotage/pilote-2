@@ -14,6 +14,11 @@ export const referentielsSeed = [
     nom: 'Départements de France',
     description: 'Départements métropolitains (échantillon de seed).',
   },
+  {
+    publicId: 'REF-EMPTY',
+    nom: 'Référentiel sans population',
+    description: 'Référentiel créé pour exercer le cas "aucun individu disponible".',
+  },
 ] as const
 
 export const individusSeed = [

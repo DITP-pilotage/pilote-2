@@ -1,7 +1,8 @@
 import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
-import { individuPublicIdSchema } from '@pilote/mb-shared/individu'
+import { type IndividuApiModel, individuPublicIdSchema } from '@pilote/mb-shared/individu'
+import { type ReferentielApiModel, referentielPublicIdSchema } from '@pilote/mb-shared/referentiel'
 import { type ValeurDateApiModel } from '@pilote/mb-shared/valeurAvancement'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
 import { ArrowLeft } from 'lucide-react'
 import { startTransition } from 'react'
@@ -13,17 +14,19 @@ import { Button } from '@/components/ui/Button'
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/Select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import {
-  indicateurIndividusQueryOptions,
   indicateurQueryOptions,
   indicateurValeursQueryOptions,
   indicateurValeursRemarquablesQueryOptions,
 } from '@/queries/indicateurs'
+import { referentielIndividusQueryOptions, referentielQueryOptions } from '@/queries/referentiels'
 
 const paramsSchema = z.object({
   id: indicateurPublicIdSchema,
@@ -31,7 +34,18 @@ const paramsSchema = z.object({
 
 const searchSchema = z.object({
   individu: individuPublicIdSchema.optional(),
+  referentiel: referentielPublicIdSchema.optional(),
 })
+
+type ReferentielGroupe = {
+  referentiel: ReferentielApiModel
+  individus: ReadonlyArray<IndividuApiModel>
+}
+
+const flattenAndSort = (groupes: ReadonlyArray<ReferentielGroupe>): IndividuApiModel[] =>
+  groupes
+    .flatMap((groupe) => [...groupe.individus])
+    .sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
 
 export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
   params: {
@@ -41,31 +55,42 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
   validateSearch: searchSchema,
   loaderDeps: ({ search }) => ({ individu: search.individu }),
   loader: async ({ context, params, deps }) => {
-    const [indicateur, individus] = await Promise.all([
-      context.queryClient.fetchQuery(indicateurQueryOptions(params.id)),
-      context.queryClient.fetchQuery(indicateurIndividusQueryOptions(params.id)),
-    ])
+    const indicateur = await context.queryClient.fetchQuery(indicateurQueryOptions(params.id))
 
-    if (individus.length === 0) return { indicateur, individus }
+    if (indicateur.referentielIds.length === 0) return { indicateur }
 
-    if (!deps.individu || !individus.some((i) => i.individu.id === deps.individu)) {
+    const groupes: ReferentielGroupe[] = await Promise.all(
+      indicateur.referentielIds.map(async (refId) => {
+        const [referentiel, individus] = await Promise.all([
+          context.queryClient.fetchQuery(referentielQueryOptions(refId)),
+          context.queryClient.fetchQuery(referentielIndividusQueryOptions(refId)),
+        ])
+        return { referentiel, individus }
+      }),
+    )
+
+    const individus = flattenAndSort(groupes)
+    if (individus.length === 0) return { indicateur }
+
+    const selected = deps.individu ? individus.find((i) => i.id === deps.individu) : undefined
+    if (!selected) {
+      const first = individus[0]!
       throw redirect({
         to: '/indicateurs/$id',
         params,
-        search: { individu: individus[0]!.individu.id },
+        search: { individu: first.id, referentiel: first.referentiel },
         replace: true,
       })
     }
 
-    // Préfetch des valeurs : useSuspenseQuery dans le composant tape le cache.
     await Promise.all([
-      context.queryClient.fetchQuery(indicateurValeursQueryOptions(params.id, deps.individu)),
+      context.queryClient.fetchQuery(indicateurValeursQueryOptions(params.id, deps.individu!)),
       context.queryClient.fetchQuery(
-        indicateurValeursRemarquablesQueryOptions(params.id, deps.individu),
+        indicateurValeursRemarquablesQueryOptions(params.id, deps.individu!),
       ),
     ])
 
-    return { indicateur, individus }
+    return { indicateur }
   },
   pendingComponent: () => <RouteLoading message="Chargement de l'indicateur…" />,
   errorComponent: RouteError,
@@ -78,12 +103,26 @@ function IndicateurDetailComponent() {
   const navigate = useNavigate({ from: Route.fullPath })
 
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(id))
-  const { data: individus } = useSuspenseQuery(indicateurIndividusQueryOptions(id))
+  const referentiels = useSuspenseQueries({
+    queries: indicateur.referentielIds.map((refId) => referentielQueryOptions(refId)),
+    combine: (results) => results.map((r) => r.data),
+  })
+  const individusByReferentiel = useSuspenseQueries({
+    queries: indicateur.referentielIds.map((refId) => referentielIndividusQueryOptions(refId)),
+    combine: (results) => results.map((r) => r.data),
+  })
+  const groupes: ReferentielGroupe[] = indicateur.referentielIds.map((_, i) => ({
+    referentiel: referentiels[i]!,
+    individus: individusByReferentiel[i]!,
+  }))
 
-  // Le loader garantit que `search.individu` est défini et valide dès lors que la liste n'est pas vide.
+  const individus = flattenAndSort(groupes)
   const selectedIndividu = search.individu
-    ? individus.find((i) => i.individu.id === search.individu)
+    ? individus.find((i) => i.id === search.individu)
     : undefined
+
+  const indicateurAAucunReferentiel = indicateur.referentielIds.length === 0
+  const referentielAAucunIndividu = !indicateurAAucunReferentiel && individus.length === 0
 
   return (
     <div className="space-y-6">
@@ -100,27 +139,33 @@ function IndicateurDetailComponent() {
         <h1 className="text-3xl font-semibold text-text">{indicateur.nom}</h1>
       </header>
 
-      {selectedIndividu === undefined ? (
+      {indicateurAAucunReferentiel ? (
         <p className="rounded border border-border bg-surface p-6 text-sm text-text-muted">
-          Aucun individu n'a de valeur pour cet indicateur.
+          Aucun référentiel associé à cet indicateur.
         </p>
-      ) : (
+      ) : referentielAAucunIndividu ? (
+        <p className="rounded border border-border bg-surface p-6 text-sm text-text-muted">
+          Aucun individu disponible dans les référentiels liés.
+        </p>
+      ) : selectedIndividu === undefined ? null : (
         <>
-          <StatistiquesPopulationSection
-            indicateurId={id}
-            individuId={selectedIndividu.individu.id}
-          />
+          <StatistiquesPopulationSection indicateurId={id} individuId={selectedIndividu.id} />
 
           <div className="flex items-center gap-3">
             <label className="text-sm text-text-muted" htmlFor="individu-select">
               Individu
             </label>
             <Select
-              value={selectedIndividu.individu.id}
+              value={selectedIndividu.id}
               onValueChange={(value) => {
+                const next = individus.find((i) => i.id === value)
                 startTransition(() => {
                   void navigate({
-                    search: (prev) => ({ ...prev, individu: value }),
+                    search: (prev) => ({
+                      ...prev,
+                      individu: value,
+                      referentiel: next?.referentiel ?? prev.referentiel,
+                    }),
                   })
                 })
               }}
@@ -129,20 +174,21 @@ function IndicateurDetailComponent() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {individus.map(({ individu }) => (
-                  <SelectItem key={individu.id} value={individu.id}>
-                    {individu.nom}
-                  </SelectItem>
+                {groupes.map((groupe) => (
+                  <SelectGroup key={groupe.referentiel.id}>
+                    <SelectLabel className="bg-background">{groupe.referentiel.nom}</SelectLabel>
+                    {groupe.individus.map((individu) => (
+                      <SelectItem key={individu.id} value={individu.id}>
+                        {individu.nom}
+                      </SelectItem>
+                    ))}
+                  </SelectGroup>
                 ))}
               </SelectContent>
             </Select>
           </div>
 
-          <ValeursRemarquablesSection
-            indicateurId={id}
-            individuId={selectedIndividu.individu.id}
-            derniereValeur={selectedIndividu.derniereValeur}
-          />
+          <ValeursRemarquablesSection indicateurId={id} individuId={selectedIndividu.id} />
 
           <Tabs defaultValue="valeurs">
             <TabsList>
@@ -151,7 +197,7 @@ function IndicateurDetailComponent() {
             </TabsList>
 
             <TabsContent value="valeurs">
-              <ValeursTable indicateurId={id} individuId={selectedIndividu.individu.id} />
+              <ValeursTable indicateurId={id} individuId={selectedIndividu.id} />
             </TabsContent>
 
             <TabsContent value="metadonnees">
@@ -197,16 +243,19 @@ function StatistiquesPopulationSection({
 function ValeursRemarquablesSection({
   indicateurId,
   individuId,
-  derniereValeur,
 }: {
   indicateurId: string
   individuId: string
-  derniereValeur: ValeurDateApiModel
 }) {
-  const { data } = useSuspenseQuery(
+  const { data: valeursRemarquables } = useSuspenseQuery(
     indicateurValeursRemarquablesQueryOptions(indicateurId, individuId),
   )
-  const variation = data.items[0]?.variation ?? null
+  const { data: valeurs } = useSuspenseQuery(
+    indicateurValeursQueryOptions(indicateurId, individuId),
+  )
+
+  const derniereValeur = derniereValeurFromItems(valeurs.items)
+  const variation = valeursRemarquables.items[0]?.variation ?? null
 
   const numberFormatter = new Intl.NumberFormat('fr-FR')
   const variationFormatter = new Intl.NumberFormat('fr-FR', { signDisplay: 'exceptZero' })
@@ -214,12 +263,18 @@ function ValeursRemarquablesSection({
   return (
     <section className="grid gap-4 sm:grid-cols-2">
       <StatCard label="Valeur la plus récente">
-        <p className="text-3xl font-semibold text-text">
-          {numberFormatter.format(derniereValeur.valeur)}
-        </p>
-        <p className="mt-1 text-xs text-text-muted">
-          au {new Date(derniereValeur.date).toLocaleDateString('fr-FR')}
-        </p>
+        {derniereValeur ? (
+          <>
+            <p className="text-3xl font-semibold text-text">
+              {numberFormatter.format(derniereValeur.valeur)}
+            </p>
+            <p className="mt-1 text-xs text-text-muted">
+              au {new Date(derniereValeur.date).toLocaleDateString('fr-FR')}
+            </p>
+          </>
+        ) : (
+          <p className="text-3xl font-semibold text-text-muted">—</p>
+        )}
       </StatCard>
 
       <StatCard label="Variation depuis la dernière MAJ">
@@ -229,6 +284,14 @@ function ValeursRemarquablesSection({
       </StatCard>
     </section>
   )
+}
+
+const derniereValeurFromItems = (
+  items: ReadonlyArray<{ date: string; valeur: number }>,
+): ValeurDateApiModel | undefined => {
+  if (items.length === 0) return undefined
+  const sorted = [...items].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
+  return { date: sorted[0]!.date, valeur: sorted[0]!.valeur }
 }
 
 const variationColorClass = (variation: number | null): string => {

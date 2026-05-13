@@ -13,6 +13,11 @@ export const getIndicateurByPublicId = (
   return ResultAsync.fromSafePromise(
     db().indicateur.findFirstOrThrow({
       where: withIndicateurReadPermission({ publicId }, principalId),
+      include: {
+        referentiels: {
+          include: { referentiel: { select: { publicId: true } } },
+        },
+      },
     }),
   ).map(toIndicateurApiModel)
 }
