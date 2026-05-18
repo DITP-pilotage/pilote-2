@@ -4,14 +4,11 @@ import { ResultAsync } from 'neverthrow'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { type ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
+import { type IndividuInconnuError, resolveAuthorizedIndividu } from '@/individu/permission'
 import {
   ensureIndicateurWritePermission,
   withIndicateurReadPermission,
 } from '@/indicateur/permissions'
-import {
-  type IndividuInconnuError,
-  resolveAuthorizedIndividu,
-} from '@/valeurAvancement/resolveAuthorizedIndividu'
 
 export type DeleteValeurAvancementError = IndividuInconnuError
 
@@ -41,8 +38,8 @@ export const deleteValeurAvancement = ({
     )
     .andThen((indicateur) =>
       resolveAuthorizedIndividu({
-        indicateurId: indicateur.id,
         individuPublicId: body.individu,
+        indicateurId: indicateur.id,
       }).map((individu) => ({ indicateur, individu })),
     )
     .andThen(({ indicateur, individu }) =>

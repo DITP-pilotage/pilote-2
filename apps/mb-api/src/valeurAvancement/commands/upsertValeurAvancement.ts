@@ -9,14 +9,11 @@ import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { Decimal } from '@/framework/decimal'
 import { type ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
+import { type IndividuInconnuError, resolveAuthorizedIndividu } from '@/individu/permission'
 import {
   ensureIndicateurWritePermission,
   withIndicateurReadPermission,
 } from '@/indicateur/permissions'
-import {
-  type IndividuInconnuError,
-  resolveAuthorizedIndividu,
-} from '@/valeurAvancement/resolveAuthorizedIndividu'
 import { toValeurAvancementApiModel } from '@/valeurAvancement/utils'
 
 export type UpsertValeurAvancementError = IndividuInconnuError
@@ -47,8 +44,8 @@ export const upsertValeurAvancement = ({
     )
     .andThen((indicateur) =>
       resolveAuthorizedIndividu({
-        indicateurId: indicateur.id,
         individuPublicId: body.individu,
+        indicateurId: indicateur.id,
       }).map((individu) => ({ indicateur, individu })),
     )
     .andThen(({ indicateur, individu }) =>

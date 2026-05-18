@@ -5,11 +5,11 @@ import { db } from '@/framework/persistence/dbStore'
 export type IndividuInconnuError = { type: 'INDIVIDU_INCONNU'; individu: string }
 
 export const resolveAuthorizedIndividu = ({
-  indicateurId,
   individuPublicId,
+  indicateurId,
 }: {
-  indicateurId: string
   individuPublicId: string
+  indicateurId: string
 }): ResultAsync<{ id: string; publicId: string }, IndividuInconnuError> => {
   const unknownOrUnauthorized = (): IndividuInconnuError => ({
     type: 'INDIVIDU_INCONNU',
