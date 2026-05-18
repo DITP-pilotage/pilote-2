@@ -2,6 +2,13 @@
 
 Ce document centralise les décisions prises autour des dépendances : pins, overrides, packages à surveiller, et procédure pour une campagne d'upgrade. À maintenir à chaque itération.
 
+Le monorepo contient 3 apps :
+- `@pilote/ppg` (`apps/pilote-ppg`) : app Next.js historique (PILOTE)
+- `@pilote/mb-api` (`apps/mb-api`) : backend Hono (pilote MB)
+- `@pilote/mb-webapp` (`apps/mb-webapp`) : webapp (pilote MB)
+
+Toutes les décisions ci-dessous s'appliquent au monorepo (root `package.json` pour les overrides ; pins et deps directes dans chaque app).
+
 ## Gestionnaire de paquets
 
 Depuis avril 2026, le projet utilise **pnpm 10** (lockfile : `pnpm-lock.yaml`).
@@ -32,11 +39,23 @@ Tous les environnements (dev, CI, prod) tournent sur Node 24.9.0. Pas de fallbac
 |---|---|---|---|
 | `@keycloak/keycloak-admin-client` | `26.5.6` | La 26.6.0 a un `prepare` script cassé qui appelle `pnpm wireit`. À re-tester maintenant qu'on est sur pnpm (le blocage d'origine venait de `npm install`). | Check `pnpm outdated` à chaque campagne |
 | `@tiptap/*` (core, extensions, react, pm, starter-kit, etc.) | `3.22.3` | Les packages `@tiptap/*` **doivent tous être à la même version** au runtime sinon l'éditeur plante (multiple `@tiptap/core` instances). On pin à l'exact pour éviter qu'un seul paquet dérive. | Bumper tout le bloc ensemble |
-| `@next/env`, `next-auth`, `nextra*`, `@gouvfr/dsfr`, `convict*`, `dotenv`, `dotenv-expand`, `fast-xml-parser`, `next-router-mock`, `jest-extended`, `sanitize-html`, `sass`, `swagger-ui-react`, `ws`, `zustand`, etc. | divers | Pins historiques par prudence. Chaque ligne pourrait être remplacée par `^` lors d'une campagne si on valide que le bump mineur est safe. | À réévaluer ponctuellement |
+| `fast-xml-parser` | `5.7.3` | Bumpé en mai 2026 pour CVEs. Pinné car la 5.7.1 introduit `@nodable/entities` v2.1.0 avec breaking changes sur les entités — on fige tant qu'on n'a pas vérifié l'impact. | À évaluer pour passer en `^5.7.3` |
+| `@next/env`, `next-auth`, `nextra*`, `@gouvfr/dsfr`, `convict*`, `dotenv`, `dotenv-expand`, `next-router-mock`, `jest-extended`, `sanitize-html`, `sass`, `swagger-ui-react`, `ws`, `zustand`, etc. | divers | Pins historiques par prudence. Chaque ligne pourrait être remplacée par `^` lors d'une campagne si on valide que le bump mineur est safe. | À réévaluer ponctuellement |
 
 ## Overrides
 
-**État actuel : aucun override.** ✨
+Définis dans `pnpm.overrides` du `package.json` racine. Tous ajoutés lors de la campagne sécu de mai 2026 pour corriger des CVEs dans des transitives profondes que les ranges parents ne pouvaient pas mettre à jour seuls.
+
+| Override | Cible CVE | Raison / chaîne transitive | Condition de sortie |
+|---|---|---|---|
+| `@hono/node-server: >=1.19.13` | [GHSA-…](https://github.com/honojs/node-server) | Tiré par `prisma > @prisma/dev` qui pinne strict | Quand `@prisma/dev` bumpera sa version |
+| `@xmldom/xmldom: >=0.9.10` | GHSA-2v35-w6hq-6mfw + 3 autres (XML injection / DoS) | Tiré par `nextra > better-react-mathjax > mathjax-full > speech-rule-engine` qui pinne `0.9.9`. `speech-rule-engine 5.x` (alpha/rc) embarque déjà la 0.9.10 | Mise à jour upstream de `speech-rule-engine` en stable 5.x |
+| `fast-uri: >=3.1.2` | GHSA-q3j6-qgpj-74h6 + GHSA-v39h-62p7-jpjc | Tiré par `webpack > schema-utils > ajv` (build) et `prisma > @prisma/dev > @prisma/streams-local > ajv` | Bump des chaînes ajv |
+| `fast-xml-builder: >=1.1.7` | GHSA-5wm8-gmm8-39j9 | Tiré par `fast-xml-parser` (bumpé 5.7.3 mais résout 1.1.6 sans override sur cette branche) | Bump effectif via `fast-xml-parser` |
+| `hono: >=4.12.18` | 4 advisories (Cache leak, CSS injection, body limit bypass, JWT validation) | Override pour garantir l'alignement partout (`@ai-sdk/devtools`, `prisma > @prisma/dev`, etc.) | Une fois que tous les parents ont bumpé |
+| `mermaid: >=11.15.0` | GHSA-6m6c-36f7-fhxh + 3 autres (DoS, CSS/HTML injection) | Tiré par `nextra > @theguild/remark-mermaid` qui autorise `^11.0.0` mais le lockfile résolvait toujours 11.14.0 | Refresh naturel après quelques campagnes |
+| `postcss: >=8.5.10` | GHSA-qx2v-qp2m-jg93 (XSS via `</style>`) | Tiré par `next` et `@tailwindcss/postcss` | Bumpera naturellement |
+| `uuid@>=11.0.0 <11.1.1: >=11.1.1` | GHSA-w5hq-g745-h8pq (buffer bounds check) | Tiré par `mermaid` (note : mermaid 11.15 loosens le range pour autoriser v14, donc l'override est précis sur la fenêtre vuln seulement) | Bump effectif de mermaid |
 
 Historique supprimé lors de la campagne d'avril 2026 :
 
@@ -104,6 +123,21 @@ Historique supprimé lors de la campagne d'avril 2026 :
 - **Attendre** : TypeScript 6
 
 ## Historique des campagnes
+
+### Mai 2026 — Campagne sécu
+
+**Bumps directs** :
+- `apps/pilote-ppg` : `axios ^1.12.2 → ^1.15.2`, `fast-xml-parser 5.5.9 → 5.7.3`, `@ai-sdk/devtools ^0.0.15 → ^0.0.18`, `next ^16.2.1 → ^16.2.6`
+- `apps/mb-api` : `hono ^4.6.14 → ^4.12.18`, `@hono/node-server ^1.13.7 → ^1.19.13`
+- `apps/mb-webapp` : `hono ^4.6.14 → ^4.12.18`, `@hono/node-server ^1.13.7 → ^1.19.13`
+
+**Ajout d'overrides** au `package.json` racine pour les transitives profondes que `pnpm update` ne pouvait pas bumper (parents qui pinnent strict ou lockfile bloqué) : `@hono/node-server`, `@xmldom/xmldom`, `fast-uri`, `fast-xml-builder`, `hono`, `mermaid`, `postcss`, `uuid` (sur la fenêtre vuln uniquement). Voir la section "Overrides" pour le détail et les conditions de sortie.
+
+**Résiduel** : 1 advisory non corrigeable côté lockfile (pas de version patchée disponible upstream à ce jour). Suivi hors-doc (cf. canal sécurité interne).
+
+**Vérifications** : `pnpm lint` ✅ sur `pilote-ppg`, `mb-api` et `mb-webapp`.
+
+**Autre** : déplacement de `DEPENDENCIES.md` vers la racine du monorepo (auparavant dans `apps/pilote-ppg/`).
 
 ### Avril 2026 — Migration npm → pnpm
 - Bascule du gestionnaire de paquets : `package-lock.json` → `pnpm-lock.yaml`, pnpm 10 pinné via `packageManager`
