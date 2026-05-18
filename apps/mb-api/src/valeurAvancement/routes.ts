@@ -3,6 +3,7 @@ import { errorApiModelSchema } from '@pilote/mb-shared/error'
 import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
 import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
 import {
+  deleteValeurAvancementBodySchema,
   individuAvecValeursApiModelSchema,
   listIndividusWithValeursQuerySchema,
   listSyntheseIndividusQuerySchema,
@@ -20,6 +21,7 @@ import { ForbiddenError } from '@/framework/errors/AppError'
 import { never } from '@/framework/errors/never'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { withTransaction } from '@/framework/persistence/withTransaction'
+import { deleteValeurAvancement } from '@/valeurAvancement/commands/deleteValeurAvancement'
 import { upsertValeurAvancement } from '@/valeurAvancement/commands/upsertValeurAvancement'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
 import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
@@ -34,6 +36,9 @@ const ValeurAvancementListApiModelSchema = valeurAvancementListApiModelSchema.op
 )
 const UpsertValeurAvancementBodySchema = upsertValeurAvancementBodySchema.openapi(
   'UpsertValeurAvancementBody',
+)
+const DeleteValeurAvancementBodySchema = deleteValeurAvancementBodySchema.openapi(
+  'DeleteValeurAvancementBody',
 )
 const IndividusWithValeursListApiModelSchema = createPaginatedApiListSchema(
   individuAvecValeursApiModelSchema,
@@ -98,6 +103,39 @@ const upsertValeurAvancementRoute = createRoute({
     200: {
       content: { 'application/json': { schema: ValeurAvancementApiModelSchema } },
       description: 'Valeur créée ou mise à jour',
+    },
+    400: {
+      content: { 'application/json': { schema: ErrorApiModelSchema } },
+      description: 'Requête invalide (body invalide ou individu inconnu/non autorisé)',
+    },
+    403: {
+      content: { 'application/json': { schema: ErrorApiModelSchema } },
+      description: 'Pas de permission WRITE sur cet indicateur',
+    },
+  },
+})
+
+// --- DELETE /indicateurs/:id/valeurs -----------------------------------------
+
+const deleteValeurAvancementRoute = createRoute({
+  method: 'delete',
+  path: '/indicateurs/{id}/valeurs',
+  tags: ['Indicateur'],
+  summary: 'Supprimer une valeur ponctuelle pour un individu',
+  description:
+    "Supprime la valeur identifiée par `(indicateur, individu, date)`. Idempotent : retourne `204` même si la valeur n'existait pas. " +
+    "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `INDIVIDU_INCONNU`).",
+  middleware: [requireAuthentication],
+  request: {
+    params: indicateurParamsSchema,
+    body: {
+      content: { 'application/json': { schema: DeleteValeurAvancementBodySchema } },
+      required: true,
+    },
+  },
+  responses: {
+    204: {
+      description: 'Valeur supprimée (ou inexistante — idempotent)',
     },
     400: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },
@@ -233,6 +271,40 @@ valeurAvancementRoutes.openapi(upsertValeurAvancementRoute, async (context) => {
         schema: ValeurAvancementApiModelSchema,
         status: 200,
       }),
+    (error) => {
+      if (error instanceof ForbiddenError) {
+        return jsonResponseError({
+          context,
+          error: { code: error.code, message: error.message },
+          schema: ErrorApiModelSchema,
+          status: 403,
+        })
+      }
+      return jsonResponseError({
+        context,
+        error: {
+          code: error.type,
+          message:
+            "L'individu est inconnu ou n'est pas rattaché à un référentiel lié à l'indicateur",
+          details: { individu: error.individu },
+        },
+        schema: ErrorApiModelSchema,
+        status: 400,
+      })
+    },
+  )
+})
+
+valeurAvancementRoutes.openapi(deleteValeurAvancementRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  const body = context.req.valid('json')
+
+  const result = await withTransaction(async () =>
+    deleteValeurAvancement({ indicateurPublicId: id, body }),
+  )
+
+  return result.match(
+    () => context.body(null, 204),
     (error) => {
       if (error instanceof ForbiddenError) {
         return jsonResponseError({

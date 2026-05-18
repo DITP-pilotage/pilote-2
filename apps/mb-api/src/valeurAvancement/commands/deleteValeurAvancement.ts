@@ -1,12 +1,7 @@
-import {
-  type UpsertValeurAvancementBody,
-  type ValeurAvancementApiModel,
-} from '@pilote/mb-shared/valeurAvancement'
+import { type DeleteValeurAvancementBody } from '@pilote/mb-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
-import { uuidv7 } from 'uuidv7'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { Decimal } from '@/framework/decimal'
 import { type ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import {
@@ -17,21 +12,20 @@ import {
   type IndividuInconnuError,
   resolveAuthorizedIndividu,
 } from '@/valeurAvancement/resolveAuthorizedIndividu'
-import { toValeurAvancementApiModel } from '@/valeurAvancement/utils'
 
-export type UpsertValeurAvancementError = IndividuInconnuError
+export type DeleteValeurAvancementError = IndividuInconnuError
 
-type UpsertValeurAvancementParams = {
+type DeleteValeurAvancementParams = {
   indicateurPublicId: string
-  body: UpsertValeurAvancementBody
+  body: DeleteValeurAvancementBody
 }
 
-export const upsertValeurAvancement = ({
+export const deleteValeurAvancement = ({
   indicateurPublicId,
   body,
-}: UpsertValeurAvancementParams): ResultAsync<
-  ValeurAvancementApiModel,
-  UpsertValeurAvancementError | ForbiddenError
+}: DeleteValeurAvancementParams): ResultAsync<
+  void,
+  DeleteValeurAvancementError | ForbiddenError
 > => {
   const principalId = requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(
@@ -53,28 +47,14 @@ export const upsertValeurAvancement = ({
     )
     .andThen(({ indicateur, individu }) =>
       ResultAsync.fromSafePromise(
-        db().valeurAvancement.upsert({
+        db().valeurAvancement.deleteMany({
           where: {
-            valeur_avancement_unique: {
-              indicateurId: indicateur.id,
-              individuId: individu.id,
-              date: body.date,
-            },
-          },
-          update: { valeur: new Decimal(body.valeur) },
-          create: {
-            id: uuidv7(),
             indicateurId: indicateur.id,
             individuId: individu.id,
             date: body.date,
-            valeur: new Decimal(body.valeur),
-          },
-          include: {
-            indicateur: { select: { publicId: true } },
-            individu: { select: { publicId: true } },
           },
         }),
       ),
     )
-    .map(toValeurAvancementApiModel)
+    .map(() => undefined)
 }
