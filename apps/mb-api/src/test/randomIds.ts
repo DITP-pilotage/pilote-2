@@ -141,12 +141,18 @@ const uniqueIds = <N extends number>(factory: () => string, count: N): FixedTupl
 export const testIndicateurId = (): string =>
   `IND-${String(Math.floor(Math.random() * 999) + 1).padStart(3, '0')}`
 
+export const testReferentielId = (): string =>
+  `REF-${String(Math.floor(Math.random() * 999) + 1).padStart(3, '0')}`
+
 export const testDeptId = (): string => `DEPT-${pickRandom(DEPT_CODES)}`
 
 export const testRegId = (): string => `REG-${pickRandom(REG_CODES)}`
 
 export const testIndicateurIds = <N extends number>(n: N): FixedTuple<N, string> =>
   uniqueIds(testIndicateurId, n)
+
+export const testReferentielIds = <N extends number>(n: N): FixedTuple<N, string> =>
+  uniqueIds(testReferentielId, n)
 
 export const testDeptIds = <N extends number>(n: N): FixedTuple<N, string> =>
   uniqueIds(testDeptId, n)
