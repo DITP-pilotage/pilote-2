@@ -12,11 +12,6 @@ export abstract class AppError extends Error {
   }
 }
 
-export class EntityNotFoundError extends AppError {
-  readonly code = 'ENTITY_NOT_FOUND'
-  readonly kind = 'not-found' as const
-}
-
 export class ForbiddenError extends AppError {
   readonly code = 'FORBIDDEN'
   readonly kind = 'forbidden' as const

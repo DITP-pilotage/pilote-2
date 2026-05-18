@@ -246,7 +246,8 @@ valeurAvancementRoutes.openapi(upsertValeurAvancementRoute, async (context) => {
         context,
         error: {
           code: error.type,
-          message: "L'individu est inconnu ou n'est pas rattaché à un référentiel lié à l'indicateur",
+          message:
+            "L'individu est inconnu ou n'est pas rattaché à un référentiel lié à l'indicateur",
           details: { individu: error.individu },
         },
         schema: ErrorApiModelSchema,
