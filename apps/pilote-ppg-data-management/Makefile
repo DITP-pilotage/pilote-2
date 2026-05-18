@@ -5,9 +5,8 @@ descente:
 
 docker-up:
 	cd ../pilote-ppg &&\
-	docker compose up
+	docker compose up postgres
 
-lint-sql:
 lint-sql:
 	pipenv sync &&\
 	pipenv run sqlfluff fix models/ || \
