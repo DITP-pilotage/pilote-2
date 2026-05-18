@@ -51,6 +51,12 @@ export const upsertValeurAvancementBodySchema = z.object({
 })
 export type UpsertValeurAvancementBody = z.infer<typeof upsertValeurAvancementBodySchema>
 
+export const deleteValeurAvancementBodySchema = z.object({
+  individu: individuPublicIdSchema,
+  date: dateSchema,
+})
+export type DeleteValeurAvancementBody = z.infer<typeof deleteValeurAvancementBodySchema>
+
 export const valeurAvancementListApiModelSchema = z.object({
   items: z
     .array(valeurAvancementApiModelSchema)
