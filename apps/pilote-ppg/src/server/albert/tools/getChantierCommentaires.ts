@@ -14,7 +14,7 @@ export const getChantierCommentairesInputSchema = z.object({
     .optional()
     .default(false)
     .describe(
-      "Si true, inclut les commentaires des sous-territoires (ex: départements d'une région). Les objectifs du chantier ne sont retournés que pour le territoire principal puisqu'ils ne sont pas territorialisés.",
+      "Si true, inclut les commentaires des sous-territoires (ex: départements d'une région, ou toutes les régions depuis NAT-FR). Les objectifs du chantier ne sont retournés que pour le territoire principal puisqu'ils ne sont pas territorialisés.",
     ),
 });
 
@@ -23,7 +23,7 @@ export type GetChantierCommentairesOutput = {
   _output_instructions: string;
 };
 
-const OUTPUT_INSTRUCTIONS = `Présente les commentaires regroupés par type ou triés par date selon la demande de l'utilisateur. Reformule chaque contenu en 1-2 phrases factuelles, sans recopie in extenso et sans interprétation.`;
+const OUTPUT_INSTRUCTIONS = `Restitue chaque commentaire avec sa date, son auteur et son contenu verbatim, sans reformulation ni interprétation. Regroupe par type ou trie par date selon la demande de l'utilisateur. Ne reformule ou ne synthétise que si l'utilisateur le demande explicitement.`;
 
 export function createGetChantierCommentairesTool({
   getChantierCommentairesQuery,
@@ -37,19 +37,17 @@ export function createGetChantierCommentairesTool({
       description: `Récupère les contenus textuels publiés rattachés à un chantier sur un territoire donné (uniquement les contenus publiés — les brouillons sont exclus).
 Quand include_sous_territoires=true, retourne aussi les commentaires de chaque sous-territoire (les objectifs du chantier ne sont renvoyés qu'une fois, pour le territoire principal).
 
-Les contenus proviennent de trois sources et chaque résultat porte un champ \`type\` permettant de les distinguer :
+Chaque résultat porte un champ \`type\` permettant de distinguer la nature du contenu :
 
-Issus de la synthèse des résultats (couple chantier × territoire) :
+Commentaires liés au couple chantier × territoire :
 - \`synthese_des_resultats\` : commentaire d'analyse accompagnant la météo de la synthèse du chantier sur le territoire
-
-Issus de la table commentaire (couple chantier × territoire) — le type est repris tel quel :
 - \`commentaires_sur_les_donnees\` : commentaires explicatifs sur les données du chantier sur le territoire
 - \`freins_a_lever\` : risques et freins à lever identifiés sur le territoire
 - \`actions_a_venir\` : solutions et actions à venir prévues sur le territoire
 - \`actions_a_valoriser\` : exemples concrets de réussite à valoriser sur le territoire
 - \`autres_resultats_obtenus_non_correles_aux_indicateurs\` : autres résultats obtenus non corrélés aux indicateurs sur le territoire
 
-Issus de la table objectif (rattachés au chantier, indépendamment du territoire) — le type est préfixé par \`objectif_\` :
+Objectifs rattachés au chantier (indépendamment du territoire) :
 - \`objectif_notre_ambition\` : ambition du chantier ("Notre ambition")
 - \`objectif_deja_fait\` : ce qui a déjà été fait
 - \`objectif_a_faire\` : ce qu'il reste à faire
