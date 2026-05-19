@@ -38,7 +38,7 @@ describe('resolveValeurDerivee', () => {
   it('somme les valeurs saisies de tous les enfants directs (1 niveau, couverture complète)', () => {
     const context = buildContext(
       {
-        'cible': [ref('a', 'DEPT-A'), ref('b', 'DEPT-B'), ref('c', 'DEPT-C')],
+        cible: [ref('a', 'DEPT-A'), ref('b', 'DEPT-B'), ref('c', 'DEPT-C')],
       },
       {
         a: saisie(10, '2025-01-01'),
@@ -63,7 +63,7 @@ describe('resolveValeurDerivee', () => {
   it('expose les enfants sans valeur comme `manquante` et somme uniquement les présents (couverture partielle)', () => {
     const context = buildContext(
       {
-        'cible': [ref('a', 'DEPT-A'), ref('b', 'DEPT-B'), ref('c', 'DEPT-C')],
+        cible: [ref('a', 'DEPT-A'), ref('b', 'DEPT-B'), ref('c', 'DEPT-C')],
       },
       {
         a: saisie(10, '2025-01-01'),
@@ -87,7 +87,7 @@ describe('resolveValeurDerivee', () => {
   it('trie les contributions par publicId quel que soit l’ordre des enfants en entrée', () => {
     const context = buildContext(
       {
-        'cible': [ref('c', 'DEPT-Z'), ref('a', 'DEPT-A'), ref('b', 'DEPT-M')],
+        cible: [ref('c', 'DEPT-Z'), ref('a', 'DEPT-A'), ref('b', 'DEPT-M')],
       },
       {
         a: saisie(1, '2025-01-01'),
@@ -105,7 +105,7 @@ describe('resolveValeurDerivee', () => {
     // France → 2 régions → chacune 2 départements (feuilles saisies)
     const context = buildContext(
       {
-        'france': [ref('reg-n', 'REG-N'), ref('reg-s', 'REG-S')],
+        france: [ref('reg-n', 'REG-N'), ref('reg-s', 'REG-S')],
         'reg-n': [ref('dept-n1', 'DEPT-N1'), ref('dept-n2', 'DEPT-N2')],
         'reg-s': [ref('dept-s1', 'DEPT-S1'), ref('dept-s2', 'DEPT-S2')],
       },
@@ -134,7 +134,7 @@ describe('resolveValeurDerivee', () => {
     // La région N a une saisie officielle ; ses départements ont aussi des saisies → on prend la saisie de la région
     const context = buildContext(
       {
-        'france': [ref('reg-n', 'REG-N'), ref('reg-s', 'REG-S')],
+        france: [ref('reg-n', 'REG-N'), ref('reg-s', 'REG-S')],
         'reg-n': [ref('dept-n1', 'DEPT-N1'), ref('dept-n2', 'DEPT-N2')],
         'reg-s': [ref('dept-s1', 'DEPT-S1'), ref('dept-s2', 'DEPT-S2')],
       },
@@ -159,7 +159,7 @@ describe('resolveValeurDerivee', () => {
   it("marque comme manquante un enfant qui n'a ni saisie ni descendants avec valeur", () => {
     const context = buildContext(
       {
-        'cible': [ref('reg-vide', 'REG-VIDE'), ref('reg-pleine', 'REG-PLEINE')],
+        cible: [ref('reg-vide', 'REG-VIDE'), ref('reg-pleine', 'REG-PLEINE')],
         'reg-vide': [ref('dept-vide', 'DEPT-VIDE')], // descendants existent mais aucune saisie
         'reg-pleine': [ref('dept-p', 'DEPT-P')],
       },
@@ -183,7 +183,7 @@ describe('resolveValeurDerivee', () => {
   it('retourne valeurDerivee null quand tous les enfants sont absents', () => {
     const context = buildContext(
       {
-        'cible': [ref('a', 'DEPT-A'), ref('b', 'DEPT-B')],
+        cible: [ref('a', 'DEPT-A'), ref('b', 'DEPT-B')],
       },
       {},
     )
@@ -203,8 +203,8 @@ describe('resolveValeurDerivee', () => {
   it('utilise la date la plus récente parmi les contributions dérivées', () => {
     const context = buildContext(
       {
-        'cible': [ref('reg', 'REG-X')],
-        'reg': [ref('d1', 'D1'), ref('d2', 'D2'), ref('d3', 'D3')],
+        cible: [ref('reg', 'REG-X')],
+        reg: [ref('d1', 'D1'), ref('d2', 'D2'), ref('d3', 'D3')],
       },
       {
         d1: saisie(1, '2024-01-01'),

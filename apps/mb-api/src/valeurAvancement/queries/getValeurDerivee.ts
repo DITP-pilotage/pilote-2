@@ -58,9 +58,7 @@ const buildResult = async (
 
   const { allIds, enfantsParParent } = await loadIndividuTree(cible.id)
 
-  const rows = await db().$queryRawTyped(
-    getDernieresValeursPourIndividus(indicateur.id, allIds),
-  )
+  const rows = await db().$queryRawTyped(getDernieresValeursPourIndividus(indicateur.id, allIds))
 
   const derniereValeurParIndividu = new Map<string, ValeurSaisie>()
   for (const row of rows) {

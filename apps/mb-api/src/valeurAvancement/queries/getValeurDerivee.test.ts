@@ -135,7 +135,9 @@ describe.concurrent('getValeurDerivee', () => {
       const data = result._unsafeUnwrap()
       expect(data.valeurDerivee).toBe(100)
       expect(data.couverture).toEqual({ nbEnfantsAvecValeur: 1, nbEnfantsTotal: 3 })
-      expect(data.contributions.filter((contribution) => contribution.source === 'manquante')).toHaveLength(2)
+      expect(
+        data.contributions.filter((contribution) => contribution.source === 'manquante'),
+      ).toHaveLength(2)
     }),
   )
 
@@ -214,7 +216,9 @@ describe.concurrent('getValeurDerivee', () => {
       expect(data.couverture).toEqual({ nbEnfantsAvecValeur: 2, nbEnfantsTotal: 2 })
       // Les contributions de France sont les régions (source dérivée), pas les départements
       expect(data.contributions).toHaveLength(2)
-      expect(data.contributions.every((contribution) => contribution.source === 'derivee')).toBe(true)
+      expect(data.contributions.every((contribution) => contribution.source === 'derivee')).toBe(
+        true,
+      )
       expect(data.contributions.map((contribution) => contribution.individu).sort()).toEqual(
         [regN, regS].sort(),
       )
