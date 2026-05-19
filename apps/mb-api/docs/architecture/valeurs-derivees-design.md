@@ -1,7 +1,7 @@
 # Valeurs dérivées par agrégation hiérarchique — design
 
 Date : 2026-05-19
-Statut : en cours de spécification
+Statut : accepté
 
 ## Contexte
 
@@ -110,86 +110,74 @@ Ce choix permet d'itérer sans toucher aux endpoints existants. Une intégration
 plus transparente (calcul auto si pas de valeur saisie sur l'endpoint GET
 classique) pourra être envisagée plus tard.
 
+### D5. Modélisation de la hiérarchie (option A3)
+
+On garde `Relation` tel quel (graphe individu ↔ individu) et on ajoute
+l'**invariant métier** : *tous les enfants directs d'un même parent
+appartiennent au même référentiel*. Cet invariant est vérifié à l'upsert
+d'une `Relation` (pas via une contrainte schéma).
+
+Rationale : pas de duplication avec `Referentiel`, hiérarchie reste portée
+par les individus, mais on s'interdit les configurations incohérentes
+(ex. un département parent d'une commune et d'un autre département).
+
+### D6. Calcul à la volée (option B1)
+
+Pas de stockage des valeurs dérivées. Chaque appel à l'endpoint déclenche le
+calcul à partir des valeurs saisies et des valeurs dérivées des enfants
+directs (récursion en mémoire). Pas de table de cache, pas de matérialisation
+Prisma.
+
+Rationale : cohérence garantie sans logique d'invalidation. Volumétrie
+réévaluable plus tard via B2 ou B3 si nécessaire.
+
+### D7. Agrégateur SUM hardcodé pour le MVP
+
+Pas de configuration d'agrégateur dans le schéma : **SUM est l'agrégateur
+unique du MVP**. Une stratégie configurable (champ sur `Indicateur`, ou
+autre) sera introduite plus tard quand le besoin produit sera explicite.
+
+### D8. Couverture partielle exposée
+
+Si un parent a `n` enfants directs et que `k < n` d'entre eux ont une valeur
+(saisie ou dérivable), on **calcule quand même** et on expose la couverture
+(`k / n`) dans la réponse. Le consommateur (UI) décide quoi en faire (alerte,
+masquer, etc.). Aucune imputation automatique (pas de 0 par défaut).
+
+### D9. Saisie autorisée sur un individu non-feuille
+
+Saisir une valeur sur un individu qui a des enfants reste **autorisé**. La
+valeur saisie et la valeur dérivée coexistent (cf. D1) — c'est au
+consommateur d'arbitrer l'affichage.
+
+### D10. Pas de détection de cycles dans `Relation`
+
+On fait confiance aux données. La création de cycles dans `Relation` n'est
+pas empêchée par le code, et la traversée récursive ne détecte pas les
+cycles. Si un cycle existe en BD, le comportement est non défini (boucle ou
+crash).
+
+Rationale : le risque est jugé faible (peu de mutations sur `Relation`, pas
+d'API publique d'édition aujourd'hui). À reconsidérer si une API d'édition de
+`Relation` est ajoutée.
+
 ## Conséquences
 
-- **Pas de migration de schéma requise** pour le MVP : `Relation` existe déjà
+- **Pas de migration de schéma requise** : `Relation` existe déjà, pas de
+  nouveau champ
+- L'upsert de `Relation` (quand il sera exposé) devra valider l'invariant D5
 - Une nouvelle famille de queries doit être introduite pour traverser la
   hiérarchie (enfants directs d'un individu) et résoudre les valeurs par
   niveau
-- Le functional core gagne un opérateur d'agrégation paramétrable (au moins
-  SUM dans un premier temps)
-- La résolution récursive doit être bornée (profondeur max, ou détection de
-  cycles) car `Relation` est un graphe sans contrainte d'acyclicité
-
-## Questions ouvertes
-
-### Q1. Modélisation de la hiérarchie
-
-`Relation` est un graphe libre : aucun invariant n'empêche un cycle, ni un
-parent d'avoir des enfants dans plusieurs référentiels. Trois options :
-
-- **A1.** Statu quo (graphe libre) — flexible mais aucune garantie structurelle
-- **A2.** Ajouter `parentReferentielId` sur `Referentiel` — duplique l'info
-  avec `Relation`, hiérarchie stricte
-- **A3.** Garder `Relation` + invariant métier "tous les enfants d'un parent
-  appartiennent au même référentiel" — vérifié à l'upsert
-
-Penchant initial : **A3**, à confirmer.
-
-### Q2. Stockage des valeurs dérivées
-
-- **B1.** Calcul à la volée — cohérent, simple, coût lecture
-- **B2.** Stockage dans `valeur_avancement` avec champ `source` — lecture
-  uniforme mais invalidation en cascade complexe
-- **B3.** Table dédiée `valeur_derivee` — cache séparé
-
-Penchant initial : **B1** pour le MVP, réévaluation si volumétrie devient un
-problème.
-
-### Q3. Configuration de l'agrégateur
-
-Où attacher la stratégie d'agrégation ?
-
-- Sur `Indicateur` (un agrégateur par indicateur)
-- Sur la combinaison `Indicateur × Referentiel` (différent par niveau, rare)
-- Paramètre de query (le client choisit) — flexible mais peu sémantique
-- Hardcodé SUM pour le MVP, à étendre
-
-Penchant initial : SUM hardcodé pour MVP, champ sur `Indicateur` ensuite.
-
-### Q4. Couverture partielle
-
-Si un parent a 13 enfants mais que seuls 12 ont une valeur (saisie ou
-dérivée) à la date demandée, que fait-on ?
-
-- Calculer quand même et exposer la couverture (12/13) — recommandé
-- Refuser de calculer (404 / 422)
-- Calculer en imputant 0 aux manquants
-
-Penchant initial : calculer + exposer couverture, le consommateur décide.
-
-### Q5. Saisie sur un individu non-feuille
-
-D3 dit que saisie et dérivée coexistent. Mais doit-on permettre la saisie sur
-un individu qui a des enfants ? Probablement oui (cas INSEE : valeur officielle
-nationale ≠ somme régionale). À confirmer.
-
-### Q6. Détection de cycles dans `Relation`
-
-Le modèle actuel n'empêche pas un cycle (A parent de B, B parent de A). Le
-calcul récursif doit soit :
-
-- Faire confiance aux données (et boucler/exploser si cycle)
-- Détecter les cycles à la lecture
-- Empêcher la création de cycles à l'écriture sur `Relation`
-
-À trancher.
+- Le functional core gagne un opérateur d'agrégation `sum` (les autres
+  agrégateurs viendront plus tard)
+- La traversée récursive n'a pas de garde anti-cycle ; si on observe un
+  problème en prod, on ajoutera la détection à ce moment-là
 
 ## Prochaines étapes
 
-1. Trancher Q1 à Q6
-2. Spécifier précisément le schéma de réponse de
+1. Spécifier précisément le schéma de réponse de
    `GET /indicateurs/:id/individus/:individuId/valeur-derivee`
-3. Implémenter la traversée hiérarchique (query Prisma + functional core)
-4. Implémenter l'agrégateur SUM en functional core
-5. Ajouter la route + tests
+2. Implémenter la traversée hiérarchique (query Prisma + functional core)
+3. Implémenter l'agrégateur SUM en functional core
+4. Ajouter la route + tests
