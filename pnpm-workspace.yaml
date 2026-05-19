@@ -1,3 +1,8 @@
 packages:
   - "apps/*"
   - "packages/*"
+
+# Refuse d'installer une version publiée il y a moins de 2 semaines
+# (mitigation supply-chain : laisse le temps de détecter un package compromis)
+# https://pnpm.io/settings#minimumreleaseage
+minimumReleaseAge: 20160
