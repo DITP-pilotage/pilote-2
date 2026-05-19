@@ -22,8 +22,10 @@ export class GetChantierCommentairesQuery {
   async execute(params: {
     territoireCode: string;
     chantierId: string;
+    inclureObjectifs?: boolean;
   }): Promise<GetChantierCommentairesResult> {
     const prisma = this.deps.prisma.getInstance();
+    const inclureObjectifs = params.inclureObjectifs ?? true;
 
     const [commentaires, syntheses, objectifs] = await Promise.all([
       prisma.commentaire.findMany({
@@ -43,13 +45,15 @@ export class GetChantierCommentairesQuery {
         },
         include: { auteur_modification: true },
       }),
-      prisma.objectif.findMany({
-        where: {
-          chantier_id: params.chantierId,
-          statut: $Enums.statut_publication.PUBLIE,
-        },
-        include: { auteur_modification: true },
-      }),
+      inclureObjectifs
+        ? prisma.objectif.findMany({
+            where: {
+              chantier_id: params.chantierId,
+              statut: $Enums.statut_publication.PUBLIE,
+            },
+            include: { auteur_modification: true },
+          })
+        : Promise.resolve([]),
     ]);
 
     const items: GetChantierCommentairesResult["commentaires"] = [

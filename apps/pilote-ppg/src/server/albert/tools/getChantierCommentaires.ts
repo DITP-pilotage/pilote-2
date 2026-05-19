@@ -2,16 +2,24 @@ import { tool } from "ai";
 import { z } from "zod";
 import { GetChantierCommentairesQuery } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { GetChantierCommentairesResult } from "@/server/chantiers/query/GetChantierCommentairesQuery";
+import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 
 export const getChantierCommentairesInputSchema = z.object({
   chantier_id: z.string().describe("Identifiant du chantier (ex: CH-001)"),
   territoire_code: z
     .string()
     .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)"),
+  include_sous_territoires: z
+    .boolean()
+    .optional()
+    .default(false)
+    .describe(
+      "Si true, inclut les commentaires des sous-territoires (ex: départements d'une région). Les objectifs du chantier ne sont retournés que pour le territoire principal puisqu'ils ne sont pas territorialisés.",
+    ),
 });
 
 export type GetChantierCommentairesOutput = {
-  resultats: GetChantierCommentairesResult;
+  resultats: GetChantierCommentairesResult[];
   _output_instructions: string;
 };
 
@@ -19,12 +27,15 @@ const OUTPUT_INSTRUCTIONS = `Présente les commentaires regroupés par type ou t
 
 export function createGetChantierCommentairesTool({
   getChantierCommentairesQuery,
+  territoireResolver,
 }: {
   getChantierCommentairesQuery: GetChantierCommentairesQuery;
+  territoireResolver: TerritoireResolver;
 }) {
   return ({ territoiresAccessibles }: { territoiresAccessibles: string[] }) => {
     return tool({
       description: `Récupère les contenus textuels publiés rattachés à un chantier sur un territoire donné (uniquement les contenus publiés — les brouillons sont exclus).
+Quand include_sous_territoires=true, retourne aussi les commentaires de chaque sous-territoire (les objectifs du chantier ne sont renvoyés qu'une fois, pour le territoire principal).
 
 Les contenus proviennent de trois sources et chaque résultat porte un champ \`type\` permettant de les distinguer :
 
@@ -52,13 +63,26 @@ Utilise cet outil quand l'utilisateur demande l'analyse qualitative ou contextue
           );
         }
 
-        const result = await getChantierCommentairesQuery.execute({
-          territoireCode: input.territoire_code,
-          chantierId: input.chantier_id,
-        });
+        const codes = await territoireResolver.resoudre(
+          input.territoire_code,
+          input.include_sous_territoires,
+        );
+        const codesAccessibles = codes.filter((code) =>
+          territoiresAccessibles.includes(code),
+        );
+
+        const resultats = await Promise.all(
+          codesAccessibles.map((code) =>
+            getChantierCommentairesQuery.execute({
+              territoireCode: code,
+              chantierId: input.chantier_id,
+              inclureObjectifs: code === input.territoire_code,
+            }),
+          ),
+        );
 
         return {
-          resultats: result,
+          resultats,
           _output_instructions: OUTPUT_INSTRUCTIONS,
         };
       },
