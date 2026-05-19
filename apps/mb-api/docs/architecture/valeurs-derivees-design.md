@@ -86,23 +86,30 @@ On introduit un **nouvel endpoint dédié** pour les valeurs dérivées, sans
 modifier les endpoints existants :
 
 ```
-GET /indicateurs/:id/individus/:individuId/valeur-derivee?date=...
+GET /indicateurs/:id/individus/:individuId/valeur-derivee
 ```
+
+Pas de paramètre `date` : on prend systématiquement la **dernière valeur
+connue** de chaque enfant (cohérent avec `listSyntheseIndividus` et
+`listIndividusWithValeurs`). Motivation : la valeur portée par un individu
+est sa donnée la plus fraîche (s'il y avait 5 arbres en mai, il y en a
+toujours 5 en juin par défaut). Chaque contribution porte donc sa propre
+date.
 
 Forme provisoire de la réponse (à affiner) :
 
 ```json
 {
-  "indicateurPublicId": "...",
-  "individuPublicId": "...",
-  "date": "2025-12",
+  "indicateur": "IND-ARBRES",
+  "individu": "REG-PACA",
   "agregateur": "SUM",
-  "valeurDerivee": "1234.56",
+  "valeurDerivee": 1234.56,
   "contributions": [
-    { "individuPublicId": "...", "valeur": "100.00", "source": "saisie" },
-    { "individuPublicId": "...", "valeur": "234.56", "source": "derivee" }
+    { "individu": "DEPT-84", "valeur": 100.00, "date": "2025-12-01", "source": "saisie" },
+    { "individu": "DEPT-13", "valeur": 234.56, "date": "2025-11-01", "source": "derivee" },
+    { "individu": "DEPT-06", "valeur": null,   "date": null,         "source": "absente" }
   ],
-  "couverture": { "nEnfantsAvecValeur": 12, "nEnfantsTotal": 13 }
+  "couverture": { "nbEnfantsAvecValeur": 2, "nbEnfantsTotal": 3 }
 }
 ```
 
@@ -174,10 +181,168 @@ d'API publique d'édition aujourd'hui). À reconsidérer si une API d'édition d
 - La traversée récursive n'a pas de garde anti-cycle ; si on observe un
   problème en prod, on ajoutera la détection à ce moment-là
 
+## Plan d'implémentation
+
+### Architecture d'une requête
+
+Objectif : `O(profondeur)` queries, indépendant du nombre d'individus.
+Trois étapes orchestrées dans `queries/getValeurDerivee.ts`.
+
+#### Étape A — Charger la structure du sous-arbre (BFS niveau par niveau)
+
+Depuis l'individu cible, on charge les descendants par paliers de
+profondeur via `relation.findMany({ where: { parentId: { in: ... } } })`.
+On itère tant qu'il reste des enfants. **P queries** (P = profondeur du
+sous-arbre, typiquement 3–4 : France → Région → Département → ...).
+
+On collecte au passage `{ id, publicId, parentId }` pour reconstruire
+l'arbre côté Node.
+
+#### Étape B — Charger toutes les dernières valeurs en bulk (TypedSQL)
+
+Une seule query récupère la dernière valeur connue par individu pour
+l'indicateur, via Postgres `DISTINCT ON`. Implémentée en
+[**Prisma TypedSQL**](https://www.prisma.io/typedsql) :
+
+```sql
+-- prisma/sql/getDernieresValeursPourIndividus.sql
+SELECT DISTINCT ON (individu_id)
+  individu_id,
+  date,
+  valeur
+FROM valeur_avancement
+WHERE indicateur_id = $1
+  AND individu_id = ANY($2)
+ORDER BY individu_id, date DESC, id DESC;
+```
+
+Génération : `npx prisma generate --sql` produit une fonction typée
+importable depuis `@/generated/prisma/sql`. Appel :
+
+```ts
+import { getDernieresValeursPourIndividus } from '@/generated/prisma/sql'
+const rows = await db().$queryRawTyped(
+  getDernieresValeursPourIndividus(indicateurId, individuIds),
+)
+```
+
+Pourquoi TypedSQL plutôt que `$queryRaw` brut : type-safe (paramètres et
+retour), SQL vit dans un `.sql` reviewable, pas de mapping manuel des
+colonnes. Préféré à `findMany` + dédoublonnage en mémoire (transfert
+inutile de données).
+
+#### Étape C — Calcul en mémoire (functional core, pur)
+
+Une fois en main l'arbre des individus + le map
+`individuId → derniereValeur | undefined`, le calcul devient pur :
+
+```ts
+// functional core, pas de Prisma
+resolveValeurDerivee({
+  cibleId,
+  enfantsParParent,        // Map<parentId, Individu[]>
+  derniereValeurParIndividu, // Map<individuId, { valeur, date }>
+}): {
+  contributions: ContributionApiModel[]
+  valeurDerivee: Decimal | null
+  couverture: { nbEnfantsAvecValeur, nbEnfantsTotal }
+}
+```
+
+Logique récursive : pour chaque enfant direct du cible :
+
+1. Saisie présente → contribution `source: 'saisie'`
+2. Sinon a-t-il des enfants ? → résolution récursive → si non-null,
+   contribution `source: 'derivee'` (date = max des dates contributives)
+3. Sinon → contribution `source: 'absente'`, valeur null
+
+Cohérent avec D1 : pour le calcul du parent, la saisie d'un enfant prime
+sur la dérivation de ses propres enfants. La dérivée de cet enfant reste
+consultable via l'endpoint appliqué à cet enfant.
+
+### Bilan des queries
+
+| Étape | Nombre de queries |
+|---|---|
+| Charger l'indicateur (validation) | 1 |
+| Charger l'individu cible (validation) | 1 |
+| BFS structure du sous-arbre | P (~3–4) |
+| Dernières valeurs en bulk (TypedSQL) | 1 |
+| **Total** | **~6**, indépendant du nombre d'individus |
+
+### Découpage fichiers
+
+| Fichier | Rôle |
+|---|---|
+| `prisma/sql/getDernieresValeursPourIndividus.sql` | Étape B, query DISTINCT ON typée |
+| `valeurAvancement/computeSum.ts` (+ test) | Agrégateur pur SUM |
+| `valeurAvancement/resolveValeurDerivee.ts` (+ test) | Functional core, calcul récursif en mémoire |
+| `valeurAvancement/queries/getValeurDerivee.ts` (+ test) | Orchestration étapes A/B/C + ResultAsync |
+| `valeurAvancement/routes.ts` | Ajout de la route (fichier existant) |
+| `packages/mb-shared/src/valeurAvancement.ts` | Schémas Zod (cf. ci-dessous) |
+
+### Schémas API partagés (mb-shared)
+
+Ajouts dans `packages/mb-shared/src/valeurAvancement.ts` :
+
+```ts
+contributionSourceSchema = z.enum(['saisie', 'derivee', 'absente'])
+
+contributionApiModelSchema = z.object({
+  individu: individuPublicIdSchema,
+  valeur: z.number().nullable(),
+  date: dateSchema.nullable(),
+  source: contributionSourceSchema,
+})
+
+couvertureApiModelSchema = z.object({
+  nbEnfantsAvecValeur: z.number().int().nonnegative(),
+  nbEnfantsTotal: z.number().int().nonnegative(),
+})
+
+valeurDeriveeApiModelSchema = z.object({
+  indicateur: indicateurPublicIdSchema,
+  individu: individuPublicIdSchema,
+  agregateur: z.literal('SUM'),
+  valeurDerivee: z.number().nullable(),
+  contributions: z.array(contributionApiModelSchema),
+  couverture: couvertureApiModelSchema,
+})
+```
+
+### Tests
+
+Tests purs (functional core) sur `resolveValeurDerivee` : couvrent
+l'essentiel de la combinatoire sans DB.
+
+- Cible feuille (pas d'enfants) → `valeurDerivee: null`, couverture 0/0
+- 1 niveau, saisies complètes → SUM
+- 1 niveau, saisies partielles → SUM partiel + couverture
+- 2 niveaux (grand-parent), saisies aux feuilles → dérivée intermédiaire,
+  puis dérivée du grand-parent. Contributions du grand-parent = niveau
+  intermédiaire (source = derivee)
+- 2 niveaux, saisie sur niveau intermédiaire + saisie aux feuilles → la
+  saisie intermédiaire prime pour la contribution au grand-parent
+- Tous les enfants absents → `valeurDerivee: null`, couverture 0/n
+
+Tests d'intégration (1 scénario par bout du pipeline) :
+
+- Cas nominal grand-parent (France/Régions/Départements) end-to-end
+- 404 indicateur inexistant, 404 individu inexistant
+- 401 sans authentification
+
+### Hors scope MVP
+
+- Invariant D5 (validation côté code) : aucune route d'upsert `Relation`
+  n'existe aujourd'hui, à enforcer le jour où elle sera ajoutée
+- Détection de cycles dans `Relation` (D10)
+- Cap de profondeur (à ajouter si abus observé en prod)
+
 ## Prochaines étapes
 
-1. Spécifier précisément le schéma de réponse de
-   `GET /indicateurs/:id/individus/:individuId/valeur-derivee`
-2. Implémenter la traversée hiérarchique (query Prisma + functional core)
-3. Implémenter l'agrégateur SUM en functional core
-4. Ajouter la route + tests
+1. Implémenter `computeSum` + tests purs
+2. Implémenter `resolveValeurDerivee` + tests purs (functional core)
+3. Ajouter le `.sql` TypedSQL + valider la génération
+4. Implémenter `getValeurDerivee` (orchestration A/B/C)
+5. Ajouter la route dans `routes.ts` + tests d'intégration
+6. Ajouter les schémas Zod dans `mb-shared`
