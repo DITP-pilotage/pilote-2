@@ -24,14 +24,24 @@ export const BoutonSyntheseTerritoire = ({
   const [activeChatId, setActiveChatId] = useState<string>(() =>
     crypto.randomUUID(),
   );
+  const [conversationPersistee, setConversationPersistee] = useState(false);
   const { data: conversationChargee, isFetched: conversationChargeeFetched } =
     api.albert.conversations.recuperer.useQuery(
       { id: activeChatId },
-      { enabled: ffHistorique === true && isOpen, retry: false },
+      {
+        enabled: ffHistorique === true && isOpen && conversationPersistee,
+        retry: false,
+      },
     );
-  const conversationPrete = !ffHistorique || conversationChargeeFetched;
+  const conversationPrete =
+    !ffHistorique || !conversationPersistee || conversationChargeeFetched;
+  const selectionnerConversation = (id: string) => {
+    setActiveChatId(id);
+    setConversationPersistee(true);
+  };
   const demarrerNouvelleConversation = () => {
     setActiveChatId(crypto.randomUUID());
+    setConversationPersistee(false);
   };
   const rafraichirHistorique = () => {
     utilsTrpc.albert.conversations.lister.invalidate();
@@ -149,7 +159,7 @@ Quelles sont les principales difficultés remontées dans les commentaires ?`,
             {ffHistorique ? (
               <ConversationHistoryDrawer
                 chatIdCourant={activeChatId}
-                onSelectionner={setActiveChatId}
+                onSelectionner={selectionnerConversation}
                 onNouvelleConversation={demarrerNouvelleConversation}
               />
             ) : null}
