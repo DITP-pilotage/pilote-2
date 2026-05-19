@@ -8,8 +8,8 @@ import {
   type ValeurSaisie,
 } from '@/valeurAvancement/resolveValeurDerivee'
 
-const ref = (id: string, publicId: string): IndividuRef => ({ id, publicId })
-const saisie = (valeur: number, date: string): ValeurSaisie => ({
+const createIndividuRef = (id: string, publicId: string): IndividuRef => ({ id, publicId })
+const createValeurSaisie = (valeur: number, date: string): ValeurSaisie => ({
   valeur: new Decimal(valeur),
   date,
 })
@@ -38,12 +38,16 @@ describe('resolveValeurDerivee', () => {
   it('somme les valeurs saisies de tous les enfants directs (1 niveau, couverture complète)', () => {
     const context = buildContext(
       {
-        cible: [ref('a', 'DEPT-A'), ref('b', 'DEPT-B'), ref('c', 'DEPT-C')],
+        cible: [
+          createIndividuRef('a', 'DEPT-A'),
+          createIndividuRef('b', 'DEPT-B'),
+          createIndividuRef('c', 'DEPT-C'),
+        ],
       },
       {
-        a: saisie(10, '2025-01-01'),
-        b: saisie(20, '2025-02-01'),
-        c: saisie(30, '2025-03-01'),
+        a: createValeurSaisie(10, '2025-01-01'),
+        b: createValeurSaisie(20, '2025-02-01'),
+        c: createValeurSaisie(30, '2025-03-01'),
       },
     )
 
@@ -63,11 +67,15 @@ describe('resolveValeurDerivee', () => {
   it('expose les enfants sans valeur comme `manquante` et somme uniquement les présents (couverture partielle)', () => {
     const context = buildContext(
       {
-        cible: [ref('a', 'DEPT-A'), ref('b', 'DEPT-B'), ref('c', 'DEPT-C')],
+        cible: [
+          createIndividuRef('a', 'DEPT-A'),
+          createIndividuRef('b', 'DEPT-B'),
+          createIndividuRef('c', 'DEPT-C'),
+        ],
       },
       {
-        a: saisie(10, '2025-01-01'),
-        c: saisie(30, '2025-03-01'),
+        a: createValeurSaisie(10, '2025-01-01'),
+        c: createValeurSaisie(30, '2025-03-01'),
       },
     )
 
@@ -87,12 +95,16 @@ describe('resolveValeurDerivee', () => {
   it('trie les contributions par publicId quel que soit l’ordre des enfants en entrée', () => {
     const context = buildContext(
       {
-        cible: [ref('c', 'DEPT-Z'), ref('a', 'DEPT-A'), ref('b', 'DEPT-M')],
+        cible: [
+          createIndividuRef('c', 'DEPT-Z'),
+          createIndividuRef('a', 'DEPT-A'),
+          createIndividuRef('b', 'DEPT-M'),
+        ],
       },
       {
-        a: saisie(1, '2025-01-01'),
-        b: saisie(2, '2025-01-01'),
-        c: saisie(3, '2025-01-01'),
+        a: createValeurSaisie(1, '2025-01-01'),
+        b: createValeurSaisie(2, '2025-01-01'),
+        c: createValeurSaisie(3, '2025-01-01'),
       },
     )
 
@@ -105,15 +117,15 @@ describe('resolveValeurDerivee', () => {
     // France → 2 régions → chacune 2 départements (feuilles saisies)
     const context = buildContext(
       {
-        france: [ref('reg-n', 'REG-N'), ref('reg-s', 'REG-S')],
-        'reg-n': [ref('dept-n1', 'DEPT-N1'), ref('dept-n2', 'DEPT-N2')],
-        'reg-s': [ref('dept-s1', 'DEPT-S1'), ref('dept-s2', 'DEPT-S2')],
+        france: [createIndividuRef('reg-n', 'REG-N'), createIndividuRef('reg-s', 'REG-S')],
+        'reg-n': [createIndividuRef('dept-n1', 'DEPT-N1'), createIndividuRef('dept-n2', 'DEPT-N2')],
+        'reg-s': [createIndividuRef('dept-s1', 'DEPT-S1'), createIndividuRef('dept-s2', 'DEPT-S2')],
       },
       {
-        'dept-n1': saisie(10, '2025-01-01'),
-        'dept-n2': saisie(20, '2025-02-01'),
-        'dept-s1': saisie(100, '2025-03-01'),
-        'dept-s2': saisie(200, '2025-04-01'),
+        'dept-n1': createValeurSaisie(10, '2025-01-01'),
+        'dept-n2': createValeurSaisie(20, '2025-02-01'),
+        'dept-s1': createValeurSaisie(100, '2025-03-01'),
+        'dept-s2': createValeurSaisie(200, '2025-04-01'),
       },
     )
 
@@ -134,16 +146,16 @@ describe('resolveValeurDerivee', () => {
     // La région N a une saisie officielle ; ses départements ont aussi des saisies → on prend la saisie de la région
     const context = buildContext(
       {
-        france: [ref('reg-n', 'REG-N'), ref('reg-s', 'REG-S')],
-        'reg-n': [ref('dept-n1', 'DEPT-N1'), ref('dept-n2', 'DEPT-N2')],
-        'reg-s': [ref('dept-s1', 'DEPT-S1'), ref('dept-s2', 'DEPT-S2')],
+        france: [createIndividuRef('reg-n', 'REG-N'), createIndividuRef('reg-s', 'REG-S')],
+        'reg-n': [createIndividuRef('dept-n1', 'DEPT-N1'), createIndividuRef('dept-n2', 'DEPT-N2')],
+        'reg-s': [createIndividuRef('dept-s1', 'DEPT-S1'), createIndividuRef('dept-s2', 'DEPT-S2')],
       },
       {
-        'reg-n': saisie(999, '2020-01-01'), // saisie officielle, ancienne mais prioritaire
-        'dept-n1': saisie(10, '2025-01-01'),
-        'dept-n2': saisie(20, '2025-02-01'),
-        'dept-s1': saisie(100, '2025-03-01'),
-        'dept-s2': saisie(200, '2025-04-01'),
+        'reg-n': createValeurSaisie(999, '2020-01-01'), // saisie officielle, ancienne mais prioritaire
+        'dept-n1': createValeurSaisie(10, '2025-01-01'),
+        'dept-n2': createValeurSaisie(20, '2025-02-01'),
+        'dept-s1': createValeurSaisie(100, '2025-03-01'),
+        'dept-s2': createValeurSaisie(200, '2025-04-01'),
       },
     )
 
@@ -159,12 +171,15 @@ describe('resolveValeurDerivee', () => {
   it("marque comme manquante un enfant qui n'a ni saisie ni descendants avec valeur", () => {
     const context = buildContext(
       {
-        cible: [ref('reg-vide', 'REG-VIDE'), ref('reg-pleine', 'REG-PLEINE')],
-        'reg-vide': [ref('dept-vide', 'DEPT-VIDE')], // descendants existent mais aucune saisie
-        'reg-pleine': [ref('dept-p', 'DEPT-P')],
+        cible: [
+          createIndividuRef('reg-vide', 'REG-VIDE'),
+          createIndividuRef('reg-pleine', 'REG-PLEINE'),
+        ],
+        'reg-vide': [createIndividuRef('dept-vide', 'DEPT-VIDE')], // descendants existent mais aucune saisie
+        'reg-pleine': [createIndividuRef('dept-p', 'DEPT-P')],
       },
       {
-        'dept-p': saisie(50, '2025-01-01'),
+        'dept-p': createValeurSaisie(50, '2025-01-01'),
       },
     )
 
@@ -183,7 +198,7 @@ describe('resolveValeurDerivee', () => {
   it('retourne valeurDerivee null quand tous les enfants sont absents', () => {
     const context = buildContext(
       {
-        cible: [ref('a', 'DEPT-A'), ref('b', 'DEPT-B')],
+        cible: [createIndividuRef('a', 'DEPT-A'), createIndividuRef('b', 'DEPT-B')],
       },
       {},
     )
@@ -203,13 +218,17 @@ describe('resolveValeurDerivee', () => {
   it('utilise la date la plus récente parmi les contributions dérivées', () => {
     const context = buildContext(
       {
-        cible: [ref('reg', 'REG-X')],
-        reg: [ref('d1', 'D1'), ref('d2', 'D2'), ref('d3', 'D3')],
+        cible: [createIndividuRef('reg', 'REG-X')],
+        reg: [
+          createIndividuRef('d1', 'D1'),
+          createIndividuRef('d2', 'D2'),
+          createIndividuRef('d3', 'D3'),
+        ],
       },
       {
-        d1: saisie(1, '2024-01-01'),
-        d2: saisie(2, '2025-06-15'),
-        d3: saisie(3, '2024-12-31'),
+        d1: createValeurSaisie(1, '2024-01-01'),
+        d2: createValeurSaisie(2, '2025-06-15'),
+        d3: createValeurSaisie(3, '2024-12-31'),
       },
     )
 
