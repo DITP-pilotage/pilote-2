@@ -14,7 +14,8 @@ type DataFetchingToolPart = Extract<
     type:
       | "tool-get_taux_avancement_territoire"
       | "tool-get_chantiers"
-      | "tool-get_indicateurs";
+      | "tool-get_indicateurs"
+      | "tool-get_chantier_commentaires";
   }
 >;
 
@@ -23,6 +24,7 @@ const TOOL_LABELS: Record<DataFetchingToolPart["type"], string> = {
     "Récupération du taux d'avancement du territoire",
   "tool-get_chantiers": "Récupération des chantiers",
   "tool-get_indicateurs": "Récupération des indicateurs",
+  "tool-get_chantier_commentaires": "Récupération des commentaires du chantier",
 };
 
 const StatusIcon = ({ state }: { state: DataFetchingToolPart["state"] }) => {

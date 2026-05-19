@@ -66,10 +66,11 @@ export const ChatUI = ({
     }),
   );
 
-  const { messages, sendMessage, status, error } = useChat<PiloteUIMessage>({
-    chat: chatRef.current,
-    experimental_throttle: 250,
-  });
+  const { messages, sendMessage, status, error, stop } =
+    useChat<PiloteUIMessage>({
+      chat: chatRef.current,
+      experimental_throttle: 250,
+    });
 
   useEffect(() => {
     if (messages.length === 0) return;
@@ -138,6 +139,7 @@ export const ChatUI = ({
       fillInput={fillInput}
       sendMessage={sendMessage}
       status={status}
+      stop={stop}
     >
       <div className={clsxm("flex flex-col", className)}>
         <style>{chatMarkdownStyles}</style>

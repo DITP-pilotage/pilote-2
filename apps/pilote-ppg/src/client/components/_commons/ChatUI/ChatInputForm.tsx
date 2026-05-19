@@ -9,6 +9,7 @@ import {
 import { clsxm } from "@/utils/clsxm";
 import { ArrowLineIcon } from "@/components/_commons/Icones/ArrowLineIcon";
 import { MicrophoneIcon } from "@/components/_commons/Icones/MicrophoneIcon";
+import { StopIcon } from "@/components/_commons/Icones/StopIcon";
 import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
 import { useSpeechRecognition } from "@/components/_commons/ChatUI/useSpeechRecognition";
 import { Select } from "@/components/shared/Select";
@@ -33,7 +34,7 @@ export const ChatInputForm = ({
   const [selectedModel, setSelectedModel] =
     useState<AlbertModel>("openweight-large");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { sendMessage, status } = useChatContext();
+  const { sendMessage, status, stop } = useChatContext();
   const isBusy = status === "submitted" || status === "streaming";
 
   useEffect(() => {
@@ -134,21 +135,31 @@ export const ChatInputForm = ({
               <MicrophoneIcon className="w-4 h-4" />
             </button>
           )}
-          <button
-            className={clsxm(
-              "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
-              {
-                "bg-primary text-white hover:bg-primary/90":
-                  !isBusy && input.trim(),
-                "bg-gray-300 text-white cursor-not-allowed":
-                  isBusy || !input.trim(),
-              },
-            )}
-            disabled={isBusy || !input.trim()}
-            type="submit"
-          >
-            <ArrowLineIcon className="w-4 h-4" />
-          </button>
+          {isBusy ? (
+            <button
+              aria-label="Arrêter la génération"
+              className="w-8 h-8 rounded-full flex items-center justify-center transition-colors bg-primary text-white hover:bg-primary/90"
+              onClick={stop}
+              type="button"
+            >
+              <StopIcon className="w-4 h-4" />
+            </button>
+          ) : (
+            <button
+              aria-label="Envoyer le message"
+              className={clsxm(
+                "w-8 h-8 rounded-full flex items-center justify-center transition-colors",
+                {
+                  "bg-primary text-white hover:bg-primary/90": input.trim(),
+                  "bg-gray-300 text-white cursor-not-allowed": !input.trim(),
+                },
+              )}
+              disabled={!input.trim()}
+              type="submit"
+            >
+              <ArrowLineIcon className="w-4 h-4" />
+            </button>
+          )}
         </div>
       </form>
     </div>

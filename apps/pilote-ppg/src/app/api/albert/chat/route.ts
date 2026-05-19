@@ -48,6 +48,9 @@ export async function POST(request: Request) {
     const createGetChantierIndicateursTool = container.resolve(
       "createGetChantierIndicateursTool",
     );
+    const createGetChantierCommentairesTool = container.resolve(
+      "createGetChantierCommentairesTool",
+    );
     const createExportRapportTool = container.resolve(
       "createExportRapportTool",
     );
@@ -77,6 +80,9 @@ export async function POST(request: Request) {
     const getChantierIndicateurs = createGetChantierIndicateursTool({
       territoiresAccessibles,
     });
+    const getChantierCommentaires = createGetChantierCommentairesTool({
+      territoiresAccessibles,
+    });
     const exportRapport = createExportRapportTool({
       userId: session.user.id,
     });
@@ -87,6 +93,7 @@ export async function POST(request: Request) {
       get_taux_avancement_territoire: getTauxAvancementTerritoire,
       get_chantiers: getChantiers,
       get_indicateurs: getChantierIndicateurs,
+      get_chantier_commentaires: getChantierCommentaires,
       display_choices: displayChoicesTool,
       ...(capacities.dashboard ? { create_dashboard: createDashboard } : {}),
       ...(capacities.exportRapport ? { export_rapport: exportRapport } : {}),
