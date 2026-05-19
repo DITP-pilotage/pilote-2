@@ -267,10 +267,6 @@ const getValeurDeriveeRoute = createRoute({
       content: { 'application/json': { schema: ValeurDeriveeApiModelSchema } },
       description: 'Valeur dérivée calculée à partir des enfants directs',
     },
-    404: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Indicateur ou individu inexistant',
-    },
   },
 })
 

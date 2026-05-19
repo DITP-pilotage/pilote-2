@@ -235,9 +235,9 @@ export const listIndividusWithValeursQuerySchema = z.object({
 export type ListIndividusWithValeursQuery = z.infer<typeof listIndividusWithValeursQuerySchema>
 
 export const contributionSourceSchema = z
-  .enum(['saisie', 'derivee', 'absente'])
+  .enum(['saisie', 'derivee', 'manquante'])
   .describe(
-    "Origine de la valeur de l'enfant pour le calcul du parent : `saisie` (valeur saisie directement sur l'enfant, prioritaire), `derivee` (calculée récursivement à partir des descendants de l'enfant), `absente` (l'enfant n'a ni saisie ni descendant avec valeur).",
+    "Origine de la valeur de l'enfant pour le calcul du parent : `saisie` (valeur saisie directement sur l'enfant, prioritaire), `derivee` (calculée récursivement à partir des descendants de l'enfant), `manquante` (l'enfant n'a ni saisie ni descendant avec valeur).",
   )
 export type ContributionSource = z.infer<typeof contributionSourceSchema>
 
@@ -246,11 +246,11 @@ export const contributionApiModelSchema = z.object({
   valeur: z
     .number()
     .nullable()
-    .describe('Valeur retenue pour cet enfant, ou null si `source` vaut `absente`.'),
+    .describe('Valeur retenue pour cet enfant, ou null si `source` vaut `manquante`.'),
   date: dateSchema
     .nullable()
     .describe(
-      "Date de la valeur retenue. Pour `saisie`, date de la valeur saisie. Pour `derivee`, date la plus récente parmi les contributions ayant servi au calcul. null si `absente`.",
+      "Date de la valeur retenue. Pour `saisie`, date de la valeur saisie. Pour `derivee`, date la plus récente parmi les contributions ayant servi au calcul. null si `manquante`.",
     ),
   source: contributionSourceSchema,
 })

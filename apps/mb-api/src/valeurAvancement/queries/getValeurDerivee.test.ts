@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vitest'
 
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptId, testDeptIds, testIndicateurId, testRegId } from '@/test/randomIds'
+import {
+  testDeptId,
+  testDeptIds,
+  testIndicateurId,
+  testReferentielId,
+  testRegId,
+} from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 import { getValeurDerivee } from '@/valeurAvancement/queries/getValeurDerivee'
 
@@ -12,10 +18,11 @@ describe.concurrent('getValeurDerivee', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
+      const refDept = testReferentielId()
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({
         publicId: deptId,
-        referentiel: { publicId: 'REF-DEPT', nom: 'Dept' },
+        referentiel: { publicId: refDept, nom: 'Dept' },
       })
       const apiKey = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
@@ -40,14 +47,16 @@ describe.concurrent('getValeurDerivee', () => {
       const indId = testIndicateurId()
       const regId = testRegId()
       const [dept1, dept2] = testDeptIds(2)
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
       await fixtures.relation(
         {
-          parent: { publicId: regId, referentiel: { publicId: 'REF-REG', nom: 'Reg' } },
-          child: { publicId: dept1, referentiel: { publicId: 'REF-DEPT', nom: 'Dept' } },
+          parent: { publicId: regId, referentiel: { publicId: refReg, nom: 'Reg' } },
+          child: { publicId: dept1, referentiel: { publicId: refDept, nom: 'Dept' } },
         },
         {
           parent: { publicId: regId },
-          child: { publicId: dept2, referentiel: { publicId: 'REF-DEPT' } },
+          child: { publicId: dept2, referentiel: { publicId: refDept } },
         },
       )
       await fixtures.valeurAvancement(
@@ -90,23 +99,25 @@ describe.concurrent('getValeurDerivee', () => {
   )
 
   it(
-    'expose les enfants sans valeur comme `absente` (couverture partielle)',
+    'expose les enfants sans valeur comme `manquante` (couverture partielle)',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const regId = testRegId()
       const [dept1, dept2, dept3] = testDeptIds(3)
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
       await fixtures.relation(
         {
-          parent: { publicId: regId, referentiel: { publicId: 'REF-REG', nom: 'Reg' } },
-          child: { publicId: dept1, referentiel: { publicId: 'REF-DEPT', nom: 'Dept' } },
+          parent: { publicId: regId, referentiel: { publicId: refReg, nom: 'Reg' } },
+          child: { publicId: dept1, referentiel: { publicId: refDept, nom: 'Dept' } },
         },
         {
           parent: { publicId: regId },
-          child: { publicId: dept2, referentiel: { publicId: 'REF-DEPT' } },
+          child: { publicId: dept2, referentiel: { publicId: refDept } },
         },
         {
           parent: { publicId: regId },
-          child: { publicId: dept3, referentiel: { publicId: 'REF-DEPT' } },
+          child: { publicId: dept3, referentiel: { publicId: refDept } },
         },
       )
       await fixtures.valeurAvancement({
@@ -124,7 +135,7 @@ describe.concurrent('getValeurDerivee', () => {
       const data = result._unsafeUnwrap()
       expect(data.valeurDerivee).toBe(100)
       expect(data.couverture).toEqual({ nbEnfantsAvecValeur: 1, nbEnfantsTotal: 3 })
-      expect(data.contributions.filter((contribution) => contribution.source === 'absente')).toHaveLength(2)
+      expect(data.contributions.filter((contribution) => contribution.source === 'manquante')).toHaveLength(2)
     }),
   )
 
@@ -135,32 +146,35 @@ describe.concurrent('getValeurDerivee', () => {
       const franceId = testRegId()
       const [regN, regS] = [testRegId(), testRegId()]
       const [deptN1, deptN2, deptS1, deptS2] = testDeptIds(4)
+      const refPays = testReferentielId()
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
 
       // France → 2 régions → chacune 2 départements (feuilles saisies)
       await fixtures.relation(
         {
-          parent: { publicId: franceId, referentiel: { publicId: 'REF-PAYS', nom: 'Pays' } },
-          child: { publicId: regN, referentiel: { publicId: 'REF-REG', nom: 'Reg' } },
+          parent: { publicId: franceId, referentiel: { publicId: refPays, nom: 'Pays' } },
+          child: { publicId: regN, referentiel: { publicId: refReg, nom: 'Reg' } },
         },
         {
           parent: { publicId: franceId },
-          child: { publicId: regS, referentiel: { publicId: 'REF-REG' } },
+          child: { publicId: regS, referentiel: { publicId: refReg } },
         },
         {
           parent: { publicId: regN },
-          child: { publicId: deptN1, referentiel: { publicId: 'REF-DEPT', nom: 'Dept' } },
+          child: { publicId: deptN1, referentiel: { publicId: refDept, nom: 'Dept' } },
         },
         {
           parent: { publicId: regN },
-          child: { publicId: deptN2, referentiel: { publicId: 'REF-DEPT' } },
+          child: { publicId: deptN2, referentiel: { publicId: refDept } },
         },
         {
           parent: { publicId: regS },
-          child: { publicId: deptS1, referentiel: { publicId: 'REF-DEPT' } },
+          child: { publicId: deptS1, referentiel: { publicId: refDept } },
         },
         {
           parent: { publicId: regS },
-          child: { publicId: deptS2, referentiel: { publicId: 'REF-DEPT' } },
+          child: { publicId: deptS2, referentiel: { publicId: refDept } },
         },
       )
       await fixtures.valeurAvancement(
@@ -214,18 +228,21 @@ describe.concurrent('getValeurDerivee', () => {
       const franceId = testRegId()
       const reg = testRegId()
       const [dept1, dept2] = testDeptIds(2)
+      const refPays = testReferentielId()
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
       await fixtures.relation(
         {
-          parent: { publicId: franceId, referentiel: { publicId: 'REF-PAYS', nom: 'Pays' } },
-          child: { publicId: reg, referentiel: { publicId: 'REF-REG', nom: 'Reg' } },
+          parent: { publicId: franceId, referentiel: { publicId: refPays, nom: 'Pays' } },
+          child: { publicId: reg, referentiel: { publicId: refReg, nom: 'Reg' } },
         },
         {
           parent: { publicId: reg },
-          child: { publicId: dept1, referentiel: { publicId: 'REF-DEPT', nom: 'Dept' } },
+          child: { publicId: dept1, referentiel: { publicId: refDept, nom: 'Dept' } },
         },
         {
           parent: { publicId: reg },
-          child: { publicId: dept2, referentiel: { publicId: 'REF-DEPT' } },
+          child: { publicId: dept2, referentiel: { publicId: refDept } },
         },
       )
       await fixtures.valeurAvancement(
@@ -267,10 +284,11 @@ describe.concurrent('getValeurDerivee', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
+      const refDept = testReferentielId()
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({
         publicId: deptId,
-        referentiel: { publicId: 'REF-DEPT', nom: 'Dept' },
+        referentiel: { publicId: refDept, nom: 'Dept' },
       })
       // apiKey sans permission sur indId
       const otherInd = testIndicateurId()
@@ -293,7 +311,7 @@ describe.concurrent('getValeurDerivee', () => {
       })
 
       await expect(
-        runAsPrincipal(apiKey.id, () => getValeurDerivee(indId, 'DEPT-INEXISTANT')),
+        runAsPrincipal(apiKey.id, () => getValeurDerivee(indId, testDeptId())),
       ).rejects.toThrow()
     }),
   )

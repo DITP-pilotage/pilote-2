@@ -11,7 +11,7 @@ import {
   type ValeurSaisie,
 } from '@/valeurAvancement/resolveValeurDerivee'
 
-const loadSubtree = async (
+const loadIndividuTree = async (
   rootIndividuId: string,
 ): Promise<{
   allIds: string[]
@@ -24,10 +24,7 @@ const loadSubtree = async (
   while (currentLevel.length > 0) {
     const relations = await db().relation.findMany({
       where: { parentId: { in: currentLevel } },
-      select: {
-        parentId: true,
-        child: { select: { id: true, publicId: true } },
-      },
+      include: { child: true },
     })
     if (relations.length === 0) break
 
@@ -53,15 +50,13 @@ const buildResult = async (
 
   const indicateur = await db().indicateur.findFirstOrThrow({
     where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
-    select: { id: true, publicId: true },
   })
 
   const cible = await db().individu.findUniqueOrThrow({
     where: { publicId: individuPublicId },
-    select: { id: true, publicId: true },
   })
 
-  const { allIds, enfantsParParent } = await loadSubtree(cible.id)
+  const { allIds, enfantsParParent } = await loadIndividuTree(cible.id)
 
   const rows = await db().$queryRawTyped(
     getDernieresValeursPourIndividus(indicateur.id, allIds),
@@ -69,7 +64,6 @@ const buildResult = async (
 
   const derniereValeurParIndividu = new Map<string, ValeurSaisie>()
   for (const row of rows) {
-    if (row.individuId === null || row.date === null || row.valeur === null) continue
     derniereValeurParIndividu.set(row.individuId, {
       valeur: row.valeur,
       date: row.date,
@@ -85,9 +79,7 @@ const buildResult = async (
     indicateur: indicateur.publicId,
     individu: cible.publicId,
     agregateur: 'SUM',
-    valeurDerivee: resolved.valeurDerivee,
-    contributions: resolved.contributions,
-    couverture: resolved.couverture,
+    ...resolved,
   }
 }
 

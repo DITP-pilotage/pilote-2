@@ -60,7 +60,7 @@ describe('resolveValeurDerivee', () => {
     })
   })
 
-  it('expose les enfants sans valeur comme `absente` et somme uniquement les présents (couverture partielle)', () => {
+  it('expose les enfants sans valeur comme `manquante` et somme uniquement les présents (couverture partielle)', () => {
     const context = buildContext(
       {
         'cible': [ref('a', 'DEPT-A'), ref('b', 'DEPT-B'), ref('c', 'DEPT-C')],
@@ -76,7 +76,7 @@ describe('resolveValeurDerivee', () => {
     expect(result).toEqual({
       contributions: [
         { individu: 'DEPT-A', valeur: 10, date: '2025-01-01', source: 'saisie' },
-        { individu: 'DEPT-B', valeur: null, date: null, source: 'absente' },
+        { individu: 'DEPT-B', valeur: null, date: null, source: 'manquante' },
         { individu: 'DEPT-C', valeur: 30, date: '2025-03-01', source: 'saisie' },
       ],
       valeurDerivee: 40,
@@ -156,7 +156,7 @@ describe('resolveValeurDerivee', () => {
     expect(result.valeurDerivee).toBe(1299)
   })
 
-  it("marque comme absente un enfant qui n'a ni saisie ni descendants avec valeur", () => {
+  it("marque comme manquante un enfant qui n'a ni saisie ni descendants avec valeur", () => {
     const context = buildContext(
       {
         'cible': [ref('reg-vide', 'REG-VIDE'), ref('reg-pleine', 'REG-PLEINE')],
@@ -173,7 +173,7 @@ describe('resolveValeurDerivee', () => {
     expect(result).toEqual({
       contributions: [
         { individu: 'REG-PLEINE', valeur: 50, date: '2025-01-01', source: 'derivee' },
-        { individu: 'REG-VIDE', valeur: null, date: null, source: 'absente' },
+        { individu: 'REG-VIDE', valeur: null, date: null, source: 'manquante' },
       ],
       valeurDerivee: 50,
       couverture: { nbEnfantsAvecValeur: 1, nbEnfantsTotal: 2 },
@@ -192,8 +192,8 @@ describe('resolveValeurDerivee', () => {
 
     expect(result).toEqual({
       contributions: [
-        { individu: 'DEPT-A', valeur: null, date: null, source: 'absente' },
-        { individu: 'DEPT-B', valeur: null, date: null, source: 'absente' },
+        { individu: 'DEPT-A', valeur: null, date: null, source: 'manquante' },
+        { individu: 'DEPT-B', valeur: null, date: null, source: 'manquante' },
       ],
       valeurDerivee: null,
       couverture: { nbEnfantsAvecValeur: 0, nbEnfantsTotal: 2 },

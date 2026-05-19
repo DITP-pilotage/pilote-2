@@ -74,7 +74,7 @@ export const resolveValeurDerivee = (
         individu: enfant.publicId,
         valeur: null,
         date: null,
-        source: 'absente',
+        source: 'manquante',
       })
       continue
     }
