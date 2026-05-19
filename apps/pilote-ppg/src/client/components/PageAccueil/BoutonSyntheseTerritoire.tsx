@@ -5,6 +5,7 @@ import { Icone } from "@/components/_commons/Icone";
 import { SparklingIcon } from "@/components/_commons/Icones/SparklingIcon";
 import { ChatScenarios, ChatUI } from "@/components/_commons/ChatUI/ChatUI";
 import { ConversationHistoryDrawer } from "@/components/_commons/ChatUI/ConversationHistoryDrawer";
+import Loader from "@/components/_commons/Loader/Loader";
 import { ModalePleinEcran } from "@/components/shared/ModalePleinEcran";
 import api from "@/server/infrastructure/api/trpc/api";
 
@@ -23,11 +24,12 @@ export const BoutonSyntheseTerritoire = ({
   const [activeChatId, setActiveChatId] = useState<string>(() =>
     crypto.randomUUID(),
   );
-  const { data: conversationChargee } =
+  const { data: conversationChargee, isFetched: conversationChargeeFetched } =
     api.albert.conversations.recuperer.useQuery(
       { id: activeChatId },
       { enabled: ffHistorique === true && isOpen, retry: false },
     );
+  const conversationPrete = !ffHistorique || conversationChargeeFetched;
   const demarrerNouvelleConversation = () => {
     setActiveChatId(crypto.randomUUID());
   };
@@ -151,22 +153,26 @@ Quelles sont les principales difficultés remontées dans les commentaires ?`,
                 onNouvelleConversation={demarrerNouvelleConversation}
               />
             ) : null}
-            <div className="flex-1">
-              <ChatUI
-                key={activeChatId}
-                chatId={activeChatId}
-                initialMessages={conversationChargee?.messages}
-                onChatFinish={ffHistorique ? rafraichirHistorique : undefined}
-                endpoint="/api/albert/chat"
-                className="h-full"
-                placeholder="Posez une question sur ce territoire..."
-                scenarios={scenarios}
-                agentContext={{
-                  jalon,
-                  territoireCode,
-                  instructions: `Le territoire courant de l'utilisateur est ${territoire.nomAffiché} (code : ${territoireCode}). Utilise ce territoire par défaut lorsque l'utilisateur ne précise pas de territoire dans sa question.`,
-                }}
-              />
+            <div className="flex-1 relative">
+              {conversationPrete ? (
+                <ChatUI
+                  key={activeChatId}
+                  chatId={activeChatId}
+                  initialMessages={conversationChargee?.messages}
+                  onChatFinish={ffHistorique ? rafraichirHistorique : undefined}
+                  endpoint="/api/albert/chat"
+                  className="h-full"
+                  placeholder="Posez une question sur ce territoire..."
+                  scenarios={scenarios}
+                  agentContext={{
+                    jalon,
+                    territoireCode,
+                    instructions: `Le territoire courant de l'utilisateur est ${territoire.nomAffiché} (code : ${territoireCode}). Utilise ce territoire par défaut lorsque l'utilisateur ne précise pas de territoire dans sa question.`,
+                  }}
+                />
+              ) : (
+                <Loader />
+              )}
             </div>
           </div>
         </ModalePleinEcran>
