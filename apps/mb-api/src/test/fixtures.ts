@@ -4,6 +4,13 @@ import { env } from '@/env'
 import { hashApiKey } from '@/framework/auth/apiKey'
 import { db } from '@/framework/persistence/dbStore'
 import {
+  testApiKeyRawKey,
+  testEmail,
+  testIndicateurId,
+  testIndividuId,
+  testReferentielId,
+} from '@/test/randomIds'
+import {
   type ApiKeyModel,
   type IndicateurModel,
   type IndicateurPermissionModel,
@@ -20,10 +27,13 @@ import { PermissionAction } from '@/generated/prisma/enums'
 
 type IndicateurOverrides = Partial<{ id: string; publicId: string; nom: string }>
 
-const DEFAULT_INDICATEUR = { publicId: 'IND-1', nom: 'Indicateur de test' } as const
-
 const upsertIndicateur = async (o: IndicateurOverrides = {}) => {
-  const create = { id: uuidv7(), ...DEFAULT_INDICATEUR, ...o }
+  const create = {
+    id: uuidv7(),
+    publicId: testIndicateurId(),
+    nom: 'Indicateur de test',
+    ...o,
+  }
   const { id: _id, publicId: _pub, ...update } = o
   if (Object.keys(update).length === 0) {
     const existing = await db().indicateur.findUnique({ where: { publicId: create.publicId } })
@@ -61,14 +71,14 @@ type ReferentielOverrides = Partial<{
   description: string | null
 }>
 
-const DEFAULT_REFERENTIEL = {
-  publicId: 'REF-TEST',
-  nom: 'Référentiel de test',
-  description: null,
-} as const
-
 const upsertReferentiel = async (o: ReferentielOverrides = {}) => {
-  const create = { id: uuidv7(), ...DEFAULT_REFERENTIEL, ...o }
+  const create = {
+    id: uuidv7(),
+    publicId: testReferentielId(),
+    nom: 'Référentiel de test',
+    description: null,
+    ...o,
+  }
   const { id: _id, publicId: _pub, ...update } = o
   if (Object.keys(update).length === 0) {
     const existing = await db().referentiel.findUnique({ where: { publicId: create.publicId } })
@@ -106,13 +116,8 @@ type IndividuOverrides = Partial<{
   referentiel: ReferentielOverrides
 }>
 
-const DEFAULT_INDIVIDU = {
-  publicId: 'TEST-1',
-  nom: 'Individu de test',
-} as const
-
 const upsertIndividu = async (o: IndividuOverrides = {}) => {
-  const publicId = o.publicId ?? DEFAULT_INDIVIDU.publicId
+  const publicId = o.publicId ?? testIndividuId()
   const existing = await db().individu.findUnique({ where: { publicId } })
 
   // Pas d'override referentiel et l'individu existe : on touche pas au rattachement.
@@ -131,7 +136,7 @@ const upsertIndividu = async (o: IndividuOverrides = {}) => {
     create: {
       id: o.id ?? uuidv7(),
       publicId,
-      nom: o.nom ?? DEFAULT_INDIVIDU.nom,
+      nom: o.nom ?? 'Individu de test',
       referentielId: referentielRow.id,
     },
   })
@@ -296,12 +301,6 @@ type ApiKeyOverrides = Partial<{
   permissions: PrincipalIndicateurPermissionOverrides[]
 }>
 
-const DEFAULT_API_KEY = {
-  label: 'API key de test',
-  rawKey: 'pilote_live_test_default_key_value_xx',
-  prefix: 'pilote_live_test_def',
-} as const
-
 const grantPermissions = async (
   principalId: string,
   permissions: PrincipalIndicateurPermissionOverrides[] | undefined,
@@ -313,13 +312,13 @@ const grantPermissions = async (
 }
 
 const upsertApiKey = async (o: ApiKeyOverrides = {}) => {
-  const rawKey = o.rawKey ?? DEFAULT_API_KEY.rawKey
+  const rawKey = o.rawKey ?? testApiKeyRawKey()
   const keyHash = hashApiKey(rawKey, env.API_KEY_HMAC_SECRET)
   const create = {
     id: o.id ?? uuidv7(),
-    label: o.label ?? DEFAULT_API_KEY.label,
+    label: o.label ?? 'API key de test',
     keyHash,
-    prefix: o.prefix ?? DEFAULT_API_KEY.prefix,
+    prefix: o.prefix ?? rawKey.slice(0, 20),
     expiresAt: o.expiresAt ?? null,
     revokedAt: o.revokedAt ?? null,
     lastUsedAt: o.lastUsedAt ?? null,
@@ -360,13 +359,8 @@ type UtilisateurOverrides = Partial<{
   permissions: PrincipalIndicateurPermissionOverrides[]
 }>
 
-const DEFAULT_UTILISATEUR = {
-  email: 'utilisateur-test@example.com',
-  providerSub: null,
-} as const
-
 const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
-  const email = o.email ?? DEFAULT_UTILISATEUR.email
+  const email = o.email ?? testEmail()
   const existing = await db().utilisateur.findUnique({ where: { email } })
   if (existing) {
     await grantPermissions(existing.id, o.permissions)
@@ -378,7 +372,7 @@ const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
   const create = {
     id,
     email,
-    providerSub: o.providerSub ?? DEFAULT_UTILISATEUR.providerSub,
+    providerSub: o.providerSub ?? null,
   }
   await db().principal.create({ data: { id } })
   const created = await db().utilisateur.create({ data: create })
