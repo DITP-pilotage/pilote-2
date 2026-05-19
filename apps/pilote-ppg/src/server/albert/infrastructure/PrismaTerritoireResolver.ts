@@ -18,7 +18,7 @@ export class PrismaTerritoireResolver implements TerritoireResolver {
     // on remonte donc explicitement toutes les régions ici.
     if (territoireCode === "NAT-FR") {
       const regions = await this.prisma.getInstance().territoire.findMany({
-        where: { maille: "REG" },
+        where: { code: { startsWith: "REG-" } },
         select: { code: true },
       });
       return [territoireCode, ...regions.map((region) => region.code)];
