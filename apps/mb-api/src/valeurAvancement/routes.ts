@@ -1,6 +1,7 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { errorApiModelSchema } from '@pilote/mb-shared/error'
 import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
+import { individuPublicIdSchema } from '@pilote/mb-shared/individu'
 import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
 import {
   deleteValeurAvancementBodySchema,
@@ -13,6 +14,7 @@ import {
   upsertValeurAvancementBodySchema,
   valeurAvancementApiModelSchema,
   valeurAvancementListApiModelSchema,
+  valeurDeriveeApiModelSchema,
   valeursRemarquablesListApiModelSchema,
 } from '@pilote/mb-shared/valeurAvancement'
 
@@ -23,6 +25,7 @@ import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonRespo
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { deleteValeurAvancement } from '@/valeurAvancement/commands/deleteValeurAvancement'
 import { upsertValeurAvancement } from '@/valeurAvancement/commands/upsertValeurAvancement'
+import { getValeurDerivee } from '@/valeurAvancement/queries/getValeurDerivee'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
 import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
 import { listValeursForIndicateur } from '@/valeurAvancement/queries/listValeursForIndicateur'
@@ -49,6 +52,7 @@ const ValeursRemarquablesListApiModelSchema = valeursRemarquablesListApiModelSch
 const SyntheseIndividusListApiModelSchema = syntheseIndividusListApiModelSchema.openapi(
   'SyntheseIndividusListApiModel',
 )
+const ValeurDeriveeApiModelSchema = valeurDeriveeApiModelSchema.openapi('ValeurDeriveeApiModel')
 const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 const indicateurParamsSchema = z.object({
@@ -235,6 +239,41 @@ const getSyntheseIndividusRoute = createRoute({
   },
 })
 
+// --- GET /indicateurs/:id/individus/:individuId/valeur-derivee --------------
+
+const indicateurIndividuParamsSchema = z.object({
+  id: indicateurPublicIdSchema,
+  individuId: individuPublicIdSchema,
+})
+
+const getValeurDeriveeRoute = createRoute({
+  method: 'get',
+  path: '/indicateurs/{id}/individus/{individuId}/valeur-derivee',
+  tags: ['Indicateur'],
+  summary: 'Calculer la valeur dérivée d’un individu par agrégation hiérarchique',
+  description:
+    "Calcule la valeur de l'individu cible comme somme (SUM) des valeurs de ses enfants directs, " +
+    "niveau par niveau (la valeur d'un enfant intermédiaire est sa propre saisie si elle existe, " +
+    'sinon la dérivée récursive de ses descendants). La valeur retenue pour chaque enfant est sa ' +
+    'dernière valeur connue (pas de paramètre date). La réponse expose les contributions de chaque ' +
+    'enfant direct (drill-down) et la couverture (combien d’enfants ont contribué). ' +
+    "Retourne 200 avec `valeurDerivee: null` et `couverture: 0/0` si l'individu est une feuille.",
+  middleware: [requireAuthentication],
+  request: {
+    params: indicateurIndividuParamsSchema,
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: ValeurDeriveeApiModelSchema } },
+      description: 'Valeur dérivée calculée à partir des enfants directs',
+    },
+    404: {
+      content: { 'application/json': { schema: ErrorApiModelSchema } },
+      description: 'Indicateur ou individu inexistant',
+    },
+  },
+})
+
 // --- App registration --------------------------------------------------------
 
 export const valeurAvancementRoutes = new OpenAPIHono()
@@ -371,6 +410,21 @@ valeurAvancementRoutes.openapi(getSyntheseIndividusRoute, async (context) => {
         context,
         data,
         schema: SyntheseIndividusListApiModelSchema,
+        status: 200,
+      }),
+    never,
+  )
+})
+
+valeurAvancementRoutes.openapi(getValeurDeriveeRoute, async (context) => {
+  const { id, individuId } = context.req.valid('param')
+
+  return getValeurDerivee(id, individuId).match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: ValeurDeriveeApiModelSchema,
         status: 200,
       }),
     never,
