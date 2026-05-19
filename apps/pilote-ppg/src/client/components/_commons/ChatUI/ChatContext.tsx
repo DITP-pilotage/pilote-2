@@ -6,6 +6,7 @@ type ChatContextValue = {
   fillInput: (text: string) => void;
   status: ChatStatus;
   error: Error | undefined;
+  stop: () => void;
 };
 
 const context = createContext<ChatContextValue | null>(null);
@@ -28,10 +29,11 @@ export const ChatContextProvider = ({
   fillInput,
   status,
   error,
+  stop,
 }: PropsWithChildren<ChatContextValue>) => {
   const value = useMemo(
-    () => ({ sendMessage, fillInput, status, error }),
-    [sendMessage, fillInput, status, error],
+    () => ({ sendMessage, fillInput, status, error, stop }),
+    [sendMessage, fillInput, status, error, stop],
   );
 
   return <context.Provider value={value}>{children}</context.Provider>;
