@@ -70,7 +70,7 @@ const buildResult = async (
     })
   }
 
-  const resolved = resolveValeurDerivee(cible.id, {
+  const { valeurDerivee, contributions, couverture } = resolveValeurDerivee(cible.id, {
     enfantsParParent,
     derniereValeurParIndividu,
   })
@@ -79,7 +79,9 @@ const buildResult = async (
     indicateur: indicateur.publicId,
     individu: cible.publicId,
     agregateur: 'SUM',
-    ...resolved,
+    valeurDerivee,
+    contributions,
+    couverture,
   }
 }
 
