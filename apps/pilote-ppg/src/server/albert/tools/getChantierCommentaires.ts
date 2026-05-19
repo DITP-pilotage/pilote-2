@@ -23,7 +23,7 @@ export type GetChantierCommentairesOutput = {
   _output_instructions: string;
 };
 
-const OUTPUT_INSTRUCTIONS = `Restitue chaque commentaire avec sa date, son auteur et son contenu verbatim, sans reformulation ni interprétation. Regroupe par type ou trie par date selon la demande de l'utilisateur. Ne reformule ou ne synthétise que si l'utilisateur le demande explicitement.`;
+const OUTPUT_INSTRUCTIONS = `Restitue chaque commentaire avec sa date, son auteur et son contenu verbatim, sans reformulation ni interprétation. Les contenus sont en HTML : extrais uniquement le texte (sans les balises) tout en conservant la formulation d'origine. Regroupe par type ou trie par date selon la demande de l'utilisateur. Ne reformule ou ne synthétise que si l'utilisateur le demande explicitement.`;
 
 export function createGetChantierCommentairesTool({
   getChantierCommentairesQuery,
