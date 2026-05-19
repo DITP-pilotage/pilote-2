@@ -120,6 +120,12 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
+      - name: Apply Prisma migrations
+        # Required before `prisma generate --sql` introspects tables for TypedSQL types
+        run: pnpm -F @pilote/mb-api exec prisma migrate deploy
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5435/postgres
+
       - name: Generate Prisma client
         run: pnpm -F @pilote/mb-api prisma:generate
         env:
@@ -140,8 +146,22 @@ jobs:
     if: needs.changes.outputs['mb-api'] == 'true' || needs.changes.outputs['mb-shared'] == 'true'
     runs-on: ubuntu-latest
     env:
-      # Dummy URL: prisma generate only validates the config schema, no DB connection needed
-      DATABASE_URL: postgresql://prisma:prisma@localhost:5432/prisma
+      # `prisma generate --sql` introspects tables to type TypedSQL queries — a real DB is required
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5436/postgres
+    services:
+      postgres:
+        image: postgres:17.9-alpine
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5436:5432
     steps:
       - uses: actions/checkout@v4
 
@@ -149,6 +169,9 @@ jobs:
         uses: ./.github/actions/setupNodeAndPackages
         with:
           node-version: ${{ env.NODE_VERSION }}
+
+      - name: Apply Prisma migrations
+        run: pnpm -F @pilote/mb-api exec prisma migrate deploy
 
       - name: Generate Prisma client
         run: pnpm -F @pilote/mb-api prisma:generate

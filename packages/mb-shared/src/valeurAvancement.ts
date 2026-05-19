@@ -233,3 +233,58 @@ export const listIndividusWithValeursQuerySchema = z.object({
   pageSize: pageSizeSchema,
 })
 export type ListIndividusWithValeursQuery = z.infer<typeof listIndividusWithValeursQuerySchema>
+
+export const contributionSourceSchema = z
+  .enum(['saisie', 'derivee', 'manquante'])
+  .describe(
+    "Origine de la valeur de l'enfant pour le calcul du parent : `saisie` (valeur saisie directement sur l'enfant, prioritaire), `derivee` (calculée récursivement à partir des descendants de l'enfant), `manquante` (l'enfant n'a ni saisie ni descendant avec valeur).",
+  )
+export type ContributionSource = z.infer<typeof contributionSourceSchema>
+
+export const contributionApiModelSchema = z.object({
+  individu: individuPublicIdSchema,
+  valeur: z
+    .number()
+    .nullable()
+    .describe('Valeur retenue pour cet enfant, ou null si `source` vaut `manquante`.'),
+  date: dateSchema
+    .nullable()
+    .describe(
+      "Date de la valeur retenue. Pour `saisie`, date de la valeur saisie. Pour `derivee`, date la plus récente parmi les contributions ayant servi au calcul. null si `manquante`.",
+    ),
+  source: contributionSourceSchema,
+})
+export type ContributionApiModel = z.infer<typeof contributionApiModelSchema>
+
+export const couvertureApiModelSchema = z.object({
+  nbEnfantsAvecValeur: z
+    .number()
+    .int()
+    .nonnegative()
+    .describe('Nombre d’enfants directs ayant contribué (saisie ou dérivée non nulle).'),
+  nbEnfantsTotal: z
+    .number()
+    .int()
+    .nonnegative()
+    .describe('Nombre total d’enfants directs du parent.'),
+})
+export type CouvertureApiModel = z.infer<typeof couvertureApiModelSchema>
+
+export const valeurDeriveeApiModelSchema = z.object({
+  indicateur: indicateurPublicIdSchema,
+  individu: individuPublicIdSchema,
+  agregateur: z.literal('SUM').describe('Agrégateur appliqué (SUM uniquement pour le moment).'),
+  valeurDerivee: z
+    .number()
+    .nullable()
+    .describe(
+      "Somme des valeurs retenues parmi les enfants directs. null si aucun enfant n'a de valeur.",
+    ),
+  contributions: z
+    .array(contributionApiModelSchema)
+    .describe(
+      "Une entrée par enfant direct du parent, dans l'ordre des publicId. Permet le drill-down et l'audit du calcul.",
+    ),
+  couverture: couvertureApiModelSchema,
+})
+export type ValeurDeriveeApiModel = z.infer<typeof valeurDeriveeApiModelSchema>
