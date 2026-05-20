@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { ValidationError } from '@/framework/errors/AppError'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import {
@@ -24,6 +25,10 @@ describe.concurrent('getValeurDerivee', () => {
         publicId: deptId,
         referentiel: { publicId: refDept, nom: 'Dept' },
       })
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId },
+        referentiel: { publicId: refDept },
+      })
       const apiKey = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
       })
@@ -33,7 +38,7 @@ describe.concurrent('getValeurDerivee', () => {
       expect(result._unsafeUnwrap()).toEqual({
         indicateur: indId,
         individu: deptId,
-        agregateur: 'SUM',
+        fonctionAgregation: 'SUM',
         valeurDerivee: null,
         contributions: [],
         couverture: { nbEnfantsAvecValeur: 0, nbEnfantsTotal: 0 },
@@ -59,6 +64,10 @@ describe.concurrent('getValeurDerivee', () => {
           child: { publicId: dept2, referentiel: { publicId: refDept } },
         },
       )
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId },
+        referentiel: { publicId: refReg },
+      })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId, nom: 'T' },
@@ -120,6 +129,10 @@ describe.concurrent('getValeurDerivee', () => {
           child: { publicId: dept3, referentiel: { publicId: refDept } },
         },
       )
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId },
+        referentiel: { publicId: refReg },
+      })
       await fixtures.valeurAvancement({
         indicateur: { publicId: indId, nom: 'T' },
         individu: { publicId: dept1 },
@@ -179,6 +192,10 @@ describe.concurrent('getValeurDerivee', () => {
           child: { publicId: deptS2, referentiel: { publicId: refDept } },
         },
       )
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId },
+        referentiel: { publicId: refPays },
+      })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId, nom: 'T' },
@@ -249,6 +266,10 @@ describe.concurrent('getValeurDerivee', () => {
           child: { publicId: dept2, referentiel: { publicId: refDept } },
         },
       )
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId },
+        referentiel: { publicId: refPays },
+      })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId, nom: 'T' },
@@ -317,6 +338,60 @@ describe.concurrent('getValeurDerivee', () => {
       await expect(
         runAsPrincipal(apiKey.id, () => getValeurDerivee(indId, testDeptId())),
       ).rejects.toThrow()
+    }),
+  )
+
+  it(
+    "rejette avec ValidationError quand l'indicateur n'est pas configuré pour le référentiel de l'individu",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const deptId = testDeptId()
+      const refDept = testReferentielId()
+      await fixtures.indicateur({ publicId: indId })
+      await fixtures.individu({
+        publicId: deptId,
+        referentiel: { publicId: refDept, nom: 'Dept' },
+      })
+      // Volontairement : aucun fixtures.indicateurReferentiel(...)
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      await expect(
+        runAsPrincipal(apiKey.id, () => getValeurDerivee(indId, deptId)),
+      ).rejects.toMatchObject({
+        constructor: ValidationError,
+        message: expect.stringContaining("n'est pas configuré"),
+      })
+    }),
+  )
+
+  it(
+    'rejette avec ValidationError quand fonctionAgregation vaut NONE',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const deptId = testDeptId()
+      const refDept = testReferentielId()
+      await fixtures.indicateur({ publicId: indId })
+      await fixtures.individu({
+        publicId: deptId,
+        referentiel: { publicId: refDept, nom: 'Dept' },
+      })
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId },
+        referentiel: { publicId: refDept },
+        fonctionAgregation: 'NONE',
+      })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      await expect(
+        runAsPrincipal(apiKey.id, () => getValeurDerivee(indId, deptId)),
+      ).rejects.toMatchObject({
+        constructor: ValidationError,
+        message: expect.stringContaining('NONE'),
+      })
     }),
   )
 })
