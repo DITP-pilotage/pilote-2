@@ -1,3 +1,4 @@
+import { Body } from '@/components/ui/Body'
 import { Section } from '@/components/ui/Section'
 
 type RouteLoadingProps = {
@@ -7,7 +8,7 @@ type RouteLoadingProps = {
 export function RouteLoading({ message = 'Chargement…' }: RouteLoadingProps) {
   return (
     <Section>
-      <p className="text-sm text-text-muted">{message}</p>
+      <Body tone="muted">{message}</Body>
     </Section>
   )
 }

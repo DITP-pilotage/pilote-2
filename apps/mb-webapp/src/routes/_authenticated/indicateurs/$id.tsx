@@ -1,6 +1,6 @@
 import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
-import { type IndividuApiModel, individuPublicIdSchema } from '@pilote/mb-shared/individu'
-import { type ReferentielApiModel, referentielPublicIdSchema } from '@pilote/mb-shared/referentiel'
+import { individuPublicIdSchema } from '@pilote/mb-shared/individu'
+import { referentielPublicIdSchema } from '@pilote/mb-shared/referentiel'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
 import { startTransition, useId } from 'react'
@@ -19,13 +19,8 @@ import { FormField } from '@/components/ui/FormField'
 import { Page } from '@/components/ui/Page'
 import { Section } from '@/components/ui/Section'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
-import {
-  indicateurQueryOptions,
-  indicateurSyntheseIndividuQueryOptions,
-  indicateurValeursQueryOptions,
-  indicateurValeursRemarquablesQueryOptions,
-} from '@/queries/indicateurs'
-import { referentielIndividusQueryOptions, referentielQueryOptions } from '@/queries/referentiels'
+import { indicateurQueryOptions, prefetchIndicateurValeursForIndividu } from '@/queries/indicateurs'
+import { loadIndividusFromReferentiels } from '@/queries/referentiels'
 
 const paramsSchema = z.object({
   id: indicateurPublicIdSchema,
@@ -36,16 +31,6 @@ const searchSchema = z.object({
   referentiel: referentielPublicIdSchema.optional(),
 })
 
-type ReferentielGroupe = {
-  referentiel: ReferentielApiModel
-  individus: ReadonlyArray<IndividuApiModel>
-}
-
-const flattenAndSort = (groupes: ReadonlyArray<ReferentielGroupe>): IndividuApiModel[] =>
-  groupes
-    .flatMap((groupe) => [...groupe.individus])
-    .sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
-
 export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
   params: {
     parse: (raw) => paramsSchema.parse(raw),
@@ -54,21 +39,15 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
   validateSearch: searchSchema,
   loaderDeps: ({ search }) => ({ individu: search.individu }),
   loader: async ({ context, params, deps }) => {
-    const indicateur = await context.queryClient.fetchQuery(indicateurQueryOptions(params.id))
+    const { queryClient } = context
+    const indicateur = await queryClient.fetchQuery(indicateurQueryOptions(params.id))
 
     if (indicateur.referentielIds.length === 0) return { indicateur }
 
-    const groupes: ReferentielGroupe[] = await Promise.all(
-      indicateur.referentielIds.map(async (refId) => {
-        const [referentiel, individus] = await Promise.all([
-          context.queryClient.fetchQuery(referentielQueryOptions(refId)),
-          context.queryClient.fetchQuery(referentielIndividusQueryOptions(refId)),
-        ])
-        return { referentiel, individus }
-      }),
-    )
-
-    const individus = flattenAndSort(groupes)
+    const individus = await loadIndividusFromReferentiels({
+      queryClient,
+      referentielIds: indicateur.referentielIds,
+    })
     if (individus.length === 0) return { indicateur }
 
     const selected = deps.individu ? individus.find((i) => i.id === deps.individu) : undefined
@@ -82,15 +61,12 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
       })
     }
 
-    await Promise.all([
-      context.queryClient.fetchQuery(indicateurValeursQueryOptions(params.id, selected.id)),
-      context.queryClient.fetchQuery(
-        indicateurValeursRemarquablesQueryOptions(params.id, selected.referentiel),
-      ),
-      context.queryClient.fetchQuery(
-        indicateurSyntheseIndividuQueryOptions(params.id, selected.id),
-      ),
-    ])
+    await prefetchIndicateurValeursForIndividu({
+      queryClient,
+      indicateurId: params.id,
+      individuId: selected.id,
+      referentielId: selected.referentiel,
+    })
 
     return { indicateur }
   },

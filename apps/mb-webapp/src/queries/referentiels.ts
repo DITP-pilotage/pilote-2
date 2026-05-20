@@ -1,4 +1,6 @@
-import { queryOptions } from '@tanstack/react-query'
+import { type IndividuApiModel } from '@pilote/mb-shared/individu'
+import { type ReferentielApiModel } from '@pilote/mb-shared/referentiel'
+import { type QueryClient, queryOptions } from '@tanstack/react-query'
 
 import { fetchIndividusForReferentiel, fetchReferentielById } from '@/api/referentiels'
 
@@ -20,3 +22,32 @@ export const referentielIndividusQueryOptions = (referentielId: string) =>
       ),
     staleTime: DEFAULT_STALE_TIME,
   })
+
+type ReferentielGroupe = {
+  referentiel: ReferentielApiModel
+  individus: ReadonlyArray<IndividuApiModel>
+}
+
+const flattenAndSort = (groupes: ReadonlyArray<ReferentielGroupe>): IndividuApiModel[] =>
+  groupes
+    .flatMap((groupe) => [...groupe.individus])
+    .sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
+
+export const loadIndividusFromReferentiels = async ({
+  queryClient,
+  referentielIds,
+}: {
+  queryClient: QueryClient
+  referentielIds: ReadonlyArray<string>
+}): Promise<IndividuApiModel[]> => {
+  const groupes = await Promise.all(
+    referentielIds.map(async (refId) => {
+      const [referentiel, individus] = await Promise.all([
+        queryClient.fetchQuery(referentielQueryOptions(refId)),
+        queryClient.fetchQuery(referentielIndividusQueryOptions(refId)),
+      ])
+      return { referentiel, individus }
+    }),
+  )
+  return flattenAndSort(groupes)
+}

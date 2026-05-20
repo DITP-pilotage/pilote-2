@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
 
+import { Body } from '@/components/ui/Body'
+
 type EmptyStateProps = {
   title: ReactNode
   description?: ReactNode
@@ -7,9 +9,9 @@ type EmptyStateProps = {
 
 export function EmptyState({ title, description }: EmptyStateProps) {
   return (
-    <div className="py-8 text-center">
-      <p className="text-sm font-medium text-text">{title}</p>
-      {description && <p className="mt-1 text-sm text-text-muted">{description}</p>}
+    <div className="space-y-1 py-8 text-center">
+      <Body weight="medium">{title}</Body>
+      {description && <Body tone="muted">{description}</Body>}
     </div>
   )
 }

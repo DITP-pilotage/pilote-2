@@ -1,5 +1,8 @@
 import type { ReactNode } from 'react'
 
+import { Body } from '@/components/ui/Body'
+import { Heading } from '@/components/ui/Heading'
+
 type SectionProps = {
   title?: ReactNode
   description?: ReactNode
@@ -15,8 +18,12 @@ export function Section({ title, description, toolbar, children }: SectionProps)
         <div className="space-y-3">
           {(title || description) && (
             <div className="space-y-1">
-              {title && <h2 className="text-base font-semibold text-text">{title}</h2>}
-              {description && <p className="text-sm text-text-muted">{description}</p>}
+              {title && (
+                <Heading as="h2" size="md">
+                  {title}
+                </Heading>
+              )}
+              {description && <Body tone="muted">{description}</Body>}
             </div>
           )}
           {toolbar && <div>{toolbar}</div>}

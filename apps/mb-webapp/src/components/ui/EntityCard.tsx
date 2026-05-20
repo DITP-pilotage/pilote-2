@@ -1,6 +1,8 @@
 import { Slot, Slottable } from '@radix-ui/react-slot'
 import type { ComponentProps, ReactNode } from 'react'
 
+import { Body } from '@/components/ui/Body'
+import { Heading } from '@/components/ui/Heading'
 import { clsxm } from '@/lib/clsxm'
 
 type EntityCardProps = Omit<ComponentProps<'div'>, 'title'> & {
@@ -26,12 +28,18 @@ export function EntityCard({
   return (
     <Comp className={clsxm(styles, className)} {...props}>
       {kicker && (
-        <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
+        <Body as="span" variant="kicker">
           {kicker}
-        </span>
+        </Body>
       )}
-      <h3 className="text-base font-semibold text-text group-hover:text-primary">{title}</h3>
-      {footer && <div className="mt-auto text-xs text-text-muted">{footer}</div>}
+      <Heading as="h3" size="md" className="group-hover:text-primary">
+        {title}
+      </Heading>
+      {footer && (
+        <Body as="div" variant="caption" className="mt-auto">
+          {footer}
+        </Body>
+      )}
       <Slottable>{children}</Slottable>
     </Comp>
   )

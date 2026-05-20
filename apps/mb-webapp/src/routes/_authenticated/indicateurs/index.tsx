@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
+import { Body } from '@/components/ui/Body'
 import { CardGrid } from '@/components/ui/CardGrid'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Page } from '@/components/ui/Page'
@@ -41,9 +42,9 @@ function IndicateursListComponent() {
       <Section
         toolbar={
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm text-text-muted">
+            <Body tone="muted">
               {data.total} indicateur{data.total > 1 ? 's' : ''}
-            </p>
+            </Body>
             <SearchField
               label="Rechercher un indicateur par nom"
               placeholder="Rechercher par nom…"

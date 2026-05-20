@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 
 import { fetchSharedMessage } from '@/api/sharedMessage'
+import { Body } from '@/components/ui/Body'
 import { Button } from '@/components/ui/Button'
 import { Page } from '@/components/ui/Page'
 import { Section } from '@/components/ui/Section'
@@ -49,11 +50,11 @@ function HomeComponent() {
       </Section>
 
       <Section title="Diagnostic TanStack Router">
-        <ul className="text-sm text-text">
-          <li>✓ Router initialisé</li>
-          <li>
+        <ul className="space-y-1">
+          <Body as="li">✓ Router initialisé</Body>
+          <Body as="li">
             État auth : <strong>{auth.isAuthenticated ? 'authentifié' : 'anonyme'}</strong>
-          </li>
+          </Body>
         </ul>
       </Section>
     </Page>

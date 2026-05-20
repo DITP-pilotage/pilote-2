@@ -1,5 +1,5 @@
 import { type ListIndicateursQuery } from '@pilote/mb-shared/indicateur'
-import { queryOptions } from '@tanstack/react-query'
+import { type QueryClient, queryOptions } from '@tanstack/react-query'
 
 import {
   fetchIndicateurById,
@@ -60,3 +60,21 @@ export const indicateurSyntheseIndividuQueryOptions = (indicateurId: string, ind
     queryFn: () => fetchSyntheseIndividus(indicateurId, { individus: [individuId] }),
     staleTime: DEFAULT_STALE_TIME,
   })
+
+export const prefetchIndicateurValeursForIndividu = async ({
+  queryClient,
+  indicateurId,
+  individuId,
+  referentielId,
+}: {
+  queryClient: QueryClient
+  indicateurId: string
+  individuId: string
+  referentielId: string
+}): Promise<void> => {
+  await Promise.all([
+    queryClient.fetchQuery(indicateurValeursQueryOptions(indicateurId, individuId)),
+    queryClient.fetchQuery(indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId)),
+    queryClient.fetchQuery(indicateurSyntheseIndividuQueryOptions(indicateurId, individuId)),
+  ])
+}
