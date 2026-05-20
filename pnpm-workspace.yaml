@@ -9,3 +9,4 @@ minimumReleaseAge: 20160
 # https://pnpm.io/settings#minimumreleaseageexclude
 minimumReleaseAgeExclude:
   - next
+  - "@next/*"
