@@ -93,7 +93,7 @@ export const AlbertDashboardTable = ({
 
   return (
     <div>
-      <div className="!overflow-x-auto !border !border-dsfr-grey-925 !rounded-md">
+      <div className="!overflow-x-auto !border !border-dsfr-grey-925 !rounded-md !bg-white">
         <table className="!w-full !text-sm">
           <thead className="!bg-dsfr-grey-1000">
             <tr>
