@@ -6,3 +6,7 @@ packages:
 # (mitigation supply-chain : laisse le temps de détecter un package compromis)
 # https://pnpm.io/settings#minimumreleaseage
 minimumReleaseAge: 20160
+# https://pnpm.io/settings#minimumreleaseageexclude
+minimumReleaseAgeExclude:
+  - next
+  - "@next/*"
