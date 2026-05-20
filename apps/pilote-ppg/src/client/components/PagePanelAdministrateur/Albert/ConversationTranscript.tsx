@@ -99,7 +99,8 @@ const BadgeEvaluation = ({
       )}
     >
       <span aria-hidden>{estPositif ? "👍" : "👎"}</span>
-      {estPositif ? "Évaluation positive" : "Évaluation négative"}
+      L&apos;utilisateur a évalué le résultat de ce prompt comme{" "}
+      {estPositif ? "positif" : "négatif"}
     </span>
   );
 };
@@ -122,9 +123,9 @@ export const ConversationTranscript = ({
         <article className="py-8 first:pt-0 last:pb-0" key={index}>
           {tour.question !== null && (
             <div className="flex flex-col items-end gap-1.5 mb-5">
-              <p className="max-w-[80%] bg-dsfr-blue-france-sun-113 text-white rounded-lg rounded-tr-sm px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap">
+              <div className="max-w-[80%] bg-dsfr-blue-france-sun-113 text-white rounded-lg rounded-tr-sm px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap">
                 {tour.question}
-              </p>
+              </div>
               {tour.llmCall && (
                 <BadgeEvaluation evaluation={tour.llmCall.evaluation} />
               )}
