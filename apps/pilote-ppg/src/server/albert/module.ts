@@ -1,3 +1,7 @@
+import { ListerConversationsAdminUseCase } from "@/server/albert/usecases/ListerConversationsAdminUseCase";
+import { RecupererConversationAdminUseCase } from "@/server/albert/usecases/RecupererConversationAdminUseCase";
+import { PrismaAdminAlbertRepository } from "@/server/albert/infrastructure/PrismaAdminAlbertRepository";
+import type { AdminAlbertRepository } from "@/server/albert/domain/AdminAlbertRepository";
 import { createGetTauxAvancementTerritoireTool } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import { createGetChantiersTool } from "@/server/albert/tools/getChantiers";
 import { createGetChantierIndicateursTool } from "@/server/albert/tools/getChantierIndicateurs";
@@ -49,6 +53,9 @@ type AlbertOwnCradle = {
   recupererConversationUseCase: RecupererConversationUseCase;
   supprimerConversationUseCase: SupprimerConversationUseCase;
   purgerConversationsExpireesUseCase: PurgerConversationsExpireesUseCase;
+  adminAlbertRepository: AdminAlbertRepository;
+  listerConversationsAdminUseCase: ListerConversationsAdminUseCase;
+  recupererConversationAdminUseCase: RecupererConversationAdminUseCase;
 };
 
 type AlbertCradle = AlbertOwnCradle & AlbertImports;
@@ -85,6 +92,13 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       supprimerConversationUseCase: asModuleClass(SupprimerConversationUseCase),
       purgerConversationsExpireesUseCase: asModuleClass(
         PurgerConversationsExpireesUseCase,
+      ),
+      adminAlbertRepository: asModuleClass(PrismaAdminAlbertRepository),
+      listerConversationsAdminUseCase: asModuleClass(
+        ListerConversationsAdminUseCase,
+      ),
+      recupererConversationAdminUseCase: asModuleClass(
+        RecupererConversationAdminUseCase,
       ),
     } satisfies VerifyCradle<AlbertOwnCradle>);
   },
