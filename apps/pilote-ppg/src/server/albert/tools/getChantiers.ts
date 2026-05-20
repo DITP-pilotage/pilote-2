@@ -51,8 +51,12 @@ type GetChantiersInput = z.infer<typeof getChantiersInputSchema>;
 
 export type GetChantiersOutput = {
   resultats: GetChantiersResult[];
+  non_applicable?: { raison: string };
   _output_instructions: string;
 };
+
+const NON_APPLICABLE_EN_RETARD_NAT_FR =
+  "L'analyse des chantiers en retard repose sur la comparaison du taux d'avancement de chaque chantier au taux médian observé sur les autres territoires. Elle n'est donc pas calculable au niveau national (NAT-FR), qui constitue l'agrégat de référence et n'a pas de médiane comparative.";
 
 function getOutputInstructions(input: GetChantiersInput): string {
   if (input.view === "en_retard") {
@@ -117,6 +121,19 @@ Quand include_sous_territoires=true, retourne aussi les chantiers de chaque sous
           throw new Error(
             `Accès non autorisé au territoire ${input.territoire_code}`,
           );
+        }
+
+        if (
+          input.territoire_code === "NAT-FR" &&
+          input.view === "en_retard" &&
+          !input.include_sous_territoires
+        ) {
+          return {
+            resultats: [],
+            non_applicable: { raison: NON_APPLICABLE_EN_RETARD_NAT_FR },
+            _output_instructions:
+              "L'analyse demandée n'est pas applicable au périmètre interrogé. Explique-le clairement à l'utilisateur en reprenant fidèlement la raison fournie dans non_applicable.raison. Ne présente pas de liste vide ni ne conclus 'aucun chantier en retard'.",
+          };
         }
 
         const filteredChantierIds = input.chantier_ids?.filter((id) =>
