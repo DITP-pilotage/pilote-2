@@ -255,10 +255,7 @@ const main = async () => {
     }
   }
 
-  const liaisonsCount = indicateurReferentielsSeed.reduce(
-    (acc, item) => acc + item.liens.length,
-    0,
-  )
+  const liaisonsCount = indicateurReferentielsSeed.reduce((acc, item) => acc + item.liens.length, 0)
 
   for (const item of relationsSeed) {
     const parent = await prisma.individu.findUniqueOrThrow({

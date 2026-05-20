@@ -1,4 +1,7 @@
-import { type IndicateurReferentielLink, type UpsertIndicateurBody } from '@pilote/mb-shared/indicateur'
+import {
+  type IndicateurReferentielLink,
+  type UpsertIndicateurBody,
+} from '@pilote/mb-shared/indicateur'
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 

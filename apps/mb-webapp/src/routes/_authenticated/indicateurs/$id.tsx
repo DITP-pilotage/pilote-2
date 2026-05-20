@@ -46,11 +46,12 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     const { queryClient } = context
     const indicateur = await loadIndicateur({ queryClient, indicateurId: params.id })
 
-    if (indicateur.referentielIds.length === 0) return { indicateur }
+    const referentielIds = indicateur.referentiels.map((link) => link.referentielId)
+    if (referentielIds.length === 0) return { indicateur }
 
     const individus = await loadIndividusFromReferentiels({
       queryClient,
-      referentielIds: indicateur.referentielIds,
+      referentielIds,
     })
     if (individus.length === 0) return { indicateur }
 
@@ -95,7 +96,7 @@ function IndicateurDetailComponent() {
     </BackLink>
   )
 
-  if (indicateur.referentielIds.length === 0) {
+  if (indicateur.referentiels.length === 0) {
     return (
       <Page title={indicateur.nom} back={back}>
         <Section>
