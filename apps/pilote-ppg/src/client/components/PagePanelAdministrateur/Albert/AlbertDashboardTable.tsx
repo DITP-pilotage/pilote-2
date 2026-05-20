@@ -57,11 +57,14 @@ const ColonneTri = ({
   );
 };
 
-const Pastille = ({ actif }: { actif: boolean }) => (
+const Compteur = ({ valeur }: { valeur: number }) => (
   <span
-    className={clsxm(actif ? "!text-dsfr-success-425" : "!text-dsfr-grey-625")}
+    className={clsxm(
+      "!text-sm !font-medium",
+      valeur > 0 ? "!text-dsfr-grey-50" : "!text-dsfr-grey-625",
+    )}
   >
-    {actif ? "✓" : "—"}
+    {valeur}
   </span>
 );
 
@@ -122,7 +125,7 @@ export const AlbertDashboardTable = ({
             {conversations.map((conversation) => (
               <tr
                 className={clsxm(
-                  "!border-t !border-dsfr-grey-925 !cursor-pointer hover:!bg-dsfr-grey-1000",
+                  "!border-t !border-dsfr-grey-925 !cursor-pointer even:!bg-dsfr-grey-1000 hover:!bg-dsfr-grey-900",
                   enChargement && "!opacity-60",
                 )}
                 key={conversation.id}
@@ -159,13 +162,13 @@ export const AlbertDashboardTable = ({
                   {formatterDateCourte(conversation.updatedAt)}
                 </td>
                 <td className="!px-4 !py-3 !text-center">
-                  <Pastille actif={conversation.aPouce} />
+                  <Compteur valeur={conversation.nbPouce} />
                 </td>
                 <td className="!px-4 !py-3 !text-center">
-                  <Pastille actif={conversation.aPouceBas} />
+                  <Compteur valeur={conversation.nbPouceBas} />
                 </td>
                 <td className="!px-4 !py-3 !text-center">
-                  <Pastille actif={conversation.aCommentaire} />
+                  <Compteur valeur={conversation.nbCommentaire} />
                 </td>
               </tr>
             ))}

@@ -1,7 +1,8 @@
 import { $Enums } from "@prisma/client";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
-import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMessageText";
+import { AssistantMessage } from "@/components/_commons/ChatUI/AssistantMessage";
+import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { clsxm } from "@/utils/clsxm";
 
 type DetailConversation = NonNullable<
@@ -11,28 +12,21 @@ type DetailConversation = NonNullable<
 >;
 type LlmCall = DetailConversation["llmCalls"][number];
 
-type MessagePart = { type: string; text?: string };
-type UIMessageMinimal = {
-  id?: string;
-  role: "user" | "assistant" | "system";
-  parts: MessagePart[];
-};
-
 type Tour = {
   question: string | null;
-  reponse: string | null;
+  reponse: PiloteUIMessage | null;
   llmCall: LlmCall | undefined;
 };
 
-const extraireTexte = (message: UIMessageMinimal): string =>
+const extraireTexteUser = (message: PiloteUIMessage): string =>
   message.parts
     .filter((part) => part.type === "text")
-    .map((part) => part.text ?? "")
+    .map((part) => (part.type === "text" ? part.text : ""))
     .join("\n")
     .trim();
 
 const grouperParTour = (
-  messages: UIMessageMinimal[],
+  messages: PiloteUIMessage[],
   llmCalls: LlmCall[],
 ): Tour[] => {
   const tours: Tour[] = [];
@@ -48,11 +42,11 @@ const grouperParTour = (
           llmCall: undefined,
         });
       }
-      questionEnCours = extraireTexte(message);
+      questionEnCours = extraireTexteUser(message);
     } else if (message.role === "assistant") {
       tours.push({
         question: questionEnCours,
-        reponse: extraireTexte(message),
+        reponse: message,
         llmCall: llmCalls[indexAssistant],
       });
       indexAssistant += 1;
@@ -115,8 +109,7 @@ export const ConversationTranscript = ({
   messages,
   llmCalls,
 }: ConversationTranscriptProps) => {
-  const messagesNormalises = messages as unknown as UIMessageMinimal[];
-  const tours = grouperParTour(messagesNormalises, llmCalls);
+  const tours = grouperParTour(messages, llmCalls);
 
   return (
     <div className="divide-y divide-dsfr-grey-925">
@@ -134,8 +127,8 @@ export const ConversationTranscript = ({
           )}
 
           {tour.reponse !== null && (
-            <div className="mb-5 text-sm text-dsfr-grey-50">
-              <AssistantMessageText text={tour.reponse} />
+            <div className="mb-5">
+              <AssistantMessage message={tour.reponse} isStreaming={false} />
             </div>
           )}
 

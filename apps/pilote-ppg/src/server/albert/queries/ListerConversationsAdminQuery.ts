@@ -31,9 +31,9 @@ export type ConversationAdminResume = {
   };
   createdAt: Date;
   updatedAt: Date;
-  aPouce: boolean;
-  aPouceBas: boolean;
-  aCommentaire: boolean;
+  nbPouce: number;
+  nbPouceBas: number;
+  nbCommentaire: number;
 };
 
 export type ListerConversationsAdminResult = {
@@ -53,9 +53,9 @@ type LigneListe = {
   profil_nom: string;
   created_at: Date;
   updated_at: Date;
-  a_pouce: boolean;
-  a_pouce_bas: boolean;
-  a_commentaire: boolean;
+  nb_pouce: bigint;
+  nb_pouce_bas: bigint;
+  nb_commentaire: bigint;
   total: bigint;
 };
 
@@ -85,7 +85,16 @@ export class ListerConversationsAdminQuery {
     })();
 
     const lignes = await db.$queryRaw<LigneListe[]>(Prisma.sql`
-      WITH base AS (
+      WITH compteurs AS (
+        SELECT
+          lc.chat_id,
+          COUNT(*) FILTER (WHERE lc.evaluation = 'POSITIVE') AS nb_pouce,
+          COUNT(*) FILTER (WHERE lc.evaluation = 'NEGATIVE') AS nb_pouce_bas,
+          COUNT(*) FILTER (WHERE lc.commentaire IS NOT NULL) AS nb_commentaire
+        FROM llm_calls lc
+        GROUP BY lc.chat_id
+      ),
+      base AS (
         SELECT
           c.id,
           c.titre,
@@ -102,21 +111,13 @@ export class ListerConversationsAdminQuery {
           p.nom AS profil_nom,
           c.created_at,
           c.updated_at,
-          EXISTS (
-            SELECT 1 FROM llm_calls lc
-            WHERE lc.chat_id = c.id::text AND lc.evaluation = 'POSITIVE'
-          ) AS a_pouce,
-          EXISTS (
-            SELECT 1 FROM llm_calls lc
-            WHERE lc.chat_id = c.id::text AND lc.evaluation = 'NEGATIVE'
-          ) AS a_pouce_bas,
-          EXISTS (
-            SELECT 1 FROM llm_calls lc
-            WHERE lc.chat_id = c.id::text AND lc.commentaire IS NOT NULL
-          ) AS a_commentaire
+          COALESCE(co.nb_pouce, 0) AS nb_pouce,
+          COALESCE(co.nb_pouce_bas, 0) AS nb_pouce_bas,
+          COALESCE(co.nb_commentaire, 0) AS nb_commentaire
         FROM chat_conversation c
         INNER JOIN utilisateur u ON u.id = c.utilisateur_id
         INNER JOIN profil p ON p.code = u.profil_code
+        LEFT JOIN compteurs co ON co.chat_id = c.id::text
       )
       SELECT
         b.id,
@@ -130,18 +131,18 @@ export class ListerConversationsAdminQuery {
         b.profil_nom,
         b.created_at,
         b.updated_at,
-        b.a_pouce,
-        b.a_pouce_bas,
-        b.a_commentaire,
+        b.nb_pouce,
+        b.nb_pouce_bas,
+        b.nb_commentaire,
         COUNT(*) OVER () AS total
       FROM base b
       WHERE
         (${recherchePattern}::text IS NULL
           OR LOWER(b.titre) LIKE ${recherchePattern}
           OR b.premier_message_user_complet LIKE ${recherchePattern})
-        AND (${params.avecPouce ?? false}::boolean = false OR b.a_pouce = true)
-        AND (${params.avecPouceBas ?? false}::boolean = false OR b.a_pouce_bas = true)
-        AND (${params.avecCommentaire ?? false}::boolean = false OR b.a_commentaire = true)
+        AND (${params.avecPouce ?? false}::boolean = false OR b.nb_pouce > 0)
+        AND (${params.avecPouceBas ?? false}::boolean = false OR b.nb_pouce_bas > 0)
+        AND (${params.avecCommentaire ?? false}::boolean = false OR b.nb_commentaire > 0)
         AND (${profilCodesArray}::text[] IS NULL OR b.profil_code = ANY(${profilCodesArray}::text[]))
       ORDER BY ${orderBy}
       LIMIT ${params.taillePage}
@@ -163,9 +164,9 @@ export class ListerConversationsAdminQuery {
       },
       createdAt: ligne.created_at,
       updatedAt: ligne.updated_at,
-      aPouce: ligne.a_pouce,
-      aPouceBas: ligne.a_pouce_bas,
-      aCommentaire: ligne.a_commentaire,
+      nbPouce: Number(ligne.nb_pouce),
+      nbPouceBas: Number(ligne.nb_pouce_bas),
+      nbCommentaire: Number(ligne.nb_commentaire),
     }));
 
     return { total, items };

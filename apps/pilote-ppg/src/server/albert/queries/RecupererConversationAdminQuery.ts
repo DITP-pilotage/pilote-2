@@ -1,9 +1,21 @@
 import { $Enums, Prisma } from "@prisma/client";
 import type { Inject } from "@/server/albert/module";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
-import type { ConversationAdminResume } from "@/server/albert/queries/ListerConversationsAdminQuery";
 
-export type ConversationAdminDetail = ConversationAdminResume & {
+export type ConversationAdminDetail = {
+  id: string;
+  titre: string;
+  extraitPremierMessageUser: string;
+  utilisateur: {
+    id: string;
+    prenom: string;
+    nom: string;
+    email: string;
+    profilCode: string;
+    profilNom: string;
+  };
+  createdAt: Date;
+  updatedAt: Date;
   messages: PiloteUIMessage[];
   contexte: Record<string, unknown> | null;
   llmCalls: Array<{
@@ -28,9 +40,6 @@ type LigneDetail = {
   profil_nom: string;
   created_at: Date;
   updated_at: Date;
-  a_pouce: boolean;
-  a_pouce_bas: boolean;
-  a_commentaire: boolean;
 };
 
 type LigneLlmCall = {
@@ -63,10 +72,7 @@ export class RecupererConversationAdminQuery {
         p.code AS profil_code,
         p.nom AS profil_nom,
         c.created_at,
-        c.updated_at,
-        EXISTS (SELECT 1 FROM llm_calls lc WHERE lc.chat_id = c.id::text AND lc.evaluation = 'POSITIVE') AS a_pouce,
-        EXISTS (SELECT 1 FROM llm_calls lc WHERE lc.chat_id = c.id::text AND lc.evaluation = 'NEGATIVE') AS a_pouce_bas,
-        EXISTS (SELECT 1 FROM llm_calls lc WHERE lc.chat_id = c.id::text AND lc.commentaire IS NOT NULL) AS a_commentaire
+        c.updated_at
       FROM chat_conversation c
       INNER JOIN utilisateur u ON u.id = c.utilisateur_id
       INNER JOIN profil p ON p.code = u.profil_code
@@ -98,9 +104,6 @@ export class RecupererConversationAdminQuery {
       },
       createdAt: ligne.created_at,
       updatedAt: ligne.updated_at,
-      aPouce: ligne.a_pouce,
-      aPouceBas: ligne.a_pouce_bas,
-      aCommentaire: ligne.a_commentaire,
       messages: ligne.messages as unknown as PiloteUIMessage[],
       contexte: ligne.contexte as Record<string, unknown> | null,
       llmCalls: llmCallsLignes.map((row) => ({

@@ -78,9 +78,9 @@ describe("ListerConversationsAdminQuery", () => {
             nom: "Martin",
             prenom: "Bob",
           }),
-          aPouce: false,
-          aPouceBas: false,
-          aCommentaire: false,
+          nbPouce: 0,
+          nbPouceBas: 0,
+          nbCommentaire: 0,
         }),
         expect.objectContaining({
           id: idConvA,
@@ -97,7 +97,7 @@ describe("ListerConversationsAdminQuery", () => {
   );
 
   it(
-    "calcule aPouce / aPouceBas / aCommentaire depuis llm_calls",
+    "calcule nbPouce / nbPouceBas / nbCommentaire depuis llm_calls",
     createIntegrationTest(async (tx) => {
       // Given
       const utilisateur = await fixtures.utilisateur({});
@@ -112,6 +112,13 @@ describe("ListerConversationsAdminQuery", () => {
       });
       await tx.llm_calls.createMany({
         data: [
+          {
+            chat_id: idConv,
+            utilisateur_id: utilisateur.id,
+            transcript: {},
+            model: "openweight-large",
+            evaluation: "POSITIVE",
+          },
           {
             chat_id: idConv,
             utilisateur_id: utilisateur.id,
@@ -141,9 +148,9 @@ describe("ListerConversationsAdminQuery", () => {
       expect(result.items).toEqual([
         expect.objectContaining({
           id: idConv,
-          aPouce: true,
-          aPouceBas: true,
-          aCommentaire: true,
+          nbPouce: 2,
+          nbPouceBas: 1,
+          nbCommentaire: 1,
         }),
       ]);
     }),
