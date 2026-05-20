@@ -21,7 +21,7 @@ import {
   type UtilisateurModel,
   type ValeurAvancementModel,
 } from '@/generated/prisma/models'
-import { PermissionAction } from '@/generated/prisma/enums'
+import { PermissionAction, type FonctionAgregation } from '@/generated/prisma/enums'
 
 // --- Indicateur --------------------------------------------------------------
 
@@ -163,11 +163,13 @@ async function individu(
 type IndicateurReferentielOverrides = {
   indicateur: IndicateurOverrides
   referentiel: ReferentielOverrides
+  fonctionAgregation?: FonctionAgregation
 }
 
 const upsertIndicateurReferentiel = async (o: IndicateurReferentielOverrides) => {
   const indicateurRow = await upsertIndicateur(o.indicateur)
   const referentielRow = await upsertReferentiel(o.referentiel)
+  const fonctionAgregation = o.fonctionAgregation ?? 'SUM'
   return db().indicateurReferentiel.upsert({
     where: {
       indicateurId_referentielId: {
@@ -175,8 +177,12 @@ const upsertIndicateurReferentiel = async (o: IndicateurReferentielOverrides) =>
         referentielId: referentielRow.id,
       },
     },
-    update: {},
-    create: { indicateurId: indicateurRow.id, referentielId: referentielRow.id },
+    update: { fonctionAgregation },
+    create: {
+      indicateurId: indicateurRow.id,
+      referentielId: referentielRow.id,
+      fonctionAgregation,
+    },
   })
 }
 
