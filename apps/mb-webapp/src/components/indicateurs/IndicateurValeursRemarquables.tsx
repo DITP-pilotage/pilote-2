@@ -3,13 +3,11 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { StatCard } from '@/components/ui/StatCard'
 import { StatGrid } from '@/components/ui/StatGrid'
+import { formatDateFr, formatNumberFr, formatVariationFr } from '@/lib/format'
 import {
   indicateurSyntheseIndividuQueryOptions,
   indicateurValeursQueryOptions,
 } from '@/queries/indicateurs'
-
-const numberFormatter = new Intl.NumberFormat('fr-FR')
-const variationFormatter = new Intl.NumberFormat('fr-FR', { signDisplay: 'exceptZero' })
 
 const derniereValeurFromItems = (
   items: ReadonlyArray<{ date: string; valeur: number }>,
@@ -48,17 +46,13 @@ export function IndicateurValeursRemarquables({
       <StatCard
         label="Valeur la plus récente"
         tone={derniereValeur ? 'neutral' : 'muted'}
-        value={derniereValeur ? numberFormatter.format(derniereValeur.valeur) : '—'}
-        caption={
-          derniereValeur
-            ? `au ${new Date(derniereValeur.date).toLocaleDateString('fr-FR')}`
-            : undefined
-        }
+        value={derniereValeur ? formatNumberFr(derniereValeur.valeur) : '—'}
+        caption={derniereValeur ? `au ${formatDateFr(derniereValeur.date)}` : undefined}
       />
       <StatCard
         label="Variation depuis la dernière MAJ"
         tone={variationTone(variation)}
-        value={variation === null ? '—' : variationFormatter.format(variation)}
+        value={variation === null ? '—' : formatVariationFr(variation)}
       />
     </StatGrid>
   )

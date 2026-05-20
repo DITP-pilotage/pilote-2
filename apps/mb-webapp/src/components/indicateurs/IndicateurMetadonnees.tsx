@@ -1,4 +1,5 @@
 import { DescriptionList } from '@/components/ui/DescriptionList'
+import { formatDateTimeFr } from '@/lib/format'
 
 type IndicateurMetadonneesProps = {
   indicateur: {
@@ -15,10 +16,10 @@ export function IndicateurMetadonnees({ indicateur }: IndicateurMetadonneesProps
       <DescriptionList.Item label="ID">{indicateur.id}</DescriptionList.Item>
       <DescriptionList.Item label="Nom">{indicateur.nom}</DescriptionList.Item>
       <DescriptionList.Item label="Créé le">
-        {new Date(indicateur.createdAt).toLocaleString('fr-FR')}
+        {formatDateTimeFr(indicateur.createdAt)}
       </DescriptionList.Item>
       <DescriptionList.Item label="Mis à jour le">
-        {new Date(indicateur.updatedAt).toLocaleString('fr-FR')}
+        {formatDateTimeFr(indicateur.updatedAt)}
       </DescriptionList.Item>
     </DescriptionList>
   )
