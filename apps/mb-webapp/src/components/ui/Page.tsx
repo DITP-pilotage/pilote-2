@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { Body } from '@/components/ui/Body'
-import { Heading } from '@/components/ui/Heading'
+import { Heading, Text } from '@/components/ui/Typography'
 
 type PageProps = {
   title: ReactNode
@@ -20,7 +19,7 @@ export function Page({ title, description, back, actions, children }: PageProps)
           <Heading as="h1" size="lg">
             {title}
           </Heading>
-          {description && <Body tone="muted">{description}</Body>}
+          {description && <Text tone="muted">{description}</Text>}
         </div>
         {actions && <div className="flex items-center gap-2">{actions}</div>}
       </header>

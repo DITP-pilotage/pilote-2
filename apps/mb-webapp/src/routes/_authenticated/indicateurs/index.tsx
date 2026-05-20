@@ -5,13 +5,13 @@ import { z } from 'zod'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
-import { Body } from '@/components/ui/Body'
 import { CardGrid } from '@/components/ui/CardGrid'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Page } from '@/components/ui/Page'
 import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@/components/ui/Pagination'
 import { SearchField } from '@/components/ui/SearchField'
 import { Section } from '@/components/ui/Section'
+import { Text } from '@/components/ui/Typography'
 import { indicateursQueryOptions, loadIndicateurs } from '@/queries/indicateurs'
 
 const indicateursSearchSchema = z.object({
@@ -42,9 +42,9 @@ function IndicateursListComponent() {
       <Section
         toolbar={
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <Body tone="muted">
+            <Text tone="muted">
               {data.total} indicateur{data.total > 1 ? 's' : ''}
-            </Body>
+            </Text>
             <SearchField
               label="Rechercher un indicateur par nom"
               placeholder="Rechercher par nom…"

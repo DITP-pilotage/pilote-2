@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { Body } from '@/components/ui/Body'
-import { Heading } from '@/components/ui/Heading'
+import { Heading, Text } from '@/components/ui/Typography'
 
 type SectionProps = {
   title?: ReactNode
@@ -23,7 +22,7 @@ export function Section({ title, description, toolbar, children }: SectionProps)
                   {title}
                 </Heading>
               )}
-              {description && <Body tone="muted">{description}</Body>}
+              {description && <Text tone="muted">{description}</Text>}
             </div>
           )}
           {toolbar && <div>{toolbar}</div>}

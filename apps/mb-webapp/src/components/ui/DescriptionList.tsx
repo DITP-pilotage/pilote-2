@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { Body } from '@/components/ui/Body'
+import { Text } from '@/components/ui/Typography'
 
 function Root({ children }: { children: ReactNode }) {
   return (
@@ -13,10 +13,10 @@ function Root({ children }: { children: ReactNode }) {
 function Item({ label, children }: { label: ReactNode; children: ReactNode }) {
   return (
     <>
-      <Body as="dt" tone="muted">
+      <Text as="dt" tone="muted">
         {label}
-      </Body>
-      <Body as="dd">{children}</Body>
+      </Text>
+      <Text as="dd">{children}</Text>
     </>
   )
 }
