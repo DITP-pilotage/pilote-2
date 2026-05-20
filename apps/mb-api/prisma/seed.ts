@@ -180,17 +180,52 @@ const main = async () => {
 
   const indicateurReferentielsSeed: ReadonlyArray<{
     indicateurPublicId: string
-    referentielPublicIds: ReadonlyArray<string>
+    liens: ReadonlyArray<{ referentielPublicId: string; fonctionAgregation: 'SUM' | 'NONE' }>
   }> = [
-    { indicateurPublicId: 'IND-001', referentielPublicIds: ['REF-DEPT', 'REF-NAT'] },
-    { indicateurPublicId: 'IND-002', referentielPublicIds: ['REF-DEPT', 'REF-REG'] },
-    { indicateurPublicId: 'IND-003', referentielPublicIds: ['REF-REG', 'REF-DEPT'] },
-    { indicateurPublicId: 'IND-004', referentielPublicIds: ['REF-DEPT'] },
-    { indicateurPublicId: 'IND-005', referentielPublicIds: ['REF-REG', 'REF-NAT'] },
-    // Indicateurs liés à REF-EMPTY pour exercer le fallback "aucun individu disponible".
-    { indicateurPublicId: 'IND-006', referentielPublicIds: ['REF-EMPTY'] },
-    { indicateurPublicId: 'IND-007', referentielPublicIds: ['REF-EMPTY'] },
-    { indicateurPublicId: 'IND-008', referentielPublicIds: ['REF-EMPTY'] },
+    {
+      indicateurPublicId: 'IND-001',
+      liens: [
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
+      ],
+    },
+    {
+      indicateurPublicId: 'IND-002',
+      liens: [
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'SUM' },
+        { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' },
+      ],
+    },
+    {
+      indicateurPublicId: 'IND-003',
+      liens: [
+        { referentielPublicId: 'REF-REG', fonctionAgregation: 'NONE' },
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
+      ],
+    },
+    {
+      indicateurPublicId: 'IND-004',
+      liens: [{ referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' }],
+    },
+    {
+      indicateurPublicId: 'IND-005',
+      liens: [
+        { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' },
+        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'SUM' },
+      ],
+    },
+    {
+      indicateurPublicId: 'IND-006',
+      liens: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
+    },
+    {
+      indicateurPublicId: 'IND-007',
+      liens: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
+    },
+    {
+      indicateurPublicId: 'IND-008',
+      liens: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
+    },
   ]
 
   for (const item of indicateurReferentielsSeed) {
@@ -198,9 +233,9 @@ const main = async () => {
       where: { publicId: item.indicateurPublicId },
       select: { id: true },
     })
-    for (const referentielPublicId of item.referentielPublicIds) {
+    for (const lien of item.liens) {
       const referentiel = await prisma.referentiel.findUniqueOrThrow({
-        where: { publicId: referentielPublicId },
+        where: { publicId: lien.referentielPublicId },
         select: { id: true },
       })
       await prisma.indicateurReferentiel.upsert({
@@ -210,14 +245,18 @@ const main = async () => {
             referentielId: referentiel.id,
           },
         },
-        update: {},
-        create: { indicateurId: indicateur.id, referentielId: referentiel.id },
+        update: { fonctionAgregation: lien.fonctionAgregation },
+        create: {
+          indicateurId: indicateur.id,
+          referentielId: referentiel.id,
+          fonctionAgregation: lien.fonctionAgregation,
+        },
       })
     }
   }
 
   const liaisonsCount = indicateurReferentielsSeed.reduce(
-    (acc, item) => acc + item.referentielPublicIds.length,
+    (acc, item) => acc + item.liens.length,
     0,
   )
 

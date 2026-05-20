@@ -63,10 +63,18 @@ model Indicateur {
   @@map("indicateur")
 }
 
+enum FonctionAgregation {
+  SUM
+  NONE
+
+  @@map("fonction_agregation_enum")
+}
+
 model IndicateurReferentiel {
-  indicateurId  String   @map("indicateur_id")  @db.Uuid
-  referentielId String   @map("referentiel_id") @db.Uuid
-  createdAt     DateTime @default(now())        @map("created_at")
+  indicateurId       String             @map("indicateur_id")  @db.Uuid
+  referentielId      String             @map("referentiel_id") @db.Uuid
+  fonctionAgregation FonctionAgregation @map("fonction_agregation")
+  createdAt          DateTime           @default(now())        @map("created_at")
 
   indicateur  Indicateur  @relation(fields: [indicateurId],  references: [id], onDelete: Cascade)
   referentiel Referentiel @relation(fields: [referentielId], references: [id], onDelete: Cascade)
