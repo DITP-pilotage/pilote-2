@@ -133,21 +133,17 @@ export const ConversationTranscript = ({
           </header>
 
           {tour.question !== null && (
-            <section className="mb-6">
-              <Label>Question utilisateur</Label>
-              <p className="text-sm text-dsfr-grey-50 whitespace-pre-wrap leading-relaxed">
+            <div className="flex justify-end mb-5">
+              <p className="max-w-[80%] bg-dsfr-blue-france-sun-113 text-white rounded-lg rounded-tr-sm px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap">
                 {tour.question}
               </p>
-            </section>
+            </div>
           )}
 
           {tour.reponse !== null && (
-            <section className="mb-6">
-              <Label>Réponse Albert</Label>
-              <div className="text-sm text-dsfr-grey-50">
-                <AssistantMessageText text={tour.reponse} />
-              </div>
-            </section>
+            <div className="mb-5 text-sm text-dsfr-grey-50">
+              <AssistantMessageText text={tour.reponse} />
+            </div>
           )}
 
           {tour.llmCall?.commentaire && (
