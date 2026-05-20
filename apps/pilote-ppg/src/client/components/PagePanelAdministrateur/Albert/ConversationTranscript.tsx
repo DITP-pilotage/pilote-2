@@ -117,26 +117,17 @@ export const ConversationTranscript = ({
   const tours = grouperParTour(messagesNormalises, llmCalls);
 
   return (
-    <div className="space-y-8">
+    <div className="divide-y divide-dsfr-grey-925">
       {tours.map((tour, index) => (
-        <article
-          className="border-l-2 border-dsfr-grey-925 pl-6 relative"
-          key={index}
-        >
-          <header className="flex items-baseline justify-between gap-4 mb-5">
-            <h3 className="text-sm font-bold text-dsfr-blue-france-sun-113 uppercase tracking-wider">
-              Tour {index + 1}
-            </h3>
-            {tour.llmCall && (
-              <BadgeEvaluation evaluation={tour.llmCall.evaluation} />
-            )}
-          </header>
-
+        <article className="py-8 first:pt-0 last:pb-0" key={index}>
           {tour.question !== null && (
-            <div className="flex justify-end mb-5">
+            <div className="flex flex-col items-end gap-1.5 mb-5">
               <p className="max-w-[80%] bg-dsfr-blue-france-sun-113 text-white rounded-lg rounded-tr-sm px-4 py-2.5 text-sm leading-relaxed whitespace-pre-wrap">
                 {tour.question}
               </p>
+              {tour.llmCall && (
+                <BadgeEvaluation evaluation={tour.llmCall.evaluation} />
+              )}
             </div>
           )}
 
