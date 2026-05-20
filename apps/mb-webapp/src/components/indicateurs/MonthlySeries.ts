@@ -13,9 +13,13 @@ export type MonthlySeries = {
   defaultWindow: { startIndex: number; endIndex: number }
 }
 
+// Encode un mois sur un seul entier pour pouvoir l'additionner / soustraire sans
+// gérer manuellement le débordement d'année.
 const ordinalOf = ({ year, monthIndex }: { year: number; monthIndex: number }): number =>
   year * 12 + monthIndex
 
+// Inverse de `ordinalOf`. La double modulo `((x % 12) + 12) % 12` garantit un
+// `monthIndex` positif même pour des ordinaux négatifs (théoriques).
 const monthFromOrdinal = (ordinal: number): Month => {
   const year = Math.floor(ordinal / 12)
   const monthIndex = ((ordinal % 12) + 12) % 12
@@ -27,6 +31,8 @@ const monthFromOrdinal = (ordinal: number): Month => {
   }
 }
 
+// Lecture en UTC pour éviter qu'un fuseau négatif fasse glisser une date du
+// 1er du mois sur le mois précédent.
 const monthFromIsoDate = (isoDate: string): Month => {
   const parsed = new Date(isoDate)
   return monthFromOrdinal(
@@ -34,11 +40,14 @@ const monthFromIsoDate = (isoDate: string): Month => {
   )
 }
 
+// Fallback d'ancre quand l'indicateur n'a aucune valeur saisie.
 const currentMonth = (): Month => {
   const now = new Date()
   return monthFromOrdinal(ordinalOf({ year: now.getUTCFullYear(), monthIndex: now.getUTCMonth() }))
 }
 
+// Un même mois peut contenir plusieurs valeurs ; on conserve celle dont la date
+// est la plus récente dans le mois.
 const latestValueByMonthKey = (
   valeurs: ReadonlyArray<ValeurDateApiModel>,
 ): Map<string, number> => {
@@ -55,6 +64,7 @@ const latestValueByMonthKey = (
   return valueByKey
 }
 
+// Bornes temporelles de l'historique. `undefined` signifie « aucune valeur ».
 const monthBounds = (
   valeurs: ReadonlyArray<ValeurDateApiModel>,
 ): { earliest: Month | undefined; latest: Month | undefined } => {
@@ -70,6 +80,8 @@ const monthBounds = (
   }
 }
 
+// Génère la séquence continue de mois entre deux bornes (incluses), pour que
+// l'axe X reste régulier même si certains mois n'ont pas de valeur.
 const enumerateMonths = ({ start, end }: { start: Month; end: Month }): Month[] => {
   const startOrdinal = ordinalOf(start)
   const endOrdinal = ordinalOf(end)
@@ -80,6 +92,12 @@ const enumerateMonths = ({ start, end }: { start: Month; end: Month }): Month[] 
   return months
 }
 
+// Construit la série mensuelle consommée par le chart :
+// - ancre = mois de la dernière valeur, ou mois courant à défaut ;
+// - série = du plus ancien mois disponible (ou ancre−(windowSize−1) si pas
+//   d'historique antérieur) jusqu'à l'ancre, sans trou ;
+// - defaultWindow = derniers `windowSize` mois pour cadrer l'affichage initial,
+//   le reste reste accessible via le slider ECharts.
 export const buildMonthlySeries = ({
   valeurs,
   windowSize,
