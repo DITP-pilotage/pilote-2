@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { $Enums, Prisma } from "@prisma/client";
 import type { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import type {
@@ -9,7 +9,7 @@ import type {
   ListerConversationsResult,
 } from "@/server/albert/domain/AdminAlbertRepository";
 
-type LigneListe = {
+type LigneBaseConversation = {
   id: string;
   titre: string;
   extrait_premier_message_user: string | null;
@@ -24,17 +24,17 @@ type LigneListe = {
   a_pouce: boolean;
   a_pouce_bas: boolean;
   a_commentaire: boolean;
-  total: bigint;
 };
 
-type LigneDetail = LigneListe & {
+type LigneListe = LigneBaseConversation & { total: bigint };
+type LigneDetail = LigneBaseConversation & {
   messages: unknown;
   contexte: unknown;
 };
 
 type LigneLlmCall = {
   id: string;
-  evaluation: "POSITIVE" | "NEGATIVE" | null;
+  evaluation: $Enums.llm_call_evaluation | null;
   commentaire: string | null;
   created_at: Date;
 };
@@ -168,8 +168,7 @@ export class PrismaAdminAlbertRepository implements AdminAlbertRepository {
         c.updated_at,
         EXISTS (SELECT 1 FROM llm_calls lc WHERE lc.chat_id = c.id::text AND lc.evaluation = 'POSITIVE') AS a_pouce,
         EXISTS (SELECT 1 FROM llm_calls lc WHERE lc.chat_id = c.id::text AND lc.evaluation = 'NEGATIVE') AS a_pouce_bas,
-        EXISTS (SELECT 1 FROM llm_calls lc WHERE lc.chat_id = c.id::text AND lc.commentaire IS NOT NULL) AS a_commentaire,
-        0::bigint AS total
+        EXISTS (SELECT 1 FROM llm_calls lc WHERE lc.chat_id = c.id::text AND lc.commentaire IS NOT NULL) AS a_commentaire
       FROM chat_conversation c
       INNER JOIN utilisateur u ON u.id = c.utilisateur_id
       INNER JOIN profil p ON p.code = u.profil_code
