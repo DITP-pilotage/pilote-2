@@ -17,24 +17,89 @@ type UIMessageMinimal = {
   parts: MessagePart[];
 };
 
+type Tour = {
+  question: string | null;
+  reponse: string | null;
+  llmCall: LlmCall | undefined;
+};
+
 const extraireTexte = (message: UIMessageMinimal): string =>
   message.parts
     .filter((part) => part.type === "text")
     .map((part) => part.text ?? "")
-    .join("\n");
+    .join("\n")
+    .trim();
 
-const BadgeEvaluation = ({ llmCall }: { llmCall: LlmCall }) => {
-  if (!llmCall.evaluation) return null;
+const grouperParTour = (
+  messages: UIMessageMinimal[],
+  llmCalls: LlmCall[],
+): Tour[] => {
+  const tours: Tour[] = [];
+  let questionEnCours: string | null = null;
+  let indexAssistant = 0;
+
+  for (const message of messages) {
+    if (message.role === "user") {
+      if (questionEnCours !== null) {
+        tours.push({
+          question: questionEnCours,
+          reponse: null,
+          llmCall: undefined,
+        });
+      }
+      questionEnCours = extraireTexte(message);
+    } else if (message.role === "assistant") {
+      tours.push({
+        question: questionEnCours,
+        reponse: extraireTexte(message),
+        llmCall: llmCalls[indexAssistant],
+      });
+      indexAssistant += 1;
+      questionEnCours = null;
+    }
+  }
+
+  if (questionEnCours !== null) {
+    tours.push({
+      question: questionEnCours,
+      reponse: null,
+      llmCall: undefined,
+    });
+  }
+
+  return tours;
+};
+
+const Label = ({ children }: { children: React.ReactNode }) => (
+  <div className="text-xs font-semibold uppercase tracking-wider text-dsfr-mention-grey mb-2">
+    {children}
+  </div>
+);
+
+const BadgeEvaluation = ({
+  evaluation,
+}: {
+  evaluation: LlmCall["evaluation"];
+}) => {
+  if (!evaluation) {
+    return (
+      <span className="inline-flex items-center gap-1.5 text-xs font-medium text-dsfr-mention-grey">
+        Sans évaluation
+      </span>
+    );
+  }
+  const estPositif = evaluation === "POSITIVE";
   return (
     <span
       className={clsxm(
-        "!inline-block !px-2 !py-0.5 !rounded !text-xs !font-medium",
-        llmCall.evaluation === "POSITIVE"
-          ? "!bg-green-100 !text-green-800"
-          : "!bg-red-100 !text-red-800",
+        "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-medium",
+        estPositif
+          ? "bg-dsfr-success-425/10 text-dsfr-success-425"
+          : "bg-dsfr-warning-950 text-dsfr-warning-425",
       )}
     >
-      {llmCall.evaluation === "POSITIVE" ? "👍 Positif" : "👎 Négatif"}
+      <span aria-hidden>{estPositif ? "👍" : "👎"}</span>
+      {estPositif ? "Évaluation positive" : "Évaluation négative"}
     </span>
   );
 };
@@ -48,46 +113,53 @@ export const ConversationTranscript = ({
   messages,
   llmCalls,
 }: ConversationTranscriptProps) => {
-  let indexAssistant = 0;
   const messagesNormalises = messages as unknown as UIMessageMinimal[];
+  const tours = grouperParTour(messagesNormalises, llmCalls);
 
   return (
-    <div className="!space-y-4">
-      {messagesNormalises.map((message, index) => {
-        if (message.role === "user") {
-          return (
-            <div className="!flex !justify-end" key={message.id ?? index}>
-              <div className="!max-w-[80%] !bg-dsfr-blue-france-sun-113 !text-white !rounded-lg !px-4 !py-2 !text-sm">
-                {extraireTexte(message)}
+    <div className="space-y-8">
+      {tours.map((tour, index) => (
+        <article
+          className="border-l-2 border-dsfr-grey-925 pl-6 relative"
+          key={index}
+        >
+          <header className="flex items-baseline justify-between gap-4 mb-5">
+            <h3 className="text-sm font-bold text-dsfr-blue-france-sun-113 uppercase tracking-wider">
+              Tour {index + 1}
+            </h3>
+            {tour.llmCall && (
+              <BadgeEvaluation evaluation={tour.llmCall.evaluation} />
+            )}
+          </header>
+
+          {tour.question !== null && (
+            <section className="mb-6">
+              <Label>Question utilisateur</Label>
+              <p className="text-sm text-dsfr-grey-50 whitespace-pre-wrap leading-relaxed">
+                {tour.question}
+              </p>
+            </section>
+          )}
+
+          {tour.reponse !== null && (
+            <section className="mb-6">
+              <Label>Réponse Albert</Label>
+              <div className="text-sm text-dsfr-grey-50">
+                <AssistantMessageText text={tour.reponse} />
               </div>
-            </div>
-          );
-        }
-        if (message.role === "assistant") {
-          const llmCall = llmCalls[indexAssistant];
-          indexAssistant += 1;
-          const texte = extraireTexte(message);
-          return (
-            <div className="!flex !flex-col !gap-2" key={message.id ?? index}>
-              <div className="!flex !items-start !gap-2">
-                <div className="!flex-1 !bg-gray-50 !rounded-lg !px-4 !py-3 !text-sm">
-                  <AssistantMessageText text={texte} />
-                </div>
-                {llmCall && <BadgeEvaluation llmCall={llmCall} />}
-              </div>
-              {llmCall?.commentaire && (
-                <blockquote className="!ml-4 !border-l-4 !border-gray-300 !pl-3 !text-sm !text-gray-700 !italic">
-                  <div className="!text-xs !font-semibold !text-gray-500 !mb-1 !not-italic">
-                    Commentaire de l'utilisateur
-                  </div>
-                  {llmCall.commentaire}
-                </blockquote>
-              )}
-            </div>
-          );
-        }
-        return null;
-      })}
+            </section>
+          )}
+
+          {tour.llmCall?.commentaire && (
+            <section className="bg-dsfr-warning-950/50 border-l-2 border-dsfr-warning-425 px-4 py-3 rounded-sm">
+              <Label>Commentaire de l&apos;utilisateur</Label>
+              <p className="text-sm text-dsfr-grey-50 italic whitespace-pre-wrap">
+                « {tour.llmCall.commentaire} »
+              </p>
+            </section>
+          )}
+        </article>
+      ))}
     </div>
   );
 };
