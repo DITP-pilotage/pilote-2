@@ -1,10 +1,16 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { z } from 'zod'
 
-import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@/components/ui/Pagination'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
+import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
+import { CardGrid } from '@/components/ui/CardGrid'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { Page } from '@/components/ui/Page'
+import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@/components/ui/Pagination'
+import { SearchField } from '@/components/ui/SearchField'
+import { Section } from '@/components/ui/Section'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
 
 const indicateursSearchSchema = z.object({
@@ -22,89 +28,58 @@ export const Route = createFileRoute('/_authenticated/indicateurs/')({
   component: IndicateursListComponent,
 })
 
-const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
-  month: '2-digit',
-  year: 'numeric',
-})
-
-function formatMiseAJour(iso: string) {
-  const date = new Date(iso)
-  if (Number.isNaN(date.getTime())) return '—'
-  return dateFormatter.format(date)
-}
-
 function IndicateursListComponent() {
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const { data } = useSuspenseQuery(indicateursQueryOptions(search))
 
   return (
-    <div className="space-y-8">
-      <header className="space-y-1">
-        <h1 className="text-2xl font-semibold text-text">Liste des indicateurs</h1>
-        <p className="text-sm text-text-muted">
-          Consultez et gérez l&apos;ensemble de vos indicateurs.
-        </p>
-      </header>
-
-      <section className="space-y-6 rounded-lg border border-border bg-surface p-6">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-text-muted">
-            {data.total} indicateur{data.total > 1 ? 's' : ''}
-          </p>
-          <input
-            type="search"
-            aria-label="Rechercher un indicateur par nom"
-            placeholder="Rechercher par nom…"
-            value={search.recherche ?? ''}
-            onChange={(e) => {
-              const recherche = e.target.value || undefined
-              void navigate({ search: (prev) => ({ ...prev, recherche, cursor: undefined }) })
-            }}
-            className="w-full max-w-xs rounded-md border border-secondary-border bg-surface px-3 py-1.5 text-sm placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20"
-          />
-        </div>
-
+    <Page
+      title="Liste des indicateurs"
+      description="Consultez et gérez l'ensemble de vos indicateurs."
+    >
+      <Section
+        toolbar={
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm text-text-muted">
+              {data.total} indicateur{data.total > 1 ? 's' : ''}
+            </p>
+            <SearchField
+              label="Rechercher un indicateur par nom"
+              placeholder="Rechercher par nom…"
+              value={search.recherche ?? ''}
+              onChange={(value) => {
+                const recherche = value || undefined
+                void navigate({ search: (prev) => ({ ...prev, recherche, cursor: undefined }) })
+              }}
+            />
+          </div>
+        }
+      >
         {data.items.length === 0 ? (
-          <p className="py-12 text-center text-sm text-text-muted">
-            Aucun indicateur ne correspond aux filtres.
-          </p>
+          <EmptyState title="Aucun indicateur ne correspond aux filtres." />
         ) : (
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <CardGrid>
             {data.items.map((indicateur) => (
-              <li key={indicateur.id}>
-                <Link
-                  to="/indicateurs/$id"
-                  params={{ id: indicateur.id }}
-                  className="group flex h-full flex-col gap-3 rounded-lg border border-border bg-surface p-4 transition-colors hover:border-secondary-border hover:bg-secondary-hover"
-                >
-                  <span className="text-xs font-medium uppercase tracking-wide text-text-muted">
-                    {indicateur.id}
-                  </span>
-                  <h2 className="text-base font-semibold text-text group-hover:text-primary">
-                    {indicateur.nom}
-                  </h2>
-                  <p className="mt-auto text-xs text-text-muted">
-                    Mise à jour : {formatMiseAJour(indicateur.updatedAt)}
-                  </p>
-                </Link>
-              </li>
+              <IndicateurCard key={indicateur.id} indicateur={indicateur} />
             ))}
-          </ul>
+          </CardGrid>
         )}
 
-        <Pagination
-          hasNext={data.pagination.hasMore}
-          onNext={() => {
-            const next = data.pagination.cursor
-            if (next) void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
-          }}
-          pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
-          onPageSizeChange={(pageSize) => {
-            void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
-          }}
-        />
-      </section>
-    </div>
+        <div className="mt-6">
+          <Pagination
+            hasNext={data.pagination.hasMore}
+            onNext={() => {
+              const next = data.pagination.cursor
+              if (next) void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
+            }}
+            pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+            onPageSizeChange={(pageSize) => {
+              void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
+            }}
+          />
+        </div>
+      </Section>
+    </Page>
   )
 }

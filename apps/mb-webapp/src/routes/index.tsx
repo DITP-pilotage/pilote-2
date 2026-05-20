@@ -4,6 +4,8 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 
 import { fetchSharedMessage } from '@/api/sharedMessage'
 import { Button } from '@/components/ui/Button'
+import { Page } from '@/components/ui/Page'
+import { Section } from '@/components/ui/Section'
 
 export const Route = createFileRoute('/')({
   component: HomeComponent,
@@ -17,33 +19,11 @@ function HomeComponent() {
   })
 
   return (
-    <div className="space-y-8">
-      <section>
-        <h1 className="text-4xl font-semibold tracking-tight">Pilote MB</h1>
-        <p className="mt-3 text-text-muted">
-          Webapp Marque Blanche — squelette initial avec TanStack Router.
-        </p>
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="text-xl font-semibold">Démo TanStack Query (préservée)</h2>
-        <pre className="rounded bg-slate-900 p-4 text-sm text-slate-100">{SHARED_GREETING}</pre>
-        <pre className="rounded bg-slate-100 p-4 text-sm text-slate-800">
-          {isPending && 'Chargement…'}
-          {isError && `Erreur: ${error.message}`}
-          {data && data.greeting}
-        </pre>
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="text-xl font-semibold">Diagnostic TanStack Router</h2>
-        <ul className="rounded border border-border bg-surface p-4 text-sm">
-          <li>✓ Router initialisé</li>
-          <li>
-            État auth : <strong>{auth.isAuthenticated ? 'authentifié' : 'anonyme'}</strong>
-          </li>
-        </ul>
-        <div className="flex gap-3">
+    <Page
+      title="Pilote MB"
+      description="Webapp Marque Blanche — squelette initial avec TanStack Router."
+      actions={
+        <>
           <Button asChild>
             <Link to="/indicateurs" search={{}}>
               Voir les indicateurs
@@ -54,8 +34,28 @@ function HomeComponent() {
               Se connecter
             </Button>
           )}
+        </>
+      }
+    >
+      <Section title="Démo TanStack Query (préservée)">
+        <div className="space-y-3">
+          <pre className="rounded bg-slate-900 p-4 text-sm text-slate-100">{SHARED_GREETING}</pre>
+          <pre className="rounded bg-slate-100 p-4 text-sm text-slate-800">
+            {isPending && 'Chargement…'}
+            {isError && `Erreur: ${error.message}`}
+            {data && data.greeting}
+          </pre>
         </div>
-      </section>
-    </div>
+      </Section>
+
+      <Section title="Diagnostic TanStack Router">
+        <ul className="text-sm text-text">
+          <li>✓ Router initialisé</li>
+          <li>
+            État auth : <strong>{auth.isAuthenticated ? 'authentifié' : 'anonyme'}</strong>
+          </li>
+        </ul>
+      </Section>
+    </Page>
   )
 }

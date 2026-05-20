@@ -1,9 +1,11 @@
 import type { ErrorComponentProps } from '@tanstack/react-router'
 import { Link } from '@tanstack/react-router'
 import { HTTPError } from 'ky'
-import { ArrowLeft } from 'lucide-react'
 
+import { BackLink } from '@/components/ui/BackLink'
 import { Button } from '@/components/ui/Button'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { Section } from '@/components/ui/Section'
 
 const isNotFoundError = (error: Error): boolean => {
   return error instanceof HTTPError && error.response.status === 404
@@ -12,32 +14,32 @@ const isNotFoundError = (error: Error): boolean => {
 export function RouteError({ error, reset }: ErrorComponentProps) {
   if (isNotFoundError(error)) {
     return (
-      <div className="space-y-3">
-        <div className="rounded border border-amber-200 bg-amber-50 p-6 text-amber-900">
-          <p className="font-medium">Ressource introuvable</p>
-          <p className="mt-1 text-sm">La ressource demandée n'existe pas ou a été supprimée.</p>
-        </div>
-        <Button variant="tertiary" size="sm" asChild>
+      <div className="space-y-4">
+        <Section>
+          <EmptyState
+            title="Ressource introuvable"
+            description="La ressource demandée n'existe pas ou a été supprimée."
+          />
+        </Section>
+        <BackLink asChild>
           <Link to="/indicateurs" search={{}}>
-            <ArrowLeft />
             Retour à la liste
           </Link>
-        </Button>
+        </BackLink>
       </div>
     )
   }
 
   return (
-    <div className="rounded border border-red-200 bg-red-50 p-6 text-red-800">
-      <p className="font-medium">Erreur lors du chargement</p>
-      <p className="mt-1 text-sm">{error.message}</p>
-      <button
-        type="button"
-        onClick={reset}
-        className="mt-3 rounded bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700"
-      >
-        Réessayer
-      </button>
-    </div>
+    <Section>
+      <div className="space-y-4">
+        <EmptyState title="Erreur lors du chargement" description={error.message} />
+        <div className="flex justify-center">
+          <Button type="button" onClick={reset}>
+            Réessayer
+          </Button>
+        </div>
+      </div>
+    </Section>
   )
 }

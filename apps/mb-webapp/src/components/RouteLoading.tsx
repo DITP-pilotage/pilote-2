@@ -1,9 +1,13 @@
+import { Section } from '@/components/ui/Section'
+
 type RouteLoadingProps = {
   message?: string
 }
 
 export function RouteLoading({ message = 'Chargement…' }: RouteLoadingProps) {
   return (
-    <div className="rounded border border-slate-200 bg-white p-6 text-slate-500">{message}</div>
+    <Section>
+      <p className="text-sm text-text-muted">{message}</p>
+    </Section>
   )
 }

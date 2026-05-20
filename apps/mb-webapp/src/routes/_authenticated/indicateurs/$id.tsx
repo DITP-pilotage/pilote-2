@@ -1,25 +1,23 @@
 import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
 import { type IndividuApiModel, individuPublicIdSchema } from '@pilote/mb-shared/individu'
 import { type ReferentielApiModel, referentielPublicIdSchema } from '@pilote/mb-shared/referentiel'
-import { type ValeurDateApiModel } from '@pilote/mb-shared/valeurAvancement'
-import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
-import { ArrowLeft } from 'lucide-react'
-import { startTransition } from 'react'
+import { startTransition, useId } from 'react'
 import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
-import { Button } from '@/components/ui/Button'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/Select'
+import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetadonnees'
+import { IndicateurStatsPanel } from '@/components/indicateurs/IndicateurStatsPanel'
+import { IndicateurValeursRemarquables } from '@/components/indicateurs/IndicateurValeursRemarquables'
+import { IndicateurValeursTable } from '@/components/indicateurs/IndicateurValeursTable'
+import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
+import { BackLink } from '@/components/ui/BackLink'
+import { EmptyState } from '@/components/ui/EmptyState'
+import { FormField } from '@/components/ui/FormField'
+import { Page } from '@/components/ui/Page'
+import { Section } from '@/components/ui/Section'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import {
   indicateurQueryOptions,
@@ -105,274 +103,78 @@ function IndicateurDetailComponent() {
   const { id } = Route.useParams()
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
+  const selectId = useId()
 
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(id))
-  const referentiels = useSuspenseQueries({
-    queries: indicateur.referentielIds.map((refId) => referentielQueryOptions(refId)),
-    combine: (results) => results.map((r) => r.data),
-  })
-  const individusByReferentiel = useSuspenseQueries({
-    queries: indicateur.referentielIds.map((refId) => referentielIndividusQueryOptions(refId)),
-    combine: (results) => results.map((r) => r.data),
-  })
-  const groupes: ReferentielGroupe[] = indicateur.referentielIds.map((_, i) => ({
-    referentiel: referentiels[i]!,
-    individus: individusByReferentiel[i]!,
-  }))
 
-  const individus = flattenAndSort(groupes)
-  const selectedIndividu = search.individu
-    ? individus.find((i) => i.id === search.individu)
-    : undefined
-
-  const indicateurAAucunReferentiel = indicateur.referentielIds.length === 0
-  const referentielAAucunIndividu = !indicateurAAucunReferentiel && individus.length === 0
-
-  return (
-    <div className="space-y-6">
-      <div>
-        <Button variant="tertiary" size="sm" asChild>
-          <Link to="/indicateurs" search={{}}>
-            <ArrowLeft />
-            Retour à la liste
-          </Link>
-        </Button>
-      </div>
-
-      <header>
-        <h1 className="text-3xl font-semibold text-text">{indicateur.nom}</h1>
-      </header>
-
-      {indicateurAAucunReferentiel ? (
-        <p className="rounded border border-border bg-surface p-6 text-sm text-text-muted">
-          Aucun référentiel associé à cet indicateur.
-        </p>
-      ) : referentielAAucunIndividu ? (
-        <p className="rounded border border-border bg-surface p-6 text-sm text-text-muted">
-          Aucun individu disponible dans les référentiels liés.
-        </p>
-      ) : selectedIndividu === undefined ? null : (
-        <>
-          <StatistiquesPopulationSection
-            indicateurId={id}
-            referentielId={selectedIndividu.referentiel}
-          />
-
-          <div className="flex items-center gap-3">
-            <label className="text-sm text-text-muted" htmlFor="individu-select">
-              Individu
-            </label>
-            <Select
-              value={selectedIndividu.id}
-              onValueChange={(value) => {
-                const next = individus.find((i) => i.id === value)
-                startTransition(() => {
-                  void navigate({
-                    search: (prev) => ({
-                      ...prev,
-                      individu: value,
-                      referentiel: next?.referentiel ?? prev.referentiel,
-                    }),
-                  })
-                })
-              }}
-            >
-              <SelectTrigger id="individu-select" className="min-w-[16rem]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {groupes.map((groupe) => (
-                  <SelectGroup key={groupe.referentiel.id}>
-                    <SelectLabel className="bg-background">{groupe.referentiel.nom}</SelectLabel>
-                    {groupe.individus.map((individu) => (
-                      <SelectItem key={individu.id} value={individu.id}>
-                        {individu.nom}
-                      </SelectItem>
-                    ))}
-                  </SelectGroup>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <ValeursRemarquablesSection indicateurId={id} individuId={selectedIndividu.id} />
-
-          <Tabs defaultValue="valeurs">
-            <TabsList>
-              <TabsTrigger value="valeurs">Valeurs</TabsTrigger>
-              <TabsTrigger value="metadonnees">Métadonnées</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="valeurs">
-              <ValeursTable indicateurId={id} individuId={selectedIndividu.id} />
-            </TabsContent>
-
-            <TabsContent value="metadonnees">
-              <MetadonneesPanel indicateur={indicateur} />
-            </TabsContent>
-          </Tabs>
-        </>
-      )}
-    </div>
-  )
-}
-
-function StatistiquesPopulationSection({
-  indicateurId,
-  referentielId,
-}: {
-  indicateurId: string
-  referentielId: string
-}) {
-  const { data } = useSuspenseQuery(
-    indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId),
-  )
-  const stats = data.items[0] ?? { min: null, max: null, mediane: null }
-
-  const numberFormatter = new Intl.NumberFormat('fr-FR')
-  const formatStat = (value: number | null): string =>
-    value === null ? '—' : numberFormatter.format(value)
-
-  return (
-    <section className="grid gap-4 sm:grid-cols-3">
-      <StatCard label="Minimum">
-        <p className="text-3xl font-semibold text-text">{formatStat(stats.min)}</p>
-      </StatCard>
-      <StatCard label="Maximum">
-        <p className="text-3xl font-semibold text-text">{formatStat(stats.max)}</p>
-      </StatCard>
-      <StatCard label="Médiane">
-        <p className="text-3xl font-semibold text-text">{formatStat(stats.mediane)}</p>
-      </StatCard>
-    </section>
-  )
-}
-
-function ValeursRemarquablesSection({
-  indicateurId,
-  individuId,
-}: {
-  indicateurId: string
-  individuId: string
-}) {
-  const { data: synthese } = useSuspenseQuery(
-    indicateurSyntheseIndividuQueryOptions(indicateurId, individuId),
-  )
-  const { data: valeurs } = useSuspenseQuery(
-    indicateurValeursQueryOptions(indicateurId, individuId),
+  const back = (
+    <BackLink asChild>
+      <Link to="/indicateurs" search={{}}>
+        Retour à la liste
+      </Link>
+    </BackLink>
   )
 
-  const derniereValeur = derniereValeurFromItems(valeurs.items)
-  const variation = synthese.items[0]?.variation ?? null
-
-  const numberFormatter = new Intl.NumberFormat('fr-FR')
-  const variationFormatter = new Intl.NumberFormat('fr-FR', { signDisplay: 'exceptZero' })
-
-  return (
-    <section className="grid gap-4 sm:grid-cols-2">
-      <StatCard label="Valeur la plus récente">
-        {derniereValeur ? (
-          <>
-            <p className="text-3xl font-semibold text-text">
-              {numberFormatter.format(derniereValeur.valeur)}
-            </p>
-            <p className="mt-1 text-xs text-text-muted">
-              au {new Date(derniereValeur.date).toLocaleDateString('fr-FR')}
-            </p>
-          </>
-        ) : (
-          <p className="text-3xl font-semibold text-text-muted">—</p>
-        )}
-      </StatCard>
-
-      <StatCard label="Variation depuis la dernière MAJ">
-        <p className={`text-3xl font-semibold ${variationColorClass(variation)}`}>
-          {variation === null ? '—' : variationFormatter.format(variation)}
-        </p>
-      </StatCard>
-    </section>
-  )
-}
-
-const derniereValeurFromItems = (
-  items: ReadonlyArray<{ date: string; valeur: number }>,
-): ValeurDateApiModel | undefined => {
-  if (items.length === 0) return undefined
-  const sorted = [...items].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
-  return { date: sorted[0]!.date, valeur: sorted[0]!.valeur }
-}
-
-const variationColorClass = (variation: number | null): string => {
-  if (variation === null || variation === 0) return 'text-text-muted'
-  return variation > 0 ? 'text-emerald-600' : 'text-rose-600'
-}
-
-function StatCard({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="rounded border border-border bg-surface p-6">
-      <h2 className="text-sm font-medium text-text-muted">{label}</h2>
-      <div className="mt-2">{children}</div>
-    </div>
-  )
-}
-
-function ValeursTable({ indicateurId, individuId }: { indicateurId: string; individuId: string }) {
-  const { data } = useSuspenseQuery(indicateurValeursQueryOptions(indicateurId, individuId))
-
-  const rows = [...data.items].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
-
-  if (rows.length === 0) {
+  if (indicateur.referentielIds.length === 0) {
     return (
-      <p className="rounded border border-border bg-surface p-6 text-sm text-text-muted">
-        Aucune valeur pour cet individu.
-      </p>
+      <Page title={indicateur.nom} back={back}>
+        <Section>
+          <EmptyState title="Aucun référentiel associé à cet indicateur." />
+        </Section>
+      </Page>
     )
   }
 
+  if (!search.individu || !search.referentiel) {
+    return (
+      <Page title={indicateur.nom} back={back}>
+        <Section>
+          <EmptyState title="Aucun individu disponible dans les référentiels liés." />
+        </Section>
+      </Page>
+    )
+  }
+
+  const individuId = search.individu
+  const referentielId = search.referentiel
+
   return (
-    <div className="overflow-hidden rounded border border-border bg-surface">
-      <table className="w-full text-sm">
-        <thead className="bg-secondary-hover text-text">
-          <tr>
-            <th className="px-4 py-2 text-left font-medium">Date</th>
-            <th className="px-4 py-2 text-right font-medium">Valeur</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-border">
-          {rows.map((row) => (
-            <tr key={row.date}>
-              <td className="px-4 py-2 text-text">
-                {new Date(row.date).toLocaleDateString('fr-FR')}
-              </td>
-              <td className="px-4 py-2 text-right text-text">
-                {row.valeur.toLocaleString('fr-FR')}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )
-}
+    <Page title={indicateur.nom} back={back}>
+      <IndicateurStatsPanel indicateurId={id} referentielId={referentielId} />
 
-function MetadonneesPanel({
-  indicateur,
-}: {
-  indicateur: { id: string; nom: string; createdAt: string; updatedAt: string }
-}) {
-  return (
-    <dl className="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 rounded border border-border bg-surface p-6 text-sm">
-      <dt className="text-text-muted">ID</dt>
-      <dd className="text-text">{indicateur.id}</dd>
+      <FormField label="Individu" htmlFor={selectId}>
+        <IndividuSelect
+          id={selectId}
+          indicateurId={id}
+          value={individuId}
+          onChange={({ individu, referentiel }) => {
+            startTransition(() => {
+              void navigate({
+                search: (prev) => ({ ...prev, individu, referentiel }),
+              })
+            })
+          }}
+        />
+      </FormField>
 
-      <dt className="text-text-muted">Nom</dt>
-      <dd className="text-text">{indicateur.nom}</dd>
+      <IndicateurValeursRemarquables indicateurId={id} individuId={individuId} />
 
-      <dt className="text-text-muted">Créé le</dt>
-      <dd className="text-text">{new Date(indicateur.createdAt).toLocaleString('fr-FR')}</dd>
+      <Section>
+        <Tabs defaultValue="valeurs">
+          <TabsList>
+            <TabsTrigger value="valeurs">Valeurs</TabsTrigger>
+            <TabsTrigger value="metadonnees">Métadonnées</TabsTrigger>
+          </TabsList>
 
-      <dt className="text-text-muted">Mis à jour le</dt>
-      <dd className="text-text">{new Date(indicateur.updatedAt).toLocaleString('fr-FR')}</dd>
-    </dl>
+          <TabsContent value="valeurs">
+            <IndicateurValeursTable indicateurId={id} individuId={individuId} />
+          </TabsContent>
+
+          <TabsContent value="metadonnees">
+            <IndicateurMetadonnees indicateur={indicateur} />
+          </TabsContent>
+        </Tabs>
+      </Section>
+    </Page>
   )
 }
