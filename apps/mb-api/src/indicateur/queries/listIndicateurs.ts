@@ -24,7 +24,10 @@ export const listIndicateurs = (
     orderBy: { id: 'asc' },
     include: {
       referentiels: {
-        include: { referentiel: { select: { publicId: true } } },
+        select: {
+          fonctionAgregation: true,
+          referentiel: { select: { publicId: true } },
+        },
       },
     },
     ...buildPaginationArgs(params.cursor, params.pageSize),

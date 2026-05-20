@@ -15,7 +15,10 @@ export const getIndicateurByPublicId = (
       where: withIndicateurReadPermission({ publicId }, principalId),
       include: {
         referentiels: {
-          include: { referentiel: { select: { publicId: true } } },
+          select: {
+            fonctionAgregation: true,
+            referentiel: { select: { publicId: true } },
+          },
         },
       },
     }),

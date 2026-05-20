@@ -19,8 +19,8 @@ describe.concurrent('getIndicateurByPublicId', () => {
       )
       await db().indicateurReferentiel.createMany({
         data: [
-          { indicateurId: indicateur.id, referentielId: refA!.id },
-          { indicateurId: indicateur.id, referentielId: refB!.id },
+          { indicateurId: indicateur.id, referentielId: refA!.id, fonctionAgregation: 'SUM' },
+          { indicateurId: indicateur.id, referentielId: refB!.id, fonctionAgregation: 'SUM' },
         ],
       })
       const apiKey = await fixtures.apiKey({
@@ -33,7 +33,10 @@ describe.concurrent('getIndicateurByPublicId', () => {
       expect(result._unsafeUnwrap()).toEqual({
         id: indId,
         nom: 'Indicateur de test',
-        referentielIds: ['REF-DETAIL-A', 'REF-DETAIL-B'],
+        referentiels: [
+          { referentielId: 'REF-DETAIL-A', fonctionAgregation: 'SUM' },
+          { referentielId: 'REF-DETAIL-B', fonctionAgregation: 'SUM' },
+        ],
         createdAt: indicateur.createdAt.toISOString(),
         updatedAt: indicateur.updatedAt.toISOString(),
       })
@@ -52,7 +55,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
 
       expect(result.isOk()).toBe(true)
-      expect(result._unsafeUnwrap().referentielIds).toEqual([])
+      expect(result._unsafeUnwrap().referentiels).toEqual([])
     }),
   )
 

@@ -185,7 +185,7 @@ describe.concurrent('listIndicateurs', () => {
   )
 
   it(
-    'expose referentielIds triés par publicId ASC sur chaque item',
+    'expose referentiels triés par publicId ASC sur chaque item',
     integrationTest(async () => {
       const [accessible] = testIndicateurIds(1)
       const indicateur = await fixtures.indicateur({ publicId: accessible })
@@ -195,8 +195,8 @@ describe.concurrent('listIndicateurs', () => {
       )
       await db().indicateurReferentiel.createMany({
         data: [
-          { indicateurId: indicateur.id, referentielId: refA!.id },
-          { indicateurId: indicateur.id, referentielId: refB!.id },
+          { indicateurId: indicateur.id, referentielId: refA!.id, fonctionAgregation: 'SUM' },
+          { indicateurId: indicateur.id, referentielId: refB!.id, fonctionAgregation: 'SUM' },
         ],
       })
       const apiKey = await fixtures.apiKey({
@@ -206,9 +206,9 @@ describe.concurrent('listIndicateurs', () => {
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
 
       const value = result._unsafeUnwrap()
-      expect(value.items.find((i) => i.id === accessible)?.referentielIds).toEqual([
-        'REF-LIST-M',
-        'REF-LIST-Z',
+      expect(value.items.find((i) => i.id === accessible)?.referentiels).toEqual([
+        { referentielId: 'REF-LIST-M', fonctionAgregation: 'SUM' },
+        { referentielId: 'REF-LIST-Z', fonctionAgregation: 'SUM' },
       ])
     }),
   )

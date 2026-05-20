@@ -1,9 +1,13 @@
 import { type IndicateurApiModel } from '@pilote/mb-shared/indicateur'
 
+import { type FonctionAgregation } from '@/generated/prisma/enums'
 import { type IndicateurModel, type ReferentielModel } from '@/generated/prisma/models'
 
 export type IndicateurWithReferentiels = IndicateurModel & {
-  referentiels: Array<{ referentiel: Pick<ReferentielModel, 'publicId'> }>
+  referentiels: Array<{
+    fonctionAgregation: FonctionAgregation
+    referentiel: Pick<ReferentielModel, 'publicId'>
+  }>
 }
 
 export const toIndicateurApiModel = (
@@ -11,7 +15,12 @@ export const toIndicateurApiModel = (
 ): IndicateurApiModel => ({
   id: indicateur.publicId,
   nom: indicateur.nom,
-  referentielIds: [...indicateur.referentiels.map((link) => link.referentiel.publicId)].sort(),
+  referentiels: indicateur.referentiels
+    .map((link) => ({
+      referentielId: link.referentiel.publicId,
+      fonctionAgregation: link.fonctionAgregation,
+    }))
+    .sort((a, b) => a.referentielId.localeCompare(b.referentielId)),
   createdAt: indicateur.createdAt.toISOString(),
   updatedAt: indicateur.updatedAt.toISOString(),
 })
