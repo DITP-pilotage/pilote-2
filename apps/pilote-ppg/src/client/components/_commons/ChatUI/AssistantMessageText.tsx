@@ -70,12 +70,24 @@ export function stripPseudoToolCalls(text: string): string {
     .replace(/\s+$/u, "");
 }
 
+/**
+ * Supprime les paragraphes markdown ne contenant que des espaces insécables
+ * (`&nbsp;` ou  ). Le LLM en produit parfois pour aérer son rendu, mais
+ * ReactMarkdown les rend en `<p>&nbsp;</p>` qui ajoutent du vide visuel.
+ */
+export function stripParagraphesVides(text: string): string {
+  return text
+    .split("\n")
+    .filter((ligne) => !/^\s*(&nbsp;| )+\s*$/u.test(ligne))
+    .join("\n");
+}
+
 export const AssistantMessageText = memo(function AssistantMessageText({
   text,
 }: {
   text: string;
 }) {
-  const sanitized = stripPseudoToolCalls(text);
+  const sanitized = stripParagraphesVides(stripPseudoToolCalls(text));
   return (
     <div className="albert-markdown">
       <ReactMarkdown remarkPlugins={remarkPlugins}>{sanitized}</ReactMarkdown>

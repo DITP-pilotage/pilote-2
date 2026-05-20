@@ -1,3 +1,5 @@
+import { ListerConversationsAdminQuery } from "@/server/albert/queries/ListerConversationsAdminQuery";
+import { RecupererConversationAdminQuery } from "@/server/albert/queries/RecupererConversationAdminQuery";
 import { createGetTauxAvancementTerritoireTool } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import { createGetChantiersTool } from "@/server/albert/tools/getChantiers";
 import { createGetChantierIndicateursTool } from "@/server/albert/tools/getChantierIndicateurs";
@@ -49,6 +51,8 @@ type AlbertOwnCradle = {
   recupererConversationUseCase: RecupererConversationUseCase;
   supprimerConversationUseCase: SupprimerConversationUseCase;
   purgerConversationsExpireesUseCase: PurgerConversationsExpireesUseCase;
+  listerConversationsAdminQuery: ListerConversationsAdminQuery;
+  recupererConversationAdminQuery: RecupererConversationAdminQuery;
 };
 
 type AlbertCradle = AlbertOwnCradle & AlbertImports;
@@ -85,6 +89,12 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       supprimerConversationUseCase: asModuleClass(SupprimerConversationUseCase),
       purgerConversationsExpireesUseCase: asModuleClass(
         PurgerConversationsExpireesUseCase,
+      ),
+      listerConversationsAdminQuery: asModuleClass(
+        ListerConversationsAdminQuery,
+      ),
+      recupererConversationAdminQuery: asModuleClass(
+        RecupererConversationAdminQuery,
       ),
     } satisfies VerifyCradle<AlbertOwnCradle>);
   },

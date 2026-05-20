@@ -5,6 +5,7 @@ import { Icone } from "@/components/_commons/Icone";
 import { SparklingIcon } from "@/components/_commons/Icones/SparklingIcon";
 import { ChatScenarios, ChatUI } from "@/components/_commons/ChatUI/ChatUI";
 import { ConversationHistoryDrawer } from "@/components/_commons/ChatUI/ConversationHistoryDrawer";
+import Loader from "@/components/_commons/Loader/Loader";
 import { ModalePleinEcran } from "@/components/shared/ModalePleinEcran";
 import api from "@/server/infrastructure/api/trpc/api";
 
@@ -20,18 +21,34 @@ export const BoutonSyntheseTerritoire = ({
   const [isOpen, setIsOpen] = useState(false);
   const ffHistorique = useEnv("NEXT_PUBLIC_FF_HISTORIQUE_ALBERT");
   const utilsTrpc = api.useUtils();
-  const [activeChatId, setActiveChatId] = useState<string>(() =>
-    crypto.randomUUID(),
-  );
-  const { data: conversationChargee } =
+  type ConversationActive =
+    | { kind: "nouvelle"; id: string }
+    | { kind: "existante"; id: string };
+  const [conversation, setConversation] = useState<ConversationActive>(() => ({
+    kind: "nouvelle",
+    id: crypto.randomUUID(),
+  }));
+  const { data: conversationChargee, isFetched: conversationChargeeFetched } =
     api.albert.conversations.recuperer.useQuery(
-      { id: activeChatId },
-      { enabled: ffHistorique === true && isOpen, retry: false },
+      { id: conversation.id },
+      {
+        enabled:
+          ffHistorique === true && isOpen && conversation.kind === "existante",
+        retry: false,
+      },
     );
+  const conversationPrete =
+    !ffHistorique ||
+    conversation.kind === "nouvelle" ||
+    conversationChargeeFetched;
+  const selectionnerConversation = (id: string) => {
+    setConversation({ kind: "existante", id });
+  };
   const demarrerNouvelleConversation = () => {
-    setActiveChatId(crypto.randomUUID());
+    setConversation({ kind: "nouvelle", id: crypto.randomUUID() });
   };
   const rafraichirHistorique = () => {
+    setConversation((courante) => ({ kind: "existante", id: courante.id }));
     utilsTrpc.albert.conversations.lister.invalidate();
   };
 
@@ -146,27 +163,31 @@ Quelles sont les principales difficultés remontées dans les commentaires ?`,
           <div className="flex h-full">
             {ffHistorique ? (
               <ConversationHistoryDrawer
-                chatIdCourant={activeChatId}
-                onSelectionner={setActiveChatId}
+                chatIdCourant={conversation.id}
+                onSelectionner={selectionnerConversation}
                 onNouvelleConversation={demarrerNouvelleConversation}
               />
             ) : null}
-            <div className="flex-1">
-              <ChatUI
-                key={activeChatId}
-                chatId={activeChatId}
-                initialMessages={conversationChargee?.messages}
-                onChatFinish={ffHistorique ? rafraichirHistorique : undefined}
-                endpoint="/api/albert/chat"
-                className="h-full"
-                placeholder="Posez une question sur ce territoire..."
-                scenarios={scenarios}
-                agentContext={{
-                  jalon,
-                  territoireCode,
-                  instructions: `Le territoire courant de l'utilisateur est ${territoire.nomAffiché} (code : ${territoireCode}). Utilise ce territoire par défaut lorsque l'utilisateur ne précise pas de territoire dans sa question.`,
-                }}
-              />
+            <div className="flex-1 relative">
+              {conversationPrete ? (
+                <ChatUI
+                  key={conversation.id}
+                  chatId={conversation.id}
+                  initialMessages={conversationChargee?.messages}
+                  onChatFinish={ffHistorique ? rafraichirHistorique : undefined}
+                  endpoint="/api/albert/chat"
+                  className="h-full"
+                  placeholder="Posez une question sur ce territoire..."
+                  scenarios={scenarios}
+                  agentContext={{
+                    jalon,
+                    territoireCode,
+                    instructions: `Le territoire courant de l'utilisateur est ${territoire.nomAffiché} (code : ${territoireCode}). Utilise ce territoire par défaut lorsque l'utilisateur ne précise pas de territoire dans sa question.`,
+                  }}
+                />
+              ) : (
+                <Loader />
+              )}
             </div>
           </div>
         </ModalePleinEcran>

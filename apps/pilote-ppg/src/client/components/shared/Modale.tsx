@@ -22,7 +22,7 @@ export const Modale = ({
   sousTitre?: string;
   titleHidden?: boolean;
   trigger?: ReactNode;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
 }) => {
   return (
     <Dialog.Root {...props}>
@@ -34,6 +34,7 @@ export const Modale = ({
             className={clsxm(
               "relative w-full bg-white p-8 rounded-t-md md:rounded-md shadow-md !pointer-events-auto [word-break:break-word]",
               {
+                "max-w-[1280px]": size === "xl",
                 "max-w-[1000px]": size === "lg",
                 "max-w-[900px]": size === "md",
                 "max-w-[600px]": size === "sm",
