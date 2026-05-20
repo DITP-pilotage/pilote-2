@@ -12,7 +12,7 @@ import { Page } from '@/components/ui/Page'
 import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@/components/ui/Pagination'
 import { SearchField } from '@/components/ui/SearchField'
 import { Section } from '@/components/ui/Section'
-import { indicateursQueryOptions } from '@/queries/indicateurs'
+import { indicateursQueryOptions, loadIndicateurs } from '@/queries/indicateurs'
 
 const indicateursSearchSchema = z.object({
   recherche: z.string().optional(),
@@ -23,7 +23,7 @@ const indicateursSearchSchema = z.object({
 export const Route = createFileRoute('/_authenticated/indicateurs/')({
   validateSearch: indicateursSearchSchema,
   loaderDeps: ({ search }) => search,
-  loader: ({ context, deps }) => context.queryClient.fetchQuery(indicateursQueryOptions(deps)),
+  loader: ({ context, deps }) => loadIndicateurs({ queryClient: context.queryClient, query: deps }),
   pendingComponent: () => <RouteLoading message="Chargement des indicateurs…" />,
   errorComponent: RouteError,
   component: IndicateursListComponent,

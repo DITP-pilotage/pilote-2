@@ -19,12 +19,28 @@ export const indicateursQueryOptions = (params: ListIndicateursQuery) =>
     staleTime: DEFAULT_STALE_TIME,
   })
 
+export const loadIndicateurs = ({
+  queryClient,
+  query,
+}: {
+  queryClient: QueryClient
+  query: ListIndicateursQuery
+}) => queryClient.fetchQuery(indicateursQueryOptions(query))
+
 export const indicateurQueryOptions = (id: string) =>
   queryOptions({
     queryKey: ['indicateur', id],
     queryFn: () => fetchIndicateurById(id),
     staleTime: DEFAULT_STALE_TIME,
   })
+
+export const loadIndicateur = ({
+  queryClient,
+  indicateurId,
+}: {
+  queryClient: QueryClient
+  indicateurId: string
+}) => queryClient.fetchQuery(indicateurQueryOptions(indicateurId))
 
 export const indicateurIndividusQueryOptions = (indicateurId: string) =>
   queryOptions({

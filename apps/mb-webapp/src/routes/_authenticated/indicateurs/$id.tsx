@@ -19,7 +19,11 @@ import { FormField } from '@/components/ui/FormField'
 import { Page } from '@/components/ui/Page'
 import { Section } from '@/components/ui/Section'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
-import { indicateurQueryOptions, prefetchIndicateurValeursForIndividu } from '@/queries/indicateurs'
+import {
+  indicateurQueryOptions,
+  loadIndicateur,
+  prefetchIndicateurValeursForIndividu,
+} from '@/queries/indicateurs'
 import { loadIndividusFromReferentiels } from '@/queries/referentiels'
 
 const paramsSchema = z.object({
@@ -40,7 +44,7 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
   loaderDeps: ({ search }) => ({ individu: search.individu }),
   loader: async ({ context, params, deps }) => {
     const { queryClient } = context
-    const indicateur = await queryClient.fetchQuery(indicateurQueryOptions(params.id))
+    const indicateur = await loadIndicateur({ queryClient, indicateurId: params.id })
 
     if (indicateur.referentielIds.length === 0) return { indicateur }
 
