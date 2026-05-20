@@ -12,10 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/Select'
 import { indicateurQueryOptions } from '@/queries/indicateurs'
-import {
-  referentielIndividusQueryOptions,
-  referentielQueryOptions,
-} from '@/queries/referentiels'
+import { referentielIndividusQueryOptions, referentielQueryOptions } from '@/queries/referentiels'
 
 type Groupe = {
   referentiel: ReferentielApiModel

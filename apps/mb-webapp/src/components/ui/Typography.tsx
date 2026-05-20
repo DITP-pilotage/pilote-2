@@ -79,14 +79,7 @@ const textVariantDefaults: Record<TextVariant, { tone: TextTone; weight: TextWei
   kicker: { tone: 'muted', weight: 'medium' },
 }
 
-export function Text({
-  variant = 'body',
-  tone,
-  weight,
-  as = 'p',
-  children,
-  className,
-}: TextProps) {
+export function Text({ variant = 'body', tone, weight, as = 'p', children, className }: TextProps) {
   const defaults = textVariantDefaults[variant]
   return createElement(
     as,

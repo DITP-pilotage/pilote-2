@@ -9,10 +9,7 @@ type IndicateurValeursTableProps = {
   individuId: string
 }
 
-export function IndicateurValeursTable({
-  indicateurId,
-  individuId,
-}: IndicateurValeursTableProps) {
+export function IndicateurValeursTable({ indicateurId, individuId }: IndicateurValeursTableProps) {
   const { data } = useSuspenseQuery(indicateurValeursQueryOptions(indicateurId, individuId))
 
   const rows = [...data.items].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : 0))
