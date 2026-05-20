@@ -2,7 +2,8 @@ import Head from "next/head";
 import { GetServerSideProps } from "next";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
-import { AlbertChat } from "@/components/PagePanelAdministrateur/Albert/AlbertChat";
+import { AlbertPanel } from "@/components/PagePanelAdministrateur/Albert/AlbertPanel";
+import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await auth(context);
@@ -16,10 +17,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (!session) {
     return redirigerVersPageAccueil;
   }
+  if (session.profil !== ProfilEnum.DITP_ADMIN) {
+    return redirigerVersPageAccueil;
+  }
 
-  return {
-    props: {},
-  };
+  return { props: {} };
 };
 
 const NextPagePanelAdministrateurAlbert = () => {
@@ -29,7 +31,7 @@ const NextPagePanelAdministrateurAlbert = () => {
         <title>Panel Administrateur - Albert - PILOTE</title>
       </Head>
       <NextPanelAdministrateurLayout pageActive="albert">
-        <AlbertChat />
+        <AlbertPanel />
       </NextPanelAdministrateurLayout>
     </>
   );
