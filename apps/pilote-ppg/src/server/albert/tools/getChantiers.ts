@@ -56,7 +56,7 @@ export type GetChantiersOutput = {
 };
 
 const NON_APPLICABLE_EN_RETARD_NAT_FR =
-  "L'analyse des chantiers en retard repose sur la comparaison du taux d'avancement de chaque chantier au taux médian observé sur les autres territoires. Elle n'est donc pas calculable au niveau national (NAT-FR), qui constitue l'agrégat de référence et n'a pas de médiane comparative.";
+  "L'analyse des chantiers en retard ne peut pas être réalisée au niveau national.\n\nEn effet, cet indicateur repose sur une comparaison entre le taux d'avancement d'un chantier pour un territoire donné et la valeur médiane observée sur l'ensemble des autres territoires.";
 
 function getOutputInstructions(input: GetChantiersInput): string {
   if (input.view === "en_retard") {
