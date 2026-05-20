@@ -65,9 +65,9 @@ export class PrismaAdminAlbertRepository implements AdminAlbertRepository {
       const direction =
         params.tri.direction === "asc" ? Prisma.sql`ASC` : Prisma.sql`DESC`;
       if (params.tri.champ === "createdAt") {
-        return Prisma.sql`c.created_at ${direction}, c.id ${direction}`;
+        return Prisma.sql`b.created_at ${direction}, b.id ${direction}`;
       }
-      return Prisma.sql`c.updated_at ${direction}, c.id ${direction}`;
+      return Prisma.sql`b.updated_at ${direction}, b.id ${direction}`;
     })();
 
     const lignes = await db.$queryRaw<LigneListe[]>(Prisma.sql`
