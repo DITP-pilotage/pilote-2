@@ -21,30 +21,34 @@ export const BoutonSyntheseTerritoire = ({
   const [isOpen, setIsOpen] = useState(false);
   const ffHistorique = useEnv("NEXT_PUBLIC_FF_HISTORIQUE_ALBERT");
   const utilsTrpc = api.useUtils();
-  const [activeChatId, setActiveChatId] = useState<string>(() =>
-    crypto.randomUUID(),
-  );
-  const [conversationPersistee, setConversationPersistee] = useState(false);
+  type ConversationActive =
+    | { kind: "nouvelle"; id: string }
+    | { kind: "existante"; id: string };
+  const [conversation, setConversation] = useState<ConversationActive>(() => ({
+    kind: "nouvelle",
+    id: crypto.randomUUID(),
+  }));
   const { data: conversationChargee, isFetched: conversationChargeeFetched } =
     api.albert.conversations.recuperer.useQuery(
-      { id: activeChatId },
+      { id: conversation.id },
       {
-        enabled: ffHistorique === true && isOpen && conversationPersistee,
+        enabled:
+          ffHistorique === true && isOpen && conversation.kind === "existante",
         retry: false,
       },
     );
   const conversationPrete =
-    !ffHistorique || !conversationPersistee || conversationChargeeFetched;
+    !ffHistorique ||
+    conversation.kind === "nouvelle" ||
+    conversationChargeeFetched;
   const selectionnerConversation = (id: string) => {
-    setActiveChatId(id);
-    setConversationPersistee(true);
+    setConversation({ kind: "existante", id });
   };
   const demarrerNouvelleConversation = () => {
-    setActiveChatId(crypto.randomUUID());
-    setConversationPersistee(false);
+    setConversation({ kind: "nouvelle", id: crypto.randomUUID() });
   };
   const rafraichirHistorique = () => {
-    setConversationPersistee(true);
+    setConversation((courante) => ({ kind: "existante", id: courante.id }));
     utilsTrpc.albert.conversations.lister.invalidate();
   };
 
@@ -159,7 +163,7 @@ Quelles sont les principales difficultés remontées dans les commentaires ?`,
           <div className="flex h-full">
             {ffHistorique ? (
               <ConversationHistoryDrawer
-                chatIdCourant={activeChatId}
+                chatIdCourant={conversation.id}
                 onSelectionner={selectionnerConversation}
                 onNouvelleConversation={demarrerNouvelleConversation}
               />
@@ -167,8 +171,8 @@ Quelles sont les principales difficultés remontées dans les commentaires ?`,
             <div className="flex-1 relative">
               {conversationPrete ? (
                 <ChatUI
-                  key={activeChatId}
-                  chatId={activeChatId}
+                  key={conversation.id}
+                  chatId={conversation.id}
                   initialMessages={conversationChargee?.messages}
                   onChatFinish={ffHistorique ? rafraichirHistorique : undefined}
                   endpoint="/api/albert/chat"
