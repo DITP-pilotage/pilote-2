@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
 import { AssistantMessageText } from "@/components/_commons/ChatUI/AssistantMessageText";
@@ -6,7 +7,7 @@ import { clsxm } from "@/utils/clsxm";
 type DetailConversation = NonNullable<
   inferRouterOutputs<
     typeof appRouter
-  >["albert"]["admin"]["recupererConversation"]
+  >["albert"]["conversations"]["recupererPourAdmin"]
 >;
 type LlmCall = DetailConversation["llmCalls"][number];
 
@@ -88,7 +89,7 @@ const BadgeEvaluation = ({
       </span>
     );
   }
-  const estPositif = evaluation === "POSITIVE";
+  const estPositif = evaluation === $Enums.llm_call_evaluation.POSITIVE;
   return (
     <span
       className={clsxm(

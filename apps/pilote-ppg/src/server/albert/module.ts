@@ -1,7 +1,5 @@
-import { ListerConversationsAdminUseCase } from "@/server/albert/usecases/ListerConversationsAdminUseCase";
-import { RecupererConversationAdminUseCase } from "@/server/albert/usecases/RecupererConversationAdminUseCase";
-import { PrismaAdminAlbertRepository } from "@/server/albert/infrastructure/PrismaAdminAlbertRepository";
-import type { AdminAlbertRepository } from "@/server/albert/domain/AdminAlbertRepository";
+import { ListerConversationsAdminQuery } from "@/server/albert/queries/ListerConversationsAdminQuery";
+import { RecupererConversationAdminQuery } from "@/server/albert/queries/RecupererConversationAdminQuery";
 import { createGetTauxAvancementTerritoireTool } from "@/server/albert/tools/getTauxAvancementTerritoire";
 import { createGetChantiersTool } from "@/server/albert/tools/getChantiers";
 import { createGetChantierIndicateursTool } from "@/server/albert/tools/getChantierIndicateurs";
@@ -53,9 +51,8 @@ type AlbertOwnCradle = {
   recupererConversationUseCase: RecupererConversationUseCase;
   supprimerConversationUseCase: SupprimerConversationUseCase;
   purgerConversationsExpireesUseCase: PurgerConversationsExpireesUseCase;
-  adminAlbertRepository: AdminAlbertRepository;
-  listerConversationsAdminUseCase: ListerConversationsAdminUseCase;
-  recupererConversationAdminUseCase: RecupererConversationAdminUseCase;
+  listerConversationsAdminQuery: ListerConversationsAdminQuery;
+  recupererConversationAdminQuery: RecupererConversationAdminQuery;
 };
 
 type AlbertCradle = AlbertOwnCradle & AlbertImports;
@@ -93,12 +90,11 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       purgerConversationsExpireesUseCase: asModuleClass(
         PurgerConversationsExpireesUseCase,
       ),
-      adminAlbertRepository: asModuleClass(PrismaAdminAlbertRepository),
-      listerConversationsAdminUseCase: asModuleClass(
-        ListerConversationsAdminUseCase,
+      listerConversationsAdminQuery: asModuleClass(
+        ListerConversationsAdminQuery,
       ),
-      recupererConversationAdminUseCase: asModuleClass(
-        RecupererConversationAdminUseCase,
+      recupererConversationAdminQuery: asModuleClass(
+        RecupererConversationAdminQuery,
       ),
     } satisfies VerifyCradle<AlbertOwnCradle>);
   },

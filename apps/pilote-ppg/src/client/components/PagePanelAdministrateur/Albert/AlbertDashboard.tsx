@@ -1,8 +1,14 @@
-import { useState } from "react";
+import {
+  parseAsArrayOf,
+  parseAsBoolean,
+  parseAsInteger,
+  parseAsString,
+  parseAsStringLiteral,
+  useQueryStates,
+} from "nuqs";
 import api from "@/server/infrastructure/api/trpc/api";
 import {
   AlbertDashboardFilters,
-  FILTRES_VIDES,
   type FiltresDashboard,
 } from "@/components/PagePanelAdministrateur/Albert/AlbertDashboardFilters";
 import {
@@ -13,19 +19,40 @@ import { ConversationDetailModale } from "@/components/PagePanelAdministrateur/A
 
 const TAILLE_PAGE = 25;
 
-export const AlbertDashboard = () => {
-  const [filtres, setFiltres] = useState<FiltresDashboard>(FILTRES_VIDES);
-  const [page, setPage] = useState(1);
-  const [tri, setTri] = useState<TriDashboard>({
-    champ: "updatedAt",
-    direction: "desc",
-  });
-  const [conversationOuverteId, setConversationOuverteId] = useState<
-    string | null
-  >(null);
+const champsTri = ["createdAt", "updatedAt"] as const;
+const directionsTri = ["asc", "desc"] as const;
 
-  const { data, isLoading } = api.albert.admin.listerConversations.useQuery({
-    page,
+export const AlbertDashboard = () => {
+  const [params, setParams] = useQueryStates(
+    {
+      page: parseAsInteger.withDefault(1),
+      recherche: parseAsString.withDefault(""),
+      avecPouce: parseAsBoolean.withDefault(false),
+      avecPouceBas: parseAsBoolean.withDefault(false),
+      avecCommentaire: parseAsBoolean.withDefault(false),
+      profilCodes: parseAsArrayOf(parseAsString).withDefault([]),
+      triChamp: parseAsStringLiteral(champsTri).withDefault("updatedAt"),
+      triDirection: parseAsStringLiteral(directionsTri).withDefault("desc"),
+      conversationOuverteId: parseAsString,
+    },
+    { history: "push", shallow: false, clearOnDefault: true },
+  );
+
+  const filtres: FiltresDashboard = {
+    recherche: params.recherche,
+    avecPouce: params.avecPouce,
+    avecPouceBas: params.avecPouceBas,
+    avecCommentaire: params.avecCommentaire,
+    profilCodes: params.profilCodes,
+  };
+
+  const tri: TriDashboard = {
+    champ: params.triChamp,
+    direction: params.triDirection,
+  };
+
+  const { data, isLoading } = api.albert.conversations.listerToutes.useQuery({
+    page: params.page,
     taillePage: TAILLE_PAGE,
     recherche: filtres.recherche || undefined,
     avecPouce: filtres.avecPouce || undefined,
@@ -38,14 +65,30 @@ export const AlbertDashboard = () => {
   });
 
   const changerFiltres = (nouveauxFiltres: FiltresDashboard) => {
-    setFiltres(nouveauxFiltres);
-    setPage(1);
+    setParams({
+      page: 1,
+      recherche: nouveauxFiltres.recherche,
+      avecPouce: nouveauxFiltres.avecPouce,
+      avecPouceBas: nouveauxFiltres.avecPouceBas,
+      avecCommentaire: nouveauxFiltres.avecCommentaire,
+      profilCodes: nouveauxFiltres.profilCodes,
+    });
+  };
+
+  const changerTri = (nouveauTri: TriDashboard) => {
+    setParams({
+      page: 1,
+      triChamp: nouveauTri.champ,
+      triDirection: nouveauTri.direction,
+    });
   };
 
   return (
     <div>
-      <h2 className="text-xl font-bold text-gray-900 mb-1">Dashboard Albert</h2>
-      <p className="text-sm text-gray-500 mb-4">
+      <h2 className="text-xl font-bold text-dsfr-grey-50 mb-1">
+        Dashboard Albert
+      </h2>
+      <p className="text-sm text-dsfr-mention-grey mb-4">
         Liste de toutes les conversations Albert et leurs feedbacks.
       </p>
 
@@ -54,22 +97,19 @@ export const AlbertDashboard = () => {
       <AlbertDashboardTable
         conversations={data?.items ?? []}
         enChargement={isLoading}
-        onLigneClick={setConversationOuverteId}
-        onPageChange={setPage}
-        onTriChange={(nouveauTri) => {
-          setTri(nouveauTri);
-          setPage(1);
-        }}
-        page={page}
+        onLigneClick={(id) => setParams({ conversationOuverteId: id })}
+        onPageChange={(page) => setParams({ page })}
+        onTriChange={changerTri}
+        page={params.page}
         taillePage={TAILLE_PAGE}
         total={data?.total ?? 0}
         tri={tri}
       />
 
-      {conversationOuverteId && (
+      {params.conversationOuverteId && (
         <ConversationDetailModale
-          id={conversationOuverteId}
-          onClose={() => setConversationOuverteId(null)}
+          id={params.conversationOuverteId}
+          onClose={() => setParams({ conversationOuverteId: null })}
         />
       )}
     </div>

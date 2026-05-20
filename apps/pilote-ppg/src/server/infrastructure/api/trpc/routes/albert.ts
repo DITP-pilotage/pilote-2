@@ -39,10 +39,8 @@ const conversationsRouter = créerRouteurTRPC({
         utilisateurId: ctx.session.user.id,
       });
     }),
-});
 
-const adminRouter = créerRouteurTRPC({
-  listerConversations: procédureProtégée
+  listerToutes: procédureProtégée
     .input(
       z.object({
         page: z.number().int().min(1).default(1),
@@ -60,10 +58,10 @@ const adminRouter = créerRouteurTRPC({
       if (ctx.session.profil !== ProfilEnum.DITP_ADMIN) {
         throw new UnauthorizedError("Accès réservé aux administrateurs");
       }
-      const useCase = getContainer("albert").resolve(
-        "listerConversationsAdminUseCase",
+      const query = getContainer("albert").resolve(
+        "listerConversationsAdminQuery",
       );
-      return useCase.execute({
+      return query.run({
         page: input.page,
         taillePage: input.taillePage,
         recherche: input.recherche,
@@ -75,16 +73,16 @@ const adminRouter = créerRouteurTRPC({
       });
     }),
 
-  recupererConversation: procédureProtégée
+  recupererPourAdmin: procédureProtégée
     .input(z.object({ id: z.string().uuid() }))
     .query(async ({ ctx, input }) => {
       if (ctx.session.profil !== ProfilEnum.DITP_ADMIN) {
         throw new UnauthorizedError("Accès réservé aux administrateurs");
       }
-      const useCase = getContainer("albert").resolve(
-        "recupererConversationAdminUseCase",
+      const query = getContainer("albert").resolve(
+        "recupererConversationAdminQuery",
       );
-      return useCase.execute({ id: input.id });
+      return query.run({ id: input.id });
     }),
 });
 
@@ -116,5 +114,4 @@ export const albertRouter = créerRouteurTRPC({
       });
     }),
   conversations: conversationsRouter,
-  admin: adminRouter,
 });

@@ -2,17 +2,17 @@ import { randomUUID } from "node:crypto";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { PrismaAdminAlbertRepository } from "@/server/albert/infrastructure/PrismaAdminAlbertRepository";
+import { ListerConversationsAdminQuery } from "@/server/albert/queries/ListerConversationsAdminQuery";
 
-describe("PrismaAdminAlbertRepository", () => {
+describe("ListerConversationsAdminQuery", () => {
   const prismaPilote = new PrismaPilote();
-  const buildRepository = () =>
-    new PrismaAdminAlbertRepository({ prisma: prismaPilote });
+  const buildQuery = () =>
+    new ListerConversationsAdminQuery({ prisma: prismaPilote });
 
   const ID_PROFIL_DITP_ADMIN = "DITP_ADMIN";
 
   it(
-    "listerConversations renvoie toutes les conversations triées par updatedAt desc par défaut, avec total",
+    "renvoie toutes les conversations triées par updatedAt desc par défaut, avec total",
     createIntegrationTest(async (tx) => {
       // Given
       const utilisateurA = await fixtures.utilisateur({
@@ -52,7 +52,6 @@ describe("PrismaAdminAlbertRepository", () => {
           messages: [],
         },
       });
-      // Conv B est plus récente (créée après) → doit sortir en premier en desc
       await tx.chat_conversation.update({
         where: { id: idConvA },
         data: { updated_at: new Date("2026-01-01") },
@@ -62,10 +61,8 @@ describe("PrismaAdminAlbertRepository", () => {
         data: { updated_at: new Date("2026-02-01") },
       });
 
-      const repo = buildRepository();
-
       // When
-      const result = await repo.listerConversations({
+      const result = await buildQuery().run({
         tri: { champ: "updatedAt", direction: "desc" },
         page: 1,
         taillePage: 25,
@@ -100,7 +97,7 @@ describe("PrismaAdminAlbertRepository", () => {
   );
 
   it(
-    "listerConversations calcule aPouce / aPouceBas / aCommentaire depuis llm_calls",
+    "calcule aPouce / aPouceBas / aCommentaire depuis llm_calls",
     createIntegrationTest(async (tx) => {
       // Given
       const utilisateur = await fixtures.utilisateur({});
@@ -133,10 +130,8 @@ describe("PrismaAdminAlbertRepository", () => {
         ],
       });
 
-      const repo = buildRepository();
-
       // When
-      const result = await repo.listerConversations({
+      const result = await buildQuery().run({
         tri: { champ: "updatedAt", direction: "desc" },
         page: 1,
         taillePage: 25,
@@ -155,7 +150,7 @@ describe("PrismaAdminAlbertRepository", () => {
   );
 
   it(
-    "listerConversations filtre avecPouce uniquement les conversations qui ont au moins un POSITIVE",
+    "filtre avecPouce uniquement les conversations qui ont au moins un POSITIVE",
     createIntegrationTest(async (tx) => {
       // Given
       const utilisateur = await fixtures.utilisateur({});
@@ -187,10 +182,8 @@ describe("PrismaAdminAlbertRepository", () => {
         },
       });
 
-      const repo = buildRepository();
-
       // When
-      const result = await repo.listerConversations({
+      const result = await buildQuery().run({
         avecPouce: true,
         tri: { champ: "updatedAt", direction: "desc" },
         page: 1,
@@ -204,7 +197,7 @@ describe("PrismaAdminAlbertRepository", () => {
   );
 
   it(
-    "listerConversations filtre par recherche sur titre (ILIKE)",
+    "filtre par recherche sur titre (ILIKE)",
     createIntegrationTest(async (tx) => {
       // Given
       const utilisateur = await fixtures.utilisateur({});
@@ -225,10 +218,8 @@ describe("PrismaAdminAlbertRepository", () => {
         ],
       });
 
-      const repo = buildRepository();
-
       // When
-      const result = await repo.listerConversations({
+      const result = await buildQuery().run({
         recherche: "bretagne",
         tri: { champ: "updatedAt", direction: "desc" },
         page: 1,
@@ -244,7 +235,44 @@ describe("PrismaAdminAlbertRepository", () => {
   );
 
   it(
-    "listerConversations filtre par profilCodes",
+    "filtre par recherche sur le 1er message au-delà des 160 premiers caractères",
+    createIntegrationTest(async (tx) => {
+      // Given : un mot-clé "marmotte" placé après 160 caractères de remplissage
+      const utilisateur = await fixtures.utilisateur({});
+      const remplissage = "a".repeat(200);
+      await tx.chat_conversation.create({
+        data: {
+          id: randomUUID(),
+          utilisateur_id: utilisateur.id,
+          titre: "Sans rapport",
+          messages: [
+            {
+              id: "m1",
+              role: "user",
+              parts: [{ type: "text", text: `${remplissage} marmotte` }],
+            },
+          ],
+        },
+      });
+
+      // When
+      const result = await buildQuery().run({
+        recherche: "marmotte",
+        tri: { champ: "updatedAt", direction: "desc" },
+        page: 1,
+        taillePage: 25,
+      });
+
+      // Then
+      expect(result.total).toEqual(1);
+      expect(result.items).toEqual([
+        expect.objectContaining({ titre: "Sans rapport" }),
+      ]);
+    }),
+  );
+
+  it(
+    "filtre par profilCodes",
     createIntegrationTest(async (tx) => {
       // Given
       const admin = await fixtures.utilisateur({ profilCode: "DITP_ADMIN" });
@@ -268,10 +296,8 @@ describe("PrismaAdminAlbertRepository", () => {
         ],
       });
 
-      const repo = buildRepository();
-
       // When
-      const result = await repo.listerConversations({
+      const result = await buildQuery().run({
         profilCodes: ["DITP_PILOTAGE"],
         tri: { champ: "updatedAt", direction: "desc" },
         page: 1,
@@ -286,7 +312,7 @@ describe("PrismaAdminAlbertRepository", () => {
   );
 
   it(
-    "listerConversations pagine via page / taillePage",
+    "pagine via page / taillePage",
     createIntegrationTest(async (tx) => {
       // Given
       const utilisateur = await fixtures.utilisateur({});
@@ -301,15 +327,13 @@ describe("PrismaAdminAlbertRepository", () => {
         });
       }
 
-      const repo = buildRepository();
-
       // When
-      const page1 = await repo.listerConversations({
+      const page1 = await buildQuery().run({
         tri: { champ: "updatedAt", direction: "desc" },
         page: 1,
         taillePage: 2,
       });
-      const page3 = await repo.listerConversations({
+      const page3 = await buildQuery().run({
         tri: { champ: "updatedAt", direction: "desc" },
         page: 3,
         taillePage: 2,
@@ -317,78 +341,13 @@ describe("PrismaAdminAlbertRepository", () => {
 
       // Then
       expect(page1.total).toEqual(5);
-      expect(page1.items).toHaveLength(2);
-      expect(page3.items).toHaveLength(1);
-    }),
-  );
-
-  it(
-    "recupererConversation renvoie conversation + llm_calls triés par created_at asc",
-    createIntegrationTest(async (tx) => {
-      // Given
-      const utilisateur = await fixtures.utilisateur({});
-      const idConv = randomUUID();
-      await tx.chat_conversation.create({
-        data: {
-          id: idConv,
-          utilisateur_id: utilisateur.id,
-          titre: "Conv détail",
-          messages: [
-            { id: "m1", role: "user", parts: [{ type: "text", text: "ping" }] },
-          ],
-          contexte: { jalon: 2025 },
-        },
-      });
-      await tx.llm_calls.create({
-        data: {
-          chat_id: idConv,
-          utilisateur_id: utilisateur.id,
-          transcript: {},
-          model: "m",
-          evaluation: "NEGATIVE",
-          commentaire: "réponse hors-sujet",
-          created_at: new Date("2026-01-01T10:00:00Z"),
-        },
-      });
-      await tx.llm_calls.create({
-        data: {
-          chat_id: idConv,
-          utilisateur_id: utilisateur.id,
-          transcript: {},
-          model: "m",
-          created_at: new Date("2026-01-01T11:00:00Z"),
-        },
-      });
-
-      const repo = buildRepository();
-
-      // When
-      const result = await repo.recupererConversation({ id: idConv });
-
-      // Then
-      expect(result).toEqual(
-        expect.objectContaining({
-          id: idConv,
-          titre: "Conv détail",
-          contexte: { jalon: 2025 },
-          llmCalls: [
-            expect.objectContaining({
-              evaluation: "NEGATIVE",
-              commentaire: "réponse hors-sujet",
-            }),
-            expect.objectContaining({ evaluation: null, commentaire: null }),
-          ],
-        }),
-      );
-    }),
-  );
-
-  it(
-    "recupererConversation renvoie null si l'id n'existe pas",
-    createIntegrationTest(async () => {
-      const repo = buildRepository();
-      const result = await repo.recupererConversation({ id: randomUUID() });
-      expect(result).toBeNull();
+      expect(page1.items).toEqual([
+        expect.objectContaining({ id: expect.any(String) }),
+        expect.objectContaining({ id: expect.any(String) }),
+      ]);
+      expect(page3.items).toEqual([
+        expect.objectContaining({ id: expect.any(String) }),
+      ]);
     }),
   );
 });

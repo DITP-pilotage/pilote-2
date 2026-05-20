@@ -49,7 +49,7 @@ export const AlbertDashboardFilters = ({
   const toggleProfil = (code: string) => {
     const actuel = filtres.profilCodes;
     const suivant = actuel.includes(code)
-      ? actuel.filter((c) => c !== code)
+      ? actuel.filter((profilCode) => profilCode !== code)
       : [...actuel, code];
     onChange({ ...filtres, profilCodes: suivant });
   };
@@ -58,7 +58,7 @@ export const AlbertDashboardFilters = ({
     <div className="!mb-4 flex flex-wrap items-center gap-3">
       <form className="flex items-center gap-2" onSubmit={validerRecherche}>
         <input
-          className="!border !border-gray-300 !rounded-md !px-3 !py-2 !text-sm !w-72"
+          className="!border !border-dsfr-grey-900 !rounded-md !px-3 !py-2 !text-sm !w-72"
           onChange={(event) => setRechercheLocale(event.target.value)}
           placeholder="Rechercher dans le titre ou le 1er message"
           type="search"
@@ -83,7 +83,7 @@ export const AlbertDashboardFilters = ({
             "!px-3 !py-2 !text-sm !rounded-md !border",
             filtres[champ]
               ? "!bg-dsfr-blue-france-sun-113 !text-white !border-dsfr-blue-france-sun-113"
-              : "!bg-white !text-gray-700 !border-gray-300",
+              : "!bg-white !text-dsfr-grey-200 !border-dsfr-grey-900",
           )}
           key={champ}
           onClick={() => toggleBooleen(champ)}
@@ -95,12 +95,12 @@ export const AlbertDashboardFilters = ({
 
       {profils && profils.length > 0 && (
         <details className="!relative">
-          <summary className="!cursor-pointer !px-3 !py-2 !text-sm !rounded-md !border !border-gray-300 !list-none">
+          <summary className="!cursor-pointer !px-3 !py-2 !text-sm !rounded-md !border !border-dsfr-grey-900 !list-none">
             Profils{" "}
             {filtres.profilCodes.length > 0 &&
               `(${filtres.profilCodes.length})`}
           </summary>
-          <div className="!absolute !z-10 !mt-1 !p-3 !bg-white !border !border-gray-200 !rounded-md !shadow-md !max-h-72 !overflow-y-auto !w-64">
+          <div className="!absolute !z-10 !mt-1 !p-3 !bg-white !border !border-dsfr-grey-925 !rounded-md !shadow-md !max-h-72 !overflow-y-auto !w-64">
             {profils.map((profil) => (
               <label
                 className="!flex !items-center !gap-2 !text-sm !py-1"
@@ -119,7 +119,7 @@ export const AlbertDashboardFilters = ({
       )}
 
       <button
-        className="!px-3 !py-2 !text-sm !rounded-md !text-gray-700 !underline"
+        className="!px-3 !py-2 !text-sm !rounded-md !text-dsfr-grey-200 !underline"
         onClick={reinitialiser}
         type="button"
       >

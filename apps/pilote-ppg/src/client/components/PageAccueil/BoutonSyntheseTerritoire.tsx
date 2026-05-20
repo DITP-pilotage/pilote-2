@@ -44,6 +44,7 @@ export const BoutonSyntheseTerritoire = ({
     setConversationPersistee(false);
   };
   const rafraichirHistorique = () => {
+    setConversationPersistee(true);
     utilsTrpc.albert.conversations.lister.invalidate();
   };
 

@@ -1,3 +1,5 @@
+import { $Enums } from "@prisma/client";
+import { DateTime } from "luxon";
 import api from "@/server/infrastructure/api/trpc/api";
 import { ConversationTranscript } from "@/components/PagePanelAdministrateur/Albert/ConversationTranscript";
 import { Modale } from "@/components/shared/Modale";
@@ -8,10 +10,10 @@ type ConversationDetailModaleProps = {
 };
 
 const formatterDateLongue = (date: Date) =>
-  new Intl.DateTimeFormat("fr-FR", {
-    dateStyle: "long",
-    timeStyle: "short",
-  }).format(date);
+  DateTime.fromJSDate(date)
+    .setZone("Europe/Paris")
+    .setLocale("fr")
+    .toFormat("d LLLL yyyy 'à' HH:mm");
 
 const ChipMeta = ({
   label,
@@ -50,14 +52,17 @@ export const ConversationDetailModale = ({
   id,
   onClose,
 }: ConversationDetailModaleProps) => {
-  const { data, isLoading } = api.albert.admin.recupererConversation.useQuery({
-    id,
-  });
+  const { data, isLoading } =
+    api.albert.conversations.recupererPourAdmin.useQuery({ id });
 
   const nbPouce =
-    data?.llmCalls.filter((call) => call.evaluation === "POSITIVE").length ?? 0;
+    data?.llmCalls.filter(
+      (call) => call.evaluation === $Enums.llm_call_evaluation.POSITIVE,
+    ).length ?? 0;
   const nbPouceBas =
-    data?.llmCalls.filter((call) => call.evaluation === "NEGATIVE").length ?? 0;
+    data?.llmCalls.filter(
+      (call) => call.evaluation === $Enums.llm_call_evaluation.NEGATIVE,
+    ).length ?? 0;
   const nbCommentaires =
     data?.llmCalls.filter((call) => call.commentaire !== null).length ?? 0;
 
