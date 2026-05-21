@@ -22,11 +22,7 @@ export const listIndicateurs = (
   const fetchPage = db().indicateur.findMany({
     where,
     orderBy: { id: 'asc' },
-    include: {
-      referentiels: {
-        include: { referentiel: { select: { publicId: true } } },
-      },
-    },
+    include: { referentiels: { include: { referentiel: true } } },
     ...buildPaginationArgs(params.cursor, params.pageSize),
   })
   const fetchTotal = db().indicateur.count({ where })

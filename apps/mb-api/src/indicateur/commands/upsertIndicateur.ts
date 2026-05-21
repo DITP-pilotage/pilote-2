@@ -1,67 +1,101 @@
-import { type UpsertIndicateurBody } from '@pilote/mb-shared/indicateur'
+import {
+  type ConfigurationIndicateurReferentiel,
+  type UpsertIndicateurBody,
+} from '@pilote/mb-shared/indicateur'
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { diff } from '@/framework/collections/diff'
 import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
-import { PermissionAction } from '@/generated/prisma/enums'
+import { type FonctionAgregation, PermissionAction } from '@/generated/prisma/enums'
 
-type UpsertIndicateurParams = {
-  publicId: string
-  body: UpsertIndicateurBody
+type ConfigurationResolue = {
+  referentielId: string
+  fonctionAgregation: FonctionAgregation
 }
 
-const resolveReferentielIds = async (publicIds: readonly string[]): Promise<string[]> => {
-  const unique = [...new Set(publicIds)]
-  if (unique.length === 0) return []
-  const found = await db().referentiel.findMany({
-    where: { publicId: { in: unique } },
-    select: { id: true, publicId: true },
+const dedupeConfigurations = (
+  configurations: ReadonlyArray<ConfigurationIndicateurReferentiel>,
+): Map<string, FonctionAgregation> => {
+  const parPublicId = new Map<string, FonctionAgregation>()
+  for (const configuration of configurations) {
+    parPublicId.set(configuration.referentielPublicId, configuration.fonctionAgregation)
+  }
+  return parPublicId
+}
+
+const resoudreConfigurationsReferentiels = async (
+  configurations: ReadonlyArray<ConfigurationIndicateurReferentiel>,
+): Promise<ConfigurationResolue[]> => {
+  const fonctionParPublicId = dedupeConfigurations(configurations)
+  const publicIds = [...fonctionParPublicId.keys()]
+  if (publicIds.length === 0) return []
+
+  const referentiels = await db().referentiel.findMany({
+    where: { publicId: { in: publicIds } },
   })
-  const foundPublicIds = new Set(found.map((r) => r.publicId))
-  const unknownIds = unique.filter((id) => !foundPublicIds.has(id))
-  if (unknownIds.length > 0) {
+  const publicIdsTrouves = new Set(referentiels.map((referentiel) => referentiel.publicId))
+  const publicIdsInconnus = publicIds.filter((id) => !publicIdsTrouves.has(id))
+  if (publicIdsInconnus.length > 0) {
     throw new ValidationError('Référentiels inconnus', {
-      unknownReferentielIds: unknownIds.sort(),
+      unknownReferentielIds: publicIdsInconnus.sort(),
     })
   }
-  return found.map((r) => r.id)
+  return referentiels.map((referentiel) => ({
+    referentielId: referentiel.id,
+    fonctionAgregation: fonctionParPublicId.get(referentiel.publicId)!,
+  }))
 }
 
-const replaceReferentielLinks = async (
+const supprimerConfigurationsRetirees = async (
   indicateurId: string,
-  referentielIds: string[],
+  referentielIdsCibles: Set<string>,
 ): Promise<void> => {
-  const existing = await db().indicateurReferentiel.findMany({
-    where: { indicateurId },
-    select: { referentielId: true },
+  const existantes = await db().indicateurReferentiel.findMany({ where: { indicateurId } })
+  const aSupprimer = existantes
+    .filter((configuration) => !referentielIdsCibles.has(configuration.referentielId))
+    .map((configuration) => configuration.referentielId)
+  if (aSupprimer.length === 0) return
+  await db().indicateurReferentiel.deleteMany({
+    where: { indicateurId, referentielId: { in: aSupprimer } },
   })
-  const { toAdd, toRemove } = diff(
-    referentielIds,
-    existing.map((link) => link.referentielId),
-  )
+}
 
-  if (toRemove.length > 0) {
-    await db().indicateurReferentiel.deleteMany({
-      where: { indicateurId, referentielId: { in: toRemove } },
-    })
-  }
-  if (toAdd.length > 0) {
-    await db().indicateurReferentiel.createMany({
-      data: toAdd.map((referentielId) => ({ indicateurId, referentielId })),
+const upsertConfigurationsCibles = async (
+  indicateurId: string,
+  configurations: ConfigurationResolue[],
+): Promise<void> => {
+  for (const configuration of configurations) {
+    await db().indicateurReferentiel.upsert({
+      where: {
+        indicateurId_referentielId: {
+          indicateurId,
+          referentielId: configuration.referentielId,
+        },
+      },
+      update: { fonctionAgregation: configuration.fonctionAgregation },
+      create: {
+        indicateurId,
+        referentielId: configuration.referentielId,
+        fonctionAgregation: configuration.fonctionAgregation,
+      },
     })
   }
 }
 
-const assertWritePermission = async ({
-  indicateurId,
-  principalId,
-}: {
-  indicateurId: string
-  principalId: string
-}): Promise<void> => {
+const remplacerConfigurationsReferentiels = async (
+  indicateurId: string,
+  configurations: ConfigurationResolue[],
+): Promise<void> => {
+  const referentielIdsCibles = new Set(
+    configurations.map((configuration) => configuration.referentielId),
+  )
+  await supprimerConfigurationsRetirees(indicateurId, referentielIdsCibles)
+  await upsertConfigurationsCibles(indicateurId, configurations)
+}
+
+const assertWritePermission = async (indicateurId: string, principalId: string): Promise<void> => {
   const hasWrite = await db().indicateurPermission.findUnique({
     where: {
       principalId_indicateurId_action: {
@@ -76,57 +110,58 @@ const assertWritePermission = async ({
   }
 }
 
-const updateExisting = async ({
-  publicId,
-  indicateurId,
-  body,
-  principalId,
-}: {
-  publicId: string
-  indicateurId: string
-  body: UpsertIndicateurBody
-  principalId: string
-}): Promise<void> => {
-  await assertWritePermission({ indicateurId, principalId })
-  const referentielIds = await resolveReferentielIds(body.referentielIds)
+const updateIndicateurExistant = async (
+  publicId: string,
+  indicateurId: string,
+  body: UpsertIndicateurBody,
+  principalId: string,
+): Promise<void> => {
+  await assertWritePermission(indicateurId, principalId)
+  const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
   await db().indicateur.update({ where: { publicId }, data: { nom: body.nom } })
-  await replaceReferentielLinks(indicateurId, referentielIds)
+  await remplacerConfigurationsReferentiels(indicateurId, configurations)
 }
 
-const createWithGrants = async ({
-  publicId,
-  body,
-  principalId,
-}: {
-  publicId: string
-  body: UpsertIndicateurBody
-  principalId: string
-}): Promise<void> => {
-  const referentielIds = await resolveReferentielIds(body.referentielIds)
-  const id = uuidv7()
-  await db().indicateur.create({ data: { id, publicId, nom: body.nom } })
+const grantOwnerPermissions = async (principalId: string, indicateurId: string): Promise<void> => {
   await db().indicateurPermission.createMany({
     data: [
-      { principalId, indicateurId: id, action: PermissionAction.READ },
-      { principalId, indicateurId: id, action: PermissionAction.WRITE },
+      { principalId, indicateurId, action: PermissionAction.READ },
+      { principalId, indicateurId, action: PermissionAction.WRITE },
     ],
   })
-  if (referentielIds.length > 0) {
+}
+
+const createIndicateurAvecGrants = async (
+  publicId: string,
+  body: UpsertIndicateurBody,
+  principalId: string,
+): Promise<void> => {
+  const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
+  const indicateurId = uuidv7()
+  await db().indicateur.create({ data: { id: indicateurId, publicId, nom: body.nom } })
+  await grantOwnerPermissions(principalId, indicateurId)
+  if (configurations.length > 0) {
     await db().indicateurReferentiel.createMany({
-      data: referentielIds.map((referentielId) => ({ indicateurId: id, referentielId })),
+      data: configurations.map((configuration) => ({
+        indicateurId,
+        referentielId: configuration.referentielId,
+        fonctionAgregation: configuration.fonctionAgregation,
+      })),
     })
   }
 }
 
-const performUpsert = async ({ publicId, body }: UpsertIndicateurParams): Promise<void> => {
+const performUpsert = async (publicId: string, body: UpsertIndicateurBody): Promise<void> => {
   const principalId = requireCurrentPrincipalId()
-  const existing = await db().indicateur.findUnique({ where: { publicId } })
-  if (existing) {
-    await updateExisting({ publicId, indicateurId: existing.id, body, principalId })
+  const existant = await db().indicateur.findUnique({ where: { publicId } })
+  if (existant) {
+    await updateIndicateurExistant(publicId, existant.id, body, principalId)
     return
   }
-  await createWithGrants({ publicId, body, principalId })
+  await createIndicateurAvecGrants(publicId, body, principalId)
 }
 
-export const upsertIndicateur = (params: UpsertIndicateurParams): ResultAsync<void, never> =>
-  ResultAsync.fromSafePromise(performUpsert(params))
+export const upsertIndicateur = (
+  publicId: string,
+  body: UpsertIndicateurBody,
+): ResultAsync<void, never> => ResultAsync.fromSafePromise(performUpsert(publicId, body))

@@ -33,15 +33,18 @@ type IndividuSelectProps = {
 
 export function IndividuSelect({ id, indicateurId, value, onChange }: IndividuSelectProps) {
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(indicateurId))
+  const referentielIds = indicateur.referentiels.map(
+    (configuration) => configuration.referentielPublicId,
+  )
   const referentiels = useSuspenseQueries({
-    queries: indicateur.referentielIds.map((refId) => referentielQueryOptions(refId)),
+    queries: referentielIds.map((refId) => referentielQueryOptions(refId)),
     combine: (results) => results.map((r) => r.data),
   })
   const individusByReferentiel = useSuspenseQueries({
-    queries: indicateur.referentielIds.map((refId) => referentielIndividusQueryOptions(refId)),
+    queries: referentielIds.map((refId) => referentielIndividusQueryOptions(refId)),
     combine: (results) => results.map((r) => r.data),
   })
-  const groupes: Groupe[] = indicateur.referentielIds.map((_, i) => ({
+  const groupes: Groupe[] = referentielIds.map((_, i) => ({
     referentiel: referentiels[i]!,
     individus: individusByReferentiel[i]!,
   }))

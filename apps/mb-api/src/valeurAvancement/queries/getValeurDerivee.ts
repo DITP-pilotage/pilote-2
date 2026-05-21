@@ -2,6 +2,7 @@ import { type ValeurDeriveeApiModel } from '@pilote/mb-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
+import { ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { getDernieresValeursPourIndividus } from '@/generated/prisma/sql'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
@@ -56,6 +57,30 @@ const buildResult = async (
     where: { publicId: individuPublicId },
   })
 
+  const configurationIndicateurReferentiel = await db().indicateurReferentiel.findUnique({
+    where: {
+      indicateurId_referentielId: {
+        indicateurId: indicateur.id,
+        referentielId: cible.referentielId,
+      },
+    },
+  })
+
+  if (!configurationIndicateurReferentiel) {
+    throw new ValidationError(
+      "L'indicateur n'est pas configuré pour le référentiel de cet individu",
+      { indicateur: indicateur.publicId, individu: cible.publicId },
+    )
+  }
+
+  if (configurationIndicateurReferentiel.fonctionAgregation === 'NONE') {
+    throw new ValidationError(
+      'Cet indicateur ne se dérive pas depuis ses enfants pour ce référentiel : ' +
+        'la valeur doit être saisie directement.',
+      { indicateur: indicateur.publicId, individu: cible.publicId },
+    )
+  }
+
   const { allIds, enfantsParParent } = await loadIndividuTree(cible.id)
 
   const rows = await db().$queryRawTyped(getDernieresValeursPourIndividus(indicateur.id, allIds))
@@ -76,7 +101,7 @@ const buildResult = async (
   return {
     indicateur: indicateur.publicId,
     individu: cible.publicId,
-    agregateur: 'SUM',
+    fonctionAgregation: configurationIndicateurReferentiel.fonctionAgregation,
     valeurDerivee,
     contributions,
     couverture,

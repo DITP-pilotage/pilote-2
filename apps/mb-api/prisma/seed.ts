@@ -2,6 +2,7 @@ import { PrismaPg } from '@prisma/adapter-pg'
 import { uuidv7 } from 'uuidv7'
 
 import { Prisma, PrismaClient } from '../src/generated/prisma/client.js'
+import { type FonctionAgregation } from '../src/generated/prisma/enums.js'
 
 import {
   individusSeed,
@@ -180,17 +181,55 @@ const main = async () => {
 
   const indicateurReferentielsSeed: ReadonlyArray<{
     indicateurPublicId: string
-    referentielPublicIds: ReadonlyArray<string>
+    referentiels: ReadonlyArray<{
+      referentielPublicId: string
+      fonctionAgregation: FonctionAgregation
+    }>
   }> = [
-    { indicateurPublicId: 'IND-001', referentielPublicIds: ['REF-DEPT', 'REF-NAT'] },
-    { indicateurPublicId: 'IND-002', referentielPublicIds: ['REF-DEPT', 'REF-REG'] },
-    { indicateurPublicId: 'IND-003', referentielPublicIds: ['REF-REG', 'REF-DEPT'] },
-    { indicateurPublicId: 'IND-004', referentielPublicIds: ['REF-DEPT'] },
-    { indicateurPublicId: 'IND-005', referentielPublicIds: ['REF-REG', 'REF-NAT'] },
-    // Indicateurs liés à REF-EMPTY pour exercer le fallback "aucun individu disponible".
-    { indicateurPublicId: 'IND-006', referentielPublicIds: ['REF-EMPTY'] },
-    { indicateurPublicId: 'IND-007', referentielPublicIds: ['REF-EMPTY'] },
-    { indicateurPublicId: 'IND-008', referentielPublicIds: ['REF-EMPTY'] },
+    {
+      indicateurPublicId: 'IND-001',
+      referentiels: [
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
+      ],
+    },
+    {
+      indicateurPublicId: 'IND-002',
+      referentiels: [
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'SUM' },
+        { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' },
+      ],
+    },
+    {
+      indicateurPublicId: 'IND-003',
+      referentiels: [
+        { referentielPublicId: 'REF-REG', fonctionAgregation: 'NONE' },
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
+      ],
+    },
+    {
+      indicateurPublicId: 'IND-004',
+      referentiels: [{ referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' }],
+    },
+    {
+      indicateurPublicId: 'IND-005',
+      referentiels: [
+        { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' },
+        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'SUM' },
+      ],
+    },
+    {
+      indicateurPublicId: 'IND-006',
+      referentiels: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
+    },
+    {
+      indicateurPublicId: 'IND-007',
+      referentiels: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
+    },
+    {
+      indicateurPublicId: 'IND-008',
+      referentiels: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
+    },
   ]
 
   for (const item of indicateurReferentielsSeed) {
@@ -198,9 +237,9 @@ const main = async () => {
       where: { publicId: item.indicateurPublicId },
       select: { id: true },
     })
-    for (const referentielPublicId of item.referentielPublicIds) {
+    for (const configuration of item.referentiels) {
       const referentiel = await prisma.referentiel.findUniqueOrThrow({
-        where: { publicId: referentielPublicId },
+        where: { publicId: configuration.referentielPublicId },
         select: { id: true },
       })
       await prisma.indicateurReferentiel.upsert({
@@ -210,14 +249,18 @@ const main = async () => {
             referentielId: referentiel.id,
           },
         },
-        update: {},
-        create: { indicateurId: indicateur.id, referentielId: referentiel.id },
+        update: { fonctionAgregation: configuration.fonctionAgregation },
+        create: {
+          indicateurId: indicateur.id,
+          referentielId: referentiel.id,
+          fonctionAgregation: configuration.fonctionAgregation,
+        },
       })
     }
   }
 
   const liaisonsCount = indicateurReferentielsSeed.reduce(
-    (acc, item) => acc + item.referentielPublicIds.length,
+    (acc, item) => acc + item.referentiels.length,
     0,
   )
 

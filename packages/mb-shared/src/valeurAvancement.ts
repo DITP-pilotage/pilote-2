@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { indicateurPublicIdSchema } from './indicateur'
+import { fonctionAgregationSchema, indicateurPublicIdSchema } from './indicateur'
 import { individuApiModelSchema, individuPublicIdSchema } from './individu'
 import {
   createPaginatedApiListSchema,
@@ -273,12 +273,16 @@ export type CouvertureApiModel = z.infer<typeof couvertureApiModelSchema>
 export const valeurDeriveeApiModelSchema = z.object({
   indicateur: indicateurPublicIdSchema,
   individu: individuPublicIdSchema,
-  agregateur: z.literal('SUM').describe('Agrégateur appliqué (SUM uniquement pour le moment).'),
+  fonctionAgregation: fonctionAgregationSchema.describe(
+    "Fonction d'agrégation appliquée pour ce couple (indicateur, référentiel de l'individu). " +
+      "Toujours `SUM` quand le calcul a abouti ; un retour 400 est renvoyé si la fonction vaut " +
+      '`NONE` (la valeur doit alors être saisie directement, pas dérivée).',
+  ),
   valeurDerivee: z
     .number()
     .nullable()
     .describe(
-      "Somme des valeurs retenues parmi les enfants directs. null si aucun enfant n'a de valeur.",
+      "Résultat de l'agrégation appliquée aux valeurs retenues parmi les enfants directs. null si aucun enfant n'a de valeur.",
     ),
   contributions: z
     .array(contributionApiModelSchema)
