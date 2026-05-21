@@ -129,6 +129,7 @@ describe.concurrent('listValeursForIndicateur', () => {
           individus: [deptId],
           dateDebut: '2024-01-01',
           dateFin: '2024-06-30',
+          dateTrunc: 'day',
         }),
       )
 
@@ -314,7 +315,7 @@ describe.concurrent('listValeursForIndicateur', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursForIndicateur(indId, { individus: [regId] }),
+        listValeursForIndicateur(indId, { individus: [regId], dateTrunc: 'day' }),
       )
 
       const value = result._unsafeUnwrap()

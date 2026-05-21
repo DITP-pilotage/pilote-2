@@ -54,7 +54,7 @@ Rationale produit : un dashboard affiche au plus tôt l'info disponible. Cacher 
 
 ### D4. Paramètre `dateTrunc`
 
-Nouveau query param `dateTrunc` sur `/valeurs`, valeurs autorisées : `day | week | month | quarter | year`. Par défaut `day` (no-op).
+Nouveau query param `dateTrunc` sur `/valeurs`, valeurs autorisées : `day | week | month | quarter | year`. **Par défaut `month`** — limite l'explosion de points en réponse pour les indicateurs saisis à fréquence quotidienne. Pour récupérer les dates exactes sans troncature, passer explicitement `dateTrunc=day`.
 
 Sémantique :
 - `week` = lundi ISO 8601 (cohérent avec `date_trunc('week', …)` PostgreSQL)

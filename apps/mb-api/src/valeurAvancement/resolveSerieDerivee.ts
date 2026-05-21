@@ -39,12 +39,17 @@ export type ResolveSerieContext = {
   referentielParIndividu: ReadonlyMap<string, string>
 }
 
+// Un individu est agrégé pour cet indicateur s'il a au moins un enfant direct
+// ET que son référentiel est configuré avec une fonction d'agrégation active
+// (≠ 'NONE'). On compare à 'NONE' plutôt qu'à 'SUM' pour rester valable quand
+// d'autres fonctions (AVG, MIN, ...) seront ajoutées à l'enum.
 export const isIndividuAgrege = (individuId: string, ctx: ResolveSerieContext): boolean => {
   const enfants = ctx.enfantsParParent.get(individuId)
   if (!enfants || enfants.length === 0) return false
   const referentielId = ctx.referentielParIndividu.get(individuId)
   if (!referentielId) return false
-  return ctx.fonctionAgregationParReferentiel.get(referentielId) === 'SUM'
+  const fonction = ctx.fonctionAgregationParReferentiel.get(referentielId)
+  return fonction !== undefined && fonction !== 'NONE'
 }
 
 export const resolveSerieIndividu = (
@@ -76,19 +81,32 @@ const computeSerieSaisie = (
   }))
 }
 
+// Calcule la série dérivée d'un parent par combineLatest permissif sur ses
+// enfants directs (cf. design doc D3) :
+// - Pour chaque bucket distinct rencontré dans une série enfant, on émet un
+//   point dérivé qui agrège les "dernières valeurs connues" de chaque enfant
+//   à cette date (carry-forward).
+// - On émet dès qu'au moins un enfant a une valeur (≠ rxjs strict) ; les
+//   enfants sans valeur connue figurent en `manquante`.
+// - Implémentation linéaire O(N×E) via pointers triés ASC : on n'utilise pas
+//   binary search car les buckets sont déjà parcourus en ordre croissant.
+// - Récursion + mémoïsation via `resolveSerieIndividu` : la série d'un enfant
+//   intermédiaire (ex. région) n'est calculée qu'une fois même si plusieurs
+//   parents (ou plusieurs cibles dans la même requête) la sollicitent.
 const computeSerieDerivee = (
   parentId: string,
   ctx: ResolveSerieContext,
   cache: Map<string, ReadonlyArray<PointInterne>>,
 ): ReadonlyArray<PointInterne> => {
   const enfants = ctx.enfantsParParent.get(parentId) ?? []
+  // Tri stable par publicId pour des contributions déterministes en sortie.
   const enfantsTries = [...enfants].sort((a, b) => a.publicId.localeCompare(b.publicId))
 
   type EnfantState = {
     enfant: IndividuRef
     points: ReadonlyArray<PointInterne>
     estAgrege: boolean
-    pointer: number
+    pointer: number // index de la dernière valeur ≤ bucket courant (-1 = aucune)
   }
   const states: EnfantState[] = enfantsTries.map((enfant) => ({
     enfant,
@@ -97,6 +115,7 @@ const computeSerieDerivee = (
     pointer: -1,
   }))
 
+  // Union des buckets distincts présents dans une série enfant (triés ASC).
   const bucketsSet = new Set<string>()
   for (const state of states) {
     for (const point of state.points) bucketsSet.add(point.bucket)
@@ -106,6 +125,9 @@ const computeSerieDerivee = (
   const result: PointInterne[] = []
 
   for (const bucket of buckets) {
+    // Avance chaque pointer tant que la valeur suivante de l'enfant est ≤ au
+    // bucket courant (carry-forward). Comme les buckets sont parcourus ASC,
+    // les pointers ne reculent jamais → coût amorti O(N+E) par enfant.
     for (const state of states) {
       while (
         state.pointer + 1 < state.points.length &&
@@ -129,6 +151,8 @@ const computeSerieDerivee = (
         })
         continue
       }
+      // Pour un enfant feuille (saisie) on expose la date d'origine pré-troncature ;
+      // pour un enfant déjà dérivé, on n'a que la date de son bucket le plus récent.
       const dateOrigine = courant.type === 'saisie' ? courant.dateOrigine : courant.bucket
       contributions.push({
         individuPublicId: state.enfant.publicId,
@@ -139,6 +163,8 @@ const computeSerieDerivee = (
       valeursPourSomme.push(courant.valeur)
     }
 
+    // Permissif : on n'émet pas tant qu'aucun enfant n'a saisi ; dès la première
+    // valeur connue d'un enfant, le point sort avec une couverture < total.
     if (valeursPourSomme.length === 0) continue
 
     const somme = valeursPourSomme.reduce((acc, v) => acc.plus(v), new Decimal(0))

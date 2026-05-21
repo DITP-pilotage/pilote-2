@@ -20,6 +20,10 @@ import {
   type SaisieTronquee,
 } from '@/valeurAvancement/resolveSerieDerivee'
 
+// Cap par défaut à la granularité mensuelle : sans troncature, une série France
+// avec saisies quotidiennes par département explose (cf. design doc D11).
+const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
+
 export const listValeursForIndicateur = (
   indicateurPublicId: string,
   params: ListValeursForIndicateurQuery,
@@ -37,6 +41,11 @@ export const listValeursForIndicateur = (
   )
 }
 
+// Orchestration en 3 phases : (1) charger en bulk l'arbre + les liens
+// indicateur↔référentiel en parallèle, (2) charger les saisies tronquées en
+// connaissant l'ensemble des descendants, (3) calculer les séries en mémoire
+// via le functional core memoïsé (cf. resolveSerieDerivee + doc d'archi
+// `indicateur-derives.md`). Filtrage dateDebut/dateFin appliqué en sortie.
 const buildSeries = async ({
   indicateurId,
   indicateurPublicId,
@@ -46,15 +55,15 @@ const buildSeries = async ({
   indicateurPublicId: string
   params: ListValeursForIndicateurQuery
 }): Promise<ValeurAvancementListApiModel> => {
-  const cibles = await db().individu.findMany({
-    where: { publicId: { in: params.individus } },
-    select: { id: true, publicId: true, referentielId: true },
-  })
+  const cibles = await loadCibles(params.individus)
   if (cibles.length === 0) return { items: [] }
 
-  const { allNodes, enfantsParParent } = await loadSousArbre(cibles)
-  const fonctionAgregationParReferentiel = await loadFonctionsAgregation(indicateurId)
-  const dateTrunc: DateTrunc = params.dateTrunc ?? 'day'
+  // Indépendants entre eux : chargement parallèle pour minimiser la latence.
+  const [{ allNodes, enfantsParParent }, fonctionAgregationParReferentiel] = await Promise.all([
+    loadSousArbre(cibles),
+    loadFonctionsAgregation(indicateurId),
+  ])
+  const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const serieFeuilleParIndividu = await loadSaisiesTronquees({
     indicateurId,
     individuIds: [...allNodes.keys()],
@@ -66,14 +75,13 @@ const buildSeries = async ({
     fonctionAgregationParReferentiel,
     serieFeuilleParIndividu,
     referentielParIndividu: new Map(
-      [...allNodes.values()].map((ref) => [ref.id, ref.referentielId]),
+      [...allNodes.values()].map((individu) => [individu.id, individu.referentielId]),
     ),
   }
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
-  const ciblesTriees = [...cibles].sort((a, b) => a.publicId.localeCompare(b.publicId))
 
   const items: ValeurAvancementApiModel[] = []
-  for (const cible of ciblesTriees) {
+  for (const cible of cibles) {
     const serie = resolveSerieIndividu(cible.id, ctx, cache)
     for (const point of serie) {
       if (params.dateDebut && point.bucket < params.dateDebut) continue
@@ -84,6 +92,17 @@ const buildSeries = async ({
   return { items }
 }
 
+const loadCibles = (individus: ReadonlyArray<string>): Promise<IndividuRef[]> =>
+  db().individu.findMany({
+    where: { publicId: { in: [...individus] } },
+    select: { id: true, publicId: true, referentielId: true },
+    orderBy: { publicId: 'asc' },
+  })
+
+// BFS itératif niveau par niveau plutôt qu'une CTE récursive PostgreSQL :
+// l'arbre est typiquement peu profond (3-4 niveaux France→Région→Département)
+// et garder le calcul en JS reste plus simple à lire et à débugger que du SQL
+// récursif. Détection naïve des cycles : on ne retraite pas un nœud déjà vu.
 const loadSousArbre = async (
   cibles: ReadonlyArray<IndividuRef>,
 ): Promise<{
@@ -98,10 +117,7 @@ const loadSousArbre = async (
   while (currentLevel.length > 0) {
     const relations = await db().relation.findMany({
       where: { parentId: { in: currentLevel } },
-      select: {
-        parentId: true,
-        child: { select: { id: true, publicId: true, referentielId: true } },
-      },
+      include: { child: true },
     })
     if (relations.length === 0) break
 

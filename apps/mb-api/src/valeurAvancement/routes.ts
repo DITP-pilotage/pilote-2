@@ -65,7 +65,7 @@ const getValeursForIndicateurRoute = createRoute({
     'la liste d’individus fournie. Le paramètre `individus` est obligatoire (1..N identifiants ' +
     'séparés par une virgule, ex. `DEPT-84,DEPT-13`). Filtres optionnels `dateDebut`/`dateFin` ' +
     '(ISO `YYYY-MM-DD`, inclusifs, comparés à la date de bucket des points). Paramètre optionnel ' +
-    '`dateTrunc` pour tronquer les dates (`day` par défaut, `week|month|quarter|year`). ' +
+    '`dateTrunc` pour tronquer les dates (`month` par défaut ; `day|week|quarter|year`). ' +
     "Chaque item porte `type: 'saisie' | 'derivee'`. Pour les individus agrégés " +
     '(`fonctionAgregation` ≠ `NONE` sur leur référentiel pour cet indicateur), les points dérivés ' +
     'incluent les contributions des enfants directs et la couverture du calcul. Sémantique ' +

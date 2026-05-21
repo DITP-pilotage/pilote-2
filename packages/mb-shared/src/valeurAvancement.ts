@@ -94,9 +94,9 @@ export const listValeursForIndicateurQuerySchema = z
     dateTrunc: dateTruncSchema
       .optional()
       .describe(
-        'Granularité de troncature des dates des points. Par défaut `day` (pas de troncature). ' +
-          "Voir `DateTrunc` pour la sémantique des unités. S'applique aux séries saisies comme " +
-          'aux séries dérivées.',
+        'Granularité de troncature des dates des points. Par défaut `month` (limite la taille ' +
+          "de réponse en regroupant les saisies du même mois). Voir `DateTrunc` pour la " +
+          "sémantique des unités. S'applique aux séries saisies comme aux séries dérivées.",
       ),
   })
   .refine(
