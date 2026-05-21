@@ -9,6 +9,7 @@ import {
   testIndicateurId,
   testReferentielId,
   testRegId,
+  testRegIds,
 } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 import { getValeurDerivee } from '@/valeurAvancement/queries/getValeurDerivee'
@@ -161,8 +162,7 @@ describe.concurrent('getValeurDerivee', () => {
     'dérive le niveau intermédiaire à partir des feuilles (grand-parent, 2 niveaux)',
     integrationTest(async () => {
       const indId = testIndicateurId()
-      const franceId = testRegId()
-      const [regN, regS] = [testRegId(), testRegId()]
+      const [franceId, regN, regS] = testRegIds(3)
       const [deptN1, deptN2, deptS1, deptS2] = testDeptIds(4)
       const refPays = testReferentielId()
       const refReg = testReferentielId()
@@ -250,8 +250,7 @@ describe.concurrent('getValeurDerivee', () => {
     'priorise la saisie sur un nœud intermédiaire (D1 : saisie ≻ dérivée pour la contribution au parent)',
     integrationTest(async () => {
       const indId = testIndicateurId()
-      const franceId = testRegId()
-      const reg = testRegId()
+      const [franceId, reg] = testRegIds(2)
       const [dept1, dept2] = testDeptIds(2)
       const refPays = testReferentielId()
       const refReg = testReferentielId()
