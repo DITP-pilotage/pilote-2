@@ -48,9 +48,7 @@ const currentMonth = (): Month => {
 
 // Un même mois peut contenir plusieurs valeurs ; on conserve celle dont la date
 // est la plus récente dans le mois.
-const latestValueByMonthKey = (
-  valeurs: ReadonlyArray<ValeurDateApiModel>,
-): Map<string, number> => {
+const latestValueByMonthKey = (valeurs: ReadonlyArray<ValeurDateApiModel>): Map<string, number> => {
   const latestDateByKey = new Map<string, string>()
   const valueByKey = new Map<string, number>()
   for (const { date, valeur } of valeurs) {
@@ -109,9 +107,7 @@ export const buildMonthlySeries = ({
   const { earliest, latest } = monthBounds(valeurs)
   const anchor = latest ?? currentMonth()
   const minStartOrdinal = ordinalOf(anchor) - (windowSize - 1)
-  const startOrdinal = earliest
-    ? Math.min(ordinalOf(earliest), minStartOrdinal)
-    : minStartOrdinal
+  const startOrdinal = earliest ? Math.min(ordinalOf(earliest), minStartOrdinal) : minStartOrdinal
   const months = enumerateMonths({ start: monthFromOrdinal(startOrdinal), end: anchor })
   const values = months.map((month): number | null => valueByKey.get(month.key) ?? null)
   const lastIndex = months.length - 1

@@ -7,8 +7,7 @@ const monthYearNumericFr = new Intl.DateTimeFormat('fr-FR', {
   year: 'numeric',
 })
 
-const toDate = (value: Date | string): Date =>
-  typeof value === 'string' ? new Date(value) : value
+const toDate = (value: Date | string): Date => (typeof value === 'string' ? new Date(value) : value)
 
 export const formatNumberFr = (value: number): string => numberFr.format(value)
 

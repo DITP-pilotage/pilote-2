@@ -5,8 +5,7 @@ import { StatGrid } from '@/components/ui/StatGrid'
 import { formatNumberFr } from '@/lib/format'
 import { indicateurValeursRemarquablesQueryOptions } from '@/queries/indicateurs'
 
-const formatStat = (value: number | null): string =>
-  value === null ? '—' : formatNumberFr(value)
+const formatStat = (value: number | null): string => (value === null ? '—' : formatNumberFr(value))
 
 type IndicateurStatsPanelProps = {
   indicateurId: string

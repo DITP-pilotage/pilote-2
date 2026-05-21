@@ -29,8 +29,7 @@ export function IndicateurValeursChart({ indicateurId, individuId }: IndicateurV
     grid: { top: 32, right: 24, bottom: showSlider ? 60 : 32, left: 56 },
     tooltip: {
       trigger: 'axis',
-      valueFormatter: (value: unknown) =>
-        typeof value === 'number' ? formatNumberFr(value) : '—',
+      valueFormatter: (value: unknown) => (typeof value === 'number' ? formatNumberFr(value) : '—'),
     },
     xAxis: {
       type: 'category',
