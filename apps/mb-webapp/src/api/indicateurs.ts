@@ -56,6 +56,7 @@ export const fetchValeursForIndicateur = async (
         individus: params.individus.join(','),
         ...(params.dateDebut ? { dateDebut: params.dateDebut } : {}),
         ...(params.dateFin ? { dateFin: params.dateFin } : {}),
+        ...(params.dateTrunc ? { dateTrunc: params.dateTrunc } : {}),
       },
     })
     .json()
