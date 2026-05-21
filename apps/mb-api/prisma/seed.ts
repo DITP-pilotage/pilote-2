@@ -106,6 +106,7 @@ const main = async () => {
         id: uuidv7(),
         publicId: item.publicId,
         nom: item.nom,
+        visibilite: 'PRIVE',
         createdAt,
         updatedAt,
       },

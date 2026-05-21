@@ -21,17 +21,23 @@ import {
   type UtilisateurModel,
   type ValeurAvancementModel,
 } from '@/generated/prisma/models'
-import { PermissionAction, type FonctionAgregation } from '@/generated/prisma/enums'
+import { PermissionAction, Visibilite, type FonctionAgregation } from '@/generated/prisma/enums'
 
 // --- Indicateur --------------------------------------------------------------
 
-type IndicateurOverrides = Partial<{ id: string; publicId: string; nom: string }>
+type IndicateurOverrides = Partial<{
+  id: string
+  publicId: string
+  nom: string
+  visibilite: Visibilite
+}>
 
 const upsertIndicateur = async (o: IndicateurOverrides = {}) => {
   const create = {
     id: uuidv7(),
     publicId: testIndicateurId(),
     nom: 'Indicateur de test',
+    visibilite: Visibilite.PRIVE,
     ...o,
   }
   const { id: _id, publicId: _pub, ...update } = o

@@ -42,6 +42,24 @@ describe.concurrent('listIndicateurs', () => {
   )
 
   it(
+    "inclut les indicateurs PUBLIC sur lesquels le principal n'a aucune permission",
+    integrationTest(async () => {
+      const [pub, priv] = testIndicateurIds(2)
+      await fixtures.indicateur(
+        { publicId: pub, visibilite: 'PUBLIC' },
+        { publicId: priv, visibilite: 'PRIVE' },
+      )
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
+
+      const value = result._unsafeUnwrap()
+      expect(value.items.map((i) => i.id)).toEqual([pub])
+      expect(value.items.map((i) => i.visibilite)).toEqual(['PUBLIC'])
+    }),
+  )
+
+  it(
     'retourne tous les indicateurs autorisés quand leur nombre est inférieur à la taille de page',
     integrationTest(async () => {
       const [ind1, ind2, ind3] = testIndicateurIds(3)

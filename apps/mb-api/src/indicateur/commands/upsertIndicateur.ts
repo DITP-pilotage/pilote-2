@@ -118,7 +118,10 @@ const updateIndicateurExistant = async (
 ): Promise<void> => {
   await assertWritePermission(indicateurId, principalId)
   const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
-  await db().indicateur.update({ where: { publicId }, data: { nom: body.nom } })
+  await db().indicateur.update({
+    where: { publicId },
+    data: { nom: body.nom, visibilite: body.visibilite },
+  })
   await remplacerConfigurationsReferentiels(indicateurId, configurations)
 }
 
@@ -138,7 +141,9 @@ const createIndicateurAvecGrants = async (
 ): Promise<void> => {
   const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
   const indicateurId = uuidv7()
-  await db().indicateur.create({ data: { id: indicateurId, publicId, nom: body.nom } })
+  await db().indicateur.create({
+    data: { id: indicateurId, publicId, nom: body.nom, visibilite: body.visibilite },
+  })
   await grantOwnerPermissions(principalId, indicateurId)
   if (configurations.length > 0) {
     await db().indicateurReferentiel.createMany({

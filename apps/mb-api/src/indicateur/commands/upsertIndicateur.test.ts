@@ -33,6 +33,7 @@ describe.concurrent('upsertIndicateur', () => {
       const result = await runAsPrincipal(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'Nouvel indicateur',
+          visibilite: 'PRIVE',
           referentiels: [
             { referentielPublicId: refA.publicId, fonctionAgregation: 'SUM' },
             { referentielPublicId: refB.publicId, fonctionAgregation: 'NONE' },
@@ -54,6 +55,39 @@ describe.concurrent('upsertIndicateur', () => {
   )
 
   it(
+    'persiste la visibilité fournie à la création',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const apiKey = await fixtures.apiKey()
+
+      await runAsPrincipal(apiKey.id, () =>
+        upsertIndicateur(indId, { nom: 'I', visibilite: 'PUBLIC', referentiels: [] }),
+      )
+
+      const row = await db().indicateur.findUniqueOrThrow({ where: { publicId: indId } })
+      expect(row.visibilite).toBe('PUBLIC')
+    }),
+  )
+
+  it(
+    "permet à un principal disposant de WRITE de modifier la visibilité d'un indicateur existant",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      await fixtures.indicateur({ publicId: indId, visibilite: 'PRIVE' })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+      })
+
+      await runAsPrincipal(apiKey.id, () =>
+        upsertIndicateur(indId, { nom: 'I', visibilite: 'PUBLIC', referentiels: [] }),
+      )
+
+      const row = await db().indicateur.findUniqueOrThrow({ where: { publicId: indId } })
+      expect(row.visibilite).toBe('PUBLIC')
+    }),
+  )
+
+  it(
     "remplace l'ensemble des configurations à chaque PUT (ajout + suppression)",
     integrationTest(async () => {
       const indId = testIndicateurId()
@@ -66,6 +100,7 @@ describe.concurrent('upsertIndicateur', () => {
       await runAsPrincipal(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
+          visibilite: 'PRIVE',
           referentiels: [
             { referentielPublicId: 'REF-REPLACE-A', fonctionAgregation: 'SUM' },
             { referentielPublicId: 'REF-REPLACE-B', fonctionAgregation: 'SUM' },
@@ -76,6 +111,7 @@ describe.concurrent('upsertIndicateur', () => {
       await runAsPrincipal(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
+          visibilite: 'PRIVE',
           referentiels: [
             { referentielPublicId: 'REF-REPLACE-B', fonctionAgregation: 'SUM' },
             { referentielPublicId: 'REF-REPLACE-C', fonctionAgregation: 'SUM' },
@@ -99,11 +135,14 @@ describe.concurrent('upsertIndicateur', () => {
       await runAsPrincipal(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
+          visibilite: 'PRIVE',
           referentiels: [{ referentielPublicId: 'REF-EMPTY-A', fonctionAgregation: 'SUM' }],
         }),
       )
 
-      await runAsPrincipal(apiKey.id, () => upsertIndicateur(indId, { nom: 'I', referentiels: [] }))
+      await runAsPrincipal(apiKey.id, () =>
+        upsertIndicateur(indId, { nom: 'I', visibilite: 'PRIVE', referentiels: [] }),
+      )
 
       expect(await getConfigurationsReferentiels(indId)).toEqual([])
     }),
@@ -119,6 +158,7 @@ describe.concurrent('upsertIndicateur', () => {
       const result = await runAsPrincipal(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
+          visibilite: 'PRIVE',
           referentiels: [
             { referentielPublicId: 'REF-DEDUP-A', fonctionAgregation: 'SUM' },
             { referentielPublicId: 'REF-DEDUP-A', fonctionAgregation: 'SUM' },
@@ -144,6 +184,7 @@ describe.concurrent('upsertIndicateur', () => {
         runAsPrincipal(apiKey.id, () =>
           upsertIndicateur(indId, {
             nom: 'I',
+            visibilite: 'PRIVE',
             referentiels: [
               { referentielPublicId: 'REF-UNKNOWN-A', fonctionAgregation: 'SUM' },
               { referentielPublicId: 'REF-UNKNOWN-X', fonctionAgregation: 'SUM' },
@@ -171,7 +212,9 @@ describe.concurrent('upsertIndicateur', () => {
       })
 
       await expect(
-        runAsPrincipal(apiKey.id, () => upsertIndicateur(indId, { nom: 'X', referentiels: [] })),
+        runAsPrincipal(apiKey.id, () =>
+          upsertIndicateur(indId, { nom: 'X', visibilite: 'PRIVE', referentiels: [] }),
+        ),
       ).rejects.toThrow(/permission/i)
     }),
   )
@@ -186,6 +229,7 @@ describe.concurrent('upsertIndicateur', () => {
       await runAsPrincipal(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
+          visibilite: 'PRIVE',
           referentiels: [{ referentielPublicId: 'REF-UPDATE-A', fonctionAgregation: 'SUM' }],
         }),
       )
@@ -193,6 +237,7 @@ describe.concurrent('upsertIndicateur', () => {
       await runAsPrincipal(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
+          visibilite: 'PRIVE',
           referentiels: [{ referentielPublicId: 'REF-UPDATE-A', fonctionAgregation: 'NONE' }],
         }),
       )
@@ -213,6 +258,7 @@ describe.concurrent('upsertIndicateur', () => {
       const result = await runAsPrincipal(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
+          visibilite: 'PRIVE',
           referentiels: [
             { referentielPublicId: 'REF-DEDUP-FN', fonctionAgregation: 'SUM' },
             { referentielPublicId: 'REF-DEDUP-FN', fonctionAgregation: 'NONE' },
