@@ -2,12 +2,10 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { StatCard } from '@/components/ui/StatCard'
 import { StatGrid } from '@/components/ui/StatGrid'
+import { formatNumberFr } from '@/lib/format'
 import { indicateurValeursRemarquablesQueryOptions } from '@/queries/indicateurs'
 
-const numberFormatter = new Intl.NumberFormat('fr-FR')
-
-const formatStat = (value: number | null): string =>
-  value === null ? '—' : numberFormatter.format(value)
+const formatStat = (value: number | null): string => (value === null ? '—' : formatNumberFr(value))
 
 type IndicateurStatsPanelProps = {
   indicateurId: string

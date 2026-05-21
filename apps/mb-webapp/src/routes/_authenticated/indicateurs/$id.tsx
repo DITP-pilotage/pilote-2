@@ -10,6 +10,7 @@ import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetadonnees'
 import { IndicateurStatsPanel } from '@/components/indicateurs/IndicateurStatsPanel'
+import { IndicateurValeursChart } from '@/components/indicateurs/IndicateurValeursChart'
 import { IndicateurValeursRemarquables } from '@/components/indicateurs/IndicateurValeursRemarquables'
 import { IndicateurValeursTable } from '@/components/indicateurs/IndicateurValeursTable'
 import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
@@ -147,7 +148,10 @@ function IndicateurDetailComponent() {
           </TabsList>
 
           <TabsContent value="valeurs">
-            <IndicateurValeursTable indicateurId={id} individuId={individuId} />
+            <div className="space-y-6">
+              <IndicateurValeursChart indicateurId={id} individuId={individuId} />
+              <IndicateurValeursTable indicateurId={id} individuId={individuId} />
+            </div>
           </TabsContent>
 
           <TabsContent value="metadonnees">

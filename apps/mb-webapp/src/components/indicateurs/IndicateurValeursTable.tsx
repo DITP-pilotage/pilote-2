@@ -2,6 +2,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Table } from '@/components/ui/Table'
+import { formatDateFr, formatNumberFr } from '@/lib/format'
 import { indicateurValeursQueryOptions } from '@/queries/indicateurs'
 
 type IndicateurValeursTableProps = {
@@ -29,8 +30,8 @@ export function IndicateurValeursTable({ indicateurId, individuId }: IndicateurV
       <Table.Body>
         {rows.map((row) => (
           <Table.Row key={row.date}>
-            <Table.Cell>{new Date(row.date).toLocaleDateString('fr-FR')}</Table.Cell>
-            <Table.Cell align="right">{row.valeur.toLocaleString('fr-FR')}</Table.Cell>
+            <Table.Cell>{formatDateFr(row.date)}</Table.Cell>
+            <Table.Cell align="right">{formatNumberFr(row.valeur)}</Table.Cell>
           </Table.Row>
         ))}
       </Table.Body>

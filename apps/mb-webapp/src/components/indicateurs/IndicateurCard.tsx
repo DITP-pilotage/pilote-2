@@ -2,16 +2,12 @@ import type { IndicateurApiModel } from '@pilote/mb-shared/indicateur'
 import { Link } from '@tanstack/react-router'
 
 import { EntityCard } from '@/components/ui/EntityCard'
-
-const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
-  month: '2-digit',
-  year: 'numeric',
-})
+import { formatMonthYearNumericFr } from '@/lib/format'
 
 function formatMiseAJour(iso: string): string {
   const date = new Date(iso)
   if (Number.isNaN(date.getTime())) return '—'
-  return dateFormatter.format(date)
+  return formatMonthYearNumericFr(date)
 }
 
 type IndicateurCardProps = {
