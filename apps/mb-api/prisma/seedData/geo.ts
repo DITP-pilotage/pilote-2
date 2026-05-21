@@ -135,4 +135,10 @@ export const valeursAvancementSeed = [
   ...buildDeptValeurs('IND-004', 21.0, 0.8, datesSemestrielles),
   ...buildDeptValeurs('IND-005', 1200.0, 30.0, datesIrregulieres),
   ...ind008Regions,
+  // Indicateurs PUBLIC (IND-046 → IND-050)
+  ...buildDeptValeurs('IND-046', 650_000, 50_000, datesAnnuelles),
+  ...buildDeptValeurs('IND-047', 82.5, 0.4, datesAnnuelles),
+  ...buildDeptValeurs('IND-048', 12.0, 0.6, datesAnnuelles),
+  ...buildDeptValeurs('IND-049', 97.5, 0.2, datesAnnuelles),
+  ...buildDeptValeurs('IND-050', 88.0, 1.2, datesSemestrielles),
 ]

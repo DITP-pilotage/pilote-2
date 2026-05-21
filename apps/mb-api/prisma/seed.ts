@@ -245,6 +245,43 @@ const main = async () => {
       indicateurPublicId: 'IND-008',
       referentiels: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
     },
+    {
+      indicateurPublicId: 'IND-046',
+      referentiels: [
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'SUM' },
+        { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' },
+        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'SUM' },
+      ],
+    },
+    {
+      indicateurPublicId: 'IND-047',
+      referentiels: [
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
+      ],
+    },
+    {
+      indicateurPublicId: 'IND-048',
+      referentiels: [
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { referentielPublicId: 'REF-REG', fonctionAgregation: 'NONE' },
+      ],
+    },
+    {
+      indicateurPublicId: 'IND-049',
+      referentiels: [
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
+      ],
+    },
+    {
+      indicateurPublicId: 'IND-050',
+      referentiels: [
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { referentielPublicId: 'REF-REG', fonctionAgregation: 'NONE' },
+        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
+      ],
+    },
   ]
 
   for (const item of indicateurReferentielsSeed) {
