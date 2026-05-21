@@ -28,6 +28,7 @@ describe.concurrent('getValeurDerivee', () => {
       await fixtures.indicateurReferentiel({
         indicateur: { publicId: indId },
         referentiel: { publicId: refDept },
+        fonctionAgregation: 'SUM',
       })
       const apiKey = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
@@ -67,6 +68,7 @@ describe.concurrent('getValeurDerivee', () => {
       await fixtures.indicateurReferentiel({
         indicateur: { publicId: indId },
         referentiel: { publicId: refReg },
+        fonctionAgregation: 'SUM',
       })
       await fixtures.valeurAvancement(
         {
@@ -132,6 +134,7 @@ describe.concurrent('getValeurDerivee', () => {
       await fixtures.indicateurReferentiel({
         indicateur: { publicId: indId },
         referentiel: { publicId: refReg },
+        fonctionAgregation: 'SUM',
       })
       await fixtures.valeurAvancement({
         indicateur: { publicId: indId, nom: 'T' },
@@ -195,6 +198,7 @@ describe.concurrent('getValeurDerivee', () => {
       await fixtures.indicateurReferentiel({
         indicateur: { publicId: indId },
         referentiel: { publicId: refPays },
+        fonctionAgregation: 'SUM',
       })
       await fixtures.valeurAvancement(
         {
@@ -269,6 +273,7 @@ describe.concurrent('getValeurDerivee', () => {
       await fixtures.indicateurReferentiel({
         indicateur: { publicId: indId },
         referentiel: { publicId: refPays },
+        fonctionAgregation: 'SUM',
       })
       await fixtures.valeurAvancement(
         {
@@ -390,7 +395,7 @@ describe.concurrent('getValeurDerivee', () => {
         runAsPrincipal(apiKey.id, () => getValeurDerivee(indId, deptId)),
       ).rejects.toMatchObject({
         constructor: ValidationError,
-        message: expect.stringContaining('NONE'),
+        message: expect.stringContaining('saisie directement'),
       })
     }),
   )

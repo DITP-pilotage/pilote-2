@@ -11,26 +11,31 @@ export const indicateurPublicIdSchema = z
 export const fonctionAgregationSchema = z
   .enum(['SUM', 'NONE'])
   .describe(
-    "Fonction d'agrégation appliquée pour dériver la valeur d'un parent depuis ses enfants. " +
-      "`SUM` = somme des contributions ; `NONE` = indicateur non dérivable pour ce référentiel.",
+    "Fonction d'agrégation appliquée pour calculer la valeur d'un parent à partir des valeurs " +
+      "de ses enfants. `SUM` = somme des contributions des enfants. `NONE` = pas d'agrégation : " +
+      "la valeur doit être saisie directement pour ce référentiel, elle n'est jamais dérivée depuis " +
+      'les enfants.',
   )
 export type FonctionAgregation = z.infer<typeof fonctionAgregationSchema>
 
-export const indicateurReferentielLinkSchema = z
+export const configurationIndicateurReferentielSchema = z
   .object({
-    referentielId: referentielPublicIdSchema,
+    referentielPublicId: referentielPublicIdSchema,
     fonctionAgregation: fonctionAgregationSchema,
   })
-  .describe("Lien indicateur-référentiel avec sa fonction d'agrégation.")
-export type IndicateurReferentielLink = z.infer<typeof indicateurReferentielLinkSchema>
+  .describe("Configuration d'un indicateur sur un référentiel donné.")
+export type ConfigurationIndicateurReferentiel = z.infer<
+  typeof configurationIndicateurReferentielSchema
+>
 
 export const indicateurApiModelSchema = z.object({
   id: indicateurPublicIdSchema,
   nom: z.string().describe("Nom lisible de l'indicateur."),
   referentiels: z
-    .array(indicateurReferentielLinkSchema)
+    .array(configurationIndicateurReferentielSchema)
     .describe(
-      "Liens vers les référentiels associés, triés par `referentielId` ASC. Tableau vide si aucun lien.",
+      'Configurations de cet indicateur sur chaque référentiel associé, triées par ' +
+        '`referentielPublicId` ASC. Tableau vide si aucun référentiel.',
     ),
   createdAt: z.string().datetime().describe('Date ISO 8601 de création.'),
   updatedAt: z.string().datetime().describe('Date ISO 8601 de dernière mise à jour.'),
@@ -46,10 +51,11 @@ export type ListIndicateursQuery = z.infer<typeof listIndicateursQuerySchema>
 export const upsertIndicateurBodySchema = z.object({
   nom: z.string().min(1).describe("Nom lisible de l'indicateur."),
   referentiels: z
-    .array(indicateurReferentielLinkSchema)
+    .array(configurationIndicateurReferentielSchema)
     .describe(
-      'Liste complète des liens à appliquer (replace-all à chaque PUT). Tableau vide pour aucun lien. ' +
-        "Doublons silencieusement dédupliqués sur `referentielId` ; en cas de fonctions différentes, la dernière occurrence l'emporte.",
+      'Liste complète des référentiels configurés pour cet indicateur (replace-all à chaque PUT). ' +
+        'Tableau vide pour aucun référentiel. Doublons silencieusement dédupliqués sur ' +
+        "`referentielPublicId` ; en cas de fonctions différentes, la dernière occurrence l'emporte.",
     ),
 })
 export type UpsertIndicateurBody = z.infer<typeof upsertIndicateurBodySchema>

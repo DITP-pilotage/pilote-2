@@ -8,29 +8,22 @@ import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
-const getReferentielLinks = async (publicId: string) => {
+const getConfigurationsReferentiels = async (publicId: string) => {
   const indicateur = await db().indicateur.findUniqueOrThrow({
     where: { publicId },
-    include: {
-      referentiels: {
-        select: {
-          fonctionAgregation: true,
-          referentiel: { select: { publicId: true } },
-        },
-      },
-    },
+    include: { referentiels: { include: { referentiel: true } } },
   })
   return indicateur.referentiels
-    .map((link) => ({
-      referentielId: link.referentiel.publicId,
-      fonctionAgregation: link.fonctionAgregation,
+    .map((configuration) => ({
+      referentielPublicId: configuration.referentiel.publicId,
+      fonctionAgregation: configuration.fonctionAgregation,
     }))
-    .sort((a, b) => a.referentielId.localeCompare(b.referentielId))
+    .sort((a, b) => a.referentielPublicId.localeCompare(b.referentielPublicId))
 }
 
 describe.concurrent('upsertIndicateur', () => {
   it(
-    'crée un indicateur avec ses référentiels liés et auto-grant READ+WRITE au créateur',
+    'crée un indicateur avec ses référentiels configurés et auto-grant READ+WRITE au créateur',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const apiKey = await fixtures.apiKey()
@@ -38,22 +31,19 @@ describe.concurrent('upsertIndicateur', () => {
       const refB = await fixtures.referentiel({ publicId: 'REF-CREATE-B' })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertIndicateur({
-          publicId: indId,
-          body: {
-            nom: 'Nouvel indicateur',
-            referentiels: [
-              { referentielId: refA.publicId, fonctionAgregation: 'SUM' },
-              { referentielId: refB.publicId, fonctionAgregation: 'NONE' },
-            ],
-          },
+        upsertIndicateur(indId, {
+          nom: 'Nouvel indicateur',
+          referentiels: [
+            { referentielPublicId: refA.publicId, fonctionAgregation: 'SUM' },
+            { referentielPublicId: refB.publicId, fonctionAgregation: 'NONE' },
+          ],
         }),
       )
 
       expect(result.isOk()).toBe(true)
-      expect(await getReferentielLinks(indId)).toEqual([
-        { referentielId: 'REF-CREATE-A', fonctionAgregation: 'SUM' },
-        { referentielId: 'REF-CREATE-B', fonctionAgregation: 'NONE' },
+      expect(await getConfigurationsReferentiels(indId)).toEqual([
+        { referentielPublicId: 'REF-CREATE-A', fonctionAgregation: 'SUM' },
+        { referentielPublicId: 'REF-CREATE-B', fonctionAgregation: 'NONE' },
       ])
       const grants = await db().indicateurPermission.findMany({
         where: { principalId: apiKey.id, indicateur: { publicId: indId } },
@@ -64,7 +54,7 @@ describe.concurrent('upsertIndicateur', () => {
   )
 
   it(
-    "remplace l'ensemble des liens à chaque PUT (ajout + suppression)",
+    "remplace l'ensemble des configurations à chaque PUT (ajout + suppression)",
     integrationTest(async () => {
       const indId = testIndicateurId()
       await fixtures.referentiel(
@@ -74,91 +64,77 @@ describe.concurrent('upsertIndicateur', () => {
       )
       const apiKey = await fixtures.apiKey()
       await runAsPrincipal(apiKey.id, () =>
-        upsertIndicateur({
-          publicId: indId,
-          body: {
-            nom: 'I',
-            referentiels: [
-              { referentielId: 'REF-REPLACE-A', fonctionAgregation: 'SUM' },
-              { referentielId: 'REF-REPLACE-B', fonctionAgregation: 'SUM' },
-            ],
-          },
+        upsertIndicateur(indId, {
+          nom: 'I',
+          referentiels: [
+            { referentielPublicId: 'REF-REPLACE-A', fonctionAgregation: 'SUM' },
+            { referentielPublicId: 'REF-REPLACE-B', fonctionAgregation: 'SUM' },
+          ],
         }),
       )
 
       await runAsPrincipal(apiKey.id, () =>
-        upsertIndicateur({
-          publicId: indId,
-          body: {
-            nom: 'I',
-            referentiels: [
-              { referentielId: 'REF-REPLACE-B', fonctionAgregation: 'SUM' },
-              { referentielId: 'REF-REPLACE-C', fonctionAgregation: 'SUM' },
-            ],
-          },
+        upsertIndicateur(indId, {
+          nom: 'I',
+          referentiels: [
+            { referentielPublicId: 'REF-REPLACE-B', fonctionAgregation: 'SUM' },
+            { referentielPublicId: 'REF-REPLACE-C', fonctionAgregation: 'SUM' },
+          ],
         }),
       )
 
-      expect(await getReferentielLinks(indId)).toEqual([
-        { referentielId: 'REF-REPLACE-B', fonctionAgregation: 'SUM' },
-        { referentielId: 'REF-REPLACE-C', fonctionAgregation: 'SUM' },
+      expect(await getConfigurationsReferentiels(indId)).toEqual([
+        { referentielPublicId: 'REF-REPLACE-B', fonctionAgregation: 'SUM' },
+        { referentielPublicId: 'REF-REPLACE-C', fonctionAgregation: 'SUM' },
       ])
     }),
   )
 
   it(
-    'accepte un tableau vide (supprime tous les liens)',
+    'accepte un tableau vide (supprime toutes les configurations)',
     integrationTest(async () => {
       const indId = testIndicateurId()
       await fixtures.referentiel({ publicId: 'REF-EMPTY-A' })
       const apiKey = await fixtures.apiKey()
       await runAsPrincipal(apiKey.id, () =>
-        upsertIndicateur({
-          publicId: indId,
-          body: {
-            nom: 'I',
-            referentiels: [{ referentielId: 'REF-EMPTY-A', fonctionAgregation: 'SUM' }],
-          },
+        upsertIndicateur(indId, {
+          nom: 'I',
+          referentiels: [{ referentielPublicId: 'REF-EMPTY-A', fonctionAgregation: 'SUM' }],
         }),
       )
 
-      await runAsPrincipal(apiKey.id, () =>
-        upsertIndicateur({ publicId: indId, body: { nom: 'I', referentiels: [] } }),
-      )
+      await runAsPrincipal(apiKey.id, () => upsertIndicateur(indId, { nom: 'I', referentiels: [] }))
 
-      expect(await getReferentielLinks(indId)).toEqual([])
+      expect(await getConfigurationsReferentiels(indId)).toEqual([])
     }),
   )
 
   it(
-    'dédoublonne silencieusement les referentielIds en double',
+    'dédoublonne silencieusement les referentielPublicId en double',
     integrationTest(async () => {
       const indId = testIndicateurId()
       await fixtures.referentiel({ publicId: 'REF-DEDUP-A' })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertIndicateur({
-          publicId: indId,
-          body: {
-            nom: 'I',
-            referentiels: [
-              { referentielId: 'REF-DEDUP-A', fonctionAgregation: 'SUM' },
-              { referentielId: 'REF-DEDUP-A', fonctionAgregation: 'SUM' },
-            ],
-          },
+        upsertIndicateur(indId, {
+          nom: 'I',
+          referentiels: [
+            { referentielPublicId: 'REF-DEDUP-A', fonctionAgregation: 'SUM' },
+            { referentielPublicId: 'REF-DEDUP-A', fonctionAgregation: 'SUM' },
+          ],
         }),
       )
 
       expect(result.isOk()).toBe(true)
-      expect(await getReferentielLinks(indId)).toEqual([
-        { referentielId: 'REF-DEDUP-A', fonctionAgregation: 'SUM' },
+      expect(await getConfigurationsReferentiels(indId)).toEqual([
+        { referentielPublicId: 'REF-DEDUP-A', fonctionAgregation: 'SUM' },
       ])
     }),
   )
 
   it(
-    'rejette quand un referentielId est inconnu, avec la liste des IDs manquants',
+    'rejette quand un referentielPublicId est inconnu, avec la liste des IDs manquants',
     integrationTest(async () => {
       const indId = testIndicateurId()
       await fixtures.referentiel({ publicId: 'REF-UNKNOWN-A' })
@@ -166,16 +142,13 @@ describe.concurrent('upsertIndicateur', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          upsertIndicateur({
-            publicId: indId,
-            body: {
-              nom: 'I',
-              referentiels: [
-                { referentielId: 'REF-UNKNOWN-A', fonctionAgregation: 'SUM' },
-                { referentielId: 'REF-UNKNOWN-X', fonctionAgregation: 'SUM' },
-                { referentielId: 'REF-UNKNOWN-Y', fonctionAgregation: 'SUM' },
-              ],
-            },
+          upsertIndicateur(indId, {
+            nom: 'I',
+            referentiels: [
+              { referentielPublicId: 'REF-UNKNOWN-A', fonctionAgregation: 'SUM' },
+              { referentielPublicId: 'REF-UNKNOWN-X', fonctionAgregation: 'SUM' },
+              { referentielPublicId: 'REF-UNKNOWN-Y', fonctionAgregation: 'SUM' },
+            ],
           }),
         ),
       ).rejects.toMatchObject({
@@ -198,69 +171,58 @@ describe.concurrent('upsertIndicateur', () => {
       })
 
       await expect(
-        runAsPrincipal(apiKey.id, () =>
-          upsertIndicateur({ publicId: indId, body: { nom: 'X', referentiels: [] } }),
-        ),
+        runAsPrincipal(apiKey.id, () => upsertIndicateur(indId, { nom: 'X', referentiels: [] })),
       ).rejects.toThrow(/permission/i)
     }),
   )
 
   it(
-    'met à jour la fonctionAgregation pour un lien existant',
+    'met à jour la fonctionAgregation pour une configuration existante',
     integrationTest(async () => {
       const indId = testIndicateurId()
       await fixtures.referentiel({ publicId: 'REF-UPDATE-A' })
       const apiKey = await fixtures.apiKey()
 
       await runAsPrincipal(apiKey.id, () =>
-        upsertIndicateur({
-          publicId: indId,
-          body: {
-            nom: 'I',
-            referentiels: [{ referentielId: 'REF-UPDATE-A', fonctionAgregation: 'SUM' }],
-          },
+        upsertIndicateur(indId, {
+          nom: 'I',
+          referentiels: [{ referentielPublicId: 'REF-UPDATE-A', fonctionAgregation: 'SUM' }],
         }),
       )
 
       await runAsPrincipal(apiKey.id, () =>
-        upsertIndicateur({
-          publicId: indId,
-          body: {
-            nom: 'I',
-            referentiels: [{ referentielId: 'REF-UPDATE-A', fonctionAgregation: 'NONE' }],
-          },
+        upsertIndicateur(indId, {
+          nom: 'I',
+          referentiels: [{ referentielPublicId: 'REF-UPDATE-A', fonctionAgregation: 'NONE' }],
         }),
       )
 
-      expect(await getReferentielLinks(indId)).toEqual([
-        { referentielId: 'REF-UPDATE-A', fonctionAgregation: 'NONE' },
+      expect(await getConfigurationsReferentiels(indId)).toEqual([
+        { referentielPublicId: 'REF-UPDATE-A', fonctionAgregation: 'NONE' },
       ])
     }),
   )
 
   it(
-    "dédoublonne sur referentielId : en cas de fonctions différentes, la dernière l'emporte",
+    "dédoublonne sur referentielPublicId : en cas de fonctions différentes, la dernière l'emporte",
     integrationTest(async () => {
       const indId = testIndicateurId()
       await fixtures.referentiel({ publicId: 'REF-DEDUP-FN' })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertIndicateur({
-          publicId: indId,
-          body: {
-            nom: 'I',
-            referentiels: [
-              { referentielId: 'REF-DEDUP-FN', fonctionAgregation: 'SUM' },
-              { referentielId: 'REF-DEDUP-FN', fonctionAgregation: 'NONE' },
-            ],
-          },
+        upsertIndicateur(indId, {
+          nom: 'I',
+          referentiels: [
+            { referentielPublicId: 'REF-DEDUP-FN', fonctionAgregation: 'SUM' },
+            { referentielPublicId: 'REF-DEDUP-FN', fonctionAgregation: 'NONE' },
+          ],
         }),
       )
 
       expect(result.isOk()).toBe(true)
-      expect(await getReferentielLinks(indId)).toEqual([
-        { referentielId: 'REF-DEDUP-FN', fonctionAgregation: 'NONE' },
+      expect(await getConfigurationsReferentiels(indId)).toEqual([
+        { referentielPublicId: 'REF-DEDUP-FN', fonctionAgregation: 'NONE' },
       ])
     }),
   )

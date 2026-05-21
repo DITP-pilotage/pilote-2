@@ -57,26 +57,26 @@ const buildResult = async (
     where: { publicId: individuPublicId },
   })
 
-  const lien = await db().indicateurReferentiel.findUnique({
+  const configurationIndicateurReferentiel = await db().indicateurReferentiel.findUnique({
     where: {
       indicateurId_referentielId: {
         indicateurId: indicateur.id,
         referentielId: cible.referentielId,
       },
     },
-    select: { fonctionAgregation: true },
   })
 
-  if (!lien) {
+  if (!configurationIndicateurReferentiel) {
     throw new ValidationError(
       "L'indicateur n'est pas configuré pour le référentiel de cet individu",
       { indicateur: indicateur.publicId, individu: cible.publicId },
     )
   }
 
-  if (lien.fonctionAgregation === 'NONE') {
+  if (configurationIndicateurReferentiel.fonctionAgregation === 'NONE') {
     throw new ValidationError(
-      "Cet indicateur n'est pas dérivable pour ce référentiel (fonction d'agrégation NONE)",
+      'Cet indicateur ne se dérive pas depuis ses enfants pour ce référentiel : ' +
+        'la valeur doit être saisie directement.',
       { indicateur: indicateur.publicId, individu: cible.publicId },
     )
   }
@@ -101,7 +101,7 @@ const buildResult = async (
   return {
     indicateur: indicateur.publicId,
     individu: cible.publicId,
-    fonctionAgregation: lien.fonctionAgregation,
+    fonctionAgregation: configurationIndicateurReferentiel.fonctionAgregation,
     valeurDerivee,
     contributions,
     couverture,

@@ -6,7 +6,7 @@ import { type IndicateurModel, type ReferentielModel } from '@/generated/prisma/
 export type IndicateurWithReferentiels = IndicateurModel & {
   referentiels: Array<{
     fonctionAgregation: FonctionAgregation
-    referentiel: Pick<ReferentielModel, 'publicId'>
+    referentiel: ReferentielModel
   }>
 }
 
@@ -16,11 +16,11 @@ export const toIndicateurApiModel = (
   id: indicateur.publicId,
   nom: indicateur.nom,
   referentiels: indicateur.referentiels
-    .map((link) => ({
-      referentielId: link.referentiel.publicId,
-      fonctionAgregation: link.fonctionAgregation,
+    .map((configuration) => ({
+      referentielPublicId: configuration.referentiel.publicId,
+      fonctionAgregation: configuration.fonctionAgregation,
     }))
-    .sort((a, b) => a.referentielId.localeCompare(b.referentielId)),
+    .sort((a, b) => a.referentielPublicId.localeCompare(b.referentielPublicId)),
   createdAt: indicateur.createdAt.toISOString(),
   updatedAt: indicateur.updatedAt.toISOString(),
 })

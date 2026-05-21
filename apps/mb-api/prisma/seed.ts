@@ -2,6 +2,7 @@ import { PrismaPg } from '@prisma/adapter-pg'
 import { uuidv7 } from 'uuidv7'
 
 import { Prisma, PrismaClient } from '../src/generated/prisma/client.js'
+import { type FonctionAgregation } from '../src/generated/prisma/enums.js'
 
 import {
   individusSeed,
@@ -180,51 +181,54 @@ const main = async () => {
 
   const indicateurReferentielsSeed: ReadonlyArray<{
     indicateurPublicId: string
-    liens: ReadonlyArray<{ referentielPublicId: string; fonctionAgregation: 'SUM' | 'NONE' }>
+    referentiels: ReadonlyArray<{
+      referentielPublicId: string
+      fonctionAgregation: FonctionAgregation
+    }>
   }> = [
     {
       indicateurPublicId: 'IND-001',
-      liens: [
+      referentiels: [
         { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
         { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
       ],
     },
     {
       indicateurPublicId: 'IND-002',
-      liens: [
+      referentiels: [
         { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'SUM' },
         { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' },
       ],
     },
     {
       indicateurPublicId: 'IND-003',
-      liens: [
+      referentiels: [
         { referentielPublicId: 'REF-REG', fonctionAgregation: 'NONE' },
         { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
       ],
     },
     {
       indicateurPublicId: 'IND-004',
-      liens: [{ referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' }],
+      referentiels: [{ referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' }],
     },
     {
       indicateurPublicId: 'IND-005',
-      liens: [
+      referentiels: [
         { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' },
         { referentielPublicId: 'REF-NAT', fonctionAgregation: 'SUM' },
       ],
     },
     {
       indicateurPublicId: 'IND-006',
-      liens: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
+      referentiels: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
     },
     {
       indicateurPublicId: 'IND-007',
-      liens: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
+      referentiels: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
     },
     {
       indicateurPublicId: 'IND-008',
-      liens: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
+      referentiels: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
     },
   ]
 
@@ -233,9 +237,9 @@ const main = async () => {
       where: { publicId: item.indicateurPublicId },
       select: { id: true },
     })
-    for (const lien of item.liens) {
+    for (const configuration of item.referentiels) {
       const referentiel = await prisma.referentiel.findUniqueOrThrow({
-        where: { publicId: lien.referentielPublicId },
+        where: { publicId: configuration.referentielPublicId },
         select: { id: true },
       })
       await prisma.indicateurReferentiel.upsert({
@@ -245,17 +249,20 @@ const main = async () => {
             referentielId: referentiel.id,
           },
         },
-        update: { fonctionAgregation: lien.fonctionAgregation },
+        update: { fonctionAgregation: configuration.fonctionAgregation },
         create: {
           indicateurId: indicateur.id,
           referentielId: referentiel.id,
-          fonctionAgregation: lien.fonctionAgregation,
+          fonctionAgregation: configuration.fonctionAgregation,
         },
       })
     }
   }
 
-  const liaisonsCount = indicateurReferentielsSeed.reduce((acc, item) => acc + item.liens.length, 0)
+  const liaisonsCount = indicateurReferentielsSeed.reduce(
+    (acc, item) => acc + item.referentiels.length,
+    0,
+  )
 
   for (const item of relationsSeed) {
     const parent = await prisma.individu.findUniqueOrThrow({

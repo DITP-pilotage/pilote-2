@@ -275,7 +275,8 @@ export const valeurDeriveeApiModelSchema = z.object({
   individu: individuPublicIdSchema,
   fonctionAgregation: fonctionAgregationSchema.describe(
     "Fonction d'agrégation appliquée pour ce couple (indicateur, référentiel de l'individu). " +
-      "Toujours `SUM` quand le calcul a abouti ; un retour 400 est renvoyé si la fonction vaut `NONE`.",
+      "Toujours `SUM` quand le calcul a abouti ; un retour 400 est renvoyé si la fonction vaut " +
+      '`NONE` (la valeur doit alors être saisie directement, pas dérivée).',
   ),
   valeurDerivee: z
     .number()

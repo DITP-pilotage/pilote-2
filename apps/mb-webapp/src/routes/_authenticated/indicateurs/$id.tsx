@@ -46,7 +46,9 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     const { queryClient } = context
     const indicateur = await loadIndicateur({ queryClient, indicateurId: params.id })
 
-    const referentielIds = indicateur.referentiels.map((link) => link.referentielId)
+    const referentielIds = indicateur.referentiels.map(
+      (configuration) => configuration.referentielPublicId,
+    )
     if (referentielIds.length === 0) return { indicateur }
 
     const individus = await loadIndividusFromReferentiels({

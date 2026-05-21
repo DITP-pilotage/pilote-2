@@ -33,7 +33,9 @@ type IndividuSelectProps = {
 
 export function IndividuSelect({ id, indicateurId, value, onChange }: IndividuSelectProps) {
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(indicateurId))
-  const referentielIds = indicateur.referentiels.map((link) => link.referentielId)
+  const referentielIds = indicateur.referentiels.map(
+    (configuration) => configuration.referentielPublicId,
+  )
   const referentiels = useSuspenseQueries({
     queries: referentielIds.map((refId) => referentielQueryOptions(refId)),
     combine: (results) => results.map((r) => r.data),

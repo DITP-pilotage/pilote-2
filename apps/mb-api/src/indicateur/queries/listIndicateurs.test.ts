@@ -207,8 +207,8 @@ describe.concurrent('listIndicateurs', () => {
 
       const value = result._unsafeUnwrap()
       expect(value.items.find((i) => i.id === accessible)?.referentiels).toEqual([
-        { referentielId: 'REF-LIST-M', fonctionAgregation: 'SUM' },
-        { referentielId: 'REF-LIST-Z', fonctionAgregation: 'SUM' },
+        { referentielPublicId: 'REF-LIST-M', fonctionAgregation: 'SUM' },
+        { referentielPublicId: 'REF-LIST-Z', fonctionAgregation: 'SUM' },
       ])
     }),
   )

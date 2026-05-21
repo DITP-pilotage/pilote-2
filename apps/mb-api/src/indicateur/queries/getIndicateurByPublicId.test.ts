@@ -34,8 +34,8 @@ describe.concurrent('getIndicateurByPublicId', () => {
         id: indId,
         nom: 'Indicateur de test',
         referentiels: [
-          { referentielId: 'REF-DETAIL-A', fonctionAgregation: 'SUM' },
-          { referentielId: 'REF-DETAIL-B', fonctionAgregation: 'SUM' },
+          { referentielPublicId: 'REF-DETAIL-A', fonctionAgregation: 'SUM' },
+          { referentielPublicId: 'REF-DETAIL-B', fonctionAgregation: 'SUM' },
         ],
         createdAt: indicateur.createdAt.toISOString(),
         updatedAt: indicateur.updatedAt.toISOString(),
