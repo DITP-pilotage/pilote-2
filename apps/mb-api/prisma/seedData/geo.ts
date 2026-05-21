@@ -97,6 +97,28 @@ const datesIrregulieres = [
   '2025-03-10',
   '2025-09-18',
 ]
+// Pas bi-mensuel (tous les 2 mois) sur 3 ans pour exposer une série temporelle
+// suffisamment dense aux indicateurs PUBLIC.
+const datesBimestrielles = [
+  '2023-01-15',
+  '2023-03-15',
+  '2023-05-15',
+  '2023-07-15',
+  '2023-09-15',
+  '2023-11-15',
+  '2024-01-15',
+  '2024-03-15',
+  '2024-05-15',
+  '2024-07-15',
+  '2024-09-15',
+  '2024-11-15',
+  '2025-01-15',
+  '2025-03-15',
+  '2025-05-15',
+  '2025-07-15',
+  '2025-09-15',
+  '2025-11-15',
+]
 
 const buildDeptValeurs = (
   indicateurPublicId: string,
@@ -112,6 +134,44 @@ const buildDeptValeurs = (
       valeur: baseValeur + departementIndex * step + dateIndex * (step / 2),
     })),
   )
+
+// Variante avec :
+// - tendance globale (trend) appliquée du premier au dernier point,
+// - oscillation sinusoïdale d'amplitude `amplitude`,
+// - bruit déterministe pour décorréler les départements.
+// Reste pure et déterministe (aucun Math.random()) : indispensable pour avoir un
+// seed reproductible.
+const buildDeptValeursVariees = ({
+  indicateurPublicId,
+  baseValeur,
+  amplitude,
+  trend,
+  dates,
+  decimals = 2,
+}: {
+  indicateurPublicId: string
+  baseValeur: number
+  amplitude: number
+  trend: number
+  dates: ReadonlyArray<string>
+  decimals?: number
+}) => {
+  const round = (n: number) => Math.round(n * 10 ** decimals) / 10 ** decimals
+  return departementsObserves.flatMap((individuPublicId, deptIndex) =>
+    dates.map((date, dateIndex) => {
+      const ratio = dates.length > 1 ? dateIndex / (dates.length - 1) : 0
+      const deptOffset = (deptIndex - (departementsObserves.length - 1) / 2) * amplitude * 0.35
+      const oscillation = Math.sin((dateIndex + deptIndex * 0.7) * 1.1) * amplitude * 0.55
+      const bruit = Math.cos(dateIndex * 3.1 + deptIndex * 5.7) * amplitude * 0.25
+      return {
+        indicateurPublicId,
+        individuPublicId,
+        date,
+        valeur: round(baseValeur + deptOffset + trend * ratio + oscillation + bruit),
+      }
+    }),
+  )
+}
 
 const ind008Regions = [
   { indicateurPublicId: 'IND-008', individuPublicId: 'REG-11', date: '2024-06-01', valeur: 72.5 },
@@ -135,4 +195,46 @@ export const valeursAvancementSeed = [
   ...buildDeptValeurs('IND-004', 21.0, 0.8, datesSemestrielles),
   ...buildDeptValeurs('IND-005', 1200.0, 30.0, datesIrregulieres),
   ...ind008Regions,
+  // Indicateurs PUBLIC (IND-046 → IND-050) : série bi-mensuelle sur 3 ans
+  // avec tendances et oscillations marquées pour avoir des graphes "parlants".
+  ...buildDeptValeursVariees({
+    indicateurPublicId: 'IND-046',
+    baseValeur: 700_000,
+    amplitude: 120_000,
+    trend: 90_000,
+    dates: datesBimestrielles,
+    decimals: 0,
+  }),
+  ...buildDeptValeursVariees({
+    indicateurPublicId: 'IND-047',
+    baseValeur: 82.5,
+    amplitude: 1.8,
+    trend: 0.9,
+    dates: datesBimestrielles,
+    decimals: 2,
+  }),
+  ...buildDeptValeursVariees({
+    indicateurPublicId: 'IND-048',
+    baseValeur: 13.5,
+    amplitude: 3.5,
+    trend: -1.4,
+    dates: datesBimestrielles,
+    decimals: 2,
+  }),
+  ...buildDeptValeursVariees({
+    indicateurPublicId: 'IND-049',
+    baseValeur: 96.0,
+    amplitude: 1.4,
+    trend: 1.6,
+    dates: datesBimestrielles,
+    decimals: 2,
+  }),
+  ...buildDeptValeursVariees({
+    indicateurPublicId: 'IND-050',
+    baseValeur: 78.0,
+    amplitude: 6.0,
+    trend: 14.0,
+    dates: datesBimestrielles,
+    decimals: 2,
+  }),
 ]

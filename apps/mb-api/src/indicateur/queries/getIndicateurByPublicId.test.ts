@@ -33,6 +33,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
       expect(result._unsafeUnwrap()).toEqual({
         id: indId,
         nom: 'Indicateur de test',
+        visibilite: 'PRIVE',
         referentiels: [
           { referentielPublicId: 'REF-DETAIL-A', fonctionAgregation: 'SUM' },
           { referentielPublicId: 'REF-DETAIL-B', fonctionAgregation: 'SUM' },
@@ -40,6 +41,20 @@ describe.concurrent('getIndicateurByPublicId', () => {
         createdAt: indicateur.createdAt.toISOString(),
         updatedAt: indicateur.updatedAt.toISOString(),
       })
+    }),
+  )
+
+  it(
+    "retourne un indicateur PUBLIC même quand le principal n'a aucune permission",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      await fixtures.indicateur({ publicId: indId, visibilite: 'PUBLIC' })
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
+
+      expect(result.isOk()).toBe(true)
+      expect(result._unsafeUnwrap().visibilite).toBe('PUBLIC')
     }),
   )
 

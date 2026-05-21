@@ -13,6 +13,7 @@ export const buildIndicateur = (override: Partial<IndicateurApiModel> = {}): Ind
   indicateurApiModelSchema.parse({
     id: 1,
     nom: 'Indicateur test',
+    visibilite: 'PRIVE',
     valeur: 0,
     unite: '%',
     statut: 'actif',

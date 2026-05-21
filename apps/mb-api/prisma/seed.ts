@@ -19,7 +19,11 @@ if (!databaseUrl) {
 const adapter = new PrismaPg({ connectionString: databaseUrl })
 const prisma = new PrismaClient({ adapter })
 
-const indicateursSeed: ReadonlyArray<{ publicId: string; nom: string }> = [
+const indicateursSeed: ReadonlyArray<{
+  publicId: string
+  nom: string
+  visibilite?: 'PUBLIC' | 'PRIVE'
+}> = [
   { publicId: 'IND-001', nom: 'Taux de chômage' },
   { publicId: 'IND-002', nom: 'Émissions de CO2' },
   { publicId: 'IND-003', nom: 'Couverture fibre' },
@@ -65,6 +69,15 @@ const indicateursSeed: ReadonlyArray<{ publicId: string; nom: string }> = [
   { publicId: 'IND-043', nom: 'Couverture 5G du territoire' },
   { publicId: 'IND-044', nom: 'Dématérialisation des démarches administratives' },
   { publicId: 'IND-045', nom: "Cyberattaques traitées par l'ANSSI" },
+  { publicId: 'IND-046', nom: 'Indicateur public — Démographie', visibilite: 'PUBLIC' },
+  { publicId: 'IND-047', nom: 'Indicateur public — Espérance de vie', visibilite: 'PUBLIC' },
+  { publicId: 'IND-048', nom: 'Indicateur public — Pauvreté', visibilite: 'PUBLIC' },
+  { publicId: 'IND-049', nom: "Indicateur public — Taux d'alphabétisation", visibilite: 'PUBLIC' },
+  {
+    publicId: 'IND-050',
+    nom: 'Indicateur public — Accès à internet haut débit',
+    visibilite: 'PUBLIC',
+  },
 ]
 
 const utilisateursSeed: ReadonlyArray<{ email: string }> = [{ email: 'ditp.admin@example.com' }]
@@ -99,13 +112,15 @@ const indicateurDates = (index: number): { createdAt: Date; updatedAt: Date } =>
 const main = async () => {
   for (const [index, item] of indicateursSeed.entries()) {
     const { createdAt, updatedAt } = indicateurDates(index)
+    const visibilite = item.visibilite ?? 'PRIVE'
     await prisma.indicateur.upsert({
       where: { publicId: item.publicId },
-      update: { nom: item.nom, updatedAt },
+      update: { nom: item.nom, visibilite, updatedAt },
       create: {
         id: uuidv7(),
         publicId: item.publicId,
         nom: item.nom,
+        visibilite,
         createdAt,
         updatedAt,
       },
@@ -229,6 +244,43 @@ const main = async () => {
     {
       indicateurPublicId: 'IND-008',
       referentiels: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
+    },
+    {
+      indicateurPublicId: 'IND-046',
+      referentiels: [
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'SUM' },
+        { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' },
+        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'SUM' },
+      ],
+    },
+    {
+      indicateurPublicId: 'IND-047',
+      referentiels: [
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
+      ],
+    },
+    {
+      indicateurPublicId: 'IND-048',
+      referentiels: [
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { referentielPublicId: 'REF-REG', fonctionAgregation: 'NONE' },
+      ],
+    },
+    {
+      indicateurPublicId: 'IND-049',
+      referentiels: [
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
+      ],
+    },
+    {
+      indicateurPublicId: 'IND-050',
+      referentiels: [
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { referentielPublicId: 'REF-REG', fonctionAgregation: 'NONE' },
+        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
+      ],
     },
   ]
 

@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testDeptId, testDeptIds, testIndicateurId } from '@/test/randomIds'
+import { runAsPrincipal } from '@/test/runAsPrincipal'
 import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
 
 describe.concurrent('listSyntheseIndividus', () => {
@@ -11,10 +12,13 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
-      await fixtures.indicateur({ publicId: indId, nom: 'T' })
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.individu({ publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } })
+      const apiKey = await fixtures.apiKey()
 
-      const result = await listSyntheseIndividus(indId, { individus: [deptId] })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listSyntheseIndividus(indId, { individus: [deptId] }),
+      )
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [{ individu: deptId, variation: null, ecartMediane: null }],
@@ -27,7 +31,7 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const [dept1, dept2] = testDeptIds(2)
-      await fixtures.indicateur({ publicId: indId, nom: 'T' })
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.individu({ publicId: dept1, referentiel: { publicId: 'REF-A', nom: 'A' } })
       await fixtures.valeurAvancement({
         indicateur: { publicId: indId },
@@ -35,8 +39,11 @@ describe.concurrent('listSyntheseIndividus', () => {
         date: '2026-01-01',
         valeur: 42,
       })
+      const apiKey = await fixtures.apiKey()
 
-      const result = await listSyntheseIndividus(indId, { individus: [dept1] })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listSyntheseIndividus(indId, { individus: [dept1] }),
+      )
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [{ individu: dept1, variation: null, ecartMediane: null }],
@@ -49,14 +56,18 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement({
-        indicateur: { publicId: indId, nom: 'T' },
+        indicateur: { publicId: indId },
         individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
         date: '2026-01-01',
         valeur: 50,
       })
+      const apiKey = await fixtures.apiKey()
 
-      const result = await listSyntheseIndividus(indId, { individus: [deptId] })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listSyntheseIndividus(indId, { individus: [deptId] }),
+      )
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [{ individu: deptId, variation: 50, ecartMediane: 0 }],
@@ -69,9 +80,10 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
-          indicateur: { publicId: indId, nom: 'T' },
+          indicateur: { publicId: indId },
           individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
           date: '2026-01-01',
           valeur: 50,
@@ -89,8 +101,11 @@ describe.concurrent('listSyntheseIndividus', () => {
           valeur: 75,
         },
       )
+      const apiKey = await fixtures.apiKey()
 
-      const result = await listSyntheseIndividus(indId, { individus: [deptId] })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listSyntheseIndividus(indId, { individus: [deptId] }),
+      )
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [{ individu: deptId, variation: 50, ecartMediane: 0 }],
@@ -103,9 +118,10 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
-          indicateur: { publicId: indId, nom: 'T' },
+          indicateur: { publicId: indId },
           individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
           date: '2026-02-01',
           valeur: 10,
@@ -123,8 +139,11 @@ describe.concurrent('listSyntheseIndividus', () => {
           valeur: 50,
         },
       )
+      const apiKey = await fixtures.apiKey()
 
-      const result = await listSyntheseIndividus(indId, { individus: [deptId] })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listSyntheseIndividus(indId, { individus: [deptId] }),
+      )
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [{ individu: deptId, variation: 65, ecartMediane: 0 }],
@@ -137,9 +156,10 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const [dept1, dept2, dept3] = testDeptIds(3)
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
-          indicateur: { publicId: indId, nom: 'T' },
+          indicateur: { publicId: indId },
           individu: {
             publicId: dept1,
             nom: 'A',
@@ -161,18 +181,17 @@ describe.concurrent('listSyntheseIndividus', () => {
           valeur: 5,
         },
       )
-      // dept3 sans valeur mais existe
       await fixtures.individu({
         publicId: dept3,
         nom: 'C',
         referentiel: { publicId: 'REF-A' },
       })
+      const apiKey = await fixtures.apiKey()
 
-      const result = await listSyntheseIndividus(indId, {
-        individus: [dept3, dept1, dept2],
-      })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listSyntheseIndividus(indId, { individus: [dept3, dept1, dept2] }),
+      )
 
-      // mediane des valeurs récentes de REF-A: dept1=30, dept2=5 → mediane=17.5
       expect(result._unsafeUnwrap()).toEqual({
         items: [
           { individu: dept1, variation: 20, ecartMediane: 12.5 },
@@ -188,9 +207,10 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const [indId, autreIndId] = [testIndicateurId(), testIndicateurId()]
       const deptId = testDeptId()
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
-          indicateur: { publicId: indId, nom: 'T' },
+          indicateur: { publicId: indId },
           individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
           date: '2026-01-01',
           valeur: 100,
@@ -202,8 +222,11 @@ describe.concurrent('listSyntheseIndividus', () => {
           valeur: 9999,
         },
       )
+      const apiKey = await fixtures.apiKey()
 
-      const result = await listSyntheseIndividus(indId, { individus: [deptId] })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listSyntheseIndividus(indId, { individus: [deptId] }),
+      )
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [{ individu: deptId, variation: 100, ecartMediane: 0 }],
@@ -217,16 +240,18 @@ describe.concurrent('listSyntheseIndividus', () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
       const inconnu = testDeptId()
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement({
-        indicateur: { publicId: indId, nom: 'T' },
+        indicateur: { publicId: indId },
         individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
         date: '2026-01-01',
         valeur: 42,
       })
+      const apiKey = await fixtures.apiKey()
 
-      const result = await listSyntheseIndividus(indId, {
-        individus: [deptId, inconnu],
-      })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listSyntheseIndividus(indId, { individus: [deptId, inconnu] }),
+      )
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [{ individu: deptId, variation: 42, ecartMediane: 0 }],
@@ -239,9 +264,10 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
-          indicateur: { publicId: indId, nom: 'T' },
+          indicateur: { publicId: indId },
           individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
           date: '2026-01-01',
           valeur: 0.15,
@@ -253,8 +279,11 @@ describe.concurrent('listSyntheseIndividus', () => {
           valeur: 0.3,
         },
       )
+      const apiKey = await fixtures.apiKey()
 
-      const result = await listSyntheseIndividus(indId, { individus: [deptId] })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listSyntheseIndividus(indId, { individus: [deptId] }),
+      )
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [{ individu: deptId, variation: 0.15, ecartMediane: 0 }],
@@ -267,9 +296,10 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const [dept1, dept2, dept3] = testDeptIds(3)
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
-          indicateur: { publicId: indId, nom: 'T' },
+          indicateur: { publicId: indId },
           individu: { publicId: dept1, referentiel: { publicId: 'REF-A', nom: 'A' } },
           date: '2026-01-01',
           valeur: 0.3,
@@ -287,10 +317,12 @@ describe.concurrent('listSyntheseIndividus', () => {
           valeur: 0.45,
         },
       )
+      const apiKey = await fixtures.apiKey()
 
-      const result = await listSyntheseIndividus(indId, { individus: [dept1] })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listSyntheseIndividus(indId, { individus: [dept1] }),
+      )
 
-      // mediane REF-A = 0.3 → ecart dept1 = 0
       expect(result._unsafeUnwrap()).toMatchObject({
         items: [{ individu: dept1, ecartMediane: 0 }],
       })
@@ -302,9 +334,10 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const [dept1, dept2, dept3] = testDeptIds(3)
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
-          indicateur: { publicId: indId, nom: 'T' },
+          indicateur: { publicId: indId },
           individu: { publicId: dept1, referentiel: { publicId: 'REF-A', nom: 'A' } },
           date: '2026-01-01',
           valeur: 100,
@@ -328,10 +361,12 @@ describe.concurrent('listSyntheseIndividus', () => {
           valeur: 30,
         },
       )
+      const apiKey = await fixtures.apiKey()
 
-      const result = await listSyntheseIndividus(indId, { individus: [dept1] })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listSyntheseIndividus(indId, { individus: [dept1] }),
+      )
 
-      // valeurs récentes REF-A: dept1=40, dept2=50, dept3=30 → mediane=40 → ecart dept1=0
       expect(result._unsafeUnwrap()).toMatchObject({
         items: [{ individu: dept1, ecartMediane: 0 }],
       })
@@ -343,14 +378,14 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const [deptA, deptB1, deptB2, deptB3] = testDeptIds(4)
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
-          indicateur: { publicId: indId, nom: 'T' },
+          indicateur: { publicId: indId },
           individu: { publicId: deptA, referentiel: { publicId: 'REF-A', nom: 'A' } },
           date: '2026-01-01',
           valeur: 100,
         },
-        // REF-B : valeurs 10/50/90 → mediane = 50
         {
           indicateur: { publicId: indId },
           individu: { publicId: deptB1, referentiel: { publicId: 'REF-B', nom: 'B' } },
@@ -370,10 +405,12 @@ describe.concurrent('listSyntheseIndividus', () => {
           valeur: 90,
         },
       )
+      const apiKey = await fixtures.apiKey()
 
-      const result = await listSyntheseIndividus(indId, { individus: [deptA] })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listSyntheseIndividus(indId, { individus: [deptA] }),
+      )
 
-      // deptA est seul dans REF-A → mediane REF-A = 100 → ecart = 0
       expect(result._unsafeUnwrap()).toEqual({
         items: [{ individu: deptA, variation: 100, ecartMediane: 0 }],
       })
@@ -385,10 +422,10 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const [deptA1, deptA2, deptB1, deptB2] = testDeptIds(4)
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
-        // REF-A : 10, 30 → mediane = 20
         {
-          indicateur: { publicId: indId, nom: 'T' },
+          indicateur: { publicId: indId },
           individu: { publicId: deptA1, referentiel: { publicId: 'REF-A', nom: 'A' } },
           date: '2026-01-01',
           valeur: 10,
@@ -399,7 +436,6 @@ describe.concurrent('listSyntheseIndividus', () => {
           date: '2026-01-01',
           valeur: 30,
         },
-        // REF-B : 100, 200 → mediane = 150
         {
           indicateur: { publicId: indId },
           individu: { publicId: deptB1, referentiel: { publicId: 'REF-B', nom: 'B' } },
@@ -413,12 +449,12 @@ describe.concurrent('listSyntheseIndividus', () => {
           valeur: 200,
         },
       )
+      const apiKey = await fixtures.apiKey()
 
-      const result = await listSyntheseIndividus(indId, {
-        individus: [deptA1, deptB1],
-      })
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listSyntheseIndividus(indId, { individus: [deptA1, deptB1] }),
+      )
 
-      // (testDeptIds est trié, l'ordre du résultat suit l'ordre tri publicId asc)
       const items = result._unsafeUnwrap().items
       const itemA1 = items.find((i) => i.individu === deptA1)
       const itemB1 = items.find((i) => i.individu === deptB1)
@@ -430,8 +466,26 @@ describe.concurrent('listSyntheseIndividus', () => {
   it(
     "rejette quand l'indicateur est introuvable",
     integrationTest(async () => {
+      const apiKey = await fixtures.apiKey()
       await expect(
-        listSyntheseIndividus(testIndicateurId(), { individus: [testDeptId()] }),
+        runAsPrincipal(apiKey.id, () =>
+          listSyntheseIndividus(testIndicateurId(), { individus: [testDeptId()] }),
+        ),
+      ).rejects.toThrow()
+    }),
+  )
+
+  it(
+    "rejette quand le principal n'a aucune permission sur un indicateur PRIVE",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const deptId = testDeptId()
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PRIVE' })
+      await fixtures.individu({ publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } })
+      const apiKey = await fixtures.apiKey()
+
+      await expect(
+        runAsPrincipal(apiKey.id, () => listSyntheseIndividus(indId, { individus: [deptId] })),
       ).rejects.toThrow()
     }),
   )

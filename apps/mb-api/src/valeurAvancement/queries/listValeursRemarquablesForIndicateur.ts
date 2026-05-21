@@ -4,8 +4,10 @@ import {
 } from '@pilote/mb-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
+import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { type Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
+import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { computeMax } from '@/valeurAvancement/computeMax'
 import { computeMediane } from '@/valeurAvancement/computeMediane'
 import { computeMin } from '@/valeurAvancement/computeMin'
@@ -34,10 +36,11 @@ const fetchReferentielsAvecValeursRecentes = (
 export const listValeursRemarquablesForIndicateur = (
   indicateurPublicId: string,
   params: ListValeursRemarquablesForIndicateurQuery,
-): ResultAsync<ValeursRemarquablesListApiModel, never> =>
-  ResultAsync.fromSafePromise(
-    db().indicateur.findUniqueOrThrow({
-      where: { publicId: indicateurPublicId },
+): ResultAsync<ValeursRemarquablesListApiModel, never> => {
+  const principalId = requireCurrentPrincipalId()
+  return ResultAsync.fromSafePromise(
+    db().indicateur.findFirstOrThrow({
+      where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
       select: { id: true },
     }),
   )
@@ -59,3 +62,4 @@ export const listValeursRemarquablesForIndicateur = (
         }
       }),
     }))
+}

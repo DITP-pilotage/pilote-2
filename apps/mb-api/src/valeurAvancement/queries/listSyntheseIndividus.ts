@@ -5,7 +5,9 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { unique } from '@/framework/array'
+import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
+import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { computeEcartMediane } from '@/valeurAvancement/computeEcartMediane'
 import { groupMedianesByKey } from '@/valeurAvancement/computeMediane'
 import { computeVariation } from '@/valeurAvancement/computeVariation'
@@ -54,8 +56,9 @@ const buildSynthese = async (
   indicateurPublicId: string,
   params: ListSyntheseIndividusQuery,
 ): Promise<SyntheseIndividusListApiModel> => {
-  const indicateur = await db().indicateur.findUniqueOrThrow({
-    where: { publicId: indicateurPublicId },
+  const principalId = requireCurrentPrincipalId()
+  const indicateur = await db().indicateur.findFirstOrThrow({
+    where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
     select: { id: true },
   })
   const itemsRows = await fetchLatestValeursIndividus({

@@ -50,11 +50,12 @@ model ApiKey {
 }
 
 model Indicateur {
-  id        String   @id @db.Uuid
-  publicId  String   @unique @map("public_id")
-  nom       String
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt      @map("updated_at")
+  id         String     @id @db.Uuid
+  publicId   String     @unique @map("public_id")
+  nom        String
+  visibilite Visibilite
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @updatedAt      @map("updated_at")
 
   valeurs      ValeurAvancement[]
   referentiels IndicateurReferentiel[]
@@ -68,6 +69,13 @@ enum FonctionAgregation {
   NONE
 
   @@map("fonction_agregation_enum")
+}
+
+enum Visibilite {
+  PUBLIC
+  PRIVE
+
+  @@map("visibilite_enum")
 }
 
 model IndicateurReferentiel {

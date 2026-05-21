@@ -8,6 +8,13 @@ export const indicateurPublicIdSchema = z
   .regex(/^IND-\d+$/, 'Identifiant public attendu au format IND-XXX')
   .describe("Identifiant public de l'indicateur (format IND-XXX).")
 
+export const indicateurVisibiliteSchema = z
+  .enum(['PUBLIC', 'PRIVE'])
+  .describe(
+    "Visibilité de l'indicateur. PUBLIC : accessible en lecture à tout principal authentifié. PRIVE : accessible uniquement aux principals disposant d'une permission explicite.",
+  )
+export type IndicateurVisibilite = z.infer<typeof indicateurVisibiliteSchema>
+
 export const fonctionAgregationSchema = z
   .enum(['SUM', 'NONE'])
   .describe(
@@ -31,6 +38,7 @@ export type ConfigurationIndicateurReferentiel = z.infer<
 export const indicateurApiModelSchema = z.object({
   id: indicateurPublicIdSchema,
   nom: z.string().describe("Nom lisible de l'indicateur."),
+  visibilite: indicateurVisibiliteSchema,
   referentiels: z
     .array(configurationIndicateurReferentielSchema)
     .describe(
@@ -50,6 +58,7 @@ export type ListIndicateursQuery = z.infer<typeof listIndicateursQuerySchema>
 
 export const upsertIndicateurBodySchema = z.object({
   nom: z.string().min(1).describe("Nom lisible de l'indicateur."),
+  visibilite: indicateurVisibiliteSchema,
   referentiels: z
     .array(configurationIndicateurReferentielSchema)
     .describe(

@@ -15,6 +15,7 @@ export const toIndicateurApiModel = (
 ): IndicateurApiModel => ({
   id: indicateur.publicId,
   nom: indicateur.nom,
+  visibilite: indicateur.visibilite,
   referentiels: indicateur.referentiels
     .map((configuration) => ({
       referentielPublicId: configuration.referentiel.publicId,
