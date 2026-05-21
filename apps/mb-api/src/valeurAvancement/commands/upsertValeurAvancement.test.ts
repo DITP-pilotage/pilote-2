@@ -41,6 +41,7 @@ describe.concurrent('upsertValeurAvancement', () => {
         individu: individuId,
         date: '2025-03-01',
         valeur: 12.34,
+        type: 'saisie',
       })
       const row = await db().valeurAvancement.findFirstOrThrow({
         where: {

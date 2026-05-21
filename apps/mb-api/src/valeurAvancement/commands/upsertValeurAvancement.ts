@@ -1,6 +1,6 @@
 import {
   type UpsertValeurAvancementBody,
-  type ValeurAvancementApiModel,
+  type ValeurSaisieApiModel,
 } from '@pilote/mb-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
@@ -14,7 +14,7 @@ import {
   ensureIndicateurWritePermission,
   withIndicateurReadPermission,
 } from '@/indicateur/permissions'
-import { toValeurAvancementApiModel } from '@/valeurAvancement/utils'
+import { toValeurSaisieApiModel } from '@/valeurAvancement/utils'
 
 export type UpsertValeurAvancementError = IndividuInconnuError
 
@@ -27,7 +27,7 @@ export const upsertValeurAvancement = ({
   indicateurPublicId,
   body,
 }: UpsertValeurAvancementParams): ResultAsync<
-  ValeurAvancementApiModel,
+  ValeurSaisieApiModel,
   UpsertValeurAvancementError | ForbiddenError
 > => {
   const principalId = requireCurrentPrincipalId()
@@ -73,5 +73,5 @@ export const upsertValeurAvancement = ({
         }),
       ),
     )
-    .map(toValeurAvancementApiModel)
+    .map(toValeurSaisieApiModel)
 }

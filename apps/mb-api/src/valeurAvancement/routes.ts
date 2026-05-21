@@ -1,7 +1,6 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { errorApiModelSchema } from '@pilote/mb-shared/error'
 import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
-import { individuPublicIdSchema } from '@pilote/mb-shared/individu'
 import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
 import {
   deleteValeurAvancementBodySchema,
@@ -12,9 +11,8 @@ import {
   listValeursRemarquablesForIndicateurQuerySchema,
   syntheseIndividusListApiModelSchema,
   upsertValeurAvancementBodySchema,
-  valeurAvancementApiModelSchema,
   valeurAvancementListApiModelSchema,
-  valeurDeriveeApiModelSchema,
+  valeurSaisieApiModelSchema,
   valeursRemarquablesListApiModelSchema,
 } from '@pilote/mb-shared/valeurAvancement'
 
@@ -25,15 +23,12 @@ import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonRespo
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { deleteValeurAvancement } from '@/valeurAvancement/commands/deleteValeurAvancement'
 import { upsertValeurAvancement } from '@/valeurAvancement/commands/upsertValeurAvancement'
-import { getValeurDerivee } from '@/valeurAvancement/queries/getValeurDerivee'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
 import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
 import { listValeursForIndicateur } from '@/valeurAvancement/queries/listValeursForIndicateur'
 import { listValeursRemarquablesForIndicateur } from '@/valeurAvancement/queries/listValeursRemarquablesForIndicateur'
 
-const ValeurAvancementApiModelSchema = valeurAvancementApiModelSchema.openapi(
-  'ValeurAvancementApiModel',
-)
+const ValeurSaisieApiModelSchema = valeurSaisieApiModelSchema.openapi('ValeurSaisieApiModel')
 const ValeurAvancementListApiModelSchema = valeurAvancementListApiModelSchema.openapi(
   'ValeurAvancementListApiModel',
 )
@@ -52,7 +47,6 @@ const ValeursRemarquablesListApiModelSchema = valeursRemarquablesListApiModelSch
 const SyntheseIndividusListApiModelSchema = syntheseIndividusListApiModelSchema.openapi(
   'SyntheseIndividusListApiModel',
 )
-const ValeurDeriveeApiModelSchema = valeurDeriveeApiModelSchema.openapi('ValeurDeriveeApiModel')
 const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 const indicateurParamsSchema = z.object({
@@ -65,9 +59,20 @@ const getValeursForIndicateurRoute = createRoute({
   method: 'get',
   path: '/indicateurs/{id}/valeurs',
   tags: ['Indicateur'],
-  summary: 'Lister les valeurs pour un indicateur sur des individus',
+  summary: 'Lister les valeurs (saisies ou dérivées) pour un indicateur sur des individus',
   description:
-    "Retourne les valeurs saisies pour l'indicateur sur la liste d'individus fournie. Le paramètre `individus` est obligatoire (1..N identifiants séparés par une virgule, ex. `DEPT-84,DEPT-13`). Filtres optionnels `dateDebut`/`dateFin` (ISO `YYYY-MM-DD`, inclusifs). La réponse n'est pas paginée — le volume est borné par la liste d'individus.",
+    "Retourne les points (saisies ou dérivés par agrégation hiérarchique) pour l'indicateur sur " +
+    'la liste d’individus fournie. Le paramètre `individus` est obligatoire (1..N identifiants ' +
+    'séparés par une virgule, ex. `DEPT-84,DEPT-13`). Filtres optionnels `dateDebut`/`dateFin` ' +
+    '(ISO `YYYY-MM-DD`, inclusifs, comparés à la date de bucket des points). Paramètre optionnel ' +
+    '`dateTrunc` pour tronquer les dates (`day` par défaut, `week|month|quarter|year`). ' +
+    "Chaque item porte `type: 'saisie' | 'derivee'`. Pour les individus agrégés " +
+    '(`fonctionAgregation` ≠ `NONE` sur leur référentiel pour cet indicateur), les points dérivés ' +
+    'incluent les contributions des enfants directs et la couverture du calcul. Sémantique ' +
+    "combineLatest permissive : un point dérivé est émis dès qu'au moins un enfant a une valeur " +
+    'connue au bucket courant ; les enfants sans valeur sont marqués `manquante`. ' +
+    'Profondeur d’agrégation supportée : France → Régions → Départements (~100 feuilles). ' +
+    'Au-delà la requête est acceptée mais peut être lente.',
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -76,11 +81,12 @@ const getValeursForIndicateurRoute = createRoute({
   responses: {
     200: {
       content: { 'application/json': { schema: ValeurAvancementListApiModelSchema } },
-      description: 'Valeurs pour les individus demandés',
+      description: 'Points (saisies et dérivés) pour les individus demandés',
     },
     400: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Paramètres de requête invalides (ex. `individus` absent ou date invalide)',
+      description:
+        'Paramètres de requête invalides (ex. `individus` absent ou date/dateTrunc invalide)',
     },
   },
 })
@@ -105,8 +111,8 @@ const upsertValeurAvancementRoute = createRoute({
   },
   responses: {
     200: {
-      content: { 'application/json': { schema: ValeurAvancementApiModelSchema } },
-      description: 'Valeur créée ou mise à jour',
+      content: { 'application/json': { schema: ValeurSaisieApiModelSchema } },
+      description: 'Valeur saisie créée ou mise à jour',
     },
     400: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },
@@ -239,46 +245,15 @@ const getSyntheseIndividusRoute = createRoute({
   },
 })
 
-// --- GET /indicateurs/:id/individus/:individuId/valeur-derivee --------------
-
-const indicateurIndividuParamsSchema = z.object({
-  id: indicateurPublicIdSchema,
-  individuId: individuPublicIdSchema,
-})
-
-const getValeurDeriveeRoute = createRoute({
-  method: 'get',
-  path: '/indicateurs/{id}/individus/{individuId}/valeur-derivee',
-  tags: ['Indicateur'],
-  summary: 'Calculer la valeur dérivée d’un individu par agrégation hiérarchique',
-  description:
-    "Calcule la valeur de l'individu cible comme somme (SUM) des valeurs de ses enfants directs, " +
-    "niveau par niveau (la valeur d'un enfant intermédiaire est sa propre saisie si elle existe, " +
-    'sinon la dérivée récursive de ses descendants). La valeur retenue pour chaque enfant est sa ' +
-    'dernière valeur connue (pas de paramètre date). La réponse expose les contributions de chaque ' +
-    'enfant direct (drill-down) et la couverture (combien d’enfants ont contribué). ' +
-    "Retourne 200 avec `valeurDerivee: null` et `couverture: 0/0` si l'individu est une feuille.",
-  middleware: [requireAuthentication],
-  request: {
-    params: indicateurIndividuParamsSchema,
-  },
-  responses: {
-    200: {
-      content: { 'application/json': { schema: ValeurDeriveeApiModelSchema } },
-      description: 'Valeur dérivée calculée à partir des enfants directs',
-    },
-  },
-})
-
 // --- App registration --------------------------------------------------------
 
 export const valeurAvancementRoutes = new OpenAPIHono()
 
 valeurAvancementRoutes.openapi(getValeursForIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { individus, dateDebut, dateFin } = context.req.valid('query')
+  const { individus, dateDebut, dateFin, dateTrunc } = context.req.valid('query')
 
-  return listValeursForIndicateur(id, { individus, dateDebut, dateFin }).match(
+  return listValeursForIndicateur(id, { individus, dateDebut, dateFin, dateTrunc }).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -303,7 +278,7 @@ valeurAvancementRoutes.openapi(upsertValeurAvancementRoute, async (context) => {
       jsonResponseOk({
         context,
         data,
-        schema: ValeurAvancementApiModelSchema,
+        schema: ValeurSaisieApiModelSchema,
         status: 200,
       }),
     (error) => {
@@ -406,21 +381,6 @@ valeurAvancementRoutes.openapi(getSyntheseIndividusRoute, async (context) => {
         context,
         data,
         schema: SyntheseIndividusListApiModelSchema,
-        status: 200,
-      }),
-    never,
-  )
-})
-
-valeurAvancementRoutes.openapi(getValeurDeriveeRoute, async (context) => {
-  const { id, individuId } = context.req.valid('param')
-
-  return getValeurDerivee(id, individuId).match(
-    (data) =>
-      jsonResponseOk({
-        context,
-        data,
-        schema: ValeurDeriveeApiModelSchema,
         status: 200,
       }),
     never,
