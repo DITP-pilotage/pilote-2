@@ -22,7 +22,11 @@ export const getChantiersInputSchema = z.object({
     .optional()
     .default(false)
     .describe(
-      "Si true, inclut les données des sous-territoires (ex: départements d'une région)",
+      "Mets `true` quand la demande couvre un territoire ET ses sous-territoires " +
+        "(ex: « la région X et ses départements », « la région X et les départements qui la composent », " +
+        "« détaille par département », « décomposé par sous-territoire »). " +
+        "Dans ce cas, fais UN SEUL appel sur le territoire parent avec ce flag à true, " +
+        "plutôt que d'énumérer chaque sous-territoire avec des appels séparés.",
     ),
   chantier_ids: z
     .array(z.string())
@@ -114,7 +118,12 @@ Tous les filtres sont combinables :
 Exemples : récupérer CH-001 et CH-042, chercher tous les chantiers en retard, ou encore filtrer parmi CH-001/CH-002/CH-003 ceux en baisse.
 
 Retourne pour chaque chantier : météo, tendance, écart, taux d'avancement, synthèse, et les flags est_en_retard / est_en_difficulte.
-Quand include_sous_territoires=true, retourne aussi les chantiers de chaque sous-territoire.`,
+Quand include_sous_territoires=true, retourne aussi les chantiers de chaque sous-territoire.
+
+⚠️ Si la demande couvre un territoire ET ses sous-territoires (ex: « région X et ses départements »),
+fais UN SEUL appel avec include_sous_territoires=true plutôt que N appels individuels.
+Cette règle s'applique aussi pour les comparaisons entre jalons : un appel par jalon avec
+include_sous_territoires=true, pas un appel par (territoire × jalon).`,
       inputSchema: getChantiersInputSchema,
       execute: async (input): Promise<GetChantiersOutput> => {
         if (!territoiresAccessibles.includes(input.territoire_code)) {
