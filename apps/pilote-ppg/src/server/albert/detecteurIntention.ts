@@ -42,10 +42,30 @@ const MOTS_CLES_EXPORT = [
   "markdown",
 ];
 
+const MOTS_CLES_SOUS_TERRITOIRES = [
+  "et ses départements",
+  "et ses departements",
+  "et les départements qui",
+  "et les departements qui",
+  "et ses sous-territoires",
+  "et ses sous territoires",
+  "détaille par département",
+  "detaille par departement",
+  "détaillé par département",
+  "detaille par departement",
+  "décomposé par",
+  "decompose par",
+  "et ses régions",
+  "et ses regions",
+  "par sous-territoire",
+  "par sous territoire",
+];
+
 export interface Capacities {
   synthese: boolean;
   dashboard: boolean;
   exportRapport: boolean;
+  inclureSousTerritoires: boolean;
 }
 
 export function detecterCapacities(message: string): Capacities {
@@ -55,6 +75,7 @@ export function detecterCapacities(message: string): Capacities {
     synthese: MOTS_CLES_SYNTHESE.some(contient),
     dashboard: MOTS_CLES_DASHBOARD.some(contient),
     exportRapport: MOTS_CLES_EXPORT.some(contient),
+    inclureSousTerritoires: MOTS_CLES_SOUS_TERRITOIRES.some(contient),
   };
 }
 
