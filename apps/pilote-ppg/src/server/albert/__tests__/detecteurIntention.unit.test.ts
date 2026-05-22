@@ -15,6 +15,7 @@ describe("detecterCapacities", () => {
       synthese: true,
       dashboard: false,
       exportRapport: false,
+      inclureSousTerritoires: false,
     });
   });
 
@@ -29,6 +30,7 @@ describe("detecterCapacities", () => {
       synthese: true,
       dashboard: false,
       exportRapport: false,
+      inclureSousTerritoires: false,
     });
   });
 
@@ -41,6 +43,7 @@ describe("detecterCapacities", () => {
       synthese: true,
       dashboard: false,
       exportRapport: false,
+      inclureSousTerritoires: false,
     });
   });
 
@@ -55,6 +58,7 @@ describe("detecterCapacities", () => {
       synthese: false,
       dashboard: true,
       exportRapport: false,
+      inclureSousTerritoires: false,
     });
   });
 
@@ -69,6 +73,7 @@ describe("detecterCapacities", () => {
       synthese: false,
       dashboard: true,
       exportRapport: false,
+      inclureSousTerritoires: false,
     });
   });
 
@@ -111,6 +116,7 @@ describe("detecterCapacities", () => {
       synthese: false,
       dashboard: false,
       exportRapport: true,
+      inclureSousTerritoires: false,
     });
   });
 
@@ -133,6 +139,7 @@ describe("detecterCapacities", () => {
       synthese: true,
       dashboard: true,
       exportRapport: true,
+      inclureSousTerritoires: false,
     });
   });
 
@@ -147,6 +154,7 @@ describe("detecterCapacities", () => {
       synthese: false,
       dashboard: false,
       exportRapport: false,
+      inclureSousTerritoires: false,
     });
   });
 
@@ -164,6 +172,34 @@ describe("detecterCapacities", () => {
 
     // then
     expect(result.synthese).toBe(true);
+  });
+
+  it.each([
+    "Compare les TA pour la région Pays de la Loire et ses départements",
+    "Donne-moi le détail pour REG-52 et les départements qui la composent",
+    "Synthèse de la France et ses sous-territoires",
+    "État des lieux détaillé par département pour la Bretagne",
+    "Compare REG-52 et REG-32 décomposé par département",
+    "detaille par département pour la Bretagne",
+    "décomposé par departement",
+  ])("détecte inclureSousTerritoires sur : %s", (message) => {
+    // when
+    const result = detecterCapacities(message);
+
+    // then
+    expect(result.inclureSousTerritoires).toBe(true);
+  });
+
+  it.each([
+    "Quel est le taux d'avancement de la France ?",
+    "Compare REG-52 et REG-32",
+    "Synthèse de la région Pays de la Loire",
+  ])("ne détecte pas inclureSousTerritoires sur : %s", (message) => {
+    // when
+    const result = detecterCapacities(message);
+
+    // then
+    expect(result.inclureSousTerritoires).toBe(false);
   });
 });
 

@@ -42,19 +42,40 @@ const MOTS_CLES_EXPORT = [
   "markdown",
 ];
 
+const MOTS_CLES_SOUS_TERRITOIRES = [
+  "et ses departements",
+  "et les departements qui",
+  "et ses sous-territoires",
+  "et ses sous territoires",
+  "detaille par departement",
+  "decompose par departement",
+  "decompose par region",
+  "decompose par sous-territoire",
+  "et ses regions",
+  "par sous-territoire",
+  "par sous territoire",
+];
+
 export interface Capacities {
   synthese: boolean;
   dashboard: boolean;
   exportRapport: boolean;
+  inclureSousTerritoires: boolean;
+}
+
+function retirerDiacritiques(texte: string): string {
+  return texte.normalize("NFD").replace(/[\u0300-\u036F]/g, "");
 }
 
 export function detecterCapacities(message: string): Capacities {
-  const normalise = message.toLowerCase();
-  const contient = (motCle: string) => normalise.includes(motCle);
+  const normalise = retirerDiacritiques(message.toLowerCase());
+  const contient = (motCle: string) =>
+    normalise.includes(retirerDiacritiques(motCle));
   return {
     synthese: MOTS_CLES_SYNTHESE.some(contient),
     dashboard: MOTS_CLES_DASHBOARD.some(contient),
     exportRapport: MOTS_CLES_EXPORT.some(contient),
+    inclureSousTerritoires: MOTS_CLES_SOUS_TERRITOIRES.some(contient),
   };
 }
 

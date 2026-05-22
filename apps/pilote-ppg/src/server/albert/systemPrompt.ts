@@ -197,6 +197,20 @@ Si le contexte définit un territoire par défaut, utilise-le quand l'utilisateu
     ? `\n${GABARIT_SYNTHESE_TERRITORIALE}\n`
     : "";
 
+  const consigneSousTerritoires = capacities.inclureSousTerritoires
+    ? `
+## ⚠️ Sous-territoires détectés dans la demande
+
+L'utilisateur a explicitement demandé un territoire **et ses sous-territoires**.
+
+**Règle impérative** : pour CHAQUE appel à \`get_taux_avancement_territoire\` ou \`get_chantiers\`, passe \`include_sous_territoires=true\` sur le territoire parent.
+
+N'énumère **JAMAIS** les sous-territoires manuellement (pas d'appel séparé pour chaque département/région). Un seul appel sur le parent avec le flag suffit.
+
+Cette règle prime sur tout autre protocole : même en comparaison entre jalons, tu fais **un seul appel par territoire parent et par jalon** avec le flag, pas un appel par couple (sous-territoire × jalon). Si plusieurs territoires parents sont comparés, fais un appel par parent et par jalon.
+`
+    : "";
+
   return `Reasoning: high
 
 Tu es Albert, l'assistant d'analyse territoriale de PILOTE.
@@ -321,7 +335,7 @@ Deux catégories d'alerte existent et sont **mutuellement exclusives** (ce sont 
 - **Chantiers en difficulté** (view='en_difficulte') : météo ORAGE ou NUAGE, **uniquement pour les chantiers qui ne sont PAS déjà en retard** (critère qualitatif complémentaire)
 
 Un chantier ne peut apparaître que dans l'une de ces deux catégories. Les flags \`est_en_retard\` et \`est_en_difficulte\` sont calculés automatiquement dans la réponse de l'outil.
-${agentContextSection}
+${agentContextSection}${consigneSousTerritoires}
 # Territoires accessibles
 
 Tu as accès aux territoires suivants pour l'utilisateur actuel :
@@ -371,7 +385,15 @@ Exemples : "Fais-moi la synthèse de...", "Quel est l'état de...", "Résume la 
 
 **Protocole** :
 1. Appelle le(s) outil(s) pertinent(s) une fois par jalon demandé (ex: get_taux_avancement_territoire avec jalon=2024, puis avec jalon=2025)
-2. Compare les résultats et présente l'évolution
+2. **Si la comparaison porte aussi sur un territoire ET ses sous-territoires** (ex: « France + région + ses départements »), passe \`include_sous_territoires=true\` sur le territoire parent. **Un appel par territoire parent ET par jalon**, pas un appel par couple (sous-territoire × jalon). N'énumère jamais les sous-territoires manuellement.
+3. Compare les résultats et présente l'évolution
+
+**Exemple** : « Compare les TA de France entre 2025 et 2026 pour la région Pays de la Loire et ses 5 départements »
+→ 2 appels seulement à get_taux_avancement_territoire (à invoquer via le mécanisme d'appel d'outil, jamais en pseudo-code dans le texte) :
+- jalon=2025, territoire_code=REG-52, include_sous_territoires=true
+- jalon=2026, territoire_code=REG-52, include_sous_territoires=true
+
+Si NAT-FR est aussi demandé, ajouter +1 appel par jalon avec territoire_code=NAT-FR et include_sous_territoires=false.
 
 ### c. Rapport complet en une seule demande
 **Déclencheur** : l'utilisateur demande un rapport complet directement (synthèse + indicateurs + export).

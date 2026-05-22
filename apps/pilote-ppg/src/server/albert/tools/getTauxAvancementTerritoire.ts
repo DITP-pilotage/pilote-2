@@ -24,7 +24,11 @@ export const getTauxAvancementTerritoireInputSchema = z.object({
     .optional()
     .default(false)
     .describe(
-      "Si true, inclut les données des sous-territoires (ex: départements d'une région)",
+      "Mets `true` quand la demande couvre un territoire ET ses sous-territoires " +
+        "(ex: « la région X et ses départements », « la région X et les départements qui la composent », " +
+        "« détaille par département », « décomposé par sous-territoire »). " +
+        "Dans ce cas, fais UN SEUL appel sur le territoire parent avec ce flag à true, " +
+        "plutôt que d'énumérer chaque sous-territoire avec des appels séparés.",
     ),
 });
 
@@ -60,6 +64,13 @@ export function createGetTauxAvancementTerritoireTool({
     return tool({
       description: `Récupère le taux d'avancement global d'un territoire, la médiane de répartition et la position du territoire par rapport à la médiane.
 Quand include_sous_territoires=true, retourne aussi les données de chaque sous-territoire.
+
+⚠️ Si la demande couvre un territoire ET ses sous-territoires (ex: « région X et ses départements »),
+fais UN SEUL appel sur le territoire parent avec include_sous_territoires=true, plutôt que N appels
+individuels sur chaque sous-territoire.
+Cette règle s'applique aussi pour les comparaisons entre jalons : un appel par territoire parent ET
+par jalon (avec include_sous_territoires=true), pas un appel par (sous-territoire × jalon). Si
+plusieurs territoires parents sont comparés, fais un appel par parent et par jalon.
 
 Utilise cet outil quand l'utilisateur demande :
 - Le taux d'avancement d'un territoire
