@@ -66,9 +66,11 @@ export function createGetTauxAvancementTerritoireTool({
 Quand include_sous_territoires=true, retourne aussi les données de chaque sous-territoire.
 
 ⚠️ Si la demande couvre un territoire ET ses sous-territoires (ex: « région X et ses départements »),
-fais UN SEUL appel avec include_sous_territoires=true plutôt que N appels individuels.
-Cette règle s'applique aussi pour les comparaisons entre jalons : un appel par jalon avec
-include_sous_territoires=true, pas un appel par (territoire × jalon).
+fais UN SEUL appel sur le territoire parent avec include_sous_territoires=true, plutôt que N appels
+individuels sur chaque sous-territoire.
+Cette règle s'applique aussi pour les comparaisons entre jalons : un appel par territoire parent ET
+par jalon (avec include_sous_territoires=true), pas un appel par (sous-territoire × jalon). Si
+plusieurs territoires parents sont comparés, fais un appel par parent et par jalon.
 
 Utilise cet outil quand l'utilisateur demande :
 - Le taux d'avancement d'un territoire

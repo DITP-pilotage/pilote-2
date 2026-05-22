@@ -207,7 +207,7 @@ L'utilisateur a explicitement demandé un territoire **et ses sous-territoires**
 
 N'énumère **JAMAIS** les sous-territoires manuellement (pas d'appel séparé pour chaque département/région). Un seul appel sur le parent avec le flag suffit.
 
-Cette règle prime sur tout autre protocole : même en comparaison entre jalons, tu fais **un seul appel par jalon** avec le flag, pas un appel par couple (sous-territoire × jalon).
+Cette règle prime sur tout autre protocole : même en comparaison entre jalons, tu fais **un seul appel par territoire parent et par jalon** avec le flag, pas un appel par couple (sous-territoire × jalon). Si plusieurs territoires parents sont comparés, fais un appel par parent et par jalon.
 `
     : "";
 
@@ -385,7 +385,7 @@ Exemples : "Fais-moi la synthèse de...", "Quel est l'état de...", "Résume la 
 
 **Protocole** :
 1. Appelle le(s) outil(s) pertinent(s) une fois par jalon demandé (ex: get_taux_avancement_territoire avec jalon=2024, puis avec jalon=2025)
-2. **Si la comparaison porte aussi sur un territoire ET ses sous-territoires** (ex: « France + région + ses départements »), passe \`include_sous_territoires=true\` sur le territoire parent. **Un appel par jalon**, pas un appel par couple (territoire × jalon). N'énumère jamais les sous-territoires manuellement.
+2. **Si la comparaison porte aussi sur un territoire ET ses sous-territoires** (ex: « France + région + ses départements »), passe \`include_sous_territoires=true\` sur le territoire parent. **Un appel par territoire parent ET par jalon**, pas un appel par couple (sous-territoire × jalon). N'énumère jamais les sous-territoires manuellement.
 3. Compare les résultats et présente l'évolution
 
 **Exemple** : « Compare les TA de France entre 2025 et 2026 pour la région Pays de la Loire et ses 5 départements »
