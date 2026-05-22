@@ -180,6 +180,8 @@ describe("detecterCapacities", () => {
     "Synthèse de la France et ses sous-territoires",
     "État des lieux détaillé par département pour la Bretagne",
     "Compare REG-52 et REG-32 décomposé par département",
+    "detaille par département pour la Bretagne",
+    "décomposé par departement",
   ])("détecte inclureSousTerritoires sur : %s", (message) => {
     // when
     const result = detecterCapacities(message);

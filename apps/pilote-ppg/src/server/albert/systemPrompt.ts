@@ -389,7 +389,11 @@ Exemples : "Fais-moi la synthèse de...", "Quel est l'état de...", "Résume la 
 3. Compare les résultats et présente l'évolution
 
 **Exemple** : « Compare les TA de France entre 2025 et 2026 pour la région Pays de la Loire et ses 5 départements »
-→ 2 appels seulement : \`get_taux_avancement_territoire(territoire_code='REG-52', jalon=2025, include_sous_territoires=true)\` et \`get_taux_avancement_territoire(territoire_code='REG-52', jalon=2026, include_sous_territoires=true)\`. Si NAT-FR est aussi demandé, +1 appel par jalon avec NAT-FR (sans include_sous_territoires).
+→ 2 appels seulement à get_taux_avancement_territoire (à invoquer via le mécanisme d'appel d'outil, jamais en pseudo-code dans le texte) :
+- jalon=2025, territoire_code=REG-52, include_sous_territoires=true
+- jalon=2026, territoire_code=REG-52, include_sous_territoires=true
+
+Si NAT-FR est aussi demandé, ajouter +1 appel par jalon avec territoire_code=NAT-FR et include_sous_territoires=false.
 
 ### c. Rapport complet en une seule demande
 **Déclencheur** : l'utilisateur demande un rapport complet directement (synthèse + indicateurs + export).

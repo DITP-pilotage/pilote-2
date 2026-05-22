@@ -43,22 +43,14 @@ const MOTS_CLES_EXPORT = [
 ];
 
 const MOTS_CLES_SOUS_TERRITOIRES = [
-  "et ses départements",
   "et ses departements",
-  "et les départements qui",
   "et les departements qui",
   "et ses sous-territoires",
   "et ses sous territoires",
-  "détaille par département",
   "detaille par departement",
-  "détaillé par département",
-  "décomposé par département",
   "decompose par departement",
-  "décomposé par région",
   "decompose par region",
-  "décomposé par sous-territoire",
   "decompose par sous-territoire",
-  "et ses régions",
   "et ses regions",
   "par sous-territoire",
   "par sous territoire",
@@ -71,9 +63,14 @@ export interface Capacities {
   inclureSousTerritoires: boolean;
 }
 
+function retirerDiacritiques(texte: string): string {
+  return texte.normalize("NFD").replace(/[\u0300-\u036F]/g, "");
+}
+
 export function detecterCapacities(message: string): Capacities {
-  const normalise = message.toLowerCase();
-  const contient = (motCle: string) => normalise.includes(motCle);
+  const normalise = retirerDiacritiques(message.toLowerCase());
+  const contient = (motCle: string) =>
+    normalise.includes(retirerDiacritiques(motCle));
   return {
     synthese: MOTS_CLES_SYNTHESE.some(contient),
     dashboard: MOTS_CLES_DASHBOARD.some(contient),
