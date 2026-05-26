@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vitest'
 
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptId, testDeptIds, testIndicateurId } from '@/test/randomIds'
+import {
+  testDeptId,
+  testDeptIds,
+  testIndicateurId,
+  testIndividuId,
+  testReferentielId,
+} from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 import { listValeursRemarquablesForIndicateur } from '@/valeurAvancement/queries/listValeursRemarquablesForIndicateur'
 
@@ -20,7 +26,9 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ referentiel: 'REF-VIDE', min: null, max: null, mediane: null }],
+        items: [
+          { referentiel: 'REF-VIDE', min: null, max: null, mediane: null, contributions: [] },
+        ],
       })
     }),
   )
@@ -42,7 +50,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ referentiel: 'REF-A', min: null, max: null, mediane: null }],
+        items: [{ referentiel: 'REF-A', min: null, max: null, mediane: null, contributions: [] }],
       })
     }),
   )
@@ -85,7 +93,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
         listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
       )
 
-      expect(result._unsafeUnwrap()).toEqual({
+      expect(result._unsafeUnwrap()).toMatchObject({
         items: [{ referentiel: 'REF-A', min: 10, max: 50, mediane: 30 }],
       })
     }),
@@ -129,7 +137,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
         listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
       )
 
-      expect(result._unsafeUnwrap()).toEqual({
+      expect(result._unsafeUnwrap()).toMatchObject({
         items: [{ referentiel: 'REF-A', min: 10, max: 40, mediane: 25 }],
       })
     }),
@@ -158,7 +166,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
         listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
       )
 
-      expect(result._unsafeUnwrap()).toEqual({
+      expect(result._unsafeUnwrap()).toMatchObject({
         items: [{ referentiel: 'REF-A', min: 42, max: 42, mediane: 42 }],
       })
     }),
@@ -196,7 +204,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
         listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A', 'REF-B'] }),
       )
 
-      expect(result._unsafeUnwrap()).toEqual({
+      expect(result._unsafeUnwrap()).toMatchObject({
         items: [
           { referentiel: 'REF-A', min: 10, max: 30, mediane: 20 },
           { referentiel: 'REF-B', min: 100, max: 100, mediane: 100 },
@@ -223,7 +231,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
         listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A', 'REF-INCONNU'] }),
       )
 
-      expect(result._unsafeUnwrap()).toEqual({
+      expect(result._unsafeUnwrap()).toMatchObject({
         items: [{ referentiel: 'REF-A', min: 42, max: 42, mediane: 42 }],
       })
     }),
@@ -292,7 +300,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
         listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
       )
 
-      expect(result._unsafeUnwrap()).toEqual({
+      expect(result._unsafeUnwrap()).toMatchObject({
         items: [{ referentiel: 'REF-A', min: 75, max: 75, mediane: 75 }],
       })
     }),
@@ -330,7 +338,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
         listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
       )
 
-      expect(result._unsafeUnwrap()).toEqual({
+      expect(result._unsafeUnwrap()).toMatchObject({
         items: [{ referentiel: 'REF-A', min: 10, max: 20, mediane: 15 }],
       })
     }),
@@ -362,7 +370,7 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
         listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
       )
 
-      expect(result._unsafeUnwrap()).toEqual({
+      expect(result._unsafeUnwrap()).toMatchObject({
         items: [{ referentiel: 'REF-A', min: 10, max: 10, mediane: 10 }],
       })
     }),
@@ -394,6 +402,379 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
           listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
         ),
       ).rejects.toThrow()
+    }),
+  )
+
+  it(
+    'calcule les stats sur les valeurs dérivées (SUM) des individus du référentiel',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
+      const [reg1, reg2] = [testIndividuId(), testIndividuId()]
+      const [d1a, d1b, d2a, d2b] = [
+        testIndividuId(),
+        testIndividuId(),
+        testIndividuId(),
+        testIndividuId(),
+      ]
+
+      await fixtures.indicateurReferentiel(
+        {
+          indicateur: { publicId: indId, nom: 'T', visibilite: 'PUBLIC' },
+          referentiel: { publicId: refReg, nom: 'Régions' },
+          fonctionAgregation: 'SUM',
+        },
+        {
+          indicateur: { publicId: indId },
+          referentiel: { publicId: refDept, nom: 'Départements' },
+          fonctionAgregation: 'NONE',
+        },
+      )
+      await fixtures.relation(
+        {
+          parent: { publicId: reg1, referentiel: { publicId: refReg } },
+          child: { publicId: d1a, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: reg1 },
+          child: { publicId: d1b, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: reg2, referentiel: { publicId: refReg } },
+          child: { publicId: d2a, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: reg2 },
+          child: { publicId: d2b, referentiel: { publicId: refDept } },
+        },
+      )
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d1a },
+          date: '2026-01-01',
+          valeur: 10,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d1b },
+          date: '2026-01-01',
+          valeur: 30,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d2a },
+          date: '2026-01-01',
+          valeur: 50,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d2b },
+          date: '2026-01-01',
+          valeur: 70,
+        },
+      )
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refReg] }),
+      )
+
+      // reg1 = 10+30 = 40 ; reg2 = 50+70 = 120
+      expect(result._unsafeUnwrap()).toMatchObject({
+        items: [{ referentiel: refReg, min: 40, max: 120, mediane: 80 }],
+      })
+    }),
+  )
+
+  it(
+    'utilise le dernier bucket de la série dérivée (carry-forward des enfants)',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
+      const regId = testIndividuId()
+      const [dept1, dept2] = [testIndividuId(), testIndividuId()]
+
+      await fixtures.indicateurReferentiel(
+        {
+          indicateur: { publicId: indId, nom: 'T', visibilite: 'PUBLIC' },
+          referentiel: { publicId: refReg },
+          fonctionAgregation: 'SUM',
+        },
+        {
+          indicateur: { publicId: indId },
+          referentiel: { publicId: refDept },
+          fonctionAgregation: 'NONE',
+        },
+      )
+      await fixtures.relation(
+        {
+          parent: { publicId: regId, referentiel: { publicId: refReg } },
+          child: { publicId: dept1, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: regId },
+          child: { publicId: dept2, referentiel: { publicId: refDept } },
+        },
+      )
+      // dept1 saisie en janvier, dept2 en mars. Dernier bucket de la série
+      // région = mars, valeur = 7 (dept1, carry-forward) + 50 (dept2) = 57.
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept1 },
+          date: '2026-01-01',
+          valeur: 7,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2 },
+          date: '2026-03-01',
+          valeur: 50,
+        },
+      )
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refReg] }),
+      )
+
+      expect(result._unsafeUnwrap()).toMatchObject({
+        items: [{ referentiel: refReg, min: 57, max: 57, mediane: 57 }],
+      })
+    }),
+  )
+
+  it(
+    'inclut un individu agrégé en couverture partielle (un seul enfant a saisi)',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
+      const [reg1, reg2] = [testIndividuId(), testIndividuId()]
+      const [d1a, d1b, d2a, d2b] = [
+        testIndividuId(),
+        testIndividuId(),
+        testIndividuId(),
+        testIndividuId(),
+      ]
+
+      await fixtures.indicateurReferentiel(
+        {
+          indicateur: { publicId: indId, nom: 'T', visibilite: 'PUBLIC' },
+          referentiel: { publicId: refReg },
+          fonctionAgregation: 'SUM',
+        },
+        {
+          indicateur: { publicId: indId },
+          referentiel: { publicId: refDept },
+          fonctionAgregation: 'NONE',
+        },
+      )
+      await fixtures.relation(
+        {
+          parent: { publicId: reg1, referentiel: { publicId: refReg } },
+          child: { publicId: d1a, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: reg1 },
+          child: { publicId: d1b, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: reg2, referentiel: { publicId: refReg } },
+          child: { publicId: d2a, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: reg2 },
+          child: { publicId: d2b, referentiel: { publicId: refDept } },
+        },
+      )
+      // reg1 : couverture pleine (d1a+d1b = 100). reg2 : un seul enfant saisi
+      // (d2a = 5). reg2 contribue malgré la couverture partielle.
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d1a },
+          date: '2026-01-01',
+          valeur: 40,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d1b },
+          date: '2026-01-01',
+          valeur: 60,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d2a },
+          date: '2026-01-01',
+          valeur: 5,
+        },
+      )
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refReg] }),
+      )
+
+      expect(result._unsafeUnwrap()).toMatchObject({
+        items: [{ referentiel: refReg, min: 5, max: 100, mediane: 52.5 }],
+      })
+    }),
+  )
+
+  it(
+    'calcule indépendamment un référentiel SUM et un référentiel feuille NONE',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
+      const regId = testIndividuId()
+      const [dept1, dept2] = [testIndividuId(), testIndividuId()]
+
+      await fixtures.indicateurReferentiel(
+        {
+          indicateur: { publicId: indId, nom: 'T', visibilite: 'PUBLIC' },
+          referentiel: { publicId: refReg, nom: 'AAA-Régions' },
+          fonctionAgregation: 'SUM',
+        },
+        {
+          indicateur: { publicId: indId },
+          referentiel: { publicId: refDept, nom: 'ZZZ-Départements' },
+          fonctionAgregation: 'NONE',
+        },
+      )
+      await fixtures.relation(
+        {
+          parent: { publicId: regId, referentiel: { publicId: refReg } },
+          child: { publicId: dept1, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: regId },
+          child: { publicId: dept2, referentiel: { publicId: refDept } },
+        },
+      )
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept1 },
+          date: '2026-01-01',
+          valeur: 12,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2 },
+          date: '2026-01-01',
+          valeur: 28,
+        },
+      )
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refReg, refDept] }),
+      )
+
+      const items = result._unsafeUnwrap().items
+      const parRef = new Map(items.map((i) => [i.referentiel, i]))
+      // Feuille : min/max sur les saisies départementales.
+      expect(parRef.get(refDept)).toMatchObject({
+        referentiel: refDept,
+        min: 12,
+        max: 28,
+        mediane: 20,
+      })
+      // Agrégé : dérivée région = 12 + 28 = 40 (un seul individu).
+      expect(parRef.get(refReg)).toMatchObject({
+        referentiel: refReg,
+        min: 40,
+        max: 40,
+        mediane: 40,
+      })
+    }),
+  )
+
+  it(
+    'expose les contributions par individu (saisie pour les feuilles, derivee pour les agrégés)',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
+      const [regA, regB] = [testIndividuId(), testIndividuId()].sort() as [string, string]
+      const [d1, d2, d3] = [testIndividuId(), testIndividuId(), testIndividuId()].sort() as [
+        string,
+        string,
+        string,
+      ]
+
+      await fixtures.indicateurReferentiel(
+        {
+          indicateur: { publicId: indId, nom: 'T', visibilite: 'PUBLIC' },
+          referentiel: { publicId: refReg, nom: 'R' },
+          fonctionAgregation: 'SUM',
+        },
+        {
+          indicateur: { publicId: indId },
+          referentiel: { publicId: refDept, nom: 'D' },
+          fonctionAgregation: 'NONE',
+        },
+      )
+      await fixtures.relation(
+        {
+          parent: { publicId: regA, referentiel: { publicId: refReg } },
+          child: { publicId: d1, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: regA },
+          child: { publicId: d2, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: regB, referentiel: { publicId: refReg } },
+          child: { publicId: d3, referentiel: { publicId: refDept } },
+        },
+      )
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d1 },
+          date: '2026-01-15',
+          valeur: 10,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d2 },
+          date: '2026-01-15',
+          valeur: 20,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d3 },
+          date: '2026-02-20',
+          valeur: 7,
+        },
+      )
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refReg, refDept] }),
+      )
+
+      const items = result._unsafeUnwrap().items
+      const reg = items.find((i) => i.referentiel === refReg)!
+      const dept = items.find((i) => i.referentiel === refDept)!
+
+      // Régions agrégées : sources = derivee, dates = buckets mensuels post-troncature.
+      expect(reg.contributions).toEqual([
+        { individu: regA, valeur: 30, date: '2026-01-01', source: 'derivee' },
+        { individu: regB, valeur: 7, date: '2026-02-01', source: 'derivee' },
+      ])
+      // Départements feuilles : sources = saisie, dates = buckets mensuels (tri par publicId).
+      expect(dept.contributions).toEqual([
+        { individu: d1, valeur: 10, date: '2026-01-01', source: 'saisie' },
+        { individu: d2, valeur: 20, date: '2026-01-01', source: 'saisie' },
+        { individu: d3, valeur: 7, date: '2026-02-01', source: 'saisie' },
+      ])
     }),
   )
 

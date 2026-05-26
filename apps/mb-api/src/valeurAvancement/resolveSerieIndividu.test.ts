@@ -43,13 +43,13 @@ const buildContext = (input: {
 })
 
 describe('resolveSerieIndividu — feuille', () => {
-  it('retourne une série vide pour une feuille sans saisies', () => {
+  it('retourne une série vide pour une feuille sans saisies', async () => {
     const ctx = buildContext({ individusReferentiel: { [DEPT_A.id]: REF_DEPT } })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
-    expect(resolveSerieIndividu(DEPT_A.id, ctx, cache)).toEqual([])
+    expect(await resolveSerieIndividu(DEPT_A.id, ctx, cache)).toEqual([])
   })
 
-  it('retourne la série de saisies tronquée pour une feuille', () => {
+  it('retourne la série de saisies tronquée pour une feuille', async () => {
     const ctx = buildContext({
       individusReferentiel: { [DEPT_A.id]: REF_DEPT },
       serieFeuilleParIndividu: {
@@ -60,7 +60,7 @@ describe('resolveSerieIndividu — feuille', () => {
       },
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
-    const serie = resolveSerieIndividu(DEPT_A.id, ctx, cache)
+    const serie = await resolveSerieIndividu(DEPT_A.id, ctx, cache)
 
     expect(serie).toHaveLength(2)
     expect(serie[0]).toEqual({
@@ -77,7 +77,7 @@ describe('resolveSerieIndividu — feuille', () => {
     })
   })
 
-  it('traite un nœud sans fonctionAgregation comme une feuille (lit ses saisies)', () => {
+  it('traite un nœud sans fonctionAgregation comme une feuille (lit ses saisies)', async () => {
     const ctx = buildContext({
       individusReferentiel: { [FRANCE.id]: REF_PAYS },
       enfantsParParent: { [FRANCE.id]: [REG_N] },
@@ -87,7 +87,7 @@ describe('resolveSerieIndividu — feuille', () => {
       },
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
-    const serie = resolveSerieIndividu(FRANCE.id, ctx, cache)
+    const serie = await resolveSerieIndividu(FRANCE.id, ctx, cache)
 
     expect(serie).toHaveLength(1)
     expect(serie[0]).toMatchObject({ type: 'saisie', valeur: d(99) })
@@ -95,7 +95,7 @@ describe('resolveSerieIndividu — feuille', () => {
 })
 
 describe('resolveSerieIndividu — agrégation 1 niveau', () => {
-  it('agrège par bucket avec couverture complète', () => {
+  it('agrège par bucket avec couverture complète', async () => {
     const ctx = buildContext({
       individusReferentiel: {
         [REG_S.id]: REF_REG,
@@ -110,7 +110,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
       },
     })
 
-    const serie = resolveSerieIndividu(REG_S.id, ctx, new Map())
+    const serie = await resolveSerieIndividu(REG_S.id, ctx, new Map())
 
     expect(serie).toHaveLength(2)
     expect(serie[0]).toMatchObject({
@@ -128,7 +128,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
     })
   })
 
-  it('émet dès la première valeur connue (combineLatest permissif)', () => {
+  it('émet dès la première valeur connue (combineLatest permissif)', async () => {
     const ctx = buildContext({
       individusReferentiel: {
         [REG_S.id]: REF_REG,
@@ -143,7 +143,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
       },
     })
 
-    const serie = resolveSerieIndividu(REG_S.id, ctx, new Map())
+    const serie = await resolveSerieIndividu(REG_S.id, ctx, new Map())
 
     expect(serie).toHaveLength(3)
     // 2025-01 : seul DEPT-A connu → valeur=10, couverture 1/2
@@ -166,7 +166,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
     expect(serie[2]).toMatchObject({ bucket: '2025-03-01', valeur: d(80) })
   })
 
-  it('trie les contributions par publicId', () => {
+  it('trie les contributions par publicId', async () => {
     // Enfants déclarés dans un ordre non alphabétique
     const ctx = buildContext({
       individusReferentiel: {
@@ -182,14 +182,14 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
       },
     })
 
-    const serie = resolveSerieIndividu(REG_S.id, ctx, new Map())
+    const serie = await resolveSerieIndividu(REG_S.id, ctx, new Map())
     const contributions = (serie[0] as { contributions: { individuPublicId: string }[] })
       .contributions
 
     expect(contributions.map((c) => c.individuPublicId)).toEqual(['DEPT-A', 'DEPT-B'])
   })
 
-  it("n'émet rien si aucun enfant n'a jamais saisi", () => {
+  it("n'émet rien si aucun enfant n'a jamais saisi", async () => {
     const ctx = buildContext({
       individusReferentiel: {
         [REG_S.id]: REF_REG,
@@ -200,10 +200,10 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
       fonctionAgregationParReferentiel: { [REF_REG]: 'SUM' },
     })
 
-    expect(resolveSerieIndividu(REG_S.id, ctx, new Map())).toEqual([])
+    expect(await resolveSerieIndividu(REG_S.id, ctx, new Map())).toEqual([])
   })
 
-  it('ignore les saisies sur un nœud agrégé (D6 : saisie ignorée si fonctionAgregation)', () => {
+  it('ignore les saisies sur un nœud agrégé (D6 : saisie ignorée si fonctionAgregation)', async () => {
     const ctx = buildContext({
       individusReferentiel: {
         [REG_S.id]: REF_REG,
@@ -217,7 +217,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
       },
     })
 
-    const serie = resolveSerieIndividu(REG_S.id, ctx, new Map())
+    const serie = await resolveSerieIndividu(REG_S.id, ctx, new Map())
 
     expect(serie).toHaveLength(1)
     expect(serie[0]).toMatchObject({ type: 'derivee', valeur: d(42) })
@@ -225,7 +225,7 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
 })
 
 describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
-  it('agrège récursivement France (régions agrégées de départements)', () => {
+  it('agrège récursivement France (régions agrégées de départements)', async () => {
     const ctx = buildContext({
       individusReferentiel: {
         [FRANCE.id]: REF_PAYS,
@@ -250,7 +250,7 @@ describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
       },
     })
 
-    const serie = resolveSerieIndividu(FRANCE.id, ctx, new Map())
+    const serie = await resolveSerieIndividu(FRANCE.id, ctx, new Map())
 
     expect(serie).toHaveLength(1)
     expect(serie[0]).toMatchObject({
@@ -268,7 +268,7 @@ describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
     ])
   })
 
-  it('propage le carry-forward à travers les niveaux', () => {
+  it('propage le carry-forward à travers les niveaux', async () => {
     const ctx = buildContext({
       individusReferentiel: {
         [FRANCE.id]: REF_PAYS,
@@ -289,7 +289,7 @@ describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
       },
     })
 
-    const serie = resolveSerieIndividu(FRANCE.id, ctx, new Map())
+    const serie = await resolveSerieIndividu(FRANCE.id, ctx, new Map())
 
     expect(serie).toHaveLength(2)
     // 2025-01 : REG-N = 5, REG-S inconnu → 5
@@ -300,19 +300,19 @@ describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
 })
 
 describe('resolveSerieIndividu — mémoïsation', () => {
-  it('retourne la même référence pour un même individuId réinterrogé', () => {
+  it('retourne la même référence pour un même individuId réinterrogé', async () => {
     const ctx = buildContext({
       individusReferentiel: { [DEPT_A.id]: REF_DEPT },
       serieFeuilleParIndividu: { [DEPT_A.id]: [saisie('2025-01-01', 7)] },
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
-    const a = resolveSerieIndividu(DEPT_A.id, ctx, cache)
-    const b = resolveSerieIndividu(DEPT_A.id, ctx, cache)
+    const a = await resolveSerieIndividu(DEPT_A.id, ctx, cache)
+    const b = await resolveSerieIndividu(DEPT_A.id, ctx, cache)
     expect(b).toBe(a)
   })
 
-  it("partage la série d'un enfant entre deux appels parents distincts", () => {
+  it("partage la série d'un enfant entre deux appels parents distincts", async () => {
     const ctx = buildContext({
       individusReferentiel: {
         [FRANCE.id]: REF_PAYS,
@@ -328,10 +328,10 @@ describe('resolveSerieIndividu — mémoïsation', () => {
     })
     const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
-    resolveSerieIndividu(REG_S.id, ctx, cache)
+    await resolveSerieIndividu(REG_S.id, ctx, cache)
     const tailleAvant = cache.size
 
-    resolveSerieIndividu(FRANCE.id, ctx, cache)
+    await resolveSerieIndividu(FRANCE.id, ctx, cache)
     // Cache : REG_S et DEPT_A déjà présents avant l'appel FRANCE, qui n'ajoute que France.
     expect(cache.has(DEPT_A.id)).toBe(true)
     expect(cache.has(REG_S.id)).toBe(true)
