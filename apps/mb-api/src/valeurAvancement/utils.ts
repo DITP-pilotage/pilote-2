@@ -1,6 +1,6 @@
 import {
   type IndividuAvecValeursApiModel,
-  type ValeurAvancementApiModel,
+  type ValeurSaisieApiModel,
 } from '@pilote/mb-shared/valeurAvancement'
 
 import { type ValeurAvancementModel } from '@/generated/prisma/models'
@@ -11,13 +11,14 @@ export type ValeurAvancementWithRelations = ValeurAvancementModel & {
   individu: { publicId: string }
 }
 
-export const toValeurAvancementApiModel = (
+export const toValeurSaisieApiModel = (
   valeur: ValeurAvancementWithRelations,
-): ValeurAvancementApiModel => ({
+): ValeurSaisieApiModel => ({
   indicateur: valeur.indicateur.publicId,
   individu: valeur.individu.publicId,
   date: valeur.date,
   valeur: valeur.valeur.toNumber(),
+  type: 'saisie',
 })
 
 export type IndividuAvecValeursRow = IndividuWithReferentiel & {

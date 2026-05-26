@@ -32,17 +32,22 @@ export const dateSchema = z
 
 export const valeurSchema = z.number().describe('Valeur observée.')
 
+export const dateTruncSchema = z
+  .enum(['day', 'week', 'month', 'quarter', 'year'])
+  .describe(
+    "Granularité temporelle de troncature appliquée aux dates des points. `day` = pas de " +
+      "troncature ; `week` = lundi ISO 8601 ; `month` = 1er du mois ; `quarter` = 1er des " +
+      'trimestres calendaires (janvier, avril, juillet, octobre) ; `year` = 1er janvier. ' +
+      'Quand plusieurs saisies tombent dans le même bucket pour un individu, la plus récente ' +
+      'est retenue.',
+  )
+export type DateTrunc = z.infer<typeof dateTruncSchema>
+
 export const valeurDateApiModelSchema = z.object({
   date: dateSchema,
   valeur: valeurSchema,
 })
 export type ValeurDateApiModel = z.infer<typeof valeurDateApiModelSchema>
-
-export const valeurAvancementApiModelSchema = valeurDateApiModelSchema.extend({
-  indicateur: indicateurPublicIdSchema,
-  individu: individuPublicIdSchema,
-})
-export type ValeurAvancementApiModel = z.infer<typeof valeurAvancementApiModelSchema>
 
 export const upsertValeurAvancementBodySchema = z.object({
   individu: individuPublicIdSchema,
@@ -56,13 +61,6 @@ export const deleteValeurAvancementBodySchema = z.object({
   date: dateSchema,
 })
 export type DeleteValeurAvancementBody = z.infer<typeof deleteValeurAvancementBodySchema>
-
-export const valeurAvancementListApiModelSchema = z.object({
-  items: z
-    .array(valeurAvancementApiModelSchema)
-    .describe('Valeurs correspondant aux individus demandés et à la plage de dates.'),
-})
-export type ValeurAvancementListApiModel = z.infer<typeof valeurAvancementListApiModelSchema>
 
 const MAX_INDIVIDUS_PAR_REQUETE = 100
 
@@ -88,11 +86,18 @@ export const listValeursForIndicateurQuerySchema = z
       `Liste d'identifiants d'individus séparés par une virgule (ex. DEPT-84,DEPT-13). 1..${MAX_INDIVIDUS_PAR_REQUETE} identifiants.`,
     ),
     dateDebut: dateSchema.optional().describe(
-      'Date ISO YYYY-MM-DD inclusive (filtre valeurs >= dateDebut).',
+      'Date ISO YYYY-MM-DD inclusive (filtre les points dont la date de bucket est >= dateDebut).',
     ),
     dateFin: dateSchema.optional().describe(
-      'Date ISO YYYY-MM-DD inclusive (filtre valeurs <= dateFin).',
+      'Date ISO YYYY-MM-DD inclusive (filtre les points dont la date de bucket est <= dateFin).',
     ),
+    dateTrunc: dateTruncSchema
+      .optional()
+      .describe(
+        'Granularité de troncature des dates des points. Par défaut `month` (limite la taille ' +
+          "de réponse en regroupant les saisies du même mois). Voir `DateTrunc` pour la " +
+          "sémantique des unités. S'applique aux séries saisies comme aux séries dérivées.",
+      ),
   })
   .refine(
     (value) => !value.dateDebut || !value.dateFin || value.dateDebut <= value.dateFin,
@@ -237,7 +242,10 @@ export type ListIndividusWithValeursQuery = z.infer<typeof listIndividusWithVale
 export const contributionSourceSchema = z
   .enum(['saisie', 'derivee', 'manquante'])
   .describe(
-    "Origine de la valeur de l'enfant pour le calcul du parent : `saisie` (valeur saisie directement sur l'enfant, prioritaire), `derivee` (calculée récursivement à partir des descendants de l'enfant), `manquante` (l'enfant n'a ni saisie ni descendant avec valeur).",
+    "Origine de la valeur portée par un enfant direct à la date du point dérivé : `saisie` " +
+      "(l'enfant est une feuille, valeur saisie connue ≤ date du bucket), `derivee` (l'enfant " +
+      "est lui-même agrégé, valeur dérivée connue ≤ date du bucket), `manquante` (aucune " +
+      "valeur connue pour cet enfant ≤ date du bucket).",
   )
 export type ContributionSource = z.infer<typeof contributionSourceSchema>
 
@@ -246,11 +254,17 @@ export const contributionApiModelSchema = z.object({
   valeur: z
     .number()
     .nullable()
-    .describe('Valeur retenue pour cet enfant, ou null si `source` vaut `manquante`.'),
+    .describe(
+      'Dernière valeur connue pour cet enfant ≤ date du bucket (carry-forward). null si ' +
+        '`source` vaut `manquante`.',
+    ),
   date: dateSchema
     .nullable()
     .describe(
-      "Date de la valeur retenue. Pour `saisie`, date de la valeur saisie. Pour `derivee`, date la plus récente parmi les contributions ayant servi au calcul. null si `manquante`.",
+      "Date associée à la valeur retenue, à des fins de debug et drill-down. Pour `saisie` : " +
+        "date d'origine pré-troncature de la saisie feuille. Pour `derivee` : date du bucket du " +
+        'point dérivé enfant le plus récent ≤ date du bucket courant (déjà tronquée). null si ' +
+        '`manquante`.',
     ),
   source: contributionSourceSchema,
 })
@@ -261,7 +275,10 @@ export const couvertureApiModelSchema = z.object({
     .number()
     .int()
     .nonnegative()
-    .describe('Nombre d’enfants directs ayant contribué (saisie ou dérivée non nulle).'),
+    .describe(
+      'Nombre d’enfants directs ayant une valeur connue au point courant ' +
+        '(source ∈ {saisie, derivee}). Évolue dans le temps.',
+    ),
   nbEnfantsTotal: z
     .number()
     .int()
@@ -270,25 +287,59 @@ export const couvertureApiModelSchema = z.object({
 })
 export type CouvertureApiModel = z.infer<typeof couvertureApiModelSchema>
 
+export const valeurSaisieApiModelSchema = z.object({
+  indicateur: indicateurPublicIdSchema,
+  individu: individuPublicIdSchema,
+  date: dateSchema.describe(
+    "Date du point. Égale à la date de la saisie d'origine si `dateTrunc=day`, sinon date du " +
+      "bucket post-troncature (la valeur retenue dans le bucket est la plus récente).",
+  ),
+  valeur: valeurSchema,
+  type: z.literal('saisie'),
+})
+export type ValeurSaisieApiModel = z.infer<typeof valeurSaisieApiModelSchema>
+
 export const valeurDeriveeApiModelSchema = z.object({
   indicateur: indicateurPublicIdSchema,
   individu: individuPublicIdSchema,
-  fonctionAgregation: fonctionAgregationSchema.describe(
-    "Fonction d'agrégation appliquée pour ce couple (indicateur, référentiel de l'individu). " +
-      "Toujours `SUM` quand le calcul a abouti ; un retour 400 est renvoyé si la fonction vaut " +
-      '`NONE` (la valeur doit alors être saisie directement, pas dérivée).',
+  date: dateSchema.describe(
+    'Date du bucket post-troncature pour lequel le point dérivé est calculé.',
   ),
-  valeurDerivee: z
-    .number()
-    .nullable()
-    .describe(
-      "Résultat de l'agrégation appliquée aux valeurs retenues parmi les enfants directs. null si aucun enfant n'a de valeur.",
-    ),
+  valeur: valeurSchema.describe(
+    "Résultat de l'agrégation appliquée aux contributions non manquantes à cette date.",
+  ),
+  type: z.literal('derivee'),
+  fonctionAgregation: fonctionAgregationSchema.describe(
+    "Fonction d'agrégation appliquée pour ce couple (indicateur, référentiel de l'individu).",
+  ),
   contributions: z
     .array(contributionApiModelSchema)
     .describe(
-      "Une entrée par enfant direct du parent, dans l'ordre des publicId. Permet le drill-down et l'audit du calcul.",
+      "Une entrée par enfant direct du parent, triée par publicId. Pour chaque enfant on porte " +
+        "sa dernière valeur connue ≤ date du bucket (carry-forward) et la date d'origine de cette " +
+        'valeur. Permet le drill-down et l’audit.',
     ),
   couverture: couvertureApiModelSchema,
 })
 export type ValeurDeriveeApiModel = z.infer<typeof valeurDeriveeApiModelSchema>
+
+export const valeurAvancementApiModelSchema = z.discriminatedUnion('type', [
+  valeurSaisieApiModelSchema,
+  valeurDeriveeApiModelSchema,
+])
+export type ValeurAvancementApiModel = z.infer<typeof valeurAvancementApiModelSchema>
+
+export const valeurAvancementListApiModelSchema = z.object({
+  items: z
+    .array(valeurAvancementApiModelSchema)
+    .describe(
+      "Points pour les individus demandés sur la plage de dates. Chaque point porte " +
+        "`type: 'saisie' | 'derivee'` (discriminé). Pour les individus agrégés " +
+        "(`fonctionAgregation` ≠ `NONE` sur leur référentiel pour cet indicateur), les points " +
+        "sont calculés par combineLatest permissif sur les enfants directs : on émet dès qu'au " +
+        'moins un enfant a une valeur connue au bucket courant. Pour les feuilles (ou ' +
+        "indicateurs non agrégés), les points reflètent les saisies tronquées selon `dateTrunc`. " +
+        'Triés par individu puis par date croissante.',
+    ),
+})
+export type ValeurAvancementListApiModel = z.infer<typeof valeurAvancementListApiModelSchema>

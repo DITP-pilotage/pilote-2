@@ -55,7 +55,11 @@ export const indicateurIndividusQueryOptions = (indicateurId: string) =>
 export const indicateurValeursQueryOptions = (indicateurId: string, individuId: string) =>
   queryOptions({
     queryKey: ['indicateur', indicateurId, 'valeurs', individuId],
-    queryFn: () => fetchValeursForIndicateur(indicateurId, { individus: [individuId] }),
+    queryFn: () =>
+      fetchValeursForIndicateur(indicateurId, {
+        individus: [individuId],
+        dateTrunc: 'month',
+      }),
     staleTime: DEFAULT_STALE_TIME,
   })
 
