@@ -281,6 +281,20 @@ describe('resolveSerieIndividu — agrégation AVG', () => {
     expect(serie[1]).toMatchObject({ bucket: '2025-02-01', valeur: d(25) })
   })
 
+  it("n'émet rien si aucun enfant n'a jamais saisi (évite la division par zéro)", async () => {
+    const ctx = buildContext({
+      individusReferentiel: {
+        [REG_S.id]: REF_REG,
+        [DEPT_A.id]: REF_DEPT,
+        [DEPT_B.id]: REF_DEPT,
+      },
+      enfantsParParent: { [REG_S.id]: [DEPT_A, DEPT_B] },
+      fonctionAgregationParReferentiel: { [REF_REG]: 'AVG' },
+    })
+
+    expect(await resolveSerieIndividu(REG_S.id, ctx, new Map())).toEqual([])
+  })
+
   it('produit une moyenne décimale exacte sur des entiers non divisibles', async () => {
     const ctx = buildContext({
       individusReferentiel: {
