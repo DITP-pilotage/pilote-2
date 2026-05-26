@@ -33,8 +33,8 @@ export const ensureIndicateurWritePermission = ({
   principalId: string
 }): ResultAsync<void, never> =>
   ResultAsync.fromSafePromise(
-    db().indicateurPermission
-      .findUnique({
+    db()
+      .indicateurPermission.findUnique({
         where: {
           principalId_indicateurId_action: {
             principalId,
