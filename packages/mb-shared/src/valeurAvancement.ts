@@ -129,6 +129,12 @@ const referentielsCsvSchema = z
       ),
   )
 
+// Distinct de `contributionApiModelSchema` (utilisé pour le drill-down d'un
+// point dérivé, plus bas) : ici on liste les individus d'un référentiel ayant
+// **au moins une valeur** connue pour l'indicateur, donc `valeur` et `date`
+// sont non-nullables et `source` n'inclut pas `manquante`. Les deux schemas
+// se ressemblent mais leurs garanties API divergent — ne pas mutualiser sans
+// relâcher le typage côté client.
 export const valeursRemarquablesContributionApiModelSchema = z.object({
   individu: individuPublicIdSchema,
   valeur: z.number().describe('Dernière valeur connue de cet individu.'),

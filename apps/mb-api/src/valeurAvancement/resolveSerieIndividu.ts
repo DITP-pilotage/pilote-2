@@ -1,5 +1,6 @@
 import { type FonctionAgregation } from '@pilote/mb-shared/indicateur'
 
+import { yieldToEventLoop } from '@/framework/concurrency'
 import { Decimal } from '@/framework/decimal'
 
 export type IndividuRef = {
@@ -57,12 +58,13 @@ export const getFonctionAgregationActive = (
 }
 
 // Async pour pouvoir yielder l'event loop entre les buckets d'une dérivée
-// (cf. `computeSerieDerivee`). Sans ce yield, une résolution profonde sur un
-// gros arbre (ex. France → ~35k communes) × historique long (5 ans en
-// `dateTrunc='day'`) cumule des centaines de milliers d'ops Decimal en
-// synchrone — ~50× plus lentes que des `number` natifs — et bloque la node
-// pendant plusieurs secondes, gelant les requêtes concurrentes. Le coût
-// micro-task ajouté reste négligeable face au temps de calcul lui-même.
+// (cf. `computeSerieDerivee` + `yieldToEventLoop`). Sans ce yield, une
+// résolution profonde sur un gros arbre (ex. France → ~35k communes) ×
+// historique long (5 ans en `dateTrunc='day'`) cumule des centaines de
+// milliers d'ops Decimal en synchrone — ~50× plus lentes que des `number`
+// natifs — et bloque la node pendant plusieurs secondes, gelant les
+// requêtes concurrentes. Le coût micro-task ajouté reste négligeable face
+// au temps de calcul lui-même.
 export const resolveSerieIndividu = async (
   individuId: string,
   ctx: ResolveSerieContext,
@@ -79,9 +81,6 @@ export const resolveSerieIndividu = async (
   cache.set(individuId, serie)
   return serie
 }
-
-const yieldToEventLoop = (): Promise<void> =>
-  new Promise((resolve) => setImmediate(resolve))
 
 const computeSerieSaisie = (
   individuId: string,
