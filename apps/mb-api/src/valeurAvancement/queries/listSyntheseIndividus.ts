@@ -103,7 +103,9 @@ const extractDeuxDerniers = (
   const dernier = serie.at(-1)
   if (!dernier) return []
   const precedent = serie.at(-2)
-  return precedent ? [{ valeur: dernier.valeur }, { valeur: precedent.valeur }] : [{ valeur: dernier.valeur }]
+  return precedent
+    ? [{ valeur: dernier.valeur }, { valeur: precedent.valeur }]
+    : [{ valeur: dernier.valeur }]
 }
 
 const computeMedianeParReferentiel = async ({
