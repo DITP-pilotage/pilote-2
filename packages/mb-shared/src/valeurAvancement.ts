@@ -35,8 +35,8 @@ export const valeurSchema = z.number().describe('Valeur observée.')
 export const dateTruncSchema = z
   .enum(['day', 'week', 'month', 'quarter', 'year'])
   .describe(
-    "Granularité temporelle de troncature appliquée aux dates des points. `day` (défaut) = pas " +
-      "de troncature ; `week` = lundi ISO 8601 ; `month` = 1er du mois ; `quarter` = 1er des " +
+    "Granularité temporelle de troncature appliquée aux dates des points. `day` = pas de " +
+      "troncature ; `week` = lundi ISO 8601 ; `month` = 1er du mois ; `quarter` = 1er des " +
       'trimestres calendaires (janvier, avril, juillet, octobre) ; `year` = 1er janvier. ' +
       'Quand plusieurs saisies tombent dans le même bucket pour un individu, la plus récente ' +
       'est retenue.',
@@ -261,8 +261,10 @@ export const contributionApiModelSchema = z.object({
   date: dateSchema
     .nullable()
     .describe(
-      "Date d'origine (pré-troncature) de la valeur retenue, à des fins de debug et drill-down. " +
-        'null si `manquante`.',
+      "Date associée à la valeur retenue, à des fins de debug et drill-down. Pour `saisie` : " +
+        "date d'origine pré-troncature de la saisie feuille. Pour `derivee` : date du bucket du " +
+        'point dérivé enfant le plus récent ≤ date du bucket courant (déjà tronquée). null si ' +
+        '`manquante`.',
     ),
   source: contributionSourceSchema,
 })

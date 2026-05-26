@@ -18,7 +18,7 @@ import {
   resolveSerieIndividu,
   type ResolveSerieContext,
   type SaisieTronquee,
-} from '@/valeurAvancement/resolveSerieDerivee'
+} from '@/valeurAvancement/resolveSerieIndividu'
 
 // Cap par défaut à la granularité mensuelle : sans troncature, une série France
 // avec saisies quotidiennes par département explose (cf. design doc D11).
@@ -44,7 +44,7 @@ export const listValeursForIndicateur = (
 // Orchestration en 3 phases : (1) charger en bulk l'arbre + les liens
 // indicateur↔référentiel en parallèle, (2) charger les saisies tronquées en
 // connaissant l'ensemble des descendants, (3) calculer les séries en mémoire
-// via le functional core memoïsé (cf. resolveSerieDerivee + doc d'archi
+// via le functional core memoïsé (cf. resolveSerieIndividu + doc d'archi
 // `indicateur-derives.md`). Filtrage dateDebut/dateFin appliqué en sortie.
 const buildSeries = async ({
   indicateurId,

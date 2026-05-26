@@ -7,7 +7,7 @@ import {
   resolveSerieIndividu,
   type ResolveSerieContext,
   type SaisieTronquee,
-} from '@/valeurAvancement/resolveSerieDerivee'
+} from '@/valeurAvancement/resolveSerieIndividu'
 
 const d = (n: number): Decimal => new Decimal(n)
 const saisie = (bucket: string, valeur: number, dateOrigine = bucket): SaisieTronquee => ({

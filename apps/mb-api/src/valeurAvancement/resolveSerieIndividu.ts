@@ -43,13 +43,17 @@ export type ResolveSerieContext = {
 // ET que son référentiel est configuré avec une fonction d'agrégation active
 // (≠ 'NONE'). On compare à 'NONE' plutôt qu'à 'SUM' pour rester valable quand
 // d'autres fonctions (AVG, MIN, ...) seront ajoutées à l'enum.
-export const isIndividuAgrege = (individuId: string, ctx: ResolveSerieContext): boolean => {
+export const getFonctionAgregationActive = (
+  individuId: string,
+  ctx: ResolveSerieContext,
+): FonctionAgregation | null => {
   const enfants = ctx.enfantsParParent.get(individuId)
-  if (!enfants || enfants.length === 0) return false
+  if (!enfants || enfants.length === 0) return null
   const referentielId = ctx.referentielParIndividu.get(individuId)
-  if (!referentielId) return false
+  if (!referentielId) return null
   const fonction = ctx.fonctionAgregationParReferentiel.get(referentielId)
-  return fonction !== undefined && fonction !== 'NONE'
+  if (!fonction || fonction === 'NONE') return null
+  return fonction
 }
 
 export const resolveSerieIndividu = (
@@ -60,8 +64,9 @@ export const resolveSerieIndividu = (
   const cached = cache.get(individuId)
   if (cached) return cached
 
-  const serie = isIndividuAgrege(individuId, ctx)
-    ? computeSerieDerivee(individuId, ctx, cache)
+  const fonctionAgregation = getFonctionAgregationActive(individuId, ctx)
+  const serie = fonctionAgregation
+    ? computeSerieDerivee(individuId, ctx, cache, fonctionAgregation)
     : computeSerieSaisie(individuId, ctx)
 
   cache.set(individuId, serie)
@@ -97,6 +102,7 @@ const computeSerieDerivee = (
   parentId: string,
   ctx: ResolveSerieContext,
   cache: Map<string, ReadonlyArray<PointInterne>>,
+  fonctionAgregation: FonctionAgregation,
 ): ReadonlyArray<PointInterne> => {
   const enfants = ctx.enfantsParParent.get(parentId) ?? []
   // Tri stable par publicId pour des contributions déterministes en sortie.
@@ -111,7 +117,7 @@ const computeSerieDerivee = (
   const states: EnfantState[] = enfantsTries.map((enfant) => ({
     enfant,
     points: resolveSerieIndividu(enfant.id, ctx, cache),
-    estAgrege: isIndividuAgrege(enfant.id, ctx),
+    estAgrege: getFonctionAgregationActive(enfant.id, ctx) !== null,
     pointer: -1,
   }))
 
@@ -172,7 +178,7 @@ const computeSerieDerivee = (
       type: 'derivee',
       bucket,
       valeur: somme,
-      fonctionAgregation: 'SUM',
+      fonctionAgregation,
       contributions,
       couverture: {
         nbEnfantsAvecValeur: valeursPourSomme.length,
