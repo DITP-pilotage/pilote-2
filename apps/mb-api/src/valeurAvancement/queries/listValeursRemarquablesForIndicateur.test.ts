@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vitest'
 
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptId, testDeptIds, testIndicateurId } from '@/test/randomIds'
+import {
+  testDeptId,
+  testDeptIds,
+  testIndicateurId,
+  testIndividuId,
+  testReferentielId,
+} from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 import { listValeursRemarquablesForIndicateur } from '@/valeurAvancement/queries/listValeursRemarquablesForIndicateur'
 
@@ -394,6 +400,286 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
           listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
         ),
       ).rejects.toThrow()
+    }),
+  )
+
+  it(
+    'calcule les stats sur les valeurs dérivées (SUM) des individus du référentiel',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
+      const [reg1, reg2] = [testIndividuId(), testIndividuId()]
+      const [d1a, d1b, d2a, d2b] = [
+        testIndividuId(),
+        testIndividuId(),
+        testIndividuId(),
+        testIndividuId(),
+      ]
+
+      await fixtures.indicateurReferentiel(
+        {
+          indicateur: { publicId: indId, nom: 'T', visibilite: 'PUBLIC' },
+          referentiel: { publicId: refReg, nom: 'Régions' },
+          fonctionAgregation: 'SUM',
+        },
+        {
+          indicateur: { publicId: indId },
+          referentiel: { publicId: refDept, nom: 'Départements' },
+          fonctionAgregation: 'NONE',
+        },
+      )
+      await fixtures.relation(
+        {
+          parent: { publicId: reg1, referentiel: { publicId: refReg } },
+          child: { publicId: d1a, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: reg1 },
+          child: { publicId: d1b, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: reg2, referentiel: { publicId: refReg } },
+          child: { publicId: d2a, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: reg2 },
+          child: { publicId: d2b, referentiel: { publicId: refDept } },
+        },
+      )
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d1a },
+          date: '2026-01-01',
+          valeur: 10,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d1b },
+          date: '2026-01-01',
+          valeur: 30,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d2a },
+          date: '2026-01-01',
+          valeur: 50,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d2b },
+          date: '2026-01-01',
+          valeur: 70,
+        },
+      )
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refReg] }),
+      )
+
+      // reg1 = 10+30 = 40 ; reg2 = 50+70 = 120
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [{ referentiel: refReg, min: 40, max: 120, mediane: 80 }],
+      })
+    }),
+  )
+
+  it(
+    'utilise le dernier bucket de la série dérivée (carry-forward des enfants)',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
+      const regId = testIndividuId()
+      const [dept1, dept2] = [testIndividuId(), testIndividuId()]
+
+      await fixtures.indicateurReferentiel(
+        {
+          indicateur: { publicId: indId, nom: 'T', visibilite: 'PUBLIC' },
+          referentiel: { publicId: refReg },
+          fonctionAgregation: 'SUM',
+        },
+        {
+          indicateur: { publicId: indId },
+          referentiel: { publicId: refDept },
+          fonctionAgregation: 'NONE',
+        },
+      )
+      await fixtures.relation(
+        {
+          parent: { publicId: regId, referentiel: { publicId: refReg } },
+          child: { publicId: dept1, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: regId },
+          child: { publicId: dept2, referentiel: { publicId: refDept } },
+        },
+      )
+      // dept1 saisie en janvier, dept2 en mars. Dernier bucket de la série
+      // région = mars, valeur = 7 (dept1, carry-forward) + 50 (dept2) = 57.
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept1 },
+          date: '2026-01-01',
+          valeur: 7,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2 },
+          date: '2026-03-01',
+          valeur: 50,
+        },
+      )
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refReg] }),
+      )
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [{ referentiel: refReg, min: 57, max: 57, mediane: 57 }],
+      })
+    }),
+  )
+
+  it(
+    'inclut un individu agrégé en couverture partielle (un seul enfant a saisi)',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
+      const [reg1, reg2] = [testIndividuId(), testIndividuId()]
+      const [d1a, d1b, d2a, d2b] = [
+        testIndividuId(),
+        testIndividuId(),
+        testIndividuId(),
+        testIndividuId(),
+      ]
+
+      await fixtures.indicateurReferentiel(
+        {
+          indicateur: { publicId: indId, nom: 'T', visibilite: 'PUBLIC' },
+          referentiel: { publicId: refReg },
+          fonctionAgregation: 'SUM',
+        },
+        {
+          indicateur: { publicId: indId },
+          referentiel: { publicId: refDept },
+          fonctionAgregation: 'NONE',
+        },
+      )
+      await fixtures.relation(
+        {
+          parent: { publicId: reg1, referentiel: { publicId: refReg } },
+          child: { publicId: d1a, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: reg1 },
+          child: { publicId: d1b, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: reg2, referentiel: { publicId: refReg } },
+          child: { publicId: d2a, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: reg2 },
+          child: { publicId: d2b, referentiel: { publicId: refDept } },
+        },
+      )
+      // reg1 : couverture pleine (d1a+d1b = 100). reg2 : un seul enfant saisi
+      // (d2a = 5). reg2 contribue malgré la couverture partielle.
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d1a },
+          date: '2026-01-01',
+          valeur: 40,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d1b },
+          date: '2026-01-01',
+          valeur: 60,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: d2a },
+          date: '2026-01-01',
+          valeur: 5,
+        },
+      )
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refReg] }),
+      )
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [{ referentiel: refReg, min: 5, max: 100, mediane: 52.5 }],
+      })
+    }),
+  )
+
+  it(
+    'calcule indépendamment un référentiel SUM et un référentiel feuille NONE',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
+      const regId = testIndividuId()
+      const [dept1, dept2] = [testIndividuId(), testIndividuId()]
+
+      await fixtures.indicateurReferentiel(
+        {
+          indicateur: { publicId: indId, nom: 'T', visibilite: 'PUBLIC' },
+          referentiel: { publicId: refReg, nom: 'AAA-Régions' },
+          fonctionAgregation: 'SUM',
+        },
+        {
+          indicateur: { publicId: indId },
+          referentiel: { publicId: refDept, nom: 'ZZZ-Départements' },
+          fonctionAgregation: 'NONE',
+        },
+      )
+      await fixtures.relation(
+        {
+          parent: { publicId: regId, referentiel: { publicId: refReg } },
+          child: { publicId: dept1, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: regId },
+          child: { publicId: dept2, referentiel: { publicId: refDept } },
+        },
+      )
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept1 },
+          date: '2026-01-01',
+          valeur: 12,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2 },
+          date: '2026-01-01',
+          valeur: 28,
+        },
+      )
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refReg, refDept] }),
+      )
+
+      const items = result._unsafeUnwrap().items
+      const parRef = new Map(items.map((i) => [i.referentiel, i]))
+      // Feuille : min/max sur les saisies départementales.
+      expect(parRef.get(refDept)).toEqual({ referentiel: refDept, min: 12, max: 28, mediane: 20 })
+      // Agrégé : dérivée région = 12 + 28 = 40 (un seul individu).
+      expect(parRef.get(refReg)).toEqual({ referentiel: refReg, min: 40, max: 40, mediane: 40 })
     }),
   )
 

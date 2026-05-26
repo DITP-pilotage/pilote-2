@@ -1,4 +1,5 @@
 import {
+  type DateTrunc,
   type ListValeursRemarquablesForIndicateurQuery,
   type ValeursRemarquablesListApiModel,
 } from '@pilote/mb-shared/valeurAvancement'
@@ -6,32 +7,22 @@ import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { type Decimal } from '@/framework/decimal'
+import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { computeMax } from '@/valeurAvancement/computeMax'
 import { computeMediane } from '@/valeurAvancement/computeMediane'
 import { computeMin } from '@/valeurAvancement/computeMin'
+import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
+import {
+  type IndividuRef,
+  type PointInterne,
+  resolveSerieIndividu,
+} from '@/valeurAvancement/resolveSerieIndividu'
 
-const fetchReferentielsAvecValeursRecentes = (
-  indicateurId: string,
-  referentiels: ReadonlyArray<string>,
-) =>
-  db().referentiel.findMany({
-    where: { publicId: { in: [...referentiels] } },
-    orderBy: { publicId: 'asc' },
-    include: {
-      individus: {
-        where: { valeurs: { some: { indicateurId } } },
-        include: {
-          valeurs: {
-            where: { indicateurId },
-            orderBy: [{ date: 'desc' }, { id: 'desc' }],
-            take: 1,
-          },
-        },
-      },
-    },
-  })
+// Aligné sur listValeursForIndicateur : on raisonne sur les buckets mensuels
+// pour les agrégés (cf. doc d'archi `indicateur-derives.md`).
+const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
 export const listValeursRemarquablesForIndicateur = (
   indicateurPublicId: string,
@@ -43,23 +34,75 @@ export const listValeursRemarquablesForIndicateur = (
       where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
       select: { id: true },
     }),
+  ).andThen((indicateur) =>
+    ResultAsync.fromSafePromise(buildStats({ indicateurId: indicateur.id, params })),
   )
-    .andThen((indicateur) =>
-      ResultAsync.fromSafePromise(
-        fetchReferentielsAvecValeursRecentes(indicateur.id, params.referentiels),
-      ),
-    )
-    .map((rows) => ({
-      items: rows.map((row) => {
-        const dernieresValeurs = row.individus
-          .map((i) => i.valeurs[0]?.valeur)
-          .filter((v): v is Decimal => v !== undefined)
-        return {
-          referentiel: row.publicId,
-          min: computeMin(dernieresValeurs),
-          max: computeMax(dernieresValeurs),
-          mediane: computeMediane(dernieresValeurs),
-        }
-      }),
-    }))
+}
+
+// Pour chaque référentiel demandé, on calcule min/max/médiane sur la dernière
+// valeur connue de chaque individu — saisie pour les feuilles, dérivée pour les
+// agrégés. On réutilise le moteur de séries de listValeursForIndicateur : un
+// seul chargement DB (arbre + saisies + fonctions d'agrégation), puis la
+// mémoïsation du functional core évite tout recalcul. La "dernière valeur" est
+// le dernier bucket de la série calculée — sans alignement sur une date pivot,
+// donc des individus peuvent contribuer à partir de dates différentes.
+const buildStats = async ({
+  indicateurId,
+  params,
+}: {
+  indicateurId: string
+  params: ListValeursRemarquablesForIndicateurQuery
+}): Promise<ValeursRemarquablesListApiModel> => {
+  const referentiels = await loadReferentielsAvecIndividus(params.referentiels)
+  if (referentiels.length === 0) return { items: [] }
+
+  const cibles: IndividuRef[] = referentiels.flatMap((r) => r.individus)
+  const dateTrunc = DEFAULT_DATE_TRUNC
+  const startedAt = performance.now()
+  const { ctx, allNodes } = await loadResolveSerieContext({ indicateurId, cibles, dateTrunc })
+  const cache = new Map<string, ReadonlyArray<PointInterne>>()
+
+  const items = referentiels.map((referentiel) => {
+    const dernieresValeurs = referentiel.individus
+      .map((individu) => resolveSerieIndividu(individu.id, ctx, cache).at(-1)?.valeur)
+      .filter((v): v is Decimal => v !== undefined)
+    return {
+      referentiel: referentiel.publicId,
+      min: computeMin(dernieresValeurs),
+      max: computeMax(dernieresValeurs),
+      mediane: computeMediane(dernieresValeurs),
+    }
+  })
+
+  logger.info(
+    {
+      event: 'valeurAvancement.listValeursRemarquablesForIndicateur.timing',
+      indicateurId,
+      dateTrunc,
+      nbReferentiels: referentiels.length,
+      nbCibles: cibles.length,
+      nbNodes: allNodes.size,
+      durationMs: Math.round(performance.now() - startedAt),
+    },
+    'listValeursRemarquablesForIndicateur computed',
+  )
+  return { items }
+}
+
+const loadReferentielsAvecIndividus = async (
+  referentielPublicIds: ReadonlyArray<string>,
+): Promise<ReadonlyArray<{ publicId: string; individus: IndividuRef[] }>> => {
+  const rows = await db().referentiel.findMany({
+    where: { publicId: { in: [...referentielPublicIds] } },
+    orderBy: { publicId: 'asc' },
+    include: { individus: { orderBy: { publicId: 'asc' } } },
+  })
+  return rows.map((r) => ({
+    publicId: r.publicId,
+    individus: r.individus.map(({ id, publicId, referentielId }) => ({
+      id,
+      publicId,
+      referentielId,
+    })),
+  }))
 }

@@ -1,4 +1,3 @@
-import { type FonctionAgregation } from '@pilote/mb-shared/indicateur'
 import {
   type ContributionApiModel,
   type DateTrunc,
@@ -9,15 +8,14 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
+import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
-import { getValeursTronqueesPourIndividus } from '@/generated/prisma/sql'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
+import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
 import {
   type IndividuRef,
   type PointInterne,
   resolveSerieIndividu,
-  type ResolveSerieContext,
-  type SaisieTronquee,
 } from '@/valeurAvancement/resolveSerieIndividu'
 
 // Cap par défaut à la granularité mensuelle : sans troncature, une série France
@@ -41,11 +39,11 @@ export const listValeursForIndicateur = (
   )
 }
 
-// Orchestration en 3 phases : (1) charger en bulk l'arbre + les liens
-// indicateur↔référentiel en parallèle, (2) charger les saisies tronquées en
-// connaissant l'ensemble des descendants, (3) calculer les séries en mémoire
-// via le functional core memoïsé (cf. resolveSerieIndividu + doc d'archi
-// `indicateur-derives.md`). Filtrage dateDebut/dateFin appliqué en sortie.
+// Orchestration en 3 phases : (1) résoudre les cibles publicId→id, (2) charger
+// en bulk le contexte de résolution (sous-arbre + saisies tronquées + fonctions
+// d'agrégation), (3) calculer les séries en mémoire via le functional core
+// mémoïsé. Filtrage dateDebut/dateFin appliqué en sortie. Cf. doc d'archi
+// `indicateur-derives.md`.
 const buildSeries = async ({
   indicateurId,
   indicateurPublicId,
@@ -58,26 +56,9 @@ const buildSeries = async ({
   const cibles = await loadCibles(params.individus)
   if (cibles.length === 0) return { items: [] }
 
-  // Indépendants entre eux : chargement parallèle pour minimiser la latence.
-  const [{ allNodes, enfantsParParent }, fonctionAgregationParReferentiel] = await Promise.all([
-    loadSousArbre(cibles),
-    loadFonctionsAgregation(indicateurId),
-  ])
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
-  const serieFeuilleParIndividu = await loadSaisiesTronquees({
-    indicateurId,
-    individuIds: [...allNodes.keys()],
-    dateTrunc,
-  })
-
-  const ctx: ResolveSerieContext = {
-    enfantsParParent,
-    fonctionAgregationParReferentiel,
-    serieFeuilleParIndividu,
-    referentielParIndividu: new Map(
-      [...allNodes.values()].map((individu) => [individu.id, individu.referentielId]),
-    ),
-  }
+  const startedAt = performance.now()
+  const { ctx, allNodes } = await loadResolveSerieContext({ indicateurId, cibles, dateTrunc })
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
   const items: ValeurAvancementApiModel[] = []
@@ -89,90 +70,27 @@ const buildSeries = async ({
       items.push(toApiModel({ indicateurPublicId, individuPublicId: cible.publicId, point }))
     }
   }
+  logger.info(
+    {
+      event: 'valeurAvancement.listValeursForIndicateur.timing',
+      indicateurId,
+      dateTrunc,
+      nbCibles: cibles.length,
+      nbNodes: allNodes.size,
+      nbPoints: items.length,
+      durationMs: Math.round(performance.now() - startedAt),
+    },
+    'listValeursForIndicateur computed',
+  )
   return { items }
 }
 
-const loadCibles = (individus: ReadonlyArray<string>): Promise<IndividuRef[]> =>
-  db().individu.findMany({
-    where: { publicId: { in: [...individus] } },
-    select: { id: true, publicId: true, referentielId: true },
+const loadCibles = async (publicIds: ReadonlyArray<string>): Promise<IndividuRef[]> => {
+  const rows = await db().individu.findMany({
+    where: { publicId: { in: [...publicIds] } },
     orderBy: { publicId: 'asc' },
   })
-
-// BFS itératif niveau par niveau plutôt qu'une CTE récursive PostgreSQL :
-// l'arbre est typiquement peu profond (3-4 niveaux France→Région→Département)
-// et garder le calcul en JS reste plus simple à lire et à débugger que du SQL
-// récursif. Détection naïve des cycles : on ne retraite pas un nœud déjà vu.
-const loadSousArbre = async (
-  cibles: ReadonlyArray<IndividuRef>,
-): Promise<{
-  allNodes: Map<string, IndividuRef>
-  enfantsParParent: Map<string, IndividuRef[]>
-}> => {
-  const allNodes = new Map<string, IndividuRef>()
-  for (const cible of cibles) allNodes.set(cible.id, cible)
-  const enfantsParParent = new Map<string, IndividuRef[]>()
-  let currentLevel = cibles.map((c) => c.id)
-
-  while (currentLevel.length > 0) {
-    const relations = await db().relation.findMany({
-      where: { parentId: { in: currentLevel } },
-      include: { child: true },
-    })
-    if (relations.length === 0) break
-
-    const nextLevelSet = new Set<string>()
-    for (const relation of relations) {
-      const childRef: IndividuRef = {
-        id: relation.child.id,
-        publicId: relation.child.publicId,
-        referentielId: relation.child.referentielId,
-      }
-      if (!allNodes.has(childRef.id)) {
-        allNodes.set(childRef.id, childRef)
-        nextLevelSet.add(childRef.id)
-      }
-      const liste = enfantsParParent.get(relation.parentId) ?? []
-      liste.push(childRef)
-      enfantsParParent.set(relation.parentId, liste)
-    }
-    currentLevel = [...nextLevelSet]
-  }
-
-  return { allNodes, enfantsParParent }
-}
-
-const loadFonctionsAgregation = async (
-  indicateurId: string,
-): Promise<Map<string, FonctionAgregation>> => {
-  const liens = await db().indicateurReferentiel.findMany({
-    where: { indicateurId },
-    select: { referentielId: true, fonctionAgregation: true },
-  })
-  return new Map(liens.map((lien) => [lien.referentielId, lien.fonctionAgregation]))
-}
-
-const loadSaisiesTronquees = async ({
-  indicateurId,
-  individuIds,
-  dateTrunc,
-}: {
-  indicateurId: string
-  individuIds: ReadonlyArray<string>
-  dateTrunc: DateTrunc
-}): Promise<Map<string, SaisieTronquee[]>> => {
-  if (individuIds.length === 0) return new Map()
-  const rows = await db().$queryRawTyped(
-    getValeursTronqueesPourIndividus(indicateurId, [...individuIds], dateTrunc),
-  )
-  const serieFeuilleParIndividu = new Map<string, SaisieTronquee[]>()
-  for (const row of rows) {
-    if (!row.bucket) continue
-    const liste = serieFeuilleParIndividu.get(row.individuId) ?? []
-    liste.push({ bucket: row.bucket, dateOrigine: row.dateOrigine, valeur: row.valeur })
-    serieFeuilleParIndividu.set(row.individuId, liste)
-  }
-  return serieFeuilleParIndividu
+  return rows.map(({ id, publicId, referentielId }) => ({ id, publicId, referentielId }))
 }
 
 const toApiModel = ({
