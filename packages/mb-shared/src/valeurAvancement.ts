@@ -205,6 +205,13 @@ export const listValeursRemarquablesForIndicateurQuerySchema = z.object({
   referentiels: referentielsCsvSchema.describe(
     `Liste d'identifiants de référentiels séparés par une virgule (ex. REF-DEPT,REF-REG). 1..${MAX_REFERENTIELS_PAR_REQUETE} identifiants.`,
   ),
+  dateTrunc: dateTruncSchema
+    .optional()
+    .describe(
+      'Granularité de troncature des dates des points. Par défaut `month`. Détermine le ' +
+        "bucket retenu comme « dernière valeur » de chaque individu. S'applique aux séries " +
+        'saisies comme aux séries dérivées.',
+    ),
 })
 export type ListValeursRemarquablesForIndicateurQuery = z.infer<
   typeof listValeursRemarquablesForIndicateurQuerySchema
@@ -241,6 +248,13 @@ export const listSyntheseIndividusQuerySchema = z.object({
   individus: individusCsvSchema.describe(
     `Liste d'identifiants d'individus séparés par une virgule (ex. DEPT-84,DEPT-13). 1..${MAX_INDIVIDUS_PAR_REQUETE} identifiants.`,
   ),
+  dateTrunc: dateTruncSchema
+    .optional()
+    .describe(
+      'Granularité de troncature des dates des points. Par défaut `month`. Détermine les ' +
+        "buckets retenus comme « dernière » et « précédente » valeur pour le calcul de la " +
+        "variation. S'applique aux séries saisies comme aux séries dérivées.",
+    ),
 })
 export type ListSyntheseIndividusQuery = z.infer<typeof listSyntheseIndividusQuerySchema>
 

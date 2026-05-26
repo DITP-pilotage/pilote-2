@@ -70,14 +70,18 @@ export const indicateurValeursRemarquablesQueryOptions = (
   queryOptions({
     queryKey: ['indicateur', indicateurId, 'valeurs-remarquables', referentielId],
     queryFn: () =>
-      fetchValeursRemarquablesForIndicateur(indicateurId, { referentiels: [referentielId] }),
+      fetchValeursRemarquablesForIndicateur(indicateurId, {
+        referentiels: [referentielId],
+        dateTrunc: 'month',
+      }),
     staleTime: DEFAULT_STALE_TIME,
   })
 
 export const indicateurSyntheseIndividuQueryOptions = (indicateurId: string, individuId: string) =>
   queryOptions({
     queryKey: ['indicateur', indicateurId, 'synthese-individus', individuId],
-    queryFn: () => fetchSyntheseIndividus(indicateurId, { individus: [individuId] }),
+    queryFn: () =>
+      fetchSyntheseIndividus(indicateurId, { individus: [individuId], dateTrunc: 'month' }),
     staleTime: DEFAULT_STALE_TIME,
   })
 

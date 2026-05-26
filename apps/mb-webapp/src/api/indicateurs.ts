@@ -69,7 +69,10 @@ export const fetchValeursRemarquablesForIndicateur = async (
 ): Promise<ValeursRemarquablesListApiModel> => {
   const json = await apiClient
     .get(`indicateurs/${indicateurId}/valeurs-remarquables`, {
-      searchParams: { referentiels: params.referentiels.join(',') },
+      searchParams: {
+        referentiels: params.referentiels.join(','),
+        ...(params.dateTrunc ? { dateTrunc: params.dateTrunc } : {}),
+      },
     })
     .json()
   return valeursRemarquablesListApiModelSchema.parse(json)
@@ -81,7 +84,10 @@ export const fetchSyntheseIndividus = async (
 ): Promise<SyntheseIndividusListApiModel> => {
   const json = await apiClient
     .get(`indicateurs/${indicateurId}/synthese-individus`, {
-      searchParams: { individus: params.individus.join(',') },
+      searchParams: {
+        individus: params.individus.join(','),
+        ...(params.dateTrunc ? { dateTrunc: params.dateTrunc } : {}),
+      },
     })
     .json()
   return syntheseIndividusListApiModelSchema.parse(json)
