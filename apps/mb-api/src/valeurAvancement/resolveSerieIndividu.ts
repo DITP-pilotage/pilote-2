@@ -56,22 +56,32 @@ export const getFonctionAgregationActive = (
   return fonction
 }
 
-export const resolveSerieIndividu = (
+// Async pour pouvoir yielder l'event loop entre les buckets d'une dérivée
+// (cf. `computeSerieDerivee`). Sans ce yield, une résolution profonde sur un
+// gros arbre (ex. France → ~35k communes) × historique long (5 ans en
+// `dateTrunc='day'`) cumule des centaines de milliers d'ops Decimal en
+// synchrone — ~50× plus lentes que des `number` natifs — et bloque la node
+// pendant plusieurs secondes, gelant les requêtes concurrentes. Le coût
+// micro-task ajouté reste négligeable face au temps de calcul lui-même.
+export const resolveSerieIndividu = async (
   individuId: string,
   ctx: ResolveSerieContext,
   cache: Map<string, ReadonlyArray<PointInterne>>,
-): ReadonlyArray<PointInterne> => {
+): Promise<ReadonlyArray<PointInterne>> => {
   const cached = cache.get(individuId)
   if (cached) return cached
 
   const fonctionAgregation = getFonctionAgregationActive(individuId, ctx)
   const serie = fonctionAgregation
-    ? computeSerieDerivee(individuId, ctx, cache, fonctionAgregation)
+    ? await computeSerieDerivee(individuId, ctx, cache, fonctionAgregation)
     : computeSerieSaisie(individuId, ctx)
 
   cache.set(individuId, serie)
   return serie
 }
+
+const yieldToEventLoop = (): Promise<void> =>
+  new Promise((resolve) => setImmediate(resolve))
 
 const computeSerieSaisie = (
   individuId: string,
@@ -98,12 +108,12 @@ const computeSerieSaisie = (
 // - Récursion + mémoïsation via `resolveSerieIndividu` : la série d'un enfant
 //   intermédiaire (ex. région) n'est calculée qu'une fois même si plusieurs
 //   parents (ou plusieurs cibles dans la même requête) la sollicitent.
-const computeSerieDerivee = (
+const computeSerieDerivee = async (
   parentId: string,
   ctx: ResolveSerieContext,
   cache: Map<string, ReadonlyArray<PointInterne>>,
   fonctionAgregation: FonctionAgregation,
-): ReadonlyArray<PointInterne> => {
+): Promise<ReadonlyArray<PointInterne>> => {
   const enfants = ctx.enfantsParParent.get(parentId) ?? []
   // Tri stable par publicId pour des contributions déterministes en sortie.
   const enfantsTries = [...enfants].sort((a, b) => a.publicId.localeCompare(b.publicId))
@@ -114,12 +124,18 @@ const computeSerieDerivee = (
     estAgrege: boolean
     pointer: number // index de la dernière valeur ≤ bucket courant (-1 = aucune)
   }
-  const states: EnfantState[] = enfantsTries.map((enfant) => ({
-    enfant,
-    points: resolveSerieIndividu(enfant.id, ctx, cache),
-    estAgrege: getFonctionAgregationActive(enfant.id, ctx) !== null,
-    pointer: -1,
-  }))
+  // Résolution séquentielle des enfants : la mémoïsation garantit que chaque
+  // sous-arbre n'est calculé qu'une fois, donc le parallélisme n'apporterait
+  // rien et empêcherait le yield bucket-par-bucket d'avoir l'effet voulu.
+  const states: EnfantState[] = []
+  for (const enfant of enfantsTries) {
+    states.push({
+      enfant,
+      points: await resolveSerieIndividu(enfant.id, ctx, cache),
+      estAgrege: getFonctionAgregationActive(enfant.id, ctx) !== null,
+      pointer: -1,
+    })
+  }
 
   // Union des buckets distincts présents dans une série enfant (triés ASC).
   const bucketsSet = new Set<string>()
@@ -131,6 +147,8 @@ const computeSerieDerivee = (
   const result: PointInterne[] = []
 
   for (const bucket of buckets) {
+    // Yield à chaque bucket : voir doc en tête de `resolveSerieIndividu`.
+    await yieldToEventLoop()
     // Avance chaque pointer tant que la valeur suivante de l'enfant est ≤ au
     // bucket courant (carry-forward). Comme les buckets sont parcourus ASC,
     // les pointers ne reculent jamais → coût amorti O(N+E) par enfant.

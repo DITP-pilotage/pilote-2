@@ -63,7 +63,7 @@ const buildSeries = async ({
 
   const items: ValeurAvancementApiModel[] = []
   for (const cible of cibles) {
-    const serie = resolveSerieIndividu(cible.id, ctx, cache)
+    const serie = await resolveSerieIndividu(cible.id, ctx, cache)
     for (const point of serie) {
       if (params.dateDebut && point.bucket < params.dateDebut) continue
       if (params.dateFin && point.bucket > params.dateFin) continue

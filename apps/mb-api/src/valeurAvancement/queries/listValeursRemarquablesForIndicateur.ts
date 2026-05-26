@@ -63,11 +63,12 @@ const buildStats = async ({
   const { ctx, allNodes } = await loadResolveSerieContext({ indicateurId, cibles, dateTrunc })
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
-  const items = referentiels.map((referentiel) => {
+  const items: ValeursRemarquablesListApiModel['items'] = []
+  for (const referentiel of referentiels) {
     const contributions: ValeursRemarquablesContributionApiModel[] = []
     const valeurs: Decimal[] = []
     for (const individu of referentiel.individus) {
-      const dernierPoint = resolveSerieIndividu(individu.id, ctx, cache).at(-1)
+      const dernierPoint = (await resolveSerieIndividu(individu.id, ctx, cache)).at(-1)
       if (!dernierPoint) continue
       valeurs.push(dernierPoint.valeur)
       contributions.push({
@@ -77,14 +78,14 @@ const buildStats = async ({
         source: dernierPoint.type === 'saisie' ? 'saisie' : 'derivee',
       })
     }
-    return {
+    items.push({
       referentiel: referentiel.publicId,
       min: computeMin(valeurs),
       max: computeMax(valeurs),
       mediane: computeMediane(valeurs),
       contributions,
-    }
-  })
+    })
+  }
 
   logger.info(
     {
