@@ -15,14 +15,14 @@ Statut : implémenté
 
 ### Saisies vs valeurs dérivées
 
-Toute valeur n'est pas saisie. Pour la plupart des indicateurs, les agents saisissent au plus bas niveau de la hiérarchie — typiquement à la maille départementale, parfois ministère ou opérateur — et les niveaux supérieurs (région, France) doivent être **reconstruits** par agrégation des enfants.
+Toute valeur n'est pas saisie. Selon l'indicateur, les agents peuvent saisir à différentes mailles — départementale, régionale, etc. — et les niveaux supérieurs (typiquement France) doivent être **reconstruits** par agrégation des enfants.
 
 Un individu est donc soit :
 
 - **feuille** pour cet indicateur — ses valeurs sont les saisies directes,
 - **agrégé** — ses valeurs sont calculées à partir de ses enfants directs, eux-mêmes feuilles ou agrégés (récursivement).
 
-Le statut feuille/agrégé n'est pas une propriété intrinsèque de l'individu : il dépend de l'indicateur. Un même département peut être feuille pour un indicateur et n'avoir aucune saisie pour un autre. Ce qui détermine le statut, c'est la `fonctionAgregation` portée par le lien `IndicateurReferentiel` du référentiel de l'individu (cf. `isIndividuAgrege`).
+Le statut feuille/agrégé n'est pas une propriété intrinsèque de l'individu : il dépend de l'indicateur. La règle est unique : c'est la `fonctionAgregation` portée par le lien `IndicateurReferentiel` du référentiel de l'individu qui détermine son statut (cf. `isIndividuAgrege`). `NONE` → feuille ; `SUM` (ou autre fonction à venir) → agrégé.
 
 ### Enjeux
 
