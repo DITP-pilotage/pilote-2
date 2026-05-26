@@ -58,7 +58,7 @@ const buildStats = async ({
   if (referentiels.length === 0) return { items: [] }
 
   const cibles: IndividuRef[] = referentiels.flatMap((r) => r.individus)
-  const dateTrunc = DEFAULT_DATE_TRUNC
+  const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
   const { ctx, allNodes } = await loadResolveSerieContext({ indicateurId, cibles, dateTrunc })
   const cache = new Map<string, ReadonlyArray<PointInterne>>()

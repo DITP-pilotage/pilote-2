@@ -57,11 +57,12 @@ const buildSynthese = async (
   const referentielIds = unique(individusDemandes.map((i) => i.referentielId))
   const population = await loadPopulation({ referentielIds })
 
+  const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
   const { ctx, allNodes } = await loadResolveSerieContext({
     indicateurId: indicateur.id,
     cibles: population,
-    dateTrunc: DEFAULT_DATE_TRUNC,
+    dateTrunc,
   })
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
@@ -84,7 +85,7 @@ const buildSynthese = async (
     {
       event: 'valeurAvancement.listSyntheseIndividus.timing',
       indicateurId: indicateur.id,
-      dateTrunc: DEFAULT_DATE_TRUNC,
+      dateTrunc,
       nbDemandes: individusDemandes.length,
       nbPopulation: population.length,
       nbNodes: allNodes.size,

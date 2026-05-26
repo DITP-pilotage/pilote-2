@@ -357,9 +357,9 @@ valeurAvancementRoutes.openapi(getIndividusWithValeursRoute, async (context) => 
 
 valeurAvancementRoutes.openapi(getValeursRemarquablesForIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { referentiels } = context.req.valid('query')
+  const { referentiels, dateTrunc } = context.req.valid('query')
 
-  return listValeursRemarquablesForIndicateur(id, { referentiels }).match(
+  return listValeursRemarquablesForIndicateur(id, { referentiels, dateTrunc }).match(
     (data) =>
       jsonResponseOk({
         context,
@@ -373,9 +373,9 @@ valeurAvancementRoutes.openapi(getValeursRemarquablesForIndicateurRoute, async (
 
 valeurAvancementRoutes.openapi(getSyntheseIndividusRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { individus } = context.req.valid('query')
+  const { individus, dateTrunc } = context.req.valid('query')
 
-  return listSyntheseIndividus(id, { individus }).match(
+  return listSyntheseIndividus(id, { individus, dateTrunc }).match(
     (data) =>
       jsonResponseOk({
         context,
