@@ -30,7 +30,7 @@ const DEPT_D: IndividuRef = { id: 'i-dept-d', publicId: 'DEPT-D', referentielId:
 
 const buildContext = (input: {
   enfantsParParent?: Record<string, IndividuRef[]>
-  fonctionAgregationParReferentiel?: Record<string, 'SUM' | 'NONE'>
+  fonctionAgregationParReferentiel?: Record<string, 'SUM' | 'AVG' | 'NONE'>
   serieFeuilleParIndividu?: Record<string, SaisieTronquee[]>
   individusReferentiel?: Record<string, string>
 }): ResolveSerieContext => ({
@@ -221,6 +221,88 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
 
     expect(serie).toHaveLength(1)
     expect(serie[0]).toMatchObject({ type: 'derivee', valeur: d(42) })
+  })
+})
+
+describe('resolveSerieIndividu — agrégation AVG', () => {
+  it('calcule la moyenne arithmétique simple sur couverture complète', async () => {
+    const ctx = buildContext({
+      individusReferentiel: {
+        [REG_S.id]: REF_REG,
+        [DEPT_A.id]: REF_DEPT,
+        [DEPT_B.id]: REF_DEPT,
+      },
+      enfantsParParent: { [REG_S.id]: [DEPT_A, DEPT_B] },
+      fonctionAgregationParReferentiel: { [REF_REG]: 'AVG' },
+      serieFeuilleParIndividu: {
+        [DEPT_A.id]: [saisie('2025-01-01', 10), saisie('2025-02-01', 20)],
+        [DEPT_B.id]: [saisie('2025-01-01', 30), saisie('2025-02-01', 40)],
+      },
+    })
+
+    const serie = await resolveSerieIndividu(REG_S.id, ctx, new Map())
+
+    expect(serie).toHaveLength(2)
+    expect(serie[0]).toMatchObject({
+      type: 'derivee',
+      bucket: '2025-01-01',
+      valeur: d(20), // (10 + 30) / 2
+      fonctionAgregation: 'AVG',
+      couverture: { nbEnfantsAvecValeur: 2, nbEnfantsTotal: 2 },
+    })
+    expect(serie[1]).toMatchObject({ bucket: '2025-02-01', valeur: d(30) }) // (20 + 40) / 2
+  })
+
+  it('moyenne sur les enfants connus uniquement (permissif, comme SUM)', async () => {
+    const ctx = buildContext({
+      individusReferentiel: {
+        [REG_S.id]: REF_REG,
+        [DEPT_A.id]: REF_DEPT,
+        [DEPT_B.id]: REF_DEPT,
+      },
+      enfantsParParent: { [REG_S.id]: [DEPT_A, DEPT_B] },
+      fonctionAgregationParReferentiel: { [REF_REG]: 'AVG' },
+      serieFeuilleParIndividu: {
+        [DEPT_A.id]: [saisie('2025-01-01', 10)],
+        [DEPT_B.id]: [saisie('2025-02-01', 40)],
+      },
+    })
+
+    const serie = await resolveSerieIndividu(REG_S.id, ctx, new Map())
+
+    expect(serie).toHaveLength(2)
+    // 2025-01 : seul DEPT-A → moyenne sur 1 = 10, couverture 1/2
+    expect(serie[0]).toMatchObject({
+      bucket: '2025-01-01',
+      valeur: d(10),
+      couverture: { nbEnfantsAvecValeur: 1, nbEnfantsTotal: 2 },
+    })
+    // 2025-02 : DEPT-A carry-forward (10) + DEPT-B (40) → moyenne 25
+    expect(serie[1]).toMatchObject({ bucket: '2025-02-01', valeur: d(25) })
+  })
+
+  it('produit une moyenne décimale exacte sur des entiers non divisibles', async () => {
+    const ctx = buildContext({
+      individusReferentiel: {
+        [REG_S.id]: REF_REG,
+        [DEPT_A.id]: REF_DEPT,
+        [DEPT_B.id]: REF_DEPT,
+        [DEPT_C.id]: REF_DEPT,
+      },
+      enfantsParParent: { [REG_S.id]: [DEPT_A, DEPT_B, DEPT_C] },
+      fonctionAgregationParReferentiel: { [REF_REG]: 'AVG' },
+      serieFeuilleParIndividu: {
+        [DEPT_A.id]: [saisie('2025-01-01', 1)],
+        [DEPT_B.id]: [saisie('2025-01-01', 2)],
+        [DEPT_C.id]: [saisie('2025-01-01', 2)],
+      },
+    })
+
+    const serie = await resolveSerieIndividu(REG_S.id, ctx, new Map())
+
+    // (1 + 2 + 2) / 3 = 1.6666...
+    const valeur = (serie[0] as { valeur: Decimal }).valeur
+    expect(valeur.toFixed(4)).toBe('1.6667')
   })
 })
 

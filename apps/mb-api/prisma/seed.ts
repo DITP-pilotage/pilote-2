@@ -117,6 +117,42 @@ const PRIORITE_MAILLE = ['REF-DEPT', 'REF-REG', 'REF-NAT'] as const
 const mailleLaPlusFine = (liensReferentielPublicIds: ReadonlyArray<string>): string | undefined =>
   PRIORITE_MAILLE.find((ref) => liensReferentielPublicIds.includes(ref))
 
+// Indicateurs qui représentent des taux, délais, indices ou ratios : agrégés
+// par moyenne arithmétique (non pondérée) à la remontée hiérarchique, plutôt
+// que par somme. Classification indicative de seed ; le métier reste seul
+// juge sur chaque indicateur réel.
+const INDICATEURS_EN_MOYENNE = new Set<string>([
+  'IND-009', // Délai moyen de prise en charge urgences
+  'IND-010', // Taux de vaccination infantile
+  'IND-011', // Accès aux soins de proximité
+  'IND-012', // Couverture des services France Santé
+  'IND-014', // Amélioration de l'orientation des élèves (indice)
+  'IND-015', // Taux de réussite au baccalauréat
+  'IND-020', // Qualité de l'air en zones urbaines (indice)
+  'IND-023', // Délai de traitement CAF
+  'IND-024', // Délai de traitement Pôle emploi
+  'IND-025', // Délai de délivrance des titres d'identité
+  'IND-026', // Présence postale en zone rurale (couverture)
+  'IND-028', // Désertification médicale (taux)
+  'IND-030', // Élucidation des cambriolages (taux)
+  'IND-032', // Délai de jugement civil
+  'IND-033', // Délai de jugement pénal
+  'IND-035', // Dette publique / PIB (ratio)
+  'IND-036', // Croissance du PIB (taux)
+  'IND-037', // Inflation (IPC, taux)
+  'IND-038', // Taux d'emploi des seniors
+  'IND-039', // Taux d'emploi des jeunes
+  'IND-043', // Couverture 5G du territoire
+  'IND-044', // Dématérialisation des démarches (taux)
+  'IND-047', // Espérance de vie (moyenne)
+  'IND-048', // Pauvreté (taux)
+  'IND-049', // Taux d'alphabétisation
+  'IND-050', // Accès à internet haut débit (couverture)
+])
+
+const fonctionAgregationGenerique = (publicId: string): FonctionAgregation =>
+  INDICATEURS_EN_MOYENNE.has(publicId) ? 'AVG' : 'SUM'
+
 const main = async () => {
   for (const [index, item] of indicateursSeed.entries()) {
     const { createdAt, updatedAt } = indicateurDates(index)
@@ -255,17 +291,21 @@ const main = async () => {
     },
     ...indicateursSeed
       .filter((ind) => parseInt(ind.publicId.replace('IND-', ''), 10) >= 9)
-      .map((ind) => ({
-        indicateurPublicId: ind.publicId,
+      .map((ind) => {
         // Politique simple : tous les indicateurs "neutres" sont rattachés à
-        // DEPT (NONE) + REG (SUM) + NAT (SUM). La saisie va sur dept, la
-        // hiérarchie supérieure se dérive.
-        referentiels: [
-          { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' as const },
-          { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' as const },
-          { referentielPublicId: 'REF-NAT', fonctionAgregation: 'SUM' as const },
-        ],
-      })),
+        // DEPT (NONE) + REG + NAT. La saisie va sur dept, la hiérarchie
+        // supérieure se dérive — par somme pour les volumes/cumuls, par
+        // moyenne pour les taux/délais/indices (cf. INDICATEURS_EN_MOYENNE).
+        const fonction = fonctionAgregationGenerique(ind.publicId)
+        return {
+          indicateurPublicId: ind.publicId,
+          referentiels: [
+            { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' as const },
+            { referentielPublicId: 'REF-REG', fonctionAgregation: fonction },
+            { referentielPublicId: 'REF-NAT', fonctionAgregation: fonction },
+          ],
+        }
+      }),
   ]
 
   for (const item of indicateurReferentielsSeed) {
