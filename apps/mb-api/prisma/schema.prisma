@@ -58,6 +58,7 @@ model Indicateur {
   updatedAt  DateTime   @updatedAt      @map("updated_at")
 
   valeurs      ValeurAvancement[]
+  objectifs    ObjectifAvancement[]
   referentiels IndicateurReferentiel[]
   permissions  IndicateurPermission[]
 
@@ -136,10 +137,11 @@ model Individu {
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt      @map("updated_at")
 
-  referentiel       Referentiel        @relation(fields: [referentielId], references: [id], onDelete: Restrict)
-  relationsAsParent Relation[]         @relation("relationParent")
-  relationsAsChild  Relation[]         @relation("relationChild")
+  referentiel       Referentiel          @relation(fields: [referentielId], references: [id], onDelete: Restrict)
+  relationsAsParent Relation[]           @relation("relationParent")
+  relationsAsChild  Relation[]           @relation("relationChild")
   valeurs           ValeurAvancement[]
+  objectifs         ObjectifAvancement[]
 
   @@index([referentielId])
   @@map("individu")
@@ -175,6 +177,24 @@ model ValeurAvancement {
   @@index([indicateurId, date])
   @@index([individuId, date])
   @@map("valeur_avancement")
+}
+
+model ObjectifAvancement {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  indicateurId String   @map("indicateur_id") @db.Uuid
+  individuId   String   @map("individu_id")   @db.Uuid
+  date         String
+  valeur       Decimal  @db.Decimal(20, 2)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt      @map("updated_at")
+
+  indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
+  individu   Individu   @relation(fields: [individuId],   references: [id], onDelete: Restrict)
+
+  @@unique([indicateurId, individuId, date], name: "objectif_avancement_unique")
+  @@index([indicateurId, individuId])
+  @@index([indicateurId, date])
+  @@map("objectif_avancement")
 }
 
 enum ApplicationLogLevel {

@@ -16,6 +16,7 @@ import {
   type IndicateurPermissionModel,
   type IndicateurReferentielModel,
   type IndividuModel,
+  type ObjectifAvancementModel,
   type ReferentielModel,
   type RelationModel,
   type UtilisateurModel,
@@ -295,6 +296,54 @@ async function valeurAvancement(
   return results
 }
 
+// --- ObjectifAvancement (deps requises) --------------------------------------
+
+type ObjectifAvancementOverrides = {
+  indicateur: IndicateurOverrides
+  individu: IndividuOverrides
+} & Partial<{ id: string; date: string; valeur: number }>
+
+const DEFAULT_OBJECTIF_AVANCEMENT_DATE = '2024-01-01'
+const DEFAULT_OBJECTIF_AVANCEMENT_VALEUR = 100
+
+const upsertObjectifAvancement = async (o: ObjectifAvancementOverrides) => {
+  const indicateurRow = await upsertIndicateur(o.indicateur)
+  const individuRow = await upsertIndividu(o.individu)
+  const date = o.date ?? DEFAULT_OBJECTIF_AVANCEMENT_DATE
+  const valeur = o.valeur ?? DEFAULT_OBJECTIF_AVANCEMENT_VALEUR
+  return db().objectifAvancement.upsert({
+    where: {
+      objectif_avancement_unique: {
+        indicateurId: indicateurRow.id,
+        individuId: individuRow.id,
+        date,
+      },
+    },
+    update: { valeur },
+    create: {
+      indicateurId: indicateurRow.id,
+      individuId: individuRow.id,
+      date,
+      valeur,
+    },
+  })
+}
+
+function objectifAvancement(override: ObjectifAvancementOverrides): Promise<ObjectifAvancementModel>
+function objectifAvancement(
+  o1: ObjectifAvancementOverrides,
+  o2: ObjectifAvancementOverrides,
+  ...rest: ObjectifAvancementOverrides[]
+): Promise<ObjectifAvancementModel[]>
+async function objectifAvancement(
+  ...overrides: ObjectifAvancementOverrides[]
+): Promise<ObjectifAvancementModel | ObjectifAvancementModel[]> {
+  if (overrides.length === 1) return upsertObjectifAvancement(overrides[0]!)
+  const results: ObjectifAvancementModel[] = []
+  for (const o of overrides) results.push(await upsertObjectifAvancement(o))
+  return results
+}
+
 // --- ApiKey ------------------------------------------------------------------
 
 type PrincipalIndicateurPermissionOverrides = {
@@ -459,6 +508,7 @@ export const fixtures = {
   indicateurReferentiel,
   relation,
   valeurAvancement,
+  objectifAvancement,
   apiKey,
   utilisateur,
   indicateurPermission,

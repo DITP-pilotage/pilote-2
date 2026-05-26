@@ -35,6 +35,10 @@
     "./valeurAvancement": {
       "types": "./src/valeurAvancement.ts",
       "default": "./src/valeurAvancement.ts"
+    },
+    "./objectifAvancement": {
+      "types": "./src/objectifAvancement.ts",
+      "default": "./src/objectifAvancement.ts"
     }
   },
   "files": [

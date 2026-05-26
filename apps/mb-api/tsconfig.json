@@ -20,6 +20,7 @@
       "@/individu/*": ["./src/individu/*"],
       "@/referentiel/*": ["./src/referentiel/*"],
       "@/valeurAvancement/*": ["./src/valeurAvancement/*"],
+      "@/objectifAvancement/*": ["./src/objectifAvancement/*"],
       "@/shared/*": ["./src/shared/*"],
       "@/generated/*": ["./src/generated/*"],
       "@/test/*": ["./src/test/*"],
