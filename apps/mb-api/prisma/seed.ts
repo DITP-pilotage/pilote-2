@@ -5,10 +5,10 @@ import { Prisma, PrismaClient } from '../src/generated/prisma/client.js'
 import { type FonctionAgregation } from '../src/generated/prisma/enums.js'
 
 import {
+  buildValeursPourIndicateur,
   individusSeed,
   referentielsSeed,
   relationsSeed,
-  valeursAvancementSeed,
 } from './seedData/geo.js'
 
 const databaseUrl = process.env['DATABASE_URL']
@@ -108,6 +108,14 @@ const indicateurDates = (index: number): { createdAt: Date; updatedAt: Date } =>
   const createdAt = new Date(updatedAt.getTime() - offsetDays * 86_400_000)
   return { createdAt, updatedAt }
 }
+
+// Maille de saisie par défaut : on saisit toujours sur la maille la plus fine
+// déclarée pour l'indicateur (DEPT > REG > NAT). Pour les niveaux SUM, la
+// valeur est dérivée à la lecture (cf. doc d'archi indicateur-derives.md).
+const PRIORITE_MAILLE = ['REF-DEPT', 'REF-REG', 'REF-NAT'] as const
+
+const mailleLaPlusFine = (liensReferentielPublicIds: ReadonlyArray<string>): string | undefined =>
+  PRIORITE_MAILLE.find((ref) => liensReferentielPublicIds.includes(ref))
 
 const main = async () => {
   for (const [index, item] of indicateursSeed.entries()) {
@@ -229,7 +237,7 @@ const main = async () => {
     {
       indicateurPublicId: 'IND-005',
       referentiels: [
-        { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' },
+        { referentielPublicId: 'REF-REG', fonctionAgregation: 'NONE' },
         { referentielPublicId: 'REF-NAT', fonctionAgregation: 'SUM' },
       ],
     },
@@ -245,43 +253,19 @@ const main = async () => {
       indicateurPublicId: 'IND-008',
       referentiels: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
     },
-    {
-      indicateurPublicId: 'IND-046',
-      referentiels: [
-        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'SUM' },
-        { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' },
-        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'SUM' },
-      ],
-    },
-    {
-      indicateurPublicId: 'IND-047',
-      referentiels: [
-        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
-      ],
-    },
-    {
-      indicateurPublicId: 'IND-048',
-      referentiels: [
-        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-REG', fonctionAgregation: 'NONE' },
-      ],
-    },
-    {
-      indicateurPublicId: 'IND-049',
-      referentiels: [
-        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
-      ],
-    },
-    {
-      indicateurPublicId: 'IND-050',
-      referentiels: [
-        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-REG', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
-      ],
-    },
+    ...indicateursSeed
+      .filter((ind) => parseInt(ind.publicId.replace('IND-', ''), 10) >= 9)
+      .map((ind) => ({
+        indicateurPublicId: ind.publicId,
+        // Politique simple : tous les indicateurs "neutres" sont rattachés à
+        // DEPT (NONE) + REG (SUM) + NAT (SUM). La saisie va sur dept, la
+        // hiérarchie supérieure se dérive.
+        referentiels: [
+          { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' as const },
+          { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' as const },
+          { referentielPublicId: 'REF-NAT', fonctionAgregation: 'SUM' as const },
+        ],
+      })),
   ]
 
   for (const item of indicateurReferentielsSeed) {
@@ -341,38 +325,80 @@ const main = async () => {
     })
   }
 
-  for (const item of valeursAvancementSeed) {
-    const indicateur = await prisma.indicateur.findUniqueOrThrow({
-      where: { publicId: item.indicateurPublicId },
-      select: { id: true },
+  // Indexation pour la génération bulk des valeurs : on a besoin d'aller vite
+  // pour saisir ~100k lignes (~50 indicateurs × 101 dépts × jusqu'à 36 mois).
+  const indicateursParPublicId = new Map(
+    (
+      await prisma.indicateur.findMany({
+        where: { publicId: { in: indicateursSeed.map((i) => i.publicId) } },
+      })
+    ).map((row) => [row.publicId, row.id]),
+  )
+  const individusParPublicId = new Map(
+    (
+      await prisma.individu.findMany({
+        where: { publicId: { in: individusSeed.map((i) => i.publicId) } },
+      })
+    ).map((row) => [row.publicId, { id: row.id, referentielId: row.referentielId }]),
+  )
+  const referentielParPublicId = new Map(
+    (
+      await prisma.referentiel.findMany({
+        where: { publicId: { in: referentielsSeed.map((r) => r.publicId) } },
+      })
+    ).map((row) => [row.publicId, row.id]),
+  )
+  const individusParReferentielId = new Map<string, string[]>()
+  for (const individu of individusSeed) {
+    const refId = referentielParPublicId.get(individu.referentiel)
+    if (!refId) continue
+    const liste = individusParReferentielId.get(refId) ?? []
+    liste.push(individu.publicId)
+    individusParReferentielId.set(refId, liste)
+  }
+
+  let valeursCount = 0
+  for (const lien of indicateurReferentielsSeed) {
+    const refPublicId = mailleLaPlusFine(lien.referentiels.map((r) => r.referentielPublicId))
+    if (!refPublicId) continue // ex. REF-EMPTY → pas de saisie
+    const refId = referentielParPublicId.get(refPublicId)
+    if (!refId) continue
+    const individusPublicIds = individusParReferentielId.get(refId) ?? []
+    if (individusPublicIds.length === 0) continue
+    const indicateurId = indicateursParPublicId.get(lien.indicateurPublicId)
+    if (!indicateurId) continue
+
+    const generated = buildValeursPourIndicateur({
+      indicateurPublicId: lien.indicateurPublicId,
+      individuPublicIds: individusPublicIds,
     })
-    const individu = await prisma.individu.findUniqueOrThrow({
-      where: { publicId: item.individuPublicId },
-      select: { id: true },
-    })
-    const valeur = new Prisma.Decimal(item.valeur)
-    await prisma.valeurAvancement.upsert({
-      where: {
-        valeur_avancement_unique: {
-          indicateurId: indicateur.id,
+    const rows = generated
+      .map((g) => {
+        const individu = individusParPublicId.get(g.individuPublicId)
+        if (!individu) return null
+        return {
+          id: uuidv7(),
+          indicateurId,
           individuId: individu.id,
-          date: item.date,
-        },
-      },
-      update: { valeur },
-      create: {
-        id: uuidv7(),
-        indicateurId: indicateur.id,
-        individuId: individu.id,
-        date: item.date,
-        valeur,
-      },
+          date: g.date,
+          valeur: new Prisma.Decimal(g.valeur),
+        }
+      })
+      .filter((row): row is NonNullable<typeof row> => row !== null)
+
+    // createMany skipDuplicates : la contrainte unique
+    // (indicateurId, individuId, date) garantit l'idempotence du seed sans
+    // payer le coût d'un upsert par ligne (~5ms × 100k = 8 min vs ~10s).
+    const result = await prisma.valeurAvancement.createMany({
+      data: rows,
+      skipDuplicates: true,
     })
+    valeursCount += result.count
   }
 
   const permissionsCount = 8 * 2
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursAvancementSeed.length} valeurs.`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées (les valeurs existantes ont été ignorées).`,
   )
 }
 
