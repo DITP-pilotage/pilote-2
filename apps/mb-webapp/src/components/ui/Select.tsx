@@ -54,12 +54,14 @@ export function SelectContent({
         position={position}
         sideOffset={4}
         className={clsxm(
-          'z-50 min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded border border-border bg-surface shadow-md',
+          'z-50 max-h-[var(--radix-select-content-available-height)] min-w-[var(--radix-select-trigger-width)] overflow-hidden rounded border border-border bg-surface shadow-md',
           className,
         )}
         {...props}
       >
-        <SelectPrimitive.Viewport className="p-1">{children}</SelectPrimitive.Viewport>
+        <SelectPrimitive.Viewport className="max-h-[var(--radix-select-content-available-height)] overflow-y-auto p-1">
+          {children}
+        </SelectPrimitive.Viewport>
       </SelectPrimitive.Content>
     </SelectPrimitive.Portal>
   )
