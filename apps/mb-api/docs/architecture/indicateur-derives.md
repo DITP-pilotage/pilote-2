@@ -1,404 +1,167 @@
-# Séries de valeurs dérivées — design
+# Séries de valeurs dérivées
 
 Date : 2026-05-21
-Statut : accepté
+Statut : implémenté
 
-## Contexte
+## Contexte métier
 
-Le design [`valeurs-derivees-design.md`](./valeurs-derivees-design.md) (2026-05-19) a introduit un endpoint dédié `GET /indicateurs/:id/individus/:individuId/valeur-derivee` qui calcule **la dernière valeur dérivée** d'un individu par agrégation hiérarchique de ses enfants. Ce design enrichit ce socle pour exposer **la série temporelle complète** des valeurs dérivées (et plus uniquement la dernière), et fusionne le résultat dans l'endpoint `/valeurs` existant.
+### Le modèle
 
-Besoin produit : afficher l'évolution dans le temps d'un indicateur sur un individu agrégé (région, France) — pas seulement sa valeur courante. La webapp consomme déjà la série pour les individus feuilles via `/valeurs` ; on veut la même chose pour les individus dérivés, dans le même endpoint, sans dédoublement client.
-Besoin produit : afficher l'évolution dans le temps d'un indicateur sur un D11individu agrégé (région, France) — pas seulement sa valeur courante. La webapp consomme déjà la série pour les individus feuilles via `/valeurs` ; on veut la même chose pour les individus dérivés, dans le même endpoint, sans dédoublement client.
+- **Indicateur** — une métrique suivie dans le temps (ex. *nombre d'arbres plantés*, *taux d'équipement fibre*).
+- **Référentiel** — une dimension d'analyse : une liste d'entités du même type (ex. *Départements*, *Régions*, *Ministères*). Un indicateur déclare sur quels référentiels il se suit, via le lien `IndicateurReferentiel` qui porte aussi sa `fonctionAgregation` (`SUM` ou `NONE`).
+- **Individu** — une entité d'un référentiel (ex. *Bouches-du-Rhône* dans le référentiel *Départements*).
+- **Relation** — lien parent/enfant entre individus, souvent entre référentiels (ex. *PACA* → *Bouches-du-Rhône*). Forme une hiérarchie typique *France → Régions → Départements*.
+- **Valeur d'avancement** — une saisie d'un agent : `(indicateur, individu, date) → valeur`. La donnée brute du système.
 
-## État de l'existant
+### Saisies vs valeurs dérivées
 
-- `GET /indicateurs/:id/valeurs?individus=...&dateDebut=...&dateFin=...` renvoie les **saisies** sous la forme `{ items: [{ indicateur, individu, date, valeur }, …] }`, triées par `individuId ASC, date ASC` (cf. `apps/mb-api/src/valeurAvancement/queries/listValeursForIndicateur.ts`)
-- `GET /indicateurs/:id/individus/:individuId/valeur-derivee` renvoie la **dernière** valeur dérivée + ses contributions directes + couverture (cf. `apps/mb-api/src/valeurAvancement/queries/getValeurDerivee.ts`)
-- L'algo `resolveValeurDerivee` (functional core, pur) prend la dernière saisie par individu et agrège niveau par niveau (saisie prime, sinon dérivée des enfants)
-- Fonction d'agrégation `SUM | NONE` portée par le lien `IndicateurReferentiel` (commit `b7cfd14c3`)
-- Hiérarchie `Relation(parentId, childId)` traversée en BFS itératif via `loadIndividuTree()`
-- TypedSQL `getDernieresValeursPourIndividus.sql` charge les dernières valeurs en bulk (1 requête)
+Toute valeur n'est pas saisie. Pour la plupart des indicateurs, les agents saisissent au plus bas niveau de la hiérarchie — typiquement à la maille départementale, parfois ministère ou opérateur — et les niveaux supérieurs (région, France) doivent être **reconstruits** par agrégation des enfants.
 
-## Décisions
+Un individu est donc soit :
 
-### D1. Suppression de `/valeur-derivee`, fusion dans `/valeurs`
+- **feuille** pour cet indicateur — ses valeurs sont les saisies directes,
+- **agrégé** — ses valeurs sont calculées à partir de ses enfants directs, eux-mêmes feuilles ou agrégés (récursivement).
 
-Le endpoint `GET /indicateurs/:id/individus/:individuId/valeur-derivee` est **supprimé**. La série dérivée d'un individu est désormais exposée par `GET /indicateurs/:id/valeurs`, exactement comme la série saisie d'un individu feuille.
+Le statut feuille/agrégé n'est pas une propriété intrinsèque de l'individu : il dépend de l'indicateur. Un même département peut être feuille pour un indicateur et n'avoir aucune saisie pour un autre. Ce qui détermine le statut, c'est la `fonctionAgregation` portée par le lien `IndicateurReferentiel` du référentiel de l'individu (cf. `isIndividuAgrege`).
 
-L'API client n'a qu'un seul endpoint à consommer pour lire l'évolution d'un indicateur sur un individu, quel que soit son niveau dans la hiérarchie.
+### Enjeux
 
-Breaking change assumé : pas de phase de coexistence ni d'alias. À documenter dans le changelog de release.
+1. **Reconstruire sans dupliquer la donnée** — pas de table dénormalisée de valeurs agrégées. Les dérivées sont recalculées à la lecture à partir des saisies feuilles. Source unique de vérité, pas de désynchronisation possible.
+2. **Affichage au plus tôt** — un dashboard région ne doit pas attendre que les 100 départements aient saisi pour afficher quelque chose. Dès qu'un enfant a une valeur, on émet un point — quitte à exposer une couverture partielle, visible explicitement dans la réponse.
+3. **Évolution dans le temps, pas snapshot** — afficher la trajectoire d'un indicateur agrégé, pas seulement sa dernière valeur. Le calcul doit reconstruire toute la série, pas juste l'état courant.
+4. **Cohérence API entre feuilles et agrégés** — du point de vue du client (webapp), lire la série d'un département ou de la France doit se faire de la même façon, avec le même endpoint et la même forme de réponse (au discriminant `type` près).
 
-### D2. Réponse enrichie : `type` + métadonnées par point
+## Objet
 
-Chaque item de la réponse `/valeurs` porte désormais :
+Exposer, pour un indicateur donné, la **série temporelle** de valeurs d'un individu — qu'il soit feuille (saisies directes) ou agrégé (valeurs reconstruites par agrégation hiérarchique de ses descendants). Tout passe par le même endpoint `GET /indicateurs/:id/valeurs` : un seul appel pour lire l'évolution dans le temps, quel que soit le niveau de l'individu dans la hiérarchie.
 
-- `type: 'saisie' | 'derivee'` — nature du point
-- Si `type = 'derivee'` :
-  - `fonctionAgregation` — fonction utilisée (ex. `SUM`)
-  - `contributions[]` — décomposition par enfant direct au moment du point
-  - `couverture` — `{ nbEnfantsAvecValeur, nbEnfantsTotal }` propre à ce point
-
-Pour un individu feuille (ou non-agrégé), tous les items ont `type: 'saisie'`. Pour un individu agrégé, tous les items ont `type: 'derivee'` (cf. D5).
-
-### D3. Sémantique combineLatest "permissive"
-
-On émet un point dérivé **dès qu'au moins un enfant a une valeur connue** au bucket considéré (et pas seulement quand tous les enfants ont émis — sémantique rxjs strict).
-
-Conséquences :
-- Le premier point de la série dérivée d'un parent correspond au premier bucket où **un** enfant a saisi une valeur. À ce point, la couverture sera `1/n` et la `valeurDerivee` = la valeur de cet unique enfant.
-- La couverture progresse dans le temps à mesure que les enfants saisissent leurs premières valeurs.
-- Les enfants sans valeur connue au bucket courant apparaissent dans `contributions` avec `source: 'manquante'`, `valeur: null`, `date: null`. La SUM se fait uniquement sur les enfants présents.
-
-Rationale produit : un dashboard affiche au plus tôt l'info disponible. Cacher les premiers points jusqu'à couverture complète bloquerait l'affichage longtemps pour les indicateurs à saisie progressive.
-
-### D4. Paramètre `dateTrunc`
-
-Nouveau query param `dateTrunc` sur `/valeurs`, valeurs autorisées : `day | week | month | quarter | year`. **Par défaut `month`** — limite l'explosion de points en réponse pour les indicateurs saisis à fréquence quotidienne. Pour récupérer les dates exactes sans troncature, passer explicitement `dateTrunc=day`.
-
-Sémantique :
-- `week` = lundi ISO 8601 (cohérent avec `date_trunc('week', …)` PostgreSQL)
-- `month` = 1er du mois
-- `quarter` = 1er janvier, 1er avril, 1er juillet, 1er octobre
-- `year` = 1er janvier
-
-S'applique aussi bien aux saisies (séries feuilles) qu'aux dérivées : la troncature uniformise les buckets entre individus.
-
-### D5. Collision dans un bucket : on garde la plus récente
-
-Si un individu a plusieurs saisies dans le même bucket post-troncature (ex. 5 janvier et 18 janvier avec `dateTrunc=month`), on conserve **la plus récente** (18 janvier) comme valeur du bucket pour cet individu.
-
-Implémentation : dédoublonnage par bucket lors du chargement de la série (Postgres `DISTINCT ON (bucket) ... ORDER BY bucket, date DESC, id DESC`), cohérent avec `getDernieresValeursPourIndividus.sql` existant.
-
-### D6. Saisie ignorée sur indicateur agrégé
-
-Si l'indicateur a une `fonctionAgregation` définie (≠ `NONE`) sur le référentiel de l'individu cible, les saisies éventuelles sur cet individu sont **ignorées** lors du calcul. La série exposée est **toujours dérivée**.
-
-Rupture explicite avec la règle "saisie prime" du design 2026-05-19 (D1 du doc précédent). Motivation : on prépare le blocage strict des saisies sur indicateurs agrégés (hors scope de ce ticket, à faire dans une PR ultérieure). En attendant, on évite l'ambiguïté sémantique en favorisant la dérivation.
-
-### D7. Date du point dérivé = date du bucket
-
-La `date` retournée pour un point dérivé est **la date du bucket** (post-troncature), pas la date d'une saisie d'origine.
-
-La date d'origine d'une contribution est exposée séparément dans `contributions[i].date` à des fins de debug / drill-down.
-
-### D8. Forme des contributions
-
-Chaque contribution porte :
-- `individu` (publicId de l'enfant direct)
-- `valeur` — **dernière valeur connue** de cet enfant **≤** date du bucket courant (carry-forward), ou `null` si jamais saisi
-- `date` — date d'origine de la valeur portée (avant troncature) pour debug
-- `source: 'saisie' | 'derivee' | 'manquante'` — `'saisie'` si l'enfant est une feuille avec saisie ; `'derivee'` si l'enfant est lui-même agrégé ; `'manquante'` si aucune valeur connue ≤ bucket
-
-On n'expose **pas** les contributions transitives (les enfants des enfants). Le client peut faire un appel ciblé sur l'enfant agrégé pour drill-down.
-
-### D9. Carry-forward sans coupe
-
-On charge **tout l'historique** des saisies des feuilles descendantes, sans filtrer par `dateDebut`/`dateFin` au load.
-
-`dateDebut`/`dateFin` filtrent en sortie après calcul : on conserve uniquement les points dont la date de bucket est dans la fenêtre. Pas de "carry-forward au-dessus de la fenêtre" : si aucun bucket n'existe avant `dateDebut`, la série commence au premier bucket ≥ `dateDebut`.
-
-Rationale : éviter les approximations / valeurs fantômes à `dateDebut`. Le coût mémoire est borné (cf. D11).
-
-### D10. Multi-individus : calcul indépendant
-
-`/valeurs?individus=A,B,C` calcule la série de chaque individu **indépendamment**. Pas de combinaison croisée entre individus de la requête.
-
-Les saisies des enfants peuvent être partagées entre plusieurs individus demandés (ex. `individus=FRANCE,REG-PACA` chargera DEPT-84 via REG-PACA et indirectement via FRANCE) — on dédoublonne le chargement DB mais on calcule deux séries séparées.
-
-### D11. Limite de volumétrie : département max
-
-Profondeur testée et supportée : **France → Régions → Départements** (~100 feuilles, max ~3 niveaux). Pas de support officiel pour communes (~36k feuilles). À documenter dans la description OpenAPI.
-
-On **accepte mollement** les demandes au-delà : pas de garde-fou applicatif, pas de rejet de la requête, pas de cap de profondeur ou de nombre de feuilles. La requête sera juste lente / coûteuse en mémoire si elle dépasse les ordres de grandeur attendus. À reconsidérer le jour où on observerait un abus en prod.
-
-### D12. Récursion multi-niveaux avec mémoïsation
-
-La série dérivée d'un nœud intermédiaire (ex. région) est calculée une fois et **mémoïsée** par `individuId` au sein d'une requête. Si un appel demande `individus=FRANCE,REG-PACA`, la série de `REG-PACA` n'est calculée qu'une fois.
-
-Implémentation : cache `Map<individuId, Point[]>` local au use case, alimenté en DFS post-ordre.
-
-### D13. Couverture par point
-
-La `couverture` exposée dans chaque point dérivé compte les enfants directs ayant **une valeur connue ≤ bucket** (saisie ou dérivée) :
+## Architecture en couches
 
 ```
-couverture = {
-  nbEnfantsAvecValeur: count(contributions[i].source !== 'manquante'),
-  nbEnfantsTotal: contributions.length,
-}
+HTTP route  ─►  use case          ─►  functional core      ◄──  TypedSQL
+/valeurs        listValeurs…ts        resolveSerieDerivee       getValeursTronquees…sql
+                (orchestration I/O)   (pur, mémoïsé)            (bulk, par bucket)
 ```
 
-Évolue dans le temps. Le client peut détecter visuellement les zones de la série où la couverture est partielle.
+Trois responsabilités séparées :
 
-## Algorithme
+- **Use case** (`queries/listValeursForIndicateur.ts`) — orchestration des I/O Prisma : permissions, chargement de l'arbre, des liens indicateur↔référentiel, et des saisies tronquées. Aucun calcul métier.
+- **Functional core** (`resolveSerieDerivee.ts`) — algorithme pur, sans Prisma. Prend un contexte en mémoire (arbres + séries feuilles + fonctions d'agrégation), retourne des séries. Mémoïsé par `individuId`.
+- **TypedSQL** (`prisma/sql/getValeursTronqueesPourIndividus.sql`) — une seule requête bulk qui charge les saisies pré-tronquées et pré-dédoublonnées pour toutes les feuilles concernées.
 
-### Pseudocode
+Le découpage isole le calcul (testable sans DB) du chargement (testable par tests d'intégration).
 
-```
-fonction sérieDérivée(individuId, dateTrunc, cache):
-  si cache.contient(individuId): retourne cache.get(individuId)
+## Cycle de vie d'une requête
 
-  enfants = relations.enfantsDirects(individuId)
+`buildSeries` (`listValeursForIndicateur.ts:49`) déroule trois phases :
 
-  si enfants.vide():
-    # Cas feuille : on retourne la série de saisies tronquée + dédoublonnée
-    série = saisies(individuId, dateTrunc)  # via SQL avec DISTINCT ON (bucket)
-    cache.set(individuId, série)
-    retourne série
+1. **Résolution des cibles** — `loadCibles` traduit les `publicId` demandés en `id` internes + `referentielId`.
+2. **Chargement bulk en parallèle** :
+   - `loadSousArbre` — BFS itératif niveau par niveau sur la table `relation`. Construit `enfantsParParent` (la topologie locale dont l'algo a besoin) et `allNodes` (l'univers des descendants).
+   - `loadFonctionsAgregation` — map `referentielId → FonctionAgregation` (`SUM` ou `NONE`) pour l'indicateur courant.
+   - Puis `loadSaisiesTronquees` (séquentiel : a besoin de `allNodes`) — une requête `$queryRawTyped` pour toutes les saisies, déjà groupées par bucket.
+3. **Calcul** — pour chaque cible, `resolveSerieIndividu` produit une série ; on filtre par `dateDebut`/`dateFin` en sortie, puis on convertit en `ValeurAvancementApiModel`.
 
-  # Cas nœud intermédiaire : calcul récursif des enfants puis combineLatest
-  sériesEnfants = []
-  pour chaque enfant ∈ enfants:
-    sériesEnfants.push((enfant, sérieDérivée(enfant.id, dateTrunc, cache)))
+Tout le travail DB est concentré au début. Le reste vit en mémoire avec un cache local à la requête.
 
-  buckets = union(toutes les dates des sériesEnfants)  # triés ASC
-  pointers = Map<enfantId, indexCourantDansSaSérie> initialisée à 0
-  points = []
+## Calcul de la série
 
-  pour chaque bucket ∈ buckets ordonnés ASC:
-    contributions = []
-    valeursPourSomme = []
-    pour chaque (enfant, sérieEnfant) ∈ sériesEnfants:
-      # Avancer le pointer tant que sérieEnfant[ptr+1].date <= bucket
-      avancer pointers[enfant.id]
-      derniereValeurConnue = sérieEnfant[pointers[enfant.id]]  # peut être null si pointer < 0
+### Distinction feuille / agrégé
 
-      si derniereValeurConnue existe et derniereValeurConnue.date <= bucket:
-        contributions.push({
-          individu: enfant.publicId,
-          valeur: derniereValeurConnue.valeur,
-          date: derniereValeurConnue.dateOrigine,
-          source: enfant.estFeuille ? 'saisie' : 'derivee',
-        })
-        valeursPourSomme.push(derniereValeurConnue.valeur)
-      sinon:
-        contributions.push({
-          individu: enfant.publicId,
-          valeur: null,
-          date: null,
-          source: 'manquante',
-        })
+`isIndividuAgrege` (`resolveSerieDerivee.ts:46`) : un individu est agrégé pour cet indicateur s'il a **au moins un enfant direct** *et* que son référentiel est lié à l'indicateur avec une `fonctionAgregation ≠ NONE`. Sinon il est feuille — sa série, ce sont ses saisies.
 
-    points.push({
-      date: bucket,
-      valeur: computeSum(valeursPourSomme),
-      type: 'derivee',
-      fonctionAgregation: 'SUM',
-      contributions,
-      couverture: {
-        nbEnfantsAvecValeur: valeursPourSomme.length,
-        nbEnfantsTotal: contributions.length,
-      },
-    })
+Conséquence importante : si un individu intermédiaire (ex. région) a des saisies *mais* que l'indicateur est configuré avec `SUM` sur les régions, ses saisies sont **ignorées**. La série exposée est toujours la dérivée. Cela évite l'ambiguïté sémantique d'avoir deux sources de vérité, en attendant le blocage strict de la saisie côté commande.
 
-  cache.set(individuId, points)
-  retourne points
-```
+### Cas feuille
+
+Trivial : on prend la série déjà tronquée chargée depuis SQL et on emballe chaque ligne en `PointInterne` de type `saisie`. Le bucket vient du `date_trunc` Postgres, la `dateOrigine` est conservée pour debug.
+
+### Cas agrégé : combineLatest permissif
+
+Le cœur du système (`computeSerieDerivee`, `resolveSerieDerivee.ts:96`). Pour chaque enfant direct, on récupère récursivement sa série (feuille ou dérivée). On fusionne ensuite ces séries niveau par niveau, en répondant à la question : « à chaque date où *au moins un enfant* a une valeur connue, quelle est la somme des dernières valeurs connues de tous les enfants ? »
+
+Mécanique en deux passes :
+
+1. **Union des buckets** — on collecte l'ensemble des dates distinctes apparaissant dans une série enfant, triées ASC. C'est le squelette temporel du parent.
+2. **Sweep avec pointers (carry-forward)** — on parcourt les buckets en ordre croissant. Pour chaque enfant on maintient un pointer qui avance tant que la prochaine valeur de cet enfant a une date ≤ bucket courant. La valeur courante de l'enfant à ce bucket est donc *sa dernière valeur connue* — c'est le carry-forward.
+
+À chaque bucket on émet un point avec :
+
+- la somme des valeurs des enfants présents,
+- les `contributions` détaillées par enfant (`source: 'saisie' | 'derivee' | 'manquante'`),
+- la `couverture` (`{ nbEnfantsAvecValeur, nbEnfantsTotal }`) propre à ce point.
+
+**Permissif** signifie : on n'attend pas que tous les enfants aient saisi pour commencer la série. Dès qu'un enfant a une valeur, on émet ; les autres apparaissent en `manquante`. La couverture progresse dans le temps à mesure que les saisies arrivent. Un dashboard affiche donc l'info au plus tôt, quitte à montrer une couverture partielle — visible explicitement dans la réponse.
+
+### Mémoïsation
+
+`resolveSerieIndividu` consulte un cache `Map<individuId, Point[]>` local à la requête. Si `/valeurs?individus=FRANCE,REG-PACA` est appelé, la série de `REG-PACA` est calculée une seule fois — la branche du calcul de FRANCE qui la traverse réutilise le résultat caché. La complexité d'un appel multi-cibles reste celle d'une seule passe sur l'arbre.
+
+### Dédoublonnage par bucket (côté SQL)
+
+Si un individu a plusieurs saisies dans le même bucket (ex. deux saisies en janvier avec `dateTrunc=month`), on conserve **la plus récente**. C'est fait au load via `DISTINCT ON (individu_id, date_trunc(...)) ORDER BY ..., date DESC, id DESC` — l'algo voit déjà une série propre à un point par bucket.
 
 ### Complexité
 
-Pour un individu cible avec :
-- `N` = nombre total de buckets distincts dans son sous-arbre après troncature
-- `E` = nombre d'enfants directs
-- `D` = profondeur du sous-arbre
+Pour un sous-arbre avec `N` buckets distincts au total et `E` enfants par parent :
 
-Complexité temps : **O(N × E × D)** dans le pire cas (DFS post-ordre + combineLatest à chaque niveau). Avec mémoïsation par individu, chaque sous-arbre n'est calculé qu'une fois.
+- Temps : `O(N × E)` par parent agrégé (la passe pointers est amortie). Avec mémoïsation, chaque sous-arbre n'est calculé qu'une fois.
+- Mémoire : `O(N × E)` pour stocker les séries intermédiaires + cache.
 
-Complexité mémoire : **O(N × E)** pour stocker les séries intermédiaires + cache.
+Ordres de grandeur ciblés : France / 18 régions / ~100 départements, ~60 buckets en mensuel → ~1k entries pour la série France (~100 KB JSON). Le passage à `dateTrunc=day` sur la même hiérarchie monte à ~3 MB — borné mais à surveiller.
 
-Ordres de grandeur attendus :
-- France / 18 régions / ~100 départements
-- 5 ans × 12 mois = 60 buckets avec `dateTrunc=month`
-- Série France = 60 points × 18 contributions = 1080 entries → ~100 KB JSON. OK.
-- Série France avec `dateTrunc=day` et saisies quotidiennes = 1825 buckets × 18 contributions ≈ 33k entries → ~3 MB JSON. À surveiller.
+## Modèle de réponse
 
-Pas de CTE récursive Postgres : on garde le calcul en JS pour la lisibilité. La table `relation` reste un BFS itératif par niveau (déjà en place).
-
-### Chargement DB
-
-Une seule requête bulk pour les saisies tronquées :
-
-```sql
--- prisma/sql/getValeursTronqueesPourIndividus.sql
-SELECT DISTINCT ON (individu_id, date_trunc($3, date::date))
-  individu_id  AS "individuId",
-  date_trunc($3, date::date)::date AS bucket,
-  date         AS "dateOrigine",
-  valeur
-FROM valeur_avancement
-WHERE indicateur_id = $1
-  AND individu_id = ANY($2)
-ORDER BY individu_id, date_trunc($3, date::date), date DESC, id DESC;
-```
-
-Le `$3` est passé comme `text` (`'day' | 'week' | 'month' | 'quarter' | 'year'`).
-
-Note : `date` est typée `String` dans Prisma mais représente un `YYYY-MM-DD` ; cast `::date` nécessaire pour `date_trunc`.
-
-## Modèle API
-
-### Query params (`listValeursForIndicateurQuerySchema`)
-
-```ts
-{
-  individus: string[],        // 1..100 publicIds (existant)
-  dateDebut?: string,         // YYYY-MM-DD inclusif (existant)
-  dateFin?: string,           // YYYY-MM-DD inclusif (existant)
-  dateTrunc?: 'day' | 'week' | 'month' | 'quarter' | 'year',  // nouveau, défaut 'day'
-}
-```
-
-### Schéma de réponse (`valeurAvancementListApiModelSchema`)
+Discriminated union sur `type` pour chaque item :
 
 ```ts
 type ValeurApiModel =
-  | {
-      indicateur: string
-      individu: string
-      date: string                  // YYYY-MM-DD (bucket post-troncature)
-      valeur: number
-      type: 'saisie'
-    }
-  | {
-      indicateur: string
-      individu: string
-      date: string                  // YYYY-MM-DD (bucket)
-      valeur: number
-      type: 'derivee'
-      fonctionAgregation: 'SUM'     // (énum FonctionAgregation, NONE exclu par construction)
-      contributions: Array<{
-        individu: string
-        valeur: number | null
-        date: string | null         // date d'origine (avant troncature)
-        source: 'saisie' | 'derivee' | 'manquante'
-      }>
-      couverture: {
-        nbEnfantsAvecValeur: number
-        nbEnfantsTotal: number
-      }
-    }
-
-type ValeurAvancementListApiModel = {
-  items: ValeurApiModel[]
-}
+  | { type: 'saisie';  indicateur; individu; date; valeur }
+  | { type: 'derivee'; indicateur; individu; date; valeur
+      fonctionAgregation: 'SUM'
+      contributions: Array<{ individu; valeur: number|null; date: string|null;
+                             source: 'saisie' | 'derivee' | 'manquante' }>
+      couverture: { nbEnfantsAvecValeur; nbEnfantsTotal } }
 ```
 
-Discriminated union sur `type` côté Zod (`z.discriminatedUnion('type', […])`).
+Pour un point `derivee`, `date` est la **date du bucket** (post-troncature). La date d'origine de chaque contribution (pré-troncature) reste accessible via `contributions[i].date`. On n'expose **pas** les contributions transitives — le client peut interroger l'enfant agrégé pour drill-down.
 
-### Exemple de réponse
+Query params côté entrée :
 
-```json
-{
-  "items": [
-    {
-      "indicateur": "IND-ARBRES",
-      "individu": "REG-PACA",
-      "date": "2025-01-01",
-      "valeur": 100.0,
-      "type": "derivee",
-      "fonctionAgregation": "SUM",
-      "contributions": [
-        { "individu": "DEPT-13", "valeur": 100.0, "date": "2025-01-18", "source": "saisie" },
-        { "individu": "DEPT-84", "valeur": null,  "date": null,         "source": "manquante" }
-      ],
-      "couverture": { "nbEnfantsAvecValeur": 1, "nbEnfantsTotal": 2 }
-    },
-    {
-      "indicateur": "IND-ARBRES",
-      "individu": "REG-PACA",
-      "date": "2025-02-01",
-      "valeur": 334.56,
-      "type": "derivee",
-      "fonctionAgregation": "SUM",
-      "contributions": [
-        { "individu": "DEPT-13", "valeur": 100.0,  "date": "2025-01-18", "source": "saisie" },
-        { "individu": "DEPT-84", "valeur": 234.56, "date": "2025-02-05", "source": "saisie" }
-      ],
-      "couverture": { "nbEnfantsAvecValeur": 2, "nbEnfantsTotal": 2 }
-    }
-  ]
-}
-```
+- `individus` — 1..100 publicIds
+- `dateDebut` / `dateFin` — fenêtre inclusive, appliquée **après** calcul (pas de troncature de l'historique chargé : voir tradeoffs)
+- `dateTrunc` — `day | week | month | quarter | year`, **défaut `month`**
 
-## Conséquences
+## Choix techniques & tradeoffs
 
-- **Breaking change** sur `/valeurs` : ajout du discriminant `type` (cassant si le client itère sans tester `type`)
-- **Suppression** de la route `/indicateurs/:id/individus/:individuId/valeur-derivee` et de tous ses artefacts associés (use case `getValeurDerivee`, schémas `ValeurDeriveeApiModel`, tests)
-- **Refactor** de `resolveValeurDerivee` : passage d'un résultat scalaire à une série temporelle, mémoïsation par individu
-- **Renommage** de `getDernieresValeursPourIndividus.sql` → `getValeursTronqueesPourIndividus.sql` (ou ajout d'un nouveau, ancien à supprimer si plus de référence)
-- Le functional core reste pur (pas de Prisma dans `resolveValeurDerivee`)
+### Pas de CTE récursive Postgres
 
-## Plan d'implémentation
+Le calcul reste en JS. La hiérarchie réelle est peu profonde (3-4 niveaux), le BFS itératif sur `relation` est lisible et débuggable. Le coût d'une CTE récursive ne serait justifié qu'à beaucoup plus grande échelle.
 
-### Étapes
+### Functional core pur
 
-1. **Étendre `mb-shared`** : ajouter `dateTrunc` au query schema, discriminated union sur `type`, supprimer les schémas `ValeurDeriveeApiModel` / `ContributionApiModel` / `CouvertureApiModel` au profit des nouveaux schémas inline (ou les réutiliser pour le sous-objet `contributions`).
-2. **Nouveau TypedSQL** `prisma/sql/getValeursTronqueesPourIndividus.sql` (paramètre `date_trunc` dynamique).
-3. **Refactor functional core** : `resolveValeurDerivee` devient `resolveSerieDerivee` qui renvoie `Point[]`. Mémoïsation par `individuId` via `Map`.
-4. **Refactor use case** `listValeursForIndicateur` :
-   - Pour chaque individu demandé : déterminer s'il est feuille ou agrégé (via `Relation` + `IndicateurReferentiel.fonctionAgregation`)
-   - Si feuille (ou `fonctionAgregation = NONE`) → série de saisies tronquée
-   - Sinon → série dérivée via `resolveSerieDerivee`
-   - Charger en bulk toutes les saisies des feuilles descendantes (1 query, dédoublonnage par individu si plusieurs cibles partagent des feuilles)
-   - Filtrer par `dateDebut`/`dateFin` en sortie
-   - Concaténer + trier par `(individu, date)`
-5. **Supprimer** la route `/valeur-derivee` (routes.ts) + `getValeurDerivee.ts` + tests associés.
-6. **Mettre à jour les tests d'intégration** `listValeursForIndicateur.test.ts` : cas feuilles, cas dérivés (1/2/3 niveaux), couverture partielle dans le temps, `dateTrunc` (day/month/year), filtres date sur séries dérivées.
-7. **Tests purs** sur `resolveSerieDerivee` : combineLatest permissif, carry-forward, mémoïsation.
-8. **OpenAPI** : description claire du nouveau comportement, mention de la limite "département max" pour les agrégés.
+`resolveSerieDerivee` ne touche jamais Prisma. Toute la donnée nécessaire (arbre, séries feuilles, fonctions d'agrégation) est passée dans un `ResolveSerieContext`. Tests purs rapides, le use case sert d'adaptateur I/O.
 
-### Découpage fichiers
+### Carry-forward sans coupe à l'entrée
 
-| Fichier | Action |
-|---|---|
-| `packages/mb-shared/src/valeurAvancement.ts` | Étendre query + discriminated union sur `type` |
-| `apps/mb-api/prisma/sql/getValeursTronqueesPourIndividus.sql` | Nouveau TypedSQL |
-| `apps/mb-api/src/valeurAvancement/resolveSerieDerivee.ts` (+ test) | Functional core (nouveau, remplace `resolveValeurDerivee.ts`) |
-| `apps/mb-api/src/valeurAvancement/queries/listValeursForIndicateur.ts` (+ test) | Refactor du use case |
-| `apps/mb-api/src/valeurAvancement/queries/getValeurDerivee.ts` (+ test) | **Suppression** |
-| `apps/mb-api/src/valeurAvancement/resolveValeurDerivee.ts` (+ test) | **Suppression** |
-| `apps/mb-api/src/valeurAvancement/routes.ts` | Suppression de la route `/valeur-derivee`, mise à jour de la route `/valeurs` |
-| `apps/mb-api/prisma/sql/getDernieresValeursPourIndividus.sql` | **Suppression** si plus référencée |
+On charge tout l'historique des saisies des descendants, sans pré-filtrer par `dateDebut`/`dateFin`. Le filtre s'applique en sortie sur les buckets calculés. Cela évite des points fantômes ou des approximations à la borne `dateDebut` (une valeur dont la dernière saisie connue est antérieure à la fenêtre serait sinon perdue). Coût mémoire borné par la volumétrie cible.
 
-### Tests
+### `dateTrunc=month` par défaut
 
-Tests purs (sans DB) sur `resolveSerieDerivee` :
+Le défaut limite l'explosion de points pour les indicateurs à saisie quotidienne. Pour les dates exactes, le client passe explicitement `dateTrunc=day`.
 
-- Feuille seule (avec / sans saisies)
-- 1 niveau, couverture 100% (combineLatest devient SUM par bucket)
-- 1 niveau, couverture progressive (premier point avec 1/n, dernier point avec n/n)
-- 1 niveau, valeur manquante au milieu de la série (carry-forward)
-- 2 niveaux (grand-parent / parent / feuilles) — vérifier la mémoïsation : on n'appelle pas deux fois
-- 3 niveaux (France / Régions / Départements)
-- Saisie sur nœud intermédiaire ignorée si `fonctionAgregation` définie (D6)
-- Collision dans bucket : 2 saisies même mois → la plus récente du mois est retenue
-- `dateTrunc` variés sur la même série d'entrée
+### Limite de volumétrie : département max
 
-Tests d'intégration (avec DB) sur `listValeursForIndicateur` :
+Profondeur supportée : France → Régions → Départements (~100 feuilles). Le code n'oppose aucun garde-fou à des demandes plus volumineuses (ex. communes, ~36k feuilles) : la requête sera juste lente. À reconsidérer si on observe un cas réel en prod.
 
-- Feuille avec saisies + `dateTrunc=month`
-- Région avec 2 départements (saisies croisées en couverture partielle puis complète)
-- France avec 2 régions × 2 départements end-to-end
-- Filtre `dateDebut`/`dateFin` sur série dérivée
-- Multi-individus `individus=A,B,C` mix feuille/agrégé
-- Indicateur avec `fonctionAgregation = NONE` sur un référentiel : série de saisies, pas d'agrégation, même si des enfants existent
-- 401 sans authentification, 404 indicateur inexistant
+### Permissif vs strict
+
+On a choisi la sémantique permissive (émettre dès qu'un enfant a une valeur) plutôt que stricte (attendre la couverture complète). Côté produit : un dashboard doit afficher l'information disponible le plus tôt possible. La `couverture` exposée donne au client toute l'info pour signaler visuellement les zones partielles s'il le souhaite.
 
 ## Hors scope
 
-- **Blocage de la saisie** sur indicateur avec `fonctionAgregation ≠ NONE` (côté commands `upsertValeurAvancement`) — PR séparée
-- **Support communes** (>500 feuilles) — pas de garde-fou ni d'optimisation matérialisée pour le MVP (cf. D11)
-- **Détection de cycles** dans `Relation` (déjà hors scope du design précédent)
-- **Autres fonctions d'agrégation** que SUM (AVG, MIN, MAX, COUNT…) — l'enum reste `SUM | NONE`
-- **Paramètre `?contributions=false`** pour réduire la taille de réponse — pas pour le MVP. Les contributions sont toujours embarquées dans les points dérivés. À reconsidérer si la volumétrie devient problématique en prod.
-- **Préservation transitoire de `/valeur-derivee`** — suppression nette, pas de phase de dépréciation (build, pas encore de prod, cf. D1).
-
-## Prochaines étapes
-
-1. Valider ce design (revue Antoine)
-2. Implémenter le TypedSQL + tests de la query brute
-3. Refactor `resolveSerieDerivee` + tests purs
-4. Refactor use case `listValeursForIndicateur` + tests d'intégration
-5. Suppression du endpoint `/valeur-derivee` et nettoyage
-6. Mise à jour de la description OpenAPI et du changelog
+- Blocage de la saisie sur indicateur avec `fonctionAgregation ≠ NONE` (côté commands `upsertValeurAvancement`)
+- Autres fonctions d'agrégation (AVG, MIN, MAX, COUNT…) — l'enum reste `SUM | NONE`
+- Détection de cycles dans `relation`
+- Paramètre `?contributions=false` pour alléger la réponse
+- Support communes
