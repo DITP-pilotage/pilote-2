@@ -129,6 +129,26 @@ const referentielsCsvSchema = z
       ),
   )
 
+export const valeursRemarquablesContributionApiModelSchema = z.object({
+  individu: individuPublicIdSchema,
+  valeur: z.number().describe('Dernière valeur connue de cet individu.'),
+  date: z
+    .string()
+    .describe(
+      "Date du bucket de la dernière valeur connue (post-troncature mensuelle), " +
+        "alignée sur l'unité de regroupement utilisée pour les indicateurs dérivés.",
+    ),
+  source: z
+    .enum(['saisie', 'derivee'])
+    .describe(
+      "`saisie` : la valeur provient d'une saisie directe sur cet individu. " +
+        "`derivee` : la valeur est reconstruite par agrégation hiérarchique des descendants.",
+    ),
+})
+export type ValeursRemarquablesContributionApiModel = z.infer<
+  typeof valeursRemarquablesContributionApiModelSchema
+>
+
 export const valeursRemarquablesReferentielApiModelSchema = z.object({
   referentiel: referentielPublicIdSchema,
   min: z
@@ -152,6 +172,14 @@ export const valeursRemarquablesReferentielApiModelSchema = z.object({
       "Médiane des valeurs les plus récentes des individus du référentiel ayant au moins une valeur " +
         "pour l'indicateur. Moyenne des deux valeurs centrales si le nombre d'individus est pair. " +
         "null si aucun individu n'a de valeur.",
+    ),
+  contributions: z
+    .array(valeursRemarquablesContributionApiModelSchema)
+    .describe(
+      "Dernière valeur connue de chaque individu du référentiel ayant au moins une valeur " +
+        "pour l'indicateur (triée par publicId d'individu, asc). Permet au client de reconstruire " +
+        "min/max/médiane ou de faire son propre top-N / drill-down. Les individus sans aucune valeur " +
+        "ne figurent pas.",
     ),
 })
 export type ValeursRemarquablesReferentielApiModel = z.infer<

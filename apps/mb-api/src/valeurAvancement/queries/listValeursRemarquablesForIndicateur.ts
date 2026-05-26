@@ -1,6 +1,7 @@
 import {
   type DateTrunc,
   type ListValeursRemarquablesForIndicateurQuery,
+  type ValeursRemarquablesContributionApiModel,
   type ValeursRemarquablesListApiModel,
 } from '@pilote/mb-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
@@ -63,14 +64,25 @@ const buildStats = async ({
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
   const items = referentiels.map((referentiel) => {
-    const dernieresValeurs = referentiel.individus
-      .map((individu) => resolveSerieIndividu(individu.id, ctx, cache).at(-1)?.valeur)
-      .filter((v): v is Decimal => v !== undefined)
+    const contributions: ValeursRemarquablesContributionApiModel[] = []
+    const valeurs: Decimal[] = []
+    for (const individu of referentiel.individus) {
+      const dernierPoint = resolveSerieIndividu(individu.id, ctx, cache).at(-1)
+      if (!dernierPoint) continue
+      valeurs.push(dernierPoint.valeur)
+      contributions.push({
+        individu: individu.publicId,
+        valeur: dernierPoint.valeur.toNumber(),
+        date: dernierPoint.bucket,
+        source: dernierPoint.type === 'saisie' ? 'saisie' : 'derivee',
+      })
+    }
     return {
       referentiel: referentiel.publicId,
-      min: computeMin(dernieresValeurs),
-      max: computeMax(dernieresValeurs),
-      mediane: computeMediane(dernieresValeurs),
+      min: computeMin(valeurs),
+      max: computeMax(valeurs),
+      mediane: computeMediane(valeurs),
+      contributions,
     }
   })
 
