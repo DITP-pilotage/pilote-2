@@ -16,12 +16,12 @@ export const indicateurVisibiliteSchema = z
 export type IndicateurVisibilite = z.infer<typeof indicateurVisibiliteSchema>
 
 export const fonctionAgregationSchema = z
-  .enum(['SUM', 'NONE'])
+  .enum(['SUM', 'AVG', 'NONE'])
   .describe(
     "Fonction d'agrégation appliquée pour calculer la valeur d'un parent à partir des valeurs " +
-      "de ses enfants. `SUM` = somme des contributions des enfants. `NONE` = pas d'agrégation : " +
-      "la valeur doit être saisie directement pour ce référentiel, elle n'est jamais dérivée depuis " +
-      'les enfants.',
+      "de ses enfants. `SUM` = somme des contributions des enfants. `AVG` = moyenne arithmétique " +
+      "simple (non pondérée) des contributions connues. `NONE` = pas d'agrégation : la valeur doit " +
+      "être saisie directement pour ce référentiel, elle n'est jamais dérivée depuis les enfants.",
   )
 export type FonctionAgregation = z.infer<typeof fonctionAgregationSchema>
 

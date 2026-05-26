@@ -161,7 +161,7 @@ const computeSerieDerivee = async (
     }
 
     const contributions: ContributionInterne[] = []
-    const valeursPourSomme: Decimal[] = []
+    const valeursAAgreger: Decimal[] = []
 
     for (const state of states) {
       const courant = state.pointer >= 0 ? state.points[state.pointer] : undefined
@@ -183,26 +183,45 @@ const computeSerieDerivee = async (
         dateOrigine,
         source: state.estAgrege ? 'derivee' : 'saisie',
       })
-      valeursPourSomme.push(courant.valeur)
+      valeursAAgreger.push(courant.valeur)
     }
 
     // Permissif : on n'émet pas tant qu'aucun enfant n'a saisi ; dès la première
     // valeur connue d'un enfant, le point sort avec une couverture < total.
-    if (valeursPourSomme.length === 0) continue
+    if (valeursAAgreger.length === 0) continue
 
-    const somme = valeursPourSomme.reduce((acc, v) => acc.plus(v), new Decimal(0))
+    const valeur = agreger(valeursAAgreger, fonctionAgregation)
     result.push({
       type: 'derivee',
       bucket,
-      valeur: somme,
+      valeur,
       fonctionAgregation,
       contributions,
       couverture: {
-        nbEnfantsAvecValeur: valeursPourSomme.length,
+        nbEnfantsAvecValeur: valeursAAgreger.length,
         nbEnfantsTotal: states.length,
       },
     })
   }
 
   return result
+}
+
+// Précondition : `valeurs` est non vide (filtré en amont sur la couverture > 0)
+// et `fonction` est active (≠ 'NONE', cf. `getFonctionAgregationActive`).
+// `AVG` est une moyenne arithmétique simple non pondérée : chaque enfant connu
+// compte pour 1, les enfants sans valeur sont ignorés (cf. cas permissif amont).
+const agreger = (valeurs: ReadonlyArray<Decimal>, fonction: FonctionAgregation): Decimal => {
+  const somme = valeurs.reduce((acc, v) => acc.plus(v), new Decimal(0))
+  switch (fonction) {
+    case 'SUM':
+      return somme
+    case 'AVG':
+      return somme.dividedBy(valeurs.length)
+    case 'NONE':
+      throw new Error(
+        "agreger appelé avec fonction 'NONE' : une dérivation ne devrait pas être déclenchée " +
+          "lorsque l'agrégation est désactivée.",
+      )
+  }
 }
