@@ -136,15 +136,14 @@ describe.concurrent('upsertObjectifAvancement', () => {
         permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
       })
 
-      const result = await runAsPrincipal(apiKey.id, () =>
-        upsertObjectifAvancement({
-          indicateurPublicId: indId,
-          body: { individu: individuId, date: '2025-01-01', valeur: 100 },
-        }),
-      )
-
-      expect(result.isErr()).toBe(true)
-      expect(result._unsafeUnwrapErr()).toBeInstanceOf(ForbiddenError)
+      await expect(
+        runAsPrincipal(apiKey.id, () =>
+          upsertObjectifAvancement({
+            indicateurPublicId: indId,
+            body: { individu: individuId, date: '2025-01-01', valeur: 100 },
+          }),
+        ),
+      ).rejects.toBeInstanceOf(ForbiddenError)
     }),
   )
 

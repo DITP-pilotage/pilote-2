@@ -2,7 +2,6 @@ import { type DeleteValeurAvancementBody } from '@pilote/mb-shared/valeurAvancem
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { type ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError, resolveAuthorizedIndividu } from '@/individu/permission'
 import {
@@ -20,10 +19,7 @@ type DeleteValeurAvancementParams = {
 export const deleteValeurAvancement = ({
   indicateurPublicId,
   body,
-}: DeleteValeurAvancementParams): ResultAsync<
-  void,
-  DeleteValeurAvancementError | ForbiddenError
-> => {
+}: DeleteValeurAvancementParams): ResultAsync<void, DeleteValeurAvancementError> => {
   const principalId = requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(
     db().indicateur.findFirstOrThrow({

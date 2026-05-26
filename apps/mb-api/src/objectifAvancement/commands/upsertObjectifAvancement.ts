@@ -6,7 +6,6 @@ import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { Decimal } from '@/framework/decimal'
-import { type ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError, resolveAuthorizedIndividu } from '@/individu/permission'
 import {
@@ -27,7 +26,7 @@ export const upsertObjectifAvancement = ({
   body,
 }: UpsertObjectifAvancementParams): ResultAsync<
   ObjectifAvancementApiModel,
-  UpsertObjectifAvancementError | ForbiddenError
+  UpsertObjectifAvancementError
 > => {
   const principalId = requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(

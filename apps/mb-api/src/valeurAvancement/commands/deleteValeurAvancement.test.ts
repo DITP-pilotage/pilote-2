@@ -203,15 +203,14 @@ describe.concurrent('deleteValeurAvancement', () => {
         permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
       })
 
-      const result = await runAsPrincipal(apiKey.id, () =>
-        deleteValeurAvancement({
-          indicateurPublicId: indId,
-          body: { individu: individuId, date: '2025-03-01' },
-        }),
-      )
-
-      expect(result.isErr()).toBe(true)
-      expect(result._unsafeUnwrapErr()).toBeInstanceOf(ForbiddenError)
+      await expect(
+        runAsPrincipal(apiKey.id, () =>
+          deleteValeurAvancement({
+            indicateurPublicId: indId,
+            body: { individu: individuId, date: '2025-03-01' },
+          }),
+        ),
+      ).rejects.toBeInstanceOf(ForbiddenError)
     }),
   )
 

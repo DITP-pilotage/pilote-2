@@ -2,7 +2,6 @@ import { type DeleteObjectifAvancementBody } from '@pilote/mb-shared/objectifAva
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { type ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError, resolveAuthorizedIndividu } from '@/individu/permission'
 import {
@@ -20,10 +19,7 @@ type DeleteObjectifAvancementParams = {
 export const deleteObjectifAvancement = ({
   indicateurPublicId,
   body,
-}: DeleteObjectifAvancementParams): ResultAsync<
-  void,
-  DeleteObjectifAvancementError | ForbiddenError
-> => {
+}: DeleteObjectifAvancementParams): ResultAsync<void, DeleteObjectifAvancementError> => {
   const principalId = requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(
     db().indicateur.findFirstOrThrow({

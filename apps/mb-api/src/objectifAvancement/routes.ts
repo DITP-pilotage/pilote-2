@@ -10,7 +10,6 @@ import {
 } from '@pilote/mb-shared/objectifAvancement'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
-import { ForbiddenError } from '@/framework/errors/AppError'
 import { never } from '@/framework/errors/never'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { withTransaction } from '@/framework/persistence/withTransaction'
@@ -169,16 +168,8 @@ objectifAvancementRoutes.openapi(upsertObjectifAvancementRoute, async (context) 
         schema: ObjectifAvancementApiModelSchema,
         status: 200,
       }),
-    (error) => {
-      if (error instanceof ForbiddenError) {
-        return jsonResponseError({
-          context,
-          error: { code: error.code, message: error.message },
-          schema: ErrorApiModelSchema,
-          status: 403,
-        })
-      }
-      return jsonResponseError({
+    (error) =>
+      jsonResponseError({
         context,
         error: {
           code: error.type,
@@ -188,8 +179,7 @@ objectifAvancementRoutes.openapi(upsertObjectifAvancementRoute, async (context) 
         },
         schema: ErrorApiModelSchema,
         status: 400,
-      })
-    },
+      }),
   )
 })
 
@@ -203,16 +193,8 @@ objectifAvancementRoutes.openapi(deleteObjectifAvancementRoute, async (context) 
 
   return result.match(
     () => context.body(null, 204),
-    (error) => {
-      if (error instanceof ForbiddenError) {
-        return jsonResponseError({
-          context,
-          error: { code: error.code, message: error.message },
-          schema: ErrorApiModelSchema,
-          status: 403,
-        })
-      }
-      return jsonResponseError({
+    (error) =>
+      jsonResponseError({
         context,
         error: {
           code: error.type,
@@ -222,7 +204,6 @@ objectifAvancementRoutes.openapi(deleteObjectifAvancementRoute, async (context) 
         },
         schema: ErrorApiModelSchema,
         status: 400,
-      })
-    },
+      }),
   )
 })

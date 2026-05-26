@@ -7,7 +7,6 @@ import { uuidv7 } from 'uuidv7'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { Decimal } from '@/framework/decimal'
-import { type ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError, resolveAuthorizedIndividu } from '@/individu/permission'
 import {
@@ -26,10 +25,7 @@ type UpsertValeurAvancementParams = {
 export const upsertValeurAvancement = ({
   indicateurPublicId,
   body,
-}: UpsertValeurAvancementParams): ResultAsync<
-  ValeurSaisieApiModel,
-  UpsertValeurAvancementError | ForbiddenError
-> => {
+}: UpsertValeurAvancementParams): ResultAsync<ValeurSaisieApiModel, UpsertValeurAvancementError> => {
   const principalId = requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(
     db().indicateur.findFirstOrThrow({
