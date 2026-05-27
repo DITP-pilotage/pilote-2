@@ -463,6 +463,7 @@ const main = async () => {
         const individu = individusParPublicId.get(g.individuPublicId)
         if (!individu) return null
         return {
+          id: uuidv7(),
           indicateurId,
           individuId: individu.id,
           date: g.date,

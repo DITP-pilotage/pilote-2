@@ -3,11 +3,12 @@ import {
   type UpsertObjectifIndicateurIndividuBody,
 } from '@pilote/mb-shared/objectifIndicateurIndividu'
 import { ResultAsync } from 'neverthrow'
+import { uuidv7 } from 'uuidv7'
 
 import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError } from '@/individu/permission'
-import { resolveIndicateurAndIndividu } from '@/indicateur/resolveIndicateurAndIndividu'
+import { resolveIndicateurAndIndividuForWrite } from '@/indicateur/resolveIndicateurAndIndividuForWrite'
 import { toObjectifIndicateurIndividuApiModel } from '@/objectifIndicateurIndividu/utils'
 
 export type UpsertObjectifIndicateurIndividuError = IndividuInconnuError
@@ -24,7 +25,7 @@ export const upsertObjectifIndicateurIndividu = ({
   ObjectifIndicateurIndividuApiModel,
   UpsertObjectifIndicateurIndividuError
 > =>
-  resolveIndicateurAndIndividu({
+  resolveIndicateurAndIndividuForWrite({
     indicateurPublicId,
     individuPublicId: body.individu,
   }).andThen(({ indicateur, individu }) =>
@@ -39,6 +40,7 @@ export const upsertObjectifIndicateurIndividu = ({
         },
         update: { valeur: new Decimal(body.valeur) },
         create: {
+          id: uuidv7(),
           indicateurId: indicateur.id,
           individuId: individu.id,
           date: body.date,

@@ -3,7 +3,7 @@ import { ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError } from '@/individu/permission'
-import { resolveIndicateurAndIndividu } from '@/indicateur/resolveIndicateurAndIndividu'
+import { resolveIndicateurAndIndividuForWrite } from '@/indicateur/resolveIndicateurAndIndividuForWrite'
 
 export type DeleteObjectifIndicateurIndividuError = IndividuInconnuError
 
@@ -19,7 +19,7 @@ export const deleteObjectifIndicateurIndividu = ({
   void,
   DeleteObjectifIndicateurIndividuError
 > =>
-  resolveIndicateurAndIndividu({
+  resolveIndicateurAndIndividuForWrite({
     indicateurPublicId,
     individuPublicId: body.individu,
   }).andThen(({ indicateur, individu }) =>

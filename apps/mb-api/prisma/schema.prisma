@@ -180,7 +180,7 @@ model ValeurAvancement {
 }
 
 model ObjectifIndicateurIndividu {
-  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id           String   @id @db.Uuid
   indicateurId String   @map("indicateur_id") @db.Uuid
   individuId   String   @map("individu_id")   @db.Uuid
   date         String

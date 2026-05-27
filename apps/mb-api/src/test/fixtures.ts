@@ -321,6 +321,7 @@ const upsertObjectifIndicateurIndividu = async (o: ObjectifIndicateurIndividuOve
     },
     update: { valeur },
     create: {
+      id: o.id ?? uuidv7(),
       indicateurId: indicateurRow.id,
       individuId: individuRow.id,
       date,

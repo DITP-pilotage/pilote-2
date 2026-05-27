@@ -130,7 +130,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
   )
 
   it(
-    "rejette avec 404 quand l'indicateur n'existe pas",
+    "throw PrismaClientKnownRequestError P2025 quand l'indicateur n'existe pas",
     integrationTest(async () => {
       const indId = testIndicateurId()
       const refId = testReferentielId()
@@ -153,7 +153,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
   )
 
   it(
-    "rejette avec 403 quand le principal n'a que la permission READ",
+    "throw ForbiddenError quand le principal n'a que la permission READ",
     integrationTest(async () => {
       const indId = testIndicateurId()
       const refId = testReferentielId()
@@ -179,7 +179,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
   )
 
   it(
-    "rejette avec INDIVIDU_INCONNU quand l'individu n'existe pas",
+    "retourne Err INDIVIDU_INCONNU quand l'individu n'existe pas",
     integrationTest(async () => {
       const indId = testIndicateurId()
       const refId = testReferentielId()
@@ -207,7 +207,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
   )
 
   it(
-    "rejette avec INDIVIDU_INCONNU quand l'individu n'est pas dans un référentiel lié à l'indicateur",
+    "retourne Err INDIVIDU_INCONNU quand l'individu n'est pas dans un référentiel lié à l'indicateur",
     integrationTest(async () => {
       const indId = testIndicateurId()
       const refLie = testReferentielId()
