@@ -54,7 +54,6 @@ describe.concurrent('getReferentielByPublicId', () => {
           type: 'carte-france-departements',
           nom: 'Carte des départements',
           joinKey: 'codeInsee',
-          defaultConfig: { palette: 'sequential-blue' },
         },
       })
 
@@ -67,7 +66,6 @@ describe.concurrent('getReferentielByPublicId', () => {
           type: 'carte-france-departements',
           nom: 'Carte des départements',
           joinKey: 'codeInsee',
-          config: { palette: 'sequential-blue' },
         },
       ])
     }),

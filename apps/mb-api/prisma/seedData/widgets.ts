@@ -4,7 +4,6 @@ export const widgetsSeed = [
     type: 'carte-france-departements',
     nom: 'Carte des départements',
     joinKey: 'codeInsee',
-    defaultConfig: {},
     referentielPublicIds: ['REF-DEPT'],
   },
   {
@@ -12,7 +11,6 @@ export const widgetsSeed = [
     type: 'carte-france-regions',
     nom: 'Carte des régions',
     joinKey: 'codeInsee',
-    defaultConfig: {},
     referentielPublicIds: ['REF-REG'],
   },
 ] as const

@@ -7,5 +7,4 @@ export const toWidgetApiModel = (widget: WidgetModel): WidgetApiModel => ({
   type: widget.type,
   nom: widget.nom,
   joinKey: widget.joinKey,
-  config: (widget.defaultConfig ?? {}) as Record<string, unknown>,
 })

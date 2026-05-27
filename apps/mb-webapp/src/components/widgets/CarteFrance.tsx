@@ -11,22 +11,22 @@ export type CartePoint = {
   nom: string
 }
 
-type CarteFranceProps = {
+export function CarteFrance({
+  mapName,
+  geoJson,
+  points,
+  onSelect,
+}: {
   mapName: string
   geoJson: FranceGeoJson
   points: ReadonlyArray<CartePoint>
   onSelect?: (joinValue: string) => void
-}
-
-export function CarteFrance({ mapName, geoJson, points, onSelect }: CarteFranceProps) {
+}) {
   const registeredRef = useRef<string | null>(null)
 
   useEffect(() => {
     if (registeredRef.current === mapName) return
-    echarts.registerMap(
-      mapName,
-      geoJson as unknown as Parameters<typeof echarts.registerMap>[1],
-    )
+    echarts.registerMap(mapName, geoJson as unknown as Parameters<typeof echarts.registerMap>[1])
     registeredRef.current = mapName
   }, [mapName, geoJson])
 
@@ -48,16 +48,11 @@ export function CarteFrance({ mapName, geoJson, points, onSelect }: CarteFranceP
         },
       },
       visualMap: {
-        type: 'piecewise' as const,
         min,
         max: max === min ? min + 1 : max,
-        splitNumber: 10,
         orient: 'horizontal' as const,
         left: 'center',
         bottom: 8,
-        itemWidth: 28,
-        itemHeight: 14,
-        itemGap: 0,
         showLabel: false,
         text: [formatNumberFr(max), formatNumberFr(min)],
         textGap: 8,

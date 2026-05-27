@@ -188,32 +188,24 @@ type WidgetOverrides = Partial<{
   type: string
   nom: string
   joinKey: string
-  defaultConfig: Record<string, unknown>
 }>
 
 const upsertWidget = async (o: WidgetOverrides = {}) => {
   const publicId = o.publicId ?? testWidgetId()
-  const { id: _id, publicId: _pub, defaultConfig, ...rest } = o
-  const update = {
-    ...rest,
-    ...(defaultConfig !== undefined
-      ? { defaultConfig: defaultConfig as Prisma.InputJsonValue }
-      : {}),
-  }
-  if (Object.keys(update).length === 0) {
+  const { id: _id, publicId: _pub, ...rest } = o
+  if (Object.keys(rest).length === 0) {
     const existing = await db().widget.findUnique({ where: { publicId } })
     if (existing) return existing
   }
   return db().widget.upsert({
     where: { publicId },
-    update,
+    update: rest,
     create: {
       id: o.id ?? uuidv7(),
       publicId,
       type: o.type ?? 'test-widget',
       nom: o.nom ?? 'Widget de test',
       joinKey: o.joinKey ?? 'testKey',
-      defaultConfig: (o.defaultConfig ?? {}) as Prisma.InputJsonValue,
     },
   })
 }

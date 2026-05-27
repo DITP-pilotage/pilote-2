@@ -8,7 +8,6 @@ CREATE TABLE "widget" (
     "type" TEXT NOT NULL,
     "nom" TEXT NOT NULL,
     "join_key" TEXT NOT NULL,
-    "default_config" JSONB NOT NULL DEFAULT '{}',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 

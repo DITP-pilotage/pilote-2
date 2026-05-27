@@ -244,14 +244,12 @@ const main = async () => {
   }
 
   for (const item of widgetsSeed) {
-    const defaultConfig = item.defaultConfig as Prisma.InputJsonValue
     const widget = await prisma.widget.upsert({
       where: { publicId: item.publicId },
       update: {
         type: item.type,
         nom: item.nom,
         joinKey: item.joinKey,
-        defaultConfig,
       },
       create: {
         id: uuidv7(),
@@ -259,7 +257,6 @@ const main = async () => {
         type: item.type,
         nom: item.nom,
         joinKey: item.joinKey,
-        defaultConfig,
       },
     })
     for (const refPublicId of item.referentielPublicIds) {

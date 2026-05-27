@@ -1,4 +1,4 @@
-import { type IndividuApiModel } from '@pilote/mb-shared/individu'
+import { type IndividuApiModel, individuMetadataSchema } from '@pilote/mb-shared/individu'
 
 import { type IndividuModel } from '@/generated/prisma/models'
 
@@ -7,9 +7,8 @@ export type IndividuWithReferentiel = IndividuModel & {
 }
 
 const toMetadata = (raw: IndividuModel['metadata']): IndividuApiModel['metadata'] => {
-  if (raw === null || raw === undefined) return null
-  if (typeof raw !== 'object' || Array.isArray(raw)) return null
-  return raw as Record<string, unknown>
+  const result = individuMetadataSchema.safeParse(raw)
+  return result.success ? result.data : null
 }
 
 export const toIndividuApiModel = (individu: IndividuWithReferentiel): IndividuApiModel => ({

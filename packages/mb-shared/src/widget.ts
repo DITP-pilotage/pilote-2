@@ -17,10 +17,5 @@ export const widgetApiModelSchema = z.object({
     .describe(
       "Nom de la propriété à lire dans `Individu.metadata` pour mapper une valeur à une entité visuelle du widget (ex. 'codeInsee' pour mapper un département à son polygone).",
     ),
-  config: z
-    .record(z.string(), z.unknown())
-    .describe(
-      'Configuration libre du widget (palette, seuils, libellés…). Le schéma exact est porté par le composant de rendu et validé côté frontend.',
-    ),
 })
 export type WidgetApiModel = z.infer<typeof widgetApiModelSchema>

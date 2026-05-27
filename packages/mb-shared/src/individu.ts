@@ -5,16 +5,16 @@ import { individuPublicIdSchema, referentielPublicIdSchema } from './publicIds'
 
 export { individuPublicIdSchema } from './publicIds'
 
+export const individuMetadataSchema = z.record(z.string(), z.string().or(z.number())).nullable()
+export type IndividuMetadata = z.infer<typeof individuMetadataSchema>
+
 export const individuApiModelSchema = z.object({
   id: individuPublicIdSchema,
   nom: z.string().describe("Nom lisible de l'individu."),
   referentiel: referentielPublicIdSchema.describe("Référentiel auquel l'individu appartient."),
-  metadata: z
-    .record(z.string(), z.unknown())
-    .nullable()
-    .describe(
-      "Métadonnées libres portées par l'individu (ex. { codeInsee } pour un département). Les widgets s'en servent comme clé de jointure ; le schéma exact est validé côté consommateur.",
-    ),
+  metadata: individuMetadataSchema.describe(
+    "Métadonnées libres portées par l'individu (ex. { codeInsee } pour un département). Les widgets s'en servent comme clé de jointure ; le schéma exact est validé côté consommateur.",
+  ),
   createdAt: z.string().datetime().describe('Date ISO 8601 de création.'),
   updatedAt: z.string().datetime().describe('Date ISO 8601 de dernière mise à jour.'),
 })

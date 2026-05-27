@@ -1,5 +1,5 @@
 import { type WidgetApiModel } from '@pilote/mb-shared/widget'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQueries } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { startTransition, useMemo } from 'react'
 
@@ -11,27 +11,27 @@ import { referentielIndividusQueryOptions } from '@/queries/referentiels'
 
 type GeoJsonQueryOptions = ReturnType<typeof franceDepartementsGeoJsonQueryOptions>
 
-type CarteFranceWidgetProps = {
-  widget: WidgetApiModel
-  indicateurId: string
-  referentielId: string
-  mapName: string
-  geoJsonQueryOptions: GeoJsonQueryOptions
-}
-
 export function CarteFranceWidget({
   widget,
   indicateurId,
   referentielId,
   mapName,
   geoJsonQueryOptions,
-}: CarteFranceWidgetProps) {
+}: {
+  widget: WidgetApiModel
+  indicateurId: string
+  referentielId: string
+  mapName: string
+  geoJsonQueryOptions: GeoJsonQueryOptions
+}) {
   const navigate = useNavigate()
-  const { data: geoJson } = useSuspenseQuery(geoJsonQueryOptions)
-  const { data: individus } = useSuspenseQuery(referentielIndividusQueryOptions(referentielId))
-  const { data: remarquables } = useSuspenseQuery(
-    indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId),
-  )
+  const [{ data: geoJson }, { data: individus }, { data: remarquables }] = useSuspenseQueries({
+    queries: [
+      geoJsonQueryOptions,
+      referentielIndividusQueryOptions(referentielId),
+      indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId),
+    ],
+  })
 
   const { points, individuIdParJoinValue } = useMemo(() => {
     const referentielRemarquables = remarquables.items.find(
@@ -68,7 +68,5 @@ export function CarteFranceWidget({
     })
   }
 
-  return (
-    <CarteFrance mapName={mapName} geoJson={geoJson} points={points} onSelect={handleSelect} />
-  )
+  return <CarteFrance mapName={mapName} geoJson={geoJson} points={points} onSelect={handleSelect} />
 }

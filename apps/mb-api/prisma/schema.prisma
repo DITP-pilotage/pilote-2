@@ -155,7 +155,6 @@ model Widget {
   type          String
   nom           String
   joinKey       String   @map("join_key")
-  defaultConfig Json     @default("{}") @map("default_config")
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt      @map("updated_at")
 
