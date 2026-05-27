@@ -9,14 +9,14 @@ export { dateSchema }
 
 export const upsertObjectifIndicateurIndividuBodySchema = z.object({
   individu: individuPublicIdSchema,
-  date: dateSchema,
-  valeur: z.number(),
+  dateCible: dateSchema,
+  valeurCible: z.number(),
 })
 export type UpsertObjectifIndicateurIndividuBody = z.infer<typeof upsertObjectifIndicateurIndividuBodySchema>
 
 export const deleteObjectifIndicateurIndividuBodySchema = z.object({
   individu: individuPublicIdSchema,
-  date: dateSchema,
+  dateCible: dateSchema,
 })
 export type DeleteObjectifIndicateurIndividuBody = z.infer<typeof deleteObjectifIndicateurIndividuBodySchema>
 
@@ -30,8 +30,8 @@ export type ListObjectifsForIndicateurQuery = z.infer<typeof listObjectifsForInd
 export const objectifIndicateurIndividuApiModelSchema = z.object({
   indicateur: indicateurPublicIdSchema,
   individu: individuPublicIdSchema,
-  date: dateSchema,
-  valeur: z.number(),
+  dateCible: dateSchema,
+  valeurCible: z.number(),
 })
 export type ObjectifIndicateurIndividuApiModel = z.infer<typeof objectifIndicateurIndividuApiModelSchema>
 

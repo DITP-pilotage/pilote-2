@@ -35,16 +35,16 @@ export const upsertObjectifIndicateurIndividu = ({
           objectif_indicateur_individu_unique: {
             indicateurId: indicateur.id,
             individuId: individu.id,
-            date: body.date,
+            dateCible: body.dateCible,
           },
         },
-        update: { valeur: new Decimal(body.valeur) },
+        update: { valeurCible: new Decimal(body.valeurCible) },
         create: {
           id: uuidv7(),
           indicateurId: indicateur.id,
           individuId: individu.id,
-          date: body.date,
-          valeur: new Decimal(body.valeur),
+          dateCible: body.dateCible,
+          valeurCible: new Decimal(body.valeurCible),
         },
         include: {
           indicateur: { select: { publicId: true } },

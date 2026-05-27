@@ -12,6 +12,6 @@ export const toObjectifIndicateurIndividuApiModel = (
 ): ObjectifIndicateurIndividuApiModel => ({
   indicateur: objectif.indicateur.publicId,
   individu: objectif.individu.publicId,
-  date: objectif.date,
-  valeur: objectif.valeur.toNumber(),
+  dateCible: objectif.dateCible,
+  valeurCible: objectif.valeurCible.toNumber(),
 })

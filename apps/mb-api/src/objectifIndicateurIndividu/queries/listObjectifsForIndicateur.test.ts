@@ -8,7 +8,7 @@ import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listObjectifsForIndicateur', () => {
   it(
-    'retourne les objectifs pour un individu triés par date',
+    'retourne les objectifs pour un individu triés par dateCible',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const refId = testReferentielId()
@@ -21,14 +21,14 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         {
           indicateur: { publicId: indId },
           individu: { publicId: deptId, referentiel: { publicId: refId } },
-          date: '2025-01-01',
-          valeur: 50,
+          dateCible: '2025-01-01',
+          valeurCible: 50,
         },
         {
           indicateur: { publicId: indId },
           individu: { publicId: deptId, referentiel: { publicId: refId } },
-          date: '2026-01-01',
-          valeur: 100,
+          dateCible: '2026-01-01',
+          valeurCible: 100,
         },
       )
       const apiKey = await fixtures.apiKey({
@@ -41,8 +41,8 @@ describe.concurrent('listObjectifsForIndicateur', () => {
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [
-          { indicateur: indId, individu: deptId, date: '2025-01-01', valeur: 50 },
-          { indicateur: indId, individu: deptId, date: '2026-01-01', valeur: 100 },
+          { indicateur: indId, individu: deptId, dateCible: '2025-01-01', valeurCible: 50 },
+          { indicateur: indId, individu: deptId, dateCible: '2026-01-01', valeurCible: 100 },
         ],
       })
     }),
@@ -62,14 +62,14 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         {
           indicateur: { publicId: indId },
           individu: { publicId: dept1, referentiel: { publicId: refId } },
-          date: '2025-01-01',
-          valeur: 50,
+          dateCible: '2025-01-01',
+          valeurCible: 50,
         },
         {
           indicateur: { publicId: indId },
           individu: { publicId: dept2, referentiel: { publicId: refId } },
-          date: '2025-01-01',
-          valeur: 80,
+          dateCible: '2025-01-01',
+          valeurCible: 80,
         },
       )
       const apiKey = await fixtures.apiKey({
@@ -124,8 +124,8 @@ describe.concurrent('listObjectifsForIndicateur', () => {
       await fixtures.objectifIndicateurIndividu({
         indicateur: { publicId: indId },
         individu: { publicId: deptId, referentiel: { publicId: refId } },
-        date: '2025-01-01',
-        valeur: 50,
+        dateCible: '2025-01-01',
+        valeurCible: 50,
       })
       const apiKey = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],

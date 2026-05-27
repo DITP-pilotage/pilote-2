@@ -301,31 +301,31 @@ async function valeurAvancement(
 type ObjectifIndicateurIndividuOverrides = {
   indicateur: IndicateurOverrides
   individu: IndividuOverrides
-} & Partial<{ id: string; date: string; valeur: number }>
+} & Partial<{ id: string; dateCible: string; valeurCible: number }>
 
-const DEFAULT_OBJECTIF_INDICATEUR_INDIVIDU_DATE = '2024-01-01'
-const DEFAULT_OBJECTIF_INDICATEUR_INDIVIDU_VALEUR = 100
+const DEFAULT_OBJECTIF_INDICATEUR_INDIVIDU_DATE_CIBLE = '2024-01-01'
+const DEFAULT_OBJECTIF_INDICATEUR_INDIVIDU_VALEUR_CIBLE = 100
 
 const upsertObjectifIndicateurIndividu = async (o: ObjectifIndicateurIndividuOverrides) => {
   const indicateurRow = await upsertIndicateur(o.indicateur)
   const individuRow = await upsertIndividu(o.individu)
-  const date = o.date ?? DEFAULT_OBJECTIF_INDICATEUR_INDIVIDU_DATE
-  const valeur = o.valeur ?? DEFAULT_OBJECTIF_INDICATEUR_INDIVIDU_VALEUR
+  const dateCible = o.dateCible ?? DEFAULT_OBJECTIF_INDICATEUR_INDIVIDU_DATE_CIBLE
+  const valeurCible = o.valeurCible ?? DEFAULT_OBJECTIF_INDICATEUR_INDIVIDU_VALEUR_CIBLE
   return db().objectifIndicateurIndividu.upsert({
     where: {
       objectif_indicateur_individu_unique: {
         indicateurId: indicateurRow.id,
         individuId: individuRow.id,
-        date,
+        dateCible,
       },
     },
-    update: { valeur },
+    update: { valeurCible },
     create: {
       id: o.id ?? uuidv7(),
       indicateurId: indicateurRow.id,
       individuId: individuRow.id,
-      date,
-      valeur,
+      dateCible,
+      valeurCible,
     },
   })
 }

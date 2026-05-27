@@ -323,14 +323,14 @@ export const buildObjectifsPourIndicateur = ({
 }): ReadonlyArray<{
   indicateurPublicId: string
   individuPublicId: string
-  date: string
-  valeur: number
+  dateCible: string
+  valeurCible: number
 }> => {
   const profil = profilPourIndicateur(indicateurPublicId)
   const estTauxPourcentage = INDICATEURS_TAUX_POURCENTAGE.has(indicateurPublicId)
   const lastIndex = Math.max(OBJECTIF_DATES.length - 1, 1)
   return individuPublicIds.flatMap((individuPublicId, individuIndex) =>
-    OBJECTIF_DATES.map((date, dateIndex) => {
+    OBJECTIF_DATES.map((dateCible, dateIndex) => {
       const valeurBrute = computeValeur({
         ...profil,
         trend: profil.trend * 1.5,
@@ -338,8 +338,8 @@ export const buildObjectifsPourIndicateur = ({
         individuIndex,
         dateIndex,
       })
-      const valeur = estTauxPourcentage ? clamp(valeurBrute, 0, 100) : valeurBrute
-      return { indicateurPublicId, individuPublicId, date, valeur }
+      const valeurCible = estTauxPourcentage ? clamp(valeurBrute, 0, 100) : valeurBrute
+      return { indicateurPublicId, individuPublicId, dateCible, valeurCible }
     }),
   )
 }

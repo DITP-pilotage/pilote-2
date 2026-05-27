@@ -28,7 +28,7 @@ export const deleteObjectifIndicateurIndividu = ({
         where: {
           indicateurId: indicateur.id,
           individuId: individu.id,
-          date: body.date,
+          dateCible: body.dateCible,
         },
       }),
     ).map(() => undefined),

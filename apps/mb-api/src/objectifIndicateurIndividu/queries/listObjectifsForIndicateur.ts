@@ -46,7 +46,7 @@ const buildList = async ({
       indicateur: { select: { publicId: true } },
       individu: { select: { publicId: true } },
     },
-    orderBy: [{ individu: { publicId: 'asc' } }, { date: 'asc' }],
+    orderBy: [{ individu: { publicId: 'asc' } }, { dateCible: 'asc' }],
   })
 
   return { items: rows.map(toObjectifIndicateurIndividuApiModel) }

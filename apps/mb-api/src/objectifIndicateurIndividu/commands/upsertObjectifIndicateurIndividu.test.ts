@@ -11,7 +11,7 @@ import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('upsertObjectifIndicateurIndividu', () => {
   it(
-    "crée l'objectif quand le triplet (indicateur, individu, date) n'existe pas",
+    "crée l'objectif quand le triplet (indicateur, individu, dateCible) n'existe pas",
     integrationTest(async () => {
       const indId = testIndicateurId()
       const refId = testReferentielId()
@@ -31,7 +31,7 @@ describe.concurrent('upsertObjectifIndicateurIndividu', () => {
       const result = await runAsPrincipal(apiKey.id, () =>
         upsertObjectifIndicateurIndividu({
           indicateurPublicId: indId,
-          body: { individu: individu.publicId, date: '2025-01-01', valeur: 100 },
+          body: { individu: individu.publicId, dateCible: '2025-01-01', valeurCible: 100 },
         }),
       )
 
@@ -39,22 +39,22 @@ describe.concurrent('upsertObjectifIndicateurIndividu', () => {
       expect(result._unsafeUnwrap()).toEqual({
         indicateur: indId,
         individu: individuId,
-        date: '2025-01-01',
-        valeur: 100,
+        dateCible: '2025-01-01',
+        valeurCible: 100,
       })
       const row = await db().objectifIndicateurIndividu.findFirstOrThrow({
         where: {
           indicateurId: link.indicateurId,
           individuId: individu.id,
-          date: '2025-01-01',
+          dateCible: '2025-01-01',
         },
       })
-      expect(row.valeur.toNumber()).toBe(100)
+      expect(row.valeurCible.toNumber()).toBe(100)
     }),
   )
 
   it(
-    'met à jour la valeur existante quand le triplet est déjà présent',
+    'met à jour la valeurCible existante quand le triplet est déjà présent',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const refId = testReferentielId()
@@ -70,8 +70,8 @@ describe.concurrent('upsertObjectifIndicateurIndividu', () => {
       await fixtures.objectifIndicateurIndividu({
         indicateur: { publicId: indId },
         individu: { publicId: individuId, referentiel: { publicId: refId } },
-        date: '2025-01-01',
-        valeur: 50,
+        dateCible: '2025-01-01',
+        valeurCible: 50,
       })
       const apiKey = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
@@ -80,21 +80,21 @@ describe.concurrent('upsertObjectifIndicateurIndividu', () => {
       const result = await runAsPrincipal(apiKey.id, () =>
         upsertObjectifIndicateurIndividu({
           indicateurPublicId: indId,
-          body: { individu: individu.publicId, date: '2025-01-01', valeur: 200 },
+          body: { individu: individu.publicId, dateCible: '2025-01-01', valeurCible: 200 },
         }),
       )
 
       expect(result.isOk()).toBe(true)
-      expect(result._unsafeUnwrap().valeur).toBe(200)
+      expect(result._unsafeUnwrap().valeurCible).toBe(200)
       const rows = await db().objectifIndicateurIndividu.findMany({
         where: {
           indicateurId: link.indicateurId,
           individuId: individu.id,
-          date: '2025-01-01',
+          dateCible: '2025-01-01',
         },
       })
       expect(rows).toHaveLength(1)
-      expect(rows[0]!.valeur.toNumber()).toBe(200)
+      expect(rows[0]!.valeurCible.toNumber()).toBe(200)
     }),
   )
 
@@ -111,7 +111,7 @@ describe.concurrent('upsertObjectifIndicateurIndividu', () => {
         runAsPrincipal(apiKey.id, () =>
           upsertObjectifIndicateurIndividu({
             indicateurPublicId: indId,
-            body: { individu: individuId, date: '2025-01-01', valeur: 100 },
+            body: { individu: individuId, dateCible: '2025-01-01', valeurCible: 100 },
           }),
         ),
       ).rejects.toMatchObject({
@@ -140,7 +140,7 @@ describe.concurrent('upsertObjectifIndicateurIndividu', () => {
         runAsPrincipal(apiKey.id, () =>
           upsertObjectifIndicateurIndividu({
             indicateurPublicId: indId,
-            body: { individu: individuId, date: '2025-01-01', valeur: 100 },
+            body: { individu: individuId, dateCible: '2025-01-01', valeurCible: 100 },
           }),
         ),
       ).rejects.toBeInstanceOf(ForbiddenError)
@@ -163,7 +163,7 @@ describe.concurrent('upsertObjectifIndicateurIndividu', () => {
       const result = await runAsPrincipal(apiKey.id, () =>
         upsertObjectifIndicateurIndividu({
           indicateurPublicId: indId,
-          body: { individu: 'DEPT-999', date: '2025-01-01', valeur: 100 },
+          body: { individu: 'DEPT-999', dateCible: '2025-01-01', valeurCible: 100 },
         }),
       )
 
@@ -194,7 +194,7 @@ describe.concurrent('upsertObjectifIndicateurIndividu', () => {
       const result = await runAsPrincipal(apiKey.id, () =>
         upsertObjectifIndicateurIndividu({
           indicateurPublicId: indId,
-          body: { individu: individuId, date: '2025-01-01', valeur: 100 },
+          body: { individu: individuId, dateCible: '2025-01-01', valeurCible: 100 },
         }),
       )
 

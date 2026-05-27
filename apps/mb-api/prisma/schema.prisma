@@ -183,17 +183,17 @@ model ObjectifIndicateurIndividu {
   id           String   @id @db.Uuid
   indicateurId String   @map("indicateur_id") @db.Uuid
   individuId   String   @map("individu_id")   @db.Uuid
-  date         String
-  valeur       Decimal  @db.Decimal(20, 2)
+  dateCible    String   @map("date_cible")
+  valeurCible  Decimal  @map("valeur_cible") @db.Decimal(20, 2)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt      @map("updated_at")
 
   indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
   individu   Individu   @relation(fields: [individuId],   references: [id], onDelete: Restrict)
 
-  @@unique([indicateurId, individuId, date], name: "objectif_indicateur_individu_unique")
+  @@unique([indicateurId, individuId, dateCible], name: "objectif_indicateur_individu_unique")
   @@index([indicateurId, individuId])
-  @@index([indicateurId, date])
+  @@index([indicateurId, dateCible])
   @@map("objectif_indicateur_individu")
 }
 

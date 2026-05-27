@@ -11,7 +11,7 @@ import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('deleteObjectifIndicateurIndividu', () => {
   it(
-    "supprime l'objectif existant pour le triplet (indicateur, individu, date)",
+    "supprime l'objectif existant pour le triplet (indicateur, individu, dateCible)",
     integrationTest(async () => {
       const indId = testIndicateurId()
       const refId = testReferentielId()
@@ -27,8 +27,8 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
       await fixtures.objectifIndicateurIndividu({
         indicateur: { publicId: indId },
         individu: { publicId: individuId, referentiel: { publicId: refId } },
-        date: '2025-01-01',
-        valeur: 100,
+        dateCible: '2025-01-01',
+        valeurCible: 100,
       })
       const apiKey = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
@@ -37,7 +37,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
       const result = await runAsPrincipal(apiKey.id, () =>
         deleteObjectifIndicateurIndividu({
           indicateurPublicId: indId,
-          body: { individu: individu.publicId, date: '2025-01-01' },
+          body: { individu: individu.publicId, dateCible: '2025-01-01' },
         }),
       )
 
@@ -46,7 +46,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
         where: {
           indicateurId: link.indicateurId,
           individuId: individu.id,
-          date: '2025-01-01',
+          dateCible: '2025-01-01',
         },
       })
       expect(rows).toHaveLength(0)
@@ -74,7 +74,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
       const result = await runAsPrincipal(apiKey.id, () =>
         deleteObjectifIndicateurIndividu({
           indicateurPublicId: indId,
-          body: { individu: individu.publicId, date: '2025-01-01' },
+          body: { individu: individu.publicId, dateCible: '2025-01-01' },
         }),
       )
 
@@ -83,7 +83,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
   )
 
   it(
-    "ne touche pas aux autres dates de l'individu pour cet indicateur",
+    "ne touche pas aux autres dateCible de l'individu pour cet indicateur",
     integrationTest(async () => {
       const indId = testIndicateurId()
       const refId = testReferentielId()
@@ -99,14 +99,14 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
       await fixtures.objectifIndicateurIndividu({
         indicateur: { publicId: indId },
         individu: { publicId: individuId, referentiel: { publicId: refId } },
-        date: '2025-01-01',
-        valeur: 50,
+        dateCible: '2025-01-01',
+        valeurCible: 50,
       })
       await fixtures.objectifIndicateurIndividu({
         indicateur: { publicId: indId },
         individu: { publicId: individuId, referentiel: { publicId: refId } },
-        date: '2026-01-01',
-        valeur: 100,
+        dateCible: '2026-01-01',
+        valeurCible: 100,
       })
       const apiKey = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
@@ -115,17 +115,17 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
       const result = await runAsPrincipal(apiKey.id, () =>
         deleteObjectifIndicateurIndividu({
           indicateurPublicId: indId,
-          body: { individu: individu.publicId, date: '2025-01-01' },
+          body: { individu: individu.publicId, dateCible: '2025-01-01' },
         }),
       )
 
       expect(result.isOk()).toBe(true)
       const rows = await db().objectifIndicateurIndividu.findMany({
         where: { individuId: individu.id },
-        orderBy: { date: 'asc' },
+        orderBy: { dateCible: 'asc' },
       })
       expect(rows).toHaveLength(1)
-      expect(rows[0]!.date).toBe('2026-01-01')
+      expect(rows[0]!.dateCible).toBe('2026-01-01')
     }),
   )
 
@@ -142,7 +142,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
         runAsPrincipal(apiKey.id, () =>
           deleteObjectifIndicateurIndividu({
             indicateurPublicId: indId,
-            body: { individu: individuId, date: '2025-01-01' },
+            body: { individu: individuId, dateCible: '2025-01-01' },
           }),
         ),
       ).rejects.toMatchObject({
@@ -171,7 +171,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
         runAsPrincipal(apiKey.id, () =>
           deleteObjectifIndicateurIndividu({
             indicateurPublicId: indId,
-            body: { individu: individuId, date: '2025-01-01' },
+            body: { individu: individuId, dateCible: '2025-01-01' },
           }),
         ),
       ).rejects.toBeInstanceOf(ForbiddenError)
@@ -194,7 +194,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
       const result = await runAsPrincipal(apiKey.id, () =>
         deleteObjectifIndicateurIndividu({
           indicateurPublicId: indId,
-          body: { individu: 'DEPT-999', date: '2025-01-01' },
+          body: { individu: 'DEPT-999', dateCible: '2025-01-01' },
         }),
       )
 
@@ -225,7 +225,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
       const result = await runAsPrincipal(apiKey.id, () =>
         deleteObjectifIndicateurIndividu({
           indicateurPublicId: indId,
-          body: { individu: individuId, date: '2025-01-01' },
+          body: { individu: individuId, dateCible: '2025-01-01' },
         }),
       )
 

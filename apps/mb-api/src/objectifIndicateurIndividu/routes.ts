@@ -44,7 +44,7 @@ const getObjectifsForIndicateurRoute = createRoute({
     'Le paramètre `individus` est obligatoire (1..N identifiants séparés par une virgule, ex. `DEPT-84,DEPT-13`). ' +
     'Les individus sans objectif sont absents de la réponse. ' +
     "Les individus inconnus ou non rattachés à un référentiel lié à l'indicateur sont silencieusement ignorés. " +
-    'Triés par `(individu, date ASC)`.',
+    'Triés par `(individu, dateCible ASC)`.',
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -70,7 +70,7 @@ const upsertObjectifIndicateurIndividuRoute = createRoute({
   tags: ['Indicateur'],
   summary: 'Saisir ou mettre à jour un objectif pour un individu',
   description:
-    "Upsert d'un objectif sur la clé `(indicateur, individu, date)`. Si le triplet existe, la `valeur` est remplacée ; sinon un nouvel objectif est créé. " +
+    "Upsert d'un objectif sur la clé `(indicateur, individu, dateCible)`. Si le triplet existe, la `valeurCible` est remplacée ; sinon un nouvel objectif est créé. " +
     "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `INDIVIDU_INCONNU`).",
   middleware: [requireAuthentication],
   request: {
@@ -104,7 +104,7 @@ const deleteObjectifIndicateurIndividuRoute = createRoute({
   tags: ['Indicateur'],
   summary: 'Supprimer un objectif pour un individu',
   description:
-    "Supprime l'objectif identifié par `(indicateur, individu, date)`. Idempotent : retourne `204` même si l'objectif n'existait pas. " +
+    "Supprime l'objectif identifié par `(indicateur, individu, dateCible)`. Idempotent : retourne `204` même si l'objectif n'existait pas. " +
     "L'individu doit appartenir à un référentiel lié à l'indicateur (sinon 400 `INDIVIDU_INCONNU`).",
   middleware: [requireAuthentication],
   request: {

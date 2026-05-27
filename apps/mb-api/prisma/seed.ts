@@ -466,8 +466,8 @@ const main = async () => {
           id: uuidv7(),
           indicateurId,
           individuId: individu.id,
-          date: g.date,
-          valeur: new Prisma.Decimal(g.valeur),
+          dateCible: g.dateCible,
+          valeurCible: new Prisma.Decimal(g.valeurCible),
         }
       })
       .filter((row): row is NonNullable<typeof row> => row !== null)
