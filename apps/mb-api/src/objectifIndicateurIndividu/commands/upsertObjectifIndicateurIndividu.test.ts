@@ -3,13 +3,13 @@ import { describe, expect, it } from 'vitest'
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
-import { upsertObjectifAvancement } from '@/objectifAvancement/commands/upsertObjectifAvancement'
+import { upsertObjectifIndicateurIndividu } from '@/objectifIndicateurIndividu/commands/upsertObjectifIndicateurIndividu'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testDeptId, testIndicateurId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
-describe.concurrent('upsertObjectifAvancement', () => {
+describe.concurrent('upsertObjectifIndicateurIndividu', () => {
   it(
     "crée l'objectif quand le triplet (indicateur, individu, date) n'existe pas",
     integrationTest(async () => {
@@ -29,7 +29,7 @@ describe.concurrent('upsertObjectifAvancement', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertObjectifAvancement({
+        upsertObjectifIndicateurIndividu({
           indicateurPublicId: indId,
           body: { individu: individu.publicId, date: '2025-01-01', valeur: 100 },
         }),
@@ -42,7 +42,7 @@ describe.concurrent('upsertObjectifAvancement', () => {
         date: '2025-01-01',
         valeur: 100,
       })
-      const row = await db().objectifAvancement.findFirstOrThrow({
+      const row = await db().objectifIndicateurIndividu.findFirstOrThrow({
         where: {
           indicateurId: link.indicateurId,
           individuId: individu.id,
@@ -67,7 +67,7 @@ describe.concurrent('upsertObjectifAvancement', () => {
         publicId: individuId,
         referentiel: { publicId: refId },
       })
-      await fixtures.objectifAvancement({
+      await fixtures.objectifIndicateurIndividu({
         indicateur: { publicId: indId },
         individu: { publicId: individuId, referentiel: { publicId: refId } },
         date: '2025-01-01',
@@ -78,7 +78,7 @@ describe.concurrent('upsertObjectifAvancement', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertObjectifAvancement({
+        upsertObjectifIndicateurIndividu({
           indicateurPublicId: indId,
           body: { individu: individu.publicId, date: '2025-01-01', valeur: 200 },
         }),
@@ -86,7 +86,7 @@ describe.concurrent('upsertObjectifAvancement', () => {
 
       expect(result.isOk()).toBe(true)
       expect(result._unsafeUnwrap().valeur).toBe(200)
-      const rows = await db().objectifAvancement.findMany({
+      const rows = await db().objectifIndicateurIndividu.findMany({
         where: {
           indicateurId: link.indicateurId,
           individuId: individu.id,
@@ -109,7 +109,7 @@ describe.concurrent('upsertObjectifAvancement', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          upsertObjectifAvancement({
+          upsertObjectifIndicateurIndividu({
             indicateurPublicId: indId,
             body: { individu: individuId, date: '2025-01-01', valeur: 100 },
           }),
@@ -138,7 +138,7 @@ describe.concurrent('upsertObjectifAvancement', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          upsertObjectifAvancement({
+          upsertObjectifIndicateurIndividu({
             indicateurPublicId: indId,
             body: { individu: individuId, date: '2025-01-01', valeur: 100 },
           }),
@@ -161,7 +161,7 @@ describe.concurrent('upsertObjectifAvancement', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertObjectifAvancement({
+        upsertObjectifIndicateurIndividu({
           indicateurPublicId: indId,
           body: { individu: 'DEPT-999', date: '2025-01-01', valeur: 100 },
         }),
@@ -192,7 +192,7 @@ describe.concurrent('upsertObjectifAvancement', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertObjectifAvancement({
+        upsertObjectifIndicateurIndividu({
           indicateurPublicId: indId,
           body: { individu: individuId, date: '2025-01-01', valeur: 100 },
         }),

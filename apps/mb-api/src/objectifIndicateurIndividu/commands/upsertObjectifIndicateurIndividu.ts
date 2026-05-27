@@ -1,37 +1,37 @@
 import {
-  type ObjectifAvancementApiModel,
-  type UpsertObjectifAvancementBody,
-} from '@pilote/mb-shared/objectifAvancement'
+  type ObjectifIndicateurIndividuApiModel,
+  type UpsertObjectifIndicateurIndividuBody,
+} from '@pilote/mb-shared/objectifIndicateurIndividu'
 import { ResultAsync } from 'neverthrow'
 
 import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError } from '@/individu/permission'
 import { resolveIndicateurAndIndividu } from '@/indicateur/resolveIndicateurAndIndividu'
-import { toObjectifAvancementApiModel } from '@/objectifAvancement/utils'
+import { toObjectifIndicateurIndividuApiModel } from '@/objectifIndicateurIndividu/utils'
 
-export type UpsertObjectifAvancementError = IndividuInconnuError
+export type UpsertObjectifIndicateurIndividuError = IndividuInconnuError
 
-type UpsertObjectifAvancementParams = {
+type UpsertObjectifIndicateurIndividuParams = {
   indicateurPublicId: string
-  body: UpsertObjectifAvancementBody
+  body: UpsertObjectifIndicateurIndividuBody
 }
 
-export const upsertObjectifAvancement = ({
+export const upsertObjectifIndicateurIndividu = ({
   indicateurPublicId,
   body,
-}: UpsertObjectifAvancementParams): ResultAsync<
-  ObjectifAvancementApiModel,
-  UpsertObjectifAvancementError
+}: UpsertObjectifIndicateurIndividuParams): ResultAsync<
+  ObjectifIndicateurIndividuApiModel,
+  UpsertObjectifIndicateurIndividuError
 > =>
   resolveIndicateurAndIndividu({
     indicateurPublicId,
     individuPublicId: body.individu,
   }).andThen(({ indicateur, individu }) =>
     ResultAsync.fromSafePromise(
-      db().objectifAvancement.upsert({
+      db().objectifIndicateurIndividu.upsert({
         where: {
-          objectif_avancement_unique: {
+          objectif_indicateur_individu_unique: {
             indicateurId: indicateur.id,
             individuId: individu.id,
             date: body.date,
@@ -49,5 +49,5 @@ export const upsertObjectifAvancement = ({
           individu: { select: { publicId: true } },
         },
       }),
-    ).map(toObjectifAvancementApiModel),
+    ).map(toObjectifIndicateurIndividuApiModel),
   )

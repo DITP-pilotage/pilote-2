@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { listObjectifsForIndicateur } from '@/objectifAvancement/queries/listObjectifsForIndicateur'
+import { listObjectifsForIndicateur } from '@/objectifIndicateurIndividu/queries/listObjectifsForIndicateur'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testDeptId, testDeptIds, testIndicateurId, testReferentielId } from '@/test/randomIds'
@@ -17,7 +17,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         indicateur: { publicId: indId },
         referentiel: { publicId: refId },
       })
-      await fixtures.objectifAvancement(
+      await fixtures.objectifIndicateurIndividu(
         {
           indicateur: { publicId: indId },
           individu: { publicId: deptId, referentiel: { publicId: refId } },
@@ -58,7 +58,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         indicateur: { publicId: indId },
         referentiel: { publicId: refId },
       })
-      await fixtures.objectifAvancement(
+      await fixtures.objectifIndicateurIndividu(
         {
           indicateur: { publicId: indId },
           individu: { publicId: dept1, referentiel: { publicId: refId } },
@@ -121,7 +121,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         indicateur: { publicId: indId },
         referentiel: { publicId: refId },
       })
-      await fixtures.objectifAvancement({
+      await fixtures.objectifIndicateurIndividu({
         indicateur: { publicId: indId },
         individu: { publicId: deptId, referentiel: { publicId: refId } },
         date: '2025-01-01',

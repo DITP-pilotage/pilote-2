@@ -1,18 +1,18 @@
 import {
   type ListObjectifsForIndicateurQuery,
-  type ObjectifAvancementListApiModel,
-} from '@pilote/mb-shared/objectifAvancement'
+  type ObjectifIndicateurIndividuListApiModel,
+} from '@pilote/mb-shared/objectifIndicateurIndividu'
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { toObjectifAvancementApiModel } from '@/objectifAvancement/utils'
+import { toObjectifIndicateurIndividuApiModel } from '@/objectifIndicateurIndividu/utils'
 
 export const listObjectifsForIndicateur = (
   indicateurPublicId: string,
   params: ListObjectifsForIndicateurQuery,
-): ResultAsync<ObjectifAvancementListApiModel, never> => {
+): ResultAsync<ObjectifIndicateurIndividuListApiModel, never> => {
   const principalId = requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(
     db().indicateur.findFirstOrThrow({
@@ -28,7 +28,7 @@ const buildList = async ({
 }: {
   indicateur: { id: string; publicId: string }
   params: ListObjectifsForIndicateurQuery
-}): Promise<ObjectifAvancementListApiModel> => {
+}): Promise<ObjectifIndicateurIndividuListApiModel> => {
   const individus = await db().individu.findMany({
     where: { publicId: { in: params.individus } },
     select: { id: true },
@@ -37,7 +37,7 @@ const buildList = async ({
 
   const individuIds = individus.map((i) => i.id)
 
-  const rows = await db().objectifAvancement.findMany({
+  const rows = await db().objectifIndicateurIndividu.findMany({
     where: {
       indicateurId: indicateur.id,
       individuId: { in: individuIds },
@@ -49,5 +49,5 @@ const buildList = async ({
     orderBy: [{ individu: { publicId: 'asc' } }, { date: 'asc' }],
   })
 
-  return { items: rows.map(toObjectifAvancementApiModel) }
+  return { items: rows.map(toObjectifIndicateurIndividuApiModel) }
 }

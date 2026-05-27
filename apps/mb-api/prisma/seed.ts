@@ -443,9 +443,7 @@ const main = async () => {
   const INDICATEURS_OBJECTIFS = ['IND-001', 'IND-002', 'IND-003', 'IND-004', 'IND-005']
   let objectifsCount = 0
   for (const indicateurPublicId of INDICATEURS_OBJECTIFS) {
-    const lien = indicateurReferentielsSeed.find(
-      (l) => l.indicateurPublicId === indicateurPublicId,
-    )
+    const lien = indicateurReferentielsSeed.find((l) => l.indicateurPublicId === indicateurPublicId)
     if (!lien) continue
     const refPublicId = mailleLaPlusFine(lien.referentiels.map((r) => r.referentielPublicId))
     if (!refPublicId) continue
@@ -456,7 +454,10 @@ const main = async () => {
     const indicateurId = indicateursParPublicId.get(indicateurPublicId)
     if (!indicateurId) continue
 
-    const generated = buildObjectifsPourIndicateur({ indicateurPublicId, individuPublicIds: individusPublicIds })
+    const generated = buildObjectifsPourIndicateur({
+      indicateurPublicId,
+      individuPublicIds: individusPublicIds,
+    })
     const rows = generated
       .map((g) => {
         const individu = individusParPublicId.get(g.individuPublicId)
@@ -470,7 +471,7 @@ const main = async () => {
       })
       .filter((row): row is NonNullable<typeof row> => row !== null)
 
-    const result = await prisma.objectifAvancement.createMany({
+    const result = await prisma.objectifIndicateurIndividu.createMany({
       data: rows,
       skipDuplicates: true,
     })

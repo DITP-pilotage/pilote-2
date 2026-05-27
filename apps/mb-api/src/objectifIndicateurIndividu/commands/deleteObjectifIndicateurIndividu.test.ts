@@ -3,13 +3,13 @@ import { describe, expect, it } from 'vitest'
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
-import { deleteObjectifAvancement } from '@/objectifAvancement/commands/deleteObjectifAvancement'
+import { deleteObjectifIndicateurIndividu } from '@/objectifIndicateurIndividu/commands/deleteObjectifIndicateurIndividu'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testDeptId, testIndicateurId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
-describe.concurrent('deleteObjectifAvancement', () => {
+describe.concurrent('deleteObjectifIndicateurIndividu', () => {
   it(
     "supprime l'objectif existant pour le triplet (indicateur, individu, date)",
     integrationTest(async () => {
@@ -24,7 +24,7 @@ describe.concurrent('deleteObjectifAvancement', () => {
         publicId: individuId,
         referentiel: { publicId: refId },
       })
-      await fixtures.objectifAvancement({
+      await fixtures.objectifIndicateurIndividu({
         indicateur: { publicId: indId },
         individu: { publicId: individuId, referentiel: { publicId: refId } },
         date: '2025-01-01',
@@ -35,14 +35,14 @@ describe.concurrent('deleteObjectifAvancement', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        deleteObjectifAvancement({
+        deleteObjectifIndicateurIndividu({
           indicateurPublicId: indId,
           body: { individu: individu.publicId, date: '2025-01-01' },
         }),
       )
 
       expect(result.isOk()).toBe(true)
-      const rows = await db().objectifAvancement.findMany({
+      const rows = await db().objectifIndicateurIndividu.findMany({
         where: {
           indicateurId: link.indicateurId,
           individuId: individu.id,
@@ -72,7 +72,7 @@ describe.concurrent('deleteObjectifAvancement', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        deleteObjectifAvancement({
+        deleteObjectifIndicateurIndividu({
           indicateurPublicId: indId,
           body: { individu: individu.publicId, date: '2025-01-01' },
         }),
@@ -96,13 +96,13 @@ describe.concurrent('deleteObjectifAvancement', () => {
         publicId: individuId,
         referentiel: { publicId: refId },
       })
-      await fixtures.objectifAvancement({
+      await fixtures.objectifIndicateurIndividu({
         indicateur: { publicId: indId },
         individu: { publicId: individuId, referentiel: { publicId: refId } },
         date: '2025-01-01',
         valeur: 50,
       })
-      await fixtures.objectifAvancement({
+      await fixtures.objectifIndicateurIndividu({
         indicateur: { publicId: indId },
         individu: { publicId: individuId, referentiel: { publicId: refId } },
         date: '2026-01-01',
@@ -113,14 +113,14 @@ describe.concurrent('deleteObjectifAvancement', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        deleteObjectifAvancement({
+        deleteObjectifIndicateurIndividu({
           indicateurPublicId: indId,
           body: { individu: individu.publicId, date: '2025-01-01' },
         }),
       )
 
       expect(result.isOk()).toBe(true)
-      const rows = await db().objectifAvancement.findMany({
+      const rows = await db().objectifIndicateurIndividu.findMany({
         where: { individuId: individu.id },
         orderBy: { date: 'asc' },
       })
@@ -140,7 +140,7 @@ describe.concurrent('deleteObjectifAvancement', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          deleteObjectifAvancement({
+          deleteObjectifIndicateurIndividu({
             indicateurPublicId: indId,
             body: { individu: individuId, date: '2025-01-01' },
           }),
@@ -169,7 +169,7 @@ describe.concurrent('deleteObjectifAvancement', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          deleteObjectifAvancement({
+          deleteObjectifIndicateurIndividu({
             indicateurPublicId: indId,
             body: { individu: individuId, date: '2025-01-01' },
           }),
@@ -192,7 +192,7 @@ describe.concurrent('deleteObjectifAvancement', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        deleteObjectifAvancement({
+        deleteObjectifIndicateurIndividu({
           indicateurPublicId: indId,
           body: { individu: 'DEPT-999', date: '2025-01-01' },
         }),
@@ -223,7 +223,7 @@ describe.concurrent('deleteObjectifAvancement', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        deleteObjectifAvancement({
+        deleteObjectifIndicateurIndividu({
           indicateurPublicId: indId,
           body: { individu: individuId, date: '2025-01-01' },
         }),

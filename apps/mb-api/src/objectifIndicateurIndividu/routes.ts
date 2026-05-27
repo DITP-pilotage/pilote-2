@@ -2,33 +2,30 @@ import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { errorApiModelSchema } from '@pilote/mb-shared/error'
 import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
 import {
-  deleteObjectifAvancementBodySchema,
+  deleteObjectifIndicateurIndividuBodySchema,
   listObjectifsForIndicateurQuerySchema,
-  objectifAvancementApiModelSchema,
-  objectifAvancementListApiModelSchema,
-  upsertObjectifAvancementBodySchema,
-} from '@pilote/mb-shared/objectifAvancement'
+  objectifIndicateurIndividuApiModelSchema,
+  objectifIndicateurIndividuListApiModelSchema,
+  upsertObjectifIndicateurIndividuBodySchema,
+} from '@pilote/mb-shared/objectifIndicateurIndividu'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { withTransaction } from '@/framework/persistence/withTransaction'
-import { deleteObjectifAvancement } from '@/objectifAvancement/commands/deleteObjectifAvancement'
-import { upsertObjectifAvancement } from '@/objectifAvancement/commands/upsertObjectifAvancement'
-import { listObjectifsForIndicateur } from '@/objectifAvancement/queries/listObjectifsForIndicateur'
+import { deleteObjectifIndicateurIndividu } from '@/objectifIndicateurIndividu/commands/deleteObjectifIndicateurIndividu'
+import { upsertObjectifIndicateurIndividu } from '@/objectifIndicateurIndividu/commands/upsertObjectifIndicateurIndividu'
+import { listObjectifsForIndicateur } from '@/objectifIndicateurIndividu/queries/listObjectifsForIndicateur'
 
-const ObjectifAvancementApiModelSchema = objectifAvancementApiModelSchema.openapi(
-  'ObjectifAvancementApiModel',
+const ObjectifIndicateurIndividuApiModelSchema = objectifIndicateurIndividuApiModelSchema.openapi(
+  'ObjectifIndicateurIndividuApiModel',
 )
-const ObjectifAvancementListApiModelSchema = objectifAvancementListApiModelSchema.openapi(
-  'ObjectifAvancementListApiModel',
-)
-const UpsertObjectifAvancementBodySchema = upsertObjectifAvancementBodySchema.openapi(
-  'UpsertObjectifAvancementBody',
-)
-const DeleteObjectifAvancementBodySchema = deleteObjectifAvancementBodySchema.openapi(
-  'DeleteObjectifAvancementBody',
-)
+const ObjectifIndicateurIndividuListApiModelSchema =
+  objectifIndicateurIndividuListApiModelSchema.openapi('ObjectifIndicateurIndividuListApiModel')
+const UpsertObjectifIndicateurIndividuBodySchema =
+  upsertObjectifIndicateurIndividuBodySchema.openapi('UpsertObjectifIndicateurIndividuBody')
+const DeleteObjectifIndicateurIndividuBodySchema =
+  deleteObjectifIndicateurIndividuBodySchema.openapi('DeleteObjectifIndicateurIndividuBody')
 const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 const indicateurParamsSchema = z.object({
@@ -55,7 +52,7 @@ const getObjectifsForIndicateurRoute = createRoute({
   },
   responses: {
     200: {
-      content: { 'application/json': { schema: ObjectifAvancementListApiModelSchema } },
+      content: { 'application/json': { schema: ObjectifIndicateurIndividuListApiModelSchema } },
       description: 'Objectifs pour les individus demandés',
     },
     400: {
@@ -67,7 +64,7 @@ const getObjectifsForIndicateurRoute = createRoute({
 
 // --- PUT /indicateurs/:id/objectifs ------------------------------------------
 
-const upsertObjectifAvancementRoute = createRoute({
+const upsertObjectifIndicateurIndividuRoute = createRoute({
   method: 'put',
   path: '/indicateurs/{id}/objectifs',
   tags: ['Indicateur'],
@@ -79,13 +76,13 @@ const upsertObjectifAvancementRoute = createRoute({
   request: {
     params: indicateurParamsSchema,
     body: {
-      content: { 'application/json': { schema: UpsertObjectifAvancementBodySchema } },
+      content: { 'application/json': { schema: UpsertObjectifIndicateurIndividuBodySchema } },
       required: true,
     },
   },
   responses: {
     200: {
-      content: { 'application/json': { schema: ObjectifAvancementApiModelSchema } },
+      content: { 'application/json': { schema: ObjectifIndicateurIndividuApiModelSchema } },
       description: 'Objectif créé ou mis à jour',
     },
     400: {
@@ -101,7 +98,7 @@ const upsertObjectifAvancementRoute = createRoute({
 
 // --- DELETE /indicateurs/:id/objectifs ---------------------------------------
 
-const deleteObjectifAvancementRoute = createRoute({
+const deleteObjectifIndicateurIndividuRoute = createRoute({
   method: 'delete',
   path: '/indicateurs/{id}/objectifs',
   tags: ['Indicateur'],
@@ -113,7 +110,7 @@ const deleteObjectifAvancementRoute = createRoute({
   request: {
     params: indicateurParamsSchema,
     body: {
-      content: { 'application/json': { schema: DeleteObjectifAvancementBodySchema } },
+      content: { 'application/json': { schema: DeleteObjectifIndicateurIndividuBodySchema } },
       required: true,
     },
   },
@@ -134,9 +131,9 @@ const deleteObjectifAvancementRoute = createRoute({
 
 // --- App registration --------------------------------------------------------
 
-export const objectifAvancementRoutes = new OpenAPIHono()
+export const objectifIndicateurIndividuRoutes = new OpenAPIHono()
 
-objectifAvancementRoutes.openapi(getObjectifsForIndicateurRoute, async (context) => {
+objectifIndicateurIndividuRoutes.openapi(getObjectifsForIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
   const { individus } = context.req.valid('query')
 
@@ -145,19 +142,19 @@ objectifAvancementRoutes.openapi(getObjectifsForIndicateurRoute, async (context)
       jsonResponseOk({
         context,
         data,
-        schema: ObjectifAvancementListApiModelSchema,
+        schema: ObjectifIndicateurIndividuListApiModelSchema,
         status: 200,
       }),
     never,
   )
 })
 
-objectifAvancementRoutes.openapi(upsertObjectifAvancementRoute, async (context) => {
+objectifIndicateurIndividuRoutes.openapi(upsertObjectifIndicateurIndividuRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
   const result = await withTransaction(async () =>
-    upsertObjectifAvancement({ indicateurPublicId: id, body }),
+    upsertObjectifIndicateurIndividu({ indicateurPublicId: id, body }),
   )
 
   return result.match(
@@ -165,7 +162,7 @@ objectifAvancementRoutes.openapi(upsertObjectifAvancementRoute, async (context) 
       jsonResponseOk({
         context,
         data,
-        schema: ObjectifAvancementApiModelSchema,
+        schema: ObjectifIndicateurIndividuApiModelSchema,
         status: 200,
       }),
     (error) =>
@@ -183,12 +180,12 @@ objectifAvancementRoutes.openapi(upsertObjectifAvancementRoute, async (context) 
   )
 })
 
-objectifAvancementRoutes.openapi(deleteObjectifAvancementRoute, async (context) => {
+objectifIndicateurIndividuRoutes.openapi(deleteObjectifIndicateurIndividuRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
   const result = await withTransaction(async () =>
-    deleteObjectifAvancement({ indicateurPublicId: id, body }),
+    deleteObjectifIndicateurIndividu({ indicateurPublicId: id, body }),
   )
 
   return result.match(

@@ -58,7 +58,7 @@ model Indicateur {
   updatedAt  DateTime   @updatedAt      @map("updated_at")
 
   valeurs      ValeurAvancement[]
-  objectifs    ObjectifAvancement[]
+  objectifs    ObjectifIndicateurIndividu[]
   referentiels IndicateurReferentiel[]
   permissions  IndicateurPermission[]
 
@@ -141,7 +141,7 @@ model Individu {
   relationsAsParent Relation[]           @relation("relationParent")
   relationsAsChild  Relation[]           @relation("relationChild")
   valeurs           ValeurAvancement[]
-  objectifs         ObjectifAvancement[]
+  objectifs         ObjectifIndicateurIndividu[]
 
   @@index([referentielId])
   @@map("individu")
@@ -179,7 +179,7 @@ model ValeurAvancement {
   @@map("valeur_avancement")
 }
 
-model ObjectifAvancement {
+model ObjectifIndicateurIndividu {
   id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   indicateurId String   @map("indicateur_id") @db.Uuid
   individuId   String   @map("individu_id")   @db.Uuid
@@ -191,10 +191,10 @@ model ObjectifAvancement {
   indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
   individu   Individu   @relation(fields: [individuId],   references: [id], onDelete: Restrict)
 
-  @@unique([indicateurId, individuId, date], name: "objectif_avancement_unique")
+  @@unique([indicateurId, individuId, date], name: "objectif_indicateur_individu_unique")
   @@index([indicateurId, individuId])
   @@index([indicateurId, date])
-  @@map("objectif_avancement")
+  @@map("objectif_indicateur_individu")
 }
 
 enum ApplicationLogLevel {

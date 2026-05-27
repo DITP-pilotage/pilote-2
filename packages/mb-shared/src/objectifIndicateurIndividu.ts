@@ -7,18 +7,18 @@ import { dateSchema } from './valeurAvancement'
 
 export { dateSchema }
 
-export const upsertObjectifAvancementBodySchema = z.object({
+export const upsertObjectifIndicateurIndividuBodySchema = z.object({
   individu: individuPublicIdSchema,
   date: dateSchema,
   valeur: z.number(),
 })
-export type UpsertObjectifAvancementBody = z.infer<typeof upsertObjectifAvancementBodySchema>
+export type UpsertObjectifIndicateurIndividuBody = z.infer<typeof upsertObjectifIndicateurIndividuBodySchema>
 
-export const deleteObjectifAvancementBodySchema = z.object({
+export const deleteObjectifIndicateurIndividuBodySchema = z.object({
   individu: individuPublicIdSchema,
   date: dateSchema,
 })
-export type DeleteObjectifAvancementBody = z.infer<typeof deleteObjectifAvancementBodySchema>
+export type DeleteObjectifIndicateurIndividuBody = z.infer<typeof deleteObjectifIndicateurIndividuBodySchema>
 
 export const listObjectifsForIndicateurQuerySchema = z.object({
   individus: individusCsvSchema.describe(
@@ -27,15 +27,15 @@ export const listObjectifsForIndicateurQuerySchema = z.object({
 })
 export type ListObjectifsForIndicateurQuery = z.infer<typeof listObjectifsForIndicateurQuerySchema>
 
-export const objectifAvancementApiModelSchema = z.object({
+export const objectifIndicateurIndividuApiModelSchema = z.object({
   indicateur: indicateurPublicIdSchema,
   individu: individuPublicIdSchema,
   date: dateSchema,
   valeur: z.number(),
 })
-export type ObjectifAvancementApiModel = z.infer<typeof objectifAvancementApiModelSchema>
+export type ObjectifIndicateurIndividuApiModel = z.infer<typeof objectifIndicateurIndividuApiModelSchema>
 
-export const objectifAvancementListApiModelSchema = z.object({
-  items: z.array(objectifAvancementApiModelSchema),
+export const objectifIndicateurIndividuListApiModelSchema = z.object({
+  items: z.array(objectifIndicateurIndividuApiModelSchema),
 })
-export type ObjectifAvancementListApiModel = z.infer<typeof objectifAvancementListApiModelSchema>
+export type ObjectifIndicateurIndividuListApiModel = z.infer<typeof objectifIndicateurIndividuListApiModelSchema>

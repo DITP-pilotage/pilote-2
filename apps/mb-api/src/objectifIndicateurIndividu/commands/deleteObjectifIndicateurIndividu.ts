@@ -1,27 +1,30 @@
-import { type DeleteObjectifAvancementBody } from '@pilote/mb-shared/objectifAvancement'
+import { type DeleteObjectifIndicateurIndividuBody } from '@pilote/mb-shared/objectifIndicateurIndividu'
 import { ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError } from '@/individu/permission'
 import { resolveIndicateurAndIndividu } from '@/indicateur/resolveIndicateurAndIndividu'
 
-export type DeleteObjectifAvancementError = IndividuInconnuError
+export type DeleteObjectifIndicateurIndividuError = IndividuInconnuError
 
-type DeleteObjectifAvancementParams = {
+type DeleteObjectifIndicateurIndividuParams = {
   indicateurPublicId: string
-  body: DeleteObjectifAvancementBody
+  body: DeleteObjectifIndicateurIndividuBody
 }
 
-export const deleteObjectifAvancement = ({
+export const deleteObjectifIndicateurIndividu = ({
   indicateurPublicId,
   body,
-}: DeleteObjectifAvancementParams): ResultAsync<void, DeleteObjectifAvancementError> =>
+}: DeleteObjectifIndicateurIndividuParams): ResultAsync<
+  void,
+  DeleteObjectifIndicateurIndividuError
+> =>
   resolveIndicateurAndIndividu({
     indicateurPublicId,
     individuPublicId: body.individu,
   }).andThen(({ indicateur, individu }) =>
     ResultAsync.fromSafePromise(
-      db().objectifAvancement.deleteMany({
+      db().objectifIndicateurIndividu.deleteMany({
         where: {
           indicateurId: indicateur.id,
           individuId: individu.id,
