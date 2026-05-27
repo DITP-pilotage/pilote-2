@@ -12,7 +12,7 @@ import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetado
 import { IndicateurStatsPanel } from '@/components/indicateurs/IndicateurStatsPanel'
 import { IndicateurValeursChart } from '@/components/indicateurs/IndicateurValeursChart'
 import { IndicateurValeursRemarquables } from '@/components/indicateurs/IndicateurValeursRemarquables'
-import { IndicateurValeursTable } from '@/components/indicateurs/IndicateurValeursTable'
+import { IndicateurWidgets } from '@/components/indicateurs/IndicateurWidgets'
 import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
 import { BackLink } from '@/components/ui/BackLink'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -153,7 +153,7 @@ function IndicateurDetailComponent() {
           <TabsContent value="valeurs">
             <div className="space-y-6">
               <IndicateurValeursChart indicateurId={id} individuId={individuId} />
-              <IndicateurValeursTable indicateurId={id} individuId={individuId} />
+              <IndicateurWidgets indicateurId={id} referentielId={referentielId} />
             </div>
           </TabsContent>
 

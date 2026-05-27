@@ -154,6 +154,9 @@ importers:
       dotenv:
         specifier: 16.4.5
         version: 16.4.5
+      echarts:
+        specifier: ^6.0.0
+        version: 6.0.0
       echarts-for-react:
         specifier: 3.0.6
         version: 3.0.6(echarts@6.0.0)(react@19.2.5)
