@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { fonctionAgregationSchema, indicateurPublicIdSchema } from './indicateur'
 import { individuApiModelSchema, individuPublicIdSchema } from './individu'
+import { individusCsvSchema, MAX_INDIVIDUS_PAR_REQUETE } from './individusCsv'
 import {
   createPaginatedApiListSchema,
   pageSizeSchema,
@@ -62,23 +63,6 @@ export const deleteValeurAvancementBodySchema = z.object({
 })
 export type DeleteValeurAvancementBody = z.infer<typeof deleteValeurAvancementBodySchema>
 
-const MAX_INDIVIDUS_PAR_REQUETE = 100
-
-const individusCsvSchema = z
-  .string()
-  .min(1, "Au moins un identifiant d'individu est requis")
-  .transform((value) =>
-    value
-      .split(',')
-      .map((segment) => segment.trim())
-      .filter((segment) => segment.length > 0),
-  )
-  .pipe(
-    z
-      .array(individuPublicIdSchema)
-      .min(1)
-      .max(MAX_INDIVIDUS_PAR_REQUETE, `Au plus ${MAX_INDIVIDUS_PAR_REQUETE} individus par requête`),
-  )
 
 export const listValeursForIndicateurQuerySchema = z
   .object({

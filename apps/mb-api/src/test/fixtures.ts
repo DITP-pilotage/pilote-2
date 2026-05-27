@@ -16,6 +16,7 @@ import {
   type IndicateurPermissionModel,
   type IndicateurReferentielModel,
   type IndividuModel,
+  type ObjectifIndicateurIndividuModel,
   type ReferentielModel,
   type RelationModel,
   type UtilisateurModel,
@@ -295,6 +296,57 @@ async function valeurAvancement(
   return results
 }
 
+// --- ObjectifIndicateurIndividu (deps requises) -------------------------------
+
+type ObjectifIndicateurIndividuOverrides = {
+  indicateur: IndicateurOverrides
+  individu: IndividuOverrides
+} & Partial<{ id: string; dateCible: string; valeurCible: number }>
+
+const DEFAULT_OBJECTIF_INDICATEUR_INDIVIDU_DATE_CIBLE = '2024-01-01'
+const DEFAULT_OBJECTIF_INDICATEUR_INDIVIDU_VALEUR_CIBLE = 100
+
+const upsertObjectifIndicateurIndividu = async (o: ObjectifIndicateurIndividuOverrides) => {
+  const indicateurRow = await upsertIndicateur(o.indicateur)
+  const individuRow = await upsertIndividu(o.individu)
+  const dateCible = o.dateCible ?? DEFAULT_OBJECTIF_INDICATEUR_INDIVIDU_DATE_CIBLE
+  const valeurCible = o.valeurCible ?? DEFAULT_OBJECTIF_INDICATEUR_INDIVIDU_VALEUR_CIBLE
+  return db().objectifIndicateurIndividu.upsert({
+    where: {
+      objectif_indicateur_individu_unique: {
+        indicateurId: indicateurRow.id,
+        individuId: individuRow.id,
+        dateCible,
+      },
+    },
+    update: { valeurCible },
+    create: {
+      id: o.id ?? uuidv7(),
+      indicateurId: indicateurRow.id,
+      individuId: individuRow.id,
+      dateCible,
+      valeurCible,
+    },
+  })
+}
+
+function objectifIndicateurIndividu(
+  override: ObjectifIndicateurIndividuOverrides,
+): Promise<ObjectifIndicateurIndividuModel>
+function objectifIndicateurIndividu(
+  o1: ObjectifIndicateurIndividuOverrides,
+  o2: ObjectifIndicateurIndividuOverrides,
+  ...rest: ObjectifIndicateurIndividuOverrides[]
+): Promise<ObjectifIndicateurIndividuModel[]>
+async function objectifIndicateurIndividu(
+  ...overrides: ObjectifIndicateurIndividuOverrides[]
+): Promise<ObjectifIndicateurIndividuModel | ObjectifIndicateurIndividuModel[]> {
+  if (overrides.length === 1) return upsertObjectifIndicateurIndividu(overrides[0]!)
+  const results: ObjectifIndicateurIndividuModel[] = []
+  for (const o of overrides) results.push(await upsertObjectifIndicateurIndividu(o))
+  return results
+}
+
 // --- ApiKey ------------------------------------------------------------------
 
 type PrincipalIndicateurPermissionOverrides = {
@@ -459,6 +511,7 @@ export const fixtures = {
   indicateurReferentiel,
   relation,
   valeurAvancement,
+  objectifIndicateurIndividu,
   apiKey,
   utilisateur,
   indicateurPermission,

@@ -307,3 +307,39 @@ export const buildValeursPourIndicateur = ({
     }),
   )
 }
+
+// Dates-cibles annuelles pour les objectifs d'avancement.
+const OBJECTIF_DATES = ['2024-01-01', '2025-01-01', '2026-01-01'] as const
+
+// Génère 3 objectifs annuels (2024, 2025, 2026) pour un indicateur et une liste
+// d'individus. La cible est calculée avec la même mécanique que les valeurs mais
+// une tendance amplifiée (+50 %) pour représenter une ambition réaliste.
+export const buildObjectifsPourIndicateur = ({
+  indicateurPublicId,
+  individuPublicIds,
+}: {
+  indicateurPublicId: string
+  individuPublicIds: ReadonlyArray<string>
+}): ReadonlyArray<{
+  indicateurPublicId: string
+  individuPublicId: string
+  dateCible: string
+  valeurCible: number
+}> => {
+  const profil = profilPourIndicateur(indicateurPublicId)
+  const estTauxPourcentage = INDICATEURS_TAUX_POURCENTAGE.has(indicateurPublicId)
+  const lastIndex = Math.max(OBJECTIF_DATES.length - 1, 1)
+  return individuPublicIds.flatMap((individuPublicId, individuIndex) =>
+    OBJECTIF_DATES.map((dateCible, dateIndex) => {
+      const valeurBrute = computeValeur({
+        ...profil,
+        trend: profil.trend * 1.5,
+        ratio: dateIndex / lastIndex,
+        individuIndex,
+        dateIndex,
+      })
+      const valeurCible = estTauxPourcentage ? clamp(valeurBrute, 0, 100) : valeurBrute
+      return { indicateurPublicId, individuPublicId, dateCible, valeurCible }
+    }),
+  )
+}

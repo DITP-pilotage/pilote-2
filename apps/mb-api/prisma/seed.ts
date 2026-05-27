@@ -5,6 +5,7 @@ import { Prisma, PrismaClient } from '../src/generated/prisma/client.js'
 import { type FonctionAgregation } from '../src/generated/prisma/enums.js'
 
 import {
+  buildObjectifsPourIndicateur,
   buildValeursPourIndicateur,
   individusSeed,
   referentielsSeed,
@@ -437,9 +438,50 @@ const main = async () => {
     valeursCount += result.count
   }
 
+  // Objectifs d'avancement : 5 premiers indicateurs avec une maille de saisie
+  // connue — 3 dates-cibles annuelles (2024, 2025, 2026) × individus de la maille.
+  const INDICATEURS_OBJECTIFS = ['IND-001', 'IND-002', 'IND-003', 'IND-004', 'IND-005']
+  let objectifsCount = 0
+  for (const indicateurPublicId of INDICATEURS_OBJECTIFS) {
+    const lien = indicateurReferentielsSeed.find((l) => l.indicateurPublicId === indicateurPublicId)
+    if (!lien) continue
+    const refPublicId = mailleLaPlusFine(lien.referentiels.map((r) => r.referentielPublicId))
+    if (!refPublicId) continue
+    const refId = referentielParPublicId.get(refPublicId)
+    if (!refId) continue
+    const individusPublicIds = individusParReferentielId.get(refId) ?? []
+    if (individusPublicIds.length === 0) continue
+    const indicateurId = indicateursParPublicId.get(indicateurPublicId)
+    if (!indicateurId) continue
+
+    const generated = buildObjectifsPourIndicateur({
+      indicateurPublicId,
+      individuPublicIds: individusPublicIds,
+    })
+    const rows = generated
+      .map((g) => {
+        const individu = individusParPublicId.get(g.individuPublicId)
+        if (!individu) return null
+        return {
+          id: uuidv7(),
+          indicateurId,
+          individuId: individu.id,
+          dateCible: g.dateCible,
+          valeurCible: new Prisma.Decimal(g.valeurCible),
+        }
+      })
+      .filter((row): row is NonNullable<typeof row> => row !== null)
+
+    const result = await prisma.objectifIndicateurIndividu.createMany({
+      data: rows,
+      skipDuplicates: true,
+    })
+    objectifsCount += result.count
+  }
+
   const permissionsCount = 8 * 2
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées (les valeurs existantes ont été ignorées).`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés).`,
   )
 }
 

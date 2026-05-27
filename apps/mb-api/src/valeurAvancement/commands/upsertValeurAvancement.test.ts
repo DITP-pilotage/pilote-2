@@ -173,15 +173,14 @@ describe.concurrent('upsertValeurAvancement', () => {
         permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
       })
 
-      const result = await runAsPrincipal(apiKey.id, () =>
-        upsertValeurAvancement({
-          indicateurPublicId: indId,
-          body: { individu: individuId, date: '2025-03-01', valeur: 1 },
-        }),
-      )
-
-      expect(result.isErr()).toBe(true)
-      expect(result._unsafeUnwrapErr()).toBeInstanceOf(ForbiddenError)
+      await expect(
+        runAsPrincipal(apiKey.id, () =>
+          upsertValeurAvancement({
+            indicateurPublicId: indId,
+            body: { individu: individuId, date: '2025-03-01', valeur: 1 },
+          }),
+        ),
+      ).rejects.toBeInstanceOf(ForbiddenError)
     }),
   )
 

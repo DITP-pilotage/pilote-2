@@ -12,6 +12,7 @@ import { indicateurRoutes } from '@/indicateur/routes'
 import { individuRoutes } from '@/individu/routes'
 import { referentielRoutes } from '@/referentiel/routes'
 import { sharedMessage } from '@/shared/routes/sharedMessage'
+import { objectifIndicateurIndividuRoutes } from '@/objectifIndicateurIndividu/routes'
 import { valeurAvancementRoutes } from '@/valeurAvancement/routes'
 
 export const app = new OpenAPIHono()
@@ -32,6 +33,7 @@ app.route('/', health)
 app.route('/', sharedMessage)
 app.route('/', indicateurRoutes)
 app.route('/', valeurAvancementRoutes)
+app.route('/', objectifIndicateurIndividuRoutes)
 app.route('/', referentielRoutes)
 app.route('/', individuRoutes)
 app.route('/', me)

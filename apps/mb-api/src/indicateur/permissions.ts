@@ -1,4 +1,4 @@
-import { errAsync, okAsync, ResultAsync } from 'neverthrow'
+import { ResultAsync } from 'neverthrow'
 
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
@@ -31,19 +31,21 @@ export const ensureIndicateurWritePermission = ({
 }: {
   indicateurId: string
   principalId: string
-}): ResultAsync<void, ForbiddenError> =>
+}): ResultAsync<void, never> =>
   ResultAsync.fromSafePromise(
-    db().indicateurPermission.findUnique({
-      where: {
-        principalId_indicateurId_action: {
-          principalId,
-          indicateurId,
-          action: PermissionAction.WRITE,
+    db()
+      .indicateurPermission.findUnique({
+        where: {
+          principalId_indicateurId_action: {
+            principalId,
+            indicateurId,
+            action: PermissionAction.WRITE,
+          },
         },
-      },
-    }),
-  ).andThen((hasWrite) =>
-    hasWrite
-      ? okAsync(undefined)
-      : errAsync(new ForbiddenError("Vous n'avez pas la permission de modifier cet indicateur")),
+      })
+      .then((hasWrite) => {
+        if (!hasWrite) {
+          throw new ForbiddenError("Vous n'avez pas la permission de modifier cet indicateur")
+        }
+      }),
   )

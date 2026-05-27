@@ -35,6 +35,10 @@
     "./valeurAvancement": {
       "types": "./src/valeurAvancement.ts",
       "default": "./src/valeurAvancement.ts"
+    },
+    "./objectifIndicateurIndividu": {
+      "types": "./src/objectifIndicateurIndividu.ts",
+      "default": "./src/objectifIndicateurIndividu.ts"
     }
   },
   "files": [

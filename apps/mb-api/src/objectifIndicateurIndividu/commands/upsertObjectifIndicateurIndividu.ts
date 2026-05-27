@@ -1,7 +1,7 @@
 import {
-  type UpsertValeurAvancementBody,
-  type ValeurSaisieApiModel,
-} from '@pilote/mb-shared/valeurAvancement'
+  type ObjectifIndicateurIndividuApiModel,
+  type UpsertObjectifIndicateurIndividuBody,
+} from '@pilote/mb-shared/objectifIndicateurIndividu'
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
@@ -9,44 +9,47 @@ import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError } from '@/individu/permission'
 import { resolveIndicateurAndIndividuForWrite } from '@/indicateur/resolveIndicateurAndIndividuForWrite'
-import { toValeurSaisieApiModel } from '@/valeurAvancement/utils'
+import { toObjectifIndicateurIndividuApiModel } from '@/objectifIndicateurIndividu/utils'
 
-export type UpsertValeurAvancementError = IndividuInconnuError
+export type UpsertObjectifIndicateurIndividuError = IndividuInconnuError
 
-type UpsertValeurAvancementParams = {
+type UpsertObjectifIndicateurIndividuParams = {
   indicateurPublicId: string
-  body: UpsertValeurAvancementBody
+  body: UpsertObjectifIndicateurIndividuBody
 }
 
-export const upsertValeurAvancement = ({
+export const upsertObjectifIndicateurIndividu = ({
   indicateurPublicId,
   body,
-}: UpsertValeurAvancementParams): ResultAsync<ValeurSaisieApiModel, UpsertValeurAvancementError> =>
+}: UpsertObjectifIndicateurIndividuParams): ResultAsync<
+  ObjectifIndicateurIndividuApiModel,
+  UpsertObjectifIndicateurIndividuError
+> =>
   resolveIndicateurAndIndividuForWrite({
     indicateurPublicId,
     individuPublicId: body.individu,
   }).andThen(({ indicateur, individu }) =>
     ResultAsync.fromSafePromise(
-      db().valeurAvancement.upsert({
+      db().objectifIndicateurIndividu.upsert({
         where: {
-          valeur_avancement_unique: {
+          objectif_indicateur_individu_unique: {
             indicateurId: indicateur.id,
             individuId: individu.id,
-            date: body.date,
+            dateCible: body.dateCible,
           },
         },
-        update: { valeur: new Decimal(body.valeur) },
+        update: { valeurCible: new Decimal(body.valeurCible) },
         create: {
           id: uuidv7(),
           indicateurId: indicateur.id,
           individuId: individu.id,
-          date: body.date,
-          valeur: new Decimal(body.valeur),
+          dateCible: body.dateCible,
+          valeurCible: new Decimal(body.valeurCible),
         },
         include: {
           indicateur: { select: { publicId: true } },
           individu: { select: { publicId: true } },
         },
       }),
-    ).map(toValeurSaisieApiModel),
+    ).map(toObjectifIndicateurIndividuApiModel),
   )
