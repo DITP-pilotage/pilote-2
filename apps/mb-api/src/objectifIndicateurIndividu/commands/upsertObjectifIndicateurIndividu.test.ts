@@ -41,6 +41,7 @@ describe.concurrent('upsertObjectifIndicateurIndividu', () => {
         individu: individuId,
         dateCible: '2025-01-01',
         valeurCible: 100,
+        type: 'saisie',
       })
       const row = await db().objectifIndicateurIndividu.findFirstOrThrow({
         where: {
