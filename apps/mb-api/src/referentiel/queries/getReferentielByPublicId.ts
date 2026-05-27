@@ -10,6 +10,9 @@ export const getReferentielByPublicId = (
   ResultAsync.fromSafePromise(
     db().referentiel.findUniqueOrThrow({
       where: { publicId },
-      include: { _count: { select: { individus: true } } },
+      include: {
+        _count: { select: { individus: true } },
+        widgets: { include: { widget: true }, orderBy: { createdAt: 'asc' } },
+      },
     }),
   ).map(toReferentielApiModel)

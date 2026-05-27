@@ -18,7 +18,10 @@ export const listReferentiels = (
   const fetchPage = db().referentiel.findMany({
     where,
     orderBy: { id: 'asc' },
-    include: { _count: { select: { individus: true } } },
+    include: {
+      _count: { select: { individus: true } },
+      widgets: { include: { widget: true }, orderBy: { createdAt: 'asc' } },
+    },
     ...buildPaginationArgs(params.cursor, params.pageSize),
   })
   const fetchTotal = db().referentiel.count({ where })

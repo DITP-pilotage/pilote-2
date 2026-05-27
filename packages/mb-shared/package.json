@@ -39,6 +39,10 @@
     "./objectifIndicateurIndividu": {
       "types": "./src/objectifIndicateurIndividu.ts",
       "default": "./src/objectifIndicateurIndividu.ts"
+    },
+    "./widget": {
+      "types": "./src/widget.ts",
+      "default": "./src/widget.ts"
     }
   },
   "files": [

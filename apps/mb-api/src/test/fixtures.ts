@@ -3,12 +3,14 @@ import { uuidv7 } from 'uuidv7'
 import { env } from '@/env'
 import { hashApiKey } from '@/framework/auth/apiKey'
 import { db } from '@/framework/persistence/dbStore'
+import { Prisma } from '@/generated/prisma/client'
 import {
   testApiKeyRawKey,
   testEmail,
   testIndicateurId,
   testIndividuId,
   testReferentielId,
+  testWidgetId,
 } from '@/test/randomIds'
 import {
   type ApiKeyModel,
@@ -18,9 +20,11 @@ import {
   type IndividuModel,
   type ObjectifIndicateurIndividuModel,
   type ReferentielModel,
+  type ReferentielWidgetModel,
   type RelationModel,
   type UtilisateurModel,
   type ValeurAvancementModel,
+  type WidgetModel,
 } from '@/generated/prisma/models'
 import { PermissionAction, Visibilite, type FonctionAgregation } from '@/generated/prisma/enums'
 
@@ -120,6 +124,7 @@ type IndividuOverrides = Partial<{
   id: string
   publicId: string
   nom: string
+  metadata: Record<string, unknown> | null
   referentiel: ReferentielOverrides
 }>
 
@@ -129,14 +134,15 @@ const upsertIndividu = async (o: IndividuOverrides = {}) => {
 
   // Pas d'override referentiel et l'individu existe : on touche pas au rattachement.
   if (existing && !o.referentiel) {
-    const { id: _id, publicId: _pub, referentiel: _ref, ...update } = o
+    const { id: _id, publicId: _pub, referentiel: _ref, metadata: _meta, ...rest } = o
+    const update = { ...rest, ...toMetadataData(o.metadata) }
     if (Object.keys(update).length === 0) return existing
     return db().individu.update({ where: { id: existing.id }, data: update })
   }
 
   const referentielRow = await upsertReferentiel(o.referentiel)
-  const { id: _id, publicId: _pub, referentiel: _ref, ...rest } = o
-  const update = { ...rest, referentielId: referentielRow.id }
+  const { id: _id, publicId: _pub, referentiel: _ref, metadata: _meta, ...rest } = o
+  const update = { ...rest, referentielId: referentielRow.id, ...toMetadataData(o.metadata) }
   return db().individu.upsert({
     where: { publicId },
     update,
@@ -145,8 +151,17 @@ const upsertIndividu = async (o: IndividuOverrides = {}) => {
       publicId,
       nom: o.nom ?? 'Individu de test',
       referentielId: referentielRow.id,
+      ...toMetadataData(o.metadata),
     },
   })
+}
+
+const toMetadataData = (
+  metadata: Record<string, unknown> | null | undefined,
+): { metadata: Prisma.InputJsonValue | typeof Prisma.DbNull } | Record<string, never> => {
+  if (metadata === undefined) return {}
+  if (metadata === null) return { metadata: Prisma.DbNull }
+  return { metadata: metadata as Prisma.InputJsonValue }
 }
 
 function individu(): Promise<IndividuModel>
@@ -162,6 +177,97 @@ async function individu(
   if (overrides.length <= 1) return upsertIndividu(overrides[0])
   const results: IndividuModel[] = []
   for (const o of overrides) results.push(await upsertIndividu(o))
+  return results
+}
+
+// --- Widget ------------------------------------------------------------------
+
+type WidgetOverrides = Partial<{
+  id: string
+  publicId: string
+  type: string
+  nom: string
+  joinKey: string
+  defaultConfig: Record<string, unknown>
+}>
+
+const upsertWidget = async (o: WidgetOverrides = {}) => {
+  const publicId = o.publicId ?? testWidgetId()
+  const { id: _id, publicId: _pub, defaultConfig, ...rest } = o
+  const update = {
+    ...rest,
+    ...(defaultConfig !== undefined
+      ? { defaultConfig: defaultConfig as Prisma.InputJsonValue }
+      : {}),
+  }
+  if (Object.keys(update).length === 0) {
+    const existing = await db().widget.findUnique({ where: { publicId } })
+    if (existing) return existing
+  }
+  return db().widget.upsert({
+    where: { publicId },
+    update,
+    create: {
+      id: o.id ?? uuidv7(),
+      publicId,
+      type: o.type ?? 'test-widget',
+      nom: o.nom ?? 'Widget de test',
+      joinKey: o.joinKey ?? 'testKey',
+      defaultConfig: (o.defaultConfig ?? {}) as Prisma.InputJsonValue,
+    },
+  })
+}
+
+function widget(): Promise<WidgetModel>
+function widget(override: WidgetOverrides): Promise<WidgetModel>
+function widget(
+  o1: WidgetOverrides,
+  o2: WidgetOverrides,
+  ...rest: WidgetOverrides[]
+): Promise<WidgetModel[]>
+async function widget(...overrides: WidgetOverrides[]): Promise<WidgetModel | WidgetModel[]> {
+  if (overrides.length <= 1) return upsertWidget(overrides[0])
+  const results: WidgetModel[] = []
+  for (const o of overrides) results.push(await upsertWidget(o))
+  return results
+}
+
+// --- ReferentielWidget (deps requises) ---------------------------------------
+
+type ReferentielWidgetOverrides = {
+  referentiel: ReferentielOverrides
+  widget: WidgetOverrides
+}
+
+const upsertReferentielWidget = async (o: ReferentielWidgetOverrides) => {
+  const referentielRow = await upsertReferentiel(o.referentiel)
+  const widgetRow = await upsertWidget(o.widget)
+  return db().referentielWidget.upsert({
+    where: {
+      referentielId_widgetId: {
+        referentielId: referentielRow.id,
+        widgetId: widgetRow.id,
+      },
+    },
+    update: {},
+    create: { referentielId: referentielRow.id, widgetId: widgetRow.id },
+  })
+}
+
+function referentielWidget(
+  override: ReferentielWidgetOverrides,
+): Promise<ReferentielWidgetModel>
+function referentielWidget(
+  o1: ReferentielWidgetOverrides,
+  o2: ReferentielWidgetOverrides,
+  ...rest: ReferentielWidgetOverrides[]
+): Promise<ReferentielWidgetModel[]>
+async function referentielWidget(
+  ...overrides: ReferentielWidgetOverrides[]
+): Promise<ReferentielWidgetModel | ReferentielWidgetModel[]> {
+  if (overrides.length === 1) return upsertReferentielWidget(overrides[0]!)
+  const results: ReferentielWidgetModel[] = []
+  for (const o of overrides) results.push(await upsertReferentielWidget(o))
   return results
 }
 
@@ -508,6 +614,8 @@ export const fixtures = {
   indicateur,
   referentiel,
   individu,
+  widget,
+  referentielWidget,
   indicateurReferentiel,
   relation,
   valeurAvancement,

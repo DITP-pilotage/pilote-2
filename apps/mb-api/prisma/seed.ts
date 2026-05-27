@@ -11,6 +11,7 @@ import {
   referentielsSeed,
   relationsSeed,
 } from './seedData/geo.js'
+import { widgetsSeed } from './seedData/widgets.js'
 
 const databaseUrl = process.env['DATABASE_URL']
 if (!databaseUrl) {
@@ -227,16 +228,53 @@ const main = async () => {
       where: { publicId: item.referentiel },
       select: { id: true },
     })
+    const metadata =
+      item.metadata === null ? Prisma.DbNull : (item.metadata as Prisma.InputJsonValue)
     await prisma.individu.upsert({
       where: { publicId: item.publicId },
-      update: { nom: item.nom, referentielId: referentiel.id },
+      update: { nom: item.nom, referentielId: referentiel.id, metadata },
       create: {
         id: uuidv7(),
         publicId: item.publicId,
         nom: item.nom,
         referentielId: referentiel.id,
+        metadata,
       },
     })
+  }
+
+  for (const item of widgetsSeed) {
+    const defaultConfig = item.defaultConfig as Prisma.InputJsonValue
+    const widget = await prisma.widget.upsert({
+      where: { publicId: item.publicId },
+      update: {
+        type: item.type,
+        nom: item.nom,
+        joinKey: item.joinKey,
+        defaultConfig,
+      },
+      create: {
+        id: uuidv7(),
+        publicId: item.publicId,
+        type: item.type,
+        nom: item.nom,
+        joinKey: item.joinKey,
+        defaultConfig,
+      },
+    })
+    for (const refPublicId of item.referentielPublicIds) {
+      const referentiel = await prisma.referentiel.findUniqueOrThrow({
+        where: { publicId: refPublicId },
+        select: { id: true },
+      })
+      await prisma.referentielWidget.upsert({
+        where: {
+          referentielId_widgetId: { referentielId: referentiel.id, widgetId: widget.id },
+        },
+        update: {},
+        create: { referentielId: referentiel.id, widgetId: widget.id },
+      })
+    }
   }
 
   const indicateurReferentielsSeed: ReadonlyArray<{
@@ -480,8 +518,9 @@ const main = async () => {
   }
 
   const permissionsCount = 8 * 2
+  const widgetLiaisonsCount = widgetsSeed.reduce((acc, w) => acc + w.referentielPublicIds.length, 0)
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés).`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget.`,
   )
 }
 

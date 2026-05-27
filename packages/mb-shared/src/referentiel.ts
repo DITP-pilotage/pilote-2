@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { createPaginatedApiListSchema, listQuerySchema } from './pagination'
 import { individuPublicIdSchema, referentielPublicIdSchema } from './publicIds'
+import { widgetApiModelSchema } from './widget'
 
 export { referentielPublicIdSchema } from './publicIds'
 
@@ -14,6 +15,11 @@ export const referentielApiModelSchema = z.object({
     .int()
     .nonnegative()
     .describe("Nombre d'individus appartenant à la population du référentiel."),
+  widgets: z
+    .array(widgetApiModelSchema)
+    .describe(
+      'Widgets de visualisation compatibles avec ce référentiel (ex. carte de France pour REF-DEPT).',
+    ),
   createdAt: z.string().datetime().describe('Date ISO 8601 de création.'),
   updatedAt: z.string().datetime().describe('Date ISO 8601 de dernière mise à jour.'),
 })
