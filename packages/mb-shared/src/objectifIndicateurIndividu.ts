@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { indicateurPublicIdSchema } from './publicIds'
+import { fonctionAgregationSchema, indicateurPublicIdSchema } from './publicIds'
 import { individuPublicIdSchema } from './individu'
 import { individusCsvSchema, MAX_INDIVIDUS_PAR_REQUETE } from './individusCsv'
 import { dateTruncSchema, dateSchema } from './dates'
@@ -33,17 +33,50 @@ export const listObjectifsForIndicateurQuerySchema = z.object({
 })
 export type ListObjectifsForIndicateurQuery = z.infer<typeof listObjectifsForIndicateurQuerySchema>
 
-export const objectifIndicateurIndividuApiModelSchema = z.object({
+export const contributionObjectifApiModelSchema = z.object({
+  individu: individuPublicIdSchema,
+  valeurCible: z.number(),
+  dateCible: dateSchema.describe(
+    "Bucket de la valeur portée (carry-forward) retenue pour cet enfant au moment du bucket parent.",
+  ),
+  source: z
+    .enum(['saisie', 'derivee'])
+    .describe(
+      "`saisie` : l'enfant est une feuille avec un objectif saisi. `derivee` : l'enfant est " +
+        "lui-même agrégé depuis ses propres enfants.",
+    ),
+})
+export type ContributionObjectifApiModel = z.infer<typeof contributionObjectifApiModelSchema>
+
+export const objectifSaisieApiModelSchema = z.object({
   indicateur: indicateurPublicIdSchema,
   individu: individuPublicIdSchema,
   dateCible: dateSchema,
   valeurCible: z.number(),
-  type: z.enum(['saisie', 'derivee']).describe(
-    "`saisie` : objectif saisi directement pour cet individu. `derivee` : objectif calculé par " +
-      "agrégation des objectifs des enfants directs (récursivement). Les individus parents avec " +
-      "une fonction d'agrégation active n'exposent jamais leurs saisies directes.",
+  type: z.literal('saisie'),
+})
+export type ObjectifSaisieApiModel = z.infer<typeof objectifSaisieApiModelSchema>
+
+export const objectifDeriveeApiModelSchema = z.object({
+  indicateur: indicateurPublicIdSchema,
+  individu: individuPublicIdSchema,
+  dateCible: dateSchema,
+  valeurCible: z.number(),
+  type: z.literal('derivee'),
+  fonctionAgregation: fonctionAgregationSchema.describe(
+    "Fonction d'agrégation appliquée pour ce couple (indicateur, référentiel de l'individu).",
+  ),
+  contributions: z.array(contributionObjectifApiModelSchema).describe(
+    "Une entrée par enfant direct, triée par publicId. Pour chaque enfant on porte sa dernière " +
+      "valeur connue ≤ dateCible du bucket (carry-forward). Permet le drill-down et l'audit.",
   ),
 })
+export type ObjectifDeriveeApiModel = z.infer<typeof objectifDeriveeApiModelSchema>
+
+export const objectifIndicateurIndividuApiModelSchema = z.discriminatedUnion('type', [
+  objectifSaisieApiModelSchema,
+  objectifDeriveeApiModelSchema,
+])
 export type ObjectifIndicateurIndividuApiModel = z.infer<typeof objectifIndicateurIndividuApiModelSchema>
 
 export const objectifIndicateurIndividuListApiModelSchema = z.object({
