@@ -65,6 +65,18 @@ async function validateKeycloakToken(token: string): Promise<boolean> {
 }
 
 export async function proxy(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const estAcmeChallenge = pathname.startsWith("/.well-known/acme-challenge/");
+
+  if (
+    request.headers.get("x-forwarded-proto") === "http" &&
+    !estAcmeChallenge
+  ) {
+    const httpsUrl = new URL(request.nextUrl.toString());
+    httpsUrl.protocol = "https:";
+    return NextResponse.redirect(httpsUrl, { status: 308 });
+  }
+
   const nonce = generateNonce();
 
   const response = NextResponse.next();
@@ -100,7 +112,6 @@ export async function proxy(request: NextRequest) {
     );
   }
 
-  const pathname = request.nextUrl.pathname;
   const routesTrpcPubliques = [
     "/api/trpc/gestionContenu.recupererMessageInformation",
     "/api/trpc/gestionContenu.recupererToutesLesVariablesContenu",
@@ -114,6 +125,8 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith("/centreaide") ||
     pathname.startsWith("/api/admin/cron") ||
     pathname.startsWith("/api/admin/unitaire") ||
+    pathname.startsWith("/api/admin/acme-challenge") ||
+    estAcmeChallenge ||
     routesTrpcPubliques.some((route) => pathname.startsWith(route));
 
   if (!estRoutePublique) {

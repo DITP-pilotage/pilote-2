@@ -58,6 +58,10 @@ const nextConfig = {
         source: "/centreaide/:slug*",
         destination: "/centre-aide-pilote-2/centre-aide/:slug*",
       },
+      {
+        source: "/.well-known/acme-challenge/:token",
+        destination: "/api/acme-challenge/:token",
+      },
     ];
   },
   webpack: function (config) {

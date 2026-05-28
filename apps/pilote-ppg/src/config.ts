@@ -434,6 +434,14 @@ const config = convict({
       env: "CRON_AUTH_SECRET",
     },
   },
+  acme: {
+    uploadApiKey: {
+      format: String,
+      default: "",
+      doc: "Clé API pour uploader les challenges ACME HTTP-01. Vide = endpoint désactivé.",
+      env: "ACME_UPLOAD_API_KEY",
+    },
+  },
   tchap: {
     baseUrl: {
       format: String,
