@@ -738,9 +738,15 @@ importers:
       '@hono/node-server':
         specifier: '>=1.19.13'
         version: 1.19.14(hono@4.12.18)
+      '@hono/zod-validator':
+        specifier: ^0.7.0
+        version: 0.7.6(hono@4.12.18)(zod@4.3.6)
       hono:
         specifier: '>=4.12.18'
         version: 4.12.18
+      zod:
+        specifier: ^4.3.6
+        version: 4.3.6
     devDependencies:
       '@types/node':
         specifier: ^22.12.0
@@ -10188,6 +10194,11 @@ snapshots:
       '@hono/zod-validator': 0.7.6(hono@4.12.19)(zod@4.3.6)
       hono: 4.12.19
       openapi3-ts: 4.5.0
+      zod: 4.3.6
+
+  '@hono/zod-validator@0.7.6(hono@4.12.18)(zod@4.3.6)':
+    dependencies:
+      hono: 4.12.18
       zod: 4.3.6
 
   '@hono/zod-validator@0.7.6(hono@4.12.19)(zod@4.3.6)':

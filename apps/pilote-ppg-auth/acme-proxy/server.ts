@@ -1,8 +1,15 @@
 import { serve } from "@hono/node-server";
+import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { proxy } from "hono/proxy";
+import { z } from "zod";
 import { acmeChallengeStore } from "./acmeChallengeStore.ts";
 import { onlyAcmeApiKey } from "./onlyAcmeApiKey.ts";
+
+const challengeBodySchema = z.object({
+  token: z.string().min(1),
+  keyAuthorization: z.string().min(1),
+});
 
 export const createApp = ({ targetOrigin }: { targetOrigin: string }) => {
   const app = new Hono();
@@ -16,32 +23,16 @@ export const createApp = ({ targetOrigin }: { targetOrigin: string }) => {
     return c.text(keyAuthorization, 200, { "Content-Type": "text/plain" });
   });
 
-  app.post("/api/acme/challenge", onlyAcmeApiKey, async (c) => {
-    let body: unknown;
-    try {
-      body = await c.req.json();
-    } catch {
-      return c.json({ error: "Invalid JSON body" }, 400);
-    }
-    if (
-      typeof body !== "object" ||
-      body === null ||
-      typeof (body as { token?: unknown }).token !== "string" ||
-      typeof (body as { keyAuthorization?: unknown }).keyAuthorization !==
-        "string"
-    ) {
-      return c.json(
-        { error: "Body must be { token: string, keyAuthorization: string }" },
-        400,
-      );
-    }
-    const { token, keyAuthorization } = body as {
-      token: string;
-      keyAuthorization: string;
-    };
-    acmeChallengeStore.set(token, keyAuthorization);
-    return c.json({ ok: true }, 201);
-  });
+  app.post(
+    "/api/acme/challenge",
+    onlyAcmeApiKey,
+    zValidator("json", challengeBodySchema),
+    (c) => {
+      const { token, keyAuthorization } = c.req.valid("json");
+      acmeChallengeStore.set(token, keyAuthorization);
+      return c.json({ ok: true }, 201);
+    },
+  );
 
   app.delete("/api/acme/challenge/:token", onlyAcmeApiKey, (c) => {
     acmeChallengeStore.delete(c.req.param("token"));
