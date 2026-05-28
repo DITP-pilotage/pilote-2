@@ -3,11 +3,11 @@ import { Link } from '@tanstack/react-router'
 
 import { EntityCard } from '@/components/ui/EntityCard'
 
-type PanierCardProps = {
+export function PanierCard({
+  panier,
+}: {
   panier: Pick<PanierApiModel, 'id' | 'nom' | 'description' | 'indicateurIds'>
-}
-
-export function PanierCard({ panier }: PanierCardProps) {
+}) {
   const nb = panier.indicateurIds.length
   return (
     <EntityCard

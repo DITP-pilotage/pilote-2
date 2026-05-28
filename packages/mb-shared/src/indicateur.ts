@@ -1,12 +1,7 @@
 import { z } from 'zod'
 
 import { createPaginatedApiListSchema, listQuerySchema } from './pagination'
-import { referentielPublicIdSchema } from './publicIds'
-
-export const indicateurPublicIdSchema = z
-  .string()
-  .regex(/^IND-\d+$/, 'Identifiant public attendu au format IND-XXX')
-  .describe("Identifiant public de l'indicateur (format IND-XXX).")
+import { indicateurPublicIdSchema, referentielPublicIdSchema } from './publicIds'
 
 export const indicateurVisibiliteSchema = z
   .enum(['PUBLIC', 'PRIVE'])

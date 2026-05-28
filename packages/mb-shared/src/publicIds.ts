@@ -1,5 +1,15 @@
 import { z } from 'zod'
 
+export const indicateurPublicIdSchema = z
+  .string()
+  .regex(/^IND-\d+$/, 'Identifiant public attendu au format IND-XXX')
+  .describe("Identifiant public de l'indicateur (format IND-XXX).")
+
+export const panierPublicIdSchema = z
+  .string()
+  .regex(/^PAN-\d+$/, 'Identifiant public attendu au format PAN-XXX')
+  .describe('Identifiant public du panier (format PAN-XXX).')
+
 export const referentielPublicIdSchema = z
   .string()
   .regex(

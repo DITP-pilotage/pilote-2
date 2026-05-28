@@ -1,12 +1,7 @@
 import { z } from 'zod'
 
-import { indicateurPublicIdSchema } from './indicateur'
 import { createPaginatedApiListSchema, paginationCursorSchema, pageSizeSchema } from './pagination'
-
-export const panierPublicIdSchema = z
-  .string()
-  .regex(/^PAN-\d+$/, 'Identifiant public attendu au format PAN-XXX')
-  .describe('Identifiant public du panier (format PAN-XXX).')
+import { indicateurPublicIdSchema, panierPublicIdSchema } from './publicIds'
 
 export const panierApiModelSchema = z.object({
   id: panierPublicIdSchema,

@@ -28,6 +28,10 @@
       "types": "./src/pagination.ts",
       "default": "./src/pagination.ts"
     },
+    "./publicIds": {
+      "types": "./src/publicIds.ts",
+      "default": "./src/publicIds.ts"
+    },
     "./referentiel": {
       "types": "./src/referentiel.ts",
       "default": "./src/referentiel.ts"

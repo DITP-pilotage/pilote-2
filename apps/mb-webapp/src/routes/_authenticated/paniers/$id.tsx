@@ -1,4 +1,4 @@
-import { panierPublicIdSchema } from '@pilote/mb-shared/panier'
+import { panierPublicIdSchema } from '@pilote/mb-shared/publicIds'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { z } from 'zod'

@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
-import { fonctionAgregationSchema, indicateurPublicIdSchema } from './indicateur'
+import { fonctionAgregationSchema } from './indicateur'
+import { indicateurPublicIdSchema } from './publicIds'
 import { individuApiModelSchema, individuPublicIdSchema } from './individu'
 import { individusCsvSchema, MAX_INDIVIDUS_PAR_REQUETE } from './individusCsv'
 import {

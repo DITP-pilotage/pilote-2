@@ -1,4 +1,4 @@
-import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
+import { indicateurPublicIdSchema } from '@pilote/mb-shared/publicIds'
 import { individuPublicIdSchema } from '@pilote/mb-shared/individu'
 import { referentielPublicIdSchema } from '@pilote/mb-shared/referentiel'
 import { useSuspenseQuery } from '@tanstack/react-query'
