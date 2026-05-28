@@ -39,17 +39,33 @@ export const createApp = ({ targetOrigin }: { targetOrigin: string }) => {
     return c.body(null, 204);
   });
 
-  app.all("*", (c) => {
+  app.all("*", async (c) => {
     const incoming = new URL(c.req.url);
     const target = targetOrigin + incoming.pathname + incoming.search;
-    return proxy(target, {
-      ...c.req,
-      headers: {
-        ...c.req.header(),
-        "X-Forwarded-Host":
-          c.req.header("x-forwarded-host") ?? c.req.header("host") ?? "",
-      },
-    });
+    try {
+      return await proxy(target, {
+        raw: c.req.raw,
+        headers: {
+          ...c.req.header(),
+          "X-Forwarded-Host":
+            c.req.header("x-forwarded-host") ?? c.req.header("host") ?? "",
+        },
+        redirect: "manual",
+      });
+    } catch (err) {
+      const cause = err instanceof Error ? err.cause : undefined;
+      console.error("[acme-proxy] upstream fetch failed", {
+        method: c.req.method,
+        target,
+        message: err instanceof Error ? err.message : String(err),
+        stack: err instanceof Error ? err.stack : undefined,
+        cause:
+          cause instanceof Error
+            ? { name: cause.name, message: cause.message, stack: cause.stack }
+            : cause,
+      });
+      return c.text("Bad Gateway", 502);
+    }
   });
 
   return app;
