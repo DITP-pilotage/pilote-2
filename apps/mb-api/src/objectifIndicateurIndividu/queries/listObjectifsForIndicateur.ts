@@ -7,13 +7,14 @@ import { type DateTrunc } from '@pilote/mb-shared/dates'
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { type Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
 import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
 import { loadResolveObjectifContext } from '@/objectifIndicateurIndividu/queries/loadResolveObjectifContext'
-import { resolveObjectifIndividu } from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
+import {
+  type PointObjectifInterne,
+  resolveObjectifIndividu,
+} from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'year'
 
@@ -47,20 +48,15 @@ const buildList = async ({
     dateTrunc,
   })
 
-  const cache = new Map<string, ReadonlyMap<string, Decimal>>()
+  const cache = new Map<string, ReadonlyMap<string, PointObjectifInterne>>()
   const items: ObjectifIndicateurIndividuApiModel[] = []
 
   for (const individuCible of individusCibles) {
-    const fonctionActive = getFonctionAgregationActive(individuCible.id, ctx)
     const objectifs = resolveObjectifIndividu(individuCible.id, ctx, cache)
-    for (const [bucket, valeurCible] of objectifs) {
-      items.push({
-        indicateur: indicateur.publicId,
-        individu: individuCible.publicId,
-        dateCible: bucket,
-        valeurCible: valeurCible.toNumber(),
-        type: fonctionActive !== null ? 'derivee' : 'saisie',
-      })
+    for (const [bucket, point] of objectifs) {
+      items.push(
+        toApiModel({ indicateurPublicId: indicateur.publicId, individuCible, bucket, point }),
+      )
     }
   }
 
@@ -71,4 +67,40 @@ const buildList = async ({
   )
 
   return { items }
+}
+
+const toApiModel = ({
+  indicateurPublicId,
+  individuCible,
+  bucket,
+  point,
+}: {
+  indicateurPublicId: string
+  individuCible: { id: string; publicId: string }
+  bucket: string
+  point: PointObjectifInterne
+}): ObjectifIndicateurIndividuApiModel => {
+  if (point.type === 'saisie') {
+    return {
+      indicateur: indicateurPublicId,
+      individu: individuCible.publicId,
+      dateCible: bucket,
+      valeurCible: point.valeur.toNumber(),
+      type: 'saisie',
+    }
+  }
+  return {
+    indicateur: indicateurPublicId,
+    individu: individuCible.publicId,
+    dateCible: bucket,
+    valeurCible: point.valeur.toNumber(),
+    type: 'derivee',
+    fonctionAgregation: point.fonctionAgregation,
+    contributions: point.contributions.map((c) => ({
+      individu: c.individuPublicId,
+      valeurCible: c.valeur.toNumber(),
+      dateCible: c.dateCible,
+      source: c.estAgregee ? ('derivee' as const) : ('saisie' as const),
+    })),
+  }
 }

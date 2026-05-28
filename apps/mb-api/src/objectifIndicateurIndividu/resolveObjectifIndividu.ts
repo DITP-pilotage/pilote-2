@@ -11,20 +11,48 @@ export type ResolveObjectifContext = {
   referentielParIndividu: ReadonlyMap<string, string>
 }
 
+export type ContributionObjectifInterne = {
+  individuPublicId: string
+  valeur: Decimal
+  dateCible: string
+  estAgregee: boolean
+}
+
+export type PointObjectifInterne =
+  | { type: 'saisie'; valeur: Decimal }
+  | {
+      type: 'derivee'
+      valeur: Decimal
+      fonctionAgregation: FonctionAgregation
+      contributions: ContributionObjectifInterne[]
+    }
+
 export const resolveObjectifIndividu = (
   individuId: string,
   ctx: ResolveObjectifContext,
-  cache: Map<string, ReadonlyMap<string, Decimal>>,
-): ReadonlyMap<string, Decimal> => {
+  cache: Map<string, ReadonlyMap<string, PointObjectifInterne>>,
+): ReadonlyMap<string, PointObjectifInterne> => {
   const cached = cache.get(individuId)
   if (cached) return cached
 
   const fonctionAgregation = getFonctionAgregationActive(individuId, ctx)
   const result = fonctionAgregation
     ? computeObjectifDerive(individuId, ctx, cache, fonctionAgregation)
-    : (ctx.objectifBucketParIndividu.get(individuId) ?? new Map())
+    : buildSaisieMap(individuId, ctx)
 
   cache.set(individuId, result)
+  return result
+}
+
+const buildSaisieMap = (
+  individuId: string,
+  ctx: ResolveObjectifContext,
+): ReadonlyMap<string, PointObjectifInterne> => {
+  const saisies = ctx.objectifBucketParIndividu.get(individuId) ?? new Map<string, Decimal>()
+  const result = new Map<string, PointObjectifInterne>()
+  for (const [bucket, valeur] of saisies) {
+    result.set(bucket, { type: 'saisie', valeur })
+  }
   return result
 }
 
@@ -34,22 +62,23 @@ export const resolveObjectifIndividu = (
 const computeObjectifDerive = (
   parentId: string,
   ctx: ResolveObjectifContext,
-  cache: Map<string, ReadonlyMap<string, Decimal>>,
+  cache: Map<string, ReadonlyMap<string, PointObjectifInterne>>,
   fonctionAgregation: FonctionAgregation,
-): ReadonlyMap<string, Decimal> => {
+): ReadonlyMap<string, PointObjectifInterne> => {
   const enfants = ctx.enfantsParParent.get(parentId) ?? []
   const enfantsTries = [...enfants].sort((a, b) => a.publicId.localeCompare(b.publicId))
 
   type EnfantState = {
+    enfant: IndividuRef
     buckets: string[]
-    values: ReadonlyMap<string, Decimal>
+    values: ReadonlyMap<string, PointObjectifInterne>
     pointer: number
   }
 
   const states: EnfantState[] = enfantsTries.map((enfant) => {
     const values = resolveObjectifIndividu(enfant.id, ctx, cache)
     const buckets = [...values.keys()].sort()
-    return { buckets, values, pointer: -1 }
+    return { enfant, buckets, values, pointer: -1 }
   })
 
   const allBuckets = new Set<string>()
@@ -58,7 +87,7 @@ const computeObjectifDerive = (
   }
   const sortedBuckets = [...allBuckets].sort()
 
-  const result = new Map<string, Decimal>()
+  const result = new Map<string, PointObjectifInterne>()
 
   for (const bucket of sortedBuckets) {
     for (const state of states) {
@@ -70,6 +99,7 @@ const computeObjectifDerive = (
       }
     }
 
+    const contributions: ContributionObjectifInterne[] = []
     const valeurs: Decimal[] = []
     let allHaveValue = true
     for (const state of states) {
@@ -77,11 +107,24 @@ const computeObjectifDerive = (
         allHaveValue = false
         break
       }
-      valeurs.push(state.values.get(state.buckets[state.pointer]!)!)
+      const dateCible = state.buckets[state.pointer]!
+      const point = state.values.get(dateCible)!
+      contributions.push({
+        individuPublicId: state.enfant.publicId,
+        valeur: point.valeur,
+        dateCible,
+        estAgregee: point.type === 'derivee',
+      })
+      valeurs.push(point.valeur)
     }
 
     if (allHaveValue && valeurs.length > 0) {
-      result.set(bucket, agreger(valeurs, fonctionAgregation))
+      result.set(bucket, {
+        type: 'derivee',
+        valeur: agreger(valeurs, fonctionAgregation),
+        fonctionAgregation,
+        contributions,
+      })
     }
   }
 

@@ -272,17 +272,25 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         listObjectifsForIndicateur(indId, { individus: [regId] }),
       )
 
-      expect(result._unsafeUnwrap()).toEqual({
-        items: [
-          {
-            indicateur: indId,
-            individu: regId,
-            dateCible: '2025-01-01',
-            valeurCible: 100,
-            type: 'derivee',
-          },
-        ],
+      const items = result._unsafeUnwrap().items
+      expect(items).toHaveLength(1)
+      const item = items[0]!
+      expect(item.type).toBe('derivee')
+      if (item.type !== 'derivee') throw new Error('expected derivee')
+      expect(item).toMatchObject({
+        indicateur: indId,
+        individu: regId,
+        dateCible: '2025-01-01',
+        valeurCible: 100,
+        fonctionAgregation: 'SUM',
       })
+      expect(item.contributions).toEqual(
+        expect.arrayContaining([
+          { individu: dept1, valeurCible: 30, dateCible: '2025-01-01', source: 'saisie' },
+          { individu: dept2, valeurCible: 70, dateCible: '2025-01-01', source: 'saisie' },
+        ]),
+      )
+      expect(item.contributions).toHaveLength(2)
     }),
   )
 
@@ -338,17 +346,25 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         listObjectifsForIndicateur(indId, { individus: [regId] }),
       )
 
-      expect(result._unsafeUnwrap()).toEqual({
-        items: [
-          {
-            indicateur: indId,
-            individu: regId,
-            dateCible: '2025-01-01',
-            valeurCible: 60,
-            type: 'derivee',
-          },
-        ],
+      const items = result._unsafeUnwrap().items
+      expect(items).toHaveLength(1)
+      const item = items[0]!
+      expect(item.type).toBe('derivee')
+      if (item.type !== 'derivee') throw new Error('expected derivee')
+      expect(item).toMatchObject({
+        indicateur: indId,
+        individu: regId,
+        dateCible: '2025-01-01',
+        valeurCible: 60,
+        fonctionAgregation: 'AVG',
       })
+      expect(item.contributions).toEqual(
+        expect.arrayContaining([
+          { individu: dept1, valeurCible: 40, dateCible: '2025-01-01', source: 'saisie' },
+          { individu: dept2, valeurCible: 80, dateCible: '2025-01-01', source: 'saisie' },
+        ]),
+      )
+      expect(item.contributions).toHaveLength(2)
     }),
   )
 
@@ -412,17 +428,25 @@ describe.concurrent('listObjectifsForIndicateur', () => {
 
       // Bucket 2024 : dept2 n'a pas encore de valeur → strict → pas de point
       // Bucket 2025 : dept1 porte 50 depuis 2024, dept2 a 80 → SUM = 130
-      expect(result._unsafeUnwrap()).toEqual({
-        items: [
-          {
-            indicateur: indId,
-            individu: regId,
-            dateCible: '2025-01-01',
-            valeurCible: 130,
-            type: 'derivee',
-          },
-        ],
+      const items = result._unsafeUnwrap().items
+      expect(items).toHaveLength(1)
+      const item = items[0]!
+      expect(item.type).toBe('derivee')
+      if (item.type !== 'derivee') throw new Error('expected derivee')
+      expect(item).toMatchObject({
+        indicateur: indId,
+        individu: regId,
+        dateCible: '2025-01-01',
+        valeurCible: 130,
+        fonctionAgregation: 'SUM',
       })
+      expect(item.contributions).toEqual(
+        expect.arrayContaining([
+          { individu: dept1, valeurCible: 50, dateCible: '2024-01-01', source: 'saisie' },
+          { individu: dept2, valeurCible: 80, dateCible: '2025-01-01', source: 'saisie' },
+        ]),
+      )
+      expect(item.contributions).toHaveLength(2)
     }),
   )
 
@@ -583,15 +607,19 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         listObjectifsForIndicateur(indId, { individus: [regId] }),
       )
 
-      expect(result._unsafeUnwrap()).toEqual({
-        items: [
-          {
-            indicateur: indId,
-            individu: regId,
-            dateCible: '2025-01-01',
-            valeurCible: 60,
-            type: 'derivee',
-          },
+      const items = result._unsafeUnwrap().items
+      expect(items).toHaveLength(1)
+      const item = items[0]!
+      expect(item.type).toBe('derivee')
+      if (item.type !== 'derivee') throw new Error('expected derivee')
+      expect(item).toMatchObject({
+        indicateur: indId,
+        individu: regId,
+        dateCible: '2025-01-01',
+        valeurCible: 60,
+        fonctionAgregation: 'SUM',
+        contributions: [
+          { individu: deptId, valeurCible: 60, dateCible: '2025-01-01', source: 'saisie' },
         ],
       })
     }),
