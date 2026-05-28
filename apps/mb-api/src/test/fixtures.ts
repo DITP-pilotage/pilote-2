@@ -9,6 +9,7 @@ import {
   testEmail,
   testIndicateurId,
   testIndividuId,
+  testPanierId,
   testReferentielId,
   testWidgetId,
 } from '@/test/randomIds'
@@ -19,6 +20,7 @@ import {
   type IndicateurReferentielModel,
   type IndividuModel,
   type ObjectifIndicateurIndividuModel,
+  type PanierModel,
   type ReferentielModel,
   type ReferentielWidgetModel,
   type RelationModel,
@@ -443,6 +445,62 @@ async function objectifIndicateurIndividu(
   return results
 }
 
+// --- Panier ------------------------------------------------------------------
+
+type PanierOverrides = Partial<{
+  id: string
+  publicId: string
+  nom: string
+  description: string | null
+  indicateurs: IndicateurOverrides[]
+}>
+
+const upsertPanier = async (o: PanierOverrides = {}) => {
+  const publicId = o.publicId ?? testPanierId()
+  const { indicateurs, id: _id, publicId: _pub, ...rest } = o
+  const create = {
+    id: o.id ?? uuidv7(),
+    publicId,
+    nom: o.nom ?? 'Panier de test',
+    description: o.description ?? null,
+  }
+  const panier = await db().panier.upsert({
+    where: { publicId },
+    update: rest,
+    create,
+  })
+  if (indicateurs) {
+    for (const indicateurOverride of indicateurs) {
+      const indicateurRow = await upsertIndicateur(indicateurOverride)
+      await db().panierIndicateur.upsert({
+        where: {
+          panierId_indicateurId: {
+            panierId: panier.id,
+            indicateurId: indicateurRow.id,
+          },
+        },
+        update: {},
+        create: { panierId: panier.id, indicateurId: indicateurRow.id },
+      })
+    }
+  }
+  return panier
+}
+
+function panier(): Promise<PanierModel>
+function panier(override: PanierOverrides): Promise<PanierModel>
+function panier(
+  o1: PanierOverrides,
+  o2: PanierOverrides,
+  ...rest: PanierOverrides[]
+): Promise<PanierModel[]>
+async function panier(...overrides: PanierOverrides[]): Promise<PanierModel | PanierModel[]> {
+  if (overrides.length <= 1) return upsertPanier(overrides[0])
+  const results: PanierModel[] = []
+  for (const o of overrides) results.push(await upsertPanier(o))
+  return results
+}
+
 // --- ApiKey ------------------------------------------------------------------
 
 type PrincipalIndicateurPermissionOverrides = {
@@ -610,6 +668,7 @@ export const fixtures = {
   relation,
   valeurAvancement,
   objectifIndicateurIndividu,
+  panier,
   apiKey,
   utilisateur,
   indicateurPermission,

@@ -106,9 +106,9 @@ const upsertIndicateurRoute = createRoute({
 export const indicateurRoutes = new OpenAPIHono()
 
 indicateurRoutes.openapi(getIndicateursRoute, async (context) => {
-  const { recherche, cursor, pageSize } = context.req.valid('query')
+  const { recherche, cursor, pageSize, ids } = context.req.valid('query')
 
-  return listIndicateurs({ recherche, cursor, pageSize }).match(
+  return listIndicateurs({ recherche, cursor, pageSize, ids }).match(
     (data) =>
       jsonResponseOk({
         context,

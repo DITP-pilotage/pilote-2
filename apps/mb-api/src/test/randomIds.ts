@@ -155,6 +155,8 @@ export const testIndividuId = (): string => `TEST-${randomToken(12)}`
 
 export const testWidgetId = (): string => `WID-${randomToken(12).toUpperCase()}`
 
+export const testPanierId = (): string => `PAN-${randomToken(12)}`
+
 export const testDeptId = (): string => `DEPT-${pickRandom(DEPT_CODES)}`
 
 export const testRegId = (): string => `REG-${pickRandom(REG_CODES)}`

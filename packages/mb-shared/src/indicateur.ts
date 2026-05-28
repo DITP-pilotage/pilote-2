@@ -19,7 +19,7 @@ export const fonctionAgregationSchema = z
   .enum(['SUM', 'AVG', 'NONE'])
   .describe(
     "Fonction d'agrégation appliquée pour calculer la valeur d'un parent à partir des valeurs " +
-      "de ses enfants. `SUM` = somme des contributions des enfants. `AVG` = moyenne arithmétique " +
+      'de ses enfants. `SUM` = somme des contributions des enfants. `AVG` = moyenne arithmétique ' +
       "simple (non pondérée) des contributions connues. `NONE` = pas d'agrégation : la valeur doit " +
       "être saisie directement pour ce référentiel, elle n'est jamais dérivée depuis les enfants.",
   )
@@ -53,7 +53,20 @@ export type IndicateurApiModel = z.infer<typeof indicateurApiModelSchema>
 export const indicateurListApiModelSchema = createPaginatedApiListSchema(indicateurApiModelSchema)
 export type IndicateurListApiModel = z.infer<typeof indicateurListApiModelSchema>
 
-export const listIndicateursQuerySchema = listQuerySchema
+export const listIndicateursQuerySchema = listQuerySchema.extend({
+  ids: z
+    .preprocess((val) => {
+      if (typeof val !== 'string') return val
+      const parts = val
+        .split(',')
+        .map((p) => p.trim())
+        .filter(Boolean)
+      return parts.length === 0 ? undefined : parts
+    }, z.array(indicateurPublicIdSchema).optional())
+    .describe(
+      'Filtre par identifiants publics (CSV, ex. `IND-001,IND-002`). Vide ou absent = aucun filtre.',
+    ),
+})
 export type ListIndicateursQuery = z.infer<typeof listIndicateursQuerySchema>
 
 export const upsertIndicateurBodySchema = z.object({

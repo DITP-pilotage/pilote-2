@@ -43,6 +43,10 @@
     "./widget": {
       "types": "./src/widget.ts",
       "default": "./src/widget.ts"
+    },
+    "./panier": {
+      "types": "./src/panier.ts",
+      "default": "./src/panier.ts"
     }
   },
   "files": [

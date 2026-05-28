@@ -514,10 +514,80 @@ const main = async () => {
     objectifsCount += result.count
   }
 
+  // Paniers d'indicateurs (v0) : collections thématiques pour le front. L'ordre
+  // du tableau `indicateurPublicIds` détermine l'ordre d'affichage (via createdAt
+  // ASC de la jonction). On ne seede que des indicateurs PUBLIC : tant que le
+  // panier n'applique pas le filtrage par permissions du principal (cf.
+  // docs/architecture/paniers-design.md, D6), l'invariant est porté par le seed.
+  const paniersSeed: ReadonlyArray<{
+    publicId: string
+    nom: string
+    description: string | null
+    indicateurPublicIds: ReadonlyArray<string>
+  }> = [
+    {
+      publicId: 'PAN-001',
+      nom: 'Indicateurs sociaux',
+      description: 'Pauvreté, alphabétisation et accès numérique.',
+      indicateurPublicIds: ['IND-048', 'IND-049', 'IND-050'],
+    },
+    {
+      publicId: 'PAN-002',
+      nom: 'Santé et démographie',
+      description: 'Démographie générale et espérance de vie.',
+      indicateurPublicIds: ['IND-046', 'IND-047'],
+    },
+    {
+      publicId: 'PAN-003',
+      nom: "Vue d'ensemble — indicateurs publics",
+      description: "L'ensemble des indicateurs publics du référentiel mb.",
+      indicateurPublicIds: ['IND-046', 'IND-047', 'IND-048', 'IND-049', 'IND-050'],
+    },
+    {
+      publicId: 'PAN-004',
+      nom: 'Niveau de vie',
+      description: 'Indicateurs de bien-être matériel et de connectivité.',
+      indicateurPublicIds: ['IND-048', 'IND-050'],
+    },
+  ]
+
+  for (const panierItem of paniersSeed) {
+    const panier = await prisma.panier.upsert({
+      where: { publicId: panierItem.publicId },
+      update: { nom: panierItem.nom, description: panierItem.description },
+      create: {
+        id: uuidv7(),
+        publicId: panierItem.publicId,
+        nom: panierItem.nom,
+        description: panierItem.description,
+      },
+    })
+    for (const indicateurPublicId of panierItem.indicateurPublicIds) {
+      const indicateur = await prisma.indicateur.findUniqueOrThrow({
+        where: { publicId: indicateurPublicId },
+        select: { id: true },
+      })
+      await prisma.panierIndicateur.upsert({
+        where: {
+          panierId_indicateurId: {
+            panierId: panier.id,
+            indicateurId: indicateur.id,
+          },
+        },
+        update: {},
+        create: { panierId: panier.id, indicateurId: indicateur.id },
+      })
+    }
+  }
+  const panierLiaisonsCount = paniersSeed.reduce(
+    (acc, item) => acc + item.indicateurPublicIds.length,
+    0,
+  )
+
   const permissionsCount = 8 * 2
   const widgetLiaisonsCount = widgetsSeed.reduce((acc, w) => acc + w.referentielPublicIds.length, 0)
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget.`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${paniersSeed.length} paniers (${panierLiaisonsCount} liaisons panier-indicateur).`,
   )
 }
 
