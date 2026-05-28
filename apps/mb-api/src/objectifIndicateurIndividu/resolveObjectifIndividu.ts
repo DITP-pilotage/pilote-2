@@ -1,6 +1,7 @@
 import { type FonctionAgregation } from '@pilote/mb-shared/indicateur'
 
 import { Decimal } from '@/framework/decimal'
+import { getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
 
 export type ResolveObjectifContext = {
@@ -25,19 +26,6 @@ export const resolveObjectifIndividu = (
 
   cache.set(individuId, result)
   return result
-}
-
-export const getFonctionAgregationActive = (
-  individuId: string,
-  ctx: ResolveObjectifContext,
-): FonctionAgregation | null => {
-  const enfants = ctx.enfantsParParent.get(individuId)
-  if (!enfants || enfants.length === 0) return null
-  const referentielId = ctx.referentielParIndividu.get(individuId)
-  if (!referentielId) return null
-  const fonction = ctx.fonctionAgregationParReferentiel.get(referentielId)
-  if (!fonction || fonction === 'NONE') return null
-  return fonction
 }
 
 // Carry-forward strict : pour chaque bucket de l'union des buckets enfants, on
