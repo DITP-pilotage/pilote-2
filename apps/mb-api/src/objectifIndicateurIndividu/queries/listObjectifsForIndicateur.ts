@@ -37,26 +37,26 @@ const buildList = async ({
   indicateur: { id: string; publicId: string }
   params: ListObjectifsForIndicateurQuery
 }): Promise<ObjectifIndicateurIndividuListApiModel> => {
-  const cibles = await loadIndividusParPublicId(params.individus)
-  if (cibles.length === 0) return { items: [] }
+  const individusCibles = await loadIndividusParPublicId(params.individus)
+  if (individusCibles.length === 0) return { items: [] }
 
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const { ctx } = await loadResolveObjectifContext({
     indicateurId: indicateur.id,
-    cibles,
+    cibles: individusCibles,
     dateTrunc,
   })
 
   const cache = new Map<string, ReadonlyMap<string, Decimal>>()
   const items: ObjectifIndicateurIndividuApiModel[] = []
 
-  for (const cible of cibles) {
-    const fonctionActive = getFonctionAgregationActive(cible.id, ctx)
-    const objectifs = resolveObjectifIndividu(cible.id, ctx, cache)
+  for (const individuCible of individusCibles) {
+    const fonctionActive = getFonctionAgregationActive(individuCible.id, ctx)
+    const objectifs = resolveObjectifIndividu(individuCible.id, ctx, cache)
     for (const [bucket, valeurCible] of objectifs) {
       items.push({
         indicateur: indicateur.publicId,
-        individu: cible.publicId,
+        individu: individuCible.publicId,
         dateCible: bucket,
         valeurCible: valeurCible.toNumber(),
         type: fonctionActive !== null ? 'derivee' : 'saisie',
