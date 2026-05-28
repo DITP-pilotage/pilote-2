@@ -3,7 +3,7 @@ import { type DateTrunc } from '@pilote/mb-shared/valeurAvancement'
 
 import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
-import { truncateDate } from '@/objectifIndicateurIndividu/dateBuckets'
+import { getObjectifsTronquesPourIndividus } from '@/generated/prisma/sql'
 import { type ResolveObjectifContext } from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
 
@@ -95,17 +95,14 @@ const loadObjectifsBucketises = async ({
   dateTrunc: DateTrunc
 }): Promise<Map<string, Map<string, Decimal>>> => {
   if (individuIds.length === 0) return new Map()
-  const rows = await db().objectifIndicateurIndividu.findMany({
-    where: { indicateurId, individuId: { in: [...individuIds] } },
-    orderBy: { dateCible: 'asc' },
-  })
-
+  const rows = await db().$queryRawTyped(
+    getObjectifsTronquesPourIndividus(indicateurId, [...individuIds], dateTrunc),
+  )
   const result = new Map<string, Map<string, Decimal>>()
   for (const row of rows) {
-    const bucket = truncateDate(row.dateCible, dateTrunc)
+    if (!row.bucket) continue
     const buckets = result.get(row.individuId) ?? new Map<string, Decimal>()
-    // Ordre ASC garanti : chaque écriture remplace par une dateCible plus récente.
-    buckets.set(bucket, row.valeurCible)
+    buckets.set(row.bucket, new Decimal(row.valeurCible.toString()))
     result.set(row.individuId, buckets)
   }
   return result
