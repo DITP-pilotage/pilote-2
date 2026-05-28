@@ -33,4 +33,36 @@ describe.concurrent('getIndividuByPublicId', () => {
       await expect(getIndividuByPublicId(testDeptId())).rejects.toThrow()
     }),
   )
+
+  it(
+    "expose la metadata libre de l'individu",
+    integrationTest(async () => {
+      const deptId = testDeptId()
+      await fixtures.individu({
+        publicId: deptId,
+        nom: 'Paris',
+        metadata: { codeInsee: '75' },
+        referentiel: { publicId: 'REF-DEPT' },
+      })
+
+      const result = await getIndividuByPublicId(deptId)
+
+      expect(result._unsafeUnwrap().metadata).toEqual({ codeInsee: '75' })
+    }),
+  )
+
+  it(
+    'retourne metadata null quand non renseignée',
+    integrationTest(async () => {
+      const deptId = testDeptId()
+      await fixtures.individu({
+        publicId: deptId,
+        referentiel: { publicId: 'REF-DEPT' },
+      })
+
+      const result = await getIndividuByPublicId(deptId)
+
+      expect(result._unsafeUnwrap().metadata).toBeNull()
+    }),
+  )
 })

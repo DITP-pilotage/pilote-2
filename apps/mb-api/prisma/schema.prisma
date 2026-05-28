@@ -125,6 +125,7 @@ model Referentiel {
 
   individus   Individu[]
   indicateurs IndicateurReferentiel[]
+  widgets     ReferentielWidget[]
 
   @@map("referentiel")
 }
@@ -134,6 +135,7 @@ model Individu {
   publicId      String   @unique @map("public_id")
   nom           String
   referentielId String   @map("referentiel_id") @db.Uuid
+  metadata      Json?
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt      @map("updated_at")
 
@@ -145,6 +147,33 @@ model Individu {
 
   @@index([referentielId])
   @@map("individu")
+}
+
+model Widget {
+  id            String   @id @db.Uuid
+  publicId      String   @unique @map("public_id")
+  type          String
+  nom           String
+  joinKey       String   @map("join_key")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt      @map("updated_at")
+
+  referentiels ReferentielWidget[]
+
+  @@map("widget")
+}
+
+model ReferentielWidget {
+  referentielId String   @map("referentiel_id") @db.Uuid
+  widgetId      String   @map("widget_id")      @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  referentiel Referentiel @relation(fields: [referentielId], references: [id], onDelete: Cascade)
+  widget      Widget      @relation(fields: [widgetId],      references: [id], onDelete: Cascade)
+
+  @@id([referentielId, widgetId])
+  @@index([widgetId])
+  @@map("referentiel_widget")
 }
 
 model Relation {

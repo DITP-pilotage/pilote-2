@@ -17,3 +17,13 @@ export const individuPublicIdSchema = z
   .describe(
     "Identifiant public d'individu, format humain-friendly (ex. DEPT-84, REG-93, FR). Lettre majuscule puis lettres/chiffres/tirets, max 20 caractères.",
   )
+
+export const widgetPublicIdSchema = z
+  .string()
+  .regex(
+    /^WID-[A-Z0-9-]{1,16}$/,
+    'Identifiant public attendu au format WID-<SLUG> (max 20 caractères)',
+  )
+  .describe(
+    'Identifiant public du widget (format WID-<SLUG>, ex. WID-CARTE-DEPT). Max 20 caractères.',
+  )

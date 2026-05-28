@@ -153,6 +153,8 @@ export const testReferentielId = (): string => `REF-${randomToken(12)}`
 
 export const testIndividuId = (): string => `TEST-${randomToken(12)}`
 
+export const testWidgetId = (): string => `WID-${randomToken(12).toUpperCase()}`
+
 export const testDeptId = (): string => `DEPT-${pickRandom(DEPT_CODES)}`
 
 export const testRegId = (): string => `REG-${pickRandom(REG_CODES)}`

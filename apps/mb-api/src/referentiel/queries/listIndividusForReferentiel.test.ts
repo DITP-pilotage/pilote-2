@@ -34,6 +34,7 @@ describe.concurrent('listIndividusForReferentiel', () => {
             id: 'P-1',
             nom: 'Premier',
             referentiel: 'REF-POP',
+            metadata: null,
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
           },
@@ -41,6 +42,7 @@ describe.concurrent('listIndividusForReferentiel', () => {
             id: 'P-2',
             nom: 'Second',
             referentiel: 'REF-POP',
+            metadata: null,
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
           },
@@ -80,6 +82,7 @@ describe.concurrent('listIndividusForReferentiel', () => {
             id: 'A-1',
             nom: 'Alpha',
             referentiel: 'REF-SEARCH',
+            metadata: null,
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
           },
@@ -87,6 +90,7 @@ describe.concurrent('listIndividusForReferentiel', () => {
             id: 'A-3',
             nom: 'ALPHA majuscule',
             referentiel: 'REF-SEARCH',
+            metadata: null,
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
           },
@@ -94,6 +98,31 @@ describe.concurrent('listIndividusForReferentiel', () => {
         pagination: { cursor: null, hasMore: false },
         total: 2,
       })
+    }),
+  )
+
+  it(
+    "renvoie le metadata JSON quand l'individu en a un",
+    integrationTest(async () => {
+      await fixtures.individu({
+        publicId: 'M-1',
+        nom: 'Avec metadata',
+        referentiel: { publicId: 'REF-META', nom: 'Meta' },
+        metadata: { codeInsee: '75', region: 'IDF' },
+      })
+
+      const result = await listIndividusForReferentiel('REF-META', {})
+
+      expect(result._unsafeUnwrap().items).toEqual([
+        {
+          id: 'M-1',
+          nom: 'Avec metadata',
+          referentiel: 'REF-META',
+          metadata: { codeInsee: '75', region: 'IDF' },
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        },
+      ])
     }),
   )
 

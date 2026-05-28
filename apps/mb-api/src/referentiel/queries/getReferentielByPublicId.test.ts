@@ -43,4 +43,42 @@ describe.concurrent('getReferentielByPublicId', () => {
       await expect(getReferentielByPublicId('REF-INCONNU')).rejects.toThrow()
     }),
   )
+
+  it(
+    'inclut les widgets rattachés au référentiel',
+    integrationTest(async () => {
+      await fixtures.referentielWidget({
+        referentiel: { publicId: 'REF-CARTO' },
+        widget: {
+          publicId: 'WID-CARTO-TEST',
+          type: 'carte-france-departements',
+          nom: 'Carte des départements',
+          joinKey: 'codeInsee',
+        },
+      })
+
+      const result = await getReferentielByPublicId('REF-CARTO')
+
+      const value = result._unsafeUnwrap()
+      expect(value.widgets).toEqual([
+        {
+          id: 'WID-CARTO-TEST',
+          type: 'carte-france-departements',
+          nom: 'Carte des départements',
+          joinKey: 'codeInsee',
+        },
+      ])
+    }),
+  )
+
+  it(
+    "retourne un tableau widgets vide quand aucun widget n'est rattaché",
+    integrationTest(async () => {
+      await fixtures.referentiel({ publicId: 'REF-NO-WID' })
+
+      const result = await getReferentielByPublicId('REF-NO-WID')
+
+      expect(result._unsafeUnwrap().widgets).toEqual([])
+    }),
+  )
 })

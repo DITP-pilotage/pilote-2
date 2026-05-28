@@ -44,6 +44,7 @@ describe.concurrent('listReferentiels', () => {
             nom: 'Alpha',
             description: null,
             nombreIndividus: 2,
+            widgets: [],
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
           },
@@ -52,6 +53,7 @@ describe.concurrent('listReferentiels', () => {
             nom: 'Beta',
             description: null,
             nombreIndividus: 0,
+            widgets: [],
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
           },
@@ -59,6 +61,37 @@ describe.concurrent('listReferentiels', () => {
         pagination: { cursor: null, hasMore: false },
         total: 2,
       })
+    }),
+  )
+
+  it(
+    'inclut les widgets rattachés à chaque référentiel',
+    integrationTest(async () => {
+      await fixtures.referentielWidget({
+        referentiel: { publicId: 'REF-WID-LIST', nom: 'Référentiel avec widget' },
+        widget: {
+          publicId: 'WID-CARTO-LIST',
+          type: 'carte-france-departements',
+          nom: 'Carte des départements',
+          joinKey: 'codeInsee',
+        },
+      })
+
+      const result = await listReferentiels({ recherche: 'avec widget' })
+
+      expect(result._unsafeUnwrap().items).toEqual([
+        expect.objectContaining({
+          id: 'REF-WID-LIST',
+          widgets: [
+            {
+              id: 'WID-CARTO-LIST',
+              type: 'carte-france-departements',
+              nom: 'Carte des départements',
+              joinKey: 'codeInsee',
+            },
+          ],
+        }),
+      ])
     }),
   )
 
@@ -80,6 +113,7 @@ describe.concurrent('listReferentiels', () => {
             nom: 'Régions de France',
             description: null,
             nombreIndividus: 0,
+            widgets: [],
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
           },

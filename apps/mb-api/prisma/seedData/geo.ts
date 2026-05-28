@@ -149,17 +149,24 @@ const departements = [
   { code: '976', nom: 'Mayotte', region: '06' },
 ] as const
 
-export const individusSeed = [
-  { publicId: 'FR', nom: 'France', referentiel: 'REF-NAT' },
+export const individusSeed: ReadonlyArray<{
+  publicId: string
+  nom: string
+  referentiel: 'REF-NAT' | 'REF-REG' | 'REF-DEPT'
+  metadata: Record<string, unknown> | null
+}> = [
+  { publicId: 'FR', nom: 'France', referentiel: 'REF-NAT', metadata: null },
   ...regions.map((r) => ({
     publicId: `REG-${r.code}`,
     nom: r.nom,
     referentiel: 'REF-REG' as const,
+    metadata: { codeInsee: r.code },
   })),
   ...departements.map((d) => ({
     publicId: `DEPT-${d.code}`,
     nom: d.nom,
     referentiel: 'REF-DEPT' as const,
+    metadata: { codeInsee: d.code },
   })),
 ]
 
