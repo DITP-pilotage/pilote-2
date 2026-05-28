@@ -1,9 +1,10 @@
 import { z } from 'zod'
 
-import { fonctionAgregationSchema, indicateurPublicIdSchema } from './publicIds'
+import { indicateurPublicIdSchema } from './publicIds'
 import { individuPublicIdSchema } from './individu'
 import { individusCsvSchema, MAX_INDIVIDUS_PAR_REQUETE } from './individusCsv'
 import { dateTruncSchema, dateSchema } from './dates'
+import { fonctionAgregationSchema } from './indicateur'
 
 export { dateSchema }
 
