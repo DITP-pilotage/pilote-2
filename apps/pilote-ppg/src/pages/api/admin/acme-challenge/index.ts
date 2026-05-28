@@ -17,7 +17,10 @@ function readTokenFromRequest(req: NextApiRequest): string | undefined {
   return undefined;
 }
 
-async function handler(req: NextApiRequest, res: NextApiResponse) {
+async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse,
+): Promise<void> {
   if (req.method === "POST") {
     const body = req.body as
       | { token?: unknown; keyAuthorization?: unknown }
@@ -26,10 +29,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
     const keyAuthorization = body?.keyAuthorization;
 
     if (typeof token !== "string" || !TOKEN_REGEX.test(token)) {
-      return res.status(400).json({ error: "Invalid token" });
+      res.status(400).json({ error: "Invalid token" });
+      return;
     }
     if (typeof keyAuthorization !== "string" || keyAuthorization.length === 0) {
-      return res.status(400).json({ error: "Invalid keyAuthorization" });
+      res.status(400).json({ error: "Invalid keyAuthorization" });
+      return;
     }
 
     acmeChallengeStore.set(token, keyAuthorization);
@@ -37,13 +42,15 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       { categorie: "acme", source: "admin/acme-challenge", token },
       "Challenge ACME stocké",
     );
-    return res.status(201).json({ token, stored: true });
+    res.status(201).json({ token, stored: true });
+    return;
   }
 
   if (req.method === "DELETE") {
     const token = readTokenFromRequest(req);
     if (typeof token !== "string" || !TOKEN_REGEX.test(token)) {
-      return res.status(400).json({ error: "Invalid token" });
+      res.status(400).json({ error: "Invalid token" });
+      return;
     }
 
     const deleted = acmeChallengeStore.delete(token);
@@ -51,10 +58,11 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       { categorie: "acme", source: "admin/acme-challenge", token, deleted },
       "Challenge ACME supprimé",
     );
-    return res.status(204).end();
+    res.status(204).end();
+    return;
   }
 
-  return res.status(405).json({ error: "Method not allowed" });
+  res.status(405).json({ error: "Method not allowed" });
 }
 
 export default onlyAcmeApiKey(handler);
