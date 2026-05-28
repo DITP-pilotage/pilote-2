@@ -1,4 +1,4 @@
-import { type DateTrunc } from '@pilote/mb-shared/valeurAvancement'
+import { type DateTrunc } from '@pilote/mb-shared/dates'
 
 import { db } from '@/framework/persistence/dbStore'
 import { getValeursTronqueesPourIndividus } from '@/generated/prisma/sql'

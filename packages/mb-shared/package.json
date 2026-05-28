@@ -8,6 +8,10 @@
       "types": "./src/index.ts",
       "default": "./src/index.ts"
     },
+    "./dates": {
+      "types": "./src/dates.ts",
+      "default": "./src/dates.ts"
+    },
     "./error": {
       "types": "./src/error.ts",
       "default": "./src/error.ts"
