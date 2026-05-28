@@ -1,9 +1,12 @@
-import { type FonctionAgregation } from '@pilote/mb-shared/indicateur'
 import { type DateTrunc } from '@pilote/mb-shared/valeurAvancement'
 
 import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
 import { getObjectifsTronquesPourIndividus } from '@/generated/prisma/sql'
+import {
+  loadFonctionsAgregation,
+  loadSousArbre,
+} from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { type ResolveObjectifContext } from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
 
@@ -35,54 +38,6 @@ export const loadResolveObjectifContext = async ({
     ),
   }
   return { ctx, allNodes }
-}
-
-const loadSousArbre = async (
-  cibles: ReadonlyArray<IndividuRef>,
-): Promise<{
-  allNodes: Map<string, IndividuRef>
-  enfantsParParent: Map<string, IndividuRef[]>
-}> => {
-  const allNodes = new Map<string, IndividuRef>()
-  for (const cible of cibles) allNodes.set(cible.id, cible)
-  const enfantsParParent = new Map<string, IndividuRef[]>()
-  let currentLevel = cibles.map((c) => c.id)
-
-  while (currentLevel.length > 0) {
-    const relations = await db().relation.findMany({
-      where: { parentId: { in: currentLevel } },
-      include: { child: true },
-    })
-    if (relations.length === 0) break
-
-    const nextLevelSet = new Set<string>()
-    for (const relation of relations) {
-      const childRef: IndividuRef = {
-        id: relation.child.id,
-        publicId: relation.child.publicId,
-        referentielId: relation.child.referentielId,
-      }
-      if (!allNodes.has(childRef.id)) {
-        allNodes.set(childRef.id, childRef)
-        nextLevelSet.add(childRef.id)
-      }
-      const liste = enfantsParParent.get(relation.parentId) ?? []
-      liste.push(childRef)
-      enfantsParParent.set(relation.parentId, liste)
-    }
-    currentLevel = [...nextLevelSet]
-  }
-
-  return { allNodes, enfantsParParent }
-}
-
-const loadFonctionsAgregation = async (
-  indicateurId: string,
-): Promise<Map<string, FonctionAgregation>> => {
-  const liens = await db().indicateurReferentiel.findMany({
-    where: { indicateurId },
-  })
-  return new Map(liens.map((lien) => [lien.referentielId, lien.fonctionAgregation]))
 }
 
 const loadObjectifsBucketises = async ({

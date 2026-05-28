@@ -9,13 +9,13 @@ import { ResultAsync } from 'neverthrow'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { type Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
+import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { loadResolveObjectifContext } from '@/objectifIndicateurIndividu/queries/loadResolveObjectifContext'
 import {
   getFonctionAgregationActive,
   resolveObjectifIndividu,
 } from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
-import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'year'
 
@@ -39,7 +39,7 @@ const buildList = async ({
   indicateur: { id: string; publicId: string }
   params: ListObjectifsForIndicateurQuery
 }): Promise<ObjectifIndicateurIndividuListApiModel> => {
-  const cibles = await loadCibles(params.individus)
+  const cibles = await loadIndividusParPublicId(params.individus)
   if (cibles.length === 0) return { items: [] }
 
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
@@ -75,10 +75,3 @@ const buildList = async ({
   return { items }
 }
 
-const loadCibles = async (publicIds: ReadonlyArray<string>): Promise<IndividuRef[]> => {
-  const rows = await db().individu.findMany({
-    where: { publicId: { in: [...publicIds] } },
-    orderBy: { publicId: 'asc' },
-  })
-  return rows.map(({ id, publicId, referentielId }) => ({ id, publicId, referentielId }))
-}
