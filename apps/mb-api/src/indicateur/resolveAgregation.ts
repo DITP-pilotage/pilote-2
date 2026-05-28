@@ -2,7 +2,7 @@ import { type FonctionAgregation } from '@pilote/mb-shared/indicateur'
 
 // Un individu est agrégé pour cet indicateur s'il a au moins un enfant direct
 // ET que son référentiel est configuré avec une fonction d'agrégation active
-// (≠ 'NONE'). 
+// (≠ 'NONE').
 export const getFonctionAgregationActive = (
   individuId: string,
   ctx: {
