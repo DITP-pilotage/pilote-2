@@ -11,11 +11,9 @@ import { type Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
 import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
+import { getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
 import { loadResolveObjectifContext } from '@/objectifIndicateurIndividu/queries/loadResolveObjectifContext'
-import {
-  getFonctionAgregationActive,
-  resolveObjectifIndividu,
-} from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
+import { resolveObjectifIndividu } from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'year'
 

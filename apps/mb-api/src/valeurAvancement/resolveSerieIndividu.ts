@@ -2,6 +2,7 @@ import { type FonctionAgregation } from '@pilote/mb-shared/indicateur'
 
 import { yieldToEventLoop } from '@/framework/concurrency'
 import { Decimal } from '@/framework/decimal'
+import { getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
 
 export type IndividuRef = {
   id: string
@@ -38,23 +39,6 @@ export type ResolveSerieContext = {
   fonctionAgregationParReferentiel: ReadonlyMap<string, FonctionAgregation>
   serieFeuilleParIndividu: ReadonlyMap<string, ReadonlyArray<SaisieTronquee>>
   referentielParIndividu: ReadonlyMap<string, string>
-}
-
-// Un individu est agrégé pour cet indicateur s'il a au moins un enfant direct
-// ET que son référentiel est configuré avec une fonction d'agrégation active
-// (≠ 'NONE'). On compare à 'NONE' plutôt qu'à 'SUM' pour rester valable quand
-// d'autres fonctions (AVG, MIN, ...) seront ajoutées à l'enum.
-export const getFonctionAgregationActive = (
-  individuId: string,
-  ctx: ResolveSerieContext,
-): FonctionAgregation | null => {
-  const enfants = ctx.enfantsParParent.get(individuId)
-  if (!enfants || enfants.length === 0) return null
-  const referentielId = ctx.referentielParIndividu.get(individuId)
-  if (!referentielId) return null
-  const fonction = ctx.fonctionAgregationParReferentiel.get(referentielId)
-  if (!fonction || fonction === 'NONE') return null
-  return fonction
 }
 
 // Async pour pouvoir yielder l'event loop entre les buckets d'une dérivée
