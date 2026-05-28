@@ -1,7 +1,7 @@
 import { type FonctionAgregation } from '@pilote/mb-shared/indicateur'
 
 import { Decimal } from '@/framework/decimal'
-import { getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
+import { agreger, getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
 
 export type ResolveObjectifContext = {
@@ -86,16 +86,4 @@ const computeObjectifDerive = (
   }
 
   return result
-}
-
-const agreger = (valeurs: ReadonlyArray<Decimal>, fonction: FonctionAgregation): Decimal => {
-  const somme = valeurs.reduce((acc, v) => acc.plus(v), new Decimal(0))
-  switch (fonction) {
-    case 'SUM':
-      return somme
-    case 'AVG':
-      return somme.dividedBy(valeurs.length)
-    case 'NONE':
-      throw new Error("agreger appelé avec fonction 'NONE'")
-  }
 }
