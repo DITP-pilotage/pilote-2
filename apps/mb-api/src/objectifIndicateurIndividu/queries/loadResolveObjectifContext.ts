@@ -1,4 +1,4 @@
-import { type DateTrunc } from '@pilote/mb-shared/valeurAvancement'
+import { type DateTrunc } from '@pilote/mb-shared/dates'
 
 import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'

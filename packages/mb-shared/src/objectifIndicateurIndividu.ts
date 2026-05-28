@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { indicateurPublicIdSchema } from './publicIds'
 import { individuPublicIdSchema } from './individu'
 import { individusCsvSchema, MAX_INDIVIDUS_PAR_REQUETE } from './individusCsv'
-import { dateTruncSchema, dateSchema } from './valeurAvancement'
+import { dateTruncSchema, dateSchema } from './dates'
 
 export { dateSchema }
 

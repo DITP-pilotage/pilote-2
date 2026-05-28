@@ -3,7 +3,7 @@ import {
   type ObjectifIndicateurIndividuApiModel,
   type ObjectifIndicateurIndividuListApiModel,
 } from '@pilote/mb-shared/objectifIndicateurIndividu'
-import { type DateTrunc } from '@pilote/mb-shared/valeurAvancement'
+import { type DateTrunc } from '@pilote/mb-shared/dates'
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
@@ -72,4 +72,3 @@ const buildList = async ({
 
   return { items }
 }
-
