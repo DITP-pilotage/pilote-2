@@ -246,9 +246,7 @@ const upsertReferentielWidget = async (o: ReferentielWidgetOverrides) => {
   })
 }
 
-function referentielWidget(
-  override: ReferentielWidgetOverrides,
-): Promise<ReferentielWidgetModel>
+function referentielWidget(override: ReferentielWidgetOverrides): Promise<ReferentielWidgetModel>
 function referentielWidget(
   o1: ReferentielWidgetOverrides,
   o2: ReferentielWidgetOverrides,

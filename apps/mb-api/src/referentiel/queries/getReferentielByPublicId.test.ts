@@ -72,7 +72,7 @@ describe.concurrent('getReferentielByPublicId', () => {
   )
 
   it(
-    'retourne un tableau widgets vide quand aucun widget n\'est rattaché',
+    "retourne un tableau widgets vide quand aucun widget n'est rattaché",
     integrationTest(async () => {
       await fixtures.referentiel({ publicId: 'REF-NO-WID' })
 

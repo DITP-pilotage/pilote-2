@@ -32,9 +32,14 @@ export function CarteFranceWidget({
     ],
   })
 
+  const contributions = useMemo(
+    () => remarquables.items.find((r) => r.referentiel === referentielId)?.contributions ?? [],
+    [remarquables, referentielId],
+  )
+
   const { points, individuIdByJoinValue } = useMemo(
-    () => buildCarteFranceBindings({ individus, remarquables, referentielId }),
-    [individus, remarquables, referentielId],
+    () => buildCarteFranceBindings({ individus, contributions }),
+    [individus, contributions],
   )
 
   const handleSelect = (joinValue: string): void => {

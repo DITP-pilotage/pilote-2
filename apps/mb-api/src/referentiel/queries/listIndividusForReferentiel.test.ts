@@ -102,6 +102,31 @@ describe.concurrent('listIndividusForReferentiel', () => {
   )
 
   it(
+    "renvoie le metadata JSON quand l'individu en a un",
+    integrationTest(async () => {
+      await fixtures.individu({
+        publicId: 'M-1',
+        nom: 'Avec metadata',
+        referentiel: { publicId: 'REF-META', nom: 'Meta' },
+        metadata: { codeInsee: '75', region: 'IDF' },
+      })
+
+      const result = await listIndividusForReferentiel('REF-META', {})
+
+      expect(result._unsafeUnwrap().items).toEqual([
+        {
+          id: 'M-1',
+          nom: 'Avec metadata',
+          referentiel: 'REF-META',
+          metadata: { codeInsee: '75', region: 'IDF' },
+          createdAt: expect.any(String),
+          updatedAt: expect.any(String),
+        },
+      ])
+    }),
+  )
+
+  it(
     'retourne une liste vide quand le référentiel est introuvable',
     integrationTest(async () => {
       const result = await listIndividusForReferentiel('REF-INCONNU', {})

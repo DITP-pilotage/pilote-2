@@ -65,6 +65,37 @@ describe.concurrent('listReferentiels', () => {
   )
 
   it(
+    'inclut les widgets rattachés à chaque référentiel',
+    integrationTest(async () => {
+      await fixtures.referentielWidget({
+        referentiel: { publicId: 'REF-WID-LIST', nom: 'Référentiel avec widget' },
+        widget: {
+          publicId: 'WID-CARTO-LIST',
+          type: 'carte-france-departements',
+          nom: 'Carte des départements',
+          joinKey: 'codeInsee',
+        },
+      })
+
+      const result = await listReferentiels({ recherche: 'avec widget' })
+
+      expect(result._unsafeUnwrap().items).toEqual([
+        expect.objectContaining({
+          id: 'REF-WID-LIST',
+          widgets: [
+            {
+              id: 'WID-CARTO-LIST',
+              type: 'carte-france-departements',
+              nom: 'Carte des départements',
+              joinKey: 'codeInsee',
+            },
+          ],
+        }),
+      ])
+    }),
+  )
+
+  it(
     'filtre par recherche case-insensitive',
     integrationTest(async () => {
       await fixtures.referentiel(
