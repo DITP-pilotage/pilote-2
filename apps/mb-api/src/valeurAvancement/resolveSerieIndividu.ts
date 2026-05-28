@@ -2,7 +2,7 @@ import { type FonctionAgregation } from '@pilote/mb-shared/indicateur'
 
 import { yieldToEventLoop } from '@/framework/concurrency'
 import { Decimal } from '@/framework/decimal'
-import { getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
+import { agreger, getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
 
 export type IndividuRef = {
   id: string
@@ -189,23 +189,4 @@ const computeSerieDerivee = async (
   }
 
   return result
-}
-
-// Précondition : `valeurs` est non vide (filtré en amont sur la couverture > 0)
-// et `fonction` est active (≠ 'NONE', cf. `getFonctionAgregationActive`).
-// `AVG` est une moyenne arithmétique simple non pondérée : chaque enfant connu
-// compte pour 1, les enfants sans valeur sont ignorés (cf. cas permissif amont).
-const agreger = (valeurs: ReadonlyArray<Decimal>, fonction: FonctionAgregation): Decimal => {
-  const somme = valeurs.reduce((acc, v) => acc.plus(v), new Decimal(0))
-  switch (fonction) {
-    case 'SUM':
-      return somme
-    case 'AVG':
-      return somme.dividedBy(valeurs.length)
-    case 'NONE':
-      throw new Error(
-        "agreger appelé avec fonction 'NONE' : une dérivation ne devrait pas être déclenchée " +
-          "lorsque l'agrégation est désactivée.",
-      )
-  }
 }
