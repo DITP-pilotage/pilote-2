@@ -10,13 +10,10 @@ import { ResultAsync } from 'neverthrow'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
+import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
-import {
-  type IndividuRef,
-  type PointInterne,
-  resolveSerieIndividu,
-} from '@/valeurAvancement/resolveSerieIndividu'
+import { type PointInterne, resolveSerieIndividu } from '@/valeurAvancement/resolveSerieIndividu'
 
 // Cap par défaut à la granularité mensuelle : sans troncature, une série France
 // avec saisies quotidiennes par département explose (cf. design doc D11).
@@ -53,7 +50,7 @@ const buildSeries = async ({
   indicateurPublicId: string
   params: ListValeursForIndicateurQuery
 }): Promise<ValeurAvancementListApiModel> => {
-  const cibles = await loadCibles(params.individus)
+  const cibles = await loadIndividusParPublicId(params.individus)
   if (cibles.length === 0) return { items: [] }
 
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
@@ -83,14 +80,6 @@ const buildSeries = async ({
     'listValeursForIndicateur computed',
   )
   return { items }
-}
-
-const loadCibles = async (publicIds: ReadonlyArray<string>): Promise<IndividuRef[]> => {
-  const rows = await db().individu.findMany({
-    where: { publicId: { in: [...publicIds] } },
-    orderBy: { publicId: 'asc' },
-  })
-  return rows.map(({ id, publicId, referentielId }) => ({ id, publicId, referentielId }))
 }
 
 const toApiModel = ({
