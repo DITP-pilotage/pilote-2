@@ -8,6 +8,7 @@ import {
   testIndicateurId,
   testIndividuId,
   testReferentielId,
+  testReferentielIds,
 } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 import { listValeursRemarquablesForIndicateur } from '@/valeurAvancement/queries/listValeursRemarquablesForIndicateur'
@@ -17,18 +18,17 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
     'retourne des stats null pour un référentiel sans individu',
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refId = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
-      await fixtures.referentiel({ publicId: 'REF-VIDE', nom: 'Vide' })
+      await fixtures.referentiel({ publicId: refId, nom: 'Vide' })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-VIDE'] }),
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [
-          { referentiel: 'REF-VIDE', min: null, max: null, mediane: null, contributions: [] },
-        ],
+        items: [{ referentiel: refId, min: null, max: null, mediane: null, contributions: [] }],
       })
     }),
   )
@@ -37,20 +37,21 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
     "retourne des stats null pour un référentiel dont aucun individu n'a de valeur",
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refId = testReferentielId()
       const deptId = testDeptId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.individu({
         publicId: deptId,
-        referentiel: { publicId: 'REF-A', nom: 'A' },
+        referentiel: { publicId: refId, nom: 'A' },
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ referentiel: 'REF-A', min: null, max: null, mediane: null, contributions: [] }],
+        items: [{ referentiel: refId, min: null, max: null, mediane: null, contributions: [] }],
       })
     }),
   )
@@ -59,12 +60,13 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
     'calcule min/max/médiane sur la valeur la plus récente de chaque individu du référentiel',
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refId = testReferentielId()
       const [dept1, dept2, dept3] = testDeptIds(3)
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept1, nom: 'A', referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: dept1, nom: 'A', referentiel: { publicId: refId, nom: 'A' } },
           date: '2026-01-01',
           valeur: 100,
         },
@@ -76,13 +78,13 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept2, nom: 'B', referentiel: { publicId: 'REF-A' } },
+          individu: { publicId: dept2, nom: 'B', referentiel: { publicId: refId } },
           date: '2026-01-01',
           valeur: 50,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept3, nom: 'C', referentiel: { publicId: 'REF-A' } },
+          individu: { publicId: dept3, nom: 'C', referentiel: { publicId: refId } },
           date: '2026-01-01',
           valeur: 30,
         },
@@ -90,11 +92,11 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
-        items: [{ referentiel: 'REF-A', min: 10, max: 50, mediane: 30 }],
+        items: [{ referentiel: refId, min: 10, max: 50, mediane: 30 }],
       })
     }),
   )
@@ -103,30 +105,31 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
     'calcule la médiane comme moyenne des deux centrales (nombre pair)',
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refId = testReferentielId()
       const [dept1, dept2, dept3, dept4] = testDeptIds(4)
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept1, nom: 'A', referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: dept1, nom: 'A', referentiel: { publicId: refId, nom: 'A' } },
           date: '2026-01-01',
           valeur: 10,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept2, nom: 'B', referentiel: { publicId: 'REF-A' } },
+          individu: { publicId: dept2, nom: 'B', referentiel: { publicId: refId } },
           date: '2026-01-01',
           valeur: 20,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept3, nom: 'C', referentiel: { publicId: 'REF-A' } },
+          individu: { publicId: dept3, nom: 'C', referentiel: { publicId: refId } },
           date: '2026-01-01',
           valeur: 30,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept4, nom: 'D', referentiel: { publicId: 'REF-A' } },
+          individu: { publicId: dept4, nom: 'D', referentiel: { publicId: refId } },
           date: '2026-01-01',
           valeur: 40,
         },
@@ -134,11 +137,11 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
-        items: [{ referentiel: 'REF-A', min: 10, max: 40, mediane: 25 }],
+        items: [{ referentiel: refId, min: 10, max: 40, mediane: 25 }],
       })
     }),
   )
@@ -147,27 +150,28 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
     "ignore les individus du référentiel n'ayant aucune valeur pour l'indicateur",
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refId = testReferentielId()
       const [dept1, dept2] = testDeptIds(2)
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.individu({
         publicId: dept1,
         nom: 'A',
-        referentiel: { publicId: 'REF-A', nom: 'A' },
+        referentiel: { publicId: refId, nom: 'A' },
       })
       await fixtures.valeurAvancement({
         indicateur: { publicId: indId },
-        individu: { publicId: dept2, nom: 'B', referentiel: { publicId: 'REF-A' } },
+        individu: { publicId: dept2, nom: 'B', referentiel: { publicId: refId } },
         date: '2026-01-01',
         valeur: 42,
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
-        items: [{ referentiel: 'REF-A', min: 42, max: 42, mediane: 42 }],
+        items: [{ referentiel: refId, min: 42, max: 42, mediane: 42 }],
       })
     }),
   )
@@ -176,24 +180,25 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
     'calcule des stats indépendantes pour chaque référentiel demandé',
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const [refA, refB] = testReferentielIds(2)
       const [dept1, dept2, dept3] = testDeptIds(3)
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept1, nom: 'A', referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: dept1, nom: 'A', referentiel: { publicId: refA, nom: 'A' } },
           date: '2026-01-01',
           valeur: 10,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept2, nom: 'B', referentiel: { publicId: 'REF-A' } },
+          individu: { publicId: dept2, nom: 'B', referentiel: { publicId: refA } },
           date: '2026-01-01',
           valeur: 30,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept3, nom: 'C', referentiel: { publicId: 'REF-B', nom: 'B' } },
+          individu: { publicId: dept3, nom: 'C', referentiel: { publicId: refB, nom: 'B' } },
           date: '2026-01-01',
           valeur: 100,
         },
@@ -201,13 +206,13 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A', 'REF-B'] }),
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refA, refB] }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
         items: [
-          { referentiel: 'REF-A', min: 10, max: 30, mediane: 20 },
-          { referentiel: 'REF-B', min: 100, max: 100, mediane: 100 },
+          { referentiel: refA, min: 10, max: 30, mediane: 20 },
+          { referentiel: refB, min: 100, max: 100, mediane: 100 },
         ],
       })
     }),
@@ -217,22 +222,24 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
     'omet les référentiels inexistants',
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refId = testReferentielId()
+      const refInconnu = testReferentielId()
       const deptId = testDeptId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement({
         indicateur: { publicId: indId },
-        individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
+        individu: { publicId: deptId, referentiel: { publicId: refId, nom: 'A' } },
         date: '2026-01-01',
         valeur: 42,
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A', 'REF-INCONNU'] }),
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId, refInconnu] }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
-        items: [{ referentiel: 'REF-A', min: 42, max: 42, mediane: 42 }],
+        items: [{ referentiel: refId, min: 42, max: 42, mediane: 42 }],
       })
     }),
   )
@@ -241,18 +248,19 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
     'trie les items par publicId de référentiel (asc)',
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const [refFirst, refLast] = testReferentielIds(2)
       const [dept1, dept2] = testDeptIds(2)
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept1, referentiel: { publicId: 'REF-Z', nom: 'Z' } },
+          individu: { publicId: dept1, referentiel: { publicId: refLast, nom: 'Z' } },
           date: '2026-01-01',
           valeur: 1,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept2, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: dept2, referentiel: { publicId: refFirst, nom: 'A' } },
           date: '2026-01-01',
           valeur: 2,
         },
@@ -260,11 +268,11 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-Z', 'REF-A'] }),
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refLast, refFirst] }),
       )
 
       const items = result._unsafeUnwrap().items
-      expect(items.map((i) => i.referentiel)).toEqual(['REF-A', 'REF-Z'])
+      expect(items.map((i) => i.referentiel)).toEqual([refFirst, refLast])
     }),
   )
 
@@ -272,12 +280,13 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
     'se base sur la date de la valeur, pas la date de saisie',
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refId = testReferentielId()
       const deptId = testDeptId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId },
-          individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: deptId, referentiel: { publicId: refId, nom: 'A' } },
           date: '2026-02-01',
           valeur: 10,
         },
@@ -297,11 +306,11 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
-        items: [{ referentiel: 'REF-A', min: 75, max: 75, mediane: 75 }],
+        items: [{ referentiel: refId, min: 75, max: 75, mediane: 75 }],
       })
     }),
   )
@@ -310,18 +319,19 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
     "ignore les valeurs d'autres indicateurs",
     integrationTest(async () => {
       const [indId, autreIndId] = [testIndicateurId(), testIndicateurId()]
+      const refId = testReferentielId()
       const [dept1, dept2] = testDeptIds(2)
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept1, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: dept1, referentiel: { publicId: refId, nom: 'A' } },
           date: '2026-01-01',
           valeur: 10,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept2, referentiel: { publicId: 'REF-A' } },
+          individu: { publicId: dept2, referentiel: { publicId: refId } },
           date: '2026-01-01',
           valeur: 20,
         },
@@ -335,11 +345,11 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
-        items: [{ referentiel: 'REF-A', min: 10, max: 20, mediane: 15 }],
+        items: [{ referentiel: refId, min: 10, max: 20, mediane: 15 }],
       })
     }),
   )
@@ -348,18 +358,19 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
     'ignore les individus appartenant à un autre référentiel',
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const [refA, refB] = testReferentielIds(2)
       const [dept1, dept2] = testDeptIds(2)
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept1, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: dept1, referentiel: { publicId: refA, nom: 'A' } },
           date: '2026-01-01',
           valeur: 10,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept2, referentiel: { publicId: 'REF-B', nom: 'B' } },
+          individu: { publicId: dept2, referentiel: { publicId: refB, nom: 'B' } },
           date: '2026-01-01',
           valeur: 9999,
         },
@@ -367,11 +378,11 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refA] }),
       )
 
       expect(result._unsafeUnwrap()).toMatchObject({
-        items: [{ referentiel: 'REF-A', min: 10, max: 10, mediane: 10 }],
+        items: [{ referentiel: refA, min: 10, max: 10, mediane: 10 }],
       })
     }),
   )
@@ -379,11 +390,12 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
   it(
     "rejette quand l'indicateur est introuvable",
     integrationTest(async () => {
-      await fixtures.referentiel({ publicId: 'REF-A', nom: 'A' })
+      const refId = testReferentielId()
+      await fixtures.referentiel({ publicId: refId, nom: 'A' })
       const apiKey = await fixtures.apiKey()
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          listValeursRemarquablesForIndicateur(testIndicateurId(), { referentiels: ['REF-A'] }),
+          listValeursRemarquablesForIndicateur(testIndicateurId(), { referentiels: [refId] }),
         ),
       ).rejects.toThrow()
     }),
@@ -393,13 +405,14 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
     "rejette quand le principal n'a aucune permission sur un indicateur PRIVE",
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refId = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PRIVE' })
-      await fixtures.referentiel({ publicId: 'REF-A', nom: 'A' })
+      await fixtures.referentiel({ publicId: refId, nom: 'A' })
       const apiKey = await fixtures.apiKey()
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
+          listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
         ),
       ).rejects.toThrow()
     }),
@@ -782,14 +795,15 @@ describe.concurrent('listValeursRemarquablesForIndicateur', () => {
     "autorise l'accès à un indicateur PRIVE quand le principal a la permission READ",
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refId = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PRIVE' })
-      await fixtures.referentiel({ publicId: 'REF-A', nom: 'A' })
+      await fixtures.referentiel({ publicId: refId, nom: 'A' })
       const apiKey = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listValeursRemarquablesForIndicateur(indId, { referentiels: ['REF-A'] }),
+        listValeursRemarquablesForIndicateur(indId, { referentiels: [refId] }),
       )
 
       expect(result.isOk()).toBe(true)
