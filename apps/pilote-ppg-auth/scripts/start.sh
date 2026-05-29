@@ -33,33 +33,6 @@ set -eu
 # 8080 est la valeur par défaut historique de Keycloak/Quarkus.
 export INTERNAL_PORT="${INTERNAL_PORT:-8080}"
 
-# Le buildpack Node de Scalingo dépose un script dans .profile.d qui ajoute
-# node au PATH. Le buildpack Keycloak (qui est build principal) ne le source
-# pas automatiquement, donc on le fait à la main. set +e/-e car on ne veut pas
-# qu'un script tiers cassé fasse échouer tout le boot.
-if [ -d "/app/.profile.d" ]; then
-  set +e
-  for f in /app/.profile.d/*.sh; do
-    [ -r "$f" ] && source "$f"
-  done
-  set -e
-fi
-
-# Filet de sécurité si .profile.d n'a pas fait son job : on tente les
-# emplacements connus des binaires node sur Heroku/Scalingo.
-if ! command -v node >/dev/null 2>&1; then
-  for candidate in /app/.heroku/node/bin /app/vendor/node/bin /app/node/bin; do
-    if [ -x "$candidate/node" ]; then
-      export PATH="$candidate:$PATH"
-      break
-    fi
-  done
-fi
-
-# Trace de diagnostic : utile quand un déploiement casse parce que node n'est
-# pas trouvé (cas déjà vu, cf. commit f3e389a6f).
-echo "[start] node: $(command -v node || echo 'NOT FOUND') — PATH=$PATH"
-
 # --- 1. Démarrage de Keycloak en background ----------------------------------
 echo "[start] launching Keycloak on internal port $INTERNAL_PORT"
 # KC_HTTP_PORT est lu par kc.sh pour configurer Quarkus. On lance en background
