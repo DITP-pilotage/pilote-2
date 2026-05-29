@@ -86,7 +86,7 @@ export const BasePageAccueilLayout: FunctionComponent<
   const { data: session } = useSession();
   const profil = useProfilUtilisateurConnecte();
   const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
-  const { peutUtiliserAskAI, estDITPAdmin, estCoordinateurEligible } =
+  const { peutUtiliserAskAI, estDITPAdmin, estEligibleTerritoire } =
     useAskAIAccess();
 
   const estProfilTerritorialise =
@@ -193,7 +193,7 @@ export const BasePageAccueilLayout: FunctionComponent<
             />
             {peutUtiliserAskAI ? (
               <div className="h-full flex items-center pt-1 pr-2 ml-auto">
-                {estCoordinateurEligible ? (
+                {estEligibleTerritoire ? (
                   <BoutonSyntheseTerritoireCoordinateur
                     jalon={jalon}
                     territoireCode={territoireCode}

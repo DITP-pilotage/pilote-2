@@ -2,11 +2,6 @@ import { useSession } from "next-auth/react";
 import { useEnv } from "@/client/hooks/useEnv";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
-const PROFILS_COORDINATEURS: ReadonlySet<string> = new Set([
-  ProfilEnum.COORDINATEUR_REGION,
-  ProfilEnum.COORDINATEUR_DEPARTEMENT,
-]);
-
 function parseEmailsAutorises(raw: string): Set<string> {
   return new Set(
     raw
@@ -40,14 +35,12 @@ function profilAutoriseParFeatureFlip(params: {
   return false;
 }
 
-function coordinateurAutoriseParListeEmails(params: {
-  profil: string | null;
+function emailAutoriseParListeTerritoire(params: {
   email: string | null;
   ffAskAITerritoire: boolean;
   emailsAutorises: Set<string>;
 }): boolean {
   if (!params.ffAskAITerritoire) return false;
-  if (!params.profil || !PROFILS_COORDINATEURS.has(params.profil)) return false;
   if (!params.email) return false;
   return params.emailsAutorises.has(params.email.toLowerCase());
 }
@@ -74,20 +67,19 @@ export function useAskAIAccess() {
     ffAskAIDitpPilotage: Boolean(ffAskAIDitpPilotage),
   });
 
-  const estCoordinateurEligible = coordinateurAutoriseParListeEmails({
-    profil,
+  const estEligibleTerritoire = emailAutoriseParListeTerritoire({
     email,
     ffAskAITerritoire: Boolean(ffAskAITerritoire),
     emailsAutorises,
   });
 
   const peutUtiliserAskAI =
-    Boolean(ffAskAI) && (autoriseParProfil || estCoordinateurEligible);
+    Boolean(ffAskAI) && (autoriseParProfil || estEligibleTerritoire);
 
   return {
     peutUtiliserAskAI,
     estDITPAdmin: profil === ProfilEnum.DITP_ADMIN,
-    estCoordinateurEligible,
+    estEligibleTerritoire,
     profil,
   };
 }
