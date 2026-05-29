@@ -2,6 +2,20 @@ import { useSession } from "next-auth/react";
 import { useEnv } from "@/client/hooks/useEnv";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
+const PROFILS_COORDINATEURS: ReadonlySet<string> = new Set([
+  ProfilEnum.COORDINATEUR_REGION,
+  ProfilEnum.COORDINATEUR_DEPARTEMENT,
+]);
+
+function parseEmailsAutorises(raw: string): Set<string> {
+  return new Set(
+    raw
+      .split(",")
+      .map((email) => email.trim().toLowerCase())
+      .filter((email) => email.length > 0),
+  );
+}
+
 function profilAutoriseParFeatureFlip(params: {
   profil: string | null;
   ffAskAIDitpAdmin: boolean;
@@ -26,6 +40,18 @@ function profilAutoriseParFeatureFlip(params: {
   return false;
 }
 
+function coordinateurAutoriseParListeEmails(params: {
+  profil: string | null;
+  email: string | null;
+  ffAskAITerritoire: boolean;
+  emailsAutorises: Set<string>;
+}): boolean {
+  if (!params.ffAskAITerritoire) return false;
+  if (!params.profil || !PROFILS_COORDINATEURS.has(params.profil)) return false;
+  if (!params.email) return false;
+  return params.emailsAutorises.has(params.email.toLowerCase());
+}
+
 export function useAskAIAccess() {
   const { data: session } = useSession();
   const ffAskAI = useEnv("NEXT_PUBLIC_FF_ASK_AI");
@@ -34,21 +60,34 @@ export function useAskAIAccess() {
     "NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET",
   );
   const ffAskAIDitpPilotage = useEnv("NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE");
+  const ffAskAITerritoire = useEnv("NEXT_PUBLIC_FF_ASK_AI_TERRITOIRE");
+  const emailsTerritoireRaw = useEnv("NEXT_PUBLIC_ASK_AI_TERRITOIRE_EMAILS");
 
   const profil = session?.profil ?? null;
+  const email = session?.user?.email ?? null;
+  const emailsAutorises = parseEmailsAutorises(emailsTerritoireRaw);
+
+  const autoriseParProfil = profilAutoriseParFeatureFlip({
+    profil,
+    ffAskAIDitpAdmin: Boolean(ffAskAIDitpAdmin),
+    ffAskAIEquipeDirProjet: Boolean(ffAskAIEquipeDirProjet),
+    ffAskAIDitpPilotage: Boolean(ffAskAIDitpPilotage),
+  });
+
+  const estCoordinateurEligible = coordinateurAutoriseParListeEmails({
+    profil,
+    email,
+    ffAskAITerritoire: Boolean(ffAskAITerritoire),
+    emailsAutorises,
+  });
 
   const peutUtiliserAskAI =
-    Boolean(ffAskAI) &&
-    profilAutoriseParFeatureFlip({
-      profil,
-      ffAskAIDitpAdmin: Boolean(ffAskAIDitpAdmin),
-      ffAskAIEquipeDirProjet: Boolean(ffAskAIEquipeDirProjet),
-      ffAskAIDitpPilotage: Boolean(ffAskAIDitpPilotage),
-    });
+    Boolean(ffAskAI) && (autoriseParProfil || estCoordinateurEligible);
 
   return {
     peutUtiliserAskAI,
     estDITPAdmin: profil === ProfilEnum.DITP_ADMIN,
+    estCoordinateurEligible,
     profil,
   };
 }

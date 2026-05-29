@@ -20,6 +20,7 @@ import { ModaleRenseignerService } from "@/components/PageAccueil/PageChantiers/
 import { BoutonNavigationFicheTerritoriale } from "@/components/PageAccueil/BoutonNavigationFicheTerritoriale";
 import { BoutonNavigationRapportDetaille } from "@/components/BoutonNavigationRapportDetaille";
 import { BoutonSyntheseTerritoire } from "@/components/PageAccueil/BoutonSyntheseTerritoire";
+import { BoutonSyntheseTerritoireCoordinateur } from "@/components/PageAccueil/BoutonSyntheseTerritoireCoordinateur";
 import { BoutonExportDesDonnees } from "@/components/PageAccueil/BoutonExportDesDonnees";
 import { clsxm } from "@/utils/clsxm";
 import { ModaleVideoAccueil } from "@/components/PageAccueil/PageChantiers/ModaleVideoAccueil/ModaleVideoAccueil";
@@ -81,7 +82,8 @@ export const PageAccueilLegacy = ({
   const ffFicheTerritoriale = useEnv("NEXT_PUBLIC_FF_FICHE_TERRITORIALE");
   const profil = useProfilUtilisateurConnecte();
   const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
-  const { peutUtiliserAskAI, estDITPAdmin } = useAskAIAccess();
+  const { peutUtiliserAskAI, estDITPAdmin, estCoordinateurEligible } =
+    useAskAIAccess();
   const doitAfficherModaleRenseignerService =
     !!monProfilEstDisponible &&
     (profil.service == null || profil.fonction == null);
@@ -183,11 +185,18 @@ export const PageAccueilLegacy = ({
             />
             {peutUtiliserAskAI ? (
               <div className="ml-auto flex items-center h-full pr-2 pt-1">
-                <BoutonSyntheseTerritoire
-                  territoireCode={territoireCode}
-                  jalon={jalon}
-                  estDITPAdmin={estDITPAdmin}
-                />
+                {estCoordinateurEligible ? (
+                  <BoutonSyntheseTerritoireCoordinateur
+                    territoireCode={territoireCode}
+                    jalon={jalon}
+                  />
+                ) : (
+                  <BoutonSyntheseTerritoire
+                    territoireCode={territoireCode}
+                    jalon={jalon}
+                    estDITPAdmin={estDITPAdmin}
+                  />
+                )}
               </div>
             ) : null}
           </div>
