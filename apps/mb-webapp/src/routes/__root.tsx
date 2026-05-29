@@ -33,6 +33,9 @@ function RootComponent() {
             >
               Indicateurs
             </Link>
+            <Link to="/paniers" search={{}} className="text-secondary-foreground hover:text-text">
+              Paniers
+            </Link>
             {auth.isAuthenticated ? (
               <span className="flex items-center gap-2">
                 <span className="text-text-muted">

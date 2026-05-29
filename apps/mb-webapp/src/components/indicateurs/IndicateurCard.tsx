@@ -10,11 +10,11 @@ function formatMiseAJour(iso: string): string {
   return formatMonthYearNumericFr(date)
 }
 
-type IndicateurCardProps = {
+export function IndicateurCard({
+  indicateur,
+}: {
   indicateur: Pick<IndicateurApiModel, 'id' | 'nom' | 'updatedAt'>
-}
-
-export function IndicateurCard({ indicateur }: IndicateurCardProps) {
+}) {
   return (
     <EntityCard
       asChild

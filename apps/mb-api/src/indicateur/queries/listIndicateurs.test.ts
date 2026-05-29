@@ -203,6 +203,46 @@ describe.concurrent('listIndicateurs', () => {
   )
 
   it(
+    'filtre les indicateurs par ids quand le paramètre est fourni',
+    integrationTest(async () => {
+      const [ind1, ind2, ind3] = testIndicateurIds(3)
+      await fixtures.indicateur({ publicId: ind1 }, { publicId: ind2 }, { publicId: ind3 })
+      const apiKey = await fixtures.apiKey({
+        permissions: [
+          { indicateur: { publicId: ind1 }, action: 'READ' },
+          { indicateur: { publicId: ind2 }, action: 'READ' },
+          { indicateur: { publicId: ind3 }, action: 'READ' },
+        ],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({ ids: [ind1, ind3] }))
+
+      const value = result._unsafeUnwrap()
+      expect(value.items.map((i) => i.id).sort()).toEqual([ind1, ind3].sort())
+      expect(value.total).toBe(2)
+    }),
+  )
+
+  it(
+    'applique les permissions par-dessus le filtre ids (un id non autorisé est silencieusement écarté)',
+    integrationTest(async () => {
+      const [accessible, hidden] = testIndicateurIds(2)
+      await fixtures.indicateur({ publicId: accessible }, { publicId: hidden })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: accessible }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listIndicateurs({ ids: [accessible, hidden] }),
+      )
+
+      const value = result._unsafeUnwrap()
+      expect(value.items.map((i) => i.id)).toEqual([accessible])
+      expect(value.total).toBe(1)
+    }),
+  )
+
+  it(
     'expose referentiels triés par publicId ASC sur chaque item',
     integrationTest(async () => {
       const [accessible] = testIndicateurIds(1)

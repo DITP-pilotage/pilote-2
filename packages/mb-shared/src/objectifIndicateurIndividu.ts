@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { indicateurPublicIdSchema } from './indicateur'
+import { indicateurPublicIdSchema } from './publicIds'
 import { individuPublicIdSchema } from './individu'
 import { individusCsvSchema, MAX_INDIVIDUS_PAR_REQUETE } from './individusCsv'
 import { dateSchema } from './valeurAvancement'

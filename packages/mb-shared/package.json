@@ -28,6 +28,10 @@
       "types": "./src/pagination.ts",
       "default": "./src/pagination.ts"
     },
+    "./publicIds": {
+      "types": "./src/publicIds.ts",
+      "default": "./src/publicIds.ts"
+    },
     "./referentiel": {
       "types": "./src/referentiel.ts",
       "default": "./src/referentiel.ts"
@@ -43,6 +47,10 @@
     "./widget": {
       "types": "./src/widget.ts",
       "default": "./src/widget.ts"
+    },
+    "./panier": {
+      "types": "./src/panier.ts",
+      "default": "./src/panier.ts"
     }
   },
   "files": [

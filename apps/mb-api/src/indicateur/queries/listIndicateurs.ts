@@ -7,6 +7,7 @@ import { ResultAsync } from 'neverthrow'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import { buildPaginationArgs, toPaginatedResponse } from '@/framework/persistence/paginate'
+import { type Prisma } from '@/generated/prisma/client'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { toIndicateurApiModel } from '@/indicateur/utils'
 
@@ -14,10 +15,14 @@ export const listIndicateurs = (
   params: ListIndicateursQuery,
 ): ResultAsync<IndicateurListApiModel, never> => {
   const principalId = requireCurrentPrincipalId()
-  const where = withIndicateurReadPermission(
-    params.recherche ? { nom: { contains: params.recherche, mode: 'insensitive' } } : {},
-    principalId,
-  )
+  const filters: Prisma.IndicateurWhereInput = {}
+  if (params.recherche) {
+    filters.nom = { contains: params.recherche, mode: 'insensitive' }
+  }
+  if (params.ids && params.ids.length > 0) {
+    filters.publicId = { in: params.ids }
+  }
+  const where = withIndicateurReadPermission(filters, principalId)
 
   const fetchPage = db().indicateur.findMany({
     where,

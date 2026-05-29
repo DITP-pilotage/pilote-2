@@ -1,6 +1,6 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { errorApiModelSchema } from '@pilote/mb-shared/error'
-import { indicateurPublicIdSchema } from '@pilote/mb-shared/indicateur'
+import { indicateurPublicIdSchema } from '@pilote/mb-shared/publicIds'
 import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
 import {
   deleteValeurAvancementBodySchema,

@@ -2,11 +2,11 @@ import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { errorApiModelSchema } from '@pilote/mb-shared/error'
 import {
   indicateurApiModelSchema,
-  indicateurPublicIdSchema,
   listIndicateursQuerySchema,
   upsertIndicateurBodySchema,
 } from '@pilote/mb-shared/indicateur'
 import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
+import { indicateurPublicIdSchema } from '@pilote/mb-shared/publicIds'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
@@ -106,9 +106,9 @@ const upsertIndicateurRoute = createRoute({
 export const indicateurRoutes = new OpenAPIHono()
 
 indicateurRoutes.openapi(getIndicateursRoute, async (context) => {
-  const { recherche, cursor, pageSize } = context.req.valid('query')
+  const { recherche, cursor, pageSize, ids } = context.req.valid('query')
 
-  return listIndicateurs({ recherche, cursor, pageSize }).match(
+  return listIndicateurs({ recherche, cursor, pageSize, ids }).match(
     (data) =>
       jsonResponseOk({
         context,

@@ -10,6 +10,7 @@ import { databaseContext } from '@/framework/persistence/databaseContext'
 import { health } from '@/healthcheck/routes/health'
 import { indicateurRoutes } from '@/indicateur/routes'
 import { individuRoutes } from '@/individu/routes'
+import { panierRoutes } from '@/panier/routes'
 import { referentielRoutes } from '@/referentiel/routes'
 import { sharedMessage } from '@/shared/routes/sharedMessage'
 import { objectifIndicateurIndividuRoutes } from '@/objectifIndicateurIndividu/routes'
@@ -36,6 +37,7 @@ app.route('/', valeurAvancementRoutes)
 app.route('/', objectifIndicateurIndividuRoutes)
 app.route('/', referentielRoutes)
 app.route('/', individuRoutes)
+app.route('/', panierRoutes)
 app.route('/', me)
 
 app.doc('/openapi.json', {
