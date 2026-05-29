@@ -15,7 +15,10 @@ import { BoutonNavigationFicheTerritoriale } from "@/components/PageAccueil/Bout
 import { BoutonNavigationRapportDetaille } from "@/components/BoutonNavigationRapportDetaille";
 import { BoutonExportDesDonnees } from "@/components/PageAccueil/BoutonExportDesDonnees";
 import { BoutonSyntheseTerritoire } from "@/components/PageAccueil/BoutonSyntheseTerritoire";
-import { BoutonSyntheseTerritoireCoordinateur } from "@/components/PageAccueil/BoutonSyntheseTerritoireCoordinateur";
+import {
+  scenariosTerritoireCoordinateur,
+  scenariosTerritoireDITP,
+} from "@/components/PageAccueil/scenariosTerritoire";
 import { ModaleVideoAccueil } from "@/components/PageAccueil/PageChantiers/ModaleVideoAccueil/ModaleVideoAccueil";
 import { ModaleInscriptionInfolettre } from "@/components/PageAccueil/PageChantiers/ModaleInscriptionInfoLettre/ModaleInscriptionInfolettre";
 import { ModaleRenseignerService } from "@/components/PageAccueil/PageChantiers/ModaleRenseignerService/ModaleRenseignerService";
@@ -193,18 +196,19 @@ export const BasePageAccueilLayout: FunctionComponent<
             />
             {peutUtiliserAskAI ? (
               <div className="h-full flex items-center pt-1 pr-2 ml-auto">
-                {estEligibleTerritoire ? (
-                  <BoutonSyntheseTerritoireCoordinateur
-                    jalon={jalon}
-                    territoireCode={territoireCode}
-                  />
-                ) : (
-                  <BoutonSyntheseTerritoire
-                    jalon={jalon}
-                    territoireCode={territoireCode}
-                    estDITPAdmin={estDITPAdmin}
-                  />
-                )}
+                <BoutonSyntheseTerritoire
+                  jalon={jalon}
+                  territoireCode={territoireCode}
+                  scenarios={
+                    estEligibleTerritoire
+                      ? scenariosTerritoireCoordinateur({ territoireCode })
+                      : scenariosTerritoireDITP({
+                          territoireCode,
+                          jalon,
+                          estDITPAdmin,
+                        })
+                  }
+                />
               </div>
             ) : null}
           </div>

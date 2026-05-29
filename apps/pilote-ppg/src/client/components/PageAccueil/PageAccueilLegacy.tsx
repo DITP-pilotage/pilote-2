@@ -20,7 +20,10 @@ import { ModaleRenseignerService } from "@/components/PageAccueil/PageChantiers/
 import { BoutonNavigationFicheTerritoriale } from "@/components/PageAccueil/BoutonNavigationFicheTerritoriale";
 import { BoutonNavigationRapportDetaille } from "@/components/BoutonNavigationRapportDetaille";
 import { BoutonSyntheseTerritoire } from "@/components/PageAccueil/BoutonSyntheseTerritoire";
-import { BoutonSyntheseTerritoireCoordinateur } from "@/components/PageAccueil/BoutonSyntheseTerritoireCoordinateur";
+import {
+  scenariosTerritoireCoordinateur,
+  scenariosTerritoireDITP,
+} from "@/components/PageAccueil/scenariosTerritoire";
 import { BoutonExportDesDonnees } from "@/components/PageAccueil/BoutonExportDesDonnees";
 import { clsxm } from "@/utils/clsxm";
 import { ModaleVideoAccueil } from "@/components/PageAccueil/PageChantiers/ModaleVideoAccueil/ModaleVideoAccueil";
@@ -185,18 +188,19 @@ export const PageAccueilLegacy = ({
             />
             {peutUtiliserAskAI ? (
               <div className="ml-auto flex items-center h-full pr-2 pt-1">
-                {estEligibleTerritoire ? (
-                  <BoutonSyntheseTerritoireCoordinateur
-                    territoireCode={territoireCode}
-                    jalon={jalon}
-                  />
-                ) : (
-                  <BoutonSyntheseTerritoire
-                    territoireCode={territoireCode}
-                    jalon={jalon}
-                    estDITPAdmin={estDITPAdmin}
-                  />
-                )}
+                <BoutonSyntheseTerritoire
+                  territoireCode={territoireCode}
+                  jalon={jalon}
+                  scenarios={
+                    estEligibleTerritoire
+                      ? scenariosTerritoireCoordinateur({ territoireCode })
+                      : scenariosTerritoireDITP({
+                          territoireCode,
+                          jalon,
+                          estDITPAdmin,
+                        })
+                  }
+                />
               </div>
             ) : null}
           </div>
