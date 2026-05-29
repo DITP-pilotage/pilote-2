@@ -134,7 +134,7 @@ export function scenariosTerritoireCoordinateur({
           },
           {
             label: "Synthèse d'un chantier sur un territoire",
-            message: `Fais moi la synthèse du chantier CH-XXX sur le territoire NOM_TERRITOIRE
+            message: `Fais moi la synthèse du chantier CH-XXX sur ${territoire.nomAffiché}
 Comment se situe ce chantier par rapport aux autres territoires ?
 Quelles sont les principales difficultés remontées dans les commentaires ?`,
             mode: "fill",
