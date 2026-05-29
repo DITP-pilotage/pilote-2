@@ -31,6 +31,7 @@ describe("acmeChallengeStore", () => {
     acmeChallengeStore.set(token, "ancienne-valeur");
 
     // When
+    // eslint-disable-next-line sonarjs/no-element-overwrite -- écrasement volontaire vérifié par le test
     acmeChallengeStore.set(token, "nouvelle-valeur");
 
     // Then
