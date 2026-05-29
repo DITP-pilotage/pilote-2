@@ -4,8 +4,10 @@
 #
 # Principe :
 #   Le dyno expose UN seul port public ($PORT, imposé par Scalingo). On veut
-#   pouvoir intercepter /.well-known/acme-challenge/* (pour Let's Encrypt) avant
-#   que les requêtes n'atteignent Keycloak, qui ne sait pas servir ces fichiers.
+#   pouvoir intercepter /.well-known/acme-challenge/* — le challenge HTTP-01
+#   du flow ACME, où certbot dépose une keyAuthorization que la CA vient
+#   vérifier — avant que les requêtes n'atteignent Keycloak, qui ne sait pas
+#   servir ces fichiers.
 #
 #   Architecture :
 #       Internet ──$PORT──► acme-proxy (Hono, node) ──127.0.0.1:$INTERNAL_PORT──► Keycloak
