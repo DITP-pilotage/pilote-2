@@ -382,7 +382,7 @@ valeurAvancementRoutes.openapi(upsertValeursAvancementBatchRoute, async (context
   const body = context.req.valid('json')
 
   const result = await withTransaction(async () =>
-    upsertValeursAvancementBatch({ indicateurPublicId: id, body }),
+    upsertValeursAvancementBatch(id, { items: body.items }),
   )
 
   return result.match(

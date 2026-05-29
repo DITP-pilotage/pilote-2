@@ -36,15 +36,12 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertValeursAvancementBatch({
-          indicateurPublicId: indId,
-          body: {
-            items: [
-              { individu: deptA, date: '2025-03-01', valeur: 10 },
-              { individu: deptB, date: '2025-03-01', valeur: 20 },
-              { individu: deptC, date: '2025-03-01', valeur: 30 },
-            ],
-          },
+        upsertValeursAvancementBatch(indId, {
+          items: [
+            { individu: deptA, date: '2025-03-01', valeur: 10 },
+            { individu: deptB, date: '2025-03-01', valeur: 20 },
+            { individu: deptC, date: '2025-03-01', valeur: 30 },
+          ],
         }),
       )
 
@@ -52,20 +49,18 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
       expect(result._unsafeUnwrap()).toEqual({ total: 3, created: 2, updated: 1 })
       const rows = await db().valeurAvancement.findMany({
         where: { indicateur: { publicId: indId } },
-        orderBy: [{ individu: { publicId: 'asc' } }],
+        include: { individu: { select: { publicId: true } } },
       })
-      expect(rows).toHaveLength(3)
-      const valeurParPublicId = new Map<string, number>()
-      for (const row of rows) {
-        const individu = await db().individu.findUniqueOrThrow({
-          where: { id: row.individuId },
-          select: { publicId: true },
-        })
-        valeurParPublicId.set(individu.publicId, row.valeur.toNumber())
-      }
-      expect(valeurParPublicId.get(deptA)).toBe(10)
-      expect(valeurParPublicId.get(deptB)).toBe(20)
-      expect(valeurParPublicId.get(deptC)).toBe(30)
+      const valeurParPublicId = new Map(
+        rows.map((row) => [row.individu.publicId, row.valeur.toNumber()]),
+      )
+      expect(valeurParPublicId).toEqual(
+        new Map([
+          [deptA, 10],
+          [deptB, 20],
+          [deptC, 30],
+        ]),
+      )
     }),
   )
 
@@ -88,15 +83,12 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertValeursAvancementBatch({
-          indicateurPublicId: indId,
-          body: {
-            items: [
-              { individu: deptA, date: '2025-03-01', valeur: 10 },
-              { individu: deptB, date: '2025-03-01', valeur: 20 },
-              { individu: deptA, date: '2025-03-01', valeur: 99 },
-            ],
-          },
+        upsertValeursAvancementBatch(indId, {
+          items: [
+            { individu: deptA, date: '2025-03-01', valeur: 10 },
+            { individu: deptB, date: '2025-03-01', valeur: 20 },
+            { individu: deptA, date: '2025-03-01', valeur: 99 },
+          ],
         }),
       )
 
@@ -114,37 +106,36 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
   )
 
   it(
-    'remonte INDIVIDU_INCONNU agrégé par individu et n\'applique rien',
+    "remonte INDIVIDU_INCONNU agrégé par individu et n'applique rien",
     integrationTest(async () => {
       const indId = testIndicateurId()
-      const refId = testReferentielId()
-      const refOrphelin = testReferentielId()
-      const [deptA, deptOrphelin] = testDeptIds(2)
-      const inconnu = `DEPT-XX`
+      const refLie = testReferentielId()
+      // Référentiel qui existe mais n'a pas de lien IndicateurReferentiel avec `indId` :
+      // les individus rattachés à ce référentiel doivent donc être rejetés en INDIVIDU_INCONNU.
+      const refNonLieAIndicateur = testReferentielId()
+      const [deptLie, deptDansRefNonLie] = testDeptIds(2)
+      const deptInconnu = 'DEPT-XX'
       await fixtures.indicateurReferentiel({
         indicateur: { publicId: indId },
-        referentiel: { publicId: refId },
+        referentiel: { publicId: refLie },
       })
-      await fixtures.individu({ publicId: deptA, referentiel: { publicId: refId } })
+      await fixtures.individu({ publicId: deptLie, referentiel: { publicId: refLie } })
       await fixtures.individu({
-        publicId: deptOrphelin,
-        referentiel: { publicId: refOrphelin },
+        publicId: deptDansRefNonLie,
+        referentiel: { publicId: refNonLieAIndicateur },
       })
       const apiKey = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertValeursAvancementBatch({
-          indicateurPublicId: indId,
-          body: {
-            items: [
-              { individu: deptA, date: '2025-03-01', valeur: 1 },
-              { individu: inconnu, date: '2025-03-01', valeur: 2 },
-              { individu: deptOrphelin, date: '2025-03-01', valeur: 3 },
-              { individu: inconnu, date: '2025-04-01', valeur: 4 },
-            ],
-          },
+        upsertValeursAvancementBatch(indId, {
+          items: [
+            { individu: deptLie, date: '2025-03-01', valeur: 1 },
+            { individu: deptInconnu, date: '2025-03-01', valeur: 2 },
+            { individu: deptDansRefNonLie, date: '2025-03-01', valeur: 3 },
+            { individu: deptInconnu, date: '2025-04-01', valeur: 4 },
+          ],
         }),
       )
 
@@ -153,8 +144,8 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
       expect(err.type).toBe('BATCH_INVALID')
       expect(err.errors).toEqual(
         expect.arrayContaining([
-          { code: 'INDIVIDU_INCONNU', individu: inconnu, indices: [1, 3] },
-          { code: 'INDIVIDU_INCONNU', individu: deptOrphelin, indices: [2] },
+          { code: 'INDIVIDU_INCONNU', individu: deptInconnu, indices: [1, 3] },
+          { code: 'INDIVIDU_INCONNU', individu: deptDansRefNonLie, indices: [2] },
         ]),
       )
       expect(err.errors).toHaveLength(2)
@@ -171,7 +162,7 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
       const indId = testIndicateurId()
       const refId = testReferentielId()
       const [deptA, deptB] = testDeptIds(2)
-      const inconnu = `DEPT-YY`
+      const deptInconnu = 'DEPT-YY'
       await fixtures.indicateurReferentiel({
         indicateur: { publicId: indId },
         referentiel: { publicId: refId },
@@ -185,16 +176,13 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertValeursAvancementBatch({
-          indicateurPublicId: indId,
-          body: {
-            items: [
-              { individu: deptA, date: '2025-03-01', valeur: 1 },
-              { individu: deptA, date: '2025-03-01', valeur: 2 },
-              { individu: inconnu, date: '2025-04-01', valeur: 3 },
-              { individu: deptB, date: '2025-04-01', valeur: 4 },
-            ],
-          },
+        upsertValeursAvancementBatch(indId, {
+          items: [
+            { individu: deptA, date: '2025-03-01', valeur: 1 },
+            { individu: deptA, date: '2025-03-01', valeur: 2 },
+            { individu: deptInconnu, date: '2025-04-01', valeur: 3 },
+            { individu: deptB, date: '2025-04-01', valeur: 4 },
+          ],
         }),
       )
 
@@ -203,7 +191,7 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
       expect(err.errors).toEqual(
         expect.arrayContaining([
           { code: 'DUPLICATE_KEY', indices: [0, 1], individu: deptA, date: '2025-03-01' },
-          { code: 'INDIVIDU_INCONNU', individu: inconnu, indices: [2] },
+          { code: 'INDIVIDU_INCONNU', individu: deptInconnu, indices: [2] },
         ]),
       )
       expect(err.errors).toHaveLength(2)
@@ -221,9 +209,8 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          upsertValeursAvancementBatch({
-            indicateurPublicId: indId,
-            body: { items: [{ individu: deptA, date: '2025-03-01', valeur: 1 }] },
+          upsertValeursAvancementBatch(indId, {
+            items: [{ individu: deptA, date: '2025-03-01', valeur: 1 }],
           }),
         ),
       ).rejects.toMatchObject({
@@ -250,9 +237,8 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          upsertValeursAvancementBatch({
-            indicateurPublicId: indId,
-            body: { items: [{ individu: deptA, date: '2025-03-01', valeur: 1 }] },
+          upsertValeursAvancementBatch(indId, {
+            items: [{ individu: deptA, date: '2025-03-01', valeur: 1 }],
           }),
         ),
       ).rejects.toBeInstanceOf(ForbiddenError)
@@ -290,14 +276,11 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        upsertValeursAvancementBatch({
-          indicateurPublicId: indId,
-          body: {
-            items: [
-              { individu: deptA, date: '2025-03-01', valeur: 11 },
-              { individu: deptB, date: '2025-03-01', valeur: 22 },
-            ],
-          },
+        upsertValeursAvancementBatch(indId, {
+          items: [
+            { individu: deptA, date: '2025-03-01', valeur: 11 },
+            { individu: deptB, date: '2025-03-01', valeur: 22 },
+          ],
         }),
       )
 

@@ -6,13 +6,9 @@ import {
 import { errAsync, okAsync, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import { upsertValeursAvancementBatch as upsertValeursAvancementBatchQuery } from '@/generated/prisma/sql'
-import {
-  ensureIndicateurWritePermission,
-  withIndicateurReadPermission,
-} from '@/indicateur/permissions'
+import { resolveIndicateurForWrite } from '@/indicateur/resolveIndicateurForWrite'
 
 export type BatchInvalidError = {
   type: 'BATCH_INVALID'
@@ -21,50 +17,59 @@ export type BatchInvalidError = {
 
 export type UpsertValeursAvancementBatchError = BatchInvalidError
 
-type UpsertValeursAvancementBatchParams = {
-  indicateurPublicId: string
-  body: UpsertValeursAvancementBatchBody
-}
+type BatchItems = UpsertValeursAvancementBatchBody['items']
+type IndividuIdsByPublicId = Map<string, string>
 
-export const upsertValeursAvancementBatch = ({
-  indicateurPublicId,
-  body,
-}: UpsertValeursAvancementBatchParams): ResultAsync<
-  UpsertValeursAvancementBatchResultApiModel,
-  UpsertValeursAvancementBatchError
-> => {
-  const principalId = requireCurrentPrincipalId()
-  return ResultAsync.fromSafePromise(
-    db().indicateur.findFirstOrThrow({
-      where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
-      select: { id: true, publicId: true },
-    }),
+export const upsertValeursAvancementBatch = (
+  indicateurPublicId: string,
+  { items }: UpsertValeursAvancementBatchBody,
+): ResultAsync<UpsertValeursAvancementBatchResultApiModel, UpsertValeursAvancementBatchError> =>
+  resolveIndicateurForWrite({ indicateurPublicId }).andThen(({ indicateur }) =>
+    validateAndResolveIndividus({ indicateurId: indicateur.id, items }).andThen((individus) =>
+      executeBatch({ indicateurId: indicateur.id, individus, items }),
+    ),
   )
-    .andThen((indicateur) =>
-      ensureIndicateurWritePermission({ indicateurId: indicateur.id, principalId }).map(
-        () => indicateur,
-      ),
-    )
-    .andThen((indicateur) =>
-      validateAndResolveIndividus({ indicateurId: indicateur.id, items: body.items }).andThen(
-        (resolved) => executeBatch({ indicateurId: indicateur.id, resolved, items: body.items }),
-      ),
-    )
-}
 
-type ResolvedIndividus = Map<string, string>
-
-const KEY_SEP = '\u0000'
-
+// Pipeline de validation hors transaction. On rassemble toutes les erreurs détectées
+// avant de toucher la table : pour préserver la garantie « tout-ou-rien transactionnel »
+// promise au client, on ne veut jamais aborter un INSERT à mi-parcours.
 const validateAndResolveIndividus = ({
   indicateurId,
   items,
 }: {
   indicateurId: string
-  items: UpsertValeursAvancementBatchBody['items']
-}): ResultAsync<ResolvedIndividus, BatchInvalidError> => {
-  const errors: BatchInvalidErrorEntryApiModel[] = []
+  items: BatchItems
+}): ResultAsync<IndividuIdsByPublicId, BatchInvalidError> => {
+  const duplicateErrors = detectDuplicateKeys(items)
 
+  return loadIndividusContext({ indicateurId, items }).andThen(
+    ({ individuByPublicId, linkedReferentielIds }) => {
+      const inconnuErrors = detectIndividusInconnus({
+        items,
+        individuByPublicId,
+        linkedReferentielIds,
+      })
+      const errors = [...duplicateErrors, ...inconnuErrors]
+      if (errors.length > 0) {
+        return errAsync<IndividuIdsByPublicId, BatchInvalidError>({
+          type: 'BATCH_INVALID',
+          errors,
+        })
+      }
+      const individuIdsByPublicId: IndividuIdsByPublicId = new Map()
+      for (const [publicId, individu] of individuByPublicId) {
+        individuIdsByPublicId.set(publicId, individu.id)
+      }
+      return okAsync<IndividuIdsByPublicId, BatchInvalidError>(individuIdsByPublicId)
+    },
+  )
+}
+
+// Détecte les couples `(individu, date)` qui apparaissent plus d'une fois dans le payload.
+// Un import « propre » n'a pas de doublon ; on refuse explicitement plutôt que de laisser
+// passer un last-write-wins silencieux qui dépendrait de l'ordre d'apparition.
+const detectDuplicateKeys = (items: BatchItems): BatchInvalidErrorEntryApiModel[] => {
+  const KEY_SEP = '\u0000'
   const indicesByKey = new Map<string, number[]>()
   items.forEach((item, index) => {
     const key = `${item.individu}${KEY_SEP}${item.date}`
@@ -72,13 +77,32 @@ const validateAndResolveIndividus = ({
     if (list) list.push(index)
     else indicesByKey.set(key, [index])
   })
+  const errors: BatchInvalidErrorEntryApiModel[] = []
   for (const [key, indices] of indicesByKey) {
     if (indices.length > 1) {
       const [individu, date] = key.split(KEY_SEP) as [string, string]
       errors.push({ code: 'DUPLICATE_KEY', indices, individu, date })
     }
   }
+  return errors
+}
 
+type IndividuRow = { id: string; publicId: string; referentielId: string }
+
+// Charge en deux requêtes ce qu'il faut pour valider chaque item :
+//  - tous les individus distincts présents dans le payload (par publicId), avec leur referentielId
+//  - parmi leurs référentiels, ceux qui sont effectivement liés à l'indicateur cible.
+// Les deux Map/Set permettent ensuite une vérification O(n) sans round-trip supplémentaire.
+const loadIndividusContext = ({
+  indicateurId,
+  items,
+}: {
+  indicateurId: string
+  items: BatchItems
+}): ResultAsync<
+  { individuByPublicId: Map<string, IndividuRow>; linkedReferentielIds: Set<string> },
+  never
+> => {
   const distinctIndividuPublicIds = Array.from(new Set(items.map((item) => item.individu)))
 
   return ResultAsync.fromSafePromise(
@@ -86,59 +110,77 @@ const validateAndResolveIndividus = ({
       where: { publicId: { in: distinctIndividuPublicIds } },
       select: { id: true, publicId: true, referentielId: true },
     }),
-  )
-    .andThen((individus) => {
-      const byPublicId = new Map(individus.map((individu) => [individu.publicId, individu]))
-      const distinctReferentielIds = Array.from(
-        new Set(individus.map((individu) => individu.referentielId)),
-      )
-      return ResultAsync.fromSafePromise(
-        db().indicateurReferentiel.findMany({
-          where: { indicateurId, referentielId: { in: distinctReferentielIds } },
-          select: { referentielId: true },
-        }),
-      ).map((links) => ({
-        byPublicId,
-        linkedReferentielIds: new Set(links.map((link) => link.referentielId)),
-      }))
-    })
-    .andThen(({ byPublicId, linkedReferentielIds }) => {
-      const indicesByInconnu = new Map<string, number[]>()
-      items.forEach((item, index) => {
-        const individu = byPublicId.get(item.individu)
-        if (!individu || !linkedReferentielIds.has(individu.referentielId)) {
-          const list = indicesByInconnu.get(item.individu)
-          if (list) list.push(index)
-          else indicesByInconnu.set(item.individu, [index])
-        }
-      })
-      for (const [individu, indices] of indicesByInconnu) {
-        errors.push({ code: 'INDIVIDU_INCONNU', individu, indices })
-      }
-
-      if (errors.length > 0) {
-        return errAsync<ResolvedIndividus, BatchInvalidError>({
-          type: 'BATCH_INVALID',
-          errors,
-        })
-      }
-      const resolved: ResolvedIndividus = new Map()
-      for (const [publicId, individu] of byPublicId) resolved.set(publicId, individu.id)
-      return okAsync<ResolvedIndividus, BatchInvalidError>(resolved)
-    })
+  ).andThen((individus) => {
+    const individuByPublicId = new Map(individus.map((individu) => [individu.publicId, individu]))
+    const distinctReferentielIds = Array.from(
+      new Set(individus.map((individu) => individu.referentielId)),
+    )
+    return ResultAsync.fromSafePromise(
+      db().indicateurReferentiel.findMany({
+        where: { indicateurId, referentielId: { in: distinctReferentielIds } },
+        select: { referentielId: true },
+      }),
+    ).map((links) => ({
+      individuByPublicId,
+      linkedReferentielIds: new Set(links.map((link) => link.referentielId)),
+    }))
+  })
 }
 
+// Pour chaque item, l'individu doit (a) exister et (b) appartenir à un référentiel
+// effectivement lié à l'indicateur. Toute violation produit une seule erreur
+// `INDIVIDU_INCONNU` par publicId — agrégée pour pointer toutes les lignes
+// concernées en une seule entrée (DX d'import).
+const detectIndividusInconnus = ({
+  items,
+  individuByPublicId,
+  linkedReferentielIds,
+}: {
+  items: BatchItems
+  individuByPublicId: Map<string, IndividuRow>
+  linkedReferentielIds: Set<string>
+}): BatchInvalidErrorEntryApiModel[] => {
+  const indicesByInconnu = new Map<string, number[]>()
+  items.forEach((item, index) => {
+    const individu = individuByPublicId.get(item.individu)
+    if (!individu || !linkedReferentielIds.has(individu.referentielId)) {
+      const list = indicesByInconnu.get(item.individu)
+      if (list) list.push(index)
+      else indicesByInconnu.set(item.individu, [index])
+    }
+  })
+  const errors: BatchInvalidErrorEntryApiModel[] = []
+  for (const [individu, indices] of indicesByInconnu) {
+    errors.push({ code: 'INDIVIDU_INCONNU', individu, indices })
+  }
+  return errors
+}
+
+// Forme transmise au paramètre `payload.items` de la requête TypedSQL.
+// Doit rester en miroir de `prisma/sql/upsertValeursAvancementBatch.sql` (clés extraites
+// via `input->>'…'`). On passe `valeur` en string pour préserver la précision décimale
+// (numeric(20, 2)) à la traversée du JSON.
+type SqlBatchItem = {
+  id: string
+  individuId: string
+  date: string
+  valeur: string
+}
+
+// Exécute l'upsert atomique en un seul appel TypedSQL. Le `RETURNING (xmax = 0)`
+// indique, ligne par ligne, si l'opération a été un INSERT (true) ou un UPDATE (false).
+// On agrège pour produire les compteurs renvoyés au client.
 const executeBatch = ({
   indicateurId,
-  resolved,
+  individus,
   items,
 }: {
   indicateurId: string
-  resolved: ResolvedIndividus
-  items: UpsertValeursAvancementBatchBody['items']
+  individus: IndividuIdsByPublicId
+  items: BatchItems
 }): ResultAsync<UpsertValeursAvancementBatchResultApiModel, never> => {
-  const sqlItems = items.map((item) => {
-    const individuId = resolved.get(item.individu)
+  const sqlItems: SqlBatchItem[] = items.map((item) => {
+    const individuId = individus.get(item.individu)
     if (!individuId) throw new Error(`Individu non résolu: ${item.individu}`)
     return {
       id: uuidv7(),
