@@ -117,17 +117,17 @@ export function scenariosTerritoireCoordinateur({
         label: "Synthèse",
         scenarios: [
           {
-            label: "Synthèse d'un territoire",
+            label: "Synthèse des difficultés d'un territoire",
             message: "Fais moi la synthèse du territoire ",
             mode: "fill",
           },
           {
-            label: "Chantiers en retard et leurs indicateurs",
+            label: "Détails des chantiers en retard et leurs indicateurs",
             message: `Analyse les chantiers en retard sur ${territoire.nomAffiché}. Pour chaque chantier en retard, récupère également les valeurs de ses indicateurs.`,
             mode: "send",
           },
           {
-            label: "Synthèse des commentaires de chantiers",
+            label: "Synthèse des commentaires d'un/de plusieurs chantiers",
             message:
               "Synthétise les commentaires des chantiers suivants CH-XXX, CH-YYY, notamment les principales actions identifiées",
             mode: "fill",
@@ -145,7 +145,7 @@ Quelles sont les principales difficultés remontées dans les commentaires ?`,
         label: "Comparaison",
         scenarios: [
           {
-            label: "Comparer avec un autre territoire",
+            label: "Comparaison quantitative des territoires",
             message: `Compare ${territoire.nomAffiché} avec `,
             mode: "fill",
           },
