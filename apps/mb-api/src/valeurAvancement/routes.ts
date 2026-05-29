@@ -3,6 +3,7 @@ import { errorApiModelSchema } from '@pilote/mb-shared/error'
 import { indicateurPublicIdSchema } from '@pilote/mb-shared/publicIds'
 import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
 import {
+  batchInvalidErrorDetailsApiModelSchema,
   deleteValeurAvancementBodySchema,
   individuAvecValeursApiModelSchema,
   listIndividusWithValeursQuerySchema,
@@ -11,6 +12,8 @@ import {
   listValeursRemarquablesForIndicateurQuerySchema,
   syntheseIndividusListApiModelSchema,
   upsertValeurAvancementBodySchema,
+  upsertValeursAvancementBatchBodySchema,
+  upsertValeursAvancementBatchResultApiModelSchema,
   valeurAvancementListApiModelSchema,
   valeurSaisieApiModelSchema,
   valeursRemarquablesListApiModelSchema,
@@ -22,6 +25,7 @@ import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonRespo
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { deleteValeurAvancement } from '@/valeurAvancement/commands/deleteValeurAvancement'
 import { upsertValeurAvancement } from '@/valeurAvancement/commands/upsertValeurAvancement'
+import { upsertValeursAvancementBatch } from '@/valeurAvancement/commands/upsertValeursAvancementBatch'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
 import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
 import { listValeursForIndicateur } from '@/valeurAvancement/queries/listValeursForIndicateur'
@@ -37,6 +41,19 @@ const UpsertValeurAvancementBodySchema = upsertValeurAvancementBodySchema.openap
 const DeleteValeurAvancementBodySchema = deleteValeurAvancementBodySchema.openapi(
   'DeleteValeurAvancementBody',
 )
+const UpsertValeursAvancementBatchBodySchema = upsertValeursAvancementBatchBodySchema.openapi(
+  'UpsertValeursAvancementBatchBody',
+)
+const UpsertValeursAvancementBatchResultApiModelSchema =
+  upsertValeursAvancementBatchResultApiModelSchema.openapi(
+    'UpsertValeursAvancementBatchResultApiModel',
+  )
+const BatchInvalidErrorDetailsApiModelSchema = batchInvalidErrorDetailsApiModelSchema.openapi(
+  'BatchInvalidErrorDetailsApiModel',
+)
+const BatchInvalidErrorApiModelSchema = errorApiModelSchema
+  .extend({ details: BatchInvalidErrorDetailsApiModelSchema })
+  .openapi('BatchInvalidErrorApiModel')
 const IndividusWithValeursListApiModelSchema = createPaginatedApiListSchema(
   individuAvecValeursApiModelSchema,
 ).openapi('IndividusWithValeursListApiModel')
@@ -149,6 +166,46 @@ const deleteValeurAvancementRoute = createRoute({
     400: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },
       description: 'Requête invalide (body invalide ou individu inconnu/non autorisé)',
+    },
+    403: {
+      content: { 'application/json': { schema: ErrorApiModelSchema } },
+      description: 'Pas de permission WRITE sur cet indicateur',
+    },
+  },
+})
+
+// --- PUT /indicateurs/:id/valeurs:batch --------------------------------------
+
+const upsertValeursAvancementBatchRoute = createRoute({
+  method: 'put',
+  path: '/indicateurs/{id}/valeurs:batch',
+  tags: ['Indicateur'],
+  summary: "Saisir ou mettre à jour un lot de valeurs pour un indicateur",
+  description:
+    "Upsert atomique d'un lot de valeurs (1..1000) sur la clé `(indicateur, individu, date)`. " +
+    "Tout-ou-rien : si une seule entrée est invalide (individu inconnu/non lié, doublon `(individu, date)` " +
+    'dans le payload), aucune valeur n’est appliquée et la réponse 400 `BATCH_INVALID` liste ' +
+    "exhaustivement les erreurs détectées (agrégées par cause avec leurs `indices` dans `items`).",
+  middleware: [requireAuthentication],
+  request: {
+    params: indicateurParamsSchema,
+    body: {
+      content: { 'application/json': { schema: UpsertValeursAvancementBatchBodySchema } },
+      required: true,
+    },
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': { schema: UpsertValeursAvancementBatchResultApiModelSchema },
+      },
+      description: 'Lot appliqué. Compteurs `total`, `created`, `updated`.',
+    },
+    400: {
+      content: { 'application/json': { schema: BatchInvalidErrorApiModelSchema } },
+      description:
+        'Lot invalide. Aucune valeur n’a été appliquée. `details.errors` détaille les causes ' +
+        '(`INVALID_ITEM`, `INDIVIDU_INCONNU`, `DUPLICATE_KEY`) avec leurs `indices` dans `items`.',
     },
     403: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },
@@ -315,6 +372,36 @@ valeurAvancementRoutes.openapi(deleteValeurAvancementRoute, async (context) => {
           details: { individu: error.individu },
         },
         schema: ErrorApiModelSchema,
+        status: 400,
+      }),
+  )
+})
+
+valeurAvancementRoutes.openapi(upsertValeursAvancementBatchRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  const body = context.req.valid('json')
+
+  const result = await withTransaction(async () =>
+    upsertValeursAvancementBatch({ indicateurPublicId: id, body }),
+  )
+
+  return result.match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: UpsertValeursAvancementBatchResultApiModelSchema,
+        status: 200,
+      }),
+    (error) =>
+      jsonResponseError({
+        context,
+        error: {
+          code: error.type,
+          message: "Aucune valeur n'a été appliquée.",
+          details: { errors: error.errors },
+        },
+        schema: BatchInvalidErrorApiModelSchema,
         status: 400,
       }),
   )
