@@ -20,7 +20,8 @@ export class RecupererDetailsIndicateursV2UseCase {
 
   async run(
     chantierId: string,
-    territoireCodes: string[],
+    territoireCode: string,
+    territoiresCompares: string[],
     habilitations: Habilitations,
     jalon: number,
   ) {
@@ -28,12 +29,9 @@ export class RecupererDetailsIndicateursV2UseCase {
       await this.datajobsExecutionQueries.recupererEtatCourant();
     const habilitation = new Habilitation(habilitations);
 
-    territoireCodes.forEach((territoireCode) => {
-      habilitation.vérifierLesHabilitationsEnLecture(
-        chantierId,
-        territoireCode,
-      );
-    });
+    habilitation.vérifierLesHabilitationsEnLecture(chantierId, territoireCode);
+
+    const territoireCodes = [territoireCode, ...territoiresCompares];
 
     // TODO(PVA:JOTA:2025-08-11): Il y a du metier dans le repository à enlever et mettre dans le use case
     const result =
