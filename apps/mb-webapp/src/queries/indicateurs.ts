@@ -6,6 +6,7 @@ import {
   fetchIndicateurs,
   fetchIndividusForIndicateur,
   fetchSyntheseIndividus,
+  fetchTauxProgressionForIndicateur,
   fetchValeursForIndicateur,
   fetchValeursRemarquablesForIndicateur,
 } from '@/api/indicateurs'
@@ -85,6 +86,13 @@ export const indicateurSyntheseIndividuQueryOptions = (indicateurId: string, ind
     staleTime: DEFAULT_STALE_TIME,
   })
 
+export const indicateurTauxProgressionQueryOptions = (indicateurId: string, individuId: string) =>
+  queryOptions({
+    queryKey: ['indicateur', indicateurId, 'taux-progression', individuId],
+    queryFn: () => fetchTauxProgressionForIndicateur(indicateurId, { individus: [individuId] }),
+    staleTime: DEFAULT_STALE_TIME,
+  })
+
 export const prefetchIndicateurValeursForIndividu = async ({
   queryClient,
   indicateurId,
@@ -100,5 +108,6 @@ export const prefetchIndicateurValeursForIndividu = async ({
     queryClient.fetchQuery(indicateurValeursQueryOptions(indicateurId, individuId)),
     queryClient.fetchQuery(indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId)),
     queryClient.fetchQuery(indicateurSyntheseIndividuQueryOptions(indicateurId, individuId)),
+    queryClient.fetchQuery(indicateurTauxProgressionQueryOptions(indicateurId, individuId)),
   ])
 }
