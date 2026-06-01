@@ -496,7 +496,7 @@ const config = convict({
   askAITerritoireEmails: {
     format: String,
     default: "",
-    doc: "Emails autorisés à utiliser Ask AI sur les territoires, séparés par des virgules. Variable serveur uniquement : ne pas préfixer NEXT_PUBLIC_ pour éviter l'exposition côté front.",
+    doc: "Emails autorisés à utiliser Ask AI sur les territoires, séparés par des virgules.",
     env: "ASK_AI_TERRITOIRE_EMAILS",
   },
   e2e: {
