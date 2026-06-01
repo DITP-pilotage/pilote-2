@@ -71,6 +71,7 @@ export const PageAccueilLegacy = ({
   aDejaVuVideoAccueil,
   doitAfficherLaModaleInfolettre,
   moyenneTerritoire,
+  emailAutoriseAskAITerritoire,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const { data: session } = useSession();
 
@@ -86,7 +87,7 @@ export const PageAccueilLegacy = ({
   const profil = useProfilUtilisateurConnecte();
   const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
   const { peutUtiliserAskAI, estDITPAdmin, estEligibleTerritoire } =
-    useAskAIAccess();
+    useAskAIAccess({ emailAutoriseAskAITerritoire });
   const doitAfficherModaleRenseignerService =
     !!monProfilEstDisponible &&
     (profil.service == null || profil.fonction == null);

@@ -67,6 +67,7 @@ interface BasePageAccueilLayoutProps {
   nombreTotalChantiersAvecAlertes: number;
   aDejaVuVideoAccueil: boolean;
   doitAfficherLaModaleInfolettre: boolean;
+  emailAutoriseAskAITerritoire: boolean;
   children: ReactNode;
 }
 
@@ -82,6 +83,7 @@ export const BasePageAccueilLayout: FunctionComponent<
   nombreTotalChantiersAvecAlertes,
   aDejaVuVideoAccueil,
   doitAfficherLaModaleInfolettre: doitAfficherLaModaleInfolettreInitial,
+  emailAutoriseAskAITerritoire,
   children,
 }) => {
   const ffVideoAccueil = useEnv("NEXT_PUBLIC_FF_VIDEO_ACCUEIL");
@@ -90,7 +92,7 @@ export const BasePageAccueilLayout: FunctionComponent<
   const profil = useProfilUtilisateurConnecte();
   const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
   const { peutUtiliserAskAI, estDITPAdmin, estEligibleTerritoire } =
-    useAskAIAccess();
+    useAskAIAccess({ emailAutoriseAskAITerritoire });
 
   const estProfilTerritorialise =
     PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || "");

@@ -26,10 +26,6 @@ export class RecupererVariableContenuUseCase {
         return configuration()
           .dateBasculeAffichageValeursAnneePrecedente as VariableContenuDisponibleEnv[T];
       }
-      case "NEXT_PUBLIC_ASK_AI_TERRITOIRE_EMAILS": {
-        return configuration()
-          .askAITerritoireEmails as VariableContenuDisponibleEnv[T];
-      }
     }
 
     // Feature flips — lecture via le mapping centralisé

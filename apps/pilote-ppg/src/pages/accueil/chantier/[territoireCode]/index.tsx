@@ -242,6 +242,17 @@ export const getServerSideProps = async (
     .resolve("recupererEtatModaleInscriptionUseCase")
     .execute(session.user.id);
 
+  const emailUtilisateur = session.user.email?.toLowerCase() ?? null;
+  const emailsAutorisesAskAITerritoire = new Set(
+    configuration()
+      .askAITerritoireEmails.split(",")
+      .map((email) => email.trim().toLowerCase())
+      .filter((email) => email.length > 0),
+  );
+  const emailAutoriseAskAITerritoire =
+    emailUtilisateur !== null &&
+    emailsAutorisesAskAITerritoire.has(emailUtilisateur);
+
   return {
     props: {
       chantiers: chantiersPaginesAvecAlertes.map((chantier) => {
@@ -266,6 +277,7 @@ export const getServerSideProps = async (
       aDejaVuVideoAccueil: doitAfficherModaleVideoAccueil,
       doitAfficherLaModaleInfolettre,
       moyenneTerritoire,
+      emailAutoriseAskAITerritoire,
     },
   };
 };

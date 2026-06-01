@@ -146,7 +146,7 @@ Quelles sont les principales difficultés remontées dans les commentaires ?`,
         scenarios: [
           {
             label: "Comparaison quantitative des territoires",
-            message: `Compare ${territoire.nomAffiché} avec `,
+            message: `Compare les taux d'avancement de ${territoire.nomAffiché} avec `,
             mode: "fill",
           },
         ],
