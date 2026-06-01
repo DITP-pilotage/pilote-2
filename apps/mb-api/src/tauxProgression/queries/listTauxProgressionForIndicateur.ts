@@ -9,11 +9,11 @@ import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
+import { resolveTauxProgression } from '@/tauxProgression/resolveTauxProgression'
 import {
-  type ObjectifBrut,
-  type ValeurBrute,
-  resolveTauxProgression,
-} from '@/tauxProgression/resolveTauxProgression'
+  loadObjectifs,
+  loadValeursAvancement,
+} from '@/tauxProgression/queries/loadTauxProgressionData'
 
 export const listTauxProgressionForIndicateur = (
   indicateurPublicId: string,
@@ -38,51 +38,13 @@ const buildList = async ({
   const individusCibles = await loadIndividusParPublicId(params.individus)
   if (individusCibles.length === 0) return { items: [] }
 
-  const individuIds = individusCibles.map((i) => i.id)
-
-  const [rawValeurs, rawObjectifs] = await Promise.all([
-    db().valeurAvancement.findMany({
-      where: {
-        indicateurId: indicateur.id,
-        individuId: { in: individuIds },
-        ...(params.dateDebut || params.dateFin
-          ? {
-              date: {
-                ...(params.dateDebut ? { gte: params.dateDebut } : {}),
-                ...(params.dateFin ? { lte: params.dateFin } : {}),
-              },
-            }
-          : {}),
-      },
-      orderBy: [{ individuId: 'asc' }, { date: 'asc' }],
-    }),
-    db().objectifIndicateurIndividu.findMany({
-      where: { indicateurId: indicateur.id, individuId: { in: individuIds } },
-      orderBy: [{ individuId: 'asc' }, { dateCible: 'asc' }],
-    }),
+  const [valeurs, objectifsParIndividu] = await Promise.all([
+    loadValeursAvancement(indicateur.id, individusCibles, params),
+    loadObjectifs(
+      indicateur.id,
+      individusCibles.map((i) => i.id),
+    ),
   ])
-
-  const individuParId = new Map(individusCibles.map((i) => [i.id, i]))
-
-  const valeurs: ValeurBrute[] = rawValeurs.flatMap((v) => {
-    const individu = individuParId.get(v.individuId)
-    if (!individu) return []
-    return [
-      {
-        individuId: v.individuId,
-        individuPublicId: individu.publicId,
-        date: v.date,
-        valeur: v.valeur,
-      },
-    ]
-  })
-
-  const objectifsParIndividu = new Map<string, ObjectifBrut[]>()
-  for (const o of rawObjectifs) {
-    const liste = objectifsParIndividu.get(o.individuId) ?? []
-    liste.push({ dateCible: o.dateCible, valeurCible: o.valeurCible })
-    objectifsParIndividu.set(o.individuId, liste)
-  }
 
   const points = resolveTauxProgression({ valeurs, objectifsParIndividu })
 
