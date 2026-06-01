@@ -21,6 +21,7 @@
       "@/referentiel/*": ["./src/referentiel/*"],
       "@/valeurAvancement/*": ["./src/valeurAvancement/*"],
       "@/objectifIndicateurIndividu/*": ["./src/objectifIndicateurIndividu/*"],
+      "@/tauxProgression/*": ["./src/tauxProgression/*"],
       "@/shared/*": ["./src/shared/*"],
       "@/generated/*": ["./src/generated/*"],
       "@/test/*": ["./src/test/*"],

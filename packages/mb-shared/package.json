@@ -43,6 +43,10 @@
     "./objectifIndicateurIndividu": {
       "types": "./src/objectifIndicateurIndividu.ts",
       "default": "./src/objectifIndicateurIndividu.ts"
+    },
+    "./tauxProgression": {
+      "types": "./src/tauxProgression.ts",
+      "default": "./src/tauxProgression.ts"
     }
   },
   "files": [

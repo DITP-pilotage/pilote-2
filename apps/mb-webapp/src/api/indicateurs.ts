@@ -6,6 +6,11 @@ import {
   type ListIndicateursQuery,
 } from '@pilote/mb-shared/indicateur'
 import {
+  type ListTauxProgressionQuery,
+  type TauxProgressionListApiModel,
+  tauxProgressionListApiModelSchema,
+} from '@pilote/mb-shared/tauxProgression'
+import {
   type IndividusWithValeursListApiModel,
   individusWithValeursListApiModelSchema,
   type ListIndividusWithValeursQuery,
@@ -91,4 +96,20 @@ export const fetchSyntheseIndividus = async (
     })
     .json()
   return syntheseIndividusListApiModelSchema.parse(json)
+}
+
+export const fetchTauxProgressionForIndicateur = async (
+  indicateurId: string,
+  params: ListTauxProgressionQuery,
+): Promise<TauxProgressionListApiModel> => {
+  const json = await apiClient
+    .get(`indicateurs/${indicateurId}/taux-progression`, {
+      searchParams: {
+        individus: params.individus.join(','),
+        ...(params.dateDebut ? { dateDebut: params.dateDebut } : {}),
+        ...(params.dateFin ? { dateFin: params.dateFin } : {}),
+      },
+    })
+    .json()
+  return tauxProgressionListApiModelSchema.parse(json)
 }

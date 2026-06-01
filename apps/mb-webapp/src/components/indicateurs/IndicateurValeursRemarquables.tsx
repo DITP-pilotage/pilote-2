@@ -6,6 +6,7 @@ import { StatGrid } from '@/components/ui/StatGrid'
 import { formatDateFr, formatNumberFr, formatVariationFr } from '@/lib/format'
 import {
   indicateurSyntheseIndividuQueryOptions,
+  indicateurTauxProgressionQueryOptions,
   indicateurValeursQueryOptions,
 } from '@/queries/indicateurs'
 
@@ -37,12 +38,18 @@ export function IndicateurValeursRemarquables({
   const { data: valeurs } = useSuspenseQuery(
     indicateurValeursQueryOptions(indicateurId, individuId),
   )
+  const { data: tauxProgression } = useSuspenseQuery(
+    indicateurTauxProgressionQueryOptions(indicateurId, individuId),
+  )
 
   const derniereValeur = derniereValeurFromItems(valeurs.items)
   const variation = synthese.items[0]?.variation ?? null
 
+  const dernierPoint = tauxProgression.items[tauxProgression.items.length - 1]
+  const hasTaux = dernierPoint !== undefined
+
   return (
-    <StatGrid columns={2}>
+    <StatGrid columns={hasTaux ? 3 : 2}>
       <StatCard
         label="Valeur la plus récente"
         tone={derniereValeur ? 'neutral' : 'muted'}
@@ -54,6 +61,14 @@ export function IndicateurValeursRemarquables({
         tone={variationTone(variation)}
         value={variation === null ? '—' : formatVariationFr(variation)}
       />
+      {hasTaux && (
+        <StatCard
+          label="Taux de progression"
+          tone={dernierPoint.tauxProgression === null ? 'muted' : 'neutral'}
+          value={dernierPoint.tauxProgression === null ? '—' : `${Math.round(dernierPoint.tauxProgression)} %`}
+          caption={`cible : ${formatNumberFr(dernierPoint.valeurCible)} au ${formatDateFr(dernierPoint.dateCible)}`}
+        />
+      )}
     </StatGrid>
   )
 }
