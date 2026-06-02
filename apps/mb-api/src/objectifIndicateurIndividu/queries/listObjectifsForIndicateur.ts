@@ -16,6 +16,8 @@ import {
   resolveObjectifIndividu,
 } from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
 
+// Granularité annuelle par défaut : reproduit le comportement de pilote-ppg
+// où les objectifs sont saisis à l'année.
 const DEFAULT_DATE_TRUNC: DateTrunc = 'year'
 
 export const listObjectifsForIndicateur = (

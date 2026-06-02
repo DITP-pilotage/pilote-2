@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { assert, describe, expect, it } from 'vitest'
 
 import { listObjectifsForIndicateur } from '@/objectifIndicateurIndividu/queries/listObjectifsForIndicateur'
 import { fixtures } from '@/test/fixtures'
@@ -276,7 +276,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
       expect(items).toHaveLength(1)
       const item = items[0]!
       expect(item.type).toBe('derivee')
-      if (item.type !== 'derivee') throw new Error('expected derivee')
+      assert(item.type === 'derivee')
       expect(item).toMatchObject({
         indicateur: indId,
         individu: regId,
@@ -350,7 +350,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
       expect(items).toHaveLength(1)
       const item = items[0]!
       expect(item.type).toBe('derivee')
-      if (item.type !== 'derivee') throw new Error('expected derivee')
+      assert(item.type === 'derivee')
       expect(item).toMatchObject({
         indicateur: indId,
         individu: regId,
@@ -432,7 +432,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
       expect(items).toHaveLength(1)
       const item = items[0]!
       expect(item.type).toBe('derivee')
-      if (item.type !== 'derivee') throw new Error('expected derivee')
+      assert(item.type === 'derivee')
       expect(item).toMatchObject({
         indicateur: indId,
         individu: regId,
@@ -611,7 +611,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
       expect(items).toHaveLength(1)
       const item = items[0]!
       expect(item.type).toBe('derivee')
-      if (item.type !== 'derivee') throw new Error('expected derivee')
+      assert(item.type === 'derivee')
       expect(item).toMatchObject({
         indicateur: indId,
         individu: regId,
