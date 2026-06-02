@@ -90,8 +90,8 @@ function getOutputInstructions(
   if (codesRestreints.length === 0) return base;
 
   return (
-    base +
-    `\n\nRestriction d'accès : pour les territoires ${codesRestreints.join(", ")}, seuls le taux d'avancement et la météo sont disponibles. Les champs tendance, écart, synthèse (commentaire) et commentaires sont null par restriction d'accès — et non par absence de données. Indique-le clairement à l'utilisateur si ces champs sont demandés.`
+    `⚠️ Restriction d'accès — territoires ${codesRestreints.join(", ")} : seuls le taux d'avancement et la météo sont disponibles. Les champs tendance, écart, synthèse (commentaire) sont null par restriction d'accès, et non par absence de données. Tu DOIS le mentionner explicitement dans ta réponse quand ces champs sont retournés.\n\n` +
+    base
   );
 }
 
