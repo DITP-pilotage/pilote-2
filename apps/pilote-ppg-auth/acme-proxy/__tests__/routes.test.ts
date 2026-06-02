@@ -1,23 +1,17 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { acmeChallengeStore } from "../acmeChallengeStore.ts";
-import { createApp } from "../server.ts";
+import { createApp } from "../app.ts";
 
 const targetOrigin = "http://127.0.0.1:1";
 
 describe("ACME routes", () => {
-  const originalSecret = process.env.ACME_UPLOAD_API_KEY;
-
   beforeEach(() => {
-    process.env.ACME_UPLOAD_API_KEY = "test-secret";
+    vi.stubEnv("ACME_UPLOAD_API_KEY", "test-secret");
     acmeChallengeStore.clear();
   });
 
   afterEach(() => {
-    if (originalSecret === undefined) {
-      delete process.env.ACME_UPLOAD_API_KEY;
-    } else {
-      process.env.ACME_UPLOAD_API_KEY = originalSecret;
-    }
+    vi.unstubAllEnvs();
     acmeChallengeStore.clear();
   });
 

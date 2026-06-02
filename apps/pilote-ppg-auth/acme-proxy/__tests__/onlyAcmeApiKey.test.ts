@@ -1,5 +1,5 @@
 import { Hono } from "hono";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { onlyAcmeApiKey } from "../onlyAcmeApiKey.ts";
 
 const buildApp = () => {
@@ -9,22 +9,16 @@ const buildApp = () => {
 };
 
 describe("onlyAcmeApiKey", () => {
-  const originalSecret = process.env.ACME_UPLOAD_API_KEY;
-
   beforeEach(() => {
-    process.env.ACME_UPLOAD_API_KEY = "test-secret";
+    vi.stubEnv("ACME_UPLOAD_API_KEY", "test-secret");
   });
 
   afterEach(() => {
-    if (originalSecret === undefined) {
-      delete process.env.ACME_UPLOAD_API_KEY;
-    } else {
-      process.env.ACME_UPLOAD_API_KEY = originalSecret;
-    }
+    vi.unstubAllEnvs();
   });
 
   it("retourne 503 quand le secret n'est pas configuré", async () => {
-    delete process.env.ACME_UPLOAD_API_KEY;
+    vi.stubEnv("ACME_UPLOAD_API_KEY", "");
     const app = buildApp();
 
     const res = await app.request("/protected", { method: "POST" });
