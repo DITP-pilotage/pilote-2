@@ -1,5 +1,5 @@
+import { type DateTrunc } from '@pilote/mb-shared/dates'
 import {
-  type DateTrunc,
   type ListValeursRemarquablesForIndicateurQuery,
   type ValeursRemarquablesContributionApiModel,
   type ValeursRemarquablesListApiModel,

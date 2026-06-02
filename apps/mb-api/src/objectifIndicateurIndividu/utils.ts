@@ -14,4 +14,5 @@ export const toObjectifIndicateurIndividuApiModel = (
   individu: objectif.individu.publicId,
   dateCible: objectif.dateCible,
   valeurCible: objectif.valeurCible.toNumber(),
+  type: 'saisie',
 })

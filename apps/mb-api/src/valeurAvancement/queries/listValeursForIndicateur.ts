@@ -1,6 +1,6 @@
+import { type DateTrunc } from '@pilote/mb-shared/dates'
 import {
   type ContributionApiModel,
-  type DateTrunc,
   type ListValeursForIndicateurQuery,
   type ValeurAvancementApiModel,
   type ValeurAvancementListApiModel,
@@ -10,13 +10,10 @@ import { ResultAsync } from 'neverthrow'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
+import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
-import {
-  type IndividuRef,
-  type PointInterne,
-  resolveSerieIndividu,
-} from '@/valeurAvancement/resolveSerieIndividu'
+import { type PointInterne, resolveSerieIndividu } from '@/valeurAvancement/resolveSerieIndividu'
 
 // Cap par défaut à la granularité mensuelle : sans troncature, une série France
 // avec saisies quotidiennes par département explose (cf. design doc D11).
@@ -53,21 +50,27 @@ const buildSeries = async ({
   indicateurPublicId: string
   params: ListValeursForIndicateurQuery
 }): Promise<ValeurAvancementListApiModel> => {
-  const cibles = await loadCibles(params.individus)
-  if (cibles.length === 0) return { items: [] }
+  const individusCibles = await loadIndividusParPublicId(params.individus)
+  if (individusCibles.length === 0) return { items: [] }
 
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
-  const { ctx, allNodes } = await loadResolveSerieContext({ indicateurId, cibles, dateTrunc })
+  const { ctx, allNodes } = await loadResolveSerieContext({
+    indicateurId,
+    cibles: individusCibles,
+    dateTrunc,
+  })
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
   const items: ValeurAvancementApiModel[] = []
-  for (const cible of cibles) {
-    const serie = await resolveSerieIndividu(cible.id, ctx, cache)
+  for (const individuCible of individusCibles) {
+    const serie = await resolveSerieIndividu(individuCible.id, ctx, cache)
     for (const point of serie) {
       if (params.dateDebut && point.bucket < params.dateDebut) continue
       if (params.dateFin && point.bucket > params.dateFin) continue
-      items.push(toApiModel({ indicateurPublicId, individuPublicId: cible.publicId, point }))
+      items.push(
+        toApiModel({ indicateurPublicId, individuPublicId: individuCible.publicId, point }),
+      )
     }
   }
   logger.info(
@@ -75,7 +78,7 @@ const buildSeries = async ({
       event: 'valeurAvancement.listValeursForIndicateur.timing',
       indicateurId,
       dateTrunc,
-      nbCibles: cibles.length,
+      nbCibles: individusCibles.length,
       nbNodes: allNodes.size,
       nbPoints: items.length,
       durationMs: Math.round(performance.now() - startedAt),
@@ -83,14 +86,6 @@ const buildSeries = async ({
     'listValeursForIndicateur computed',
   )
   return { items }
-}
-
-const loadCibles = async (publicIds: ReadonlyArray<string>): Promise<IndividuRef[]> => {
-  const rows = await db().individu.findMany({
-    where: { publicId: { in: [...publicIds] } },
-    orderBy: { publicId: 'asc' },
-  })
-  return rows.map(({ id, publicId, referentielId }) => ({ id, publicId, referentielId }))
 }
 
 const toApiModel = ({
