@@ -55,8 +55,16 @@ const buildList = async ({
   if (individusCibles.length === 0) return { items: [] }
 
   const [{ ctx: serieCtx }, { ctx: objectifCtx }] = await Promise.all([
-    loadResolveSerieContext({ indicateurId: indicateur.id, cibles: individusCibles, dateTrunc: DATE_TRUNC }),
-    loadResolveObjectifContext({ indicateurId: indicateur.id, cibles: individusCibles, dateTrunc: DATE_TRUNC }),
+    loadResolveSerieContext({
+      indicateurId: indicateur.id,
+      cibles: individusCibles,
+      dateTrunc: DATE_TRUNC,
+    }),
+    loadResolveObjectifContext({
+      indicateurId: indicateur.id,
+      cibles: individusCibles,
+      dateTrunc: DATE_TRUNC,
+    }),
   ])
   const serieCache = new Map<string, ReadonlyArray<PointInterne>>()
   const objectifCache = new Map<string, ReadonlyMap<string, PointObjectifInterne>>()
@@ -119,9 +127,7 @@ const toValeurBrute = ({
   valeur: point.valeur,
 })
 
-const toObjectifBruts = (
-  objectifsMap: ReadonlyMap<string, PointObjectifInterne>,
-): ObjectifBrut[] =>
+const toObjectifBruts = (objectifsMap: ReadonlyMap<string, PointObjectifInterne>): ObjectifBrut[] =>
   [...objectifsMap.entries()]
     .map(([dateCible, point]) => ({ dateCible, valeurCible: point.valeur }))
     .sort((a, b) => a.dateCible.localeCompare(b.dateCible))

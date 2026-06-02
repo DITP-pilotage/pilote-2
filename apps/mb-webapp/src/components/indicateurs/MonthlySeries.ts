@@ -19,8 +19,7 @@ const UTC = { zone: 'utc' } as const
 
 // Toutes les manipulations se font en UTC pour éviter qu'un fuseau négatif ne
 // fasse glisser une date du 1er du mois sur le mois précédent.
-const parseMonth = (isoDate: string): DateTime =>
-  DateTime.fromISO(isoDate, UTC).startOf('month')
+const parseMonth = (isoDate: string): DateTime => DateTime.fromISO(isoDate, UTC).startOf('month')
 
 const monthKeyOf = (dt: DateTime): string => dt.toFormat('yyyy-LL')
 
@@ -31,9 +30,7 @@ const toMonth = (dt: DateTime): Month => {
 
 // Un même mois peut contenir plusieurs valeurs ; on conserve celle dont la date
 // est la plus récente dans le mois.
-const latestValueByMonthKey = (
-  valeurs: ReadonlyArray<ValeurDateApiModel>,
-): Map<string, number> => {
+const latestValueByMonthKey = (valeurs: ReadonlyArray<ValeurDateApiModel>): Map<string, number> => {
   const latestDateByKey = new Map<string, string>()
   const valueByKey = new Map<string, number>()
   for (const { date, valeur } of valeurs) {

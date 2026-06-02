@@ -3,12 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { StatCard } from '@/components/ui/StatCard'
 import { StatGrid } from '@/components/ui/StatGrid'
-import {
-  formatDateFr,
-  formatNumberFr,
-  formatPourcentageFr,
-  formatVariationFr,
-} from '@/lib/format'
+import { formatDateFr, formatNumberFr, formatPourcentageFr, formatVariationFr } from '@/lib/format'
 import {
   indicateurSyntheseIndividuQueryOptions,
   indicateurTauxProgressionQueryOptions,
