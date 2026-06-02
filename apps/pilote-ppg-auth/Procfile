@@ -1,1 +1,2 @@
-web: bash -c "source /app/create-env.sh && /app/bin/kc.sh start" 
+web: bash -c "source /app/create-env.sh && /app/scripts/start.sh"
+

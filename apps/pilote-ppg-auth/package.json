@@ -1,0 +1,30 @@
+{
+  "name": "pilote-ppg-auth",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.9.0"
+  },
+  "scripts": {
+    "dev": "tsx acme-proxy/server.ts",
+    "build": "esbuild acme-proxy/server.ts --bundle --platform=node --target=node22 --format=esm --outfile=acme-proxy/dist/server.mjs --banner:js=\"import { createRequire } from 'module'; const require = createRequire(import.meta.url);\"",
+    "start": "node acme-proxy/dist/server.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.13",
+    "@hono/zod-validator": "^0.7.0",
+    "hono": "^4.12.18",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.12.0",
+    "esbuild": "^0.25.0",
+    "tsx": "^4.19.3",
+    "typescript": "5.9.3",
+    "vitest": "^4.0.18"
+  }
+}
