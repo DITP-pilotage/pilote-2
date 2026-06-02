@@ -92,6 +92,36 @@ function toQueryParams(
   };
 }
 
+function masquerDonneesNonAccessibles(
+  resultats: GetChantiersResult[],
+  territoiresAccessibles: string[],
+): GetChantiersResult[] {
+  return resultats.map((resultat) => {
+    if (territoiresAccessibles.includes(resultat.territoire_code)) {
+      return resultat;
+    }
+    return {
+      ...resultat,
+      chantiers: resultat.chantiers.map((chantier) => ({
+        ...chantier,
+        tendance: null,
+        ecart: null,
+        est_en_retard: false,
+        est_en_difficulte: false,
+        synthese: chantier.synthese
+          ? {
+              meteo: chantier.synthese.meteo,
+              commentaire: null,
+              date_meteo: chantier.synthese.date_meteo,
+              date_commentaire: null,
+            }
+          : null,
+        commentaires: { donnees: null, autresResultats: null },
+      })),
+    };
+  });
+}
+
 export function createGetChantiersTool({
   getChantiersQuery,
   territoireResolver,
@@ -128,12 +158,6 @@ par jalon (avec include_sous_territoires=true), pas un appel par (sous-territoir
 plusieurs territoires parents sont comparés, fais un appel par parent et par jalon.`,
       inputSchema: getChantiersInputSchema,
       execute: async (input): Promise<GetChantiersOutput> => {
-        if (!territoiresAccessibles.includes(input.territoire_code)) {
-          throw new Error(
-            `Accès non autorisé au territoire ${input.territoire_code}`,
-          );
-        }
-
         if (
           input.territoire_code === "NAT-FR" &&
           input.view === "en_retard" &&
@@ -170,18 +194,18 @@ plusieurs territoires parents sont comparés, fais un appel par parent et par ja
           input.territoire_code,
           input.include_sous_territoires,
         );
-        const codesAccessibles = codes.filter((code) =>
-          territoiresAccessibles.includes(code),
-        );
 
         const resultats = await Promise.all(
-          codesAccessibles.map((code) =>
+          codes.map((code) =>
             getChantiersQuery.execute(toQueryParams(effectiveInput, code)),
           ),
         );
 
         return {
-          resultats,
+          resultats: masquerDonneesNonAccessibles(
+            resultats,
+            territoiresAccessibles,
+          ),
           _output_instructions: getOutputInstructions(input),
         };
       },

@@ -29,7 +29,7 @@ export function createGetChantierIndicateursTool({
 }: {
   getChantierIndicateursQuery: GetChantierIndicateursQuery;
 }) {
-  return ({ territoiresAccessibles }: { territoiresAccessibles: string[] }) => {
+  return () => {
     return tool({
       description: `Récupère les valeurs des indicateurs de suivi (VI, VA, VC, TA) d'un chantier sur un territoire donné.
 
@@ -41,12 +41,6 @@ Utilise cet outil UNIQUEMENT quand l'utilisateur demande explicitement :
 - Pour alimenter un export de rapport (étape indicateurs)`,
       inputSchema: getChantierIndicateursInputSchema,
       execute: async (input): Promise<GetChantierIndicateursOutput> => {
-        if (!territoiresAccessibles.includes(input.territoire_code)) {
-          throw new Error(
-            `Accès non autorisé au territoire ${input.territoire_code}`,
-          );
-        }
-
         const result = await getChantierIndicateursQuery.execute({
           territoireCode: input.territoire_code,
           chantierId: input.chantier_id,
