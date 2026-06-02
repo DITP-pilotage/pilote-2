@@ -118,7 +118,7 @@ export function scenariosTerritoireCoordinateur({
         scenarios: [
           {
             label: "Synthèse des difficultés d'un territoire",
-            message: "Fais moi la synthèse du territoire ",
+            message: "Fais moi la synthèse des difficultés du territoire ",
             mode: "fill",
           },
           {
