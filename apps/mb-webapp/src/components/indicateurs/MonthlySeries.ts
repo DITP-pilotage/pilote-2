@@ -1,3 +1,4 @@
+import type { TauxProgressionPointApiModel } from '@pilote/mb-shared/tauxProgression'
 import type { ValeurDateApiModel } from '@pilote/mb-shared/valeurAvancement'
 
 export type Month = {
@@ -10,6 +11,8 @@ export type Month = {
 export type MonthlySeries = {
   months: ReadonlyArray<Month>
   values: ReadonlyArray<number | null>
+  valeursCible: ReadonlyArray<number | null>
+  tauxProgression: ReadonlyArray<number | null>
   defaultWindow: { startIndex: number; endIndex: number }
 }
 
@@ -90,30 +93,51 @@ const enumerateMonths = ({ start, end }: { start: Month; end: Month }): Month[] 
   return months
 }
 
+// Indexe les points de taux de progression par bucket mensuel pour permettre
+// un alignement O(1) sur l'axe des mois.
+const tauxByMonthKey = (
+  tauxProgression: ReadonlyArray<TauxProgressionPointApiModel>,
+): Map<string, TauxProgressionPointApiModel> => {
+  const map = new Map<string, TauxProgressionPointApiModel>()
+  for (const point of tauxProgression) {
+    map.set(point.date.slice(0, 7), point)
+  }
+  return map
+}
+
 // Construit la série mensuelle consommée par le chart :
 // - ancre = mois de la dernière valeur, ou mois courant à défaut ;
 // - série = du plus ancien mois disponible (ou ancre−(windowSize−1) si pas
 //   d'historique antérieur) jusqu'à l'ancre, sans trou ;
 // - defaultWindow = derniers `windowSize` mois pour cadrer l'affichage initial,
 //   le reste reste accessible via le slider ECharts.
+// `valeursCible` et `tauxProgression` sont alignés sur le même axe X via le
+// bucket mensuel, et restent `null` pour les mois sans objectif applicable.
 export const buildMonthlySeries = ({
   valeurs,
+  tauxProgression,
   windowSize,
 }: {
   valeurs: ReadonlyArray<ValeurDateApiModel>
+  tauxProgression: ReadonlyArray<TauxProgressionPointApiModel>
   windowSize: number
 }): MonthlySeries => {
   const valueByKey = latestValueByMonthKey(valeurs)
+  const tauxByKey = tauxByMonthKey(tauxProgression)
   const { earliest, latest } = monthBounds(valeurs)
   const anchor = latest ?? currentMonth()
   const minStartOrdinal = ordinalOf(anchor) - (windowSize - 1)
   const startOrdinal = earliest ? Math.min(ordinalOf(earliest), minStartOrdinal) : minStartOrdinal
   const months = enumerateMonths({ start: monthFromOrdinal(startOrdinal), end: anchor })
   const values = months.map((month): number | null => valueByKey.get(month.key) ?? null)
+  const valeursCible = months.map((month): number | null => tauxByKey.get(month.key)?.valeurCible ?? null)
+  const taux = months.map((month): number | null => tauxByKey.get(month.key)?.tauxProgression ?? null)
   const lastIndex = months.length - 1
   return {
     months,
     values,
+    valeursCible,
+    tauxProgression: taux,
     defaultWindow: {
       startIndex: Math.max(0, lastIndex - (windowSize - 1)),
       endIndex: lastIndex,
