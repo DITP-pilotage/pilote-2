@@ -1,8 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { z } from "zod";
 import { configuration } from "@/config";
 import { errorHandler } from "@/server/app/error-boundary/error-handler";
 
 const ALLOWED_METHODS = ["POST", "DELETE"];
+
+const bearerHeaderSchema = z
+  .string()
+  .startsWith("Bearer ")
+  .transform((header) => header.slice("Bearer ".length));
 
 export function onlyAcmeApiKey(
   handler: (req: NextApiRequest, res: NextApiResponse) => Promise<void>,
@@ -19,15 +25,14 @@ export function onlyAcmeApiKey(
         .json({ error: "ACME upload endpoint not configured" });
     }
 
-    const authHeader = req.headers["authorization"];
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    const parsed = bearerHeaderSchema.safeParse(req.headers["authorization"]);
+    if (!parsed.success) {
       return res
         .status(401)
         .json({ error: "Missing or invalid Authorization header" });
     }
 
-    const providedSecret = authHeader.slice(7);
-    if (providedSecret !== expectedSecret) {
+    if (parsed.data !== expectedSecret) {
       return res.status(403).json({ error: "Invalid ACME API key" });
     }
 
