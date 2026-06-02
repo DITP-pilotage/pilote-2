@@ -1,10 +1,8 @@
-import { ResultAsync } from 'neverthrow'
+import { type ResultAsync } from 'neverthrow'
 
-import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError, resolveAuthorizedIndividu } from '@/individu/permission'
 
-import { ensureIndicateurWritePermission, withIndicateurReadPermission } from './permissions'
+import { resolveIndicateurForWrite } from './resolveIndicateurForWrite'
 
 type ResolvedContext = {
   indicateur: { id: string; publicId: string }
@@ -18,22 +16,9 @@ export const resolveIndicateurAndIndividuForWrite = ({
 }: {
   indicateurPublicId: string
   individuPublicId: string
-}): ResultAsync<ResolvedContext, IndividuInconnuError> => {
-  const principalId = requireCurrentPrincipalId()
-  return ResultAsync.fromSafePromise(
-    db().indicateur.findFirstOrThrow({
-      where: withIndicateurReadPermission({ publicId: indicateurPublicId }, principalId),
-      select: { id: true, publicId: true },
-    }),
+}): ResultAsync<ResolvedContext, IndividuInconnuError> =>
+  resolveIndicateurForWrite({ indicateurPublicId }).andThen(({ indicateur, principalId }) =>
+    resolveAuthorizedIndividu({ individuPublicId, indicateurId: indicateur.id }).map(
+      (individu) => ({ indicateur, individu, principalId }),
+    ),
   )
-    .andThen((indicateur) =>
-      ensureIndicateurWritePermission({ indicateurId: indicateur.id, principalId }).map(
-        () => indicateur,
-      ),
-    )
-    .andThen((indicateur) =>
-      resolveAuthorizedIndividu({ individuPublicId, indicateurId: indicateur.id }).map(
-        (individu) => ({ indicateur, individu, principalId }),
-      ),
-    )
-}

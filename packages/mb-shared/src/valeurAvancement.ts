@@ -64,6 +64,95 @@ export const deleteValeurAvancementBodySchema = z.object({
 })
 export type DeleteValeurAvancementBody = z.infer<typeof deleteValeurAvancementBodySchema>
 
+export const MAX_VALEURS_PAR_BATCH = 1000
+
+export const upsertValeursAvancementBatchBodySchema = z.object({
+  items: z
+    .array(upsertValeurAvancementBodySchema)
+    .min(1, 'Au moins une entrée est requise')
+    .max(MAX_VALEURS_PAR_BATCH, `Au plus ${MAX_VALEURS_PAR_BATCH} entrées par requête`)
+    .describe(
+      `Entrées à upserter sur l'indicateur (clé unique \`(individu, date)\`). 1..${MAX_VALEURS_PAR_BATCH} entrées.`,
+    ),
+})
+export type UpsertValeursAvancementBatchBody = z.infer<
+  typeof upsertValeursAvancementBatchBodySchema
+>
+
+export const upsertValeursAvancementBatchResultApiModelSchema = z.object({
+  total: z.number().int().nonnegative().describe('Nombre total d’entrées traitées.'),
+  created: z
+    .number()
+    .int()
+    .nonnegative()
+    .describe('Nombre d’entrées nouvellement créées dans la base.'),
+  updated: z
+    .number()
+    .int()
+    .nonnegative()
+    .describe('Nombre d’entrées préexistantes dont la valeur a été remplacée.'),
+})
+export type UpsertValeursAvancementBatchResultApiModel = z.infer<
+  typeof upsertValeursAvancementBatchResultApiModelSchema
+>
+
+export const batchInvalidIssueApiModelSchema = z.object({
+  path: z
+    .string()
+    .describe(
+      "Chemin Zod relatif à l'item (ex. `valeur`, `individu`). Vide si l'erreur porte sur l'item entier.",
+    ),
+  message: z.string().describe('Message Zod en français.'),
+})
+export type BatchInvalidIssueApiModel = z.infer<typeof batchInvalidIssueApiModelSchema>
+
+export const batchInvalidErrorEntryApiModelSchema = z.discriminatedUnion('code', [
+  z.object({
+    code: z.literal('INVALID_ITEM'),
+    indices: z
+      .array(z.number().int().nonnegative())
+      .min(1)
+      .describe("Index (toujours 1 élément pour INVALID_ITEM) de l'item invalide dans `items`."),
+    issues: z
+      .array(batchInvalidIssueApiModelSchema)
+      .min(1)
+      .describe("Liste des problèmes Zod détectés sur l'item."),
+  }),
+  z.object({
+    code: z.literal('INDIVIDU_INCONNU'),
+    indices: z
+      .array(z.number().int().nonnegative())
+      .min(1)
+      .describe(
+        'Tous les index où cet individu apparaît (l’individu est inconnu ou non lié à l’indicateur).',
+      ),
+    individu: individuPublicIdSchema,
+  }),
+  z.object({
+    code: z.literal('DUPLICATE_KEY'),
+    indices: z
+      .array(z.number().int().nonnegative())
+      .min(2)
+      .describe('Les index où le couple `(individu, date)` apparaît (au moins 2).'),
+    individu: individuPublicIdSchema,
+    date: dateSchema,
+  }),
+])
+export type BatchInvalidErrorEntryApiModel = z.infer<typeof batchInvalidErrorEntryApiModelSchema>
+
+export const batchInvalidErrorDetailsApiModelSchema = z.object({
+  errors: z
+    .array(batchInvalidErrorEntryApiModelSchema)
+    .min(1)
+    .describe(
+      'Liste exhaustive des erreurs détectées. Toutes les erreurs sont remontées en une fois ' +
+        '(pas de plafond). Aucune valeur n’a été appliquée.',
+    ),
+})
+export type BatchInvalidErrorDetailsApiModel = z.infer<
+  typeof batchInvalidErrorDetailsApiModelSchema
+>
+
 
 export const listValeursForIndicateurQuerySchema = z
   .object({
