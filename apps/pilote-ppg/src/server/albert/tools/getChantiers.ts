@@ -62,20 +62,37 @@ export type GetChantiersOutput = {
 const NON_APPLICABLE_EN_RETARD_NAT_FR =
   "L'analyse des chantiers en retard ne peut pas être réalisée au niveau national.\n\nEn effet, cet indicateur repose sur une comparaison entre le taux d'avancement d'un chantier pour un territoire donné et la valeur médiane observée sur l'ensemble des autres territoires.";
 
-function getOutputInstructions(input: GetChantiersInput): string {
+function getOutputInstructions(
+  input: GetChantiersInput,
+  resultats: GetChantiersResult[],
+  territoiresAccessibles: string[],
+): string {
+  let base: string;
+
   if (input.view === "en_retard") {
-    return "Pour chaque chantier en retard, indique l'écart par rapport à la médiane (en points) et la météo de la synthèse si disponible.";
+    base =
+      "Pour chaque chantier en retard, indique l'écart par rapport à la médiane (en points) et la météo de la synthèse si disponible.";
+  } else if (input.view === "en_difficulte") {
+    base =
+      "Pour chaque chantier en difficulté, indique la météo avec son libellé utilisateur (Objectifs compromis, Appuis nécessaires), sans afficher les codes internes.";
+  } else if (input.chantier_ids && input.chantier_ids.length > 0) {
+    base =
+      "Présente les données détaillées de chaque chantier demandé : taux d'avancement, écart, météo, tendance, et synthèse si disponible.";
+  } else {
+    base =
+      "Présente la liste des chantiers correspondant aux critères avec leurs données clés (taux d'avancement, météo, tendance).";
   }
 
-  if (input.view === "en_difficulte") {
-    return "Pour chaque chantier en difficulté, indique la météo avec son libellé utilisateur (Objectifs compromis, Appuis nécessaires), sans afficher les codes internes.";
-  }
+  const codesRestreints = resultats
+    .map((r) => r.territoire_code)
+    .filter((code) => !territoiresAccessibles.includes(code));
 
-  if (input.chantier_ids && input.chantier_ids.length > 0) {
-    return "Présente les données détaillées de chaque chantier demandé : taux d'avancement, écart, météo, tendance, et synthèse si disponible.";
-  }
+  if (codesRestreints.length === 0) return base;
 
-  return "Présente la liste des chantiers correspondant aux critères avec leurs données clés (taux d'avancement, météo, tendance).";
+  return (
+    base +
+    `\n\nRestriction d'accès : pour les territoires ${codesRestreints.join(", ")}, seuls le taux d'avancement et la météo sont disponibles. Les champs tendance, écart, synthèse (commentaire) et commentaires sont null par restriction d'accès — et non par absence de données. Indique-le clairement à l'utilisateur si ces champs sont demandés.`
+  );
 }
 
 function toQueryParams(
@@ -206,7 +223,11 @@ plusieurs territoires parents sont comparés, fais un appel par parent et par ja
             resultats,
             territoiresAccessibles,
           ),
-          _output_instructions: getOutputInstructions(input),
+          _output_instructions: getOutputInstructions(
+            input,
+            resultats,
+            territoiresAccessibles,
+          ),
         };
       },
     });
