@@ -85,10 +85,6 @@ export const getServerSideProps = async (
   );
   const territoireSélectionné =
     await territoireRepository.récupérer(territoireCode);
-  const territoireCodes =
-    territoiresCompares.length > 0
-      ? [...territoiresCompares, territoireCode]
-      : [territoireCode];
 
   try {
     const [
@@ -138,7 +134,13 @@ export const getServerSideProps = async (
         .run(chantierId, session.user!.id),
       getContainer("chantiers")
         .resolve("recupererDetailsIndicateursV2UseCase")
-        .run(chantierId, territoireCodes, session.habilitations, jalon),
+        .run(
+          chantierId,
+          territoireCode,
+          territoiresCompares,
+          session.habilitations,
+          jalon,
+        ),
       getContainer("chantiers")
         .resolve("récupérerStatistiquesAvancementChantiersUseCase")
         .run([chantierId], mailleQuery, session.habilitations, jalon)
