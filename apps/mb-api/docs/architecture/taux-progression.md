@@ -8,22 +8,22 @@ Un indicateur peut être associé à des objectifs temporels par individu (`Obje
 tauxProgression = min(100, (valeur / valeurCible) × 100)
 ```
 
-où `valeurCible` est celle de l'objectif applicable à la date de chaque valeur d'avancement.
+où `valeurCible` est celle de l'objectif applicable au bucket mensuel de chaque valeur d'avancement.
 
-**V1 — périmètre restreint :**
-- Indicateurs de type saisie uniquement (pas d'agrégation)
-- Pas de troncature de date — on travaille sur les dates brutes des saisies
-- Pas d'héritage d'objectif depuis un parent hiérarchique
+**Périmètre :**
+- Indicateurs feuille **et** dérivés (agrégation hiérarchique des valeurs via `resolveSerieIndividu`)
+- Objectifs feuille **et** dérivés (agrégation hiérarchique via `resolveObjectifIndividu`)
+- Troncature **mensuelle** fixe, alignée pour valeurs et objectifs
 
 ---
 
 ## Règle métier — Objectif applicable
 
-À la date D d'une valeur d'avancement sur un individu I :
+Au bucket mensuel D d'une valeur résolue sur un individu I :
 
-> L'objectif applicable est le **premier objectif de I dont `dateCible` est strictement supérieure à D**.
+> L'objectif applicable est le **premier objectif (bucket mensuel) de I dont `dateCible` est strictement supérieure à D**.
 > Si D est supérieure ou égale à toutes les `dateCible` connues → **dernier objectif** (le plus grand `dateCible`).
-> Si I n'a aucun objectif → ce point est **exclu** de la réponse.
+> Si I n'a aucun objectif applicable (ni direct ni dérivé) → ce point est **exclu** de la réponse.
 
 ### Exemple
 
@@ -65,10 +65,10 @@ GET /indicateurs/:id/taux-progression
 | Param      | Type         | Requis | Description |
 |------------|--------------|--------|-------------|
 | `individus` | CSV publicId | Oui   | 1..N individus (même convention que `/valeurs`) |
-| `dateDebut` | `YYYY-MM-DD` | Non  | Filtre inclusif sur `date` |
-| `dateFin`   | `YYYY-MM-DD` | Non  | Filtre inclusif sur `date` |
+| `dateDebut` | `YYYY-MM-DD` | Non  | Filtre inclusif sur le bucket mensuel de chaque point |
+| `dateFin`   | `YYYY-MM-DD` | Non  | Filtre inclusif sur le bucket mensuel de chaque point |
 
-Pas de `dateTrunc` — les dates brutes des saisies sont utilisées.
+Pas de `dateTrunc` exposé — la troncature est fixée à `month` côté serveur. Les filtres `dateDebut`/`dateFin` sont appliqués **en sortie** pour ne pas perturber le carry-forward des séries dérivées.
 
 ### Response
 
@@ -79,10 +79,10 @@ Pas de `dateTrunc` — les dates brutes des saisies sont utilisées.
   items: Array<{
     indicateur: string       // publicId de l'indicateur
     individu: string         // publicId de l'individu
-    date: string             // date brute de la saisie (YYYY-MM-DD)
-    valeur: number           // valeur d'avancement
-    valeurCible: number      // valeurCible de l'objectif applicable
-    dateCible: string        // dateCible de l'objectif applicable
+    date: string             // bucket mensuel (YYYY-MM-01) de la valeur résolue
+    valeur: number           // valeur d'avancement (saisie directe ou agrégée)
+    valeurCible: number      // valeurCible de l'objectif applicable (saisie ou agrégée)
+    dateCible: string        // bucket mensuel de la dateCible de l'objectif applicable
     tauxProgression: number | null  // min(100, valeur/valeurCible×100), null si valeurCible=0
   }>
 }
@@ -99,28 +99,27 @@ Pas de `dateTrunc` — les dates brutes des saisies sont utilisées.
 L'implémentation suit le pattern établi : **chargement bulk en amont, résolution pure sans I/O**.
 
 ```
-1. Charger en bulk toutes les ValeurAvancement pour les individus demandés
-2. Charger en bulk tous les ObjectifIndicateurIndividu pour ces mêmes individus
-3. Grouper les objectifs par individu, triés par dateCible ASC
-4. Pour chaque (individu, valeur) :
-   a. Si l'individu n'a aucun objectif → exclure
+1. Charger en bulk le ResolveSerieContext (sous-arbre + saisies bucketisées + fonctions d'agrégation)
+2. Charger en bulk le ResolveObjectifContext (sous-arbre + objectifs bucketisés)
+3. Pour chaque individu cible :
+   a. serie    = resolveSerieIndividu(individuId, ...)    → Array<PointInterne>
+   b. objectifsMap = resolveObjectifIndividu(individuId, ...) → Map<bucketDateCible, PointObjectifInterne>
+4. Convertir objectifsMap → ObjectifBrut[] triés par dateCible ASC
+5. Pour chaque (individu, point de série) — `date = point.bucket` :
+   a. Si l'individu n'a aucun objectif (ni direct ni dérivé) → exclure
    b. Trouver l'objectif applicable :
-      - Premier objectif avec dateCible > valeur.date (strictement)
+      - Premier objectif avec dateCible > date (strictement)
       - Si aucun (D ≥ tous les dateCible) → dernier objectif
    c. Si valeurCible = 0 → tauxProgression = null
-      Sinon → tauxProgression = Math.min(100, (valeur.valeur / valeurCible) × 100)
-5. Appliquer les filtres dateDebut / dateFin sur valeur.date
-6. Trier par individu publicId asc, puis date asc
+      Sinon → tauxProgression = Math.min(100, (valeur / valeurCible) × 100)
+6. Appliquer les filtres dateDebut / dateFin **en sortie** (pas en DB)
+7. Trier par individu publicId asc, puis date asc
 ```
 
-### Note d'évolution (V2)
-
-En V2, il faudra gérer :
-- Les **valeurs dérivées** : résoudre d'abord la série agrégée (`resolveSerieIndividu`), puis calculer le taux sur chaque point résultant
-- Les **objectifs dérivés** : utiliser `resolveObjectifIndividu` pour obtenir la `valeurCible` applicable à chaque bucket
-- La **troncature** : comparer les dates post-`dateTrunc` plutôt que les dates brutes
-
-L'architecture bulk + résolution pure facilitera cette extension sans changer le contrat API.
+`resolveTauxProgression(valeurs, objectifsParIndividu)` reste pur et n'est jamais conscient
+du fait que les valeurs ou les objectifs proviennent d'une saisie directe ou d'une agrégation.
+Les deux contextes partagent `dateTrunc='month'` pour aligner les buckets de valeurs et
+d'objectifs sur une grille mensuelle commune.
 
 ---
 
@@ -184,9 +183,8 @@ L'architecture bulk + résolution pure facilitera cette extension sans changer l
 
 ---
 
-## Hors scope V1
+## Hors scope
 
-- Indicateurs dérivés (agrégation)
-- `dateTrunc` / buckets
-- Héritage d'objectif depuis un parent hiérarchique
-- Graphique historique du taux (le query sera prêt côté frontend, l'UI graphique sera ajoutée en V2)
+- `dateTrunc` exposé en query param (fixé à `month` côté serveur ; à reconsidérer si un besoin client justifie une granularité différente)
+- Exposition des `contributions` d'agrégation dans la réponse (cf. `/valeurs` qui le fait déjà ; pas l'objet de cet endpoint)
+- Graphique historique du taux dans l'UI
