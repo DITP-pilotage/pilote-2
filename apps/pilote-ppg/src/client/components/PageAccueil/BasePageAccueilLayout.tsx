@@ -15,6 +15,10 @@ import { BoutonNavigationFicheTerritoriale } from "@/components/PageAccueil/Bout
 import { BoutonNavigationRapportDetaille } from "@/components/BoutonNavigationRapportDetaille";
 import { BoutonExportDesDonnees } from "@/components/PageAccueil/BoutonExportDesDonnees";
 import { BoutonSyntheseTerritoire } from "@/components/PageAccueil/BoutonSyntheseTerritoire";
+import {
+  scenariosTerritoireCoordinateur,
+  scenariosTerritoireDITP,
+} from "@/components/PageAccueil/scenariosTerritoire";
 import { ModaleVideoAccueil } from "@/components/PageAccueil/PageChantiers/ModaleVideoAccueil/ModaleVideoAccueil";
 import { ModaleInscriptionInfolettre } from "@/components/PageAccueil/PageChantiers/ModaleInscriptionInfoLettre/ModaleInscriptionInfolettre";
 import { ModaleRenseignerService } from "@/components/PageAccueil/PageChantiers/ModaleRenseignerService/ModaleRenseignerService";
@@ -63,6 +67,7 @@ interface BasePageAccueilLayoutProps {
   nombreTotalChantiersAvecAlertes: number;
   aDejaVuVideoAccueil: boolean;
   doitAfficherLaModaleInfolettre: boolean;
+  emailAutoriseAskAITerritoire: boolean;
   children: ReactNode;
 }
 
@@ -78,6 +83,7 @@ export const BasePageAccueilLayout: FunctionComponent<
   nombreTotalChantiersAvecAlertes,
   aDejaVuVideoAccueil,
   doitAfficherLaModaleInfolettre: doitAfficherLaModaleInfolettreInitial,
+  emailAutoriseAskAITerritoire,
   children,
 }) => {
   const ffVideoAccueil = useEnv("NEXT_PUBLIC_FF_VIDEO_ACCUEIL");
@@ -85,7 +91,8 @@ export const BasePageAccueilLayout: FunctionComponent<
   const { data: session } = useSession();
   const profil = useProfilUtilisateurConnecte();
   const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
-  const { peutUtiliserAskAI, estDITPAdmin } = useAskAIAccess();
+  const { peutUtiliserAskAI, estDITPAdmin, estEligibleTerritoire } =
+    useAskAIAccess({ emailAutoriseAskAITerritoire });
 
   const estProfilTerritorialise =
     PROFIL_AUTORISE_A_VOIR_FILTRE_TERRITORIALISE.has(session?.profil || "");
@@ -194,7 +201,15 @@ export const BasePageAccueilLayout: FunctionComponent<
                 <BoutonSyntheseTerritoire
                   jalon={jalon}
                   territoireCode={territoireCode}
-                  estDITPAdmin={estDITPAdmin}
+                  scenarios={
+                    estEligibleTerritoire
+                      ? scenariosTerritoireCoordinateur({ territoireCode })
+                      : scenariosTerritoireDITP({
+                          territoireCode,
+                          jalon,
+                          estDITPAdmin,
+                        })
+                  }
                 />
               </div>
             ) : null}

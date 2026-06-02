@@ -26,6 +26,7 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN: boolean;
   NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET: boolean;
   NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE: boolean;
+  NEXT_PUBLIC_FF_ASK_AI_TERRITOIRE: boolean;
   NEXT_PUBLIC_FF_HISTORIQUE_ALBERT: boolean;
   NEXT_PUBLIC_FF_CENTRE_AIDE_ADMIN: boolean;
   NEXT_PUBLIC_FF_CENTRE_AIDE_PILOTE: boolean;
@@ -159,6 +160,11 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE",
     configKey: "askAIDitpPilotage",
     label: "Ask AI — ouverture DITP Pilotage",
+  },
+  {
+    envKey: "NEXT_PUBLIC_FF_ASK_AI_TERRITOIRE",
+    configKey: "askAITerritoire",
+    label: "Ask AI — ouverture Territoire",
   },
   {
     envKey: "NEXT_PUBLIC_FF_HISTORIQUE_ALBERT",

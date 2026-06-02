@@ -319,6 +319,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE",
     },
+    askAITerritoire: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_ASK_AI_TERRITOIRE",
+    },
     historiqueAlbert: {
       format: Boolean,
       default: false,
@@ -487,6 +492,12 @@ const config = convict({
     default:
       "https://raw.githubusercontent.com/DITP-pilotage/pilote-2/dev/apps/pilote-ppg/public/schema/",
     env: "NEXT_PUBLIC_SCHEMA_VALIDATA_URL",
+  },
+  askAITerritoireEmails: {
+    format: String,
+    default: "",
+    doc: "Emails autorisés à utiliser Ask AI sur les territoires, séparés par des virgules.",
+    env: "ASK_AI_TERRITOIRE_EMAILS",
   },
   e2e: {
     username: {

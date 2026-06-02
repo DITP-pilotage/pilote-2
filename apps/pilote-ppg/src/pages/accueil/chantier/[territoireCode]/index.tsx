@@ -17,6 +17,20 @@ import { loadAccueilSearchParams } from "@/client/searchParams/accueilSearchPara
 import { PageAccueil } from "@/components/PageAccueil/PageAccueil";
 import { PageAccueilLegacy } from "@/components/PageAccueil/PageAccueilLegacy";
 
+let emailsAutorisesAskAITerritoireCache: ReadonlySet<string> | null = null;
+
+const getEmailsAutorisesAskAITerritoire = (): ReadonlySet<string> => {
+  if (emailsAutorisesAskAITerritoireCache === null) {
+    emailsAutorisesAskAITerritoireCache = new Set(
+      configuration()
+        .askAITerritoireEmails.split(",")
+        .map((email) => email.trim().toLowerCase())
+        .filter((email) => email.length > 0),
+    );
+  }
+  return emailsAutorisesAskAITerritoireCache;
+};
+
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,
 ) => {
@@ -242,6 +256,11 @@ export const getServerSideProps = async (
     .resolve("recupererEtatModaleInscriptionUseCase")
     .execute(session.user.id);
 
+  const emailUtilisateur = session.user.email?.toLowerCase() ?? null;
+  const emailAutoriseAskAITerritoire =
+    emailUtilisateur !== null &&
+    getEmailsAutorisesAskAITerritoire().has(emailUtilisateur);
+
   return {
     props: {
       chantiers: chantiersPaginesAvecAlertes.map((chantier) => {
@@ -266,6 +285,7 @@ export const getServerSideProps = async (
       aDejaVuVideoAccueil: doitAfficherModaleVideoAccueil,
       doitAfficherLaModaleInfolettre,
       moyenneTerritoire,
+      emailAutoriseAskAITerritoire,
     },
   };
 };

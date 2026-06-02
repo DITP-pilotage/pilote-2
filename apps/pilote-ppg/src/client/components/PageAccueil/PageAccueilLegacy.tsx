@@ -20,6 +20,10 @@ import { ModaleRenseignerService } from "@/components/PageAccueil/PageChantiers/
 import { BoutonNavigationFicheTerritoriale } from "@/components/PageAccueil/BoutonNavigationFicheTerritoriale";
 import { BoutonNavigationRapportDetaille } from "@/components/BoutonNavigationRapportDetaille";
 import { BoutonSyntheseTerritoire } from "@/components/PageAccueil/BoutonSyntheseTerritoire";
+import {
+  scenariosTerritoireCoordinateur,
+  scenariosTerritoireDITP,
+} from "@/components/PageAccueil/scenariosTerritoire";
 import { BoutonExportDesDonnees } from "@/components/PageAccueil/BoutonExportDesDonnees";
 import { clsxm } from "@/utils/clsxm";
 import { ModaleVideoAccueil } from "@/components/PageAccueil/PageChantiers/ModaleVideoAccueil/ModaleVideoAccueil";
@@ -67,6 +71,7 @@ export const PageAccueilLegacy = ({
   aDejaVuVideoAccueil,
   doitAfficherLaModaleInfolettre,
   moyenneTerritoire,
+  emailAutoriseAskAITerritoire,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const { data: session } = useSession();
 
@@ -81,7 +86,8 @@ export const PageAccueilLegacy = ({
   const ffFicheTerritoriale = useEnv("NEXT_PUBLIC_FF_FICHE_TERRITORIALE");
   const profil = useProfilUtilisateurConnecte();
   const monProfilEstDisponible = useEnv("NEXT_PUBLIC_FF_MON_PROFIL");
-  const { peutUtiliserAskAI, estDITPAdmin } = useAskAIAccess();
+  const { peutUtiliserAskAI, estDITPAdmin, estEligibleTerritoire } =
+    useAskAIAccess({ emailAutoriseAskAITerritoire });
   const doitAfficherModaleRenseignerService =
     !!monProfilEstDisponible &&
     (profil.service == null || profil.fonction == null);
@@ -186,7 +192,15 @@ export const PageAccueilLegacy = ({
                 <BoutonSyntheseTerritoire
                   territoireCode={territoireCode}
                   jalon={jalon}
-                  estDITPAdmin={estDITPAdmin}
+                  scenarios={
+                    estEligibleTerritoire
+                      ? scenariosTerritoireCoordinateur({ territoireCode })
+                      : scenariosTerritoireDITP({
+                          territoireCode,
+                          jalon,
+                          estDITPAdmin,
+                        })
+                  }
                 />
               </div>
             ) : null}

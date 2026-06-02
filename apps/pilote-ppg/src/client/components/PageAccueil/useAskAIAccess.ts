@@ -26,7 +26,11 @@ function profilAutoriseParFeatureFlip(params: {
   return false;
 }
 
-export function useAskAIAccess() {
+export function useAskAIAccess({
+  emailAutoriseAskAITerritoire,
+}: {
+  emailAutoriseAskAITerritoire: boolean;
+}) {
   const { data: session } = useSession();
   const ffAskAI = useEnv("NEXT_PUBLIC_FF_ASK_AI");
   const ffAskAIDitpAdmin = useEnv("NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN");
@@ -34,21 +38,27 @@ export function useAskAIAccess() {
     "NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET",
   );
   const ffAskAIDitpPilotage = useEnv("NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE");
+  const ffAskAITerritoire = useEnv("NEXT_PUBLIC_FF_ASK_AI_TERRITOIRE");
 
   const profil = session?.profil ?? null;
 
+  const autoriseParProfil = profilAutoriseParFeatureFlip({
+    profil,
+    ffAskAIDitpAdmin: Boolean(ffAskAIDitpAdmin),
+    ffAskAIEquipeDirProjet: Boolean(ffAskAIEquipeDirProjet),
+    ffAskAIDitpPilotage: Boolean(ffAskAIDitpPilotage),
+  });
+
+  const estEligibleTerritoire =
+    Boolean(ffAskAITerritoire) && emailAutoriseAskAITerritoire;
+
   const peutUtiliserAskAI =
-    Boolean(ffAskAI) &&
-    profilAutoriseParFeatureFlip({
-      profil,
-      ffAskAIDitpAdmin: Boolean(ffAskAIDitpAdmin),
-      ffAskAIEquipeDirProjet: Boolean(ffAskAIEquipeDirProjet),
-      ffAskAIDitpPilotage: Boolean(ffAskAIDitpPilotage),
-    });
+    Boolean(ffAskAI) && (autoriseParProfil || estEligibleTerritoire);
 
   return {
     peutUtiliserAskAI,
     estDITPAdmin: profil === ProfilEnum.DITP_ADMIN,
+    estEligibleTerritoire,
     profil,
   };
 }
