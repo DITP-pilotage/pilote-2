@@ -1,9 +1,8 @@
 import type { TauxProgressionPointApiModel } from '@pilote/mb-shared/tauxProgression'
 import type { ValeurDateApiModel } from '@pilote/mb-shared/valeurAvancement'
+import { DateTime } from 'luxon'
 
 export type Month = {
-  year: number
-  monthIndex: number
   date: Date
   key: string
 }
@@ -16,46 +15,29 @@ export type MonthlySeries = {
   defaultWindow: { startIndex: number; endIndex: number }
 }
 
-// Encode un mois sur un seul entier pour pouvoir l'additionner / soustraire sans
-// gérer manuellement le débordement d'année.
-const ordinalOf = ({ year, monthIndex }: { year: number; monthIndex: number }): number =>
-  year * 12 + monthIndex
+const UTC = { zone: 'utc' } as const
 
-// Inverse de `ordinalOf`. La double modulo `((x % 12) + 12) % 12` garantit un
-// `monthIndex` positif même pour des ordinaux négatifs (théoriques).
-const monthFromOrdinal = (ordinal: number): Month => {
-  const year = Math.floor(ordinal / 12)
-  const monthIndex = ((ordinal % 12) + 12) % 12
-  return {
-    year,
-    monthIndex,
-    date: new Date(Date.UTC(year, monthIndex, 1)),
-    key: `${year}-${String(monthIndex + 1).padStart(2, '0')}`,
-  }
-}
+// Toutes les manipulations se font en UTC pour éviter qu'un fuseau négatif ne
+// fasse glisser une date du 1er du mois sur le mois précédent.
+const parseMonth = (isoDate: string): DateTime =>
+  DateTime.fromISO(isoDate, UTC).startOf('month')
 
-// Lecture en UTC pour éviter qu'un fuseau négatif fasse glisser une date du
-// 1er du mois sur le mois précédent.
-const monthFromIsoDate = (isoDate: string): Month => {
-  const parsed = new Date(isoDate)
-  return monthFromOrdinal(
-    ordinalOf({ year: parsed.getUTCFullYear(), monthIndex: parsed.getUTCMonth() }),
-  )
-}
+const monthKeyOf = (dt: DateTime): string => dt.toFormat('yyyy-LL')
 
-// Fallback d'ancre quand l'indicateur n'a aucune valeur saisie.
-const currentMonth = (): Month => {
-  const now = new Date()
-  return monthFromOrdinal(ordinalOf({ year: now.getUTCFullYear(), monthIndex: now.getUTCMonth() }))
+const toMonth = (dt: DateTime): Month => {
+  const start = dt.startOf('month')
+  return { date: start.toJSDate(), key: monthKeyOf(start) }
 }
 
 // Un même mois peut contenir plusieurs valeurs ; on conserve celle dont la date
 // est la plus récente dans le mois.
-const latestValueByMonthKey = (valeurs: ReadonlyArray<ValeurDateApiModel>): Map<string, number> => {
+const latestValueByMonthKey = (
+  valeurs: ReadonlyArray<ValeurDateApiModel>,
+): Map<string, number> => {
   const latestDateByKey = new Map<string, string>()
   const valueByKey = new Map<string, number>()
   for (const { date, valeur } of valeurs) {
-    const key = date.slice(0, 7)
+    const key = monthKeyOf(parseMonth(date))
     const previous = latestDateByKey.get(key)
     if (!previous || date > previous) {
       latestDateByKey.set(key, date)
@@ -65,34 +47,6 @@ const latestValueByMonthKey = (valeurs: ReadonlyArray<ValeurDateApiModel>): Map<
   return valueByKey
 }
 
-// Bornes temporelles de l'historique. `undefined` signifie « aucune valeur ».
-const monthBounds = (
-  valeurs: ReadonlyArray<ValeurDateApiModel>,
-): { earliest: Month | undefined; latest: Month | undefined } => {
-  let earliestDate: string | undefined
-  let latestDate: string | undefined
-  for (const { date } of valeurs) {
-    if (!earliestDate || date < earliestDate) earliestDate = date
-    if (!latestDate || date > latestDate) latestDate = date
-  }
-  return {
-    earliest: earliestDate ? monthFromIsoDate(earliestDate) : undefined,
-    latest: latestDate ? monthFromIsoDate(latestDate) : undefined,
-  }
-}
-
-// Génère la séquence continue de mois entre deux bornes (incluses), pour que
-// l'axe X reste régulier même si certains mois n'ont pas de valeur.
-const enumerateMonths = ({ start, end }: { start: Month; end: Month }): Month[] => {
-  const startOrdinal = ordinalOf(start)
-  const endOrdinal = ordinalOf(end)
-  const months: Month[] = []
-  for (let ordinal = startOrdinal; ordinal <= endOrdinal; ordinal++) {
-    months.push(monthFromOrdinal(ordinal))
-  }
-  return months
-}
-
 // Indexe les points de taux de progression par bucket mensuel pour permettre
 // un alignement O(1) sur l'axe des mois.
 const tauxByMonthKey = (
@@ -100,10 +54,40 @@ const tauxByMonthKey = (
 ): Map<string, TauxProgressionPointApiModel> => {
   const map = new Map<string, TauxProgressionPointApiModel>()
   for (const point of tauxProgression) {
-    map.set(point.date.slice(0, 7), point)
+    map.set(monthKeyOf(parseMonth(point.date)), point)
   }
   return map
 }
+
+// Bornes temporelles de l'historique. `undefined` signifie « aucune valeur ».
+const monthBounds = (
+  valeurs: ReadonlyArray<ValeurDateApiModel>,
+): { earliest: DateTime | undefined; latest: DateTime | undefined } => {
+  let earliestDate: string | undefined
+  let latestDate: string | undefined
+  for (const { date } of valeurs) {
+    if (!earliestDate || date < earliestDate) earliestDate = date
+    if (!latestDate || date > latestDate) latestDate = date
+  }
+  return {
+    earliest: earliestDate ? parseMonth(earliestDate) : undefined,
+    latest: latestDate ? parseMonth(latestDate) : undefined,
+  }
+}
+
+// Génère la séquence continue de mois entre deux bornes (incluses), pour que
+// l'axe X reste régulier même si certains mois n'ont pas de valeur.
+const enumerateMonths = ({ start, end }: { start: DateTime; end: DateTime }): Month[] => {
+  const months: Month[] = []
+  let cursor = start
+  while (cursor <= end) {
+    months.push(toMonth(cursor))
+    cursor = cursor.plus({ months: 1 })
+  }
+  return months
+}
+
+const earlier = (a: DateTime, b: DateTime): DateTime => (a < b ? a : b)
 
 // Construit la série mensuelle consommée par le chart :
 // - ancre = mois de la dernière valeur, ou mois courant à défaut ;
@@ -125,13 +109,17 @@ export const buildMonthlySeries = ({
   const valueByKey = latestValueByMonthKey(valeurs)
   const tauxByKey = tauxByMonthKey(tauxProgression)
   const { earliest, latest } = monthBounds(valeurs)
-  const anchor = latest ?? currentMonth()
-  const minStartOrdinal = ordinalOf(anchor) - (windowSize - 1)
-  const startOrdinal = earliest ? Math.min(ordinalOf(earliest), minStartOrdinal) : minStartOrdinal
-  const months = enumerateMonths({ start: monthFromOrdinal(startOrdinal), end: anchor })
+  const anchor = latest ?? DateTime.utc().startOf('month')
+  const minStart = anchor.minus({ months: windowSize - 1 })
+  const start = earliest ? earlier(earliest, minStart) : minStart
+  const months = enumerateMonths({ start, end: anchor })
   const values = months.map((month): number | null => valueByKey.get(month.key) ?? null)
-  const valeursCible = months.map((month): number | null => tauxByKey.get(month.key)?.valeurCible ?? null)
-  const taux = months.map((month): number | null => tauxByKey.get(month.key)?.tauxProgression ?? null)
+  const valeursCible = months.map(
+    (month): number | null => tauxByKey.get(month.key)?.valeurCible ?? null,
+  )
+  const taux = months.map(
+    (month): number | null => tauxByKey.get(month.key)?.tauxProgression ?? null,
+  )
   const lastIndex = months.length - 1
   return {
     months,

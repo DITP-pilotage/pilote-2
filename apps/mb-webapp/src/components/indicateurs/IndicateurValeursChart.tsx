@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQueries } from '@tanstack/react-query'
 import ReactECharts from 'echarts-for-react'
 import { useMemo } from 'react'
 
@@ -28,11 +28,45 @@ type AxisTooltipParam = {
   marker?: string
 }
 
+// Construit le HTML du tooltip ECharts au survol d'un point :
+// - en-tête : libellé du mois (label de l'axe X) ;
+// - une ligne par série affichée (Valeur, Objectif) avec son marqueur coloré ;
+// - ligne supplémentaire pour le taux de progression résolu sur le bucket
+//   courant, uniquement si un taux est applicable.
+const renderTooltip = ({
+  params,
+  labels,
+  tauxByIndex,
+}: {
+  params: ReadonlyArray<AxisTooltipParam>
+  labels: ReadonlyArray<string>
+  tauxByIndex: ReadonlyArray<number | null>
+}): string => {
+  const head = params[0]
+  if (!head) return ''
+  const dataIndex = head.dataIndex ?? 0
+  const monthLabel = head.axisValueLabel ?? labels[dataIndex] ?? ''
+  const lines = params.map((p) => {
+    const marker = p.marker ?? ''
+    const name = p.seriesName ?? ''
+    const value = typeof p.value === 'number' ? formatNumberFr(p.value) : '—'
+    return `${marker}${name} : <strong>${value}</strong>`
+  })
+  const taux = tauxByIndex[dataIndex]
+  if (taux !== null && taux !== undefined) {
+    lines.push(`Taux de progression : <strong>${Math.round(taux)} %</strong>`)
+  }
+  return `${monthLabel}<br/>${lines.join('<br/>')}`
+}
+
 export function IndicateurValeursChart({ indicateurId, individuId }: IndicateurValeursChartProps) {
-  const { data: valeurs } = useSuspenseQuery(indicateurValeursQueryOptions(indicateurId, individuId))
-  const { data: taux } = useSuspenseQuery(
-    indicateurTauxProgressionQueryOptions(indicateurId, individuId),
-  )
+  // useSuspenseQueries pour lancer les 2 requêtes en parallèle (pas de waterfall).
+  const [{ data: valeurs }, { data: taux }] = useSuspenseQueries({
+    queries: [
+      indicateurValeursQueryOptions(indicateurId, individuId),
+      indicateurTauxProgressionQueryOptions(indicateurId, individuId),
+    ],
+  })
 
   const series = useMemo(
     () =>
@@ -48,30 +82,13 @@ export function IndicateurValeursChart({ indicateurId, individuId }: IndicateurV
   const showSlider = series.months.length > DEFAULT_WINDOW
   const hasObjectif = series.valeursCible.some((value) => value !== null)
 
-  const tooltipFormatter = (params: ReadonlyArray<AxisTooltipParam>): string => {
-    const head = params[0]
-    if (!head) return ''
-    const dataIndex = head.dataIndex ?? 0
-    const monthLabel = head.axisValueLabel ?? labels[dataIndex] ?? ''
-    const lines = params.map((p) => {
-      const marker = p.marker ?? ''
-      const name = p.seriesName ?? ''
-      const value = typeof p.value === 'number' ? formatNumberFr(p.value) : '—'
-      return `${marker}${name} : <strong>${value}</strong>`
-    })
-    const tauxValue = series.tauxProgression[dataIndex]
-    if (tauxValue !== null && tauxValue !== undefined) {
-      lines.push(`Taux de progression : <strong>${Math.round(tauxValue)} %</strong>`)
-    }
-    return `${monthLabel}<br/>${lines.join('<br/>')}`
-  }
-
   const option = {
     grid: { top: 32, right: 24, bottom: showSlider ? 60 : 32, left: 56 },
     legend: hasObjectif ? { top: 0 } : undefined,
     tooltip: {
       trigger: 'axis',
-      formatter: tooltipFormatter,
+      formatter: (params: ReadonlyArray<AxisTooltipParam>) =>
+        renderTooltip({ params, labels, tauxByIndex: series.tauxProgression }),
     },
     xAxis: {
       type: 'category',
