@@ -180,12 +180,12 @@ const upsertValeursAvancementBatchRoute = createRoute({
   method: 'put',
   path: '/indicateurs/{id}/valeurs:batch',
   tags: ['Indicateur'],
-  summary: "Saisir ou mettre à jour un lot de valeurs pour un indicateur",
+  summary: 'Saisir ou mettre à jour un lot de valeurs pour un indicateur',
   description:
     "Upsert atomique d'un lot de valeurs (1..1000) sur la clé `(indicateur, individu, date)`. " +
-    "Tout-ou-rien : si une seule entrée est invalide (individu inconnu/non lié, doublon `(individu, date)` " +
+    'Tout-ou-rien : si une seule entrée est invalide (individu inconnu/non lié, doublon `(individu, date)` ' +
     'dans le payload), aucune valeur n’est appliquée et la réponse 400 `BATCH_INVALID` liste ' +
-    "exhaustivement les erreurs détectées (agrégées par cause avec leurs `indices` dans `items`).",
+    'exhaustivement les erreurs détectées (agrégées par cause avec leurs `indices` dans `items`).',
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,
@@ -202,10 +202,16 @@ const upsertValeursAvancementBatchRoute = createRoute({
       description: 'Lot appliqué. Compteurs `total`, `created`, `updated`.',
     },
     400: {
-      content: { 'application/json': { schema: BatchInvalidErrorApiModelSchema } },
+      content: {
+        'application/json': {
+          schema: z.union([BatchInvalidErrorApiModelSchema, ErrorApiModelSchema]),
+        },
+      },
       description:
-        'Lot invalide. Aucune valeur n’a été appliquée. `details.errors` détaille les causes ' +
-        '(`INVALID_ITEM`, `INDIVIDU_INCONNU`, `DUPLICATE_KEY`) avec leurs `indices` dans `items`.',
+        "Lot invalide. Aucune valeur n'a été appliquée. " +
+        '`BATCH_INVALID` (lot rejeté par la validation métier) — `details.errors` détaille les causes ' +
+        '(`INVALID_ITEM`, `INDIVIDU_INCONNU`, `DUPLICATE_KEY`) avec leurs `indices` dans `items`. ' +
+        '`VALIDATION_ERROR` (payload JSON/schema invalide en amont du handler).',
     },
     403: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },

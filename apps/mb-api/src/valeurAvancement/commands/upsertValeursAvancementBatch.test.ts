@@ -65,7 +65,7 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
   )
 
   it(
-    'détecte les doublons (individu, date) du payload et n\'applique rien',
+    "détecte les doublons (individu, date) du payload et n'applique rien",
     integrationTest(async () => {
       const indId = testIndicateurId()
       const refId = testReferentielId()

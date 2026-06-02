@@ -30,9 +30,12 @@ export const upsertValeursAvancementBatch = (
     ),
   )
 
-// Pipeline de validation hors transaction. On rassemble toutes les erreurs détectées
-// avant de toucher la table : pour préserver la garantie « tout-ou-rien transactionnel »
-// promise au client, on ne veut jamais aborter un INSERT à mi-parcours.
+// Pipeline de validation avant toute écriture en base. En pratique l'appelant
+// enveloppe la commande dans `withTransaction`, donc cette validation s'exécute
+// dans la transaction courante — l'important est qu'elle court-circuite avant
+// le premier INSERT : on rassemble toutes les erreurs détectées pour préserver
+// la garantie « tout-ou-rien transactionnel » promise au client (on ne veut
+// jamais aborter un INSERT à mi-parcours).
 const validateAndResolveIndividus = ({
   indicateurId,
   items,
@@ -191,9 +194,7 @@ const executeBatch = ({
   })
 
   return ResultAsync.fromSafePromise(
-    db().$queryRawTyped(
-      upsertValeursAvancementBatchQuery(indicateurId, { items: sqlItems }),
-    ),
+    db().$queryRawTyped(upsertValeursAvancementBatchQuery(indicateurId, { items: sqlItems })),
   ).map((rows) => {
     const total = rows.length
     const created = rows.reduce((sum, row) => sum + (row.created === true ? 1 : 0), 0)
