@@ -3,7 +3,7 @@ import ReactECharts from 'echarts-for-react'
 import { useMemo } from 'react'
 
 import { buildMonthlySeries } from '@/components/indicateurs/MonthlySeries'
-import { formatMonthYearShortFr, formatNumberFr } from '@/lib/format'
+import { formatMonthYearShortFr, formatNumberFr, formatPourcentageFr } from '@/lib/format'
 import {
   indicateurTauxProgressionQueryOptions,
   indicateurValeursQueryOptions,
@@ -54,7 +54,7 @@ const renderTooltip = ({
   })
   const taux = tauxByIndex[dataIndex]
   if (taux !== null && taux !== undefined) {
-    lines.push(`Taux de progression : <strong>${Math.round(taux)} %</strong>`)
+    lines.push(`Taux de progression : <strong>${formatPourcentageFr(taux)}</strong>`)
   }
   return `${monthLabel}<br/>${lines.join('<br/>')}`
 }
