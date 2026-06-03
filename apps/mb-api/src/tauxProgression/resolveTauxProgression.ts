@@ -1,40 +1,46 @@
+import { type Bucket, compareBuckets } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
 
 export type ValeurBrute = {
   individuId: string
   individuPublicId: string
-  date: string
+  date: Bucket
   valeur: Decimal
 }
 
 export type ObjectifBrut = {
-  dateCible: string
+  dateCible: Bucket
   valeurCible: Decimal
 }
 
 export type TauxProgressionPoint = {
   individuId: string
   individuPublicId: string
-  date: string
+  date: Bucket
   valeur: Decimal
   valeurCible: Decimal
-  dateCible: string
+  dateCible: Bucket
   tauxProgression: number | null
 }
 
 // objectifs doit être trié par dateCible ASC
 const findObjectifApplicable = (
-  valeurDate: string,
+  valeurDate: Bucket,
   objectifs: ReadonlyArray<ObjectifBrut>,
 ): ObjectifBrut | null => {
   if (objectifs.length === 0) return null
-  return objectifs.find((o) => o.dateCible > valeurDate) ?? objectifs[objectifs.length - 1]!
+  return (
+    objectifs.find((o) => compareBuckets(o.dateCible, valeurDate) > 0) ??
+    objectifs[objectifs.length - 1]!
+  )
 }
+
+const CENT = new Decimal(100)
 
 const computeTaux = (valeur: Decimal, valeurCible: Decimal): number | null => {
   if (valeurCible.isZero()) return null
-  const taux = valeur.div(valeurCible).mul(100).toNumber()
-  return Math.min(100, taux)
+  const taux = valeur.div(valeurCible).mul(CENT)
+  return Decimal.min(CENT, taux).toDecimalPlaces(2).toNumber()
 }
 
 export const resolveTauxProgression = ({

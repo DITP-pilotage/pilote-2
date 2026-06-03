@@ -139,6 +139,43 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
     }),
   )
 
+  it(
+    'arrondit le taux de progression à 2 décimales',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refId = testReferentielId()
+      const deptId = testDeptId()
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId },
+        referentiel: { publicId: refId },
+      })
+      // 2 / 3 × 100 = 66.6666… → 66.67 (half-up à 2 décimales)
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId, nom: 'Test' },
+        individu: { publicId: deptId, referentiel: { publicId: refId } },
+        date: '2024-06-01',
+        valeur: 2,
+      })
+      await fixtures.objectifIndicateurIndividu({
+        indicateur: { publicId: indId },
+        individu: { publicId: deptId },
+        dateCible: '2024-12-31',
+        valeurCible: 3,
+      })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listTauxProgressionForIndicateur(indId, { individus: [deptId] }),
+      )
+
+      const items = result._unsafeUnwrap().items
+      expect(items).toHaveLength(1)
+      expect(items[0]!.tauxProgression).toBe(66.67)
+    }),
+  )
+
   // ---------------------------------------------------------------------------
   // Sélection de l'objectif applicable
   // ---------------------------------------------------------------------------

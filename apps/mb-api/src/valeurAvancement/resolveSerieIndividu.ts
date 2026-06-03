@@ -1,5 +1,6 @@
 import { type FonctionAgregation } from '@pilote/mb-shared/indicateur'
 
+import { type Bucket, type BucketKey, compareBuckets, formatBucket } from '@/framework/bucket'
 import { yieldToEventLoop } from '@/framework/concurrency'
 import { Decimal } from '@/framework/decimal'
 import { agreger, getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
@@ -11,23 +12,23 @@ export type IndividuRef = {
 }
 
 export type SaisieTronquee = {
-  bucket: string
-  dateOrigine: string
+  bucket: Bucket
+  dateOrigine: Bucket
   valeur: Decimal
 }
 
 export type ContributionInterne = {
   individuPublicId: string
   valeur: Decimal | null
-  dateOrigine: string | null
+  dateOrigine: Bucket | null
   source: 'saisie' | 'derivee' | 'manquante'
 }
 
 export type PointInterne =
-  | { type: 'saisie'; bucket: string; dateOrigine: string; valeur: Decimal }
+  | { type: 'saisie'; bucket: Bucket; dateOrigine: Bucket; valeur: Decimal }
   | {
       type: 'derivee'
-      bucket: string
+      bucket: Bucket
       valeur: Decimal
       fonctionAgregation: FonctionAgregation
       contributions: ContributionInterne[]
@@ -121,11 +122,17 @@ const computeSerieDerivee = async (
   }
 
   // Union des buckets distincts présents dans une série enfant (triés ASC).
-  const bucketsSet = new Set<string>()
+  // Indexés par leur ISO string (`BucketKey`) parce que `PlainDate` n'a pas
+  // d'égalité de valeur native pour `Set`/`Map` ; on conserve l'instance
+  // `PlainDate` pour propager le bucket aux `PointInterne` sortants.
+  const bucketsByKey = new Map<BucketKey, Bucket>()
   for (const state of states) {
-    for (const point of state.points) bucketsSet.add(point.bucket)
+    for (const point of state.points) {
+      const key = formatBucket(point.bucket)
+      if (!bucketsByKey.has(key)) bucketsByKey.set(key, point.bucket)
+    }
   }
-  const buckets = [...bucketsSet].sort()
+  const buckets = [...bucketsByKey.values()].sort(compareBuckets)
 
   const result: PointInterne[] = []
 
@@ -138,7 +145,7 @@ const computeSerieDerivee = async (
     for (const state of states) {
       while (
         state.pointer + 1 < state.points.length &&
-        state.points[state.pointer + 1]!.bucket <= bucket
+        compareBuckets(state.points[state.pointer + 1]!.bucket, bucket) <= 0
       ) {
         state.pointer++
       }
