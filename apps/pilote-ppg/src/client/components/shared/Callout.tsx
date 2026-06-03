@@ -105,7 +105,7 @@ const CalloutIcon = ({
   return (
     <div
       {...props}
-      className={clsxm("flex-shrink-0 mt-1", context?.iconColor, className)}
+      className={clsxm("flex-shrink-0 mt-0.5", context?.iconColor, className)}
     >
       {isComponent
         ? (() => {

@@ -10,6 +10,7 @@ import { AssistantLoader } from "@/components/_commons/ChatUI/AssistantLoader";
 import { FeedbackBar } from "@/components/_commons/ChatUI/FeedbackBar";
 import { ChatInputForm } from "@/components/_commons/ChatUI/ChatInputForm";
 import { ChatExperimentationBanner } from "@/components/_commons/ChatUI/ChatExperimentationBanner";
+import { ChatAssistantDisclaimer } from "@/components/_commons/ChatUI/ChatAssistantDisclaimer";
 import { chatMarkdownStyles } from "@/components/_commons/ChatUI/chatMarkdownStyles";
 import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { ChatEmptyState } from "@/components/_commons/ChatUI/ChatEmptyState";
@@ -204,7 +205,10 @@ export const ChatUI = ({
         )}
 
         {messages.length > 0 && status === "ready" && (
-          <FeedbackBar chatId={chatRef.current.id} />
+          <>
+            <FeedbackBar chatId={chatRef.current.id} />
+            <ChatAssistantDisclaimer />
+          </>
         )}
 
         <ChatInputForm
