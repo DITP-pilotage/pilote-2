@@ -86,11 +86,6 @@ export const ConversationDetailModale = ({
       {!isLoading && data && (
         <>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 pb-5 mb-6 border-b border-dsfr-grey-925">
-            <ChipMeta
-              label="Utilisateur"
-              valeur={`${data.utilisateur.prenom} ${data.utilisateur.nom}`}
-            />
-            <ChipMeta label="Email" valeur={data.utilisateur.email} />
             <ChipMeta label="Profil" valeur={data.utilisateur.profilNom} />
             <ChipMeta label="Tours" valeur={`${data.llmCalls.length}`} />
             <ChipMeta

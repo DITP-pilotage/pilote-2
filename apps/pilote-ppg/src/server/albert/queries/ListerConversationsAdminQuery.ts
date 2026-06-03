@@ -23,9 +23,6 @@ export type ConversationAdminResume = {
   extraitPremierMessageUser: string;
   utilisateur: {
     id: string;
-    prenom: string;
-    nom: string;
-    email: string;
     profilCode: string;
     profilNom: string;
   };
@@ -46,9 +43,6 @@ type LigneListe = {
   titre: string;
   extrait_premier_message_user: string;
   utilisateur_id: string;
-  utilisateur_prenom: string;
-  utilisateur_nom: string;
-  utilisateur_email: string;
   profil_code: string;
   profil_nom: string;
   created_at: Date;
@@ -104,9 +98,6 @@ export class ListerConversationsAdminQuery {
           ) AS extrait_premier_message_user,
           LOWER(COALESCE((c.messages->0->'parts'->0->>'text'), '')) AS premier_message_user_complet,
           u.id AS utilisateur_id,
-          u.prenom AS utilisateur_prenom,
-          u.nom AS utilisateur_nom,
-          u.email AS utilisateur_email,
           p.code AS profil_code,
           p.nom AS profil_nom,
           c.created_at,
@@ -124,9 +115,6 @@ export class ListerConversationsAdminQuery {
         b.titre,
         b.extrait_premier_message_user,
         b.utilisateur_id,
-        b.utilisateur_prenom,
-        b.utilisateur_nom,
-        b.utilisateur_email,
         b.profil_code,
         b.profil_nom,
         b.created_at,
@@ -156,9 +144,6 @@ export class ListerConversationsAdminQuery {
       extraitPremierMessageUser: ligne.extrait_premier_message_user,
       utilisateur: {
         id: ligne.utilisateur_id,
-        prenom: ligne.utilisateur_prenom,
-        nom: ligne.utilisateur_nom,
-        email: ligne.utilisateur_email,
         profilCode: ligne.profil_code,
         profilNom: ligne.profil_nom,
       },

@@ -75,8 +75,7 @@ describe("ListerConversationsAdminQuery", () => {
           id: idConvB,
           titre: "Conv Bob",
           utilisateur: expect.objectContaining({
-            nom: "Martin",
-            prenom: "Bob",
+            profilCode: ID_PROFIL_DITP_ADMIN,
           }),
           nbPouce: 0,
           nbPouceBas: 0,
@@ -87,11 +86,15 @@ describe("ListerConversationsAdminQuery", () => {
           titre: "Conv Alice",
           extraitPremierMessageUser: expect.stringContaining("Bonjour Albert"),
           utilisateur: expect.objectContaining({
-            nom: "Dupont",
-            prenom: "Alice",
             profilCode: ID_PROFIL_DITP_ADMIN,
           }),
         }),
+      ]);
+      // Pseudonymisation : aucune donnée nominative ne doit être exposée
+      expect(Object.keys(result.items[0].utilisateur).sort()).toEqual([
+        "id",
+        "profilCode",
+        "profilNom",
       ]);
     }),
   );

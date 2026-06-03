@@ -8,9 +8,6 @@ export type ConversationAdminDetail = {
   extraitPremierMessageUser: string;
   utilisateur: {
     id: string;
-    prenom: string;
-    nom: string;
-    email: string;
     profilCode: string;
     profilNom: string;
   };
@@ -33,9 +30,6 @@ type LigneDetail = {
   contexte: unknown;
   extrait_premier_message_user: string;
   utilisateur_id: string;
-  utilisateur_prenom: string;
-  utilisateur_nom: string;
-  utilisateur_email: string;
   profil_code: string;
   profil_nom: string;
   created_at: Date;
@@ -66,9 +60,6 @@ export class RecupererConversationAdminQuery {
           ''
         ) AS extrait_premier_message_user,
         u.id AS utilisateur_id,
-        u.prenom AS utilisateur_prenom,
-        u.nom AS utilisateur_nom,
-        u.email AS utilisateur_email,
         p.code AS profil_code,
         p.nom AS profil_nom,
         c.created_at,
@@ -96,9 +87,6 @@ export class RecupererConversationAdminQuery {
       extraitPremierMessageUser: ligne.extrait_premier_message_user,
       utilisateur: {
         id: ligne.utilisateur_id,
-        prenom: ligne.utilisateur_prenom,
-        nom: ligne.utilisateur_nom,
-        email: ligne.utilisateur_email,
         profilCode: ligne.profil_code,
         profilNom: ligne.profil_nom,
       },
