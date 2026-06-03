@@ -9,6 +9,7 @@ import { AssistantMessage } from "@/components/_commons/ChatUI/AssistantMessage"
 import { AssistantLoader } from "@/components/_commons/ChatUI/AssistantLoader";
 import { FeedbackBar } from "@/components/_commons/ChatUI/FeedbackBar";
 import { ChatInputForm } from "@/components/_commons/ChatUI/ChatInputForm";
+import { ChatExperimentationBanner } from "@/components/_commons/ChatUI/ChatExperimentationBanner";
 import { chatMarkdownStyles } from "@/components/_commons/ChatUI/chatMarkdownStyles";
 import { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { ChatEmptyState } from "@/components/_commons/ChatUI/ChatEmptyState";
@@ -30,6 +31,7 @@ export const ChatUI = ({
   chatId,
   initialMessages,
   onChatFinish,
+  showExperimentationBanner = false,
 }: {
   endpoint: string;
   placeholder?: string;
@@ -39,6 +41,7 @@ export const ChatUI = ({
   chatId?: string;
   initialMessages?: PiloteUIMessage[];
   onChatFinish?: () => void;
+  showExperimentationBanner?: boolean;
 }) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -209,6 +212,8 @@ export const ChatUI = ({
           onModelChange={handleModelChange}
           placeholder={placeholder}
         />
+
+        {showExperimentationBanner && <ChatExperimentationBanner />}
       </div>
     </ChatContextProvider>
   );
