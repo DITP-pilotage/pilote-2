@@ -1,7 +1,6 @@
 import { type DateTrunc } from '@pilote/mb-shared/dates'
 
 import { type BucketKey, parseBucket } from '@/framework/bucket'
-import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
 import { getObjectifsTronquesPourIndividus } from '@/generated/prisma/sql'
 import {
@@ -62,7 +61,7 @@ const loadObjectifsBucketises = async ({
     if (!row.bucket) continue
     const bucket = parseBucket(row.bucket)
     const buckets = result.get(row.individuId) ?? new Map<BucketKey, ObjectifSaisieBucketise>()
-    buckets.set(row.bucket, { bucket, valeur: new Decimal(row.valeurCible.toString()) })
+    buckets.set(row.bucket, { bucket, valeur: row.valeurCible })
     result.set(row.individuId, buckets)
   }
   return result

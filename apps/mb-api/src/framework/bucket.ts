@@ -1,4 +1,4 @@
-import { Temporal } from '@/framework/temporal'
+import { Temporal } from '@js-temporal/polyfill'
 
 // Un "bucket" représente le 1er jour d'une période tronquée (jour, mois, année).
 // On utilise `Temporal.PlainDate` parce qu'il porte une date calendaire sans
