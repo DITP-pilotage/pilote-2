@@ -139,9 +139,21 @@ const computeSerieDerivee = async (
   for (const bucket of buckets) {
     // Yield à chaque bucket : voir doc en tête de `resolveSerieIndividu`.
     await yieldToEventLoop()
-    // Avance chaque pointer tant que la valeur suivante de l'enfant est ≤ au
-    // bucket courant (carry-forward). Comme les buckets sont parcourus ASC,
-    // les pointers ne reculent jamais → coût amorti O(N+E) par enfant.
+    // Carry-forward via pointers triés ASC.
+    // `state.pointer` = index dans `state.points` de la **dernière** valeur
+    // de l'enfant dont bucket ≤ B courant (-1 = aucune valeur encore portée).
+    // L'union des buckets est parcourue ASC : si `points[k].bucket ≤ B₁`, alors
+    // `points[k].bucket ≤ B₂` pour tout B₂ ≥ B₁ → le pointer ne peut qu'avancer,
+    // jamais reculer. Coût amorti O(N+E) par enfant (vs O(N×E) si on re-scannait
+    // à chaque bucket).
+    // Test `[pointer+1] ≤ B` (et non `<`) : un `<` raterait l'égalité quand
+    // l'enfant a une valeur **exactement** sur B et on resterait sur la précédente.
+    //
+    // Exemple — enfant avec buckets = [Jan, Juin] (val 10 puis 20) :
+    //   B=Jan  → pointer 0  (val 10)
+    //   B=Mar  → pointer 0  (val 10, carry-forward)
+    //   B=Juin → pointer 1  (val 20)
+    //   B=Aoû  → pointer 1  (val 20, carry-forward — au-delà du dernier bucket)
     for (const state of states) {
       while (
         state.pointer + 1 < state.points.length &&

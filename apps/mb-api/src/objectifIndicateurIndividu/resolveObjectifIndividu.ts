@@ -105,6 +105,21 @@ const computeObjectifDerive = (
   const result = new Map<BucketKey, PointObjectifInterne>()
 
   for (const bucket of sortedBuckets) {
+    // Carry-forward via pointers triés ASC.
+    // `state.pointer` = index dans `state.buckets` de la **dernière** valeur
+    // de l'enfant dont bucket ≤ B courant (-1 = aucune valeur encore portée).
+    // L'union `sortedBuckets` est parcourue ASC : si `buckets[k] ≤ B₁`, alors
+    // `buckets[k] ≤ B₂` pour tout B₂ ≥ B₁ → le pointer ne peut qu'avancer,
+    // jamais reculer. Coût amorti O(N+E) par enfant (vs O(N×E) si on re-scannait
+    // à chaque bucket).
+    // Test `[pointer+1] ≤ B` (et non `<`) : un `<` raterait l'égalité quand
+    // l'enfant a une valeur **exactement** sur B et on resterait sur la précédente.
+    //
+    // Exemple — enfant avec buckets = [Jan, Juin] (val 10 puis 20) :
+    //   B=Jan  → pointer 0  (val 10)
+    //   B=Mar  → pointer 0  (val 10, carry-forward)
+    //   B=Juin → pointer 1  (val 20)
+    //   B=Aoû  → pointer 1  (val 20, carry-forward — au-delà du dernier bucket)
     for (const state of states) {
       while (
         state.pointer + 1 < state.buckets.length &&

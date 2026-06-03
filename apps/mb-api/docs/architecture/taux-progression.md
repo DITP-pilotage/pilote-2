@@ -37,13 +37,13 @@ Le `≥` (et non `>`) est volontaire : sans cette inclusivité, une valeur et un
 | 3        | 60          | 2025-06-01 |
 | 4        | 100         | 2026-02-01 |
 
-| Date de la valeur       | Objectif applicable | valeurCible |
-|-------------------------|---------------------|-------------|
-| D < 2024-01-01          | Objectif 1          | 10          |
-| 2024-01-01 ≤ D < 2025-01-01 | Objectif 2     | 50          |
-| 2025-01-01 ≤ D < 2025-06-01 | Objectif 3     | 60          |
-| 2025-06-01 ≤ D < 2026-02-01 | Objectif 4     | 100         |
-| D ≥ 2026-02-01          | Objectif 4          | 100         |
+| Date de la valeur            | Objectif applicable | valeurCible |
+|------------------------------|---------------------|-------------|
+| D ≤ 2024-01-01               | Objectif 1          | 10          |
+| 2024-01-01 < D ≤ 2025-01-01  | Objectif 2          | 50          |
+| 2025-01-01 < D ≤ 2025-06-01  | Objectif 3          | 60          |
+| 2025-06-01 < D ≤ 2026-02-01  | Objectif 4          | 100         |
+| D > 2026-02-01               | Objectif 4          | 100         |
 
 ### Cas limites
 
@@ -116,7 +116,7 @@ L'implémentation suit le pattern établi : **chargement bulk en amont, résolut
    a. Si l'individu n'a aucun objectif (ni direct ni dérivé) → exclure
    b. Trouver l'objectif applicable :
       - Premier objectif avec dateCible ≥ date
-      - Si aucun (D ≥ tous les dateCible) → dernier objectif
+      - Si aucun (D > tous les dateCible) → dernier objectif
    c. Si valeurCible = 0 → tauxProgression = null
       Sinon → tauxProgression = Math.min(100, (valeur / valeurCible) × 100)
 6. Appliquer les filtres dateDebut / dateFin **en sortie** (pas en DB)
@@ -229,6 +229,255 @@ sequenceDiagram
     Q->>Q: tri par individuPublicId asc, date asc
     Q-->>R: { items: [...] }
     R-->>C: JSON
+```
+
+### `resolveSerieIndividu` — récursion + carry-forward **permissif**
+
+Calcule la série d'un individu :
+- si l'individu est **feuille** (pas de fonction d'agrégation active sur son référentiel) → ses saisies bucketisées telles quelles
+- sinon → série dérivée par `combineLatest` permissif sur ses enfants directs (récursion + mémoïsation via `cache`)
+
+> **Permissif** : un bucket sort dès qu'**au moins un enfant** a une valeur portée. Les autres figurent en `manquante` dans `contributions`, avec une `couverture { nbEnfantsAvecValeur, nbEnfantsTotal }`.
+
+#### Flux (ASCII)
+
+```
+resolveSerieIndividu(individuId, ctx, cache)               [async — yield event loop par bucket]
+   │
+   ├── cache.get(individuId) → hit ? oui → retour
+   │
+   ├── fonctionAgregation = getFonctionAgregationActive(individuId, ctx)
+   │
+   ├── feuille (fonctionAgregation === null) ?
+   │     │
+   │     ├─ OUI → computeSerieSaisie
+   │     │         ctx.serieFeuilleParIndividu.get(individuId)
+   │     │           → PointInterne[] type='saisie' (bucket, dateOrigine, valeur)
+   │     │
+   │     └─ NON → computeSerieDerivee(parent, fonctionAgregation)
+   │                │
+   │                ├── enfants = ctx.enfantsParParent.get(parent), triés par publicId asc
+   │                │
+   │                ├── pour chaque enfant (séquentiel — la mémo amortit le coût) :
+   │                │     state.points = await resolveSerieIndividu(enfant.id, ctx, cache)
+   │                │     state.pointer = -1
+   │                │
+   │                ├── union des buckets distincts présents chez ≥ 1 enfant (triés ASC)
+   │                │
+   │                └── pour chaque bucket B (ASC) :
+   │                      await yieldToEventLoop()
+   │                      ├── carry-forward : pour chaque enfant, avancer pointer tant que
+   │                      │     state.points[pointer + 1].bucket ≤ B
+   │                      ├── construire contributions :
+   │                      │     - pointer ≥ 0 → 'saisie' ou 'derivee' (selon estAgrege)
+   │                      │     - pointer = -1 → 'manquante' (valeur=null)
+   │                      └── si AU MOINS UN enfant a une valeur :
+   │                            valeur = agreger(valeurs, fonctionAgregation)
+   │                            émettre PointInterne type='derivee'
+   │                              avec couverture { avec, total }
+   │                          sinon → skip ce bucket
+   │
+   └── cache.set(individuId, serie) ; retour
+```
+
+#### Mini exemple (somme, 2 enfants feuilles)
+
+```
+Enfant A (saisies)  :   ●(10) ───────────── ●(20)
+                     2024-01              2024-06
+Enfant B (saisies)  :       ●(5) ──────────────── ●(15)
+                          2024-03                2024-08
+
+Union buckets ASC : 2024-01   2024-03   2024-06   2024-08
+
+bucket    ptr A → val    ptr B → val    contributions               valeur émise    couverture
+─────────────────────────────────────────────────────────────────────────────────────────────
+2024-01   ●(10)           — (ptr=-1)    [A=10, B=manquante]              10            1/2
+2024-03   ●(10) (carry)   ●(5)           [A=10, B=5]                      15            2/2
+2024-06   ●(20)           ●(5)  (carry)  [A=20, B=5]                      25            2/2
+2024-08   ●(20) (carry)   ●(15)          [A=20, B=15]                     35            2/2
+
+→ permissif : 2024-01 sort à couverture 1/2 dès que A a une valeur.
+```
+
+#### Mermaid
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Caller
+    participant R as resolveSerieIndividu(I)
+    participant Cache
+    participant Ctx as ResolveSerieContext
+    participant CSD as computeSerieDerivee
+
+    Caller->>R: individuId
+    R->>Cache: get(I)
+    alt cache hit
+        Cache-->>R: PointInterne[]
+        R-->>Caller: PointInterne[]
+    else cache miss
+        R->>Ctx: getFonctionAgregationActive(I)
+        alt feuille (pas de fonction d'agrégation)
+            R->>Ctx: serieFeuilleParIndividu.get(I)
+            Ctx-->>R: SaisieTronquee[]
+            Note over R: map → PointInterne type='saisie'
+        else dérivée
+            R->>CSD: parentId, fonctionAgregation
+            CSD->>Ctx: enfantsParParent.get(parent)<br/>tri par publicId asc
+            loop chaque enfant (séquentiel)
+                CSD->>R: resolveSerieIndividu(enfant) — récursion mémo
+                R-->>CSD: enfant.points
+            end
+            Note over CSD: union des buckets distincts (asc)
+            loop chaque bucket B (asc)
+                Note over CSD: await yieldToEventLoop()<br/>laisse node servir d'autres requêtes<br/>(coût négligeable vs ops Decimal en chaîne)
+                loop chaque enfant — carry-forward des pointers
+                    Note over CSD: tant que state.points[pointer + 1].bucket ≤ B :<br/>  state.pointer++<br/>(B asc → pointer ne recule jamais : O(N+E) amorti par enfant)
+                end
+                loop chaque enfant — construit contributions
+                    alt state.pointer = -1 (aucune valeur ≤ B)
+                        Note over CSD: contribution { source: 'manquante',<br/>valeur: null, dateOrigine: null }
+                    else state.pointer ≥ 0
+                        Note over CSD: courant = state.points[state.pointer]<br/>dateOrigine = courant.type === 'saisie'<br/>  ? courant.dateOrigine (pré-troncature)<br/>  : courant.bucket<br/>source = state.estAgrege ? 'derivee' : 'saisie'<br/>push courant.valeur → valeursAAgreger
+                    end
+                end
+                alt valeursAAgreger.length === 0
+                    Note over CSD: skip bucket (aucun enfant n'a encore de valeur)
+                else
+                    Note over CSD: valeur = agreger(valeursAAgreger, fonctionAgregation)<br/>émettre PointInterne type='derivee'<br/>couverture { nbEnfantsAvecValeur, nbEnfantsTotal }
+                end
+            end
+            CSD-->>R: PointInterne[] type='derivee'
+        end
+        R->>Cache: set(I, serie)
+        R-->>Caller: PointInterne[]
+    end
+```
+
+### `resolveObjectifIndividu` — récursion + carry-forward **strict**
+
+Calcule les objectifs bucketisés d'un individu :
+- si l'individu est **feuille** → ses saisies d'objectif déjà bucketisées
+- sinon → carry-forward strict sur les enfants directs (récursion + mémoïsation)
+
+> **Strict** : un bucket n'est émis **que si TOUS les enfants** ont au moins une valeur portée (`pointer ≥ 0`). Tant qu'un seul enfant n'a encore aucun objectif connu, le bucket est ignoré. La structure de sortie est une `Map<BucketKey, PointObjectifInterne>` (lookup O(1) côté `tauxProgression`).
+
+#### Flux (ASCII)
+
+```
+resolveObjectifIndividu(individuId, ctx, cache)            [synchrone]
+   │
+   ├── cache.get(individuId) → hit ? oui → retour
+   │
+   ├── fonctionAgregation = getFonctionAgregationActive(individuId, ctx)
+   │
+   ├── feuille (fonctionAgregation === null) ?
+   │     │
+   │     ├─ OUI → buildSaisieMap
+   │     │         ctx.objectifBucketParIndividu.get(individuId)
+   │     │           → Map<BucketKey, PointObjectifInterne type='saisie' (bucket, valeur)>
+   │     │
+   │     └─ NON → computeObjectifDerive(parent, fonctionAgregation)
+   │                │
+   │                ├── enfants = ctx.enfantsParParent.get(parent), triés par publicId asc
+   │                │
+   │                ├── pour chaque enfant (récursion synchrone, mémoïsée) :
+   │                │     state.values  = resolveObjectifIndividu(enfant.id, ctx, cache)
+   │                │     state.buckets = [...values.values()].map(p => p.bucket).sort(asc)
+   │                │     state.pointer = -1
+   │                │
+   │                ├── union des buckets distincts (triés ASC)
+   │                │
+   │                └── pour chaque bucket B (ASC) :
+   │                      ├── carry-forward : pour chaque enfant, avancer pointer tant que
+   │                      │     state.buckets[pointer + 1] ≤ B
+   │                      ├── allHaveValue = true
+   │                      │   pour chaque enfant :
+   │                      │     si pointer < 0 → allHaveValue = false ; BREAK
+   │                      │     sinon → push contribution + valeur
+   │                      └── si allHaveValue && valeurs.length > 0 :
+   │                            result.set(B, type='derivee', agreger(valeurs, fonctionAgregation))
+   │                          sinon → skip ce bucket
+   │
+   └── cache.set(individuId, result) ; retour Map<BucketKey, PointObjectifInterne>
+```
+
+#### Mini exemple (somme, 2 enfants feuilles — mêmes saisies que ci-dessus)
+
+```
+Enfant A (objectifs)  :   ▼(10) ───────────── ▼(20)
+                       2024-01              2024-06
+Enfant B (objectifs)  :       ▼(5) ──────────────── ▼(15)
+                            2024-03                2024-08
+
+Union buckets ASC : 2024-01   2024-03   2024-06   2024-08
+
+bucket    ptr A → val    ptr B → val    allHave ?    sortie agrégée ?
+──────────────────────────────────────────────────────────────────────────
+2024-01   ▼(10)           — (ptr=-1)    NON          SKIP (B pas encore d'objectif)
+2024-03   ▼(10) (carry)   ▼(5)           OUI         somme = 15
+2024-06   ▼(20)           ▼(5)  (carry)  OUI         somme = 25
+2024-08   ▼(20) (carry)   ▼(15)          OUI         somme = 35
+
+→ strict : 2024-01 sauté (vs émis en permissif sur les séries).
+```
+
+Conséquence côté `resolveTauxProgression` : tant qu'un parent n'a pas d'objectif consolidé sur un bucket, ce bucket ne fait jamais partie de `ObjectifBrut[]` pour cet individu et ne biaise donc pas la recherche `findObjectifApplicable`.
+
+#### Mermaid
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Caller
+    participant R as resolveObjectifIndividu(I)
+    participant Cache
+    participant Ctx as ResolveObjectifContext
+    participant COD as computeObjectifDerive
+
+    Caller->>R: individuId
+    R->>Cache: get(I)
+    alt cache hit
+        Cache-->>R: Map<BucketKey, PointObjectifInterne>
+        R-->>Caller: Map
+    else cache miss
+        R->>Ctx: getFonctionAgregationActive(I)
+        alt feuille (pas de fonction d'agrégation)
+            R->>Ctx: objectifBucketParIndividu.get(I)
+            Ctx-->>R: Map<BucketKey, ObjectifSaisieBucketise>
+            Note over R: map → Map<BucketKey, PointObjectifInterne type='saisie'>
+        else dérivée
+            R->>COD: parentId, fonctionAgregation
+            COD->>Ctx: enfantsParParent.get(parent)<br/>tri par publicId asc
+            loop chaque enfant (récursion synchrone)
+                COD->>R: resolveObjectifIndividu(enfant) — mémo
+                R-->>COD: enfant.values (Map) + buckets triés asc
+            end
+            Note over COD: union des buckets distincts (asc)
+            loop chaque bucket B (asc)
+                loop chaque enfant — carry-forward des pointers
+                    Note over COD: tant que state.buckets[pointer + 1] ≤ B :<br/>  state.pointer++<br/>(B asc → pointer ne recule jamais : O(N+E) amorti par enfant)<br/>note : pas de yieldToEventLoop (calcul synchrone)
+                end
+                Note over COD: allHaveValue = true ; valeurs = []
+                loop chaque enfant — collecte stricte
+                    alt state.pointer = -1
+                        Note over COD: allHaveValue = false<br/>BREAK la boucle (inutile de continuer)
+                    else state.pointer ≥ 0
+                        Note over COD: dateCible = state.buckets[state.pointer]<br/>point = state.values.get(formatBucket(dateCible))<br/>contribution { valeur, dateCible,<br/>  estAgregee: point.type === 'derivee' }<br/>push point.valeur → valeurs
+                    end
+                end
+                alt !allHaveValue OR valeurs.length === 0
+                    Note over COD: SKIP bucket<br/>(au moins un enfant n'a aucun objectif ≤ B)
+                else
+                    Note over COD: valeur = agreger(valeurs, fonctionAgregation)<br/>result.set(formatBucket(B),<br/>  { type: 'derivee', bucket: B, valeur,<br/>    fonctionAgregation, contributions })
+                end
+            end
+            COD-->>R: Map<BucketKey, PointObjectifInterne>
+        end
+        R->>Cache: set(I, result)
+        R-->>Caller: Map
+    end
 ```
 
 ---
