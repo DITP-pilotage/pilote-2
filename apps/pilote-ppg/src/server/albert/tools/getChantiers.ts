@@ -62,20 +62,37 @@ export type GetChantiersOutput = {
 const NON_APPLICABLE_EN_RETARD_NAT_FR =
   "L'analyse des chantiers en retard ne peut pas être réalisée au niveau national.\n\nEn effet, cet indicateur repose sur une comparaison entre le taux d'avancement d'un chantier pour un territoire donné et la valeur médiane observée sur l'ensemble des autres territoires.";
 
-function getOutputInstructions(input: GetChantiersInput): string {
+function getOutputInstructions(
+  input: GetChantiersInput,
+  resultats: GetChantiersResult[],
+  territoiresAccessibles: string[],
+): string {
+  let base: string;
+
   if (input.view === "en_retard") {
-    return "Pour chaque chantier en retard, indique l'écart par rapport à la médiane (en points) et la météo de la synthèse si disponible.";
+    base =
+      "Pour chaque chantier en retard, indique l'écart par rapport à la médiane (en points) et la météo de la synthèse si disponible.";
+  } else if (input.view === "en_difficulte") {
+    base =
+      "Pour chaque chantier en difficulté, indique la météo avec son libellé utilisateur (Objectifs compromis, Appuis nécessaires), sans afficher les codes internes.";
+  } else if (input.chantier_ids && input.chantier_ids.length > 0) {
+    base =
+      "Présente les données détaillées de chaque chantier demandé : taux d'avancement, écart, météo, tendance, et synthèse si disponible.";
+  } else {
+    base =
+      "Présente la liste des chantiers correspondant aux critères avec leurs données clés (taux d'avancement, météo, tendance).";
   }
 
-  if (input.view === "en_difficulte") {
-    return "Pour chaque chantier en difficulté, indique la météo avec son libellé utilisateur (Objectifs compromis, Appuis nécessaires), sans afficher les codes internes.";
-  }
+  const codesRestreints = resultats
+    .map((r) => r.territoire_code)
+    .filter((code) => !territoiresAccessibles.includes(code));
 
-  if (input.chantier_ids && input.chantier_ids.length > 0) {
-    return "Présente les données détaillées de chaque chantier demandé : taux d'avancement, écart, météo, tendance, et synthèse si disponible.";
-  }
+  if (codesRestreints.length === 0) return base;
 
-  return "Présente la liste des chantiers correspondant aux critères avec leurs données clés (taux d'avancement, météo, tendance).";
+  return (
+    `⚠️ Restriction d'accès — territoires ${codesRestreints.join(", ")} : seuls le taux d'avancement et la météo sont disponibles. Les champs tendance, écart, synthèse (commentaire) sont null par restriction d'accès, et non par absence de données. Tu DOIS le mentionner explicitement dans ta réponse quand ces champs sont retournés.\n\n` +
+    base
+  );
 }
 
 function toQueryParams(
@@ -90,6 +107,36 @@ function toQueryParams(
     tendance: input.tendance,
     meteo: input.meteo,
   };
+}
+
+function masquerDonneesNonAccessibles(
+  resultats: GetChantiersResult[],
+  territoiresAccessibles: string[],
+): GetChantiersResult[] {
+  return resultats.map((resultat) => {
+    if (territoiresAccessibles.includes(resultat.territoire_code)) {
+      return resultat;
+    }
+    return {
+      ...resultat,
+      chantiers: resultat.chantiers.map((chantier) => ({
+        ...chantier,
+        tendance: null,
+        ecart: null,
+        est_en_retard: false,
+        est_en_difficulte: false,
+        synthese: chantier.synthese
+          ? {
+              meteo: chantier.synthese.meteo,
+              commentaire: null,
+              date_meteo: chantier.synthese.date_meteo,
+              date_commentaire: null,
+            }
+          : null,
+        commentaires: { donnees: null, autresResultats: null },
+      })),
+    };
+  });
 }
 
 export function createGetChantiersTool({
@@ -128,12 +175,6 @@ par jalon (avec include_sous_territoires=true), pas un appel par (sous-territoir
 plusieurs territoires parents sont comparés, fais un appel par parent et par jalon.`,
       inputSchema: getChantiersInputSchema,
       execute: async (input): Promise<GetChantiersOutput> => {
-        if (!territoiresAccessibles.includes(input.territoire_code)) {
-          throw new Error(
-            `Accès non autorisé au territoire ${input.territoire_code}`,
-          );
-        }
-
         if (
           input.territoire_code === "NAT-FR" &&
           input.view === "en_retard" &&
@@ -170,19 +211,23 @@ plusieurs territoires parents sont comparés, fais un appel par parent et par ja
           input.territoire_code,
           input.include_sous_territoires,
         );
-        const codesAccessibles = codes.filter((code) =>
-          territoiresAccessibles.includes(code),
-        );
 
         const resultats = await Promise.all(
-          codesAccessibles.map((code) =>
+          codes.map((code) =>
             getChantiersQuery.execute(toQueryParams(effectiveInput, code)),
           ),
         );
 
         return {
-          resultats,
-          _output_instructions: getOutputInstructions(input),
+          resultats: masquerDonneesNonAccessibles(
+            resultats,
+            territoiresAccessibles,
+          ),
+          _output_instructions: getOutputInstructions(
+            input,
+            resultats,
+            territoiresAccessibles,
+          ),
         };
       },
     });

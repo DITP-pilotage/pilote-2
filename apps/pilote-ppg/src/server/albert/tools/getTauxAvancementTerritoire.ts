@@ -49,7 +49,14 @@ export type GetTauxAvancementTerritoireOutput = {
   _output_instructions: string;
 };
 
-const OUTPUT_INSTRUCTIONS = `Présente le TA, la médiane et la position pour chaque territoire. Un seul territoire → paragraphe factuel. Plusieurs territoires → tableau comparatif.`;
+function getOutputInstructions(codesRestreints: string[]): string {
+  const base = `Présente le TA, la médiane et la position pour chaque territoire. Un seul territoire → paragraphe factuel. Plusieurs territoires → tableau comparatif.`;
+  if (codesRestreints.length === 0) return base;
+  return (
+    `⚠️ Restriction d'accès — territoires ${codesRestreints.join(", ")} : seuls le taux d'avancement est disponible. La médiane et la position par rapport à la médiane sont null par restriction d'accès, et non par absence de données. Tu DOIS le mentionner explicitement dans ta réponse.\n\n` +
+    base
+  );
+}
 
 export function createGetTauxAvancementTerritoireTool({
   prisma,
@@ -78,18 +85,9 @@ Utilise cet outil quand l'utilisateur demande :
 - Une vue d'ensemble rapide d'un territoire`,
       inputSchema: getTauxAvancementTerritoireInputSchema,
       execute: async (input): Promise<GetTauxAvancementTerritoireOutput> => {
-        if (!territoiresAccessibles.includes(input.territoire_code)) {
-          throw new Error(
-            `Accès non autorisé au territoire ${input.territoire_code}`,
-          );
-        }
-
         const codes = await territoireResolver.resoudre(
           input.territoire_code,
           input.include_sous_territoires,
-        );
-        const codesAccessibles = codes.filter((code) =>
-          territoiresAccessibles.includes(code),
         );
 
         const db = prisma.getInstance();
@@ -114,7 +112,7 @@ Utilise cet outil quand l'utilisateur demande :
           input.jalon,
         );
 
-        const mailles = new Set(codesAccessibles.map(determineMaille));
+        const mailles = new Set(codes.map(determineMaille));
         const statsByMaille = new Map<Maille, number | null>();
 
         for (const maille of mailles) {
@@ -137,21 +135,32 @@ Utilise cet outil quand l'utilisateur demande :
           }
         }
 
-        const resultats = codesAccessibles.map((code) => {
+        const codesRestreints: string[] = [];
+
+        const resultats = codes.map((code) => {
           const maille = determineMaille(code);
           const territoireData = agregat[maille]?.territoires[code];
+          const estAccessible = territoiresAccessibles.includes(code);
+
+          if (!estAccessible) codesRestreints.push(code);
 
           const taux_avancement_global =
             territoireData?.repartition.avancements.annuel.moyenne ?? null;
 
-          const mediane_repartition = statsByMaille.get(maille) ?? null;
+          const mediane_repartition = estAccessible
+            ? (statsByMaille.get(maille) ?? null)
+            : null;
 
           let position_mediane:
             | "EN_RETARD"
             | "EN_AVANCE"
             | "DANS_LA_MEDIANE"
             | null = null;
-          if (taux_avancement_global !== null && mediane_repartition !== null) {
+          if (
+            estAccessible &&
+            taux_avancement_global !== null &&
+            mediane_repartition !== null
+          ) {
             const ecart = taux_avancement_global - mediane_repartition;
             if (ecart <= -10) {
               position_mediane = "EN_RETARD";
@@ -173,7 +182,7 @@ Utilise cet outil quand l'utilisateur demande :
 
         return {
           resultats,
-          _output_instructions: OUTPUT_INSTRUCTIONS,
+          _output_instructions: getOutputInstructions(codesRestreints),
         };
       },
     });
