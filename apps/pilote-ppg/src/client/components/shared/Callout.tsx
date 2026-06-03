@@ -17,7 +17,8 @@ export type CalloutColor =
   | "warning"
   | "error"
   | "blue"
-  | "moutarde";
+  | "moutarde"
+  | "neutral";
 
 const colorVariants: Record<
   CalloutColor,
@@ -52,6 +53,11 @@ const colorVariants: Record<
     bg: "bg-dsfr-moutarde-main-975",
     border: "!border-l-dsfr-moutarde-main-679",
     iconColor: "!text-dsfr-moutarde-main-679",
+  },
+  neutral: {
+    bg: "bg-dsfr-grey-1000",
+    border: "!border-l-dsfr-grey-625",
+    iconColor: "!text-dsfr-grey-200",
   },
 };
 

@@ -6,18 +6,10 @@ import {
   NodeViewWrapper,
   ReactNodeViewRenderer,
 } from "@tiptap/react";
-import { Callout } from "@/client/components/shared/Callout";
+import { Callout, CalloutColor } from "@/client/components/shared/Callout";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 import { WarningIcon } from "@/components/_commons/Icones/WarningIcon";
 import { ErrorWarningIcon } from "@/components/_commons/Icones/ErrorWarningIcon";
-
-type CalloutColor =
-  | "info"
-  | "success"
-  | "warning"
-  | "error"
-  | "blue"
-  | "moutarde";
 
 const CALLOUT_COLORS: CalloutColor[] = [
   "info",
@@ -26,6 +18,7 @@ const CALLOUT_COLORS: CalloutColor[] = [
   "error",
   "blue",
   "moutarde",
+  "neutral",
 ];
 
 const colorIconMap: Record<
@@ -38,6 +31,7 @@ const colorIconMap: Record<
   error: ErrorWarningIcon,
   blue: InformationPleineIcon,
   moutarde: WarningIcon,
+  neutral: InformationPleineIcon,
 };
 
 const colorLabels: Record<CalloutColor, string> = {
@@ -47,6 +41,7 @@ const colorLabels: Record<CalloutColor, string> = {
   error: "Erreur",
   blue: "Bleu",
   moutarde: "Moutarde",
+  neutral: "Neutre",
 };
 
 function CalloutNodeView({ node, updateAttributes, editor }: NodeViewProps) {
