@@ -3,9 +3,10 @@ import type { ValeurDateApiModel } from '@pilote/mb-shared/valeurAvancement'
 import { Temporal } from '@js-temporal/polyfill'
 
 export type Month = {
-  // `PlainYearMonth` représente exactement un bucket mensuel : pas de jour, pas
-  // de fuseau, donc impossible d'introduire un offset qui décale le mois.
-  bucket: Temporal.PlainYearMonth
+  // 1er du mois. `PlainDate` (sans heure ni fuseau) garantit qu'aucun offset
+  // ne peut décaler le bucket ; aligné sur la sortie SQL (`date_trunc`) côté
+  // mb-api qui produit aussi le 1er du bucket en ISO `YYYY-MM-DD`.
+  bucket: Temporal.PlainDate
   key: string
 }
 
@@ -17,20 +18,18 @@ export type MonthlySeries = {
   defaultWindow: { startIndex: number; endIndex: number }
 }
 
-// `PlainYearMonth.from("2025-02-14")` ignore le jour et retient `2025-02` : la
-// truncation au mois est faite par Temporal sans manipulation manuelle.
-const parseMonth = (isoDate: string): Temporal.PlainYearMonth =>
-  Temporal.PlainYearMonth.from(isoDate)
+// Force le 1er du mois pour aligner les saisies (jour quelconque) sur la
+// grille mensuelle utilisée par les API et l'axe X du chart.
+const parseMonth = (isoDate: string): Temporal.PlainDate =>
+  Temporal.PlainDate.from(isoDate).with({ day: 1 })
 
-const toMonth = (bucket: Temporal.PlainYearMonth): Month => ({ bucket, key: bucket.toString() })
+const toMonth = (bucket: Temporal.PlainDate): Month => ({ bucket, key: bucket.toString() })
 
-const compareMonths = (a: Temporal.PlainYearMonth, b: Temporal.PlainYearMonth): number =>
-  Temporal.PlainYearMonth.compare(a, b)
+const compareMonths = (a: Temporal.PlainDate, b: Temporal.PlainDate): number =>
+  Temporal.PlainDate.compare(a, b)
 
-const earlier = (
-  a: Temporal.PlainYearMonth,
-  b: Temporal.PlainYearMonth,
-): Temporal.PlainYearMonth => (compareMonths(a, b) <= 0 ? a : b)
+const earlier = (a: Temporal.PlainDate, b: Temporal.PlainDate): Temporal.PlainDate =>
+  compareMonths(a, b) <= 0 ? a : b
 
 // Un même mois peut contenir plusieurs valeurs ; on conserve celle dont la date
 // d'origine est la plus récente dans le mois.
@@ -64,15 +63,15 @@ const tauxByMonthKey = (
 const monthBounds = (
   valeurs: ReadonlyArray<ValeurDateApiModel>,
 ): {
-  earliest: Temporal.PlainYearMonth | undefined
-  latest: Temporal.PlainYearMonth | undefined
+  earliest: Temporal.PlainDate | undefined
+  latest: Temporal.PlainDate | undefined
 } => {
-  let earliest: Temporal.PlainYearMonth | undefined
-  let latest: Temporal.PlainYearMonth | undefined
+  let earliest: Temporal.PlainDate | undefined
+  let latest: Temporal.PlainDate | undefined
   for (const { date } of valeurs) {
-    const ym = parseMonth(date)
-    if (!earliest || compareMonths(ym, earliest) < 0) earliest = ym
-    if (!latest || compareMonths(ym, latest) > 0) latest = ym
+    const bucket = parseMonth(date)
+    if (!earliest || compareMonths(bucket, earliest) < 0) earliest = bucket
+    if (!latest || compareMonths(bucket, latest) > 0) latest = bucket
   }
   return { earliest, latest }
 }
@@ -83,8 +82,8 @@ const enumerateMonths = ({
   start,
   end,
 }: {
-  start: Temporal.PlainYearMonth
-  end: Temporal.PlainYearMonth
+  start: Temporal.PlainDate
+  end: Temporal.PlainDate
 }): Month[] => {
   const months: Month[] = []
   let cursor = start
@@ -95,8 +94,7 @@ const enumerateMonths = ({
   return months
 }
 
-const currentMonth = (): Temporal.PlainYearMonth =>
-  Temporal.Now.plainDateISO('UTC').toPlainYearMonth()
+const currentMonth = (): Temporal.PlainDate => Temporal.Now.plainDateISO('UTC').with({ day: 1 })
 
 // Construit la série mensuelle consommée par le chart :
 // - ancre = mois de la dernière valeur, ou mois courant à défaut ;

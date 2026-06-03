@@ -19,22 +19,16 @@ export const formatDateFr = (value: Date | string): string => dateFr.format(toDa
 export const formatDateTimeFr = (value: Date | string): string =>
   toDate(value).toLocaleString('fr-FR')
 
-// `PlainYearMonth.toLocaleString('fr-FR', …)` lève un `RangeError` à cause
-// d'un mismatch de calendrier (iso8601 → gregory du locale fr-FR). On passe
-// par `PlainDate(day=1)` qui, lui, accepte la conversion implicite. Le jour
-// arbitraire ne sort pas du formattage tant qu'on demande uniquement mois+année.
-const monthYearAsPlainDate = (ym: Temporal.PlainYearMonth): Temporal.PlainDate =>
-  ym.toPlainDate({ day: 1 })
-
-// Accepte `Temporal.PlainYearMonth` (formatage natif sans `Date` JS) en plus
-// des entrées historiques `Date | string` — utilisé sur des buckets mensuels
-// pour lesquels on veut un libellé fr-FR court (ex. "mars 25").
-export const formatMonthYearShortFr = (value: Date | string | Temporal.PlainYearMonth): string =>
-  value instanceof Temporal.PlainYearMonth
-    ? monthYearAsPlainDate(value).toLocaleString('fr-FR', monthYearShortOptions)
+// Accepte `Temporal.PlainDate` (formatage natif sans `Date` JS, conversion
+// iso8601→gregory implicite côté locale fr-FR) en plus des entrées historiques
+// `Date | string` — utilisé sur des buckets mensuels (1er du mois) pour
+// lesquels on veut un libellé fr-FR court (ex. "mars 25").
+export const formatMonthYearShortFr = (value: Date | string | Temporal.PlainDate): string =>
+  value instanceof Temporal.PlainDate
+    ? value.toLocaleString('fr-FR', monthYearShortOptions)
     : monthYearShortFr.format(toDate(value))
 
-export const formatMonthYearNumericFr = (value: Date | string | Temporal.PlainYearMonth): string =>
-  value instanceof Temporal.PlainYearMonth
-    ? monthYearAsPlainDate(value).toLocaleString('fr-FR', monthYearNumericOptions)
+export const formatMonthYearNumericFr = (value: Date | string | Temporal.PlainDate): string =>
+  value instanceof Temporal.PlainDate
+    ? value.toLocaleString('fr-FR', monthYearNumericOptions)
     : monthYearNumericFr.format(toDate(value))
