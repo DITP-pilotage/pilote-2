@@ -3,7 +3,7 @@ import ReactECharts from 'echarts-for-react'
 import { useMemo } from 'react'
 
 import { buildMonthlySeries } from '@/components/indicateurs/MonthlySeries'
-import { formatMonthYearShortFr, formatNumberFr } from '@/lib/format'
+import { formatMonthYearShortFr, formatNumberFr, formatVariationFr } from '@/lib/format'
 import {
   indicateurTauxProgressionQueryOptions,
   indicateurValeursQueryOptions,
@@ -36,10 +36,12 @@ type AxisTooltipParam = {
 const renderTooltip = ({
   params,
   labels,
+  valeursByIndex,
   tauxByIndex,
 }: {
   params: ReadonlyArray<AxisTooltipParam>
   labels: ReadonlyArray<string>
+  valeursByIndex: ReadonlyArray<number | null>
   tauxByIndex: ReadonlyArray<number | null>
 }): string => {
   const head = params[0]
@@ -52,6 +54,11 @@ const renderTooltip = ({
     const value = typeof p.value === 'number' ? formatNumberFr(p.value) : '—'
     return `${marker}${name} : <strong>${value}</strong>`
   })
+  const valeur = valeursByIndex[dataIndex]
+  const valeurPrecedente = dataIndex > 0 ? valeursByIndex[dataIndex - 1] : null
+  if (valeur !== null && valeur !== undefined && valeurPrecedente !== null && valeurPrecedente !== undefined) {
+    lines.push(`Variation : <strong>${formatVariationFr(valeur - valeurPrecedente)}</strong>`)
+  }
   const taux = tauxByIndex[dataIndex]
   if (taux !== null && taux !== undefined) {
     lines.push(`Taux de progression : <strong>${formatNumberFr(taux)} %</strong>`)
@@ -88,7 +95,12 @@ export function IndicateurValeursChart({ indicateurId, individuId }: IndicateurV
     tooltip: {
       trigger: 'axis',
       formatter: (params: ReadonlyArray<AxisTooltipParam>) =>
-        renderTooltip({ params, labels, tauxByIndex: series.tauxProgression }),
+        renderTooltip({
+          params,
+          labels,
+          valeursByIndex: series.values,
+          tauxByIndex: series.tauxProgression,
+        }),
     },
     xAxis: {
       type: 'category',
