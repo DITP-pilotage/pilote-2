@@ -22,7 +22,7 @@ export type ResolveObjectifContext = {
 export type ContributionObjectifInterne = {
   individuPublicId: string
   valeur: Decimal
-  dateCible: Bucket
+  bucketCible: Bucket
   estAgregee: boolean
 }
 
@@ -137,12 +137,12 @@ const computeObjectifDerive = (
         allHaveValue = false
         break
       }
-      const dateCible = state.buckets[state.pointer]!
-      const point = state.values.get(formatBucket(dateCible))!
+      const bucketCible = state.buckets[state.pointer]!
+      const point = state.values.get(formatBucket(bucketCible))!
       contributions.push({
         individuPublicId: state.enfant.publicId,
         valeur: point.valeur,
-        dateCible,
+        bucketCible,
         estAgregee: point.type === 'derivee',
       })
       valeurs.push(point.valeur)

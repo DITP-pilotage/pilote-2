@@ -283,6 +283,64 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
   )
 
   it(
+    "sélectionne l'objectif futur quand l'objectif passé tombe avant la valeur dans le même mois (dateTrunc=day)",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refId = testReferentielId()
+      const deptId = testDeptId()
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId },
+        referentiel: { publicId: refId },
+      })
+      // Cas miroir du précédent : avec `dateTrunc=day`, les buckets ne se
+      // confondent plus dans le mois. Objectif au 2024-12-15 → bucket
+      // `2024-12-15`, valeur au 2024-12-31 → bucket `2024-12-31`. L'objectif
+      // de décembre est **antérieur** à la valeur ; on doit sauter sur
+      // l'objectif futur (2025-12-31).
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId, nom: 'Test' },
+        individu: { publicId: deptId, referentiel: { publicId: refId } },
+        date: '2024-12-31',
+        valeur: 80,
+      })
+      await fixtures.objectifIndicateurIndividu(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
+          dateCible: '2024-12-15',
+          valeurCible: 50,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
+          dateCible: '2025-12-31',
+          valeurCible: 100,
+        },
+      )
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listTauxProgressionForIndicateur(indId, {
+          individus: [deptId],
+          dateTruncValeur: 'day',
+          dateTruncObjectif: 'day',
+        }),
+      )
+
+      const items = result._unsafeUnwrap().items
+      expect(items).toHaveLength(1)
+      expect(items[0]).toMatchObject({
+        date: '2024-12-31',
+        dateCible: '2025-12-31',
+        valeurCible: 100,
+        tauxProgression: 80,
+      })
+    }),
+  )
+
+  it(
     'utilise le dernier objectif quand toutes les dateCibles sont dépassées',
     integrationTest(async () => {
       const indId = testIndicateurId()
@@ -873,6 +931,63 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       expect(items.every((p) => p.dateCible === '2024-01-01')).toBe(true)
       expect(items.every((p) => p.valeurCible === 100)).toBe(true)
       expect(items.map((p) => p.tauxProgression)).toEqual([25, 50, 75])
+    }),
+  )
+
+  it(
+    "retient l'objectif le plus récent quand plusieurs tombent dans le même bucket annuel (dateTruncObjectif=year)",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refId = testReferentielId()
+      const deptId = testDeptId()
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId },
+        referentiel: { publicId: refId },
+      })
+      // 2 objectifs dans la même année → bucket `2024-01-01` partagé.
+      // Le SQL `DISTINCT ON ... ORDER BY date_cible DESC` garde le plus récent
+      // (2024-12-31, val 100). Sans ce comportement, on basculerait sur
+      // l'objectif de mars (val 50) et fausserait la valeurCible/taux.
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId, nom: 'Test' },
+        individu: { publicId: deptId, referentiel: { publicId: refId } },
+        date: '2024-06-20',
+        valeur: 80,
+      })
+      await fixtures.objectifIndicateurIndividu(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
+          dateCible: '2024-03-31',
+          valeurCible: 50,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
+          dateCible: '2024-12-31',
+          valeurCible: 100,
+        },
+      )
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listTauxProgressionForIndicateur(indId, {
+          individus: [deptId],
+          dateTruncValeur: 'month',
+          dateTruncObjectif: 'year',
+        }),
+      )
+
+      const items = result._unsafeUnwrap().items
+      expect(items).toHaveLength(1)
+      expect(items[0]).toMatchObject({
+        date: '2024-06-01',
+        dateCible: '2024-01-01',
+        valeurCible: 100,
+        tauxProgression: 80,
+      })
     }),
   )
 

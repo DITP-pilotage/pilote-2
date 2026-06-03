@@ -102,7 +102,7 @@ const toApiModel = ({
     contributions: point.contributions.map((c) => ({
       individu: c.individuPublicId,
       valeurCible: c.valeur.toNumber(),
-      dateCible: formatBucket(c.dateCible),
+      dateCible: formatBucket(c.bucketCible),
       source: c.estAgregee ? ('derivee' as const) : ('saisie' as const),
     })),
   }
