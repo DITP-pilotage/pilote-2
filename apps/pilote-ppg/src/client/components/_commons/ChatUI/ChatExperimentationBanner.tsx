@@ -31,7 +31,6 @@ export const ChatExperimentationBanner = () => {
             className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
           >
             Charte d&apos;utilisation de l&apos;IA dans PILOTE
-            <ExternalLinkIcon className="w-3.5 h-3.5" fill="currentColor" />
           </a>
           <Link
             href="/donnees-personnelles-cookies"
@@ -39,7 +38,6 @@ export const ChatExperimentationBanner = () => {
             className="inline-flex items-center gap-1 font-semibold text-primary hover:underline"
           >
             Données personnelles et cookies
-            <ExternalLinkIcon className="w-3.5 h-3.5" fill="currentColor" />
           </Link>
         </div>
       </Callout.Text>
