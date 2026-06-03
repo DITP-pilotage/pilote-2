@@ -3,7 +3,7 @@ import ReactECharts from 'echarts-for-react'
 import { useMemo } from 'react'
 
 import { buildMonthlySeries } from '@/components/indicateurs/MonthlySeries'
-import { formatMonthYearShortFr, formatNumberFr, formatPourcentageFr } from '@/lib/format'
+import { formatMonthYearShortFr, formatNumberFr } from '@/lib/format'
 import {
   indicateurTauxProgressionQueryOptions,
   indicateurValeursQueryOptions,
@@ -54,7 +54,7 @@ const renderTooltip = ({
   })
   const taux = tauxByIndex[dataIndex]
   if (taux !== null && taux !== undefined) {
-    lines.push(`Taux de progression : <strong>${formatPourcentageFr(taux)}</strong>`)
+    lines.push(`Taux de progression : <strong>${formatNumberFr(taux)} %</strong>`)
   }
   return `${monthLabel}<br/>${lines.join('<br/>')}`
 }
@@ -78,7 +78,7 @@ export function IndicateurValeursChart({ indicateurId, individuId }: IndicateurV
     [valeurs.items, taux.items],
   )
 
-  const labels = series.months.map((month) => formatMonthYearShortFr(month.date))
+  const labels = series.months.map((month) => formatMonthYearShortFr(month.bucket))
   const showSlider = series.months.length > DEFAULT_WINDOW
   const hasObjectif = series.valeursCible.some((value) => value !== null)
 

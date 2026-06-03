@@ -3,7 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { StatCard } from '@/components/ui/StatCard'
 import { StatGrid } from '@/components/ui/StatGrid'
-import { formatDateFr, formatNumberFr, formatPourcentageFr, formatVariationFr } from '@/lib/format'
+import { formatDateFr, formatNumberFr, formatVariationFr } from '@/lib/format'
 import {
   indicateurSyntheseIndividuQueryOptions,
   indicateurTauxProgressionQueryOptions,
@@ -68,7 +68,7 @@ export function IndicateurValeursRemarquables({
           value={
             dernierPoint.tauxProgression === null
               ? '—'
-              : formatPourcentageFr(dernierPoint.tauxProgression)
+              : `${formatNumberFr(dernierPoint.tauxProgression)} %`
           }
           caption={`cible : ${formatNumberFr(dernierPoint.valeurCible)} au ${formatDateFr(dernierPoint.dateCible)}`}
         />

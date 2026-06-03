@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.19.13",
+    "@js-temporal/polyfill": "^0.5.1",
     "@pilote/mb-shared": "workspace:*",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.4",

@@ -1,3 +1,4 @@
+import { type DateTrunc } from '@pilote/mb-shared/dates'
 import {
   type ListTauxProgressionQuery,
   type TauxProgressionListApiModel,
@@ -28,10 +29,12 @@ import {
   resolveSerieIndividu,
 } from '@/valeurAvancement/resolveSerieIndividu'
 
-// Bucket de référence unique pour aligner valeurs et objectifs. Le mois est
-// un compromis entre granularité d'affichage et coût de carry-forward sur les
-// gros arbres (cf. doc archi `taux-progression.md`).
-const DATE_TRUNC = 'month' as const
+// Défauts compromis lisibilité × coût : mensuel des deux côtés (cf. doc archi
+// `taux-progression.md`). Surchargeable par requête, avec la contrainte
+// `dateTruncObjectif >= dateTruncValeur` (validée côté schema mb-shared) — un
+// objectif qui change plus souvent que les mesures n'a pas de sens.
+const DEFAULT_DATE_TRUNC_VALEUR: DateTrunc = 'month'
+const DEFAULT_DATE_TRUNC_OBJECTIF: DateTrunc = 'month'
 
 export const listTauxProgressionForIndicateur = (
   indicateurPublicId: string,
@@ -56,17 +59,19 @@ const buildList = async ({
   const individusCibles = await loadIndividusParPublicId(params.individus)
   if (individusCibles.length === 0) return { items: [] }
 
+  const dateTruncValeur = params.dateTruncValeur ?? DEFAULT_DATE_TRUNC_VALEUR
+  const dateTruncObjectif = params.dateTruncObjectif ?? DEFAULT_DATE_TRUNC_OBJECTIF
   const startedAt = performance.now()
   const [{ ctx: serieCtx, allNodes }, { ctx: objectifCtx }] = await Promise.all([
     loadResolveSerieContext({
       indicateurId: indicateur.id,
       cibles: individusCibles,
-      dateTrunc: DATE_TRUNC,
+      dateTrunc: dateTruncValeur,
     }),
     loadResolveObjectifContext({
       indicateurId: indicateur.id,
       cibles: individusCibles,
-      dateTrunc: DATE_TRUNC,
+      dateTrunc: dateTruncObjectif,
     }),
   ])
   const serieCache = new Map<string, ReadonlyArray<PointInterne>>()
@@ -120,7 +125,8 @@ const buildList = async ({
     {
       event: 'tauxProgression.listTauxProgressionForIndicateur.timing',
       indicateurId: indicateur.id,
-      dateTrunc: DATE_TRUNC,
+      dateTruncValeur,
+      dateTruncObjectif,
       nbCibles: individusCibles.length,
       nbNodes: allNodes.size,
       nbPoints: items.length,

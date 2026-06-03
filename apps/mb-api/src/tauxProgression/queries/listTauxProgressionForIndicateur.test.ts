@@ -140,7 +140,7 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
   )
 
   it(
-    'arrondit le taux de progression à 2 décimales',
+    'tronque le taux de progression à 2 décimales',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const refId = testReferentielId()
@@ -149,7 +149,7 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
         indicateur: { publicId: indId },
         referentiel: { publicId: refId },
       })
-      // 2 / 3 × 100 = 66.6666… → 66.67 (half-up à 2 décimales)
+      // 2 / 3 × 100 = 66.6666… → 66.66 (trunc à 2 décimales, pas half-up)
       await fixtures.valeurAvancement({
         indicateur: { publicId: indId, nom: 'Test' },
         individu: { publicId: deptId, referentiel: { publicId: refId } },
@@ -172,7 +172,7 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
 
       const items = result._unsafeUnwrap().items
       expect(items).toHaveLength(1)
-      expect(items[0]!.tauxProgression).toBe(66.67)
+      expect(items[0]!.tauxProgression).toBe(66.66)
     }),
   )
 
@@ -222,6 +222,59 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       const items = result._unsafeUnwrap().items
       expect(items).toHaveLength(1)
       expect(items[0]).toMatchObject({
+        dateCible: '2024-12-01',
+        valeurCible: 50,
+        tauxProgression: 80,
+      })
+    }),
+  )
+
+  it(
+    "sélectionne l'objectif quand sa dateCible tombe dans le même bucket que la valeur (frontière)",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refId = testReferentielId()
+      const deptId = testDeptId()
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId },
+        referentiel: { publicId: refId },
+      })
+      // Valeur saisie le 2024-12-15 → bucket mensuel `2024-12-01`.
+      // Objectif fixé au 2024-12-31 → même bucket `2024-12-01`.
+      // Sans `>=`, le `findObjectifApplicable` sauterait à l'objectif suivant
+      // et fausserait `valeurCible` / `tauxProgression` pour ce bucket.
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId, nom: 'Test' },
+        individu: { publicId: deptId, referentiel: { publicId: refId } },
+        date: '2024-12-15',
+        valeur: 40,
+      })
+      await fixtures.objectifIndicateurIndividu(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
+          dateCible: '2024-12-31',
+          valeurCible: 50,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
+          dateCible: '2025-12-31',
+          valeurCible: 100,
+        },
+      )
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listTauxProgressionForIndicateur(indId, { individus: [deptId] }),
+      )
+
+      const items = result._unsafeUnwrap().items
+      expect(items).toHaveLength(1)
+      expect(items[0]).toMatchObject({
+        date: '2024-12-01',
         dateCible: '2024-12-01',
         valeurCible: 50,
         tauxProgression: 80,
@@ -756,6 +809,70 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
         valeur: 70, // dept1 (carry 30) + dept2 (40) — preuve que le filtre est en sortie
         tauxProgression: 70,
       })
+    }),
+  )
+
+  // ---------------------------------------------------------------------------
+  // Granularité mixte (dateTruncValeur ≠ dateTruncObjectif)
+  // ---------------------------------------------------------------------------
+
+  it(
+    'aligne des valeurs mensuelles sur un objectif annuel (dateTruncObjectif=year)',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refId = testReferentielId()
+      const deptId = testDeptId()
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId },
+        referentiel: { publicId: refId },
+      })
+      // 3 valeurs mensuelles sur 2024 + un objectif annuel (dateCible 2024-12-31).
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId, nom: 'Test' },
+          individu: { publicId: deptId, referentiel: { publicId: refId } },
+          date: '2024-03-15',
+          valeur: 25,
+        },
+        {
+          indicateur: { publicId: indId, nom: 'Test' },
+          individu: { publicId: deptId, referentiel: { publicId: refId } },
+          date: '2024-06-20',
+          valeur: 50,
+        },
+        {
+          indicateur: { publicId: indId, nom: 'Test' },
+          individu: { publicId: deptId, referentiel: { publicId: refId } },
+          date: '2024-09-10',
+          valeur: 75,
+        },
+      )
+      await fixtures.objectifIndicateurIndividu({
+        indicateur: { publicId: indId },
+        individu: { publicId: deptId },
+        dateCible: '2024-12-31',
+        valeurCible: 100,
+      })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listTauxProgressionForIndicateur(indId, {
+          individus: [deptId],
+          dateTruncValeur: 'month',
+          dateTruncObjectif: 'year',
+        }),
+      )
+
+      const items = result._unsafeUnwrap().items
+      expect(items).toHaveLength(3)
+      // Chaque bucket mensuel de valeur tape la même cible annuelle bucketisée
+      // au 1er janvier (`year` trunc).
+      expect(items.map((p) => p.date)).toEqual(['2024-03-01', '2024-06-01', '2024-09-01'])
+      expect(items.every((p) => p.dateCible === '2024-01-01')).toBe(true)
+      expect(items.every((p) => p.valeurCible === 100)).toBe(true)
+      expect(items.map((p) => p.tauxProgression)).toEqual([25, 50, 75])
     }),
   )
 

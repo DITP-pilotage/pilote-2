@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-import { dateSchema } from './dates'
+import { dateSchema, dateTruncSchema, isCoarserOrEqual } from './dates'
 import { indicateurPublicIdSchema } from './publicIds'
 import { individuPublicIdSchema } from './individu'
 import { individusCsvSchema, MAX_INDIVIDUS_PAR_REQUETE } from './individusCsv'
@@ -11,15 +11,36 @@ export const listTauxProgressionQuerySchema = z
       `Liste d'identifiants d'individus séparés par une virgule (ex. DEPT-84,DEPT-13). 1..${MAX_INDIVIDUS_PAR_REQUETE} identifiants.`,
     ),
     dateDebut: dateSchema.optional().describe(
-      'Date ISO YYYY-MM-DD inclusive (filtre les points dont le bucket mensuel est >= dateDebut).',
+      'Date ISO YYYY-MM-DD inclusive (filtre les points dont le bucket est >= dateDebut).',
     ),
     dateFin: dateSchema.optional().describe(
-      'Date ISO YYYY-MM-DD inclusive (filtre les points dont le bucket mensuel est <= dateFin).',
+      'Date ISO YYYY-MM-DD inclusive (filtre les points dont le bucket est <= dateFin).',
+    ),
+    dateTruncValeur: dateTruncSchema.optional().describe(
+      'Granularité de bucket appliquée aux valeurs (défaut `month`). Détermine la fréquence ' +
+        'des points retournés : un point par bucket de valeur résolu.',
+    ),
+    dateTruncObjectif: dateTruncSchema.optional().describe(
+      'Granularité de bucket appliquée aux objectifs (défaut `month`). Doit être >= ' +
+        '`dateTruncValeur` : un objectif qui change plus souvent que les mesures ne peut pas ' +
+        "être évalué. Cas d'usage typique : `dateTruncValeur=month` + `dateTruncObjectif=year` " +
+        "pour suivre l'évolution mensuelle des valeurs contre un objectif annuel.",
     ),
   })
   .refine(
     (value) => !value.dateDebut || !value.dateFin || value.dateDebut <= value.dateFin,
     { message: 'dateDebut doit être <= dateFin', path: ['dateDebut'] },
+  )
+  .refine(
+    (value) => {
+      const v = value.dateTruncValeur ?? 'month'
+      const o = value.dateTruncObjectif ?? 'month'
+      return isCoarserOrEqual(o, v)
+    },
+    {
+      message: 'dateTruncObjectif doit être de granularité >= dateTruncValeur',
+      path: ['dateTruncObjectif'],
+    },
   )
 export type ListTauxProgressionQuery = z.infer<typeof listTauxProgressionQuerySchema>
 
