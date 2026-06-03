@@ -47,7 +47,10 @@ export type ListTauxProgressionQuery = z.infer<typeof listTauxProgressionQuerySc
 export const tauxProgressionPointApiModelSchema = z.object({
   indicateur: indicateurPublicIdSchema,
   individu: individuPublicIdSchema,
-  date: dateSchema.describe('Bucket mensuel (1er du mois, YYYY-MM-01) de la valeur résolue.'),
+  date: dateSchema.describe(
+    'Borne inférieure du bucket de valeur (YYYY-MM-DD), alignée sur `dateTruncValeur` ' +
+      '(ex. `month` → 1er du mois, `quarter` → 1er du trimestre, `year` → 1er janvier).',
+  ),
   valeur: z
     .number()
     .describe("Valeur d'avancement résolue à ce bucket (saisie directe ou agrégation hiérarchique)."),
@@ -57,7 +60,7 @@ export const tauxProgressionPointApiModelSchema = z.object({
       "Valeur cible de l'objectif applicable à ce bucket (objectif direct ou agrégation hiérarchique).",
     ),
   dateCible: dateSchema.describe(
-    "Bucket mensuel (YYYY-MM-01) de la dateCible de l'objectif applicable.",
+    "Borne inférieure du bucket d'objectif (YYYY-MM-DD), alignée sur `dateTruncObjectif`.",
   ),
   tauxProgression: z
     .number()
@@ -73,9 +76,9 @@ export const tauxProgressionListApiModelSchema = z.object({
   items: z
     .array(tauxProgressionPointApiModelSchema)
     .describe(
-      'Un point par bucket mensuel pour les individus demandés ayant au moins un objectif. ' +
-        'Pour les nœuds parents, la valeur et la valeurCible sont calculées par agrégation hiérarchique. ' +
-        'Les individus sans objectif applicable sont absents. ' +
+      'Un point par bucket de valeur (granularité `dateTruncValeur`) pour les individus demandés ' +
+        'ayant au moins un objectif. Pour les nœuds parents, la valeur et la valeurCible sont ' +
+        'calculées par agrégation hiérarchique. Les individus sans objectif applicable sont absents. ' +
         'Triés par individu (publicId asc) puis par date asc.',
     ),
 })
