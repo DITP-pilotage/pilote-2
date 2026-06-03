@@ -98,7 +98,6 @@ export const AlbertDashboardTable = ({
           <thead className="!bg-dsfr-grey-1000">
             <tr>
               <th className="!text-left !px-4 !py-2">Conversation</th>
-              <th className="!text-left !px-4 !py-2">Utilisateur</th>
               <th className="!text-left !px-4 !py-2">Profil</th>
               <th className="!text-left !px-4 !py-2">
                 <ColonneTri
@@ -140,15 +139,6 @@ export const AlbertDashboardTable = ({
                       {conversation.extraitPremierMessageUser}
                     </div>
                   )}
-                </td>
-                <td className="!px-4 !py-3">
-                  <div>
-                    {conversation.utilisateur.prenom}{" "}
-                    {conversation.utilisateur.nom}
-                  </div>
-                  <div className="!text-xs !text-dsfr-mention-grey">
-                    {conversation.utilisateur.email}
-                  </div>
                 </td>
                 <td className="!px-4 !py-3">
                   <span className="!inline-block !px-2 !py-1 !text-xs !bg-dsfr-grey-1000 !rounded">
