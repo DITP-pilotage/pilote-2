@@ -135,9 +135,9 @@ export const objectifIndicateurIndividuRoutes = new OpenAPIHono()
 
 objectifIndicateurIndividuRoutes.openapi(getObjectifsForIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { individus } = context.req.valid('query')
+  const { individus, dateTrunc } = context.req.valid('query')
 
-  return listObjectifsForIndicateur(id, { individus }).match(
+  return listObjectifsForIndicateur(id, { individus, dateTrunc }).match(
     (data) =>
       jsonResponseOk({
         context,
