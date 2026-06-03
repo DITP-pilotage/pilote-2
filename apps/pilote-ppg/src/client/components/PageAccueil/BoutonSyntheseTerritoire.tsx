@@ -89,6 +89,7 @@ export const BoutonSyntheseTerritoire = ({
                   className="h-full"
                   placeholder="Posez une question sur ce territoire..."
                   scenarios={scenarios}
+                  showExperimentationBanner
                   agentContext={{
                     jalon,
                     territoireCode,
