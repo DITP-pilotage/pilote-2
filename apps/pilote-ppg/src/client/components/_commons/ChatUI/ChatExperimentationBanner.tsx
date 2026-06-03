@@ -2,7 +2,6 @@ import Link from "next/link";
 import { useState } from "react";
 import { Callout } from "@/components/shared/Callout";
 import { CloseLineIcon } from "@/components/_commons/Icones/CloseLineIcon";
-import { ExternalLinkIcon } from "@/components/_commons/Icones/ExternalLinkIcon";
 
 const CHARTE_IA_URL =
   "https://docs.numerique.gouv.fr/docs/fa8a98a7-bb77-4c07-9a16-bd80006ee5ec/";
