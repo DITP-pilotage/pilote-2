@@ -7,7 +7,10 @@ export const Tabs = TabsPrimitive.Root
 
 export function TabsList({ className, ...props }: ComponentProps<typeof TabsPrimitive.List>) {
   return (
-    <TabsPrimitive.List className={clsxm('flex border-b border-border', className)} {...props} />
+    <TabsPrimitive.List
+      className={clsxm('flex gap-1 border-b border-border', className)}
+      {...props}
+    />
   )
 }
 
@@ -15,10 +18,10 @@ export function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsP
   return (
     <TabsPrimitive.Trigger
       className={clsxm(
-        '-mb-px inline-flex items-center border-b-2 border-transparent px-4 py-2 text-sm text-text-muted transition-colors',
+        '-mb-px inline-flex items-center border-b-2 border-transparent px-4 py-3 text-sm font-medium text-text-muted transition-colors',
         'hover:text-text',
-        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
-        'data-[state=active]:border-primary data-[state=active]:text-text data-[state=active]:font-medium',
+        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:rounded-sm',
+        'data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:font-semibold',
         className,
       )}
       {...props}
@@ -29,7 +32,7 @@ export function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsP
 export function TabsContent({ className, ...props }: ComponentProps<typeof TabsPrimitive.Content>) {
   return (
     <TabsPrimitive.Content
-      className={clsxm('pt-4 focus-visible:outline-none', className)}
+      className={clsxm('pt-8 focus-visible:outline-none', className)}
       {...props}
     />
   )

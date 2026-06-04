@@ -1,4 +1,5 @@
 import { Slot, Slottable } from '@radix-ui/react-slot'
+import { ArrowUpRight } from 'lucide-react'
 import type { ComponentProps, ReactNode } from 'react'
 
 import { Heading, Text } from '@/components/ui/Typography'
@@ -11,8 +12,12 @@ type EntityCardProps = Omit<ComponentProps<'div'>, 'title'> & {
   footer?: ReactNode
 }
 
-const styles =
-  'group flex h-full flex-col gap-3 rounded-lg border border-border bg-surface p-4 transition-colors hover:border-secondary-border hover:bg-secondary-hover'
+const styles = [
+  'group relative flex h-full flex-col gap-3 rounded-xl bg-surface p-6',
+  'border border-border transition-all duration-150',
+  'hover:border-primary hover:bg-surface-tinted hover:-translate-y-0.5',
+  'focus-within:border-primary focus-within:bg-surface-tinted',
+].join(' ')
 
 export function EntityCard({
   asChild = false,
@@ -31,15 +36,19 @@ export function EntityCard({
           {kicker}
         </Text>
       )}
-      <Heading as="h3" size="md" className="group-hover:text-primary">
+      <Heading as="h3" size="md" className="text-text transition-colors group-hover:text-primary">
         {title}
       </Heading>
+      <Slottable>{children}</Slottable>
       {footer && (
-        <Text as="div" variant="caption" className="mt-auto">
+        <Text as="div" variant="caption" tone="subtle" className="mt-auto pt-2">
           {footer}
         </Text>
       )}
-      <Slottable>{children}</Slottable>
+      <ArrowUpRight
+        className="absolute right-5 top-5 size-4 text-text-subtle opacity-0 transition-opacity group-hover:text-primary group-hover:opacity-100"
+        aria-hidden
+      />
     </Comp>
   )
 }

@@ -18,7 +18,6 @@ import { BackLink } from '@/components/ui/BackLink'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { FormField } from '@/components/ui/FormField'
 import { Page } from '@/components/ui/Page'
-import { Section } from '@/components/ui/Section'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import {
   indicateurQueryOptions,
@@ -101,20 +100,16 @@ function IndicateurDetailComponent() {
 
   if (indicateur.referentiels.length === 0) {
     return (
-      <Page title={indicateur.nom} back={back}>
-        <Section>
-          <EmptyState title="Aucun référentiel associé à cet indicateur." />
-        </Section>
+      <Page kicker={indicateur.id} title={indicateur.nom} back={back}>
+        <EmptyState title="Aucun référentiel associé à cet indicateur." />
       </Page>
     )
   }
 
   if (!search.individu || !search.referentiel) {
     return (
-      <Page title={indicateur.nom} back={back}>
-        <Section>
-          <EmptyState title="Aucun individu disponible dans les référentiels liés." />
-        </Section>
+      <Page kicker={indicateur.id} title={indicateur.nom} back={back}>
+        <EmptyState title="Aucun individu disponible dans les référentiels liés." />
       </Page>
     )
   }
@@ -123,45 +118,45 @@ function IndicateurDetailComponent() {
   const referentielId = search.referentiel
 
   return (
-    <Page title={indicateur.nom} back={back}>
+    <Page kicker={indicateur.id} title={indicateur.nom} back={back}>
       <IndicateurStatsPanel indicateurId={id} referentielId={referentielId} />
 
-      <FormField label="Individu" htmlFor={selectId}>
-        <IndividuSelect
-          id={selectId}
-          indicateurId={id}
-          value={individuId}
-          onChange={({ individu, referentiel }) => {
-            startTransition(() => {
-              void navigate({
-                search: (prev) => ({ ...prev, individu, referentiel }),
+      <div className="max-w-md">
+        <FormField label="Individu" htmlFor={selectId}>
+          <IndividuSelect
+            id={selectId}
+            indicateurId={id}
+            value={individuId}
+            onChange={({ individu, referentiel }) => {
+              startTransition(() => {
+                void navigate({
+                  search: (prev) => ({ ...prev, individu, referentiel }),
+                })
               })
-            })
-          }}
-        />
-      </FormField>
+            }}
+          />
+        </FormField>
+      </div>
 
       <IndicateurValeursRemarquables indicateurId={id} individuId={individuId} />
 
-      <Section>
-        <Tabs defaultValue="valeurs">
-          <TabsList>
-            <TabsTrigger value="valeurs">Valeurs</TabsTrigger>
-            <TabsTrigger value="metadonnees">Métadonnées</TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue="valeurs">
+        <TabsList>
+          <TabsTrigger value="valeurs">Valeurs</TabsTrigger>
+          <TabsTrigger value="metadonnees">Métadonnées</TabsTrigger>
+        </TabsList>
 
-          <TabsContent value="valeurs">
-            <div className="space-y-6">
-              <IndicateurValeursChart indicateurId={id} individuId={individuId} />
-              <IndicateurWidgets indicateurId={id} referentielId={referentielId} />
-            </div>
-          </TabsContent>
+        <TabsContent value="valeurs">
+          <div className="space-y-10">
+            <IndicateurValeursChart indicateurId={id} individuId={individuId} />
+            <IndicateurWidgets indicateurId={id} referentielId={referentielId} />
+          </div>
+        </TabsContent>
 
-          <TabsContent value="metadonnees">
-            <IndicateurMetadonnees indicateur={indicateur} />
-          </TabsContent>
-        </Tabs>
-      </Section>
+        <TabsContent value="metadonnees">
+          <IndicateurMetadonnees indicateur={indicateur} />
+        </TabsContent>
+      </Tabs>
     </Page>
   )
 }

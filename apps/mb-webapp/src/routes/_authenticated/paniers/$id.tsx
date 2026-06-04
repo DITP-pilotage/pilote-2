@@ -10,7 +10,6 @@ import { BackLink } from '@/components/ui/BackLink'
 import { CardGrid } from '@/components/ui/CardGrid'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Page } from '@/components/ui/Page'
-import { Section } from '@/components/ui/Section'
 import { Text } from '@/components/ui/Typography'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
 import { loadPanier, panierQueryOptions } from '@/queries/paniers'
@@ -60,14 +59,16 @@ function PanierDetailComponent() {
   )
 
   return (
-    <Page title={panier.nom} description={panier.description ?? undefined} back={back}>
-      <Section
-        toolbar={
-          <Text tone="muted">
-            {orderedIndicateurs.length} indicateur{orderedIndicateurs.length > 1 ? 's' : ''}
-          </Text>
-        }
-      >
+    <Page
+      kicker={panier.id}
+      title={panier.nom}
+      description={panier.description ?? undefined}
+      back={back}
+    >
+      <div className="flex flex-col gap-6">
+        <Text as="span" variant="kicker" tone="muted">
+          {orderedIndicateurs.length} indicateur{orderedIndicateurs.length > 1 ? 's' : ''}
+        </Text>
         {orderedIndicateurs.length === 0 ? (
           <EmptyState title="Ce panier ne contient aucun indicateur." />
         ) : (
@@ -77,7 +78,7 @@ function PanierDetailComponent() {
             ))}
           </CardGrid>
         )}
-      </Section>
+      </div>
     </Page>
   )
 }
