@@ -56,7 +56,12 @@ const renderTooltip = ({
   })
   const valeur = valeursByIndex[dataIndex]
   const valeurPrecedente = dataIndex > 0 ? valeursByIndex[dataIndex - 1] : null
-  if (valeur !== null && valeur !== undefined && valeurPrecedente !== null && valeurPrecedente !== undefined) {
+  if (
+    valeur !== null &&
+    valeur !== undefined &&
+    valeurPrecedente !== null &&
+    valeurPrecedente !== undefined
+  ) {
     lines.push(`Variation : <strong>${formatVariationFr(valeur - valeurPrecedente)}</strong>`)
   }
   const taux = tauxByIndex[dataIndex]
