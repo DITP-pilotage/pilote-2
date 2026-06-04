@@ -12,6 +12,11 @@ export const individuApiModelSchema = z.object({
   id: individuPublicIdSchema,
   nom: z.string().describe("Nom lisible de l'individu."),
   referentiel: referentielPublicIdSchema.describe("Référentiel auquel l'individu appartient."),
+  parents: z
+    .array(individuPublicIdSchema)
+    .describe(
+      "Publics IDs des individus parents (hiérarchie). Vide si l'individu est racine. Plusieurs entrées possibles : un individu peut être rattaché à plusieurs parents (ex. commune appartenant à plusieurs EPCI).",
+    ),
   metadata: individuMetadataSchema.describe(
     "Métadonnées libres portées par l'individu (ex. { codeInsee } pour un département). Les widgets s'en servent comme clé de jointure ; le schéma exact est validé côté consommateur.",
   ),

@@ -1,28 +1,50 @@
+import * as PopoverPrimitive from '@radix-ui/react-popover'
 import { type IndividuApiModel } from '@pilote/mb-shared/individu'
 import { type ReferentielApiModel } from '@pilote/mb-shared/referentiel'
 import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query'
+import { Command } from 'cmdk'
+import { Check, ChevronDown, Search } from 'lucide-react'
+import { useMemo, useState } from 'react'
 
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/Select'
+import { clsxm } from '@/lib/clsxm'
 import { indicateurQueryOptions } from '@/queries/indicateurs'
 import { referentielIndividusQueryOptions, referentielQueryOptions } from '@/queries/referentiels'
 
-type Groupe = {
+type IndividuNode = {
+  individu: IndividuApiModel
   referentiel: ReferentielApiModel
-  individus: ReadonlyArray<IndividuApiModel>
+  depth: number
+  parentPath: ReadonlyArray<string>
 }
 
-const flattenAndSort = (groupes: ReadonlyArray<Groupe>): IndividuApiModel[] =>
-  groupes
-    .flatMap((groupe) => [...groupe.individus])
-    .sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
+const buildOrderedNodes = (
+  individus: ReadonlyArray<IndividuApiModel>,
+  referentielsById: ReadonlyMap<string, ReferentielApiModel>,
+): IndividuNode[] => {
+  const byId = new Map(individus.map((i) => [i.id, i] as const))
+  const childrenByParent = new Map<string | null, IndividuApiModel[]>()
+  for (const individu of individus) {
+    const parent = individu.parents.find((p) => byId.has(p)) ?? null
+    const bucket = childrenByParent.get(parent) ?? []
+    bucket.push(individu)
+    childrenByParent.set(parent, bucket)
+  }
+  for (const bucket of childrenByParent.values()) {
+    bucket.sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
+  }
+
+  const ordered: IndividuNode[] = []
+  const visit = (individu: IndividuApiModel, depth: number, parentPath: ReadonlyArray<string>) => {
+    const referentiel = referentielsById.get(individu.referentiel)
+    if (!referentiel) return
+    ordered.push({ individu, referentiel, depth, parentPath })
+    const children = childrenByParent.get(individu.id) ?? []
+    const nextPath = [...parentPath, individu.nom]
+    for (const child of children) visit(child, depth + 1, nextPath)
+  }
+  for (const root of childrenByParent.get(null) ?? []) visit(root, 0, [])
+  return ordered
+}
 
 type IndividuSelectProps = {
   id?: string
@@ -32,6 +54,9 @@ type IndividuSelectProps = {
 }
 
 export function IndividuSelect({ id, indicateurId, value, onChange }: IndividuSelectProps) {
+  const [open, setOpen] = useState(false)
+  const [search, setSearch] = useState('')
+
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(indicateurId))
   const referentielIds = indicateur.referentiels.map(
     (configuration) => configuration.referentielPublicId,
@@ -44,34 +69,129 @@ export function IndividuSelect({ id, indicateurId, value, onChange }: IndividuSe
     queries: referentielIds.map((refId) => referentielIndividusQueryOptions(refId)),
     combine: (results) => results.map((r) => r.data),
   })
-  const groupes: Groupe[] = referentielIds.map((_, i) => ({
-    referentiel: referentiels[i]!,
-    individus: individusByReferentiel[i]!,
-  }))
+
+  const nodes = useMemo(() => {
+    const referentielsById = new Map(referentiels.map((r) => [r.id, r] as const))
+    const allIndividus = individusByReferentiel.flatMap((batch) => [...batch])
+    return buildOrderedNodes(allIndividus, referentielsById)
+  }, [referentiels, individusByReferentiel])
+
+  const selected = nodes.find((node) => node.individu.id === value)
 
   return (
-    <Select
-      value={value}
-      onValueChange={(next) => {
-        const individu = flattenAndSort(groupes).find((i) => i.id === next)
-        if (individu) onChange({ individu: individu.id, referentiel: individu.referentiel })
-      }}
-    >
-      <SelectTrigger id={id} className="min-w-[16rem]">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        {groupes.map((groupe) => (
-          <SelectGroup key={groupe.referentiel.id}>
-            <SelectLabel className="bg-background">{groupe.referentiel.nom}</SelectLabel>
-            {groupe.individus.map((individu) => (
-              <SelectItem key={individu.id} value={individu.id}>
-                {individu.nom}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        ))}
-      </SelectContent>
-    </Select>
+    <PopoverPrimitive.Root open={open} onOpenChange={setOpen}>
+      <PopoverPrimitive.Trigger
+        id={id}
+        className={clsxm(
+          'inline-flex w-full min-w-[28rem] items-center justify-between gap-2 rounded-md border border-border bg-surface px-3 py-2.5 text-left text-sm font-medium text-text',
+          'hover:border-border-strong',
+          'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+          'data-[state=open]:border-primary',
+        )}
+      >
+        <span className="flex min-w-0 flex-col">
+          {selected ? (
+            <>
+              <span className="flex items-baseline gap-2">
+                <span className="truncate">{selected.individu.nom}</span>
+                <span className="shrink-0 font-mono text-xs font-normal text-text-subtle">
+                  {selected.individu.id}
+                </span>
+              </span>
+              {selected.parentPath.length > 0 ? (
+                <span className="truncate text-xs font-normal text-text-muted">
+                  {selected.parentPath.join(' › ')}
+                </span>
+              ) : null}
+            </>
+          ) : (
+            <span className="text-text-subtle">Sélectionner un individu…</span>
+          )}
+        </span>
+        <ChevronDown className="size-4 shrink-0 text-text-muted" />
+      </PopoverPrimitive.Trigger>
+
+      <PopoverPrimitive.Portal>
+        <PopoverPrimitive.Content
+          align="start"
+          sideOffset={6}
+          className="z-50 w-[var(--radix-popover-trigger-width)] min-w-[32rem] overflow-hidden rounded-lg border border-border bg-surface shadow-[0_8px_24px_rgba(0,0,0,0.06)]"
+        >
+          <Command
+            label="Rechercher un individu"
+            filter={(itemValue, query) => {
+              const haystack = itemValue.toLowerCase()
+              const needle = query.trim().toLowerCase()
+              if (!needle) return 1
+              return haystack.includes(needle) ? 1 : 0
+            }}
+          >
+            <div className="flex items-center gap-2 border-b border-border px-3">
+              <Search className="size-4 text-text-muted" />
+              <Command.Input
+                value={search}
+                onValueChange={setSearch}
+                placeholder="Rechercher…"
+                className="h-10 w-full bg-transparent text-sm text-text outline-none placeholder:text-text-subtle"
+              />
+            </div>
+            <Command.List className="max-h-[min(20rem,var(--radix-popover-content-available-height))] overflow-y-auto p-1.5">
+              <Command.Empty className="px-3 py-6 text-center text-sm text-text-muted">
+                Aucun individu trouvé.
+              </Command.Empty>
+              {nodes.map((node) => {
+                const isSelected = node.individu.id === value
+                const searchableValue = [
+                  node.individu.nom,
+                  node.individu.id,
+                  ...node.parentPath,
+                  node.referentiel.nom,
+                ].join(' ')
+                return (
+                  <Command.Item
+                    key={node.individu.id}
+                    value={searchableValue}
+                    onSelect={() => {
+                      onChange({
+                        individu: node.individu.id,
+                        referentiel: node.individu.referentiel,
+                      })
+                      setOpen(false)
+                      setSearch('')
+                    }}
+                    className={clsxm(
+                      'flex cursor-pointer select-none items-center gap-2 rounded-md px-2.5 py-2 text-sm text-text outline-none',
+                      'data-[selected=true]:bg-surface-tinted data-[selected=true]:text-primary',
+                      isSelected && 'bg-primary-tinted font-semibold text-primary',
+                    )}
+                    style={{ paddingLeft: `${0.625 + node.depth * 0.875}rem` }}
+                  >
+                    <Check
+                      className={clsxm('size-4 shrink-0', isSelected ? 'opacity-100' : 'opacity-0')}
+                    />
+                    <span className="flex min-w-0 flex-1 flex-col">
+                      <span className="flex items-baseline gap-2">
+                        <span className="truncate">{node.individu.nom}</span>
+                        <span className="shrink-0 font-mono text-[11px] font-normal text-text-subtle">
+                          {node.individu.id}
+                        </span>
+                      </span>
+                      {node.parentPath.length > 0 ? (
+                        <span className="truncate text-xs font-normal text-text-muted">
+                          {node.parentPath.join(' › ')}
+                        </span>
+                      ) : null}
+                    </span>
+                    <span className="shrink-0 rounded-full bg-surface-tinted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+                      {node.referentiel.nom}
+                    </span>
+                  </Command.Item>
+                )
+              })}
+            </Command.List>
+          </Command>
+        </PopoverPrimitive.Content>
+      </PopoverPrimitive.Portal>
+    </PopoverPrimitive.Root>
   )
 }
