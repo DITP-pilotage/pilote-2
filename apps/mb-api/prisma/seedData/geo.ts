@@ -238,39 +238,22 @@ const profils = [
 ] as const
 
 // Profil dédié pour les indicateurs en pourcentage : borné par construction
-// dans [0, 100] (base 70, amplitudes choisies pour ne pas déborder).
-const PROFIL_TAUX_POURCENTAGE = {
-  baseValeur: 70,
-  amplitude: 12,
-  trend: 4,
+// dans [0, 100] (base 60, amplitudes choisies pour ne pas déborder).
+const PROFIL_POURCENTAGE = {
+  baseValeur: 60,
+  amplitude: 18,
+  trend: 6,
   decimals: 1,
 } as const
 
-// Indicateurs dont la valeur représente un pourcentage : on force un profil
-// borné 0-100 plutôt qu'un profil cyclique générique (où IND-001 / IND-049
-// auraient hérité de bases à 720k / 1200 — non sensé pour un taux).
-const INDICATEURS_TAUX_POURCENTAGE = new Set<string>([
-  'IND-001', // Taux de chômage
-  'IND-010', // Taux de vaccination infantile
-  'IND-011', // Accès aux soins de proximité
-  'IND-012', // Couverture des services France Santé
-  'IND-014', // Amélioration de l'orientation des élèves (indice 0-100)
-  'IND-015', // Taux de réussite au baccalauréat
-  'IND-020', // Qualité de l'air en zones urbaines (indice 0-100)
-  'IND-026', // Présence postale en zone rurale (couverture %)
-  'IND-028', // Désertification médicale
-  'IND-030', // Élucidation des cambriolages
-  'IND-038', // Taux d'emploi des seniors
-  'IND-039', // Taux d'emploi des jeunes
-  'IND-043', // Couverture 5G du territoire
-  'IND-044', // Dématérialisation des démarches
-  'IND-048', // Pauvreté
-  'IND-049', // Taux d'alphabétisation
-  'IND-050', // Accès à internet haut débit
-])
-
-const profilPourIndicateur = (indicateurPublicId: string) => {
-  if (INDICATEURS_TAUX_POURCENTAGE.has(indicateurPublicId)) return PROFIL_TAUX_POURCENTAGE
+const profilPourIndicateur = ({
+  indicateurPublicId,
+  estPourcentage,
+}: {
+  indicateurPublicId: string
+  estPourcentage: boolean
+}) => {
+  if (estPourcentage) return PROFIL_POURCENTAGE
   const match = /(\d+)$/.exec(indicateurPublicId)
   const rang = match ? parseInt(match[1]!, 10) : 0
   return profils[rang % profils.length]!
@@ -285,9 +268,11 @@ const clamp = (valeur: number, min: number, max: number): number =>
 export const buildValeursPourIndicateur = ({
   indicateurPublicId,
   individuPublicIds,
+  estPourcentage,
 }: {
   indicateurPublicId: string
   individuPublicIds: ReadonlyArray<string>
+  estPourcentage: boolean
 }): ReadonlyArray<{
   indicateurPublicId: string
   individuPublicId: string
@@ -296,8 +281,7 @@ export const buildValeursPourIndicateur = ({
 }> => {
   const frequence = frequencePourIndicateur(indicateurPublicId)
   const dates = datesPourFrequence(frequence)
-  const profil = profilPourIndicateur(indicateurPublicId)
-  const estTauxPourcentage = INDICATEURS_TAUX_POURCENTAGE.has(indicateurPublicId)
+  const profil = profilPourIndicateur({ indicateurPublicId, estPourcentage })
   const lastIndex = Math.max(dates.length - 1, 1)
   return individuPublicIds.flatMap((individuPublicId, individuIndex) =>
     dates.map((date, dateIndex) => {
@@ -309,7 +293,7 @@ export const buildValeursPourIndicateur = ({
       })
       // Filet de sécurité : la combinaison oscillation+offset+trend pourrait
       // théoriquement déborder pour les taux ; on garantit [0, 100].
-      const valeur = estTauxPourcentage ? clamp(valeurBrute, 0, 100) : valeurBrute
+      const valeur = estPourcentage ? clamp(valeurBrute, 0, 100) : valeurBrute
       return { indicateurPublicId, individuPublicId, date, valeur }
     }),
   )
@@ -324,17 +308,18 @@ const OBJECTIF_DATES = ['2024-01-01', '2025-01-01', '2026-01-01'] as const
 export const buildObjectifsPourIndicateur = ({
   indicateurPublicId,
   individuPublicIds,
+  estPourcentage,
 }: {
   indicateurPublicId: string
   individuPublicIds: ReadonlyArray<string>
+  estPourcentage: boolean
 }): ReadonlyArray<{
   indicateurPublicId: string
   individuPublicId: string
   dateCible: string
   valeurCible: number
 }> => {
-  const profil = profilPourIndicateur(indicateurPublicId)
-  const estTauxPourcentage = INDICATEURS_TAUX_POURCENTAGE.has(indicateurPublicId)
+  const profil = profilPourIndicateur({ indicateurPublicId, estPourcentage })
   const lastIndex = Math.max(OBJECTIF_DATES.length - 1, 1)
   return individuPublicIds.flatMap((individuPublicId, individuIndex) =>
     OBJECTIF_DATES.map((dateCible, dateIndex) => {
@@ -345,7 +330,7 @@ export const buildObjectifsPourIndicateur = ({
         individuIndex,
         dateIndex,
       })
-      const valeurCible = estTauxPourcentage ? clamp(valeurBrute, 0, 100) : valeurBrute
+      const valeurCible = estPourcentage ? clamp(valeurBrute, 0, 100) : valeurBrute
       return { indicateurPublicId, individuPublicId, dateCible, valeurCible }
     }),
   )

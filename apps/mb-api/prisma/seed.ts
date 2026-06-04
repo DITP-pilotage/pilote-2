@@ -25,29 +25,30 @@ const indicateursSeed: ReadonlyArray<{
   publicId: string
   nom: string
   visibilite?: 'PUBLIC' | 'PRIVE'
+  unite?: 'POURCENTAGE' | 'ANNEES'
 }> = [
-  { publicId: 'IND-001', nom: 'Taux de chômage' },
+  { publicId: 'IND-001', nom: 'Taux de chômage', unite: 'POURCENTAGE' },
   { publicId: 'IND-002', nom: 'Émissions de CO2' },
-  { publicId: 'IND-003', nom: 'Couverture fibre' },
+  { publicId: 'IND-003', nom: 'Couverture fibre', unite: 'POURCENTAGE' },
   { publicId: 'IND-004', nom: 'Délai de traitement préfectures' },
   { publicId: 'IND-005', nom: 'Effectif police nationale' },
   { publicId: 'IND-006', nom: 'Indicateur expérimental ancien' },
   { publicId: 'IND-007', nom: 'Indicateur en pause' },
   { publicId: 'IND-008', nom: 'Satisfaction usagers services publics' },
   { publicId: 'IND-009', nom: 'Délai moyen de prise en charge urgences' },
-  { publicId: 'IND-010', nom: 'Taux de vaccination infantile' },
-  { publicId: 'IND-011', nom: 'Accès aux soins de proximité' },
+  { publicId: 'IND-010', nom: 'Taux de vaccination infantile', unite: 'POURCENTAGE' },
+  { publicId: 'IND-011', nom: 'Accès aux soins de proximité', unite: 'POURCENTAGE' },
   { publicId: 'IND-012', nom: 'Couverture des services France Santé' },
   { publicId: 'IND-013', nom: 'Déploiement de France Santé' },
   { publicId: 'IND-014', nom: "Amélioration de l'orientation des élèves" },
-  { publicId: 'IND-015', nom: 'Taux de réussite au baccalauréat' },
+  { publicId: 'IND-015', nom: 'Taux de réussite au baccalauréat', unite: 'POURCENTAGE' },
   { publicId: 'IND-016', nom: 'Nombre de places en crèche' },
   { publicId: 'IND-017', nom: 'Logements rénovés énergétiquement' },
   { publicId: 'IND-018', nom: "Production d'énergies renouvelables" },
   { publicId: 'IND-019', nom: 'Émissions de gaz à effet de serre' },
   { publicId: 'IND-020', nom: "Qualité de l'air en zones urbaines" },
   { publicId: 'IND-021', nom: 'Aires protégées (terre et mer)' },
-  { publicId: 'IND-022', nom: 'Tri et valorisation des déchets' },
+  { publicId: 'IND-022', nom: 'Tri et valorisation des déchets', unite: 'POURCENTAGE' },
   { publicId: 'IND-023', nom: 'Délai de traitement CAF' },
   { publicId: 'IND-024', nom: 'Délai de traitement Pôle emploi' },
   { publicId: 'IND-025', nom: "Délai de délivrance des titres d'identité" },
@@ -60,25 +61,36 @@ const indicateursSeed: ReadonlyArray<{
   { publicId: 'IND-032', nom: 'Délai de jugement civil' },
   { publicId: 'IND-033', nom: 'Délai de jugement pénal' },
   { publicId: 'IND-034', nom: 'Recettes fiscales nettes' },
-  { publicId: 'IND-035', nom: 'Dette publique / PIB' },
-  { publicId: 'IND-036', nom: 'Croissance du PIB' },
-  { publicId: 'IND-037', nom: 'Inflation (IPC)' },
-  { publicId: 'IND-038', nom: "Taux d'emploi des seniors" },
-  { publicId: 'IND-039', nom: "Taux d'emploi des jeunes" },
+  { publicId: 'IND-035', nom: 'Dette publique / PIB', unite: 'POURCENTAGE' },
+  { publicId: 'IND-036', nom: 'Croissance du PIB', unite: 'POURCENTAGE' },
+  { publicId: 'IND-037', nom: 'Inflation (IPC)', unite: 'POURCENTAGE' },
+  { publicId: 'IND-038', nom: "Taux d'emploi des seniors", unite: 'POURCENTAGE' },
+  { publicId: 'IND-039', nom: "Taux d'emploi des jeunes", unite: 'POURCENTAGE' },
   { publicId: 'IND-040', nom: 'Apprentissage — contrats signés' },
   { publicId: 'IND-041', nom: "Création nette d'entreprises" },
   { publicId: 'IND-042', nom: 'Exportations de biens' },
-  { publicId: 'IND-043', nom: 'Couverture 5G du territoire' },
+  { publicId: 'IND-043', nom: 'Couverture 5G du territoire', unite: 'POURCENTAGE' },
   { publicId: 'IND-044', nom: 'Dématérialisation des démarches administratives' },
   { publicId: 'IND-045', nom: "Cyberattaques traitées par l'ANSSI" },
   { publicId: 'IND-046', nom: 'Indicateur public — Démographie', visibilite: 'PUBLIC' },
-  { publicId: 'IND-047', nom: 'Indicateur public — Espérance de vie', visibilite: 'PUBLIC' },
+  {
+    publicId: 'IND-047',
+    nom: 'Indicateur public — Espérance de vie',
+    visibilite: 'PUBLIC',
+    unite: 'ANNEES',
+  },
   { publicId: 'IND-048', nom: 'Indicateur public — Pauvreté', visibilite: 'PUBLIC' },
-  { publicId: 'IND-049', nom: "Indicateur public — Taux d'alphabétisation", visibilite: 'PUBLIC' },
+  {
+    publicId: 'IND-049',
+    nom: "Indicateur public — Taux d'alphabétisation",
+    visibilite: 'PUBLIC',
+    unite: 'POURCENTAGE',
+  },
   {
     publicId: 'IND-050',
     nom: 'Indicateur public — Accès à internet haut débit',
     visibilite: 'PUBLIC',
+    unite: 'POURCENTAGE',
   },
 ]
 
@@ -159,14 +171,16 @@ const main = async () => {
   for (const [index, item] of indicateursSeed.entries()) {
     const { createdAt, updatedAt } = indicateurDates(index)
     const visibilite = item.visibilite ?? 'PRIVE'
+    const unite = item.unite ?? null
     await prisma.indicateur.upsert({
       where: { publicId: item.publicId },
-      update: { nom: item.nom, visibilite, updatedAt },
+      update: { nom: item.nom, visibilite, unite, updatedAt },
       create: {
         id: uuidv7(),
         publicId: item.publicId,
         nom: item.nom,
         visibilite,
+        unite,
         createdAt,
         updatedAt,
       },
@@ -434,6 +448,26 @@ const main = async () => {
     individusParReferentielId.set(refId, liste)
   }
 
+  const unitePourIndicateur = new Map(indicateursSeed.map((i) => [i.publicId, i.unite ?? null]))
+
+  // Purge ciblée pour les indicateurs en POURCENTAGE : la contrainte d'unicité
+  // (indicateurId, individuId, date) + `skipDuplicates` garderait sinon les
+  // valeurs des seeds antérieurs (où ces indicateurs héritaient d'un profil
+  // cyclique générique, ex. base 720 000 pour le chômage). On supprime pour
+  // forcer un ré-insert avec le profil borné [0, 100].
+  const indicateursAPurger = indicateursSeed
+    .filter((i) => i.unite === 'POURCENTAGE')
+    .map((i) => indicateursParPublicId.get(i.publicId))
+    .filter((id): id is string => id !== undefined)
+  if (indicateursAPurger.length > 0) {
+    await prisma.valeurAvancement.deleteMany({
+      where: { indicateurId: { in: indicateursAPurger } },
+    })
+    await prisma.objectifIndicateurIndividu.deleteMany({
+      where: { indicateurId: { in: indicateursAPurger } },
+    })
+  }
+
   let valeursCount = 0
   for (const lien of indicateurReferentielsSeed) {
     const refPublicId = mailleLaPlusFine(lien.referentiels.map((r) => r.referentielPublicId))
@@ -448,6 +482,7 @@ const main = async () => {
     const generated = buildValeursPourIndicateur({
       indicateurPublicId: lien.indicateurPublicId,
       individuPublicIds: individusPublicIds,
+      estPourcentage: unitePourIndicateur.get(lien.indicateurPublicId) === 'POURCENTAGE',
     })
     const rows = generated
       .map((g) => {
@@ -492,6 +527,7 @@ const main = async () => {
     const generated = buildObjectifsPourIndicateur({
       indicateurPublicId,
       individuPublicIds: individusPublicIds,
+      estPourcentage: unitePourIndicateur.get(indicateurPublicId) === 'POURCENTAGE',
     })
     const rows = generated
       .map((g) => {

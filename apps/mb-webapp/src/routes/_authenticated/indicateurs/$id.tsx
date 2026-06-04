@@ -119,7 +119,11 @@ function IndicateurDetailComponent() {
 
   return (
     <Page kicker={indicateur.id} title={indicateur.nom} back={back}>
-      <IndicateurStatsPanel indicateurId={id} referentielId={referentielId} />
+      <IndicateurStatsPanel
+        indicateurId={id}
+        referentielId={referentielId}
+        unite={indicateur.unite}
+      />
 
       <div className="max-w-md">
         <FormField label="Individu" htmlFor={selectId}>
@@ -138,7 +142,11 @@ function IndicateurDetailComponent() {
         </FormField>
       </div>
 
-      <IndicateurValeursRemarquables indicateurId={id} individuId={individuId} />
+      <IndicateurValeursRemarquables
+        indicateurId={id}
+        individuId={individuId}
+        unite={indicateur.unite}
+      />
 
       <Tabs defaultValue="valeurs">
         <TabsList>
@@ -148,7 +156,11 @@ function IndicateurDetailComponent() {
 
         <TabsContent value="valeurs">
           <div className="space-y-10">
-            <IndicateurValeursChart indicateurId={id} individuId={individuId} />
+            <IndicateurValeursChart
+              indicateurId={id}
+              individuId={individuId}
+              unite={indicateur.unite}
+            />
             <IndicateurWidgets indicateurId={id} referentielId={referentielId} />
           </div>
         </TabsContent>

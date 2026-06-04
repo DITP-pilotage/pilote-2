@@ -1,9 +1,15 @@
+import { type UniteIndicateurApiModel } from '@pilote/mb-shared/indicateur'
 import { type ValeurDateApiModel } from '@pilote/mb-shared/valeurAvancement'
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { StatCard } from '@/components/ui/StatCard'
 import { StatGrid } from '@/components/ui/StatGrid'
-import { formatDateFr, formatNumberFr, formatVariationFr } from '@/lib/format'
+import {
+  formatDateFr,
+  formatNumberAvecUniteFr,
+  formatNumberFr,
+  formatVariationFr,
+} from '@/lib/format'
 import {
   indicateurSyntheseIndividuQueryOptions,
   indicateurTauxProgressionQueryOptions,
@@ -26,11 +32,13 @@ const variationTone = (variation: number | null): 'positive' | 'negative' | 'mut
 type IndicateurValeursRemarquablesProps = {
   indicateurId: string
   individuId: string
+  unite: UniteIndicateurApiModel | null
 }
 
 export function IndicateurValeursRemarquables({
   indicateurId,
   individuId,
+  unite,
 }: IndicateurValeursRemarquablesProps) {
   const { data: synthese } = useSuspenseQuery(
     indicateurSyntheseIndividuQueryOptions(indicateurId, individuId),
@@ -53,7 +61,7 @@ export function IndicateurValeursRemarquables({
       <StatCard
         label="Valeur la plus récente"
         tone={derniereValeur ? 'neutral' : 'muted'}
-        value={derniereValeur ? formatNumberFr(derniereValeur.valeur) : '—'}
+        value={derniereValeur ? formatNumberAvecUniteFr(derniereValeur.valeur, unite) : '—'}
         caption={derniereValeur ? `au ${formatDateFr(derniereValeur.date)}` : undefined}
       />
       <StatCard
@@ -70,7 +78,7 @@ export function IndicateurValeursRemarquables({
               ? '—'
               : `${formatNumberFr(dernierPoint.tauxProgression)} %`
           }
-          caption={`cible : ${formatNumberFr(dernierPoint.valeurCible)} au ${formatDateFr(dernierPoint.dateCible)}`}
+          caption={`cible : ${formatNumberAvecUniteFr(dernierPoint.valeurCible, unite)} au ${formatDateFr(dernierPoint.dateCible)}`}
         />
       )}
     </StatGrid>

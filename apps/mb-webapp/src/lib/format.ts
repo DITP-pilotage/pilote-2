@@ -1,4 +1,5 @@
 import { Temporal } from '@js-temporal/polyfill'
+import { type UniteIndicateurApiModel } from '@pilote/mb-shared/indicateur'
 
 const numberFr = new Intl.NumberFormat('fr-FR')
 const variationFr = new Intl.NumberFormat('fr-FR', { signDisplay: 'exceptZero' })
@@ -11,6 +12,16 @@ const monthYearNumericFr = new Intl.DateTimeFormat('fr-FR', monthYearNumericOpti
 const toDate = (value: Date | string): Date => (typeof value === 'string' ? new Date(value) : value)
 
 export const formatNumberFr = (value: number): string => numberFr.format(value)
+
+// Espace fine insécable (U+202F) entre la valeur et l'abréviation, conforme
+// à la typographie fr-FR (`70 %`, `82 ans`).
+const NBSP_FINE = '\u202F'
+
+export const formatNumberAvecUniteFr = (
+  value: number,
+  unite: UniteIndicateurApiModel | null,
+): string =>
+  unite ? `${numberFr.format(value)}${NBSP_FINE}${unite.abbreviation}` : numberFr.format(value)
 
 export const formatVariationFr = (value: number): string => variationFr.format(value)
 

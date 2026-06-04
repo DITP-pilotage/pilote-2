@@ -51,12 +51,13 @@ model ApiKey {
 }
 
 model Indicateur {
-  id         String     @id @db.Uuid
-  publicId   String     @unique @map("public_id")
+  id         String            @id @db.Uuid
+  publicId   String            @unique @map("public_id")
   nom        String
   visibilite Visibilite
-  createdAt  DateTime   @default(now()) @map("created_at")
-  updatedAt  DateTime   @updatedAt      @map("updated_at")
+  unite      UniteIndicateur?
+  createdAt  DateTime          @default(now()) @map("created_at")
+  updatedAt  DateTime          @updatedAt      @map("updated_at")
 
   valeurs      ValeurAvancement[]
   objectifs    ObjectifIndicateurIndividu[]
@@ -80,6 +81,13 @@ enum Visibilite {
   PRIVE
 
   @@map("visibilite_enum")
+}
+
+enum UniteIndicateur {
+  POURCENTAGE
+  ANNEES
+
+  @@map("unite_indicateur_enum")
 }
 
 model IndicateurReferentiel {

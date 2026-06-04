@@ -1,22 +1,28 @@
+import { type UniteIndicateurApiModel } from '@pilote/mb-shared/indicateur'
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { StatCard } from '@/components/ui/StatCard'
 import { StatGrid } from '@/components/ui/StatGrid'
-import { formatNumberFr } from '@/lib/format'
+import { formatNumberAvecUniteFr } from '@/lib/format'
 import { indicateurValeursRemarquablesQueryOptions } from '@/queries/indicateurs'
-
-const formatStat = (value: number | null): string => (value === null ? '—' : formatNumberFr(value))
 
 type IndicateurStatsPanelProps = {
   indicateurId: string
   referentielId: string
+  unite: UniteIndicateurApiModel | null
 }
 
-export function IndicateurStatsPanel({ indicateurId, referentielId }: IndicateurStatsPanelProps) {
+export function IndicateurStatsPanel({
+  indicateurId,
+  referentielId,
+  unite,
+}: IndicateurStatsPanelProps) {
   const { data } = useSuspenseQuery(
     indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId),
   )
   const stats = data.items[0] ?? { min: null, max: null, mediane: null }
+  const formatStat = (value: number | null): string =>
+    value === null ? '—' : formatNumberAvecUniteFr(value, unite)
 
   return (
     <StatGrid columns={3}>

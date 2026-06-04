@@ -120,7 +120,7 @@ const updateIndicateurExistant = async (
   const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
   await db().indicateur.update({
     where: { publicId },
-    data: { nom: body.nom, visibilite: body.visibilite },
+    data: { nom: body.nom, visibilite: body.visibilite, unite: body.unite },
   })
   await remplacerConfigurationsReferentiels(indicateurId, configurations)
 }
@@ -142,7 +142,13 @@ const createIndicateurAvecGrants = async (
   const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
   const indicateurId = uuidv7()
   await db().indicateur.create({
-    data: { id: indicateurId, publicId, nom: body.nom, visibilite: body.visibilite },
+    data: {
+      id: indicateurId,
+      publicId,
+      nom: body.nom,
+      visibilite: body.visibilite,
+      unite: body.unite,
+    },
   })
   await grantOwnerPermissions(principalId, indicateurId)
   if (configurations.length > 0) {

@@ -20,6 +20,31 @@ export const fonctionAgregationSchema = z
   )
 export type FonctionAgregation = z.infer<typeof fonctionAgregationSchema>
 
+export const UNITES_INDICATEUR = ['POURCENTAGE', 'ANNEES'] as const
+export type UniteIndicateurCode = (typeof UNITES_INDICATEUR)[number]
+
+export const uniteIndicateurCodeSchema = z
+  .enum(UNITES_INDICATEUR)
+  .describe(
+    "Code de l'unité de mesure de l'indicateur. Catalogue plateforme, fermé, étendu par déploiement.",
+  )
+
+export const UNITES_INDICATEUR_CONFIG = {
+  POURCENTAGE: { libelle: 'Pourcentage', abbreviation: '%' },
+  ANNEES: { libelle: 'Années', abbreviation: 'ans' },
+} satisfies Record<UniteIndicateurCode, { libelle: string; abbreviation: string }>
+
+export const uniteIndicateurApiModelSchema = z
+  .object({
+    code: uniteIndicateurCodeSchema,
+    libelle: z.string().describe("Libellé affichable de l'unité (français)."),
+    abbreviation: z
+      .string()
+      .describe("Abréviation de l'unité, à suffixer aux valeurs (ex. `%`, `ans`)."),
+  })
+  .describe("Unité de mesure d'un indicateur, sérialisée enrichie pour les clients API.")
+export type UniteIndicateurApiModel = z.infer<typeof uniteIndicateurApiModelSchema>
+
 export const configurationIndicateurReferentielSchema = z
   .object({
     referentielPublicId: referentielPublicIdSchema,
@@ -34,6 +59,11 @@ export const indicateurApiModelSchema = z.object({
   id: indicateurPublicIdSchema,
   nom: z.string().describe("Nom lisible de l'indicateur."),
   visibilite: indicateurVisibiliteSchema,
+  unite: uniteIndicateurApiModelSchema
+    .nullable()
+    .describe(
+      "Unité de mesure de l'indicateur, ou `null` si non renseignée (valeur brute, sans unité).",
+    ),
   referentiels: z
     .array(configurationIndicateurReferentielSchema)
     .describe(
@@ -67,6 +97,11 @@ export type ListIndicateursQuery = z.infer<typeof listIndicateursQuerySchema>
 export const upsertIndicateurBodySchema = z.object({
   nom: z.string().min(1).describe("Nom lisible de l'indicateur."),
   visibilite: indicateurVisibiliteSchema,
+  unite: uniteIndicateurCodeSchema
+    .nullable()
+    .describe(
+      "Code de l'unité de mesure de l'indicateur, ou `null` pour effacer / ne pas renseigner (valeur brute, sans unité).",
+    ),
   referentiels: z
     .array(configurationIndicateurReferentielSchema)
     .describe(

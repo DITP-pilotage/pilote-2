@@ -1,9 +1,15 @@
+import { type UniteIndicateurApiModel } from '@pilote/mb-shared/indicateur'
 import { useSuspenseQueries } from '@tanstack/react-query'
 import ReactECharts from 'echarts-for-react'
 import { useMemo } from 'react'
 
 import { buildMonthlySeries } from '@/components/indicateurs/MonthlySeries'
-import { formatMonthYearShortFr, formatNumberFr, formatVariationFr } from '@/lib/format'
+import {
+  formatMonthYearShortFr,
+  formatNumberAvecUniteFr,
+  formatNumberFr,
+  formatVariationFr,
+} from '@/lib/format'
 import {
   indicateurTauxProgressionQueryOptions,
   indicateurValeursQueryOptions,
@@ -18,6 +24,7 @@ const SERIES_OBJECTIF = 'Objectif'
 type IndicateurValeursChartProps = {
   indicateurId: string
   individuId: string
+  unite: UniteIndicateurApiModel | null
 }
 
 type AxisTooltipParam = {
@@ -38,11 +45,13 @@ const renderTooltip = ({
   labels,
   valeursByIndex,
   tauxByIndex,
+  unite,
 }: {
   params: ReadonlyArray<AxisTooltipParam>
   labels: ReadonlyArray<string>
   valeursByIndex: ReadonlyArray<number | null>
   tauxByIndex: ReadonlyArray<number | null>
+  unite: UniteIndicateurApiModel | null
 }): string => {
   const head = params[0]
   if (!head) return ''
@@ -51,7 +60,7 @@ const renderTooltip = ({
   const lines = params.map((p) => {
     const marker = p.marker ?? ''
     const name = p.seriesName ?? ''
-    const value = typeof p.value === 'number' ? formatNumberFr(p.value) : '—'
+    const value = typeof p.value === 'number' ? formatNumberAvecUniteFr(p.value, unite) : '—'
     return `${marker}${name} : <strong>${value}</strong>`
   })
   const valeur = valeursByIndex[dataIndex]
@@ -71,7 +80,11 @@ const renderTooltip = ({
   return `${monthLabel}<br/>${lines.join('<br/>')}`
 }
 
-export function IndicateurValeursChart({ indicateurId, individuId }: IndicateurValeursChartProps) {
+export function IndicateurValeursChart({
+  indicateurId,
+  individuId,
+  unite,
+}: IndicateurValeursChartProps) {
   // useSuspenseQueries pour lancer les 2 requêtes en parallèle (pas de waterfall).
   const [{ data: valeurs }, { data: taux }] = useSuspenseQueries({
     queries: [
@@ -105,6 +118,7 @@ export function IndicateurValeursChart({ indicateurId, individuId }: IndicateurV
           labels,
           valeursByIndex: series.values,
           tauxByIndex: series.tauxProgression,
+          unite,
         }),
     },
     xAxis: {
@@ -115,7 +129,7 @@ export function IndicateurValeursChart({ indicateurId, individuId }: IndicateurV
     yAxis: {
       type: 'value',
       axisLabel: {
-        formatter: (value: number) => formatNumberFr(value),
+        formatter: (value: number) => formatNumberAvecUniteFr(value, unite),
       },
     },
     dataZoom: showSlider
