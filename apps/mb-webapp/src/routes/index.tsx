@@ -1,9 +1,7 @@
-import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight, BarChart3, ShoppingBasket } from 'lucide-react'
 import type { ReactNode } from 'react'
 
-import { fetchSharedMessage } from '@/api/sharedMessage'
 import { Button } from '@/components/ui/Button'
 import { Section } from '@/components/ui/Section'
 import { Heading, Text } from '@/components/ui/Typography'
@@ -20,8 +18,6 @@ function HomeComponent() {
       <HeroSection isAuthenticated={auth.isAuthenticated} onLogin={() => auth.login()} />
 
       <CapabilitiesSection />
-
-      <ConnectionStatusSection isAuthenticated={auth.isAuthenticated} />
     </div>
   )
 }
@@ -197,65 +193,5 @@ function CapabilityCard({
         <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
       </div>
     </Link>
-  )
-}
-
-function ConnectionStatusSection({ isAuthenticated }: { isAuthenticated: boolean }) {
-  const { data, isPending, isError } = useQuery({
-    queryKey: ['shared-message'],
-    queryFn: fetchSharedMessage,
-  })
-
-  const apiStatus = isPending
-    ? { tone: 'muted' as const, label: 'Connexion en cours' }
-    : isError
-      ? { tone: 'negative' as const, label: 'API injoignable' }
-      : { tone: 'positive' as const, label: 'API connectée' }
-
-  const authStatus = isAuthenticated
-    ? { tone: 'positive' as const, label: 'Session authentifiée' }
-    : { tone: 'muted' as const, label: 'Session anonyme' }
-
-  return (
-    <Section tone="plain" kicker="Diagnostic" title="État de la liaison">
-      <div className="grid gap-3 sm:grid-cols-2">
-        <StatusRow label="Backend" tone={apiStatus.tone}>
-          {apiStatus.label}
-          {data?.greeting && (
-            <Text as="span" variant="caption" tone="subtle" className="ml-2">
-              {data.greeting}
-            </Text>
-          )}
-        </StatusRow>
-        <StatusRow label="Authentification" tone={authStatus.tone}>
-          {authStatus.label}
-        </StatusRow>
-      </div>
-    </Section>
-  )
-}
-
-function StatusRow({
-  label,
-  tone,
-  children,
-}: {
-  label: string
-  tone: 'positive' | 'negative' | 'muted'
-  children: ReactNode
-}) {
-  const dotClass =
-    tone === 'positive' ? 'bg-emerald-500' : tone === 'negative' ? 'bg-rose-500' : 'bg-text-subtle'
-
-  return (
-    <div className="flex items-center justify-between gap-4 rounded-lg border border-border bg-surface px-5 py-4">
-      <div className="space-y-0.5">
-        <Text as="span" variant="kicker" tone="muted">
-          {label}
-        </Text>
-        <Text weight="medium">{children}</Text>
-      </div>
-      <span className={`size-2.5 shrink-0 rounded-full ${dotClass}`} aria-hidden />
-    </div>
   )
 }
