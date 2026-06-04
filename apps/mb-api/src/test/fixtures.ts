@@ -29,7 +29,12 @@ import {
   type ValeurAvancementModel,
   type WidgetModel,
 } from '@/generated/prisma/models'
-import { PermissionAction, Visibilite, type FonctionAgregation } from '@/generated/prisma/enums'
+import {
+  PermissionAction,
+  Visibilite,
+  type FonctionAgregation,
+  type UniteIndicateur,
+} from '@/generated/prisma/enums'
 
 // --- Indicateur --------------------------------------------------------------
 
@@ -38,6 +43,7 @@ type IndicateurOverrides = Partial<{
   publicId: string
   nom: string
   visibilite: Visibilite
+  unite: UniteIndicateur | null
 }>
 
 const upsertIndicateur = async (o: IndicateurOverrides = {}) => {

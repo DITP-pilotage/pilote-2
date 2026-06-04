@@ -34,12 +34,32 @@ describe.concurrent('getIndicateurByPublicId', () => {
         id: indId,
         nom: 'Indicateur de test',
         visibilite: 'PRIVE',
+        unite: null,
         referentiels: [
           { referentielPublicId: 'REF-DETAIL-A', fonctionAgregation: 'SUM' },
           { referentielPublicId: 'REF-DETAIL-B', fonctionAgregation: 'SUM' },
         ],
         createdAt: indicateur.createdAt.toISOString(),
         updatedAt: indicateur.updatedAt.toISOString(),
+      })
+    }),
+  )
+
+  it(
+    "sérialise l'unité enrichie (code + libellé + abréviation) quand renseignée",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      await fixtures.indicateur({ publicId: indId, unite: 'POURCENTAGE' })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
+
+      expect(result._unsafeUnwrap().unite).toEqual({
+        code: 'POURCENTAGE',
+        libelle: 'Pourcentage',
+        abbreviation: '%',
       })
     }),
   )
