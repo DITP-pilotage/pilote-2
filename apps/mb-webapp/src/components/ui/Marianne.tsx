@@ -10,15 +10,15 @@ const DEVISE_SVG =
 
 const FLAG_BG: CSSProperties = {
   backgroundImage: `${MARIANNE_SVG}, linear-gradient(90deg, #000091 0%, #000091 50%, #e1000f 50%, #e1000f 100%)`,
-  backgroundSize: '2.75rem 1.125rem, 2.75rem 1rem',
-  backgroundPosition: '0 -0.0625rem, 0 0',
+  backgroundSize: '2.0625rem 0.84375rem, 2.0625rem 0.75rem',
+  backgroundPosition: '0 -0.046875rem, 0 0',
   backgroundRepeat: 'no-repeat, no-repeat',
 }
 
 const DEVISE_BG: CSSProperties = {
   backgroundImage: DEVISE_SVG,
-  backgroundSize: '5.25rem 3.75rem',
-  backgroundPosition: '0 calc(100% + 1.875rem)',
+  backgroundSize: '3.9375rem 2.8125rem',
+  backgroundPosition: '0 calc(100% + 1.40625rem)',
   backgroundRepeat: 'no-repeat',
 }
 
@@ -31,16 +31,16 @@ export function Marianne({ className }: MarianneProps) {
     <span
       className={clsxm(
         'inline-block align-middle font-bold uppercase text-black',
-        'text-[1.05rem] leading-[1.0317em] tracking-[-0.01em] [text-indent:-0.1em]',
+        'text-[0.7875rem] leading-[1.0317em] tracking-[-0.01em] [text-indent:-0.1em]',
         className,
       )}
       aria-label="République Française"
     >
-      <span aria-hidden className="block h-4 w-11 bg-no-repeat mb-[0.3333rem]" style={FLAG_BG} />
+      <span aria-hidden className="mb-1 block h-3 w-[2.0625rem] bg-no-repeat" style={FLAG_BG} />
       Gouvernement
       <span
         aria-hidden
-        className="block min-w-[2.625rem] bg-no-repeat pt-[2.2083rem]"
+        className="block min-w-[1.96875rem] bg-no-repeat pt-[1.65625rem]"
         style={DEVISE_BG}
       />
     </span>
