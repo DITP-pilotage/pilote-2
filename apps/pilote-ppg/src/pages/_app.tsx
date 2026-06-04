@@ -7,7 +7,7 @@ import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import init from "@socialgouv/matomo-next";
+import { trackPagesRouter } from "@socialgouv/matomo-next";
 import Router from "next/router";
 import { Toaster } from "sonner";
 import { NuqsAdapter } from "nuqs/adapters/next/pages";
@@ -78,7 +78,11 @@ function MonApplication({ Component, pageProps, nonce: appNonce }: MyAppProps) {
 
   useEffect(() => {
     if (estRecordAnalyticsActive === "true") {
-      init({ url: matomoUrl as string, siteId: matomoSiteId as string });
+      trackPagesRouter({
+        url: matomoUrl as string,
+        siteId: matomoSiteId as string,
+        enableHeatmapSessionRecording: true,
+      });
     }
   }, [estRecordAnalyticsActive, matomoSiteId, matomoUrl]);
 
