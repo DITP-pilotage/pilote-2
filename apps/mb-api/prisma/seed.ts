@@ -448,6 +448,26 @@ const main = async () => {
     individusParReferentielId.set(refId, liste)
   }
 
+  const unitePourIndicateur = new Map(indicateursSeed.map((i) => [i.publicId, i.unite ?? null]))
+
+  // Purge ciblée pour les indicateurs en POURCENTAGE : la contrainte d'unicité
+  // (indicateurId, individuId, date) + `skipDuplicates` garderait sinon les
+  // valeurs des seeds antérieurs (où ces indicateurs héritaient d'un profil
+  // cyclique générique, ex. base 720 000 pour le chômage). On supprime pour
+  // forcer un ré-insert avec le profil borné [0, 100].
+  const indicateursAPurger = indicateursSeed
+    .filter((i) => i.unite === 'POURCENTAGE')
+    .map((i) => indicateursParPublicId.get(i.publicId))
+    .filter((id): id is string => id !== undefined)
+  if (indicateursAPurger.length > 0) {
+    await prisma.valeurAvancement.deleteMany({
+      where: { indicateurId: { in: indicateursAPurger } },
+    })
+    await prisma.objectifIndicateurIndividu.deleteMany({
+      where: { indicateurId: { in: indicateursAPurger } },
+    })
+  }
+
   let valeursCount = 0
   for (const lien of indicateurReferentielsSeed) {
     const refPublicId = mailleLaPlusFine(lien.referentiels.map((r) => r.referentielPublicId))
@@ -462,6 +482,7 @@ const main = async () => {
     const generated = buildValeursPourIndicateur({
       indicateurPublicId: lien.indicateurPublicId,
       individuPublicIds: individusPublicIds,
+      estPourcentage: unitePourIndicateur.get(lien.indicateurPublicId) === 'POURCENTAGE',
     })
     const rows = generated
       .map((g) => {
@@ -506,6 +527,7 @@ const main = async () => {
     const generated = buildObjectifsPourIndicateur({
       indicateurPublicId,
       individuPublicIds: individusPublicIds,
+      estPourcentage: unitePourIndicateur.get(indicateurPublicId) === 'POURCENTAGE',
     })
     const rows = generated
       .map((g) => {

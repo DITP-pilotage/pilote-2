@@ -19,9 +19,7 @@ export function IndicateurMetadonnees({ indicateur }: IndicateurMetadonneesProps
       <DescriptionList.Item label="ID">{indicateur.id}</DescriptionList.Item>
       <DescriptionList.Item label="Nom">{indicateur.nom}</DescriptionList.Item>
       <DescriptionList.Item label="Unité">
-        {indicateur.unite
-          ? `${indicateur.unite.libelle} (${indicateur.unite.abbreviation})`
-          : '—'}
+        {indicateur.unite ? `${indicateur.unite.libelle} (${indicateur.unite.abbreviation})` : '—'}
       </DescriptionList.Item>
       <DescriptionList.Item label="Créé le">
         {formatDateTimeFr(indicateur.createdAt)}
