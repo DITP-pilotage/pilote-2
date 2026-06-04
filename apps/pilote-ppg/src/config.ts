@@ -483,6 +483,23 @@ const config = convict({
       default: "",
       env: "TCHAP_ROOM_ID_RAPPORT_SERVICE_AUTRE",
     },
+    roomIdSyncMbValeurs: {
+      format: String,
+      default: "",
+      env: "TCHAP_ROOM_ID_SYNC_MB_VALEURS",
+    },
+  },
+  mbApi: {
+    baseUrl: {
+      format: String,
+      default: "",
+      env: "MB_API_BASE_URL",
+    },
+    apiKey: {
+      format: String,
+      default: "",
+      env: "MB_API_KEY",
+    },
   },
   scalingoEnvironment: {
     format: String,

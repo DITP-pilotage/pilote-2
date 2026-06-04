@@ -28,6 +28,7 @@ import { parametrageCentreAideModule } from "./parametrage-centre-aide/module";
 import { datajobsExecutionModule } from "./datajobs-execution/module";
 import { legacyModule } from "./legacy/module";
 import { actualitesModule } from "./actualites/module";
+import { mbSyncModule } from "./mb-sync/module";
 
 const allModules = [
   sharedModule,
@@ -53,6 +54,7 @@ const allModules = [
   legacyModule,
   applicationLogModule,
   actualitesModule,
+  mbSyncModule,
 ];
 
 // Compile-time check: errors with missing module name(s) if allModules is not exhaustive
@@ -96,6 +98,7 @@ function registerContainer(): ContainerDependencies {
     legacy: getContainer("legacy"),
     applicationLog: getContainer("applicationLog"),
     actualites: getContainer("actualites"),
+    mbSync: getContainer("mbSync"),
   };
 }
 
@@ -116,4 +119,5 @@ if (configuration().env === "production") {
 
 export const getContainer = <T extends keyof ContainerDependencies>(
   nameDependency: T,
-) => innerContainer[nameDependency];
+): ContainerDependencies[T] =>
+  innerContainer[nameDependency] as ContainerDependencies[T];
