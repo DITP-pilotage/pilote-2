@@ -15,11 +15,21 @@ export type IndicateurWithReferentiels = IndicateurModel & {
   }>
 }
 
+// Pont enum Prisma → catalogue mb-shared : on throw plutôt que de retourner null
+// silencieusement, car une divergence est un défaut de déploiement (enum Prisma
+// étendu sans mise à jour de `UNITES_INDICATEUR`), pas une donnée manquante.
+const toUniteIndicateurCode = (unite: UniteIndicateur): UniteIndicateurCode => {
+  if (unite in UNITES_INDICATEUR_CONFIG) return unite as UniteIndicateurCode
+  throw new Error(
+    `Unité Prisma '${unite}' absente du catalogue mb-shared (UNITES_INDICATEUR). Ajouter ce code et redéployer.`,
+  )
+}
+
 const toUniteIndicateurApiModel = (
   unite: UniteIndicateur | null,
 ): UniteIndicateurApiModel | null => {
   if (unite === null) return null
-  const code = unite as UniteIndicateurCode
+  const code = toUniteIndicateurCode(unite)
   const config = UNITES_INDICATEUR_CONFIG[code]
   return { code, libelle: config.libelle, abbreviation: config.abbreviation }
 }

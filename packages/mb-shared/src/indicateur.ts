@@ -26,8 +26,7 @@ export type UniteIndicateurCode = (typeof UNITES_INDICATEUR)[number]
 export const uniteIndicateurCodeSchema = z
   .enum(UNITES_INDICATEUR)
   .describe(
-    "Code de l'unité de mesure de l'indicateur. `null` signifie sans unité (valeur brute). " +
-      'Catalogue plateforme, fermé, étendu par déploiement.',
+    "Code de l'unité de mesure de l'indicateur. Catalogue plateforme, fermé, étendu par déploiement.",
   )
 
 export const UNITES_INDICATEUR_CONFIG = {
@@ -62,7 +61,9 @@ export const indicateurApiModelSchema = z.object({
   visibilite: indicateurVisibiliteSchema,
   unite: uniteIndicateurApiModelSchema
     .nullable()
-    .describe("Unité de mesure de l'indicateur, ou `null` si non renseignée."),
+    .describe(
+      "Unité de mesure de l'indicateur, ou `null` si non renseignée (valeur brute, sans unité).",
+    ),
   referentiels: z
     .array(configurationIndicateurReferentielSchema)
     .describe(
@@ -99,7 +100,7 @@ export const upsertIndicateurBodySchema = z.object({
   unite: uniteIndicateurCodeSchema
     .nullable()
     .describe(
-      "Code de l'unité de mesure de l'indicateur, ou `null` pour effacer / ne pas renseigner.",
+      "Code de l'unité de mesure de l'indicateur, ou `null` pour effacer / ne pas renseigner (valeur brute, sans unité).",
     ),
   referentiels: z
     .array(configurationIndicateurReferentielSchema)
