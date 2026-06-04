@@ -1,8 +1,11 @@
-import { type IndividuApiModel } from '@pilote/mb-shared/individu'
-import { type ReferentielApiModel } from '@pilote/mb-shared/referentiel'
 import { type QueryClient, queryOptions } from '@tanstack/react-query'
 
-import { fetchIndividusForReferentiel, fetchReferentielById } from '@/api/referentiels'
+import {
+  fetchIndividusForReferentiel,
+  fetchReferentielById,
+  fetchReferentiels,
+} from '@/api/referentiels'
+import { buildOrderedNodes, type IndividuNode } from '@/lib/individus/hierarchy'
 
 import { DEFAULT_STALE_TIME, fetchAllPaginatedItems } from './utils'
 
@@ -23,23 +26,31 @@ export const referentielIndividusQueryOptions = (referentielId: string) =>
     staleTime: DEFAULT_STALE_TIME,
   })
 
-type ReferentielGroupe = {
-  referentiel: ReferentielApiModel
-  individus: ReadonlyArray<IndividuApiModel>
+export const allReferentielsQueryOptions = queryOptions({
+  queryKey: ['referentiels', 'all'],
+  queryFn: () => fetchAllPaginatedItems((cursor) => fetchReferentiels(cursor ? { cursor } : {})),
+  staleTime: DEFAULT_STALE_TIME,
+})
+
+export const loadAllReferentielIds = async ({
+  queryClient,
+}: {
+  queryClient: QueryClient
+}): Promise<string[]> => {
+  const referentiels = await queryClient.fetchQuery(allReferentielsQueryOptions)
+  for (const referentiel of referentiels) {
+    queryClient.setQueryData(referentielQueryOptions(referentiel.id).queryKey, referentiel)
+  }
+  return referentiels.map((r) => r.id)
 }
 
-const flattenAndSort = (groupes: ReadonlyArray<ReferentielGroupe>): IndividuApiModel[] =>
-  groupes
-    .flatMap((groupe) => [...groupe.individus])
-    .sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
-
-export const loadIndividusFromReferentiels = async ({
+export const loadHierarchyFromReferentiels = async ({
   queryClient,
   referentielIds,
 }: {
   queryClient: QueryClient
   referentielIds: ReadonlyArray<string>
-}): Promise<IndividuApiModel[]> => {
+}): Promise<IndividuNode[]> => {
   const groupes = await Promise.all(
     referentielIds.map(async (refId) => {
       const [referentiel, individus] = await Promise.all([
@@ -49,5 +60,7 @@ export const loadIndividusFromReferentiels = async ({
       return { referentiel, individus }
     }),
   )
-  return flattenAndSort(groupes)
+  const referentielsById = new Map(groupes.map((g) => [g.referentiel.id, g.referentiel] as const))
+  const allIndividus = groupes.flatMap((g) => [...g.individus])
+  return buildOrderedNodes(allIndividus, referentielsById)
 }

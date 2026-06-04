@@ -1,66 +1,24 @@
 import * as PopoverPrimitive from '@radix-ui/react-popover'
-import { type IndividuApiModel } from '@pilote/mb-shared/individu'
-import { type ReferentielApiModel } from '@pilote/mb-shared/referentiel'
-import { useSuspenseQueries, useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQueries } from '@tanstack/react-query'
 import { Command } from 'cmdk'
 import { Check, ChevronDown, Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 import { clsxm } from '@/lib/clsxm'
-import { indicateurQueryOptions } from '@/queries/indicateurs'
+import { buildOrderedNodes } from '@/lib/individus/hierarchy'
 import { referentielIndividusQueryOptions, referentielQueryOptions } from '@/queries/referentiels'
-
-type IndividuNode = {
-  individu: IndividuApiModel
-  referentiel: ReferentielApiModel
-  depth: number
-  parentPath: ReadonlyArray<string>
-}
-
-const buildOrderedNodes = (
-  individus: ReadonlyArray<IndividuApiModel>,
-  referentielsById: ReadonlyMap<string, ReferentielApiModel>,
-): IndividuNode[] => {
-  const byId = new Map(individus.map((i) => [i.id, i] as const))
-  const childrenByParent = new Map<string | null, IndividuApiModel[]>()
-  for (const individu of individus) {
-    const parent = [...individu.parents].sort().find((p) => byId.has(p)) ?? null
-    const bucket = childrenByParent.get(parent) ?? []
-    bucket.push(individu)
-    childrenByParent.set(parent, bucket)
-  }
-  for (const bucket of childrenByParent.values()) {
-    bucket.sort((a, b) => a.nom.localeCompare(b.nom, 'fr'))
-  }
-
-  const ordered: IndividuNode[] = []
-  const visit = (individu: IndividuApiModel, depth: number, parentPath: ReadonlyArray<string>) => {
-    const referentiel = referentielsById.get(individu.referentiel)
-    if (!referentiel) return
-    ordered.push({ individu, referentiel, depth, parentPath })
-    const children = childrenByParent.get(individu.id) ?? []
-    const nextPath = [...parentPath, individu.nom]
-    for (const child of children) visit(child, depth + 1, nextPath)
-  }
-  for (const root of childrenByParent.get(null) ?? []) visit(root, 0, [])
-  return ordered
-}
 
 type IndividuSelectProps = {
   id?: string
-  indicateurId: string
+  referentielIds: ReadonlyArray<string>
   value: string
   onChange: (next: { individu: string; referentiel: string }) => void
 }
 
-export function IndividuSelect({ id, indicateurId, value, onChange }: IndividuSelectProps) {
+export function IndividuSelect({ id, referentielIds, value, onChange }: IndividuSelectProps) {
   const [open, setOpen] = useState(false)
   const [search, setSearch] = useState('')
 
-  const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(indicateurId))
-  const referentielIds = indicateur.referentiels.map(
-    (configuration) => configuration.referentielPublicId,
-  )
   const referentiels = useSuspenseQueries({
     queries: referentielIds.map((refId) => referentielQueryOptions(refId)),
     combine: (results) => results.map((r) => r.data),

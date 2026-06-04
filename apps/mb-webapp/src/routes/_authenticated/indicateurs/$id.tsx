@@ -19,12 +19,13 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { FormField } from '@/components/ui/FormField'
 import { Page } from '@/components/ui/Page'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { pickRoot } from '@/lib/individus/hierarchy'
 import {
   indicateurQueryOptions,
   loadIndicateur,
   prefetchIndicateurValeursForIndividu,
 } from '@/queries/indicateurs'
-import { loadIndividusFromReferentiels } from '@/queries/referentiels'
+import { loadHierarchyFromReferentiels } from '@/queries/referentiels'
 
 const paramsSchema = z.object({
   id: indicateurPublicIdSchema,
@@ -51,19 +52,21 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     )
     if (referentielIds.length === 0) return { indicateur }
 
-    const individus = await loadIndividusFromReferentiels({
-      queryClient,
-      referentielIds,
-    })
-    if (individus.length === 0) return { indicateur }
+    const nodes = await loadHierarchyFromReferentiels({ queryClient, referentielIds })
+    if (nodes.length === 0) return { indicateur }
 
-    const selected = deps.individu ? individus.find((i) => i.id === deps.individu) : undefined
+    const selected = deps.individu
+      ? nodes.find((n) => n.individu.id === deps.individu)?.individu
+      : undefined
     if (!selected) {
-      const first = individus[0]!
+      const fallback = pickRoot(nodes) ?? nodes[0]!
       throw redirect({
         to: '/indicateurs/$id',
         params,
-        search: { individu: first.id, referentiel: first.referentiel },
+        search: {
+          individu: fallback.individu.id,
+          referentiel: fallback.individu.referentiel,
+        },
         replace: true,
       })
     }
@@ -92,7 +95,10 @@ function IndicateurDetailComponent() {
 
   const back = (
     <BackLink asChild>
-      <Link to="/indicateurs" search={{}}>
+      <Link
+        to="/indicateurs"
+        search={{ individu: search.individu, referentiel: search.referentiel }}
+      >
         Retour à la liste
       </Link>
     </BackLink>
@@ -116,6 +122,7 @@ function IndicateurDetailComponent() {
 
   const individuId = search.individu
   const referentielId = search.referentiel
+  const referentielIds = indicateur.referentiels.map((c) => c.referentielPublicId)
 
   return (
     <Page title={indicateur.nom} back={back}>
@@ -129,7 +136,7 @@ function IndicateurDetailComponent() {
         <FormField label="Individu" htmlFor={selectId}>
           <IndividuSelect
             id={selectId}
-            indicateurId={id}
+            referentielIds={referentielIds}
             value={individuId}
             onChange={({ individu, referentiel }) => {
               startTransition(() => {

@@ -1,28 +1,67 @@
+import { individuPublicIdSchema } from '@pilote/mb-shared/individu'
+import { referentielPublicIdSchema } from '@pilote/mb-shared/referentiel'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { startTransition, useId } from 'react'
 import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
+import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
 import { CardGrid } from '@/components/ui/CardGrid'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { FormField } from '@/components/ui/FormField'
 import { Page } from '@/components/ui/Page'
 import { SearchField } from '@/components/ui/SearchField'
 import { Text } from '@/components/ui/Typography'
-import { indicateursQueryOptions, loadIndicateurs } from '@/queries/indicateurs'
+import { pickRoot } from '@/lib/individus/hierarchy'
 import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@/components/ui/Pagination'
+import { indicateursQueryOptions, loadIndicateurs } from '@/queries/indicateurs'
+import {
+  allReferentielsQueryOptions,
+  loadAllReferentielIds,
+  loadHierarchyFromReferentiels,
+} from '@/queries/referentiels'
 
 const indicateursSearchSchema = z.object({
   recherche: z.string().optional(),
   cursor: z.string().optional(),
   pageSize: z.coerce.number().int().min(1).max(100).optional(),
+  individu: individuPublicIdSchema.optional(),
+  referentiel: referentielPublicIdSchema.optional(),
 })
 
 export const Route = createFileRoute('/_authenticated/indicateurs/')({
   validateSearch: indicateursSearchSchema,
   loaderDeps: ({ search }) => search,
-  loader: ({ context, deps }) => loadIndicateurs({ queryClient: context.queryClient, query: deps }),
+  loader: async ({ context, deps }) => {
+    const { queryClient } = context
+
+    const referentielIds = await loadAllReferentielIds({ queryClient })
+    if (referentielIds.length > 0) {
+      const nodes = await loadHierarchyFromReferentiels({ queryClient, referentielIds })
+      const knownIndividu = deps.individu
+        ? nodes.find((n) => n.individu.id === deps.individu)?.individu
+        : undefined
+      if (!knownIndividu) {
+        const fallback = pickRoot(nodes) ?? nodes[0]
+        if (fallback) {
+          throw redirect({
+            to: '/indicateurs',
+            search: {
+              ...deps,
+              individu: fallback.individu.id,
+              referentiel: fallback.individu.referentiel,
+            },
+            replace: true,
+          })
+        }
+      }
+    }
+
+    return loadIndicateurs({ queryClient, query: deps })
+  },
   pendingComponent: () => <RouteLoading message="Chargement des indicateurs…" />,
   errorComponent: RouteError,
   component: IndicateursListComponent,
@@ -31,11 +70,33 @@ export const Route = createFileRoute('/_authenticated/indicateurs/')({
 function IndicateursListComponent() {
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
+  const selectId = useId()
   const { data } = useSuspenseQuery(indicateursQueryOptions(search))
+  const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
+  const referentielIds = referentiels.map((r) => r.id)
 
   return (
     <Page kicker="Catalogue" title="Indicateurs">
       <div className="flex flex-col gap-6">
+        {search.individu ? (
+          <div className="max-w-md">
+            <FormField label="Individu observé" htmlFor={selectId}>
+              <IndividuSelect
+                id={selectId}
+                referentielIds={referentielIds}
+                value={search.individu}
+                onChange={({ individu, referentiel }) => {
+                  startTransition(() => {
+                    void navigate({
+                      search: (prev) => ({ ...prev, individu, referentiel }),
+                    })
+                  })
+                }}
+              />
+            </FormField>
+          </div>
+        ) : null}
+
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Text as="span" variant="kicker" tone="muted">
             {data.total} indicateur{data.total > 1 ? 's' : ''}
@@ -59,7 +120,12 @@ function IndicateursListComponent() {
         ) : (
           <CardGrid>
             {data.items.map((indicateur) => (
-              <IndicateurCard key={indicateur.id} indicateur={indicateur} />
+              <IndicateurCard
+                key={indicateur.id}
+                indicateur={indicateur}
+                individu={search.individu}
+                referentiel={search.referentiel}
+              />
             ))}
           </CardGrid>
         )}

@@ -12,8 +12,12 @@ function formatMiseAJour(iso: string): string {
 
 export function IndicateurCard({
   indicateur,
+  individu,
+  referentiel,
 }: {
   indicateur: Pick<IndicateurApiModel, 'id' | 'nom' | 'updatedAt'>
+  individu?: string | undefined
+  referentiel?: string | undefined
 }) {
   return (
     <EntityCard
@@ -21,7 +25,11 @@ export function IndicateurCard({
       title={indicateur.nom}
       footer={<>Mis à jour {formatMiseAJour(indicateur.updatedAt)}</>}
     >
-      <Link to="/indicateurs/$id" params={{ id: indicateur.id }} />
+      <Link
+        to="/indicateurs/$id"
+        params={{ id: indicateur.id }}
+        search={{ individu, referentiel }}
+      />
     </EntityCard>
   )
 }

@@ -2,7 +2,12 @@ import { http, HttpResponse } from 'msw'
 import { setupServer } from 'msw/node'
 
 import { env } from '@/env'
-import { buildIndicateur, buildIndicateursList, buildMe } from '@/tests/factories/api'
+import {
+  buildIndicateur,
+  buildIndicateursList,
+  buildMe,
+  buildReferentielsList,
+} from '@/tests/factories/api'
 import { buildLogoutResponse, buildRefreshResponse } from '@/tests/factories/bff'
 
 const apiOrigin = new URL(env.apiUrl).origin
@@ -18,6 +23,7 @@ export const defaultHandlers = [
   http.get(apiUrl('/me'), () => HttpResponse.json(buildMe())),
   http.get(apiUrl('/indicateurs'), () => HttpResponse.json(buildIndicateursList())),
   http.get(apiUrl('/indicateurs/:id'), () => HttpResponse.json(buildIndicateur())),
+  http.get(apiUrl('/referentiels'), () => HttpResponse.json(buildReferentielsList())),
 ]
 
 export const server = setupServer(...defaultHandlers)
