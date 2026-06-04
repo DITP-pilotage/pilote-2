@@ -14,10 +14,12 @@ export function IndicateurWidgets({ indicateurId, referentielId }: IndicateurWid
   if (referentiel.widgets.length === 0) return null
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {referentiel.widgets.map((widget) => (
-        <div key={widget.id} className="rounded-lg border border-border bg-surface p-4">
-          <h3 className="mb-2 text-base font-medium">{widget.nom}</h3>
+        <div key={widget.id} className="rounded-xl border border-border bg-surface p-6 sm:p-8">
+          <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.12em] text-primary">
+            {widget.nom}
+          </h3>
           <WidgetRenderer
             widget={widget}
             indicateurId={indicateurId}

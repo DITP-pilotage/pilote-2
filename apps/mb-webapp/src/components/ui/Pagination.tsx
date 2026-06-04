@@ -39,16 +39,18 @@ export function Pagination({
   return (
     <nav
       aria-label="Pagination"
-      className={clsxm('flex items-center justify-between gap-2', className)}
+      className={clsxm('flex items-center justify-between gap-3', className)}
     >
       {showPageSize ? (
-        <div className="flex items-center gap-2 text-sm text-text-muted">
-          <label htmlFor={pageSizeId}>Items par page</label>
+        <div className="flex items-center gap-3 text-sm text-text-muted">
+          <label htmlFor={pageSizeId} className="text-xs font-semibold uppercase tracking-[0.08em]">
+            Par page
+          </label>
           <Select
             value={String(pageSize)}
             onValueChange={(value) => onPageSizeChange(Number(value))}
           >
-            <SelectTrigger id={pageSizeId} className="py-1">
+            <SelectTrigger id={pageSizeId} className="py-1.5">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -73,10 +75,10 @@ export function Pagination({
           onClick={onPrevious}
         >
           <ChevronLeft />
-          Page précédente
+          Précédent
         </Button>
         <Button variant="secondary" size="sm" type="button" disabled={!hasNext} onClick={onNext}>
-          Page suivante
+          Suivant
           <ChevronRight />
         </Button>
       </div>

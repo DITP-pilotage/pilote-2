@@ -4,7 +4,7 @@ import { Text } from '@/components/ui/Typography'
 
 function Root({ children }: { children: ReactNode }) {
   return (
-    <dl className="grid grid-cols-[max-content_1fr] gap-x-6 gap-y-2 rounded-lg border border-border bg-surface p-6">
+    <dl className="grid grid-cols-[max-content_1fr] gap-x-10 gap-y-4 rounded-xl bg-surface-tinted p-6 sm:p-8">
       {children}
     </dl>
   )
@@ -13,10 +13,12 @@ function Root({ children }: { children: ReactNode }) {
 function Item({ label, children }: { label: ReactNode; children: ReactNode }) {
   return (
     <>
-      <Text as="dt" tone="muted">
+      <Text as="dt" variant="kicker" tone="muted">
         {label}
       </Text>
-      <Text as="dd">{children}</Text>
+      <Text as="dd" weight="medium">
+        {children}
+      </Text>
     </>
   )
 }

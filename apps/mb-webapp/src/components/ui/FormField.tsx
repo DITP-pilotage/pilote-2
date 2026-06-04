@@ -8,8 +8,11 @@ type FormFieldProps = {
 
 export function FormField({ label, htmlFor, children }: FormFieldProps) {
   return (
-    <div className="flex items-center gap-3">
-      <label htmlFor={htmlFor} className="text-sm text-text-muted">
+    <div className="flex flex-col gap-2">
+      <label
+        htmlFor={htmlFor}
+        className="text-xs font-semibold uppercase tracking-[0.08em] text-text-muted"
+      >
         {label}
       </label>
       {children}

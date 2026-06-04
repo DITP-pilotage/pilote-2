@@ -9,7 +9,6 @@ import { CardGrid } from '@/components/ui/CardGrid'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Page } from '@/components/ui/Page'
 import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@/components/ui/Pagination'
-import { Section } from '@/components/ui/Section'
 import { Text } from '@/components/ui/Typography'
 import { loadPaniers, paniersQueryOptions } from '@/queries/paniers'
 
@@ -33,16 +32,18 @@ function PaniersListComponent() {
   const { data } = useSuspenseQuery(paniersQueryOptions(search))
 
   return (
-    <Page title="Paniers d'indicateurs" description="Collections thématiques d'indicateurs.">
-      <Section
-        toolbar={
-          <Text tone="muted">
-            {data.total} panier{data.total > 1 ? 's' : ''}
-          </Text>
-        }
-      >
+    <Page
+      kicker="Collections thématiques"
+      title="Paniers"
+      description="Des regroupements d'indicateurs construits pour répondre à une question publique précise."
+    >
+      <div className="flex flex-col gap-6">
+        <Text as="span" variant="kicker" tone="muted">
+          {data.total} panier{data.total > 1 ? 's' : ''}
+        </Text>
+
         {data.items.length === 0 ? (
-          <EmptyState title="Aucun panier disponible." />
+          <EmptyState title="Aucun panier disponible" />
         ) : (
           <CardGrid>
             {data.items.map((panier) => (
@@ -51,20 +52,18 @@ function PaniersListComponent() {
           </CardGrid>
         )}
 
-        <div className="mt-6">
-          <Pagination
-            hasNext={data.pagination.hasMore}
-            onNext={() => {
-              const next = data.pagination.cursor
-              if (next) void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
-            }}
-            pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
-            onPageSizeChange={(pageSize) => {
-              void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
-            }}
-          />
-        </div>
-      </Section>
+        <Pagination
+          hasNext={data.pagination.hasMore}
+          onNext={() => {
+            const next = data.pagination.cursor
+            if (next) void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
+          }}
+          pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+          onPageSizeChange={(pageSize) => {
+            void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
+          }}
+        />
+      </div>
     </Page>
   )
 }

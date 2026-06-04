@@ -9,13 +9,13 @@ type BackLinkProps = ComponentProps<'button'> & {
 }
 
 const styles =
-  'inline-flex items-center gap-1.5 text-sm text-text-muted hover:text-text transition-colors'
+  'group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.1em] text-text-muted transition-colors hover:text-primary'
 
 export function BackLink({ asChild = false, className, children, ...props }: BackLinkProps) {
   const Comp = asChild ? Slot : 'button'
   return (
     <Comp className={clsxm(styles, className)} {...props}>
-      <ArrowLeft className="size-4" />
+      <ArrowLeft className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
       <Slottable>{children}</Slottable>
     </Comp>
   )

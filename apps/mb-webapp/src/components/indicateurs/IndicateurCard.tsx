@@ -20,7 +20,7 @@ export function IndicateurCard({
       asChild
       kicker={indicateur.id}
       title={indicateur.nom}
-      footer={<>Mise à jour : {formatMiseAJour(indicateur.updatedAt)}</>}
+      footer={<>Mis à jour {formatMiseAJour(indicateur.updatedAt)}</>}
     >
       <Link to="/indicateurs/$id" params={{ id: indicateur.id }} />
     </EntityCard>

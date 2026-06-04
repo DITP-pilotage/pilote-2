@@ -10,7 +10,6 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { Page } from '@/components/ui/Page'
 import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@/components/ui/Pagination'
 import { SearchField } from '@/components/ui/SearchField'
-import { Section } from '@/components/ui/Section'
 import { Text } from '@/components/ui/Typography'
 import { indicateursQueryOptions, loadIndicateurs } from '@/queries/indicateurs'
 
@@ -36,29 +35,31 @@ function IndicateursListComponent() {
 
   return (
     <Page
-      title="Liste des indicateurs"
-      description="Consultez et gérez l'ensemble de vos indicateurs."
+      kicker="Catalogue"
+      title="Indicateurs"
+      description="Toutes les mesures suivies par l'application. Explorez l'historique, les valeurs remarquables et la déclinaison territoriale."
     >
-      <Section
-        toolbar={
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <Text tone="muted">
-              {data.total} indicateur{data.total > 1 ? 's' : ''}
-            </Text>
-            <SearchField
-              label="Rechercher un indicateur par nom"
-              placeholder="Rechercher par nom…"
-              value={search.recherche ?? ''}
-              onChange={(value) => {
-                const recherche = value || undefined
-                void navigate({ search: (prev) => ({ ...prev, recherche, cursor: undefined }) })
-              }}
-            />
-          </div>
-        }
-      >
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <Text as="span" variant="kicker" tone="muted">
+            {data.total} indicateur{data.total > 1 ? 's' : ''}
+          </Text>
+          <SearchField
+            label="Rechercher un indicateur par nom"
+            placeholder="Rechercher un indicateur…"
+            value={search.recherche ?? ''}
+            onChange={(value) => {
+              const recherche = value || undefined
+              void navigate({ search: (prev) => ({ ...prev, recherche, cursor: undefined }) })
+            }}
+          />
+        </div>
+
         {data.items.length === 0 ? (
-          <EmptyState title="Aucun indicateur ne correspond aux filtres." />
+          <EmptyState
+            title="Aucun indicateur ne correspond"
+            description="Essayez d'élargir votre recherche ou de réinitialiser les filtres."
+          />
         ) : (
           <CardGrid>
             {data.items.map((indicateur) => (
@@ -67,20 +68,18 @@ function IndicateursListComponent() {
           </CardGrid>
         )}
 
-        <div className="mt-6">
-          <Pagination
-            hasNext={data.pagination.hasMore}
-            onNext={() => {
-              const next = data.pagination.cursor
-              if (next) void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
-            }}
-            pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
-            onPageSizeChange={(pageSize) => {
-              void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
-            }}
-          />
-        </div>
-      </Section>
+        <Pagination
+          hasNext={data.pagination.hasMore}
+          onNext={() => {
+            const next = data.pagination.cursor
+            if (next) void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
+          }}
+          pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+          onPageSizeChange={(pageSize) => {
+            void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
+          }}
+        />
+      </div>
     </Page>
   )
 }

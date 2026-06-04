@@ -3,6 +3,7 @@ import type { ReactNode } from 'react'
 import { Heading, Text } from '@/components/ui/Typography'
 
 type PageProps = {
+  kicker?: ReactNode
   title: ReactNode
   description?: ReactNode
   back?: ReactNode
@@ -10,20 +11,29 @@ type PageProps = {
   children: ReactNode
 }
 
-export function Page({ title, description, back, actions, children }: PageProps) {
+export function Page({ kicker, title, description, back, actions, children }: PageProps) {
   return (
-    <div className="space-y-8">
+    <div className="space-y-10 sm:space-y-14">
       {back && <div>{back}</div>}
-      <header className="flex items-start justify-between gap-4">
-        <div className="space-y-1">
-          <Heading as="h1" size="lg">
+      <header className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+        <div className="max-w-3xl space-y-4">
+          {kicker && (
+            <Text as="span" variant="kicker">
+              {kicker}
+            </Text>
+          )}
+          <Heading as="h1" size="display-lg" className="text-balance">
             {title}
           </Heading>
-          {description && <Text tone="muted">{description}</Text>}
+          {description && (
+            <Text variant="lead" tone="muted" className="text-balance">
+              {description}
+            </Text>
+          )}
         </div>
-        {actions && <div className="flex items-center gap-2">{actions}</div>}
+        {actions && <div className="flex shrink-0 items-center gap-3">{actions}</div>}
       </header>
-      <div className="space-y-6">{children}</div>
+      <div className="space-y-10 sm:space-y-12">{children}</div>
     </div>
   )
 }
