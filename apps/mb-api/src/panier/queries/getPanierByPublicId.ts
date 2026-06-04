@@ -1,13 +1,16 @@
 import { type PanierApiModel } from '@pilote/mb-shared/panier'
 import { ResultAsync } from 'neverthrow'
 
+import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
+import { withPanierReadPermission } from '@/panier/permissions'
 import { toPanierApiModel } from '@/panier/utils'
 
 export const getPanierByPublicId = (publicId: string): ResultAsync<PanierApiModel, never> => {
+  const principalId = requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(
-    db().panier.findUniqueOrThrow({
-      where: { publicId },
+    db().panier.findFirstOrThrow({
+      where: withPanierReadPermission({ publicId }, principalId),
       include: {
         indicateurs: {
           orderBy: { createdAt: 'asc' },

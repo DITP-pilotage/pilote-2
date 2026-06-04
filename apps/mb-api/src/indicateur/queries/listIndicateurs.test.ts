@@ -60,6 +60,52 @@ describe.concurrent('listIndicateurs', () => {
   )
 
   it(
+    'propage READ via les permissions panier : un principal qui a accès à un panier voit ses indicateurs PRIVE',
+    integrationTest(async () => {
+      const [viaPanier, hidden] = testIndicateurIds(2)
+      await fixtures.indicateur(
+        { publicId: viaPanier, visibilite: 'PRIVE' },
+        { publicId: hidden, visibilite: 'PRIVE' },
+      )
+      await fixtures.panier({
+        publicId: 'PAN-PROPAG-1',
+        visibilite: 'PRIVE',
+        indicateurs: [{ publicId: viaPanier }],
+      })
+      const apiKey = await fixtures.apiKey({
+        panierPermissions: [{ panier: { publicId: 'PAN-PROPAG-1' }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
+
+      const value = result._unsafeUnwrap()
+      expect(value.items.map((i) => i.id)).toEqual([viaPanier])
+      expect(value.total).toBe(1)
+    }),
+  )
+
+  it(
+    'la propagation panier → indicateur fonctionne aussi avec WRITE sur le panier',
+    integrationTest(async () => {
+      const [viaPanier] = testIndicateurIds(1)
+      await fixtures.indicateur({ publicId: viaPanier, visibilite: 'PRIVE' })
+      await fixtures.panier({
+        publicId: 'PAN-PROPAG-2',
+        visibilite: 'PRIVE',
+        indicateurs: [{ publicId: viaPanier }],
+      })
+      const apiKey = await fixtures.apiKey({
+        panierPermissions: [{ panier: { publicId: 'PAN-PROPAG-2' }, action: 'WRITE' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
+
+      const value = result._unsafeUnwrap()
+      expect(value.items.map((i) => i.id)).toEqual([viaPanier])
+    }),
+  )
+
+  it(
     'retourne tous les indicateurs autorisés quand leur nombre est inférieur à la taille de page',
     integrationTest(async () => {
       const [ind1, ind2, ind3] = testIndicateurIds(3)

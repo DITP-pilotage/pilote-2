@@ -14,9 +14,10 @@ model Principal {
   id        String   @id @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  utilisateur          Utilisateur?
-  apiKey               ApiKey?
+  utilisateur           Utilisateur?
+  apiKey                ApiKey?
   indicateurPermissions IndicateurPermission[]
+  panierPermissions     PanierPermission[]
 
   @@map("principal")
 }
@@ -228,16 +229,32 @@ model ObjectifIndicateurIndividu {
 }
 
 model Panier {
-  id          String   @id @db.Uuid
-  publicId    String   @unique @map("public_id")
+  id          String     @id @db.Uuid
+  publicId    String     @unique @map("public_id")
   nom         String
   description String?
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt      @map("updated_at")
+  visibilite  Visibilite
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt      @map("updated_at")
 
   indicateurs PanierIndicateur[]
+  permissions PanierPermission[]
 
   @@map("panier")
+}
+
+model PanierPermission {
+  principalId String           @map("principal_id") @db.Uuid
+  panierId    String           @map("panier_id")    @db.Uuid
+  action      PermissionAction
+  createdAt   DateTime         @default(now()) @map("created_at")
+
+  principal Principal @relation(fields: [principalId], references: [id], onDelete: Cascade)
+  panier    Panier    @relation(fields: [panierId],    references: [id], onDelete: Cascade)
+
+  @@id([principalId, panierId, action])
+  @@index([panierId])
+  @@map("panier_permission")
 }
 
 model PanierIndicateur {

@@ -12,6 +12,7 @@ export const toPanierApiModel = (panier: PanierWithIndicateurs): PanierApiModel 
   id: panier.publicId,
   nom: panier.nom,
   description: panier.description,
+  visibilite: panier.visibilite,
   indicateurIds: panier.indicateurs.map((lien) => lien.indicateur.publicId),
   createdAt: panier.createdAt.toISOString(),
   updatedAt: panier.updatedAt.toISOString(),
