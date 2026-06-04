@@ -514,54 +514,82 @@ const main = async () => {
     objectifsCount += result.count
   }
 
-  // Paniers d'indicateurs (v0) : collections thématiques pour le front. L'ordre
+  // Paniers d'indicateurs : collections thématiques pour le front. L'ordre
   // du tableau `indicateurPublicIds` détermine l'ordre d'affichage (via createdAt
-  // ASC de la jonction). On ne seede que des indicateurs PUBLIC : tant que le
-  // panier n'applique pas le filtrage par permissions du principal (cf.
-  // docs/architecture/paniers-design.md, D6), l'invariant est porté par le seed.
+  // ASC de la jonction).
+  //
+  // Visibilité (cf. docs/architecture/permissions-design.md) :
+  // - PUBLIC : visible à tout principal authentifié ;
+  // - PRIVE : visible uniquement aux principals avec une permission explicite
+  //   sur le panier (et propage READ sur ses indicateurs).
+  //
+  // PAN-001..004 restent PUBLIC pour conserver le comportement antérieur (les
+  // 5 indicateurs IND-046..050 sont eux-mêmes PUBLIC, donc accessibles à tous).
+  // PAN-005 est PRIVE et contient des indicateurs PRIVE (IND-001..003) : il
+  // démontre la propagation panier → indicateur (un principal qui a accès à
+  // PAN-005 voit IND-001..003 même sans permission directe sur eux).
   const paniersSeed: ReadonlyArray<{
     publicId: string
     nom: string
     description: string | null
+    visibilite: 'PUBLIC' | 'PRIVE'
     indicateurPublicIds: ReadonlyArray<string>
   }> = [
     {
       publicId: 'PAN-001',
       nom: 'Indicateurs sociaux',
       description: 'Pauvreté, alphabétisation et accès numérique.',
+      visibilite: 'PUBLIC',
       indicateurPublicIds: ['IND-048', 'IND-049', 'IND-050'],
     },
     {
       publicId: 'PAN-002',
       nom: 'Santé et démographie',
       description: 'Démographie générale et espérance de vie.',
+      visibilite: 'PUBLIC',
       indicateurPublicIds: ['IND-046', 'IND-047'],
     },
     {
       publicId: 'PAN-003',
       nom: "Vue d'ensemble — indicateurs publics",
       description: "L'ensemble des indicateurs publics du référentiel mb.",
+      visibilite: 'PUBLIC',
       indicateurPublicIds: ['IND-046', 'IND-047', 'IND-048', 'IND-049', 'IND-050'],
     },
     {
       publicId: 'PAN-004',
       nom: 'Niveau de vie',
       description: 'Indicateurs de bien-être matériel et de connectivité.',
+      visibilite: 'PUBLIC',
       indicateurPublicIds: ['IND-048', 'IND-050'],
+    },
+    {
+      publicId: 'PAN-005',
+      nom: 'Panier admin — économie',
+      description: 'Panier privé démontrant la propagation READ vers ses indicateurs.',
+      visibilite: 'PRIVE',
+      indicateurPublicIds: ['IND-001', 'IND-002', 'IND-003'],
     },
   ]
 
+  const paniersByPublicId = new Map<string, { id: string }>()
   for (const panierItem of paniersSeed) {
     const panier = await prisma.panier.upsert({
       where: { publicId: panierItem.publicId },
-      update: { nom: panierItem.nom, description: panierItem.description },
+      update: {
+        nom: panierItem.nom,
+        description: panierItem.description,
+        visibilite: panierItem.visibilite,
+      },
       create: {
         id: uuidv7(),
         publicId: panierItem.publicId,
         nom: panierItem.nom,
         description: panierItem.description,
+        visibilite: panierItem.visibilite,
       },
     })
+    paniersByPublicId.set(panierItem.publicId, { id: panier.id })
     for (const indicateurPublicId of panierItem.indicateurPublicIds) {
       const indicateur = await prisma.indicateur.findUniqueOrThrow({
         where: { publicId: indicateurPublicId },
@@ -584,10 +612,37 @@ const main = async () => {
     0,
   )
 
+  // Permissions panier : on accorde READ + WRITE à ditp.admin sur PAN-005
+  // (le panier privé). Comme PAN-005 contient des indicateurs PRIVE
+  // (IND-001..003) sur lesquels ditp.admin a déjà des permissions directes
+  // (cf. boucle indicateursSeed.slice(0, 8) plus haut), la propagation
+  // n'apporte rien ici en pratique pour ditp.admin — c'est volontaire : la
+  // démo de propagation reste vérifiée en tests d'intégration.
+  for (const action of ['READ', 'WRITE'] as const) {
+    const panier = paniersByPublicId.get('PAN-005')
+    if (!panier) continue
+    await prisma.panierPermission.upsert({
+      where: {
+        principalId_panierId_action: {
+          principalId: ditpAdmin.id,
+          panierId: panier.id,
+          action,
+        },
+      },
+      update: {},
+      create: {
+        principalId: ditpAdmin.id,
+        panierId: panier.id,
+        action,
+      },
+    })
+  }
+  const panierPermissionsCount = 2
+
   const permissionsCount = 8 * 2
   const widgetLiaisonsCount = widgetsSeed.reduce((acc, w) => acc + w.referentielPublicIds.length, 0)
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${paniersSeed.length} paniers (${panierLiaisonsCount} liaisons panier-indicateur).`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${paniersSeed.length} paniers (${panierLiaisonsCount} liaisons panier-indicateur, ${panierPermissionsCount} permissions panier).`,
   )
 }
 

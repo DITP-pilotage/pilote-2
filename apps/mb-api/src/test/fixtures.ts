@@ -21,6 +21,7 @@ import {
   type IndividuModel,
   type ObjectifIndicateurIndividuModel,
   type PanierModel,
+  type PanierPermissionModel,
   type ReferentielModel,
   type ReferentielWidgetModel,
   type RelationModel,
@@ -452,6 +453,7 @@ type PanierOverrides = Partial<{
   publicId: string
   nom: string
   description: string | null
+  visibilite: Visibilite
   indicateurs: IndicateurOverrides[]
 }>
 
@@ -463,6 +465,7 @@ const upsertPanier = async (o: PanierOverrides = {}) => {
     publicId,
     nom: o.nom ?? 'Panier de test',
     description: o.description ?? null,
+    visibilite: o.visibilite ?? Visibilite.PRIVE,
   }
   const panier = await db().panier.upsert({
     where: { publicId },
@@ -508,6 +511,11 @@ type PrincipalIndicateurPermissionOverrides = {
   action: PermissionAction
 }
 
+type PrincipalPanierPermissionOverrides = {
+  panier: PanierOverrides
+  action: PermissionAction
+}
+
 type ApiKeyOverrides = Partial<{
   id: string
   label: string
@@ -517,6 +525,7 @@ type ApiKeyOverrides = Partial<{
   revokedAt: Date | null
   lastUsedAt: Date | null
   permissions: PrincipalIndicateurPermissionOverrides[]
+  panierPermissions: PrincipalPanierPermissionOverrides[]
 }>
 
 const grantPermissions = async (
@@ -526,6 +535,16 @@ const grantPermissions = async (
   if (!permissions || permissions.length === 0) return
   for (const p of permissions) {
     await upsertIndicateurPermission({ principalId, ...p })
+  }
+}
+
+const grantPanierPermissions = async (
+  principalId: string,
+  permissions: PrincipalPanierPermissionOverrides[] | undefined,
+): Promise<void> => {
+  if (!permissions || permissions.length === 0) return
+  for (const p of permissions) {
+    await upsertPanierPermission({ principalId, ...p })
   }
 }
 
@@ -541,16 +560,18 @@ const upsertApiKey = async (o: ApiKeyOverrides = {}) => {
     revokedAt: o.revokedAt ?? null,
     lastUsedAt: o.lastUsedAt ?? null,
   }
-  const { id: _id, rawKey: _raw, permissions, ...update } = o
+  const { id: _id, rawKey: _raw, permissions, panierPermissions, ...update } = o
   const existing = await db().apiKey.findUnique({ where: { keyHash } })
   if (existing) {
     await grantPermissions(existing.id, permissions)
+    await grantPanierPermissions(existing.id, panierPermissions)
     if (Object.keys(update).length === 0) return existing
     return db().apiKey.update({ where: { keyHash }, data: update })
   }
   await db().principal.create({ data: { id: create.id } })
   const created = await db().apiKey.create({ data: create })
   await grantPermissions(created.id, permissions)
+  await grantPanierPermissions(created.id, panierPermissions)
   return created
 }
 
@@ -575,6 +596,7 @@ type UtilisateurOverrides = Partial<{
   email: string
   providerSub: string | null
   permissions: PrincipalIndicateurPermissionOverrides[]
+  panierPermissions: PrincipalPanierPermissionOverrides[]
 }>
 
 const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
@@ -582,7 +604,8 @@ const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
   const existing = await db().utilisateur.findUnique({ where: { email } })
   if (existing) {
     await grantPermissions(existing.id, o.permissions)
-    const { id: _id, email: _email, permissions: _p, ...update } = o
+    await grantPanierPermissions(existing.id, o.panierPermissions)
+    const { id: _id, email: _email, permissions: _p, panierPermissions: _pp, ...update } = o
     if (Object.keys(update).length === 0) return existing
     return db().utilisateur.update({ where: { email }, data: update })
   }
@@ -595,6 +618,7 @@ const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
   await db().principal.create({ data: { id } })
   const created = await db().utilisateur.create({ data: create })
   await grantPermissions(created.id, o.permissions)
+  await grantPanierPermissions(created.id, o.panierPermissions)
   return created
 }
 
@@ -658,6 +682,48 @@ async function indicateurPermission(
   return results
 }
 
+// --- PanierPermission (deps requises) ----------------------------------------
+
+type PanierPermissionOverrides = {
+  principalId: string
+  panier: PanierOverrides
+  action: PermissionAction
+}
+
+const upsertPanierPermission = async (o: PanierPermissionOverrides) => {
+  const panierRow = await upsertPanier(o.panier)
+  return db().panierPermission.upsert({
+    where: {
+      principalId_panierId_action: {
+        principalId: o.principalId,
+        panierId: panierRow.id,
+        action: o.action,
+      },
+    },
+    update: {},
+    create: {
+      principalId: o.principalId,
+      panierId: panierRow.id,
+      action: o.action,
+    },
+  })
+}
+
+function panierPermission(override: PanierPermissionOverrides): Promise<PanierPermissionModel>
+function panierPermission(
+  o1: PanierPermissionOverrides,
+  o2: PanierPermissionOverrides,
+  ...rest: PanierPermissionOverrides[]
+): Promise<PanierPermissionModel[]>
+async function panierPermission(
+  ...overrides: PanierPermissionOverrides[]
+): Promise<PanierPermissionModel | PanierPermissionModel[]> {
+  if (overrides.length === 1) return upsertPanierPermission(overrides[0]!)
+  const results: PanierPermissionModel[] = []
+  for (const o of overrides) results.push(await upsertPanierPermission(o))
+  return results
+}
+
 export const fixtures = {
   indicateur,
   referentiel,
@@ -672,4 +738,5 @@ export const fixtures = {
   apiKey,
   utilisateur,
   indicateurPermission,
+  panierPermission,
 }

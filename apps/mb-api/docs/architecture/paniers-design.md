@@ -40,12 +40,23 @@ Périmètre v0 délibérément minimaliste :
 Un panier n'appartient ni à une organisation, ni à un référentiel, ni à un
 principal. Tout principal authentifié peut lister et lire tous les paniers.
 
-### D2. Pas de modèle de permissions sur le panier (v0)
+### D2. Modèle de permissions sur le panier (révisé)
 
-Pas de champ `visibilite`, pas de table `PanierPermission`. Cohérent avec D1
-et avec le fait que la création est aujourd'hui une opération de seed
-contrôlée. Si un besoin de paniers privés / par organisation émerge, on
-introduira un modèle de permissions à ce moment-là.
+**Statut : implémenté.** Initialement reporté à plus tard, le besoin de paniers
+privés est arrivé immédiatement après la mise en production v0. Le modèle
+reprend point pour point le pattern indicateur :
+
+- Champ `visibilite: Visibilite` (PUBLIC / PRIVE) sur `Panier`.
+- Table `PanierPermission(principalId, panierId, action)` avec `action ∈
+  {READ, WRITE}`, PK composite, index sur `principalId`.
+- Helper `withPanierReadPermission(where, principalId)` appliqué dans
+  `listPaniers` et `getPanierByPublicId`.
+- **Propagation panier → indicateurs** : un principal qui a READ ou WRITE sur
+  un panier obtient automatiquement READ sur tous ses indicateurs (la clause
+  `withIndicateurReadPermission` ajoute un branche OR via `paniers.some`). Le
+  WRITE indicateur reste exclusivement direct.
+
+Détails et invariants généraux : voir `permissions-design.md`.
 
 ### D3. Composition N-N via join table, ordre par `createdAt`
 
@@ -67,19 +78,18 @@ Pas d'endpoint `POST/PUT/DELETE /paniers`. Cycle de vie 100% via
 `prisma/seed.ts`. À introduire plus tard quand un cas d'usage explicite
 arrive (admin UI, intégration externe).
 
-### D6. Pas de filtrage des indicateurs contenus par les permissions du principal (v0)
+### D6. Pas de filtrage des indicateurs contenus par les permissions du principal
 
 `GET /paniers/:publicId` renvoie l'**intégralité** des `indicateurPublicIds`
 de la jonction, sans intersection avec les droits du principal courant.
 
 L'invariant « tous les indicateurs d'un panier sont accessibles au principal »
-est garanti **par le seed** (qui n'y met que des indicateurs PUBLIC), pas par
-le modèle Prisma.
+est désormais garanti **par le modèle de permissions** (D2 révisée) : la
+visibilité d'un panier propage READ vers ses indicateurs, donc un principal
+qui voit un panier voit nécessairement les indicateurs qui le composent.
 
-**Évolution prévue** : à terme, intersecter avec
-`withIndicateurReadPermission` dans `getPanierByPublicId` /
-`listPaniers` pour ne renvoyer que les `publicId` visibles. Trivial à
-brancher (helper déjà disponible), mais hors scope v0.
+Conséquence : pas besoin d'intersection sur les `indicateurPublicIds` — la
+contention est portée au niveau du panier lui-même.
 
 ### D7. Recomposition côté front via bulk fetch `GET /indicateurs?ids=...`
 
