@@ -1,13 +1,16 @@
 import { type DateTrunc } from '@pilote/mb-shared/dates'
 
-import { Decimal } from '@/framework/decimal'
+import { type BucketKey, parseBucket } from '@/framework/bucket'
 import { db } from '@/framework/persistence/dbStore'
 import { getObjectifsTronquesPourIndividus } from '@/generated/prisma/sql'
 import {
   loadFonctionsAgregation,
   loadSousArbre,
 } from '@/indicateur/queries/loadIndicateurIndividuContext'
-import { type ResolveObjectifContext } from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
+import {
+  type ObjectifSaisieBucketise,
+  type ResolveObjectifContext,
+} from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
 
 export const loadResolveObjectifContext = async ({
@@ -48,16 +51,17 @@ const loadObjectifsBucketises = async ({
   indicateurId: string
   individuIds: ReadonlyArray<string>
   dateTrunc: DateTrunc
-}): Promise<Map<string, Map<string, Decimal>>> => {
+}): Promise<Map<string, Map<BucketKey, ObjectifSaisieBucketise>>> => {
   if (individuIds.length === 0) return new Map()
   const rows = await db().$queryRawTyped(
     getObjectifsTronquesPourIndividus(indicateurId, [...individuIds], dateTrunc),
   )
-  const result = new Map<string, Map<string, Decimal>>()
+  const result = new Map<string, Map<BucketKey, ObjectifSaisieBucketise>>()
   for (const row of rows) {
     if (!row.bucket) continue
-    const buckets = result.get(row.individuId) ?? new Map<string, Decimal>()
-    buckets.set(row.bucket, new Decimal(row.valeurCible.toString()))
+    const bucket = parseBucket(row.bucket)
+    const buckets = result.get(row.individuId) ?? new Map<BucketKey, ObjectifSaisieBucketise>()
+    buckets.set(row.bucket, { bucket, valeur: row.valeurCible })
     result.set(row.individuId, buckets)
   }
   return result

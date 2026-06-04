@@ -8,6 +8,7 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
+import { compareBuckets, formatBucket, parseBucket } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
@@ -62,12 +63,14 @@ const buildSeries = async ({
   })
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
+  const dateDebut = params.dateDebut ? parseBucket(params.dateDebut) : null
+  const dateFin = params.dateFin ? parseBucket(params.dateFin) : null
   const items: ValeurAvancementApiModel[] = []
   for (const individuCible of individusCibles) {
     const serie = await resolveSerieIndividu(individuCible.id, ctx, cache)
     for (const point of serie) {
-      if (params.dateDebut && point.bucket < params.dateDebut) continue
-      if (params.dateFin && point.bucket > params.dateFin) continue
+      if (dateDebut && compareBuckets(point.bucket, dateDebut) < 0) continue
+      if (dateFin && compareBuckets(point.bucket, dateFin) > 0) continue
       items.push(
         toApiModel({ indicateurPublicId, individuPublicId: individuCible.publicId, point }),
       )
@@ -101,7 +104,7 @@ const toApiModel = ({
     return {
       indicateur: indicateurPublicId,
       individu: individuPublicId,
-      date: point.bucket,
+      date: formatBucket(point.bucket),
       valeur: point.valeur.toNumber(),
       type: 'saisie',
     }
@@ -109,13 +112,13 @@ const toApiModel = ({
   const contributions: ContributionApiModel[] = point.contributions.map((c) => ({
     individu: c.individuPublicId,
     valeur: c.valeur === null ? null : c.valeur.toNumber(),
-    date: c.dateOrigine,
+    date: c.dateOrigine === null ? null : formatBucket(c.dateOrigine),
     source: c.source,
   }))
   return {
     indicateur: indicateurPublicId,
     individu: individuPublicId,
-    date: point.bucket,
+    date: formatBucket(point.bucket),
     valeur: point.valeur.toNumber(),
     type: 'derivee',
     fonctionAgregation: point.fonctionAgregation,

@@ -1,5 +1,6 @@
 import { type DateTrunc } from '@pilote/mb-shared/dates'
 
+import { parseBucket } from '@/framework/bucket'
 import { db } from '@/framework/persistence/dbStore'
 import { getValeursTronqueesPourIndividus } from '@/generated/prisma/sql'
 import {
@@ -65,7 +66,11 @@ const loadSaisiesTronquees = async ({
   for (const row of rows) {
     if (!row.bucket) continue
     const liste = serieFeuilleParIndividu.get(row.individuId) ?? []
-    liste.push({ bucket: row.bucket, dateOrigine: row.dateOrigine, valeur: row.valeur })
+    liste.push({
+      bucket: parseBucket(row.bucket),
+      dateOrigine: parseBucket(row.dateOrigine),
+      valeur: row.valeur,
+    })
     serieFeuilleParIndividu.set(row.individuId, liste)
   }
   return serieFeuilleParIndividu

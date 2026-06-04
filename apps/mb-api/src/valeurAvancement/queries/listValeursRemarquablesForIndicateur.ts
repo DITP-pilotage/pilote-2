@@ -7,6 +7,7 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
+import { formatBucket } from '@/framework/bucket'
 import { type Decimal } from '@/framework/decimal'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
@@ -74,7 +75,7 @@ const buildStats = async ({
       contributions.push({
         individu: individu.publicId,
         valeur: dernierPoint.valeur.toNumber(),
-        date: dernierPoint.bucket,
+        date: formatBucket(dernierPoint.bucket),
         source: dernierPoint.type === 'saisie' ? 'saisie' : 'derivee',
       })
     }

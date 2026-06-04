@@ -30,6 +30,9 @@ importers:
       '@hono/zod-openapi':
         specifier: ^1.3.0
         version: 1.3.0(hono@4.12.19)(zod@4.3.6)
+      '@js-temporal/polyfill':
+        specifier: ^0.5.1
+        version: 0.5.1
       '@pilote/mb-shared':
         specifier: workspace:*
         version: link:../../packages/mb-shared
@@ -124,6 +127,9 @@ importers:
       '@hono/node-server':
         specifier: '>=1.19.13'
         version: 1.19.14(hono@4.12.19)
+      '@js-temporal/polyfill':
+        specifier: ^0.5.1
+        version: 0.5.1
       '@pilote/mb-shared':
         specifier: workspace:*
         version: link:../../packages/mb-shared
@@ -175,6 +181,9 @@ importers:
       lucide-react:
         specifier: ^1.14.0
         version: 1.14.0(react@19.2.5)
+      luxon:
+        specifier: ^3.7.2
+        version: 3.7.2
       neverthrow:
         specifier: ^8.2.0
         version: 8.2.0
@@ -221,6 +230,9 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.6.1
         version: 14.6.1(@testing-library/dom@10.4.1)
+      '@types/luxon':
+        specifier: ^3.7.1
+        version: 3.7.1
       '@types/node':
         specifier: ^22.12.0
         version: 22.19.17
@@ -1864,6 +1876,10 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
+
+  '@js-temporal/polyfill@0.5.1':
+    resolution: {integrity: sha512-hloP58zRVCRSpgDxmqCWJNlizAlUgJFqG2ypq79DCvyv9tHjRYMDOcPFjzfl/A1/YxDvRCZz8wvZvmapQnKwFQ==}
+    engines: {node: '>=12'}
 
   '@keycloak/keycloak-admin-client@26.5.6':
     resolution: {integrity: sha512-APCPQ7gjB3r6s66N8vjAoXpxDkwJ5Huna9PlWIg+WMnrKzQkOBkxj+mmBduxjkt9uqQVaUtmy6/vZZerwQ/ltw==}
@@ -6485,6 +6501,9 @@ packages:
     resolution: {integrity: sha512-qQKT4zQxXl8lLwBtHMWwaTcGfFOZviOJet3Oy/xmGk2gZH677CJM9EvtfdSkgWcATZhj/55JZ0rmy3myCT5lsA==}
     hasBin: true
 
+  jsbi@4.3.2:
+    resolution: {integrity: sha512-9fqMSQbhJykSeii05nxKl4m6Eqn2P6rOlYiS+C5Dr/HPIU/7yZxu5qzbs40tgaFORiw2Amd0mirjxatXYMkIew==}
+
   jsdom@23.2.0:
     resolution: {integrity: sha512-L88oL7D/8ufIES+Zjz7v0aes+oBMh2Xnh3ygWvL0OaICOomKEPKuPnIfBJekiXr+BHbbMjrWn/xqrDQuxFTeyA==}
     engines: {node: '>=18'}
@@ -10427,6 +10446,10 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
+
+  '@js-temporal/polyfill@0.5.1':
+    dependencies:
+      jsbi: 4.3.2
 
   '@keycloak/keycloak-admin-client@26.5.6':
     dependencies:
@@ -15754,6 +15777,8 @@ snapshots:
   js-yaml@4.1.1:
     dependencies:
       argparse: 2.0.1
+
+  jsbi@4.3.2: {}
 
   jsdom@23.2.0:
     dependencies:

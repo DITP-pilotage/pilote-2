@@ -28,10 +28,9 @@ export const listObjectifsForIndicateurQuerySchema = z.object({
   dateTrunc: dateTruncSchema
     .optional()
     .describe(
-      "Granularité de troncature des dates cibles. Par défaut `year` (reproduit le comportement " +
-        "de pilote-ppg où les objectifs sont annuels). Voir `DateTrunc` pour la sémantique des " +
-        "unités. Si plusieurs objectifs d'un même individu tombent dans le même bucket, la " +
-        "dateCible la plus récente est retenue.",
+      'Granularité de troncature des dates cibles. Par défaut `year`. Voir `DateTrunc` pour la ' +
+        "sémantique des unités. Si plusieurs objectifs d'un même individu tombent dans le même " +
+        'bucket, la dateCible la plus récente est retenue.',
     ),
 })
 export type ListObjectifsForIndicateurQuery = z.infer<typeof listObjectifsForIndicateurQuerySchema>

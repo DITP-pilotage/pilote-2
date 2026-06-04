@@ -26,16 +26,19 @@ const getTauxProgressionRoute = createRoute({
   method: 'get',
   path: '/indicateurs/{id}/taux-progression',
   tags: ['Indicateur'],
-  summary: "Lister le taux de progression par valeur d'avancement pour des individus",
+  summary: 'Lister le taux de progression par bucket pour des individus',
   description:
-    'Retourne, pour chaque saisie des individus demandés, le taux de progression calculé ' +
-    "comme `min(100, valeur / valeurCible × 100)` où `valeurCible` est celle de l'objectif " +
-    "applicable à la date de la saisie. L'objectif applicable est le premier objectif dont " +
-    '`dateCible` est strictement supérieure à la date de la saisie ; si la saisie est ' +
-    'postérieure à tous les objectifs, le dernier objectif connu est retenu. ' +
-    'Les individus sans aucun objectif sont absents de la réponse. ' +
-    'Les dates sont brutes (pas de troncature). ' +
-    'Triés par `(individu publicId asc, date asc)`.',
+    'Retourne, pour chaque bucket de valeur des individus demandés, le taux de progression ' +
+    'calculé comme `min(100, valeur / valeurCible × 100)`, tronqué à 2 décimales (jamais ' +
+    '100 % avant atteinte stricte de la cible). La valeur et la valeurCible sont résolues par ' +
+    'agrégation hiérarchique (cf. doc `indicateur-derives.md` / `objectifs-derives.md`) ' +
+    "lorsque l'individu est un nœud parent. La granularité des buckets est paramétrable " +
+    'indépendamment pour les valeurs (`dateTruncValeur`) et les objectifs (`dateTruncObjectif`), ' +
+    'avec la contrainte `dateTruncObjectif >= dateTruncValeur`. ' +
+    "L'objectif applicable est le premier objectif dont `dateCible` (bucketisée) est ≥ date " +
+    'du bucket de valeur ; si le bucket est postérieur à tous les objectifs, le dernier ' +
+    'objectif connu est retenu. Les individus sans aucun objectif applicable sont absents ' +
+    'de la réponse. Triés par `(individu publicId asc, date asc)`.',
   middleware: [requireAuthentication],
   request: {
     params: indicateurParamsSchema,

@@ -7,6 +7,7 @@ import { type DateTrunc } from '@pilote/mb-shared/dates'
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
+import { type Bucket, type BucketKey, compareBuckets, formatBucket } from '@/framework/bucket'
 import { db } from '@/framework/persistence/dbStore'
 import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
@@ -16,8 +17,6 @@ import {
   resolveObjectifIndividu,
 } from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
 
-// Granularité annuelle par défaut : reproduit le comportement de pilote-ppg
-// où les objectifs sont saisis à l'année.
 const DEFAULT_DATE_TRUNC: DateTrunc = 'year'
 
 export const listObjectifsForIndicateur = (
@@ -50,43 +49,45 @@ const buildList = async ({
     dateTrunc,
   })
 
-  const cache = new Map<string, ReadonlyMap<string, PointObjectifInterne>>()
-  const items: ObjectifIndicateurIndividuApiModel[] = []
+  const cache = new Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>()
+  // Buckets sortie API : on stocke le `Bucket` (PlainDate) pour le tri puis on
+  // sérialise en ISO string juste avant le push.
+  type ItemWithBucket = { bucket: Bucket; item: ObjectifIndicateurIndividuApiModel }
+  const withBuckets: ItemWithBucket[] = []
 
   for (const individuCible of individusCibles) {
     const objectifs = resolveObjectifIndividu(individuCible.id, ctx, cache)
-    for (const [bucket, point] of objectifs) {
-      items.push(
-        toApiModel({ indicateurPublicId: indicateur.publicId, individuCible, bucket, point }),
-      )
+    for (const point of objectifs.values()) {
+      withBuckets.push({
+        bucket: point.bucket,
+        item: toApiModel({ indicateurPublicId: indicateur.publicId, individuCible, point }),
+      })
     }
   }
 
-  items.sort((a, b) =>
-    a.individu !== b.individu
-      ? a.individu.localeCompare(b.individu)
-      : a.dateCible.localeCompare(b.dateCible),
+  withBuckets.sort((a, b) =>
+    a.item.individu !== b.item.individu
+      ? a.item.individu.localeCompare(b.item.individu)
+      : compareBuckets(a.bucket, b.bucket),
   )
 
-  return { items }
+  return { items: withBuckets.map(({ item }) => item) }
 }
 
 const toApiModel = ({
   indicateurPublicId,
   individuCible,
-  bucket,
   point,
 }: {
   indicateurPublicId: string
   individuCible: { id: string; publicId: string }
-  bucket: string
   point: PointObjectifInterne
 }): ObjectifIndicateurIndividuApiModel => {
   if (point.type === 'saisie') {
     return {
       indicateur: indicateurPublicId,
       individu: individuCible.publicId,
-      dateCible: bucket,
+      dateCible: formatBucket(point.bucket),
       valeurCible: point.valeur.toNumber(),
       type: 'saisie',
     }
@@ -94,14 +95,14 @@ const toApiModel = ({
   return {
     indicateur: indicateurPublicId,
     individu: individuCible.publicId,
-    dateCible: bucket,
+    dateCible: formatBucket(point.bucket),
     valeurCible: point.valeur.toNumber(),
     type: 'derivee',
     fonctionAgregation: point.fonctionAgregation,
     contributions: point.contributions.map((c) => ({
       individu: c.individuPublicId,
       valeurCible: c.valeur.toNumber(),
-      dateCible: c.dateCible,
+      dateCible: formatBucket(c.bucketCible),
       source: c.estAgregee ? ('derivee' as const) : ('saisie' as const),
     })),
   }

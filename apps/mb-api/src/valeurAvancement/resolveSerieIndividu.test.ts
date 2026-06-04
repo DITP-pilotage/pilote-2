@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
+import { parseBucket } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
 import {
   type IndividuRef,
@@ -10,9 +11,10 @@ import {
 } from '@/valeurAvancement/resolveSerieIndividu'
 
 const d = (n: number): Decimal => new Decimal(n)
+const b = parseBucket
 const saisie = (bucket: string, valeur: number, dateOrigine = bucket): SaisieTronquee => ({
-  bucket,
-  dateOrigine,
+  bucket: b(bucket),
+  dateOrigine: b(dateOrigine),
   valeur: d(valeur),
 })
 
@@ -65,14 +67,14 @@ describe('resolveSerieIndividu — feuille', () => {
     expect(serie).toHaveLength(2)
     expect(serie[0]).toEqual({
       type: 'saisie',
-      bucket: '2025-01-01',
-      dateOrigine: '2025-01-18',
+      bucket: b('2025-01-01'),
+      dateOrigine: b('2025-01-18'),
       valeur: d(10),
     })
     expect(serie[1]).toEqual({
       type: 'saisie',
-      bucket: '2025-02-01',
-      dateOrigine: '2025-02-05',
+      bucket: b('2025-02-01'),
+      dateOrigine: b('2025-02-05'),
       valeur: d(20),
     })
   })
@@ -115,14 +117,14 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
     expect(serie).toHaveLength(2)
     expect(serie[0]).toMatchObject({
       type: 'derivee',
-      bucket: '2025-01-01',
+      bucket: b('2025-01-01'),
       valeur: d(110),
       fonctionAgregation: 'SUM',
       couverture: { nbEnfantsAvecValeur: 2, nbEnfantsTotal: 2 },
     })
     expect(serie[1]).toMatchObject({
       type: 'derivee',
-      bucket: '2025-02-01',
+      bucket: b('2025-02-01'),
       valeur: d(215),
       couverture: { nbEnfantsAvecValeur: 2, nbEnfantsTotal: 2 },
     })
@@ -148,22 +150,22 @@ describe('resolveSerieIndividu — agrégation 1 niveau', () => {
     expect(serie).toHaveLength(3)
     // 2025-01 : seul DEPT-A connu → valeur=10, couverture 1/2
     expect(serie[0]).toMatchObject({
-      bucket: '2025-01-01',
+      bucket: b('2025-01-01'),
       valeur: d(10),
       couverture: { nbEnfantsAvecValeur: 1, nbEnfantsTotal: 2 },
     })
     expect((serie[0] as { contributions: unknown[] }).contributions).toEqual([
-      { individuPublicId: 'DEPT-A', valeur: d(10), dateOrigine: '2025-01-01', source: 'saisie' },
+      { individuPublicId: 'DEPT-A', valeur: d(10), dateOrigine: b('2025-01-01'), source: 'saisie' },
       { individuPublicId: 'DEPT-B', valeur: null, dateOrigine: null, source: 'manquante' },
     ])
     // 2025-02 : DEPT-A carry-forward (10) + DEPT-B (50) → 60, couverture 2/2
     expect(serie[1]).toMatchObject({
-      bucket: '2025-02-01',
+      bucket: b('2025-02-01'),
       valeur: d(60),
       couverture: { nbEnfantsAvecValeur: 2, nbEnfantsTotal: 2 },
     })
     // 2025-03 : DEPT-A (30) + DEPT-B carry-forward (50) → 80
-    expect(serie[2]).toMatchObject({ bucket: '2025-03-01', valeur: d(80) })
+    expect(serie[2]).toMatchObject({ bucket: b('2025-03-01'), valeur: d(80) })
   })
 
   it('trie les contributions par publicId', async () => {
@@ -245,12 +247,12 @@ describe('resolveSerieIndividu — agrégation AVG', () => {
     expect(serie).toHaveLength(2)
     expect(serie[0]).toMatchObject({
       type: 'derivee',
-      bucket: '2025-01-01',
+      bucket: b('2025-01-01'),
       valeur: d(20), // (10 + 30) / 2
       fonctionAgregation: 'AVG',
       couverture: { nbEnfantsAvecValeur: 2, nbEnfantsTotal: 2 },
     })
-    expect(serie[1]).toMatchObject({ bucket: '2025-02-01', valeur: d(30) }) // (20 + 40) / 2
+    expect(serie[1]).toMatchObject({ bucket: b('2025-02-01'), valeur: d(30) }) // (20 + 40) / 2
   })
 
   it('moyenne sur les enfants connus uniquement (permissif, comme SUM)', async () => {
@@ -273,12 +275,12 @@ describe('resolveSerieIndividu — agrégation AVG', () => {
     expect(serie).toHaveLength(2)
     // 2025-01 : seul DEPT-A → moyenne sur 1 = 10, couverture 1/2
     expect(serie[0]).toMatchObject({
-      bucket: '2025-01-01',
+      bucket: b('2025-01-01'),
       valeur: d(10),
       couverture: { nbEnfantsAvecValeur: 1, nbEnfantsTotal: 2 },
     })
     // 2025-02 : DEPT-A carry-forward (10) + DEPT-B (40) → moyenne 25
-    expect(serie[1]).toMatchObject({ bucket: '2025-02-01', valeur: d(25) })
+    expect(serie[1]).toMatchObject({ bucket: b('2025-02-01'), valeur: d(25) })
   })
 
   it("n'émet rien si aucun enfant n'a jamais saisi (évite la division par zéro)", async () => {
@@ -351,7 +353,7 @@ describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
     expect(serie).toHaveLength(1)
     expect(serie[0]).toMatchObject({
       type: 'derivee',
-      bucket: '2025-01-01',
+      bucket: b('2025-01-01'),
       valeur: d(33),
       couverture: { nbEnfantsAvecValeur: 2, nbEnfantsTotal: 2 },
     })
@@ -359,8 +361,8 @@ describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
     const contributions = (serie[0] as { contributions: { source: string; valeur: Decimal }[] })
       .contributions
     expect(contributions).toEqual([
-      { individuPublicId: 'REG-N', valeur: d(3), dateOrigine: '2025-01-01', source: 'derivee' },
-      { individuPublicId: 'REG-S', valeur: d(30), dateOrigine: '2025-01-01', source: 'derivee' },
+      { individuPublicId: 'REG-N', valeur: d(3), dateOrigine: b('2025-01-01'), source: 'derivee' },
+      { individuPublicId: 'REG-S', valeur: d(30), dateOrigine: b('2025-01-01'), source: 'derivee' },
     ])
   })
 
@@ -389,9 +391,9 @@ describe('resolveSerieIndividu — agrégation multi-niveaux', () => {
 
     expect(serie).toHaveLength(2)
     // 2025-01 : REG-N = 5, REG-S inconnu → 5
-    expect(serie[0]).toMatchObject({ bucket: '2025-01-01', valeur: d(5) })
+    expect(serie[0]).toMatchObject({ bucket: b('2025-01-01'), valeur: d(5) })
     // 2025-03 : REG-N (carry-forward 5) + REG-S (50) → 55
-    expect(serie[1]).toMatchObject({ bucket: '2025-03-01', valeur: d(55) })
+    expect(serie[1]).toMatchObject({ bucket: b('2025-03-01'), valeur: d(55) })
   })
 })
 

@@ -3,7 +3,13 @@ import { describe, expect, it } from 'vitest'
 import { listTauxProgressionForIndicateur } from '@/tauxProgression/queries/listTauxProgressionForIndicateur'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptId, testDeptIds, testIndicateurId, testReferentielId } from '@/test/randomIds'
+import {
+  testDeptId,
+  testDeptIds,
+  testIndicateurId,
+  testIndividuId,
+  testReferentielId,
+} from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listTauxProgressionForIndicateur', () => {
@@ -89,7 +95,7 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
             date: '2024-06-01',
             valeur: 75,
             valeurCible: 100,
-            dateCible: '2024-12-31',
+            dateCible: '2024-12-01',
             tauxProgression: 75,
           },
         ],
@@ -130,6 +136,43 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       const items = result._unsafeUnwrap().items
       expect(items).toHaveLength(1)
       expect(items[0]!.tauxProgression).toBe(100)
+    }),
+  )
+
+  it(
+    'tronque le taux de progression à 2 décimales',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refId = testReferentielId()
+      const deptId = testDeptId()
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId },
+        referentiel: { publicId: refId },
+      })
+      // 2 / 3 × 100 = 66.6666… → 66.66 (trunc à 2 décimales, pas half-up)
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId, nom: 'Test' },
+        individu: { publicId: deptId, referentiel: { publicId: refId } },
+        date: '2024-06-01',
+        valeur: 2,
+      })
+      await fixtures.objectifIndicateurIndividu({
+        indicateur: { publicId: indId },
+        individu: { publicId: deptId },
+        dateCible: '2024-12-31',
+        valeurCible: 3,
+      })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listTauxProgressionForIndicateur(indId, { individus: [deptId] }),
+      )
+
+      const items = result._unsafeUnwrap().items
+      expect(items).toHaveLength(1)
+      expect(items[0]!.tauxProgression).toBe(66.66)
     }),
   )
 
@@ -179,8 +222,119 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       const items = result._unsafeUnwrap().items
       expect(items).toHaveLength(1)
       expect(items[0]).toMatchObject({
-        dateCible: '2024-12-31',
+        dateCible: '2024-12-01',
         valeurCible: 50,
+        tauxProgression: 80,
+      })
+    }),
+  )
+
+  it(
+    "sélectionne l'objectif quand sa dateCible tombe dans le même bucket que la valeur (frontière)",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refId = testReferentielId()
+      const deptId = testDeptId()
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId },
+        referentiel: { publicId: refId },
+      })
+      // Valeur saisie le 2024-12-15 → bucket mensuel `2024-12-01`.
+      // Objectif fixé au 2024-12-31 → même bucket `2024-12-01`.
+      // Sans `>=`, le `findObjectifApplicable` sauterait à l'objectif suivant
+      // et fausserait `valeurCible` / `tauxProgression` pour ce bucket.
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId, nom: 'Test' },
+        individu: { publicId: deptId, referentiel: { publicId: refId } },
+        date: '2024-12-15',
+        valeur: 40,
+      })
+      await fixtures.objectifIndicateurIndividu(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
+          dateCible: '2024-12-31',
+          valeurCible: 50,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
+          dateCible: '2025-12-31',
+          valeurCible: 100,
+        },
+      )
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listTauxProgressionForIndicateur(indId, { individus: [deptId] }),
+      )
+
+      const items = result._unsafeUnwrap().items
+      expect(items).toHaveLength(1)
+      expect(items[0]).toMatchObject({
+        date: '2024-12-01',
+        dateCible: '2024-12-01',
+        valeurCible: 50,
+        tauxProgression: 80,
+      })
+    }),
+  )
+
+  it(
+    "sélectionne l'objectif futur quand l'objectif passé tombe avant la valeur dans le même mois (dateTrunc=day)",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refId = testReferentielId()
+      const deptId = testDeptId()
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId },
+        referentiel: { publicId: refId },
+      })
+      // Cas miroir du précédent : avec `dateTrunc=day`, les buckets ne se
+      // confondent plus dans le mois. Objectif au 2024-12-15 → bucket
+      // `2024-12-15`, valeur au 2024-12-31 → bucket `2024-12-31`. L'objectif
+      // de décembre est **antérieur** à la valeur ; on doit sauter sur
+      // l'objectif futur (2025-12-31).
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId, nom: 'Test' },
+        individu: { publicId: deptId, referentiel: { publicId: refId } },
+        date: '2024-12-31',
+        valeur: 80,
+      })
+      await fixtures.objectifIndicateurIndividu(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
+          dateCible: '2024-12-15',
+          valeurCible: 50,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
+          dateCible: '2025-12-31',
+          valeurCible: 100,
+        },
+      )
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listTauxProgressionForIndicateur(indId, {
+          individus: [deptId],
+          dateTruncValeur: 'day',
+          dateTruncObjectif: 'day',
+        }),
+      )
+
+      const items = result._unsafeUnwrap().items
+      expect(items).toHaveLength(1)
+      expect(items[0]).toMatchObject({
+        date: '2024-12-31',
+        dateCible: '2025-12-31',
+        valeurCible: 100,
         tauxProgression: 80,
       })
     }),
@@ -228,7 +382,7 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       const items = result._unsafeUnwrap().items
       expect(items).toHaveLength(1)
       expect(items[0]).toMatchObject({
-        dateCible: '2025-12-31',
+        dateCible: '2025-12-01',
         valeurCible: 100,
         tauxProgression: 80,
       })
@@ -350,6 +504,490 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       expect(individus).toContain(dept2)
       expect(items.find((i) => i.individu === dept1)!.tauxProgression).toBe(30)
       expect(items.find((i) => i.individu === dept2)!.tauxProgression).toBe(60)
+    }),
+  )
+
+  // ---------------------------------------------------------------------------
+  // Indicateurs dérivés (agrégation hiérarchique)
+  // ---------------------------------------------------------------------------
+
+  it(
+    'calcule le taux directement sur une feuille (sanity check non-régression)',
+    integrationTest(async () => {
+      // Vérifie que le passage par resolveSerie/Objectif n'a pas cassé le
+      // cas feuille (objectif et valeur saisis directement sur le même individu).
+      const indId = testIndicateurId()
+      const refDept = testReferentielId()
+      const deptId = testIndividuId()
+
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId, nom: 'Test' },
+        referentiel: { publicId: refDept },
+        fonctionAgregation: 'NONE',
+      })
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId },
+        individu: { publicId: deptId, referentiel: { publicId: refDept } },
+        date: '2025-01-15',
+        valeur: 30,
+      })
+      await fixtures.objectifIndicateurIndividu({
+        indicateur: { publicId: indId },
+        individu: { publicId: deptId },
+        dateCible: '2025-12-31',
+        valeurCible: 60,
+      })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listTauxProgressionForIndicateur(indId, { individus: [deptId] }),
+      )
+
+      // bucket mensuel : '2025-01-15' → '2025-01-01'
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [
+          {
+            indicateur: indId,
+            individu: deptId,
+            date: '2025-01-01',
+            valeur: 30,
+            valeurCible: 60,
+            dateCible: '2025-12-01',
+            tauxProgression: 50,
+          },
+        ],
+      })
+    }),
+  )
+
+  it(
+    'calcule le taux avec valeur ET objectif dérivés sur le parent',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
+      const regId = testIndividuId()
+      const [dept1, dept2] = [testIndividuId(), testIndividuId()]
+
+      await fixtures.indicateurReferentiel(
+        {
+          indicateur: { publicId: indId, nom: 'Test' },
+          referentiel: { publicId: refReg },
+          fonctionAgregation: 'SUM',
+        },
+        {
+          indicateur: { publicId: indId },
+          referentiel: { publicId: refDept },
+          fonctionAgregation: 'NONE',
+        },
+      )
+      await fixtures.relation(
+        {
+          parent: { publicId: regId, referentiel: { publicId: refReg } },
+          child: { publicId: dept1, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: regId },
+          child: { publicId: dept2, referentiel: { publicId: refDept } },
+        },
+      )
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept1 },
+          date: '2025-06-01',
+          valeur: 25,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2 },
+          date: '2025-06-01',
+          valeur: 50,
+        },
+      )
+      // Pas d'objectif sur la région : il sera dérivé par SUM(50, 50) = 100
+      await fixtures.objectifIndicateurIndividu(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept1 },
+          dateCible: '2025-12-31',
+          valeurCible: 50,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2 },
+          dateCible: '2025-12-31',
+          valeurCible: 50,
+        },
+      )
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listTauxProgressionForIndicateur(indId, { individus: [regId] }),
+      )
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [
+          {
+            indicateur: indId,
+            individu: regId,
+            date: '2025-06-01',
+            valeur: 75, // SUM(25, 50)
+            valeurCible: 100, // SUM(50, 50)
+            dateCible: '2025-12-01',
+            tauxProgression: 75,
+          },
+        ],
+      })
+    }),
+  )
+
+  it(
+    "exclut un parent dont aucun objectif (direct ni dérivé) n'est applicable",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
+      const regId = testIndividuId()
+      const dept1 = testIndividuId()
+
+      await fixtures.indicateurReferentiel(
+        {
+          indicateur: { publicId: indId, nom: 'Test' },
+          referentiel: { publicId: refReg },
+          fonctionAgregation: 'SUM',
+        },
+        {
+          indicateur: { publicId: indId },
+          referentiel: { publicId: refDept },
+          fonctionAgregation: 'NONE',
+        },
+      )
+      await fixtures.relation({
+        parent: { publicId: regId, referentiel: { publicId: refReg } },
+        child: { publicId: dept1, referentiel: { publicId: refDept } },
+      })
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId },
+        individu: { publicId: dept1 },
+        date: '2025-06-01',
+        valeur: 10,
+      })
+      // Aucun objectif ni sur la région ni sur le département
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listTauxProgressionForIndicateur(indId, { individus: [regId] }),
+      )
+
+      expect(result._unsafeUnwrap()).toEqual({ items: [] })
+    }),
+  )
+
+  it(
+    'aligne le carry-forward des valeurs et des objectifs sur la grille mensuelle',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
+      const regId = testIndividuId()
+      const [dept1, dept2] = [testIndividuId(), testIndividuId()]
+
+      await fixtures.indicateurReferentiel(
+        {
+          indicateur: { publicId: indId, nom: 'Test' },
+          referentiel: { publicId: refReg },
+          fonctionAgregation: 'SUM',
+        },
+        {
+          indicateur: { publicId: indId },
+          referentiel: { publicId: refDept },
+          fonctionAgregation: 'NONE',
+        },
+      )
+      await fixtures.relation(
+        {
+          parent: { publicId: regId, referentiel: { publicId: refReg } },
+          child: { publicId: dept1, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: regId },
+          child: { publicId: dept2, referentiel: { publicId: refDept } },
+        },
+      )
+      // dept1 saisit en jan, dept2 saisit en feb → bucket mensuel doit
+      // émettre 2 points avec carry-forward
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept1 },
+          date: '2025-01-15',
+          valeur: 10,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2 },
+          date: '2025-02-15',
+          valeur: 40,
+        },
+      )
+      // Objectifs sur les enfants : l'objectif région est dérivé par SUM
+      // (les objectifs directs sur un nœud agrégé sont ignorés par design,
+      // cf. objectifs-derives.md).
+      await fixtures.objectifIndicateurIndividu(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept1 },
+          dateCible: '2025-12-31',
+          valeurCible: 50,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2 },
+          dateCible: '2025-12-31',
+          valeurCible: 50,
+        },
+      )
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listTauxProgressionForIndicateur(indId, { individus: [regId] }),
+      )
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [
+          {
+            indicateur: indId,
+            individu: regId,
+            date: '2025-01-01',
+            valeur: 10, // dept1 seul (couverture 1/2, permissif)
+            valeurCible: 100,
+            dateCible: '2025-12-01',
+            tauxProgression: 10,
+          },
+          {
+            indicateur: indId,
+            individu: regId,
+            date: '2025-02-01',
+            valeur: 50, // dept1 (carry 10) + dept2 (40)
+            valeurCible: 100,
+            dateCible: '2025-12-01',
+            tauxProgression: 50,
+          },
+        ],
+      })
+    }),
+  )
+
+  it(
+    'applique les filtres dateDebut/dateFin en sortie sans perturber le carry-forward',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
+      const regId = testIndividuId()
+      const [dept1, dept2] = [testIndividuId(), testIndividuId()]
+
+      await fixtures.indicateurReferentiel(
+        {
+          indicateur: { publicId: indId, nom: 'Test' },
+          referentiel: { publicId: refReg },
+          fonctionAgregation: 'SUM',
+        },
+        {
+          indicateur: { publicId: indId },
+          referentiel: { publicId: refDept },
+          fonctionAgregation: 'NONE',
+        },
+      )
+      await fixtures.relation(
+        {
+          parent: { publicId: regId, referentiel: { publicId: refReg } },
+          child: { publicId: dept1, referentiel: { publicId: refDept } },
+        },
+        {
+          parent: { publicId: regId },
+          child: { publicId: dept2, referentiel: { publicId: refDept } },
+        },
+      )
+      // Saisie de dept1 en jan (hors filtre) — son carry-forward doit se
+      // propager jusqu'au bucket de feb (dans le filtre) où dept2 saisit.
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept1 },
+          date: '2025-01-01',
+          valeur: 30,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2 },
+          date: '2025-02-01',
+          valeur: 40,
+        },
+      )
+      // Objectifs sur les enfants (le parent agrégé ignorerait un objectif direct).
+      await fixtures.objectifIndicateurIndividu(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept1 },
+          dateCible: '2025-12-31',
+          valeurCible: 50,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: dept2 },
+          dateCible: '2025-12-31',
+          valeurCible: 50,
+        },
+      )
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listTauxProgressionForIndicateur(indId, {
+          individus: [regId],
+          dateDebut: '2025-02-01',
+        }),
+      )
+
+      const items = result._unsafeUnwrap().items
+      expect(items).toHaveLength(1)
+      expect(items[0]).toMatchObject({
+        date: '2025-02-01',
+        valeur: 70, // dept1 (carry 30) + dept2 (40) — preuve que le filtre est en sortie
+        tauxProgression: 70,
+      })
+    }),
+  )
+
+  // ---------------------------------------------------------------------------
+  // Granularité mixte (dateTruncValeur ≠ dateTruncObjectif)
+  // ---------------------------------------------------------------------------
+
+  it(
+    'aligne des valeurs mensuelles sur un objectif annuel (dateTruncObjectif=year)',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refId = testReferentielId()
+      const deptId = testDeptId()
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId },
+        referentiel: { publicId: refId },
+      })
+      // 3 valeurs mensuelles sur 2024 + un objectif annuel (dateCible 2024-12-31).
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId, nom: 'Test' },
+          individu: { publicId: deptId, referentiel: { publicId: refId } },
+          date: '2024-03-15',
+          valeur: 25,
+        },
+        {
+          indicateur: { publicId: indId, nom: 'Test' },
+          individu: { publicId: deptId, referentiel: { publicId: refId } },
+          date: '2024-06-20',
+          valeur: 50,
+        },
+        {
+          indicateur: { publicId: indId, nom: 'Test' },
+          individu: { publicId: deptId, referentiel: { publicId: refId } },
+          date: '2024-09-10',
+          valeur: 75,
+        },
+      )
+      await fixtures.objectifIndicateurIndividu({
+        indicateur: { publicId: indId },
+        individu: { publicId: deptId },
+        dateCible: '2024-12-31',
+        valeurCible: 100,
+      })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listTauxProgressionForIndicateur(indId, {
+          individus: [deptId],
+          dateTruncValeur: 'month',
+          dateTruncObjectif: 'year',
+        }),
+      )
+
+      const items = result._unsafeUnwrap().items
+      expect(items).toHaveLength(3)
+      // Chaque bucket mensuel de valeur tape la même cible annuelle bucketisée
+      // au 1er janvier (`year` trunc).
+      expect(items.map((p) => p.date)).toEqual(['2024-03-01', '2024-06-01', '2024-09-01'])
+      expect(items.every((p) => p.dateCible === '2024-01-01')).toBe(true)
+      expect(items.every((p) => p.valeurCible === 100)).toBe(true)
+      expect(items.map((p) => p.tauxProgression)).toEqual([25, 50, 75])
+    }),
+  )
+
+  it(
+    "retient l'objectif le plus récent quand plusieurs tombent dans le même bucket annuel (dateTruncObjectif=year)",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refId = testReferentielId()
+      const deptId = testDeptId()
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indId },
+        referentiel: { publicId: refId },
+      })
+      // 2 objectifs dans la même année → bucket `2024-01-01` partagé.
+      // Le SQL `DISTINCT ON ... ORDER BY date_cible DESC` garde le plus récent
+      // (2024-12-31, val 100). Sans ce comportement, on basculerait sur
+      // l'objectif de mars (val 50) et fausserait la valeurCible/taux.
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId, nom: 'Test' },
+        individu: { publicId: deptId, referentiel: { publicId: refId } },
+        date: '2024-06-20',
+        valeur: 80,
+      })
+      await fixtures.objectifIndicateurIndividu(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
+          dateCible: '2024-03-31',
+          valeurCible: 50,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
+          dateCible: '2024-12-31',
+          valeurCible: 100,
+        },
+      )
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listTauxProgressionForIndicateur(indId, {
+          individus: [deptId],
+          dateTruncValeur: 'month',
+          dateTruncObjectif: 'year',
+        }),
+      )
+
+      const items = result._unsafeUnwrap().items
+      expect(items).toHaveLength(1)
+      expect(items[0]).toMatchObject({
+        date: '2024-06-01',
+        dateCible: '2024-01-01',
+        valeurCible: 100,
+        tauxProgression: 80,
+      })
     }),
   )
 

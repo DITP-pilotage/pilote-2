@@ -1,5 +1,6 @@
 import { type FonctionAgregation } from '@pilote/mb-shared/indicateur'
 
+import { type Bucket, type BucketKey, compareBuckets, formatBucket } from '@/framework/bucket'
 import { yieldToEventLoop } from '@/framework/concurrency'
 import { Decimal } from '@/framework/decimal'
 import { agreger, getFonctionAgregationActive } from '@/indicateur/resolveAgregation'
@@ -11,23 +12,23 @@ export type IndividuRef = {
 }
 
 export type SaisieTronquee = {
-  bucket: string
-  dateOrigine: string
+  bucket: Bucket
+  dateOrigine: Bucket
   valeur: Decimal
 }
 
 export type ContributionInterne = {
   individuPublicId: string
   valeur: Decimal | null
-  dateOrigine: string | null
+  dateOrigine: Bucket | null
   source: 'saisie' | 'derivee' | 'manquante'
 }
 
 export type PointInterne =
-  | { type: 'saisie'; bucket: string; dateOrigine: string; valeur: Decimal }
+  | { type: 'saisie'; bucket: Bucket; dateOrigine: Bucket; valeur: Decimal }
   | {
       type: 'derivee'
-      bucket: string
+      bucket: Bucket
       valeur: Decimal
       fonctionAgregation: FonctionAgregation
       contributions: ContributionInterne[]
@@ -121,24 +122,42 @@ const computeSerieDerivee = async (
   }
 
   // Union des buckets distincts présents dans une série enfant (triés ASC).
-  const bucketsSet = new Set<string>()
+  // Indexés par leur ISO string (`BucketKey`) parce que `PlainDate` n'a pas
+  // d'égalité de valeur native pour `Set`/`Map` ; on conserve l'instance
+  // `PlainDate` pour propager le bucket aux `PointInterne` sortants.
+  const bucketsByKey = new Map<BucketKey, Bucket>()
   for (const state of states) {
-    for (const point of state.points) bucketsSet.add(point.bucket)
+    for (const point of state.points) {
+      const key = formatBucket(point.bucket)
+      if (!bucketsByKey.has(key)) bucketsByKey.set(key, point.bucket)
+    }
   }
-  const buckets = [...bucketsSet].sort()
+  const buckets = [...bucketsByKey.values()].sort(compareBuckets)
 
   const result: PointInterne[] = []
 
   for (const bucket of buckets) {
     // Yield à chaque bucket : voir doc en tête de `resolveSerieIndividu`.
     await yieldToEventLoop()
-    // Avance chaque pointer tant que la valeur suivante de l'enfant est ≤ au
-    // bucket courant (carry-forward). Comme les buckets sont parcourus ASC,
-    // les pointers ne reculent jamais → coût amorti O(N+E) par enfant.
+    // Carry-forward via pointers triés ASC.
+    // `state.pointer` = index dans `state.points` de la **dernière** valeur
+    // de l'enfant dont bucket ≤ B courant (-1 = aucune valeur encore portée).
+    // L'union des buckets est parcourue ASC : si `points[k].bucket ≤ B₁`, alors
+    // `points[k].bucket ≤ B₂` pour tout B₂ ≥ B₁ → le pointer ne peut qu'avancer,
+    // jamais reculer. Coût amorti O(N+E) par enfant (vs O(N×E) si on re-scannait
+    // à chaque bucket).
+    // Test `[pointer+1] ≤ B` (et non `<`) : un `<` raterait l'égalité quand
+    // l'enfant a une valeur **exactement** sur B et on resterait sur la précédente.
+    //
+    // Exemple — enfant avec buckets = [Jan, Juin] (val 10 puis 20) :
+    //   B=Jan  → pointer 0  (val 10)
+    //   B=Mar  → pointer 0  (val 10, carry-forward)
+    //   B=Juin → pointer 1  (val 20)
+    //   B=Aoû  → pointer 1  (val 20, carry-forward — au-delà du dernier bucket)
     for (const state of states) {
       while (
         state.pointer + 1 < state.points.length &&
-        state.points[state.pointer + 1]!.bucket <= bucket
+        compareBuckets(state.points[state.pointer + 1]!.bucket, bucket) <= 0
       ) {
         state.pointer++
       }

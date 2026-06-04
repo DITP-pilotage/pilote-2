@@ -31,3 +31,18 @@ export const dateTruncSchema = z
       'est retenue.',
   )
 export type DateTrunc = z.infer<typeof dateTruncSchema>
+
+// Ordre du plus fin au plus grossier — utilisé pour valider que la granularité
+// d'un côté (ex. objectifs) n'est pas plus fine que celle de l'autre (ex.
+// valeurs) : un objectif qui change plus souvent que les mesures n'a pas de
+// sens car aucune valeur ne pourrait évaluer sa progression.
+const DATE_TRUNC_ORDER: Record<DateTrunc, number> = {
+  day: 1,
+  week: 2,
+  month: 3,
+  quarter: 4,
+  year: 5,
+}
+
+export const isCoarserOrEqual = (a: DateTrunc, b: DateTrunc): boolean =>
+  DATE_TRUNC_ORDER[a] >= DATE_TRUNC_ORDER[b]

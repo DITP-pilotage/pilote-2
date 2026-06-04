@@ -68,7 +68,7 @@ export function IndicateurValeursRemarquables({
           value={
             dernierPoint.tauxProgression === null
               ? '—'
-              : `${Math.round(dernierPoint.tauxProgression)} %`
+              : `${formatNumberFr(dernierPoint.tauxProgression)} %`
           }
           caption={`cible : ${formatNumberFr(dernierPoint.valeurCible)} au ${formatDateFr(dernierPoint.dateCible)}`}
         />
