@@ -1,7 +1,7 @@
 import { Inbox } from 'lucide-react'
 import type { ReactNode } from 'react'
 
-import { Heading, Text } from '@/components/ui/Typography'
+import { Text } from '@/components/ui/Typography'
 
 type EmptyStateProps = {
   title: ReactNode
@@ -15,9 +15,7 @@ export function EmptyState({ title, description, icon }: EmptyStateProps) {
       <div className="flex size-12 items-center justify-center rounded-full bg-surface text-primary">
         {icon ?? <Inbox className="size-5" aria-hidden />}
       </div>
-      <Heading as="p" size="md">
-        {title}
-      </Heading>
+      <Text weight="medium">{title}</Text>
       {description && <Text tone="muted">{description}</Text>}
     </div>
   )

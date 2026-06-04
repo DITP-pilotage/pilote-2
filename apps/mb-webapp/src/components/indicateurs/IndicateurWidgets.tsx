@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { WidgetRenderer } from '@/components/widgets/WidgetRenderer'
+import { Card } from '@/components/ui/Card'
 import { referentielQueryOptions } from '@/queries/referentiels'
 
 type IndicateurWidgetsProps = {
@@ -16,16 +17,13 @@ export function IndicateurWidgets({ indicateurId, referentielId }: IndicateurWid
   return (
     <div className="space-y-6">
       {referentiel.widgets.map((widget) => (
-        <div key={widget.id} className="rounded-xl border border-border bg-surface p-6 sm:p-8">
-          <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.12em] text-primary">
-            {widget.nom}
-          </h3>
+        <Card key={widget.id} kicker={widget.nom}>
           <WidgetRenderer
             widget={widget}
             indicateurId={indicateurId}
             referentielId={referentielId}
           />
-        </div>
+        </Card>
       ))}
     </div>
   )
