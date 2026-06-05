@@ -3,7 +3,6 @@ import { type PrismaPilote } from "@/server/db/PrismaPilote";
 import { type PilotePrismaClient } from "@/server/db/PrismaTransaction";
 import logger from "@/server/infrastructure/Logger";
 import { type MbApiClient } from "@/server/mb-sync/domain/ports/MbApiClient";
-import { INDICATEURS_A_SYNCHRONISER } from "@/server/mb-sync/usecases/SyncMbValeursUseCase";
 
 const MAILLE_VERS_REFERENTIEL: Record<$Enums.Maille, string> = {
   NAT: "REF-NAT",
@@ -30,7 +29,7 @@ export class SyncMbMetadonneesUseCase {
     this.mbApiClient = mbApiClient;
   }
 
-  async execute(): Promise<SyncMetadonneesResultat> {
+  async execute(indicateursIds: string[]): Promise<SyncMetadonneesResultat> {
     logger.info(
       { source: "cron/sync-mb-valeurs" },
       "Démarrage de la synchronisation mb-metadonnees",
@@ -38,7 +37,7 @@ export class SyncMbMetadonneesUseCase {
 
     const resultats: SyncMetadonneesResultat["indicateurs"] = [];
 
-    for (const indicId of INDICATEURS_A_SYNCHRONISER) {
+    for (const indicId of indicateursIds) {
       const indicateur = await this.prisma.indicateur_identite.findUnique({
         where: { id: indicId },
       });

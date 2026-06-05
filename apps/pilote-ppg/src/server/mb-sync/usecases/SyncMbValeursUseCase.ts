@@ -9,8 +9,6 @@ import {
 } from "@/server/mb-sync/domain/ports/MbApiClient";
 import { type MbSyncExecutionRepository } from "@/server/mb-sync/domain/ports/MbSyncExecutionRepository";
 
-export const INDICATEURS_A_SYNCHRONISER: string[] = ["IND-003"];
-
 type EvenementDelta = {
   indic_id: string;
   territoire_code: string;
@@ -42,7 +40,7 @@ export class SyncMbValeursUseCase {
     this.mbSyncExecutionRepository = mbSyncExecutionRepository;
   }
 
-  async execute(): Promise<SyncResultat> {
+  async execute(indicateursIds: string[]): Promise<SyncResultat> {
     const lastSyncAt =
       await this.mbSyncExecutionRepository.recupererDerniereDateSync();
 
@@ -53,7 +51,7 @@ export class SyncMbValeursUseCase {
 
     const resultats: Array<{ id: string; total: number }> = [];
 
-    for (const indicId of INDICATEURS_A_SYNCHRONISER) {
+    for (const indicId of indicateursIds) {
       const evenements = await this.recupererEvenementsDelta(
         indicId,
         lastSyncAt,
@@ -71,7 +69,10 @@ export class SyncMbValeursUseCase {
 
       const items = this.toUpsertValeurAvancementItems(evenements);
 
-      const total = await this.mbApiClient.upsertValeursAvancementBatch(indicId, items);
+      const total = await this.mbApiClient.upsertValeursAvancementBatch(
+        indicId,
+        items,
+      );
 
       resultats.push({ id: indicId, total });
     }
@@ -107,7 +108,9 @@ export class SyncMbValeursUseCase {
     );
   }
 
-  private toUpsertValeurAvancementItems(evenements: EvenementDelta[]): UpsertValeurAvancementItem[] {
+  private toUpsertValeurAvancementItems(
+    evenements: EvenementDelta[],
+  ): UpsertValeurAvancementItem[] {
     return evenements
       .filter(
         (evenement): evenement is EvenementDelta & { valeur: number } =>

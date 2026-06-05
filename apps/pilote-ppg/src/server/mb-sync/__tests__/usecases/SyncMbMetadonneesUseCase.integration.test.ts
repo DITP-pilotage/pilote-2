@@ -35,7 +35,7 @@ describe("SyncMbMetadonneesUseCase", () => {
       const { mbApiClient, upsertIndicateur } = buildMbApiClientMock();
 
       // When
-      const resultat = await buildUseCase(mbApiClient).execute();
+      const resultat = await buildUseCase(mbApiClient).execute([INDIC_ID]);
 
       // Then
       expect(upsertIndicateur).toHaveBeenCalledExactlyOnceWith(INDIC_ID, {
@@ -59,7 +59,7 @@ describe("SyncMbMetadonneesUseCase", () => {
       const { mbApiClient, upsertIndicateur } = buildMbApiClientMock();
 
       // When
-      const resultat = await buildUseCase(mbApiClient).execute();
+      const resultat = await buildUseCase(mbApiClient).execute([INDIC_ID]);
 
       // Then
       expect(upsertIndicateur).not.toHaveBeenCalled();
@@ -86,7 +86,7 @@ describe("SyncMbMetadonneesUseCase", () => {
         .mockRejectedValue(new Error("mb-api indisponible"));
 
       // When / Then
-      await expect(buildUseCase(mbApiClient).execute()).rejects.toThrow(
+      await expect(buildUseCase(mbApiClient).execute([INDIC_ID])).rejects.toThrow(
         "mb-api indisponible",
       );
     }),

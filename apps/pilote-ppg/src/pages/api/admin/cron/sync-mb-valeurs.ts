@@ -7,6 +7,8 @@ import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { getContainer } from "@/server/dependances";
 import { type SyncMetadonneesResultat } from "@/server/mb-sync/usecases/SyncMbMetadonneesUseCase";
 
+const INDICATEURS_A_SYNCHRONISER = ["IND-003"];
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const {
     baseUrl,
@@ -22,7 +24,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     metadonnees = await container
       .resolve("syncMbMetadonneesUseCase")
-      .execute();
+      .execute(INDICATEURS_A_SYNCHRONISER);
   } catch (error) {
     logger.error(
       { categorie: "sync", source: "cron/sync-mb-valeurs" },
@@ -42,10 +44,17 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 
   try {
-    const valeurs = await container.resolve("syncMbValeursUseCase").execute();
+    const valeurs = await container
+      .resolve("syncMbValeursUseCase")
+      .execute(INDICATEURS_A_SYNCHRONISER);
 
     logger.info(
-      { categorie: "sync", source: "cron/sync-mb-valeurs", metadonnees, valeurs },
+      {
+        categorie: "sync",
+        source: "cron/sync-mb-valeurs",
+        metadonnees,
+        valeurs,
+      },
       "Synchronisation mb-valeurs terminée avec succès",
     );
 
