@@ -1,7 +1,8 @@
 import { configuration } from "@/config";
 import {
   type MbApiClient,
-  type UpsertItem,
+  type UpsertIndicateurPayload,
+  type UpsertValeurAvancementItem,
 } from "@/server/mb-sync/domain/ports/MbApiClient";
 
 const MAX_ITEMS_PAR_BATCH = 1000;
@@ -13,9 +14,9 @@ type BatchResultat = {
 };
 
 export class HttpMbApiClient implements MbApiClient {
-  async upsertBatch(
+  async upsertValeursAvancementBatch(
     indicateurId: string,
-    items: UpsertItem[],
+    items: UpsertValeurAvancementItem[],
   ): Promise<number> {
     const { baseUrl, apiKey } = configuration().mbApi;
     let total = 0;
@@ -47,5 +48,28 @@ export class HttpMbApiClient implements MbApiClient {
     }
 
     return total;
+  }
+
+  async upsertIndicateur(
+    id: string,
+    payload: UpsertIndicateurPayload,
+  ): Promise<void> {
+    const { baseUrl, apiKey } = configuration().mbApi;
+
+    const response = await fetch(`${baseUrl}/indicateurs/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      const body = await response.text();
+      throw new Error(
+        `mb-api upsert indicateur échoué pour ${id} : HTTP ${response.status} — ${body}`,
+      );
+    }
   }
 }

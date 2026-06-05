@@ -2,7 +2,7 @@ import { $Enums } from "@prisma/client";
 import { type PrismaPilote } from "@/server/db/PrismaPilote";
 import { type PilotePrismaClient } from "@/server/db/PrismaTransaction";
 import logger from "@/server/infrastructure/Logger";
-import { type MbIndicateurClient } from "@/server/mb-sync/domain/ports/MbIndicateurClient";
+import { type MbApiClient } from "@/server/mb-sync/domain/ports/MbApiClient";
 import { INDICATEURS_A_SYNCHRONISER } from "@/server/mb-sync/usecases/SyncMbValeursUseCase";
 
 const MAILLE_VERS_REFERENTIEL: Record<$Enums.Maille, string> = {
@@ -17,17 +17,17 @@ export type SyncMetadonneesResultat = {
 
 export class SyncMbMetadonneesUseCase {
   private readonly prisma: PilotePrismaClient;
-  private readonly mbIndicateurClient: MbIndicateurClient;
+  private readonly mbApiClient: MbApiClient;
 
   constructor({
     prisma,
-    mbIndicateurClient,
+    mbApiClient,
   }: {
     prisma: PrismaPilote;
-    mbIndicateurClient: MbIndicateurClient;
+    mbApiClient: MbApiClient;
   }) {
     this.prisma = prisma.getInstance();
-    this.mbIndicateurClient = mbIndicateurClient;
+    this.mbApiClient = mbApiClient;
   }
 
   async execute(): Promise<SyncMetadonneesResultat> {
@@ -57,7 +57,7 @@ export class SyncMbMetadonneesUseCase {
         fonctionAgregation: "NONE" as const,
       }));
 
-      await this.mbIndicateurClient.upsertIndicateur(indicId, {
+      await this.mbApiClient.upsertIndicateur(indicId, {
         nom: indicateur.nom,
         visibilite: "PRIVE",
         referentiels,

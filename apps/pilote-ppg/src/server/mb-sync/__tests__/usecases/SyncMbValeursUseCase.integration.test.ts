@@ -22,10 +22,10 @@ describe("SyncMbValeursUseCase", () => {
     });
 
   const buildMbApiClientMock = () => {
-    const upsertBatch = vi.fn().mockResolvedValue(1);
+    const upsertValeursAvancementBatch = vi.fn().mockResolvedValue(1);
     return {
-      mbApiClient: { upsertBatch } as unknown as MbApiClient,
-      upsertBatch,
+      mbApiClient: { upsertValeursAvancementBatch } as unknown as MbApiClient,
+      upsertValeursAvancementBatch,
     };
   };
 
@@ -63,14 +63,14 @@ describe("SyncMbValeursUseCase", () => {
         valeur: 42,
         ordre: 1,
       });
-      const { mbApiClient, upsertBatch } = buildMbApiClientMock();
+      const { mbApiClient, upsertValeursAvancementBatch } = buildMbApiClientMock();
 
       // When
       const avant = new Date();
       await buildUseCase(mbApiClient).execute();
 
       // Then
-      expect(upsertBatch).toHaveBeenCalledExactlyOnceWith(INDIC_ID, [
+      expect(upsertValeursAvancementBatch).toHaveBeenCalledExactlyOnceWith(INDIC_ID, [
         { individu: TERRITOIRE_CODE, date: "2025-03-01", valeur: 42 },
       ]);
 
@@ -85,13 +85,13 @@ describe("SyncMbValeursUseCase", () => {
     "ne fait rien si aucun événement depuis la dernière sync",
     createIntegrationTest(async () => {
       // Given — aucun événement en base
-      const { mbApiClient, upsertBatch } = buildMbApiClientMock();
+      const { mbApiClient, upsertValeursAvancementBatch } = buildMbApiClientMock();
 
       // When
       await buildUseCase(mbApiClient).execute();
 
       // Then
-      expect(upsertBatch).not.toHaveBeenCalled();
+      expect(upsertValeursAvancementBatch).not.toHaveBeenCalled();
     }),
   );
 
@@ -119,13 +119,13 @@ describe("SyncMbValeursUseCase", () => {
         valeur: null,
         ordre: 1,
       });
-      const { mbApiClient, upsertBatch } = buildMbApiClientMock();
+      const { mbApiClient, upsertValeursAvancementBatch } = buildMbApiClientMock();
 
       // When
       await buildUseCase(mbApiClient).execute();
 
       // Then — seul l'événement avec valeur non nulle est envoyé
-      expect(upsertBatch).toHaveBeenCalledExactlyOnceWith(INDIC_ID, [
+      expect(upsertValeursAvancementBatch).toHaveBeenCalledExactlyOnceWith(INDIC_ID, [
         { individu: TERRITOIRE_CODE, date: "2025-03-01", valeur: 10 },
       ]);
     }),
@@ -157,13 +157,13 @@ describe("SyncMbValeursUseCase", () => {
         valeur: 75,
         ordre: 2,
       });
-      const { mbApiClient, upsertBatch } = buildMbApiClientMock();
+      const { mbApiClient, upsertValeursAvancementBatch } = buildMbApiClientMock();
 
       // When
       await buildUseCase(mbApiClient).execute();
 
       // Then — seule la valeur 75 (ordre 2) est envoyée
-      expect(upsertBatch).toHaveBeenCalledExactlyOnceWith(INDIC_ID, [
+      expect(upsertValeursAvancementBatch).toHaveBeenCalledExactlyOnceWith(INDIC_ID, [
         { individu: TERRITOIRE_CODE, date: "2025-03-01", valeur: 75 },
       ]);
     }),

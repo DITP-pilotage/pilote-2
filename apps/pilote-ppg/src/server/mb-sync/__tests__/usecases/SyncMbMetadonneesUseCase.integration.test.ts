@@ -2,7 +2,7 @@ import { vi } from "vitest";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
-import { type MbIndicateurClient } from "@/server/mb-sync/domain/ports/MbIndicateurClient";
+import { type MbApiClient } from "@/server/mb-sync/domain/ports/MbApiClient";
 import { SyncMbMetadonneesUseCase } from "@/server/mb-sync/usecases/SyncMbMetadonneesUseCase";
 
 const INDIC_ID = "IND-003";
@@ -10,13 +10,13 @@ const INDIC_ID = "IND-003";
 describe("SyncMbMetadonneesUseCase", () => {
   const prismaPilote = new PrismaPilote();
 
-  const buildUseCase = (mbIndicateurClient: MbIndicateurClient) =>
-    new SyncMbMetadonneesUseCase({ prisma: prismaPilote, mbIndicateurClient });
+  const buildUseCase = (mbApiClient: MbApiClient) =>
+    new SyncMbMetadonneesUseCase({ prisma: prismaPilote, mbApiClient });
 
-  const buildMbIndicateurClientMock = () => {
+  const buildMbApiClientMock = () => {
     const upsertIndicateur = vi.fn().mockResolvedValue(undefined);
     return {
-      mbIndicateurClient: { upsertIndicateur } as unknown as MbIndicateurClient,
+      mbApiClient: { upsertIndicateur } as unknown as MbApiClient,
       upsertIndicateur,
     };
   };
@@ -32,11 +32,10 @@ describe("SyncMbMetadonneesUseCase", () => {
         nom: "Taux de chômage",
         mailles_applicables: ["NAT", "REG"],
       });
-      const { mbIndicateurClient, upsertIndicateur } =
-        buildMbIndicateurClientMock();
+      const { mbApiClient, upsertIndicateur } = buildMbApiClientMock();
 
       // When
-      const resultat = await buildUseCase(mbIndicateurClient).execute();
+      const resultat = await buildUseCase(mbApiClient).execute();
 
       // Then
       expect(upsertIndicateur).toHaveBeenCalledExactlyOnceWith(INDIC_ID, {
@@ -57,11 +56,10 @@ describe("SyncMbMetadonneesUseCase", () => {
     "ignore un indicateur absent de indicateur_identite sans bloquer",
     createIntegrationTest(async () => {
       // Given — aucun indicateur en base
-      const { mbIndicateurClient, upsertIndicateur } =
-        buildMbIndicateurClientMock();
+      const { mbApiClient, upsertIndicateur } = buildMbApiClientMock();
 
       // When
-      const resultat = await buildUseCase(mbIndicateurClient).execute();
+      const resultat = await buildUseCase(mbApiClient).execute();
 
       // Then
       expect(upsertIndicateur).not.toHaveBeenCalled();
@@ -81,17 +79,16 @@ describe("SyncMbMetadonneesUseCase", () => {
         chantier_id: chantier.id,
         mailles_applicables: ["NAT"],
       });
-      const { mbIndicateurClient } = buildMbIndicateurClientMock();
-      (
-        mbIndicateurClient as { upsertIndicateur: ReturnType<typeof vi.fn> }
-      ).upsertIndicateur = vi
+      const { mbApiClient } = buildMbApiClientMock();
+      (mbApiClient as unknown as { upsertIndicateur: ReturnType<typeof vi.fn> })
+        .upsertIndicateur = vi
         .fn()
         .mockRejectedValue(new Error("mb-api indisponible"));
 
       // When / Then
-      await expect(
-        buildUseCase(mbIndicateurClient).execute(),
-      ).rejects.toThrow("mb-api indisponible");
+      await expect(buildUseCase(mbApiClient).execute()).rejects.toThrow(
+        "mb-api indisponible",
+      );
     }),
   );
 });

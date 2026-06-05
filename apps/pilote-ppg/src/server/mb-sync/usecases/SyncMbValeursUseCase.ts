@@ -5,7 +5,7 @@ import { type PilotePrismaClient } from "@/server/db/PrismaTransaction";
 import logger from "@/server/infrastructure/Logger";
 import {
   type MbApiClient,
-  type UpsertItem,
+  type UpsertValeurAvancementItem,
 } from "@/server/mb-sync/domain/ports/MbApiClient";
 import { type MbSyncExecutionRepository } from "@/server/mb-sync/domain/ports/MbSyncExecutionRepository";
 
@@ -69,9 +69,9 @@ export class SyncMbValeursUseCase {
         continue;
       }
 
-      const items = this.toUpsertItems(evenements);
+      const items = this.toUpsertValeurAvancementItems(evenements);
 
-      const total = await this.mbApiClient.upsertBatch(indicId, items);
+      const total = await this.mbApiClient.upsertValeursAvancementBatch(indicId, items);
 
       resultats.push({ id: indicId, total });
     }
@@ -107,7 +107,7 @@ export class SyncMbValeursUseCase {
     );
   }
 
-  private toUpsertItems(evenements: EvenementDelta[]): UpsertItem[] {
+  private toUpsertValeurAvancementItems(evenements: EvenementDelta[]): UpsertValeurAvancementItem[] {
     return evenements
       .filter(
         (evenement): evenement is EvenementDelta & { valeur: number } =>
