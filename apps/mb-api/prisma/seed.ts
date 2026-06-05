@@ -312,6 +312,7 @@ const main = async () => {
     {
       indicateurPublicId: 'IND-003',
       referentiels: [
+        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
         { referentielPublicId: 'REF-REG', fonctionAgregation: 'NONE' },
         { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
       ],

@@ -15,7 +15,10 @@ export type BatchResultat = {
 };
 
 export class MbApiClient {
-  async upsertBatch(indicateurId: string, items: UpsertItem[]): Promise<number> {
+  async upsertBatch(
+    indicateurId: string,
+    items: UpsertItem[],
+  ): Promise<number> {
     const { baseUrl, apiKey } = configuration().mbApi;
     let total = 0;
 

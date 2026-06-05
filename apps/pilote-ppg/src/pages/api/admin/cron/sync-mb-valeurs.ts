@@ -7,8 +7,11 @@ import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { getContainer } from "@/server/dependances";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { baseUrl, roomIdSyncMbValeurs: roomId, accessToken } =
-    configuration().tchap;
+  const {
+    baseUrl,
+    roomIdSyncMbValeurs: roomId,
+    accessToken,
+  } = configuration().tchap;
   const isProd = configuration().scalingoEnvironment === "PROD";
 
   try {
