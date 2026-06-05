@@ -2,6 +2,7 @@ import { $Enums } from "@prisma/client";
 import type { inferRouterOutputs } from "@trpc/server";
 import type { appRouter } from "@/server/infrastructure/api/trpc/routes/routes";
 import { AssistantMessage } from "@/components/_commons/ChatUI/AssistantMessage";
+import { LIBELLES_CATEGORIES } from "@/components/_commons/ChatUI/feedbackCategories";
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { clsxm } from "@/utils/clsxm";
 
@@ -140,6 +141,20 @@ export const ConversationTranscript = ({
               </p>
             </section>
           )}
+
+          {tour.llmCall?.categoriesProbleme &&
+            tour.llmCall.categoriesProbleme.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {tour.llmCall.categoriesProbleme.map((categorie) => (
+                  <span
+                    className="inline-flex items-center px-2.5 py-1 rounded-sm text-xs font-medium bg-dsfr-warning-950 text-dsfr-warning-425"
+                    key={categorie}
+                  >
+                    {LIBELLES_CATEGORIES[categorie]}
+                  </span>
+                ))}
+              </div>
+            )}
         </article>
       ))}
     </div>

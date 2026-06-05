@@ -49,6 +49,9 @@ const conversationsRouter = créerRouteurTRPC({
         avecPouce: z.boolean().optional(),
         avecPouceBas: z.boolean().optional(),
         avecCommentaire: z.boolean().optional(),
+        categories: z
+          .array(z.nativeEnum($Enums.llm_call_categorie_probleme))
+          .optional(),
         profilCodes: z.array(z.string()).optional(),
         triChamp: z.enum(["createdAt", "updatedAt"]).default("updatedAt"),
         triDirection: z.enum(["asc", "desc"]).default("desc"),
@@ -68,6 +71,7 @@ const conversationsRouter = créerRouteurTRPC({
         avecPouce: input.avecPouce,
         avecPouceBas: input.avecPouceBas,
         avecCommentaire: input.avecCommentaire,
+        categories: input.categories,
         profilCodes: input.profilCodes,
         tri: { champ: input.triChamp, direction: input.triDirection },
       });
@@ -89,17 +93,35 @@ const conversationsRouter = créerRouteurTRPC({
 export const albertRouter = créerRouteurTRPC({
   evaluer: procédureProtégée
     .input(
-      z.discriminatedUnion("evaluation", [
-        z.object({
-          chatId: z.string().min(1),
-          evaluation: z.literal($Enums.llm_call_evaluation.POSITIVE),
-        }),
-        z.object({
-          chatId: z.string().min(1),
-          evaluation: z.literal($Enums.llm_call_evaluation.NEGATIVE),
-          commentaire: z.string().min(1),
-        }),
-      ]),
+      z
+        .discriminatedUnion("evaluation", [
+          z.object({
+            chatId: z.string().min(1),
+            evaluation: z.literal($Enums.llm_call_evaluation.POSITIVE),
+            commentaire: z.string().trim().min(1).optional(),
+          }),
+          z.object({
+            chatId: z.string().min(1),
+            evaluation: z.literal($Enums.llm_call_evaluation.NEGATIVE),
+            categories: z
+              .array(z.nativeEnum($Enums.llm_call_categorie_probleme))
+              .min(1),
+            commentaire: z.string().trim().min(1).optional(),
+          }),
+        ])
+        .refine(
+          (data) =>
+            data.evaluation !== $Enums.llm_call_evaluation.NEGATIVE ||
+            !data.categories.includes(
+              $Enums.llm_call_categorie_probleme.AUTRE,
+            ) ||
+            !!data.commentaire,
+          {
+            message:
+              "Un commentaire est obligatoire lorsque la catégorie « Autre » est sélectionnée",
+            path: ["commentaire"],
+          },
+        ),
     )
     .mutation(async ({ input }) => {
       const container = getContainer("albert");
@@ -107,9 +129,10 @@ export const albertRouter = créerRouteurTRPC({
       await evaluerChatUseCase.execute({
         chatId: input.chatId,
         evaluation: input.evaluation,
-        commentaire:
+        commentaire: input.commentaire,
+        categories:
           input.evaluation === $Enums.llm_call_evaluation.NEGATIVE
-            ? input.commentaire
+            ? input.categories
             : undefined,
       });
     }),

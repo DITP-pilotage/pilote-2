@@ -804,17 +804,27 @@ enum llm_call_evaluation {
   @@schema("public")
 }
 
+enum llm_call_categorie_probleme {
+  PROBLEME_TECHNIQUE
+  INCOMPREHENSION
+  SUGGESTION
+  AUTRE
+
+  @@schema("public")
+}
+
 model llm_calls {
-  id             String               @id @default(uuid()) @db.Uuid
-  chat_id        String
-  utilisateur_id String               @db.Uuid
-  transcript     Json
-  model          String
-  input_tokens   Int                  @default(0)
-  output_tokens  Int                  @default(0)
-  evaluation     llm_call_evaluation?
-  commentaire    String?
-  created_at     DateTime             @default(now())
+  id                  String                        @id @default(uuid()) @db.Uuid
+  chat_id             String
+  utilisateur_id      String                        @db.Uuid
+  transcript          Json
+  model               String
+  input_tokens        Int                           @default(0)
+  output_tokens       Int                           @default(0)
+  evaluation          llm_call_evaluation?
+  commentaire         String?
+  categories_probleme llm_call_categorie_probleme[] @default([])
+  created_at          DateTime                      @default(now())
 
   utilisateur utilisateur @relation(fields: [utilisateur_id], references: [id])
 

@@ -19,6 +19,7 @@ export type ConversationAdminDetail = {
     id: string;
     evaluation: $Enums.llm_call_evaluation | null;
     commentaire: string | null;
+    categoriesProbleme: $Enums.llm_call_categorie_probleme[];
     createdAt: Date;
   }>;
 };
@@ -40,6 +41,7 @@ type LigneLlmCall = {
   id: string;
   evaluation: $Enums.llm_call_evaluation | null;
   commentaire: string | null;
+  categories_probleme: $Enums.llm_call_categorie_probleme[];
   created_at: Date;
 };
 
@@ -75,7 +77,7 @@ export class RecupererConversationAdminQuery {
     const ligne = lignes[0];
 
     const llmCallsLignes = await db.$queryRaw<LigneLlmCall[]>(Prisma.sql`
-      SELECT id, evaluation, commentaire, created_at
+      SELECT id, evaluation, commentaire, categories_probleme, created_at
       FROM llm_calls
       WHERE chat_id = ${params.id}::text
       ORDER BY created_at ASC
@@ -98,6 +100,7 @@ export class RecupererConversationAdminQuery {
         id: row.id,
         evaluation: row.evaluation,
         commentaire: row.commentaire,
+        categoriesProbleme: row.categories_probleme,
         createdAt: row.created_at,
       })),
     };
