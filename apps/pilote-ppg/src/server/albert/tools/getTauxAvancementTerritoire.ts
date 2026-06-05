@@ -49,13 +49,8 @@ export type GetTauxAvancementTerritoireOutput = {
   _output_instructions: string;
 };
 
-function getOutputInstructions(codesRestreints: string[]): string {
-  const base = `Présente le TA, la médiane et la position pour chaque territoire. Un seul territoire → paragraphe factuel. Plusieurs territoires → tableau comparatif.`;
-  if (codesRestreints.length === 0) return base;
-  return (
-    `⚠️ Restriction d'accès — territoires ${codesRestreints.join(", ")} : seuls le taux d'avancement est disponible. La médiane et la position par rapport à la médiane sont null par restriction d'accès, et non par absence de données. Tu DOIS le mentionner explicitement dans ta réponse.\n\n` +
-    base
-  );
+function getOutputInstructions(): string {
+  return `Présente le TA, la médiane et la position pour chaque territoire. Un seul territoire → paragraphe factuel. Plusieurs territoires → tableau comparatif.`;
 }
 
 export function createGetTauxAvancementTerritoireTool({
@@ -66,8 +61,6 @@ export function createGetTauxAvancementTerritoireTool({
   territoireResolver: TerritoireResolver;
 }) {
   return ({ habilitations }: { habilitations: Habilitations }) => {
-    const territoiresAccessibles = habilitations.lecture.territoires;
-
     return tool({
       description: `Récupère le taux d'avancement global d'un territoire, la médiane de répartition et la position du territoire par rapport à la médiane.
 Quand include_sous_territoires=true, retourne aussi les données de chaque sous-territoire.
@@ -135,32 +128,21 @@ Utilise cet outil quand l'utilisateur demande :
           }
         }
 
-        const codesRestreints: string[] = [];
-
         const resultats = codes.map((code) => {
           const maille = determineMaille(code);
           const territoireData = agregat[maille]?.territoires[code];
-          const estAccessible = territoiresAccessibles.includes(code);
-
-          if (!estAccessible) codesRestreints.push(code);
 
           const taux_avancement_global =
             territoireData?.repartition.avancements.annuel.moyenne ?? null;
 
-          const mediane_repartition = estAccessible
-            ? (statsByMaille.get(maille) ?? null)
-            : null;
+          const mediane_repartition = statsByMaille.get(maille) ?? null;
 
           let position_mediane:
             | "EN_RETARD"
             | "EN_AVANCE"
             | "DANS_LA_MEDIANE"
             | null = null;
-          if (
-            estAccessible &&
-            taux_avancement_global !== null &&
-            mediane_repartition !== null
-          ) {
+          if (taux_avancement_global !== null && mediane_repartition !== null) {
             const ecart = taux_avancement_global - mediane_repartition;
             if (ecart <= -10) {
               position_mediane = "EN_RETARD";
@@ -182,7 +164,7 @@ Utilise cet outil quand l'utilisateur demande :
 
         return {
           resultats,
-          _output_instructions: getOutputInstructions(codesRestreints),
+          _output_instructions: getOutputInstructions(),
         };
       },
     });
