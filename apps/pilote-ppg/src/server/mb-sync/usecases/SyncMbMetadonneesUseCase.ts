@@ -1,0 +1,81 @@
+import { $Enums } from "@prisma/client";
+import { type PrismaPilote } from "@/server/db/PrismaPilote";
+import { type PilotePrismaClient } from "@/server/db/PrismaTransaction";
+import logger from "@/server/infrastructure/Logger";
+import { type MbIndicateurClient } from "@/server/mb-sync/domain/ports/MbIndicateurClient";
+import { INDICATEURS_A_SYNCHRONISER } from "@/server/mb-sync/usecases/SyncMbValeursUseCase";
+
+const MAILLE_VERS_REFERENTIEL: Record<$Enums.Maille, string> = {
+  NAT: "REF-NAT",
+  REG: "REF-REG",
+  DEPT: "REF-DEPT",
+};
+
+export type SyncMetadonneesResultat = {
+  indicateurs: Array<{ id: string; statut: "ok" | "non_trouve" }>;
+};
+
+export class SyncMbMetadonneesUseCase {
+  private readonly prisma: PilotePrismaClient;
+  private readonly mbIndicateurClient: MbIndicateurClient;
+
+  constructor({
+    prisma,
+    mbIndicateurClient,
+  }: {
+    prisma: PrismaPilote;
+    mbIndicateurClient: MbIndicateurClient;
+  }) {
+    this.prisma = prisma.getInstance();
+    this.mbIndicateurClient = mbIndicateurClient;
+  }
+
+  async execute(): Promise<SyncMetadonneesResultat> {
+    logger.info(
+      { source: "cron/sync-mb-valeurs" },
+      "Démarrage de la synchronisation mb-metadonnees",
+    );
+
+    const resultats: SyncMetadonneesResultat["indicateurs"] = [];
+
+    for (const indicId of INDICATEURS_A_SYNCHRONISER) {
+      const indicateur = await this.prisma.indicateur_identite.findUnique({
+        where: { id: indicId },
+      });
+
+      if (!indicateur) {
+        logger.warn(
+          { source: "cron/sync-mb-valeurs", indicId },
+          "Indicateur absent de indicateur_identite, sync métadonnées ignorée",
+        );
+        resultats.push({ id: indicId, statut: "non_trouve" });
+        continue;
+      }
+
+      const referentiels = indicateur.mailles_applicables.map((maille) => ({
+        referentielPublicId: MAILLE_VERS_REFERENTIEL[maille],
+        fonctionAgregation: "NONE" as const,
+      }));
+
+      await this.mbIndicateurClient.upsertIndicateur(indicId, {
+        nom: indicateur.nom,
+        visibilite: "PRIVE",
+        referentiels,
+      });
+
+      logger.info(
+        { source: "cron/sync-mb-valeurs", indicId },
+        "Métadonnées synchronisées",
+      );
+
+      resultats.push({ id: indicId, statut: "ok" });
+    }
+
+    logger.info(
+      { source: "cron/sync-mb-valeurs", resultats },
+      "Synchronisation mb-metadonnees terminée",
+    );
+
+    return { indicateurs: resultats };
+  }
+}

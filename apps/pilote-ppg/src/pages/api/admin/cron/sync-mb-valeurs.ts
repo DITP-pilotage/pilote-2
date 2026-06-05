@@ -5,6 +5,7 @@ import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
 import logger from "@/server/infrastructure/Logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { getContainer } from "@/server/dependances";
+import { type SyncMetadonneesResultat } from "@/server/mb-sync/usecases/SyncMbMetadonneesUseCase";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const {
@@ -14,29 +15,54 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   } = configuration().tchap;
   const isProd = configuration().scalingoEnvironment === "PROD";
 
+  const container = getContainer("mbSync");
+
+  let metadonnees: SyncMetadonneesResultat;
+
   try {
-    const useCase = getContainer("mbSync").resolve("syncMbValeursUseCase");
-    const result = await useCase.execute();
+    metadonnees = await container
+      .resolve("syncMbMetadonneesUseCase")
+      .execute();
+  } catch (error) {
+    logger.error(
+      { categorie: "sync", source: "cron/sync-mb-valeurs" },
+      `Erreur synchronisation mb-metadonnees : ${(error as Error).message}`,
+    );
+
+    if (isProd) {
+      envoieMessageTchap(
+        "## ⚠️ Erreur lors de la synchronisation mb-metadonnees\nVeuillez regarder les logs pour en savoir plus.",
+        baseUrl,
+        roomId,
+        accessToken,
+      );
+    }
+
+    return res.status(500).json({ error: "Internal server error" });
+  }
+
+  try {
+    const valeurs = await container.resolve("syncMbValeursUseCase").execute();
 
     logger.info(
-      { categorie: "sync", source: "cron/sync-mb-valeurs", result },
+      { categorie: "sync", source: "cron/sync-mb-valeurs", metadonnees, valeurs },
       "Synchronisation mb-valeurs terminée avec succès",
     );
 
-    return res.status(200).json(result);
+    return res.status(200).json({ metadonnees, valeurs });
   } catch (error) {
     logger.error(
       { categorie: "sync", source: "cron/sync-mb-valeurs" },
       `Erreur synchronisation mb-valeurs : ${(error as Error).message}`,
     );
 
-    const messageErreur = [
-      "## ⚠️ Erreur lors de la synchronisation mb-valeurs",
-      "Veuillez regarder les logs pour en savoir plus.",
-    ].join("\n");
-
     if (isProd) {
-      envoieMessageTchap(messageErreur, baseUrl, roomId, accessToken);
+      envoieMessageTchap(
+        "## ⚠️ Erreur lors de la synchronisation mb-valeurs\nVeuillez regarder les logs pour en savoir plus.",
+        baseUrl,
+        roomId,
+        accessToken,
+      );
     }
 
     return res.status(500).json({ error: "Internal server error" });
