@@ -1,5 +1,7 @@
 import { FormEvent, useState } from "react";
+import { $Enums } from "@prisma/client";
 import api from "@/server/infrastructure/api/trpc/api";
+import { FEEDBACK_CATEGORIES } from "@/components/_commons/ChatUI/feedbackCategories";
 import { clsxm } from "@/utils/clsxm";
 
 export type FiltresDashboard = {
@@ -7,6 +9,7 @@ export type FiltresDashboard = {
   avecPouce: boolean;
   avecPouceBas: boolean;
   avecCommentaire: boolean;
+  categories: $Enums.llm_call_categorie_probleme[];
   profilCodes: string[];
 };
 
@@ -15,6 +18,7 @@ export const FILTRES_VIDES: FiltresDashboard = {
   avecPouce: false,
   avecPouceBas: false,
   avecCommentaire: false,
+  categories: [],
   profilCodes: [],
 };
 
@@ -52,6 +56,14 @@ export const AlbertDashboardFilters = ({
       ? actuel.filter((profilCode) => profilCode !== code)
       : [...actuel, code];
     onChange({ ...filtres, profilCodes: suivant });
+  };
+
+  const toggleCategorie = (valeur: $Enums.llm_call_categorie_probleme) => {
+    const actuelles = filtres.categories;
+    const suivantes = actuelles.includes(valeur)
+      ? actuelles.filter((categorie) => categorie !== valeur)
+      : [...actuelles, valeur];
+    onChange({ ...filtres, categories: suivantes });
   };
 
   return (
@@ -117,6 +129,28 @@ export const AlbertDashboardFilters = ({
           </div>
         </details>
       )}
+
+      <details className="!relative">
+        <summary className="!cursor-pointer !px-3 !py-2 !text-sm !rounded-md !border !border-dsfr-grey-900 !list-none">
+          Catégories{" "}
+          {filtres.categories.length > 0 && `(${filtres.categories.length})`}
+        </summary>
+        <div className="!absolute !z-10 !mt-1 !p-3 !bg-white !border !border-dsfr-grey-925 !rounded-md !shadow-md !w-64">
+          {FEEDBACK_CATEGORIES.map((categorie) => (
+            <label
+              className="!flex !items-center !gap-2 !text-sm !py-1"
+              key={categorie.valeur}
+            >
+              <input
+                checked={filtres.categories.includes(categorie.valeur)}
+                onChange={() => toggleCategorie(categorie.valeur)}
+                type="checkbox"
+              />
+              {categorie.titre}
+            </label>
+          ))}
+        </div>
+      </details>
 
       <button
         className="!px-3 !py-2 !text-sm !rounded-md !text-dsfr-grey-200 !underline"

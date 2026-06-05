@@ -6,6 +6,7 @@ import {
   parseAsStringLiteral,
   useQueryStates,
 } from "nuqs";
+import { $Enums } from "@prisma/client";
 import api from "@/server/infrastructure/api/trpc/api";
 import {
   AlbertDashboardFilters,
@@ -21,6 +22,7 @@ const TAILLE_PAGE = 25;
 
 const champsTri = ["createdAt", "updatedAt"] as const;
 const directionsTri = ["asc", "desc"] as const;
+const categoriesProbleme = Object.values($Enums.llm_call_categorie_probleme);
 
 export const AlbertDashboard = () => {
   const [params, setParams] = useQueryStates(
@@ -30,6 +32,9 @@ export const AlbertDashboard = () => {
       avecPouce: parseAsBoolean.withDefault(false),
       avecPouceBas: parseAsBoolean.withDefault(false),
       avecCommentaire: parseAsBoolean.withDefault(false),
+      categories: parseAsArrayOf(
+        parseAsStringLiteral(categoriesProbleme),
+      ).withDefault([]),
       profilCodes: parseAsArrayOf(parseAsString).withDefault([]),
       triChamp: parseAsStringLiteral(champsTri).withDefault("updatedAt"),
       triDirection: parseAsStringLiteral(directionsTri).withDefault("desc"),
@@ -43,6 +48,7 @@ export const AlbertDashboard = () => {
     avecPouce: params.avecPouce,
     avecPouceBas: params.avecPouceBas,
     avecCommentaire: params.avecCommentaire,
+    categories: params.categories,
     profilCodes: params.profilCodes,
   };
 
@@ -58,6 +64,7 @@ export const AlbertDashboard = () => {
     avecPouce: filtres.avecPouce || undefined,
     avecPouceBas: filtres.avecPouceBas || undefined,
     avecCommentaire: filtres.avecCommentaire || undefined,
+    categories: filtres.categories.length > 0 ? filtres.categories : undefined,
     profilCodes:
       filtres.profilCodes.length > 0 ? filtres.profilCodes : undefined,
     triChamp: tri.champ,
@@ -71,6 +78,7 @@ export const AlbertDashboard = () => {
       avecPouce: nouveauxFiltres.avecPouce,
       avecPouceBas: nouveauxFiltres.avecPouceBas,
       avecCommentaire: nouveauxFiltres.avecCommentaire,
+      categories: nouveauxFiltres.categories,
       profilCodes: nouveauxFiltres.profilCodes,
     });
   };
