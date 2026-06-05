@@ -49,6 +49,9 @@ const conversationsRouter = créerRouteurTRPC({
         avecPouce: z.boolean().optional(),
         avecPouceBas: z.boolean().optional(),
         avecCommentaire: z.boolean().optional(),
+        categories: z
+          .array(z.nativeEnum($Enums.llm_call_categorie_probleme))
+          .optional(),
         profilCodes: z.array(z.string()).optional(),
         triChamp: z.enum(["createdAt", "updatedAt"]).default("updatedAt"),
         triDirection: z.enum(["asc", "desc"]).default("desc"),
@@ -68,6 +71,7 @@ const conversationsRouter = créerRouteurTRPC({
         avecPouce: input.avecPouce,
         avecPouceBas: input.avecPouceBas,
         avecCommentaire: input.avecCommentaire,
+        categories: input.categories,
         profilCodes: input.profilCodes,
         tri: { champ: input.triChamp, direction: input.triDirection },
       });

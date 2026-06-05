@@ -78,4 +78,44 @@ describe("RecupererConversationAdminQuery", () => {
       expect(result).toBeNull();
     }),
   );
+
+  it(
+    "expose les categories_probleme du dernier tour",
+    createIntegrationTest(async (tx) => {
+      // Given
+      const utilisateur = await fixtures.utilisateur({});
+      const idConv = randomUUID();
+      await tx.chat_conversation.create({
+        data: {
+          id: idConv,
+          utilisateur_id: utilisateur.id,
+          titre: "Conv",
+          messages: [],
+        },
+      });
+      await tx.llm_calls.create({
+        data: {
+          chat_id: idConv,
+          utilisateur_id: utilisateur.id,
+          transcript: {},
+          model: "openweight-large",
+          evaluation: "NEGATIVE",
+          commentaire: "bof",
+          categories_probleme: ["INCOMPREHENSION", "SUGGESTION"],
+        },
+      });
+
+      // When
+      const detail = await buildQuery().run({ id: idConv });
+
+      // Then
+      expect(detail?.llmCalls).toEqual([
+        expect.objectContaining({
+          evaluation: "NEGATIVE",
+          commentaire: "bof",
+          categoriesProbleme: ["INCOMPREHENSION", "SUGGESTION"],
+        }),
+      ]);
+    }),
+  );
 });

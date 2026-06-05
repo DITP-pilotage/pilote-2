@@ -360,4 +360,62 @@ describe("ListerConversationsAdminQuery", () => {
       ]);
     }),
   );
+
+  it(
+    "filtre par categories : ne garde que les conversations dont un tour a une des categories demandées",
+    createIntegrationTest(async (tx) => {
+      // Given
+      const utilisateur = await fixtures.utilisateur({});
+      const idAvec = randomUUID();
+      const idSans = randomUUID();
+      await tx.chat_conversation.createMany({
+        data: [
+          {
+            id: idAvec,
+            utilisateur_id: utilisateur.id,
+            titre: "avec",
+            messages: [],
+          },
+          {
+            id: idSans,
+            utilisateur_id: utilisateur.id,
+            titre: "sans",
+            messages: [],
+          },
+        ],
+      });
+      await tx.llm_calls.createMany({
+        data: [
+          {
+            chat_id: idAvec,
+            utilisateur_id: utilisateur.id,
+            transcript: {},
+            model: "openweight-large",
+            evaluation: "NEGATIVE",
+            categories_probleme: ["PROBLEME_TECHNIQUE"],
+          },
+          {
+            chat_id: idSans,
+            utilisateur_id: utilisateur.id,
+            transcript: {},
+            model: "openweight-large",
+            evaluation: "NEGATIVE",
+            categories_probleme: ["SUGGESTION"],
+          },
+        ],
+      });
+
+      // When
+      const result = await buildQuery().run({
+        categories: ["PROBLEME_TECHNIQUE"],
+        tri: { champ: "updatedAt", direction: "desc" },
+        page: 1,
+        taillePage: 25,
+      });
+
+      // Then
+      expect(result.total).toEqual(1);
+      expect(result.items).toEqual([expect.objectContaining({ id: idAvec })]);
+    }),
+  );
 });

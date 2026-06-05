@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { $Enums, Prisma } from "@prisma/client";
 import type { Inject } from "@/server/albert/module";
 
 export type TriListeConversationsAdmin = {
@@ -13,6 +13,7 @@ export type ListerConversationsAdminParams = {
   avecPouce?: boolean;
   avecPouceBas?: boolean;
   avecCommentaire?: boolean;
+  categories?: $Enums.llm_call_categorie_probleme[];
   profilCodes?: string[];
   tri: TriListeConversationsAdmin;
 };
@@ -67,6 +68,10 @@ export class ListerConversationsAdminQuery {
     const profilCodesArray =
       params.profilCodes && params.profilCodes.length > 0
         ? params.profilCodes
+        : null;
+    const categoriesArray =
+      params.categories && params.categories.length > 0
+        ? params.categories
         : null;
 
     const orderBy = ((): Prisma.Sql => {
@@ -131,6 +136,14 @@ export class ListerConversationsAdminQuery {
         AND (${params.avecPouce ?? false}::boolean = false OR b.nb_pouce > 0)
         AND (${params.avecPouceBas ?? false}::boolean = false OR b.nb_pouce_bas > 0)
         AND (${params.avecCommentaire ?? false}::boolean = false OR b.nb_commentaire > 0)
+        AND (
+          ${categoriesArray}::text[] IS NULL
+          OR EXISTS (
+            SELECT 1 FROM llm_calls lc2
+            WHERE lc2.chat_id = b.id::text
+              AND lc2.categories_probleme::text[] && ${categoriesArray}::text[]
+          )
+        )
         AND (${profilCodesArray}::text[] IS NULL OR b.profil_code = ANY(${profilCodesArray}::text[]))
       ORDER BY ${orderBy}
       LIMIT ${params.taillePage}
