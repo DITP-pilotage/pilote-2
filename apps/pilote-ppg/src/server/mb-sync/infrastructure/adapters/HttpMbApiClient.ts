@@ -1,20 +1,18 @@
 import { configuration } from "@/config";
+import {
+  type MbApiClient,
+  type UpsertItem,
+} from "@/server/mb-sync/domain/ports/MbApiClient";
 
 const MAX_ITEMS_PAR_BATCH = 1000;
 
-export type UpsertItem = {
-  individu: string;
-  date: string;
-  valeur: number;
-};
-
-export type BatchResultat = {
+type BatchResultat = {
   total: number;
   created: number;
   updated: number;
 };
 
-export class MbApiClient {
+export class HttpMbApiClient implements MbApiClient {
   async upsertBatch(
     indicateurId: string,
     items: UpsertItem[],

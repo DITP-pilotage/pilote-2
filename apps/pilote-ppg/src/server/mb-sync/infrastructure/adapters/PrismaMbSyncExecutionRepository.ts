@@ -1,7 +1,10 @@
 import { type PrismaPilote } from "@/server/db/PrismaPilote";
 import { type PilotePrismaClient } from "@/server/db/PrismaTransaction";
+import { type MbSyncExecutionRepository } from "@/server/mb-sync/domain/ports/MbSyncExecutionRepository";
 
-export class MbSyncExecutionRepository {
+export class PrismaMbSyncExecutionRepository
+  implements MbSyncExecutionRepository
+{
   private readonly prisma: PilotePrismaClient;
 
   constructor({ prisma }: { prisma: PrismaPilote }) {

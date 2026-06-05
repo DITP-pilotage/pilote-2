@@ -6,8 +6,8 @@ import logger from "@/server/infrastructure/Logger";
 import {
   type MbApiClient,
   type UpsertItem,
-} from "@/server/mb-sync/MbApiClient";
-import { type MbSyncExecutionRepository } from "@/server/mb-sync/MbSyncExecutionRepository";
+} from "@/server/mb-sync/domain/ports/MbApiClient";
+import { type MbSyncExecutionRepository } from "@/server/mb-sync/domain/ports/MbSyncExecutionRepository";
 
 export const INDICATEURS_A_SYNCHRONISER: string[] = ["IND-003"];
 
