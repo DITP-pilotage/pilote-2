@@ -94,16 +94,19 @@ export class SyncMbValeursUseCase {
   ): Promise<EvenementDelta[]> {
     return this.prisma.$queryRaw<EvenementDelta[]>(
       Prisma.sql`
-        SELECT DISTINCT ON (indic_id, territoire_code, date_valeur)
-          indic_id, territoire_code, date_valeur, valeur
-        FROM indicateur_territoire_valeur_evenement
-        WHERE indic_id = ${indicId}
-          AND type_evenement::text IN (${Prisma.join([
+        SELECT DISTINCT ON (ev.indic_id, ev.territoire_code, ev.date_valeur)
+          ev.indic_id, ev.territoire_code, ev.date_valeur, ev.valeur
+        FROM indicateur_territoire_valeur_evenement ev
+        JOIN territoire t ON t.code = ev.territoire_code
+        JOIN indicateur_identite ii ON ii.id = ev.indic_id
+        WHERE ev.indic_id = ${indicId}
+          AND ev.type_evenement::text IN (${Prisma.join([
             EvenementValeurEnum.VALEUR_CREEE,
             EvenementValeurEnum.VALEUR_MODIFIEE,
           ])})
-          AND date_modification > ${lastSyncAt}
-        ORDER BY indic_id, territoire_code, date_valeur, ordre DESC
+          AND ev.date_modification > ${lastSyncAt}
+          AND t.maille = ANY(ii.mailles_applicables)
+        ORDER BY ev.indic_id, ev.territoire_code, ev.date_valeur, ev.ordre DESC
       `,
     );
   }

@@ -39,7 +39,11 @@ describe("SyncMbValeursUseCase", () => {
       code_insee: "FR",
       zone_id: "FRANCE",
     });
-    await fixtures.indicateurIdentite({ id: INDIC_ID, chantier_id: chantier.id });
+    await fixtures.indicateurIdentite({
+      id: INDIC_ID,
+      chantier_id: chantier.id,
+      mailles_applicables: ["NAT"],
+    });
     await fixtures.indicateurTerritoire({
       id: INDIC_ID,
       chantier_id: chantier.id,
