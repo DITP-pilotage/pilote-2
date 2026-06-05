@@ -1,13 +1,15 @@
 import { Prisma } from "@prisma/client";
-
 import { EvenementValeurEnum } from "@/server/app/domain/EvenementValeurEnum";
 import { type PrismaPilote } from "@/server/db/PrismaPilote";
 import { type PilotePrismaClient } from "@/server/db/PrismaTransaction";
 import logger from "@/server/infrastructure/Logger";
-import { type MbApiClient, type UpsertItem } from "@/server/mb-sync/MbApiClient";
+import {
+  type MbApiClient,
+  type UpsertItem,
+} from "@/server/mb-sync/MbApiClient";
 import { type MbSyncExecutionRepository } from "@/server/mb-sync/MbSyncExecutionRepository";
 
-export const INDICATEURS_A_SYNCHRONISER: string[] = [];
+export const INDICATEURS_A_SYNCHRONISER: string[] = ["IND-003"];
 
 type EvenementDelta = {
   indic_id: string;
@@ -52,19 +54,9 @@ export class SyncMbValeursUseCase {
     const resultats: Array<{ id: string; total: number }> = [];
 
     for (const indicId of INDICATEURS_A_SYNCHRONISER) {
-      const evenements = await this.prisma.$queryRaw<EvenementDelta[]>(
-        Prisma.sql`
-          SELECT DISTINCT ON (indic_id, territoire_code, date_valeur)
-            indic_id, territoire_code, date_valeur, valeur
-          FROM indicateur_territoire_valeur_evenement
-          WHERE indic_id = ${indicId}
-            AND type_evenement::text IN (${Prisma.join([
-              EvenementValeurEnum.VALEUR_CREEE,
-              EvenementValeurEnum.VALEUR_MODIFIEE,
-            ])})
-            AND date_modification > ${lastSyncAt}
-          ORDER BY indic_id, territoire_code, date_valeur, ordre DESC
-        `,
+      const evenements = await this.recupererEvenementsDelta(
+        indicId,
+        lastSyncAt,
       );
 
       logger.info(
@@ -77,18 +69,10 @@ export class SyncMbValeursUseCase {
         continue;
       }
 
-      const items: UpsertItem[] = evenements
-        .filter(
-          (ev): ev is EvenementDelta & { valeur: number } =>
-            ev.valeur !== null,
-        )
-        .map((ev) => ({
-          individu: ev.territoire_code,
-          date: ev.date_valeur.toISOString().slice(0, 10),
-          valeur: ev.valeur,
-        }));
+      const items = this.toUpsertItems(evenements);
 
       const total = await this.mbApiClient.upsertBatch(indicId, items);
+
       resultats.push({ id: indicId, total });
     }
 
@@ -101,5 +85,38 @@ export class SyncMbValeursUseCase {
     );
 
     return { indicateurs: resultats, lastSyncAt: lastSyncAt.toISOString() };
+  }
+
+  private async recupererEvenementsDelta(
+    indicId: string,
+    lastSyncAt: Date,
+  ): Promise<EvenementDelta[]> {
+    return this.prisma.$queryRaw<EvenementDelta[]>(
+      Prisma.sql`
+        SELECT DISTINCT ON (indic_id, territoire_code, date_valeur)
+          indic_id, territoire_code, date_valeur, valeur
+        FROM indicateur_territoire_valeur_evenement
+        WHERE indic_id = ${indicId}
+          AND type_evenement::text IN (${Prisma.join([
+            EvenementValeurEnum.VALEUR_CREEE,
+            EvenementValeurEnum.VALEUR_MODIFIEE,
+          ])})
+          AND date_modification > ${lastSyncAt}
+        ORDER BY indic_id, territoire_code, date_valeur, ordre DESC
+      `,
+    );
+  }
+
+  private toUpsertItems(evenements: EvenementDelta[]): UpsertItem[] {
+    return evenements
+      .filter(
+        (evenement): evenement is EvenementDelta & { valeur: number } =>
+          evenement.valeur !== null,
+      )
+      .map((evenement) => ({
+        individu: evenement.territoire_code,
+        date: evenement.date_valeur.toISOString().slice(0, 10),
+        valeur: evenement.valeur,
+      }));
   }
 }
