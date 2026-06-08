@@ -65,6 +65,7 @@ export const FeedbackNegatifModale = ({
         }
       }}
       open={open}
+      titleClassName="!mb-2"
       size="md"
       sousTitre="Dites-nous ce qui n'a pas fonctionné"
       title="Aidez-nous à nous améliorer"
@@ -79,13 +80,13 @@ export const FeedbackNegatifModale = ({
       }
     >
       <fieldset className="border-0 p-0 m-0">
-        <legend className="font-medium text-gray-900 mb-3">
+        <legend className="text-sm font-medium text-gray-900 mb-2">
           Quel(s) type(s) de problème avez-vous rencontré ?{" "}
           <span className="font-normal text-gray-500">
             (vous pouvez en sélectionner plusieurs)
           </span>
         </legend>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
           {FEEDBACK_CATEGORIES.map((categorie) => (
             <FeedbackCategorieCard
               categorie={categorie}
@@ -97,16 +98,16 @@ export const FeedbackNegatifModale = ({
         </div>
       </fieldset>
 
-      <div className="mt-6">
+      <div className="mt-4">
         <label
-          className="font-medium text-gray-900"
+          className="text-sm font-medium text-gray-900"
           htmlFor="feedback-negatif-commentaire"
         >
           Décrivez le problème{" "}
           <span className="font-normal text-gray-500">(optionnel)</span>
         </label>
         <textarea
-          className="mt-2 w-full rounded-md border border-gray-300 p-3 text-sm h-40 resize-none"
+          className="mt-1 w-full rounded-md border border-gray-300 p-2 text-sm h-24 resize-none"
           id="feedback-negatif-commentaire"
           onChange={(event) => setCommentaire(event.target.value)}
           placeholder="Décrivez ce qui n'a pas fonctionné..."
@@ -114,7 +115,7 @@ export const FeedbackNegatifModale = ({
         />
       </div>
 
-      <div className="flex justify-end gap-2 mt-4">
+      <div className="flex justify-end gap-2 mt-3">
         <Dialog.Close asChild>
           <Bouton label="Annuler" variant="secondary" />
         </Dialog.Close>

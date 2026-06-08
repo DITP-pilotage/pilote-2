@@ -13,6 +13,7 @@ import { StopIcon } from "@/components/_commons/Icones/StopIcon";
 import { useChatContext } from "@/components/_commons/ChatUI/ChatContext";
 import { useSpeechRecognition } from "@/components/_commons/ChatUI/useSpeechRecognition";
 import { Select } from "@/components/shared/Select";
+import { ChatAssistantDisclaimer } from "@/components/_commons/ChatUI/ChatAssistantDisclaimer";
 
 export type AlbertModel = "openweight-medium" | "openweight-large";
 
@@ -72,7 +73,7 @@ export const ChatInputForm = ({
   };
 
   return (
-    <div className="shrink-0 border-t border-gray-100 p-4 bg-white">
+    <div className="shrink-0 border-t border-gray-100 px-4 pt-4 pb-2 bg-white">
       <form className="max-w-3xl mx-auto relative" onSubmit={handleSubmit}>
         <textarea
           ref={textareaRef}
@@ -162,6 +163,7 @@ export const ChatInputForm = ({
           )}
         </div>
       </form>
+      <ChatAssistantDisclaimer />
     </div>
   );
 };

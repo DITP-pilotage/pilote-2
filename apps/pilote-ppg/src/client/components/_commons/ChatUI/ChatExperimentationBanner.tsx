@@ -12,17 +12,17 @@ export const ChatExperimentationBanner = () => {
   if (!isVisible) return null;
 
   return (
-    <Callout.Root color="info" className="relative pr-10">
+    <Callout.Root color="info" className="relative pr-6 pl-2 py-2 ">
       <Callout.Icon />
       <Callout.Text>
-        <p className="font-semibold mb-1">Expérimentation en cours</p>
-        <p>
+        <p className="font-semibold mb-0">Expérimentation en cours</p>
+        <p className="mb-0 text-sm">
           Ce chatbot est une expérimentation visant à améliorer nos services.
           Vos interactions (prompts, réponses, feedbacks) sont analysées pour
-          évaluer sa qualité. Elles sont pseudonymisées par défaut et ne seront
+          évaluer sa qualité. Elles sont pseudonymisées et ne seront
           réattribuées à votre identité qu&apos;en cas de besoin de support.
         </p>
-        <div className="flex flex-wrap gap-x-6 gap-y-2 mt-3">
+        <div className="flex flex-wrap gap-x-6 gap-y-1 mt-2">
           <a
             href={CHARTE_IA_URL}
             target="_blank"
