@@ -12,6 +12,7 @@ export const Modale = ({
   children,
   size = "lg",
   titleClassName,
+  sousTitreClassName,
   ...props
 }: Pick<
   ComponentProps<typeof Dialog.Root>,
@@ -20,6 +21,7 @@ export const Modale = ({
   title: ReactNode;
   titleClassName?: string;
   sousTitre?: string;
+  sousTitreClassName?: string;
   titleHidden?: boolean;
   trigger?: ReactNode;
   size?: "sm" | "md" | "lg" | "xl";
@@ -65,7 +67,11 @@ export const Modale = ({
             >
               {title}
             </Dialog.Title>
-            {sousTitre ? <p className="fr-text--lg bold">{sousTitre}</p> : null}
+            {sousTitre ? (
+              <p className={clsxm("fr-text--lg bold", sousTitreClassName)}>
+                {sousTitre}
+              </p>
+            ) : null}
             <div className="max-h-[70vh] overflow-y-auto -mx-8 px-8 -mb-8 pb-8">
               {children}
             </div>

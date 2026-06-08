@@ -15,7 +15,7 @@ export const FeedbackCategorieCard = ({
     <button
       aria-pressed={selectionnee}
       className={clsxm(
-        "flex items-start gap-3 rounded-md border p-3 text-left transition-colors",
+        "flex items-start gap-2 rounded-md border p-2 text-left transition-colors",
         selectionnee
           ? "border-dsfr-blue-france-sun-113 bg-dsfr-blue-france-975"
           : "border-gray-300 hover:bg-gray-50",
@@ -28,7 +28,7 @@ export const FeedbackCategorieCard = ({
         <span className="font-medium text-sm text-gray-900">
           {categorie.titre}
         </span>
-        <span className="text-sm text-gray-500">{categorie.sousTitre}</span>
+        <span className="text-xs text-gray-500">{categorie.sousTitre}</span>
       </span>
     </button>
   );

@@ -66,8 +66,9 @@ export const FeedbackNegatifModale = ({
       }}
       open={open}
       titleClassName="!mb-2"
-      size="md"
+      size="sm"
       sousTitre="Dites-nous ce qui n'a pas fonctionné"
+      sousTitreClassName="mb-2"
       title="Aidez-nous à nous améliorer"
       trigger={
         <button
@@ -81,9 +82,11 @@ export const FeedbackNegatifModale = ({
     >
       <fieldset className="border-0 p-0 m-0">
         <legend className="text-sm font-medium text-gray-900 mb-2">
-          Quel(s) type(s) de problème avez-vous rencontré ?{" "}
+          <span className="block">
+            Quel(s) type(s) de problème avez-vous rencontré ?
+          </span>
           <span className="font-normal text-gray-500">
-            (vous pouvez en sélectionner plusieurs)
+            (Vous pouvez sélectionner plusieurs options)
           </span>
         </legend>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -107,7 +110,7 @@ export const FeedbackNegatifModale = ({
           <span className="font-normal text-gray-500">(optionnel)</span>
         </label>
         <textarea
-          className="mt-1 w-full rounded-md border border-gray-300 p-2 text-sm h-24 resize-none"
+          className="mt-1 w-full rounded-md border border-gray-300 p-2 text-sm h-22 resize-none"
           id="feedback-negatif-commentaire"
           onChange={(event) => setCommentaire(event.target.value)}
           placeholder="Décrivez ce qui n'a pas fonctionné..."

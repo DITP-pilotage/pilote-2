@@ -24,7 +24,7 @@ export const FEEDBACK_CATEGORIES: FeedbackCategorie[] = [
   {
     valeur: $Enums.llm_call_categorie_probleme.INCOMPREHENSION,
     titre: "Incompréhension",
-    sousTitre: "Réponse pas claire",
+    sousTitre: "La réponse manque de précision ou de clarté",
     icone: QuestionIcon,
     couleurIcone: "text-dsfr-blue-france-sun-113",
   },
