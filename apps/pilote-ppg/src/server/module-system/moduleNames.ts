@@ -22,6 +22,7 @@ export const moduleNames = [
   "legacy",
   "applicationLog",
   "actualites",
+  "mbSync",
 ] as const;
 
 export type ModuleName = (typeof moduleNames)[number];

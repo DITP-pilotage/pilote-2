@@ -155,7 +155,7 @@ export const individusSeed: ReadonlyArray<{
   referentiel: 'REF-NAT' | 'REF-REG' | 'REF-DEPT'
   metadata: Record<string, unknown> | null
 }> = [
-  { publicId: 'FR', nom: 'France', referentiel: 'REF-NAT', metadata: null },
+  { publicId: 'NAT-FR', nom: 'France', referentiel: 'REF-NAT', metadata: null },
   ...regions.map((r) => ({
     publicId: `REG-${r.code}`,
     nom: r.nom,
@@ -171,7 +171,7 @@ export const individusSeed: ReadonlyArray<{
 ]
 
 export const relationsSeed = [
-  ...regions.map((r) => ({ parent: 'FR', child: `REG-${r.code}` })),
+  ...regions.map((r) => ({ parent: 'NAT-FR', child: `REG-${r.code}` })),
   ...departements.map((d) => ({ parent: `REG-${d.region}`, child: `DEPT-${d.code}` })),
 ]
 

@@ -1221,3 +1221,10 @@ model chat_conversation {
   @@index([updated_at])
   @@schema("public")
 }
+
+model mb_sync_execution {
+  id                 String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  derniere_date_sync DateTime
+
+  @@schema("public")
+}
