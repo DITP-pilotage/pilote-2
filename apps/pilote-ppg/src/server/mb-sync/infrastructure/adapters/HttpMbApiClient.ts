@@ -14,18 +14,19 @@ type BatchResultat = {
 };
 
 export class HttpMbApiClient implements MbApiClient {
-  async upsertValeursAvancementBatch(
-    indicateurId: string,
-    items: UpsertValeurAvancementItem[],
-  ): Promise<number> {
+  async upsertValeursAvancementBatch(args: {
+    indicId: string;
+    items: UpsertValeurAvancementItem[];
+  }): Promise<number> {
     const { baseUrl, apiKey } = configuration().mbApi;
+    const { items, indicId } = args;
     let total = 0;
 
     for (let offset = 0; offset < items.length; offset += MAX_ITEMS_PAR_BATCH) {
       const chunk = items.slice(offset, offset + MAX_ITEMS_PAR_BATCH);
 
       const response = await fetch(
-        `${baseUrl}/indicateurs/${indicateurId}/valeurs:batch`,
+        `${baseUrl}/indicateurs/${indicId}/valeurs:batch`,
         {
           method: "PUT",
           headers: {
@@ -39,7 +40,7 @@ export class HttpMbApiClient implements MbApiClient {
       if (!response.ok) {
         const body = await response.text();
         throw new Error(
-          `mb-api batch échoué pour l'indicateur ${indicateurId} : HTTP ${response.status} — ${body}`,
+          `mb-api batch échoué pour l'indicateur ${indicId} : HTTP ${response.status} — ${body}`,
         );
       }
 
@@ -50,25 +51,25 @@ export class HttpMbApiClient implements MbApiClient {
     return total;
   }
 
-  async upsertIndicateur(
-    id: string,
-    payload: UpsertIndicateurPayload,
-  ): Promise<void> {
+  async upsertIndicateur(args: {
+    indicId: string;
+    payload: UpsertIndicateurPayload;
+  }): Promise<void> {
     const { baseUrl, apiKey } = configuration().mbApi;
 
-    const response = await fetch(`${baseUrl}/indicateurs/${id}`, {
+    const response = await fetch(`${baseUrl}/indicateurs/${args.indicId}`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(args.payload),
     });
 
     if (!response.ok) {
       const body = await response.text();
       throw new Error(
-        `mb-api upsert indicateur échoué pour ${id} : HTTP ${response.status} — ${body}`,
+        `mb-api upsert indicateur échoué pour ${args.indicId} : HTTP ${response.status} — ${body}`,
       );
     }
   }

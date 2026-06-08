@@ -14,6 +14,12 @@ export type UpsertIndicateurPayload = {
 };
 
 export interface MbApiClient {
-  upsertValeursAvancementBatch(indicateurId: string, items: UpsertValeurAvancementItem[]): Promise<number>;
-  upsertIndicateur(id: string, payload: UpsertIndicateurPayload): Promise<void>;
+  upsertValeursAvancementBatch(args: {
+    indicId: string;
+    items: UpsertValeurAvancementItem[];
+  }): Promise<number>;
+  upsertIndicateur(args: {
+    indicId: string;
+    payload: UpsertIndicateurPayload;
+  }): Promise<void>;
 }

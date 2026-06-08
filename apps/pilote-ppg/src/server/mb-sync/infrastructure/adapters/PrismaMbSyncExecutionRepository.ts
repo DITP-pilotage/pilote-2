@@ -1,14 +1,11 @@
 import { type PrismaPilote } from "@/server/db/PrismaPilote";
-import { type PilotePrismaClient } from "@/server/db/PrismaTransaction";
 import { type MbSyncExecutionRepository } from "@/server/mb-sync/domain/ports/MbSyncExecutionRepository";
 
-export class PrismaMbSyncExecutionRepository
-  implements MbSyncExecutionRepository
-{
-  private readonly prisma: PilotePrismaClient;
+export class PrismaMbSyncExecutionRepository implements MbSyncExecutionRepository {
+  constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
-  constructor({ prisma }: { prisma: PrismaPilote }) {
-    this.prisma = prisma.getInstance();
+  private get prisma() {
+    return this.dependencies.prisma.getInstance();
   }
 
   async recupererDerniereDateSync(): Promise<Date> {

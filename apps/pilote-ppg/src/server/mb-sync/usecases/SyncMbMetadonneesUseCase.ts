@@ -1,8 +1,7 @@
 import { $Enums } from "@prisma/client";
-import { type PrismaPilote } from "@/server/db/PrismaPilote";
-import { type PilotePrismaClient } from "@/server/db/PrismaTransaction";
 import logger from "@/server/infrastructure/Logger";
 import { type MbApiClient } from "@/server/mb-sync/domain/ports/MbApiClient";
+import { type IndicateurIdentiteRepository } from "@/server/mb-sync/domain/ports/IndicateurIdentiteRepository";
 
 const MAILLE_VERS_REFERENTIEL: Record<$Enums.Maille, string> = {
   NAT: "REF-NAT",
@@ -15,17 +14,17 @@ export type SyncMetadonneesResultat = {
 };
 
 export class SyncMbMetadonneesUseCase {
-  private readonly prisma: PilotePrismaClient;
+  private readonly indicateurIdentiteRepository: IndicateurIdentiteRepository;
   private readonly mbApiClient: MbApiClient;
 
   constructor({
-    prisma,
+    indicateurIdentiteRepository,
     mbApiClient,
   }: {
-    prisma: PrismaPilote;
+    indicateurIdentiteRepository: IndicateurIdentiteRepository;
     mbApiClient: MbApiClient;
   }) {
-    this.prisma = prisma.getInstance();
+    this.indicateurIdentiteRepository = indicateurIdentiteRepository;
     this.mbApiClient = mbApiClient;
   }
 
@@ -38,9 +37,8 @@ export class SyncMbMetadonneesUseCase {
     const resultats: SyncMetadonneesResultat["indicateurs"] = [];
 
     for (const indicId of indicateursIds) {
-      const indicateur = await this.prisma.indicateur_identite.findUnique({
-        where: { id: indicId },
-      });
+      const indicateur =
+        await this.indicateurIdentiteRepository.findById(indicId);
 
       if (!indicateur) {
         logger.warn(
@@ -51,15 +49,18 @@ export class SyncMbMetadonneesUseCase {
         continue;
       }
 
-      const referentiels = indicateur.mailles_applicables.map((maille) => ({
+      const referentiels = indicateur.maillesApplicables.map((maille) => ({
         referentielPublicId: MAILLE_VERS_REFERENTIEL[maille],
         fonctionAgregation: "NONE" as const,
       }));
 
-      await this.mbApiClient.upsertIndicateur(indicId, {
-        nom: indicateur.nom,
-        visibilite: "PRIVE",
-        referentiels,
+      await this.mbApiClient.upsertIndicateur({
+        indicId,
+        payload: {
+          nom: indicateur.nom,
+          visibilite: "PUBLIC",
+          referentiels,
+        },
       });
 
       logger.info(

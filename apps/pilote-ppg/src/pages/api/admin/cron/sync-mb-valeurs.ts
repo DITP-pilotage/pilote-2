@@ -7,7 +7,27 @@ import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { getContainer } from "@/server/dependances";
 import { type SyncMetadonneesResultat } from "@/server/mb-sync/usecases/SyncMbMetadonneesUseCase";
 
-const INDICATEURS_A_SYNCHRONISER = ["IND-003"];
+const INDICATEURS_A_SYNCHRONISER = [
+  "IND-001",
+  "IND-003",
+  "IND-005",
+  "IND-446",
+  "IND-447",
+  "IND-448",
+  "IND-450",
+  "IND-451",
+  "IND-452",
+  "IND-453",
+  "IND-454",
+  "IND-458",
+  "IND-470",
+  "IND-890",
+  "IND-891",
+  "IND-892",
+  "IND-893",
+  "IND-894",
+  "IND-895",
+];
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const {
