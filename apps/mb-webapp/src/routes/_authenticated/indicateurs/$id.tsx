@@ -100,7 +100,7 @@ function IndicateurDetailComponent() {
 
   if (indicateur.referentiels.length === 0) {
     return (
-      <Page kicker={indicateur.id} title={indicateur.nom} back={back}>
+      <Page title={indicateur.nom} back={back}>
         <EmptyState title="Aucun référentiel associé à cet indicateur." />
       </Page>
     )
@@ -108,7 +108,7 @@ function IndicateurDetailComponent() {
 
   if (!search.individu || !search.referentiel) {
     return (
-      <Page kicker={indicateur.id} title={indicateur.nom} back={back}>
+      <Page title={indicateur.nom} back={back}>
         <EmptyState title="Aucun individu disponible dans les référentiels liés." />
       </Page>
     )
@@ -118,7 +118,7 @@ function IndicateurDetailComponent() {
   const referentielId = search.referentiel
 
   return (
-    <Page kicker={indicateur.id} title={indicateur.nom} back={back}>
+    <Page title={indicateur.nom} back={back}>
       <IndicateurStatsPanel
         indicateurId={id}
         referentielId={referentielId}

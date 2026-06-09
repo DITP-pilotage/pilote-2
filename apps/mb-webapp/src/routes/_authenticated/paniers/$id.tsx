@@ -59,12 +59,7 @@ function PanierDetailComponent() {
   )
 
   return (
-    <Page
-      kicker={panier.id}
-      title={panier.nom}
-      description={panier.description ?? undefined}
-      back={back}
-    >
+    <Page title={panier.nom} description={panier.description ?? undefined} back={back}>
       <div className="flex flex-col gap-6">
         <Text as="span" variant="kicker" tone="muted">
           {orderedIndicateurs.length} indicateur{orderedIndicateurs.length > 1 ? 's' : ''}
