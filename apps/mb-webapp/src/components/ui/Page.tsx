@@ -13,7 +13,7 @@ type PageProps = {
 
 export function Page({ kicker, title, description, back, actions, children }: PageProps) {
   return (
-    <div className="space-y-10 sm:space-y-14">
+    <div className="space-y-2 sm:space-y-4">
       {back && <div>{back}</div>}
       <header className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div className="max-w-3xl space-y-4">

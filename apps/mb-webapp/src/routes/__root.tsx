@@ -1,12 +1,11 @@
 import type { QueryClient } from '@tanstack/react-query'
 import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import { LogOut } from 'lucide-react'
 import type { ReactNode } from 'react'
 
+import { UserMenu } from '@/components/UserMenu'
 import { Button } from '@/components/ui/Button'
 import { Marianne } from '@/components/ui/Marianne'
-import { Text } from '@/components/ui/Typography'
 import type { Auth } from '@/auth'
 
 export type RouterContext = {
@@ -48,22 +47,13 @@ function RootComponent() {
 
             <div className="mx-2 hidden h-6 w-px bg-border sm:block" />
 
-            {auth.isAuthenticated ? (
-              <div className="flex items-center gap-3">
-                <Text as="span" variant="caption" tone="muted" className="hidden sm:inline">
-                  {auth.user?.prenom} {auth.user?.nom}
-                </Text>
-                <Button
-                  variant="tertiary"
-                  size="sm"
-                  type="button"
-                  onClick={() => {
-                    void auth.logout()
-                  }}
-                >
-                  <LogOut /> Se déconnecter
-                </Button>
-              </div>
+            {auth.isAuthenticated && auth.user ? (
+              <UserMenu
+                user={auth.user}
+                onLogout={() => {
+                  void auth.logout()
+                }}
+              />
             ) : (
               <Button size="sm" type="button" onClick={() => auth.login()}>
                 Se connecter
@@ -73,7 +63,7 @@ function RootComponent() {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-12 sm:px-10 sm:py-16">
+      <main className="mx-auto w-full max-w-7xl flex-1 px-6 py-6 sm:px-8 sm:py-10">
         <Outlet />
       </main>
 

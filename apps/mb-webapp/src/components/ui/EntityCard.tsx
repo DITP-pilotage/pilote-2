@@ -13,7 +13,7 @@ type EntityCardProps = Omit<ComponentProps<'div'>, 'title'> & {
 }
 
 const styles = [
-  'group relative flex h-full flex-col gap-3 rounded-xl bg-surface p-6',
+  'group relative flex h-full flex-col gap-3 overflow-hidden rounded-xl bg-surface py-5 pl-6 pr-5',
   'border border-border transition-all duration-150',
   'hover:border-primary hover:bg-surface-tinted hover:-translate-y-0.5',
   'focus-within:border-primary focus-within:bg-surface-tinted',
@@ -31,6 +31,10 @@ export function EntityCard({
   const Comp = asChild ? Slot : 'div'
   return (
     <Comp className={clsxm(styles, className)} {...props}>
+      <span
+        aria-hidden
+        className="absolute inset-y-0 left-0 w-1 bg-border-strong transition-colors group-hover:bg-primary group-focus-within:bg-primary"
+      />
       {kicker && (
         <Text as="span" variant="kicker">
           {kicker}
@@ -41,7 +45,12 @@ export function EntityCard({
       </Heading>
       <Slottable>{children}</Slottable>
       {footer && (
-        <Text as="div" variant="caption" tone="subtle" className="mt-auto pt-2">
+        <Text
+          as="div"
+          variant="caption"
+          tone="subtle"
+          className="mt-auto border-t border-border pt-3"
+        >
           {footer}
         </Text>
       )}
