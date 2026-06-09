@@ -11,6 +11,7 @@ import { Page } from '@/components/ui/Page'
 import { SearchField } from '@/components/ui/SearchField'
 import { Text } from '@/components/ui/Typography'
 import { indicateursQueryOptions, loadIndicateurs } from '@/queries/indicateurs'
+import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@/components/ui/Pagination'
 
 const indicateursSearchSchema = z.object({
   recherche: z.string().optional(),
@@ -62,6 +63,18 @@ function IndicateursListComponent() {
             ))}
           </CardGrid>
         )}
+
+        <Pagination
+          hasNext={data.pagination.hasMore}
+          onNext={() => {
+            const next = data.pagination.cursor
+            if (next) void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
+          }}
+          pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+          onPageSizeChange={(pageSize) => {
+            void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
+          }}
+        />
       </div>
     </Page>
   )
