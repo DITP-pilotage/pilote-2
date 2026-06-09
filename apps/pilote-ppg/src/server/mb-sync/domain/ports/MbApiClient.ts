@@ -7,6 +7,7 @@ export type UpsertValeurAvancementItem = {
 export type UpsertIndicateurPayload = {
   nom: string;
   visibilite: "PRIVE" | "PUBLIC";
+  unite: "POURCENTAGE" | "ANNEES" | null;
   referentiels: Array<{
     referentielPublicId: string;
     fonctionAgregation: "SUM" | "AVG" | "NONE";
