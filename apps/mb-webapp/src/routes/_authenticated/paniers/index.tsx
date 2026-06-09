@@ -32,11 +32,7 @@ function PaniersListComponent() {
   const { data } = useSuspenseQuery(paniersQueryOptions(search))
 
   return (
-    <Page
-      kicker="Collections thématiques"
-      title="Paniers"
-      description="Des regroupements d'indicateurs construits pour répondre à une question publique précise."
-    >
+    <Page kicker="Collections thématiques" title="Paniers">
       <div className="flex flex-col gap-6">
         <Text as="span" variant="kicker" tone="muted">
           {data.total} panier{data.total > 1 ? 's' : ''}

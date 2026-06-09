@@ -18,7 +18,6 @@ export function IndicateurCard({
   return (
     <EntityCard
       asChild
-      kicker={indicateur.id}
       title={indicateur.nom}
       footer={<>Mis à jour {formatMiseAJour(indicateur.updatedAt)}</>}
     >

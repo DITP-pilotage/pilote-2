@@ -8,10 +8,10 @@ import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
 import { CardGrid } from '@/components/ui/CardGrid'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Page } from '@/components/ui/Page'
-import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@/components/ui/Pagination'
 import { SearchField } from '@/components/ui/SearchField'
 import { Text } from '@/components/ui/Typography'
 import { indicateursQueryOptions, loadIndicateurs } from '@/queries/indicateurs'
+import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@/components/ui/Pagination'
 
 const indicateursSearchSchema = z.object({
   recherche: z.string().optional(),
@@ -34,11 +34,7 @@ function IndicateursListComponent() {
   const { data } = useSuspenseQuery(indicateursQueryOptions(search))
 
   return (
-    <Page
-      kicker="Catalogue"
-      title="Indicateurs"
-      description="Toutes les mesures suivies par l'application. Explorez l'historique, les valeurs remarquables et la déclinaison territoriale."
-    >
+    <Page kicker="Catalogue" title="Indicateurs">
       <div className="flex flex-col gap-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Text as="span" variant="kicker" tone="muted">
