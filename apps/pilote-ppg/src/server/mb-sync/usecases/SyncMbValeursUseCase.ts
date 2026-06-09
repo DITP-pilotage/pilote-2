@@ -1,5 +1,6 @@
 import logger from "@/server/infrastructure/Logger";
 import {
+  type DeleteValeurAvancementItem,
   type MbApiClient,
   type UpsertValeurAvancementItem,
 } from "@/server/mb-sync/domain/ports/MbApiClient";
@@ -10,7 +11,7 @@ import {
 } from "@/server/mb-sync/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 
 export type SyncResultat = {
-  indicateurs: Array<{ id: string; total: number }>;
+  indicateurs: Array<{ id: string; upserts: number; deletes: number }>;
   lastSyncAt: string;
 };
 
@@ -43,7 +44,8 @@ export class SyncMbValeursUseCase {
       "Démarrage de la synchronisation mb-valeurs",
     );
 
-    const resultats: Array<{ id: string; total: number }> = [];
+    const resultats: Array<{ id: string; upserts: number; deletes: number }> =
+      [];
 
     for (const indicId of indicateursIds) {
       const evenements =
@@ -57,18 +59,33 @@ export class SyncMbValeursUseCase {
       );
 
       if (evenements.length === 0) {
-        resultats.push({ id: indicId, total: 0 });
+        resultats.push({ id: indicId, upserts: 0, deletes: 0 });
         continue;
       }
 
-      const items = this.toUpsertValeurAvancementItems(evenements);
+      const upserts = this.toUpsertValeurAvancementItems(evenements);
+      const deletes = this.toDeleteValeurAvancementItems(evenements);
 
-      const total = await this.mbApiClient.upsertValeursAvancementBatch({
-        indicId,
-        items,
+      const [totalUpserts, totalDeletes] = await Promise.all([
+        upserts.length > 0
+          ? this.mbApiClient.upsertValeursAvancementBatch({
+              indicId,
+              items: upserts,
+            })
+          : Promise.resolve(0),
+        deletes.length > 0
+          ? this.mbApiClient.deleteValeursAvancement({
+              indicId,
+              items: deletes,
+            })
+          : Promise.resolve(0),
+      ]);
+
+      resultats.push({
+        id: indicId,
+        upserts: totalUpserts,
+        deletes: totalDeletes,
       });
-
-      resultats.push({ id: indicId, total });
     }
 
     const syncAt = new Date();
@@ -94,6 +111,17 @@ export class SyncMbValeursUseCase {
         individu: evenement.territoire_code,
         date: evenement.dateValeur.toISOString().slice(0, 10),
         valeur: evenement.valeur,
+      }));
+  }
+
+  private toDeleteValeurAvancementItems(
+    evenements: EvenementValeurDelta[],
+  ): DeleteValeurAvancementItem[] {
+    return evenements
+      .filter((evenement) => evenement.valeur === null)
+      .map((evenement) => ({
+        individu: evenement.territoire_code,
+        date: evenement.dateValeur.toISOString().slice(0, 10),
       }));
   }
 }

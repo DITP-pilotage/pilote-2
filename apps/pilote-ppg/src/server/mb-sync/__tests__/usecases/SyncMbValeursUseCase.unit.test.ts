@@ -24,6 +24,7 @@ describe("SyncMbValeursUseCase", () => {
       LAST_SYNC_AT,
     );
     mbApiClient.upsertValeursAvancementBatch.mockResolvedValue(1);
+    mbApiClient.deleteValeursAvancement.mockResolvedValue(1);
 
     useCase = new SyncMbValeursUseCase({
       indicateurTerritoireValeurEvenementRepository,
@@ -57,6 +58,7 @@ describe("SyncMbValeursUseCase", () => {
       indicId: INDIC_ID,
       items: [{ individu: TERRITOIRE_CODE, date: "2025-03-01", valeur: 42 }],
     });
+    expect(mbApiClient.deleteValeursAvancement).not.toHaveBeenCalled();
     expect(
       mbSyncExecutionRepository.mettreAJourDerniereDateSync,
     ).toHaveBeenCalledOnce();
@@ -76,19 +78,13 @@ describe("SyncMbValeursUseCase", () => {
 
     // Then
     expect(mbApiClient.upsertValeursAvancementBatch).not.toHaveBeenCalled();
+    expect(mbApiClient.deleteValeursAvancement).not.toHaveBeenCalled();
   });
 
-  it("filtre les événements avec valeur null avant l'envoi", async () => {
+  it("appelle deleteValeursAvancement pour les événements avec valeur null", async () => {
     // Given
     indicateurTerritoireValeurEvenementRepository.recupererEvenementsModifiesDepuis.mockResolvedValue(
       [
-        {
-          indicId: INDIC_ID,
-          territoire_code: TERRITOIRE_CODE,
-          dateValeur: new Date("2025-03-01"),
-          valeur: 10,
-        },
-        // événement avec valeur null (ex : valeur supprimée)
         {
           indicId: INDIC_ID,
           territoire_code: TERRITOIRE_CODE,
@@ -101,13 +97,87 @@ describe("SyncMbValeursUseCase", () => {
     // When
     await useCase.execute([INDIC_ID]);
 
-    // Then — seul l'événement avec valeur non nulle est envoyé
+    // Then
+    expect(mbApiClient.deleteValeursAvancement).toHaveBeenCalledExactlyOnceWith(
+      {
+        indicId: INDIC_ID,
+        items: [{ individu: TERRITOIRE_CODE, date: "2025-04-01" }],
+      },
+    );
+    expect(mbApiClient.upsertValeursAvancementBatch).not.toHaveBeenCalled();
+  });
+
+  it("sépare upserts et deletes quand les événements sont mixtes", async () => {
+    // Given
+    indicateurTerritoireValeurEvenementRepository.recupererEvenementsModifiesDepuis.mockResolvedValue(
+      [
+        {
+          indicId: INDIC_ID,
+          territoire_code: TERRITOIRE_CODE,
+          dateValeur: new Date("2025-03-01"),
+          valeur: 10,
+        },
+        {
+          indicId: INDIC_ID,
+          territoire_code: TERRITOIRE_CODE,
+          dateValeur: new Date("2025-04-01"),
+          valeur: null,
+        },
+      ],
+    );
+
+    // When
+    await useCase.execute([INDIC_ID]);
+
+    // Then
     expect(
       mbApiClient.upsertValeursAvancementBatch,
     ).toHaveBeenCalledExactlyOnceWith({
       indicId: INDIC_ID,
       items: [{ individu: TERRITOIRE_CODE, date: "2025-03-01", valeur: 10 }],
     });
+    expect(mbApiClient.deleteValeursAvancement).toHaveBeenCalledExactlyOnceWith(
+      {
+        indicId: INDIC_ID,
+        items: [{ individu: TERRITOIRE_CODE, date: "2025-04-01" }],
+      },
+    );
+  });
+
+  it("agrège upserts et deletes dans le total du résultat", async () => {
+    // Given — 2 upserts retournent 2, 1 delete retourne 1
+    mbApiClient.upsertValeursAvancementBatch.mockResolvedValue(2);
+    mbApiClient.deleteValeursAvancement.mockResolvedValue(1);
+    indicateurTerritoireValeurEvenementRepository.recupererEvenementsModifiesDepuis.mockResolvedValue(
+      [
+        {
+          indicId: INDIC_ID,
+          territoire_code: TERRITOIRE_CODE,
+          dateValeur: new Date("2025-03-01"),
+          valeur: 10,
+        },
+        {
+          indicId: INDIC_ID,
+          territoire_code: "REG-84",
+          dateValeur: new Date("2025-03-01"),
+          valeur: 20,
+        },
+        {
+          indicId: INDIC_ID,
+          territoire_code: TERRITOIRE_CODE,
+          dateValeur: new Date("2025-04-01"),
+          valeur: null,
+        },
+      ],
+    );
+
+    // When
+    const resultat = await useCase.execute([INDIC_ID]);
+
+    // Then
+    expect(resultat.indicateurs).toEqual([
+      { id: INDIC_ID, upserts: 2, deletes: 1 },
+    ]);
   });
 
   it("retourne le lastSyncAt de la précédente exécution dans le résultat", async () => {

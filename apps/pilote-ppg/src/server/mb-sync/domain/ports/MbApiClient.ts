@@ -14,10 +14,19 @@ export type UpsertIndicateurPayload = {
   }>;
 };
 
+export type DeleteValeurAvancementItem = {
+  individu: string;
+  date: string;
+};
+
 export interface MbApiClient {
   upsertValeursAvancementBatch(args: {
     indicId: string;
     items: UpsertValeurAvancementItem[];
+  }): Promise<number>;
+  deleteValeursAvancement(args: {
+    indicId: string;
+    items: DeleteValeurAvancementItem[];
   }): Promise<number>;
   upsertIndicateur(args: {
     indicId: string;

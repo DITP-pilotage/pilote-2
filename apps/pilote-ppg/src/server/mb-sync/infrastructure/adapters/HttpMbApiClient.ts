@@ -1,5 +1,6 @@
 import { configuration } from "@/config";
 import {
+  type DeleteValeurAvancementItem,
   type MbApiClient,
   type UpsertIndicateurPayload,
   type UpsertValeurAvancementItem,
@@ -49,6 +50,37 @@ export class HttpMbApiClient implements MbApiClient {
     }
 
     return total;
+  }
+
+  async deleteValeursAvancement(args: {
+    indicId: string;
+    items: DeleteValeurAvancementItem[];
+  }): Promise<number> {
+    const { baseUrl, apiKey } = configuration().mbApi;
+    const { indicId, items } = args;
+
+    for (const item of items) {
+      const response = await fetch(
+        `${baseUrl}/indicateurs/${indicId}/valeurs`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify(item),
+        },
+      );
+
+      if (!response.ok) {
+        const body = await response.text();
+        throw new Error(
+          `mb-api delete valeur échoué pour l'indicateur ${indicId} (individu=${item.individu}, date=${item.date}) : HTTP ${response.status} — ${body}`,
+        );
+      }
+    }
+
+    return items.length;
   }
 
   async upsertIndicateur(args: {
