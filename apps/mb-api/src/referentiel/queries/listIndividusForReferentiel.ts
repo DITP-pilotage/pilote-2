@@ -6,7 +6,7 @@ import { ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'
 import { buildPaginationArgs, toPaginatedResponse } from '@/framework/persistence/paginate'
-import { toIndividuApiModel } from '@/individu/utils'
+import { individuInclude, toIndividuApiModel } from '@/individu/utils'
 
 export const listIndividusForReferentiel = (
   referentielPublicId: string,
@@ -22,7 +22,7 @@ export const listIndividusForReferentiel = (
   const fetchPage = db().individu.findMany({
     where,
     orderBy: { id: 'asc' },
-    include: { referentiel: true },
+    include: individuInclude,
     ...buildPaginationArgs(params.cursor, params.pageSize),
   })
   const fetchTotal = db().individu.count({ where })

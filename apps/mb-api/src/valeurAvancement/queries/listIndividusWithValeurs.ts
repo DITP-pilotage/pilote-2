@@ -7,6 +7,7 @@ import { ResultAsync } from 'neverthrow'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import { buildPaginationArgs, toPaginatedResponse } from '@/framework/persistence/paginate'
+import { individuInclude } from '@/individu/utils'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
 import { toIndividuAvecValeursApiModel } from '@/valeurAvancement/utils'
 
@@ -27,7 +28,7 @@ export const listIndividusWithValeurs = (
     where,
     orderBy: { id: 'asc' },
     include: {
-      referentiel: true,
+      ...individuInclude,
       valeurs: {
         where: indicateurFilter,
         orderBy: [{ date: 'desc' }, { id: 'desc' }],
