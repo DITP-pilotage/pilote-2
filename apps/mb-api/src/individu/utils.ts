@@ -21,7 +21,7 @@ export const toIndividuApiModel = (individu: IndividuWithReferentiel): IndividuA
   id: individu.publicId,
   nom: individu.nom,
   referentiel: individu.referentiel.publicId,
-  parents: individu.relationsAsChild.map((relation) => relation.parent.publicId),
+  parents: individu.relationsAsChild.map((relation) => relation.parent.publicId).sort(),
   metadata: toMetadata(individu.metadata),
   createdAt: individu.createdAt.toISOString(),
   updatedAt: individu.updatedAt.toISOString(),

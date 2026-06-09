@@ -24,7 +24,7 @@ const buildOrderedNodes = (
   const byId = new Map(individus.map((i) => [i.id, i] as const))
   const childrenByParent = new Map<string | null, IndividuApiModel[]>()
   for (const individu of individus) {
-    const parent = individu.parents.find((p) => byId.has(p)) ?? null
+    const parent = [...individu.parents].sort().find((p) => byId.has(p)) ?? null
     const bucket = childrenByParent.get(parent) ?? []
     bucket.push(individu)
     childrenByParent.set(parent, bucket)
