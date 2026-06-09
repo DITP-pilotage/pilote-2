@@ -24,6 +24,7 @@ describe("SyncMbMetadonneesUseCase", () => {
     indicateurIdentiteRepository.findById.mockResolvedValue({
       nom: "Taux de chômage",
       maillesApplicables: ["NAT", "REG"],
+      uniteMesure: null,
     });
 
     // When
@@ -35,6 +36,7 @@ describe("SyncMbMetadonneesUseCase", () => {
       payload: {
         nom: "Taux de chômage",
         visibilite: "PUBLIC",
+        unite: null,
         referentiels: [
           { referentielPublicId: "REF-NAT", fonctionAgregation: "NONE" },
           { referentielPublicId: "REF-REG", fonctionAgregation: "NONE" },
@@ -45,6 +47,35 @@ describe("SyncMbMetadonneesUseCase", () => {
       indicateurs: [{ id: INDIC_ID, statut: "ok" }],
     });
   });
+
+  it.each([
+    { uniteMesure: "%", expected: "POURCENTAGE" },
+    { uniteMesure: "Pourcentage", expected: "POURCENTAGE" },
+    { uniteMesure: "ans", expected: "ANNEES" },
+    { uniteMesure: "Années", expected: "ANNEES" },
+    { uniteMesure: "kg", expected: null },
+    { uniteMesure: null, expected: null },
+  ])(
+    "mappe uniteMesure=$uniteMesure vers unite=$expected",
+    async ({ uniteMesure, expected }) => {
+      // Given
+      indicateurIdentiteRepository.findById.mockResolvedValue({
+        nom: "Mon indicateur",
+        maillesApplicables: ["NAT"],
+        uniteMesure,
+      });
+
+      // When
+      await useCase.execute([INDIC_ID]);
+
+      // Then
+      expect(mbApiClient.upsertIndicateur).toHaveBeenCalledExactlyOnceWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({ unite: expected }),
+        }),
+      );
+    },
+  );
 
   it("ignore un indicateur absent sans bloquer", async () => {
     // Given
@@ -65,6 +96,7 @@ describe("SyncMbMetadonneesUseCase", () => {
     indicateurIdentiteRepository.findById.mockResolvedValue({
       nom: "Mon indicateur",
       maillesApplicables: ["NAT"],
+      uniteMesure: null,
     });
     mbApiClient.upsertIndicateur.mockRejectedValue(
       new Error("mb-api indisponible"),

@@ -1,6 +1,9 @@
 import { $Enums } from "@prisma/client";
 import logger from "@/server/infrastructure/Logger";
-import { type MbApiClient } from "@/server/mb-sync/domain/ports/MbApiClient";
+import {
+  type MbApiClient,
+  type UpsertIndicateurPayload,
+} from "@/server/mb-sync/domain/ports/MbApiClient";
 import { type IndicateurIdentiteRepository } from "@/server/mb-sync/domain/ports/IndicateurIdentiteRepository";
 
 const MAILLE_VERS_REFERENTIEL: Record<$Enums.Maille, string> = {
@@ -8,6 +11,21 @@ const MAILLE_VERS_REFERENTIEL: Record<$Enums.Maille, string> = {
   REG: "REF-REG",
   DEPT: "REF-DEPT",
 };
+
+function mapUniteMesure(
+  uniteMesure: string | null,
+): UpsertIndicateurPayload["unite"] {
+  if (!uniteMesure) return null;
+  const normalized = uniteMesure.trim().toLowerCase();
+  if (normalized === "%" || normalized === "pourcentage") return "POURCENTAGE";
+  if (
+    normalized === "ans" ||
+    normalized === "années" ||
+    normalized === "annees"
+  )
+    return "ANNEES";
+  return null;
+}
 
 export type SyncMetadonneesResultat = {
   indicateurs: Array<{ id: string; statut: "ok" | "non_trouve" }>;
@@ -59,6 +77,7 @@ export class SyncMbMetadonneesUseCase {
         payload: {
           nom: indicateur.nom,
           visibilite: "PUBLIC",
+          unite: mapUniteMesure(indicateur.uniteMesure),
           referentiels,
         },
       });

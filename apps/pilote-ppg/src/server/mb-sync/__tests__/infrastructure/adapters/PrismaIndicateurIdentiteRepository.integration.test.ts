@@ -23,6 +23,7 @@ describe("PrismaIndicateurIdentiteRepository", () => {
           chantier_id: chantier.id,
           nom: "Taux de chômage",
           mailles_applicables: ["NAT", "REG"],
+          unite_mesure: "pourcentage",
         });
 
         // When
@@ -32,6 +33,7 @@ describe("PrismaIndicateurIdentiteRepository", () => {
         expect(result).toEqual({
           nom: "Taux de chômage",
           maillesApplicables: ["NAT", "REG"],
+          uniteMesure: "pourcentage",
         });
       }),
     );

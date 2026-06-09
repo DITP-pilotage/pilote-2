@@ -14,9 +14,13 @@ export class PrismaIndicateurIdentiteRepository implements IndicateurIdentiteRep
   async findById(id: string): Promise<IndicateurIdentite | null> {
     const row = await this.prisma.indicateur_identite.findUnique({
       where: { id },
-      select: { nom: true, mailles_applicables: true },
+      select: { nom: true, mailles_applicables: true, unite_mesure: true },
     });
     if (!row) return null;
-    return { nom: row.nom, maillesApplicables: row.mailles_applicables };
+    return {
+      nom: row.nom,
+      maillesApplicables: row.mailles_applicables,
+      uniteMesure: row.unite_mesure,
+    };
   }
 }
