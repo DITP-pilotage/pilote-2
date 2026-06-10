@@ -25,6 +25,9 @@ export function withOptionalDevTools(model: LanguageModelV3): LanguageModelV3 {
 
 const DEFAULT_MODEL = "openweight-large";
 
+const TEMPERATURE_STREAM_TEXT = 0.2;
+const TEMPERATURE_STRUCTURED_OUTPUT = 0;
+
 export class Albert {
   static createProvider() {
     return createOpenAI({
@@ -87,6 +90,7 @@ export class Albert {
       prompt,
       stopWhen: stepCountIs(5),
       output: Output.object({ schema }),
+      temperature: TEMPERATURE_STRUCTURED_OUTPUT,
       abortSignal,
     });
     return result.output;
@@ -116,6 +120,7 @@ export class Albert {
       messages: modelMessages,
       tools,
       stopWhen: stepCountIs(50),
+      temperature: TEMPERATURE_STREAM_TEXT,
       onFinish: (event) => Albert.saveLlmCall({ chatId, userId, event, model }),
     });
   }
