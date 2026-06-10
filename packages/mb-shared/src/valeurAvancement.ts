@@ -2,6 +2,11 @@ import { z } from 'zod'
 
 import { dateSchema, dateTruncSchema } from './dates'
 import { fonctionAgregationSchema } from './indicateur'
+import { indicateursCsvSchema, MAX_INDICATEURS_PAR_REQUETE } from './indicateursCsv'
+
+// Ré-export pour les consommateurs front qui plafonnent leur taille de batch
+// sur la même valeur que celle imposée par l'API.
+export { MAX_INDICATEURS_PAR_REQUETE } from './indicateursCsv'
 import { indicateurPublicIdSchema } from './publicIds'
 import { individuApiModelSchema, individuPublicIdSchema } from './individu'
 import { individusCsvSchema, MAX_INDIVIDUS_PAR_REQUETE } from './individusCsv'
@@ -434,3 +439,39 @@ export const valeurAvancementListApiModelSchema = z.object({
     ),
 })
 export type ValeurAvancementListApiModel = z.infer<typeof valeurAvancementListApiModelSchema>
+
+export const dernierValeurIndividuApiModelSchema = z.object({
+  indicateur: indicateurPublicIdSchema,
+  valeur: valeurSchema.describe("Dernière valeur connue de l'individu pour cet indicateur."),
+  date: dateSchema.describe(
+    "Date du bucket de la dernière valeur connue (post-troncature mensuelle).",
+  ),
+  type: z
+    .enum(['saisie', 'derivee'])
+    .describe(
+      "`saisie` : la valeur provient d'une saisie directe sur cet individu. " +
+        "`derivee` : la valeur est reconstruite par agrégation hiérarchique des descendants.",
+    ),
+})
+export type DernierValeurIndividuApiModel = z.infer<typeof dernierValeurIndividuApiModelSchema>
+
+export const dernieresValeursIndividuListApiModelSchema = z.object({
+  items: z
+    .array(dernierValeurIndividuApiModelSchema)
+    .describe(
+      "Dernière valeur connue de l'individu pour chaque indicateur demandé ayant au moins une " +
+        "valeur. Les indicateurs sans valeur connue pour cet individu sont omis de la réponse.",
+    ),
+})
+export type DernieresValeursIndividuListApiModel = z.infer<
+  typeof dernieresValeursIndividuListApiModelSchema
+>
+
+export const listDernieresValeursForIndividuQuerySchema = z.object({
+  indicateurs: indicateursCsvSchema.describe(
+    `Liste d'identifiants d'indicateurs séparés par une virgule (ex. IND-A,IND-B). 1..${MAX_INDICATEURS_PAR_REQUETE} identifiants.`,
+  ),
+})
+export type ListDernieresValeursForIndividuQuery = z.infer<
+  typeof listDernieresValeursForIndividuQuerySchema
+>
