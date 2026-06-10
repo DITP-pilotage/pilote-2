@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Plus, Search } from 'lucide-react'
 import { useState } from 'react'
 
+import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -24,6 +25,12 @@ function ReferentielsListComponent() {
 
   return (
     <div>
+      <Breadcrumb>
+        <Link to="/fonctionnalites" className="hover:text-primary">
+          Fonctionnalités
+        </Link>
+        <span className="font-medium text-text">Référentiels</span>
+      </Breadcrumb>
       <PageHeading
         title="Référentiels"
         subtitle={

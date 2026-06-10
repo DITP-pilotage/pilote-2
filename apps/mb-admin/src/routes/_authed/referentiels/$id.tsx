@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 
 import { upsertReferentiel } from '@/api/referentiels'
+import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { ReferentielForm, type ReferentielFormValues } from '@/components/ReferentielForm'
 import { extractApiError } from '@/lib/apiError'
@@ -54,6 +55,15 @@ function EditReferentielComponent() {
 
   return (
     <div>
+      <Breadcrumb>
+        <Link to="/fonctionnalites" className="hover:text-primary">
+          Fonctionnalités
+        </Link>
+        <Link to="/referentiels" className="hover:text-primary">
+          Référentiels
+        </Link>
+        <span className="font-medium text-text">{id}</span>
+      </Breadcrumb>
       <PageHeading title="Modifier le référentiel" subtitle={<code>PUT /referentiels/{id}</code>} />
       <ReferentielForm
         mode="edit"

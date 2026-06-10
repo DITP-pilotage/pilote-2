@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 
 import { upsertReferentiel } from '@/api/referentiels'
+import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { ReferentielForm, type ReferentielFormValues } from '@/components/ReferentielForm'
 import { extractApiError } from '@/lib/apiError'
@@ -36,6 +37,15 @@ function NewReferentielComponent() {
 
   return (
     <div>
+      <Breadcrumb>
+        <Link to="/fonctionnalites" className="hover:text-primary">
+          Fonctionnalités
+        </Link>
+        <Link to="/referentiels" className="hover:text-primary">
+          Référentiels
+        </Link>
+        <span className="font-medium text-text">Nouveau référentiel</span>
+      </Breadcrumb>
       <PageHeading title="Nouveau référentiel" />
       <ReferentielForm
         mode="create"

@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 
 import { upsertIndicateur } from '@/api/indicateurs'
+import { Breadcrumb } from '@/components/Breadcrumb'
 import {
   buildInitialValues,
   IndicateurForm,
@@ -47,6 +48,15 @@ function EditIndicateurComponent() {
 
   return (
     <div>
+      <Breadcrumb>
+        <Link to="/fonctionnalites" className="hover:text-primary">
+          Fonctionnalités
+        </Link>
+        <Link to="/indicateurs" className="hover:text-primary">
+          Indicateurs
+        </Link>
+        <span className="font-medium text-text">{id}</span>
+      </Breadcrumb>
       <PageHeading title="Modifier l'indicateur" subtitle={<code>PUT /indicateurs/{id}</code>} />
       <IndicateurForm
         mode="edit"

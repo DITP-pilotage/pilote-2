@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 
 import { upsertIndicateur } from '@/api/indicateurs'
+import { Breadcrumb } from '@/components/Breadcrumb'
 import {
   buildInitialValues,
   IndicateurForm,
@@ -41,6 +42,15 @@ function NewIndicateurComponent() {
 
   return (
     <div>
+      <Breadcrumb>
+        <Link to="/fonctionnalites" className="hover:text-primary">
+          Fonctionnalités
+        </Link>
+        <Link to="/indicateurs" className="hover:text-primary">
+          Indicateurs
+        </Link>
+        <span className="font-medium text-text">Nouvel indicateur</span>
+      </Breadcrumb>
       <PageHeading title="Nouvel indicateur" />
       <IndicateurForm
         mode="create"
