@@ -299,6 +299,7 @@ const main = async () => {
       indicateurPublicId: 'IND-001',
       referentiels: [
         { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { referentielPublicId: 'REF-REG', fonctionAgregation: 'NONE' },
         { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
       ],
     },
@@ -307,6 +308,7 @@ const main = async () => {
       referentiels: [
         { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'SUM' },
         { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' },
+        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'SUM' },
       ],
     },
     {
@@ -319,7 +321,11 @@ const main = async () => {
     },
     {
       indicateurPublicId: 'IND-004',
-      referentiels: [{ referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' }],
+      referentiels: [
+        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { referentielPublicId: 'REF-REG', fonctionAgregation: 'AVG' },
+        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'AVG' },
+      ],
     },
     {
       indicateurPublicId: 'IND-005',

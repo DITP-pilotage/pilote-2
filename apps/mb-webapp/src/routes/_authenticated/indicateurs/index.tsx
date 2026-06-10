@@ -44,15 +44,16 @@ export const Route = createFileRoute('/_authenticated/indicateurs/')({
       const knownIndividu = deps.individu
         ? nodes.find((n) => n.individu.id === deps.individu)?.individu
         : undefined
-      if (!knownIndividu) {
-        const fallback = pickRoot(nodes) ?? nodes[0]
+      const pairValid = knownIndividu && knownIndividu.referentiel === deps.referentiel
+      if (!pairValid) {
+        const fallback = knownIndividu ?? pickRoot(nodes)?.individu ?? nodes[0]?.individu
         if (fallback) {
           throw redirect({
             to: '/indicateurs',
             search: {
               ...deps,
-              individu: fallback.individu.id,
-              referentiel: fallback.individu.referentiel,
+              individu: fallback.id,
+              referentiel: fallback.referentiel,
             },
             replace: true,
           })
@@ -123,8 +124,9 @@ function IndicateursListComponent() {
               <IndicateurCard
                 key={indicateur.id}
                 indicateur={indicateur}
-                individu={search.individu}
-                referentiel={search.referentiel}
+                {...(search.individu && search.referentiel
+                  ? { context: { individu: search.individu, referentiel: search.referentiel } }
+                  : {})}
               />
             ))}
           </CardGrid>

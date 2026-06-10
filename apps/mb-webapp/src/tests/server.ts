@@ -6,6 +6,7 @@ import {
   buildIndicateur,
   buildIndicateursList,
   buildMe,
+  buildReferentiel,
   buildReferentielsList,
 } from '@/tests/factories/api'
 import { buildLogoutResponse, buildRefreshResponse } from '@/tests/factories/bff'
@@ -24,6 +25,9 @@ export const defaultHandlers = [
   http.get(apiUrl('/indicateurs'), () => HttpResponse.json(buildIndicateursList())),
   http.get(apiUrl('/indicateurs/:id'), () => HttpResponse.json(buildIndicateur())),
   http.get(apiUrl('/referentiels'), () => HttpResponse.json(buildReferentielsList())),
+  http.get(apiUrl('/referentiels/:id'), ({ params }) =>
+    HttpResponse.json(buildReferentiel({ id: String(params.id) })),
+  ),
 ]
 
 export const server = setupServer(...defaultHandlers)

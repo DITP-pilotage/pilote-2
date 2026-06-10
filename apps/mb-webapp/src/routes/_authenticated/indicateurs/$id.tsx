@@ -42,7 +42,7 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     stringify: ({ id }) => ({ id }),
   },
   validateSearch: searchSchema,
-  loaderDeps: ({ search }) => ({ individu: search.individu }),
+  loaderDeps: ({ search }) => ({ individu: search.individu, referentiel: search.referentiel }),
   loader: async ({ context, params, deps }) => {
     const { queryClient } = context
     const indicateur = await loadIndicateur({ queryClient, indicateurId: params.id })
@@ -58,14 +58,15 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     const selected = deps.individu
       ? nodes.find((n) => n.individu.id === deps.individu)?.individu
       : undefined
-    if (!selected) {
-      const fallback = pickRoot(nodes) ?? nodes[0]!
+    const pairValid = selected && selected.referentiel === deps.referentiel
+    if (!pairValid) {
+      const fallback = selected ?? pickRoot(nodes)?.individu ?? nodes[0]!.individu
       throw redirect({
         to: '/indicateurs/$id',
         params,
         search: {
-          individu: fallback.individu.id,
-          referentiel: fallback.individu.referentiel,
+          individu: fallback.id,
+          referentiel: fallback.referentiel,
         },
         replace: true,
       })
