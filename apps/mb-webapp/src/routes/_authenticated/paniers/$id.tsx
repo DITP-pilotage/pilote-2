@@ -1,21 +1,33 @@
+import { individuPublicIdSchema } from '@pilote/mb-shared/individu'
+import { referentielPublicIdSchema } from '@pilote/mb-shared/referentiel'
 import { panierPublicIdSchema } from '@pilote/mb-shared/publicIds'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
+import { startTransition, useId } from 'react'
 import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
+import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
 import { BackLink } from '@/components/ui/BackLink'
 import { CardGrid } from '@/components/ui/CardGrid'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { FormField } from '@/components/ui/FormField'
 import { Page } from '@/components/ui/Page'
 import { Text } from '@/components/ui/Typography'
+import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
 import { loadPanier, panierQueryOptions } from '@/queries/paniers'
+import { allReferentielsQueryOptions, loadAllReferentielIds } from '@/queries/referentiels'
 
 const paramsSchema = z.object({
   id: panierPublicIdSchema,
+})
+
+const searchSchema = z.object({
+  individu: individuPublicIdSchema.optional(),
+  referentiel: referentielPublicIdSchema.optional(),
 })
 
 export const Route = createFileRoute('/_authenticated/paniers/$id')({
@@ -23,12 +35,30 @@ export const Route = createFileRoute('/_authenticated/paniers/$id')({
     parse: (raw) => paramsSchema.parse(raw),
     stringify: ({ id }) => ({ id }),
   },
-  loader: async ({ context, params }) => {
+  validateSearch: searchSchema,
+  loaderDeps: ({ search }) => ({ individu: search.individu, referentiel: search.referentiel }),
+  loader: async ({ context, params, deps }) => {
     const { queryClient } = context
     const panier = await loadPanier({ queryClient, panierId: params.id })
     if (panier.indicateurIds.length > 0) {
       await queryClient.ensureQueryData(indicateursQueryOptions({ ids: panier.indicateurIds }))
     }
+
+    const referentielIds = await loadAllReferentielIds({ queryClient })
+    await ensureIndividuReferentielPair({
+      queryClient,
+      referentielIds,
+      deps,
+      onMismatch: ({ individu, referentiel }) => {
+        throw redirect({
+          to: '/paniers/$id',
+          params,
+          search: { individu, referentiel },
+          replace: true,
+        })
+      },
+    })
+
     return { panier }
   },
   pendingComponent: () => <RouteLoading message="Chargement du panier…" />,
@@ -38,10 +68,15 @@ export const Route = createFileRoute('/_authenticated/paniers/$id')({
 
 function PanierDetailComponent() {
   const { id } = Route.useParams()
+  const search = Route.useSearch()
+  const navigate = useNavigate({ from: Route.fullPath })
+  const selectId = useId()
   const { data: panier } = useSuspenseQuery(panierQueryOptions(id))
   const { data: indicateurs } = useSuspenseQuery(
     indicateursQueryOptions({ ids: panier.indicateurIds }),
   )
+  const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
+  const referentielIds = referentiels.map((r) => r.id)
 
   // Re-tri selon l'ordre du panier : la query indicateurs ne garantit pas
   // l'ordre du filtre `ids`.
@@ -52,15 +87,39 @@ function PanierDetailComponent() {
 
   const back = (
     <BackLink asChild>
-      <Link to="/paniers" search={{}}>
+      <Link to="/paniers" search={{ individu: search.individu, referentiel: search.referentiel }}>
         Retour aux paniers
       </Link>
     </BackLink>
   )
 
+  const cardContext =
+    search.individu && search.referentiel
+      ? { individu: search.individu, referentiel: search.referentiel }
+      : undefined
+
   return (
     <Page title={panier.nom} description={panier.description ?? undefined} back={back}>
       <div className="flex flex-col gap-6">
+        {search.individu ? (
+          <div className="max-w-md">
+            <FormField label="Individu observé" htmlFor={selectId}>
+              <IndividuSelect
+                id={selectId}
+                referentielIds={referentielIds}
+                value={search.individu}
+                onChange={({ individu, referentiel }) => {
+                  startTransition(() => {
+                    void navigate({
+                      search: (prev) => ({ ...prev, individu, referentiel }),
+                    })
+                  })
+                }}
+              />
+            </FormField>
+          </div>
+        ) : null}
+
         <Text as="span" variant="kicker" tone="muted">
           {orderedIndicateurs.length} indicateur{orderedIndicateurs.length > 1 ? 's' : ''}
         </Text>
@@ -69,7 +128,11 @@ function PanierDetailComponent() {
         ) : (
           <CardGrid>
             {orderedIndicateurs.map((indicateur) => (
-              <IndicateurCard key={indicateur.id} indicateur={indicateur} />
+              <IndicateurCard
+                key={indicateur.id}
+                indicateur={indicateur}
+                {...(cardContext ? { context: cardContext } : {})}
+              />
             ))}
           </CardGrid>
         )}

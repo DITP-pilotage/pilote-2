@@ -1,5 +1,6 @@
 import { type IndicateurApiModel, indicateurApiModelSchema } from '@pilote/mb-shared/indicateur'
 import { type MeApiModel, meApiModelSchema } from '@pilote/mb-shared/me'
+import { type ReferentielApiModel, referentielApiModelSchema } from '@pilote/mb-shared/referentiel'
 
 export const buildMe = (override: Partial<MeApiModel> = {}): MeApiModel =>
   meApiModelSchema.parse({
@@ -25,6 +26,26 @@ export const buildIndicateur = (override: Partial<IndicateurApiModel> = {}): Ind
   })
 
 export const buildIndicateursList = (items: IndicateurApiModel[] = []) => ({
+  items,
+  pagination: { cursor: null, hasMore: false },
+  total: items.length,
+})
+
+export const buildReferentiel = (
+  override: Partial<ReferentielApiModel> = {},
+): ReferentielApiModel =>
+  referentielApiModelSchema.parse({
+    id: 'REF-NAT',
+    nom: 'National',
+    description: null,
+    nombreIndividus: 0,
+    widgets: [],
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+    ...override,
+  })
+
+export const buildReferentielsList = (items: ReferentielApiModel[] = []) => ({
   items,
   pagination: { cursor: null, hasMore: false },
   total: items.length,

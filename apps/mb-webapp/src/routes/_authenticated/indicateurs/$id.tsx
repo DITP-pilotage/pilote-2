@@ -19,12 +19,12 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { FormField } from '@/components/ui/FormField'
 import { Page } from '@/components/ui/Page'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import {
   indicateurQueryOptions,
   loadIndicateur,
   prefetchIndicateurValeursForIndividu,
 } from '@/queries/indicateurs'
-import { loadIndividusFromReferentiels } from '@/queries/referentiels'
 
 const paramsSchema = z.object({
   id: indicateurPublicIdSchema,
@@ -41,7 +41,7 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     stringify: ({ id }) => ({ id }),
   },
   validateSearch: searchSchema,
-  loaderDeps: ({ search }) => ({ individu: search.individu }),
+  loaderDeps: ({ search }) => ({ individu: search.individu, referentiel: search.referentiel }),
   loader: async ({ context, params, deps }) => {
     const { queryClient } = context
     const indicateur = await loadIndicateur({ queryClient, indicateurId: params.id })
@@ -49,31 +49,28 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     const referentielIds = indicateur.referentiels.map(
       (configuration) => configuration.referentielPublicId,
     )
-    if (referentielIds.length === 0) return { indicateur }
-
-    const individus = await loadIndividusFromReferentiels({
+    const pair = await ensureIndividuReferentielPair({
       queryClient,
       referentielIds,
+      deps,
+      onMismatch: ({ individu, referentiel }) => {
+        throw redirect({
+          to: '/indicateurs/$id',
+          params,
+          search: { individu, referentiel },
+          replace: true,
+        })
+      },
     })
-    if (individus.length === 0) return { indicateur }
 
-    const selected = deps.individu ? individus.find((i) => i.id === deps.individu) : undefined
-    if (!selected) {
-      const first = individus[0]!
-      throw redirect({
-        to: '/indicateurs/$id',
-        params,
-        search: { individu: first.id, referentiel: first.referentiel },
-        replace: true,
+    if (pair) {
+      await prefetchIndicateurValeursForIndividu({
+        queryClient,
+        indicateurId: params.id,
+        individuId: pair.individu,
+        referentielId: pair.referentiel,
       })
     }
-
-    await prefetchIndicateurValeursForIndividu({
-      queryClient,
-      indicateurId: params.id,
-      individuId: selected.id,
-      referentielId: selected.referentiel,
-    })
 
     return { indicateur }
   },
@@ -92,7 +89,10 @@ function IndicateurDetailComponent() {
 
   const back = (
     <BackLink asChild>
-      <Link to="/indicateurs" search={{}}>
+      <Link
+        to="/indicateurs"
+        search={{ individu: search.individu, referentiel: search.referentiel }}
+      >
         Retour à la liste
       </Link>
     </BackLink>
@@ -116,6 +116,7 @@ function IndicateurDetailComponent() {
 
   const individuId = search.individu
   const referentielId = search.referentiel
+  const referentielIds = indicateur.referentiels.map((c) => c.referentielPublicId)
 
   return (
     <Page title={indicateur.nom} back={back}>
@@ -129,7 +130,7 @@ function IndicateurDetailComponent() {
         <FormField label="Individu" htmlFor={selectId}>
           <IndividuSelect
             id={selectId}
-            indicateurId={id}
+            referentielIds={referentielIds}
             value={individuId}
             onChange={({ individu, referentiel }) => {
               startTransition(() => {

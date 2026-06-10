@@ -1,5 +1,5 @@
 import type { QueryClient } from '@tanstack/react-query'
-import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router'
+import { createRootRouteWithContext, Link, Outlet, useSearch } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import type { ReactNode } from 'react'
 
@@ -84,10 +84,11 @@ function RootComponent() {
 }
 
 function NavLink({ to, children }: { to: '/indicateurs' | '/paniers'; children: ReactNode }) {
+  const search = useSearch({ strict: false })
   return (
     <Link
       to={to}
-      search={{}}
+      search={{ individu: search.individu, referentiel: search.referentiel }}
       className="rounded-md px-3 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-surface-tinted hover:text-primary data-[status=active]:bg-primary-tinted data-[status=active]:text-primary"
       activeProps={{ 'data-status': 'active' }}
     >

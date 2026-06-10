@@ -10,10 +10,17 @@ function formatMiseAJour(iso: string): string {
   return formatMonthYearNumericFr(date)
 }
 
+export type IndicateurCardContext = {
+  individu: string
+  referentiel: string
+}
+
 export function IndicateurCard({
   indicateur,
+  context,
 }: {
   indicateur: Pick<IndicateurApiModel, 'id' | 'nom' | 'updatedAt'>
+  context?: IndicateurCardContext
 }) {
   return (
     <EntityCard
@@ -21,7 +28,7 @@ export function IndicateurCard({
       title={indicateur.nom}
       footer={<>Mis à jour {formatMiseAJour(indicateur.updatedAt)}</>}
     >
-      <Link to="/indicateurs/$id" params={{ id: indicateur.id }} />
+      <Link to="/indicateurs/$id" params={{ id: indicateur.id }} search={context ?? {}} />
     </EntityCard>
   )
 }
