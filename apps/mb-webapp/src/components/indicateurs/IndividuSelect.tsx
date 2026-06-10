@@ -1,4 +1,4 @@
-import * as PopoverPrimitive from '@radix-ui/react-popover'
+import { Popover as PopoverPrimitive } from 'radix-ui'
 import { useSuspenseQueries } from '@tanstack/react-query'
 import { Command } from 'cmdk'
 import { Check, ChevronDown, Search } from 'lucide-react'

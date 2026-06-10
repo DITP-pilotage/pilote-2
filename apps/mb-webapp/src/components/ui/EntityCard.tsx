@@ -1,4 +1,4 @@
-import { Slot, Slottable } from '@radix-ui/react-slot'
+import { Slot as SlotPrimitive } from 'radix-ui'
 import { ArrowUpRight } from 'lucide-react'
 import type { ComponentProps, ReactNode } from 'react'
 
@@ -28,7 +28,7 @@ export function EntityCard({
   children,
   ...props
 }: EntityCardProps) {
-  const Comp = asChild ? Slot : 'div'
+  const Comp = asChild ? SlotPrimitive.Slot : 'div'
   return (
     <Comp className={clsxm(styles, className)} {...props}>
       {kicker && (
@@ -39,7 +39,7 @@ export function EntityCard({
       <Heading as="h3" size="md" className="text-text transition-colors group-hover:text-primary">
         {title}
       </Heading>
-      <Slottable>{children}</Slottable>
+      <SlotPrimitive.Slottable>{children}</SlotPrimitive.Slottable>
       {footer && (
         <Text as="div" variant="caption" tone="subtle" className="mt-auto">
           {footer}

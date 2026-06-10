@@ -1,4 +1,4 @@
-import * as TabsPrimitive from '@radix-ui/react-tabs'
+import { Tabs as TabsPrimitive } from 'radix-ui'
 import type { ComponentProps } from 'react'
 
 import { clsxm } from '@/lib/clsxm'

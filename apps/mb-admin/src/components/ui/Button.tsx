@@ -1,4 +1,4 @@
-import { Slot } from '@radix-ui/react-slot'
+import { Slot as SlotPrimitive } from 'radix-ui'
 import { cva, type VariantProps } from 'class-variance-authority'
 import type { ButtonHTMLAttributes, Ref } from 'react'
 
@@ -40,7 +40,7 @@ export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> &
   }
 
 export function Button({ className, variant, size, asChild = false, ref, ...props }: ButtonProps) {
-  const Comp = asChild ? Slot : 'button'
+  const Comp = asChild ? SlotPrimitive.Slot : 'button'
   return (
     <Comp ref={ref} className={clsxm(buttonVariants({ variant, size }), className)} {...props} />
   )

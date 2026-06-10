@@ -1,4 +1,4 @@
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import { DropdownMenu } from 'radix-ui'
 import type { MeApiModel } from '@pilote/mb-shared/me'
 import { ChevronDown, CircleUserRound, LogOut } from 'lucide-react'
 
