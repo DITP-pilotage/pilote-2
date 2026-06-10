@@ -3,7 +3,7 @@ import { type MbApiClient } from "@/server/mb-sync/domain/ports/MbApiClient";
 import { type MesureIndicateurObjectifRepository } from "@/server/mb-sync/domain/ports/MesureIndicateurObjectifRepository";
 import { SyncMbObjectifsUseCase } from "@/server/mb-sync/usecases/SyncMbObjectifsUseCase";
 
-const ZONE_ID = "DEPT-75";
+const TERRITOIRE_CODE = "DEPT-75";
 const INDIC_ID = "IND-003";
 
 describe("SyncMbObjectifsUseCase", () => {
@@ -28,7 +28,7 @@ describe("SyncMbObjectifsUseCase", () => {
   it("envoie les valeurs cibles à mb-api en batch", async () => {
     // Given
     mesureIndicateurObjectifRepository.recupererDernieresValeursCibles.mockResolvedValue([
-      { zone_id: ZONE_ID, metric_date: "2025-12-31", metric_value: 100 },
+      { territoire_code: TERRITOIRE_CODE, metric_date: "2025-12-31", metric_value: 100 },
     ]);
 
     // When
@@ -37,7 +37,7 @@ describe("SyncMbObjectifsUseCase", () => {
     // Then
     expect(mbApiClient.upsertObjectifsIndicateurBatch).toHaveBeenCalledExactlyOnceWith({
       indicId: INDIC_ID,
-      items: [{ individu: ZONE_ID, dateCible: "2025-12-31", valeurCible: 100 }],
+      items: [{ individu: TERRITOIRE_CODE, dateCible: "2025-12-31", valeurCible: 100 }],
     });
     expect(mbApiClient.deleteObjectifIndicateur).not.toHaveBeenCalled();
   });
@@ -56,7 +56,7 @@ describe("SyncMbObjectifsUseCase", () => {
   it("appelle deleteObjectifIndicateur pour les vc avec metric_value null", async () => {
     // Given
     mesureIndicateurObjectifRepository.recupererDernieresValeursCibles.mockResolvedValue([
-      { zone_id: ZONE_ID, metric_date: "2025-12-31", metric_value: null },
+      { territoire_code: TERRITOIRE_CODE, metric_date: "2025-12-31", metric_value: null },
     ]);
 
     // When
@@ -65,7 +65,7 @@ describe("SyncMbObjectifsUseCase", () => {
     // Then
     expect(mbApiClient.deleteObjectifIndicateur).toHaveBeenCalledExactlyOnceWith({
       indicId: INDIC_ID,
-      item: { individu: ZONE_ID, dateCible: "2025-12-31" },
+      item: { individu: TERRITOIRE_CODE, dateCible: "2025-12-31" },
     });
     expect(mbApiClient.upsertObjectifsIndicateurBatch).not.toHaveBeenCalled();
   });
@@ -73,8 +73,8 @@ describe("SyncMbObjectifsUseCase", () => {
   it("sépare upserts et deletes quand les mesures sont mixtes", async () => {
     // Given
     mesureIndicateurObjectifRepository.recupererDernieresValeursCibles.mockResolvedValue([
-      { zone_id: ZONE_ID, metric_date: "2025-12-31", metric_value: 100 },
-      { zone_id: "DEPT-13", metric_date: "2025-12-31", metric_value: null },
+      { territoire_code: TERRITOIRE_CODE, metric_date: "2025-12-31", metric_value: 100 },
+      { territoire_code: "DEPT-13", metric_date: "2025-12-31", metric_value: null },
     ]);
 
     // When
@@ -83,7 +83,7 @@ describe("SyncMbObjectifsUseCase", () => {
     // Then
     expect(mbApiClient.upsertObjectifsIndicateurBatch).toHaveBeenCalledExactlyOnceWith({
       indicId: INDIC_ID,
-      items: [{ individu: ZONE_ID, dateCible: "2025-12-31", valeurCible: 100 }],
+      items: [{ individu: TERRITOIRE_CODE, dateCible: "2025-12-31", valeurCible: 100 }],
     });
     expect(mbApiClient.deleteObjectifIndicateur).toHaveBeenCalledExactlyOnceWith({
       indicId: INDIC_ID,
@@ -95,9 +95,9 @@ describe("SyncMbObjectifsUseCase", () => {
     // Given — 2 upserts retournent 2, 1 delete
     mbApiClient.upsertObjectifsIndicateurBatch.mockResolvedValue(2);
     mesureIndicateurObjectifRepository.recupererDernieresValeursCibles.mockResolvedValue([
-      { zone_id: ZONE_ID, metric_date: "2025-12-31", metric_value: 100 },
-      { zone_id: "DEPT-13", metric_date: "2025-12-31", metric_value: 200 },
-      { zone_id: "DEPT-69", metric_date: "2025-12-31", metric_value: null },
+      { territoire_code: TERRITOIRE_CODE, metric_date: "2025-12-31", metric_value: 100 },
+      { territoire_code: "DEPT-13", metric_date: "2025-12-31", metric_value: 200 },
+      { territoire_code: "DEPT-69", metric_date: "2025-12-31", metric_value: null },
     ]);
 
     // When
@@ -110,8 +110,8 @@ describe("SyncMbObjectifsUseCase", () => {
   it("ignore silencieusement les valeurs non numériques (NaN) et les exclut des upserts", async () => {
     // Given — metric_value parsée en NaN (valeur corrompue en base)
     mesureIndicateurObjectifRepository.recupererDernieresValeursCibles.mockResolvedValue([
-      { zone_id: ZONE_ID, metric_date: "2025-12-31", metric_value: NaN },
-      { zone_id: "DEPT-13", metric_date: "2025-12-31", metric_value: 200 },
+      { territoire_code: TERRITOIRE_CODE, metric_date: "2025-12-31", metric_value: NaN },
+      { territoire_code: "DEPT-13", metric_date: "2025-12-31", metric_value: 200 },
     ]);
 
     // When
@@ -128,7 +128,7 @@ describe("SyncMbObjectifsUseCase", () => {
     // Given
     const INDIC_B = "IND-099";
     mesureIndicateurObjectifRepository.recupererDernieresValeursCibles
-      .mockResolvedValueOnce([{ zone_id: ZONE_ID, metric_date: "2025-12-31", metric_value: 100 }])
+      .mockResolvedValueOnce([{ territoire_code: TERRITOIRE_CODE, metric_date: "2025-12-31", metric_value: 100 }])
       .mockResolvedValueOnce([]);
 
     // When

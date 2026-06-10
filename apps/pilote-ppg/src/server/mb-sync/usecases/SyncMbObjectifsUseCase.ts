@@ -88,7 +88,7 @@ export class SyncMbObjectifsUseCase {
           if (mesure.metric_value === null) return false;
           if (isNaN(mesure.metric_value)) {
             logger.warn(
-              { source: "cron/sync-mb-valeurs", zone_id: mesure.zone_id, metric_date: mesure.metric_date },
+              { source: "cron/sync-mb-valeurs", territoire_code: mesure.territoire_code, metric_date: mesure.metric_date },
               "Valeur cible non numérique ignorée",
             );
             return false;
@@ -97,7 +97,7 @@ export class SyncMbObjectifsUseCase {
         },
       )
       .map((mesure) => ({
-        individu: mesure.zone_id,
+        individu: mesure.territoire_code,
         dateCible: mesure.metric_date,
         valeurCible: mesure.metric_value,
       }));
@@ -107,7 +107,7 @@ export class SyncMbObjectifsUseCase {
     return mesures
       .filter((mesure) => mesure.metric_value === null)
       .map((mesure) => ({
-        individu: mesure.zone_id,
+        individu: mesure.territoire_code,
         dateCible: mesure.metric_date,
       }));
   }

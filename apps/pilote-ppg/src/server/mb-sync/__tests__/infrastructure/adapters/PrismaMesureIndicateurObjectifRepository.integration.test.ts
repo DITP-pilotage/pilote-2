@@ -5,7 +5,7 @@ import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaMesureIndicateurObjectifRepository } from "@/server/mb-sync/infrastructure/adapters/PrismaMesureIndicateurObjectifRepository";
 
 const INDIC_ID = "IND-003";
-const ZONE_ID = "DEPT-75";
+const TERRITOIRE_CODE = "DEPT-75";
 
 describe("PrismaMesureIndicateurObjectifRepository", () => {
   let repository: PrismaMesureIndicateurObjectifRepository;
@@ -35,7 +35,7 @@ describe("PrismaMesureIndicateurObjectifRepository", () => {
         const dateImportRecente = new Date("2025-01-02T10:00:00Z");
         await fixtures.mesureIndicateur({
           indic_id: INDIC_ID,
-          zone_id: ZONE_ID,
+          territoire_code: TERRITOIRE_CODE,
           metric_date: "2025-12-31",
           metric_type: "vc",
           metric_value: "50",
@@ -43,7 +43,7 @@ describe("PrismaMesureIndicateurObjectifRepository", () => {
         });
         await fixtures.mesureIndicateur({
           indic_id: INDIC_ID,
-          zone_id: ZONE_ID,
+          territoire_code: TERRITOIRE_CODE,
           metric_date: "2025-12-31",
           metric_type: "vc",
           metric_value: "100",
@@ -57,7 +57,7 @@ describe("PrismaMesureIndicateurObjectifRepository", () => {
 
         // Then — seule la valeur la plus récente est retournée
         expect(result).toEqual([
-          { zone_id: ZONE_ID, metric_date: "2025-12-31", metric_value: 100 },
+          { territoire_code: TERRITOIRE_CODE, metric_date: "2025-12-31", metric_value: 100 },
         ]);
       }),
     );
@@ -97,9 +97,9 @@ describe("PrismaMesureIndicateurObjectifRepository", () => {
         // Then
         expect(result).toEqual(
           expect.arrayContaining([
-            { zone_id: "DEPT-75", metric_date: "2025-12-31", metric_value: 100 },
-            { zone_id: "DEPT-13", metric_date: "2025-12-31", metric_value: 200 },
-            { zone_id: "DEPT-75", metric_date: "2026-12-31", metric_value: 150 },
+            { territoire_code: "DEPT-75", metric_date: "2025-12-31", metric_value: 100 },
+            { territoire_code: "DEPT-13", metric_date: "2025-12-31", metric_value: 200 },
+            { territoire_code: "DEPT-75", metric_date: "2026-12-31", metric_value: 150 },
           ]),
         );
         expect(result).toHaveLength(3);
@@ -113,7 +113,7 @@ describe("PrismaMesureIndicateurObjectifRepository", () => {
         await seedIndicateur();
         await fixtures.mesureIndicateur({
           indic_id: INDIC_ID,
-          zone_id: ZONE_ID,
+          territoire_code: TERRITOIRE_CODE,
           metric_date: "2025-12-31",
           metric_type: "vc",
           metric_value: "100",
@@ -121,7 +121,7 @@ describe("PrismaMesureIndicateurObjectifRepository", () => {
         });
         await fixtures.mesureIndicateur({
           indic_id: INDIC_ID,
-          zone_id: ZONE_ID,
+          territoire_code: TERRITOIRE_CODE,
           metric_date: "2025-12-31",
           metric_type: "vc",
           metric_value: "null",
@@ -135,7 +135,7 @@ describe("PrismaMesureIndicateurObjectifRepository", () => {
 
         // Then
         expect(result).toEqual([
-          { zone_id: ZONE_ID, metric_date: "2025-12-31", metric_value: null },
+          { territoire_code: TERRITOIRE_CODE, metric_date: "2025-12-31", metric_value: null },
         ]);
       }),
     );
@@ -147,14 +147,14 @@ describe("PrismaMesureIndicateurObjectifRepository", () => {
         await seedIndicateur();
         await fixtures.mesureIndicateur({
           indic_id: INDIC_ID,
-          zone_id: ZONE_ID,
+          territoire_code: TERRITOIRE_CODE,
           metric_date: "2025-12-31",
           metric_type: "va",
           metric_value: "42",
         });
         await fixtures.mesureIndicateur({
           indic_id: INDIC_ID,
-          zone_id: ZONE_ID,
+          territoire_code: TERRITOIRE_CODE,
           metric_date: "2025-12-31",
           metric_type: "vi",
           metric_value: "10",
@@ -189,7 +189,7 @@ describe("PrismaMesureIndicateurObjectifRepository", () => {
         // Given — vc pour un autre indic
         await fixtures.mesureIndicateur({
           indic_id: "IND-999",
-          zone_id: ZONE_ID,
+          territoire_code: TERRITOIRE_CODE,
           metric_date: "2025-12-31",
           metric_type: "vc",
           metric_value: "999",
@@ -212,7 +212,7 @@ describe("PrismaMesureIndicateurObjectifRepository", () => {
         await seedIndicateur([$Enums.Maille.NAT]);
         await fixtures.mesureIndicateur({
           indic_id: INDIC_ID,
-          zone_id: ZONE_ID,
+          territoire_code: TERRITOIRE_CODE,
           metric_date: "2025-12-31",
           metric_type: "vc",
           metric_value: "100",

@@ -1,5 +1,5 @@
 export type ObjectifMesure = {
-  zone_id: string;
+  territoire_code: string;
   metric_date: string;
   metric_value: number | null;
 };

@@ -7,7 +7,7 @@ import {
 } from "@/server/mb-sync/domain/ports/MesureIndicateurObjectifRepository";
 
 type RawRow = {
-  zone_id: string;
+  territoire_code: string;
   metric_date: string;
   metric_value: string;
 };
@@ -27,7 +27,7 @@ export class PrismaMesureIndicateurObjectifRepository
     const rows = await this.prisma.$queryRaw<RawRow[]>(
       Prisma.sql`
         SELECT DISTINCT ON (mi.zone_id, mi.metric_date)
-          mi.zone_id,
+          t.code AS territoire_code,
           mi.metric_date,
           mi.metric_value
         FROM raw_data.mesure_indicateur mi
@@ -41,7 +41,7 @@ export class PrismaMesureIndicateurObjectifRepository
     );
 
     return rows.map((row) => ({
-      zone_id: row.zone_id,
+      territoire_code: row.territoire_code,
       metric_date: row.metric_date,
       metric_value: row.metric_value === 'null' ? null : parseFloat(row.metric_value),
     }));
