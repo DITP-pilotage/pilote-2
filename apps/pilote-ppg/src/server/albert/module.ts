@@ -4,6 +4,7 @@ import { createGetTauxAvancementTerritoireTool } from "@/server/albert/tools/get
 import { createGetChantiersTool } from "@/server/albert/tools/getChantiers";
 import { createGetChantierIndicateursTool } from "@/server/albert/tools/getChantierIndicateurs";
 import { createGetChantierCommentairesTool } from "@/server/albert/tools/getChantierCommentaires";
+import { createSearchChantiersTool } from "@/server/albert/tools/searchChantiers";
 import { createComposeDashboardTool } from "@/server/albert/tools/composeDashboard";
 import type { ChantierExports } from "@/server/chantiers/module";
 import { EvaluerChatUseCase } from "@/server/albert/usecases/EvaluerChatUseCase";
@@ -42,6 +43,7 @@ type AlbertOwnCradle = {
   createGetChantierCommentairesTool: ReturnType<
     typeof createGetChantierCommentairesTool
   >;
+  createSearchChantiersTool: ReturnType<typeof createSearchChantiersTool>;
   createComposeDashboardTool: ReturnType<typeof createComposeDashboardTool>;
   createExportRapportTool: ReturnType<typeof createExportRapportTool>;
   evaluerChatUseCase: EvaluerChatUseCase;
@@ -75,6 +77,7 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       createGetChantierCommentairesTool: asModuleFunction(
         createGetChantierCommentairesTool,
       ),
+      createSearchChantiersTool: asModuleFunction(createSearchChantiersTool),
       createComposeDashboardTool: asModuleFunction(createComposeDashboardTool),
       createExportRapportTool: asModuleFunction(createExportRapportTool),
       evaluerChatUseCase: asModuleClass(EvaluerChatUseCase),

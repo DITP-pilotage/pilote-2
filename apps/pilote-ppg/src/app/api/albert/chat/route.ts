@@ -51,6 +51,9 @@ export async function POST(request: Request) {
     const createGetChantierCommentairesTool = container.resolve(
       "createGetChantierCommentairesTool",
     );
+    const createSearchChantiersTool = container.resolve(
+      "createSearchChantiersTool",
+    );
     const createExportRapportTool = container.resolve(
       "createExportRapportTool",
     );
@@ -81,6 +84,9 @@ export async function POST(request: Request) {
     const getChantierCommentaires = createGetChantierCommentairesTool({
       territoiresAccessibles,
     });
+    const searchChantiers = createSearchChantiersTool({
+      chantiersAccessibles: session.habilitations.lecture.chantiers,
+    });
     const exportRapport = createExportRapportTool({
       userId: session.user.id,
     });
@@ -92,6 +98,7 @@ export async function POST(request: Request) {
       get_chantiers: getChantiers,
       get_indicateurs: getChantierIndicateurs,
       get_chantier_commentaires: getChantierCommentaires,
+      search_chantiers: searchChantiers,
       display_choices: displayChoicesTool,
       ...(capacities.dashboard ? { create_dashboard: createDashboard } : {}),
       ...(capacities.exportRapport ? { export_rapport: exportRapport } : {}),

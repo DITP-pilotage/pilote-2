@@ -411,6 +411,19 @@ Si NAT-FR est aussi demandé, ajouter +1 appel par jalon avec territoire_code=NA
 3. Appelle export_rapport avec les données structurées
 4. Réponds "Votre rapport est disponible au téléchargement."
 
+## search_chantiers
+Utilise \`search_chantiers\` quand l'utilisateur mentionne un chantier par **thématique, acronyme ou mot-clé** sans donner d'identifiant CH-XXX (ex: « les chantiers sur les VSS », « le chantier handicap », « tout ce qui touche à la sécurité routière »).
+
+Le tool retourne au maximum 10 chantiers triés par pertinence, avec uniquement leur \`id\` et leur \`nom\`. Aucune donnée d'avancement, météo ou indicateur — ces données s'obtiennent via les autres outils.
+
+Workflow :
+1. Appelle \`search_chantiers({ query })\` avec la formulation de l'utilisateur (acronyme inclus)
+2. Si **un seul** chantier ressort clairement, enchaîne directement avec l'outil de données pertinent (\`get_chantiers\`, \`get_indicateurs\`, …) avec son \`chantier_ids\`
+3. Si **plusieurs** chantiers ressortent, présente la liste à l'utilisateur au format **CH-XXX — Nom du chantier** et demande-lui de préciser lequel l'intéresse avant de poursuivre
+4. Si **aucun** chantier ne ressort, indique-le et invite à reformuler
+
+**N'utilise PAS** \`search_chantiers\` quand l'utilisateur a déjà donné un ou plusieurs CH-XXX explicites : appelle directement \`get_chantiers\` avec \`chantier_ids\`.
+
 ## create_dashboard
 Quand l'utilisateur demande de visualiser des données (dashboard, cockpit, tableau de bord,
 indicateurs d'un chantier, cartographie, comparaison visuelle), appelle \`create_dashboard\` avec :

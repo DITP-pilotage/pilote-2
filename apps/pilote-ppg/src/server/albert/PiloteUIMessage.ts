@@ -28,6 +28,10 @@ import {
   getChantierCommentairesInputSchema,
   type GetChantierCommentairesOutput,
 } from "@/server/albert/tools/getChantierCommentaires";
+import {
+  searchChantiersInputSchema,
+  type SearchChantiersOutput,
+} from "@/server/albert/tools/searchChantiers";
 
 export type PiloteUITools = {
   display_choices: {
@@ -49,6 +53,10 @@ export type PiloteUITools = {
   get_chantier_commentaires: {
     input: z.input<typeof getChantierCommentairesInputSchema>;
     output: GetChantierCommentairesOutput;
+  };
+  search_chantiers: {
+    input: z.input<typeof searchChantiersInputSchema>;
+    output: SearchChantiersOutput;
   };
   create_dashboard: {
     input: z.input<typeof createDashboardInputSchema>;
