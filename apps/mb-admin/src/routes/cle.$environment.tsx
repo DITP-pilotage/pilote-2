@@ -1,4 +1,6 @@
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import { KeyRound } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/Button'
@@ -19,10 +21,24 @@ function KeyComponent() {
   const { environment } = Route.useParams()
   const env = environment as Environment
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [apiKey, setApiKey] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [pending, setPending] = useState(false)
   const isProd = env === 'prod'
+
+  const rememberedQuery = useQuery({
+    queryKey: ['remembered'],
+    queryFn: () => session.remembered(),
+  })
+  const remembered = rememberedQuery.data?.[env]
+
+  const errorMessageFor = (code: string | undefined): string =>
+    code === 'invalid_key'
+      ? `Clé invalide pour l'environnement ${ENV_LABEL[env]}.`
+      : code === 'environment_unreachable'
+        ? `Environnement ${ENV_LABEL[env]} injoignable.`
+        : 'Une erreur est survenue.'
 
   const submit = async () => {
     setPending(true)
@@ -33,13 +49,30 @@ function KeyComponent() {
       return
     }
     setPending(false)
+    setError(errorMessageFor(result.error))
+  }
+
+  const continueWithRemembered = async () => {
+    setPending(true)
+    setError(null)
+    const result = await session.useRemembered(env)
+    if (result.ok) {
+      window.location.assign('/fonctionnalites')
+      return
+    }
+    setPending(false)
+    // La clé mémorisée a pu être révoquée/expirée : le serveur l'a oubliée.
+    await queryClient.invalidateQueries({ queryKey: ['remembered'] })
     setError(
       result.error === 'invalid_key'
-        ? `Clé invalide pour l'environnement ${ENV_LABEL[env]}.`
-        : result.error === 'environment_unreachable'
-          ? `Environnement ${ENV_LABEL[env]} injoignable.`
-          : 'Une erreur est survenue.',
+        ? `La clé mémorisée n'est plus valide, saisissez-en une nouvelle.`
+        : errorMessageFor(result.error),
     )
+  }
+
+  const forget = async () => {
+    await session.forget(env)
+    await queryClient.invalidateQueries({ queryKey: ['remembered'] })
   }
 
   return (
@@ -83,6 +116,28 @@ function KeyComponent() {
         >
           {pending ? 'Validation…' : 'Confirmer la clé'}
         </Button>
+
+        {remembered ? (
+          <div className="flex flex-col gap-1.5 border-t border-border pt-3">
+            <Button
+              variant="secondary"
+              type="button"
+              disabled={pending}
+              onClick={() => void continueWithRemembered()}
+            >
+              <KeyRound className="size-4" />
+              Continuer avec « {remembered.label} » ({remembered.prefix}…)
+            </Button>
+            <button
+              type="button"
+              onClick={() => void forget()}
+              className="self-end text-xs text-text-subtle underline hover:text-accent"
+            >
+              Oublier cette clé
+            </button>
+          </div>
+        ) : null}
+
         <p className="text-xs text-text-subtle">
           🔒 La clé est validée puis stockée chiffrée côté serveur, jamais exposée au navigateur.
         </p>
