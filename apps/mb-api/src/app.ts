@@ -3,6 +3,7 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
 
 import { me } from '@/authentication/routes/me'
+import { whoami } from '@/authentication/routes/whoami'
 import { env } from '@/env'
 import { authContext } from '@/framework/auth/authContext'
 import { registerErrorHandler } from '@/framework/errors/errorHandler'
@@ -41,6 +42,7 @@ app.route('/', referentielRoutes)
 app.route('/', individuRoutes)
 app.route('/', panierRoutes)
 app.route('/', me)
+app.route('/', whoami)
 
 app.doc('/openapi.json', {
   openapi: '3.0.0',
