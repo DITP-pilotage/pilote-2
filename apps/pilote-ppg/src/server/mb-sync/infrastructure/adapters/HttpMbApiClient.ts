@@ -1,8 +1,10 @@
 import { configuration } from "@/config";
 import {
+  type DeleteObjectifIndicateurItem,
   type DeleteValeurAvancementItem,
   type MbApiClient,
   type UpsertIndicateurPayload,
+  type UpsertObjectifIndicateurItem,
   type UpsertValeurAvancementItem,
 } from "@/server/mb-sync/domain/ports/MbApiClient";
 
@@ -81,6 +83,70 @@ export class HttpMbApiClient implements MbApiClient {
     }
 
     return items.length;
+  }
+
+  async upsertObjectifsIndicateurBatch(args: {
+    indicId: string;
+    items: UpsertObjectifIndicateurItem[];
+  }): Promise<number> {
+    const { baseUrl, apiKey } = configuration().mbApi;
+    const { items, indicId } = args;
+    let total = 0;
+
+    for (let offset = 0; offset < items.length; offset += MAX_ITEMS_PAR_BATCH) {
+      const chunk = items.slice(offset, offset + MAX_ITEMS_PAR_BATCH);
+
+      const response = await fetch(
+        `${baseUrl}/indicateurs/${indicId}/objectifs:batch`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${apiKey}`,
+          },
+          body: JSON.stringify({ items: chunk }),
+        },
+      );
+
+      if (!response.ok) {
+        const body = await response.text();
+        throw new Error(
+          `mb-api batch objectifs échoué pour l'indicateur ${indicId} : HTTP ${response.status} — ${body}`,
+        );
+      }
+
+      const result = (await response.json()) as BatchResultat;
+      total += result.total;
+    }
+
+    return total;
+  }
+
+  async deleteObjectifIndicateur(args: {
+    indicId: string;
+    item: DeleteObjectifIndicateurItem;
+  }): Promise<void> {
+    const { baseUrl, apiKey } = configuration().mbApi;
+    const { indicId, item } = args;
+
+    const response = await fetch(
+      `${baseUrl}/indicateurs/${indicId}/objectifs`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({ individu: item.individu, dateCible: item.dateCible }),
+      },
+    );
+
+    if (!response.ok) {
+      const body = await response.text();
+      throw new Error(
+        `mb-api delete objectif échoué pour l'indicateur ${indicId} (individu=${item.individu}, dateCible=${item.dateCible}) : HTTP ${response.status} — ${body}`,
+      );
+    }
   }
 
   async upsertIndicateur(args: {

@@ -4,6 +4,17 @@ export type UpsertValeurAvancementItem = {
   valeur: number;
 };
 
+export type UpsertObjectifIndicateurItem = {
+  individu: string;
+  dateCible: string;
+  valeurCible: number;
+};
+
+export type DeleteObjectifIndicateurItem = {
+  individu: string;
+  dateCible: string;
+};
+
 export type UpsertIndicateurPayload = {
   nom: string;
   visibilite: "PRIVE" | "PUBLIC";
@@ -31,5 +42,13 @@ export interface MbApiClient {
   upsertIndicateur(args: {
     indicId: string;
     payload: UpsertIndicateurPayload;
+  }): Promise<void>;
+  upsertObjectifsIndicateurBatch(args: {
+    indicId: string;
+    items: UpsertObjectifIndicateurItem[];
+  }): Promise<number>;
+  deleteObjectifIndicateur(args: {
+    indicId: string;
+    item: DeleteObjectifIndicateurItem;
   }): Promise<void>;
 }
