@@ -15,14 +15,10 @@ import { FormField } from '@/components/ui/FormField'
 import { Page } from '@/components/ui/Page'
 import { SearchField } from '@/components/ui/SearchField'
 import { Text } from '@/components/ui/Typography'
-import { pickRoot } from '@/lib/individus/hierarchy'
+import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@/components/ui/Pagination'
 import { indicateursQueryOptions, loadIndicateurs } from '@/queries/indicateurs'
-import {
-  allReferentielsQueryOptions,
-  loadAllReferentielIds,
-  loadHierarchyFromReferentiels,
-} from '@/queries/referentiels'
+import { allReferentielsQueryOptions, loadAllReferentielIds } from '@/queries/referentiels'
 
 const indicateursSearchSchema = z.object({
   recherche: z.string().optional(),
@@ -37,29 +33,19 @@ export const Route = createFileRoute('/_authenticated/indicateurs/')({
   loaderDeps: ({ search }) => search,
   loader: async ({ context, deps }) => {
     const { queryClient } = context
-
     const referentielIds = await loadAllReferentielIds({ queryClient })
-    if (referentielIds.length > 0) {
-      const nodes = await loadHierarchyFromReferentiels({ queryClient, referentielIds })
-      const knownIndividu = deps.individu
-        ? nodes.find((n) => n.individu.id === deps.individu)?.individu
-        : undefined
-      const pairValid = knownIndividu && knownIndividu.referentiel === deps.referentiel
-      if (!pairValid) {
-        const fallback = knownIndividu ?? pickRoot(nodes)?.individu ?? nodes[0]?.individu
-        if (fallback) {
-          throw redirect({
-            to: '/indicateurs',
-            search: {
-              ...deps,
-              individu: fallback.id,
-              referentiel: fallback.referentiel,
-            },
-            replace: true,
-          })
-        }
-      }
-    }
+    await ensureIndividuReferentielPair({
+      queryClient,
+      referentielIds,
+      deps,
+      onMismatch: ({ individu, referentiel }) => {
+        throw redirect({
+          to: '/indicateurs',
+          search: { ...deps, individu, referentiel },
+          replace: true,
+        })
+      },
+    })
 
     return loadIndicateurs({ queryClient, query: deps })
   },

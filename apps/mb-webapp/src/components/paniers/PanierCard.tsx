@@ -3,10 +3,17 @@ import { Link } from '@tanstack/react-router'
 
 import { EntityCard } from '@/components/ui/EntityCard'
 
+export type PanierCardContext = {
+  individu: string
+  referentiel: string
+}
+
 export function PanierCard({
   panier,
+  context,
 }: {
   panier: Pick<PanierApiModel, 'id' | 'nom' | 'description' | 'indicateurIds'>
+  context?: PanierCardContext | undefined
 }) {
   const nb = panier.indicateurIds.length
   return (
@@ -21,7 +28,7 @@ export function PanierCard({
         </>
       }
     >
-      <Link to="/paniers/$id" params={{ id: panier.id }} />
+      <Link to="/paniers/$id" params={{ id: panier.id }} search={context ?? {}} />
     </EntityCard>
   )
 }

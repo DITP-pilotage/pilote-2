@@ -28,11 +28,7 @@ export function IndicateurCard({
       title={indicateur.nom}
       footer={<>Mis à jour {formatMiseAJour(indicateur.updatedAt)}</>}
     >
-      <Link
-        to="/indicateurs/$id"
-        params={{ id: indicateur.id }}
-        search={context ?? {}}
-      />
+      <Link to="/indicateurs/$id" params={{ id: indicateur.id }} search={context ?? {}} />
     </EntityCard>
   )
 }

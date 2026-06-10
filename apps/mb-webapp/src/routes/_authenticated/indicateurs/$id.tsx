@@ -19,13 +19,12 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { FormField } from '@/components/ui/FormField'
 import { Page } from '@/components/ui/Page'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
-import { pickRoot } from '@/lib/individus/hierarchy'
+import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import {
   indicateurQueryOptions,
   loadIndicateur,
   prefetchIndicateurValeursForIndividu,
 } from '@/queries/indicateurs'
-import { loadHierarchyFromReferentiels } from '@/queries/referentiels'
 
 const paramsSchema = z.object({
   id: indicateurPublicIdSchema,
@@ -50,34 +49,28 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     const referentielIds = indicateur.referentiels.map(
       (configuration) => configuration.referentielPublicId,
     )
-    if (referentielIds.length === 0) return { indicateur }
+    const pair = await ensureIndividuReferentielPair({
+      queryClient,
+      referentielIds,
+      deps,
+      onMismatch: ({ individu, referentiel }) => {
+        throw redirect({
+          to: '/indicateurs/$id',
+          params,
+          search: { individu, referentiel },
+          replace: true,
+        })
+      },
+    })
 
-    const nodes = await loadHierarchyFromReferentiels({ queryClient, referentielIds })
-    if (nodes.length === 0) return { indicateur }
-
-    const selected = deps.individu
-      ? nodes.find((n) => n.individu.id === deps.individu)?.individu
-      : undefined
-    const pairValid = selected && selected.referentiel === deps.referentiel
-    if (!pairValid) {
-      const fallback = selected ?? pickRoot(nodes)?.individu ?? nodes[0]!.individu
-      throw redirect({
-        to: '/indicateurs/$id',
-        params,
-        search: {
-          individu: fallback.id,
-          referentiel: fallback.referentiel,
-        },
-        replace: true,
+    if (pair) {
+      await prefetchIndicateurValeursForIndividu({
+        queryClient,
+        indicateurId: params.id,
+        individuId: pair.individu,
+        referentielId: pair.referentiel,
       })
     }
-
-    await prefetchIndicateurValeursForIndividu({
-      queryClient,
-      indicateurId: params.id,
-      individuId: selected.id,
-      referentielId: selected.referentiel,
-    })
 
     return { indicateur }
   },
