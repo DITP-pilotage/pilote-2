@@ -9,7 +9,7 @@ import {
 type RawRow = {
   zone_id: string;
   metric_date: string;
-  metric_value: string | null;
+  metric_value: string;
 };
 
 export class PrismaMesureIndicateurObjectifRepository
@@ -40,7 +40,7 @@ export class PrismaMesureIndicateurObjectifRepository
     return rows.map((row) => ({
       zone_id: row.zone_id,
       metric_date: row.metric_date,
-      metric_value: row.metric_value !== null ? parseFloat(row.metric_value) : null,
+      metric_value: row.metric_value === 'null' ? null : parseFloat(row.metric_value),
     }));
   }
 }
