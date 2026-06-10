@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
@@ -15,11 +16,21 @@ describe("PrismaMesureIndicateurObjectifRepository", () => {
     });
   });
 
+  const seedIndicateur = async (mailles_applicables: $Enums.Maille[] = [$Enums.Maille.DEPT]) => {
+    const chantier = await fixtures.chantierIdentite();
+    await fixtures.indicateurIdentite({
+      id: INDIC_ID,
+      chantier_id: chantier.id,
+      mailles_applicables,
+    });
+  };
+
   describe("#recupererDernieresValeursCibles", () => {
     it(
       "retourne la dernière vc par couple (zone_id, metric_date)",
       createIntegrationTest(async () => {
         // Given — deux imports pour le même couple, dates_import différentes
+        await seedIndicateur();
         const dateImportAncienne = new Date("2025-01-01T10:00:00Z");
         const dateImportRecente = new Date("2025-01-02T10:00:00Z");
         await fixtures.mesureIndicateur({
@@ -55,6 +66,7 @@ describe("PrismaMesureIndicateurObjectifRepository", () => {
       "retourne une entrée par couple (zone_id, metric_date) distinct",
       createIntegrationTest(async () => {
         // Given — deux zones et deux dates
+        await seedIndicateur();
         await fixtures.mesureIndicateur({
           indic_id: INDIC_ID,
           zone_id: "DEPT-75",
@@ -98,6 +110,7 @@ describe("PrismaMesureIndicateurObjectifRepository", () => {
       "retourne metric_value null quand la dernière valeur est la string 'null'",
       createIntegrationTest(async () => {
         // Given — import avec valeur numérique, puis import avec 'null' string (plus récent)
+        await seedIndicateur();
         await fixtures.mesureIndicateur({
           indic_id: INDIC_ID,
           zone_id: ZONE_ID,
@@ -131,6 +144,7 @@ describe("PrismaMesureIndicateurObjectifRepository", () => {
       "ignore les lignes metric_type != 'vc'",
       createIntegrationTest(async () => {
         // Given — une valeur d'avancement (va) et une valeur initiale (vi), pas de vc
+        await seedIndicateur();
         await fixtures.mesureIndicateur({
           indic_id: INDIC_ID,
           zone_id: ZONE_ID,
@@ -179,6 +193,29 @@ describe("PrismaMesureIndicateurObjectifRepository", () => {
           metric_date: "2025-12-31",
           metric_type: "vc",
           metric_value: "999",
+        });
+
+        // When
+        const result = await repository.recupererDernieresValeursCibles({
+          indicId: INDIC_ID,
+        });
+
+        // Then
+        expect(result).toEqual([]);
+      }),
+    );
+
+    it(
+      "filtre les zones dont la maille n'est pas dans les mailles applicables",
+      createIntegrationTest(async () => {
+        // Given — indicateur applicable uniquement en NAT, mais zone_id en DEPT
+        await seedIndicateur([$Enums.Maille.NAT]);
+        await fixtures.mesureIndicateur({
+          indic_id: INDIC_ID,
+          zone_id: ZONE_ID,
+          metric_date: "2025-12-31",
+          metric_type: "vc",
+          metric_value: "100",
         });
 
         // When

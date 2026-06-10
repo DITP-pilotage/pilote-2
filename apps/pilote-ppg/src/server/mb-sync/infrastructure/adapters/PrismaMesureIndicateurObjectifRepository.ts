@@ -26,14 +26,17 @@ export class PrismaMesureIndicateurObjectifRepository
   }): Promise<ObjectifMesure[]> {
     const rows = await this.prisma.$queryRaw<RawRow[]>(
       Prisma.sql`
-        SELECT DISTINCT ON (zone_id, metric_date)
-          zone_id,
-          metric_date,
-          metric_value
-        FROM raw_data.mesure_indicateur
-        WHERE indic_id = ${args.indicId}
-          AND metric_type = 'vc'
-        ORDER BY zone_id, metric_date, date_import DESC
+        SELECT DISTINCT ON (mi.zone_id, mi.metric_date)
+          mi.zone_id,
+          mi.metric_date,
+          mi.metric_value
+        FROM raw_data.mesure_indicateur mi
+        JOIN territoire t ON t.code = mi.zone_id
+        JOIN indicateur_identite ii ON ii.id = mi.indic_id
+        WHERE mi.indic_id = ${args.indicId}
+          AND mi.metric_type = 'vc'
+          AND t.maille = ANY(ii.mailles_applicables)
+        ORDER BY mi.zone_id, mi.metric_date, mi.date_import DESC
       `,
     );
 
