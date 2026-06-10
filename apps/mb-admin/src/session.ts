@@ -5,9 +5,7 @@ import { authClient } from '@/api/client'
 const ENVIRONMENTS = ['local', 'dev', 'prod'] as const
 export type Environment = (typeof ENVIRONMENTS)[number]
 
-const sessionSchema = z
-  .object({ environment: z.enum(ENVIRONMENTS), label: z.string() })
-  .nullable()
+const sessionSchema = z.object({ environment: z.enum(ENVIRONMENTS), label: z.string() }).nullable()
 
 export type SessionState = { environment: Environment; label: string } | null
 

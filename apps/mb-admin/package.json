@@ -4,8 +4,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "files": ["dist"],
-  "engines": { "node": "24.9.0" },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": "24.9.0"
+  },
   "scripts": {
     "dev": "portless run vite",
     "deploy:prepare": "bash deploy-prepare.sh",
