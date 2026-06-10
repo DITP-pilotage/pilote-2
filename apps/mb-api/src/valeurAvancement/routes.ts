@@ -1,11 +1,13 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { errorApiModelSchema } from '@pilote/mb-shared/error'
-import { indicateurPublicIdSchema } from '@pilote/mb-shared/publicIds'
+import { indicateurPublicIdSchema, individuPublicIdSchema } from '@pilote/mb-shared/publicIds'
 import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
 import {
   batchInvalidErrorDetailsApiModelSchema,
   deleteValeurAvancementBodySchema,
+  dernieresValeursIndividuListApiModelSchema,
   individuAvecValeursApiModelSchema,
+  listDernieresValeursForIndividuQuerySchema,
   listIndividusWithValeursQuerySchema,
   listSyntheseIndividusQuerySchema,
   listValeursForIndicateurQuerySchema,
@@ -26,6 +28,7 @@ import { withTransaction } from '@/framework/persistence/withTransaction'
 import { deleteValeurAvancement } from '@/valeurAvancement/commands/deleteValeurAvancement'
 import { upsertValeurAvancement } from '@/valeurAvancement/commands/upsertValeurAvancement'
 import { upsertValeursAvancementBatch } from '@/valeurAvancement/commands/upsertValeursAvancementBatch'
+import { listDernieresValeursForIndividu } from '@/valeurAvancement/queries/listDernieresValeursForIndividu'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
 import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
 import { listValeursForIndicateur } from '@/valeurAvancement/queries/listValeursForIndicateur'
@@ -63,6 +66,8 @@ const ValeursRemarquablesListApiModelSchema = valeursRemarquablesListApiModelSch
 const SyntheseIndividusListApiModelSchema = syntheseIndividusListApiModelSchema.openapi(
   'SyntheseIndividusListApiModel',
 )
+const DernieresValeursIndividuListApiModelSchema =
+  dernieresValeursIndividuListApiModelSchema.openapi('DernieresValeursIndividuListApiModel')
 const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 const indicateurParamsSchema = z.object({
@@ -307,6 +312,41 @@ const getSyntheseIndividusRoute = createRoute({
   },
 })
 
+// --- GET /individus/:id/dernieres-valeurs ------------------------------------
+
+const individuParamsSchema = z.object({
+  id: individuPublicIdSchema,
+})
+
+const getDernieresValeursForIndividuRoute = createRoute({
+  method: 'get',
+  path: '/individus/{id}/dernieres-valeurs',
+  tags: ['Individu'],
+  summary: "Lister la dernière valeur connue de l'individu pour un lot d'indicateurs",
+  description:
+    'Retourne, pour chaque indicateur demandé accessible en lecture, la dernière valeur ' +
+    "connue de l'individu (saisie ou dérivée par agrégation hiérarchique). Le paramètre " +
+    '`indicateurs` est obligatoire (1..N identifiants séparés par une virgule, ex. ' +
+    '`IND-A,IND-B`). Les indicateurs sans valeur connue pour cet individu ou non accessibles ' +
+    'sont omis de la réponse. Granularité de troncature `month`. Endpoint pensé pour des ' +
+    "appels batch côté client (afficher l'avancement sur une liste de cartes d'indicateurs).",
+  middleware: [requireAuthentication],
+  request: {
+    params: individuParamsSchema,
+    query: listDernieresValeursForIndividuQuerySchema,
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: DernieresValeursIndividuListApiModelSchema } },
+      description: 'Dernières valeurs pour les indicateurs demandés',
+    },
+    400: {
+      content: { 'application/json': { schema: ErrorApiModelSchema } },
+      description: 'Paramètres de requête invalides (ex. `indicateurs` absent ou trop nombreux)',
+    },
+  },
+})
+
 // --- App registration --------------------------------------------------------
 
 export const valeurAvancementRoutes = new OpenAPIHono()
@@ -455,6 +495,22 @@ valeurAvancementRoutes.openapi(getSyntheseIndividusRoute, async (context) => {
         context,
         data,
         schema: SyntheseIndividusListApiModelSchema,
+        status: 200,
+      }),
+    never,
+  )
+})
+
+valeurAvancementRoutes.openapi(getDernieresValeursForIndividuRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  const { indicateurs } = context.req.valid('query')
+
+  return listDernieresValeursForIndividu(id, { indicateurs }).match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: DernieresValeursIndividuListApiModelSchema,
         status: 200,
       }),
     never,
