@@ -32,6 +32,14 @@ import {
   searchChantiersInputSchema,
   type SearchChantiersOutput,
 } from "@/server/albert/tools/searchChantiers";
+import {
+  searchIndicateursInputSchema,
+  type SearchIndicateursOutput,
+} from "@/server/albert/tools/searchIndicateurs";
+import {
+  searchTerritoiresInputSchema,
+  type SearchTerritoiresOutput,
+} from "@/server/albert/tools/searchTerritoires";
 
 export type PiloteUITools = {
   display_choices: {
@@ -57,6 +65,14 @@ export type PiloteUITools = {
   search_chantiers: {
     input: z.input<typeof searchChantiersInputSchema>;
     output: SearchChantiersOutput;
+  };
+  search_indicateurs: {
+    input: z.input<typeof searchIndicateursInputSchema>;
+    output: SearchIndicateursOutput;
+  };
+  search_territoires: {
+    input: z.input<typeof searchTerritoiresInputSchema>;
+    output: SearchTerritoiresOutput;
   };
   create_dashboard: {
     input: z.input<typeof createDashboardInputSchema>;

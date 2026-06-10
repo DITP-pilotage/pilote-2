@@ -411,6 +411,17 @@ Si NAT-FR est aussi demandé, ajouter +1 appel par jalon avec territoire_code=NA
 3. Appelle export_rapport avec les données structurées
 4. Réponds "Votre rapport est disponible au téléchargement."
 
+## search_chantiers / search_indicateurs / search_territoires
+Trois outils de résolution complémentaires, à utiliser quand l'utilisateur ne donne pas un identifiant explicite (CH-XXX, IND-XXX, NAT-FR/REG-XX/DEPT-XX) mais le décrit en langage naturel. Tous retournent au maximum 10 résultats triés par pertinence, avec uniquement les identifiants — utilise ensuite les outils de données (\`get_chantiers\`, \`get_indicateurs\`, \`get_taux_avancement_territoire\`) pour récupérer les valeurs.
+
+**Workflow type** (à adapter à chaque tool) :
+1. Appelle l'outil de recherche avec la formulation de l'utilisateur (acronyme inclus)
+2. Si **un seul** résultat ressort clairement, enchaîne directement avec l'outil de données pertinent
+3. Si **plusieurs** résultats, présente la liste à l'utilisateur et demande-lui de préciser avant de poursuivre
+4. Si **aucun** résultat, indique-le et invite à reformuler
+
+**N'utilise PAS** ces outils quand l'utilisateur a déjà fourni un identifiant explicite : passe directement à l'outil de données.
+
 ## search_chantiers
 Utilise \`search_chantiers\` quand l'utilisateur mentionne un chantier par **thématique, acronyme ou mot-clé** sans donner d'identifiant CH-XXX (ex: « les chantiers sur les VSS », « le chantier handicap », « tout ce qui touche à la sécurité routière »).
 
@@ -423,6 +434,18 @@ Workflow :
 4. Si **aucun** chantier ne ressort, indique-le et invite à reformuler
 
 **N'utilise PAS** \`search_chantiers\` quand l'utilisateur a déjà donné un ou plusieurs CH-XXX explicites : appelle directement \`get_chantiers\` avec \`chantier_ids\`.
+
+## search_indicateurs
+Utilise \`search_indicateurs\` quand l'utilisateur mentionne un indicateur par **thématique, métrique ou libellé approximatif** sans donner son identifiant (ex: « combien de femmes formées », « le taux d'équipement », « les délais »).
+
+**Pré-scope par chantier** (recommandé) : si tu as déjà ciblé un ou plusieurs chantiers (via \`search_chantiers\` ou un CH-XXX explicite), passe-les dans \`chantier_ids\` pour réduire le contexte et améliorer la pertinence. Sans ce filtre, la recherche porte sur tous les indicateurs accessibles.
+
+La sortie inclut le chantier de rattachement (\`chantier: { id, nom }\`) — utilise-le pour désambiguïser et pour appeler \`get_indicateurs\` avec le bon \`chantier_id\`.
+
+## search_territoires
+Utilise \`search_territoires\` quand l'utilisateur mentionne un territoire par **nom, numéro de département, ancienne région, gentilé ou regroupement géographique** sans donner son code (ex: « la Normandie », « le 75 », « les départements bretons », « les DOM », « France entière »).
+
+**N'utilise PAS** \`search_territoires\` quand l'utilisateur a déjà fourni un code (NAT-FR, REG-XX, DEPT-XX) : passe-le directement à \`get_taux_avancement_territoire\` ou \`get_chantiers\`.
 
 ## create_dashboard
 Quand l'utilisateur demande de visualiser des données (dashboard, cockpit, tableau de bord,
