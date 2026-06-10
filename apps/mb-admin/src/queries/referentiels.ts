@@ -1,6 +1,11 @@
-import { infiniteQueryOptions } from '@tanstack/react-query'
+import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query'
 
-import { fetchReferentiels } from '@/api/referentiels'
+import {
+  fetchIndividusForReferentiel,
+  fetchReferentielById,
+  fetchReferentiels,
+} from '@/api/referentiels'
+import { fetchAllPages } from '@/lib/fetchAllPages'
 
 export const referentielsInfiniteQueryOptions = (recherche: string) =>
   infiniteQueryOptions({
@@ -10,4 +15,14 @@ export const referentielsInfiniteQueryOptions = (recherche: string) =>
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) =>
       lastPage.pagination.hasMore ? (lastPage.pagination.cursor ?? undefined) : undefined,
+  })
+
+export const referentielQueryOptions = (id: string) =>
+  queryOptions({ queryKey: ['referentiel', id], queryFn: () => fetchReferentielById(id) })
+
+export const referentielIndividusQueryOptions = (id: string) =>
+  queryOptions({
+    queryKey: ['referentiel', id, 'individus'],
+    queryFn: () =>
+      fetchAllPages((cursor) => fetchIndividusForReferentiel(id, cursor ? { cursor } : {})),
   })
