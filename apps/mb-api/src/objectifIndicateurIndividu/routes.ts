@@ -1,13 +1,16 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { errorApiModelSchema } from '@pilote/mb-shared/error'
-import { indicateurPublicIdSchema } from '@pilote/mb-shared/publicIds'
 import {
   deleteObjectifIndicateurIndividuBodySchema,
   listObjectifsForIndicateurQuerySchema,
   objectifIndicateurIndividuApiModelSchema,
   objectifIndicateurIndividuListApiModelSchema,
   upsertObjectifIndicateurIndividuBodySchema,
+  upsertObjectifsIndicateurBatchBodySchema,
+  upsertObjectifsIndicateurBatchResultApiModelSchema,
 } from '@pilote/mb-shared/objectifIndicateurIndividu'
+import { indicateurPublicIdSchema } from '@pilote/mb-shared/publicIds'
+import { batchInvalidErrorDetailsApiModelSchema } from '@pilote/mb-shared/valeurAvancement'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
@@ -15,6 +18,7 @@ import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonRespo
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { deleteObjectifIndicateurIndividu } from '@/objectifIndicateurIndividu/commands/deleteObjectifIndicateurIndividu'
 import { upsertObjectifIndicateurIndividu } from '@/objectifIndicateurIndividu/commands/upsertObjectifIndicateurIndividu'
+import { upsertObjectifsIndicateurBatch } from '@/objectifIndicateurIndividu/commands/upsertObjectifsIndicateurBatch'
 import { listObjectifsForIndicateur } from '@/objectifIndicateurIndividu/queries/listObjectifsForIndicateur'
 
 const ObjectifIndicateurIndividuApiModelSchema = objectifIndicateurIndividuApiModelSchema.openapi(
@@ -26,6 +30,19 @@ const UpsertObjectifIndicateurIndividuBodySchema =
   upsertObjectifIndicateurIndividuBodySchema.openapi('UpsertObjectifIndicateurIndividuBody')
 const DeleteObjectifIndicateurIndividuBodySchema =
   deleteObjectifIndicateurIndividuBodySchema.openapi('DeleteObjectifIndicateurIndividuBody')
+const UpsertObjectifsIndicateurBatchBodySchema = upsertObjectifsIndicateurBatchBodySchema.openapi(
+  'UpsertObjectifsIndicateurBatchBody',
+)
+const UpsertObjectifsIndicateurBatchResultApiModelSchema =
+  upsertObjectifsIndicateurBatchResultApiModelSchema.openapi(
+    'UpsertObjectifsIndicateurBatchResultApiModel',
+  )
+const BatchInvalidErrorDetailsApiModelSchema = batchInvalidErrorDetailsApiModelSchema.openapi(
+  'BatchInvalidErrorDetailsApiModel',
+)
+const BatchInvalidErrorApiModelSchema = errorApiModelSchema
+  .extend({ details: BatchInvalidErrorDetailsApiModelSchema })
+  .openapi('BatchInvalidObjectifErrorApiModel')
 const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 const indicateurParamsSchema = z.object({
@@ -129,6 +146,51 @@ const deleteObjectifIndicateurIndividuRoute = createRoute({
   },
 })
 
+// --- PUT /indicateurs/:id/objectifs:batch ------------------------------------
+
+const upsertObjectifsIndicateurBatchRoute = createRoute({
+  method: 'put',
+  path: '/indicateurs/{id}/objectifs:batch',
+  tags: ['Indicateur'],
+  summary: "Saisir ou mettre à jour un lot d'objectifs pour un indicateur",
+  description:
+    "Upsert atomique d'un lot d'objectifs (1..1000) sur la cle `(indicateur, individu, dateCible)`. " +
+    'Tout-ou-rien : si une seule entree est invalide (individu inconnu/non lie, doublon `(individu, dateCible)` ' +
+    "dans le payload), aucun objectif n'est applique et la reponse 400 `BATCH_INVALID` liste " +
+    'exhaustivement les erreurs detectees.',
+  middleware: [requireAuthentication],
+  request: {
+    params: indicateurParamsSchema,
+    body: {
+      content: { 'application/json': { schema: UpsertObjectifsIndicateurBatchBodySchema } },
+      required: true,
+    },
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': { schema: UpsertObjectifsIndicateurBatchResultApiModelSchema },
+      },
+      description: 'Lot appliqué. Compteurs `total`, `created`, `updated`.',
+    },
+    400: {
+      content: {
+        'application/json': {
+          schema: z.union([BatchInvalidErrorApiModelSchema, ErrorApiModelSchema]),
+        },
+      },
+      description:
+        "Lot invalide. Aucun objectif n'a été appliqué. " +
+        '`BATCH_INVALID` (lot rejeté par la validation métier) — `details.errors` détaille les causes. ' +
+        '`VALIDATION_ERROR` (payload JSON/schema invalide en amont du handler).',
+    },
+    403: {
+      content: { 'application/json': { schema: ErrorApiModelSchema } },
+      description: 'Pas de permission WRITE sur cet indicateur',
+    },
+  },
+})
+
 // --- App registration --------------------------------------------------------
 
 export const objectifIndicateurIndividuRoutes = new OpenAPIHono()
@@ -200,6 +262,36 @@ objectifIndicateurIndividuRoutes.openapi(deleteObjectifIndicateurIndividuRoute, 
           details: { individu: error.individu },
         },
         schema: ErrorApiModelSchema,
+        status: 400,
+      }),
+  )
+})
+
+objectifIndicateurIndividuRoutes.openapi(upsertObjectifsIndicateurBatchRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  const body = context.req.valid('json')
+
+  const result = await withTransaction(async () =>
+    upsertObjectifsIndicateurBatch(id, { items: body.items }),
+  )
+
+  return result.match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: UpsertObjectifsIndicateurBatchResultApiModelSchema,
+        status: 200,
+      }),
+    (error) =>
+      jsonResponseError({
+        context,
+        error: {
+          code: error.type,
+          message: "Aucun objectif n'a été appliqué.",
+          details: { errors: error.errors },
+        },
+        schema: BatchInvalidErrorApiModelSchema,
         status: 400,
       }),
   )

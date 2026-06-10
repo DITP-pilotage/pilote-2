@@ -85,3 +85,23 @@ export const objectifIndicateurIndividuListApiModelSchema = z.object({
   items: z.array(objectifIndicateurIndividuApiModelSchema),
 })
 export type ObjectifIndicateurIndividuListApiModel = z.infer<typeof objectifIndicateurIndividuListApiModelSchema>
+
+export const MAX_OBJECTIFS_PAR_BATCH = 1000
+
+export const upsertObjectifsIndicateurBatchBodySchema = z.object({
+  items: z
+    .array(upsertObjectifIndicateurIndividuBodySchema)
+    .min(1, 'Au moins une entrée est requise')
+    .max(MAX_OBJECTIFS_PAR_BATCH, `Au plus ${MAX_OBJECTIFS_PAR_BATCH} entrées par requête`)
+    .describe(
+      `Entrées à upserter sur l'indicateur (clé unique \`(individu, dateCible)\`). 1..${MAX_OBJECTIFS_PAR_BATCH} entrées.`,
+    ),
+})
+export type UpsertObjectifsIndicateurBatchBody = z.infer<typeof upsertObjectifsIndicateurBatchBodySchema>
+
+export const upsertObjectifsIndicateurBatchResultApiModelSchema = z.object({
+  total: z.number().int().nonnegative().describe("Nombre total d'entrées traitées."),
+  created: z.number().int().nonnegative().describe("Nombre d'entrées nouvellement créées dans la base."),
+  updated: z.number().int().nonnegative().describe("Nombre d'entrées mises à jour dans la base."),
+})
+export type UpsertObjectifsIndicateurBatchResultApiModel = z.infer<typeof upsertObjectifsIndicateurBatchResultApiModelSchema>
