@@ -34,7 +34,11 @@ type MbSyncCradle = MbSyncExports & {
 export const mbSyncModule = defineModule<MbSyncExports, MbSyncCradle>()({
   name: "mbSync",
   imports: ["shared"],
-  exports: ["syncMbMetadonneesUseCase", "syncMbValeursUseCase", "syncMbObjectifsUseCase"],
+  exports: [
+    "syncMbMetadonneesUseCase",
+    "syncMbValeursUseCase",
+    "syncMbObjectifsUseCase",
+  ],
   register: (container, { asModuleClass }) => {
     container.register({
       mbApiClient: asModuleClass(HttpMbApiClient),

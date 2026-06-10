@@ -202,7 +202,9 @@ describe.concurrent('upsertObjectifsIndicateurBatch', () => {
         where: { indicateur: { publicId: indId } },
       })
       expect(rows).toHaveLength(2)
-      expect(rows.map((row) => row.valeurCible.toNumber()).sort((a, b) => a - b)).toEqual([110, 220])
+      expect(rows.map((row) => row.valeurCible.toNumber()).sort((a, b) => a - b)).toEqual([
+        110, 220,
+      ])
     }),
   )
 

@@ -24,7 +24,8 @@ export class SyncMbObjectifsUseCase {
     mesureIndicateurObjectifRepository: MesureIndicateurObjectifRepository;
     mbApiClient: MbApiClient;
   }) {
-    this.mesureIndicateurObjectifRepository = mesureIndicateurObjectifRepository;
+    this.mesureIndicateurObjectifRepository =
+      mesureIndicateurObjectifRepository;
     this.mbApiClient = mbApiClient;
   }
 
@@ -81,21 +82,25 @@ export class SyncMbObjectifsUseCase {
     return { indicateurs: resultats };
   }
 
-  private toUpsertItems(mesures: ObjectifMesure[]): UpsertObjectifIndicateurItem[] {
+  private toUpsertItems(
+    mesures: ObjectifMesure[],
+  ): UpsertObjectifIndicateurItem[] {
     return mesures
-      .filter(
-        (mesure): mesure is ObjectifMesure & { metric_value: number } => {
-          if (mesure.metric_value === null) return false;
-          if (isNaN(mesure.metric_value)) {
-            logger.warn(
-              { source: "cron/sync-mb-valeurs", territoire_code: mesure.territoire_code, metric_date: mesure.metric_date },
-              "Valeur cible non numérique ignorée",
-            );
-            return false;
-          }
-          return true;
-        },
-      )
+      .filter((mesure): mesure is ObjectifMesure & { metric_value: number } => {
+        if (mesure.metric_value === null) return false;
+        if (isNaN(mesure.metric_value)) {
+          logger.warn(
+            {
+              source: "cron/sync-mb-valeurs",
+              territoire_code: mesure.territoire_code,
+              metric_date: mesure.metric_date,
+            },
+            "Valeur cible non numérique ignorée",
+          );
+          return false;
+        }
+        return true;
+      })
       .map((mesure) => ({
         individu: mesure.territoire_code,
         dateCible: mesure.metric_date,
@@ -103,7 +108,9 @@ export class SyncMbObjectifsUseCase {
       }));
   }
 
-  private toDeleteItems(mesures: ObjectifMesure[]): DeleteObjectifIndicateurItem[] {
+  private toDeleteItems(
+    mesures: ObjectifMesure[],
+  ): DeleteObjectifIndicateurItem[] {
     return mesures
       .filter((mesure) => mesure.metric_value === null)
       .map((mesure) => ({

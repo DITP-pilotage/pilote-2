@@ -137,7 +137,10 @@ export class HttpMbApiClient implements MbApiClient {
           "Content-Type": "application/json",
           Authorization: `Bearer ${apiKey}`,
         },
-        body: JSON.stringify({ individu: item.individu, dateCible: item.dateCible }),
+        body: JSON.stringify({
+          individu: item.individu,
+          dateCible: item.dateCible,
+        }),
       },
     );
 

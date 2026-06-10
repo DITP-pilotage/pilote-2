@@ -12,9 +12,7 @@ type RawRow = {
   metric_value: string;
 };
 
-export class PrismaMesureIndicateurObjectifRepository
-  implements MesureIndicateurObjectifRepository
-{
+export class PrismaMesureIndicateurObjectifRepository implements MesureIndicateurObjectifRepository {
   constructor(private readonly dependencies: { prisma: PrismaPilote }) {}
 
   private get prisma() {
@@ -31,7 +29,7 @@ export class PrismaMesureIndicateurObjectifRepository
           mi.metric_date,
           mi.metric_value
         FROM raw_data.mesure_indicateur mi
-        JOIN territoire t ON t.code = mi.zone_id
+        JOIN territoire t ON t.zone_id = mi.zone_id
         JOIN indicateur_identite ii ON ii.id = mi.indic_id
         WHERE mi.indic_id = ${args.indicId}
           AND mi.metric_type = 'vc'
@@ -43,7 +41,8 @@ export class PrismaMesureIndicateurObjectifRepository
     return rows.map((row) => ({
       territoire_code: row.territoire_code,
       metric_date: row.metric_date,
-      metric_value: row.metric_value === 'null' ? null : parseFloat(row.metric_value),
+      metric_value:
+        row.metric_value === "null" ? null : parseFloat(row.metric_value),
     }));
   }
 }
