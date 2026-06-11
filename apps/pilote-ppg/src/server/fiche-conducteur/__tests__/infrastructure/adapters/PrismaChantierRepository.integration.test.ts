@@ -19,11 +19,13 @@ describe("PrismaChantierRepository", () => {
       "doit récupérer le chantier associé",
       createIntegrationTest(async () => {
         // Given
+        const dp1 = await fixtures.utilisateur({ nom: "Un", prenom: "DP" });
+        const dp2 = await fixtures.utilisateur({ nom: "Deux", prenom: "DP" });
         const chantier = await fixtures.chantierIdentite({
           nom: "Chantier 168",
           est_territorialise: true,
           directeurs_administration_centrale: ["DAC 1", "DAC 2"],
-          directeurs_projet: ["DP 1", "DP 2"],
+          directeurs_projet_ids: [dp1.id, dp2.id],
         });
         const autreChantier = await fixtures.chantierIdentite();
 
@@ -105,8 +107,8 @@ describe("PrismaChantierRepository", () => {
           chantierResult.listeDirecteursAdministrationCentrale,
         ).toIncludeSameMembers(["DAC 1", "DAC 2"]);
         expect(chantierResult.listeDirecteursProjet).toIncludeSameMembers([
-          "DP 1",
-          "DP 2",
+          "DP Un",
+          "DP Deux",
         ]);
       }),
     );
