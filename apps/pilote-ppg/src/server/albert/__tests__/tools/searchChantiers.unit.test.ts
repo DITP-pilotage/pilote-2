@@ -18,9 +18,9 @@ const buildTool = ({
   chantiers: ChantierIdentiteResult[];
   chantiersAccessibles: string[];
 }) =>
-  createSearchChantiersTool({ getChantiersIdentiteQuery: buildQuery(chantiers) })(
-    { chantiersAccessibles },
-  );
+  createSearchChantiersTool({
+    getChantiersIdentiteQuery: buildQuery(chantiers),
+  })({ chantiersAccessibles });
 
 const executeTool = (
   tool: ReturnType<ReturnType<typeof createSearchChantiersTool>>,

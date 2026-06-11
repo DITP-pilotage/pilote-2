@@ -27,9 +27,7 @@ const buildTool = ({
 };
 
 const executeTool = (
-  tool: ReturnType<
-    ReturnType<typeof createSearchIndicateursTool>
-  >,
+  tool: ReturnType<ReturnType<typeof createSearchIndicateursTool>>,
   input: { query: string; chantier_ids?: string[] },
 ) =>
   tool.execute!(input, {
