@@ -10,11 +10,14 @@ import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsN
 import { NotFoundError } from "@/server/app/error-boundary/not-found-error";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
+type NomParId = Map<string, string>;
+
 const convertirChantierTerritoireEnChantier = (
   chantierTerritoireModel: ChantierTerritoireModel & {
     chantier_identite: ChantierIdentiteModel;
     chantier_territoire_jalon: ChantierTerritoireJalonModel[];
   },
+  nomParId: NomParId,
 ): Chantier => {
   return Chantier.creerChantier({
     id: chantierTerritoireModel.id,
@@ -33,7 +36,9 @@ const convertirChantierTerritoireEnChantier = (
       chantierTerritoireModel.chantier_identite
         .directeurs_administration_centrale,
     listeDirecteursProjet:
-      chantierTerritoireModel.chantier_identite.directeurs_projet,
+      chantierTerritoireModel.chantier_identite.directeurs_projet_ids
+        .map((id) => nomParId.get(id))
+        .filter((nom): nom is string => nom !== undefined),
   });
 };
 
@@ -42,6 +47,7 @@ const convertirChantierIdentiteEnChantier = (
   chantierTerritoire: ChantierTerritoireModel & {
     chantier_territoire_jalon: ChantierTerritoireJalonModel[];
   },
+  nomParId: NomParId,
 ): Chantier => {
   return Chantier.creerChantier({
     id: chantierIdentiteModel.id,
@@ -57,7 +63,10 @@ const convertirChantierIdentiteEnChantier = (
     estApplicable: !!chantierTerritoire.est_applicable,
     listeDirecteursAdministrationCentrale:
       chantierIdentiteModel.directeurs_administration_centrale,
-    listeDirecteursProjet: chantierIdentiteModel.directeurs_projet,
+    listeDirecteursProjet:
+      chantierIdentiteModel.directeurs_projet_ids
+        .map((id) => nomParId.get(id))
+        .filter((nom): nom is string => nom !== undefined),
   });
 };
 
@@ -66,6 +75,15 @@ export class PrismaChantierRepository implements ChantierRepository {
 
   private get prisma() {
     return this.dependencies.prisma.getInstance();
+  }
+
+  private async résoudreNomParIds(ids: string[]): Promise<NomParId> {
+    if (ids.length === 0) return new Map();
+    const utilisateurs = await this.prisma.utilisateur.findMany({
+      where: { id: { in: ids } },
+      select: { id: true, nom: true, prenom: true },
+    });
+    return new Map(utilisateurs.map((u) => [u.id, `${u.prenom} ${u.nom}`]));
   }
 
   async récupérerParIdEtParTerritoireCode({
@@ -98,7 +116,10 @@ export class PrismaChantierRepository implements ChantierRepository {
       throw new NotFoundError("Le chantier n'existe pas");
     }
 
-    return convertirChantierTerritoireEnChantier(result);
+    const nomParId = await this.résoudreNomParIds(
+      result.chantier_identite.directeurs_projet_ids,
+    );
+    return convertirChantierTerritoireEnChantier(result, nomParId);
   }
 
   async récupérerMailleNatEtDeptParId(
@@ -136,8 +157,9 @@ export class PrismaChantierRepository implements ChantierRepository {
       throw new NotFoundError("Le chantier n'existe pas");
     }
 
+    const nomParId = await this.résoudreNomParIds(result.directeurs_projet_ids);
     return result.chantier_territoire.map((chantierTerritoire) =>
-      convertirChantierIdentiteEnChantier(result, chantierTerritoire),
+      convertirChantierIdentiteEnChantier(result, chantierTerritoire, nomParId),
     );
   }
 }
