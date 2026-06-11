@@ -5,7 +5,11 @@ export interface Publication {
   dateCreation: string;
   dateModification: string;
   auteurCreationNom: string;
+  auteurCreationService: string | null;
+  auteurCreationFonction: string | null;
   auteurModificationNom: string;
+  auteurModificationService: string | null;
+  auteurModificationFonction: string | null;
 }
 
 export interface PublicationBrouillon {

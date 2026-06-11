@@ -8,7 +8,11 @@ export type ObjectifHistoriqueItem = {
   dateCreation: string;
   dateModification: string;
   auteurCreationNom: string;
+  auteurCreationService: string | null;
+  auteurCreationFonction: string | null;
   auteurModificationNom: string;
+  auteurModificationService: string | null;
+  auteurModificationFonction: string | null;
 };
 
 export class RecupererHistoriqueObjectifQuery {
@@ -33,7 +37,17 @@ export class RecupererHistoriqueObjectifQuery {
       dateCreation: objectif.date_creation.toISOString(),
       dateModification: objectif.date_modification.toISOString(),
       auteurCreationNom: `${objectif.auteur_creation.prenom} ${objectif.auteur_creation.nom}`,
+      auteurCreationService:
+        objectif.auteur_creation.service === "autre"
+          ? objectif.auteur_creation.service_autre
+          : objectif.auteur_creation.service,
+      auteurCreationFonction: objectif.auteur_creation.fonction,
       auteurModificationNom: `${objectif.auteur_modification.prenom} ${objectif.auteur_modification.nom}`,
+      auteurModificationService:
+        objectif.auteur_modification.service === "autre"
+          ? objectif.auteur_modification.service_autre
+          : objectif.auteur_modification.service,
+      auteurModificationFonction: objectif.auteur_modification.fonction,
     }));
   }
 }

@@ -27,7 +27,11 @@ export type ObjectifV2 = {
 
 export type ObjectifV2AvecNomAuteur = ObjectifV2 & {
   auteurCreationNom: string;
+  auteurCreationService: string | null;
+  auteurCreationFonction: string | null;
   auteurModificationNom: string;
+  auteurModificationService: string | null;
+  auteurModificationFonction: string | null;
 };
 
 export default Objectif;

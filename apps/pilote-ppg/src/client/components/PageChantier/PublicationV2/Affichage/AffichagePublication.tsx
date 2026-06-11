@@ -8,6 +8,7 @@ import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { Publication } from "@/components/PageChantier/PublicationV2/Publication.interface";
 import { BoutonsAffichage } from "@/components/_commons/BoutonsAffichage/BoutonsAffichage";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
+import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
 
 export const AffichagePublication = ({
   commentaire,
@@ -36,9 +37,31 @@ export const AffichagePublication = ({
   return (
     <>
       <p className="text-xs text-dsfr-mention-grey mb-1">
-        {commentaire.dateCreation === commentaire.dateModification
-          ? `Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.dateCreation)} | Par ${commentaire.auteurCreationNom}`
-          : `Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.dateCreation)} par ${commentaire.auteurCreationNom} et modifié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.dateModification)} par ${commentaire.auteurModificationNom}`}
+        {commentaire.dateCreation === commentaire.dateModification ? (
+          <>
+            {`Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.dateCreation)} | Par `}
+            <NomUtilisateurAvecTooltip
+              fonction={commentaire.auteurCreationFonction}
+              nom={commentaire.auteurCreationNom}
+              service={commentaire.auteurCreationService}
+            />
+          </>
+        ) : (
+          <>
+            {`Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.dateCreation)} par `}
+            <NomUtilisateurAvecTooltip
+              fonction={commentaire.auteurCreationFonction}
+              nom={commentaire.auteurCreationNom}
+              service={commentaire.auteurCreationService}
+            />
+            {` et modifié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(commentaire.dateModification)} par `}
+            <NomUtilisateurAvecTooltip
+              fonction={commentaire.auteurModificationFonction}
+              nom={commentaire.auteurModificationNom}
+              service={commentaire.auteurModificationService}
+            />
+          </>
+        )}
       </p>
       {!!onModifier ? (
         <div className="flex items-center gap-1 mb-3">

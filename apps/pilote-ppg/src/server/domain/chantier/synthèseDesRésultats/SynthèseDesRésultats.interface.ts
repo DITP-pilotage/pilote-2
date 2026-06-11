@@ -24,7 +24,11 @@ export type SyntheseDesResultatsV2 = {
 
 export type SyntheseDesResultatsAvecNomsAuteurs = SyntheseDesResultatsV2 & {
   auteurCreationNom: string;
+  auteurCreationService: string | null;
+  auteurCreationFonction: string | null;
   auteurModificationNom: string;
+  auteurModificationService: string | null;
+  auteurModificationFonction: string | null;
 };
 
 export default SynthèseDesRésultats;

@@ -9,7 +9,11 @@ export type SyntheseDesResultatsHistoriqueItem = {
   dateCreation: string;
   dateModification: string;
   auteurCreationNom: string;
+  auteurCreationService: string | null;
+  auteurCreationFonction: string | null;
   auteurModificationNom: string;
+  auteurModificationService: string | null;
+  auteurModificationFonction: string | null;
 };
 import type { Inject } from "@/server/syntheses-des-resultats/module";
 
@@ -43,7 +47,17 @@ export class RecupererHistoriqueSyntheseDesResultatsQuery {
       dateCreation: synthese.date_creation.toISOString(),
       dateModification: synthese.date_modification.toISOString(),
       auteurCreationNom: `${synthese.auteur_creation.prenom} ${synthese.auteur_creation.nom}`,
+      auteurCreationService:
+        synthese.auteur_creation.service === "autre"
+          ? synthese.auteur_creation.service_autre
+          : synthese.auteur_creation.service,
+      auteurCreationFonction: synthese.auteur_creation.fonction,
       auteurModificationNom: `${synthese.auteur_modification.prenom} ${synthese.auteur_modification.nom}`,
+      auteurModificationService:
+        synthese.auteur_modification.service === "autre"
+          ? synthese.auteur_modification.service_autre
+          : synthese.auteur_modification.service,
+      auteurModificationFonction: synthese.auteur_modification.fonction,
     }));
   }
 }

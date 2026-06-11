@@ -68,7 +68,18 @@ export class RecupererDernierCommentaireQuery {
             auteurModificationId: commentaire.auteur_modification_id,
             dateModification: commentaire.date_modification.toISOString(),
             auteurCreationNom: `${commentaire.auteur_creation.prenom} ${commentaire.auteur_creation.nom}`,
+            auteurCreationService:
+              commentaire.auteur_creation.service === "autre"
+                ? commentaire.auteur_creation.service_autre
+                : commentaire.auteur_creation.service,
+            auteurCreationFonction: commentaire.auteur_creation.fonction,
             auteurModificationNom: `${commentaire.auteur_modification.prenom} ${commentaire.auteur_modification.nom}`,
+            auteurModificationService:
+              commentaire.auteur_modification.service === "autre"
+                ? commentaire.auteur_modification.service_autre
+                : commentaire.auteur_modification.service,
+            auteurModificationFonction:
+              commentaire.auteur_modification.fonction,
           },
         ];
       }),
