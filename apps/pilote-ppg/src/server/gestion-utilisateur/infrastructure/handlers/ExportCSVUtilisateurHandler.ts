@@ -17,7 +17,7 @@ import { PerimetreMinisteriel } from "@/server/gestion-utilisateur/domain/Perime
 import {
   getPerimetreLibelle,
   getServiceLibelle,
-} from "@/client/constants/referentiel-services";
+} from "@/utils/referentiel-services";
 
 type UtilisateurPourExportCSVContrat = string[];
 

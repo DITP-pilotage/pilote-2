@@ -1,5 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
+import { getServiceLibelle } from "@/utils/referentiel-services";
 
 export type SyntheseDesResultatsHistoriqueItem = {
   chantierId: string;
@@ -9,7 +10,11 @@ export type SyntheseDesResultatsHistoriqueItem = {
   dateCreation: string;
   dateModification: string;
   auteurCreationNom: string;
+  auteurCreationService: string | null;
+  auteurCreationFonction: string | null;
   auteurModificationNom: string;
+  auteurModificationService: string | null;
+  auteurModificationFonction: string | null;
 };
 import type { Inject } from "@/server/syntheses-des-resultats/module";
 
@@ -43,7 +48,19 @@ export class RecupererHistoriqueSyntheseDesResultatsQuery {
       dateCreation: synthese.date_creation.toISOString(),
       dateModification: synthese.date_modification.toISOString(),
       auteurCreationNom: `${synthese.auteur_creation.prenom} ${synthese.auteur_creation.nom}`,
+      auteurCreationService: getServiceLibelle(
+        synthese.auteur_creation.perimetre_ministeriel,
+        synthese.auteur_creation.service,
+        synthese.auteur_creation.service_autre,
+      ),
+      auteurCreationFonction: synthese.auteur_creation.fonction,
       auteurModificationNom: `${synthese.auteur_modification.prenom} ${synthese.auteur_modification.nom}`,
+      auteurModificationService: getServiceLibelle(
+        synthese.auteur_modification.perimetre_ministeriel,
+        synthese.auteur_modification.service,
+        synthese.auteur_modification.service_autre,
+      ),
+      auteurModificationFonction: synthese.auteur_modification.fonction,
     }));
   }
 }

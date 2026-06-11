@@ -1,5 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { getServiceLibelle } from "@/utils/referentiel-services";
 import { SyntheseDesResultatsAvecNomsAuteurs } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
 import type { Inject } from "@/server/syntheses-des-resultats/module";
@@ -44,7 +45,19 @@ export class RecupererDerniereSyntheseDesResultatsQuery {
       dateModification: synthese.date_modification.toISOString(),
       statut: synthese.statut,
       auteurCreationNom: `${synthese.auteur_creation.prenom} ${synthese.auteur_creation.nom}`,
+      auteurCreationService: getServiceLibelle(
+        synthese.auteur_creation.perimetre_ministeriel,
+        synthese.auteur_creation.service,
+        synthese.auteur_creation.service_autre,
+      ),
+      auteurCreationFonction: synthese.auteur_creation.fonction,
       auteurModificationNom: `${synthese.auteur_modification.prenom} ${synthese.auteur_modification.nom}`,
+      auteurModificationService: getServiceLibelle(
+        synthese.auteur_modification.perimetre_ministeriel,
+        synthese.auteur_modification.service,
+        synthese.auteur_modification.service_autre,
+      ),
+      auteurModificationFonction: synthese.auteur_modification.fonction,
     };
   }
 }

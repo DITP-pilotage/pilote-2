@@ -23,6 +23,7 @@ import {
   DetailsIndicateurTerritoire,
 } from "@/server/chantiers/domain/DetailsIndicateurs";
 import { comparerDates, formatDate } from "@/client/utils/date/date";
+import { getServiceLibelle } from "@/utils/referentiel-services";
 import {
   EVENEMENT_VALEUR_PROPOSITION_VALEUR_TERMINEE,
   EvenementValeurEnum,
@@ -792,6 +793,9 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
               select: {
                 nom: true,
                 prenom: true,
+                service: true,
+                service_autre: true,
+                perimetre_ministeriel: true,
               },
             },
           },
@@ -892,6 +896,9 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
                 select: {
                   nom: true,
                   prenom: true,
+                  service: true,
+                  service_autre: true,
+                  perimetre_ministeriel: true,
                 },
               },
             },
@@ -954,7 +961,14 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       indicateur_identite: PrismaIndicateurIdentite;
       indicateur_territoire_jalon: PrismaIndicateurTerritoireJalon[];
       indicateur_territoire_valeur_evenement: (PrismaIndicateurTerritoireValeurEvenement & {
-        auteur: Pick<PrismaUtilisateur, "nom" | "prenom">;
+        auteur: Pick<
+          PrismaUtilisateur,
+          | "nom"
+          | "prenom"
+          | "service"
+          | "service_autre"
+          | "perimetre_ministeriel"
+        >;
       })[];
     })[],
     dateDerniereExecutionDatajobs: Date,
@@ -1072,7 +1086,14 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       indicateur_identite: PrismaIndicateurIdentite;
       indicateur_territoire_jalon: PrismaIndicateurTerritoireJalon[];
       indicateur_territoire_valeur_evenement: (PrismaIndicateurTerritoireValeurEvenement & {
-        auteur: Pick<PrismaUtilisateur, "nom" | "prenom">;
+        auteur: Pick<
+          PrismaUtilisateur,
+          | "nom"
+          | "prenom"
+          | "service"
+          | "service_autre"
+          | "perimetre_ministeriel"
+        >;
       })[];
     })[],
     jalon: number,
@@ -1177,7 +1198,14 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
   private recupererPropositionValeurAvancement(
     indicateurRow: PrismaIndicateurTerritoire & {
       indicateur_territoire_valeur_evenement: (PrismaIndicateurTerritoireValeurEvenement & {
-        auteur: Pick<PrismaUtilisateur, "nom" | "prenom">;
+        auteur: Pick<
+          PrismaUtilisateur,
+          | "nom"
+          | "prenom"
+          | "service"
+          | "service_autre"
+          | "perimetre_ministeriel"
+        >;
       })[];
     },
     indicateurTerritoireJalon: PrismaIndicateurTerritoireJalon | undefined,
@@ -1228,6 +1256,11 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
               ? indicateurTerritoireJalon.taux_avancement_proposition
               : null,
           auteur: `${evenementPropositionLePlusRecent.auteur.prenom} ${evenementPropositionLePlusRecent.auteur.nom}`,
+          auteurService: getServiceLibelle(
+            evenementPropositionLePlusRecent.auteur.perimetre_ministeriel,
+            evenementPropositionLePlusRecent.auteur.service,
+            evenementPropositionLePlusRecent.auteur.service_autre,
+          ),
           dateProposition: formatDate(
             evenementPropositionLePlusRecent.date_creation,
           ),

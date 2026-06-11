@@ -1,5 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { getServiceLibelle } from "@/utils/referentiel-services";
 import {
   ObjectifV2AvecNomAuteur,
   TypeObjectif,
@@ -52,7 +53,19 @@ export class RecupererDerniersObjectifsQuery {
             auteurModificationId: objectif.auteur_modification_id,
             dateModification: objectif.date_modification.toISOString(),
             auteurCreationNom: `${objectif.auteur_creation.prenom} ${objectif.auteur_creation.nom}`,
+            auteurCreationService: getServiceLibelle(
+              objectif.auteur_creation.perimetre_ministeriel,
+              objectif.auteur_creation.service,
+              objectif.auteur_creation.service_autre,
+            ),
+            auteurCreationFonction: objectif.auteur_creation.fonction,
             auteurModificationNom: `${objectif.auteur_modification.prenom} ${objectif.auteur_modification.nom}`,
+            auteurModificationService: getServiceLibelle(
+              objectif.auteur_modification.perimetre_ministeriel,
+              objectif.auteur_modification.service,
+              objectif.auteur_modification.service_autre,
+            ),
+            auteurModificationFonction: objectif.auteur_modification.fonction,
           },
         ];
       }),
