@@ -23,7 +23,7 @@ import {
   DetailsIndicateurTerritoire,
 } from "@/server/chantiers/domain/DetailsIndicateurs";
 import { comparerDates, formatDate } from "@/client/utils/date/date";
-import { getServiceLibelle } from "@/client/constants/referentiel-services";
+import { getServiceLibelle } from "@/utils/referentiel-services";
 import {
   EVENEMENT_VALEUR_PROPOSITION_VALEUR_TERMINEE,
   EvenementValeurEnum,

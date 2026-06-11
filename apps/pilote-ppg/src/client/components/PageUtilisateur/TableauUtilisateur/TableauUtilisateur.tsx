@@ -4,7 +4,7 @@ import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 import {
   getPerimetreLibelle,
   getServiceLibelle,
-} from "@/client/constants/referentiel-services";
+} from "@/utils/referentiel-services";
 import Champ from "@/components/_commons/Champ";
 
 interface TableauUtilisateurProps {

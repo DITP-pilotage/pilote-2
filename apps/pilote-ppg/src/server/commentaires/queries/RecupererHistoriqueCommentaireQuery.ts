@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { getServiceLibelle } from "@/client/constants/referentiel-services";
+import { getServiceLibelle } from "@/utils/referentiel-services";
 import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import {
   CODES_TYPES_COMMENTAIRES,
