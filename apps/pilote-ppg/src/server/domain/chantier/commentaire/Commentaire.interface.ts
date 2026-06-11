@@ -23,7 +23,11 @@ export type CommentaireV2 = {
 
 export type CommentaireAvecNomsAuteurs = CommentaireV2 & {
   auteurCreationNom: string;
+  auteurCreationService: string | null;
+  auteurCreationFonction: string | null;
   auteurModificationNom: string;
+  auteurModificationService: string | null;
+  auteurModificationFonction: string | null;
 };
 
 export const typesCommentaireMailleNationale = [

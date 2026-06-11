@@ -7,6 +7,7 @@ import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { SyntheseDesResultatsHistoriqueItem } from "@/server/syntheses-des-resultats/queries/RecupererHistoriqueSyntheseDesResultatsQuery";
 import { PiloteDateFormatter } from "@/utils/PiloteDateFormatter";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
+import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
 
 const SynthèseDesRésultatsAffichage = ({
   itemHistoriqueSyntheseDesResultats: synthèseDesRésultats,
@@ -40,9 +41,31 @@ const SynthèseDesRésultatsAffichage = ({
     <>
       <p className="text-xs text-dsfr-mention-grey mb-1">
         {synthèseDesRésultats.dateCreation ===
-        synthèseDesRésultats.dateModification
-          ? `Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateCreation)} | Par ${synthèseDesRésultats.auteurCreationNom}`
-          : `Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateCreation)} par ${synthèseDesRésultats.auteurCreationNom} et modifié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateModification)} par ${synthèseDesRésultats.auteurModificationNom}`}
+        synthèseDesRésultats.dateModification ? (
+          <>
+            {`Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateCreation)} | Par `}
+            <NomUtilisateurAvecTooltip
+              fonction={synthèseDesRésultats.auteurCreationFonction}
+              nom={synthèseDesRésultats.auteurCreationNom}
+              service={synthèseDesRésultats.auteurCreationService}
+            />
+          </>
+        ) : (
+          <>
+            {`Publié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateCreation)} par `}
+            <NomUtilisateurAvecTooltip
+              fonction={synthèseDesRésultats.auteurCreationFonction}
+              nom={synthèseDesRésultats.auteurCreationNom}
+              service={synthèseDesRésultats.auteurCreationService}
+            />
+            {` et modifié le ${PiloteDateFormatter.isoDateFranceMetropolitaine(synthèseDesRésultats.dateModification)} par `}
+            <NomUtilisateurAvecTooltip
+              fonction={synthèseDesRésultats.auteurModificationFonction}
+              nom={synthèseDesRésultats.auteurModificationNom}
+              service={synthèseDesRésultats.auteurModificationService}
+            />
+          </>
+        )}
       </p>
       {!!onModifier ? (
         <div className="flex items-center gap-1 mb-3">

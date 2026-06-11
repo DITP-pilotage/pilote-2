@@ -44,7 +44,17 @@ export class RecupererDerniereSyntheseDesResultatsQuery {
       dateModification: synthese.date_modification.toISOString(),
       statut: synthese.statut,
       auteurCreationNom: `${synthese.auteur_creation.prenom} ${synthese.auteur_creation.nom}`,
+      auteurCreationService:
+        synthese.auteur_creation.service === "autre"
+          ? synthese.auteur_creation.service_autre
+          : synthese.auteur_creation.service,
+      auteurCreationFonction: synthese.auteur_creation.fonction,
       auteurModificationNom: `${synthese.auteur_modification.prenom} ${synthese.auteur_modification.nom}`,
+      auteurModificationService:
+        synthese.auteur_modification.service === "autre"
+          ? synthese.auteur_modification.service_autre
+          : synthese.auteur_modification.service,
+      auteurModificationFonction: synthese.auteur_modification.fonction,
     };
   }
 }

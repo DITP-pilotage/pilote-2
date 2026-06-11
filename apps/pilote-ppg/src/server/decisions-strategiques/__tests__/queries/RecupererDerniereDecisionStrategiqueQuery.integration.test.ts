@@ -79,7 +79,11 @@ describe("RecupererDerniereDecisionStrategiqueQuery", () => {
         auteurModificationId: auteur.id,
         dateModification: new Date("2025-06-01").toISOString(),
         auteurCreationNom: "Jean Dupont",
+        auteurCreationService: null,
+        auteurCreationFonction: null,
         auteurModificationNom: "Jean Dupont",
+        auteurModificationService: null,
+        auteurModificationFonction: null,
       });
     }),
   );

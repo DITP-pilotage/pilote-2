@@ -82,7 +82,11 @@ describe("RecupererDerniereSyntheseDesResultatsQuery", () => {
         dateModification: new Date("2025-06-01").toISOString(),
         statut: $Enums.statut_publication.PUBLIE,
         auteurCreationNom: "Jean Dupont",
+        auteurCreationService: null,
+        auteurCreationFonction: null,
         auteurModificationNom: "Jean Dupont",
+        auteurModificationService: null,
+        auteurModificationFonction: null,
       });
     }),
   );

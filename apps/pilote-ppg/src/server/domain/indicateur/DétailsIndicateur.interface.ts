@@ -16,6 +16,7 @@ interface DetailIndicateurPropositionValeurAvancement {
   statutTauxAvancement: "CALCULE" | "EN_COURS";
   tauxAvancementIntermediaire: number | null;
   auteur: string | null;
+  auteurService: string | null;
   dateProposition: string | null;
   motif: string | null;
   sourceDonneeEtMethodeCalcul: string | null;

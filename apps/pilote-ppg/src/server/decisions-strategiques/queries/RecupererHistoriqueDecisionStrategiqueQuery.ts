@@ -7,7 +7,11 @@ export type DecisionStrategiqueHistoriqueItem = {
   dateCreation: string;
   dateModification: string;
   auteurCreationNom: string;
+  auteurCreationService: string | null;
+  auteurCreationFonction: string | null;
   auteurModificationNom: string;
+  auteurModificationService: string | null;
+  auteurModificationFonction: string | null;
 };
 
 export class RecupererHistoriqueDecisionStrategiqueQuery {
@@ -31,7 +35,17 @@ export class RecupererHistoriqueDecisionStrategiqueQuery {
       dateCreation: decision.date_creation.toISOString(),
       dateModification: decision.date_modification.toISOString(),
       auteurCreationNom: `${decision.auteur_creation.prenom} ${decision.auteur_creation.nom}`,
+      auteurCreationService:
+        decision.auteur_creation.service === "autre"
+          ? decision.auteur_creation.service_autre
+          : decision.auteur_creation.service,
+      auteurCreationFonction: decision.auteur_creation.fonction,
       auteurModificationNom: `${decision.auteur_modification.prenom} ${decision.auteur_modification.nom}`,
+      auteurModificationService:
+        decision.auteur_modification.service === "autre"
+          ? decision.auteur_modification.service_autre
+          : decision.auteur_modification.service,
+      auteurModificationFonction: decision.auteur_modification.fonction,
     }));
   }
 }

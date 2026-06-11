@@ -93,6 +93,7 @@ export const CelluleStatutProposition = ({
           Valeur d'avancement proposée le{" "}
           {formaterDate(proposition.dateProposition, "DD/MM/YYYY")} par{" "}
           {proposition.auteur}
+          {proposition.auteurService ? ` (${proposition.auteurService})` : ""}
         </p>
         <p className="fr-text--sm">
           <b>Motif de la proposition</b>
