@@ -24,6 +24,7 @@
       "@/widget/*": ["./src/widget/*"],
       "@/panier/*": ["./src/panier/*"],
       "@/tauxProgression/*": ["./src/tauxProgression/*"],
+      "@/panierTauxProgression/*": ["./src/panierTauxProgression/*"],
       "@/shared/*": ["./src/shared/*"],
       "@/generated/*": ["./src/generated/*"],
       "@/test/*": ["./src/test/*"],
