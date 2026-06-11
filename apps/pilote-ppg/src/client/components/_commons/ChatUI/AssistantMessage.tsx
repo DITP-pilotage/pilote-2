@@ -53,7 +53,10 @@ export const AssistantMessage = memo(function AssistantMessage({
             part.type === "tool-get_taux_avancement_territoire" ||
             part.type === "tool-get_chantiers" ||
             part.type === "tool-get_indicateurs" ||
-            part.type === "tool-get_chantier_commentaires"
+            part.type === "tool-get_chantier_commentaires" ||
+            part.type === "tool-search_chantiers" ||
+            part.type === "tool-search_indicateurs" ||
+            part.type === "tool-search_territoires"
           ) {
             return <ToolCallIndicator key={index} part={part} />;
           }
