@@ -1,6 +1,6 @@
 import { Maille, MailleInterne } from "@/server/domain/maille/Maille.interface";
 import { UtilisateurEnrichi } from "@/server/chantiers/domain/ports/ChantierRepository";
-import { getServiceLibelle } from "@/utils/referentiel-services";
+import { resolveResponsables } from "@/server/chantiers/app/contrats/resolveResponsables";
 import { TypeStatut } from "@/server/domain/chantier/Chantier.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
@@ -13,28 +13,6 @@ import {
   EntreePrismaChantier,
   PrismaChantier,
 } from "@/server/chantiers/domain/PrismaChantier";
-
-function resolveResponsables(
-  ids: string[],
-  utilisateurParId: Map<string, UtilisateurEnrichi>,
-) {
-  return ids.flatMap((id) => {
-    const u = utilisateurParId.get(id);
-    if (!u) return [];
-    return [
-      {
-        nom: `${u.prenom} ${u.nom}`,
-        email: u.email,
-        service: getServiceLibelle(
-          u.perimetre_ministeriel,
-          u.service,
-          u.service_autre,
-        ),
-        fonction: u.fonction ?? null,
-      },
-    ];
-  });
-}
 
 interface TerritoireAvancementRapportDetailleContrat {
   global: number | null;
@@ -432,19 +410,10 @@ export const presenterEnChantierRapportDetaille = (
         nom: value,
         direction: chantierIdentite.directions_administration_centrale[index],
       })),
-      directeursProjet: (chantierIdentite.directeurs_projet_ids || [])
-        .map((id) => utilisateurParId.get(id))
-        .filter((u): u is UtilisateurEnrichi => u !== undefined)
-        .map((u) => ({
-          nom: `${u.prenom} ${u.nom}`,
-          email: u.email,
-          service: getServiceLibelle(
-            u.perimetre_ministeriel,
-            u.service,
-            u.service_autre,
-          ),
-          fonction: u.fonction ?? null,
-        })),
+      directeursProjet: resolveResponsables(
+        chantierIdentite.directeurs_projet_ids || [],
+        utilisateurParId,
+      ),
     },
     tauxAvancementDonnéeTerritorialisée: {
       departementale: !!chantierIdentite.possede_taux_avancement_departemental,

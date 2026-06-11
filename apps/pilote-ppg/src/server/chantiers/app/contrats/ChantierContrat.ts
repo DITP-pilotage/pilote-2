@@ -1,6 +1,6 @@
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { UtilisateurEnrichi } from "@/server/chantiers/domain/ports/ChantierRepository";
-import { getServiceLibelle } from "@/utils/referentiel-services";
+import { resolveResponsables } from "@/server/chantiers/app/contrats/resolveResponsables";
 import {
   Territoire,
   TerritoiresDonnées,
@@ -20,28 +20,6 @@ class ErreurChantierSansMailleNationale extends Error {
   constructor(idChantier: string) {
     super(`Erreur: le chantier '${idChantier}' n'a pas de maille nationale.`);
   }
-}
-
-function resolveResponsables(
-  ids: string[],
-  utilisateurParId: Map<string, UtilisateurEnrichi>,
-) {
-  return ids.flatMap((id) => {
-    const u = utilisateurParId.get(id);
-    if (!u) return [];
-    return [
-      {
-        nom: `${u.prenom} ${u.nom}`,
-        email: u.email,
-        service: getServiceLibelle(
-          u.perimetre_ministeriel,
-          u.service,
-          u.service_autre,
-        ),
-        fonction: u.fonction,
-      },
-    ];
-  });
 }
 
 export function créerDonnéesTerritoires(
@@ -244,20 +222,12 @@ export const presenterEnChantierContrat = (
     }
   }
 
-  for (const id of chantierIdentite.directeurs_projet_ids || []) {
-    const u = utilisateurParId.get(id);
-    if (u)
-      result.responsables.directeursProjet.push({
-        nom: `${u.prenom} ${u.nom}`,
-        email: u.email,
-        service: getServiceLibelle(
-          u.perimetre_ministeriel,
-          u.service,
-          u.service_autre,
-        ),
-        fonction: u.fonction,
-      });
-  }
+  result.responsables.directeursProjet.push(
+    ...resolveResponsables(
+      chantierIdentite.directeurs_projet_ids || [],
+      utilisateurParId,
+    ),
+  );
 
   return result;
 };
