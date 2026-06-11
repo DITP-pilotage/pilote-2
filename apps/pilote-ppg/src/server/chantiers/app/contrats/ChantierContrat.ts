@@ -22,6 +22,28 @@ class ErreurChantierSansMailleNationale extends Error {
   }
 }
 
+function resolveResponsables(
+  ids: string[],
+  utilisateurParId: Map<string, UtilisateurEnrichi>,
+) {
+  return ids.flatMap((id) => {
+    const u = utilisateurParId.get(id);
+    if (!u) return [];
+    return [
+      {
+        nom: `${u.prenom} ${u.nom}`,
+        email: u.email,
+        service: getServiceLibelle(
+          u.perimetre_ministeriel,
+          u.service,
+          u.service_autre,
+        ),
+        fonction: u.fonction,
+      },
+    ];
+  });
+}
+
 export function créerDonnéesTerritoires(
   territoires: Territoire[],
   chantierRows: EntreePrismaChantier[],
@@ -76,34 +98,18 @@ export function créerDonnéesTerritoires(
     };
 
     if (!!chantierRow) {
-      for (const id of chantierRow.responsables_locaux_ids || []) {
-        const u = utilisateurParId.get(id);
-        if (u)
-          donnéesTerritoires[t.code].responsableLocal.push({
-            nom: `${u.prenom} ${u.nom}`,
-            email: u.email,
-            service: getServiceLibelle(
-              u.perimetre_ministeriel,
-              u.service,
-              u.service_autre,
-            ),
-            fonction: u.fonction,
-          });
-      }
-      for (const id of chantierRow.coordinateurs_territoriaux_ids || []) {
-        const u = utilisateurParId.get(id);
-        if (u)
-          donnéesTerritoires[t.code].coordinateurTerritorial.push({
-            nom: `${u.prenom} ${u.nom}`,
-            email: u.email,
-            service: getServiceLibelle(
-              u.perimetre_ministeriel,
-              u.service,
-              u.service_autre,
-            ),
-            fonction: u.fonction,
-          });
-      }
+      donnéesTerritoires[t.code].responsableLocal.push(
+        ...resolveResponsables(
+          chantierRow.responsables_locaux_ids || [],
+          utilisateurParId,
+        ),
+      );
+      donnéesTerritoires[t.code].coordinateurTerritorial.push(
+        ...resolveResponsables(
+          chantierRow.coordinateurs_territoriaux_ids || [],
+          utilisateurParId,
+        ),
+      );
     }
   });
 

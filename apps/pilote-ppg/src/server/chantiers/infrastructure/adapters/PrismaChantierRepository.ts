@@ -86,6 +86,25 @@ export class PrismaChantierRepository implements ChantierRepository {
     return `${u.prenom} ${u.nom}`;
   }
 
+  private resolveNoms(
+    ids: string[],
+    utilisateurParId: Map<string, UtilisateurEnrichi>,
+  ): string[] {
+    return ids
+      .map((id) => utilisateurParId.get(id))
+      .filter((u): u is UtilisateurEnrichi => !!u)
+      .map((u) => this.toNomComplet(u));
+  }
+
+  private resolveMails(
+    ids: string[],
+    utilisateurParId: Map<string, UtilisateurEnrichi>,
+  ): string[] {
+    return ids
+      .map((id) => utilisateurParId.get(id)?.email)
+      .filter((e): e is string => !!e);
+  }
+
   async récupérerDonneesChantier(
     chantierId: string,
     territoireCodesLecture: string[],
@@ -372,28 +391,22 @@ export class PrismaChantierRepository implements ChantierRepository {
               ((mapMeteo.get(
                 `${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`,
               ) || null) as Meteo) || null,
-            directeursProjet: (
-              prismaChantierIdentite.directeurs_projet_ids || []
-            )
-              .map((id) => utilisateurParId.get(id))
-              .filter((u): u is UtilisateurEnrichi => !!u)
-              .map((u) => this.toNomComplet(u)),
-            directeursProjetMails: (
-              prismaChantierIdentite.directeurs_projet_ids || []
-            )
-              .map((id) => utilisateurParId.get(id)?.email)
-              .filter((e): e is string => !!e),
-            responsablesLocaux: (
-              prismaChantierTerritoire.responsables_locaux_ids || []
-            )
-              .map((id) => utilisateurParId.get(id))
-              .filter((u): u is UtilisateurEnrichi => !!u)
-              .map((u) => this.toNomComplet(u)),
-            responsablesLocauxMails: (
-              prismaChantierTerritoire.responsables_locaux_ids || []
-            )
-              .map((id) => utilisateurParId.get(id)?.email)
-              .filter((e): e is string => !!e),
+            directeursProjet: this.resolveNoms(
+              prismaChantierIdentite.directeurs_projet_ids || [],
+              utilisateurParId,
+            ),
+            directeursProjetMails: this.resolveMails(
+              prismaChantierIdentite.directeurs_projet_ids || [],
+              utilisateurParId,
+            ),
+            responsablesLocaux: this.resolveNoms(
+              prismaChantierTerritoire.responsables_locaux_ids || [],
+              utilisateurParId,
+            ),
+            responsablesLocauxMails: this.resolveMails(
+              prismaChantierTerritoire.responsables_locaux_ids || [],
+              utilisateurParId,
+            ),
             statut: prismaChantierIdentite.statut,
             estBaromètre: !!prismaChantierIdentite.est_barometre,
             estTerritorialisé: !!prismaChantierIdentite.est_territorialise,
@@ -925,39 +938,30 @@ export class PrismaChantierRepository implements ChantierRepository {
                   : null,
               périmètreIds: prismaChantierIdentite.perimetre_ids,
               météo: (prismaChantierTerritoire.meteo as Meteo) || null,
-              directeursProjet: (
-                prismaChantierIdentite.directeurs_projet_ids || []
-              )
-                .map((id) => utilisateurParId.get(id))
-                .filter((u): u is UtilisateurEnrichi => !!u)
-                .map((u) => this.toNomComplet(u)),
-              directeursProjetMails: (
-                prismaChantierIdentite.directeurs_projet_ids || []
-              )
-                .map((id) => utilisateurParId.get(id)?.email)
-                .filter((e): e is string => !!e),
-              responsablesLocaux: (
-                prismaChantierTerritoire.responsables_locaux_ids || []
-              )
-                .map((id) => utilisateurParId.get(id))
-                .filter((u): u is UtilisateurEnrichi => !!u)
-                .map((u) => this.toNomComplet(u)),
-              responsablesLocauxMails: (
-                prismaChantierTerritoire.responsables_locaux_ids || []
-              )
-                .map((id) => utilisateurParId.get(id)?.email)
-                .filter((e): e is string => !!e),
-              coordinateursTerritoriaux: (
-                prismaChantierTerritoire.coordinateurs_territoriaux_ids || []
-              )
-                .map((id) => utilisateurParId.get(id))
-                .filter((u): u is UtilisateurEnrichi => !!u)
-                .map((u) => this.toNomComplet(u)),
-              coordinateursTerritoriauxMails: (
-                prismaChantierTerritoire.coordinateurs_territoriaux_ids || []
-              )
-                .map((id) => utilisateurParId.get(id)?.email)
-                .filter((e): e is string => !!e),
+              directeursProjet: this.resolveNoms(
+                prismaChantierIdentite.directeurs_projet_ids || [],
+                utilisateurParId,
+              ),
+              directeursProjetMails: this.resolveMails(
+                prismaChantierIdentite.directeurs_projet_ids || [],
+                utilisateurParId,
+              ),
+              responsablesLocaux: this.resolveNoms(
+                prismaChantierTerritoire.responsables_locaux_ids || [],
+                utilisateurParId,
+              ),
+              responsablesLocauxMails: this.resolveMails(
+                prismaChantierTerritoire.responsables_locaux_ids || [],
+                utilisateurParId,
+              ),
+              coordinateursTerritoriaux: this.resolveNoms(
+                prismaChantierTerritoire.coordinateurs_territoriaux_ids || [],
+                utilisateurParId,
+              ),
+              coordinateursTerritoriauxMails: this.resolveMails(
+                prismaChantierTerritoire.coordinateurs_territoriaux_ids || [],
+                utilisateurParId,
+              ),
               statut: prismaChantierIdentite.statut,
               estBaromètre: prismaChantierIdentite.est_barometre,
               estTerritorialisé: prismaChantierIdentite.est_territorialise,
