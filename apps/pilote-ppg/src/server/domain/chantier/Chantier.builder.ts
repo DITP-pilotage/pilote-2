@@ -85,6 +85,8 @@ export default class ChantierBuilder {
     const directeursProjet = générerTableau(1, 3, () => ({
       nom: faker.name.fullName(),
       email: faker.internet.email(),
+      service: null,
+      fonction: null,
     }));
 
     this._id = générerUnIdentifiantUnique("CH");

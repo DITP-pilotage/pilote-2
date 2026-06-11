@@ -131,8 +131,18 @@ export const codesInseeRégions = [
 export const codeInseeFrance = "FR";
 
 export type CodeInsee = string;
-export type ResponsableLocal = { nom: string; email: string };
-export type CoordinateurTerritorial = { nom: string; email: string };
+export type ResponsableLocal = {
+  nom: string;
+  email: string;
+  service: string | null;
+  fonction: string | null;
+};
+export type CoordinateurTerritorial = {
+  nom: string;
+  email: string;
+  service: string | null;
+  fonction: string | null;
+};
 
 export type DonneesComparaisonDuTauxDAvancementType = {
   ppgEcartMedian: number | null;

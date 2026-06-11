@@ -56,6 +56,11 @@ export default class RecupererChantierUseCaseV2 {
     ];
     const utilisateurParId =
       await this.chantierRepository.recupererUtilisateursParIds(allIds);
-    return presenterEnChantierContrat(chantierRows, territoires, ministères, utilisateurParId);
+    return presenterEnChantierContrat(
+      chantierRows,
+      territoires,
+      ministères,
+      utilisateurParId,
+    );
   }
 }

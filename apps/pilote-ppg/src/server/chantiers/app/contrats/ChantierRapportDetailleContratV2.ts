@@ -215,16 +215,26 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
         .map((u) => ({
           nom: `${u.prenom} ${u.nom}`,
           email: u.email,
-          service: getServiceLibelle(u.perimetre_ministeriel, u.service, u.service_autre),
+          service: getServiceLibelle(
+            u.perimetre_ministeriel,
+            u.service,
+            u.service_autre,
+          ),
           fonction: u.fonction ?? null,
         })),
-      coordinateurTerritorial: (chantierRow?.coordinateurs_territoriaux_ids || [])
+      coordinateurTerritorial: (
+        chantierRow?.coordinateurs_territoriaux_ids || []
+      )
         .map((id) => utilisateurParId.get(id))
         .filter((u): u is UtilisateurEnrichi => u !== undefined)
         .map((u) => ({
           nom: `${u.prenom} ${u.nom}`,
           email: u.email,
-          service: getServiceLibelle(u.perimetre_ministeriel, u.service, u.service_autre),
+          service: getServiceLibelle(
+            u.perimetre_ministeriel,
+            u.service,
+            u.service_autre,
+          ),
           fonction: u.fonction ?? null,
         })),
       aUnePropositionsValeurAvancement: aUnePropositionDeValeurAvancement,
@@ -426,7 +436,11 @@ export const presenterEnChantierRapportDetaille = (
         .map((u) => ({
           nom: `${u.prenom} ${u.nom}`,
           email: u.email,
-          service: getServiceLibelle(u.perimetre_ministeriel, u.service, u.service_autre),
+          service: getServiceLibelle(
+            u.perimetre_ministeriel,
+            u.service,
+            u.service_autre,
+          ),
           fonction: u.fonction ?? null,
         })),
     },

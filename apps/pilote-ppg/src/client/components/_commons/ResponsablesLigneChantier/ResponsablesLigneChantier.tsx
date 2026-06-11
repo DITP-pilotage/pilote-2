@@ -32,20 +32,18 @@ const ResponsablesLigneChantier: FunctionComponent<ResponsablesLigneProps> = ({
           {libellé}
         </div>
         <p className="fr-text--sm fr-col-7 fr-col-md-4 fr-col-xl-5 fr-m-0 fr-pb-1v fr-p-md-1w">
-          {responsables.length > 0 ? (
-            responsables.map((r, i) => (
-              <Fragment key={r.nom}>
-                <NomUtilisateurAvecTooltip
-                  nom={r.nom}
-                  service={r.service}
-                  fonction={r.fonction}
-                />
-                {i < responsables.length - 1 && ", "}
-              </Fragment>
-            ))
-          ) : (
-            "Non renseigné"
-          )}
+          {responsables.length > 0
+            ? responsables.map((r, i) => (
+                <Fragment key={r.nom}>
+                  <NomUtilisateurAvecTooltip
+                    nom={r.nom}
+                    service={r.service}
+                    fonction={r.fonction}
+                  />
+                  {i < responsables.length - 1 && ", "}
+                </Fragment>
+              ))
+            : "Non renseigné"}
         </p>
         {libelleEmailsResponsables ? (
           <div className="fr-col-5 fr-col-md-4 fr-col-xl-2 flex align-start justify-end max-[450px]:items-end print:hidden">

@@ -63,10 +63,9 @@ const convertirChantierIdentiteEnChantier = (
     estApplicable: !!chantierTerritoire.est_applicable,
     listeDirecteursAdministrationCentrale:
       chantierIdentiteModel.directeurs_administration_centrale,
-    listeDirecteursProjet:
-      chantierIdentiteModel.directeurs_projet_ids
-        .map((id) => nomParId.get(id))
-        .filter((nom): nom is string => nom !== undefined),
+    listeDirecteursProjet: chantierIdentiteModel.directeurs_projet_ids
+      .map((id) => nomParId.get(id))
+      .filter((nom): nom is string => nom !== undefined),
   });
 };
 

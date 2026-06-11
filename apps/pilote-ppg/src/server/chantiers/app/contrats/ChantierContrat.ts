@@ -1,5 +1,6 @@
 import Chantier from "@/server/domain/chantier/Chantier.interface";
 import { UtilisateurEnrichi } from "@/server/chantiers/domain/ports/ChantierRepository";
+import { getServiceLibelle } from "@/utils/referentiel-services";
 import {
   Territoire,
   TerritoiresDonnées,
@@ -77,11 +78,31 @@ export function créerDonnéesTerritoires(
     if (!!chantierRow) {
       for (const id of chantierRow.responsables_locaux_ids || []) {
         const u = utilisateurParId.get(id);
-        if (u) donnéesTerritoires[t.code].responsableLocal.push({ nom: `${u.prenom} ${u.nom}`, email: u.email });
+        if (u)
+          donnéesTerritoires[t.code].responsableLocal.push({
+            nom: `${u.prenom} ${u.nom}`,
+            email: u.email,
+            service: getServiceLibelle(
+              u.perimetre_ministeriel,
+              u.service,
+              u.service_autre,
+            ),
+            fonction: u.fonction,
+          });
       }
       for (const id of chantierRow.coordinateurs_territoriaux_ids || []) {
         const u = utilisateurParId.get(id);
-        if (u) donnéesTerritoires[t.code].coordinateurTerritorial.push({ nom: `${u.prenom} ${u.nom}`, email: u.email });
+        if (u)
+          donnéesTerritoires[t.code].coordinateurTerritorial.push({
+            nom: `${u.prenom} ${u.nom}`,
+            email: u.email,
+            service: getServiceLibelle(
+              u.perimetre_ministeriel,
+              u.service,
+              u.service_autre,
+            ),
+            fonction: u.fonction,
+          });
       }
     }
   });
@@ -219,7 +240,17 @@ export const presenterEnChantierContrat = (
 
   for (const id of chantierIdentite.directeurs_projet_ids || []) {
     const u = utilisateurParId.get(id);
-    if (u) result.responsables.directeursProjet.push({ nom: `${u.prenom} ${u.nom}`, email: u.email });
+    if (u)
+      result.responsables.directeursProjet.push({
+        nom: `${u.prenom} ${u.nom}`,
+        email: u.email,
+        service: getServiceLibelle(
+          u.perimetre_ministeriel,
+          u.service,
+          u.service_autre,
+        ),
+        fonction: u.fonction,
+      });
   }
 
   return result;

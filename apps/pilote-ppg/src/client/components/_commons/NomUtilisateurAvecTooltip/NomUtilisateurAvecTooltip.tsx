@@ -17,9 +17,11 @@ export const NomUtilisateurAvecTooltip = ({
 }: NomUtilisateurAvecTooltipProps) => (
   <Tooltip.Provider>
     <Tooltip.Root>
-      <Tooltip.Trigger className={clsxm("inline underline hover:bg-transparent", className)}>
+      <Tooltip.Trigger
+        className={clsxm("inline underline hover:bg-transparent", className)}
+      >
         {nom}
-      </Tooltip.Trigger >
+      </Tooltip.Trigger>
       <Tooltip.Portal>
         <RadixTooltip.Content
           className="max-w-[400px] text-dsfr-grey-50 bg-dsfr-alt-blue-france rounded-lg p-3 border border-primary"
