@@ -244,44 +244,58 @@ export default class RecupererChantiersAccessiblesEnLectureUseCaseRapportDetaill
 
     const territoires = await this.territoireRepository.récupérerTousNew();
 
-    return this.chantierRepository
-      .récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+    const listePrismaChantier =
+      await this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
         chantiersLecture,
         territoiresLecture,
         profil,
         filtresPourChantier,
         territoireCode,
         [jalon, jalonParDefaut],
-      )
-      .then((listePrismaChantier) =>
-        listePrismaChantier
-          .reduce((acc, chantierIdentite) => {
-            // on devrait pouvoir appliquer le filtre plus tôt
-            const chantierTerritoireSelectionne =
-              chantierIdentite.chantier_territoire.find(
-                (chantierTerritoire) =>
-                  chantierTerritoire.territoire_code === territoireCode,
-              );
-            if (
-              chantierTerritoireSelectionne?.est_applicable &&
-              appliquerFiltre(mailleChantier, profil)(chantierIdentite)
-            ) {
-              return [
-                ...acc,
-                presenterEnChantierRapportDetaille(
-                  chantierIdentite,
-                  territoires,
-                  ministères,
-                  territoireCode,
-                  profil,
-                  jalon,
-                  jalonParDefaut,
-                ),
-              ];
-            }
-            return acc;
-          }, [] as ChantierRapportDetailleContrat[])
-          .sort(appliquerTri(sorting, mailleChantier, territoireCode)),
       );
+
+    const allIds = [
+      ...new Set(
+        listePrismaChantier.flatMap((c) => [
+          ...c.directeurs_projet_ids,
+          ...c.chantier_territoire.flatMap((t) => [
+            ...t.responsables_locaux_ids,
+            ...t.coordinateurs_territoriaux_ids,
+          ]),
+        ]),
+      ),
+    ];
+    const utilisateurParId =
+      await this.chantierRepository.recupererUtilisateursParIds(allIds);
+
+    return listePrismaChantier
+      .reduce((acc, chantierIdentite) => {
+        // on devrait pouvoir appliquer le filtre plus tôt
+        const chantierTerritoireSelectionne =
+          chantierIdentite.chantier_territoire.find(
+            (chantierTerritoire) =>
+              chantierTerritoire.territoire_code === territoireCode,
+          );
+        if (
+          chantierTerritoireSelectionne?.est_applicable &&
+          appliquerFiltre(mailleChantier, profil)(chantierIdentite)
+        ) {
+          return [
+            ...acc,
+            presenterEnChantierRapportDetaille(
+              chantierIdentite,
+              territoires,
+              ministères,
+              territoireCode,
+              profil,
+              jalon,
+              jalonParDefaut,
+              utilisateurParId,
+            ),
+          ];
+        }
+        return acc;
+      }, [] as ChantierRapportDetailleContrat[])
+      .sort(appliquerTri(sorting, mailleChantier, territoireCode));
   }
 }

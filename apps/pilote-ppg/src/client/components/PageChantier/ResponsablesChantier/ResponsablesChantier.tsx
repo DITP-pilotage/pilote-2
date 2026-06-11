@@ -36,29 +36,16 @@ const ResponsablesPageChantier: FunctionComponent<
   estChantierArchive = false,
   libelléChantier,
 }) => {
-  const libelleNomsDirecteursProjets = listeDirecteursProjets
-    .map((directeurProjet) => directeurProjet.nom)
-    .filter(Boolean)
-    .join(", ");
-  const libelleNomsResponsablesLocal = listeResponsablesLocaux
-    .map((responsableLocal) => responsableLocal.nom)
-    .filter(Boolean)
-    .join(", ");
-  const libelleNomsCoordinateurTerritorial = listeCoordinateursTerritorials
-    .map((coordinateurTerritorial) => coordinateurTerritorial.nom)
-    .filter(Boolean)
-    .join(", ");
-
   const libelleEmailsDirecteursProjets = listeDirecteursProjets
-    .map((directeur) => directeur.email)
+    .map((d) => d.email)
     .filter(Boolean)
     .join("; ");
   const libelleEmailsResponsablesLocal = listeResponsablesLocaux
-    .map((responsableLocal) => responsableLocal.email)
+    .map((r) => r.email)
     .filter(Boolean)
     .join("; ");
   const libelleEmailsCoordinateursTerritorial = listeCoordinateursTerritorials
-    .map((coordinateurTerritorial) => coordinateurTerritorial.email)
+    .map((c) => c.email)
     .filter(Boolean)
     .join("; ");
 
@@ -71,7 +58,7 @@ const ResponsablesPageChantier: FunctionComponent<
     >
       <ResponsablesLigneChantier
         libelleEmailsResponsables={libelleEmailsDirecteursProjets}
-        libelleNomsResponsables={libelleNomsDirecteursProjets}
+        responsables={listeDirecteursProjets}
         libellé="Directeur(s) / directrice(s) du projet"
         libelléChantier={libelléChantier}
       />
@@ -80,14 +67,14 @@ const ResponsablesPageChantier: FunctionComponent<
           <hr className="fr-hr fr-py-1w" />
           <ResponsablesLigneChantier
             libelleEmailsResponsables={libelleEmailsResponsablesLocal}
-            libelleNomsResponsables={libelleNomsResponsablesLocal}
+            responsables={listeResponsablesLocaux}
             libellé="Responsable local"
             libelléChantier={libelléChantier}
           />
           <hr className="fr-hr fr-py-1w" />
           <ResponsablesLigneChantier
             libelleEmailsResponsables={libelleEmailsCoordinateursTerritorial}
-            libelleNomsResponsables={libelleNomsCoordinateurTerritorial}
+            responsables={listeCoordinateursTerritorials}
             libellé={`Coordinateur PILOTE ${maille ? adjectifReferent[maille] : ""}`}
             libelléChantier={libelléChantier}
           />
