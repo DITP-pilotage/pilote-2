@@ -1,5 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { getServiceLibelle } from "@/client/constants/referentiel-services";
 import { TypeCommentaireChantier } from "@/server/domain/chantier/commentaire/Commentaire.interface";
 import {
   CODES_TYPES_COMMENTAIRES,
@@ -50,16 +51,18 @@ export class RecupererHistoriqueCommentaireQuery {
       dateCreation: commentaire.date_creation.toISOString(),
       dateModification: commentaire.date_modification.toISOString(),
       auteurCreationNom: `${commentaire.auteur_creation.prenom} ${commentaire.auteur_creation.nom}`,
-      auteurCreationService:
-        commentaire.auteur_creation.service === "autre"
-          ? commentaire.auteur_creation.service_autre
-          : commentaire.auteur_creation.service,
+      auteurCreationService: getServiceLibelle(
+        commentaire.auteur_creation.perimetre_ministeriel,
+        commentaire.auteur_creation.service,
+        commentaire.auteur_creation.service_autre,
+      ),
       auteurCreationFonction: commentaire.auteur_creation.fonction,
       auteurModificationNom: `${commentaire.auteur_modification.prenom} ${commentaire.auteur_modification.nom}`,
-      auteurModificationService:
-        commentaire.auteur_modification.service === "autre"
-          ? commentaire.auteur_modification.service_autre
-          : commentaire.auteur_modification.service,
+      auteurModificationService: getServiceLibelle(
+        commentaire.auteur_modification.perimetre_ministeriel,
+        commentaire.auteur_modification.service,
+        commentaire.auteur_modification.service_autre,
+      ),
       auteurModificationFonction: commentaire.auteur_modification.fonction,
     }));
   }

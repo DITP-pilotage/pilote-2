@@ -1,5 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { getServiceLibelle } from "@/client/constants/referentiel-services";
 import { TypeObjectif } from "@/server/domain/chantier/objectif/Objectif.interface";
 import { CODES_TYPES_OBJECTIFS } from "@/server/infrastructure/accès_données/chantier/objectif/ObjectifSQLRepository";
 
@@ -37,16 +38,18 @@ export class RecupererHistoriqueObjectifQuery {
       dateCreation: objectif.date_creation.toISOString(),
       dateModification: objectif.date_modification.toISOString(),
       auteurCreationNom: `${objectif.auteur_creation.prenom} ${objectif.auteur_creation.nom}`,
-      auteurCreationService:
-        objectif.auteur_creation.service === "autre"
-          ? objectif.auteur_creation.service_autre
-          : objectif.auteur_creation.service,
+      auteurCreationService: getServiceLibelle(
+        objectif.auteur_creation.perimetre_ministeriel,
+        objectif.auteur_creation.service,
+        objectif.auteur_creation.service_autre,
+      ),
       auteurCreationFonction: objectif.auteur_creation.fonction,
       auteurModificationNom: `${objectif.auteur_modification.prenom} ${objectif.auteur_modification.nom}`,
-      auteurModificationService:
-        objectif.auteur_modification.service === "autre"
-          ? objectif.auteur_modification.service_autre
-          : objectif.auteur_modification.service,
+      auteurModificationService: getServiceLibelle(
+        objectif.auteur_modification.perimetre_ministeriel,
+        objectif.auteur_modification.service,
+        objectif.auteur_modification.service_autre,
+      ),
       auteurModificationFonction: objectif.auteur_modification.fonction,
     }));
   }
