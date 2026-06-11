@@ -127,13 +127,13 @@ describe.sequential('auth singleton', () => {
   })
 
   describe('login', () => {
-    it("redirige vers le BFF /auth/login sans param quand aucun redirect n'est fourni", () => {
+    it('redirige vers le BFF /auth/login avec provider=proconnect par défaut', () => {
       const assignSpy = vi.fn()
       vi.stubGlobal('window', { ...window, location: { assign: assignSpy } })
 
       auth.login()
 
-      expect(assignSpy).toHaveBeenCalledWith('/auth/login')
+      expect(assignSpy).toHaveBeenCalledWith('/auth/login?provider=proconnect')
     })
 
     it('passe le param redirect encodé au BFF', () => {
@@ -143,8 +143,17 @@ describe.sequential('auth singleton', () => {
       auth.login('/indicateurs?statut=actif')
 
       expect(assignSpy).toHaveBeenCalledWith(
-        `/auth/login?redirect=${encodeURIComponent('/indicateurs?statut=actif')}`,
+        `/auth/login?provider=proconnect&redirect=${encodeURIComponent('/indicateurs?statut=actif')}`,
       )
+    })
+
+    it('passe le provider keycloak quand spécifié', () => {
+      const assignSpy = vi.fn()
+      vi.stubGlobal('window', { ...window, location: { assign: assignSpy } })
+
+      auth.login(undefined, 'keycloak')
+
+      expect(assignSpy).toHaveBeenCalledWith('/auth/login?provider=keycloak')
     })
   })
 

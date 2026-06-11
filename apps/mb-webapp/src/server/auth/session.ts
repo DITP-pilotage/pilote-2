@@ -2,6 +2,7 @@ import type { Context } from 'hono'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { sealData, unsealData } from 'iron-session'
 
+import type { Provider } from '@/server/auth/oidc'
 import { serverEnv } from '@/server/env'
 
 const SESSION_COOKIE = 'mb_session'
@@ -12,12 +13,14 @@ export type SessionPayload = {
   refreshToken: string
   sub: string
   idToken: string
+  provider: Provider
 }
 
 export type PkcePayload = {
   codeVerifier: string
   state: string
   nonce: string
+  provider: Provider
   redirect?: string
 }
 

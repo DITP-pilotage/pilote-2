@@ -97,6 +97,7 @@ describe.sequential('middleware authContext', () => {
 
   it("renvoie 401 sur /protected-user quand le token est valide mais l'utilisateur n'est pas provisionné", async () => {
     verifyJwt.mockResolvedValue({
+      provider: 'proconnect',
       providerSub: 'sub-123',
       email: 'agent@example.com',
       prenom: 'Admin',
@@ -109,6 +110,7 @@ describe.sequential('middleware authContext', () => {
     })
     expect(response.status).toBe(401)
     expect(lookup).toHaveBeenCalledWith({
+      provider: 'proconnect',
       providerSub: 'sub-123',
       email: 'agent@example.com',
       prenom: 'Admin',
@@ -118,6 +120,7 @@ describe.sequential('middleware authContext', () => {
 
   it("expose l'utilisateur aux handlers quand le lookup réussit", async () => {
     verifyJwt.mockResolvedValue({
+      provider: 'proconnect',
       providerSub: 'sub-123',
       email: 'agent@example.com',
       prenom: 'Admin',
@@ -144,6 +147,7 @@ describe.sequential('middleware authContext', () => {
 
   it('accepte le scheme Bearer de manière insensible à la casse (RFC 6750)', async () => {
     verifyJwt.mockResolvedValue({
+      provider: 'proconnect',
       providerSub: 'sub-123',
       email: 'agent@example.com',
       prenom: 'Admin',

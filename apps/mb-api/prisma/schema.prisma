@@ -22,16 +22,36 @@ model Principal {
   @@map("principal")
 }
 
-model Utilisateur {
-  id          String   @id @db.Uuid
-  email       String   @unique
-  providerSub String?  @unique @map("provider_sub")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt      @map("updated_at")
+enum ProviderType {
+  proconnect
+  keycloak
 
-  principal Principal @relation(fields: [id], references: [id], onDelete: Cascade)
+  @@map("provider_type_enum")
+}
+
+model Utilisateur {
+  id        String   @id @db.Uuid
+  email     String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt      @map("updated_at")
+
+  principal  Principal         @relation(fields: [id], references: [id], onDelete: Cascade)
+  identites  IdentiteExterne[]
 
   @@map("utilisateur")
+}
+
+model IdentiteExterne {
+  provider      ProviderType
+  providerSub   String       @map("provider_sub")
+  utilisateurId String       @map("utilisateur_id") @db.Uuid
+  createdAt     DateTime     @default(now())        @map("created_at")
+
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerSub])
+  @@index([utilisateurId])
+  @@map("identite_externe")
 }
 
 model ApiKey {
