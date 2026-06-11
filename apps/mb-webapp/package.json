@@ -1,6 +1,6 @@
 {
   "name": "@pilote/mb-webapp",
-  "portless": "mb-webapp",
+  "portless": "pmb.modernisation",
   "version": "0.1.0",
   "private": true,
   "type": "module",

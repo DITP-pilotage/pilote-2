@@ -1,6 +1,6 @@
 {
   "name": "@pilote/mb-api",
-  "portless": "mb-api",
+  "portless": "pmb-api.modernisation",
   "version": "0.1.0",
   "private": true,
   "type": "module",
