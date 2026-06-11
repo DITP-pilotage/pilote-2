@@ -1,18 +1,25 @@
-import { FunctionComponent } from "react";
+import { Fragment, FunctionComponent } from "react";
 import Link from "next/link";
 import { EnveloppeContourIcon } from "@/components/_commons/Icones/EnveloppeContourIcon";
 import { Icone } from "@/components/_commons/Icone";
+import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
+
+interface Responsable {
+  nom: string;
+  service: string | null;
+  fonction: string | null;
+}
 
 interface ResponsablesLigneProps {
   libellé: string;
-  libelleNomsResponsables: string;
+  responsables: Responsable[];
   libelleEmailsResponsables: string;
   libelléChantier: string;
 }
 
 const ResponsablesLigneChantier: FunctionComponent<ResponsablesLigneProps> = ({
   libellé,
-  libelleNomsResponsables,
+  responsables,
   libelleEmailsResponsables,
   libelléChantier,
 }) => {
@@ -25,7 +32,20 @@ const ResponsablesLigneChantier: FunctionComponent<ResponsablesLigneProps> = ({
           {libellé}
         </div>
         <p className="fr-text--sm fr-col-7 fr-col-md-4 fr-col-xl-5 fr-m-0 fr-pb-1v fr-p-md-1w">
-          {libelleNomsResponsables || "Non renseigné"}
+          {responsables.length > 0 ? (
+            responsables.map((r, i) => (
+              <Fragment key={r.nom}>
+                <NomUtilisateurAvecTooltip
+                  nom={r.nom}
+                  service={r.service}
+                  fonction={r.fonction}
+                />
+                {i < responsables.length - 1 && ", "}
+              </Fragment>
+            ))
+          ) : (
+            "Non renseigné"
+          )}
         </p>
         {libelleEmailsResponsables ? (
           <div className="fr-col-5 fr-col-md-4 fr-col-xl-2 flex align-start justify-end max-[450px]:items-end print:hidden">

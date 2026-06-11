@@ -45,6 +45,17 @@ export default class RecupererChantierUseCaseV2 {
         profil,
         jalon,
       );
-    return presenterEnChantierContrat(chantierRows, territoires, ministères);
+    const allIds = [
+      ...new Set([
+        ...chantierRows.directeurs_projet_ids,
+        ...chantierRows.chantier_territoire.flatMap((t) => [
+          ...t.responsables_locaux_ids,
+          ...t.coordinateurs_territoriaux_ids,
+        ]),
+      ]),
+    ];
+    const utilisateurParId =
+      await this.chantierRepository.recupererUtilisateursParIds(allIds);
+    return presenterEnChantierContrat(chantierRows, territoires, ministères, utilisateurParId);
   }
 }
