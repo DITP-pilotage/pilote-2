@@ -10,6 +10,7 @@ import { Dropdown } from "@/components/shared/Dropdown";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
 import { useEnv } from "@/client/hooks/useEnv";
 import { Settings1Icon } from "@/components/_commons/Icones/Settings1Icon";
+import { ExternalLink1Icon } from "@/components/_commons/Icones/ExternalLink1Icon";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 
 const peutAccederPanelAdministrateur = (
@@ -74,6 +75,23 @@ export const Utilisateur = () => {
             </Link>
           </Dropdown.Item>
         ) : null}
+
+        <Dropdown.Divider />
+
+        <Dropdown.Item asChild>
+          <button
+            type="button"
+            onClick={() => {
+              document.cookie =
+                "pmb-ppg=true; Domain=.modernisation.localhost; Path=/; Secure; SameSite=Lax";
+              window.location.href =
+                "https://pmb.modernisation.localhost/indicateurs";
+            }}
+          >
+            <Dropdown.Icone icone={ExternalLink1Icon} />
+            Pilote Marque Blanche
+          </button>
+        </Dropdown.Item>
 
         <Dropdown.Divider />
 

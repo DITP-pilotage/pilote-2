@@ -20,7 +20,7 @@ if (hasSubmodule) {
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
-  outputFileTracingRoot: path.join(__dirname, '../..'),
+  outputFileTracingRoot: path.join(__dirname, "../.."),
   bundlePagesRouterDependencies: true,
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
   allowedDevOrigins: [

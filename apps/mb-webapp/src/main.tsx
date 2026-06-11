@@ -29,7 +29,18 @@ declare module '@tanstack/react-router' {
 
 const root = createRoot(rootElement)
 
+const hasPpgCookie = () => document.cookie.split(';').some((c) => c.trim().startsWith('pmb-ppg='))
+
 void auth.bootstrap().then(() => {
+  if (!auth.isAuthenticated && hasPpgCookie()) {
+    const params = new URLSearchParams({
+      provider: 'keycloak',
+      redirect: location.pathname + location.search + location.hash,
+    })
+    window.location.assign(`/auth/login?${params.toString()}`)
+    return
+  }
+
   root.render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>

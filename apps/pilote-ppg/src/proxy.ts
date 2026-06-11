@@ -130,10 +130,13 @@ export async function proxy(request: NextRequest) {
     routesTrpcPubliques.some((route) => pathname.startsWith(route));
 
   if (!estRoutePublique) {
+    const useSecureCookies =
+      process.env.NEXTAUTH_URL?.startsWith("https://") ?? false;
+
     const token = await getToken({
       req: request,
       secret: process.env.NEXTAUTH_SECRET,
-      secureCookie: process.env.NEXTAUTH_URL?.startsWith("https://") ?? false,
+      secureCookie: useSecureCookies,
     });
 
     if (!token) {
@@ -169,7 +172,11 @@ export async function proxy(request: NextRequest) {
               expires: new Date(0),
               path: "/",
               httpOnly: true,
-              secure: process.env.NODE_ENV === "production",
+              // Doit matcher les attributs d'origine : les cookies `__Secure-` exigent Secure,
+              // et NextAuth les pose dès que NEXTAUTH_URL est en https. Sans ça le navigateur
+              // ignore le clear et on tombe en boucle de redirections quand Keycloak révoque
+              // la session (ex. SSO logout depuis une autre app du realm).
+              secure: useSecureCookies,
               sameSite: "lax",
             });
           }
