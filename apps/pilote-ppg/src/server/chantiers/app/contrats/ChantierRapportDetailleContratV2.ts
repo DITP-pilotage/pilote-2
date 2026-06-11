@@ -1,4 +1,6 @@
 import { Maille, MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { UtilisateurEnrichi } from "@/server/chantiers/domain/ports/ChantierRepository";
+import { getServiceLibelle } from "@/utils/referentiel-services";
 import { TypeStatut } from "@/server/domain/chantier/Chantier.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
@@ -73,6 +75,8 @@ export interface DirecteurAdministrationCentraleRapportDetailleContrat {
 export interface DirecteurProjetRapportDetailleContrat {
   nom: string;
   email: string | null;
+  service: string | null;
+  fonction: string | null;
 }
 
 export interface ResponsableRapportDetailleContrat {
@@ -85,11 +89,15 @@ export interface ResponsableRapportDetailleContrat {
 export interface ResponsableLocalRapportDetailleContrat {
   nom: string;
   email: string;
+  service: string | null;
+  fonction: string | null;
 }
 
 export interface CoordinateurTerritorialRapportDetailleContrat {
   nom: string;
   email: string;
+  service: string | null;
+  fonction: string | null;
 }
 
 export interface ChantierRapportDetailleContrat {
@@ -135,6 +143,7 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
   chantierRows: EntreePrismaChantier[],
   jalonSelectionne: number,
   jalonParDefaut: number,
+  utilisateurParId: Map<string, UtilisateurEnrichi>,
   listeTerritoireEnfant?: Territoire[],
   chantierRowsMailleEnfant?: EntreePrismaChantier[],
 ) {
@@ -200,18 +209,24 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
       avancementPrecedent:
         chantierRow?.taux_avancement_mandat_valeur_precedente ?? null,
       météo: (chantierRow?.meteo as Meteo) ?? "NON_RENSEIGNEE",
-      responsableLocal: (chantierRow?.responsables_locaux || []).map(
-        (value, index) => ({
-          nom: value,
-          email: chantierRow?.responsables_locaux_mails[index]!,
-        }),
-      ),
-      coordinateurTerritorial: (
-        chantierRow?.coordinateurs_territoriaux || []
-      ).map((value, index) => ({
-        nom: value,
-        email: chantierRow?.coordinateurs_territoriaux_mails[index]!,
-      })),
+      responsableLocal: (chantierRow?.responsables_locaux_ids || [])
+        .map((id) => utilisateurParId.get(id))
+        .filter((u): u is UtilisateurEnrichi => u !== undefined)
+        .map((u) => ({
+          nom: `${u.prenom} ${u.nom}`,
+          email: u.email,
+          service: getServiceLibelle(u.perimetre_ministeriel, u.service, u.service_autre),
+          fonction: u.fonction ?? null,
+        })),
+      coordinateurTerritorial: (chantierRow?.coordinateurs_territoriaux_ids || [])
+        .map((id) => utilisateurParId.get(id))
+        .filter((u): u is UtilisateurEnrichi => u !== undefined)
+        .map((u) => ({
+          nom: `${u.prenom} ${u.nom}`,
+          email: u.email,
+          service: getServiceLibelle(u.perimetre_ministeriel, u.service, u.service_autre),
+          fonction: u.fonction ?? null,
+        })),
       aUnePropositionsValeurAvancement: aUnePropositionDeValeurAvancement,
       dateTauxAvancementMandatValeurPrecedente:
         chantierRow?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ??
@@ -230,6 +245,7 @@ export const presenterEnChantierRapportDetaille = (
   profil: ProfilCode,
   jalonSelectionne: number,
   jalonParDefaut: number,
+  utilisateurParId: Map<string, UtilisateurEnrichi>,
 ): ChantierRapportDetailleContrat => {
   const mailleChantier = territoireCode.startsWith("NAT")
     ? "nationale"
@@ -352,12 +368,14 @@ export const presenterEnChantierRapportDetaille = (
       listeChantiersMailleDépartementale,
       jalonSelectionne,
       jalonParDefaut,
+      utilisateurParId,
     ),
     regionale: créerDonnéesTerritoiresRapportDetailleNew(
       listeTerritoireReg,
       listeChantiersMailleRégionale,
       jalonSelectionne,
       jalonParDefaut,
+      utilisateurParId,
       listeTerritoireDept,
       listeChantiersMailleDépartementale,
     ),
@@ -402,12 +420,15 @@ export const presenterEnChantierRapportDetaille = (
         nom: value,
         direction: chantierIdentite.directions_administration_centrale[index],
       })),
-      directeursProjet: (chantierIdentite.directeurs_projet || []).map(
-        (value, index) => ({
-          nom: value,
-          email: chantierIdentite.directeurs_projet_mails[index],
-        }),
-      ),
+      directeursProjet: (chantierIdentite.directeurs_projet_ids || [])
+        .map((id) => utilisateurParId.get(id))
+        .filter((u): u is UtilisateurEnrichi => u !== undefined)
+        .map((u) => ({
+          nom: `${u.prenom} ${u.nom}`,
+          email: u.email,
+          service: getServiceLibelle(u.perimetre_ministeriel, u.service, u.service_autre),
+          fonction: u.fonction ?? null,
+        })),
     },
     tauxAvancementDonnéeTerritorialisée: {
       departementale: !!chantierIdentite.possede_taux_avancement_departemental,

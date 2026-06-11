@@ -88,10 +88,8 @@ SELECT
     AND COALESCE(
         mailles_applicables.maille_est_applicable, FALSE
     ) AS est_applicable,
-    resp_locaux.nom AS responsables_locaux,
-    coord_territoriaux.nom AS coordinateurs_territoriaux,
-    resp_locaux.email AS responsables_locaux_mails,
-    coord_territoriaux.email AS coordinateurs_territoriaux_mails,
+    resp_locaux.ids AS responsables_locaux_ids,
+    coord_territoriaux.ids AS coordinateurs_territoriaux_ids,
     last_meteo.date_meteo::DATE AS derniere_maj_date_qualitative,
     CASE
         WHEN

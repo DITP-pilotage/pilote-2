@@ -1,5 +1,6 @@
 import { $Enums, Prisma, type_objectif, type_statut } from "@prisma/client";
-import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
+import { ChantierRepository, UtilisateurEnrichi } from "@/server/chantiers/domain/ports/ChantierRepository";
+import { getServiceLibelle } from "@/utils/referentiel-services";
 import { DonneeChantier } from "@/server/chantiers/domain/DonneeChantier";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
@@ -57,6 +58,28 @@ export class PrismaChantierRepository implements ChantierRepository {
         },
       },
     });
+  }
+
+  async recupererUtilisateursParIds(ids: string[]): Promise<Map<string, UtilisateurEnrichi>> {
+    if (ids.length === 0) return new Map();
+    const utilisateurs = await this.prisma.utilisateur.findMany({
+      where: { id: { in: ids } },
+      select: {
+        id: true,
+        nom: true,
+        prenom: true,
+        email: true,
+        service: true,
+        service_autre: true,
+        perimetre_ministeriel: true,
+        fonction: true,
+      },
+    });
+    return new Map(utilisateurs.map((u) => [u.id, u]));
+  }
+
+  private toNomComplet(u: UtilisateurEnrichi): string {
+    return `${u.prenom} ${u.nom}`;
   }
 
   async récupérerDonneesChantier(

@@ -92,10 +92,9 @@ model chantier_identite {
   directions_administration_centrale    String[]
   ministeres                            String[]
   ministeres_acronymes                  String[]
-  directeurs_projet                     String[]
+  directeurs_projet_ids                 String[]
   axe                                   String                 @default("non renseigné")
   ppg                                   String                 @default("non renseignée")
-  directeurs_projet_mails               String[]
   est_barometre                         Boolean?
   est_territorialise                    Boolean?
   ate                                   type_ate?
@@ -130,10 +129,8 @@ model chantier_territoire {
   taux_avancement_mandat_valeur_precedente      Float?
   date_taux_avancement_mandat_valeur_precedente DateTime?                   @db.Date
   est_applicable                                Boolean?
-  responsables_locaux                           String[]
-  coordinateurs_territoriaux                    String[]
-  responsables_locaux_mails                     String[]
-  coordinateurs_territoriaux_mails              String[]
+  responsables_locaux_ids                       String[]
+  coordinateurs_territoriaux_ids                String[]
   derniere_maj_date_qualitative                 DateTime?                   @db.Date
   tendance                                      type_tendance?
   tendance_int_index                            Float?

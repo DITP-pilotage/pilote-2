@@ -1,16 +1,6 @@
 WITH coord_locaux AS (
     SELECT
-    -- On trie par email pour éviter les différences de tri
-    -- et que les noms soient associés aux bons emails
-    -- (email est PK d'utilisateurs dc pas de doublons)
-        ARRAY_AGG(
-            INITCAP(utilisateur.prenom)
-            || ' '
-            || INITCAP(utilisateur.nom)
-            ORDER BY utilisateur.email
-        )
-            AS nom,
-        ARRAY_AGG(utilisateur.email ORDER BY utilisateur.email) AS email,
+        ARRAY_AGG(utilisateur.id::TEXT ORDER BY utilisateur.email) AS ids,
         utilisateur.profil_code,
         UNNEST(habilitation.territoires) AS territoire_code
     FROM
@@ -29,8 +19,7 @@ WITH coord_locaux AS (
 )
 
 SELECT
-    coord_locaux.nom,
-    coord_locaux.email,
+    coord_locaux.ids,
     coord_locaux.territoire_code,
     territoire.zone_id
 FROM coord_locaux
