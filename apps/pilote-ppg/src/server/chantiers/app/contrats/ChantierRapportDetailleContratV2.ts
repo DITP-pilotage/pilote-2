@@ -14,6 +14,28 @@ import {
   PrismaChantier,
 } from "@/server/chantiers/domain/PrismaChantier";
 
+function resolveResponsables(
+  ids: string[],
+  utilisateurParId: Map<string, UtilisateurEnrichi>,
+) {
+  return ids.flatMap((id) => {
+    const u = utilisateurParId.get(id);
+    if (!u) return [];
+    return [
+      {
+        nom: `${u.prenom} ${u.nom}`,
+        email: u.email,
+        service: getServiceLibelle(
+          u.perimetre_ministeriel,
+          u.service,
+          u.service_autre,
+        ),
+        fonction: u.fonction ?? null,
+      },
+    ];
+  });
+}
+
 interface TerritoireAvancementRapportDetailleContrat {
   global: number | null;
   annuel: number | null;
@@ -209,34 +231,14 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
       avancementPrecedent:
         chantierRow?.taux_avancement_mandat_valeur_precedente ?? null,
       météo: (chantierRow?.meteo as Meteo) ?? "NON_RENSEIGNEE",
-      responsableLocal: (chantierRow?.responsables_locaux_ids || [])
-        .map((id) => utilisateurParId.get(id))
-        .filter((u): u is UtilisateurEnrichi => u !== undefined)
-        .map((u) => ({
-          nom: `${u.prenom} ${u.nom}`,
-          email: u.email,
-          service: getServiceLibelle(
-            u.perimetre_ministeriel,
-            u.service,
-            u.service_autre,
-          ),
-          fonction: u.fonction ?? null,
-        })),
-      coordinateurTerritorial: (
-        chantierRow?.coordinateurs_territoriaux_ids || []
-      )
-        .map((id) => utilisateurParId.get(id))
-        .filter((u): u is UtilisateurEnrichi => u !== undefined)
-        .map((u) => ({
-          nom: `${u.prenom} ${u.nom}`,
-          email: u.email,
-          service: getServiceLibelle(
-            u.perimetre_ministeriel,
-            u.service,
-            u.service_autre,
-          ),
-          fonction: u.fonction ?? null,
-        })),
+      responsableLocal: resolveResponsables(
+        chantierRow?.responsables_locaux_ids || [],
+        utilisateurParId,
+      ),
+      coordinateurTerritorial: resolveResponsables(
+        chantierRow?.coordinateurs_territoriaux_ids || [],
+        utilisateurParId,
+      ),
       aUnePropositionsValeurAvancement: aUnePropositionDeValeurAvancement,
       dateTauxAvancementMandatValeurPrecedente:
         chantierRow?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ??
