@@ -11,7 +11,12 @@ export type DirecteurAdministrationCentrale = {
   nom: string;
   direction: string;
 };
-export type DirecteurProjet = { nom: string; email: string | null };
+export type DirecteurProjet = {
+  nom: string;
+  email: string | null;
+  service: string | null;
+  fonction: string | null;
+};
 
 export const typesAte = [
   "ate",

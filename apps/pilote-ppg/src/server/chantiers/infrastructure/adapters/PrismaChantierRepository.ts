@@ -1,6 +1,8 @@
 import { $Enums, Prisma, type_objectif, type_statut } from "@prisma/client";
-import { ChantierRepository, UtilisateurEnrichi } from "@/server/chantiers/domain/ports/ChantierRepository";
-import { getServiceLibelle } from "@/utils/referentiel-services";
+import {
+  ChantierRepository,
+  UtilisateurEnrichi,
+} from "@/server/chantiers/domain/ports/ChantierRepository";
 import { DonneeChantier } from "@/server/chantiers/domain/DonneeChantier";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
@@ -60,7 +62,9 @@ export class PrismaChantierRepository implements ChantierRepository {
     });
   }
 
-  async recupererUtilisateursParIds(ids: string[]): Promise<Map<string, UtilisateurEnrichi>> {
+  async recupererUtilisateursParIds(
+    ids: string[],
+  ): Promise<Map<string, UtilisateurEnrichi>> {
     if (ids.length === 0) return new Map();
     const utilisateurs = await this.prisma.utilisateur.findMany({
       where: { id: { in: ids } },
@@ -309,7 +313,8 @@ export class PrismaChantierRepository implements ChantierRepository {
         ),
       ]),
     ];
-    const utilisateurParId = await this.recupererUtilisateursParIds(allResponsablesIds);
+    const utilisateurParId =
+      await this.recupererUtilisateursParIds(allResponsablesIds);
 
     return listePrismaChantierIdentite.flatMap((prismaChantierIdentite) => {
       return prismaChantierIdentite.chantier_territoire
@@ -367,18 +372,26 @@ export class PrismaChantierRepository implements ChantierRepository {
               ((mapMeteo.get(
                 `${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`,
               ) || null) as Meteo) || null,
-            directeursProjet: (prismaChantierIdentite.directeurs_projet_ids || [])
+            directeursProjet: (
+              prismaChantierIdentite.directeurs_projet_ids || []
+            )
               .map((id) => utilisateurParId.get(id))
               .filter((u): u is UtilisateurEnrichi => !!u)
               .map((u) => this.toNomComplet(u)),
-            directeursProjetMails: (prismaChantierIdentite.directeurs_projet_ids || [])
+            directeursProjetMails: (
+              prismaChantierIdentite.directeurs_projet_ids || []
+            )
               .map((id) => utilisateurParId.get(id)?.email)
               .filter((e): e is string => !!e),
-            responsablesLocaux: (prismaChantierTerritoire.responsables_locaux_ids || [])
+            responsablesLocaux: (
+              prismaChantierTerritoire.responsables_locaux_ids || []
+            )
               .map((id) => utilisateurParId.get(id))
               .filter((u): u is UtilisateurEnrichi => !!u)
               .map((u) => this.toNomComplet(u)),
-            responsablesLocauxMails: (prismaChantierTerritoire.responsables_locaux_ids || [])
+            responsablesLocauxMails: (
+              prismaChantierTerritoire.responsables_locaux_ids || []
+            )
               .map((id) => utilisateurParId.get(id)?.email)
               .filter((e): e is string => !!e),
             statut: prismaChantierIdentite.statut,
@@ -783,7 +796,9 @@ export class PrismaChantierRepository implements ChantierRepository {
         ]),
       ]),
     ];
-    const utilisateurParId = await this.recupererUtilisateursParIds(allResponsablesIdsExport);
+    const utilisateurParId = await this.recupererUtilisateursParIds(
+      allResponsablesIdsExport,
+    );
 
     return prismaChantierIdentite.chantier_territoire
       .reduce((acc, prismaChantierTerritoire) => {
@@ -910,25 +925,37 @@ export class PrismaChantierRepository implements ChantierRepository {
                   : null,
               périmètreIds: prismaChantierIdentite.perimetre_ids,
               météo: (prismaChantierTerritoire.meteo as Meteo) || null,
-              directeursProjet: (prismaChantierIdentite.directeurs_projet_ids || [])
+              directeursProjet: (
+                prismaChantierIdentite.directeurs_projet_ids || []
+              )
                 .map((id) => utilisateurParId.get(id))
                 .filter((u): u is UtilisateurEnrichi => !!u)
                 .map((u) => this.toNomComplet(u)),
-              directeursProjetMails: (prismaChantierIdentite.directeurs_projet_ids || [])
+              directeursProjetMails: (
+                prismaChantierIdentite.directeurs_projet_ids || []
+              )
                 .map((id) => utilisateurParId.get(id)?.email)
                 .filter((e): e is string => !!e),
-              responsablesLocaux: (prismaChantierTerritoire.responsables_locaux_ids || [])
+              responsablesLocaux: (
+                prismaChantierTerritoire.responsables_locaux_ids || []
+              )
                 .map((id) => utilisateurParId.get(id))
                 .filter((u): u is UtilisateurEnrichi => !!u)
                 .map((u) => this.toNomComplet(u)),
-              responsablesLocauxMails: (prismaChantierTerritoire.responsables_locaux_ids || [])
+              responsablesLocauxMails: (
+                prismaChantierTerritoire.responsables_locaux_ids || []
+              )
                 .map((id) => utilisateurParId.get(id)?.email)
                 .filter((e): e is string => !!e),
-              coordinateursTerritoriaux: (prismaChantierTerritoire.coordinateurs_territoriaux_ids || [])
+              coordinateursTerritoriaux: (
+                prismaChantierTerritoire.coordinateurs_territoriaux_ids || []
+              )
                 .map((id) => utilisateurParId.get(id))
                 .filter((u): u is UtilisateurEnrichi => !!u)
                 .map((u) => this.toNomComplet(u)),
-              coordinateursTerritoriauxMails: (prismaChantierTerritoire.coordinateurs_territoriaux_ids || [])
+              coordinateursTerritoriauxMails: (
+                prismaChantierTerritoire.coordinateurs_territoriaux_ids || []
+              )
                 .map((id) => utilisateurParId.get(id)?.email)
                 .filter((e): e is string => !!e),
               statut: prismaChantierIdentite.statut,
