@@ -1,6 +1,6 @@
 {
   "name": "@pilote/ppg",
-  "portless": "pilote-ppg",
+  "portless": "pilote.modernisation",
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@10.28.2",
@@ -8,7 +8,7 @@
     "node": "24.9.0"
   },
   "scripts": {
-    "dev": "portless ${PORTLESS_NAME:-}pilote-ppg next dev",
+    "dev": "portless ${PORTLESS_NAME:-}pilote.modernisation next dev",
     "deploy:prepare": "bash deploy-prepare.sh",
     "build": "prisma generate && bash scripts/clone_centre_aide.sh && next build && pnpm exec pagefind --site .next/server/app --output-path public/_pagefind && node copy-assets.js && prisma migrate deploy && prisma db seed",
     "build:dev": "prisma generate && next build && pnpm exec pagefind --site .next/server/app --output-path public/_pagefind && node copy-assets.js && prisma migrate deploy && prisma db seed",

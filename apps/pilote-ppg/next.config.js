@@ -23,7 +23,10 @@ const nextConfig = {
   outputFileTracingRoot: path.join(__dirname, '../..'),
   bundlePagesRouterDependencies: true,
   pageExtensions: ["js", "jsx", "ts", "tsx", "md", "mdx"],
-  allowedDevOrigins: ["*.pilote-ppg.localhost", "pilote-ppg.localhost"],
+  allowedDevOrigins: [
+    "*.pilote.modernisation.localhost",
+    "pilote.modernisation.localhost",
+  ],
   turbopack: {
     rules: {
       "*.yaml": {
