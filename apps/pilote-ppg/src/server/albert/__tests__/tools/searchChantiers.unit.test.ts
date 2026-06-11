@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
+import { mock } from "vitest-mock-extended";
 import { Albert } from "@/server/albert/Albert";
 import { createSearchChantiersTool } from "@/server/albert/tools/searchChantiers";
 import type {
@@ -6,22 +7,20 @@ import type {
   GetChantiersIdentiteQuery,
 } from "@/server/chantiers/query/GetChantiersIdentiteQuery";
 
-const buildQuery = (chantiers: ChantierIdentiteResult[]) =>
-  ({
-    execute: vi.fn().mockResolvedValue(chantiers),
-  }) as unknown as GetChantiersIdentiteQuery;
-
 const buildTool = ({
   chantiers,
   chantiersAccessibles,
 }: {
   chantiers: ChantierIdentiteResult[];
   chantiersAccessibles: string[];
-}) =>
-  createSearchChantiersTool({
-    getChantiersIdentiteQuery: buildQuery(chantiers),
+}) => {
+  const chantiersQuery = mock<GetChantiersIdentiteQuery>({
+    execute: async () => chantiers,
+  });
+  return createSearchChantiersTool({
+    getChantiersIdentiteQuery: chantiersQuery,
   })({ chantiersAccessibles });
-
+};
 const executeTool = (
   tool: ReturnType<ReturnType<typeof createSearchChantiersTool>>,
   query: string,
