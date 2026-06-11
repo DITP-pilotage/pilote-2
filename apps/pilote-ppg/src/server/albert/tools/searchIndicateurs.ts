@@ -1,6 +1,7 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { Albert } from "@/server/albert/Albert";
+import { filtrerHallucinations } from "@/server/albert/subagents/filtrerHallucinations";
 import { buildSearchIndicateursSystemPrompt } from "@/server/albert/subagents/searchIndicateursSystemPrompt";
 import type {
   GetIndicateursIdentiteQuery,
@@ -94,18 +95,23 @@ Le tool retourne au maximum 10 indicateurs triés par pertinence, avec leur id, 
             ? chantier_ids.filter((id) => accessibleSet.has(id))
             : chantiersAccessibles;
 
+        if (chantier_ids !== undefined && chantierIdsScope.length === 0) {
+          return {
+            indicateurs: [],
+            reasoning:
+              "Aucun des chantiers demandés n'est accessible pour cet utilisateur.",
+            _output_instructions: OUTPUT_INSTRUCTIONS_VIDE,
+          };
+        }
+
         const indicateurs = await getIndicateursIdentiteQuery.execute({
           chantierIds: chantierIdsScope,
         });
 
         if (indicateurs.length === 0) {
-          const reasoning =
-            chantier_ids !== undefined && chantierIdsScope.length === 0
-              ? "Aucun des chantiers demandés n'est accessible pour cet utilisateur."
-              : "Aucun indicateur accessible dans le périmètre demandé.";
           return {
             indicateurs: [],
-            reasoning,
+            reasoning: "Aucun indicateur accessible dans le périmètre demandé.",
             _output_instructions: OUTPUT_INSTRUCTIONS_VIDE,
           };
         }
@@ -119,21 +125,18 @@ Le tool retourne au maximum 10 indicateurs triés par pertinence, avec leur id, 
 
         const indicateursById = new Map(indicateurs.map((i) => [i.id, i]));
 
-        const resultats = output.indicateurs
-          .map((i) => {
-            const reference = indicateursById.get(i.id);
-            if (!reference) return null;
-            if (!accessibleSet.has(reference.chantier.id)) return null;
-            return {
-              id: reference.id,
-              nom: reference.nom,
-              chantier: {
-                id: reference.chantier.id,
-                nom: reference.chantier.nom,
-              },
-            };
-          })
-          .filter((i): i is NonNullable<typeof i> => i !== null);
+        const resultats = filtrerHallucinations({
+          items: output.indicateurs,
+          references: indicateursById,
+          getId: (i) => i.id,
+        }).map((i) => ({
+          id: i.id,
+          nom: i.nom,
+          chantier: {
+            id: i.chantier.id,
+            nom: i.chantier.nom,
+          },
+        }));
 
         return {
           indicateurs: resultats,

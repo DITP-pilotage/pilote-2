@@ -1,6 +1,7 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { Albert } from "@/server/albert/Albert";
+import { filtrerHallucinations } from "@/server/albert/subagents/filtrerHallucinations";
 import { buildSearchTerritoiresSystemPrompt } from "@/server/albert/subagents/searchTerritoiresSystemPrompt";
 import type {
   GetTerritoiresIdentiteQuery,
@@ -83,16 +84,15 @@ Le tool retourne au maximum 10 territoires triés par pertinence, avec leur code
 
         const territoiresByCode = new Map(territoires.map((t) => [t.code, t]));
 
-        const resultats = output.territoires
-          .filter((t) => territoiresByCode.has(t.code))
-          .map((t) => {
-            const referenceTerritoire = territoiresByCode.get(t.code);
-            return {
-              code: t.code,
-              nom: referenceTerritoire?.nom ?? t.nom,
-              maille: referenceTerritoire?.maille ?? t.maille,
-            };
-          });
+        const resultats = filtrerHallucinations({
+          items: output.territoires,
+          references: territoiresByCode,
+          getId: (t) => t.code,
+        }).map((t) => ({
+          code: t.code,
+          nom: t.nom,
+          maille: t.maille,
+        }));
 
         return {
           territoires: resultats,

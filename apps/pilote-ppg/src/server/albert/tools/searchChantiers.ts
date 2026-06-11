@@ -1,6 +1,7 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { Albert } from "@/server/albert/Albert";
+import { filtrerHallucinations } from "@/server/albert/subagents/filtrerHallucinations";
 import { buildSearchChantiersSystemPrompt } from "@/server/albert/subagents/searchChantiersSystemPrompt";
 import type {
   ChantierIdentiteResult,
@@ -92,15 +93,16 @@ Le tool retourne au maximum 10 chantiers triés par pertinence, avec leur id et 
           abortSignal,
         });
 
-        const accessibleSet = new Set(chantiersAccessibles);
         const chantiersById = new Map(chantiers.map((c) => [c.id, c]));
 
-        const resultats = output.chantiers
-          .filter((c) => accessibleSet.has(c.id) && chantiersById.has(c.id))
-          .map((c) => ({
-            id: c.id,
-            nom: chantiersById.get(c.id)?.nom ?? c.nom,
-          }));
+        const resultats = filtrerHallucinations({
+          items: output.chantiers,
+          references: chantiersById,
+          getId: (c) => c.id,
+        }).map((c) => ({
+          id: c.id,
+          nom: c.nom,
+        }));
 
         return {
           chantiers: resultats,

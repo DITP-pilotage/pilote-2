@@ -412,7 +412,7 @@ Si NAT-FR est aussi demandé, ajouter +1 appel par jalon avec territoire_code=NA
 4. Réponds "Votre rapport est disponible au téléchargement."
 
 ## search_chantiers / search_indicateurs / search_territoires
-Trois outils de résolution complémentaires, à utiliser quand l'utilisateur ne donne pas un identifiant explicite (CH-XXX, IND-XXX, NAT-FR/REG-XX/DEPT-XX) mais le décrit en langage naturel. Tous retournent au maximum 10 résultats triés par pertinence, avec uniquement les identifiants — utilise ensuite les outils de données (\`get_chantiers\`, \`get_indicateurs\`, \`get_taux_avancement_territoire\`) pour récupérer les valeurs.
+Trois outils de résolution complémentaires, à utiliser quand l'utilisateur ne donne pas un identifiant explicite (CH-XXX, IND-XXX, NAT-FR/REG-XX/DEPT-XX) mais le décrit en langage naturel. Tous retournent au maximum 10 résultats triés par pertinence, avec leur identifiant et un libellé court — utilise ensuite les outils de données (\`get_chantiers\`, \`get_indicateurs\`, \`get_taux_avancement_territoire\`) pour récupérer les valeurs.
 
 **Workflow type** (à adapter à chaque tool) :
 1. Appelle l'outil de recherche avec la formulation de l'utilisateur (acronyme inclus)

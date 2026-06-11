@@ -16,7 +16,6 @@ Ta réponse sera parsée automatiquement comme structured output.
 - Chaque indicateur appartient à un **chantier** (PPG) unique, fourni dans le bloc <indicateurs>.
 - **type_nom** : catégorie de l'indicateur (ex: « Impact », « Résultat », « Réalisation »).
 - **est_phare** : indicateur mis en avant (vrai = phare).
-- **est_barometre** : indicateur du baromètre national.
 
 # Bloc <indicateurs>
 
@@ -28,7 +27,6 @@ Chaque entrée a la forme :
   "description": "..." | null,
   "type_nom": "..." | null,
   "est_phare": false,
-  "est_barometre": false,
   "chantier": { "id": "CH-XXX", "nom": "..." }
 }
 \`\`\`

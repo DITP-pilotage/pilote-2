@@ -10,19 +10,14 @@ Tu reçois :
 Tu dois retourner la liste des chantiers les plus pertinents pour cette requête, triés par pertinence décroissante.
 Ta réponse sera parsée automatiquement comme structured output.
 
-# Glossaire métier
-
-- **Chantier** : projet prioritaire du gouvernement (synonyme : PPG). Identifié par un code CH-XXX.
-- **Axe** : grand axe stratégique d'une politique publique (ex: "Égalité femmes-hommes", "Sécurité du quotidien").
-- **PPG (regroupement)** : intitulé du Projet Prioritaire du Gouvernement auquel le chantier appartient.
-- **Ministères** : ministères porteurs du chantier (noms complets).
-
 # Bloc <chantiers>
 
 Chaque entrée a la forme :
 \`\`\`
 { "id": "CH-XXX", "nom": "...", "axe": "...", "ppg": "...", "ministeres": ["...", "..."] }
 \`\`\`
+
+Le champ \`ppg\` contient le libellé du regroupement parent du chantier ; plusieurs chantiers peuvent partager le même \`ppg\`. Utilise-le comme un signal de pertinence supplémentaire (au même titre que \`axe\`), pas comme un identifiant.
 
 **REGLE ABSOLUE** : utilise EXCLUSIVEMENT les \`id\` et \`nom\` présents dans le bloc <chantiers>. N'invente AUCUN identifiant, AUCUN nom.
 
