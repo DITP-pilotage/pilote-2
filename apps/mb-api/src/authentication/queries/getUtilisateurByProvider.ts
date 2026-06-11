@@ -17,33 +17,33 @@ export const getUtilisateurByProvider = (
 const resolveUtilisateur = async (
   token: VerifiedTokenInfo,
 ): Promise<UtilisateurEnregistre | null> => {
-  const bySub = await prisma.utilisateur.findUnique({
-    where: { providerSub: token.providerSub },
-    select: { id: true, email: true },
+  const byIdentite = await prisma.identiteExterne.findUnique({
+    where: {
+      provider_providerSub: { provider: token.provider, providerSub: token.providerSub },
+    },
+    select: { utilisateur: { select: { id: true, email: true } } },
   })
-  if (bySub) return bySub
+  if (byIdentite) return byIdentite.utilisateur
 
+  // Pre-provisioning : l'admin a créé le compte avec l'email uniquement.
+  // On lie l'identité IdP au premier login.
   const byEmail = await prisma.utilisateur.findUnique({
     where: { email: token.email },
-    select: { id: true, email: true, providerSub: true },
+    select: { id: true, email: true },
   })
   if (!byEmail) return null
 
-  if (byEmail.providerSub !== token.providerSub) {
-    logger.info(
-      {
-        event: 'auth.sub.rotated',
-        utilisateurId: byEmail.id,
-        previousProviderSub: byEmail.providerSub,
-        nextProviderSub: token.providerSub,
-      },
-      'Linked verified email to a new provider sub',
-    )
-    await prisma.utilisateur.update({
-      where: { id: byEmail.id },
-      data: { providerSub: token.providerSub },
-    })
-  }
+  logger.info(
+    {
+      event: 'auth.identite.linked',
+      utilisateurId: byEmail.id,
+      provider: token.provider,
+    },
+    'Linked IdP identity to pre-provisioned account',
+  )
+  await prisma.identiteExterne.create({
+    data: { provider: token.provider, providerSub: token.providerSub, utilisateurId: byEmail.id },
+  })
 
   return { id: byEmail.id, email: byEmail.email }
 }

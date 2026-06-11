@@ -31,6 +31,7 @@ import {
 } from '@/generated/prisma/models'
 import {
   PermissionAction,
+  ProviderType,
   Visibilite,
   type FonctionAgregation,
   type UniteIndicateur,
@@ -600,7 +601,7 @@ async function apiKey(...overrides: ApiKeyOverrides[]): Promise<ApiKeyModel | Ap
 type UtilisateurOverrides = Partial<{
   id: string
   email: string
-  providerSub: string | null
+  identite: { provider: ProviderType; providerSub: string }
   permissions: PrincipalIndicateurPermissionOverrides[]
   panierPermissions: PrincipalPanierPermissionOverrides[]
 }>
@@ -611,18 +612,20 @@ const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
   if (existing) {
     await grantPermissions(existing.id, o.permissions)
     await grantPanierPermissions(existing.id, o.panierPermissions)
-    const { id: _id, email: _email, permissions: _p, panierPermissions: _pp, ...update } = o
-    if (Object.keys(update).length === 0) return existing
-    return db().utilisateur.update({ where: { email }, data: update })
+    return existing
   }
   const id = o.id ?? uuidv7()
-  const create = {
-    id,
-    email,
-    providerSub: o.providerSub ?? null,
-  }
   await db().principal.create({ data: { id } })
-  const created = await db().utilisateur.create({ data: create })
+  const created = await db().utilisateur.create({ data: { id, email } })
+  if (o.identite) {
+    await db().identiteExterne.create({
+      data: {
+        provider: o.identite.provider,
+        providerSub: o.identite.providerSub,
+        utilisateurId: id,
+      },
+    })
+  }
   await grantPermissions(created.id, o.permissions)
   await grantPanierPermissions(created.id, o.panierPermissions)
   return created

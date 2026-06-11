@@ -5,11 +5,13 @@ import { z } from 'zod'
 import { fetchMe } from '@/api/me'
 import { tokenStore } from '@/auth/tokenStore'
 
+export type Provider = 'proconnect' | 'keycloak'
+
 export type Auth = {
   isAuthenticated: boolean
   user: MeApiModel | null
   bootstrap: () => Promise<void>
-  login: (redirect?: string) => void
+  login: (redirect?: string, provider?: Provider) => void
   logout: () => Promise<void>
 }
 
@@ -79,9 +81,10 @@ export const auth: Auth = {
       state.user = null
     }
   },
-  login(redirect) {
-    const url = redirect ? `/auth/login?redirect=${encodeURIComponent(redirect)}` : '/auth/login'
-    window.location.assign(url)
+  login(redirect, provider = 'proconnect') {
+    const params = new URLSearchParams({ provider })
+    if (redirect) params.set('redirect', redirect)
+    window.location.assign(`/auth/login?${params.toString()}`)
   },
   async logout() {
     let logoutUrl: string | null = null

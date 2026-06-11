@@ -6,7 +6,7 @@ import * as client from 'openid-client'
 import { errAsync, okAsync, ResultAsync } from 'neverthrow'
 import ky, { HTTPError } from 'ky'
 
-import { getOidcConfig } from '@/server/auth/oidc'
+import { type Provider, getOidcConfig, providerSchema } from '@/server/auth/oidc'
 import {
   clearPkce,
   clearSession,
@@ -18,7 +18,10 @@ import {
 import { serverEnv } from '@/server/env'
 import { logger } from '@/server/logger'
 
-const SCOPES = 'openid given_name usual_name email uid'
+const SCOPES: Record<Provider, string> = {
+  proconnect: 'openid given_name usual_name email uid',
+  keycloak: 'openid profile email offline_access',
+}
 const DEFAULT_SESSION_TTL_SECONDS = 60 * 60 * 24 * 30
 const ALLOWED_CALLBACK_PARAMS = ['code', 'state', 'iss', 'error', 'error_description'] as const
 const PUBLIC_ORIGIN = new URL(serverEnv.PUBLIC_BASE_URL).origin
@@ -98,7 +101,8 @@ const checkUserProvisioned = (accessToken: string) =>
 export const authRouter = new Hono()
 
 authRouter.get('/login', loginLimiter, async (context) => {
-  const config = await getOidcConfig()
+  const provider = providerSchema.parse(context.req.query('provider'))
+  const config = await getOidcConfig(provider)
   const codeVerifier = client.randomPKCECodeVerifier()
   const codeChallenge = await client.calculatePKCECodeChallenge(codeVerifier)
   const state = client.randomState()
@@ -109,19 +113,20 @@ authRouter.get('/login', loginLimiter, async (context) => {
     codeVerifier,
     state,
     nonce,
+    provider,
     ...(redirectPath ? { redirect: redirectPath } : {}),
   })
 
   const authorizationUrl = client.buildAuthorizationUrl(config, {
     redirect_uri: serverEnv.OIDC_REDIRECT_URI,
-    scope: SCOPES,
+    scope: SCOPES[provider],
     code_challenge: codeChallenge,
     code_challenge_method: 'S256',
     state,
     nonce,
   })
 
-  logger.debug({ event: 'auth.login.start' }, 'Starting OIDC login')
+  logger.debug({ event: 'auth.login.start', provider }, 'Starting OIDC login')
   return context.redirect(authorizationUrl.toString())
 })
 
@@ -133,7 +138,7 @@ authRouter.get('/callback', async (context) => {
   }
   clearPkce(context)
 
-  const config = await getOidcConfig()
+  const config = await getOidcConfig(pkce.provider)
   const currentUrl = sanitizeCallbackUrl(context.req.url)
 
   let tokens: Awaited<ReturnType<typeof client.authorizationCodeGrant>>
@@ -182,11 +187,11 @@ authRouter.get('/callback', async (context) => {
 
       await writeSession(
         context,
-        { refreshToken, sub, idToken },
+        { refreshToken, sub, idToken, provider: pkce.provider },
         sessionTtlSeconds(tokens.refresh_expires_in),
       )
 
-      logger.debug({ event: 'auth.login.success' }, 'PMB login completed')
+      logger.debug({ event: 'auth.login.success', provider: pkce.provider }, 'PMB login completed')
 
       const target = pkce.redirect
         ? new URL(pkce.redirect, serverEnv.PUBLIC_BASE_URL).toString()
@@ -213,7 +218,7 @@ authRouter.post('/refresh', refreshLimiter, async (context) => {
     return context.json({ error: 'unauthorized' }, 401)
   }
 
-  const config = await getOidcConfig()
+  const config = await getOidcConfig(session.provider)
   let tokens: Awaited<ReturnType<typeof client.refreshTokenGrant>>
   try {
     tokens = await client.refreshTokenGrant(config, session.refreshToken)
@@ -238,6 +243,7 @@ authRouter.post('/refresh', refreshLimiter, async (context) => {
       refreshToken: tokens.refresh_token ?? session.refreshToken,
       sub: session.sub,
       idToken: tokens.id_token ?? session.idToken,
+      provider: session.provider,
     },
     sessionTtlSeconds(tokens.refresh_expires_in),
   )
@@ -262,7 +268,7 @@ authRouter.post('/logout', logoutLimiter, async (context) => {
     return context.json({ logoutUrl: null })
   }
 
-  const config = await getOidcConfig()
+  const config = await getOidcConfig(session.provider)
   try {
     await client.tokenRevocation(config, session.refreshToken)
   } catch (error) {

@@ -5,10 +5,7 @@ export const Route = createFileRoute('/_authenticated')({
     if (!context.auth.isAuthenticated) {
       const hash = location.hash ? `#${location.hash}` : ''
       const target = `${location.pathname}${location.searchStr}${hash}`
-      throw redirect({
-        href: `/auth/login?redirect=${encodeURIComponent(target)}`,
-        reloadDocument: true,
-      })
+      throw redirect({ to: '/login', search: { redirect: target } })
     }
   },
   component: () => <Outlet />,
