@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
-import { getServiceLibelle } from "@/client/constants/referentiel-services";
+import { getServiceLibelle } from "@/utils/referentiel-services";
 
 export type SyntheseDesResultatsHistoriqueItem = {
   chantierId: string;

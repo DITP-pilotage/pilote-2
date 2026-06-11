@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { getServiceLibelle } from "@/client/constants/referentiel-services";
+import { getServiceLibelle } from "@/utils/referentiel-services";
 import { SyntheseDesResultatsAvecNomsAuteurs } from "@/server/domain/chantier/synthèseDesRésultats/SynthèseDesRésultats.interface";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
 import type { Inject } from "@/server/syntheses-des-resultats/module";

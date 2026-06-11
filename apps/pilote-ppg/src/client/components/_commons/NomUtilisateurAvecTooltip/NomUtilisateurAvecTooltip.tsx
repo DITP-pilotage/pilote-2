@@ -22,7 +22,7 @@ export const NomUtilisateurAvecTooltip = ({
     <>
       <span
         ref={anchorRef}
-        className={clsxm("cursor-help underline decoration-dotted", className)}
+        className={clsxm("underline", className)}
         onMouseEnter={() => setVisible(true)}
         onMouseLeave={() => setVisible(false)}
       >

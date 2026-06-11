@@ -1,6 +1,6 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { getServiceLibelle } from "@/client/constants/referentiel-services";
+import { getServiceLibelle } from "@/utils/referentiel-services";
 import {
   ObjectifV2AvecNomAuteur,
   TypeObjectif,

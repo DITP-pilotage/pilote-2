@@ -3,7 +3,7 @@ import {
   SelecteurNew,
   SelecteurNewOptionGroup,
 } from "@/components/_commons/SelecteurNew/SelecteurNew";
-import { referentielServices } from "@/client/constants/referentiel-services";
+import { referentielServices } from "@/utils/referentiel-services";
 import {
   buildCompositeValue,
   parseCompositeValue,
