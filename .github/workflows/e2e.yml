@@ -53,8 +53,11 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm -F @pilote/ppg exec playwright install chromium --with-deps
 
+      - name: Allow Node to bind privileged ports
+        run: sudo setcap 'cap_net_bind_service=+ep' "$(which node)"
+
       - name: Start portless proxy
-        run: sudo "$(which pnpm)" -F @pilote/ppg exec portless proxy start
+        run: pnpm -F @pilote/ppg exec portless proxy start
 
       - name: Run E2E tests
         id: playwright-tests
