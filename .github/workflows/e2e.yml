@@ -54,7 +54,7 @@ jobs:
         run: pnpm -F @pilote/ppg exec playwright install chromium --with-deps
 
       - name: Start portless proxy
-        run: sudo env PATH="$PATH" pnpm -F @pilote/ppg exec portless proxy start
+        run: sudo "$(which pnpm)" -F @pilote/ppg exec portless proxy start
 
       - name: Run E2E tests
         id: playwright-tests
