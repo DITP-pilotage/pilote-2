@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vitest'
 
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptId, testIndicateurId, testIndicateurIds, testRegId } from '@/test/randomIds'
+import {
+  testDeptId,
+  testIndicateurId,
+  testIndicateurIds,
+  testReferentielId,
+  testRegId,
+} from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 import { listDernieresValeursForIndividu } from '@/valeurAvancement/queries/listDernieresValeursForIndividu'
 
@@ -12,11 +18,12 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
+      const refA = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId },
-          individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: deptId, referentiel: { publicId: refA, nom: 'A' } },
           date: '2026-01-01',
           valeur: 10,
         },
@@ -50,8 +57,9 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
+      const refA = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
-      await fixtures.individu({ publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } })
+      await fixtures.individu({ publicId: deptId, referentiel: { publicId: refA, nom: 'A' } })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -82,13 +90,14 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
     integrationTest(async () => {
       const [indAvecValeur, indSansValeur] = testIndicateurIds(2)
       const deptId = testDeptId()
+      const refA = testReferentielId()
       await fixtures.indicateur(
         { publicId: indAvecValeur, nom: 'A', visibilite: 'PUBLIC' },
         { publicId: indSansValeur, nom: 'B', visibilite: 'PUBLIC' },
       )
       await fixtures.valeurAvancement({
         indicateur: { publicId: indAvecValeur },
-        individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
+        individu: { publicId: deptId, referentiel: { publicId: refA, nom: 'A' } },
         date: '2026-01-01',
         valeur: 42,
       })
@@ -111,6 +120,7 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
     integrationTest(async () => {
       const [indPublic, indPrive] = testIndicateurIds(2)
       const deptId = testDeptId()
+      const refA = testReferentielId()
       await fixtures.indicateur(
         { publicId: indPublic, nom: 'Public', visibilite: 'PUBLIC' },
         { publicId: indPrive, nom: 'Privé', visibilite: 'PRIVE' },
@@ -118,7 +128,7 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indPublic },
-          individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: deptId, referentiel: { publicId: refA, nom: 'A' } },
           date: '2026-01-01',
           valeur: 10,
         },
@@ -147,19 +157,21 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
       const indId = testIndicateurId()
       const regId = testRegId()
       const deptId = testDeptId()
+      const refReg = testReferentielId()
+      const refDept = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.indicateurReferentiel({
         indicateur: { publicId: indId },
-        referentiel: { publicId: 'REF-REG', nom: 'Régions' },
+        referentiel: { publicId: refReg, nom: 'Régions' },
         fonctionAgregation: 'SUM',
       })
       await fixtures.indicateurReferentiel({
         indicateur: { publicId: indId },
-        referentiel: { publicId: 'REF-DEPT', nom: 'Départements' },
+        referentiel: { publicId: refDept, nom: 'Départements' },
       })
       await fixtures.relation({
-        parent: { publicId: regId, referentiel: { publicId: 'REF-REG' } },
-        child: { publicId: deptId, referentiel: { publicId: 'REF-DEPT' } },
+        parent: { publicId: regId, referentiel: { publicId: refReg } },
+        child: { publicId: deptId, referentiel: { publicId: refDept } },
       })
       await fixtures.valeurAvancement({
         indicateur: { publicId: indId },

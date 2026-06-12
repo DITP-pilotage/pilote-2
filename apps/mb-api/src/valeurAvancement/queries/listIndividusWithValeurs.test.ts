@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vitest'
 
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptId, testDeptIds, testIndicateurId, testRegId } from '@/test/randomIds'
+import {
+  testDeptId,
+  testDeptIds,
+  testIndicateurId,
+  testReferentielId,
+  testRegId,
+} from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
 
@@ -12,21 +18,22 @@ describe.concurrent('listIndividusWithValeurs', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const [dept1, dept2, dept3] = testDeptIds(3)
+      const refDept = testReferentielId()
       await fixtures.individu(
         {
           publicId: dept1,
           nom: 'Vaucluse',
-          referentiel: { publicId: 'REF-DEPT', nom: 'Dept' },
+          referentiel: { publicId: refDept, nom: 'Dept' },
         },
         {
           publicId: dept2,
           nom: 'BdR',
-          referentiel: { publicId: 'REF-DEPT' },
+          referentiel: { publicId: refDept },
         },
         {
           publicId: dept3,
           nom: 'AM',
-          referentiel: { publicId: 'REF-DEPT' },
+          referentiel: { publicId: refDept },
         },
       )
       await fixtures.valeurAvancement(
@@ -61,7 +68,7 @@ describe.concurrent('listIndividusWithValeurs', () => {
             individu: {
               id: dept1,
               nom: 'Vaucluse',
-              referentiel: 'REF-DEPT',
+              referentiel: refDept,
               parents: [],
               metadata: null,
               createdAt: expect.any(String),
@@ -74,7 +81,7 @@ describe.concurrent('listIndividusWithValeurs', () => {
             individu: {
               id: dept2,
               nom: 'BdR',
-              referentiel: 'REF-DEPT',
+              referentiel: refDept,
               parents: [],
               metadata: null,
               createdAt: expect.any(String),
@@ -96,16 +103,18 @@ describe.concurrent('listIndividusWithValeurs', () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
       const regId = testRegId()
+      const refDept = testReferentielId()
+      const refReg = testReferentielId()
       await fixtures.individu(
         {
           publicId: deptId,
           nom: 'Vaucluse',
-          referentiel: { publicId: 'REF-DEPT', nom: 'Dept' },
+          referentiel: { publicId: refDept, nom: 'Dept' },
         },
         {
           publicId: regId,
           nom: 'PACA',
-          referentiel: { publicId: 'REF-REG', nom: 'Reg' },
+          referentiel: { publicId: refReg, nom: 'Reg' },
         },
       )
       await fixtures.valeurAvancement(
@@ -127,7 +136,7 @@ describe.concurrent('listIndividusWithValeurs', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listIndividusWithValeurs(indId, { referentiel: 'REF-REG' }),
+        listIndividusWithValeurs(indId, { referentiel: refReg }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
@@ -136,7 +145,7 @@ describe.concurrent('listIndividusWithValeurs', () => {
             individu: {
               id: regId,
               nom: 'PACA',
-              referentiel: 'REF-REG',
+              referentiel: refReg,
               parents: [],
               metadata: null,
               createdAt: expect.any(String),

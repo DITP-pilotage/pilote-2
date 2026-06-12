@@ -7,7 +7,7 @@ import {
 } from '@/indicateur/permissions'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testIndicateurIds } from '@/test/randomIds'
+import { testIndicateurIds, testPanierId } from '@/test/randomIds'
 
 const listIndicateursWithReadPermission = async (principalId: string) =>
   db().indicateur.findMany({
@@ -77,14 +77,15 @@ describe.concurrent('withIndicateurReadPermission', () => {
     'propage READ depuis un panier (action READ sur le panier)',
     integrationTest(async () => {
       const [viaPanier] = testIndicateurIds(1)
+      const panRpropR = testPanierId()
       await fixtures.indicateur({ publicId: viaPanier, visibilite: 'PRIVE' })
       await fixtures.panier({
-        publicId: 'PAN-PERM-RPROP-R',
+        publicId: panRpropR,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: viaPanier }],
       })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: 'PAN-PERM-RPROP-R' }, action: 'READ' }],
+        panierPermissions: [{ panier: { publicId: panRpropR }, action: 'READ' }],
       })
 
       const rows = await listIndicateursWithReadPermission(apiKey.id)
@@ -97,14 +98,15 @@ describe.concurrent('withIndicateurReadPermission', () => {
     'propage READ depuis un panier (action WRITE sur le panier)',
     integrationTest(async () => {
       const [viaPanier] = testIndicateurIds(1)
+      const panRpropW = testPanierId()
       await fixtures.indicateur({ publicId: viaPanier, visibilite: 'PRIVE' })
       await fixtures.panier({
-        publicId: 'PAN-PERM-RPROP-W',
+        publicId: panRpropW,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: viaPanier }],
       })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: 'PAN-PERM-RPROP-W' }, action: 'WRITE' }],
+        panierPermissions: [{ panier: { publicId: panRpropW }, action: 'WRITE' }],
       })
 
       const rows = await listIndicateursWithReadPermission(apiKey.id)
@@ -117,9 +119,10 @@ describe.concurrent('withIndicateurReadPermission', () => {
     "ne propage rien depuis un panier auquel le principal n'a pas accès",
     integrationTest(async () => {
       const [hidden] = testIndicateurIds(1)
+      const panRpropNone = testPanierId()
       await fixtures.indicateur({ publicId: hidden, visibilite: 'PRIVE' })
       await fixtures.panier({
-        publicId: 'PAN-PERM-RPROP-NONE',
+        publicId: panRpropNone,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: hidden }],
       })
@@ -208,14 +211,15 @@ describe.concurrent('ensureIndicateurWritePermission', () => {
     "rejette même si le principal a WRITE sur un panier qui contient l'indicateur (WRITE indicateur reste direct, pas de propagation)",
     integrationTest(async () => {
       const [viaPanier] = testIndicateurIds(1)
+      const panWpropNo = testPanierId()
       const indicateur = await fixtures.indicateur({ publicId: viaPanier, visibilite: 'PRIVE' })
       await fixtures.panier({
-        publicId: 'PAN-PERM-WPROP-NO',
+        publicId: panWpropNo,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: viaPanier }],
       })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: 'PAN-PERM-WPROP-NO' }, action: 'WRITE' }],
+        panierPermissions: [{ panier: { publicId: panWpropNo }, action: 'WRITE' }],
       })
 
       await expect(

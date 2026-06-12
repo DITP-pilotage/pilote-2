@@ -4,7 +4,7 @@ import { db } from '@/framework/persistence/dbStore'
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testIndicateurId } from '@/test/randomIds'
+import { testIndicateurId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('getIndicateurByPublicId', () => {
@@ -12,15 +12,17 @@ describe.concurrent('getIndicateurByPublicId', () => {
     "retourne l'indicateur avec ses référentiels liés triés par publicId",
     integrationTest(async () => {
       const indId = testIndicateurId()
+      const refDetailA = testReferentielId()
+      const refDetailB = testReferentielId()
       const indicateur = await fixtures.indicateur({ publicId: indId, nom: 'Indicateur de test' })
-      const [refA, refB] = await fixtures.referentiel(
-        { publicId: 'REF-DETAIL-B' },
-        { publicId: 'REF-DETAIL-A' },
+      const [ref1, ref2] = await fixtures.referentiel(
+        { publicId: refDetailB },
+        { publicId: refDetailA },
       )
       await db().indicateurReferentiel.createMany({
         data: [
-          { indicateurId: indicateur.id, referentielId: refA!.id, fonctionAgregation: 'SUM' },
-          { indicateurId: indicateur.id, referentielId: refB!.id, fonctionAgregation: 'SUM' },
+          { indicateurId: indicateur.id, referentielId: ref1!.id, fonctionAgregation: 'SUM' },
+          { indicateurId: indicateur.id, referentielId: ref2!.id, fonctionAgregation: 'SUM' },
         ],
       })
       const apiKey = await fixtures.apiKey({
@@ -29,16 +31,18 @@ describe.concurrent('getIndicateurByPublicId', () => {
 
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
 
+      const referentielsTries = [
+        { referentielPublicId: refDetailA, fonctionAgregation: 'SUM' as const },
+        { referentielPublicId: refDetailB, fonctionAgregation: 'SUM' as const },
+      ].sort((a, b) => a.referentielPublicId.localeCompare(b.referentielPublicId))
+
       expect(result.isOk()).toBe(true)
       expect(result._unsafeUnwrap()).toEqual({
         id: indId,
         nom: 'Indicateur de test',
         visibilite: 'PRIVE',
         unite: null,
-        referentiels: [
-          { referentielPublicId: 'REF-DETAIL-A', fonctionAgregation: 'SUM' },
-          { referentielPublicId: 'REF-DETAIL-B', fonctionAgregation: 'SUM' },
-        ],
+        referentiels: referentielsTries,
         createdAt: indicateur.createdAt.toISOString(),
         updatedAt: indicateur.updatedAt.toISOString(),
       })

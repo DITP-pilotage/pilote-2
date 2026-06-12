@@ -3,17 +3,18 @@ import { describe, expect, it } from 'vitest'
 import { getIndividuByPublicId } from '@/individu/queries/getIndividuByPublicId'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptId } from '@/test/randomIds'
+import { testDeptId, testReferentielId } from '@/test/randomIds'
 
 describe.concurrent('getIndividuByPublicId', () => {
   it(
     "retourne l'individu avec son référentiel",
     integrationTest(async () => {
       const deptId = testDeptId()
+      const refDept = testReferentielId()
       await fixtures.individu({
         publicId: deptId,
         nom: 'Vaucluse',
-        referentiel: { publicId: 'REF-DEPT', nom: 'Départements' },
+        referentiel: { publicId: refDept, nom: 'Départements' },
       })
 
       const result = await getIndividuByPublicId(deptId)
@@ -22,7 +23,7 @@ describe.concurrent('getIndividuByPublicId', () => {
       expect(value).toMatchObject({
         id: deptId,
         nom: 'Vaucluse',
-        referentiel: 'REF-DEPT',
+        referentiel: refDept,
       })
     }),
   )
@@ -38,11 +39,12 @@ describe.concurrent('getIndividuByPublicId', () => {
     "expose la metadata libre de l'individu",
     integrationTest(async () => {
       const deptId = testDeptId()
+      const refDept = testReferentielId()
       await fixtures.individu({
         publicId: deptId,
         nom: 'Paris',
         metadata: { codeInsee: '75' },
-        referentiel: { publicId: 'REF-DEPT' },
+        referentiel: { publicId: refDept },
       })
 
       const result = await getIndividuByPublicId(deptId)
@@ -55,9 +57,10 @@ describe.concurrent('getIndividuByPublicId', () => {
     'retourne metadata null quand non renseignée',
     integrationTest(async () => {
       const deptId = testDeptId()
+      const refDept = testReferentielId()
       await fixtures.individu({
         publicId: deptId,
-        referentiel: { publicId: 'REF-DEPT' },
+        referentiel: { publicId: refDept },
       })
 
       const result = await getIndividuByPublicId(deptId)

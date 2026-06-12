@@ -5,7 +5,7 @@ import { encodeCursor } from '@/framework/persistence/paginate'
 import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testIndicateurIds } from '@/test/randomIds'
+import { testIndicateurIds, testPanierId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listIndicateurs', () => {
@@ -63,17 +63,18 @@ describe.concurrent('listIndicateurs', () => {
     'propage READ via les permissions panier : un principal qui a accès à un panier voit ses indicateurs PRIVE',
     integrationTest(async () => {
       const [viaPanier, hidden] = testIndicateurIds(2)
+      const panPropag = testPanierId()
       await fixtures.indicateur(
         { publicId: viaPanier, visibilite: 'PRIVE' },
         { publicId: hidden, visibilite: 'PRIVE' },
       )
       await fixtures.panier({
-        publicId: 'PAN-PROPAG-1',
+        publicId: panPropag,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: viaPanier }],
       })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: 'PAN-PROPAG-1' }, action: 'READ' }],
+        panierPermissions: [{ panier: { publicId: panPropag }, action: 'READ' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
@@ -88,14 +89,15 @@ describe.concurrent('listIndicateurs', () => {
     'la propagation panier → indicateur fonctionne aussi avec WRITE sur le panier',
     integrationTest(async () => {
       const [viaPanier] = testIndicateurIds(1)
+      const panPropag = testPanierId()
       await fixtures.indicateur({ publicId: viaPanier, visibilite: 'PRIVE' })
       await fixtures.panier({
-        publicId: 'PAN-PROPAG-2',
+        publicId: panPropag,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: viaPanier }],
       })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: 'PAN-PROPAG-2' }, action: 'WRITE' }],
+        panierPermissions: [{ panier: { publicId: panPropag }, action: 'WRITE' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
@@ -292,15 +294,17 @@ describe.concurrent('listIndicateurs', () => {
     'expose referentiels triés par publicId ASC sur chaque item',
     integrationTest(async () => {
       const [accessible] = testIndicateurIds(1)
+      const refListZ = testReferentielId()
+      const refListM = testReferentielId()
       const indicateur = await fixtures.indicateur({ publicId: accessible })
-      const [refA, refB] = await fixtures.referentiel(
-        { publicId: 'REF-LIST-Z' },
-        { publicId: 'REF-LIST-M' },
+      const [ref1, ref2] = await fixtures.referentiel(
+        { publicId: refListZ },
+        { publicId: refListM },
       )
       await db().indicateurReferentiel.createMany({
         data: [
-          { indicateurId: indicateur.id, referentielId: refA!.id, fonctionAgregation: 'SUM' },
-          { indicateurId: indicateur.id, referentielId: refB!.id, fonctionAgregation: 'SUM' },
+          { indicateurId: indicateur.id, referentielId: ref1!.id, fonctionAgregation: 'SUM' },
+          { indicateurId: indicateur.id, referentielId: ref2!.id, fonctionAgregation: 'SUM' },
         ],
       })
       const apiKey = await fixtures.apiKey({
@@ -309,11 +313,13 @@ describe.concurrent('listIndicateurs', () => {
 
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
 
+      const referentielsTries = [
+        { referentielPublicId: refListM, fonctionAgregation: 'SUM' as const },
+        { referentielPublicId: refListZ, fonctionAgregation: 'SUM' as const },
+      ].sort((a, b) => a.referentielPublicId.localeCompare(b.referentielPublicId))
+
       const value = result._unsafeUnwrap()
-      expect(value.items.find((i) => i.id === accessible)?.referentiels).toEqual([
-        { referentielPublicId: 'REF-LIST-M', fonctionAgregation: 'SUM' },
-        { referentielPublicId: 'REF-LIST-Z', fonctionAgregation: 'SUM' },
-      ])
+      expect(value.items.find((i) => i.id === accessible)?.referentiels).toEqual(referentielsTries)
     }),
   )
 })

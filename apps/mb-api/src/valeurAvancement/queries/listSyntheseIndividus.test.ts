@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptId, testDeptIds, testIndicateurId } from '@/test/randomIds'
+import { testDeptId, testDeptIds, testIndicateurId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
 
@@ -12,8 +12,9 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
+      const refA = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
-      await fixtures.individu({ publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } })
+      await fixtures.individu({ publicId: deptId, referentiel: { publicId: refA, nom: 'A' } })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -31,11 +32,12 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const [dept1, dept2] = testDeptIds(2)
+      const refA = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
-      await fixtures.individu({ publicId: dept1, referentiel: { publicId: 'REF-A', nom: 'A' } })
+      await fixtures.individu({ publicId: dept1, referentiel: { publicId: refA, nom: 'A' } })
       await fixtures.valeurAvancement({
         indicateur: { publicId: indId },
-        individu: { publicId: dept2, referentiel: { publicId: 'REF-A' } },
+        individu: { publicId: dept2, referentiel: { publicId: refA } },
         date: '2026-01-01',
         valeur: 42,
       })
@@ -56,10 +58,11 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
+      const refA = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement({
         indicateur: { publicId: indId },
-        individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
+        individu: { publicId: deptId, referentiel: { publicId: refA, nom: 'A' } },
         date: '2026-01-01',
         valeur: 50,
       })
@@ -80,11 +83,12 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
+      const refA = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId },
-          individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: deptId, referentiel: { publicId: refA, nom: 'A' } },
           date: '2026-01-01',
           valeur: 50,
         },
@@ -118,11 +122,12 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
+      const refA = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId },
-          individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: deptId, referentiel: { publicId: refA, nom: 'A' } },
           date: '2026-02-01',
           valeur: 10,
         },
@@ -156,6 +161,7 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const [dept1, dept2, dept3] = testDeptIds(3)
+      const refA = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
@@ -163,7 +169,7 @@ describe.concurrent('listSyntheseIndividus', () => {
           individu: {
             publicId: dept1,
             nom: 'A',
-            referentiel: { publicId: 'REF-A', nom: 'A' },
+            referentiel: { publicId: refA, nom: 'A' },
           },
           date: '2026-01-01',
           valeur: 10,
@@ -176,7 +182,7 @@ describe.concurrent('listSyntheseIndividus', () => {
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept2, nom: 'B', referentiel: { publicId: 'REF-A' } },
+          individu: { publicId: dept2, nom: 'B', referentiel: { publicId: refA } },
           date: '2026-01-01',
           valeur: 5,
         },
@@ -184,7 +190,7 @@ describe.concurrent('listSyntheseIndividus', () => {
       await fixtures.individu({
         publicId: dept3,
         nom: 'C',
-        referentiel: { publicId: 'REF-A' },
+        referentiel: { publicId: refA },
       })
       const apiKey = await fixtures.apiKey()
 
@@ -207,11 +213,12 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const [indId, autreIndId] = [testIndicateurId(), testIndicateurId()]
       const deptId = testDeptId()
+      const refA = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId },
-          individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: deptId, referentiel: { publicId: refA, nom: 'A' } },
           date: '2026-01-01',
           valeur: 100,
         },
@@ -240,10 +247,11 @@ describe.concurrent('listSyntheseIndividus', () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
       const inconnu = testDeptId()
+      const refA = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement({
         indicateur: { publicId: indId },
-        individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
+        individu: { publicId: deptId, referentiel: { publicId: refA, nom: 'A' } },
         date: '2026-01-01',
         valeur: 42,
       })
@@ -264,11 +272,12 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
+      const refA = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId },
-          individu: { publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: deptId, referentiel: { publicId: refA, nom: 'A' } },
           date: '2026-01-01',
           valeur: 0.15,
         },
@@ -296,23 +305,24 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const [dept1, dept2, dept3] = testDeptIds(3)
+      const refA = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept1, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: dept1, referentiel: { publicId: refA, nom: 'A' } },
           date: '2026-01-01',
           valeur: 0.3,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept2, referentiel: { publicId: 'REF-A' } },
+          individu: { publicId: dept2, referentiel: { publicId: refA } },
           date: '2026-01-01',
           valeur: 0.15,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept3, referentiel: { publicId: 'REF-A' } },
+          individu: { publicId: dept3, referentiel: { publicId: refA } },
           date: '2026-01-01',
           valeur: 0.45,
         },
@@ -334,11 +344,12 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const [dept1, dept2, dept3] = testDeptIds(3)
+      const refA = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept1, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: dept1, referentiel: { publicId: refA, nom: 'A' } },
           date: '2026-01-01',
           valeur: 100,
         },
@@ -350,13 +361,13 @@ describe.concurrent('listSyntheseIndividus', () => {
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept2, referentiel: { publicId: 'REF-A' } },
+          individu: { publicId: dept2, referentiel: { publicId: refA } },
           date: '2026-01-01',
           valeur: 50,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: dept3, referentiel: { publicId: 'REF-A' } },
+          individu: { publicId: dept3, referentiel: { publicId: refA } },
           date: '2026-01-01',
           valeur: 30,
         },
@@ -378,29 +389,31 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const [deptA, deptB1, deptB2, deptB3] = testDeptIds(4)
+      const refA = testReferentielId()
+      const refB = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId },
-          individu: { publicId: deptA, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: deptA, referentiel: { publicId: refA, nom: 'A' } },
           date: '2026-01-01',
           valeur: 100,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: deptB1, referentiel: { publicId: 'REF-B', nom: 'B' } },
+          individu: { publicId: deptB1, referentiel: { publicId: refB, nom: 'B' } },
           date: '2026-01-01',
           valeur: 10,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: deptB2, referentiel: { publicId: 'REF-B' } },
+          individu: { publicId: deptB2, referentiel: { publicId: refB } },
           date: '2026-01-01',
           valeur: 50,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: deptB3, referentiel: { publicId: 'REF-B' } },
+          individu: { publicId: deptB3, referentiel: { publicId: refB } },
           date: '2026-01-01',
           valeur: 90,
         },
@@ -422,29 +435,31 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const [deptA1, deptA2, deptB1, deptB2] = testDeptIds(4)
+      const refA = testReferentielId()
+      const refB = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
       await fixtures.valeurAvancement(
         {
           indicateur: { publicId: indId },
-          individu: { publicId: deptA1, referentiel: { publicId: 'REF-A', nom: 'A' } },
+          individu: { publicId: deptA1, referentiel: { publicId: refA, nom: 'A' } },
           date: '2026-01-01',
           valeur: 10,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: deptA2, referentiel: { publicId: 'REF-A' } },
+          individu: { publicId: deptA2, referentiel: { publicId: refA } },
           date: '2026-01-01',
           valeur: 30,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: deptB1, referentiel: { publicId: 'REF-B', nom: 'B' } },
+          individu: { publicId: deptB1, referentiel: { publicId: refB, nom: 'B' } },
           date: '2026-01-01',
           valeur: 100,
         },
         {
           indicateur: { publicId: indId },
-          individu: { publicId: deptB2, referentiel: { publicId: 'REF-B' } },
+          individu: { publicId: deptB2, referentiel: { publicId: refB } },
           date: '2026-01-01',
           valeur: 200,
         },
@@ -480,8 +495,9 @@ describe.concurrent('listSyntheseIndividus', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const deptId = testDeptId()
+      const refA = testReferentielId()
       await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PRIVE' })
-      await fixtures.individu({ publicId: deptId, referentiel: { publicId: 'REF-A', nom: 'A' } })
+      await fixtures.individu({ publicId: deptId, referentiel: { publicId: refA, nom: 'A' } })
       const apiKey = await fixtures.apiKey()
 
       await expect(

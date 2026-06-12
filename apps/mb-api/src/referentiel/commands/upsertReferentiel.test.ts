@@ -4,21 +4,22 @@ import { db } from '@/framework/persistence/dbStore'
 import { upsertReferentiel } from '@/referentiel/commands/upsertReferentiel'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptIds } from '@/test/randomIds'
+import { testDeptIds, testReferentielId } from '@/test/randomIds'
 
 describe.concurrent('upsertReferentiel', () => {
   it(
     'crée un référentiel quand le publicId est libre',
     integrationTest(async () => {
       // When
-      const result = await upsertReferentiel('REF-NEW', {
+      const refNew = testReferentielId()
+      const result = await upsertReferentiel(refNew, {
         nom: 'Nouveau référentiel',
         description: 'Description initiale',
       })
 
       // Then
       expect(result.isOk()).toBe(true)
-      const persisted = await db().referentiel.findUniqueOrThrow({ where: { publicId: 'REF-NEW' } })
+      const persisted = await db().referentiel.findUniqueOrThrow({ where: { publicId: refNew } })
       expect(persisted.nom).toBe('Nouveau référentiel')
       expect(persisted.description).toBe('Description initiale')
     }),
@@ -28,21 +29,22 @@ describe.concurrent('upsertReferentiel', () => {
     'met à jour nom, description et updatedAt quand le référentiel existe déjà',
     integrationTest(async () => {
       // Given
+      const refUpd = testReferentielId()
       const original = await fixtures.referentiel({
-        publicId: 'REF-UPD',
+        publicId: refUpd,
         nom: 'Ancien nom',
         description: 'Ancienne description',
       })
 
       // When
-      const result = await upsertReferentiel('REF-UPD', {
+      const result = await upsertReferentiel(refUpd, {
         nom: 'Nouveau nom',
         description: null,
       })
 
       // Then
       expect(result.isOk()).toBe(true)
-      const persisted = await db().referentiel.findUniqueOrThrow({ where: { publicId: 'REF-UPD' } })
+      const persisted = await db().referentiel.findUniqueOrThrow({ where: { publicId: refUpd } })
       expect(persisted.nom).toBe('Nouveau nom')
       expect(persisted.description).toBeNull()
       expect(persisted.createdAt).toEqual(original.createdAt)
@@ -55,9 +57,10 @@ describe.concurrent('upsertReferentiel', () => {
     integrationTest(async () => {
       // Given
       const [dept1, dept2] = testDeptIds(2)
+      const refInds = testReferentielId()
 
       // When
-      await upsertReferentiel('REF-INDS', {
+      await upsertReferentiel(refInds, {
         nom: 'Avec individus',
         description: null,
         individus: [
@@ -72,9 +75,9 @@ describe.concurrent('upsertReferentiel', () => {
         include: { referentiel: { select: { publicId: true } } },
       })
       expect(persistedDept1.nom).toBe('Premier')
-      expect(persistedDept1.referentiel.publicId).toBe('REF-INDS')
+      expect(persistedDept1.referentiel.publicId).toBe(refInds)
       const individusForRef = await db().individu.findMany({
-        where: { referentiel: { publicId: 'REF-INDS' } },
+        where: { referentiel: { publicId: refInds } },
       })
       expect(individusForRef).toHaveLength(2)
     }),
@@ -85,14 +88,15 @@ describe.concurrent('upsertReferentiel', () => {
     integrationTest(async () => {
       // Given
       const [dept1] = testDeptIds(1)
+      const refLink = testReferentielId()
       await fixtures.individu({
         publicId: dept1,
         nom: 'Ancien nom individu',
-        referentiel: { publicId: 'REF-LINK' },
+        referentiel: { publicId: refLink },
       })
 
       // When
-      const result = await upsertReferentiel('REF-LINK', {
+      const result = await upsertReferentiel(refLink, {
         nom: 'Référentiel',
         description: null,
         individus: [{ publicId: dept1, nom: 'Nouveau nom individu' }],
@@ -105,7 +109,7 @@ describe.concurrent('upsertReferentiel', () => {
         include: { referentiel: { select: { publicId: true } } },
       })
       expect(persisted.nom).toBe('Nouveau nom individu')
-      expect(persisted.referentiel.publicId).toBe('REF-LINK')
+      expect(persisted.referentiel.publicId).toBe(refLink)
     }),
   )
 
@@ -114,13 +118,16 @@ describe.concurrent('upsertReferentiel', () => {
     integrationTest(async () => {
       // Given
       const [dept1, dept2, dept3] = testDeptIds(3)
+      const refOtherA = testReferentielId()
+      const refOtherB = testReferentielId()
+      const refNew2 = testReferentielId()
       await fixtures.individu(
-        { publicId: dept1, referentiel: { publicId: 'REF-OTHER-A' } },
-        { publicId: dept2, referentiel: { publicId: 'REF-OTHER-B' } },
+        { publicId: dept1, referentiel: { publicId: refOtherA } },
+        { publicId: dept2, referentiel: { publicId: refOtherB } },
       )
 
       // When
-      const result = await upsertReferentiel('REF-NEW2', {
+      const result = await upsertReferentiel(refNew2, {
         nom: 'Nouveau référentiel',
         description: null,
         individus: [
@@ -136,7 +143,7 @@ describe.concurrent('upsertReferentiel', () => {
         type: 'INDIVIDUS_ALREADY_ATTACHED',
         individuIds: [dept1, dept2].sort(),
       })
-      const created = await db().referentiel.findUnique({ where: { publicId: 'REF-NEW2' } })
+      const created = await db().referentiel.findUnique({ where: { publicId: refNew2 } })
       expect(created).toBeNull()
     }),
   )
@@ -145,7 +152,8 @@ describe.concurrent('upsertReferentiel', () => {
     'fonctionne sans individus (champ omis)',
     integrationTest(async () => {
       // When
-      const result = await upsertReferentiel('REF-EMPTY', {
+      const refEmpty = testReferentielId()
+      const result = await upsertReferentiel(refEmpty, {
         nom: 'Sans individus',
         description: null,
       })
@@ -153,7 +161,7 @@ describe.concurrent('upsertReferentiel', () => {
       // Then
       expect(result.isOk()).toBe(true)
       const persisted = await db().referentiel.findUniqueOrThrow({
-        where: { publicId: 'REF-EMPTY' },
+        where: { publicId: refEmpty },
       })
       expect(persisted.nom).toBe('Sans individus')
     }),
