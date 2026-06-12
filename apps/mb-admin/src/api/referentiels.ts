@@ -11,6 +11,7 @@ import {
 } from '@pilote/mb-shared/referentiel'
 
 import { bffClient } from '@/api/client'
+import { fetchAllPages } from '@/lib/fetchAllPages'
 
 export const fetchReferentiels = async (
   params: { recherche?: string | undefined; cursor?: string | undefined } = {},
@@ -21,6 +22,11 @@ export const fetchReferentiels = async (
   const json = await bffClient.get('referentiels', { searchParams }).json()
   return referentielListApiModelSchema.parse(json)
 }
+
+export const fetchAllReferentiels = (
+  params: { recherche?: string } = {},
+): Promise<ReferentielApiModel[]> =>
+  fetchAllPages((cursor) => fetchReferentiels({ recherche: params.recherche, cursor }))
 
 export const fetchReferentielById = async (id: string): Promise<ReferentielApiModel> => {
   const json = await bffClient.get(`referentiels/${id}`).json()

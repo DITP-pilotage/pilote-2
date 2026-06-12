@@ -8,6 +8,7 @@ import { PageHeading } from '@/components/PageHeading'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Table } from '@/components/ui/Table'
+import { clickableRowProps } from '@/lib/clickableRow'
 import { indicateursInfiniteQueryOptions } from '@/queries/indicateurs'
 import { session } from '@/session'
 
@@ -81,10 +82,9 @@ function IndicateursListComponent() {
             {items.map((indicateur) => (
               <Table.Row
                 key={indicateur.id}
-                className="cursor-pointer"
-                onClick={() =>
-                  void navigate({ to: '/indicateurs/$id', params: { id: indicateur.id } })
-                }
+                {...clickableRowProps(
+                  () => void navigate({ to: '/indicateurs/$id', params: { id: indicateur.id } }),
+                )}
               >
                 <Table.Cell>
                   <span className="font-mono text-primary">{indicateur.id}</span>

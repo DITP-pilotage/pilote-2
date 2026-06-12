@@ -8,6 +8,7 @@ import { PageHeading } from '@/components/PageHeading'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Table } from '@/components/ui/Table'
+import { clickableRowProps } from '@/lib/clickableRow'
 import { referentielsInfiniteQueryOptions } from '@/queries/referentiels'
 import { session } from '@/session'
 
@@ -75,10 +76,9 @@ function ReferentielsListComponent() {
             {items.map((referentiel) => (
               <Table.Row
                 key={referentiel.id}
-                className="cursor-pointer"
-                onClick={() =>
-                  void navigate({ to: '/referentiels/$id', params: { id: referentiel.id } })
-                }
+                {...clickableRowProps(
+                  () => void navigate({ to: '/referentiels/$id', params: { id: referentiel.id } }),
+                )}
               >
                 <Table.Cell>
                   <span className="font-mono text-primary">{referentiel.id}</span>

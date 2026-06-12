@@ -4,7 +4,7 @@ import { useState } from 'react'
 
 import type { IndicateurApiModel } from '@pilote/mb-shared/indicateur'
 
-import { fetchReferentiels } from '@/api/referentiels'
+import { fetchAllReferentiels } from '@/api/referentiels'
 import { Button } from '@/components/ui/Button'
 import { clsxm } from '@/lib/clsxm'
 
@@ -55,9 +55,9 @@ export function IndicateurForm({
   const [values, setValues] = useState<IndicateurFormValues>(initial)
   const referentielsQuery = useQuery({
     queryKey: ['referentiels', 'all-for-select'],
-    queryFn: () => fetchReferentiels({}),
+    queryFn: () => fetchAllReferentiels(),
   })
-  const referentielsOptions = referentielsQuery.data?.items ?? []
+  const referentielsOptions = referentielsQuery.data ?? []
 
   const update = (patch: Partial<IndicateurFormValues>) =>
     setValues((prev) => ({ ...prev, ...patch }))
