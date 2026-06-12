@@ -3,46 +3,52 @@ import { describe, expect, it } from 'vitest'
 import { listIndividusForReferentiel } from '@/referentiel/queries/listIndividusForReferentiel'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
+import { testIndividuId, testReferentielId } from '@/test/randomIds'
 
 describe.concurrent('listIndividusForReferentiel', () => {
   it(
     'retourne les individus de la population du référentiel',
     integrationTest(async () => {
+      const refPop = testReferentielId()
+      const refOther = testReferentielId()
+      const p1 = testIndividuId()
+      const p2 = testIndividuId()
+      const o1 = testIndividuId()
       await fixtures.individu(
         {
-          publicId: 'P-1',
+          publicId: p1,
           nom: 'Premier',
-          referentiel: { publicId: 'REF-POP', nom: 'Pop' },
+          referentiel: { publicId: refPop, nom: 'Pop' },
         },
         {
-          publicId: 'P-2',
+          publicId: p2,
           nom: 'Second',
-          referentiel: { publicId: 'REF-POP' },
+          referentiel: { publicId: refPop },
         },
         {
-          publicId: 'O-1',
+          publicId: o1,
           nom: 'Hors population',
-          referentiel: { publicId: 'REF-OTHER', nom: 'Other' },
+          referentiel: { publicId: refOther, nom: 'Other' },
         },
       )
 
-      const result = await listIndividusForReferentiel('REF-POP', {})
+      const result = await listIndividusForReferentiel(refPop, {})
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [
           {
-            id: 'P-1',
+            id: p1,
             nom: 'Premier',
-            referentiel: 'REF-POP',
+            referentiel: refPop,
             parents: [],
             metadata: null,
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
           },
           {
-            id: 'P-2',
+            id: p2,
             nom: 'Second',
-            referentiel: 'REF-POP',
+            referentiel: refPop,
             parents: [],
             metadata: null,
             createdAt: expect.any(String),
@@ -58,41 +64,45 @@ describe.concurrent('listIndividusForReferentiel', () => {
   it(
     'filtre par recherche sur le nom',
     integrationTest(async () => {
+      const refSearch = testReferentielId()
+      const a1 = testIndividuId()
+      const a2 = testIndividuId()
+      const a3 = testIndividuId()
       await fixtures.individu(
         {
-          publicId: 'A-1',
+          publicId: a1,
           nom: 'Alpha',
-          referentiel: { publicId: 'REF-SEARCH', nom: 'Search' },
+          referentiel: { publicId: refSearch, nom: 'Search' },
         },
         {
-          publicId: 'A-2',
+          publicId: a2,
           nom: 'Bravo',
-          referentiel: { publicId: 'REF-SEARCH' },
+          referentiel: { publicId: refSearch },
         },
         {
-          publicId: 'A-3',
+          publicId: a3,
           nom: 'ALPHA majuscule',
-          referentiel: { publicId: 'REF-SEARCH' },
+          referentiel: { publicId: refSearch },
         },
       )
 
-      const result = await listIndividusForReferentiel('REF-SEARCH', { recherche: 'alpha' })
+      const result = await listIndividusForReferentiel(refSearch, { recherche: 'alpha' })
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [
           {
-            id: 'A-1',
+            id: a1,
             nom: 'Alpha',
-            referentiel: 'REF-SEARCH',
+            referentiel: refSearch,
             parents: [],
             metadata: null,
             createdAt: expect.any(String),
             updatedAt: expect.any(String),
           },
           {
-            id: 'A-3',
+            id: a3,
             nom: 'ALPHA majuscule',
-            referentiel: 'REF-SEARCH',
+            referentiel: refSearch,
             parents: [],
             metadata: null,
             createdAt: expect.any(String),
@@ -108,20 +118,22 @@ describe.concurrent('listIndividusForReferentiel', () => {
   it(
     "renvoie le metadata JSON quand l'individu en a un",
     integrationTest(async () => {
+      const refMeta = testReferentielId()
+      const m1 = testIndividuId()
       await fixtures.individu({
-        publicId: 'M-1',
+        publicId: m1,
         nom: 'Avec metadata',
-        referentiel: { publicId: 'REF-META', nom: 'Meta' },
+        referentiel: { publicId: refMeta, nom: 'Meta' },
         metadata: { codeInsee: '75', region: 'IDF' },
       })
 
-      const result = await listIndividusForReferentiel('REF-META', {})
+      const result = await listIndividusForReferentiel(refMeta, {})
 
       expect(result._unsafeUnwrap().items).toEqual([
         {
-          id: 'M-1',
+          id: m1,
           nom: 'Avec metadata',
-          referentiel: 'REF-META',
+          referentiel: refMeta,
           parents: [],
           metadata: { codeInsee: '75', region: 'IDF' },
           createdAt: expect.any(String),

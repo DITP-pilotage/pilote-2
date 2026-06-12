@@ -4,7 +4,7 @@ import { encodeCursor } from '@/framework/persistence/paginate'
 import { listPaniers } from '@/panier/queries/listPaniers'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testIndicateurIds } from '@/test/randomIds'
+import { testIndicateurIds, testPanierId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listPaniers', () => {
@@ -26,17 +26,21 @@ describe.concurrent('listPaniers', () => {
   it(
     'retourne tous les paniers PUBLIC quand leur nombre est inférieur à la taille de page',
     integrationTest(async () => {
+      // Ordre de création = ordre attendu (orderBy id interne uuidv7).
+      const panList1 = testPanierId()
+      const panList2 = testPanierId()
+      const panList3 = testPanierId()
       await fixtures.panier(
-        { publicId: 'PAN-LIST-1', nom: 'Panier 1', visibilite: 'PUBLIC' },
-        { publicId: 'PAN-LIST-2', nom: 'Panier 2', visibilite: 'PUBLIC' },
-        { publicId: 'PAN-LIST-3', nom: 'Panier 3', visibilite: 'PUBLIC' },
+        { publicId: panList1, nom: 'Panier 1', visibilite: 'PUBLIC' },
+        { publicId: panList2, nom: 'Panier 2', visibilite: 'PUBLIC' },
+        { publicId: panList3, nom: 'Panier 3', visibilite: 'PUBLIC' },
       )
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () => listPaniers({}))
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((p) => p.id)).toEqual(['PAN-LIST-1', 'PAN-LIST-2', 'PAN-LIST-3'])
+      expect(value.items.map((p) => p.id)).toEqual([panList1, panList2, panList3])
       expect(value.pagination).toEqual({ cursor: null, hasMore: false })
       expect(value.total).toBe(3)
     }),
@@ -45,18 +49,20 @@ describe.concurrent('listPaniers', () => {
   it(
     "n'inclut que les paniers sur lesquels le principal a une permission",
     integrationTest(async () => {
+      const panPermAcc = testPanierId()
+      const panPermHid = testPanierId()
       await fixtures.panier(
-        { publicId: 'PAN-PERM-ACC', visibilite: 'PRIVE' },
-        { publicId: 'PAN-PERM-HID', visibilite: 'PRIVE' },
+        { publicId: panPermAcc, visibilite: 'PRIVE' },
+        { publicId: panPermHid, visibilite: 'PRIVE' },
       )
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: 'PAN-PERM-ACC' }, action: 'READ' }],
+        panierPermissions: [{ panier: { publicId: panPermAcc }, action: 'READ' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listPaniers({}))
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((p) => p.id)).toEqual(['PAN-PERM-ACC'])
+      expect(value.items.map((p) => p.id)).toEqual([panPermAcc])
       expect(value.total).toBe(1)
     }),
   )
@@ -64,16 +70,18 @@ describe.concurrent('listPaniers', () => {
   it(
     "inclut les paniers PUBLIC sur lesquels le principal n'a aucune permission",
     integrationTest(async () => {
+      const panVisPub = testPanierId()
+      const panVisPri = testPanierId()
       await fixtures.panier(
-        { publicId: 'PAN-VIS-PUB', visibilite: 'PUBLIC' },
-        { publicId: 'PAN-VIS-PRI', visibilite: 'PRIVE' },
+        { publicId: panVisPub, visibilite: 'PUBLIC' },
+        { publicId: panVisPri, visibilite: 'PRIVE' },
       )
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () => listPaniers({}))
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((p) => p.id)).toEqual(['PAN-VIS-PUB'])
+      expect(value.items.map((p) => p.id)).toEqual([panVisPub])
       expect(value.items.map((p) => p.visibilite)).toEqual(['PUBLIC'])
     }),
   )
@@ -82,8 +90,9 @@ describe.concurrent('listPaniers', () => {
     "expose les indicateurs du panier triés par ordre d'insertion (createdAt ASC)",
     integrationTest(async () => {
       const [indA, indB, indC] = testIndicateurIds(3)
+      const panOrder = testPanierId()
       await fixtures.panier({
-        publicId: 'PAN-ORDER-001',
+        publicId: panOrder,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indA }, { publicId: indB }, { publicId: indC }],
       })
@@ -92,7 +101,7 @@ describe.concurrent('listPaniers', () => {
       const result = await runAsPrincipal(apiKey.id, () => listPaniers({}))
 
       const value = result._unsafeUnwrap()
-      const panier = value.items.find((p) => p.id === 'PAN-ORDER-001')
+      const panier = value.items.find((p) => p.id === panOrder)
       expect(panier?.indicateurIds).toEqual([indA, indB, indC])
     }),
   )
@@ -100,13 +109,14 @@ describe.concurrent('listPaniers', () => {
   it(
     'retourne un panier sans indicateurs avec un tableau vide',
     integrationTest(async () => {
-      await fixtures.panier({ publicId: 'PAN-EMPTY-001', visibilite: 'PUBLIC' })
+      const panEmpty = testPanierId()
+      await fixtures.panier({ publicId: panEmpty, visibilite: 'PUBLIC' })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () => listPaniers({}))
 
       const value = result._unsafeUnwrap()
-      const panier = value.items.find((p) => p.id === 'PAN-EMPTY-001')
+      const panier = value.items.find((p) => p.id === panEmpty)
       expect(panier?.indicateurIds).toEqual([])
     }),
   )
@@ -114,13 +124,20 @@ describe.concurrent('listPaniers', () => {
   it(
     'pagine quand le nombre de paniers dépasse la taille de page',
     integrationTest(async () => {
+      // Ordre de création = ordre attendu (orderBy id interne uuidv7).
+      const panPage1 = testPanierId()
+      const panPage2 = testPanierId()
+      const panPage3 = testPanierId()
+      const panPage4 = testPanierId()
+      const panPage5 = testPanierId()
+      const panPage6 = testPanierId()
       const created = await fixtures.panier(
-        { publicId: 'PAN-PAGE-1', visibilite: 'PUBLIC' },
-        { publicId: 'PAN-PAGE-2', visibilite: 'PUBLIC' },
-        { publicId: 'PAN-PAGE-3', visibilite: 'PUBLIC' },
-        { publicId: 'PAN-PAGE-4', visibilite: 'PUBLIC' },
-        { publicId: 'PAN-PAGE-5', visibilite: 'PUBLIC' },
-        { publicId: 'PAN-PAGE-6', visibilite: 'PUBLIC' },
+        { publicId: panPage1, visibilite: 'PUBLIC' },
+        { publicId: panPage2, visibilite: 'PUBLIC' },
+        { publicId: panPage3, visibilite: 'PUBLIC' },
+        { publicId: panPage4, visibilite: 'PUBLIC' },
+        { publicId: panPage5, visibilite: 'PUBLIC' },
+        { publicId: panPage6, visibilite: 'PUBLIC' },
       )
       const apiKey = await fixtures.apiKey()
 
@@ -128,11 +145,11 @@ describe.concurrent('listPaniers', () => {
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((p) => p.id)).toEqual([
-        'PAN-PAGE-1',
-        'PAN-PAGE-2',
-        'PAN-PAGE-3',
-        'PAN-PAGE-4',
-        'PAN-PAGE-5',
+        panPage1,
+        panPage2,
+        panPage3,
+        panPage4,
+        panPage5,
       ])
       expect(value.pagination).toEqual({ cursor: encodeCursor(created[4]!.id), hasMore: true })
       expect(value.total).toBe(6)
@@ -142,13 +159,20 @@ describe.concurrent('listPaniers', () => {
   it(
     'retourne la page suivante en utilisant le cursor',
     integrationTest(async () => {
+      // Ordre de création = ordre attendu (orderBy id interne uuidv7).
+      const panCursor1 = testPanierId()
+      const panCursor2 = testPanierId()
+      const panCursor3 = testPanierId()
+      const panCursor4 = testPanierId()
+      const panCursor5 = testPanierId()
+      const panCursor6 = testPanierId()
       const created = await fixtures.panier(
-        { publicId: 'PAN-CURSOR-1', visibilite: 'PUBLIC' },
-        { publicId: 'PAN-CURSOR-2', visibilite: 'PUBLIC' },
-        { publicId: 'PAN-CURSOR-3', visibilite: 'PUBLIC' },
-        { publicId: 'PAN-CURSOR-4', visibilite: 'PUBLIC' },
-        { publicId: 'PAN-CURSOR-5', visibilite: 'PUBLIC' },
-        { publicId: 'PAN-CURSOR-6', visibilite: 'PUBLIC' },
+        { publicId: panCursor1, visibilite: 'PUBLIC' },
+        { publicId: panCursor2, visibilite: 'PUBLIC' },
+        { publicId: panCursor3, visibilite: 'PUBLIC' },
+        { publicId: panCursor4, visibilite: 'PUBLIC' },
+        { publicId: panCursor5, visibilite: 'PUBLIC' },
+        { publicId: panCursor6, visibilite: 'PUBLIC' },
       )
       const apiKey = await fixtures.apiKey()
 
@@ -157,7 +181,7 @@ describe.concurrent('listPaniers', () => {
       )
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((p) => p.id)).toEqual(['PAN-CURSOR-6'])
+      expect(value.items.map((p) => p.id)).toEqual([panCursor6])
       expect(value.pagination).toEqual({ cursor: null, hasMore: false })
       expect(value.total).toBe(6)
     }),

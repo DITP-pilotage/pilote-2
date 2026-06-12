@@ -4,6 +4,7 @@ import { encodeCursor } from '@/framework/persistence/paginate'
 import { listReferentiels } from '@/referentiel/queries/listReferentiels'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
+import { testIndividuId, testReferentielId, testWidgetId } from '@/test/randomIds'
 
 describe.concurrent('listReferentiels', () => {
   it(
@@ -23,24 +24,28 @@ describe.concurrent('listReferentiels', () => {
   it(
     "retourne les référentiels avec leur nombre d'individus",
     integrationTest(async () => {
+      const refAlpha = testReferentielId()
+      const refBeta = testReferentielId()
+      const a1 = testIndividuId()
+      const a2 = testIndividuId()
       await fixtures.individu(
         {
-          publicId: 'A-1',
-          referentiel: { publicId: 'REF-ALPHA', nom: 'Alpha' },
+          publicId: a1,
+          referentiel: { publicId: refAlpha, nom: 'Alpha' },
         },
         {
-          publicId: 'A-2',
-          referentiel: { publicId: 'REF-ALPHA' },
+          publicId: a2,
+          referentiel: { publicId: refAlpha },
         },
       )
-      await fixtures.referentiel({ publicId: 'REF-BETA', nom: 'Beta' })
+      await fixtures.referentiel({ publicId: refBeta, nom: 'Beta' })
 
       const result = await listReferentiels({})
 
       expect(result._unsafeUnwrap()).toEqual({
         items: [
           {
-            id: 'REF-ALPHA',
+            id: refAlpha,
             nom: 'Alpha',
             description: null,
             nombreIndividus: 2,
@@ -49,7 +54,7 @@ describe.concurrent('listReferentiels', () => {
             updatedAt: expect.any(String),
           },
           {
-            id: 'REF-BETA',
+            id: refBeta,
             nom: 'Beta',
             description: null,
             nombreIndividus: 0,
@@ -67,10 +72,12 @@ describe.concurrent('listReferentiels', () => {
   it(
     'inclut les widgets rattachés à chaque référentiel',
     integrationTest(async () => {
+      const refWidList = testReferentielId()
+      const widCartoList = testWidgetId()
       await fixtures.referentielWidget({
-        referentiel: { publicId: 'REF-WID-LIST', nom: 'Référentiel avec widget' },
+        referentiel: { publicId: refWidList, nom: 'Référentiel avec widget' },
         widget: {
-          publicId: 'WID-CARTO-LIST',
+          publicId: widCartoList,
           type: 'carte-france-departements',
           nom: 'Carte des départements',
           joinKey: 'codeInsee',
@@ -81,10 +88,10 @@ describe.concurrent('listReferentiels', () => {
 
       expect(result._unsafeUnwrap().items).toEqual([
         expect.objectContaining({
-          id: 'REF-WID-LIST',
+          id: refWidList,
           widgets: [
             {
-              id: 'WID-CARTO-LIST',
+              id: widCartoList,
               type: 'carte-france-departements',
               nom: 'Carte des départements',
               joinKey: 'codeInsee',
@@ -98,10 +105,13 @@ describe.concurrent('listReferentiels', () => {
   it(
     'filtre par recherche case-insensitive',
     integrationTest(async () => {
+      const refDept = testReferentielId()
+      const refReg = testReferentielId()
+      const refNat = testReferentielId()
       await fixtures.referentiel(
-        { publicId: 'REF-DEPT', nom: 'Départements de France' },
-        { publicId: 'REF-REG', nom: 'Régions de France' },
-        { publicId: 'REF-NAT', nom: 'France national' },
+        { publicId: refDept, nom: 'Départements de France' },
+        { publicId: refReg, nom: 'Régions de France' },
+        { publicId: refNat, nom: 'France national' },
       )
 
       const result = await listReferentiels({ recherche: 'régions' })
@@ -109,7 +119,7 @@ describe.concurrent('listReferentiels', () => {
       expect(result._unsafeUnwrap()).toEqual({
         items: [
           {
-            id: 'REF-REG',
+            id: refReg,
             nom: 'Régions de France',
             description: null,
             nombreIndividus: 0,
@@ -127,20 +137,26 @@ describe.concurrent('listReferentiels', () => {
   it(
     'pagine au-delà de la taille de page',
     integrationTest(async () => {
+      const ref1 = testReferentielId()
+      const ref2 = testReferentielId()
+      const ref3 = testReferentielId()
+      const ref4 = testReferentielId()
+      const ref5 = testReferentielId()
+      const ref6 = testReferentielId()
       const created = await fixtures.referentiel(
-        { publicId: 'REF-1', nom: 'R1' },
-        { publicId: 'REF-2', nom: 'R2' },
-        { publicId: 'REF-3', nom: 'R3' },
-        { publicId: 'REF-4', nom: 'R4' },
-        { publicId: 'REF-5', nom: 'R5' },
-        { publicId: 'REF-6', nom: 'R6' },
+        { publicId: ref1, nom: 'R1' },
+        { publicId: ref2, nom: 'R2' },
+        { publicId: ref3, nom: 'R3' },
+        { publicId: ref4, nom: 'R4' },
+        { publicId: ref5, nom: 'R5' },
+        { publicId: ref6, nom: 'R6' },
       )
 
       const result = await listReferentiels({ pageSize: 5 })
 
       const value = result._unsafeUnwrap()
       expect(value.items).toHaveLength(5)
-      expect(value.items.map((r) => r.id)).toEqual(['REF-1', 'REF-2', 'REF-3', 'REF-4', 'REF-5'])
+      expect(value.items.map((r) => r.id)).toEqual([ref1, ref2, ref3, ref4, ref5])
       expect(value.pagination).toEqual({ cursor: encodeCursor(created[4]!.id), hasMore: true })
       expect(value.total).toBe(6)
     }),

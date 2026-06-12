@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { getPanierByPublicId } from '@/panier/queries/getPanierByPublicId'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testIndicateurIds } from '@/test/randomIds'
+import { testIndicateurIds, testPanierId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('getPanierByPublicId', () => {
@@ -11,8 +11,9 @@ describe.concurrent('getPanierByPublicId', () => {
     "retourne le panier PUBLIC avec ses indicateurs triés par ordre d'insertion",
     integrationTest(async () => {
       const [indA, indB] = testIndicateurIds(2)
+      const panDetail = testPanierId()
       const panier = await fixtures.panier({
-        publicId: 'PAN-DETAIL-1',
+        publicId: panDetail,
         nom: 'Panier de détail',
         description: 'Une description',
         visibilite: 'PUBLIC',
@@ -20,11 +21,11 @@ describe.concurrent('getPanierByPublicId', () => {
       })
       const apiKey = await fixtures.apiKey()
 
-      const result = await runAsPrincipal(apiKey.id, () => getPanierByPublicId('PAN-DETAIL-1'))
+      const result = await runAsPrincipal(apiKey.id, () => getPanierByPublicId(panDetail))
 
       expect(result.isOk()).toBe(true)
       expect(result._unsafeUnwrap()).toEqual({
-        id: 'PAN-DETAIL-1',
+        id: panDetail,
         nom: 'Panier de détail',
         description: 'Une description',
         visibilite: 'PUBLIC',
@@ -38,17 +39,18 @@ describe.concurrent('getPanierByPublicId', () => {
   it(
     'retourne un panier sans indicateurs avec un tableau vide',
     integrationTest(async () => {
+      const panEmpty = testPanierId()
       await fixtures.panier({
-        publicId: 'PAN-DETAIL-EMPTY',
+        publicId: panEmpty,
         nom: 'Sans indicateurs',
         visibilite: 'PUBLIC',
       })
       const apiKey = await fixtures.apiKey()
 
-      const result = await runAsPrincipal(apiKey.id, () => getPanierByPublicId('PAN-DETAIL-EMPTY'))
+      const result = await runAsPrincipal(apiKey.id, () => getPanierByPublicId(panEmpty))
 
       expect(result._unsafeUnwrap()).toMatchObject({
-        id: 'PAN-DETAIL-EMPTY',
+        id: panEmpty,
         indicateurIds: [],
         description: null,
       })
@@ -58,37 +60,36 @@ describe.concurrent('getPanierByPublicId', () => {
   it(
     "retourne un panier PRIVE quand le principal dispose d'une permission",
     integrationTest(async () => {
-      await fixtures.panier({ publicId: 'PAN-DETAIL-PRIV', visibilite: 'PRIVE' })
+      const panPriv = testPanierId()
+      await fixtures.panier({ publicId: panPriv, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: 'PAN-DETAIL-PRIV' }, action: 'READ' }],
+        panierPermissions: [{ panier: { publicId: panPriv }, action: 'READ' }],
       })
 
-      const result = await runAsPrincipal(apiKey.id, () => getPanierByPublicId('PAN-DETAIL-PRIV'))
+      const result = await runAsPrincipal(apiKey.id, () => getPanierByPublicId(panPriv))
 
-      expect(result._unsafeUnwrap().id).toBe('PAN-DETAIL-PRIV')
+      expect(result._unsafeUnwrap().id).toBe(panPriv)
     }),
   )
 
   it(
     'lève une erreur quand un panier PRIVE est demandé sans permission',
     integrationTest(async () => {
-      await fixtures.panier({ publicId: 'PAN-DETAIL-NOACL', visibilite: 'PRIVE' })
+      const panNoacl = testPanierId()
+      await fixtures.panier({ publicId: panNoacl, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey()
 
-      await expect(
-        runAsPrincipal(apiKey.id, () => getPanierByPublicId('PAN-DETAIL-NOACL')),
-      ).rejects.toThrow()
+      await expect(runAsPrincipal(apiKey.id, () => getPanierByPublicId(panNoacl))).rejects.toThrow()
     }),
   )
 
   it(
     'lève une erreur quand aucun panier ne correspond',
     integrationTest(async () => {
+      const panNope = testPanierId()
       const apiKey = await fixtures.apiKey()
 
-      await expect(
-        runAsPrincipal(apiKey.id, () => getPanierByPublicId('PAN-NOPE-001')),
-      ).rejects.toThrow()
+      await expect(runAsPrincipal(apiKey.id, () => getPanierByPublicId(panNope))).rejects.toThrow()
     }),
   )
 })
