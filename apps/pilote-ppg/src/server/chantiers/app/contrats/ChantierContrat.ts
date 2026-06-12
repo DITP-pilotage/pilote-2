@@ -1,5 +1,4 @@
 import Chantier from "@/server/domain/chantier/Chantier.interface";
-import { UtilisateurEnrichi } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { resolveResponsables } from "@/server/chantiers/app/contrats/resolveResponsables";
 import {
   Territoire,
@@ -13,6 +12,7 @@ import {
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { NOMS_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
+import { UtilisateurEnrichi } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 
 export type ChantierContrat = Chantier;
 

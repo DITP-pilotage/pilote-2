@@ -1,4 +1,7 @@
-import { UtilisateurRepository } from "@/server/chantiers/domain/ports/UtilisateurRepository";
+import {
+  UtilisateurRepository,
+  UtilisateurEnrichi,
+} from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import { Utilisateur } from "@/server/chantiers/domain/Utilisateur";
 import { prisma } from "@/server/db/prisma";
 
@@ -90,5 +93,25 @@ export class PrismaUtilisateurRepository implements UtilisateurRepository {
     }
 
     return utilisateursAvecChantiers;
+  }
+
+  async recupererParIds(
+    ids: string[],
+  ): Promise<Map<string, UtilisateurEnrichi>> {
+    if (ids.length === 0) return new Map();
+    const utilisateurs = await prisma.utilisateur.findMany({
+      where: { id: { in: ids } },
+      select: {
+        id: true,
+        nom: true,
+        prenom: true,
+        email: true,
+        service: true,
+        service_autre: true,
+        perimetre_ministeriel: true,
+        fonction: true,
+      },
+    });
+    return new Map(utilisateurs.map((u) => [u.id, u]));
   }
 }

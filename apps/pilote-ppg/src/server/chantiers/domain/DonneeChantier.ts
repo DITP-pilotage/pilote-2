@@ -10,10 +10,8 @@ export type DonneeChantier = {
   tauxDAvancementRégional: number | null;
   tauxDAvancementDépartemental: number | null;
   météo: string;
-  directeursProjet: string[] | null;
-  directeursProjetMails: string[] | null;
-  responsablesLocaux: string[] | null;
-  responsablesLocauxMails: string[] | null;
+  directeursProjetIds: string[];
+  responsablesLocauxIds: string[];
   statut: string;
   estBaromètre: boolean;
   estTerritorialisé: boolean;

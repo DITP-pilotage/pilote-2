@@ -1,8 +1,5 @@
 import { $Enums, Prisma, type_objectif, type_statut } from "@prisma/client";
-import {
-  ChantierRepository,
-  UtilisateurEnrichi,
-} from "@/server/chantiers/domain/ports/ChantierRepository";
+import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { DonneeChantier } from "@/server/chantiers/domain/DonneeChantier";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
@@ -60,49 +57,6 @@ export class PrismaChantierRepository implements ChantierRepository {
         },
       },
     });
-  }
-
-  async recupererUtilisateursParIds(
-    ids: string[],
-  ): Promise<Map<string, UtilisateurEnrichi>> {
-    if (ids.length === 0) return new Map();
-    const utilisateurs = await this.prisma.utilisateur.findMany({
-      where: { id: { in: ids } },
-      select: {
-        id: true,
-        nom: true,
-        prenom: true,
-        email: true,
-        service: true,
-        service_autre: true,
-        perimetre_ministeriel: true,
-        fonction: true,
-      },
-    });
-    return new Map(utilisateurs.map((u) => [u.id, u]));
-  }
-
-  private toNomComplet(u: UtilisateurEnrichi): string {
-    return `${u.prenom} ${u.nom}`;
-  }
-
-  private resolveNoms(
-    ids: string[],
-    utilisateurParId: Map<string, UtilisateurEnrichi>,
-  ): string[] {
-    return ids
-      .map((id) => utilisateurParId.get(id))
-      .filter((u): u is UtilisateurEnrichi => !!u)
-      .map((u) => this.toNomComplet(u));
-  }
-
-  private resolveMails(
-    ids: string[],
-    utilisateurParId: Map<string, UtilisateurEnrichi>,
-  ): string[] {
-    return ids
-      .map((id) => utilisateurParId.get(id)?.email)
-      .filter((e): e is string => !!e);
   }
 
   async récupérerDonneesChantier(
@@ -324,17 +278,6 @@ export class PrismaChantierRepository implements ChantierRepository {
       ),
     ]);
 
-    const allResponsablesIds = [
-      ...new Set([
-        ...listePrismaChantierIdentite.flatMap((c) => c.directeurs_projet_ids),
-        ...listePrismaChantierIdentite.flatMap((c) =>
-          c.chantier_territoire.flatMap((t) => t.responsables_locaux_ids),
-        ),
-      ]),
-    ];
-    const utilisateurParId =
-      await this.recupererUtilisateursParIds(allResponsablesIds);
-
     return listePrismaChantierIdentite.flatMap((prismaChantierIdentite) => {
       return prismaChantierIdentite.chantier_territoire
         .filter((chantierTerritoire) =>
@@ -391,22 +334,10 @@ export class PrismaChantierRepository implements ChantierRepository {
               ((mapMeteo.get(
                 `${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`,
               ) || null) as Meteo) || null,
-            directeursProjet: this.resolveNoms(
+            directeursProjetIds:
               prismaChantierIdentite.directeurs_projet_ids || [],
-              utilisateurParId,
-            ),
-            directeursProjetMails: this.resolveMails(
-              prismaChantierIdentite.directeurs_projet_ids || [],
-              utilisateurParId,
-            ),
-            responsablesLocaux: this.resolveNoms(
+            responsablesLocauxIds:
               prismaChantierTerritoire.responsables_locaux_ids || [],
-              utilisateurParId,
-            ),
-            responsablesLocauxMails: this.resolveMails(
-              prismaChantierTerritoire.responsables_locaux_ids || [],
-              utilisateurParId,
-            ),
             statut: prismaChantierIdentite.statut,
             estBaromètre: !!prismaChantierIdentite.est_barometre,
             estTerritorialisé: !!prismaChantierIdentite.est_territorialise,
@@ -800,19 +731,6 @@ export class PrismaChantierRepository implements ChantierRepository {
           ])
         : [];
 
-    const allResponsablesIdsExport = [
-      ...new Set([
-        ...prismaChantierIdentite.directeurs_projet_ids,
-        ...prismaChantierIdentite.chantier_territoire.flatMap((t) => [
-          ...t.responsables_locaux_ids,
-          ...t.coordinateurs_territoriaux_ids,
-        ]),
-      ]),
-    ];
-    const utilisateurParId = await this.recupererUtilisateursParIds(
-      allResponsablesIdsExport,
-    );
-
     return prismaChantierIdentite.chantier_territoire
       .reduce((acc, prismaChantierTerritoire) => {
         if (
@@ -938,30 +856,12 @@ export class PrismaChantierRepository implements ChantierRepository {
                   : null,
               périmètreIds: prismaChantierIdentite.perimetre_ids,
               météo: (prismaChantierTerritoire.meteo as Meteo) || null,
-              directeursProjet: this.resolveNoms(
+              directeursProjetIds:
                 prismaChantierIdentite.directeurs_projet_ids || [],
-                utilisateurParId,
-              ),
-              directeursProjetMails: this.resolveMails(
-                prismaChantierIdentite.directeurs_projet_ids || [],
-                utilisateurParId,
-              ),
-              responsablesLocaux: this.resolveNoms(
+              responsablesLocauxIds:
                 prismaChantierTerritoire.responsables_locaux_ids || [],
-                utilisateurParId,
-              ),
-              responsablesLocauxMails: this.resolveMails(
-                prismaChantierTerritoire.responsables_locaux_ids || [],
-                utilisateurParId,
-              ),
-              coordinateursTerritoriaux: this.resolveNoms(
+              coordinateursTerritoriauxIds:
                 prismaChantierTerritoire.coordinateurs_territoriaux_ids || [],
-                utilisateurParId,
-              ),
-              coordinateursTerritoriauxMails: this.resolveMails(
-                prismaChantierTerritoire.coordinateurs_territoriaux_ids || [],
-                utilisateurParId,
-              ),
               statut: prismaChantierIdentite.statut,
               estBaromètre: prismaChantierIdentite.est_barometre,
               estTerritorialisé: prismaChantierIdentite.est_territorialise,

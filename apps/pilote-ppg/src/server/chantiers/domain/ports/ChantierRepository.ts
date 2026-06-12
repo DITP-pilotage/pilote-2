@@ -9,21 +9,7 @@ import { PrismaChantier } from "@/server/chantiers/domain/PrismaChantier";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { Habilitations } from "@/server/domain/utilisateur/habilitation/Habilitation.interface";
 
-export type UtilisateurEnrichi = {
-  id: string;
-  nom: string;
-  prenom: string;
-  email: string;
-  service: string | null;
-  service_autre: string | null;
-  perimetre_ministeriel: string | null;
-  fonction: string | null;
-};
-
 export interface ChantierRepository {
-  recupererUtilisateursParIds(
-    ids: string[],
-  ): Promise<Map<string, UtilisateurEnrichi>>;
   modifierMeteo(
     chantierId: string,
     territoireCode: string,

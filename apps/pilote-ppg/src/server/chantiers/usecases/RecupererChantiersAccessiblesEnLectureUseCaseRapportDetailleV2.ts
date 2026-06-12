@@ -12,6 +12,7 @@ import {
 } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { TerritoireRepository } from "@/server/chantiers/domain/ports/TerritoireRepository";
+import { UtilisateurRepository } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import {
   ChantierRapportDetailleContrat,
   presenterEnChantierRapportDetaille,
@@ -206,12 +207,18 @@ export default class RecupererChantiersAccessiblesEnLectureUseCaseRapportDetaill
 
   private readonly territoireRepository: TerritoireRepository;
 
+  private readonly utilisateurRepository: UtilisateurRepository;
+
   constructor({
     chantierRepository,
     territoireRepository,
-  }: Inject<"chantierRepository" | "territoireRepository">) {
+    utilisateurRepository,
+  }: Inject<
+    "chantierRepository" | "territoireRepository" | "utilisateurRepository"
+  >) {
     this.chantierRepository = chantierRepository;
     this.territoireRepository = territoireRepository;
+    this.utilisateurRepository = utilisateurRepository;
   }
 
   async run(
@@ -266,7 +273,7 @@ export default class RecupererChantiersAccessiblesEnLectureUseCaseRapportDetaill
       ),
     ];
     const utilisateurParId =
-      await this.chantierRepository.recupererUtilisateursParIds(allIds);
+      await this.utilisateurRepository.recupererParIds(allIds);
 
     return listePrismaChantier
       .reduce((acc, chantierIdentite) => {

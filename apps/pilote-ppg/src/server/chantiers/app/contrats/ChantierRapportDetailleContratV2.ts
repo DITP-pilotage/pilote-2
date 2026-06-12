@@ -1,5 +1,4 @@
 import { Maille, MailleInterne } from "@/server/domain/maille/Maille.interface";
-import { UtilisateurEnrichi } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { resolveResponsables } from "@/server/chantiers/app/contrats/resolveResponsables";
 import { TypeStatut } from "@/server/domain/chantier/Chantier.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
@@ -13,6 +12,7 @@ import {
   EntreePrismaChantier,
   PrismaChantier,
 } from "@/server/chantiers/domain/PrismaChantier";
+import { UtilisateurEnrichi } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 
 interface TerritoireAvancementRapportDetailleContrat {
   global: number | null;

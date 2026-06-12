@@ -1,5 +1,24 @@
-import { UtilisateurEnrichi } from "@/server/chantiers/domain/ports/ChantierRepository";
+import { UtilisateurEnrichi } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import { getServiceLibelle } from "@/utils/referentiel-services";
+
+export function resolveNoms(
+  ids: string[],
+  utilisateurParId: Map<string, UtilisateurEnrichi>,
+): string[] {
+  return ids
+    .map((id) => utilisateurParId.get(id))
+    .filter((u): u is UtilisateurEnrichi => !!u)
+    .map((u) => `${u.prenom} ${u.nom}`);
+}
+
+export function resolveMails(
+  ids: string[],
+  utilisateurParId: Map<string, UtilisateurEnrichi>,
+): string[] {
+  return ids
+    .map((id) => utilisateurParId.get(id)?.email)
+    .filter((e): e is string => !!e);
+}
 
 export function resolveResponsables(
   ids: string[],

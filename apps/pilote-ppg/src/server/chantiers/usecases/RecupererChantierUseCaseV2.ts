@@ -5,6 +5,7 @@ import { ProfilCode } from "@/server/domain/utilisateur/Utilisateur.interface";
 import { TerritoireRepository } from "@/server/chantiers/domain/ports/TerritoireRepository";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { MinistereRepository } from "@/server/chantiers/domain/ports/MinistereRepository";
+import { UtilisateurRepository } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import { presenterEnChantierContrat } from "@/server/chantiers/app/contrats/ChantierContrat";
 import type { Inject } from "@/server/chantiers/module";
 
@@ -15,16 +16,23 @@ export default class RecupererChantierUseCaseV2 {
 
   private territoireRepository: TerritoireRepository;
 
+  private utilisateurRepository: UtilisateurRepository;
+
   constructor({
     chantierRepository,
     ministereRepository,
     territoireRepository,
+    utilisateurRepository,
   }: Inject<
-    "chantierRepository" | "ministereRepository" | "territoireRepository"
+    | "chantierRepository"
+    | "ministereRepository"
+    | "territoireRepository"
+    | "utilisateurRepository"
   >) {
     this.chantierRepository = chantierRepository;
     this.ministereRepository = ministereRepository;
     this.territoireRepository = territoireRepository;
+    this.utilisateurRepository = utilisateurRepository;
   }
 
   async run(
@@ -55,7 +63,7 @@ export default class RecupererChantierUseCaseV2 {
       ]),
     ];
     const utilisateurParId =
-      await this.chantierRepository.recupererUtilisateursParIds(allIds);
+      await this.utilisateurRepository.recupererParIds(allIds);
     return presenterEnChantierContrat(
       chantierRows,
       territoires,

@@ -3,6 +3,11 @@ import {
   formaterNumériqueOuValeurNonApplicable,
   NON_APPLICABLE,
 } from "@/server/infrastructure/export_csv/valeurs";
+import { UtilisateurEnrichi } from "@/server/chantiers/domain/ports/UtilisateurRepository";
+import {
+  resolveMails,
+  resolveNoms,
+} from "@/server/chantiers/app/contrats/resolveResponsables";
 
 type DonneeChantierPublication = {
   synthese_des_resultats: string | null;
@@ -46,15 +51,20 @@ export type DonneeChantierContrat = {
 
 export const presenterEnDonneeTerritoireChantierContrat = (
   donneeChantier: DonneeChantier,
+  utilisateurParId: Map<string, UtilisateurEnrichi>,
 ): DonneeTerritoireChantierContrat => {
   return {
     maille: donneeChantier.maille,
     territoire_code: donneeChantier.territoireCode,
     meteo: donneeChantier.météo,
     responsables_locaux:
-      donneeChantier.responsablesLocaux?.join(",") || NON_APPLICABLE,
+      resolveNoms(donneeChantier.responsablesLocauxIds, utilisateurParId).join(
+        ",",
+      ) || NON_APPLICABLE,
     responsable_locaux_mails:
-      donneeChantier.responsablesLocauxMails?.join(",") || NON_APPLICABLE,
+      resolveMails(donneeChantier.responsablesLocauxIds, utilisateurParId).join(
+        ",",
+      ) || NON_APPLICABLE,
     taux_avancement_dept: formaterNumériqueOuValeurNonApplicable(
       donneeChantier.tauxDAvancementDépartemental,
     ),
@@ -87,6 +97,7 @@ export const presenterEnDonneeTerritoireChantierContrat = (
 
 export const presenterEnDonneeChantierContrat = (
   listeDonneesChantier: DonneeChantier[],
+  utilisateurParId: Map<string, UtilisateurEnrichi>,
 ): DonneeChantierContrat => {
   const chantier = listeDonneesChantier[0];
   return {
@@ -97,11 +108,14 @@ export const presenterEnDonneeChantierContrat = (
     statut: chantier.statut,
     est_barometre: chantier.estBaromètre,
     est_territorialise: chantier.estTerritorialisé,
-    directeurs_projet: chantier.directeursProjet?.join(",") || NON_APPLICABLE,
+    directeurs_projet:
+      resolveNoms(chantier.directeursProjetIds, utilisateurParId).join(",") ||
+      NON_APPLICABLE,
     directeurs_projet_mails:
-      chantier.directeursProjetMails?.join(",") || NON_APPLICABLE,
-    donnees_territoires: listeDonneesChantier.map(
-      presenterEnDonneeTerritoireChantierContrat,
+      resolveMails(chantier.directeursProjetIds, utilisateurParId).join(",") ||
+      NON_APPLICABLE,
+    donnees_territoires: listeDonneesChantier.map((d) =>
+      presenterEnDonneeTerritoireChantierContrat(d, utilisateurParId),
     ),
   };
 };
