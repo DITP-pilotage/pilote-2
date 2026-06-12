@@ -68,10 +68,7 @@ export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const estAcmeChallenge = pathname.startsWith("/.well-known/acme-challenge/");
 
-  const isDev = process.env.NODE_ENV === "development";
-
   if (
-    !isDev &&
     request.headers.get("x-forwarded-proto") === "http" &&
     !estAcmeChallenge
   ) {
@@ -83,6 +80,8 @@ export async function proxy(request: NextRequest) {
   const nonce = generateNonce();
 
   const response = NextResponse.next();
+
+  const isDev = process.env.NODE_ENV === "development";
 
   response.headers.set("x-nonce", nonce);
 

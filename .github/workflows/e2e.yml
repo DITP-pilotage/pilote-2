@@ -53,6 +53,9 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm -F @pilote/ppg exec playwright install chromium --with-deps
 
+      - name: Start portless proxy
+        run: sudo pnpm -F @pilote/ppg exec portless proxy start
+
       - name: Run E2E tests
         id: playwright-tests
         run: |

@@ -39,6 +39,7 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     stdout: "pipe",
     stderr: "pipe",
+    ignoreHTTPSErrors: true,
   },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -52,6 +53,7 @@ export default defineConfig({
     actionTimeout: 30_000,
     navigationTimeout: 45_000,
     acceptDownloads: true,
+    ignoreHTTPSErrors: true,
   },
 
   /* Configure projects for major browsers */
