@@ -1,4 +1,4 @@
-import * as SelectPrimitive from '@radix-ui/react-select'
+import { Select as SelectPrimitive } from 'radix-ui'
 import { ChevronDown } from 'lucide-react'
 import type { ComponentProps } from 'react'
 
