@@ -36,11 +36,14 @@ export class HeaderComponent {
 
       await this.logoutButton.click();
 
-      // Le click déclenche next-auth signOut() qui POST /api/auth/signout
-      // puis redirige. On attend que la navigation déclenchée par signOut
-      // soit terminée avant de vérifier l'état des cookies — sinon notre
-      // goto de fallback racerait avec la navigation en cours (ERR_ABORTED).
-      await this.page.waitForLoadState("load");
+      // SignOut déclenche une chaîne de 2 navigations :
+      // 1. NextAuth redirige vers la page courante (ex: /accueil/chantier/NAT-FR)
+      // 2. Le middleware intercepte (plus d'auth) et redirige vers /
+      // waitForLoadState("load") ne couvrait que la 1ère navigation, laissant
+      // la 2ème en cours → race avec le goto("/") de loginAs → ERR_ABORTED.
+      await this.page.waitForURL((url) => url.pathname === "/", {
+        timeout: 30_000,
+      });
 
       // Dans next-auth v5 beta, le cookie de session (authjs.session-token)
       // peut persister après la redirection à cause d'une race avec une
