@@ -14,6 +14,10 @@ env:
   TCHAP_BASE_URL: ${{ secrets.TCHAP_BASE_URL }}
   TCHAP_ACCESS_TOKEN: ${{ secrets.TCHAP_ACCESS_TOKEN }}
   TCHAP_ROOM_ID_E2E: ${{ secrets.TCHAP_ROOM_ID_E2E }}
+  # Portless tourne sur le port 1355 en CI (non privilégié, sans sudo)
+  BASE_URL: https://e2e-pilote.localhost:1355
+  NEXTAUTH_URL: https://e2e-pilote.localhost:1355
+  WEBAPP_BASE_URL: https://e2e-pilote.localhost:1355
 
 jobs:
   e2e-tests:
