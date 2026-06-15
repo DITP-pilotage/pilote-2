@@ -30,31 +30,31 @@ export const BoutonEditerBrouillonSyntheseDesResultats = ({
     });
 
   return (
-    <ModaleFormulaireSyntheseDesResultats
-      onEnregistrerBrouillon={enregistrerEnBrouillon}
-      onOpenChange={setOpen}
-      onPublier={publier}
-      open={open}
-      title={`Nouveau commentaire "${LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS}"`}
-      trigger={
+    <>
+      <div className="flex items-center gap-1">
         <Bouton
           iconLeft={
             <Icone className="text-current h-4 w-4" icone={Icone1Icon} />
           }
           label="Editer un brouillon"
+          onClick={() => setOpen(true)}
           variant="secondary"
-          iconRight={
-            <Infobulle classNameIcone="w-5 h-5">
-              Vous avez déjà saisi un nouveau commentaire mais vous ne l'avez
-              pas publié. Vous pouvez éditer ce nouveau commentaire pour le
-              publier ou le conserver en tant que brouillon. Si vous choisissez
-              de publier votre nouveau commentaire, le commentaire précédemment
-              affiché sera automatiquement archivé dans l'historique des
-              commentaires.
-            </Infobulle>
-          }
         />
-      }
-    />
+        <Infobulle classNameIcone="w-5 h-5">
+          Vous avez déjà saisi un nouveau commentaire mais vous ne l'avez pas
+          publié. Vous pouvez éditer ce nouveau commentaire pour le publier ou
+          le conserver en tant que brouillon. Si vous choisissez de publier
+          votre nouveau commentaire, le commentaire précédemment affiché sera
+          automatiquement archivé dans l'historique des commentaires.
+        </Infobulle>
+      </div>
+      <ModaleFormulaireSyntheseDesResultats
+        onEnregistrerBrouillon={enregistrerEnBrouillon}
+        onOpenChange={setOpen}
+        onPublier={publier}
+        open={open}
+        title={`Nouveau commentaire "${LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS}"`}
+      />
+    </>
   );
 };

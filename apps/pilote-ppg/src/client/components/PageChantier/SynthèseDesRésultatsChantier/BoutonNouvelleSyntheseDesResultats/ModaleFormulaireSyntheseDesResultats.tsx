@@ -28,7 +28,7 @@ import { extractVisibleText } from "@/utils/extractVisibleText";
 
 interface ModaleFormulaireSyntheseDesResultatsProps {
   title: string;
-  trigger: ReactNode;
+  trigger?: ReactNode;
   open: boolean;
   onOpenChange: (isOpen: boolean) => void;
   onPublier: SubmitHandler<SyntheseDesResultatsFormulaireInputs>;

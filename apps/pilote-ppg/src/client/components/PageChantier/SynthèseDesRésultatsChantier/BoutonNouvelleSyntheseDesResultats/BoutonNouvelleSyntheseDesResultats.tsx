@@ -25,29 +25,30 @@ export const BoutonNouvelleSyntheseDesResultats = ({
   });
 
   return (
-    <ModaleFormulaireSyntheseDesResultats
-      onEnregistrerBrouillon={enregistrerEnBrouillon}
-      onOpenChange={setOpen}
-      onPublier={publier}
-      open={open}
-      title={`Nouveau commentaire "${LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS}"`}
-      trigger={
+    <>
+      <div className="flex items-center gap-1">
         <Bouton
           iconLeft={
             <Icone className="text-current h-4 w-4" icone={Icone1Icon} />
           }
-          iconRight={
-            <Infobulle classNameIcone="w-5 h-5">
-              Vous pouvez ici saisir un nouveau commentaire et le publier ou
-              l'enregistrer en tant que brouillon. Si vous choisissez de publier
-              votre nouveau commentaire, le commentaire précédemment affiché
-              sera automatiquement archivé dans l'historique des commentaires.
-            </Infobulle>
-          }
           label="Nouveau commentaire"
+          onClick={() => setOpen(true)}
           variant="secondary"
         />
-      }
-    />
+        <Infobulle classNameIcone="w-5 h-5">
+          Vous pouvez ici saisir un nouveau commentaire et le publier ou
+          l'enregistrer en tant que brouillon. Si vous choisissez de publier
+          votre nouveau commentaire, le commentaire précédemment affiché sera
+          automatiquement archivé dans l'historique des commentaires.
+        </Infobulle>
+      </div>
+      <ModaleFormulaireSyntheseDesResultats
+        onEnregistrerBrouillon={enregistrerEnBrouillon}
+        onOpenChange={setOpen}
+        onPublier={publier}
+        open={open}
+        title={`Nouveau commentaire "${LIBELLÉ_SYNTHÈSE_DES_RÉSULTATS}"`}
+      />
+    </>
   );
 };
