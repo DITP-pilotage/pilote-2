@@ -1,17 +1,14 @@
 import { FunctionComponent } from "react";
 import clsx from "clsx";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import Titre from "@/components/_commons/Titre/Titre";
 import TitreInfobulleConteneur from "@/components/_commons/TitreInfobulleConteneur/TitreInfobulleConteneur";
 
 export const TitreRubrique: FunctionComponent<{
   rubriqueNom: string;
-  rubriqueDescription: string | null;
   nombreIndicateurRubrique: number;
   classNameTitre?: string;
 }> = ({
   rubriqueNom,
-  rubriqueDescription,
   nombreIndicateurRubrique,
   classNameTitre,
 }) => {
@@ -23,9 +20,6 @@ export const TitreRubrique: FunctionComponent<{
       >
         {`${rubriqueNom} (${nombreIndicateurRubrique})`}
       </Titre>
-      {rubriqueDescription ? (
-        <Infobulle>{rubriqueDescription}</Infobulle>
-      ) : null}
     </TitreInfobulleConteneur>
   );
 };

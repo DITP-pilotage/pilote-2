@@ -9,6 +9,7 @@ import {
 import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { pageChantier } from "@/components/PageChantier/PageChantierServerSideContext";
 import { clsxm } from "@/utils/clsxm";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { TitreRubrique } from "./Bloc/Détails/TitreRubrique/TitreRubrique";
 
 interface IndicateursProps {
@@ -63,31 +64,37 @@ const IndicateursChantier: FunctionComponent<IndicateursProps> = ({
               id={rubriqueIndicateur.ancre}
               key={rubriqueIndicateur.ancre}
             >
-              <button
-                aria-controls={`accordion-rubrique-${rubriqueIndicateur.categorieIndicateur}`}
-                aria-expanded={rubriqueIndicateur.estAccordeonOuvert}
-                className={clsxm(
-                  "fr-accordion__btn border-b rounded-t-lg fr-py-0 fr-px-3v !text-black",
-                  {
-                    "!bg-dsfr-blue-france-925 !border-dsfr-blue-france-sun-113":
-                      chantier.statut !== "ARCHIVE",
-                    "!bg-dsfr-grey-925 !border-dsfr-grey-200":
-                      chantier.statut === "ARCHIVE",
-                  },
-                )}
-                type="button"
-              >
-                <TitreRubrique
-                  classNameTitre={
-                    chantier.statut === "ARCHIVE"
-                      ? "!m-0 !text-dsfr-grey-200"
-                      : "!m-0"
-                  }
-                  nombreIndicateurRubrique={indicateursDeCetteRubrique.length}
-                  rubriqueDescription={rubriqueIndicateur.description}
-                  rubriqueNom={rubriqueIndicateur.nom}
-                />
-              </button>
+              <div className="flex items-center">
+                <button
+                  aria-controls={`accordion-rubrique-${rubriqueIndicateur.categorieIndicateur}`}
+                  aria-expanded={rubriqueIndicateur.estAccordeonOuvert}
+                  className={clsxm(
+                    "fr-accordion__btn border-b rounded-t-lg fr-py-0 fr-px-3v !text-black flex-1",
+                    {
+                      "!bg-dsfr-blue-france-925 !border-dsfr-blue-france-sun-113":
+                        chantier.statut !== "ARCHIVE",
+                      "!bg-dsfr-grey-925 !border-dsfr-grey-200":
+                        chantier.statut === "ARCHIVE",
+                    },
+                  )}
+                  type="button"
+                >
+                  <TitreRubrique
+                    classNameTitre={
+                      chantier.statut === "ARCHIVE"
+                        ? "!m-0 !text-dsfr-grey-200"
+                        : "!m-0"
+                    }
+                    nombreIndicateurRubrique={indicateursDeCetteRubrique.length}
+                    rubriqueNom={rubriqueIndicateur.nom}
+                  />
+                </button>
+                {rubriqueIndicateur.description ? (
+                  <Infobulle classNameIcone="w-5 h-5 ml-1">
+                    {rubriqueIndicateur.description}
+                  </Infobulle>
+                ) : null}
+              </div>
               <div
                 className="fr-collapse"
                 id={`accordion-rubrique-${rubriqueIndicateur.categorieIndicateur}`}
