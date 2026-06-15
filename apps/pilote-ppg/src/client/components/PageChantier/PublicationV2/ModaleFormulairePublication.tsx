@@ -29,7 +29,7 @@ interface ModaleFormulairePublicationProps {
   title: string;
   consigne: string;
   complementConsigneGenerique: string;
-  trigger: ReactNode;
+  trigger?: ReactNode;
   open: boolean;
   onOpenChange: (isOpen: boolean) => void;
   commentaire: Publication | null;

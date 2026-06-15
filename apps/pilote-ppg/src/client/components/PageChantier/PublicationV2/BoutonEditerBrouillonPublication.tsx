@@ -40,32 +40,33 @@ export const BoutonEditerBrouillonPublication = ({
   };
 
   return (
-    <ModaleFormulairePublication
-      brouillon={brouillon}
-      commentaire={commentaire}
-      complementConsigneGenerique={complementConsigneGenerique}
-      consigne={consigne}
-      onEnregistrerBrouillon={handleBrouillon}
-      onOpenChange={setOpen}
-      onPublier={handlePublier}
-      open={open}
-      title={`Nouveau commentaire "${libelle}"`}
-      trigger={
+    <>
+      <div className="flex items-center gap-1">
         <Bouton
           iconLeft={
             <Icone className="text-current h-4 w-4" icone={Icone1Icon} />
           }
-          iconRight={
-            <Infobulle classNameIcone="w-5 h-5">
-              Vous avez déjà saisi un nouveau commentaire mais vous ne l'avez
-              pas publié. Vous pouvez éditer ce nouveau commentaire pour le
-              publier ou le conserver en tant que brouillon.
-            </Infobulle>
-          }
           label="Editer un brouillon"
+          onClick={() => setOpen(true)}
           variant="secondary"
         />
-      }
-    />
+        <Infobulle classNameIcone="w-5 h-5">
+          Vous avez déjà saisi un nouveau commentaire mais vous ne l'avez
+          pas publié. Vous pouvez éditer ce nouveau commentaire pour le
+          publier ou le conserver en tant que brouillon.
+        </Infobulle>
+      </div>
+      <ModaleFormulairePublication
+        brouillon={brouillon}
+        commentaire={commentaire}
+        complementConsigneGenerique={complementConsigneGenerique}
+        consigne={consigne}
+        onEnregistrerBrouillon={handleBrouillon}
+        onOpenChange={setOpen}
+        onPublier={handlePublier}
+        open={open}
+        title={`Nouveau commentaire "${libelle}"`}
+      />
+    </>
   );
 };
