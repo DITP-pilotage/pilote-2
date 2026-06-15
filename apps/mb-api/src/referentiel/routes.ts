@@ -80,10 +80,10 @@ const getReferentielByIdRoute = createRoute({
 const upsertReferentielRoute = createRoute({
   method: 'put',
   path: '/referentiels/{id}',
-  tags: ['Referentiel'],
+  tags: ['Referentiel', 'Admin'],
   summary: 'Créer ou mettre à jour un référentiel',
   description:
-    "Crée le référentiel s'il n'existe pas, ou met à jour son `nom` et sa `description` quand le référentiel existe déjà. Le tableau `individus` est optionnel : chaque individu est créé et rattaché au référentiel, ou son nom est mis à jour s'il existe déjà et qu'il est déjà rattaché à ce même référentiel. Si un individu listé existe et est rattaché à un autre référentiel, la requête est rejetée (409). Opération idempotente, exécutée dans une transaction.",
+    "Réservé aux clés API de rôle `ADMIN`. Crée le référentiel s'il n'existe pas, ou met à jour son `nom` et sa `description` quand le référentiel existe déjà. Le tableau `individus` est optionnel : chaque individu est créé et rattaché au référentiel, ou son nom est mis à jour s'il existe déjà et qu'il est déjà rattaché à ce même référentiel. Si un individu listé existe et est rattaché à un autre référentiel, la requête est rejetée (409). Opération idempotente, exécutée dans une transaction.",
   middleware: [requireAuthentication],
   request: {
     params: detailParamsSchema,
@@ -100,6 +100,10 @@ const upsertReferentielRoute = createRoute({
     400: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },
       description: 'Corps de requête ou paramètres invalides',
+    },
+    403: {
+      content: { 'application/json': { schema: ErrorApiModelSchema } },
+      description: 'Clé API sans le rôle ADMIN requis',
     },
     409: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },
