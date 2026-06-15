@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { authContext } from '@/framework/auth/authContext'
 import { UnauthorizedError } from '@/framework/auth/UnauthorizedError'
+import { ApiKeyRole } from '@/generated/prisma/enums'
 import {
   getCurrentPrincipal,
   getCurrentUser,
@@ -174,7 +175,9 @@ describe.sequential('middleware authContext', () => {
   })
 
   it("route les tokens préfixés pilote_live_ vers le vérificateur d'API key", async () => {
-    verifyKey.mockReturnValue(okAsync({ id: 'api-key-id-1', label: 'partner-x' }))
+    verifyKey.mockReturnValue(
+      okAsync({ id: 'api-key-id-1', label: 'partner-x', role: ApiKeyRole.CONTRIBUTOR }),
+    )
     const app = buildApp()
     const response = await app.request('/protected-principal', {
       headers: { Authorization: 'Bearer pilote_live_abc123' },
@@ -182,7 +185,7 @@ describe.sequential('middleware authContext', () => {
     expect(response.status).toBe(200)
     expect(await response.json()).toEqual({
       kind: 'apiKey',
-      apiKey: { id: 'api-key-id-1', label: 'partner-x' },
+      apiKey: { id: 'api-key-id-1', label: 'partner-x', role: ApiKeyRole.CONTRIBUTOR },
     })
     expect(verifyKey).toHaveBeenCalledWith('pilote_live_abc123', expect.any(String))
     expect(verifyJwt).not.toHaveBeenCalled()
@@ -199,7 +202,9 @@ describe.sequential('middleware authContext', () => {
   })
 
   it('fait throw UnauthorizedError sur requireUser() quand le principal est une API key', async () => {
-    verifyKey.mockReturnValue(okAsync({ id: 'api-key-id-1', label: 'partner-x' }))
+    verifyKey.mockReturnValue(
+      okAsync({ id: 'api-key-id-1', label: 'partner-x', role: ApiKeyRole.CONTRIBUTOR }),
+    )
     const app = buildApp()
     const response = await app.request('/protected-user', {
       headers: { Authorization: 'Bearer pilote_live_abc123' },
@@ -208,7 +213,9 @@ describe.sequential('middleware authContext', () => {
   })
 
   it('fait passer requirePrincipal() avec un principal API key', async () => {
-    verifyKey.mockReturnValue(okAsync({ id: 'api-key-id-1', label: 'partner-x' }))
+    verifyKey.mockReturnValue(
+      okAsync({ id: 'api-key-id-1', label: 'partner-x', role: ApiKeyRole.CONTRIBUTOR }),
+    )
     const app = buildApp()
     const response = await app.request('/protected-principal', {
       headers: { Authorization: 'Bearer pilote_live_abc123' },
