@@ -41,5 +41,5 @@ const resolveApiKey = async (
     )
   }
 
-  return { id: row.id, label: row.label }
+  return { id: row.id, label: row.label, role: row.role }
 }
