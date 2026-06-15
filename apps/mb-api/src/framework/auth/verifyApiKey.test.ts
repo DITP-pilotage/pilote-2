@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { env } from '@/env'
 import { verifyApiKey } from '@/framework/auth/verifyApiKey'
+import { ApiKeyRole } from '@/generated/prisma/enums'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 
@@ -12,6 +13,7 @@ describe.concurrent('verifyApiKey', () => {
       const row = await fixtures.apiKey({
         rawKey: 'pilote_live_active_key_for_test_value',
         label: 'partenaire X',
+        role: ApiKeyRole.ADMIN,
       })
 
       const result = await verifyApiKey(
@@ -20,7 +22,11 @@ describe.concurrent('verifyApiKey', () => {
       )
 
       expect(result.isOk()).toBe(true)
-      expect(result._unsafeUnwrap()).toEqual({ id: row.id, label: 'partenaire X' })
+      expect(result._unsafeUnwrap()).toEqual({
+        id: row.id,
+        label: 'partenaire X',
+        role: ApiKeyRole.ADMIN,
+      })
     }),
   )
 

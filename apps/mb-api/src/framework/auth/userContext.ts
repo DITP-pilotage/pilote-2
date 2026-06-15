@@ -1,6 +1,7 @@
 import { AsyncLocalStorage } from 'node:async_hooks'
 
 import { UnauthorizedError } from '@/framework/auth/UnauthorizedError'
+import type { ApiKeyRole } from '@/generated/prisma/enums'
 
 export type UtilisateurAuthentifie = {
   id: string
@@ -12,6 +13,7 @@ export type UtilisateurAuthentifie = {
 export type ApiKeyAuthentifiee = {
   id: string
   label: string
+  role: ApiKeyRole
 }
 
 export type Principal =

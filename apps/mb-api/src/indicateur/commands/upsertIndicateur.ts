@@ -5,6 +5,7 @@ import {
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
+import { ensureApiKeyAdmin } from '@/framework/auth/ensureApiKeyAdmin'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
@@ -163,6 +164,7 @@ const createIndicateurAvecGrants = async (
 }
 
 const performUpsert = async (publicId: string, body: UpsertIndicateurBody): Promise<void> => {
+  ensureApiKeyAdmin()
   const principalId = requireCurrentPrincipalId()
   const existant = await db().indicateur.findUnique({ where: { publicId } })
   if (existant) {

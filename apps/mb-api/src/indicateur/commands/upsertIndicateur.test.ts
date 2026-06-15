@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
-import { ValidationError } from '@/framework/errors/AppError'
+import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { upsertIndicateur } from '@/indicateur/commands/upsertIndicateur'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurId, testReferentielId } from '@/test/randomIds'
-import { runAsPrincipal } from '@/test/runAsPrincipal'
+import { runAsAdmin, runAsContributor, runAsUser } from '@/test/runAsPrincipal'
 
 const getConfigurationsReferentiels = async (publicId: string) => {
   const indicateur = await db().indicateur.findUniqueOrThrow({
@@ -32,7 +32,7 @@ describe.concurrent('upsertIndicateur', () => {
       const refA = await fixtures.referentiel({ publicId: refCreateA })
       const refB = await fixtures.referentiel({ publicId: refCreateB })
 
-      const result = await runAsPrincipal(apiKey.id, () =>
+      const result = await runAsAdmin(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'Nouvel indicateur',
           visibilite: 'PRIVE',
@@ -64,7 +64,7 @@ describe.concurrent('upsertIndicateur', () => {
       const indId = testIndicateurId()
       const apiKey = await fixtures.apiKey()
 
-      await runAsPrincipal(apiKey.id, () =>
+      await runAsAdmin(apiKey.id, () =>
         upsertIndicateur(indId, { nom: 'I', visibilite: 'PUBLIC', unite: null, referentiels: [] }),
       )
 
@@ -79,7 +79,7 @@ describe.concurrent('upsertIndicateur', () => {
       const indId = testIndicateurId()
       const apiKey = await fixtures.apiKey()
 
-      await runAsPrincipal(apiKey.id, () =>
+      await runAsAdmin(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
@@ -90,7 +90,7 @@ describe.concurrent('upsertIndicateur', () => {
       const apresCreation = await db().indicateur.findUniqueOrThrow({ where: { publicId: indId } })
       expect(apresCreation.unite).toBe('POURCENTAGE')
 
-      await runAsPrincipal(apiKey.id, () =>
+      await runAsAdmin(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
@@ -101,7 +101,7 @@ describe.concurrent('upsertIndicateur', () => {
       const apresMaj = await db().indicateur.findUniqueOrThrow({ where: { publicId: indId } })
       expect(apresMaj.unite).toBe('ANNEES')
 
-      await runAsPrincipal(apiKey.id, () =>
+      await runAsAdmin(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
@@ -123,7 +123,7 @@ describe.concurrent('upsertIndicateur', () => {
         permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
       })
 
-      await runAsPrincipal(apiKey.id, () =>
+      await runAsAdmin(apiKey.id, () =>
         upsertIndicateur(indId, { nom: 'I', visibilite: 'PUBLIC', unite: null, referentiels: [] }),
       )
 
@@ -145,7 +145,7 @@ describe.concurrent('upsertIndicateur', () => {
         { publicId: refReplaceC },
       )
       const apiKey = await fixtures.apiKey()
-      await runAsPrincipal(apiKey.id, () =>
+      await runAsAdmin(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
@@ -157,7 +157,7 @@ describe.concurrent('upsertIndicateur', () => {
         }),
       )
 
-      await runAsPrincipal(apiKey.id, () =>
+      await runAsAdmin(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
@@ -184,7 +184,7 @@ describe.concurrent('upsertIndicateur', () => {
       const refEmptyA = testReferentielId()
       await fixtures.referentiel({ publicId: refEmptyA })
       const apiKey = await fixtures.apiKey()
-      await runAsPrincipal(apiKey.id, () =>
+      await runAsAdmin(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
@@ -193,7 +193,7 @@ describe.concurrent('upsertIndicateur', () => {
         }),
       )
 
-      await runAsPrincipal(apiKey.id, () =>
+      await runAsAdmin(apiKey.id, () =>
         upsertIndicateur(indId, { nom: 'I', visibilite: 'PRIVE', unite: null, referentiels: [] }),
       )
 
@@ -209,7 +209,7 @@ describe.concurrent('upsertIndicateur', () => {
       await fixtures.referentiel({ publicId: refDedupA })
       const apiKey = await fixtures.apiKey()
 
-      const result = await runAsPrincipal(apiKey.id, () =>
+      const result = await runAsAdmin(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
@@ -239,7 +239,7 @@ describe.concurrent('upsertIndicateur', () => {
       const apiKey = await fixtures.apiKey()
 
       await expect(
-        runAsPrincipal(apiKey.id, () =>
+        runAsAdmin(apiKey.id, () =>
           upsertIndicateur(indId, {
             nom: 'I',
             visibilite: 'PRIVE',
@@ -271,7 +271,7 @@ describe.concurrent('upsertIndicateur', () => {
       })
 
       await expect(
-        runAsPrincipal(apiKey.id, () =>
+        runAsAdmin(apiKey.id, () =>
           upsertIndicateur(indId, { nom: 'X', visibilite: 'PRIVE', unite: null, referentiels: [] }),
         ),
       ).rejects.toThrow(/permission/i)
@@ -286,7 +286,7 @@ describe.concurrent('upsertIndicateur', () => {
       await fixtures.referentiel({ publicId: refUpdateA })
       const apiKey = await fixtures.apiKey()
 
-      await runAsPrincipal(apiKey.id, () =>
+      await runAsAdmin(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
@@ -295,7 +295,7 @@ describe.concurrent('upsertIndicateur', () => {
         }),
       )
 
-      await runAsPrincipal(apiKey.id, () =>
+      await runAsAdmin(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
@@ -318,7 +318,7 @@ describe.concurrent('upsertIndicateur', () => {
       await fixtures.referentiel({ publicId: refDedupFn })
       const apiKey = await fixtures.apiKey()
 
-      const result = await runAsPrincipal(apiKey.id, () =>
+      const result = await runAsAdmin(apiKey.id, () =>
         upsertIndicateur(indId, {
           nom: 'I',
           visibilite: 'PRIVE',
@@ -334,6 +334,50 @@ describe.concurrent('upsertIndicateur', () => {
       expect(await getConfigurationsReferentiels(indId)).toEqual([
         { referentielPublicId: refDedupFn, fonctionAgregation: 'NONE' },
       ])
+    }),
+  )
+})
+
+describe.concurrent('upsertIndicateur — garde ADMIN', () => {
+  const body = { nom: 'Nouveau nom', visibilite: 'PRIVE' as const, unite: null, referentiels: [] }
+
+  it(
+    'refuse une clé CONTRIBUTOR (403)',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+      })
+
+      await expect(
+        runAsContributor(apiKey.id, () => upsertIndicateur(indId, body)),
+      ).rejects.toBeInstanceOf(ForbiddenError)
+    }),
+  )
+
+  it(
+    'autorise une clé ADMIN à créer un indicateur',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsAdmin(apiKey.id, () => upsertIndicateur(indId, body))
+
+      expect(result.isOk()).toBe(true)
+      const row = await db().indicateur.findUnique({ where: { publicId: indId } })
+      expect(row?.nom).toBe('Nouveau nom')
+    }),
+  )
+
+  it(
+    'autorise un utilisateur OIDC à créer un indicateur',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const utilisateur = await fixtures.utilisateur()
+
+      const result = await runAsUser(utilisateur.id, () => upsertIndicateur(indId, body))
+
+      expect(result.isOk()).toBe(true)
     }),
   )
 })

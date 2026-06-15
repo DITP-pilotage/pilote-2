@@ -5,10 +5,11 @@ import { buildApiKey } from '@/framework/auth/apiKey'
 const printUsage = () => {
   process.stderr.write(
     [
-      'Usage: tsx scripts/generate-api-key.ts --secret=<hmac-secret> [--label=<label>] [--expires-at=YYYY-MM-DD]',
+      'Usage: tsx scripts/generate-api-key.ts --secret=<hmac-secret> [--label=<label>] [--admin] [--expires-at=YYYY-MM-DD]',
       '',
       '  --secret      Secret HMAC à utiliser pour calculer le hash (obligatoire ; sinon lu depuis API_KEY_HMAC_SECRET).',
       "  --label       Étiquette à utiliser dans la commande SQL d'insertion (optionnel ; défaut: 'à renseigner').",
+      '  --admin       Génère une clé de rôle ADMIN (gestion des indicateurs/référentiels). Défaut : CONTRIBUTOR.',
       "  --expires-at  Date d'expiration ISO (optionnel ; sans cette option, la clé n'expire pas).",
       '',
       'Le script ne touche pas la base : il imprime la clé en clair (à transmettre au client) et',
@@ -35,6 +36,7 @@ const main = (): void => {
     options: {
       secret: { type: 'string' },
       label: { type: 'string' },
+      admin: { type: 'boolean' },
       'expires-at': { type: 'string' },
       help: { type: 'boolean', short: 'h' },
     },
@@ -56,14 +58,16 @@ const main = (): void => {
   }
 
   const label = values.label ?? 'à renseigner'
+  const role = values.admin ? 'ADMIN' : 'CONTRIBUTOR'
   const expiresAt = parseExpiresAt(values['expires-at'])
   const generated = buildApiKey(secret)
 
   const sqlInsert = [
     'BEGIN;',
     `INSERT INTO principal (id) VALUES (${sqlString(generated.id)});`,
-    `INSERT INTO api_key (id, label, key_hash, prefix, expires_at) VALUES (` +
+    `INSERT INTO api_key (id, label, key_hash, prefix, role, expires_at) VALUES (` +
       `${sqlString(generated.id)}, ${sqlString(label)}, ${sqlString(generated.keyHash)}, ${sqlString(generated.prefix)}, ` +
+      `${sqlString(role)}::api_key_role_enum, ` +
       `${expiresAt ? sqlString(expiresAt.toISOString()) : 'NULL'});`,
     `-- Grants READ + WRITE sur les 10 premiers indicateurs (ordre publicId ASC)`,
     `INSERT INTO indicateur_permission (principal_id, indicateur_id, action)`,
@@ -79,6 +83,7 @@ const main = (): void => {
       '== API key générée ==',
       `id        : ${generated.id}`,
       `label     : ${label}`,
+      `role      : ${role}`,
       `prefix    : ${generated.prefix}`,
       `expiresAt : ${expiresAt ? expiresAt.toISOString() : 'jamais'}`,
       '',

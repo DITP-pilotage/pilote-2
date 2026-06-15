@@ -1,10 +1,18 @@
 import { describe, expect, it } from 'vitest'
 
+import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { upsertReferentiel } from '@/referentiel/commands/upsertReferentiel'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testDeptIds, testReferentielId } from '@/test/randomIds'
+import { runAsAdmin, runAsContributor, runAsUser } from '@/test/runAsPrincipal'
+
+// La gestion d'un référentiel est réservée aux clés ADMIN : les cas nominaux
+// s'exécutent donc sous un principal ADMIN.
+const ADMIN_PRINCIPAL_ID = '00000000-0000-0000-0000-0000000000aa'
+const upsertReferentielAsAdmin: typeof upsertReferentiel = (publicId, body) =>
+  runAsAdmin(ADMIN_PRINCIPAL_ID, () => upsertReferentiel(publicId, body))
 
 describe.concurrent('upsertReferentiel', () => {
   it(
@@ -12,7 +20,7 @@ describe.concurrent('upsertReferentiel', () => {
     integrationTest(async () => {
       // When
       const refNew = testReferentielId()
-      const result = await upsertReferentiel(refNew, {
+      const result = await upsertReferentielAsAdmin(refNew, {
         nom: 'Nouveau référentiel',
         description: 'Description initiale',
       })
@@ -37,7 +45,7 @@ describe.concurrent('upsertReferentiel', () => {
       })
 
       // When
-      const result = await upsertReferentiel(refUpd, {
+      const result = await upsertReferentielAsAdmin(refUpd, {
         nom: 'Nouveau nom',
         description: null,
       })
@@ -60,7 +68,7 @@ describe.concurrent('upsertReferentiel', () => {
       const refInds = testReferentielId()
 
       // When
-      await upsertReferentiel(refInds, {
+      await upsertReferentielAsAdmin(refInds, {
         nom: 'Avec individus',
         description: null,
         individus: [
@@ -96,7 +104,7 @@ describe.concurrent('upsertReferentiel', () => {
       })
 
       // When
-      const result = await upsertReferentiel(refLink, {
+      const result = await upsertReferentielAsAdmin(refLink, {
         nom: 'Référentiel',
         description: null,
         individus: [{ publicId: dept1, nom: 'Nouveau nom individu' }],
@@ -127,7 +135,7 @@ describe.concurrent('upsertReferentiel', () => {
       )
 
       // When
-      const result = await upsertReferentiel(refNew2, {
+      const result = await upsertReferentielAsAdmin(refNew2, {
         nom: 'Nouveau référentiel',
         description: null,
         individus: [
@@ -153,7 +161,7 @@ describe.concurrent('upsertReferentiel', () => {
     integrationTest(async () => {
       // When
       const refEmpty = testReferentielId()
-      const result = await upsertReferentiel(refEmpty, {
+      const result = await upsertReferentielAsAdmin(refEmpty, {
         nom: 'Sans individus',
         description: null,
       })
@@ -164,6 +172,48 @@ describe.concurrent('upsertReferentiel', () => {
         where: { publicId: refEmpty },
       })
       expect(persisted.nom).toBe('Sans individus')
+    }),
+  )
+})
+
+describe.concurrent('upsertReferentiel — garde ADMIN', () => {
+  const body = { nom: 'Référentiel', description: null, individus: [] }
+
+  it(
+    'refuse une clé CONTRIBUTOR (403)',
+    integrationTest(async () => {
+      const refId = testReferentielId()
+      const apiKey = await fixtures.apiKey()
+
+      await expect(
+        runAsContributor(apiKey.id, () => upsertReferentiel(refId, body)),
+      ).rejects.toBeInstanceOf(ForbiddenError)
+    }),
+  )
+
+  it(
+    'autorise une clé ADMIN',
+    integrationTest(async () => {
+      const refId = testReferentielId()
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsAdmin(apiKey.id, () => upsertReferentiel(refId, body))
+
+      expect(result.isOk()).toBe(true)
+      const row = await db().referentiel.findUnique({ where: { publicId: refId } })
+      expect(row?.nom).toBe('Référentiel')
+    }),
+  )
+
+  it(
+    'autorise un utilisateur OIDC',
+    integrationTest(async () => {
+      const refId = testReferentielId()
+      const utilisateur = await fixtures.utilisateur()
+
+      const result = await runAsUser(utilisateur.id, () => upsertReferentiel(refId, body))
+
+      expect(result.isOk()).toBe(true)
     }),
   )
 })

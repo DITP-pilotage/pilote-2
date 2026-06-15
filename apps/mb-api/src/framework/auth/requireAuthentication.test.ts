@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest'
 import { UnauthorizedError } from '@/framework/auth/UnauthorizedError'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { type Principal, runWithPrincipal } from '@/framework/auth/userContext'
+import { ApiKeyRole } from '@/generated/prisma/enums'
 
 const buildApp = (principal: Principal | null) => {
   const app = new Hono()
@@ -42,7 +43,7 @@ describe.concurrent('middleware requireAuthentication', () => {
   it('laisse passer la requête quand un principal API key est présent', async () => {
     const app = buildApp({
       kind: 'apiKey',
-      apiKey: { id: 'api-key-id-1', label: 'partner-x' },
+      apiKey: { id: 'api-key-id-1', label: 'partner-x', role: ApiKeyRole.CONTRIBUTOR },
     })
     const response = await app.request('/protected')
     expect(response.status).toBe(200)
