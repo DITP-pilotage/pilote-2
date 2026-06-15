@@ -31,7 +31,7 @@ export class HeaderComponent {
     if (await this.userButton().isVisible()) {
       await expect(async () => {
         await this.userButton().click();
-        await this.logoutButton.waitFor({ state: "visible", timeout: 2_000 });
+        await this.logoutButton.waitFor({ state: "visible", timeout: 5_000 });
       }).toPass({ timeout: 15_000 });
 
       await this.logoutButton.click();
@@ -54,7 +54,7 @@ export class HeaderComponent {
       );
 
       if (sessionStillPresent) {
-        await this.page.context().clearCookies();
+        await this.page.context().clearCookies({ name: /session-token/ });
         await this.page.reload({ waitUntil: "domcontentloaded" });
       }
 

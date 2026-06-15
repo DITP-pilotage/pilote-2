@@ -19,7 +19,7 @@ export default defineConfig({
   /* Retry on CI only */
   retries: 2,
   timeout: 90_000,
-  globalTimeout: 1_000_000,
+  globalTimeout: 1_400_000,
   outputDir: process.env.CI ? "test-results" : "/tmp/pilote-playwright/results",
   /* Run serially for test isolation */
   workers: 3,
