@@ -18,7 +18,6 @@ env:
   BASE_URL: https://e2e-pilote.localhost:1355
   NEXTAUTH_URL: https://e2e-pilote.localhost:1355
   WEBAPP_BASE_URL: https://e2e-pilote.localhost:1355
-
 jobs:
   e2e-tests:
     runs-on: ubuntu-22.04
@@ -57,14 +56,11 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm -F @pilote/ppg exec playwright install chromium --with-deps
 
-      - name: Start portless proxy
-        run: pnpm -F @pilote/ppg exec portless proxy start --port 1355 --https
-
       - name: Run E2E tests
         id: playwright-tests
         run: |
           set -e
-          pnpm -F @pilote/ppg exec playwright test --workers=1
+          pnpm -F @pilote/ppg exec playwright test --workers=3
         env:
           CI: true
           PLAYWRIGHT_HEADLESS: true
