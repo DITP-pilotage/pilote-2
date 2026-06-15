@@ -60,7 +60,7 @@ jobs:
         id: playwright-tests
         run: |
           set -e
-          pnpm -F @pilote/ppg exec playwright test --workers=3
+          pnpm -F @pilote/ppg exec playwright test --workers=3 --reporter=list
         env:
           CI: true
           PLAYWRIGHT_HEADLESS: true
