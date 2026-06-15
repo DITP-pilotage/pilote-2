@@ -83,7 +83,7 @@ const upsertReferentielRoute = createRoute({
   tags: ['Referentiel', 'Admin'],
   summary: 'Créer ou mettre à jour un référentiel',
   description:
-    "Réservé aux clés API de rôle `ADMIN`. Crée le référentiel s'il n'existe pas, ou met à jour son `nom` et sa `description` quand le référentiel existe déjà. Le tableau `individus` est optionnel : chaque individu est créé et rattaché au référentiel, ou son nom est mis à jour s'il existe déjà et qu'il est déjà rattaché à ce même référentiel. Si un individu listé existe et est rattaché à un autre référentiel, la requête est rejetée (409). Opération idempotente, exécutée dans une transaction.",
+    "Réservé aux clés API de rôle `ADMIN` (les utilisateurs OIDC authentifiés restent autorisés). Crée le référentiel s'il n'existe pas, ou met à jour son `nom` et sa `description` quand le référentiel existe déjà. Le tableau `individus` est optionnel : chaque individu est créé et rattaché au référentiel, ou son nom est mis à jour s'il existe déjà et qu'il est déjà rattaché à ce même référentiel. Si un individu listé existe et est rattaché à un autre référentiel, la requête est rejetée (409). Opération idempotente, exécutée dans une transaction.",
   middleware: [requireAuthentication],
   request: {
     params: detailParamsSchema,
