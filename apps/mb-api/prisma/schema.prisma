@@ -54,15 +54,23 @@ model IdentiteExterne {
   @@map("identite_externe")
 }
 
+enum ApiKeyRole {
+  CONTRIBUTOR
+  ADMIN
+
+  @@map("api_key_role_enum")
+}
+
 model ApiKey {
-  id         String    @id @db.Uuid
+  id         String     @id @db.Uuid
   label      String
-  keyHash    String    @unique @map("key_hash")
-  prefix     String    @map("prefix")
-  createdAt  DateTime  @default(now()) @map("created_at")
-  expiresAt  DateTime? @map("expires_at")
-  revokedAt  DateTime? @map("revoked_at")
-  lastUsedAt DateTime? @map("last_used_at")
+  keyHash    String     @unique @map("key_hash")
+  prefix     String     @map("prefix")
+  role       ApiKeyRole @default(CONTRIBUTOR) @map("role")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  expiresAt  DateTime?  @map("expires_at")
+  revokedAt  DateTime?  @map("revoked_at")
+  lastUsedAt DateTime?  @map("last_used_at")
 
   principal Principal @relation(fields: [id], references: [id], onDelete: Cascade)
 
