@@ -4,11 +4,11 @@ on:
   schedule:
     - cron: "0 8,14 * * *"
   workflow_dispatch: # Pour déclencher manuellement
-      notify_tchap:
-        description: "Envoyer notification Tchap"
-        required: true
-        default: true
-        type: boolean
+    notify_tchap:
+      description: "Envoyer notification Tchap"
+      required: true
+      default: true
+      type: boolean
 env:
   # Notifications Tchap
   TCHAP_BASE_URL: ${{ secrets.TCHAP_BASE_URL }}
@@ -48,8 +48,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version-file: 'package.json'
-          cache: 'pnpm'
+          node-version-file: "package.json"
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
