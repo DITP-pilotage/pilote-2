@@ -30,6 +30,7 @@ import {
   type WidgetModel,
 } from '@/generated/prisma/models'
 import {
+  ApiKeyRole,
   PermissionAction,
   ProviderType,
   Visibilite,
@@ -528,6 +529,7 @@ type ApiKeyOverrides = Partial<{
   label: string
   rawKey: string
   prefix: string
+  role: ApiKeyRole
   expiresAt: Date | null
   revokedAt: Date | null
   lastUsedAt: Date | null
@@ -563,6 +565,7 @@ const upsertApiKey = async (o: ApiKeyOverrides = {}) => {
     label: o.label ?? 'API key de test',
     keyHash,
     prefix: o.prefix ?? rawKey.slice(0, 20),
+    role: o.role ?? ApiKeyRole.CONTRIBUTOR,
     expiresAt: o.expiresAt ?? null,
     revokedAt: o.revokedAt ?? null,
     lastUsedAt: o.lastUsedAt ?? null,
