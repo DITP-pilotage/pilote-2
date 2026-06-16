@@ -8,6 +8,7 @@ import {
   formatDateFr,
   formatNumberAvecUniteFr,
   formatNumberFr,
+  formatVariationAvecUniteFr,
   formatVariationFr,
 } from '@/lib/format'
 import {
@@ -52,14 +53,16 @@ export function IndicateurValeursRemarquables({
 
   const derniereValeur = derniereValeurFromItems(valeurs.items)
   const variation = synthese.items[0]?.variation ?? null
+  const ecartMediane = synthese.items[0]?.ecartMediane ?? null
 
   const dernierPoint = tauxProgression.items[tauxProgression.items.length - 1]
   const hasTaux = dernierPoint !== undefined
+  const columns = hasTaux ? 4 : 3
 
   return (
-    <StatGrid columns={hasTaux ? 3 : 2}>
+    <StatGrid columns={columns}>
       <StatCard
-        label="Valeur la plus récente"
+        label="Valeur d'avancement"
         tone={derniereValeur ? 'neutral' : 'muted'}
         value={derniereValeur ? formatNumberAvecUniteFr(derniereValeur.valeur, unite) : '—'}
         caption={derniereValeur ? `au ${formatDateFr(derniereValeur.date)}` : undefined}
@@ -68,6 +71,11 @@ export function IndicateurValeursRemarquables({
         label="Variation depuis la dernière MAJ"
         tone={variationTone(variation)}
         value={variation === null ? '—' : formatVariationFr(variation)}
+      />
+      <StatCard
+        label="Écart à la médiane"
+        tone={ecartMediane === null ? 'muted' : 'neutral'}
+        value={ecartMediane === null ? '—' : formatVariationAvecUniteFr(ecartMediane, unite)}
       />
       {hasTaux && (
         <StatCard

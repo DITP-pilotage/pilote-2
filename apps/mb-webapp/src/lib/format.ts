@@ -25,6 +25,14 @@ export const formatNumberAvecUniteFr = (
 
 export const formatVariationFr = (value: number): string => variationFr.format(value)
 
+export const formatVariationAvecUniteFr = (
+  value: number,
+  unite: UniteIndicateurApiModel | null,
+): string =>
+  unite
+    ? `${variationFr.format(value)}${NBSP_FINE}${unite.abbreviation}`
+    : variationFr.format(value)
+
 export const formatDateFr = (value: Date | string): string => dateFr.format(toDate(value))
 
 export const formatDateTimeFr = (value: Date | string): string =>
