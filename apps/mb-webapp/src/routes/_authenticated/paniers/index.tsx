@@ -5,6 +5,7 @@ import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { startTransition, useId } from 'react'
 import { z } from 'zod'
 
+import { DashboardSwitch } from '@/components/DashboardSwitch'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
@@ -71,7 +72,10 @@ function PaniersListComponent() {
       : undefined
 
   return (
-    <Page kicker="Collections thématiques" title="Paniers">
+    <Page
+      title="Tableau de bord"
+      description="Consultez et gérez l'ensemble de vos indicateurs par valeur ou par dossier."
+    >
       <div className="flex flex-col gap-6">
         {search.individu ? (
           <div className="max-w-md">
@@ -92,9 +96,12 @@ function PaniersListComponent() {
           </div>
         ) : null}
 
-        <Text as="span" variant="kicker" tone="muted">
-          {data.total} panier{data.total > 1 ? 's' : ''}
-        </Text>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <Text as="span" variant="kicker" tone="muted">
+            {data.total} dossier{data.total > 1 ? 's' : ''}
+          </Text>
+          <DashboardSwitch />
+        </div>
 
         {data.items.length === 0 ? (
           <EmptyState title="Aucun panier disponible" />

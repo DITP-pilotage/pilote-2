@@ -5,6 +5,7 @@ import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { startTransition, useId } from 'react'
 import { z } from 'zod'
 
+import { DashboardSwitch } from '@/components/DashboardSwitch'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
@@ -63,7 +64,10 @@ function IndicateursListComponent() {
   const referentielIds = referentiels.map((r) => r.id)
 
   return (
-    <Page kicker="Catalogue" title="Indicateurs">
+    <Page
+      title="Tableau de bord"
+      description="Consultez et gérez l'ensemble de vos indicateurs par valeur ou par dossier."
+    >
       <div className="flex flex-col gap-6">
         {search.individu ? (
           <div className="max-w-md">
@@ -88,15 +92,18 @@ function IndicateursListComponent() {
           <Text as="span" variant="kicker" tone="muted">
             {data.total} indicateur{data.total > 1 ? 's' : ''}
           </Text>
-          <SearchField
-            label="Rechercher un indicateur par nom"
-            placeholder="Rechercher un indicateur…"
-            value={search.recherche ?? ''}
-            onChange={(value) => {
-              const recherche = value || undefined
-              void navigate({ search: (prev) => ({ ...prev, recherche, cursor: undefined }) })
-            }}
-          />
+          <div className="flex flex-wrap items-center gap-4">
+            <SearchField
+              label="Rechercher un indicateur par nom"
+              placeholder="Rechercher un indicateur…"
+              value={search.recherche ?? ''}
+              onChange={(value) => {
+                const recherche = value || undefined
+                void navigate({ search: (prev) => ({ ...prev, recherche, cursor: undefined }) })
+              }}
+            />
+            <DashboardSwitch />
+          </div>
         </div>
 
         {data.items.length === 0 ? (
