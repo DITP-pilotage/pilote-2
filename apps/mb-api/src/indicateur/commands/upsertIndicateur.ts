@@ -121,7 +121,17 @@ const updateIndicateurExistant = async (
   const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
   await db().indicateur.update({
     where: { publicId },
-    data: { nom: body.nom, visibilite: body.visibilite, unite: body.unite },
+    data: {
+      nom: body.nom,
+      visibilite: body.visibilite,
+      unite: body.unite,
+      description: body.description,
+      methodeCalcul: body.methodeCalcul,
+      sourceDonnees: body.sourceDonnees,
+      sourceUrl: body.sourceUrl,
+      periodeMiseAJour: body.periodeMiseAJour,
+      jourMiseAJour: body.jourMiseAJour,
+    },
   })
   await remplacerConfigurationsReferentiels(indicateurId, configurations)
 }
@@ -149,6 +159,12 @@ const createIndicateurAvecGrants = async (
       nom: body.nom,
       visibilite: body.visibilite,
       unite: body.unite,
+      description: body.description,
+      methodeCalcul: body.methodeCalcul,
+      sourceDonnees: body.sourceDonnees,
+      sourceUrl: body.sourceUrl,
+      periodeMiseAJour: body.periodeMiseAJour,
+      jourMiseAJour: body.jourMiseAJour,
     },
   })
   await grantOwnerPermissions(principalId, indicateurId)

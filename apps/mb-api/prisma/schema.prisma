@@ -79,13 +79,19 @@ model ApiKey {
 }
 
 model Indicateur {
-  id         String            @id @db.Uuid
-  publicId   String            @unique @map("public_id")
-  nom        String
-  visibilite Visibilite
-  unite      UniteIndicateur?
-  createdAt  DateTime          @default(now()) @map("created_at")
-  updatedAt  DateTime          @updatedAt      @map("updated_at")
+  id                String            @id @db.Uuid
+  publicId          String            @unique @map("public_id")
+  nom               String
+  visibilite        Visibilite
+  unite             UniteIndicateur?
+  description       String?
+  methodeCalcul     String?           @map("methode_calcul")
+  sourceDonnees     String?           @map("source_donnees")
+  sourceUrl         String?           @map("source_url")
+  periodeMiseAJour  PeriodeMiseAJour? @map("periode_mise_a_jour")
+  jourMiseAJour     Int?              @map("jour_mise_a_jour")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt      @map("updated_at")
 
   valeurs      ValeurAvancement[]
   objectifs    ObjectifIndicateurIndividu[]
@@ -116,6 +122,19 @@ enum UniteIndicateur {
   ANNEES
 
   @@map("unite_indicateur_enum")
+}
+
+enum PeriodeMiseAJour {
+  QUOTIDIENNE
+  HEBDOMADAIRE
+  BIMENSUELLE
+  MENSUELLE
+  TRIMESTRIELLE
+  SEMESTRIELLE
+  ANNUELLE
+  AUCUNE
+
+  @@map("periode_mise_a_jour_enum")
 }
 
 model IndicateurReferentiel {

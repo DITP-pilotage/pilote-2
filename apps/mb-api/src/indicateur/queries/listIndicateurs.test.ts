@@ -314,8 +314,16 @@ describe.concurrent('listIndicateurs', () => {
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
 
       const referentielsTries = [
-        { referentielPublicId: refListM, fonctionAgregation: 'SUM' as const },
-        { referentielPublicId: refListZ, fonctionAgregation: 'SUM' as const },
+        {
+          referentielPublicId: refListM,
+          referentielNom: 'Référentiel de test',
+          fonctionAgregation: 'SUM' as const,
+        },
+        {
+          referentielPublicId: refListZ,
+          referentielNom: 'Référentiel de test',
+          fonctionAgregation: 'SUM' as const,
+        },
       ].sort((a, b) => a.referentielPublicId.localeCompare(b.referentielPublicId))
 
       const value = result._unsafeUnwrap()
