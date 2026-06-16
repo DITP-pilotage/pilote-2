@@ -26,7 +26,7 @@ import {
   type ObjectifBrut,
   resolveTauxProgression,
   type ValeurBrute,
-} from '@/tauxProgression/resolveTauxProgression'
+} from '@/valeurAvancement/resolveTauxProgression'
 import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
 import {
   type IndividuRef,

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { listTauxProgressionForIndicateur } from '@/tauxProgression/queries/listTauxProgressionForIndicateur'
+import { listTauxProgressionForIndicateur } from '@/valeurAvancement/queries/listTauxProgressionForIndicateur'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import {
