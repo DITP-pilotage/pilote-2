@@ -134,7 +134,7 @@ const computeDernierTaux = async ({
 }): Promise<{ tauxProgression: number | null; date: Bucket } | null> => {
   const points = await computeTauxProgressionPoints({
     indicateurId,
-    cibles: [cible],
+    individusCibles: [cible],
     dateTruncValeur: DATE_TRUNC_VALEUR,
     dateTruncObjectif: DATE_TRUNC_OBJECTIF,
   })

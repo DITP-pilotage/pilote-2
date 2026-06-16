@@ -50,7 +50,7 @@ const buildList = async ({
 
   const points = await computeTauxProgressionPoints({
     indicateurId: indicateur.id,
-    cibles: individusCibles,
+    individusCibles: individusCibles,
     dateTruncValeur,
     dateTruncObjectif,
   })

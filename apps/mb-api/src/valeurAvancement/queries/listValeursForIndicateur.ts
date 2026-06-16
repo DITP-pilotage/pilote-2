@@ -58,7 +58,7 @@ const buildSeries = async ({
   const startedAt = performance.now()
   const { ctx, allNodes } = await loadResolveSerieContext({
     indicateurId,
-    cibles: individusCibles,
+    individusCibles: individusCibles,
     dateTrunc,
   })
   const cache = new Map<string, ReadonlyArray<PointInterne>>()

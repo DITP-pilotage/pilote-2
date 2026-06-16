@@ -15,15 +15,15 @@ import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
 
 export const loadResolveObjectifContext = async ({
   indicateurId,
-  cibles,
+  individusCibles,
   dateTrunc,
 }: {
   indicateurId: string
-  cibles: ReadonlyArray<IndividuRef>
+  individusCibles: ReadonlyArray<IndividuRef>
   dateTrunc: DateTrunc
 }): Promise<{ ctx: ResolveObjectifContext; allNodes: Map<string, IndividuRef> }> => {
   const [{ allNodes, enfantsParParent }, fonctionAgregationParReferentiel] = await Promise.all([
-    loadSousArbre(cibles),
+    loadSousArbre(individusCibles),
     loadFonctionsAgregation(indicateurId),
   ])
   const objectifBucketParIndividu = await loadObjectifsBucketises({

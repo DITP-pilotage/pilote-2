@@ -21,15 +21,15 @@ import {
 // functional core reste pur et mémoïsable côté appelant.
 export const loadResolveSerieContext = async ({
   indicateurId,
-  cibles,
+  individusCibles,
   dateTrunc,
 }: {
   indicateurId: string
-  cibles: ReadonlyArray<IndividuRef>
+  individusCibles: ReadonlyArray<IndividuRef>
   dateTrunc: DateTrunc
 }): Promise<{ ctx: ResolveSerieContext; allNodes: Map<string, IndividuRef> }> => {
   const [{ allNodes, enfantsParParent }, fonctionAgregationParReferentiel] = await Promise.all([
-    loadSousArbre(cibles),
+    loadSousArbre(individusCibles),
     loadFonctionsAgregation(indicateurId),
   ])
   const serieFeuilleParIndividu = await loadSaisiesTronquees({

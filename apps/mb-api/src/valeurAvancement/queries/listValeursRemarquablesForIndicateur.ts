@@ -61,7 +61,11 @@ const buildStats = async ({
   const cibles: IndividuRef[] = referentiels.flatMap((r) => r.individus)
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const startedAt = performance.now()
-  const { ctx, allNodes } = await loadResolveSerieContext({ indicateurId, cibles, dateTrunc })
+  const { ctx, allNodes } = await loadResolveSerieContext({
+    indicateurId,
+    individusCibles: cibles,
+    dateTrunc,
+  })
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
 
   const items: ValeursRemarquablesListApiModel['items'] = []

@@ -51,7 +51,7 @@ const build = async (
     indicateurs.map(async (indicateur) => {
       const { ctx } = await loadResolveSerieContext({
         indicateurId: indicateur.id,
-        cibles: [individu],
+        individusCibles: [individu],
         dateTrunc,
       })
       const cache = new Map<string, ReadonlyArray<PointInterne>>()

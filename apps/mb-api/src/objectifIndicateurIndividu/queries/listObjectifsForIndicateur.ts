@@ -45,7 +45,7 @@ const buildList = async ({
   const dateTrunc: DateTrunc = params.dateTrunc ?? DEFAULT_DATE_TRUNC
   const { ctx } = await loadResolveObjectifContext({
     indicateurId: indicateur.id,
-    cibles: individusCibles,
+    individusCibles: individusCibles,
     dateTrunc,
   })
 

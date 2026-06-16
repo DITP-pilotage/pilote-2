@@ -28,20 +28,28 @@ import {
 // panier" (cf. `docs/architecture/taux-progression.md`).
 export const computeTauxProgressionPoints = async ({
   indicateurId,
-  cibles,
+  individusCibles,
   dateTruncValeur,
   dateTruncObjectif,
 }: {
   indicateurId: string
-  cibles: ReadonlyArray<IndividuRef>
+  individusCibles: ReadonlyArray<IndividuRef>
   dateTruncValeur: DateTrunc
   dateTruncObjectif: DateTrunc
 }): Promise<TauxProgressionPoint[]> => {
-  if (cibles.length === 0) return []
+  if (individusCibles.length === 0) return []
 
   const [{ ctx: serieCtx }, { ctx: objectifCtx }] = await Promise.all([
-    loadResolveSerieContext({ indicateurId, cibles, dateTrunc: dateTruncValeur }),
-    loadResolveObjectifContext({ indicateurId, cibles, dateTrunc: dateTruncObjectif }),
+    loadResolveSerieContext({
+      indicateurId,
+      individusCibles,
+      dateTrunc: dateTruncValeur,
+    }),
+    loadResolveObjectifContext({
+      indicateurId,
+      individusCibles,
+      dateTrunc: dateTruncObjectif,
+    }),
   ])
   const serieCache = new Map<string, ReadonlyArray<PointInterne>>()
   const objectifCache = new Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>()
@@ -49,7 +57,7 @@ export const computeTauxProgressionPoints = async ({
   const valeurs: ValeurBrute[] = []
   const objectifsParIndividu = new Map<string, ObjectifBrut[]>()
 
-  for (const cible of cibles) {
+  for (const cible of individusCibles) {
     const serie = await resolveSerieIndividu(cible.id, serieCtx, serieCache)
     for (const point of serie) {
       valeurs.push({

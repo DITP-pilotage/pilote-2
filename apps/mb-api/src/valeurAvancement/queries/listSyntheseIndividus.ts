@@ -61,7 +61,7 @@ const buildSynthese = async (
   const startedAt = performance.now()
   const { ctx, allNodes } = await loadResolveSerieContext({
     indicateurId: indicateur.id,
-    cibles: population,
+    individusCibles: population,
     dateTrunc,
   })
   const cache = new Map<string, ReadonlyArray<PointInterne>>()
