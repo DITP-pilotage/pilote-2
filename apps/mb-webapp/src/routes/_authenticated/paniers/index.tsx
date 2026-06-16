@@ -77,31 +77,33 @@ function PaniersListComponent() {
       description="Consultez et gérez l'ensemble de vos indicateurs par valeur ou par dossier."
     >
       <div className="flex flex-col gap-6">
-        {search.individu ? (
-          <div className="max-w-md">
-            <FormField label="Individu observé" htmlFor={selectId}>
-              <IndividuSelect
-                id={selectId}
-                referentielIds={referentielIds}
-                value={search.individu}
-                onChange={({ individu, referentiel }) => {
-                  startTransition(() => {
-                    void navigate({
-                      search: (prev) => ({ ...prev, individu, referentiel }),
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          {search.individu ? (
+            <div className="max-w-md flex-1">
+              <FormField label="Individu observé" htmlFor={selectId}>
+                <IndividuSelect
+                  id={selectId}
+                  referentielIds={referentielIds}
+                  value={search.individu}
+                  onChange={({ individu, referentiel }) => {
+                    startTransition(() => {
+                      void navigate({
+                        search: (prev) => ({ ...prev, individu, referentiel }),
+                      })
                     })
-                  })
-                }}
-              />
-            </FormField>
-          </div>
-        ) : null}
-
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <Text as="span" variant="kicker" tone="muted">
-            {data.total} dossier{data.total > 1 ? 's' : ''}
-          </Text>
+                  }}
+                />
+              </FormField>
+            </div>
+          ) : (
+            <div />
+          )}
           <DashboardSwitch />
         </div>
+
+        <Text as="span" variant="kicker" tone="muted">
+          {data.total} dossier{data.total > 1 ? 's' : ''}
+        </Text>
 
         {data.items.length === 0 ? (
           <EmptyState title="Aucun panier disponible" />
