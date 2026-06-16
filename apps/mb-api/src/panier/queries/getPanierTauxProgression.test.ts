@@ -1,13 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
-import { getPanierTauxProgression } from '@/panierTauxProgression/queries/getPanierTauxProgression'
+import { getPanierTauxProgression } from '@/panier/queries/getPanierTauxProgression'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import {
-  testDeptId,
-  testIndicateurId,
-  testReferentielId,
-} from '@/test/randomIds'
+import { testDeptId, testIndicateurId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('getPanierTauxProgression', () => {

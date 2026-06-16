@@ -21,7 +21,7 @@ import { withPanierReadPermission } from '@/panier/permissions'
 import {
   type IndicateurContribution,
   resolvePanierTauxProgression,
-} from '@/panierTauxProgression/resolvePanierTauxProgression'
+} from '@/panier/resolvePanierTauxProgression'
 import {
   type ObjectifBrut,
   resolveTauxProgression,

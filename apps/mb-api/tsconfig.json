@@ -23,7 +23,6 @@
       "@/objectifIndicateurIndividu/*": ["./src/objectifIndicateurIndividu/*"],
       "@/widget/*": ["./src/widget/*"],
       "@/panier/*": ["./src/panier/*"],
-      "@/panierTauxProgression/*": ["./src/panierTauxProgression/*"],
       "@/shared/*": ["./src/shared/*"],
       "@/generated/*": ["./src/generated/*"],
       "@/test/*": ["./src/test/*"],

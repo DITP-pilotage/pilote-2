@@ -11,7 +11,6 @@ import { health } from '@/healthcheck/routes/health'
 import { indicateurRoutes } from '@/indicateur/routes'
 import { individuRoutes } from '@/individu/routes'
 import { panierRoutes } from '@/panier/routes'
-import { panierTauxProgressionRoutes } from '@/panierTauxProgression/routes'
 import { referentielRoutes } from '@/referentiel/routes'
 import { sharedMessage } from '@/shared/routes/sharedMessage'
 import { objectifIndicateurIndividuRoutes } from '@/objectifIndicateurIndividu/routes'
@@ -39,7 +38,6 @@ app.route('/', objectifIndicateurIndividuRoutes)
 app.route('/', referentielRoutes)
 app.route('/', individuRoutes)
 app.route('/', panierRoutes)
-app.route('/', panierTauxProgressionRoutes)
 app.route('/', me)
 
 app.doc('/openapi.json', {

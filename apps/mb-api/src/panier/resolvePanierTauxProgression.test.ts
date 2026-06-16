@@ -4,7 +4,7 @@ import { Decimal } from '@/framework/decimal'
 import {
   type IndicateurContribution,
   resolvePanierTauxProgression,
-} from '@/panierTauxProgression/resolvePanierTauxProgression'
+} from '@/panier/resolvePanierTauxProgression'
 
 const c = (overrides: Partial<IndicateurContribution> = {}): IndicateurContribution => ({
   indicateurPublicId: 'IND-X',
