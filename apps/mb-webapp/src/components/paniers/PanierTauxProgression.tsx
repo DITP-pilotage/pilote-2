@@ -5,7 +5,7 @@ import { panierTauxProgressionQueryOptions } from '@/queries/paniers'
 
 const formatTaux = (taux: number | null): string => {
   if (taux === null) return '—'
-  return `${Math.floor(taux)} %`
+  return `${taux} %`
 }
 
 const buildCaption = (

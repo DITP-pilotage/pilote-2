@@ -113,8 +113,8 @@ function PanierDetailComponent() {
     <Page title={panier.nom} description={panier.description ?? undefined} back={back}>
       <div className="flex flex-col gap-6">
         {search.individu ? (
-          <div className="flex flex-col gap-6 md:flex-row md:items-end">
-            <div className="max-w-md flex-1">
+          <div className="flex flex-col gap-6">
+            <div className="max-w-md">
               <FormField label="Individu observé" htmlFor={selectId}>
                 <IndividuSelect
                   id={selectId}
@@ -130,7 +130,7 @@ function PanierDetailComponent() {
                 />
               </FormField>
             </div>
-            <div className="md:w-72">
+            <div className="max-w-xs">
               <PanierTauxProgression panierId={id} individu={search.individu} />
             </div>
           </div>

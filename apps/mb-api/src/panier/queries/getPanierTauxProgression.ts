@@ -8,9 +8,9 @@ import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { type Bucket, compareBuckets, formatBucket } from '@/framework/bucket'
-import { Decimal } from '@/framework/decimal'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
+import { Prisma } from '@/generated/prisma/client'
 import { withPanierReadPermission } from '@/panier/permissions'
 import {
   type IndicateurContribution,
@@ -26,6 +26,22 @@ import { type TauxProgressionPoint } from '@/valeurAvancement/resolveTauxProgres
 const DATE_TRUNC_VALEUR: DateTrunc = 'month'
 const DATE_TRUNC_OBJECTIF: DateTrunc = 'month'
 
+const panierTauxProgressionArgs = {
+  select: {
+    id: true,
+    publicId: true,
+    indicateurs: {
+      orderBy: { createdAt: 'asc' },
+      select: {
+        ponderation: true,
+        indicateur: { select: { id: true, publicId: true } },
+      },
+    },
+  },
+} satisfies Prisma.PanierDefaultArgs
+
+type PanierRow = Prisma.PanierGetPayload<typeof panierTauxProgressionArgs>
+
 export const getPanierTauxProgression = (
   panierPublicId: string,
   params: GetPanierTauxProgressionQuery,
@@ -34,28 +50,9 @@ export const getPanierTauxProgression = (
   return ResultAsync.fromSafePromise(
     db().panier.findFirstOrThrow({
       where: withPanierReadPermission({ publicId: panierPublicId }, principalId),
-      select: {
-        id: true,
-        publicId: true,
-        indicateurs: {
-          orderBy: { createdAt: 'asc' },
-          select: {
-            ponderation: true,
-            indicateur: { select: { id: true, publicId: true } },
-          },
-        },
-      },
+      ...panierTauxProgressionArgs,
     }),
   ).andThen((panier) => ResultAsync.fromSafePromise(buildResult({ panier, params })))
-}
-
-type PanierRow = {
-  id: string
-  publicId: string
-  indicateurs: ReadonlyArray<{
-    ponderation: Decimal
-    indicateur: { id: string; publicId: string }
-  }>
 }
 
 const buildResult = async ({
