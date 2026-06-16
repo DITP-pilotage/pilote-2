@@ -84,7 +84,7 @@ const getPanierTauxProgressionRoute = createRoute({
     'indicateurs bloquants. Granularité de troncature fixée à `month` (cf. ' +
     '`docs/architecture/taux-progression.md`). Le taux est tronqué à 2 décimales (ROUND_DOWN) ' +
     'pour préserver la sémantique « ne jamais afficher 100 % avant atteinte stricte ». ' +
-    'Renvoie 404 (`ENTITY_NOT_FOUND`) si le panier ou l\'individu est introuvable.',
+    "Renvoie 404 (`ENTITY_NOT_FOUND`) si le panier ou l'individu est introuvable.",
   middleware: [requireAuthentication],
   request: {
     params: detailParamsSchema,
