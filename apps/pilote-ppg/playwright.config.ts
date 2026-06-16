@@ -11,6 +11,7 @@ require("dotenv").config({ path: ".env.e2e" });
  */
 export default defineConfig({
   globalSetup: "./tests/global-setup.ts",
+  globalTeardown: "./tests/global-teardown.ts",
   testDir: "./tests",
   /* Run tests in files in parallel */
   fullyParallel: false,
