@@ -7,32 +7,19 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { type BucketKey, compareBuckets, formatBucket } from '@/framework/bucket'
+import { type Bucket, compareBuckets, formatBucket } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
-import { loadResolveObjectifContext } from '@/objectifIndicateurIndividu/queries/loadResolveObjectifContext'
-import {
-  type PointObjectifInterne,
-  resolveObjectifIndividu,
-} from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
 import { withPanierReadPermission } from '@/panier/permissions'
 import {
   type IndicateurContribution,
   resolvePanierTauxProgression,
 } from '@/panier/resolvePanierTauxProgression'
-import {
-  type ObjectifBrut,
-  resolveTauxProgression,
-  type ValeurBrute,
-} from '@/valeurAvancement/resolveTauxProgression'
-import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
-import {
-  type IndividuRef,
-  type PointInterne,
-  resolveSerieIndividu,
-} from '@/valeurAvancement/resolveSerieIndividu'
+import { computeTauxProgressionPoints } from '@/valeurAvancement/queries/computeTauxProgressionPoints'
+import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
+import { type TauxProgressionPoint } from '@/valeurAvancement/resolveTauxProgression'
 
 // Pondération uniforme en v0 : moyenne arithmétique des taux des indicateurs
 // du panier. Le resolver pur reçoit déjà un Decimal pour préserver la précision.
@@ -128,7 +115,7 @@ const buildResult = async ({
 
   logger.info(
     {
-      event: 'panierTauxProgression.getPanierTauxProgression.timing',
+      event: 'panier.getPanierTauxProgression.timing',
       panierId: panier.id,
       individu: params.individu,
       nbIndicateurs: indicateurs.length,
@@ -146,56 +133,29 @@ const buildResult = async ({
   }
 }
 
-// Calcule le dernier point taux-progression pour (indicateur, individu cible).
-// Réutilise exactement le pipeline de /indicateurs/:id/taux-progression
-// (résoluteurs purs + contextes bulkés) mais ne retient que le bucket max.
+// Sélectionne le dernier bucket parmi les points calculés par le pipeline
+// taux-progression. La règle « tout-ou-rien » côté panier veut que tout
+// indicateur dont l'un des prérequis manque (pas de série, pas d'objectif,
+// dernier objectif à 0) produise `null` — ce qui correspond ici à l'absence
+// de point ou à un dernier point sans taux.
 const computeDernierTaux = async ({
   indicateurId,
   cible,
 }: {
   indicateurId: string
   cible: IndividuRef
-}): Promise<{ tauxProgression: number | null; date: PointInterne['bucket'] } | null> => {
-  const [{ ctx: serieCtx }, { ctx: objectifCtx }] = await Promise.all([
-    loadResolveSerieContext({
-      indicateurId,
-      cibles: [cible],
-      dateTrunc: DATE_TRUNC_VALEUR,
-    }),
-    loadResolveObjectifContext({
-      indicateurId,
-      cibles: [cible],
-      dateTrunc: DATE_TRUNC_OBJECTIF,
-    }),
-  ])
-  const serieCache = new Map<string, ReadonlyArray<PointInterne>>()
-  const objectifCache = new Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>()
-
-  const serie = await resolveSerieIndividu(cible.id, serieCtx, serieCache)
-  if (serie.length === 0) return null
-
-  const valeurs: ValeurBrute[] = serie.map((point) => ({
-    individuId: cible.id,
-    individuPublicId: cible.publicId,
-    date: point.bucket,
-    valeur: point.valeur,
-  }))
-
-  const objectifsMap = resolveObjectifIndividu(cible.id, objectifCtx, objectifCache)
-  if (objectifsMap.size === 0) return null
-
-  const objectifsList: ObjectifBrut[] = [...objectifsMap.values()]
-    .map((point) => ({ dateCible: point.bucket, valeurCible: point.valeur }))
-    .sort((a, b) => compareBuckets(a.dateCible, b.dateCible))
-
-  const points = resolveTauxProgression({
-    valeurs,
-    objectifsParIndividu: new Map([[cible.id, objectifsList]]),
+}): Promise<{ tauxProgression: number | null; date: Bucket } | null> => {
+  const points = await computeTauxProgressionPoints({
+    indicateurId,
+    cibles: [cible],
+    dateTruncValeur: DATE_TRUNC_VALEUR,
+    dateTruncObjectif: DATE_TRUNC_OBJECTIF,
   })
   if (points.length === 0) return null
 
-  // Dernier bucket dans le temps (resolveTauxProgression conserve l'ordre des
-  // valeurs en entrée, mais on ne dépend pas de ce détail d'implémentation).
-  const dernier = points.reduce((acc, p) => (compareBuckets(p.date, acc.date) > 0 ? p : acc))
+  const dernier = points.reduce<TauxProgressionPoint>(
+    (acc, p) => (compareBuckets(p.date, acc.date) > 0 ? p : acc),
+    points[0]!,
+  )
   return { tauxProgression: dernier.tauxProgression, date: dernier.date }
 }
