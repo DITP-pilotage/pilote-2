@@ -15,7 +15,6 @@ import { panierRoutes } from '@/panier/routes'
 import { referentielRoutes } from '@/referentiel/routes'
 import { sharedMessage } from '@/shared/routes/sharedMessage'
 import { objectifIndicateurIndividuRoutes } from '@/objectifIndicateurIndividu/routes'
-import { tauxProgressionRoutes } from '@/tauxProgression/routes'
 import { valeurAvancementRoutes } from '@/valeurAvancement/routes'
 
 export const app = new OpenAPIHono()
@@ -37,7 +36,6 @@ app.route('/', sharedMessage)
 app.route('/', indicateurRoutes)
 app.route('/', valeurAvancementRoutes)
 app.route('/', objectifIndicateurIndividuRoutes)
-app.route('/', tauxProgressionRoutes)
 app.route('/', referentielRoutes)
 app.route('/', individuRoutes)
 app.route('/', panierRoutes)

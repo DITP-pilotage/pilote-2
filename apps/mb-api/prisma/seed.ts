@@ -515,9 +515,24 @@ const main = async () => {
     valeursCount += result.count
   }
 
-  // Objectifs d'avancement : 5 premiers indicateurs avec une maille de saisie
-  // connue — 3 dates-cibles annuelles (2024, 2025, 2026) × individus de la maille.
-  const INDICATEURS_OBJECTIFS = ['IND-001', 'IND-002', 'IND-003', 'IND-004', 'IND-005']
+  // Objectifs d'avancement : indicateurs avec une maille de saisie connue —
+  // 3 dates-cibles annuelles (2024, 2025, 2026) × individus de la maille.
+  // - IND-001..005 : indicateurs PRIVE de démonstration (ditp.admin a accès).
+  // - IND-046..050 : indicateurs PUBLIC, indispensables pour que les paniers
+  //   publics (PAN-001..004) exposent un taux de progression calculable à tout
+  //   utilisateur authentifié.
+  const INDICATEURS_OBJECTIFS = [
+    'IND-001',
+    'IND-002',
+    'IND-003',
+    'IND-004',
+    'IND-005',
+    'IND-046',
+    'IND-047',
+    'IND-048',
+    'IND-049',
+    'IND-050',
+  ]
   let objectifsCount = 0
   for (const indicateurPublicId of INDICATEURS_OBJECTIFS) {
     const lien = indicateurReferentielsSeed.find((l) => l.indicateurPublicId === indicateurPublicId)

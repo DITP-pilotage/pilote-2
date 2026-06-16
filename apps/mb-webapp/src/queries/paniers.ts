@@ -1,7 +1,7 @@
 import { type ListPaniersQuery } from '@pilote/mb-shared/panier'
 import { type QueryClient, queryOptions } from '@tanstack/react-query'
 
-import { fetchPanierById, fetchPaniers } from '@/api/paniers'
+import { fetchPanierById, fetchPaniers, fetchPanierTauxProgression } from '@/api/paniers'
 
 import { DEFAULT_STALE_TIME } from './utils'
 
@@ -34,3 +34,16 @@ export const loadPanier = ({
   queryClient: QueryClient
   panierId: string
 }) => queryClient.fetchQuery(panierQueryOptions(panierId))
+
+export const panierTauxProgressionQueryOptions = ({
+  panierId,
+  individu,
+}: {
+  panierId: string
+  individu: string
+}) =>
+  queryOptions({
+    queryKey: ['panier', panierId, 'taux-progression', individu],
+    queryFn: () => fetchPanierTauxProgression({ panierId, individu }),
+    staleTime: DEFAULT_STALE_TIME,
+  })

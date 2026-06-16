@@ -59,6 +59,10 @@
     "./tauxProgression": {
       "types": "./src/tauxProgression.ts",
       "default": "./src/tauxProgression.ts"
+    },
+    "./panierTauxProgression": {
+      "types": "./src/panierTauxProgression.ts",
+      "default": "./src/panierTauxProgression.ts"
     }
   },
   "files": [

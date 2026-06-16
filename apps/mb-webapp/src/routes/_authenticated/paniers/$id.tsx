@@ -10,6 +10,7 @@ import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
 import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
+import { PanierTauxProgression } from '@/components/paniers/PanierTauxProgression'
 import { BackLink } from '@/components/ui/BackLink'
 import { CardGrid } from '@/components/ui/CardGrid'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -18,7 +19,11 @@ import { Page } from '@/components/ui/Page'
 import { Text } from '@/components/ui/Typography'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
-import { loadPanier, panierQueryOptions } from '@/queries/paniers'
+import {
+  loadPanier,
+  panierQueryOptions,
+  panierTauxProgressionQueryOptions,
+} from '@/queries/paniers'
 import { allReferentielsQueryOptions, loadAllReferentielIds } from '@/queries/referentiels'
 
 const paramsSchema = z.object({
@@ -58,6 +63,12 @@ export const Route = createFileRoute('/_authenticated/paniers/$id')({
         })
       },
     })
+
+    if (deps.individu) {
+      void queryClient.prefetchQuery(
+        panierTauxProgressionQueryOptions({ panierId: params.id, individu: deps.individu }),
+      )
+    }
 
     return { panier }
   },
@@ -102,21 +113,26 @@ function PanierDetailComponent() {
     <Page title={panier.nom} description={panier.description ?? undefined} back={back}>
       <div className="flex flex-col gap-6">
         {search.individu ? (
-          <div className="max-w-md">
-            <FormField label="Individu observé" htmlFor={selectId}>
-              <IndividuSelect
-                id={selectId}
-                referentielIds={referentielIds}
-                value={search.individu}
-                onChange={({ individu, referentiel }) => {
-                  startTransition(() => {
-                    void navigate({
-                      search: (prev) => ({ ...prev, individu, referentiel }),
+          <div className="flex flex-col gap-6">
+            <div className="max-w-md">
+              <FormField label="Individu observé" htmlFor={selectId}>
+                <IndividuSelect
+                  id={selectId}
+                  referentielIds={referentielIds}
+                  value={search.individu}
+                  onChange={({ individu, referentiel }) => {
+                    startTransition(() => {
+                      void navigate({
+                        search: (prev) => ({ ...prev, individu, referentiel }),
+                      })
                     })
-                  })
-                }}
-              />
-            </FormField>
+                  }}
+                />
+              </FormField>
+            </div>
+            <div className="max-w-xs">
+              <PanierTauxProgression panierId={id} individu={search.individu} />
+            </div>
           </div>
         ) : null}
 

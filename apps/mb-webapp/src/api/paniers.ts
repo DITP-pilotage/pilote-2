@@ -5,6 +5,10 @@ import {
   type PanierListApiModel,
   panierListApiModelSchema,
 } from '@pilote/mb-shared/panier'
+import {
+  type PanierTauxProgressionApiModel,
+  panierTauxProgressionApiModelSchema,
+} from '@pilote/mb-shared/panierTauxProgression'
 
 import { apiClient } from '@/api/client'
 
@@ -16,4 +20,17 @@ export const fetchPaniers = async (params: ListPaniersQuery): Promise<PanierList
 export const fetchPanierById = async (id: string): Promise<PanierApiModel> => {
   const json = await apiClient.get(`paniers/${id}`).json()
   return panierApiModelSchema.parse(json)
+}
+
+export const fetchPanierTauxProgression = async ({
+  panierId,
+  individu,
+}: {
+  panierId: string
+  individu: string
+}): Promise<PanierTauxProgressionApiModel> => {
+  const json = await apiClient
+    .get(`paniers/${panierId}/taux-progression`, { searchParams: { individu } })
+    .json()
+  return panierTauxProgressionApiModelSchema.parse(json)
 }
