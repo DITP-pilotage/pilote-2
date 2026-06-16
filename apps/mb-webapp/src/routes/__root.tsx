@@ -3,6 +3,7 @@ import {
   createRootRouteWithContext,
   Link,
   Outlet,
+  useLocation,
   useNavigate,
   useSearch,
 } from '@tanstack/react-router'
@@ -49,8 +50,7 @@ function RootComponent() {
           </Link>
 
           <nav className="flex items-center gap-1 sm:gap-2">
-            <NavLink to="/indicateurs">Indicateurs</NavLink>
-            <NavLink to="/paniers">Paniers</NavLink>
+            <NavLink>Tableau de bord</NavLink>
 
             <div className="mx-2 hidden h-6 w-px bg-border sm:block" />
 
@@ -90,14 +90,16 @@ function RootComponent() {
   )
 }
 
-function NavLink({ to, children }: { to: '/indicateurs' | '/paniers'; children: ReactNode }) {
+function NavLink({ children }: { children: ReactNode }) {
   const search = useSearch({ strict: false })
+  const { pathname } = useLocation()
+  const isActive = pathname.startsWith('/indicateurs') || pathname.startsWith('/paniers')
   return (
     <Link
-      to={to}
+      to="/indicateurs"
       search={{ individu: search.individu, referentiel: search.referentiel }}
+      data-status={isActive ? 'active' : undefined}
       className="rounded-md px-3 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-surface-tinted hover:text-primary data-[status=active]:bg-primary-tinted data-[status=active]:text-primary"
-      activeProps={{ 'data-status': 'active' }}
     >
       {children}
     </Link>

@@ -61,13 +61,13 @@ describe('routing', () => {
   it('ne rend pas /indicateurs sans être authentifié (le beforeLoad bloque le rendu)', async () => {
     renderAt('/indicateurs', stubAuth(null))
     await new Promise((resolve) => setTimeout(resolve, 50))
-    expect(screen.queryByRole('heading', { level: 1, name: 'Indicateurs' })).toBeNull()
+    expect(screen.queryByRole('heading', { level: 1, name: 'Tableau de bord' })).toBeNull()
   })
 
   it("permet d'accéder à /indicateurs après login", async () => {
     renderAt('/indicateurs', stubAuth({ userId: 'sub-1', prenom: 'Admin', nom: 'DITP' }))
     await waitFor(() => {
-      expect(screen.getByRole('heading', { level: 1, name: 'Indicateurs' })).toBeInTheDocument()
+      expect(screen.getByRole('heading', { level: 1, name: 'Tableau de bord' })).toBeInTheDocument()
     })
   })
 })
