@@ -59,7 +59,7 @@ export function IndicateurValeursRemarquables({
   return (
     <StatGrid columns={hasTaux ? 3 : 2}>
       <StatCard
-        label="Valeur la plus récente"
+        label="Valeur d'avancement"
         tone={derniereValeur ? 'neutral' : 'muted'}
         value={derniereValeur ? formatNumberAvecUniteFr(derniereValeur.valeur, unite) : '—'}
         caption={derniereValeur ? `au ${formatDateFr(derniereValeur.date)}` : undefined}
