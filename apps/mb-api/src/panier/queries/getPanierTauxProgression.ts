@@ -11,7 +11,6 @@ import { type Bucket, compareBuckets, formatBucket } from '@/framework/bucket'
 import { Decimal } from '@/framework/decimal'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
-import { loadIndividusParPublicId } from '@/indicateur/queries/loadIndicateurIndividuContext'
 import { withPanierReadPermission } from '@/panier/permissions'
 import {
   type IndicateurContribution,
@@ -77,21 +76,11 @@ const buildResult = async ({
     }
   }
 
-  const [cible] = await loadIndividusParPublicId([params.individu])
-  // Individu inconnu : aucune contribution calculable → tout-ou-rien → null.
-  if (!cible) {
-    return {
-      panier: panier.publicId,
-      individu: params.individu,
-      tauxProgression: null,
-      contributions: indicateurs.map((ind) => ({
-        indicateur: ind.publicId,
-        tauxProgression: null,
-        date: null,
-        ponderation: PONDERATION_DEFAUT.toNumber(),
-      })),
-    }
-  }
+  // Individu inconnu → 404 via le handler global (mappe Prisma P2025).
+  const cible: IndividuRef = await db().individu.findFirstOrThrow({
+    where: { publicId: params.individu },
+    select: { id: true, publicId: true, referentielId: true },
+  })
 
   const contributions: IndicateurContribution[] = []
   for (const ind of indicateurs) {

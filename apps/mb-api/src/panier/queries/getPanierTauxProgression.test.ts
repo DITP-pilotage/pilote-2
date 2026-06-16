@@ -308,7 +308,7 @@ describe.concurrent('getPanierTauxProgression', () => {
   )
 
   it(
-    "retourne null avec contributions stub si l'individu est inconnu",
+    "lève une erreur 404 si l'individu est inconnu",
     integrationTest(async () => {
       const indA = testIndicateurId()
       await fixtures.indicateur({ publicId: indA })
@@ -319,15 +319,11 @@ describe.concurrent('getPanierTauxProgression', () => {
       })
       const apiKey = await fixtures.apiKey()
 
-      const result = await runAsPrincipal(apiKey.id, () =>
-        getPanierTauxProgression('PAN-PROG-INCONNU', { individu: 'DEPT-INCONNU' }),
-      )
-
-      const data = result._unsafeUnwrap()
-      expect(data.tauxProgression).toBeNull()
-      expect(data.contributions).toEqual([
-        { indicateur: indA, tauxProgression: null, date: null, ponderation: 1 },
-      ])
+      await expect(
+        runAsPrincipal(apiKey.id, () =>
+          getPanierTauxProgression('PAN-PROG-INCONNU', { individu: 'DEPT-INCONNU' }),
+        ),
+      ).rejects.toThrow()
     }),
   )
 

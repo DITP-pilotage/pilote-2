@@ -83,7 +83,8 @@ const getPanierTauxProgressionRoute = createRoute({
     "`contributions` est toujours renseigné, ce qui permet au client d'identifier les " +
     'indicateurs bloquants. Granularité de troncature fixée à `month` (cf. ' +
     '`docs/architecture/taux-progression.md`). Le taux est tronqué à 2 décimales (ROUND_DOWN) ' +
-    'pour préserver la sémantique « ne jamais afficher 100 % avant atteinte stricte ».',
+    'pour préserver la sémantique « ne jamais afficher 100 % avant atteinte stricte ». ' +
+    'Renvoie 404 (`ENTITY_NOT_FOUND`) si le panier ou l\'individu est introuvable.',
   middleware: [requireAuthentication],
   request: {
     params: detailParamsSchema,
@@ -97,6 +98,10 @@ const getPanierTauxProgressionRoute = createRoute({
     400: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },
       description: 'Paramètres de requête invalides',
+    },
+    404: {
+      content: { 'application/json': { schema: ErrorApiModelSchema } },
+      description: 'Panier ou individu introuvable',
     },
   },
 })
