@@ -49,11 +49,11 @@ export const toIndicateurApiModel = (
   jourMiseAJour: indicateur.jourMiseAJour,
   referentiels: indicateur.referentiels
     .map((configuration) => ({
-      referentielPublicId: configuration.referentiel.publicId,
-      referentielNom: configuration.referentiel.nom,
+      id: configuration.referentiel.publicId,
+      nom: configuration.referentiel.nom,
       fonctionAgregation: configuration.fonctionAgregation,
     }))
-    .sort((a, b) => a.referentielPublicId.localeCompare(b.referentielPublicId)),
+    .sort((a, b) => a.id.localeCompare(b.id)),
   createdAt: indicateur.createdAt.toISOString(),
   updatedAt: indicateur.updatedAt.toISOString(),
 })

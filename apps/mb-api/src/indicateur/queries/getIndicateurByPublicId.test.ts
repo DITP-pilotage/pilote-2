@@ -33,16 +33,16 @@ describe.concurrent('getIndicateurByPublicId', () => {
 
       const referentielsTries = [
         {
-          referentielPublicId: refDetailA,
-          referentielNom: 'Référentiel de test',
+          id: refDetailA,
+          nom: 'Référentiel de test',
           fonctionAgregation: 'SUM' as const,
         },
         {
-          referentielPublicId: refDetailB,
-          referentielNom: 'Référentiel de test',
+          id: refDetailB,
+          nom: 'Référentiel de test',
           fonctionAgregation: 'SUM' as const,
         },
-      ].sort((a, b) => a.referentielPublicId.localeCompare(b.referentielPublicId))
+      ].sort((a, b) => a.id.localeCompare(b.id))
 
       expect(result.isOk()).toBe(true)
       expect(result._unsafeUnwrap()).toEqual({
@@ -136,8 +136,8 @@ describe.concurrent('getIndicateurByPublicId', () => {
 
       expect(result._unsafeUnwrap().referentiels).toEqual([
         {
-          referentielPublicId: refNomId,
-          referentielNom: 'Périmètre national',
+          id: refNomId,
+          nom: 'Périmètre national',
           fonctionAgregation: 'SUM',
         },
       ])

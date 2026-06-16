@@ -68,7 +68,7 @@ export class SyncMbMetadonneesUseCase {
       }
 
       const referentiels = indicateur.maillesApplicables.map((maille) => ({
-        referentielPublicId: MAILLE_VERS_REFERENTIEL[maille],
+        id: MAILLE_VERS_REFERENTIEL[maille],
         fonctionAgregation: "NONE" as const,
       }));
 

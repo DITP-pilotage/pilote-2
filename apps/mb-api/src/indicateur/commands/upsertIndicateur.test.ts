@@ -24,10 +24,10 @@ const getConfigurationsReferentiels = async (publicId: string) => {
   })
   return indicateur.referentiels
     .map((configuration) => ({
-      referentielPublicId: configuration.referentiel.publicId,
+      id: configuration.referentiel.publicId,
       fonctionAgregation: configuration.fonctionAgregation,
     }))
-    .sort((a, b) => a.referentielPublicId.localeCompare(b.referentielPublicId))
+    .sort((a, b) => a.id.localeCompare(b.id))
 }
 
 describe.concurrent('upsertIndicateur', () => {
@@ -48,17 +48,17 @@ describe.concurrent('upsertIndicateur', () => {
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [
-            { referentielPublicId: refA.publicId, fonctionAgregation: 'SUM' },
-            { referentielPublicId: refB.publicId, fonctionAgregation: 'NONE' },
+            { id: refA.publicId, fonctionAgregation: 'SUM' },
+            { id: refB.publicId, fonctionAgregation: 'NONE' },
           ],
         }),
       )
 
       expect(result.isOk()).toBe(true)
       const configurationsTriees = [
-        { referentielPublicId: refCreateA, fonctionAgregation: 'SUM' as const },
-        { referentielPublicId: refCreateB, fonctionAgregation: 'NONE' as const },
-      ].sort((a, b) => a.referentielPublicId.localeCompare(b.referentielPublicId))
+        { id: refCreateA, fonctionAgregation: 'SUM' as const },
+        { id: refCreateB, fonctionAgregation: 'NONE' as const },
+      ].sort((a, b) => a.id.localeCompare(b.id))
       expect(await getConfigurationsReferentiels(indId)).toEqual(configurationsTriees)
       const grants = await db().indicateurPermission.findMany({
         where: { principalId: apiKey.id, indicateur: { publicId: indId } },
@@ -231,8 +231,8 @@ describe.concurrent('upsertIndicateur', () => {
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [
-            { referentielPublicId: refReplaceA, fonctionAgregation: 'SUM' },
-            { referentielPublicId: refReplaceB, fonctionAgregation: 'SUM' },
+            { id: refReplaceA, fonctionAgregation: 'SUM' },
+            { id: refReplaceB, fonctionAgregation: 'SUM' },
           ],
         }),
       )
@@ -244,16 +244,16 @@ describe.concurrent('upsertIndicateur', () => {
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [
-            { referentielPublicId: refReplaceB, fonctionAgregation: 'SUM' },
-            { referentielPublicId: refReplaceC, fonctionAgregation: 'SUM' },
+            { id: refReplaceB, fonctionAgregation: 'SUM' },
+            { id: refReplaceC, fonctionAgregation: 'SUM' },
           ],
         }),
       )
 
       const configurationsTriees = [
-        { referentielPublicId: refReplaceB, fonctionAgregation: 'SUM' as const },
-        { referentielPublicId: refReplaceC, fonctionAgregation: 'SUM' as const },
-      ].sort((a, b) => a.referentielPublicId.localeCompare(b.referentielPublicId))
+        { id: refReplaceB, fonctionAgregation: 'SUM' as const },
+        { id: refReplaceC, fonctionAgregation: 'SUM' as const },
+      ].sort((a, b) => a.id.localeCompare(b.id))
       expect(await getConfigurationsReferentiels(indId)).toEqual(configurationsTriees)
     }),
   )
@@ -271,7 +271,7 @@ describe.concurrent('upsertIndicateur', () => {
           visibilite: 'PRIVE',
           unite: null,
           ...METADONNEES_VIDES,
-          referentiels: [{ referentielPublicId: refEmptyA, fonctionAgregation: 'SUM' }],
+          referentiels: [{ id: refEmptyA, fonctionAgregation: 'SUM' }],
         }),
       )
 
@@ -290,7 +290,7 @@ describe.concurrent('upsertIndicateur', () => {
   )
 
   it(
-    'dédoublonne silencieusement les referentielPublicId en double',
+    'dédoublonne silencieusement les id en double',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const refDedupA = testReferentielId()
@@ -304,21 +304,21 @@ describe.concurrent('upsertIndicateur', () => {
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [
-            { referentielPublicId: refDedupA, fonctionAgregation: 'SUM' },
-            { referentielPublicId: refDedupA, fonctionAgregation: 'SUM' },
+            { id: refDedupA, fonctionAgregation: 'SUM' },
+            { id: refDedupA, fonctionAgregation: 'SUM' },
           ],
         }),
       )
 
       expect(result.isOk()).toBe(true)
       expect(await getConfigurationsReferentiels(indId)).toEqual([
-        { referentielPublicId: refDedupA, fonctionAgregation: 'SUM' },
+        { id: refDedupA, fonctionAgregation: 'SUM' },
       ])
     }),
   )
 
   it(
-    'rejette quand un referentielPublicId est inconnu, avec la liste des IDs manquants',
+    'rejette quand un id est inconnu, avec la liste des IDs manquants',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const refKnownA = testReferentielId()
@@ -335,9 +335,9 @@ describe.concurrent('upsertIndicateur', () => {
             unite: null,
             ...METADONNEES_VIDES,
             referentiels: [
-              { referentielPublicId: refKnownA, fonctionAgregation: 'SUM' },
-              { referentielPublicId: refUnknownX, fonctionAgregation: 'SUM' },
-              { referentielPublicId: refUnknownY, fonctionAgregation: 'SUM' },
+              { id: refKnownA, fonctionAgregation: 'SUM' },
+              { id: refUnknownX, fonctionAgregation: 'SUM' },
+              { id: refUnknownY, fonctionAgregation: 'SUM' },
             ],
           }),
         ),
@@ -388,7 +388,7 @@ describe.concurrent('upsertIndicateur', () => {
           visibilite: 'PRIVE',
           unite: null,
           ...METADONNEES_VIDES,
-          referentiels: [{ referentielPublicId: refUpdateA, fonctionAgregation: 'SUM' }],
+          referentiels: [{ id: refUpdateA, fonctionAgregation: 'SUM' }],
         }),
       )
 
@@ -398,18 +398,18 @@ describe.concurrent('upsertIndicateur', () => {
           visibilite: 'PRIVE',
           unite: null,
           ...METADONNEES_VIDES,
-          referentiels: [{ referentielPublicId: refUpdateA, fonctionAgregation: 'NONE' }],
+          referentiels: [{ id: refUpdateA, fonctionAgregation: 'NONE' }],
         }),
       )
 
       expect(await getConfigurationsReferentiels(indId)).toEqual([
-        { referentielPublicId: refUpdateA, fonctionAgregation: 'NONE' },
+        { id: refUpdateA, fonctionAgregation: 'NONE' },
       ])
     }),
   )
 
   it(
-    "dédoublonne sur referentielPublicId : en cas de fonctions différentes, la dernière l'emporte",
+    "dédoublonne sur id : en cas de fonctions différentes, la dernière l'emporte",
     integrationTest(async () => {
       const indId = testIndicateurId()
       const refDedupFn = testReferentielId()
@@ -423,15 +423,15 @@ describe.concurrent('upsertIndicateur', () => {
           unite: null,
           ...METADONNEES_VIDES,
           referentiels: [
-            { referentielPublicId: refDedupFn, fonctionAgregation: 'SUM' },
-            { referentielPublicId: refDedupFn, fonctionAgregation: 'NONE' },
+            { id: refDedupFn, fonctionAgregation: 'SUM' },
+            { id: refDedupFn, fonctionAgregation: 'NONE' },
           ],
         }),
       )
 
       expect(result.isOk()).toBe(true)
       expect(await getConfigurationsReferentiels(indId)).toEqual([
-        { referentielPublicId: refDedupFn, fonctionAgregation: 'NONE' },
+        { id: refDedupFn, fonctionAgregation: 'NONE' },
       ])
     }),
   )

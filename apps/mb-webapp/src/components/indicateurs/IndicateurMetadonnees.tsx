@@ -30,7 +30,7 @@ const formatReferentiels = (
   referentiels: ReadonlyArray<ConfigurationIndicateurReferentielApiModel>,
 ): string => {
   if (referentiels.length === 0) return VALEUR_VIDE
-  return referentiels.map((r) => r.referentielNom).join(', ')
+  return referentiels.map((r) => r.nom).join(', ')
 }
 
 type IndicateurMetadonneesProps = {

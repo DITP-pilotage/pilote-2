@@ -362,61 +362,61 @@ const main = async () => {
   const indicateurReferentielsSeed: ReadonlyArray<{
     indicateurPublicId: string
     referentiels: ReadonlyArray<{
-      referentielPublicId: string
+      id: string
       fonctionAgregation: FonctionAgregation
     }>
   }> = [
     {
       indicateurPublicId: 'IND-001',
       referentiels: [
-        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-REG', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
+        { id: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { id: 'REF-REG', fonctionAgregation: 'NONE' },
+        { id: 'REF-NAT', fonctionAgregation: 'NONE' },
       ],
     },
     {
       indicateurPublicId: 'IND-002',
       referentiels: [
-        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'SUM' },
-        { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' },
-        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'SUM' },
+        { id: 'REF-DEPT', fonctionAgregation: 'SUM' },
+        { id: 'REF-REG', fonctionAgregation: 'SUM' },
+        { id: 'REF-NAT', fonctionAgregation: 'SUM' },
       ],
     },
     {
       indicateurPublicId: 'IND-003',
       referentiels: [
-        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-REG', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { id: 'REF-NAT', fonctionAgregation: 'NONE' },
+        { id: 'REF-REG', fonctionAgregation: 'NONE' },
+        { id: 'REF-DEPT', fonctionAgregation: 'NONE' },
       ],
     },
     {
       indicateurPublicId: 'IND-004',
       referentiels: [
-        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-REG', fonctionAgregation: 'AVG' },
-        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'AVG' },
+        { id: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { id: 'REF-REG', fonctionAgregation: 'AVG' },
+        { id: 'REF-NAT', fonctionAgregation: 'AVG' },
       ],
     },
     {
       indicateurPublicId: 'IND-005',
       referentiels: [
-        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' },
-        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'SUM' },
+        { id: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { id: 'REF-REG', fonctionAgregation: 'SUM' },
+        { id: 'REF-NAT', fonctionAgregation: 'SUM' },
       ],
     },
     {
       indicateurPublicId: 'IND-006',
-      referentiels: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
+      referentiels: [{ id: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
     },
     {
       indicateurPublicId: 'IND-007',
-      referentiels: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
+      referentiels: [{ id: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
     },
     {
       indicateurPublicId: 'IND-008',
-      referentiels: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
+      referentiels: [{ id: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
     },
     ...indicateursSeed
       .filter((ind) => parseInt(ind.publicId.replace('IND-', ''), 10) >= 9)
@@ -429,9 +429,9 @@ const main = async () => {
         return {
           indicateurPublicId: ind.publicId,
           referentiels: [
-            { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' as const },
-            { referentielPublicId: 'REF-REG', fonctionAgregation: fonction },
-            { referentielPublicId: 'REF-NAT', fonctionAgregation: fonction },
+            { id: 'REF-DEPT', fonctionAgregation: 'NONE' as const },
+            { id: 'REF-REG', fonctionAgregation: fonction },
+            { id: 'REF-NAT', fonctionAgregation: fonction },
           ],
         }
       }),
@@ -444,7 +444,7 @@ const main = async () => {
     })
     for (const configuration of item.referentiels) {
       const referentiel = await prisma.referentiel.findUniqueOrThrow({
-        where: { publicId: configuration.referentielPublicId },
+        where: { publicId: configuration.id },
         select: { id: true },
       })
       await prisma.indicateurReferentiel.upsert({
@@ -548,7 +548,7 @@ const main = async () => {
 
   let valeursCount = 0
   for (const lien of indicateurReferentielsSeed) {
-    const refPublicId = mailleLaPlusFine(lien.referentiels.map((r) => r.referentielPublicId))
+    const refPublicId = mailleLaPlusFine(lien.referentiels.map((r) => r.id))
     if (!refPublicId) continue // ex. REF-EMPTY → pas de saisie
     const refId = referentielParPublicId.get(refPublicId)
     if (!refId) continue
@@ -608,7 +608,7 @@ const main = async () => {
   for (const indicateurPublicId of INDICATEURS_OBJECTIFS) {
     const lien = indicateurReferentielsSeed.find((l) => l.indicateurPublicId === indicateurPublicId)
     if (!lien) continue
-    const refPublicId = mailleLaPlusFine(lien.referentiels.map((r) => r.referentielPublicId))
+    const refPublicId = mailleLaPlusFine(lien.referentiels.map((r) => r.id))
     if (!refPublicId) continue
     const refId = referentielParPublicId.get(refPublicId)
     if (!refId) continue

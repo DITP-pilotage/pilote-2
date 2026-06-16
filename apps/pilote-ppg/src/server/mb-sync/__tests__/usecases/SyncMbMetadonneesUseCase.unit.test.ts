@@ -38,8 +38,8 @@ describe("SyncMbMetadonneesUseCase", () => {
         visibilite: "PUBLIC",
         unite: null,
         referentiels: [
-          { referentielPublicId: "REF-NAT", fonctionAgregation: "NONE" },
-          { referentielPublicId: "REF-REG", fonctionAgregation: "NONE" },
+          { id: "REF-NAT", fonctionAgregation: "NONE" },
+          { id: "REF-REG", fonctionAgregation: "NONE" },
         ],
       },
     });
