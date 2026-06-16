@@ -288,6 +288,7 @@ model PanierPermission {
 model PanierIndicateur {
   panierId     String   @map("panier_id")     @db.Uuid
   indicateurId String   @map("indicateur_id") @db.Uuid
+  ponderation  Decimal  @default(1)           @db.Decimal(20, 2)
   createdAt    DateTime @default(now())       @map("created_at")
 
   panier     Panier     @relation(fields: [panierId],     references: [id], onDelete: Cascade)

@@ -20,10 +20,6 @@ import { computeTauxProgressionPoints } from '@/valeurAvancement/queries/compute
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
 import { type TauxProgressionPoint } from '@/valeurAvancement/resolveTauxProgression'
 
-// Pondération uniforme en v0 : moyenne arithmétique des taux des indicateurs
-// du panier. Le resolver pur reçoit déjà un Decimal pour préserver la précision.
-const PONDERATION_DEFAUT = new Decimal(1)
-
 // Aligné sur la route /indicateurs/:id/taux-progression : `month/month` est
 // le défaut documenté (cf. docs/architecture/taux-progression.md). Pas exposé
 // en query côté panier en v0.
@@ -43,7 +39,10 @@ export const getPanierTauxProgression = (
         publicId: true,
         indicateurs: {
           orderBy: { createdAt: 'asc' },
-          select: { indicateur: { select: { id: true, publicId: true } } },
+          select: {
+            ponderation: true,
+            indicateur: { select: { id: true, publicId: true } },
+          },
         },
       },
     }),
@@ -53,7 +52,10 @@ export const getPanierTauxProgression = (
 type PanierRow = {
   id: string
   publicId: string
-  indicateurs: ReadonlyArray<{ indicateur: { id: string; publicId: string } }>
+  indicateurs: ReadonlyArray<{
+    ponderation: Decimal
+    indicateur: { id: string; publicId: string }
+  }>
 }
 
 const buildResult = async ({
@@ -64,10 +66,9 @@ const buildResult = async ({
   params: GetPanierTauxProgressionQuery
 }): Promise<PanierTauxProgressionApiModel> => {
   const startedAt = performance.now()
-  const indicateurs = panier.indicateurs.map((p) => p.indicateur)
 
   // Panier vide → result null, contributions vide.
-  if (indicateurs.length === 0) {
+  if (panier.indicateurs.length === 0) {
     return {
       panier: panier.publicId,
       individu: params.individu,
@@ -83,13 +84,13 @@ const buildResult = async ({
   })
 
   const contributions: IndicateurContribution[] = []
-  for (const ind of indicateurs) {
+  for (const { indicateur: ind, ponderation } of panier.indicateurs) {
     const dernier = await computeDernierTaux({ indicateurId: ind.id, cible })
     contributions.push({
       indicateurPublicId: ind.publicId,
       tauxProgression: dernier?.tauxProgression ?? null,
       date: dernier?.date ?? null,
-      ponderation: PONDERATION_DEFAUT,
+      ponderation,
     })
   }
 
@@ -107,7 +108,7 @@ const buildResult = async ({
       event: 'panier.getPanierTauxProgression.timing',
       panierId: panier.id,
       individu: params.individu,
-      nbIndicateurs: indicateurs.length,
+      nbIndicateurs: panier.indicateurs.length,
       tauxProgression,
       durationMs: Math.round(performance.now() - startedAt),
     },

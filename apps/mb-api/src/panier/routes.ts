@@ -76,8 +76,8 @@ const getPanierTauxProgressionRoute = createRoute({
   summary: "Récupérer le taux de progression agrégé d'un panier pour un individu",
   description:
     'Retourne la moyenne pondérée du dernier taux de progression connu de chaque indicateur ' +
-    "du panier pour l'individu demandé. La pondération est fixée à 1 par indicateur en v0 " +
-    '(constante côté serveur). Règle tout-ou-rien : si au moins un indicateur du panier ' +
+    "du panier pour l'individu demandé. La pondération est lue sur la jonction " +
+    '`panier_indicateur.ponderation` (par défaut 1). Règle tout-ou-rien : si au moins un indicateur du panier ' +
     "n'a pas de dernier taux calculable (aucun objectif, aucune valeur, ou dernier point avec " +
     '`valeurCible = 0`), le champ `tauxProgression` global vaut `null`. Le tableau ' +
     "`contributions` est toujours renseigné, ce qui permet au client d'identifier les " +
