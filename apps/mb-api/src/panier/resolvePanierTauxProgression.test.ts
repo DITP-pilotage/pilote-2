@@ -65,4 +65,23 @@ describe('resolvePanierTauxProgression', () => {
     ])
     expect(result.tauxProgression).toBe(100)
   })
+
+  it('ignore les indicateurs à pondération 0 (y compris non calculables)', () => {
+    // IND-Z a pondération 0 et pas de taux → exclu du calcul, ne déclenche pas
+    // le tout-ou-rien. La moyenne porte uniquement sur IND-A et IND-B.
+    const result = resolvePanierTauxProgression([
+      c({ indicateurPublicId: 'IND-A', tauxProgression: 50, ponderation: new Decimal(1) }),
+      c({ indicateurPublicId: 'IND-B', tauxProgression: 100, ponderation: new Decimal(1) }),
+      c({ indicateurPublicId: 'IND-Z', tauxProgression: null, ponderation: new Decimal(0) }),
+    ])
+    expect(result.tauxProgression).toBe(75)
+  })
+
+  it('retourne null si toutes les pondérations valent 0', () => {
+    const result = resolvePanierTauxProgression([
+      c({ tauxProgression: 50, ponderation: new Decimal(0) }),
+      c({ tauxProgression: 80, ponderation: new Decimal(0) }),
+    ])
+    expect(result.tauxProgression).toBeNull()
+  })
 })

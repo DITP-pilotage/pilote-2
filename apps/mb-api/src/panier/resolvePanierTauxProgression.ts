@@ -29,8 +29,11 @@ export const resolvePanierTauxProgression = (
   let sommePondTaux = new Decimal(0)
   let sommePond = new Decimal(0)
   for (const c of contributions) {
+    // Pondération 0 = indicateur volontairement exclu du calcul (cf. PIL-1578).
+    // L'absence de taux ne bloque pas si l'utilisateur a déjà décidé de l'écarter.
+    if (c.ponderation.isZero()) continue
     if (c.tauxProgression === null) {
-      // Règle tout-ou-rien : un seul indicateur non calculable invalide la moyenne.
+      // Règle tout-ou-rien : un indicateur pondéré non calculable invalide la moyenne.
       return { tauxProgression: null, contributions }
     }
     sommePondTaux = sommePondTaux.plus(c.ponderation.mul(c.tauxProgression))
