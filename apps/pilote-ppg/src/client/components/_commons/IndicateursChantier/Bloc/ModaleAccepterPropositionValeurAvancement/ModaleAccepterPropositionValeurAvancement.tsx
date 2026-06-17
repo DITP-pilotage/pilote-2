@@ -135,7 +135,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       indicateurId={indicateur.id}
                       proposition={detailIndicateur.proposition}
                       titre={
-                        <>
+                        <span>
                           {`Valeur d'avancement proposée par `}
                           <NomUtilisateurAvecTooltip
                             nom={detailIndicateur.proposition?.auteur ?? ""}
@@ -149,7 +149,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                             }
                           />
                           {` le ${formaterDate(detailIndicateur.proposition?.dateProposition, "DD/MM/YYYY")}`}
-                        </>
+                        </span>
                       }
                       valeur={detailIndicateur.proposition?.valeurAvancement}
                     />

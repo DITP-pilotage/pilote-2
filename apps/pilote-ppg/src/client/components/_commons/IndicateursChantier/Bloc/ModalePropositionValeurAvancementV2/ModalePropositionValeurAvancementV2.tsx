@@ -157,22 +157,24 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
                     <div className="w-half-full fr-ml-1w border">
                       {estUneModificationDeProposition ? (
                         <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
-                          {`Valeur d'avancement proposée par `}
-                          <NomUtilisateurAvecTooltip
-                            nom={
-                              detailIndicateurDuTerritoire.proposition
-                                ?.auteur ?? ""
-                            }
-                            service={
-                              detailIndicateurDuTerritoire.proposition
-                                ?.auteurService ?? null
-                            }
-                            fonction={
-                              detailIndicateurDuTerritoire.proposition
-                                ?.auteurFonction ?? null
-                            }
-                          />
-                          {` le ${formaterDate(detailIndicateurDuTerritoire.proposition!.dateProposition, "DD/MM/YYYY")}`}
+                          <span>
+                            {`Valeur d'avancement proposée par `}
+                            <NomUtilisateurAvecTooltip
+                              nom={
+                                detailIndicateurDuTerritoire.proposition
+                                  ?.auteur ?? ""
+                              }
+                              service={
+                                detailIndicateurDuTerritoire.proposition
+                                  ?.auteurService ?? null
+                              }
+                              fonction={
+                                detailIndicateurDuTerritoire.proposition
+                                  ?.auteurFonction ?? null
+                              }
+                            />
+                            {` le ${formaterDate(detailIndicateurDuTerritoire.proposition!.dateProposition, "DD/MM/YYYY")}`}
+                          </span>
                           <Infobulle classNameInfoBulle="tooltip-accordeon">
                             <p className="fr-text--sm texte-proposition">
                               Valeur d'avancement proposée le{" "}
@@ -182,20 +184,7 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
                                 "DD/MM/YYYY",
                               )}{" "}
                               par{" "}
-                              <NomUtilisateurAvecTooltip
-                                nom={
-                                  detailIndicateurDuTerritoire.proposition
-                                    ?.auteur ?? ""
-                                }
-                                service={
-                                  detailIndicateurDuTerritoire.proposition
-                                    ?.auteurService ?? null
-                                }
-                                fonction={
-                                  detailIndicateurDuTerritoire.proposition
-                                    ?.auteurFonction ?? null
-                                }
-                              />
+                              {detailIndicateurDuTerritoire.proposition?.auteur}
                             </p>
                             <p className="fr-text--sm">
                               <b>Motif de la proposition</b>

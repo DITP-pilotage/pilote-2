@@ -1265,7 +1265,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             evenementPropositionLePlusRecent.auteur.service,
             evenementPropositionLePlusRecent.auteur.service_autre,
           ),
-          auteurFonction: evenementPropositionLePlusRecent.auteur.fonction ?? null,
+          auteurFonction:
+            evenementPropositionLePlusRecent.auteur.fonction ?? null,
           dateProposition: formatDate(
             evenementPropositionLePlusRecent.date_creation,
           ),

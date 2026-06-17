@@ -121,17 +121,21 @@ export const ModaleSuppressionValeurAvancementV2: FunctionComponent<
                     </div>
                     <div className="w-half-full fr-ml-1w border">
                       <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
-                        {`Valeur d'avancement proposée par `}
-                        <NomUtilisateurAvecTooltip
-                          nom={detailIndicateur.proposition?.auteur ?? ""}
-                          service={
-                            detailIndicateur.proposition?.auteurService ?? null
-                          }
-                          fonction={
-                            detailIndicateur.proposition?.auteurFonction ?? null
-                          }
-                        />
-                        {` le ${formaterDate(detailIndicateur.proposition!.dateProposition, "DD/MM/YYYY")}`}
+                        <span>
+                          {`Valeur d'avancement proposée par `}
+                          <NomUtilisateurAvecTooltip
+                            nom={detailIndicateur.proposition?.auteur ?? ""}
+                            service={
+                              detailIndicateur.proposition?.auteurService ??
+                              null
+                            }
+                            fonction={
+                              detailIndicateur.proposition?.auteurFonction ??
+                              null
+                            }
+                          />
+                          {` le ${formaterDate(detailIndicateur.proposition!.dateProposition, "DD/MM/YYYY")}`}
+                        </span>
                       </span>
                       <div className="w-full flex flex-column align-center fr-pt-1w">
                         <span className="flex justify-center fr-mb-5v">
