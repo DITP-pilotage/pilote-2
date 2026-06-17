@@ -17,6 +17,7 @@ import { useBlocIndicateurContext } from "@/components/PageChantier/useBlocIndic
 import { useEnv } from "@/client/hooks/useEnv";
 import { SelecteurNew } from "@/components/_commons/SelecteurNew/SelecteurNew";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
+import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
 
 export const ModalePropositionValeurAvancementV2: FunctionComponent<
   PropsWithChildren
@@ -110,7 +111,19 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
                     <p className="fr-text--sm fr-mt-1v">
                       La proposition de nouvelle valeur d'avancement que vous
                       modifiez a été faite par{" "}
-                      {detailIndicateurDuTerritoire.proposition.auteur} le{" "}
+                      <NomUtilisateurAvecTooltip
+                        nom={
+                          detailIndicateurDuTerritoire.proposition.auteur ?? ""
+                        }
+                        service={
+                          detailIndicateurDuTerritoire.proposition.auteurService
+                        }
+                        fonction={
+                          detailIndicateurDuTerritoire.proposition
+                            .auteurFonction
+                        }
+                      />{" "}
+                      le{" "}
                       {formaterDate(
                         detailIndicateurDuTerritoire.proposition
                           .dateProposition,
@@ -144,7 +157,22 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
                     <div className="w-half-full fr-ml-1w border">
                       {estUneModificationDeProposition ? (
                         <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
-                          {`Valeur d'avancement proposée par ${detailIndicateurDuTerritoire.proposition?.auteur} le ${formaterDate(detailIndicateurDuTerritoire.proposition!.dateProposition, "DD/MM/YYYY")}`}
+                          {`Valeur d'avancement proposée par `}
+                          <NomUtilisateurAvecTooltip
+                            nom={
+                              detailIndicateurDuTerritoire.proposition
+                                ?.auteur ?? ""
+                            }
+                            service={
+                              detailIndicateurDuTerritoire.proposition
+                                ?.auteurService ?? null
+                            }
+                            fonction={
+                              detailIndicateurDuTerritoire.proposition
+                                ?.auteurFonction ?? null
+                            }
+                          />
+                          {` le ${formaterDate(detailIndicateurDuTerritoire.proposition!.dateProposition, "DD/MM/YYYY")}`}
                           <Infobulle classNameInfoBulle="tooltip-accordeon">
                             <p className="fr-text--sm texte-proposition">
                               Valeur d'avancement proposée le{" "}
@@ -154,7 +182,20 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
                                 "DD/MM/YYYY",
                               )}{" "}
                               par{" "}
-                              {detailIndicateurDuTerritoire.proposition?.auteur}
+                              <NomUtilisateurAvecTooltip
+                                nom={
+                                  detailIndicateurDuTerritoire.proposition
+                                    ?.auteur ?? ""
+                                }
+                                service={
+                                  detailIndicateurDuTerritoire.proposition
+                                    ?.auteurService ?? null
+                                }
+                                fonction={
+                                  detailIndicateurDuTerritoire.proposition
+                                    ?.auteurFonction ?? null
+                                }
+                              />
                             </p>
                             <p className="fr-text--sm">
                               <b>Motif de la proposition</b>

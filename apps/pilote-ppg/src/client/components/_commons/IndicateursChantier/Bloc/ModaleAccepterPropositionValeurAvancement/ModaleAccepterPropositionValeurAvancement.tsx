@@ -14,6 +14,7 @@ import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
 import Input from "@/components/_commons/Input/Input";
 import { ComparaisonValeurBox } from "@/components/_commons/IndicateursChantier/Bloc/ComparaisonValeurBox";
+import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
 export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
@@ -107,7 +108,12 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                     <p className="fr-text--sm fr-mt-1v">
                       La proposition de nouvelle valeur d'avancement que vous
                       modifiez a été faite par{" "}
-                      {detailIndicateur.proposition.auteur} le{" "}
+                      <NomUtilisateurAvecTooltip
+                        nom={detailIndicateur.proposition.auteur ?? ""}
+                        service={detailIndicateur.proposition.auteurService}
+                        fonction={detailIndicateur.proposition.auteurFonction}
+                      />{" "}
+                      le{" "}
                       {formaterDate(
                         detailIndicateur.proposition.dateProposition,
                         "DD/MM/YYYY",
@@ -128,10 +134,23 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       date={detailIndicateur.proposition!.dateValeurAvancement}
                       indicateurId={indicateur.id}
                       proposition={detailIndicateur.proposition}
-                      titre={`Valeur d'avancement proposée par ${detailIndicateur.proposition?.auteur} le ${formaterDate(
-                        detailIndicateur.proposition?.dateProposition,
-                        "DD/MM/YYYY",
-                      )}`}
+                      titre={
+                        <>
+                          {`Valeur d'avancement proposée par `}
+                          <NomUtilisateurAvecTooltip
+                            nom={detailIndicateur.proposition?.auteur ?? ""}
+                            service={
+                              detailIndicateur.proposition?.auteurService ??
+                              null
+                            }
+                            fonction={
+                              detailIndicateur.proposition?.auteurFonction ??
+                              null
+                            }
+                          />
+                          {` le ${formaterDate(detailIndicateur.proposition?.dateProposition, "DD/MM/YYYY")}`}
+                        </>
+                      }
                       valeur={detailIndicateur.proposition?.valeurAvancement}
                     />
                   </div>
@@ -272,7 +291,17 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       <span>
                         Valeur d'avancement proposée le{" "}
                         {`${formaterDate(detailIndicateur.proposition?.dateProposition, "DD/MM/YYYY")}`}{" "}
-                        par {detailIndicateur.proposition?.auteur} :{" "}
+                        par{" "}
+                        <NomUtilisateurAvecTooltip
+                          nom={detailIndicateur.proposition?.auteur ?? ""}
+                          service={
+                            detailIndicateur.proposition?.auteurService ?? null
+                          }
+                          fonction={
+                            detailIndicateur.proposition?.auteurFonction ?? null
+                          }
+                        />{" "}
+                        :{" "}
                       </span>
                       <span className="fr-text--bold">
                         {detailIndicateur.proposition?.valeurAvancement} (
