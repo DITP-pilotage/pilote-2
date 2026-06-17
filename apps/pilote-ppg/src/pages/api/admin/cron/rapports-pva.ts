@@ -1,22 +1,33 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { z } from "zod";
 import { onlyCron } from "@/server/infrastructure/api/cron/onlyCron";
 import { getContainer } from "@/server/dependances";
 import logger from "@/server/infrastructure/Logger";
 import { envoieMessageTchap } from "@/server/utils/notification-tchap";
 import { configuration } from "@/config";
 
+const querySchema = z.object({
+  force: z
+    .enum(["true", "false"])
+    .optional()
+    .transform((val) => val === "true"),
+});
+
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const baseUrl = configuration().tchap.baseUrl;
   const roomId = configuration().tchap.roomIdRapportPva;
   const accessToken = configuration().tchap.accessToken;
+
+  const { force } = querySchema.parse(req.query);
 
   const featureFlips = await getContainer("legacy")
     .resolve("recupererFeatureFlipsUseCase")
     .run();
 
   if (
-    !featureFlips["NEXT_PUBLIC_FF_RAPPORT_PVA"] ||
-    configuration().scalingoEnvironment !== "PROD"
+    !force &&
+    (!featureFlips["NEXT_PUBLIC_FF_RAPPORT_PVA"] ||
+      configuration().scalingoEnvironment !== "PROD")
   ) {
     return res.status(200).json({
       skipped: true,
