@@ -1,4 +1,5 @@
 import Chantier from "@/server/domain/chantier/Chantier.interface";
+import { resolveResponsables } from "@/server/chantiers/app/contrats/resolveResponsables";
 import {
   Territoire,
   TerritoiresDonnées,
@@ -11,6 +12,7 @@ import {
 import { verifyValeurIsNotNullOrUndefined } from "@/server/utils/VerifyValeurIsNotNullOrUndefined";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
 import { NOMS_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
+import { UtilisateurEnrichi } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 
 export type ChantierContrat = Chantier;
 
@@ -23,6 +25,7 @@ class ErreurChantierSansMailleNationale extends Error {
 export function créerDonnéesTerritoires(
   territoires: Territoire[],
   chantierRows: EntreePrismaChantier[],
+  utilisateurParId: Map<string, UtilisateurEnrichi>,
 ) {
   let donnéesTerritoires: TerritoiresDonnées = {};
 
@@ -73,23 +76,18 @@ export function créerDonnéesTerritoires(
     };
 
     if (!!chantierRow) {
-      const responsables = chantierRow.responsables_locaux;
-      const responsablesEmails = chantierRow.responsables_locaux_mails;
-      for (const [i, responsable] of (responsables || []).entries()) {
-        donnéesTerritoires[t.code].responsableLocal.push({
-          nom: responsable,
-          email: responsablesEmails[i],
-        });
-      }
-
-      const coordinateurs = chantierRow.coordinateurs_territoriaux;
-      const coordinateursEmails = chantierRow.coordinateurs_territoriaux_mails;
-      for (const [i, coordinateur] of (coordinateurs || []).entries()) {
-        donnéesTerritoires[t.code].coordinateurTerritorial.push({
-          nom: coordinateur,
-          email: coordinateursEmails[i],
-        });
-      }
+      donnéesTerritoires[t.code].responsableLocal.push(
+        ...resolveResponsables(
+          chantierRow.responsables_locaux_ids || [],
+          utilisateurParId,
+        ),
+      );
+      donnéesTerritoires[t.code].coordinateurTerritorial.push(
+        ...resolveResponsables(
+          chantierRow.coordinateurs_territoriaux_ids || [],
+          utilisateurParId,
+        ),
+      );
     }
   });
 
@@ -100,6 +98,7 @@ export const presenterEnChantierContrat = (
   chantierIdentite: PrismaChantier,
   territoires: Territoire[],
   ministères: Ministère[],
+  utilisateurParId: Map<string, UtilisateurEnrichi>,
 ): Chantier => {
   const chantierMailleNationale = chantierIdentite.chantier_territoire.find(
     (c) => c.maille === "NAT",
@@ -177,10 +176,12 @@ export const presenterEnChantierContrat = (
       departementale: créerDonnéesTerritoires(
         territoires.filter((t) => t.maille === "departementale"),
         listeChantiersMailleDépartementale,
+        utilisateurParId,
       ),
       regionale: créerDonnéesTerritoires(
         territoires.filter((t) => t.maille === "regionale"),
         listeChantiersMailleRégionale,
+        utilisateurParId,
       ),
     },
     responsables: {
@@ -221,19 +222,12 @@ export const presenterEnChantierContrat = (
     }
   }
 
-  if (
-    chantierIdentite.directeurs_projet &&
-    chantierIdentite.directeurs_projet.length > 0
-  ) {
-    const directeurs = chantierIdentite.directeurs_projet;
-    const emails = chantierIdentite.directeurs_projet_mails;
-    for (const [i, directeur] of directeurs.entries()) {
-      result.responsables.directeursProjet.push({
-        nom: directeur,
-        email: emails[i] || null,
-      });
-    }
-  }
+  result.responsables.directeursProjet.push(
+    ...resolveResponsables(
+      chantierIdentite.directeurs_projet_ids || [],
+      utilisateurParId,
+    ),
+  );
 
   return result;
 };

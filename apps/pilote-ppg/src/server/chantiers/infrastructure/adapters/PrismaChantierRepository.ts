@@ -334,12 +334,10 @@ export class PrismaChantierRepository implements ChantierRepository {
               ((mapMeteo.get(
                 `${prismaChantierTerritoire.id}-${prismaChantierTerritoire.territoire_code}`,
               ) || null) as Meteo) || null,
-            directeursProjet: prismaChantierIdentite.directeurs_projet,
-            directeursProjetMails:
-              prismaChantierIdentite.directeurs_projet_mails,
-            responsablesLocaux: prismaChantierTerritoire.responsables_locaux,
-            responsablesLocauxMails:
-              prismaChantierTerritoire.responsables_locaux_mails,
+            directeursProjetIds:
+              prismaChantierIdentite.directeurs_projet_ids || [],
+            responsablesLocauxIds:
+              prismaChantierTerritoire.responsables_locaux_ids || [],
             statut: prismaChantierIdentite.statut,
             estBaromètre: !!prismaChantierIdentite.est_barometre,
             estTerritorialisé: !!prismaChantierIdentite.est_territorialise,
@@ -858,16 +856,12 @@ export class PrismaChantierRepository implements ChantierRepository {
                   : null,
               périmètreIds: prismaChantierIdentite.perimetre_ids,
               météo: (prismaChantierTerritoire.meteo as Meteo) || null,
-              directeursProjet: prismaChantierIdentite.directeurs_projet,
-              directeursProjetMails:
-                prismaChantierIdentite.directeurs_projet_mails,
-              responsablesLocaux: prismaChantierTerritoire.responsables_locaux,
-              responsablesLocauxMails:
-                prismaChantierTerritoire.responsables_locaux_mails,
-              coordinateursTerritoriaux:
-                prismaChantierTerritoire.coordinateurs_territoriaux,
-              coordinateursTerritoriauxMails:
-                prismaChantierTerritoire.coordinateurs_territoriaux_mails,
+              directeursProjetIds:
+                prismaChantierIdentite.directeurs_projet_ids || [],
+              responsablesLocauxIds:
+                prismaChantierTerritoire.responsables_locaux_ids || [],
+              coordinateursTerritoriauxIds:
+                prismaChantierTerritoire.coordinateurs_territoriaux_ids || [],
               statut: prismaChantierIdentite.statut,
               estBaromètre: prismaChantierIdentite.est_barometre,
               estTerritorialisé: prismaChantierIdentite.est_territorialise,
@@ -1327,8 +1321,7 @@ export class PrismaChantierRepository implements ChantierRepository {
         possede_meteo_regional: true,
         directeurs_administration_centrale: true,
         directions_administration_centrale: true,
-        directeurs_projet: true,
-        directeurs_projet_mails: true,
+        directeurs_projet_ids: true,
         mailles_applicables: true,
         chantier_territoire: {
           where: {
@@ -1352,10 +1345,8 @@ export class PrismaChantierRepository implements ChantierRepository {
             derniere_maj_date_qualitative: true,
             date_taux_avancement_mandat: true,
             est_applicable: true,
-            responsables_locaux: true,
-            responsables_locaux_mails: true,
-            coordinateurs_territoriaux: true,
-            coordinateurs_territoriaux_mails: true,
+            responsables_locaux_ids: true,
+            coordinateurs_territoriaux_ids: true,
             taux_avancement_mandat: true,
             nombre_propositions_valeur_actuelle: true,
             nombre_propositions_valeur_actuelle_ponderee: true,

@@ -1,4 +1,5 @@
 import { Maille, MailleInterne } from "@/server/domain/maille/Maille.interface";
+import { resolveResponsables } from "@/server/chantiers/app/contrats/resolveResponsables";
 import { TypeStatut } from "@/server/domain/chantier/Chantier.interface";
 import Ministère from "@/server/domain/ministère/Ministère.interface";
 import { Meteo } from "@/server/domain/météo/Météo.interface";
@@ -11,6 +12,7 @@ import {
   EntreePrismaChantier,
   PrismaChantier,
 } from "@/server/chantiers/domain/PrismaChantier";
+import { UtilisateurEnrichi } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 
 interface TerritoireAvancementRapportDetailleContrat {
   global: number | null;
@@ -73,6 +75,8 @@ export interface DirecteurAdministrationCentraleRapportDetailleContrat {
 export interface DirecteurProjetRapportDetailleContrat {
   nom: string;
   email: string | null;
+  service: string | null;
+  fonction: string | null;
 }
 
 export interface ResponsableRapportDetailleContrat {
@@ -85,11 +89,15 @@ export interface ResponsableRapportDetailleContrat {
 export interface ResponsableLocalRapportDetailleContrat {
   nom: string;
   email: string;
+  service: string | null;
+  fonction: string | null;
 }
 
 export interface CoordinateurTerritorialRapportDetailleContrat {
   nom: string;
   email: string;
+  service: string | null;
+  fonction: string | null;
 }
 
 export interface ChantierRapportDetailleContrat {
@@ -135,6 +143,7 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
   chantierRows: EntreePrismaChantier[],
   jalonSelectionne: number,
   jalonParDefaut: number,
+  utilisateurParId: Map<string, UtilisateurEnrichi>,
   listeTerritoireEnfant?: Territoire[],
   chantierRowsMailleEnfant?: EntreePrismaChantier[],
 ) {
@@ -200,18 +209,14 @@ export function créerDonnéesTerritoiresRapportDetailleNew(
       avancementPrecedent:
         chantierRow?.taux_avancement_mandat_valeur_precedente ?? null,
       météo: (chantierRow?.meteo as Meteo) ?? "NON_RENSEIGNEE",
-      responsableLocal: (chantierRow?.responsables_locaux || []).map(
-        (value, index) => ({
-          nom: value,
-          email: chantierRow?.responsables_locaux_mails[index]!,
-        }),
+      responsableLocal: resolveResponsables(
+        chantierRow?.responsables_locaux_ids || [],
+        utilisateurParId,
       ),
-      coordinateurTerritorial: (
-        chantierRow?.coordinateurs_territoriaux || []
-      ).map((value, index) => ({
-        nom: value,
-        email: chantierRow?.coordinateurs_territoriaux_mails[index]!,
-      })),
+      coordinateurTerritorial: resolveResponsables(
+        chantierRow?.coordinateurs_territoriaux_ids || [],
+        utilisateurParId,
+      ),
       aUnePropositionsValeurAvancement: aUnePropositionDeValeurAvancement,
       dateTauxAvancementMandatValeurPrecedente:
         chantierRow?.date_taux_avancement_mandat_valeur_precedente?.toISOString() ??
@@ -230,6 +235,7 @@ export const presenterEnChantierRapportDetaille = (
   profil: ProfilCode,
   jalonSelectionne: number,
   jalonParDefaut: number,
+  utilisateurParId: Map<string, UtilisateurEnrichi>,
 ): ChantierRapportDetailleContrat => {
   const mailleChantier = territoireCode.startsWith("NAT")
     ? "nationale"
@@ -352,12 +358,14 @@ export const presenterEnChantierRapportDetaille = (
       listeChantiersMailleDépartementale,
       jalonSelectionne,
       jalonParDefaut,
+      utilisateurParId,
     ),
     regionale: créerDonnéesTerritoiresRapportDetailleNew(
       listeTerritoireReg,
       listeChantiersMailleRégionale,
       jalonSelectionne,
       jalonParDefaut,
+      utilisateurParId,
       listeTerritoireDept,
       listeChantiersMailleDépartementale,
     ),
@@ -402,11 +410,9 @@ export const presenterEnChantierRapportDetaille = (
         nom: value,
         direction: chantierIdentite.directions_administration_centrale[index],
       })),
-      directeursProjet: (chantierIdentite.directeurs_projet || []).map(
-        (value, index) => ({
-          nom: value,
-          email: chantierIdentite.directeurs_projet_mails[index],
-        }),
+      directeursProjet: resolveResponsables(
+        chantierIdentite.directeurs_projet_ids || [],
+        utilisateurParId,
       ),
     },
     tauxAvancementDonnéeTerritorialisée: {

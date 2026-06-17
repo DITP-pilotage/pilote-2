@@ -17,6 +17,10 @@ import { OptionsExport } from "@/server/usecase/chantier/OptionsExport";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import type { Inject } from "@/server/chantiers/module";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
+import {
+  UtilisateurEnrichi,
+  UtilisateurRepository,
+} from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import { GetStatistiquesAvancementChantiersParChantierQuery } from "@/server/chantiers/infrastructure/queries/GetStatistiquesAvancementChantiersParChantierQuery";
 import { AvancementsStatistiques } from "@/components/_commons/Avancements/Avancements.interface";
 import {
@@ -29,6 +33,10 @@ import {
   verifierOptionPerimetreIds,
   verifierOptionStatut,
 } from "@/server/chantiers/domain/ChantierPourExport";
+import {
+  resolveMails,
+  resolveNoms,
+} from "@/server/chantiers/app/contrats/resolveResponsables";
 
 const presenterEnChantierExportContrat = (
   chantierPourExport: ChantierPourExport,
@@ -36,6 +44,7 @@ const presenterEnChantierExportContrat = (
   optionsExport: OptionsExport,
   statistiquesReg: AvancementsStatistiques,
   statistiquesDept: AvancementsStatistiques,
+  utilisateurParId: Map<string, UtilisateurEnrichi>,
 ): string[] => {
   const donnees = [
     chantierPourExport.maille === "NAT"
@@ -74,13 +83,30 @@ const presenterEnChantierExportContrat = (
   }
   if (optionsExport.listeOptionsExport.includes("responsabilite")) {
     donnees.push(
-      chantierPourExport.directeursProjet?.join(" ") || NON_RENSEIGNEE,
-      chantierPourExport.directeursProjetMails?.join(" ") || NON_RENSEIGNEE,
-      chantierPourExport.responsablesLocaux?.join(" ") || NON_RENSEIGNEE,
-      chantierPourExport.responsablesLocauxMails?.join(" ") || NON_RENSEIGNEE,
-      chantierPourExport.coordinateursTerritoriaux?.join(" ") || NON_RENSEIGNEE,
-      chantierPourExport.coordinateursTerritoriauxMails?.join(" ") ||
-        NON_RENSEIGNEE,
+      resolveNoms(
+        chantierPourExport.directeursProjetIds,
+        utilisateurParId,
+      ).join(" ") || NON_RENSEIGNEE,
+      resolveMails(
+        chantierPourExport.directeursProjetIds,
+        utilisateurParId,
+      ).join(" ") || NON_RENSEIGNEE,
+      resolveNoms(
+        chantierPourExport.responsablesLocauxIds,
+        utilisateurParId,
+      ).join(" ") || NON_RENSEIGNEE,
+      resolveMails(
+        chantierPourExport.responsablesLocauxIds,
+        utilisateurParId,
+      ).join(" ") || NON_RENSEIGNEE,
+      resolveNoms(
+        chantierPourExport.coordinateursTerritoriauxIds,
+        utilisateurParId,
+      ).join(" ") || NON_RENSEIGNEE,
+      resolveMails(
+        chantierPourExport.coordinateursTerritoriauxIds,
+        utilisateurParId,
+      ).join(" ") || NON_RENSEIGNEE,
     );
   }
 
@@ -295,15 +321,20 @@ export class ExportCsvDesChantiersUseCase {
   };
 
   private readonly chantierRepository: ChantierRepository;
+  private readonly utilisateurRepository: UtilisateurRepository;
   private readonly getStatistiquesAvancementChantiersParChantierQuery: GetStatistiquesAvancementChantiersParChantierQuery;
 
   constructor({
     chantierRepository,
+    utilisateurRepository,
     getStatistiquesAvancementChantiersParChantierQuery,
   }: Inject<
-    "chantierRepository" | "getStatistiquesAvancementChantiersParChantierQuery"
+    | "chantierRepository"
+    | "utilisateurRepository"
+    | "getStatistiquesAvancementChantiersParChantierQuery"
   >) {
     this.chantierRepository = chantierRepository;
+    this.utilisateurRepository = utilisateurRepository;
     this.getStatistiquesAvancementChantiersParChantierQuery =
       getStatistiquesAvancementChantiersParChantierQuery;
   }
@@ -341,75 +372,79 @@ export class ExportCsvDesChantiersUseCase {
     for (let i = 0; i < chantierIds.length; i += chantierChunkSize) {
       const partialChantierIds = chantierIds.slice(i, i + chantierChunkSize);
 
-      const input = partialChantierIds.map((id) =>
-        this.chantierRepository
-          .recupererPourExports(
+      const chantiersExport = await Promise.all(
+        partialChantierIds.map((id) =>
+          this.chantierRepository.recupererPourExports(
             id,
             territoireCodes,
             optionsExport,
             jalonSelectionne,
             jalonParDefaut,
-          )
-          .then((listerChantierTerritoireExport) =>
-            (listerChantierTerritoireExport || []).reduce(
-              (acc, chantierTerritoireExport) => {
-                if (
-                  chantierTerritoireExport &&
-                  !masquerPourProfilDROMEtMailleNat(
-                    profil,
-                    chantierTerritoireExport.périmètreIds,
-                    chantierTerritoireExport.maille,
-                  ) &&
-                  verifierOptionPerimetreIds(
-                    optionsExport,
-                    chantierTerritoireExport.périmètreIds,
-                  ) &&
-                  verifierOptionEstBarometreEtEstTerritorialise(
-                    optionsExport,
-                    chantierTerritoireExport.estBaromètre,
-                  ) &&
-                  verifierOptionStatut(
-                    optionsExport,
-                    chantierTerritoireExport.statut,
-                  ) &&
-                  verifierOptionMeteo(
-                    optionsExport,
-                    chantierTerritoireExport.météo,
-                  ) &&
-                  verifierOptionChantiersSignales(
-                    optionsExport,
-                    chantierTerritoireExport.ecart,
-                    chantierTerritoireExport.tendance,
-                    chantierTerritoireExport.tauxDAvancementJalonParDefaut,
-                    chantierTerritoireExport.cibleAttendu,
-                    chantierTerritoireExport.aUnTauxAvancementDepartemental,
-                    chantierTerritoireExport.météo ?? "NON_RENSEIGNEE",
-                    chantierTerritoireExport.aUnePropositionsValeurAvancement,
-                  )
-                ) {
-                  return [
-                    ...acc,
-                    presenterEnChantierExportContrat(
-                      chantierTerritoireExport,
-                      profil,
-                      optionsExport,
-                      statistiquesRegParChantier.get(
-                        chantierTerritoireExport.id,
-                      ) ?? null,
-                      statistiquesDeptParChantier.get(
-                        chantierTerritoireExport.id,
-                      ) ?? null,
-                    ),
-                  ];
-                }
-                return acc;
-              },
-              [] as string[][],
-            ),
           ),
-      );
+        ),
+      ).then((results) => results.flatMap((result) => result ?? []));
 
-      yield await Promise.all(input).then((result) => result.flat());
+      const allIds = [
+        ...new Set(
+          chantiersExport.flatMap((c) => [
+            ...c.directeursProjetIds,
+            ...c.responsablesLocauxIds,
+            ...c.coordinateursTerritoriauxIds,
+          ]),
+        ),
+      ];
+      const utilisateurParId =
+        await this.utilisateurRepository.recupererParIds(allIds);
+
+      const rows = chantiersExport.reduce((acc, chantierTerritoireExport) => {
+        if (
+          !masquerPourProfilDROMEtMailleNat(
+            profil,
+            chantierTerritoireExport.périmètreIds,
+            chantierTerritoireExport.maille,
+          ) &&
+          verifierOptionPerimetreIds(
+            optionsExport,
+            chantierTerritoireExport.périmètreIds,
+          ) &&
+          verifierOptionEstBarometreEtEstTerritorialise(
+            optionsExport,
+            chantierTerritoireExport.estBaromètre,
+          ) &&
+          verifierOptionStatut(
+            optionsExport,
+            chantierTerritoireExport.statut,
+          ) &&
+          verifierOptionMeteo(optionsExport, chantierTerritoireExport.météo) &&
+          verifierOptionChantiersSignales(
+            optionsExport,
+            chantierTerritoireExport.ecart,
+            chantierTerritoireExport.tendance,
+            chantierTerritoireExport.tauxDAvancementJalonParDefaut,
+            chantierTerritoireExport.cibleAttendu,
+            chantierTerritoireExport.aUnTauxAvancementDepartemental,
+            chantierTerritoireExport.météo ?? "NON_RENSEIGNEE",
+            chantierTerritoireExport.aUnePropositionsValeurAvancement,
+          )
+        ) {
+          return [
+            ...acc,
+            presenterEnChantierExportContrat(
+              chantierTerritoireExport,
+              profil,
+              optionsExport,
+              statistiquesRegParChantier.get(chantierTerritoireExport.id) ??
+                null,
+              statistiquesDeptParChantier.get(chantierTerritoireExport.id) ??
+                null,
+              utilisateurParId,
+            ),
+          ];
+        }
+        return acc;
+      }, [] as string[][]);
+
+      yield rows;
     }
   }
 }

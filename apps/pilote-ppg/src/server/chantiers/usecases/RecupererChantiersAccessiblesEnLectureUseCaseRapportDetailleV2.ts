@@ -12,6 +12,7 @@ import {
 } from "@/server/chantiers/app/contrats/FiltreQueryParams";
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
 import { TerritoireRepository } from "@/server/chantiers/domain/ports/TerritoireRepository";
+import { UtilisateurRepository } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import {
   ChantierRapportDetailleContrat,
   presenterEnChantierRapportDetaille,
@@ -206,12 +207,18 @@ export default class RecupererChantiersAccessiblesEnLectureUseCaseRapportDetaill
 
   private readonly territoireRepository: TerritoireRepository;
 
+  private readonly utilisateurRepository: UtilisateurRepository;
+
   constructor({
     chantierRepository,
     territoireRepository,
-  }: Inject<"chantierRepository" | "territoireRepository">) {
+    utilisateurRepository,
+  }: Inject<
+    "chantierRepository" | "territoireRepository" | "utilisateurRepository"
+  >) {
     this.chantierRepository = chantierRepository;
     this.territoireRepository = territoireRepository;
+    this.utilisateurRepository = utilisateurRepository;
   }
 
   async run(
@@ -244,44 +251,58 @@ export default class RecupererChantiersAccessiblesEnLectureUseCaseRapportDetaill
 
     const territoires = await this.territoireRepository.récupérerTousNew();
 
-    return this.chantierRepository
-      .récupérerLesEntréesDeTousLesChantiersHabilitésNew(
+    const listePrismaChantier =
+      await this.chantierRepository.récupérerLesEntréesDeTousLesChantiersHabilitésNew(
         chantiersLecture,
         territoiresLecture,
         profil,
         filtresPourChantier,
         territoireCode,
         [jalon, jalonParDefaut],
-      )
-      .then((listePrismaChantier) =>
-        listePrismaChantier
-          .reduce((acc, chantierIdentite) => {
-            // on devrait pouvoir appliquer le filtre plus tôt
-            const chantierTerritoireSelectionne =
-              chantierIdentite.chantier_territoire.find(
-                (chantierTerritoire) =>
-                  chantierTerritoire.territoire_code === territoireCode,
-              );
-            if (
-              chantierTerritoireSelectionne?.est_applicable &&
-              appliquerFiltre(mailleChantier, profil)(chantierIdentite)
-            ) {
-              return [
-                ...acc,
-                presenterEnChantierRapportDetaille(
-                  chantierIdentite,
-                  territoires,
-                  ministères,
-                  territoireCode,
-                  profil,
-                  jalon,
-                  jalonParDefaut,
-                ),
-              ];
-            }
-            return acc;
-          }, [] as ChantierRapportDetailleContrat[])
-          .sort(appliquerTri(sorting, mailleChantier, territoireCode)),
       );
+
+    const allIds = [
+      ...new Set(
+        listePrismaChantier.flatMap((c) => [
+          ...c.directeurs_projet_ids,
+          ...c.chantier_territoire.flatMap((t) => [
+            ...t.responsables_locaux_ids,
+            ...t.coordinateurs_territoriaux_ids,
+          ]),
+        ]),
+      ),
+    ];
+    const utilisateurParId =
+      await this.utilisateurRepository.recupererParIds(allIds);
+
+    return listePrismaChantier
+      .reduce((acc, chantierIdentite) => {
+        // on devrait pouvoir appliquer le filtre plus tôt
+        const chantierTerritoireSelectionne =
+          chantierIdentite.chantier_territoire.find(
+            (chantierTerritoire) =>
+              chantierTerritoire.territoire_code === territoireCode,
+          );
+        if (
+          chantierTerritoireSelectionne?.est_applicable &&
+          appliquerFiltre(mailleChantier, profil)(chantierIdentite)
+        ) {
+          return [
+            ...acc,
+            presenterEnChantierRapportDetaille(
+              chantierIdentite,
+              territoires,
+              ministères,
+              territoireCode,
+              profil,
+              jalon,
+              jalonParDefaut,
+              utilisateurParId,
+            ),
+          ];
+        }
+        return acc;
+      }, [] as ChantierRapportDetailleContrat[])
+      .sort(appliquerTri(sorting, mailleChantier, territoireCode));
   }
 }

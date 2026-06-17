@@ -356,7 +356,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
           nom: "Test Chantier",
           est_territorialise: true,
           directeurs_administration_centrale: [],
-          directeurs_projet: [],
+          directeurs_projet_ids: [],
         },
       });
 
@@ -845,7 +845,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
           nom: "Test Chantier",
           est_territorialise: true,
           directeurs_administration_centrale: [],
-          directeurs_projet: [],
+          directeurs_projet_ids: [],
         },
       });
 

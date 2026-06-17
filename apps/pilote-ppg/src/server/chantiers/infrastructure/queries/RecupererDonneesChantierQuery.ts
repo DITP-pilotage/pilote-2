@@ -1,4 +1,5 @@
 import { ChantierRepository } from "@/server/chantiers/domain/ports/ChantierRepository";
+import { UtilisateurRepository } from "@/server/chantiers/domain/ports/UtilisateurRepository";
 import {
   DonneeChantierContrat,
   presenterEnDonneeChantierContrat,
@@ -6,13 +7,17 @@ import {
 
 type Dependances = {
   chantierRepository: ChantierRepository;
+  utilisateurRepository: UtilisateurRepository;
 };
 
 export class RecupererDonneesChantierQuery {
   private chantierRepository: ChantierRepository;
 
-  constructor({ chantierRepository }: Dependances) {
+  private utilisateurRepository: UtilisateurRepository;
+
+  constructor({ chantierRepository, utilisateurRepository }: Dependances) {
     this.chantierRepository = chantierRepository;
+    this.utilisateurRepository = utilisateurRepository;
   }
 
   async handle(
@@ -25,10 +30,22 @@ export class RecupererDonneesChantierQuery {
         listeTerritoireCodes,
       );
 
-    return listeDonneesChantier.length > 0
-      ? presenterEnDonneeChantierContrat(listeDonneesChantier)
-      : {
-          message: "Il n'existe aucune donnée pour ce chantier",
-        };
+    if (listeDonneesChantier.length === 0) {
+      return { message: "Il n'existe aucune donnée pour ce chantier" };
+    }
+
+    const allIds = [
+      ...new Set([
+        ...listeDonneesChantier.flatMap((d) => d.directeursProjetIds),
+        ...listeDonneesChantier.flatMap((d) => d.responsablesLocauxIds),
+      ]),
+    ];
+    const utilisateurParId =
+      await this.utilisateurRepository.recupererParIds(allIds);
+
+    return presenterEnDonneeChantierContrat(
+      listeDonneesChantier,
+      utilisateurParId,
+    );
   }
 }

@@ -23,8 +23,7 @@ type EntreePrismaChantierIdentite = Pick<
   | "possede_meteo_regional"
   | "directeurs_administration_centrale"
   | "directions_administration_centrale"
-  | "directeurs_projet"
-  | "directeurs_projet_mails"
+  | "directeurs_projet_ids"
   | "mailles_applicables"
 >;
 type EntreePrismaChantierTerritoireJalon = Pick<
@@ -45,10 +44,8 @@ type EntreePrismaChantierTerritoire = Pick<
   | "derniere_maj_date_qualitative"
   | "date_taux_avancement_mandat"
   | "est_applicable"
-  | "responsables_locaux"
-  | "responsables_locaux_mails"
-  | "coordinateurs_territoriaux"
-  | "coordinateurs_territoriaux_mails"
+  | "responsables_locaux_ids"
+  | "coordinateurs_territoriaux_ids"
   | "taux_avancement_mandat"
   | "nombre_propositions_valeur_actuelle"
   | "nombre_propositions_valeur_actuelle_ponderee"

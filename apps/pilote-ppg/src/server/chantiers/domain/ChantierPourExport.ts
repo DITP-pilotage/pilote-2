@@ -21,12 +21,9 @@ export type ChantierPourExport = {
   tauxDAvancementRégional: number | null;
   tauxDAvancementDépartemental: number | null;
   météo: Meteo | null;
-  directeursProjet: string[] | null;
-  directeursProjetMails: string[] | null;
-  responsablesLocaux: string[] | null;
-  responsablesLocauxMails: string[] | null;
-  coordinateursTerritoriaux: string[] | null;
-  coordinateursTerritoriauxMails: string[] | null;
+  directeursProjetIds: string[];
+  responsablesLocauxIds: string[];
+  coordinateursTerritoriauxIds: string[];
   estBaromètre: boolean | null;
   estTerritorialisé: boolean | null;
   statut: string | null;

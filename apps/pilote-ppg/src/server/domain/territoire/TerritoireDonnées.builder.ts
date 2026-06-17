@@ -76,10 +76,14 @@ export default class TerritoireDonnéesBuilder {
     this._coordinateurTerritorial = générerTableau(1, 3, () => ({
       nom: faker.name.fullName(),
       email: faker.internet.email(),
+      service: null,
+      fonction: null,
     }));
     this._responsableLocal = générerTableau(1, 3, () => ({
       nom: faker.name.fullName(),
       email: faker.internet.email(),
+      service: null,
+      fonction: null,
     }));
     this._mailleSourceDonnees = null;
     this._nombrePropositionValeur = 0;
