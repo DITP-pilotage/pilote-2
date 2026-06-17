@@ -80,8 +80,7 @@ export const usePageChantier = () => {
   const estAutoriseAImporterDesIndicateurs =
     peutToujoursImporterDesIndicateurs ||
     (estAutoriséAImporterDesIndicateurs(session!.profil) &&
-      estAutoriseAImporterSurLeChantier &&
-      chantier.statut !== "ARCHIVE");
+      estAutoriseAImporterSurLeChantier);
 
   const estAutoriseAVoirLeBoutonFicheConducteur =
     !!ffFicheConducteur &&
