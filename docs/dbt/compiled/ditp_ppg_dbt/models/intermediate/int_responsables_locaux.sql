@@ -1,7 +1,7 @@
 -- responsables locaux avec des habilitations sur les chantiers
 WITH resp_locaux AS (
     SELECT
-        INITCAP(utilisateur.prenom) || ' ' || INITCAP(utilisateur.nom) AS nom,
+        utilisateur.id,
         utilisateur.email,
         utilisateur.profil_code,
         territoires.territoire_code,
@@ -30,11 +30,7 @@ WITH resp_locaux AS (
 )
 
 SELECT
-    -- On trie par email pour éviter les différences de tri
-    -- et que les noms soient associés aux bons emails
-    -- (email est PK d'utilisateurs dc pas de doublons)
-    ARRAY_AGG(resp_locaux.nom ORDER BY resp_locaux.email) AS nom,
-    ARRAY_AGG(resp_locaux.email ORDER BY resp_locaux.email) AS email,
+    ARRAY_AGG(resp_locaux.id::TEXT ORDER BY resp_locaux.email) AS ids,
     resp_locaux.chantier_id,
     resp_locaux.territoire_code,
     territoire.zone_id

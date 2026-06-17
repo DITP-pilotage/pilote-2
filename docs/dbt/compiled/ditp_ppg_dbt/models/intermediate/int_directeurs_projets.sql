@@ -1,6 +1,6 @@
 WITH dir_projets_chantiers AS (
     SELECT
-        INITCAP(utilisateur.prenom) || ' ' || INITCAP(utilisateur.nom) AS nom,
+        utilisateur.id,
         utilisateur.email,
         UNNEST(habilitation.chantiers) AS chantier_id
     FROM
@@ -17,7 +17,7 @@ WITH dir_projets_chantiers AS (
 dir_projets_perimetres AS (
     SELECT
         UNNEST(habilitation.perimetres) AS perimetre_id,
-        INITCAP(utilisateur.prenom) || ' ' || INITCAP(utilisateur.nom) AS nom,
+        utilisateur.id,
         utilisateur.email
     FROM
         "dev_pilote__6230"."public"."habilitation" AS habilitation
@@ -44,7 +44,7 @@ dir_projets_complet AS (
     UNION ALL
     (
         SELECT
-            dir_projets_perimetres.nom,
+            dir_projets_perimetres.id,
             dir_projets_perimetres.email,
             corresp_perimetres.chantier_id
         FROM
@@ -58,11 +58,7 @@ dir_projets_complet AS (
 )
 
 SELECT
-    ARRAY_AGG(nom ORDER BY email) AS nom,
-    -- On trie par email pour éviter les différences de tri
-    -- et que les noms soient associés aux bons emails
-    -- (email est PK d'utilisateurs dc pas de doublons)
-    ARRAY_AGG(email ORDER BY email) AS email,
+    ARRAY_AGG(id::TEXT ORDER BY email) AS ids,
     chantier_id
 FROM dir_projets_complet
 GROUP BY chantier_id
