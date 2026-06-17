@@ -115,7 +115,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                         <span>
                           {`Valeur d'avancement proposée par `}
                           <NomUtilisateurAvecTooltip
-                            nom={detailIndicateur.proposition?.auteur ?? ""}
+                            nom={detailIndicateur.proposition!.auteur!}
                             service={
                               detailIndicateur.proposition?.auteurService ??
                               null
@@ -196,7 +196,7 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                         )}{" "}
                         par{" "}
                         <NomUtilisateurAvecTooltip
-                          nom={detailIndicateur.proposition?.auteur ?? ""}
+                          nom={detailIndicateur.proposition!.auteur!}
                           service={
                             detailIndicateur.proposition?.auteurService ?? null
                           }

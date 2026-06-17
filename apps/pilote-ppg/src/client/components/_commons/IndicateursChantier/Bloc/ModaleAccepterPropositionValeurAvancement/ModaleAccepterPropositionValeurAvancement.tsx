@@ -109,7 +109,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                       La proposition de nouvelle valeur d'avancement que vous
                       modifiez a été faite par{" "}
                       <NomUtilisateurAvecTooltip
-                        nom={detailIndicateur.proposition.auteur ?? ""}
+                        nom={detailIndicateur.proposition.auteur!}
                         service={detailIndicateur.proposition.auteurService}
                         fonction={detailIndicateur.proposition.auteurFonction}
                       />{" "}
@@ -138,7 +138,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                         <span>
                           {`Valeur d'avancement proposée par `}
                           <NomUtilisateurAvecTooltip
-                            nom={detailIndicateur.proposition?.auteur ?? ""}
+                            nom={detailIndicateur.proposition!.auteur!}
                             service={
                               detailIndicateur.proposition?.auteurService ??
                               null
@@ -293,7 +293,7 @@ export const ModaleAccepterPropositionValeurAvancement: FunctionComponent<
                         {`${formaterDate(detailIndicateur.proposition?.dateProposition, "DD/MM/YYYY")}`}{" "}
                         par{" "}
                         <NomUtilisateurAvecTooltip
-                          nom={detailIndicateur.proposition?.auteur ?? ""}
+                          nom={detailIndicateur.proposition!.auteur!}
                           service={
                             detailIndicateur.proposition?.auteurService ?? null
                           }

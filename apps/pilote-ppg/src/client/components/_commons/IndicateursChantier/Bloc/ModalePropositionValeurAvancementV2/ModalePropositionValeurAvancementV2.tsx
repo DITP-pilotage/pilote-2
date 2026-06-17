@@ -112,9 +112,7 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
                       La proposition de nouvelle valeur d'avancement que vous
                       modifiez a été faite par{" "}
                       <NomUtilisateurAvecTooltip
-                        nom={
-                          detailIndicateurDuTerritoire.proposition.auteur ?? ""
-                        }
+                        nom={detailIndicateurDuTerritoire.proposition.auteur!}
                         service={
                           detailIndicateurDuTerritoire.proposition.auteurService
                         }
@@ -161,8 +159,8 @@ export const ModalePropositionValeurAvancementV2: FunctionComponent<
                             {`Valeur d'avancement proposée par `}
                             <NomUtilisateurAvecTooltip
                               nom={
-                                detailIndicateurDuTerritoire.proposition
-                                  ?.auteur ?? ""
+                                detailIndicateurDuTerritoire.proposition!
+                                  .auteur!
                               }
                               service={
                                 detailIndicateurDuTerritoire.proposition

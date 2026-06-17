@@ -124,7 +124,7 @@ export const ModaleSuppressionValeurAvancementV2: FunctionComponent<
                         <span>
                           {`Valeur d'avancement proposée par `}
                           <NomUtilisateurAvecTooltip
-                            nom={detailIndicateur.proposition?.auteur ?? ""}
+                            nom={detailIndicateur.proposition!.auteur!}
                             service={
                               detailIndicateur.proposition?.auteurService ??
                               null
@@ -205,7 +205,7 @@ export const ModaleSuppressionValeurAvancementV2: FunctionComponent<
                         {`${formaterDate(detailIndicateur.proposition?.dateProposition, "DD/MM/YYYY")}`}{" "}
                         par{" "}
                         <NomUtilisateurAvecTooltip
-                          nom={detailIndicateur.proposition?.auteur ?? ""}
+                          nom={detailIndicateur.proposition!.auteur!}
                           service={
                             detailIndicateur.proposition?.auteurService ?? null
                           }
