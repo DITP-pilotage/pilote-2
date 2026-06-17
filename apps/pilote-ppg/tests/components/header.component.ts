@@ -31,21 +31,22 @@ export class HeaderComponent {
     if (await this.userButton().isVisible()) {
       await expect(async () => {
         await this.userButton().click();
-        await this.logoutButton.waitFor({ state: "visible", timeout: 2_000 });
+        await this.logoutButton.waitFor({ state: "visible", timeout: 5_000 });
       }).toPass({ timeout: 15_000 });
 
       await this.logoutButton.click();
 
       // Le click déclenche next-auth signOut() qui POST /api/auth/signout
-      // puis redirige. On attend que la navigation déclenchée par signOut
-      // soit terminée avant de vérifier l'état des cookies — sinon notre
-      // goto de fallback racerait avec la navigation en cours (ERR_ABORTED).
+      // puis redirige vers "/". On attend que cette navigation soit terminée
+      // avant de vérifier l'état des cookies.
       await this.page.waitForLoadState("load");
 
-      // Dans next-auth v5 beta, le cookie de session (authjs.session-token)
-      // peut persister après la redirection à cause d'une race avec une
-      // éventuelle refresh de session concurrente. On force sa suppression
-      // si nécessaire avant de considérer l'utilisateur comme déconnecté.
+      // Dans next-auth v5 beta, le cookie de session peut persister à cause
+      // d'une race avec un refresh de session concurrent en vol au moment du
+      // signOut. On force la suppression si nécessaire. On utilise reload()
+      // plutôt que goto("/") : la page est déjà sur "/" et une nouvelle
+      // navigation via portless/HTTP2 peut lever ERR_ABORTED si des requêtes
+      // background sont encore en cours d'annulation.
       const sessionCookieName = "session-token";
       const cookies = await this.page.context().cookies();
       const sessionStillPresent = cookies.some((cookie) =>
@@ -53,8 +54,8 @@ export class HeaderComponent {
       );
 
       if (sessionStillPresent) {
-        await this.page.context().clearCookies();
-        await this.page.goto("/");
+        await this.page.context().clearCookies({ name: /session-token/ });
+        await this.page.reload({ waitUntil: "domcontentloaded" });
       }
 
       await this.loginButton.waitFor({ state: "visible", timeout: 30_000 });

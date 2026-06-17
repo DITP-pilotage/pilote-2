@@ -11,6 +11,7 @@ require("dotenv").config({ path: ".env.e2e" });
  */
 export default defineConfig({
   globalSetup: "./tests/global-setup.ts",
+  globalTeardown: "./tests/global-teardown.ts",
   testDir: "./tests",
   /* Run tests in files in parallel */
   fullyParallel: false,
@@ -19,7 +20,7 @@ export default defineConfig({
   /* Retry on CI only */
   retries: 2,
   timeout: 90_000,
-  globalTimeout: 2_000_000,
+  globalTimeout: 1_400_000,
   outputDir: process.env.CI ? "test-results" : "/tmp/pilote-playwright/results",
   /* Run serially for test isolation */
   workers: 3,
@@ -39,6 +40,7 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     stdout: "pipe",
     stderr: "pipe",
+    ignoreHTTPSErrors: true,
   },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -52,6 +54,7 @@ export default defineConfig({
     actionTimeout: 30_000,
     navigationTimeout: 45_000,
     acceptDownloads: true,
+    ignoreHTTPSErrors: true,
   },
 
   /* Configure projects for major browsers */

@@ -41,7 +41,7 @@ export class VerifierFichierImportIndicateurHandler {
   }
 
   async handle(request: NextApiRequest, response: NextApiResponse) {
-    const estSecuredEnv = configuration().env === "production";
+    const estSecuredEnv = configuration().nextAuth.url.startsWith("https://");
 
     const formData = await parseForm(request);
 
