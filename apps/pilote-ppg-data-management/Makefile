@@ -14,3 +14,6 @@ lint-sql:
 
 tunnel-dev:
 	scalingo -a dev-pilote-ditp --region osc-secnum-fr1 db-tunnel SCALINGO_POSTGRESQL_URL
+
+tunnel-prod:
+	scalingo -a prod-pilote-ditp --region osc-secnum-fr1 db-tunnel SCALINGO_POSTGRESQL_URL
