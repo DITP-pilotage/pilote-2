@@ -12,6 +12,7 @@ import {
 import { formaterDate } from "@/client/utils/date/date";
 import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaAvecLabel";
 import { ComparaisonValeurBox } from "@/components/_commons/IndicateursChantier/Bloc/ComparaisonValeurBox";
+import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 
@@ -110,10 +111,23 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                       date={detailIndicateur.proposition!.dateValeurAvancement}
                       indicateurId={indicateur.id}
                       proposition={detailIndicateur.proposition}
-                      titre={`Valeur d'avancement proposée par ${detailIndicateur.proposition?.auteur} le ${formaterDate(
-                        detailIndicateur.proposition?.dateProposition,
-                        "DD/MM/YYYY",
-                      )}`}
+                      titre={
+                        <span>
+                          {`Valeur d'avancement proposée par `}
+                          <NomUtilisateurAvecTooltip
+                            nom={detailIndicateur.proposition!.auteur!}
+                            service={
+                              detailIndicateur.proposition?.auteurService ??
+                              null
+                            }
+                            fonction={
+                              detailIndicateur.proposition?.auteurFonction ??
+                              null
+                            }
+                          />
+                          {` le ${formaterDate(detailIndicateur.proposition?.dateProposition, "DD/MM/YYYY")}`}
+                        </span>
+                      }
                       valeur={detailIndicateur.proposition?.valeurAvancement}
                     />
                   </div>
@@ -180,7 +194,17 @@ export const ModaleAccuserReceptionPropositionValeurAvancement: FunctionComponen
                           detailIndicateur.proposition?.dateProposition,
                           "DD/MM/YYYY",
                         )}{" "}
-                        par {detailIndicateur.proposition?.auteur} :{" "}
+                        par{" "}
+                        <NomUtilisateurAvecTooltip
+                          nom={detailIndicateur.proposition!.auteur!}
+                          service={
+                            detailIndicateur.proposition?.auteurService ?? null
+                          }
+                          fonction={
+                            detailIndicateur.proposition?.auteurFonction ?? null
+                          }
+                        />{" "}
+                        :{" "}
                       </span>
                       <span className="fr-text--bold">
                         {detailIndicateur.proposition?.valeurAvancement} (

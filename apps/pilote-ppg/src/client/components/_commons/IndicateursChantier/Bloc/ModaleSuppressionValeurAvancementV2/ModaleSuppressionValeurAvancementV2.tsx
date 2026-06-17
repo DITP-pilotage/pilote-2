@@ -8,6 +8,7 @@ import TextAreaAvecLabel from "@/components/_commons/TextAreaAvecLabel/TextAreaA
 import { LIMITE_CARACTERES_DOCUMENTATION_PROPOSITION } from "@/validation/proposition-valeur-avancement";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { useProfilUtilisateurConnecte } from "@/client/hooks/useProfilUtilisateurConnecte";
+import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
 import useModaleSuppressionValeurAvancementV2, {
   EtapeSuppressionPropositionValeurAvancement,
   Stepper,
@@ -120,7 +121,21 @@ export const ModaleSuppressionValeurAvancementV2: FunctionComponent<
                     </div>
                     <div className="w-half-full fr-ml-1w border">
                       <span className="fr-background-action-low-blue-france w-full flex justify-center fr-p-1w">
-                        {`Valeur d'avancement proposée par ${detailIndicateur.proposition?.auteur} le ${formaterDate(detailIndicateur.proposition!.dateProposition, "DD/MM/YYYY")}`}
+                        <span>
+                          {`Valeur d'avancement proposée par `}
+                          <NomUtilisateurAvecTooltip
+                            nom={detailIndicateur.proposition!.auteur!}
+                            service={
+                              detailIndicateur.proposition?.auteurService ??
+                              null
+                            }
+                            fonction={
+                              detailIndicateur.proposition?.auteurFonction ??
+                              null
+                            }
+                          />
+                          {` le ${formaterDate(detailIndicateur.proposition!.dateProposition, "DD/MM/YYYY")}`}
+                        </span>
                       </span>
                       <div className="w-full flex flex-column align-center fr-pt-1w">
                         <span className="flex justify-center fr-mb-5v">
@@ -188,8 +203,17 @@ export const ModaleSuppressionValeurAvancementV2: FunctionComponent<
                       <span className="fr-text--bold">
                         Valeur d'avancement proposée le{" "}
                         {`${formaterDate(detailIndicateur.proposition?.dateProposition, "DD/MM/YYYY")}`}{" "}
-                        par {detailIndicateur.proposition?.auteur} :{" "}
-                        {detailIndicateur.proposition?.valeurAvancement} (
+                        par{" "}
+                        <NomUtilisateurAvecTooltip
+                          nom={detailIndicateur.proposition!.auteur!}
+                          service={
+                            detailIndicateur.proposition?.auteurService ?? null
+                          }
+                          fonction={
+                            detailIndicateur.proposition?.auteurFonction ?? null
+                          }
+                        />{" "}
+                        : {detailIndicateur.proposition?.valeurAvancement} (
                         {formaterDate(
                           detailIndicateur.dateValeurAvancementMandat,
                           "MM/YYYY",

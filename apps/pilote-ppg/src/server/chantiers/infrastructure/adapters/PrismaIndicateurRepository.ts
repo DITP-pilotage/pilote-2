@@ -899,6 +899,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
                   service: true,
                   service_autre: true,
                   perimetre_ministeriel: true,
+                  fonction: true,
                 },
               },
             },
@@ -968,6 +969,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           | "service"
           | "service_autre"
           | "perimetre_ministeriel"
+          | "fonction"
         >;
       })[];
     })[],
@@ -1093,6 +1095,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           | "service"
           | "service_autre"
           | "perimetre_ministeriel"
+          | "fonction"
         >;
       })[];
     })[],
@@ -1205,6 +1208,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
           | "service"
           | "service_autre"
           | "perimetre_ministeriel"
+          | "fonction"
         >;
       })[];
     },
@@ -1261,6 +1265,8 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             evenementPropositionLePlusRecent.auteur.service,
             evenementPropositionLePlusRecent.auteur.service_autre,
           ),
+          auteurFonction:
+            evenementPropositionLePlusRecent.auteur.fonction ?? null,
           dateProposition: formatDate(
             evenementPropositionLePlusRecent.date_creation,
           ),

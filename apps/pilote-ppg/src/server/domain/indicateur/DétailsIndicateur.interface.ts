@@ -17,6 +17,7 @@ interface DetailIndicateurPropositionValeurAvancement {
   tauxAvancementIntermediaire: number | null;
   auteur: string | null;
   auteurService: string | null;
+  auteurFonction: string | null;
   dateProposition: string | null;
   motif: string | null;
   sourceDonneeEtMethodeCalcul: string | null;
