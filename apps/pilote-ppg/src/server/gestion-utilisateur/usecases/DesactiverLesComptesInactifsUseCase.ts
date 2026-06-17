@@ -16,7 +16,8 @@ export interface DesactiverLesComptesInactifsResultat {
   erreurs: number;
 }
 
-const EMAIL_UTILISATEUR_SYSTEME = "import.csv@modernisation.gouv.fr";
+const EMAIL_UTILISATEUR_SYSTEME =
+  "desactivation.automatique@modernisation.gouv.fr";
 
 export class DesactiverLesComptesInactifsUseCase {
   private utilisateurRepository: UtilisateurRepository;
