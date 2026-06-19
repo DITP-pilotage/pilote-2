@@ -47,7 +47,15 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ indicateur: indId, valeur: 75, date: '2026-03-01', type: 'saisie' }],
+        items: [
+          {
+            indicateur: indId,
+            valeur: 75,
+            date: '2026-03-01',
+            type: 'saisie',
+            tauxProgression: null,
+          },
+        ],
       })
     }),
   )
@@ -110,7 +118,15 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ indicateur: indAvecValeur, valeur: 42, date: '2026-01-01', type: 'saisie' }],
+        items: [
+          {
+            indicateur: indAvecValeur,
+            valeur: 42,
+            date: '2026-01-01',
+            type: 'saisie',
+            tauxProgression: null,
+          },
+        ],
       })
     }),
   )
@@ -146,7 +162,15 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ indicateur: indPublic, valeur: 10, date: '2026-01-01', type: 'saisie' }],
+        items: [
+          {
+            indicateur: indPublic,
+            valeur: 10,
+            date: '2026-01-01',
+            type: 'saisie',
+            tauxProgression: null,
+          },
+        ],
       })
     }),
   )
@@ -186,7 +210,179 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ indicateur: indId, valeur: 12, date: '2026-01-01', type: 'derivee' }],
+        items: [
+          {
+            indicateur: indId,
+            valeur: 12,
+            date: '2026-01-01',
+            type: 'derivee',
+            tauxProgression: null,
+          },
+        ],
+      })
+    }),
+  )
+
+  it(
+    'retourne le tauxProgression calculé quand un objectif est défini',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const deptId = testDeptId()
+      const refA = testReferentielId()
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId },
+        individu: { publicId: deptId, referentiel: { publicId: refA, nom: 'A' } },
+        date: '2026-01-01',
+        valeur: 75,
+      })
+      await fixtures.objectifIndicateurIndividu({
+        indicateur: { publicId: indId },
+        individu: { publicId: deptId },
+        dateCible: '2026-12-01',
+        valeurCible: 100,
+      })
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listDernieresValeursForIndividu(deptId, { indicateurs: [indId] }),
+      )
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [
+          {
+            indicateur: indId,
+            valeur: 75,
+            date: '2026-01-01',
+            type: 'saisie',
+            tauxProgression: 75,
+          },
+        ],
+      })
+    }),
+  )
+
+  it(
+    'calcule le taux sur la dernière valeur de la série',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const deptId = testDeptId()
+      const refA = testReferentielId()
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
+      await fixtures.valeurAvancement(
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId, referentiel: { publicId: refA, nom: 'A' } },
+          date: '2026-01-01',
+          valeur: 10,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: { publicId: deptId },
+          date: '2026-03-01',
+          valeur: 90,
+        },
+      )
+      await fixtures.objectifIndicateurIndividu({
+        indicateur: { publicId: indId },
+        individu: { publicId: deptId },
+        dateCible: '2026-12-01',
+        valeurCible: 100,
+      })
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listDernieresValeursForIndividu(deptId, { indicateurs: [indId] }),
+      )
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [
+          {
+            indicateur: indId,
+            valeur: 90,
+            date: '2026-03-01',
+            type: 'saisie',
+            tauxProgression: 90,
+          },
+        ],
+      })
+    }),
+  )
+
+  it(
+    'plafonne tauxProgression à 100 quand la valeur dépasse la cible',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const deptId = testDeptId()
+      const refA = testReferentielId()
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId },
+        individu: { publicId: deptId, referentiel: { publicId: refA, nom: 'A' } },
+        date: '2026-01-01',
+        valeur: 150,
+      })
+      await fixtures.objectifIndicateurIndividu({
+        indicateur: { publicId: indId },
+        individu: { publicId: deptId },
+        dateCible: '2026-12-01',
+        valeurCible: 100,
+      })
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listDernieresValeursForIndividu(deptId, { indicateurs: [indId] }),
+      )
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [
+          {
+            indicateur: indId,
+            valeur: 150,
+            date: '2026-01-01',
+            type: 'saisie',
+            tauxProgression: 100,
+          },
+        ],
+      })
+    }),
+  )
+
+  it(
+    'retourne tauxProgression null quand valeurCible vaut zéro',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const deptId = testDeptId()
+      const refA = testReferentielId()
+      await fixtures.indicateur({ publicId: indId, nom: 'T', visibilite: 'PUBLIC' })
+      await fixtures.valeurAvancement({
+        indicateur: { publicId: indId },
+        individu: { publicId: deptId, referentiel: { publicId: refA, nom: 'A' } },
+        date: '2026-01-01',
+        valeur: 42,
+      })
+      await fixtures.objectifIndicateurIndividu({
+        indicateur: { publicId: indId },
+        individu: { publicId: deptId },
+        dateCible: '2026-12-01',
+        valeurCible: 0,
+      })
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listDernieresValeursForIndividu(deptId, { indicateurs: [indId] }),
+      )
+
+      expect(result._unsafeUnwrap()).toEqual({
+        items: [
+          {
+            indicateur: indId,
+            valeur: 42,
+            date: '2026-01-01',
+            type: 'saisie',
+            tauxProgression: null,
+          },
+        ],
       })
     }),
   )

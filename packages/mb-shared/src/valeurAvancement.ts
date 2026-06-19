@@ -452,6 +452,13 @@ export const dernierValeurIndividuApiModelSchema = z.object({
       "`saisie` : la valeur provient d'une saisie directe sur cet individu. " +
         "`derivee` : la valeur est reconstruite par agrégation hiérarchique des descendants.",
     ),
+  tauxProgression: z
+    .number()
+    .nullable()
+    .describe(
+      "Taux de progression vers l'objectif courant (0–100), null si aucun objectif n'est défini " +
+        'pour cet indicateur × individu ou si la valeur cible est zéro.',
+    ),
 })
 export type DernierValeurIndividuApiModel = z.infer<typeof dernierValeurIndividuApiModelSchema>
 
