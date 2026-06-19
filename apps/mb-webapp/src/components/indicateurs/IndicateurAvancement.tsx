@@ -37,7 +37,9 @@ export function IndicateurAvancement({
         {formatNumberAvecUniteFr(data.valeur, unite)}
       </span>
       <span className="text-text-muted">au {formatMonthYearNumericFr(data.date)}</span>
-      {data.tauxProgression !== null && <ProgressionBar taux={data.tauxProgression} />}
+      {data.tauxProgression !== null && (
+        <ProgressionBar taux={data.tauxProgression} valeurCible={data.valeurCible} unite={unite} />
+      )}
     </span>
   )
 }

@@ -54,6 +54,7 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
             date: '2026-03-01',
             type: 'saisie',
             tauxProgression: null,
+            valeurCible: null,
           },
         ],
       })
@@ -125,6 +126,7 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
             date: '2026-01-01',
             type: 'saisie',
             tauxProgression: null,
+            valeurCible: null,
           },
         ],
       })
@@ -169,6 +171,7 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
             date: '2026-01-01',
             type: 'saisie',
             tauxProgression: null,
+            valeurCible: null,
           },
         ],
       })
@@ -217,6 +220,7 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
             date: '2026-01-01',
             type: 'derivee',
             tauxProgression: null,
+            valeurCible: null,
           },
         ],
       })
@@ -256,6 +260,7 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
             date: '2026-01-01',
             type: 'saisie',
             tauxProgression: 75,
+            valeurCible: 100,
           },
         ],
       })
@@ -303,6 +308,7 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
             date: '2026-03-01',
             type: 'saisie',
             tauxProgression: 90,
+            valeurCible: 100,
           },
         ],
       })
@@ -342,6 +348,7 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
             date: '2026-01-01',
             type: 'saisie',
             tauxProgression: 100,
+            valeurCible: 100,
           },
         ],
       })
@@ -381,6 +388,7 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
             date: '2026-01-01',
             type: 'saisie',
             tauxProgression: null,
+            valeurCible: null,
           },
         ],
       })

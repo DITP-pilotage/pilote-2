@@ -459,6 +459,13 @@ export const dernierValeurIndividuApiModelSchema = z.object({
       "Taux de progression vers l'objectif courant (0–100), null si aucun objectif n'est défini " +
         'pour cet indicateur × individu ou si la valeur cible est zéro.',
     ),
+  valeurCible: z
+    .number()
+    .nullable()
+    .describe(
+      "Valeur cible de l'objectif courant, null si aucun objectif n'est défini " +
+        "pour cet indicateur × individu.",
+    ),
 })
 export type DernierValeurIndividuApiModel = z.infer<typeof dernierValeurIndividuApiModelSchema>
 

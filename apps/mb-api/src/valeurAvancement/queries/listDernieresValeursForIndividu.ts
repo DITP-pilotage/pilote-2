@@ -80,14 +80,19 @@ const build = async (
       const objectifCache = new Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>()
       const objectifsMap = resolveObjectifIndividu(individu.id, objectifCtx, objectifCache)
       let tauxProgression: number | null = null
+      let valeurCible: number | null = null
       if (objectifsMap.size > 0) {
         const objectifsList: ObjectifBrut[] = [...objectifsMap.values()]
           .map((p) => ({ dateCible: p.bucket, valeurCible: p.valeur }))
           .sort((a, b) => compareBuckets(a.dateCible, b.dateCible))
         const objectifApplicable = findObjectifApplicable(dernier.bucket, objectifsList)
-        tauxProgression = objectifApplicable
-          ? computeTaux(dernier.valeur, objectifApplicable.valeurCible)
-          : null
+        if (objectifApplicable) {
+          const taux = computeTaux(dernier.valeur, objectifApplicable.valeurCible)
+          if (taux !== null) {
+            tauxProgression = taux
+            valeurCible = objectifApplicable.valeurCible.toNumber()
+          }
+        }
       }
 
       const item: DernierValeurIndividuApiModel = {
@@ -96,6 +101,7 @@ const build = async (
         date: formatBucket(dernier.bucket),
         type: dernier.type,
         tauxProgression,
+        valeurCible,
       }
       return item
     }),

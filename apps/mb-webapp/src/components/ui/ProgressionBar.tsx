@@ -1,23 +1,39 @@
 import { Progress } from 'radix-ui'
 
-import { formatNumberFr } from '@/lib/format'
+import { formatNumberAvecUniteFr, formatNumberFr } from '@/lib/format'
+import { type UniteIndicateurApiModel } from '@pilote/mb-shared/indicateur'
 
-export function ProgressionBar({ taux }: { taux: number }) {
+export function ProgressionBar({
+  taux,
+  valeurCible,
+  unite,
+}: {
+  taux: number
+  valeurCible: number | null
+  unite: UniteIndicateurApiModel | null
+}) {
   return (
-    <span className="flex items-center gap-2">
-      <Progress.Root
-        value={taux}
-        max={100}
-        className="flex-1 h-2 rounded-full overflow-hidden bg-primary/20"
-      >
-        <Progress.Indicator
-          className="h-full bg-primary transition-transform duration-300"
-          style={{ transform: `translateX(-${100 - taux}%)` }}
-        />
-      </Progress.Root>
-      <span className="text-sm font-medium tabular-nums shrink-0 text-primary">
-        {formatNumberFr(taux)} %
+    <span className="flex flex-col gap-1">
+      <span className="flex items-center gap-2">
+        <Progress.Root
+          value={taux}
+          max={100}
+          className="flex-1 h-2 rounded-full overflow-hidden bg-primary/20"
+        >
+          <Progress.Indicator
+            className="h-full bg-primary transition-transform duration-300"
+            style={{ transform: `translateX(-${100 - taux}%)` }}
+          />
+        </Progress.Root>
+        <span className="text-sm font-medium tabular-nums shrink-0 text-primary">
+          {formatNumberFr(taux)} %
+        </span>
       </span>
+      {valeurCible !== null && (
+        <span className="text-xs text-text-muted text-right">
+          Objectif : {formatNumberAvecUniteFr(valeurCible, unite)}
+        </span>
+      )}
     </span>
   )
 }
