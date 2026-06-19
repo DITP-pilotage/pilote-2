@@ -1,9 +1,9 @@
 import { type UniteIndicateurApiModel } from '@pilote/mb-shared/indicateur'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { Progress } from 'radix-ui'
 
-import { formatMonthYearNumericFr, formatNumberAvecUniteFr, formatNumberFr } from '@/lib/format'
+import { formatMonthYearNumericFr, formatNumberAvecUniteFr } from '@/lib/format'
 import { dernierValeurIndividuQueryOptions } from '@/queries/dernieresValeurs'
+import { ProgressionBar } from '@/components/ui/ProgressionBar'
 
 export function IndicateurAvancementSkeleton() {
   return (
@@ -37,23 +37,7 @@ export function IndicateurAvancement({
         {formatNumberAvecUniteFr(data.valeur, unite)}
       </span>
       <span className="text-text-muted">au {formatMonthYearNumericFr(data.date)}</span>
-      {data.tauxProgression !== null && (
-        <span className="flex items-center gap-2">
-          <Progress.Root
-            value={data.tauxProgression}
-            max={100}
-            className="flex-1 h-2 rounded-full overflow-hidden bg-primary/20"
-          >
-            <Progress.Indicator
-              className="h-full bg-primary transition-transform duration-300"
-              style={{ transform: `translateX(-${100 - data.tauxProgression}%)` }}
-            />
-          </Progress.Root>
-          <span className="text-sm font-medium tabular-nums shrink-0 text-primary">
-            {formatNumberFr(data.tauxProgression)} %
-          </span>
-        </span>
-      )}
+      {data.tauxProgression !== null && <ProgressionBar taux={data.tauxProgression} />}
     </span>
   )
 }

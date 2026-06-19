@@ -24,7 +24,8 @@ import {
 } from '@/valeurAvancement/resolveSerieIndividu'
 import {
   type ObjectifBrut,
-  resolveTauxProgression,
+  computeTaux,
+  findObjectifApplicable,
 } from '@/valeurAvancement/resolveTauxProgression'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
@@ -83,16 +84,10 @@ const build = async (
         const objectifsList: ObjectifBrut[] = [...objectifsMap.values()]
           .map((p) => ({ dateCible: p.bucket, valeurCible: p.valeur }))
           .sort((a, b) => compareBuckets(a.dateCible, b.dateCible))
-        const tauxPoints = resolveTauxProgression({
-          valeurs: serie.map((p) => ({
-            individuId: individu.id,
-            individuPublicId: individu.publicId,
-            date: p.bucket,
-            valeur: p.valeur,
-          })),
-          objectifsParIndividu: new Map([[individu.id, objectifsList]]),
-        })
-        tauxProgression = tauxPoints.at(-1)?.tauxProgression ?? null
+        const objectifApplicable = findObjectifApplicable(dernier.bucket, objectifsList)
+        tauxProgression = objectifApplicable
+          ? computeTaux(dernier.valeur, objectifApplicable.valeurCible)
+          : null
       }
 
       const item: DernierValeurIndividuApiModel = {

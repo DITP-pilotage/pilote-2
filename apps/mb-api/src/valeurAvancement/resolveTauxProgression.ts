@@ -30,7 +30,7 @@ export type TauxProgressionPoint = {
 // donc une valeur de juin 2024 et un objectif fixé au 30 juin 2024 finissent
 // tous deux sur `2024-06-01` ; un `>` strict sauterait à l'objectif suivant et
 // fausserait `tauxProgression` pour tout le bucket de l'échéance.
-const findObjectifApplicable = (
+export const findObjectifApplicable = (
   valeurDate: Bucket,
   objectifs: ReadonlyArray<ObjectifBrut>,
 ): ObjectifBrut | null => {
@@ -43,7 +43,7 @@ const findObjectifApplicable = (
 
 const CENT = new Decimal(100)
 
-const computeTaux = (valeur: Decimal, valeurCible: Decimal): number | null => {
+export const computeTaux = (valeur: Decimal, valeurCible: Decimal): number | null => {
   if (valeurCible.isZero()) return null
   const taux = valeur.div(valeurCible).mul(CENT)
   // Tronqué (et non arrondi half-up) pour ne jamais afficher 100 % tant que la
