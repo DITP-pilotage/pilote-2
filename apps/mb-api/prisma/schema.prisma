@@ -278,9 +278,10 @@ model Panier {
   createdAt   DateTime   @default(now()) @map("created_at")
   updatedAt   DateTime   @updatedAt      @map("updated_at")
 
-  indicateurs  PanierIndicateur[]
-  permissions  PanierPermission[]
-  responsables PanierResponsable[]
+  indicateurs    PanierIndicateur[]
+  permissions    PanierPermission[]
+  responsables   PanierResponsable[]
+  contactsUtiles PanierContactUtile[]
 
   @@map("panier")
 }
@@ -324,6 +325,48 @@ model PanierResponsable {
   @@id([panierId, utilisateurId])
   @@index([panierId, createdAt])
   @@map("panier_responsable")
+}
+
+model Organisme {
+  id        String   @id @default(uuid()) @db.Uuid
+  nom       String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt       @map("updated_at")
+
+  contacts  ContactUtile[]
+
+  @@map("organisme")
+}
+
+model ContactUtile {
+  id          String   @id @default(uuid()) @db.Uuid
+  organismeId String   @map("organisme_id") @db.Uuid
+  nom         String
+  description String?
+  telephone   String?
+  email       String?
+  url         String?
+  adresse     String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt       @map("updated_at")
+
+  organisme Organisme            @relation(fields: [organismeId], references: [id])
+  paniers   PanierContactUtile[]
+
+  @@map("contact_utile")
+}
+
+model PanierContactUtile {
+  panierId       String   @map("panier_id")        @db.Uuid
+  contactUtileId String   @map("contact_utile_id") @db.Uuid
+  createdAt      DateTime @default(now())           @map("created_at")
+
+  panier       Panier       @relation(fields: [panierId],       references: [id], onDelete: Cascade)
+  contactUtile ContactUtile @relation(fields: [contactUtileId], references: [id], onDelete: Cascade)
+
+  @@id([panierId, contactUtileId])
+  @@index([panierId])
+  @@map("panier_contact_utile")
 }
 
 enum ApplicationLogLevel {
