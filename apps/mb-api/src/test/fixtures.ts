@@ -30,6 +30,21 @@ import {
   type ValeurAvancementModel,
   type WidgetModel,
 } from '@/generated/prisma/models'
+
+type OrganismeModel = { id: string; nom: string; createdAt: Date; updatedAt: Date }
+type ContactUtileModel = {
+  id: string
+  organismeId: string
+  nom: string
+  description: string | null
+  telephone: string | null
+  email: string | null
+  url: string | null
+  adresse: string | null
+  createdAt: Date
+  updatedAt: Date
+}
+type PanierContactUtileModel = { panierId: string; contactUtileId: string; createdAt: Date }
 import {
   ApiKeyRole,
   PermissionAction,
@@ -835,6 +850,106 @@ async function commentaire(override: CommentaireOverrides) {
   return upsertCommentaire(override)
 }
 
+// --- Organisme ---------------------------------------------------------------
+
+type OrganismeOverrides = Partial<{
+  id: string
+  nom: string
+}>
+
+const upsertOrganisme = async (o: OrganismeOverrides = {}): Promise<OrganismeModel> => {
+  const id = o.id ?? uuidv7()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const prismaDb = db() as any
+  return prismaDb.organisme.upsert({
+    where: { id },
+    update: { nom: o.nom ?? 'Organisme Test' },
+    create: {
+      id,
+      nom: o.nom ?? 'Organisme Test',
+    },
+  })
+}
+
+function organisme(): Promise<OrganismeModel>
+function organisme(override: OrganismeOverrides): Promise<OrganismeModel>
+async function organisme(override?: OrganismeOverrides): Promise<OrganismeModel> {
+  return upsertOrganisme(override)
+}
+
+// --- ContactUtile ------------------------------------------------------------
+
+type ContactUtileOverrides = Partial<{
+  id: string
+  nom: string
+  description: string | null
+  telephone: string | null
+  email: string | null
+  url: string | null
+  adresse: string | null
+  organisme: OrganismeOverrides
+}>
+
+const upsertContactUtile = async (o: ContactUtileOverrides = {}): Promise<ContactUtileModel> => {
+  const organismeRow = await upsertOrganisme(o.organisme)
+  const id = o.id ?? uuidv7()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const prismaDb = db() as any
+  return prismaDb.contactUtile.upsert({
+    where: { id },
+    update: {},
+    create: {
+      id,
+      organismeId: organismeRow.id,
+      nom: o.nom ?? 'Contact Test',
+      description: o.description ?? null,
+      telephone: o.telephone ?? null,
+      email: o.email ?? null,
+      url: o.url ?? null,
+      adresse: o.adresse ?? null,
+    },
+  })
+}
+
+function contactUtile(): Promise<ContactUtileModel>
+function contactUtile(override: ContactUtileOverrides): Promise<ContactUtileModel>
+async function contactUtile(override?: ContactUtileOverrides): Promise<ContactUtileModel> {
+  return upsertContactUtile(override)
+}
+
+// --- PanierContactUtile ------------------------------------------------------
+
+type PanierContactUtileOverrides = {
+  panier?: PanierOverrides
+  contactUtile?: ContactUtileOverrides
+}
+
+const upsertPanierContactUtile = async (
+  o: PanierContactUtileOverrides,
+): Promise<PanierContactUtileModel> => {
+  const panierRow = await upsertPanier(o.panier)
+  const contactUtileRow = await upsertContactUtile(o.contactUtile)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const prismaDb = db() as any
+  return prismaDb.panierContactUtile.upsert({
+    where: {
+      panierId_contactUtileId: {
+        panierId: panierRow.id,
+        contactUtileId: contactUtileRow.id,
+      },
+    },
+    update: {},
+    create: { panierId: panierRow.id, contactUtileId: contactUtileRow.id },
+  })
+}
+
+function panierContactUtile(override: PanierContactUtileOverrides): Promise<PanierContactUtileModel>
+async function panierContactUtile(
+  override: PanierContactUtileOverrides,
+): Promise<PanierContactUtileModel> {
+  return upsertPanierContactUtile(override)
+}
+
 export const fixtures = {
   indicateur,
   commentaire,
@@ -852,4 +967,7 @@ export const fixtures = {
   indicateurPermission,
   panierPermission,
   panierResponsable,
+  organisme,
+  contactUtile,
+  panierContactUtile,
 }
