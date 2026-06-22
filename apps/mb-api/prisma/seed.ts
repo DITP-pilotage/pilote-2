@@ -740,6 +740,7 @@ const main = async () => {
 
   // Responsables panier : ditp.admin et claire.dupont sont responsables de PAN-005.
   const pan005 = paniersByPublicId.get('PAN-005')
+  const pan004 = paniersByPublicId.get('PAN-004')
   const claireDupont = await prisma.utilisateur.findUniqueOrThrow({
     where: { email: 'claire.dupont@example.com' },
     select: { id: true },
@@ -755,10 +756,109 @@ const main = async () => {
   }
   const panierResponsablesCount = 2
 
+  // ── Organismes ────────────────────────────────────────────────────────────────
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const prismaAny = prisma as any
+
+  const ditp = await prismaAny.organisme.upsert({
+    where:  { id: 'a1b2c3d4-0000-0000-0000-000000000001' },
+    update: {},
+    create: {
+      id:  'a1b2c3d4-0000-0000-0000-000000000001',
+      nom: 'Direction interministérielle de la transformation publique (DITP)',
+    },
+  })
+
+  const dinum = await prismaAny.organisme.upsert({
+    where:  { id: 'a1b2c3d4-0000-0000-0000-000000000002' },
+    update: {},
+    create: {
+      id:  'a1b2c3d4-0000-0000-0000-000000000002',
+      nom: 'Direction interministérielle du numérique (DINUM)',
+    },
+  })
+
+  // ── Contacts utiles ────────────────────────────────────────────────────────────
+
+  const supportMethodo = await prismaAny.contactUtile.upsert({
+    where:  { id: 'b0000000-0000-0000-0000-000000000001' },
+    update: {},
+    create: {
+      id:          'b0000000-0000-0000-0000-000000000001',
+      organismeId: ditp.id,
+      nom:         'Support méthodologique et accompagnement',
+      description: 'Accompagnement des équipes projet dans la démarche de pilotage par les résultats',
+      telephone:   '01 23 45 67 89',
+      email:       'support.methodologie@ditp.gouv.fr',
+      url:         'https://www.modernisation.gouv.fr',
+      adresse:     '20 avenue de Ségur, 75007 Paris',
+    },
+  })
+
+  const celluleFormation = await prismaAny.contactUtile.upsert({
+    where:  { id: 'b0000000-0000-0000-0000-000000000002' },
+    update: {},
+    create: {
+      id:          'b0000000-0000-0000-0000-000000000002',
+      organismeId: ditp.id,
+      nom:         'Cellule formation et montée en compétences',
+      description: 'Formations au pilotage par les résultats, ateliers et webinaires',
+      telephone:   '01 23 45 67 90',
+      email:       'formation@ditp.gouv.fr',
+    },
+  })
+
+  const supportTechnique = await prismaAny.contactUtile.upsert({
+    where:  { id: 'b0000000-0000-0000-0000-000000000003' },
+    update: {},
+    create: {
+      id:          'b0000000-0000-0000-0000-000000000003',
+      organismeId: dinum.id,
+      nom:         'Support technique Pilote',
+      email:       'support@pilote.gouv.fr',
+      url:         'https://pilote.numerique.gouv.fr',
+    },
+  })
+
+  const ouvertureDonnees = await prismaAny.contactUtile.upsert({
+    where:  { id: 'b0000000-0000-0000-0000-000000000004' },
+    update: {},
+    create: {
+      id:          'b0000000-0000-0000-0000-000000000004',
+      organismeId: dinum.id,
+      nom:         'Département ouverture des données',
+      description: "Accompagnement à l'ouverture et au partage des données publiques",
+      email:       'data@numerique.gouv.fr',
+      url:         'https://data.gouv.fr',
+    },
+  })
+
+  // ── Rattachements ──────────────────────────────────────────────────────────────
+
+  if (pan005) {
+    for (const contact of [supportMethodo, celluleFormation, supportTechnique, ouvertureDonnees]) {
+      await prismaAny.panierContactUtile.upsert({
+        where:  { panierId_contactUtileId: { panierId: pan005.id, contactUtileId: contact.id } },
+        update: {},
+        create: { panierId: pan005.id, contactUtileId: contact.id },
+      })
+    }
+  }
+
+  if (pan004) {
+    await prismaAny.panierContactUtile.upsert({
+      where:  { panierId_contactUtileId: { panierId: pan004.id, contactUtileId: ouvertureDonnees.id } },
+      update: {},
+      create: { panierId: pan004.id, contactUtileId: ouvertureDonnees.id },
+    })
+  }
+
+  const contactsUtilesCount = 4
+
   const permissionsCount = 8 * 2
   const widgetLiaisonsCount = widgetsSeed.reduce((acc, w) => acc + w.referentielPublicIds.length, 0)
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${paniersSeed.length} paniers (${panierLiaisonsCount} liaisons panier-indicateur, ${panierPermissionsCount} permissions panier, ${panierResponsablesCount} responsable panier).`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${paniersSeed.length} paniers (${panierLiaisonsCount} liaisons panier-indicateur, ${panierPermissionsCount} permissions panier, ${panierResponsablesCount} responsable panier, ${contactsUtilesCount} contacts utiles).`,
   )
 }
 
