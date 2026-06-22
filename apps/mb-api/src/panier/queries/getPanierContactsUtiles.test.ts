@@ -45,12 +45,12 @@ describe.concurrent('getPanierContactsUtiles', () => {
       expect(item).toBeDefined()
       expect(item!.organisme.nom).toBe('Organisme A')
       expect(item!.contacts[0]).toMatchObject({
-        nom:         'Contact complet',
+        nom: 'Contact complet',
         description: 'Une description',
-        telephone:   '01 23 45 67 89',
-        email:       'contact@example.com',
-        url:         'https://example.com',
-        adresse:     '1 rue de la Paix, 75001 Paris',
+        telephone: '01 23 45 67 89',
+        email: 'contact@example.com',
+        url: 'https://example.com',
+        adresse: '1 rue de la Paix, 75001 Paris',
       })
     }),
   )
@@ -117,8 +117,12 @@ describe.concurrent('getPanierContactsUtiles', () => {
       const orgA = await fixtures.organisme({ nom: 'Aaa Organisation' })
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const prismaDb = (await import('@/framework/persistence/dbStore')).db() as any
-      const cZ = await prismaDb.contactUtile.create({ data: { organismeId: orgZ.id, nom: 'Contact Z' } })
-      const cA = await prismaDb.contactUtile.create({ data: { organismeId: orgA.id, nom: 'Contact A' } })
+      const cZ = await prismaDb.contactUtile.create({
+        data: { organismeId: orgZ.id, nom: 'Contact Z' },
+      })
+      const cA = await prismaDb.contactUtile.create({
+        data: { organismeId: orgA.id, nom: 'Contact A' },
+      })
       await prismaDb.panierContactUtile.createMany({
         data: [
           { panierId: panierRow.id, contactUtileId: cZ.id },

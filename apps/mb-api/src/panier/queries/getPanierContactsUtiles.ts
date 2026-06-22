@@ -31,7 +31,13 @@ export const getPanierContactsUtiles = (
       },
     }),
   ).map((panier) => {
-    const grouped = new Map<string, { organisme: { id: string; nom: string }; contacts: typeof panier.contactsUtiles[0]['contactUtile'][] }>()
+    const grouped = new Map<
+      string,
+      {
+        organisme: { id: string; nom: string }
+        contacts: (typeof panier.contactsUtiles)[0]['contactUtile'][]
+      }
+    >()
 
     for (const joinRow of panier.contactsUtiles) {
       const c = joinRow.contactUtile
@@ -46,13 +52,13 @@ export const getPanierContactsUtiles = (
       items: Array.from(grouped.values()).map(({ organisme, contacts }) => ({
         organisme,
         contacts: contacts.map((c) => ({
-          id:          c.id,
-          nom:         c.nom,
+          id: c.id,
+          nom: c.nom,
           description: c.description,
-          telephone:   c.telephone,
-          email:       c.email,
-          url:         c.url,
-          adresse:     c.adresse,
+          telephone: c.telephone,
+          email: c.email,
+          url: c.url,
+          adresse: c.adresse,
         })),
       })),
     }

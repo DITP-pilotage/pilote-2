@@ -27,7 +27,10 @@ export function PanierContactsUtiles({ panierId }: { panierId: string }) {
 
           <ul className="space-y-2">
             {contacts.map((contact) => (
-              <li key={contact.id} className="rounded-lg border border-gray-200 bg-white p-4 space-y-2">
+              <li
+                key={contact.id}
+                className="rounded-lg border border-gray-200 bg-white p-4 space-y-2"
+              >
                 <p className="text-sm font-semibold text-gray-900">{contact.nom}</p>
                 {contact.description && (
                   <p className="text-sm text-gray-500 italic">{contact.description}</p>
@@ -41,13 +44,20 @@ export function PanierContactsUtiles({ panierId }: { panierId: string }) {
                 {contact.email && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Mail size={14} className="shrink-0 text-gray-400" />
-                    <a href={`mailto:${contact.email}`} className="hover:underline">{contact.email}</a>
+                    <a href={`mailto:${contact.email}`} className="hover:underline">
+                      {contact.email}
+                    </a>
                   </div>
                 )}
                 {contact.url && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Globe size={14} className="shrink-0 text-gray-400" />
-                    <a href={contact.url} target="_blank" rel="noopener noreferrer" className="hover:underline truncate max-w-xs">
+                    <a
+                      href={contact.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="hover:underline truncate max-w-xs"
+                    >
                       {contact.url.length > 50 ? contact.url.slice(0, 50) + '…' : contact.url}
                     </a>
                   </div>
