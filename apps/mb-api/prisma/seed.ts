@@ -761,19 +761,19 @@ const main = async () => {
   const prismaAny = prisma as any
 
   const ditp = await prismaAny.organisme.upsert({
-    where:  { id: 'a1b2c3d4-0000-0000-0000-000000000001' },
+    where: { id: 'a1b2c3d4-0000-0000-0000-000000000001' },
     update: {},
     create: {
-      id:  'a1b2c3d4-0000-0000-0000-000000000001',
+      id: 'a1b2c3d4-0000-0000-0000-000000000001',
       nom: 'Direction interministérielle de la transformation publique (DITP)',
     },
   })
 
   const dinum = await prismaAny.organisme.upsert({
-    where:  { id: 'a1b2c3d4-0000-0000-0000-000000000002' },
+    where: { id: 'a1b2c3d4-0000-0000-0000-000000000002' },
     update: {},
     create: {
-      id:  'a1b2c3d4-0000-0000-0000-000000000002',
+      id: 'a1b2c3d4-0000-0000-0000-000000000002',
       nom: 'Direction interministérielle du numérique (DINUM)',
     },
   })
@@ -781,55 +781,56 @@ const main = async () => {
   // ── Contacts utiles ────────────────────────────────────────────────────────────
 
   const supportMethodo = await prismaAny.contactUtile.upsert({
-    where:  { id: 'b0000000-0000-0000-0000-000000000001' },
+    where: { id: 'b0000000-0000-0000-0000-000000000001' },
     update: {},
     create: {
-      id:          'b0000000-0000-0000-0000-000000000001',
+      id: 'b0000000-0000-0000-0000-000000000001',
       organismeId: ditp.id,
-      nom:         'Support méthodologique et accompagnement',
-      description: 'Accompagnement des équipes projet dans la démarche de pilotage par les résultats',
-      telephone:   '01 23 45 67 89',
-      email:       'support.methodologie@ditp.gouv.fr',
-      url:         'https://www.modernisation.gouv.fr',
-      adresse:     '20 avenue de Ségur, 75007 Paris',
+      nom: 'Support méthodologique et accompagnement',
+      description:
+        'Accompagnement des équipes projet dans la démarche de pilotage par les résultats',
+      telephone: '01 23 45 67 89',
+      email: 'support.methodologie@ditp.gouv.fr',
+      url: 'https://www.modernisation.gouv.fr',
+      adresse: '20 avenue de Ségur, 75007 Paris',
     },
   })
 
   const celluleFormation = await prismaAny.contactUtile.upsert({
-    where:  { id: 'b0000000-0000-0000-0000-000000000002' },
+    where: { id: 'b0000000-0000-0000-0000-000000000002' },
     update: {},
     create: {
-      id:          'b0000000-0000-0000-0000-000000000002',
+      id: 'b0000000-0000-0000-0000-000000000002',
       organismeId: ditp.id,
-      nom:         'Cellule formation et montée en compétences',
+      nom: 'Cellule formation et montée en compétences',
       description: 'Formations au pilotage par les résultats, ateliers et webinaires',
-      telephone:   '01 23 45 67 90',
-      email:       'formation@ditp.gouv.fr',
+      telephone: '01 23 45 67 90',
+      email: 'formation@ditp.gouv.fr',
     },
   })
 
   const supportTechnique = await prismaAny.contactUtile.upsert({
-    where:  { id: 'b0000000-0000-0000-0000-000000000003' },
+    where: { id: 'b0000000-0000-0000-0000-000000000003' },
     update: {},
     create: {
-      id:          'b0000000-0000-0000-0000-000000000003',
+      id: 'b0000000-0000-0000-0000-000000000003',
       organismeId: dinum.id,
-      nom:         'Support technique Pilote',
-      email:       'support@pilote.gouv.fr',
-      url:         'https://pilote.numerique.gouv.fr',
+      nom: 'Support technique Pilote',
+      email: 'support@pilote.gouv.fr',
+      url: 'https://pilote.numerique.gouv.fr',
     },
   })
 
   const ouvertureDonnees = await prismaAny.contactUtile.upsert({
-    where:  { id: 'b0000000-0000-0000-0000-000000000004' },
+    where: { id: 'b0000000-0000-0000-0000-000000000004' },
     update: {},
     create: {
-      id:          'b0000000-0000-0000-0000-000000000004',
+      id: 'b0000000-0000-0000-0000-000000000004',
       organismeId: dinum.id,
-      nom:         'Département ouverture des données',
+      nom: 'Département ouverture des données',
       description: "Accompagnement à l'ouverture et au partage des données publiques",
-      email:       'data@numerique.gouv.fr',
-      url:         'https://data.gouv.fr',
+      email: 'data@numerique.gouv.fr',
+      url: 'https://data.gouv.fr',
     },
   })
 
@@ -838,7 +839,7 @@ const main = async () => {
   if (pan005) {
     for (const contact of [supportMethodo, celluleFormation, supportTechnique, ouvertureDonnees]) {
       await prismaAny.panierContactUtile.upsert({
-        where:  { panierId_contactUtileId: { panierId: pan005.id, contactUtileId: contact.id } },
+        where: { panierId_contactUtileId: { panierId: pan005.id, contactUtileId: contact.id } },
         update: {},
         create: { panierId: pan005.id, contactUtileId: contact.id },
       })
@@ -847,7 +848,9 @@ const main = async () => {
 
   if (pan004) {
     await prismaAny.panierContactUtile.upsert({
-      where:  { panierId_contactUtileId: { panierId: pan004.id, contactUtileId: ouvertureDonnees.id } },
+      where: {
+        panierId_contactUtileId: { panierId: pan004.id, contactUtileId: ouvertureDonnees.id },
+      },
       update: {},
       create: { panierId: pan004.id, contactUtileId: ouvertureDonnees.id },
     })

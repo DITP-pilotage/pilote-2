@@ -895,9 +895,7 @@ const upsertPanierContactUtile = async (
   })
 }
 
-function panierContactUtile(
-  override: PanierContactUtileOverrides,
-): Promise<PanierContactUtileModel>
+function panierContactUtile(override: PanierContactUtileOverrides): Promise<PanierContactUtileModel>
 async function panierContactUtile(
   override: PanierContactUtileOverrides,
 ): Promise<PanierContactUtileModel> {
