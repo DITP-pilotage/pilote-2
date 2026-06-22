@@ -5,6 +5,7 @@ import {
   panierApiModelSchema,
   panierListApiModelSchema,
 } from '@pilote/mb-shared/panier'
+import { panierResponsablesApiModelSchema } from '@pilote/mb-shared/panierResponsable'
 import {
   getPanierTauxProgressionQuerySchema,
   panierTauxProgressionApiModelSchema,
@@ -15,6 +16,7 @@ import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { getPanierByPublicId } from '@/panier/queries/getPanierByPublicId'
+import { getPanierResponsables } from '@/panier/queries/getPanierResponsables'
 import { getPanierTauxProgression } from '@/panier/queries/getPanierTauxProgression'
 import { listPaniers } from '@/panier/queries/listPaniers'
 
@@ -22,6 +24,9 @@ const PanierApiModelSchema = panierApiModelSchema.openapi('PanierApiModel')
 const PanierListApiModelSchema = panierListApiModelSchema.openapi('PanierListApiModel')
 const PanierTauxProgressionApiModelSchema = panierTauxProgressionApiModelSchema.openapi(
   'PanierTauxProgressionApiModel',
+)
+const PanierResponsablesApiModelSchema = panierResponsablesApiModelSchema.openapi(
+  'PanierResponsablesApiModel',
 )
 const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
@@ -106,6 +111,32 @@ const getPanierTauxProgressionRoute = createRoute({
   },
 })
 
+// --- GET /paniers/:id/responsables -------------------------------------------
+
+const getPanierResponsablesRoute = createRoute({
+  method: 'get',
+  path: '/paniers/{id}/responsables',
+  tags: ['Panier'],
+  summary: "Lister les responsables d'un panier",
+  description:
+    'Retourne la liste des utilisateurs désignés responsables du panier, triés par ordre ' +
+    "d'assignation (createdAt ASC). Accessible à tout principal pouvant lire le panier " +
+    '(visibilite PUBLIC ou permission READ/WRITE explicite). ' +
+    'Renvoie 404 (`ENTITY_NOT_FOUND`) si le panier est introuvable ou inaccessible.',
+  middleware: [requireAuthentication],
+  request: { params: detailParamsSchema },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: PanierResponsablesApiModelSchema } },
+      description: 'Liste des responsables du panier',
+    },
+    404: {
+      content: { 'application/json': { schema: ErrorApiModelSchema } },
+      description: 'Panier introuvable',
+    },
+  },
+})
+
 // --- App registration --------------------------------------------------------
 
 export const panierRoutes = new OpenAPIHono()
@@ -150,6 +181,21 @@ panierRoutes.openapi(getPanierTauxProgressionRoute, async (context) => {
         context,
         data,
         schema: PanierTauxProgressionApiModelSchema,
+        status: 200,
+      }),
+    never,
+  )
+})
+
+panierRoutes.openapi(getPanierResponsablesRoute, async (context) => {
+  const { id } = context.req.valid('param')
+
+  return getPanierResponsables(id).match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: PanierResponsablesApiModelSchema,
         status: 200,
       }),
     never,

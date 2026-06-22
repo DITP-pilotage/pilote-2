@@ -63,6 +63,10 @@
     "./panierTauxProgression": {
       "types": "./src/panierTauxProgression.ts",
       "default": "./src/panierTauxProgression.ts"
+    },
+    "./panierResponsable": {
+      "types": "./src/panierResponsable.ts",
+      "default": "./src/panierResponsable.ts"
     }
   },
   "files": [
