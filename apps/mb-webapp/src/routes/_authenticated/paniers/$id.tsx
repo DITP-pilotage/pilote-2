@@ -23,6 +23,7 @@ import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
 import {
   loadPanier,
+  panierContactsUtilesQueryOptions,
   panierQueryOptions,
   panierResponsablesQueryOptions,
   panierTauxProgressionQueryOptions,
@@ -67,14 +68,14 @@ export const Route = createFileRoute('/_authenticated/paniers/$id')({
       },
     })
 
-    await Promise.all([
-      deps.individu
-        ? queryClient.prefetchQuery(
-            panierTauxProgressionQueryOptions({ panierId: params.id, individu: deps.individu }),
-          )
-        : Promise.resolve(),
-      queryClient.prefetchQuery(panierResponsablesQueryOptions(params.id)),
-    ])
+    if (deps.individu) {
+      void queryClient.prefetchQuery(
+        panierTauxProgressionQueryOptions({ panierId: params.id, individu: deps.individu }),
+      )
+    }
+
+    void queryClient.prefetchQuery(panierResponsablesQueryOptions(params.id))
+    void queryClient.prefetchQuery(panierContactsUtilesQueryOptions(params.id))
 
     return { panier }
   },
