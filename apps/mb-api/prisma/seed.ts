@@ -832,19 +832,19 @@ const main = async () => {
   const prismaAny = prisma as any
 
   const ditp = await prismaAny.organisme.upsert({
-    where: { id: 'a1b2c3d4-0000-0000-0000-000000000001' },
+    where: { id: 'a1b2c3d4-e5f6-4a7b-8c9d-e0f1a2b3c401' },
     update: {},
     create: {
-      id: 'a1b2c3d4-0000-0000-0000-000000000001',
+      id: 'a1b2c3d4-e5f6-4a7b-8c9d-e0f1a2b3c401',
       nom: 'Direction interministérielle de la transformation publique (DITP)',
     },
   })
 
   const dinum = await prismaAny.organisme.upsert({
-    where: { id: 'a1b2c3d4-0000-0000-0000-000000000002' },
+    where: { id: 'a1b2c3d4-e5f6-4a7b-8c9d-e0f1a2b3c402' },
     update: {},
     create: {
-      id: 'a1b2c3d4-0000-0000-0000-000000000002',
+      id: 'a1b2c3d4-e5f6-4a7b-8c9d-e0f1a2b3c402',
       nom: 'Direction interministérielle du numérique (DINUM)',
     },
   })
@@ -852,10 +852,10 @@ const main = async () => {
   // ── Contacts utiles ────────────────────────────────────────────────────────────
 
   const supportMethodo = await prismaAny.contactUtile.upsert({
-    where: { id: 'b0000000-0000-0000-0000-000000000001' },
+    where: { id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d401' },
     update: {},
     create: {
-      id: 'b0000000-0000-0000-0000-000000000001',
+      id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d401',
       organismeId: ditp.id,
       nom: 'Support méthodologique et accompagnement',
       description:
@@ -868,10 +868,10 @@ const main = async () => {
   })
 
   const celluleFormation = await prismaAny.contactUtile.upsert({
-    where: { id: 'b0000000-0000-0000-0000-000000000002' },
+    where: { id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d402' },
     update: {},
     create: {
-      id: 'b0000000-0000-0000-0000-000000000002',
+      id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d402',
       organismeId: ditp.id,
       nom: 'Cellule formation et montée en compétences',
       description: 'Formations au pilotage par les résultats, ateliers et webinaires',
@@ -881,10 +881,10 @@ const main = async () => {
   })
 
   const supportTechnique = await prismaAny.contactUtile.upsert({
-    where: { id: 'b0000000-0000-0000-0000-000000000003' },
+    where: { id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d403' },
     update: {},
     create: {
-      id: 'b0000000-0000-0000-0000-000000000003',
+      id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d403',
       organismeId: dinum.id,
       nom: 'Support technique Pilote',
       email: 'support@pilote.gouv.fr',
@@ -893,10 +893,10 @@ const main = async () => {
   })
 
   const ouvertureDonnees = await prismaAny.contactUtile.upsert({
-    where: { id: 'b0000000-0000-0000-0000-000000000004' },
+    where: { id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d404' },
     update: {},
     create: {
-      id: 'b0000000-0000-0000-0000-000000000004',
+      id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d404',
       organismeId: dinum.id,
       nom: 'Département ouverture des données',
       description: "Accompagnement à l'ouverture et au partage des données publiques",
