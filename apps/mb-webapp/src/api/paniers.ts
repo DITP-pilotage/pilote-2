@@ -6,6 +6,10 @@ import {
   panierListApiModelSchema,
 } from '@pilote/mb-shared/panier'
 import {
+  type PanierContactsUtilesApiModel,
+  panierContactsUtilesApiModelSchema,
+} from '@pilote/mb-shared/panierContactUtile'
+import {
   type PanierResponsablesApiModel,
   panierResponsablesApiModelSchema,
 } from '@pilote/mb-shared/panierResponsable'
@@ -44,4 +48,11 @@ export const fetchPanierResponsables = async (
 ): Promise<PanierResponsablesApiModel> => {
   const json = await apiClient.get(`paniers/${panierId}/responsables`).json()
   return panierResponsablesApiModelSchema.parse(json)
+}
+
+export const fetchPanierContactsUtiles = async (
+  panierId: string,
+): Promise<PanierContactsUtilesApiModel> => {
+  const json = await apiClient.get(`paniers/${panierId}/contacts-utiles`).json()
+  return panierContactsUtilesApiModelSchema.parse(json)
 }
