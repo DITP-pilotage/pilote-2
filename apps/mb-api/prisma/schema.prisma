@@ -32,10 +32,10 @@ enum ProviderType {
 model Utilisateur {
   id        String   @id @db.Uuid
   email     String   @unique
-  nom       String?
-  prenom    String?
-  service   String?
-  fonction  String?
+  nom       String
+  prenom    String
+  service   String
+  fonction  String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt      @map("updated_at")
 

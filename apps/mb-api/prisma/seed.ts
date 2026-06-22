@@ -96,10 +96,10 @@ const indicateursSeed: ReadonlyArray<{
 
 const utilisateursSeed: ReadonlyArray<{
   email: string
-  nom: string | null
-  prenom: string | null
-  service: string | null
-  fonction: string | null
+  nom: string
+  prenom: string
+  service: string
+  fonction: string
 }> = [
   {
     email: 'ditp.admin@example.com',

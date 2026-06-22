@@ -16,9 +16,7 @@ export const getPanierResponsables = (
         responsables: {
           orderBy: { createdAt: 'asc' },
           include: {
-            utilisateur: {
-              select: { email: true, nom: true, prenom: true, service: true, fonction: true },
-            },
+            utilisateur: true,
           },
         },
       },

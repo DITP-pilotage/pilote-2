@@ -605,10 +605,10 @@ async function apiKey(...overrides: ApiKeyOverrides[]): Promise<ApiKeyModel | Ap
 type UtilisateurOverrides = Partial<{
   id: string
   email: string
-  nom: string | null
-  prenom: string | null
-  service: string | null
-  fonction: string | null
+  nom: string
+  prenom: string
+  service: string
+  fonction: string
   identite: { provider: ProviderType; providerSub: string }
   permissions: PrincipalIndicateurPermissionOverrides[]
   panierPermissions: PrincipalPanierPermissionOverrides[]
@@ -628,10 +628,10 @@ const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
     data: {
       id,
       email,
-      nom: o.nom ?? null,
-      prenom: o.prenom ?? null,
-      service: o.service ?? null,
-      fonction: o.fonction ?? null,
+      nom: o.nom ?? 'Doe',
+      prenom: o.prenom ?? 'John',
+      service: o.service ?? 'DITP',
+      fonction: o.fonction ?? 'Agent',
     },
   })
   if (o.identite) {

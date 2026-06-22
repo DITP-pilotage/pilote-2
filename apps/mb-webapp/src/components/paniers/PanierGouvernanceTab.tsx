@@ -5,10 +5,10 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { Heading, Text } from '@/components/ui/Typography'
 import { panierResponsablesQueryOptions } from '@/queries/paniers'
 
-function Initiales({ nom, prenom }: { nom: string | null; prenom: string | null }) {
+function Initiales({ nom, prenom }: { nom: string; prenom: string }) {
   const initiales = [prenom, nom]
     .filter(Boolean)
-    .map((s) => s![0]!.toUpperCase())
+    .map((s) => s[0]!.toUpperCase())
     .join('')
     .slice(0, 2)
   return (

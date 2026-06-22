@@ -54,32 +54,6 @@ describe.concurrent('getPanierResponsables', () => {
   )
 
   it(
-    'retourne les champs null pour un responsable sans profil renseigné',
-    integrationTest(async () => {
-      const panNull = testPanierId()
-      await fixtures.panierResponsable({
-        panier: { publicId: panNull, visibilite: 'PUBLIC' },
-        utilisateur: { email: `bob-${panNull}@example.com` },
-      })
-      const apiKey = await fixtures.apiKey()
-
-      const result = await runAsPrincipal(apiKey.id, () => getPanierResponsables(panNull))
-
-      expect(result._unsafeUnwrap()).toEqual({
-        items: [
-          {
-            email: `bob-${panNull}@example.com`,
-            nom: null,
-            prenom: null,
-            service: null,
-            fonction: null,
-          },
-        ],
-      })
-    }),
-  )
-
-  it(
     'retourne les responsables triés par ordre dassignation (createdAt ASC)',
     integrationTest(async () => {
       const panOrdre = testPanierId()

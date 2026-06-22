@@ -1,9 +1,9 @@
 -- AlterTable
 ALTER TABLE "utilisateur"
-  ADD COLUMN "nom"      TEXT,
-  ADD COLUMN "prenom"   TEXT,
-  ADD COLUMN "service"  TEXT,
-  ADD COLUMN "fonction" TEXT;
+  ADD COLUMN "nom"      TEXT NOT NULL,
+  ADD COLUMN "prenom"   TEXT NOT NULL,
+  ADD COLUMN "service"  TEXT NOT NULL,
+  ADD COLUMN "fonction" TEXT NOT NULL;
 
 -- CreateTable
 CREATE TABLE "panier_responsable" (
