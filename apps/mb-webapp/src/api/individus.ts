@@ -2,6 +2,9 @@ import {
   type DernieresValeursIndividuListApiModel,
   dernieresValeursIndividuListApiModelSchema,
   type ListDernieresValeursForIndividuQuery,
+  type ListTauxProgressionIndividuQuery,
+  type TauxProgressionIndividuListApiModel,
+  tauxProgressionIndividuListApiModelSchema,
 } from '@pilote/mb-shared/valeurAvancement'
 
 import { apiClient } from '@/api/client'
@@ -16,4 +19,16 @@ export const fetchDernieresValeursForIndividu = async (
     })
     .json()
   return dernieresValeursIndividuListApiModelSchema.parse(json)
+}
+
+export const fetchTauxProgressionForIndividu = async (
+  individuId: string,
+  params: ListTauxProgressionIndividuQuery,
+): Promise<TauxProgressionIndividuListApiModel> => {
+  const json = await apiClient
+    .get(`individus/${individuId}/taux-progression`, {
+      searchParams: { indicateurs: params.indicateurs.join(',') },
+    })
+    .json()
+  return tauxProgressionIndividuListApiModelSchema.parse(json)
 }

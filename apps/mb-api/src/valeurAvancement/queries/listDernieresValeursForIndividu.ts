@@ -7,26 +7,16 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { type BucketKey, compareBuckets, formatBucket } from '@/framework/bucket'
+import { formatBucket } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { loadResolveObjectifContext } from '@/objectifIndicateurIndividu/queries/loadResolveObjectifContext'
-import {
-  type PointObjectifInterne,
-  resolveObjectifIndividu,
-} from '@/objectifIndicateurIndividu/resolveObjectifIndividu'
 import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
 import {
   type IndividuRef,
   type PointInterne,
   resolveSerieIndividu,
 } from '@/valeurAvancement/resolveSerieIndividu'
-import {
-  type ObjectifBrut,
-  computeTaux,
-  findObjectifApplicable,
-} from '@/valeurAvancement/resolveTauxProgression'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
@@ -59,49 +49,22 @@ const build = async (
   const dateTrunc = DEFAULT_DATE_TRUNC
   const resolus = await Promise.all(
     indicateurs.map(async (indicateur) => {
-      const [{ ctx: serieCtx }, { ctx: objectifCtx }] = await Promise.all([
-        loadResolveSerieContext({
-          indicateurId: indicateur.id,
-          individusCibles: [individu],
-          dateTrunc,
-        }),
-        loadResolveObjectifContext({
-          indicateurId: indicateur.id,
-          individusCibles: [individu],
-          dateTrunc,
-        }),
-      ])
+      const { ctx: serieCtx } = await loadResolveSerieContext({
+        indicateurId: indicateur.id,
+        individusCibles: [individu],
+        dateTrunc,
+      })
 
       const serieCache = new Map<string, ReadonlyArray<PointInterne>>()
       const serie = await resolveSerieIndividu(individu.id, serieCtx, serieCache)
       const dernier = serie.at(-1)
       if (!dernier) return null
 
-      const objectifCache = new Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>()
-      const objectifsMap = resolveObjectifIndividu(individu.id, objectifCtx, objectifCache)
-      let tauxProgression: number | null = null
-      let valeurCible: number | null = null
-      if (objectifsMap.size > 0) {
-        const objectifsList: ObjectifBrut[] = [...objectifsMap.values()]
-          .map((p) => ({ dateCible: p.bucket, valeurCible: p.valeur }))
-          .sort((a, b) => compareBuckets(a.dateCible, b.dateCible))
-        const objectifApplicable = findObjectifApplicable(dernier.bucket, objectifsList)
-        if (objectifApplicable) {
-          const taux = computeTaux(dernier.valeur, objectifApplicable.valeurCible)
-          if (taux !== null) {
-            tauxProgression = taux
-            valeurCible = objectifApplicable.valeurCible.toNumber()
-          }
-        }
-      }
-
       const item: DernierValeurIndividuApiModel = {
         indicateur: indicateur.publicId,
         valeur: dernier.valeur.toNumber(),
         date: formatBucket(dernier.bucket),
         type: dernier.type,
-        tauxProgression,
-        valeurCible,
       }
       return item
     }),
