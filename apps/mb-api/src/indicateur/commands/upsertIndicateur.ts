@@ -21,7 +21,7 @@ const dedupeConfigurations = (
 ): Map<string, FonctionAgregation> => {
   const parPublicId = new Map<string, FonctionAgregation>()
   for (const configuration of configurations) {
-    parPublicId.set(configuration.referentielPublicId, configuration.fonctionAgregation)
+    parPublicId.set(configuration.id, configuration.fonctionAgregation)
   }
   return parPublicId
 }
@@ -111,6 +111,17 @@ const assertWritePermission = async (indicateurId: string, principalId: string):
   }
 }
 
+// Les champs métadonnées sont optionnels dans le body : une clé absente signifie
+// « ne pas toucher » (sémantique PATCH-like), `null` signifie « effacer ».
+const metadonneesData = (body: UpsertIndicateurBody) => ({
+  ...(body.description !== undefined && { description: body.description }),
+  ...(body.methodeCalcul !== undefined && { methodeCalcul: body.methodeCalcul }),
+  ...(body.sourceDonnees !== undefined && { sourceDonnees: body.sourceDonnees }),
+  ...(body.sourceUrl !== undefined && { sourceUrl: body.sourceUrl }),
+  ...(body.periodeMiseAJour !== undefined && { periodeMiseAJour: body.periodeMiseAJour }),
+  ...(body.jourMiseAJour !== undefined && { jourMiseAJour: body.jourMiseAJour }),
+})
+
 const updateIndicateurExistant = async (
   publicId: string,
   indicateurId: string,
@@ -121,7 +132,12 @@ const updateIndicateurExistant = async (
   const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
   await db().indicateur.update({
     where: { publicId },
-    data: { nom: body.nom, visibilite: body.visibilite, unite: body.unite },
+    data: {
+      nom: body.nom,
+      visibilite: body.visibilite,
+      unite: body.unite,
+      ...metadonneesData(body),
+    },
   })
   await remplacerConfigurationsReferentiels(indicateurId, configurations)
 }
@@ -149,6 +165,7 @@ const createIndicateurAvecGrants = async (
       nom: body.nom,
       visibilite: body.visibilite,
       unite: body.unite,
+      ...metadonneesData(body),
     },
   })
   await grantOwnerPermissions(principalId, indicateurId)

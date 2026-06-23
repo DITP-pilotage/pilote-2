@@ -41,12 +41,19 @@ export const toIndicateurApiModel = (
   nom: indicateur.nom,
   visibilite: indicateur.visibilite,
   unite: toUniteIndicateurApiModel(indicateur.unite),
+  description: indicateur.description,
+  methodeCalcul: indicateur.methodeCalcul,
+  sourceDonnees: indicateur.sourceDonnees,
+  sourceUrl: indicateur.sourceUrl,
+  periodeMiseAJour: indicateur.periodeMiseAJour,
+  jourMiseAJour: indicateur.jourMiseAJour,
   referentiels: indicateur.referentiels
     .map((configuration) => ({
-      referentielPublicId: configuration.referentiel.publicId,
+      id: configuration.referentiel.publicId,
+      nom: configuration.referentiel.nom,
       fonctionAgregation: configuration.fonctionAgregation,
     }))
-    .sort((a, b) => a.referentielPublicId.localeCompare(b.referentielPublicId)),
+    .sort((a, b) => a.id.localeCompare(b.id)),
   createdAt: indicateur.createdAt.toISOString(),
   updatedAt: indicateur.updatedAt.toISOString(),
 })

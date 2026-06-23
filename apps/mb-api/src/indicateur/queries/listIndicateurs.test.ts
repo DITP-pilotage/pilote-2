@@ -314,9 +314,17 @@ describe.concurrent('listIndicateurs', () => {
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
 
       const referentielsTries = [
-        { referentielPublicId: refListM, fonctionAgregation: 'SUM' as const },
-        { referentielPublicId: refListZ, fonctionAgregation: 'SUM' as const },
-      ].sort((a, b) => a.referentielPublicId.localeCompare(b.referentielPublicId))
+        {
+          id: refListM,
+          nom: 'Référentiel de test',
+          fonctionAgregation: 'SUM' as const,
+        },
+        {
+          id: refListZ,
+          nom: 'Référentiel de test',
+          fonctionAgregation: 'SUM' as const,
+        },
+      ].sort((a, b) => a.id.localeCompare(b.id))
 
       const value = result._unsafeUnwrap()
       expect(value.items.find((i) => i.id === accessible)?.referentiels).toEqual(referentielsTries)

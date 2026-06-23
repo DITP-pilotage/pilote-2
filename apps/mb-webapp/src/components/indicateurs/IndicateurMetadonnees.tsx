@@ -1,13 +1,50 @@
-import { type UniteIndicateurApiModel } from '@pilote/mb-shared/indicateur'
+import {
+  type ConfigurationIndicateurReferentielApiModel,
+  type PeriodeMiseAJour,
+  type UniteIndicateurApiModel,
+} from '@pilote/mb-shared/indicateur'
 
 import { DescriptionList } from '@/components/ui/DescriptionList'
 import { formatDateTimeFr } from '@/lib/format'
+
+const VALEUR_VIDE = '—'
+
+const PERIODE_LIBELLES: Record<PeriodeMiseAJour, string> = {
+  QUOTIDIENNE: 'Quotidienne',
+  HEBDOMADAIRE: 'Hebdomadaire',
+  BIMENSUELLE: 'Bimensuelle',
+  MENSUELLE: 'Mensuelle',
+  TRIMESTRIELLE: 'Trimestrielle',
+  SEMESTRIELLE: 'Semestrielle',
+  ANNUELLE: 'Annuelle',
+  AUCUNE: 'Aucune',
+}
+
+const formatPeriodeMiseAJour = (periode: PeriodeMiseAJour | null, jour: number | null): string => {
+  if (!periode) return VALEUR_VIDE
+  const libelle = PERIODE_LIBELLES[periode]
+  return jour === null ? libelle : `${libelle} (le ${jour})`
+}
+
+const formatReferentiels = (
+  referentiels: ReadonlyArray<ConfigurationIndicateurReferentielApiModel>,
+): string => {
+  if (referentiels.length === 0) return VALEUR_VIDE
+  return referentiels.map((r) => r.nom).join(', ')
+}
 
 type IndicateurMetadonneesProps = {
   indicateur: {
     id: string
     nom: string
     unite: UniteIndicateurApiModel | null
+    description: string | null
+    methodeCalcul: string | null
+    sourceDonnees: string | null
+    sourceUrl: string | null
+    periodeMiseAJour: PeriodeMiseAJour | null
+    jourMiseAJour: number | null
+    referentiels: ReadonlyArray<ConfigurationIndicateurReferentielApiModel>
     createdAt: string
     updatedAt: string
   }
@@ -19,7 +56,38 @@ export function IndicateurMetadonnees({ indicateur }: IndicateurMetadonneesProps
       <DescriptionList.Item label="ID">{indicateur.id}</DescriptionList.Item>
       <DescriptionList.Item label="Nom">{indicateur.nom}</DescriptionList.Item>
       <DescriptionList.Item label="Unité">
-        {indicateur.unite ? `${indicateur.unite.libelle} (${indicateur.unite.abbreviation})` : '—'}
+        {indicateur.unite
+          ? `${indicateur.unite.libelle} (${indicateur.unite.abbreviation})`
+          : VALEUR_VIDE}
+      </DescriptionList.Item>
+      <DescriptionList.Item label="Description">
+        <span className="whitespace-pre-line">{indicateur.description ?? VALEUR_VIDE}</span>
+      </DescriptionList.Item>
+      <DescriptionList.Item label="Méthode de calcul">
+        <span className="whitespace-pre-line">{indicateur.methodeCalcul ?? VALEUR_VIDE}</span>
+      </DescriptionList.Item>
+      <DescriptionList.Item label="Source des données">
+        {indicateur.sourceDonnees ?? VALEUR_VIDE}
+      </DescriptionList.Item>
+      <DescriptionList.Item label="Source (URL)">
+        {indicateur.sourceUrl ? (
+          <a
+            href={indicateur.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline"
+          >
+            {indicateur.sourceUrl}
+          </a>
+        ) : (
+          VALEUR_VIDE
+        )}
+      </DescriptionList.Item>
+      <DescriptionList.Item label="Période de mise à jour">
+        {formatPeriodeMiseAJour(indicateur.periodeMiseAJour, indicateur.jourMiseAJour)}
+      </DescriptionList.Item>
+      <DescriptionList.Item label="Référentiels">
+        {formatReferentiels(indicateur.referentiels)}
       </DescriptionList.Item>
       <DescriptionList.Item label="Créé le">
         {formatDateTimeFr(indicateur.createdAt)}

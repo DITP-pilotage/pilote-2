@@ -9,7 +9,7 @@ export type UpsertIndicateurPayload = {
   visibilite: "PRIVE" | "PUBLIC";
   unite: "POURCENTAGE" | "ANNEES" | null;
   referentiels: Array<{
-    referentielPublicId: string;
+    id: string;
     fonctionAgregation: "SUM" | "AVG" | "NONE";
   }>;
 };

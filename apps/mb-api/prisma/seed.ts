@@ -1,6 +1,8 @@
 import { PrismaPg } from '@prisma/adapter-pg'
 import { uuidv7 } from 'uuidv7'
 
+import { type PeriodeMiseAJour } from '@pilote/mb-shared/indicateur'
+
 import { Prisma, PrismaClient } from '../src/generated/prisma/client.js'
 import { type FonctionAgregation } from '../src/generated/prisma/enums.js'
 
@@ -26,17 +28,77 @@ const indicateursSeed: ReadonlyArray<{
   nom: string
   visibilite?: 'PUBLIC' | 'PRIVE'
   unite?: 'POURCENTAGE' | 'ANNEES'
+  description?: string
+  methodeCalcul?: string
+  sourceDonnees?: string
+  sourceUrl?: string
+  periodeMiseAJour?: PeriodeMiseAJour
+  jourMiseAJour?: number
 }> = [
-  { publicId: 'IND-001', nom: 'Taux de chômage', unite: 'POURCENTAGE' },
-  { publicId: 'IND-002', nom: 'Émissions de CO2' },
-  { publicId: 'IND-003', nom: 'Couverture fibre', unite: 'POURCENTAGE' },
-  { publicId: 'IND-004', nom: 'Délai de traitement préfectures' },
+  {
+    publicId: 'IND-001',
+    nom: 'Taux de chômage',
+    unite: 'POURCENTAGE',
+    description:
+      'Part de la population active sans emploi cherchant activement un travail, au sens du Bureau international du travail.',
+    methodeCalcul: 'Nombre de chômeurs BIT / population active × 100',
+    sourceDonnees: 'INSEE — Enquête Emploi',
+    sourceUrl: 'https://www.insee.fr/fr/statistiques/2489483',
+    periodeMiseAJour: 'TRIMESTRIELLE',
+    jourMiseAJour: 15,
+  },
+  {
+    publicId: 'IND-002',
+    nom: 'Émissions de CO2',
+    description: "Émissions totales de dioxyde de carbone d'origine anthropique sur le territoire.",
+    methodeCalcul: 'Inventaire national selon les lignes directrices du GIEC',
+    sourceDonnees: 'CITEPA — Secten',
+    sourceUrl: 'https://www.citepa.org/fr/secten/',
+    periodeMiseAJour: 'ANNUELLE',
+  },
+  {
+    publicId: 'IND-003',
+    nom: 'Couverture fibre',
+    unite: 'POURCENTAGE',
+    description:
+      'Part des locaux raccordables à la fibre optique (FttH) sur le territoire national.',
+    methodeCalcul: 'Locaux raccordables FttH / locaux totaux × 100',
+    sourceDonnees: 'ARCEP — Observatoire du très haut débit',
+    sourceUrl: 'https://www.arcep.fr/cartes-et-donnees/nos-cartes/couverture-fixe.html',
+    periodeMiseAJour: 'TRIMESTRIELLE',
+    jourMiseAJour: 1,
+  },
+  {
+    publicId: 'IND-004',
+    nom: 'Délai de traitement préfectures',
+    description: "Délai moyen d'instruction des dossiers déposés en préfecture, en jours ouvrés.",
+    sourceDonnees: 'Ministère de l’Intérieur — DGCL',
+    periodeMiseAJour: 'MENSUELLE',
+    jourMiseAJour: 5,
+  },
   { publicId: 'IND-005', nom: 'Effectif police nationale' },
   { publicId: 'IND-006', nom: 'Indicateur expérimental ancien' },
-  { publicId: 'IND-007', nom: 'Indicateur en pause' },
-  { publicId: 'IND-008', nom: 'Satisfaction usagers services publics' },
+  { publicId: 'IND-007', nom: 'Indicateur en pause', periodeMiseAJour: 'AUCUNE' },
+  {
+    publicId: 'IND-008',
+    nom: 'Satisfaction usagers services publics',
+    description: 'Note de satisfaction globale des usagers des services publics, sur 10.',
+    methodeCalcul: 'Moyenne arithmétique des notes individuelles collectées par enquête',
+    sourceDonnees: 'DITP — Baromètre Services Publics+',
+    sourceUrl: 'https://www.plus.transformation.gouv.fr/',
+    periodeMiseAJour: 'SEMESTRIELLE',
+  },
   { publicId: 'IND-009', nom: 'Délai moyen de prise en charge urgences' },
-  { publicId: 'IND-010', nom: 'Taux de vaccination infantile', unite: 'POURCENTAGE' },
+  {
+    publicId: 'IND-010',
+    nom: 'Taux de vaccination infantile',
+    unite: 'POURCENTAGE',
+    description:
+      "Part des enfants de 24 mois ayant reçu l'ensemble des vaccins du calendrier vaccinal obligatoire.",
+    sourceDonnees: 'Santé publique France',
+    sourceUrl: 'https://www.santepubliquefrance.fr/',
+    periodeMiseAJour: 'ANNUELLE',
+  },
   { publicId: 'IND-011', nom: 'Accès aux soins de proximité', unite: 'POURCENTAGE' },
   { publicId: 'IND-012', nom: 'Couverture des services France Santé' },
   { publicId: 'IND-013', nom: 'Déploiement de France Santé' },
@@ -172,15 +234,24 @@ const main = async () => {
     const { createdAt, updatedAt } = indicateurDates(index)
     const visibilite = item.visibilite ?? 'PRIVE'
     const unite = item.unite ?? null
+    const metadonnees = {
+      description: item.description ?? null,
+      methodeCalcul: item.methodeCalcul ?? null,
+      sourceDonnees: item.sourceDonnees ?? null,
+      sourceUrl: item.sourceUrl ?? null,
+      periodeMiseAJour: item.periodeMiseAJour ?? null,
+      jourMiseAJour: item.jourMiseAJour ?? null,
+    }
     await prisma.indicateur.upsert({
       where: { publicId: item.publicId },
-      update: { nom: item.nom, visibilite, unite, updatedAt },
+      update: { nom: item.nom, visibilite, unite, ...metadonnees, updatedAt },
       create: {
         id: uuidv7(),
         publicId: item.publicId,
         nom: item.nom,
         visibilite,
         unite,
+        ...metadonnees,
         createdAt,
         updatedAt,
       },
@@ -291,61 +362,61 @@ const main = async () => {
   const indicateurReferentielsSeed: ReadonlyArray<{
     indicateurPublicId: string
     referentiels: ReadonlyArray<{
-      referentielPublicId: string
+      id: string
       fonctionAgregation: FonctionAgregation
     }>
   }> = [
     {
       indicateurPublicId: 'IND-001',
       referentiels: [
-        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-REG', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
+        { id: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { id: 'REF-REG', fonctionAgregation: 'NONE' },
+        { id: 'REF-NAT', fonctionAgregation: 'NONE' },
       ],
     },
     {
       indicateurPublicId: 'IND-002',
       referentiels: [
-        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'SUM' },
-        { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' },
-        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'SUM' },
+        { id: 'REF-DEPT', fonctionAgregation: 'SUM' },
+        { id: 'REF-REG', fonctionAgregation: 'SUM' },
+        { id: 'REF-NAT', fonctionAgregation: 'SUM' },
       ],
     },
     {
       indicateurPublicId: 'IND-003',
       referentiels: [
-        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-REG', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { id: 'REF-NAT', fonctionAgregation: 'NONE' },
+        { id: 'REF-REG', fonctionAgregation: 'NONE' },
+        { id: 'REF-DEPT', fonctionAgregation: 'NONE' },
       ],
     },
     {
       indicateurPublicId: 'IND-004',
       referentiels: [
-        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-REG', fonctionAgregation: 'AVG' },
-        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'AVG' },
+        { id: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { id: 'REF-REG', fonctionAgregation: 'AVG' },
+        { id: 'REF-NAT', fonctionAgregation: 'AVG' },
       ],
     },
     {
       indicateurPublicId: 'IND-005',
       referentiels: [
-        { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' },
-        { referentielPublicId: 'REF-REG', fonctionAgregation: 'SUM' },
-        { referentielPublicId: 'REF-NAT', fonctionAgregation: 'SUM' },
+        { id: 'REF-DEPT', fonctionAgregation: 'NONE' },
+        { id: 'REF-REG', fonctionAgregation: 'SUM' },
+        { id: 'REF-NAT', fonctionAgregation: 'SUM' },
       ],
     },
     {
       indicateurPublicId: 'IND-006',
-      referentiels: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
+      referentiels: [{ id: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
     },
     {
       indicateurPublicId: 'IND-007',
-      referentiels: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
+      referentiels: [{ id: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
     },
     {
       indicateurPublicId: 'IND-008',
-      referentiels: [{ referentielPublicId: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
+      referentiels: [{ id: 'REF-EMPTY', fonctionAgregation: 'NONE' }],
     },
     ...indicateursSeed
       .filter((ind) => parseInt(ind.publicId.replace('IND-', ''), 10) >= 9)
@@ -358,9 +429,9 @@ const main = async () => {
         return {
           indicateurPublicId: ind.publicId,
           referentiels: [
-            { referentielPublicId: 'REF-DEPT', fonctionAgregation: 'NONE' as const },
-            { referentielPublicId: 'REF-REG', fonctionAgregation: fonction },
-            { referentielPublicId: 'REF-NAT', fonctionAgregation: fonction },
+            { id: 'REF-DEPT', fonctionAgregation: 'NONE' as const },
+            { id: 'REF-REG', fonctionAgregation: fonction },
+            { id: 'REF-NAT', fonctionAgregation: fonction },
           ],
         }
       }),
@@ -373,7 +444,7 @@ const main = async () => {
     })
     for (const configuration of item.referentiels) {
       const referentiel = await prisma.referentiel.findUniqueOrThrow({
-        where: { publicId: configuration.referentielPublicId },
+        where: { publicId: configuration.id },
         select: { id: true },
       })
       await prisma.indicateurReferentiel.upsert({
@@ -477,7 +548,7 @@ const main = async () => {
 
   let valeursCount = 0
   for (const lien of indicateurReferentielsSeed) {
-    const refPublicId = mailleLaPlusFine(lien.referentiels.map((r) => r.referentielPublicId))
+    const refPublicId = mailleLaPlusFine(lien.referentiels.map((r) => r.id))
     if (!refPublicId) continue // ex. REF-EMPTY → pas de saisie
     const refId = referentielParPublicId.get(refPublicId)
     if (!refId) continue
@@ -537,7 +608,7 @@ const main = async () => {
   for (const indicateurPublicId of INDICATEURS_OBJECTIFS) {
     const lien = indicateurReferentielsSeed.find((l) => l.indicateurPublicId === indicateurPublicId)
     if (!lien) continue
-    const refPublicId = mailleLaPlusFine(lien.referentiels.map((r) => r.referentielPublicId))
+    const refPublicId = mailleLaPlusFine(lien.referentiels.map((r) => r.id))
     if (!refPublicId) continue
     const refId = referentielParPublicId.get(refPublicId)
     if (!refId) continue

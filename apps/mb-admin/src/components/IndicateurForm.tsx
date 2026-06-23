@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { clsxm } from '@/lib/clsxm'
 
 type FonctionAgregation = 'SUM' | 'AVG' | 'NONE'
-type ReferentielLie = { referentielPublicId: string; fonctionAgregation: FonctionAgregation }
+type ReferentielLie = { id: string; fonctionAgregation: FonctionAgregation }
 
 export type IndicateurFormValues = {
   id: string
@@ -68,10 +68,7 @@ export function IndicateurForm({
     }))
   const addReferentiel = () =>
     update({
-      referentiels: [
-        ...values.referentiels,
-        { referentielPublicId: '', fonctionAgregation: 'SUM' },
-      ],
+      referentiels: [...values.referentiels, { id: '', fonctionAgregation: 'SUM' }],
     })
   const removeReferentiel = (index: number) =>
     update({ referentiels: values.referentiels.filter((_, i) => i !== index) })
@@ -79,7 +76,7 @@ export function IndicateurForm({
   const canSubmit =
     values.nom.trim().length > 0 &&
     (mode === 'edit' || /^IND-\d+$/.test(values.id)) &&
-    values.referentiels.every((ref) => /^REF-[A-Z0-9-]{1,16}$/.test(ref.referentielPublicId))
+    values.referentiels.every((ref) => /^REF-[A-Z0-9-]{1,16}$/.test(ref.id))
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -175,10 +172,8 @@ export function IndicateurForm({
               className="mb-2.5 flex items-center gap-2.5 rounded-lg border border-border bg-surface-muted px-3 py-2.5"
             >
               <select
-                value={ref.referentielPublicId}
-                onChange={(event) =>
-                  updateReferentiel(index, { referentielPublicId: event.target.value })
-                }
+                value={ref.id}
+                onChange={(event) => updateReferentiel(index, { id: event.target.value })}
                 className="flex-[2] rounded-md border border-border bg-surface px-2.5 py-2 text-sm focus:border-primary focus:outline-none"
               >
                 <option value="" disabled>

@@ -35,7 +35,7 @@ export type UpsertIndicateurPayload = {
   nom: string;
   visibilite: "PRIVE" | "PUBLIC";
   referentiels: Array<{
-    referentielPublicId: string;
+    id: string;
     fonctionAgregation: "SUM" | "AVG" | "NONE";
   }>;
 };
@@ -91,7 +91,7 @@ Retourner : { indicateurs: Array<{ id: string; statut: "ok" | "non_trouve" }> }
 
 ### Mapping mailles → référentiels
 
-| Maille (`mailles_applicables`) | `referentielPublicId` |
+| Maille (`mailles_applicables`) | `id` |
 |---|---|
 | `NAT` | `REF-NAT` |
 | `REG` | `REF-REG` |

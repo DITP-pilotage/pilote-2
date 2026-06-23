@@ -46,9 +46,7 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     const { queryClient } = context
     const indicateur = await loadIndicateur({ queryClient, indicateurId: params.id })
 
-    const referentielIds = indicateur.referentiels.map(
-      (configuration) => configuration.referentielPublicId,
-    )
+    const referentielIds = indicateur.referentiels.map((configuration) => configuration.id)
     const pair = await ensureIndividuReferentielPair({
       queryClient,
       referentielIds,
@@ -116,7 +114,7 @@ function IndicateurDetailComponent() {
 
   const individuId = search.individu
   const referentielId = search.referentiel
-  const referentielIds = indicateur.referentiels.map((c) => c.referentielPublicId)
+  const referentielIds = indicateur.referentiels.map((c) => c.id)
 
   return (
     <Page title={indicateur.nom} back={back}>

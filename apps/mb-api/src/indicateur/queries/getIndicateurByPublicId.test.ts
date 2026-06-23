@@ -32,9 +32,17 @@ describe.concurrent('getIndicateurByPublicId', () => {
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
 
       const referentielsTries = [
-        { referentielPublicId: refDetailA, fonctionAgregation: 'SUM' as const },
-        { referentielPublicId: refDetailB, fonctionAgregation: 'SUM' as const },
-      ].sort((a, b) => a.referentielPublicId.localeCompare(b.referentielPublicId))
+        {
+          id: refDetailA,
+          nom: 'Référentiel de test',
+          fonctionAgregation: 'SUM' as const,
+        },
+        {
+          id: refDetailB,
+          nom: 'Référentiel de test',
+          fonctionAgregation: 'SUM' as const,
+        },
+      ].sort((a, b) => a.id.localeCompare(b.id))
 
       expect(result.isOk()).toBe(true)
       expect(result._unsafeUnwrap()).toEqual({
@@ -42,6 +50,12 @@ describe.concurrent('getIndicateurByPublicId', () => {
         nom: 'Indicateur de test',
         visibilite: 'PRIVE',
         unite: null,
+        description: null,
+        methodeCalcul: null,
+        sourceDonnees: null,
+        sourceUrl: null,
+        periodeMiseAJour: null,
+        jourMiseAJour: null,
         referentiels: referentielsTries,
         createdAt: indicateur.createdAt.toISOString(),
         updatedAt: indicateur.updatedAt.toISOString(),
@@ -65,6 +79,68 @@ describe.concurrent('getIndicateurByPublicId', () => {
         libelle: 'Pourcentage',
         abbreviation: '%',
       })
+    }),
+  )
+
+  it(
+    'expose les métadonnées (description, méthode, sources, période/jour) quand renseignées',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      await fixtures.indicateur({
+        publicId: indId,
+        description: 'Description longue de l’indicateur',
+        methodeCalcul: 'Somme pondérée',
+        sourceDonnees: 'INSEE',
+        sourceUrl: 'https://www.insee.fr/source',
+        periodeMiseAJour: 'TRIMESTRIELLE',
+        jourMiseAJour: 15,
+      })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
+
+      const indicateur = result._unsafeUnwrap()
+      expect(indicateur.description).toBe('Description longue de l’indicateur')
+      expect(indicateur.methodeCalcul).toBe('Somme pondérée')
+      expect(indicateur.sourceDonnees).toBe('INSEE')
+      expect(indicateur.sourceUrl).toBe('https://www.insee.fr/source')
+      expect(indicateur.periodeMiseAJour).toBe('TRIMESTRIELLE')
+      expect(indicateur.jourMiseAJour).toBe(15)
+    }),
+  )
+
+  it(
+    'expose le nom du référentiel dans les configurations',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const refNomId = testReferentielId()
+      const indicateur = await fixtures.indicateur({ publicId: indId })
+      const referentiel = await fixtures.referentiel({
+        publicId: refNomId,
+        nom: 'Périmètre national',
+      })
+      await db().indicateurReferentiel.create({
+        data: {
+          indicateurId: indicateur.id,
+          referentielId: referentiel.id,
+          fonctionAgregation: 'SUM',
+        },
+      })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
+
+      expect(result._unsafeUnwrap().referentiels).toEqual([
+        {
+          id: refNomId,
+          nom: 'Périmètre national',
+          fonctionAgregation: 'SUM',
+        },
+      ])
     }),
   )
 
