@@ -190,6 +190,9 @@ importers:
       pino-http:
         specifier: ^11
         version: 11.0.0
+      remeda:
+        specifier: ^2.39.0
+        version: 2.39.0
       uuidv7:
         specifier: ^1.2.1
         version: 1.2.1
@@ -8306,6 +8309,10 @@ packages:
 
   remeda@2.33.4:
     resolution: {integrity: sha512-ygHswjlc/opg2VrtiYvUOPLjxjtdKvjGz1/plDhkG66hjNjFr1xmfrs2ClNFo/E6TyUFiwYNh53bKV26oBoMGQ==}
+
+  remeda@2.39.0:
+    resolution: {integrity: sha512-3Ki8dU1o3OVu4dwIQ2Pj+yiuP7OnEbmWAGmJ3yDRqopily5jsj8NWzPvbS89H85d6UdONKEcUnrfuHY6jN9vyw==}
+    engines: {node: '>=18.0.0'}
 
   repeat-string@1.6.1:
     resolution: {integrity: sha512-PV0dzCYDNfRi1jCDbJzpW7jNNDRuCOG/jI5ctQcGKt/clZD+YcPS3yIlWuTJMmESC8aevCFmWJy5wjAFgNqN6w==}
@@ -18167,6 +18174,8 @@ snapshots:
       autolinker: 3.16.2
 
   remeda@2.33.4: {}
+
+  remeda@2.39.0: {}
 
   repeat-string@1.6.1: {}
 

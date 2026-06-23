@@ -1,5 +1,6 @@
 import { type PanierResponsablesApiModel } from '@pilote/mb-shared/panierResponsable'
 import { ResultAsync } from 'neverthrow'
+import { pick } from 'remeda'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
@@ -22,12 +23,8 @@ export const getPanierResponsables = (
       },
     }),
   ).map((panier) => ({
-    items: panier.responsables.map((r) => ({
-      email: r.utilisateur.email,
-      nom: r.utilisateur.nom,
-      prenom: r.utilisateur.prenom,
-      service: r.utilisateur.service,
-      fonction: r.utilisateur.fonction,
-    })),
+    items: panier.responsables.map((r) =>
+      pick(r.utilisateur, ['email', 'nom', 'prenom', 'service', 'fonction']),
+    ),
   }))
 }
