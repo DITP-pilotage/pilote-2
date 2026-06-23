@@ -121,18 +121,13 @@ const getPanierResponsablesRoute = createRoute({
   description:
     'Retourne la liste des utilisateurs désignés responsables du panier, triés par ordre ' +
     "d'assignation (createdAt ASC). Accessible à tout principal pouvant lire le panier " +
-    '(visibilite PUBLIC ou permission READ/WRITE explicite). ' +
-    'Renvoie 404 (`ENTITY_NOT_FOUND`) si le panier est introuvable ou inaccessible.',
+    '(visibilite PUBLIC ou permission READ/WRITE explicite).',
   middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {
     200: {
       content: { 'application/json': { schema: PanierResponsablesApiModelSchema } },
       description: 'Liste des responsables du panier',
-    },
-    404: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Panier introuvable',
     },
   },
 })

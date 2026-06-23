@@ -8,7 +8,7 @@ import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('getPanierResponsables', () => {
   it(
-    'retourne une liste vide quand le panier PUBLIC na aucun responsable',
+    "retourne une liste vide quand le panier PUBLIC n'a aucun responsable",
     integrationTest(async () => {
       const panVide = testPanierId()
       await fixtures.panier({ publicId: panVide, visibilite: 'PUBLIC' })
@@ -22,7 +22,7 @@ describe.concurrent('getPanierResponsables', () => {
   )
 
   it(
-    'retourne les champs complets dun responsable avec profil renseigné',
+    "retourne les champs complets d'un responsable avec profil renseigné",
     integrationTest(async () => {
       const panComplet = testPanierId()
       await fixtures.panierResponsable({
@@ -54,7 +54,7 @@ describe.concurrent('getPanierResponsables', () => {
   )
 
   it(
-    'retourne les responsables triés par ordre dassignation (createdAt ASC)',
+    "retourne les responsables triés par ordre d'assignation (createdAt ASC)",
     integrationTest(async () => {
       const panOrdre = testPanierId()
       const panierRow = await fixtures.panier({ publicId: panOrdre, visibilite: 'PUBLIC' })
@@ -111,7 +111,7 @@ describe.concurrent('getPanierResponsables', () => {
   )
 
   it(
-    'lève une erreur si le panier nexiste pas',
+    "lève une erreur si le panier n'existe pas",
     integrationTest(async () => {
       const panInexistant = testPanierId()
       const apiKey = await fixtures.apiKey()

@@ -67,13 +67,14 @@ export const Route = createFileRoute('/_authenticated/paniers/$id')({
       },
     })
 
-    if (deps.individu) {
-      void queryClient.prefetchQuery(
-        panierTauxProgressionQueryOptions({ panierId: params.id, individu: deps.individu }),
-      )
-    }
-
-    void queryClient.prefetchQuery(panierResponsablesQueryOptions(params.id))
+    await Promise.all([
+      deps.individu
+        ? queryClient.prefetchQuery(
+            panierTauxProgressionQueryOptions({ panierId: params.id, individu: deps.individu }),
+          )
+        : Promise.resolve(),
+      queryClient.prefetchQuery(panierResponsablesQueryOptions(params.id)),
+    ])
 
     return { panier }
   },
