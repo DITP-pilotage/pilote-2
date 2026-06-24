@@ -1,4 +1,7 @@
-import { type CommentaireApiModel } from '@pilote/mb-shared/commentaire'
+import {
+  type CommentaireApiModel,
+  type NiveauConfianceApiModel,
+} from '@pilote/mb-shared/commentaire'
 
 import { type Prisma } from '@/generated/prisma/client'
 
@@ -64,3 +67,21 @@ export const toCommentaireApiModel = (row: CommentaireRow): CommentaireApiModel 
   createdAt: row.createdAt.toISOString(),
   updatedAt: row.updatedAt.toISOString(),
 })
+
+// Include avec le dernier indice (courant) du commentaire.
+export const niveauConfianceInclude = {
+  ...commentaireInclude,
+  niveauxConfiance: { orderBy: { createdAt: 'desc' }, take: 1 },
+} satisfies Prisma.CommentaireInclude
+
+export type NiveauConfianceRow = Prisma.CommentaireGetPayload<{
+  include: typeof niveauConfianceInclude
+}>
+
+export const toNiveauConfianceApiModel = (row: NiveauConfianceRow): NiveauConfianceApiModel => {
+  const indice = row.niveauxConfiance[0]?.indice
+  if (!indice) {
+    throw new Error(`Commentaire ${row.id} de type CONFIANCE sans NiveauConfiance`)
+  }
+  return { ...toCommentaireApiModel(row), indice }
+}
