@@ -7,7 +7,7 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { type BucketKey, compareBuckets } from '@/framework/bucket'
+import { compareBuckets } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
@@ -24,8 +24,7 @@ import {
 } from '@/valeurAvancement/resolveSerieIndividu'
 import {
   type ObjectifBrut,
-  computeTaux,
-  findObjectifApplicable,
+  resolveTauxProgression,
 } from '@/valeurAvancement/resolveTauxProgression'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
@@ -77,22 +76,31 @@ const build = async (
       const dernier = serie.at(-1)
       if (!dernier) return null
 
-      const objectifCache = new Map<string, ReadonlyMap<BucketKey, PointObjectifInterne>>()
+      const objectifCache = new Map<string, ReadonlyMap<string, PointObjectifInterne>>()
       const objectifsMap = resolveObjectifIndividu(individu.id, objectifCtx, objectifCache)
       if (objectifsMap.size === 0) return null
 
       const objectifsList: ObjectifBrut[] = [...objectifsMap.values()]
         .map((p) => ({ dateCible: p.bucket, valeurCible: p.valeur }))
         .sort((a, b) => compareBuckets(a.dateCible, b.dateCible))
-      const objectifApplicable = findObjectifApplicable(dernier.bucket, objectifsList)
-      if (!objectifApplicable) return null
 
-      const taux = computeTaux(dernier.valeur, objectifApplicable.valeurCible)
+      const point = resolveTauxProgression({
+        valeurs: [
+          {
+            individuId: individu.id,
+            individuPublicId: individu.publicId,
+            date: dernier.bucket,
+            valeur: dernier.valeur,
+          },
+        ],
+        objectifsParIndividu: new Map([[individu.id, objectifsList]]),
+      })[0]
+      if (!point) return null
 
       return {
         indicateur: indicateur.publicId,
-        tauxProgression: taux,
-        valeurCible: objectifApplicable.valeurCible.toNumber(),
+        tauxProgression: point.tauxProgression,
+        valeurCible: point.valeurCible.toNumber(),
       }
     }),
   )
