@@ -1,0 +1,84 @@
+import { z } from 'zod'
+
+import { createPaginatedApiListSchema, pageSizeSchema, paginationCursorSchema } from './pagination'
+
+export const commentaireStatutSchema = z
+  .enum(['BROUILLON', 'PUBLIE'])
+  .describe('Statut du commentaire : BROUILLON (en cours de rédaction) ou PUBLIE (visible).')
+export type CommentaireStatut = z.infer<typeof commentaireStatutSchema>
+
+// Enums `type` par sujet (chaque sujet a ses propres valeurs).
+export const indicateurIndividuCommentaireTypeSchema = z.enum(['DEFAUT', 'CONFIANCE'])
+export const panierIndividuCommentaireTypeSchema = z.enum(['DEFAUT', 'CONFIANCE'])
+export const panierCommentaireTypeSchema = z.enum(['DEFAUT', 'CONFIANCE', 'OBJECTIF'])
+
+const auteurApiModelSchema = z
+  .object({
+    id: z.string().uuid().describe('Identifiant du principal (utilisateur ou clé API).'),
+    email: z
+      .string()
+      .email()
+      .nullable()
+      .describe('Email de l’auteur si c’est un utilisateur, sinon null.'),
+  })
+  .describe('Auteur d’un commentaire.')
+
+export const commentaireApiModelSchema = z
+  .object({
+    id: z.string().uuid().describe('Identifiant du commentaire.'),
+    type: z.string().describe('Catégorie du commentaire (enum propre au sujet).'),
+    individuId: z
+      .string()
+      .nullable()
+      .describe(
+        'Identifiant public de l’individu rattaché, ou null pour un commentaire global de panier.',
+      ),
+    contenu: z.string().describe('Contenu HTML riche (peut être vide).'),
+    contenuTexte: z.string().describe('Contenu en texte brut, dérivé du HTML (recherche / LLM).'),
+    statut: commentaireStatutSchema,
+    auteurCreation: auteurApiModelSchema,
+    auteurModification: auteurApiModelSchema,
+    createdAt: z.string().datetime().describe('Date ISO 8601 de création.'),
+    updatedAt: z.string().datetime().describe('Date ISO 8601 de dernière modification.'),
+  })
+  .describe('Commentaire.')
+export type CommentaireApiModel = z.infer<typeof commentaireApiModelSchema>
+
+// Body de création : `type` est contraint par le sujet (cf. factory ci-dessous).
+const creerCommentaireBodySchema = <T extends z.ZodTypeAny>(typeSchema: T) =>
+  z.object({
+    type: typeSchema.describe('Catégorie du commentaire.'),
+    contenu: z.string().describe('Contenu HTML riche (la chaîne vide est autorisée).'),
+    statut: commentaireStatutSchema,
+  })
+
+export const creerIndicateurIndividuCommentaireBodySchema = creerCommentaireBodySchema(
+  indicateurIndividuCommentaireTypeSchema,
+)
+export const creerPanierIndividuCommentaireBodySchema = creerCommentaireBodySchema(
+  panierIndividuCommentaireTypeSchema,
+)
+export const creerPanierCommentaireBodySchema = creerCommentaireBodySchema(
+  panierCommentaireTypeSchema,
+)
+export type CreerCommentaireBody = z.infer<typeof creerIndicateurIndividuCommentaireBodySchema>
+
+// Body de modification (socle, par id) : type non modifiable, individu/sujet figés.
+export const modifierCommentaireBodySchema = z
+  .object({
+    contenu: z.string().optional().describe('Nouveau contenu HTML (optionnel).'),
+    statut: commentaireStatutSchema.optional().describe('Nouveau statut (optionnel).'),
+  })
+  .describe('Modification du contenu et/ou du statut d’un commentaire.')
+export type ModifierCommentaireBody = z.infer<typeof modifierCommentaireBodySchema>
+
+// Query de listing : filtre optionnel par type + pagination cursor.
+export const listerCommentairesQuerySchema = z.object({
+  type: z.string().optional().describe('Filtre optionnel sur la catégorie du commentaire.'),
+  cursor: paginationCursorSchema.optional(),
+  pageSize: pageSizeSchema,
+})
+export type ListerCommentairesQuery = z.infer<typeof listerCommentairesQuerySchema>
+
+export const commentaireListApiModelSchema = createPaginatedApiListSchema(commentaireApiModelSchema)
+export type CommentaireListApiModel = z.infer<typeof commentaireListApiModelSchema>
