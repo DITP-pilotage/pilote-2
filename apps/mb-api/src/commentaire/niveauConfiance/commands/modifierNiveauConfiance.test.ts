@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { creerNiveauConfiance } from '@/commentaire/niveauConfiance/commands/creerNiveauConfiance'
 import { modifierNiveauConfiance } from '@/commentaire/niveauConfiance/commands/modifierNiveauConfiance'
-import { indicateurIndividuConfig } from '@/commentaire/sujets'
+import { indicateurIndividuConfig } from '@/indicateur/commands/creerIndicateurIndividuCommentaire'
 import { db } from '@/framework/persistence/dbStore'
 import { PermissionAction } from '@/generated/prisma/enums'
 import { fixtures } from '@/test/fixtures'

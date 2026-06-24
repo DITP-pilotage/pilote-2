@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { creerNiveauConfiance } from '@/commentaire/niveauConfiance/commands/creerNiveauConfiance'
-import { indicateurIndividuConfig } from '@/commentaire/sujets'
+import { indicateurIndividuConfig } from '@/indicateur/commands/creerIndicateurIndividuCommentaire'
 import { PermissionAction } from '@/generated/prisma/enums'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
@@ -31,7 +31,7 @@ describe.concurrent('creerNiveauConfiance', () => {
       const model = result._unsafeUnwrap()
       expect(model.type).toBe('CONFIANCE')
       expect(model.indice).toBe('OBJECTIF_SECURISE')
-      expect(model.contenuTexte).toBe('OK')
+      expect(model.contenu).toBe('<p>OK</p>')
     }),
   )
 

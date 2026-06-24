@@ -1,7 +1,5 @@
-import {
-  type ListerCommentairesQuery,
-  type NiveauConfianceListApiModel,
-} from '@pilote/mb-shared/commentaire'
+import { type NiveauConfianceListApiModel } from '@pilote/mb-shared/commentaire'
+import { type PaginateQuery } from '@pilote/mb-shared/pagination'
 import { ResultAsync } from 'neverthrow'
 
 import { type SujetCommentaireConfig } from '@/commentaire/sujets'
@@ -22,7 +20,7 @@ const CONFIANCE_PUBLIE: Prisma.CommentaireWhereInput = {
 
 export const listerHistoriqueNiveauConfiance = <P extends Record<string, string>>(
   config: SujetCommentaireConfig<P>,
-  { params, query }: { params: P; query: ListerCommentairesQuery },
+  { params, query }: { params: P; query: PaginateQuery },
 ): ResultAsync<NiveauConfianceListApiModel, never> => {
   const principalId = requireCurrentPrincipalId()
   const where: Prisma.CommentaireWhereInput = {

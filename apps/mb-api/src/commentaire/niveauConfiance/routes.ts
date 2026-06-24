@@ -1,12 +1,12 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import {
   creerNiveauConfianceBodySchema,
-  listerCommentairesQuerySchema,
   modifierNiveauConfianceBodySchema,
   niveauConfianceApiModelSchema,
   niveauConfianceListApiModelSchema,
 } from '@pilote/mb-shared/commentaire'
 import { errorApiModelSchema } from '@pilote/mb-shared/error'
+import { pageSizeSchema, paginationCursorSchema } from '@pilote/mb-shared/pagination'
 import {
   indicateurPublicIdSchema,
   individuPublicIdSchema,
@@ -17,8 +17,10 @@ import { creerNiveauConfiance } from '@/commentaire/niveauConfiance/commands/cre
 import { modifierNiveauConfiance } from '@/commentaire/niveauConfiance/commands/modifierNiveauConfiance'
 import { getNiveauConfianceCourant } from '@/commentaire/niveauConfiance/queries/getNiveauConfianceCourant'
 import { listerHistoriqueNiveauConfiance } from '@/commentaire/niveauConfiance/queries/listerHistoriqueNiveauConfiance'
-import { indicateurIndividuConfig, panierConfig, panierIndividuConfig } from '@/commentaire/sujets'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
+import { indicateurIndividuConfig } from '@/indicateur/commands/creerIndicateurIndividuCommentaire'
+import { panierConfig } from '@/panier/commands/creerPanierCommentaire'
+import { panierIndividuConfig } from '@/panier/commands/creerPanierIndividuCommentaire'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { withTransaction } from '@/framework/persistence/withTransaction'
@@ -29,6 +31,13 @@ const NiveauConfianceListApiModelSchema = niveauConfianceListApiModelSchema.open
   'NiveauConfianceListApiModel',
 )
 const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
+
+// Historique = listing des commentaires CONFIANCE (filtrage hardcodé côté query)
+// → seulement la pagination est exposée à l'appelant.
+const historiqueQuerySchema = z.object({
+  cursor: paginationCursorSchema.optional(),
+  pageSize: pageSizeSchema,
+})
 
 export const niveauConfianceRoutes = new OpenAPIHono()
 
@@ -126,7 +135,7 @@ niveauConfianceRoutes.openapi(
     tags: ['NiveauConfiance'],
     summary: 'Historique des niveaux de confiance (indicateur + individu)',
     middleware: [requireAuthentication],
-    request: { params: indicIndividuParams, query: listerCommentairesQuerySchema },
+    request: { params: indicIndividuParams, query: historiqueQuerySchema },
     responses: reponseHistorique,
   }),
   async (context) => {
@@ -204,7 +213,7 @@ niveauConfianceRoutes.openapi(
     tags: ['NiveauConfiance'],
     summary: 'Historique des niveaux de confiance (panier + individu)',
     middleware: [requireAuthentication],
-    request: { params: panierIndividuParams, query: listerCommentairesQuerySchema },
+    request: { params: panierIndividuParams, query: historiqueQuerySchema },
     responses: reponseHistorique,
   }),
   async (context) => {
@@ -279,7 +288,7 @@ niveauConfianceRoutes.openapi(
     tags: ['NiveauConfiance'],
     summary: 'Historique des niveaux de confiance (panier global)',
     middleware: [requireAuthentication],
-    request: { params: panierParams, query: listerCommentairesQuerySchema },
+    request: { params: panierParams, query: historiqueQuerySchema },
     responses: reponseHistorique,
   }),
   async (context) => {
