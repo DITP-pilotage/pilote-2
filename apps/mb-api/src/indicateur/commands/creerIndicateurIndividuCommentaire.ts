@@ -2,6 +2,7 @@ import { type CreerCommentaireBody } from '@pilote/mb-shared/commentaire'
 import { ResultAsync } from 'neverthrow'
 
 import { creerCommentaire } from '@/commentaire/commands/creerCommentaire'
+import { type CommentaireType } from '@/commentaire/ensureBrouillonUnique'
 import { type SujetCommentaireConfig } from '@/commentaire/sujets'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
@@ -47,7 +48,7 @@ export const indicateurIndividuConfig: SujetCommentaireConfig<Params> = {
 
 type Input = {
   params: Params
-  body: CreerCommentaireBody
+  body: CreerCommentaireBody<CommentaireType>
 }
 
 export const creerIndicateurIndividuCommentaire = (input: Input) =>

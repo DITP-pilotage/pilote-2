@@ -1,12 +1,7 @@
 import { type CommentaireApiModel } from '@pilote/mb-shared/commentaire'
 
+import { auteurInclude, toAuteurApiModel } from '@/commentaire/auteur'
 import { type Prisma } from '@/generated/prisma/client'
-
-type AuteurRow = {
-  id: string
-  utilisateur: { email: string } | null
-  apiKey: { label: string } | null
-}
 
 // Dérive un texte brut depuis un contenu HTML riche (recherche / LLM).
 // Implémentation minimale (strip de balises + normalisation des espaces) ;
@@ -17,15 +12,6 @@ export const htmlToPlainText = (html: string): string =>
     .replace(/&nbsp;/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
-
-// Include réutilisable pour toutes les queries renvoyant un CommentaireApiModel.
-const auteurInclude = {
-  select: {
-    id: true,
-    utilisateur: { select: { email: true } },
-    apiKey: { select: { label: true } },
-  },
-} as const
 
 export const commentaireInclude = {
   auteurCreation: auteurInclude,
@@ -42,16 +28,6 @@ const typeDuCommentaire = (row: CommentaireRow): string =>
 
 const individuPublicId = (row: CommentaireRow): string | null =>
   row.indicateurIndividu?.individu.publicId ?? row.panierIndividu?.individu.publicId ?? null
-
-const toAuteurApiModel = (row: AuteurRow): CommentaireApiModel['auteurCreation'] => {
-  if (row.utilisateur) {
-    return { type: 'utilisateur', id: row.id, email: row.utilisateur.email }
-  }
-  if (row.apiKey) {
-    return { type: 'apiKey', id: row.id, label: row.apiKey.label }
-  }
-  throw new Error(`Principal ${row.id} sans utilisateur ni clé API associé`)
-}
 
 export const toCommentaireApiModel = (row: CommentaireRow): CommentaireApiModel => ({
   id: row.id,

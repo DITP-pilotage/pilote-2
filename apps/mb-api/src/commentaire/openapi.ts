@@ -2,30 +2,21 @@ import {
   commentaireApiModelSchema,
   commentaireListApiModelSchema,
 } from '@pilote/mb-shared/commentaire'
-import { errorApiModelSchema } from '@pilote/mb-shared/error'
+
+import { erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
 
 export const CommentaireApiModelSchema = commentaireApiModelSchema.openapi('CommentaireApiModel')
 export const CommentaireListApiModelSchema =
   commentaireListApiModelSchema.openapi('CommentaireListApiModel')
-const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 export const reponseCommentaire = {
   200: {
     content: { 'application/json': { schema: CommentaireApiModelSchema } },
     description: 'Commentaire',
   },
-  400: {
-    content: { 'application/json': { schema: ErrorApiModelSchema } },
-    description: 'Requête invalide',
-  },
-  403: {
-    content: { 'application/json': { schema: ErrorApiModelSchema } },
-    description: 'Permission insuffisante',
-  },
-  404: {
-    content: { 'application/json': { schema: ErrorApiModelSchema } },
-    description: 'Sujet introuvable',
-  },
+  400: erreur400,
+  403: erreur403,
+  404: erreur404,
 }
 
 export const reponseListe = {

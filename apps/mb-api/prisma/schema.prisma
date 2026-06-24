@@ -18,8 +18,10 @@ model Principal {
   apiKey                ApiKey?
   indicateurPermissions IndicateurPermission[]
   panierPermissions     PanierPermission[]
-  commentairesCrees     Commentaire[]          @relation("commentaireCreatedBy")
-  commentairesModifies  Commentaire[]          @relation("commentaireUpdatedBy")
+  commentairesCrees       Commentaire[]     @relation("commentaireCreatedBy")
+  commentairesModifies    Commentaire[]     @relation("commentaireUpdatedBy")
+  niveauxConfianceCrees   NiveauConfiance[] @relation("niveauConfianceCreatedBy")
+  niveauxConfianceModifies NiveauConfiance[] @relation("niveauConfianceUpdatedBy")
 
   @@map("principal")
 }
@@ -483,11 +485,17 @@ model NiveauConfiance {
   id            String          @id @db.Uuid
   commentaireId String          @map("commentaire_id") @db.Uuid
   indice        IndiceConfiance
+  createdBy     String          @map("created_by") @db.Uuid
+  updatedBy     String          @map("updated_by") @db.Uuid
   createdAt     DateTime        @default(now()) @map("created_at")
   updatedAt     DateTime        @updatedAt @map("updated_at")
 
-  commentaire Commentaire @relation(fields: [commentaireId], references: [id], onDelete: Cascade)
+  commentaire        Commentaire @relation(fields: [commentaireId], references: [id], onDelete: Cascade)
+  auteurCreation     Principal   @relation("niveauConfianceCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  auteurModification Principal   @relation("niveauConfianceUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
 
   @@index([commentaireId])
+  @@index([createdBy])
+  @@index([updatedBy])
   @@map("niveau_confiance")
 }

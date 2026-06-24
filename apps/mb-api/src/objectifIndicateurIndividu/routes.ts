@@ -1,5 +1,4 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
-import { errorApiModelSchema } from '@pilote/mb-shared/error'
 import { indicateurPublicIdSchema } from '@pilote/mb-shared/publicIds'
 import {
   deleteObjectifIndicateurIndividuBodySchema,
@@ -12,6 +11,7 @@ import {
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { ErrorApiModelSchema, erreur400, erreur403 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { deleteObjectifIndicateurIndividu } from '@/objectifIndicateurIndividu/commands/deleteObjectifIndicateurIndividu'
 import { upsertObjectifIndicateurIndividu } from '@/objectifIndicateurIndividu/commands/upsertObjectifIndicateurIndividu'
@@ -26,7 +26,6 @@ const UpsertObjectifIndicateurIndividuBodySchema =
   upsertObjectifIndicateurIndividuBodySchema.openapi('UpsertObjectifIndicateurIndividuBody')
 const DeleteObjectifIndicateurIndividuBodySchema =
   deleteObjectifIndicateurIndividuBodySchema.openapi('DeleteObjectifIndicateurIndividuBody')
-const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 const indicateurParamsSchema = z.object({
   id: indicateurPublicIdSchema,
@@ -55,10 +54,7 @@ const getObjectifsForIndicateurRoute = createRoute({
       content: { 'application/json': { schema: ObjectifIndicateurIndividuListApiModelSchema } },
       description: 'Objectifs pour les individus demandés',
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Paramètres de requête invalides (ex. `individus` absent ou format incorrect)',
-    },
+    400: erreur400,
   },
 })
 
@@ -85,14 +81,8 @@ const upsertObjectifIndicateurIndividuRoute = createRoute({
       content: { 'application/json': { schema: ObjectifIndicateurIndividuApiModelSchema } },
       description: 'Objectif créé ou mis à jour',
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Requête invalide (body invalide ou individu inconnu/non autorisé)',
-    },
-    403: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Pas de permission WRITE sur cet indicateur',
-    },
+    400: erreur400,
+    403: erreur403,
   },
 })
 
@@ -118,14 +108,8 @@ const deleteObjectifIndicateurIndividuRoute = createRoute({
     204: {
       description: 'Objectif supprimé (ou inexistant — idempotent)',
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Requête invalide (body invalide ou individu inconnu/non autorisé)',
-    },
-    403: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Pas de permission WRITE sur cet indicateur',
-    },
+    400: erreur400,
+    403: erreur403,
   },
 })
 

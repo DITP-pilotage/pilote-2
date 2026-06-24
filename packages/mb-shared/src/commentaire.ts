@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { auteurApiModelSchema } from "./auteur";
 import {
   createPaginatedApiListSchema,
   pageSizeSchema,
@@ -27,25 +28,6 @@ export const panierCommentaireTypeSchema = z.enum([
   "CONFIANCE",
   "OBJECTIF",
 ]);
-
-const auteurUtilisateurApiModelSchema = z.object({
-  type: z.literal("utilisateur"),
-  id: z.string().uuid().describe("Identifiant du principal."),
-  email: z.string().email().describe("Email de l’utilisateur."),
-});
-
-const auteurApiKeyApiModelSchema = z.object({
-  type: z.literal("apiKey"),
-  id: z.string().uuid().describe("Identifiant du principal."),
-  label: z.string().describe("Libellé de la clé API."),
-});
-
-const auteurApiModelSchema = z
-  .discriminatedUnion("type", [
-    auteurUtilisateurApiModelSchema,
-    auteurApiKeyApiModelSchema,
-  ])
-  .describe("Auteur d’un commentaire (utilisateur ou clé API).");
 
 export const commentaireApiModelSchema = z
   .object({
@@ -89,10 +71,10 @@ export const creerPanierIndividuCommentaireBodySchema =
 export const creerPanierCommentaireBodySchema = creerCommentaireBodySchema(
   panierCommentaireTypeSchema,
 );
-// Type « élargi » consommé par la couche générique : le `type` est déjà validé
-// par le schéma propre au sujet (route), donc ici on accepte n'importe quelle valeur.
-export type CreerCommentaireBody = {
-  type: string;
+// `type` est paramétré par sujet (cf. schémas ci-dessus) ; le générique permet
+// au consommateur de fixer l'enum exact attendu (sinon `string`).
+export type CreerCommentaireBody<T extends string = string> = {
+  type: T;
   contenu: string;
   statut: CommentaireStatut;
 };
@@ -125,9 +107,8 @@ export const listerIndicateurIndividuCommentairesQuerySchema =
   listerCommentairesQuerySchema(indicateurIndividuCommentaireTypeSchema);
 export const listerPanierIndividuCommentairesQuerySchema =
   listerCommentairesQuerySchema(panierIndividuCommentaireTypeSchema);
-export const listerPanierCommentairesQuerySchema = listerCommentairesQuerySchema(
-  panierCommentaireTypeSchema,
-);
+export const listerPanierCommentairesQuerySchema =
+  listerCommentairesQuerySchema(panierCommentaireTypeSchema);
 // Type « élargi » consommé par la couche générique : le `type` est déjà validé
 // par le schéma propre au sujet (route).
 export type ListerCommentairesQuery = {

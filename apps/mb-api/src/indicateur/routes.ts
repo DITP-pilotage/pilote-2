@@ -3,12 +3,12 @@ import {
   creerIndicateurIndividuCommentaireBodySchema,
   listerIndicateurIndividuCommentairesQuerySchema,
 } from '@pilote/mb-shared/commentaire'
-import { errorApiModelSchema } from '@pilote/mb-shared/error'
 import {
   indicateurApiModelSchema,
   listIndicateursQuerySchema,
   upsertIndicateurBodySchema,
 } from '@pilote/mb-shared/indicateur'
+import { historiqueNiveauConfianceQuerySchema } from '@pilote/mb-shared/niveauConfiance'
 import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
 import { indicateurPublicIdSchema, individuPublicIdSchema } from '@pilote/mb-shared/publicIds'
 
@@ -21,18 +21,29 @@ import {
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { upsertIndicateur } from '@/indicateur/commands/upsertIndicateur'
-import { creerIndicateurIndividuCommentaire } from '@/indicateur/commands/creerIndicateurIndividuCommentaire'
+import {
+  creerIndicateurIndividuCommentaire,
+  indicateurIndividuConfig,
+} from '@/indicateur/commands/creerIndicateurIndividuCommentaire'
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
 import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
 import { listerIndicateurIndividuCommentaires } from '@/indicateur/queries/listerIndicateurIndividuCommentaires'
+import {
+  NiveauConfianceApiModelSchema,
+  NiveauConfianceListApiModelSchema,
+  reponseHistoriqueNiveauConfiance,
+  reponseNiveauConfiance,
+} from '@/niveauConfiance/openapi'
+import { getNiveauConfianceCourant } from '@/niveauConfiance/queries/getNiveauConfianceCourant'
+import { listerHistoriqueNiveauConfiance } from '@/niveauConfiance/queries/listerHistoriqueNiveauConfiance'
 
 const IndicateurApiModelSchema = indicateurApiModelSchema.openapi('IndicateurApiModel')
 const IndicateurListApiModelSchema =
   createPaginatedApiListSchema(indicateurApiModelSchema).openapi('IndicateurListApiModel')
 const UpsertIndicateurBodySchema = upsertIndicateurBodySchema.openapi('UpsertIndicateurBody')
-export const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 // --- GET /indicateurs --------------------------------------------------------
 
@@ -50,10 +61,7 @@ const getIndicateursRoute = createRoute({
       content: { 'application/json': { schema: IndicateurListApiModelSchema } },
       description: 'Liste paginée des indicateurs',
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Paramètres de requête invalides',
-    },
+    400: erreur400,
   },
 })
 
@@ -77,10 +85,7 @@ const getIndicateurByIdRoute = createRoute({
       content: { 'application/json': { schema: IndicateurApiModelSchema } },
       description: 'Indicateur trouvé',
     },
-    404: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Indicateur introuvable',
-    },
+    404: erreur404,
   },
 })
 
@@ -106,14 +111,8 @@ const upsertIndicateurRoute = createRoute({
       content: { 'application/json': { schema: IndicateurApiModelSchema } },
       description: 'Indicateur créé ou mis à jour',
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Requête invalide (body ou référentiels inconnus)',
-    },
-    403: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Clé API sans le rôle ADMIN requis',
-    },
+    400: erreur400,
+    403: erreur403,
   },
 })
 
@@ -230,3 +229,56 @@ indicateurRoutes.openapi(listerIndicateurIndividuCommentairesRoute, async (conte
     never,
   )
 })
+
+// --- GET /indicateurs/:id/individus/:individuId/niveau-confiance -------------
+
+const getNiveauConfianceIndicateurIndividuRoute = createRoute({
+  method: 'get',
+  path: '/indicateurs/{indicateurId}/individus/{individuId}/niveau-confiance',
+  tags: ['Indicateur', 'NiveauConfiance'],
+  summary: 'Récupérer le niveau de confiance courant (indicateur + individu)',
+  middleware: [requireAuthentication],
+  request: { params: indicateurIndividuCommentaireParamsSchema },
+  responses: reponseNiveauConfiance,
+})
+
+indicateurRoutes.openapi(getNiveauConfianceIndicateurIndividuRoute, async (context) => {
+  const params = context.req.valid('param')
+  return getNiveauConfianceCourant(indicateurIndividuConfig, { params }).match(
+    (data) => jsonResponseOk({ context, data, schema: NiveauConfianceApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
+// --- GET /indicateurs/:id/individus/:individuId/niveau-confiance/historique --
+
+const listerHistoriqueNiveauConfianceIndicateurIndividuRoute = createRoute({
+  method: 'get',
+  path: '/indicateurs/{indicateurId}/individus/{individuId}/niveau-confiance/historique',
+  tags: ['Indicateur', 'NiveauConfiance'],
+  summary: 'Historique des niveaux de confiance (indicateur + individu)',
+  middleware: [requireAuthentication],
+  request: {
+    params: indicateurIndividuCommentaireParamsSchema,
+    query: historiqueNiveauConfianceQuerySchema,
+  },
+  responses: reponseHistoriqueNiveauConfiance,
+})
+
+indicateurRoutes.openapi(
+  listerHistoriqueNiveauConfianceIndicateurIndividuRoute,
+  async (context) => {
+    const params = context.req.valid('param')
+    const query = context.req.valid('query')
+    return listerHistoriqueNiveauConfiance(indicateurIndividuConfig, { params, query }).match(
+      (data) =>
+        jsonResponseOk({
+          context,
+          data,
+          schema: NiveauConfianceListApiModelSchema,
+          status: 200,
+        }),
+      never,
+    )
+  },
+)
