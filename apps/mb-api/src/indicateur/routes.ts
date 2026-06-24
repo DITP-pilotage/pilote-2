@@ -182,7 +182,7 @@ const indicateurIndividuCommentaireParamsSchema = z.object({
 const creerIndicateurIndividuCommentaireRoute = createRoute({
   method: 'post',
   path: '/indicateurs/{indicateurId}/individus/{individuId}/commentaires',
-  tags: ['Commentaire'],
+  tags: ['Indicateur'],
   summary: 'Créer un commentaire sur un indicateur pour un individu',
   middleware: [requireAuthentication],
   request: {
@@ -212,7 +212,7 @@ indicateurRoutes.openapi(creerIndicateurIndividuCommentaireRoute, async (context
 const listerIndicateurIndividuCommentairesRoute = createRoute({
   method: 'get',
   path: '/indicateurs/{indicateurId}/individus/{individuId}/commentaires',
-  tags: ['Commentaire'],
+  tags: ['Indicateur'],
   summary: 'Lister les commentaires d’un indicateur pour un individu',
   middleware: [requireAuthentication],
   request: {

@@ -223,7 +223,7 @@ const panierIndividuCommentaireParamsSchema = z.object({
 const creerPanierIndividuCommentaireRoute = createRoute({
   method: 'post',
   path: '/paniers/{panierId}/individus/{individuId}/commentaires',
-  tags: ['Commentaire'],
+  tags: ['Panier'],
   summary: 'Créer un commentaire sur un panier pour un individu',
   middleware: [requireAuthentication],
   request: {
@@ -251,7 +251,7 @@ panierRoutes.openapi(creerPanierIndividuCommentaireRoute, async (context) => {
 const listerPanierIndividuCommentairesRoute = createRoute({
   method: 'get',
   path: '/paniers/{panierId}/individus/{individuId}/commentaires',
-  tags: ['Commentaire'],
+  tags: ['Panier'],
   summary: 'Lister les commentaires d’un panier pour un individu',
   middleware: [requireAuthentication],
   request: {
@@ -277,7 +277,7 @@ const panierCommentaireParamsSchema = z.object({ panierId: panierPublicIdSchema 
 const creerPanierCommentaireRoute = createRoute({
   method: 'post',
   path: '/paniers/{panierId}/commentaires',
-  tags: ['Commentaire'],
+  tags: ['Panier'],
   summary: 'Créer un commentaire global sur un panier',
   middleware: [requireAuthentication],
   request: {
@@ -305,7 +305,7 @@ panierRoutes.openapi(creerPanierCommentaireRoute, async (context) => {
 const listerPanierCommentairesRoute = createRoute({
   method: 'get',
   path: '/paniers/{panierId}/commentaires',
-  tags: ['Commentaire'],
+  tags: ['Panier'],
   summary: 'Lister les commentaires globaux d’un panier',
   middleware: [requireAuthentication],
   request: {
