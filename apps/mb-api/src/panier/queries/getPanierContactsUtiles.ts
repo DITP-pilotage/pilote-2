@@ -9,10 +9,8 @@ export const getPanierContactsUtiles = (
   panierPublicId: string,
 ): ResultAsync<PanierContactsUtilesApiModel, never> => {
   const principalId = requireCurrentPrincipalId()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const prismaDb = db() as any
   return ResultAsync.fromSafePromise(
-    prismaDb.panier.findFirstOrThrow({
+    db().panier.findFirstOrThrow({
       where: withPanierReadPermission({ publicId: panierPublicId }, principalId),
       include: {
         contactsUtiles: {

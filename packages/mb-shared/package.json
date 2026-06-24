@@ -79,6 +79,10 @@
     "./panierResponsable": {
       "types": "./src/panierResponsable.ts",
       "default": "./src/panierResponsable.ts"
+    },
+    "./panierContactUtile": {
+      "types": "./src/panierContactUtile.ts",
+      "default": "./src/panierContactUtile.ts"
     }
   },
   "files": [
