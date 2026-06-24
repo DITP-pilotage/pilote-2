@@ -21,3 +21,8 @@ export class ValidationError extends AppError {
   readonly code = 'VALIDATION_ERROR'
   readonly kind = 'validation' as const
 }
+
+export class ConflictError extends AppError {
+  readonly code = 'CONFLICT'
+  readonly kind = 'conflict' as const
+}
