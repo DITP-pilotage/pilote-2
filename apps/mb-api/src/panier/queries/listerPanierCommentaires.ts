@@ -1,7 +1,7 @@
 import { type ListerCommentairesQuery } from '@pilote/mb-shared/commentaire'
 
 import { listerCommentaires } from '@/commentaire/queries/listerCommentaires'
-import { panierConfig } from '@/commentaire/sujets'
+import { panierConfig } from '@/panier/commands/creerPanierCommentaire'
 
 type Input = {
   params: { panierId: string }

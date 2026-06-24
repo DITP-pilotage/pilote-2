@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { creerCommentaire } from '@/commentaire/commands/creerCommentaire'
-import { indicateurIndividuConfig } from '@/commentaire/sujets'
+import { indicateurIndividuConfig } from '@/indicateur/commands/creerIndicateurIndividuCommentaire'
 import { db } from '@/framework/persistence/dbStore'
 import { PermissionAction } from '@/generated/prisma/enums'
 import { fixtures } from '@/test/fixtures'
