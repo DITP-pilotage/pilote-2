@@ -21,12 +21,8 @@ export const listerCommentaires = <P extends Record<string, string>>(
   { params, query }: ListerCommentairesParams<P>,
 ): ResultAsync<CommentaireListApiModel, never> => {
   const principalId = requireCurrentPrincipalId()
-  // Filtre type : si fourni on le respecte, sinon on exclut les commentaires de confiance.
-  const filtreType: Prisma.CommentaireWhereInput = query.type
-    ? filtreParType(query.type)
-    : { NOT: filtreParType('CONFIANCE') }
   const where: Prisma.CommentaireWhereInput = {
-    AND: [config.whereLecture(params, principalId), filtreType],
+    AND: [config.whereLecture(params, principalId), filtreParType(query.type)],
   }
 
   const fetchPage = db().commentaire.findMany({

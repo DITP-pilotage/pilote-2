@@ -10,7 +10,7 @@ import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listerCommentaires', () => {
   it(
-    'liste les commentaires du scope en antichronologique, en excluant le type CONFIANCE',
+    'liste les commentaires du scope en antichronologique, filtrés par type=DEFAUT',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const indivId = testIndividuId()
@@ -39,14 +39,14 @@ describe.concurrent('listerCommentaires', () => {
       const result = await runAsPrincipal(apiKey.id, () =>
         listerCommentaires(indicateurIndividuConfig, {
           params: { indicateurId: indId, individuId: indivId },
-          query: {},
+          query: { type: 'DEFAUT' },
         }),
       )
 
       expect(result.isOk()).toBe(true)
       const page = result._unsafeUnwrap()
       expect(page.total).toBe(1)
-      expect(page.items.map((c) => c.contenuTexte)).toEqual(['Premier'])
+      expect(page.items.map((c) => c.contenu)).toEqual(['<p>Premier</p>'])
     }),
   )
 

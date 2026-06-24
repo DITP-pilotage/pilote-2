@@ -32,7 +32,7 @@ describe.concurrent('creerCommentaire', () => {
       const model = result._unsafeUnwrap()
       expect(model.type).toBe('DEFAUT')
       expect(model.individuId).toBe(indivId)
-      expect(model.contenuTexte).toBe('Hello')
+      expect(model.contenu).toBe('<p>Hello</p>')
       expect(model.auteurCreation.id).toBe(apiKey.id)
       const count = await db().commentaire.count({
         where: { indicateurIndividu: { indicateurId: indicateur.id } },

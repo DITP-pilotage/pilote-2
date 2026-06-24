@@ -14,10 +14,10 @@ On repart d'une conception **générique** : un **socle `Commentaire`** unique (
 1. **Socle + satellites.** Un seul `Commentaire` porte les champs communs. Chaque sujet commentable a sa propre table satellite (FK → `Commentaire`, FK → sujet) **avec son propre enum `type`** (anti-fourre-tout : pas de table générique mélangeant catégorie + type).
 2. **3 secteurs dans ce lot** : `IndicateurIndividuCommentaire`, `PanierIndividuCommentaire`, `PanierCommentaire` (global, sans individu). Indicateur et panier-par-individu portent une dimension `individuId` ; le panier global non.
 3. **Le niveau de confiance n'est pas une table dédiée à part.** Un `NiveauConfiance` est accroché à **un commentaire** en **1:n** : un commentaire de type `CONFIANCE` porte un ou plusieurs indices ordonnés par date (historique d'indices, et autres usages à venir). L'indice « courant » d'un commentaire = le dernier (`createdAt` max) ; l'indice de confiance « courant » d'un scope = l'indice courant du dernier commentaire `CONFIANCE` **publié** du scope.
-4. **Statut BROUILLON / PUBLIE** sur le socle, piloté par le `PUT`. Max **1 brouillon par (scope, auteur)**.
+4. **Statut BROUILLON / PUBLIE** sur le socle, choisi à la création (`POST` body) puis piloté par le `PUT`. Max **1 brouillon par (scope, auteur)**.
 5. **`individuId` dans le path** (et non le body) : routes imbriquées `…/individus/{individuId}/commentaires`. Cohérent avec mb-api où `individus` est déjà une sous-ressource d'un sujet (`/indicateurs/{id}/individus`, `/referentiels/{id}/individus`). Profondeur 3 niveaux assumée (≤3, conforme aux guidelines REST type Zalando/Microsoft).
 6. **Espace d'`id` unifié sur le socle** : `PUT /commentaires/{id}` et `DELETE /commentaires/{id}` opèrent sur le socle, quel que soit le satellite (un resolver retrouve le sujet pour le contrôle de permission).
-7. **Contenu** = richtext (HTML) + un champ **`contenuTexte`** dérivé (plain text) pour le futur LLM et la recherche. `contenu` peut être la **chaîne vide `""`** (jamais `null`) à la création.
+7. **Contenu** = richtext (HTML) + un champ **`contenuTexte`** dérivé (plain text) pour le futur LLM et la recherche, **interne (DB uniquement, non exposé dans le modèle API)**. `contenu` peut être la **chaîne vide `""`** (jamais `null`) à la création.
 
 ## 3. Modèle de données
 
@@ -27,7 +27,7 @@ On repart d'une conception **générique** : un **socle `Commentaire`** unique (
 Commentaire
   id            uuid (PK, app-generated)
   contenu       text          -- richtext/HTML, "" autorisé
-  contenuTexte  text          -- plain text dérivé (LLM/recherche)
+  contenuTexte  text          -- plain text dérivé (LLM/recherche), interne (non exposé en API)
   statut        CommentaireStatut  -- BROUILLON | PUBLIE
   createdBy     uuid (FK → Principal)
   updatedBy     uuid (FK → Principal)
@@ -115,8 +115,8 @@ Pluriel partout, `individuId` dans le path. `{sujet}` = `indicateurs` | `paniers
 
 | Méthode | Route |
 |---|---|
-| `POST` | `/{sujet}/{id}[/individus/{individuId}]/commentaires` — body `{ type, contenu }` |
-| `GET` | `/{sujet}/{id}[/individus/{individuId}]/commentaires?type=…` — exclut les commentaires de confiance (type `CONFIANCE`), antichrono, paginé |
+| `POST` | `/{sujet}/{id}[/individus/{individuId}]/commentaires` — body `{ type, contenu, statut }` |
+| `GET` | `/{sujet}/{id}[/individus/{individuId}]/commentaires?type=…` — `type` requis (l'appelant choisit la catégorie), antichrono, paginé |
 
 **Niveau de confiance**
 
