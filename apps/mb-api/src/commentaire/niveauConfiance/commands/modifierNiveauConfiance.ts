@@ -6,7 +6,11 @@ import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
 import { resolveCommentairePourEcriture } from '@/commentaire/resolveCommentairePourEcriture'
-import { htmlToPlainText, niveauConfianceInclude, toNiveauConfianceApiModel } from '@/commentaire/utils'
+import {
+  htmlToPlainText,
+  niveauConfianceInclude,
+  toNiveauConfianceApiModel,
+} from '@/commentaire/utils'
 import { db } from '@/framework/persistence/dbStore'
 
 export const modifierNiveauConfiance = (

@@ -30,7 +30,10 @@ describe.concurrent('modifierNiveauConfiance', () => {
       const commentaireId = cree._unsafeUnwrap().id
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        modifierNiveauConfiance(commentaireId, { indice: 'OBJECTIF_SECURISE', contenu: '<p>maj</p>' }),
+        modifierNiveauConfiance(commentaireId, {
+          indice: 'OBJECTIF_SECURISE',
+          contenu: '<p>maj</p>',
+        }),
       )
 
       expect(result.isOk()).toBe(true)

@@ -5,6 +5,7 @@ import { cors } from 'hono/cors'
 import { me } from '@/authentication/routes/me'
 import { whoami } from '@/authentication/routes/whoami'
 import { commentaireRoutes } from '@/commentaire/routes'
+import { niveauConfianceRoutes } from '@/commentaire/niveauConfiance/routes'
 import { env } from '@/env'
 import { authContext } from '@/framework/auth/authContext'
 import { registerErrorHandler } from '@/framework/errors/errorHandler'
@@ -41,6 +42,7 @@ app.route('/', referentielRoutes)
 app.route('/', individuRoutes)
 app.route('/', panierRoutes)
 app.route('/', commentaireRoutes)
+app.route('/', niveauConfianceRoutes)
 app.route('/', me)
 app.route('/', whoami)
 

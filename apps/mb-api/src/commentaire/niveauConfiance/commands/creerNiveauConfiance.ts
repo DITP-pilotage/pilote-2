@@ -7,7 +7,11 @@ import { uuidv7 } from 'uuidv7'
 
 import { ensureUnSeulBrouillon } from '@/commentaire/ensureUnSeulBrouillon'
 import { type SujetCommentaireConfig } from '@/commentaire/sujets'
-import { htmlToPlainText, niveauConfianceInclude, toNiveauConfianceApiModel } from '@/commentaire/utils'
+import {
+  htmlToPlainText,
+  niveauConfianceInclude,
+  toNiveauConfianceApiModel,
+} from '@/commentaire/utils'
 import { db } from '@/framework/persistence/dbStore'
 
 type CreerNiveauConfianceParams<P extends Record<string, string>> = {
