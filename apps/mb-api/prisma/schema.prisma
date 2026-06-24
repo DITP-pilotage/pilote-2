@@ -18,6 +18,8 @@ model Principal {
   apiKey                ApiKey?
   indicateurPermissions IndicateurPermission[]
   panierPermissions     PanierPermission[]
+  commentairesCrees     Commentaire[]          @relation("commentaireCreatedBy")
+  commentairesModifies  Commentaire[]          @relation("commentaireUpdatedBy")
 
   @@map("principal")
 }
@@ -37,9 +39,9 @@ model Utilisateur {
   service   String
   fonction  String
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt      @map("updated_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
-  principal       Principal          @relation(fields: [id], references: [id], onDelete: Cascade)
+  principal       Principal           @relation(fields: [id], references: [id], onDelete: Cascade)
   identites       IdentiteExterne[]
   responsabilites PanierResponsable[]
 
@@ -50,7 +52,7 @@ model IdentiteExterne {
   provider      ProviderType
   providerSub   String       @map("provider_sub")
   utilisateurId String       @map("utilisateur_id") @db.Uuid
-  createdAt     DateTime     @default(now())        @map("created_at")
+  createdAt     DateTime     @default(now()) @map("created_at")
 
   utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
 
@@ -84,25 +86,26 @@ model ApiKey {
 }
 
 model Indicateur {
-  id                String            @id @db.Uuid
-  publicId          String            @unique @map("public_id")
-  nom               String
-  visibilite        Visibilite
-  unite             UniteIndicateur?
-  description       String?
-  methodeCalcul     String?           @map("methode_calcul")
-  sourceDonnees     String?           @map("source_donnees")
-  sourceUrl         String?           @map("source_url")
-  periodeMiseAJour  PeriodeMiseAJour? @map("periode_mise_a_jour")
-  jourMiseAJour     Int?              @map("jour_mise_a_jour")
-  createdAt         DateTime          @default(now()) @map("created_at")
-  updatedAt         DateTime          @updatedAt      @map("updated_at")
+  id               String            @id @db.Uuid
+  publicId         String            @unique @map("public_id")
+  nom              String
+  visibilite       Visibilite
+  unite            UniteIndicateur?
+  description      String?
+  methodeCalcul    String?           @map("methode_calcul")
+  sourceDonnees    String?           @map("source_donnees")
+  sourceUrl        String?           @map("source_url")
+  periodeMiseAJour PeriodeMiseAJour? @map("periode_mise_a_jour")
+  jourMiseAJour    Int?              @map("jour_mise_a_jour")
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
 
-  valeurs      ValeurAvancement[]
-  objectifs    ObjectifIndicateurIndividu[]
-  referentiels IndicateurReferentiel[]
-  permissions  IndicateurPermission[]
-  paniers      PanierIndicateur[]
+  valeurs              ValeurAvancement[]
+  objectifs            ObjectifIndicateurIndividu[]
+  referentiels         IndicateurReferentiel[]
+  permissions          IndicateurPermission[]
+  paniers              PanierIndicateur[]
+  individuCommentaires IndicateurIndividuCommentaire[]
 
   @@map("indicateur")
 }
@@ -143,12 +146,12 @@ enum PeriodeMiseAJour {
 }
 
 model IndicateurReferentiel {
-  indicateurId       String             @map("indicateur_id")  @db.Uuid
+  indicateurId       String             @map("indicateur_id") @db.Uuid
   referentielId      String             @map("referentiel_id") @db.Uuid
   fonctionAgregation FonctionAgregation @map("fonction_agregation")
-  createdAt          DateTime           @default(now())        @map("created_at")
+  createdAt          DateTime           @default(now()) @map("created_at")
 
-  indicateur  Indicateur  @relation(fields: [indicateurId],  references: [id], onDelete: Cascade)
+  indicateur  Indicateur  @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
   referentiel Referentiel @relation(fields: [referentielId], references: [id], onDelete: Cascade)
 
   @@id([indicateurId, referentielId])
@@ -164,12 +167,12 @@ enum PermissionAction {
 }
 
 model IndicateurPermission {
-  principalId  String           @map("principal_id")  @db.Uuid
+  principalId  String           @map("principal_id") @db.Uuid
   indicateurId String           @map("indicateur_id") @db.Uuid
   action       PermissionAction
   createdAt    DateTime         @default(now()) @map("created_at")
 
-  principal  Principal  @relation(fields: [principalId],  references: [id], onDelete: Cascade)
+  principal  Principal  @relation(fields: [principalId], references: [id], onDelete: Cascade)
   indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
 
   @@id([principalId, indicateurId, action])
@@ -183,7 +186,7 @@ model Referentiel {
   nom         String
   description String?
   createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt      @map("updated_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
   individus   Individu[]
   indicateurs IndicateurReferentiel[]
@@ -199,26 +202,28 @@ model Individu {
   referentielId String   @map("referentiel_id") @db.Uuid
   metadata      Json?
   createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt      @map("updated_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
 
-  referentiel       Referentiel          @relation(fields: [referentielId], references: [id], onDelete: Restrict)
-  relationsAsParent Relation[]           @relation("relationParent")
-  relationsAsChild  Relation[]           @relation("relationChild")
-  valeurs           ValeurAvancement[]
-  objectifs         ObjectifIndicateurIndividu[]
+  referentiel            Referentiel                     @relation(fields: [referentielId], references: [id], onDelete: Restrict)
+  relationsAsParent      Relation[]                      @relation("relationParent")
+  relationsAsChild       Relation[]                      @relation("relationChild")
+  valeurs                ValeurAvancement[]
+  objectifs              ObjectifIndicateurIndividu[]
+  indicateurCommentaires IndicateurIndividuCommentaire[]
+  panierCommentaires     PanierIndividuCommentaire[]
 
   @@index([referentielId])
   @@map("individu")
 }
 
 model Widget {
-  id            String   @id @db.Uuid
-  publicId      String   @unique @map("public_id")
-  type          String
-  nom           String
-  joinKey       String   @map("join_key")
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt      @map("updated_at")
+  id        String   @id @db.Uuid
+  publicId  String   @unique @map("public_id")
+  type      String
+  nom       String
+  joinKey   String   @map("join_key")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   referentiels ReferentielWidget[]
 
@@ -227,11 +232,11 @@ model Widget {
 
 model ReferentielWidget {
   referentielId String   @map("referentiel_id") @db.Uuid
-  widgetId      String   @map("widget_id")      @db.Uuid
+  widgetId      String   @map("widget_id") @db.Uuid
   createdAt     DateTime @default(now()) @map("created_at")
 
   referentiel Referentiel @relation(fields: [referentielId], references: [id], onDelete: Cascade)
-  widget      Widget      @relation(fields: [widgetId],      references: [id], onDelete: Cascade)
+  widget      Widget      @relation(fields: [widgetId], references: [id], onDelete: Cascade)
 
   @@id([referentielId, widgetId])
   @@index([widgetId])
@@ -241,11 +246,11 @@ model ReferentielWidget {
 model Relation {
   id        String   @id @db.Uuid
   parentId  String   @map("parent_id") @db.Uuid
-  childId   String   @map("child_id")  @db.Uuid
+  childId   String   @map("child_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
   parent Individu @relation("relationParent", fields: [parentId], references: [id], onDelete: Cascade)
-  child  Individu @relation("relationChild",  fields: [childId],  references: [id], onDelete: Cascade)
+  child  Individu @relation("relationChild", fields: [childId], references: [id], onDelete: Cascade)
 
   @@unique([parentId, childId])
   @@index([childId])
@@ -255,14 +260,14 @@ model Relation {
 model ValeurAvancement {
   id           String   @id @db.Uuid
   indicateurId String   @map("indicateur_id") @db.Uuid
-  individuId   String   @map("individu_id")   @db.Uuid
+  individuId   String   @map("individu_id") @db.Uuid
   date         String
   valeur       Decimal  @db.Decimal(20, 2)
   createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt      @map("updated_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
   indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
-  individu   Individu   @relation(fields: [individuId],   references: [id], onDelete: Restrict)
+  individu   Individu   @relation(fields: [individuId], references: [id], onDelete: Restrict)
 
   @@unique([indicateurId, individuId, date], name: "valeur_avancement_unique")
   @@index([indicateurId, date])
@@ -273,14 +278,14 @@ model ValeurAvancement {
 model ObjectifIndicateurIndividu {
   id           String   @id @db.Uuid
   indicateurId String   @map("indicateur_id") @db.Uuid
-  individuId   String   @map("individu_id")   @db.Uuid
+  individuId   String   @map("individu_id") @db.Uuid
   dateCible    String   @map("date_cible")
   valeurCible  Decimal  @map("valeur_cible") @db.Decimal(20, 2)
   createdAt    DateTime @default(now()) @map("created_at")
-  updatedAt    DateTime @updatedAt      @map("updated_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
 
   indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
-  individu   Individu   @relation(fields: [individuId],   references: [id], onDelete: Restrict)
+  individu   Individu   @relation(fields: [individuId], references: [id], onDelete: Restrict)
 
   @@unique([indicateurId, individuId, dateCible], name: "objectif_indicateur_individu_unique")
   @@index([indicateurId, individuId])
@@ -295,23 +300,25 @@ model Panier {
   description String?
   visibilite  Visibilite
   createdAt   DateTime   @default(now()) @map("created_at")
-  updatedAt   DateTime   @updatedAt      @map("updated_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
 
-  indicateurs  PanierIndicateur[]
-  permissions  PanierPermission[]
-  responsables PanierResponsable[]
+  indicateurs          PanierIndicateur[]
+  permissions          PanierPermission[]
+  responsables         PanierResponsable[]
+  individuCommentaires PanierIndividuCommentaire[]
+  panierCommentaires   PanierCommentaire[]
 
   @@map("panier")
 }
 
 model PanierPermission {
   principalId String           @map("principal_id") @db.Uuid
-  panierId    String           @map("panier_id")    @db.Uuid
+  panierId    String           @map("panier_id") @db.Uuid
   action      PermissionAction
   createdAt   DateTime         @default(now()) @map("created_at")
 
   principal Principal @relation(fields: [principalId], references: [id], onDelete: Cascade)
-  panier    Panier    @relation(fields: [panierId],    references: [id], onDelete: Cascade)
+  panier    Panier    @relation(fields: [panierId], references: [id], onDelete: Cascade)
 
   @@id([principalId, panierId, action])
   @@index([panierId])
@@ -319,12 +326,12 @@ model PanierPermission {
 }
 
 model PanierIndicateur {
-  panierId     String   @map("panier_id")     @db.Uuid
+  panierId     String   @map("panier_id") @db.Uuid
   indicateurId String   @map("indicateur_id") @db.Uuid
-  ponderation  Decimal  @default(1)           @db.Decimal(20, 2)
-  createdAt    DateTime @default(now())       @map("created_at")
+  ponderation  Decimal  @default(1) @db.Decimal(20, 2)
+  createdAt    DateTime @default(now()) @map("created_at")
 
-  panier     Panier     @relation(fields: [panierId],     references: [id], onDelete: Cascade)
+  panier     Panier     @relation(fields: [panierId], references: [id], onDelete: Cascade)
   indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
 
   @@id([panierId, indicateurId])
@@ -369,4 +376,118 @@ model ApplicationLog {
   @@index([level, date])
   @@index([requestId])
   @@map("application_log")
+}
+
+enum CommentaireStatut {
+  BROUILLON
+  PUBLIE
+
+  @@map("commentaire_statut_enum")
+}
+
+enum IndiceConfiance {
+  OBJECTIF_COMPROMIS
+  APPUIS_NECESSAIRE
+  OBJECTIF_ATTEIGNABLE
+  OBJECTIF_SECURISE
+
+  @@map("indice_confiance_enum")
+}
+
+enum IndicateurIndividuCommentaireType {
+  DEFAUT
+  CONFIANCE
+
+  @@map("indicateur_individu_commentaire_type_enum")
+}
+
+enum PanierIndividuCommentaireType {
+  DEFAUT
+  CONFIANCE
+
+  @@map("panier_individu_commentaire_type_enum")
+}
+
+enum PanierCommentaireType {
+  DEFAUT
+  CONFIANCE
+  OBJECTIF
+
+  @@map("panier_commentaire_type_enum")
+}
+
+model Commentaire {
+  id           String            @id @db.Uuid
+  contenu      String
+  contenuTexte String            @map("contenu_texte")
+  statut       CommentaireStatut
+  createdBy    String            @map("created_by") @db.Uuid
+  updatedBy    String            @map("updated_by") @db.Uuid
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+
+  auteurCreation     Principal @relation("commentaireCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  auteurModification Principal @relation("commentaireUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+
+  indicateurIndividu IndicateurIndividuCommentaire?
+  panierIndividu     PanierIndividuCommentaire?
+  panier             PanierCommentaire?
+  niveauxConfiance   NiveauConfiance[]
+
+  @@index([createdBy])
+  @@index([updatedBy])
+  @@map("commentaire")
+}
+
+model IndicateurIndividuCommentaire {
+  commentaireId String                            @id @map("commentaire_id") @db.Uuid
+  indicateurId  String                            @map("indicateur_id") @db.Uuid
+  individuId    String                            @map("individu_id") @db.Uuid
+  type          IndicateurIndividuCommentaireType
+
+  commentaire Commentaire @relation(fields: [commentaireId], references: [id], onDelete: Cascade)
+  indicateur  Indicateur  @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
+  individu    Individu    @relation(fields: [individuId], references: [id], onDelete: Restrict)
+
+  @@index([indicateurId, individuId])
+  @@map("indicateur_individu_commentaire")
+}
+
+model PanierIndividuCommentaire {
+  commentaireId String                        @id @map("commentaire_id") @db.Uuid
+  panierId      String                        @map("panier_id") @db.Uuid
+  individuId    String                        @map("individu_id") @db.Uuid
+  type          PanierIndividuCommentaireType
+
+  commentaire Commentaire @relation(fields: [commentaireId], references: [id], onDelete: Cascade)
+  panier      Panier      @relation(fields: [panierId], references: [id], onDelete: Cascade)
+  individu    Individu    @relation(fields: [individuId], references: [id], onDelete: Restrict)
+
+  @@index([panierId, individuId])
+  @@map("panier_individu_commentaire")
+}
+
+model PanierCommentaire {
+  commentaireId String                @id @map("commentaire_id") @db.Uuid
+  panierId      String                @map("panier_id") @db.Uuid
+  type          PanierCommentaireType
+
+  commentaire Commentaire @relation(fields: [commentaireId], references: [id], onDelete: Cascade)
+  panier      Panier      @relation(fields: [panierId], references: [id], onDelete: Cascade)
+
+  @@index([panierId])
+  @@map("panier_commentaire")
+}
+
+model NiveauConfiance {
+  id            String          @id @db.Uuid
+  commentaireId String          @map("commentaire_id") @db.Uuid
+  indice        IndiceConfiance
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+
+  commentaire Commentaire @relation(fields: [commentaireId], references: [id], onDelete: Cascade)
+
+  @@index([commentaireId])
+  @@map("niveau_confiance")
 }

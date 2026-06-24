@@ -12,6 +12,10 @@
       "types": "./src/dates.ts",
       "default": "./src/dates.ts"
     },
+    "./commentaire": {
+      "types": "./src/commentaire.ts",
+      "default": "./src/commentaire.ts"
+    },
     "./error": {
       "types": "./src/error.ts",
       "default": "./src/error.ts"

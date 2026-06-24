@@ -15,6 +15,7 @@
     "paths": {
       "@/framework/*": ["./src/framework/*"],
       "@/authentication/*": ["./src/authentication/*"],
+      "@/commentaire/*": ["./src/commentaire/*"],
       "@/healthcheck/*": ["./src/healthcheck/*"],
       "@/indicateur/*": ["./src/indicateur/*"],
       "@/individu/*": ["./src/individu/*"],

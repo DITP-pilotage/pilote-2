@@ -44,10 +44,11 @@ qodana.yaml
 # uploads
 /uploads
 
-docs/superpowers/
-
-# superpowers specs/plans
-docs/superpowers/
+# superpowers ignoré, sauf le spec commentaires (tracké)
+docs/superpowers/*
+!docs/superpowers/specs/
+docs/superpowers/specs/*
+!docs/superpowers/specs/2026-06-23-commentaires-niveau-confiance-design.md
 
 # superpowers visual companion (mockups)
 .superpowers/

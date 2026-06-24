@@ -794,8 +794,50 @@ async function panierResponsable(
   return results
 }
 
+// --- Commentaire (indicateur + individu) -------------------------------------
+
+type CommentaireOverrides = {
+  indicateur: IndicateurOverrides
+  individu: IndividuOverrides
+  createdBy: string
+} & Partial<{
+  id: string
+  contenu: string
+  contenuTexte: string
+  statut: 'BROUILLON' | 'PUBLIE'
+  type: 'DEFAUT' | 'CONFIANCE'
+}>
+
+const upsertCommentaire = async (o: CommentaireOverrides) => {
+  const indicateurRow = await upsertIndicateur(o.indicateur)
+  const individuRow = await upsertIndividu(o.individu)
+  return db().commentaire.create({
+    data: {
+      id: o.id ?? uuidv7(),
+      contenu: o.contenu ?? '<p>Commentaire de test</p>',
+      contenuTexte: o.contenuTexte ?? 'Commentaire de test',
+      statut: o.statut ?? 'PUBLIE',
+      createdBy: o.createdBy,
+      updatedBy: o.createdBy,
+      indicateurIndividu: {
+        create: {
+          indicateurId: indicateurRow.id,
+          individuId: individuRow.id,
+          type: o.type ?? 'DEFAUT',
+        },
+      },
+    },
+    include: { indicateurIndividu: true },
+  })
+}
+
+async function commentaire(override: CommentaireOverrides) {
+  return upsertCommentaire(override)
+}
+
 export const fixtures = {
   indicateur,
+  commentaire,
   referentiel,
   individu,
   widget,
