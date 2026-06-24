@@ -142,3 +142,37 @@ export const commentaireListApiModelSchema = createPaginatedApiListSchema(
 export type CommentaireListApiModel = z.infer<
   typeof commentaireListApiModelSchema
 >;
+
+// --- Niveau de confiance -----------------------------------------------------
+
+export const indiceConfianceSchema = z
+  .enum(["OBJECTIF_COMPROMIS", "APPUIS_NECESSAIRE", "OBJECTIF_ATTEIGNABLE", "OBJECTIF_SECURISE"])
+  .describe("Indice de confiance (état d’avancement vis-à-vis des objectifs).");
+export type IndiceConfiance = z.infer<typeof indiceConfianceSchema>;
+
+// Un niveau de confiance = un commentaire de type CONFIANCE + son indice courant.
+export const niveauConfianceApiModelSchema = commentaireApiModelSchema
+  .extend({ indice: indiceConfianceSchema })
+  .describe("Niveau de confiance (commentaire CONFIANCE + indice courant).");
+export type NiveauConfianceApiModel = z.infer<typeof niveauConfianceApiModelSchema>;
+
+export const creerNiveauConfianceBodySchema = z.object({
+  indice: indiceConfianceSchema,
+  contenu: z.string().describe("Justification HTML riche (la chaîne vide est autorisée)."),
+  statut: commentaireStatutSchema,
+});
+export type CreerNiveauConfianceBody = z.infer<typeof creerNiveauConfianceBodySchema>;
+
+export const modifierNiveauConfianceBodySchema = z
+  .object({
+    indice: indiceConfianceSchema.optional().describe("Nouvel indice (append un NiveauConfiance)."),
+    contenu: z.string().optional(),
+    statut: commentaireStatutSchema.optional(),
+  })
+  .describe("Modification d’un niveau de confiance (indice / contenu / statut).");
+export type ModifierNiveauConfianceBody = z.infer<typeof modifierNiveauConfianceBodySchema>;
+
+export const niveauConfianceListApiModelSchema = createPaginatedApiListSchema(
+  niveauConfianceApiModelSchema,
+);
+export type NiveauConfianceListApiModel = z.infer<typeof niveauConfianceListApiModelSchema>;
