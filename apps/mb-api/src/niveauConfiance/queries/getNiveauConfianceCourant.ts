@@ -6,8 +6,6 @@ import { type SujetCommentaireConfig } from '@/commentaire/sujets'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 
-// Courant = dernier NiveauConfiance dont le commentaire est PUBLIE sur le scope.
-// Renvoie 404 (P2025) si aucun.
 export const getNiveauConfianceCourant = <P extends Record<string, string>>(
   config: SujetCommentaireConfig<P>,
   { params }: { params: P },

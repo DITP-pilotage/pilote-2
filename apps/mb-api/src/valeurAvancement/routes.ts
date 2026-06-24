@@ -28,6 +28,7 @@ import {
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { ErrorApiModelSchema, errorResponse } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { deleteValeurAvancement } from '@/valeurAvancement/commands/deleteValeurAvancement'
 import { upsertValeurAvancement } from '@/valeurAvancement/commands/upsertValeurAvancement'
@@ -76,7 +77,6 @@ const DernieresValeursIndividuListApiModelSchema =
 const TauxProgressionListApiModelSchema = tauxProgressionListApiModelSchema.openapi(
   'TauxProgressionListApiModel',
 )
-const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 const indicateurParamsSchema = z.object({
   id: indicateurPublicIdSchema,
@@ -112,11 +112,9 @@ const getValeursForIndicateurRoute = createRoute({
       content: { 'application/json': { schema: ValeurAvancementListApiModelSchema } },
       description: 'Points (saisies et dérivés) pour les individus demandés',
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description:
-        'Paramètres de requête invalides (ex. `individus` absent ou date/dateTrunc invalide)',
-    },
+    400: errorResponse(
+      'Paramètres de requête invalides (ex. `individus` absent ou date/dateTrunc invalide)',
+    ),
   },
 })
 
@@ -143,14 +141,8 @@ const upsertValeurAvancementRoute = createRoute({
       content: { 'application/json': { schema: ValeurSaisieApiModelSchema } },
       description: 'Valeur saisie créée ou mise à jour',
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Requête invalide (body invalide ou individu inconnu/non autorisé)',
-    },
-    403: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Pas de permission WRITE sur cet indicateur',
-    },
+    400: errorResponse('Requête invalide (body invalide ou individu inconnu/non autorisé)'),
+    403: errorResponse('Pas de permission WRITE sur cet indicateur'),
   },
 })
 
@@ -176,14 +168,8 @@ const deleteValeurAvancementRoute = createRoute({
     204: {
       description: 'Valeur supprimée (ou inexistante — idempotent)',
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Requête invalide (body invalide ou individu inconnu/non autorisé)',
-    },
-    403: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Pas de permission WRITE sur cet indicateur',
-    },
+    400: errorResponse('Requête invalide (body invalide ou individu inconnu/non autorisé)'),
+    403: errorResponse('Pas de permission WRITE sur cet indicateur'),
   },
 })
 
@@ -226,10 +212,7 @@ const upsertValeursAvancementBatchRoute = createRoute({
         '(`INVALID_ITEM`, `INDIVIDU_INCONNU`, `DUPLICATE_KEY`) avec leurs `indices` dans `items`. ' +
         '`VALIDATION_ERROR` (payload JSON/schema invalide en amont du handler).',
     },
-    403: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Pas de permission WRITE sur cet indicateur',
-    },
+    403: errorResponse('Pas de permission WRITE sur cet indicateur'),
   },
 })
 
@@ -252,10 +235,7 @@ const getIndividusWithValeursRoute = createRoute({
       content: { 'application/json': { schema: IndividusWithValeursListApiModelSchema } },
       description: "Individus avec valeurs pour l'indicateur",
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Paramètres de requête invalides',
-    },
+    400: errorResponse('Paramètres de requête invalides'),
   },
 })
 
@@ -281,10 +261,7 @@ const getValeursRemarquablesForIndicateurRoute = createRoute({
       content: { 'application/json': { schema: ValeursRemarquablesListApiModelSchema } },
       description: 'Valeurs remarquables agrégées pour les référentiels demandés',
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Paramètres de requête invalides (ex. `referentiels` absent)',
-    },
+    400: errorResponse('Paramètres de requête invalides (ex. `referentiels` absent)'),
   },
 })
 
@@ -313,10 +290,7 @@ const getSyntheseIndividusRoute = createRoute({
       content: { 'application/json': { schema: SyntheseIndividusListApiModelSchema } },
       description: 'Synthèse pour les individus demandés',
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Paramètres de requête invalides (ex. `individus` absent)',
-    },
+    400: errorResponse('Paramètres de requête invalides (ex. `individus` absent)'),
   },
 })
 
@@ -348,10 +322,9 @@ const getDernieresValeursForIndividuRoute = createRoute({
       content: { 'application/json': { schema: DernieresValeursIndividuListApiModelSchema } },
       description: 'Dernières valeurs pour les indicateurs demandés',
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Paramètres de requête invalides (ex. `indicateurs` absent ou trop nombreux)',
-    },
+    400: errorResponse(
+      'Paramètres de requête invalides (ex. `indicateurs` absent ou trop nombreux)',
+    ),
   },
 })
 
@@ -384,10 +357,7 @@ const getTauxProgressionRoute = createRoute({
       content: { 'application/json': { schema: TauxProgressionListApiModelSchema } },
       description: 'Taux de progression pour les individus demandés',
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Paramètres de requête invalides',
-    },
+    400: errorResponse('Paramètres de requête invalides'),
   },
 })
 

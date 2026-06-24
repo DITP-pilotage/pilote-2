@@ -5,7 +5,6 @@ import {
   listerPanierCommentairesQuerySchema,
   listerPanierIndividuCommentairesQuerySchema,
 } from '@pilote/mb-shared/commentaire'
-import { errorApiModelSchema } from '@pilote/mb-shared/error'
 import { historiqueNiveauConfianceQuerySchema } from '@pilote/mb-shared/niveauConfiance'
 import {
   listPaniersQuerySchema,
@@ -36,6 +35,7 @@ import {
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { errorResponse } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { creerPanierCommentaire, panierConfig } from '@/panier/commands/creerPanierCommentaire'
 import {
@@ -57,7 +57,6 @@ const PanierTauxProgressionApiModelSchema = panierTauxProgressionApiModelSchema.
 const PanierResponsablesApiModelSchema = panierResponsablesApiModelSchema.openapi(
   'PanierResponsablesApiModel',
 )
-const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 // --- GET /paniers ------------------------------------------------------------
 
@@ -129,14 +128,8 @@ const getPanierTauxProgressionRoute = createRoute({
       content: { 'application/json': { schema: PanierTauxProgressionApiModelSchema } },
       description: "Taux de progression du panier pour l'individu demandé",
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Paramètres de requête invalides',
-    },
-    404: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Panier ou individu introuvable',
-    },
+    400: errorResponse('Paramètres de requête invalides'),
+    404: errorResponse('Panier ou individu introuvable'),
   },
 })
 

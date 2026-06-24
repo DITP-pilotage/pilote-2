@@ -1,6 +1,5 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import { modifierCommentaireBodySchema } from '@pilote/mb-shared/commentaire'
-import { errorApiModelSchema } from '@pilote/mb-shared/error'
 
 import { modifierCommentaire } from '@/commentaire/commands/modifierCommentaire'
 import { supprimerCommentaire } from '@/commentaire/commands/supprimerCommentaire'
@@ -8,9 +7,8 @@ import { CommentaireApiModelSchema, reponseCommentaire } from '@/commentaire/ope
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { erreur403, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
-
-const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 export const commentaireRoutes = new OpenAPIHono()
 
@@ -53,14 +51,8 @@ const supprimerRoute = createRoute({
   request: { params: z.object({ commentaireId: z.string().uuid() }) },
   responses: {
     204: { description: 'Commentaire supprimé' },
-    403: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Permission insuffisante',
-    },
-    404: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Commentaire introuvable',
-    },
+    403: erreur403,
+    404: erreur404,
   },
 })
 

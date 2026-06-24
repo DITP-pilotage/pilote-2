@@ -2,7 +2,7 @@ import { type CommentaireApiModel, type CreerCommentaireBody } from '@pilote/mb-
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { ensureUnSeulBrouillon } from '@/commentaire/ensureUnSeulBrouillon'
+import { ensureBrouillonUnique } from '@/commentaire/ensureBrouillonUnique'
 import { type SujetCommentaireConfig } from '@/commentaire/sujets'
 import { commentaireInclude, htmlToPlainText, toCommentaireApiModel } from '@/commentaire/utils'
 import { db } from '@/framework/persistence/dbStore'
@@ -17,7 +17,7 @@ export const creerCommentaire = <P extends Record<string, string>>(
   { params, body }: CreerCommentaireParams<P>,
 ): ResultAsync<CommentaireApiModel, never> =>
   config.resoudreCibleEcriture(params).andThen((cible) =>
-    ensureUnSeulBrouillon(config, params, body.statut, cible.principalId, 'LIBRE').andThen(() =>
+    ensureBrouillonUnique(config, params, body.statut, cible.principalId, body.type).andThen(() =>
       ResultAsync.fromSafePromise(
         db().commentaire.create({
           data: {

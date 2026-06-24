@@ -1,5 +1,4 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
-import { errorApiModelSchema } from '@pilote/mb-shared/error'
 import {
   individuApiModelSchema,
   listIndividusForReferentielQuerySchema,
@@ -15,6 +14,7 @@ import {
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { ErrorApiModelSchema, errorResponse } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { upsertReferentiel } from '@/referentiel/commands/upsertReferentiel'
 import { getReferentielByPublicId } from '@/referentiel/queries/getReferentielByPublicId'
@@ -27,7 +27,6 @@ const ReferentielListApiModelSchema =
 const IndividuListApiModelSchema =
   createPaginatedApiListSchema(individuApiModelSchema).openapi('IndividuListApiModel')
 const UpsertReferentielBodySchema = upsertReferentielBodySchema.openapi('UpsertReferentielBody')
-const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 // --- GET /referentiels -------------------------------------------------------
 
@@ -45,10 +44,7 @@ const getReferentielsRoute = createRoute({
       content: { 'application/json': { schema: ReferentielListApiModelSchema } },
       description: 'Liste paginée des référentiels',
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Paramètres de requête invalides',
-    },
+    400: errorResponse('Paramètres de requête invalides'),
   },
 })
 
@@ -97,18 +93,9 @@ const upsertReferentielRoute = createRoute({
       content: { 'application/json': { schema: ReferentielApiModelSchema } },
       description: 'Référentiel créé ou mis à jour',
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Corps de requête ou paramètres invalides',
-    },
-    403: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Clé API sans le rôle ADMIN requis',
-    },
-    409: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Un individu listé est déjà rattaché à un autre référentiel',
-    },
+    400: errorResponse('Corps de requête ou paramètres invalides'),
+    403: errorResponse('Clé API sans le rôle ADMIN requis'),
+    409: errorResponse('Un individu listé est déjà rattaché à un autre référentiel'),
   },
 })
 
