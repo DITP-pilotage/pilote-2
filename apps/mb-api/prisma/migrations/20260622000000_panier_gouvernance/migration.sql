@@ -1,9 +1,21 @@
--- AlterTable
+-- AlterTable : ajout nullable pour compatibilité avec les lignes existantes
 ALTER TABLE "utilisateur"
-  ADD COLUMN "nom"      TEXT NOT NULL,
-  ADD COLUMN "prenom"   TEXT NOT NULL,
-  ADD COLUMN "service"  TEXT NOT NULL,
-  ADD COLUMN "fonction" TEXT NOT NULL;
+  ADD COLUMN "nom"      TEXT,
+  ADD COLUMN "prenom"   TEXT,
+  ADD COLUMN "service"  TEXT,
+  ADD COLUMN "fonction" TEXT;
+
+-- Backfill des lignes existantes
+UPDATE "utilisateur"
+  SET nom = '', prenom = '', service = '', fonction = ''
+  WHERE nom IS NULL;
+
+-- Passage en NOT NULL après backfill
+ALTER TABLE "utilisateur"
+  ALTER COLUMN "nom"      SET NOT NULL,
+  ALTER COLUMN "prenom"   SET NOT NULL,
+  ALTER COLUMN "service"  SET NOT NULL,
+  ALTER COLUMN "fonction" SET NOT NULL;
 
 -- CreateTable
 CREATE TABLE "panier_responsable" (
