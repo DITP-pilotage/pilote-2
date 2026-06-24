@@ -3,7 +3,7 @@ import {
   commentaireListApiModelSchema,
 } from '@pilote/mb-shared/commentaire'
 
-import { erreursEntite } from '@/framework/openapi/responses'
+import { erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
 
 export const CommentaireApiModelSchema = commentaireApiModelSchema.openapi('CommentaireApiModel')
 export const CommentaireListApiModelSchema =
@@ -14,7 +14,9 @@ export const reponseCommentaire = {
     content: { 'application/json': { schema: CommentaireApiModelSchema } },
     description: 'Commentaire',
   },
-  ...erreursEntite,
+  400: erreur400,
+  403: erreur403,
+  404: erreur404,
 }
 
 export const reponseListe = {

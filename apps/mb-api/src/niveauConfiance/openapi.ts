@@ -3,7 +3,7 @@ import {
   niveauConfianceListApiModelSchema,
 } from '@pilote/mb-shared/niveauConfiance'
 
-import { erreursEntite } from '@/framework/openapi/responses'
+import { erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
 
 export const NiveauConfianceApiModelSchema =
   niveauConfianceApiModelSchema.openapi('NiveauConfianceApiModel')
@@ -16,7 +16,9 @@ export const reponseNiveauConfiance = {
     content: { 'application/json': { schema: NiveauConfianceApiModelSchema } },
     description: 'Niveau de confiance',
   },
-  ...erreursEntite,
+  400: erreur400,
+  403: erreur403,
+  404: erreur404,
 }
 
 export const reponseHistoriqueNiveauConfiance = {

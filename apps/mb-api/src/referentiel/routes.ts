@@ -14,7 +14,7 @@ import {
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { ErrorApiModelSchema, errorResponse } from '@/framework/openapi/responses'
+import { ErrorApiModelSchema, erreur400, erreur403, erreur409 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { upsertReferentiel } from '@/referentiel/commands/upsertReferentiel'
 import { getReferentielByPublicId } from '@/referentiel/queries/getReferentielByPublicId'
@@ -44,7 +44,7 @@ const getReferentielsRoute = createRoute({
       content: { 'application/json': { schema: ReferentielListApiModelSchema } },
       description: 'Liste paginée des référentiels',
     },
-    400: errorResponse('Paramètres de requête invalides'),
+    400: erreur400,
   },
 })
 
@@ -93,9 +93,9 @@ const upsertReferentielRoute = createRoute({
       content: { 'application/json': { schema: ReferentielApiModelSchema } },
       description: 'Référentiel créé ou mis à jour',
     },
-    400: errorResponse('Corps de requête ou paramètres invalides'),
-    403: errorResponse('Clé API sans le rôle ADMIN requis'),
-    409: errorResponse('Un individu listé est déjà rattaché à un autre référentiel'),
+    400: erreur400,
+    403: erreur403,
+    409: erreur409,
   },
 })
 

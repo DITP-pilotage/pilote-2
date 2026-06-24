@@ -21,7 +21,7 @@ import {
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { errorResponse } from '@/framework/openapi/responses'
+import { erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { upsertIndicateur } from '@/indicateur/commands/upsertIndicateur'
 import {
@@ -61,7 +61,7 @@ const getIndicateursRoute = createRoute({
       content: { 'application/json': { schema: IndicateurListApiModelSchema } },
       description: 'Liste paginée des indicateurs',
     },
-    400: errorResponse('Paramètres de requête invalides'),
+    400: erreur400,
   },
 })
 
@@ -85,7 +85,7 @@ const getIndicateurByIdRoute = createRoute({
       content: { 'application/json': { schema: IndicateurApiModelSchema } },
       description: 'Indicateur trouvé',
     },
-    404: errorResponse('Indicateur introuvable'),
+    404: erreur404,
   },
 })
 
@@ -111,8 +111,8 @@ const upsertIndicateurRoute = createRoute({
       content: { 'application/json': { schema: IndicateurApiModelSchema } },
       description: 'Indicateur créé ou mis à jour',
     },
-    400: errorResponse('Requête invalide (body ou référentiels inconnus)'),
-    403: errorResponse('Clé API sans le rôle ADMIN requis'),
+    400: erreur400,
+    403: erreur403,
   },
 })
 

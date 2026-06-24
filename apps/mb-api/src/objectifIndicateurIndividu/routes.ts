@@ -11,7 +11,7 @@ import {
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { ErrorApiModelSchema, errorResponse } from '@/framework/openapi/responses'
+import { ErrorApiModelSchema, erreur400, erreur403 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { deleteObjectifIndicateurIndividu } from '@/objectifIndicateurIndividu/commands/deleteObjectifIndicateurIndividu'
 import { upsertObjectifIndicateurIndividu } from '@/objectifIndicateurIndividu/commands/upsertObjectifIndicateurIndividu'
@@ -54,9 +54,7 @@ const getObjectifsForIndicateurRoute = createRoute({
       content: { 'application/json': { schema: ObjectifIndicateurIndividuListApiModelSchema } },
       description: 'Objectifs pour les individus demandés',
     },
-    400: errorResponse(
-      'Paramètres de requête invalides (ex. `individus` absent ou format incorrect)',
-    ),
+    400: erreur400,
   },
 })
 
@@ -83,8 +81,8 @@ const upsertObjectifIndicateurIndividuRoute = createRoute({
       content: { 'application/json': { schema: ObjectifIndicateurIndividuApiModelSchema } },
       description: 'Objectif créé ou mis à jour',
     },
-    400: errorResponse('Requête invalide (body invalide ou individu inconnu/non autorisé)'),
-    403: errorResponse('Pas de permission WRITE sur cet indicateur'),
+    400: erreur400,
+    403: erreur403,
   },
 })
 
@@ -110,8 +108,8 @@ const deleteObjectifIndicateurIndividuRoute = createRoute({
     204: {
       description: 'Objectif supprimé (ou inexistant — idempotent)',
     },
-    400: errorResponse('Requête invalide (body invalide ou individu inconnu/non autorisé)'),
-    403: errorResponse('Pas de permission WRITE sur cet indicateur'),
+    400: erreur400,
+    403: erreur403,
   },
 })
 

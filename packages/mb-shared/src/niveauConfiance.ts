@@ -1,30 +1,12 @@
 import { z } from "zod";
 
+import { auteurApiModelSchema } from "./auteur";
 import { commentaireApiModelSchema } from "./commentaire";
 import {
   createPaginatedApiListSchema,
   pageSizeSchema,
   paginationCursorSchema,
 } from "./pagination";
-
-const auteurUtilisateurApiModelSchema = z.object({
-  type: z.literal("utilisateur"),
-  id: z.string().uuid().describe("Identifiant du principal."),
-  email: z.string().email().describe("Email de l’utilisateur."),
-});
-
-const auteurApiKeyApiModelSchema = z.object({
-  type: z.literal("apiKey"),
-  id: z.string().uuid().describe("Identifiant du principal."),
-  label: z.string().describe("Libellé de la clé API."),
-});
-
-const auteurApiModelSchema = z
-  .discriminatedUnion("type", [
-    auteurUtilisateurApiModelSchema,
-    auteurApiKeyApiModelSchema,
-  ])
-  .describe("Auteur d’un niveau de confiance (utilisateur ou clé API).");
 
 export const indiceConfianceSchema = z
   .enum([

@@ -5,20 +5,29 @@ import {
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { resolveCommentairePourEcriture } from '@/commentaire/resolveCommentairePourEcriture'
-import { ValidationError } from '@/framework/errors/AppError'
+import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
+import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { niveauConfianceInclude, toNiveauConfianceApiModel } from '@/niveauConfiance/utils'
 
-const ensureCommentaireConfiance = async (commentaireId: string): Promise<void> => {
+// L'auteur du commentaire est implicitement habilité à y attacher son indice :
+// s'il a pu poster le commentaire CONFIANCE, il a déjà la permission.
+const ensureAuteurDuCommentaireConfiance = async (
+  commentaireId: string,
+  principalId: string,
+): Promise<void> => {
   const commentaire = await db().commentaire.findUniqueOrThrow({
     where: { id: commentaireId },
     select: {
+      createdBy: true,
       indicateurIndividu: { select: { type: true } },
       panierIndividu: { select: { type: true } },
       panier: { select: { type: true } },
     },
   })
+  if (commentaire.createdBy !== principalId) {
+    throw new ForbiddenError('Seul l’auteur du commentaire peut y attacher un niveau de confiance')
+  }
   const typeSatellite =
     commentaire.indicateurIndividu?.type ??
     commentaire.panierIndividu?.type ??
@@ -50,15 +59,15 @@ const insertNiveauConfiance = ({
 
 export const creerNiveauConfiance = (
   body: CreerNiveauConfianceBody,
-): ResultAsync<NiveauConfianceApiModel, never> =>
-  resolveCommentairePourEcriture(body.commentaireId).andThen(({ principalId }) =>
-    ResultAsync.fromSafePromise(
-      ensureCommentaireConfiance(body.commentaireId).then(() =>
-        insertNiveauConfiance({
-          commentaireId: body.commentaireId,
-          indice: body.indice,
-          principalId,
-        }),
-      ),
-    ).map(toNiveauConfianceApiModel),
-  )
+): ResultAsync<NiveauConfianceApiModel, never> => {
+  const principalId = requireCurrentPrincipalId()
+  return ResultAsync.fromSafePromise(
+    ensureAuteurDuCommentaireConfiance(body.commentaireId, principalId).then(() =>
+      insertNiveauConfiance({
+        commentaireId: body.commentaireId,
+        indice: body.indice,
+        principalId,
+      }),
+    ),
+  ).map(toNiveauConfianceApiModel)
+}

@@ -35,7 +35,7 @@ import {
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { errorResponse } from '@/framework/openapi/responses'
+import { erreur400, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { creerPanierCommentaire, panierConfig } from '@/panier/commands/creerPanierCommentaire'
 import {
@@ -128,8 +128,8 @@ const getPanierTauxProgressionRoute = createRoute({
       content: { 'application/json': { schema: PanierTauxProgressionApiModelSchema } },
       description: "Taux de progression du panier pour l'individu demandé",
     },
-    400: errorResponse('Paramètres de requête invalides'),
-    404: errorResponse('Panier ou individu introuvable'),
+    400: erreur400,
+    404: erreur404,
   },
 })
 
