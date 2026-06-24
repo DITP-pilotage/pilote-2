@@ -20,7 +20,7 @@ export const statutArchive = {
   id: "ARCHIVE",
   nom: "Chantiers précédemment suivis",
   texteInfobulle:
-    "Ces chantiers ne sont désormais plus suivis via PILOTE. Leurs données restent consultables mais il n'est plus possible de les mettre à jour.",
+    "Ces chantiers ne sont désormais plus suivis via PILOTE. Toutefois, leurs données restent consultables et les indicateurs peuvent être mis à jour.",
 };
 
 export const listeStatuts = [
