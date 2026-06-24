@@ -3,7 +3,10 @@ import { ResultAsync } from 'neverthrow'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import { type Prisma } from '@/generated/prisma/client'
-import { ensureIndicateurWritePermission, withIndicateurReadPermission } from '@/indicateur/permissions'
+import {
+  ensureIndicateurWritePermission,
+  withIndicateurReadPermission,
+} from '@/indicateur/permissions'
 import { ensurePanierWritePermission, withPanierReadPermission } from '@/panier/permissions'
 
 // Fragment `data` du satellite à greffer sur la création d'un Commentaire.
@@ -86,7 +89,9 @@ export const panierIndividuConfig: SujetCommentaireConfig<{
         ensurePanierWritePermission({ panierId: panId, principalId }).map(() => ({
           principalId,
           satelliteCreate: (type: string) => ({
-            panierIndividu: { create: { panierId: panId, individuId: indivId, type: type as never } },
+            panierIndividu: {
+              create: { panierId: panId, individuId: indivId, type: type as never },
+            },
           }),
         })),
       )

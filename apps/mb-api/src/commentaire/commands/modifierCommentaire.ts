@@ -1,4 +1,7 @@
-import { type CommentaireApiModel, type ModifierCommentaireBody } from '@pilote/mb-shared/commentaire'
+import {
+  type CommentaireApiModel,
+  type ModifierCommentaireBody,
+} from '@pilote/mb-shared/commentaire'
 import { ResultAsync } from 'neverthrow'
 
 import { resolveCommentairePourEcriture } from '@/commentaire/resolveCommentairePourEcriture'
