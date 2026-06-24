@@ -1,0 +1,49 @@
+import { type CommentaireApiModel } from '@pilote/mb-shared/commentaire'
+
+import { type Prisma } from '@/generated/prisma/client'
+
+// Dérive un texte brut depuis un contenu HTML riche (recherche / LLM).
+// Implémentation minimale (strip de balises + normalisation des espaces) ;
+// à durcir si le richEditor introduit des structures complexes.
+export const htmlToPlainText = (html: string): string =>
+  html
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+
+// Include réutilisable pour toutes les queries renvoyant un CommentaireApiModel.
+export const commentaireInclude = {
+  auteurCreation: { select: { id: true, utilisateur: { select: { email: true } } } },
+  auteurModification: { select: { id: true, utilisateur: { select: { email: true } } } },
+  indicateurIndividu: { include: { individu: { select: { publicId: true } } } },
+  panierIndividu: { include: { individu: { select: { publicId: true } } } },
+  panier: true,
+} satisfies Prisma.CommentaireInclude
+
+export type CommentaireRow = Prisma.CommentaireGetPayload<{ include: typeof commentaireInclude }>
+
+const typeDuCommentaire = (row: CommentaireRow): string =>
+  row.indicateurIndividu?.type ?? row.panierIndividu?.type ?? row.panier?.type ?? 'DEFAUT'
+
+const individuPublicId = (row: CommentaireRow): string | null =>
+  row.indicateurIndividu?.individu.publicId ?? row.panierIndividu?.individu.publicId ?? null
+
+export const toCommentaireApiModel = (row: CommentaireRow): CommentaireApiModel => ({
+  id: row.id,
+  type: typeDuCommentaire(row),
+  individuId: individuPublicId(row),
+  contenu: row.contenu,
+  contenuTexte: row.contenuTexte,
+  statut: row.statut,
+  auteurCreation: {
+    id: row.auteurCreation.id,
+    email: row.auteurCreation.utilisateur?.email ?? null,
+  },
+  auteurModification: {
+    id: row.auteurModification.id,
+    email: row.auteurModification.utilisateur?.email ?? null,
+  },
+  createdAt: row.createdAt.toISOString(),
+  updatedAt: row.updatedAt.toISOString(),
+})
