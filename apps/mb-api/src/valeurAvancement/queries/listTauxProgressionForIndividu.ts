@@ -93,11 +93,11 @@ const build = async (
         indicateur: indicateur.publicId,
         tauxProgression: taux,
         valeurCible: objectifApplicable.valeurCible.toNumber(),
-      } satisfies TauxProgressionIndividuApiModel
+      }
     }),
   )
 
-  const items = resolus.filter((item): item is TauxProgressionIndividuApiModel => item !== null)
+  const items = resolus.filter((item) => item !== null) as TauxProgressionIndividuApiModel[]
 
   logger.info(
     {
