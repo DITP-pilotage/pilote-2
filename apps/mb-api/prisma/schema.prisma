@@ -306,7 +306,7 @@ model Panier {
   permissions          PanierPermission[]
   responsables         PanierResponsable[]
   individuCommentaires PanierIndividuCommentaire[]
-  commentaires         PanierCommentaire[]
+  panierCommentaires   PanierCommentaire[]
 
   @@map("panier")
 }
@@ -395,19 +395,23 @@ enum IndiceConfiance {
 }
 
 enum IndicateurIndividuCommentaireType {
-  TYPE_COMMENTAIRE_1
+  DEFAUT
+  CONFIANCE
 
   @@map("indicateur_individu_commentaire_type_enum")
 }
 
 enum PanierIndividuCommentaireType {
-  TYPE_COMMENTAIRE_1
+  DEFAUT
+  CONFIANCE
 
   @@map("panier_individu_commentaire_type_enum")
 }
 
 enum PanierCommentaireType {
-  TYPE_COMMENTAIRE_1
+  DEFAUT
+  CONFIANCE
+  OBJECTIF
 
   @@map("panier_commentaire_type_enum")
 }
@@ -428,7 +432,7 @@ model Commentaire {
   indicateurIndividu IndicateurIndividuCommentaire?
   panierIndividu     PanierIndividuCommentaire?
   panier             PanierCommentaire?
-  niveauConfiance    NiveauConfiance?
+  niveauxConfiance   NiveauConfiance[]
 
   @@index([createdBy])
   @@index([updatedBy])
@@ -476,10 +480,14 @@ model PanierCommentaire {
 }
 
 model NiveauConfiance {
-  commentaireId String          @id @map("commentaire_id") @db.Uuid
+  id            String          @id @db.Uuid
+  commentaireId String          @map("commentaire_id") @db.Uuid
   indice        IndiceConfiance
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
 
   commentaire Commentaire @relation(fields: [commentaireId], references: [id], onDelete: Cascade)
 
+  @@index([commentaireId])
   @@map("niveau_confiance")
 }

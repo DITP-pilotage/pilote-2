@@ -1,14 +1,12 @@
 -- Socle Commentaire + satellites par secteur (IndicateurIndividu, PanierIndividu, Panier)
--- + NiveauConfiance (météo) accroché 1:1 à un commentaire.
--- Les enums `type` sont seedés avec un placeholder (TYPE_COMMENTAIRE_1) ;
--- ils seront remplacés quand les vraies valeurs métier seront connues.
+-- + NiveauConfiance (météo) accroché 1:n à un commentaire (historique d'indices + autres usages).
 
 -- CreateEnum
 CREATE TYPE "commentaire_statut_enum" AS ENUM ('BROUILLON', 'PUBLIE');
 CREATE TYPE "indice_confiance_enum" AS ENUM ('OBJECTIF_COMPROMIS', 'APPUIS_NECESSAIRE', 'OBJECTIF_ATTEIGNABLE', 'OBJECTIF_SECURISE');
-CREATE TYPE "indicateur_individu_commentaire_type_enum" AS ENUM ('TYPE_COMMENTAIRE_1');
-CREATE TYPE "panier_individu_commentaire_type_enum" AS ENUM ('TYPE_COMMENTAIRE_1');
-CREATE TYPE "panier_commentaire_type_enum" AS ENUM ('TYPE_COMMENTAIRE_1');
+CREATE TYPE "indicateur_individu_commentaire_type_enum" AS ENUM ('DEFAUT', 'CONFIANCE');
+CREATE TYPE "panier_individu_commentaire_type_enum" AS ENUM ('DEFAUT', 'CONFIANCE');
+CREATE TYPE "panier_commentaire_type_enum" AS ENUM ('DEFAUT', 'CONFIANCE', 'OBJECTIF');
 
 -- CreateTable : socle
 CREATE TABLE "commentaire" (
@@ -68,10 +66,15 @@ CREATE TABLE "panier_commentaire" (
 
 CREATE INDEX "panier_commentaire_panier_id_idx" ON "panier_commentaire"("panier_id");
 
--- CreateTable : NiveauConfiance (météo), 1:1 sur le commentaire
+-- CreateTable : NiveauConfiance (météo), 1:n sur le commentaire (historique d'indices)
 CREATE TABLE "niveau_confiance" (
+    "id"             UUID                    NOT NULL,
     "commentaire_id" UUID                    NOT NULL,
     "indice"         "indice_confiance_enum" NOT NULL,
-    CONSTRAINT "niveau_confiance_pkey" PRIMARY KEY ("commentaire_id"),
+    "created_at"     TIMESTAMP(3)            NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at"     TIMESTAMP(3)            NOT NULL,
+    CONSTRAINT "niveau_confiance_pkey" PRIMARY KEY ("id"),
     CONSTRAINT "niveau_confiance_commentaire_id_fkey" FOREIGN KEY ("commentaire_id") REFERENCES "commentaire"("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+CREATE INDEX "niveau_confiance_commentaire_id_idx" ON "niveau_confiance"("commentaire_id");
