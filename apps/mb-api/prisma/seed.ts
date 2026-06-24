@@ -156,7 +156,28 @@ const indicateursSeed: ReadonlyArray<{
   },
 ]
 
-const utilisateursSeed: ReadonlyArray<{ email: string }> = [{ email: 'ditp.admin@example.com' }]
+const utilisateursSeed: ReadonlyArray<{
+  email: string
+  nom: string
+  prenom: string
+  service: string
+  fonction: string
+}> = [
+  {
+    email: 'ditp.admin@example.com',
+    nom: 'Admin',
+    prenom: 'DITP',
+    service: 'DITP',
+    fonction: 'Administrateur',
+  },
+  {
+    email: 'claire.dupont@example.com',
+    nom: 'Dupont',
+    prenom: 'Claire',
+    service: 'Bureau des indicateurs',
+    fonction: 'Chargée de mission',
+  },
+]
 
 // Clusters de mise à jour : plusieurs indicateurs peuvent partager la même
 // date de mise à jour (réaliste : on bouge plusieurs fiches le même jour).
@@ -259,11 +280,31 @@ const main = async () => {
   }
   for (const item of utilisateursSeed) {
     const existing = await prisma.utilisateur.findUnique({ where: { email: item.email } })
-    if (existing) continue
+    if (existing) {
+      await prisma.utilisateur.update({
+        where: { email: item.email },
+        data: {
+          nom: item.nom,
+          prenom: item.prenom,
+          service: item.service,
+          fonction: item.fonction,
+        },
+      })
+      continue
+    }
     const id = uuidv7()
     await prisma.$transaction([
       prisma.principal.create({ data: { id } }),
-      prisma.utilisateur.create({ data: { id, email: item.email } }),
+      prisma.utilisateur.create({
+        data: {
+          id,
+          email: item.email,
+          nom: item.nom,
+          prenom: item.prenom,
+          service: item.service,
+          fonction: item.fonction,
+        },
+      }),
     ])
   }
 
@@ -768,10 +809,27 @@ const main = async () => {
   }
   const panierPermissionsCount = 2
 
+  // Responsables panier : ditp.admin et claire.dupont sont responsables de PAN-005.
+  const pan005 = paniersByPublicId.get('PAN-005')
+  const claireDupont = await prisma.utilisateur.findUniqueOrThrow({
+    where: { email: 'claire.dupont@example.com' },
+    select: { id: true },
+  })
+  if (pan005) {
+    for (const utilisateurId of [ditpAdmin.id, claireDupont.id]) {
+      await prisma.panierResponsable.upsert({
+        where: { panierId_utilisateurId: { panierId: pan005.id, utilisateurId } },
+        update: {},
+        create: { panierId: pan005.id, utilisateurId },
+      })
+    }
+  }
+  const panierResponsablesCount = 2
+
   const permissionsCount = 8 * 2
   const widgetLiaisonsCount = widgetsSeed.reduce((acc, w) => acc + w.referentielPublicIds.length, 0)
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${paniersSeed.length} paniers (${panierLiaisonsCount} liaisons panier-indicateur, ${panierPermissionsCount} permissions panier).`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${paniersSeed.length} paniers (${panierLiaisonsCount} liaisons panier-indicateur, ${panierPermissionsCount} permissions panier, ${panierResponsablesCount} responsable panier).`,
   )
 }
 

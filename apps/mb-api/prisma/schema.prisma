@@ -32,11 +32,16 @@ enum ProviderType {
 model Utilisateur {
   id        String   @id @db.Uuid
   email     String   @unique
+  nom       String
+  prenom    String
+  service   String
+  fonction  String
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt      @map("updated_at")
 
-  principal  Principal         @relation(fields: [id], references: [id], onDelete: Cascade)
-  identites  IdentiteExterne[]
+  principal       Principal          @relation(fields: [id], references: [id], onDelete: Cascade)
+  identites       IdentiteExterne[]
+  responsabilites PanierResponsable[]
 
   @@map("utilisateur")
 }
@@ -292,8 +297,9 @@ model Panier {
   createdAt   DateTime   @default(now()) @map("created_at")
   updatedAt   DateTime   @updatedAt      @map("updated_at")
 
-  indicateurs PanierIndicateur[]
-  permissions PanierPermission[]
+  indicateurs  PanierIndicateur[]
+  permissions  PanierPermission[]
+  responsables PanierResponsable[]
 
   @@map("panier")
 }
@@ -324,6 +330,19 @@ model PanierIndicateur {
   @@id([panierId, indicateurId])
   @@index([panierId, createdAt])
   @@map("panier_indicateur")
+}
+
+model PanierResponsable {
+  panierId      String   @map("panier_id")      @db.Uuid
+  utilisateurId String   @map("utilisateur_id") @db.Uuid
+  createdAt     DateTime @default(now())         @map("created_at")
+
+  panier      Panier      @relation(fields: [panierId],      references: [id], onDelete: Cascade)
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@id([panierId, utilisateurId])
+  @@index([panierId, createdAt])
+  @@map("panier_responsable")
 }
 
 enum ApplicationLogLevel {

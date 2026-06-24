@@ -3,25 +3,28 @@ import { referentielPublicIdSchema } from '@pilote/mb-shared/referentiel'
 import { panierPublicIdSchema } from '@pilote/mb-shared/publicIds'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
-import { startTransition, useId } from 'react'
+import { startTransition, Suspense, useId } from 'react'
 import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
 import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
+import { PanierGouvernanceTab } from '@/components/paniers/PanierGouvernanceTab'
 import { PanierTauxProgression } from '@/components/paniers/PanierTauxProgression'
 import { BackLink } from '@/components/ui/BackLink'
 import { CardGrid } from '@/components/ui/CardGrid'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { FormField } from '@/components/ui/FormField'
 import { Page } from '@/components/ui/Page'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Text } from '@/components/ui/Typography'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
 import {
   loadPanier,
   panierQueryOptions,
+  panierResponsablesQueryOptions,
   panierTauxProgressionQueryOptions,
 } from '@/queries/paniers'
 import { allReferentielsQueryOptions, loadAllReferentielIds } from '@/queries/referentiels'
@@ -64,11 +67,14 @@ export const Route = createFileRoute('/_authenticated/paniers/$id')({
       },
     })
 
-    if (deps.individu) {
-      void queryClient.prefetchQuery(
-        panierTauxProgressionQueryOptions({ panierId: params.id, individu: deps.individu }),
-      )
-    }
+    await Promise.all([
+      deps.individu
+        ? queryClient.prefetchQuery(
+            panierTauxProgressionQueryOptions({ panierId: params.id, individu: deps.individu }),
+          )
+        : Promise.resolve(),
+      queryClient.prefetchQuery(panierResponsablesQueryOptions(params.id)),
+    ])
 
     return { panier }
   },
@@ -111,48 +117,63 @@ function PanierDetailComponent() {
 
   return (
     <Page title={panier.nom} description={panier.description ?? undefined} back={back}>
-      <div className="flex flex-col gap-6">
-        {search.individu ? (
-          <div className="flex flex-col gap-6">
-            <div className="max-w-md">
-              <FormField label="Individu observé" htmlFor={selectId}>
-                <IndividuSelect
-                  id={selectId}
-                  referentielIds={referentielIds}
-                  value={search.individu}
-                  onChange={({ individu, referentiel }) => {
-                    startTransition(() => {
-                      void navigate({
-                        search: (prev) => ({ ...prev, individu, referentiel }),
-                      })
-                    })
-                  }}
-                />
-              </FormField>
-            </div>
-            <div className="max-w-xs">
-              <PanierTauxProgression panierId={id} individu={search.individu} />
-            </div>
-          </div>
-        ) : null}
+      <Tabs defaultValue="resultats">
+        <TabsList>
+          <TabsTrigger value="resultats">Résultats</TabsTrigger>
+          <TabsTrigger value="gouvernance">Gouvernance</TabsTrigger>
+        </TabsList>
 
-        <Text as="span" variant="kicker" tone="muted">
-          {orderedIndicateurs.length} indicateur{orderedIndicateurs.length > 1 ? 's' : ''}
-        </Text>
-        {orderedIndicateurs.length === 0 ? (
-          <EmptyState title="Ce panier ne contient aucun indicateur." />
-        ) : (
-          <CardGrid>
-            {orderedIndicateurs.map((indicateur) => (
-              <IndicateurCard
-                key={indicateur.id}
-                indicateur={indicateur}
-                {...(cardContext ? { context: cardContext } : {})}
-              />
-            ))}
-          </CardGrid>
-        )}
-      </div>
+        <TabsContent value="resultats">
+          <div className="flex flex-col gap-6">
+            {search.individu ? (
+              <div className="flex flex-col gap-6">
+                <div className="max-w-md">
+                  <FormField label="Individu observé" htmlFor={selectId}>
+                    <IndividuSelect
+                      id={selectId}
+                      referentielIds={referentielIds}
+                      value={search.individu}
+                      onChange={({ individu, referentiel }) => {
+                        startTransition(() => {
+                          void navigate({
+                            search: (prev) => ({ ...prev, individu, referentiel }),
+                          })
+                        })
+                      }}
+                    />
+                  </FormField>
+                </div>
+                <div className="max-w-xs">
+                  <PanierTauxProgression panierId={id} individu={search.individu} />
+                </div>
+              </div>
+            ) : null}
+
+            <Text as="span" variant="kicker" tone="muted">
+              {orderedIndicateurs.length} indicateur{orderedIndicateurs.length > 1 ? 's' : ''}
+            </Text>
+            {orderedIndicateurs.length === 0 ? (
+              <EmptyState title="Ce panier ne contient aucun indicateur." />
+            ) : (
+              <CardGrid>
+                {orderedIndicateurs.map((indicateur) => (
+                  <IndicateurCard
+                    key={indicateur.id}
+                    indicateur={indicateur}
+                    {...(cardContext ? { context: cardContext } : {})}
+                  />
+                ))}
+              </CardGrid>
+            )}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="gouvernance">
+          <Suspense fallback={<RouteLoading message="Chargement des responsables…" />}>
+            <PanierGouvernanceTab panierId={id} />
+          </Suspense>
+        </TabsContent>
+      </Tabs>
     </Page>
   )
 }

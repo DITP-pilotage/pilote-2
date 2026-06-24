@@ -22,6 +22,7 @@ import {
   type ObjectifIndicateurIndividuModel,
   type PanierModel,
   type PanierPermissionModel,
+  type PanierResponsableModel,
   type ReferentielModel,
   type ReferentielWidgetModel,
   type RelationModel,
@@ -611,6 +612,10 @@ async function apiKey(...overrides: ApiKeyOverrides[]): Promise<ApiKeyModel | Ap
 type UtilisateurOverrides = Partial<{
   id: string
   email: string
+  nom: string
+  prenom: string
+  service: string
+  fonction: string
   identite: { provider: ProviderType; providerSub: string }
   permissions: PrincipalIndicateurPermissionOverrides[]
   panierPermissions: PrincipalPanierPermissionOverrides[]
@@ -626,7 +631,16 @@ const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
   }
   const id = o.id ?? uuidv7()
   await db().principal.create({ data: { id } })
-  const created = await db().utilisateur.create({ data: { id, email } })
+  const created = await db().utilisateur.create({
+    data: {
+      id,
+      email,
+      nom: o.nom ?? 'Doe',
+      prenom: o.prenom ?? 'John',
+      service: o.service ?? 'DITP',
+      fonction: o.fonction ?? 'Agent',
+    },
+  })
   if (o.identite) {
     await db().identiteExterne.create({
       data: {
@@ -743,6 +757,43 @@ async function panierPermission(
   return results
 }
 
+// --- PanierResponsable (deps requises) ----------------------------------------
+
+type PanierResponsableOverrides = {
+  panier: PanierOverrides
+  utilisateur: UtilisateurOverrides
+}
+
+const upsertPanierResponsable = async (o: PanierResponsableOverrides) => {
+  const panierRow = await upsertPanier(o.panier)
+  const utilisateurRow = await upsertUtilisateur(o.utilisateur)
+  return db().panierResponsable.upsert({
+    where: {
+      panierId_utilisateurId: {
+        panierId: panierRow.id,
+        utilisateurId: utilisateurRow.id,
+      },
+    },
+    update: {},
+    create: { panierId: panierRow.id, utilisateurId: utilisateurRow.id },
+  })
+}
+
+function panierResponsable(override: PanierResponsableOverrides): Promise<PanierResponsableModel>
+function panierResponsable(
+  o1: PanierResponsableOverrides,
+  o2: PanierResponsableOverrides,
+  ...rest: PanierResponsableOverrides[]
+): Promise<PanierResponsableModel[]>
+async function panierResponsable(
+  ...overrides: PanierResponsableOverrides[]
+): Promise<PanierResponsableModel | PanierResponsableModel[]> {
+  if (overrides.length === 1) return upsertPanierResponsable(overrides[0]!)
+  const results: PanierResponsableModel[] = []
+  for (const o of overrides) results.push(await upsertPanierResponsable(o))
+  return results
+}
+
 export const fixtures = {
   indicateur,
   referentiel,
@@ -758,4 +809,5 @@ export const fixtures = {
   utilisateur,
   indicateurPermission,
   panierPermission,
+  panierResponsable,
 }
