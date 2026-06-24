@@ -61,7 +61,13 @@ export const creerPanierIndividuCommentaireBodySchema = creerCommentaireBodySche
 export const creerPanierCommentaireBodySchema = creerCommentaireBodySchema(
   panierCommentaireTypeSchema,
 )
-export type CreerCommentaireBody = z.infer<typeof creerIndicateurIndividuCommentaireBodySchema>
+// Type « élargi » consommé par la couche générique : le `type` est déjà validé
+// par le schéma propre au sujet (route), donc ici on accepte n'importe quelle valeur.
+export type CreerCommentaireBody = {
+  type: string
+  contenu: string
+  statut: CommentaireStatut
+}
 
 // Body de modification (socle, par id) : type non modifiable, individu/sujet figés.
 export const modifierCommentaireBodySchema = z
