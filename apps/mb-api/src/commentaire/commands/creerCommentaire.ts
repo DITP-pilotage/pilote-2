@@ -9,7 +9,7 @@ import { db } from '@/framework/persistence/dbStore'
 
 type CreerCommentaireParams<P extends Record<string, string>> = {
   params: P
-  body: CreerCommentaireBody
+  body: CreerCommentaireBody<CommentaireType>
 }
 
 export const creerCommentaire = <P extends Record<string, string>>(
@@ -17,13 +17,7 @@ export const creerCommentaire = <P extends Record<string, string>>(
   { params, body }: CreerCommentaireParams<P>,
 ): ResultAsync<CommentaireApiModel, never> =>
   config.resoudreCibleEcriture(params).andThen((cible) =>
-    ensureBrouillonUnique(
-      config,
-      params,
-      body.statut,
-      cible.principalId,
-      body.type as CommentaireType,
-    ).andThen(() =>
+    ensureBrouillonUnique(config, params, body.statut, cible.principalId, body.type).andThen(() =>
       ResultAsync.fromSafePromise(
         db().commentaire.create({
           data: {

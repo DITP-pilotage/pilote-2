@@ -71,10 +71,10 @@ export const creerPanierIndividuCommentaireBodySchema =
 export const creerPanierCommentaireBodySchema = creerCommentaireBodySchema(
   panierCommentaireTypeSchema,
 );
-// Type « élargi » consommé par la couche générique : le `type` est déjà validé
-// par le schéma propre au sujet (route), donc ici on accepte n'importe quelle valeur.
-export type CreerCommentaireBody = {
-  type: string;
+// `type` est paramétré par sujet (cf. schémas ci-dessus) ; le générique permet
+// au consommateur de fixer l'enum exact attendu (sinon `string`).
+export type CreerCommentaireBody<T extends string = string> = {
+  type: T;
   contenu: string;
   statut: CommentaireStatut;
 };
