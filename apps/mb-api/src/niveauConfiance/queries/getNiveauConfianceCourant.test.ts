@@ -1,13 +1,37 @@
 import { describe, expect, it } from 'vitest'
 
-import { creerNiveauConfiance } from '@/commentaire/niveauConfiance/commands/creerNiveauConfiance'
-import { getNiveauConfianceCourant } from '@/commentaire/niveauConfiance/queries/getNiveauConfianceCourant'
-import { indicateurIndividuConfig } from '@/indicateur/commands/creerIndicateurIndividuCommentaire'
+import {
+  creerIndicateurIndividuCommentaire,
+  indicateurIndividuConfig,
+} from '@/indicateur/commands/creerIndicateurIndividuCommentaire'
 import { PermissionAction } from '@/generated/prisma/enums'
+import { creerNiveauConfiance } from '@/niveauConfiance/commands/creerNiveauConfiance'
+import { getNiveauConfianceCourant } from '@/niveauConfiance/queries/getNiveauConfianceCourant'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurId, testIndividuId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
+
+import type { IndiceConfiance } from '@pilote/mb-shared/niveauConfiance'
+
+const creerNcSur = async (
+  apiKeyId: string,
+  params: { indicateurId: string; individuId: string },
+  indice: IndiceConfiance,
+) => {
+  const commentaire = await runAsPrincipal(apiKeyId, () =>
+    creerIndicateurIndividuCommentaire({
+      params,
+      body: { type: 'CONFIANCE', contenu: '', statut: 'PUBLIE' },
+    }),
+  )
+  return runAsPrincipal(apiKeyId, () =>
+    creerNiveauConfiance({
+      commentaireId: commentaire._unsafeUnwrap().id,
+      indice,
+    }),
+  )
+}
 
 describe.concurrent('getNiveauConfianceCourant', () => {
   it(
@@ -22,12 +46,7 @@ describe.concurrent('getNiveauConfianceCourant', () => {
       })
       const params = { indicateurId: indId, individuId: indivId }
       for (const indice of ['OBJECTIF_COMPROMIS', 'OBJECTIF_SECURISE'] as const) {
-        await runAsPrincipal(apiKey.id, () =>
-          creerNiveauConfiance(indicateurIndividuConfig, {
-            params,
-            body: { indice, contenu: '', statut: 'PUBLIE' },
-          }),
-        )
+        await creerNcSur(apiKey.id, params, indice)
       }
 
       const result = await runAsPrincipal(apiKey.id, () =>

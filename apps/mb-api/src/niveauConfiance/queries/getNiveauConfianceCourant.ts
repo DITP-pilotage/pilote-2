@@ -1,21 +1,12 @@
-import { type NiveauConfianceApiModel } from '@pilote/mb-shared/commentaire'
+import { type NiveauConfianceApiModel } from '@pilote/mb-shared/niveauConfiance'
 import { ResultAsync } from 'neverthrow'
 
+import { niveauConfianceInclude, toNiveauConfianceApiModel } from '@/niveauConfiance/utils'
 import { type SujetCommentaireConfig } from '@/commentaire/sujets'
-import { niveauConfianceInclude, toNiveauConfianceApiModel } from '@/commentaire/utils'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
-import { type Prisma } from '@/generated/prisma/client'
 
-const CONFIANCE: Prisma.CommentaireWhereInput = {
-  OR: [
-    { indicateurIndividu: { type: 'CONFIANCE' } },
-    { panierIndividu: { type: 'CONFIANCE' } },
-    { panier: { type: 'CONFIANCE' } },
-  ],
-}
-
-// Courant = dernier commentaire CONFIANCE publié du scope (par id desc = antichrono).
+// Courant = dernier NiveauConfiance dont le commentaire est PUBLIE sur le scope.
 // Renvoie 404 (P2025) si aucun.
 export const getNiveauConfianceCourant = <P extends Record<string, string>>(
   config: SujetCommentaireConfig<P>,
@@ -23,8 +14,12 @@ export const getNiveauConfianceCourant = <P extends Record<string, string>>(
 ): ResultAsync<NiveauConfianceApiModel, never> => {
   const principalId = requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(
-    db().commentaire.findFirstOrThrow({
-      where: { AND: [config.whereLecture(params, principalId), CONFIANCE, { statut: 'PUBLIE' }] },
+    db().niveauConfiance.findFirstOrThrow({
+      where: {
+        commentaire: {
+          AND: [config.whereLecture(params, principalId), { statut: 'PUBLIE' }],
+        },
+      },
       orderBy: { id: 'desc' },
       include: niveauConfianceInclude,
     }),

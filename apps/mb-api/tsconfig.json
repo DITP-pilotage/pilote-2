@@ -20,6 +20,7 @@
       "@/indicateur/*": ["./src/indicateur/*"],
       "@/individu/*": ["./src/individu/*"],
       "@/referentiel/*": ["./src/referentiel/*"],
+      "@/niveauConfiance/*": ["./src/niveauConfiance/*"],
       "@/valeurAvancement/*": ["./src/valeurAvancement/*"],
       "@/objectifIndicateurIndividu/*": ["./src/objectifIndicateurIndividu/*"],
       "@/widget/*": ["./src/widget/*"],

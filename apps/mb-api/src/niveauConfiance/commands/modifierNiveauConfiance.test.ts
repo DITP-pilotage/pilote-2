@@ -1,18 +1,40 @@
 import { describe, expect, it } from 'vitest'
 
-import { creerNiveauConfiance } from '@/commentaire/niveauConfiance/commands/creerNiveauConfiance'
-import { modifierNiveauConfiance } from '@/commentaire/niveauConfiance/commands/modifierNiveauConfiance'
-import { indicateurIndividuConfig } from '@/indicateur/commands/creerIndicateurIndividuCommentaire'
-import { db } from '@/framework/persistence/dbStore'
+import { creerIndicateurIndividuCommentaire } from '@/indicateur/commands/creerIndicateurIndividuCommentaire'
 import { PermissionAction } from '@/generated/prisma/enums'
+import { creerNiveauConfiance } from '@/niveauConfiance/commands/creerNiveauConfiance'
+import { modifierNiveauConfiance } from '@/niveauConfiance/commands/modifierNiveauConfiance'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurId, testIndividuId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
+const creerNcSur = async ({
+  apiKeyId,
+  indicateurId,
+  individuId,
+}: {
+  apiKeyId: string
+  indicateurId: string
+  individuId: string
+}) => {
+  const commentaire = await runAsPrincipal(apiKeyId, () =>
+    creerIndicateurIndividuCommentaire({
+      params: { indicateurId, individuId },
+      body: { type: 'CONFIANCE', contenu: '', statut: 'PUBLIE' },
+    }),
+  )
+  return runAsPrincipal(apiKeyId, () =>
+    creerNiveauConfiance({
+      commentaireId: commentaire._unsafeUnwrap().id,
+      indice: 'OBJECTIF_COMPROMIS',
+    }),
+  )
+}
+
 describe.concurrent('modifierNiveauConfiance', () => {
   it(
-    'change l’indice (append) et le contenu, par l’auteur',
+    'change l’indice, par l’auteur',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const indivId = testIndividuId()
@@ -21,25 +43,20 @@ describe.concurrent('modifierNiveauConfiance', () => {
       const apiKey = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
       })
-      const cree = await runAsPrincipal(apiKey.id, () =>
-        creerNiveauConfiance(indicateurIndividuConfig, {
-          params: { indicateurId: indId, individuId: indivId },
-          body: { indice: 'OBJECTIF_COMPROMIS', contenu: '', statut: 'PUBLIE' },
-        }),
-      )
-      const commentaireId = cree._unsafeUnwrap().id
+      const cree = await creerNcSur({
+        apiKeyId: apiKey.id,
+        indicateurId: indId,
+        individuId: indivId,
+      })
+      const niveauConfianceId = cree._unsafeUnwrap().id
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        modifierNiveauConfiance(commentaireId, {
-          indice: 'OBJECTIF_SECURISE',
-          contenu: '<p>maj</p>',
-        }),
+        modifierNiveauConfiance(niveauConfianceId, { indice: 'OBJECTIF_SECURISE' }),
       )
 
       expect(result.isOk()).toBe(true)
       expect(result._unsafeUnwrap().indice).toBe('OBJECTIF_SECURISE')
-      const count = await db().niveauConfiance.count({ where: { commentaireId } })
-      expect(count).toBe(2) // historique d'indices : 2
+      expect(result._unsafeUnwrap().id).toBe(niveauConfianceId)
     }),
   )
 
@@ -56,12 +73,11 @@ describe.concurrent('modifierNiveauConfiance', () => {
       const autre = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
       })
-      const cree = await runAsPrincipal(auteur.id, () =>
-        creerNiveauConfiance(indicateurIndividuConfig, {
-          params: { indicateurId: indId, individuId: indivId },
-          body: { indice: 'OBJECTIF_COMPROMIS', contenu: '', statut: 'PUBLIE' },
-        }),
-      )
+      const cree = await creerNcSur({
+        apiKeyId: auteur.id,
+        indicateurId: indId,
+        individuId: indivId,
+      })
 
       await expect(
         runAsPrincipal(autre.id, () =>

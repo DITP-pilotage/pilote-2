@@ -16,6 +16,10 @@
       "types": "./src/commentaire.ts",
       "default": "./src/commentaire.ts"
     },
+    "./niveauConfiance": {
+      "types": "./src/niveauConfiance.ts",
+      "default": "./src/niveauConfiance.ts"
+    },
     "./error": {
       "types": "./src/error.ts",
       "default": "./src/error.ts"
