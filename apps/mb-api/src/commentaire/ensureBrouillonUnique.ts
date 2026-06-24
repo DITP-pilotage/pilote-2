@@ -4,14 +4,25 @@ import { type SujetCommentaireConfig } from '@/commentaire/sujets'
 import { ConflictError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { type Prisma } from '@/generated/prisma/client'
+import {
+  type IndicateurIndividuCommentaireType,
+  type PanierCommentaireType,
+  type PanierIndividuCommentaireType,
+} from '@/generated/prisma/enums'
 
-const filtreType = (type: string): Prisma.CommentaireWhereInput => ({
-  OR: [
-    { indicateurIndividu: { type: type as never } },
-    { panierIndividu: { type: type as never } },
-    { panier: { type: type as never } },
-  ],
-})
+// Union des types possibles sur les 3 satellites (DEFAUT, CONFIANCE, OBJECTIF).
+export type CommentaireType =
+  | IndicateurIndividuCommentaireType
+  | PanierIndividuCommentaireType
+  | PanierCommentaireType
+
+const filtreType = (type: CommentaireType): Prisma.CommentaireWhereInput => {
+  // OBJECTIF n'existe que sur le satellite panier global.
+  if (type === 'OBJECTIF') return { panier: { type } }
+  return {
+    OR: [{ indicateurIndividu: { type } }, { panierIndividu: { type } }, { panier: { type } }],
+  }
+}
 
 // Règle PIL-1585/1592 : au plus 1 brouillon par (scope, auteur, type).
 export const ensureBrouillonUnique = <P extends Record<string, string>>(
@@ -19,7 +30,7 @@ export const ensureBrouillonUnique = <P extends Record<string, string>>(
   params: P,
   statut: 'BROUILLON' | 'PUBLIE',
   principalId: string,
-  type: string,
+  type: CommentaireType,
 ): ResultAsync<void, never> => {
   if (statut !== 'BROUILLON') return ResultAsync.fromSafePromise(Promise.resolve())
   return ResultAsync.fromSafePromise(
