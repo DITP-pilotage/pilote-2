@@ -1,7 +1,7 @@
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import {
   creerIndicateurIndividuCommentaireBodySchema,
-  listerCommentairesQuerySchema,
+  listerIndicateurIndividuCommentairesQuerySchema,
 } from '@pilote/mb-shared/commentaire'
 import { errorApiModelSchema } from '@pilote/mb-shared/error'
 import {
@@ -217,7 +217,7 @@ const listerIndicateurIndividuCommentairesRoute = createRoute({
   middleware: [requireAuthentication],
   request: {
     params: indicateurIndividuCommentaireParamsSchema,
-    query: listerCommentairesQuerySchema,
+    query: listerIndicateurIndividuCommentairesQuerySchema,
   },
   responses: reponseListe,
 })

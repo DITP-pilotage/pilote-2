@@ -113,15 +113,28 @@ export type ModifierCommentaireBody = z.infer<
   typeof modifierCommentaireBodySchema
 >;
 
-// Query de listing : filtre `type` obligatoire (l'appelant choisit la catégorie) + pagination cursor.
-export const listerCommentairesQuerySchema = z.object({
-  type: z.string().describe("Catégorie du commentaire (enum propre au sujet)."),
-  cursor: paginationCursorSchema.optional(),
-  pageSize: pageSizeSchema,
-});
-export type ListerCommentairesQuery = z.infer<
-  typeof listerCommentairesQuerySchema
->;
+// Query de listing : `type` obligatoire, contraint par le sujet (cf. factory ci-dessous).
+const listerCommentairesQuerySchema = <T extends z.ZodTypeAny>(typeSchema: T) =>
+  z.object({
+    type: typeSchema.describe("Catégorie du commentaire."),
+    cursor: paginationCursorSchema.optional(),
+    pageSize: pageSizeSchema,
+  });
+
+export const listerIndicateurIndividuCommentairesQuerySchema =
+  listerCommentairesQuerySchema(indicateurIndividuCommentaireTypeSchema);
+export const listerPanierIndividuCommentairesQuerySchema =
+  listerCommentairesQuerySchema(panierIndividuCommentaireTypeSchema);
+export const listerPanierCommentairesQuerySchema = listerCommentairesQuerySchema(
+  panierCommentaireTypeSchema,
+);
+// Type « élargi » consommé par la couche générique : le `type` est déjà validé
+// par le schéma propre au sujet (route).
+export type ListerCommentairesQuery = {
+  type: string;
+  cursor?: string | undefined;
+  pageSize?: number | undefined;
+};
 
 export const commentaireListApiModelSchema = createPaginatedApiListSchema(
   commentaireApiModelSchema,

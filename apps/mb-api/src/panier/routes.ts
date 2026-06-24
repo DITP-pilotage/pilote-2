@@ -2,7 +2,8 @@ import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import {
   creerPanierCommentaireBodySchema,
   creerPanierIndividuCommentaireBodySchema,
-  listerCommentairesQuerySchema,
+  listerPanierCommentairesQuerySchema,
+  listerPanierIndividuCommentairesQuerySchema,
 } from '@pilote/mb-shared/commentaire'
 import { errorApiModelSchema } from '@pilote/mb-shared/error'
 import {
@@ -256,7 +257,7 @@ const listerPanierIndividuCommentairesRoute = createRoute({
   middleware: [requireAuthentication],
   request: {
     params: panierIndividuCommentaireParamsSchema,
-    query: listerCommentairesQuerySchema,
+    query: listerPanierIndividuCommentairesQuerySchema,
   },
   responses: reponseListe,
 })
@@ -310,7 +311,7 @@ const listerPanierCommentairesRoute = createRoute({
   middleware: [requireAuthentication],
   request: {
     params: panierCommentaireParamsSchema,
-    query: listerCommentairesQuerySchema,
+    query: listerPanierCommentairesQuerySchema,
   },
   responses: reponseListe,
 })
