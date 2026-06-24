@@ -1,7 +1,6 @@
 import { type DateTrunc } from '@pilote/mb-shared/dates'
 import {
   type ListTauxProgressionIndividuQuery,
-  type TauxProgressionIndividuApiModel,
   type TauxProgressionIndividuListApiModel,
 } from '@pilote/mb-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
@@ -105,7 +104,7 @@ const build = async (
     }),
   )
 
-  const items = resolus.filter((item) => item !== null) as TauxProgressionIndividuApiModel[]
+  const items = resolus.filter((item) => item !== null)
 
   logger.info(
     {
