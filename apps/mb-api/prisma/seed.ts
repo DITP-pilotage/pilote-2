@@ -816,14 +816,12 @@ const main = async () => {
     where: { email: 'claire.dupont@example.com' },
     select: { id: true },
   })
-  if (pan005) {
-    for (const utilisateurId of [ditpAdmin.id, claireDupont.id]) {
-      await prisma.panierResponsable.upsert({
-        where: { panierId_utilisateurId: { panierId: pan005.id, utilisateurId } },
-        update: {},
-        create: { panierId: pan005.id, utilisateurId },
-      })
-    }
+  for (const utilisateurId of [ditpAdmin.id, claireDupont.id]) {
+    await prisma.panierResponsable.upsert({
+      where: { panierId_utilisateurId: { panierId: pan005.id, utilisateurId } },
+      update: {},
+      create: { panierId: pan005.id, utilisateurId },
+    })
   }
   const panierResponsablesCount = 2
 

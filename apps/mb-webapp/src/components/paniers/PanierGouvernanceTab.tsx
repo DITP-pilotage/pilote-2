@@ -1,6 +1,5 @@
 import { Mail } from 'lucide-react'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { Suspense } from 'react'
 
 import { PanierContactsUtiles } from '@/components/paniers/PanierContactsUtiles'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -60,9 +59,7 @@ export function PanierGouvernanceTab({ panierId }: { panierId: string }) {
         )}
       </div>
 
-      <Suspense>
-        <PanierContactsUtiles panierId={panierId} />
-      </Suspense>
+      <PanierContactsUtiles panierId={panierId} />
     </div>
   )
 }
