@@ -36,7 +36,7 @@ const creerNcSur = async (
 
 describe.concurrent('listerHistoriqueNiveauConfiance', () => {
   it(
-    'liste les niveaux de confiance publiés en antichronologique',
+    'liste les niveaux de confiance en antichronologique',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const indivId = testIndividuId()
@@ -60,7 +60,7 @@ describe.concurrent('listerHistoriqueNiveauConfiance', () => {
   )
 
   it(
-    'inclut les niveaux des brouillons (filtre publié retiré)',
+    'liste aussi les niveaux des commentaires en brouillon',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const indivId = testIndividuId()
@@ -77,7 +77,9 @@ describe.concurrent('listerHistoriqueNiveauConfiance', () => {
         listerHistoriqueNiveauConfiance(indicateurIndividuConfig, { params, query: {} }),
       )
 
-      expect(result._unsafeUnwrap().total).toBe(2)
+      const indices = result._unsafeUnwrap().items.map((niveau) => niveau.indice)
+      expect(indices).toContain('OBJECTIF_COMPROMIS')
+      expect(indices).toContain('OBJECTIF_SECURISE')
     }),
   )
 })
