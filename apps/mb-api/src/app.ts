@@ -12,6 +12,7 @@ import { registerErrorHandler } from '@/framework/errors/errorHandler'
 import { databaseContext } from '@/framework/persistence/databaseContext'
 import { health } from '@/healthcheck/routes/health'
 import { indicateurRoutes } from '@/indicateur/routes'
+import { importPocRoutes } from '@/importPoc/routes'
 import { individuRoutes } from '@/individu/routes'
 import { panierRoutes } from '@/panier/routes'
 import { referentielRoutes } from '@/referentiel/routes'
@@ -43,6 +44,7 @@ app.route('/', individuRoutes)
 app.route('/', panierRoutes)
 app.route('/', commentaireRoutes)
 app.route('/', niveauConfianceRoutes)
+app.route('/', importPocRoutes)
 app.route('/', me)
 app.route('/', whoami)
 
