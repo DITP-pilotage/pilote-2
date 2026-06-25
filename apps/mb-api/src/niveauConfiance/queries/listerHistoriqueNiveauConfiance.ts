@@ -4,6 +4,7 @@ import { ResultAsync } from 'neverthrow'
 
 import { niveauConfianceInclude, toNiveauConfianceApiModel } from '@/niveauConfiance/utils'
 import { type SujetCommentaireConfig } from '@/commentaire/sujets'
+import { filtreVisibiliteCommentaire } from '@/commentaire/visibilite'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import { buildPaginationArgs, toPaginatedResponse } from '@/framework/persistence/paginate'
@@ -15,7 +16,9 @@ export const listerHistoriqueNiveauConfiance = <P extends Record<string, string>
 ): ResultAsync<NiveauConfianceListApiModel, never> => {
   const principalId = requireCurrentPrincipalId()
   const where: Prisma.NiveauConfianceWhereInput = {
-    commentaire: config.whereLecture(params, principalId),
+    commentaire: {
+      AND: [config.whereLecture(params, principalId), filtreVisibiliteCommentaire(principalId)],
+    },
   }
   const fetchPage = db().niveauConfiance.findMany({
     where,

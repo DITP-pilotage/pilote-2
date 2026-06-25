@@ -82,4 +82,31 @@ describe.concurrent('listerHistoriqueNiveauConfiance', () => {
       expect(indices).toContain('OBJECTIF_SECURISE')
     }),
   )
+
+  it(
+    "n'inclut pas les niveaux des brouillons d'autres auteurs",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const indivId = testIndividuId()
+      await fixtures.indicateur({ publicId: indId })
+      await fixtures.individu({ publicId: indivId })
+      const moi = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+      })
+      const autre = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+      })
+      const params = { indicateurId: indId, individuId: indivId }
+      await creerNcSur(moi.id, params, 'OBJECTIF_SECURISE', 'PUBLIE')
+      await creerNcSur(autre.id, params, 'OBJECTIF_COMPROMIS', 'BROUILLON')
+
+      const result = await runAsPrincipal(moi.id, () =>
+        listerHistoriqueNiveauConfiance(indicateurIndividuConfig, { params, query: {} }),
+      )
+
+      const indices = result._unsafeUnwrap().items.map((niveau) => niveau.indice)
+      expect(indices).toContain('OBJECTIF_SECURISE')
+      expect(indices).not.toContain('OBJECTIF_COMPROMIS')
+    }),
+  )
 })

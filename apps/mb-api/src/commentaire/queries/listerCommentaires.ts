@@ -6,6 +6,7 @@ import { ResultAsync } from 'neverthrow'
 
 import { type SujetCommentaireConfig } from '@/commentaire/sujets'
 import { commentaireInclude, toCommentaireApiModel } from '@/commentaire/utils'
+import { filtreVisibiliteCommentaire } from '@/commentaire/visibilite'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import { buildPaginationArgs, toPaginatedResponse } from '@/framework/persistence/paginate'
@@ -22,7 +23,11 @@ export const listerCommentaires = <P extends Record<string, string>>(
 ): ResultAsync<CommentaireListApiModel, never> => {
   const principalId = requireCurrentPrincipalId()
   const where: Prisma.CommentaireWhereInput = {
-    AND: [config.whereLecture(params, principalId), filtreParType(query.type)],
+    AND: [
+      config.whereLecture(params, principalId),
+      filtreParType(query.type),
+      filtreVisibiliteCommentaire(principalId, query.statut),
+    ],
   }
 
   const fetchPage = db().commentaire.findMany({

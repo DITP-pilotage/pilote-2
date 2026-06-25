@@ -99,6 +99,11 @@ export type ModifierCommentaireBody = z.infer<
 const listerCommentairesQuerySchema = <T extends z.ZodTypeAny>(typeSchema: T) =>
   z.object({
     type: typeSchema.describe("Catégorie du commentaire."),
+    statut: commentaireStatutSchema
+      .optional()
+      .describe(
+        "Filtre sur le statut. PUBLIE = tous les publiés ; BROUILLON = uniquement les vôtres. Absent = publiés + vos brouillons.",
+      ),
     cursor: paginationCursorSchema.optional(),
     pageSize: pageSizeSchema,
   });
@@ -113,6 +118,7 @@ export const listerPanierCommentairesQuerySchema =
 // par le schéma propre au sujet (route).
 export type ListerCommentairesQuery = {
   type: string;
+  statut?: CommentaireStatut | undefined;
   cursor?: string | undefined;
   pageSize?: number | undefined;
 };
