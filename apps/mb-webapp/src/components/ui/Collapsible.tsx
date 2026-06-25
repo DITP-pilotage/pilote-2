@@ -24,18 +24,19 @@ export function CollapsibleContent({ className, peek, style, ...props }: Collaps
     )
   }
 
-  // Mode aperçu : le contenu reste monté (forceMount) et est borné à `peek` quand
-  // replié ; l'animation interpole entre `peek` et la hauteur réelle mesurée par radix.
+  // Mode aperçu : le contenu reste monté (forceMount) et on anime la `height` via
+  // une transition CSS entre deux valeurs explicites — `--collapsible-peek` (replié)
+  // et `--collapsible-full` (hauteur réelle, fournie par le consommateur qui mesure).
+  // Plus fiable que les keyframes basées sur la variable radix, dont le timing à
+  // l'ouverture est aléatoire avec forceMount.
   return (
     <CollapsiblePrimitive.Content
       forceMount
       style={{ ...style, '--collapsible-peek': peek } as CSSProperties}
       className={clsxm(
-        // height (et non max-height) : radix mesure la hauteur réelle en forçant
-        // `height:auto` en inline, ce qui override bien un `height` de classe mais
-        // pas un `max-height` (qui fausserait la mesure → animation à plat).
-        'overflow-hidden data-[state=closed]:h-[var(--collapsible-peek)]',
-        animation,
+        'overflow-hidden transition-[height] duration-200 ease-out',
+        'data-[state=closed]:h-[var(--collapsible-peek)]',
+        'data-[state=open]:h-[var(--collapsible-full,auto)]',
         className,
       )}
       {...props}
