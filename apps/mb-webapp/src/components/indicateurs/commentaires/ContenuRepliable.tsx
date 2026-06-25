@@ -7,23 +7,32 @@ import { clsxm } from '@/lib/clsxm'
 
 // Hauteur de l'aperçu replié (~3 lignes).
 const PEEK = '4.5rem'
+const PEEK_PX = 72
 
 export function ContenuRepliable({ html }: { html: string }) {
-  const ref = useRef<HTMLDivElement>(null)
+  const contenuRef = useRef<HTMLDivElement>(null)
   const [ouvert, setOuvert] = useState(false)
-  const [depasse, setDepasse] = useState(false)
+  // On part de l'hypothèse « dépasse » pour que les contenus longs soient repliés
+  // dès le premier rendu (pas de flash). La mesure ajuste ensuite.
+  const [depasse, setDepasse] = useState(true)
 
   useLayoutEffect(() => {
-    const el = ref.current
-    if (el) setDepasse(el.scrollHeight > el.clientHeight + 1)
+    const el = contenuRef.current
+    // offsetHeight = hauteur réelle du contenu, indépendante du clamp parent.
+    if (el) setDepasse(el.offsetHeight > PEEK_PX + 1)
   }, [html])
 
+  // Si le contenu ne dépasse pas l'aperçu, on l'affiche entièrement (pas de repli).
+  const effectivementOuvert = ouvert || !depasse
+
   return (
-    <Collapsible open={ouvert} onOpenChange={setOuvert}>
-      <CollapsibleContent ref={ref} peek={PEEK}>
-        <RenduContenuHtml html={html} className="text-sm leading-relaxed text-text" />
+    <Collapsible open={effectivementOuvert} onOpenChange={setOuvert}>
+      <CollapsibleContent peek={PEEK}>
+        <div ref={contenuRef}>
+          <RenduContenuHtml html={html} className="text-sm leading-relaxed text-text" />
+        </div>
       </CollapsibleContent>
-      {(depasse || ouvert) && (
+      {depasse && (
         <CollapsibleTrigger className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-primary">
           <ChevronDown className={clsxm('size-4 transition-transform', ouvert && 'rotate-180')} />
           {ouvert ? 'Voir moins' : 'Voir plus'}

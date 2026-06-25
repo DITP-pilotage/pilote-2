@@ -31,7 +31,10 @@ export function CollapsibleContent({ className, peek, style, ...props }: Collaps
       forceMount
       style={{ ...style, '--collapsible-peek': peek } as CSSProperties}
       className={clsxm(
-        'overflow-hidden data-[state=closed]:max-h-[var(--collapsible-peek)]',
+        // height (et non max-height) : radix mesure la hauteur réelle en forçant
+        // `height:auto` en inline, ce qui override bien un `height` de classe mais
+        // pas un `max-height` (qui fausserait la mesure → animation à plat).
+        'overflow-hidden data-[state=closed]:h-[var(--collapsible-peek)]',
         animation,
         className,
       )}
