@@ -1,4 +1,5 @@
 import {
+  brouillonApiModelSchema,
   commentaireApiModelSchema,
   commentaireListApiModelSchema,
 } from '@pilote/mb-shared/commentaire'
@@ -8,6 +9,7 @@ import { erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
 export const CommentaireApiModelSchema = commentaireApiModelSchema.openapi('CommentaireApiModel')
 export const CommentaireListApiModelSchema =
   commentaireListApiModelSchema.openapi('CommentaireListApiModel')
+export const BrouillonApiModelSchema = brouillonApiModelSchema.openapi('BrouillonApiModel')
 
 export const reponseCommentaire = {
   200: {
@@ -24,4 +26,12 @@ export const reponseListe = {
     content: { 'application/json': { schema: CommentaireListApiModelSchema } },
     description: 'Liste paginée',
   },
+}
+
+export const reponseBrouillon = {
+  200: {
+    content: { 'application/json': { schema: BrouillonApiModelSchema } },
+    description: 'Brouillon courant, ou null',
+  },
+  403: erreur403,
 }

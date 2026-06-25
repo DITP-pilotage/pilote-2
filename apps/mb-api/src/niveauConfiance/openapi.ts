@@ -21,9 +21,9 @@ export const reponseNiveauConfiance = {
   404: erreur404,
 }
 
-export const reponseHistoriqueNiveauConfiance = {
+export const reponseListeNiveauxConfiance = {
   200: {
     content: { 'application/json': { schema: NiveauConfianceListApiModelSchema } },
-    description: 'Historique paginé',
+    description: 'Niveaux de confiance des commentaires demandés',
   },
 }

@@ -18,7 +18,7 @@ export const niveauConfianceRoutes = new OpenAPIHono()
 
 const creerRoute = createRoute({
   method: 'post',
-  path: '/niveau-confiance',
+  path: '/niveaux-confiance',
   tags: ['NiveauConfiance'],
   summary: 'Créer un niveau de confiance sur un commentaire CONFIANCE',
   middleware: [requireAuthentication],
@@ -44,7 +44,7 @@ niveauConfianceRoutes.openapi(creerRoute, async (context) => {
 
 const modifierRoute = createRoute({
   method: 'put',
-  path: '/niveau-confiance/{niveauConfianceId}',
+  path: '/niveaux-confiance/{niveauConfianceId}',
   tags: ['NiveauConfiance'],
   summary: 'Modifier l’indice d’un niveau de confiance (auteur uniquement)',
   middleware: [requireAuthentication],

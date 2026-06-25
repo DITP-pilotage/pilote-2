@@ -87,7 +87,7 @@ describe.concurrent('listerCommentaires', () => {
   )
 
   it(
-    'statut=BROUILLON ne renvoie que les brouillons du principal courant',
+    'ne renvoie que les publiés (les brouillons sont exclus, même les miens)',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const indivId = testIndividuId()
@@ -96,56 +96,7 @@ describe.concurrent('listerCommentaires', () => {
       const moi = await fixtures.apiKey({
         permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
-      const autre = await fixtures.apiKey({ permissions: [] })
       const scope = { indicateur: { publicId: indId }, individu: { publicId: indivId } }
-      await fixtures.commentaire({
-        ...scope,
-        createdBy: moi.id,
-        type: 'DEFAUT',
-        statut: 'BROUILLON',
-        contenu: '<p>Mon brouillon</p>',
-        contenuTexte: 'Mon brouillon',
-      })
-      await fixtures.commentaire({
-        ...scope,
-        createdBy: autre.id,
-        type: 'DEFAUT',
-        statut: 'BROUILLON',
-        contenu: '<p>Brouillon autre</p>',
-        contenuTexte: 'Brouillon autre',
-      })
-
-      const result = await runAsPrincipal(moi.id, () =>
-        listerCommentaires(indicateurIndividuConfig, {
-          params: { indicateurId: indId, individuId: indivId },
-          query: { type: 'DEFAUT', statut: 'BROUILLON' },
-        }),
-      )
-
-      const page = result._unsafeUnwrap()
-      expect(page.total).toBe(1)
-      expect(page.items.map((c) => c.contenu)).toEqual(['<p>Mon brouillon</p>'])
-    }),
-  )
-
-  it(
-    'statut=PUBLIE renvoie tous les publiés et aucun brouillon',
-    integrationTest(async () => {
-      const indId = testIndicateurId()
-      const indivId = testIndividuId()
-      await fixtures.indicateur({ publicId: indId })
-      await fixtures.individu({ publicId: indivId })
-      const moi = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
-      })
-      const autre = await fixtures.apiKey({ permissions: [] })
-      const scope = { indicateur: { publicId: indId }, individu: { publicId: indivId } }
-      await fixtures.commentaire({
-        ...scope,
-        createdBy: autre.id,
-        type: 'DEFAUT',
-        statut: 'PUBLIE',
-      })
       await fixtures.commentaire({ ...scope, createdBy: moi.id, type: 'DEFAUT', statut: 'PUBLIE' })
       await fixtures.commentaire({
         ...scope,
@@ -157,56 +108,13 @@ describe.concurrent('listerCommentaires', () => {
       const result = await runAsPrincipal(moi.id, () =>
         listerCommentaires(indicateurIndividuConfig, {
           params: { indicateurId: indId, individuId: indivId },
-          query: { type: 'DEFAUT', statut: 'PUBLIE' },
-        }),
-      )
-
-      const page = result._unsafeUnwrap()
-      expect(page.total).toBe(2)
-      expect(page.items.every((c) => c.statut === 'PUBLIE')).toBe(true)
-    }),
-  )
-
-  it(
-    'sans statut, masque les brouillons des autres auteurs mais garde les miens et tous les publiés',
-    integrationTest(async () => {
-      const indId = testIndicateurId()
-      const indivId = testIndividuId()
-      await fixtures.indicateur({ publicId: indId })
-      await fixtures.individu({ publicId: indivId })
-      const moi = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
-      })
-      const autre = await fixtures.apiKey({ permissions: [] })
-      const scope = { indicateur: { publicId: indId }, individu: { publicId: indivId } }
-      await fixtures.commentaire({
-        ...scope,
-        createdBy: autre.id,
-        type: 'DEFAUT',
-        statut: 'PUBLIE',
-      })
-      await fixtures.commentaire({
-        ...scope,
-        createdBy: moi.id,
-        type: 'DEFAUT',
-        statut: 'BROUILLON',
-      })
-      await fixtures.commentaire({
-        ...scope,
-        createdBy: autre.id,
-        type: 'DEFAUT',
-        statut: 'BROUILLON',
-      })
-
-      const result = await runAsPrincipal(moi.id, () =>
-        listerCommentaires(indicateurIndividuConfig, {
-          params: { indicateurId: indId, individuId: indivId },
           query: { type: 'DEFAUT' },
         }),
       )
 
-      // 1 publié (autre) + 1 brouillon (moi) ; le brouillon de l'autre est masqué.
-      expect(result._unsafeUnwrap().total).toBe(2)
+      const page = result._unsafeUnwrap()
+      expect(page.total).toBe(1)
+      expect(page.items.every((c) => c.statut === 'PUBLIE')).toBe(true)
     }),
   )
 })

@@ -2,11 +2,7 @@ import { z } from "zod";
 
 import { auteurApiModelSchema } from "./auteur";
 import { commentaireApiModelSchema } from "./commentaire";
-import {
-  createPaginatedApiListSchema,
-  pageSizeSchema,
-  paginationCursorSchema,
-} from "./pagination";
+import { createPaginatedApiListSchema } from "./pagination";
 
 export const indiceConfianceSchema = z
   .enum([
@@ -60,12 +56,23 @@ export type ModifierNiveauConfianceBody = z.infer<
   typeof modifierNiveauConfianceBodySchema
 >;
 
-export const historiqueNiveauConfianceQuerySchema = z.object({
-  cursor: paginationCursorSchema.optional(),
-  pageSize: pageSizeSchema,
+// Query batch : récupère les niveaux des commentaires passés (CSV d'UUID).
+export const listerNiveauxConfianceQuerySchema = z.object({
+  commentaires: z
+    .preprocess((val) => {
+      if (typeof val !== "string") return val;
+      const parts = val
+        .split(",")
+        .map((p) => p.trim())
+        .filter(Boolean);
+      return parts;
+    }, z.array(z.string().uuid()).default([]))
+    .describe(
+      "Identifiants des commentaires concernés (CSV, ex. `uuid1,uuid2`). Vide = aucun résultat.",
+    ),
 });
-export type HistoriqueNiveauConfianceQuery = z.infer<
-  typeof historiqueNiveauConfianceQuerySchema
+export type ListerNiveauxConfianceQuery = z.infer<
+  typeof listerNiveauxConfianceQuerySchema
 >;
 
 export const niveauConfianceListApiModelSchema = createPaginatedApiListSchema(

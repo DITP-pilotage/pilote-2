@@ -96,14 +96,11 @@ export type ModifierCommentaireBody = z.infer<
 >;
 
 // Query de listing : `type` obligatoire, contraint par le sujet (cf. factory ci-dessous).
+// Le listing ne renvoie que les commentaires PUBLIE (tous auteurs). Les brouillons
+// passent par un endpoint dédié (`/commentaires/brouillon`).
 const listerCommentairesQuerySchema = <T extends z.ZodTypeAny>(typeSchema: T) =>
   z.object({
     type: typeSchema.describe("Catégorie du commentaire."),
-    statut: commentaireStatutSchema
-      .optional()
-      .describe(
-        "Filtre sur le statut. PUBLIE = tous les publiés ; BROUILLON = uniquement les vôtres. Absent = publiés + vos brouillons.",
-      ),
     cursor: paginationCursorSchema.optional(),
     pageSize: pageSizeSchema,
   });
@@ -118,10 +115,27 @@ export const listerPanierCommentairesQuerySchema =
 // par le schéma propre au sujet (route).
 export type ListerCommentairesQuery = {
   type: string;
-  statut?: CommentaireStatut | undefined;
   cursor?: string | undefined;
   pageSize?: number | undefined;
 };
+
+// Query du brouillon courant (par sujet) : juste le type.
+const recupererBrouillonQuerySchema = <T extends z.ZodTypeAny>(typeSchema: T) =>
+  z.object({ type: typeSchema.describe("Catégorie du commentaire.") });
+
+export const recupererIndicateurIndividuBrouillonQuerySchema =
+  recupererBrouillonQuerySchema(indicateurIndividuCommentaireTypeSchema);
+export const recupererPanierIndividuBrouillonQuerySchema =
+  recupererBrouillonQuerySchema(panierIndividuCommentaireTypeSchema);
+export const recupererPanierBrouillonQuerySchema =
+  recupererBrouillonQuerySchema(panierCommentaireTypeSchema);
+export type RecupererBrouillonQuery = { type: string };
+
+// Réponse du brouillon : le commentaire, ou null s'il n'y en a pas.
+export const brouillonApiModelSchema = commentaireApiModelSchema
+  .nullable()
+  .describe("Brouillon courant de l'utilisateur, ou null s'il n'en a pas.");
+export type BrouillonApiModel = z.infer<typeof brouillonApiModelSchema>;
 
 export const commentaireListApiModelSchema = createPaginatedApiListSchema(
   commentaireApiModelSchema,
