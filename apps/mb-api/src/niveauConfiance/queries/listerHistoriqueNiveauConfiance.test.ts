@@ -18,11 +18,12 @@ const creerNcSur = async (
   apiKeyId: string,
   params: { indicateurId: string; individuId: string },
   indice: IndiceConfiance,
+  statut: 'BROUILLON' | 'PUBLIE' = 'PUBLIE',
 ) => {
   const commentaire = await runAsPrincipal(apiKeyId, () =>
     creerIndicateurIndividuCommentaire({
       params,
-      body: { type: 'CONFIANCE', contenu: '', statut: 'PUBLIE' },
+      body: { type: 'CONFIANCE', contenu: '', statut },
     }),
   )
   return runAsPrincipal(apiKeyId, () =>
@@ -55,6 +56,28 @@ describe.concurrent('listerHistoriqueNiveauConfiance', () => {
 
       expect(result._unsafeUnwrap().total).toBe(2)
       expect(result._unsafeUnwrap().items[0]?.indice).toBe('OBJECTIF_ATTEIGNABLE')
+    }),
+  )
+
+  it(
+    'inclut les niveaux des brouillons (filtre publié retiré)',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const indivId = testIndividuId()
+      await fixtures.indicateur({ publicId: indId })
+      await fixtures.individu({ publicId: indivId })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+      })
+      const params = { indicateurId: indId, individuId: indivId }
+      await creerNcSur(apiKey.id, params, 'OBJECTIF_SECURISE', 'PUBLIE')
+      await creerNcSur(apiKey.id, params, 'OBJECTIF_COMPROMIS', 'BROUILLON')
+
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listerHistoriqueNiveauConfiance(indicateurIndividuConfig, { params, query: {} }),
+      )
+
+      expect(result._unsafeUnwrap().total).toBe(2)
     }),
   )
 })

@@ -15,9 +15,7 @@ export const listerHistoriqueNiveauConfiance = <P extends Record<string, string>
 ): ResultAsync<NiveauConfianceListApiModel, never> => {
   const principalId = requireCurrentPrincipalId()
   const where: Prisma.NiveauConfianceWhereInput = {
-    commentaire: {
-      AND: [config.whereLecture(params, principalId), { statut: 'PUBLIE' }],
-    },
+    commentaire: config.whereLecture(params, principalId),
   }
   const fetchPage = db().niveauConfiance.findMany({
     where,
