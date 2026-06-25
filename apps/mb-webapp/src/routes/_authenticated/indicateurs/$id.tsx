@@ -8,6 +8,7 @@ import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
+import { IndicateurCommentairesTab } from '@/components/indicateurs/commentaires/IndicateurCommentairesTab'
 import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetadonnees'
 import { IndicateurStatsPanel } from '@/components/indicateurs/IndicateurStatsPanel'
 import { IndicateurValeursChart } from '@/components/indicateurs/IndicateurValeursChart'
@@ -151,6 +152,7 @@ function IndicateurDetailComponent() {
         <TabsList>
           <TabsTrigger value="valeurs">Valeurs</TabsTrigger>
           <TabsTrigger value="metadonnees">Métadonnées</TabsTrigger>
+          <TabsTrigger value="commentaires">Commentaires</TabsTrigger>
         </TabsList>
 
         <TabsContent value="valeurs">
@@ -166,6 +168,10 @@ function IndicateurDetailComponent() {
 
         <TabsContent value="metadonnees">
           <IndicateurMetadonnees indicateur={indicateur} />
+        </TabsContent>
+
+        <TabsContent value="commentaires">
+          <IndicateurCommentairesTab indicateurId={id} individuId={individuId} />
         </TabsContent>
       </Tabs>
     </Page>
