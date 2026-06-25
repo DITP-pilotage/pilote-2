@@ -44,7 +44,11 @@ export function PanierContactsUtiles({ panierId }: { panierId: string }) {
                 {contact.email && (
                   <div className="flex items-center gap-2 text-sm text-text-muted">
                     <Mail size={14} className="shrink-0 text-text-subtle" />
-                    <a href={`mailto:${contact.email}`} className="hover:underline">
+                    <a
+                      href={`mailto:${contact.email}`}
+                      aria-label={`Envoyer un email à ${contact.email}`}
+                      className="hover:underline"
+                    >
                       {contact.email}
                     </a>
                   </div>
@@ -58,7 +62,7 @@ export function PanierContactsUtiles({ panierId }: { panierId: string }) {
                       rel="noopener noreferrer"
                       className="hover:underline truncate max-w-xs"
                     >
-                      {contact.url.length > 50 ? contact.url.slice(0, 50) + '…' : contact.url}
+                      {contact.url}
                     </a>
                   </div>
                 )}

@@ -5,7 +5,7 @@ export const contactUtileApiModelSchema = z.object({
   nom: z.string(),
   description: z.string().nullable(),
   telephone: z.string().nullable(),
-  email: z.string().nullable(),
+  email: z.string().email().nullable(),
   url: z.string().nullable(),
   adresse: z.string().nullable(),
 })
