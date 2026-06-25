@@ -810,8 +810,8 @@ const main = async () => {
   const panierPermissionsCount = 2
 
   // Responsables panier : ditp.admin et claire.dupont sont responsables de PAN-005.
-  const pan005 = paniersByPublicId.get('PAN-005')
-  const pan004 = paniersByPublicId.get('PAN-004')
+  const pan005 = paniersByPublicId.get('PAN-005')!
+  const pan004 = paniersByPublicId.get('PAN-004')!
   const claireDupont = await prisma.utilisateur.findUniqueOrThrow({
     where: { email: 'claire.dupont@example.com' },
     select: { id: true },
@@ -828,10 +828,8 @@ const main = async () => {
   const panierResponsablesCount = 2
 
   // ── Organismes ────────────────────────────────────────────────────────────────
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const prismaAny = prisma as any
 
-  const ditp = await prismaAny.organisme.upsert({
+  const ditp = await prisma.organisme.upsert({
     where: { id: 'a1b2c3d4-e5f6-4a7b-8c9d-e0f1a2b3c401' },
     update: {},
     create: {
@@ -840,7 +838,7 @@ const main = async () => {
     },
   })
 
-  const dinum = await prismaAny.organisme.upsert({
+  const dinum = await prisma.organisme.upsert({
     where: { id: 'a1b2c3d4-e5f6-4a7b-8c9d-e0f1a2b3c402' },
     update: {},
     create: {
@@ -851,7 +849,7 @@ const main = async () => {
 
   // ── Contacts utiles ────────────────────────────────────────────────────────────
 
-  const supportMethodo = await prismaAny.contactUtile.upsert({
+  const supportMethodo = await prisma.contactUtile.upsert({
     where: { id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d401' },
     update: {},
     create: {
@@ -867,7 +865,7 @@ const main = async () => {
     },
   })
 
-  const celluleFormation = await prismaAny.contactUtile.upsert({
+  const celluleFormation = await prisma.contactUtile.upsert({
     where: { id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d402' },
     update: {},
     create: {
@@ -880,7 +878,7 @@ const main = async () => {
     },
   })
 
-  const supportTechnique = await prismaAny.contactUtile.upsert({
+  const supportTechnique = await prisma.contactUtile.upsert({
     where: { id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d403' },
     update: {},
     create: {
@@ -892,7 +890,7 @@ const main = async () => {
     },
   })
 
-  const ouvertureDonnees = await prismaAny.contactUtile.upsert({
+  const ouvertureDonnees = await prisma.contactUtile.upsert({
     where: { id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d404' },
     update: {},
     create: {
@@ -907,25 +905,21 @@ const main = async () => {
 
   // ── Rattachements ──────────────────────────────────────────────────────────────
 
-  if (pan005) {
-    for (const contact of [supportMethodo, celluleFormation, supportTechnique, ouvertureDonnees]) {
-      await prismaAny.panierContactUtile.upsert({
-        where: { panierId_contactUtileId: { panierId: pan005.id, contactUtileId: contact.id } },
-        update: {},
-        create: { panierId: pan005.id, contactUtileId: contact.id },
-      })
-    }
-  }
-
-  if (pan004) {
-    await prismaAny.panierContactUtile.upsert({
-      where: {
-        panierId_contactUtileId: { panierId: pan004.id, contactUtileId: ouvertureDonnees.id },
-      },
+  for (const contact of [supportMethodo, celluleFormation, supportTechnique, ouvertureDonnees]) {
+    await prisma.panierContactUtile.upsert({
+      where: { panierId_contactUtileId: { panierId: pan005.id, contactUtileId: contact.id } },
       update: {},
-      create: { panierId: pan004.id, contactUtileId: ouvertureDonnees.id },
+      create: { panierId: pan005.id, contactUtileId: contact.id },
     })
   }
+
+  await prisma.panierContactUtile.upsert({
+    where: {
+      panierId_contactUtileId: { panierId: pan004.id, contactUtileId: ouvertureDonnees.id },
+    },
+    update: {},
+    create: { panierId: pan004.id, contactUtileId: ouvertureDonnees.id },
+  })
 
   const contactsUtilesCount = 4
 
