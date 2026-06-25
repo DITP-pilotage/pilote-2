@@ -47,6 +47,7 @@ export function PanierGouvernanceTab({ panierId }: { panierId: string }) {
                   </div>
                   <a
                     href={`mailto:${r.email}`}
+                    aria-label={r.email}
                     className="flex shrink-0 items-center gap-1.5 text-sm text-text-muted hover:text-text transition-colors"
                   >
                     <Mail className="size-4" aria-hidden />

@@ -8,7 +8,7 @@ import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('getPanierContactsUtiles', () => {
   it(
-    'retourne une liste vide quand le panier na aucun contact',
+    "retourne une liste vide quand le panier n'a aucun contact",
     integrationTest(async () => {
       const panVide = testPanierId()
       await fixtures.panier({ publicId: panVide, visibilite: 'PUBLIC' })
@@ -22,7 +22,7 @@ describe.concurrent('getPanierContactsUtiles', () => {
   )
 
   it(
-    'retourne tous les champs dun contact quand ils sont tous renseignés',
+    "retourne tous les champs d'un contact quand ils sont tous renseignés",
     integrationTest(async () => {
       const panComplet = testPanierId()
       await fixtures.panierContactUtile({
@@ -56,7 +56,7 @@ describe.concurrent('getPanierContactsUtiles', () => {
   )
 
   it(
-    'retourne null pour les champs absents dun contact minimal',
+    "retourne null pour les champs absents d'un contact minimal",
     integrationTest(async () => {
       const panMinimal = testPanierId()
       await fixtures.panierContactUtile({
@@ -143,7 +143,7 @@ describe.concurrent('getPanierContactsUtiles', () => {
   )
 
   it(
-    'trie les contacts dun organisme alphabétiquement par nom',
+    "trie les contacts d'un organisme alphabétiquement par nom",
     integrationTest(async () => {
       const panContactsTri = testPanierId()
       await fixtures.panier({ publicId: panContactsTri, visibilite: 'PUBLIC' })
@@ -206,7 +206,7 @@ describe.concurrent('getPanierContactsUtiles', () => {
   )
 
   it(
-    'lève une erreur si le panier nexiste pas',
+    "lève une erreur si le panier n'existe pas",
     integrationTest(async () => {
       const panInexistant = testPanierId()
       const apiKey = await fixtures.apiKey()
