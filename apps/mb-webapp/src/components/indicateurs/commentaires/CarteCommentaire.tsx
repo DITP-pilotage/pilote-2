@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu'
 import { Text } from '@/components/ui/Typography'
+import { auth } from '@/auth'
 import { clsxm } from '@/lib/clsxm'
 import { formatDateHeureFr } from '@/lib/format'
 
@@ -26,6 +27,9 @@ export function CarteCommentaire({
   onEdit: () => void
 }) {
   const brouillon = commentaire.statut === 'BROUILLON'
+  // L'édition est réservée à l'auteur (createdBy). `me.userId` et `auteurCreation.id`
+  // sont le même identifiant de principal (cf. backend), donc comparaison directe.
+  const peutModifier = commentaire.auteurCreation.id === auth.user?.userId
   return (
     <article
       className={clsxm(
@@ -35,23 +39,22 @@ export function CarteCommentaire({
     >
       <div className="mb-4 flex items-center gap-3">
         <BadgeStatut statut={commentaire.statut} />
-        {/* TODO gating : conditionner l'affichage des actions (Éditer, …) aux
-            autorisations réelles de l'utilisateur. Aujourd'hui on les montre à
-            tous et l'API renvoie 403 si non-auteur (capté par un toast). */}
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            aria-label="Actions"
-            className="ml-auto flex size-8 items-center justify-center rounded-md border border-border text-text-muted transition-colors hover:bg-surface-tinted hover:text-primary"
-          >
-            <MoreVertical className="size-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onSelect={onEdit}>
-              <Pencil />
-              Éditer
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {peutModifier && (
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              aria-label="Actions"
+              className="ml-auto flex size-8 items-center justify-center rounded-md border border-border text-text-muted transition-colors hover:bg-surface-tinted hover:text-primary"
+            >
+              <MoreVertical className="size-4" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onSelect={onEdit}>
+                <Pencil />
+                Éditer
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
 
       {indice && (

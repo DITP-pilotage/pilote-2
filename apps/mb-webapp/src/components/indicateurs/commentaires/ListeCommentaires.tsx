@@ -30,23 +30,24 @@ export function ListeCommentaires({
   individuId,
   type,
   avecMeteo,
-  commentaires,
+  brouillon,
+  publies,
   meteoParCommentaire,
 }: {
   indicateurId: string
   individuId: string
   type: IndicateurIndividuCommentaireType
   avecMeteo: boolean
-  commentaires: CommentaireApiModel[]
+  // Brouillon de l'utilisateur courant (l'API ne renvoie que le sien). Au plus un.
+  brouillon?: CommentaireApiModel | undefined
+  publies: CommentaireApiModel[]
   meteoParCommentaire: Map<string, MeteoCourante>
 }) {
   const [editionId, setEditionId] = useState<string | null>(null)
   const creer = useCreerCommentaire(indicateurId, individuId, type)
 
-  const brouillon = commentaires.find((commentaire) => commentaire.statut === 'BROUILLON')
-  const reste = commentaires.filter((commentaire) => commentaire.id !== brouillon?.id)
-  const etatEnCours = reste.find((commentaire) => commentaire.statut === 'PUBLIE')
-  const historique = reste.filter((commentaire) => commentaire.id !== etatEnCours?.id)
+  const etatEnCours = publies[0]
+  const historique = publies.slice(1)
 
   const ajouter = (
     <Button
@@ -60,7 +61,7 @@ export function ListeCommentaires({
     </Button>
   )
 
-  if (commentaires.length === 0) {
+  if (!brouillon && publies.length === 0) {
     return (
       <div className="flex flex-col gap-6">
         <EmptyState title="Aucun commentaire pour le moment." />
@@ -68,25 +69,6 @@ export function ListeCommentaires({
       </div>
     )
   }
-
-  const carteOuEditeur = (commentaire: CommentaireApiModel) =>
-    editionId === commentaire.id ? (
-      <EditeurCommentaire
-        indicateurId={indicateurId}
-        individuId={individuId}
-        type={type}
-        commentaire={commentaire}
-        avecMeteo={avecMeteo}
-        meteo={meteoParCommentaire.get(commentaire.id)}
-        onClose={() => setEditionId(null)}
-      />
-    ) : (
-      <CarteCommentaire
-        commentaire={commentaire}
-        indice={meteoParCommentaire.get(commentaire.id)?.indice}
-        onEdit={() => setEditionId(commentaire.id)}
-      />
-    )
 
   return (
     <div className="flex flex-col gap-8">
@@ -107,7 +89,23 @@ export function ListeCommentaires({
       {etatEnCours && (
         <section>
           <Intitule icon={<CheckCircle2 />}>État en cours</Intitule>
-          {carteOuEditeur(etatEnCours)}
+          {editionId === etatEnCours.id ? (
+            <EditeurCommentaire
+              indicateurId={indicateurId}
+              individuId={individuId}
+              type={type}
+              commentaire={etatEnCours}
+              avecMeteo={avecMeteo}
+              meteo={meteoParCommentaire.get(etatEnCours.id)}
+              onClose={() => setEditionId(null)}
+            />
+          ) : (
+            <CarteCommentaire
+              commentaire={etatEnCours}
+              indice={meteoParCommentaire.get(etatEnCours.id)?.indice}
+              onEdit={() => setEditionId(etatEnCours.id)}
+            />
+          )}
         </section>
       )}
 

@@ -31,7 +31,7 @@ export function useCreerCommentaire(
       createCommentaire(indicateurId, individuId, body),
     onSuccess: () => {
       void queryClient.invalidateQueries({
-        queryKey: commentairesKeys.liste(indicateurId, individuId, type),
+        queryKey: commentairesKeys.parType(indicateurId, individuId, type),
       })
       toast({ title: 'Commentaire créé.' })
     },
@@ -56,7 +56,7 @@ export function useModifierCommentaire(
     }) => updateCommentaire(commentaireId, body),
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({
-        queryKey: commentairesKeys.liste(indicateurId, individuId, type),
+        queryKey: commentairesKeys.parType(indicateurId, individuId, type),
       })
       void queryClient.invalidateQueries({
         queryKey: niveauConfianceKeys.historique(indicateurId, individuId),

@@ -12,8 +12,11 @@ export function SectionMeteoSynthese({
   indicateurId: string
   individuId: string
 }) {
-  const { data: commentaires } = useSuspenseQuery(
-    commentairesQueryOptions(indicateurId, individuId, 'CONFIANCE'),
+  const { data: publies } = useSuspenseQuery(
+    commentairesQueryOptions(indicateurId, individuId, 'CONFIANCE', 'PUBLIE'),
+  )
+  const { data: brouillons } = useSuspenseQuery(
+    commentairesQueryOptions(indicateurId, individuId, 'CONFIANCE', 'BROUILLON'),
   )
   const { data: niveaux } = useSuspenseQuery(
     niveauConfianceHistoriqueQueryOptions(indicateurId, individuId),
@@ -33,7 +36,8 @@ export function SectionMeteoSynthese({
       individuId={individuId}
       type="CONFIANCE"
       avecMeteo
-      commentaires={commentaires}
+      brouillon={brouillons[0]}
+      publies={publies}
       meteoParCommentaire={meteoParCommentaire}
     />
   )

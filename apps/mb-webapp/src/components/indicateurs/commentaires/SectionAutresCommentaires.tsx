@@ -13,8 +13,11 @@ export function SectionAutresCommentaires({
   indicateurId: string
   individuId: string
 }) {
-  const { data: commentaires } = useSuspenseQuery(
-    commentairesQueryOptions(indicateurId, individuId, 'DEFAUT'),
+  const { data: publies } = useSuspenseQuery(
+    commentairesQueryOptions(indicateurId, individuId, 'DEFAUT', 'PUBLIE'),
+  )
+  const { data: brouillons } = useSuspenseQuery(
+    commentairesQueryOptions(indicateurId, individuId, 'DEFAUT', 'BROUILLON'),
   )
 
   return (
@@ -23,7 +26,8 @@ export function SectionAutresCommentaires({
       individuId={individuId}
       type="DEFAUT"
       avecMeteo={false}
-      commentaires={commentaires}
+      brouillon={brouillons[0]}
+      publies={publies}
       meteoParCommentaire={SANS_METEO}
     />
   )
