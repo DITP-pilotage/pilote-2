@@ -44,6 +44,8 @@ export function EditeurCommentaire({
 
   const brouillon = commentaire.statut === 'BROUILLON'
   const enCours = modifier.isPending || creerMeteo.isPending || modifierMeteo.isPending
+  // Pour le type Confiance, on bloque la publication tant qu'aucune météo n'est choisie.
+  const publicationBloquee = avecMeteo && !indice
 
   // La météo n'est persistée qu'au moment de l'enregistrement (appel séparé de
   // celui du commentaire), et seulement si elle a changé.
@@ -105,9 +107,14 @@ export function EditeurCommentaire({
           Modifié le {formatDateHeureFr(commentaire.updatedAt)} par{' '}
           {libelleAuteur(commentaire.auteurModification)}
         </Text>
-        <div className="ml-auto flex gap-3">
+        <div className="ml-auto flex items-center gap-3">
           {brouillon ? (
             <>
+              {publicationBloquee && (
+                <Text variant="caption" tone="muted">
+                  Une météo est requise pour publier.
+                </Text>
+              )}
               <Button
                 variant="secondary"
                 size="sm"
@@ -121,7 +128,7 @@ export function EditeurCommentaire({
                 size="sm"
                 type="button"
                 onClick={() => void sauvegarder('PUBLIE')}
-                disabled={enCours}
+                disabled={enCours || publicationBloquee}
               >
                 <Send />
                 Publier
