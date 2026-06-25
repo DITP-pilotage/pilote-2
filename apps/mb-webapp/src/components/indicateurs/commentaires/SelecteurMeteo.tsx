@@ -8,7 +8,7 @@ export function SelecteurMeteo({
   onChange,
   disabled = false,
 }: {
-  value?: IndiceConfiance
+  value?: IndiceConfiance | undefined
   onChange: (indice: IndiceConfiance) => void
   disabled?: boolean
 }) {
