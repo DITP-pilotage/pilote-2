@@ -18,15 +18,17 @@ export function IndicateurCommentairesTab({
 
   return (
     <div className="flex flex-col gap-8">
-      <SegmentedControl
-        aria-label="Famille de commentaires"
-        value={type}
-        onValueChange={(value) => setType(value)}
-        options={[
-          { value: 'CONFIANCE', label: 'Météo & synthèse des résultats', icon: <CloudSun /> },
-          { value: 'DEFAUT', label: 'Autres commentaires', icon: <MessageSquare /> },
-        ]}
-      />
+      <div>
+        <SegmentedControl
+          aria-label="Famille de commentaires"
+          value={type}
+          onValueChange={(value) => setType(value)}
+          options={[
+            { value: 'CONFIANCE', label: 'Météo & synthèse des résultats', icon: <CloudSun /> },
+            { value: 'DEFAUT', label: 'Autres commentaires', icon: <MessageSquare /> },
+          ]}
+        />
+      </div>
 
       <Suspense fallback={<RouteLoading message="Chargement des commentaires…" />}>
         {type === 'CONFIANCE' ? (

@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/DropdownMenu'
 import { Text } from '@/components/ui/Typography'
 import { clsxm } from '@/lib/clsxm'
-import { formatDateTimeFr } from '@/lib/format'
+import { formatDateHeureFr } from '@/lib/format'
 
 export function CarteCommentaire({
   commentaire,
@@ -64,7 +64,7 @@ export function CarteCommentaire({
 
       <div className="mt-4 border-t border-border pt-3">
         <Text variant="caption" tone="muted">
-          Modifié le {formatDateTimeFr(commentaire.updatedAt)} par{' '}
+          Modifié le {formatDateHeureFr(commentaire.updatedAt)} par{' '}
           {libelleAuteur(commentaire.auteurModification)}
         </Text>
       </div>

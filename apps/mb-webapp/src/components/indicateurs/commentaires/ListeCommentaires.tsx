@@ -8,6 +8,7 @@ import {
   EditeurCommentaire,
   type MeteoCourante,
 } from '@/components/indicateurs/commentaires/EditeurCommentaire'
+import { LigneHistorique } from '@/components/indicateurs/commentaires/LigneHistorique'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Text } from '@/components/ui/Typography'
@@ -113,9 +114,13 @@ export function ListeCommentaires({
       {historique.length > 0 && (
         <section>
           <Intitule icon={<History />}>Historique</Intitule>
-          <div className="flex flex-col gap-4">
+          <div className="divide-y divide-border rounded-xl border border-border px-5">
             {historique.map((commentaire) => (
-              <div key={commentaire.id}>{carteOuEditeur(commentaire)}</div>
+              <LigneHistorique
+                key={commentaire.id}
+                commentaire={commentaire}
+                indice={meteoParCommentaire.get(commentaire.id)?.indice}
+              />
             ))}
           </div>
         </section>

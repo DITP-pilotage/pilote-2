@@ -1,6 +1,6 @@
 import { type CommentaireApiModel } from '@pilote/mb-shared/commentaire'
 import { type IndiceConfiance } from '@pilote/mb-shared/niveauConfiance'
-import { Send } from 'lucide-react'
+import { EyeOff, Send } from 'lucide-react'
 import { useState } from 'react'
 
 import { type IndicateurIndividuCommentaireType } from '@/api/commentaires'
@@ -11,7 +11,7 @@ import { SelecteurMeteo } from '@/components/indicateurs/commentaires/SelecteurM
 import { Button } from '@/components/ui/Button'
 import { Text } from '@/components/ui/Typography'
 import { clsxm } from '@/lib/clsxm'
-import { formatDateTimeFr } from '@/lib/format'
+import { formatDateHeureFr } from '@/lib/format'
 import { useModifierCommentaire } from '@/mutations/commentaires'
 import { useEnregistrerMeteo } from '@/mutations/niveauConfiance'
 
@@ -35,6 +35,7 @@ export function EditeurCommentaire({
   onClose?: (() => void) | undefined
 }) {
   const [contenu, setContenu] = useState(commentaire.contenu)
+  const [indice, setIndice] = useState<IndiceConfiance | undefined>(meteo?.indice)
   const modifier = useModifierCommentaire(indicateurId, individuId, type)
   const { creer: creerMeteo, modifier: modifierMeteo } = useEnregistrerMeteo(
     indicateurId,
@@ -42,26 +43,31 @@ export function EditeurCommentaire({
   )
 
   const brouillon = commentaire.statut === 'BROUILLON'
+  const enCours = modifier.isPending || creerMeteo.isPending || modifierMeteo.isPending
 
-  const onMeteoChange = (indice: IndiceConfiance) => {
+  // La météo n'est persistée qu'au moment de l'enregistrement (appel séparé de
+  // celui du commentaire), et seulement si elle a changé.
+  const persisterMeteo = async () => {
+    if (!avecMeteo || !indice || indice === meteo?.indice) return
     if (meteo) {
-      modifierMeteo.mutate({ niveauConfianceId: meteo.niveauId, body: { indice } })
+      await modifierMeteo.mutateAsync({ niveauConfianceId: meteo.niveauId, body: { indice } })
     } else {
-      creerMeteo.mutate({ commentaireId: commentaire.id, indice })
+      await creerMeteo.mutateAsync({ commentaireId: commentaire.id, indice })
     }
   }
 
-  const enregistrer = () =>
-    modifier.mutate(
-      { commentaireId: commentaire.id, body: { contenu } },
-      { onSuccess: () => onClose?.() },
-    )
-
-  const publier = () =>
-    modifier.mutate(
-      { commentaireId: commentaire.id, body: { contenu, statut: 'PUBLIE' } },
-      { onSuccess: () => onClose?.() },
-    )
+  const sauvegarder = async (statut?: 'PUBLIE') => {
+    try {
+      await modifier.mutateAsync({
+        commentaireId: commentaire.id,
+        body: statut ? { contenu, statut } : { contenu },
+      })
+      await persisterMeteo()
+      onClose?.()
+    } catch {
+      // Les erreurs sont déjà signalées par les toasts des mutations.
+    }
+  }
 
   return (
     <article
@@ -70,8 +76,14 @@ export function EditeurCommentaire({
         brouillon ? 'border-l-warning' : 'border-l-primary',
       )}
     >
-      <div className="mb-4 flex items-center gap-3">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <BadgeStatut statut={commentaire.statut} />
+        {brouillon && (
+          <span className="inline-flex items-center gap-1.5 text-xs text-text-muted">
+            <EyeOff className="size-3.5" />
+            Seul vous pouvez voir ce commentaire tant qu'il n'est pas publié.
+          </span>
+        )}
       </div>
 
       {avecMeteo && (
@@ -79,11 +91,7 @@ export function EditeurCommentaire({
           <Text variant="caption" weight="semibold" tone="muted" className="mb-2 block">
             Météo
           </Text>
-          <SelecteurMeteo
-            value={meteo?.indice}
-            onChange={onMeteoChange}
-            disabled={creerMeteo.isPending || modifierMeteo.isPending}
-          />
+          <SelecteurMeteo value={indice} onChange={setIndice} disabled={enCours} />
         </div>
       )}
 
@@ -94,7 +102,7 @@ export function EditeurCommentaire({
 
       <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-border pt-4">
         <Text variant="caption" tone="muted">
-          Modifié le {formatDateTimeFr(commentaire.updatedAt)} par{' '}
+          Modifié le {formatDateHeureFr(commentaire.updatedAt)} par{' '}
           {libelleAuteur(commentaire.auteurModification)}
         </Text>
         <div className="ml-auto flex gap-3">
@@ -104,12 +112,17 @@ export function EditeurCommentaire({
                 variant="secondary"
                 size="sm"
                 type="button"
-                onClick={enregistrer}
-                disabled={modifier.isPending}
+                onClick={() => void sauvegarder()}
+                disabled={enCours}
               >
                 Enregistrer
               </Button>
-              <Button size="sm" type="button" onClick={publier} disabled={modifier.isPending}>
+              <Button
+                size="sm"
+                type="button"
+                onClick={() => void sauvegarder('PUBLIE')}
+                disabled={enCours}
+              >
                 <Send />
                 Publier
               </Button>
@@ -119,7 +132,7 @@ export function EditeurCommentaire({
               <Button variant="tertiary" size="sm" type="button" onClick={() => onClose?.()}>
                 Annuler
               </Button>
-              <Button size="sm" type="button" onClick={enregistrer} disabled={modifier.isPending}>
+              <Button size="sm" type="button" onClick={() => void sauvegarder()} disabled={enCours}>
                 Enregistrer
               </Button>
             </>

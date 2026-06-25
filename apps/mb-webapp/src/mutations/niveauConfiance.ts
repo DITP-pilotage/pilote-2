@@ -17,12 +17,11 @@ export function useEnregistrerMeteo(indicateurId: string, individuId: string) {
       queryKey: niveauConfianceKeys.historique(indicateurId, individuId),
     })
 
+  // Pas de toast de succès : la météo est persistée au moment de l'enregistrement
+  // du commentaire, qui porte déjà le toast de succès.
   const creer = useMutation({
     mutationFn: (body: CreerNiveauConfianceBody) => createNiveauConfiance(body),
-    onSuccess: () => {
-      void invalider()
-      toast({ title: 'Météo enregistrée.' })
-    },
+    onSuccess: () => void invalider(),
     onError: () => toast({ title: 'Météo non enregistrée.', variant: 'error' }),
   })
 
@@ -34,10 +33,7 @@ export function useEnregistrerMeteo(indicateurId: string, individuId: string) {
       niveauConfianceId: string
       body: ModifierNiveauConfianceBody
     }) => updateNiveauConfiance(niveauConfianceId, body),
-    onSuccess: () => {
-      void invalider()
-      toast({ title: 'Météo mise à jour.' })
-    },
+    onSuccess: () => void invalider(),
     onError: () => toast({ title: 'Météo non mise à jour.', variant: 'error' }),
   })
 
