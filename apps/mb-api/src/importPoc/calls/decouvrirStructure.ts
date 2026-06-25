@@ -14,10 +14,13 @@ const colonneDateSchema = z.object({
     .enum(['iso', 'fr-libre', 'quarter', 'annee'])
     .describe(
       "Type de format détecté pour la date. " +
-        "'iso' = YYYY-MM-DD strict. " +
-        "'fr-libre' = texte libre français (`1er janvier 2025`, `janvier 2026`, `01/01/2025`, etc.). " +
-        "'quarter' = trimestre (`Q1 2023`, `T1 2023`, `1er trimestre 2023`). " +
-        "'annee' = année seule (`2023`).",
+        "'iso' = YYYY-MM-DD strict (toutes les cellules suivent ce format). " +
+        "'annee' = année seule, toutes les cellules sont au format `2023`. " +
+        "'quarter' = trimestre, toutes les cellules sont du type `Q1 2023` / `T1 2023` / `1er trimestre 2023`. " +
+        "'fr-libre' = texte libre français ou MIX de formats dans la même colonne " +
+        "(`1er janvier 2025`, `janvier 2026`, `01/01/2025`, `01/2023`, `2023-01`, voire `2023` ou `Q1 2023` mélangés). " +
+        "Choisis 'fr-libre' dès que la colonne contient au moins un format autre que ISO pur, " +
+        "ou si tu vois plusieurs conventions mélangées.",
     ),
 })
 
