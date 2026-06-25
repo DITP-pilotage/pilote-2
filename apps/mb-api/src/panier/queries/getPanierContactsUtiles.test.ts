@@ -81,21 +81,23 @@ describe.concurrent('getPanierContactsUtiles', () => {
     'regroupe plusieurs contacts du même organisme dans un seul item',
     integrationTest(async () => {
       const panGroupé = testPanierId()
-      const panierRow = await fixtures.panier({ publicId: panGroupé, visibilite: 'PUBLIC' })
+      await fixtures.panier({ publicId: panGroupé, visibilite: 'PUBLIC' })
       const org = await fixtures.organisme({ nom: 'Organisme Unique' })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const prismaDb = (await import('@/framework/persistence/dbStore')).db() as any
-      const c1 = await prismaDb.contactUtile.create({
-        data: { organismeId: org.id, nom: 'Alpha' },
+      const c1 = await fixtures.contactUtile({
+        nom: 'Alpha',
+        organisme: { id: org.id, nom: org.nom },
       })
-      const c2 = await prismaDb.contactUtile.create({
-        data: { organismeId: org.id, nom: 'Beta' },
+      const c2 = await fixtures.contactUtile({
+        nom: 'Beta',
+        organisme: { id: org.id, nom: org.nom },
       })
-      await prismaDb.panierContactUtile.createMany({
-        data: [
-          { panierId: panierRow.id, contactUtileId: c1.id },
-          { panierId: panierRow.id, contactUtileId: c2.id },
-        ],
+      await fixtures.panierContactUtile({
+        panier: { publicId: panGroupé },
+        contactUtile: { id: c1.id },
+      })
+      await fixtures.panierContactUtile({
+        panier: { publicId: panGroupé },
+        contactUtile: { id: c2.id },
       })
       const apiKey = await fixtures.apiKey()
 
@@ -112,22 +114,24 @@ describe.concurrent('getPanierContactsUtiles', () => {
     'retourne plusieurs organismes triés alphabétiquement',
     integrationTest(async () => {
       const panTri = testPanierId()
-      const panierRow = await fixtures.panier({ publicId: panTri, visibilite: 'PUBLIC' })
+      await fixtures.panier({ publicId: panTri, visibilite: 'PUBLIC' })
       const orgZ = await fixtures.organisme({ nom: 'Zzz Organisation' })
       const orgA = await fixtures.organisme({ nom: 'Aaa Organisation' })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const prismaDb = (await import('@/framework/persistence/dbStore')).db() as any
-      const cZ = await prismaDb.contactUtile.create({
-        data: { organismeId: orgZ.id, nom: 'Contact Z' },
+      const cZ = await fixtures.contactUtile({
+        nom: 'Contact Z',
+        organisme: { id: orgZ.id, nom: orgZ.nom },
       })
-      const cA = await prismaDb.contactUtile.create({
-        data: { organismeId: orgA.id, nom: 'Contact A' },
+      const cA = await fixtures.contactUtile({
+        nom: 'Contact A',
+        organisme: { id: orgA.id, nom: orgA.nom },
       })
-      await prismaDb.panierContactUtile.createMany({
-        data: [
-          { panierId: panierRow.id, contactUtileId: cZ.id },
-          { panierId: panierRow.id, contactUtileId: cA.id },
-        ],
+      await fixtures.panierContactUtile({
+        panier: { publicId: panTri },
+        contactUtile: { id: cZ.id },
+      })
+      await fixtures.panierContactUtile({
+        panier: { publicId: panTri },
+        contactUtile: { id: cA.id },
       })
       const apiKey = await fixtures.apiKey()
 
@@ -142,17 +146,23 @@ describe.concurrent('getPanierContactsUtiles', () => {
     'trie les contacts dun organisme alphabétiquement par nom',
     integrationTest(async () => {
       const panContactsTri = testPanierId()
-      const panierRow = await fixtures.panier({ publicId: panContactsTri, visibilite: 'PUBLIC' })
+      await fixtures.panier({ publicId: panContactsTri, visibilite: 'PUBLIC' })
       const org = await fixtures.organisme({ nom: 'Organisme Tri' })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const prismaDb = (await import('@/framework/persistence/dbStore')).db() as any
-      const cZ = await prismaDb.contactUtile.create({ data: { organismeId: org.id, nom: 'Zebra' } })
-      const cA = await prismaDb.contactUtile.create({ data: { organismeId: org.id, nom: 'Alpha' } })
-      await prismaDb.panierContactUtile.createMany({
-        data: [
-          { panierId: panierRow.id, contactUtileId: cZ.id },
-          { panierId: panierRow.id, contactUtileId: cA.id },
-        ],
+      const cZ = await fixtures.contactUtile({
+        nom: 'Zebra',
+        organisme: { id: org.id, nom: org.nom },
+      })
+      const cA = await fixtures.contactUtile({
+        nom: 'Alpha',
+        organisme: { id: org.id, nom: org.nom },
+      })
+      await fixtures.panierContactUtile({
+        panier: { publicId: panContactsTri },
+        contactUtile: { id: cZ.id },
+      })
+      await fixtures.panierContactUtile({
+        panier: { publicId: panContactsTri },
+        contactUtile: { id: cA.id },
       })
       const apiKey = await fixtures.apiKey()
 
@@ -212,19 +222,20 @@ describe.concurrent('getPanierContactsUtiles', () => {
     integrationTest(async () => {
       const pan1 = testPanierId()
       const pan2 = testPanierId()
-      const panierRow1 = await fixtures.panier({ publicId: pan1, visibilite: 'PUBLIC' })
-      const panierRow2 = await fixtures.panier({ publicId: pan2, visibilite: 'PUBLIC' })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const prismaDb = (await import('@/framework/persistence/dbStore')).db() as any
+      await fixtures.panier({ publicId: pan1, visibilite: 'PUBLIC' })
+      await fixtures.panier({ publicId: pan2, visibilite: 'PUBLIC' })
       const org = await fixtures.organisme({ nom: 'Organisme Partagé' })
-      const contact = await prismaDb.contactUtile.create({
-        data: { organismeId: org.id, nom: 'Contact Partagé' },
+      const contact = await fixtures.contactUtile({
+        nom: 'Contact Partagé',
+        organisme: { id: org.id, nom: org.nom },
       })
-      await prismaDb.panierContactUtile.createMany({
-        data: [
-          { panierId: panierRow1.id, contactUtileId: contact.id },
-          { panierId: panierRow2.id, contactUtileId: contact.id },
-        ],
+      await fixtures.panierContactUtile({
+        panier: { publicId: pan1 },
+        contactUtile: { id: contact.id },
+      })
+      await fixtures.panierContactUtile({
+        panier: { publicId: pan2 },
+        contactUtile: { id: contact.id },
       })
       const apiKey = await fixtures.apiKey()
 
