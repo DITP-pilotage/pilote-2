@@ -7,10 +7,7 @@ import { logger } from '@/framework/logger/logger'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { ErrorApiModelSchema, erreur400 } from '@/framework/openapi/responses'
 import { appliquerPlan } from '@/importPoc/appliquerPlan'
-import {
-  decouverteOutputSchema,
-  decouvrirStructure,
-} from '@/importPoc/calls/decouvrirStructure'
+import { decouverteOutputSchema, decouvrirStructure } from '@/importPoc/calls/decouvrirStructure'
 import { resoudreIndividus } from '@/importPoc/calls/resoudreIndividus'
 import { safeStringify } from '@/importPoc/helpers/safeStringify'
 import { listIndividusForIndicateur } from '@/importPoc/queries/listIndividusForIndicateur'
@@ -20,7 +17,7 @@ const MAX_ROWS = 500
 
 const rowSchema = z
   .record(z.string(), z.unknown())
-  .describe("Ligne brute du fichier (clé = en-tête, valeur = cellule).")
+  .describe('Ligne brute du fichier (clé = en-tête, valeur = cellule).')
 
 const normaliserBodySchema = z.object({
   rows: z
@@ -89,10 +86,10 @@ const normaliserRoute = createRoute({
   summary: "POC v2 — Normaliser un fichier vers le format batch d'un indicateur",
   description:
     "POC d'import intelligent. Reçoit des lignes brutes (CSV/Excel parsé côté client) et utilise Albert " +
-    "en 2 passes pour produire le payload batch :\n" +
-    "1. Découverte de structure → plan (long/pivot, colonnes, formats).\n" +
-    "2. Résolution des individus (libellé → publicId) via tool call avec schema dynamique.\n" +
-    "Puis exécution déterministe en code (parsing dates/nombres). " +
+    'en 2 passes pour produire le payload batch :\n' +
+    '1. Découverte de structure → plan (long/pivot, colonnes, formats).\n' +
+    '2. Résolution des individus (libellé → publicId) via tool call avec schema dynamique.\n' +
+    'Puis exécution déterministe en code (parsing dates/nombres). ' +
     "À ce stade le POC n'écrit rien en base — il restitue le plan + items + warnings.",
   middleware: [requireAuthentication],
   request: {
@@ -228,8 +225,7 @@ importPocRoutes.openapi(normaliserRoute, async (context) => {
         context,
         error: {
           code: 'RESOLUTION_ECHEC',
-          message:
-            "Albert n'a pas réussi à fournir un mapping valide après plusieurs tentatives.",
+          message: "Albert n'a pas réussi à fournir un mapping valide après plusieurs tentatives.",
           ...(error.derniereErreur ? { details: error.derniereErreur } : {}),
         },
         schema: ErrorApiModelSchema,

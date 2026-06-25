@@ -4,9 +4,7 @@ import { safeStringify } from '@/importPoc/helpers/safeStringify'
 
 export type FormatDate = 'iso' | 'fr-libre' | 'quarter' | 'annee'
 
-export type ParseDateResult =
-  | { ok: true; iso: string }
-  | { ok: false; raison: string }
+export type ParseDateResult = { ok: true; iso: string } | { ok: false; raison: string }
 
 const ISO_REGEX = /^\d{4}-\d{2}-\d{2}$/
 const ANNEE_REGEX = /^(\d{4})$/

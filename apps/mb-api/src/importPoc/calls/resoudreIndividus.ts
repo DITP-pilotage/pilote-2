@@ -50,10 +50,10 @@ const makeResolutionToolSchema = ({
     .string()
     .describe(
       "publicId d'un individu présent dans la liste fournie. " +
-        "Ne JAMAIS inventer un publicId — utilise uniquement ceux fournis en contexte.",
+        'Ne JAMAIS inventer un publicId — utilise uniquement ceux fournis en contexte.',
     )
     .refine((value) => publicIdsValides.has(value), {
-      message: "publicId inconnu — doit appartenir à la liste fournie.",
+      message: 'publicId inconnu — doit appartenir à la liste fournie.',
     })
 
   return z.object({
@@ -65,8 +65,8 @@ const makeResolutionToolSchema = ({
         }),
       )
       .describe(
-        "Liste des libellés que tu as su rattacher avec confiance à un individu connu. " +
-          "Un même libellé ne doit pas apparaître plusieurs fois.",
+        'Liste des libellés que tu as su rattacher avec confiance à un individu connu. ' +
+          'Un même libellé ne doit pas apparaître plusieurs fois.',
       ),
     nonResolus: z
       .array(
@@ -76,7 +76,7 @@ const makeResolutionToolSchema = ({
             .string()
             .describe(
               "Phrase courte en français : pourquoi tu n'as pas pu rattacher ce libellé " +
-                "(ambiguïté, libellé inconnu, manque de contexte, etc.).",
+                '(ambiguïté, libellé inconnu, manque de contexte, etc.).',
             ),
         }),
       )
@@ -117,15 +117,15 @@ const validerCouverture = ({
 
 const SYSTEM_PROMPT =
   "Tu reçois une liste de libellés bruts (libellésSources) provenant d'une colonne d'un fichier " +
-  "de données téléversé. Ces libellés font référence à des individus connus (territoires, entités).\n" +
-  "\n" +
-  "Règles strictes :\n" +
+  'de données téléversé. Ces libellés font référence à des individus connus (territoires, entités).\n' +
+  '\n' +
+  'Règles strictes :\n' +
   "- N'invente JAMAIS un publicId. Seuls les publicId présents dans la liste fournie sont autorisés.\n" +
   "- Recopie EXACTEMENT chaque libelleSource tel qu'apparu dans la liste (pas de reformulation).\n" +
-  "- Chaque libelleSource doit apparaître exactement une fois dans mapping OU dans nonResolus.\n" +
-  "- Utilise les métadonnées (codeInsee notamment) pour désambiguïser.\n" +
-  "- Pour les abréviations courantes (IDF, Bdr, P-de-D, etc.), résous SI tu es certain ; sinon non résolu.\n" +
-  "\n" +
+  '- Chaque libelleSource doit apparaître exactement une fois dans mapping OU dans nonResolus.\n' +
+  '- Utilise les métadonnées (codeInsee notamment) pour désambiguïser.\n' +
+  '- Pour les abréviations courantes (IDF, Bdr, P-de-D, etc.), résous SI tu es certain ; sinon non résolu.\n' +
+  '\n' +
   "Quand tu as terminé, appelle l'outil `enregistrerMapping` avec ta proposition.\n" +
   "Si l'outil te signale des erreurs, corrige et rappelle-le."
 
@@ -187,8 +187,8 @@ export const resoudreIndividus = ({
       tools: {
         enregistrerMapping: tool({
           description:
-            "Enregistre la résolution proposée. Renvoie ok=true si la couverture est complète " +
-            "et sans doublon, sinon renvoie la liste des erreurs à corriger.",
+            'Enregistre la résolution proposée. Renvoie ok=true si la couverture est complète ' +
+            'et sans doublon, sinon renvoie la liste des erreurs à corriger.',
           inputSchema,
           // eslint-disable-next-line @typescript-eslint/require-await -- l'AI SDK attend une fonction async
           execute: async ({ mapping, nonResolus }) => {
@@ -212,8 +212,8 @@ export const resoudreIndividus = ({
                 ok: false as const,
                 ...erreurs,
                 consigne:
-                  "Re-appelle `enregistrerMapping` avec un mapping/nonResolus couvrant EXACTEMENT " +
-                  "tous les libellés fournis, sans doublon.",
+                  'Re-appelle `enregistrerMapping` avec un mapping/nonResolus couvrant EXACTEMENT ' +
+                  'tous les libellés fournis, sans doublon.',
               }
             }
             derniereTentative = { mapping, nonResolus }
@@ -246,7 +246,10 @@ export const resoudreIndividus = ({
           outputTokens: result.usage.outputTokens,
           succes: derniereTentative !== null,
           ...(derniereTentative
-            ? { nbMappesFinal: derniereTentative.mapping.length, nbNonResolusFinal: derniereTentative.nonResolus.length }
+            ? {
+                nbMappesFinal: derniereTentative.mapping.length,
+                nbNonResolusFinal: derniereTentative.nonResolus.length,
+              }
             : {}),
         },
         'Albert call 2 (résolution) — fin',
@@ -266,7 +269,8 @@ export const resoudreIndividus = ({
       return { type: 'ALBERT_UNAVAILABLE', cause }
     },
   ).andThen(() => {
-    if (derniereTentative) return okAsync<ResolutionResult, ResoudreIndividusError>(derniereTentative)
+    if (derniereTentative)
+      return okAsync<ResolutionResult, ResoudreIndividusError>(derniereTentative)
     return errAsync<ResolutionResult, ResoudreIndividusError>({
       type: 'RESOLUTION_ECHEC',
       derniereErreur,

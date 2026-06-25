@@ -52,8 +52,7 @@ const parseCsv = async (file: File): Promise<Array<Record<string, unknown>>> => 
       header: true,
       skipEmptyLines: true,
       complete: (result) => resolve(result.data),
-      error: (cause: unknown) =>
-        reject(cause instanceof Error ? cause : new Error(String(cause))),
+      error: (cause: unknown) => reject(cause instanceof Error ? cause : new Error(String(cause))),
     })
   })
 }
@@ -78,7 +77,9 @@ const parseFile = async (file: File): Promise<ParsedFichier> => {
     const rows = await parseExcel(file)
     return { nomFichier: file.name, rows, source: 'excel' }
   }
-  throw new Error(`Format de fichier non reconnu (extensions supportées : .csv, .tsv, .txt, .xlsx, .xls, .ods).`)
+  throw new Error(
+    `Format de fichier non reconnu (extensions supportées : .csv, .tsv, .txt, .xlsx, .xls, .ods).`,
+  )
 }
 
 const formatCellule = (cellule: unknown): string => {
@@ -115,8 +116,13 @@ function ImportPocComponent() {
   const [parseError, setParseError] = useState<string | null>(null)
 
   const mutation = useMutation({
-    mutationFn: ({ rows, nomFichier }: { rows: Array<Record<string, unknown>>; nomFichier: string }) =>
-      normaliserFichierPoc({ indicateurId: id, rows, nomFichier }),
+    mutationFn: ({
+      rows,
+      nomFichier,
+    }: {
+      rows: Array<Record<string, unknown>>
+      nomFichier: string
+    }) => normaliserFichierPoc({ indicateurId: id, rows, nomFichier }),
   })
 
   const onFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -302,8 +308,8 @@ function ResultatNormalisation({
             {resultat.warnings.map((warning, index) => (
               <li key={index} className="flex flex-col gap-0.5">
                 <span>
-                  <code className="rounded bg-surface px-1.5 py-0.5 text-xs">{warning.code}</code>{' '}
-                  — {warning.message}
+                  <code className="rounded bg-surface px-1.5 py-0.5 text-xs">{warning.code}</code> —{' '}
+                  {warning.message}
                 </span>
                 {(warning.ligneSource !== undefined ||
                   warning.colonneSource ||
@@ -381,9 +387,7 @@ function ResultatNormalisation({
                   <th className="border-b border-border px-3 py-2 text-left font-semibold">
                     Individu
                   </th>
-                  <th className="border-b border-border px-3 py-2 text-left font-semibold">
-                    Date
-                  </th>
+                  <th className="border-b border-border px-3 py-2 text-left font-semibold">Date</th>
                   <th className="border-b border-border px-3 py-2 text-right font-semibold">
                     Valeur
                   </th>
@@ -447,8 +451,7 @@ function PlanInspecteur({ plan }: { plan: Plan }) {
             <ul className="ml-4 mt-1 list-disc space-y-0.5 text-xs">
               {plan.colonnesPivot.map((colonne) => (
                 <li key={colonne.nom}>
-                  <code className="rounded bg-surface px-1.5 py-0.5">{colonne.nom}</code>{' '}
-                  →{' '}
+                  <code className="rounded bg-surface px-1.5 py-0.5">{colonne.nom}</code> →{' '}
                   <code className="rounded bg-surface px-1.5 py-0.5">{colonne.dateIso}</code>
                 </li>
               ))}

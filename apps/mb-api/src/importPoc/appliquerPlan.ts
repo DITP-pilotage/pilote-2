@@ -72,7 +72,7 @@ export const appliquerPlan = ({
 
     if (!libellesDejaSignales.has(libelle)) {
       libellesDejaSignales.add(libelle)
-      const raison = libellesNonResolus.get(libelle) ?? "Libellé non couvert par la résolution."
+      const raison = libellesNonResolus.get(libelle) ?? 'Libellé non couvert par la résolution.'
       warnings.push({
         code: 'INDIVIDU_NON_RESOLU',
         message: `« ${libelle} » : ${raison}`,
@@ -144,7 +144,11 @@ export const appliquerPlan = ({
 
     for (const colonnePivot of plan.colonnesPivot) {
       const valeurBrute = row[colonnePivot.nom]
-      if (valeurBrute === null || valeurBrute === undefined || safeStringify(valeurBrute).trim() === '') {
+      if (
+        valeurBrute === null ||
+        valeurBrute === undefined ||
+        safeStringify(valeurBrute).trim() === ''
+      ) {
         // Cellule vide en pivot : silencieux (un fichier pivot a souvent des trous).
         continue
       }

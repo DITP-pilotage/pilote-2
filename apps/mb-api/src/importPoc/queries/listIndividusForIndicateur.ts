@@ -9,7 +9,9 @@ export const listIndividusForIndicateur = (
 ): ResultAsync<IndividuPourImport[], never> =>
   ResultAsync.fromSafePromise(
     db().individu.findMany({
-      where: { referentiel: { indicateurs: { some: { indicateur: { publicId: indicateurPublicId } } } } },
+      where: {
+        referentiel: { indicateurs: { some: { indicateur: { publicId: indicateurPublicId } } } },
+      },
       include: { referentiel: true },
       orderBy: { publicId: 'asc' },
     }),

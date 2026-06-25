@@ -1,8 +1,6 @@
 import { safeStringify } from '@/importPoc/helpers/safeStringify'
 
-export type ParseNombreResult =
-  | { ok: true; valeur: number }
-  | { ok: false; raison: string }
+export type ParseNombreResult = { ok: true; valeur: number } | { ok: false; raison: string }
 
 // POC : on assume locale FR. trim + virgule → point + Number().
 // Pas de gestion des séparateurs de milliers, suffixes, parenthèses.
