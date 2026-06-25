@@ -24,14 +24,14 @@ export function SelecteurMeteo({
             aria-pressed={actif}
             onClick={() => onChange(indice)}
             className={clsxm(
-              'inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition-colors',
+              'inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold leading-none transition-colors',
               'disabled:cursor-not-allowed disabled:opacity-60',
               actif
                 ? 'border-primary-tinted bg-primary-tinted text-primary'
                 : 'border-border bg-surface text-text-muted hover:border-border-strong',
             )}
           >
-            <Icon className="size-5" />
+            <Icon className="size-5 shrink-0" />
             {label}
           </button>
         )

@@ -19,8 +19,8 @@ export function LigneHistorique({
     <div className="py-4">
       <div className="mb-2 flex items-center gap-3">
         {meteo && (
-          <span className="inline-flex items-center gap-1.5 text-sm font-medium text-primary">
-            <meteo.Icon className="size-4" />
+          <span className="inline-flex items-center gap-1.5 text-sm font-medium leading-none text-primary">
+            <meteo.Icon className="size-4 shrink-0" />
             {meteo.label}
           </span>
         )}
