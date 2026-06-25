@@ -26,15 +26,6 @@ export const getPanierContactsUtiles = (
           contacts: {
             where: { paniers: { some: { panierId } } },
             orderBy: { nom: 'asc' },
-            select: {
-              id: true,
-              nom: true,
-              description: true,
-              telephone: true,
-              email: true,
-              url: true,
-              adresse: true,
-            },
           },
         },
       }),
