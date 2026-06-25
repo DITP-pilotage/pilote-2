@@ -46,6 +46,12 @@
   --color-accent-rouge: #c9191e;
   --color-accent-sable: #fbe7c6;
 
+  /* Statuts (sémantique DSFR) */
+  --color-success: #18753c;
+  --color-success-tinted: #e3fbe9;
+  --color-warning: #b34000;
+  --color-warning-tinted: #fff4e6;
+
   /* Display type scale */
   --text-display-xl: 4.5rem; /* 72px */
   --text-display-xl--line-height: 1.05;

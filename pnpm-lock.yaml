@@ -263,6 +263,27 @@ importers:
       '@tanstack/react-router-devtools':
         specifier: ^1.166.13
         version: 1.166.13(@tanstack/react-router@1.168.26(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(@tanstack/router-core@1.168.18)(csstype@3.2.3)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@tiptap/core':
+        specifier: 3.22.3
+        version: 3.22.3(@tiptap/pm@3.22.3)
+      '@tiptap/extension-link':
+        specifier: 3.22.3
+        version: 3.22.3(@tiptap/core@3.22.3(@tiptap/pm@3.22.3))(@tiptap/pm@3.22.3)
+      '@tiptap/extension-placeholder':
+        specifier: 3.22.3
+        version: 3.22.3(@tiptap/extensions@3.22.3(@tiptap/core@3.22.3(@tiptap/pm@3.22.3))(@tiptap/pm@3.22.3))
+      '@tiptap/extension-underline':
+        specifier: 3.22.3
+        version: 3.22.3(@tiptap/core@3.22.3(@tiptap/pm@3.22.3))
+      '@tiptap/pm':
+        specifier: 3.22.3
+        version: 3.22.3
+      '@tiptap/react':
+        specifier: 3.22.3
+        version: 3.22.3(@floating-ui/dom@1.7.6)(@tiptap/core@3.22.3(@tiptap/pm@3.22.3))(@tiptap/pm@3.22.3)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      '@tiptap/starter-kit':
+        specifier: 3.22.3
+        version: 3.22.3
       '@yornaath/batshit':
         specifier: ^0.14.0
         version: 0.14.0
@@ -13308,7 +13329,7 @@ snapshots:
       obug: 2.1.1
       std-env: 4.1.0
       tinyrainbow: 3.1.0
-      vitest: 4.1.4(@opentelemetry/api@1.9.0)(@types/node@22.19.17)(@vitest/coverage-v8@4.1.4)(jsdom@29.1.0(@noble/hashes@1.8.0))(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(vite@8.0.10(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.78.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.8.3))
+      vitest: 4.1.4(@opentelemetry/api@1.9.0)(@types/node@22.19.17)(@vitest/coverage-v8@4.1.4)(jsdom@29.0.2(@noble/hashes@1.8.0))(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(vite@8.0.10(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.78.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.8.3))
 
   '@vitest/eslint-plugin@1.6.15(@typescript-eslint/eslint-plugin@8.58.2(@typescript-eslint/parser@8.58.2(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3))(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)(vitest@4.1.4)':
     dependencies:
