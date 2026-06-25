@@ -6,7 +6,14 @@ import { useMemo, useState } from 'react'
 import * as XLSX from 'xlsx'
 import { z } from 'zod'
 
-import { normaliserFichierPoc, type NormaliserResponse } from '@/api/importPoc'
+import {
+  NormaliserError,
+  normaliserFichierPoc,
+  type ItemNormalise,
+  type NormaliserResponse,
+  type Plan,
+  type Resolution,
+} from '@/api/importPoc'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { BackLink } from '@/components/ui/BackLink'
@@ -82,11 +89,9 @@ const formatCellule = (cellule: unknown): string => {
   return JSON.stringify(cellule)
 }
 
-const itemsToCsv = (items: NormaliserResponse['items']): string => {
+const itemsToCsv = (items: ReadonlyArray<ItemNormalise>): string => {
   const header = 'individu,date,valeur'
-  const lignes = items.map(
-    (item) => `${item.individu},${item.date},${item.valeur}`,
-  )
+  const lignes = items.map((item) => `${item.individu},${item.date},${item.valeur}`)
   return [header, ...lignes].join('\n')
 }
 
@@ -229,17 +234,35 @@ function ImportPocComponent() {
         >
           {mutation.isPending ? 'Normalisation en cours…' : 'Lancer la normalisation'}
         </Button>
-        {mutation.isError && (
-          <Text className="text-red-600">
-            Erreur :{' '}
-            {mutation.error instanceof Error ? mutation.error.message : 'inattendue'}
-          </Text>
-        )}
+        {mutation.isError && <ErreurNormalisation cause={mutation.error} />}
       </section>
 
-      {mutation.data && <ResultatNormalisation resultat={mutation.data} indicateurNom={indicateur.nom} />}
+      {mutation.data && (
+        <ResultatNormalisation resultat={mutation.data} indicateurNom={indicateur.nom} />
+      )}
     </Page>
   )
+}
+
+function ErreurNormalisation({ cause }: { cause: unknown }) {
+  if (cause instanceof NormaliserError) {
+    const { code, message, details } = cause.payload
+    return (
+      <div className="space-y-2 rounded-md border border-red-300 bg-red-50 p-4 text-red-900">
+        <div className="flex items-center gap-2">
+          <code className="rounded bg-white px-1.5 py-0.5 text-xs font-semibold">{code}</code>
+          <span className="text-sm">{message}</span>
+        </div>
+        {details ? (
+          <pre className="overflow-auto rounded bg-white p-2 text-xs">
+            {JSON.stringify(details, null, 2)}
+          </pre>
+        ) : null}
+      </div>
+    )
+  }
+  const message = cause instanceof Error ? cause.message : 'Erreur inattendue.'
+  return <Text className="text-red-600">Erreur : {message}</Text>
 }
 
 function ResultatNormalisation({
@@ -258,13 +281,17 @@ function ResultatNormalisation({
         3. Résultat
       </Heading>
 
+      <PlanInspecteur plan={resultat.plan} />
+
       <div className="grid gap-3 sm:grid-cols-5">
         <Stat label="Lignes du fichier" value={resultat.rapport.totalLignes} />
-        <Stat label="Extraits par Albert" value={resultat.rapport.totalItemsExtraits} />
-        <Stat label="Retenus" value={resultat.rapport.totalItemsRetenus} highlight />
-        <Stat label="Confiance basse" value={resultat.rapport.totalItemsBasseConfiance} />
-        <Stat label="Ignorés" value={resultat.rapport.totalItemsIgnores} />
+        <Stat label="Libellés distincts" value={resultat.rapport.totalLibellesSources} />
+        <Stat label="Mappés" value={resultat.rapport.totalLibellesMappes} highlight />
+        <Stat label="Non résolus" value={resultat.rapport.totalLibellesNonResolus} />
+        <Stat label="Items produits" value={resultat.rapport.totalItemsProduits} highlight />
       </div>
+
+      <ResolutionInspecteur resolution={resultat.resolution} />
 
       {resultat.warnings.length > 0 && (
         <div className="space-y-2 rounded-md border border-border bg-surface-tinted p-4">
@@ -279,12 +306,12 @@ function ResultatNormalisation({
                   — {warning.message}
                 </span>
                 {(warning.ligneSource !== undefined ||
-                  warning.publicIdRetenu ||
-                  warning.score !== undefined) && (
+                  warning.colonneSource ||
+                  warning.libelleSource) && (
                   <span className="text-xs text-text-muted">
                     {warning.ligneSource !== undefined && `ligne #${warning.ligneSource} `}
-                    {warning.publicIdRetenu && `→ ${warning.publicIdRetenu} `}
-                    {warning.score !== undefined && `(score ${warning.score})`}
+                    {warning.colonneSource && `colonne « ${warning.colonneSource} » `}
+                    {warning.libelleSource && `libellé « ${warning.libelleSource} »`}
                   </span>
                 )}
               </li>
@@ -382,6 +409,122 @@ function ResultatNormalisation({
         )}
       </div>
     </section>
+  )
+}
+
+function PlanInspecteur({ plan }: { plan: Plan }) {
+  return (
+    <details className="rounded-md border border-border bg-surface-tinted p-4" open>
+      <summary className="cursor-pointer font-semibold">
+        Plan reconnu par Albert ({plan.layout})
+      </summary>
+      <div className="mt-3 space-y-2 text-sm">
+        <div>
+          <strong>Layout :</strong>{' '}
+          <code className="rounded bg-surface px-1.5 py-0.5 text-xs">{plan.layout}</code>
+        </div>
+        <div>
+          <strong>Colonne individu :</strong>{' '}
+          <code className="rounded bg-surface px-1.5 py-0.5 text-xs">{plan.colonneIndividu}</code>
+        </div>
+        {plan.layout === 'long' ? (
+          <>
+            <div>
+              <strong>Colonne date :</strong>{' '}
+              <code className="rounded bg-surface px-1.5 py-0.5 text-xs">
+                {plan.colonneDate.nom}
+              </code>{' '}
+              <span className="text-text-muted">(format : {plan.colonneDate.format})</span>
+            </div>
+            <div>
+              <strong>Colonne valeur :</strong>{' '}
+              <code className="rounded bg-surface px-1.5 py-0.5 text-xs">{plan.colonneValeur}</code>
+            </div>
+          </>
+        ) : (
+          <div>
+            <strong>Colonnes pivot :</strong>
+            <ul className="ml-4 mt-1 list-disc space-y-0.5 text-xs">
+              {plan.colonnesPivot.map((colonne) => (
+                <li key={colonne.nom}>
+                  <code className="rounded bg-surface px-1.5 py-0.5">{colonne.nom}</code>{' '}
+                  →{' '}
+                  <code className="rounded bg-surface px-1.5 py-0.5">{colonne.dateIso}</code>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </details>
+  )
+}
+
+function ResolutionInspecteur({ resolution }: { resolution: Resolution }) {
+  if (resolution.mapping.length === 0 && resolution.nonResolus.length === 0) {
+    return null
+  }
+  return (
+    <details className="rounded-md border border-border bg-surface-tinted p-4">
+      <summary className="cursor-pointer font-semibold">
+        Résolution des individus ({resolution.mapping.length} mappés
+        {resolution.nonResolus.length > 0 ? `, ${resolution.nonResolus.length} non résolus` : ''})
+      </summary>
+      <div className="mt-3 grid gap-4 text-sm sm:grid-cols-2">
+        {resolution.mapping.length > 0 && (
+          <div>
+            <Heading as="h4" size="sm" className="mb-1">
+              Mapping
+            </Heading>
+            <div className="max-h-64 overflow-auto rounded border border-border bg-surface">
+              <table className="min-w-full text-xs">
+                <thead className="sticky top-0 bg-surface-tinted">
+                  <tr>
+                    <th className="border-b border-border px-2 py-1 text-left">Libellé source</th>
+                    <th className="border-b border-border px-2 py-1 text-left">→ publicId</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {resolution.mapping.map((entree, index) => (
+                    <tr key={index} className="odd:bg-surface even:bg-surface-tinted/40">
+                      <td className="border-b border-border px-2 py-1">{entree.libelleSource}</td>
+                      <td className="border-b border-border px-2 py-1 font-mono">
+                        {entree.individuPublicId}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+        {resolution.nonResolus.length > 0 && (
+          <div>
+            <Heading as="h4" size="sm" className="mb-1">
+              Non résolus
+            </Heading>
+            <div className="max-h-64 overflow-auto rounded border border-border bg-surface">
+              <table className="min-w-full text-xs">
+                <thead className="sticky top-0 bg-surface-tinted">
+                  <tr>
+                    <th className="border-b border-border px-2 py-1 text-left">Libellé source</th>
+                    <th className="border-b border-border px-2 py-1 text-left">Raison</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {resolution.nonResolus.map((entree, index) => (
+                    <tr key={index} className="odd:bg-surface even:bg-surface-tinted/40">
+                      <td className="border-b border-border px-2 py-1">{entree.libelleSource}</td>
+                      <td className="border-b border-border px-2 py-1">{entree.raison}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+    </details>
   )
 }
 
