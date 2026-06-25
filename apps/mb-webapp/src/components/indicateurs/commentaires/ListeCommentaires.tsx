@@ -1,5 +1,5 @@
 import { type CommentaireApiModel } from '@pilote/mb-shared/commentaire'
-import { CheckCircle2, History, Pencil, Plus } from 'lucide-react'
+import { CheckCircle2, Eye, EyeOff, History, Pencil, Plus } from 'lucide-react'
 import { type ReactNode, useState } from 'react'
 
 import { type IndicateurIndividuCommentaireType } from '@/api/commentaires'
@@ -44,6 +44,7 @@ export function ListeCommentaires({
   meteoParCommentaire: Map<string, MeteoCourante>
 }) {
   const [editionId, setEditionId] = useState<string | null>(null)
+  const [brouillonVisible, setBrouillonVisible] = useState(true)
   const creer = useCreerCommentaire(indicateurId, individuId, type)
 
   const etatEnCours = publies[0]
@@ -74,15 +75,40 @@ export function ListeCommentaires({
     <div className="flex flex-col gap-8">
       {brouillon && (
         <section>
-          <Intitule icon={<Pencil />}>Brouillon, à venir</Intitule>
-          <EditeurCommentaire
-            indicateurId={indicateurId}
-            individuId={individuId}
-            type={type}
-            commentaire={brouillon}
-            avecMeteo={avecMeteo}
-            meteo={meteoParCommentaire.get(brouillon.id)}
-          />
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-text-muted">
+              <Pencil className="size-4" />
+              <Text as="span" variant="kicker" tone="muted">
+                Brouillon, à venir
+              </Text>
+            </div>
+            <button
+              type="button"
+              onClick={() => setBrouillonVisible((v) => !v)}
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary"
+            >
+              {brouillonVisible ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+              {brouillonVisible ? 'Masquer' : 'Afficher'}
+            </button>
+          </div>
+          {brouillonVisible ? (
+            <EditeurCommentaire
+              indicateurId={indicateurId}
+              individuId={individuId}
+              type={type}
+              commentaire={brouillon}
+              avecMeteo={avecMeteo}
+              meteo={meteoParCommentaire.get(brouillon.id)}
+            />
+          ) : (
+            <button
+              type="button"
+              onClick={() => setBrouillonVisible(true)}
+              className="w-full rounded-r-sm border border-l-4 border-border border-l-warning bg-surface px-5 py-4 text-left text-sm text-text-muted transition-colors hover:bg-surface-tinted"
+            >
+              Brouillon en cours, masqué — cliquez pour l’afficher.
+            </button>
+          )}
         </section>
       )}
 

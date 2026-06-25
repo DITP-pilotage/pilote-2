@@ -1,37 +1,44 @@
-import { type CommentaireStatut } from '@pilote/mb-shared/commentaire'
 import { queryOptions } from '@tanstack/react-query'
 
-import { fetchCommentaires, type IndicateurIndividuCommentaireType } from '@/api/commentaires'
+import {
+  fetchBrouillon,
+  fetchCommentaires,
+  type IndicateurIndividuCommentaireType,
+} from '@/api/commentaires'
 
 import { DEFAULT_STALE_TIME, fetchAllPaginatedItems } from './utils'
 
 export const commentairesKeys = {
-  // Préfixe (tous statuts confondus) : sert à invalider les deux listes d'un coup.
+  // Préfixe (publiés + brouillon) : sert à tout invalider d'un coup.
   parType: (indicateurId: string, individuId: string, type: IndicateurIndividuCommentaireType) =>
     ['indicateur', indicateurId, 'individu', individuId, 'commentaires', type] as const,
-  liste: (
-    indicateurId: string,
-    individuId: string,
-    type: IndicateurIndividuCommentaireType,
-    statut: CommentaireStatut,
-  ) => [...commentairesKeys.parType(indicateurId, individuId, type), statut] as const,
+  publies: (indicateurId: string, individuId: string, type: IndicateurIndividuCommentaireType) =>
+    [...commentairesKeys.parType(indicateurId, individuId, type), 'publies'] as const,
+  brouillon: (indicateurId: string, individuId: string, type: IndicateurIndividuCommentaireType) =>
+    [...commentairesKeys.parType(indicateurId, individuId, type), 'brouillon'] as const,
 }
 
-export const commentairesQueryOptions = (
+export const commentairesPubliesQueryOptions = (
   indicateurId: string,
   individuId: string,
   type: IndicateurIndividuCommentaireType,
-  statut: CommentaireStatut,
 ) =>
   queryOptions({
-    queryKey: commentairesKeys.liste(indicateurId, individuId, type, statut),
+    queryKey: commentairesKeys.publies(indicateurId, individuId, type),
     queryFn: () =>
       fetchAllPaginatedItems((cursor) =>
-        fetchCommentaires(indicateurId, individuId, {
-          type,
-          statut,
-          ...(cursor ? { cursor } : {}),
-        }),
+        fetchCommentaires(indicateurId, individuId, { type, ...(cursor ? { cursor } : {}) }),
       ),
+    staleTime: DEFAULT_STALE_TIME,
+  })
+
+export const brouillonQueryOptions = (
+  indicateurId: string,
+  individuId: string,
+  type: IndicateurIndividuCommentaireType,
+) =>
+  queryOptions({
+    queryKey: commentairesKeys.brouillon(indicateurId, individuId, type),
+    queryFn: () => fetchBrouillon(indicateurId, individuId, type),
     staleTime: DEFAULT_STALE_TIME,
   })

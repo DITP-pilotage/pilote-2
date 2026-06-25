@@ -1,4 +1,6 @@
 import {
+  type BrouillonApiModel,
+  brouillonApiModelSchema,
   type CommentaireApiModel,
   commentaireApiModelSchema,
   type CommentaireListApiModel,
@@ -27,6 +29,19 @@ export const fetchCommentaires = async (
     })
     .json()
   return commentaireListApiModelSchema.parse(json)
+}
+
+export const fetchBrouillon = async (
+  indicateurId: string,
+  individuId: string,
+  type: IndicateurIndividuCommentaireType,
+): Promise<BrouillonApiModel> => {
+  const json = await apiClient
+    .get(`indicateurs/${indicateurId}/individus/${individuId}/commentaires/brouillon`, {
+      searchParams: { type },
+    })
+    .json()
+  return brouillonApiModelSchema.parse(json)
 }
 
 export const createCommentaire = async (

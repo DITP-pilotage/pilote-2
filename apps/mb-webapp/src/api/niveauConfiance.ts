@@ -6,18 +6,18 @@ import {
   type NiveauConfianceListApiModel,
   niveauConfianceListApiModelSchema,
 } from '@pilote/mb-shared/niveauConfiance'
-import { type PaginateQuery } from '@pilote/mb-shared/pagination'
 
 import { apiClient } from '@/api/client'
 
-export const fetchHistoriqueNiveauConfiance = async (
+// Récupère les niveaux de confiance associés aux commentaires passés (CSV d'ids).
+export const fetchNiveauxParCommentaires = async (
   indicateurId: string,
   individuId: string,
-  query: PaginateQuery,
+  commentaireIds: string[],
 ): Promise<NiveauConfianceListApiModel> => {
   const json = await apiClient
-    .get(`indicateurs/${indicateurId}/individus/${individuId}/niveau-confiance/historique`, {
-      searchParams: query,
+    .get(`indicateurs/${indicateurId}/individus/${individuId}/niveaux-confiance`, {
+      searchParams: { commentaires: commentaireIds.join(',') },
     })
     .json()
   return niveauConfianceListApiModelSchema.parse(json)
@@ -26,7 +26,7 @@ export const fetchHistoriqueNiveauConfiance = async (
 export const createNiveauConfiance = async (
   body: CreerNiveauConfianceBody,
 ): Promise<NiveauConfianceApiModel> => {
-  const json = await apiClient.post('niveau-confiance', { json: body }).json()
+  const json = await apiClient.post('niveaux-confiance', { json: body }).json()
   return niveauConfianceApiModelSchema.parse(json)
 }
 
@@ -34,6 +34,6 @@ export const updateNiveauConfiance = async (
   niveauConfianceId: string,
   body: ModifierNiveauConfianceBody,
 ): Promise<NiveauConfianceApiModel> => {
-  const json = await apiClient.put(`niveau-confiance/${niveauConfianceId}`, { json: body }).json()
+  const json = await apiClient.put(`niveaux-confiance/${niveauConfianceId}`, { json: body }).json()
   return niveauConfianceApiModelSchema.parse(json)
 }

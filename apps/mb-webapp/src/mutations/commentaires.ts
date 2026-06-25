@@ -59,7 +59,7 @@ export function useModifierCommentaire(
         queryKey: commentairesKeys.parType(indicateurId, individuId, type),
       })
       void queryClient.invalidateQueries({
-        queryKey: niveauConfianceKeys.historique(indicateurId, individuId),
+        queryKey: niveauConfianceKeys.parScope(indicateurId, individuId),
       })
       toast({
         title:

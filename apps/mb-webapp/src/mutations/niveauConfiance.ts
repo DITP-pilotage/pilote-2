@@ -14,7 +14,7 @@ export function useEnregistrerMeteo(indicateurId: string, individuId: string) {
 
   const invalider = () =>
     queryClient.invalidateQueries({
-      queryKey: niveauConfianceKeys.historique(indicateurId, individuId),
+      queryKey: niveauConfianceKeys.parScope(indicateurId, individuId),
     })
 
   // Pas de toast de succès : la météo est persistée au moment de l'enregistrement
