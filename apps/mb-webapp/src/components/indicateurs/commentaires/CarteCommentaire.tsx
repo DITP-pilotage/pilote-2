@@ -22,7 +22,7 @@ export function CarteCommentaire({
   onEdit,
 }: {
   commentaire: CommentaireApiModel
-  indice?: IndiceConfiance
+  indice?: IndiceConfiance | undefined
   onEdit: () => void
 }) {
   const brouillon = commentaire.statut === 'BROUILLON'

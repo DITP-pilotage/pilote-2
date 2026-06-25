@@ -31,8 +31,8 @@ export function EditeurCommentaire({
   type: IndicateurIndividuCommentaireType
   commentaire: CommentaireApiModel
   avecMeteo: boolean
-  meteo?: MeteoCourante
-  onClose?: () => void
+  meteo?: MeteoCourante | undefined
+  onClose?: (() => void) | undefined
 }) {
   const [contenu, setContenu] = useState(commentaire.contenu)
   const modifier = useModifierCommentaire(indicateurId, individuId, type)
