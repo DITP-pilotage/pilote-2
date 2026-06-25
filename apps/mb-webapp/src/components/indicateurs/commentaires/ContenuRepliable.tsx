@@ -1,8 +1,8 @@
 import { ChevronDown } from 'lucide-react'
-import { type CSSProperties, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import { RenduContenuHtml } from '@/components/editeur-riche/RenduContenuHtml'
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/Collapsible'
+import { Collapsible, CollapsibleTrigger } from '@/components/ui/Collapsible'
 import { clsxm } from '@/lib/clsxm'
 
 // Hauteur de l'aperçu replié (~3 lignes).
@@ -17,8 +17,8 @@ export function ContenuRepliable({ html }: { html: string }) {
   // premier rendu (pas de flash) ; la mesure ajuste ensuite.
   const [depasse, setDepasse] = useState(true)
 
-  // ResizeObserver : mesure la hauteur réelle du contenu (indépendante du clamp
-  // parent) et la tient à jour en cas de reflow (resize, retour à la ligne).
+  // Mesure la hauteur réelle du contenu (indépendante du clamp) et la tient à jour
+  // en cas de reflow (resize, retour à la ligne).
   useEffect(() => {
     const el = contenuRef.current
     if (!el) return
@@ -33,18 +33,20 @@ export function ContenuRepliable({ html }: { html: string }) {
   // Si le contenu ne dépasse pas l'aperçu, on l'affiche entièrement (pas de repli).
   const effectivementOuvert = ouvert || !depasse
 
+  // On anime la `height` entre deux valeurs explicites (aperçu ↔ hauteur mesurée) :
+  // une transition CSS simple, symétrique, sans flash au montage.
+  const hauteurCible = effectivementOuvert ? (hauteur != null ? `${hauteur}px` : undefined) : PEEK
+
   return (
     <Collapsible open={effectivementOuvert} onOpenChange={setOuvert}>
-      <CollapsibleContent
-        peek={PEEK}
-        style={
-          { '--collapsible-full': hauteur != null ? `${hauteur}px` : undefined } as CSSProperties
-        }
+      <div
+        className="overflow-hidden transition-[height] duration-200 ease-out"
+        style={{ height: hauteurCible }}
       >
         <div ref={contenuRef}>
           <RenduContenuHtml html={html} className="text-sm leading-relaxed text-text" />
         </div>
-      </CollapsibleContent>
+      </div>
       {depasse && (
         <CollapsibleTrigger className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-primary">
           <ChevronDown className={clsxm('size-4 transition-transform', ouvert && 'rotate-180')} />
