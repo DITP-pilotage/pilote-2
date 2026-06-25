@@ -52,6 +52,29 @@
   --color-warning: #b34000;
   --color-warning-tinted: #fff4e6;
 
+  /* Animations Collapsible (radix expose --radix-collapsible-content-height).
+     --collapsible-peek = hauteur d'aperçu repliée (0 par défaut). */
+  --animate-collapsible-down: collapsible-down 220ms ease-out;
+  --animate-collapsible-up: collapsible-up 220ms ease-out;
+
+  @keyframes collapsible-down {
+    from {
+      height: var(--collapsible-peek, 0px);
+    }
+    to {
+      height: var(--radix-collapsible-content-height);
+    }
+  }
+
+  @keyframes collapsible-up {
+    from {
+      height: var(--radix-collapsible-content-height);
+    }
+    to {
+      height: var(--collapsible-peek, 0px);
+    }
+  }
+
   /* Display type scale */
   --text-display-xl: 4.5rem; /* 72px */
   --text-display-xl--line-height: 1.05;

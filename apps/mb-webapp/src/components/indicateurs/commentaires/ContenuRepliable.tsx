@@ -2,11 +2,15 @@ import { ChevronDown } from 'lucide-react'
 import { useLayoutEffect, useRef, useState } from 'react'
 
 import { RenduContenuHtml } from '@/components/editeur-riche/RenduContenuHtml'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/Collapsible'
 import { clsxm } from '@/lib/clsxm'
+
+// Hauteur de l'aperçu replié (~3 lignes).
+const PEEK = '4.5rem'
 
 export function ContenuRepliable({ html }: { html: string }) {
   const ref = useRef<HTMLDivElement>(null)
-  const [deplie, setDeplie] = useState(false)
+  const [ouvert, setOuvert] = useState(false)
   const [depasse, setDepasse] = useState(false)
 
   useLayoutEffect(() => {
@@ -15,22 +19,16 @@ export function ContenuRepliable({ html }: { html: string }) {
   }, [html])
 
   return (
-    <div>
-      <RenduContenuHtml
-        ref={ref}
-        html={html}
-        className={clsxm('text-sm leading-relaxed text-text', !deplie && 'line-clamp-3')}
-      />
-      {(depasse || deplie) && (
-        <button
-          type="button"
-          onClick={() => setDeplie((v) => !v)}
-          className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-primary"
-        >
-          <ChevronDown className={clsxm('size-4 transition-transform', deplie && 'rotate-180')} />
-          {deplie ? 'Voir moins' : 'Voir plus'}
-        </button>
+    <Collapsible open={ouvert} onOpenChange={setOuvert}>
+      <CollapsibleContent ref={ref} peek={PEEK}>
+        <RenduContenuHtml html={html} className="text-sm leading-relaxed text-text" />
+      </CollapsibleContent>
+      {(depasse || ouvert) && (
+        <CollapsibleTrigger className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-primary">
+          <ChevronDown className={clsxm('size-4 transition-transform', ouvert && 'rotate-180')} />
+          {ouvert ? 'Voir moins' : 'Voir plus'}
+        </CollapsibleTrigger>
       )}
-    </div>
+    </Collapsible>
   )
 }
