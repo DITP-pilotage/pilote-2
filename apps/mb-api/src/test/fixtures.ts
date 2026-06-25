@@ -15,11 +15,14 @@ import {
 } from '@/test/randomIds'
 import {
   type ApiKeyModel,
+  type ContactUtileModel,
   type IndicateurModel,
   type IndicateurPermissionModel,
   type IndicateurReferentielModel,
   type IndividuModel,
   type ObjectifIndicateurIndividuModel,
+  type OrganismeModel,
+  type PanierContactUtileModel,
   type PanierModel,
   type PanierPermissionModel,
   type PanierResponsableModel,
@@ -30,21 +33,6 @@ import {
   type ValeurAvancementModel,
   type WidgetModel,
 } from '@/generated/prisma/models'
-
-type OrganismeModel = { id: string; nom: string; createdAt: Date; updatedAt: Date }
-type ContactUtileModel = {
-  id: string
-  organismeId: string
-  nom: string
-  description: string | null
-  telephone: string | null
-  email: string | null
-  url: string | null
-  adresse: string | null
-  createdAt: Date
-  updatedAt: Date
-}
-type PanierContactUtileModel = { panierId: string; contactUtileId: string; createdAt: Date }
 import {
   ApiKeyRole,
   PermissionAction,
@@ -859,9 +847,7 @@ type OrganismeOverrides = Partial<{
 
 const upsertOrganisme = async (o: OrganismeOverrides = {}): Promise<OrganismeModel> => {
   const id = o.id ?? uuidv7()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const prismaDb = db() as any
-  return prismaDb.organisme.upsert({
+  return db().organisme.upsert({
     where: { id },
     update: { nom: o.nom ?? 'Organisme Test' },
     create: {
@@ -893,9 +879,7 @@ type ContactUtileOverrides = Partial<{
 const upsertContactUtile = async (o: ContactUtileOverrides = {}): Promise<ContactUtileModel> => {
   const organismeRow = await upsertOrganisme(o.organisme)
   const id = o.id ?? uuidv7()
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const prismaDb = db() as any
-  return prismaDb.contactUtile.upsert({
+  return db().contactUtile.upsert({
     where: { id },
     update: {},
     create: {
@@ -929,9 +913,7 @@ const upsertPanierContactUtile = async (
 ): Promise<PanierContactUtileModel> => {
   const panierRow = await upsertPanier(o.panier)
   const contactUtileRow = await upsertContactUtile(o.contactUtile)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const prismaDb = db() as any
-  return prismaDb.panierContactUtile.upsert({
+  return db().panierContactUtile.upsert({
     where: {
       panierId_contactUtileId: {
         panierId: panierRow.id,

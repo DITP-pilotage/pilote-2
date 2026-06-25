@@ -62,7 +62,6 @@ const PanierResponsablesApiModelSchema = panierResponsablesApiModelSchema.openap
 const PanierContactsUtilesApiModelSchema = panierContactsUtilesApiModelSchema.openapi(
   'PanierContactsUtilesApiModel',
 )
-const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 // --- GET /paniers ------------------------------------------------------------
 
@@ -170,18 +169,13 @@ const getPanierContactsUtilesRoute = createRoute({
   description:
     'Retourne les contacts utiles du panier, regroupés par organisme et triés alphabétiquement. ' +
     'Accessible à tout principal pouvant lire le panier ' +
-    '(visibilite PUBLIC ou permission READ/WRITE explicite). ' +
-    'Renvoie 404 (`ENTITY_NOT_FOUND`) si le panier est introuvable ou inaccessible.',
+    '(visibilite PUBLIC ou permission READ/WRITE explicite).',
   middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {
     200: {
       content: { 'application/json': { schema: PanierContactsUtilesApiModelSchema } },
       description: 'Contacts utiles du panier groupés par organisme',
-    },
-    404: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Panier introuvable',
     },
   },
 })
