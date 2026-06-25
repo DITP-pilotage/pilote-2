@@ -2,6 +2,7 @@ import { generateText, stepCountIs, tool } from 'ai'
 import { errAsync, ok, okAsync, ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 
+import { logger } from '@/framework/logger/logger'
 import { ALBERT_TEMPERATURE, createAlbertModel } from '@/importPoc/helpers/albert'
 import { type IndividuPourImport } from '@/importPoc/queries/listIndividusForIndicateur'
 
@@ -165,6 +166,18 @@ export const resoudreIndividus = ({
 
   let derniereTentative: ResolutionResult | null = null
   let derniereErreur: ToolValidationError | null = null
+  let nbAppelsTool = 0
+
+  const startedAt = performance.now()
+  logger.info(
+    {
+      event: 'importPoc.resoudreIndividus.start',
+      indicateurNom: indicateur.nom,
+      nbIndividusValides: individusValides.length,
+      nbLibellesSources: libellesSources.length,
+    },
+    'Albert call 2 (résolution) — début',
+  )
 
   return ResultAsync.fromPromise(
     generateText({
@@ -179,9 +192,22 @@ export const resoudreIndividus = ({
           inputSchema,
           // eslint-disable-next-line @typescript-eslint/require-await -- l'AI SDK attend une fonction async
           execute: async ({ mapping, nonResolus }) => {
+            nbAppelsTool += 1
             const erreurs = validerCouverture({ mapping, nonResolus, libellesSources })
             if (erreurs) {
               derniereErreur = erreurs
+              logger.info(
+                {
+                  event: 'importPoc.resoudreIndividus.toolCall',
+                  tentative: nbAppelsTool,
+                  ok: false,
+                  nbMappes: mapping.length,
+                  nbNonResolus: nonResolus.length,
+                  nbLibellesNonCouverts: erreurs.libellesNonCouverts.length,
+                  nbLibellesEnDoublon: erreurs.libellesEnDoublon.length,
+                },
+                'Tool call invalide — Albert va corriger',
+              )
               return {
                 ok: false as const,
                 ...erreurs,
@@ -192,17 +218,53 @@ export const resoudreIndividus = ({
             }
             derniereTentative = { mapping, nonResolus }
             derniereErreur = null
+            logger.info(
+              {
+                event: 'importPoc.resoudreIndividus.toolCall',
+                tentative: nbAppelsTool,
+                ok: true,
+                nbMappes: mapping.length,
+                nbNonResolus: nonResolus.length,
+              },
+              'Tool call valide',
+            )
             return { ok: true as const }
           },
         }),
       },
       stopWhen: stepCountIs(MAX_STEPS),
       temperature: ALBERT_TEMPERATURE,
-    }).then(() => {
+    }).then((result) => {
+      const durationMs = Math.round(performance.now() - startedAt)
+      logger.info(
+        {
+          event: 'importPoc.resoudreIndividus.done',
+          durationMs,
+          nbAppelsTool,
+          nbSteps: result.steps.length,
+          inputTokens: result.usage.inputTokens,
+          outputTokens: result.usage.outputTokens,
+          succes: derniereTentative !== null,
+          ...(derniereTentative
+            ? { nbMappesFinal: derniereTentative.mapping.length, nbNonResolusFinal: derniereTentative.nonResolus.length }
+            : {}),
+        },
+        'Albert call 2 (résolution) — fin',
+      )
       if (derniereTentative) return ok(derniereTentative)
       return ok<ResolutionResult, ResoudreIndividusError>(null as never)
     }),
-    (cause): ResoudreIndividusError => ({ type: 'ALBERT_UNAVAILABLE', cause }),
+    (cause): ResoudreIndividusError => {
+      logger.error(
+        {
+          event: 'importPoc.resoudreIndividus.error',
+          durationMs: Math.round(performance.now() - startedAt),
+          cause: cause instanceof Error ? cause.message : String(cause),
+        },
+        'Albert call 2 (résolution) — échec',
+      )
+      return { type: 'ALBERT_UNAVAILABLE', cause }
+    },
   ).andThen(() => {
     if (derniereTentative) return okAsync<ResolutionResult, ResoudreIndividusError>(derniereTentative)
     return errAsync<ResolutionResult, ResoudreIndividusError>({

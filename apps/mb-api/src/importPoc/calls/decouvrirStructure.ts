@@ -3,6 +3,7 @@ import { dateSchema } from '@pilote/mb-shared/dates'
 import { errAsync, ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 
+import { logger } from '@/framework/logger/logger'
 import { ALBERT_TEMPERATURE, createAlbertModel } from '@/importPoc/helpers/albert'
 
 const colonneDateSchema = z.object({
@@ -146,6 +147,19 @@ export const decouvrirStructure = ({
     .filter(Boolean)
     .join('\n')
 
+  const startedAt = performance.now()
+  logger.info(
+    {
+      event: 'importPoc.decouvrirStructure.start',
+      indicateurNom: indicateur.nom,
+      nbHeaders: headers.length,
+      nbRows: rows.length,
+      tailleEchantillon: echantillon.length,
+      ...(nomFichier ? { nomFichier } : {}),
+    },
+    'Albert call 1 (découverte) — début',
+  )
+
   return ResultAsync.fromPromise(
     generateObject({
       model,
@@ -153,7 +167,45 @@ export const decouvrirStructure = ({
       system: SYSTEM_PROMPT,
       prompt,
       temperature: ALBERT_TEMPERATURE,
-    }).then((result) => result.object),
-    (cause): DecouvrirStructureError => ({ type: 'ALBERT_UNAVAILABLE', cause }),
+    }).then((result) => {
+      const durationMs = Math.round(performance.now() - startedAt)
+      const usage = result.usage
+      const output = result.object
+      logger.info(
+        {
+          event: 'importPoc.decouvrirStructure.done',
+          durationMs,
+          inputTokens: usage.inputTokens,
+          outputTokens: usage.outputTokens,
+          statut: output.statut,
+          ...(output.statut === 'reconnu'
+            ? {
+                layout: output.plan.layout,
+                colonneIndividu: output.plan.colonneIndividu,
+                ...(output.plan.layout === 'long'
+                  ? {
+                      colonneDate: output.plan.colonneDate.nom,
+                      formatDate: output.plan.colonneDate.format,
+                      colonneValeur: output.plan.colonneValeur,
+                    }
+                  : { nbColonnesPivot: output.plan.colonnesPivot.length }),
+              }
+            : { raison: output.raison, explication: output.explication }),
+        },
+        'Albert call 1 (découverte) — fin',
+      )
+      return output
+    }),
+    (cause): DecouvrirStructureError => {
+      logger.error(
+        {
+          event: 'importPoc.decouvrirStructure.error',
+          durationMs: Math.round(performance.now() - startedAt),
+          cause: cause instanceof Error ? cause.message : String(cause),
+        },
+        'Albert call 1 (découverte) — échec',
+      )
+      return { type: 'ALBERT_UNAVAILABLE', cause }
+    },
   )
 }

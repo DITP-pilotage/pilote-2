@@ -3,6 +3,7 @@ import { dateSchema } from '@pilote/mb-shared/dates'
 import { indicateurPublicIdSchema, individuPublicIdSchema } from '@pilote/mb-shared/publicIds'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
+import { logger } from '@/framework/logger/logger'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { ErrorApiModelSchema, erreur400 } from '@/framework/openapi/responses'
 import { appliquerPlan } from '@/importPoc/appliquerPlan'
@@ -134,6 +135,17 @@ importPocRoutes.openapi(normaliserRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
+  const startedAt = performance.now()
+  logger.info(
+    {
+      event: 'importPoc.normaliser.start',
+      indicateurId: id,
+      nbRows: body.rows.length,
+      ...(body.nomFichier ? { nomFichier: body.nomFichier } : {}),
+    },
+    'POC normaliser — début',
+  )
+
   const [indicateurResult, individusResult] = await Promise.all([
     getIndicateurByPublicId(id),
     listIndividusForIndicateur(id),
@@ -247,6 +259,22 @@ importPocRoutes.openapi(normaliserRoute, async (context) => {
     resolution,
     individusValides,
   })
+
+  logger.info(
+    {
+      event: 'importPoc.normaliser.done',
+      durationMs: Math.round(performance.now() - startedAt),
+      indicateurId: id,
+      layout: plan.layout,
+      totalLignes: body.rows.length,
+      totalItemsProduits: application.items.length,
+      totalLibellesSources: libellesSources.length,
+      totalLibellesMappes: resolution.mapping.length,
+      totalLibellesNonResolus: resolution.nonResolus.length,
+      totalWarnings: application.warnings.length,
+    },
+    'POC normaliser — succès',
+  )
 
   return jsonResponseOk({
     context,
