@@ -362,38 +362,6 @@ const getTauxProgressionForIndividuRoute = createRoute({
   },
 })
 
-// --- GET /individus/:id/taux-progression -------------------------------------
-
-const getTauxProgressionForIndividuRoute = createRoute({
-  method: 'get',
-  path: '/individus/{id}/taux-progression',
-  tags: ['Individu'],
-  summary: "Lister le taux de progression de l'individu pour un lot d'indicateurs",
-  description:
-    'Retourne, pour chaque indicateur demandé accessible en lecture, le taux de progression ' +
-    "calculé sur la dernière valeur connue de l'individu (`min(100, valeur / valeurCible × 100)`, " +
-    'tronqué à 2 décimales). Les indicateurs sans objectif défini, sans valeur connue, ou dont ' +
-    'la valeurCible est zéro sont omis de la réponse. Endpoint pensé pour des appels batch ' +
-    'côté client en parallèle de `dernieres-valeurs`.',
-  middleware: [requireAuthentication],
-  request: {
-    params: individuParamsSchema,
-    query: listTauxProgressionIndividuQuerySchema,
-  },
-  responses: {
-    200: {
-      content: {
-        'application/json': { schema: TauxProgressionIndividuListApiModelSchema },
-      },
-      description: 'Taux de progression pour les indicateurs demandés',
-    },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Paramètres de requête invalides (ex. `indicateurs` absent ou trop nombreux)',
-    },
-  },
-})
-
 // --- GET /indicateurs/:id/taux-progression -----------------------------------
 
 const getTauxProgressionRoute = createRoute({
