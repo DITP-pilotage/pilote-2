@@ -3,14 +3,28 @@ import { Cloud, CloudLightning, CloudSun, Sun, type LucideIcon } from 'lucide-re
 
 export type Meteo = { indice: IndiceConfiance; label: string; Icon: LucideIcon }
 
-const ORAGE: Meteo = { indice: 'OBJECTIF_COMPROMIS', label: 'Orage', Icon: CloudLightning }
+// Record exhaustif : ajouter un IndiceConfiance fait échouer la compilation.
+const METEO_PAR_INDICE: Record<IndiceConfiance, Omit<Meteo, 'indice'>> = {
+  OBJECTIF_COMPROMIS: { label: 'Orage', Icon: CloudLightning },
+  APPUIS_NECESSAIRE: { label: 'Couvert', Icon: Cloud },
+  OBJECTIF_ATTEIGNABLE: { label: 'Nuage', Icon: CloudSun },
+  OBJECTIF_SECURISE: { label: 'Soleil', Icon: Sun },
+}
 
-export const METEOS: readonly Meteo[] = [
-  ORAGE,
-  { indice: 'APPUIS_NECESSAIRE', label: 'Couvert', Icon: Cloud },
-  { indice: 'OBJECTIF_ATTEIGNABLE', label: 'Nuage', Icon: CloudSun },
-  { indice: 'OBJECTIF_SECURISE', label: 'Soleil', Icon: Sun },
+// Ordre d'affichage du sélecteur, du plus dégradé au plus serein.
+const ORDRE_SELECTEUR: readonly IndiceConfiance[] = [
+  'OBJECTIF_COMPROMIS',
+  'APPUIS_NECESSAIRE',
+  'OBJECTIF_ATTEIGNABLE',
+  'OBJECTIF_SECURISE',
 ]
 
-export const meteoFromIndice = (indice: IndiceConfiance): Meteo =>
-  METEOS.find((meteo) => meteo.indice === indice)!
+export const METEOS: readonly Meteo[] = ORDRE_SELECTEUR.map((indice) => ({
+  indice,
+  ...METEO_PAR_INDICE[indice],
+}))
+
+export const meteoFromIndice = (indice: IndiceConfiance): Meteo => ({
+  indice,
+  ...METEO_PAR_INDICE[indice],
+})

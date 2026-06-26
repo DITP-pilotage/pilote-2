@@ -4,10 +4,7 @@ import { type ReactNode, useState } from 'react'
 
 import { type IndicateurIndividuCommentaireType } from '@/api/commentaires'
 import { CarteCommentaire } from '@/components/indicateurs/commentaires/CarteCommentaire'
-import {
-  EditeurCommentaire,
-  type NiveauConfianceCourant,
-} from '@/components/indicateurs/commentaires/EditeurCommentaire'
+import { EditeurCommentaire } from '@/components/indicateurs/commentaires/EditeurCommentaire'
 import { LigneHistorique } from '@/components/indicateurs/commentaires/LigneHistorique'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -32,7 +29,6 @@ export function ListeCommentaires({
   avecNiveauConfiance,
   brouillon,
   publies,
-  niveauxParCommentaire,
 }: {
   indicateurId: string
   individuId: string
@@ -41,7 +37,6 @@ export function ListeCommentaires({
   // Brouillon de l'utilisateur courant (l'API ne renvoie que le sien). Au plus un.
   brouillon?: CommentaireApiModel | undefined
   publies: CommentaireApiModel[]
-  niveauxParCommentaire: Map<string, NiveauConfianceCourant>
 }) {
   const [editionId, setEditionId] = useState<string | null>(null)
   const [brouillonVisible, setBrouillonVisible] = useState(true)
@@ -98,7 +93,6 @@ export function ListeCommentaires({
               type={type}
               commentaire={brouillon}
               avecNiveauConfiance={avecNiveauConfiance}
-              niveauConfiance={niveauxParCommentaire.get(brouillon.id)}
             />
           ) : (
             <button
@@ -106,7 +100,7 @@ export function ListeCommentaires({
               onClick={() => setBrouillonVisible(true)}
               className="w-full rounded-r-sm border border-l-4 border-border border-l-warning bg-surface px-5 py-4 text-left text-sm text-text-muted transition-colors hover:bg-surface-tinted"
             >
-              Brouillon en cours, masqué — cliquez pour l'afficher.
+              Brouillon en cours, masqué — cliquez pour l’afficher.
             </button>
           )}
         </section>
@@ -122,13 +116,14 @@ export function ListeCommentaires({
               type={type}
               commentaire={etatEnCours}
               avecNiveauConfiance={avecNiveauConfiance}
-              niveauConfiance={niveauxParCommentaire.get(etatEnCours.id)}
               onClose={() => setEditionId(null)}
             />
           ) : (
             <CarteCommentaire
+              indicateurId={indicateurId}
+              individuId={individuId}
               commentaire={etatEnCours}
-              indice={niveauxParCommentaire.get(etatEnCours.id)?.indice}
+              avecNiveauConfiance={avecNiveauConfiance}
               onEdit={() => setEditionId(etatEnCours.id)}
             />
           )}
@@ -142,8 +137,10 @@ export function ListeCommentaires({
             {historique.map((commentaire) => (
               <LigneHistorique
                 key={commentaire.id}
+                indicateurId={indicateurId}
+                individuId={individuId}
                 commentaire={commentaire}
-                indice={niveauxParCommentaire.get(commentaire.id)?.indice}
+                avecNiveauConfiance={avecNiveauConfiance}
               />
             ))}
           </div>

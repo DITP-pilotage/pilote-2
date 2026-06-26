@@ -248,6 +248,9 @@ importers:
       '@hono/node-server':
         specifier: '>=1.19.13'
         version: 1.19.14(hono@4.12.19)
+      '@hookform/resolvers':
+        specifier: ^5.4.0
+        version: 5.4.0(react-hook-form@7.78.0(react@19.2.5))
       '@js-temporal/polyfill':
         specifier: ^0.5.1
         version: 0.5.1
@@ -344,6 +347,9 @@ importers:
       react-dom:
         specifier: ^19.2.5
         version: 19.2.5(react@19.2.5)
+      react-hook-form:
+        specifier: ^7.78.0
+        version: 7.78.0(react@19.2.5)
       tailwind-merge:
         specifier: ^3.5.0
         version: 3.5.0
@@ -1761,6 +1767,11 @@ packages:
 
   '@hookform/resolvers@5.2.2':
     resolution: {integrity: sha512-A/IxlMLShx3KjV/HeTcTfaMxdwy690+L/ZADoeaTltLx+CVuzkeVIPuybK3jrRfw7YZnmdKsVVHAlEPIAEUNlA==}
+    peerDependencies:
+      react-hook-form: ^7.55.0
+
+  '@hookform/resolvers@5.4.0':
+    resolution: {integrity: sha512-EIsqr/t/qbinPIhGjMdtvutIN1Kk4uwbROE9/UQ93CAVGR7GkA7Y92+fX80OzXi/OB67jVFYwKGO1WzkxmkFZw==}
     peerDependencies:
       react-hook-form: ^7.55.0
 
@@ -8091,6 +8102,12 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
 
+  react-hook-form@7.78.0:
+    resolution: {integrity: sha512-EEZqc+N23moyzTlz61Pj+JvcXo76ICkpfOZo8JZw+sM4+wLQGh6nI2Ms+PdMOYNluFu0ghlM7B8mCzhRYtJCnA==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17 || ^18 || ^19
+
   react-immutable-proptypes@2.2.0:
     resolution: {integrity: sha512-Vf4gBsePlwdGvSZoLSBfd4HAP93HDauMY4fDjXhreg/vg6F3Fj/MXDNyTbltPC/xZKmZc+cjLu3598DdYK6sgQ==}
     peerDependencies:
@@ -10398,6 +10415,11 @@ snapshots:
     dependencies:
       '@standard-schema/utils': 0.3.0
       react-hook-form: 7.72.1(react@19.2.5)
+
+  '@hookform/resolvers@5.4.0(react-hook-form@7.78.0(react@19.2.5))':
+    dependencies:
+      '@standard-schema/utils': 0.3.0
+      react-hook-form: 7.78.0(react@19.2.5)
 
   '@humanfs/core@0.19.1': {}
 
@@ -17834,6 +17856,10 @@ snapshots:
       scheduler: 0.27.0
 
   react-hook-form@7.72.1(react@19.2.5):
+    dependencies:
+      react: 19.2.5
+
+  react-hook-form@7.78.0(react@19.2.5):
     dependencies:
       react: 19.2.5
 

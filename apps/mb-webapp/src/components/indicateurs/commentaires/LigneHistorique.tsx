@@ -1,28 +1,33 @@
 import { type CommentaireApiModel } from '@pilote/mb-shared/commentaire'
-import { type IndiceConfiance } from '@pilote/mb-shared/niveauConfiance'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { ContenuRepliable } from '@/components/indicateurs/commentaires/ContenuRepliable'
 import { libelleAuteur } from '@/components/indicateurs/commentaires/libelleAuteur'
 import { meteoFromIndice } from '@/components/indicateurs/commentaires/meteo'
 import { Text } from '@/components/ui/Typography'
 import { formatDateHeureFr } from '@/lib/format'
+import { niveauPourCommentaireQueryOptions } from '@/queries/niveauConfiance'
 
 export function LigneHistorique({
+  indicateurId,
+  individuId,
   commentaire,
-  indice,
+  avecNiveauConfiance,
 }: {
+  indicateurId: string
+  individuId: string
   commentaire: CommentaireApiModel
-  indice?: IndiceConfiance | undefined
+  avecNiveauConfiance: boolean
 }) {
-  const meteo = indice ? meteoFromIndice(indice) : undefined
   return (
     <div className="py-4">
       <div className="mb-2 flex items-center gap-3">
-        {meteo && (
-          <span className="inline-flex items-center gap-1.5 text-sm font-medium leading-none text-primary">
-            <meteo.Icon className="size-4 shrink-0" />
-            {meteo.label}
-          </span>
+        {avecNiveauConfiance && (
+          <MeteoInline
+            indicateurId={indicateurId}
+            individuId={individuId}
+            commentaireId={commentaire.id}
+          />
         )}
         <Text as="span" variant="caption" tone="muted" className="ml-auto">
           {formatDateHeureFr(commentaire.updatedAt)} ·{' '}
@@ -31,5 +36,27 @@ export function LigneHistorique({
       </div>
       <ContenuRepliable html={commentaire.contenu} />
     </div>
+  )
+}
+
+function MeteoInline({
+  indicateurId,
+  individuId,
+  commentaireId,
+}: {
+  indicateurId: string
+  individuId: string
+  commentaireId: string
+}) {
+  const { data: niveau } = useSuspenseQuery(
+    niveauPourCommentaireQueryOptions(indicateurId, individuId, commentaireId),
+  )
+  if (!niveau) return null
+  const { label, Icon } = meteoFromIndice(niveau.indice)
+  return (
+    <span className="inline-flex items-center gap-1.5 text-sm font-medium leading-none text-primary">
+      <Icon className="size-4 shrink-0" />
+      {label}
+    </span>
   )
 }

@@ -1,5 +1,5 @@
 import { type CommentaireApiModel } from '@pilote/mb-shared/commentaire'
-import { type IndiceConfiance } from '@pilote/mb-shared/niveauConfiance'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { MoreVertical, Pencil } from 'lucide-react'
 
 import { BadgeStatut } from '@/components/indicateurs/commentaires/BadgeStatut'
@@ -16,14 +16,19 @@ import { Text } from '@/components/ui/Typography'
 import { auth } from '@/auth'
 import { clsxm } from '@/lib/clsxm'
 import { formatDateHeureFr } from '@/lib/format'
+import { niveauPourCommentaireQueryOptions } from '@/queries/niveauConfiance'
 
 export function CarteCommentaire({
+  indicateurId,
+  individuId,
   commentaire,
-  indice,
+  avecNiveauConfiance,
   onEdit,
 }: {
+  indicateurId: string
+  individuId: string
   commentaire: CommentaireApiModel
-  indice?: IndiceConfiance | undefined
+  avecNiveauConfiance: boolean
   onEdit: () => void
 }) {
   const brouillon = commentaire.statut === 'BROUILLON'
@@ -57,10 +62,12 @@ export function CarteCommentaire({
         )}
       </div>
 
-      {indice && (
-        <div className="mb-3">
-          <MeteoTag indice={indice} />
-        </div>
+      {avecNiveauConfiance && (
+        <MeteoBadge
+          indicateurId={indicateurId}
+          individuId={individuId}
+          commentaireId={commentaire.id}
+        />
       )}
 
       <ContenuRepliable html={commentaire.contenu} />
@@ -72,5 +79,25 @@ export function CarteCommentaire({
         </Text>
       </div>
     </article>
+  )
+}
+
+function MeteoBadge({
+  indicateurId,
+  individuId,
+  commentaireId,
+}: {
+  indicateurId: string
+  individuId: string
+  commentaireId: string
+}) {
+  const { data: niveau } = useSuspenseQuery(
+    niveauPourCommentaireQueryOptions(indicateurId, individuId, commentaireId),
+  )
+  if (!niveau) return null
+  return (
+    <div className="mb-3">
+      <MeteoTag indice={niveau.indice} />
+    </div>
   )
 }
