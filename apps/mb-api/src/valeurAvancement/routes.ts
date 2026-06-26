@@ -355,10 +355,7 @@ const getTauxProgressionForIndividuRoute = createRoute({
       },
       description: 'Taux de progression pour les indicateurs demandés',
     },
-    400: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Paramètres de requête invalides (ex. `indicateurs` absent ou trop nombreux)',
-    },
+    400: erreur400,
   },
 })
 
