@@ -9,7 +9,7 @@ export function ProgressionBar({
   unite,
 }: {
   taux: number
-  valeurCible: number | null
+  valeurCible: number
   unite: UniteIndicateurApiModel | null
 }) {
   return (
@@ -30,11 +30,9 @@ export function ProgressionBar({
           {formatNumberFr(taux)} %
         </span>
       </div>
-      {valeurCible !== null && (
-        <span className="text-xs text-text-muted text-right">
-          Objectif : {formatNumberAvecUniteFr(valeurCible, unite)}
-        </span>
-      )}
+      <span className="text-xs text-text-muted text-right">
+        Objectif : {formatNumberAvecUniteFr(valeurCible, unite)}
+      </span>
     </div>
   )
 }

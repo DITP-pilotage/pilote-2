@@ -340,9 +340,9 @@ const getTauxProgressionForIndividuRoute = createRoute({
   description:
     'Retourne, pour chaque indicateur demandé accessible en lecture, le taux de progression ' +
     "calculé sur la dernière valeur connue de l'individu (`min(100, valeur / valeurCible × 100)`, " +
-    'tronqué à 2 décimales). Les indicateurs sans objectif défini, sans valeur connue, ou dont ' +
-    'la valeurCible est zéro sont omis de la réponse. Endpoint pensé pour des appels batch ' +
-    'côté client en parallèle de `dernieres-valeurs`.',
+    'tronqué à 2 décimales). Les indicateurs sans objectif défini ou sans valeur connue sont omis. ' +
+    'Les indicateurs dont la valeurCible est zéro sont inclus avec `tauxProgression: null`. ' +
+    'Endpoint pensé pour des appels batch côté client en parallèle de `dernieres-valeurs`.',
   middleware: [requireAuthentication],
   request: {
     params: individuParamsSchema,

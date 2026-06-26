@@ -496,11 +496,7 @@ export const tauxProgressionIndividuApiModelSchema = z.object({
     ),
   valeurCible: z
     .number()
-    .nullable()
-    .describe(
-      "Valeur cible de l'objectif courant, null si aucun objectif n'est défini " +
-        "pour cet indicateur × individu.",
-    ),
+    .describe("Valeur cible de l'objectif courant pour cet indicateur × individu."),
 })
 export type TauxProgressionIndividuApiModel = z.infer<typeof tauxProgressionIndividuApiModelSchema>
 
@@ -508,8 +504,9 @@ export const tauxProgressionIndividuListApiModelSchema = z.object({
   items: z
     .array(tauxProgressionIndividuApiModelSchema)
     .describe(
-      "Taux de progression pour chaque indicateur demandé ayant un objectif défini. " +
-        "Les indicateurs sans objectif ou sans valeur sont omis de la réponse.",
+      'Taux de progression pour chaque indicateur demandé ayant un objectif défini et une valeur connue. ' +
+        "Les indicateurs sans objectif ou sans valeur sont omis. " +
+        "Les indicateurs dont la valeurCible est zéro sont inclus avec tauxProgression: null.",
     ),
 })
 export type TauxProgressionIndividuListApiModel = z.infer<
