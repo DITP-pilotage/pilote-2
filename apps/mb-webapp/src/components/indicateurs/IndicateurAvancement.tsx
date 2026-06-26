@@ -1,5 +1,5 @@
 import { type UniteIndicateurApiModel } from '@pilote/mb-shared/indicateur'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQueries } from '@tanstack/react-query'
 
 import { formatMonthYearNumericFr, formatNumberAvecUniteFr } from '@/lib/format'
 import { dernierValeurIndividuQueryOptions } from '@/queries/dernieresValeurs'
@@ -28,10 +28,12 @@ export function IndicateurAvancement({
   individuId: string
   unite: UniteIndicateurApiModel | null
 }) {
-  const { data } = useSuspenseQuery(dernierValeurIndividuQueryOptions(individuId, indicateurId))
-  const { data: tauxData } = useSuspenseQuery(
-    tauxProgressionIndividuQueryOptions(individuId, indicateurId),
-  )
+  const [{ data }, { data: tauxData }] = useSuspenseQueries({
+    queries: [
+      dernierValeurIndividuQueryOptions(individuId, indicateurId),
+      tauxProgressionIndividuQueryOptions(individuId, indicateurId),
+    ],
+  })
   if (!data) {
     return <span className="text-text-subtle">Pas de valeur</span>
   }
@@ -41,7 +43,7 @@ export function IndicateurAvancement({
         {formatNumberAvecUniteFr(data.valeur, unite)}
       </span>
       <span className="text-text-muted">au {formatMonthYearNumericFr(data.date)}</span>
-      {tauxData?.tauxProgression !== null && tauxData?.tauxProgression !== undefined && (
+      {tauxData?.tauxProgression != null && (
         <ProgressionBar
           taux={tauxData.tauxProgression}
           valeurCible={tauxData.valeurCible}

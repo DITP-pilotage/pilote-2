@@ -13,11 +13,12 @@ export function ProgressionBar({
   unite: UniteIndicateurApiModel | null
 }) {
   return (
-    <span className="flex flex-col gap-1">
-      <span className="flex items-center gap-2">
+    <div className="flex flex-col gap-1">
+      <div className="flex items-center gap-2">
         <Progress.Root
           value={taux}
           max={100}
+          aria-label={`Progression vers l'objectif : ${formatNumberFr(taux)} %`}
           className="flex-1 h-2 rounded-full overflow-hidden bg-primary/20"
         >
           <Progress.Indicator
@@ -28,12 +29,12 @@ export function ProgressionBar({
         <span className="text-sm font-medium tabular-nums shrink-0 text-primary">
           {formatNumberFr(taux)} %
         </span>
-      </span>
+      </div>
       {valeurCible !== null && (
         <span className="text-xs text-text-muted text-right">
           Objectif : {formatNumberAvecUniteFr(valeurCible, unite)}
         </span>
       )}
-    </span>
+    </div>
   )
 }
