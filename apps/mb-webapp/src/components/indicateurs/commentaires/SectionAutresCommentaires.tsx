@@ -1,10 +1,10 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
-import { type MeteoCourante } from '@/components/indicateurs/commentaires/EditeurCommentaire'
+import { type NiveauConfianceCourant } from '@/components/indicateurs/commentaires/EditeurCommentaire'
 import { ListeCommentaires } from '@/components/indicateurs/commentaires/ListeCommentaires'
 import { brouillonQueryOptions, commentairesPubliesQueryOptions } from '@/queries/commentaires'
 
-const SANS_METEO = new Map<string, MeteoCourante>()
+const SANS_NIVEAUX = new Map<string, NiveauConfianceCourant>()
 
 export function SectionAutresCommentaires({
   indicateurId,
@@ -25,10 +25,10 @@ export function SectionAutresCommentaires({
       indicateurId={indicateurId}
       individuId={individuId}
       type="DEFAUT"
-      avecMeteo={false}
+      avecNiveauConfiance={false}
       brouillon={brouillon ?? undefined}
       publies={publies}
-      meteoParCommentaire={SANS_METEO}
+      niveauxParCommentaire={SANS_NIVEAUX}
     />
   )
 }

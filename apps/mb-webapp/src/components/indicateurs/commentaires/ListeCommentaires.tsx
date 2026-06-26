@@ -6,7 +6,7 @@ import { type IndicateurIndividuCommentaireType } from '@/api/commentaires'
 import { CarteCommentaire } from '@/components/indicateurs/commentaires/CarteCommentaire'
 import {
   EditeurCommentaire,
-  type MeteoCourante,
+  type NiveauConfianceCourant,
 } from '@/components/indicateurs/commentaires/EditeurCommentaire'
 import { LigneHistorique } from '@/components/indicateurs/commentaires/LigneHistorique'
 import { Button } from '@/components/ui/Button'
@@ -29,19 +29,19 @@ export function ListeCommentaires({
   indicateurId,
   individuId,
   type,
-  avecMeteo,
+  avecNiveauConfiance,
   brouillon,
   publies,
-  meteoParCommentaire,
+  niveauxParCommentaire,
 }: {
   indicateurId: string
   individuId: string
   type: IndicateurIndividuCommentaireType
-  avecMeteo: boolean
+  avecNiveauConfiance: boolean
   // Brouillon de l'utilisateur courant (l'API ne renvoie que le sien). Au plus un.
   brouillon?: CommentaireApiModel | undefined
   publies: CommentaireApiModel[]
-  meteoParCommentaire: Map<string, MeteoCourante>
+  niveauxParCommentaire: Map<string, NiveauConfianceCourant>
 }) {
   const [editionId, setEditionId] = useState<string | null>(null)
   const [brouillonVisible, setBrouillonVisible] = useState(true)
@@ -97,8 +97,8 @@ export function ListeCommentaires({
               individuId={individuId}
               type={type}
               commentaire={brouillon}
-              avecMeteo={avecMeteo}
-              meteo={meteoParCommentaire.get(brouillon.id)}
+              avecNiveauConfiance={avecNiveauConfiance}
+              niveauConfiance={niveauxParCommentaire.get(brouillon.id)}
             />
           ) : (
             <button
@@ -106,7 +106,7 @@ export function ListeCommentaires({
               onClick={() => setBrouillonVisible(true)}
               className="w-full rounded-r-sm border border-l-4 border-border border-l-warning bg-surface px-5 py-4 text-left text-sm text-text-muted transition-colors hover:bg-surface-tinted"
             >
-              Brouillon en cours, masqué — cliquez pour l’afficher.
+              Brouillon en cours, masqué — cliquez pour l'afficher.
             </button>
           )}
         </section>
@@ -121,14 +121,14 @@ export function ListeCommentaires({
               individuId={individuId}
               type={type}
               commentaire={etatEnCours}
-              avecMeteo={avecMeteo}
-              meteo={meteoParCommentaire.get(etatEnCours.id)}
+              avecNiveauConfiance={avecNiveauConfiance}
+              niveauConfiance={niveauxParCommentaire.get(etatEnCours.id)}
               onClose={() => setEditionId(null)}
             />
           ) : (
             <CarteCommentaire
               commentaire={etatEnCours}
-              indice={meteoParCommentaire.get(etatEnCours.id)?.indice}
+              indice={niveauxParCommentaire.get(etatEnCours.id)?.indice}
               onEdit={() => setEditionId(etatEnCours.id)}
             />
           )}
@@ -143,7 +143,7 @@ export function ListeCommentaires({
               <LigneHistorique
                 key={commentaire.id}
                 commentaire={commentaire}
-                indice={meteoParCommentaire.get(commentaire.id)?.indice}
+                indice={niveauxParCommentaire.get(commentaire.id)?.indice}
               />
             ))}
           </div>

@@ -3,7 +3,7 @@ import { Suspense, useState } from 'react'
 
 import { type IndicateurIndividuCommentaireType } from '@/api/commentaires'
 import { SectionAutresCommentaires } from '@/components/indicateurs/commentaires/SectionAutresCommentaires'
-import { SectionMeteoSynthese } from '@/components/indicateurs/commentaires/SectionMeteoSynthese'
+import { SectionSyntheseDesResultats } from '@/components/indicateurs/commentaires/SectionSyntheseDesResultats'
 import { RouteLoading } from '@/components/RouteLoading'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 
@@ -32,7 +32,7 @@ export function IndicateurCommentairesTab({
 
       <Suspense fallback={<RouteLoading message="Chargement des commentaires…" />}>
         {type === 'CONFIANCE' ? (
-          <SectionMeteoSynthese indicateurId={indicateurId} individuId={individuId} />
+          <SectionSyntheseDesResultats indicateurId={indicateurId} individuId={individuId} />
         ) : (
           <SectionAutresCommentaires indicateurId={indicateurId} individuId={individuId} />
         )}

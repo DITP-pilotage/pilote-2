@@ -13,48 +13,51 @@ import { Text } from '@/components/ui/Typography'
 import { clsxm } from '@/lib/clsxm'
 import { formatDateHeureFr } from '@/lib/format'
 import { useModifierCommentaire } from '@/mutations/commentaires'
-import { useEnregistrerMeteo } from '@/mutations/niveauConfiance'
+import { useEnregistrerNiveauConfiance } from '@/mutations/niveauConfiance'
 
-export type MeteoCourante = { niveauId: string; indice: IndiceConfiance }
+export type NiveauConfianceCourant = { niveauId: string; indice: IndiceConfiance }
 
 export function EditeurCommentaire({
   indicateurId,
   individuId,
   type,
   commentaire,
-  avecMeteo,
-  meteo,
+  avecNiveauConfiance,
+  niveauConfiance,
   onClose,
 }: {
   indicateurId: string
   individuId: string
   type: IndicateurIndividuCommentaireType
   commentaire: CommentaireApiModel
-  avecMeteo: boolean
-  meteo?: MeteoCourante | undefined
+  avecNiveauConfiance: boolean
+  niveauConfiance?: NiveauConfianceCourant | undefined
   onClose?: (() => void) | undefined
 }) {
   const [contenu, setContenu] = useState(commentaire.contenu)
-  const [indice, setIndice] = useState<IndiceConfiance | undefined>(meteo?.indice)
+  const [indice, setIndice] = useState<IndiceConfiance | undefined>(niveauConfiance?.indice)
   const modifier = useModifierCommentaire(indicateurId, individuId, type)
-  const { creer: creerMeteo, modifier: modifierMeteo } = useEnregistrerMeteo(
+  const { creer: creerNiveau, modifier: modifierNiveau } = useEnregistrerNiveauConfiance(
     indicateurId,
     individuId,
   )
 
   const brouillon = commentaire.statut === 'BROUILLON'
-  const enCours = modifier.isPending || creerMeteo.isPending || modifierMeteo.isPending
-  // Pour le type Confiance, on bloque la publication tant qu'aucune météo n'est choisie.
-  const publicationBloquee = avecMeteo && !indice
+  const enCours = modifier.isPending || creerNiveau.isPending || modifierNiveau.isPending
+  // Pour le type Confiance, on bloque la publication tant qu'aucun indice n'est choisi.
+  const publicationBloquee = avecNiveauConfiance && !indice
 
-  // La météo n'est persistée qu'au moment de l'enregistrement (appel séparé de
-  // celui du commentaire), et seulement si elle a changé.
-  const persisterMeteo = async () => {
-    if (!avecMeteo || !indice || indice === meteo?.indice) return
-    if (meteo) {
-      await modifierMeteo.mutateAsync({ niveauConfianceId: meteo.niveauId, body: { indice } })
+  // Le niveau de confiance n'est persisté qu'au moment de l'enregistrement (appel séparé de
+  // celui du commentaire), et seulement s'il a changé.
+  const persisterNiveauConfiance = async () => {
+    if (!avecNiveauConfiance || !indice || indice === niveauConfiance?.indice) return
+    if (niveauConfiance) {
+      await modifierNiveau.mutateAsync({
+        niveauConfianceId: niveauConfiance.niveauId,
+        body: { indice },
+      })
     } else {
-      await creerMeteo.mutateAsync({ commentaireId: commentaire.id, indice })
+      await creerNiveau.mutateAsync({ commentaireId: commentaire.id, indice })
     }
   }
 
@@ -64,7 +67,7 @@ export function EditeurCommentaire({
         commentaireId: commentaire.id,
         body: statut ? { contenu, statut } : { contenu },
       })
-      await persisterMeteo()
+      await persisterNiveauConfiance()
       onClose?.()
     } catch {
       // Les erreurs sont déjà signalées par les toasts des mutations.
@@ -88,7 +91,7 @@ export function EditeurCommentaire({
         )}
       </div>
 
-      {avecMeteo && (
+      {avecNiveauConfiance && (
         <div className="mb-5">
           <Text variant="caption" weight="semibold" tone="muted" className="mb-2 block">
             Météo

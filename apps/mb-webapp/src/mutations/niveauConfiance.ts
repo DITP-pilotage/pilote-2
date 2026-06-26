@@ -8,7 +8,7 @@ import { createNiveauConfiance, updateNiveauConfiance } from '@/api/niveauConfia
 import { useToast } from '@/components/ui/Toast'
 import { niveauConfianceKeys } from '@/queries/niveauConfiance'
 
-export function useEnregistrerMeteo(indicateurId: string, individuId: string) {
+export function useEnregistrerNiveauConfiance(indicateurId: string, individuId: string) {
   const queryClient = useQueryClient()
   const toast = useToast()
 
@@ -17,7 +17,7 @@ export function useEnregistrerMeteo(indicateurId: string, individuId: string) {
       queryKey: niveauConfianceKeys.parScope(indicateurId, individuId),
     })
 
-  // Pas de toast de succès : la météo est persistée au moment de l'enregistrement
+  // Pas de toast de succès : le niveau de confiance est persisté au moment de l'enregistrement
   // du commentaire, qui porte déjà le toast de succès.
   const creer = useMutation({
     mutationFn: (body: CreerNiveauConfianceBody) => createNiveauConfiance(body),

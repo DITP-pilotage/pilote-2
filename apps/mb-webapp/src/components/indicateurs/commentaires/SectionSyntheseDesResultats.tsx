@@ -1,11 +1,11 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
-import { type MeteoCourante } from '@/components/indicateurs/commentaires/EditeurCommentaire'
+import { type NiveauConfianceCourant } from '@/components/indicateurs/commentaires/EditeurCommentaire'
 import { ListeCommentaires } from '@/components/indicateurs/commentaires/ListeCommentaires'
 import { brouillonQueryOptions, commentairesPubliesQueryOptions } from '@/queries/commentaires'
 import { niveauxParCommentairesQueryOptions } from '@/queries/niveauConfiance'
 
-export function SectionMeteoSynthese({
+export function SectionSyntheseDesResultats({
   indicateurId,
   individuId,
 }: {
@@ -19,17 +19,20 @@ export function SectionMeteoSynthese({
     brouillonQueryOptions(indicateurId, individuId, 'CONFIANCE'),
   )
 
-  // Météos récupérées par lot, pour exactement les commentaires affichés.
+  // Niveaux récupérés par lot, pour exactement les commentaires affichés.
   const commentaireIds = [...publies.map((c) => c.id), ...(brouillon ? [brouillon.id] : [])]
   const { data: niveaux } = useSuspenseQuery(
     niveauxParCommentairesQueryOptions(indicateurId, individuId, commentaireIds),
   )
 
   // niveaux antichronologiques → on garde le plus récent par commentaire.
-  const meteoParCommentaire = new Map<string, MeteoCourante>()
+  const niveauxParCommentaire = new Map<string, NiveauConfianceCourant>()
   for (const niveau of niveaux.items) {
-    if (!meteoParCommentaire.has(niveau.commentaire.id)) {
-      meteoParCommentaire.set(niveau.commentaire.id, { niveauId: niveau.id, indice: niveau.indice })
+    if (!niveauxParCommentaire.has(niveau.commentaire.id)) {
+      niveauxParCommentaire.set(niveau.commentaire.id, {
+        niveauId: niveau.id,
+        indice: niveau.indice,
+      })
     }
   }
 
@@ -38,10 +41,10 @@ export function SectionMeteoSynthese({
       indicateurId={indicateurId}
       individuId={individuId}
       type="CONFIANCE"
-      avecMeteo
+      avecNiveauConfiance
       brouillon={brouillon ?? undefined}
       publies={publies}
-      meteoParCommentaire={meteoParCommentaire}
+      niveauxParCommentaire={niveauxParCommentaire}
     />
   )
 }
