@@ -3,6 +3,7 @@ import { type QueryClient, queryOptions } from '@tanstack/react-query'
 
 import {
   fetchPanierById,
+  fetchPanierContactsUtiles,
   fetchPanierResponsables,
   fetchPaniers,
   fetchPanierTauxProgression,
@@ -57,5 +58,12 @@ export const panierResponsablesQueryOptions = (panierId: string) =>
   queryOptions({
     queryKey: ['panier', panierId, 'responsables'],
     queryFn: () => fetchPanierResponsables(panierId),
+    staleTime: DEFAULT_STALE_TIME,
+  })
+
+export const panierContactsUtilesQueryOptions = (panierId: string) =>
+  queryOptions({
+    queryKey: ['panier', panierId, 'contacts-utiles'],
+    queryFn: () => fetchPanierContactsUtiles(panierId),
     staleTime: DEFAULT_STALE_TIME,
   })
