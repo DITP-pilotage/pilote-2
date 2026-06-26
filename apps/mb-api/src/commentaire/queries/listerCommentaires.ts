@@ -5,6 +5,8 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { type SujetCommentaireConfig } from '@/commentaire/sujets'
+import { filtreParType } from '@/commentaire/queries/filtres'
+import { filtreVisibiliteCommentaire } from '@/commentaire/visibilite'
 import { commentaireInclude, toCommentaireApiModel } from '@/commentaire/utils'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
@@ -25,7 +27,7 @@ export const listerCommentaires = <P extends Record<string, string>>(
     AND: [
       config.whereLecture(params, principalId),
       filtreParType(query.type),
-      { statut: 'PUBLIE' },
+      filtreVisibiliteCommentaire(principalId, 'PUBLIE'),
     ],
   }
 
@@ -41,12 +43,3 @@ export const listerCommentaires = <P extends Record<string, string>>(
     toPaginatedResponse(rows, total, toCommentaireApiModel, query.pageSize),
   )
 }
-
-// Filtre sur le `type` quel que soit le satellite (un seul satellite est renseigné par commentaire).
-export const filtreParType = (type: string): Prisma.CommentaireWhereInput => ({
-  OR: [
-    { indicateurIndividu: { type: type as never } },
-    { panierIndividu: { type: type as never } },
-    { panier: { type: type as never } },
-  ],
-})

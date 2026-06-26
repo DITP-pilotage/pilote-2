@@ -13,4 +13,4 @@ export const METEOS: readonly Meteo[] = [
 ]
 
 export const meteoFromIndice = (indice: IndiceConfiance): Meteo =>
-  METEOS.find((meteo) => meteo.indice === indice) ?? ORAGE
+  METEOS.find((meteo) => meteo.indice === indice)!

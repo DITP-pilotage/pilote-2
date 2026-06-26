@@ -2,7 +2,8 @@ import { type BrouillonApiModel, type RecupererBrouillonQuery } from '@pilote/mb
 import { ResultAsync } from 'neverthrow'
 
 import { type SujetCommentaireConfig } from '@/commentaire/sujets'
-import { filtreParType } from '@/commentaire/queries/listerCommentaires'
+import { filtreParType } from '@/commentaire/queries/filtres'
+import { filtreVisibiliteCommentaire } from '@/commentaire/visibilite'
 import { commentaireInclude, toCommentaireApiModel } from '@/commentaire/utils'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
@@ -23,7 +24,7 @@ export const getDernierBrouillon = <P extends Record<string, string>>(
     AND: [
       config.whereLecture(params, principalId),
       filtreParType(query.type),
-      { statut: 'BROUILLON', createdBy: principalId },
+      filtreVisibiliteCommentaire(principalId, 'BROUILLON'),
     ],
   }
   return ResultAsync.fromSafePromise(
