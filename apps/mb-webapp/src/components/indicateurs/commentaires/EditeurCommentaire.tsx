@@ -63,11 +63,11 @@ export function EditeurCommentaire({
 
   const sauvegarder = async (statut?: 'PUBLIE') => {
     try {
+      await persisterNiveauConfiance()
       await modifier.mutateAsync({
         commentaireId: commentaire.id,
         body: statut ? { contenu, statut } : { contenu },
       })
-      await persisterNiveauConfiance()
       onClose?.()
     } catch {
       // Les erreurs sont déjà signalées par les toasts des mutations.
