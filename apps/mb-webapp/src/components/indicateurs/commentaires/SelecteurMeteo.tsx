@@ -1,6 +1,6 @@
 import { type IndiceConfiance } from '@pilote/mb-shared/niveauConfiance'
 
-import { METEOS } from '@/components/indicateurs/commentaires/meteo'
+import { METEOS, couleurIndice } from '@/components/indicateurs/commentaires/meteo'
 import { clsxm } from '@/lib/clsxm'
 
 export function SelecteurMeteo({
@@ -14,8 +14,9 @@ export function SelecteurMeteo({
 }) {
   return (
     <div className="flex flex-wrap gap-2.5">
-      {METEOS.map(({ indice, label, Icon }) => {
+      {METEOS.map(({ indice, label }) => {
         const actif = value === indice
+        const couleur = couleurIndice(indice)
         return (
           <button
             key={indice}
@@ -26,12 +27,9 @@ export function SelecteurMeteo({
             className={clsxm(
               'inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold leading-none transition-colors',
               'disabled:cursor-not-allowed disabled:opacity-60',
-              actif
-                ? 'border-primary-tinted bg-primary-tinted text-primary'
-                : 'border-border bg-surface text-text-muted hover:border-border-strong',
+              actif ? couleur.actif : couleur.inactif,
             )}
           >
-            <Icon className="size-5 shrink-0" />
             {label}
           </button>
         )

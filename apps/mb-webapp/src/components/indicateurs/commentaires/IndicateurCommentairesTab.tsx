@@ -26,7 +26,7 @@ export function IndicateurCommentairesTab({
           value={type}
           onValueChange={onTypeChange}
           options={[
-            { value: 'CONFIANCE', label: 'Météo & synthèse des résultats', icon: <CloudSun /> },
+            { value: 'CONFIANCE', label: 'Synthèse des résultats', icon: <CloudSun /> },
             { value: 'DEFAUT', label: 'Autres commentaires', icon: <MessageSquare /> },
           ]}
         />
