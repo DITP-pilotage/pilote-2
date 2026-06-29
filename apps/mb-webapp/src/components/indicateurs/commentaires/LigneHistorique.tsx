@@ -3,8 +3,9 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { ContenuRepliable } from '@/components/indicateurs/commentaires/ContenuRepliable'
 import { libelleAuteur } from '@/components/indicateurs/commentaires/libelleAuteur'
-import { meteoFromIndice } from '@/components/indicateurs/commentaires/meteo'
+import { couleurIndice, meteoFromIndice } from '@/components/indicateurs/commentaires/meteo'
 import { Text } from '@/components/ui/Typography'
+import { clsxm } from '@/lib/clsxm'
 import { formatDateHeureFr } from '@/lib/format'
 import { niveauPourCommentaireQueryOptions } from '@/queries/niveauConfiance'
 
@@ -52,10 +53,14 @@ function MeteoInline({
     niveauPourCommentaireQueryOptions(indicateurId, individuId, commentaireId),
   )
   if (!niveau) return null
-  const { label, Icon } = meteoFromIndice(niveau.indice)
+  const { label } = meteoFromIndice(niveau.indice)
   return (
-    <span className="inline-flex items-center gap-1.5 text-sm font-medium leading-none text-primary">
-      <Icon className="size-4 shrink-0" />
+    <span
+      className={clsxm(
+        'inline-flex items-center text-sm font-semibold leading-none',
+        couleurIndice(niveau.indice).texte,
+      )}
+    >
       {label}
     </span>
   )

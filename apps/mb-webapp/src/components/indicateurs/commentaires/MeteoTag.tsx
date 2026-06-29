@@ -1,12 +1,17 @@
 import { type IndiceConfiance } from '@pilote/mb-shared/niveauConfiance'
 
-import { meteoFromIndice } from '@/components/indicateurs/commentaires/meteo'
+import { couleurIndice, meteoFromIndice } from '@/components/indicateurs/commentaires/meteo'
+import { clsxm } from '@/lib/clsxm'
 
 export function MeteoTag({ indice }: { indice: IndiceConfiance }) {
-  const { label, Icon } = meteoFromIndice(indice)
+  const { label } = meteoFromIndice(indice)
   return (
-    <span className="inline-flex items-center gap-2 rounded-xl bg-primary-tinted px-4 py-2 text-sm font-semibold leading-none text-primary">
-      <Icon className="size-5 shrink-0" />
+    <span
+      className={clsxm(
+        'inline-flex items-center rounded-xl px-4 py-2 text-sm font-semibold leading-none',
+        couleurIndice(indice).badge,
+      )}
+    >
       {label}
     </span>
   )

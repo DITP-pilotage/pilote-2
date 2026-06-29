@@ -22,7 +22,7 @@ export function useEnregistrerNiveauConfiance(indicateurId: string, individuId: 
   const creer = useMutation({
     mutationFn: (body: CreerNiveauConfianceBody) => createNiveauConfiance(body),
     onSuccess: () => void invalider(),
-    onError: () => toast({ title: 'Météo non enregistrée.', variant: 'error' }),
+    onError: () => toast({ title: 'Niveau de confiance non enregistré.', variant: 'error' }),
   })
 
   const modifier = useMutation({
@@ -34,7 +34,7 @@ export function useEnregistrerNiveauConfiance(indicateurId: string, individuId: 
       body: ModifierNiveauConfianceBody
     }) => updateNiveauConfiance(niveauConfianceId, body),
     onSuccess: () => void invalider(),
-    onError: () => toast({ title: 'Météo non mise à jour.', variant: 'error' }),
+    onError: () => toast({ title: 'Niveau de confiance non mis à jour.', variant: 'error' }),
   })
 
   return { creer, modifier }

@@ -132,7 +132,7 @@ function EditeurInterne({
         {avecNiveauConfiance && (
           <div className="mb-5">
             <Text variant="caption" weight="semibold" tone="muted" className="mb-2 block">
-              Météo
+              Niveau de confiance
             </Text>
             <Controller
               control={form.control}
@@ -163,7 +163,7 @@ function EditeurInterne({
               <>
                 {publicationBloquee && (
                   <Text variant="caption" tone="muted">
-                    Une météo est requise pour publier.
+                    Un niveau de confiance est requis pour publier.
                   </Text>
                 )}
                 <Button variant="secondary" size="sm" type="submit" disabled={enCours}>
