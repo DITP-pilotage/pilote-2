@@ -1,3 +1,4 @@
+import { indicateurIndividuCommentaireTypeSchema } from '@pilote/mb-shared/commentaire'
 import { indicateurPublicIdSchema } from '@pilote/mb-shared/publicIds'
 import { individuPublicIdSchema } from '@pilote/mb-shared/individu'
 import { referentielPublicIdSchema } from '@pilote/mb-shared/referentiel'
@@ -8,6 +9,7 @@ import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
+import { IndicateurCommentairesTab } from '@/components/indicateurs/commentaires/IndicateurCommentairesTab'
 import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetadonnees'
 import { IndicateurStatsPanel } from '@/components/indicateurs/IndicateurStatsPanel'
 import { IndicateurValeursChart } from '@/components/indicateurs/IndicateurValeursChart'
@@ -33,6 +35,8 @@ const paramsSchema = z.object({
 const searchSchema = z.object({
   individu: individuPublicIdSchema.optional(),
   referentiel: referentielPublicIdSchema.optional(),
+  onglet: z.enum(['valeurs', 'metadonnees', 'commentaires']).default('valeurs'),
+  commentaires: indicateurIndividuCommentaireTypeSchema.default('CONFIANCE'),
 })
 
 export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
@@ -147,10 +151,21 @@ function IndicateurDetailComponent() {
         unite={indicateur.unite}
       />
 
-      <Tabs defaultValue="valeurs">
+      <Tabs
+        value={search.onglet}
+        onValueChange={(onglet) => {
+          void navigate({
+            search: (prev) => ({
+              ...prev,
+              onglet: onglet as typeof search.onglet,
+            }),
+          })
+        }}
+      >
         <TabsList>
           <TabsTrigger value="valeurs">Valeurs</TabsTrigger>
           <TabsTrigger value="metadonnees">Métadonnées</TabsTrigger>
+          <TabsTrigger value="commentaires">Commentaires</TabsTrigger>
         </TabsList>
 
         <TabsContent value="valeurs">
@@ -166,6 +181,17 @@ function IndicateurDetailComponent() {
 
         <TabsContent value="metadonnees">
           <IndicateurMetadonnees indicateur={indicateur} />
+        </TabsContent>
+
+        <TabsContent value="commentaires">
+          <IndicateurCommentairesTab
+            indicateurId={id}
+            individuId={individuId}
+            type={search.commentaires}
+            onTypeChange={(commentaires) => {
+              void navigate({ search: (prev) => ({ ...prev, commentaires }) })
+            }}
+          />
         </TabsContent>
       </Tabs>
     </Page>

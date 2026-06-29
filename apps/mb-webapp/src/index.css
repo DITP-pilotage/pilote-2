@@ -46,6 +46,34 @@
   --color-accent-rouge: #c9191e;
   --color-accent-sable: #fbe7c6;
 
+  /* Statuts (sémantique DSFR) */
+  --color-success: #18753c;
+  --color-success-tinted: #e3fbe9;
+  --color-warning: #b34000;
+  --color-warning-tinted: #fff4e6;
+
+  /* Animations Collapsible (radix expose --radix-collapsible-content-height). */
+  --animate-collapsible-down: collapsible-down 220ms ease-out;
+  --animate-collapsible-up: collapsible-up 220ms ease-out;
+
+  @keyframes collapsible-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-collapsible-content-height);
+    }
+  }
+
+  @keyframes collapsible-up {
+    from {
+      height: var(--radix-collapsible-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+
   /* Display type scale */
   --text-display-xl: 4.5rem; /* 72px */
   --text-display-xl--line-height: 1.05;

@@ -4,8 +4,10 @@ import {
   creerPanierIndividuCommentaireBodySchema,
   listerPanierCommentairesQuerySchema,
   listerPanierIndividuCommentairesQuerySchema,
+  recupererPanierBrouillonQuerySchema,
+  recupererPanierIndividuBrouillonQuerySchema,
 } from '@pilote/mb-shared/commentaire'
-import { historiqueNiveauConfianceQuerySchema } from '@pilote/mb-shared/niveauConfiance'
+import { listerNiveauxConfianceQuerySchema } from '@pilote/mb-shared/niveauConfiance'
 import {
   listPaniersQuerySchema,
   panierApiModelSchema,
@@ -20,19 +22,19 @@ import {
 import { individuPublicIdSchema, panierPublicIdSchema } from '@pilote/mb-shared/publicIds'
 
 import {
-  NiveauConfianceApiModelSchema,
   NiveauConfianceListApiModelSchema,
-  reponseHistoriqueNiveauConfiance,
-  reponseNiveauConfiance,
+  reponseListeNiveauxConfiance,
 } from '@/niveauConfiance/openapi'
-import { getNiveauConfianceCourant } from '@/niveauConfiance/queries/getNiveauConfianceCourant'
-import { listerHistoriqueNiveauConfiance } from '@/niveauConfiance/queries/listerHistoriqueNiveauConfiance'
+import { listerNiveauxParCommentaires } from '@/niveauConfiance/queries/listerNiveauxParCommentaires'
 import {
+  BrouillonApiModelSchema,
   CommentaireApiModelSchema,
   CommentaireListApiModelSchema,
+  reponseBrouillon,
   reponseCommentaire,
   reponseListe,
 } from '@/commentaire/openapi'
+import { getDernierBrouillon } from '@/commentaire/queries/getDernierBrouillon'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
@@ -302,6 +304,30 @@ panierRoutes.openapi(listerPanierIndividuCommentairesRoute, async (context) => {
   )
 })
 
+// --- GET /paniers/:id/individus/:individuId/commentaires/brouillon -----------
+
+const getPanierIndividuBrouillonRoute = createRoute({
+  method: 'get',
+  path: '/paniers/{panierId}/individus/{individuId}/commentaires/brouillon',
+  tags: ['Panier'],
+  summary: 'Récupérer mon brouillon courant (panier + individu)',
+  middleware: [requireAuthentication],
+  request: {
+    params: panierIndividuCommentaireParamsSchema,
+    query: recupererPanierIndividuBrouillonQuerySchema,
+  },
+  responses: reponseBrouillon,
+})
+
+panierRoutes.openapi(getPanierIndividuBrouillonRoute, async (context) => {
+  const params = context.req.valid('param')
+  const query = context.req.valid('query')
+  return getDernierBrouillon(panierIndividuConfig, { params, query }).match(
+    (data) => jsonResponseOk({ context, data, schema: BrouillonApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
 // --- POST /paniers/:id/commentaires ------------------------------------------
 
 const panierCommentaireParamsSchema = z.object({ panierId: panierPublicIdSchema })
@@ -356,102 +382,76 @@ panierRoutes.openapi(listerPanierCommentairesRoute, async (context) => {
   )
 })
 
-// --- GET /paniers/:id/individus/:individuId/niveau-confiance -----------------
+// --- GET /paniers/:id/commentaires/brouillon ---------------------------------
 
-const getNiveauConfiancePanierIndividuRoute = createRoute({
+const getPanierBrouillonRoute = createRoute({
   method: 'get',
-  path: '/paniers/{panierId}/individus/{individuId}/niveau-confiance',
-  tags: ['Panier', 'NiveauConfiance'],
-  summary: 'Récupérer le niveau de confiance courant (panier + individu)',
-  middleware: [requireAuthentication],
-  request: { params: panierIndividuCommentaireParamsSchema },
-  responses: reponseNiveauConfiance,
-})
-
-panierRoutes.openapi(getNiveauConfiancePanierIndividuRoute, async (context) => {
-  const params = context.req.valid('param')
-  return getNiveauConfianceCourant(panierIndividuConfig, { params }).match(
-    (data) => jsonResponseOk({ context, data, schema: NiveauConfianceApiModelSchema, status: 200 }),
-    never,
-  )
-})
-
-// --- GET /paniers/:id/individus/:individuId/niveau-confiance/historique ------
-
-const listerHistoriqueNiveauConfiancePanierIndividuRoute = createRoute({
-  method: 'get',
-  path: '/paniers/{panierId}/individus/{individuId}/niveau-confiance/historique',
-  tags: ['Panier', 'NiveauConfiance'],
-  summary: 'Historique des niveaux de confiance (panier + individu)',
-  middleware: [requireAuthentication],
-  request: {
-    params: panierIndividuCommentaireParamsSchema,
-    query: historiqueNiveauConfianceQuerySchema,
-  },
-  responses: reponseHistoriqueNiveauConfiance,
-})
-
-panierRoutes.openapi(listerHistoriqueNiveauConfiancePanierIndividuRoute, async (context) => {
-  const params = context.req.valid('param')
-  const query = context.req.valid('query')
-  return listerHistoriqueNiveauConfiance(panierIndividuConfig, { params, query }).match(
-    (data) =>
-      jsonResponseOk({
-        context,
-        data,
-        schema: NiveauConfianceListApiModelSchema,
-        status: 200,
-      }),
-    never,
-  )
-})
-
-// --- GET /paniers/:id/niveau-confiance ---------------------------------------
-
-const getNiveauConfiancePanierRoute = createRoute({
-  method: 'get',
-  path: '/paniers/{panierId}/niveau-confiance',
-  tags: ['Panier', 'NiveauConfiance'],
-  summary: 'Récupérer le niveau de confiance courant (panier global)',
-  middleware: [requireAuthentication],
-  request: { params: panierCommentaireParamsSchema },
-  responses: reponseNiveauConfiance,
-})
-
-panierRoutes.openapi(getNiveauConfiancePanierRoute, async (context) => {
-  const params = context.req.valid('param')
-  return getNiveauConfianceCourant(panierConfig, { params }).match(
-    (data) => jsonResponseOk({ context, data, schema: NiveauConfianceApiModelSchema, status: 200 }),
-    never,
-  )
-})
-
-// --- GET /paniers/:id/niveau-confiance/historique ----------------------------
-
-const listerHistoriqueNiveauConfiancePanierRoute = createRoute({
-  method: 'get',
-  path: '/paniers/{panierId}/niveau-confiance/historique',
-  tags: ['Panier', 'NiveauConfiance'],
-  summary: 'Historique des niveaux de confiance (panier global)',
+  path: '/paniers/{panierId}/commentaires/brouillon',
+  tags: ['Panier'],
+  summary: 'Récupérer mon brouillon courant (panier global)',
   middleware: [requireAuthentication],
   request: {
     params: panierCommentaireParamsSchema,
-    query: historiqueNiveauConfianceQuerySchema,
+    query: recupererPanierBrouillonQuerySchema,
   },
-  responses: reponseHistoriqueNiveauConfiance,
+  responses: reponseBrouillon,
 })
 
-panierRoutes.openapi(listerHistoriqueNiveauConfiancePanierRoute, async (context) => {
+panierRoutes.openapi(getPanierBrouillonRoute, async (context) => {
   const params = context.req.valid('param')
   const query = context.req.valid('query')
-  return listerHistoriqueNiveauConfiance(panierConfig, { params, query }).match(
+  return getDernierBrouillon(panierConfig, { params, query }).match(
+    (data) => jsonResponseOk({ context, data, schema: BrouillonApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
+// --- GET /paniers/:id/individus/:individuId/niveaux-confiance ----------------
+
+const listerNiveauxParCommentairesPanierIndividuRoute = createRoute({
+  method: 'get',
+  path: '/paniers/{panierId}/individus/{individuId}/niveaux-confiance',
+  tags: ['Panier', 'NiveauConfiance'],
+  summary: 'Niveaux de confiance des commentaires demandés (panier + individu)',
+  middleware: [requireAuthentication],
+  request: {
+    params: panierIndividuCommentaireParamsSchema,
+    query: listerNiveauxConfianceQuerySchema,
+  },
+  responses: reponseListeNiveauxConfiance,
+})
+
+panierRoutes.openapi(listerNiveauxParCommentairesPanierIndividuRoute, async (context) => {
+  const params = context.req.valid('param')
+  const query = context.req.valid('query')
+  return listerNiveauxParCommentaires(panierIndividuConfig, { params, query }).match(
     (data) =>
-      jsonResponseOk({
-        context,
-        data,
-        schema: NiveauConfianceListApiModelSchema,
-        status: 200,
-      }),
+      jsonResponseOk({ context, data, schema: NiveauConfianceListApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
+// --- GET /paniers/:id/niveaux-confiance --------------------------------------
+
+const listerNiveauxParCommentairesPanierRoute = createRoute({
+  method: 'get',
+  path: '/paniers/{panierId}/niveaux-confiance',
+  tags: ['Panier', 'NiveauConfiance'],
+  summary: 'Niveaux de confiance des commentaires demandés (panier global)',
+  middleware: [requireAuthentication],
+  request: {
+    params: panierCommentaireParamsSchema,
+    query: listerNiveauxConfianceQuerySchema,
+  },
+  responses: reponseListeNiveauxConfiance,
+})
+
+panierRoutes.openapi(listerNiveauxParCommentairesPanierRoute, async (context) => {
+  const params = context.req.valid('param')
+  const query = context.req.valid('query')
+  return listerNiveauxParCommentaires(panierConfig, { params, query }).match(
+    (data) =>
+      jsonResponseOk({ context, data, schema: NiveauConfianceListApiModelSchema, status: 200 }),
     never,
   )
 })

@@ -85,4 +85,36 @@ describe.concurrent('listerCommentaires', () => {
       expect(result._unsafeUnwrap().items[0]?.type).toBe('CONFIANCE')
     }),
   )
+
+  it(
+    'ne renvoie que les publiés (les brouillons sont exclus, même les miens)',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const indivId = testIndividuId()
+      await fixtures.indicateur({ publicId: indId })
+      await fixtures.individu({ publicId: indivId })
+      const moi = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
+      })
+      const scope = { indicateur: { publicId: indId }, individu: { publicId: indivId } }
+      await fixtures.commentaire({ ...scope, createdBy: moi.id, type: 'DEFAUT', statut: 'PUBLIE' })
+      await fixtures.commentaire({
+        ...scope,
+        createdBy: moi.id,
+        type: 'DEFAUT',
+        statut: 'BROUILLON',
+      })
+
+      const result = await runAsPrincipal(moi.id, () =>
+        listerCommentaires(indicateurIndividuConfig, {
+          params: { indicateurId: indId, individuId: indivId },
+          query: { type: 'DEFAUT' },
+        }),
+      )
+
+      const page = result._unsafeUnwrap()
+      expect(page.total).toBe(1)
+      expect(page.items.every((c) => c.statut === 'PUBLIE')).toBe(true)
+    }),
+  )
 })

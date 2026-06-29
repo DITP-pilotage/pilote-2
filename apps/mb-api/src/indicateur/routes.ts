@@ -2,22 +2,26 @@ import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
 import {
   creerIndicateurIndividuCommentaireBodySchema,
   listerIndicateurIndividuCommentairesQuerySchema,
+  recupererIndicateurIndividuBrouillonQuerySchema,
 } from '@pilote/mb-shared/commentaire'
 import {
   indicateurApiModelSchema,
   listIndicateursQuerySchema,
   upsertIndicateurBodySchema,
 } from '@pilote/mb-shared/indicateur'
-import { historiqueNiveauConfianceQuerySchema } from '@pilote/mb-shared/niveauConfiance'
+import { listerNiveauxConfianceQuerySchema } from '@pilote/mb-shared/niveauConfiance'
 import { createPaginatedApiListSchema } from '@pilote/mb-shared/pagination'
 import { indicateurPublicIdSchema, individuPublicIdSchema } from '@pilote/mb-shared/publicIds'
 
 import {
+  BrouillonApiModelSchema,
   CommentaireApiModelSchema,
   CommentaireListApiModelSchema,
+  reponseBrouillon,
   reponseCommentaire,
   reponseListe,
 } from '@/commentaire/openapi'
+import { getDernierBrouillon } from '@/commentaire/queries/getDernierBrouillon'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
@@ -32,13 +36,10 @@ import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPub
 import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
 import { listerIndicateurIndividuCommentaires } from '@/indicateur/queries/listerIndicateurIndividuCommentaires'
 import {
-  NiveauConfianceApiModelSchema,
   NiveauConfianceListApiModelSchema,
-  reponseHistoriqueNiveauConfiance,
-  reponseNiveauConfiance,
+  reponseListeNiveauxConfiance,
 } from '@/niveauConfiance/openapi'
-import { getNiveauConfianceCourant } from '@/niveauConfiance/queries/getNiveauConfianceCourant'
-import { listerHistoriqueNiveauConfiance } from '@/niveauConfiance/queries/listerHistoriqueNiveauConfiance'
+import { listerNiveauxParCommentaires } from '@/niveauConfiance/queries/listerNiveauxParCommentaires'
 
 const IndicateurApiModelSchema = indicateurApiModelSchema.openapi('IndicateurApiModel')
 const IndicateurListApiModelSchema =
@@ -230,55 +231,51 @@ indicateurRoutes.openapi(listerIndicateurIndividuCommentairesRoute, async (conte
   )
 })
 
-// --- GET /indicateurs/:id/individus/:individuId/niveau-confiance -------------
+// --- GET /indicateurs/:id/individus/:individuId/commentaires/brouillon -------
 
-const getNiveauConfianceIndicateurIndividuRoute = createRoute({
+const getIndicateurIndividuBrouillonRoute = createRoute({
   method: 'get',
-  path: '/indicateurs/{indicateurId}/individus/{individuId}/niveau-confiance',
-  tags: ['Indicateur', 'NiveauConfiance'],
-  summary: 'Récupérer le niveau de confiance courant (indicateur + individu)',
+  path: '/indicateurs/{indicateurId}/individus/{individuId}/commentaires/brouillon',
+  tags: ['Indicateur'],
+  summary: 'Récupérer mon brouillon courant (indicateur + individu)',
   middleware: [requireAuthentication],
-  request: { params: indicateurIndividuCommentaireParamsSchema },
-  responses: reponseNiveauConfiance,
+  request: {
+    params: indicateurIndividuCommentaireParamsSchema,
+    query: recupererIndicateurIndividuBrouillonQuerySchema,
+  },
+  responses: reponseBrouillon,
 })
 
-indicateurRoutes.openapi(getNiveauConfianceIndicateurIndividuRoute, async (context) => {
+indicateurRoutes.openapi(getIndicateurIndividuBrouillonRoute, async (context) => {
   const params = context.req.valid('param')
-  return getNiveauConfianceCourant(indicateurIndividuConfig, { params }).match(
-    (data) => jsonResponseOk({ context, data, schema: NiveauConfianceApiModelSchema, status: 200 }),
+  const query = context.req.valid('query')
+  return getDernierBrouillon(indicateurIndividuConfig, { params, query }).match(
+    (data) => jsonResponseOk({ context, data, schema: BrouillonApiModelSchema, status: 200 }),
     never,
   )
 })
 
-// --- GET /indicateurs/:id/individus/:individuId/niveau-confiance/historique --
+// --- GET /indicateurs/:id/individus/:individuId/niveaux-confiance ------------
 
-const listerHistoriqueNiveauConfianceIndicateurIndividuRoute = createRoute({
+const listerNiveauxParCommentairesIndicateurIndividuRoute = createRoute({
   method: 'get',
-  path: '/indicateurs/{indicateurId}/individus/{individuId}/niveau-confiance/historique',
+  path: '/indicateurs/{indicateurId}/individus/{individuId}/niveaux-confiance',
   tags: ['Indicateur', 'NiveauConfiance'],
-  summary: 'Historique des niveaux de confiance (indicateur + individu)',
+  summary: 'Niveaux de confiance des commentaires demandés (indicateur + individu)',
   middleware: [requireAuthentication],
   request: {
     params: indicateurIndividuCommentaireParamsSchema,
-    query: historiqueNiveauConfianceQuerySchema,
+    query: listerNiveauxConfianceQuerySchema,
   },
-  responses: reponseHistoriqueNiveauConfiance,
+  responses: reponseListeNiveauxConfiance,
 })
 
-indicateurRoutes.openapi(
-  listerHistoriqueNiveauConfianceIndicateurIndividuRoute,
-  async (context) => {
-    const params = context.req.valid('param')
-    const query = context.req.valid('query')
-    return listerHistoriqueNiveauConfiance(indicateurIndividuConfig, { params, query }).match(
-      (data) =>
-        jsonResponseOk({
-          context,
-          data,
-          schema: NiveauConfianceListApiModelSchema,
-          status: 200,
-        }),
-      never,
-    )
-  },
-)
+indicateurRoutes.openapi(listerNiveauxParCommentairesIndicateurIndividuRoute, async (context) => {
+  const params = context.req.valid('param')
+  const query = context.req.valid('query')
+  return listerNiveauxParCommentaires(indicateurIndividuConfig, { params, query }).match(
+    (data) =>
+      jsonResponseOk({ context, data, schema: NiveauConfianceListApiModelSchema, status: 200 }),
+    never,
+  )
+})

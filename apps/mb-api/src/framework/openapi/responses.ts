@@ -1,9 +1,16 @@
+import { type z } from '@hono/zod-openapi'
+
 import { errorApiModelSchema } from '@pilote/mb-shared/error'
 
 export const ErrorApiModelSchema = errorApiModelSchema.openapi('ErrorApiModel')
 
 const errorResponse = (description: string) => ({
   content: { 'application/json': { schema: ErrorApiModelSchema } },
+  description,
+})
+
+export const succes200 = <S extends z.ZodTypeAny>(description: string, schema: S) => ({
+  content: { 'application/json': { schema } },
   description,
 })
 

@@ -4,6 +4,7 @@ import { type UniteIndicateurApiModel } from '@pilote/mb-shared/indicateur'
 const numberFr = new Intl.NumberFormat('fr-FR')
 const variationFr = new Intl.NumberFormat('fr-FR', { signDisplay: 'exceptZero' })
 const dateFr = new Intl.DateTimeFormat('fr-FR')
+const heureFr = new Intl.DateTimeFormat('fr-FR', { hour: '2-digit', minute: '2-digit' })
 const monthYearShortOptions = { month: 'short', year: '2-digit' } as const
 const monthYearShortFr = new Intl.DateTimeFormat('fr-FR', monthYearShortOptions)
 const monthYearNumericOptions = { month: '2-digit', year: 'numeric' } as const
@@ -37,6 +38,12 @@ export const formatDateFr = (value: Date | string): string => dateFr.format(toDa
 
 export const formatDateTimeFr = (value: Date | string): string =>
   toDate(value).toLocaleString('fr-FR')
+
+// "25/06/2026 à 10:48" — sans les secondes (inutiles pour un horodatage de saisie).
+export const formatDateHeureFr = (value: Date | string): string => {
+  const date = toDate(value)
+  return `${dateFr.format(date)} à ${heureFr.format(date)}`
+}
 
 // Accepte `Temporal.PlainDate` (formatage natif sans `Date` JS, conversion
 // iso8601→gregory implicite côté locale fr-FR) en plus des entrées historiques

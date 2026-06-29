@@ -96,6 +96,8 @@ export type ModifierCommentaireBody = z.infer<
 >;
 
 // Query de listing : `type` obligatoire, contraint par le sujet (cf. factory ci-dessous).
+// Le listing ne renvoie que les commentaires PUBLIE (tous auteurs). Les brouillons
+// passent par un endpoint dédié (`/commentaires/brouillon`).
 const listerCommentairesQuerySchema = <T extends z.ZodTypeAny>(typeSchema: T) =>
   z.object({
     type: typeSchema.describe("Catégorie du commentaire."),
@@ -116,6 +118,24 @@ export type ListerCommentairesQuery = {
   cursor?: string | undefined;
   pageSize?: number | undefined;
 };
+
+// Query du brouillon courant (par sujet) : juste le type.
+const recupererBrouillonQuerySchema = <T extends z.ZodTypeAny>(typeSchema: T) =>
+  z.object({ type: typeSchema.describe("Catégorie du commentaire.") });
+
+export const recupererIndicateurIndividuBrouillonQuerySchema =
+  recupererBrouillonQuerySchema(indicateurIndividuCommentaireTypeSchema);
+export const recupererPanierIndividuBrouillonQuerySchema =
+  recupererBrouillonQuerySchema(panierIndividuCommentaireTypeSchema);
+export const recupererPanierBrouillonQuerySchema =
+  recupererBrouillonQuerySchema(panierCommentaireTypeSchema);
+export type RecupererBrouillonQuery = { type: string };
+
+// Réponse du brouillon : le commentaire, ou null s'il n'y en a pas.
+export const brouillonApiModelSchema = commentaireApiModelSchema
+  .nullable()
+  .describe("Brouillon courant de l'utilisateur, ou null s'il n'en a pas.");
+export type BrouillonApiModel = z.infer<typeof brouillonApiModelSchema>;
 
 export const commentaireListApiModelSchema = createPaginatedApiListSchema(
   commentaireApiModelSchema,
