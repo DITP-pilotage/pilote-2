@@ -810,26 +810,121 @@ const main = async () => {
   const panierPermissionsCount = 2
 
   // Responsables panier : ditp.admin et claire.dupont sont responsables de PAN-005.
-  const pan005 = paniersByPublicId.get('PAN-005')
+  const pan005 = paniersByPublicId.get('PAN-005')!
+  const pan004 = paniersByPublicId.get('PAN-004')!
   const claireDupont = await prisma.utilisateur.findUniqueOrThrow({
     where: { email: 'claire.dupont@example.com' },
     select: { id: true },
   })
-  if (pan005) {
-    for (const utilisateurId of [ditpAdmin.id, claireDupont.id]) {
-      await prisma.panierResponsable.upsert({
-        where: { panierId_utilisateurId: { panierId: pan005.id, utilisateurId } },
-        update: {},
-        create: { panierId: pan005.id, utilisateurId },
-      })
-    }
+  for (const utilisateurId of [ditpAdmin.id, claireDupont.id]) {
+    await prisma.panierResponsable.upsert({
+      where: { panierId_utilisateurId: { panierId: pan005.id, utilisateurId } },
+      update: {},
+      create: { panierId: pan005.id, utilisateurId },
+    })
   }
   const panierResponsablesCount = 2
+
+  // ── Organismes ────────────────────────────────────────────────────────────────
+
+  const ditp = await prisma.organisme.upsert({
+    where: { id: 'a1b2c3d4-e5f6-4a7b-8c9d-e0f1a2b3c401' },
+    update: {},
+    create: {
+      id: 'a1b2c3d4-e5f6-4a7b-8c9d-e0f1a2b3c401',
+      nom: 'Direction interministérielle de la transformation publique (DITP)',
+    },
+  })
+
+  const dinum = await prisma.organisme.upsert({
+    where: { id: 'a1b2c3d4-e5f6-4a7b-8c9d-e0f1a2b3c402' },
+    update: {},
+    create: {
+      id: 'a1b2c3d4-e5f6-4a7b-8c9d-e0f1a2b3c402',
+      nom: 'Direction interministérielle du numérique (DINUM)',
+    },
+  })
+
+  // ── Contacts utiles ────────────────────────────────────────────────────────────
+
+  const supportMethodo = await prisma.contactUtile.upsert({
+    where: { id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d401' },
+    update: {},
+    create: {
+      id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d401',
+      organismeId: ditp.id,
+      nom: 'Support méthodologique et accompagnement',
+      description:
+        'Accompagnement des équipes projet dans la démarche de pilotage par les résultats',
+      telephone: '01 23 45 67 89',
+      email: 'support.methodologie@ditp.gouv.fr',
+      url: 'https://www.modernisation.gouv.fr',
+      adresse: '20 avenue de Ségur, 75007 Paris',
+    },
+  })
+
+  const celluleFormation = await prisma.contactUtile.upsert({
+    where: { id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d402' },
+    update: {},
+    create: {
+      id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d402',
+      organismeId: ditp.id,
+      nom: 'Cellule formation et montée en compétences',
+      description: 'Formations au pilotage par les résultats, ateliers et webinaires',
+      telephone: '01 23 45 67 90',
+      email: 'formation@ditp.gouv.fr',
+    },
+  })
+
+  const supportTechnique = await prisma.contactUtile.upsert({
+    where: { id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d403' },
+    update: {},
+    create: {
+      id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d403',
+      organismeId: dinum.id,
+      nom: 'Support technique Pilote',
+      email: 'support@pilote.gouv.fr',
+      url: 'https://pilote.numerique.gouv.fr',
+    },
+  })
+
+  const ouvertureDonnees = await prisma.contactUtile.upsert({
+    where: { id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d404' },
+    update: {},
+    create: {
+      id: 'b1c2d3e4-f5a6-4b7c-8d9e-f0a1b2c3d404',
+      organismeId: dinum.id,
+      nom: 'Département ouverture des données',
+      description: "Accompagnement à l'ouverture et au partage des données publiques",
+      email: 'data@numerique.gouv.fr',
+      url: 'https://data.gouv.fr',
+    },
+  })
+
+  // ── Rattachements ──────────────────────────────────────────────────────────────
+
+  for (const contact of [supportMethodo, celluleFormation, supportTechnique, ouvertureDonnees]) {
+    await prisma.panierContactUtile.upsert({
+      where: { panierId_contactUtileId: { panierId: pan005.id, contactUtileId: contact.id } },
+      update: {},
+      create: { panierId: pan005.id, contactUtileId: contact.id },
+    })
+  }
+
+  await prisma.panierContactUtile.upsert({
+    where: {
+      panierId_contactUtileId: { panierId: pan004.id, contactUtileId: ouvertureDonnees.id },
+    },
+    update: {},
+    create: { panierId: pan004.id, contactUtileId: ouvertureDonnees.id },
+  })
+
+  const contactsUtilesCount = 4
 
   const permissionsCount = 8 * 2
   const widgetLiaisonsCount = widgetsSeed.reduce((acc, w) => acc + w.referentielPublicIds.length, 0)
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${paniersSeed.length} paniers (${panierLiaisonsCount} liaisons panier-indicateur, ${panierPermissionsCount} permissions panier, ${panierResponsablesCount} responsable panier).`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${paniersSeed.length} paniers (${panierLiaisonsCount} liaisons panier-indicateur, ${panierPermissionsCount} permissions panier, ${panierResponsablesCount} responsable panier, ${contactsUtilesCount} contacts utiles).`,
   )
 }
 

@@ -13,6 +13,7 @@ import {
   panierApiModelSchema,
   panierListApiModelSchema,
 } from '@pilote/mb-shared/panier'
+import { panierContactsUtilesApiModelSchema } from '@pilote/mb-shared/panierContactUtile'
 import { panierResponsablesApiModelSchema } from '@pilote/mb-shared/panierResponsable'
 import {
   getPanierTauxProgressionQuerySchema,
@@ -45,6 +46,7 @@ import {
   panierIndividuConfig,
 } from '@/panier/commands/creerPanierIndividuCommentaire'
 import { getPanierByPublicId } from '@/panier/queries/getPanierByPublicId'
+import { getPanierContactsUtiles } from '@/panier/queries/getPanierContactsUtiles'
 import { getPanierResponsables } from '@/panier/queries/getPanierResponsables'
 import { getPanierTauxProgression } from '@/panier/queries/getPanierTauxProgression'
 import { listPaniers } from '@/panier/queries/listPaniers'
@@ -58,6 +60,9 @@ const PanierTauxProgressionApiModelSchema = panierTauxProgressionApiModelSchema.
 )
 const PanierResponsablesApiModelSchema = panierResponsablesApiModelSchema.openapi(
   'PanierResponsablesApiModel',
+)
+const PanierContactsUtilesApiModelSchema = panierContactsUtilesApiModelSchema.openapi(
+  'PanierContactsUtilesApiModel',
 )
 
 // --- GET /paniers ------------------------------------------------------------
@@ -152,6 +157,27 @@ const getPanierResponsablesRoute = createRoute({
     200: {
       content: { 'application/json': { schema: PanierResponsablesApiModelSchema } },
       description: 'Liste des responsables du panier',
+    },
+  },
+})
+
+// --- GET /paniers/:id/contacts-utiles ----------------------------------------
+
+const getPanierContactsUtilesRoute = createRoute({
+  method: 'get',
+  path: '/paniers/{id}/contacts-utiles',
+  tags: ['Panier'],
+  summary: "Lister les contacts utiles d'un panier",
+  description:
+    'Retourne les contacts utiles du panier, regroupés par organisme et triés alphabétiquement. ' +
+    'Accessible à tout principal pouvant lire le panier ' +
+    '(visibilite PUBLIC ou permission READ/WRITE explicite).',
+  middleware: [requireAuthentication],
+  request: { params: detailParamsSchema },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: PanierContactsUtilesApiModelSchema } },
+      description: 'Contacts utiles du panier groupés par organisme',
     },
   },
 })
@@ -426,6 +452,21 @@ panierRoutes.openapi(listerNiveauxParCommentairesPanierRoute, async (context) =>
   return listerNiveauxParCommentaires(panierConfig, { params, query }).match(
     (data) =>
       jsonResponseOk({ context, data, schema: NiveauConfianceListApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
+panierRoutes.openapi(getPanierContactsUtilesRoute, async (context) => {
+  const { id } = context.req.valid('param')
+
+  return getPanierContactsUtiles(id).match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: PanierContactsUtilesApiModelSchema,
+        status: 200,
+      }),
     never,
   )
 })
