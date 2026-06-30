@@ -1,5 +1,13 @@
 -- Détermine le valeurs de VACA pour chaque mesure
 
+----------------------------------------------------
+-- ATTENTION : VERIFIER LES IMPACTS AVANT DE MODIFIER CE MODELE
+----------------------------------------------------
+-- Est utilisé pour les envois de données au SIG pour info.gouv.fr via copilot
+----------------------------------------------------
+
+
+
 -- on joint les mesures avec les params associés
 WITH mesures_and_params AS (
     SELECT
