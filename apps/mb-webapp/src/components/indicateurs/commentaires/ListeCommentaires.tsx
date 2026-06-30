@@ -137,8 +137,6 @@ export function ListeCommentaires({
             {historique.map((commentaire) => (
               <LigneHistorique
                 key={commentaire.id}
-                indicateurId={indicateurId}
-                individuId={individuId}
                 commentaire={commentaire}
                 avecNiveauConfiance={avecNiveauConfiance}
               />
