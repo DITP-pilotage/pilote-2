@@ -7,7 +7,6 @@
 ----------------------------------------------------
 
 
-
 -- on joint les mesures avec les params associés
 WITH mesures_and_params AS (
     SELECT
