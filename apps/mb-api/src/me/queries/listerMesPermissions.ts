@@ -23,46 +23,40 @@ export const listerMesPermissions = (): ResultAsync<MePermissionsApiModel, never
   return ResultAsync.fromSafePromise(loadPermissions(principalId)).map(buildResponse)
 }
 
-const loadPermissions = async (principalId: string) => {
-  const [panierPerms, indicateurPerms] = await Promise.all([
+const loadPermissions = (principalId: string) =>
+  Promise.all([
     db().panierPermission.findMany({
       where: { principalId },
-      include: { panier: { select: { publicId: true } } },
+      include: {
+        panier: {
+          select: {
+            publicId: true,
+            indicateurs: { select: { indicateur: { select: { publicId: true } } } },
+          },
+        },
+      },
     }),
     db().indicateurPermission.findMany({
       where: { principalId },
       include: { indicateur: { select: { publicId: true } } },
     }),
   ])
-  const panierIds = panierPerms.map((p) => p.panierId)
-  const propagationLinks =
-    panierIds.length === 0
-      ? []
-      : await db().panierIndicateur.findMany({
-          where: { panierId: { in: panierIds } },
-          include: { indicateur: { select: { publicId: true } } },
-        })
-  return { panierPerms, indicateurPerms, propagationLinks }
-}
 
 type LoadResult = Awaited<ReturnType<typeof loadPermissions>>
 
-const buildResponse = ({
-  panierPerms,
-  indicateurPerms,
-  propagationLinks,
-}: LoadResult): MePermissionsApiModel => {
+const buildResponse = ([panierPerms, indicateurPerms]: LoadResult): MePermissionsApiModel => {
   const paniersActions = new Map<string, Set<PermissionAction>>()
   const indicateursActions = new Map<string, Set<PermissionAction>>()
 
   for (const perm of panierPerms) {
     addAction(paniersActions, perm.panier.publicId, perm.action)
+    // Propagation : READ ou WRITE panier → READ sur chaque indicateur lié.
+    for (const link of perm.panier.indicateurs) {
+      addAction(indicateursActions, link.indicateur.publicId, PermissionAction.READ)
+    }
   }
   for (const perm of indicateurPerms) {
     addAction(indicateursActions, perm.indicateur.publicId, perm.action)
-  }
-  for (const link of propagationLinks) {
-    addAction(indicateursActions, link.indicateur.publicId, PermissionAction.READ)
   }
 
   return {

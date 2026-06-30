@@ -15,10 +15,12 @@ export const mePermissionsQueryOptions = () =>
 export const loadMePermissions = ({ queryClient }: { queryClient: QueryClient }) =>
   queryClient.ensureQueryData(mePermissionsQueryOptions())
 
-const hasWrite = (entries: MePermissionsApiModel['indicateurs'], publicId: string): boolean =>
-  entries.some((entry) => entry.id === publicId && entry.actions.includes('WRITE'))
+const hasIndicateurWrite = (
+  entries: MePermissionsApiModel['indicateurs'],
+  publicId: string,
+): boolean => entries.some((entry) => entry.id === publicId && entry.actions.includes('WRITE'))
 
 export const useCanWriteIndicateur = (indicateurId: string): boolean => {
   const { data } = useSuspenseQuery(mePermissionsQueryOptions())
-  return data.isAdmin === true || hasWrite(data.indicateurs, indicateurId)
+  return data.isAdmin === true || hasIndicateurWrite(data.indicateurs, indicateurId)
 }
