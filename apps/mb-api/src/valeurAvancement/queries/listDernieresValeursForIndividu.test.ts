@@ -47,7 +47,14 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ indicateur: indId, valeur: 75, date: '2026-03-01', type: 'saisie' }],
+        items: [
+          {
+            indicateur: indId,
+            valeur: 75,
+            date: '2026-03-01',
+            type: 'saisie',
+          },
+        ],
       })
     }),
   )
@@ -110,7 +117,14 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ indicateur: indAvecValeur, valeur: 42, date: '2026-01-01', type: 'saisie' }],
+        items: [
+          {
+            indicateur: indAvecValeur,
+            valeur: 42,
+            date: '2026-01-01',
+            type: 'saisie',
+          },
+        ],
       })
     }),
   )
@@ -146,7 +160,14 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ indicateur: indPublic, valeur: 10, date: '2026-01-01', type: 'saisie' }],
+        items: [
+          {
+            indicateur: indPublic,
+            valeur: 10,
+            date: '2026-01-01',
+            type: 'saisie',
+          },
+        ],
       })
     }),
   )
@@ -186,7 +207,14 @@ describe.concurrent('listDernieresValeursForIndividu', () => {
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ indicateur: indId, valeur: 12, date: '2026-01-01', type: 'derivee' }],
+        items: [
+          {
+            indicateur: indId,
+            valeur: 12,
+            date: '2026-01-01',
+            type: 'derivee',
+          },
+        ],
       })
     }),
   )

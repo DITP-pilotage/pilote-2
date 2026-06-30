@@ -1,35 +1,29 @@
 import { type DateTrunc } from '@pilote/mb-shared/dates'
 import {
-  type DernieresValeursIndividuListApiModel,
-  type DernierValeurIndividuApiModel,
-  type ListDernieresValeursForIndividuQuery,
+  type ListTauxProgressionIndividuQuery,
+  type TauxProgressionIndividuListApiModel,
 } from '@pilote/mb-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { formatBucket } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { withIndicateurReadPermission } from '@/indicateur/permissions'
-import { loadResolveSerieContext } from '@/valeurAvancement/queries/loadResolveSerieContext'
-import {
-  type IndividuRef,
-  type PointInterne,
-  resolveSerieIndividu,
-} from '@/valeurAvancement/resolveSerieIndividu'
+import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
+import { computeTauxProgressionPoints } from '@/valeurAvancement/queries/computeTauxProgressionPoints'
 
 const DEFAULT_DATE_TRUNC: DateTrunc = 'month'
 
-export const listDernieresValeursForIndividu = (
+export const listTauxProgressionForIndividu = (
   individuPublicId: string,
-  params: ListDernieresValeursForIndividuQuery,
-): ResultAsync<DernieresValeursIndividuListApiModel, never> =>
+  params: ListTauxProgressionIndividuQuery,
+): ResultAsync<TauxProgressionIndividuListApiModel, never> =>
   ResultAsync.fromSafePromise(build(individuPublicId, params))
 
 const build = async (
   individuPublicId: string,
-  params: ListDernieresValeursForIndividuQuery,
-): Promise<DernieresValeursIndividuListApiModel> => {
+  params: ListTauxProgressionIndividuQuery,
+): Promise<TauxProgressionIndividuListApiModel> => {
   const principalId = requireCurrentPrincipalId()
 
   const individuRow = await db().individu.findUnique({
@@ -49,38 +43,35 @@ const build = async (
   const dateTrunc = DEFAULT_DATE_TRUNC
   const resolus = await Promise.all(
     indicateurs.map(async (indicateur) => {
-      const { ctx: serieCtx } = await loadResolveSerieContext({
+      const points = await computeTauxProgressionPoints({
         indicateurId: indicateur.id,
         individusCibles: [individu],
-        dateTrunc,
+        dateTruncValeur: dateTrunc,
+        dateTruncObjectif: dateTrunc,
       })
+      const point = points.at(-1)
+      if (!point) return null
 
-      const serieCache = new Map<string, ReadonlyArray<PointInterne>>()
-      const serie = await resolveSerieIndividu(individu.id, serieCtx, serieCache)
-      const dernier = serie.at(-1)
-      if (!dernier) return null
-
-      const item: DernierValeurIndividuApiModel = {
+      return {
         indicateur: indicateur.publicId,
-        valeur: dernier.valeur.toNumber(),
-        date: formatBucket(dernier.bucket),
-        type: dernier.type,
+        tauxProgression: point.tauxProgression,
+        valeurCible: point.valeurCible.toNumber(),
       }
-      return item
     }),
   )
-  const items = resolus.filter((item): item is DernierValeurIndividuApiModel => item !== null)
+
+  const items = resolus.filter((item) => item !== null)
 
   logger.info(
     {
-      event: 'valeurAvancement.listDernieresValeursForIndividu.timing',
+      event: 'valeurAvancement.listTauxProgressionForIndividu.timing',
       individuId: individu.id,
       nbIndicateursDemandes: params.indicateurs.length,
       nbIndicateursAccessibles: indicateurs.length,
       nbItems: items.length,
       durationMs: Math.round(performance.now() - startedAt),
     },
-    'listDernieresValeursForIndividu computed',
+    'listTauxProgressionForIndividu computed',
   )
   return { items }
 }

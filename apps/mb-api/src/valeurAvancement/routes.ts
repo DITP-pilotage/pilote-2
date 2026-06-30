@@ -10,9 +10,11 @@ import {
   listDernieresValeursForIndividuQuerySchema,
   listIndividusWithValeursQuerySchema,
   listSyntheseIndividusQuerySchema,
+  listTauxProgressionIndividuQuerySchema,
   listValeursForIndicateurQuerySchema,
   listValeursRemarquablesForIndicateurQuerySchema,
   syntheseIndividusListApiModelSchema,
+  tauxProgressionIndividuListApiModelSchema,
   upsertValeurAvancementBodySchema,
   upsertValeursAvancementBatchBodySchema,
   upsertValeursAvancementBatchResultApiModelSchema,
@@ -34,6 +36,7 @@ import { deleteValeurAvancement } from '@/valeurAvancement/commands/deleteValeur
 import { upsertValeurAvancement } from '@/valeurAvancement/commands/upsertValeurAvancement'
 import { upsertValeursAvancementBatch } from '@/valeurAvancement/commands/upsertValeursAvancementBatch'
 import { listDernieresValeursForIndividu } from '@/valeurAvancement/queries/listDernieresValeursForIndividu'
+import { listTauxProgressionForIndividu } from '@/valeurAvancement/queries/listTauxProgressionForIndividu'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
 import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
 import { listTauxProgressionForIndicateur } from '@/valeurAvancement/queries/listTauxProgressionForIndicateur'
@@ -76,6 +79,9 @@ const DernieresValeursIndividuListApiModelSchema =
   dernieresValeursIndividuListApiModelSchema.openapi('DernieresValeursIndividuListApiModel')
 const TauxProgressionListApiModelSchema = tauxProgressionListApiModelSchema.openapi(
   'TauxProgressionListApiModel',
+)
+const TauxProgressionIndividuListApiModelSchema = tauxProgressionIndividuListApiModelSchema.openapi(
+  'TauxProgressionIndividuListApiModel',
 )
 
 const indicateurParamsSchema = z.object({
@@ -324,6 +330,35 @@ const getDernieresValeursForIndividuRoute = createRoute({
   },
 })
 
+// --- GET /individus/:id/taux-progression -------------------------------------
+
+const getTauxProgressionForIndividuRoute = createRoute({
+  method: 'get',
+  path: '/individus/{id}/taux-progression',
+  tags: ['Individu'],
+  summary: "Lister le taux de progression de l'individu pour un lot d'indicateurs",
+  description:
+    'Retourne, pour chaque indicateur demandé accessible en lecture, le taux de progression ' +
+    "calculé sur la dernière valeur connue de l'individu (`min(100, valeur / valeurCible × 100)`, " +
+    'tronqué à 2 décimales). Les indicateurs sans objectif défini ou sans valeur connue sont omis. ' +
+    'Les indicateurs dont la valeurCible est zéro sont inclus avec `tauxProgression: null`. ' +
+    'Endpoint pensé pour des appels batch côté client en parallèle de `dernieres-valeurs`.',
+  middleware: [requireAuthentication],
+  request: {
+    params: individuParamsSchema,
+    query: listTauxProgressionIndividuQuerySchema,
+  },
+  responses: {
+    200: {
+      content: {
+        'application/json': { schema: TauxProgressionIndividuListApiModelSchema },
+      },
+      description: 'Taux de progression pour les indicateurs demandés',
+    },
+    400: erreur400,
+  },
+})
+
 // --- GET /indicateurs/:id/taux-progression -----------------------------------
 
 const getTauxProgressionRoute = createRoute({
@@ -521,6 +556,22 @@ valeurAvancementRoutes.openapi(getDernieresValeursForIndividuRoute, async (conte
         context,
         data,
         schema: DernieresValeursIndividuListApiModelSchema,
+        status: 200,
+      }),
+    never,
+  )
+})
+
+valeurAvancementRoutes.openapi(getTauxProgressionForIndividuRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  const { indicateurs } = context.req.valid('query')
+
+  return listTauxProgressionForIndividu(id, { indicateurs }).match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: TauxProgressionIndividuListApiModelSchema,
         status: 200,
       }),
     never,

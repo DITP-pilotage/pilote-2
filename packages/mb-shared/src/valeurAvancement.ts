@@ -475,3 +475,40 @@ export const listDernieresValeursForIndividuQuerySchema = z.object({
 export type ListDernieresValeursForIndividuQuery = z.infer<
   typeof listDernieresValeursForIndividuQuerySchema
 >
+
+export const listTauxProgressionIndividuQuerySchema = z.object({
+  indicateurs: indicateursCsvSchema.describe(
+    `Liste d'identifiants d'indicateurs séparés par une virgule (ex. IND-A,IND-B). 1..${MAX_INDICATEURS_PAR_REQUETE} identifiants.`,
+  ),
+})
+export type ListTauxProgressionIndividuQuery = z.infer<
+  typeof listTauxProgressionIndividuQuerySchema
+>
+
+export const tauxProgressionIndividuApiModelSchema = z.object({
+  indicateur: indicateurPublicIdSchema,
+  tauxProgression: z
+    .number()
+    .nullable()
+    .describe(
+      "Taux de progression vers l'objectif courant (0–100), null si aucun objectif n'est défini " +
+        'pour cet indicateur × individu ou si la valeur cible est zéro.',
+    ),
+  valeurCible: z
+    .number()
+    .describe("Valeur cible de l'objectif courant pour cet indicateur × individu."),
+})
+export type TauxProgressionIndividuApiModel = z.infer<typeof tauxProgressionIndividuApiModelSchema>
+
+export const tauxProgressionIndividuListApiModelSchema = z.object({
+  items: z
+    .array(tauxProgressionIndividuApiModelSchema)
+    .describe(
+      'Taux de progression pour chaque indicateur demandé ayant un objectif défini et une valeur connue. ' +
+        "Les indicateurs sans objectif ou sans valeur sont omis. " +
+        "Les indicateurs dont la valeurCible est zéro sont inclus avec tauxProgression: null.",
+    ),
+})
+export type TauxProgressionIndividuListApiModel = z.infer<
+  typeof tauxProgressionIndividuListApiModelSchema
+>
