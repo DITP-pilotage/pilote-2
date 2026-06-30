@@ -21,9 +21,9 @@ const meRoute = createRoute({
   },
 })
 
-export const me = new OpenAPIHono()
+export const meRoutes = new OpenAPIHono()
 
-me.openapi(meRoute, (context) => {
+meRoutes.openapi(meRoute, (context) => {
   const user = requireUser()
   return jsonResponseOk({
     context,

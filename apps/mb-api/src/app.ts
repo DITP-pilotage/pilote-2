@@ -2,8 +2,6 @@ import { swaggerUI } from '@hono/swagger-ui'
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
 
-import { me } from '@/authentication/routes/me'
-import { whoami } from '@/authentication/routes/whoami'
 import { commentaireRoutes } from '@/commentaire/routes'
 import { niveauConfianceRoutes } from '@/niveauConfiance/routes'
 import { env } from '@/env'
@@ -13,11 +11,13 @@ import { databaseContext } from '@/framework/persistence/databaseContext'
 import { health } from '@/healthcheck/routes/health'
 import { indicateurRoutes } from '@/indicateur/routes'
 import { individuRoutes } from '@/individu/routes'
+import { meRoutes } from '@/me/routes'
 import { panierRoutes } from '@/panier/routes'
 import { referentielRoutes } from '@/referentiel/routes'
 import { sharedMessage } from '@/shared/routes/sharedMessage'
 import { objectifIndicateurIndividuRoutes } from '@/objectifIndicateurIndividu/routes'
 import { valeurAvancementRoutes } from '@/valeurAvancement/routes'
+import { whoamiRoutes } from '@/whoami/routes'
 
 export const app = new OpenAPIHono()
 
@@ -43,8 +43,8 @@ app.route('/', individuRoutes)
 app.route('/', panierRoutes)
 app.route('/', commentaireRoutes)
 app.route('/', niveauConfianceRoutes)
-app.route('/', me)
-app.route('/', whoami)
+app.route('/', meRoutes)
+app.route('/', whoamiRoutes)
 
 app.doc('/openapi.json', {
   openapi: '3.0.0',

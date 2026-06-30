@@ -1,11 +1,11 @@
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { describe, expect, it } from 'vitest'
 
-import { whoami } from '@/authentication/routes/whoami'
 import { authContext } from '@/framework/auth/authContext'
 import { registerErrorHandler } from '@/framework/errors/errorHandler'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
+import { whoamiRoutes } from '@/whoami/routes'
 
 // App de test minimale : authContext (qui résout le principal via la base de la
 // transaction de test) + la route whoami + le mapping d'erreur standard. On
@@ -14,7 +14,7 @@ import { integrationTest } from '@/test/integrationTest'
 const buildApp = () => {
   const app = new OpenAPIHono()
   app.use('*', authContext)
-  app.route('/', whoami)
+  app.route('/', whoamiRoutes)
   registerErrorHandler(app)
   return app
 }

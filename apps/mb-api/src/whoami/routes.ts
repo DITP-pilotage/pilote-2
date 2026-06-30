@@ -29,9 +29,9 @@ const whoamiRoute = createRoute({
   },
 })
 
-export const whoami = new OpenAPIHono()
+export const whoamiRoutes = new OpenAPIHono()
 
-whoami.openapi(whoamiRoute, (context) => {
+whoamiRoutes.openapi(whoamiRoute, (context) => {
   const principal = requirePrincipal()
   const label =
     principal.kind === 'user'
