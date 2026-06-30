@@ -9,6 +9,7 @@ import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
+import { IndicateurCommentaireConfigProvider } from '@/components/indicateurs/commentaires/IndicateurCommentaireConfigProvider'
 import { IndicateurCommentairesTab } from '@/components/indicateurs/commentaires/IndicateurCommentairesTab'
 import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetadonnees'
 import { IndicateurStatsPanel } from '@/components/indicateurs/IndicateurStatsPanel'
@@ -184,14 +185,16 @@ function IndicateurDetailComponent() {
         </TabsContent>
 
         <TabsContent value="commentaires">
-          <IndicateurCommentairesTab
-            indicateurId={id}
-            individuId={individuId}
-            type={search.commentaires}
-            onTypeChange={(commentaires) => {
-              void navigate({ search: (prev) => ({ ...prev, commentaires }) })
-            }}
-          />
+          <IndicateurCommentaireConfigProvider indicateurId={id} individuId={individuId}>
+            <IndicateurCommentairesTab
+              indicateurId={id}
+              individuId={individuId}
+              type={search.commentaires}
+              onTypeChange={(commentaires) => {
+                void navigate({ search: (prev) => ({ ...prev, commentaires }) })
+              }}
+            />
+          </IndicateurCommentaireConfigProvider>
         </TabsContent>
       </Tabs>
     </Page>
