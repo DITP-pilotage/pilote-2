@@ -17,6 +17,7 @@
       "@/authentication/*": ["./src/authentication/*"],
       "@/commentaire/*": ["./src/commentaire/*"],
       "@/healthcheck/*": ["./src/healthcheck/*"],
+      "@/importPoc/*": ["./src/importPoc/*"],
       "@/indicateur/*": ["./src/indicateur/*"],
       "@/individu/*": ["./src/individu/*"],
       "@/referentiel/*": ["./src/referentiel/*"],
