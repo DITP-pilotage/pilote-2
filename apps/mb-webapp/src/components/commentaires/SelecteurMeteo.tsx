@@ -1,6 +1,6 @@
 import { type IndiceConfiance } from '@pilote/mb-shared/niveauConfiance'
 
-import { METEOS, couleurIndice } from '@/components/indicateurs/commentaires/meteo'
+import { METEOS, couleurIndice } from '@/components/commentaires/meteo'
 import { clsxm } from '@/lib/clsxm'
 
 export function SelecteurMeteo({

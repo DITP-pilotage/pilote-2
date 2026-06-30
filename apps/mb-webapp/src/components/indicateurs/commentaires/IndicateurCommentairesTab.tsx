@@ -2,8 +2,8 @@ import { CloudSun, MessageSquare } from 'lucide-react'
 import { Suspense } from 'react'
 
 import { type IndicateurIndividuCommentaireType } from '@/api/commentaires'
-import { SectionAutresCommentaires } from '@/components/indicateurs/commentaires/SectionAutresCommentaires'
-import { SectionSyntheseDesResultats } from '@/components/indicateurs/commentaires/SectionSyntheseDesResultats'
+import { SectionAutresCommentaires } from '@/components/commentaires/SectionAutresCommentaires'
+import { SectionSyntheseDesResultats } from '@/components/commentaires/SectionSyntheseDesResultats'
 import { RouteLoading } from '@/components/RouteLoading'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 

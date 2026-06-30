@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfigContext'
-import { ListeCommentaires } from '@/components/indicateurs/commentaires/ListeCommentaires'
+import { ListeCommentaires } from '@/components/commentaires/ListeCommentaires'
 
 export function SectionAutresCommentaires() {
   const { commentairesPubliesQueryOptions, brouillonQueryOptions } = useCommentaireConfig()

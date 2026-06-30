@@ -3,10 +3,10 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { MoreVertical, Pencil } from 'lucide-react'
 
 import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfigContext'
-import { BadgeStatut } from '@/components/indicateurs/commentaires/BadgeStatut'
-import { ContenuRepliable } from '@/components/indicateurs/commentaires/ContenuRepliable'
-import { libelleAuteur } from '@/components/indicateurs/commentaires/libelleAuteur'
-import { MeteoTag } from '@/components/indicateurs/commentaires/MeteoTag'
+import { BadgeStatut } from '@/components/commentaires/BadgeStatut'
+import { ContenuRepliable } from '@/components/commentaires/ContenuRepliable'
+import { libelleAuteur } from '@/components/commentaires/libelleAuteur'
+import { MeteoTag } from '@/components/commentaires/MeteoTag'
 import {
   DropdownMenu,
   DropdownMenuContent,
