@@ -35,8 +35,7 @@ export function IndicateurCommentaireConfigProvider({
         useCreerCommentaire(indicateurId, individuId, type as IndicateurIndividuCommentaireType),
       useModifierCommentaire: (type) =>
         useModifierCommentaire(indicateurId, individuId, type as IndicateurIndividuCommentaireType),
-      useEnregistrerNiveauConfiance: () =>
-        useEnregistrerNiveauConfiance(indicateurId, individuId),
+      useEnregistrerNiveauConfiance: () => useEnregistrerNiveauConfiance(indicateurId, individuId),
     }),
     [indicateurId, individuId],
   )

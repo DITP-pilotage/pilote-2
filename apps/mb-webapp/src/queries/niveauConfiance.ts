@@ -94,10 +94,7 @@ export const niveauConfiancePanierKeys = {
     [...niveauConfiancePanierKeys.parScope(panierId), commentaireId] as const,
 }
 
-export const niveauPourCommentairePanierQueryOptions = (
-  panierId: string,
-  commentaireId: string,
-) =>
+export const niveauPourCommentairePanierQueryOptions = (panierId: string, commentaireId: string) =>
   queryOptions<NiveauConfianceApiModel | null, Error, NiveauConfianceApiModel | null, QueryKey>({
     queryKey: niveauConfiancePanierKeys.parCommentaire(panierId, commentaireId),
     queryFn: (): Promise<NiveauConfianceApiModel | null> =>

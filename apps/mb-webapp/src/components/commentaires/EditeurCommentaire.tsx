@@ -40,9 +40,7 @@ export function EditeurCommentaire(props: EditeurProps) {
 
 function EditeurAvecNiveauConfiance(props: EditeurProps) {
   const { niveauPourCommentaireQueryOptions } = useCommentaireConfig()
-  const { data: niveau } = useSuspenseQuery(
-    niveauPourCommentaireQueryOptions(props.commentaire.id),
-  )
+  const { data: niveau } = useSuspenseQuery(niveauPourCommentaireQueryOptions(props.commentaire.id))
   const niveauConfiance: NiveauConfianceCourant | undefined = niveau
     ? { niveauId: niveau.id, indice: niveau.indice }
     : undefined

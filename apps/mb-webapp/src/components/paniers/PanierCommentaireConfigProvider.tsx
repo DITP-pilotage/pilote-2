@@ -5,10 +5,7 @@ import {
   type CommentaireConfig,
   CommentaireConfigProvider,
 } from '@/components/commentaires/CommentaireConfigContext'
-import {
-  useCreerCommentairePanier,
-  useModifierCommentairePanier,
-} from '@/mutations/commentaires'
+import { useCreerCommentairePanier, useModifierCommentairePanier } from '@/mutations/commentaires'
 import { useEnregistrerNiveauConfiancePanier } from '@/mutations/niveauConfiance'
 import {
   brouillonPanierQueryOptions,
