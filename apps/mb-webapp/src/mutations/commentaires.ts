@@ -27,8 +27,7 @@ export function useCreerCommentaire(
   const queryClient = useQueryClient()
   const toast = useToast()
   return useMutation({
-    mutationFn: (body: CreerCommentaireBody<IndicateurIndividuCommentaireType>) =>
-      createCommentaire(indicateurId, individuId, body),
+    mutationFn: (body: CreerCommentaireBody) => createCommentaire(indicateurId, individuId, body),
     onSuccess: () => {
       void queryClient.invalidateQueries({
         queryKey: commentairesKeys.parType(indicateurId, individuId, type),

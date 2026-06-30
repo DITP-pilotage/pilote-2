@@ -1,5 +1,5 @@
 import { type NiveauConfianceApiModel } from '@pilote/mb-shared/niveauConfiance'
-import { queryOptions } from '@tanstack/react-query'
+import { type QueryKey, queryOptions } from '@tanstack/react-query'
 import { create, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
 import { fetchNiveauxParCommentaires } from '@/api/niveauConfiance'
@@ -46,12 +46,14 @@ export const niveauConfianceKeys = {
     [...niveauConfianceKeys.parScope(indicateurId, individuId), commentaireId] as const,
 }
 
+// Cf. commentaires.ts : queryKey élargi à `QueryKey` pour permettre l'exposition
+// via un Context React polymorphique (types tanstack-query invariants sur queryKey).
 export const niveauPourCommentaireQueryOptions = (
   indicateurId: string,
   individuId: string,
   commentaireId: string,
 ) =>
-  queryOptions({
+  queryOptions<NiveauConfianceApiModel | null, Error, NiveauConfianceApiModel | null, QueryKey>({
     queryKey: niveauConfianceKeys.parCommentaire(indicateurId, individuId, commentaireId),
     queryFn: (): Promise<NiveauConfianceApiModel | null> =>
       getBatcher(indicateurId, individuId).fetch(commentaireId),

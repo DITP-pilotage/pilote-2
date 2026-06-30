@@ -47,7 +47,7 @@ export const fetchBrouillon = async (
 export const createCommentaire = async (
   indicateurId: string,
   individuId: string,
-  body: CreerCommentaireBody<IndicateurIndividuCommentaireType>,
+  body: CreerCommentaireBody,
 ): Promise<CommentaireApiModel> => {
   const json = await apiClient
     .post(`indicateurs/${indicateurId}/individus/${individuId}/commentaires`, { json: body })
