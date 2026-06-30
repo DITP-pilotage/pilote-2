@@ -187,8 +187,6 @@ function IndicateurDetailComponent() {
         <TabsContent value="commentaires">
           <IndicateurCommentaireConfigProvider indicateurId={id} individuId={individuId}>
             <IndicateurCommentairesTab
-              indicateurId={id}
-              individuId={individuId}
               type={search.commentaires}
               onTypeChange={(commentaires) => {
                 void navigate({ search: (prev) => ({ ...prev, commentaires }) })

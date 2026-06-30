@@ -1,26 +1,16 @@
-import { useSuspenseQueries } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
+import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfigContext'
 import { ListeCommentaires } from '@/components/indicateurs/commentaires/ListeCommentaires'
-import { brouillonQueryOptions, commentairesPubliesQueryOptions } from '@/queries/commentaires'
 
-export function SectionSyntheseDesResultats({
-  indicateurId,
-  individuId,
-}: {
-  indicateurId: string
-  individuId: string
-}) {
-  const [{ data: publies }, { data: brouillon }] = useSuspenseQueries({
-    queries: [
-      commentairesPubliesQueryOptions(indicateurId, individuId, 'CONFIANCE'),
-      brouillonQueryOptions(indicateurId, individuId, 'CONFIANCE'),
-    ],
-  })
+export function SectionSyntheseDesResultats() {
+  const { commentairesPubliesQueryOptions, brouillonQueryOptions } = useCommentaireConfig()
+  // Deux useSuspenseQuery distincts : Suspense les regroupe dans la même phase de fetch.
+  const { data: publies } = useSuspenseQuery(commentairesPubliesQueryOptions('CONFIANCE'))
+  const { data: brouillon } = useSuspenseQuery(brouillonQueryOptions('CONFIANCE'))
 
   return (
     <ListeCommentaires
-      indicateurId={indicateurId}
-      individuId={individuId}
       type="CONFIANCE"
       avecNiveauConfiance
       brouillon={brouillon ?? undefined}

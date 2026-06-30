@@ -8,13 +8,9 @@ import { RouteLoading } from '@/components/RouteLoading'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 
 export function IndicateurCommentairesTab({
-  indicateurId,
-  individuId,
   type,
   onTypeChange,
 }: {
-  indicateurId: string
-  individuId: string
   type: IndicateurIndividuCommentaireType
   onTypeChange: (type: IndicateurIndividuCommentaireType) => void
 }) {
@@ -33,11 +29,7 @@ export function IndicateurCommentairesTab({
       </div>
 
       <Suspense fallback={<RouteLoading message="Chargement des commentaires…" />}>
-        {type === 'CONFIANCE' ? (
-          <SectionSyntheseDesResultats indicateurId={indicateurId} individuId={individuId} />
-        ) : (
-          <SectionAutresCommentaires indicateurId={indicateurId} individuId={individuId} />
-        )}
+        {type === 'CONFIANCE' ? <SectionSyntheseDesResultats /> : <SectionAutresCommentaires />}
       </Suspense>
     </div>
   )

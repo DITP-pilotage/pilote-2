@@ -2,15 +2,13 @@ import { type CommentaireApiModel } from '@pilote/mb-shared/commentaire'
 import { CheckCircle2, Eye, EyeOff, History, Pencil, Plus } from 'lucide-react'
 import { type ReactNode, useState } from 'react'
 
-import { type IndicateurIndividuCommentaireType } from '@/api/commentaires'
+import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfigContext'
 import { CarteCommentaire } from '@/components/indicateurs/commentaires/CarteCommentaire'
 import { EditeurCommentaire } from '@/components/indicateurs/commentaires/EditeurCommentaire'
 import { LigneHistorique } from '@/components/indicateurs/commentaires/LigneHistorique'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Text } from '@/components/ui/Typography'
-import { useCreerCommentaire } from '@/mutations/commentaires'
-import { useCanWriteIndicateur } from '@/queries/mePermissions'
 
 function Intitule({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (
@@ -24,30 +22,26 @@ function Intitule({ icon, children }: { icon: ReactNode; children: ReactNode }) 
 }
 
 export function ListeCommentaires({
-  indicateurId,
-  individuId,
   type,
   avecNiveauConfiance,
   brouillon,
   publies,
 }: {
-  indicateurId: string
-  individuId: string
-  type: IndicateurIndividuCommentaireType
+  type: string
   avecNiveauConfiance: boolean
   // Brouillon de l'utilisateur courant (l'API ne renvoie que le sien). Au plus un.
   brouillon?: CommentaireApiModel | undefined
   publies: CommentaireApiModel[]
 }) {
+  const ctx = useCommentaireConfig()
   const [editionId, setEditionId] = useState<string | null>(null)
   const [brouillonVisible, setBrouillonVisible] = useState(true)
-  const creer = useCreerCommentaire(indicateurId, individuId, type)
-  const canWrite = useCanWriteIndicateur(indicateurId)
+  const creer = ctx.useCreerCommentaire(type)
 
   const etatEnCours = publies[0]
   const historique = publies.slice(1)
 
-  const ajouter = canWrite ? (
+  const ajouter = (
     <Button
       variant="secondary"
       type="button"
@@ -57,13 +51,13 @@ export function ListeCommentaires({
       <Plus />
       Ajouter un commentaire
     </Button>
-  ) : null
+  )
 
   if (!brouillon && publies.length === 0) {
     return (
       <div className="flex flex-col gap-6">
         <EmptyState title="Aucun commentaire pour le moment." />
-        {ajouter && <div>{ajouter}</div>}
+        <div>{ajouter}</div>
       </div>
     )
   }
@@ -141,7 +135,7 @@ export function ListeCommentaires({
         </section>
       )}
 
-      {!brouillon && ajouter && <div>{ajouter}</div>}
+      {!brouillon && <div>{ajouter}</div>}
     </div>
   )
 }

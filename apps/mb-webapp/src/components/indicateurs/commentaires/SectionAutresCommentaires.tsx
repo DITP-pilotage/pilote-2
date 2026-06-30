@@ -1,26 +1,15 @@
-import { useSuspenseQueries } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 
+import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfigContext'
 import { ListeCommentaires } from '@/components/indicateurs/commentaires/ListeCommentaires'
-import { brouillonQueryOptions, commentairesPubliesQueryOptions } from '@/queries/commentaires'
 
-export function SectionAutresCommentaires({
-  indicateurId,
-  individuId,
-}: {
-  indicateurId: string
-  individuId: string
-}) {
-  const [{ data: publies }, { data: brouillon }] = useSuspenseQueries({
-    queries: [
-      commentairesPubliesQueryOptions(indicateurId, individuId, 'DEFAUT'),
-      brouillonQueryOptions(indicateurId, individuId, 'DEFAUT'),
-    ],
-  })
+export function SectionAutresCommentaires() {
+  const { commentairesPubliesQueryOptions, brouillonQueryOptions } = useCommentaireConfig()
+  const { data: publies } = useSuspenseQuery(commentairesPubliesQueryOptions('DEFAUT'))
+  const { data: brouillon } = useSuspenseQuery(brouillonQueryOptions('DEFAUT'))
 
   return (
     <ListeCommentaires
-      indicateurId={indicateurId}
-      individuId={individuId}
       type="DEFAUT"
       avecNiveauConfiance={false}
       brouillon={brouillon ?? undefined}
