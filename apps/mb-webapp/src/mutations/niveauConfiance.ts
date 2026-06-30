@@ -6,19 +6,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { createNiveauConfiance, updateNiveauConfiance } from '@/api/niveauConfiance'
 import { useToast } from '@/components/ui/Toast'
-import { niveauConfianceKeys } from '@/queries/niveauConfiance'
+import { niveauConfianceKeys, niveauConfiancePanierKeys } from '@/queries/niveauConfiance'
 
-export function useEnregistrerNiveauConfiance(indicateurId: string, individuId: string) {
-  const queryClient = useQueryClient()
+function useEnregistrerNiveauConfianceInterne(invalider: () => Promise<void>) {
   const toast = useToast()
-
-  const invalider = () =>
-    queryClient.invalidateQueries({
-      queryKey: niveauConfianceKeys.parScope(indicateurId, individuId),
-    })
-
-  // Pas de toast de succès : le niveau de confiance est persisté au moment de l'enregistrement
-  // du commentaire, qui porte déjà le toast de succès.
+  // Pas de toast de succès : le niveau de confiance est persisté au moment de
+  // l'enregistrement du commentaire, qui porte déjà le toast de succès.
   const creer = useMutation({
     mutationFn: (body: CreerNiveauConfianceBody) => createNiveauConfiance(body),
     onSuccess: () => void invalider(),
@@ -38,4 +31,22 @@ export function useEnregistrerNiveauConfiance(indicateurId: string, individuId: 
   })
 
   return { creer, modifier }
+}
+
+export function useEnregistrerNiveauConfiance(indicateurId: string, individuId: string) {
+  const queryClient = useQueryClient()
+  return useEnregistrerNiveauConfianceInterne(async () => {
+    await queryClient.invalidateQueries({
+      queryKey: niveauConfianceKeys.parScope(indicateurId, individuId),
+    })
+  })
+}
+
+export function useEnregistrerNiveauConfiancePanier(panierId: string) {
+  const queryClient = useQueryClient()
+  return useEnregistrerNiveauConfianceInterne(async () => {
+    await queryClient.invalidateQueries({
+      queryKey: niveauConfiancePanierKeys.parScope(panierId),
+    })
+  })
 }

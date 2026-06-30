@@ -6,8 +6,11 @@ import { type QueryKey, queryOptions } from '@tanstack/react-query'
 
 import {
   fetchBrouillon,
+  fetchBrouillonPanier,
   fetchCommentaires,
+  fetchCommentairesPanier,
   type IndicateurIndividuCommentaireType,
+  type PanierCommentaireType,
 } from '@/api/commentaires'
 
 import { DEFAULT_STALE_TIME, fetchAllPaginatedItems } from './utils'
@@ -48,5 +51,36 @@ export const brouillonQueryOptions = (
   queryOptions<BrouillonApiModel, Error, BrouillonApiModel, QueryKey>({
     queryKey: commentairesKeys.brouillon(indicateurId, individuId, type),
     queryFn: () => fetchBrouillon(indicateurId, individuId, type),
+    staleTime: DEFAULT_STALE_TIME,
+  })
+
+// --- Panier global -----------------------------------------------------------
+
+export const commentairesPanierKeys = {
+  parType: (panierId: string, type: PanierCommentaireType) =>
+    ['panier', panierId, 'commentaires', type] as const,
+  publies: (panierId: string, type: PanierCommentaireType) =>
+    [...commentairesPanierKeys.parType(panierId, type), 'publies'] as const,
+  brouillon: (panierId: string, type: PanierCommentaireType) =>
+    [...commentairesPanierKeys.parType(panierId, type), 'brouillon'] as const,
+}
+
+export const commentairesPanierPubliesQueryOptions = (
+  panierId: string,
+  type: PanierCommentaireType,
+) =>
+  queryOptions<CommentaireApiModel[], Error, CommentaireApiModel[], QueryKey>({
+    queryKey: commentairesPanierKeys.publies(panierId, type),
+    queryFn: () =>
+      fetchAllPaginatedItems((cursor) =>
+        fetchCommentairesPanier(panierId, { type, ...(cursor ? { cursor } : {}) }),
+      ),
+    staleTime: DEFAULT_STALE_TIME,
+  })
+
+export const brouillonPanierQueryOptions = (panierId: string, type: PanierCommentaireType) =>
+  queryOptions<BrouillonApiModel, Error, BrouillonApiModel, QueryKey>({
+    queryKey: commentairesPanierKeys.brouillon(panierId, type),
+    queryFn: () => fetchBrouillonPanier(panierId, type),
     staleTime: DEFAULT_STALE_TIME,
   })

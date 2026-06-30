@@ -6,12 +6,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import {
   createCommentaire,
+  createCommentairePanier,
   type IndicateurIndividuCommentaireType,
+  type PanierCommentaireType,
   updateCommentaire,
 } from '@/api/commentaires'
 import { useToast } from '@/components/ui/Toast'
-import { commentairesKeys } from '@/queries/commentaires'
-import { niveauConfianceKeys } from '@/queries/niveauConfiance'
+import { commentairesKeys, commentairesPanierKeys } from '@/queries/commentaires'
+import { niveauConfianceKeys, niveauConfiancePanierKeys } from '@/queries/niveauConfiance'
 
 const messageErreur = {
   title: 'Action impossible.',
@@ -59,6 +61,50 @@ export function useModifierCommentaire(
       })
       void queryClient.invalidateQueries({
         queryKey: niveauConfianceKeys.parScope(indicateurId, individuId),
+      })
+      toast({
+        title:
+          variables.body.statut === 'PUBLIE' ? 'Commentaire publié.' : 'Commentaire enregistré.',
+      })
+    },
+    onError: () => toast(messageErreur),
+  })
+}
+
+// --- Panier global -----------------------------------------------------------
+
+export function useCreerCommentairePanier(panierId: string, type: PanierCommentaireType) {
+  const queryClient = useQueryClient()
+  const toast = useToast()
+  return useMutation({
+    mutationFn: (body: CreerCommentaireBody) => createCommentairePanier(panierId, body),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({
+        queryKey: commentairesPanierKeys.parType(panierId, type),
+      })
+      toast({ title: 'Commentaire créé.' })
+    },
+    onError: () => toast(messageErreur),
+  })
+}
+
+export function useModifierCommentairePanier(panierId: string, type: PanierCommentaireType) {
+  const queryClient = useQueryClient()
+  const toast = useToast()
+  return useMutation({
+    mutationFn: ({
+      commentaireId,
+      body,
+    }: {
+      commentaireId: string
+      body: ModifierCommentaireBody
+    }) => updateCommentaire(commentaireId, body),
+    onSuccess: (_data, variables) => {
+      void queryClient.invalidateQueries({
+        queryKey: commentairesPanierKeys.parType(panierId, type),
+      })
+      void queryClient.invalidateQueries({
+        queryKey: niveauConfiancePanierKeys.parScope(panierId),
       })
       toast({
         title:
