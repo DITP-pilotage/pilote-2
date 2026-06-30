@@ -16,6 +16,8 @@ sources:
       - name: metadata_chantier_meteos
       - name: metadata_indicateur_types
       - name: metadata_porteurs
+      - name: metadata_parametrage_indicateurs
+      - name: metadata_indicateurs_complementaire
 
   - name: python_load_seeds
     description: "Données chargées par dlt dans le schema *seeds* de la base Pilote de production."

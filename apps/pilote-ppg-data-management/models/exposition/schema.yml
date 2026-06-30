@@ -99,6 +99,10 @@ exposures:
       Export des données au SIG pour info.gouv.fr via copilot
     depends_on:
       - ref('compute_vaca')
+      - ref('indicateur_identite')
+      - ref('metadata_indicateurs')
+      - source('python_load', 'metadata_indicateurs_complementaire')
+      - source('python_load', 'metadata_parametrage_indicateurs')
     owner:
       name: Romain Thoyer
       email: romain.thoyer@modernisation.gouv.fr
