@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Text } from '@/components/ui/Typography'
 import { useCreerCommentaire } from '@/mutations/commentaires'
+import { useCanWriteIndicateur } from '@/queries/mePermissions'
 
 function Intitule({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (
@@ -41,6 +42,7 @@ export function ListeCommentaires({
   const [editionId, setEditionId] = useState<string | null>(null)
   const [brouillonVisible, setBrouillonVisible] = useState(true)
   const creer = useCreerCommentaire(indicateurId, individuId, type)
+  const peutEcrire = useCanWriteIndicateur(indicateurId)
 
   const etatEnCours = publies[0]
   const historique = publies.slice(1)
@@ -50,7 +52,8 @@ export function ListeCommentaires({
       variant="secondary"
       type="button"
       onClick={() => creer.mutate({ type, contenu: '', statut: 'BROUILLON' })}
-      disabled={creer.isPending}
+      disabled={creer.isPending || !peutEcrire}
+      title={peutEcrire ? undefined : "Vous n'avez pas la permission d'écrire sur cet indicateur."}
     >
       <Plus />
       Ajouter un commentaire

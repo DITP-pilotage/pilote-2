@@ -1,5 +1,9 @@
 import { type IndicateurApiModel, indicateurApiModelSchema } from '@pilote/mb-shared/indicateur'
 import { type MeApiModel, meApiModelSchema } from '@pilote/mb-shared/me'
+import {
+  type MePermissionsApiModel,
+  mePermissionsApiModelSchema,
+} from '@pilote/mb-shared/mePermissions'
 import { type ReferentielApiModel, referentielApiModelSchema } from '@pilote/mb-shared/referentiel'
 
 export const buildMe = (override: Partial<MeApiModel> = {}): MeApiModel =>
@@ -7,6 +11,15 @@ export const buildMe = (override: Partial<MeApiModel> = {}): MeApiModel =>
     userId: 'sub-test',
     prenom: 'Admin',
     nom: 'DITP',
+    ...override,
+  })
+
+export const buildMePermissions = (
+  override: Partial<MePermissionsApiModel> = {},
+): MePermissionsApiModel =>
+  mePermissionsApiModelSchema.parse({
+    paniers: [],
+    indicateurs: [],
     ...override,
   })
 
