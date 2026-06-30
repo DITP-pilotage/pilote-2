@@ -122,8 +122,6 @@ export function ListeCommentaires({
             />
           ) : (
             <CarteCommentaire
-              indicateurId={indicateurId}
-              individuId={individuId}
               commentaire={etatEnCours}
               avecNiveauConfiance={avecNiveauConfiance}
               onEdit={() => setEditionId(etatEnCours.id)}

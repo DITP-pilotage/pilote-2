@@ -2,6 +2,7 @@ import { type CommentaireApiModel } from '@pilote/mb-shared/commentaire'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { MoreVertical, Pencil } from 'lucide-react'
 
+import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfigContext'
 import { BadgeStatut } from '@/components/indicateurs/commentaires/BadgeStatut'
 import { ContenuRepliable } from '@/components/indicateurs/commentaires/ContenuRepliable'
 import { libelleAuteur } from '@/components/indicateurs/commentaires/libelleAuteur'
@@ -16,17 +17,12 @@ import { Text } from '@/components/ui/Typography'
 import { auth } from '@/auth'
 import { clsxm } from '@/lib/clsxm'
 import { formatDateHeureFr } from '@/lib/format'
-import { niveauPourCommentaireQueryOptions } from '@/queries/niveauConfiance'
 
 export function CarteCommentaire({
-  indicateurId,
-  individuId,
   commentaire,
   avecNiveauConfiance,
   onEdit,
 }: {
-  indicateurId: string
-  individuId: string
   commentaire: CommentaireApiModel
   avecNiveauConfiance: boolean
   onEdit: () => void
@@ -62,13 +58,7 @@ export function CarteCommentaire({
         )}
       </div>
 
-      {avecNiveauConfiance && (
-        <MeteoBadge
-          indicateurId={indicateurId}
-          individuId={individuId}
-          commentaireId={commentaire.id}
-        />
-      )}
+      {avecNiveauConfiance && <MeteoBadge commentaireId={commentaire.id} />}
 
       <ContenuRepliable html={commentaire.contenu} />
 
@@ -82,18 +72,9 @@ export function CarteCommentaire({
   )
 }
 
-function MeteoBadge({
-  indicateurId,
-  individuId,
-  commentaireId,
-}: {
-  indicateurId: string
-  individuId: string
-  commentaireId: string
-}) {
-  const { data: niveau } = useSuspenseQuery(
-    niveauPourCommentaireQueryOptions(indicateurId, individuId, commentaireId),
-  )
+function MeteoBadge({ commentaireId }: { commentaireId: string }) {
+  const { niveauPourCommentaireQueryOptions } = useCommentaireConfig()
+  const { data: niveau } = useSuspenseQuery(niveauPourCommentaireQueryOptions(commentaireId))
   if (!niveau) return null
   return (
     <div className="mb-3">
