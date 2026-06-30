@@ -90,8 +90,6 @@ export function ListeCommentaires({
           </div>
           {brouillonVisible ? (
             <EditeurCommentaire
-              indicateurId={indicateurId}
-              individuId={individuId}
               type={type}
               commentaire={brouillon}
               avecNiveauConfiance={avecNiveauConfiance}
@@ -113,8 +111,6 @@ export function ListeCommentaires({
           <Intitule icon={<CheckCircle2 />}>État en cours</Intitule>
           {editionId === etatEnCours.id ? (
             <EditeurCommentaire
-              indicateurId={indicateurId}
-              individuId={individuId}
               type={type}
               commentaire={etatEnCours}
               avecNiveauConfiance={avecNiveauConfiance}
