@@ -40,6 +40,10 @@
       "types": "./src/me.ts",
       "default": "./src/me.ts"
     },
+    "./mePermissions": {
+      "types": "./src/mePermissions.ts",
+      "default": "./src/mePermissions.ts"
+    },
     "./pagination": {
       "types": "./src/pagination.ts",
       "default": "./src/pagination.ts"
