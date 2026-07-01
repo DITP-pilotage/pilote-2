@@ -1,5 +1,4 @@
-FROM python:3.11
-
+FROM ghcr.io/astral-sh/uv:trixie-slim
 # [setup.root-dir]
 WORKDIR /app/data_management
 
@@ -8,16 +7,11 @@ RUN apt-get update && apt-get install -y \
     postgresql \
  && rm -rf /var/lib/apt/lists/*
 
-## [install.uv] (last version)
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ENV UV_ENV_FILE="/app/data_management/.env"
 
-COPY pyproject.toml .
-COPY uv.lock .
-COPY .python-version .
+COPY . /app/data_management/
 
 RUN uv python install
-
-WORKDIR /app/data_management
 
 ENTRYPOINT ["uv","run", "/bin/bash"]
 
