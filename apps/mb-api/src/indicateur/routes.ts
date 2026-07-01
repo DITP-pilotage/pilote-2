@@ -26,8 +26,9 @@ import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
+import { db } from '@/framework/persistence/dbStore'
 import { withTransaction } from '@/framework/persistence/withTransaction'
-import { upsertIndicateur } from '@/indicateur/commands/upsertIndicateur'
+import { createIndicateur, updateIndicateur } from '@/indicateur/commands/writeIndicateur'
 import {
   creerIndicateurIndividuCommentaire,
   indicateurIndividuConfig,
@@ -156,8 +157,14 @@ indicateurRoutes.openapi(upsertIndicateurRoute, async (context) => {
   const body = context.req.valid('json')
 
   const result = await withTransaction(async () => {
-    await upsertIndicateur(id, body)
-    return getIndicateurByPublicId(id)
+    // Temporary adapter — Task 4 will split create/update into dedicated routes
+    const existing = await db().indicateur.findUnique({ where: { publicId: id } })
+    if (existing) {
+      await updateIndicateur(id, body)
+      return getIndicateurByPublicId(id)
+    }
+    const generatedId = (await createIndicateur(body))._unsafeUnwrap()
+    return getIndicateurByPublicId(generatedId)
   })
 
   return result.match(
