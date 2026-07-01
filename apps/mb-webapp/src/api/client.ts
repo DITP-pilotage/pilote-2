@@ -35,7 +35,8 @@ export const apiClient = ky.create({
       async ({ request }) => {
         const token = await refreshAccessToken()
         if (!token) {
-          window.location.assign('/auth/login')
+          const currentPath = `${window.location.pathname}${window.location.search}`
+          window.location.assign(`/auth/login?redirect=${encodeURIComponent(currentPath)}`)
           return ky.stop
         }
         request.headers.set('Authorization', `Bearer ${token}`)
