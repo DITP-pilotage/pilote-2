@@ -2,15 +2,13 @@ import { type CommentaireApiModel } from '@pilote/mb-shared/commentaire'
 import { CheckCircle2, Eye, EyeOff, History, Pencil, Plus } from 'lucide-react'
 import { type ReactNode, useState } from 'react'
 
-import { type IndicateurIndividuCommentaireType } from '@/api/commentaires'
-import { CarteCommentaire } from '@/components/indicateurs/commentaires/CarteCommentaire'
-import { EditeurCommentaire } from '@/components/indicateurs/commentaires/EditeurCommentaire'
-import { LigneHistorique } from '@/components/indicateurs/commentaires/LigneHistorique'
+import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfigContext'
+import { CarteCommentaire } from '@/components/commentaires/CarteCommentaire'
+import { EditeurCommentaire } from '@/components/commentaires/EditeurCommentaire'
+import { LigneHistorique } from '@/components/commentaires/LigneHistorique'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Text } from '@/components/ui/Typography'
-import { useCreerCommentaire } from '@/mutations/commentaires'
-import { useCanWriteIndicateur } from '@/queries/mePermissions'
 
 function Intitule({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (
@@ -24,30 +22,27 @@ function Intitule({ icon, children }: { icon: ReactNode; children: ReactNode }) 
 }
 
 export function ListeCommentaires({
-  indicateurId,
-  individuId,
   type,
   avecNiveauConfiance,
   brouillon,
   publies,
 }: {
-  indicateurId: string
-  individuId: string
-  type: IndicateurIndividuCommentaireType
+  type: string
   avecNiveauConfiance: boolean
   // Brouillon de l'utilisateur courant (l'API ne renvoie que le sien). Au plus un.
   brouillon?: CommentaireApiModel | undefined
   publies: CommentaireApiModel[]
 }) {
+  const ctx = useCommentaireConfig()
   const [editionId, setEditionId] = useState<string | null>(null)
   const [brouillonVisible, setBrouillonVisible] = useState(true)
-  const creer = useCreerCommentaire(indicateurId, individuId, type)
-  const canWrite = useCanWriteIndicateur(indicateurId)
+  const creer = ctx.useCreerCommentaire(type)
+  const canWrite = ctx.useCanWrite()
 
   const etatEnCours = publies[0]
   const historique = publies.slice(1)
 
-  const ajouter = canWrite ? (
+  const ajouter = canWrite && (
     <Button
       variant="secondary"
       type="button"
@@ -57,7 +52,7 @@ export function ListeCommentaires({
       <Plus />
       Ajouter un commentaire
     </Button>
-  ) : null
+  )
 
   if (!brouillon && publies.length === 0) {
     return (
@@ -90,8 +85,6 @@ export function ListeCommentaires({
           </div>
           {brouillonVisible ? (
             <EditeurCommentaire
-              indicateurId={indicateurId}
-              individuId={individuId}
               type={type}
               commentaire={brouillon}
               avecNiveauConfiance={avecNiveauConfiance}
@@ -113,8 +106,6 @@ export function ListeCommentaires({
           <Intitule icon={<CheckCircle2 />}>État en cours</Intitule>
           {editionId === etatEnCours.id ? (
             <EditeurCommentaire
-              indicateurId={indicateurId}
-              individuId={individuId}
               type={type}
               commentaire={etatEnCours}
               avecNiveauConfiance={avecNiveauConfiance}
@@ -122,8 +113,6 @@ export function ListeCommentaires({
             />
           ) : (
             <CarteCommentaire
-              indicateurId={indicateurId}
-              individuId={individuId}
               commentaire={etatEnCours}
               avecNiveauConfiance={avecNiveauConfiance}
               onEdit={() => setEditionId(etatEnCours.id)}
@@ -139,8 +128,6 @@ export function ListeCommentaires({
             {historique.map((commentaire) => (
               <LigneHistorique
                 key={commentaire.id}
-                indicateurId={indicateurId}
-                individuId={individuId}
                 commentaire={commentaire}
                 avecNiveauConfiance={avecNiveauConfiance}
               />

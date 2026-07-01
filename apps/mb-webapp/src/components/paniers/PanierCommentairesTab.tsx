@@ -1,17 +1,17 @@
-import { CloudSun, MessageSquare } from 'lucide-react'
+import { CloudSun, MessageSquare, Target } from 'lucide-react'
 import { Suspense } from 'react'
 
-import { type IndicateurIndividuCommentaireType } from '@/api/commentaires'
+import { type PanierCommentaireType } from '@/api/commentaires'
 import { SectionCommentaire } from '@/components/commentaires/SectionCommentaire'
 import { RouteLoading } from '@/components/RouteLoading'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 
-export function IndicateurCommentairesTab({
+export function PanierCommentairesTab({
   type,
   onTypeChange,
 }: {
-  type: IndicateurIndividuCommentaireType
-  onTypeChange: (type: IndicateurIndividuCommentaireType) => void
+  type: PanierCommentaireType
+  onTypeChange: (type: PanierCommentaireType) => void
 }) {
   return (
     <div className="flex flex-col gap-8">
@@ -21,6 +21,7 @@ export function IndicateurCommentairesTab({
           value={type}
           onValueChange={onTypeChange}
           options={[
+            { value: 'OBJECTIF', label: 'Objectifs', icon: <Target /> },
             { value: 'CONFIANCE', label: 'Synthèse des résultats', icon: <CloudSun /> },
             { value: 'DEFAUT', label: 'Autres commentaires', icon: <MessageSquare /> },
           ]}

@@ -1,10 +1,13 @@
 import { type IndiceConfiance } from '@pilote/mb-shared/niveauConfiance'
 
-import { couleurIndice, meteoFromIndice } from '@/components/indicateurs/commentaires/meteo'
+import {
+  couleurIndice,
+  niveauConfianceFromIndice,
+} from '@/components/commentaires/niveauConfianceAffichage'
 import { clsxm } from '@/lib/clsxm'
 
-export function MeteoTag({ indice }: { indice: IndiceConfiance }) {
-  const { label } = meteoFromIndice(indice)
+export function NiveauConfianceTag({ indice }: { indice: IndiceConfiance }) {
+  const { label } = niveauConfianceFromIndice(indice)
   return (
     <span
       className={clsxm(

@@ -2,10 +2,11 @@ import { type CommentaireApiModel } from '@pilote/mb-shared/commentaire'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { MoreVertical, Pencil } from 'lucide-react'
 
-import { BadgeStatut } from '@/components/indicateurs/commentaires/BadgeStatut'
-import { ContenuRepliable } from '@/components/indicateurs/commentaires/ContenuRepliable'
-import { libelleAuteur } from '@/components/indicateurs/commentaires/libelleAuteur'
-import { MeteoTag } from '@/components/indicateurs/commentaires/MeteoTag'
+import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfigContext'
+import { BadgeStatut } from '@/components/commentaires/BadgeStatut'
+import { ContenuRepliable } from '@/components/commentaires/ContenuRepliable'
+import { libelleAuteur } from '@/components/commentaires/libelleAuteur'
+import { NiveauConfianceTag } from '@/components/commentaires/NiveauConfianceTag'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,25 +17,22 @@ import { Text } from '@/components/ui/Typography'
 import { auth } from '@/auth'
 import { clsxm } from '@/lib/clsxm'
 import { formatDateHeureFr } from '@/lib/format'
-import { niveauPourCommentaireQueryOptions } from '@/queries/niveauConfiance'
 
 export function CarteCommentaire({
-  indicateurId,
-  individuId,
   commentaire,
   avecNiveauConfiance,
   onEdit,
 }: {
-  indicateurId: string
-  individuId: string
   commentaire: CommentaireApiModel
   avecNiveauConfiance: boolean
   onEdit: () => void
 }) {
+  const canWrite = useCommentaireConfig().useCanWrite()
   const brouillon = commentaire.statut === 'BROUILLON'
-  // L'édition est réservée à l'auteur (createdBy). `me.userId` et `auteurCreation.id`
-  // sont le même identifiant de principal (cf. backend), donc comparaison directe.
-  const peutModifier = commentaire.auteurCreation.id === auth.user?.userId
+  // L'édition est réservée à l'auteur (createdBy) ET requiert le droit d'écriture sur la
+  // ressource. `me.userId` et `auteurCreation.id` sont le même identifiant de principal
+  // (cf. backend), donc comparaison directe.
+  const peutModifier = canWrite && commentaire.auteurCreation.id === auth.user?.userId
   return (
     <article
       className={clsxm(
@@ -62,13 +60,7 @@ export function CarteCommentaire({
         )}
       </div>
 
-      {avecNiveauConfiance && (
-        <MeteoBadge
-          indicateurId={indicateurId}
-          individuId={individuId}
-          commentaireId={commentaire.id}
-        />
-      )}
+      {avecNiveauConfiance && <NiveauConfianceBadge commentaireId={commentaire.id} />}
 
       <ContenuRepliable html={commentaire.contenu} />
 
@@ -82,22 +74,13 @@ export function CarteCommentaire({
   )
 }
 
-function MeteoBadge({
-  indicateurId,
-  individuId,
-  commentaireId,
-}: {
-  indicateurId: string
-  individuId: string
-  commentaireId: string
-}) {
-  const { data: niveau } = useSuspenseQuery(
-    niveauPourCommentaireQueryOptions(indicateurId, individuId, commentaireId),
-  )
+function NiveauConfianceBadge({ commentaireId }: { commentaireId: string }) {
+  const { niveauPourCommentaireQueryOptions } = useCommentaireConfig()
+  const { data: niveau } = useSuspenseQuery(niveauPourCommentaireQueryOptions(commentaireId))
   if (!niveau) return null
   return (
     <div className="mb-3">
-      <MeteoTag indice={niveau.indice} />
+      <NiveauConfianceTag indice={niveau.indice} />
     </div>
   )
 }

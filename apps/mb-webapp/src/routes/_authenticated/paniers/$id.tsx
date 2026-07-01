@@ -1,3 +1,4 @@
+import { panierCommentaireTypeSchema } from '@pilote/mb-shared/commentaire'
 import { individuPublicIdSchema } from '@pilote/mb-shared/individu'
 import { referentielPublicIdSchema } from '@pilote/mb-shared/referentiel'
 import { panierPublicIdSchema } from '@pilote/mb-shared/publicIds'
@@ -10,6 +11,8 @@ import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
 import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
+import { PanierCommentaireConfigProvider } from '@/components/paniers/PanierCommentaireConfigProvider'
+import { PanierCommentairesTab } from '@/components/paniers/PanierCommentairesTab'
 import { PanierGouvernanceTab } from '@/components/paniers/PanierGouvernanceTab'
 import { PanierTauxProgression } from '@/components/paniers/PanierTauxProgression'
 import { BackLink } from '@/components/ui/BackLink'
@@ -37,6 +40,8 @@ const paramsSchema = z.object({
 const searchSchema = z.object({
   individu: individuPublicIdSchema.optional(),
   referentiel: referentielPublicIdSchema.optional(),
+  onglet: z.enum(['resultats', 'commentaires', 'gouvernance']).default('resultats'),
+  commentaires: panierCommentaireTypeSchema.default('OBJECTIF'),
 })
 
 export const Route = createFileRoute('/_authenticated/paniers/$id')({
@@ -119,9 +124,17 @@ function PanierDetailComponent() {
 
   return (
     <Page title={panier.nom} description={panier.description ?? undefined} back={back}>
-      <Tabs defaultValue="resultats">
+      <Tabs
+        value={search.onglet}
+        onValueChange={(onglet) => {
+          void navigate({
+            search: (prev) => ({ ...prev, onglet: onglet as typeof search.onglet }),
+          })
+        }}
+      >
         <TabsList>
           <TabsTrigger value="resultats">Résultats</TabsTrigger>
+          <TabsTrigger value="commentaires">Commentaires</TabsTrigger>
           <TabsTrigger value="gouvernance">Gouvernance</TabsTrigger>
         </TabsList>
 
@@ -168,6 +181,17 @@ function PanierDetailComponent() {
               </CardGrid>
             )}
           </div>
+        </TabsContent>
+
+        <TabsContent value="commentaires">
+          <PanierCommentaireConfigProvider panierId={id}>
+            <PanierCommentairesTab
+              type={search.commentaires}
+              onTypeChange={(commentaires) => {
+                void navigate({ search: (prev) => ({ ...prev, commentaires }) })
+              }}
+            />
+          </PanierCommentaireConfigProvider>
         </TabsContent>
 
         <TabsContent value="gouvernance">

@@ -38,3 +38,6 @@ export const mePermissionsApiModelSchema = z.object({
 })
 
 export type MePermissionsApiModel = z.infer<typeof mePermissionsApiModelSchema>
+
+// Entrée de permission (id + actions), partagée par `paniers` et `indicateurs`.
+export type PermissionEntryApiModel = z.infer<typeof permissionEntrySchema>

@@ -6,18 +6,15 @@ import { EyeOff, Send } from 'lucide-react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { z } from 'zod'
 
-import { type IndicateurIndividuCommentaireType } from '@/api/commentaires'
+import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfigContext'
 import { EditeurRiche } from '@/components/editeur-riche/EditeurRiche'
-import { BadgeStatut } from '@/components/indicateurs/commentaires/BadgeStatut'
-import { libelleAuteur } from '@/components/indicateurs/commentaires/libelleAuteur'
-import { SelecteurMeteo } from '@/components/indicateurs/commentaires/SelecteurMeteo'
+import { BadgeStatut } from '@/components/commentaires/BadgeStatut'
+import { libelleAuteur } from '@/components/commentaires/libelleAuteur'
+import { SelecteurNiveauConfiance } from '@/components/commentaires/SelecteurNiveauConfiance'
 import { Button } from '@/components/ui/Button'
 import { Text } from '@/components/ui/Typography'
 import { clsxm } from '@/lib/clsxm'
 import { formatDateHeureFr } from '@/lib/format'
-import { useModifierCommentaire } from '@/mutations/commentaires'
-import { useEnregistrerNiveauConfiance } from '@/mutations/niveauConfiance'
-import { niveauPourCommentaireQueryOptions } from '@/queries/niveauConfiance'
 
 const editeurFormSchema = z.object({
   contenu: z.string(),
@@ -28,9 +25,7 @@ type EditeurFormValues = z.infer<typeof editeurFormSchema>
 export type NiveauConfianceCourant = { niveauId: string; indice: IndiceConfiance }
 
 type EditeurProps = {
-  indicateurId: string
-  individuId: string
-  type: IndicateurIndividuCommentaireType
+  type: string
   commentaire: CommentaireApiModel
   avecNiveauConfiance: boolean
   onClose?: (() => void) | undefined
@@ -44,9 +39,8 @@ export function EditeurCommentaire(props: EditeurProps) {
 }
 
 function EditeurAvecNiveauConfiance(props: EditeurProps) {
-  const { data: niveau } = useSuspenseQuery(
-    niveauPourCommentaireQueryOptions(props.indicateurId, props.individuId, props.commentaire.id),
-  )
+  const { niveauPourCommentaireQueryOptions } = useCommentaireConfig()
+  const { data: niveau } = useSuspenseQuery(niveauPourCommentaireQueryOptions(props.commentaire.id))
   const niveauConfiance: NiveauConfianceCourant | undefined = niveau
     ? { niveauId: niveau.id, indice: niveau.indice }
     : undefined
@@ -54,23 +48,19 @@ function EditeurAvecNiveauConfiance(props: EditeurProps) {
 }
 
 function EditeurInterne({
-  indicateurId,
-  individuId,
   type,
   commentaire,
   avecNiveauConfiance,
   niveauConfiance,
   onClose,
 }: EditeurProps & { niveauConfiance: NiveauConfianceCourant | undefined }) {
+  const ctx = useCommentaireConfig()
   const form = useForm<EditeurFormValues>({
     resolver: zodResolver(editeurFormSchema),
     defaultValues: { contenu: commentaire.contenu, indice: niveauConfiance?.indice },
   })
-  const modifier = useModifierCommentaire(indicateurId, individuId, type)
-  const { creer: creerNiveau, modifier: modifierNiveau } = useEnregistrerNiveauConfiance(
-    indicateurId,
-    individuId,
-  )
+  const modifier = ctx.useModifierCommentaire(type)
+  const { creer: creerNiveau, modifier: modifierNiveau } = ctx.useEnregistrerNiveauConfiance()
 
   const brouillon = commentaire.statut === 'BROUILLON'
   const enCours = modifier.isPending || creerNiveau.isPending || modifierNiveau.isPending
@@ -138,7 +128,11 @@ function EditeurInterne({
               control={form.control}
               name="indice"
               render={({ field }) => (
-                <SelecteurMeteo value={field.value} onChange={field.onChange} disabled={enCours} />
+                <SelecteurNiveauConfiance
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={enCours}
+                />
               )}
             />
           </div>

@@ -1,6 +1,6 @@
 import { type IndiceConfiance } from '@pilote/mb-shared/niveauConfiance'
 
-export type Meteo = { indice: IndiceConfiance; label: string }
+export type NiveauConfianceAffichage = { indice: IndiceConfiance; label: string }
 
 // Classes Tailwind par indice. Écrites en entier (pas de concaténation) pour
 // rester détectables par le scanner de contenu de Tailwind.
@@ -64,12 +64,14 @@ const ORDRE_SELECTEUR: readonly IndiceConfiance[] = [
 
 export const couleurIndice = (indice: IndiceConfiance): CouleurIndice => COULEUR_PAR_INDICE[indice]
 
-export const METEOS: readonly Meteo[] = ORDRE_SELECTEUR.map((indice) => ({
-  indice,
-  label: LABEL_PAR_INDICE[indice],
-}))
+export const NIVEAUX_CONFIANCE: readonly NiveauConfianceAffichage[] = ORDRE_SELECTEUR.map(
+  (indice) => ({
+    indice,
+    label: LABEL_PAR_INDICE[indice],
+  }),
+)
 
-export const meteoFromIndice = (indice: IndiceConfiance): Meteo => ({
+export const niveauConfianceFromIndice = (indice: IndiceConfiance): NiveauConfianceAffichage => ({
   indice,
   label: LABEL_PAR_INDICE[indice],
 })
