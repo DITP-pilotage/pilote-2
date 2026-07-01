@@ -9,6 +9,7 @@ import {
   uniteDureeSchema,
   uniteIndicateurCodeSchema,
 } from '@pilote/kpilote-shared/indicateur'
+import { indicateurPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
 
 import { emptyToNull } from '@/lib/emptyToNull'
 
@@ -19,8 +20,7 @@ import { emptyToNull } from '@/lib/emptyToNull'
 export const buildIndicateurFormSchema = (mode: 'create' | 'edit') =>
   z
     .object({
-      id:
-        mode === 'create' ? z.string().regex(/^IND-\d+$/, 'Format attendu : IND-001') : z.string(),
+      id: mode === 'create' ? indicateurPublicIdSchema : z.string(),
       nom: z.string().trim().min(1, 'Le nom est requis'),
       visibilite: indicateurVisibiliteSchema,
       unite: z.union([z.literal(''), uniteIndicateurCodeSchema]),
