@@ -1,4 +1,4 @@
-FROM python:3.10
+FROM python:3.11
 
 # [setup.root-dir]
 WORKDIR /app/data_management
@@ -25,6 +25,6 @@ RUN pipenv run pip freeze
 
 WORKDIR /app/data_management
 
-ENTRYPOINT ["pipenv","run", "/bin/bash"]
+ENTRYPOINT ["uv","run", "/bin/bash"]
 
 CMD ["scripts/run_datajobs.sh"]

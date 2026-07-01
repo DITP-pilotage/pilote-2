@@ -13,18 +13,18 @@ dbt run --select barometre
 # Exécuter les datajobs [docker]
 FULL_DJ=false docker compose run --rm -e FULL_DJ pilote_datajobs
 ## [local]
-FULL_DJ=false pipenv run /bin/bash scripts/run_datajobs.sh
+FULL_DJ=false uv run /bin/bash scripts/run_datajobs.sh
 
 
 # Exécuter les datajobs en mode FULL_DJ [docker]
 FULL_DJ=true docker compose run --rm -e FULL_DJ pilote_datajobs
 ## [local]
-FULL_DJ=true pipenv run /bin/bash scripts/run_datajobs.sh
+FULL_DJ=true uv run /bin/bash scripts/run_datajobs.sh
 
 # Exécuter un script datajob unique [docker]
 docker compose run --rm pilote_datajobs scripts/2_seed_ppg_metadata.sh
 ## [local]
-pipenv run /bin/bash scripts/2_seed_ppg_metadata.sh
+uv run /bin/bash scripts/2_seed_ppg_metadata.sh
 ```
 
 *Note:* 

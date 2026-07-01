@@ -13,4 +13,4 @@ bash scripts/ddp_dump.sh
 bash scripts/ddp_restore.sh
 echo ">> Run dj prod"
 cd ../pilote-ppg-data-management
-FULL_DJ=false pipenv run python3 scripts/__main__.py
+FULL_DJ=false uv run python3 scripts/__main__.py

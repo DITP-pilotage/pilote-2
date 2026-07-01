@@ -1,8 +1,7 @@
 descente:
 	(cd ../pilote-ppg &&\
 	pnpm i) &&\
-	pipenv sync &&\
-	pipenv run bash ../pilote-ppg/scripts/daily/romain.sh
+	uv run bash pilote-ppg/scripts/daily/romain.sh
 
 docker-up:
 	cd ../pilote-ppg &&\
@@ -12,9 +11,8 @@ docs:
 	pipenv run dbt docs generate && pipenv run dbt docs serve --port 8081
 
 lint-sql:
-	pipenv sync &&\
-	pipenv run sqlfluff fix models/ || \
-	pipenv run sqlfluff lint models/
+	uv run sqlfluff fix models/ || \
+	uv run sqlfluff lint models/
 
 
 tunnel-dev:
