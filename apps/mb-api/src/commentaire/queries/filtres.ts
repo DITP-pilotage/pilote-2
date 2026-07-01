@@ -1,7 +1,6 @@
 import {
   IndicateurIndividuCommentaireType,
   PanierCommentaireType,
-  PanierIndividuCommentaireType,
   type Prisma,
 } from '@/generated/prisma/client'
 
@@ -12,9 +11,6 @@ export const filtreParType = (type: string): Prisma.CommentaireWhereInput => {
   const branches: Prisma.CommentaireWhereInput[] = []
   if (type in IndicateurIndividuCommentaireType) {
     branches.push({ indicateurIndividu: { type: type as IndicateurIndividuCommentaireType } })
-  }
-  if (type in PanierIndividuCommentaireType) {
-    branches.push({ panierIndividu: { type: type as PanierIndividuCommentaireType } })
   }
   if (type in PanierCommentaireType) {
     branches.push({ panier: { type: type as PanierCommentaireType } })

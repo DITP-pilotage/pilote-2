@@ -212,7 +212,6 @@ model Individu {
   valeurs                ValeurAvancement[]
   objectifs              ObjectifIndicateurIndividu[]
   indicateurCommentaires IndicateurIndividuCommentaire[]
-  panierCommentaires     PanierIndividuCommentaire[]
 
   @@index([referentielId])
   @@map("individu")
@@ -304,12 +303,11 @@ model Panier {
   createdAt   DateTime   @default(now()) @map("created_at")
   updatedAt   DateTime   @updatedAt @map("updated_at")
 
-  indicateurs          PanierIndicateur[]
-  permissions          PanierPermission[]
-  responsables         PanierResponsable[]
-  individuCommentaires PanierIndividuCommentaire[]
-  panierCommentaires   PanierCommentaire[]
-  contactsUtiles       PanierContactUtile[]
+  indicateurs        PanierIndicateur[]
+  permissions        PanierPermission[]
+  responsables       PanierResponsable[]
+  panierCommentaires PanierCommentaire[]
+  contactsUtiles     PanierContactUtile[]
 
   @@map("panier")
 }
@@ -446,13 +444,6 @@ enum IndicateurIndividuCommentaireType {
   @@map("indicateur_individu_commentaire_type_enum")
 }
 
-enum PanierIndividuCommentaireType {
-  DEFAUT
-  CONFIANCE
-
-  @@map("panier_individu_commentaire_type_enum")
-}
-
 enum PanierCommentaireType {
   DEFAUT
   CONFIANCE
@@ -475,7 +466,6 @@ model Commentaire {
   auteurModification Principal @relation("commentaireUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
 
   indicateurIndividu IndicateurIndividuCommentaire?
-  panierIndividu     PanierIndividuCommentaire?
   panier             PanierCommentaire?
   niveauxConfiance   NiveauConfiance[]
 
@@ -496,20 +486,6 @@ model IndicateurIndividuCommentaire {
 
   @@index([indicateurId, individuId])
   @@map("indicateur_individu_commentaire")
-}
-
-model PanierIndividuCommentaire {
-  commentaireId String                        @id @map("commentaire_id") @db.Uuid
-  panierId      String                        @map("panier_id") @db.Uuid
-  individuId    String                        @map("individu_id") @db.Uuid
-  type          PanierIndividuCommentaireType
-
-  commentaire Commentaire @relation(fields: [commentaireId], references: [id], onDelete: Cascade)
-  panier      Panier      @relation(fields: [panierId], references: [id], onDelete: Cascade)
-  individu    Individu    @relation(fields: [individuId], references: [id], onDelete: Restrict)
-
-  @@index([panierId, individuId])
-  @@map("panier_individu_commentaire")
 }
 
 model PanierCommentaire {

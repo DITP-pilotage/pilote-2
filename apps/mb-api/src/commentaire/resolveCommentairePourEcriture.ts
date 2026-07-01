@@ -19,7 +19,6 @@ export const resolveCommentairePourEcriture = (
         select: {
           createdBy: true,
           indicateurIndividu: { select: { indicateurId: true } },
-          panierIndividu: { select: { panierId: true } },
           panier: { select: { panierId: true } },
         },
       })
@@ -33,7 +32,7 @@ export const resolveCommentairePourEcriture = (
         })
         return { principalId }
       }
-      const panierId = commentaire.panierIndividu?.panierId ?? commentaire.panier?.panierId
+      const panierId = commentaire.panier?.panierId
       if (panierId) {
         await ensurePanierWritePermission({ panierId, principalId })
         return { principalId }

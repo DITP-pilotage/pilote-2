@@ -7,20 +7,16 @@ import { type Prisma } from '@/generated/prisma/client'
 import {
   type IndicateurIndividuCommentaireType,
   type PanierCommentaireType,
-  type PanierIndividuCommentaireType,
 } from '@/generated/prisma/enums'
 
-// Union des types possibles sur les 3 satellites (DEFAUT, CONFIANCE, OBJECTIF).
-export type CommentaireType =
-  | IndicateurIndividuCommentaireType
-  | PanierIndividuCommentaireType
-  | PanierCommentaireType
+// Union des types possibles sur les 2 satellites (DEFAUT, CONFIANCE, OBJECTIF).
+export type CommentaireType = IndicateurIndividuCommentaireType | PanierCommentaireType
 
 const filtreType = (type: CommentaireType): Prisma.CommentaireWhereInput => {
   // OBJECTIF n'existe que sur le satellite panier global.
   if (type === 'OBJECTIF') return { panier: { type } }
   return {
-    OR: [{ indicateurIndividu: { type } }, { panierIndividu: { type } }, { panier: { type } }],
+    OR: [{ indicateurIndividu: { type } }, { panier: { type } }],
   }
 }
 

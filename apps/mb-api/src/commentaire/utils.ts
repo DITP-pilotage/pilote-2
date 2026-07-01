@@ -17,17 +17,16 @@ export const commentaireInclude = {
   auteurCreation: auteurInclude,
   auteurModification: auteurInclude,
   indicateurIndividu: { include: { individu: { select: { publicId: true } } } },
-  panierIndividu: { include: { individu: { select: { publicId: true } } } },
   panier: true,
 } satisfies Prisma.CommentaireInclude
 
 export type CommentaireRow = Prisma.CommentaireGetPayload<{ include: typeof commentaireInclude }>
 
 const typeDuCommentaire = (row: CommentaireRow): string =>
-  row.indicateurIndividu?.type ?? row.panierIndividu?.type ?? row.panier?.type ?? 'DEFAUT'
+  row.indicateurIndividu?.type ?? row.panier?.type ?? 'DEFAUT'
 
 const individuPublicId = (row: CommentaireRow): string | null =>
-  row.indicateurIndividu?.individu.publicId ?? row.panierIndividu?.individu.publicId ?? null
+  row.indicateurIndividu?.individu.publicId ?? null
 
 export const toCommentaireApiModel = (row: CommentaireRow): CommentaireApiModel => ({
   id: row.id,

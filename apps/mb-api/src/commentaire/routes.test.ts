@@ -6,7 +6,7 @@ import { app } from '../app'
 // Le comportement métier (permissions, brouillon, filtrage type, auteur) est couvert
 // par les tests d'intégration command/query (modèle transactionnel à rollback).
 describe('routes commentaires — câblage OpenAPI', () => {
-  it('déclare les 8 routes commentaires dans le doc OpenAPI', async () => {
+  it('déclare les 6 routes commentaires dans le doc OpenAPI', async () => {
     const res = await app.request('/openapi.json')
     expect(res.status).toBe(200)
     const doc = (await res.json()) as { paths: Record<string, Record<string, unknown>> }
@@ -14,8 +14,6 @@ describe('routes commentaires — câblage OpenAPI', () => {
     const attendu: Array<[string, string]> = [
       ['/indicateurs/{indicateurId}/individus/{individuId}/commentaires', 'post'],
       ['/indicateurs/{indicateurId}/individus/{individuId}/commentaires', 'get'],
-      ['/paniers/{panierId}/individus/{individuId}/commentaires', 'post'],
-      ['/paniers/{panierId}/individus/{individuId}/commentaires', 'get'],
       ['/paniers/{panierId}/commentaires', 'post'],
       ['/paniers/{panierId}/commentaires', 'get'],
       ['/commentaires/{commentaireId}', 'put'],
