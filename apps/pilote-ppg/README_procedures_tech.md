@@ -61,14 +61,14 @@ pnpm dev
 bash scripts/prisma_reset_migrate_seed.sh
 ## (4) Lancer les datajobs en mode *full*
 cd data_management
-FULL_DJ=true pipenv run bash scripts/run_datajobs.sh
+FULL_DJ=true uv run bash scripts/run_datajobs.sh
 ## (5) Faire une descente de prod
 cd ..
 bash scripts/ddp_dump.sh
 bash scripts/ddp_restore.sh
 bash scripts/anonymisation_utilisateurs.sh
 ## (6) Lancer les datajobs en mode normal
-FULL_DJ=false pipenv run bash scripts/run_datajobs.sh
+FULL_DJ=false uv run bash scripts/run_datajobs.sh
 ```
 
 Pour éviter de lancer ces scripts un par un, vous pouvez créer des **scripts personnalisés** (*script daily*) dans le dossier [scripts/daily](./scripts/daily).
