@@ -4,7 +4,10 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfigContext'
 import { ContenuRepliable } from '@/components/commentaires/ContenuRepliable'
 import { libelleAuteur } from '@/components/commentaires/libelleAuteur'
-import { couleurIndice, meteoFromIndice } from '@/components/commentaires/meteo'
+import {
+  couleurIndice,
+  niveauConfianceFromIndice,
+} from '@/components/commentaires/niveauConfianceAffichage'
 import { Text } from '@/components/ui/Typography'
 import { clsxm } from '@/lib/clsxm'
 import { formatDateHeureFr } from '@/lib/format'
@@ -19,7 +22,7 @@ export function LigneHistorique({
   return (
     <div className="py-4">
       <div className="mb-2 flex items-center gap-3">
-        {avecNiveauConfiance && <MeteoInline commentaireId={commentaire.id} />}
+        {avecNiveauConfiance && <NiveauConfianceInline commentaireId={commentaire.id} />}
         <Text as="span" variant="caption" tone="muted" className="ml-auto">
           {formatDateHeureFr(commentaire.updatedAt)} ·{' '}
           {libelleAuteur(commentaire.auteurModification)}
@@ -30,11 +33,11 @@ export function LigneHistorique({
   )
 }
 
-function MeteoInline({ commentaireId }: { commentaireId: string }) {
+function NiveauConfianceInline({ commentaireId }: { commentaireId: string }) {
   const { niveauPourCommentaireQueryOptions } = useCommentaireConfig()
   const { data: niveau } = useSuspenseQuery(niveauPourCommentaireQueryOptions(commentaireId))
   if (!niveau) return null
-  const { label } = meteoFromIndice(niveau.indice)
+  const { label } = niveauConfianceFromIndice(niveau.indice)
   return (
     <span
       className={clsxm(

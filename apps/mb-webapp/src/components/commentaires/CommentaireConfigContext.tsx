@@ -43,10 +43,8 @@ type EnregistrerNiveauConfianceMutations = {
   >
 }
 
-// Config injectée par un Provider concret (indicateur-individu, panier, panier-individu, …).
-// `type` reste typé `string` ici : seuls les écrans qui montent le Provider connaissent
-// l'enum exact (CONFIANCE / DEFAUT / OBJECTIF). Les composants génériques le manipulent
-// comme une valeur opaque.
+// Config injectée par un Provider concret. `type` reste opaque (`string`) : seuls les
+// écrans qui montent le Provider connaissent l'enum exact.
 export type CommentaireConfig = {
   brouillonQueryOptions: (type: string) => QueryOpts<BrouillonApiModel>
   commentairesPubliesQueryOptions: (type: string) => QueryOpts<CommentaireApiModel[]>
@@ -58,8 +56,7 @@ export type CommentaireConfig = {
   useModifierCommentaire: (type: string) => ModifierCommentaireMutation
   useEnregistrerNiveauConfiance: () => EnregistrerNiveauConfianceMutations
 
-  // Droit d'écriture du principal courant sur la ressource commentée (indicateur ou panier).
-  // Gate l'ajout/édition de commentaires. Hook : appelé pendant le rendu des composants génériques.
+  // Droit d'écriture du principal sur la ressource commentée (gate l'ajout/édition).
   useCanWrite: () => boolean
 }
 

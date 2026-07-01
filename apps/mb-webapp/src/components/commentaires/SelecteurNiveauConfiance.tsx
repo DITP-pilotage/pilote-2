@@ -1,9 +1,12 @@
 import { type IndiceConfiance } from '@pilote/mb-shared/niveauConfiance'
 
-import { METEOS, couleurIndice } from '@/components/commentaires/meteo'
+import {
+  NIVEAUX_CONFIANCE,
+  couleurIndice,
+} from '@/components/commentaires/niveauConfianceAffichage'
 import { clsxm } from '@/lib/clsxm'
 
-export function SelecteurMeteo({
+export function SelecteurNiveauConfiance({
   value,
   onChange,
   disabled = false,
@@ -14,7 +17,7 @@ export function SelecteurMeteo({
 }) {
   return (
     <div className="flex flex-wrap gap-2.5">
-      {METEOS.map(({ indice, label }) => {
+      {NIVEAUX_CONFIANCE.map(({ indice, label }) => {
         const actif = value === indice
         const couleur = couleurIndice(indice)
         return (

@@ -42,7 +42,7 @@ export function ListeCommentaires({
   const etatEnCours = publies[0]
   const historique = publies.slice(1)
 
-  const ajouter = canWrite ? (
+  const ajouter = canWrite && (
     <Button
       variant="secondary"
       type="button"
@@ -52,7 +52,7 @@ export function ListeCommentaires({
       <Plus />
       Ajouter un commentaire
     </Button>
-  ) : null
+  )
 
   if (!brouillon && publies.length === 0) {
     return (

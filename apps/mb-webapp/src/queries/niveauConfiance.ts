@@ -26,7 +26,7 @@ const createBatcher = (indicateurId: string, individuId: string) =>
       return items
     },
     // Items renvoyés antichronologiquement par l'API → `find` garde le plus
-    // récent par commentaire. Pas de niveau → null (commentaire sans météo).
+    // récent par commentaire. Pas de niveau → null (commentaire sans niveau de confiance).
     resolver: (items, commentaireId) =>
       items.find((niveau) => niveau.commentaire.id === commentaireId) ?? null,
     scheduler: windowedFiniteBatchScheduler({ windowMs: 10, maxBatchSize: 100 }),
@@ -42,7 +42,7 @@ const getBatcher = (indicateurId: string, individuId: string): Batcher => {
 }
 
 export const niveauConfianceKeys = {
-  // Préfixe par périmètre : invalide toutes les queries de météo de ce périmètre.
+  // Préfixe par périmètre : invalide toutes les queries de niveau de confiance de ce périmètre.
   parScope: (indicateurId: string, individuId: string) =>
     ['indicateur', indicateurId, 'individu', individuId, 'niveau-confiance'] as const,
   parCommentaire: (indicateurId: string, individuId: string, commentaireId: string) =>

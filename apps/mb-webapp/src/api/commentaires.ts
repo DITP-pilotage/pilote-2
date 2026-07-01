@@ -21,6 +21,9 @@ export type IndicateurIndividuCommentaireType = z.infer<
 
 export type PanierCommentaireType = z.infer<typeof panierCommentaireTypeSchema>
 
+// Seul le type CONFIANCE (synthèse des résultats) porte un niveau de confiance.
+export const typeAvecNiveauConfiance = (type: string): boolean => type === 'CONFIANCE'
+
 export const fetchCommentaires = async (
   indicateurId: string,
   individuId: string,

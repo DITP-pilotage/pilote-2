@@ -6,7 +6,7 @@ import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfi
 import { BadgeStatut } from '@/components/commentaires/BadgeStatut'
 import { ContenuRepliable } from '@/components/commentaires/ContenuRepliable'
 import { libelleAuteur } from '@/components/commentaires/libelleAuteur'
-import { MeteoTag } from '@/components/commentaires/MeteoTag'
+import { NiveauConfianceTag } from '@/components/commentaires/NiveauConfianceTag'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -60,7 +60,7 @@ export function CarteCommentaire({
         )}
       </div>
 
-      {avecNiveauConfiance && <MeteoBadge commentaireId={commentaire.id} />}
+      {avecNiveauConfiance && <NiveauConfianceBadge commentaireId={commentaire.id} />}
 
       <ContenuRepliable html={commentaire.contenu} />
 
@@ -74,13 +74,13 @@ export function CarteCommentaire({
   )
 }
 
-function MeteoBadge({ commentaireId }: { commentaireId: string }) {
+function NiveauConfianceBadge({ commentaireId }: { commentaireId: string }) {
   const { niveauPourCommentaireQueryOptions } = useCommentaireConfig()
   const { data: niveau } = useSuspenseQuery(niveauPourCommentaireQueryOptions(commentaireId))
   if (!niveau) return null
   return (
     <div className="mb-3">
-      <MeteoTag indice={niveau.indice} />
+      <NiveauConfianceTag indice={niveau.indice} />
     </div>
   )
 }

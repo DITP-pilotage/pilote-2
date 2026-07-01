@@ -10,7 +10,7 @@ import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfi
 import { EditeurRiche } from '@/components/editeur-riche/EditeurRiche'
 import { BadgeStatut } from '@/components/commentaires/BadgeStatut'
 import { libelleAuteur } from '@/components/commentaires/libelleAuteur'
-import { SelecteurMeteo } from '@/components/commentaires/SelecteurMeteo'
+import { SelecteurNiveauConfiance } from '@/components/commentaires/SelecteurNiveauConfiance'
 import { Button } from '@/components/ui/Button'
 import { Text } from '@/components/ui/Typography'
 import { clsxm } from '@/lib/clsxm'
@@ -128,7 +128,11 @@ function EditeurInterne({
               control={form.control}
               name="indice"
               render={({ field }) => (
-                <SelecteurMeteo value={field.value} onChange={field.onChange} disabled={enCours} />
+                <SelecteurNiveauConfiance
+                  value={field.value}
+                  onChange={field.onChange}
+                  disabled={enCours}
+                />
               )}
             />
           </div>

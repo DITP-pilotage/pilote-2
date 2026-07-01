@@ -2,9 +2,7 @@ import { CloudSun, MessageSquare, Target } from 'lucide-react'
 import { Suspense } from 'react'
 
 import { type PanierCommentaireType } from '@/api/commentaires'
-import { SectionAutresCommentaires } from '@/components/commentaires/SectionAutresCommentaires'
-import { SectionObjectifs } from '@/components/commentaires/SectionObjectifs'
-import { SectionSyntheseDesResultats } from '@/components/commentaires/SectionSyntheseDesResultats'
+import { SectionCommentaire } from '@/components/commentaires/SectionCommentaire'
 import { RouteLoading } from '@/components/RouteLoading'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 
@@ -31,13 +29,7 @@ export function PanierCommentairesTab({
       </div>
 
       <Suspense fallback={<RouteLoading message="Chargement des commentaires…" />}>
-        {type === 'OBJECTIF' ? (
-          <SectionObjectifs />
-        ) : type === 'CONFIANCE' ? (
-          <SectionSyntheseDesResultats />
-        ) : (
-          <SectionAutresCommentaires />
-        )}
+        <SectionCommentaire key={type} type={type} />
       </Suspense>
     </div>
   )
