@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Text } from '@/components/ui/Typography'
 import { useCreerCommentaire } from '@/mutations/commentaires'
+import { useCanWriteIndicateur } from '@/queries/mePermissions'
 
 function Intitule({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (
@@ -41,11 +42,12 @@ export function ListeCommentaires({
   const [editionId, setEditionId] = useState<string | null>(null)
   const [brouillonVisible, setBrouillonVisible] = useState(true)
   const creer = useCreerCommentaire(indicateurId, individuId, type)
+  const canWrite = useCanWriteIndicateur(indicateurId)
 
   const etatEnCours = publies[0]
   const historique = publies.slice(1)
 
-  const ajouter = (
+  const ajouter = canWrite ? (
     <Button
       variant="secondary"
       type="button"
@@ -55,13 +57,13 @@ export function ListeCommentaires({
       <Plus />
       Ajouter un commentaire
     </Button>
-  )
+  ) : null
 
   if (!brouillon && publies.length === 0) {
     return (
       <div className="flex flex-col gap-6">
         <EmptyState title="Aucun commentaire pour le moment." />
-        <div>{ajouter}</div>
+        {ajouter && <div>{ajouter}</div>}
       </div>
     )
   }
@@ -147,7 +149,7 @@ export function ListeCommentaires({
         </section>
       )}
 
-      {!brouillon && <div>{ajouter}</div>}
+      {!brouillon && ajouter && <div>{ajouter}</div>}
     </div>
   )
 }

@@ -6,6 +6,7 @@ import {
   buildIndicateur,
   buildIndicateursList,
   buildMe,
+  buildMePermissions,
   buildReferentiel,
   buildReferentielsList,
 } from '@/tests/factories/api'
@@ -22,6 +23,7 @@ export const defaultHandlers = [
   http.post(bffUrl('/auth/refresh'), () => HttpResponse.json(buildRefreshResponse())),
   http.post(bffUrl('/auth/logout'), () => HttpResponse.json(buildLogoutResponse())),
   http.get(apiUrl('/me'), () => HttpResponse.json(buildMe())),
+  http.get(apiUrl('/me/permissions'), () => HttpResponse.json(buildMePermissions())),
   http.get(apiUrl('/indicateurs'), () => HttpResponse.json(buildIndicateursList())),
   http.get(apiUrl('/indicateurs/:id'), () => HttpResponse.json(buildIndicateur())),
   http.get(apiUrl('/referentiels'), () => HttpResponse.json(buildReferentielsList())),

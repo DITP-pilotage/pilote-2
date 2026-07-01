@@ -1,7 +1,7 @@
 import { AsyncLocalStorage } from 'node:async_hooks'
 
 import { UnauthorizedError } from '@/framework/auth/UnauthorizedError'
-import type { ApiKeyRole } from '@/generated/prisma/enums'
+import { ApiKeyRole } from '@/generated/prisma/enums'
 
 export type UtilisateurAuthentifie = {
   id: string
@@ -38,6 +38,11 @@ export const requirePrincipal = (): Principal => {
 export const requireCurrentPrincipalId = (): string => {
   const principal = requirePrincipal()
   return principal.kind === 'user' ? principal.user.id : principal.apiKey.id
+}
+
+export const isAdminPrincipal = (): boolean => {
+  const principal = requirePrincipal()
+  return principal.kind === 'apiKey' && principal.apiKey.role === ApiKeyRole.ADMIN
 }
 
 export const getCurrentUser = (): UtilisateurAuthentifie | null => {
