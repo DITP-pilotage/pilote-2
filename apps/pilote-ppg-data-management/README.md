@@ -24,24 +24,18 @@ Pensez à mettre jour le fichier `.env` en demandant les variables à l'équipe.
 
 #### Gestion des packages
 
-Utilisation de [uv](https://docs.astral.sh/uv/) pour la gestion des dépendances Python.
+Utilisation d'[uv](https://docs.astral.sh/uv/) pour la gestion des dépendances Python.
 
 Commandes utiles:
 ```sh
-# [Installation de packages]
-# Installation des versions exactes du Pipenv.lock
-pipenv sync
-# /!\ Installation des versions les plus récentes compatibles avec le Pipenv
-pipenv install pyarrow
-# /!\ Installation des versions les plus récentes compatibles avec le Pipenv
-#     -> Attention aux màj cassantes
-pipenv update
+# Téléchargement de la version de Python nécessaire
+uv python install
 
 # [Excécution commandes]
 # Exécuter une commande dans l'environnement
-pipenv run dbt compile --select model_1
+uv run dbt compile --select model_1
 # Exécuter des commandes interactivement dans l'environnement
-pipenv shell
+source .venv/bin/activate
 ```
 
 #### Initialisation des dépendances de DBT
@@ -50,9 +44,9 @@ Utilisation des [commandes dbt](https://docs.getdbt.com/reference/dbt-commands):
 
 ```sh
 # Mise à jour des dépendances
-pipenv run dbt deps
+uv run dbt deps
 # Exécution d'un modèle
-pipenv run dbt run --select model_1
+uv run dbt run --select model_1
 ```
 
 ### [docker-conf] Installation
@@ -117,9 +111,9 @@ L'outil `SQLFluff` permet d'avoir une écriture consistente du code SQL. Pour la
 
 ```sh
 # Lancer le linter
-pipenv run sqlfluff lint <path-to-file>
+uv run sqlfluff lint <path-to-file>
 # Corriger les erreurs
-pipenv run sqlfluff fix <path-to-file>
+uv run sqlfluff fix <path-to-file>
 ```
 
 Afin de merger une PR, il est nécessaire qu'il n'y ait aucune erreur de lint. 
@@ -302,7 +296,7 @@ Afin de pouvoir anticiper les conséquences de changements sur la datafactory il
 
 Typiquement, après avoir créé un tunnel vers la dev, fait une descente de dev et lancé les jobs en local :
 ```bash
-pipenv run LOG_LEVEL=WARN PGHOST="localhost" python scripts/compare_local_vs_target.py
+LOG_LEVEL=WARN PGHOST="localhost" uv run python scripts/compare_local_vs_target.py
 ```
 
 Il est possible de préciser des connections strings de 2 bases de données différentes et de passer des noms de table précis au script (cf doc du script). Par défaut il compare une liste de tables d'exposition.
@@ -344,7 +338,11 @@ Afin de mieux visualiser le DAG à l'intérieur du projet, nous vous proposons d
 Il est possible d'y avoir accès en exécutant la commande suivante : 
 
 ```bash
-pipenv run dbt docs generate && pipenv run dbt docs serve
+uv run dbt docs generate && uv run dbt docs serve
+```
+ou plus simplement :
+```bash
+make docs
 ```
 
 Cette ligne de commande ouvrira une interface web avec laquelle vous pourrez interagir. 
