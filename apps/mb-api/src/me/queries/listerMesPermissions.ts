@@ -1,9 +1,9 @@
 import { type MePermissionsApiModel } from '@pilote/mb-shared/mePermissions'
 import { okAsync, ResultAsync } from 'neverthrow'
 
-import { requirePrincipal } from '@/framework/auth/userContext'
+import { isAdminPrincipal, requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
-import { ApiKeyRole, PermissionAction } from '@/generated/prisma/enums'
+import { PermissionAction } from '@/generated/prisma/enums'
 
 type PermissionEntry = MePermissionsApiModel['paniers'][number]
 
@@ -12,15 +12,13 @@ const ACTION_ORDER: PermissionAction[] = [PermissionAction.READ, PermissionActio
 // READ panier (direct ou WRITE) propage en READ sur les indicateurs du panier.
 // WRITE indicateur reste strictement direct — cf. permissions-design.md.
 export const listerMesPermissions = (): ResultAsync<MePermissionsApiModel, never> => {
-  const principal = requirePrincipal()
-
-  if (principal.kind === 'apiKey' && principal.apiKey.role === ApiKeyRole.ADMIN) {
+  if (isAdminPrincipal()) {
     return okAsync({ isAdmin: true, paniers: [], indicateurs: [] })
   }
 
-  const principalId = principal.kind === 'user' ? principal.user.id : principal.apiKey.id
-
-  return ResultAsync.fromSafePromise(loadPermissions(principalId)).map(buildResponse)
+  return ResultAsync.fromSafePromise(loadPermissions(requireCurrentPrincipalId())).map(
+    buildResponse,
+  )
 }
 
 const loadPermissions = (principalId: string) =>

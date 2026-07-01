@@ -1,24 +1,12 @@
-import { OpenAPIHono } from '@hono/zod-openapi'
 import { describe, expect, it } from 'vitest'
 
-import { authContext } from '@/framework/auth/authContext'
-import { registerErrorHandler } from '@/framework/errors/errorHandler'
 import { meRoutes } from '@/me/routes'
+import { buildTestApp } from '@/test/buildTestApp'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurIds, testPanierId } from '@/test/randomIds'
 
-// App de test minimale : authContext (qui résout le principal via la base de la
-// transaction de test) + les routes /me et /me/permissions + le mapping
-// d'erreur standard. On n'inclut pas databaseContext, qui écraserait le
-// contexte db transactionnel d'integrationTest.
-const buildApp = () => {
-  const app = new OpenAPIHono()
-  app.use('*', authContext)
-  app.route('/', meRoutes)
-  registerErrorHandler(app)
-  return app
-}
+const buildApp = () => buildTestApp(meRoutes)
 
 describe.concurrent('GET /me/permissions', () => {
   it(
