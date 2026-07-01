@@ -2,8 +2,13 @@ import { z } from 'zod'
 
 export const indicateurPublicIdSchema = z
   .string()
-  .regex(/^IND-\d+$/, 'Identifiant public attendu au format IND-XXX')
-  .describe("Identifiant public de l'indicateur (format IND-XXX).")
+  .regex(
+    /^(?!PAN-|REF-|WID-)[A-Z][A-Z0-9-]{0,19}$/,
+    "Identifiant public d'indicateur attendu (lettre majuscule puis lettres/chiffres/tirets, max 20 caractères ; préfixes PAN-, REF-, WID- réservés)",
+  )
+  .describe(
+    "Identifiant public de l'indicateur (ex. IND-001, IND-TAUX-CHOMAGE). Lettre majuscule puis lettres/chiffres/tirets, max 20 caractères. Préfixes PAN-, REF-, WID- réservés.",
+  )
 
 export const panierPublicIdSchema = z
   .string()

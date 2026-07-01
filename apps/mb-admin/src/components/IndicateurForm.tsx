@@ -3,6 +3,7 @@ import { Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 import type { IndicateurApiModel } from '@pilote/mb-shared/indicateur'
+import { indicateurPublicIdSchema, referentielPublicIdSchema } from '@pilote/mb-shared/publicIds'
 
 import { fetchAllReferentiels } from '@/api/referentiels'
 import { Button } from '@/components/ui/Button'
@@ -75,8 +76,8 @@ export function IndicateurForm({
 
   const canSubmit =
     values.nom.trim().length > 0 &&
-    (mode === 'edit' || /^IND-\d+$/.test(values.id)) &&
-    values.referentiels.every((ref) => /^REF-[A-Z0-9-]{1,16}$/.test(ref.id))
+    (mode === 'edit' || indicateurPublicIdSchema.safeParse(values.id).success) &&
+    values.referentiels.every((ref) => referentielPublicIdSchema.safeParse(ref.id).success)
 
   return (
     <div className="mx-auto max-w-2xl">
