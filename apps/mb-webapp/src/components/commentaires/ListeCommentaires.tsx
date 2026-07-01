@@ -37,11 +37,12 @@ export function ListeCommentaires({
   const [editionId, setEditionId] = useState<string | null>(null)
   const [brouillonVisible, setBrouillonVisible] = useState(true)
   const creer = ctx.useCreerCommentaire(type)
+  const canWrite = ctx.useCanWrite()
 
   const etatEnCours = publies[0]
   const historique = publies.slice(1)
 
-  const ajouter = (
+  const ajouter = canWrite ? (
     <Button
       variant="secondary"
       type="button"
@@ -51,13 +52,13 @@ export function ListeCommentaires({
       <Plus />
       Ajouter un commentaire
     </Button>
-  )
+  ) : null
 
   if (!brouillon && publies.length === 0) {
     return (
       <div className="flex flex-col gap-6">
         <EmptyState title="Aucun commentaire pour le moment." />
-        <div>{ajouter}</div>
+        {ajouter && <div>{ajouter}</div>}
       </div>
     )
   }
@@ -135,7 +136,7 @@ export function ListeCommentaires({
         </section>
       )}
 
-      {!brouillon && <div>{ajouter}</div>}
+      {!brouillon && ajouter && <div>{ajouter}</div>}
     </div>
   )
 }

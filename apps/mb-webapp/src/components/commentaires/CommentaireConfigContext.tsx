@@ -57,6 +57,10 @@ export type CommentaireConfig = {
   useCreerCommentaire: (type: string) => CreerCommentaireMutation
   useModifierCommentaire: (type: string) => ModifierCommentaireMutation
   useEnregistrerNiveauConfiance: () => EnregistrerNiveauConfianceMutations
+
+  // Droit d'écriture du principal courant sur la ressource commentée (indicateur ou panier).
+  // Gate l'ajout/édition de commentaires. Hook : appelé pendant le rendu des composants génériques.
+  useCanWrite: () => boolean
 }
 
 const CommentaireConfigContext = createContext<CommentaireConfig | null>(null)

@@ -8,6 +8,7 @@ import {
 import { useCreerCommentaire, useModifierCommentaire } from '@/mutations/commentaires'
 import { useEnregistrerNiveauConfiance } from '@/mutations/niveauConfiance'
 import { brouillonQueryOptions, commentairesPubliesQueryOptions } from '@/queries/commentaires'
+import { useCanWriteIndicateur } from '@/queries/mePermissions'
 import { niveauPourCommentaireQueryOptions } from '@/queries/niveauConfiance'
 
 export function IndicateurCommentaireConfigProvider({
@@ -36,6 +37,7 @@ export function IndicateurCommentaireConfigProvider({
       useModifierCommentaire: (type) =>
         useModifierCommentaire(indicateurId, individuId, type as IndicateurIndividuCommentaireType),
       useEnregistrerNiveauConfiance: () => useEnregistrerNiveauConfiance(indicateurId, individuId),
+      useCanWrite: () => useCanWriteIndicateur(indicateurId),
     }),
     [indicateurId, individuId],
   )

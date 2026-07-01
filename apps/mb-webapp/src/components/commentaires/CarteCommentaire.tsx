@@ -27,10 +27,12 @@ export function CarteCommentaire({
   avecNiveauConfiance: boolean
   onEdit: () => void
 }) {
+  const canWrite = useCommentaireConfig().useCanWrite()
   const brouillon = commentaire.statut === 'BROUILLON'
-  // L'édition est réservée à l'auteur (createdBy). `me.userId` et `auteurCreation.id`
-  // sont le même identifiant de principal (cf. backend), donc comparaison directe.
-  const peutModifier = commentaire.auteurCreation.id === auth.user?.userId
+  // L'édition est réservée à l'auteur (createdBy) ET requiert le droit d'écriture sur la
+  // ressource. `me.userId` et `auteurCreation.id` sont le même identifiant de principal
+  // (cf. backend), donc comparaison directe.
+  const peutModifier = canWrite && commentaire.auteurCreation.id === auth.user?.userId
   return (
     <article
       className={clsxm(

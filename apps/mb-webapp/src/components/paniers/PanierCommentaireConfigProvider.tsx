@@ -11,6 +11,7 @@ import {
   brouillonPanierQueryOptions,
   commentairesPanierPubliesQueryOptions,
 } from '@/queries/commentaires'
+import { useCanWritePanier } from '@/queries/mePermissions'
 import { niveauPourCommentairePanierQueryOptions } from '@/queries/niveauConfiance'
 
 export function PanierCommentaireConfigProvider({
@@ -33,6 +34,7 @@ export function PanierCommentaireConfigProvider({
       useModifierCommentaire: (type) =>
         useModifierCommentairePanier(panierId, type as PanierCommentaireType),
       useEnregistrerNiveauConfiance: () => useEnregistrerNiveauConfiancePanier(panierId),
+      useCanWrite: () => useCanWritePanier(panierId),
     }),
     [panierId],
   )
