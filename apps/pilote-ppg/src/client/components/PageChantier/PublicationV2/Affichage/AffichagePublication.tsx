@@ -9,6 +9,7 @@ import { Publication } from "@/components/PageChantier/PublicationV2/Publication
 import { BoutonsAffichage } from "@/components/_commons/BoutonsAffichage/BoutonsAffichage";
 import { RenduContenuHtml } from "@/components/_commons/EditeurRiche/RenduContenuHtml";
 import { NomUtilisateurAvecTooltip } from "@/components/_commons/NomUtilisateurAvecTooltip/NomUtilisateurAvecTooltip";
+import { clsxm } from "@/utils/clsxm";
 
 export const AffichagePublication = ({
   commentaire,
@@ -85,7 +86,7 @@ export const AffichagePublication = ({
       ) : null}
       <div
         ref={contenuRef}
-        className={`fr-text--sm mb-1 ${!afficherContenuComplet ? "line-clamp-3" : ""}`}
+        className={clsxm("fr-text--sm mb-1", !afficherContenuComplet && "line-clamp-3")}
       >
         <RenduContenuHtml
           className="[&_p]:text-sm [&_p]:mb-1"
