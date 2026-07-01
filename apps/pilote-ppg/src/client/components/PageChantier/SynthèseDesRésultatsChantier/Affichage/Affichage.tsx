@@ -90,7 +90,10 @@ const SynthèseDesRésultatsAffichage = ({
       ) : null}
       <div
         ref={contenuRef}
-        className={clsxm("fr-text--sm mb-1", !afficherContenuComplet && "line-clamp-3")}
+        className={clsxm(
+          "fr-text--sm mb-1 print:line-clamp-none",
+          !afficherContenuComplet && "line-clamp-3",
+        )}
       >
         <RenduContenuHtml
           className="[&_p]:text-sm [&_p]:mb-1"
@@ -98,11 +101,13 @@ const SynthèseDesRésultatsAffichage = ({
         />
       </div>
       {contenuTronque || afficherContenuComplet ? (
-        <BoutonsAffichage
-          deplie={afficherContenuComplet}
-          deplierLeContenu={() => setAfficherContenuComplet(true)}
-          replierLeContenu={() => setAfficherContenuComplet(false)}
-        />
+        <div className="print:hidden">
+          <BoutonsAffichage
+            deplie={afficherContenuComplet}
+            deplierLeContenu={() => setAfficherContenuComplet(true)}
+            replierLeContenu={() => setAfficherContenuComplet(false)}
+          />
+        </div>
       ) : null}
     </>
   );
