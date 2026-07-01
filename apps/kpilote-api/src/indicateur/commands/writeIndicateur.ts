@@ -10,6 +10,7 @@ import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { type FonctionAgregation, IndicateurPermissionAction } from '@/generated/prisma/enums'
+import { generateIndicateurPublicId } from '@/indicateur/commands/generateIndicateurPublicId'
 
 type ConfigurationResolue = {
   referentielId: string
@@ -163,31 +164,6 @@ const metadonneesData = (body: UpsertIndicateurBody) => ({
   }),
 })
 
-const updateIndicateurExistant = async (
-  publicId: string,
-  indicateurId: string,
-  body: UpsertIndicateurBody,
-  principalId: string,
-): Promise<void> => {
-  await assertWritePermission(indicateurId, principalId)
-  const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
-  const responsablesCibles =
-    body.responsables === undefined ? undefined : await resoudreResponsables(body.responsables)
-  await db().indicateur.update({
-    where: { publicId },
-    data: {
-      nom: body.nom,
-      visibilite: body.visibilite,
-      unite: body.unite,
-      ...metadonneesData(body),
-    },
-  })
-  await remplacerConfigurationsReferentiels(indicateurId, configurations)
-  if (responsablesCibles !== undefined) {
-    await remplacerResponsables(indicateurId, responsablesCibles)
-  }
-}
-
 const grantOwnerPermissions = async (principalId: string, indicateurId: string): Promise<void> => {
   await db().indicateurPermission.createMany({
     data: [
@@ -199,13 +175,13 @@ const grantOwnerPermissions = async (principalId: string, indicateurId: string):
 }
 
 const createIndicateurAvecGrants = async (
-  publicId: string,
   body: UpsertIndicateurBody,
   principalId: string,
-): Promise<void> => {
+): Promise<string> => {
   const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
   const responsablesCibles =
     body.responsables === undefined ? undefined : await resoudreResponsables(body.responsables)
+  const publicId = await generateIndicateurPublicId()
   const indicateurId = uuidv7()
   await db().indicateur.create({
     data: {
@@ -230,23 +206,56 @@ const createIndicateurAvecGrants = async (
   if (responsablesCibles !== undefined) {
     await remplacerResponsables(indicateurId, responsablesCibles)
   }
+  return publicId
 }
 
-const performUpsert = async (publicId: string, body: UpsertIndicateurBody): Promise<void> => {
+const updateIndicateurExistant = async (
+  publicId: string,
+  body: UpsertIndicateurBody,
+  principalId: string,
+): Promise<void> => {
+  const existant = await db().indicateur.findUniqueOrThrow({ where: { publicId } })
+  await assertWritePermission(existant.id, principalId)
+  const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
+  const responsablesCibles =
+    body.responsables === undefined ? undefined : await resoudreResponsables(body.responsables)
+  await db().indicateur.update({
+    where: { publicId },
+    data: {
+      nom: body.nom,
+      visibilite: body.visibilite,
+      unite: body.unite,
+      ...metadonneesData(body),
+    },
+  })
+  await remplacerConfigurationsReferentiels(existant.id, configurations)
+  if (responsablesCibles !== undefined) {
+    await remplacerResponsables(existant.id, responsablesCibles)
+  }
+}
+
+const performCreate = async (body: UpsertIndicateurBody): Promise<string> => {
   ensurePrincipal(
     (principal) => isApiKeyAdmin(principal) || isOidcUser(principal),
     'Cette opération requiert un utilisateur OIDC ou une clé API de rôle ADMIN',
   )
   const principalId = requireCurrentPrincipalId()
-  const existant = await db().indicateur.findUnique({ where: { publicId } })
-  if (existant) {
-    await updateIndicateurExistant(publicId, existant.id, body, principalId)
-    return
-  }
-  await createIndicateurAvecGrants(publicId, body, principalId)
+  return createIndicateurAvecGrants(body, principalId)
 }
 
-export const upsertIndicateur = (
+const performUpdate = async (publicId: string, body: UpsertIndicateurBody): Promise<void> => {
+  ensurePrincipal(
+    (principal) => isApiKeyAdmin(principal) || isOidcUser(principal),
+    'Cette opération requiert un utilisateur OIDC ou une clé API de rôle ADMIN',
+  )
+  const principalId = requireCurrentPrincipalId()
+  await updateIndicateurExistant(publicId, body, principalId)
+}
+
+export const createIndicateur = (body: UpsertIndicateurBody): ResultAsync<string, never> =>
+  ResultAsync.fromSafePromise(performCreate(body))
+
+export const updateIndicateur = (
   publicId: string,
   body: UpsertIndicateurBody,
-): ResultAsync<void, never> => ResultAsync.fromSafePromise(performUpsert(publicId, body))
+): ResultAsync<void, never> => ResultAsync.fromSafePromise(performUpdate(publicId, body))
