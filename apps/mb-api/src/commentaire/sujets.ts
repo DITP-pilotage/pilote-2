@@ -3,10 +3,7 @@ import { type ResultAsync } from 'neverthrow'
 import { type Prisma } from '@/generated/prisma/client'
 
 // Fragment `data` du satellite à greffer sur la création d'un Commentaire.
-type SatelliteCreate = Pick<
-  Prisma.CommentaireCreateInput,
-  'indicateurIndividu' | 'panierIndividu' | 'panier'
->
+type SatelliteCreate = Pick<Prisma.CommentaireCreateInput, 'indicateurIndividu' | 'panier'>
 
 // Données nécessaires pour rattacher un nouveau commentaire à son satellite.
 type CibleEcriture = {

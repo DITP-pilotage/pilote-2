@@ -19,10 +19,6 @@ export const indicateurIndividuCommentaireTypeSchema = z.enum([
   "DEFAUT",
   "CONFIANCE",
 ]);
-export const panierIndividuCommentaireTypeSchema = z.enum([
-  "DEFAUT",
-  "CONFIANCE",
-]);
 export const panierCommentaireTypeSchema = z.enum([
   "DEFAUT",
   "CONFIANCE",
@@ -66,8 +62,6 @@ const creerCommentaireBodySchema = <T extends z.ZodTypeAny>(typeSchema: T) =>
 
 export const creerIndicateurIndividuCommentaireBodySchema =
   creerCommentaireBodySchema(indicateurIndividuCommentaireTypeSchema);
-export const creerPanierIndividuCommentaireBodySchema =
-  creerCommentaireBodySchema(panierIndividuCommentaireTypeSchema);
 export const creerPanierCommentaireBodySchema = creerCommentaireBodySchema(
   panierCommentaireTypeSchema,
 );
@@ -107,8 +101,6 @@ const listerCommentairesQuerySchema = <T extends z.ZodTypeAny>(typeSchema: T) =>
 
 export const listerIndicateurIndividuCommentairesQuerySchema =
   listerCommentairesQuerySchema(indicateurIndividuCommentaireTypeSchema);
-export const listerPanierIndividuCommentairesQuerySchema =
-  listerCommentairesQuerySchema(panierIndividuCommentaireTypeSchema);
 export const listerPanierCommentairesQuerySchema =
   listerCommentairesQuerySchema(panierCommentaireTypeSchema);
 // Type « élargi » consommé par la couche générique : le `type` est déjà validé
@@ -125,8 +117,6 @@ const recupererBrouillonQuerySchema = <T extends z.ZodTypeAny>(typeSchema: T) =>
 
 export const recupererIndicateurIndividuBrouillonQuerySchema =
   recupererBrouillonQuerySchema(indicateurIndividuCommentaireTypeSchema);
-export const recupererPanierIndividuBrouillonQuerySchema =
-  recupererBrouillonQuerySchema(panierIndividuCommentaireTypeSchema);
 export const recupererPanierBrouillonQuerySchema =
   recupererBrouillonQuerySchema(panierCommentaireTypeSchema);
 export type RecupererBrouillonQuery = { type: string };

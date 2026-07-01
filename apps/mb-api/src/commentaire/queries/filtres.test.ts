@@ -3,23 +3,15 @@ import { describe, expect, it } from 'vitest'
 import { filtreParType } from '@/commentaire/queries/filtres'
 
 describe('filtreParType', () => {
-  it('inclut les 3 satellites pour un type partagé (DEFAUT)', () => {
+  it('inclut les 2 satellites pour un type partagé (DEFAUT)', () => {
     expect(filtreParType('DEFAUT')).toEqual({
-      OR: [
-        { indicateurIndividu: { type: 'DEFAUT' } },
-        { panierIndividu: { type: 'DEFAUT' } },
-        { panier: { type: 'DEFAUT' } },
-      ],
+      OR: [{ indicateurIndividu: { type: 'DEFAUT' } }, { panier: { type: 'DEFAUT' } }],
     })
   })
 
-  it('inclut les 3 satellites pour CONFIANCE', () => {
+  it('inclut les 2 satellites pour CONFIANCE', () => {
     expect(filtreParType('CONFIANCE')).toEqual({
-      OR: [
-        { indicateurIndividu: { type: 'CONFIANCE' } },
-        { panierIndividu: { type: 'CONFIANCE' } },
-        { panier: { type: 'CONFIANCE' } },
-      ],
+      OR: [{ indicateurIndividu: { type: 'CONFIANCE' } }, { panier: { type: 'CONFIANCE' } }],
     })
   })
 
