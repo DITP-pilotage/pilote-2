@@ -27,7 +27,12 @@ export const fetchIndicateurById = async (id: string): Promise<IndicateurApiMode
   return indicateurApiModelSchema.parse(json)
 }
 
-export const upsertIndicateur = async (
+export const createIndicateur = async (body: UpsertIndicateurBody): Promise<IndicateurApiModel> => {
+  const json = await bffClient.post('indicateurs', { json: body }).json()
+  return indicateurApiModelSchema.parse(json)
+}
+
+export const updateIndicateur = async (
   id: string,
   body: UpsertIndicateurBody,
 ): Promise<IndicateurApiModel> => {

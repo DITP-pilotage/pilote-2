@@ -3,7 +3,7 @@ import { Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 import type { IndicateurApiModel } from '@pilote/mb-shared/indicateur'
-import { indicateurPublicIdSchema, referentielPublicIdSchema } from '@pilote/mb-shared/publicIds'
+import { referentielPublicIdSchema } from '@pilote/mb-shared/publicIds'
 
 import { fetchAllReferentiels } from '@/api/referentiels'
 import { Button } from '@/components/ui/Button'
@@ -76,28 +76,24 @@ export function IndicateurForm({
 
   const canSubmit =
     values.nom.trim().length > 0 &&
-    (mode === 'edit' || indicateurPublicIdSchema.safeParse(values.id).success) &&
     values.referentiels.every((ref) => referentielPublicIdSchema.safeParse(ref.id).success)
 
   return (
     <div className="mx-auto max-w-2xl">
       <div className="rounded-xl border border-border bg-surface p-6">
-        <div className="mb-5">
-          <label className="mb-1.5 block text-xs font-semibold">Identifiant</label>
-          {mode === 'edit' ? (
+        {mode === 'edit' ? (
+          <div className="mb-5">
+            <label className="mb-1.5 block text-xs font-semibold">Identifiant</label>
             <span className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-surface-tinted px-3 py-2 font-mono text-sm text-primary">
               {values.id}{' '}
               <span className="font-sans text-xs text-text-subtle">🔒 non modifiable</span>
             </span>
-          ) : (
-            <input
-              value={values.id}
-              onChange={(event) => update({ id: event.target.value.toUpperCase() })}
-              placeholder="IND-001"
-              className="w-48 rounded-md border border-border px-3 py-2 font-mono text-sm focus:border-primary focus:outline-none"
-            />
-          )}
-        </div>
+          </div>
+        ) : (
+          <p className="mb-5 text-xs text-text-subtle">
+            L'identifiant (<code>IND-…</code>) est généré automatiquement à la création.
+          </p>
+        )}
 
         <div className="mb-5">
           <label className="mb-1.5 block text-xs font-semibold">
