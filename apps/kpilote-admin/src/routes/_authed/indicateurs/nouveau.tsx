@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 
-import { upsertIndicateur } from '@/api/indicateurs'
+import { createIndicateur } from '@/api/indicateurs'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { IndicateurForm } from '@/components/indicateurs/IndicateurForm'
 import {
@@ -30,7 +30,7 @@ function NewIndicateurComponent() {
 
   const toast = useToast()
   const mutation = useMutation({
-    mutationFn: (values: IndicateurFormValues) => upsertIndicateur(values.id, toUpsertBody(values)),
+    mutationFn: (values: IndicateurFormValues) => createIndicateur(toUpsertBody(values)),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['indicateurs'] })
       toast({ title: 'Indicateur créé.' })

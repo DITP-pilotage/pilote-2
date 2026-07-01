@@ -9,66 +9,61 @@ import {
   uniteDureeSchema,
   uniteIndicateurCodeSchema,
 } from '@pilote/kpilote-shared/indicateur'
-import { indicateurPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
 
 import { emptyToNull } from '@/lib/emptyToNull'
 
 // Schéma du formulaire (valeurs saisies, toutes en chaînes natives). La
 // conversion vers le body PUT — `'' → null`, `jour → number` — est faite par
-// `toUpsertBody`. La validation de `id` dépend du mode (create : identifiant
-// requis et formaté ; edit : verrouillé, donc non validé).
-export const buildIndicateurFormSchema = (mode: 'create' | 'edit') =>
-  z
-    .object({
-      id: mode === 'create' ? indicateurPublicIdSchema : z.string(),
-      nom: z.string().trim().min(1, 'Le nom est requis'),
-      visibilite: indicateurVisibiliteSchema,
-      unite: z.union([z.literal(''), uniteIndicateurCodeSchema]),
-      description: z.string(),
-      methodeCalcul: z.string(),
-      sourceDonnees: z.string(),
-      sourceUrl: z.union([z.literal(''), indicateurSourceUrlSchema]),
-      periodeMiseAJour: z.union([z.literal(''), periodeMiseAJourSchema]),
-      jourMiseAJour: z
-        .string()
-        .refine(
-          (value) =>
-            value === '' || (/^\d+$/.test(value) && Number(value) >= 1 && Number(value) <= 31),
-          'Entier entre 1 et 31',
-        ),
-      delaiNombre: z
-        .string()
-        .refine(
-          (value) => value === '' || (/^\d+$/.test(value) && Number(value) >= 1),
-          'Entier ≥ 1',
-        ),
-      delaiUnite: z.union([z.literal(''), uniteDureeSchema]),
-      referentiels: z.array(configurationIndicateurReferentielSchema),
-      responsables: z.array(
-        z.object({
-          id: z.string(),
-          nom: z.string(),
-          prenom: z.string(),
-          email: z.string(),
-        }),
+// `toUpsertBody`. `id` n'est jamais saisi : généré par l'API à la création,
+// verrouillé en édition.
+export const indicateurFormSchema = z
+  .object({
+    id: z.string(),
+    nom: z.string().trim().min(1, 'Le nom est requis'),
+    visibilite: indicateurVisibiliteSchema,
+    unite: z.union([z.literal(''), uniteIndicateurCodeSchema]),
+    description: z.string(),
+    methodeCalcul: z.string(),
+    sourceDonnees: z.string(),
+    sourceUrl: z.union([z.literal(''), indicateurSourceUrlSchema]),
+    periodeMiseAJour: z.union([z.literal(''), periodeMiseAJourSchema]),
+    jourMiseAJour: z
+      .string()
+      .refine(
+        (value) =>
+          value === '' || (/^\d+$/.test(value) && Number(value) >= 1 && Number(value) <= 31),
+        'Entier entre 1 et 31',
       ),
-    })
-    // Le délai (nombre + unité) est optionnel, mais indissociable : les deux
-    // champs doivent être remplis ensemble, sinon `toUpsertBody` effacerait
-    // silencieusement la saisie. On pose l'erreur sur le champ manquant.
-    .superRefine((values, ctx) => {
-      const nombreRempli = values.delaiNombre !== ''
-      const uniteRemplie = values.delaiUnite !== ''
-      if (nombreRempli !== uniteRemplie) {
-        ctx.addIssue({
-          code: 'custom',
-          message: 'Renseignez le nombre et l’unité, ou laissez les deux vides',
-          path: [nombreRempli ? 'delaiUnite' : 'delaiNombre'],
-        })
-      }
-    })
+    delaiNombre: z
+      .string()
+      .refine((value) => value === '' || (/^\d+$/.test(value) && Number(value) >= 1), 'Entier ≥ 1'),
+    delaiUnite: z.union([z.literal(''), uniteDureeSchema]),
+    referentiels: z.array(configurationIndicateurReferentielSchema),
+    responsables: z.array(
+      z.object({
+        id: z.string(),
+        nom: z.string(),
+        prenom: z.string(),
+        email: z.string(),
+      }),
+    ),
+  })
+  // Le délai (nombre + unité) est optionnel, mais indissociable : les deux
+  // champs doivent être remplis ensemble, sinon `toUpsertBody` effacerait
+  // silencieusement la saisie. On pose l'erreur sur le champ manquant.
+  .superRefine((values, ctx) => {
+    const nombreRempli = values.delaiNombre !== ''
+    const uniteRemplie = values.delaiUnite !== ''
+    if (nombreRempli !== uniteRemplie) {
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Renseignez le nombre et l’unité, ou laissez les deux vides',
+        path: [nombreRempli ? 'delaiUnite' : 'delaiNombre'],
+      })
+    }
+  })
 
-export type IndicateurFormValues = z.infer<ReturnType<typeof buildIndicateurFormSchema>>
+export type IndicateurFormValues = z.infer<typeof indicateurFormSchema>
 
 export function buildInitialValues(indicateur?: IndicateurApiModel): IndicateurFormValues {
   return {

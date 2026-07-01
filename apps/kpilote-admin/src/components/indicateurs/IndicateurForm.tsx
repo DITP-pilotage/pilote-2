@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMemo } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 
 import {
@@ -13,7 +12,7 @@ import { AdminReferentiels } from '@/components/indicateurs/AdminReferentiels'
 import { AdminResponsables } from '@/components/indicateurs/AdminResponsables'
 import { UnitePicker } from '@/components/indicateurs/UnitePicker'
 import {
-  buildIndicateurFormSchema,
+  indicateurFormSchema,
   type IndicateurFormValues,
 } from '@/components/indicateurs/indicateurFormSchema'
 import { Button } from '@pilote/kpilote-ui/Button'
@@ -43,9 +42,8 @@ export function IndicateurForm({
   onCancel: () => void
 }) {
   const { isProd } = useAppConfig()
-  const schema = useMemo(() => buildIndicateurFormSchema(mode), [mode])
   const form = useForm<IndicateurFormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(indicateurFormSchema),
     mode: 'onChange',
     defaultValues: initial,
   })
@@ -54,30 +52,20 @@ export function IndicateurForm({
     <FormProvider {...form}>
       <form onSubmit={(event) => void form.handleSubmit(onSubmit)(event)}>
         <div className="rounded-xl border border-border bg-surface p-6">
-          <div className="mb-5">
-            {mode === 'edit' ? (
+          {mode === 'edit' ? (
+            <div className="mb-5">
               <Field label="Identifiant">
                 <span className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-surface-tinted px-3 py-2 font-mono text-sm text-primary">
                   {initial.id}{' '}
                   <span className="font-sans text-xs text-text-subtle">🔒 non modifiable</span>
                 </span>
               </Field>
-            ) : (
-              <FieldInput
-                label="Identifiant"
-                placeholder="IND-001"
-                className="w-48 font-mono"
-                error={form.formState.errors.id?.message}
-                {...form.register('id')}
-                onChange={(event) =>
-                  form.setValue('id', event.target.value.toUpperCase(), {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                  })
-                }
-              />
-            )}
-          </div>
+            </div>
+          ) : (
+            <p className="mb-5 text-xs text-text-subtle">
+              L’identifiant (<code>IND-…</code>) est généré automatiquement à la création.
+            </p>
+          )}
 
           <div className="mb-5">
             <FieldInput
