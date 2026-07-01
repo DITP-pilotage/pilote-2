@@ -14,7 +14,6 @@ import { individuRoutes } from '@/individu/routes'
 import { meRoutes } from '@/me/routes'
 import { panierRoutes } from '@/panier/routes'
 import { referentielRoutes } from '@/referentiel/routes'
-import { sharedMessage } from '@/shared/routes/sharedMessage'
 import { objectifIndicateurIndividuRoutes } from '@/objectifIndicateurIndividu/routes'
 import { valeurAvancementRoutes } from '@/valeurAvancement/routes'
 import { whoamiRoutes } from '@/whoami/routes'
@@ -34,7 +33,6 @@ app.openAPIRegistry.registerComponent('securitySchemes', 'bearer', {
 
 app.get('/', (context) => context.json({ hello: 'world' }))
 app.route('/', health)
-app.route('/', sharedMessage)
 app.route('/', indicateurRoutes)
 app.route('/', valeurAvancementRoutes)
 app.route('/', objectifIndicateurIndividuRoutes)
