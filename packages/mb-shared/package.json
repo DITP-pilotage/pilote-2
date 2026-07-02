@@ -87,6 +87,10 @@
     "./panierContactUtile": {
       "types": "./src/panierContactUtile.ts",
       "default": "./src/panierContactUtile.ts"
+    },
+    "./utilisateur": {
+      "types": "./src/utilisateur.ts",
+      "default": "./src/utilisateur.ts"
     }
   },
   "files": [
