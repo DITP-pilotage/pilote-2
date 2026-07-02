@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 
@@ -7,9 +7,12 @@ import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { UtilisateurForm, type UtilisateurFormValues } from '@/components/UtilisateurForm'
 import { extractApiError } from '@/lib/apiError'
-import { utilisateurQueryOptions } from '@/queries/utilisateurs'
+import { utilisateursQueryOptions } from '@/queries/utilisateurs'
 
 export const Route = createFileRoute('/_authed/utilisateurs/$id')({
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(utilisateursQueryOptions())
+  },
   component: EditUtilisateurComponent,
 })
 
@@ -19,7 +22,10 @@ function EditUtilisateurComponent() {
   const queryClient = useQueryClient()
   const [error, setError] = useState<string | null>(null)
 
-  const query = useQuery(utilisateurQueryOptions(id))
+  const { data: utilisateur } = useSuspenseQuery({
+    ...utilisateursQueryOptions(),
+    select: (items) => items.find((u) => u.id === id),
+  })
 
   const mutation = useMutation({
     mutationFn: (values: UtilisateurFormValues) =>
@@ -31,7 +37,6 @@ function EditUtilisateurComponent() {
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['utilisateurs'] })
-      await queryClient.invalidateQueries({ queryKey: ['utilisateurs', id] })
       await navigate({ to: '/utilisateurs' })
     },
     onError: (err: unknown) => {
@@ -52,25 +57,23 @@ function EditUtilisateurComponent() {
       </Breadcrumb>
       <PageHeading title="Modifier l'utilisateur" />
 
-      {query.isLoading ? (
-        <p className="text-sm text-text-muted">Chargement…</p>
-      ) : query.isError || !query.data ? (
-        <p className="text-sm font-medium text-accent">Utilisateur introuvable.</p>
-      ) : (
+      {utilisateur ? (
         <UtilisateurForm
           mode="update"
           initialValues={{
-            email: query.data.email,
-            nom: query.data.nom,
-            prenom: query.data.prenom,
-            service: query.data.service,
-            fonction: query.data.fonction,
+            email: utilisateur.email,
+            nom: utilisateur.nom,
+            prenom: utilisateur.prenom,
+            service: utilisateur.service,
+            fonction: utilisateur.fonction,
           }}
           pending={mutation.isPending}
           errorMessage={error}
           onCancel={() => void navigate({ to: '/utilisateurs' })}
           onSubmit={(values) => mutation.mutate(values)}
         />
+      ) : (
+        <p className="text-sm font-medium text-accent">Utilisateur introuvable.</p>
       )}
     </div>
   )

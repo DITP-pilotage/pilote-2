@@ -1,5 +1,5 @@
 import type { UtilisateurApiModel } from '@pilote/mb-shared/utilisateur'
-import { useQuery } from '@tanstack/react-query'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
 
@@ -12,6 +12,9 @@ import { utilisateursQueryOptions } from '@/queries/utilisateurs'
 import { session } from '@/session'
 
 export const Route = createFileRoute('/_authed/utilisateurs/')({
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(utilisateursQueryOptions())
+  },
   component: UtilisateursListComponent,
 })
 
@@ -32,8 +35,7 @@ const PROVIDER_LABEL: Record<UtilisateurApiModel['providers'][number], string> =
 
 function UtilisateursListComponent() {
   const isProd = session.current?.environment === 'prod'
-  const query = useQuery(utilisateursQueryOptions())
-  const items = query.data ?? []
+  const { data: items } = useSuspenseQuery(utilisateursQueryOptions())
 
   return (
     <div>
@@ -60,13 +62,7 @@ function UtilisateursListComponent() {
         }
       />
 
-      {query.isError ? (
-        <p className="mb-4 text-sm font-medium text-accent">
-          Impossible de charger les utilisateurs. Une clé de session de rôle ADMIN est requise.
-        </p>
-      ) : null}
-
-      {items.length === 0 && !query.isLoading && !query.isError ? (
+      {items.length === 0 ? (
         <EmptyState
           title="Aucun utilisateur"
           description="Créez votre premier utilisateur pré-provisionné."

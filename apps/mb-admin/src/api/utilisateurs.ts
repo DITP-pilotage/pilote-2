@@ -16,16 +16,6 @@ export const fetchUtilisateurs = async (): Promise<UtilisateurListApiModel> => {
   return utilisateurListApiModelSchema.parse(json)
 }
 
-// La liste étant petite (v0), on l'utilise comme source de vérité pour la page
-// détail via le cache React Query. Ce helper couvre le cas du deep link direct.
-// Une route GET /utilisateurs/:id pourra le remplacer si le besoin l'exige.
-export const fetchUtilisateur = async (id: string): Promise<UtilisateurApiModel> => {
-  const items = await fetchUtilisateurs()
-  const found = items.find((u) => u.id === id)
-  if (!found) throw new Error('Utilisateur introuvable')
-  return found
-}
-
 export const createUtilisateur = async (
   body: CreateUtilisateurBody,
 ): Promise<UtilisateurApiModel> => {
