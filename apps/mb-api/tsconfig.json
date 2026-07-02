@@ -13,6 +13,7 @@
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "paths": {
+      "@/apiKey/*": ["./src/apiKey/*"],
       "@/framework/*": ["./src/framework/*"],
       "@/authentication/*": ["./src/authentication/*"],
       "@/commentaire/*": ["./src/commentaire/*"],
