@@ -12,6 +12,10 @@
       "types": "./src/auteur.ts",
       "default": "./src/auteur.ts"
     },
+    "./apiKey": {
+      "types": "./src/apiKey.ts",
+      "default": "./src/apiKey.ts"
+    },
     "./commentaire": {
       "types": "./src/commentaire.ts",
       "default": "./src/commentaire.ts"
