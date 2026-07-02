@@ -1,7 +1,5 @@
-import { Check, Copy } from 'lucide-react'
-import { useState } from 'react'
-
 import { Button } from '@/components/ui/Button'
+import { CopyButton } from '@/components/ui/CopyButton'
 
 export function CreatedApiKeyResult({
   rawKey,
@@ -12,18 +10,6 @@ export function CreatedApiKeyResult({
   label: string
   onDone: () => void
 }) {
-  const [copied, setCopied] = useState(false)
-
-  const copy = () => {
-    void navigator.clipboard
-      .writeText(rawKey)
-      .then(() => {
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
-      })
-      .catch(() => setCopied(false))
-  }
-
   return (
     <div className="mx-auto max-w-2xl">
       <div className="rounded-xl border border-border bg-surface p-6">
@@ -33,9 +19,7 @@ export function CreatedApiKeyResult({
         </p>
         <div className="mt-4 flex items-center gap-2 rounded-md border border-border bg-surface-muted px-3 py-2.5">
           <code className="flex-1 break-all font-mono text-sm">{rawKey}</code>
-          <button type="button" onClick={copy} className="text-primary" aria-label="Copier la clé">
-            {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-          </button>
+          <CopyButton value={rawKey} label="Copier la clé" />
         </div>
       </div>
       <div className="mt-5 flex justify-end">
