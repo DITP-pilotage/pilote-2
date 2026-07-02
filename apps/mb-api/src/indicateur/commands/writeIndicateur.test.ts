@@ -62,6 +62,12 @@ describe.concurrent('createIndicateur', () => {
         { id: refCreateB, fonctionAgregation: 'NONE' as const },
       ].sort((a, b) => a.id.localeCompare(b.id))
       expect(await getConfigurationsReferentiels(publicId)).toEqual(configurationsTriees)
+
+      const created = await db().indicateur.findUniqueOrThrow({ where: { publicId } })
+      const perms = await db().indicateurPermission.findMany({
+        where: { principalId: apiKey.id, indicateurId: created.id },
+      })
+      expect(perms.map((p) => p.action).sort()).toEqual(['READ', 'WRITE'])
     }),
   )
 
