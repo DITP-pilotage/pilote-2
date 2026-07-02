@@ -2,7 +2,7 @@ import { type UpsertReferentielBody } from '@pilote/mb-shared/referentiel'
 import { err, ok, type Result, ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { ensureApiKeyAdmin } from '@/framework/auth/ensureApiKeyAdmin'
+import { ensurePrincipal, isApiKeyAdmin, isOidcUser } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 
 export type UpsertReferentielError = {
@@ -30,7 +30,10 @@ const performUpsert = async (
   publicId: string,
   body: UpsertReferentielBody,
 ): Promise<Result<void, UpsertReferentielError>> => {
-  ensureApiKeyAdmin()
+  ensurePrincipal(
+    (principal) => isApiKeyAdmin(principal) || isOidcUser(principal),
+    'Cette opération requiert un utilisateur OIDC ou une clé API de rôle ADMIN',
+  )
   const existingReferentiel = await db().referentiel.findUnique({
     where: { publicId },
     select: { id: true },
