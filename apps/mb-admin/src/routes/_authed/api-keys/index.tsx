@@ -82,7 +82,7 @@ function ApiKeysListComponent() {
       ) : null}
       {error ? <p className="mb-4 text-sm font-medium text-accent">{error}</p> : null}
 
-      {items.length === 0 && !query.isLoading ? (
+      {items.length === 0 && !query.isLoading && !query.isError ? (
         <EmptyState title="Aucune clé API" description="Créez votre première clé API." />
       ) : (
         <Table>

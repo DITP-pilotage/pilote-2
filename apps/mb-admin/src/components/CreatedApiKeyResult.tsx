@@ -15,10 +15,13 @@ export function CreatedApiKeyResult({
   const [copied, setCopied] = useState(false)
 
   const copy = () => {
-    void navigator.clipboard.writeText(rawKey).then(() => {
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    })
+    void navigator.clipboard
+      .writeText(rawKey)
+      .then(() => {
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      })
+      .catch(() => setCopied(false))
   }
 
   return (
