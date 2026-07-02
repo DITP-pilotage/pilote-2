@@ -1,57 +1,60 @@
-import { useState } from 'react'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
 
 import { Button } from '@/components/ui/Button'
+import { useAppConfig } from '@/context/AppConfigContext'
 import { clsxm } from '@/lib/clsxm'
 
-export type ApiKeyFormValues = {
-  label: string
-  role: 'CONTRIBUTOR' | 'ADMIN'
-  expiresAt: string
-}
+const apiKeyFormSchema = z.object({
+  label: z.string().trim().min(1, 'Le label est requis'),
+  role: z.enum(['CONTRIBUTOR', 'ADMIN']),
+  expiresAt: z.string(),
+})
+
+export type ApiKeyFormValues = z.infer<typeof apiKeyFormSchema>
 
 export function ApiKeyForm({
   pending,
   errorMessage,
-  isProd,
   onSubmit,
   onCancel,
 }: {
   pending: boolean
   errorMessage: string | null
-  isProd: boolean
   onSubmit: (values: ApiKeyFormValues) => void
   onCancel: () => void
 }) {
-  const [values, setValues] = useState<ApiKeyFormValues>({
-    label: '',
-    role: 'CONTRIBUTOR',
-    expiresAt: '',
+  const { isProd } = useAppConfig()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm<ApiKeyFormValues>({
+    resolver: zodResolver(apiKeyFormSchema),
+    mode: 'onChange',
+    defaultValues: { label: '', role: 'CONTRIBUTOR', expiresAt: '' },
   })
 
-  const update = (patch: Partial<ApiKeyFormValues>) => setValues((prev) => ({ ...prev, ...patch }))
-
-  const canSubmit = values.label.trim().length > 0
-
   return (
-    <div className="mx-auto max-w-2xl">
+    <form onSubmit={(event) => void handleSubmit(onSubmit)(event)} className="mx-auto max-w-2xl">
       <div className="rounded-xl border border-border bg-surface p-6">
         <div className="mb-5">
           <label className="mb-1.5 block text-xs font-semibold">
             Label <span className="text-accent">*</span>
           </label>
           <input
-            value={values.label}
-            onChange={(event) => update({ label: event.target.value })}
+            {...register('label')}
             placeholder="Intégration SI-X"
             className="w-full rounded-md border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none"
           />
+          {errors.label ? <p className="mt-1 text-xs text-accent">{errors.label.message}</p> : null}
         </div>
 
         <div className="mb-5">
           <label className="mb-1.5 block text-xs font-semibold">Rôle</label>
           <select
-            value={values.role}
-            onChange={(event) => update({ role: event.target.value as ApiKeyFormValues['role'] })}
+            {...register('role')}
             className="w-56 rounded-md border border-border px-3 py-2 text-sm focus:border-primary focus:outline-none"
           >
             <option value="CONTRIBUTOR">CONTRIBUTOR</option>
@@ -63,8 +66,7 @@ export function ApiKeyForm({
           <label className="mb-1.5 block text-xs font-semibold">Expiration (optionnelle)</label>
           <input
             type="date"
-            value={values.expiresAt}
-            onChange={(event) => update({ expiresAt: event.target.value })}
+            {...register('expiresAt')}
             className="w-56 rounded-md border border-border px-3 py-2 text-sm focus:border-primary focus:outline-none"
           />
         </div>
@@ -79,14 +81,13 @@ export function ApiKeyForm({
           Annuler
         </Button>
         <Button
-          type="button"
-          disabled={!canSubmit || pending}
-          onClick={() => onSubmit(values)}
+          type="submit"
+          disabled={!isValid || pending}
           className={clsxm(isProd && 'bg-accent hover:bg-accent')}
         >
           {pending ? 'Création…' : isProd ? '🚨 Créer en Prod' : 'Créer la clé'}
         </Button>
       </div>
-    </div>
+    </form>
   )
 }

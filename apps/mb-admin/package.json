@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.19.13",
+    "@hookform/resolvers": "^5.4.0",
     "@pilote/mb-shared": "workspace:*",
     "@tanstack/react-query": "^5.62.7",
     "@tanstack/react-router": "^1.168.26",
@@ -41,6 +42,7 @@
     "radix-ui": "^1.4.3",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
+    "react-hook-form": "^7.79.0",
     "tailwind-merge": "^3.5.0",
     "zod": "^4.3.6"
   },

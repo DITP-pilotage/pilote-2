@@ -9,7 +9,6 @@ import { Breadcrumb } from '@/components/Breadcrumb'
 import { CreatedApiKeyResult } from '@/components/CreatedApiKeyResult'
 import { PageHeading } from '@/components/PageHeading'
 import { extractApiError } from '@/lib/apiError'
-import { session } from '@/session'
 
 export const Route = createFileRoute('/_authed/api-keys/nouveau')({
   component: NewApiKeyComponent,
@@ -18,7 +17,6 @@ export const Route = createFileRoute('/_authed/api-keys/nouveau')({
 function NewApiKeyComponent() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const isProd = session.current?.environment === 'prod'
   const [error, setError] = useState<string | null>(null)
   const [created, setCreated] = useState<CreatedApiKeyApiModel | null>(null)
 
@@ -60,7 +58,6 @@ function NewApiKeyComponent() {
         <ApiKeyForm
           pending={mutation.isPending}
           errorMessage={error}
-          isProd={isProd}
           onCancel={() => void navigate({ to: '/api-keys' })}
           onSubmit={(values) => mutation.mutate(values)}
         />
