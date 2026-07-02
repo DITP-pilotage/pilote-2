@@ -119,7 +119,7 @@ const createIndicateurRoute = createRoute({
 
 // --- PUT /indicateurs/:id ----------------------------------------------------
 
-const upsertIndicateurRoute = createRoute({
+const updateIndicateurRoute = createRoute({
   method: 'put',
   path: '/indicateurs/{id}',
   tags: ['Indicateur', 'Admin'],
@@ -193,7 +193,7 @@ indicateurRoutes.openapi(createIndicateurRoute, async (context) => {
   )
 })
 
-indicateurRoutes.openapi(upsertIndicateurRoute, async (context) => {
+indicateurRoutes.openapi(updateIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
