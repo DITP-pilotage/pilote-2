@@ -27,7 +27,7 @@ import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
-import { upsertIndicateur } from '@/indicateur/commands/upsertIndicateur'
+import { createIndicateur, updateIndicateur } from '@/indicateur/commands/writeIndicateur'
 import {
   creerIndicateurIndividuCommentaire,
   indicateurIndividuConfig,
@@ -90,15 +90,41 @@ const getIndicateurByIdRoute = createRoute({
   },
 })
 
+// --- POST /indicateurs -------------------------------------------------------
+
+const createIndicateurRoute = createRoute({
+  method: 'post',
+  path: '/indicateurs',
+  tags: ['Indicateur', 'Admin'],
+  summary: 'Créer un indicateur (identifiant public généré par le serveur)',
+  description:
+    "Réservé aux clés API de rôle `ADMIN` (les utilisateurs OIDC authentifiés restent autorisés). Crée un indicateur ; l'identifiant public (`IND-<n>`) est généré côté serveur (dernier numéro + 1). Le champ `referentiels` applique la sémantique replace-all. Si un `referentielId` n'existe pas, 400 `VALIDATION_ERROR` + `details.unknownReferentielIds`. L'opération est atomique.",
+  middleware: [requireAuthentication],
+  request: {
+    body: {
+      content: { 'application/json': { schema: UpsertIndicateurBodySchema } },
+      required: true,
+    },
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: IndicateurApiModelSchema } },
+      description: 'Indicateur créé',
+    },
+    400: erreur400,
+    403: erreur403,
+  },
+})
+
 // --- PUT /indicateurs/:id ----------------------------------------------------
 
-const upsertIndicateurRoute = createRoute({
+const updateIndicateurRoute = createRoute({
   method: 'put',
   path: '/indicateurs/{id}',
   tags: ['Indicateur', 'Admin'],
-  summary: 'Créer ou remplacer un indicateur (nom + référentiels liés)',
+  summary: 'Mettre à jour un indicateur (nom + référentiels liés)',
   description:
-    "Réservé aux clés API de rôle `ADMIN` (les utilisateurs OIDC authentifiés restent autorisés). Crée l'indicateur s'il n'existe pas, ou met à jour son `nom` si déjà présent. Le champ `referentielIds` est obligatoire et applique une sémantique replace-all : l'ensemble des liens devient strictement celui décrit dans le body (tableau vide pour aucun lien). Les doublons sont silencieusement dédupliqués. Si un `referentielId` n'existe pas, l'appel échoue avec 400 `VALIDATION_ERROR` et `details.unknownReferentielIds`. L'opération est atomique (transaction unique).",
+    "Réservé aux clés API de rôle `ADMIN` (les utilisateurs OIDC authentifiés restent autorisés). Met à jour le `nom`, la visibilité, l'unité, les métadonnées et les référentiels liés (replace-all). Renvoie 404 (`ENTITY_NOT_FOUND`) si l'indicateur n'existe pas. L'opération est atomique.",
   middleware: [requireAuthentication],
   request: {
     params: detailParamsSchema,
@@ -110,10 +136,11 @@ const upsertIndicateurRoute = createRoute({
   responses: {
     200: {
       content: { 'application/json': { schema: IndicateurApiModelSchema } },
-      description: 'Indicateur créé ou mis à jour',
+      description: 'Indicateur mis à jour',
     },
     400: erreur400,
     403: erreur403,
+    404: erreur404,
   },
 })
 
@@ -151,23 +178,31 @@ indicateurRoutes.openapi(getIndicateurByIdRoute, async (context) => {
   )
 })
 
-indicateurRoutes.openapi(upsertIndicateurRoute, async (context) => {
+indicateurRoutes.openapi(createIndicateurRoute, async (context) => {
+  const body = context.req.valid('json')
+
+  const result = await withTransaction(async () => {
+    const publicId = (await createIndicateur(body))._unsafeUnwrap()
+    return getIndicateurByPublicId(publicId)
+  })
+
+  return result.match(
+    (data) => jsonResponseOk({ context, data, schema: IndicateurApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
+indicateurRoutes.openapi(updateIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
 
   const result = await withTransaction(async () => {
-    await upsertIndicateur(id, body)
+    ;(await updateIndicateur(id, body))._unsafeUnwrap()
     return getIndicateurByPublicId(id)
   })
 
   return result.match(
-    (data) =>
-      jsonResponseOk({
-        context,
-        data,
-        schema: IndicateurApiModelSchema,
-        status: 200,
-      }),
+    (data) => jsonResponseOk({ context, data, schema: IndicateurApiModelSchema, status: 200 }),
     never,
   )
 })

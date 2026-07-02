@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react'
 
-import { upsertIndicateur } from '@/api/indicateurs'
+import { createIndicateur } from '@/api/indicateurs'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import {
   buildInitialValues,
@@ -25,7 +25,7 @@ function NewIndicateurComponent() {
 
   const mutation = useMutation({
     mutationFn: (values: IndicateurFormValues) =>
-      upsertIndicateur(values.id, {
+      createIndicateur({
         nom: values.nom,
         visibilite: values.visibilite,
         unite: values.unite,
