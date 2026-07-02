@@ -22,7 +22,10 @@ const CreateUtilisateurBodySchema = createUtilisateurBodySchema.openapi('CreateU
 const UpdateUtilisateurBodySchema = updateUtilisateurBodySchema.openapi('UpdateUtilisateurBody')
 
 const updateParamsSchema = z.object({
-  id: z.string().openapi({ description: "Identifiant (UUID) de l'utilisateur à modifier." }),
+  id: z
+    .string()
+    .uuid()
+    .openapi({ description: "Identifiant (UUID) de l'utilisateur à modifier." }),
 })
 
 // --- POST /utilisateurs ------------------------------------------------------
