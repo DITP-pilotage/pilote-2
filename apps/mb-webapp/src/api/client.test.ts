@@ -89,7 +89,7 @@ describe.sequential('apiClient retry on 401', () => {
     expect(authHeadersSeen).toEqual(['Bearer stale', 'Bearer fresh'])
   })
 
-  it('redirects to /auth/login with the current path when refresh fails', async () => {
+  it("redirige vers /auth/login avec le chemin courant en cas d'échec du refresh", async () => {
     tokenStore.set('stale')
     const assignSpy = vi.fn()
     vi.stubGlobal('window', {

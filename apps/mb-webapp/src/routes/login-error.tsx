@@ -32,6 +32,12 @@ type ErrorContent = {
   action: 'logout' | 'retry'
 }
 
+const GENERIC_ERROR: ErrorContent = {
+  title: 'Une erreur est survenue',
+  description: "L'authentification a échoué. Merci de réessayer.",
+  action: 'retry',
+}
+
 const CONTENT_BY_REASON: Record<Reason | 'default', ErrorContent> = {
   user_not_found: {
     title: 'Accès refusé',
@@ -45,34 +51,11 @@ const CONTENT_BY_REASON: Record<Reason | 'default', ErrorContent> = {
       'Votre session a expiré ou votre navigateur a bloqué nos cookies. Merci de vous reconnecter.',
     action: 'retry',
   },
-  callback_failed: {
-    title: 'Connexion interrompue',
-    description: "L'échange avec votre fournisseur d'identité a échoué. Merci de réessayer.",
-    action: 'retry',
-  },
-  missing_tokens: {
-    title: 'Réponse incomplète',
-    description:
-      "Votre fournisseur d'identité n'a pas renvoyé toutes les informations nécessaires. Merci de réessayer.",
-    action: 'retry',
-  },
-  missing_access_token: {
-    title: 'Réponse incomplète',
-    description:
-      "Votre fournisseur d'identité n'a pas renvoyé de jeton d'accès. Merci de réessayer.",
-    action: 'retry',
-  },
-  me_failed: {
-    title: 'Service indisponible',
-    description:
-      'Impossible de vérifier votre compte pour le moment. Merci de réessayer dans quelques instants.',
-    action: 'retry',
-  },
-  default: {
-    title: 'Authentification impossible',
-    description: 'Une erreur inattendue est survenue. Merci de réessayer.',
-    action: 'retry',
-  },
+  callback_failed: GENERIC_ERROR,
+  missing_tokens: GENERIC_ERROR,
+  missing_access_token: GENERIC_ERROR,
+  me_failed: GENERIC_ERROR,
+  default: GENERIC_ERROR,
 }
 
 function LoginErrorPage() {
