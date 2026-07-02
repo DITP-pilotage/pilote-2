@@ -1,0 +1,42 @@
+import type {
+  CreateUtilisateurBody,
+  UpdateUtilisateurBody,
+  UtilisateurApiModel,
+  UtilisateurListApiModel,
+} from '@pilote/mb-shared/utilisateur'
+import {
+  utilisateurApiModelSchema,
+  utilisateurListApiModelSchema,
+} from '@pilote/mb-shared/utilisateur'
+
+import { bffClient } from '@/api/client'
+
+export const fetchUtilisateurs = async (): Promise<UtilisateurListApiModel> => {
+  const json = await bffClient.get('utilisateurs').json()
+  return utilisateurListApiModelSchema.parse(json)
+}
+
+// La liste étant petite (v0), on l'utilise comme source de vérité pour la page
+// détail via le cache React Query. Ce helper couvre le cas du deep link direct.
+// Une route GET /utilisateurs/:id pourra le remplacer si le besoin l'exige.
+export const fetchUtilisateur = async (id: string): Promise<UtilisateurApiModel> => {
+  const items = await fetchUtilisateurs()
+  const found = items.find((u) => u.id === id)
+  if (!found) throw new Error('Utilisateur introuvable')
+  return found
+}
+
+export const createUtilisateur = async (
+  body: CreateUtilisateurBody,
+): Promise<UtilisateurApiModel> => {
+  const json = await bffClient.post('utilisateurs', { json: body }).json()
+  return utilisateurApiModelSchema.parse(json)
+}
+
+export const updateUtilisateur = async (
+  id: string,
+  body: UpdateUtilisateurBody,
+): Promise<UtilisateurApiModel> => {
+  const json = await bffClient.patch(`utilisateurs/${id}`, { json: body }).json()
+  return utilisateurApiModelSchema.parse(json)
+}
