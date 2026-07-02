@@ -2,6 +2,7 @@ import { swaggerUI } from '@hono/swagger-ui'
 import { OpenAPIHono } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
 
+import { apiKeyRoutes } from '@/apiKey/routes'
 import { commentaireRoutes } from '@/commentaire/routes'
 import { niveauConfianceRoutes } from '@/niveauConfiance/routes'
 import { env } from '@/env'
@@ -43,6 +44,7 @@ app.route('/', commentaireRoutes)
 app.route('/', niveauConfianceRoutes)
 app.route('/', meRoutes)
 app.route('/', whoamiRoutes)
+app.route('/', apiKeyRoutes)
 
 app.doc('/openapi.json', {
   openapi: '3.0.0',
