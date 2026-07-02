@@ -2,8 +2,7 @@ import { type ApiKeyListApiModel } from '@pilote/mb-shared/apiKey'
 import { ResultAsync } from 'neverthrow'
 
 import { toApiKeyApiModel } from '@/apiKey/utils'
-import { ensurePrincipal } from '@/framework/auth/ensurePrincipal'
-import { isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 
 // Garde ADMIN comme les commandes : les 3 endpoints de gestion des clés sont

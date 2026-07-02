@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { listApiKeys } from '@/apiKey/queries/listApiKeys'
-import { parseIsoDate } from '@/framework/date'
+import { parseIsoInstant, toDate } from '@/framework/date'
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
@@ -20,12 +20,12 @@ describe.concurrent('listApiKeys', () => {
       const revoked = await fixtures.apiKey({
         label: 'revoked',
         rawKey: 'pilote_live_list_revoked_key_value_ok',
-        revokedAt: parseIsoDate('2024-01-01'),
+        revokedAt: toDate(parseIsoInstant('2024-01-01T00:00:00Z')),
       })
       const expired = await fixtures.apiKey({
         label: 'expired',
         rawKey: 'pilote_live_list_expired_key_value_ok',
-        expiresAt: parseIsoDate('2000-01-01'),
+        expiresAt: toDate(parseIsoInstant('2000-01-01T00:00:00Z')),
       })
 
       const result = await runAsAdmin(ADMIN_ID, () => listApiKeys())

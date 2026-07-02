@@ -40,7 +40,7 @@ describe.concurrent('createApiKey', () => {
       const created = result._unsafeUnwrap()
       expect(created.role).toBe('ADMIN')
       expect(created.status).toBe('expired')
-      expect(created.expiresAt).toBe('2020-01-01T00:00:00.000Z')
+      expect(created.expiresAt).toBe('2020-01-01T00:00:00Z')
     }),
   )
 

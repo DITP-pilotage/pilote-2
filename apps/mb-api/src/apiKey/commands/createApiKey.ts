@@ -4,9 +4,8 @@ import { ResultAsync } from 'neverthrow'
 import { toApiKeyApiModel } from '@/apiKey/utils'
 import { env } from '@/env'
 import { buildApiKey } from '@/framework/auth/apiKey'
-import { ensurePrincipal } from '@/framework/auth/ensurePrincipal'
-import { isApiKeyAdmin } from '@/framework/auth/principalPredicates'
-import { parseIsoDate } from '@/framework/date'
+import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { parseIsoInstant, toDate } from '@/framework/date'
 import { db } from '@/framework/persistence/dbStore'
 
 const performCreate = async (body: CreateApiKeyBody): Promise<CreatedApiKeyApiModel> => {
@@ -21,7 +20,7 @@ const performCreate = async (body: CreateApiKeyBody): Promise<CreatedApiKeyApiMo
       keyHash: generated.keyHash,
       prefix: generated.prefix,
       role: body.role,
-      expiresAt: body.expiresAt ? parseIsoDate(body.expiresAt) : null,
+      expiresAt: body.expiresAt ? toDate(parseIsoInstant(body.expiresAt)) : null,
     },
   })
 

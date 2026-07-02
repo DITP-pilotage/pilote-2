@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { revokeApiKey } from '@/apiKey/commands/revokeApiKey'
-import { parseIsoDate } from '@/framework/date'
+import { parseIsoInstant, toDate } from '@/framework/date'
 import { ConflictError, ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { fixtures } from '@/test/fixtures'
@@ -34,7 +34,7 @@ describe.concurrent('revokeApiKey', () => {
       const key = await fixtures.apiKey({
         label: 'already',
         rawKey: 'pilote_live_revoke_already_value_okk',
-        revokedAt: parseIsoDate('2024-01-01'),
+        revokedAt: toDate(parseIsoInstant('2024-01-01T00:00:00Z')),
       })
       await expect(runAsAdmin(ADMIN_ID, () => revokeApiKey(key.id))).rejects.toBeInstanceOf(
         ConflictError,

@@ -5,8 +5,7 @@ import {
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 
-import { ensurePrincipal } from '@/framework/auth/ensurePrincipal'
-import { isApiKeyAdmin, isOidcUser } from '@/framework/auth/principalPredicates'
+import { ensurePrincipal, isApiKeyAdmin, isOidcUser } from '@/framework/auth/principalPredicates'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
@@ -184,7 +183,7 @@ const createIndicateurAvecGrants = async (
 const performUpsert = async (publicId: string, body: UpsertIndicateurBody): Promise<void> => {
   ensurePrincipal(
     (principal) => isApiKeyAdmin(principal) || isOidcUser(principal),
-    'Cette opération requiert un rôle ADMIN',
+    'Cette opération requiert un utilisateur OIDC ou une clé API de rôle ADMIN',
   )
   const principalId = requireCurrentPrincipalId()
   const existant = await db().indicateur.findUnique({ where: { publicId } })

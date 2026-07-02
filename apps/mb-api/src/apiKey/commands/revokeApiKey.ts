@@ -2,10 +2,9 @@ import { type ApiKeyApiModel } from '@pilote/mb-shared/apiKey'
 import { ResultAsync } from 'neverthrow'
 
 import { toApiKeyApiModel } from '@/apiKey/utils'
-import { ensurePrincipal } from '@/framework/auth/ensurePrincipal'
-import { isApiKeyAdmin } from '@/framework/auth/principalPredicates'
+import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { now } from '@/framework/date'
+import { now, toDate } from '@/framework/date'
 import { ConflictError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 
@@ -23,7 +22,7 @@ const performRevoke = async (id: string): Promise<ApiKeyApiModel> => {
 
   const revoked = await db().apiKey.update({
     where: { id },
-    data: { revokedAt: now() },
+    data: { revokedAt: toDate(now()) },
   })
 
   return toApiKeyApiModel(revoked)

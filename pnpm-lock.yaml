@@ -24,6 +24,9 @@ importers:
       '@hono/node-server':
         specifier: '>=1.19.13'
         version: 1.19.14(hono@4.12.19)
+      '@hookform/resolvers':
+        specifier: ^5.4.0
+        version: 5.4.0(react-hook-form@7.79.0(react@19.2.5))
       '@pilote/mb-shared':
         specifier: workspace:*
         version: link:../../packages/mb-shared
@@ -75,6 +78,9 @@ importers:
       react-dom:
         specifier: ^19.2.5
         version: 19.2.5(react@19.2.5)
+      react-hook-form:
+        specifier: ^7.79.0
+        version: 7.79.0(react@19.2.5)
       tailwind-merge:
         specifier: ^3.5.0
         version: 3.5.0
@@ -326,9 +332,6 @@ importers:
       lucide-react:
         specifier: ^1.14.0
         version: 1.14.0(react@19.2.5)
-      luxon:
-        specifier: ^3.7.2
-        version: 3.7.2
       neverthrow:
         specifier: ^8.2.0
         version: 8.2.0
@@ -381,9 +384,6 @@ importers:
       '@testing-library/user-event':
         specifier: ^14.6.1
         version: 14.6.1(@testing-library/dom@10.4.1)
-      '@types/luxon':
-        specifier: ^3.7.1
-        version: 3.7.1
       '@types/node':
         specifier: ^22.12.0
         version: 22.19.17
@@ -8108,6 +8108,12 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
 
+  react-hook-form@7.79.0:
+    resolution: {integrity: sha512-mhYp/MTmXvzYX6AJcJVko0rktoIhhmRnEouObj4wF5i/tCttgJvnp1+9wRkpITZjDTqpo4IOSJqu0dBlPlV/Lw==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17 || ^18 || ^19
+
   react-immutable-proptypes@2.2.0:
     resolution: {integrity: sha512-Vf4gBsePlwdGvSZoLSBfd4HAP93HDauMY4fDjXhreg/vg6F3Fj/MXDNyTbltPC/xZKmZc+cjLu3598DdYK6sgQ==}
     peerDependencies:
@@ -10420,6 +10426,11 @@ snapshots:
     dependencies:
       '@standard-schema/utils': 0.3.0
       react-hook-form: 7.78.0(react@19.2.5)
+
+  '@hookform/resolvers@5.4.0(react-hook-form@7.79.0(react@19.2.5))':
+    dependencies:
+      '@standard-schema/utils': 0.3.0
+      react-hook-form: 7.79.0(react@19.2.5)
 
   '@humanfs/core@0.19.1': {}
 
@@ -17860,6 +17871,10 @@ snapshots:
       react: 19.2.5
 
   react-hook-form@7.78.0(react@19.2.5):
+    dependencies:
+      react: 19.2.5
+
+  react-hook-form@7.79.0(react@19.2.5):
     dependencies:
       react: 19.2.5
 

@@ -1,9 +1,10 @@
+import { Temporal } from '@js-temporal/polyfill'
 import { describe, expect, it } from 'vitest'
 
 import { computeApiKeyStatus } from '@/apiKey/utils'
 
 const base = { revokedAt: null, expiresAt: null }
-const NOW = new Date('2026-07-02T00:00:00.000Z')
+const NOW = Temporal.Instant.from('2026-07-02T00:00:00Z')
 
 describe('computeApiKeyStatus', () => {
   it('active quand ni révoquée ni expirée', () => {
