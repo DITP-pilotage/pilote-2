@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
 import { useAppConfig } from '@/context/AppConfigContext'
 import { clsxm } from '@/lib/clsxm'
 
@@ -16,15 +17,6 @@ const utilisateurFormSchema = z.object({
 
 export type UtilisateurFormValues = z.infer<typeof utilisateurFormSchema>
 
-export type UtilisateurFormProps = {
-  mode: 'create' | 'update'
-  initialValues?: Partial<UtilisateurFormValues>
-  pending: boolean
-  errorMessage: string | null
-  onSubmit: (values: UtilisateurFormValues) => void
-  onCancel: () => void
-}
-
 export function UtilisateurForm({
   mode,
   initialValues,
@@ -32,7 +24,14 @@ export function UtilisateurForm({
   errorMessage,
   onSubmit,
   onCancel,
-}: UtilisateurFormProps) {
+}: {
+  mode: 'create' | 'update'
+  initialValues?: Partial<UtilisateurFormValues>
+  pending: boolean
+  errorMessage: string | null
+  onSubmit: (values: UtilisateurFormValues) => void
+  onCancel: () => void
+}) {
   const { isProd } = useAppConfig()
   const {
     register,
@@ -68,78 +67,53 @@ export function UtilisateurForm({
     <form onSubmit={(event) => void handleSubmit(onSubmit)(event)} className="mx-auto max-w-2xl">
       <div className="rounded-xl border border-border bg-surface p-6">
         <div className="mb-5">
-          <label className="mb-1.5 block text-xs font-semibold">
-            Email <span className="text-accent">*</span>
-            {emailReadOnly ? (
-              <span className="ml-2 text-xs font-normal text-text-muted">(non modifiable)</span>
-            ) : null}
-          </label>
-          <input
+          <Input
+            label="Email"
+            required
             type="email"
-            {...register('email')}
-            readOnly={emailReadOnly}
             placeholder="prenom.nom@example.gouv.fr"
-            className={clsxm(
-              'w-full rounded-md border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none',
-              emailReadOnly && 'bg-surface-muted text-text-muted',
-            )}
+            readOnly={emailReadOnly}
+            hint={emailReadOnly ? '(non modifiable)' : undefined}
+            error={errors.email?.message}
+            {...register('email')}
           />
-          {errors.email ? <p className="mt-1 text-xs text-accent">{errors.email.message}</p> : null}
         </div>
 
         <div className="mb-5 grid grid-cols-2 gap-4">
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold">
-              Prénom <span className="text-accent">*</span>
-            </label>
-            <input
-              {...register('prenom')}
-              placeholder="Jane"
-              className="w-full rounded-md border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none"
-            />
-            {errors.prenom ? (
-              <p className="mt-1 text-xs text-accent">{errors.prenom.message}</p>
-            ) : null}
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold">
-              Nom <span className="text-accent">*</span>
-            </label>
-            <input
-              {...register('nom')}
-              placeholder="Doe"
-              className="w-full rounded-md border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none"
-            />
-            {errors.nom ? <p className="mt-1 text-xs text-accent">{errors.nom.message}</p> : null}
-          </div>
+          <Input
+            label="Prénom"
+            required
+            placeholder="Jane"
+            error={errors.prenom?.message}
+            {...register('prenom')}
+          />
+          <Input
+            label="Nom"
+            required
+            placeholder="Doe"
+            error={errors.nom?.message}
+            {...register('nom')}
+          />
         </div>
 
         <div className="mb-5">
-          <label className="mb-1.5 block text-xs font-semibold">
-            Service <span className="text-accent">*</span>
-          </label>
-          <input
-            {...register('service')}
+          <Input
+            label="Service"
+            required
             placeholder="DITP / SI / …"
-            className="w-full rounded-md border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none"
+            error={errors.service?.message}
+            {...register('service')}
           />
-          {errors.service ? (
-            <p className="mt-1 text-xs text-accent">{errors.service.message}</p>
-          ) : null}
         </div>
 
         <div className="mb-2">
-          <label className="mb-1.5 block text-xs font-semibold">
-            Fonction <span className="text-accent">*</span>
-          </label>
-          <input
-            {...register('fonction')}
+          <Input
+            label="Fonction"
+            required
             placeholder="Chargée de mission"
-            className="w-full rounded-md border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none"
+            error={errors.fonction?.message}
+            {...register('fonction')}
           />
-          {errors.fonction ? (
-            <p className="mt-1 text-xs text-accent">{errors.fonction.message}</p>
-          ) : null}
         </div>
       </div>
 
