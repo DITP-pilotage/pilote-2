@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { ConflictError, ForbiddenError } from '@/framework/errors/AppError'
+import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
+import { Prisma } from '@/generated/prisma/client'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { runAsAdmin, runAsContributor, runAsUser } from '@/test/runAsPrincipal'
@@ -69,7 +70,7 @@ describe.concurrent('createUtilisateur', () => {
   )
 
   it(
-    'rejette un email déjà utilisé (ConflictError)',
+    "throw PrismaClientKnownRequestError P2002 quand l'email est déjà utilisé",
     integrationTest(async () => {
       await fixtures.utilisateur({ email: 'existant@example.gouv.fr' })
       await expect(
@@ -82,7 +83,10 @@ describe.concurrent('createUtilisateur', () => {
             fonction: 'Agent',
           }),
         ),
-      ).rejects.toBeInstanceOf(ConflictError)
+      ).rejects.toMatchObject({
+        constructor: Prisma.PrismaClientKnownRequestError,
+        code: 'P2002',
+      })
     }),
   )
 })
