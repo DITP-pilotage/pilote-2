@@ -2,12 +2,14 @@ import type { Context } from 'hono'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
 import { sealData, unsealData } from 'iron-session'
 
-import type { Provider } from '@/server/auth/oidc'
+import { providerSchema, type Provider } from '@/server/auth/oidc'
 import { serverEnv } from '@/server/env'
 
 const SESSION_COOKIE = 'mb_session'
 const PKCE_COOKIE = 'mb_pkce'
+const LAST_PROVIDER_COOKIE = 'mb_last_provider'
 const COOKIE_PATH = '/auth'
+const LAST_PROVIDER_MAX_AGE_SECONDS = 60 * 60 * 24 * 180
 
 export type SessionPayload = {
   refreshToken: string
@@ -78,4 +80,21 @@ export const readPkce = async (context: Context): Promise<PkcePayload | null> =>
 
 export const clearPkce = (context: Context) => {
   deleteCookie(context, PKCE_COOKIE, { path: COOKIE_PATH })
+}
+
+export const writeLastProvider = (context: Context, provider: Provider) => {
+  setCookie(context, LAST_PROVIDER_COOKIE, provider, {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Lax',
+    path: COOKIE_PATH,
+    maxAge: LAST_PROVIDER_MAX_AGE_SECONDS,
+  })
+}
+
+export const readLastProvider = (context: Context): Provider | null => {
+  const raw = getCookie(context, LAST_PROVIDER_COOKIE)
+  if (!raw) return null
+  const parsed = providerSchema.safeParse(raw)
+  return parsed.success ? parsed.data : null
 }

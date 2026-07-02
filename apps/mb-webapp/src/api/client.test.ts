@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { apiClient, isApiOrigin } from '@/api/client'
 import { tokenStore } from '@/auth/tokenStore'
@@ -87,5 +87,26 @@ describe.sequential('apiClient retry on 401', () => {
     expect(data).toEqual(buildMe())
     expect(meCallCount).toBe(2)
     expect(authHeadersSeen).toEqual(['Bearer stale', 'Bearer fresh'])
+  })
+
+  it("redirige vers /auth/login avec le chemin courant en cas d'échec du refresh", async () => {
+    tokenStore.set('stale')
+    const assignSpy = vi.fn()
+    vi.stubGlobal('window', {
+      ...window,
+      location: { assign: assignSpy, pathname: '/indicateurs', search: '?statut=actif' },
+    })
+    server.use(
+      http.post(bffUrl('/auth/refresh'), () => new HttpResponse(null, { status: 401 })),
+      http.get(apiUrl('/me'), () => new HttpResponse(null, { status: 401 })),
+    )
+
+    await apiClient.get('me').catch(() => {})
+
+    expect(assignSpy).toHaveBeenCalledWith(
+      `/auth/login?redirect=${encodeURIComponent('/indicateurs?statut=actif')}`,
+    )
+
+    vi.unstubAllGlobals()
   })
 })

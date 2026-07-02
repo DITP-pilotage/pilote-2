@@ -10,8 +10,10 @@ import { type Provider, getOidcConfig, providerSchema } from '@/server/auth/oidc
 import {
   clearPkce,
   clearSession,
+  readLastProvider,
   readPkce,
   readSession,
+  writeLastProvider,
   writePkce,
   writeSession,
 } from '@/server/auth/session'
@@ -22,13 +24,27 @@ const SCOPES: Record<Provider, string> = {
   proconnect: 'openid given_name usual_name email uid',
   keycloak: 'openid profile email offline_access',
 }
-const DEFAULT_SESSION_TTL_SECONDS = 60 * 60 * 24 * 30
+
+// ProConnect plafonne le refresh_token à 2h dur depuis la génération du token, sans rotation
+// et sans champ `refresh_expires_in` dans la réponse token endpoint.
+// Sources :
+// - https://partenaires.proconnect.gouv.fr/docs/fournisseur-service/refresh-token
+// - https://github.com/proconnect-gouv/proconnect-documentation
+// Vérifié empiriquement (cf. commentaire PIL-1637) : refresh_expires_in reçu = null,
+// et le fingerprint du refresh_token ne change pas entre plusieurs appels successifs.
+// Keycloak (dev) demande `offline_access` et supporte un refresh long, on garde 30 jours.
+const SESSION_TTL_DEFAULTS_SECONDS: Record<Provider, number> = {
+  proconnect: 60 * 60 * 2,
+  keycloak: 60 * 60 * 24 * 30,
+}
 const ALLOWED_CALLBACK_PARAMS = ['code', 'state', 'iss', 'error', 'error_description'] as const
 const PUBLIC_ORIGIN = new URL(serverEnv.PUBLIC_BASE_URL).origin
 
-const sessionTtlSeconds = (refreshExpiresIn: unknown): number => {
+const sessionTtlSeconds = (provider: Provider, refreshExpiresIn: unknown): number => {
+  const default_ = SESSION_TTL_DEFAULTS_SECONDS[provider]
   const value = Number(refreshExpiresIn)
-  return Number.isFinite(value) && value > 0 ? value : DEFAULT_SESSION_TTL_SECONDS
+  const idpValue = Number.isFinite(value) && value > 0 ? value : default_
+  return Math.min(idpValue, default_)
 }
 
 const SAFE_INTERNAL_PATH = /^\/(?:[^/\\].*)?$/
@@ -100,14 +116,29 @@ const checkUserProvisioned = (accessToken: string) =>
 
 export const authRouter = new Hono()
 
+const resolveLoginProvider = (context: Context): Provider | null => {
+  const queryProvider = context.req.query('provider')
+  if (queryProvider !== undefined) {
+    const parsed = providerSchema.safeParse(queryProvider)
+    return parsed.success ? parsed.data : null
+  }
+  return readLastProvider(context)
+}
+
 authRouter.get('/login', loginLimiter, async (context) => {
-  const provider = providerSchema.parse(context.req.query('provider'))
+  const redirectPath = safeRedirectPath(context.req.query('redirect'))
+  const provider = resolveLoginProvider(context)
+
+  if (!provider) {
+    const target = redirectPath ? `/login?redirect=${encodeURIComponent(redirectPath)}` : '/login'
+    return context.redirect(target)
+  }
+
   const config = await getOidcConfig(provider)
   const codeVerifier = client.randomPKCECodeVerifier()
   const codeChallenge = await client.calculatePKCECodeChallenge(codeVerifier)
   const state = client.randomState()
   const nonce = client.randomNonce()
-  const redirectPath = safeRedirectPath(context.req.query('redirect'))
 
   await writePkce(context, {
     codeVerifier,
@@ -134,7 +165,7 @@ authRouter.get('/callback', async (context) => {
   const pkce = await readPkce(context)
   if (!pkce) {
     logger.error({ event: 'auth.callback.no_pkce' }, 'Callback received without PKCE state')
-    return context.text('Invalid auth state', 400)
+    return context.redirect('/login-error?reason=invalid_state')
   }
   clearPkce(context)
 
@@ -153,7 +184,7 @@ authRouter.get('/callback', async (context) => {
       { event: 'auth.callback.failed', reason: error instanceof Error ? error.message : 'unknown' },
       'OIDC code exchange failed',
     )
-    return context.text('Authentication failed', 401)
+    return context.redirect('/login-error?reason=callback_failed')
   }
 
   const claims = tokens.claims()
@@ -162,7 +193,7 @@ authRouter.get('/callback', async (context) => {
       { event: 'auth.callback.missing_tokens' },
       'Missing claims, refresh token or id token',
     )
-    return context.text('Authentication failed', 401)
+    return context.redirect('/login-error?reason=missing_tokens')
   }
 
   if (!tokens.access_token) {
@@ -170,7 +201,7 @@ authRouter.get('/callback', async (context) => {
       { event: 'auth.callback.missing_access_token' },
       'Missing access token in OIDC response',
     )
-    return context.text('Authentication failed', 401)
+    return context.redirect('/login-error?reason=missing_access_token')
   }
 
   const sub = claims.sub
@@ -182,14 +213,15 @@ authRouter.get('/callback', async (context) => {
     async (provisioned) => {
       if (!provisioned) {
         logger.warn({ event: 'auth.login.user_not_found', sub }, 'PMB user not found')
-        return context.redirect('/login-error')
+        return context.redirect('/login-error?reason=user_not_found')
       }
 
       await writeSession(
         context,
         { refreshToken, sub, idToken, provider: pkce.provider },
-        sessionTtlSeconds(tokens.refresh_expires_in),
+        sessionTtlSeconds(pkce.provider, tokens.refresh_expires_in),
       )
+      writeLastProvider(context, pkce.provider)
 
       logger.debug({ event: 'auth.login.success', provider: pkce.provider }, 'PMB login completed')
 
@@ -203,7 +235,7 @@ authRouter.get('/callback', async (context) => {
         { event: 'auth.callback.me_failed', err: error },
         'Failed to verify user provisioning',
       )
-      return context.text('Authentication failed', 502)
+      return context.redirect('/login-error?reason=me_failed')
     },
   )
 })
@@ -245,7 +277,7 @@ authRouter.post('/refresh', refreshLimiter, async (context) => {
       idToken: tokens.id_token ?? session.idToken,
       provider: session.provider,
     },
-    sessionTtlSeconds(tokens.refresh_expires_in),
+    sessionTtlSeconds(session.provider, tokens.refresh_expires_in),
   )
 
   logger.debug({ event: 'auth.refresh.success' }, 'Refresh succeeded')
