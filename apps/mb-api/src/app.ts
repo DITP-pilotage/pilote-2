@@ -16,6 +16,7 @@ import { meRoutes } from '@/me/routes'
 import { panierRoutes } from '@/panier/routes'
 import { referentielRoutes } from '@/referentiel/routes'
 import { objectifIndicateurIndividuRoutes } from '@/objectifIndicateurIndividu/routes'
+import { utilisateurRoutes } from '@/utilisateur/routes'
 import { valeurAvancementRoutes } from '@/valeurAvancement/routes'
 import { whoamiRoutes } from '@/whoami/routes'
 
@@ -45,6 +46,7 @@ app.route('/', niveauConfianceRoutes)
 app.route('/', meRoutes)
 app.route('/', whoamiRoutes)
 app.route('/', apiKeyRoutes)
+app.route('/', utilisateurRoutes)
 
 app.doc('/openapi.json', {
   openapi: '3.0.0',
