@@ -13,13 +13,13 @@ dbt run --select barometre
 # Exécuter les datajobs [docker]
 FULL_DJ=false docker compose run --rm -e FULL_DJ pilote_datajobs
 ## [local]
-FULL_DJ=false uv run /bin/bash scripts/run_datajobs.sh
+FULL_DJ=false uv run python scripts/__main__.py
 
 
 # Exécuter les datajobs en mode FULL_DJ [docker]
 FULL_DJ=true docker compose run --rm -e FULL_DJ pilote_datajobs
 ## [local]
-FULL_DJ=true uv run /bin/bash scripts/run_datajobs.sh
+FULL_DJ=true uv run python scripts/__main__.py
 
 # Exécuter un script datajob unique [docker]
 docker compose run --rm pilote_datajobs scripts/2_seed_ppg_metadata.sh
@@ -36,4 +36,4 @@ uv run /bin/bash scripts/2_seed_ppg_metadata.sh
 Etapes à réaliser sur Scalingo:
 
 - se connecter à un one-off de l'environnement souhaité sur l'app des datajobs
-- *datajobs*: exécuter `/bin/bash scripts/run_datajobs.sh`
+- *datajobs*: exécuter `uv run python3 scripts/__main__.py`

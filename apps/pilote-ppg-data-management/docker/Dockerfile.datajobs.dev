@@ -13,6 +13,6 @@ COPY . /app/data_management/
 
 RUN uv python install
 
-ENTRYPOINT ["uv","run", "/bin/bash"]
+ENTRYPOINT ["uv","run", "python"]
 
-CMD ["scripts/run_datajobs.sh"]
+CMD ["scripts/__main__.py"]

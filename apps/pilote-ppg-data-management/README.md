@@ -4,7 +4,7 @@ Ce répertoire administre les pipelines d'import, de chargement et transformatio
 ## Description
 
 
-La mise à jour des données de la datafactory se fait automatiquement via l'exécution du script `scripts/run_datajobs.sh`. La fréquence de mise à jour est définie par le job cron de l'app Scalingo (exemple [pour la dev](https://dashboard.scalingo.com/apps/osc-secnum-fr1/dev-datajobs/resources)).
+La mise à jour des données de la datafactory se fait automatiquement via l'exécution du script `scripts/__main__.py`. La fréquence de mise à jour est définie par le job cron de l'app Scalingo (exemple [pour la dev](https://dashboard.scalingo.com/apps/osc-secnum-fr1/dev-datajobs/resources)).
 
 Les modèles de données *dbt* sont dans le dossier [models/](models/). La doc *dbt* est générée via `uv run dbt docs generate`.
 
@@ -98,7 +98,7 @@ docker compose run pilote_scripts scripts/1_dump_dfakto.sh
 # and so on for all the scripts
 ```
 
-Pour exécuter les datajobs via Docker, voir [run_datajobs_docker.sh](./run_datajobs_docker.sh). Il est aussi possible de n'exécuter que les datajobs de production avec la variable d'environnement :
+Il est aussi possible de n'exécuter que les datajobs de production avec la variable d'environnement :
 
 ```sh
 # Force to run datajobs as in specific env. Leave "" to ignore
