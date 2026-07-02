@@ -2,9 +2,10 @@ import { describe, expect, it } from 'vitest'
 
 import { listApiKeys } from '@/apiKey/queries/listApiKeys'
 import { parseIsoDate } from '@/framework/date'
+import { ForbiddenError } from '@/framework/errors/AppError'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { runAsAdmin } from '@/test/runAsPrincipal'
+import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
 
 const ADMIN_ID = '00000000-0000-0000-0000-0000000000b1'
 
@@ -35,6 +36,15 @@ describe.concurrent('listApiKeys', () => {
       expect(byId.get(revoked.id)?.status).toBe('revoked')
       expect(byId.get(expired.id)?.status).toBe('expired')
       expect(JSON.stringify(items)).not.toContain('keyHash')
+    }),
+  )
+
+  it(
+    'rejette une clé CONTRIBUTOR (ForbiddenError)',
+    integrationTest(async () => {
+      await expect(runAsContributor(ADMIN_ID, () => listApiKeys())).rejects.toBeInstanceOf(
+        ForbiddenError,
+      )
     }),
   )
 })
