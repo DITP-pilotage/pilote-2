@@ -1,18 +1,18 @@
 descente:
 	(cd ../pilote-ppg &&\
 	pnpm i) &&\
-	uv run bash pilote-ppg/scripts/daily/romain.sh
+	UV_ENV_FILE=.env uv run bash ../pilote-ppg/scripts/daily/romain.sh
 
 docker-up:
 	cd ../pilote-ppg &&\
 	docker compose up postgres
 
 docs:
-	pipenv run dbt docs generate && pipenv run dbt docs serve --port 8081
+	UV_ENV_FILE=.env uv run dbt docs generate && uv run dbt docs serve --port 8081
 
 lint-sql:
-	uv run sqlfluff fix models/ || \
-	uv run sqlfluff lint models/
+	UV_ENV_FILE=.env uv run sqlfluff fix models/ || \
+	UV_ENV_FILE=.env uv run sqlfluff lint models/
 
 
 tunnel-dev:
