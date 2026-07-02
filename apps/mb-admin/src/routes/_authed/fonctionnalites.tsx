@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { BarChart3, FolderTree } from 'lucide-react'
+import { BarChart3, FolderTree, KeyRound } from 'lucide-react'
 
 import { BarCard } from '@/components/ui/BarCard'
 import { FadeIn } from '@/components/ui/FadeIn'
@@ -28,6 +28,14 @@ function FeaturesComponent() {
             title="Gérer les référentiels"
             description="Créer ou modifier un référentiel et ses individus."
             onClick={() => void navigate({ to: '/referentiels' })}
+          />
+        </FadeIn>
+        <FadeIn delayMs={180}>
+          <BarCard
+            icon={KeyRound}
+            title="Gérer les clés API"
+            description="Créer, lister et révoquer les clés API (réservé aux clés ADMIN)."
+            onClick={() => void navigate({ to: '/api-keys' })}
           />
         </FadeIn>
       </div>
