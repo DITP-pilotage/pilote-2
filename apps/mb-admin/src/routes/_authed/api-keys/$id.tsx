@@ -1,9 +1,11 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
+import { useState } from 'react'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { PrincipalPermissions } from '@/components/PrincipalPermissions'
+import { TabNav } from '@/components/ui/TabNav'
 import { apiKeyQueryOptions } from '@/queries/apiKeys'
 import { principalPermissionsQueryOptions } from '@/queries/permissions'
 
@@ -26,6 +28,7 @@ const STATUS_LABEL: Record<string, string> = {
 function ApiKeyDetailComponent() {
   const { id } = Route.useParams()
   const { data: apiKey } = useSuspenseQuery(apiKeyQueryOptions(id))
+  const [tab, setTab] = useState<'identite' | 'permissions'>('identite')
 
   return (
     <div>
@@ -43,31 +46,42 @@ function ApiKeyDetailComponent() {
         subtitle={<span className="font-mono">{apiKey.prefix}…</span>}
       />
 
-      <div className="mx-auto max-w-2xl">
-        <div className="mb-8 grid grid-cols-2 gap-4 rounded-xl border border-border bg-surface p-6 text-sm">
-          <div>
-            <span className="block text-text-muted">Rôle</span>
-            <span className="text-text">{apiKey.role}</span>
-          </div>
-          <div>
-            <span className="block text-text-muted">Statut</span>
-            <span className="text-text">{STATUS_LABEL[apiKey.status] ?? apiKey.status}</span>
-          </div>
-          <div>
-            <span className="block text-text-muted">Créée le</span>
-            <span className="text-text">
-              {new Date(apiKey.createdAt).toLocaleDateString('fr-FR')}
-            </span>
-          </div>
-          <div>
-            <span className="block text-text-muted">Expire le</span>
-            <span className="text-text">
-              {apiKey.expiresAt ? new Date(apiKey.expiresAt).toLocaleDateString('fr-FR') : '—'}
-            </span>
-          </div>
-        </div>
+      <TabNav
+        tabs={[
+          { key: 'identite', label: 'Identité' },
+          { key: 'permissions', label: 'Permissions' },
+        ]}
+        active={tab}
+        onChange={(key) => setTab(key as 'identite' | 'permissions')}
+      />
 
-        <PrincipalPermissions principalId={id} />
+      <div className="mx-auto max-w-2xl">
+        {tab === 'identite' ? (
+          <div className="grid grid-cols-2 gap-4 rounded-xl border border-border bg-surface p-6 text-sm">
+            <div>
+              <span className="block text-text-muted">Rôle</span>
+              <span className="text-text">{apiKey.role}</span>
+            </div>
+            <div>
+              <span className="block text-text-muted">Statut</span>
+              <span className="text-text">{STATUS_LABEL[apiKey.status] ?? apiKey.status}</span>
+            </div>
+            <div>
+              <span className="block text-text-muted">Créée le</span>
+              <span className="text-text">
+                {new Date(apiKey.createdAt).toLocaleDateString('fr-FR')}
+              </span>
+            </div>
+            <div>
+              <span className="block text-text-muted">Expire le</span>
+              <span className="text-text">
+                {apiKey.expiresAt ? new Date(apiKey.expiresAt).toLocaleDateString('fr-FR') : '—'}
+              </span>
+            </div>
+          </div>
+        ) : (
+          <PrincipalPermissions principalId={id} />
+        )}
       </div>
     </div>
   )

@@ -14,6 +14,11 @@ import { principalPermissionsQueryOptions } from '@/queries/permissions'
 
 const ACTIONS: PermissionActionValue[] = ['READ', 'WRITE']
 
+const ACTION_LABEL: Record<PermissionActionValue, string> = {
+  READ: 'Lecture',
+  WRITE: 'Écriture',
+}
+
 type DirectRow = { publicId: string; nom: string; actions: PermissionActionValue[] }
 
 export function PrincipalPermissions({ principalId }: { principalId: string }) {
@@ -111,7 +116,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
                         key={action}
                         type="button"
                         disabled={disabled}
-                        title={impliedRead ? 'Lecture implicite (WRITE ⇒ READ)' : undefined}
+                        title={impliedRead ? 'Lecture implicite (Écriture ⇒ Lecture)' : undefined}
                         onClick={() => toggle(resourceType, row.publicId, action, active)}
                         className={clsxm(
                           'rounded-md border px-2 py-1 text-xs font-medium transition-colors',
@@ -122,7 +127,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
                           disabled && 'cursor-not-allowed opacity-50',
                         )}
                       >
-                        {action}
+                        {ACTION_LABEL[action]}
                       </button>
                     )
                   })}
