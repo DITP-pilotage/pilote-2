@@ -1,7 +1,7 @@
 import type { PermissionActionValue, PermissionResourceType } from '@pilote/mb-shared/permission'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { Lock, Plus, Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { type ReactNode, useState } from 'react'
 
 import { grantPermission, revokePermission } from '@/api/permissions'
 import { ResourceSearchModal, type ResourceHit } from '@/components/ResourceSearchModal'
@@ -79,6 +79,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
     title: string,
     resourceType: PermissionResourceType,
     rows: DirectRow[],
+    extraForRow?: (publicId: string) => ReactNode,
   ) => (
     <div className="mb-6">
       <div className="mb-2 flex items-center justify-between">
@@ -101,46 +102,50 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
         <ul className="divide-y divide-border rounded-lg border border-border">
           {rows.map((row) => {
             const hasWrite = row.actions.includes('WRITE')
+            const extra = extraForRow?.(row.publicId)
             return (
-              <li key={row.publicId} className="flex items-center gap-3 px-3 py-2.5">
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm text-text">{row.nom}</span>
-                  <span className="font-mono text-xs text-text-muted">{row.publicId}</span>
-                </span>
-                <span className="flex items-center gap-1.5">
-                  {ACTIONS.map((action) => {
-                    const active = row.actions.includes(action)
-                    const impliedRead = action === 'READ' && hasWrite
-                    return (
-                      <button
-                        key={action}
-                        type="button"
-                        disabled={disabled}
-                        title={impliedRead ? 'Lecture implicite (Écriture ⇒ Lecture)' : undefined}
-                        onClick={() => toggle(resourceType, row.publicId, action, active)}
-                        className={clsxm(
-                          'rounded-md border px-2 py-1 text-xs font-medium transition-colors',
-                          active
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-border bg-surface text-text-muted hover:border-primary',
-                          impliedRead && !active && 'border-dashed opacity-70',
-                          disabled && 'cursor-not-allowed opacity-50',
-                        )}
-                      >
-                        {ACTION_LABEL[action]}
-                      </button>
-                    )
-                  })}
-                  <button
-                    type="button"
-                    disabled={disabled}
-                    onClick={() => removeResource(resourceType, row.publicId)}
-                    className="ml-1 text-text-subtle hover:text-accent disabled:opacity-50"
-                    aria-label="Retirer la ressource"
-                  >
-                    <Trash2 className="size-4" />
-                  </button>
-                </span>
+              <li key={row.publicId} className="px-3 py-2.5">
+                <div className="flex items-center gap-3">
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm text-text">{row.nom}</span>
+                    <span className="font-mono text-xs text-text-muted">{row.publicId}</span>
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    {ACTIONS.map((action) => {
+                      const active = row.actions.includes(action)
+                      const impliedRead = action === 'READ' && hasWrite
+                      return (
+                        <button
+                          key={action}
+                          type="button"
+                          disabled={disabled}
+                          title={impliedRead ? 'Lecture implicite (Écriture ⇒ Lecture)' : undefined}
+                          onClick={() => toggle(resourceType, row.publicId, action, active)}
+                          className={clsxm(
+                            'rounded-md border px-2 py-1 text-xs font-medium transition-colors',
+                            active
+                              ? 'border-primary bg-primary text-primary-foreground'
+                              : 'border-border bg-surface text-text-muted hover:border-primary',
+                            impliedRead && !active && 'border-dashed opacity-70',
+                            disabled && 'cursor-not-allowed opacity-50',
+                          )}
+                        >
+                          {ACTION_LABEL[action]}
+                        </button>
+                      )
+                    })}
+                    <button
+                      type="button"
+                      disabled={disabled}
+                      onClick={() => removeResource(resourceType, row.publicId)}
+                      className="ml-1 text-text-subtle hover:text-accent disabled:opacity-50"
+                      aria-label="Retirer la ressource"
+                    >
+                      <Trash2 className="size-4" />
+                    </button>
+                  </span>
+                </div>
+                {extra}
               </li>
             )
           })}
@@ -148,6 +153,33 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
       )}
     </div>
   )
+
+  const heritesByPanier = new Map<string, typeof data.indicateursHerites>()
+  for (const herite of data.indicateursHerites) {
+    const list = heritesByPanier.get(herite.viaPanierPublicId) ?? []
+    list.push(herite)
+    heritesByPanier.set(herite.viaPanierPublicId, list)
+  }
+
+  const renderHeritesForPanier = (panierPublicId: string): ReactNode => {
+    const herites = heritesByPanier.get(panierPublicId)
+    if (!herites || herites.length === 0) return null
+    return (
+      <ul className="mt-2 space-y-1.5 border-l-2 border-dashed border-border pl-3">
+        {herites.map((herite) => (
+          <li
+            key={herite.publicId}
+            className="flex items-center gap-2 text-text-subtle"
+            title="Lecture héritée via ce panier"
+          >
+            <span className="min-w-0 flex-1 truncate text-xs">{herite.nom}</span>
+            <span className="shrink-0 font-mono text-xs">{herite.publicId}</span>
+            <span className="shrink-0 text-xs italic">Lecture héritée</span>
+          </li>
+        ))}
+      </ul>
+    )
+  }
 
   const excludedPaniers = data.paniers.map((p) => p.publicId)
   const excludedIndicateurs = [
@@ -202,30 +234,8 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
         />
       ) : null}
 
-      {renderSection('Paniers', 'PANIER', data.paniers)}
       {renderSection('Indicateurs', 'INDICATEUR', data.indicateurs)}
-
-      {data.indicateursHerites.length > 0 ? (
-        <div className="mb-2">
-          <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-text-subtle">
-            Indicateurs hérités
-          </h3>
-          <ul className="divide-y divide-border rounded-lg border border-dashed border-border">
-            {data.indicateursHerites.map((row) => (
-              <li
-                key={row.publicId}
-                className="flex items-center gap-3 px-3 py-2.5 text-text-subtle"
-              >
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm">{row.nom}</span>
-                  <span className="font-mono text-xs">{row.publicId}</span>
-                </span>
-                <span className="text-xs italic">hérité · via {row.viaPanierPublicId}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
+      {renderSection('Paniers', 'PANIER', data.paniers, renderHeritesForPanier)}
 
       {modalType ? (
         <ResourceSearchModal
