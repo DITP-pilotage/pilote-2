@@ -3,6 +3,7 @@ import {
   grantPermissionBodySchema,
   listPrincipalPermissionsQuerySchema,
   principalPermissionsApiModelSchema,
+  revokePermissionQuerySchema,
 } from '@pilote/mb-shared/permission'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
@@ -11,6 +12,7 @@ import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { erreur400, erreur403, erreur404, erreur409 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { grantPermission } from '@/permission/commands/grantPermission'
+import { revokePermission } from '@/permission/commands/revokePermission'
 import { getPrincipalPermissions } from '@/permission/queries/getPrincipalPermissions'
 
 const PrincipalPermissionsApiModelSchema =
@@ -67,6 +69,29 @@ const grantPermissionRoute = createRoute({
   },
 })
 
+// --- DELETE /permissions -----------------------------------------------------
+
+const revokePermissionRoute = createRoute({
+  method: 'delete',
+  path: '/permissions',
+  tags: ['Permission', 'Admin'],
+  summary: 'Retirer une permission à un principal',
+  description:
+    'Réservé aux clés API de rôle `ADMIN`. Retire une action précise si `action` est fournie, sinon ' +
+    'toutes les actions de la ressource pour ce principal. **Idempotent**. Retourne l’état à jour.',
+  middleware: [requireAuthentication],
+  request: { query: revokePermissionQuerySchema },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: PrincipalPermissionsApiModelSchema } },
+      description: 'Permission retirée, état à jour',
+    },
+    400: erreur400,
+    403: erreur403,
+    404: erreur404,
+  },
+})
+
 export const permissionRoutes = new OpenAPIHono()
 
 permissionRoutes.openapi(getPermissionsRoute, async (context) => {
@@ -81,6 +106,15 @@ permissionRoutes.openapi(getPermissionsRoute, async (context) => {
 permissionRoutes.openapi(grantPermissionRoute, async (context) => {
   const body = context.req.valid('json')
   return (await withTransaction(async () => grantPermission(body))).match(
+    (data) =>
+      jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
+permissionRoutes.openapi(revokePermissionRoute, async (context) => {
+  const query = context.req.valid('query')
+  return (await withTransaction(async () => revokePermission(query))).match(
     (data) =>
       jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
     never,
