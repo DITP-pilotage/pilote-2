@@ -100,7 +100,13 @@ function ApiKeysListComponent() {
             {items.map((apiKey) => (
               <Table.Row key={apiKey.id}>
                 <Table.Cell>
-                  <span className="font-semibold">{apiKey.label}</span>
+                  <Link
+                    to="/api-keys/$id"
+                    params={{ id: apiKey.id }}
+                    className="font-semibold text-primary hover:underline"
+                  >
+                    {apiKey.label}
+                  </Link>
                 </Table.Cell>
                 <Table.Cell>
                   <span className="font-mono text-text-muted">{apiKey.prefix}…</span>

@@ -160,7 +160,9 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-text">Permissions</h2>
         {isProd ? (
-          <span className={clsxm('text-xs font-medium', locked ? 'text-accent' : 'text-text-muted')}>
+          <span
+            className={clsxm('text-xs font-medium', locked ? 'text-accent' : 'text-text-muted')}
+          >
             {locked ? 'Édition verrouillée (PROD)' : 'Édition déverrouillée (PROD)'}
           </span>
         ) : null}
@@ -176,7 +178,8 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
             size="sm"
             type="button"
             onClick={() => {
-              if (window.confirm('Déverrouiller l’édition des permissions en PRODUCTION ?')) unlock()
+              if (window.confirm('Déverrouiller l’édition des permissions en PRODUCTION ?'))
+                unlock()
             }}
             className="border-accent bg-accent text-primary-foreground hover:bg-accent"
           >
@@ -204,7 +207,10 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           </h3>
           <ul className="divide-y divide-border rounded-lg border border-dashed border-border">
             {data.indicateursHerites.map((row) => (
-              <li key={row.publicId} className="flex items-center gap-3 px-3 py-2.5 text-text-subtle">
+              <li
+                key={row.publicId}
+                className="flex items-center gap-3 px-3 py-2.5 text-text-subtle"
+              >
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-sm">{row.nom}</span>
                   <span className="font-mono text-xs">{row.publicId}</span>

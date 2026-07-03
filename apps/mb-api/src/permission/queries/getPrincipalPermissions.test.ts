@@ -35,9 +35,7 @@ describe.concurrent('getPrincipalPermissions', () => {
       const result = await runAsAdmin(CALLER_ID, () => getPrincipalPermissions(target.id))
       const model = result._unsafeUnwrap()
 
-      expect(model.paniers).toEqual([
-        { publicId: pan.publicId, nom: 'Panier', actions: ['READ'] },
-      ])
+      expect(model.paniers).toEqual([{ publicId: pan.publicId, nom: 'Panier', actions: ['READ'] }])
       expect(model.indicateurs).toEqual([
         { publicId: ind1.publicId, nom: 'Indic 1', actions: ['WRITE'] },
       ])
@@ -92,9 +90,7 @@ describe.concurrent('getPrincipalPermissions', () => {
   it(
     'rejette un principal inconnu',
     integrationTest(async () => {
-      await expect(
-        runAsAdmin(CALLER_ID, () => getPrincipalPermissions(uuidv7())),
-      ).rejects.toThrow()
+      await expect(runAsAdmin(CALLER_ID, () => getPrincipalPermissions(uuidv7()))).rejects.toThrow()
     }),
   )
 })

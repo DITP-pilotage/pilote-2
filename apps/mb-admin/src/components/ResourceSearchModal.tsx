@@ -48,7 +48,6 @@ export function ResourceSearchModal({
 
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-subtle" />
-          {/* eslint-disable-next-line jsx-a11y/no-autofocus -- focus attendu à l'ouverture de la modale */}
           <input
             autoFocus
             placeholder={`Rechercher un ${label} par nom ou identifiant…`}
