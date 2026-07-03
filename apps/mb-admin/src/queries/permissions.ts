@@ -1,3 +1,4 @@
+import type { PermissionResourceType } from '@pilote/mb-shared/permission'
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query'
 
 import { fetchIndicateurs } from '@/api/indicateurs'
@@ -10,21 +11,23 @@ export const principalPermissionsQueryOptions = (principalId: string) =>
     queryFn: () => fetchPrincipalPermissions(principalId),
   })
 
-export const paniersSearchInfiniteQueryOptions = (recherche: string) =>
+// Recherche unifiée panier/indicateur : normalise les deux listes vers une page
+// `{ publicId, nom }[]`, ce qui évite l'union de types incompatibles côté hook.
+export const resourceSearchInfiniteQueryOptions = (
+  resourceType: PermissionResourceType,
+  recherche: string,
+) =>
   infiniteQueryOptions({
-    queryKey: ['paniers-search', { recherche }],
-    queryFn: ({ pageParam }) =>
-      fetchPaniers({ recherche: recherche || undefined, cursor: pageParam ?? undefined }),
-    initialPageParam: undefined as string | undefined,
-    getNextPageParam: (lastPage) =>
-      lastPage.pagination.hasMore ? (lastPage.pagination.cursor ?? undefined) : undefined,
-  })
-
-export const indicateursSearchInfiniteQueryOptions = (recherche: string) =>
-  infiniteQueryOptions({
-    queryKey: ['indicateurs-search', { recherche }],
-    queryFn: ({ pageParam }) =>
-      fetchIndicateurs({ recherche: recherche || undefined, cursor: pageParam ?? undefined }),
+    queryKey: ['resource-search', resourceType, { recherche }],
+    queryFn: async ({ pageParam }) => {
+      const params = { recherche: recherche || undefined, cursor: pageParam ?? undefined }
+      const page =
+        resourceType === 'PANIER' ? await fetchPaniers(params) : await fetchIndicateurs(params)
+      return {
+        hits: page.items.map((item) => ({ publicId: item.id, nom: item.nom })),
+        pagination: page.pagination,
+      }
+    },
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) =>
       lastPage.pagination.hasMore ? (lastPage.pagination.cursor ?? undefined) : undefined,
