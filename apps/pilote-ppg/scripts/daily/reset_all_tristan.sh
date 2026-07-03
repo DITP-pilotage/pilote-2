@@ -15,4 +15,4 @@ bash scripts/ddp_restore.sh
 bash scripts/anonymisation_utilisateurs.sh
 echo ">> Run dj prod"
 cd ../pilote-ppg-data-management
-FULL_DJ=false pipenv run /bin/bash scripts/run_datajobs.sh
+FULL_DJ=false UV_ENV_FILE=.env uv run /bin/bash scripts/__main__.py
