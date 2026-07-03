@@ -77,6 +77,17 @@ export const registerErrorHandler = (app: OpenAPIHono): void => {
       )
     }
 
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      logger.warn({ method, url, prismaCode: error.code }, error.message)
+      return context.json(
+        {
+          code: 'UNIQUE_CONSTRAINT_VIOLATION',
+          message: 'Une ressource avec ces valeurs existe déjà',
+        },
+        409,
+      )
+    }
+
     logger.error({ method, url, err: error }, 'Unhandled error')
     return context.json(
       {

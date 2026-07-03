@@ -28,6 +28,7 @@
       "@/widget/*": ["./src/widget/*"],
       "@/panier/*": ["./src/panier/*"],
       "@/shared/*": ["./src/shared/*"],
+      "@/utilisateur/*": ["./src/utilisateur/*"],
       "@/whoami/*": ["./src/whoami/*"],
       "@/generated/*": ["./src/generated/*"],
       "@/test/*": ["./src/test/*"],

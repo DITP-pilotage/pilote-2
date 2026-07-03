@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/Button'
+import { Input } from '@/components/ui/Input'
 import { useAppConfig } from '@/context/AppConfigContext'
 import { clsxm } from '@/lib/clsxm'
 
@@ -40,15 +41,13 @@ export function ApiKeyForm({
     <form onSubmit={(event) => void handleSubmit(onSubmit)(event)} className="mx-auto max-w-2xl">
       <div className="rounded-xl border border-border bg-surface p-6">
         <div className="mb-5">
-          <label className="mb-1.5 block text-xs font-semibold">
-            Label <span className="text-accent">*</span>
-          </label>
-          <input
-            {...register('label')}
+          <Input
+            label="Label"
+            required
             placeholder="Intégration SI-X"
-            className="w-full rounded-md border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none"
+            error={errors.label?.message}
+            {...register('label')}
           />
-          {errors.label ? <p className="mt-1 text-xs text-accent">{errors.label.message}</p> : null}
         </div>
 
         <div className="mb-5">
@@ -63,11 +62,11 @@ export function ApiKeyForm({
         </div>
 
         <div className="mb-2">
-          <label className="mb-1.5 block text-xs font-semibold">Expiration (optionnelle)</label>
-          <input
+          <Input
+            label="Expiration (optionnelle)"
             type="date"
+            className="w-56"
             {...register('expiresAt')}
-            className="w-56 rounded-md border border-border px-3 py-2 text-sm focus:border-primary focus:outline-none"
           />
         </div>
       </div>
