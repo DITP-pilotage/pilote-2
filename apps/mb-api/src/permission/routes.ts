@@ -15,8 +15,9 @@ import { grantPermission } from '@/permission/commands/grantPermission'
 import { revokePermission } from '@/permission/commands/revokePermission'
 import { getPrincipalPermissions } from '@/permission/queries/getPrincipalPermissions'
 
-const PrincipalPermissionsApiModelSchema =
-  principalPermissionsApiModelSchema.openapi('PrincipalPermissionsApiModel')
+const PrincipalPermissionsApiModelSchema = principalPermissionsApiModelSchema.openapi(
+  'PrincipalPermissionsApiModel',
+)
 const GrantPermissionBodySchema = grantPermissionBodySchema.openapi('GrantPermissionBody')
 
 // --- GET /permissions --------------------------------------------------------
@@ -55,7 +56,10 @@ const grantPermissionRoute = createRoute({
     'sans doublon. Retourne les permissions à jour du principal.',
   middleware: [requireAuthentication],
   request: {
-    body: { content: { 'application/json': { schema: GrantPermissionBodySchema } }, required: true },
+    body: {
+      content: { 'application/json': { schema: GrantPermissionBodySchema } },
+      required: true,
+    },
   },
   responses: {
     200: {

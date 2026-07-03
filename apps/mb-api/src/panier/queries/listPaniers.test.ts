@@ -200,7 +200,7 @@ describe.concurrent('listPaniers', () => {
   )
 
   it(
-    "un principal non-ADMIN ne voit pas un panier PRIVÉ sans permission",
+    'un principal non-ADMIN ne voit pas un panier PRIVÉ sans permission',
     integrationTest(async () => {
       const pubId = testPanierId()
       await fixtures.panier({ publicId: pubId, visibilite: 'PRIVE' })
