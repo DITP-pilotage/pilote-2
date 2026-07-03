@@ -7,11 +7,11 @@ import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { UtilisateurForm, type UtilisateurFormValues } from '@/components/UtilisateurForm'
 import { extractApiError } from '@/lib/apiError'
-import { utilisateursQueryOptions } from '@/queries/utilisateurs'
+import { utilisateurQueryOptions } from '@/queries/utilisateurs'
 
 export const Route = createFileRoute('/_authed/utilisateurs/$id')({
-  loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(utilisateursQueryOptions())
+  loader: async ({ context, params }) => {
+    await context.queryClient.ensureQueryData(utilisateurQueryOptions(params.id))
   },
   component: EditUtilisateurComponent,
 })
@@ -22,10 +22,7 @@ function EditUtilisateurComponent() {
   const queryClient = useQueryClient()
   const [error, setError] = useState<string | null>(null)
 
-  const { data: utilisateur } = useSuspenseQuery({
-    ...utilisateursQueryOptions(),
-    select: (items) => items.find((u) => u.id === id),
-  })
+  const { data: utilisateur } = useSuspenseQuery(utilisateurQueryOptions(id))
 
   const mutation = useMutation({
     mutationFn: (values: UtilisateurFormValues) =>

@@ -1,25 +1,26 @@
 import type { UtilisateurApiModel } from '@pilote/mb-shared/utilisateur'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Plus } from 'lucide-react'
+import { Plus, Search } from 'lucide-react'
+import { useState } from 'react'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Table } from '@/components/ui/Table'
-import { utilisateursQueryOptions } from '@/queries/utilisateurs'
+import { utilisateursInfiniteQueryOptions } from '@/queries/utilisateurs'
 import { session } from '@/session'
 
 export const Route = createFileRoute('/_authed/utilisateurs/')({
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(utilisateursQueryOptions())
+    await context.queryClient.ensureInfiniteQueryData(utilisateursInfiniteQueryOptions(''))
   },
   component: UtilisateursListComponent,
 })
 
 const STATUS_LABEL: Record<UtilisateurApiModel['status'], string> = {
-  en_attente: 'En attente',
+  en_attente: 'Jamais connecté',
   actif: 'Actif',
 }
 
@@ -35,7 +36,10 @@ const PROVIDER_LABEL: Record<UtilisateurApiModel['providers'][number], string> =
 
 function UtilisateursListComponent() {
   const isProd = session.current?.environment === 'prod'
-  const { data: items } = useSuspenseQuery(utilisateursQueryOptions())
+  const [recherche, setRecherche] = useState('')
+  const query = useInfiniteQuery(utilisateursInfiniteQueryOptions(recherche))
+  const items = query.data?.pages.flatMap((page) => page.items) ?? []
+  const total = query.data?.pages[0]?.total ?? 0
 
   return (
     <div>
@@ -49,7 +53,7 @@ function UtilisateursListComponent() {
         title="Utilisateurs"
         subtitle={
           <>
-            {items.length} utilisateur{items.length > 1 ? 's' : ''} · environnement{' '}
+            {total} utilisateur{total > 1 ? 's' : ''} · environnement{' '}
             <b className={isProd ? 'text-accent' : undefined}>{session.current?.environment}</b>
           </>
         }
@@ -62,7 +66,17 @@ function UtilisateursListComponent() {
         }
       />
 
-      {items.length === 0 ? (
+      <div className="mb-4 flex max-w-sm items-center gap-2 rounded-md border border-border px-3 py-2 text-sm">
+        <Search className="size-4 text-text-subtle" />
+        <input
+          value={recherche}
+          onChange={(event) => setRecherche(event.target.value)}
+          placeholder="Rechercher un utilisateur…"
+          className="w-full bg-transparent focus:outline-none"
+        />
+      </div>
+
+      {items.length === 0 && !query.isLoading ? (
         <EmptyState
           title="Aucun utilisateur"
           description="Créez votre premier utilisateur pré-provisionné."
@@ -130,6 +144,19 @@ function UtilisateursListComponent() {
           </Table.Body>
         </Table>
       )}
+
+      {query.hasNextPage ? (
+        <div className="mt-4 flex justify-center">
+          <Button
+            variant="secondary"
+            type="button"
+            disabled={query.isFetchingNextPage}
+            onClick={() => void query.fetchNextPage()}
+          >
+            {query.isFetchingNextPage ? 'Chargement…' : 'Charger plus'}
+          </Button>
+        </div>
+      ) : null}
     </div>
   )
 }

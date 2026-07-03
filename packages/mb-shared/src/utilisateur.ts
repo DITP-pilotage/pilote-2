@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { createPaginatedApiListSchema, listQuerySchema } from './pagination'
+
 export const providerTypeSchema = z.enum(['proconnect', 'keycloak'])
 export type ProviderTypeValue = z.infer<typeof providerTypeSchema>
 
@@ -7,7 +9,7 @@ export const utilisateurStatusSchema = z.enum(['en_attente', 'actif'])
 export type UtilisateurStatus = z.infer<typeof utilisateurStatusSchema>
 
 export const utilisateurApiModelSchema = z.object({
-  id: z.string().describe("Identifiant unique de l'utilisateur (UUID)."),
+  id: z.string().uuid().describe("Identifiant unique de l'utilisateur (UUID)."),
   email: z.string().email().describe('Adresse email (clé du linking OIDC, immuable).'),
   nom: z.string().describe('Nom.'),
   prenom: z.string().describe('Prénom.'),
@@ -24,8 +26,11 @@ export const utilisateurApiModelSchema = z.object({
 })
 export type UtilisateurApiModel = z.infer<typeof utilisateurApiModelSchema>
 
-export const utilisateurListApiModelSchema = z.array(utilisateurApiModelSchema)
+export const utilisateurListApiModelSchema = createPaginatedApiListSchema(utilisateurApiModelSchema)
 export type UtilisateurListApiModel = z.infer<typeof utilisateurListApiModelSchema>
+
+export const listUtilisateursQuerySchema = listQuerySchema
+export type ListUtilisateursQuery = z.infer<typeof listUtilisateursQuerySchema>
 
 export const createUtilisateurBodySchema = z.object({
   email: z.string().email().describe('Adresse email (clé du linking OIDC).'),

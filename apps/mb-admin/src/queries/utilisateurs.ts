@@ -1,6 +1,16 @@
-import { queryOptions } from '@tanstack/react-query'
+import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query'
 
-import { fetchUtilisateurs } from '@/api/utilisateurs'
+import { fetchUtilisateurById, fetchUtilisateurs } from '@/api/utilisateurs'
 
-export const utilisateursQueryOptions = () =>
-  queryOptions({ queryKey: ['utilisateurs'], queryFn: fetchUtilisateurs })
+export const utilisateursInfiniteQueryOptions = (recherche: string) =>
+  infiniteQueryOptions({
+    queryKey: ['utilisateurs', { recherche }],
+    queryFn: ({ pageParam }) =>
+      fetchUtilisateurs({ recherche: recherche || undefined, cursor: pageParam ?? undefined }),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) =>
+      lastPage.pagination.hasMore ? (lastPage.pagination.cursor ?? undefined) : undefined,
+  })
+
+export const utilisateurQueryOptions = (id: string) =>
+  queryOptions({ queryKey: ['utilisateur', id], queryFn: () => fetchUtilisateurById(id) })
