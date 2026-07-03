@@ -4,7 +4,7 @@ import {
 } from '@pilote/mb-shared/indicateur'
 import { ResultAsync } from 'neverthrow'
 
-import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
+import { isAdminPrincipal, requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import { buildPaginationArgs, toPaginatedResponse } from '@/framework/persistence/paginate'
 import { type Prisma } from '@/generated/prisma/client'
@@ -22,7 +22,9 @@ export const listIndicateurs = (
   if (params.ids && params.ids.length > 0) {
     filters.publicId = { in: params.ids }
   }
-  const where = withIndicateurReadPermission(filters, principalId)
+  // Un principal ADMIN administre toutes les ressources (PUBLIC + PRIVÉ), cohérent
+  // avec isAdminPrincipal qui court-circuite déjà /me/permissions.
+  const where = isAdminPrincipal() ? filters : withIndicateurReadPermission(filters, principalId)
 
   const fetchPage = db().indicateur.findMany({
     where,

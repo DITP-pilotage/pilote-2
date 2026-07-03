@@ -29,6 +29,7 @@ export const panierListApiModelSchema = createPaginatedApiListSchema(panierApiMo
 export type PanierListApiModel = z.infer<typeof panierListApiModelSchema>
 
 export const listPaniersQuerySchema = z.object({
+  recherche: z.string().optional().describe('Filtre case-insensitive sur le nom du panier.'),
   cursor: paginationCursorSchema.optional(),
   pageSize: pageSizeSchema,
 })
