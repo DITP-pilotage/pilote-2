@@ -6,7 +6,8 @@ import { readSession } from '@/server/session'
 // Ressources relayables (lecture + upsert indicateurs/référentiels/individus).
 // Segments sûrs uniquement : une ressource autorisée, puis des segments composés
 // de caractères de public id (alphanum, `_`, `-`). Tout le reste est rejeté.
-const SAFE_PATH = /^(indicateurs|referentiels|individus|api-keys|utilisateurs)(\/[A-Za-z0-9_-]+)*$/
+const SAFE_PATH =
+  /^(indicateurs|referentiels|individus|api-keys|utilisateurs|paniers|permissions)(\/[A-Za-z0-9_-]+)*$/
 
 // Rejette toute tentative de traversal / d'injection d'URL absolue AVANT de
 // matcher l'allowlist (sinon la normalisation d'URL des `..` permettrait
