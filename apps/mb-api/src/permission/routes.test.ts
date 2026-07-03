@@ -8,7 +8,10 @@ describe('routes permissions — câblage OpenAPI', () => {
     expect(res.status).toBe(200)
     const doc = (await res.json()) as { paths: Record<string, Record<string, unknown>> }
 
-    const attendu: Array<[string, string]> = [['/permissions', 'get']]
+    const attendu: Array<[string, string]> = [
+      ['/permissions', 'get'],
+      ['/permissions', 'post'],
+    ]
 
     for (const [path, method] of attendu) {
       expect(doc.paths[path], `path ${path} manquant`).toBeDefined()
