@@ -57,8 +57,6 @@ Pour l'utiliser:
 
 - *optionnel* `docker compose build` pour construire les images Docker nécessaires
 - `docker compose up` pour lancer la base de données, la documentation interactive (dbt et prisma), et la webapp
-- *optionnel* `docker compose run pilote_scripts` pour entrer dans le container et lancer les scripts dbt via `/bin/bash scripts/<name-of-the-script>.sh`
-- *optionnel* OU `docker compose run pilote_scripts scripts/<name-of-the-script>.sh` pour lancer le script dbt `<name-of-the-script>.sh`
 - *optionnel* `docker container exec -it pilote_webapp /bin/sh` pour entrer dans le container webapp et éventuellement entrer des commandes (ex: npm, yarn, ...)
 
 Le *reverse-proxy* [Traefik](https://traefik.io/traefik/) est utilisé pour définir les différentes routes. Ainsi, on a:
@@ -81,22 +79,6 @@ NEXTAUTH_URL=http://pilote.localhost
 - `pilote_postgres`: base de données
 - `pilote_webapp`: webapp
 
-
-
-
-Un exemple complet d'utilisation de docker pour cette partie data pourrait être:
-
-```sh
-# Build the image
-docker compose build
-# Lancement de la base de données, documentation, et webapp
-docker compose up
-# Run prisma migrations
-docker compose run pilote_scripts scripts/0_prisma_migrate.sh
-# Run script 1
-docker compose run pilote_scripts scripts/1_dump_dfakto.sh
-# and so on for all the scripts
-```
 
 Il est aussi possible de n'exécuter que les datajobs de production avec la variable d'environnement :
 
@@ -266,16 +248,12 @@ Ces données seront ensuite utilisées pour avoir l'historique des va des indica
 Afin d'exécuter les jobs de la data factory, il suffit de :
 
 ```bash
-/bin/bash scripts/6_fill_tables_marts.sh
+uv run /bin/bash scripts/6_fill_tables_marts.sh
 ```
 
 ### Tests sur les données
 
-Des tests sur les données ont été implémentés. Ils sont situés dans le dossier [tests](./tests). Pour les exécuter, utiliser le script `scripts/test_data.sh` ou via Docker: 
-
-```sh
-docker-compose run pilote_scripts scripts/test_data.sh
-```
+Des tests sur les données ont été implémentés. Ils sont situés dans le dossier [tests](./tests). Pour les exécuter, utiliser le script `uv run dbt test`.
 
 *Note:* Vous pouvez également exécuter uniquement certains tests (en se basant sur le dossier ou les tags associés) comme détaillé dans la [documentation dbt](https://docs.getdbt.com/reference/node-selection/test-selection-examples).
 
@@ -285,9 +263,7 @@ docker-compose run pilote_scripts scripts/test_data.sh
 Afin de remplir les tables du schéma `public` et ainsi alimenter l'application _Pilote 2_, il faut exécuter le script suivant en local :
 
 ```bash
-bash scripts/7_fill_tables_public.sh
-# ou via docker
-docker-compose run pilote_scripts scripts/7_fill_tables_public.sh
+uv run bash scripts/7_fill_tables_public.sh
 ```
 
 ### Développement et comparaison des données local vs prod/dev
