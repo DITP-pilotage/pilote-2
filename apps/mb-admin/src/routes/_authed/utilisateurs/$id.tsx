@@ -5,13 +5,18 @@ import { useState } from 'react'
 import { updateUtilisateur } from '@/api/utilisateurs'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
+import { PrincipalPermissions } from '@/components/PrincipalPermissions'
 import { UtilisateurForm, type UtilisateurFormValues } from '@/components/UtilisateurForm'
 import { extractApiError } from '@/lib/apiError'
+import { principalPermissionsQueryOptions } from '@/queries/permissions'
 import { utilisateurQueryOptions } from '@/queries/utilisateurs'
 
 export const Route = createFileRoute('/_authed/utilisateurs/$id')({
   loader: async ({ context, params }) => {
-    await context.queryClient.ensureQueryData(utilisateurQueryOptions(params.id))
+    await Promise.all([
+      context.queryClient.ensureQueryData(utilisateurQueryOptions(params.id)),
+      context.queryClient.ensureQueryData(principalPermissionsQueryOptions(params.id)),
+    ])
   },
   component: EditUtilisateurComponent,
 })
@@ -72,6 +77,10 @@ function EditUtilisateurComponent() {
       ) : (
         <p className="text-sm font-medium text-accent">Utilisateur introuvable.</p>
       )}
+
+      <div className="mx-auto mt-8 max-w-2xl">
+        <PrincipalPermissions principalId={id} />
+      </div>
     </div>
   )
 }
