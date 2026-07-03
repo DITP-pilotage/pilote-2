@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-const permissionActionSchema = z.enum(['READ', 'WRITE'])
+import { permissionActionSchema } from './permission'
 
 const permissionEntrySchema = z.object({
   id: z

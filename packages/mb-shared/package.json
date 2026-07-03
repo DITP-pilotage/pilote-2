@@ -91,6 +91,10 @@
     "./utilisateur": {
       "types": "./src/utilisateur.ts",
       "default": "./src/utilisateur.ts"
+    },
+    "./permission": {
+      "types": "./src/permission.ts",
+      "default": "./src/permission.ts"
     }
   },
   "files": [
