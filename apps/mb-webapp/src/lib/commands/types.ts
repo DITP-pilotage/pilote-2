@@ -4,7 +4,7 @@ import type { LucideIcon } from 'lucide-react'
  * Regroupement d'une commande dans la palette. Volontairement extensible :
  * les itérations futures ajouteront `'paniers'`, `'actions'`, etc.
  */
-export type CommandGroup = 'navigation' | 'indicateurs'
+export type CommandGroup = 'navigation' | 'recents' | 'indicateurs' | 'paniers'
 
 /**
  * Contrat générique d'une entrée de la palette de commandes (⌘K).

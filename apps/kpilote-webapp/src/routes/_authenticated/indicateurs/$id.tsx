@@ -23,6 +23,7 @@ import { FormField } from '@/components/ui/FormField'
 import { Page } from '@/components/ui/Page'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
+import { useRecordVisit } from '@/lib/recentlyVisited'
 import {
   indicateurQueryOptions,
   loadIndicateur,
@@ -89,6 +90,7 @@ function IndicateurDetailComponent() {
   const selectId = useId()
 
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(id))
+  useRecordVisit({ type: 'indicateur', id: indicateur.id, label: indicateur.nom })
 
   const back = (
     <BackLink asChild>

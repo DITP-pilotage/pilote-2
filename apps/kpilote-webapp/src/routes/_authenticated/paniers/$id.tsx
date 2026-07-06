@@ -23,6 +23,7 @@ import { Page } from '@/components/ui/Page'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Text } from '@/components/ui/Typography'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
+import { useRecordVisit } from '@/lib/recentlyVisited'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
 import {
   loadPanier,
@@ -90,6 +91,7 @@ function PanierDetailComponent() {
   const navigate = useNavigate({ from: Route.fullPath })
   const selectId = useId()
   const { data: panier } = useSuspenseQuery(panierQueryOptions(id))
+  useRecordVisit({ type: 'panier', id: panier.id, label: panier.nom })
   const { data: indicateurs } = useSuspenseQuery(
     indicateursQueryOptions({ ids: panier.indicateurIds }),
   )

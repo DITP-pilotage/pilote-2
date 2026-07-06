@@ -9,6 +9,8 @@ import { filterCommands, type Command } from '@/lib/commands/types'
 import { useCommandPaletteShortcut } from './useCommandPaletteShortcut'
 import { useIndicateurCommands } from './useIndicateurCommands'
 import { useNavigationCommands } from './useNavigationCommands'
+import { usePanierCommands } from './usePanierCommands'
+import { useRecentlyVisitedCommands } from './useRecentlyVisitedCommands'
 
 type CommandPaletteProps = {
   open: boolean
@@ -26,7 +28,17 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   useCommandPaletteShortcut(handleOpen)
 
   const navigationCommands = filterCommands(useNavigationCommands(close), query)
-  const { commands: indicateurCommands, isLoading } = useIndicateurCommands(query, close)
+  const recentCommands = useRecentlyVisitedCommands(open, close)
+  const { commands: indicateurCommands, isLoading: isLoadingIndicateurs } = useIndicateurCommands(
+    query,
+    close,
+  )
+  const { commands: panierCommands, isLoading: isLoadingPaniers } = usePanierCommands(query, close)
+  const isLoading = isLoadingIndicateurs || isLoadingPaniers
+
+  // Les fiches récentes servent de point de départ : on les masque dès que
+  // l'utilisateur tape, la recherche serveur prenant alors le relais.
+  const showRecents = query.trim().length === 0
 
   const handleOpenChange = (next: boolean) => {
     onOpenChange(next)
@@ -67,9 +79,25 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 </CommandPrimitive.Group>
               ) : null}
 
+              {showRecents && recentCommands.length > 0 ? (
+                <CommandPrimitive.Group heading="Visité récemment" className={GROUP_HEADING_CLASS}>
+                  {recentCommands.map((command) => (
+                    <CommandRow key={command.id} command={command} />
+                  ))}
+                </CommandPrimitive.Group>
+              ) : null}
+
               {indicateurCommands.length > 0 ? (
                 <CommandPrimitive.Group heading="Indicateurs" className={GROUP_HEADING_CLASS}>
                   {indicateurCommands.map((command) => (
+                    <CommandRow key={command.id} command={command} />
+                  ))}
+                </CommandPrimitive.Group>
+              ) : null}
+
+              {panierCommands.length > 0 ? (
+                <CommandPrimitive.Group heading="Paniers" className={GROUP_HEADING_CLASS}>
+                  {panierCommands.map((command) => (
                     <CommandRow key={command.id} command={command} />
                   ))}
                 </CommandPrimitive.Group>
