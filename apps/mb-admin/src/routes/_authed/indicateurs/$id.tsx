@@ -4,12 +4,12 @@ import { useState } from 'react'
 
 import { upsertIndicateur } from '@/api/indicateurs'
 import { Breadcrumb } from '@/components/Breadcrumb'
+import { IndicateurForm } from '@/components/indicateurs/IndicateurForm'
 import {
   buildInitialValues,
-  IndicateurForm,
-  type IndicateurFormValues,
   toUpsertBody,
-} from '@/components/IndicateurForm'
+  type IndicateurFormValues,
+} from '@/components/indicateurs/useIndicateurForm'
 import { PageHeading } from '@/components/PageHeading'
 import { extractApiError } from '@/lib/apiError'
 import { indicateurQueryOptions } from '@/queries/indicateurs'
