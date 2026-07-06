@@ -14,6 +14,9 @@ export const listPaniers = (params: ListPaniersQuery): ResultAsync<PanierListApi
   if (params.recherche) {
     filters.nom = { contains: params.recherche, mode: 'insensitive' }
   }
+  if (params.rechercheIdentifiant) {
+    filters.publicId = { contains: params.rechercheIdentifiant, mode: 'insensitive' }
+  }
   // Un principal ADMIN administre tous les paniers (PUBLIC + PRIVÉ), cohérent
   // avec isAdminPrincipal qui court-circuite déjà /me/permissions.
   const where = isAdminPrincipal() ? filters : withPanierReadPermission(filters, principalId)

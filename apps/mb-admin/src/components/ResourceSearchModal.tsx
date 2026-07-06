@@ -20,9 +20,12 @@ export function ResourceSearchModal({
   onClose: () => void
 }) {
   const [recherche, setRecherche] = useState('')
+  const [rechercheIdentifiant, setRechercheIdentifiant] = useState('')
   const excluded = new Set(excludedPublicIds)
 
-  const query = useInfiniteQuery(resourceSearchInfiniteQueryOptions(resourceType, recherche))
+  const query = useInfiniteQuery(
+    resourceSearchInfiniteQueryOptions(resourceType, recherche, rechercheIdentifiant),
+  )
 
   const hits: ResourceHit[] = (query.data?.pages ?? [])
     .flatMap((page) => page.hits)
@@ -46,15 +49,29 @@ export function ResourceSearchModal({
           </button>
         </div>
 
-        <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-subtle" />
-          <input
-            autoFocus
-            placeholder={`Rechercher un ${label} par nom ou identifiant…`}
-            value={recherche}
-            onChange={(event) => setRecherche(event.target.value)}
-            className="w-full rounded-md border border-border bg-surface py-2.5 pl-9 pr-3 text-sm focus:border-primary focus:outline-none"
-          />
+        <div className="mb-4 grid grid-cols-2 gap-3">
+          <div>
+            <label className="mb-1.5 block text-xs font-semibold">Nom</label>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-subtle" />
+              <input
+                autoFocus
+                placeholder={`Nom du ${label}…`}
+                value={recherche}
+                onChange={(event) => setRecherche(event.target.value)}
+                className="w-full rounded-md border border-border bg-surface py-2.5 pl-9 pr-3 text-sm focus:border-primary focus:outline-none"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="mb-1.5 block text-xs font-semibold">Identifiant</label>
+            <input
+              placeholder={resourceType === 'PANIER' ? 'PAN-…' : 'IND-…'}
+              value={rechercheIdentifiant}
+              onChange={(event) => setRechercheIdentifiant(event.target.value)}
+              className="w-full rounded-md border border-border bg-surface px-3 py-2.5 font-mono text-sm focus:border-primary focus:outline-none"
+            />
+          </div>
         </div>
 
         <div className="max-h-80 overflow-y-auto">

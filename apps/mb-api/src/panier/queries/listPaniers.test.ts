@@ -229,4 +229,22 @@ describe.concurrent('listPaniers', () => {
       expect(ids).not.toContain(other)
     }),
   )
+
+  it(
+    "filtre les paniers par recherche sur l'identifiant public",
+    integrationTest(async () => {
+      const match = testPanierId()
+      const other = testPanierId()
+      await fixtures.panier({ publicId: match, nom: 'Alpha', visibilite: 'PRIVE' })
+      await fixtures.panier({ publicId: other, nom: 'Beta', visibilite: 'PRIVE' })
+
+      const result = await runAsAdmin('00000000-0000-0000-0000-0000000000a1', () =>
+        listPaniers({ rechercheIdentifiant: match }),
+      )
+      const ids = result._unsafeUnwrap().items.map((p) => p.id)
+
+      expect(ids).toContain(match)
+      expect(ids).not.toContain(other)
+    }),
+  )
 })

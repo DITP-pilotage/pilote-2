@@ -125,6 +125,10 @@ export const indicateurListApiModelSchema = createPaginatedApiListSchema(indicat
 export type IndicateurListApiModel = z.infer<typeof indicateurListApiModelSchema>
 
 export const listIndicateursQuerySchema = listQuerySchema.extend({
+  rechercheIdentifiant: z
+    .string()
+    .optional()
+    .describe("Filtre case-insensitive sur l'identifiant public (`publicId`, ex. `IND-01`)."),
   ids: z
     .preprocess((val) => {
       if (typeof val !== 'string') return val

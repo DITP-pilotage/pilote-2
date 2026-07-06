@@ -19,6 +19,9 @@ export const listIndicateurs = (
   if (params.recherche) {
     filters.nom = { contains: params.recherche, mode: 'insensitive' }
   }
+  if (params.rechercheIdentifiant) {
+    filters.publicId = { contains: params.rechercheIdentifiant, mode: 'insensitive' }
+  }
   if (params.ids && params.ids.length > 0) {
     filters.publicId = { in: params.ids }
   }

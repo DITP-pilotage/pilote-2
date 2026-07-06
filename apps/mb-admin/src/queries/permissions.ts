@@ -13,14 +13,20 @@ export const principalPermissionsQueryOptions = (principalId: string) =>
 
 // Recherche unifiée panier/indicateur : normalise les deux listes vers une page
 // `{ publicId, nom }[]`, ce qui évite l'union de types incompatibles côté hook.
+// `recherche` filtre sur le nom, `rechercheIdentifiant` sur l'identifiant public.
 export const resourceSearchInfiniteQueryOptions = (
   resourceType: PermissionResourceType,
   recherche: string,
+  rechercheIdentifiant: string,
 ) =>
   infiniteQueryOptions({
-    queryKey: ['resource-search', resourceType, { recherche }],
+    queryKey: ['resource-search', resourceType, { recherche, rechercheIdentifiant }],
     queryFn: async ({ pageParam }) => {
-      const params = { recherche: recherche || undefined, cursor: pageParam ?? undefined }
+      const params = {
+        recherche: recherche || undefined,
+        rechercheIdentifiant: rechercheIdentifiant || undefined,
+        cursor: pageParam ?? undefined,
+      }
       const page =
         resourceType === 'PANIER' ? await fetchPaniers(params) : await fetchIndicateurs(params)
       return {
