@@ -8,10 +8,10 @@ import {
   buildInitialValues,
   IndicateurForm,
   type IndicateurFormValues,
+  toUpsertBody,
 } from '@/components/IndicateurForm'
 import { PageHeading } from '@/components/PageHeading'
 import { extractApiError } from '@/lib/apiError'
-import { session } from '@/session'
 
 export const Route = createFileRoute('/_authed/indicateurs/nouveau')({
   component: NewIndicateurComponent,
@@ -20,17 +20,10 @@ export const Route = createFileRoute('/_authed/indicateurs/nouveau')({
 function NewIndicateurComponent() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const isProd = session.current?.environment === 'prod'
   const [error, setError] = useState<string | null>(null)
 
   const mutation = useMutation({
-    mutationFn: (values: IndicateurFormValues) =>
-      upsertIndicateur(values.id, {
-        nom: values.nom,
-        visibilite: values.visibilite,
-        unite: values.unite,
-        referentiels: values.referentiels,
-      }),
+    mutationFn: (values: IndicateurFormValues) => upsertIndicateur(values.id, toUpsertBody(values)),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['indicateurs'] })
       void navigate({ to: '/indicateurs' })
@@ -57,7 +50,6 @@ function NewIndicateurComponent() {
         initial={buildInitialValues()}
         pending={mutation.isPending}
         errorMessage={error}
-        isProd={isProd}
         onCancel={() => void navigate({ to: '/indicateurs' })}
         onSubmit={(values) => mutation.mutate(values)}
       />
