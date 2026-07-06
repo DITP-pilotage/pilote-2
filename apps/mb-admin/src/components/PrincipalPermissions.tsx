@@ -1,6 +1,6 @@
 import type { PermissionActionValue, PermissionResourceType } from '@pilote/mb-shared/permission'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { Lock, Plus, Trash2 } from 'lucide-react'
+import { Eye, Lock, Plus, Trash2 } from 'lucide-react'
 import { type ReactNode, useState } from 'react'
 
 import { grantPermission, revokePermission } from '@/api/permissions'
@@ -103,14 +103,14 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
                     <span className="block truncate text-sm text-text">{row.nom}</span>
                     <span className="font-mono text-xs text-text-muted">{row.publicId}</span>
                   </span>
-                  <span className="flex items-center gap-1.5">
-                    {/* Lecture toujours accordée pour une ressource listée : non modifiable,
-                        se retire via la corbeille (qui supprime toute la ressource). */}
+                  <span className="flex items-center gap-2.5">
+                    {/* Lecture toujours accordée pour une ressource listée : simple libellé
+                        informatif (pas une chip cliquable). Se retire via la corbeille. */}
                     <span
-                      title="Lecture toujours accordée. Utilisez la corbeille pour retirer la ressource."
-                      className="cursor-default rounded-md border border-primary bg-primary px-2 py-1 text-xs font-medium text-primary-foreground"
+                      title="Lecture toujours accordée pour une ressource ajoutée. Utilisez la corbeille pour la retirer."
+                      className="flex items-center gap-1 text-xs font-medium text-text-muted"
                     >
-                      Lecture
+                      <Eye className="size-3.5" /> Lecture
                     </span>
                     <button
                       type="button"
