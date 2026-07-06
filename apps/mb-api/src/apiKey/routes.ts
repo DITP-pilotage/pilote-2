@@ -12,7 +12,7 @@ import { listApiKeys } from '@/apiKey/queries/listApiKeys'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { erreur403, erreur404, erreur409 } from '@/framework/openapi/responses'
+import { erreur403, erreur404, erreur409, succes200 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 
 const ApiKeyApiModelSchema = apiKeyApiModelSchema.openapi('ApiKeyApiModel')
@@ -25,7 +25,7 @@ const revokeParamsSchema = z.object({
 })
 
 const detailParamsSchema = z.object({
-  id: z.string().openapi({ description: 'Identifiant (UUID) de la clé API.' }),
+  id: z.string().uuid().openapi({ description: 'Identifiant (UUID) de la clé API.' }),
 })
 
 // --- POST /api-keys ----------------------------------------------------------
@@ -81,10 +81,7 @@ const getApiKeyByIdRoute = createRoute({
   middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {
-    200: {
-      content: { 'application/json': { schema: ApiKeyApiModelSchema } },
-      description: 'Clé API trouvée',
-    },
+    200: succes200('Clé API trouvée', ApiKeyApiModelSchema),
     403: erreur403,
     404: erreur404,
   },

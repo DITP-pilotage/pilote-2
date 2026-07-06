@@ -1,24 +1,35 @@
 import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
 import {
-  grantPermissionBodySchema,
+  grantIndicateurPermissionBodySchema,
+  grantPanierPermissionBodySchema,
   listPrincipalPermissionsQuerySchema,
   principalPermissionsApiModelSchema,
-  revokePermissionQuerySchema,
+  revokeIndicateurPermissionQuerySchema,
+  revokePanierPermissionQuerySchema,
 } from '@pilote/mb-shared/permission'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { erreur400, erreur403, erreur404, erreur409 } from '@/framework/openapi/responses'
+import { erreur400, erreur403, erreur404, succes200 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
-import { grantPermission } from '@/permission/commands/grantPermission'
-import { revokePermission } from '@/permission/commands/revokePermission'
+import { grantIndicateurPermission } from '@/permission/commands/grantIndicateurPermission'
+import { grantPanierPermission } from '@/permission/commands/grantPanierPermission'
+import { revokeIndicateurPermission } from '@/permission/commands/revokeIndicateurPermission'
+import { revokePanierPermission } from '@/permission/commands/revokePanierPermission'
 import { getPrincipalPermissions } from '@/permission/queries/getPrincipalPermissions'
 
 const PrincipalPermissionsApiModelSchema = principalPermissionsApiModelSchema.openapi(
   'PrincipalPermissionsApiModel',
 )
-const GrantPermissionBodySchema = grantPermissionBodySchema.openapi('GrantPermissionBody')
+const GrantIndicateurPermissionBodySchema = grantIndicateurPermissionBodySchema.openapi(
+  'GrantIndicateurPermissionBody',
+)
+const GrantPanierPermissionBodySchema = grantPanierPermissionBodySchema.openapi(
+  'GrantPanierPermissionBody',
+)
+
+const ADMIN_ONLY = 'Réservé aux clés API de rôle `ADMIN`.'
 
 // --- GET /permissions --------------------------------------------------------
 
@@ -28,68 +39,94 @@ const getPermissionsRoute = createRoute({
   tags: ['Permission', 'Admin'],
   summary: "Lister les permissions d'un principal",
   description:
-    'Réservé aux clés API de rôle `ADMIN`. Retourne les permissions directes (paniers + ' +
-    'indicateurs) du principal, plus les indicateurs en READ hérités via propagation panier → indicateur.',
+    `${ADMIN_ONLY} Retourne les permissions directes (paniers + indicateurs) du principal, plus ` +
+    'les indicateurs en READ hérités via propagation panier → indicateur.',
   middleware: [requireAuthentication],
   request: { query: listPrincipalPermissionsQuerySchema },
   responses: {
-    200: {
-      content: { 'application/json': { schema: PrincipalPermissionsApiModelSchema } },
-      description: 'Permissions du principal',
-    },
+    200: succes200('Permissions du principal', PrincipalPermissionsApiModelSchema),
     400: erreur400,
     403: erreur403,
     404: erreur404,
   },
 })
 
-// --- POST /permissions -------------------------------------------------------
+// --- POST /permissions/indicateur --------------------------------------------
 
-const grantPermissionRoute = createRoute({
+const grantIndicateurPermissionRoute = createRoute({
   method: 'post',
-  path: '/permissions',
+  path: '/permissions/indicateur',
   tags: ['Permission', 'Admin'],
-  summary: 'Accorder une permission à un principal',
-  description:
-    'Réservé aux clés API de rôle `ADMIN`. Accorde une action (`READ`/`WRITE`) sur une ressource ' +
-    '(`PANIER`/`INDICATEUR`) à un principal. **Idempotent** : ré-accorder un droit existant renvoie 200 ' +
-    'sans doublon. Retourne les permissions à jour du principal.',
+  summary: 'Accorder une permission sur un indicateur',
+  description: `${ADMIN_ONLY} Accorde une action (\`READ\`/\`WRITE\`) sur un indicateur à un principal. **Idempotent**. Retourne l'état à jour.`,
   middleware: [requireAuthentication],
   request: {
     body: {
-      content: { 'application/json': { schema: GrantPermissionBodySchema } },
+      content: { 'application/json': { schema: GrantIndicateurPermissionBodySchema } },
       required: true,
     },
   },
   responses: {
-    200: {
-      content: { 'application/json': { schema: PrincipalPermissionsApiModelSchema } },
-      description: 'Permission accordée, état à jour',
-    },
+    200: succes200('Permission accordée, état à jour', PrincipalPermissionsApiModelSchema),
     400: erreur400,
     403: erreur403,
     404: erreur404,
-    409: erreur409,
   },
 })
 
-// --- DELETE /permissions -----------------------------------------------------
+// --- DELETE /permissions/indicateur ------------------------------------------
 
-const revokePermissionRoute = createRoute({
+const revokeIndicateurPermissionRoute = createRoute({
   method: 'delete',
-  path: '/permissions',
+  path: '/permissions/indicateur',
   tags: ['Permission', 'Admin'],
-  summary: 'Retirer une permission à un principal',
-  description:
-    'Réservé aux clés API de rôle `ADMIN`. Retire une action précise si `action` est fournie, sinon ' +
-    'toutes les actions de la ressource pour ce principal. **Idempotent**. Retourne l’état à jour.',
+  summary: 'Retirer une permission sur un indicateur',
+  description: `${ADMIN_ONLY} Retire une action précise si \`action\` est fournie, sinon toutes les actions de l'indicateur. **Idempotent**. Retourne l'état à jour.`,
   middleware: [requireAuthentication],
-  request: { query: revokePermissionQuerySchema },
+  request: { query: revokeIndicateurPermissionQuerySchema },
   responses: {
-    200: {
-      content: { 'application/json': { schema: PrincipalPermissionsApiModelSchema } },
-      description: 'Permission retirée, état à jour',
+    200: succes200('Permission retirée, état à jour', PrincipalPermissionsApiModelSchema),
+    400: erreur400,
+    403: erreur403,
+    404: erreur404,
+  },
+})
+
+// --- POST /permissions/panier ------------------------------------------------
+
+const grantPanierPermissionRoute = createRoute({
+  method: 'post',
+  path: '/permissions/panier',
+  tags: ['Permission', 'Admin'],
+  summary: 'Accorder une permission sur un panier',
+  description: `${ADMIN_ONLY} Accorde une action (\`READ\`/\`WRITE\`) sur un panier à un principal. **Idempotent**. Retourne l'état à jour.`,
+  middleware: [requireAuthentication],
+  request: {
+    body: {
+      content: { 'application/json': { schema: GrantPanierPermissionBodySchema } },
+      required: true,
     },
+  },
+  responses: {
+    200: succes200('Permission accordée, état à jour', PrincipalPermissionsApiModelSchema),
+    400: erreur400,
+    403: erreur403,
+    404: erreur404,
+  },
+})
+
+// --- DELETE /permissions/panier ----------------------------------------------
+
+const revokePanierPermissionRoute = createRoute({
+  method: 'delete',
+  path: '/permissions/panier',
+  tags: ['Permission', 'Admin'],
+  summary: 'Retirer une permission sur un panier',
+  description: `${ADMIN_ONLY} Retire une action précise si \`action\` est fournie, sinon toutes les actions du panier. **Idempotent**. Retourne l'état à jour.`,
+  middleware: [requireAuthentication],
+  request: { query: revokePanierPermissionQuerySchema },
+  responses: {
+    200: succes200('Permission retirée, état à jour', PrincipalPermissionsApiModelSchema),
     400: erreur400,
     403: erreur403,
     404: erreur404,
@@ -107,18 +144,36 @@ permissionRoutes.openapi(getPermissionsRoute, async (context) => {
   )
 })
 
-permissionRoutes.openapi(grantPermissionRoute, async (context) => {
+permissionRoutes.openapi(grantIndicateurPermissionRoute, async (context) => {
   const body = context.req.valid('json')
-  return (await withTransaction(async () => grantPermission(body))).match(
+  return (await withTransaction(async () => grantIndicateurPermission(body))).match(
     (data) =>
       jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
     never,
   )
 })
 
-permissionRoutes.openapi(revokePermissionRoute, async (context) => {
+permissionRoutes.openapi(revokeIndicateurPermissionRoute, async (context) => {
   const query = context.req.valid('query')
-  return (await withTransaction(async () => revokePermission(query))).match(
+  return (await withTransaction(async () => revokeIndicateurPermission(query))).match(
+    (data) =>
+      jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
+permissionRoutes.openapi(grantPanierPermissionRoute, async (context) => {
+  const body = context.req.valid('json')
+  return (await withTransaction(async () => grantPanierPermission(body))).match(
+    (data) =>
+      jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
+permissionRoutes.openapi(revokePanierPermissionRoute, async (context) => {
+  const query = context.req.valid('query')
+  return (await withTransaction(async () => revokePanierPermission(query))).match(
     (data) =>
       jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
     never,

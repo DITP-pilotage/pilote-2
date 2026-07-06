@@ -43,20 +43,38 @@ export const listPrincipalPermissionsQuerySchema = z.object({
 })
 export type ListPrincipalPermissionsQuery = z.infer<typeof listPrincipalPermissionsQuerySchema>
 
-export const grantPermissionBodySchema = z.object({
+// --- Indicateur --------------------------------------------------------------
+
+export const grantIndicateurPermissionBodySchema = z.object({
   principalId: z.string().uuid().describe('Principal (UUID) à qui accorder le droit.'),
-  resourceType: permissionResourceTypeSchema,
-  resourcePublicId: z.string().describe('Identifiant public de la ressource (`PAN-…` / `IND-…`).'),
+  indicateurPublicId: z.string().describe("Identifiant public de l'indicateur (`IND-…`)."),
   action: permissionActionSchema,
 })
-export type GrantPermissionBody = z.infer<typeof grantPermissionBodySchema>
+export type GrantIndicateurPermissionBody = z.infer<typeof grantIndicateurPermissionBodySchema>
 
-export const revokePermissionQuerySchema = z.object({
+export const revokeIndicateurPermissionQuerySchema = z.object({
   principalId: z.string().uuid(),
-  resourceType: permissionResourceTypeSchema,
-  resourcePublicId: z.string(),
+  indicateurPublicId: z.string(),
   action: permissionActionSchema
     .optional()
-    .describe('Action à retirer. Si absent, retire toutes les actions de la ressource.'),
+    .describe("Action à retirer. Si absent, retire toutes les actions de l'indicateur."),
 })
-export type RevokePermissionQuery = z.infer<typeof revokePermissionQuerySchema>
+export type RevokeIndicateurPermissionQuery = z.infer<typeof revokeIndicateurPermissionQuerySchema>
+
+// --- Panier ------------------------------------------------------------------
+
+export const grantPanierPermissionBodySchema = z.object({
+  principalId: z.string().uuid().describe('Principal (UUID) à qui accorder le droit.'),
+  panierPublicId: z.string().describe('Identifiant public du panier (`PAN-…`).'),
+  action: permissionActionSchema,
+})
+export type GrantPanierPermissionBody = z.infer<typeof grantPanierPermissionBodySchema>
+
+export const revokePanierPermissionQuerySchema = z.object({
+  principalId: z.string().uuid(),
+  panierPublicId: z.string(),
+  action: permissionActionSchema
+    .optional()
+    .describe('Action à retirer. Si absent, retire toutes les actions du panier.'),
+})
+export type RevokePanierPermissionQuery = z.infer<typeof revokePanierPermissionQuerySchema>
