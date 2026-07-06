@@ -12,13 +12,6 @@ import { clsxm } from '@/lib/clsxm'
 import { useProdEditUnlock } from '@/lib/useProdEditUnlock'
 import { principalPermissionsQueryOptions } from '@/queries/permissions'
 
-const ACTIONS: PermissionActionValue[] = ['READ', 'WRITE']
-
-const ACTION_LABEL: Record<PermissionActionValue, string> = {
-  READ: 'Lecture',
-  WRITE: 'Écriture',
-}
-
 type DirectRow = { publicId: string; nom: string; actions: PermissionActionValue[] }
 
 export function PrincipalPermissions({ principalId }: { principalId: string }) {
@@ -101,7 +94,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
       ) : (
         <ul className="divide-y divide-border rounded-lg border border-border">
           {rows.map((row) => {
-            const hasWrite = row.actions.includes('WRITE')
+            const writeActive = row.actions.includes('WRITE')
             const extra = extraForRow?.(row.publicId)
             return (
               <li key={row.publicId} className="px-3 py-2.5">
@@ -111,29 +104,28 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
                     <span className="font-mono text-xs text-text-muted">{row.publicId}</span>
                   </span>
                   <span className="flex items-center gap-1.5">
-                    {ACTIONS.map((action) => {
-                      const active = row.actions.includes(action)
-                      const impliedRead = action === 'READ' && hasWrite
-                      return (
-                        <button
-                          key={action}
-                          type="button"
-                          disabled={disabled}
-                          title={impliedRead ? 'Lecture implicite (Écriture ⇒ Lecture)' : undefined}
-                          onClick={() => toggle(resourceType, row.publicId, action, active)}
-                          className={clsxm(
-                            'rounded-md border px-2 py-1 text-xs font-medium transition-colors',
-                            active
-                              ? 'border-primary bg-primary text-primary-foreground'
-                              : 'border-border bg-surface text-text-muted hover:border-primary',
-                            impliedRead && !active && 'border-dashed opacity-70',
-                            disabled && 'cursor-not-allowed opacity-50',
-                          )}
-                        >
-                          {ACTION_LABEL[action]}
-                        </button>
-                      )
-                    })}
+                    {/* Lecture toujours accordée pour une ressource listée : non modifiable,
+                        se retire via la corbeille (qui supprime toute la ressource). */}
+                    <span
+                      title="Lecture toujours accordée. Utilisez la corbeille pour retirer la ressource."
+                      className="cursor-default rounded-md border border-primary bg-primary px-2 py-1 text-xs font-medium text-primary-foreground"
+                    >
+                      Lecture
+                    </span>
+                    <button
+                      type="button"
+                      disabled={disabled}
+                      onClick={() => toggle(resourceType, row.publicId, 'WRITE', writeActive)}
+                      className={clsxm(
+                        'rounded-md border px-2 py-1 text-xs font-medium transition-colors',
+                        writeActive
+                          ? 'border-primary bg-primary text-primary-foreground'
+                          : 'border-border bg-surface text-text-muted hover:border-primary',
+                        disabled && 'cursor-not-allowed opacity-50',
+                      )}
+                    >
+                      Écriture
+                    </button>
                     <button
                       type="button"
                       disabled={disabled}
