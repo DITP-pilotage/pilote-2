@@ -51,26 +51,26 @@ export function ResourceSearchModal({
 
         <div className="mb-4 space-y-3">
           <div>
+            <label className="mb-1.5 block text-xs font-semibold">Identifiant</label>
+            <input
+              autoFocus
+              placeholder={resourceType === 'PANIER' ? 'PAN-…' : 'IND-…'}
+              value={rechercheIdentifiant}
+              onChange={(event) => setRechercheIdentifiant(event.target.value)}
+              className="w-full rounded-md border border-border bg-surface px-3 py-2.5 font-mono text-sm focus:border-primary focus:outline-none"
+            />
+          </div>
+          <div>
             <label className="mb-1.5 block text-xs font-semibold">Nom</label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-subtle" />
               <input
-                autoFocus
                 placeholder={`Nom du ${label}…`}
                 value={recherche}
                 onChange={(event) => setRecherche(event.target.value)}
                 className="w-full rounded-md border border-border bg-surface py-2.5 pl-9 pr-3 text-sm focus:border-primary focus:outline-none"
               />
             </div>
-          </div>
-          <div>
-            <label className="mb-1.5 block text-xs font-semibold">Identifiant</label>
-            <input
-              placeholder={resourceType === 'PANIER' ? 'PAN-…' : 'IND-…'}
-              value={rechercheIdentifiant}
-              onChange={(event) => setRechercheIdentifiant(event.target.value)}
-              className="w-full rounded-md border border-border bg-surface px-3 py-2.5 font-mono text-sm focus:border-primary focus:outline-none"
-            />
           </div>
         </div>
 
