@@ -1,7 +1,7 @@
 import type {
-  GrantPermissionBody,
+  GrantIndicateurPermissionBody,
+  GrantPanierPermissionBody,
   PermissionActionValue,
-  PermissionResourceType,
   PrincipalPermissionsApiModel,
 } from '@pilote/mb-shared/permission'
 import { principalPermissionsApiModelSchema } from '@pilote/mb-shared/permission'
@@ -15,25 +15,48 @@ export const fetchPrincipalPermissions = async (
   return principalPermissionsApiModelSchema.parse(json)
 }
 
-export const grantPermission = async (
-  body: GrantPermissionBody,
+// --- Indicateur --------------------------------------------------------------
+
+export const grantIndicateurPermission = async (
+  body: GrantIndicateurPermissionBody,
 ): Promise<PrincipalPermissionsApiModel> => {
-  const json = await bffClient.post('permissions', { json: body }).json()
+  const json = await bffClient.post('permissions/indicateur', { json: body }).json()
   return principalPermissionsApiModelSchema.parse(json)
 }
 
-export const revokePermission = async (params: {
+export const revokeIndicateurPermission = async (params: {
   principalId: string
-  resourceType: PermissionResourceType
-  resourcePublicId: string
+  indicateurPublicId: string
   action?: PermissionActionValue
 }): Promise<PrincipalPermissionsApiModel> => {
   const searchParams: Record<string, string> = {
     principalId: params.principalId,
-    resourceType: params.resourceType,
-    resourcePublicId: params.resourcePublicId,
+    indicateurPublicId: params.indicateurPublicId,
   }
   if (params.action) searchParams.action = params.action
-  const json = await bffClient.delete('permissions', { searchParams }).json()
+  const json = await bffClient.delete('permissions/indicateur', { searchParams }).json()
+  return principalPermissionsApiModelSchema.parse(json)
+}
+
+// --- Panier ------------------------------------------------------------------
+
+export const grantPanierPermission = async (
+  body: GrantPanierPermissionBody,
+): Promise<PrincipalPermissionsApiModel> => {
+  const json = await bffClient.post('permissions/panier', { json: body }).json()
+  return principalPermissionsApiModelSchema.parse(json)
+}
+
+export const revokePanierPermission = async (params: {
+  principalId: string
+  panierPublicId: string
+  action?: PermissionActionValue
+}): Promise<PrincipalPermissionsApiModel> => {
+  const searchParams: Record<string, string> = {
+    principalId: params.principalId,
+    panierPublicId: params.panierPublicId,
+  }
+  if (params.action) searchParams.action = params.action
+  const json = await bffClient.delete('permissions/panier', { searchParams }).json()
   return principalPermissionsApiModelSchema.parse(json)
 }

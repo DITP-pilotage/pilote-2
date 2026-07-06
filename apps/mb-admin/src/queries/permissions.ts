@@ -1,4 +1,3 @@
-import type { PermissionResourceType } from '@pilote/mb-shared/permission'
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query'
 
 import { fetchIndicateurs } from '@/api/indicateurs'
@@ -11,24 +10,43 @@ export const principalPermissionsQueryOptions = (principalId: string) =>
     queryFn: () => fetchPrincipalPermissions(principalId),
   })
 
-// Recherche unifiée panier/indicateur : normalise les deux listes vers une page
-// `{ publicId, nom }[]`, ce qui évite l'union de types incompatibles côté hook.
 // `recherche` filtre sur le nom, `rechercheIdentifiant` sur l'identifiant public.
-export const resourceSearchInfiniteQueryOptions = (
-  resourceType: PermissionResourceType,
+// Les deux factories normalisent la page vers `{ hits: { publicId, nom }[], pagination }`.
+
+export const searchIndicateursInfiniteQueryOptions = (
   recherche: string,
   rechercheIdentifiant: string,
 ) =>
   infiniteQueryOptions({
-    queryKey: ['resource-search', resourceType, { recherche, rechercheIdentifiant }],
+    queryKey: ['indicateurs-search', { recherche, rechercheIdentifiant }],
     queryFn: async ({ pageParam }) => {
-      const params = {
+      const page = await fetchIndicateurs({
         recherche: recherche || undefined,
         rechercheIdentifiant: rechercheIdentifiant || undefined,
         cursor: pageParam ?? undefined,
+      })
+      return {
+        hits: page.items.map((item) => ({ publicId: item.id, nom: item.nom })),
+        pagination: page.pagination,
       }
-      const page =
-        resourceType === 'PANIER' ? await fetchPaniers(params) : await fetchIndicateurs(params)
+    },
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (lastPage) =>
+      lastPage.pagination.hasMore ? (lastPage.pagination.cursor ?? undefined) : undefined,
+  })
+
+export const searchPaniersInfiniteQueryOptions = (
+  recherche: string,
+  rechercheIdentifiant: string,
+) =>
+  infiniteQueryOptions({
+    queryKey: ['paniers-search', { recherche, rechercheIdentifiant }],
+    queryFn: async ({ pageParam }) => {
+      const page = await fetchPaniers({
+        recherche: recherche || undefined,
+        rechercheIdentifiant: rechercheIdentifiant || undefined,
+        cursor: pageParam ?? undefined,
+      })
       return {
         hits: page.items.map((item) => ({ publicId: item.id, nom: item.nom })),
         pagination: page.pagination,

@@ -1,9 +1,18 @@
-import type { PermissionActionValue, PermissionResourceType } from '@pilote/mb-shared/permission'
+import type {
+  PermissionActionValue,
+  PermissionResourceType,
+  PrincipalPermissionsApiModel,
+} from '@pilote/mb-shared/permission'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { Eye, Lock, Plus, Trash2 } from 'lucide-react'
 import { type ReactNode, useState } from 'react'
 
-import { grantPermission, revokePermission } from '@/api/permissions'
+import {
+  grantIndicateurPermission,
+  grantPanierPermission,
+  revokeIndicateurPermission,
+  revokePanierPermission,
+} from '@/api/permissions'
 import { ResourceSearchModal, type ResourceHit } from '@/components/ResourceSearchModal'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -23,49 +32,61 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const options = principalPermissionsQueryOptions(principalId)
   const { data } = useSuspenseQuery(options)
 
-  const grantMutation = useMutation({
-    mutationFn: grantPermission,
+  const mutation = useMutation({
+    mutationFn: (run: () => Promise<PrincipalPermissionsApiModel>) => run(),
     onSuccess: (fresh) => queryClient.setQueryData(options.queryKey, fresh),
     onError: (err: unknown) => void extractApiError(err).then(setError),
   })
 
-  const revokeMutation = useMutation({
-    mutationFn: revokePermission,
-    onSuccess: (fresh) => queryClient.setQueryData(options.queryKey, fresh),
-    onError: (err: unknown) => void extractApiError(err).then(setError),
-  })
+  const disabled = locked || mutation.isPending
 
-  const pending = grantMutation.isPending || revokeMutation.isPending
-  const disabled = locked || pending
+  const grantFor = (
+    resourceType: PermissionResourceType,
+    publicId: string,
+    action: PermissionActionValue,
+  ) =>
+    resourceType === 'INDICATEUR'
+      ? grantIndicateurPermission({ principalId, indicateurPublicId: publicId, action })
+      : grantPanierPermission({ principalId, panierPublicId: publicId, action })
+
+  const revokeFor = (
+    resourceType: PermissionResourceType,
+    publicId: string,
+    action?: PermissionActionValue,
+  ) =>
+    resourceType === 'INDICATEUR'
+      ? revokeIndicateurPermission({
+          principalId,
+          indicateurPublicId: publicId,
+          ...(action ? { action } : {}),
+        })
+      : revokePanierPermission({
+          principalId,
+          panierPublicId: publicId,
+          ...(action ? { action } : {}),
+        })
 
   const toggle = (
     resourceType: PermissionResourceType,
-    resourcePublicId: string,
+    publicId: string,
     action: PermissionActionValue,
     active: boolean,
   ) => {
     setError(null)
-    if (active) {
-      revokeMutation.mutate({ principalId, resourceType, resourcePublicId, action })
-    } else {
-      grantMutation.mutate({ principalId, resourceType, resourcePublicId, action })
-    }
+    mutation.mutate(() =>
+      active ? revokeFor(resourceType, publicId, action) : grantFor(resourceType, publicId, action),
+    )
   }
 
-  const removeResource = (resourceType: PermissionResourceType, resourcePublicId: string) => {
+  const removeResource = (resourceType: PermissionResourceType, publicId: string) => {
     setError(null)
-    revokeMutation.mutate({ principalId, resourceType, resourcePublicId })
+    mutation.mutate(() => revokeFor(resourceType, publicId))
   }
 
   const addResource = (resourceType: PermissionResourceType, hit: ResourceHit) => {
     setError(null)
     setModalType(null)
-    grantMutation.mutate({
-      principalId,
-      resourceType,
-      resourcePublicId: hit.publicId,
-      action: 'READ',
-    })
+    mutation.mutate(() => grantFor(resourceType, hit.publicId, 'READ'))
   }
 
   const renderSection = (
@@ -104,8 +125,6 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
                     <span className="font-mono text-xs text-text-muted">{row.publicId}</span>
                   </span>
                   <span className="flex items-center gap-2.5">
-                    {/* Lecture toujours accordée pour une ressource listée : simple libellé
-                        informatif (pas une chip cliquable). Se retire via la corbeille. */}
                     <span
                       title="Lecture toujours accordée pour une ressource ajoutée. Utilisez la corbeille pour la retirer."
                       className="flex items-center gap-1 text-xs font-medium text-text-muted"
