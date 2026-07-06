@@ -1,3 +1,4 @@
+import { formatDate } from '@pilote/mb-shared/formatDate'
 import type { UtilisateurApiModel } from '@pilote/mb-shared/utilisateur'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
@@ -128,9 +129,7 @@ function UtilisateursListComponent() {
                   )}
                 </Table.Cell>
                 <Table.Cell>
-                  <span className="text-text-muted">
-                    {new Date(u.createdAt).toLocaleDateString('fr-FR')}
-                  </span>
+                  <span className="text-text-muted">{formatDate(u.createdAt)}</span>
                 </Table.Cell>
                 <Table.Cell align="right">
                   <Button variant="tertiary" size="sm" type="button" asChild>

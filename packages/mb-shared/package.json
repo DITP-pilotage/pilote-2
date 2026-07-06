@@ -8,6 +8,10 @@
       "types": "./src/dates.ts",
       "default": "./src/dates.ts"
     },
+    "./formatDate": {
+      "types": "./src/formatDate.ts",
+      "default": "./src/formatDate.ts"
+    },
     "./auteur": {
       "types": "./src/auteur.ts",
       "default": "./src/auteur.ts"
@@ -91,6 +95,10 @@
     "./utilisateur": {
       "types": "./src/utilisateur.ts",
       "default": "./src/utilisateur.ts"
+    },
+    "./permission": {
+      "types": "./src/permission.ts",
+      "default": "./src/permission.ts"
     }
   },
   "files": [

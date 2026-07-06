@@ -17,6 +17,11 @@ export const fetchApiKeys = async (): Promise<ApiKeyListApiModel> => {
   return apiKeyListApiModelSchema.parse(json)
 }
 
+export const fetchApiKeyById = async (id: string): Promise<ApiKeyApiModel> => {
+  const json = await bffClient.get(`api-keys/${id}`).json()
+  return apiKeyApiModelSchema.parse(json)
+}
+
 export const createApiKey = async (body: CreateApiKeyBody): Promise<CreatedApiKeyApiModel> => {
   const json = await bffClient.post('api-keys', { json: body }).json()
   return createdApiKeyApiModelSchema.parse(json)

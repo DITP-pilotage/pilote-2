@@ -5,13 +5,19 @@ import { useState } from 'react'
 import { updateUtilisateur } from '@/api/utilisateurs'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
+import { PrincipalPermissions } from '@/components/PrincipalPermissions'
+import { TabNav } from '@/components/ui/TabNav'
 import { UtilisateurForm, type UtilisateurFormValues } from '@/components/UtilisateurForm'
 import { extractApiError } from '@/lib/apiError'
+import { principalPermissionsQueryOptions } from '@/queries/permissions'
 import { utilisateurQueryOptions } from '@/queries/utilisateurs'
 
 export const Route = createFileRoute('/_authed/utilisateurs/$id')({
   loader: async ({ context, params }) => {
-    await context.queryClient.ensureQueryData(utilisateurQueryOptions(params.id))
+    await Promise.all([
+      context.queryClient.ensureQueryData(utilisateurQueryOptions(params.id)),
+      context.queryClient.ensureQueryData(principalPermissionsQueryOptions(params.id)),
+    ])
   },
   component: EditUtilisateurComponent,
 })
@@ -21,6 +27,7 @@ function EditUtilisateurComponent() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const [error, setError] = useState<string | null>(null)
+  const [tab, setTab] = useState<'identite' | 'permissions'>('identite')
 
   const { data: utilisateur } = useSuspenseQuery(utilisateurQueryOptions(id))
 
@@ -54,23 +61,38 @@ function EditUtilisateurComponent() {
       </Breadcrumb>
       <PageHeading title="Modifier l'utilisateur" />
 
-      {utilisateur ? (
-        <UtilisateurForm
-          mode="update"
-          initialValues={{
-            email: utilisateur.email,
-            nom: utilisateur.nom,
-            prenom: utilisateur.prenom,
-            service: utilisateur.service,
-            fonction: utilisateur.fonction,
-          }}
-          pending={mutation.isPending}
-          errorMessage={error}
-          onCancel={() => void navigate({ to: '/utilisateurs' })}
-          onSubmit={(values) => mutation.mutate(values)}
-        />
+      <TabNav
+        tabs={[
+          { key: 'identite', label: 'Identité' },
+          { key: 'permissions', label: 'Permissions' },
+        ]}
+        active={tab}
+        onChange={(key) => setTab(key as 'identite' | 'permissions')}
+      />
+
+      {tab === 'identite' ? (
+        utilisateur ? (
+          <UtilisateurForm
+            mode="update"
+            initialValues={{
+              email: utilisateur.email,
+              nom: utilisateur.nom,
+              prenom: utilisateur.prenom,
+              service: utilisateur.service,
+              fonction: utilisateur.fonction,
+            }}
+            pending={mutation.isPending}
+            errorMessage={error}
+            onCancel={() => void navigate({ to: '/utilisateurs' })}
+            onSubmit={(values) => mutation.mutate(values)}
+          />
+        ) : (
+          <p className="text-sm font-medium text-accent">Utilisateur introuvable.</p>
+        )
       ) : (
-        <p className="text-sm font-medium text-accent">Utilisateur introuvable.</p>
+        <div className="mx-auto max-w-2xl">
+          <PrincipalPermissions principalId={id} />
+        </div>
       )}
     </div>
   )

@@ -94,6 +94,9 @@ export const session: SessionStore = {
       await authClient.post('logout')
     } finally {
       state.current = null
+      if (typeof sessionStorage !== 'undefined') {
+        sessionStorage.removeItem('mbadmin_prod_edit_unlocked')
+      }
     }
   },
 }

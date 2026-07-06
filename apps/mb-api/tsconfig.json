@@ -27,6 +27,7 @@
       "@/objectifIndicateurIndividu/*": ["./src/objectifIndicateurIndividu/*"],
       "@/widget/*": ["./src/widget/*"],
       "@/panier/*": ["./src/panier/*"],
+      "@/permission/*": ["./src/permission/*"],
       "@/shared/*": ["./src/shared/*"],
       "@/utilisateur/*": ["./src/utilisateur/*"],
       "@/whoami/*": ["./src/whoami/*"],

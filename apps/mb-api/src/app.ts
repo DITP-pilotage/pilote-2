@@ -14,6 +14,7 @@ import { indicateurRoutes } from '@/indicateur/routes'
 import { individuRoutes } from '@/individu/routes'
 import { meRoutes } from '@/me/routes'
 import { panierRoutes } from '@/panier/routes'
+import { permissionRoutes } from '@/permission/routes'
 import { referentielRoutes } from '@/referentiel/routes'
 import { objectifIndicateurIndividuRoutes } from '@/objectifIndicateurIndividu/routes'
 import { utilisateurRoutes } from '@/utilisateur/routes'
@@ -47,6 +48,7 @@ app.route('/', meRoutes)
 app.route('/', whoamiRoutes)
 app.route('/', apiKeyRoutes)
 app.route('/', utilisateurRoutes)
+app.route('/', permissionRoutes)
 
 app.doc('/openapi.json', {
   openapi: '3.0.0',

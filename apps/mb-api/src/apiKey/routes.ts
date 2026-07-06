@@ -7,11 +7,12 @@ import {
 
 import { createApiKey } from '@/apiKey/commands/createApiKey'
 import { revokeApiKey } from '@/apiKey/commands/revokeApiKey'
+import { getApiKeyById } from '@/apiKey/queries/getApiKeyById'
 import { listApiKeys } from '@/apiKey/queries/listApiKeys'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { erreur403, erreur404, erreur409 } from '@/framework/openapi/responses'
+import { erreur403, erreur404, erreur409, succes200 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 
 const ApiKeyApiModelSchema = apiKeyApiModelSchema.openapi('ApiKeyApiModel')
@@ -21,6 +22,10 @@ const CreateApiKeyBodySchema = createApiKeyBodySchema.openapi('CreateApiKeyBody'
 
 const revokeParamsSchema = z.object({
   id: z.string().openapi({ description: 'Identifiant (UUID) de la clé API à révoquer.' }),
+})
+
+const detailParamsSchema = z.object({
+  id: z.string().uuid().openapi({ description: 'Identifiant (UUID) de la clé API.' }),
 })
 
 // --- POST /api-keys ----------------------------------------------------------
@@ -64,6 +69,24 @@ const listApiKeysRoute = createRoute({
   },
 })
 
+// --- GET /api-keys/{id} ------------------------------------------------------
+
+const getApiKeyByIdRoute = createRoute({
+  method: 'get',
+  path: '/api-keys/{id}',
+  tags: ['ApiKey', 'Admin'],
+  summary: 'Récupérer une clé API',
+  description:
+    "Réservé aux clés API de rôle `ADMIN`. Retourne les métadonnées d'une clé (aucune valeur secrète).",
+  middleware: [requireAuthentication],
+  request: { params: detailParamsSchema },
+  responses: {
+    200: succes200('Clé API trouvée', ApiKeyApiModelSchema),
+    403: erreur403,
+    404: erreur404,
+  },
+})
+
 // --- POST /api-keys/{id}/revoke ----------------------------------------------
 
 const revokeApiKeyRoute = createRoute({
@@ -102,6 +125,14 @@ apiKeyRoutes.openapi(listApiKeysRoute, async (context) =>
     never,
   ),
 )
+
+apiKeyRoutes.openapi(getApiKeyByIdRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  return getApiKeyById(id).match(
+    (data) => jsonResponseOk({ context, data, schema: ApiKeyApiModelSchema, status: 200 }),
+    never,
+  )
+})
 
 apiKeyRoutes.openapi(revokeApiKeyRoute, async (context) => {
   const { id } = context.req.valid('param')

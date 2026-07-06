@@ -5,7 +5,7 @@ import { listPaniers } from '@/panier/queries/listPaniers'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurIds, testPanierId } from '@/test/randomIds'
-import { runAsPrincipal } from '@/test/runAsPrincipal'
+import { runAsAdmin, runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listPaniers', () => {
   it(
@@ -184,6 +184,67 @@ describe.concurrent('listPaniers', () => {
       expect(value.items.map((p) => p.id)).toEqual([panCursor6])
       expect(value.pagination).toEqual({ cursor: null, hasMore: false })
       expect(value.total).toBe(6)
+    }),
+  )
+
+  it(
+    'un principal ADMIN voit les paniers PRIVÉ sans permission explicite',
+    integrationTest(async () => {
+      const pubId = testPanierId()
+      await fixtures.panier({ publicId: pubId, visibilite: 'PRIVE' })
+
+      const result = await runAsAdmin('00000000-0000-0000-0000-0000000000a1', () => listPaniers({}))
+
+      expect(result._unsafeUnwrap().items.map((p) => p.id)).toContain(pubId)
+    }),
+  )
+
+  it(
+    'un principal non-ADMIN ne voit pas un panier PRIVÉ sans permission',
+    integrationTest(async () => {
+      const pubId = testPanierId()
+      await fixtures.panier({ publicId: pubId, visibilite: 'PRIVE' })
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () => listPaniers({}))
+
+      expect(result._unsafeUnwrap().items.map((p) => p.id)).not.toContain(pubId)
+    }),
+  )
+
+  it(
+    'filtre les paniers par recherche sur le nom',
+    integrationTest(async () => {
+      const match = testPanierId()
+      const other = testPanierId()
+      await fixtures.panier({ publicId: match, nom: 'Logement social', visibilite: 'PRIVE' })
+      await fixtures.panier({ publicId: other, nom: 'Transport', visibilite: 'PRIVE' })
+
+      const result = await runAsAdmin('00000000-0000-0000-0000-0000000000a1', () =>
+        listPaniers({ recherche: 'logement' }),
+      )
+      const ids = result._unsafeUnwrap().items.map((p) => p.id)
+
+      expect(ids).toContain(match)
+      expect(ids).not.toContain(other)
+    }),
+  )
+
+  it(
+    "filtre les paniers par recherche sur l'identifiant public",
+    integrationTest(async () => {
+      const match = testPanierId()
+      const other = testPanierId()
+      await fixtures.panier({ publicId: match, nom: 'Alpha', visibilite: 'PRIVE' })
+      await fixtures.panier({ publicId: other, nom: 'Beta', visibilite: 'PRIVE' })
+
+      const result = await runAsAdmin('00000000-0000-0000-0000-0000000000a1', () =>
+        listPaniers({ rechercheIdentifiant: match }),
+      )
+      const ids = result._unsafeUnwrap().items.map((p) => p.id)
+
+      expect(ids).toContain(match)
+      expect(ids).not.toContain(other)
     }),
   )
 })

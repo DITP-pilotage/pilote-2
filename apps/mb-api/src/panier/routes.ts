@@ -179,9 +179,9 @@ const getPanierContactsUtilesRoute = createRoute({
 export const panierRoutes = new OpenAPIHono()
 
 panierRoutes.openapi(getPaniersRoute, async (context) => {
-  const { cursor, pageSize } = context.req.valid('query')
+  const { recherche, rechercheIdentifiant, cursor, pageSize } = context.req.valid('query')
 
-  return listPaniers({ cursor, pageSize }).match(
+  return listPaniers({ recherche, rechercheIdentifiant, cursor, pageSize }).match(
     (data) =>
       jsonResponseOk({
         context,
