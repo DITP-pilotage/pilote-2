@@ -8,8 +8,10 @@ import {
   useSearch,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import type { ReactNode } from 'react'
+import { Search } from 'lucide-react'
+import { useState, type ReactNode } from 'react'
 
+import { CommandPalette } from '@/components/command-palette/CommandPalette'
 import { UserMenu } from '@/components/UserMenu'
 import { Button } from '@/components/ui/Button'
 import { Marianne } from '@/components/ui/Marianne'
@@ -27,6 +29,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 function RootComponent() {
   const { auth } = Route.useRouteContext()
   const navigate = useNavigate()
+  const [paletteOpen, setPaletteOpen] = useState(false)
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-text">
@@ -50,6 +53,21 @@ function RootComponent() {
           </Link>
 
           <nav className="flex items-center gap-1 sm:gap-2">
+            {auth.isAuthenticated ? (
+              <button
+                type="button"
+                onClick={() => setPaletteOpen(true)}
+                aria-label="Ouvrir la recherche"
+                className="hidden items-center gap-2 rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text-subtle transition-colors hover:border-border-strong hover:text-text sm:flex"
+              >
+                <Search className="size-4" />
+                <span>Rechercher…</span>
+                <kbd className="ml-4 rounded border border-border bg-surface-tinted px-1.5 py-0.5 font-mono text-[10px] font-medium text-text-muted">
+                  ⌘K
+                </kbd>
+              </button>
+            ) : null}
+
             <NavLink>Tableau de bord</NavLink>
 
             <div className="mx-2 hidden h-6 w-px bg-border sm:block" />
@@ -84,6 +102,10 @@ function RootComponent() {
           </div>
         </div>
       </footer>
+
+      {auth.isAuthenticated ? (
+        <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+      ) : null}
 
       {import.meta.env.DEV && <TanStackRouterDevtools position="bottom-right" />}
     </div>
