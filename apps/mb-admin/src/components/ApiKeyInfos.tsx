@@ -1,13 +1,11 @@
 import type { ApiKeyApiModel } from '@pilote/mb-shared/apiKey'
+import { formatDate } from '@pilote/mb-shared/formatDate'
 
 const STATUS_LABEL: Record<ApiKeyApiModel['status'], string> = {
   active: 'Active',
   expired: 'Expirée',
   revoked: 'Révoquée',
 }
-
-const formatDate = (iso: string | null): string =>
-  iso ? new Date(iso).toLocaleDateString('fr-FR') : '—'
 
 export function ApiKeyInfos({ apiKey }: { apiKey: ApiKeyApiModel }) {
   return (

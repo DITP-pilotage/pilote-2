@@ -1,6 +1,5 @@
 import type {
   PermissionActionValue,
-  PermissionResourceType,
   PrincipalPermissionsApiModel,
 } from '@pilote/mb-shared/permission'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
@@ -13,7 +12,8 @@ import {
   revokeIndicateurPermission,
   revokePanierPermission,
 } from '@/api/permissions'
-import { ResourceSearchModal, type ResourceHit } from '@/components/ResourceSearchModal'
+import { IndicateurSearchModal } from '@/components/IndicateurSearchModal'
+import { PanierSearchModal } from '@/components/PanierSearchModal'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { extractApiError } from '@/lib/apiError'
@@ -23,11 +23,17 @@ import { principalPermissionsQueryOptions } from '@/queries/permissions'
 
 type DirectRow = { publicId: string; nom: string; actions: PermissionActionValue[] }
 
+type SectionHandlers = {
+  onAdd: () => void
+  onToggleWrite: (publicId: string, active: boolean) => void
+  onRemove: (publicId: string) => void
+}
+
 export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const queryClient = useQueryClient()
   const { isProd, locked, unlock } = useProdEditUnlock()
   const [error, setError] = useState<string | null>(null)
-  const [modalType, setModalType] = useState<PermissionResourceType | null>(null)
+  const [modal, setModal] = useState<'indicateur' | 'panier' | null>(null)
 
   const options = principalPermissionsQueryOptions(principalId)
   const { data } = useSuspenseQuery(options)
@@ -40,59 +46,43 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
 
   const disabled = locked || mutation.isPending
 
-  const grantFor = (
-    resourceType: PermissionResourceType,
-    publicId: string,
-    action: PermissionActionValue,
-  ) =>
-    resourceType === 'INDICATEUR'
-      ? grantIndicateurPermission({ principalId, indicateurPublicId: publicId, action })
-      : grantPanierPermission({ principalId, panierPublicId: publicId, action })
-
-  const revokeFor = (
-    resourceType: PermissionResourceType,
-    publicId: string,
-    action?: PermissionActionValue,
-  ) =>
-    resourceType === 'INDICATEUR'
-      ? revokeIndicateurPermission({
-          principalId,
-          indicateurPublicId: publicId,
-          ...(action ? { action } : {}),
-        })
-      : revokePanierPermission({
-          principalId,
-          panierPublicId: publicId,
-          ...(action ? { action } : {}),
-        })
-
-  const toggle = (
-    resourceType: PermissionResourceType,
-    publicId: string,
-    action: PermissionActionValue,
-    active: boolean,
-  ) => {
+  const run = (task: () => Promise<PrincipalPermissionsApiModel>) => {
     setError(null)
-    mutation.mutate(() =>
-      active ? revokeFor(resourceType, publicId, action) : grantFor(resourceType, publicId, action),
+    mutation.mutate(task)
+  }
+
+  // Indicateurs — appels directs, aucune factorisation avec les paniers.
+  const addIndicateur = (indicateurPublicId: string) => {
+    setModal(null)
+    run(() => grantIndicateurPermission({ principalId, indicateurPublicId, action: 'READ' }))
+  }
+  const toggleIndicateurWrite = (indicateurPublicId: string, active: boolean) =>
+    run(() =>
+      active
+        ? revokeIndicateurPermission({ principalId, indicateurPublicId, action: 'WRITE' })
+        : grantIndicateurPermission({ principalId, indicateurPublicId, action: 'WRITE' }),
     )
-  }
+  const removeIndicateur = (indicateurPublicId: string) =>
+    run(() => revokeIndicateurPermission({ principalId, indicateurPublicId }))
 
-  const removeResource = (resourceType: PermissionResourceType, publicId: string) => {
-    setError(null)
-    mutation.mutate(() => revokeFor(resourceType, publicId))
+  // Paniers — appels directs, aucune factorisation avec les indicateurs.
+  const addPanier = (panierPublicId: string) => {
+    setModal(null)
+    run(() => grantPanierPermission({ principalId, panierPublicId, action: 'READ' }))
   }
-
-  const addResource = (resourceType: PermissionResourceType, hit: ResourceHit) => {
-    setError(null)
-    setModalType(null)
-    mutation.mutate(() => grantFor(resourceType, hit.publicId, 'READ'))
-  }
+  const togglePanierWrite = (panierPublicId: string, active: boolean) =>
+    run(() =>
+      active
+        ? revokePanierPermission({ principalId, panierPublicId, action: 'WRITE' })
+        : grantPanierPermission({ principalId, panierPublicId, action: 'WRITE' }),
+    )
+  const removePanier = (panierPublicId: string) =>
+    run(() => revokePanierPermission({ principalId, panierPublicId }))
 
   const renderSection = (
     title: string,
-    resourceType: PermissionResourceType,
     rows: DirectRow[],
+    handlers: SectionHandlers,
     extraForRow?: (publicId: string) => ReactNode,
   ) => (
     <div className="mb-6">
@@ -103,7 +93,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           size="sm"
           type="button"
           disabled={disabled}
-          onClick={() => setModalType(resourceType)}
+          onClick={handlers.onAdd}
         >
           <Plus className="size-4" /> Ajouter
         </Button>
@@ -134,7 +124,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
                     <button
                       type="button"
                       disabled={disabled}
-                      onClick={() => toggle(resourceType, row.publicId, 'WRITE', writeActive)}
+                      onClick={() => handlers.onToggleWrite(row.publicId, writeActive)}
                       className={clsxm(
                         'rounded-md border px-2 py-1 text-xs font-medium transition-colors',
                         writeActive
@@ -148,7 +138,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
                     <button
                       type="button"
                       disabled={disabled}
-                      onClick={() => removeResource(resourceType, row.publicId)}
+                      onClick={() => handlers.onRemove(row.publicId)}
                       className="ml-1 text-text-subtle hover:text-accent disabled:opacity-50"
                       aria-label="Retirer la ressource"
                     >
@@ -245,15 +235,34 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
         />
       ) : null}
 
-      {renderSection('Indicateurs', 'INDICATEUR', data.indicateurs)}
-      {renderSection('Paniers', 'PANIER', data.paniers, renderHeritesForPanier)}
+      {renderSection('Indicateurs', data.indicateurs, {
+        onAdd: () => setModal('indicateur'),
+        onToggleWrite: toggleIndicateurWrite,
+        onRemove: removeIndicateur,
+      })}
+      {renderSection(
+        'Paniers',
+        data.paniers,
+        {
+          onAdd: () => setModal('panier'),
+          onToggleWrite: togglePanierWrite,
+          onRemove: removePanier,
+        },
+        renderHeritesForPanier,
+      )}
 
-      {modalType ? (
-        <ResourceSearchModal
-          resourceType={modalType}
-          excludedPublicIds={modalType === 'PANIER' ? excludedPaniers : excludedIndicateurs}
-          onSelect={(hit) => addResource(modalType, hit)}
-          onClose={() => setModalType(null)}
+      {modal === 'indicateur' ? (
+        <IndicateurSearchModal
+          excludedPublicIds={excludedIndicateurs}
+          onSelect={(hit) => addIndicateur(hit.publicId)}
+          onClose={() => setModal(null)}
+        />
+      ) : null}
+      {modal === 'panier' ? (
+        <PanierSearchModal
+          excludedPublicIds={excludedPaniers}
+          onSelect={(hit) => addPanier(hit.publicId)}
+          onClose={() => setModal(null)}
         />
       ) : null}
     </section>

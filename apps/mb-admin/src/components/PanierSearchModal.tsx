@@ -1,42 +1,30 @@
-import type { PermissionResourceType } from '@pilote/mb-shared/permission'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { Search, X } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '@/components/ui/Button'
-import {
-  searchIndicateursInfiniteQueryOptions,
-  searchPaniersInfiniteQueryOptions,
-} from '@/queries/permissions'
+import { searchPaniersInfiniteQueryOptions } from '@/queries/permissions'
 
-export type ResourceHit = { publicId: string; nom: string }
+export type PanierHit = { publicId: string; nom: string }
 
-export function ResourceSearchModal({
-  resourceType,
+export function PanierSearchModal({
   excludedPublicIds,
   onSelect,
   onClose,
 }: {
-  resourceType: PermissionResourceType
   excludedPublicIds: string[]
-  onSelect: (hit: ResourceHit) => void
+  onSelect: (hit: PanierHit) => void
   onClose: () => void
 }) {
   const [recherche, setRecherche] = useState('')
   const [rechercheIdentifiant, setRechercheIdentifiant] = useState('')
   const excluded = new Set(excludedPublicIds)
 
-  const query = useInfiniteQuery(
-    resourceType === 'PANIER'
-      ? searchPaniersInfiniteQueryOptions(recherche, rechercheIdentifiant)
-      : searchIndicateursInfiniteQueryOptions(recherche, rechercheIdentifiant),
-  )
+  const query = useInfiniteQuery(searchPaniersInfiniteQueryOptions(recherche, rechercheIdentifiant))
 
-  const hits: ResourceHit[] = (query.data?.pages ?? [])
+  const hits: PanierHit[] = (query.data?.pages ?? [])
     .flatMap((page) => page.hits)
     .filter((hit) => !excluded.has(hit.publicId))
-
-  const label = resourceType === 'PANIER' ? 'panier' : 'indicateur'
 
   return (
     <div
@@ -48,7 +36,7 @@ export function ResourceSearchModal({
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-text">Ajouter un {label}</h2>
+          <h2 className="text-lg font-semibold text-text">Ajouter un panier</h2>
           <button
             type="button"
             onClick={onClose}
@@ -62,13 +50,13 @@ export function ResourceSearchModal({
         <div className="mb-4 space-y-3">
           <div>
             <label
-              htmlFor="resource-search-identifiant"
+              htmlFor="panier-search-identifiant"
               className="mb-1.5 block text-xs font-semibold"
             >
               Identifiant
             </label>
             <input
-              id="resource-search-identifiant"
+              id="panier-search-identifiant"
               autoFocus
               placeholder="Identifiant"
               value={rechercheIdentifiant}
@@ -77,14 +65,14 @@ export function ResourceSearchModal({
             />
           </div>
           <div>
-            <label htmlFor="resource-search-nom" className="mb-1.5 block text-xs font-semibold">
+            <label htmlFor="panier-search-nom" className="mb-1.5 block text-xs font-semibold">
               Nom
             </label>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-subtle" />
               <input
-                id="resource-search-nom"
-                placeholder={`Nom du ${label}…`}
+                id="panier-search-nom"
+                placeholder="Nom du panier…"
                 value={recherche}
                 onChange={(event) => setRecherche(event.target.value)}
                 className="w-full rounded-md border border-border bg-surface py-2.5 pl-9 pr-3 text-sm focus:border-primary focus:outline-none"

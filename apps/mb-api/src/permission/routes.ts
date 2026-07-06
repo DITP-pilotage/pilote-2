@@ -29,8 +29,6 @@ const GrantPanierPermissionBodySchema = grantPanierPermissionBodySchema.openapi(
   'GrantPanierPermissionBody',
 )
 
-const ADMIN_ONLY = 'Réservé aux clés API de rôle `ADMIN`.'
-
 // --- GET /permissions --------------------------------------------------------
 
 const getPermissionsRoute = createRoute({
@@ -39,7 +37,7 @@ const getPermissionsRoute = createRoute({
   tags: ['Permission', 'Admin'],
   summary: "Lister les permissions d'un principal",
   description:
-    `${ADMIN_ONLY} Retourne les permissions directes (paniers + indicateurs) du principal, plus ` +
+    `Réservé aux clés API de rôle \`ADMIN\`. Retourne les permissions directes (paniers + indicateurs) du principal, plus ` +
     'les indicateurs en READ hérités via propagation panier → indicateur.',
   middleware: [requireAuthentication],
   request: { query: listPrincipalPermissionsQuerySchema },
@@ -58,7 +56,7 @@ const grantIndicateurPermissionRoute = createRoute({
   path: '/permissions/indicateur',
   tags: ['Permission', 'Admin'],
   summary: 'Accorder une permission sur un indicateur',
-  description: `${ADMIN_ONLY} Accorde une action (\`READ\`/\`WRITE\`) sur un indicateur à un principal. **Idempotent**. Retourne l'état à jour.`,
+  description: `Réservé aux clés API de rôle \`ADMIN\`. Accorde une action (\`READ\`/\`WRITE\`) sur un indicateur à un principal. **Idempotent**. Retourne l'état à jour.`,
   middleware: [requireAuthentication],
   request: {
     body: {
@@ -81,7 +79,7 @@ const revokeIndicateurPermissionRoute = createRoute({
   path: '/permissions/indicateur',
   tags: ['Permission', 'Admin'],
   summary: 'Retirer une permission sur un indicateur',
-  description: `${ADMIN_ONLY} Retire une action précise si \`action\` est fournie, sinon toutes les actions de l'indicateur. **Idempotent**. Retourne l'état à jour.`,
+  description: `Réservé aux clés API de rôle \`ADMIN\`. Retire une action précise si \`action\` est fournie, sinon toutes les actions de l'indicateur. **Idempotent**. Retourne l'état à jour.`,
   middleware: [requireAuthentication],
   request: { query: revokeIndicateurPermissionQuerySchema },
   responses: {
@@ -99,7 +97,7 @@ const grantPanierPermissionRoute = createRoute({
   path: '/permissions/panier',
   tags: ['Permission', 'Admin'],
   summary: 'Accorder une permission sur un panier',
-  description: `${ADMIN_ONLY} Accorde une action (\`READ\`/\`WRITE\`) sur un panier à un principal. **Idempotent**. Retourne l'état à jour.`,
+  description: `Réservé aux clés API de rôle \`ADMIN\`. Accorde une action (\`READ\`/\`WRITE\`) sur un panier à un principal. **Idempotent**. Retourne l'état à jour.`,
   middleware: [requireAuthentication],
   request: {
     body: {
@@ -122,7 +120,7 @@ const revokePanierPermissionRoute = createRoute({
   path: '/permissions/panier',
   tags: ['Permission', 'Admin'],
   summary: 'Retirer une permission sur un panier',
-  description: `${ADMIN_ONLY} Retire une action précise si \`action\` est fournie, sinon toutes les actions du panier. **Idempotent**. Retourne l'état à jour.`,
+  description: `Réservé aux clés API de rôle \`ADMIN\`. Retire une action précise si \`action\` est fournie, sinon toutes les actions du panier. **Idempotent**. Retourne l'état à jour.`,
   middleware: [requireAuthentication],
   request: { query: revokePanierPermissionQuerySchema },
   responses: {
