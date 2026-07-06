@@ -5,7 +5,7 @@ import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPub
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurId, testReferentielId } from '@/test/randomIds'
-import { runAsPrincipal } from '@/test/runAsPrincipal'
+import { runAsAdmin, runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('getIndicateurByPublicId', () => {
   it(
@@ -171,6 +171,20 @@ describe.concurrent('getIndicateurByPublicId', () => {
 
       expect(result.isOk()).toBe(true)
       expect(result._unsafeUnwrap().referentiels).toEqual([])
+    }),
+  )
+
+  it(
+    'retourne un indicateur PRIVÉ pour un principal ADMIN sans permission explicite (cohérent avec la liste)',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      await fixtures.indicateur({ publicId: indId, visibilite: 'PRIVE' })
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsAdmin(apiKey.id, () => getIndicateurByPublicId(indId))
+
+      expect(result.isOk()).toBe(true)
+      expect(result._unsafeUnwrap().visibilite).toBe('PRIVE')
     }),
   )
 
