@@ -29,4 +29,6 @@ export const individuListApiModelSchema = createPaginatedApiListSchema(individuA
 export type IndividuListApiModel = z.infer<typeof individuListApiModelSchema>
 
 export const listIndividusForReferentielQuerySchema = listQuerySchema
-export type ListIndividusForReferentielQuery = z.infer<typeof listIndividusForReferentielQuerySchema>
+export type ListIndividusForReferentielQuery = z.infer<
+  typeof listIndividusForReferentielQuerySchema
+>

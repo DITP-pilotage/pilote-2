@@ -3,9 +3,7 @@ import { z } from 'zod'
 export const paginationCursorSchema = z
   .string()
   .min(1)
-  .describe(
-    'Cursor opaque (base64) renvoyé par la réponse précédente. Vide pour la première page.',
-  )
+  .describe('Cursor opaque (base64) renvoyé par la réponse précédente. Vide pour la première page.')
 
 export const paginationSchema = z.object({
   cursor: paginationCursorSchema
@@ -18,7 +16,7 @@ export const createPaginatedApiListSchema = <T extends z.ZodTypeAny>(itemSchema:
   z.object({
     items: z.array(itemSchema).describe('Items de la page courante'),
     pagination: paginationSchema.describe('Métadonnées de pagination'),
-    total: z.number().describe('Nombre total d\'items après filtres (toutes pages confondues)'),
+    total: z.number().describe("Nombre total d'items après filtres (toutes pages confondues)"),
   })
 
 export type PaginatedApiList<T extends z.ZodTypeAny> = z.infer<

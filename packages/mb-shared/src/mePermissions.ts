@@ -5,11 +5,15 @@ import { permissionActionSchema } from './permission'
 const permissionEntrySchema = z.object({
   id: z
     .string()
-    .describe('Identifiant public de la ressource (`PAN-…` pour un panier, `IND-…` pour un indicateur).'),
+    .describe(
+      'Identifiant public de la ressource (`PAN-…` pour un panier, `IND-…` pour un indicateur).',
+    ),
   actions: z
     .array(permissionActionSchema)
     .min(1)
-    .describe('Actions accordées au principal courant sur cette ressource. Trié `READ` avant `WRITE`.'),
+    .describe(
+      'Actions accordées au principal courant sur cette ressource. Trié `READ` avant `WRITE`.',
+    ),
 })
 
 export const mePermissionsApiModelSchema = z.object({
@@ -25,7 +29,7 @@ export const mePermissionsApiModelSchema = z.object({
     .array(permissionEntrySchema)
     .describe(
       "Permissions explicites du principal sur les paniers, triées par `id` ASC. N'inclut PAS " +
-        "le READ implicite des paniers `PUBLIC` (le client le sait en affichant le panier).",
+        'le READ implicite des paniers `PUBLIC` (le client le sait en affichant le panier).',
     ),
   indicateurs: z
     .array(permissionEntrySchema)

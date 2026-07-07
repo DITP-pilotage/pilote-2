@@ -17,13 +17,15 @@ export const panierTauxProgressionContributionApiModelSchema = z.object({
     .number()
     .nullable()
     .describe(
-      "Dernier taux de progression connu pour cet indicateur et cet individu. " +
+      'Dernier taux de progression connu pour cet indicateur et cet individu. ' +
         "null si l'indicateur n'a aucun point calculable (pas d'objectif, pas de valeur, " +
         'ou dernier point avec valeurCible = 0).',
     ),
-  date: dateSchema.nullable().describe(
-    'Bucket (YYYY-MM-DD) du dernier point retenu pour cet indicateur. null si aucun point.',
-  ),
+  date: dateSchema
+    .nullable()
+    .describe(
+      'Bucket (YYYY-MM-DD) du dernier point retenu pour cet indicateur. null si aucun point.',
+    ),
   ponderation: z
     .number()
     .describe(
@@ -41,7 +43,7 @@ export const panierTauxProgressionApiModelSchema = z.object({
     .number()
     .nullable()
     .describe(
-      "Moyenne pondérée des taux de progression des indicateurs du panier, tronquée à 2 décimales. " +
+      'Moyenne pondérée des taux de progression des indicateurs du panier, tronquée à 2 décimales. ' +
         "null si au moins un indicateur du panier n'est pas calculable (règle tout-ou-rien) ou si " +
         'le panier est vide.',
     ),
@@ -49,7 +51,7 @@ export const panierTauxProgressionApiModelSchema = z.object({
     .array(panierTauxProgressionContributionApiModelSchema)
     .describe(
       "Détail par indicateur du panier (dernier taux connu pour l'individu, date, pondération). " +
-        "Toujours renseigné même si la moyenne globale est null — utile pour expliciter au client " +
+        'Toujours renseigné même si la moyenne globale est null — utile pour expliciter au client ' +
         'quels indicateurs bloquent le calcul.',
     ),
 })

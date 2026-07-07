@@ -220,6 +220,24 @@ jobs:
         env:
           APP_PACKAGE: '@pilote/mb-webapp'
 
+  lint-mb-shared:
+    name: Run linters for mb-shared
+    needs: changes
+    if: needs.changes.outputs['mb-shared'] == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Run lint command
+        run: pnpm lint
+        env:
+          APP_PACKAGE: '@pilote/mb-shared'
+
   lint-sql:
     name: Run SQL linter on dbt models
     needs: changes
