@@ -11,6 +11,9 @@ export type FieldProps = {
   // Id posé sur le `<label>`, pour associer un contrôle custom via
   // `aria-labelledby` (ex. un radiogroup qui n'a pas de `<input>` natif).
   labelId?: string | undefined
+  // Id du contrôle natif associé (`<label for>`), pour les champs input /
+  // select / textarea. Fourni par FieldInput & co via `useId`.
+  htmlFor?: string | undefined
   children: ReactNode
 }
 
@@ -19,11 +22,21 @@ export type FieldProps = {
 // FieldSelect, FieldTextarea et les contrôles custom. Le label reste toujours dans
 // le DOM ; `hideLabel` le masque visuellement (`sr-only`) sans le retirer aux
 // lecteurs d'écran — utile pour les champs en grille où le libellé est implicite.
-export function Field({ label, required, hint, error, hideLabel, labelId, children }: FieldProps) {
+export function Field({
+  label,
+  required,
+  hint,
+  error,
+  hideLabel,
+  labelId,
+  htmlFor,
+  children,
+}: FieldProps) {
   return (
     <div>
       <label
         id={labelId}
+        htmlFor={htmlFor}
         className={clsxm('mb-1.5 block text-xs font-semibold', hideLabel && 'sr-only')}
       >
         {label}

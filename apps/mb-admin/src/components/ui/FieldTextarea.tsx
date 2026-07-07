@@ -1,4 +1,4 @@
-import type { Ref, TextareaHTMLAttributes } from 'react'
+import { useId, type Ref, type TextareaHTMLAttributes } from 'react'
 
 import { Field } from '@/components/ui/Field'
 import { clsxm } from '@/lib/clsxm'
@@ -21,12 +21,23 @@ export function FieldTextarea({
   error,
   hideLabel,
   className,
+  id,
   ref,
   ...props
 }: FieldTextareaProps) {
+  const generatedId = useId()
+  const fieldId = id ?? generatedId
   return (
-    <Field label={label} required={required} hint={hint} error={error} hideLabel={hideLabel}>
+    <Field
+      label={label}
+      required={required}
+      hint={hint}
+      error={error}
+      hideLabel={hideLabel}
+      htmlFor={fieldId}
+    >
       <textarea
+        id={fieldId}
         ref={ref}
         className={clsxm(
           'w-full resize-y rounded-md border border-border px-3 py-2 text-sm focus:border-primary focus:outline-none',

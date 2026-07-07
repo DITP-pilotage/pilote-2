@@ -9,6 +9,8 @@ import {
   uniteIndicateurCodeSchema,
 } from '@pilote/mb-shared/indicateur'
 
+import { emptyToNull } from '@/lib/emptyToNull'
+
 // Schéma du formulaire (valeurs saisies, toutes en chaînes natives). La
 // conversion vers le body PUT — `'' → null`, `jour → number` — est faite par
 // `toUpsertBody`. La validation de `id` dépend du mode (create : identifiant
@@ -50,11 +52,6 @@ export function buildInitialValues(indicateur?: IndicateurApiModel): IndicateurF
     jourMiseAJour: indicateur?.jourMiseAJour != null ? String(indicateur.jourMiseAJour) : '',
     referentiels: indicateur?.referentiels ?? [],
   }
-}
-
-const emptyToNull = (value: string): string | null => {
-  const trimmed = value.trim()
-  return trimmed === '' ? null : trimmed
 }
 
 // Mappe les valeurs du formulaire vers le body PUT. Les 6 métadonnées sont
