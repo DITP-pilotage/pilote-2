@@ -72,13 +72,12 @@ export const toIndicateurApiModel = (
       fonctionAgregation: configuration.fonctionAgregation,
     }))
     .sort((a, b) => a.id.localeCompare(b.id)),
-  // `responsables` est projeté ici : toute query réutilisant ce mapper (getIndicateurByPublicId ET listIndicateurs) doit inclure la relation, sinon `.map` échoue.
-  responsables: indicateur.responsables.map(({ utilisateur: u }) => ({
-    email: u.email,
-    nom: u.nom,
-    prenom: u.prenom,
-    service: u.service,
-    fonction: u.fonction,
+  responsables: indicateur.responsables.map(({ utilisateur }) => ({
+    email: utilisateur.email,
+    nom: utilisateur.nom,
+    prenom: utilisateur.prenom,
+    service: utilisateur.service,
+    fonction: utilisateur.fonction,
   })),
   createdAt: indicateur.createdAt.toISOString(),
   updatedAt: indicateur.updatedAt.toISOString(),

@@ -45,7 +45,7 @@ model Utilisateur {
 
   principal       Principal           @relation(fields: [id], references: [id], onDelete: Cascade)
   identites       IdentiteExterne[]
-  responsabilites           PanierResponsable[]
+  responsabilitesPanier     PanierResponsable[]
   responsabilitesIndicateur IndicateurResponsable[]
 
   @@map("utilisateur")

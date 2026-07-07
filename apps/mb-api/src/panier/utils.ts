@@ -55,13 +55,12 @@ export const toPanierApiModel = (panier: PanierWithIndicateurs): PanierApiModel 
   description: panier.description,
   visibilite: panier.visibilite,
   indicateurIds: panier.indicateurs.map((lien) => lien.indicateur.publicId),
-  // `responsables` et `contactsUtiles` sont projetés ici : toute query réutilisant ce mapper (getPanierByPublicId ET listPaniers) doit inclure ces relations, sinon `.map` échoue.
-  responsables: panier.responsables.map(({ utilisateur: u }) => ({
-    email: u.email,
-    nom: u.nom,
-    prenom: u.prenom,
-    service: u.service,
-    fonction: u.fonction,
+  responsables: panier.responsables.map(({ utilisateur }) => ({
+    email: utilisateur.email,
+    nom: utilisateur.nom,
+    prenom: utilisateur.prenom,
+    service: utilisateur.service,
+    fonction: utilisateur.fonction,
   })),
   contactsUtiles: toContactsUtilesGroups(panier.contactsUtiles),
   createdAt: panier.createdAt.toISOString(),

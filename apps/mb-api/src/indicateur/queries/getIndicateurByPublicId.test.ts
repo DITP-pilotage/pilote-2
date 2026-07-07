@@ -213,7 +213,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
   )
 
   it(
-    "retourne les responsables de l'indicateur triés par ordre d'assignation",
+    "retourne tous les champs d'un responsable de l'indicateur",
     integrationTest(async () => {
       const indId = testIndicateurId()
       await fixtures.indicateurResponsable({
@@ -239,6 +239,28 @@ describe.concurrent('getIndicateurByPublicId', () => {
           fonction: 'Chargée de mission',
         },
       ])
+    }),
+  )
+
+  it(
+    "retourne les responsables dans le bon ordre (createdAt ASC) quand plusieurs sont assignés",
+    integrationTest(async () => {
+      const indOrd = testIndicateurId()
+      // Insertions séquentielles pour garantir des createdAt distincts.
+      await fixtures.indicateurResponsable({
+        indicateur: { publicId: indOrd, visibilite: 'PUBLIC' },
+        utilisateur: { email: `aa-ord-${indOrd}@example.com` },
+      })
+      await fixtures.indicateurResponsable({
+        indicateur: { publicId: indOrd },
+        utilisateur: { email: `bb-ord-${indOrd}@example.com` },
+      })
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indOrd))
+      const emails = result._unsafeUnwrap().responsables.map((r) => r.email)
+
+      expect(emails).toEqual([`aa-ord-${indOrd}@example.com`, `bb-ord-${indOrd}@example.com`])
     }),
   )
 
