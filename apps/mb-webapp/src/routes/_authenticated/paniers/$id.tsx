@@ -28,7 +28,6 @@ import {
   loadPanier,
   panierContactsUtilesQueryOptions,
   panierQueryOptions,
-  panierResponsablesQueryOptions,
   panierTauxProgressionQueryOptions,
 } from '@/queries/paniers'
 import { allReferentielsQueryOptions, loadAllReferentielIds } from '@/queries/referentiels'
@@ -79,7 +78,6 @@ export const Route = createFileRoute('/_authenticated/paniers/$id')({
             panierTauxProgressionQueryOptions({ panierId: params.id, individu: deps.individu }),
           )
         : Promise.resolve(),
-      queryClient.prefetchQuery(panierResponsablesQueryOptions(params.id)),
       queryClient.prefetchQuery(panierContactsUtilesQueryOptions(params.id)),
     ])
 
@@ -196,7 +194,7 @@ function PanierDetailComponent() {
 
         <TabsContent value="gouvernance">
           <Suspense fallback={<RouteLoading message="Chargement des responsables…" />}>
-            <PanierGouvernanceTab panierId={id} />
+            <PanierGouvernanceTab panierId={id} responsables={panier.responsables} />
           </Suspense>
         </TabsContent>
       </Tabs>
