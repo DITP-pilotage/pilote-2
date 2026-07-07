@@ -243,7 +243,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
   )
 
   it(
-    "retourne les responsables dans le bon ordre (createdAt ASC) quand plusieurs sont assignés",
+    'retourne les responsables dans le bon ordre (createdAt ASC) quand plusieurs sont assignés',
     integrationTest(async () => {
       const indOrd = testIndicateurId()
       // Insertions séquentielles pour garantir des createdAt distincts.
