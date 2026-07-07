@@ -48,7 +48,7 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
   },
   validateSearch: searchSchema,
   loaderDeps: ({ search }) => ({ individu: search.individu, referentiel: search.referentiel }),
-  loader: async ({ context, params, deps }) => {
+  loader: async ({ context, params, deps, location }) => {
     const { queryClient } = context
     const indicateur = await loadIndicateur({ queryClient, indicateurId: params.id })
 
@@ -61,7 +61,10 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
         throw redirect({
           to: '/indicateurs/$id',
           params,
-          search: { individu, referentiel },
+          // On préserve le reste du search (onglet, commentaires…) : seul le
+          // couple individu/referentiel est corrigé. Sinon un lien profond vers
+          // un onglet (ex. depuis la palette ⌘K) le perdrait au redirect.
+          search: { ...location.search, individu, referentiel },
           replace: true,
         })
       },

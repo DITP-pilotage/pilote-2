@@ -6,6 +6,8 @@ import { useEffect, useMemo, useState } from 'react'
 import type { Command } from '@/lib/commands/types'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
 
+import { buildIndicateurActions } from './indicateurActions'
+
 const DEBOUNCE_MS = 200
 const MAX_RESULTS = 8
 
@@ -49,6 +51,7 @@ export function useIndicateurCommands(
         void navigate({ to: '/indicateurs/$id', params: { id: indicateur.id } })
         close()
       },
+      actions: buildIndicateurActions(indicateur, { navigate, close }),
     }))
   }, [enabled, data, navigate, close])
 

@@ -50,7 +50,7 @@ export const Route = createFileRoute('/_authenticated/paniers/$id')({
   },
   validateSearch: searchSchema,
   loaderDeps: ({ search }) => ({ individu: search.individu, referentiel: search.referentiel }),
-  loader: async ({ context, params, deps }) => {
+  loader: async ({ context, params, deps, location }) => {
     const { queryClient } = context
     const panier = await loadPanier({ queryClient, panierId: params.id })
     if (panier.indicateurIds.length > 0) {
@@ -66,7 +66,10 @@ export const Route = createFileRoute('/_authenticated/paniers/$id')({
         throw redirect({
           to: '/paniers/$id',
           params,
-          search: { individu, referentiel },
+          // On préserve le reste du search (onglet…) : seul le couple
+          // individu/referentiel est corrigé. Sinon un lien profond vers un
+          // onglet (ex. depuis la palette ⌘K) le perdrait au redirect.
+          search: { ...location.search, individu, referentiel },
           replace: true,
         })
       },

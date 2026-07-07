@@ -6,6 +6,8 @@ import { useEffect, useMemo, useState } from 'react'
 import type { Command } from '@/lib/commands/types'
 import { paniersQueryOptions } from '@/queries/paniers'
 
+import { buildPanierActions } from './panierActions'
+
 const DEBOUNCE_MS = 200
 const MAX_RESULTS = 8
 
@@ -49,6 +51,7 @@ export function usePanierCommands(
         void navigate({ to: '/paniers/$id', params: { id: panier.id } })
         close()
       },
+      actions: buildPanierActions(panier, { navigate, close }),
     }))
   }, [enabled, data, navigate, close])
 

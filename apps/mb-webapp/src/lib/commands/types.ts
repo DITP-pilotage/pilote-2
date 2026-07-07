@@ -7,11 +7,35 @@ import type { LucideIcon } from 'lucide-react'
 export type CommandGroup = 'navigation' | 'recents' | 'indicateurs' | 'paniers'
 
 /**
+ * Sous-action accessible via `Tab` sur une commande actionnable (ex: sur un
+ * indicateur : « Voir les commentaires », « Voir les métadonnées »…).
+ *
+ * Volontairement découplée de la navigation : `run()` peut aussi bien naviguer
+ * vers un onglet que déclencher demain un import de données ou l'ouverture d'une
+ * modale. Chaque domaine fournit ses actions via un builder dédié.
+ */
+export type CommandAction = {
+  /** Identifiant stable et unique (sert aussi de `value` cmdk). */
+  id: string
+  /** Libellé principal affiché. */
+  label: string
+  /** Termes supplémentaires pris en compte par le filtrage. */
+  keywords?: string[]
+  /** Icône optionnelle affichée à gauche. */
+  icon?: LucideIcon
+  /** Texte secondaire discret. */
+  hint?: string
+  /** Effet déclenché à la sélection. */
+  run: () => void
+}
+
+/**
  * Contrat générique d'une entrée de la palette de commandes (⌘K).
  *
- * Aujourd'hui chaque commande est une navigation, mais le modèle est pensé pour
- * accueillir demain des sous-actions (import de données d'un indicateur, panier
- * pré-filtré…) : il suffira d'ajouter une commande avec son propre `run()`.
+ * Chaque commande a une action primaire (`run`, déclenchée par `Entrée`). Elle
+ * peut en plus exposer des sous-actions (`actions`) accessibles via `Tab` : la
+ * palette bascule alors sur une page dédiée listant ces actions. Un item est
+ * « actionnable » ssi `actions` est présent et non vide.
  */
 export type Command = {
   /** Identifiant stable et unique (sert aussi de `value` cmdk). */
@@ -26,8 +50,10 @@ export type Command = {
   icon?: LucideIcon
   /** Texte secondaire discret (ex: le publicId affiché en mono). */
   hint?: string
-  /** Effet déclenché à la sélection (navigation aujourd'hui). */
+  /** Action primaire déclenchée par `Entrée`. */
   run: () => void
+  /** Sous-actions accessibles via `Tab` (page dédiée). Opt-in par commande. */
+  actions?: CommandAction[]
 }
 
 /**
@@ -36,10 +62,25 @@ export type Command = {
  * filtrage n'est pas délégué au serveur.
  */
 export function filterCommands(commands: Command[], query: string): Command[] {
+  return filterByLabelAndKeywords(commands, query)
+}
+
+/**
+ * Filtrage client des sous-actions d'une page (`Tab`), même contrat que
+ * {@link filterCommands} : sous-chaîne insensible à la casse sur libellé + mots-clés.
+ */
+export function filterActions(actions: CommandAction[], query: string): CommandAction[] {
+  return filterByLabelAndKeywords(actions, query)
+}
+
+function filterByLabelAndKeywords<T extends { label: string; keywords?: string[] }>(
+  items: T[],
+  query: string,
+): T[] {
   const needle = query.trim().toLowerCase()
-  if (!needle) return commands
-  return commands.filter((command) => {
-    const haystack = [command.label, ...(command.keywords ?? [])].join(' ').toLowerCase()
+  if (!needle) return items
+  return items.filter((item) => {
+    const haystack = [item.label, ...(item.keywords ?? [])].join(' ').toLowerCase()
     return haystack.includes(needle)
   })
 }

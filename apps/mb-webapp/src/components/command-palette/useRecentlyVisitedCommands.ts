@@ -5,6 +5,9 @@ import { useMemo } from 'react'
 import type { Command } from '@/lib/commands/types'
 import { getRecentlyVisited } from '@/lib/recentlyVisited'
 
+import { buildIndicateurActions } from './indicateurActions'
+import { buildPanierActions } from './panierActions'
+
 const ICON_BY_TYPE = {
   indicateur: BarChart3,
   panier: ShoppingBasket,
@@ -24,22 +27,30 @@ export function useRecentlyVisitedCommands(open: boolean, close: () => void): Co
 
   return useMemo<Command[]>(
     () =>
-      entries.map((entry) => ({
-        id: `recent:${entry.type}:${entry.id}`,
-        label: entry.label,
-        group: 'recents',
-        keywords: [entry.id],
-        hint: entry.id,
-        icon: ICON_BY_TYPE[entry.type],
-        run: () => {
-          if (entry.type === 'indicateur') {
-            void navigate({ to: '/indicateurs/$id', params: { id: entry.id } })
-          } else {
-            void navigate({ to: '/paniers/$id', params: { id: entry.id } })
-          }
-          close()
-        },
-      })),
+      entries.map((entry) => {
+        const cible = { id: entry.id, nom: entry.label }
+        const actions =
+          entry.type === 'indicateur'
+            ? buildIndicateurActions(cible, { navigate, close })
+            : buildPanierActions(cible, { navigate, close })
+        return {
+          id: `recent:${entry.type}:${entry.id}`,
+          label: entry.label,
+          group: 'recents',
+          keywords: [entry.id],
+          hint: entry.id,
+          icon: ICON_BY_TYPE[entry.type],
+          run: () => {
+            if (entry.type === 'indicateur') {
+              void navigate({ to: '/indicateurs/$id', params: { id: entry.id } })
+            } else {
+              void navigate({ to: '/paniers/$id', params: { id: entry.id } })
+            }
+            close()
+          },
+          actions,
+        }
+      }),
     [entries, navigate, close],
   )
 }
