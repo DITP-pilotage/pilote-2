@@ -1,7 +1,7 @@
 import { PrismaPg } from '@prisma/adapter-pg'
 import { uuidv7 } from 'uuidv7'
 
-import { type PeriodeMiseAJour } from '@pilote/mb-shared/indicateur'
+import { type PeriodeMiseAJour, type UniteIndicateurCode } from '@pilote/mb-shared/indicateur'
 
 import { Prisma, PrismaClient } from '../src/generated/prisma/client.js'
 import { type FonctionAgregation } from '../src/generated/prisma/enums.js'
@@ -27,7 +27,7 @@ const indicateursSeed: ReadonlyArray<{
   publicId: string
   nom: string
   visibilite?: 'PUBLIC' | 'PRIVE'
-  unite?: 'POURCENTAGE' | 'ANNEES'
+  unite?: UniteIndicateurCode
   description?: string
   methodeCalcul?: string
   sourceDonnees?: string
@@ -50,6 +50,7 @@ const indicateursSeed: ReadonlyArray<{
   {
     publicId: 'IND-002',
     nom: 'Émissions de CO2',
+    unite: 'TONNES_CO2',
     description: "Émissions totales de dioxyde de carbone d'origine anthropique sur le territoire.",
     methodeCalcul: 'Inventaire national selon les lignes directrices du GIEC',
     sourceDonnees: 'CITEPA — Secten',
@@ -71,24 +72,26 @@ const indicateursSeed: ReadonlyArray<{
   {
     publicId: 'IND-004',
     nom: 'Délai de traitement préfectures',
+    unite: 'JOURS',
     description: "Délai moyen d'instruction des dossiers déposés en préfecture, en jours ouvrés.",
     sourceDonnees: 'Ministère de l’Intérieur — DGCL',
     periodeMiseAJour: 'MENSUELLE',
     jourMiseAJour: 5,
   },
-  { publicId: 'IND-005', nom: 'Effectif police nationale' },
+  { publicId: 'IND-005', nom: 'Effectif police nationale', unite: 'ETP' },
   { publicId: 'IND-006', nom: 'Indicateur expérimental ancien' },
   { publicId: 'IND-007', nom: 'Indicateur en pause', periodeMiseAJour: 'AUCUNE' },
   {
     publicId: 'IND-008',
     nom: 'Satisfaction usagers services publics',
+    unite: 'POINTS',
     description: 'Note de satisfaction globale des usagers des services publics, sur 10.',
     methodeCalcul: 'Moyenne arithmétique des notes individuelles collectées par enquête',
     sourceDonnees: 'DITP — Baromètre Services Publics+',
     sourceUrl: 'https://www.plus.transformation.gouv.fr/',
     periodeMiseAJour: 'SEMESTRIELLE',
   },
-  { publicId: 'IND-009', nom: 'Délai moyen de prise en charge urgences' },
+  { publicId: 'IND-009', nom: 'Délai moyen de prise en charge urgences', unite: 'MINUTES' },
   {
     publicId: 'IND-010',
     nom: 'Taux de vaccination infantile',
@@ -100,48 +103,62 @@ const indicateursSeed: ReadonlyArray<{
     periodeMiseAJour: 'ANNUELLE',
   },
   { publicId: 'IND-011', nom: 'Accès aux soins de proximité', unite: 'POURCENTAGE' },
-  { publicId: 'IND-012', nom: 'Couverture des services France Santé' },
-  { publicId: 'IND-013', nom: 'Déploiement de France Santé' },
+  { publicId: 'IND-012', nom: 'Couverture des services France Santé', unite: 'POURCENTAGE' },
+  { publicId: 'IND-013', nom: 'Déploiement de France Santé', unite: 'POURCENTAGE' },
   { publicId: 'IND-014', nom: "Amélioration de l'orientation des élèves" },
   { publicId: 'IND-015', nom: 'Taux de réussite au baccalauréat', unite: 'POURCENTAGE' },
-  { publicId: 'IND-016', nom: 'Nombre de places en crèche' },
-  { publicId: 'IND-017', nom: 'Logements rénovés énergétiquement' },
-  { publicId: 'IND-018', nom: "Production d'énergies renouvelables" },
-  { publicId: 'IND-019', nom: 'Émissions de gaz à effet de serre' },
+  { publicId: 'IND-016', nom: 'Nombre de places en crèche', unite: 'VALEUR_UNITAIRE' },
+  { publicId: 'IND-017', nom: 'Logements rénovés énergétiquement', unite: 'VALEUR_UNITAIRE' },
+  { publicId: 'IND-018', nom: "Production d'énergies renouvelables", unite: 'TERAWATT' },
+  { publicId: 'IND-019', nom: 'Émissions de gaz à effet de serre', unite: 'TONNES_CO2' },
   { publicId: 'IND-020', nom: "Qualité de l'air en zones urbaines" },
-  { publicId: 'IND-021', nom: 'Aires protégées (terre et mer)' },
+  { publicId: 'IND-021', nom: 'Aires protégées (terre et mer)', unite: 'HECTARES' },
   { publicId: 'IND-022', nom: 'Tri et valorisation des déchets', unite: 'POURCENTAGE' },
-  { publicId: 'IND-023', nom: 'Délai de traitement CAF' },
-  { publicId: 'IND-024', nom: 'Délai de traitement Pôle emploi' },
-  { publicId: 'IND-025', nom: "Délai de délivrance des titres d'identité" },
+  { publicId: 'IND-023', nom: 'Délai de traitement CAF', unite: 'JOURS' },
+  { publicId: 'IND-024', nom: 'Délai de traitement Pôle emploi', unite: 'JOURS' },
+  { publicId: 'IND-025', nom: "Délai de délivrance des titres d'identité", unite: 'JOURS' },
   { publicId: 'IND-026', nom: 'Présence postale en zone rurale' },
-  { publicId: 'IND-027', nom: 'Maisons France Services ouvertes' },
+  { publicId: 'IND-027', nom: 'Maisons France Services ouvertes', unite: 'VALEUR_UNITAIRE' },
   { publicId: 'IND-028', nom: 'Désertification médicale' },
-  { publicId: 'IND-029', nom: 'Effectifs gendarmerie nationale' },
-  { publicId: 'IND-030', nom: 'Élucidation des cambriolages' },
-  { publicId: 'IND-031', nom: 'Sécurité routière — accidents mortels' },
-  { publicId: 'IND-032', nom: 'Délai de jugement civil' },
-  { publicId: 'IND-033', nom: 'Délai de jugement pénal' },
-  { publicId: 'IND-034', nom: 'Recettes fiscales nettes' },
+  { publicId: 'IND-029', nom: 'Effectifs gendarmerie nationale', unite: 'ETP' },
+  { publicId: 'IND-030', nom: 'Élucidation des cambriolages', unite: 'POURCENTAGE' },
+  { publicId: 'IND-031', nom: 'Sécurité routière — accidents mortels', unite: 'VALEUR_UNITAIRE' },
+  { publicId: 'IND-032', nom: 'Délai de jugement civil', unite: 'MOIS' },
+  { publicId: 'IND-033', nom: 'Délai de jugement pénal', unite: 'MOIS' },
+  { publicId: 'IND-034', nom: 'Recettes fiscales nettes', unite: 'MILLIARDS_EUROS' },
   { publicId: 'IND-035', nom: 'Dette publique / PIB', unite: 'POURCENTAGE' },
   { publicId: 'IND-036', nom: 'Croissance du PIB', unite: 'POURCENTAGE' },
   { publicId: 'IND-037', nom: 'Inflation (IPC)', unite: 'POURCENTAGE' },
   { publicId: 'IND-038', nom: "Taux d'emploi des seniors", unite: 'POURCENTAGE' },
   { publicId: 'IND-039', nom: "Taux d'emploi des jeunes", unite: 'POURCENTAGE' },
-  { publicId: 'IND-040', nom: 'Apprentissage — contrats signés' },
-  { publicId: 'IND-041', nom: "Création nette d'entreprises" },
-  { publicId: 'IND-042', nom: 'Exportations de biens' },
+  { publicId: 'IND-040', nom: 'Apprentissage — contrats signés', unite: 'VALEUR_UNITAIRE' },
+  { publicId: 'IND-041', nom: "Création nette d'entreprises", unite: 'VALEUR_UNITAIRE' },
+  { publicId: 'IND-042', nom: 'Exportations de biens', unite: 'MILLIARDS_EUROS' },
   { publicId: 'IND-043', nom: 'Couverture 5G du territoire', unite: 'POURCENTAGE' },
-  { publicId: 'IND-044', nom: 'Dématérialisation des démarches administratives' },
-  { publicId: 'IND-045', nom: "Cyberattaques traitées par l'ANSSI" },
-  { publicId: 'IND-046', nom: 'Indicateur public — Démographie', visibilite: 'PUBLIC' },
+  {
+    publicId: 'IND-044',
+    nom: 'Dématérialisation des démarches administratives',
+    unite: 'POURCENTAGE',
+  },
+  { publicId: 'IND-045', nom: "Cyberattaques traitées par l'ANSSI", unite: 'VALEUR_UNITAIRE' },
+  {
+    publicId: 'IND-046',
+    nom: 'Indicateur public — Démographie',
+    visibilite: 'PUBLIC',
+    unite: 'MILLIONS',
+  },
   {
     publicId: 'IND-047',
     nom: 'Indicateur public — Espérance de vie',
     visibilite: 'PUBLIC',
     unite: 'ANNEES',
   },
-  { publicId: 'IND-048', nom: 'Indicateur public — Pauvreté', visibilite: 'PUBLIC' },
+  {
+    publicId: 'IND-048',
+    nom: 'Indicateur public — Pauvreté',
+    visibilite: 'PUBLIC',
+    unite: 'POURCENTAGE',
+  },
   {
     publicId: 'IND-049',
     nom: "Indicateur public — Taux d'alphabétisation",

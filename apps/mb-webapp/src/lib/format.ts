@@ -18,21 +18,26 @@ export const formatNumberFr = (value: number): string => numberFr.format(value)
 // à la typographie fr-FR (`70 %`, `82 ans`).
 const NBSP_FINE = '\u202F'
 
-export const formatNumberAvecUniteFr = (
+const formatAvecUnite = (
+  format: Intl.NumberFormat,
   value: number,
   unite: UniteIndicateurApiModel | null,
 ): string =>
-  unite ? `${numberFr.format(value)}${NBSP_FINE}${unite.abbreviation}` : numberFr.format(value)
+  unite?.abbreviation
+    ? `${format.format(value)}${NBSP_FINE}${unite.abbreviation}`
+    : format.format(value)
+
+export const formatNumberAvecUniteFr = (
+  value: number,
+  unite: UniteIndicateurApiModel | null,
+): string => formatAvecUnite(numberFr, value, unite)
 
 export const formatVariationFr = (value: number): string => variationFr.format(value)
 
 export const formatVariationAvecUniteFr = (
   value: number,
   unite: UniteIndicateurApiModel | null,
-): string =>
-  unite
-    ? `${variationFr.format(value)}${NBSP_FINE}${unite.abbreviation}`
-    : variationFr.format(value)
+): string => formatAvecUnite(variationFr, value, unite)
 
 export const formatDateFr = (value: Date | string): string => dateFr.format(toDate(value))
 

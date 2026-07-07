@@ -4,7 +4,12 @@ import { Plus, Trash2 } from 'lucide-react'
 import { useMemo } from 'react'
 import { useFieldArray, useForm, useWatch, type UseFormRegister } from 'react-hook-form'
 
-import { PERIODE_MISE_A_JOUR_LABELS, PERIODES_MISE_A_JOUR } from '@pilote/mb-shared/indicateur'
+import {
+  PERIODE_MISE_A_JOUR_LABELS,
+  PERIODES_MISE_A_JOUR,
+  UNITES_INDICATEUR,
+  UNITES_INDICATEUR_CONFIG,
+} from '@pilote/mb-shared/indicateur'
 
 import { fetchAllReferentiels } from '@/api/referentiels'
 import {
@@ -117,8 +122,11 @@ export function IndicateurForm({
           <div className="flex-1">
             <FieldSelect label="Unité" {...form.register('unite')}>
               <option value="">Aucune</option>
-              <option value="POURCENTAGE">Pourcentage</option>
-              <option value="ANNEES">Années</option>
+              {UNITES_INDICATEUR.map((code) => (
+                <option key={code} value={code}>
+                  {UNITES_INDICATEUR_CONFIG[code].libelle}
+                </option>
+              ))}
             </FieldSelect>
           </div>
         </div>

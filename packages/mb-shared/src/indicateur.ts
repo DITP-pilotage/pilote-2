@@ -20,7 +20,45 @@ export const fonctionAgregationSchema = z
   )
 export type FonctionAgregation = z.infer<typeof fonctionAgregationSchema>
 
-export const UNITES_INDICATEUR = ['POURCENTAGE', 'ANNEES'] as const
+// Catalogue plateforme des unités, ordonné par famille (numéraires, durée,
+// spatiales, taux, monétaires, autres) pour un affichage groupé dans les
+// sélecteurs. Catalogue fermé, étendu par déploiement.
+export const UNITES_INDICATEUR = [
+  // Numéraires
+  'VALEUR_UNITAIRE',
+  'MILLIONS',
+  'ETP',
+  'ETPT',
+  // Durée
+  'HEURES',
+  'MINUTES',
+  'JOURS',
+  'MOIS',
+  'ANNEES',
+  // Spatiales
+  'HECTARES',
+  'METRE',
+  'KILOMETRE',
+  'METRE_CARRE',
+  'KILOMETRE_CARRE',
+  // Taux
+  'POINTS',
+  'POURCENTAGE',
+  // Monétaires
+  'EURO',
+  'MILLIONS_EUROS',
+  'MILLIARDS_EUROS',
+  // Autres
+  'MEGAWATT',
+  'GIGAWATT',
+  'TONNES',
+  'TONNES_CO2',
+  'TERAWATT',
+  'LITRES',
+  'ELEVES',
+  'CLASSES',
+  'REPAS',
+] as const
 export type UniteIndicateurCode = (typeof UNITES_INDICATEUR)[number]
 
 export const uniteIndicateurCodeSchema = z
@@ -29,10 +67,45 @@ export const uniteIndicateurCodeSchema = z
     "Code de l'unité de mesure de l'indicateur. Catalogue plateforme, fermé, étendu par déploiement.",
   )
 
+// `abbreviation: null` = unité sans symbole à suffixer (compte brut, ex.
+// « Valeur unitaire »). Les unités « mots » (élèves, classes, repas) portent le
+// mot en abréviation pour rester lisibles suffixées à une valeur.
 export const UNITES_INDICATEUR_CONFIG = {
-  POURCENTAGE: { libelle: 'Pourcentage', abbreviation: '%' },
+  // Numéraires
+  VALEUR_UNITAIRE: { libelle: 'Valeur unitaire', abbreviation: null },
+  MILLIONS: { libelle: 'Millions', abbreviation: 'M' },
+  ETP: { libelle: 'ETP', abbreviation: 'ETP' },
+  ETPT: { libelle: 'ETPT', abbreviation: 'ETPT' },
+  // Durée
+  HEURES: { libelle: 'Heures', abbreviation: 'h' },
+  MINUTES: { libelle: 'Minutes', abbreviation: 'min' },
+  JOURS: { libelle: 'Jours', abbreviation: 'j' },
+  MOIS: { libelle: 'Mois', abbreviation: 'mois' },
   ANNEES: { libelle: 'Années', abbreviation: 'ans' },
-} satisfies Record<UniteIndicateurCode, { libelle: string; abbreviation: string }>
+  // Spatiales
+  HECTARES: { libelle: 'Hectares', abbreviation: 'ha' },
+  METRE: { libelle: 'Mètre', abbreviation: 'm' },
+  KILOMETRE: { libelle: 'Kilomètre', abbreviation: 'km' },
+  METRE_CARRE: { libelle: 'Mètre carré', abbreviation: 'm²' },
+  KILOMETRE_CARRE: { libelle: 'Kilomètre carré', abbreviation: 'km²' },
+  // Taux
+  POINTS: { libelle: 'Points', abbreviation: 'pts' },
+  POURCENTAGE: { libelle: 'Pourcentage', abbreviation: '%' },
+  // Monétaires
+  EURO: { libelle: 'Euro', abbreviation: '€' },
+  MILLIONS_EUROS: { libelle: "Millions d'€", abbreviation: 'M€' },
+  MILLIARDS_EUROS: { libelle: "Milliards d'€", abbreviation: 'Md€' },
+  // Autres
+  MEGAWATT: { libelle: 'Megawatt', abbreviation: 'MW' },
+  GIGAWATT: { libelle: 'Gigawatt', abbreviation: 'GW' },
+  TONNES: { libelle: 'Tonnes', abbreviation: 't' },
+  TONNES_CO2: { libelle: 'Tonnes équivalents CO2', abbreviation: 'tCO2e' },
+  TERAWATT: { libelle: 'Térawatt', abbreviation: 'TW' },
+  LITRES: { libelle: 'Litres', abbreviation: 'L' },
+  ELEVES: { libelle: 'Élèves', abbreviation: 'élèves' },
+  CLASSES: { libelle: 'Classes', abbreviation: 'classes' },
+  REPAS: { libelle: 'Repas', abbreviation: 'repas' },
+} satisfies Record<UniteIndicateurCode, { libelle: string; abbreviation: string | null }>
 
 export const uniteIndicateurApiModelSchema = z
   .object({
@@ -40,7 +113,11 @@ export const uniteIndicateurApiModelSchema = z
     libelle: z.string().describe("Libellé affichable de l'unité (français)."),
     abbreviation: z
       .string()
-      .describe("Abréviation de l'unité, à suffixer aux valeurs (ex. `%`, `ans`)."),
+      .nullable()
+      .describe(
+        "Abréviation de l'unité à suffixer aux valeurs (ex. `%`, `ans`), ou `null` " +
+          'pour une unité sans symbole (compte brut, ex. « Valeur unitaire »).',
+      ),
   })
   .describe("Unité de mesure d'un indicateur, sérialisée enrichie pour les clients API.")
 export type UniteIndicateurApiModel = z.infer<typeof uniteIndicateurApiModelSchema>
