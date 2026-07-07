@@ -11,7 +11,6 @@ import {
   panierListApiModelSchema,
 } from '@pilote/mb-shared/panier'
 import { panierContactsUtilesApiModelSchema } from '@pilote/mb-shared/panierContactUtile'
-import { panierResponsablesApiModelSchema } from '@pilote/mb-shared/panierResponsable'
 import {
   getPanierTauxProgressionQuerySchema,
   panierTauxProgressionApiModelSchema,
@@ -40,7 +39,6 @@ import { withTransaction } from '@/framework/persistence/withTransaction'
 import { creerPanierCommentaire, panierConfig } from '@/panier/commands/creerPanierCommentaire'
 import { getPanierByPublicId } from '@/panier/queries/getPanierByPublicId'
 import { getPanierContactsUtiles } from '@/panier/queries/getPanierContactsUtiles'
-import { getPanierResponsables } from '@/panier/queries/getPanierResponsables'
 import { getPanierTauxProgression } from '@/panier/queries/getPanierTauxProgression'
 import { listPaniers } from '@/panier/queries/listPaniers'
 import { listerPanierCommentaires } from '@/panier/queries/listerPanierCommentaires'
@@ -49,9 +47,6 @@ const PanierApiModelSchema = panierApiModelSchema.openapi('PanierApiModel')
 const PanierListApiModelSchema = panierListApiModelSchema.openapi('PanierListApiModel')
 const PanierTauxProgressionApiModelSchema = panierTauxProgressionApiModelSchema.openapi(
   'PanierTauxProgressionApiModel',
-)
-const PanierResponsablesApiModelSchema = panierResponsablesApiModelSchema.openapi(
-  'PanierResponsablesApiModel',
 )
 const PanierContactsUtilesApiModelSchema = panierContactsUtilesApiModelSchema.openapi(
   'PanierContactsUtilesApiModel',
@@ -132,27 +127,6 @@ const getPanierTauxProgressionRoute = createRoute({
   },
 })
 
-// --- GET /paniers/:id/responsables -------------------------------------------
-
-const getPanierResponsablesRoute = createRoute({
-  method: 'get',
-  path: '/paniers/{id}/responsables',
-  tags: ['Panier'],
-  summary: "Lister les responsables d'un panier",
-  description:
-    'Retourne la liste des utilisateurs désignés responsables du panier, triés par ordre ' +
-    "d'assignation (createdAt ASC). Accessible à tout principal pouvant lire le panier " +
-    '(visibilite PUBLIC ou permission READ/WRITE explicite).',
-  middleware: [requireAuthentication],
-  request: { params: detailParamsSchema },
-  responses: {
-    200: {
-      content: { 'application/json': { schema: PanierResponsablesApiModelSchema } },
-      description: 'Liste des responsables du panier',
-    },
-  },
-})
-
 // --- GET /paniers/:id/contacts-utiles ----------------------------------------
 
 const getPanierContactsUtilesRoute = createRoute({
@@ -218,21 +192,6 @@ panierRoutes.openapi(getPanierTauxProgressionRoute, async (context) => {
         context,
         data,
         schema: PanierTauxProgressionApiModelSchema,
-        status: 200,
-      }),
-    never,
-  )
-})
-
-panierRoutes.openapi(getPanierResponsablesRoute, async (context) => {
-  const { id } = context.req.valid('param')
-
-  return getPanierResponsables(id).match(
-    (data) =>
-      jsonResponseOk({
-        context,
-        data,
-        schema: PanierResponsablesApiModelSchema,
         status: 200,
       }),
     never,

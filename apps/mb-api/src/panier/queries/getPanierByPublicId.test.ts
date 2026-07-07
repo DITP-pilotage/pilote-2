@@ -123,4 +123,26 @@ describe.concurrent('getPanierByPublicId', () => {
       ])
     }),
   )
+
+  it(
+    'retourne les responsables dans le bon ordre (createdAt ASC) quand plusieurs sont assignés',
+    integrationTest(async () => {
+      const panOrd = testPanierId()
+      // Insertions séquentielles pour garantir des createdAt distincts.
+      await fixtures.panierResponsable({
+        panier: { publicId: panOrd, visibilite: 'PUBLIC' },
+        utilisateur: { email: `aa-ord-${panOrd}@example.com` },
+      })
+      await fixtures.panierResponsable({
+        panier: { publicId: panOrd },
+        utilisateur: { email: `bb-ord-${panOrd}@example.com` },
+      })
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () => getPanierByPublicId(panOrd))
+      const emails = result._unsafeUnwrap().responsables.map((r) => r.email)
+
+      expect(emails).toEqual([`aa-ord-${panOrd}@example.com`, `bb-ord-${panOrd}@example.com`])
+    }),
+  )
 })
