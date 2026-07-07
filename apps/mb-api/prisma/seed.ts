@@ -842,6 +842,17 @@ const main = async () => {
   }
   const panierResponsablesCount = 2
 
+  // Responsables indicateur : ditp.admin et claire.dupont sont responsables de IND-001.
+  const indicateurIdInd001 = indicateursParPublicId.get('IND-001')!
+  for (const utilisateurId of [ditpAdmin.id, claireDupont.id]) {
+    await prisma.indicateurResponsable.upsert({
+      where: { indicateurId_utilisateurId: { indicateurId: indicateurIdInd001, utilisateurId } },
+      update: {},
+      create: { indicateurId: indicateurIdInd001, utilisateurId },
+    })
+  }
+  const indicateurResponsablesCount = 2
+
   // ── Organismes ────────────────────────────────────────────────────────────────
 
   const ditp = await prisma.organisme.upsert({
@@ -941,7 +952,7 @@ const main = async () => {
   const permissionsCount = 8 * 2
   const widgetLiaisonsCount = widgetsSeed.reduce((acc, w) => acc + w.referentielPublicIds.length, 0)
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${paniersSeed.length} paniers (${panierLiaisonsCount} liaisons panier-indicateur, ${panierPermissionsCount} permissions panier, ${panierResponsablesCount} responsable panier, ${contactsUtilesCount} contacts utiles).`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${paniersSeed.length} paniers (${panierLiaisonsCount} liaisons panier-indicateur, ${panierPermissionsCount} permissions panier, ${panierResponsablesCount} responsable panier, ${contactsUtilesCount} contacts utiles), ${indicateurResponsablesCount} responsables indicateur.`,
   )
 }
 

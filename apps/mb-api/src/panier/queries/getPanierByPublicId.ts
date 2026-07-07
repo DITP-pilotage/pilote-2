@@ -16,6 +16,13 @@ export const getPanierByPublicId = (publicId: string): ResultAsync<PanierApiMode
           orderBy: { createdAt: 'asc' },
           include: { indicateur: { select: { publicId: true } } },
         },
+        responsables: {
+          orderBy: { createdAt: 'asc' },
+          include: { utilisateur: true },
+        },
+        contactsUtiles: {
+          include: { contactUtile: { include: { organisme: true } } },
+        },
       },
     }),
   ).map(toPanierApiModel)

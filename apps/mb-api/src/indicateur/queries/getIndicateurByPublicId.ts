@@ -19,7 +19,13 @@ export const getIndicateurByPublicId = (
   return ResultAsync.fromSafePromise(
     db().indicateur.findFirstOrThrow({
       where,
-      include: { referentiels: { include: { referentiel: true } } },
+      include: {
+        referentiels: { include: { referentiel: true } },
+        responsables: {
+          orderBy: { createdAt: 'asc' },
+          include: { utilisateur: true },
+        },
+      },
     }),
   ).map(toIndicateurApiModel)
 }

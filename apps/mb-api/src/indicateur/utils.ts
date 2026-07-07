@@ -6,13 +6,18 @@ import {
 } from '@pilote/mb-shared/indicateur'
 
 import { type FonctionAgregation, type UniteIndicateur } from '@/generated/prisma/enums'
-import { type IndicateurModel, type ReferentielModel } from '@/generated/prisma/models'
+import {
+  type IndicateurModel,
+  type ReferentielModel,
+  type UtilisateurModel,
+} from '@/generated/prisma/models'
 
 export type IndicateurWithReferentiels = IndicateurModel & {
   referentiels: Array<{
     fonctionAgregation: FonctionAgregation
     referentiel: ReferentielModel
   }>
+  responsables: Array<{ utilisateur: UtilisateurModel }>
 }
 
 // Garde compile-time : l'enum Prisma `UniteIndicateur` et le catalogue mb-shared
@@ -67,6 +72,13 @@ export const toIndicateurApiModel = (
       fonctionAgregation: configuration.fonctionAgregation,
     }))
     .sort((a, b) => a.id.localeCompare(b.id)),
+  responsables: indicateur.responsables.map(({ utilisateur }) => ({
+    email: utilisateur.email,
+    nom: utilisateur.nom,
+    prenom: utilisateur.prenom,
+    service: utilisateur.service,
+    fonction: utilisateur.fonction,
+  })),
   createdAt: indicateur.createdAt.toISOString(),
   updatedAt: indicateur.updatedAt.toISOString(),
 })

@@ -19,8 +19,3 @@ export const panierContactsUtilesGroupSchema = z.object({
   contacts: z.array(contactUtileApiModelSchema),
 })
 export type PanierContactsUtilesGroup = z.infer<typeof panierContactsUtilesGroupSchema>
-
-export const panierContactsUtilesApiModelSchema = z.object({
-  items: z.array(panierContactsUtilesGroupSchema),
-})
-export type PanierContactsUtilesApiModel = z.infer<typeof panierContactsUtilesApiModelSchema>

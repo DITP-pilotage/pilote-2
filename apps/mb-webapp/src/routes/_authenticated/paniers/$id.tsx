@@ -4,7 +4,7 @@ import { referentielPublicIdSchema } from '@pilote/mb-shared/referentiel'
 import { panierPublicIdSchema } from '@pilote/mb-shared/publicIds'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
-import { startTransition, Suspense, useId } from 'react'
+import { startTransition, useId } from 'react'
 import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
@@ -26,9 +26,7 @@ import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
 import {
   loadPanier,
-  panierContactsUtilesQueryOptions,
   panierQueryOptions,
-  panierResponsablesQueryOptions,
   panierTauxProgressionQueryOptions,
 } from '@/queries/paniers'
 import { allReferentielsQueryOptions, loadAllReferentielIds } from '@/queries/referentiels'
@@ -73,15 +71,11 @@ export const Route = createFileRoute('/_authenticated/paniers/$id')({
       },
     })
 
-    await Promise.all([
-      deps.individu
-        ? queryClient.prefetchQuery(
-            panierTauxProgressionQueryOptions({ panierId: params.id, individu: deps.individu }),
-          )
-        : Promise.resolve(),
-      queryClient.prefetchQuery(panierResponsablesQueryOptions(params.id)),
-      queryClient.prefetchQuery(panierContactsUtilesQueryOptions(params.id)),
-    ])
+    if (deps.individu) {
+      await queryClient.prefetchQuery(
+        panierTauxProgressionQueryOptions({ panierId: params.id, individu: deps.individu }),
+      )
+    }
 
     return { panier }
   },
@@ -195,9 +189,10 @@ function PanierDetailComponent() {
         </TabsContent>
 
         <TabsContent value="gouvernance">
-          <Suspense fallback={<RouteLoading message="Chargement des responsables…" />}>
-            <PanierGouvernanceTab panierId={id} />
-          </Suspense>
+          <PanierGouvernanceTab
+            responsables={panier.responsables}
+            contactsUtiles={panier.contactsUtiles}
+          />
         </TabsContent>
       </Tabs>
     </Page>
