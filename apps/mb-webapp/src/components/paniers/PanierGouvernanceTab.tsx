@@ -9,7 +9,7 @@ export function PanierGouvernanceTab({
   responsables,
 }: {
   panierId: string
-  responsables: ResponsableApiModel[]
+  responsables: ReadonlyArray<ResponsableApiModel>
 }) {
   return (
     <div className="flex flex-col gap-8">

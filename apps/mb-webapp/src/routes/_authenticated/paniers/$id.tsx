@@ -193,7 +193,7 @@ function PanierDetailComponent() {
         </TabsContent>
 
         <TabsContent value="gouvernance">
-          <Suspense fallback={<RouteLoading message="Chargement des responsables…" />}>
+          <Suspense fallback={<RouteLoading message="Chargement de la gouvernance…" />}>
             <PanierGouvernanceTab panierId={id} responsables={panier.responsables} />
           </Suspense>
         </TabsContent>

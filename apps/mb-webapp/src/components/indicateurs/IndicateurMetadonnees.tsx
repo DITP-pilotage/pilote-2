@@ -96,7 +96,7 @@ export function IndicateurMetadonnees({ indicateur }: IndicateurMetadonneesProps
 
       <div className="flex flex-col gap-4">
         <Heading size="sm">Responsables</Heading>
-        <ResponsablesList responsables={[...indicateur.responsables]} />
+        <ResponsablesList responsables={indicateur.responsables} />
       </div>
     </div>
   )

@@ -17,7 +17,7 @@ function Initiales({ nom, prenom }: { nom: string; prenom: string }) {
   )
 }
 
-export function ResponsablesList({ responsables }: { responsables: ResponsableApiModel[] }) {
+export function ResponsablesList({ responsables }: { responsables: ReadonlyArray<ResponsableApiModel> }) {
   if (responsables.length === 0) {
     return <EmptyState title="Aucun responsable désigné." />
   }

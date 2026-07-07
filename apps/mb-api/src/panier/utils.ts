@@ -19,6 +19,7 @@ export const toPanierApiModel = (panier: PanierWithIndicateurs): PanierApiModel 
   description: panier.description,
   visibilite: panier.visibilite,
   indicateurIds: panier.indicateurs.map((lien) => lien.indicateur.publicId),
+  // `responsables` est projeté ici : toute query réutilisant ce mapper (getPanierByPublicId ET listPaniers) doit inclure la relation, sinon `.map` échoue.
   responsables: panier.responsables.map(({ utilisateur: u }) => ({
     email: u.email,
     nom: u.nom,
