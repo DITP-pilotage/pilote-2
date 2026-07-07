@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod'
 
 export const contactUtileApiModelSchema = z.object({
   id: z.string(),
@@ -8,8 +8,8 @@ export const contactUtileApiModelSchema = z.object({
   email: z.string().email().nullable(),
   url: z.string().nullable(),
   adresse: z.string().nullable(),
-});
-export type ContactUtileApiModel = z.infer<typeof contactUtileApiModelSchema>;
+})
+export type ContactUtileApiModel = z.infer<typeof contactUtileApiModelSchema>
 
 export const panierContactsUtilesGroupSchema = z.object({
   organisme: z.object({
@@ -17,7 +17,5 @@ export const panierContactsUtilesGroupSchema = z.object({
     nom: z.string(),
   }),
   contacts: z.array(contactUtileApiModelSchema),
-});
-export type PanierContactsUtilesGroup = z.infer<
-  typeof panierContactsUtilesGroupSchema
->;
+})
+export type PanierContactsUtilesGroup = z.infer<typeof panierContactsUtilesGroupSchema>

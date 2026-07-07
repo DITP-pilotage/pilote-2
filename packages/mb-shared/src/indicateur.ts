@@ -207,7 +207,9 @@ export const indicateurApiModelSchema = z.object({
     ),
   responsables: z
     .array(responsableApiModelSchema)
-    .describe("Utilisateurs désignés responsables de l'indicateur, triés par ordre d'assignation (createdAt ASC)."),
+    .describe(
+      "Utilisateurs désignés responsables de l'indicateur, triés par ordre d'assignation (createdAt ASC).",
+    ),
   createdAt: z.string().datetime().describe('Date ISO 8601 de création.'),
   updatedAt: z.string().datetime().describe('Date ISO 8601 de dernière mise à jour.'),
 })
