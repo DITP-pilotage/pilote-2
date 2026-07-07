@@ -298,6 +298,7 @@ model synthese_des_resultats {
   auteur_modification    utilisateur         @relation("syntheses_modifiees", fields: [auteur_modification_id], references: [id], onUpdate: Cascade)
   chantier_territoire    chantier_territoire @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onUpdate: Cascade)
 
+  @@index([chantier_id, territoire_code, statut])
   @@schema("public")
 }
 
@@ -335,6 +336,7 @@ model commentaire {
   auteur_modification    utilisateur         @relation("commentaires_modifies", fields: [auteur_modification_id], references: [id], onUpdate: Cascade)
   chantier_territoire    chantier_territoire @relation(fields: [chantier_id, territoire_code], references: [id, territoire_code], onUpdate: Cascade)
 
+  @@index([chantier_id, territoire_code, statut])
   @@schema("public")
 }
 
@@ -581,6 +583,7 @@ model objectif {
   auteur_modification    utilisateur        @relation("objectifs_modifies", fields: [auteur_modification_id], references: [id], onUpdate: Cascade)
   chantier_identite      chantier_identite  @relation(fields: [chantier_id], references: [id], onUpdate: Cascade)
 
+  @@index([chantier_id, statut])
   @@schema("public")
 }
 
@@ -605,6 +608,7 @@ model decision_strategique {
   auteur_modification    utilisateur               @relation("decision_auteur_modification", fields: [auteur_modification_id], references: [id], onUpdate: Cascade)
   chantier_identite      chantier_identite         @relation(fields: [chantier_id], references: [id], onUpdate: Cascade)
 
+  @@index([chantier_id, statut])
   @@schema("public")
 }
 

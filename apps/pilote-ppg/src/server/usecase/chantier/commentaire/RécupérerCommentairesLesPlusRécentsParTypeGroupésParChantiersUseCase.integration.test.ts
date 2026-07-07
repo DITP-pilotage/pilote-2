@@ -196,38 +196,37 @@ describe("RécupérerCommentairesLesPlusRécentsParTypeGroupésParChantiersUseCa
           );
 
         // Then
-        expect(résultat).toStrictEqual({
-          [chantier.id]: [
-            {
-              id: commentaireSolutionsNational.id,
-              contenu: commentaireSolutionsNational.contenu,
-              date: commentaireSolutionsNational.date_modification.toISOString(),
-              auteur: "User Test",
-              type: "solutionsEtActionsÀVenir",
-            },
-            {
-              id: commentaireRisquesPlusRécent.id,
-              contenu: commentaireRisquesPlusRécent.contenu,
-              date: commentaireRisquesPlusRécent.date_modification.toISOString(),
-              auteur: "User Test",
-              type: "risquesEtFreinsÀLever",
-            },
-            {
-              id: commentaireExemples.id,
-              contenu: commentaireExemples.contenu,
-              date: commentaireExemples.date_modification.toISOString(),
-              auteur: "User Test",
-              type: "exemplesConcretsDeRéussite",
-            },
-            {
-              id: commentaireAutresNonCorrélés.id,
-              contenu: commentaireAutresNonCorrélés.contenu,
-              date: commentaireAutresNonCorrélés.date_modification.toISOString(),
-              auteur: "User Test",
-              type: "autresRésultatsObtenusNonCorrélésAuxIndicateurs",
-            },
-          ],
-        });
+        expect(Object.keys(résultat)).toStrictEqual([chantier.id]);
+        expect(résultat[chantier.id]).toIncludeSameMembers([
+          {
+            id: commentaireSolutionsNational.id,
+            contenu: commentaireSolutionsNational.contenu,
+            date: commentaireSolutionsNational.date_modification.toISOString(),
+            auteur: "User Test",
+            type: "solutionsEtActionsÀVenir",
+          },
+          {
+            id: commentaireRisquesPlusRécent.id,
+            contenu: commentaireRisquesPlusRécent.contenu,
+            date: commentaireRisquesPlusRécent.date_modification.toISOString(),
+            auteur: "User Test",
+            type: "risquesEtFreinsÀLever",
+          },
+          {
+            id: commentaireExemples.id,
+            contenu: commentaireExemples.contenu,
+            date: commentaireExemples.date_modification.toISOString(),
+            auteur: "User Test",
+            type: "exemplesConcretsDeRéussite",
+          },
+          {
+            id: commentaireAutresNonCorrélés.id,
+            contenu: commentaireAutresNonCorrélés.contenu,
+            date: commentaireAutresNonCorrélés.date_modification.toISOString(),
+            auteur: "User Test",
+            type: "autresRésultatsObtenusNonCorrélésAuxIndicateurs",
+          },
+        ]);
       }),
     );
   });
