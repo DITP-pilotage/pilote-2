@@ -269,9 +269,9 @@ function ReferentielRow({
           hideLabel
           {...register(`referentiels.${index}.fonctionAgregation`)}
         >
-          {(['SUM', 'AVG', 'NONE'] as const).map((option) => (
-            <option key={option} value={option}>
-              {AGREGATION_LABEL[option]}
+          {Object.entries(AGREGATION_LABEL).map(([value, label]) => (
+            <option key={value} value={value}>
+              {label}
             </option>
           ))}
         </FieldSelect>
