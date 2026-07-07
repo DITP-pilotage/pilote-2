@@ -99,6 +99,10 @@
     "./permission": {
       "types": "./src/permission.ts",
       "default": "./src/permission.ts"
+    },
+    "./responsable": {
+      "types": "./src/responsable.ts",
+      "default": "./src/responsable.ts"
     }
   },
   "files": [
