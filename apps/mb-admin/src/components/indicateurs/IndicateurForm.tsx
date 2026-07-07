@@ -1,20 +1,23 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import { useQuery } from '@tanstack/react-query'
 import { Plus, Trash2 } from 'lucide-react'
-import type { UseFormRegister } from 'react-hook-form'
+import { useMemo } from 'react'
+import { useFieldArray, useForm, useWatch, type UseFormRegister } from 'react-hook-form'
 
-import { PERIODES_MISE_A_JOUR } from '@pilote/mb-shared/indicateur'
+import { PERIODE_MISE_A_JOUR_LABELS, PERIODES_MISE_A_JOUR } from '@pilote/mb-shared/indicateur'
 
 import { fetchAllReferentiels } from '@/api/referentiels'
+import {
+  buildIndicateurFormSchema,
+  type IndicateurFormValues,
+} from '@/components/indicateurs/indicateurFormSchema'
 import { Button } from '@/components/ui/Button'
+import { Field } from '@/components/ui/Field'
+import { FieldInput } from '@/components/ui/FieldInput'
 import { FieldSelect } from '@/components/ui/FieldSelect'
 import { FieldTextarea } from '@/components/ui/FieldTextarea'
-import { Input } from '@/components/ui/Input'
+import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { useAppConfig } from '@/context/AppConfigContext'
-import {
-  useIndicateurForm,
-  type IndicateurFormValues,
-} from '@/components/indicateurs/useIndicateurForm'
-import { clsxm } from '@/lib/clsxm'
 
 type FonctionAgregation = 'SUM' | 'AVG' | 'NONE'
 
@@ -24,16 +27,10 @@ const AGREGATION_LABEL: Record<FonctionAgregation, string> = {
   NONE: 'Aucune',
 }
 
-const PERIODE_MISE_A_JOUR_LABEL: Record<(typeof PERIODES_MISE_A_JOUR)[number], string> = {
-  QUOTIDIENNE: 'Quotidienne',
-  HEBDOMADAIRE: 'Hebdomadaire',
-  BIMENSUELLE: 'Bimensuelle',
-  MENSUELLE: 'Mensuelle',
-  TRIMESTRIELLE: 'Trimestrielle',
-  SEMESTRIELLE: 'Semestrielle',
-  ANNUELLE: 'Annuelle',
-  AUCUNE: 'Aucune',
-}
+const VISIBILITE_OPTIONS = [
+  { value: 'PUBLIC', label: 'Public' },
+  { value: 'PRIVE', label: 'Privé' },
+] as const
 
 export function IndicateurForm({
   mode,
@@ -51,11 +48,14 @@ export function IndicateurForm({
   onCancel: () => void
 }) {
   const { isProd } = useAppConfig()
-  const {
-    form,
-    referentiels: { fields, append, remove },
-    visibilite,
-  } = useIndicateurForm({ mode, initial })
+  const schema = useMemo(() => buildIndicateurFormSchema(mode), [mode])
+  const form = useForm<IndicateurFormValues>({
+    resolver: zodResolver(schema),
+    mode: 'onChange',
+    defaultValues: initial,
+  })
+  const { fields, append, remove } = useFieldArray({ control: form.control, name: 'referentiels' })
+  const visibilite = useWatch({ control: form.control, name: 'visibilite' })
 
   const referentielsQuery = useQuery({
     queryKey: ['referentiels', 'all-for-select'],
@@ -71,15 +71,14 @@ export function IndicateurForm({
       <div className="rounded-xl border border-border bg-surface p-6">
         <div className="mb-5">
           {mode === 'edit' ? (
-            <>
-              <label className="mb-1.5 block text-xs font-semibold">Identifiant</label>
+            <Field label="Identifiant">
               <span className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-surface-tinted px-3 py-2 font-mono text-sm text-primary">
                 {initial.id}{' '}
                 <span className="font-sans text-xs text-text-subtle">🔒 non modifiable</span>
               </span>
-            </>
+            </Field>
           ) : (
-            <Input
+            <FieldInput
               label="Identifiant"
               placeholder="IND-001"
               className="w-48 font-mono"
@@ -96,7 +95,7 @@ export function IndicateurForm({
         </div>
 
         <div className="mb-5">
-          <Input
+          <FieldInput
             label="Nom"
             required
             error={form.formState.errors.nom?.message}
@@ -106,25 +105,14 @@ export function IndicateurForm({
 
         <div className="mb-6 flex gap-4">
           <div className="flex-1">
-            <label className="mb-1.5 block text-xs font-semibold">Visibilité</label>
-            <div className="flex overflow-hidden rounded-md border border-border text-sm">
-              {(['PUBLIC', 'PRIVE'] as const).map((option) => (
-                <button
-                  key={option}
-                  type="button"
-                  aria-pressed={visibilite === option}
-                  onClick={() => form.setValue('visibilite', option, { shouldValidate: true })}
-                  className={clsxm(
-                    'flex-1 py-2',
-                    visibilite === option
-                      ? 'bg-primary font-semibold text-white'
-                      : 'text-text-muted',
-                  )}
-                >
-                  {option === 'PUBLIC' ? 'Public' : 'Privé'}
-                </button>
-              ))}
-            </div>
+            <SegmentedControl
+              label="Visibilité"
+              value={visibilite}
+              onValueChange={(value) =>
+                form.setValue('visibilite', value, { shouldValidate: true })
+              }
+              options={VISIBILITE_OPTIONS}
+            />
           </div>
           <div className="flex-1">
             <FieldSelect label="Unité" {...form.register('unite')}>
@@ -148,14 +136,14 @@ export function IndicateurForm({
 
           <div className="mb-5 flex gap-4">
             <div className="flex-1">
-              <Input
+              <FieldInput
                 label="Source des données"
                 error={form.formState.errors.sourceDonnees?.message}
                 {...form.register('sourceDonnees')}
               />
             </div>
             <div className="flex-1">
-              <Input
+              <FieldInput
                 label="URL de la source"
                 type="url"
                 placeholder="https://…"
@@ -171,13 +159,13 @@ export function IndicateurForm({
                 <option value="">Non renseignée</option>
                 {PERIODES_MISE_A_JOUR.map((periode) => (
                   <option key={periode} value={periode}>
-                    {PERIODE_MISE_A_JOUR_LABEL[periode]}
+                    {PERIODE_MISE_A_JOUR_LABELS[periode]}
                   </option>
                 ))}
               </FieldSelect>
             </div>
             <div className="flex-1">
-              <Input
+              <FieldInput
                 label="Jour de mise à jour"
                 type="number"
                 min={1}
@@ -239,7 +227,8 @@ export function IndicateurForm({
 }
 
 // Une ligne « référentiel lié » : sélection du référentiel + fonction
-// d'agrégation, avec message d'erreur si le référentiel n'est pas choisi.
+// d'agrégation, avec message d'erreur si le référentiel n'est pas choisi. Les
+// libellés sont masqués (`hideLabel`) car la ligne est en grille horizontale.
 function ReferentielRow({
   index,
   register,
@@ -254,10 +243,13 @@ function ReferentielRow({
   onRemove: () => void
 }) {
   return (
-    <div className="mb-2.5">
-      <div className="flex items-center gap-2.5 rounded-lg border border-border bg-surface-muted px-3 py-2.5">
-        <select
-          className="flex-[2] rounded-md border border-border bg-surface px-2.5 py-2 text-sm focus:border-primary focus:outline-none"
+    <div className="mb-2.5 flex items-start gap-2.5 rounded-lg border border-border bg-surface-muted px-3 py-2.5">
+      <div className="flex-[2]">
+        <FieldSelect
+          label="Référentiel"
+          hideLabel
+          required
+          error={error}
           aria-invalid={error ? true : undefined}
           {...register(`referentiels.${index}.id`)}
         >
@@ -269,9 +261,12 @@ function ReferentielRow({
               {option.id} · {option.nom}
             </option>
           ))}
-        </select>
-        <select
-          className="flex-1 rounded-md border border-border bg-surface px-2.5 py-2 text-sm focus:border-primary focus:outline-none"
+        </FieldSelect>
+      </div>
+      <div className="flex-1">
+        <FieldSelect
+          label="Fonction d'agrégation"
+          hideLabel
           {...register(`referentiels.${index}.fonctionAgregation`)}
         >
           {(['SUM', 'AVG', 'NONE'] as const).map((option) => (
@@ -279,12 +274,11 @@ function ReferentielRow({
               {AGREGATION_LABEL[option]}
             </option>
           ))}
-        </select>
-        <button type="button" onClick={onRemove} className="text-accent" aria-label="Retirer">
-          <Trash2 className="size-4" />
-        </button>
+        </FieldSelect>
       </div>
-      {error ? <p className="mt-1 text-xs text-accent">{error}</p> : null}
+      <button type="button" onClick={onRemove} className="mt-2 text-accent" aria-label="Retirer">
+        <Trash2 className="size-4" />
+      </button>
     </div>
   )
 }

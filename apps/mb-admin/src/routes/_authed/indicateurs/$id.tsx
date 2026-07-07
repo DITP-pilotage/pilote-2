@@ -9,7 +9,7 @@ import {
   buildInitialValues,
   toUpsertBody,
   type IndicateurFormValues,
-} from '@/components/indicateurs/useIndicateurForm'
+} from '@/components/indicateurs/indicateurFormSchema'
 import { PageHeading } from '@/components/PageHeading'
 import { extractApiError } from '@/lib/apiError'
 import { indicateurQueryOptions } from '@/queries/indicateurs'

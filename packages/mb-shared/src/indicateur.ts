@@ -75,6 +75,19 @@ export const PERIODES_MISE_A_JOUR = [
 ] as const
 export type PeriodeMiseAJour = (typeof PERIODES_MISE_A_JOUR)[number]
 
+// Libellés d'affichage des périodes, partagés entre l'admin (formulaire) et la
+// webapp (fiche indicateur) pour éviter la divergence.
+export const PERIODE_MISE_A_JOUR_LABELS: Record<PeriodeMiseAJour, string> = {
+  QUOTIDIENNE: 'Quotidienne',
+  HEBDOMADAIRE: 'Hebdomadaire',
+  BIMENSUELLE: 'Bimensuelle',
+  MENSUELLE: 'Mensuelle',
+  TRIMESTRIELLE: 'Trimestrielle',
+  SEMESTRIELLE: 'Semestrielle',
+  ANNUELLE: 'Annuelle',
+  AUCUNE: 'Aucune',
+}
+
 export const periodeMiseAJourSchema = z
   .enum(PERIODES_MISE_A_JOUR)
   .describe('Période de mise à jour planifiée des valeurs de cet indicateur.')

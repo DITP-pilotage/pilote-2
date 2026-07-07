@@ -1,5 +1,6 @@
 import type { Ref, TextareaHTMLAttributes } from 'react'
 
+import { Field } from '@/components/ui/Field'
 import { clsxm } from '@/lib/clsxm'
 
 export type FieldTextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
@@ -7,27 +8,24 @@ export type FieldTextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   required?: boolean
   hint?: string | undefined
   error?: string | undefined
+  hideLabel?: boolean
   ref?: Ref<HTMLTextAreaElement>
 }
 
-// Champ textarea avec label + message d'erreur, jumeau de `Input` pour les
+// Champ textarea avec label + message d'erreur, jumeau de `FieldInput` pour les
 // zones de texte multi-lignes (description, méthode de calcul…).
 export function FieldTextarea({
   label,
   required,
   hint,
   error,
+  hideLabel,
   className,
   ref,
   ...props
 }: FieldTextareaProps) {
   return (
-    <div>
-      <label className="mb-1.5 block text-xs font-semibold">
-        {label}
-        {required ? <span className="text-accent"> *</span> : null}
-        {hint ? <span className="ml-2 text-xs font-normal text-text-muted">{hint}</span> : null}
-      </label>
+    <Field label={label} required={required} hint={hint} error={error} hideLabel={hideLabel}>
       <textarea
         ref={ref}
         className={clsxm(
@@ -36,7 +34,6 @@ export function FieldTextarea({
         )}
         {...props}
       />
-      {error ? <p className="mt-1 text-xs text-accent">{error}</p> : null}
-    </div>
+    </Field>
   )
 }

@@ -1,6 +1,3 @@
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useMemo } from 'react'
-import { useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { z } from 'zod'
 
 import type { IndicateurApiModel, UpsertIndicateurBody } from '@pilote/mb-shared/indicateur'
@@ -16,7 +13,7 @@ import {
 // conversion vers le body PUT — `'' → null`, `jour → number` — est faite par
 // `toUpsertBody`. La validation de `id` dépend du mode (create : identifiant
 // requis et formaté ; edit : verrouillé, donc non validé).
-const buildIndicateurFormSchema = (mode: 'create' | 'edit') =>
+export const buildIndicateurFormSchema = (mode: 'create' | 'edit') =>
   z.object({
     id: mode === 'create' ? z.string().regex(/^IND-\d+$/, 'Format attendu : IND-001') : z.string(),
     nom: z.string().trim().min(1, 'Le nom est requis'),
@@ -76,28 +73,4 @@ export function toUpsertBody(values: IndicateurFormValues): UpsertIndicateurBody
     jourMiseAJour: values.jourMiseAJour === '' ? null : Number(values.jourMiseAJour),
     referentiels: values.referentiels,
   }
-}
-
-// Regroupe tout le câblage react-hook-form du formulaire indicateur (schéma
-// zod mode-dépendant, resolver, tableau de référentiels, watch de la
-// visibilité) pour que le composant ne porte que le rendu. On renvoie `form`
-// tel quel (le composant appelle `form.register` etc.) plutôt qu'un objet plat,
-// pour laisser react-hook-form inférer les types.
-export function useIndicateurForm({
-  mode,
-  initial,
-}: {
-  mode: 'create' | 'edit'
-  initial: IndicateurFormValues
-}) {
-  const schema = useMemo(() => buildIndicateurFormSchema(mode), [mode])
-  const form = useForm<IndicateurFormValues>({
-    resolver: zodResolver(schema),
-    mode: 'onChange',
-    defaultValues: initial,
-  })
-  const referentiels = useFieldArray({ control: form.control, name: 'referentiels' })
-  const visibilite = useWatch({ control: form.control, name: 'visibilite' })
-
-  return { form, referentiels, visibilite }
 }

@@ -1,5 +1,6 @@
 import type { ReactNode, Ref, SelectHTMLAttributes } from 'react'
 
+import { Field } from '@/components/ui/Field'
 import { clsxm } from '@/lib/clsxm'
 
 export type FieldSelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
@@ -7,29 +8,27 @@ export type FieldSelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
   required?: boolean
   hint?: string | undefined
   error?: string | undefined
+  hideLabel?: boolean
   ref?: Ref<HTMLSelectElement>
   children: ReactNode
 }
 
-// Champ select avec label + message d'erreur, jumeau de `Input`. Les `<option>`
-// sont passées en enfants.
+// Champ select avec label + message d'erreur, jumeau de `FieldInput`. Les
+// `<option>` sont passées en enfants. `hideLabel` masque le libellé (sr-only)
+// pour les selects en grille où l'intitulé est implicite.
 export function FieldSelect({
   label,
   required,
   hint,
   error,
+  hideLabel,
   className,
   children,
   ref,
   ...props
 }: FieldSelectProps) {
   return (
-    <div>
-      <label className="mb-1.5 block text-xs font-semibold">
-        {label}
-        {required ? <span className="text-accent"> *</span> : null}
-        {hint ? <span className="ml-2 text-xs font-normal text-text-muted">{hint}</span> : null}
-      </label>
+    <Field label={label} required={required} hint={hint} error={error} hideLabel={hideLabel}>
       <select
         ref={ref}
         className={clsxm(
@@ -40,7 +39,6 @@ export function FieldSelect({
       >
         {children}
       </select>
-      {error ? <p className="mt-1 text-xs text-accent">{error}</p> : null}
-    </div>
+    </Field>
   )
 }

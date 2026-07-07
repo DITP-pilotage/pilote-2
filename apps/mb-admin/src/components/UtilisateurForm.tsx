@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
+import { FieldInput } from '@/components/ui/FieldInput'
 import { useAppConfig } from '@/context/AppConfigContext'
 import { clsxm } from '@/lib/clsxm'
 
@@ -67,7 +67,7 @@ export function UtilisateurForm({
     <form onSubmit={(event) => void handleSubmit(onSubmit)(event)} className="mx-auto max-w-2xl">
       <div className="rounded-xl border border-border bg-surface p-6">
         <div className="mb-5">
-          <Input
+          <FieldInput
             label="Email"
             required
             type="email"
@@ -80,14 +80,14 @@ export function UtilisateurForm({
         </div>
 
         <div className="mb-5 grid grid-cols-2 gap-4">
-          <Input
+          <FieldInput
             label="Prénom"
             required
             placeholder="Jane"
             error={errors.prenom?.message}
             {...register('prenom')}
           />
-          <Input
+          <FieldInput
             label="Nom"
             required
             placeholder="Doe"
@@ -97,7 +97,7 @@ export function UtilisateurForm({
         </div>
 
         <div className="mb-5">
-          <Input
+          <FieldInput
             label="Service"
             required
             placeholder="DITP / SI / …"
@@ -107,7 +107,7 @@ export function UtilisateurForm({
         </div>
 
         <div className="mb-2">
-          <Input
+          <FieldInput
             label="Fonction"
             required
             placeholder="Chargée de mission"

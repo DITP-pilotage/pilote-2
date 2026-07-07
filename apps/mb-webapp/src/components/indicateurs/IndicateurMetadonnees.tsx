@@ -1,4 +1,5 @@
 import {
+  PERIODE_MISE_A_JOUR_LABELS,
   type ConfigurationIndicateurReferentielApiModel,
   type PeriodeMiseAJour,
   type UniteIndicateurApiModel,
@@ -9,20 +10,9 @@ import { formatDateTimeFr } from '@/lib/format'
 
 const VALEUR_VIDE = '—'
 
-const PERIODE_LIBELLES: Record<PeriodeMiseAJour, string> = {
-  QUOTIDIENNE: 'Quotidienne',
-  HEBDOMADAIRE: 'Hebdomadaire',
-  BIMENSUELLE: 'Bimensuelle',
-  MENSUELLE: 'Mensuelle',
-  TRIMESTRIELLE: 'Trimestrielle',
-  SEMESTRIELLE: 'Semestrielle',
-  ANNUELLE: 'Annuelle',
-  AUCUNE: 'Aucune',
-}
-
 const formatPeriodeMiseAJour = (periode: PeriodeMiseAJour | null, jour: number | null): string => {
   if (!periode) return VALEUR_VIDE
-  const libelle = PERIODE_LIBELLES[periode]
+  const libelle = PERIODE_MISE_A_JOUR_LABELS[periode]
   return jour === null ? libelle : `${libelle} (le ${jour})`
 }
 

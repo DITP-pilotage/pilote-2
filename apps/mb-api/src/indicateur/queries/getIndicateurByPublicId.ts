@@ -10,12 +10,12 @@ export const getIndicateurByPublicId = (
   publicId: string,
 ): ResultAsync<IndicateurApiModel, never> => {
   const principalId = requireCurrentPrincipalId()
-  // Un principal ADMIN administre toutes les ressources (PUBLIC + PRIVÉ), comme
-  // dans listIndicateurs. Sans ce bypass, un ADMIN listerait un indicateur PRIVÉ
-  // mais obtiendrait un 404 sur le détail (incohérence liste ↔ détail).
-  const where = isAdminPrincipal()
-    ? { publicId }
-    : withIndicateurReadPermission({ publicId }, principalId)
+  // Le bypass ADMIN est géré dans withIndicateurReadPermission. Sans lui, un ADMIN
+  // listerait un indicateur PRIVÉ mais obtiendrait un 404 sur le détail (incohérence
+  // liste ↔ détail).
+  const where = withIndicateurReadPermission({ publicId }, principalId, {
+    isAdmin: isAdminPrincipal(),
+  })
   return ResultAsync.fromSafePromise(
     db().indicateur.findFirstOrThrow({
       where,
