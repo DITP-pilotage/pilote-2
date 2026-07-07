@@ -91,12 +91,7 @@ export const indicateurMetadonneesSchema = z.object({
     .nullable()
     .describe('URL de la source des données. Doit utiliser le protocole http ou https.'),
   periodeMiseAJour: periodeMiseAJourSchema.nullable().describe('Période de mise à jour.'),
-  jourMiseAJour: z
-    .int()
-    .min(1)
-    .max(31)
-    .nullable()
-    .describe('Jour de mise à jour entre 1 et 31.'),
+  jourMiseAJour: z.int().min(1).max(31).nullable().describe('Jour de mise à jour entre 1 et 31.'),
 })
 export type IndicateurMetadonnees = z.infer<typeof indicateurMetadonneesSchema>
 

@@ -13,13 +13,17 @@ export const upsertObjectifIndicateurIndividuBodySchema = z.object({
   dateCible: dateSchema,
   valeurCible: z.number(),
 })
-export type UpsertObjectifIndicateurIndividuBody = z.infer<typeof upsertObjectifIndicateurIndividuBodySchema>
+export type UpsertObjectifIndicateurIndividuBody = z.infer<
+  typeof upsertObjectifIndicateurIndividuBodySchema
+>
 
 export const deleteObjectifIndicateurIndividuBodySchema = z.object({
   individu: individuPublicIdSchema,
   dateCible: dateSchema,
 })
-export type DeleteObjectifIndicateurIndividuBody = z.infer<typeof deleteObjectifIndicateurIndividuBodySchema>
+export type DeleteObjectifIndicateurIndividuBody = z.infer<
+  typeof deleteObjectifIndicateurIndividuBodySchema
+>
 
 export const listObjectifsForIndicateurQuerySchema = z.object({
   individus: individusCsvSchema.describe(
@@ -39,13 +43,13 @@ export const contributionObjectifApiModelSchema = z.object({
   individu: individuPublicIdSchema,
   valeurCible: z.number(),
   dateCible: dateSchema.describe(
-    "Bucket de la valeur portée (carry-forward) retenue pour cet enfant au moment du bucket parent.",
+    'Bucket de la valeur portée (carry-forward) retenue pour cet enfant au moment du bucket parent.',
   ),
   source: z
     .enum(['saisie', 'derivee'])
     .describe(
       "`saisie` : l'enfant est une feuille avec un objectif saisi. `derivee` : l'enfant est " +
-        "lui-même agrégé depuis ses propres enfants.",
+        'lui-même agrégé depuis ses propres enfants.',
     ),
 })
 export type ContributionObjectifApiModel = z.infer<typeof contributionObjectifApiModelSchema>
@@ -68,10 +72,12 @@ export const objectifDeriveeApiModelSchema = z.object({
   fonctionAgregation: fonctionAgregationSchema.describe(
     "Fonction d'agrégation appliquée pour ce couple (indicateur, référentiel de l'individu).",
   ),
-  contributions: z.array(contributionObjectifApiModelSchema).describe(
-    "Une entrée par enfant direct, triée par publicId. Pour chaque enfant on porte sa dernière " +
-      "valeur connue ≤ dateCible du bucket (carry-forward). Permet le drill-down et l'audit.",
-  ),
+  contributions: z
+    .array(contributionObjectifApiModelSchema)
+    .describe(
+      'Une entrée par enfant direct, triée par publicId. Pour chaque enfant on porte sa dernière ' +
+        "valeur connue ≤ dateCible du bucket (carry-forward). Permet le drill-down et l'audit.",
+    ),
 })
 export type ObjectifDeriveeApiModel = z.infer<typeof objectifDeriveeApiModelSchema>
 
@@ -79,9 +85,13 @@ export const objectifIndicateurIndividuApiModelSchema = z.discriminatedUnion('ty
   objectifSaisieApiModelSchema,
   objectifDeriveeApiModelSchema,
 ])
-export type ObjectifIndicateurIndividuApiModel = z.infer<typeof objectifIndicateurIndividuApiModelSchema>
+export type ObjectifIndicateurIndividuApiModel = z.infer<
+  typeof objectifIndicateurIndividuApiModelSchema
+>
 
 export const objectifIndicateurIndividuListApiModelSchema = z.object({
   items: z.array(objectifIndicateurIndividuApiModelSchema),
 })
-export type ObjectifIndicateurIndividuListApiModel = z.infer<typeof objectifIndicateurIndividuListApiModelSchema>
+export type ObjectifIndicateurIndividuListApiModel = z.infer<
+  typeof objectifIndicateurIndividuListApiModelSchema
+>

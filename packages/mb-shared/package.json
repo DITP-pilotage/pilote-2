@@ -104,7 +104,15 @@
   "files": [
     "src"
   ],
+  "scripts": {
+    "lint": "prettier --check .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
   "peerDependencies": {
     "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
   }
 }

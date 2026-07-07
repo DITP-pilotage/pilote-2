@@ -10,11 +10,7 @@ export { MAX_INDICATEURS_PAR_REQUETE } from './indicateursCsv'
 import { indicateurPublicIdSchema } from './publicIds'
 import { individuApiModelSchema, individuPublicIdSchema } from './individu'
 import { individusCsvSchema, MAX_INDIVIDUS_PAR_REQUETE } from './individusCsv'
-import {
-  createPaginatedApiListSchema,
-  pageSizeSchema,
-  paginationCursorSchema,
-} from './pagination'
+import { createPaginatedApiListSchema, pageSizeSchema, paginationCursorSchema } from './pagination'
 import { referentielPublicIdSchema } from './referentiel'
 
 export const valeurSchema = z.number().describe('Valeur observée.')
@@ -127,33 +123,33 @@ export type BatchInvalidErrorDetailsApiModel = z.infer<
   typeof batchInvalidErrorDetailsApiModelSchema
 >
 
-
 export const listValeursForIndicateurQuerySchema = z
   .object({
     individus: individusCsvSchema.describe(
       `Liste d'identifiants d'individus séparés par une virgule (ex. DEPT-84,DEPT-13). 1..${MAX_INDIVIDUS_PAR_REQUETE} identifiants.`,
     ),
-    dateDebut: dateSchema.optional().describe(
-      'Date ISO YYYY-MM-DD inclusive (filtre les points dont la date de bucket est >= dateDebut).',
-    ),
-    dateFin: dateSchema.optional().describe(
-      'Date ISO YYYY-MM-DD inclusive (filtre les points dont la date de bucket est <= dateFin).',
-    ),
+    dateDebut: dateSchema
+      .optional()
+      .describe(
+        'Date ISO YYYY-MM-DD inclusive (filtre les points dont la date de bucket est >= dateDebut).',
+      ),
+    dateFin: dateSchema
+      .optional()
+      .describe(
+        'Date ISO YYYY-MM-DD inclusive (filtre les points dont la date de bucket est <= dateFin).',
+      ),
     dateTrunc: dateTruncSchema
       .optional()
       .describe(
         'Granularité de troncature des dates des points. Par défaut `month` (limite la taille ' +
-          "de réponse en regroupant les saisies du même mois). Voir `DateTrunc` pour la " +
+          'de réponse en regroupant les saisies du même mois). Voir `DateTrunc` pour la ' +
           "sémantique des unités. S'applique aux séries saisies comme aux séries dérivées.",
       ),
   })
-  .refine(
-    (value) => !value.dateDebut || !value.dateFin || value.dateDebut <= value.dateFin,
-    {
-      message: 'dateDebut doit être <= dateFin',
-      path: ['dateDebut'],
-    },
-  )
+  .refine((value) => !value.dateDebut || !value.dateFin || value.dateDebut <= value.dateFin, {
+    message: 'dateDebut doit être <= dateFin',
+    path: ['dateDebut'],
+  })
 export type ListValeursForIndicateurQuery = z.infer<typeof listValeursForIndicateurQuerySchema>
 
 const MAX_REFERENTIELS_PAR_REQUETE = 100
@@ -189,14 +185,14 @@ export const valeursRemarquablesContributionApiModelSchema = z.object({
   date: z
     .string()
     .describe(
-      "Date du bucket de la dernière valeur connue (post-troncature mensuelle), " +
+      'Date du bucket de la dernière valeur connue (post-troncature mensuelle), ' +
         "alignée sur l'unité de regroupement utilisée pour les indicateurs dérivés.",
     ),
   source: z
     .enum(['saisie', 'derivee'])
     .describe(
       "`saisie` : la valeur provient d'une saisie directe sur cet individu. " +
-        "`derivee` : la valeur est reconstruite par agrégation hiérarchique des descendants.",
+        '`derivee` : la valeur est reconstruite par agrégation hiérarchique des descendants.',
     ),
 })
 export type ValeursRemarquablesContributionApiModel = z.infer<
@@ -209,31 +205,31 @@ export const valeursRemarquablesReferentielApiModelSchema = z.object({
     .number()
     .nullable()
     .describe(
-      "Plus petite valeur la plus récente parmi les individus du référentiel ayant au moins une valeur " +
+      'Plus petite valeur la plus récente parmi les individus du référentiel ayant au moins une valeur ' +
         "pour l'indicateur. null si aucun individu n'a de valeur.",
     ),
   max: z
     .number()
     .nullable()
     .describe(
-      "Plus grande valeur la plus récente parmi les individus du référentiel ayant au moins une valeur " +
+      'Plus grande valeur la plus récente parmi les individus du référentiel ayant au moins une valeur ' +
         "pour l'indicateur. null si aucun individu n'a de valeur.",
     ),
   mediane: z
     .number()
     .nullable()
     .describe(
-      "Médiane des valeurs les plus récentes des individus du référentiel ayant au moins une valeur " +
+      'Médiane des valeurs les plus récentes des individus du référentiel ayant au moins une valeur ' +
         "pour l'indicateur. Moyenne des deux valeurs centrales si le nombre d'individus est pair. " +
         "null si aucun individu n'a de valeur.",
     ),
   contributions: z
     .array(valeursRemarquablesContributionApiModelSchema)
     .describe(
-      "Dernière valeur connue de chaque individu du référentiel ayant au moins une valeur " +
+      'Dernière valeur connue de chaque individu du référentiel ayant au moins une valeur ' +
         "pour l'indicateur (triée par publicId d'individu, asc). Permet au client de reconstruire " +
-        "min/max/médiane ou de faire son propre top-N / drill-down. Les individus sans aucune valeur " +
-        "ne figurent pas.",
+        'min/max/médiane ou de faire son propre top-N / drill-down. Les individus sans aucune valeur ' +
+        'ne figurent pas.',
     ),
 })
 export type ValeursRemarquablesReferentielApiModel = z.infer<
@@ -245,9 +241,7 @@ export const valeursRemarquablesListApiModelSchema = z.object({
     .array(valeursRemarquablesReferentielApiModelSchema)
     .describe('Valeurs remarquables agrégées pour chaque référentiel demandé existant.'),
 })
-export type ValeursRemarquablesListApiModel = z.infer<
-  typeof valeursRemarquablesListApiModelSchema
->
+export type ValeursRemarquablesListApiModel = z.infer<typeof valeursRemarquablesListApiModelSchema>
 
 export const listValeursRemarquablesForIndicateurQuerySchema = z.object({
   referentiels: referentielsCsvSchema.describe(
@@ -271,7 +265,7 @@ export const syntheseIndividuApiModelSchema = z.object({
     .number()
     .nullable()
     .describe(
-      "Variation absolue entre la valeur la plus récente et la précédente (par date de la valeur). " +
+      'Variation absolue entre la valeur la plus récente et la précédente (par date de la valeur). ' +
         "null si l'individu n'a aucune valeur ; égale à la valeur la plus récente s'il n'en a qu'une (comparée à 0).",
     ),
   ecartMediane: z
@@ -300,7 +294,7 @@ export const listSyntheseIndividusQuerySchema = z.object({
     .optional()
     .describe(
       'Granularité de troncature des dates des points. Par défaut `month`. Détermine les ' +
-        "buckets retenus comme « dernière » et « précédente » valeur pour le calcul de la " +
+        'buckets retenus comme « dernière » et « précédente » valeur pour le calcul de la ' +
         "variation. S'applique aux séries saisies comme aux séries dérivées.",
     ),
 })
@@ -338,10 +332,10 @@ export type ListIndividusWithValeursQuery = z.infer<typeof listIndividusWithVale
 export const contributionSourceSchema = z
   .enum(['saisie', 'derivee', 'manquante'])
   .describe(
-    "Origine de la valeur portée par un enfant direct à la date du point dérivé : `saisie` " +
+    'Origine de la valeur portée par un enfant direct à la date du point dérivé : `saisie` ' +
       "(l'enfant est une feuille, valeur saisie connue ≤ date du bucket), `derivee` (l'enfant " +
-      "est lui-même agrégé, valeur dérivée connue ≤ date du bucket), `manquante` (aucune " +
-      "valeur connue pour cet enfant ≤ date du bucket).",
+      'est lui-même agrégé, valeur dérivée connue ≤ date du bucket), `manquante` (aucune ' +
+      'valeur connue pour cet enfant ≤ date du bucket).',
   )
 export type ContributionSource = z.infer<typeof contributionSourceSchema>
 
@@ -357,7 +351,7 @@ export const contributionApiModelSchema = z.object({
   date: dateSchema
     .nullable()
     .describe(
-      "Date associée à la valeur retenue, à des fins de debug et drill-down. Pour `saisie` : " +
+      'Date associée à la valeur retenue, à des fins de debug et drill-down. Pour `saisie` : ' +
         "date d'origine pré-troncature de la saisie feuille. Pour `derivee` : date du bucket du " +
         'point dérivé enfant le plus récent ≤ date du bucket courant (déjà tronquée). null si ' +
         '`manquante`.',
@@ -388,7 +382,7 @@ export const valeurSaisieApiModelSchema = z.object({
   individu: individuPublicIdSchema,
   date: dateSchema.describe(
     "Date du point. Égale à la date de la saisie d'origine si `dateTrunc=day`, sinon date du " +
-      "bucket post-troncature (la valeur retenue dans le bucket est la plus récente).",
+      'bucket post-troncature (la valeur retenue dans le bucket est la plus récente).',
   ),
   valeur: valeurSchema,
   type: z.literal('saisie'),
@@ -411,7 +405,7 @@ export const valeurDeriveeApiModelSchema = z.object({
   contributions: z
     .array(contributionApiModelSchema)
     .describe(
-      "Une entrée par enfant direct du parent, triée par publicId. Pour chaque enfant on porte " +
+      'Une entrée par enfant direct du parent, triée par publicId. Pour chaque enfant on porte ' +
         "sa dernière valeur connue ≤ date du bucket (carry-forward) et la date d'origine de cette " +
         'valeur. Permet le drill-down et l’audit.',
     ),
@@ -429,12 +423,12 @@ export const valeurAvancementListApiModelSchema = z.object({
   items: z
     .array(valeurAvancementApiModelSchema)
     .describe(
-      "Points pour les individus demandés sur la plage de dates. Chaque point porte " +
+      'Points pour les individus demandés sur la plage de dates. Chaque point porte ' +
         "`type: 'saisie' | 'derivee'` (discriminé). Pour les individus agrégés " +
-        "(`fonctionAgregation` ≠ `NONE` sur leur référentiel pour cet indicateur), les points " +
+        '(`fonctionAgregation` ≠ `NONE` sur leur référentiel pour cet indicateur), les points ' +
         "sont calculés par combineLatest permissif sur les enfants directs : on émet dès qu'au " +
         'moins un enfant a une valeur connue au bucket courant. Pour les feuilles (ou ' +
-        "indicateurs non agrégés), les points reflètent les saisies tronquées selon `dateTrunc`. " +
+        'indicateurs non agrégés), les points reflètent les saisies tronquées selon `dateTrunc`. ' +
         'Triés par individu puis par date croissante.',
     ),
 })
@@ -444,13 +438,13 @@ export const dernierValeurIndividuApiModelSchema = z.object({
   indicateur: indicateurPublicIdSchema,
   valeur: valeurSchema.describe("Dernière valeur connue de l'individu pour cet indicateur."),
   date: dateSchema.describe(
-    "Date du bucket de la dernière valeur connue (post-troncature mensuelle).",
+    'Date du bucket de la dernière valeur connue (post-troncature mensuelle).',
   ),
   type: z
     .enum(['saisie', 'derivee'])
     .describe(
       "`saisie` : la valeur provient d'une saisie directe sur cet individu. " +
-        "`derivee` : la valeur est reconstruite par agrégation hiérarchique des descendants.",
+        '`derivee` : la valeur est reconstruite par agrégation hiérarchique des descendants.',
     ),
 })
 export type DernierValeurIndividuApiModel = z.infer<typeof dernierValeurIndividuApiModelSchema>
@@ -460,7 +454,7 @@ export const dernieresValeursIndividuListApiModelSchema = z.object({
     .array(dernierValeurIndividuApiModelSchema)
     .describe(
       "Dernière valeur connue de l'individu pour chaque indicateur demandé ayant au moins une " +
-        "valeur. Les indicateurs sans valeur connue pour cet individu sont omis de la réponse.",
+        'valeur. Les indicateurs sans valeur connue pour cet individu sont omis de la réponse.',
     ),
 })
 export type DernieresValeursIndividuListApiModel = z.infer<
@@ -505,8 +499,8 @@ export const tauxProgressionIndividuListApiModelSchema = z.object({
     .array(tauxProgressionIndividuApiModelSchema)
     .describe(
       'Taux de progression pour chaque indicateur demandé ayant un objectif défini et une valeur connue. ' +
-        "Les indicateurs sans objectif ou sans valeur sont omis. " +
-        "Les indicateurs dont la valeurCible est zéro sont inclus avec tauxProgression: null.",
+        'Les indicateurs sans objectif ou sans valeur sont omis. ' +
+        'Les indicateurs dont la valeurCible est zéro sont inclus avec tauxProgression: null.',
     ),
 })
 export type TauxProgressionIndividuListApiModel = z.infer<
