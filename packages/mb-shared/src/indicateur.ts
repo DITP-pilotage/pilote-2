@@ -79,6 +79,10 @@ export const periodeMiseAJourSchema = z
   .enum(PERIODES_MISE_A_JOUR)
   .describe('Période de mise à jour planifiée des valeurs de cet indicateur.')
 
+export const indicateurSourceUrlSchema = z
+  .url({ protocol: /^https$/, error: 'URL https invalide' })
+  .describe('URL de la source des données. Doit utiliser le protocole https.')
+
 export const indicateurMetadonneesSchema = z.object({
   description: z.string().nullable().describe("Description libre de l'indicateur."),
   methodeCalcul: z
@@ -86,10 +90,9 @@ export const indicateurMetadonneesSchema = z.object({
     .nullable()
     .describe('Méthode de calcul utilisée pour produire la valeur.'),
   sourceDonnees: z.string().nullable().describe('Nom de la source des données.'),
-  sourceUrl: z
-    .url({ protocol: /^https?$/ })
+  sourceUrl: indicateurSourceUrlSchema
     .nullable()
-    .describe('URL de la source des données. Doit utiliser le protocole http ou https.'),
+    .describe('URL de la source des données. Doit utiliser le protocole https.'),
   periodeMiseAJour: periodeMiseAJourSchema.nullable().describe('Période de mise à jour.'),
   jourMiseAJour: z
     .int()

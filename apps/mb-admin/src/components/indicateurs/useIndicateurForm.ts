@@ -1,33 +1,16 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMemo } from 'react'
-import {
-  useFieldArray,
-  type FieldErrors,
-  type UseFieldArrayReturn,
-  type UseFormHandleSubmit,
-  type UseFormRegister,
-  type UseFormSetValue,
-  useForm,
-  useWatch,
-} from 'react-hook-form'
+import { useFieldArray, useForm, useWatch } from 'react-hook-form'
 import { z } from 'zod'
 
 import type { IndicateurApiModel, UpsertIndicateurBody } from '@pilote/mb-shared/indicateur'
-import { periodeMiseAJourSchema } from '@pilote/mb-shared/indicateur'
-
-const isValidHttpUrl = (value: string): boolean => {
-  try {
-    const url = new URL(value)
-    return url.protocol === 'http:' || url.protocol === 'https:'
-  } catch {
-    return false
-  }
-}
-
-const referentielLieSchema = z.object({
-  id: z.string().regex(/^REF-[A-Z0-9-]{1,16}$/, 'Référentiel invalide'),
-  fonctionAgregation: z.enum(['SUM', 'AVG', 'NONE']),
-})
+import {
+  configurationIndicateurReferentielSchema,
+  indicateurSourceUrlSchema,
+  indicateurVisibiliteSchema,
+  periodeMiseAJourSchema,
+  uniteIndicateurCodeSchema,
+} from '@pilote/mb-shared/indicateur'
 
 // Schéma du formulaire (valeurs saisies, toutes en chaînes natives). La
 // conversion vers le body PUT — `'' → null`, `jour → number` — est faite par
@@ -37,17 +20,12 @@ const buildIndicateurFormSchema = (mode: 'create' | 'edit') =>
   z.object({
     id: mode === 'create' ? z.string().regex(/^IND-\d+$/, 'Format attendu : IND-001') : z.string(),
     nom: z.string().trim().min(1, 'Le nom est requis'),
-    visibilite: z.enum(['PUBLIC', 'PRIVE']),
-    unite: z.union([z.literal(''), z.enum(['POURCENTAGE', 'ANNEES'])]),
+    visibilite: indicateurVisibiliteSchema,
+    unite: z.union([z.literal(''), uniteIndicateurCodeSchema]),
     description: z.string(),
     methodeCalcul: z.string(),
     sourceDonnees: z.string(),
-    sourceUrl: z
-      .string()
-      .refine(
-        (value) => value.trim() === '' || isValidHttpUrl(value.trim()),
-        'URL http(s) invalide',
-      ),
+    sourceUrl: z.union([z.literal(''), indicateurSourceUrlSchema]),
     periodeMiseAJour: z.union([z.literal(''), periodeMiseAJourSchema]),
     jourMiseAJour: z
       .string()
@@ -56,7 +34,7 @@ const buildIndicateurFormSchema = (mode: 'create' | 'edit') =>
           value === '' || (/^\d+$/.test(value) && Number(value) >= 1 && Number(value) <= 31),
         'Entier entre 1 et 31',
       ),
-    referentiels: z.array(referentielLieSchema),
+    referentiels: z.array(configurationIndicateurReferentielSchema),
   })
 
 export type IndicateurFormValues = z.infer<ReturnType<typeof buildIndicateurFormSchema>>
@@ -100,40 +78,26 @@ export function toUpsertBody(values: IndicateurFormValues): UpsertIndicateurBody
   }
 }
 
-export type UseIndicateurFormReturn = {
-  register: UseFormRegister<IndicateurFormValues>
-  handleSubmit: UseFormHandleSubmit<IndicateurFormValues>
-  setValue: UseFormSetValue<IndicateurFormValues>
-  errors: FieldErrors<IndicateurFormValues>
-  isValid: boolean
-  referentiels: UseFieldArrayReturn<IndicateurFormValues, 'referentiels'>
-  visibilite: IndicateurFormValues['visibilite']
-}
-
 // Regroupe tout le câblage react-hook-form du formulaire indicateur (schéma
 // zod mode-dépendant, resolver, tableau de référentiels, watch de la
-// visibilité) pour que le composant ne porte que le rendu.
+// visibilité) pour que le composant ne porte que le rendu. On renvoie `form`
+// tel quel (le composant appelle `form.register` etc.) plutôt qu'un objet plat,
+// pour laisser react-hook-form inférer les types.
 export function useIndicateurForm({
   mode,
   initial,
 }: {
   mode: 'create' | 'edit'
   initial: IndicateurFormValues
-}): UseIndicateurFormReturn {
+}) {
   const schema = useMemo(() => buildIndicateurFormSchema(mode), [mode])
-  const {
-    register,
-    handleSubmit,
-    control,
-    setValue,
-    formState: { errors, isValid },
-  } = useForm<IndicateurFormValues>({
+  const form = useForm<IndicateurFormValues>({
     resolver: zodResolver(schema),
     mode: 'onChange',
     defaultValues: initial,
   })
-  const referentiels = useFieldArray({ control, name: 'referentiels' })
-  const visibilite = useWatch({ control, name: 'visibilite' })
+  const referentiels = useFieldArray({ control: form.control, name: 'referentiels' })
+  const visibilite = useWatch({ control: form.control, name: 'visibilite' })
 
-  return { register, handleSubmit, setValue, errors, isValid, referentiels, visibilite }
+  return { form, referentiels, visibilite }
 }

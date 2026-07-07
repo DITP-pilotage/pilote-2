@@ -1,10 +1,13 @@
 import { useQuery } from '@tanstack/react-query'
 import { Plus, Trash2 } from 'lucide-react'
+import type { UseFormRegister } from 'react-hook-form'
 
 import { PERIODES_MISE_A_JOUR } from '@pilote/mb-shared/indicateur'
 
 import { fetchAllReferentiels } from '@/api/referentiels'
 import { Button } from '@/components/ui/Button'
+import { FieldSelect } from '@/components/ui/FieldSelect'
+import { FieldTextarea } from '@/components/ui/FieldTextarea'
 import { Input } from '@/components/ui/Input'
 import { useAppConfig } from '@/context/AppConfigContext'
 import {
@@ -49,11 +52,7 @@ export function IndicateurForm({
 }) {
   const { isProd } = useAppConfig()
   const {
-    register,
-    handleSubmit,
-    setValue,
-    errors,
-    isValid,
+    form,
     referentiels: { fields, append, remove },
     visibilite,
   } = useIndicateurForm({ mode, initial })
@@ -65,35 +64,44 @@ export function IndicateurForm({
   const referentielsOptions = referentielsQuery.data ?? []
 
   return (
-    <form onSubmit={(event) => void handleSubmit(onSubmit)(event)} className="mx-auto max-w-2xl">
+    <form
+      onSubmit={(event) => void form.handleSubmit(onSubmit)(event)}
+      className="mx-auto max-w-2xl"
+    >
       <div className="rounded-xl border border-border bg-surface p-6">
         <div className="mb-5">
-          <label className="mb-1.5 block text-xs font-semibold">Identifiant</label>
           {mode === 'edit' ? (
-            <span className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-surface-tinted px-3 py-2 font-mono text-sm text-primary">
-              {initial.id}{' '}
-              <span className="font-sans text-xs text-text-subtle">🔒 non modifiable</span>
-            </span>
-          ) : (
             <>
-              <input
-                placeholder="IND-001"
-                className="w-48 rounded-md border border-border px-3 py-2 font-mono text-sm focus:border-primary focus:outline-none"
-                {...register('id')}
-                onChange={(event) =>
-                  setValue('id', event.target.value.toUpperCase(), {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                  })
-                }
-              />
-              {errors.id ? <p className="mt-1 text-xs text-accent">{errors.id.message}</p> : null}
+              <label className="mb-1.5 block text-xs font-semibold">Identifiant</label>
+              <span className="inline-flex items-center gap-2 rounded-md border border-primary/20 bg-surface-tinted px-3 py-2 font-mono text-sm text-primary">
+                {initial.id}{' '}
+                <span className="font-sans text-xs text-text-subtle">🔒 non modifiable</span>
+              </span>
             </>
+          ) : (
+            <Input
+              label="Identifiant"
+              placeholder="IND-001"
+              className="w-48 font-mono"
+              error={form.formState.errors.id?.message}
+              {...form.register('id')}
+              onChange={(event) =>
+                form.setValue('id', event.target.value.toUpperCase(), {
+                  shouldValidate: true,
+                  shouldDirty: true,
+                })
+              }
+            />
           )}
         </div>
 
         <div className="mb-5">
-          <Input label="Nom" required error={errors.nom?.message} {...register('nom')} />
+          <Input
+            label="Nom"
+            required
+            error={form.formState.errors.nom?.message}
+            {...form.register('nom')}
+          />
         </div>
 
         <div className="mb-6 flex gap-4">
@@ -104,7 +112,8 @@ export function IndicateurForm({
                 <button
                   key={option}
                   type="button"
-                  onClick={() => setValue('visibilite', option, { shouldValidate: true })}
+                  aria-pressed={visibilite === option}
+                  onClick={() => form.setValue('visibilite', option, { shouldValidate: true })}
                   className={clsxm(
                     'flex-1 py-2',
                     visibilite === option
@@ -118,15 +127,11 @@ export function IndicateurForm({
             </div>
           </div>
           <div className="flex-1">
-            <label className="mb-1.5 block text-xs font-semibold">Unité</label>
-            <select
-              className="w-full rounded-md border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none"
-              {...register('unite')}
-            >
+            <FieldSelect label="Unité" {...form.register('unite')}>
               <option value="">Aucune</option>
               <option value="POURCENTAGE">Pourcentage</option>
               <option value="ANNEES">Années</option>
-            </select>
+            </FieldSelect>
           </div>
         </div>
 
@@ -134,29 +139,19 @@ export function IndicateurForm({
           <span className="mb-4 block text-sm font-bold">Métadonnées</span>
 
           <div className="mb-5">
-            <label className="mb-1.5 block text-xs font-semibold">Description</label>
-            <textarea
-              rows={3}
-              className="w-full resize-y rounded-md border border-border px-3 py-2 text-sm focus:border-primary focus:outline-none"
-              {...register('description')}
-            />
+            <FieldTextarea label="Description" rows={3} {...form.register('description')} />
           </div>
 
           <div className="mb-5">
-            <label className="mb-1.5 block text-xs font-semibold">Méthode de calcul</label>
-            <textarea
-              rows={3}
-              className="w-full resize-y rounded-md border border-border px-3 py-2 text-sm focus:border-primary focus:outline-none"
-              {...register('methodeCalcul')}
-            />
+            <FieldTextarea label="Méthode de calcul" rows={3} {...form.register('methodeCalcul')} />
           </div>
 
           <div className="mb-5 flex gap-4">
             <div className="flex-1">
               <Input
                 label="Source des données"
-                error={errors.sourceDonnees?.message}
-                {...register('sourceDonnees')}
+                error={form.formState.errors.sourceDonnees?.message}
+                {...form.register('sourceDonnees')}
               />
             </div>
             <div className="flex-1">
@@ -164,26 +159,22 @@ export function IndicateurForm({
                 label="URL de la source"
                 type="url"
                 placeholder="https://…"
-                error={errors.sourceUrl?.message}
-                {...register('sourceUrl')}
+                error={form.formState.errors.sourceUrl?.message}
+                {...form.register('sourceUrl')}
               />
             </div>
           </div>
 
           <div className="flex gap-4">
             <div className="flex-1">
-              <label className="mb-1.5 block text-xs font-semibold">Période de mise à jour</label>
-              <select
-                className="w-full rounded-md border border-border px-3 py-2.5 text-sm focus:border-primary focus:outline-none"
-                {...register('periodeMiseAJour')}
-              >
+              <FieldSelect label="Période de mise à jour" {...form.register('periodeMiseAJour')}>
                 <option value="">Non renseignée</option>
                 {PERIODES_MISE_A_JOUR.map((periode) => (
                   <option key={periode} value={periode}>
                     {PERIODE_MISE_A_JOUR_LABEL[periode]}
                   </option>
                 ))}
-              </select>
+              </FieldSelect>
             </div>
             <div className="flex-1">
               <Input
@@ -192,8 +183,8 @@ export function IndicateurForm({
                 min={1}
                 max={31}
                 placeholder="1–31"
-                error={errors.jourMiseAJour?.message}
-                {...register('jourMiseAJour')}
+                error={form.formState.errors.jourMiseAJour?.message}
+                {...form.register('jourMiseAJour')}
               />
             </div>
           </div>
@@ -215,42 +206,14 @@ export function IndicateurForm({
             supprime le lien.
           </p>
           {fields.map((field, index) => (
-            <div
+            <ReferentielRow
               key={field.id}
-              className="mb-2.5 flex items-center gap-2.5 rounded-lg border border-border bg-surface-muted px-3 py-2.5"
-            >
-              <select
-                className="flex-[2] rounded-md border border-border bg-surface px-2.5 py-2 text-sm focus:border-primary focus:outline-none"
-                {...register(`referentiels.${index}.id`)}
-              >
-                <option value="" disabled>
-                  Choisir un référentiel…
-                </option>
-                {referentielsOptions.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.id} · {option.nom}
-                  </option>
-                ))}
-              </select>
-              <select
-                className="flex-1 rounded-md border border-border bg-surface px-2.5 py-2 text-sm focus:border-primary focus:outline-none"
-                {...register(`referentiels.${index}.fonctionAgregation`)}
-              >
-                {(['SUM', 'AVG', 'NONE'] as const).map((option) => (
-                  <option key={option} value={option}>
-                    {AGREGATION_LABEL[option]}
-                  </option>
-                ))}
-              </select>
-              <button
-                type="button"
-                onClick={() => remove(index)}
-                className="text-accent"
-                aria-label="Retirer"
-              >
-                <Trash2 className="size-4" />
-              </button>
-            </div>
+              index={index}
+              register={form.register}
+              error={form.formState.errors.referentiels?.[index]?.id?.message}
+              options={referentielsOptions}
+              onRemove={() => remove(index)}
+            />
           ))}
         </div>
       </div>
@@ -265,12 +228,63 @@ export function IndicateurForm({
         </Button>
         <Button
           type="submit"
-          disabled={!isValid || pending}
+          disabled={!form.formState.isValid || pending}
           className={isProd ? 'bg-accent hover:bg-accent' : undefined}
         >
           {pending ? 'Enregistrement…' : isProd ? '🚨 Enregistrer en Prod' : 'Enregistrer'}
         </Button>
       </div>
     </form>
+  )
+}
+
+// Une ligne « référentiel lié » : sélection du référentiel + fonction
+// d'agrégation, avec message d'erreur si le référentiel n'est pas choisi.
+function ReferentielRow({
+  index,
+  register,
+  error,
+  options,
+  onRemove,
+}: {
+  index: number
+  register: UseFormRegister<IndicateurFormValues>
+  error?: string | undefined
+  options: { id: string; nom: string }[]
+  onRemove: () => void
+}) {
+  return (
+    <div className="mb-2.5">
+      <div className="flex items-center gap-2.5 rounded-lg border border-border bg-surface-muted px-3 py-2.5">
+        <select
+          className="flex-[2] rounded-md border border-border bg-surface px-2.5 py-2 text-sm focus:border-primary focus:outline-none"
+          aria-invalid={error ? true : undefined}
+          {...register(`referentiels.${index}.id`)}
+        >
+          <option value="" disabled>
+            Choisir un référentiel…
+          </option>
+          {options.map((option) => (
+            <option key={option.id} value={option.id}>
+              {option.id} · {option.nom}
+            </option>
+          ))}
+        </select>
+        <select
+          className="flex-1 rounded-md border border-border bg-surface px-2.5 py-2 text-sm focus:border-primary focus:outline-none"
+          {...register(`referentiels.${index}.fonctionAgregation`)}
+        >
+          {(['SUM', 'AVG', 'NONE'] as const).map((option) => (
+            <option key={option} value={option}>
+              {AGREGATION_LABEL[option]}
+            </option>
+          ))}
+        </select>
+        <button type="button" onClick={onRemove} className="text-accent" aria-label="Retirer">
+          <Trash2 className="size-4" />
+        </button>
+      </div>
+      {error ? <p className="mt-1 text-xs text-accent">{error}</p> : null}
+    </div>
   )
 }
