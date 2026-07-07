@@ -9,9 +9,9 @@ import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurIds, testPanierId } from '@/test/randomIds'
 
-const listIndicateursWithReadPermission = async (principalId: string) =>
+const listIndicateursWithReadPermission = async (principalId: string, isAdmin = false) =>
   db().indicateur.findMany({
-    where: withIndicateurReadPermission({}, principalId),
+    where: withIndicateurReadPermission({}, principalId, { isAdmin }),
     select: { publicId: true },
     orderBy: { publicId: 'asc' },
   })
@@ -145,11 +145,24 @@ describe.concurrent('withIndicateurReadPermission', () => {
       const apiKey = await fixtures.apiKey()
 
       const rows = await db().indicateur.findMany({
-        where: withIndicateurReadPermission({ nom: 'Cible' }, apiKey.id),
+        where: withIndicateurReadPermission({ nom: 'Cible' }, apiKey.id, { isAdmin: false }),
         select: { publicId: true },
       })
 
       expect(rows.map((r) => r.publicId)).toEqual([a])
+    }),
+  )
+
+  it(
+    'expose un indicateur PRIVE à un principal ADMIN, sans aucune permission (bypass)',
+    integrationTest(async () => {
+      const [priv] = testIndicateurIds(1)
+      await fixtures.indicateur({ publicId: priv, visibilite: 'PRIVE' })
+      const apiKey = await fixtures.apiKey()
+
+      const rows = await listIndicateursWithReadPermission(apiKey.id, true)
+
+      expect(rows.map((r) => r.publicId)).toContain(priv)
     }),
   )
 })

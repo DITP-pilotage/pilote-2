@@ -12,6 +12,7 @@ const INDICATEUR_READ_PERMISSIONS: PermissionAction[] = [
 ]
 
 // La permission de lecture sur un indicateur est accordée si :
+// - le principal est ADMIN (bypass : administre PUBLIC + PRIVÉ, aligné avec /me/permissions), OU
 // - l'indicateur est PUBLIC, OU
 // - le principal a READ/WRITE direct sur l'indicateur, OU
 // - le principal a READ/WRITE sur un panier qui contient l'indicateur
@@ -20,28 +21,34 @@ const INDICATEUR_READ_PERMISSIONS: PermissionAction[] = [
 export const withIndicateurReadPermission = (
   where: Prisma.IndicateurWhereInput,
   principalId: string,
-): Prisma.IndicateurWhereInput => ({
-  AND: [
-    where,
-    {
-      OR: [
-        { visibilite: Visibilite.PUBLIC },
-        { permissions: { some: { principalId, action: { in: INDICATEUR_READ_PERMISSIONS } } } },
-        {
-          paniers: {
-            some: {
-              panier: {
-                permissions: {
-                  some: { principalId, action: { in: PANIER_READ_PERMISSIONS } },
+  { isAdmin = false }: { isAdmin?: boolean } = {},
+): Prisma.IndicateurWhereInput => {
+  if (isAdmin) {
+    return where
+  }
+  return {
+    AND: [
+      where,
+      {
+        OR: [
+          { visibilite: Visibilite.PUBLIC },
+          { permissions: { some: { principalId, action: { in: INDICATEUR_READ_PERMISSIONS } } } },
+          {
+            paniers: {
+              some: {
+                panier: {
+                  permissions: {
+                    some: { principalId, action: { in: PANIER_READ_PERMISSIONS } },
+                  },
                 },
               },
             },
           },
-        },
-      ],
-    },
-  ],
-})
+        ],
+      },
+    ],
+  }
+}
 
 export const ensureIndicateurWritePermission = ({
   indicateurId,

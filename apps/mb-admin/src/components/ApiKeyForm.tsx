@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
+import { FieldInput } from '@/components/ui/FieldInput'
 import { useAppConfig } from '@/context/AppConfigContext'
 import { clsxm } from '@/lib/clsxm'
 
@@ -41,7 +41,7 @@ export function ApiKeyForm({
     <form onSubmit={(event) => void handleSubmit(onSubmit)(event)} className="mx-auto max-w-2xl">
       <div className="rounded-xl border border-border bg-surface p-6">
         <div className="mb-5">
-          <Input
+          <FieldInput
             label="Label"
             required
             placeholder="Intégration SI-X"
@@ -62,7 +62,7 @@ export function ApiKeyForm({
         </div>
 
         <div className="mb-2">
-          <Input
+          <FieldInput
             label="Expiration (optionnelle)"
             type="date"
             className="w-56"

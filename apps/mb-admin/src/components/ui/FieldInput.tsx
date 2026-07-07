@@ -1,33 +1,42 @@
-import type { InputHTMLAttributes, Ref } from 'react'
+import { useId, type InputHTMLAttributes, type Ref } from 'react'
 
+import { Field } from '@/components/ui/Field'
 import { clsxm } from '@/lib/clsxm'
 
-export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
+export type FieldInputProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string
   required?: boolean
   hint?: string | undefined
   error?: string | undefined
+  hideLabel?: boolean
   ref?: Ref<HTMLInputElement>
 }
 
-export function Input({
+export function FieldInput({
   label,
   required,
   hint,
   error,
+  hideLabel,
   className,
   readOnly,
+  id,
   ref,
   ...props
-}: InputProps) {
+}: FieldInputProps) {
+  const generatedId = useId()
+  const fieldId = id ?? generatedId
   return (
-    <div>
-      <label className="mb-1.5 block text-xs font-semibold">
-        {label}
-        {required ? <span className="text-accent"> *</span> : null}
-        {hint ? <span className="ml-2 text-xs font-normal text-text-muted">{hint}</span> : null}
-      </label>
+    <Field
+      label={label}
+      required={required}
+      hint={hint}
+      error={error}
+      hideLabel={hideLabel}
+      htmlFor={fieldId}
+    >
       <input
+        id={fieldId}
         ref={ref}
         readOnly={readOnly}
         className={clsxm(
@@ -37,7 +46,6 @@ export function Input({
         )}
         {...props}
       />
-      {error ? <p className="mt-1 text-xs text-accent">{error}</p> : null}
-    </div>
+    </Field>
   )
 }

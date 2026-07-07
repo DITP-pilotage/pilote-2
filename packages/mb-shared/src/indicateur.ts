@@ -75,9 +75,26 @@ export const PERIODES_MISE_A_JOUR = [
 ] as const
 export type PeriodeMiseAJour = (typeof PERIODES_MISE_A_JOUR)[number]
 
+// Libellés d'affichage des périodes, partagés entre l'admin (formulaire) et la
+// webapp (fiche indicateur) pour éviter la divergence.
+export const PERIODE_MISE_A_JOUR_LABELS: Record<PeriodeMiseAJour, string> = {
+  QUOTIDIENNE: 'Quotidienne',
+  HEBDOMADAIRE: 'Hebdomadaire',
+  BIMENSUELLE: 'Bimensuelle',
+  MENSUELLE: 'Mensuelle',
+  TRIMESTRIELLE: 'Trimestrielle',
+  SEMESTRIELLE: 'Semestrielle',
+  ANNUELLE: 'Annuelle',
+  AUCUNE: 'Aucune',
+}
+
 export const periodeMiseAJourSchema = z
   .enum(PERIODES_MISE_A_JOUR)
   .describe('Période de mise à jour planifiée des valeurs de cet indicateur.')
+
+export const indicateurSourceUrlSchema = z
+  .url({ protocol: /^https$/, error: 'URL https invalide' })
+  .describe('URL de la source des données. Doit utiliser le protocole https.')
 
 export const indicateurMetadonneesSchema = z.object({
   description: z.string().nullable().describe("Description libre de l'indicateur."),
@@ -86,10 +103,9 @@ export const indicateurMetadonneesSchema = z.object({
     .nullable()
     .describe('Méthode de calcul utilisée pour produire la valeur.'),
   sourceDonnees: z.string().nullable().describe('Nom de la source des données.'),
-  sourceUrl: z
-    .url({ protocol: /^https?$/ })
+  sourceUrl: indicateurSourceUrlSchema
     .nullable()
-    .describe('URL de la source des données. Doit utiliser le protocole http ou https.'),
+    .describe('URL de la source des données. Doit utiliser le protocole https.'),
   periodeMiseAJour: periodeMiseAJourSchema.nullable().describe('Période de mise à jour.'),
   jourMiseAJour: z.int().min(1).max(31).nullable().describe('Jour de mise à jour entre 1 et 31.'),
 })
