@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { createPaginatedApiListSchema, paginationCursorSchema, pageSizeSchema } from './pagination'
 import { indicateurPublicIdSchema, panierPublicIdSchema } from './publicIds'
+import { responsableApiModelSchema } from './responsable'
 
 export const panierVisibiliteSchema = z
   .enum(['PUBLIC', 'PRIVE'])
@@ -20,6 +21,9 @@ export const panierApiModelSchema = z.object({
     .describe(
       "Identifiants publics des indicateurs composant le panier, triés par ordre d'insertion (createdAt ASC).",
     ),
+  responsables: z
+    .array(responsableApiModelSchema)
+    .describe("Utilisateurs désignés responsables du panier, triés par ordre d'assignation (createdAt ASC)."),
   createdAt: z.string().datetime().describe('Date ISO 8601 de création.'),
   updatedAt: z.string().datetime().describe('Date ISO 8601 de dernière mise à jour.'),
 })

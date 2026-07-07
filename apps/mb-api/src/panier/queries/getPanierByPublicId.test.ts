@@ -30,6 +30,7 @@ describe.concurrent('getPanierByPublicId', () => {
         description: 'Une description',
         visibilite: 'PUBLIC',
         indicateurIds: [indA, indB],
+        responsables: [],
         createdAt: panier.createdAt.toISOString(),
         updatedAt: panier.updatedAt.toISOString(),
       })
@@ -90,6 +91,36 @@ describe.concurrent('getPanierByPublicId', () => {
       const apiKey = await fixtures.apiKey()
 
       await expect(runAsPrincipal(apiKey.id, () => getPanierByPublicId(panNope))).rejects.toThrow()
+    }),
+  )
+
+  it(
+    "retourne les responsables du panier triés par ordre d'assignation",
+    integrationTest(async () => {
+      const panId = testPanierId()
+      await fixtures.panierResponsable({
+        panier: { publicId: panId, visibilite: 'PUBLIC' },
+        utilisateur: {
+          email: `resp-a-${panId}@example.com`,
+          nom: 'Martin',
+          prenom: 'Alice',
+          service: 'DITP',
+          fonction: 'Chargée de mission',
+        },
+      })
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () => getPanierByPublicId(panId))
+
+      expect(result._unsafeUnwrap().responsables).toEqual([
+        {
+          email: `resp-a-${panId}@example.com`,
+          nom: 'Martin',
+          prenom: 'Alice',
+          service: 'DITP',
+          fonction: 'Chargée de mission',
+        },
+      ])
     }),
   )
 })
