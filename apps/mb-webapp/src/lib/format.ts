@@ -22,7 +22,9 @@ export const formatNumberAvecUniteFr = (
   value: number,
   unite: UniteIndicateurApiModel | null,
 ): string =>
-  unite ? `${numberFr.format(value)}${NBSP_FINE}${unite.abbreviation}` : numberFr.format(value)
+  unite?.abbreviation
+    ? `${numberFr.format(value)}${NBSP_FINE}${unite.abbreviation}`
+    : numberFr.format(value)
 
 export const formatVariationFr = (value: number): string => variationFr.format(value)
 
@@ -30,7 +32,7 @@ export const formatVariationAvecUniteFr = (
   value: number,
   unite: UniteIndicateurApiModel | null,
 ): string =>
-  unite
+  unite?.abbreviation
     ? `${variationFr.format(value)}${NBSP_FINE}${unite.abbreviation}`
     : variationFr.format(value)
 

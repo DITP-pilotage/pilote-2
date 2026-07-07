@@ -128,8 +128,40 @@ enum Visibilite {
 }
 
 enum UniteIndicateur {
-  POURCENTAGE
+  // Numéraires
+  VALEUR_UNITAIRE
+  MILLIONS
+  ETP
+  ETPT
+  // Durée
+  HEURES
+  MINUTES
+  JOURS
+  MOIS
   ANNEES
+  // Spatiales
+  HECTARES
+  METRE
+  KILOMETRE
+  METRE_CARRE
+  KILOMETRE_CARRE
+  // Taux
+  POINTS
+  POURCENTAGE
+  // Monétaires
+  EURO
+  MILLIONS_EUROS
+  MILLIARDS_EUROS
+  // Autres
+  MEGAWATT
+  GIGAWATT
+  TONNES
+  TONNES_CO2
+  TERAWATT
+  LITRES
+  ELEVES
+  CLASSES
+  REPAS
 
   @@map("unite_indicateur_enum")
 }
