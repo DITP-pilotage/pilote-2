@@ -10,7 +10,6 @@ import {
   panierApiModelSchema,
   panierListApiModelSchema,
 } from '@pilote/mb-shared/panier'
-import { panierContactsUtilesApiModelSchema } from '@pilote/mb-shared/panierContactUtile'
 import {
   getPanierTauxProgressionQuerySchema,
   panierTauxProgressionApiModelSchema,
@@ -38,7 +37,6 @@ import { erreur400, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { creerPanierCommentaire, panierConfig } from '@/panier/commands/creerPanierCommentaire'
 import { getPanierByPublicId } from '@/panier/queries/getPanierByPublicId'
-import { getPanierContactsUtiles } from '@/panier/queries/getPanierContactsUtiles'
 import { getPanierTauxProgression } from '@/panier/queries/getPanierTauxProgression'
 import { listPaniers } from '@/panier/queries/listPaniers'
 import { listerPanierCommentaires } from '@/panier/queries/listerPanierCommentaires'
@@ -47,9 +45,6 @@ const PanierApiModelSchema = panierApiModelSchema.openapi('PanierApiModel')
 const PanierListApiModelSchema = panierListApiModelSchema.openapi('PanierListApiModel')
 const PanierTauxProgressionApiModelSchema = panierTauxProgressionApiModelSchema.openapi(
   'PanierTauxProgressionApiModel',
-)
-const PanierContactsUtilesApiModelSchema = panierContactsUtilesApiModelSchema.openapi(
-  'PanierContactsUtilesApiModel',
 )
 
 // --- GET /paniers ------------------------------------------------------------
@@ -124,27 +119,6 @@ const getPanierTauxProgressionRoute = createRoute({
     },
     400: erreur400,
     404: erreur404,
-  },
-})
-
-// --- GET /paniers/:id/contacts-utiles ----------------------------------------
-
-const getPanierContactsUtilesRoute = createRoute({
-  method: 'get',
-  path: '/paniers/{id}/contacts-utiles',
-  tags: ['Panier'],
-  summary: "Lister les contacts utiles d'un panier",
-  description:
-    'Retourne les contacts utiles du panier, regroupés par organisme et triés alphabétiquement. ' +
-    'Accessible à tout principal pouvant lire le panier ' +
-    '(visibilite PUBLIC ou permission READ/WRITE explicite).',
-  middleware: [requireAuthentication],
-  request: { params: detailParamsSchema },
-  responses: {
-    200: {
-      content: { 'application/json': { schema: PanierContactsUtilesApiModelSchema } },
-      description: 'Contacts utiles du panier groupés par organisme',
-    },
   },
 })
 
@@ -297,21 +271,6 @@ panierRoutes.openapi(listerNiveauxParCommentairesPanierRoute, async (context) =>
   return listerNiveauxParCommentaires(panierConfig, { params, query }).match(
     (data) =>
       jsonResponseOk({ context, data, schema: NiveauConfianceListApiModelSchema, status: 200 }),
-    never,
-  )
-})
-
-panierRoutes.openapi(getPanierContactsUtilesRoute, async (context) => {
-  const { id } = context.req.valid('param')
-
-  return getPanierContactsUtiles(id).match(
-    (data) =>
-      jsonResponseOk({
-        context,
-        data,
-        schema: PanierContactsUtilesApiModelSchema,
-        status: 200,
-      }),
     never,
   )
 })

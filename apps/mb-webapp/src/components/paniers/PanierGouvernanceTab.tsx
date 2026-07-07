@@ -1,3 +1,4 @@
+import { type PanierContactsUtilesGroup } from '@pilote/mb-shared/panierContactUtile'
 import { type ResponsableApiModel } from '@pilote/mb-shared/responsable'
 
 import { PanierContactsUtiles } from '@/components/paniers/PanierContactsUtiles'
@@ -5,11 +6,11 @@ import { ResponsablesList } from '@/components/ui/ResponsablesList'
 import { Heading } from '@/components/ui/Typography'
 
 export function PanierGouvernanceTab({
-  panierId,
   responsables,
+  contactsUtiles,
 }: {
-  panierId: string
   responsables: ReadonlyArray<ResponsableApiModel>
+  contactsUtiles: ReadonlyArray<PanierContactsUtilesGroup>
 }) {
   return (
     <div className="flex flex-col gap-8">
@@ -18,7 +19,7 @@ export function PanierGouvernanceTab({
         <ResponsablesList responsables={responsables} />
       </div>
 
-      <PanierContactsUtiles panierId={panierId} />
+      <PanierContactsUtiles contactsUtiles={contactsUtiles} />
     </div>
   )
 }

@@ -17,7 +17,7 @@
 - **Tests mb-api** : `integrationTest(...)`, `fixtures.<entity>(...)`, `runAsPrincipal`, valeurs hardcodées (isolation transactionnelle), pas de random.
 - **UI** : composant réutilisable factorisé plutôt que markup dupliqué.
 - **Lecture seule** : aucune route/UI d'écriture des responsables.
-- **Hors scope** : contacts utiles du panier (route séparée conservée), écriture des responsables.
+- **Hors scope** : écriture des responsables. (Les contacts utiles du panier, initialement hors scope, ont finalement été embarqués dans le GET détail et leur route supprimée suite au retour de revue PR-2251.)
 - Commandes de vérif :
   - mb-api tous les tests : `pnpm -F @pilote/mb-api test`
   - mb-api un fichier : `pnpm -F @pilote/mb-api exec vitest run <path>`

@@ -33,6 +33,9 @@ export const listPaniers = (params: ListPaniersQuery): ResultAsync<PanierListApi
         orderBy: { createdAt: 'asc' },
         include: { utilisateur: true },
       },
+      contactsUtiles: {
+        include: { contactUtile: { include: { organisme: true } } },
+      },
     },
     ...buildPaginationArgs(params.cursor, params.pageSize),
   })

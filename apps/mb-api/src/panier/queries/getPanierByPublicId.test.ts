@@ -31,6 +31,7 @@ describe.concurrent('getPanierByPublicId', () => {
         visibilite: 'PUBLIC',
         indicateurIds: [indA, indB],
         responsables: [],
+        contactsUtiles: [],
         createdAt: panier.createdAt.toISOString(),
         updatedAt: panier.updatedAt.toISOString(),
       })
@@ -143,6 +144,106 @@ describe.concurrent('getPanierByPublicId', () => {
       const emails = result._unsafeUnwrap().responsables.map((r) => r.email)
 
       expect(emails).toEqual([`aa-ord-${panOrd}@example.com`, `bb-ord-${panOrd}@example.com`])
+    }),
+  )
+
+  it(
+    "retourne tous les champs d'un contact utile groupé par organisme",
+    integrationTest(async () => {
+      const panContact = testPanierId()
+      await fixtures.panierContactUtile({
+        panier: { publicId: panContact, visibilite: 'PUBLIC' },
+        contactUtile: {
+          nom: 'Contact complet',
+          description: 'Une description',
+          telephone: '01 23 45 67 89',
+          email: 'contact@example.com',
+          url: 'https://example.com',
+          adresse: '1 rue de la Paix, 75001 Paris',
+          organisme: { nom: 'Organisme A' },
+        },
+      })
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () => getPanierByPublicId(panContact))
+      const [group] = result._unsafeUnwrap().contactsUtiles
+
+      expect(group?.organisme.nom).toBe('Organisme A')
+      expect(group?.contacts[0]).toMatchObject({
+        nom: 'Contact complet',
+        description: 'Une description',
+        telephone: '01 23 45 67 89',
+        email: 'contact@example.com',
+        url: 'https://example.com',
+        adresse: '1 rue de la Paix, 75001 Paris',
+      })
+    }),
+  )
+
+  it(
+    "retourne null pour les champs absents d'un contact utile minimal",
+    integrationTest(async () => {
+      const panMinimal = testPanierId()
+      await fixtures.panierContactUtile({
+        panier: { publicId: panMinimal, visibilite: 'PUBLIC' },
+        contactUtile: { nom: 'Contact minimal' },
+      })
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () => getPanierByPublicId(panMinimal))
+      const contact = result._unsafeUnwrap().contactsUtiles[0]!.contacts[0]!
+
+      expect(contact).toMatchObject({
+        nom: 'Contact minimal',
+        description: null,
+        telephone: null,
+        email: null,
+        url: null,
+        adresse: null,
+      })
+    }),
+  )
+
+  it(
+    'regroupe les contacts par organisme et trie organismes puis contacts par nom',
+    integrationTest(async () => {
+      const panTri = testPanierId()
+      await fixtures.panier({ publicId: panTri, visibilite: 'PUBLIC' })
+      const orgZ = await fixtures.organisme({ nom: 'Zzz Organisation' })
+      const orgA = await fixtures.organisme({ nom: 'Aaa Organisation' })
+      const cZebra = await fixtures.contactUtile({
+        nom: 'Zebra',
+        organisme: { id: orgA.id, nom: orgA.nom },
+      })
+      const cAlpha = await fixtures.contactUtile({
+        nom: 'Alpha',
+        organisme: { id: orgA.id, nom: orgA.nom },
+      })
+      const cZeta = await fixtures.contactUtile({
+        nom: 'Zeta',
+        organisme: { id: orgZ.id, nom: orgZ.nom },
+      })
+      await fixtures.panierContactUtile({
+        panier: { publicId: panTri },
+        contactUtile: { id: cZebra.id },
+      })
+      await fixtures.panierContactUtile({
+        panier: { publicId: panTri },
+        contactUtile: { id: cAlpha.id },
+      })
+      await fixtures.panierContactUtile({
+        panier: { publicId: panTri },
+        contactUtile: { id: cZeta.id },
+      })
+      const apiKey = await fixtures.apiKey()
+
+      const groups = (
+        await runAsPrincipal(apiKey.id, () => getPanierByPublicId(panTri))
+      )._unsafeUnwrap().contactsUtiles
+
+      expect(groups.map((g) => g.organisme.nom)).toEqual(['Aaa Organisation', 'Zzz Organisation'])
+      expect(groups[0]!.contacts.map((c) => c.nom)).toEqual(['Alpha', 'Zebra'])
+      expect(groups[1]!.contacts.map((c) => c.nom)).toEqual(['Zeta'])
     }),
   )
 })

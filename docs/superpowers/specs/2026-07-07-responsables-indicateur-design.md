@@ -28,7 +28,8 @@ Ce design couvre donc deux choses :
 
 Périmètre : **lecture seule**, comme l'existant panier. Aucune route/UI
 d'écriture (assignation via seed/fixtures). Les **contacts utiles** du panier
-restent hors scope (route séparée conservée).
+sont embarqués de la même façon dans le GET détail (par cohérence avec les
+responsables, cf. retour de revue PR-2251), leur route dédiée est supprimée.
 
 ## Principes de conception
 
@@ -128,9 +129,11 @@ Migration `add_indicateur_responsable`. Seed : bloc miroir de celui de PAN-005
 
 - **Écriture** des responsables (assignation/retrait par API ou UI) : reste
   seed/fixtures uniquement, comme aujourd'hui pour le panier.
-- **Contacts utiles** du panier : route séparée `/paniers/{id}/contacts-utiles`
-  conservée telle quelle (donnée potentiellement volumineuse, groupée par
-  organisme).
+
+> Note revue (PR-2251) : les **contacts utiles** du panier, initialement hors
+> scope, sont finalement embarqués dans le GET détail eux aussi et leur route
+> `/paniers/{id}/contacts-utiles` est supprimée. Le volume est marginal (~3
+> contacts) et la cohérence avec les responsables prime.
 
 ## Trade-off assumé
 

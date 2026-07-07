@@ -1,14 +1,15 @@
+import { type PanierContactsUtilesGroup } from '@pilote/mb-shared/panierContactUtile'
 import { Globe, Mail, MapPin, Phone } from 'lucide-react'
-import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Heading } from '@/components/ui/Typography'
-import { panierContactsUtilesQueryOptions } from '@/queries/paniers'
 
-export function PanierContactsUtiles({ panierId }: { panierId: string }) {
-  const { data } = useSuspenseQuery(panierContactsUtilesQueryOptions(panierId))
-
-  if (data.items.length === 0) {
+export function PanierContactsUtiles({
+  contactsUtiles,
+}: {
+  contactsUtiles: ReadonlyArray<PanierContactsUtilesGroup>
+}) {
+  if (contactsUtiles.length === 0) {
     return <EmptyState title="Aucun contact utile pour ce panier." />
   }
 
@@ -16,7 +17,7 @@ export function PanierContactsUtiles({ panierId }: { panierId: string }) {
     <div className="space-y-6">
       <Heading size="sm">Contacts utiles</Heading>
 
-      {data.items.map(({ organisme, contacts }) => (
+      {contactsUtiles.map(({ organisme, contacts }) => (
         <div key={organisme.id} className="space-y-3">
           <div className="flex items-center gap-3">
             <span className="text-xs font-semibold uppercase tracking-widest text-text-subtle whitespace-nowrap">
