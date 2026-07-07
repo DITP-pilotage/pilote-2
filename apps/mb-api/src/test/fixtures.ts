@@ -25,6 +25,7 @@ import {
   type PanierContactUtileModel,
   type PanierModel,
   type PanierPermissionModel,
+  type IndicateurResponsableModel,
   type PanierResponsableModel,
   type ReferentielModel,
   type ReferentielWidgetModel,
@@ -797,6 +798,45 @@ async function panierResponsable(
   return results
 }
 
+// --- IndicateurResponsable (deps requises) -----------------------------------
+
+type IndicateurResponsableOverrides = {
+  indicateur: IndicateurOverrides
+  utilisateur: UtilisateurOverrides
+}
+
+const upsertIndicateurResponsable = async (o: IndicateurResponsableOverrides) => {
+  const indicateurRow = await upsertIndicateur(o.indicateur)
+  const utilisateurRow = await upsertUtilisateur(o.utilisateur)
+  return db().indicateurResponsable.upsert({
+    where: {
+      indicateurId_utilisateurId: {
+        indicateurId: indicateurRow.id,
+        utilisateurId: utilisateurRow.id,
+      },
+    },
+    update: {},
+    create: { indicateurId: indicateurRow.id, utilisateurId: utilisateurRow.id },
+  })
+}
+
+function indicateurResponsable(
+  override: IndicateurResponsableOverrides,
+): Promise<IndicateurResponsableModel>
+function indicateurResponsable(
+  o1: IndicateurResponsableOverrides,
+  o2: IndicateurResponsableOverrides,
+  ...rest: IndicateurResponsableOverrides[]
+): Promise<IndicateurResponsableModel[]>
+async function indicateurResponsable(
+  ...overrides: IndicateurResponsableOverrides[]
+): Promise<IndicateurResponsableModel | IndicateurResponsableModel[]> {
+  if (overrides.length === 1) return upsertIndicateurResponsable(overrides[0]!)
+  const results: IndicateurResponsableModel[] = []
+  for (const o of overrides) results.push(await upsertIndicateurResponsable(o))
+  return results
+}
+
 // --- Commentaire (indicateur + individu) -------------------------------------
 
 type CommentaireOverrides = {
@@ -949,6 +989,7 @@ export const fixtures = {
   indicateurPermission,
   panierPermission,
   panierResponsable,
+  indicateurResponsable,
   organisme,
   contactUtile,
   panierContactUtile,

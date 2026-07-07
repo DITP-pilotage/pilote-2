@@ -2,6 +2,7 @@ import { z } from 'zod'
 
 import { createPaginatedApiListSchema, listQuerySchema } from './pagination'
 import { indicateurPublicIdSchema, referentielPublicIdSchema } from './publicIds'
+import { responsableApiModelSchema } from './responsable'
 
 export const indicateurVisibiliteSchema = z
   .enum(['PUBLIC', 'PRIVE'])
@@ -204,6 +205,9 @@ export const indicateurApiModelSchema = z.object({
       'Configurations de cet indicateur sur chaque référentiel associé, triées par `id` ASC. ' +
         'Tableau vide si aucun référentiel.',
     ),
+  responsables: z
+    .array(responsableApiModelSchema)
+    .describe("Utilisateurs désignés responsables de l'indicateur, triés par ordre d'assignation (createdAt ASC)."),
   createdAt: z.string().datetime().describe('Date ISO 8601 de création.'),
   updatedAt: z.string().datetime().describe('Date ISO 8601 de dernière mise à jour.'),
 })
