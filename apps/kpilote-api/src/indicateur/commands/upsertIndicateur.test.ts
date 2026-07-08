@@ -30,7 +30,56 @@ const getConfigurationsReferentiels = async (publicId: string) => {
     .sort((a, b) => a.id.localeCompare(b.id))
 }
 
+const BODY_BASE = {
+  nom: 'Données fiscales',
+  visibilite: 'PRIVE' as const,
+  unite: null,
+  ...METADONNEES_VIDES,
+  referentiels: [],
+}
+
 describe.concurrent('upsertIndicateur', () => {
+  it(
+    'persiste le délai de mise à disposition à la création',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const apiKey = await fixtures.apiKey()
+
+      await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, {
+          ...BODY_BASE,
+          delaiMiseADisposition: { nombre: 6, unite: 'MOIS' },
+        }),
+      )
+
+      const row = await db().indicateur.findUniqueOrThrow({ where: { publicId: indId } })
+      expect(row.delaiMiseADispositionNombre).toBe(6)
+      expect(row.delaiMiseADispositionUnite).toBe('MOIS')
+    }),
+  )
+
+  it(
+    'efface le délai quand on envoie null',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const apiKey = await fixtures.apiKey()
+
+      await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, {
+          ...BODY_BASE,
+          delaiMiseADisposition: { nombre: 6, unite: 'MOIS' },
+        }),
+      )
+      await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, { ...BODY_BASE, delaiMiseADisposition: null }),
+      )
+
+      const row = await db().indicateur.findUniqueOrThrow({ where: { publicId: indId } })
+      expect(row.delaiMiseADispositionNombre).toBeNull()
+      expect(row.delaiMiseADispositionUnite).toBeNull()
+    }),
+  )
+
   it(
     'crée un indicateur avec ses référentiels configurés et auto-grant READ+WRITE au créateur',
     integrationTest(async () => {

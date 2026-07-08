@@ -44,7 +44,27 @@ export const listIndicateurs = (
   })
   const fetchTotal = db().indicateur.count({ where })
 
-  return ResultAsync.fromSafePromise(Promise.all([fetchPage, fetchTotal])).map(([rows, total]) =>
-    toPaginatedResponse(rows, total, toIndicateurApiModel, params.pageSize),
-  )
+  const loadPage = async (): Promise<IndicateurListApiModel> => {
+    const [rows, total] = await Promise.all([fetchPage, fetchTotal])
+    // Une seule requête pour toutes les dernières valeurs de la page (évite le N+1).
+    // La date est en `YYYY-MM-DD` : MAX lexicographique = MAX chronologique.
+    const maxDates = await db().valeurAvancement.groupBy({
+      by: ['indicateurId'],
+      where: { indicateurId: { in: rows.map((row) => row.id) } },
+      _max: { date: true },
+    })
+    const dateParIndicateur = new Map(maxDates.map((m) => [m.indicateurId, m._max.date]))
+    return toPaginatedResponse(
+      rows,
+      total,
+      (row) =>
+        toIndicateurApiModel({
+          indicateur: row,
+          dateDerniereValeur: dateParIndicateur.get(row.id) ?? null,
+        }),
+      params.pageSize,
+    )
+  }
+
+  return ResultAsync.fromSafePromise(loadPage())
 }

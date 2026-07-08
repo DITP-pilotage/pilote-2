@@ -7,6 +7,8 @@ import { useFieldArray, useForm, useWatch, type UseFormRegister } from 'react-ho
 import {
   PERIODE_MISE_A_JOUR_LABELS,
   PERIODES_MISE_A_JOUR,
+  UNITE_DUREE_LABELS,
+  UNITES_DUREE,
   UNITES_INDICATEUR,
   UNITES_INDICATEUR_CONFIG,
 } from '@pilote/kpilote-shared/indicateur'
@@ -182,6 +184,33 @@ export function IndicateurForm({
                 error={form.formState.errors.jourMiseAJour?.message}
                 {...form.register('jourMiseAJour')}
               />
+            </div>
+          </div>
+
+          <div className="mt-5 flex gap-4">
+            <div className="flex-1">
+              <FieldInput
+                label="Délai de mise à disposition"
+                type="number"
+                min={1}
+                placeholder="ex. 6"
+                error={form.formState.errors.delaiNombre?.message}
+                {...form.register('delaiNombre')}
+              />
+            </div>
+            <div className="flex-1">
+              <FieldSelect
+                label="Unité du délai"
+                error={form.formState.errors.delaiUnite?.message}
+                {...form.register('delaiUnite')}
+              >
+                <option value="">Aucune</option>
+                {UNITES_DUREE.map((unite) => (
+                  <option key={unite} value={unite}>
+                    {UNITE_DUREE_LABELS[unite]}
+                  </option>
+                ))}
+              </FieldSelect>
             </div>
           </div>
         </div>

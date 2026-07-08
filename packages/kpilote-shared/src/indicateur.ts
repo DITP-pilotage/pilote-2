@@ -1,5 +1,6 @@
 import { z } from 'zod'
 
+import { dateSchema } from './dates'
 import { createPaginatedApiListSchema, listQuerySchema } from './pagination'
 import { indicateurPublicIdSchema, referentielPublicIdSchema } from './publicIds'
 import { responsableApiModelSchema } from './responsable'
@@ -174,6 +175,30 @@ export const indicateurSourceUrlSchema = z
   .url({ protocol: /^https$/, error: 'URL https invalide' })
   .describe('URL de la source des données. Doit utiliser le protocole https.')
 
+export const UNITES_DUREE = ['JOURS', 'SEMAINES', 'MOIS', 'ANNEES'] as const
+export type UniteDuree = (typeof UNITES_DUREE)[number]
+
+// Libellés d'affichage des unités de durée, partagés admin (formulaire) et
+// webapp (fiche indicateur) pour éviter la divergence.
+export const UNITE_DUREE_LABELS: Record<UniteDuree, string> = {
+  JOURS: 'jour(s)',
+  SEMAINES: 'semaine(s)',
+  MOIS: 'mois',
+  ANNEES: 'an(s)',
+}
+
+export const uniteDureeSchema = z
+  .enum(UNITES_DUREE)
+  .describe("Unité de durée d'un délai (jours, semaines, mois, années).")
+
+export const delaiMiseADispositionSchema = z
+  .object({
+    nombre: z.int().min(1).describe("Nombre d'unités du délai (entier ≥ 1)."),
+    unite: uniteDureeSchema,
+  })
+  .describe("Délai entre la date théorique d'une valeur et sa mise à disposition effective.")
+export type DelaiMiseADisposition = z.infer<typeof delaiMiseADispositionSchema>
+
 export const indicateurMetadonneesSchema = z.object({
   description: z.string().nullable().describe("Description libre de l'indicateur."),
   methodeCalcul: z
@@ -186,6 +211,9 @@ export const indicateurMetadonneesSchema = z.object({
     .describe('URL de la source des données. Doit utiliser le protocole https.'),
   periodeMiseAJour: periodeMiseAJourSchema.nullable().describe('Période de mise à jour.'),
   jourMiseAJour: z.int().min(1).max(31).nullable().describe('Jour de mise à jour entre 1 et 31.'),
+  delaiMiseADisposition: delaiMiseADispositionSchema
+    .nullable()
+    .describe('Délai de mise à disposition, ou `null` si non renseigné.'),
 })
 export type IndicateurMetadonnees = z.infer<typeof indicateurMetadonneesSchema>
 
@@ -210,6 +238,19 @@ export const indicateurApiModelSchema = z.object({
     .describe(
       "Utilisateurs désignés responsables de l'indicateur, triés par ordre d'assignation (createdAt ASC).",
     ),
+  dateDerniereValeur: dateSchema
+    .nullable()
+    .describe(
+      'Date ISO YYYY-MM-DD de la dernière valeur connue (MAX, tous individus), ou `null` si aucune valeur.',
+    ),
+  dateProchaineValeur: dateSchema
+    .nullable()
+    .describe(
+      'Date ISO YYYY-MM-DD de la prochaine valeur théorique (dernière valeur + période), ou `null`.',
+    ),
+  dateMiseADisposition: dateSchema
+    .nullable()
+    .describe('Date ISO YYYY-MM-DD de mise à disposition (prochaine valeur + délai), ou `null`.'),
   createdAt: z.string().datetime().describe('Date ISO 8601 de création.'),
   updatedAt: z.string().datetime().describe('Date ISO 8601 de dernière mise à jour.'),
 })

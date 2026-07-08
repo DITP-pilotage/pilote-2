@@ -63,3 +63,9 @@ export const formatMonthYearNumericFr = (value: Date | string | Temporal.PlainDa
   value instanceof Temporal.PlainDate
     ? value.toLocaleString('fr-FR', monthYearNumericOptions)
     : monthYearNumericFr.format(toDate(value))
+
+const moisAnneeLongOptions = { month: 'long', year: 'numeric' } as const
+
+// "décembre 2024" — entrée ISO YYYY-MM-DD (dates dérivées de l'indicateur).
+export const formatMoisAnneeLongFr = (value: string): string =>
+  Temporal.PlainDate.from(value).toLocaleString('fr-FR', moisAnneeLongOptions)

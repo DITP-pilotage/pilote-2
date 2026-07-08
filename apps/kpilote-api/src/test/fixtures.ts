@@ -41,6 +41,7 @@ import {
   Visibilite,
   type FonctionAgregation,
   type PeriodeMiseAJour,
+  type UniteDuree,
   type UniteIndicateur,
 } from '@/generated/prisma/enums'
 
@@ -58,6 +59,8 @@ type IndicateurOverrides = Partial<{
   sourceUrl: string | null
   periodeMiseAJour: PeriodeMiseAJour | null
   jourMiseAJour: number | null
+  delaiMiseADispositionNombre: number | null
+  delaiMiseADispositionUnite: UniteDuree | null
 }>
 
 const upsertIndicateur = async (o: IndicateurOverrides = {}) => {
