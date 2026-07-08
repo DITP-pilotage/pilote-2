@@ -3,14 +3,14 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { ProgressBar } from '@pilote/kpilote-ui/ProgressBar'
 import { Text } from '@pilote/kpilote-ui/Typography'
 import { formatNumberFr } from '@/lib/format'
-import { panierTauxProgressionIndividuQueryOptions } from '@/queries/panierTauxProgression'
+import { dossierTauxProgressionIndividuQueryOptions } from '@/queries/dossierTauxProgression'
 
-export function PanierAvancementSkeleton() {
+export function DossierAvancementSkeleton() {
   return (
     <span
       className="flex animate-pulse flex-col gap-1"
       role="status"
-      aria-label="Chargement de la progression du panier"
+      aria-label="Chargement de la progression du dossier"
     >
       <span className="h-[18px] w-20 rounded bg-border" />
       <span className="h-2 w-full rounded bg-border" />
@@ -18,14 +18,16 @@ export function PanierAvancementSkeleton() {
   )
 }
 
-export function PanierAvancement({
-  panierId,
+export function DossierAvancement({
+  dossierId,
   individuId,
 }: {
-  panierId: string
+  dossierId: string
   individuId: string
 }) {
-  const { data } = useSuspenseQuery(panierTauxProgressionIndividuQueryOptions(individuId, panierId))
+  const { data } = useSuspenseQuery(
+    dossierTauxProgressionIndividuQueryOptions(individuId, dossierId),
+  )
 
   if (data == null || data.tauxProgression == null) return null
 
@@ -42,7 +44,7 @@ export function PanierAvancement({
       <ProgressBar
         value={data.tauxProgression}
         tone="neutral"
-        label={`Progression du panier : ${formatNumberFr(data.tauxProgression)} %`}
+        label={`Progression du dossier : ${formatNumberFr(data.tauxProgression)} %`}
         className="mt-2"
       />
     </div>

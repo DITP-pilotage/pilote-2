@@ -5,7 +5,7 @@ import { SegmentedControl } from '@pilote/kpilote-ui/SegmentedControl'
 
 const ROUTE_BY_VUE = {
   indicateurs: '/indicateurs',
-  dossiers: '/paniers',
+  dossiers: '/dossiers',
 } as const
 
 type VueTableauDeBord = keyof typeof ROUTE_BY_VUE
@@ -14,7 +14,7 @@ export function DashboardSwitch() {
   const navigate = useNavigate()
   const search = useSearch({ strict: false })
   const { pathname } = useLocation()
-  const vue: VueTableauDeBord = pathname.startsWith('/paniers') ? 'dossiers' : 'indicateurs'
+  const vue: VueTableauDeBord = pathname.startsWith('/dossiers') ? 'dossiers' : 'indicateurs'
 
   return (
     <SegmentedControl

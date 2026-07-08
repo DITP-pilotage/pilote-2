@@ -1,16 +1,16 @@
-import { type PanierContactsUtilesGroup } from '@pilote/kpilote-shared/panierContactUtile'
+import { type DossierContactsUtilesGroup } from '@pilote/kpilote-shared/dossierContactUtile'
 import { Globe, Mail, MapPin, Phone } from 'lucide-react'
 
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Heading } from '@pilote/kpilote-ui/Typography'
 
-export function PanierContactsUtiles({
+export function DossierContactsUtiles({
   contactsUtiles,
 }: {
-  contactsUtiles: ReadonlyArray<PanierContactsUtilesGroup>
+  contactsUtiles: ReadonlyArray<DossierContactsUtilesGroup>
 }) {
   if (contactsUtiles.length === 0) {
-    return <EmptyState title="Aucun contact utile pour ce panier." />
+    return <EmptyState title="Aucun contact utile pour ce dossier." />
   }
 
   return (

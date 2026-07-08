@@ -8,26 +8,26 @@ import { z } from 'zod'
 import { DashboardSwitch } from '@/components/DashboardSwitch'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
+import { DossierCard } from '@/components/dossiers/DossierCard'
 import { FieldIndividuSelect } from '@/components/indicateurs/FieldIndividuSelect'
-import { PanierCard } from '@/components/paniers/PanierCard'
 import { CardGrid } from '@pilote/kpilote-ui/CardGrid'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Page } from '@pilote/kpilote-ui/Page'
 import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@pilote/kpilote-ui/Pagination'
 import { Text } from '@pilote/kpilote-ui/Typography'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
-import { loadPaniers, paniersQueryOptions } from '@/queries/paniers'
+import { loadDossiers, dossiersQueryOptions } from '@/queries/dossiers'
 import { allReferentielsQueryOptions, loadAllReferentielIds } from '@/queries/referentiels'
 
-const paniersSearchSchema = z.object({
+const dossiersSearchSchema = z.object({
   cursor: z.string().optional(),
   pageSize: z.coerce.number().int().min(1).max(100).optional(),
   individu: individuPublicIdSchema.optional(),
   referentiel: referentielPublicIdSchema.optional(),
 })
 
-export const Route = createFileRoute('/_authenticated/paniers/')({
-  validateSearch: paniersSearchSchema,
+export const Route = createFileRoute('/_authenticated/dossiers/')({
+  validateSearch: dossiersSearchSchema,
   loaderDeps: ({ search }) => search,
   loader: async ({ context, deps }) => {
     const { queryClient } = context
@@ -38,28 +38,28 @@ export const Route = createFileRoute('/_authenticated/paniers/')({
       deps,
       onMismatch: ({ individu, referentiel }) => {
         throw redirect({
-          to: '/paniers',
+          to: '/dossiers',
           search: { ...deps, individu, referentiel },
           replace: true,
         })
       },
     })
 
-    return loadPaniers({
+    return loadDossiers({
       queryClient,
       query: { cursor: deps.cursor, pageSize: deps.pageSize },
     })
   },
-  pendingComponent: () => <RouteLoading message="Chargement des paniers…" />,
+  pendingComponent: () => <RouteLoading message="Chargement des dossiers…" />,
   errorComponent: RouteError,
-  component: PaniersListComponent,
+  component: DossiersListComponent,
 })
 
-function PaniersListComponent() {
+function DossiersListComponent() {
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const { data } = useSuspenseQuery(
-    paniersQueryOptions({ cursor: search.cursor, pageSize: search.pageSize }),
+    dossiersQueryOptions({ cursor: search.cursor, pageSize: search.pageSize }),
   )
   const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
   const referentielIds = referentiels.map((r) => r.id)
@@ -102,11 +102,11 @@ function PaniersListComponent() {
         </Text>
 
         {data.items.length === 0 ? (
-          <EmptyState title="Aucun panier disponible" />
+          <EmptyState title="Aucun dossier disponible" />
         ) : (
           <CardGrid>
-            {data.items.map((panier) => (
-              <PanierCard key={panier.id} panier={panier} context={cardContext} />
+            {data.items.map((dossier) => (
+              <DossierCard key={dossier.id} dossier={dossier} context={cardContext} />
             ))}
           </CardGrid>
         )}

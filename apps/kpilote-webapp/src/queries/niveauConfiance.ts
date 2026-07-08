@@ -4,7 +4,7 @@ import { create, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
 import {
   fetchNiveauxParCommentaires,
-  fetchNiveauxParCommentairesPanier,
+  fetchNiveauxParCommentairesDossier,
 } from '@/api/niveauConfiance'
 
 import { DEFAULT_STALE_TIME } from './utils'
@@ -63,16 +63,16 @@ export const niveauPourCommentaireQueryOptions = (
     staleTime: DEFAULT_STALE_TIME,
   })
 
-// --- Panier global -----------------------------------------------------------
+// --- Dossier global -----------------------------------------------------------
 
-const batchersPanierByScope = new Map<string, BatcherPanier>()
+const batchersDossierByScope = new Map<string, BatcherDossier>()
 
-type BatcherPanier = ReturnType<typeof createBatcherPanier>
+type BatcherDossier = ReturnType<typeof createBatcherDossier>
 
-const createBatcherPanier = (panierId: string) =>
+const createBatcherDossier = (dossierId: string) =>
   create({
     fetcher: async (commentaireIds: string[]): Promise<ReadonlyArray<NiveauConfianceApiModel>> => {
-      const { items } = await fetchNiveauxParCommentairesPanier(panierId, commentaireIds)
+      const { items } = await fetchNiveauxParCommentairesDossier(dossierId, commentaireIds)
       return items
     },
     resolver: (items, commentaireId) =>
@@ -80,24 +80,27 @@ const createBatcherPanier = (panierId: string) =>
     scheduler: windowedFiniteBatchScheduler({ windowMs: 10, maxBatchSize: 100 }),
   })
 
-const getBatcherPanier = (panierId: string): BatcherPanier => {
-  const existing = batchersPanierByScope.get(panierId)
+const getBatcherDossier = (dossierId: string): BatcherDossier => {
+  const existing = batchersDossierByScope.get(dossierId)
   if (existing) return existing
-  const batcher = createBatcherPanier(panierId)
-  batchersPanierByScope.set(panierId, batcher)
+  const batcher = createBatcherDossier(dossierId)
+  batchersDossierByScope.set(dossierId, batcher)
   return batcher
 }
 
-export const niveauConfiancePanierKeys = {
-  parScope: (panierId: string) => ['panier', panierId, 'niveau-confiance'] as const,
-  parCommentaire: (panierId: string, commentaireId: string) =>
-    [...niveauConfiancePanierKeys.parScope(panierId), commentaireId] as const,
+export const niveauConfianceDossierKeys = {
+  parScope: (dossierId: string) => ['dossier', dossierId, 'niveau-confiance'] as const,
+  parCommentaire: (dossierId: string, commentaireId: string) =>
+    [...niveauConfianceDossierKeys.parScope(dossierId), commentaireId] as const,
 }
 
-export const niveauPourCommentairePanierQueryOptions = (panierId: string, commentaireId: string) =>
+export const niveauPourCommentaireDossierQueryOptions = (
+  dossierId: string,
+  commentaireId: string,
+) =>
   queryOptions<NiveauConfianceApiModel | null, Error, NiveauConfianceApiModel | null, QueryKey>({
-    queryKey: niveauConfiancePanierKeys.parCommentaire(panierId, commentaireId),
+    queryKey: niveauConfianceDossierKeys.parCommentaire(dossierId, commentaireId),
     queryFn: (): Promise<NiveauConfianceApiModel | null> =>
-      getBatcherPanier(panierId).fetch(commentaireId),
+      getBatcherDossier(dossierId).fetch(commentaireId),
     staleTime: DEFAULT_STALE_TIME,
   })

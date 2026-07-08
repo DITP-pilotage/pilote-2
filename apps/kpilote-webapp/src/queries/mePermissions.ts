@@ -34,8 +34,8 @@ export const useCanWriteIndicateur = (indicateurId: string): boolean => {
   return canWriteIndicateur({ permissions: data, indicateurId })
 }
 
-// WRITE panier reste strictement direct (jamais propagé) — cf. me-permissions-design.md.
-export const useCanWritePanier = (panierId: string): boolean => {
+// WRITE dossier reste strictement direct (jamais propagé) — cf. me-permissions-design.md.
+export const useCanWriteDossier = (dossierId: string): boolean => {
   const { data } = useSuspenseQuery(mePermissionsQueryOptions())
-  return data.isAdmin === true || hasWrite(data.paniers, panierId)
+  return data.isAdmin === true || hasWrite(data.dossiers, dossierId)
 }

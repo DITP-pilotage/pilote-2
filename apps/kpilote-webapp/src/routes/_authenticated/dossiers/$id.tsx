@@ -1,6 +1,6 @@
 import { individuPublicIdSchema } from '@pilote/kpilote-shared/individu'
 import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
-import { panierPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
+import { dossierPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
 import { startTransition, Suspense } from 'react'
@@ -9,11 +9,11 @@ import { z } from 'zod'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { SectionCommentaire } from '@/components/commentaires/SectionCommentaire'
-import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
+import { DossierCommentaireConfigProvider } from '@/components/dossiers/DossierCommentaireConfigProvider'
+import { DossierGouvernanceTab } from '@/components/dossiers/DossierGouvernanceTab'
+import { DossierTauxProgression } from '@/components/dossiers/DossierTauxProgression'
 import { FieldIndividuSelect } from '@/components/indicateurs/FieldIndividuSelect'
-import { PanierCommentaireConfigProvider } from '@/components/paniers/PanierCommentaireConfigProvider'
-import { PanierGouvernanceTab } from '@/components/paniers/PanierGouvernanceTab'
-import { PanierTauxProgression } from '@/components/paniers/PanierTauxProgression'
+import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
 import { BackLink } from '@pilote/kpilote-ui/BackLink'
 import { CardGrid } from '@pilote/kpilote-ui/CardGrid'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
@@ -24,14 +24,14 @@ import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import { useRecordVisit } from '@/lib/recentlyVisited'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
 import {
-  loadPanier,
-  panierQueryOptions,
-  panierTauxProgressionQueryOptions,
-} from '@/queries/paniers'
+  loadDossier,
+  dossierQueryOptions,
+  dossierTauxProgressionQueryOptions,
+} from '@/queries/dossiers'
 import { allReferentielsQueryOptions, loadAllReferentielIds } from '@/queries/referentiels'
 
 const paramsSchema = z.object({
-  id: panierPublicIdSchema,
+  id: dossierPublicIdSchema,
 })
 
 const searchSchema = z.object({
@@ -40,7 +40,7 @@ const searchSchema = z.object({
   onglet: z.enum(['resultats', 'gouvernance', 'confiance', 'commentaires']).default('resultats'),
 })
 
-export const Route = createFileRoute('/_authenticated/paniers/$id')({
+export const Route = createFileRoute('/_authenticated/dossiers/$id')({
   params: {
     parse: (raw) => paramsSchema.parse(raw),
     stringify: ({ id }) => ({ id }),
@@ -49,9 +49,9 @@ export const Route = createFileRoute('/_authenticated/paniers/$id')({
   loaderDeps: ({ search }) => ({ individu: search.individu, referentiel: search.referentiel }),
   loader: async ({ context, params, deps, location }) => {
     const { queryClient } = context
-    const panier = await loadPanier({ queryClient, panierId: params.id })
-    if (panier.indicateurIds.length > 0) {
-      await queryClient.ensureQueryData(indicateursQueryOptions({ ids: panier.indicateurIds }))
+    const dossier = await loadDossier({ queryClient, dossierId: params.id })
+    if (dossier.indicateurIds.length > 0) {
+      await queryClient.ensureQueryData(indicateursQueryOptions({ ids: dossier.indicateurIds }))
     }
 
     const referentielIds = await loadAllReferentielIds({ queryClient })
@@ -61,7 +61,7 @@ export const Route = createFileRoute('/_authenticated/paniers/$id')({
       deps,
       onMismatch: ({ individu, referentiel }) => {
         throw redirect({
-          to: '/paniers/$id',
+          to: '/dossiers/$id',
           params,
           // On préserve le reste du search (onglet…) : seul le couple
           // individu/referentiel est corrigé. Sinon un lien profond vers un
@@ -74,39 +74,39 @@ export const Route = createFileRoute('/_authenticated/paniers/$id')({
 
     if (deps.individu) {
       await queryClient.prefetchQuery(
-        panierTauxProgressionQueryOptions({ panierId: params.id, individu: deps.individu }),
+        dossierTauxProgressionQueryOptions({ dossierId: params.id, individu: deps.individu }),
       )
     }
 
-    return { panier }
+    return { dossier }
   },
-  pendingComponent: () => <RouteLoading message="Chargement du panier…" />,
+  pendingComponent: () => <RouteLoading message="Chargement du dossier…" />,
   errorComponent: RouteError,
-  component: PanierDetailComponent,
+  component: DossierDetailComponent,
 })
 
-function PanierDetailComponent() {
+function DossierDetailComponent() {
   const { id } = Route.useParams()
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
-  const { data: panier } = useSuspenseQuery(panierQueryOptions(id))
-  useRecordVisit({ type: 'panier', id: panier.id, label: panier.nom })
+  const { data: dossier } = useSuspenseQuery(dossierQueryOptions(id))
+  useRecordVisit({ type: 'dossier', id: dossier.id, label: dossier.nom })
   const { data: indicateurs } = useSuspenseQuery(
-    indicateursQueryOptions({ ids: panier.indicateurIds }),
+    indicateursQueryOptions({ ids: dossier.indicateurIds }),
   )
   const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
   const referentielIds = referentiels.map((r) => r.id)
 
-  // Re-tri selon l'ordre du panier : la query indicateurs ne garantit pas
+  // Re-tri selon l'ordre du dossier : la query indicateurs ne garantit pas
   // l'ordre du filtre `ids`.
   const indicateurById = new Map(indicateurs.items.map((i) => [i.id, i]))
-  const orderedIndicateurs = panier.indicateurIds
+  const orderedIndicateurs = dossier.indicateurIds
     .map((indicateurId) => indicateurById.get(indicateurId))
     .filter((i): i is NonNullable<typeof i> => i !== undefined)
 
   const back = (
     <BackLink asChild>
-      <Link to="/paniers" search={{ individu: search.individu, referentiel: search.referentiel }}>
+      <Link to="/dossiers" search={{ individu: search.individu, referentiel: search.referentiel }}>
         Tableau de bord
       </Link>
     </BackLink>
@@ -118,7 +118,7 @@ function PanierDetailComponent() {
       : undefined
 
   return (
-    <Page title={panier.nom} description={panier.description ?? undefined} back={back}>
+    <Page title={dossier.nom} description={dossier.description ?? undefined} back={back}>
       <Tabs
         value={search.onglet}
         onValueChange={(onglet) => {
@@ -154,7 +154,7 @@ function PanierDetailComponent() {
                   />
                 </div>
                 <div className="max-w-xs">
-                  <PanierTauxProgression panierId={id} individu={search.individu} />
+                  <DossierTauxProgression dossierId={id} individu={search.individu} />
                 </div>
               </>
             )}
@@ -163,7 +163,7 @@ function PanierDetailComponent() {
               {orderedIndicateurs.length} indicateur{orderedIndicateurs.length > 1 ? 's' : ''}
             </Text>
             {orderedIndicateurs.length === 0 ? (
-              <EmptyState title="Ce panier ne contient aucun indicateur." />
+              <EmptyState title="Ce dossier ne contient aucun indicateur." />
             ) : (
               <CardGrid>
                 {orderedIndicateurs.map((indicateur) => (
@@ -179,26 +179,26 @@ function PanierDetailComponent() {
         </TabsContent>
 
         <TabsContent value="gouvernance">
-          <PanierGouvernanceTab
-            responsables={panier.responsables}
-            contactsUtiles={panier.contactsUtiles}
+          <DossierGouvernanceTab
+            responsables={dossier.responsables}
+            contactsUtiles={dossier.contactsUtiles}
           />
         </TabsContent>
 
         <TabsContent value="confiance">
-          <PanierCommentaireConfigProvider panierId={id}>
+          <DossierCommentaireConfigProvider dossierId={id}>
             <Suspense fallback={<RouteLoading message="Chargement des commentaires…" />}>
               <SectionCommentaire type="CONFIANCE" />
             </Suspense>
-          </PanierCommentaireConfigProvider>
+          </DossierCommentaireConfigProvider>
         </TabsContent>
 
         <TabsContent value="commentaires">
-          <PanierCommentaireConfigProvider panierId={id}>
+          <DossierCommentaireConfigProvider dossierId={id}>
             <Suspense fallback={<RouteLoading message="Chargement des commentaires…" />}>
               <SectionCommentaire type="DEFAUT" />
             </Suspense>
-          </PanierCommentaireConfigProvider>
+          </DossierCommentaireConfigProvider>
         </TabsContent>
       </Tabs>
     </Page>

@@ -1,11 +1,11 @@
 import {
-  type PanierTauxProgressionSummaryApiModel,
-  MAX_PANIERS_PAR_REQUETE,
-} from '@pilote/kpilote-shared/panierTauxProgression'
+  type DossierTauxProgressionSummaryApiModel,
+  MAX_DOSSIERS_PAR_REQUETE,
+} from '@pilote/kpilote-shared/dossierTauxProgression'
 import { create, keyResolver, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 import { queryOptions } from '@tanstack/react-query'
 
-import { fetchPanierTauxProgressionForIndividu } from '@/api/paniers'
+import { fetchDossierTauxProgressionForIndividu } from '@/api/dossiers'
 
 import { DEFAULT_STALE_TIME } from './utils'
 
@@ -16,15 +16,15 @@ type Batcher = ReturnType<typeof createBatcher>
 const createBatcher = (individuId: string) =>
   create({
     fetcher: async (
-      panierIds: string[],
-    ): Promise<ReadonlyArray<PanierTauxProgressionSummaryApiModel>> => {
-      const { items } = await fetchPanierTauxProgressionForIndividu(individuId, panierIds)
+      dossierIds: string[],
+    ): Promise<ReadonlyArray<DossierTauxProgressionSummaryApiModel>> => {
+      const { items } = await fetchDossierTauxProgressionForIndividu(individuId, dossierIds)
       return items
     },
-    resolver: keyResolver('panier'),
+    resolver: keyResolver('dossier'),
     scheduler: windowedFiniteBatchScheduler({
       windowMs: 10,
-      maxBatchSize: MAX_PANIERS_PAR_REQUETE,
+      maxBatchSize: MAX_DOSSIERS_PAR_REQUETE,
     }),
   })
 
@@ -36,10 +36,13 @@ const getBatcher = (individuId: string): Batcher => {
   return batcher
 }
 
-export const panierTauxProgressionIndividuQueryOptions = (individuId: string, panierId: string) =>
+export const dossierTauxProgressionIndividuQueryOptions = (
+  individuId: string,
+  dossierId: string,
+) =>
   queryOptions({
-    queryKey: ['panier-taux-progression', individuId, panierId],
-    queryFn: (): Promise<PanierTauxProgressionSummaryApiModel | null> =>
-      getBatcher(individuId).fetch(panierId),
+    queryKey: ['dossier-taux-progression', individuId, dossierId],
+    queryFn: (): Promise<DossierTauxProgressionSummaryApiModel | null> =>
+      getBatcher(individuId).fetch(dossierId),
     staleTime: DEFAULT_STALE_TIME,
   })
