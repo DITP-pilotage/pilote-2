@@ -14,8 +14,8 @@
 
 - **Exports/imports nommés uniquement** — jamais de `default`.
 - **Params de helpers sous forme d'objet nommé**, pas de positionnels.
-- **Use cases mb-api en `ResultAsync`** (neverthrow) ; wrap des promesses via `ResultAsync.fromSafePromise`.
-- **Tests mb-api** : `integrationTest`, `uuidv7` (jamais `randomUUID`), valeurs hardcodées (isolation transactionnelle), fixtures `fixtures.<entity>(...)` variadic.
+- **Use cases kpilote-api en `ResultAsync`** (neverthrow) ; wrap des promesses via `ResultAsync.fromSafePromise`.
+- **Tests kpilote-api** : `integrationTest`, `uuidv7` (jamais `randomUUID`), valeurs hardcodées (isolation transactionnelle), fixtures `fixtures.<entity>(...)` variadic.
 - **Prisma** : pas de `$transaction` nesté (awaits séquentiels) ; pas de `select` granulaires.
 - **Copie FR** correcte et accentuée.
 - Le délai est un couple **les-deux-ou-aucun** : `nombre` (int ≥ 1) + `unité` renseignés ensemble, sinon `null`.
@@ -199,7 +199,7 @@ git commit -m "feat(shared): schémas délai de mise à disposition + dates dér
 
 ---
 
-### Task 3 : mb-api — helper pur de calcul des dates (TDD)
+### Task 3 : kpilote-api — helper pur de calcul des dates
 
 **Files:**
 - Create: `apps/kpilote-api/src/indicateur/datesMiseADisposition.ts`
@@ -209,7 +209,7 @@ git commit -m "feat(shared): schémas délai de mise à disposition + dates dér
 - Consumes: `PeriodeMiseAJour`, `DelaiMiseADisposition` de `@pilote/kpilote-shared/indicateur`.
 - Produces: `computeDatesMiseADisposition({ dateDerniereValeur, periodeMiseAJour, delai })` → `{ dateDerniereValeur: string | null; dateProchaineValeur: string | null; dateMiseADisposition: string | null }`.
 
-- [ ] **Step 1 : Écrire les tests (qui échouent)**
+- [ ] **Step 1 : Écrire les tests**
 
 Créer `apps/kpilote-api/src/indicateur/datesMiseADisposition.test.ts` :
 
@@ -406,7 +406,7 @@ git commit -m "feat(indicateur): helper pur de calcul des dates de mise à dispo
 
 ---
 
-### Task 4 : mb-api — mapper + queries (dernière valeur + dates dérivées)
+### Task 4 : kpilote-api — mapper + queries (dernière valeur + dates dérivées)
 
 **Files:**
 - Modify: `apps/kpilote-api/src/indicateur/utils.ts`
@@ -652,7 +652,7 @@ git commit -m "feat(indicateur): expose délai + dates dérivées dans l'API (d�
 
 ---
 
-### Task 5 : mb-api — écriture du délai (upsert)
+### Task 5 : kpilote-api — écriture du délai (upsert)
 
 **Files:**
 - Modify: `apps/kpilote-api/src/indicateur/commands/upsertIndicateur.ts`
