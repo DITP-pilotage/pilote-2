@@ -12,7 +12,7 @@ export type RecentEntry = {
   label: string
 }
 
-const STORAGE_KEY = 'mb:recently-visited'
+const STORAGE_KEY = 'kpilote:recently-visited'
 const MAX_ENTRIES = 5
 
 const entryKey = (entry: RecentEntry): string => `${entry.type}:${entry.id}`
