@@ -1,11 +1,11 @@
 import { type ListerCommentairesQuery } from '@pilote/kpilote-shared/commentaire'
 
 import { listerCommentaires } from '@/commentaire/queries/listerCommentaires'
-import { panierConfig } from '@/panier/commands/creerPanierCommentaire'
+import { dossierConfig } from '@/dossier/commands/creerDossierCommentaire'
 
 type Input = {
-  params: { panierId: string }
+  params: { dossierId: string }
   query: ListerCommentairesQuery
 }
 
-export const listerPanierCommentaires = (input: Input) => listerCommentaires(panierConfig, input)
+export const listerDossierCommentaires = (input: Input) => listerCommentaires(dossierConfig, input)

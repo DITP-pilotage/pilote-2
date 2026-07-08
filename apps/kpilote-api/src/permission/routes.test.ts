@@ -12,8 +12,8 @@ describe('routes permissions — câblage OpenAPI', () => {
       ['/permissions', 'get'],
       ['/permissions/indicateur', 'post'],
       ['/permissions/indicateur', 'delete'],
-      ['/permissions/panier', 'post'],
-      ['/permissions/panier', 'delete'],
+      ['/permissions/dossier', 'post'],
+      ['/permissions/dossier', 'delete'],
     ]
 
     for (const [path, method] of attendu) {

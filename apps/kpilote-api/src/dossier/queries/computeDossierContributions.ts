@@ -1,23 +1,23 @@
 import { type Bucket, compareBuckets } from '@/framework/bucket'
 import { withConcurrency } from '@/framework/concurrency'
 import { type Decimal } from '@/framework/decimal'
-import { type IndicateurContribution } from '@/panier/resolvePanierTauxProgression'
+import { type IndicateurContribution } from '@/dossier/resolveDossierTauxProgression'
 import { computeTauxProgressionPoints } from '@/valeurAvancement/queries/computeTauxProgressionPoints'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
 import { type TauxProgressionPoint } from '@/valeurAvancement/resolveTauxProgression'
 
 // Aligné sur /indicateurs/:id/taux-progression : `month/month` est le défaut
-// documenté. Pas exposé en query côté panier en v0.
+// documenté. Pas exposé en query côté dossier en v0.
 const DATE_TRUNC_VALEUR = 'month' as const
 const DATE_TRUNC_OBJECTIF = 'month' as const
 
-type PanierIndicateurRef = {
+type DossierIndicateurRef = {
   ponderation: Decimal
   indicateur: { id: string; publicId: string }
 }
 
 export const computeContributions = (
-  indicateurs: PanierIndicateurRef[],
+  indicateurs: DossierIndicateurRef[],
   individuCible: IndividuRef,
 ): Promise<IndicateurContribution[]> =>
   withConcurrency(

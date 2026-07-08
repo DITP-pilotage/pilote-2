@@ -7,7 +7,7 @@ import {
 } from '@/indicateur/permissions'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testIndicateurIds, testPanierId } from '@/test/randomIds'
+import { testIndicateurIds, testDossierId } from '@/test/randomIds'
 
 const listIndicateursWithReadPermission = async (principalId: string, isAdmin = false) =>
   db().indicateur.findMany({
@@ -76,42 +76,42 @@ describe.concurrent('withIndicateurReadPermission', () => {
   it(
     'propage READ depuis un panier (action READ sur le panier)',
     integrationTest(async () => {
-      const [viaPanier] = testIndicateurIds(1)
-      const panRpropR = testPanierId()
-      await fixtures.indicateur({ publicId: viaPanier, visibilite: 'PRIVE' })
-      await fixtures.panier({
+      const [viaDossier] = testIndicateurIds(1)
+      const panRpropR = testDossierId()
+      await fixtures.indicateur({ publicId: viaDossier, visibilite: 'PRIVE' })
+      await fixtures.dossier({
         publicId: panRpropR,
         visibilite: 'PRIVE',
-        indicateurs: [{ publicId: viaPanier }],
+        indicateurs: [{ publicId: viaDossier }],
       })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: panRpropR }, action: 'READ' }],
+        dossierPermissions: [{ dossier: { publicId: panRpropR }, action: 'READ' }],
       })
 
       const rows = await listIndicateursWithReadPermission(apiKey.id)
 
-      expect(rows.map((r) => r.publicId)).toContain(viaPanier)
+      expect(rows.map((r) => r.publicId)).toContain(viaDossier)
     }),
   )
 
   it(
     'propage READ depuis un panier (action WRITE sur le panier)',
     integrationTest(async () => {
-      const [viaPanier] = testIndicateurIds(1)
-      const panRpropW = testPanierId()
-      await fixtures.indicateur({ publicId: viaPanier, visibilite: 'PRIVE' })
-      await fixtures.panier({
+      const [viaDossier] = testIndicateurIds(1)
+      const panRpropW = testDossierId()
+      await fixtures.indicateur({ publicId: viaDossier, visibilite: 'PRIVE' })
+      await fixtures.dossier({
         publicId: panRpropW,
         visibilite: 'PRIVE',
-        indicateurs: [{ publicId: viaPanier }],
+        indicateurs: [{ publicId: viaDossier }],
       })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: panRpropW }, action: 'WRITE' }],
+        dossierPermissions: [{ dossier: { publicId: panRpropW }, action: 'WRITE' }],
       })
 
       const rows = await listIndicateursWithReadPermission(apiKey.id)
 
-      expect(rows.map((r) => r.publicId)).toContain(viaPanier)
+      expect(rows.map((r) => r.publicId)).toContain(viaDossier)
     }),
   )
 
@@ -119,9 +119,9 @@ describe.concurrent('withIndicateurReadPermission', () => {
     "ne propage rien depuis un panier auquel le principal n'a pas accès",
     integrationTest(async () => {
       const [hidden] = testIndicateurIds(1)
-      const panRpropNone = testPanierId()
+      const panRpropNone = testDossierId()
       await fixtures.indicateur({ publicId: hidden, visibilite: 'PRIVE' })
-      await fixtures.panier({
+      await fixtures.dossier({
         publicId: panRpropNone,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: hidden }],
@@ -223,16 +223,16 @@ describe.concurrent('ensureIndicateurWritePermission', () => {
   it(
     "rejette même si le principal a WRITE sur un panier qui contient l'indicateur (WRITE indicateur reste direct, pas de propagation)",
     integrationTest(async () => {
-      const [viaPanier] = testIndicateurIds(1)
-      const panWpropNo = testPanierId()
-      const indicateur = await fixtures.indicateur({ publicId: viaPanier, visibilite: 'PRIVE' })
-      await fixtures.panier({
+      const [viaDossier] = testIndicateurIds(1)
+      const panWpropNo = testDossierId()
+      const indicateur = await fixtures.indicateur({ publicId: viaDossier, visibilite: 'PRIVE' })
+      await fixtures.dossier({
         publicId: panWpropNo,
         visibilite: 'PRIVE',
-        indicateurs: [{ publicId: viaPanier }],
+        indicateurs: [{ publicId: viaDossier }],
       })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: panWpropNo }, action: 'WRITE' }],
+        dossierPermissions: [{ dossier: { publicId: panWpropNo }, action: 'WRITE' }],
       })
 
       await expect(

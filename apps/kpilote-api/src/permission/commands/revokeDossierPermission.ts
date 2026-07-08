@@ -1,6 +1,6 @@
 import {
   type PrincipalPermissionsApiModel,
-  type RevokePanierPermissionQuery,
+  type RevokeDossierPermissionQuery,
 } from '@pilote/kpilote-shared/permission'
 import { ResultAsync } from 'neverthrow'
 
@@ -9,19 +9,19 @@ import { db } from '@/framework/persistence/dbStore'
 import { loadPrincipalPermissions } from '@/permission/queries/loadPrincipalPermissions'
 
 const performRevoke = async (
-  query: RevokePanierPermissionQuery,
+  query: RevokeDossierPermissionQuery,
 ): Promise<PrincipalPermissionsApiModel> => {
   ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
   await db().principal.findUniqueOrThrow({ where: { id: query.principalId } })
-  const panier = await db().panier.findUniqueOrThrow({
-    where: { publicId: query.panierPublicId },
+  const dossier = await db().dossier.findUniqueOrThrow({
+    where: { publicId: query.dossierPublicId },
     select: { id: true },
   })
 
-  await db().panierPermission.deleteMany({
+  await db().dossierPermission.deleteMany({
     where: {
       principalId: query.principalId,
-      panierId: panier.id,
+      dossierId: dossier.id,
       ...(query.action ? { action: query.action } : {}),
     },
   })
@@ -29,7 +29,7 @@ const performRevoke = async (
   return loadPrincipalPermissions(query.principalId)
 }
 
-export const revokePanierPermission = (
-  query: RevokePanierPermissionQuery,
+export const revokeDossierPermission = (
+  query: RevokeDossierPermissionQuery,
 ): ResultAsync<PrincipalPermissionsApiModel, never> =>
   ResultAsync.fromSafePromise(performRevoke(query))

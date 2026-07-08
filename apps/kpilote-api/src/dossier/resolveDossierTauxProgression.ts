@@ -9,7 +9,7 @@ export type IndicateurContribution = {
   ponderation: Decimal
 }
 
-export type PanierTauxProgressionResult = {
+export type DossierTauxProgressionResult = {
   tauxProgression: number | null
   contributions: ReadonlyArray<IndicateurContribution>
 }
@@ -19,9 +19,9 @@ const CENT = new Decimal(100)
 // Tronque (ROUND_DOWN) pour la cohérence avec le taux par indicateur :
 // ne jamais afficher 100 % tant qu'au moins une contribution n'a pas
 // strictement atteint la cible (cf. doc taux-progression.md).
-export const resolvePanierTauxProgression = (
+export const resolveDossierTauxProgression = (
   contributions: ReadonlyArray<IndicateurContribution>,
-): PanierTauxProgressionResult => {
+): DossierTauxProgressionResult => {
   if (contributions.length === 0) {
     return { tauxProgression: null, contributions }
   }

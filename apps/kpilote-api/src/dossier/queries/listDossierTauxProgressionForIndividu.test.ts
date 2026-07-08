@@ -1,21 +1,21 @@
 import { describe, expect, it } from 'vitest'
 
-import { listPanierTauxProgressionForIndividu } from '@/panier/queries/listPanierTauxProgressionForIndividu'
+import { listDossierTauxProgressionForIndividu } from '@/dossier/queries/listDossierTauxProgressionForIndividu'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testDeptId, testIndicateurId, testPanierId, testReferentielId } from '@/test/randomIds'
+import { testDeptId, testDossierId, testIndicateurId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
-describe.concurrent('listPanierTauxProgressionForIndividu', () => {
+describe.concurrent('listDossierTauxProgressionForIndividu', () => {
   it(
-    'retourne items vide quand aucun panier demandé',
+    'retourne items vide quand aucun dossier demandé',
     integrationTest(async () => {
       const deptId = testDeptId()
       await fixtures.individu({ publicId: deptId })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listPanierTauxProgressionForIndividu(deptId, { paniers: [] }),
+        listDossierTauxProgressionForIndividu(deptId, { dossiers: [] }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({ items: [] })
@@ -23,20 +23,20 @@ describe.concurrent('listPanierTauxProgressionForIndividu', () => {
   )
 
   it(
-    'retourne tauxProgression null pour un panier sans indicateur',
+    'retourne tauxProgression null pour un dossier sans indicateur',
     integrationTest(async () => {
       const deptId = testDeptId()
-      const panId = testPanierId()
+      const dosId = testDossierId()
       await fixtures.individu({ publicId: deptId })
-      await fixtures.panier({ publicId: panId, visibilite: 'PUBLIC' })
+      await fixtures.dossier({ publicId: dosId, visibilite: 'PUBLIC' })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listPanierTauxProgressionForIndividu(deptId, { paniers: [panId] }),
+        listDossierTauxProgressionForIndividu(deptId, { dossiers: [dosId] }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ panier: panId, tauxProgression: null }],
+        items: [{ dossier: dosId, tauxProgression: null }],
       })
     }),
   )
@@ -46,7 +46,7 @@ describe.concurrent('listPanierTauxProgressionForIndividu', () => {
     integrationTest(async () => {
       const deptId = testDeptId()
       const refId = testReferentielId()
-      const panId = testPanierId()
+      const dosId = testDossierId()
       const indA = testIndicateurId()
       const indB = testIndicateurId()
 
@@ -82,19 +82,19 @@ describe.concurrent('listPanierTauxProgressionForIndividu', () => {
           valeurCible: 100,
         },
       )
-      await fixtures.panier({
-        publicId: panId,
+      await fixtures.dossier({
+        publicId: dosId,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indA }, { publicId: indB }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listPanierTauxProgressionForIndividu(deptId, { paniers: [panId] }),
+        listDossierTauxProgressionForIndividu(deptId, { dossiers: [dosId] }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ panier: panId, tauxProgression: 65 }],
+        items: [{ dossier: dosId, tauxProgression: 65 }],
       })
     }),
   )
@@ -104,7 +104,7 @@ describe.concurrent('listPanierTauxProgressionForIndividu', () => {
     integrationTest(async () => {
       const deptId = testDeptId()
       const refId = testReferentielId()
-      const panId = testPanierId()
+      const dosId = testDossierId()
       const indOk = testIndicateurId()
       const indSansObjectif = testIndicateurId()
 
@@ -132,19 +132,19 @@ describe.concurrent('listPanierTauxProgressionForIndividu', () => {
         dateCible: '2024-12-31',
         valeurCible: 100,
       })
-      await fixtures.panier({
-        publicId: panId,
+      await fixtures.dossier({
+        publicId: dosId,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indOk }, { publicId: indSansObjectif }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listPanierTauxProgressionForIndividu(deptId, { paniers: [panId] }),
+        listDossierTauxProgressionForIndividu(deptId, { dossiers: [dosId] }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ panier: panId, tauxProgression: null }],
+        items: [{ dossier: dosId, tauxProgression: null }],
       })
     }),
   )
@@ -154,7 +154,7 @@ describe.concurrent('listPanierTauxProgressionForIndividu', () => {
     integrationTest(async () => {
       const deptId = testDeptId()
       const refId = testReferentielId()
-      const panId = testPanierId()
+      const dosId = testDossierId()
       const indOk = testIndicateurId()
       const indSansValeur = testIndicateurId()
 
@@ -182,19 +182,19 @@ describe.concurrent('listPanierTauxProgressionForIndividu', () => {
           valeurCible: 100,
         },
       )
-      await fixtures.panier({
-        publicId: panId,
+      await fixtures.dossier({
+        publicId: dosId,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indOk }, { publicId: indSansValeur }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listPanierTauxProgressionForIndividu(deptId, { paniers: [panId] }),
+        listDossierTauxProgressionForIndividu(deptId, { dossiers: [dosId] }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ panier: panId, tauxProgression: null }],
+        items: [{ dossier: dosId, tauxProgression: null }],
       })
     }),
   )
@@ -204,7 +204,7 @@ describe.concurrent('listPanierTauxProgressionForIndividu', () => {
     integrationTest(async () => {
       const deptId = testDeptId()
       const refId = testReferentielId()
-      const panId = testPanierId()
+      const dosId = testDossierId()
       const indId = testIndicateurId()
 
       await fixtures.indicateurReferentiel({
@@ -223,19 +223,19 @@ describe.concurrent('listPanierTauxProgressionForIndividu', () => {
         dateCible: '2024-12-31',
         valeurCible: 0,
       })
-      await fixtures.panier({
-        publicId: panId,
+      await fixtures.dossier({
+        publicId: dosId,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indId }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listPanierTauxProgressionForIndividu(deptId, { paniers: [panId] }),
+        listDossierTauxProgressionForIndividu(deptId, { dossiers: [dosId] }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ panier: panId, tauxProgression: null }],
+        items: [{ dossier: dosId, tauxProgression: null }],
       })
     }),
   )
@@ -245,7 +245,7 @@ describe.concurrent('listPanierTauxProgressionForIndividu', () => {
     integrationTest(async () => {
       const deptId = testDeptId()
       const refId = testReferentielId()
-      const panId = testPanierId()
+      const dosId = testDossierId()
       const indId = testIndicateurId()
 
       await fixtures.indicateurReferentiel({
@@ -272,19 +272,19 @@ describe.concurrent('listPanierTauxProgressionForIndividu', () => {
         dateCible: '2024-12-31',
         valeurCible: 100,
       })
-      await fixtures.panier({
-        publicId: panId,
+      await fixtures.dossier({
+        publicId: dosId,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indId }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listPanierTauxProgressionForIndividu(deptId, { paniers: [panId] }),
+        listDossierTauxProgressionForIndividu(deptId, { dossiers: [dosId] }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ panier: panId, tauxProgression: 90 }],
+        items: [{ dossier: dosId, tauxProgression: 90 }],
       })
     }),
   )
@@ -292,24 +292,24 @@ describe.concurrent('listPanierTauxProgressionForIndividu', () => {
   it(
     'lève une erreur si l individu est inconnu',
     integrationTest(async () => {
-      const panId = testPanierId()
-      await fixtures.panier({ publicId: panId, visibilite: 'PUBLIC' })
+      const dosId = testDossierId()
+      await fixtures.dossier({ publicId: dosId, visibilite: 'PUBLIC' })
       const apiKey = await fixtures.apiKey()
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          listPanierTauxProgressionForIndividu('DEPT-INCONNU', { paniers: [panId] }),
+          listDossierTauxProgressionForIndividu('DEPT-INCONNU', { dossiers: [dosId] }),
         ),
       ).rejects.toThrow()
     }),
   )
 
   it(
-    'exclut silencieusement un panier PRIVE sans permission',
+    'exclut silencieusement un dossier PRIVE sans permission',
     integrationTest(async () => {
       const deptId = testDeptId()
-      const panPublic = testPanierId()
-      const panPrive = testPanierId()
+      const dosPublic = testDossierId()
+      const dosPrive = testDossierId()
       const refId = testReferentielId()
       const indId = testIndicateurId()
 
@@ -329,31 +329,31 @@ describe.concurrent('listPanierTauxProgressionForIndividu', () => {
         dateCible: '2024-12-31',
         valeurCible: 100,
       })
-      await fixtures.panier({
-        publicId: panPublic,
+      await fixtures.dossier({
+        publicId: dosPublic,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indId }],
       })
-      await fixtures.panier({ publicId: panPrive, visibilite: 'PRIVE' })
+      await fixtures.dossier({ publicId: dosPrive, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listPanierTauxProgressionForIndividu(deptId, { paniers: [panPublic, panPrive] }),
+        listDossierTauxProgressionForIndividu(deptId, { dossiers: [dosPublic, dosPrive] }),
       )
 
       const items = result._unsafeUnwrap().items
       expect(items).toHaveLength(1)
-      expect(items[0]).toEqual({ panier: panPublic, tauxProgression: 50 })
+      expect(items[0]).toEqual({ dossier: dosPublic, tauxProgression: 50 })
     }),
   )
 
   it(
-    'retourne les taux corrects pour plusieurs paniers en un seul appel',
+    'retourne les taux corrects pour plusieurs dossiers en un seul appel',
     integrationTest(async () => {
       const deptId = testDeptId()
       const refId = testReferentielId()
-      const panA = testPanierId()
-      const panB = testPanierId()
+      const dosA = testDossierId()
+      const dosB = testDossierId()
       const indA = testIndicateurId()
       const indB = testIndicateurId()
 
@@ -389,26 +389,26 @@ describe.concurrent('listPanierTauxProgressionForIndividu', () => {
           valeurCible: 100,
         },
       )
-      await fixtures.panier({
-        publicId: panA,
+      await fixtures.dossier({
+        publicId: dosA,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indA }],
       })
-      await fixtures.panier({
-        publicId: panB,
+      await fixtures.dossier({
+        publicId: dosB,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indB }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listPanierTauxProgressionForIndividu(deptId, { paniers: [panA, panB] }),
+        listDossierTauxProgressionForIndividu(deptId, { dossiers: [dosA, dosB] }),
       )
 
       const items = result._unsafeUnwrap().items
       expect(items).toHaveLength(2)
-      expect(items.find((i) => i.panier === panA)?.tauxProgression).toBe(40)
-      expect(items.find((i) => i.panier === panB)?.tauxProgression).toBe(70)
+      expect(items.find((i) => i.dossier === dosA)?.tauxProgression).toBe(40)
+      expect(items.find((i) => i.dossier === dosB)?.tauxProgression).toBe(70)
     }),
   )
 })

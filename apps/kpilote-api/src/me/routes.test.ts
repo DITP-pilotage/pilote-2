@@ -4,7 +4,7 @@ import { meRoutes } from '@/me/routes'
 import { buildTestApp } from '@/test/buildTestApp'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testIndicateurIds, testPanierId } from '@/test/randomIds'
+import { testIndicateurIds, testDossierId } from '@/test/randomIds'
 
 const buildApp = () => buildTestApp(meRoutes)
 
@@ -12,12 +12,12 @@ describe.concurrent('GET /me/permissions', () => {
   it(
     'renvoie 200 + les permissions matérialisées du principal',
     integrationTest(async () => {
-      const panierId = testPanierId()
+      const dossierId = testDossierId()
       const [indicateurId] = testIndicateurIds(1)
-      await fixtures.panier({ publicId: panierId, indicateurs: [{ publicId: indicateurId }] })
+      await fixtures.dossier({ publicId: dossierId, indicateurs: [{ publicId: indicateurId }] })
       await fixtures.apiKey({
         rawKey: 'pilote_live_meperms_principal_with_perms',
-        panierPermissions: [{ panier: { publicId: panierId }, action: 'WRITE' }],
+        dossierPermissions: [{ dossier: { publicId: dossierId }, action: 'WRITE' }],
       })
 
       const response = await buildApp().request('/me/permissions', {
@@ -26,7 +26,7 @@ describe.concurrent('GET /me/permissions', () => {
 
       expect(response.status).toBe(200)
       expect(await response.json()).toEqual({
-        paniers: [{ id: panierId, actions: ['WRITE'] }],
+        dossiers: [{ id: dossierId, actions: ['WRITE'] }],
         indicateurs: [{ id: indicateurId, actions: ['READ'] }],
       })
     }),
@@ -47,7 +47,7 @@ describe.concurrent('GET /me/permissions', () => {
       expect(response.status).toBe(200)
       expect(await response.json()).toEqual({
         isAdmin: true,
-        paniers: [],
+        dossiers: [],
         indicateurs: [],
       })
     }),

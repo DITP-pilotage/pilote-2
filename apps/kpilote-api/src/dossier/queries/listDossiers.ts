@@ -1,27 +1,27 @@
-import { type ListPaniersQuery, type PanierListApiModel } from '@pilote/kpilote-shared/panier'
+import { type DossierListApiModel, type ListDossiersQuery } from '@pilote/kpilote-shared/dossier'
 import { ResultAsync } from 'neverthrow'
 
 import { isAdminPrincipal, requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import { buildPaginationArgs, toPaginatedResponse } from '@/framework/persistence/paginate'
 import { type Prisma } from '@/generated/prisma/client'
-import { withPanierReadPermission } from '@/panier/permissions'
-import { toPanierApiModel } from '@/panier/utils'
+import { withDossierReadPermission } from '@/dossier/permissions'
+import { toDossierApiModel } from '@/dossier/utils'
 
-export const listPaniers = (params: ListPaniersQuery): ResultAsync<PanierListApiModel, never> => {
+export const listDossiers = (params: ListDossiersQuery): ResultAsync<DossierListApiModel, never> => {
   const principalId = requireCurrentPrincipalId()
-  const filters: Prisma.PanierWhereInput = {}
+  const filters: Prisma.DossierWhereInput = {}
   if (params.recherche) {
     filters.nom = { contains: params.recherche, mode: 'insensitive' }
   }
   if (params.rechercheIdentifiant) {
     filters.publicId = { contains: params.rechercheIdentifiant, mode: 'insensitive' }
   }
-  // Un principal ADMIN administre tous les paniers (PUBLIC + PRIVÉ), cohérent
+  // Un principal ADMIN administre tous les dossiers (PUBLIC + PRIVÉ), cohérent
   // avec isAdminPrincipal qui court-circuite déjà /me/permissions.
-  const where = isAdminPrincipal() ? filters : withPanierReadPermission(filters, principalId)
+  const where = isAdminPrincipal() ? filters : withDossierReadPermission(filters, principalId)
 
-  const fetchPage = db().panier.findMany({
+  const fetchPage = db().dossier.findMany({
     where,
     orderBy: { id: 'asc' },
     include: {
@@ -39,9 +39,9 @@ export const listPaniers = (params: ListPaniersQuery): ResultAsync<PanierListApi
     },
     ...buildPaginationArgs(params.cursor, params.pageSize),
   })
-  const fetchTotal = db().panier.count({ where })
+  const fetchTotal = db().dossier.count({ where })
 
   return ResultAsync.fromSafePromise(Promise.all([fetchPage, fetchTotal])).map(([rows, total]) =>
-    toPaginatedResponse(rows, total, toPanierApiModel, params.pageSize),
+    toPaginatedResponse(rows, total, toDossierApiModel, params.pageSize),
   )
 }

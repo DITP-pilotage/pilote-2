@@ -1,17 +1,17 @@
-import { type PanierApiModel } from '@pilote/kpilote-shared/panier'
-import { type PanierContactsUtilesGroup } from '@pilote/kpilote-shared/panierContactUtile'
+import { type DossierApiModel } from '@pilote/kpilote-shared/dossier'
+import { type DossierContactsUtilesGroup } from '@pilote/kpilote-shared/dossierContactUtile'
 
 import {
   type ContactUtileModel,
+  type DossierModel,
   type IndicateurModel,
   type OrganismeModel,
-  type PanierModel,
   type UtilisateurModel,
 } from '@/generated/prisma/models'
 
 type ContactUtileLien = { contactUtile: ContactUtileModel & { organisme: OrganismeModel } }
 
-export type PanierWithIndicateurs = PanierModel & {
+export type DossierWithIndicateurs = DossierModel & {
   indicateurs: Array<{ indicateur: Pick<IndicateurModel, 'publicId'> }>
   responsables: Array<{ utilisateur: UtilisateurModel }>
   contactsUtiles: ContactUtileLien[]
@@ -19,9 +19,9 @@ export type PanierWithIndicateurs = PanierModel & {
 
 // Regroupe les contacts utiles par organisme, organismes et contacts triés par
 // nom. Le tri se fait ici (et non côté SQL) car les contacts sont chargés via
-// `include` sur le panier, sans passer par une query dédiée.
-const toContactsUtilesGroups = (liens: ContactUtileLien[]): PanierContactsUtilesGroup[] => {
-  const parOrganisme = new Map<string, PanierContactsUtilesGroup>()
+// `include` sur le dossier, sans passer par une query dédiée.
+const toContactsUtilesGroups = (liens: ContactUtileLien[]): DossierContactsUtilesGroup[] => {
+  const parOrganisme = new Map<string, DossierContactsUtilesGroup>()
   for (const { contactUtile } of liens) {
     const { organisme } = contactUtile
     let group = parOrganisme.get(organisme.id)
@@ -49,13 +49,13 @@ const toContactsUtilesGroups = (liens: ContactUtileLien[]): PanierContactsUtiles
 
 // L'ordre des `indicateurs` est garanti par la query Prisma
 // (`orderBy: { createdAt: 'asc' }` dans l'include).
-export const toPanierApiModel = (panier: PanierWithIndicateurs): PanierApiModel => ({
-  id: panier.publicId,
-  nom: panier.nom,
-  description: panier.description,
-  visibilite: panier.visibilite,
-  indicateurIds: panier.indicateurs.map((lien) => lien.indicateur.publicId),
-  responsables: panier.responsables.map(({ utilisateur }) => ({
+export const toDossierApiModel = (dossier: DossierWithIndicateurs): DossierApiModel => ({
+  id: dossier.publicId,
+  nom: dossier.nom,
+  description: dossier.description,
+  visibilite: dossier.visibilite,
+  indicateurIds: dossier.indicateurs.map((lien) => lien.indicateur.publicId),
+  responsables: dossier.responsables.map(({ utilisateur }) => ({
     id: utilisateur.id,
     email: utilisateur.email,
     nom: utilisateur.nom,
@@ -63,7 +63,7 @@ export const toPanierApiModel = (panier: PanierWithIndicateurs): PanierApiModel 
     service: utilisateur.service,
     fonction: utilisateur.fonction,
   })),
-  contactsUtiles: toContactsUtilesGroups(panier.contactsUtiles),
-  createdAt: panier.createdAt.toISOString(),
-  updatedAt: panier.updatedAt.toISOString(),
+  contactsUtiles: toContactsUtilesGroups(dossier.contactsUtiles),
+  createdAt: dossier.createdAt.toISOString(),
+  updatedAt: dossier.updatedAt.toISOString(),
 })

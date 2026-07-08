@@ -28,7 +28,7 @@
       "@/valeurImport/*": ["./src/valeurImport/*"],
       "@/objectifIndicateurIndividu/*": ["./src/objectifIndicateurIndividu/*"],
       "@/widget/*": ["./src/widget/*"],
-      "@/panier/*": ["./src/panier/*"],
+      "@/dossier/*": ["./src/dossier/*"],
       "@/permission/*": ["./src/permission/*"],
       "@/shared/*": ["./src/shared/*"],
       "@/utilisateur/*": ["./src/utilisateur/*"],

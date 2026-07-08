@@ -733,7 +733,7 @@ const main = async () => {
   // PAN-005 est PRIVE et contient des indicateurs PRIVE (IND-001..003) : il
   // démontre la propagation panier → indicateur (un principal qui a accès à
   // PAN-005 voit IND-001..003 même sans permission directe sur eux).
-  const paniersSeed: ReadonlyArray<{
+  const dossiersSeed: ReadonlyArray<{
     publicId: string
     nom: string
     description: string | null
@@ -741,35 +741,35 @@ const main = async () => {
     indicateurPublicIds: ReadonlyArray<string>
   }> = [
     {
-      publicId: 'PAN-001',
+      publicId: 'DOS-001',
       nom: 'Indicateurs sociaux',
       description: 'Pauvreté, alphabétisation et accès numérique.',
       visibilite: 'PUBLIC',
       indicateurPublicIds: ['IND-048', 'IND-049', 'IND-050'],
     },
     {
-      publicId: 'PAN-002',
+      publicId: 'DOS-002',
       nom: 'Santé et démographie',
       description: 'Démographie générale et espérance de vie.',
       visibilite: 'PUBLIC',
       indicateurPublicIds: ['IND-046', 'IND-047'],
     },
     {
-      publicId: 'PAN-003',
+      publicId: 'DOS-003',
       nom: "Vue d'ensemble — indicateurs publics",
       description: "L'ensemble des indicateurs publics du référentiel mb.",
       visibilite: 'PUBLIC',
       indicateurPublicIds: ['IND-046', 'IND-047', 'IND-048', 'IND-049', 'IND-050'],
     },
     {
-      publicId: 'PAN-004',
+      publicId: 'DOS-004',
       nom: 'Niveau de vie',
       description: 'Indicateurs de bien-être matériel et de connectivité.',
       visibilite: 'PUBLIC',
       indicateurPublicIds: ['IND-048', 'IND-050'],
     },
     {
-      publicId: 'PAN-005',
+      publicId: 'DOS-005',
       nom: 'Panier admin — économie',
       description: 'Panier privé démontrant la propagation READ vers ses indicateurs.',
       visibilite: 'PRIVE',
@@ -777,42 +777,42 @@ const main = async () => {
     },
   ]
 
-  const paniersByPublicId = new Map<string, { id: string }>()
-  for (const panierItem of paniersSeed) {
-    const panier = await prisma.panier.upsert({
-      where: { publicId: panierItem.publicId },
+  const dossiersByPublicId = new Map<string, { id: string }>()
+  for (const dossierItem of dossiersSeed) {
+    const dossier = await prisma.dossier.upsert({
+      where: { publicId: dossierItem.publicId },
       update: {
-        nom: panierItem.nom,
-        description: panierItem.description,
-        visibilite: panierItem.visibilite,
+        nom: dossierItem.nom,
+        description: dossierItem.description,
+        visibilite: dossierItem.visibilite,
       },
       create: {
         id: uuidv7(),
-        publicId: panierItem.publicId,
-        nom: panierItem.nom,
-        description: panierItem.description,
-        visibilite: panierItem.visibilite,
+        publicId: dossierItem.publicId,
+        nom: dossierItem.nom,
+        description: dossierItem.description,
+        visibilite: dossierItem.visibilite,
       },
     })
-    paniersByPublicId.set(panierItem.publicId, { id: panier.id })
-    for (const indicateurPublicId of panierItem.indicateurPublicIds) {
+    dossiersByPublicId.set(dossierItem.publicId, { id: dossier.id })
+    for (const indicateurPublicId of dossierItem.indicateurPublicIds) {
       const indicateur = await prisma.indicateur.findUniqueOrThrow({
         where: { publicId: indicateurPublicId },
         select: { id: true },
       })
-      await prisma.panierIndicateur.upsert({
+      await prisma.dossierIndicateur.upsert({
         where: {
-          panierId_indicateurId: {
-            panierId: panier.id,
+          dossierId_indicateurId: {
+            dossierId: dossier.id,
             indicateurId: indicateur.id,
           },
         },
         update: {},
-        create: { panierId: panier.id, indicateurId: indicateur.id },
+        create: { dossierId: dossier.id, indicateurId: indicateur.id },
       })
     }
   }
-  const panierLiaisonsCount = paniersSeed.reduce(
+  const dossierLiaisonsCount = dossiersSeed.reduce(
     (acc, item) => acc + item.indicateurPublicIds.length,
     0,
   )
@@ -824,41 +824,41 @@ const main = async () => {
   // n'apporte rien ici en pratique pour ditp.admin — c'est volontaire : la
   // démo de propagation reste vérifiée en tests d'intégration.
   for (const action of ['READ', 'WRITE'] as const) {
-    const panier = paniersByPublicId.get('PAN-005')
-    if (!panier) continue
-    await prisma.panierPermission.upsert({
+    const dossier = dossiersByPublicId.get('DOS-005')
+    if (!dossier) continue
+    await prisma.dossierPermission.upsert({
       where: {
-        principalId_panierId_action: {
+        principalId_dossierId_action: {
           principalId: ditpAdmin.id,
-          panierId: panier.id,
+          dossierId: dossier.id,
           action,
         },
       },
       update: {},
       create: {
         principalId: ditpAdmin.id,
-        panierId: panier.id,
+        dossierId: dossier.id,
         action,
       },
     })
   }
-  const panierPermissionsCount = 2
+  const dossierPermissionsCount = 2
 
   // Responsables panier : ditp.admin et claire.dupont sont responsables de PAN-005.
-  const pan005 = paniersByPublicId.get('PAN-005')!
-  const pan004 = paniersByPublicId.get('PAN-004')!
+  const pan005 = dossiersByPublicId.get('DOS-005')!
+  const pan004 = dossiersByPublicId.get('DOS-004')!
   const claireDupont = await prisma.utilisateur.findUniqueOrThrow({
     where: { email: 'claire.dupont@example.com' },
     select: { id: true },
   })
   for (const utilisateurId of [ditpAdmin.id, claireDupont.id]) {
-    await prisma.panierResponsable.upsert({
-      where: { panierId_utilisateurId: { panierId: pan005.id, utilisateurId } },
+    await prisma.dossierResponsable.upsert({
+      where: { dossierId_utilisateurId: { dossierId: pan005.id, utilisateurId } },
       update: {},
-      create: { panierId: pan005.id, utilisateurId },
+      create: { dossierId: pan005.id, utilisateurId },
     })
   }
-  const panierResponsablesCount = 2
+  const dossierResponsablesCount = 2
 
   // Responsables indicateur : ditp.admin et claire.dupont sont responsables de IND-001.
   const indicateurIdInd001 = indicateursParPublicId.get('IND-001')!
@@ -950,19 +950,19 @@ const main = async () => {
   // ── Rattachements ──────────────────────────────────────────────────────────────
 
   for (const contact of [supportMethodo, celluleFormation, supportTechnique, ouvertureDonnees]) {
-    await prisma.panierContactUtile.upsert({
-      where: { panierId_contactUtileId: { panierId: pan005.id, contactUtileId: contact.id } },
+    await prisma.dossierContactUtile.upsert({
+      where: { dossierId_contactUtileId: { dossierId: pan005.id, contactUtileId: contact.id } },
       update: {},
-      create: { panierId: pan005.id, contactUtileId: contact.id },
+      create: { dossierId: pan005.id, contactUtileId: contact.id },
     })
   }
 
-  await prisma.panierContactUtile.upsert({
+  await prisma.dossierContactUtile.upsert({
     where: {
-      panierId_contactUtileId: { panierId: pan004.id, contactUtileId: ouvertureDonnees.id },
+      dossierId_contactUtileId: { dossierId: pan004.id, contactUtileId: ouvertureDonnees.id },
     },
     update: {},
-    create: { panierId: pan004.id, contactUtileId: ouvertureDonnees.id },
+    create: { dossierId: pan004.id, contactUtileId: ouvertureDonnees.id },
   })
 
   const contactsUtilesCount = 4
@@ -970,7 +970,7 @@ const main = async () => {
   const permissionsCount = 8 * 2
   const widgetLiaisonsCount = widgetsSeed.reduce((acc, w) => acc + w.referentielPublicIds.length, 0)
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${paniersSeed.length} paniers (${panierLiaisonsCount} liaisons panier-indicateur, ${panierPermissionsCount} permissions panier, ${panierResponsablesCount} responsable panier, ${contactsUtilesCount} contacts utiles), ${indicateurResponsablesCount} responsables indicateur.`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${dossiersSeed.length} dossiers (${dossierLiaisonsCount} liaisons dossier-indicateur, ${dossierPermissionsCount} permissions dossier, ${dossierResponsablesCount} responsable dossier, ${contactsUtilesCount} contacts utiles), ${indicateurResponsablesCount} responsables indicateur.`,
   )
 }
 

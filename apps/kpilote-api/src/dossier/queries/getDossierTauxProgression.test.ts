@@ -1,16 +1,16 @@
 import { describe, expect, it } from 'vitest'
 
-import { getPanierTauxProgression } from '@/panier/queries/getPanierTauxProgression'
+import { getDossierTauxProgression } from '@/dossier/queries/getDossierTauxProgression'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testDeptId, testIndicateurId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
-describe.concurrent('getPanierTauxProgression', () => {
+describe.concurrent('getDossierTauxProgression', () => {
   it(
-    'retourne null avec contributions vides pour un panier vide',
+    'retourne null avec contributions vides pour un dossier vide',
     integrationTest(async () => {
-      await fixtures.panier({
+      await fixtures.dossier({
         publicId: 'PAN-PROG-EMPTY',
         visibilite: 'PUBLIC',
       })
@@ -18,11 +18,11 @@ describe.concurrent('getPanierTauxProgression', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getPanierTauxProgression('PAN-PROG-EMPTY', { individu: deptId }),
+        getDossierTauxProgression('PAN-PROG-EMPTY', { individu: deptId }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        panier: 'PAN-PROG-EMPTY',
+        dossier: 'PAN-PROG-EMPTY',
         individu: deptId,
         tauxProgression: null,
         contributions: [],
@@ -74,7 +74,7 @@ describe.concurrent('getPanierTauxProgression', () => {
         valeurCible: 100,
       })
 
-      await fixtures.panier({
+      await fixtures.dossier({
         publicId: 'PAN-PROG-OK',
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indA }, { publicId: indB }],
@@ -82,7 +82,7 @@ describe.concurrent('getPanierTauxProgression', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getPanierTauxProgression('PAN-PROG-OK', { individu: deptId }),
+        getDossierTauxProgression('PAN-PROG-OK', { individu: deptId }),
       )
 
       const data = result._unsafeUnwrap()
@@ -131,7 +131,7 @@ describe.concurrent('getPanierTauxProgression', () => {
         valeur: 30,
       })
 
-      await fixtures.panier({
+      await fixtures.dossier({
         publicId: 'PAN-PROG-NO-OBJ',
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indOk }, { publicId: indSansObjectif }],
@@ -139,7 +139,7 @@ describe.concurrent('getPanierTauxProgression', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getPanierTauxProgression('PAN-PROG-NO-OBJ', { individu: deptId }),
+        getDossierTauxProgression('PAN-PROG-NO-OBJ', { individu: deptId }),
       )
 
       const data = result._unsafeUnwrap()
@@ -188,7 +188,7 @@ describe.concurrent('getPanierTauxProgression', () => {
         valeurCible: 100,
       })
 
-      await fixtures.panier({
+      await fixtures.dossier({
         publicId: 'PAN-PROG-NO-VAL',
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indOk }, { publicId: indSansValeur }],
@@ -196,7 +196,7 @@ describe.concurrent('getPanierTauxProgression', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getPanierTauxProgression('PAN-PROG-NO-VAL', { individu: deptId }),
+        getDossierTauxProgression('PAN-PROG-NO-VAL', { individu: deptId }),
       )
 
       const data = result._unsafeUnwrap()
@@ -234,7 +234,7 @@ describe.concurrent('getPanierTauxProgression', () => {
         valeurCible: 0,
       })
 
-      await fixtures.panier({
+      await fixtures.dossier({
         publicId: 'PAN-PROG-ZERO',
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indZero }],
@@ -242,7 +242,7 @@ describe.concurrent('getPanierTauxProgression', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getPanierTauxProgression('PAN-PROG-ZERO', { individu: deptId }),
+        getDossierTauxProgression('PAN-PROG-ZERO', { individu: deptId }),
       )
 
       const data = result._unsafeUnwrap()
@@ -285,7 +285,7 @@ describe.concurrent('getPanierTauxProgression', () => {
         valeurCible: 100,
       })
 
-      await fixtures.panier({
+      await fixtures.dossier({
         publicId: 'PAN-PROG-HIST',
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indH }],
@@ -293,7 +293,7 @@ describe.concurrent('getPanierTauxProgression', () => {
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getPanierTauxProgression('PAN-PROG-HIST', { individu: deptId }),
+        getDossierTauxProgression('PAN-PROG-HIST', { individu: deptId }),
       )
 
       const data = result._unsafeUnwrap()
@@ -312,7 +312,7 @@ describe.concurrent('getPanierTauxProgression', () => {
     integrationTest(async () => {
       const indA = testIndicateurId()
       await fixtures.indicateur({ publicId: indA })
-      await fixtures.panier({
+      await fixtures.dossier({
         publicId: 'PAN-PROG-INCONNU',
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indA }],
@@ -321,16 +321,16 @@ describe.concurrent('getPanierTauxProgression', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          getPanierTauxProgression('PAN-PROG-INCONNU', { individu: 'DEPT-INCONNU' }),
+          getDossierTauxProgression('PAN-PROG-INCONNU', { individu: 'DEPT-INCONNU' }),
         ),
       ).rejects.toThrow()
     }),
   )
 
   it(
-    'lève une erreur sur un panier PRIVE sans permission',
+    'lève une erreur sur un dossier PRIVE sans permission',
     integrationTest(async () => {
-      await fixtures.panier({
+      await fixtures.dossier({
         publicId: 'PAN-PROG-PRIV',
         visibilite: 'PRIVE',
       })
@@ -338,14 +338,14 @@ describe.concurrent('getPanierTauxProgression', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          getPanierTauxProgression('PAN-PROG-PRIV', { individu: testDeptId() }),
+          getDossierTauxProgression('PAN-PROG-PRIV', { individu: testDeptId() }),
         ),
       ).rejects.toThrow()
     }),
   )
 
   it(
-    "autorise l'accès à un panier PRIVE avec permission READ",
+    "autorise l'accès à un dossier PRIVE avec permission READ",
     integrationTest(async () => {
       const refId = testReferentielId()
       const deptId = testDeptId()
@@ -366,17 +366,17 @@ describe.concurrent('getPanierTauxProgression', () => {
         dateCible: '2024-12-31',
         valeurCible: 100,
       })
-      await fixtures.panier({
+      await fixtures.dossier({
         publicId: 'PAN-PROG-PRIV-OK',
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: indA }],
       })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: 'PAN-PROG-PRIV-OK' }, action: 'READ' }],
+        dossierPermissions: [{ dossier: { publicId: 'PAN-PROG-PRIV-OK' }, action: 'READ' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getPanierTauxProgression('PAN-PROG-PRIV-OK', { individu: deptId }),
+        getDossierTauxProgression('PAN-PROG-PRIV-OK', { individu: deptId }),
       )
 
       expect(result._unsafeUnwrap().tauxProgression).toBe(25)

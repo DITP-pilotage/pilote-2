@@ -25,7 +25,7 @@ import {
 // valeurs et d'objectifs sont indépendamment paramétrables (la contrainte
 // `dateTruncObjectif >= dateTruncValeur` est validée en amont côté schema).
 // Mutualisé entre la query "liste pour un indicateur" et la query "agrégat
-// panier" (cf. `docs/architecture/taux-progression.md`).
+// dossier" (cf. `docs/architecture/taux-progression.md`).
 export const computeTauxProgressionPoints = async ({
   indicateurId,
   individusCibles,

@@ -1,16 +1,16 @@
-import { type PanierApiModel } from '@pilote/kpilote-shared/panier'
+import { type DossierApiModel } from '@pilote/kpilote-shared/dossier'
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
-import { withPanierReadPermission } from '@/panier/permissions'
-import { toPanierApiModel } from '@/panier/utils'
+import { withDossierReadPermission } from '@/dossier/permissions'
+import { toDossierApiModel } from '@/dossier/utils'
 
-export const getPanierByPublicId = (publicId: string): ResultAsync<PanierApiModel, never> => {
+export const getDossierByPublicId = (publicId: string): ResultAsync<DossierApiModel, never> => {
   const principalId = requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(
-    db().panier.findFirstOrThrow({
-      where: withPanierReadPermission({ publicId }, principalId),
+    db().dossier.findFirstOrThrow({
+      where: withDossierReadPermission({ publicId }, principalId),
       include: {
         indicateurs: {
           orderBy: { createdAt: 'asc' },
@@ -25,5 +25,5 @@ export const getPanierByPublicId = (publicId: string): ResultAsync<PanierApiMode
         },
       },
     }),
-  ).map(toPanierApiModel)
+  ).map(toDossierApiModel)
 }

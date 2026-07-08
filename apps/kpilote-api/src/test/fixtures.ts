@@ -9,7 +9,7 @@ import {
   testEmail,
   testIndicateurId,
   testIndividuId,
-  testPanierId,
+  testDossierId,
   testReferentielId,
   testWidgetId,
 } from '@/test/randomIds'
@@ -22,11 +22,11 @@ import {
   type IndividuModel,
   type ObjectifIndicateurIndividuModel,
   type OrganismeModel,
-  type PanierContactUtileModel,
-  type PanierModel,
-  type PanierPermissionModel,
+  type DossierContactUtileModel,
+  type DossierModel,
+  type DossierPermissionModel,
   type IndicateurResponsableModel,
-  type PanierResponsableModel,
+  type DossierResponsableModel,
   type ReferentielModel,
   type ReferentielWidgetModel,
   type RelationModel,
@@ -471,9 +471,9 @@ async function objectifIndicateurIndividu(
   return results
 }
 
-// --- Panier ------------------------------------------------------------------
+// --- Dossier ------------------------------------------------------------------
 
-type PanierOverrides = Partial<{
+type DossierOverrides = Partial<{
   id: string
   publicId: string
   nom: string
@@ -482,17 +482,17 @@ type PanierOverrides = Partial<{
   indicateurs: IndicateurOverrides[]
 }>
 
-const upsertPanier = async (o: PanierOverrides = {}) => {
-  const publicId = o.publicId ?? testPanierId()
+const upsertDossier = async (o: DossierOverrides = {}) => {
+  const publicId = o.publicId ?? testDossierId()
   const { indicateurs, id: _id, publicId: _pub, ...rest } = o
   const create = {
     id: o.id ?? uuidv7(),
     publicId,
-    nom: o.nom ?? 'Panier de test',
+    nom: o.nom ?? 'Dossier de test',
     description: o.description ?? null,
     visibilite: o.visibilite ?? Visibilite.PRIVE,
   }
-  const panier = await db().panier.upsert({
+  const dossier = await db().dossier.upsert({
     where: { publicId },
     update: rest,
     create,
@@ -500,32 +500,32 @@ const upsertPanier = async (o: PanierOverrides = {}) => {
   if (indicateurs) {
     for (const indicateurOverride of indicateurs) {
       const indicateurRow = await upsertIndicateur(indicateurOverride)
-      await db().panierIndicateur.upsert({
+      await db().dossierIndicateur.upsert({
         where: {
-          panierId_indicateurId: {
-            panierId: panier.id,
+          dossierId_indicateurId: {
+            dossierId: dossier.id,
             indicateurId: indicateurRow.id,
           },
         },
         update: {},
-        create: { panierId: panier.id, indicateurId: indicateurRow.id },
+        create: { dossierId: dossier.id, indicateurId: indicateurRow.id },
       })
     }
   }
-  return panier
+  return dossier
 }
 
-function panier(): Promise<PanierModel>
-function panier(override: PanierOverrides): Promise<PanierModel>
-function panier(
-  o1: PanierOverrides,
-  o2: PanierOverrides,
-  ...rest: PanierOverrides[]
-): Promise<PanierModel[]>
-async function panier(...overrides: PanierOverrides[]): Promise<PanierModel | PanierModel[]> {
-  if (overrides.length <= 1) return upsertPanier(overrides[0])
-  const results: PanierModel[] = []
-  for (const o of overrides) results.push(await upsertPanier(o))
+function dossier(): Promise<DossierModel>
+function dossier(override: DossierOverrides): Promise<DossierModel>
+function dossier(
+  o1: DossierOverrides,
+  o2: DossierOverrides,
+  ...rest: DossierOverrides[]
+): Promise<DossierModel[]>
+async function dossier(...overrides: DossierOverrides[]): Promise<DossierModel | DossierModel[]> {
+  if (overrides.length <= 1) return upsertDossier(overrides[0])
+  const results: DossierModel[] = []
+  for (const o of overrides) results.push(await upsertDossier(o))
   return results
 }
 
@@ -536,8 +536,8 @@ type PrincipalIndicateurPermissionOverrides = {
   action: PermissionAction
 }
 
-type PrincipalPanierPermissionOverrides = {
-  panier: PanierOverrides
+type PrincipalDossierPermissionOverrides = {
+  dossier: DossierOverrides
   action: PermissionAction
 }
 
@@ -551,7 +551,7 @@ type ApiKeyOverrides = Partial<{
   revokedAt: Date | null
   lastUsedAt: Date | null
   permissions: PrincipalIndicateurPermissionOverrides[]
-  panierPermissions: PrincipalPanierPermissionOverrides[]
+  dossierPermissions: PrincipalDossierPermissionOverrides[]
 }>
 
 const grantPermissions = async (
@@ -564,13 +564,13 @@ const grantPermissions = async (
   }
 }
 
-const grantPanierPermissions = async (
+const grantDossierPermissions = async (
   principalId: string,
-  permissions: PrincipalPanierPermissionOverrides[] | undefined,
+  permissions: PrincipalDossierPermissionOverrides[] | undefined,
 ): Promise<void> => {
   if (!permissions || permissions.length === 0) return
   for (const p of permissions) {
-    await upsertPanierPermission({ principalId, ...p })
+    await upsertDossierPermission({ principalId, ...p })
   }
 }
 
@@ -587,18 +587,18 @@ const upsertApiKey = async (o: ApiKeyOverrides = {}) => {
     revokedAt: o.revokedAt ?? null,
     lastUsedAt: o.lastUsedAt ?? null,
   }
-  const { id: _id, rawKey: _raw, permissions, panierPermissions, ...update } = o
+  const { id: _id, rawKey: _raw, permissions, dossierPermissions, ...update } = o
   const existing = await db().apiKey.findUnique({ where: { keyHash } })
   if (existing) {
     await grantPermissions(existing.id, permissions)
-    await grantPanierPermissions(existing.id, panierPermissions)
+    await grantDossierPermissions(existing.id, dossierPermissions)
     if (Object.keys(update).length === 0) return existing
     return db().apiKey.update({ where: { keyHash }, data: update })
   }
   await db().principal.create({ data: { id: create.id } })
   const created = await db().apiKey.create({ data: create })
   await grantPermissions(created.id, permissions)
-  await grantPanierPermissions(created.id, panierPermissions)
+  await grantDossierPermissions(created.id, dossierPermissions)
   return created
 }
 
@@ -627,7 +627,7 @@ type UtilisateurOverrides = Partial<{
   fonction: string
   identite: { provider: ProviderType; providerSub: string }
   permissions: PrincipalIndicateurPermissionOverrides[]
-  panierPermissions: PrincipalPanierPermissionOverrides[]
+  dossierPermissions: PrincipalDossierPermissionOverrides[]
 }>
 
 const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
@@ -635,7 +635,7 @@ const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
   const existing = await db().utilisateur.findUnique({ where: { email } })
   if (existing) {
     await grantPermissions(existing.id, o.permissions)
-    await grantPanierPermissions(existing.id, o.panierPermissions)
+    await grantDossierPermissions(existing.id, o.dossierPermissions)
     return existing
   }
   const id = o.id ?? uuidv7()
@@ -660,7 +660,7 @@ const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
     })
   }
   await grantPermissions(created.id, o.permissions)
-  await grantPanierPermissions(created.id, o.panierPermissions)
+  await grantDossierPermissions(created.id, o.dossierPermissions)
   return created
 }
 
@@ -724,82 +724,82 @@ async function indicateurPermission(
   return results
 }
 
-// --- PanierPermission (deps requises) ----------------------------------------
+// --- DossierPermission (deps requises) ----------------------------------------
 
-type PanierPermissionOverrides = {
+type DossierPermissionOverrides = {
   principalId: string
-  panier: PanierOverrides
+  dossier: DossierOverrides
   action: PermissionAction
 }
 
-const upsertPanierPermission = async (o: PanierPermissionOverrides) => {
-  const panierRow = await upsertPanier(o.panier)
-  return db().panierPermission.upsert({
+const upsertDossierPermission = async (o: DossierPermissionOverrides) => {
+  const dossierRow = await upsertDossier(o.dossier)
+  return db().dossierPermission.upsert({
     where: {
-      principalId_panierId_action: {
+      principalId_dossierId_action: {
         principalId: o.principalId,
-        panierId: panierRow.id,
+        dossierId: dossierRow.id,
         action: o.action,
       },
     },
     update: {},
     create: {
       principalId: o.principalId,
-      panierId: panierRow.id,
+      dossierId: dossierRow.id,
       action: o.action,
     },
   })
 }
 
-function panierPermission(override: PanierPermissionOverrides): Promise<PanierPermissionModel>
-function panierPermission(
-  o1: PanierPermissionOverrides,
-  o2: PanierPermissionOverrides,
-  ...rest: PanierPermissionOverrides[]
-): Promise<PanierPermissionModel[]>
-async function panierPermission(
-  ...overrides: PanierPermissionOverrides[]
-): Promise<PanierPermissionModel | PanierPermissionModel[]> {
-  if (overrides.length === 1) return upsertPanierPermission(overrides[0]!)
-  const results: PanierPermissionModel[] = []
-  for (const o of overrides) results.push(await upsertPanierPermission(o))
+function dossierPermission(override: DossierPermissionOverrides): Promise<DossierPermissionModel>
+function dossierPermission(
+  o1: DossierPermissionOverrides,
+  o2: DossierPermissionOverrides,
+  ...rest: DossierPermissionOverrides[]
+): Promise<DossierPermissionModel[]>
+async function dossierPermission(
+  ...overrides: DossierPermissionOverrides[]
+): Promise<DossierPermissionModel | DossierPermissionModel[]> {
+  if (overrides.length === 1) return upsertDossierPermission(overrides[0]!)
+  const results: DossierPermissionModel[] = []
+  for (const o of overrides) results.push(await upsertDossierPermission(o))
   return results
 }
 
-// --- PanierResponsable (deps requises) ----------------------------------------
+// --- DossierResponsable (deps requises) ----------------------------------------
 
-type PanierResponsableOverrides = {
-  panier: PanierOverrides
+type DossierResponsableOverrides = {
+  dossier: DossierOverrides
   utilisateur: UtilisateurOverrides
 }
 
-const upsertPanierResponsable = async (o: PanierResponsableOverrides) => {
-  const panierRow = await upsertPanier(o.panier)
+const upsertDossierResponsable = async (o: DossierResponsableOverrides) => {
+  const dossierRow = await upsertDossier(o.dossier)
   const utilisateurRow = await upsertUtilisateur(o.utilisateur)
-  return db().panierResponsable.upsert({
+  return db().dossierResponsable.upsert({
     where: {
-      panierId_utilisateurId: {
-        panierId: panierRow.id,
+      dossierId_utilisateurId: {
+        dossierId: dossierRow.id,
         utilisateurId: utilisateurRow.id,
       },
     },
     update: {},
-    create: { panierId: panierRow.id, utilisateurId: utilisateurRow.id },
+    create: { dossierId: dossierRow.id, utilisateurId: utilisateurRow.id },
   })
 }
 
-function panierResponsable(override: PanierResponsableOverrides): Promise<PanierResponsableModel>
-function panierResponsable(
-  o1: PanierResponsableOverrides,
-  o2: PanierResponsableOverrides,
-  ...rest: PanierResponsableOverrides[]
-): Promise<PanierResponsableModel[]>
-async function panierResponsable(
-  ...overrides: PanierResponsableOverrides[]
-): Promise<PanierResponsableModel | PanierResponsableModel[]> {
-  if (overrides.length === 1) return upsertPanierResponsable(overrides[0]!)
-  const results: PanierResponsableModel[] = []
-  for (const o of overrides) results.push(await upsertPanierResponsable(o))
+function dossierResponsable(override: DossierResponsableOverrides): Promise<DossierResponsableModel>
+function dossierResponsable(
+  o1: DossierResponsableOverrides,
+  o2: DossierResponsableOverrides,
+  ...rest: DossierResponsableOverrides[]
+): Promise<DossierResponsableModel[]>
+async function dossierResponsable(
+  ...overrides: DossierResponsableOverrides[]
+): Promise<DossierResponsableModel | DossierResponsableModel[]> {
+  if (overrides.length === 1) return upsertDossierResponsable(overrides[0]!)
+  const results: DossierResponsableModel[] = []
+  for (const o of overrides) results.push(await upsertDossierResponsable(o))
   return results
 }
 
@@ -946,35 +946,35 @@ async function contactUtile(override?: ContactUtileOverrides): Promise<ContactUt
   return upsertContactUtile(override)
 }
 
-// --- PanierContactUtile ------------------------------------------------------
+// --- DossierContactUtile ------------------------------------------------------
 
-type PanierContactUtileOverrides = {
-  panier?: PanierOverrides
+type DossierContactUtileOverrides = {
+  dossier?: DossierOverrides
   contactUtile?: ContactUtileOverrides
 }
 
-const upsertPanierContactUtile = async (
-  o: PanierContactUtileOverrides,
-): Promise<PanierContactUtileModel> => {
-  const panierRow = await upsertPanier(o.panier)
+const upsertDossierContactUtile = async (
+  o: DossierContactUtileOverrides,
+): Promise<DossierContactUtileModel> => {
+  const dossierRow = await upsertDossier(o.dossier)
   const contactUtileRow = await upsertContactUtile(o.contactUtile)
-  return db().panierContactUtile.upsert({
+  return db().dossierContactUtile.upsert({
     where: {
-      panierId_contactUtileId: {
-        panierId: panierRow.id,
+      dossierId_contactUtileId: {
+        dossierId: dossierRow.id,
         contactUtileId: contactUtileRow.id,
       },
     },
     update: {},
-    create: { panierId: panierRow.id, contactUtileId: contactUtileRow.id },
+    create: { dossierId: dossierRow.id, contactUtileId: contactUtileRow.id },
   })
 }
 
-function panierContactUtile(override: PanierContactUtileOverrides): Promise<PanierContactUtileModel>
-async function panierContactUtile(
-  override: PanierContactUtileOverrides,
-): Promise<PanierContactUtileModel> {
-  return upsertPanierContactUtile(override)
+function dossierContactUtile(override: DossierContactUtileOverrides): Promise<DossierContactUtileModel>
+async function dossierContactUtile(
+  override: DossierContactUtileOverrides,
+): Promise<DossierContactUtileModel> {
+  return upsertDossierContactUtile(override)
 }
 
 // --- Feature ---------------------------------------------------------
@@ -1026,14 +1026,14 @@ export const fixtures = {
   relation,
   valeurAvancement,
   objectifIndicateurIndividu,
-  panier,
+  dossier,
   apiKey,
   utilisateur,
   indicateurPermission,
-  panierPermission,
-  panierResponsable,
+  dossierPermission,
+  dossierResponsable,
   indicateurResponsable,
   organisme,
   contactUtile,
-  panierContactUtile,
+  dossierContactUtile,
 }

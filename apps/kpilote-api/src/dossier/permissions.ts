@@ -5,47 +5,47 @@ import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
 import { PermissionAction, Visibilite } from '@/generated/prisma/enums'
 
-export const PANIER_READ_PERMISSIONS: PermissionAction[] = [
+export const DOSSIER_READ_PERMISSIONS: PermissionAction[] = [
   PermissionAction.READ,
   PermissionAction.WRITE,
 ]
 
-export const withPanierReadPermission = (
-  where: Prisma.PanierWhereInput,
+export const withDossierReadPermission = (
+  where: Prisma.DossierWhereInput,
   principalId: string,
-): Prisma.PanierWhereInput => ({
+): Prisma.DossierWhereInput => ({
   AND: [
     where,
     {
       OR: [
         { visibilite: Visibilite.PUBLIC },
-        { permissions: { some: { principalId, action: { in: PANIER_READ_PERMISSIONS } } } },
+        { permissions: { some: { principalId, action: { in: DOSSIER_READ_PERMISSIONS } } } },
       ],
     },
   ],
 })
 
-export const ensurePanierWritePermission = ({
-  panierId,
+export const ensureDossierWritePermission = ({
+  dossierId,
   principalId,
 }: {
-  panierId: string
+  dossierId: string
   principalId: string
 }): ResultAsync<void, never> =>
   ResultAsync.fromSafePromise(
     db()
-      .panierPermission.findUnique({
+      .dossierPermission.findUnique({
         where: {
-          principalId_panierId_action: {
+          principalId_dossierId_action: {
             principalId,
-            panierId,
+            dossierId,
             action: PermissionAction.WRITE,
           },
         },
       })
       .then((hasWrite) => {
         if (!hasWrite) {
-          throw new ForbiddenError("Vous n'avez pas la permission de modifier ce panier")
+          throw new ForbiddenError("Vous n'avez pas la permission de modifier ce dossier")
         }
       }),
   )

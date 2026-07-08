@@ -5,7 +5,7 @@ import { encodeCursor } from '@/framework/persistence/paginate'
 import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testIndicateurIds, testPanierId, testReferentielId } from '@/test/randomIds'
+import { testIndicateurIds, testDossierId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listIndicateurs', () => {
@@ -62,25 +62,25 @@ describe.concurrent('listIndicateurs', () => {
   it(
     'propage READ via les permissions panier : un principal qui a accès à un panier voit ses indicateurs PRIVE',
     integrationTest(async () => {
-      const [viaPanier, hidden] = testIndicateurIds(2)
-      const panPropag = testPanierId()
+      const [viaDossier, hidden] = testIndicateurIds(2)
+      const dosPropag = testDossierId()
       await fixtures.indicateur(
-        { publicId: viaPanier, visibilite: 'PRIVE' },
+        { publicId: viaDossier, visibilite: 'PRIVE' },
         { publicId: hidden, visibilite: 'PRIVE' },
       )
-      await fixtures.panier({
-        publicId: panPropag,
+      await fixtures.dossier({
+        publicId: dosPropag,
         visibilite: 'PRIVE',
-        indicateurs: [{ publicId: viaPanier }],
+        indicateurs: [{ publicId: viaDossier }],
       })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: panPropag }, action: 'READ' }],
+        dossierPermissions: [{ dossier: { publicId: dosPropag }, action: 'READ' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((i) => i.id)).toEqual([viaPanier])
+      expect(value.items.map((i) => i.id)).toEqual([viaDossier])
       expect(value.total).toBe(1)
     }),
   )
@@ -88,22 +88,22 @@ describe.concurrent('listIndicateurs', () => {
   it(
     'la propagation panier → indicateur fonctionne aussi avec WRITE sur le panier',
     integrationTest(async () => {
-      const [viaPanier] = testIndicateurIds(1)
-      const panPropag = testPanierId()
-      await fixtures.indicateur({ publicId: viaPanier, visibilite: 'PRIVE' })
-      await fixtures.panier({
-        publicId: panPropag,
+      const [viaDossier] = testIndicateurIds(1)
+      const dosPropag = testDossierId()
+      await fixtures.indicateur({ publicId: viaDossier, visibilite: 'PRIVE' })
+      await fixtures.dossier({
+        publicId: dosPropag,
         visibilite: 'PRIVE',
-        indicateurs: [{ publicId: viaPanier }],
+        indicateurs: [{ publicId: viaDossier }],
       })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: panPropag }, action: 'WRITE' }],
+        dossierPermissions: [{ dossier: { publicId: dosPropag }, action: 'WRITE' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((i) => i.id)).toEqual([viaPanier])
+      expect(value.items.map((i) => i.id)).toEqual([viaDossier])
     }),
   )
 
