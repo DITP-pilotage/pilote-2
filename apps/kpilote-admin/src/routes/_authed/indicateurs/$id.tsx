@@ -13,10 +13,16 @@ import {
 import { PageHeading } from '@/components/PageHeading'
 import { extractApiError } from '@/lib/apiError'
 import { indicateurQueryOptions } from '@/queries/indicateurs'
+import { referentielsAllQueryOptions } from '@/queries/referentiels'
+import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
 
 export const Route = createFileRoute('/_authed/indicateurs/$id')({
   loader: ({ context, params }) =>
-    context.queryClient.ensureQueryData(indicateurQueryOptions(params.id)),
+    Promise.all([
+      context.queryClient.ensureQueryData(indicateurQueryOptions(params.id)),
+      context.queryClient.ensureQueryData(referentielsAllQueryOptions()),
+      context.queryClient.ensureQueryData(utilisateursAllQueryOptions()),
+    ]),
   component: EditIndicateurComponent,
 })
 

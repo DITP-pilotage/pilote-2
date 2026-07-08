@@ -1,6 +1,12 @@
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query'
 
-import { fetchUtilisateurById, fetchUtilisateurs } from '@/api/utilisateurs'
+import { fetchAllUtilisateurs, fetchUtilisateurById, fetchUtilisateurs } from '@/api/utilisateurs'
+
+export const utilisateursAllQueryOptions = () =>
+  queryOptions({
+    queryKey: ['utilisateurs', 'all-for-select'],
+    queryFn: () => fetchAllUtilisateurs(),
+  })
 
 export const utilisateursInfiniteQueryOptions = (recherche: string) =>
   infiniteQueryOptions({
