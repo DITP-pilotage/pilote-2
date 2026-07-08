@@ -1,6 +1,6 @@
 import type {
+  GrantDossierPermissionBody,
   GrantIndicateurPermissionBody,
-  GrantPanierPermissionBody,
   PermissionActionValue,
   PrincipalPermissionsApiModel,
 } from '@pilote/kpilote-shared/permission'
@@ -38,25 +38,25 @@ export const revokeIndicateurPermission = async (params: {
   return principalPermissionsApiModelSchema.parse(json)
 }
 
-// --- Panier ------------------------------------------------------------------
+// --- Dossier -----------------------------------------------------------------
 
-export const grantPanierPermission = async (
-  body: GrantPanierPermissionBody,
+export const grantDossierPermission = async (
+  body: GrantDossierPermissionBody,
 ): Promise<PrincipalPermissionsApiModel> => {
-  const json = await bffClient.post('permissions/panier', { json: body }).json()
+  const json = await bffClient.post('permissions/dossier', { json: body }).json()
   return principalPermissionsApiModelSchema.parse(json)
 }
 
-export const revokePanierPermission = async (params: {
+export const revokeDossierPermission = async (params: {
   principalId: string
-  panierPublicId: string
+  dossierPublicId: string
   action?: PermissionActionValue
 }): Promise<PrincipalPermissionsApiModel> => {
   const searchParams: Record<string, string> = {
     principalId: params.principalId,
-    panierPublicId: params.panierPublicId,
+    dossierPublicId: params.dossierPublicId,
   }
   if (params.action) searchParams.action = params.action
-  const json = await bffClient.delete('permissions/panier', { searchParams }).json()
+  const json = await bffClient.delete('permissions/dossier', { searchParams }).json()
   return principalPermissionsApiModelSchema.parse(json)
 }
