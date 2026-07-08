@@ -199,7 +199,11 @@ export function IndicateurForm({
               />
             </div>
             <div className="flex-1">
-              <FieldSelect label="Unité du délai" {...form.register('delaiUnite')}>
+              <FieldSelect
+                label="Unité du délai"
+                error={form.formState.errors.delaiUnite?.message}
+                {...form.register('delaiUnite')}
+              >
                 <option value="">Aucune</option>
                 {UNITES_DUREE.map((unite) => (
                   <option key={unite} value={unite}>
