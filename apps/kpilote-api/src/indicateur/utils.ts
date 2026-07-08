@@ -102,6 +102,7 @@ export const toIndicateurApiModel = ({
       }))
       .sort((a, b) => a.id.localeCompare(b.id)),
     responsables: indicateur.responsables.map(({ utilisateur }) => ({
+      id: utilisateur.id,
       email: utilisateur.email,
       nom: utilisateur.nom,
       prenom: utilisateur.prenom,

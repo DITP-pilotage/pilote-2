@@ -56,6 +56,7 @@ export const toPanierApiModel = (panier: PanierWithIndicateurs): PanierApiModel 
   visibilite: panier.visibilite,
   indicateurIds: panier.indicateurs.map((lien) => lien.indicateur.publicId),
   responsables: panier.responsables.map(({ utilisateur }) => ({
+    id: utilisateur.id,
     email: utilisateur.email,
     nom: utilisateur.nom,
     prenom: utilisateur.prenom,

@@ -99,7 +99,7 @@ describe.concurrent('getPanierByPublicId', () => {
     "retourne les responsables du panier triés par ordre d'assignation",
     integrationTest(async () => {
       const panId = testPanierId()
-      await fixtures.panierResponsable({
+      const liaison = await fixtures.panierResponsable({
         panier: { publicId: panId, visibilite: 'PUBLIC' },
         utilisateur: {
           email: `resp-a-${panId}@example.com`,
@@ -115,6 +115,7 @@ describe.concurrent('getPanierByPublicId', () => {
 
       expect(result._unsafeUnwrap().responsables).toEqual([
         {
+          id: liaison.utilisateurId,
           email: `resp-a-${panId}@example.com`,
           nom: 'Martin',
           prenom: 'Alice',

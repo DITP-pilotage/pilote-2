@@ -257,7 +257,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
     "retourne tous les champs d'un responsable de l'indicateur",
     integrationTest(async () => {
       const indId = testIndicateurId()
-      await fixtures.indicateurResponsable({
+      const liaison = await fixtures.indicateurResponsable({
         indicateur: { publicId: indId, visibilite: 'PUBLIC' },
         utilisateur: {
           email: `resp-${indId}@example.com`,
@@ -273,6 +273,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
 
       expect(result._unsafeUnwrap().responsables).toEqual([
         {
+          id: liaison.utilisateurId,
           email: `resp-${indId}@example.com`,
           nom: 'Martin',
           prenom: 'Alice',
