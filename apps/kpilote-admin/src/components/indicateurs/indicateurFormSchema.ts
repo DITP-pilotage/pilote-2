@@ -44,6 +44,14 @@ export const buildIndicateurFormSchema = (mode: 'create' | 'edit') =>
         ),
       delaiUnite: z.union([z.literal(''), uniteDureeSchema]),
       referentiels: z.array(configurationIndicateurReferentielSchema),
+      responsables: z.array(
+        z.object({
+          id: z.string(),
+          nom: z.string(),
+          prenom: z.string(),
+          email: z.string(),
+        }),
+      ),
     })
     // Le délai (nombre + unité) est optionnel, mais indissociable : les deux
     // champs doivent être remplis ensemble, sinon `toUpsertBody` effacerait
@@ -80,6 +88,13 @@ export function buildInitialValues(indicateur?: IndicateurApiModel): IndicateurF
         : '',
     delaiUnite: indicateur?.delaiMiseADisposition?.unite ?? '',
     referentiels: indicateur?.referentiels ?? [],
+    responsables:
+      indicateur?.responsables.map((responsable) => ({
+        id: responsable.id,
+        nom: responsable.nom,
+        prenom: responsable.prenom,
+        email: responsable.email,
+      })) ?? [],
   }
 }
 
@@ -102,5 +117,6 @@ export function toUpsertBody(values: IndicateurFormValues): UpsertIndicateurBody
         ? null
         : { nombre: Number(values.delaiNombre), unite: values.delaiUnite },
     referentiels: values.referentiels,
+    responsables: values.responsables.map((responsable) => responsable.id),
   }
 }
