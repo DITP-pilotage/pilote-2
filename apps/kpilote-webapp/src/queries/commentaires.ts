@@ -1,4 +1,7 @@
-import { type BrouillonApiModel, type CommentaireApiModel } from '@pilote/kpilote-shared/commentaire'
+import {
+  type BrouillonApiModel,
+  type CommentaireApiModel,
+} from '@pilote/kpilote-shared/commentaire'
 import { type QueryKey, queryOptions } from '@tanstack/react-query'
 
 import {

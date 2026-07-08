@@ -1,4 +1,7 @@
-import { type CommentaireApiModel, type CreerCommentaireBody } from '@pilote/kpilote-shared/commentaire'
+import {
+  type CommentaireApiModel,
+  type CreerCommentaireBody,
+} from '@pilote/kpilote-shared/commentaire'
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 

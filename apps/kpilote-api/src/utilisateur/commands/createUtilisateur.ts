@@ -1,4 +1,7 @@
-import { type CreateUtilisateurBody, type UtilisateurApiModel } from '@pilote/kpilote-shared/utilisateur'
+import {
+  type CreateUtilisateurBody,
+  type UtilisateurApiModel,
+} from '@pilote/kpilote-shared/utilisateur'
 import { ResultAsync } from 'neverthrow'
 import { uuidv7 } from 'uuidv7'
 

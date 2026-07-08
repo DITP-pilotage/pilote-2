@@ -1,4 +1,7 @@
-import { type UpdateUtilisateurBody, type UtilisateurApiModel } from '@pilote/kpilote-shared/utilisateur'
+import {
+  type UpdateUtilisateurBody,
+  type UtilisateurApiModel,
+} from '@pilote/kpilote-shared/utilisateur'
 import { ResultAsync } from 'neverthrow'
 
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'

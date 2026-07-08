@@ -1,4 +1,7 @@
-import { type BrouillonApiModel, type RecupererBrouillonQuery } from '@pilote/kpilote-shared/commentaire'
+import {
+  type BrouillonApiModel,
+  type RecupererBrouillonQuery,
+} from '@pilote/kpilote-shared/commentaire'
 import { ResultAsync } from 'neverthrow'
 
 import { type SujetCommentaireConfig } from '@/commentaire/sujets'

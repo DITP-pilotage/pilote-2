@@ -1,10 +1,16 @@
-import { type IndicateurApiModel, indicateurApiModelSchema } from '@pilote/kpilote-shared/indicateur'
+import {
+  type IndicateurApiModel,
+  indicateurApiModelSchema,
+} from '@pilote/kpilote-shared/indicateur'
 import { type MeApiModel, meApiModelSchema } from '@pilote/kpilote-shared/me'
 import {
   type MePermissionsApiModel,
   mePermissionsApiModelSchema,
 } from '@pilote/kpilote-shared/mePermissions'
-import { type ReferentielApiModel, referentielApiModelSchema } from '@pilote/kpilote-shared/referentiel'
+import {
+  type ReferentielApiModel,
+  referentielApiModelSchema,
+} from '@pilote/kpilote-shared/referentiel'
 
 export const buildMe = (override: Partial<MeApiModel> = {}): MeApiModel =>
   meApiModelSchema.parse({

@@ -1,4 +1,7 @@
-import { type IndividuListApiModel, individuListApiModelSchema } from '@pilote/kpilote-shared/individu'
+import {
+  type IndividuListApiModel,
+  individuListApiModelSchema,
+} from '@pilote/kpilote-shared/individu'
 import {
   type ReferentielApiModel,
   referentielApiModelSchema,
