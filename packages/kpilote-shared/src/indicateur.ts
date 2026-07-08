@@ -295,5 +295,12 @@ export const upsertIndicateurBodySchema = z.object({
         'Tableau vide pour aucun référentiel. Doublons silencieusement dédupliqués sur `id` ; ' +
         "en cas de fonctions différentes, la dernière occurrence l'emporte.",
     ),
+  responsables: z
+    .array(z.string().uuid())
+    .optional()
+    .describe(
+      'UUIDs des utilisateurs responsables (replace-all quand présent). ' +
+        'Champ optionnel : absent = inchangé ; `[]` = aucun responsable. Doublons dédupliqués.',
+    ),
 })
 export type UpsertIndicateurBody = z.infer<typeof upsertIndicateurBodySchema>
