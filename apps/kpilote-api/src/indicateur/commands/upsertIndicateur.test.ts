@@ -616,14 +616,14 @@ describe.concurrent('upsertIndicateur', () => {
         upsertIndicateur(indId, { ...BODY_BASE, responsables: [userA.id] }),
       )
       const avant = await db().indicateurResponsable.findFirstOrThrow({
-        where: { utilisateurId: userA.id },
+        where: { utilisateurId: userA.id, indicateur: { publicId: indId } },
       })
 
       await runAsAdmin(apiKey.id, () =>
         upsertIndicateur(indId, { ...BODY_BASE, responsables: [userA.id, userB.id] }),
       )
       const apres = await db().indicateurResponsable.findFirstOrThrow({
-        where: { utilisateurId: userA.id },
+        where: { utilisateurId: userA.id, indicateur: { publicId: indId } },
       })
 
       expect(apres.createdAt).toEqual(avant.createdAt)

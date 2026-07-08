@@ -13,7 +13,14 @@ import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
 // est une clé générée par react-hook-form).
 export function AdminResponsables() {
   const form = useIndicateurFormContext()
-  const { fields, append, remove } = useFieldArray({ control: form.control, name: 'responsables' })
+  // `keyName: 'fieldId'` : sans ça, react-hook-form écrase le champ métier `id`
+  // (UUID utilisateur) par sa clé interne dans `fields`. On garde donc `id` = UUID
+  // utilisateur, et `fieldId` = clé stable pour la prop `key`.
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: 'responsables',
+    keyName: 'fieldId',
+  })
   const responsablesSelectionnes = useWatch({ control: form.control, name: 'responsables' })
   const { data: utilisateurs } = useSuspenseQuery(utilisateursAllQueryOptions())
 
@@ -59,7 +66,7 @@ export function AdminResponsables() {
       <ul className="mt-3 space-y-2">
         {fields.map((responsable, index) => (
           <li
-            key={responsable.id}
+            key={responsable.fieldId}
             className="flex items-center justify-between rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm"
           >
             <span>
