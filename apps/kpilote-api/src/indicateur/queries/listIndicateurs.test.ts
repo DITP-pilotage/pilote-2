@@ -60,7 +60,7 @@ describe.concurrent('listIndicateurs', () => {
   )
 
   it(
-    'propage READ via les permissions panier : un principal qui a accès à un panier voit ses indicateurs PRIVE',
+    'propage READ via les permissions dossier : un principal qui a accès à un dossier voit ses indicateurs PRIVE',
     integrationTest(async () => {
       const [viaDossier, hidden] = testIndicateurIds(2)
       const dosPropag = testDossierId()
@@ -86,7 +86,7 @@ describe.concurrent('listIndicateurs', () => {
   )
 
   it(
-    'la propagation panier → indicateur fonctionne aussi avec WRITE sur le panier',
+    'la propagation dossier → indicateur fonctionne aussi avec WRITE sur le dossier',
     integrationTest(async () => {
       const [viaDossier] = testIndicateurIds(1)
       const dosPropag = testDossierId()

@@ -18,7 +18,7 @@ describe.concurrent('getPrincipalPermissions', () => {
       const ind1 = await fixtures.indicateur({ nom: 'Indic 1' })
       const ind2 = await fixtures.indicateur({ nom: 'Indic 2' })
       const pan = await fixtures.dossier({
-        nom: 'Panier',
+        nom: 'Dossier',
         indicateurs: [{ publicId: ind2.publicId }],
       })
       await fixtures.indicateurPermission({
@@ -35,7 +35,7 @@ describe.concurrent('getPrincipalPermissions', () => {
       const result = await runAsAdmin(CALLER_ID, () => getPrincipalPermissions(target.id))
       const model = result._unsafeUnwrap()
 
-      expect(model.dossiers).toEqual([{ publicId: pan.publicId, nom: 'Panier', actions: ['READ'] }])
+      expect(model.dossiers).toEqual([{ publicId: pan.publicId, nom: 'Dossier', actions: ['READ'] }])
       expect(model.indicateurs).toEqual([
         { publicId: ind1.publicId, nom: 'Indic 1', actions: ['WRITE'] },
       ])
@@ -44,7 +44,7 @@ describe.concurrent('getPrincipalPermissions', () => {
           publicId: ind2.publicId,
           nom: 'Indic 2',
           viaDossierPublicId: pan.publicId,
-          viaDossierNom: 'Panier',
+          viaDossierNom: 'Dossier',
         },
       ])
     }),
@@ -54,7 +54,7 @@ describe.concurrent('getPrincipalPermissions', () => {
     "n'expose pas un indicateur en hérité s'il est déjà direct",
     integrationTest(async () => {
       const target = await fixtures.utilisateur({})
-      const ind = await fixtures.indicateur({ nom: 'Direct et dans panier' })
+      const ind = await fixtures.indicateur({ nom: 'Direct et dans dossier' })
       const pan = await fixtures.dossier({ nom: 'P', indicateurs: [{ publicId: ind.publicId }] })
       await fixtures.dossierPermission({
         principalId: target.id,
@@ -71,7 +71,7 @@ describe.concurrent('getPrincipalPermissions', () => {
       const model = result._unsafeUnwrap()
 
       expect(model.indicateurs).toEqual([
-        { publicId: ind.publicId, nom: 'Direct et dans panier', actions: ['WRITE'] },
+        { publicId: ind.publicId, nom: 'Direct et dans dossier', actions: ['WRITE'] },
       ])
       expect(model.indicateursHerites).toEqual([])
     }),

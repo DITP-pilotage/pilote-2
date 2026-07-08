@@ -1,20 +1,20 @@
-# Paniers d'indicateurs — design
+# Dossiers d'indicateurs — design
 
 Date : 2026-05-27
 Statut : proposé
 
 ## Contexte
 
-Besoin produit : regrouper des indicateurs en collections nommées (« paniers »)
+Besoin produit : regrouper des indicateurs en collections nommées (« dossiers »)
 pour les exposer côté front, typiquement pour qu'un utilisateur navigue d'une
 sélection thématique vers les indicateurs qui la composent.
 
 Périmètre v0 délibérément minimaliste :
 
-- Pas de création/édition côté API. Les paniers sont **créés par seed**
+- Pas de création/édition côté API. Les dossiers sont **créés par seed**
   uniquement.
 - Lecture exposée via API publique (liste paginée + détail).
-- Affichage côté front : entrée « Paniers » dans la top bar, page liste,
+- Affichage côté front : entrée « Dossiers » dans la top bar, page liste,
   page détail réutilisant la grid d'indicateurs existante.
 
 ## État de l'existant
@@ -35,37 +35,37 @@ Périmètre v0 délibérément minimaliste :
 
 ## Décisions
 
-### D1. Paniers globaux, pas de scope
+### D1. Dossiers globaux, pas de scope
 
-Un panier n'appartient ni à une organisation, ni à un référentiel, ni à un
-principal. Tout principal authentifié peut lister et lire tous les paniers.
+Un dossier n'appartient ni à une organisation, ni à un référentiel, ni à un
+principal. Tout principal authentifié peut lister et lire tous les dossiers.
 
-### D2. Modèle de permissions sur le panier (révisé)
+### D2. Modèle de permissions sur le dossier (révisé)
 
-**Statut : implémenté.** Initialement reporté à plus tard, le besoin de paniers
+**Statut : implémenté.** Initialement reporté à plus tard, le besoin de dossiers
 privés est arrivé immédiatement après la mise en production v0. Le modèle
 reprend point pour point le pattern indicateur :
 
 - Champ `visibilite: Visibilite` (PUBLIC / PRIVE) sur `Panier`.
-- Table `PanierPermission(principalId, panierId, action)` avec `action ∈
+- Table `DossierPermission(principalId, panierId, action)` avec `action ∈
   {READ, WRITE}`, PK composite, index sur `principalId`.
-- Helper `withPanierReadPermission(where, principalId)` appliqué dans
-  `listPaniers` et `getPanierByPublicId`.
+- Helper `withDossierReadPermission(where, principalId)` appliqué dans
+  `listDossiers` et `getDossierByPublicId`.
 - **Propagation panier → indicateurs** : un principal qui a READ ou WRITE sur
-  un panier obtient automatiquement READ sur tous ses indicateurs (la clause
-  `withIndicateurReadPermission` ajoute un branche OR via `paniers.some`). Le
+  un dossier obtient automatiquement READ sur tous ses indicateurs (la clause
+  `withIndicateurReadPermission` ajoute un branche OR via `dossiers.some`). Le
   WRITE indicateur reste exclusivement direct.
 
 Détails et invariants généraux : voir `permissions-design.md`.
 
 ### D3. Composition N-N via join table, ordre par `createdAt`
 
-Table de jonction `PanierIndicateur(panierId, indicateurId, createdAt)`.
-L'ordre d'affichage des indicateurs dans un panier = `createdAt ASC` de la
+Table de jonction `DossierIndicateur(panierId, indicateurId, createdAt)`.
+L'ordre d'affichage des indicateurs dans un dossier = `createdAt ASC` de la
 ligne de jonction, c'est-à-dire **l'ordre d'insertion au seed**. Pas de champ
 `position` explicite.
 
-Un même indicateur peut appartenir à plusieurs paniers.
+Un même indicateur peut appartenir à plusieurs dossiers.
 
 ### D4. `publicId` lisible `PAN-XXX`
 
@@ -74,7 +74,7 @@ Format `PAN-001`, `PAN-002`, etc. Généré côté seed (cohérent avec `IND-XXX
 
 ### D5. Pas de création par API en v0
 
-Pas d'endpoint `POST/PUT/DELETE /paniers`. Cycle de vie 100% via
+Pas d'endpoint `POST/PUT/DELETE /dossiers`. Cycle de vie 100% via
 `prisma/seed.ts`. À introduire plus tard quand un cas d'usage explicite
 arrive (admin UI, intégration externe).
 

@@ -41,7 +41,7 @@ describe.concurrent('listerMesPermissions', () => {
   )
 
   it(
-    'inclut les permissions directes sur les paniers et les indicateurs',
+    'inclut les permissions directes sur les dossiers et les indicateurs',
     integrationTest(async () => {
       const dossierId = testDossierId()
       const [indicateurId] = testIndicateurIds(1)
@@ -80,7 +80,7 @@ describe.concurrent('listerMesPermissions', () => {
   )
 
   it(
-    'propage READ panier → READ sur tous ses indicateurs (depuis READ ou WRITE panier)',
+    'propage READ dossier → READ sur tous ses indicateurs (depuis READ ou WRITE dossier)',
     integrationTest(async () => {
       const dossierWriteId = testDossierId()
       const dossierReadId = testDossierId()
@@ -101,7 +101,7 @@ describe.concurrent('listerMesPermissions', () => {
 
       const result = await runAsPrincipal(apiKey.id, () => listerMesPermissions())
 
-      // Les 3 indicateurs liés sont propagés en READ. WRITE panier ne propage jamais WRITE.
+      // Les 3 indicateurs liés sont propagés en READ. WRITE dossier ne propage jamais WRITE.
       const indicateurs = result._unsafeUnwrap().indicateurs
       expect(indicateurs).toEqual(
         [
@@ -114,7 +114,7 @@ describe.concurrent('listerMesPermissions', () => {
   )
 
   it(
-    'fusionne une permission directe et la propagation panier en une seule entrée dédupliquée',
+    'fusionne une permission directe et la propagation dossier en une seule entrée dédupliquée',
     integrationTest(async () => {
       const dossierId = testDossierId()
       const [indicateurId] = testIndicateurIds(1)
@@ -126,7 +126,7 @@ describe.concurrent('listerMesPermissions', () => {
 
       const result = await runAsPrincipal(apiKey.id, () => listerMesPermissions())
 
-      // READ direct + READ propagé via panierWrite → une seule entrée, pas de doublon.
+      // READ direct + READ propagé via dossierWrite → une seule entrée, pas de doublon.
       expect(result._unsafeUnwrap().indicateurs).toEqual([{ id: indicateurId, actions: ['READ'] }])
     }),
   )
@@ -151,7 +151,7 @@ describe.concurrent('listerMesPermissions', () => {
   )
 
   it(
-    'trie paniers et indicateurs par id ASC indépendamment de l’ordre de création',
+    "trie dossiers et indicateurs par id ASC indépendamment de l’ordre de création",
     integrationTest(async () => {
       const indicateurs = testIndicateurIds(3) // tuple trié ASC
       const dossiers = [testDossierId(), testDossierId(), testDossierId()].sort()

@@ -307,7 +307,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
   )
 
   it(
-    'expose les responsables via une permission READ propagée par un panier',
+    'expose les responsables via une permission READ propagée par un dossier',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const dosId = testDossierId()

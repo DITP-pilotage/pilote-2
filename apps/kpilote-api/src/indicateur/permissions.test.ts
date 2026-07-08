@@ -74,7 +74,7 @@ describe.concurrent('withIndicateurReadPermission', () => {
   )
 
   it(
-    'propage READ depuis un panier (action READ sur le panier)',
+    'propage READ depuis un dossier (action READ sur le dossier)',
     integrationTest(async () => {
       const [viaDossier] = testIndicateurIds(1)
       const panRpropR = testDossierId()
@@ -95,7 +95,7 @@ describe.concurrent('withIndicateurReadPermission', () => {
   )
 
   it(
-    'propage READ depuis un panier (action WRITE sur le panier)',
+    'propage READ depuis un dossier (action WRITE sur le dossier)',
     integrationTest(async () => {
       const [viaDossier] = testIndicateurIds(1)
       const panRpropW = testDossierId()
@@ -116,7 +116,7 @@ describe.concurrent('withIndicateurReadPermission', () => {
   )
 
   it(
-    "ne propage rien depuis un panier auquel le principal n'a pas accès",
+    "ne propage rien depuis un dossier auquel le principal n'a pas accès",
     integrationTest(async () => {
       const [hidden] = testIndicateurIds(1)
       const panRpropNone = testDossierId()
@@ -221,7 +221,7 @@ describe.concurrent('ensureIndicateurWritePermission', () => {
   )
 
   it(
-    "rejette même si le principal a WRITE sur un panier qui contient l'indicateur (WRITE indicateur reste direct, pas de propagation)",
+    "rejette même si le principal a WRITE sur un dossier qui contient l'indicateur (WRITE indicateur reste direct, pas de propagation)",
     integrationTest(async () => {
       const [viaDossier] = testIndicateurIds(1)
       const panWpropNo = testDossierId()
