@@ -11,18 +11,18 @@ const CALLER_ID = '00000000-0000-0000-0000-0000000000a1'
 
 describe.concurrent('revokeDossierPermission', () => {
   it(
-    'retire toutes les actions du panier quand action est omise',
+    'retire toutes les actions du dossier quand action est omise',
     integrationTest(async () => {
       const target = await fixtures.utilisateur({})
-      const pan = await fixtures.dossier({})
+      const dos = await fixtures.dossier({})
       await fixtures.dossierPermission({
         principalId: target.id,
-        dossier: { publicId: pan.publicId },
+        dossier: { publicId: dos.publicId },
         action: PermissionAction.READ,
       })
 
       const result = await runAsAdmin(CALLER_ID, () =>
-        revokeDossierPermission({ principalId: target.id, dossierPublicId: pan.publicId }),
+        revokeDossierPermission({ principalId: target.id, dossierPublicId: dos.publicId }),
       )
 
       expect(result._unsafeUnwrap().dossiers).toEqual([])
@@ -33,12 +33,12 @@ describe.concurrent('revokeDossierPermission', () => {
     'rejette une clé non-ADMIN (ForbiddenError)',
     integrationTest(async () => {
       const target = await fixtures.utilisateur({})
-      const pan = await fixtures.dossier({})
+      const dos = await fixtures.dossier({})
       await expect(
         runAsContributor(CALLER_ID, () =>
           revokeDossierPermission({
             principalId: target.id,
-            dossierPublicId: pan.publicId,
+            dossierPublicId: dos.publicId,
             action: 'READ',
           }),
         ),

@@ -665,8 +665,8 @@ const main = async () => {
   // Objectifs d'avancement : indicateurs avec une maille de saisie connue —
   // 3 dates-cibles annuelles (2024, 2025, 2026) × individus de la maille.
   // - IND-001..005 : indicateurs PRIVE de démonstration (ditp.admin a accès).
-  // - IND-046..050 : indicateurs PUBLIC, indispensables pour que les paniers
-  //   publics (PAN-001..004) exposent un taux de progression calculable à tout
+  // - IND-046..050 : indicateurs PUBLIC, indispensables pour que les dossiers
+  //   publics (DOS-001..004) exposent un taux de progression calculable à tout
   //   utilisateur authentifié.
   const INDICATEURS_OBJECTIFS = [
     'IND-001',
@@ -719,20 +719,20 @@ const main = async () => {
     objectifsCount += result.count
   }
 
-  // Paniers d'indicateurs : collections thématiques pour le front. L'ordre
+  // Dossiers d'indicateurs : collections thématiques pour le front. L'ordre
   // du tableau `indicateurPublicIds` détermine l'ordre d'affichage (via createdAt
   // ASC de la jonction).
   //
   // Visibilité (cf. docs/architecture/permissions-design.md) :
   // - PUBLIC : visible à tout principal authentifié ;
   // - PRIVE : visible uniquement aux principals avec une permission explicite
-  //   sur le panier (et propage READ sur ses indicateurs).
+  //   sur le dossier (et propage READ sur ses indicateurs).
   //
-  // PAN-001..004 restent PUBLIC pour conserver le comportement antérieur (les
+  // DOS-001..004 restent PUBLIC pour conserver le comportement antérieur (les
   // 5 indicateurs IND-046..050 sont eux-mêmes PUBLIC, donc accessibles à tous).
-  // PAN-005 est PRIVE et contient des indicateurs PRIVE (IND-001..003) : il
-  // démontre la propagation panier → indicateur (un principal qui a accès à
-  // PAN-005 voit IND-001..003 même sans permission directe sur eux).
+  // DOS-005 est PRIVE et contient des indicateurs PRIVE (IND-001..003) : il
+  // démontre la propagation dossier → indicateur (un principal qui a accès à
+  // DOS-005 voit IND-001..003 même sans permission directe sur eux).
   const dossiersSeed: ReadonlyArray<{
     publicId: string
     nom: string
@@ -770,8 +770,8 @@ const main = async () => {
     },
     {
       publicId: 'DOS-005',
-      nom: 'Panier admin — économie',
-      description: 'Panier privé démontrant la propagation READ vers ses indicateurs.',
+      nom: 'Dossier admin — économie',
+      description: 'Dossier privé démontrant la propagation READ vers ses indicateurs.',
       visibilite: 'PRIVE',
       indicateurPublicIds: ['IND-001', 'IND-002', 'IND-003'],
     },
@@ -817,8 +817,8 @@ const main = async () => {
     0,
   )
 
-  // Permissions panier : on accorde READ + WRITE à ditp.admin sur PAN-005
-  // (le panier privé). Comme PAN-005 contient des indicateurs PRIVE
+  // Permissions dossier : on accorde READ + WRITE à ditp.admin sur DOS-005
+  // (le dossier privé). Comme DOS-005 contient des indicateurs PRIVE
   // (IND-001..003) sur lesquels ditp.admin a déjà des permissions directes
   // (cf. boucle indicateursSeed.slice(0, 8) plus haut), la propagation
   // n'apporte rien ici en pratique pour ditp.admin — c'est volontaire : la
@@ -844,7 +844,7 @@ const main = async () => {
   }
   const dossierPermissionsCount = 2
 
-  // Responsables panier : ditp.admin et claire.dupont sont responsables de PAN-005.
+  // Responsables dossier : ditp.admin et claire.dupont sont responsables de DOS-005.
   const pan005 = dossiersByPublicId.get('DOS-005')!
   const pan004 = dossiersByPublicId.get('DOS-004')!
   const claireDupont = await prisma.utilisateur.findUniqueOrThrow({

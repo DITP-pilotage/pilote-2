@@ -15,7 +15,7 @@ describe('filtreParType', () => {
     })
   })
 
-  it("n'inclut que le satellite panier pour OBJECTIF (seul enum à le contenir)", () => {
+  it("n'inclut que le satellite dossier pour OBJECTIF (seul enum à le contenir)", () => {
     expect(filtreParType('OBJECTIF')).toEqual({
       OR: [{ dossier: { type: 'OBJECTIF' } }],
     })

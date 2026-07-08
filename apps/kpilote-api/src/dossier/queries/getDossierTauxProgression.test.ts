@@ -11,18 +11,18 @@ describe.concurrent('getDossierTauxProgression', () => {
     'retourne null avec contributions vides pour un dossier vide',
     integrationTest(async () => {
       await fixtures.dossier({
-        publicId: 'PAN-PROG-EMPTY',
+        publicId: 'DOS-PROG-EMPTY',
         visibilite: 'PUBLIC',
       })
       const deptId = testDeptId()
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getDossierTauxProgression('PAN-PROG-EMPTY', { individu: deptId }),
+        getDossierTauxProgression('DOS-PROG-EMPTY', { individu: deptId }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        dossier: 'PAN-PROG-EMPTY',
+        dossier: 'DOS-PROG-EMPTY',
         individu: deptId,
         tauxProgression: null,
         contributions: [],
@@ -75,14 +75,14 @@ describe.concurrent('getDossierTauxProgression', () => {
       })
 
       await fixtures.dossier({
-        publicId: 'PAN-PROG-OK',
+        publicId: 'DOS-PROG-OK',
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indA }, { publicId: indB }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getDossierTauxProgression('PAN-PROG-OK', { individu: deptId }),
+        getDossierTauxProgression('DOS-PROG-OK', { individu: deptId }),
       )
 
       const data = result._unsafeUnwrap()
@@ -132,14 +132,14 @@ describe.concurrent('getDossierTauxProgression', () => {
       })
 
       await fixtures.dossier({
-        publicId: 'PAN-PROG-NO-OBJ',
+        publicId: 'DOS-PROG-NO-OBJ',
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indOk }, { publicId: indSansObjectif }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getDossierTauxProgression('PAN-PROG-NO-OBJ', { individu: deptId }),
+        getDossierTauxProgression('DOS-PROG-NO-OBJ', { individu: deptId }),
       )
 
       const data = result._unsafeUnwrap()
@@ -189,14 +189,14 @@ describe.concurrent('getDossierTauxProgression', () => {
       })
 
       await fixtures.dossier({
-        publicId: 'PAN-PROG-NO-VAL',
+        publicId: 'DOS-PROG-NO-VAL',
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indOk }, { publicId: indSansValeur }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getDossierTauxProgression('PAN-PROG-NO-VAL', { individu: deptId }),
+        getDossierTauxProgression('DOS-PROG-NO-VAL', { individu: deptId }),
       )
 
       const data = result._unsafeUnwrap()
@@ -235,14 +235,14 @@ describe.concurrent('getDossierTauxProgression', () => {
       })
 
       await fixtures.dossier({
-        publicId: 'PAN-PROG-ZERO',
+        publicId: 'DOS-PROG-ZERO',
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indZero }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getDossierTauxProgression('PAN-PROG-ZERO', { individu: deptId }),
+        getDossierTauxProgression('DOS-PROG-ZERO', { individu: deptId }),
       )
 
       const data = result._unsafeUnwrap()
@@ -286,14 +286,14 @@ describe.concurrent('getDossierTauxProgression', () => {
       })
 
       await fixtures.dossier({
-        publicId: 'PAN-PROG-HIST',
+        publicId: 'DOS-PROG-HIST',
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indH }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getDossierTauxProgression('PAN-PROG-HIST', { individu: deptId }),
+        getDossierTauxProgression('DOS-PROG-HIST', { individu: deptId }),
       )
 
       const data = result._unsafeUnwrap()
@@ -313,7 +313,7 @@ describe.concurrent('getDossierTauxProgression', () => {
       const indA = testIndicateurId()
       await fixtures.indicateur({ publicId: indA })
       await fixtures.dossier({
-        publicId: 'PAN-PROG-INCONNU',
+        publicId: 'DOS-PROG-INCONNU',
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indA }],
       })
@@ -321,7 +321,7 @@ describe.concurrent('getDossierTauxProgression', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          getDossierTauxProgression('PAN-PROG-INCONNU', { individu: 'DEPT-INCONNU' }),
+          getDossierTauxProgression('DOS-PROG-INCONNU', { individu: 'DEPT-INCONNU' }),
         ),
       ).rejects.toThrow()
     }),
@@ -331,14 +331,14 @@ describe.concurrent('getDossierTauxProgression', () => {
     'lève une erreur sur un dossier PRIVE sans permission',
     integrationTest(async () => {
       await fixtures.dossier({
-        publicId: 'PAN-PROG-PRIV',
+        publicId: 'DOS-PROG-PRIV',
         visibilite: 'PRIVE',
       })
       const apiKey = await fixtures.apiKey()
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          getDossierTauxProgression('PAN-PROG-PRIV', { individu: testDeptId() }),
+          getDossierTauxProgression('DOS-PROG-PRIV', { individu: testDeptId() }),
         ),
       ).rejects.toThrow()
     }),
@@ -367,16 +367,16 @@ describe.concurrent('getDossierTauxProgression', () => {
         valeurCible: 100,
       })
       await fixtures.dossier({
-        publicId: 'PAN-PROG-PRIV-OK',
+        publicId: 'DOS-PROG-PRIV-OK',
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: indA }],
       })
       const apiKey = await fixtures.apiKey({
-        dossierPermissions: [{ dossier: { publicId: 'PAN-PROG-PRIV-OK' }, action: 'READ' }],
+        dossierPermissions: [{ dossier: { publicId: 'DOS-PROG-PRIV-OK' }, action: 'READ' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        getDossierTauxProgression('PAN-PROG-PRIV-OK', { individu: deptId }),
+        getDossierTauxProgression('DOS-PROG-PRIV-OK', { individu: deptId }),
       )
 
       expect(result._unsafeUnwrap().tauxProgression).toBe(25)

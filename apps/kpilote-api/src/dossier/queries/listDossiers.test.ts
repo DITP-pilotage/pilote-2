@@ -122,7 +122,7 @@ describe.concurrent('listDossiers', () => {
   )
 
   it(
-    'pagine quand le nombre de paniers dépasse la taille de page',
+    'pagine quand le nombre de dossiers dépasse la taille de page',
     integrationTest(async () => {
       // Ordre de création = ordre attendu (orderBy id interne uuidv7).
       const panPage1 = testDossierId()

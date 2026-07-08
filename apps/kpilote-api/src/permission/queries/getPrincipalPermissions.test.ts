@@ -17,7 +17,7 @@ describe.concurrent('getPrincipalPermissions', () => {
       const target = await fixtures.utilisateur({})
       const ind1 = await fixtures.indicateur({ nom: 'Indic 1' })
       const ind2 = await fixtures.indicateur({ nom: 'Indic 2' })
-      const pan = await fixtures.dossier({
+      const dos = await fixtures.dossier({
         nom: 'Dossier',
         indicateurs: [{ publicId: ind2.publicId }],
       })
@@ -28,14 +28,14 @@ describe.concurrent('getPrincipalPermissions', () => {
       })
       await fixtures.dossierPermission({
         principalId: target.id,
-        dossier: { publicId: pan.publicId },
+        dossier: { publicId: dos.publicId },
         action: PermissionAction.READ,
       })
 
       const result = await runAsAdmin(CALLER_ID, () => getPrincipalPermissions(target.id))
       const model = result._unsafeUnwrap()
 
-      expect(model.dossiers).toEqual([{ publicId: pan.publicId, nom: 'Dossier', actions: ['READ'] }])
+      expect(model.dossiers).toEqual([{ publicId: dos.publicId, nom: 'Dossier', actions: ['READ'] }])
       expect(model.indicateurs).toEqual([
         { publicId: ind1.publicId, nom: 'Indic 1', actions: ['WRITE'] },
       ])
@@ -43,7 +43,7 @@ describe.concurrent('getPrincipalPermissions', () => {
         {
           publicId: ind2.publicId,
           nom: 'Indic 2',
-          viaDossierPublicId: pan.publicId,
+          viaDossierPublicId: dos.publicId,
           viaDossierNom: 'Dossier',
         },
       ])
@@ -55,10 +55,10 @@ describe.concurrent('getPrincipalPermissions', () => {
     integrationTest(async () => {
       const target = await fixtures.utilisateur({})
       const ind = await fixtures.indicateur({ nom: 'Direct et dans dossier' })
-      const pan = await fixtures.dossier({ nom: 'P', indicateurs: [{ publicId: ind.publicId }] })
+      const dos = await fixtures.dossier({ nom: 'P', indicateurs: [{ publicId: ind.publicId }] })
       await fixtures.dossierPermission({
         principalId: target.id,
-        dossier: { publicId: pan.publicId },
+        dossier: { publicId: dos.publicId },
         action: PermissionAction.READ,
       })
       await fixtures.indicateurPermission({
