@@ -56,8 +56,12 @@ describe.concurrent('getIndicateurByPublicId', () => {
         sourceUrl: null,
         periodeMiseAJour: null,
         jourMiseAJour: null,
+        delaiMiseADisposition: null,
         referentiels: referentielsTries,
         responsables: [],
+        dateDerniereValeur: null,
+        dateProchaineValeur: null,
+        dateMiseADisposition: null,
         createdAt: indicateur.createdAt.toISOString(),
         updatedAt: indicateur.updatedAt.toISOString(),
       })
@@ -109,6 +113,43 @@ describe.concurrent('getIndicateurByPublicId', () => {
       expect(indicateur.sourceUrl).toBe('https://www.insee.fr/source')
       expect(indicateur.periodeMiseAJour).toBe('TRIMESTRIELLE')
       expect(indicateur.jourMiseAJour).toBe(15)
+    }),
+  )
+
+  it(
+    'calcule les dates dérivées (dernière valeur, prochaine valeur, mise à disposition)',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      await fixtures.valeurAvancement(
+        {
+          indicateur: {
+            publicId: indId,
+            periodeMiseAJour: 'ANNUELLE',
+            delaiMiseADispositionNombre: 6,
+            delaiMiseADispositionUnite: 'MOIS',
+          },
+          individu: {},
+          date: '2022-12-01',
+          valeur: 5,
+        },
+        {
+          indicateur: { publicId: indId },
+          individu: {},
+          date: '2023-12-01',
+          valeur: 10,
+        },
+      )
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+      })
+
+      const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
+      const indicateur = result._unsafeUnwrap()
+
+      expect(indicateur.delaiMiseADisposition).toEqual({ nombre: 6, unite: 'MOIS' })
+      expect(indicateur.dateDerniereValeur).toBe('2023-12-01')
+      expect(indicateur.dateProchaineValeur).toBe('2024-12-01')
+      expect(indicateur.dateMiseADisposition).toBe('2025-06-01')
     }),
   )
 

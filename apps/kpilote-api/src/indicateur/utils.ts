@@ -1,9 +1,13 @@
 import {
+  type DelaiMiseADisposition,
   type IndicateurApiModel,
+  type UniteDuree,
   type UniteIndicateurApiModel,
   type UniteIndicateurCode,
   UNITES_INDICATEUR_CONFIG,
 } from '@pilote/kpilote-shared/indicateur'
+
+import { computeDatesMiseADisposition } from '@/indicateur/datesMiseADisposition'
 
 import { type FonctionAgregation, type UniteIndicateur } from '@/generated/prisma/enums'
 import {
@@ -52,33 +56,62 @@ const toUniteIndicateurApiModel = (
   return { code, libelle: config.libelle, abbreviation: config.abbreviation }
 }
 
-export const toIndicateurApiModel = (
-  indicateur: IndicateurWithReferentiels,
-): IndicateurApiModel => ({
-  id: indicateur.publicId,
-  nom: indicateur.nom,
-  visibilite: indicateur.visibilite,
-  unite: toUniteIndicateurApiModel(indicateur.unite),
-  description: indicateur.description,
-  methodeCalcul: indicateur.methodeCalcul,
-  sourceDonnees: indicateur.sourceDonnees,
-  sourceUrl: indicateur.sourceUrl,
-  periodeMiseAJour: indicateur.periodeMiseAJour,
-  jourMiseAJour: indicateur.jourMiseAJour,
-  referentiels: indicateur.referentiels
-    .map((configuration) => ({
-      id: configuration.referentiel.publicId,
-      nom: configuration.referentiel.nom,
-      fonctionAgregation: configuration.fonctionAgregation,
-    }))
-    .sort((a, b) => a.id.localeCompare(b.id)),
-  responsables: indicateur.responsables.map(({ utilisateur }) => ({
-    email: utilisateur.email,
-    nom: utilisateur.nom,
-    prenom: utilisateur.prenom,
-    service: utilisateur.service,
-    fonction: utilisateur.fonction,
-  })),
-  createdAt: indicateur.createdAt.toISOString(),
-  updatedAt: indicateur.updatedAt.toISOString(),
-})
+// Recompose le délai stocké en deux colonnes (nombre + unité) en objet, ou
+// `null` si l'un des deux manque (invariant les-deux-ou-aucun garanti à l'écriture).
+const toDelaiMiseADisposition = (indicateur: {
+  delaiMiseADispositionNombre: number | null
+  delaiMiseADispositionUnite: UniteDuree | null
+}): DelaiMiseADisposition | null =>
+  indicateur.delaiMiseADispositionNombre !== null && indicateur.delaiMiseADispositionUnite !== null
+    ? {
+        nombre: indicateur.delaiMiseADispositionNombre,
+        unite: indicateur.delaiMiseADispositionUnite,
+      }
+    : null
+
+export const toIndicateurApiModel = ({
+  indicateur,
+  dateDerniereValeur,
+}: {
+  indicateur: IndicateurWithReferentiels
+  dateDerniereValeur: string | null
+}): IndicateurApiModel => {
+  const delaiMiseADisposition = toDelaiMiseADisposition(indicateur)
+  const dates = computeDatesMiseADisposition({
+    dateDerniereValeur,
+    periodeMiseAJour: indicateur.periodeMiseAJour,
+    delai: delaiMiseADisposition,
+  })
+  return {
+    id: indicateur.publicId,
+    nom: indicateur.nom,
+    visibilite: indicateur.visibilite,
+    unite: toUniteIndicateurApiModel(indicateur.unite),
+    description: indicateur.description,
+    methodeCalcul: indicateur.methodeCalcul,
+    sourceDonnees: indicateur.sourceDonnees,
+    sourceUrl: indicateur.sourceUrl,
+    periodeMiseAJour: indicateur.periodeMiseAJour,
+    jourMiseAJour: indicateur.jourMiseAJour,
+    delaiMiseADisposition,
+    referentiels: indicateur.referentiels
+      .map((configuration) => ({
+        id: configuration.referentiel.publicId,
+        nom: configuration.referentiel.nom,
+        fonctionAgregation: configuration.fonctionAgregation,
+      }))
+      .sort((a, b) => a.id.localeCompare(b.id)),
+    responsables: indicateur.responsables.map(({ utilisateur }) => ({
+      email: utilisateur.email,
+      nom: utilisateur.nom,
+      prenom: utilisateur.prenom,
+      service: utilisateur.service,
+      fonction: utilisateur.fonction,
+    })),
+    dateDerniereValeur: dates.dateDerniereValeur,
+    dateProchaineValeur: dates.dateProchaineValeur,
+    dateMiseADisposition: dates.dateMiseADisposition,
+    createdAt: indicateur.createdAt.toISOString(),
+    updatedAt: indicateur.updatedAt.toISOString(),
+  }
+}

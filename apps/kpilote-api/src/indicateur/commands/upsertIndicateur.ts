@@ -120,6 +120,10 @@ const metadonneesData = (body: UpsertIndicateurBody) => ({
   ...(body.sourceUrl !== undefined && { sourceUrl: body.sourceUrl }),
   ...(body.periodeMiseAJour !== undefined && { periodeMiseAJour: body.periodeMiseAJour }),
   ...(body.jourMiseAJour !== undefined && { jourMiseAJour: body.jourMiseAJour }),
+  ...(body.delaiMiseADisposition !== undefined && {
+    delaiMiseADispositionNombre: body.delaiMiseADisposition?.nombre ?? null,
+    delaiMiseADispositionUnite: body.delaiMiseADisposition?.unite ?? null,
+  }),
 })
 
 const updateIndicateurExistant = async (
