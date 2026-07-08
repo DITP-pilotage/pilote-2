@@ -19,7 +19,7 @@ importers:
 
   .: {}
 
-  apps/mb-admin:
+  apps/kpilote-admin:
     dependencies:
       '@hono/node-server':
         specifier: '>=1.19.13'
@@ -27,9 +27,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.4.0
         version: 5.4.0(react-hook-form@7.79.0(react@19.2.5))
-      '@pilote/mb-shared':
+      '@pilote/kpilote-shared':
         specifier: workspace:*
-        version: link:../../packages/mb-shared
+        version: link:../../packages/kpilote-shared
       '@tanstack/react-query':
         specifier: ^5.62.7
         version: 5.99.0(react@19.2.5)
@@ -146,7 +146,7 @@ importers:
         specifier: ^8.0.10
         version: 8.0.10(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.78.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.8.3)
 
-  apps/mb-api:
+  apps/kpilote-api:
     dependencies:
       '@hono/node-server':
         specifier: '>=1.19.13'
@@ -160,9 +160,9 @@ importers:
       '@js-temporal/polyfill':
         specifier: ^0.5.1
         version: 0.5.1
-      '@pilote/mb-shared':
+      '@pilote/kpilote-shared':
         specifier: workspace:*
-        version: link:../../packages/mb-shared
+        version: link:../../packages/kpilote-shared
       '@prisma/adapter-pg':
         specifier: ^7.8.0
         version: 7.8.0
@@ -247,22 +247,22 @@ importers:
         version: 8.0.10(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.78.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.8.3)
       vitest:
         specifier: ^4.0.18
-        version: 4.1.4(@opentelemetry/api@1.9.0)(@types/node@22.19.17)(@vitest/coverage-v8@4.1.4)(jsdom@29.1.0(@noble/hashes@1.8.0))(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(vite@8.0.10(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.78.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.8.3))
+        version: 4.1.5(@opentelemetry/api@1.9.0)(@types/node@22.19.17)(jsdom@29.1.0(@noble/hashes@1.8.0))(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(vite@8.0.10(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.78.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.8.3))
 
-  apps/mb-webapp:
+  apps/kpilote-webapp:
     dependencies:
       '@hono/node-server':
         specifier: '>=1.19.13'
         version: 1.19.14(hono@4.12.19)
       '@hookform/resolvers':
         specifier: ^5.4.0
-        version: 5.4.0(react-hook-form@7.78.0(react@19.2.5))
+        version: 5.4.0(react-hook-form@7.79.0(react@19.2.5))
       '@js-temporal/polyfill':
         specifier: ^0.5.1
         version: 0.5.1
-      '@pilote/mb-shared':
+      '@pilote/kpilote-shared':
         specifier: workspace:*
-        version: link:../../packages/mb-shared
+        version: link:../../packages/kpilote-shared
       '@tanstack/react-query':
         specifier: ^5.62.7
         version: 5.99.0(react@19.2.5)
@@ -352,7 +352,7 @@ importers:
         version: 19.2.5(react@19.2.5)
       react-hook-form:
         specifier: ^7.78.0
-        version: 7.78.0(react@19.2.5)
+        version: 7.79.0(react@19.2.5)
       tailwind-merge:
         specifier: ^3.5.0
         version: 3.5.0
@@ -927,7 +927,7 @@ importers:
         specifier: ^4.0.18
         version: 4.1.5(@opentelemetry/api@1.9.0)(@types/node@22.19.17)(jsdom@29.1.0(@noble/hashes@1.8.0))(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(vite@8.0.10(@types/node@22.19.17)(esbuild@0.25.12)(jiti@2.6.1)(sass@1.78.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.8.3))
 
-  packages/mb-shared:
+  packages/kpilote-shared:
     dependencies:
       zod:
         specifier: ^4.3.6
@@ -4653,9 +4653,6 @@ packages:
   ajv@6.14.0:
     resolution: {integrity: sha512-IWrosm/yrn43eiKqkfkHis7QioDleaXQHdDVPKg0FSwwd/DuvyX79TZnFOnYpB7dcsFAMmtFztZuXPDvSePkFw==}
 
-  ajv@8.18.0:
-    resolution: {integrity: sha512-PlXPeEWMXMZ7sPYOHqmDyCJzcfNrUr3fGNKtezX14ykXOEIvyK81d+qydx89KY5O71FKMPaQ2vBfBFI5NHR63A==}
-
   ajv@8.20.0:
     resolution: {integrity: sha512-Thbli+OlOj+iMPYFBVBfJ3OmCAnaSyNn4M1vz9T6Gka5Jt9ba/HIR56joy65tY6kx/FCF5VXNB819Y7/GUrBGA==}
 
@@ -4817,11 +4814,6 @@ packages:
   base64-js@1.5.1:
     resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
 
-  baseline-browser-mapping@2.10.19:
-    resolution: {integrity: sha512-qCkNLi2sfBOn8XhZQ0FXsT1Ki/Yo5P90hrkRamVFRS7/KV9hpfA4HkoWNU152+8w0zPjnxo5psx5NL3PSGgv5g==}
-    engines: {node: '>=6.0.0'}
-    hasBin: true
-
   baseline-browser-mapping@2.10.30:
     resolution: {integrity: sha512-xjOFN16Ha1+Rz4nFYKqHU/LSB+gx/Vi3yQLX7r7sAW+Wa+8hhF2h4pvqTrTMc8+WcDBEunnUurr46Jvv0jk3Vg==}
     engines: {node: '>=6.0.0'}
@@ -4914,9 +4906,6 @@ packages:
   camelize-ts@3.0.0:
     resolution: {integrity: sha512-cgRwKKavoDKLTjO4FQTs3dRBePZp/2Y9Xpud0FhuCOTE86M2cniKN4CCXgRnsyXNMmQMifVHcv6SPaMtTx6ofQ==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
-
-  caniuse-lite@1.0.30001788:
-    resolution: {integrity: sha512-6q8HFp+lOQtcf7wBK+uEenxymVWkGKkjFpCvw5W25cmMwEDU45p1xQFBQv8JDlMMry7eNxyBaR+qxgmTUZkIRQ==}
 
   caniuse-lite@1.0.30001793:
     resolution: {integrity: sha512-iwSsYWaCOoh26cV8NwNRViHlrfUvYsHDfRVcbtmw0Kg6PJIZZXwMkj1442FYLBGkeUf1juAsU3DTfxW579mrPA==}
@@ -5463,9 +5452,6 @@ packages:
   domhandler@5.0.3:
     resolution: {integrity: sha512-cgwlv/1iFQiFnU96XXgROh8xTeetsnJiDsTc7TYCLFd9+/WNkIqPTxiM/8pSd8VIrhXGTf1Ny1q1hquVqDJB5w==}
     engines: {node: '>= 4'}
-
-  dompurify@3.4.0:
-    resolution: {integrity: sha512-nolgK9JcaUXMSmW+j1yaSvaEaoXYHwWyGJlkoCTghc97KgGDDSnpoU/PlEnw63Ah+TGKFOyY+X5LnxaWbCSfXg==}
 
   dompurify@3.4.9:
     resolution: {integrity: sha512-4dPSRMRDqHvs0V4YDFCsaIZo4if5u0xM+llyxiM2fwuZFdKArUBAF3VtI2+n8NKg9P870WMdYk0UhqQNoWXbfQ==}
@@ -6635,9 +6621,6 @@ packages:
     resolution: {integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==}
     hasBin: true
 
-  jose@6.2.2:
-    resolution: {integrity: sha512-d7kPDd34KO/YnzaDOlikGpOurfF0ByC2sEV4cANCtdqLlTfBlw2p14O/5d/zv40gJPbIQxfES3nSx1/oYNyuZQ==}
-
   jose@6.2.3:
     resolution: {integrity: sha512-YYVDInQKFJfR/xa3ojUTl8c2KoTwiL1R5Wg9YCydwH0x0B9grbzlg5HC7mMjCtUJjbQ/YnGEZIhI5tCgfTb4Hw==}
 
@@ -6988,10 +6971,6 @@ packages:
 
   lru-cache@10.4.3:
     resolution: {integrity: sha512-JNAzZcXrCt42VGLuYz0zfAzDfAvJWW6AfYlDBQyDV5DClI2m5sAmK+OIO7s59XfsRsWHp02jAJrRadPRGTt6SQ==}
-
-  lru-cache@11.3.5:
-    resolution: {integrity: sha512-NxVFwLAnrd9i7KUBxC4DrUhmgjzOs+1Qm50D3oF1/oL+r1NpZ4gA7xvG0/zJ8evR7zIKn4vLf7qTNduWFtCrRw==}
-    engines: {node: 20 || >=22}
 
   lru-cache@11.3.6:
     resolution: {integrity: sha512-Gf/KoL3C/MlI7Bt0PGI9I+TeTC/I6r/csU58N4BSNc4lppLBeKsOdFYkK+dX0ABDUMJNfCHTyPpzwwO21Awd3A==}
@@ -8102,12 +8081,6 @@ packages:
 
   react-hook-form@7.72.1:
     resolution: {integrity: sha512-RhwBoy2ygeVZje+C+bwJ8g0NjTdBmDlJvAUHTxRjTmSUKPYsKfMphkS2sgEMotsY03bP358yEYlnUeZy//D9Ig==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      react: ^16.8.0 || ^17 || ^18 || ^19
-
-  react-hook-form@7.78.0:
-    resolution: {integrity: sha512-EEZqc+N23moyzTlz61Pj+JvcXo76ICkpfOZo8JZw+sM4+wLQGh6nI2Ms+PdMOYNluFu0ghlM7B8mCzhRYtJCnA==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
@@ -9753,7 +9726,7 @@ snapshots:
   '@auth/core@0.41.0':
     dependencies:
       '@panva/hkdf': 1.2.1
-      jose: 6.2.2
+      jose: 6.2.3
       oauth4webapi: 3.8.5
       preact: 10.24.3
       preact-render-to-string: 6.5.11(preact@10.24.3)
@@ -10426,11 +10399,6 @@ snapshots:
       '@standard-schema/utils': 0.3.0
       react-hook-form: 7.72.1(react@19.2.5)
 
-  '@hookform/resolvers@5.4.0(react-hook-form@7.78.0(react@19.2.5))':
-    dependencies:
-      '@standard-schema/utils': 0.3.0
-      react-hook-form: 7.78.0(react@19.2.5)
-
   '@hookform/resolvers@5.4.0(react-hook-form@7.79.0(react@19.2.5))':
     dependencies:
       '@standard-schema/utils': 0.3.0
@@ -10981,7 +10949,7 @@ snapshots:
 
   '@prisma/streams-local@0.1.2':
     dependencies:
-      ajv: 8.18.0
+      ajv: 8.20.0
       better-result: 2.9.0
       env-paths: 3.0.0
       proper-lockfile: 4.1.2
@@ -13054,7 +13022,7 @@ snapshots:
 
   '@types/dompurify@3.2.0':
     dependencies:
-      dompurify: 3.4.0
+      dompurify: 3.4.9
 
   '@types/eslint-scope@3.7.7':
     dependencies:
@@ -13631,13 +13599,6 @@ snapshots:
       json-schema-traverse: 0.4.1
       uri-js: 4.4.1
 
-  ajv@8.18.0:
-    dependencies:
-      fast-deep-equal: 3.1.3
-      fast-uri: 3.1.2
-      json-schema-traverse: 1.0.0
-      require-from-string: 2.0.2
-
   ajv@8.20.0:
     dependencies:
       fast-deep-equal: 3.1.3
@@ -13824,8 +13785,6 @@ snapshots:
 
   base64-js@1.5.1: {}
 
-  baseline-browser-mapping@2.10.19: {}
-
   baseline-browser-mapping@2.10.30: {}
 
   better-react-mathjax@2.3.0(react@19.2.5):
@@ -13872,8 +13831,8 @@ snapshots:
 
   browserslist@4.28.2:
     dependencies:
-      baseline-browser-mapping: 2.10.19
-      caniuse-lite: 1.0.30001788
+      baseline-browser-mapping: 2.10.30
+      caniuse-lite: 1.0.30001793
       electron-to-chromium: 1.5.336
       node-releases: 2.0.37
       update-browserslist-db: 1.2.3(browserslist@4.28.2)
@@ -13926,8 +13885,6 @@ snapshots:
   callsites@3.1.0: {}
 
   camelize-ts@3.0.0: {}
-
-  caniuse-lite@1.0.30001788: {}
 
   caniuse-lite@1.0.30001793: {}
 
@@ -14469,10 +14426,6 @@ snapshots:
   domhandler@5.0.3:
     dependencies:
       domelementtype: 2.3.0
-
-  dompurify@3.4.0:
-    optionalDependencies:
-      '@types/trusted-types': 2.0.7
 
   dompurify@3.4.9:
     optionalDependencies:
@@ -15903,7 +15856,7 @@ snapshots:
   isomorphic-dompurify@1.13.0:
     dependencies:
       '@types/dompurify': 3.2.0
-      dompurify: 3.4.0
+      dompurify: 3.4.9
       jsdom: 23.2.0
     transitivePeerDependencies:
       - bufferutil
@@ -15954,8 +15907,6 @@ snapshots:
       supports-color: 8.1.1
 
   jiti@2.6.1: {}
-
-  jose@6.2.2: {}
 
   jose@6.2.3: {}
 
@@ -16026,7 +15977,7 @@ snapshots:
       decimal.js: 10.6.0
       html-encoding-sniffer: 6.0.0(@noble/hashes@1.8.0)
       is-potential-custom-element-name: 1.0.1
-      lru-cache: 11.3.5
+      lru-cache: 11.3.6
       parse5: 8.0.0
       saxes: 6.0.0
       symbol-tree: 3.2.4
@@ -16052,7 +16003,7 @@ snapshots:
       decimal.js: 10.6.0
       html-encoding-sniffer: 6.0.0(@noble/hashes@1.8.0)
       is-potential-custom-element-name: 1.0.1
-      lru-cache: 11.3.5
+      lru-cache: 11.3.6
       parse5: 8.0.1
       saxes: 6.0.0
       symbol-tree: 3.2.4
@@ -16280,8 +16231,6 @@ snapshots:
       highlight.js: 10.7.3
 
   lru-cache@10.4.3: {}
-
-  lru-cache@11.3.5: {}
 
   lru-cache@11.3.6: {}
 
@@ -16559,7 +16508,7 @@ snapshots:
       d3-sankey: 0.12.3
       dagre-d3-es: 7.0.14
       dayjs: 1.11.20
-      dompurify: 3.4.0
+      dompurify: 3.4.9
       es-toolkit: 1.46.1
       katex: 0.16.45
       khroma: 2.1.0
@@ -17874,10 +17823,6 @@ snapshots:
     dependencies:
       react: 19.2.5
 
-  react-hook-form@7.78.0(react@19.2.5):
-    dependencies:
-      react: 19.2.5
-
   react-hook-form@7.79.0(react@19.2.5):
     dependencies:
       react: 19.2.5
@@ -18792,7 +18737,7 @@ snapshots:
       classnames: 2.5.1
       css.escape: 1.5.1
       deep-extend: 0.6.0
-      dompurify: 3.4.0
+      dompurify: 3.4.9
       ieee754: 1.2.1
       immutable: 3.8.3
       js-file-download: 0.4.12
@@ -19400,36 +19345,6 @@ snapshots:
       '@types/node': 22.19.17
       '@vitest/coverage-v8': 4.1.4(vitest@4.1.4)
       jsdom: 29.0.2(@noble/hashes@1.8.0)
-    transitivePeerDependencies:
-      - msw
-
-  vitest@4.1.4(@opentelemetry/api@1.9.0)(@types/node@22.19.17)(@vitest/coverage-v8@4.1.4)(jsdom@29.1.0(@noble/hashes@1.8.0))(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(vite@8.0.10(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.78.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.8.3)):
-    dependencies:
-      '@vitest/expect': 4.1.4
-      '@vitest/mocker': 4.1.4(msw@2.14.2(@types/node@22.19.17)(typescript@5.9.3))(vite@8.0.10(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.78.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.8.3))
-      '@vitest/pretty-format': 4.1.4
-      '@vitest/runner': 4.1.4
-      '@vitest/snapshot': 4.1.4
-      '@vitest/spy': 4.1.4
-      '@vitest/utils': 4.1.4
-      es-module-lexer: 2.0.0
-      expect-type: 1.3.0
-      magic-string: 0.30.21
-      obug: 2.1.1
-      pathe: 2.0.3
-      picomatch: 4.0.4
-      std-env: 4.1.0
-      tinybench: 2.9.0
-      tinyexec: 1.1.1
-      tinyglobby: 0.2.16
-      tinyrainbow: 3.1.0
-      vite: 8.0.10(@types/node@22.19.17)(esbuild@0.27.7)(jiti@2.6.1)(sass@1.78.0)(terser@5.46.2)(tsx@4.21.0)(yaml@2.8.3)
-      why-is-node-running: 2.3.0
-    optionalDependencies:
-      '@opentelemetry/api': 1.9.0
-      '@types/node': 22.19.17
-      '@vitest/coverage-v8': 4.1.4(vitest@4.1.4)
-      jsdom: 29.1.0(@noble/hashes@1.8.0)
     transitivePeerDependencies:
       - msw
 

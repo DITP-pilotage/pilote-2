@@ -4,8 +4,8 @@ Ce document centralise les décisions prises autour des dépendances : pins, ove
 
 Le monorepo contient 3 apps :
 - `@pilote/ppg` (`apps/pilote-ppg`) : app Next.js historique (PILOTE)
-- `@pilote/mb-api` (`apps/mb-api`) : backend Hono (pilote MB)
-- `@pilote/mb-webapp` (`apps/mb-webapp`) : webapp (pilote MB)
+- `@pilote/kpilote-api` (`apps/kpilote-api`) : backend Hono (pilote MB)
+- `@pilote/kpilote-webapp` (`apps/kpilote-webapp`) : webapp (pilote MB)
 
 Toutes les décisions ci-dessous s'appliquent au monorepo (root `package.json` pour les overrides ; pins et deps directes dans chaque app).
 
@@ -128,14 +128,14 @@ Historique supprimé lors de la campagne d'avril 2026 :
 
 **Bumps directs** :
 - `apps/pilote-ppg` : `axios ^1.12.2 → ^1.15.2`, `fast-xml-parser 5.5.9 → 5.7.3`, `@ai-sdk/devtools ^0.0.15 → ^0.0.18`, `next ^16.2.1 → ^16.2.6`
-- `apps/mb-api` : `hono ^4.6.14 → ^4.12.18`, `@hono/node-server ^1.13.7 → ^1.19.13`
-- `apps/mb-webapp` : `hono ^4.6.14 → ^4.12.18`, `@hono/node-server ^1.13.7 → ^1.19.13`
+- `apps/kpilote-api` : `hono ^4.6.14 → ^4.12.18`, `@hono/node-server ^1.13.7 → ^1.19.13`
+- `apps/kpilote-webapp` : `hono ^4.6.14 → ^4.12.18`, `@hono/node-server ^1.13.7 → ^1.19.13`
 
 **Ajout d'overrides** au `package.json` racine pour les transitives profondes que `pnpm update` ne pouvait pas bumper (parents qui pinnent strict ou lockfile bloqué) : `@hono/node-server`, `@xmldom/xmldom`, `fast-uri`, `fast-xml-builder`, `hono`, `mermaid`, `postcss`, `uuid` (sur la fenêtre vuln uniquement). Voir la section "Overrides" pour le détail et les conditions de sortie.
 
 **Résiduel** : 1 advisory non corrigeable côté lockfile (pas de version patchée disponible upstream à ce jour). Suivi hors-doc (cf. canal sécurité interne).
 
-**Vérifications** : `pnpm lint` ✅ sur `pilote-ppg`, `mb-api` et `mb-webapp`.
+**Vérifications** : `pnpm lint` ✅ sur `pilote-ppg`, `kpilote-api` et `kpilote-webapp`.
 
 **Autre** : déplacement de `DEPENDENCIES.md` vers la racine du monorepo (auparavant dans `apps/pilote-ppg/`).
 
