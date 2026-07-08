@@ -17,7 +17,7 @@ model Principal {
   utilisateur              Utilisateur?
   apiKey                   ApiKey?
   indicateurPermissions    IndicateurPermission[]
-  panierPermissions        PanierPermission[]
+  dossierPermissions       DossierPermission[]
   commentairesCrees        Commentaire[]          @relation("commentaireCreatedBy")
   commentairesModifies     Commentaire[]          @relation("commentaireUpdatedBy")
   niveauxConfianceCrees    NiveauConfiance[]      @relation("niveauConfianceCreatedBy")
@@ -45,7 +45,7 @@ model Utilisateur {
 
   principal                 Principal               @relation(fields: [id], references: [id], onDelete: Cascade)
   identites                 IdentiteExterne[]
-  responsabilitesPanier     PanierResponsable[]
+  responsabilitesDossier    DossierResponsable[]
   responsabilitesIndicateur IndicateurResponsable[]
   featuresAutorises FeatureUtilisateur[]
 
@@ -112,7 +112,7 @@ model Indicateur {
   objectifs            ObjectifIndicateurIndividu[]
   referentiels         IndicateurReferentiel[]
   permissions          IndicateurPermission[]
-  paniers              PanierIndicateur[]
+  dossiers             DossierIndicateur[]
   individuCommentaires IndicateurIndividuCommentaire[]
   responsables         IndicateurResponsable[]
 
@@ -342,7 +342,7 @@ model ObjectifIndicateurIndividu {
   @@map("objectif_indicateur_individu")
 }
 
-model Panier {
+model Dossier {
   id          String     @id @db.Uuid
   publicId    String     @unique @map("public_id")
   nom         String
@@ -351,54 +351,54 @@ model Panier {
   createdAt   DateTime   @default(now()) @map("created_at")
   updatedAt   DateTime   @updatedAt @map("updated_at")
 
-  indicateurs        PanierIndicateur[]
-  permissions        PanierPermission[]
-  responsables       PanierResponsable[]
-  panierCommentaires PanierCommentaire[]
-  contactsUtiles     PanierContactUtile[]
+  indicateurs  DossierIndicateur[]
+  permissions  DossierPermission[]
+  responsables DossierResponsable[]
+  commentaires DossierCommentaire[]
+  contactsUtiles DossierContactUtile[]
 
-  @@map("panier")
+  @@map("dossier")
 }
 
-model PanierPermission {
+model DossierPermission {
   principalId String           @map("principal_id") @db.Uuid
-  panierId    String           @map("panier_id") @db.Uuid
+  dossierId   String           @map("panier_id") @db.Uuid
   action      PermissionAction
   createdAt   DateTime         @default(now()) @map("created_at")
 
   principal Principal @relation(fields: [principalId], references: [id], onDelete: Cascade)
-  panier    Panier    @relation(fields: [panierId], references: [id], onDelete: Cascade)
+  dossier   Dossier   @relation(fields: [dossierId], references: [id], onDelete: Cascade)
 
-  @@id([principalId, panierId, action])
-  @@index([panierId])
-  @@map("panier_permission")
+  @@id([principalId, dossierId, action])
+  @@index([dossierId])
+  @@map("dossier_permission")
 }
 
-model PanierIndicateur {
-  panierId     String   @map("panier_id") @db.Uuid
+model DossierIndicateur {
+  dossierId    String   @map("panier_id") @db.Uuid
   indicateurId String   @map("indicateur_id") @db.Uuid
   ponderation  Decimal  @default(1) @db.Decimal(20, 2)
   createdAt    DateTime @default(now()) @map("created_at")
 
-  panier     Panier     @relation(fields: [panierId], references: [id], onDelete: Cascade)
+  dossier    Dossier    @relation(fields: [dossierId], references: [id], onDelete: Cascade)
   indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
 
-  @@id([panierId, indicateurId])
-  @@index([panierId, createdAt])
-  @@map("panier_indicateur")
+  @@id([dossierId, indicateurId])
+  @@index([dossierId, createdAt])
+  @@map("dossier_indicateur")
 }
 
-model PanierResponsable {
-  panierId      String   @map("panier_id") @db.Uuid
+model DossierResponsable {
+  dossierId     String   @map("panier_id") @db.Uuid
   utilisateurId String   @map("utilisateur_id") @db.Uuid
   createdAt     DateTime @default(now()) @map("created_at")
 
-  panier      Panier      @relation(fields: [panierId], references: [id], onDelete: Cascade)
+  dossier     Dossier     @relation(fields: [dossierId], references: [id], onDelete: Cascade)
   utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
 
-  @@id([panierId, utilisateurId])
-  @@index([panierId, createdAt])
-  @@map("panier_responsable")
+  @@id([dossierId, utilisateurId])
+  @@index([dossierId, createdAt])
+  @@map("dossier_responsable")
 }
 
 model IndicateurResponsable {
@@ -438,22 +438,22 @@ model ContactUtile {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   organisme Organisme            @relation(fields: [organismeId], references: [id])
-  paniers   PanierContactUtile[]
+  dossiers  DossierContactUtile[]
 
   @@map("contact_utile")
 }
 
-model PanierContactUtile {
-  panierId       String   @map("panier_id") @db.Uuid
+model DossierContactUtile {
+  dossierId      String   @map("panier_id") @db.Uuid
   contactUtileId String   @map("contact_utile_id") @db.Uuid
   createdAt      DateTime @default(now()) @map("created_at")
 
-  panier       Panier       @relation(fields: [panierId], references: [id], onDelete: Cascade)
+  dossier      Dossier      @relation(fields: [dossierId], references: [id], onDelete: Cascade)
   contactUtile ContactUtile @relation(fields: [contactUtileId], references: [id], onDelete: Cascade)
 
-  @@id([panierId, contactUtileId])
-  @@index([panierId])
-  @@map("panier_contact_utile")
+  @@id([dossierId, contactUtileId])
+  @@index([dossierId])
+  @@map("dossier_contact_utile")
 }
 
 enum ApplicationLogLevel {
@@ -505,12 +505,12 @@ enum IndicateurIndividuCommentaireType {
   @@map("indicateur_individu_commentaire_type_enum")
 }
 
-enum PanierCommentaireType {
+enum DossierCommentaireType {
   DEFAUT
   CONFIANCE
   OBJECTIF
 
-  @@map("panier_commentaire_type_enum")
+  @@map("dossier_commentaire_type_enum")
 }
 
 model Commentaire {
@@ -527,7 +527,7 @@ model Commentaire {
   auteurModification Principal @relation("commentaireUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
 
   indicateurIndividu IndicateurIndividuCommentaire?
-  panier             PanierCommentaire?
+  dossier            DossierCommentaire?
   niveauxConfiance   NiveauConfiance[]
 
   @@index([createdBy])
@@ -549,16 +549,16 @@ model IndicateurIndividuCommentaire {
   @@map("indicateur_individu_commentaire")
 }
 
-model PanierCommentaire {
+model DossierCommentaire {
   commentaireId String                @id @map("commentaire_id") @db.Uuid
-  panierId      String                @map("panier_id") @db.Uuid
-  type          PanierCommentaireType
+  dossierId     String                @map("panier_id") @db.Uuid
+  type          DossierCommentaireType
 
   commentaire Commentaire @relation(fields: [commentaireId], references: [id], onDelete: Cascade)
-  panier      Panier      @relation(fields: [panierId], references: [id], onDelete: Cascade)
+  dossier     Dossier     @relation(fields: [dossierId], references: [id], onDelete: Cascade)
 
-  @@index([panierId])
-  @@map("panier_commentaire")
+  @@index([dossierId])
+  @@map("dossier_commentaire")
 }
 
 model NiveauConfiance {
