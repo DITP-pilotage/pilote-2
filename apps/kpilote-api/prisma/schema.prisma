@@ -362,7 +362,7 @@ model Dossier {
 
 model DossierPermission {
   principalId String           @map("principal_id") @db.Uuid
-  dossierId   String           @map("panier_id") @db.Uuid
+  dossierId   String           @map("dossier_id") @db.Uuid
   action      PermissionAction
   createdAt   DateTime         @default(now()) @map("created_at")
 
@@ -375,7 +375,7 @@ model DossierPermission {
 }
 
 model DossierIndicateur {
-  dossierId    String   @map("panier_id") @db.Uuid
+  dossierId    String   @map("dossier_id") @db.Uuid
   indicateurId String   @map("indicateur_id") @db.Uuid
   ponderation  Decimal  @default(1) @db.Decimal(20, 2)
   createdAt    DateTime @default(now()) @map("created_at")
@@ -389,7 +389,7 @@ model DossierIndicateur {
 }
 
 model DossierResponsable {
-  dossierId     String   @map("panier_id") @db.Uuid
+  dossierId     String   @map("dossier_id") @db.Uuid
   utilisateurId String   @map("utilisateur_id") @db.Uuid
   createdAt     DateTime @default(now()) @map("created_at")
 
@@ -444,7 +444,7 @@ model ContactUtile {
 }
 
 model DossierContactUtile {
-  dossierId      String   @map("panier_id") @db.Uuid
+  dossierId      String   @map("dossier_id") @db.Uuid
   contactUtileId String   @map("contact_utile_id") @db.Uuid
   createdAt      DateTime @default(now()) @map("created_at")
 
@@ -551,7 +551,7 @@ model IndicateurIndividuCommentaire {
 
 model DossierCommentaire {
   commentaireId String                @id @map("commentaire_id") @db.Uuid
-  dossierId     String                @map("panier_id") @db.Uuid
+  dossierId     String                @map("dossier_id") @db.Uuid
   type          DossierCommentaireType
 
   commentaire Commentaire @relation(fields: [commentaireId], references: [id], onDelete: Cascade)
