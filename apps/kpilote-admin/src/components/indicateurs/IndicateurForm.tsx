@@ -69,6 +69,7 @@ export function IndicateurForm({
     remove: removeResponsable,
   } = useFieldArray({ control: form.control, name: 'responsables' })
   const visibilite = useWatch({ control: form.control, name: 'visibilite' })
+  const responsablesSelectionnes = useWatch({ control: form.control, name: 'responsables' })
 
   const referentielsQuery = useQuery({
     queryKey: ['referentiels', 'all-for-select'],
@@ -81,7 +82,8 @@ export function IndicateurForm({
     queryFn: () => fetchAllUtilisateurs(),
   })
   const utilisateursDisponibles = (utilisateursQuery.data ?? []).filter(
-    (utilisateur) => !responsablesFields.some((responsable) => responsable.id === utilisateur.id),
+    (utilisateur) =>
+      !(responsablesSelectionnes ?? []).some((responsable) => responsable.id === utilisateur.id),
   )
 
   return (
