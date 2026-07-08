@@ -58,11 +58,11 @@ function RootComponent() {
                 type="button"
                 onClick={() => setPaletteOpen(true)}
                 aria-label="Ouvrir la recherche"
-                className="hidden items-center gap-2 rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-text-subtle transition-colors hover:border-border-strong hover:text-text sm:flex"
+                className="flex items-center gap-2 rounded-md border border-border bg-surface px-2 py-1.5 text-sm text-text-subtle transition-colors hover:border-border-strong hover:text-text sm:px-3"
               >
                 <Search className="size-4" />
-                <span>Rechercher…</span>
-                <kbd className="ml-4 rounded border border-border bg-surface-tinted px-1.5 py-0.5 font-mono text-[10px] font-medium text-text-muted">
+                <span className="hidden sm:inline">Rechercher…</span>
+                <kbd className="ml-4 hidden rounded border border-border bg-surface-tinted px-1.5 py-0.5 font-mono text-[10px] font-medium text-text-muted sm:inline-block">
                   ⌘K
                 </kbd>
               </button>

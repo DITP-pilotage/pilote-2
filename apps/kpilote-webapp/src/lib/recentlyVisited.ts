@@ -17,12 +17,26 @@ const MAX_ENTRIES = 5
 
 const entryKey = (entry: RecentEntry): string => `${entry.type}:${entry.id}`
 
+/** Valide qu'une valeur inconnue a bien la forme d'une `RecentEntry`. */
+function isRecentEntry(value: unknown): value is RecentEntry {
+  if (typeof value !== 'object' || value === null) return false
+  const entry = value as Record<string, unknown>
+  return (
+    (entry.type === 'indicateur' || entry.type === 'panier') &&
+    typeof entry.id === 'string' &&
+    typeof entry.label === 'string'
+  )
+}
+
 /** Lit la liste depuis localStorage, tolérante aux données corrompues / stockage indisponible. */
 function read(): RecentEntry[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
     const parsed: unknown = raw ? JSON.parse(raw) : []
-    return Array.isArray(parsed) ? (parsed as RecentEntry[]).slice(0, MAX_ENTRIES) : []
+    if (!Array.isArray(parsed)) return []
+    // On filtre les entrées malformées pour tenir la promesse d'une lecture
+    // tolérante : une entrée corrompue ne doit pas faire échouer `recordVisit()`.
+    return parsed.filter(isRecentEntry).slice(0, MAX_ENTRIES)
   } catch {
     return []
   }

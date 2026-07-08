@@ -20,7 +20,15 @@ export function buildIndicateurActions(
   { navigate, close }: BuildActionsContext,
 ): CommandAction[] {
   const goToOnglet = (onglet: 'valeurs' | 'commentaires' | 'metadonnees') => () => {
-    void navigate({ to: '/indicateurs/$id', params: { id: indicateur.id }, search: { onglet } })
+    // On conserve le couple individu/referentiel (contexte transverse aux fiches)
+    // et on ne fixe que `onglet`. `commentaires` reprend son défaut côté route.
+    // On ne peut pas étaler tout `prev` : il agrège le search cross-domaine (ex.
+    // `commentaires` panier) invalide pour le schéma indicateur.
+    void navigate({
+      to: '/indicateurs/$id',
+      params: { id: indicateur.id },
+      search: (prev) => ({ individu: prev.individu, referentiel: prev.referentiel, onglet }),
+    })
     close()
   }
 

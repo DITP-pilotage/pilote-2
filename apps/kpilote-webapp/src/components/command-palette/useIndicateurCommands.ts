@@ -1,25 +1,16 @@
 import { useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
 import { BarChart3 } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 import type { Command } from '@/lib/commands/types'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
 
 import { buildIndicateurActions } from './indicateurActions'
+import { useDebouncedValue } from './useDebouncedValue'
 
 const DEBOUNCE_MS = 200
 const MAX_RESULTS = 8
-
-/** Débounce une valeur : ne renvoie la nouvelle qu'après `delay` ms sans changement. */
-function useDebouncedValue<T>(value: T, delay: number): T {
-  const [debounced, setDebounced] = useState(value)
-  useEffect(() => {
-    const timer = setTimeout(() => setDebounced(value), delay)
-    return () => clearTimeout(timer)
-  }, [value, delay])
-  return debounced
-}
 
 /**
  * Commandes issues de la recherche serveur d'indicateurs (param `recherche`).
