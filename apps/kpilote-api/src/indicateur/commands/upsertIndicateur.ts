@@ -96,6 +96,43 @@ const remplacerConfigurationsReferentiels = async (
   await upsertConfigurationsCibles(indicateurId, configurations)
 }
 
+const resoudreResponsables = async (utilisateurIds: ReadonlyArray<string>): Promise<string[]> => {
+  const idsUniques = [...new Set(utilisateurIds)]
+  if (idsUniques.length === 0) return []
+  const utilisateurs = await db().utilisateur.findMany({ where: { id: { in: idsUniques } } })
+  const idsTrouves = new Set(utilisateurs.map((utilisateur) => utilisateur.id))
+  const idsInconnus = idsUniques.filter((id) => !idsTrouves.has(id))
+  if (idsInconnus.length > 0) {
+    throw new ValidationError('Utilisateurs inconnus', {
+      unknownUtilisateurIds: idsInconnus.sort(),
+    })
+  }
+  return idsUniques
+}
+
+const remplacerResponsables = async (
+  indicateurId: string,
+  utilisateurIdsCibles: string[],
+): Promise<void> => {
+  const cibles = new Set(utilisateurIdsCibles)
+  const existantes = await db().indicateurResponsable.findMany({ where: { indicateurId } })
+  const aSupprimer = existantes
+    .filter((liaison) => !cibles.has(liaison.utilisateurId))
+    .map((liaison) => liaison.utilisateurId)
+  if (aSupprimer.length > 0) {
+    await db().indicateurResponsable.deleteMany({
+      where: { indicateurId, utilisateurId: { in: aSupprimer } },
+    })
+  }
+  for (const utilisateurId of utilisateurIdsCibles) {
+    await db().indicateurResponsable.upsert({
+      where: { indicateurId_utilisateurId: { indicateurId, utilisateurId } },
+      update: {},
+      create: { indicateurId, utilisateurId },
+    })
+  }
+}
+
 const assertWritePermission = async (indicateurId: string, principalId: string): Promise<void> => {
   const hasWrite = await db().indicateurPermission.findUnique({
     where: {
@@ -134,6 +171,8 @@ const updateIndicateurExistant = async (
 ): Promise<void> => {
   await assertWritePermission(indicateurId, principalId)
   const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
+  const responsablesCibles =
+    body.responsables === undefined ? undefined : await resoudreResponsables(body.responsables)
   await db().indicateur.update({
     where: { publicId },
     data: {
@@ -144,6 +183,9 @@ const updateIndicateurExistant = async (
     },
   })
   await remplacerConfigurationsReferentiels(indicateurId, configurations)
+  if (responsablesCibles !== undefined) {
+    await remplacerResponsables(indicateurId, responsablesCibles)
+  }
 }
 
 const grantOwnerPermissions = async (principalId: string, indicateurId: string): Promise<void> => {
@@ -161,6 +203,8 @@ const createIndicateurAvecGrants = async (
   principalId: string,
 ): Promise<void> => {
   const configurations = await resoudreConfigurationsReferentiels(body.referentiels)
+  const responsablesCibles =
+    body.responsables === undefined ? undefined : await resoudreResponsables(body.responsables)
   const indicateurId = uuidv7()
   await db().indicateur.create({
     data: {
@@ -181,6 +225,9 @@ const createIndicateurAvecGrants = async (
         fonctionAgregation: configuration.fonctionAgregation,
       })),
     })
+  }
+  if (responsablesCibles !== undefined) {
+    await remplacerResponsables(indicateurId, responsablesCibles)
   }
 }
 

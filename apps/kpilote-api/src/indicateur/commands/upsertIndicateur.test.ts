@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { uuidv7 } from 'uuidv7'
 
 import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
@@ -7,6 +8,14 @@ import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurId, testReferentielId } from '@/test/randomIds'
 import { runAsAdmin, runAsContributor, runAsUser } from '@/test/runAsPrincipal'
+
+const getResponsableUtilisateurIds = async (publicId: string): Promise<string[]> => {
+  const indicateur = await db().indicateur.findUniqueOrThrow({
+    where: { publicId },
+    include: { responsables: { orderBy: { createdAt: 'asc' } } },
+  })
+  return indicateur.responsables.map((responsable) => responsable.utilisateurId)
+}
 
 const METADONNEES_VIDES = {
   description: null,
@@ -482,6 +491,145 @@ describe.concurrent('upsertIndicateur', () => {
       expect(await getConfigurationsReferentiels(indId)).toEqual([
         { id: refDedupFn, fonctionAgregation: 'NONE' },
       ])
+    }),
+  )
+
+  it(
+    'assigne des responsables à la création',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const apiKey = await fixtures.apiKey()
+      const userA = await fixtures.utilisateur({ email: `a-${indId}@example.com` })
+      const userB = await fixtures.utilisateur({ email: `b-${indId}@example.com` })
+
+      await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, { ...BODY_BASE, responsables: [userA.id, userB.id] }),
+      )
+
+      const ids = await getResponsableUtilisateurIds(indId)
+      expect(new Set(ids)).toEqual(new Set([userA.id, userB.id]))
+    }),
+  )
+
+  it(
+    'remplace intégralement la liste des responsables (replace-all)',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const apiKey = await fixtures.apiKey()
+      const userA = await fixtures.utilisateur({ email: `a-${indId}@example.com` })
+      const userB = await fixtures.utilisateur({ email: `b-${indId}@example.com` })
+      const userC = await fixtures.utilisateur({ email: `c-${indId}@example.com` })
+
+      await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, { ...BODY_BASE, responsables: [userA.id, userB.id] }),
+      )
+      await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, { ...BODY_BASE, responsables: [userB.id, userC.id] }),
+      )
+
+      const ids = await getResponsableUtilisateurIds(indId)
+      expect(new Set(ids)).toEqual(new Set([userB.id, userC.id]))
+    }),
+  )
+
+  it(
+    'laisse les responsables inchangés quand le champ est absent',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const apiKey = await fixtures.apiKey()
+      const userA = await fixtures.utilisateur({ email: `a-${indId}@example.com` })
+
+      await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, { ...BODY_BASE, responsables: [userA.id] }),
+      )
+      // Pas de clé `responsables` → ne pas toucher.
+      await runAsAdmin(apiKey.id, () => upsertIndicateur(indId, { ...BODY_BASE, nom: 'Renommé' }))
+
+      const ids = await getResponsableUtilisateurIds(indId)
+      expect(ids).toEqual([userA.id])
+    }),
+  )
+
+  it(
+    'vide les responsables quand le champ vaut []',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const apiKey = await fixtures.apiKey()
+      const userA = await fixtures.utilisateur({ email: `a-${indId}@example.com` })
+
+      await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, { ...BODY_BASE, responsables: [userA.id] }),
+      )
+      await runAsAdmin(apiKey.id, () => upsertIndicateur(indId, { ...BODY_BASE, responsables: [] }))
+
+      const ids = await getResponsableUtilisateurIds(indId)
+      expect(ids).toEqual([])
+    }),
+  )
+
+  it(
+    'déduplique les responsables en doublon',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const apiKey = await fixtures.apiKey()
+      const userA = await fixtures.utilisateur({ email: `a-${indId}@example.com` })
+
+      await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, { ...BODY_BASE, responsables: [userA.id, userA.id] }),
+      )
+
+      const ids = await getResponsableUtilisateurIds(indId)
+      expect(ids).toEqual([userA.id])
+    }),
+  )
+
+  it(
+    'échoue avec VALIDATION_ERROR quand un utilisateur est inconnu (aucun indicateur créé)',
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const apiKey = await fixtures.apiKey()
+      const inconnu = uuidv7()
+
+      await expect(
+        runAsAdmin(apiKey.id, () =>
+          upsertIndicateur(indId, { ...BODY_BASE, responsables: [inconnu] }),
+        ),
+      ).rejects.toMatchObject({
+        constructor: ValidationError,
+        details: { unknownUtilisateurIds: [inconnu] },
+      })
+
+      const created = await db().indicateur.findUnique({ where: { publicId: indId } })
+      expect(created).toBeNull()
+    }),
+  )
+
+  it(
+    "préserve le createdAt des responsables conservés lors d'un remplacement",
+    integrationTest(async () => {
+      const indId = testIndicateurId()
+      const apiKey = await fixtures.apiKey()
+      const userA = await fixtures.utilisateur({ email: `keep-a-${indId}@example.com` })
+      const userB = await fixtures.utilisateur({ email: `keep-b-${indId}@example.com` })
+
+      await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, { ...BODY_BASE, responsables: [userA.id] }),
+      )
+      const avant = await db().indicateurResponsable.findFirstOrThrow({
+        where: { utilisateurId: userA.id },
+      })
+
+      await runAsAdmin(apiKey.id, () =>
+        upsertIndicateur(indId, { ...BODY_BASE, responsables: [userA.id, userB.id] }),
+      )
+      const apres = await db().indicateurResponsable.findFirstOrThrow({
+        where: { utilisateurId: userA.id },
+      })
+
+      expect(apres.createdAt).toEqual(avant.createdAt)
+      // userA (inséré en 1er, createdAt préservé) précède userB (inséré ensuite).
+      const ids = await getResponsableUtilisateurIds(indId)
+      expect(ids).toEqual([userA.id, userB.id])
     }),
   )
 })
