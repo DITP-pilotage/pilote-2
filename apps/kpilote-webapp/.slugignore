@@ -3,11 +3,11 @@
 .github
 .gitignore
 .gitmodules
-apps/mb-api
+apps/kpilote-api
 apps/pilote-ppg
 apps/pilote-ppg-auth
 apps/pilote-ppg-data-management
-mb-api-deploy
+kpilote-api-deploy
 node_modules
 public
 README.md

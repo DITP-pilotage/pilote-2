@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-exec node mb-admin-deploy/dist/server/index.js
+exec node kpilote-admin-deploy/dist/server/index.js
