@@ -5,7 +5,7 @@ import { Temporal } from '@js-temporal/polyfill'
 export type Month = {
   // 1er du mois. `PlainDate` (sans heure ni fuseau) garantit qu'aucun offset
   // ne peut décaler le bucket ; aligné sur la sortie SQL (`date_trunc`) côté
-  // mb-api qui produit aussi le 1er du bucket en ISO `YYYY-MM-DD`.
+  // kpilote-api qui produit aussi le 1er du bucket en ISO `YYYY-MM-DD`.
   bucket: Temporal.PlainDate
   key: string
 }

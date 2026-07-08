@@ -6,7 +6,7 @@ const isDev = process.env.NODE_ENV !== 'production'
 
 export const logger = pino({
   level: serverEnv.LOG_LEVEL,
-  base: { app: 'mb-webapp-bff' },
+  base: { app: 'kpilote-webapp-bff' },
   redact: {
     paths: [
       'req.headers.authorization',

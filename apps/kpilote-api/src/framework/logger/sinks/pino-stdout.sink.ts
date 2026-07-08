@@ -11,7 +11,7 @@ export class PinoStdoutSink implements LogSink {
   constructor(env: Env) {
     this.pino = pino({
       level: env.LOG_LEVEL,
-      base: { app: 'mb-api' },
+      base: { app: 'kpilote-api' },
       redact: {
         paths: [
           'req.headers.authorization',
