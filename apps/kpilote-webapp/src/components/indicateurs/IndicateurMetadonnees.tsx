@@ -1,6 +1,8 @@
 import {
   PERIODE_MISE_A_JOUR_LABELS,
+  UNITE_DUREE_LABELS,
   type ConfigurationIndicateurReferentielApiModel,
+  type DelaiMiseADisposition,
   type PeriodeMiseAJour,
   type UniteIndicateurApiModel,
 } from '@pilote/kpilote-shared/indicateur'
@@ -9,7 +11,7 @@ import { type ResponsableApiModel } from '@pilote/kpilote-shared/responsable'
 import { DescriptionList } from '@/components/ui/DescriptionList'
 import { ResponsablesList } from '@/components/ui/ResponsablesList'
 import { Heading } from '@/components/ui/Typography'
-import { formatDateTimeFr } from '@/lib/format'
+import { formatDateTimeFr, formatMoisAnneeLongFr } from '@/lib/format'
 
 const VALEUR_VIDE = '—'
 
@@ -26,6 +28,12 @@ const formatReferentiels = (
   return referentiels.map((r) => r.nom).join(', ')
 }
 
+const formatDelai = (delai: DelaiMiseADisposition | null): string =>
+  delai ? `${delai.nombre} ${UNITE_DUREE_LABELS[delai.unite]}` : VALEUR_VIDE
+
+const formatDateMoisAnnee = (date: string | null): string =>
+  date ? formatMoisAnneeLongFr(date) : VALEUR_VIDE
+
 type IndicateurMetadonneesProps = {
   indicateur: {
     id: string
@@ -37,6 +45,9 @@ type IndicateurMetadonneesProps = {
     sourceUrl: string | null
     periodeMiseAJour: PeriodeMiseAJour | null
     jourMiseAJour: number | null
+    delaiMiseADisposition: DelaiMiseADisposition | null
+    dateProchaineValeur: string | null
+    dateMiseADisposition: string | null
     referentiels: ReadonlyArray<ConfigurationIndicateurReferentielApiModel>
     responsables: ReadonlyArray<ResponsableApiModel>
     createdAt: string
@@ -82,6 +93,15 @@ export function IndicateurMetadonnees({ indicateur }: IndicateurMetadonneesProps
         </DescriptionList.Item>
         <DescriptionList.Item label="Période de mise à jour">
           {formatPeriodeMiseAJour(indicateur.periodeMiseAJour, indicateur.jourMiseAJour)}
+        </DescriptionList.Item>
+        <DescriptionList.Item label="Délai de mise à disposition">
+          {formatDelai(indicateur.delaiMiseADisposition)}
+        </DescriptionList.Item>
+        <DescriptionList.Item label="Date de la prochaine valeur">
+          {formatDateMoisAnnee(indicateur.dateProchaineValeur)}
+        </DescriptionList.Item>
+        <DescriptionList.Item label="Date de mise à disposition">
+          {formatDateMoisAnnee(indicateur.dateMiseADisposition)}
         </DescriptionList.Item>
         <DescriptionList.Item label="Référentiels">
           {formatReferentiels(indicateur.referentiels)}
