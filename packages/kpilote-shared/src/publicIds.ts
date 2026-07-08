@@ -5,10 +5,10 @@ export const indicateurPublicIdSchema = z
   .regex(/^IND-\d+$/, 'Identifiant public attendu au format IND-XXX')
   .describe("Identifiant public de l'indicateur (format IND-XXX).")
 
-export const panierPublicIdSchema = z
+export const dossierPublicIdSchema = z
   .string()
-  .regex(/^PAN-\d+$/, 'Identifiant public attendu au format PAN-XXX')
-  .describe('Identifiant public du panier (format PAN-XXX).')
+  .regex(/^DOS-\d+$/, 'Identifiant public attendu au format DOS-XXX')
+  .describe('Identifiant public du dossier (format DOS-XXX).')
 
 export const referentielPublicIdSchema = z
   .string()

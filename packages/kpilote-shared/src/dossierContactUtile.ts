@@ -11,11 +11,11 @@ export const contactUtileApiModelSchema = z.object({
 })
 export type ContactUtileApiModel = z.infer<typeof contactUtileApiModelSchema>
 
-export const panierContactsUtilesGroupSchema = z.object({
+export const dossierContactsUtilesGroupSchema = z.object({
   organisme: z.object({
     id: z.string(),
     nom: z.string(),
   }),
   contacts: z.array(contactUtileApiModelSchema),
 })
-export type PanierContactsUtilesGroup = z.infer<typeof panierContactsUtilesGroupSchema>
+export type DossierContactsUtilesGroup = z.infer<typeof dossierContactsUtilesGroupSchema>
