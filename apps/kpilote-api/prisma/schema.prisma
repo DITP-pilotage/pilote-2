@@ -100,6 +100,10 @@ model Indicateur {
   sourceUrl        String?           @map("source_url")
   periodeMiseAJour PeriodeMiseAJour? @map("periode_mise_a_jour")
   jourMiseAJour    Int?              @map("jour_mise_a_jour")
+
+  delaiMiseADispositionNombre Int?        @map("delai_mad_nombre")
+  delaiMiseADispositionUnite  UniteDuree? @map("delai_mad_unite")
+
   createdAt        DateTime          @default(now()) @map("created_at")
   updatedAt        DateTime          @updatedAt @map("updated_at")
 
@@ -179,6 +183,15 @@ enum PeriodeMiseAJour {
   AUCUNE
 
   @@map("periode_mise_a_jour_enum")
+}
+
+enum UniteDuree {
+  JOURS
+  SEMAINES
+  MOIS
+  ANNEES
+
+  @@map("unite_duree_enum")
 }
 
 model IndicateurReferentiel {
