@@ -35,7 +35,9 @@ describe.concurrent('getPrincipalPermissions', () => {
       const result = await runAsAdmin(CALLER_ID, () => getPrincipalPermissions(target.id))
       const model = result._unsafeUnwrap()
 
-      expect(model.dossiers).toEqual([{ publicId: dos.publicId, nom: 'Dossier', actions: ['READ'] }])
+      expect(model.dossiers).toEqual([
+        { publicId: dos.publicId, nom: 'Dossier', actions: ['READ'] },
+      ])
       expect(model.indicateurs).toEqual([
         { publicId: ind1.publicId, nom: 'Indic 1', actions: ['WRITE'] },
       ])

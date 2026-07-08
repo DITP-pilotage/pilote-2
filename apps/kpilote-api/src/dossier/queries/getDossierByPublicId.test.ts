@@ -81,7 +81,9 @@ describe.concurrent('getDossierByPublicId', () => {
       await fixtures.dossier({ publicId: panNoacl, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey()
 
-      await expect(runAsPrincipal(apiKey.id, () => getDossierByPublicId(panNoacl))).rejects.toThrow()
+      await expect(
+        runAsPrincipal(apiKey.id, () => getDossierByPublicId(panNoacl)),
+      ).rejects.toThrow()
     }),
   )
 

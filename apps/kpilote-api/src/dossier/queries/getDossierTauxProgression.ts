@@ -92,14 +92,12 @@ const buildResult = async ({
 
   const { tauxProgression } = resolveDossierTauxProgression(contributions)
 
-  const apiContributions: DossierTauxProgressionContributionApiModel[] = contributions.map(
-    (c) => ({
-      indicateur: c.indicateurPublicId,
-      tauxProgression: c.tauxProgression,
-      date: c.date ? formatBucket(c.date) : null,
-      ponderation: c.ponderation.toNumber(),
-    }),
-  )
+  const apiContributions: DossierTauxProgressionContributionApiModel[] = contributions.map((c) => ({
+    indicateur: c.indicateurPublicId,
+    tauxProgression: c.tauxProgression,
+    date: c.date ? formatBucket(c.date) : null,
+    ponderation: c.ponderation.toNumber(),
+  }))
 
   logger.info(
     {

@@ -193,7 +193,9 @@ describe.concurrent('listDossiers', () => {
       const pubId = testDossierId()
       await fixtures.dossier({ publicId: pubId, visibilite: 'PRIVE' })
 
-      const result = await runAsAdmin('00000000-0000-0000-0000-0000000000a1', () => listDossiers({}))
+      const result = await runAsAdmin('00000000-0000-0000-0000-0000000000a1', () =>
+        listDossiers({}),
+      )
 
       expect(result._unsafeUnwrap().items.map((p) => p.id)).toContain(pubId)
     }),

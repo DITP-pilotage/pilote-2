@@ -75,7 +75,9 @@ describe.concurrent('listerMesPermissions', () => {
 
       const result = await runAsPrincipal(apiKey.id, () => listerMesPermissions())
 
-      expect(result._unsafeUnwrap().dossiers).toEqual([{ id: dossierId, actions: ['READ', 'WRITE'] }])
+      expect(result._unsafeUnwrap().dossiers).toEqual([
+        { id: dossierId, actions: ['READ', 'WRITE'] },
+      ])
     }),
   )
 
@@ -151,7 +153,7 @@ describe.concurrent('listerMesPermissions', () => {
   )
 
   it(
-    "trie dossiers et indicateurs par id ASC indépendamment de l’ordre de création",
+    'trie dossiers et indicateurs par id ASC indépendamment de l’ordre de création',
     integrationTest(async () => {
       const indicateurs = testIndicateurIds(3) // tuple trié ASC
       const dossiers = [testDossierId(), testDossierId(), testDossierId()].sort()

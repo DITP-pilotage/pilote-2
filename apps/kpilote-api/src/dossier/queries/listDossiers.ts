@@ -8,7 +8,9 @@ import { type Prisma } from '@/generated/prisma/client'
 import { withDossierReadPermission } from '@/dossier/permissions'
 import { toDossierApiModel } from '@/dossier/utils'
 
-export const listDossiers = (params: ListDossiersQuery): ResultAsync<DossierListApiModel, never> => {
+export const listDossiers = (
+  params: ListDossiersQuery,
+): ResultAsync<DossierListApiModel, never> => {
   const principalId = requireCurrentPrincipalId()
   const filters: Prisma.DossierWhereInput = {}
   if (params.recherche) {

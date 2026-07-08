@@ -970,7 +970,9 @@ const upsertDossierContactUtile = async (
   })
 }
 
-function dossierContactUtile(override: DossierContactUtileOverrides): Promise<DossierContactUtileModel>
+function dossierContactUtile(
+  override: DossierContactUtileOverrides,
+): Promise<DossierContactUtileModel>
 async function dossierContactUtile(
   override: DossierContactUtileOverrides,
 ): Promise<DossierContactUtileModel> {

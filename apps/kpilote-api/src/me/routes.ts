@@ -37,7 +37,7 @@ const mePermissionsRoute = createRoute({
   description:
     'Permet au client de gater son UI sans envoyer une mutation pour découvrir un 403. ' +
     "N'inclut PAS le READ implicite des ressources `PUBLIC` (le client le sait en affichant " +
-    'la ressource). Pour les API keys de rôle ADMIN, renvoie \`{ isAdmin: true, dossiers: [], ' +
+    'la ressource). Pour les API keys de rôle ADMIN, renvoie `{ isAdmin: true, dossiers: [], ' +
     'indicateurs: [] }` ; le client doit alors considérer toute action autorisée.',
   middleware: [requireAuthentication],
   responses: {
