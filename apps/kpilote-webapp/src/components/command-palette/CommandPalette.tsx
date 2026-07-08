@@ -51,9 +51,14 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const recentCommands = useRecentlyVisitedCommands(open, close)
   const { commands: indicateurCommands, isLoading: isLoadingIndicateurs } = useIndicateurCommands(
     query,
+    open,
     close,
   )
-  const { commands: panierCommands, isLoading: isLoadingPaniers } = usePanierCommands(query, close)
+  const { commands: panierCommands, isLoading: isLoadingPaniers } = usePanierCommands(
+    query,
+    open,
+    close,
+  )
   const isLoading = isLoadingIndicateurs || isLoadingPaniers
 
   // Les fiches récentes servent de point de départ : on les masque dès que

@@ -3,35 +3,30 @@ import { useQuery } from '@tanstack/react-query'
 import { ShoppingBasket } from 'lucide-react'
 import { useMemo } from 'react'
 
-import type { Command } from '@/lib/commands/types'
-import { paniersQueryOptions } from '@/queries/paniers'
+import { filterCommands, type Command } from '@/lib/commands/types'
+import { allPaniersQueryOptions } from '@/queries/paniers'
 
 import { buildPanierActions } from './panierActions'
-import { useDebouncedValue } from './useDebouncedValue'
 
-const DEBOUNCE_MS = 200
 const MAX_RESULTS = 8
 
 /**
- * Commandes issues de la recherche serveur de paniers (param `recherche`).
- * Chaque résultat navigue vers la fiche `/paniers/$id` puis ferme la palette.
+ * Commandes de recherche de paniers. Tous les paniers sont chargés à l'ouverture
+ * de la palette (`open`) et filtrés côté client (insensible casse + accents) sur
+ * le nom et le publicId. Chaque résultat navigue vers la fiche `/paniers/$id`
+ * puis ferme la palette.
  */
 export function usePanierCommands(
   query: string,
+  open: boolean,
   close: () => void,
 ): { commands: Command[]; isLoading: boolean } {
   const navigate = useNavigate()
-  const recherche = useDebouncedValue(query.trim(), DEBOUNCE_MS)
-  const enabled = recherche.length > 0
+  const { data, isLoading } = useQuery({ ...allPaniersQueryOptions(), enabled: open })
 
-  const { data, isFetching } = useQuery({
-    ...paniersQueryOptions({ recherche, pageSize: MAX_RESULTS }),
-    enabled,
-  })
-
-  const commands = useMemo<Command[]>(() => {
-    if (!enabled || !data) return []
-    return data.items.map((panier) => ({
+  const allCommands = useMemo<Command[]>(() => {
+    if (!data) return []
+    return data.map((panier) => ({
       id: `panier:${panier.id}`,
       label: panier.nom,
       group: 'paniers',
@@ -44,7 +39,14 @@ export function usePanierCommands(
       },
       actions: buildPanierActions(panier, { navigate, close }),
     }))
-  }, [enabled, data, navigate, close])
+  }, [data, navigate, close])
 
-  return { commands, isLoading: enabled && isFetching }
+  // On ne surface les résultats que lorsqu'une recherche est saisie : à vide, la
+  // palette affiche navigation + fiches récentes, pas tout le catalogue.
+  const commands = useMemo<Command[]>(() => {
+    if (query.trim().length === 0) return []
+    return filterCommands(allCommands, query).slice(0, MAX_RESULTS)
+  }, [allCommands, query])
+
+  return { commands, isLoading: open && isLoading }
 }

@@ -1,5 +1,7 @@
 import type { LucideIcon } from 'lucide-react'
 
+import { normaliserTexte } from '@/lib/texte'
+
 /**
  * Regroupement d'une commande dans la palette. Volontairement extensible :
  * les itérations futures ajouteront `'paniers'`, `'actions'`, etc.
@@ -57,9 +59,8 @@ export type Command = {
 }
 
 /**
- * Filtrage client d'une liste de commandes par sous-chaîne (insensible à la casse)
- * sur le libellé et les mots-clés. Utilisé pour les commandes statiques, dont le
- * filtrage n'est pas délégué au serveur.
+ * Filtrage client d'une liste de commandes par sous-chaîne (insensible à la casse
+ * et aux accents) sur le libellé et les mots-clés.
  */
 export function filterCommands(commands: Command[], query: string): Command[] {
   return filterByLabelAndKeywords(commands, query)
@@ -67,7 +68,8 @@ export function filterCommands(commands: Command[], query: string): Command[] {
 
 /**
  * Filtrage client des sous-actions d'une page (`Tab`), même contrat que
- * {@link filterCommands} : sous-chaîne insensible à la casse sur libellé + mots-clés.
+ * {@link filterCommands} : sous-chaîne insensible à la casse et aux accents sur
+ * libellé + mots-clés.
  */
 export function filterActions(actions: CommandAction[], query: string): CommandAction[] {
   return filterByLabelAndKeywords(actions, query)
@@ -77,10 +79,10 @@ function filterByLabelAndKeywords<T extends { label: string; keywords?: string[]
   items: T[],
   query: string,
 ): T[] {
-  const needle = query.trim().toLowerCase()
+  const needle = normaliserTexte(query.trim())
   if (!needle) return items
   return items.filter((item) => {
-    const haystack = [item.label, ...(item.keywords ?? [])].join(' ').toLowerCase()
+    const haystack = normaliserTexte([item.label, ...(item.keywords ?? [])].join(' '))
     return haystack.includes(needle)
   })
 }

@@ -3,35 +3,30 @@ import { useQuery } from '@tanstack/react-query'
 import { BarChart3 } from 'lucide-react'
 import { useMemo } from 'react'
 
-import type { Command } from '@/lib/commands/types'
-import { indicateursQueryOptions } from '@/queries/indicateurs'
+import { filterCommands, type Command } from '@/lib/commands/types'
+import { allIndicateursQueryOptions } from '@/queries/indicateurs'
 
 import { buildIndicateurActions } from './indicateurActions'
-import { useDebouncedValue } from './useDebouncedValue'
 
-const DEBOUNCE_MS = 200
 const MAX_RESULTS = 8
 
 /**
- * Commandes issues de la recherche serveur d'indicateurs (param `recherche`).
- * Chaque résultat navigue vers la fiche `/indicateurs/$id` puis ferme la palette.
+ * Commandes de recherche d'indicateurs. Toutes les fiches sont chargées à
+ * l'ouverture de la palette (`open`) et filtrées côté client (insensible casse +
+ * accents) sur le nom et le publicId. Chaque résultat navigue vers la fiche
+ * `/indicateurs/$id` puis ferme la palette.
  */
 export function useIndicateurCommands(
   query: string,
+  open: boolean,
   close: () => void,
 ): { commands: Command[]; isLoading: boolean } {
   const navigate = useNavigate()
-  const recherche = useDebouncedValue(query.trim(), DEBOUNCE_MS)
-  const enabled = recherche.length > 0
+  const { data, isLoading } = useQuery({ ...allIndicateursQueryOptions(), enabled: open })
 
-  const { data, isFetching } = useQuery({
-    ...indicateursQueryOptions({ recherche, pageSize: MAX_RESULTS }),
-    enabled,
-  })
-
-  const commands = useMemo<Command[]>(() => {
-    if (!enabled || !data) return []
-    return data.items.map((indicateur) => ({
+  const allCommands = useMemo<Command[]>(() => {
+    if (!data) return []
+    return data.map((indicateur) => ({
       id: `indicateur:${indicateur.id}`,
       label: indicateur.nom,
       group: 'indicateurs',
@@ -44,7 +39,14 @@ export function useIndicateurCommands(
       },
       actions: buildIndicateurActions(indicateur, { navigate, close }),
     }))
-  }, [enabled, data, navigate, close])
+  }, [data, navigate, close])
 
-  return { commands, isLoading: enabled && isFetching }
+  // On ne surface les résultats que lorsqu'une recherche est saisie : à vide, la
+  // palette affiche navigation + fiches récentes, pas tout le catalogue.
+  const commands = useMemo<Command[]>(() => {
+    if (query.trim().length === 0) return []
+    return filterCommands(allCommands, query).slice(0, MAX_RESULTS)
+  }, [allCommands, query])
+
+  return { commands, isLoading: open && isLoading }
 }
