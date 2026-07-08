@@ -6,6 +6,7 @@ import {
   indicateurSourceUrlSchema,
   indicateurVisibiliteSchema,
   periodeMiseAJourSchema,
+  uniteDureeSchema,
   uniteIndicateurCodeSchema,
 } from '@pilote/kpilote-shared/indicateur'
 
@@ -33,6 +34,10 @@ export const buildIndicateurFormSchema = (mode: 'create' | 'edit') =>
           value === '' || (/^\d+$/.test(value) && Number(value) >= 1 && Number(value) <= 31),
         'Entier entre 1 et 31',
       ),
+    delaiNombre: z
+      .string()
+      .refine((value) => value === '' || (/^\d+$/.test(value) && Number(value) >= 1), 'Entier ≥ 1'),
+    delaiUnite: z.union([z.literal(''), uniteDureeSchema]),
     referentiels: z.array(configurationIndicateurReferentielSchema),
   })
 
@@ -50,6 +55,11 @@ export function buildInitialValues(indicateur?: IndicateurApiModel): IndicateurF
     sourceUrl: indicateur?.sourceUrl ?? '',
     periodeMiseAJour: indicateur?.periodeMiseAJour ?? '',
     jourMiseAJour: indicateur?.jourMiseAJour != null ? String(indicateur.jourMiseAJour) : '',
+    delaiNombre:
+      indicateur?.delaiMiseADisposition != null
+        ? String(indicateur.delaiMiseADisposition.nombre)
+        : '',
+    delaiUnite: indicateur?.delaiMiseADisposition?.unite ?? '',
     referentiels: indicateur?.referentiels ?? [],
   }
 }
@@ -68,6 +78,10 @@ export function toUpsertBody(values: IndicateurFormValues): UpsertIndicateurBody
     sourceUrl: emptyToNull(values.sourceUrl),
     periodeMiseAJour: values.periodeMiseAJour === '' ? null : values.periodeMiseAJour,
     jourMiseAJour: values.jourMiseAJour === '' ? null : Number(values.jourMiseAJour),
+    delaiMiseADisposition:
+      values.delaiUnite === '' || values.delaiNombre === ''
+        ? null
+        : { nombre: Number(values.delaiNombre), unite: values.delaiUnite },
     referentiels: values.referentiels,
   }
 }
