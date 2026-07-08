@@ -7,8 +7,8 @@
   },
   "scripts": {
     "dev:ppg": "pnpm -F @pilote/ppg dev",
-    "dev:mb": "pnpm -F @pilote/mb-api dev",
-    "dev:mb-webapp": "pnpm -F @pilote/mb-webapp dev",
+    "dev:kpilot-api": "pnpm -F @pilote/kpilot-api dev",
+    "dev:kpilot-webapp": "pnpm -F @pilote/kpilot-webapp dev",
     "build": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} deploy:prepare && pnpm -F ${APP_PACKAGE:-@pilote/ppg} build && pnpm -F ${APP_PACKAGE:-@pilote/ppg} deploy:bundle",
     "build:dev": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} build:dev",
     "start": "bash start.sh",

@@ -16,9 +16,9 @@ jobs:
     outputs:
       pilote-ppg: ${{ steps.filter.outputs.pilote-ppg }}
       pilote-ppg-data-management: ${{ steps.filter.outputs.pilote-ppg-data-management }}
-      mb-api: ${{ steps.filter.outputs.mb-api }}
-      mb-webapp: ${{ steps.filter.outputs.mb-webapp }}
-      mb-shared: ${{ steps.filter.outputs.mb-shared }}
+      kpilot-api: ${{ steps.filter.outputs.kpilot-api }}
+      kpilot-webapp: ${{ steps.filter.outputs.kpilot-webapp }}
+      kpilot-shared: ${{ steps.filter.outputs.kpilot-shared }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -31,16 +31,16 @@ jobs:
               - 'pnpm-lock.yaml'
             pilote-ppg-data-management:
               - 'apps/pilote-ppg-data-management/**'
-            mb-api:
-              - 'apps/mb-api/**'
+            kpilot-api:
+              - 'apps/kpilot-api/**'
               - 'package.json'
               - 'pnpm-lock.yaml'
-            mb-webapp:
-              - 'apps/mb-webapp/**'
+            kpilot-webapp:
+              - 'apps/kpilot-webapp/**'
               - 'package.json'
               - 'pnpm-lock.yaml'
-            mb-shared:
-              - 'packages/mb-shared/**'
+            kpilot-shared:
+              - 'packages/kpilot-shared/**'
 
   test:
     name: Run tests
@@ -91,10 +91,10 @@ jobs:
       - name: Run lint command
         run: pnpm lint
 
-  test-mb-api:
-    name: Run tests for mb-api
+  test-kpilot-api:
+    name: Run tests for kpilot-api
     needs: changes
-    if: needs.changes.outputs['mb-api'] == 'true' || needs.changes.outputs['mb-shared'] == 'true'
+    if: needs.changes.outputs['kpilot-api'] == 'true' || needs.changes.outputs['kpilot-shared'] == 'true'
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5435/postgres?connection_limit=50
@@ -122,28 +122,28 @@ jobs:
 
       - name: Apply Prisma migrations
         # Required before `prisma generate --sql` introspects tables for TypedSQL types
-        run: pnpm -F @pilote/mb-api exec prisma migrate deploy
+        run: pnpm -F @pilote/kpilot-api exec prisma migrate deploy
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5435/postgres
 
       - name: Generate Prisma client
-        run: pnpm -F @pilote/mb-api prisma:generate
+        run: pnpm -F @pilote/kpilot-api prisma:generate
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5435/postgres
 
       - name: Run test command
         run: pnpm test
         env:
-          APP_PACKAGE: '@pilote/mb-api'
+          APP_PACKAGE: '@pilote/kpilot-api'
           OIDC_ISSUER_URL: https://example.test/realms/test
           OIDC_JWKS_URI: https://example.test/realms/test/protocol/openid-connect/certs
           OIDC_AUDIENCE: test-client
           OIDC_AUTHORIZED_PARTY: test-client
 
-  lint-mb-api:
-    name: Run linters for mb-api
+  lint-kpilot-api:
+    name: Run linters for kpilot-api
     needs: changes
-    if: needs.changes.outputs['mb-api'] == 'true' || needs.changes.outputs['mb-shared'] == 'true'
+    if: needs.changes.outputs['kpilot-api'] == 'true' || needs.changes.outputs['kpilot-shared'] == 'true'
     runs-on: ubuntu-latest
     env:
       # `prisma generate --sql` introspects tables to type TypedSQL queries — a real DB is required
@@ -171,20 +171,20 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
 
       - name: Apply Prisma migrations
-        run: pnpm -F @pilote/mb-api exec prisma migrate deploy
+        run: pnpm -F @pilote/kpilot-api exec prisma migrate deploy
 
       - name: Generate Prisma client
-        run: pnpm -F @pilote/mb-api prisma:generate
+        run: pnpm -F @pilote/kpilot-api prisma:generate
 
       - name: Run lint command
         run: pnpm lint
         env:
-          APP_PACKAGE: '@pilote/mb-api'
+          APP_PACKAGE: '@pilote/kpilot-api'
 
-  test-mb-webapp:
-    name: Run tests for mb-webapp
+  test-kpilot-webapp:
+    name: Run tests for kpilot-webapp
     needs: changes
-    if: needs.changes.outputs['mb-webapp'] == 'true' || needs.changes.outputs['mb-shared'] == 'true'
+    if: needs.changes.outputs['kpilot-webapp'] == 'true' || needs.changes.outputs['kpilot-shared'] == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -197,15 +197,15 @@ jobs:
       - name: Run test command
         run: pnpm test
         env:
-          APP_PACKAGE: '@pilote/mb-webapp'
-          # mb-webapp validates VITE_API_URL at module load (env.ts via Zod).
+          APP_PACKAGE: '@pilote/kpilot-webapp'
+          # kpilot-webapp validates VITE_API_URL at module load (env.ts via Zod).
           # Tests stub fetch globally so no real backend is hit; this only needs to be a valid URL.
           VITE_API_URL: http://localhost:3000
 
-  lint-mb-webapp:
-    name: Run linters for mb-webapp
+  lint-kpilot-webapp:
+    name: Run linters for kpilot-webapp
     needs: changes
-    if: needs.changes.outputs['mb-webapp'] == 'true' || needs.changes.outputs['mb-shared'] == 'true'
+    if: needs.changes.outputs['kpilot-webapp'] == 'true' || needs.changes.outputs['kpilot-shared'] == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -218,12 +218,12 @@ jobs:
       - name: Run lint command
         run: pnpm lint
         env:
-          APP_PACKAGE: '@pilote/mb-webapp'
+          APP_PACKAGE: '@pilote/kpilot-webapp'
 
-  lint-mb-shared:
-    name: Run linters for mb-shared
+  lint-kpilot-shared:
+    name: Run linters for kpilot-shared
     needs: changes
-    if: needs.changes.outputs['mb-shared'] == 'true'
+    if: needs.changes.outputs['kpilot-shared'] == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -236,7 +236,7 @@ jobs:
       - name: Run lint command
         run: pnpm lint
         env:
-          APP_PACKAGE: '@pilote/mb-shared'
+          APP_PACKAGE: '@pilote/kpilot-shared'
 
   lint-sql:
     name: Run SQL linter on dbt models
