@@ -1,7 +1,11 @@
 import { PrismaPg } from '@prisma/adapter-pg'
 import { uuidv7 } from 'uuidv7'
 
-import { type PeriodeMiseAJour, type UniteIndicateurCode } from '@pilote/kpilote-shared/indicateur'
+import {
+  type PeriodeMiseAJour,
+  type UniteDuree,
+  type UniteIndicateurCode,
+} from '@pilote/kpilote-shared/indicateur'
 
 import { Prisma, PrismaClient } from '../src/generated/prisma/client.js'
 import { type FonctionAgregation } from '../src/generated/prisma/enums.js'
@@ -34,6 +38,8 @@ const indicateursSeed: ReadonlyArray<{
   sourceUrl?: string
   periodeMiseAJour?: PeriodeMiseAJour
   jourMiseAJour?: number
+  delaiMiseADispositionNombre?: number
+  delaiMiseADispositionUnite?: UniteDuree
 }> = [
   {
     publicId: 'IND-001',
@@ -46,6 +52,9 @@ const indicateursSeed: ReadonlyArray<{
     sourceUrl: 'https://www.insee.fr/fr/statistiques/2489483',
     periodeMiseAJour: 'TRIMESTRIELLE',
     jourMiseAJour: 15,
+    // L'INSEE publie le taux de chômage BIT environ 50 jours après la fin du trimestre.
+    delaiMiseADispositionNombre: 2,
+    delaiMiseADispositionUnite: 'MOIS',
   },
   {
     publicId: 'IND-002',
@@ -56,6 +65,10 @@ const indicateursSeed: ReadonlyArray<{
     sourceDonnees: 'CITEPA — Secten',
     sourceUrl: 'https://www.citepa.org/fr/secten/',
     periodeMiseAJour: 'ANNUELLE',
+    // L'inventaire CITEPA d'une année n'est consolidé et publié qu'environ 18 mois
+    // plus tard : la donnée arrive après la valeur théorique suivante.
+    delaiMiseADispositionNombre: 18,
+    delaiMiseADispositionUnite: 'MOIS',
   },
   {
     publicId: 'IND-003',
@@ -90,6 +103,9 @@ const indicateursSeed: ReadonlyArray<{
     sourceDonnees: 'DITP — Baromètre Services Publics+',
     sourceUrl: 'https://www.plus.transformation.gouv.fr/',
     periodeMiseAJour: 'SEMESTRIELLE',
+    // Résultats du baromètre consolidés environ 2 mois après la fin de la vague.
+    delaiMiseADispositionNombre: 2,
+    delaiMiseADispositionUnite: 'MOIS',
   },
   { publicId: 'IND-009', nom: 'Délai moyen de prise en charge urgences', unite: 'MINUTES' },
   {
@@ -279,6 +295,8 @@ const main = async () => {
       sourceUrl: item.sourceUrl ?? null,
       periodeMiseAJour: item.periodeMiseAJour ?? null,
       jourMiseAJour: item.jourMiseAJour ?? null,
+      delaiMiseADispositionNombre: item.delaiMiseADispositionNombre ?? null,
+      delaiMiseADispositionUnite: item.delaiMiseADispositionUnite ?? null,
     }
     await prisma.indicateur.upsert({
       where: { publicId: item.publicId },
