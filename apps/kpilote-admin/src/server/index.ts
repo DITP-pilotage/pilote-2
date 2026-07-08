@@ -47,5 +47,5 @@ app.get(
 )
 
 serve({ fetch: app.fetch, port: serverEnv.PORT }, (info) => {
-  console.log(`mb-admin listening on http://localhost:${info.port}`)
+  console.log(`kpilote-admin listening on http://localhost:${info.port}`)
 })
