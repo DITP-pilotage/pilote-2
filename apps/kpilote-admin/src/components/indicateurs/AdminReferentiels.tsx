@@ -15,9 +15,6 @@ const AGREGATION_LABEL: Record<FonctionAgregation, string> = {
   NONE: 'Aucune',
 }
 
-// Section « Référentiels liés » du formulaire indicateur. Récupère le form via
-// le contexte (`FormProvider`) et la liste des référentiels via une query
-// suspense préchargée dans le loader de route.
 export function AdminReferentiels() {
   const form = useIndicateurFormContext()
   const { fields, append, remove } = useFieldArray({ control: form.control, name: 'referentiels' })
@@ -53,9 +50,6 @@ export function AdminReferentiels() {
   )
 }
 
-// Une ligne « référentiel lié » : sélection du référentiel + fonction
-// d'agrégation, avec message d'erreur si le référentiel n'est pas choisi. Les
-// libellés sont masqués (`hideLabel`) car la ligne est en grille horizontale.
 function ReferentielRow({
   index,
   register,

@@ -10,7 +10,7 @@ import { fetchAllPages } from '@/lib/fetchAllPages'
 
 export const referentielsAllQueryOptions = () =>
   queryOptions({
-    queryKey: ['referentiels', 'all-for-select'],
+    queryKey: ['referentiels', 'all-pages'],
     queryFn: () => fetchAllReferentiels(),
   })
 

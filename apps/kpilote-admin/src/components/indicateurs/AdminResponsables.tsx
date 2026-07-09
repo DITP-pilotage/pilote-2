@@ -6,21 +6,9 @@ import { useIndicateurFormContext } from '@/components/indicateurs/indicateurFor
 import { FieldSelect } from '@/components/ui/FieldSelect'
 import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
 
-// Section « Responsables » du formulaire indicateur. Récupère le form via le
-// contexte (`FormProvider`) et la liste des utilisateurs via une query suspense
-// préchargée dans le loader de route. Le select exclut les responsables déjà
-// sélectionnés (comparaison sur les valeurs du form, pas sur `fields` dont l'id
-// est une clé générée par react-hook-form).
 export function AdminResponsables() {
   const form = useIndicateurFormContext()
-  // `keyName: 'fieldId'` : sans ça, react-hook-form écrase le champ métier `id`
-  // (UUID utilisateur) par sa clé interne dans `fields`. On garde donc `id` = UUID
-  // utilisateur, et `fieldId` = clé stable pour la prop `key`.
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: 'responsables',
-    keyName: 'fieldId',
-  })
+  const { fields, append, remove } = useFieldArray({ control: form.control, name: 'responsables' })
   const responsablesSelectionnes = useWatch({ control: form.control, name: 'responsables' })
   const { data: utilisateurs } = useSuspenseQuery(utilisateursAllQueryOptions())
 
@@ -66,7 +54,7 @@ export function AdminResponsables() {
       <ul className="mt-3 space-y-2">
         {fields.map((responsable, index) => (
           <li
-            key={responsable.fieldId}
+            key={responsable.id}
             className="flex items-center justify-between rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm"
           >
             <span>
