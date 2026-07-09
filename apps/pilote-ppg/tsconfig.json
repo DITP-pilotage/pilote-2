@@ -18,34 +18,33 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
-    "baseUrl": "./src",
     "paths": {
       "@/components/*": [
-        "client/components/*"
+        "./src/client/components/*"
       ],
       "@/client/*": [
-        "client/*"
+        "./src/client/*"
       ],
       "@/pages/*": [
-        "pages/*"
+        "./src/pages/*"
       ],
       "@/utils/*": [
-        "utils/*"
+        "./src/utils/*"
       ],
       "@/hooks/*": [
-        "hooks/*"
+        "./src/hooks/*"
       ],
       "@/server/*": [
-        "server/*"
+        "./src/server/*"
       ],
       "@/stores/*": [
-        "client/stores/*"
+        "./src/client/stores/*"
       ],
       "@/validation/*": [
-        "validation/*"
+        "./src/validation/*"
       ],
       "@/config": [
-        "config.ts"
+        "./src/config.ts"
       ]
     },
     "plugins": [
