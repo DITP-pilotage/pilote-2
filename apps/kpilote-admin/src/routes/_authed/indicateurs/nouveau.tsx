@@ -12,8 +12,15 @@ import {
 } from '@/components/indicateurs/indicateurFormSchema'
 import { PageHeading } from '@/components/PageHeading'
 import { extractApiError } from '@/lib/apiError'
+import { referentielsAllQueryOptions } from '@/queries/referentiels'
+import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
 
 export const Route = createFileRoute('/_authed/indicateurs/nouveau')({
+  loader: ({ context }) =>
+    Promise.all([
+      context.queryClient.ensureQueryData(referentielsAllQueryOptions()),
+      context.queryClient.ensureQueryData(utilisateursAllQueryOptions()),
+    ]),
   component: NewIndicateurComponent,
 })
 

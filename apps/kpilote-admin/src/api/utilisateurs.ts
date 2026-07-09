@@ -10,6 +10,7 @@ import {
 } from '@pilote/kpilote-shared/utilisateur'
 
 import { bffClient } from '@/api/client'
+import { fetchAllPages } from '@/lib/fetchAllPages'
 
 export const fetchUtilisateurs = async (
   params: { recherche?: string | undefined; cursor?: string | undefined } = {},
@@ -20,6 +21,9 @@ export const fetchUtilisateurs = async (
   const json = await bffClient.get('utilisateurs', { searchParams }).json()
   return utilisateurListApiModelSchema.parse(json)
 }
+
+export const fetchAllUtilisateurs = (): Promise<UtilisateurApiModel[]> =>
+  fetchAllPages((cursor) => fetchUtilisateurs({ cursor }))
 
 export const fetchUtilisateurById = async (id: string): Promise<UtilisateurApiModel> => {
   const json = await bffClient.get(`utilisateurs/${id}`).json()

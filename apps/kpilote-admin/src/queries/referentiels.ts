@@ -1,11 +1,18 @@
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query'
 
 import {
+  fetchAllReferentiels,
   fetchIndividusForReferentiel,
   fetchReferentielById,
   fetchReferentiels,
 } from '@/api/referentiels'
 import { fetchAllPages } from '@/lib/fetchAllPages'
+
+export const referentielsAllQueryOptions = () =>
+  queryOptions({
+    queryKey: ['referentiels', 'all-pages'],
+    queryFn: () => fetchAllReferentiels(),
+  })
 
 export const referentielsInfiniteQueryOptions = (recherche: string) =>
   infiniteQueryOptions({
