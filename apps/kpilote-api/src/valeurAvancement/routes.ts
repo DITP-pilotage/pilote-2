@@ -1,5 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi'
-import { errorApiModelSchema } from '@pilote/kpilote-shared/error'
+import { errorApiModelSchema, validationErrorApiModelSchema } from '@pilote/kpilote-shared/error'
 import { indicateurPublicIdSchema, individuPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
 import { createPaginatedApiListSchema } from '@pilote/kpilote-shared/pagination'
 import {
@@ -67,6 +67,9 @@ const BatchInvalidErrorDetailsApiModelSchema = batchInvalidErrorDetailsApiModelS
 const BatchInvalidErrorApiModelSchema = errorApiModelSchema
   .extend({ details: BatchInvalidErrorDetailsApiModelSchema })
   .openapi('BatchInvalidErrorApiModel')
+const ValidationErrorApiModelSchema = validationErrorApiModelSchema.openapi(
+  'ValidationErrorApiModel',
+)
 const IndividusWithValeursListApiModelSchema = createPaginatedApiListSchema(
   individuAvecValeursApiModelSchema,
 ).openapi('IndividusWithValeursListApiModel')
@@ -208,7 +211,7 @@ const upsertValeursAvancementBatchRoute = createRoute({
     400: {
       content: {
         'application/json': {
-          schema: z.union([BatchInvalidErrorApiModelSchema, ErrorApiModelSchema]),
+          schema: z.union([BatchInvalidErrorApiModelSchema, ValidationErrorApiModelSchema]),
         },
       },
       description:
