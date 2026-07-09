@@ -19,38 +19,41 @@ export function buildIndicateurActions(
   indicateur: { id: string; nom: string },
   { navigate, close }: BuildActionsContext,
 ): CommandAction[] {
-  const goToOnglet = (onglet: 'valeurs' | 'commentaires' | 'metadonnees') => () => {
-    // On conserve le couple individu/referentiel (contexte transverse aux fiches)
-    // et on ne fixe que `onglet`. `commentaires` reprend son défaut côté route.
-    // On ne peut pas étaler tout `prev` : il agrège le search cross-domaine (ex.
-    // `commentaires` panier) invalide pour le schéma indicateur.
-    void navigate({
-      to: '/indicateurs/$id',
-      params: { id: indicateur.id },
-      search: (prev) => ({ individu: prev.individu, referentiel: prev.referentiel, onglet }),
-    })
-    close()
-  }
+  const goTo =
+    (onglet: 'resultats' | 'metadonnees', sousOnglet?: 'confiance' | 'evolution' | 'commentaire') =>
+    () => {
+      void navigate({
+        to: '/indicateurs/$id',
+        params: { id: indicateur.id },
+        search: (prev) => ({
+          individu: prev.individu,
+          referentiel: prev.referentiel,
+          onglet,
+          ...(sousOnglet ? { sousOnglet } : {}),
+        }),
+      })
+      close()
+    }
 
   return [
     {
       id: `indicateur:${indicateur.id}:fiche`,
       label: 'Voir la fiche',
       icon: FileText,
-      keywords: ['valeurs', 'ouvrir'],
-      run: goToOnglet('valeurs'),
+      keywords: ['résultats', 'ouvrir'],
+      run: goTo('resultats'),
     },
     {
       id: `indicateur:${indicateur.id}:commentaires`,
       label: 'Voir les commentaires',
       icon: MessageSquare,
-      run: goToOnglet('commentaires'),
+      run: goTo('resultats', 'commentaire'),
     },
     {
       id: `indicateur:${indicateur.id}:metadonnees`,
       label: 'Voir les métadonnées',
       icon: Info,
-      run: goToOnglet('metadonnees'),
+      run: goTo('metadonnees'),
     },
   ]
 }

@@ -1,16 +1,15 @@
-import { indicateurIndividuCommentaireTypeSchema } from '@pilote/kpilote-shared/commentaire'
 import { indicateurPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
 import { individuPublicIdSchema } from '@pilote/kpilote-shared/individu'
 import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
-import { startTransition, useId } from 'react'
+import { startTransition, Suspense, useId } from 'react'
 import { z } from 'zod'
 
+import { SectionCommentaire } from '@/components/commentaires/SectionCommentaire'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurCommentaireConfigProvider } from '@/components/indicateurs/commentaires/IndicateurCommentaireConfigProvider'
-import { IndicateurCommentairesTab } from '@/components/indicateurs/commentaires/IndicateurCommentairesTab'
 import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetadonnees'
 import { IndicateurSynthesePanel } from '@/components/indicateurs/IndicateurSynthesePanel'
 import { IndicateurValeursChart } from '@/components/indicateurs/IndicateurValeursChart'
@@ -36,8 +35,8 @@ const paramsSchema = z.object({
 const searchSchema = z.object({
   individu: individuPublicIdSchema.optional(),
   referentiel: referentielPublicIdSchema.optional(),
-  onglet: z.enum(['valeurs', 'metadonnees', 'commentaires']).default('valeurs'),
-  commentaires: indicateurIndividuCommentaireTypeSchema.default('CONFIANCE'),
+  onglet: z.enum(['resultats', 'metadonnees']).default('resultats'),
+  sousOnglet: z.enum(['confiance', 'evolution', 'commentaire']).default('confiance'),
 })
 
 export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
@@ -60,9 +59,6 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
         throw redirect({
           to: '/indicateurs/$id',
           params,
-          // On préserve le reste du search (onglet, commentaires…) : seul le
-          // couple individu/referentiel est corrigé. Sinon un lien profond vers
-          // un onglet (ex. depuis la palette ⌘K) le perdrait au redirect.
           search: { ...location.search, individu, referentiel },
           replace: true,
         })
@@ -145,55 +141,82 @@ function IndicateurDetailComponent() {
         </FormField>
       </div>
 
-      <IndicateurSynthesePanel
-        indicateurId={id}
-        referentielId={referentielId}
-        individuId={individuId}
-        unite={indicateur.unite}
-        referentielNom={referentielNom}
-      />
-
       <Tabs
         value={search.onglet}
         onValueChange={(onglet) => {
           void navigate({
-            search: (prev) => ({
-              ...prev,
-              onglet: onglet as typeof search.onglet,
-            }),
+            search: (prev) => ({ ...prev, onglet: onglet as typeof search.onglet }),
           })
         }}
       >
         <TabsList>
-          <TabsTrigger value="valeurs">Valeurs</TabsTrigger>
+          <TabsTrigger value="resultats">Résultats</TabsTrigger>
           <TabsTrigger value="metadonnees">Métadonnées</TabsTrigger>
-          <TabsTrigger value="commentaires">Commentaires</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="valeurs">
-          <div className="space-y-10">
-            <IndicateurValeursChart
+        <TabsContent value="resultats">
+          <div className="space-y-8">
+            <IndicateurSynthesePanel
               indicateurId={id}
+              referentielId={referentielId}
               individuId={individuId}
               unite={indicateur.unite}
+              referentielNom={referentielNom}
             />
-            <IndicateurWidgets indicateurId={id} referentielId={referentielId} />
+
+            <IndicateurCommentaireConfigProvider indicateurId={id} individuId={individuId}>
+              <Tabs
+                value={search.sousOnglet}
+                onValueChange={(sousOnglet) => {
+                  void navigate({
+                    search: (prev) => ({
+                      ...prev,
+                      sousOnglet: sousOnglet as typeof search.sousOnglet,
+                    }),
+                  })
+                }}
+              >
+                <TabsList>
+                  <TabsTrigger value="confiance" className="text-xs">
+                    Niveau de confiance
+                  </TabsTrigger>
+                  <TabsTrigger value="evolution" className="text-xs">
+                    Evolution et répartition
+                  </TabsTrigger>
+                  <TabsTrigger value="commentaire" className="text-xs">
+                    Commentaire
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="confiance">
+                  <Suspense fallback={<RouteLoading message="Chargement des commentaires…" />}>
+                    <SectionCommentaire type="CONFIANCE" />
+                  </Suspense>
+                </TabsContent>
+
+                <TabsContent value="evolution">
+                  <div className="space-y-10">
+                    <IndicateurValeursChart
+                      indicateurId={id}
+                      individuId={individuId}
+                      unite={indicateur.unite}
+                    />
+                    <IndicateurWidgets indicateurId={id} referentielId={referentielId} />
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="commentaire">
+                  <Suspense fallback={<RouteLoading message="Chargement des commentaires…" />}>
+                    <SectionCommentaire type="DEFAUT" />
+                  </Suspense>
+                </TabsContent>
+              </Tabs>
+            </IndicateurCommentaireConfigProvider>
           </div>
         </TabsContent>
 
         <TabsContent value="metadonnees">
           <IndicateurMetadonnees indicateur={indicateur} />
-        </TabsContent>
-
-        <TabsContent value="commentaires">
-          <IndicateurCommentaireConfigProvider indicateurId={id} individuId={individuId}>
-            <IndicateurCommentairesTab
-              type={search.commentaires}
-              onTypeChange={(commentaires) => {
-                void navigate({ search: (prev) => ({ ...prev, commentaires }) })
-              }}
-            />
-          </IndicateurCommentaireConfigProvider>
         </TabsContent>
       </Tabs>
     </Page>
