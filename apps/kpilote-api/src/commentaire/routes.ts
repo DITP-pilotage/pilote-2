@@ -1,4 +1,4 @@
-import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import { createRoute, z } from '@hono/zod-openapi'
 import { modifierCommentaireBodySchema } from '@pilote/kpilote-shared/commentaire'
 
 import { modifierCommentaire } from '@/commentaire/commands/modifierCommentaire'
@@ -6,11 +6,12 @@ import { supprimerCommentaire } from '@/commentaire/commands/supprimerCommentair
 import { CommentaireApiModelSchema, reponseCommentaire } from '@/commentaire/openapi'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
+import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { erreur403, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 
-export const commentaireRoutes = new OpenAPIHono()
+export const commentaireRoutes = createOpenApiHono()
 
 // --- PUT /commentaires/:commentaireId ----------------------------------------
 

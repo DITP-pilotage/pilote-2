@@ -1,4 +1,4 @@
-import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import { createRoute, z } from '@hono/zod-openapi'
 import {
   creerIndicateurIndividuCommentaireBodySchema,
   listerIndicateurIndividuCommentairesQuerySchema,
@@ -24,6 +24,7 @@ import {
 import { getDernierBrouillon } from '@/commentaire/queries/getDernierBrouillon'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
+import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
@@ -119,7 +120,7 @@ const upsertIndicateurRoute = createRoute({
 
 // --- App registration --------------------------------------------------------
 
-export const indicateurRoutes = new OpenAPIHono()
+export const indicateurRoutes = createOpenApiHono()
 
 indicateurRoutes.openapi(getIndicateursRoute, async (context) => {
   const { recherche, rechercheIdentifiant, cursor, pageSize, ids } = context.req.valid('query')

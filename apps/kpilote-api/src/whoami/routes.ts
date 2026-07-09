@@ -1,7 +1,8 @@
-import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import { createRoute, z } from '@hono/zod-openapi'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { requirePrincipal } from '@/framework/auth/userContext'
+import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 
 const WhoamiOkSchema = z
@@ -29,7 +30,7 @@ const whoamiRoute = createRoute({
   },
 })
 
-export const whoamiRoutes = new OpenAPIHono()
+export const whoamiRoutes = createOpenApiHono()
 
 whoamiRoutes.openapi(whoamiRoute, (context) => {
   const principal = requirePrincipal()

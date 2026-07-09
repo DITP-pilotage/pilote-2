@@ -1,8 +1,9 @@
-import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import { createRoute, z } from '@hono/zod-openapi'
 import { individuApiModelSchema, individuPublicIdSchema } from '@pilote/kpilote-shared/individu'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
+import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { getIndividuByPublicId } from '@/individu/queries/getIndividuByPublicId'
 
@@ -29,7 +30,7 @@ const getIndividuByIdRoute = createRoute({
   },
 })
 
-export const individuRoutes = new OpenAPIHono()
+export const individuRoutes = createOpenApiHono()
 
 individuRoutes.openapi(getIndividuByIdRoute, async (context) => {
   const { id } = context.req.valid('param')

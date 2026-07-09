@@ -1,4 +1,4 @@
-import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import { createRoute, z } from '@hono/zod-openapi'
 import {
   creerNiveauConfianceBodySchema,
   modifierNiveauConfianceBodySchema,
@@ -9,10 +9,11 @@ import { modifierNiveauConfiance } from '@/niveauConfiance/commands/modifierNive
 import { NiveauConfianceApiModelSchema, reponseNiveauConfiance } from '@/niveauConfiance/openapi'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
+import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 
-export const niveauConfianceRoutes = new OpenAPIHono()
+export const niveauConfianceRoutes = createOpenApiHono()
 
 // --- POST /niveau-confiance --------------------------------------------------
 

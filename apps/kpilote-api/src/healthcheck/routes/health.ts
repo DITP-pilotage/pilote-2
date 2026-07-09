@@ -1,5 +1,6 @@
-import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import { createRoute, z } from '@hono/zod-openapi'
 
+import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { getHealth } from '@/healthcheck/queries/getHealth'
 
@@ -35,7 +36,7 @@ const healthRoute = createRoute({
   },
 })
 
-export const health = new OpenAPIHono()
+export const health = createOpenApiHono()
 
 health.openapi(healthRoute, async (context) => {
   return getHealth().match(

@@ -1,4 +1,4 @@
-import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import { createRoute, z } from '@hono/zod-openapi'
 import {
   individuApiModelSchema,
   listIndividusForReferentielQuerySchema,
@@ -13,6 +13,7 @@ import {
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
+import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { ErrorApiModelSchema, erreur400, erreur403, erreur409 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
@@ -123,7 +124,7 @@ const getIndividusForReferentielRoute = createRoute({
 
 // --- App registration --------------------------------------------------------
 
-export const referentielRoutes = new OpenAPIHono()
+export const referentielRoutes = createOpenApiHono()
 
 referentielRoutes.openapi(getReferentielsRoute, async (context) => {
   const { recherche, cursor, pageSize } = context.req.valid('query')
