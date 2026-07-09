@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { Search } from 'lucide-react'
-import { useState, type ReactNode } from 'react'
+import { Suspense, useState, type ReactNode } from 'react'
 
 import { CommandPalette } from '@/components/command-palette/CommandPalette'
 import { RaccourciKbd } from '@/components/command-palette/RaccourciKbd'
@@ -52,7 +52,9 @@ export function HeaderNav({ auth }: { auth: Auth }) {
       </nav>
 
       {auth.isAuthenticated ? (
-        <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+        <Suspense fallback={null}>
+          <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+        </Suspense>
       ) : null}
     </>
   )
