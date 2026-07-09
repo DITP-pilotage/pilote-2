@@ -106,13 +106,6 @@ function IndicateurDetailComponent() {
   // viser la dropzone de la modale, pas déclencher un second overlay par-dessus.
   const { isDragging } = usePageFileDrop({ enabled: canWrite && target === null, onFile })
 
-  const onFile = useCallback(
-    (file: File) =>
-      open({ indicateurId: indicateur.id, indicateurNom: indicateur.nom, initialFile: file }),
-    [open, indicateur.id, indicateur.nom],
-  )
-  const { isDragging } = usePageFileDrop({ enabled: canWrite, onFile })
-
   const actionsFiche = canWrite ? (
     <Button
       variant="secondary"
