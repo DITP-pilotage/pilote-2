@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 
+import { loadAllIndicateurs } from '@/queries/indicateurs'
 import { loadMePermissions } from '@/queries/mePermissions'
 
 export const Route = createFileRoute('/_authenticated')({
@@ -10,6 +11,10 @@ export const Route = createFileRoute('/_authenticated')({
       throw redirect({ to: '/login', search: { redirect: target } })
     }
   },
-  loader: ({ context }) => loadMePermissions({ queryClient: context.queryClient }),
+  loader: ({ context }) =>
+    Promise.all([
+      loadMePermissions({ queryClient: context.queryClient }),
+      loadAllIndicateurs({ queryClient: context.queryClient }),
+    ]),
   component: () => <Outlet />,
 })

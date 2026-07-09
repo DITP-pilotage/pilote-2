@@ -32,6 +32,9 @@ export const allIndicateursQueryOptions = () =>
     staleTime: DEFAULT_STALE_TIME,
   })
 
+export const loadAllIndicateurs = ({ queryClient }: { queryClient: QueryClient }) =>
+  queryClient.ensureQueryData(allIndicateursQueryOptions())
+
 export const loadIndicateurs = ({
   queryClient,
   query,
