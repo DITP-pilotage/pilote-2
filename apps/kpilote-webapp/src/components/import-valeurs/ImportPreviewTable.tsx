@@ -1,3 +1,6 @@
+import type { DataTableColumn } from '@/components/ui/DataTable'
+import { DataTable } from '@/components/ui/DataTable'
+
 import type { ParsedRow } from './parseFichierValeurs'
 
 const MAX_LIGNES_AFFICHEES = 100
@@ -6,33 +9,42 @@ export function ImportPreviewTable({ rows }: { rows: ParsedRow[] }) {
   const visibles = rows.slice(0, MAX_LIGNES_AFFICHEES)
   const reste = rows.length - visibles.length
 
+  const columns: DataTableColumn<ParsedRow>[] = [
+    {
+      key: '#',
+      header: '#',
+      cell: (_, index) => <span className="text-text-subtle">{index + 2}</span>,
+    },
+    {
+      key: 'individu',
+      header: 'individu',
+      cell: (row) => <span className="font-mono text-[13px]">{row.individu}</span>,
+    },
+    {
+      key: 'date',
+      header: 'date',
+      cell: (row) => <span className="font-mono text-[13px]">{row.date}</span>,
+    },
+    {
+      key: 'valeur',
+      header: 'valeur',
+      cell: (row) => <span className="font-mono text-[13px]">{String(row.valeur)}</span>,
+    },
+  ]
+
+  const footer =
+    reste > 0 ? (
+      <div className="border-t border-border bg-surface px-5 py-3 text-center text-xs text-text-subtle">
+        … et {reste} autre{reste > 1 ? 's' : ''} ligne{reste > 1 ? 's' : ''}
+      </div>
+    ) : null
+
   return (
-    <div className="overflow-hidden rounded-lg border border-border">
-      <table className="w-full text-left text-sm">
-        <thead className="bg-background text-xs uppercase tracking-wide text-text-subtle">
-          <tr>
-            <th className="px-4 py-2 font-medium">#</th>
-            <th className="px-4 py-2 font-medium">individu</th>
-            <th className="px-4 py-2 font-medium">date</th>
-            <th className="px-4 py-2 font-medium">valeur</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-border font-mono text-[13px]">
-          {visibles.map((row, index) => (
-            <tr key={index}>
-              <td className="px-4 py-2 text-text-subtle">{index + 2}</td>
-              <td className="px-4 py-2">{row.individu}</td>
-              <td className="px-4 py-2">{row.date}</td>
-              <td className="px-4 py-2">{String(row.valeur)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {reste > 0 ? (
-        <div className="border-t border-border bg-background px-4 py-2 text-center text-xs text-text-subtle">
-          … et {reste} autre{reste > 1 ? 's' : ''} ligne{reste > 1 ? 's' : ''}
-        </div>
-      ) : null}
-    </div>
+    <DataTable<ParsedRow>
+      columns={columns}
+      rows={visibles}
+      getRowKey={(_, i) => i}
+      footer={footer}
+    />
   )
 }
