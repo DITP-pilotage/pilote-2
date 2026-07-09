@@ -27,9 +27,8 @@ export function useRecentlyVisitedCommands(open: boolean, close: () => void): Co
   const { open: openImport } = useImportModal()
 
   const canImport = useMemo(
-    () =>
-      (indicateurId: string) =>
-        permissions ? canWriteIndicateur({ permissions, indicateurId }) : false,
+    () => (indicateurId: string) =>
+      permissions ? canWriteIndicateur({ permissions, indicateurId }) : false,
     [permissions],
   )
 

@@ -107,7 +107,8 @@ function IndicateurDetailComponent() {
   const { isDragging } = usePageFileDrop({ enabled: canWrite && target === null, onFile })
 
   const onFile = useCallback(
-    (file: File) => open({ indicateurId: indicateur.id, indicateurNom: indicateur.nom, initialFile: file }),
+    (file: File) =>
+      open({ indicateurId: indicateur.id, indicateurNom: indicateur.nom, initialFile: file }),
     [open, indicateur.id, indicateur.nom],
   )
   const { isDragging } = usePageFileDrop({ enabled: canWrite, onFile })

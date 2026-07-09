@@ -23,7 +23,13 @@ const messageParseError = (result: Extract<ParseResult, { ok: false }>): string 
   }
 }
 
-export function ImportValeursModal({ target, onClose }: { target: ImportTarget; onClose: () => void }) {
+export function ImportValeursModal({
+  target,
+  onClose,
+}: {
+  target: ImportTarget
+  onClose: () => void
+}) {
   const toast = useToast()
   const mutation = useImportValeursBatch({ indicateurId: target.indicateurId })
   const [nomFichier, setNomFichier] = useState<string | null>(null)
@@ -81,7 +87,11 @@ export function ImportValeursModal({ target, onClose }: { target: ImportTarget; 
         if (error instanceof ImportBatchInvalidError) {
           setErreursServeur(traduireErreursBatch({ details: error.details }))
         } else {
-          toast({ title: 'Import impossible.', description: 'Une erreur est survenue.', variant: 'error' })
+          toast({
+            title: 'Import impossible.',
+            description: 'Une erreur est survenue.',
+            variant: 'error',
+          })
         }
       },
     })
@@ -149,7 +159,12 @@ export function ImportValeursModal({ target, onClose }: { target: ImportTarget; 
                       CSV ou Excel · colonnes individu, date, valeur · 1000 lignes max
                     </p>
                   </div>
-                  <input type="file" accept=".csv,.xlsx" className="hidden" onChange={onInputChange} />
+                  <input
+                    type="file"
+                    accept=".csv,.xlsx"
+                    className="hidden"
+                    onChange={onInputChange}
+                  />
                 </label>
                 {parseResult && !parseResult.ok ? (
                   <p className="mt-3 rounded-lg border border-accent-rouge/30 bg-accent-rouge/5 px-4 py-3 text-sm text-accent-rouge">
@@ -164,7 +179,12 @@ export function ImportValeursModal({ target, onClose }: { target: ImportTarget; 
             <Button variant="secondary" size="md" onClick={onClose}>
               Annuler
             </Button>
-            <Button variant="primary" size="md" disabled={!rows || mutation.isPending} onClick={onSubmit}>
+            <Button
+              variant="primary"
+              size="md"
+              disabled={!rows || mutation.isPending}
+              onClick={onSubmit}
+            >
               {mutation.isPending
                 ? 'Import en cours…'
                 : rows

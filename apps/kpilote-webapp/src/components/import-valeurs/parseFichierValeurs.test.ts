@@ -6,8 +6,7 @@ import {
   parseFichierValeurs,
 } from '@/components/import-valeurs/parseFichierValeurs'
 
-const csvFile = (contenu: string) =>
-  new File([contenu], 'valeurs.csv', { type: 'text/csv' })
+const csvFile = (contenu: string) => new File([contenu], 'valeurs.csv', { type: 'text/csv' })
 
 describe('formatDateCell', () => {
   it('formate un objet Date en YYYY-MM-DD (UTC)', () => {

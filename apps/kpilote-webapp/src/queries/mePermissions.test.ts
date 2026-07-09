@@ -8,7 +8,9 @@ const base: MePermissionsApiModel = { indicateurs: [], paniers: [] }
 
 describe('canWriteIndicateur', () => {
   it("autorise un admin sur n'importe quel indicateur", () => {
-    expect(canWriteIndicateur({ permissions: { ...base, isAdmin: true }, indicateurId: 'IND-1' })).toBe(true)
+    expect(
+      canWriteIndicateur({ permissions: { ...base, isAdmin: true }, indicateurId: 'IND-1' }),
+    ).toBe(true)
   })
 
   it("autorise si une entree WRITE existe pour l'indicateur", () => {
@@ -19,7 +21,7 @@ describe('canWriteIndicateur', () => {
     expect(canWriteIndicateur({ permissions, indicateurId: 'IND-1' })).toBe(true)
   })
 
-  it("refuse sans entree WRITE", () => {
+  it('refuse sans entree WRITE', () => {
     const permissions: MePermissionsApiModel = {
       ...base,
       indicateurs: [{ id: 'IND-1', actions: ['READ'] }],

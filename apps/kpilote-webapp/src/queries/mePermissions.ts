@@ -1,4 +1,7 @@
-import { type MePermissionsApiModel, type PermissionEntryApiModel } from '@pilote/kpilote-shared/mePermissions'
+import {
+  type MePermissionsApiModel,
+  type PermissionEntryApiModel,
+} from '@pilote/kpilote-shared/mePermissions'
 import { type QueryClient, queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 
 import { fetchMePermissions } from '@/api/mePermissions'

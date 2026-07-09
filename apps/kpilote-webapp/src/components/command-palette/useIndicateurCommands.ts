@@ -29,9 +29,8 @@ export function useIndicateurCommands(
   const { open: openImport } = useImportModal()
 
   const canImport = useMemo(
-    () =>
-      (indicateurId: string) =>
-        permissions ? canWriteIndicateur({ permissions, indicateurId }) : false,
+    () => (indicateurId: string) =>
+      permissions ? canWriteIndicateur({ permissions, indicateurId }) : false,
     [permissions],
   )
 
