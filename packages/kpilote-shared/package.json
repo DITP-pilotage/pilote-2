@@ -72,6 +72,10 @@
       "types": "./src/valeurAvancement.ts",
       "default": "./src/valeurAvancement.ts"
     },
+    "./valeurImport": {
+      "types": "./src/valeurImport.ts",
+      "default": "./src/valeurImport.ts"
+    },
     "./objectifIndicateurIndividu": {
       "types": "./src/objectifIndicateurIndividu.ts",
       "default": "./src/objectifIndicateurIndividu.ts"

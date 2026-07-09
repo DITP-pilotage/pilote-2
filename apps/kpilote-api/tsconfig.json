@@ -25,6 +25,7 @@
       "@/referentiel/*": ["./src/referentiel/*"],
       "@/niveauConfiance/*": ["./src/niveauConfiance/*"],
       "@/valeurAvancement/*": ["./src/valeurAvancement/*"],
+      "@/valeurImport/*": ["./src/valeurImport/*"],
       "@/objectifIndicateurIndividu/*": ["./src/objectifIndicateurIndividu/*"],
       "@/widget/*": ["./src/widget/*"],
       "@/panier/*": ["./src/panier/*"],
