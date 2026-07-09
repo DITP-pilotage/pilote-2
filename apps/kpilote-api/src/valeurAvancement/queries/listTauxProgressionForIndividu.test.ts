@@ -43,6 +43,7 @@ describe.concurrent('listTauxProgressionForIndividu', () => {
             indicateur: indId,
             tauxProgression: 75,
             valeurCible: 100,
+            dateCible: '2026-12-01',
           },
         ],
       })
@@ -88,6 +89,7 @@ describe.concurrent('listTauxProgressionForIndividu', () => {
             indicateur: indId,
             tauxProgression: 90,
             valeurCible: 100,
+            dateCible: '2026-12-01',
           },
         ],
       })
@@ -125,6 +127,7 @@ describe.concurrent('listTauxProgressionForIndividu', () => {
             indicateur: indId,
             tauxProgression: 100,
             valeurCible: 100,
+            dateCible: '2026-12-01',
           },
         ],
       })
@@ -162,6 +165,7 @@ describe.concurrent('listTauxProgressionForIndividu', () => {
             indicateur: indId,
             tauxProgression: null,
             valeurCible: 0,
+            dateCible: '2026-12-01',
           },
         ],
       })
@@ -212,6 +216,7 @@ describe.concurrent('listTauxProgressionForIndividu', () => {
             indicateur: indAvecObjectif,
             tauxProgression: 50,
             valeurCible: 100,
+            dateCible: '2026-12-01',
           },
         ],
       })

@@ -3,8 +3,8 @@ import { Progress } from 'radix-ui'
 import { clsxm } from '@/lib/clsxm'
 
 // Primitive « rail de progression » (Radix) : piste + indicateur bleu République.
-// La valeur est clampée à [0, 100]. Les compositions (ProgressionBar,
-// IndicateurProgression…) s'appuient dessus plutôt que de redéclarer le markup.
+// La valeur est clampée à [0, 100]. Les compositions (IndicateurProgression…)
+// s'appuient dessus plutôt que de redéclarer le markup.
 export function ProgressBar({
   value,
   label,

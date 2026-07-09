@@ -9,6 +9,10 @@ type EntityCardProps = Omit<ComponentProps<'div'>, 'title'> & {
   asChild?: boolean
   kicker?: ReactNode
   title: ReactNode
+  // Contenu principal, aligné sous le titre, qui occupe la hauteur restante de
+  // la carte (via flex-1). Le contenu gère lui-même son alignement interne.
+  body?: ReactNode
+  // Légende de pied de carte, épinglée en bas.
   footer?: ReactNode
 }
 
@@ -23,6 +27,7 @@ export function EntityCard({
   asChild = false,
   kicker,
   title,
+  body,
   footer,
   className,
   children,
@@ -40,6 +45,7 @@ export function EntityCard({
         {title}
       </Heading>
       <SlotPrimitive.Slottable>{children}</SlotPrimitive.Slottable>
+      {body && <div className="flex flex-1 flex-col">{body}</div>}
       {footer && (
         <Text as="div" variant="caption" tone="subtle" className="mt-auto">
           {footer}

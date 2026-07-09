@@ -1,10 +1,10 @@
 import { type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
 import { useSuspenseQueries } from '@tanstack/react-query'
 
+import { IndicateurProgression } from '@/components/indicateurs/IndicateurProgression'
 import { formatMonthYearNumericFr, formatNumberAvecUniteFr } from '@/lib/format'
 import { dernierValeurIndividuQueryOptions } from '@/queries/dernieresValeurs'
 import { tauxProgressionIndividuQueryOptions } from '@/queries/tauxProgression'
-import { ProgressionBar } from '@/components/ui/ProgressionBar'
 
 export function IndicateurAvancementSkeleton() {
   return (
@@ -35,20 +35,23 @@ export function IndicateurAvancement({
     ],
   })
   if (!data) {
-    return <span className="text-text-subtle">Pas de valeur</span>
+    return <span className="text-xs text-text-subtle">Pas de valeur</span>
   }
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-1 flex-col gap-1">
       <span className="text-2xl font-bold leading-none text-primary">
         {formatNumberAvecUniteFr(data.valeur, unite)}
       </span>
-      <span className="text-text-muted">au {formatMonthYearNumericFr(data.date)}</span>
+      <span className="text-xs text-text-muted">au {formatMonthYearNumericFr(data.date)}</span>
       {tauxData?.tauxProgression != null && (
-        <ProgressionBar
-          taux={tauxData.tauxProgression}
-          valeurCible={tauxData.valeurCible}
-          unite={unite}
-        />
+        <div className="mt-auto pt-4">
+          <IndicateurProgression
+            taux={tauxData.tauxProgression}
+            valeurCible={tauxData.valeurCible}
+            dateCible={tauxData.dateCible}
+            unite={unite}
+          />
+        </div>
       )}
     </div>
   )

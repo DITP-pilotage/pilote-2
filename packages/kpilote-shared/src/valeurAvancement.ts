@@ -491,6 +491,9 @@ export const tauxProgressionIndividuApiModelSchema = z.object({
   valeurCible: z
     .number()
     .describe("Valeur cible de l'objectif courant pour cet indicateur × individu."),
+  dateCible: dateSchema.describe(
+    "Date cible de l'objectif courant (YYYY-MM-DD) pour cet indicateur × individu.",
+  ),
 })
 export type TauxProgressionIndividuApiModel = z.infer<typeof tauxProgressionIndividuApiModelSchema>
 

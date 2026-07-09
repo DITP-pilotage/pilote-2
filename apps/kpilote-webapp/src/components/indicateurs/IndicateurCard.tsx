@@ -7,13 +7,6 @@ import {
   IndicateurAvancementSkeleton,
 } from '@/components/indicateurs/IndicateurAvancement'
 import { EntityCard } from '@/components/ui/EntityCard'
-import { formatMonthYearNumericFr } from '@/lib/format'
-
-function formatMiseAJour(iso: string): string {
-  const date = new Date(iso)
-  if (Number.isNaN(date.getTime())) return '—'
-  return formatMonthYearNumericFr(date)
-}
 
 export type IndicateurCardContext = {
   individu: string
@@ -24,23 +17,25 @@ export function IndicateurCard({
   indicateur,
   context,
 }: {
-  indicateur: Pick<IndicateurApiModel, 'id' | 'nom' | 'updatedAt' | 'unite'>
+  indicateur: Pick<IndicateurApiModel, 'id' | 'nom' | 'unite'>
   context?: IndicateurCardContext | undefined
 }) {
-  const footer = context ? (
-    <Suspense fallback={<IndicateurAvancementSkeleton />}>
-      <IndicateurAvancement
-        indicateurId={indicateur.id}
-        individuId={context.individu}
-        unite={indicateur.unite}
-      />
-    </Suspense>
-  ) : (
-    <>Mis à jour {formatMiseAJour(indicateur.updatedAt)}</>
-  )
-
   return (
-    <EntityCard asChild title={indicateur.nom} footer={footer}>
+    <EntityCard
+      asChild
+      title={indicateur.nom}
+      body={
+        context ? (
+          <Suspense fallback={<IndicateurAvancementSkeleton />}>
+            <IndicateurAvancement
+              indicateurId={indicateur.id}
+              individuId={context.individu}
+              unite={indicateur.unite}
+            />
+          </Suspense>
+        ) : undefined
+      }
+    >
       <Link to="/indicateurs/$id" params={{ id: indicateur.id }} search={context ?? {}} />
     </EntityCard>
   )
