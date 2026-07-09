@@ -81,6 +81,7 @@ export function ImportValeursModal({
           title: 'Import réussi.',
           description: `${result.created} créée(s) · ${result.updated} mise(s) à jour`,
         })
+        target.onSuccess?.()
         onClose()
       },
       onError: (error) => {

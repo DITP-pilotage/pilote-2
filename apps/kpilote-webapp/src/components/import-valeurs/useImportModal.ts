@@ -1,6 +1,12 @@
 import { createContext, useContext } from 'react'
 
-export type ImportTarget = { indicateurId: string; indicateurNom: string; initialFile?: File }
+export type ImportTarget = {
+  indicateurId: string
+  indicateurNom: string
+  initialFile?: File
+  /** Effet optionnel joué après un import réussi, avant la fermeture (ex. navigation). */
+  onSuccess?: () => void
+}
 
 export type ImportModalContextValue = {
   target: ImportTarget | null
