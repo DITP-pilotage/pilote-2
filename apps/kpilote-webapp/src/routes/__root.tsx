@@ -1,17 +1,8 @@
 import type { QueryClient } from '@tanstack/react-query'
-import {
-  createRootRouteWithContext,
-  Link,
-  Outlet,
-  useLocation,
-  useNavigate,
-  useSearch,
-} from '@tanstack/react-router'
+import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
-import type { ReactNode } from 'react'
 
-import { UserMenu } from '@/components/UserMenu'
-import { Button } from '@/components/ui/Button'
+import { HeaderNav } from '@/components/HeaderNav'
 import { Marianne } from '@/components/ui/Marianne'
 import type { Auth } from '@/auth'
 
@@ -26,7 +17,6 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootComponent() {
   const { auth } = Route.useRouteContext()
-  const navigate = useNavigate()
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-text">
@@ -49,24 +39,7 @@ function RootComponent() {
             </span>
           </Link>
 
-          <nav className="flex items-center gap-1 sm:gap-2">
-            <NavLink>Tableau de bord</NavLink>
-
-            <div className="mx-2 hidden h-6 w-px bg-border sm:block" />
-
-            {auth.isAuthenticated && auth.user ? (
-              <UserMenu
-                user={auth.user}
-                onLogout={() => {
-                  void auth.logout()
-                }}
-              />
-            ) : (
-              <Button size="sm" type="button" onClick={() => void navigate({ to: '/login' })}>
-                Se connecter
-              </Button>
-            )}
-          </nav>
+          <HeaderNav auth={auth} />
         </div>
       </header>
 
@@ -87,21 +60,5 @@ function RootComponent() {
 
       {import.meta.env.DEV && <TanStackRouterDevtools position="bottom-right" />}
     </div>
-  )
-}
-
-function NavLink({ children }: { children: ReactNode }) {
-  const search = useSearch({ strict: false })
-  const { pathname } = useLocation()
-  const isActive = pathname.startsWith('/indicateurs') || pathname.startsWith('/paniers')
-  return (
-    <Link
-      to="/indicateurs"
-      search={{ individu: search.individu, referentiel: search.referentiel }}
-      data-status={isActive ? 'active' : undefined}
-      className="rounded-md px-3 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-surface-tinted hover:text-primary data-[status=active]:bg-primary-tinted data-[status=active]:text-primary"
-    >
-      {children}
-    </Link>
   )
 }

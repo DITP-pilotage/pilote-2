@@ -20,6 +20,18 @@ export const indicateursQueryOptions = (params: ListIndicateursQuery) =>
     staleTime: DEFAULT_STALE_TIME,
   })
 
+/**
+ * Toutes les pages d'indicateurs en une liste, pour un filtrage 100% client
+ * (ex: command palette ⌘K). Cache dédié — pattern d'accès distinct des pages
+ * liste paginées côté serveur.
+ */
+export const allIndicateursQueryOptions = () =>
+  queryOptions({
+    queryKey: ['indicateurs', 'all'],
+    queryFn: () => fetchAllPaginatedItems((cursor) => fetchIndicateurs({ cursor, pageSize: 100 })),
+    staleTime: DEFAULT_STALE_TIME,
+  })
+
 export const loadIndicateurs = ({
   queryClient,
   query,

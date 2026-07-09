@@ -23,6 +23,7 @@ import { Page } from '@/components/ui/Page'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Text } from '@/components/ui/Typography'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
+import { useRecordVisit } from '@/lib/recentlyVisited'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
 import {
   loadPanier,
@@ -49,7 +50,7 @@ export const Route = createFileRoute('/_authenticated/paniers/$id')({
   },
   validateSearch: searchSchema,
   loaderDeps: ({ search }) => ({ individu: search.individu, referentiel: search.referentiel }),
-  loader: async ({ context, params, deps }) => {
+  loader: async ({ context, params, deps, location }) => {
     const { queryClient } = context
     const panier = await loadPanier({ queryClient, panierId: params.id })
     if (panier.indicateurIds.length > 0) {
@@ -65,7 +66,10 @@ export const Route = createFileRoute('/_authenticated/paniers/$id')({
         throw redirect({
           to: '/paniers/$id',
           params,
-          search: { individu, referentiel },
+          // On préserve le reste du search (onglet…) : seul le couple
+          // individu/referentiel est corrigé. Sinon un lien profond vers un
+          // onglet (ex. depuis la palette ⌘K) le perdrait au redirect.
+          search: { ...location.search, individu, referentiel },
           replace: true,
         })
       },
@@ -90,6 +94,7 @@ function PanierDetailComponent() {
   const navigate = useNavigate({ from: Route.fullPath })
   const selectId = useId()
   const { data: panier } = useSuspenseQuery(panierQueryOptions(id))
+  useRecordVisit({ type: 'panier', id: panier.id, label: panier.nom })
   const { data: indicateurs } = useSuspenseQuery(
     indicateursQueryOptions({ ids: panier.indicateurIds }),
   )

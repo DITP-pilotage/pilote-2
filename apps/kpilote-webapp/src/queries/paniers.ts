@@ -3,12 +3,24 @@ import { type QueryClient, queryOptions } from '@tanstack/react-query'
 
 import { fetchPanierById, fetchPaniers, fetchPanierTauxProgression } from '@/api/paniers'
 
-import { DEFAULT_STALE_TIME } from './utils'
+import { DEFAULT_STALE_TIME, fetchAllPaginatedItems } from './utils'
 
 export const paniersQueryOptions = (params: ListPaniersQuery) =>
   queryOptions({
     queryKey: ['paniers', params],
     queryFn: () => fetchPaniers(params),
+    staleTime: DEFAULT_STALE_TIME,
+  })
+
+/**
+ * Toutes les pages de paniers en une liste, pour un filtrage 100% client
+ * (ex: command palette ⌘K). Cache dédié — pattern d'accès distinct des pages
+ * liste paginées côté serveur.
+ */
+export const allPaniersQueryOptions = () =>
+  queryOptions({
+    queryKey: ['paniers', 'all'],
+    queryFn: () => fetchAllPaginatedItems((cursor) => fetchPaniers({ cursor, pageSize: 100 })),
     staleTime: DEFAULT_STALE_TIME,
   })
 
