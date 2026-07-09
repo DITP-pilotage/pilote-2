@@ -34,22 +34,33 @@ export async function parseFichierValeurs({ file }: { file: File }): Promise<Par
   try {
     const data = await file.arrayBuffer()
     const workbook = XLSX.read(data, { type: 'array', cellDates: true })
-    const feuille = workbook.Sheets[workbook.SheetNames[0]]
+    const nomFeuille = workbook.SheetNames[0]
+    if (nomFeuille === undefined) return { ok: false, error: { code: 'UNREADABLE' } }
+    const feuille = workbook.Sheets[nomFeuille]
+    if (feuille === undefined) return { ok: false, error: { code: 'UNREADABLE' } }
     matrice = XLSX.utils.sheet_to_json<unknown[]>(feuille, { header: 1, raw: true, blankrows: false })
   } catch {
     return { ok: false, error: { code: 'UNREADABLE' } }
   }
 
-  if (matrice.length === 0) return { ok: false, error: { code: 'EMPTY' } }
+  const [ligneEntetes, ...lignesSuivantes] = matrice
+  if (ligneEntetes === undefined) return { ok: false, error: { code: 'EMPTY' } }
 
-  const entetes = matrice[0].map((cellule) => String(cellule ?? '').trim().toLowerCase())
+  const entetes = ligneEntetes.map((cellule) => String(cellule ?? '').trim().toLowerCase())
   const indexParColonne = new Map(COLONNES.map((nom) => [nom, entetes.indexOf(nom)]))
   const missing = COLONNES.filter((nom) => (indexParColonne.get(nom) ?? -1) < 0)
   if (missing.length > 0) return { ok: false, error: { code: 'MISSING_COLUMNS', missing } }
 
-  const lignesData = matrice
-    .slice(1)
-    .filter((ligne) => ligne.some((cellule) => String(cellule ?? '').trim().length > 0))
+  // After the missing check, all three columns are guaranteed present — indexOf returns a valid number
+  const indices = {
+    individu: entetes.indexOf('individu'),
+    date: entetes.indexOf('date'),
+    valeur: entetes.indexOf('valeur'),
+  }
+
+  const lignesData = lignesSuivantes.filter((ligne) =>
+    ligne.some((cellule) => String(cellule ?? '').trim().length > 0),
+  )
 
   if (lignesData.length === 0) return { ok: false, error: { code: 'EMPTY' } }
   if (lignesData.length > MAX_VALEURS_PAR_BATCH) {
@@ -60,9 +71,9 @@ export async function parseFichierValeurs({ file }: { file: File }): Promise<Par
   }
 
   const rows = lignesData.map((ligne) => ({
-    individu: String(ligne[indexParColonne.get('individu') as number] ?? '').trim(),
-    date: formatDateCell({ cell: ligne[indexParColonne.get('date') as number] }),
-    valeur: parseValeurCell({ cell: ligne[indexParColonne.get('valeur') as number] }),
+    individu: String(ligne[indices.individu] ?? '').trim(),
+    date: formatDateCell({ cell: ligne[indices.date] }),
+    valeur: parseValeurCell({ cell: ligne[indices.valeur] }),
   }))
 
   return { ok: true, rows }

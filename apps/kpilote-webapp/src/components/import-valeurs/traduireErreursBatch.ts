@@ -15,7 +15,8 @@ const traduireEntree = (entree: BatchInvalidErrorEntryApiModel): string => {
   switch (entree.code) {
     case 'INVALID_ITEM': {
       const champs = entree.issues.map((issue) => issue.path).join(', ')
-      return `Ligne ${numeroLigne(entree.indices[0])} : champ « ${champs} » invalide.`
+      const [premierIndice = 0] = entree.indices
+      return `Ligne ${numeroLigne(premierIndice)} : champ « ${champs} » invalide.`
     }
     case 'INDIVIDU_INCONNU':
       return `Individu inconnu « ${entree.individu} » (${libelleLignes(entree.indices)}).`
