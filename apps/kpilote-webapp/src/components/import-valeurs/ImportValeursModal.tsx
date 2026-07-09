@@ -1,5 +1,5 @@
 import { Dialog as DialogPrimitive } from 'radix-ui'
-import { useEffect, useState, type ChangeEvent, type DragEvent } from 'react'
+import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react'
 import { Upload, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
@@ -30,16 +30,28 @@ export function ImportValeursModal({ target, onClose }: { target: ImportTarget; 
   const [parseResult, setParseResult] = useState<ParseResult | null>(null)
   const [erreursServeur, setErreursServeur] = useState<string[]>([])
 
+  const generationRef = useRef(0)
+
   const traiterFichier = async (file: File) => {
+    const generation = ++generationRef.current
     setNomFichier(file.name)
     setErreursServeur([])
-    setParseResult(await parseFichierValeurs({ file }))
+    const result = await parseFichierValeurs({ file })
+    if (generation !== generationRef.current) return
+    setParseResult(result)
   }
 
+  const initialFile = target.initialFile
   useEffect(() => {
-    if (target.initialFile) void traiterFichier(target.initialFile)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    if (!initialFile) return
+    const generation = ++generationRef.current
+    void parseFichierValeurs({ file: initialFile }).then((result) => {
+      if (generation !== generationRef.current) return
+      setNomFichier(initialFile.name)
+      setErreursServeur([])
+      setParseResult(result)
+    })
+  }, [initialFile])
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
