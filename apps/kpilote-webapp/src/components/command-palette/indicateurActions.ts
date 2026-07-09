@@ -76,6 +76,15 @@ export function buildIndicateurActions(
       icon: Upload,
       keywords: ['import', 'csv', 'excel', 'charger'],
       run: () => {
+        void navigate({
+          to: '/indicateurs/$id',
+          params: { id: indicateur.id },
+          search: (prev) => ({
+            individu: prev.individu,
+            referentiel: prev.referentiel,
+            onglet: 'valeurs',
+          }),
+        })
         openImport({ indicateurId: indicateur.id, indicateurNom: indicateur.nom })
         close()
       },
