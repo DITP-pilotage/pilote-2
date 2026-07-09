@@ -5,7 +5,11 @@ import type { ParsedRow } from '@/components/import-valeurs/parseFichierValeurs'
 export function useImportValeursBatch({ indicateurId }: { indicateurId: string }) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (rows: ParsedRow[]) => importValeursBatch({ indicateurId, rows }),
+    mutationFn: async (rows: ParsedRow[]) => {
+      const res = await importValeursBatch({ indicateurId, rows })
+      if (res.isErr()) throw res.error
+      return res.value
+    },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['indicateur', indicateurId] })
     },
