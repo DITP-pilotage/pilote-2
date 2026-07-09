@@ -2,7 +2,15 @@ import { createElement, type ReactNode } from 'react'
 
 import { clsxm } from '@/lib/clsxm'
 
-type HeadingSize = 'sm' | 'md' | 'lg' | 'xl' | 'display-sm' | 'display-md' | 'display-lg'
+type HeadingSize =
+  | 'sm'
+  | 'md'
+  | 'lg'
+  | 'xl'
+  | 'display-sm'
+  | 'display-md'
+  | 'display-lg'
+  | 'display-xl'
 type HeadingTone = 'neutral' | 'muted' | 'primary'
 type HeadingAs = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div'
 
@@ -22,6 +30,7 @@ const headingSizeClasses: Record<HeadingSize, string> = {
   'display-sm': 'text-3xl font-bold tracking-tight sm:text-display-sm',
   'display-md': 'text-display-sm sm:text-display-md',
   'display-lg': 'text-display-md sm:text-display-lg',
+  'display-xl': 'text-display-lg sm:text-display-xl',
 }
 
 const headingToneClasses: Record<HeadingTone, string> = {

@@ -5,6 +5,7 @@ import {
 } from '@pilote/kpilote-shared/valeurAvancement'
 import { ResultAsync } from 'neverthrow'
 
+import { formatBucket } from '@/framework/bucket'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
@@ -56,6 +57,7 @@ const build = async (
         indicateur: indicateur.publicId,
         tauxProgression: point.tauxProgression,
         valeurCible: point.valeurCible.toNumber(),
+        dateCible: formatBucket(point.dateCible),
       }
     }),
   )

@@ -12,9 +12,8 @@ import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurCommentaireConfigProvider } from '@/components/indicateurs/commentaires/IndicateurCommentaireConfigProvider'
 import { IndicateurCommentairesTab } from '@/components/indicateurs/commentaires/IndicateurCommentairesTab'
 import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetadonnees'
-import { IndicateurStatsPanel } from '@/components/indicateurs/IndicateurStatsPanel'
+import { IndicateurSynthesePanel } from '@/components/indicateurs/IndicateurSynthesePanel'
 import { IndicateurValeursChart } from '@/components/indicateurs/IndicateurValeursChart'
-import { IndicateurValeursRemarquables } from '@/components/indicateurs/IndicateurValeursRemarquables'
 import { IndicateurWidgets } from '@/components/indicateurs/IndicateurWidgets'
 import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
 import { BackLink } from '@/components/ui/BackLink'
@@ -125,15 +124,10 @@ function IndicateurDetailComponent() {
   const individuId = search.individu
   const referentielId = search.referentiel
   const referentielIds = indicateur.referentiels.map((c) => c.id)
+  const referentielNom = indicateur.referentiels.find((c) => c.id === referentielId)?.nom ?? null
 
   return (
     <Page title={indicateur.nom} back={back}>
-      <IndicateurStatsPanel
-        indicateurId={id}
-        referentielId={referentielId}
-        unite={indicateur.unite}
-      />
-
       <div className="max-w-md">
         <FormField label="Individu" htmlFor={selectId}>
           <IndividuSelect
@@ -151,10 +145,12 @@ function IndicateurDetailComponent() {
         </FormField>
       </div>
 
-      <IndicateurValeursRemarquables
+      <IndicateurSynthesePanel
         indicateurId={id}
+        referentielId={referentielId}
         individuId={individuId}
         unite={indicateur.unite}
+        referentielNom={referentielNom}
       />
 
       <Tabs
