@@ -43,7 +43,20 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const [highlighted, setHighlighted] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const close = useCallback(() => onOpenChange(false), [onOpenChange])
+  // Réinitialise la palette à son état racine (liste principale, requête vide).
+  const resetToRoot = useCallback(() => {
+    setActiveItem(null)
+    setQuery('')
+  }, [])
+
+  // Ferme la palette ET réinitialise son état. `close()` est déclenché après une
+  // navigation, sans passer par le `onOpenChange` du Dialog : sans ce reset,
+  // rouvrir la palette la laisserait sur la page d'actions ou une requête résiduelle.
+  const close = useCallback(() => {
+    onOpenChange(false)
+    resetToRoot()
+  }, [onOpenChange, resetToRoot])
+
   const handleOpen = useCallback(() => onOpenChange(true), [onOpenChange])
   useCommandPaletteShortcut(handleOpen)
 
@@ -62,7 +75,8 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const isLoading = isLoadingIndicateurs || isLoadingPaniers
 
   // Les fiches récentes servent de point de départ : on les masque dès que
-  // l'utilisateur tape, la recherche serveur prenant alors le relais.
+  // l'utilisateur tape, les résultats de recherche (indicateurs, paniers)
+  // prenant alors le relais.
   const showRecents = query.trim().length === 0
 
   // Toutes les commandes racine affichées, indexées pour résoudre l'item
@@ -89,11 +103,6 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   }, [])
 
   const exitActions = useCallback(() => {
-    setActiveItem(null)
-    setQuery('')
-  }, [])
-
-  const resetToRoot = useCallback(() => {
     setActiveItem(null)
     setQuery('')
   }, [])
