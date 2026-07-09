@@ -4,6 +4,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
 import { auth } from '@/auth'
+import { ImportModalProvider } from '@/components/import-valeurs/ImportModalProvider'
 import { ToastProvider } from '@/components/ui/Toast'
 import '@/index.css'
 import { routeTree } from '@/routeTree.gen'
@@ -35,7 +36,9 @@ void auth.bootstrap().then(() => {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <ToastProvider>
-          <RouterProvider router={router} />
+          <ImportModalProvider>
+            <RouterProvider router={router} />
+          </ImportModalProvider>
         </ToastProvider>
       </QueryClientProvider>
     </StrictMode>,
