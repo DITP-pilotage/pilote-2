@@ -6,7 +6,11 @@ describe('error schemas', () => {
     const parsed = validationErrorApiModelSchema.safeParse({
       code: 'VALIDATION_ERROR',
       message: 'Les données fournies sont invalides',
-      details: { issues: [{ path: ['items', 2, 'date'], message: 'Date calendaire invalide', code: 'custom' }] },
+      details: {
+        issues: [
+          { path: ['items', 2, 'date'], message: 'Date calendaire invalide', code: 'custom' },
+        ],
+      },
     })
     expect(parsed.success).toBe(true)
   })

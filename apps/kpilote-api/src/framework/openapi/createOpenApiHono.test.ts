@@ -1,5 +1,6 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { describe, expect, it } from 'vitest'
+import { validationErrorApiModelSchema } from '@pilote/kpilote-shared/error'
 
 import { registerErrorHandler } from '@/framework/errors/errorHandler'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
@@ -21,7 +22,10 @@ const buildApp = () => {
         },
       },
       responses: {
-        200: { description: 'ok', content: { 'application/json': { schema: z.object({ ok: z.boolean() }) } } },
+        200: {
+          description: 'ok',
+          content: { 'application/json': { schema: z.object({ ok: z.boolean() }) } },
+        },
       },
     }),
     (c) => c.json({ ok: true }, 200),
@@ -44,7 +48,7 @@ describe('createOpenApiHono — defaultHook route les ZodError vers onError', ()
     })
 
     expect(response.status).toBe(400)
-    const body = await response.json()
+    const body = validationErrorApiModelSchema.parse(await response.json())
     expect(body).not.toHaveProperty('success')
     expect(body.code).toBe('VALIDATION_ERROR')
     expect(body.details.issues).toBeDefined()
@@ -61,7 +65,7 @@ describe('createOpenApiHono — defaultHook route les ZodError vers onError', ()
     })
 
     expect(response.status).toBe(200)
-    const body = await response.json()
+    const body = (await response.json()) as { ok: boolean }
     expect(body.ok).toBe(true)
   })
 })

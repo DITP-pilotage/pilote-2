@@ -67,9 +67,8 @@ const BatchInvalidErrorDetailsApiModelSchema = batchInvalidErrorDetailsApiModelS
 const BatchInvalidErrorApiModelSchema = errorApiModelSchema
   .extend({ details: BatchInvalidErrorDetailsApiModelSchema })
   .openapi('BatchInvalidErrorApiModel')
-const ValidationErrorApiModelSchema = validationErrorApiModelSchema.openapi(
-  'ValidationErrorApiModel',
-)
+const ValidationErrorApiModelSchema =
+  validationErrorApiModelSchema.openapi('ValidationErrorApiModel')
 const IndividusWithValeursListApiModelSchema = createPaginatedApiListSchema(
   individuAvecValeursApiModelSchema,
 ).openapi('IndividusWithValeursListApiModel')

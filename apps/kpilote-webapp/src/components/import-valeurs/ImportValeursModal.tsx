@@ -1,6 +1,6 @@
 import { useState, type ChangeEvent, type DragEvent } from 'react'
 import { Upload } from 'lucide-react'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useQuery } from '@tanstack/react-query'
@@ -48,7 +48,7 @@ export function ImportValeursModal({
     defaultValues: { file: target.initialFile ?? null } as unknown as FormValues,
   })
 
-  const file = form.watch('file')
+  const file = useWatch({ control: form.control, name: 'file' })
 
   const parseQuery = useQuery({
     queryKey: ['import-parse', file?.name, file?.size, file?.lastModified],
