@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { traduireErreursBatch, traduireIssuesValidation } from '@/components/import-valeurs/traduireErreursBatch'
+import {
+  traduireErreursBatch,
+  traduireIssuesValidation,
+} from '@/components/import-valeurs/traduireErreursBatch'
 import type { ValidationIssueApiModel } from '@pilote/kpilote-shared/error'
 
 describe('traduireErreursBatch', () => {
@@ -38,9 +41,7 @@ describe('traduireIssuesValidation', () => {
       },
     ]
     const messages = traduireIssuesValidation({ issues })
-    expect(messages).toEqual([
-      'Ligne 4 : champ « date » invalide — Date calendaire invalide',
-    ])
+    expect(messages).toEqual(['Ligne 4 : champ « date » invalide — Date calendaire invalide'])
   })
 
   it('fallback "Ligne inconnue" si pas d\'index numérique dans le path', () => {

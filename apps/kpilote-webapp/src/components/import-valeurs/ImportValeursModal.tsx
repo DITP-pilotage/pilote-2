@@ -31,7 +31,7 @@ export function ImportValeursModal({
   onClose: () => void
 }) {
   const toast = useToast()
-  const mutation = useImportValeursBatch({ indicateurId: target.indicateurId })
+  const mutation = useImportValeursBatch({ indicateurId: target.indicateur.id })
   const [nomFichier, setNomFichier] = useState<string | null>(null)
   const [parseResult, setParseResult] = useState<ParseResult | null>(null)
   const [erreursServeur, setErreursServeur] = useState<string[]>([])
@@ -118,7 +118,7 @@ export function ImportValeursModal({
                 Importer des valeurs
               </DialogPrimitive.Title>
               <DialogPrimitive.Description className="mt-0.5 text-sm text-text-muted">
-                {target.indicateurNom} · CSV ou Excel
+                {target.indicateur.nom} · CSV ou Excel
               </DialogPrimitive.Description>
             </div>
             <button
