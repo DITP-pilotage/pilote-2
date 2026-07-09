@@ -1,6 +1,5 @@
+import { z } from 'zod'
 import { MAX_VALEURS_PAR_BATCH } from '@pilote/kpilote-shared/valeurAvancement'
-
-export type ParsedRow = { individu: string; date: string; valeur: number | string }
 
 export type ParseError =
   | { code: 'EMPTY' }
@@ -36,6 +35,14 @@ export function parseValeurCell({ cell }: { cell: unknown }): number | string {
   const normalise = Number(texte.replace(',', '.'))
   return texte.length > 0 && Number.isFinite(normalise) ? normalise : texte
 }
+
+const rowSchema = z.object({
+  individu: z.preprocess((cell) => celluleVersTexte(cell).trim(), z.string()),
+  date: z.preprocess((cell) => formatDateCell({ cell }), z.string()),
+  valeur: z.preprocess((cell) => parseValeurCell({ cell }), z.union([z.number(), z.string()])),
+})
+
+export type ParsedRow = z.infer<typeof rowSchema>
 
 export async function parseFichierValeurs({ file }: { file: File }): Promise<ParseResult> {
   const XLSX = await import('xlsx')
@@ -83,11 +90,13 @@ export async function parseFichierValeurs({ file }: { file: File }): Promise<Par
     }
   }
 
-  const rows = lignesData.map((ligne) => ({
-    individu: celluleVersTexte(ligne[indices.individu]).trim(),
-    date: formatDateCell({ cell: ligne[indices.date] }),
-    valeur: parseValeurCell({ cell: ligne[indices.valeur] }),
-  }))
+  const rows = lignesData.map((ligne) =>
+    rowSchema.parse({
+      individu: ligne[indices.individu],
+      date: ligne[indices.date],
+      valeur: ligne[indices.valeur],
+    }),
+  )
 
   return { ok: true, rows }
 }

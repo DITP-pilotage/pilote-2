@@ -81,4 +81,23 @@ describe('parseFichierValeurs', () => {
       rows: [{ individu: 'REG-93', date: '2024-01-15', valeur: 7.8 }],
     })
   })
+
+  it('convertit une cellule Date (UTC) en YYYY-MM-DD dans un XLSX', async () => {
+    const dateCell = new Date(Date.UTC(2025, 5, 3)) // 2025-06-03
+    const worksheet = XLSX.utils.aoa_to_sheet([
+      ['individu', 'date', 'valeur'],
+      ['DEPT-01', dateCell, 42],
+    ])
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Feuille1')
+    const buffer = XLSX.write(workbook, { type: 'array', bookType: 'xlsx' }) as ArrayBuffer
+    const file = new File([buffer], 'valeurs.xlsx', {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    })
+    const result = await parseFichierValeurs({ file })
+    expect(result).toEqual({
+      ok: true,
+      rows: [{ individu: 'DEPT-01', date: '2025-06-03', valeur: 42 }],
+    })
+  })
 })
