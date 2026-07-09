@@ -12,3 +12,19 @@ export const errorApiModelSchema = z.object({
 })
 
 export type ErrorApiModel = z.infer<typeof errorApiModelSchema>
+
+export const validationIssueApiModelSchema = z.object({
+  path: z
+    .array(z.union([z.string(), z.number()]))
+    .describe('Chemin Zod de la donnée invalide (ex. ["items", 2, "date"]).'),
+  message: z.string().describe('Message Zod en français.'),
+  code: z.string().describe('Code Zod (ex. custom, invalid_type).'),
+})
+export type ValidationIssueApiModel = z.infer<typeof validationIssueApiModelSchema>
+
+export const validationErrorApiModelSchema = z.object({
+  code: z.literal('VALIDATION_ERROR'),
+  message: z.string(),
+  details: z.object({ issues: z.array(validationIssueApiModelSchema) }),
+})
+export type ValidationErrorApiModel = z.infer<typeof validationErrorApiModelSchema>
