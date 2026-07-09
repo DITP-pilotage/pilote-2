@@ -3,7 +3,8 @@ import { individuPublicIdSchema } from '@pilote/kpilote-shared/individu'
 import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
-import { startTransition, useId } from 'react'
+import { Upload } from 'lucide-react'
+import { startTransition, useCallback, useId } from 'react'
 import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
@@ -11,7 +12,10 @@ import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetadonnees'
 import { IndicateurResultatsTab } from '@/components/indicateurs/IndicateurResultatsTab'
 import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
+import { useImportModal } from '@/components/import-valeurs/useImportModal'
+import { usePageFileDrop } from '@/components/import-valeurs/usePageFileDrop'
 import { BackLink } from '@/components/ui/BackLink'
+import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { FormField } from '@/components/ui/FormField'
 import { Page } from '@/components/ui/Page'
@@ -23,6 +27,7 @@ import {
   loadIndicateur,
   prefetchIndicateurValeursForIndividu,
 } from '@/queries/indicateurs'
+import { useCanWriteIndicateur } from '@/queries/mePermissions'
 
 const paramsSchema = z.object({
   id: indicateurPublicIdSchema,
@@ -89,6 +94,29 @@ function IndicateurDetailComponent() {
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(id))
   useRecordVisit({ type: 'indicateur', id: indicateur.id, label: indicateur.nom })
 
+  const canWrite = useCanWriteIndicateur(id)
+  const { open, target } = useImportModal()
+
+  const onFile = useCallback(
+    (file: File) =>
+      open({ indicateur: { id: indicateur.id, nom: indicateur.nom }, initialFile: file }),
+    [open, indicateur.id, indicateur.nom],
+  )
+  // Désactive le drop de page quand la modale d'import est ouverte : le drop doit
+  // viser la dropzone de la modale, pas déclencher un second overlay par-dessus.
+  const { isDragging } = usePageFileDrop({ enabled: canWrite && target === null, onFile })
+
+  const actionsFiche = canWrite ? (
+    <Button
+      variant="secondary"
+      size="md"
+      onClick={() => open({ indicateur: { id: indicateur.id, nom: indicateur.nom } })}
+    >
+      <Upload />
+      Importer des valeurs
+    </Button>
+  ) : null
+
   const back = (
     <BackLink asChild>
       <Link
@@ -122,7 +150,7 @@ function IndicateurDetailComponent() {
   const referentielNom = indicateur.referentiels.find((c) => c.id === referentielId)?.nom ?? null
 
   return (
-    <Page title={indicateur.nom} back={back}>
+    <Page title={indicateur.nom} back={back} actions={actionsFiche}>
       <div className="max-w-md">
         <FormField label="Individu" htmlFor={selectId}>
           <IndividuSelect
@@ -171,6 +199,15 @@ function IndicateurDetailComponent() {
           <IndicateurMetadonnees indicateur={indicateur} />
         </TabsContent>
       </Tabs>
+
+      {isDragging ? (
+        <div className="pointer-events-none fixed inset-0 z-40 flex items-center justify-center bg-primary/10 p-8 backdrop-blur-sm">
+          <div className="flex h-full w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed border-primary/40 bg-surface/70">
+            <p className="text-lg font-semibold text-primary">Déposez votre fichier CSV ou Excel</p>
+            <p className="text-sm text-primary/70">Il sera chargé dans la fenêtre d'import</p>
+          </div>
+        </div>
+      ) : null}
     </Page>
   )
 }
