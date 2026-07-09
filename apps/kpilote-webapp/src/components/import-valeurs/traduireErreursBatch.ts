@@ -21,6 +21,10 @@ const traduireEntree = (entree: BatchInvalidErrorEntryApiModel): string => {
       return `Individu inconnu « ${entree.individu} » (${libelleLignes(entree.indices)}).`
     case 'DUPLICATE_KEY':
       return `Doublon ${entree.individu} / ${entree.date} (${libelleLignes(entree.indices)}).`
+    default: {
+      const exhaustif: never = entree
+      return exhaustif
+    }
   }
 }
 

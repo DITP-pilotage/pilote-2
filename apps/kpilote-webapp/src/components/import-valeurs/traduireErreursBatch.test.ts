@@ -2,6 +2,13 @@ import { describe, expect, it } from 'vitest'
 import { traduireErreursBatch } from '@/components/import-valeurs/traduireErreursBatch'
 
 describe('traduireErreursBatch', () => {
+  it('utilise le singulier « ligne » pour un seul indice', () => {
+    const messages = traduireErreursBatch({
+      details: { errors: [{ code: 'INDIVIDU_INCONNU', indices: [0], individu: 'DEPT-1' }] },
+    })
+    expect(messages).toEqual(['Individu inconnu « DEPT-1 » (ligne 2).'])
+  })
+
   it('traduit chaque code en message FR avec numéro de ligne (index + 2)', () => {
     const messages = traduireErreursBatch({
       details: {
