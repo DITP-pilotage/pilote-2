@@ -1,11 +1,13 @@
 import type { useNavigate } from '@tanstack/react-router'
-import { BarChart2, FileText, Info, MessageSquare, ShieldCheck } from 'lucide-react'
+import { BarChart2, FileText, Info, MessageSquare, ShieldCheck, Upload } from 'lucide-react'
 
 import type { CommandAction } from '@/lib/commands/types'
 
 type BuildActionsContext = {
   navigate: ReturnType<typeof useNavigate>
   close: () => void
+  openImport?: (input: { indicateurId: string; indicateurNom: string }) => void
+  canImport?: (indicateurId: string) => boolean
 }
 
 /**
@@ -15,7 +17,7 @@ type BuildActionsContext = {
  */
 export function buildIndicateurActions(
   indicateur: { id: string; nom: string },
-  { navigate, close }: BuildActionsContext,
+  { navigate, close, openImport, canImport }: BuildActionsContext,
 ): CommandAction[] {
   const goTo =
     (onglet: 'resultats' | 'metadonnees', sousOnglet?: 'confiance' | 'evolution' | 'commentaire') =>
@@ -33,7 +35,7 @@ export function buildIndicateurActions(
       close()
     }
 
-  return [
+  const actions: CommandAction[] = [
     {
       id: `indicateur:${indicateur.id}:fiche`,
       label: 'Voir la fiche',
@@ -66,4 +68,19 @@ export function buildIndicateurActions(
       run: goTo('metadonnees'),
     },
   ]
+
+  if (openImport && canImport?.(indicateur.id)) {
+    actions.push({
+      id: `indicateur:${indicateur.id}:import`,
+      label: 'Importer des valeurs',
+      icon: Upload,
+      keywords: ['import', 'csv', 'excel', 'charger'],
+      run: () => {
+        openImport({ indicateurId: indicateur.id, indicateurNom: indicateur.nom })
+        close()
+      },
+    })
+  }
+
+  return actions
 }

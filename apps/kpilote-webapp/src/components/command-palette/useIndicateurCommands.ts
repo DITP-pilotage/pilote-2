@@ -5,6 +5,8 @@ import { useMemo } from 'react'
 
 import { filterCommands, type Command } from '@/lib/commands/types'
 import { allIndicateursQueryOptions } from '@/queries/indicateurs'
+import { canWriteIndicateur, mePermissionsQueryOptions } from '@/queries/mePermissions'
+import { useImportModal } from '@/components/import-valeurs/useImportModal'
 
 import { buildIndicateurActions } from './indicateurActions'
 
@@ -23,6 +25,15 @@ export function useIndicateurCommands(
 ): { commands: Command[]; isLoading: boolean } {
   const navigate = useNavigate()
   const { data, isLoading } = useQuery({ ...allIndicateursQueryOptions(), enabled: open })
+  const { data: permissions } = useQuery({ ...mePermissionsQueryOptions(), enabled: open })
+  const { open: openImport } = useImportModal()
+
+  const canImport = useMemo(
+    () =>
+      (indicateurId: string) =>
+        permissions ? canWriteIndicateur({ permissions, indicateurId }) : false,
+    [permissions],
+  )
 
   const allCommands = useMemo<Command[]>(() => {
     if (!data) return []
@@ -37,9 +48,9 @@ export function useIndicateurCommands(
         void navigate({ to: '/indicateurs/$id', params: { id: indicateur.id } })
         close()
       },
-      actions: buildIndicateurActions(indicateur, { navigate, close }),
+      actions: buildIndicateurActions(indicateur, { navigate, close, openImport, canImport }),
     }))
-  }, [data, navigate, close])
+  }, [data, navigate, close, openImport, canImport])
 
   // On ne surface les résultats que lorsqu'une recherche est saisie : à vide, la
   // palette affiche navigation + fiches récentes, pas tout le catalogue.
