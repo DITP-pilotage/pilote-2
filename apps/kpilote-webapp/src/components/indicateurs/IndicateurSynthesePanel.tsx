@@ -1,5 +1,5 @@
 import { type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
-import { useSuspenseQuery } from '@tanstack/react-query'
+import { useSuspenseQueries } from '@tanstack/react-query'
 
 import { IndicateurProgression } from '@/components/indicateurs/IndicateurProgression'
 import { Pill } from '@/components/ui/Pill'
@@ -42,18 +42,15 @@ export function IndicateurSynthesePanel({
   unite,
   referentielNom,
 }: IndicateurSynthesePanelProps) {
-  const { data: remarquables } = useSuspenseQuery(
-    indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId),
-  )
-  const { data: synthese } = useSuspenseQuery(
-    indicateurSyntheseIndividuQueryOptions(indicateurId, individuId),
-  )
-  const { data: valeurs } = useSuspenseQuery(
-    indicateurValeursQueryOptions(indicateurId, individuId),
-  )
-  const { data: tauxProgression } = useSuspenseQuery(
-    indicateurTauxProgressionQueryOptions(indicateurId, individuId),
-  )
+  const [{ data: remarquables }, { data: synthese }, { data: valeurs }, { data: tauxProgression }] =
+    useSuspenseQueries({
+      queries: [
+        indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId),
+        indicateurSyntheseIndividuQueryOptions(indicateurId, individuId),
+        indicateurValeursQueryOptions(indicateurId, individuId),
+        indicateurTauxProgressionQueryOptions(indicateurId, individuId),
+      ],
+    })
 
   const serie = valeursTrieesDesc(valeurs.items)
   const derniere = serie[0]

@@ -2,16 +2,13 @@ import { Progress } from 'radix-ui'
 
 import { clsxm } from '@/lib/clsxm'
 
-// Primitive « rail de progression » (Radix) : piste + indicateur bleu République.
-// La valeur est clampée à [0, 100]. Les compositions (IndicateurProgression…)
-// s'appuient dessus plutôt que de redéclarer le markup.
 export function ProgressBar({
   value,
   label,
   className,
 }: {
   value: number
-  label?: string
+  label: string
   className?: string
 }) {
   const clamped = Math.min(100, Math.max(0, value))

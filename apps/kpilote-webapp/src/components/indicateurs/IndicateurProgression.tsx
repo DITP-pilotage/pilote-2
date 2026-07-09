@@ -4,8 +4,6 @@ import { ProgressBar } from '@/components/ui/ProgressBar'
 import { Text } from '@/components/ui/Typography'
 import { formatDateFr, formatNumberAvecUniteFr, formatNumberFr } from '@/lib/format'
 
-// Section « Progression » complète : label + taux + barre + objectif daté.
-// Extraite pour être réutilisée (panneau de synthèse indicateur + carte indicateur).
 export function IndicateurProgression({
   taux,
   valeurCible,
