@@ -14,16 +14,25 @@ const COLONNES = ['individu', 'date', 'valeur'] as const
 
 const pad = (valeur: number): string => String(valeur).padStart(2, '0')
 
+const celluleVersTexte = (cellule: unknown): string => {
+  if (cellule == null) return ''
+  if (typeof cellule === 'string') return cellule
+  if (typeof cellule === 'number' || typeof cellule === 'boolean' || typeof cellule === 'bigint') {
+    return String(cellule)
+  }
+  return ''
+}
+
 export function formatDateCell({ cell }: { cell: unknown }): string {
   if (cell instanceof Date) {
     return `${cell.getUTCFullYear()}-${pad(cell.getUTCMonth() + 1)}-${pad(cell.getUTCDate())}`
   }
-  return String(cell ?? '').trim()
+  return celluleVersTexte(cell).trim()
 }
 
 export function parseValeurCell({ cell }: { cell: unknown }): number | string {
   if (typeof cell === 'number') return cell
-  const texte = String(cell ?? '').trim()
+  const texte = celluleVersTexte(cell).trim()
   const normalise = Number(texte.replace(',', '.'))
   return texte.length > 0 && Number.isFinite(normalise) ? normalise : texte
 }
@@ -38,7 +47,11 @@ export async function parseFichierValeurs({ file }: { file: File }): Promise<Par
     if (nomFeuille === undefined) return { ok: false, error: { code: 'UNREADABLE' } }
     const feuille = workbook.Sheets[nomFeuille]
     if (feuille === undefined) return { ok: false, error: { code: 'UNREADABLE' } }
-    matrice = XLSX.utils.sheet_to_json<unknown[]>(feuille, { header: 1, raw: true, blankrows: false })
+    matrice = XLSX.utils.sheet_to_json<unknown[]>(feuille, {
+      header: 1,
+      raw: true,
+      blankrows: false,
+    })
   } catch {
     return { ok: false, error: { code: 'UNREADABLE' } }
   }
@@ -46,7 +59,7 @@ export async function parseFichierValeurs({ file }: { file: File }): Promise<Par
   const [ligneEntetes, ...lignesSuivantes] = matrice
   if (ligneEntetes === undefined) return { ok: false, error: { code: 'EMPTY' } }
 
-  const entetes = ligneEntetes.map((cellule) => String(cellule ?? '').trim().toLowerCase())
+  const entetes = ligneEntetes.map((cellule) => celluleVersTexte(cellule).trim().toLowerCase())
   const indexParColonne = new Map(COLONNES.map((nom) => [nom, entetes.indexOf(nom)]))
   const missing = COLONNES.filter((nom) => (indexParColonne.get(nom) ?? -1) < 0)
   if (missing.length > 0) return { ok: false, error: { code: 'MISSING_COLUMNS', missing } }
@@ -59,7 +72,7 @@ export async function parseFichierValeurs({ file }: { file: File }): Promise<Par
   }
 
   const lignesData = lignesSuivantes.filter((ligne) =>
-    ligne.some((cellule) => String(cellule ?? '').trim().length > 0),
+    ligne.some((cellule) => celluleVersTexte(cellule).trim().length > 0),
   )
 
   if (lignesData.length === 0) return { ok: false, error: { code: 'EMPTY' } }
@@ -71,7 +84,7 @@ export async function parseFichierValeurs({ file }: { file: File }): Promise<Par
   }
 
   const rows = lignesData.map((ligne) => ({
-    individu: String(ligne[indices.individu] ?? '').trim(),
+    individu: celluleVersTexte(ligne[indices.individu]).trim(),
     date: formatDateCell({ cell: ligne[indices.date] }),
     valeur: parseValeurCell({ cell: ligne[indices.valeur] }),
   }))
