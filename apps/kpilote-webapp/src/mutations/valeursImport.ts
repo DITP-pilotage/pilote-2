@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { importValeursBatch } from '@/api/valeursImport'
+import { importValeursBatch, ImportError } from '@/api/valeursImport'
 import type { ParsedRow } from '@/components/import-valeurs/parseFichierValeurs'
 
 export function useImportValeursBatch({ indicateurId }: { indicateurId: string }) {
@@ -7,7 +7,7 @@ export function useImportValeursBatch({ indicateurId }: { indicateurId: string }
   return useMutation({
     mutationFn: async (rows: ParsedRow[]) => {
       const res = await importValeursBatch({ indicateurId, rows })
-      if (res.isErr()) throw res.error
+      if (res.isErr()) throw new ImportError(res.error)
       return res.value
     },
     onSuccess: () => {

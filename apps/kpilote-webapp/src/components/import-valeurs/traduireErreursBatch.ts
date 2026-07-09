@@ -46,13 +46,13 @@ export function traduireIssuesValidation({
   return issues.map((issue) => {
     // Extraire l'index numérique du path (ex: ['items', 2, 'date'] -> 2)
     const numericIndex = issue.path.find(
-      (segment) => typeof segment === 'number'
-    ) as number | undefined
+      (segment): segment is number => typeof segment === 'number',
+    )
 
     // Extraire le dernier segment string du path (le nom du champ)
     const fieldName = issue.path.findLast(
-      (segment) => typeof segment === 'string'
-    ) as string | undefined
+      (segment): segment is string => typeof segment === 'string',
+    )
 
     if (numericIndex !== undefined && fieldName) {
       const ligne = numeroLigne(numericIndex)

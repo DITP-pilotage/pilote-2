@@ -3,7 +3,7 @@ import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'r
 import { Upload, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { useToast } from '@/components/ui/Toast'
-import type { ImportBatchError } from '@/api/valeursImport'
+import { ImportError } from '@/api/valeursImport'
 import { useImportValeursBatch } from '@/mutations/valeursImport'
 import { parseFichierValeurs, type ParseResult } from './parseFichierValeurs'
 import { traduireErreursBatch } from './traduireErreursBatch'
@@ -85,9 +85,17 @@ export function ImportValeursModal({
         onClose()
       },
       onError: (error) => {
-        const batchError = error as unknown as ImportBatchError
-        if (batchError.type === 'BATCH_INVALID') {
-          setErreursServeur(traduireErreursBatch({ details: batchError.details }))
+        if (error instanceof ImportError) {
+          const detail = error.detail
+          if (detail.type === 'BATCH_INVALID') {
+            setErreursServeur(traduireErreursBatch({ details: detail.details }))
+          } else {
+            toast({
+              title: 'Import impossible.',
+              description: 'Une erreur est survenue.',
+              variant: 'error',
+            })
+          }
         } else {
           toast({
             title: 'Import impossible.',

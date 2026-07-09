@@ -18,6 +18,13 @@ export type ImportBatchError =
   | { type: 'VALIDATION_ERROR'; issues: ValidationIssueApiModel[] }
   | { type: 'UNKNOWN' }
 
+export class ImportError extends Error {
+  constructor(readonly detail: ImportBatchError) {
+    super(detail.type)
+    this.name = 'ImportError'
+  }
+}
+
 export async function importValeursBatch({
   indicateurId,
   rows,
