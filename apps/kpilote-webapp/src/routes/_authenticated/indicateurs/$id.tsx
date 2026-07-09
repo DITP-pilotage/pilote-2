@@ -124,6 +124,7 @@ function IndicateurDetailComponent() {
   const individuId = search.individu
   const referentielId = search.referentiel
   const referentielIds = indicateur.referentiels.map((c) => c.id)
+  const referentielNom = indicateur.referentiels.find((c) => c.id === referentielId)?.nom ?? null
 
   return (
     <Page title={indicateur.nom} back={back}>
@@ -149,6 +150,7 @@ function IndicateurDetailComponent() {
         referentielId={referentielId}
         individuId={individuId}
         unite={indicateur.unite}
+        referentielNom={referentielNom}
       />
 
       <Tabs

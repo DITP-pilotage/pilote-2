@@ -3,11 +3,10 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { IndicateurProgression } from '@/components/indicateurs/IndicateurProgression'
 import { Pill } from '@/components/ui/Pill'
-import { PositionRelative } from '@/components/ui/PositionRelative'
 import { Heading, Text } from '@/components/ui/Typography'
 import { clsxm } from '@/lib/clsxm'
 import {
-  formatMonthYearNumericFr,
+  formatDateFr,
   formatNumberAvecUniteFr,
   formatNumberFr,
   formatVariationAvecUniteFr,
@@ -33,6 +32,7 @@ type IndicateurSynthesePanelProps = {
   referentielId: string
   individuId: string
   unite: UniteIndicateurApiModel | null
+  referentielNom: string | null
 }
 
 export function IndicateurSynthesePanel({
@@ -40,6 +40,7 @@ export function IndicateurSynthesePanel({
   referentielId,
   individuId,
   unite,
+  referentielNom,
 }: IndicateurSynthesePanelProps) {
   const { data: remarquables } = useSuspenseQuery(
     indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId),
@@ -67,62 +68,70 @@ export function IndicateurSynthesePanel({
 
   return (
     <section className="rounded-xl border border-border bg-surface p-6 sm:p-8">
-      <div className="flex flex-col gap-6 sm:grid sm:grid-cols-[1fr_1px_1fr] sm:items-start sm:gap-x-11 sm:gap-y-7">
-        {/* Rangée 1 · gauche — la valeur & sa trajectoire */}
-        <div className="sm:col-start-1 sm:row-start-1">
-          <Text variant="kicker" as="p">
-            Valeur d&apos;avancement
-          </Text>
-          {derniere ? (
-            <>
-              <Heading as="p" size="display-xl" className="mt-3">
-                {formatNumberFr(derniere.valeur)}
-                {unite?.abbreviation && (
-                  <span className="ml-[0.06em] text-[0.46em] font-bold text-text-muted">
-                    {unite.abbreviation}
-                  </span>
-                )}
-              </Heading>
-              <Text variant="caption" tone="subtle" className="mt-2">
-                au {formatMonthYearNumericFr(derniere.date)}
-              </Text>
-            </>
-          ) : (
-            <Heading as="p" size="display-xl" tone="muted" className="mt-3">
-              —
-            </Heading>
-          )}
-
-          {variation !== null && variation !== 0 && (
-            <div className="mt-4">
-              <Pill tone={variation > 0 ? 'success' : 'warning'}>
-                {variation > 0 ? '↑' : '↓'} {variation > 0 ? 'En hausse' : 'En baisse'} :{' '}
-                {formatVariationFr(variation)}
-              </Pill>
-            </div>
-          )}
-
-          {precedente && (
-            <Text variant="body" tone="muted" className="mt-3">
-              Valeur précédente :{' '}
-              <span className="font-semibold text-text">
-                {formatNumberAvecUniteFr(precedente.valeur, unite)}
-              </span>{' '}
-              ({formatMonthYearNumericFr(precedente.date)})
+      <div className="flex flex-col gap-6 sm:grid sm:grid-cols-[1fr_1px_1fr] sm:items-start sm:gap-x-11">
+        {/* Gauche — la valeur, sa trajectoire, puis la progression */}
+        <div className="flex flex-col gap-4 sm:col-start-1">
+          <div>
+            <Text variant="kicker" as="p">
+              Valeur d&apos;avancement
             </Text>
+            {derniere ? (
+              <>
+                <div className="mt-3 flex flex-wrap items-end gap-3">
+                  <Heading as="p" size="display-lg">
+                    {formatNumberFr(derniere.valeur)}
+                    {unite?.abbreviation && (
+                      <span className="ml-[0.06em] text-[0.46em] font-bold text-text-muted">
+                        {unite.abbreviation}
+                      </span>
+                    )}
+                  </Heading>
+                  {variation !== null && variation !== 0 && (
+                    <Pill tone={variation > 0 ? 'success' : 'warning'} className="mb-2">
+                      {variation > 0 ? '↑' : '↓'} {formatVariationFr(variation)} ·{' '}
+                      {variation > 0 ? 'en hausse' : 'en baisse'}
+                    </Pill>
+                  )}
+                </div>
+                <Text variant="caption" tone="subtle" className="mt-2">
+                  au {formatDateFr(derniere.date)}
+                </Text>
+              </>
+            ) : (
+              <Heading as="p" size="display-lg" tone="muted" className="mt-3">
+                —
+              </Heading>
+            )}
+
+            {precedente && (
+              <Text variant="body" tone="muted" className="mt-3">
+                Valeur précédente :{' '}
+                <span className="font-semibold text-text">
+                  {formatNumberAvecUniteFr(precedente.valeur, unite)}
+                </span>{' '}
+                ({formatDateFr(precedente.date)})
+              </Text>
+            )}
+          </div>
+
+          {taux !== null && dernierPoint && (
+            <IndicateurProgression
+              taux={taux}
+              valeurCible={dernierPoint.valeurCible}
+              dateCible={dernierPoint.dateCible}
+              unite={unite}
+            />
           )}
         </div>
 
         {/* Séparateur vertical pleine hauteur (desktop) */}
-        <div
-          aria-hidden
-          className="hidden bg-border sm:col-start-2 sm:row-span-2 sm:row-start-1 sm:block sm:self-stretch"
-        />
+        <div aria-hidden className="hidden bg-border sm:col-start-2 sm:block sm:self-stretch" />
 
-        {/* Rangée 1 · droite — la distribution de référence */}
-        <div className="sm:col-start-3 sm:row-start-1">
-          <Text variant="kicker" tone="subtle" as="p">
+        {/* Droite — données de comparaison */}
+        <div className="max-sm:border-t max-sm:border-border max-sm:pt-6 sm:col-start-3">
+          <Text variant="kicker" as="p">
             Données de comparaison
+            {referentielNom && <span className="text-primary"> · {referentielNom}</span>}
           </Text>
           <ul className="mt-3 flex flex-col gap-0.5">
             <ComparaisonRow
@@ -144,8 +153,9 @@ export function IndicateurSynthesePanel({
               unite={unite}
             />
           </ul>
+
           {ecartMediane !== null && (
-            <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
+            <div className="mt-3 flex items-center justify-between gap-3 border-t border-border pt-3">
               <Text variant="body" tone="muted">
                 Écart à la médiane
               </Text>
@@ -155,32 +165,6 @@ export function IndicateurSynthesePanel({
               </Pill>
             </div>
           )}
-        </div>
-
-        {/* Rangée 2 · gauche — progression (alignée avec la position relative) */}
-        {taux !== null && dernierPoint && (
-          <div className="sm:col-start-1 sm:row-start-2">
-            <IndicateurProgression
-              taux={taux}
-              valeurCible={dernierPoint.valeurCible}
-              dateCible={dernierPoint.dateCible}
-              unite={unite}
-            />
-          </div>
-        )}
-
-        {/* Rangée 2 · droite — position relative */}
-        <div className="sm:col-start-3 sm:row-start-2">
-          <Text variant="kicker" tone="subtle" as="p" className="mb-3">
-            Position relative
-          </Text>
-          <PositionRelative
-            min={stats.min}
-            mediane={stats.mediane}
-            max={stats.max}
-            valeur={derniere?.valeur ?? null}
-            unite={unite}
-          />
         </div>
       </div>
     </section>
@@ -199,7 +183,7 @@ function ComparaisonRow({
   unite: UniteIndicateurApiModel | null
 }) {
   return (
-    <li className="flex items-baseline justify-between py-1.5">
+    <li className="flex items-baseline justify-between gap-3 py-1.5">
       <span className="flex items-center gap-2.5 text-sm text-text-muted">
         <span className={clsxm('size-2 rounded-full', dotClassName)} aria-hidden />
         {label}
