@@ -8,10 +8,19 @@ type PageProps = {
   description?: ReactNode
   back?: ReactNode
   actions?: ReactNode
+  stickybar?: ReactNode
   children: ReactNode
 }
 
-export function Page({ kicker, title, description, back, actions, children }: PageProps) {
+export function Page({
+  kicker,
+  title,
+  description,
+  back,
+  actions,
+  stickybar,
+  children,
+}: PageProps) {
   return (
     <div className="space-y-2 sm:space-y-4">
       {back && <div>{back}</div>}
@@ -33,6 +42,11 @@ export function Page({ kicker, title, description, back, actions, children }: Pa
         </div>
         {actions && <div className="flex shrink-0 items-center gap-3">{actions}</div>}
       </header>
+      {stickybar && (
+        <div className="sticky top-20 z-20 -mx-6 flex flex-wrap items-end justify-between gap-4 bg-surface/90 px-6 py-3 backdrop-blur sm:-mx-8 sm:px-8">
+          {stickybar}
+        </div>
+      )}
       <div className="space-y-10 sm:space-y-12">{children}</div>
     </div>
   )

@@ -150,8 +150,11 @@ function IndicateurDetailComponent() {
   const referentielNom = indicateur.referentiels.find((c) => c.id === referentielId)?.nom ?? null
 
   return (
-    <Page title={indicateur.nom} back={back} actions={actionsFiche}>
-      <div className="sticky top-20 z-20 -mx-6 mb-2 flex justify-start bg-surface/90 px-6 py-3 backdrop-blur sm:-mx-8 sm:px-8">
+    <Page
+      title={indicateur.nom}
+      back={back}
+      actions={actionsFiche}
+      stickybar={
         <div className="max-w-md">
           <FormField label="Individu" htmlFor={selectId}>
             <IndividuSelect
@@ -168,8 +171,8 @@ function IndicateurDetailComponent() {
             />
           </FormField>
         </div>
-      </div>
-
+      }
+    >
       <Tabs
         value={search.onglet}
         onValueChange={(onglet) => {

@@ -75,31 +75,32 @@ function PaniersListComponent() {
     <Page
       title="Tableau de bord"
       description="Consultez et gérez l'ensemble de vos indicateurs par valeur ou par dossier."
-    >
-      <div className="sticky top-20 z-20 -mx-6 mb-2 flex flex-wrap items-end justify-between gap-4 bg-surface/90 px-6 py-3 backdrop-blur sm:-mx-8 sm:px-8">
-        {search.individu ? (
-          <div className="max-w-md flex-1">
-            <FormField label="Individu" htmlFor={selectId}>
-              <IndividuSelect
-                id={selectId}
-                referentielIds={referentielIds}
-                value={search.individu}
-                onChange={({ individu, referentiel }) => {
-                  startTransition(() => {
-                    void navigate({
-                      search: (prev) => ({ ...prev, individu, referentiel }),
+      stickybar={
+        <>
+          {search.individu ? (
+            <div className="max-w-md flex-1">
+              <FormField label="Individu" htmlFor={selectId}>
+                <IndividuSelect
+                  id={selectId}
+                  referentielIds={referentielIds}
+                  value={search.individu}
+                  onChange={({ individu, referentiel }) => {
+                    startTransition(() => {
+                      void navigate({
+                        search: (prev) => ({ ...prev, individu, referentiel }),
+                      })
                     })
-                  })
-                }}
-              />
-            </FormField>
-          </div>
-        ) : (
-          <div />
-        )}
-        <DashboardSwitch />
-      </div>
-
+                  }}
+                />
+              </FormField>
+            </div>
+          ) : (
+            <div />
+          )}
+          <DashboardSwitch />
+        </>
+      }
+    >
       <div className="flex flex-col gap-6">
         <Text as="span" variant="kicker" tone="muted">
           {data.total} dossier{data.total > 1 ? 's' : ''}
