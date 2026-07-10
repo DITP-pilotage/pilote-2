@@ -1,4 +1,3 @@
-import { indicateurIndividuCommentaireTypeSchema } from '@pilote/kpilote-shared/commentaire'
 import { indicateurPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
 import { individuPublicIdSchema } from '@pilote/kpilote-shared/individu'
 import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
@@ -9,12 +8,8 @@ import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
-import { IndicateurCommentaireConfigProvider } from '@/components/indicateurs/commentaires/IndicateurCommentaireConfigProvider'
-import { IndicateurCommentairesTab } from '@/components/indicateurs/commentaires/IndicateurCommentairesTab'
 import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetadonnees'
-import { IndicateurSynthesePanel } from '@/components/indicateurs/IndicateurSynthesePanel'
-import { IndicateurValeursChart } from '@/components/indicateurs/IndicateurValeursChart'
-import { IndicateurWidgets } from '@/components/indicateurs/IndicateurWidgets'
+import { IndicateurResultatsTab } from '@/components/indicateurs/IndicateurResultatsTab'
 import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
 import { BackLink } from '@/components/ui/BackLink'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -36,8 +31,8 @@ const paramsSchema = z.object({
 const searchSchema = z.object({
   individu: individuPublicIdSchema.optional(),
   referentiel: referentielPublicIdSchema.optional(),
-  onglet: z.enum(['valeurs', 'metadonnees', 'commentaires']).default('valeurs'),
-  commentaires: indicateurIndividuCommentaireTypeSchema.default('CONFIANCE'),
+  onglet: z.enum(['resultats', 'metadonnees']).default('resultats'),
+  sousOnglet: z.enum(['confiance', 'evolution', 'commentaire']).default('confiance'),
 })
 
 export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
@@ -60,9 +55,9 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
         throw redirect({
           to: '/indicateurs/$id',
           params,
-          // On préserve le reste du search (onglet, commentaires…) : seul le
+          // On préserve le reste du search (onglet, sousOnglet…) : seul le
           // couple individu/referentiel est corrigé. Sinon un lien profond vers
-          // un onglet (ex. depuis la palette ⌘K) le perdrait au redirect.
+          // un sous-onglet (ex. depuis la palette ⌘K) le perdrait au redirect.
           search: { ...location.search, individu, referentiel },
           replace: true,
         })
@@ -145,55 +140,35 @@ function IndicateurDetailComponent() {
         </FormField>
       </div>
 
-      <IndicateurSynthesePanel
-        indicateurId={id}
-        referentielId={referentielId}
-        individuId={individuId}
-        unite={indicateur.unite}
-        referentielNom={referentielNom}
-      />
-
       <Tabs
         value={search.onglet}
         onValueChange={(onglet) => {
           void navigate({
-            search: (prev) => ({
-              ...prev,
-              onglet: onglet as typeof search.onglet,
-            }),
+            search: (prev) => ({ ...prev, onglet: onglet as typeof search.onglet }),
           })
         }}
       >
         <TabsList>
-          <TabsTrigger value="valeurs">Valeurs</TabsTrigger>
+          <TabsTrigger value="resultats">Résultats</TabsTrigger>
           <TabsTrigger value="metadonnees">Métadonnées</TabsTrigger>
-          <TabsTrigger value="commentaires">Commentaires</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="valeurs">
-          <div className="space-y-10">
-            <IndicateurValeursChart
-              indicateurId={id}
-              individuId={individuId}
-              unite={indicateur.unite}
-            />
-            <IndicateurWidgets indicateurId={id} referentielId={referentielId} />
-          </div>
+        <TabsContent value="resultats">
+          <IndicateurResultatsTab
+            indicateurId={id}
+            individuId={individuId}
+            referentielId={referentielId}
+            unite={indicateur.unite}
+            referentielNom={referentielNom}
+            sousOnglet={search.sousOnglet}
+            onSousOngletChange={(sousOnglet) => {
+              void navigate({ search: (prev) => ({ ...prev, sousOnglet }) })
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="metadonnees">
           <IndicateurMetadonnees indicateur={indicateur} />
-        </TabsContent>
-
-        <TabsContent value="commentaires">
-          <IndicateurCommentaireConfigProvider indicateurId={id} individuId={individuId}>
-            <IndicateurCommentairesTab
-              type={search.commentaires}
-              onTypeChange={(commentaires) => {
-                void navigate({ search: (prev) => ({ ...prev, commentaires }) })
-              }}
-            />
-          </IndicateurCommentaireConfigProvider>
         </TabsContent>
       </Tabs>
     </Page>

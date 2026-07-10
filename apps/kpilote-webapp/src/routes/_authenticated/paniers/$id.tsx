@@ -1,18 +1,17 @@
-import { panierCommentaireTypeSchema } from '@pilote/kpilote-shared/commentaire'
 import { individuPublicIdSchema } from '@pilote/kpilote-shared/individu'
 import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
 import { panierPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
-import { startTransition, useId } from 'react'
+import { startTransition, Suspense, useId } from 'react'
 import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
+import { SectionCommentaire } from '@/components/commentaires/SectionCommentaire'
 import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
 import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
 import { PanierCommentaireConfigProvider } from '@/components/paniers/PanierCommentaireConfigProvider'
-import { PanierCommentairesTab } from '@/components/paniers/PanierCommentairesTab'
 import { PanierGouvernanceTab } from '@/components/paniers/PanierGouvernanceTab'
 import { PanierTauxProgression } from '@/components/paniers/PanierTauxProgression'
 import { BackLink } from '@/components/ui/BackLink'
@@ -39,8 +38,7 @@ const paramsSchema = z.object({
 const searchSchema = z.object({
   individu: individuPublicIdSchema.optional(),
   referentiel: referentielPublicIdSchema.optional(),
-  onglet: z.enum(['resultats', 'commentaires', 'gouvernance']).default('resultats'),
-  commentaires: panierCommentaireTypeSchema.default('OBJECTIF'),
+  onglet: z.enum(['resultats', 'gouvernance', 'confiance', 'commentaires']).default('resultats'),
 })
 
 export const Route = createFileRoute('/_authenticated/paniers/$id')({
@@ -133,8 +131,9 @@ function PanierDetailComponent() {
       >
         <TabsList>
           <TabsTrigger value="resultats">Résultats</TabsTrigger>
-          <TabsTrigger value="commentaires">Commentaires</TabsTrigger>
           <TabsTrigger value="gouvernance">Gouvernance</TabsTrigger>
+          <TabsTrigger value="confiance">Niveau de confiance</TabsTrigger>
+          <TabsTrigger value="commentaires">Commentaires</TabsTrigger>
         </TabsList>
 
         <TabsContent value="resultats">
@@ -182,22 +181,27 @@ function PanierDetailComponent() {
           </div>
         </TabsContent>
 
-        <TabsContent value="commentaires">
-          <PanierCommentaireConfigProvider panierId={id}>
-            <PanierCommentairesTab
-              type={search.commentaires}
-              onTypeChange={(commentaires) => {
-                void navigate({ search: (prev) => ({ ...prev, commentaires }) })
-              }}
-            />
-          </PanierCommentaireConfigProvider>
-        </TabsContent>
-
         <TabsContent value="gouvernance">
           <PanierGouvernanceTab
             responsables={panier.responsables}
             contactsUtiles={panier.contactsUtiles}
           />
+        </TabsContent>
+
+        <TabsContent value="confiance">
+          <PanierCommentaireConfigProvider panierId={id}>
+            <Suspense fallback={<RouteLoading message="Chargement des commentaires…" />}>
+              <SectionCommentaire type="CONFIANCE" />
+            </Suspense>
+          </PanierCommentaireConfigProvider>
+        </TabsContent>
+
+        <TabsContent value="commentaires">
+          <PanierCommentaireConfigProvider panierId={id}>
+            <Suspense fallback={<RouteLoading message="Chargement des commentaires…" />}>
+              <SectionCommentaire type="DEFAUT" />
+            </Suspense>
+          </PanierCommentaireConfigProvider>
         </TabsContent>
       </Tabs>
     </Page>

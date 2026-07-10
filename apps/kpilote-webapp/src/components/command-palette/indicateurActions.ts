@@ -1,5 +1,5 @@
 import type { useNavigate } from '@tanstack/react-router'
-import { FileText, Info, MessageSquare } from 'lucide-react'
+import { BarChart2, FileText, Info, MessageSquare, ShieldCheck } from 'lucide-react'
 
 import type { CommandAction } from '@/lib/commands/types'
 
@@ -9,48 +9,61 @@ type BuildActionsContext = {
 }
 
 /**
- * Sous-actions (`Tab`) proposées sur un indicateur : pure navigation vers un
- * onglet de la fiche `/indicateurs/$id`, aucun appel API supplémentaire.
- *
- * Point d'extension du domaine indicateur : les actions futures (ex. « Importer
- * des données ») s'ajoutent ici avec leur propre `run()`.
+ * Actions de navigation proposées sur un indicateur dans la command palette.
+ * Couvrent les deux onglets primaires (Résultats, Métadonnées) et les trois
+ * sous-onglets de Résultats (Niveau de confiance, Evolution et répartition, Commentaire).
  */
 export function buildIndicateurActions(
   indicateur: { id: string; nom: string },
   { navigate, close }: BuildActionsContext,
 ): CommandAction[] {
-  const goToOnglet = (onglet: 'valeurs' | 'commentaires' | 'metadonnees') => () => {
-    // On conserve le couple individu/referentiel (contexte transverse aux fiches)
-    // et on ne fixe que `onglet`. `commentaires` reprend son défaut côté route.
-    // On ne peut pas étaler tout `prev` : il agrège le search cross-domaine (ex.
-    // `commentaires` panier) invalide pour le schéma indicateur.
-    void navigate({
-      to: '/indicateurs/$id',
-      params: { id: indicateur.id },
-      search: (prev) => ({ individu: prev.individu, referentiel: prev.referentiel, onglet }),
-    })
-    close()
-  }
+  const goTo =
+    (onglet: 'resultats' | 'metadonnees', sousOnglet?: 'confiance' | 'evolution' | 'commentaire') =>
+    () => {
+      void navigate({
+        to: '/indicateurs/$id',
+        params: { id: indicateur.id },
+        search: (prev) => ({
+          individu: prev.individu,
+          referentiel: prev.referentiel,
+          onglet,
+          ...(sousOnglet ? { sousOnglet } : {}),
+        }),
+      })
+      close()
+    }
 
   return [
     {
       id: `indicateur:${indicateur.id}:fiche`,
       label: 'Voir la fiche',
       icon: FileText,
-      keywords: ['valeurs', 'ouvrir'],
-      run: goToOnglet('valeurs'),
+      keywords: ['résultats', 'ouvrir'],
+      run: goTo('resultats'),
+    },
+    {
+      id: `indicateur:${indicateur.id}:confiance`,
+      label: 'Voir le niveau de confiance',
+      icon: ShieldCheck,
+      run: goTo('resultats', 'confiance'),
+    },
+    {
+      id: `indicateur:${indicateur.id}:evolution`,
+      label: "Voir l'évolution et répartition",
+      icon: BarChart2,
+      run: goTo('resultats', 'evolution'),
     },
     {
       id: `indicateur:${indicateur.id}:commentaires`,
       label: 'Voir les commentaires',
       icon: MessageSquare,
-      run: goToOnglet('commentaires'),
+      run: goTo('resultats', 'commentaire'),
     },
     {
       id: `indicateur:${indicateur.id}:metadonnees`,
       label: 'Voir les métadonnées',
       icon: Info,
-      run: goToOnglet('metadonnees'),
+      run: goTo('metadonnees'),
     },
   ]
 }
