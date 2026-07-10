@@ -1,5 +1,5 @@
 import type { useNavigate } from '@tanstack/react-router'
-import { FileText, Landmark, MessageSquare } from 'lucide-react'
+import { FileText, Landmark, MessageSquare, ShieldCheck } from 'lucide-react'
 
 import type { CommandAction } from '@/lib/commands/types'
 
@@ -19,11 +19,10 @@ export function buildPanierActions(
   panier: { id: string; nom: string },
   { navigate, close }: BuildActionsContext,
 ): CommandAction[] {
-  const goToOnglet = (onglet: 'resultats' | 'commentaires' | 'gouvernance') => () => {
+  const goToOnglet = (onglet: 'resultats' | 'gouvernance' | 'confiance' | 'commentaires') => () => {
     // On conserve le couple individu/referentiel (contexte transverse aux fiches)
-    // et on ne fixe que `onglet`. `commentaires` reprend son défaut côté route.
-    // On ne peut pas étaler tout `prev` : il agrège le search cross-domaine (ex.
-    // `commentaires` indicateur) invalide pour le schéma panier.
+    // et on ne fixe que `onglet`. On ne peut pas étaler tout `prev` : il agrège
+    // le search cross-domaine invalide pour le schéma panier.
     void navigate({
       to: '/paniers/$id',
       params: { id: panier.id },
@@ -41,16 +40,22 @@ export function buildPanierActions(
       run: goToOnglet('resultats'),
     },
     {
-      id: `panier:${panier.id}:commentaires`,
-      label: 'Voir les commentaires',
-      icon: MessageSquare,
-      run: goToOnglet('commentaires'),
-    },
-    {
       id: `panier:${panier.id}:gouvernance`,
       label: 'Voir la gouvernance',
       icon: Landmark,
       run: goToOnglet('gouvernance'),
+    },
+    {
+      id: `panier:${panier.id}:confiance`,
+      label: 'Voir le niveau de confiance',
+      icon: ShieldCheck,
+      run: goToOnglet('confiance'),
+    },
+    {
+      id: `panier:${panier.id}:commentaires`,
+      label: 'Voir les commentaires',
+      icon: MessageSquare,
+      run: goToOnglet('commentaires'),
     },
   ]
 }
