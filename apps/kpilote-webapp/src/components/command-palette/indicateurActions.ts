@@ -1,5 +1,5 @@
 import type { useNavigate } from '@tanstack/react-router'
-import { FileText, Info, MessageSquare } from 'lucide-react'
+import { BarChart2, FileText, Info, MessageSquare, ShieldCheck } from 'lucide-react'
 
 import type { CommandAction } from '@/lib/commands/types'
 
@@ -9,11 +9,9 @@ type BuildActionsContext = {
 }
 
 /**
- * Sous-actions (`Tab`) proposées sur un indicateur : pure navigation vers un
- * onglet de la fiche `/indicateurs/$id`, aucun appel API supplémentaire.
- *
- * Point d'extension du domaine indicateur : les actions futures (ex. « Importer
- * des données ») s'ajoutent ici avec leur propre `run()`.
+ * Actions de navigation proposées sur un indicateur dans la command palette.
+ * Couvrent les deux onglets primaires (Résultats, Métadonnées) et les trois
+ * sous-onglets de Résultats (Niveau de confiance, Evolution et répartition, Commentaire).
  */
 export function buildIndicateurActions(
   indicateur: { id: string; nom: string },
@@ -42,6 +40,18 @@ export function buildIndicateurActions(
       icon: FileText,
       keywords: ['résultats', 'ouvrir'],
       run: goTo('resultats'),
+    },
+    {
+      id: `indicateur:${indicateur.id}:confiance`,
+      label: 'Voir le niveau de confiance',
+      icon: ShieldCheck,
+      run: goTo('resultats', 'confiance'),
+    },
+    {
+      id: `indicateur:${indicateur.id}:evolution`,
+      label: 'Voir l\'évolution et répartition',
+      icon: BarChart2,
+      run: goTo('resultats', 'evolution'),
     },
     {
       id: `indicateur:${indicateur.id}:commentaires`,

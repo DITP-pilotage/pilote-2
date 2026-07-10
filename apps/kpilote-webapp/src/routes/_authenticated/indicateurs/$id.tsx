@@ -59,6 +59,9 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
         throw redirect({
           to: '/indicateurs/$id',
           params,
+          // On préserve le reste du search (onglet, sousOnglet…) : seul le
+          // couple individu/referentiel est corrigé. Sinon un lien profond vers
+          // un sous-onglet (ex. depuis la palette ⌘K) le perdrait au redirect.
           search: { ...location.search, individu, referentiel },
           replace: true,
         })
