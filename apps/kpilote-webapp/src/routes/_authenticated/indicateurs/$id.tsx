@@ -152,7 +152,7 @@ function IndicateurDetailComponent() {
   return (
     <Page title={indicateur.nom} back={back} actions={actionsFiche}>
       <div className="sticky top-20 z-20 -mx-6 mb-2 flex justify-start bg-surface/90 px-6 py-3 backdrop-blur sm:-mx-8 sm:px-8">
-        <div className="max-w-md flex-1">
+        <div className="max-w-md">
           <FormField label="Individu" htmlFor={selectId}>
             <IndividuSelect
               id={selectId}
