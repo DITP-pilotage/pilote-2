@@ -3,17 +3,13 @@ import { individuPublicIdSchema } from '@pilote/kpilote-shared/individu'
 import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
-import { startTransition, Suspense, useId } from 'react'
+import { startTransition, useId } from 'react'
 import { z } from 'zod'
 
-import { SectionCommentaire } from '@/components/commentaires/SectionCommentaire'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
-import { IndicateurCommentaireConfigProvider } from '@/components/indicateurs/commentaires/IndicateurCommentaireConfigProvider'
 import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetadonnees'
-import { IndicateurSynthesePanel } from '@/components/indicateurs/IndicateurSynthesePanel'
-import { IndicateurValeursChart } from '@/components/indicateurs/IndicateurValeursChart'
-import { IndicateurWidgets } from '@/components/indicateurs/IndicateurWidgets'
+import { IndicateurResultatsTab } from '@/components/indicateurs/IndicateurResultatsTab'
 import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
 import { BackLink } from '@/components/ui/BackLink'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -158,64 +154,17 @@ function IndicateurDetailComponent() {
         </TabsList>
 
         <TabsContent value="resultats">
-          <div className="space-y-8">
-            <IndicateurSynthesePanel
-              indicateurId={id}
-              referentielId={referentielId}
-              individuId={individuId}
-              unite={indicateur.unite}
-              referentielNom={referentielNom}
-            />
-
-            <IndicateurCommentaireConfigProvider indicateurId={id} individuId={individuId}>
-              <Tabs
-                value={search.sousOnglet}
-                onValueChange={(sousOnglet) => {
-                  void navigate({
-                    search: (prev) => ({
-                      ...prev,
-                      sousOnglet: sousOnglet as typeof search.sousOnglet,
-                    }),
-                  })
-                }}
-              >
-                <TabsList>
-                  <TabsTrigger value="confiance" className="text-xs">
-                    Niveau de confiance
-                  </TabsTrigger>
-                  <TabsTrigger value="evolution" className="text-xs">
-                    Evolution et répartition
-                  </TabsTrigger>
-                  <TabsTrigger value="commentaire" className="text-xs">
-                    Commentaire
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="confiance">
-                  <Suspense fallback={<RouteLoading message="Chargement des commentaires…" />}>
-                    <SectionCommentaire type="CONFIANCE" />
-                  </Suspense>
-                </TabsContent>
-
-                <TabsContent value="evolution">
-                  <div className="space-y-10">
-                    <IndicateurValeursChart
-                      indicateurId={id}
-                      individuId={individuId}
-                      unite={indicateur.unite}
-                    />
-                    <IndicateurWidgets indicateurId={id} referentielId={referentielId} />
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="commentaire">
-                  <Suspense fallback={<RouteLoading message="Chargement des commentaires…" />}>
-                    <SectionCommentaire type="DEFAUT" />
-                  </Suspense>
-                </TabsContent>
-              </Tabs>
-            </IndicateurCommentaireConfigProvider>
-          </div>
+          <IndicateurResultatsTab
+            indicateurId={id}
+            individuId={individuId}
+            referentielId={referentielId}
+            unite={indicateur.unite}
+            referentielNom={referentielNom}
+            sousOnglet={search.sousOnglet}
+            onSousOngletChange={(sousOnglet) => {
+              void navigate({ search: (prev) => ({ ...prev, sousOnglet }) })
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="metadonnees">

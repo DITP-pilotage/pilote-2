@@ -49,7 +49,7 @@ export function buildIndicateurActions(
     },
     {
       id: `indicateur:${indicateur.id}:evolution`,
-      label: 'Voir l\'évolution et répartition',
+      label: "Voir l'évolution et répartition",
       icon: BarChart2,
       run: goTo('resultats', 'evolution'),
     },
