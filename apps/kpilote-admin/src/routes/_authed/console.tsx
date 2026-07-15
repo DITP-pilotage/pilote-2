@@ -49,7 +49,7 @@ function ConsoleComponent() {
   const activeTab = bodyless ? 'headers' : tab
 
   const baseUrl = (meta?.baseUrl ?? '').replace(/\/+$/, '')
-  const fullUrl = `${baseUrl}/${path}`
+  const fullUrl = `${baseUrl}${path.startsWith('/') ? path : `/${path}`}`
   const blockedByProd = isProd && locked && MUTATING.has(method)
 
   // Ramène la réponse dans le viewport dès qu'un résultat (ou une erreur) arrive.
@@ -100,7 +100,7 @@ function ConsoleComponent() {
           <EndpointPicker
             onSelect={(endpoint) => {
               setMethod(endpoint.method)
-              setPath(endpoint.path.replace(/^\/+/, ''))
+              setPath(endpoint.path)
               if (endpoint.bodyExample) {
                 setBody(endpoint.bodyExample)
                 setTab('body')
@@ -124,13 +124,13 @@ function ConsoleComponent() {
             </FieldSelect>
             <div className="flex flex-1 items-center rounded-md border border-border">
               <span className="max-w-[45%] truncate px-2 py-2.5 text-xs text-text-muted">
-                {baseUrl}/
+                {baseUrl}
               </span>
               <input
                 aria-label="Chemin de la requête"
                 value={path}
-                onChange={(event) => setPath(event.target.value.replace(/^\/+/, ''))}
-                placeholder="indicateurs?limit=10"
+                onChange={(event) => setPath(event.target.value)}
+                placeholder="/indicateurs?limit=10"
                 className="flex-1 rounded-r-md px-2 py-2.5 text-sm focus:outline-none"
               />
             </div>
@@ -185,7 +185,7 @@ function ConsoleComponent() {
             <CopyButton value={curl} label="Copier la commande curl" />
           </div>
 
-          <div ref={responseRef} className="scroll-mt-4 rounded-md border border-border p-4">
+          <div ref={responseRef} className="scroll-mt-24 rounded-md border border-border p-4">
             <ResponsePanel response={response} pending={pending} error={error} />
           </div>
         </div>
