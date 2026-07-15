@@ -1,4 +1,4 @@
-import type { KeyboardEvent } from 'react'
+import type { KeyboardEvent, MouseEvent } from 'react'
 
 /**
  * Props pour rendre une ligne (`<tr>`) cliquable et activable au clavier.
@@ -17,3 +17,14 @@ export const clickableRowProps = (onActivate: () => void) => ({
     }
   },
 })
+
+/**
+ * Props à poser sur une cellule contenant un contrôle interactif (bouton,
+ * select…) à l'intérieur d'une ligne rendue cliquable par `clickableRowProps`.
+ * Empêche le clic ET l'activation clavier (Enter/Espace) de remonter au `<tr>`
+ * et de déclencher la navigation à la place de l'action du contrôle.
+ */
+export const stopRowActivation = {
+  onClick: (event: MouseEvent) => event.stopPropagation(),
+  onKeyDown: (event: KeyboardEvent) => event.stopPropagation(),
+}

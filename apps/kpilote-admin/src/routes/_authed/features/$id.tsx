@@ -1,23 +1,26 @@
-import type { FeatureFlippingEtat } from '@pilote/kpilote-shared/featureFlipping'
 import type { UtilisateurApiModel } from '@pilote/kpilote-shared/utilisateur'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Users } from 'lucide-react'
-import { useState } from 'react'
+import { Trash2 } from 'lucide-react'
 
-import { modifierEtatFeatureFlipping, remplacerUtilisateursAutorises } from '@/api/featureFlipping'
+import { remplacerUtilisateursAutorises } from '@/api/feature'
 import { Breadcrumb } from '@/components/Breadcrumb'
-import { FeatureFlippingUtilisateursModal } from '@/components/FeatureFlippingUtilisateursModal'
 import { PageHeading } from '@/components/PageHeading'
-import { Button } from '@/components/ui/Button'
+import { Picker } from '@/components/ui/Picker'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { extractApiError } from '@/lib/apiError'
-import { featureFlippingQueryOptions } from '@/queries/featureFlipping'
+import { sansAccents } from '@/lib/texte'
+import { featureQueryOptions, useModifierEtatFeatureMutation } from '@/queries/feature'
+import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
+import { useState } from 'react'
 
-export const Route = createFileRoute('/_authed/feature-flipping/$id')({
+export const Route = createFileRoute('/_authed/features/$id')({
   loader: ({ context, params }) =>
-    context.queryClient.ensureQueryData(featureFlippingQueryOptions(params.id)),
-  component: FeatureFlippingDetailComponent,
+    Promise.all([
+      context.queryClient.ensureQueryData(featureQueryOptions(params.id)),
+      context.queryClient.ensureQueryData(utilisateursAllQueryOptions()),
+    ]),
+  component: FeatureDetailComponent,
 })
 
 const ETAT_OPTIONS = [
@@ -29,33 +32,42 @@ const ETAT_OPTIONS = [
 const initiales = (utilisateur: UtilisateurApiModel): string =>
   `${utilisateur.prenom.at(0) ?? ''}${utilisateur.nom.at(0) ?? ''}`.toUpperCase()
 
-function FeatureFlippingDetailComponent() {
+// Texte de recherche du Picker : formes accentuée + désaccentuée, pour que
+// « Zoe » comme « Zoé » retrouvent l'utilisateur (le filtre cmdk fait un includes).
+const texteRecherche = (utilisateur: UtilisateurApiModel): string => {
+  const base = `${utilisateur.prenom} ${utilisateur.nom} ${utilisateur.email}`
+  return `${base} ${sansAccents(base)}`
+}
+
+function FeatureDetailComponent() {
   const { id } = Route.useParams()
   const queryClient = useQueryClient()
-  const { data: ff } = useSuspenseQuery(featureFlippingQueryOptions(id))
+  const { data: feature } = useSuspenseQuery(featureQueryOptions(id))
+  const { data: tousLesUtilisateurs } = useSuspenseQuery(utilisateursAllQueryOptions())
   const [error, setError] = useState<string | null>(null)
-  const [modaleOuverte, setModaleOuverte] = useState(false)
 
-  const cibleUtilisateurs = ff.etat === 'ACTIVE_POUR_UTILISATEUR'
+  const cibleUtilisateurs = feature.etat === 'ACTIVE_POUR_UTILISATEUR'
+  const utilisateurIdsAutorises = feature.utilisateursAutorises.map((u) => u.id)
+  const utilisateursDisponibles = tousLesUtilisateurs.filter(
+    (u) => !utilisateurIdsAutorises.includes(u.id),
+  )
 
-  const invalider = async () => {
-    await queryClient.invalidateQueries({ queryKey: ['feature-flipping'] })
-  }
-
-  const etatMutation = useMutation({
-    mutationFn: (etat: FeatureFlippingEtat) => modifierEtatFeatureFlipping(id, etat),
-    onSuccess: invalider,
-    onError: (err: unknown) => void extractApiError(err).then(setError),
+  const etatMutation = useModifierEtatFeatureMutation({
+    onError: (err) => void extractApiError(err).then(setError),
   })
 
   const utilisateursMutation = useMutation({
     mutationFn: (utilisateurIds: string[]) => remplacerUtilisateursAutorises(id, utilisateurIds),
     onSuccess: async () => {
-      setModaleOuverte(false)
-      await invalider()
+      await queryClient.invalidateQueries({ queryKey: ['features'] })
     },
     onError: (err: unknown) => void extractApiError(err).then(setError),
   })
+
+  const ajouter = (utilisateurId: string) =>
+    utilisateursMutation.mutate([...utilisateurIdsAutorises, utilisateurId])
+  const retirer = (utilisateurId: string) =>
+    utilisateursMutation.mutate(utilisateurIdsAutorises.filter((x) => x !== utilisateurId))
 
   return (
     <div>
@@ -63,12 +75,15 @@ function FeatureFlippingDetailComponent() {
         <Link to="/fonctionnalites" className="hover:text-primary">
           Fonctionnalités
         </Link>
-        <Link to="/feature-flipping" className="hover:text-primary">
+        <Link to="/features" className="hover:text-primary">
           Feature flipping
         </Link>
-        <span className="font-medium text-text">{ff.nom}</span>
+        <span className="font-medium text-text">{feature.nom}</span>
       </Breadcrumb>
-      <PageHeading title={ff.nom} subtitle={<span className="font-mono">{ff.key}</span>} />
+      <PageHeading
+        title={feature.nom}
+        subtitle={<span className="font-mono">{feature.key}</span>}
+      />
 
       {error ? <p className="mb-4 text-sm font-medium text-accent">{error}</p> : null}
 
@@ -76,14 +91,14 @@ function FeatureFlippingDetailComponent() {
         <section className="rounded-xl border border-border bg-surface p-6">
           <SegmentedControl
             label="État"
-            value={ff.etat}
-            onValueChange={(etat) => etatMutation.mutate(etat)}
+            value={feature.etat}
+            onValueChange={(etat) => etatMutation.mutate({ id, etat })}
             options={ETAT_OPTIONS}
           />
           <p className="mt-3 text-xs text-text-muted">
-            {ff.etat === 'ACTIVE'
+            {feature.etat === 'ACTIVE'
               ? 'Actif pour tous les utilisateurs.'
-              : ff.etat === 'ACTIVE_POUR_UTILISATEUR'
+              : feature.etat === 'ACTIVE_POUR_UTILISATEUR'
                 ? 'Actif uniquement pour les utilisateurs autorisés ci-dessous.'
                 : 'Inactif pour tous les utilisateurs.'}
           </p>
@@ -93,16 +108,8 @@ function FeatureFlippingDetailComponent() {
           <div className="mb-4 flex items-center justify-between gap-4">
             <h2 className="text-sm font-semibold text-text">
               Utilisateurs autorisés{' '}
-              <span className="text-text-muted">({ff.utilisateursAutorises.length})</span>
+              <span className="text-text-muted">({feature.utilisateursAutorises.length})</span>
             </h2>
-            <Button
-              variant="secondary"
-              size="sm"
-              type="button"
-              onClick={() => setModaleOuverte(true)}
-            >
-              <Users className="size-4" /> Gérer
-            </Button>
           </div>
 
           {!cibleUtilisateurs ? (
@@ -111,11 +118,39 @@ function FeatureFlippingDetailComponent() {
             </p>
           ) : null}
 
-          {ff.utilisateursAutorises.length === 0 ? (
+          <div className="mb-4">
+            <Picker
+              items={utilisateursDisponibles}
+              onSelect={(utilisateur) => ajouter(utilisateur.id)}
+              getKey={(utilisateur) => utilisateur.id}
+              getSearchText={texteRecherche}
+              disabled={utilisateursMutation.isPending}
+              triggerLabel="Ajouter un utilisateur…"
+              searchPlaceholder="Rechercher un utilisateur…"
+              emptyLabel="Aucun utilisateur."
+              renderItem={(utilisateur) => (
+                <>
+                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-semibold text-primary">
+                    {initiales(utilisateur)}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block truncate">
+                      {utilisateur.prenom} {utilisateur.nom}
+                    </span>
+                    <span className="block truncate text-xs text-text-muted">
+                      {utilisateur.email}
+                    </span>
+                  </span>
+                </>
+              )}
+            />
+          </div>
+
+          {feature.utilisateursAutorises.length === 0 ? (
             <p className="py-6 text-center text-sm text-text-muted">Aucun utilisateur autorisé.</p>
           ) : (
             <ul className="space-y-1">
-              {ff.utilisateursAutorises.map((utilisateur) => (
+              {feature.utilisateursAutorises.map((utilisateur) => (
                 <li
                   key={utilisateur.id}
                   className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-surface-tinted"
@@ -123,7 +158,7 @@ function FeatureFlippingDetailComponent() {
                   <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
                     {initiales(utilisateur)}
                   </span>
-                  <span className="min-w-0">
+                  <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm text-text">
                       {utilisateur.prenom} {utilisateur.nom}
                     </span>
@@ -131,21 +166,21 @@ function FeatureFlippingDetailComponent() {
                       {utilisateur.email}
                     </span>
                   </span>
+                  <button
+                    type="button"
+                    aria-label={`Retirer ${utilisateur.prenom} ${utilisateur.nom}`}
+                    disabled={utilisateursMutation.isPending}
+                    onClick={() => retirer(utilisateur.id)}
+                    className="shrink-0 rounded-md p-1.5 text-text-muted hover:bg-accent/10 hover:text-accent disabled:opacity-50"
+                  >
+                    <Trash2 className="size-4" />
+                  </button>
                 </li>
               ))}
             </ul>
           )}
         </section>
       </div>
-
-      {modaleOuverte ? (
-        <FeatureFlippingUtilisateursModal
-          utilisateursInitiaux={ff.utilisateursAutorises}
-          pending={utilisateursMutation.isPending}
-          onValider={(utilisateurIds) => utilisateursMutation.mutate(utilisateurIds)}
-          onClose={() => setModaleOuverte(false)}
-        />
-      ) : null}
     </div>
   )
 }

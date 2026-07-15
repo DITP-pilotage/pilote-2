@@ -1,58 +1,47 @@
-import type {
-  FeatureFlippingApiModel,
-  FeatureFlippingEtat,
-} from '@pilote/kpilote-shared/featureFlipping'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import type { FeatureApiModel, FeatureEtat } from '@pilote/kpilote-shared/feature'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
-import { modifierEtatFeatureFlipping } from '@/api/featureFlipping'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Table } from '@/components/ui/Table'
-import { clickableRowProps } from '@/lib/clickableRow'
 import { extractApiError } from '@/lib/apiError'
-import { featureFlippingsQueryOptions } from '@/queries/featureFlipping'
+import { clickableRowProps, stopRowActivation } from '@/lib/clickableRow'
+import { featuresQueryOptions, useModifierEtatFeatureMutation } from '@/queries/feature'
 import { session } from '@/session'
 
-export const Route = createFileRoute('/_authed/feature-flipping/')({
-  loader: ({ context }) => context.queryClient.ensureQueryData(featureFlippingsQueryOptions()),
-  component: FeatureFlippingListComponent,
+export const Route = createFileRoute('/_authed/features/')({
+  loader: ({ context }) => context.queryClient.ensureQueryData(featuresQueryOptions()),
+  component: FeatureListComponent,
 })
 
-const ETAT_OPTIONS: { value: FeatureFlippingEtat; label: string }[] = [
+const ETAT_OPTIONS: { value: FeatureEtat; label: string }[] = [
   { value: 'ACTIVE', label: 'Actif (tous)' },
   { value: 'ACTIVE_POUR_UTILISATEUR', label: 'Actif (utilisateurs autorisés)' },
   { value: 'DESACTIVE', label: 'Désactivé' },
 ]
 
-function FeatureFlippingListComponent() {
+function FeatureListComponent() {
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
   const isProd = session.current?.environment === 'prod'
-  const query = useQuery(featureFlippingsQueryOptions())
+  const { data: features } = useSuspenseQuery(featuresQueryOptions())
   const [recherche, setRecherche] = useState('')
   const [error, setError] = useState<string | null>(null)
 
-  const items = useMemo(() => {
-    const liste = query.data ?? []
-    const terme = recherche.trim().toLowerCase()
-    if (!terme) return liste
-    return liste.filter((ff) => `${ff.nom} ${ff.key}`.toLowerCase().includes(terme))
-  }, [query.data, recherche])
-
-  const total = query.data?.length ?? 0
-
-  const mutation = useMutation({
-    mutationFn: ({ id, etat }: { id: string; etat: FeatureFlippingEtat }) =>
-      modifierEtatFeatureFlipping(id, etat),
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ['feature-flipping'] })
-    },
-    onError: (err: unknown) => void extractApiError(err).then(setError),
+  const mutation = useModifierEtatFeatureMutation({
+    onError: (err) => void extractApiError(err).then(setError),
   })
+
+  const items = useMemo(() => {
+    const terme = recherche.trim().toLowerCase()
+    if (!terme) return features
+    return features.filter((feature) =>
+      `${feature.nom} ${feature.key}`.toLowerCase().includes(terme),
+    )
+  }, [features, recherche])
 
   return (
     <div>
@@ -66,7 +55,7 @@ function FeatureFlippingListComponent() {
         title="Feature flipping"
         subtitle={
           <>
-            {total} fonctionnalité{total > 1 ? 's' : ''} · environnement{' '}
+            {features.length} fonctionnalité{features.length > 1 ? 's' : ''} · environnement{' '}
             <b className={isProd ? 'text-accent' : undefined}>{session.current?.environment}</b>
           </>
         }
@@ -79,15 +68,15 @@ function FeatureFlippingListComponent() {
         <input
           value={recherche}
           onChange={(event) => setRecherche(event.target.value)}
-          placeholder="Rechercher un feature flipping…"
+          placeholder="Rechercher une feature…"
           className="w-full bg-transparent focus:outline-none"
         />
       </div>
 
-      {items.length === 0 && !query.isLoading ? (
+      {features.length === 0 ? (
         <EmptyState
-          title="Aucun feature flipping"
-          description="Les feature flippings sont créés via des migrations Prisma (script ff:creer)."
+          title="Aucune feature"
+          description="Les features sont créées via des migrations Prisma (script ff:creer)."
         />
       ) : (
         <Table>
@@ -100,33 +89,28 @@ function FeatureFlippingListComponent() {
             </Table.Row>
           </Table.Head>
           <Table.Body>
-            {items.map((ff: FeatureFlippingApiModel) => (
+            {items.map((feature: FeatureApiModel) => (
               <Table.Row
-                key={ff.id}
+                key={feature.id}
                 {...clickableRowProps(
-                  () => void navigate({ to: '/feature-flipping/$id', params: { id: ff.id } }),
+                  () => void navigate({ to: '/features/$id', params: { id: feature.id } }),
                 )}
               >
                 <Table.Cell>
-                  <span className="font-semibold">{ff.nom}</span>
+                  <span className="font-semibold">{feature.nom}</span>
                 </Table.Cell>
                 <Table.Cell>
-                  <span className="font-mono text-text-muted">{ff.key}</span>
+                  <span className="font-mono text-text-muted">{feature.key}</span>
                 </Table.Cell>
                 <Table.Cell>
-                  {/* Contrôle interactif : on stoppe la propagation pour ne pas
-                      déclencher la navigation de la ligne cliquable. */}
+                  {/* Contrôle interactif isolé du clic de navigation de la ligne. */}
                   <select
-                    aria-label={`État de ${ff.nom}`}
-                    value={ff.etat}
+                    aria-label={`État de ${feature.nom}`}
+                    value={feature.etat}
                     disabled={mutation.isPending}
-                    onClick={(event) => event.stopPropagation()}
-                    onKeyDown={(event) => event.stopPropagation()}
+                    {...stopRowActivation}
                     onChange={(event) =>
-                      mutation.mutate({
-                        id: ff.id,
-                        etat: event.target.value as FeatureFlippingEtat,
-                      })
+                      mutation.mutate({ id: feature.id, etat: event.target.value as FeatureEtat })
                     }
                     className="rounded-md border border-border bg-surface px-2 py-1.5 text-sm focus:border-primary focus:outline-none"
                   >

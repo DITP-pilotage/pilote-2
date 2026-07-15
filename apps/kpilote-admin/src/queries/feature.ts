@@ -1,15 +1,31 @@
-import { queryOptions } from '@tanstack/react-query'
+import type { FeatureEtat } from '@pilote/kpilote-shared/feature'
+import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
 
-import { fetchFeatureFlippingById, fetchFeatureFlippings } from '@/api/featureFlipping'
+import { fetchFeatureById, fetchFeatures, modifierEtatFeature } from '@/api/feature'
 
-export const featureFlippingsQueryOptions = () =>
+export const featuresQueryOptions = () =>
   queryOptions({
-    queryKey: ['feature-flipping'],
-    queryFn: () => fetchFeatureFlippings(),
+    queryKey: ['features'],
+    queryFn: () => fetchFeatures(),
   })
 
-export const featureFlippingQueryOptions = (id: string) =>
+export const featureQueryOptions = (id: string) =>
   queryOptions({
-    queryKey: ['feature-flipping', id],
-    queryFn: () => fetchFeatureFlippingById(id),
+    queryKey: ['features', id],
+    queryFn: () => fetchFeatureById(id),
   })
+
+// Mutation partagée entre la liste (état inline) et la fiche : change l'état
+// d'une feature et invalide les queries `features`.
+export const useModifierEtatFeatureMutation = (options?: {
+  onError?: (error: unknown) => void
+}) => {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, etat }: { id: string; etat: FeatureEtat }) => modifierEtatFeature(id, etat),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['features'] })
+    },
+    ...(options?.onError ? { onError: options.onError } : {}),
+  })
+}

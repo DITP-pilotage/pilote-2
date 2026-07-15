@@ -11,7 +11,7 @@ import { PageHeading } from '@/components/PageHeading'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Table } from '@/components/ui/Table'
-import { clickableRowProps } from '@/lib/clickableRow'
+import { clickableRowProps, stopRowActivation } from '@/lib/clickableRow'
 import { extractApiError } from '@/lib/apiError'
 import { apiKeysQueryOptions } from '@/queries/apiKeys'
 import { session } from '@/session'
@@ -121,7 +121,7 @@ function ApiKeysListComponent() {
                 <Table.Cell>
                   <span className="text-text-muted">{formatDate(apiKey.createdAt)}</span>
                 </Table.Cell>
-                <Table.Cell align="right" onClick={(event) => event.stopPropagation()}>
+                <Table.Cell align="right" {...stopRowActivation}>
                   {apiKey.status === 'revoked' ? (
                     <span className="text-text-subtle">—</span>
                   ) : confirmingId === apiKey.id ? (

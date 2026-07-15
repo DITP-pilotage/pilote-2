@@ -59,7 +59,7 @@ function FeaturesComponent() {
             icon={ToggleLeft}
             title="Gérer le feature flipping"
             description="Activer, désactiver ou cibler des fonctionnalités par utilisateur (réservé aux clés ADMIN)."
-            onClick={() => void navigate({ to: '/feature-flipping' })}
+            onClick={() => void navigate({ to: '/features' })}
           />
         </FadeIn>
       </div>
