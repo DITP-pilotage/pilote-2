@@ -95,9 +95,12 @@ const main = (): void => {
   }
 
   const sqlPath = join(MIGRATIONS_DIR, dossier, 'migration.sql')
+  // `updated_at` est @updatedAt côté Prisma (pas de default SQL) : on l'alimente
+  // explicitement en INSERT brut, sinon violation NOT NULL. `created_at` a un
+  // default DB (now()), donc facultatif — fourni aussi par cohérence.
   const insert =
-    `\nINSERT INTO "feature_flipping" ("id", "key", "nom", "etat")\n` +
-    `VALUES (gen_random_uuid(), '${echapperSql(key)}', '${echapperSql(nom)}', '${etat}');\n`
+    `\nINSERT INTO "feature_flipping" ("id", "key", "nom", "etat", "created_at", "updated_at")\n` +
+    `VALUES (gen_random_uuid(), '${echapperSql(key)}', '${echapperSql(nom)}', '${etat}', now(), now());\n`
   writeFileSync(sqlPath, readFileSync(sqlPath, 'utf8') + insert)
 
   process.stdout.write(`✅ Migration générée : ${sqlPath}\n`)
