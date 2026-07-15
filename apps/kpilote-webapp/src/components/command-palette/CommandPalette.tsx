@@ -62,17 +62,13 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
   const navigationCommands = filterCommands(useNavigationCommands(close), query)
   const recentCommands = useRecentlyVisitedCommands(open, close)
-  const { commands: indicateurCommands, isLoading: isLoadingIndicateurs } = useIndicateurCommands(
-    query,
-    open,
-    close,
-  )
+  const indicateurCommands = useIndicateurCommands(query, open, close)
   const { commands: dossierCommands, isLoading: isLoadingDossiers } = useDossierCommands(
     query,
     open,
     close,
   )
-  const isLoading = isLoadingIndicateurs || isLoadingDossiers
+  const isLoading = isLoadingDossiers
 
   // Les fiches récentes servent de point de départ : on les masque dès que
   // l'utilisateur tape, les résultats de recherche (indicateurs, dossiers)
