@@ -1,7 +1,7 @@
 import type { ApiKeyApiModel } from '@pilote/kpilote-shared/apiKey'
 import { formatDate } from '@pilote/kpilote-shared/formatDate'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 
@@ -11,6 +11,7 @@ import { PageHeading } from '@/components/PageHeading'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Table } from '@/components/ui/Table'
+import { clickableRowProps } from '@/lib/clickableRow'
 import { extractApiError } from '@/lib/apiError'
 import { apiKeysQueryOptions } from '@/queries/apiKeys'
 import { session } from '@/session'
@@ -33,6 +34,7 @@ const STATUS_CLASS: Record<ApiKeyApiModel['status'], string> = {
 
 function ApiKeysListComponent() {
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
   const isProd = session.current?.environment === 'prod'
   const query = useQuery(apiKeysQueryOptions())
   const items = query.data ?? []
@@ -95,19 +97,19 @@ function ApiKeysListComponent() {
               <Table.HeaderCell>Statut</Table.HeaderCell>
               <Table.HeaderCell>Créée le</Table.HeaderCell>
               <Table.HeaderCell align="right" />
+              <Table.HeaderCell />
             </Table.Row>
           </Table.Head>
           <Table.Body>
             {items.map((apiKey) => (
-              <Table.Row key={apiKey.id}>
+              <Table.Row
+                key={apiKey.id}
+                {...clickableRowProps(
+                  () => void navigate({ to: '/api-keys/$id', params: { id: apiKey.id } }),
+                )}
+              >
                 <Table.Cell>
-                  <Link
-                    to="/api-keys/$id"
-                    params={{ id: apiKey.id }}
-                    className="font-semibold text-primary hover:underline"
-                  >
-                    {apiKey.label}
-                  </Link>
+                  <span className="font-semibold text-primary">{apiKey.label}</span>
                 </Table.Cell>
                 <Table.Cell>
                   <span className="font-mono text-text-muted">{apiKey.prefix}…</span>
@@ -119,7 +121,7 @@ function ApiKeysListComponent() {
                 <Table.Cell>
                   <span className="text-text-muted">{formatDate(apiKey.createdAt)}</span>
                 </Table.Cell>
-                <Table.Cell align="right">
+                <Table.Cell align="right" onClick={(event) => event.stopPropagation()}>
                   {apiKey.status === 'revoked' ? (
                     <span className="text-text-subtle">—</span>
                   ) : confirmingId === apiKey.id ? (
@@ -153,6 +155,9 @@ function ApiKeysListComponent() {
                       Révoquer
                     </Button>
                   )}
+                </Table.Cell>
+                <Table.Cell align="right">
+                  <span className="text-primary">→</span>
                 </Table.Cell>
               </Table.Row>
             ))}
