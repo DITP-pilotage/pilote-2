@@ -86,7 +86,10 @@ export const normaliserValeursImport = (
 ): ResultAsync<NormaliserValeursImportResult, NormaliserValeursImportError> =>
   getIndicateurByPublicId(indicateurPublicId)
     .andThen((indicateur) =>
-      listIndividusForIndicateur(indicateurPublicId).map((individus) => ({ indicateur, individus })),
+      listIndividusForIndicateur(indicateurPublicId).map((individus) => ({
+        indicateur,
+        individus,
+      })),
     )
     .andThen(({ indicateur, individus }) =>
       decouvrirStructure({

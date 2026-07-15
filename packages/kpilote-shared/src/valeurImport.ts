@@ -21,7 +21,10 @@ const planPivotSchema = z.object({
   colonnesPivot: z.array(z.object({ nom: z.string(), dateIso: z.string() })).min(1),
 })
 
-export const normaliserPlanSchema = z.discriminatedUnion('layout', [planLongSchema, planPivotSchema])
+export const normaliserPlanSchema = z.discriminatedUnion('layout', [
+  planLongSchema,
+  planPivotSchema,
+])
 export type NormaliserPlan = z.infer<typeof normaliserPlanSchema>
 
 export const itemNormaliseApiModelSchema = z.object({

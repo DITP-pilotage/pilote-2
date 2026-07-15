@@ -16,7 +16,11 @@ const normaliserBodySchema = z.object({
     .min(1)
     .max(MAX_ROWS)
     .describe('Lignes brutes parsées côté client (clé = en-tête, valeur = cellule).'),
-  nomFichier: z.string().max(255).optional().describe('Nom du fichier source — contexte pour Albert.'),
+  nomFichier: z
+    .string()
+    .max(255)
+    .optional()
+    .describe('Nom du fichier source — contexte pour Albert.'),
 })
 
 const NormaliserBodySchema = normaliserBodySchema.openapi('NormaliserValeursImportBody')
