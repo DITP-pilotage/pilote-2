@@ -19,7 +19,7 @@ export default defineConfig({
         /^\/@.+$/,
         /.*\.(ts|tsx|js|jsx|css|svg|png|jpg|jpeg|gif|webp|woff2?)($|\?)/,
         /^\/(public|assets|static|src|node_modules)\/.+/,
-        /^\/(?!auth(\/|$)|healthz(\/|$)|api(\/|$)).*/,
+        /^\/(?!auth(\/|$)|healthz(\/|$)|api(\/|$)|console(\/|$)).*/,
       ],
     }),
   ],
