@@ -17,11 +17,11 @@ type PanierIndicateurRef = {
 
 export const computeContributions = (
   indicateurs: PanierIndicateurRef[],
-  cible: IndividuRef,
+  individuCible: IndividuRef,
 ): Promise<IndicateurContribution[]> =>
   Promise.all(
     indicateurs.map(async ({ indicateur, ponderation }) => {
-      const dernier = await computeDernierTaux({ indicateurId: indicateur.id, cible })
+      const dernier = await computeDernierTaux({ indicateurId: indicateur.id, individuCible })
       return {
         indicateurPublicId: indicateur.publicId,
         tauxProgression: dernier?.tauxProgression ?? null,
@@ -33,14 +33,14 @@ export const computeContributions = (
 
 const computeDernierTaux = async ({
   indicateurId,
-  cible,
+  individuCible,
 }: {
   indicateurId: string
-  cible: IndividuRef
+  individuCible: IndividuRef
 }): Promise<{ tauxProgression: number | null; date: Bucket } | null> => {
   const points = await computeTauxProgressionPoints({
     indicateurId,
-    individusCibles: [cible],
+    individusCibles: [individuCible],
     dateTruncValeur: DATE_TRUNC_VALEUR,
     dateTruncObjectif: DATE_TRUNC_OBJECTIF,
   })

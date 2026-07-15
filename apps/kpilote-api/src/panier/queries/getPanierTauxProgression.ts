@@ -64,12 +64,12 @@ const buildResult = async ({
   }
 
   // Individu inconnu → 404 via le handler global (mappe Prisma P2025).
-  const cible: IndividuRef = await db().individu.findFirstOrThrow({
+  const individuCible: IndividuRef = await db().individu.findFirstOrThrow({
     where: { publicId: params.individu },
     select: { id: true, publicId: true, referentielId: true },
   })
 
-  const contributions = await computeContributions(panier.indicateurs, cible)
+  const contributions = await computeContributions(panier.indicateurs, individuCible)
 
   const { tauxProgression } = resolvePanierTauxProgression(contributions)
 

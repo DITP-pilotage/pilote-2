@@ -40,7 +40,7 @@ const build = async (
 ): Promise<PanierTauxProgressionSummaryListApiModel> => {
   const principalId = requireCurrentPrincipalId()
 
-  const cible = await db().individu.findFirstOrThrow({
+  const individuCible = await db().individu.findFirstOrThrow({
     where: { publicId: individuPublicId },
     select: { id: true, publicId: true, referentielId: true },
   })
@@ -52,12 +52,12 @@ const build = async (
     ...panierListArgs,
   })
 
-  const items = await Promise.all(paniers.map((panier) => computePanierTaux(panier, cible)))
+  const items = await Promise.all(paniers.map((panier) => computePanierTaux(panier, individuCible)))
 
   logger.info(
     {
       event: 'panier.listPanierTauxProgressionForIndividu.timing',
-      individuId: cible.id,
+      individuId: individuCible.id,
       nbPaniersDemandes: params.paniers.length,
       nbPaniersAccessibles: paniers.length,
       nbItems: items.length,
@@ -71,13 +71,13 @@ const build = async (
 
 const computePanierTaux = async (
   panier: PanierRow,
-  cible: IndividuRef,
+  individuCible: IndividuRef,
 ): Promise<{ panier: string; tauxProgression: number | null }> => {
   if (panier.indicateurs.length === 0) {
     return { panier: panier.publicId, tauxProgression: null }
   }
 
-  const contributions = await computeContributions(panier.indicateurs, cible)
+  const contributions = await computeContributions(panier.indicateurs, individuCible)
   const { tauxProgression } = resolvePanierTauxProgression(contributions)
   return { panier: panier.publicId, tauxProgression }
 }
