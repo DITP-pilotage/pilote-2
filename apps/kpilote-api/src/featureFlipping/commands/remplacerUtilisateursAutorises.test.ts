@@ -1,8 +1,12 @@
 import { describe, expect, it } from 'vitest'
 
 import { remplacerUtilisateursAutorises } from '@/featureFlipping/commands/remplacerUtilisateursAutorises'
+import { ForbiddenError } from '@/framework/errors/AppError'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
+import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
+
+const ADMIN_ID = '00000000-0000-0000-0000-000000000201'
 
 describe.concurrent('remplacerUtilisateursAutorises', () => {
   it(
@@ -18,9 +22,9 @@ describe.concurrent('remplacerUtilisateursAutorises', () => {
         utilisateurs: [{ id: a.id }, { id: b.id }],
       })
 
-      const result = await remplacerUtilisateursAutorises(ff.id, {
-        utilisateurIds: [b.id, c.id],
-      })
+      const result = await runAsAdmin(ADMIN_ID, () =>
+        remplacerUtilisateursAutorises(ff.id, { utilisateurIds: [b.id, c.id] }),
+      )
 
       expect(result._unsafeUnwrap().utilisateursAutorises.map((u) => u.email)).toEqual([
         'b@ditp.gouv.fr',
@@ -35,7 +39,9 @@ describe.concurrent('remplacerUtilisateursAutorises', () => {
       const a = await fixtures.utilisateur({ email: 'a@ditp.gouv.fr' })
       const ff = await fixtures.featureFlipping({ utilisateurs: [{ id: a.id }] })
 
-      const result = await remplacerUtilisateursAutorises(ff.id, { utilisateurIds: [] })
+      const result = await runAsAdmin(ADMIN_ID, () =>
+        remplacerUtilisateursAutorises(ff.id, { utilisateurIds: [] }),
+      )
 
       expect(result._unsafeUnwrap().utilisateursAutorises).toEqual([])
     }),
@@ -47,10 +53,24 @@ describe.concurrent('remplacerUtilisateursAutorises', () => {
       const ff = await fixtures.featureFlipping()
 
       await expect(
-        remplacerUtilisateursAutorises(ff.id, {
-          utilisateurIds: ['00000000-0000-0000-0000-000000000000'],
-        }),
+        runAsAdmin(ADMIN_ID, () =>
+          remplacerUtilisateursAutorises(ff.id, {
+            utilisateurIds: ['00000000-0000-0000-0000-000000000000'],
+          }),
+        ),
       ).rejects.toThrow()
+    }),
+  )
+
+  it(
+    'rejette une clé CONTRIBUTOR (ForbiddenError)',
+    integrationTest(async () => {
+      const ff = await fixtures.featureFlipping()
+      await expect(
+        runAsContributor(ADMIN_ID, () =>
+          remplacerUtilisateursAutorises(ff.id, { utilisateurIds: [] }),
+        ),
+      ).rejects.toBeInstanceOf(ForbiddenError)
     }),
   )
 })

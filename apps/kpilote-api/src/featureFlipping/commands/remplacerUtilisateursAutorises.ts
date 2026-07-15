@@ -4,9 +4,10 @@ import {
 } from '@pilote/kpilote-shared/featureFlipping'
 import { ResultAsync } from 'neverthrow'
 
-import { featureFlippingInclude, toFeatureFlippingDetailApiModel } from '@/featureFlipping/utils'
+import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
+import { featureFlippingInclude, toFeatureFlippingDetailApiModel } from '@/featureFlipping/utils'
 
 // findUniqueOrThrow lève Prisma P2025 (→ 404) si le FF n'existe pas.
 const ensureFeatureFlippingExiste = async (id: string): Promise<void> => {
@@ -52,15 +53,23 @@ const remplacerLiaisons = async (
   }
 }
 
+const performRemplacer = async (
+  id: string,
+  body: RemplacerUtilisateursAutorisesBody,
+): Promise<FeatureFlippingDetailApiModel> => {
+  ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
+  await ensureFeatureFlippingExiste(id)
+  const utilisateurIds = await resoudreUtilisateurs(body.utilisateurIds)
+  await remplacerLiaisons(id, utilisateurIds)
+  const row = await db().featureFlipping.findUniqueOrThrow({
+    where: { id },
+    include: featureFlippingInclude,
+  })
+  return toFeatureFlippingDetailApiModel(row)
+}
+
 export const remplacerUtilisateursAutorises = (
   id: string,
   body: RemplacerUtilisateursAutorisesBody,
 ): ResultAsync<FeatureFlippingDetailApiModel, never> =>
-  ResultAsync.fromSafePromise(
-    ensureFeatureFlippingExiste(id)
-      .then(() => resoudreUtilisateurs(body.utilisateurIds))
-      .then((utilisateurIds) => remplacerLiaisons(id, utilisateurIds))
-      .then(() =>
-        db().featureFlipping.findUniqueOrThrow({ where: { id }, include: featureFlippingInclude }),
-      ),
-  ).map(toFeatureFlippingDetailApiModel)
+  ResultAsync.fromSafePromise(performRemplacer(id, body))
