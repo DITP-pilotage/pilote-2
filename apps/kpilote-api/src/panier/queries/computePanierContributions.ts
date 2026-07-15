@@ -1,4 +1,5 @@
 import { type Bucket, compareBuckets } from '@/framework/bucket'
+import { withConcurrency } from '@/framework/concurrency'
 import { type Decimal } from '@/framework/decimal'
 import { type IndicateurContribution } from '@/panier/resolvePanierTauxProgression'
 import { computeTauxProgressionPoints } from '@/valeurAvancement/queries/computeTauxProgressionPoints'
@@ -19,8 +20,8 @@ export const computeContributions = (
   indicateurs: PanierIndicateurRef[],
   individuCible: IndividuRef,
 ): Promise<IndicateurContribution[]> =>
-  Promise.all(
-    indicateurs.map(async ({ indicateur, ponderation }) => {
+  withConcurrency(
+    indicateurs.map(({ indicateur, ponderation }) => async () => {
       const dernier = await computeDernierTaux({ indicateurId: indicateur.id, individuCible })
       return {
         indicateurPublicId: indicateur.publicId,

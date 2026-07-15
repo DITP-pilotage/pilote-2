@@ -5,6 +5,7 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
+import { withConcurrency } from '@/framework/concurrency'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
@@ -52,7 +53,9 @@ const build = async (
     ...panierListArgs,
   })
 
-  const items = await Promise.all(paniers.map((panier) => computePanierTaux(panier, individuCible)))
+  const items = await withConcurrency(
+    paniers.map((panier) => () => computePanierTaux(panier, individuCible)),
+  )
 
   logger.info(
     {
