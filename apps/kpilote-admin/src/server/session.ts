@@ -1,5 +1,6 @@
 import type { Context } from 'hono'
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie'
+import { HTTPException } from 'hono/http-exception'
 import { sealData, unsealData } from 'iron-session'
 
 import { serverEnv } from '@/server/env'
@@ -44,6 +45,14 @@ export const readSession = async (context: Context): Promise<AdminSession | null
 
 export const clearSession = (context: Context) => {
   deleteCookie(context, SESSION_COOKIE, { path: '/' })
+}
+
+// Garde de session : renvoie la session ou court-circuite le handler avec une 401
+// générique. Évite de répéter le `if (!session) return 401` dans chaque route.
+export const requireSession = async (context: Context): Promise<AdminSession> => {
+  const session = await readSession(context)
+  if (!session) throw new HTTPException(401, { message: 'unauthorized' })
+  return session
 }
 
 // Coffre des clés validées, par environnement. Cookie chiffré httpOnly : la clé

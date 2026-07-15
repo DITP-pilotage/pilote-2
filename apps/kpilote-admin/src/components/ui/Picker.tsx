@@ -1,0 +1,97 @@
+import { Command } from 'cmdk'
+import { ChevronDown, Search } from 'lucide-react'
+import { Popover as PopoverPrimitive } from 'radix-ui'
+import type { ReactNode } from 'react'
+import { useState } from 'react'
+
+import { clsxm } from '@/lib/clsxm'
+
+// Filtre par sous-chaîne, prévisible plutôt que le scoring fuzzy par défaut de cmdk.
+const commandFilter = (itemValue: string, query: string): number => {
+  const needle = query.trim().toLowerCase()
+  if (!needle) return 1
+  return itemValue.toLowerCase().includes(needle) ? 1 : 0
+}
+
+type PickerProps<T> = {
+  items: T[]
+  onSelect: (item: T) => void
+  getKey: (item: T) => string
+  getSearchText: (item: T) => string
+  renderItem: (item: T) => ReactNode
+  triggerLabel: ReactNode
+  searchPlaceholder?: string
+  emptyLabel?: string
+  disabled?: boolean
+}
+
+export function Picker<T>({
+  items,
+  onSelect,
+  getKey,
+  getSearchText,
+  renderItem,
+  triggerLabel,
+  searchPlaceholder = 'Rechercher…',
+  emptyLabel = 'Aucun résultat.',
+  disabled = false,
+}: PickerProps<T>) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <PopoverPrimitive.Root open={open} onOpenChange={setOpen}>
+      <PopoverPrimitive.Trigger
+        disabled={disabled}
+        className={clsxm(
+          'flex w-full items-center gap-2 rounded-md border border-border px-3 py-2.5 text-left text-sm',
+          'hover:border-primary focus-visible:border-primary focus-visible:outline-none',
+          'data-[state=open]:border-primary disabled:cursor-not-allowed disabled:opacity-60',
+        )}
+      >
+        <Search className="size-4 shrink-0 text-text-muted" />
+        <span className="flex-1 truncate text-text-subtle">{triggerLabel}</span>
+        <ChevronDown className="size-4 shrink-0 text-text-muted" />
+      </PopoverPrimitive.Trigger>
+
+      <PopoverPrimitive.Portal>
+        <PopoverPrimitive.Content
+          align="start"
+          sideOffset={6}
+          className="z-50 w-[var(--radix-popover-trigger-width)] overflow-hidden rounded-md border border-border bg-surface shadow-lg"
+        >
+          <Command filter={commandFilter}>
+            <div className="flex items-center gap-2 border-b border-border px-3">
+              <Search className="size-4 shrink-0 text-text-muted" />
+              <Command.Input
+                autoFocus
+                placeholder={searchPlaceholder}
+                className="h-10 w-full bg-transparent text-sm outline-none placeholder:text-text-subtle"
+              />
+            </div>
+            <Command.List className="max-h-72 overflow-y-auto p-1.5">
+              <Command.Empty className="px-3 py-6 text-center text-sm text-text-muted">
+                {emptyLabel}
+              </Command.Empty>
+              {items.map((item) => (
+                <Command.Item
+                  key={getKey(item)}
+                  value={getSearchText(item)}
+                  onSelect={() => {
+                    onSelect(item)
+                    setOpen(false)
+                  }}
+                  className={clsxm(
+                    'flex cursor-pointer select-none items-center gap-3 rounded-md px-2.5 py-2 text-sm outline-none',
+                    'data-[selected=true]:bg-surface-tinted data-[selected=true]:text-primary',
+                  )}
+                >
+                  {renderItem(item)}
+                </Command.Item>
+              ))}
+            </Command.List>
+          </Command>
+        </PopoverPrimitive.Content>
+      </PopoverPrimitive.Portal>
+    </PopoverPrimitive.Root>
+  )
+}

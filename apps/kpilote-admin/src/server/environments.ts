@@ -12,4 +12,5 @@ const URL_BY_ENVIRONMENT: Record<Environment, string> = {
   prod: serverEnv.API_BASE_URL_PROD,
 }
 
-export const mbApiUrlFor = (environment: Environment): string => URL_BY_ENVIRONMENT[environment]
+export const kpiloteApiUrlFor = (environment: Environment): string =>
+  URL_BY_ENVIRONMENT[environment]

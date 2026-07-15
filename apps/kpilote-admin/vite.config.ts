@@ -19,7 +19,9 @@ export default defineConfig({
         /^\/@.+$/,
         /.*\.(ts|tsx|js|jsx|css|svg|png|jpg|jpeg|gif|webp|woff2?)($|\?)/,
         /^\/(public|assets|static|src|node_modules)\/.+/,
-        /^\/(?!auth(\/|$)|healthz(\/|$)|api(\/|$)).*/,
+        // `console\/.` : on forwarde `/console/<sous-chemin>` (meta, openapi, proxy)
+        // vers Hono, mais pas le `/console` nu qui est une route SPA (sinon F5 → 404).
+        /^\/(?!auth(\/|$)|healthz(\/|$)|api(\/|$)|console\/.).*/,
       ],
     }),
   ],

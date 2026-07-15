@@ -3,6 +3,7 @@ import { secureHeaders } from 'hono/secure-headers'
 
 import { apiRouter } from '@/server/api/router'
 import { authRouter } from '@/server/auth/router'
+import { consoleRouter } from '@/server/console/router'
 
 export const app = new Hono()
 
@@ -31,3 +32,4 @@ app.use(
 app.get('/healthz', (context) => context.text('ok\n'))
 app.route('/auth', authRouter)
 app.route('/api', apiRouter)
+app.route('/console', consoleRouter)
