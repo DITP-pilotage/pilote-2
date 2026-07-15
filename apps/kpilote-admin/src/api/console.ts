@@ -14,6 +14,7 @@ export type ConsoleRequest = {
 
 export type ConsoleResponse = {
   status: number
+  statusText: string
   headers: Record<string, string>
   body: string
   durationMs: number
@@ -26,36 +27,24 @@ const consoleClient = ky.create({
   throwHttpErrors: false,
 })
 
-// Normalise le path saisi (retire les `/` de tête) pour le préfixer à `proxy/`.
-const normalizePath = (path: string): string => path.replace(/^\/+/, '')
-
-const isBodyless = (method: HttpMethod): boolean => method === 'GET'
-
+// La requête à exécuter est décrite dans une enveloppe JSON POSTée au BFF, qui
+// forge l'appel upstream côté serveur (le token n'est jamais exposé au client, et
+// on peut poser des en-têtes que le `fetch` du navigateur interdirait). La réponse
+// est elle aussi une enveloppe : status/statusText/headers/body + timing serveur.
 export const sendConsoleRequest = async (request: ConsoleRequest): Promise<ConsoleResponse> => {
-  const headers = new Headers()
-  for (const { key, value } of request.headers) {
-    if (key.trim()) headers.set(key, value)
-  }
-  const bodyProvided = !isBodyless(request.method) && request.body.trim().length > 0
-  if (bodyProvided && !headers.has('Content-Type')) {
-    headers.set('Content-Type', 'application/json')
-  }
-
-  const start = performance.now()
-  const response = await consoleClient(`proxy/${normalizePath(request.path)}`, {
-    method: request.method,
-    headers,
-    ...(bodyProvided ? { body: request.body } : {}),
+  const bffResponse = await consoleClient.post('proxy', {
+    json: {
+      method: request.method,
+      path: request.path,
+      headers: request.headers.filter((header) => header.key.trim()),
+      body: request.body,
+    },
   })
-  const text = await response.text()
-  const durationMs = Math.round(performance.now() - start)
-
-  const responseHeaders: Record<string, string> = {}
-  response.headers.forEach((value, key) => {
-    responseHeaders[key] = value
-  })
-
-  return { status: response.status, headers: responseHeaders, body: text, durationMs }
+  if (!bffResponse.ok) {
+    const detail = await bffResponse.text()
+    throw new Error(`Erreur proxy console (${bffResponse.status}) : ${detail}`)
+  }
+  return bffResponse.json<ConsoleResponse>()
 }
 
 export const fetchConsoleMeta = async (): Promise<{ environment: string; baseUrl: string }> => {

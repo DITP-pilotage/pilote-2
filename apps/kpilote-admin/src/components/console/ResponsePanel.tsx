@@ -37,6 +37,9 @@ export function ResponsePanel({
         >
           {response.status}
         </span>
+        {response.statusText ? (
+          <span className="text-text-muted">{response.statusText}</span>
+        ) : null}
         <span className="text-text-muted">{response.durationMs} ms</span>
         <button
           type="button"
