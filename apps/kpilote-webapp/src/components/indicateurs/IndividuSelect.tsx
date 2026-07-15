@@ -5,7 +5,7 @@ import { Check, ChevronDown, ChevronLeft, ChevronRight, Search } from 'lucide-re
 import { useMemo, useState } from 'react'
 
 import { clsxm } from '@/lib/clsxm'
-import { buildOrderedNodes } from '@/lib/individus/hierarchy'
+import { buildOrderedNodes, groupNodesByRootReferentiel } from '@/lib/individus/hierarchy'
 import { referentielIndividusQueryOptions, referentielQueryOptions } from '@/queries/referentiels'
 
 type IndividuSelectProps = {
@@ -42,26 +42,25 @@ export function IndividuSelect({ id, referentielIds, value, onChange }: Individu
     return buildOrderedNodes(allIndividus, referentielsById)
   }, [referentiels, individusByReferentiel])
 
-  const countByReferentiel = useMemo(() => {
-    const counts = new Map<string, number>()
-    for (const node of nodes) {
-      counts.set(node.individu.referentiel, (counts.get(node.individu.referentiel) ?? 0) + 1)
-    }
-    return counts
-  }, [nodes])
+  // Groupes par référentiel *racine* : chaque groupe porte tout le sous-arbre de
+  // sa racine, hiérarchie transverse comprise (ex. France → régions → départements).
+  const groups = useMemo(() => groupNodesByRootReferentiel(nodes), [nodes])
 
   const selected = nodes.find((node) => node.individu.id === value)
-  const hasSingleReferentiel = referentiels.length === 1
-  const activeReferentiel = referentiels.find((r) => r.id === activeReferentielId)
-  const activeNodes = activeReferentielId
-    ? nodes.filter((node) => node.individu.referentiel === activeReferentielId)
-    : []
+  const hasSingleRootReferentiel = groups.length === 1
+  const activeGroup = groups.find((group) => group.referentiel.id === activeReferentielId)
+  const activeReferentiel = activeGroup?.referentiel
+  const activeNodes = activeGroup?.nodes ?? []
 
-  // Étape d'ouverture : on ouvre directement sur le référentiel de l'individu déjà
-  // sélectionné, ou sur l'unique référentiel disponible ; sinon on liste les référentiels.
+  // Étape d'ouverture : on ouvre directement sur le référentiel racine de l'arbre
+  // de l'individu déjà sélectionné, ou sur l'unique référentiel racine ; sinon on
+  // liste les référentiels racines.
   const resolveInitialReferentiel = () => {
-    if (selected) return selected.individu.referentiel
-    if (hasSingleReferentiel) return referentiels[0]?.id ?? null
+    if (selected) {
+      const group = groups.find((g) => g.nodes.some((n) => n.individu.id === value))
+      if (group) return group.referentiel.id
+    }
+    if (hasSingleRootReferentiel) return groups[0]?.referentiel.id ?? null
     return null
   }
 
@@ -130,19 +129,21 @@ export function IndividuSelect({ id, referentielIds, value, onChange }: Individu
                 <Command.Empty className="px-3 py-6 text-center text-sm text-text-muted">
                   Aucun référentiel trouvé.
                 </Command.Empty>
-                {referentiels.map((referentiel) => (
+                {groups.map((group) => (
                   <Command.Item
-                    key={referentiel.id}
-                    value={referentiel.nom}
-                    onSelect={() => openReferentiel(referentiel.id)}
+                    key={group.referentiel.id}
+                    value={group.referentiel.nom}
+                    onSelect={() => openReferentiel(group.referentiel.id)}
                     className={clsxm(
                       'flex cursor-pointer select-none items-center gap-2 rounded-md px-2.5 py-2 text-sm text-text outline-none',
                       'data-[selected=true]:bg-surface-tinted data-[selected=true]:text-primary',
                     )}
                   >
-                    <span className="min-w-0 flex-1 truncate font-medium">{referentiel.nom}</span>
+                    <span className="min-w-0 flex-1 truncate font-medium">
+                      {group.referentiel.nom}
+                    </span>
                     <span className="shrink-0 rounded-full bg-surface-tinted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
-                      {countByReferentiel.get(referentiel.id) ?? 0}
+                      {group.nodes.length}
                     </span>
                     <ChevronRight className="size-4 shrink-0 text-text-muted" />
                   </Command.Item>
@@ -155,7 +156,7 @@ export function IndividuSelect({ id, referentielIds, value, onChange }: Individu
               label="Rechercher un individu"
               filter={commandFilter}
             >
-              {!hasSingleReferentiel ? (
+              {!hasSingleRootReferentiel ? (
                 <button
                   type="button"
                   onClick={() => openReferentiel(null)}

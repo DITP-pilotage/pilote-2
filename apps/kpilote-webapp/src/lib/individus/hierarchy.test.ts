@@ -2,7 +2,7 @@ import { type IndividuApiModel } from '@pilote/kpilote-shared/individu'
 import { type ReferentielApiModel } from '@pilote/kpilote-shared/referentiel'
 import { describe, expect, it } from 'vitest'
 
-import { buildOrderedNodes, pickRoot } from './hierarchy'
+import { buildOrderedNodes, groupNodesByRootReferentiel, pickRoot } from './hierarchy'
 
 const referentiel = (id: string, nom: string): ReferentielApiModel => ({
   id,
@@ -121,5 +121,51 @@ describe('pickRoot', () => {
 
   it('renvoie null sur un arbre vide', () => {
     expect(pickRoot([])).toBeNull()
+  })
+})
+
+describe('groupNodesByRootReferentiel', () => {
+  it('rattache un sous-arbre transverse au référentiel de sa racine', () => {
+    const refNat = referentiel('REF-NAT', 'France (national)')
+    const refReg = referentiel('REF-REG', 'Régions')
+    const refDept = referentiel('REF-DEPT', 'Départements')
+    const refsById = new Map([
+      [refNat.id, refNat],
+      [refReg.id, refReg],
+      [refDept.id, refDept],
+    ])
+    const fr = individu('IND-FR', 'France', 'REF-NAT')
+    const idf = individu('IND-IDF', 'Île-de-France', 'REF-REG', ['IND-FR'])
+    const paris = individu('IND-PARIS', 'Paris', 'REF-DEPT', ['IND-IDF'])
+
+    const groups = groupNodesByRootReferentiel(buildOrderedNodes([fr, idf, paris], refsById))
+
+    // Un seul référentiel racine (REF-NAT), mais tout le sous-arbre y est rattaché.
+    expect(groups).toHaveLength(1)
+    expect(groups[0]!.referentiel.id).toBe('REF-NAT')
+    expect(groups[0]!.nodes.map((n) => n.individu.id)).toEqual(['IND-FR', 'IND-IDF', 'IND-PARIS'])
+  })
+
+  it('produit un groupe par référentiel racine, dans l’ordre de la forêt', () => {
+    const refA = referentiel('REF-A', 'Alpha')
+    const refB = referentiel('REF-B', 'Bravo')
+    const refsById = new Map([
+      [refA.id, refA],
+      [refB.id, refB],
+    ])
+    // Deux racines de référentiels distincts, chacune avec un enfant.
+    const a = individu('IND-A', 'Racine A', 'REF-A')
+    const aChild = individu('IND-A1', 'Enfant A', 'REF-A', ['IND-A'])
+    const b = individu('IND-B', 'Racine B', 'REF-B')
+
+    const groups = groupNodesByRootReferentiel(buildOrderedNodes([a, aChild, b], refsById))
+
+    expect(groups.map((g) => g.referentiel.id)).toEqual(['REF-A', 'REF-B'])
+    expect(groups[0]!.nodes.map((n) => n.individu.id)).toEqual(['IND-A', 'IND-A1'])
+    expect(groups[1]!.nodes.map((n) => n.individu.id)).toEqual(['IND-B'])
+  })
+
+  it('renvoie un tableau vide sans nœud', () => {
+    expect(groupNodesByRootReferentiel([])).toEqual([])
   })
 })
