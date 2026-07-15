@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { BarChart3, FolderTree, KeyRound, Terminal, Users } from 'lucide-react'
+import { BarChart3, FolderTree, KeyRound, Terminal, ToggleLeft, Users } from 'lucide-react'
 
 import { BarCard } from '@/components/ui/BarCard'
 import { FadeIn } from '@/components/ui/FadeIn'
@@ -52,6 +52,14 @@ function FeaturesComponent() {
             title="Console API"
             description="Effectuer des appels HTTP arbitraires vers l'API, avec export curl."
             onClick={() => void navigate({ to: '/console' })}
+          />
+        </FadeIn>
+        <FadeIn delayMs={360}>
+          <BarCard
+            icon={ToggleLeft}
+            title="Gérer le feature flipping"
+            description="Activer, désactiver ou cibler des fonctionnalités par utilisateur (réservé aux clés ADMIN)."
+            onClick={() => void navigate({ to: '/feature-flipping' })}
           />
         </FadeIn>
       </div>
