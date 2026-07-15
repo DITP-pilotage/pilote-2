@@ -47,6 +47,7 @@ model Utilisateur {
   identites                 IdentiteExterne[]
   responsabilitesPanier     PanierResponsable[]
   responsabilitesIndicateur IndicateurResponsable[]
+  featureFlippingsAutorises FeatureFlippingUtilisateur[]
 
   @@map("utilisateur")
 }
@@ -577,4 +578,36 @@ model NiveauConfiance {
   @@index([createdBy])
   @@index([updatedBy])
   @@map("niveau_confiance")
+}
+
+enum FeatureFlippingEtat {
+  ACTIVE
+  ACTIVE_POUR_UTILISATEUR
+  DESACTIVE
+}
+
+model FeatureFlipping {
+  id        String              @id @db.Uuid
+  key       String              @unique
+  nom       String
+  etat      FeatureFlippingEtat @default(DESACTIVE)
+  createdAt DateTime            @default(now()) @map("created_at")
+  updatedAt DateTime            @updatedAt @map("updated_at")
+
+  utilisateursAutorises FeatureFlippingUtilisateur[]
+
+  @@map("feature_flipping")
+}
+
+model FeatureFlippingUtilisateur {
+  featureFlippingId String   @map("feature_flipping_id") @db.Uuid
+  utilisateurId     String   @map("utilisateur_id") @db.Uuid
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  featureFlipping FeatureFlipping @relation(fields: [featureFlippingId], references: [id], onDelete: Cascade)
+  utilisateur     Utilisateur     @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@id([featureFlippingId, utilisateurId])
+  @@index([featureFlippingId])
+  @@map("feature_flipping_utilisateur")
 }
