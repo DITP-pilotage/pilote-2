@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { remplacerUtilisateursAutorises } from '@/featureFlipping/commands/remplacerUtilisateursAutorises'
+import { remplacerUtilisateursAutorises } from '@/feature/commands/remplacerUtilisateursAutorises'
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
@@ -15,7 +15,7 @@ describe.concurrent('remplacerUtilisateursAutorises', () => {
       const a = await fixtures.utilisateur({ email: 'a@ditp.gouv.fr' })
       const b = await fixtures.utilisateur({ email: 'b@ditp.gouv.fr' })
       const c = await fixtures.utilisateur({ email: 'c@ditp.gouv.fr' })
-      const ff = await fixtures.featureFlipping({
+      const ff = await fixtures.feature({
         key: 'x',
         nom: 'X',
         etat: 'ACTIVE_POUR_UTILISATEUR',
@@ -37,7 +37,7 @@ describe.concurrent('remplacerUtilisateursAutorises', () => {
     'vide la liste quand utilisateurIds est vide',
     integrationTest(async () => {
       const a = await fixtures.utilisateur({ email: 'a@ditp.gouv.fr' })
-      const ff = await fixtures.featureFlipping({ utilisateurs: [{ id: a.id }] })
+      const ff = await fixtures.feature({ utilisateurs: [{ id: a.id }] })
 
       const result = await runAsAdmin(ADMIN_ID, () =>
         remplacerUtilisateursAutorises(ff.id, { utilisateurIds: [] }),
@@ -50,7 +50,7 @@ describe.concurrent('remplacerUtilisateursAutorises', () => {
   it(
     'rejette quand un utilisateur est inconnu',
     integrationTest(async () => {
-      const ff = await fixtures.featureFlipping()
+      const ff = await fixtures.feature()
 
       await expect(
         runAsAdmin(ADMIN_ID, () =>
@@ -65,7 +65,7 @@ describe.concurrent('remplacerUtilisateursAutorises', () => {
   it(
     'rejette une clé CONTRIBUTOR (ForbiddenError)',
     integrationTest(async () => {
-      const ff = await fixtures.featureFlipping()
+      const ff = await fixtures.feature()
       await expect(
         runAsContributor(ADMIN_ID, () =>
           remplacerUtilisateursAutorises(ff.id, { utilisateurIds: [] }),

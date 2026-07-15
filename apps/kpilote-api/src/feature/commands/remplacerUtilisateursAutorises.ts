@@ -1,17 +1,17 @@
 import {
-  type FeatureFlippingDetailApiModel,
+  type FeatureDetailApiModel,
   type RemplacerUtilisateursAutorisesBody,
-} from '@pilote/kpilote-shared/featureFlipping'
+} from '@pilote/kpilote-shared/feature'
 import { ResultAsync } from 'neverthrow'
 
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
-import { featureFlippingInclude, toFeatureFlippingDetailApiModel } from '@/featureFlipping/utils'
+import { featureInclude, toFeatureDetailApiModel } from '@/feature/utils'
 
 // findUniqueOrThrow lève Prisma P2025 (→ 404) si le FF n'existe pas.
-const ensureFeatureFlippingExiste = async (id: string): Promise<void> => {
-  await db().featureFlipping.findUniqueOrThrow({ where: { id }, select: { id: true } })
+const ensureFeatureExiste = async (id: string): Promise<void> => {
+  await db().feature.findUniqueOrThrow({ where: { id }, select: { id: true } })
 }
 
 const resoudreUtilisateurs = async (utilisateurIds: ReadonlyArray<string>): Promise<string[]> => {
@@ -29,26 +29,26 @@ const resoudreUtilisateurs = async (utilisateurIds: ReadonlyArray<string>): Prom
 }
 
 const remplacerLiaisons = async (
-  featureFlippingId: string,
+  featureId: string,
   utilisateurIdsCibles: string[],
 ): Promise<void> => {
   const cibles = new Set(utilisateurIdsCibles)
-  const existantes = await db().featureFlippingUtilisateur.findMany({
-    where: { featureFlippingId },
+  const existantes = await db().featureUtilisateur.findMany({
+    where: { featureId },
   })
   const aSupprimer = existantes
     .filter((liaison) => !cibles.has(liaison.utilisateurId))
     .map((liaison) => liaison.utilisateurId)
   if (aSupprimer.length > 0) {
-    await db().featureFlippingUtilisateur.deleteMany({
-      where: { featureFlippingId, utilisateurId: { in: aSupprimer } },
+    await db().featureUtilisateur.deleteMany({
+      where: { featureId, utilisateurId: { in: aSupprimer } },
     })
   }
   for (const utilisateurId of utilisateurIdsCibles) {
-    await db().featureFlippingUtilisateur.upsert({
-      where: { featureFlippingId_utilisateurId: { featureFlippingId, utilisateurId } },
+    await db().featureUtilisateur.upsert({
+      where: { featureId_utilisateurId: { featureId, utilisateurId } },
       update: {},
-      create: { featureFlippingId, utilisateurId },
+      create: { featureId, utilisateurId },
     })
   }
 }
@@ -56,20 +56,20 @@ const remplacerLiaisons = async (
 const performRemplacer = async (
   id: string,
   body: RemplacerUtilisateursAutorisesBody,
-): Promise<FeatureFlippingDetailApiModel> => {
+): Promise<FeatureDetailApiModel> => {
   ensurePrincipal(isApiKeyAdmin, 'Cette opération requiert une clé API de rôle ADMIN')
-  await ensureFeatureFlippingExiste(id)
+  await ensureFeatureExiste(id)
   const utilisateurIds = await resoudreUtilisateurs(body.utilisateurIds)
   await remplacerLiaisons(id, utilisateurIds)
-  const row = await db().featureFlipping.findUniqueOrThrow({
+  const row = await db().feature.findUniqueOrThrow({
     where: { id },
-    include: featureFlippingInclude,
+    include: featureInclude,
   })
-  return toFeatureFlippingDetailApiModel(row)
+  return toFeatureDetailApiModel(row)
 }
 
 export const remplacerUtilisateursAutorises = (
   id: string,
   body: RemplacerUtilisateursAutorisesBody,
-): ResultAsync<FeatureFlippingDetailApiModel, never> =>
+): ResultAsync<FeatureDetailApiModel, never> =>
   ResultAsync.fromSafePromise(performRemplacer(id, body))

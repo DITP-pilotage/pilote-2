@@ -1,6 +1,6 @@
 import { createRoute } from '@hono/zod-openapi'
 import { meApiModelSchema } from '@pilote/kpilote-shared/me'
-import { meFeatureFlippingApiModelSchema } from '@pilote/kpilote-shared/meFeatureFlipping'
+import { meFeatureApiModelSchema } from '@pilote/kpilote-shared/meFeature'
 import { mePermissionsApiModelSchema } from '@pilote/kpilote-shared/mePermissions'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
@@ -8,12 +8,12 @@ import { requireUser } from '@/framework/auth/userContext'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { listerMesFeatureFlippings } from '@/me/queries/listerMesFeatureFlippings'
+import { listerMesFeatures } from '@/me/queries/listerMesFeatures'
 import { listerMesPermissions } from '@/me/queries/listerMesPermissions'
 
 const MeOkSchema = meApiModelSchema.openapi('Me')
 const MePermissionsOkSchema = mePermissionsApiModelSchema.openapi('MePermissions')
-const MeFeatureFlippingOkSchema = meFeatureFlippingApiModelSchema.openapi('MeFeatureFlipping')
+const MeFeatureOkSchema = meFeatureApiModelSchema.openapi('MeFeature')
 
 const meRoute = createRoute({
   method: 'get',
@@ -48,15 +48,15 @@ const mePermissionsRoute = createRoute({
   },
 })
 
-const meFeatureFlippingRoute = createRoute({
+const meFeatureRoute = createRoute({
   method: 'get',
-  path: '/me/feature-flipping',
+  path: '/me/features',
   tags: ['Authentication'],
   summary: 'Feature flippings actifs pour l’utilisateur courant',
   middleware: [requireAuthentication],
   responses: {
     200: {
-      content: { 'application/json': { schema: MeFeatureFlippingOkSchema } },
+      content: { 'application/json': { schema: MeFeatureOkSchema } },
       description: 'Clés des feature flippings actifs',
     },
   },
@@ -91,13 +91,13 @@ meRoutes.openapi(mePermissionsRoute, async (context) =>
   ),
 )
 
-meRoutes.openapi(meFeatureFlippingRoute, async (context) =>
-  listerMesFeatureFlippings().match(
+meRoutes.openapi(meFeatureRoute, async (context) =>
+  listerMesFeatures().match(
     (data) =>
       jsonResponseOk({
         context,
         data,
-        schema: MeFeatureFlippingOkSchema,
+        schema: MeFeatureOkSchema,
         status: 200,
       }),
     never,

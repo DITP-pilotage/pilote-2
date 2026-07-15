@@ -104,13 +104,13 @@
       "types": "./src/responsable.ts",
       "default": "./src/responsable.ts"
     },
-    "./featureFlipping": {
-      "types": "./src/featureFlipping.ts",
-      "default": "./src/featureFlipping.ts"
+    "./feature": {
+      "types": "./src/feature.ts",
+      "default": "./src/feature.ts"
     },
-    "./meFeatureFlipping": {
-      "types": "./src/meFeatureFlipping.ts",
-      "default": "./src/meFeatureFlipping.ts"
+    "./meFeature": {
+      "types": "./src/meFeature.ts",
+      "default": "./src/meFeature.ts"
     }
   },
   "files": [

@@ -4,7 +4,7 @@ import { cors } from 'hono/cors'
 
 import { apiKeyRoutes } from '@/apiKey/routes'
 import { commentaireRoutes } from '@/commentaire/routes'
-import { featureFlippingRoutes } from '@/featureFlipping/routes'
+import { featureRoutes } from '@/feature/routes'
 import { niveauConfianceRoutes } from '@/niveauConfiance/routes'
 import { env } from '@/env'
 import { authContext } from '@/framework/auth/authContext'
@@ -45,7 +45,7 @@ app.route('/', individuRoutes)
 app.route('/', panierRoutes)
 app.route('/', commentaireRoutes)
 app.route('/', niveauConfianceRoutes)
-app.route('/', featureFlippingRoutes)
+app.route('/', featureRoutes)
 app.route('/', meRoutes)
 app.route('/', whoamiRoutes)
 app.route('/', apiKeyRoutes)

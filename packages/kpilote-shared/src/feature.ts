@@ -2,32 +2,32 @@ import { z } from 'zod'
 
 import { utilisateurApiModelSchema } from './utilisateur'
 
-export const featureFlippingEtatSchema = z
+export const featureEtatSchema = z
   .enum(['ACTIVE', 'ACTIVE_POUR_UTILISATEUR', 'DESACTIVE'])
   .describe(
     'État du feature flipping : `ACTIVE` (tous), `ACTIVE_POUR_UTILISATEUR` (utilisateurs autorisés uniquement), `DESACTIVE` (personne).',
   )
-export type FeatureFlippingEtat = z.infer<typeof featureFlippingEtatSchema>
+export type FeatureEtat = z.infer<typeof featureEtatSchema>
 
-export const featureFlippingKeySchema = z
+export const featureKeySchema = z
   .string()
   .regex(/^[a-z0-9_-]+$/, 'La clé doit être en minuscules (a-z, 0-9, `_`, `-`).')
   .describe('Clé technique référencée dans le code (ex. `nouveau_dashboard`).')
 
-export const featureFlippingApiModelSchema = z
+export const featureApiModelSchema = z
   .object({
     id: z.string().uuid().describe('Identifiant du feature flipping.'),
-    key: featureFlippingKeySchema,
+    key: featureKeySchema,
     nom: z.string().describe('Libellé lisible.'),
-    etat: featureFlippingEtatSchema,
+    etat: featureEtatSchema,
   })
   .describe('Feature flipping (item de liste).')
-export type FeatureFlippingApiModel = z.infer<typeof featureFlippingApiModelSchema>
+export type FeatureApiModel = z.infer<typeof featureApiModelSchema>
 
-export const featureFlippingListApiModelSchema = z.array(featureFlippingApiModelSchema)
-export type FeatureFlippingListApiModel = z.infer<typeof featureFlippingListApiModelSchema>
+export const featureListApiModelSchema = z.array(featureApiModelSchema)
+export type FeatureListApiModel = z.infer<typeof featureListApiModelSchema>
 
-export const featureFlippingDetailApiModelSchema = featureFlippingApiModelSchema
+export const featureDetailApiModelSchema = featureApiModelSchema
   .extend({
     utilisateursAutorises: z
       .array(utilisateurApiModelSchema)
@@ -36,12 +36,12 @@ export const featureFlippingDetailApiModelSchema = featureFlippingApiModelSchema
       ),
   })
   .describe('Feature flipping détaillé (fiche).')
-export type FeatureFlippingDetailApiModel = z.infer<typeof featureFlippingDetailApiModelSchema>
+export type FeatureDetailApiModel = z.infer<typeof featureDetailApiModelSchema>
 
-export const modifierEtatFeatureFlippingBodySchema = z
-  .object({ etat: featureFlippingEtatSchema })
+export const modifierEtatFeatureBodySchema = z
+  .object({ etat: featureEtatSchema })
   .describe('Changement d’état d’un feature flipping.')
-export type ModifierEtatFeatureFlippingBody = z.infer<typeof modifierEtatFeatureFlippingBodySchema>
+export type ModifierEtatFeatureBody = z.infer<typeof modifierEtatFeatureBodySchema>
 
 export const remplacerUtilisateursAutorisesBodySchema = z
   .object({

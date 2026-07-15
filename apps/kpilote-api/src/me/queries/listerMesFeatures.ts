@@ -1,11 +1,11 @@
-import { type MeFeatureFlippingApiModel } from '@pilote/kpilote-shared/meFeatureFlipping'
+import { type MeFeatureApiModel } from '@pilote/kpilote-shared/meFeature'
 import { ResultAsync } from 'neverthrow'
 
 import { isAdminPrincipal, requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 
 const loadFeaturesActives = async (utilisateurId: string | null): Promise<string[]> => {
-  const rows = await db().featureFlipping.findMany({
+  const rows = await db().feature.findMany({
     where: {
       OR: [
         { etat: 'ACTIVE' },
@@ -25,7 +25,7 @@ const loadFeaturesActives = async (utilisateurId: string | null): Promise<string
   return rows.map((row) => row.key)
 }
 
-export const listerMesFeatureFlippings = (): ResultAsync<MeFeatureFlippingApiModel, never> => {
+export const listerMesFeatures = (): ResultAsync<MeFeatureApiModel, never> => {
   // Une API key ADMIN n'est pas un utilisateur ciblable : elle ne voit que les FF ACTIVE.
   const utilisateurId = isAdminPrincipal() ? null : requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(loadFeaturesActives(utilisateurId)).map((features) => ({
