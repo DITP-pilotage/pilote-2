@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
-import { BarChart3, ShoppingBasket } from 'lucide-react'
+import { BarChart3, FolderOpen } from 'lucide-react'
 import { useMemo } from 'react'
 
 import type { Command } from '@/lib/commands/types'
@@ -7,12 +7,12 @@ import { getRecentlyVisited } from '@/lib/recentlyVisited'
 import { useImportModal } from '@/components/import-valeurs/useImportModal'
 
 import { buildIndicateurActions } from './indicateurActions'
-import { buildPanierActions } from './panierActions'
+import { buildDossierActions } from './dossierActions'
 import { useCanImport } from './useCanImport'
 
 const ICON_BY_TYPE = {
   indicateur: BarChart3,
-  panier: ShoppingBasket,
+  dossier: FolderOpen,
 } as const
 
 /**
@@ -39,7 +39,7 @@ export function useRecentlyVisitedCommands(open: boolean, close: () => void): Co
         const actions =
           entry.type === 'indicateur'
             ? buildIndicateurActions(cible, { navigate, close, openImport, canImport })
-            : buildPanierActions(cible, { navigate, close })
+            : buildDossierActions(cible, { navigate, close })
         return {
           id: `recent:${entry.type}:${entry.id}`,
           label: entry.label,
@@ -51,7 +51,7 @@ export function useRecentlyVisitedCommands(open: boolean, close: () => void): Co
             if (entry.type === 'indicateur') {
               void navigate({ to: '/indicateurs/$id', params: { id: entry.id } })
             } else {
-              void navigate({ to: '/paniers/$id', params: { id: entry.id } })
+              void navigate({ to: '/dossiers/$id', params: { id: entry.id } })
             }
             close()
           },

@@ -9,23 +9,23 @@ type BuildActionsContext = {
 }
 
 /**
- * Sous-actions (`Tab`) proposées sur un panier : pure navigation vers un onglet
- * de la fiche `/paniers/$id`, aucun appel API supplémentaire.
+ * Sous-actions (`Tab`) proposées sur un dossier : pure navigation vers un onglet
+ * de la fiche `/dossiers/$id`, aucun appel API supplémentaire.
  *
- * Point d'extension du domaine panier : les actions futures s'ajoutent ici avec
+ * Point d'extension du domaine dossier : les actions futures s'ajoutent ici avec
  * leur propre `run()`.
  */
-export function buildPanierActions(
-  panier: { id: string; nom: string },
+export function buildDossierActions(
+  dossier: { id: string; nom: string },
   { navigate, close }: BuildActionsContext,
 ): CommandAction[] {
   const goToOnglet = (onglet: 'resultats' | 'gouvernance' | 'confiance' | 'commentaires') => () => {
     // On conserve le couple individu/referentiel (contexte transverse aux fiches)
     // et on ne fixe que `onglet`. On ne peut pas étaler tout `prev` : il agrège
-    // le search cross-domaine invalide pour le schéma panier.
+    // le search cross-domaine invalide pour le schéma dossier.
     void navigate({
-      to: '/paniers/$id',
-      params: { id: panier.id },
+      to: '/dossiers/$id',
+      params: { id: dossier.id },
       search: (prev) => ({ individu: prev.individu, referentiel: prev.referentiel, onglet }),
     })
     close()
@@ -33,26 +33,26 @@ export function buildPanierActions(
 
   return [
     {
-      id: `panier:${panier.id}:fiche`,
+      id: `dossier:${dossier.id}:fiche`,
       label: 'Voir la fiche',
       icon: FileText,
       keywords: ['résultats', 'ouvrir'],
       run: goToOnglet('resultats'),
     },
     {
-      id: `panier:${panier.id}:gouvernance`,
+      id: `dossier:${dossier.id}:gouvernance`,
       label: 'Voir la gouvernance',
       icon: Landmark,
       run: goToOnglet('gouvernance'),
     },
     {
-      id: `panier:${panier.id}:confiance`,
+      id: `dossier:${dossier.id}:confiance`,
       label: 'Voir le niveau de confiance',
       icon: ShieldCheck,
       run: goToOnglet('confiance'),
     },
     {
-      id: `panier:${panier.id}:commentaires`,
+      id: `dossier:${dossier.id}:commentaires`,
       label: 'Voir les commentaires',
       icon: MessageSquare,
       run: goToOnglet('commentaires'),

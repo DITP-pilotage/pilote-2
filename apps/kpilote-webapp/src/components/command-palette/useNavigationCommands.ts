@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
-import { BarChart3, Home, ShoppingBasket } from 'lucide-react'
+import { BarChart3, FolderOpen, Home } from 'lucide-react'
 import { useMemo } from 'react'
 
 import type { Command } from '@/lib/commands/types'
@@ -36,13 +36,13 @@ export function useNavigationCommands(close: () => void): Command[] {
         },
       },
       {
-        id: 'nav:paniers',
-        label: 'Paniers',
+        id: 'nav:dossiers',
+        label: 'Dossiers',
         group: 'navigation',
-        icon: ShoppingBasket,
+        icon: FolderOpen,
         keywords: ['collections'],
         run: () => {
-          void navigate({ to: '/paniers', search: {} })
+          void navigate({ to: '/dossiers', search: {} })
           close()
         },
       },

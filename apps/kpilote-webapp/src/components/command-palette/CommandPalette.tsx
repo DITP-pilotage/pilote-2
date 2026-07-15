@@ -22,7 +22,7 @@ import {
 import { useCommandPaletteShortcut } from './useCommandPaletteShortcut'
 import { useIndicateurCommands } from './useIndicateurCommands'
 import { useNavigationCommands } from './useNavigationCommands'
-import { usePanierCommands } from './usePanierCommands'
+import { useDossierCommands } from './useDossierCommands'
 import { useRecentlyVisitedCommands } from './useRecentlyVisitedCommands'
 
 type CommandPaletteProps = {
@@ -62,16 +62,20 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
 
   const navigationCommands = filterCommands(useNavigationCommands(close), query)
   const recentCommands = useRecentlyVisitedCommands(open, close)
-  const indicateurCommands = useIndicateurCommands(query, open, close)
-  const { commands: panierCommands, isLoading: isLoadingPaniers } = usePanierCommands(
+  const { commands: indicateurCommands, isLoading: isLoadingIndicateurs } = useIndicateurCommands(
     query,
     open,
     close,
   )
-  const isLoading = isLoadingPaniers
+  const { commands: dossierCommands, isLoading: isLoadingDossiers } = useDossierCommands(
+    query,
+    open,
+    close,
+  )
+  const isLoading = isLoadingIndicateurs || isLoadingDossiers
 
   // Les fiches récentes servent de point de départ : on les masque dès que
-  // l'utilisateur tape, les résultats de recherche (indicateurs, paniers)
+  // l'utilisateur tape, les résultats de recherche (indicateurs, dossiers)
   // prenant alors le relais.
   const showRecents = query.trim().length === 0
 
@@ -82,9 +86,9 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       ...navigationCommands,
       ...(showRecents ? recentCommands : []),
       ...indicateurCommands,
-      ...panierCommands,
+      ...dossierCommands,
     ],
-    [navigationCommands, showRecents, recentCommands, indicateurCommands, panierCommands],
+    [navigationCommands, showRecents, recentCommands, indicateurCommands, dossierCommands],
   )
 
   const highlightedCommand = useMemo(
@@ -221,9 +225,9 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                     </CommandPrimitive.Group>
                   ) : null}
 
-                  {panierCommands.length > 0 ? (
-                    <CommandPrimitive.Group heading="Paniers" className={GROUP_HEADING_CLASS}>
-                      {panierCommands.map((command) => (
+                  {dossierCommands.length > 0 ? (
+                    <CommandPrimitive.Group heading="Dossiers" className={GROUP_HEADING_CLASS}>
+                      {dossierCommands.map((command) => (
                         <CommandRow key={command.id} command={command} />
                       ))}
                     </CommandPrimitive.Group>

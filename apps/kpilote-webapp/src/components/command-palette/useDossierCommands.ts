@@ -1,43 +1,43 @@
 import { useNavigate } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { ShoppingBasket } from 'lucide-react'
+import { FolderOpen } from 'lucide-react'
 import { useMemo } from 'react'
 
 import { filterCommands, type Command } from '@/lib/commands/types'
-import { allPaniersQueryOptions } from '@/queries/paniers'
+import { allDossiersQueryOptions } from '@/queries/dossiers'
 
-import { buildPanierActions } from './panierActions'
+import { buildDossierActions } from './dossierActions'
 
 const MAX_RESULTS = 8
 
 /**
- * Commandes de recherche de paniers. Tous les paniers sont chargés à l'ouverture
+ * Commandes de recherche de dossiers. Tous les dossiers sont chargés à l'ouverture
  * de la palette (`open`) et filtrés côté client (insensible casse + accents) sur
- * le nom et le publicId. Chaque résultat navigue vers la fiche `/paniers/$id`
+ * le nom et le publicId. Chaque résultat navigue vers la fiche `/dossiers/$id`
  * puis ferme la palette.
  */
-export function usePanierCommands(
+export function useDossierCommands(
   query: string,
   open: boolean,
   close: () => void,
 ): { commands: Command[]; isLoading: boolean } {
   const navigate = useNavigate()
-  const { data, isLoading } = useQuery({ ...allPaniersQueryOptions(), enabled: open })
+  const { data, isLoading } = useQuery({ ...allDossiersQueryOptions(), enabled: open })
 
   const allCommands = useMemo<Command[]>(() => {
     if (!data) return []
-    return data.map((panier) => ({
-      id: `panier:${panier.id}`,
-      label: panier.nom,
-      group: 'paniers',
-      keywords: [panier.id],
-      hint: panier.id,
-      icon: ShoppingBasket,
+    return data.map((dossier) => ({
+      id: `dossier:${dossier.id}`,
+      label: dossier.nom,
+      group: 'dossiers',
+      keywords: [dossier.id],
+      hint: dossier.id,
+      icon: FolderOpen,
       run: () => {
-        void navigate({ to: '/paniers/$id', params: { id: panier.id } })
+        void navigate({ to: '/dossiers/$id', params: { id: dossier.id } })
         close()
       },
-      actions: buildPanierActions(panier, { navigate, close }),
+      actions: buildDossierActions(dossier, { navigate, close }),
     }))
   }, [data, navigate, close])
 
