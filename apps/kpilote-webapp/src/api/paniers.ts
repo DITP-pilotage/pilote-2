@@ -42,7 +42,7 @@ export const fetchPanierTauxProgressionForIndividu = async (
   panierIds: string[],
 ): Promise<PanierTauxProgressionSummaryListApiModel> => {
   const json = await apiClient
-    .get(`individus/${individuId}/paniers-taux-progression`, {
+    .get(`individus/${individuId}/taux-progression/paniers`, {
       searchParams: { paniers: panierIds.join(',') },
     })
     .json()

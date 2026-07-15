@@ -26,7 +26,7 @@ export const fetchTauxProgressionForIndividu = async (
   params: ListTauxProgressionIndividuQuery,
 ): Promise<TauxProgressionIndividuListApiModel> => {
   const json = await apiClient
-    .get(`individus/${individuId}/taux-progression`, {
+    .get(`individus/${individuId}/taux-progression/indicateurs`, {
       searchParams: { indicateurs: params.indicateurs.join(',') },
     })
     .json()

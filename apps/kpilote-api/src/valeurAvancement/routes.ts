@@ -340,11 +340,11 @@ const getDernieresValeursForIndividuRoute = createRoute({
   },
 })
 
-// --- GET /individus/:id/taux-progression -------------------------------------
+// --- GET /individus/:id/taux-progression/indicateurs -------------------------
 
 const getTauxProgressionForIndividuRoute = createRoute({
   method: 'get',
-  path: '/individus/{id}/taux-progression',
+  path: '/individus/{id}/taux-progression/indicateurs',
   tags: ['Individu'],
   summary: "Lister le taux de progression de l'individu pour un lot d'indicateurs",
   description:
@@ -369,11 +369,11 @@ const getTauxProgressionForIndividuRoute = createRoute({
   },
 })
 
-// --- GET /individus/:id/paniers-taux-progression ------------------------------
+// --- GET /individus/:id/taux-progression/paniers ------------------------------
 
 const getPanierTauxProgressionForIndividuRoute = createRoute({
   method: 'get',
-  path: '/individus/{id}/paniers-taux-progression',
+  path: '/individus/{id}/taux-progression/paniers',
   tags: ['Individu'],
   summary: "Lister le taux de progression d'un lot de paniers pour un individu",
   description:
