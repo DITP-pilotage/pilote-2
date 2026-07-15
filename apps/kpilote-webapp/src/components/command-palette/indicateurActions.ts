@@ -86,7 +86,7 @@ export function buildIndicateurActions(
               search: (prev) => ({
                 individu: prev.individu,
                 referentiel: prev.referentiel,
-                onglet: 'valeurs',
+                onglet: 'resultats',
               }),
             })
           },
