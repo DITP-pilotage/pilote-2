@@ -1,6 +1,8 @@
 import type { PanierApiModel } from '@pilote/kpilote-shared/panier'
 import { Link } from '@tanstack/react-router'
+import { Suspense } from 'react'
 
+import { PanierAvancement, PanierAvancementSkeleton } from '@/components/paniers/PanierAvancement'
 import { EntityCard } from '@/components/ui/EntityCard'
 
 export type PanierCardContext = {
@@ -21,6 +23,13 @@ export function PanierCard({
       asChild
       kicker={panier.id}
       title={panier.nom}
+      body={
+        context ? (
+          <Suspense fallback={<PanierAvancementSkeleton />}>
+            <PanierAvancement panierId={panier.id} individuId={context.individu} />
+          </Suspense>
+        ) : undefined
+      }
       footer={
         <>
           {nb} indicateur{nb > 1 ? 's' : ''}
