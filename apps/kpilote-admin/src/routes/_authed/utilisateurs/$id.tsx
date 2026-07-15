@@ -90,7 +90,7 @@ function EditUtilisateurComponent() {
           <p className="text-sm font-medium text-accent">Utilisateur introuvable.</p>
         )
       ) : (
-        <div className="mx-auto max-w-2xl">
+        <div>
           <PrincipalPermissions principalId={id} />
         </div>
       )}

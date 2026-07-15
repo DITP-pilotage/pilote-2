@@ -56,10 +56,7 @@ export function IndicateurForm({
 
   return (
     <FormProvider {...form}>
-      <form
-        onSubmit={(event) => void form.handleSubmit(onSubmit)(event)}
-        className="mx-auto max-w-2xl"
-      >
+      <form onSubmit={(event) => void form.handleSubmit(onSubmit)(event)}>
         <div className="rounded-xl border border-border bg-surface p-6">
           <div className="mb-5">
             {mode === 'edit' ? (

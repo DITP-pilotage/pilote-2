@@ -51,7 +51,7 @@ export function ReferentielForm({
     )
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div>
       <div className="rounded-xl border border-border bg-surface p-6">
         <div className="mb-5">
           <label className="mb-1.5 block text-xs font-semibold">Identifiant</label>
