@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 import {
   HTTP_METHODS,
@@ -42,10 +42,22 @@ function ConsoleComponent() {
   const [pending, setPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [history, setHistory] = useState<HistoryEntry[]>(() => loadHistory())
+  const responseRef = useRef<HTMLDivElement>(null)
 
-  const baseUrl = (meta?.baseUrl ?? '').replace(/\/$/, '')
-  const fullUrl = `${baseUrl}/${path.replace(/^\/+/, '')}`
+  // GET est bodyless : on masque l'onglet Body et on force l'affichage des en-têtes.
+  const bodyless = method === 'GET'
+  const activeTab = bodyless ? 'headers' : tab
+
+  const baseUrl = (meta?.baseUrl ?? '').replace(/\/+$/, '')
+  const fullUrl = `${baseUrl}/${path}`
   const blockedByProd = isProd && locked && MUTATING.has(method)
+
+  // Ramène la réponse dans le viewport dès qu'un résultat (ou une erreur) arrive.
+  useEffect(() => {
+    if (response || error) {
+      responseRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [response, error])
 
   const curl = toCurl({ method, url: fullUrl, headers, body })
 
@@ -88,7 +100,7 @@ function ConsoleComponent() {
           <EndpointPicker
             onSelect={(endpoint) => {
               setMethod(endpoint.method)
-              setPath(endpoint.path)
+              setPath(endpoint.path.replace(/^\/+/, ''))
               if (endpoint.bodyExample) {
                 setBody(endpoint.bodyExample)
                 setTab('body')
@@ -138,14 +150,18 @@ function ConsoleComponent() {
 
           <div>
             <TabNav
-              tabs={[
-                { key: 'body', label: 'Body' },
-                { key: 'headers', label: 'En-têtes' },
-              ]}
-              active={tab}
+              tabs={
+                bodyless
+                  ? [{ key: 'headers', label: 'En-têtes' }]
+                  : [
+                      { key: 'body', label: 'Body' },
+                      { key: 'headers', label: 'En-têtes' },
+                    ]
+              }
+              active={activeTab}
               onChange={(key) => setTab(key as 'body' | 'headers')}
             />
-            {tab === 'body' ? (
+            {activeTab === 'body' ? (
               <div className="flex flex-col gap-2">
                 <div className="flex justify-end">
                   <Button
@@ -169,7 +185,7 @@ function ConsoleComponent() {
             <CopyButton value={curl} label="Copier la commande curl" />
           </div>
 
-          <div className="rounded-md border border-border p-4">
+          <div ref={responseRef} className="scroll-mt-4 rounded-md border border-border p-4">
             <ResponsePanel response={response} pending={pending} error={error} />
           </div>
         </div>

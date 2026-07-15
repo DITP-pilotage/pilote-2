@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
 import type { ConsoleResponse } from '@/api/console'
+import { CopyButton } from '@/components/ui/CopyButton'
 import { formatJson, JsonEditor } from '@/components/ui/JsonEditor'
 import { clsxm } from '@/lib/clsxm'
 
@@ -44,6 +45,10 @@ export function ResponsePanel({
         >
           {showHeaders ? 'Masquer' : 'Afficher'} les en-têtes
         </button>
+        <div className="ml-auto flex items-center gap-1 text-xs text-primary">
+          <CopyButton value={body} label="Copier le corps de la réponse" />
+          Copier
+        </div>
       </div>
       {showHeaders ? (
         <pre className="overflow-auto rounded-md border border-border bg-surface-muted p-3 text-xs">
