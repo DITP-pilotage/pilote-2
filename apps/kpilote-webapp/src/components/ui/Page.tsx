@@ -43,7 +43,7 @@ export function Page({
         {actions && <div className="flex shrink-0 items-center gap-3">{actions}</div>}
       </header>
       {stickybar && (
-        <div className="sticky top-20 z-20 -mx-6 flex flex-wrap items-end justify-between gap-4 bg-surface/90 px-6 py-3 backdrop-blur sm:-mx-8 sm:px-8">
+        <div className="sticky top-20 z-20 -mx-6 flex items-end justify-between gap-4 bg-surface/90 px-6 py-3 backdrop-blur sm:-mx-8 sm:px-8">
           {stickybar}
         </div>
       )}

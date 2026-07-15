@@ -70,7 +70,7 @@ function IndicateursListComponent() {
       stickybar={
         <>
           {search.individu ? (
-            <div className="max-w-md flex-1">
+            <div>
               <FormField label="Individu" htmlFor={selectId}>
                 <IndividuSelect
                   id={selectId}
