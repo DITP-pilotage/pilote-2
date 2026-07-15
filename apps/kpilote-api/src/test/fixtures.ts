@@ -30,6 +30,7 @@ import {
   type ReferentielModel,
   type ReferentielWidgetModel,
   type RelationModel,
+  type FeatureFlippingModel,
   type UtilisateurModel,
   type ValeurAvancementModel,
   type WidgetModel,
@@ -39,6 +40,7 @@ import {
   PermissionAction,
   ProviderType,
   Visibilite,
+  type FeatureFlippingEtat,
   type FonctionAgregation,
   type PeriodeMiseAJour,
   type UniteDuree,
@@ -975,8 +977,46 @@ async function panierContactUtile(
   return upsertPanierContactUtile(override)
 }
 
+// --- FeatureFlipping ---------------------------------------------------------
+
+type FeatureFlippingOverrides = Partial<{
+  id: string
+  key: string
+  nom: string
+  etat: FeatureFlippingEtat
+  utilisateurs: { id: string }[]
+}>
+
+let featureFlippingSeq = 0
+
+const upsertFeatureFlipping = async (o: FeatureFlippingOverrides = {}) => {
+  const id = o.id ?? uuidv7()
+  featureFlippingSeq += 1
+  const created = await db().featureFlipping.create({
+    data: {
+      id,
+      key: o.key ?? `ff_test_${featureFlippingSeq}`,
+      nom: o.nom ?? 'FF de test',
+      etat: o.etat ?? 'DESACTIVE',
+    },
+  })
+  for (const utilisateur of o.utilisateurs ?? []) {
+    await db().featureFlippingUtilisateur.create({
+      data: { featureFlippingId: id, utilisateurId: utilisateur.id },
+    })
+  }
+  return created
+}
+
+function featureFlipping(): Promise<FeatureFlippingModel>
+function featureFlipping(override: FeatureFlippingOverrides): Promise<FeatureFlippingModel>
+async function featureFlipping(o?: FeatureFlippingOverrides): Promise<FeatureFlippingModel> {
+  return upsertFeatureFlipping(o)
+}
+
 export const fixtures = {
   indicateur,
+  featureFlipping,
   commentaire,
   referentiel,
   individu,
