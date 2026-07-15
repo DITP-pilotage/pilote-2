@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { BarChart3, FolderTree, KeyRound, Users } from 'lucide-react'
+import { BarChart3, FolderTree, KeyRound, Terminal, Users } from 'lucide-react'
 
 import { BarCard } from '@/components/ui/BarCard'
 import { FadeIn } from '@/components/ui/FadeIn'
@@ -44,6 +44,14 @@ function FeaturesComponent() {
             title="Gérer les utilisateurs"
             description="Créer, lister et modifier les utilisateurs OIDC pré-provisionnés (réservé aux clés ADMIN)."
             onClick={() => void navigate({ to: '/utilisateurs' })}
+          />
+        </FadeIn>
+        <FadeIn delayMs={300}>
+          <BarCard
+            icon={Terminal}
+            title="Console API"
+            description="Effectuer des appels HTTP arbitraires vers l'API, avec export curl."
+            onClick={() => void navigate({ to: '/console' })}
           />
         </FadeIn>
       </div>
