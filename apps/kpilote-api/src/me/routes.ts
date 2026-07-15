@@ -1,10 +1,11 @@
-import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
+import { createRoute } from '@hono/zod-openapi'
 import { meApiModelSchema } from '@pilote/kpilote-shared/me'
 import { mePermissionsApiModelSchema } from '@pilote/kpilote-shared/mePermissions'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { requireUser } from '@/framework/auth/userContext'
 import { never } from '@/framework/errors/never'
+import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { listerMesPermissions } from '@/me/queries/listerMesPermissions'
 
@@ -44,7 +45,7 @@ const mePermissionsRoute = createRoute({
   },
 })
 
-export const meRoutes = new OpenAPIHono()
+export const meRoutes = createOpenApiHono()
 
 meRoutes.openapi(meRoute, (context) => {
   const user = requireUser()

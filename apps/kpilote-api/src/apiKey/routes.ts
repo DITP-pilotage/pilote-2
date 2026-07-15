@@ -1,4 +1,4 @@
-import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import { createRoute, z } from '@hono/zod-openapi'
 import {
   apiKeyApiModelSchema,
   createApiKeyBodySchema,
@@ -11,6 +11,7 @@ import { getApiKeyById } from '@/apiKey/queries/getApiKeyById'
 import { listApiKeys } from '@/apiKey/queries/listApiKeys'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
+import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { erreur403, erreur404, erreur409, succes200 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
@@ -109,7 +110,7 @@ const revokeApiKeyRoute = createRoute({
   },
 })
 
-export const apiKeyRoutes = new OpenAPIHono()
+export const apiKeyRoutes = createOpenApiHono()
 
 apiKeyRoutes.openapi(createApiKeyRoute, async (context) => {
   const body = context.req.valid('json')

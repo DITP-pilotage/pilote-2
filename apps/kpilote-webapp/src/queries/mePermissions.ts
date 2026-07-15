@@ -1,4 +1,7 @@
-import { type PermissionEntryApiModel } from '@pilote/kpilote-shared/mePermissions'
+import {
+  type MePermissionsApiModel,
+  type PermissionEntryApiModel,
+} from '@pilote/kpilote-shared/mePermissions'
 import { type QueryClient, queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 
 import { fetchMePermissions } from '@/api/mePermissions'
@@ -18,9 +21,17 @@ export const loadMePermissions = ({ queryClient }: { queryClient: QueryClient })
 const hasWrite = (entries: PermissionEntryApiModel[], publicId: string): boolean =>
   entries.some((entry) => entry.id === publicId && entry.actions.includes('WRITE'))
 
+export const canWriteIndicateur = ({
+  permissions,
+  indicateurId,
+}: {
+  permissions: MePermissionsApiModel
+  indicateurId: string
+}): boolean => permissions.isAdmin === true || hasWrite(permissions.indicateurs, indicateurId)
+
 export const useCanWriteIndicateur = (indicateurId: string): boolean => {
   const { data } = useSuspenseQuery(mePermissionsQueryOptions())
-  return data.isAdmin === true || hasWrite(data.indicateurs, indicateurId)
+  return canWriteIndicateur({ permissions: data, indicateurId })
 }
 
 // WRITE panier reste strictement direct (jamais propagé) — cf. me-permissions-design.md.

@@ -1,4 +1,4 @@
-import { createRoute, OpenAPIHono } from '@hono/zod-openapi'
+import { createRoute } from '@hono/zod-openapi'
 import {
   grantIndicateurPermissionBodySchema,
   grantPanierPermissionBodySchema,
@@ -10,6 +10,7 @@ import {
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
+import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { erreur400, erreur403, erreur404, succes200 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
@@ -131,7 +132,7 @@ const revokePanierPermissionRoute = createRoute({
   },
 })
 
-export const permissionRoutes = new OpenAPIHono()
+export const permissionRoutes = createOpenApiHono()
 
 permissionRoutes.openapi(getPermissionsRoute, async (context) => {
   const { principalId } = context.req.valid('query')

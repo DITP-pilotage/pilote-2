@@ -1,4 +1,4 @@
-import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import { createRoute, z } from '@hono/zod-openapi'
 import { indicateurPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
 import {
   deleteObjectifIndicateurIndividuBodySchema,
@@ -10,6 +10,7 @@ import {
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
+import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { ErrorApiModelSchema, erreur400, erreur403 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
@@ -115,7 +116,7 @@ const deleteObjectifIndicateurIndividuRoute = createRoute({
 
 // --- App registration --------------------------------------------------------
 
-export const objectifIndicateurIndividuRoutes = new OpenAPIHono()
+export const objectifIndicateurIndividuRoutes = createOpenApiHono()
 
 objectifIndicateurIndividuRoutes.openapi(getObjectifsForIndicateurRoute, async (context) => {
   const { id } = context.req.valid('param')

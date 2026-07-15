@@ -4,9 +4,11 @@ import { useMemo } from 'react'
 
 import type { Command } from '@/lib/commands/types'
 import { getRecentlyVisited } from '@/lib/recentlyVisited'
+import { useImportModal } from '@/components/import-valeurs/useImportModal'
 
 import { buildIndicateurActions } from './indicateurActions'
 import { buildPanierActions } from './panierActions'
+import { useCanImport } from './useCanImport'
 
 const ICON_BY_TYPE = {
   indicateur: BarChart3,
@@ -17,9 +19,14 @@ const ICON_BY_TYPE = {
  * Commandes reconstruites depuis les 5 dernières fiches visitées (localStorage).
  * La liste est relue à chaque ouverture de la palette pour refléter les visites
  * les plus récentes sans instrumenter chaque navigation.
+ *
+ * Les permissions sont prefetchées dans le loader `_authenticated` :
+ * `useCanImport` lit le cache via `useSuspenseQuery` sans suspendre en pratique.
  */
 export function useRecentlyVisitedCommands(open: boolean, close: () => void): Command[] {
   const navigate = useNavigate()
+  const canImport = useCanImport()
+  const { open: openImport } = useImportModal()
 
   // Relu à chaque (ré)ouverture de la palette : `open` en dépendance suffit à
   // rafraîchir la liste sans effet ni setState.
@@ -31,7 +38,7 @@ export function useRecentlyVisitedCommands(open: boolean, close: () => void): Co
         const cible = { id: entry.id, nom: entry.label }
         const actions =
           entry.type === 'indicateur'
-            ? buildIndicateurActions(cible, { navigate, close })
+            ? buildIndicateurActions(cible, { navigate, close, openImport, canImport })
             : buildPanierActions(cible, { navigate, close })
         return {
           id: `recent:${entry.type}:${entry.id}`,
@@ -51,6 +58,6 @@ export function useRecentlyVisitedCommands(open: boolean, close: () => void): Co
           actions,
         }
       }),
-    [entries, navigate, close],
+    [entries, navigate, close, openImport, canImport],
   )
 }

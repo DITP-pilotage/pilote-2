@@ -1,4 +1,4 @@
-import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import { createRoute, z } from '@hono/zod-openapi'
 import {
   creerPanierCommentaireBodySchema,
   listerPanierCommentairesQuerySchema,
@@ -32,6 +32,7 @@ import {
 import { getDernierBrouillon } from '@/commentaire/queries/getDernierBrouillon'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
+import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { erreur400, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
@@ -124,7 +125,7 @@ const getPanierTauxProgressionRoute = createRoute({
 
 // --- App registration --------------------------------------------------------
 
-export const panierRoutes = new OpenAPIHono()
+export const panierRoutes = createOpenApiHono()
 
 panierRoutes.openapi(getPaniersRoute, async (context) => {
   const { recherche, rechercheIdentifiant, cursor, pageSize } = context.req.valid('query')

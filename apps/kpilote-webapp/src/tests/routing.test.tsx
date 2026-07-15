@@ -7,6 +7,8 @@ import type { MeApiModel } from '@pilote/kpilote-shared/me'
 
 import type { Auth } from '@/auth'
 import { tokenStore } from '@/auth/tokenStore'
+import { ImportModalProvider } from '@/components/import-valeurs/ImportModalProvider'
+import { ToastProvider } from '@/components/ui/Toast'
 import { routeTree } from '@/routeTree.gen'
 
 const stubAuth = (user: MeApiModel | null): Auth => ({
@@ -32,7 +34,11 @@ const renderAt = (initialPath: string, authImpl: Auth) => {
   })
   return render(
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <ToastProvider>
+        <ImportModalProvider>
+          <RouterProvider router={router} />
+        </ImportModalProvider>
+      </ToastProvider>
     </QueryClientProvider>,
   )
 }

@@ -1,4 +1,4 @@
-import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi'
+import { createRoute, z } from '@hono/zod-openapi'
 import { createPaginatedApiListSchema } from '@pilote/kpilote-shared/pagination'
 import {
   createUtilisateurBodySchema,
@@ -9,6 +9,7 @@ import {
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
+import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { erreur400, erreur403, erreur404, erreur409 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
@@ -122,7 +123,7 @@ const updateUtilisateurRoute = createRoute({
   },
 })
 
-export const utilisateurRoutes = new OpenAPIHono()
+export const utilisateurRoutes = createOpenApiHono()
 
 utilisateurRoutes.openapi(createUtilisateurRoute, async (context) => {
   const body = context.req.valid('json')
