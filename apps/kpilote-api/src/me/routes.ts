@@ -1,5 +1,6 @@
 import { createRoute } from '@hono/zod-openapi'
 import { meApiModelSchema } from '@pilote/kpilote-shared/me'
+import { meFeatureFlippingApiModelSchema } from '@pilote/kpilote-shared/meFeatureFlipping'
 import { mePermissionsApiModelSchema } from '@pilote/kpilote-shared/mePermissions'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
@@ -7,10 +8,12 @@ import { requireUser } from '@/framework/auth/userContext'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { listerMesFeatureFlippings } from '@/me/queries/listerMesFeatureFlippings'
 import { listerMesPermissions } from '@/me/queries/listerMesPermissions'
 
 const MeOkSchema = meApiModelSchema.openapi('Me')
 const MePermissionsOkSchema = mePermissionsApiModelSchema.openapi('MePermissions')
+const MeFeatureFlippingOkSchema = meFeatureFlippingApiModelSchema.openapi('MeFeatureFlipping')
 
 const meRoute = createRoute({
   method: 'get',
@@ -45,6 +48,20 @@ const mePermissionsRoute = createRoute({
   },
 })
 
+const meFeatureFlippingRoute = createRoute({
+  method: 'get',
+  path: '/me/feature-flipping',
+  tags: ['Authentication'],
+  summary: 'Feature flippings actifs pour l’utilisateur courant',
+  middleware: [requireAuthentication],
+  responses: {
+    200: {
+      content: { 'application/json': { schema: MeFeatureFlippingOkSchema } },
+      description: 'Clés des feature flippings actifs',
+    },
+  },
+})
+
 export const meRoutes = createOpenApiHono()
 
 meRoutes.openapi(meRoute, (context) => {
@@ -68,6 +85,19 @@ meRoutes.openapi(mePermissionsRoute, async (context) =>
         context,
         data,
         schema: MePermissionsOkSchema,
+        status: 200,
+      }),
+    never,
+  ),
+)
+
+meRoutes.openapi(meFeatureFlippingRoute, async (context) =>
+  listerMesFeatureFlippings().match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: MeFeatureFlippingOkSchema,
         status: 200,
       }),
     never,
