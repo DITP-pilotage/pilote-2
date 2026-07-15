@@ -24,6 +24,10 @@
       "types": "./src/commentaire.ts",
       "default": "./src/commentaire.ts"
     },
+    "./console": {
+      "types": "./src/console.ts",
+      "default": "./src/console.ts"
+    },
     "./niveauConfiance": {
       "types": "./src/niveauConfiance.ts",
       "default": "./src/niveauConfiance.ts"

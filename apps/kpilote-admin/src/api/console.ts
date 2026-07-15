@@ -1,24 +1,31 @@
+import {
+  consoleMetaSchema,
+  consoleResponseSchema,
+  HTTP_METHODS,
+  type ConsoleMeta,
+  type ConsoleRequest,
+  type ConsoleResponse,
+  type HeaderPair,
+  type HttpMethod,
+} from '@pilote/kpilote-shared/console'
 import ky from 'ky'
 
-export const HTTP_METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const
-export type HttpMethod = (typeof HTTP_METHODS)[number]
+// Le contrat (schémas + types) vit dans le package partagé : front et back
+// parlent la même enveloppe. On ré-exporte ici ce dont l'UI a besoin pour éviter
+// de propager l'import `@pilote/kpilote-shared/console` dans tous les composants.
+export { HTTP_METHODS }
+export type { ConsoleMeta, ConsoleRequest, ConsoleResponse, HeaderPair, HttpMethod }
 
-export type HeaderPair = { key: string; value: string }
-
-export type ConsoleRequest = {
-  method: HttpMethod
-  path: string
-  headers: HeaderPair[]
-  body: string
+// L'UI manipule une URL relative unique (`/indicateurs?limit=10`) ; l'enveloppe,
+// elle, sépare chemin et querystring. Ces deux helpers font le pont.
+export const splitUrl = (url: string): { path: string; query: string } => {
+  const index = url.indexOf('?')
+  if (index === -1) return { path: url, query: '' }
+  return { path: url.slice(0, index), query: url.slice(index + 1) }
 }
 
-export type ConsoleResponse = {
-  status: number
-  statusText: string
-  headers: Record<string, string>
-  body: string
-  durationMs: number
-}
+export const joinUrl = ({ path, query }: { path: string; query: string }): string =>
+  query ? `${path}?${query}` : path
 
 const consoleClient = ky.create({
   prefixUrl: new URL('/console/', location.origin).toString(),
@@ -32,25 +39,22 @@ const consoleClient = ky.create({
 // on peut poser des en-têtes que le `fetch` du navigateur interdirait). La réponse
 // est elle aussi une enveloppe : status/statusText/headers/body + timing serveur.
 export const sendConsoleRequest = async (request: ConsoleRequest): Promise<ConsoleResponse> => {
-  const bffResponse = await consoleClient.post('proxy', {
-    json: {
-      method: request.method,
-      path: request.path,
-      headers: request.headers.filter((header) => header.key.trim()),
-      body: request.body,
-    },
-  })
+  const payload: ConsoleRequest = {
+    ...request,
+    headers: request.headers.filter((header) => header.key.trim()),
+  }
+  // `throwHttpErrors: false` : ky ne lève pas sur les status HTTP, on inspecte
+  // `.ok` nous-mêmes (pas de try/catch nécessaire ici).
+  const bffResponse = await consoleClient.post('proxy', { json: payload })
   if (!bffResponse.ok) {
     const detail = await bffResponse.text()
     throw new Error(`Erreur proxy console (${bffResponse.status}) : ${detail}`)
   }
-  return bffResponse.json<ConsoleResponse>()
+  return consoleResponseSchema.parse(await bffResponse.json())
 }
 
-export const fetchConsoleMeta = async (): Promise<{ environment: string; baseUrl: string }> => {
-  return consoleClient.get('meta').json()
-}
+export const fetchConsoleMeta = async (): Promise<ConsoleMeta> =>
+  consoleMetaSchema.parse(await consoleClient.get('meta').json())
 
-export const fetchOpenapiSpec = async (): Promise<unknown> => {
-  return consoleClient.get('openapi.json').json()
-}
+export const fetchOpenapiSpec = async (): Promise<unknown> =>
+  consoleClient.get('openapi.json').json()

@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 
-import { mbApiUrlFor } from '@/server/environments'
+import { kpiloteApiUrlFor } from '@/server/environments'
 import { readSession } from '@/server/session'
 
 // Ressources relayables (lecture + upsert indicateurs/référentiels/individus).
@@ -31,7 +31,7 @@ apiRouter.all('/*', async (context) => {
     return context.json({ error: 'forbidden' }, 403)
   }
 
-  const base = new URL(mbApiUrlFor(session.environment))
+  const base = new URL(kpiloteApiUrlFor(session.environment))
   const basePath = base.pathname.replace(/\/$/, '')
   const url = new URL(`${basePath}/${subPath}`, base)
   url.search = new URL(context.req.url).search

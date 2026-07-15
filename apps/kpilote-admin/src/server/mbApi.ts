@@ -1,7 +1,7 @@
 import ky, { HTTPError } from 'ky'
 
 import type { Environment } from '@/server/environments'
-import { mbApiUrlFor } from '@/server/environments'
+import { kpiloteApiUrlFor } from '@/server/environments'
 
 export type WhoamiResult = { kind: 'user' | 'apiKey'; label: string }
 
@@ -11,7 +11,7 @@ export const fetchWhoami = async (
 ): Promise<WhoamiResult | null> => {
   try {
     const json = await ky
-      .get(`${mbApiUrlFor(environment)}/auth/whoami`, {
+      .get(`${kpiloteApiUrlFor(environment)}/auth/whoami`, {
         headers: { Authorization: `Bearer ${apiKey}` },
         retry: 0,
         timeout: 5000,

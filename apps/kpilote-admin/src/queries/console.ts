@@ -9,25 +9,53 @@ export type OpenapiEndpoint = {
   bodyExample: string
 }
 
-const METHOD_SET = new Set<string>(HTTP_METHODS)
+// Sous-ensemble de la spec OpenAPI que l'on exploite. On type l'entrée une seule
+// fois à la frontière (`spec as OpenapiSpec`) plutôt que de caster à chaque accès.
+type OpenapiSchema = {
+  $ref?: string
+  example?: unknown
+  enum?: unknown[]
+  type?: string
+  properties?: Record<string, OpenapiSchema>
+  items?: OpenapiSchema
+}
+type OpenapiOperation = {
+  summary?: string
+  requestBody?: { content?: Record<string, { schema?: OpenapiSchema }> }
+}
+type OpenapiSpec = {
+  paths?: Record<string, Record<string, OpenapiOperation>>
+  components?: { schemas?: Record<string, OpenapiSchema> }
+}
 
-// Génère un exemple JSON minimal depuis un schéma OpenAPI (profondeur limitée).
-const exampleFromSchema = (schema: unknown, depth = 0): unknown => {
-  if (depth > 4 || typeof schema !== 'object' || schema === null) return null
-  const node = schema as Record<string, unknown>
-  if ('example' in node) return node.example
-  if (Array.isArray(node.enum) && node.enum.length > 0) return node.enum[0]
-  switch (node.type) {
+const METHOD_SET = new Set<string>(HTTP_METHODS)
+const REF_PREFIX = '#/components/schemas/'
+
+// Génère un exemple JSON minimal depuis un schéma OpenAPI. Les `$ref` (que
+// @hono/zod-openapi émet pour les bodies enregistrés en composants) sont résolus
+// contre `components.schemas`. La profondeur est bornée (refs cycliques, imbrication).
+const exampleFromSchema = (
+  schema: OpenapiSchema | undefined,
+  schemas: Record<string, OpenapiSchema>,
+  depth = 0,
+): unknown => {
+  if (depth > 6 || !schema) return null
+  if (schema.$ref) {
+    const name = schema.$ref.startsWith(REF_PREFIX) ? schema.$ref.slice(REF_PREFIX.length) : ''
+    return exampleFromSchema(schemas[name], schemas, depth + 1)
+  }
+  if ('example' in schema) return schema.example
+  if (Array.isArray(schema.enum) && schema.enum.length > 0) return schema.enum[0]
+  switch (schema.type) {
     case 'object': {
-      const properties = (node.properties as Record<string, unknown>) ?? {}
       const result: Record<string, unknown> = {}
-      for (const [key, value] of Object.entries(properties)) {
-        result[key] = exampleFromSchema(value, depth + 1)
+      for (const [key, value] of Object.entries(schema.properties ?? {})) {
+        result[key] = exampleFromSchema(value, schemas, depth + 1)
       }
       return result
     }
     case 'array':
-      return [exampleFromSchema(node.items, depth + 1)]
+      return [exampleFromSchema(schema.items, schemas, depth + 1)]
     case 'string':
       return ''
     case 'number':
@@ -40,31 +68,33 @@ const exampleFromSchema = (schema: unknown, depth = 0): unknown => {
   }
 }
 
-const bodyExampleFor = (operation: Record<string, unknown>): string => {
-  const requestBody = operation.requestBody as Record<string, unknown> | undefined
-  const content = requestBody?.content as Record<string, unknown> | undefined
-  const jsonContent = content?.['application/json'] as Record<string, unknown> | undefined
-  if (!jsonContent?.schema) return ''
-  const example = exampleFromSchema(jsonContent.schema)
+const bodyExampleFor = (
+  operation: OpenapiOperation,
+  schemas: Record<string, OpenapiSchema>,
+): string => {
+  const schema = operation.requestBody?.content?.['application/json']?.schema
+  if (!schema) return ''
+  const example = exampleFromSchema(schema, schemas)
   if (example === null || example === undefined) return ''
   return JSON.stringify(example, null, 2)
 }
 
 const parseEndpoints = (spec: unknown): OpenapiEndpoint[] => {
-  const paths = (spec as { paths?: Record<string, unknown> })?.paths
+  const typed = spec as OpenapiSpec
+  const paths = typed.paths
   if (!paths) return []
+  const schemas = typed.components?.schemas ?? {}
   const endpoints: OpenapiEndpoint[] = []
   for (const [path, pathItem] of Object.entries(paths)) {
-    if (typeof pathItem !== 'object' || pathItem === null) continue
-    for (const [rawMethod, operation] of Object.entries(pathItem as Record<string, unknown>)) {
+    for (const [rawMethod, operation] of Object.entries(pathItem)) {
       const method = rawMethod.toUpperCase()
-      if (!METHOD_SET.has(method) || typeof operation !== 'object' || operation === null) continue
-      const op = operation as Record<string, unknown>
+      // Le filtre méthode écarte de fait les clés non-opérations (parameters, $ref…).
+      if (!METHOD_SET.has(method)) continue
       endpoints.push({
         method: method as HttpMethod,
         path,
-        summary: typeof op.summary === 'string' ? op.summary : '',
-        bodyExample: bodyExampleFor(op),
+        summary: operation.summary ?? '',
+        bodyExample: bodyExampleFor(operation, schemas),
       })
     }
   }

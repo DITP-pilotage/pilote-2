@@ -3,7 +3,7 @@ import { lintGutter, linter } from '@codemirror/lint'
 import { EditorState } from '@codemirror/state'
 import { EditorView, keymap } from '@codemirror/view'
 import { basicSetup } from 'codemirror'
-import { useEffect, useRef } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 
 import { clsxm } from '@/lib/clsxm'
 
@@ -30,48 +30,56 @@ export function JsonEditor({
   minHeight?: number
   ariaLabel?: string
 }) {
-  const hostRef = useRef<HTMLDivElement | null>(null)
   const viewRef = useRef<EditorView | null>(null)
-  // On garde `onChange` dans une ref pour éviter de recréer l'éditeur à chaque render.
+  // On garde `onChange`/`value` dans des refs pour éviter de recréer l'éditeur à
+  // chaque render. `value` sert au doc initial d'un (re)mount ; un éventuel décalage
+  // d'un render est corrigé par l'effet de synchronisation ci-dessous.
   const onChangeRef = useRef(onChange)
+  const valueRef = useRef(value)
   useEffect(() => {
     onChangeRef.current = onChange
-  }, [onChange])
+    valueRef.current = value
+  }, [onChange, value])
 
-  useEffect(() => {
-    if (!hostRef.current) return
-    const view = new EditorView({
-      parent: hostRef.current,
-      state: EditorState.create({
-        doc: value,
-        extensions: [
-          basicSetup,
-          json(),
-          linter(jsonParseLinter()),
-          lintGutter(),
-          keymap.of([]),
-          EditorView.lineWrapping,
-          EditorState.readOnly.of(readOnly),
-          EditorView.editable.of(!readOnly),
-          EditorView.theme({
-            '&': { fontSize: '13px', minHeight: `${minHeight}px` },
-            '.cm-scroller': { fontFamily: 'ui-monospace, monospace' },
-            '&.cm-focused': { outline: 'none' },
-          }),
-          EditorView.updateListener.of((update) => {
-            if (update.docChanged) onChangeRef.current?.(update.state.doc.toString())
-          }),
-        ],
-      }),
-    })
-    viewRef.current = view
-    return () => {
-      view.destroy()
-      viewRef.current = null
-    }
-    // Recréation uniquement si le mode read-only ou la hauteur change.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [readOnly, minHeight])
+  // Callback ref (React 19) : React (re)appelle cette fonction quand son identité
+  // change — donc quand `readOnly`/`minHeight` changent — et exécute le cleanup
+  // retourné au démontage. Plus besoin de hostRef, d'un useEffect de création ni
+  // d'eslint-disable : le cycle de vie de l'éditeur suit celui du nœud.
+  const mountEditor = useCallback(
+    (host: HTMLDivElement | null) => {
+      if (!host) return
+      const view = new EditorView({
+        parent: host,
+        state: EditorState.create({
+          doc: valueRef.current,
+          extensions: [
+            basicSetup,
+            json(),
+            linter(jsonParseLinter()),
+            lintGutter(),
+            keymap.of([]),
+            EditorView.lineWrapping,
+            EditorState.readOnly.of(readOnly),
+            EditorView.editable.of(!readOnly),
+            EditorView.theme({
+              '&': { fontSize: '13px', minHeight: `${minHeight}px` },
+              '.cm-scroller': { fontFamily: 'ui-monospace, monospace' },
+              '&.cm-focused': { outline: 'none' },
+            }),
+            EditorView.updateListener.of((update) => {
+              if (update.docChanged) onChangeRef.current?.(update.state.doc.toString())
+            }),
+          ],
+        }),
+      })
+      viewRef.current = view
+      return () => {
+        view.destroy()
+        viewRef.current = null
+      }
+    },
+    [readOnly, minHeight],
+  )
 
   // Synchronise la valeur externe (ex. picker qui pré-remplit) sans casser le curseur.
   useEffect(() => {
@@ -85,7 +93,7 @@ export function JsonEditor({
 
   return (
     <div
-      ref={hostRef}
+      ref={mountEditor}
       role="textbox"
       aria-label={ariaLabel}
       className={clsxm(

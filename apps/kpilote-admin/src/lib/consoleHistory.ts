@@ -1,24 +1,30 @@
-import type { ConsoleRequest, HttpMethod } from '@/api/console'
+import { consoleRequestSchema, httpMethodSchema } from '@pilote/kpilote-shared/console'
+import { z } from 'zod'
 
 const STORAGE_KEY = 'kpiloteadmin_console_history'
 const MAX_ENTRIES = 20
 
-export type HistoryEntry = {
-  id: string
-  method: HttpMethod
-  path: string
-  status: number
-  ts: number
-  request: ConsoleRequest
-}
+const historyEntrySchema = z.object({
+  id: z.string(),
+  method: httpMethodSchema,
+  path: z.string(),
+  status: z.number(),
+  ts: z.number(),
+  request: consoleRequestSchema,
+})
+export type HistoryEntry = z.infer<typeof historyEntrySchema>
+
+const historySchema = z.array(historyEntrySchema)
 
 export const loadHistory = (): HistoryEntry[] => {
   if (typeof localStorage === 'undefined') return []
+  const raw = localStorage.getItem(STORAGE_KEY)
+  if (!raw) return []
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed: unknown = JSON.parse(raw)
-    return Array.isArray(parsed) ? (parsed as HistoryEntry[]) : []
+    // Sortie type-safe du localStorage : tout ce qui ne matche pas le schéma
+    // (ancienne version, données corrompues) est ignoré silencieusement.
+    const parsed = historySchema.safeParse(JSON.parse(raw))
+    return parsed.success ? parsed.data : []
   } catch {
     return []
   }
