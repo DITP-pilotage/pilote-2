@@ -14,6 +14,7 @@
     "dev": "portless kpilote-admin vite",
     "deploy:prepare": "bash deploy-prepare.sh",
     "routes:generate": "tsr generate",
+    "typecheck": "tsr generate && tsc --noEmit",
     "build": "rm -rf dist && tsr generate && tsc --noEmit && vite build && vite build -c vite.server.config.ts",
     "deploy:bundle": "bash deploy-bundle.sh",
     "start": "node dist/server/index.js",
