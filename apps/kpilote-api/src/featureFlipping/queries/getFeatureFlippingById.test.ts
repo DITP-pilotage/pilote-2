@@ -31,9 +31,7 @@ describe.concurrent('getFeatureFlippingById', () => {
   it(
     'rejette quand le FF est introuvable',
     integrationTest(async () => {
-      await expect(
-        getFeatureFlippingById('00000000-0000-0000-0000-000000000000'),
-      ).rejects.toThrow()
+      await expect(getFeatureFlippingById('00000000-0000-0000-0000-000000000000')).rejects.toThrow()
     }),
   )
 })

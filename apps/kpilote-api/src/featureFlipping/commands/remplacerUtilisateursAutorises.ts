@@ -32,7 +32,9 @@ const remplacerLiaisons = async (
   utilisateurIdsCibles: string[],
 ): Promise<void> => {
   const cibles = new Set(utilisateurIdsCibles)
-  const existantes = await db().featureFlippingUtilisateur.findMany({ where: { featureFlippingId } })
+  const existantes = await db().featureFlippingUtilisateur.findMany({
+    where: { featureFlippingId },
+  })
   const aSupprimer = existantes
     .filter((liaison) => !cibles.has(liaison.utilisateurId))
     .map((liaison) => liaison.utilisateurId)
