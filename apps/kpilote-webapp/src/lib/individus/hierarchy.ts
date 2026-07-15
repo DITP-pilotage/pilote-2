@@ -39,3 +39,35 @@ export const buildOrderedNodes = (
 
 export const pickRoot = (nodes: ReadonlyArray<IndividuNode>): IndividuNode | null =>
   nodes.find((node) => node.depth === 0) ?? null
+
+export type ReferentielGroup = {
+  referentiel: ReferentielApiModel
+  nodes: IndividuNode[]
+}
+
+// Regroupe les nœuds ordonnés (issus de buildOrderedNodes, ordre DFS) par
+// référentiel *racine* : chaque arbre de la forêt est rattaché au référentiel de
+// son individu racine (depth 0). Les descendants rattachés à d'autres
+// référentiels (ex. régions/départements sous la France nationale) restent dans
+// le groupe de leur racine, ce qui préserve la hiérarchie complète en étape 2.
+export const groupNodesByRootReferentiel = (
+  nodes: ReadonlyArray<IndividuNode>,
+): ReferentielGroup[] => {
+  const groups: ReferentielGroup[] = []
+  const byReferentielId = new Map<string, ReferentielGroup>()
+  let current: ReferentielGroup | null = null
+  for (const node of nodes) {
+    if (node.depth === 0) {
+      current =
+        byReferentielId.get(node.referentiel.id) ??
+        (() => {
+          const created: ReferentielGroup = { referentiel: node.referentiel, nodes: [] }
+          byReferentielId.set(node.referentiel.id, created)
+          groups.push(created)
+          return created
+        })()
+    }
+    current?.nodes.push(node)
+  }
+  return groups
+}
