@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router'
 
 import { loadAllIndicateurs } from '@/queries/indicateurs'
-import { loadMeFeatureFlipping } from '@/queries/meFeatureFlipping'
+import { loadMeFeature } from '@/queries/meFeature'
 import { loadMePermissions } from '@/queries/mePermissions'
 
 export const Route = createFileRoute('/_authenticated')({
@@ -15,7 +15,7 @@ export const Route = createFileRoute('/_authenticated')({
   loader: ({ context }) =>
     Promise.all([
       loadMePermissions({ queryClient: context.queryClient }),
-      loadMeFeatureFlipping({ queryClient: context.queryClient }),
+      loadMeFeature({ queryClient: context.queryClient }),
       loadAllIndicateurs({ queryClient: context.queryClient }),
     ]),
   component: () => <Outlet />,

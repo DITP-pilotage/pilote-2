@@ -1,11 +1,8 @@
-import {
-  type MeFeatureFlippingApiModel,
-  meFeatureFlippingApiModelSchema,
-} from '@pilote/kpilote-shared/meFeatureFlipping'
+import { type MeFeatureApiModel, meFeatureApiModelSchema } from '@pilote/kpilote-shared/meFeature'
 
 import { apiClient } from '@/api/client'
 
-export const fetchMeFeatureFlipping = async (): Promise<MeFeatureFlippingApiModel> => {
-  const json = await apiClient.get('me/feature-flipping').json()
-  return meFeatureFlippingApiModelSchema.parse(json)
+export const fetchMeFeature = async (): Promise<MeFeatureApiModel> => {
+  const json = await apiClient.get('me/features').json()
+  return meFeatureApiModelSchema.parse(json)
 }

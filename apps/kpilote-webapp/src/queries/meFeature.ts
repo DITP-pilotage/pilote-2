@@ -1,20 +1,20 @@
 import { type QueryClient, queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 
-import { fetchMeFeatureFlipping } from '@/api/meFeatureFlipping'
+import { fetchMeFeature } from '@/api/meFeature'
 
 import { DEFAULT_STALE_TIME } from './utils'
 
-export const meFeatureFlippingQueryOptions = () =>
+export const meFeatureQueryOptions = () =>
   queryOptions({
-    queryKey: ['me', 'feature-flipping'],
-    queryFn: fetchMeFeatureFlipping,
+    queryKey: ['me', 'features'],
+    queryFn: fetchMeFeature,
     staleTime: DEFAULT_STALE_TIME,
   })
 
-export const loadMeFeatureFlipping = ({ queryClient }: { queryClient: QueryClient }) =>
-  queryClient.ensureQueryData(meFeatureFlippingQueryOptions())
+export const loadMeFeature = ({ queryClient }: { queryClient: QueryClient }) =>
+  queryClient.ensureQueryData(meFeatureQueryOptions())
 
-export const useFeatureFlipping = (key: string): boolean => {
-  const { data } = useSuspenseQuery(meFeatureFlippingQueryOptions())
+export const useFeature = (key: string): boolean => {
+  const { data } = useSuspenseQuery(meFeatureQueryOptions())
   return data.features.includes(key)
 }
