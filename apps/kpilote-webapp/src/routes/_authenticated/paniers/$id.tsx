@@ -120,7 +120,31 @@ function PanierDetailComponent() {
       : undefined
 
   return (
-    <Page title={panier.nom} description={panier.description ?? undefined} back={back}>
+    <Page
+      title={panier.nom}
+      description={panier.description ?? undefined}
+      back={back}
+      stickybar={
+        search.individu ? (
+          <div className="max-w-md">
+            <FormField label="Individu" htmlFor={selectId}>
+              <IndividuSelect
+                id={selectId}
+                referentielIds={referentielIds}
+                value={search.individu}
+                onChange={({ individu, referentiel }) => {
+                  startTransition(() => {
+                    void navigate({
+                      search: (prev) => ({ ...prev, individu, referentiel }),
+                    })
+                  })
+                }}
+              />
+            </FormField>
+          </div>
+        ) : undefined
+      }
+    >
       <Tabs
         value={search.onglet}
         onValueChange={(onglet) => {
@@ -138,29 +162,11 @@ function PanierDetailComponent() {
 
         <TabsContent value="resultats">
           <div className="flex flex-col gap-6">
-            {search.individu ? (
-              <div className="flex flex-col gap-6">
-                <div className="max-w-md">
-                  <FormField label="Individu observé" htmlFor={selectId}>
-                    <IndividuSelect
-                      id={selectId}
-                      referentielIds={referentielIds}
-                      value={search.individu}
-                      onChange={({ individu, referentiel }) => {
-                        startTransition(() => {
-                          void navigate({
-                            search: (prev) => ({ ...prev, individu, referentiel }),
-                          })
-                        })
-                      }}
-                    />
-                  </FormField>
-                </div>
-                <div className="max-w-xs">
-                  <PanierTauxProgression panierId={id} individu={search.individu} />
-                </div>
+            {search.individu && (
+              <div className="max-w-xs">
+                <PanierTauxProgression panierId={id} individu={search.individu} />
               </div>
-            ) : null}
+            )}
 
             <Text as="span" variant="kicker" tone="muted">
               {orderedIndicateurs.length} indicateur{orderedIndicateurs.length > 1 ? 's' : ''}

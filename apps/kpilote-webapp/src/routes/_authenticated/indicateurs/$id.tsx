@@ -150,24 +150,29 @@ function IndicateurDetailComponent() {
   const referentielNom = indicateur.referentiels.find((c) => c.id === referentielId)?.nom ?? null
 
   return (
-    <Page title={indicateur.nom} back={back} actions={actionsFiche}>
-      <div className="max-w-md">
-        <FormField label="Individu" htmlFor={selectId}>
-          <IndividuSelect
-            id={selectId}
-            referentielIds={referentielIds}
-            value={individuId}
-            onChange={({ individu, referentiel }) => {
-              startTransition(() => {
-                void navigate({
-                  search: (prev) => ({ ...prev, individu, referentiel }),
+    <Page
+      title={indicateur.nom}
+      back={back}
+      actions={actionsFiche}
+      stickybar={
+        <div className="max-w-md">
+          <FormField label="Individu" htmlFor={selectId}>
+            <IndividuSelect
+              id={selectId}
+              referentielIds={referentielIds}
+              value={individuId}
+              onChange={({ individu, referentiel }) => {
+                startTransition(() => {
+                  void navigate({
+                    search: (prev) => ({ ...prev, individu, referentiel }),
+                  })
                 })
-              })
-            }}
-          />
-        </FormField>
-      </div>
-
+              }}
+            />
+          </FormField>
+        </div>
+      }
+    >
       <Tabs
         value={search.onglet}
         onValueChange={(onglet) => {

@@ -27,8 +27,16 @@ export function DashboardSwitch() {
         })
       }}
       options={[
-        { value: 'indicateurs', label: 'Indicateurs', icon: <LineChart /> },
-        { value: 'dossiers', label: 'Mes dossiers', icon: <FolderClosed /> },
+        {
+          value: 'indicateurs',
+          label: <span className="sr-only md:not-sr-only">Indicateurs</span>,
+          icon: <LineChart />,
+        },
+        {
+          value: 'dossiers',
+          label: <span className="sr-only md:not-sr-only">Mes dossiers</span>,
+          icon: <FolderClosed />,
+        },
       ]}
     />
   )

@@ -67,12 +67,11 @@ function IndicateursListComponent() {
     <Page
       title="Tableau de bord"
       description="Consultez et gérez l'ensemble de vos indicateurs par valeur ou par dossier."
-    >
-      <div className="flex flex-col gap-6">
-        <div className="flex flex-wrap items-end justify-between gap-4">
+      stickybar={
+        <>
           {search.individu ? (
-            <div className="max-w-md flex-1">
-              <FormField label="Individu observé" htmlFor={selectId}>
+            <div>
+              <FormField label="Individu" htmlFor={selectId}>
                 <IndividuSelect
                   id={selectId}
                   referentielIds={referentielIds}
@@ -91,8 +90,10 @@ function IndicateursListComponent() {
             <div />
           )}
           <DashboardSwitch />
-        </div>
-
+        </>
+      }
+    >
+      <div className="flex flex-col gap-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Text as="span" variant="kicker" tone="muted">
             {data.total} indicateur{data.total > 1 ? 's' : ''}
