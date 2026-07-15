@@ -11,7 +11,7 @@
     "node": "24.9.0"
   },
   "scripts": {
-    "dev": "portless run vite",
+    "dev": "portless kpilote-admin vite",
     "deploy:prepare": "bash deploy-prepare.sh",
     "routes:generate": "tsr generate",
     "build": "rm -rf dist && tsr generate && tsc --noEmit && vite build && vite build -c vite.server.config.ts",

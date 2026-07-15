@@ -11,7 +11,7 @@
     "node": "24.9.0"
   },
   "scripts": {
-    "dev": "portless run vite",
+    "dev": "portless kpilote-api.modernisation vite",
     "deploy:prepare": "bash deploy-prepare.sh",
     "build": "prisma migrate deploy && prisma generate --sql && prisma db seed && vite build",
     "deploy:bundle": "bash deploy-bundle.sh",
