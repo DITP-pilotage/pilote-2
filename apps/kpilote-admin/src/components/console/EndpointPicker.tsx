@@ -23,7 +23,12 @@ export function EndpointPicker({ onSelect }: { onSelect: (endpoint: OpenapiEndpo
     <div className="relative">
       <input
         value={search}
-        onChange={(event) => setSearch(event.target.value)}
+        onChange={(event) => {
+          setSearch(event.target.value)
+          // Après une sélection, l'input garde le focus (onMouseDown+preventDefault)
+          // et la liste est fermée : rouvrir à la saisie pour permettre une 2e recherche.
+          setOpen(true)
+        }}
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
         placeholder={isPending ? 'Chargement des endpoints…' : 'Rechercher un endpoint (OpenAPI)…'}
