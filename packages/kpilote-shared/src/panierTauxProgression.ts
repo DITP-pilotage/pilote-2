@@ -47,10 +47,12 @@ export type PanierTauxProgressionSummaryApiModel = z.infer<
 >
 
 export const panierTauxProgressionSummaryListApiModelSchema = z.object({
-  items: z.array(panierTauxProgressionSummaryApiModelSchema).describe(
-    'Taux de progression pour chaque panier demandé accessible en lecture. ' +
-      'Les paniers inaccessibles ou inexistants sont omis.',
-  ),
+  items: z
+    .array(panierTauxProgressionSummaryApiModelSchema)
+    .describe(
+      'Taux de progression pour chaque panier demandé accessible en lecture. ' +
+        'Les paniers inaccessibles ou inexistants sont omis.',
+    ),
 })
 export type PanierTauxProgressionSummaryListApiModel = z.infer<
   typeof panierTauxProgressionSummaryListApiModelSchema

@@ -5,20 +5,13 @@ import {
 import { ResultAsync } from 'neverthrow'
 
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { type Bucket, compareBuckets } from '@/framework/bucket'
+import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
+import { computeContributions } from '@/panier/queries/computePanierContributions'
 import { withPanierReadPermission } from '@/panier/permissions'
-import {
-  type IndicateurContribution,
-  resolvePanierTauxProgression,
-} from '@/panier/resolvePanierTauxProgression'
-import { computeTauxProgressionPoints } from '@/valeurAvancement/queries/computeTauxProgressionPoints'
+import { resolvePanierTauxProgression } from '@/panier/resolvePanierTauxProgression'
 import { type IndividuRef } from '@/valeurAvancement/resolveSerieIndividu'
-import { type TauxProgressionPoint } from '@/valeurAvancement/resolveTauxProgression'
-
-const DATE_TRUNC_VALEUR = 'month' as const
-const DATE_TRUNC_OBJECTIF = 'month' as const
 
 const panierListArgs = {
   select: {
@@ -38,26 +31,42 @@ type PanierRow = Prisma.PanierGetPayload<typeof panierListArgs>
 export const listPanierTauxProgressionForIndividu = (
   individuPublicId: string,
   params: ListPanierTauxProgressionForIndividuQuery,
-): ResultAsync<PanierTauxProgressionSummaryListApiModel, never> => {
+): ResultAsync<PanierTauxProgressionSummaryListApiModel, never> =>
+  ResultAsync.fromSafePromise(build(individuPublicId, params))
+
+const build = async (
+  individuPublicId: string,
+  params: ListPanierTauxProgressionForIndividuQuery,
+): Promise<PanierTauxProgressionSummaryListApiModel> => {
   const principalId = requireCurrentPrincipalId()
 
-  return ResultAsync.fromSafePromise(
-    db().individu.findFirstOrThrow({
-      where: { publicId: individuPublicId },
-      select: { id: true, publicId: true, referentielId: true },
-    }),
-  ).andThen((cible) =>
-    ResultAsync.fromSafePromise(
-      db().panier.findMany({
-        where: withPanierReadPermission({ publicId: { in: params.paniers } }, principalId),
-        ...panierListArgs,
-      }),
-    ).andThen((paniers) =>
-      ResultAsync.fromSafePromise(
-        Promise.all(paniers.map((panier) => computePanierTaux(panier, cible))),
-      ).map((items) => ({ items })),
-    ),
+  const cible = await db().individu.findFirstOrThrow({
+    where: { publicId: individuPublicId },
+    select: { id: true, publicId: true, referentielId: true },
+  })
+
+  const startedAt = performance.now()
+
+  const paniers = await db().panier.findMany({
+    where: withPanierReadPermission({ publicId: { in: params.paniers } }, principalId),
+    ...panierListArgs,
+  })
+
+  const items = await Promise.all(paniers.map((panier) => computePanierTaux(panier, cible)))
+
+  logger.info(
+    {
+      event: 'panier.listPanierTauxProgressionForIndividu.timing',
+      individuId: cible.id,
+      nbPaniersDemandes: params.paniers.length,
+      nbPaniersAccessibles: paniers.length,
+      nbItems: items.length,
+      durationMs: Math.round(performance.now() - startedAt),
+    },
+    'listPanierTauxProgressionForIndividu computed',
   )
+
+  return { items }
 }
 
 const computePanierTaux = async (
@@ -68,40 +77,7 @@ const computePanierTaux = async (
     return { panier: panier.publicId, tauxProgression: null }
   }
 
-  const contributions: IndicateurContribution[] = await Promise.all(
-    panier.indicateurs.map(async ({ indicateur, ponderation }) => {
-      const dernier = await computeDernierTaux({ indicateurId: indicateur.id, cible })
-      return {
-        indicateurPublicId: indicateur.publicId,
-        tauxProgression: dernier?.tauxProgression ?? null,
-        date: dernier?.date ?? null,
-        ponderation,
-      }
-    }),
-  )
-
+  const contributions = await computeContributions(panier.indicateurs, cible)
   const { tauxProgression } = resolvePanierTauxProgression(contributions)
   return { panier: panier.publicId, tauxProgression }
-}
-
-const computeDernierTaux = async ({
-  indicateurId,
-  cible,
-}: {
-  indicateurId: string
-  cible: IndividuRef
-}): Promise<{ tauxProgression: number | null; date: Bucket } | null> => {
-  const points = await computeTauxProgressionPoints({
-    indicateurId,
-    individusCibles: [cible],
-    dateTruncValeur: DATE_TRUNC_VALEUR,
-    dateTruncObjectif: DATE_TRUNC_OBJECTIF,
-  })
-  if (points.length === 0) return null
-
-  const dernier = points.reduce<TauxProgressionPoint>(
-    (acc, p) => (compareBuckets(p.date, acc.date) > 0 ? p : acc),
-    points[0]!,
-  )
-  return { tauxProgression: dernier.tauxProgression, date: dernier.date }
 }
