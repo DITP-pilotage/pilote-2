@@ -36,7 +36,7 @@ export const appliquerPlan = ({
   rows: ReadonlyArray<Record<string, unknown>>
   resolution: ResolutionResult
   individusValides: ReadonlyArray<{ publicId: string }>
-  typeValeur?: { colonne: string; typesValeurRetenus: ReadonlyArray<string> }
+  typeValeur: { colonne: string; typesValeurRetenus: ReadonlyArray<string> } | null
 }): ResultatApplication => {
   const items: ItemNormalise[] = []
   const warnings: WarningApplication[] = []

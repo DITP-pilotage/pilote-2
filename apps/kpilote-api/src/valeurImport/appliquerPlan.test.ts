@@ -87,6 +87,7 @@ describe('appliquerPlan — filtrage par type de valeur', () => {
       rows,
       resolution,
       individusValides,
+      typeValeur: null,
     })
     expect(items).toHaveLength(2)
     expect(warnings.filter((w) => w.code === 'LIGNE_IGNOREE')).toHaveLength(0)

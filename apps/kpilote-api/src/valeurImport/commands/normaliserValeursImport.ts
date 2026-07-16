@@ -152,14 +152,7 @@ export const normaliserValeursImport = (
                   rows,
                   resolution,
                   individusValides: individus,
-                  ...(resolutionTypeValeur
-                    ? {
-                        typeValeur: {
-                          colonne: resolutionTypeValeur.colonne,
-                          typesValeurRetenus: resolutionTypeValeur.typesValeurRetenus,
-                        },
-                      }
-                    : {}),
+                  typeValeur: resolutionTypeValeur,
                 })
                 return {
                   plan,
