@@ -9,7 +9,6 @@ import { z } from 'zod'
 import { apiClient } from '@/api/client'
 
 export type NormaliserError =
-  | { type: 'ALBERT_NON_CONFIGURE' }
   | { type: 'PLAN_ECHEC'; message: string }
   | { type: 'RESOLUTION_ECHEC' }
   | { type: 'UNKNOWN' }
@@ -20,8 +19,6 @@ const mapErrorBody = (body: unknown): NormaliserError => {
   const parsed = errorPayloadSchema.safeParse(body)
   if (!parsed.success) return { type: 'UNKNOWN' }
   switch (parsed.data.code) {
-    case 'ALBERT_NON_CONFIGURE':
-      return { type: 'ALBERT_NON_CONFIGURE' }
     case 'PLAN_ECHEC':
       return { type: 'PLAN_ECHEC', message: parsed.data.message }
     case 'RESOLUTION_ECHEC':

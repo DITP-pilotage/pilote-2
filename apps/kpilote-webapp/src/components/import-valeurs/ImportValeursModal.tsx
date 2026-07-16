@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ChangeEvent, type DragEvent } from 'react'
+import { useState, type ChangeEvent, type DragEvent } from 'react'
 import { Upload } from 'lucide-react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -9,9 +9,8 @@ import { ModaleForm } from '@pilote/kpilote-ui/ModaleForm'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { ImportError } from '@/api/valeursImport'
 import { useImportValeursBatch } from '@/mutations/valeursImport'
-import { useNormaliserValeurs } from '@/mutations/valeursNormaliser'
 import { parseFichierValeurs, type ParseResult } from './parseFichierValeurs'
-import { lireLignesBrutes } from './lireLignesBrutes'
+import { AlbertFallback } from './AlbertFallback'
 import { traduireErreursBatch, traduireIssuesValidation } from './traduireErreursBatch'
 import { ImportPreviewTable } from './ImportPreviewTable'
 import { NormalisationReviewView } from './NormalisationReviewView'
@@ -45,10 +44,8 @@ export function ImportValeursModal({
 }) {
   const toast = useToast()
   const mutation = useImportValeursBatch({ indicateurId: target.indicateur.id })
-  const normaliser = useNormaliserValeurs({ indicateurId: target.indicateur.id })
   const [erreursServeur, setErreursServeur] = useState<string[]>([])
   const [revue, setRevue] = useState<NormaliserValeursImportResponseApiModel | null>(null)
-  const [fallbackIndisponible, setFallbackIndisponible] = useState(false)
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -69,37 +66,17 @@ export function ImportValeursModal({
 
   const parseResult = parseQuery.data
   const rows = parseResult?.ok ? parseResult.rows : null
-
-  // Sur MISSING_COLUMNS : on tente une extraction assistée par Albert plutôt que
-  // d'afficher directement l'erreur de format. Si Albert n'est pas disponible
-  // (non configuré / injoignable), on retombe sur le message d'erreur standard.
-  const fallbackLanceRef = useRef<string | null>(null)
-  useEffect(() => {
-    if (!file) {
-      fallbackLanceRef.current = null
-      return
-    }
-    if (!parseResult || parseResult.ok || parseResult.error.code !== 'MISSING_COLUMNS') return
-    const cle = `${file.name}:${file.size}:${file.lastModified}`
-    if (fallbackLanceRef.current === cle) return
-    fallbackLanceRef.current = cle
-    void lireLignesBrutes({ file }).then((rowsBrutes) => {
-      normaliser.mutate(
-        { rows: rowsBrutes, nomFichier: file.name },
-        {
-          onSuccess: (response) => setRevue(response),
-          onError: () => setFallbackIndisponible(true),
-        },
-      )
-    })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parseResult, file])
+  // Sur MISSING_COLUMNS : extraction assistée par Albert via <AlbertFallback>,
+  // qui remonte la revue ici (setRevue) en cas de succès.
+  const fichierHorsFormat =
+    file && parseResult && !parseResult.ok && parseResult.error.code === 'MISSING_COLUMNS'
+      ? { file, message: messageParseError(parseResult) }
+      : null
 
   const onFileChange = (newFile: File) => {
     form.setValue('file', newFile, { shouldValidate: true })
     setErreursServeur([])
     setRevue(null)
-    setFallbackIndisponible(false)
   }
 
   const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -166,7 +143,7 @@ export function ImportValeursModal({
       onSubmit={onSubmit}
       submitLabel={submitLabel}
       submitPendingLabel="Import en cours…"
-      submitDisabled={!payload || payload.length === 0 || normaliser.isPending}
+      submitDisabled={!payload || payload.length === 0}
     >
       {revue ? (
         <>
@@ -225,13 +202,14 @@ export function ImportValeursModal({
             </div>
             <input type="file" accept=".csv,.xlsx" className="hidden" onChange={onInputChange} />
           </label>
-          {normaliser.isPending ? (
-            <p className="mt-3 rounded-lg border border-border bg-background/60 px-4 py-3 text-sm text-text-muted">
-              Format non standard détecté — extraction assistée en cours…
-            </p>
-          ) : parseResult &&
-            !parseResult.ok &&
-            (parseResult.error.code !== 'MISSING_COLUMNS' || fallbackIndisponible) ? (
+          {fichierHorsFormat ? (
+            <AlbertFallback
+              file={fichierHorsFormat.file}
+              indicateurId={target.indicateur.id}
+              onResolved={setRevue}
+              messageSiEchec={fichierHorsFormat.message}
+            />
+          ) : parseResult && !parseResult.ok ? (
             <p className="mt-3 rounded-lg border border-red-marianne/30 bg-red-marianne/5 px-4 py-3 text-sm text-red-marianne">
               {messageParseError(parseResult)}
             </p>
