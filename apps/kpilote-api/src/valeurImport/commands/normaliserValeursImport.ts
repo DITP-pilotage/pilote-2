@@ -93,6 +93,29 @@ const extraireLibellesSources = (
   return [...set]
 }
 
+type ResolutionTypeValeur = NonNullable<NormaliserValeursImportResult['resolutionTypeValeur']>
+
+// Passe 1b (conditionnelle) : résolution sémantique du type de valeur (fichiers PPG).
+// On ne retient la colonne que si Albert a fourni un nom valide et réel (il remplit
+// parfois ce champ optionnel avec un nom vide ou halluciné). Sinon → null (pas de filtre).
+const resoudreEtapeTypeValeur = ({
+  plan,
+  rows,
+  headers,
+}: {
+  plan: Plan
+  rows: Array<Record<string, unknown>>
+  headers: string[]
+}): ResultAsync<ResolutionTypeValeur | null, NormaliserValeursImportError> => {
+  const colonne = resoudreColonneTypeValeur({ colonneTypeValeur: plan.colonneTypeValeur, headers })
+  if (!colonne) return okAsync(null)
+
+  const typesValeurDistincts = collecterValeursDistinctes({ rows, colonne })
+  return resoudreTypeValeur({ colonne, typesValeurDistincts })
+    .mapErr(mapTypeValeurError)
+    .map((res) => ({ colonne, typesValeurDistincts, typesValeurRetenus: res.typesValeurRetenus }))
+}
+
 export const normaliserValeursImport = (
   indicateurPublicId: string,
   { rows, nomFichier }: { rows: Array<Record<string, unknown>>; nomFichier: string },
@@ -116,30 +139,7 @@ export const normaliserValeursImport = (
         .andThen((plan) => {
           const libellesSources = extraireLibellesSources(rows, plan.colonneIndividu)
 
-          // Passe 1b (conditionnelle) : résolution sémantique du type de valeur (fichiers PPG).
-          // On ne retient la colonne que si Albert a fourni un nom valide et réel
-          // (il remplit parfois ce champ optionnel avec un nom vide ou halluciné).
-          const colonne = resoudreColonneTypeValeur({
-            colonneTypeValeur: plan.colonneTypeValeur,
-            headers,
-          })
-          const etapeTypeValeur: ResultAsync<
-            NormaliserValeursImportResult['resolutionTypeValeur'] | null,
-            NormaliserValeursImportError
-          > = colonne
-            ? (() => {
-                const typesValeurDistincts = collecterValeursDistinctes({ rows, colonne })
-                return resoudreTypeValeur({ colonne, typesValeurDistincts })
-                  .mapErr(mapTypeValeurError)
-                  .map((res) => ({
-                    colonne,
-                    typesValeurDistincts,
-                    typesValeurRetenus: res.typesValeurRetenus,
-                  }))
-              })()
-            : okAsync(null)
-
-          return etapeTypeValeur.andThen((resolutionTypeValeur) =>
+          return resoudreEtapeTypeValeur({ plan, rows, headers }).andThen((resolutionTypeValeur) =>
             resoudreIndividus({
               indicateur: { nom: indicateur.nom },
               individusValides: individus,
