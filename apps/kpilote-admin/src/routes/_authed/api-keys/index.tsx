@@ -14,8 +14,8 @@ import { Table } from '@/components/ui/Table'
 import { clickableRowProps, stopRowActivation } from '@/lib/clickableRow'
 import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
+import { useAppConfig } from '@/context/AppConfigContext'
 import { apiKeysQueryOptions } from '@/queries/apiKeys'
-import { session } from '@/session'
 
 export const Route = createFileRoute('/_authed/api-keys/')({
   component: ApiKeysListComponent,
@@ -36,7 +36,7 @@ const STATUS_CLASS: Record<ApiKeyApiModel['status'], string> = {
 function ApiKeysListComponent() {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
-  const isProd = session.current?.environment === 'prod'
+  const { isProd, environment } = useAppConfig()
   const query = useQuery(apiKeysQueryOptions())
   const items = query.data ?? []
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
@@ -68,7 +68,7 @@ function ApiKeysListComponent() {
         subtitle={
           <>
             {items.length} clé{items.length > 1 ? 's' : ''} · environnement{' '}
-            <b className={isProd ? 'text-accent' : undefined}>{session.current?.environment}</b>
+            <b className={isProd ? 'text-accent' : undefined}>{environment}</b>
           </>
         }
         action={

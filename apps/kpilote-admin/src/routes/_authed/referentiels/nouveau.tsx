@@ -7,7 +7,7 @@ import { PageHeading } from '@/components/PageHeading'
 import { ReferentielForm, type ReferentielFormValues } from '@/components/ReferentielForm'
 import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
-import { session } from '@/session'
+import { useAppConfig } from '@/context/AppConfigContext'
 
 export const Route = createFileRoute('/_authed/referentiels/nouveau')({
   component: NewReferentielComponent,
@@ -16,7 +16,7 @@ export const Route = createFileRoute('/_authed/referentiels/nouveau')({
 function NewReferentielComponent() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const isProd = session.current?.environment === 'prod'
+  const { isProd } = useAppConfig()
 
   const toast = useToast()
   const mutation = useMutation({

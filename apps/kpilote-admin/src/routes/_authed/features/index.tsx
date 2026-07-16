@@ -12,8 +12,8 @@ import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { clickableRowProps, stopRowActivation } from '@/lib/clickableRow'
 import { searchUnaccent } from '@/lib/texte'
+import { useAppConfig } from '@/context/AppConfigContext'
 import { featuresQueryOptions, useModifierEtatFeatureMutation } from '@/queries/feature'
-import { session } from '@/session'
 
 export const Route = createFileRoute('/_authed/features/')({
   loader: ({ context }) => context.queryClient.ensureQueryData(featuresQueryOptions()),
@@ -28,7 +28,7 @@ const ETAT_OPTIONS: { value: FeatureEtat; label: string }[] = [
 
 function FeatureListComponent() {
   const navigate = useNavigate()
-  const isProd = session.current?.environment === 'prod'
+  const { isProd, environment } = useAppConfig()
   const { data: features } = useSuspenseQuery(featuresQueryOptions())
   const [recherche, setRecherche] = useState('')
   const toast = useToast()
@@ -60,7 +60,7 @@ function FeatureListComponent() {
         subtitle={
           <>
             {features.length} fonctionnalité{features.length > 1 ? 's' : ''} · environnement{' '}
-            <b className={isProd ? 'text-accent' : undefined}>{session.current?.environment}</b>
+            <b className={isProd ? 'text-accent' : undefined}>{environment}</b>
           </>
         }
       />

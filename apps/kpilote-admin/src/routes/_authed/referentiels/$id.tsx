@@ -8,7 +8,7 @@ import { ReferentielForm, type ReferentielFormValues } from '@/components/Refere
 import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { referentielIndividusQueryOptions, referentielQueryOptions } from '@/queries/referentiels'
-import { session } from '@/session'
+import { useAppConfig } from '@/context/AppConfigContext'
 
 export const Route = createFileRoute('/_authed/referentiels/$id')({
   loader: async ({ context, params }) => {
@@ -24,7 +24,7 @@ function EditReferentielComponent() {
   const { id } = Route.useParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const isProd = session.current?.environment === 'prod'
+  const { isProd } = useAppConfig()
   const { data: referentiel } = useSuspenseQuery(referentielQueryOptions(id))
   const { data: individus } = useSuspenseQuery(referentielIndividusQueryOptions(id))
 
