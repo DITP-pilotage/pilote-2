@@ -9,6 +9,7 @@ import {
 } from '@pilote/kpilote-shared/indicateur'
 
 import { bffClient } from '@/api/client'
+import { fetchAllPages } from '@/lib/fetchAllPages'
 
 export type ListIndicateursParams = {
   recherche?: string | undefined
@@ -26,6 +27,9 @@ export const fetchIndicateurs = async (
   const json = await bffClient.get('indicateurs', { searchParams }).json()
   return indicateurListApiModelSchema.parse(json)
 }
+
+export const fetchAllIndicateurs = (): Promise<IndicateurApiModel[]> =>
+  fetchAllPages((cursor) => fetchIndicateurs({ cursor }))
 
 export const fetchIndicateurById = async (id: string): Promise<IndicateurApiModel> => {
   const json = await bffClient.get(`indicateurs/${id}`).json()
