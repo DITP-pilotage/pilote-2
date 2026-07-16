@@ -1,5 +1,5 @@
 import { generateText, stepCountIs, tool } from 'ai'
-import { errAsync, ok, okAsync, ResultAsync } from 'neverthrow'
+import { err, ok, okAsync, type Result, ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 
 import { logger } from '@/framework/logger/logger'
@@ -253,8 +253,7 @@ export const resoudreIndividus = ({
         },
         'Albert call 2 (résolution) — fin',
       )
-      if (derniereTentative) return ok(derniereTentative)
-      return ok<ResolutionResult, ResoudreIndividusError>(null as never)
+      return derniereTentative
     }),
     (cause): ResoudreIndividusError => {
       logger.error(
@@ -267,12 +266,7 @@ export const resoudreIndividus = ({
       )
       return { type: 'ALBERT_UNAVAILABLE', cause }
     },
-  ).andThen(() => {
-    if (derniereTentative)
-      return okAsync<ResolutionResult, ResoudreIndividusError>(derniereTentative)
-    return errAsync<ResolutionResult, ResoudreIndividusError>({
-      type: 'RESOLUTION_ECHEC',
-      derniereErreur,
-    })
-  })
+  ).andThen((tentative): Result<ResolutionResult, ResoudreIndividusError> =>
+    tentative ? ok(tentative) : err({ type: 'RESOLUTION_ECHEC', derniereErreur }),
+  )
 }
