@@ -5,7 +5,6 @@ import { individuPublicIdSchema } from './publicIds'
 
 const colonneDateSchema = z.object({
   nom: z.string(),
-  format: z.enum(['iso', 'fr-libre', 'quarter', 'annee']),
 })
 
 const colonneTypeValeurSchema = z.object({ nom: z.string() })

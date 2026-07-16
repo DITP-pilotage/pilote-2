@@ -10,7 +10,7 @@ const decrirePlan = (plan: NormaliserValeursImportResponseApiModel['plan']): str
   if (plan.layout === 'long') {
     return (
       `Tableau « long » — individu « ${plan.colonneIndividu} », ` +
-      `date « ${plan.colonneDate.nom} » (${plan.colonneDate.format}), ` +
+      `date « ${plan.colonneDate.nom} », ` +
       `valeur « ${plan.colonneValeur} »`
     )
   }

@@ -1,7 +1,7 @@
 import { type Plan } from '@/valeurImport/calls/decouvrirStructure'
 import { type ResolutionResult } from '@/valeurImport/calls/resoudreIndividus'
 import { safeStringify } from '@/valeurImport/helpers/safeStringify'
-import { parseDate } from '@/valeurImport/parsers/parseDate'
+import { parseFrLibre } from '@/valeurImport/parsers/parseFrLibre'
 import { parseNombre } from '@/valeurImport/parsers/parseNombre'
 
 export type ItemNormalise = { individu: string; date: string; valeur: number }
@@ -136,11 +136,11 @@ export const appliquerPlan = ({
       const { individu } = signalerLibelleNonResolu(libelle, index)
       if (!individu) continue
 
-      const dateResult = parseDate(row[plan.colonneDate.nom], plan.colonneDate.format)
-      if (!dateResult.ok) {
+      const date = parseFrLibre(row[plan.colonneDate.nom])
+      if (!date) {
         warnings.push({
           code: 'DATE_INVALIDE',
-          message: `Ligne ${index} : ${dateResult.raison}`,
+          message: `Ligne ${index} : « ${safeStringify(row[plan.colonneDate.nom]).trim()} » n'a pas pu être interprété comme une date.`,
           ligneSource: index,
           colonneSource: plan.colonneDate.nom,
           libelleSource: libelle,
@@ -160,12 +160,22 @@ export const appliquerPlan = ({
         continue
       }
 
-      items.push({ individu, date: dateResult.iso, valeur: valeurResult.valeur })
+      items.push({ individu, date, valeur: valeurResult.valeur })
     }
     return { items, warnings }
   }
 
   // layout === 'pivot'
+  // Résolution canonique des dates d'en-tête : le parser déterministe fait autorité ;
+  // le dateIso d'Albert n'est qu'un filet pour les en-têtes bruités qu'il ne tranche
+  // pas (parseFrLibre renvoie null en cas de doute, jamais une date fausse).
+  const dateParColonne = new Map(
+    plan.colonnesPivot.map((colonne) => [
+      colonne.nom,
+      parseFrLibre(colonne.nom) ?? colonne.dateIso,
+    ]),
+  )
+
   for (const [index, row] of rows.entries()) {
     if (ligneRejeteeParType(row, index)) continue
     const libelle = safeStringify(row[plan.colonneIndividu]).trim()
@@ -202,7 +212,11 @@ export const appliquerPlan = ({
         })
         continue
       }
-      items.push({ individu, date: colonnePivot.dateIso, valeur: valeurResult.valeur })
+      items.push({
+        individu,
+        date: dateParColonne.get(colonnePivot.nom)!,
+        valeur: valeurResult.valeur,
+      })
     }
   }
 

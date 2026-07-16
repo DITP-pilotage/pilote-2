@@ -8,18 +8,6 @@ import { ALBERT_TEMPERATURE, createAlbertModel } from '@/valeurImport/helpers/al
 
 const colonneDateSchema = z.object({
   nom: z.string().describe('Nom exact du header de colonne contenant la date (recopie exacte).'),
-  format: z
-    .enum(['iso', 'fr-libre', 'quarter', 'annee'])
-    .describe(
-      'Type de format détecté pour la date. ' +
-        "'iso' = YYYY-MM-DD strict (toutes les cellules suivent ce format). " +
-        "'annee' = année seule, toutes les cellules sont au format `2023`. " +
-        "'quarter' = trimestre, toutes les cellules sont du type `Q1 2023` / `T1 2023` / `1er trimestre 2023`. " +
-        "'fr-libre' = texte libre français ou MIX de formats dans la même colonne " +
-        '(`1er janvier 2025`, `janvier 2026`, `01/01/2025`, `01/2023`, `2023-01`, voire `2023` ou `Q1 2023` mélangés). ' +
-        "Choisis 'fr-libre' dès que la colonne contient au moins un format autre que ISO pur, " +
-        'ou si tu vois plusieurs conventions mélangées.',
-    ),
 })
 
 const colonneTypeValeurSchema = z.object({
@@ -213,7 +201,6 @@ export const decouvrirStructure = ({
                 ...(output.plan.layout === 'long'
                   ? {
                       colonneDate: output.plan.colonneDate.nom,
-                      formatDate: output.plan.colonneDate.format,
                       colonneValeur: output.plan.colonneValeur,
                     }
                   : { nbColonnesPivot: output.plan.colonnesPivot.length }),

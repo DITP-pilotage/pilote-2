@@ -10,7 +10,7 @@ describe('schéma partagé — type de valeur', () => {
     const parsed = normaliserPlanSchema.safeParse({
       layout: 'long',
       colonneIndividu: 'zone_nom',
-      colonneDate: { nom: 'date_valeur', format: 'iso' },
+      colonneDate: { nom: 'date_valeur' },
       colonneValeur: 'valeur',
       colonneTypeValeur: { nom: 'type_valeur' },
     })
@@ -30,7 +30,7 @@ describe('schéma partagé — type de valeur', () => {
       plan: {
         layout: 'long',
         colonneIndividu: 'zone_nom',
-        colonneDate: { nom: 'date_valeur', format: 'iso' },
+        colonneDate: { nom: 'date_valeur' },
         colonneValeur: 'valeur',
         colonneTypeValeur: { nom: 'type_valeur' },
       },

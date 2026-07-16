@@ -17,7 +17,7 @@ const resolution: ResolutionResult = {
 const planLong: Plan = {
   layout: 'long',
   colonneIndividu: 'zone_nom',
-  colonneDate: { nom: 'date_valeur', format: 'iso' },
+  colonneDate: { nom: 'date_valeur' },
   colonneValeur: 'valeur',
   colonneTypeValeur: { nom: 'type_valeur' },
 }
@@ -41,7 +41,9 @@ describe('appliquerPlan — filtrage par type de valeur', () => {
   })
 
   it('compare le type sans tenir compte de la casse ni des espaces', () => {
-    const rows = [{ zone_nom: 'Ain', date_valeur: '2023-12-31', type_valeur: '  VA ', valeur: '10' }]
+    const rows = [
+      { zone_nom: 'Ain', date_valeur: '2023-12-31', type_valeur: '  VA ', valeur: '10' },
+    ]
     const { items } = appliquerPlan({
       plan: planLong,
       rows,
@@ -73,7 +75,7 @@ describe('appliquerPlan — filtrage par type de valeur', () => {
     const planSansType: Plan = {
       layout: 'long',
       colonneIndividu: 'zone_nom',
-      colonneDate: { nom: 'date_valeur', format: 'iso' },
+      colonneDate: { nom: 'date_valeur' },
       colonneValeur: 'valeur',
     }
     const rows = [
