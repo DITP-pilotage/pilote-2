@@ -3,6 +3,7 @@ import { ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 
 import { logger } from '@/framework/logger/logger'
+import { startTimer } from '@/framework/timer'
 import { ALBERT_TEMPERATURE, createAlbertModel } from '@/valeurImport/helpers/albert'
 
 const outputSchema = z.object({
@@ -48,7 +49,7 @@ export const resoudreTypeValeur = ({
     `Valeurs distinctes rencontrées : ${JSON.stringify([...typesValeurDistincts])}`,
   ].join('\n')
 
-  const startedAt = performance.now()
+  const elapsed = startTimer()
   logger.info(
     {
       event: 'importPoc.resoudreTypeValeur.start',
@@ -76,7 +77,7 @@ export const resoudreTypeValeur = ({
       logger.info(
         {
           event: 'importPoc.resoudreTypeValeur.done',
-          durationMs: Math.round(performance.now() - startedAt),
+          durationMs: elapsed(),
           inputTokens: result.usage.inputTokens,
           outputTokens: result.usage.outputTokens,
           typesValeurRetenus,
@@ -89,7 +90,7 @@ export const resoudreTypeValeur = ({
       logger.error(
         {
           event: 'importPoc.resoudreTypeValeur.error',
-          durationMs: Math.round(performance.now() - startedAt),
+          durationMs: elapsed(),
           cause: cause instanceof Error ? cause.message : String(cause),
         },
         'Albert call 1b (type de valeur) — échec',

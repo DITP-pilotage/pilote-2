@@ -4,6 +4,7 @@ import { ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 
 import { logger } from '@/framework/logger/logger'
+import { startTimer } from '@/framework/timer'
 import { ALBERT_TEMPERATURE, createAlbertModel } from '@/valeurImport/helpers/albert'
 
 const colonneDateSchema = z.object({
@@ -159,7 +160,7 @@ export const decouvrirStructure = ({
     .filter(Boolean)
     .join('\n')
 
-  const startedAt = performance.now()
+  const elapsed = startTimer()
   logger.info(
     {
       event: 'importPoc.decouvrirStructure.start',
@@ -180,7 +181,7 @@ export const decouvrirStructure = ({
       prompt,
       temperature: ALBERT_TEMPERATURE,
     }).then((result) => {
-      const durationMs = Math.round(performance.now() - startedAt)
+      const durationMs = elapsed()
       const usage = result.usage
       const output = result.object
       logger.info(
@@ -211,7 +212,7 @@ export const decouvrirStructure = ({
       logger.error(
         {
           event: 'importPoc.decouvrirStructure.error',
-          durationMs: Math.round(performance.now() - startedAt),
+          durationMs: elapsed(),
           cause: cause instanceof Error ? cause.message : String(cause),
         },
         'Albert call 1 (découverte) — échec',

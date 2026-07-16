@@ -3,6 +3,7 @@ import { errAsync, ok, okAsync, ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 
 import { logger } from '@/framework/logger/logger'
+import { startTimer } from '@/framework/timer'
 import { ALBERT_TEMPERATURE, createAlbertModel } from '@/valeurImport/helpers/albert'
 import { type IndividuPourImport } from '@/valeurImport/queries/listIndividusForIndicateur'
 
@@ -166,7 +167,7 @@ export const resoudreIndividus = ({
   let derniereErreur: ToolValidationError | null = null
   let nbAppelsTool = 0
 
-  const startedAt = performance.now()
+  const elapsed = startTimer()
   logger.info(
     {
       event: 'importPoc.resoudreIndividus.start',
@@ -233,7 +234,7 @@ export const resoudreIndividus = ({
       stopWhen: stepCountIs(MAX_STEPS),
       temperature: ALBERT_TEMPERATURE,
     }).then((result) => {
-      const durationMs = Math.round(performance.now() - startedAt)
+      const durationMs = elapsed()
       logger.info(
         {
           event: 'importPoc.resoudreIndividus.done',
@@ -259,7 +260,7 @@ export const resoudreIndividus = ({
       logger.error(
         {
           event: 'importPoc.resoudreIndividus.error',
-          durationMs: Math.round(performance.now() - startedAt),
+          durationMs: elapsed(),
           cause: cause instanceof Error ? cause.message : String(cause),
         },
         'Albert call 2 (résolution) — échec',
