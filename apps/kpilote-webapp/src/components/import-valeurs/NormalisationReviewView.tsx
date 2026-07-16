@@ -34,7 +34,7 @@ export function NormalisationReviewView({
 }: {
   response: NormaliserValeursImportResponseApiModel
 }) {
-  const { items, warnings, plan, resolution, rapport } = response
+  const { items, warnings, plan, resolution, rapport, resolutionTypeValeur } = response
   const nbImportables = items.length
   const [detailsOuverts, setDetailsOuverts] = useState(false)
 
@@ -66,6 +66,40 @@ export function NormalisationReviewView({
               <div className="font-medium text-text">Structure détectée</div>
               <p className="mt-0.5 text-text-muted">{decrirePlan(plan)}</p>
             </div>
+
+            {resolutionTypeValeur ? (
+              <div className="text-sm">
+                <div className="font-medium text-text">Type de valeur</div>
+                <p className="mt-0.5 text-text-muted">
+                  Colonne « {resolutionTypeValeur.colonne} » —{' '}
+                  {resolutionTypeValeur.typesValeurRetenus.length > 0 ? (
+                    <>
+                      valeurs retenues :{' '}
+                      <span className="font-mono text-text">
+                        {resolutionTypeValeur.typesValeurRetenus.join(', ')}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-accent-rouge">aucune valeur d'avancement identifiée</span>
+                  )}
+                  {resolutionTypeValeur.typesValeurDistincts.filter(
+                    (valeur) => !resolutionTypeValeur.typesValeurRetenus.includes(valeur),
+                  ).length > 0 ? (
+                    <>
+                      {' '}
+                      — écartées :{' '}
+                      <span className="font-mono text-text-subtle">
+                        {resolutionTypeValeur.typesValeurDistincts
+                          .filter(
+                            (valeur) => !resolutionTypeValeur.typesValeurRetenus.includes(valeur),
+                          )
+                          .join(', ')}
+                      </span>
+                    </>
+                  ) : null}
+                </p>
+              </div>
+            ) : null}
 
             {resolution.mapping.length > 0 ? (
               <div className="text-sm">
