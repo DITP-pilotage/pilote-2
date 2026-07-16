@@ -147,14 +147,18 @@ export function IndicateurForm({
 
             <div className="flex gap-4">
               <div className="flex-1">
-                <FieldSelect label="Période de mise à jour" {...form.register('periodeMiseAJour')}>
-                  <option value="">Non renseignée</option>
-                  {PERIODES_MISE_A_JOUR.map((periode) => (
-                    <option key={periode} value={periode}>
-                      {PERIODE_MISE_A_JOUR_LABELS[periode]}
-                    </option>
-                  ))}
-                </FieldSelect>
+                <FieldSelect
+                  control={form.control}
+                  name="periodeMiseAJour"
+                  label="Période de mise à jour"
+                  options={[
+                    { value: '', label: 'Non renseignée' },
+                    ...PERIODES_MISE_A_JOUR.map((periode) => ({
+                      value: periode,
+                      label: PERIODE_MISE_A_JOUR_LABELS[periode],
+                    })),
+                  ]}
+                />
               </div>
               <div className="flex-1">
                 <FieldInput
@@ -182,17 +186,17 @@ export function IndicateurForm({
               </div>
               <div className="flex-1">
                 <FieldSelect
+                  control={form.control}
+                  name="delaiUnite"
                   label="Unité du délai"
-                  error={form.formState.errors.delaiUnite?.message}
-                  {...form.register('delaiUnite')}
-                >
-                  <option value="">Aucune</option>
-                  {UNITES_DUREE.map((unite) => (
-                    <option key={unite} value={unite}>
-                      {UNITE_DUREE_LABELS[unite]}
-                    </option>
-                  ))}
-                </FieldSelect>
+                  options={[
+                    { value: '', label: 'Aucune' },
+                    ...UNITES_DUREE.map((unite) => ({
+                      value: unite,
+                      label: UNITE_DUREE_LABELS[unite],
+                    })),
+                  ]}
+                />
               </div>
             </div>
           </div>

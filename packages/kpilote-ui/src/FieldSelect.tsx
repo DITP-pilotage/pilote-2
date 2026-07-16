@@ -1,59 +1,96 @@
-import { ChevronDown } from 'lucide-react'
-import { useId, type ReactNode, type Ref, type SelectHTMLAttributes } from 'react'
+import { useId, type ReactNode } from 'react'
+import { Controller, type Control, type FieldPath, type FieldValues } from 'react-hook-form'
 
-import { Field } from './Field'
 import { clsxm } from './clsxm'
+import { Field } from './Field'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './Select'
 
-export type FieldSelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
+export type FieldSelectOption = { value: string; label: ReactNode }
+
+// Radix Select interdit une <SelectItem> de value "" (réservée au vidage). On
+// mappe donc l'option « vide » (value: '') sur un sentinel interne, retraduit
+// en '' vers le formulaire — permet de garder une entrée sélectionnable
+// (« Aucune », « Non renseignée »…).
+const EMPTY_SENTINEL = ' empty'
+
+type FieldSelectProps<TValues extends FieldValues> = {
+  control: Control<TValues>
+  name: FieldPath<TValues>
   label: string
+  options: readonly FieldSelectOption[]
+  placeholder?: string
   required?: boolean
-  hint?: string | undefined
-  error?: string | undefined
+  hint?: string
   hideLabel?: boolean
-  ref?: Ref<HTMLSelectElement>
-  children: ReactNode
+  disabled?: boolean
+  className?: string
 }
 
-// Champ select avec label + message d'erreur, jumeau de `FieldInput`. Les
-// `<option>` sont passées en enfants. `hideLabel` masque le libellé (sr-only)
-// pour les selects en grille où l'intitulé est implicite.
-export function FieldSelect({
+// Champ select branché sur react-hook-form (Controller interne) : Field
+// (label + erreur) + Select radix custom. Remplace l'ancien <select> natif.
+// Pour des listes longues/recherchables, préférer un Picker.
+export function FieldSelect<TValues extends FieldValues>({
+  control,
+  name,
   label,
+  options,
+  placeholder,
   required,
   hint,
-  error,
   hideLabel,
+  disabled,
   className,
-  children,
-  id,
-  ref,
-  ...props
-}: FieldSelectProps) {
-  const generatedId = useId()
-  const fieldId = id ?? generatedId
+}: FieldSelectProps<TValues>) {
+  const labelId = useId()
+  const hasEmptyOption = options.some((option) => option.value === '')
+
   return (
-    <Field
-      label={label}
-      required={required}
-      hint={hint}
-      error={error}
-      hideLabel={hideLabel}
-      htmlFor={fieldId}
-    >
-      <div className="relative">
-        <select
-          id={fieldId}
-          ref={ref}
-          className={clsxm(
-            'w-full appearance-none rounded-md border border-border bg-white px-3 py-2.5 pr-9 text-sm focus:border-primary focus:outline-none',
-            className,
-          )}
-          {...props}
-        >
-          {children}
-        </select>
-        <ChevronDown className="pointer-events-none absolute right-2 top-1/2 size-4 -translate-y-1/2 text-text-muted" />
-      </div>
-    </Field>
+    <Controller
+      control={control}
+      name={name}
+      render={({ field, fieldState }) => {
+        const radixValue =
+          field.value == null || field.value === ''
+            ? hasEmptyOption
+              ? EMPTY_SENTINEL
+              : ''
+            : String(field.value)
+
+        return (
+          <Field
+            label={label}
+            required={required}
+            hint={hint}
+            hideLabel={hideLabel}
+            error={fieldState.error?.message}
+            labelId={labelId}
+          >
+            <Select
+              value={radixValue}
+              onValueChange={(next) => field.onChange(next === EMPTY_SENTINEL ? '' : next)}
+              disabled={disabled ?? false}
+            >
+              <SelectTrigger
+                aria-labelledby={labelId}
+                className={clsxm('w-full', className)}
+                onBlur={field.onBlur}
+              >
+                <SelectValue placeholder={placeholder} />
+              </SelectTrigger>
+              <SelectContent>
+                {options.map((option) => (
+                  <SelectItem
+                    key={option.value}
+                    value={option.value === '' ? EMPTY_SENTINEL : option.value}
+                  >
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </Field>
+        )
+      }}
+    />
   )
 }

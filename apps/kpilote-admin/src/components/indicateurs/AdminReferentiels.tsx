@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Trash2 } from 'lucide-react'
-import { useFieldArray, useWatch, type UseFormRegister } from 'react-hook-form'
+import { useFieldArray, useWatch, type Control } from 'react-hook-form'
 
 import { ReferentielPicker } from '@/components/indicateurs/ReferentielPicker'
 import { useIndicateurFormContext } from '@/components/indicateurs/indicateurFormContext'
@@ -45,7 +45,7 @@ export function AdminReferentiels() {
             key={field.id}
             index={index}
             referentielNom={nomById.get(selectedIds[index] ?? '') ?? selectedIds[index] ?? ''}
-            register={form.register}
+            control={form.control}
             onRemove={() => remove(index)}
           />
         ))}
@@ -57,12 +57,12 @@ export function AdminReferentiels() {
 function ReferentielRow({
   index,
   referentielNom,
-  register,
+  control,
   onRemove,
 }: {
   index: number
   referentielNom: string
-  register: UseFormRegister<IndicateurFormValues>
+  control: Control<IndicateurFormValues>
   onRemove: () => void
 }) {
   return (
@@ -70,16 +70,12 @@ function ReferentielRow({
       <span className="flex-[2] text-sm text-text">{referentielNom}</span>
       <div className="flex-1">
         <FieldSelect
+          control={control}
+          name={`referentiels.${index}.fonctionAgregation`}
           label="Fonction d'agrégation"
           hideLabel
-          {...register(`referentiels.${index}.fonctionAgregation`)}
-        >
-          {Object.entries(AGREGATION_LABEL).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </FieldSelect>
+          options={Object.entries(AGREGATION_LABEL).map(([value, label]) => ({ value, label }))}
+        />
       </div>
       <button type="button" onClick={onRemove} className="text-accent-rouge" aria-label="Retirer">
         <Trash2 className="size-4" />
