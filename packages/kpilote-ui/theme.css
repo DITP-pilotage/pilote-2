@@ -4,9 +4,6 @@
  *
  *   @import 'tailwindcss';
  *   @import '@pilote/kpilote-ui/theme.css';
- *
- * Les tokens spécifiques à une app (ex. niveaux de confiance, animations
- * propres) restent dans le `index.css` de l'app.
  */
 
 @theme {
@@ -53,6 +50,7 @@
 
   /* Rouge Marianne (DSFR red-marianne) — signaux prod/danger, erreurs, requis */
   --color-red-marianne: #c9191e;
+  --color-red-marianne-tinted: #fddede;
 
   /* Statuts (sémantique DSFR) */
   --color-success: #18753c;

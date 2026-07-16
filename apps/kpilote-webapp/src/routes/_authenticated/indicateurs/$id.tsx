@@ -4,20 +4,19 @@ import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
 import { Upload } from 'lucide-react'
-import { startTransition, useCallback, useId } from 'react'
+import { startTransition, useCallback } from 'react'
 import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetadonnees'
 import { IndicateurResultatsTab } from '@/components/indicateurs/IndicateurResultatsTab'
-import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
+import { FieldIndividuSelect } from '@/components/indicateurs/FieldIndividuSelect'
 import { useImportModal } from '@/components/import-valeurs/useImportModal'
 import { usePageFileDrop } from '@/components/import-valeurs/usePageFileDrop'
 import { BackLink } from '@pilote/kpilote-ui/BackLink'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
-import { Field } from '@pilote/kpilote-ui/Field'
 import { Page } from '@pilote/kpilote-ui/Page'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tabs'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
@@ -89,7 +88,6 @@ function IndicateurDetailComponent() {
   const { id } = Route.useParams()
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
-  const selectId = useId()
 
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(id))
   useRecordVisit({ type: 'indicateur', id: indicateur.id, label: indicateur.nom })
@@ -156,20 +154,17 @@ function IndicateurDetailComponent() {
       actions={actionsFiche}
       stickybar={
         <div className="max-w-md">
-          <Field label="Individu" htmlFor={selectId}>
-            <IndividuSelect
-              id={selectId}
-              referentielIds={referentielIds}
-              value={individuId}
-              onChange={({ individu, referentiel }) => {
-                startTransition(() => {
-                  void navigate({
-                    search: (prev) => ({ ...prev, individu, referentiel }),
-                  })
+          <FieldIndividuSelect
+            referentielIds={referentielIds}
+            value={individuId}
+            onChange={({ individu, referentiel }) => {
+              startTransition(() => {
+                void navigate({
+                  search: (prev) => ({ ...prev, individu, referentiel }),
                 })
-              }}
-            />
-          </Field>
+              })
+            }}
+          />
         </div>
       }
     >

@@ -29,7 +29,7 @@ export function BarCard({
         'group flex w-full max-w-[280px] flex-col overflow-hidden border bg-surface text-left',
         'transition-all duration-150 hover:-translate-y-0.5',
         danger
-          ? 'border-[#f0d2d2] hover:border-red-marianne'
+          ? 'border-red-marianne-tinted hover:border-red-marianne'
           : 'border-border hover:border-primary',
       )}
     >
