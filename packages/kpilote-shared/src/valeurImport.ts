@@ -8,17 +8,21 @@ const colonneDateSchema = z.object({
   format: z.enum(['iso', 'fr-libre', 'quarter', 'annee']),
 })
 
+const colonneTypeValeurSchema = z.object({ nom: z.string() })
+
 const planLongSchema = z.object({
   layout: z.literal('long'),
   colonneIndividu: z.string(),
   colonneDate: colonneDateSchema,
   colonneValeur: z.string(),
+  colonneTypeValeur: colonneTypeValeurSchema.optional(),
 })
 
 const planPivotSchema = z.object({
   layout: z.literal('pivot'),
   colonneIndividu: z.string(),
   colonnesPivot: z.array(z.object({ nom: z.string(), dateIso: z.string() })).min(1),
+  colonneTypeValeur: colonneTypeValeurSchema.optional(),
 })
 
 export const normaliserPlanSchema = z.discriminatedUnion('layout', [
@@ -41,6 +45,7 @@ export const normaliserWarningSchema = z.object({
     'DATE_INVALIDE',
     'VALEUR_INVALIDE',
     'CELLULE_VIDE',
+    'LIGNE_IGNOREE',
   ]),
   message: z.string(),
   ligneSource: z.number().int().optional(),
@@ -68,6 +73,13 @@ export const normaliserValeursImportResponseApiModelSchema = z.object({
   items: z.array(itemNormaliseApiModelSchema),
   warnings: z.array(normaliserWarningSchema),
   rapport: rapportSchema,
+  resolutionTypeValeur: z
+    .object({
+      colonne: z.string(),
+      typesValeurDistincts: z.array(z.string()),
+      typesValeurRetenus: z.array(z.string()),
+    })
+    .optional(),
 })
 export type NormaliserValeursImportResponseApiModel = z.infer<
   typeof normaliserValeursImportResponseApiModelSchema
