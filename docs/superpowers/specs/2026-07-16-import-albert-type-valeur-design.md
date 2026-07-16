@@ -59,7 +59,7 @@ a été détectée en pass 1.
 
 ```
 Pass 1   decouvrirStructure    → plan (+ colonneTypeValeur?.nom)
-Pass 1b  resoudreTypeValeur     → { valeursRetenues[] }   ← NOUVEAU, conditionnel
+Pass 1b  resoudreTypeValeur     → { typesValeurRetenus[] }   ← NOUVEAU, conditionnel
 Pass 2   resoudreIndividus      → mapping libellés → publicId
          appliquerPlan          → pré-filtre lignes non-VA, puis produit les items
 ```
@@ -102,8 +102,8 @@ la résolution du type :
 resolutionTypeValeur: z
   .object({
     colonne: z.string(),
-    valeursDistinctes: z.array(z.string()),
-    valeursRetenues: z.array(z.string()),
+    typesValeurDistincts: z.array(z.string()),
+    typesValeurRetenus: z.array(z.string()),
   })
   .optional()
 ```
@@ -172,7 +172,7 @@ de colonne). Ex : `["vi", "va", "vc"]`.
 
 ```typescript
 z.object({
-  valeursRetenues: z.array(z.string()), // sous-ensemble du set fourni, recopié à l'identique
+  typesValeurRetenus: z.array(z.string()), // sous-ensemble du set fourni, recopié à l'identique
 })
 ```
 
@@ -180,27 +180,27 @@ z.object({
 
 Après la découverte réussie, avant `resoudreIndividus` :
 
-- si `plan.colonneTypeValeur` absent → chemin actuel inchangé, `valeursRetenues` non
+- si `plan.colonneTypeValeur` absent → chemin actuel inchangé, `typesValeurRetenus` non
   défini ;
 - si présent → extraire le set distinct, appeler `resoudreTypeValeur`, récupérer
-  `valeursRetenues` et le passer à `appliquerPlan`. La réponse porte
+  `typesValeurRetenus` et le passer à `appliquerPlan`. La réponse porte
   `resolutionTypeValeur` pour l'UI.
 
 Les erreurs Albert de la passe 1b se mappent comme les autres
 (`ALBERT_NON_CONFIGURE` / `ALBERT_UNAVAILABLE`). **Note :** l'absence de VA résolue
-n'est **pas** une erreur (voir §6) — c'est un résultat `valeursRetenues: []` traité en
+n'est **pas** une erreur (voir §6) — c'est un résultat `typesValeurRetenus: []` traité en
 non-bloquant.
 
 ### 5. `appliquerPlan.ts` — pré-filtrage au niveau ligne
 
-Nouveau paramètre optionnel `typeValeur?: { colonne: string; valeursRetenues: string[] }`.
+Nouveau paramètre optionnel `typeValeur?: { colonne: string; typesValeurRetenus: string[] }`.
 
 Quand il est fourni, on filtre **au niveau ligne, en amont** de la logique long/pivot
 existante (donc commun aux deux layouts, avant l'expansion pivot) :
 
 - On normalise pour comparer (trim + casse insensible) la cellule
-  `row[typeValeur.colonne]` contre `valeursRetenues`.
-- Ligne retenue (valeur ∈ `valeursRetenues`) → traitée normalement.
+  `row[typeValeur.colonne]` contre `typesValeurRetenus`.
+- Ligne retenue (valeur ∈ `typesValeurRetenus`) → traitée normalement.
 - Ligne écartée → un warning générique `LIGNE_IGNOREE` :
   > `Ligne {i} : valeur « vc » écartée (colonne « type_valeur ») — seules les valeurs d'avancement sont importées.`
 
@@ -208,7 +208,7 @@ Le `WarningApplication.code` gagne `'LIGNE_IGNOREE'`.
 
 ### 6. Cas « aucune VA résolue » — non-bloquant, tout écarter
 
-Si `valeursRetenues` est vide (colonne détectée mais Albert n'a identifié aucune VA) :
+Si `typesValeurRetenus` est vide (colonne détectée mais Albert n'a identifié aucune VA) :
 toutes les lignes de la colonne sont écartées → **0 item produit**, et on émet **un
 warning global** (non rattaché à une ligne) :
 
@@ -225,7 +225,7 @@ Nouveau **bloc dédié « Type de valeur »**, affiché seulement si `resolution
 est présent dans la réponse :
 
 - colonne détectée (`type_valeur`) ;
-- valeurs **retenues** (VA) vs **écartées** (le complément de `valeursDistinctes`) ;
+- valeurs **retenues** (VA) vs **écartées** (le complément de `typesValeurDistincts`) ;
 - s'appuie sur le compteur de lignes ignorées déjà dérivable des warnings.
 
 Les lignes écartées apparaissent dans la **liste de warnings existante** (ligne +
@@ -239,7 +239,7 @@ ligne à ligne.
 |-------|---------|----------------|
 | Schéma plan + réponse | `kpilote-shared/src/valeurImport.ts` | `colonneTypeValeur` optionnel, `resolutionTypeValeur`, code `LIGNE_IGNOREE` |
 | Détection header | `calls/decouvrirStructure.ts` | schéma Zod + prompt : détecter `colonneTypeValeur.nom` |
-| Résolution sémantique | `calls/resoudreTypeValeur.ts` (nouveau) | set distinct → `valeursRetenues` via Albert |
+| Résolution sémantique | `calls/resoudreTypeValeur.ts` (nouveau) | set distinct → `typesValeurRetenus` via Albert |
 | Orchestration | `commands/normaliserValeursImport.ts` | brancher 1b conditionnellement, exposer `resolutionTypeValeur` |
 | Filtrage | `appliquerPlan.ts` | pré-filtre ligne + warning `LIGNE_IGNOREE` + warning global si vide |
 | UI | `NormalisationReviewView.tsx` | bloc « Type de valeur » + warnings existants |
@@ -252,7 +252,7 @@ ligne à ligne.
   - layout **long** PPG → seules les lignes VA produisent des items, warnings
     `LIGNE_IGNOREE` sur VI/VC ;
   - layout **pivot** avec colonne type → filtrage par ligne avant expansion ;
-  - `valeursRetenues: []` → 0 item + warning global ;
+  - `typesValeurRetenus: []` → 0 item + warning global ;
   - `typeValeur` absent → comportement identique à aujourd'hui (non-régression).
 - Orchestration `normaliserValeursImport` : fichier sans colonne type → pas d'appel à
   `resoudreTypeValeur`, réponse sans `resolutionTypeValeur`.
