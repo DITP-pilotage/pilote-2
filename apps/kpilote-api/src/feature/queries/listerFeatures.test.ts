@@ -10,7 +10,7 @@ const ADMIN_ID = '00000000-0000-0000-0000-000000000201'
 
 describe.concurrent('listerFeatures', () => {
   it(
-    'renvoie une liste vide quand aucun FF',
+    'renvoie une liste vide quand aucune feature',
     integrationTest(async () => {
       const result = await runAsAdmin(ADMIN_ID, () => listerFeatures())
       expect(result._unsafeUnwrap()).toEqual([])
@@ -18,15 +18,15 @@ describe.concurrent('listerFeatures', () => {
   )
 
   it(
-    'renvoie les FF triés par nom ASC',
+    'renvoie les features triées par nom ASC',
     integrationTest(async () => {
-      await fixtures.feature({ key: 'beta', nom: 'Beta', etat: 'ACTIVE' })
-      await fixtures.feature({ key: 'alpha', nom: 'Alpha', etat: 'DESACTIVE' })
+      await fixtures.feature({ key: 'BETA', nom: 'Beta', etat: 'ACTIVE' })
+      await fixtures.feature({ key: 'ALPHA', nom: 'Alpha', etat: 'DESACTIVE' })
 
       const result = await runAsAdmin(ADMIN_ID, () => listerFeatures())
 
-      expect(result._unsafeUnwrap().map((ff) => ff.nom)).toEqual(['Alpha', 'Beta'])
-      expect(result._unsafeUnwrap()[0]).toMatchObject({ key: 'alpha', etat: 'DESACTIVE' })
+      expect(result._unsafeUnwrap().map((feature) => feature.nom)).toEqual(['Alpha', 'Beta'])
+      expect(result._unsafeUnwrap()[0]).toMatchObject({ key: 'ALPHA', etat: 'DESACTIVE' })
     }),
   )
 

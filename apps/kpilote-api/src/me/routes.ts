@@ -52,12 +52,12 @@ const meFeatureRoute = createRoute({
   method: 'get',
   path: '/me/features',
   tags: ['Authentication'],
-  summary: 'Feature flippings actifs pour l’utilisateur courant',
+  summary: 'Features actifs pour l’utilisateur courant',
   middleware: [requireAuthentication],
   responses: {
     200: {
       content: { 'application/json': { schema: MeFeatureOkSchema } },
-      description: 'Clés des feature flippings actifs',
+      description: 'Clés des features actifs',
     },
   },
 })

@@ -9,7 +9,7 @@ import { ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { featureInclude, toFeatureDetailApiModel } from '@/feature/utils'
 
-// findUniqueOrThrow lève Prisma P2025 (→ 404) si le FF n'existe pas.
+// findUniqueOrThrow lève Prisma P2025 (→ 404) si la feature n'existe pas.
 const ensureFeatureExiste = async (id: string): Promise<void> => {
   await db().feature.findUniqueOrThrow({ where: { id }, select: { id: true } })
 }

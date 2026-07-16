@@ -10,12 +10,12 @@ const ADMIN_ID = '00000000-0000-0000-0000-000000000201'
 
 describe.concurrent('modifierEtatFeature', () => {
   it(
-    'change l’état du feature flipping',
+    'change l’état du feature',
     integrationTest(async () => {
-      const ff = await fixtures.feature({ key: 'x', nom: 'X', etat: 'DESACTIVE' })
+      const feature = await fixtures.feature({ key: 'X', nom: 'X', etat: 'DESACTIVE' })
 
       const result = await runAsAdmin(ADMIN_ID, () =>
-        modifierEtatFeature(ff.id, { etat: 'ACTIVE' }),
+        modifierEtatFeature(feature.id, { etat: 'ACTIVE' }),
       )
 
       expect(result._unsafeUnwrap().etat).toBe('ACTIVE')
@@ -23,7 +23,7 @@ describe.concurrent('modifierEtatFeature', () => {
   )
 
   it(
-    'rejette quand le FF est introuvable',
+    'rejette quand la feature est introuvable',
     integrationTest(async () => {
       await expect(
         runAsAdmin(ADMIN_ID, () =>
@@ -36,9 +36,9 @@ describe.concurrent('modifierEtatFeature', () => {
   it(
     'rejette une clé CONTRIBUTOR (ForbiddenError)',
     integrationTest(async () => {
-      const ff = await fixtures.feature()
+      const feature = await fixtures.feature()
       await expect(
-        runAsContributor(ADMIN_ID, () => modifierEtatFeature(ff.id, { etat: 'ACTIVE' })),
+        runAsContributor(ADMIN_ID, () => modifierEtatFeature(feature.id, { etat: 'ACTIVE' })),
       ).rejects.toBeInstanceOf(ForbiddenError)
     }),
   )

@@ -26,7 +26,7 @@ const loadFeaturesActives = async (utilisateurId: string | null): Promise<string
 }
 
 export const listerMesFeatures = (): ResultAsync<MeFeatureApiModel, never> => {
-  // Une API key ADMIN n'est pas un utilisateur ciblable : elle ne voit que les FF ACTIVE.
+  // Une API key ADMIN n'est pas un utilisateur ciblable : elle ne voit que les features ACTIVE.
   const utilisateurId = isAdminPrincipal() ? null : requireCurrentPrincipalId()
   return ResultAsync.fromSafePromise(loadFeaturesActives(utilisateurId)).map((features) => ({
     features,

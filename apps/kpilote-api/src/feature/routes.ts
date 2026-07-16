@@ -28,7 +28,7 @@ const listerRoute = createRoute({
   method: 'get',
   path: '/features',
   tags: ['Feature'],
-  summary: 'Lister les feature flippings',
+  summary: 'Lister les features',
   middleware: [requireAuthentication],
   responses: reponseListeFeature,
 })
@@ -44,7 +44,7 @@ const detailRoute = createRoute({
   method: 'get',
   path: '/features/{id}',
   tags: ['Feature'],
-  summary: 'Détail d’un feature flipping',
+  summary: 'Détail d’un feature',
   middleware: [requireAuthentication],
   request: { params },
   responses: reponseDetailFeature,
@@ -62,7 +62,7 @@ const modifierEtatRoute = createRoute({
   method: 'patch',
   path: '/features/{id}/etat',
   tags: ['Feature'],
-  summary: 'Modifier l’état d’un feature flipping',
+  summary: 'Modifier l’état d’un feature',
   middleware: [requireAuthentication],
   request: {
     params,

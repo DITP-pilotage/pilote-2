@@ -7,26 +7,26 @@ import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listerMesFeatures', () => {
   it(
-    'inclut les FF ACTIVE, exclut les DESACTIVE, et inclut ACTIVE_POUR_UTILISATEUR seulement si autorisé',
+    'inclut les features ACTIVE, exclut les DESACTIVE, et inclut ACTIVE_POUR_UTILISATEUR seulement si autorisé',
     integrationTest(async () => {
       const moi = await fixtures.utilisateur({ email: 'moi@ditp.gouv.fr' })
       const autre = await fixtures.utilisateur({ email: 'autre@ditp.gouv.fr' })
-      await fixtures.feature({ key: 'global_on', etat: 'ACTIVE' })
-      await fixtures.feature({ key: 'global_off', etat: 'DESACTIVE' })
+      await fixtures.feature({ key: 'GLOBAL_ON', etat: 'ACTIVE' })
+      await fixtures.feature({ key: 'GLOBAL_OFF', etat: 'DESACTIVE' })
       await fixtures.feature({
-        key: 'pour_moi',
+        key: 'POUR_MOI',
         etat: 'ACTIVE_POUR_UTILISATEUR',
         utilisateurs: [{ id: moi.id }],
       })
       await fixtures.feature({
-        key: 'pour_autre',
+        key: 'POUR_AUTRE',
         etat: 'ACTIVE_POUR_UTILISATEUR',
         utilisateurs: [{ id: autre.id }],
       })
 
       const result = await runAsPrincipal(moi.id, () => listerMesFeatures())
 
-      expect(result._unsafeUnwrap().features.sort()).toEqual(['global_on', 'pour_moi'])
+      expect(result._unsafeUnwrap().features.sort()).toEqual(['GLOBAL_ON', 'POUR_MOI'])
     }),
   )
 })

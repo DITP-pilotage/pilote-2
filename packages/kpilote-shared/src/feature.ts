@@ -5,14 +5,14 @@ import { utilisateurApiModelSchema } from './utilisateur'
 export const featureEtatSchema = z
   .enum(['ACTIVE', 'ACTIVE_POUR_UTILISATEUR', 'DESACTIVE'])
   .describe(
-    'État du feature flipping : `ACTIVE` (tous), `ACTIVE_POUR_UTILISATEUR` (utilisateurs autorisés uniquement), `DESACTIVE` (personne).',
+    'État de la feature : `ACTIVE` (tous), `ACTIVE_POUR_UTILISATEUR` (utilisateurs autorisés uniquement), `DESACTIVE` (personne).',
   )
 export type FeatureEtat = z.infer<typeof featureEtatSchema>
 
 export const featureKeySchema = z
   .string()
-  .regex(/^[a-z0-9_-]+$/, 'La clé doit être en minuscules (a-z, 0-9, `_`, `-`).')
-  .describe('Clé technique référencée dans le code (ex. `nouveau_dashboard`).')
+  .regex(/^[A-Z_]+$/, 'La clé doit être en majuscules (A-Z et `_` uniquement).')
+  .describe('Clé technique référencée dans le code (ex. `NOUVEAU_DASHBOARD`).')
 
 export const featureApiModelSchema = z
   .object({

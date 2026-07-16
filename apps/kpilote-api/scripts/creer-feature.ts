@@ -14,7 +14,7 @@ const printUsage = () => {
     [
       'Usage: tsx scripts/creer-feature.ts --key=<key> --nom="<nom>" [--etat=<etat>]',
       '',
-      '  --key   Clé technique du feature flipping (a-z, 0-9, `_`, `-`). Obligatoire.',
+      '  --key   Clé technique de la feature (A-Z et `_` uniquement). Obligatoire.',
       '  --nom   Libellé lisible. Obligatoire.',
       `  --etat  État initial (${ETATS.join(' | ')}). Défaut : DESACTIVE.`,
       '',
@@ -76,7 +76,7 @@ const main = (): void => {
   }
 
   // Scaffolde une migration vide via Prisma (nécessite une base up).
-  const nomMigration = `ajout_ff_${key}`
+  const nomMigration = `ajout_feature_${key}`
   execFileSync(
     'pnpm',
     ['exec', 'prisma', 'migrate', 'dev', '--create-only', '--name', nomMigration],

@@ -12,11 +12,11 @@ export const FeatureDetailApiModelSchema =
 export const FeatureListApiModelSchema = featureListApiModelSchema.openapi('FeatureListApiModel')
 
 export const reponseListeFeature = {
-  200: succes200('Feature flippings', FeatureListApiModelSchema),
+  200: succes200('Features', FeatureListApiModelSchema),
 }
 
 export const reponseDetailFeature = {
-  200: succes200('Feature flipping', FeatureDetailApiModelSchema),
+  200: succes200('Feature', FeatureDetailApiModelSchema),
   400: erreur400,
   404: erreur404,
 }

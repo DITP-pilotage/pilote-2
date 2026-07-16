@@ -15,15 +15,15 @@ describe.concurrent('remplacerUtilisateursAutorises', () => {
       const a = await fixtures.utilisateur({ email: 'a@ditp.gouv.fr' })
       const b = await fixtures.utilisateur({ email: 'b@ditp.gouv.fr' })
       const c = await fixtures.utilisateur({ email: 'c@ditp.gouv.fr' })
-      const ff = await fixtures.feature({
-        key: 'x',
+      const feature = await fixtures.feature({
+        key: 'X',
         nom: 'X',
         etat: 'ACTIVE_POUR_UTILISATEUR',
         utilisateurs: [{ id: a.id }, { id: b.id }],
       })
 
       const result = await runAsAdmin(ADMIN_ID, () =>
-        remplacerUtilisateursAutorises(ff.id, { utilisateurIds: [b.id, c.id] }),
+        remplacerUtilisateursAutorises(feature.id, { utilisateurIds: [b.id, c.id] }),
       )
 
       expect(result._unsafeUnwrap().utilisateursAutorises.map((u) => u.email)).toEqual([
@@ -37,10 +37,10 @@ describe.concurrent('remplacerUtilisateursAutorises', () => {
     'vide la liste quand utilisateurIds est vide',
     integrationTest(async () => {
       const a = await fixtures.utilisateur({ email: 'a@ditp.gouv.fr' })
-      const ff = await fixtures.feature({ utilisateurs: [{ id: a.id }] })
+      const feature = await fixtures.feature({ utilisateurs: [{ id: a.id }] })
 
       const result = await runAsAdmin(ADMIN_ID, () =>
-        remplacerUtilisateursAutorises(ff.id, { utilisateurIds: [] }),
+        remplacerUtilisateursAutorises(feature.id, { utilisateurIds: [] }),
       )
 
       expect(result._unsafeUnwrap().utilisateursAutorises).toEqual([])
@@ -50,11 +50,11 @@ describe.concurrent('remplacerUtilisateursAutorises', () => {
   it(
     'rejette quand un utilisateur est inconnu',
     integrationTest(async () => {
-      const ff = await fixtures.feature()
+      const feature = await fixtures.feature()
 
       await expect(
         runAsAdmin(ADMIN_ID, () =>
-          remplacerUtilisateursAutorises(ff.id, {
+          remplacerUtilisateursAutorises(feature.id, {
             utilisateurIds: ['00000000-0000-0000-0000-000000000000'],
           }),
         ),
@@ -65,10 +65,10 @@ describe.concurrent('remplacerUtilisateursAutorises', () => {
   it(
     'rejette une clé CONTRIBUTOR (ForbiddenError)',
     integrationTest(async () => {
-      const ff = await fixtures.feature()
+      const feature = await fixtures.feature()
       await expect(
         runAsContributor(ADMIN_ID, () =>
-          remplacerUtilisateursAutorises(ff.id, { utilisateurIds: [] }),
+          remplacerUtilisateursAutorises(feature.id, { utilisateurIds: [] }),
         ),
       ).rejects.toBeInstanceOf(ForbiddenError)
     }),

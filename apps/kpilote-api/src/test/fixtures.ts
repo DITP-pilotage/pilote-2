@@ -995,8 +995,8 @@ const upsertFeature = async (o: FeatureOverrides = {}) => {
   const created = await db().feature.create({
     data: {
       id,
-      key: o.key ?? `ff_test_${featureSeq}`,
-      nom: o.nom ?? 'FF de test',
+      key: o.key ?? `FEATURE_TEST_${featureSeq}`,
+      nom: o.nom ?? 'Feature de test',
       etat: o.etat ?? 'DESACTIVE',
     },
   })

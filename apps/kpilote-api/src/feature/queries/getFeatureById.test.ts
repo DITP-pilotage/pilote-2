@@ -14,17 +14,17 @@ describe.concurrent('getFeatureById', () => {
     integrationTest(async () => {
       const zoe = await fixtures.utilisateur({ email: 'zoe@ditp.gouv.fr' })
       const alice = await fixtures.utilisateur({ email: 'alice@ditp.gouv.fr' })
-      const ff = await fixtures.feature({
-        key: 'nouveau_dashboard',
+      const feature = await fixtures.feature({
+        key: 'NOUVEAU_DASHBOARD',
         nom: 'Nouveau dashboard',
         etat: 'ACTIVE_POUR_UTILISATEUR',
         utilisateurs: [{ id: zoe.id }, { id: alice.id }],
       })
 
-      const result = await runAsAdmin(ADMIN_ID, () => getFeatureById(ff.id))
+      const result = await runAsAdmin(ADMIN_ID, () => getFeatureById(feature.id))
 
       const detail = result._unsafeUnwrap()
-      expect(detail).toMatchObject({ key: 'nouveau_dashboard', etat: 'ACTIVE_POUR_UTILISATEUR' })
+      expect(detail).toMatchObject({ key: 'NOUVEAU_DASHBOARD', etat: 'ACTIVE_POUR_UTILISATEUR' })
       expect(detail.utilisateursAutorises.map((u) => u.email)).toEqual([
         'alice@ditp.gouv.fr',
         'zoe@ditp.gouv.fr',
@@ -33,7 +33,7 @@ describe.concurrent('getFeatureById', () => {
   )
 
   it(
-    'rejette quand le FF est introuvable',
+    'rejette quand la feature est introuvable',
     integrationTest(async () => {
       await expect(
         runAsAdmin(ADMIN_ID, () => getFeatureById('00000000-0000-0000-0000-000000000000')),
@@ -44,10 +44,10 @@ describe.concurrent('getFeatureById', () => {
   it(
     'rejette une clé CONTRIBUTOR (ForbiddenError)',
     integrationTest(async () => {
-      const ff = await fixtures.feature()
-      await expect(runAsContributor(ADMIN_ID, () => getFeatureById(ff.id))).rejects.toBeInstanceOf(
-        ForbiddenError,
-      )
+      const feature = await fixtures.feature()
+      await expect(
+        runAsContributor(ADMIN_ID, () => getFeatureById(feature.id)),
+      ).rejects.toBeInstanceOf(ForbiddenError)
     }),
   )
 })
