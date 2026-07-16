@@ -35,12 +35,12 @@ export async function normaliserValeurs({
 }: {
   indicateurId: string
   rows: Array<Record<string, unknown>>
-  nomFichier?: string
+  nomFichier: string
 }): Promise<Result<NormaliserValeursImportResponseApiModel, NormaliserError>> {
   try {
     const json = await apiClient
       .post(`indicateurs/${indicateurId}/valeurs:normaliser`, {
-        json: { rows, ...(nomFichier ? { nomFichier } : {}) },
+        json: { rows, nomFichier },
         timeout: 180_000,
       })
       .json()

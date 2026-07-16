@@ -95,7 +95,7 @@ const extraireLibellesSources = (
 
 export const normaliserValeursImport = (
   indicateurPublicId: string,
-  { rows, nomFichier }: { rows: Array<Record<string, unknown>>; nomFichier?: string },
+  { rows, nomFichier }: { rows: Array<Record<string, unknown>>; nomFichier: string },
 ): ResultAsync<NormaliserValeursImportResult, NormaliserValeursImportError> =>
   getIndicateurByPublicId(indicateurPublicId)
     .andThen((indicateur) =>
@@ -110,7 +110,7 @@ export const normaliserValeursImport = (
         indicateur: { nom: indicateur.nom, uniteLibelle: indicateur.unite?.libelle ?? null },
         headers,
         rows,
-        ...(nomFichier ? { nomFichier } : {}),
+        nomFichier,
       })
         .mapErr(mapAlbertError)
         .andThen((decouverte) => {

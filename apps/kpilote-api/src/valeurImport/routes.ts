@@ -16,11 +16,7 @@ const normaliserBodySchema = z.object({
     .min(1)
     .max(MAX_ROWS)
     .describe('Lignes brutes parsées côté client (clé = en-tête, valeur = cellule).'),
-  nomFichier: z
-    .string()
-    .max(255)
-    .optional()
-    .describe('Nom du fichier source — contexte pour Albert.'),
+  nomFichier: z.string().max(255).describe('Nom du fichier source — contexte pour Albert.'),
 })
 
 const NormaliserBodySchema = normaliserBodySchema.openapi('NormaliserValeursImportBody')
@@ -72,7 +68,7 @@ valeurImportRoutes.openapi(normaliserRoute, async (context) => {
 
   const result = await normaliserValeursImport(id, {
     rows: body.rows,
-    ...(body.nomFichier ? { nomFichier: body.nomFichier } : {}),
+    nomFichier: body.nomFichier,
   })
 
   return result.match(

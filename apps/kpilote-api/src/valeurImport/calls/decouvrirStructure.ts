@@ -141,7 +141,7 @@ export const decouvrirStructure = ({
   indicateur: { nom: string; uniteLibelle: string | null }
   headers: ReadonlyArray<string>
   rows: ReadonlyArray<Record<string, unknown>>
-  nomFichier?: string
+  nomFichier: string
 }): ResultAsync<DecouverteOutput, DecouvrirStructureError> => {
   const model = createAlbertModel()
   const echantillon = rows.slice(0, MAX_LIGNES_ECHANTILLON)
@@ -168,7 +168,7 @@ export const decouvrirStructure = ({
       nbHeaders: headers.length,
       nbRows: rows.length,
       tailleEchantillon: echantillon.length,
-      ...(nomFichier ? { nomFichier } : {}),
+      nomFichier,
     },
     'Albert call 1 (découverte) — début',
   )
