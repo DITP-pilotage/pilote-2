@@ -10,7 +10,6 @@ import { Picker } from '@/components/ui/Picker'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
-import { searchUnaccent } from '@/lib/texte'
 import { featureQueryOptions, useModifierEtatFeatureMutation } from '@/queries/feature'
 import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
 import { useState } from 'react'
@@ -121,7 +120,7 @@ function FeatureDetailComponent() {
               onSelect={(utilisateur) => ajouter(utilisateur.id)}
               getKey={(utilisateur) => utilisateur.id}
               getSearchText={(utilisateur) =>
-                searchUnaccent(`${utilisateur.prenom} ${utilisateur.nom} ${utilisateur.email}`)
+                `${utilisateur.prenom} ${utilisateur.nom} ${utilisateur.email}`
               }
               disabled={utilisateursMutation.isPending}
               triggerLabel="Ajouter un utilisateur…"

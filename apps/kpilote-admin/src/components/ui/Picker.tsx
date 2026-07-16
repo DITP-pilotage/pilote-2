@@ -5,12 +5,15 @@ import type { ReactNode } from 'react'
 import { useState } from 'react'
 
 import { clsxm } from '@/lib/clsxm'
+import { searchUnaccent } from '@/lib/texte'
 
-// Filtre par sous-chaîne, prévisible plutôt que le scoring fuzzy par défaut de cmdk.
+// Filtre par sous-chaîne insensible à la casse ET aux accents, prévisible plutôt
+// que le scoring fuzzy par défaut de cmdk. `getSearchText` peut donc renvoyer le
+// texte brut : la normalisation est centralisée ici pour tous les Pickers.
 const commandFilter = (itemValue: string, query: string): number => {
-  const needle = query.trim().toLowerCase()
+  const needle = searchUnaccent(query)
   if (!needle) return 1
-  return itemValue.toLowerCase().includes(needle) ? 1 : 0
+  return searchUnaccent(itemValue).includes(needle) ? 1 : 0
 }
 
 type PickerProps<T> = {
