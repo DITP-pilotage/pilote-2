@@ -70,7 +70,7 @@ export function ReferentielForm({
 
         <div className="mb-5">
           <label className="mb-1.5 block text-xs font-semibold">
-            Nom <span className="text-accent-rouge">*</span>
+            Nom <span className="text-red-marianne">*</span>
           </label>
           <input
             value={values.nom}
@@ -126,7 +126,7 @@ export function ReferentielForm({
               <button
                 type="button"
                 onClick={() => removeIndividu(index)}
-                className="text-accent-rouge"
+                className="text-red-marianne"
                 aria-label="Retirer"
               >
                 <Trash2 className="size-4" />
@@ -144,7 +144,7 @@ export function ReferentielForm({
           type="button"
           disabled={!canSubmit || pending}
           onClick={() => onSubmit(values)}
-          className={clsxm(isProd && 'bg-accent-rouge hover:bg-accent-rouge')}
+          className={clsxm(isProd && 'bg-red-marianne hover:bg-red-marianne')}
         >
           {pending ? 'Enregistrement…' : isProd ? '🚨 Enregistrer en Prod' : 'Enregistrer'}
         </Button>

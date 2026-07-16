@@ -55,7 +55,7 @@ function UtilisateursListComponent() {
         subtitle={
           <>
             {total} utilisateur{total > 1 ? 's' : ''} · environnement{' '}
-            <b className={isProd ? 'text-accent-rouge' : undefined}>
+            <b className={isProd ? 'text-red-marianne' : undefined}>
               {session.current?.environment}
             </b>
           </>

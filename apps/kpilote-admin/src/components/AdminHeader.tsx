@@ -33,7 +33,7 @@ export function AdminHeader({
             <span
               className={clsxm(
                 'flex items-center gap-1 rounded-full px-3 py-1 font-extrabold uppercase tracking-wide',
-                isProd ? 'bg-accent-rouge text-white' : 'border border-border text-text-muted',
+                isProd ? 'bg-red-marianne text-white' : 'border border-border text-text-muted',
               )}
             >
               {isProd ? <TriangleAlert className="size-3" /> : null}

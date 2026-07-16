@@ -7,7 +7,7 @@ import { clsxm } from '@/lib/clsxm'
 
 const statusTone = (status: number): string => {
   if (status >= 200 && status < 300) return 'bg-primary text-primary-foreground'
-  if (status >= 400) return 'bg-accent-rouge text-white'
+  if (status >= 400) return 'bg-red-marianne text-white'
   return 'border border-border text-text-muted'
 }
 
@@ -23,7 +23,7 @@ export function ResponsePanel({
   const [showHeaders, setShowHeaders] = useState(false)
 
   if (pending) return <p className="text-sm text-text-muted">Appel en cours…</p>
-  if (error) return <p className="text-sm text-accent-rouge">{error}</p>
+  if (error) return <p className="text-sm text-red-marianne">{error}</p>
   if (!response) return <p className="text-sm text-text-muted">Aucune réponse pour l'instant.</p>
 
   const contentType = response.headers['content-type'] ?? ''

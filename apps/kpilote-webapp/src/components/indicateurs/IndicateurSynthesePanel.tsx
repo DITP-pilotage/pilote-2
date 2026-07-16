@@ -144,7 +144,7 @@ export function IndicateurSynthesePanel({
               unite={unite}
             />
             <ComparaisonRow
-              dotClassName="bg-accent-rouge"
+              dotClassName="bg-red-marianne"
               label="Valeur minimale observée"
               value={stats.min}
               unite={unite}

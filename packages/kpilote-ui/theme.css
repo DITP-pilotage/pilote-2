@@ -51,9 +51,8 @@
   --color-disabled: #f0f0f0;
   --color-disabled-foreground: #929292;
 
-  /* Accents secondaires (illustration / signaux) */
-  --color-accent-rouge: #c9191e;
-  --color-accent-sable: #fbe7c6;
+  /* Rouge Marianne (DSFR red-marianne) — signaux prod/danger, erreurs, requis */
+  --color-red-marianne: #c9191e;
 
   /* Statuts (sémantique DSFR) */
   --color-success: #18753c;

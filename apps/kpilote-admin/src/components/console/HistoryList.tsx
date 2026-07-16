@@ -36,7 +36,7 @@ export function HistoryList({
                 <span
                   className={clsxm(
                     'w-12 shrink-0 font-bold',
-                    entry.method === 'GET' ? 'text-primary' : 'text-accent-rouge',
+                    entry.method === 'GET' ? 'text-primary' : 'text-red-marianne',
                   )}
                 >
                   {entry.method}

@@ -42,13 +42,13 @@ export function ToastProvider({ children }: { children: ReactNode }) {
             }}
             className={clsxm(
               'flex items-start gap-3 rounded-lg border bg-surface p-4 shadow-[0_8px_24px_rgba(0,0,0,0.08)]',
-              item.variant === 'success' ? 'border-success/30' : 'border-accent-rouge/30',
+              item.variant === 'success' ? 'border-success/30' : 'border-red-marianne/30',
             )}
           >
             <span
               className={clsxm(
                 'mt-0.5 shrink-0',
-                item.variant === 'success' ? 'text-success' : 'text-accent-rouge',
+                item.variant === 'success' ? 'text-success' : 'text-red-marianne',
               )}
               aria-hidden
             >

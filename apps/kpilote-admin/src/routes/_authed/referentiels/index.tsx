@@ -37,7 +37,7 @@ function ReferentielsListComponent() {
         subtitle={
           <>
             {total} référentiel{total > 1 ? 's' : ''} · environnement{' '}
-            <b className={isProd ? 'text-accent-rouge' : undefined}>{environment}</b>
+            <b className={isProd ? 'text-red-marianne' : undefined}>{environment}</b>
           </>
         }
         action={

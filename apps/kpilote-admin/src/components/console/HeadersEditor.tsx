@@ -41,7 +41,7 @@ export function HeadersEditor({
             type="button"
             onClick={() => remove(index)}
             aria-label="Supprimer l'en-tête"
-            className="text-text-muted hover:text-accent-rouge"
+            className="text-text-muted hover:text-red-marianne"
           >
             <Trash2 className="size-4" />
           </button>

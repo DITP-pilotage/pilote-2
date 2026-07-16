@@ -233,7 +233,7 @@ export function IndicateurForm({
           <Button
             type="submit"
             disabled={!form.formState.isValid || pending}
-            className={isProd ? 'bg-accent-rouge hover:bg-accent-rouge' : undefined}
+            className={isProd ? 'bg-red-marianne hover:bg-red-marianne' : undefined}
           >
             {pending ? 'Enregistrement…' : isProd ? '🚨 Enregistrer en Prod' : 'Enregistrer'}
           </Button>

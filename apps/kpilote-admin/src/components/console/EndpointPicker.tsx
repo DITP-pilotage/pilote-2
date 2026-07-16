@@ -24,7 +24,7 @@ export function EndpointPicker({ onSelect }: { onSelect: (endpoint: OpenapiEndpo
             <span
               className={clsxm(
                 'w-14 shrink-0 text-xs font-bold',
-                endpoint.method === 'GET' ? 'text-primary' : 'text-accent-rouge',
+                endpoint.method === 'GET' ? 'text-primary' : 'text-red-marianne',
               )}
             >
               {endpoint.method}

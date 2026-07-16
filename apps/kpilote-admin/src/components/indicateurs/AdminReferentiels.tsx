@@ -84,7 +84,7 @@ function ReferentielRow({
           )}
         />
       </div>
-      <button type="button" onClick={onRemove} className="text-accent-rouge" aria-label="Retirer">
+      <button type="button" onClick={onRemove} className="text-red-marianne" aria-label="Retirer">
         <Trash2 className="size-4" />
       </button>
     </li>

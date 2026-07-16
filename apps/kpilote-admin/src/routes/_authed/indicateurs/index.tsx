@@ -42,7 +42,7 @@ function IndicateursListComponent() {
         subtitle={
           <>
             {total} indicateur{total > 1 ? 's' : ''} · environnement{' '}
-            <b className={isProd ? 'text-accent-rouge' : undefined}>
+            <b className={isProd ? 'text-red-marianne' : undefined}>
               {session.current?.environment}
             </b>
           </>

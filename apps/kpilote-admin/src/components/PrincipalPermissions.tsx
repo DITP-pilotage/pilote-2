@@ -132,7 +132,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
                       type="button"
                       disabled={disabled}
                       onClick={() => handlers.onRemove(row.publicId)}
-                      className="ml-1 text-text-subtle hover:text-accent-rouge disabled:opacity-50"
+                      className="ml-1 text-text-subtle hover:text-red-marianne disabled:opacity-50"
                       aria-label="Retirer la ressource"
                     >
                       <Trash2 className="size-4" />
@@ -194,7 +194,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           <span
             className={clsxm(
               'text-xs font-medium',
-              locked ? 'text-accent-rouge' : 'text-text-muted',
+              locked ? 'text-red-marianne' : 'text-text-muted',
             )}
           >
             {locked ? 'Édition verrouillée (PROD)' : 'Édition déverrouillée (PROD)'}
@@ -203,9 +203,9 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
       </div>
 
       {locked ? (
-        <div className="mb-5 flex items-center justify-between gap-4 rounded-lg border border-accent-rouge/40 bg-accent-rouge/5 px-4 py-3">
+        <div className="mb-5 flex items-center justify-between gap-4 rounded-lg border border-red-marianne/40 bg-red-marianne/5 px-4 py-3">
           <span className="flex items-center gap-2 text-sm text-text">
-            <Lock className="size-4 text-accent-rouge" /> Modifications désactivées en production.
+            <Lock className="size-4 text-red-marianne" /> Modifications désactivées en production.
           </span>
           <Button
             variant="secondary"
@@ -215,7 +215,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
               if (window.confirm('Déverrouiller l’édition des permissions en PRODUCTION ?'))
                 unlock()
             }}
-            className="border-accent-rouge bg-accent-rouge text-primary-foreground hover:bg-accent-rouge"
+            className="border-red-marianne bg-red-marianne text-primary-foreground hover:bg-red-marianne"
           >
             Déverrouiller l’édition en PROD
           </Button>

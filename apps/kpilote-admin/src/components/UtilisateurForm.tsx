@@ -122,7 +122,7 @@ export function UtilisateurForm({
         <Button
           type="submit"
           disabled={!isValid || pending}
-          className={clsxm(isProd && 'bg-accent-rouge hover:bg-accent-rouge')}
+          className={clsxm(isProd && 'bg-red-marianne hover:bg-red-marianne')}
         >
           {submitLabel}
         </Button>

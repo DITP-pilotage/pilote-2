@@ -79,7 +79,7 @@ function KeyComponent() {
   return (
     <div className="mx-auto grid max-w-3xl overflow-hidden rounded-xl border border-border sm:grid-cols-2">
       <div
-        className={`flex flex-col justify-center p-8 text-white ${isProd ? 'bg-accent-rouge' : 'bg-primary'}`}
+        className={`flex flex-col justify-center p-8 text-white ${isProd ? 'bg-red-marianne' : 'bg-primary'}`}
       >
         <div className="text-xs font-bold uppercase tracking-widest opacity-70">Environnement</div>
         <div className="mt-2 text-2xl font-extrabold">{ENV_LABEL[env]}</div>
@@ -109,7 +109,7 @@ function KeyComponent() {
           placeholder="pilote_live_…"
           className="rounded-md border border-border px-3 py-2.5 font-mono text-sm focus:border-primary focus:outline-none"
         />
-        {error ? <p className="text-sm font-medium text-accent-rouge">{error}</p> : null}
+        {error ? <p className="text-sm font-medium text-red-marianne">{error}</p> : null}
         <Button
           type="button"
           disabled={pending || apiKey.trim().length === 0}
@@ -132,7 +132,7 @@ function KeyComponent() {
             <button
               type="button"
               onClick={() => void forget()}
-              className="self-end text-xs text-text-subtle underline hover:text-accent-rouge"
+              className="self-end text-xs text-text-subtle underline hover:text-red-marianne"
             >
               Oublier cette clé
             </button>

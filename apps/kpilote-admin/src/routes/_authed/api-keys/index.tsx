@@ -30,7 +30,7 @@ const STATUS_LABEL: Record<ApiKeyApiModel['status'], string> = {
 const STATUS_CLASS: Record<ApiKeyApiModel['status'], string> = {
   active: 'font-semibold text-primary',
   expired: 'text-text-muted',
-  revoked: 'text-accent-rouge',
+  revoked: 'text-red-marianne',
 }
 
 function ApiKeysListComponent() {
@@ -68,7 +68,7 @@ function ApiKeysListComponent() {
         subtitle={
           <>
             {items.length} clé{items.length > 1 ? 's' : ''} · environnement{' '}
-            <b className={isProd ? 'text-accent-rouge' : undefined}>{environment}</b>
+            <b className={isProd ? 'text-red-marianne' : undefined}>{environment}</b>
           </>
         }
         action={
@@ -81,7 +81,7 @@ function ApiKeysListComponent() {
       />
 
       {query.isError ? (
-        <p className="mb-4 text-sm font-medium text-accent-rouge">
+        <p className="mb-4 text-sm font-medium text-red-marianne">
           Impossible de charger les clés API. Une clé de session de rôle ADMIN est requise.
         </p>
       ) : null}
@@ -133,7 +133,7 @@ function ApiKeysListComponent() {
                         type="button"
                         disabled={revokeMutation.isPending}
                         onClick={() => revokeMutation.mutate(apiKey.id)}
-                        className="border-accent-rouge bg-accent-rouge text-primary-foreground hover:bg-accent-rouge"
+                        className="border-red-marianne bg-red-marianne text-primary-foreground hover:bg-red-marianne"
                       >
                         Confirmer
                       </Button>

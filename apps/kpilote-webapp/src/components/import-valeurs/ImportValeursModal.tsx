@@ -138,8 +138,8 @@ export function ImportValeursModal({
             </span>
           </div>
           {erreursServeur.length > 0 ? (
-            <div className="mb-3 rounded-lg border border-accent-rouge/30 bg-accent-rouge/5 px-4 py-3 text-sm">
-              <p className="font-medium text-accent-rouge">
+            <div className="mb-3 rounded-lg border border-red-marianne/30 bg-red-marianne/5 px-4 py-3 text-sm">
+              <p className="font-medium text-red-marianne">
                 Aucune valeur n'a été appliquée. Corrigez puis réessayez :
               </p>
               <ul className="mt-2 space-y-1">
@@ -170,7 +170,7 @@ export function ImportValeursModal({
             <input type="file" accept=".csv,.xlsx" className="hidden" onChange={onInputChange} />
           </label>
           {parseResult && !parseResult.ok ? (
-            <p className="mt-3 rounded-lg border border-accent-rouge/30 bg-accent-rouge/5 px-4 py-3 text-sm text-accent-rouge">
+            <p className="mt-3 rounded-lg border border-red-marianne/30 bg-red-marianne/5 px-4 py-3 text-sm text-red-marianne">
               {messageParseError(parseResult)}
             </p>
           ) : null}

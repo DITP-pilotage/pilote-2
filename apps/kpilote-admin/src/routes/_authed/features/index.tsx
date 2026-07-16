@@ -60,7 +60,7 @@ function FeatureListComponent() {
         subtitle={
           <>
             {features.length} fonctionnalité{features.length > 1 ? 's' : ''} · environnement{' '}
-            <b className={isProd ? 'text-accent-rouge' : undefined}>{environment}</b>
+            <b className={isProd ? 'text-red-marianne' : undefined}>{environment}</b>
           </>
         }
       />

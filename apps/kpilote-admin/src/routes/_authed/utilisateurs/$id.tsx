@@ -90,7 +90,7 @@ function EditUtilisateurComponent() {
             onSubmit={(values) => mutation.mutate(values)}
           />
         ) : (
-          <p className="text-sm font-medium text-accent-rouge">Utilisateur introuvable.</p>
+          <p className="text-sm font-medium text-red-marianne">Utilisateur introuvable.</p>
         )
       ) : (
         <div>
