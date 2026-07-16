@@ -10,7 +10,7 @@ import { Picker } from '@/components/ui/Picker'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
-import { unaccent } from '@/lib/texte'
+import { searchUnaccent } from '@/lib/texte'
 import { featureQueryOptions, useModifierEtatFeatureMutation } from '@/queries/feature'
 import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
 import { useState } from 'react'
@@ -32,13 +32,6 @@ const ETAT_OPTIONS = [
 
 const initiales = (utilisateur: UtilisateurApiModel): string =>
   `${utilisateur.prenom.at(0) ?? ''}${utilisateur.nom.at(0) ?? ''}`.toUpperCase()
-
-// Texte de recherche du Picker : formes accentuée + désaccentuée, pour que
-// « Zoe » comme « Zoé » retrouvent l'utilisateur (le filtre cmdk fait un includes).
-const texteRecherche = (utilisateur: UtilisateurApiModel): string => {
-  const base = `${utilisateur.prenom} ${utilisateur.nom} ${utilisateur.email}`
-  return `${base} ${unaccent(base)}`
-}
 
 function FeatureDetailComponent() {
   const { id } = Route.useParams()
@@ -127,7 +120,9 @@ function FeatureDetailComponent() {
               items={utilisateursDisponibles}
               onSelect={(utilisateur) => ajouter(utilisateur.id)}
               getKey={(utilisateur) => utilisateur.id}
-              getSearchText={texteRecherche}
+              getSearchText={(utilisateur) =>
+                searchUnaccent(`${utilisateur.prenom} ${utilisateur.nom} ${utilisateur.email}`)
+              }
               disabled={utilisateursMutation.isPending}
               triggerLabel="Ajouter un utilisateur…"
               searchPlaceholder="Rechercher un utilisateur…"
