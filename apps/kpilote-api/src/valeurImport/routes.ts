@@ -53,10 +53,6 @@ const normaliserRoute = createRoute({
         "Albert n'a pas su structurer le fichier (`PLAN_ECHEC`) ou résoudre les individus " +
         '(`RESOLUTION_ECHEC`).',
     },
-    503: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description: 'Albert injoignable ou réponse non conforme (`ALBERT_UNAVAILABLE`).',
-    },
   },
 })
 
@@ -86,25 +82,15 @@ valeurImportRoutes.openapi(normaliserRoute, async (context) => {
           status: 422,
         })
       }
-      if (error.type === 'RESOLUTION_ECHEC') {
-        return jsonResponseError({
-          context,
-          error: {
-            code: 'RESOLUTION_ECHEC',
-            message: "Albert n'a pas fourni de mapping valide après plusieurs tentatives.",
-          },
-          schema: ErrorApiModelSchema,
-          status: 422,
-        })
-      }
+      // RESOLUTION_ECHEC
       return jsonResponseError({
         context,
         error: {
-          code: error.type,
-          message: 'Albert injoignable ou réponse non conforme.',
+          code: 'RESOLUTION_ECHEC',
+          message: "Albert n'a pas fourni de mapping valide après plusieurs tentatives.",
         },
         schema: ErrorApiModelSchema,
-        status: 503,
+        status: 422,
       })
     },
   )

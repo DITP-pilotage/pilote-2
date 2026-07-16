@@ -16,8 +16,6 @@ const outputSchema = z.object({
     ),
 })
 
-export type ResoudreTypeValeurError = { type: 'ALBERT_UNAVAILABLE'; cause: unknown }
-
 const SYSTEM_PROMPT =
   "Tu reçois l'ensemble des valeurs distinctes d'une colonne qui indique le TYPE DE VALEUR " +
   'dans un fichier de données territorial (souvent issu de Pilote PPG).\n' +
@@ -41,7 +39,7 @@ export const resoudreTypeValeur = ({
 }: {
   colonne: string
   typesValeurDistincts: ReadonlyArray<string>
-}): ResultAsync<{ typesValeurRetenus: string[] }, ResoudreTypeValeurError> => {
+}): ResultAsync<{ typesValeurRetenus: string[] }, never> => {
   const model = createAlbertModel()
 
   const prompt = [
@@ -61,7 +59,7 @@ export const resoudreTypeValeur = ({
 
   const distinctsSet = new Set(typesValeurDistincts)
 
-  return ResultAsync.fromPromise(
+  return ResultAsync.fromSafePromise(
     generateObject({
       model,
       schema: outputSchema,
@@ -86,16 +84,5 @@ export const resoudreTypeValeur = ({
       )
       return { typesValeurRetenus }
     }),
-    (cause): ResoudreTypeValeurError => {
-      logger.error(
-        {
-          event: 'importPoc.resoudreTypeValeur.error',
-          durationMs: elapsed(),
-          cause: cause instanceof Error ? cause.message : String(cause),
-        },
-        'Albert call 1b (type de valeur) — échec',
-      )
-      return { type: 'ALBERT_UNAVAILABLE', cause }
-    },
   )
 }

@@ -6,21 +6,13 @@ import {
   type ItemNormalise,
   type WarningApplication,
 } from '@/valeurImport/appliquerPlan'
-import {
-  decouvrirStructure,
-  type DecouvrirStructureError,
-  type Plan,
-} from '@/valeurImport/calls/decouvrirStructure'
+import { decouvrirStructure, type Plan } from '@/valeurImport/calls/decouvrirStructure'
 import {
   resoudreIndividus,
   type ResolutionEntry,
   type ResolutionNonResolu,
-  type ResoudreIndividusError,
 } from '@/valeurImport/calls/resoudreIndividus'
-import {
-  resoudreTypeValeur,
-  type ResoudreTypeValeurError,
-} from '@/valeurImport/calls/resoudreTypeValeur'
+import { resoudreTypeValeur } from '@/valeurImport/calls/resoudreTypeValeur'
 import { collecterValeursDistinctes } from '@/valeurImport/helpers/collecterValeursDistinctes'
 import { resoudreColonneTypeValeur } from '@/valeurImport/helpers/resoudreColonneTypeValeur'
 import { safeStringify } from '@/valeurImport/helpers/safeStringify'
@@ -46,24 +38,8 @@ export type NormaliserValeursImportResult = {
 }
 
 export type NormaliserValeursImportError =
-  | { type: 'ALBERT_UNAVAILABLE'; cause: unknown }
   | { type: 'PLAN_ECHEC'; raison: string; explication: string }
   | { type: 'RESOLUTION_ECHEC'; derniereErreur: unknown }
-
-const mapAlbertError = (error: DecouvrirStructureError): NormaliserValeursImportError =>
-  error.type === 'PLAN_ECHEC'
-    ? { type: 'PLAN_ECHEC', raison: error.raison, explication: error.explication }
-    : { type: 'ALBERT_UNAVAILABLE', cause: error.cause }
-
-const mapResolutionError = (error: ResoudreIndividusError): NormaliserValeursImportError =>
-  error.type === 'RESOLUTION_ECHEC'
-    ? { type: 'RESOLUTION_ECHEC', derniereErreur: error.derniereErreur }
-    : { type: 'ALBERT_UNAVAILABLE', cause: error.cause }
-
-const mapTypeValeurError = (error: ResoudreTypeValeurError): NormaliserValeursImportError => ({
-  type: 'ALBERT_UNAVAILABLE',
-  cause: error.cause,
-})
 
 const collectHeaders = (rows: ReadonlyArray<Record<string, unknown>>): string[] => {
   const seen = new Set<string>()
@@ -111,9 +87,11 @@ const resoudreEtapeTypeValeur = ({
   if (!colonne) return okAsync(null)
 
   const typesValeurDistincts = collecterValeursDistinctes({ rows, colonne })
-  return resoudreTypeValeur({ colonne, typesValeurDistincts })
-    .mapErr(mapTypeValeurError)
-    .map((res) => ({ colonne, typesValeurDistincts, typesValeurRetenus: res.typesValeurRetenus }))
+  return resoudreTypeValeur({ colonne, typesValeurDistincts }).map((res) => ({
+    colonne,
+    typesValeurDistincts,
+    typesValeurRetenus: res.typesValeurRetenus,
+  }))
 }
 
 export const normaliserValeursImport = (
@@ -134,44 +112,40 @@ export const normaliserValeursImport = (
         headers,
         rows,
         nomFichier,
-      })
-        .mapErr(mapAlbertError)
-        .andThen((plan) => {
-          const libellesSources = extraireLibellesSources(rows, plan.colonneIndividu)
+      }).andThen((plan) => {
+        const libellesSources = extraireLibellesSources(rows, plan.colonneIndividu)
 
-          return resoudreEtapeTypeValeur({ plan, rows, headers }).andThen((resolutionTypeValeur) =>
-            resoudreIndividus({
-              indicateur: { nom: indicateur.nom },
+        return resoudreEtapeTypeValeur({ plan, rows, headers }).andThen((resolutionTypeValeur) =>
+          resoudreIndividus({
+            indicateur: { nom: indicateur.nom },
+            individusValides: individus,
+            libellesSources,
+          }).map((resolution) => {
+            const application = appliquerPlan({
+              plan,
+              rows,
+              resolution,
               individusValides: individus,
-              libellesSources,
+              typeValeur: resolutionTypeValeur,
             })
-              .mapErr(mapResolutionError)
-              .map((resolution) => {
-                const application = appliquerPlan({
-                  plan,
-                  rows,
-                  resolution,
-                  individusValides: individus,
-                  typeValeur: resolutionTypeValeur,
-                })
-                return {
-                  plan,
-                  resolution: {
-                    mapping: [...resolution.mapping],
-                    nonResolus: [...resolution.nonResolus],
-                  },
-                  items: application.items,
-                  warnings: application.warnings,
-                  rapport: {
-                    totalLignes: rows.length,
-                    totalItemsProduits: application.items.length,
-                    totalLibellesSources: libellesSources.length,
-                    totalLibellesMappes: resolution.mapping.length,
-                    totalLibellesNonResolus: resolution.nonResolus.length,
-                  },
-                  ...(resolutionTypeValeur ? { resolutionTypeValeur } : {}),
-                }
-              }),
-          )
-        })
+            return {
+              plan,
+              resolution: {
+                mapping: [...resolution.mapping],
+                nonResolus: [...resolution.nonResolus],
+              },
+              items: application.items,
+              warnings: application.warnings,
+              rapport: {
+                totalLignes: rows.length,
+                totalItemsProduits: application.items.length,
+                totalLibellesSources: libellesSources.length,
+                totalLibellesMappes: resolution.mapping.length,
+                totalLibellesNonResolus: resolution.nonResolus.length,
+              },
+              ...(resolutionTypeValeur ? { resolutionTypeValeur } : {}),
+            }
+          }),
+        )
+      })
     })

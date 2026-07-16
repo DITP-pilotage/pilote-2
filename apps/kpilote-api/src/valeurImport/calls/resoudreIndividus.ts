@@ -16,9 +16,10 @@ export type ResolutionResult = {
   nonResolus: ReadonlyArray<ResolutionNonResolu>
 }
 
-export type ResoudreIndividusError =
-  | { type: 'ALBERT_UNAVAILABLE'; cause: unknown }
-  | { type: 'RESOLUTION_ECHEC'; derniereErreur: ToolValidationError | null }
+export type ResoudreIndividusError = {
+  type: 'RESOLUTION_ECHEC'
+  derniereErreur: ToolValidationError | null
+}
 
 type ToolValidationError = {
   publicIdsInvalides: string[]
@@ -178,7 +179,7 @@ export const resoudreIndividus = ({
     'Albert call 2 (résolution) — début',
   )
 
-  return ResultAsync.fromPromise(
+  return ResultAsync.fromSafePromise(
     generateText({
       model,
       system: SYSTEM_PROMPT,
@@ -255,18 +256,8 @@ export const resoudreIndividus = ({
       )
       return derniereTentative
     }),
-    (cause): ResoudreIndividusError => {
-      logger.error(
-        {
-          event: 'importPoc.resoudreIndividus.error',
-          durationMs: elapsed(),
-          cause: cause instanceof Error ? cause.message : String(cause),
-        },
-        'Albert call 2 (résolution) — échec',
-      )
-      return { type: 'ALBERT_UNAVAILABLE', cause }
-    },
-  ).andThen((tentative): Result<ResolutionResult, ResoudreIndividusError> =>
-    tentative ? ok(tentative) : err({ type: 'RESOLUTION_ECHEC', derniereErreur }),
+  ).andThen(
+    (tentative): Result<ResolutionResult, ResoudreIndividusError> =>
+      tentative ? ok(tentative) : err({ type: 'RESOLUTION_ECHEC', derniereErreur }),
   )
 }

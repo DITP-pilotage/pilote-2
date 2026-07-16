@@ -131,9 +131,11 @@ const SYSTEM_PROMPT =
 
 const MAX_LIGNES_ECHANTILLON = 8
 
-export type DecouvrirStructureError =
-  | { type: 'ALBERT_UNAVAILABLE'; cause: unknown }
-  | { type: 'PLAN_ECHEC'; raison: DecouverteEchec['raison']; explication: string }
+export type DecouvrirStructureError = {
+  type: 'PLAN_ECHEC'
+  raison: DecouverteEchec['raison']
+  explication: string
+}
 
 export const decouvrirStructure = ({
   indicateur,
@@ -176,7 +178,7 @@ export const decouvrirStructure = ({
     'Albert call 1 (découverte) — début',
   )
 
-  return ResultAsync.fromPromise(
+  return ResultAsync.fromSafePromise(
     generateObject({
       model,
       schema: decouverteOutputSchema,
@@ -211,20 +213,10 @@ export const decouvrirStructure = ({
       )
       return output
     }),
-    (cause): DecouvrirStructureError => {
-      logger.error(
-        {
-          event: 'importPoc.decouvrirStructure.error',
-          durationMs: elapsed(),
-          cause: cause instanceof Error ? cause.message : String(cause),
-        },
-        'Albert call 1 (découverte) — échec',
-      )
-      return { type: 'ALBERT_UNAVAILABLE', cause }
-    },
-  ).andThen((output): Result<Plan, DecouvrirStructureError> =>
-    output.statut === 'echec'
-      ? err({ type: 'PLAN_ECHEC', raison: output.raison, explication: output.explication })
-      : ok(output.plan),
+  ).andThen(
+    (output): Result<Plan, DecouvrirStructureError> =>
+      output.statut === 'echec'
+        ? err({ type: 'PLAN_ECHEC', raison: output.raison, explication: output.explication })
+        : ok(output.plan),
   )
 }
