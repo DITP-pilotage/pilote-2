@@ -1,5 +1,5 @@
 import { generateObject } from 'ai'
-import { errAsync, ResultAsync } from 'neverthrow'
+import { ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 
 import { logger } from '@/framework/logger/logger'
@@ -15,9 +15,7 @@ const outputSchema = z.object({
     ),
 })
 
-export type ResoudreTypeValeurError =
-  | { type: 'ALBERT_NON_CONFIGURE' }
-  | { type: 'ALBERT_UNAVAILABLE'; cause: unknown }
+export type ResoudreTypeValeurError = { type: 'ALBERT_UNAVAILABLE'; cause: unknown }
 
 const SYSTEM_PROMPT =
   "Tu reçois l'ensemble des valeurs distinctes d'une colonne qui indique le TYPE DE VALEUR " +
@@ -44,7 +42,6 @@ export const resoudreTypeValeur = ({
   typesValeurDistincts: ReadonlyArray<string>
 }): ResultAsync<{ typesValeurRetenus: string[] }, ResoudreTypeValeurError> => {
   const model = createAlbertModel()
-  if (!model) return errAsync({ type: 'ALBERT_NON_CONFIGURE' })
 
   const prompt = [
     `Colonne « ${colonne} ».`,

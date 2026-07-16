@@ -46,27 +46,24 @@ export type NormaliserValeursImportResult = {
 }
 
 export type NormaliserValeursImportError =
-  | { type: 'ALBERT_NON_CONFIGURE' }
   | { type: 'ALBERT_UNAVAILABLE'; cause: unknown }
   | { type: 'PLAN_ECHEC'; raison: string; explication: string }
   | { type: 'RESOLUTION_ECHEC'; derniereErreur: unknown }
 
-const mapAlbertError = (error: DecouvrirStructureError): NormaliserValeursImportError =>
-  error.type === 'ALBERT_NON_CONFIGURE'
-    ? { type: 'ALBERT_NON_CONFIGURE' }
+const mapAlbertError = (error: DecouvrirStructureError): NormaliserValeursImportError => ({
+  type: 'ALBERT_UNAVAILABLE',
+  cause: error.cause,
+})
+
+const mapResolutionError = (error: ResoudreIndividusError): NormaliserValeursImportError =>
+  error.type === 'RESOLUTION_ECHEC'
+    ? { type: 'RESOLUTION_ECHEC', derniereErreur: error.derniereErreur }
     : { type: 'ALBERT_UNAVAILABLE', cause: error.cause }
 
-const mapResolutionError = (error: ResoudreIndividusError): NormaliserValeursImportError => {
-  if (error.type === 'ALBERT_NON_CONFIGURE') return { type: 'ALBERT_NON_CONFIGURE' }
-  if (error.type === 'RESOLUTION_ECHEC')
-    return { type: 'RESOLUTION_ECHEC', derniereErreur: error.derniereErreur }
-  return { type: 'ALBERT_UNAVAILABLE', cause: error.cause }
-}
-
-const mapTypeValeurError = (error: ResoudreTypeValeurError): NormaliserValeursImportError =>
-  error.type === 'ALBERT_NON_CONFIGURE'
-    ? { type: 'ALBERT_NON_CONFIGURE' }
-    : { type: 'ALBERT_UNAVAILABLE', cause: error.cause }
+const mapTypeValeurError = (error: ResoudreTypeValeurError): NormaliserValeursImportError => ({
+  type: 'ALBERT_UNAVAILABLE',
+  cause: error.cause,
+})
 
 const collectHeaders = (rows: ReadonlyArray<Record<string, unknown>>): string[] => {
   const seen = new Set<string>()

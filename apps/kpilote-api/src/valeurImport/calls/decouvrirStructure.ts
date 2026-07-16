@@ -1,6 +1,6 @@
 import { generateObject } from 'ai'
 import { dateSchema } from '@pilote/kpilote-shared/dates'
-import { errAsync, ResultAsync } from 'neverthrow'
+import { ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 
 import { logger } from '@/framework/logger/logger'
@@ -129,9 +129,7 @@ const SYSTEM_PROMPT =
 
 const MAX_LIGNES_ECHANTILLON = 8
 
-export type DecouvrirStructureError =
-  | { type: 'ALBERT_NON_CONFIGURE' }
-  | { type: 'ALBERT_UNAVAILABLE'; cause: unknown }
+export type DecouvrirStructureError = { type: 'ALBERT_UNAVAILABLE'; cause: unknown }
 
 export const decouvrirStructure = ({
   indicateur,
@@ -145,8 +143,6 @@ export const decouvrirStructure = ({
   nomFichier?: string
 }): ResultAsync<DecouverteOutput, DecouvrirStructureError> => {
   const model = createAlbertModel()
-  if (!model) return errAsync({ type: 'ALBERT_NON_CONFIGURE' })
-
   const echantillon = rows.slice(0, MAX_LIGNES_ECHANTILLON)
 
   const prompt = [

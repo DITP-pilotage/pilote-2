@@ -59,8 +59,7 @@ const normaliserRoute = createRoute({
     },
     503: {
       content: { 'application/json': { schema: ErrorApiModelSchema } },
-      description:
-        'Albert non configuré (`ALBERT_NON_CONFIGURE`) ou injoignable (`ALBERT_UNAVAILABLE`).',
+      description: 'Albert injoignable ou réponse non conforme (`ALBERT_UNAVAILABLE`).',
     },
   },
 })
@@ -106,10 +105,7 @@ valeurImportRoutes.openapi(normaliserRoute, async (context) => {
         context,
         error: {
           code: error.type,
-          message:
-            error.type === 'ALBERT_NON_CONFIGURE'
-              ? "Albert n'est pas configuré côté API (ALBERT_API_KEY manquante)."
-              : 'Albert injoignable ou réponse non conforme.',
+          message: 'Albert injoignable ou réponse non conforme.',
         },
         schema: ErrorApiModelSchema,
         status: 503,

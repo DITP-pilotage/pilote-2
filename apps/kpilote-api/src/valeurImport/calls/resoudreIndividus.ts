@@ -16,7 +16,6 @@ export type ResolutionResult = {
 }
 
 export type ResoudreIndividusError =
-  | { type: 'ALBERT_NON_CONFIGURE' }
   | { type: 'ALBERT_UNAVAILABLE'; cause: unknown }
   | { type: 'RESOLUTION_ECHEC'; derniereErreur: ToolValidationError | null }
 
@@ -139,7 +138,6 @@ export const resoudreIndividus = ({
   libellesSources: ReadonlyArray<string>
 }): ResultAsync<ResolutionResult, ResoudreIndividusError> => {
   const model = createAlbertModel()
-  if (!model) return errAsync({ type: 'ALBERT_NON_CONFIGURE' })
 
   // Court-circuit : aucun libellé à résoudre.
   if (libellesSources.length === 0) {
