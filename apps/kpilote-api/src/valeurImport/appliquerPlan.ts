@@ -1,4 +1,4 @@
-import { type Plan } from '@/valeurImport/calls/decouvrirStructure'
+import { type Plan, type PlanLong, type PlanPivot } from '@/valeurImport/calls/decouvrirStructure'
 import { type ResolutionResult } from '@/valeurImport/calls/resoudreIndividus'
 import { safeStringify } from '@/valeurImport/helpers/safeStringify'
 import { parseFrLibre } from '@/valeurImport/parsers/parseFrLibre'
@@ -25,6 +25,121 @@ export type ResultatApplication = {
   warnings: WarningApplication[]
 }
 
+// Factory par warning : construit l'objet WarningApplication (message + champs source).
+
+const warnAucuneValeurAvancement = (colonne: string): WarningApplication => ({
+  code: 'LIGNE_IGNOREE',
+  message:
+    `Aucune valeur d'avancement n'a pu être identifiée dans la colonne « ${colonne} ». ` +
+    `Aucune valeur n'a été importée.`,
+  colonneSource: colonne,
+})
+
+const warnLigneIgnoreeType = ({
+  index,
+  colonne,
+  valeur,
+}: {
+  index: number
+  colonne: string
+  valeur: string
+}): WarningApplication => ({
+  code: 'LIGNE_IGNOREE',
+  message:
+    `Ligne ${index} : valeur « ${valeur} » écartée ` +
+    `(colonne « ${colonne} ») — seules les valeurs d'avancement sont importées.`,
+  ligneSource: index,
+  colonneSource: colonne,
+})
+
+const warnIndividuHallucine = ({
+  publicId,
+  libelle,
+}: {
+  publicId: string
+  libelle: string
+}): WarningApplication => ({
+  code: 'INDIVIDU_HALLUCINE',
+  message: `Albert a proposé un publicId inconnu (${publicId}) pour « ${libelle} » — ignoré.`,
+  libelleSource: libelle,
+})
+
+const warnIndividuNonResolu = ({
+  libelle,
+  ligne,
+  raison,
+}: {
+  libelle: string
+  ligne: number
+  raison: string
+}): WarningApplication => ({
+  code: 'INDIVIDU_NON_RESOLU',
+  message: `« ${libelle} » : ${raison}`,
+  libelleSource: libelle,
+  ligneSource: ligne,
+})
+
+const warnCelluleVide = ({
+  index,
+  colonne,
+}: {
+  index: number
+  colonne: string
+}): WarningApplication => ({
+  code: 'CELLULE_VIDE',
+  message: `Ligne ${index} : libellé individu vide (colonne « ${colonne} »).`,
+  ligneSource: index,
+  colonneSource: colonne,
+})
+
+const warnDateInvalide = ({
+  index,
+  colonne,
+  libelle,
+  brut,
+}: {
+  index: number
+  colonne: string
+  libelle: string
+  brut: string
+}): WarningApplication => ({
+  code: 'DATE_INVALIDE',
+  message: `Ligne ${index} : « ${brut} » n'a pas pu être interprété comme une date.`,
+  ligneSource: index,
+  colonneSource: colonne,
+  libelleSource: libelle,
+})
+
+const warnValeurInvalide = ({
+  index,
+  colonne,
+  libelle,
+  raison,
+  mentionColonne,
+}: {
+  index: number
+  colonne: string
+  libelle: string
+  raison: string
+  mentionColonne: boolean
+}): WarningApplication => ({
+  code: 'VALEUR_INVALIDE',
+  message: mentionColonne
+    ? `Ligne ${index}, colonne « ${colonne} » : ${raison}`
+    : `Ligne ${index} : ${raison}`,
+  ligneSource: index,
+  colonneSource: colonne,
+  libelleSource: libelle,
+})
+
+// Aucune valeur d'avancement identifiée : on écarte tout, un seul warning global.
+const resultatAucuneValeurAvancement = (colonne: string): ResultatApplication => ({
+  items: [],
+  warnings: [warnAucuneValeurAvancement(colonne)],
+})
+
+const normaliserType = (valeur: unknown): string => safeStringify(valeur).trim().toLowerCase()
+
 export const appliquerPlan = ({
   plan,
   rows,
@@ -41,21 +156,11 @@ export const appliquerPlan = ({
   const items: ItemNormalise[] = []
   const warnings: WarningApplication[] = []
 
-  const normaliserType = (valeur: unknown): string => safeStringify(valeur).trim().toLowerCase()
-
   // Filtrage optionnel par type de valeur (fichiers PPG : VI/VA/VC).
   let typesRetenusSet: Set<string> | null = null
   if (typeValeur) {
     if (typeValeur.typesValeurRetenus.length === 0) {
-      // Aucune valeur d'avancement identifiée : on écarte tout, un seul warning global.
-      warnings.push({
-        code: 'LIGNE_IGNOREE',
-        message:
-          `Aucune valeur d'avancement n'a pu être identifiée dans la colonne « ${typeValeur.colonne} ». ` +
-          `Aucune valeur n'a été importée.`,
-        colonneSource: typeValeur.colonne,
-      })
-      return { items, warnings }
+      return resultatAucuneValeurAvancement(typeValeur.colonne)
     }
     typesRetenusSet = new Set(typeValeur.typesValeurRetenus.map(normaliserType))
   }
@@ -64,14 +169,13 @@ export const appliquerPlan = ({
   const ligneRejeteeParType = (row: Record<string, unknown>, index: number): boolean => {
     if (!typeValeur || !typesRetenusSet) return false
     if (typesRetenusSet.has(normaliserType(row[typeValeur.colonne]))) return false
-    warnings.push({
-      code: 'LIGNE_IGNOREE',
-      message:
-        `Ligne ${index} : valeur « ${safeStringify(row[typeValeur.colonne]).trim()} » écartée ` +
-        `(colonne « ${typeValeur.colonne} ») — seules les valeurs d'avancement sont importées.`,
-      ligneSource: index,
-      colonneSource: typeValeur.colonne,
-    })
+    warnings.push(
+      warnLigneIgnoreeType({
+        index,
+        colonne: typeValeur.colonne,
+        valeur: safeStringify(row[typeValeur.colonne]).trim(),
+      }),
+    )
     return true
   }
 
@@ -81,11 +185,9 @@ export const appliquerPlan = ({
   const libelleVersPublicId = new Map<string, string>()
   for (const entree of resolution.mapping) {
     if (!publicIdsValides.has(entree.individuPublicId)) {
-      warnings.push({
-        code: 'INDIVIDU_HALLUCINE',
-        message: `Albert a proposé un publicId inconnu (${entree.individuPublicId}) pour « ${entree.libelleSource} » — ignoré.`,
-        libelleSource: entree.libelleSource,
-      })
+      warnings.push(
+        warnIndividuHallucine({ publicId: entree.individuPublicId, libelle: entree.libelleSource }),
+      )
       continue
     }
     libelleVersPublicId.set(entree.libelleSource, entree.individuPublicId)
@@ -110,115 +212,108 @@ export const appliquerPlan = ({
     if (!libellesDejaSignales.has(libelle)) {
       libellesDejaSignales.add(libelle)
       const raison = libellesNonResolus.get(libelle) ?? 'Libellé non couvert par la résolution.'
-      warnings.push({
-        code: 'INDIVIDU_NON_RESOLU',
-        message: `« ${libelle} » : ${raison}`,
-        libelleSource: libelle,
-        ligneSource: ligne,
-      })
+      warnings.push(warnIndividuNonResolu({ libelle, ligne, raison }))
     }
     return { individu: null }
   }
 
-  if (plan.layout === 'long') {
+  const appliquerLong = (planLong: PlanLong): void => {
     for (const [index, row] of rows.entries()) {
       if (ligneRejeteeParType(row, index)) continue
-      const libelle = safeStringify(row[plan.colonneIndividu]).trim()
+      const libelle = safeStringify(row[planLong.colonneIndividu]).trim()
       if (!libelle) {
-        warnings.push({
-          code: 'CELLULE_VIDE',
-          message: `Ligne ${index} : libellé individu vide (colonne « ${plan.colonneIndividu} »).`,
-          ligneSource: index,
-          colonneSource: plan.colonneIndividu,
-        })
+        warnings.push(warnCelluleVide({ index, colonne: planLong.colonneIndividu }))
         continue
       }
       const { individu } = signalerLibelleNonResolu(libelle, index)
       if (!individu) continue
 
-      const date = parseFrLibre(row[plan.colonneDate.nom])
+      const date = parseFrLibre(row[planLong.colonneDate.nom])
       if (!date) {
-        warnings.push({
-          code: 'DATE_INVALIDE',
-          message: `Ligne ${index} : « ${safeStringify(row[plan.colonneDate.nom]).trim()} » n'a pas pu être interprété comme une date.`,
-          ligneSource: index,
-          colonneSource: plan.colonneDate.nom,
-          libelleSource: libelle,
-        })
+        warnings.push(
+          warnDateInvalide({
+            index,
+            colonne: planLong.colonneDate.nom,
+            libelle,
+            brut: safeStringify(row[planLong.colonneDate.nom]).trim(),
+          }),
+        )
         continue
       }
 
-      const valeurResult = parseNombre(row[plan.colonneValeur])
+      const valeurResult = parseNombre(row[planLong.colonneValeur])
       if (!valeurResult.ok) {
-        warnings.push({
-          code: 'VALEUR_INVALIDE',
-          message: `Ligne ${index} : ${valeurResult.raison}`,
-          ligneSource: index,
-          colonneSource: plan.colonneValeur,
-          libelleSource: libelle,
-        })
+        warnings.push(
+          warnValeurInvalide({
+            index,
+            colonne: planLong.colonneValeur,
+            libelle,
+            raison: valeurResult.raison,
+            mentionColonne: false,
+          }),
+        )
         continue
       }
 
       items.push({ individu, date, valeur: valeurResult.valeur })
     }
-    return { items, warnings }
   }
 
-  // layout === 'pivot'
-  // Résolution canonique des dates d'en-tête : le parser déterministe fait autorité ;
-  // le dateIso d'Albert n'est qu'un filet pour les en-têtes bruités qu'il ne tranche
-  // pas (parseFrLibre renvoie null en cas de doute, jamais une date fausse).
-  const dateParColonne = new Map(
-    plan.colonnesPivot.map((colonne) => [
-      colonne.nom,
-      parseFrLibre(colonne.nom) ?? colonne.dateIso,
-    ]),
-  )
+  const appliquerPivot = (planPivot: PlanPivot): void => {
+    // Résolution canonique des dates d'en-tête : le parser déterministe fait autorité ;
+    // le dateIso d'Albert n'est qu'un filet pour les en-têtes bruités qu'il ne tranche
+    // pas (parseFrLibre renvoie null en cas de doute, jamais une date fausse).
+    const dateParColonne = new Map(
+      planPivot.colonnesPivot.map((colonne) => [
+        colonne.nom,
+        parseFrLibre(colonne.nom) ?? colonne.dateIso,
+      ]),
+    )
 
-  for (const [index, row] of rows.entries()) {
-    if (ligneRejeteeParType(row, index)) continue
-    const libelle = safeStringify(row[plan.colonneIndividu]).trim()
-    if (!libelle) {
-      warnings.push({
-        code: 'CELLULE_VIDE',
-        message: `Ligne ${index} : libellé individu vide (colonne « ${plan.colonneIndividu} »).`,
-        ligneSource: index,
-        colonneSource: plan.colonneIndividu,
-      })
-      continue
-    }
-    const { individu } = signalerLibelleNonResolu(libelle, index)
-    if (!individu) continue
-
-    for (const colonnePivot of plan.colonnesPivot) {
-      const valeurBrute = row[colonnePivot.nom]
-      if (
-        valeurBrute === null ||
-        valeurBrute === undefined ||
-        safeStringify(valeurBrute).trim() === ''
-      ) {
-        // Cellule vide en pivot : silencieux (un fichier pivot a souvent des trous).
+    for (const [index, row] of rows.entries()) {
+      if (ligneRejeteeParType(row, index)) continue
+      const libelle = safeStringify(row[planPivot.colonneIndividu]).trim()
+      if (!libelle) {
+        warnings.push(warnCelluleVide({ index, colonne: planPivot.colonneIndividu }))
         continue
       }
-      const valeurResult = parseNombre(valeurBrute)
-      if (!valeurResult.ok) {
-        warnings.push({
-          code: 'VALEUR_INVALIDE',
-          message: `Ligne ${index}, colonne « ${colonnePivot.nom} » : ${valeurResult.raison}`,
-          ligneSource: index,
-          colonneSource: colonnePivot.nom,
-          libelleSource: libelle,
+      const { individu } = signalerLibelleNonResolu(libelle, index)
+      if (!individu) continue
+
+      for (const colonnePivot of planPivot.colonnesPivot) {
+        const valeurBrute = row[colonnePivot.nom]
+        if (
+          valeurBrute === null ||
+          valeurBrute === undefined ||
+          safeStringify(valeurBrute).trim() === ''
+        ) {
+          // Cellule vide en pivot : silencieux (un fichier pivot a souvent des trous).
+          continue
+        }
+        const valeurResult = parseNombre(valeurBrute)
+        if (!valeurResult.ok) {
+          warnings.push(
+            warnValeurInvalide({
+              index,
+              colonne: colonnePivot.nom,
+              libelle,
+              raison: valeurResult.raison,
+              mentionColonne: true,
+            }),
+          )
+          continue
+        }
+        items.push({
+          individu,
+          date: dateParColonne.get(colonnePivot.nom)!,
+          valeur: valeurResult.valeur,
         })
-        continue
       }
-      items.push({
-        individu,
-        date: dateParColonne.get(colonnePivot.nom)!,
-        valeur: valeurResult.valeur,
-      })
     }
   }
+
+  if (plan.layout === 'long') appliquerLong(plan)
+  else appliquerPivot(plan)
 
   return { items, warnings }
 }
