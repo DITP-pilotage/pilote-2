@@ -13,6 +13,7 @@ export type WarningApplication = {
     | 'DATE_INVALIDE'
     | 'VALEUR_INVALIDE'
     | 'CELLULE_VIDE'
+    | 'LIGNE_IGNOREE'
   message: string
   ligneSource?: number
   libelleSource?: string
@@ -29,14 +30,50 @@ export const appliquerPlan = ({
   rows,
   resolution,
   individusValides,
+  typeValeur,
 }: {
   plan: Plan
   rows: ReadonlyArray<Record<string, unknown>>
   resolution: ResolutionResult
   individusValides: ReadonlyArray<{ publicId: string }>
+  typeValeur?: { colonne: string; typesValeurRetenus: ReadonlyArray<string> }
 }): ResultatApplication => {
   const items: ItemNormalise[] = []
   const warnings: WarningApplication[] = []
+
+  const normaliserType = (valeur: unknown): string => safeStringify(valeur).trim().toLowerCase()
+
+  // Filtrage optionnel par type de valeur (fichiers PPG : VI/VA/VC).
+  let typesRetenusSet: Set<string> | null = null
+  if (typeValeur) {
+    if (typeValeur.typesValeurRetenus.length === 0) {
+      // Aucune valeur d'avancement identifiée : on écarte tout, un seul warning global.
+      warnings.push({
+        code: 'LIGNE_IGNOREE',
+        message:
+          `Aucune valeur d'avancement n'a pu être identifiée dans la colonne « ${typeValeur.colonne} ». ` +
+          `Aucune valeur n'a été importée.`,
+        colonneSource: typeValeur.colonne,
+      })
+      return { items, warnings }
+    }
+    typesRetenusSet = new Set(typeValeur.typesValeurRetenus.map(normaliserType))
+  }
+
+  // Prédicat de rejet d'une ligne selon son type de valeur (émet un warning si rejetée).
+  const ligneRejeteeParType = (row: Record<string, unknown>, index: number): boolean => {
+    if (!typeValeur || !typesRetenusSet) return false
+    if (typesRetenusSet.has(normaliserType(row[typeValeur.colonne]))) return false
+    warnings.push({
+      code: 'LIGNE_IGNOREE',
+      message:
+        `Ligne ${index} : valeur « ${safeStringify(row[typeValeur.colonne]).trim()} » écartée ` +
+        `(colonne « ${typeValeur.colonne} ») — seules les valeurs d'avancement sont importées.`,
+      ligneSource: index,
+      colonneSource: typeValeur.colonne,
+    })
+    return true
+  }
 
   // Index mapping libelle -> publicId, en filtrant les éventuels publicId
   // hallucinés (sécurité défensive — le tool refine devrait déjà l'avoir bloqué).
@@ -85,6 +122,7 @@ export const appliquerPlan = ({
 
   if (plan.layout === 'long') {
     for (const [index, row] of rows.entries()) {
+      if (ligneRejeteeParType(row, index)) continue
       const libelle = safeStringify(row[plan.colonneIndividu]).trim()
       if (!libelle) {
         warnings.push({
@@ -129,6 +167,7 @@ export const appliquerPlan = ({
 
   // layout === 'pivot'
   for (const [index, row] of rows.entries()) {
+    if (ligneRejeteeParType(row, index)) continue
     const libelle = safeStringify(row[plan.colonneIndividu]).trim()
     if (!libelle) {
       warnings.push({
