@@ -1,4 +1,4 @@
-const pad2 = (n: number): string => String(n).padStart(2, '0')
+import { Temporal } from '@js-temporal/polyfill'
 
 export const formatIso = ({
   annee,
@@ -8,7 +8,7 @@ export const formatIso = ({
   annee: number
   mois: number
   jour: number
-}): string => `${annee}-${pad2(mois)}-${pad2(jour)}`
+}): string => Temporal.PlainDate.from({ year: annee, month: mois, day: jour }).toString()
 
 // Années « plausibles » : 1900–2099. Le bornage évite de confondre un identifiant
 // (`1234`, `Zone 5000`) avec une année lors de l'extraction depuis une chaîne bruitée.

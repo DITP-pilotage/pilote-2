@@ -1,15 +1,17 @@
-import { isValidCalendarDate } from '@pilote/kpilote-shared/dates'
+import { Temporal } from '@js-temporal/polyfill'
 
 const DATE_ONLY = /^\d{4}-\d{2}-\d{2}$/
 // datetime ISO 8601 : date + T/espace + heure, offset optionnel (Z ou ±HH:MM).
 const DATETIME = /^(\d{4}-\d{2}-\d{2})[T ]\d{2}:\d{2}(?::\d{2})?(?:\.\d+)?(Z|[+-]\d{2}:?\d{2})?$/
 
-const PARIS_FORMAT = new Intl.DateTimeFormat('en-CA', {
-  timeZone: 'Europe/Paris',
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-})
+// Valide une date calendaire nue (rejette 2022-13-40, 2023-02-29…) via Temporal.
+const toPlainDate = (texte: string): string | null => {
+  try {
+    return Temporal.PlainDate.from(texte, { overflow: 'reject' }).toString()
+  } catch {
+    return null
+  }
+}
 
 // Interprète les dates au format ISO. Une date nue est renvoyée telle quelle ;
 // un datetime porteur d'un offset (Z ou ±HH:MM) est résolu comme un instant absolu
@@ -17,7 +19,7 @@ const PARIS_FORMAT = new Intl.DateTimeFormat('en-CA', {
 // devient `2023-01-01`. Un datetime « flottant » (sans offset) garde sa date écrite.
 export const parseIsoDate = (texte: string): string | null => {
   if (DATE_ONLY.test(texte)) {
-    return isValidCalendarDate(texte) ? texte : null
+    return toPlainDate(texte)
   }
 
   const match = DATETIME.exec(texte)
@@ -25,11 +27,12 @@ export const parseIsoDate = (texte: string): string | null => {
 
   const [, datePart, offset] = match
   if (!offset) {
-    return isValidCalendarDate(datePart!) ? datePart! : null
+    return toPlainDate(datePart!)
   }
 
-  const instant = new Date(texte)
-  if (Number.isNaN(instant.getTime())) return null
-  // en-CA formate en YYYY-MM-DD.
-  return PARIS_FORMAT.format(instant)
+  try {
+    return Temporal.Instant.from(texte).toZonedDateTimeISO('Europe/Paris').toPlainDate().toString()
+  } catch {
+    return null
+  }
 }
