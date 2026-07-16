@@ -18,6 +18,7 @@ export const featureQueryOptions = (id: string) =>
 // Mutation partagée entre la liste (état inline) et la fiche : change l'état
 // d'une feature et invalide les queries `features`.
 export const useModifierEtatFeatureMutation = (options?: {
+  onSuccess?: () => void
   onError?: (error: unknown) => void
 }) => {
   const queryClient = useQueryClient()
@@ -25,6 +26,7 @@ export const useModifierEtatFeatureMutation = (options?: {
     mutationFn: ({ id, etat }: { id: string; etat: FeatureEtat }) => modifierEtatFeature(id, etat),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['features'] })
+      options?.onSuccess?.()
     },
     ...(options?.onError ? { onError: options.onError } : {}),
   })

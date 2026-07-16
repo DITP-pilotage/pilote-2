@@ -8,8 +8,10 @@ import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Table } from '@/components/ui/Table'
+import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { clickableRowProps, stopRowActivation } from '@/lib/clickableRow'
+import { searchUnaccent } from '@/lib/texte'
 import { featuresQueryOptions, useModifierEtatFeatureMutation } from '@/queries/feature'
 import { session } from '@/session'
 
@@ -30,16 +32,18 @@ function FeatureListComponent() {
   const { data: features } = useSuspenseQuery(featuresQueryOptions())
   const [recherche, setRecherche] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const toast = useToast()
 
   const mutation = useModifierEtatFeatureMutation({
+    onSuccess: () => toast({ title: 'État mis à jour.' }),
     onError: (err) => void extractApiError(err).then(setError),
   })
 
   const items = useMemo(() => {
-    const terme = recherche.trim().toLowerCase()
+    const terme = searchUnaccent(recherche)
     if (!terme) return features
     return features.filter((feature) =>
-      `${feature.nom} ${feature.key}`.toLowerCase().includes(terme),
+      searchUnaccent(`${feature.nom} ${feature.key}`).includes(terme),
     )
   }, [features, recherche])
 
@@ -49,10 +53,10 @@ function FeatureListComponent() {
         <Link to="/fonctionnalites" className="hover:text-primary">
           Fonctionnalités
         </Link>
-        <span className="font-medium text-text">Feature flipping</span>
+        <span className="font-medium text-text">Features</span>
       </Breadcrumb>
       <PageHeading
-        title="Feature flipping"
+        title="Features"
         subtitle={
           <>
             {features.length} fonctionnalité{features.length > 1 ? 's' : ''} · environnement{' '}
@@ -76,7 +80,7 @@ function FeatureListComponent() {
       {features.length === 0 ? (
         <EmptyState
           title="Aucune feature"
-          description="Les features sont créées via des migrations Prisma (script ff:creer)."
+          description="Les features sont créées via des migrations Prisma (script feature:creer)."
         />
       ) : (
         <Table>

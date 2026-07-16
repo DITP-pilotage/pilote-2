@@ -57,7 +57,7 @@ function FeaturesComponent() {
         <FadeIn delayMs={360}>
           <BarCard
             icon={ToggleLeft}
-            title="Gérer le feature flipping"
+            title="Gérer les features"
             description="Activer, désactiver ou cibler des fonctionnalités par utilisateur (réservé aux clés ADMIN)."
             onClick={() => void navigate({ to: '/features' })}
           />

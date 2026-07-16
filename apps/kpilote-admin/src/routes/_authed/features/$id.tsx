@@ -8,8 +8,9 @@ import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { Picker } from '@/components/ui/Picker'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
+import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
-import { sansAccents } from '@/lib/texte'
+import { unaccent } from '@/lib/texte'
 import { featureQueryOptions, useModifierEtatFeatureMutation } from '@/queries/feature'
 import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
 import { useState } from 'react'
@@ -36,7 +37,7 @@ const initiales = (utilisateur: UtilisateurApiModel): string =>
 // « Zoe » comme « Zoé » retrouvent l'utilisateur (le filtre cmdk fait un includes).
 const texteRecherche = (utilisateur: UtilisateurApiModel): string => {
   const base = `${utilisateur.prenom} ${utilisateur.nom} ${utilisateur.email}`
-  return `${base} ${sansAccents(base)}`
+  return `${base} ${unaccent(base)}`
 }
 
 function FeatureDetailComponent() {
@@ -45,6 +46,7 @@ function FeatureDetailComponent() {
   const { data: feature } = useSuspenseQuery(featureQueryOptions(id))
   const { data: tousLesUtilisateurs } = useSuspenseQuery(utilisateursAllQueryOptions())
   const [error, setError] = useState<string | null>(null)
+  const toast = useToast()
 
   const cibleUtilisateurs = feature.etat === 'ACTIVE_POUR_UTILISATEUR'
   const utilisateurIdsAutorises = feature.utilisateursAutorises.map((u) => u.id)
@@ -53,6 +55,7 @@ function FeatureDetailComponent() {
   )
 
   const etatMutation = useModifierEtatFeatureMutation({
+    onSuccess: () => toast({ title: 'État mis à jour.' }),
     onError: (err) => void extractApiError(err).then(setError),
   })
 
@@ -60,6 +63,7 @@ function FeatureDetailComponent() {
     mutationFn: (utilisateurIds: string[]) => remplacerUtilisateursAutorises(id, utilisateurIds),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['features'] })
+      toast({ title: 'Utilisateurs autorisés mis à jour.' })
     },
     onError: (err: unknown) => void extractApiError(err).then(setError),
   })
@@ -76,7 +80,7 @@ function FeatureDetailComponent() {
           Fonctionnalités
         </Link>
         <Link to="/features" className="hover:text-primary">
-          Feature flipping
+          Features
         </Link>
         <span className="font-medium text-text">{feature.nom}</span>
       </Breadcrumb>
