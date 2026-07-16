@@ -1,4 +1,4 @@
-import { errAsync, okAsync, ResultAsync } from 'neverthrow'
+import { okAsync, ResultAsync } from 'neverthrow'
 
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
 import {
@@ -50,10 +50,10 @@ export type NormaliserValeursImportError =
   | { type: 'PLAN_ECHEC'; raison: string; explication: string }
   | { type: 'RESOLUTION_ECHEC'; derniereErreur: unknown }
 
-const mapAlbertError = (error: DecouvrirStructureError): NormaliserValeursImportError => ({
-  type: 'ALBERT_UNAVAILABLE',
-  cause: error.cause,
-})
+const mapAlbertError = (error: DecouvrirStructureError): NormaliserValeursImportError =>
+  error.type === 'PLAN_ECHEC'
+    ? { type: 'PLAN_ECHEC', raison: error.raison, explication: error.explication }
+    : { type: 'ALBERT_UNAVAILABLE', cause: error.cause }
 
 const mapResolutionError = (error: ResoudreIndividusError): NormaliserValeursImportError =>
   error.type === 'RESOLUTION_ECHEC'
@@ -113,15 +113,7 @@ export const normaliserValeursImport = (
         nomFichier,
       })
         .mapErr(mapAlbertError)
-        .andThen((decouverte) => {
-          if (decouverte.statut === 'echec') {
-            return errAsync<NormaliserValeursImportResult, NormaliserValeursImportError>({
-              type: 'PLAN_ECHEC',
-              raison: decouverte.raison,
-              explication: decouverte.explication,
-            })
-          }
-          const plan = decouverte.plan
+        .andThen((plan) => {
           const libellesSources = extraireLibellesSources(rows, plan.colonneIndividu)
 
           // Passe 1b (conditionnelle) : résolution sémantique du type de valeur (fichiers PPG).

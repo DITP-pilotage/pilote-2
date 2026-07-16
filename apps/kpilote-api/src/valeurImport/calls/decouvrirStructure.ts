@@ -1,6 +1,6 @@
 import { generateObject } from 'ai'
 import { dateSchema } from '@pilote/kpilote-shared/dates'
-import { ResultAsync } from 'neverthrow'
+import { err, ok, type Result, ResultAsync } from 'neverthrow'
 import { z } from 'zod'
 
 import { logger } from '@/framework/logger/logger'
@@ -103,6 +103,7 @@ export const decouverteOutputSchema = z.discriminatedUnion('statut', [
 ])
 
 export type DecouverteOutput = z.infer<typeof decouverteOutputSchema>
+type DecouverteEchec = Extract<DecouverteOutput, { statut: 'echec' }>
 export type Plan = Extract<DecouverteOutput, { statut: 'reconnu' }>['plan']
 export type PlanLong = Extract<Plan, { layout: 'long' }>
 export type PlanPivot = Extract<Plan, { layout: 'pivot' }>
@@ -130,7 +131,9 @@ const SYSTEM_PROMPT =
 
 const MAX_LIGNES_ECHANTILLON = 8
 
-export type DecouvrirStructureError = { type: 'ALBERT_UNAVAILABLE'; cause: unknown }
+export type DecouvrirStructureError =
+  | { type: 'ALBERT_UNAVAILABLE'; cause: unknown }
+  | { type: 'PLAN_ECHEC'; raison: DecouverteEchec['raison']; explication: string }
 
 export const decouvrirStructure = ({
   indicateur,
@@ -142,7 +145,7 @@ export const decouvrirStructure = ({
   headers: ReadonlyArray<string>
   rows: ReadonlyArray<Record<string, unknown>>
   nomFichier: string
-}): ResultAsync<DecouverteOutput, DecouvrirStructureError> => {
+}): ResultAsync<Plan, DecouvrirStructureError> => {
   const model = createAlbertModel()
   const echantillon = rows.slice(0, MAX_LIGNES_ECHANTILLON)
 
@@ -219,5 +222,9 @@ export const decouvrirStructure = ({
       )
       return { type: 'ALBERT_UNAVAILABLE', cause }
     },
+  ).andThen((output): Result<Plan, DecouvrirStructureError> =>
+    output.statut === 'echec'
+      ? err({ type: 'PLAN_ECHEC', raison: output.raison, explication: output.explication })
+      : ok(output.plan),
   )
 }
