@@ -19,7 +19,7 @@ import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Field } from '@pilote/kpilote-ui/Field'
 import { Page } from '@pilote/kpilote-ui/Page'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tabs'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import { useRecordVisit } from '@/lib/recentlyVisited'
 import {

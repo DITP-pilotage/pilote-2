@@ -7,7 +7,7 @@ import { HeadersEditor } from '@/components/console/HeadersEditor'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
 import { formatJson, JsonEditor } from '@/components/ui/JsonEditor'
-import { TabNav } from '@/components/ui/TabNav'
+import { Tabs, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tabs'
 import type { ConsoleFormValues } from '@/lib/consoleForm'
 
 const MUTATING: ReadonlySet<HttpMethod> = new Set<HttpMethod>(['POST', 'PUT', 'PATCH', 'DELETE'])
@@ -93,18 +93,12 @@ export function RequestForm({
       ) : null}
 
       <div>
-        <TabNav
-          tabs={
-            bodyless
-              ? [{ key: 'headers', label: 'En-têtes' }]
-              : [
-                  { key: 'body', label: 'Body' },
-                  { key: 'headers', label: 'En-têtes' },
-                ]
-          }
-          active={activeTab}
-          onChange={(key) => setTab(key as 'body' | 'headers')}
-        />
+        <Tabs value={activeTab} onValueChange={(key) => setTab(key as 'body' | 'headers')}>
+          <TabsList className="mb-6">
+            {bodyless ? null : <TabsTrigger value="body">Body</TabsTrigger>}
+            <TabsTrigger value="headers">En-têtes</TabsTrigger>
+          </TabsList>
+        </Tabs>
         {activeTab === 'body' ? (
           <div className="flex flex-col gap-2">
             <div className="flex justify-end">

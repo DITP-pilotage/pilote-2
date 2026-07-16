@@ -141,6 +141,10 @@
       "types": "./src/Table.tsx",
       "default": "./src/Table.tsx"
     },
+    "./Tabs": {
+      "types": "./src/Tabs.tsx",
+      "default": "./src/Tabs.tsx"
+    },
     "./Toast": {
       "types": "./src/Toast.tsx",
       "default": "./src/Toast.tsx"

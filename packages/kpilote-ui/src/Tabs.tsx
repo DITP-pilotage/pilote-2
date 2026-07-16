@@ -1,7 +1,7 @@
 import { Tabs as TabsPrimitive } from 'radix-ui'
 import type { ComponentProps } from 'react'
 
-import { clsxm } from '@/lib/clsxm'
+import { clsxm } from './clsxm'
 
 export const Tabs = TabsPrimitive.Root
 

@@ -6,7 +6,7 @@ import { updateUtilisateur } from '@/api/utilisateurs'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { PrincipalPermissions } from '@/components/PrincipalPermissions'
-import { TabNav } from '@/components/ui/TabNav'
+import { Tabs, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tabs'
 import { UtilisateurForm, type UtilisateurFormValues } from '@/components/UtilisateurForm'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
@@ -67,14 +67,12 @@ function EditUtilisateurComponent() {
       </Breadcrumb>
       <PageHeading title="Modifier l'utilisateur" />
 
-      <TabNav
-        tabs={[
-          { key: 'identite', label: 'Identité' },
-          { key: 'permissions', label: 'Permissions' },
-        ]}
-        active={tab}
-        onChange={(key) => setTab(key as 'identite' | 'permissions')}
-      />
+      <Tabs value={tab} onValueChange={(key) => setTab(key as 'identite' | 'permissions')}>
+        <TabsList className="mb-6">
+          <TabsTrigger value="identite">Identité</TabsTrigger>
+          <TabsTrigger value="permissions">Permissions</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       {tab === 'identite' ? (
         utilisateur ? (

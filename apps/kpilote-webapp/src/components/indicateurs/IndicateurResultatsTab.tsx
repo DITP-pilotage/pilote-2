@@ -7,7 +7,7 @@ import { IndicateurCommentaireConfigProvider } from '@/components/indicateurs/co
 import { IndicateurSynthesePanel } from '@/components/indicateurs/IndicateurSynthesePanel'
 import { IndicateurValeursChart } from '@/components/indicateurs/IndicateurValeursChart'
 import { IndicateurWidgets } from '@/components/indicateurs/IndicateurWidgets'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tabs'
 
 type SousOnglet = 'confiance' | 'evolution' | 'commentaire'
 
