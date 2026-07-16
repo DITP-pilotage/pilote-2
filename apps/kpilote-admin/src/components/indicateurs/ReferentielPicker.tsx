@@ -5,32 +5,27 @@ import { Picker } from '@/components/ui/Picker'
 import { PickerOptionNomId } from '@/components/ui/PickerOptionNomId'
 import { referentielsAllQueryOptions } from '@/queries/referentiels'
 
-// Champ contrôlé (value/onChange) : s'utilise tel quel dans un <Controller> RHF.
+// Contrôle d'ajout : sélectionner un référentiel appelle onSelect(id), le trigger
+// affiche toujours son placeholder (comme le sélecteur d'ajout des responsables).
 export function ReferentielPicker({
-  value,
-  onChange,
   excludedIds,
+  onSelect,
   disabled,
-  placeholder = 'Choisir un référentiel…',
+  placeholder = 'Ajouter un référentiel',
 }: {
-  value: string
-  onChange: (id: string) => void
-  excludedIds?: string[]
+  excludedIds: string[]
+  onSelect: (id: string) => void
   disabled?: boolean
   placeholder?: ReactNode
 }) {
   const { data } = useSuspenseQuery(referentielsAllQueryOptions())
-  const excluded = new Set(excludedIds ?? [])
-  // On garde toujours le référentiel courant sélectionnable, on n'exclut que les autres déjà pris.
-  const items = data.filter(
-    (referentiel) => referentiel.id === value || !excluded.has(referentiel.id),
-  )
+  const excluded = new Set(excludedIds)
+  const items = data.filter((referentiel) => !excluded.has(referentiel.id))
 
   return (
     <Picker
       items={items}
-      value={value}
-      onSelect={(referentiel) => onChange(referentiel.id)}
+      onSelect={(referentiel) => onSelect(referentiel.id)}
       getKey={(referentiel) => referentiel.id}
       getSearchText={(referentiel) => `${referentiel.id} ${referentiel.nom}`}
       renderItem={(referentiel) => <PickerOptionNomId nom={referentiel.nom} id={referentiel.id} />}

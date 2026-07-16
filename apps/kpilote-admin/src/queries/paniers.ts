@@ -4,6 +4,6 @@ import { fetchAllPaniers } from '@/api/paniers'
 
 export const paniersAllQueryOptions = () =>
   queryOptions({
-    queryKey: ['paniers', 'all-pages'],
+    queryKey: ['paniers', 'all'],
     queryFn: () => fetchAllPaniers(),
   })

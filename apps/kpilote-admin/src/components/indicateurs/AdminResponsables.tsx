@@ -1,21 +1,14 @@
-import { useSuspenseQuery } from '@tanstack/react-query'
 import { Trash2 } from 'lucide-react'
 import { useFieldArray, useWatch } from 'react-hook-form'
 
 import { useIndicateurFormContext } from '@/components/indicateurs/indicateurFormContext'
-import { FieldSelect } from '@/components/ui/FieldSelect'
-import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
+import { UtilisateurPicker } from '@/components/indicateurs/UtilisateurPicker'
 
 export function AdminResponsables() {
   const form = useIndicateurFormContext()
   const { fields, append, remove } = useFieldArray({ control: form.control, name: 'responsables' })
   const responsablesSelectionnes = useWatch({ control: form.control, name: 'responsables' })
-  const { data: utilisateurs } = useSuspenseQuery(utilisateursAllQueryOptions())
-
-  const utilisateursDisponibles = utilisateurs.filter(
-    (utilisateur) =>
-      !(responsablesSelectionnes ?? []).some((responsable) => responsable.id === utilisateur.id),
-  )
+  const selectedIds = (responsablesSelectionnes ?? []).map((responsable) => responsable.id)
 
   return (
     <div className="border-t border-border pt-5">
@@ -25,31 +18,17 @@ export function AdminResponsables() {
         <b>intégralement</b> l'existant à l'enregistrement.
       </p>
 
-      <FieldSelect
-        label="Ajouter un responsable"
-        value=""
-        onChange={(event) => {
-          const utilisateur = utilisateursDisponibles.find(
-            (candidat) => candidat.id === event.target.value,
-          )
-          if (!utilisateur) return
+      <UtilisateurPicker
+        excludedIds={selectedIds}
+        onSelect={(utilisateur) =>
           append({
             id: utilisateur.id,
             nom: utilisateur.nom,
             prenom: utilisateur.prenom,
             email: utilisateur.email,
           })
-        }}
-      >
-        <option value="" disabled>
-          Choisir un utilisateur…
-        </option>
-        {utilisateursDisponibles.map((utilisateur) => (
-          <option key={utilisateur.id} value={utilisateur.id}>
-            {utilisateur.prenom} {utilisateur.nom} · {utilisateur.email}
-          </option>
-        ))}
-      </FieldSelect>
+        }
+      />
 
       <ul className="mt-3 space-y-2">
         {fields.map((responsable, index) => (

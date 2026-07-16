@@ -4,7 +4,7 @@ import { fetchAllUtilisateurs, fetchUtilisateurById, fetchUtilisateurs } from '@
 
 export const utilisateursAllQueryOptions = () =>
   queryOptions({
-    queryKey: ['utilisateurs', 'all-pages'],
+    queryKey: ['utilisateurs', 'all'],
     queryFn: () => fetchAllUtilisateurs(),
   })
 

@@ -26,10 +26,6 @@ type PickerProps<T> = {
   searchPlaceholder?: string
   emptyLabel?: string
   disabled?: boolean
-  // Mode contrôlé optionnel : passer la clé sélectionnée pour l'utiliser comme
-  // champ de formulaire (ex. via <Controller> de react-hook-form). Le trigger
-  // affiche alors l'élément sélectionné ; `triggerLabel` sert de placeholder.
-  value?: string
 }
 
 export function Picker<T>({
@@ -42,10 +38,8 @@ export function Picker<T>({
   searchPlaceholder = 'Rechercher…',
   emptyLabel = 'Aucun résultat.',
   disabled = false,
-  value,
 }: PickerProps<T>) {
   const [open, setOpen] = useState(false)
-  const selected = value !== undefined ? items.find((item) => getKey(item) === value) : undefined
 
   return (
     <PopoverPrimitive.Root open={open} onOpenChange={setOpen}>
@@ -58,9 +52,7 @@ export function Picker<T>({
         )}
       >
         <Search className="size-4 shrink-0 text-text-muted" />
-        <span className={clsxm('flex-1 truncate', selected ? 'text-text' : 'text-text-subtle')}>
-          {selected ? renderItem(selected) : triggerLabel}
-        </span>
+        <span className="flex-1 truncate text-text-subtle">{triggerLabel}</span>
         <ChevronDown className="size-4 shrink-0 text-text-muted" />
       </PopoverPrimitive.Trigger>
 

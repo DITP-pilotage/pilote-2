@@ -4,7 +4,7 @@ import { fetchAllIndicateurs, fetchIndicateurById, fetchIndicateurs } from '@/ap
 
 export const indicateursAllQueryOptions = () =>
   queryOptions({
-    queryKey: ['indicateurs', 'all-pages'],
+    queryKey: ['indicateurs', 'all'],
     queryFn: () => fetchAllIndicateurs(),
   })
 
