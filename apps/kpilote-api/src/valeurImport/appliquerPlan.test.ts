@@ -66,7 +66,7 @@ describe('appliquerPlan — filtrage par type de valeur', () => {
     })
     expect(items).toEqual([])
     expect(warnings).toHaveLength(1)
-    expect(warnings[0].code).toBe('LIGNE_IGNOREE')
+    expect(warnings[0]?.code).toBe('LIGNE_IGNOREE')
   })
 
   it('sans typeValeur : comportement inchangé (toutes les lignes valides produisent un item)', () => {

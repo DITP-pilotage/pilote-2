@@ -1,4 +1,4 @@
-import { errAsync, ResultAsync } from 'neverthrow'
+import { errAsync, okAsync, ResultAsync } from 'neverthrow'
 
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
 import {
@@ -17,6 +17,11 @@ import {
   type ResolutionNonResolu,
   type ResoudreIndividusError,
 } from '@/valeurImport/calls/resoudreIndividus'
+import {
+  resoudreTypeValeur,
+  type ResoudreTypeValeurError,
+} from '@/valeurImport/calls/resoudreTypeValeur'
+import { collecterValeursDistinctes } from '@/valeurImport/helpers/collecterValeursDistinctes'
 import { safeStringify } from '@/valeurImport/helpers/safeStringify'
 import { listIndividusForIndicateur } from '@/valeurImport/queries/listIndividusForIndicateur'
 
@@ -31,6 +36,11 @@ export type NormaliserValeursImportResult = {
     totalLibellesSources: number
     totalLibellesMappes: number
     totalLibellesNonResolus: number
+  }
+  resolutionTypeValeur?: {
+    colonne: string
+    typesValeurDistincts: string[]
+    typesValeurRetenus: string[]
   }
 }
 
@@ -51,6 +61,11 @@ const mapResolutionError = (error: ResoudreIndividusError): NormaliserValeursImp
     return { type: 'RESOLUTION_ECHEC', derniereErreur: error.derniereErreur }
   return { type: 'ALBERT_UNAVAILABLE', cause: error.cause }
 }
+
+const mapTypeValeurError = (error: ResoudreTypeValeurError): NormaliserValeursImportError =>
+  error.type === 'ALBERT_NON_CONFIGURE'
+    ? { type: 'ALBERT_NON_CONFIGURE' }
+    : { type: 'ALBERT_UNAVAILABLE', cause: error.cause }
 
 const collectHeaders = (rows: ReadonlyArray<Record<string, unknown>>): string[] => {
   const seen = new Set<string>()
@@ -109,35 +124,66 @@ export const normaliserValeursImport = (
           }
           const plan = decouverte.plan
           const libellesSources = extraireLibellesSources(rows, plan.colonneIndividu)
-          return resoudreIndividus({
-            indicateur: { nom: indicateur.nom },
-            individusValides: individus,
-            libellesSources,
-          })
-            .mapErr(mapResolutionError)
-            .map((resolution) => {
-              const application = appliquerPlan({
-                plan,
-                rows,
-                resolution,
-                individusValides: individus,
-              })
-              return {
-                plan,
-                resolution: {
-                  mapping: [...resolution.mapping],
-                  nonResolus: [...resolution.nonResolus],
-                },
-                items: application.items,
-                warnings: application.warnings,
-                rapport: {
-                  totalLignes: rows.length,
-                  totalItemsProduits: application.items.length,
-                  totalLibellesSources: libellesSources.length,
-                  totalLibellesMappes: resolution.mapping.length,
-                  totalLibellesNonResolus: resolution.nonResolus.length,
-                },
-              }
+
+          // Passe 1b (conditionnelle) : résolution sémantique du type de valeur (fichiers PPG).
+          const colonneTypeValeur = plan.colonneTypeValeur
+          const etapeTypeValeur: ResultAsync<
+            NormaliserValeursImportResult['resolutionTypeValeur'] | null,
+            NormaliserValeursImportError
+          > = colonneTypeValeur
+            ? (() => {
+                const colonne = colonneTypeValeur.nom
+                const typesValeurDistincts = collecterValeursDistinctes({ rows, colonne })
+                return resoudreTypeValeur({ colonne, typesValeurDistincts })
+                  .mapErr(mapTypeValeurError)
+                  .map((res) => ({
+                    colonne,
+                    typesValeurDistincts,
+                    typesValeurRetenus: res.typesValeurRetenus,
+                  }))
+              })()
+            : okAsync(null)
+
+          return etapeTypeValeur.andThen((resolutionTypeValeur) =>
+            resoudreIndividus({
+              indicateur: { nom: indicateur.nom },
+              individusValides: individus,
+              libellesSources,
             })
+              .mapErr(mapResolutionError)
+              .map((resolution) => {
+                const application = appliquerPlan({
+                  plan,
+                  rows,
+                  resolution,
+                  individusValides: individus,
+                  ...(resolutionTypeValeur
+                    ? {
+                        typeValeur: {
+                          colonne: resolutionTypeValeur.colonne,
+                          typesValeurRetenus: resolutionTypeValeur.typesValeurRetenus,
+                        },
+                      }
+                    : {}),
+                })
+                return {
+                  plan,
+                  resolution: {
+                    mapping: [...resolution.mapping],
+                    nonResolus: [...resolution.nonResolus],
+                  },
+                  items: application.items,
+                  warnings: application.warnings,
+                  rapport: {
+                    totalLignes: rows.length,
+                    totalItemsProduits: application.items.length,
+                    totalLibellesSources: libellesSources.length,
+                    totalLibellesMappes: resolution.mapping.length,
+                    totalLibellesNonResolus: resolution.nonResolus.length,
+                  },
+                  ...(resolutionTypeValeur ? { resolutionTypeValeur } : {}),
+                }
+              }),
+          )
         }),
     )
