@@ -17,7 +17,7 @@ import { usePageFileDrop } from '@/components/import-valeurs/usePageFileDrop'
 import { BackLink } from '@/components/ui/BackLink'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
-import { FormField } from '@/components/ui/FormField'
+import { Field } from '@pilote/kpilote-ui/Field'
 import { Page } from '@/components/ui/Page'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
@@ -156,7 +156,7 @@ function IndicateurDetailComponent() {
       actions={actionsFiche}
       stickybar={
         <div className="max-w-md">
-          <FormField label="Individu" htmlFor={selectId}>
+          <Field label="Individu" htmlFor={selectId}>
             <IndividuSelect
               id={selectId}
               referentielIds={referentielIds}
@@ -169,7 +169,7 @@ function IndicateurDetailComponent() {
                 })
               }}
             />
-          </FormField>
+          </Field>
         </div>
       }
     >

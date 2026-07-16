@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { Button } from '@pilote/kpilote-ui/Button'
-import { FieldInput } from '@/components/ui/FieldInput'
+import { FieldInput } from '@pilote/kpilote-ui/FieldInput'
 import { useAppConfig } from '@/context/AppConfigContext'
 import { clsxm } from '@/lib/clsxm'
 

@@ -1,7 +1,7 @@
-import { SegmentedControl, type SegmentedControlOption } from '@pilote/kpilote-ui/SegmentedControl'
+import { SegmentedControl, type SegmentedControlOption } from './SegmentedControl'
 import { useId } from 'react'
 
-import { Field } from '@/components/ui/Field'
+import { Field } from './Field'
 
 // Variante « champ de formulaire » du SegmentedControl partagé : ajoute un label
 // (via Field) associé au groupe par aria-labelledby. Pour des choix courts et

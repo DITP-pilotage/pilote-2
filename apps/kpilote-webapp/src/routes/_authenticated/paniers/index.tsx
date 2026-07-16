@@ -12,7 +12,7 @@ import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
 import { PanierCard } from '@/components/paniers/PanierCard'
 import { CardGrid } from '@/components/ui/CardGrid'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
-import { FormField } from '@/components/ui/FormField'
+import { Field } from '@pilote/kpilote-ui/Field'
 import { Page } from '@/components/ui/Page'
 import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@/components/ui/Pagination'
 import { Text } from '@pilote/kpilote-ui/Typography'
@@ -79,7 +79,7 @@ function PaniersListComponent() {
         <>
           {search.individu ? (
             <div>
-              <FormField label="Individu" htmlFor={selectId}>
+              <Field label="Individu" htmlFor={selectId}>
                 <IndividuSelect
                   id={selectId}
                   referentielIds={referentielIds}
@@ -92,7 +92,7 @@ function PaniersListComponent() {
                     })
                   }}
                 />
-              </FormField>
+              </Field>
             </div>
           ) : (
             <div />

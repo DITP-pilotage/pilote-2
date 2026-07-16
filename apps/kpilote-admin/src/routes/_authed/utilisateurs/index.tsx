@@ -9,7 +9,7 @@ import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
-import { Table } from '@/components/ui/Table'
+import { Table } from '@pilote/kpilote-ui/Table'
 import { utilisateursInfiniteQueryOptions } from '@/queries/utilisateurs'
 import { session } from '@/session'
 

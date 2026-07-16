@@ -12,7 +12,7 @@ import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
 import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
 import { CardGrid } from '@/components/ui/CardGrid'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
-import { FormField } from '@/components/ui/FormField'
+import { Field } from '@pilote/kpilote-ui/Field'
 import { Page } from '@/components/ui/Page'
 import { SearchField } from '@/components/ui/SearchField'
 import { Text } from '@pilote/kpilote-ui/Typography'
@@ -71,7 +71,7 @@ function IndicateursListComponent() {
         <>
           {search.individu ? (
             <div>
-              <FormField label="Individu" htmlFor={selectId}>
+              <Field label="Individu" htmlFor={selectId}>
                 <IndividuSelect
                   id={selectId}
                   referentielIds={referentielIds}
@@ -84,7 +84,7 @@ function IndicateursListComponent() {
                     })
                   }}
                 />
-              </FormField>
+              </Field>
             </div>
           ) : (
             <div />

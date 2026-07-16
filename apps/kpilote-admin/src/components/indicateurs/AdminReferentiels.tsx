@@ -5,7 +5,7 @@ import { useFieldArray, useWatch, type UseFormRegister } from 'react-hook-form'
 import { ReferentielPicker } from '@/components/indicateurs/ReferentielPicker'
 import { useIndicateurFormContext } from '@/components/indicateurs/indicateurFormContext'
 import { type IndicateurFormValues } from '@/components/indicateurs/indicateurFormSchema'
-import { FieldSelect } from '@/components/ui/FieldSelect'
+import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
 import { referentielsAllQueryOptions } from '@/queries/referentiels'
 
 type FonctionAgregation = 'SUM' | 'AVG' | 'NONE'

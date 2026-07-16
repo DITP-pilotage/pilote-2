@@ -17,7 +17,7 @@ import { PanierTauxProgression } from '@/components/paniers/PanierTauxProgressio
 import { BackLink } from '@/components/ui/BackLink'
 import { CardGrid } from '@/components/ui/CardGrid'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
-import { FormField } from '@/components/ui/FormField'
+import { Field } from '@pilote/kpilote-ui/Field'
 import { Page } from '@/components/ui/Page'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
 import { Text } from '@pilote/kpilote-ui/Typography'
@@ -127,7 +127,7 @@ function PanierDetailComponent() {
       stickybar={
         search.individu ? (
           <div className="max-w-md">
-            <FormField label="Individu" htmlFor={selectId}>
+            <Field label="Individu" htmlFor={selectId}>
               <IndividuSelect
                 id={selectId}
                 referentielIds={referentielIds}
@@ -140,7 +140,7 @@ function PanierDetailComponent() {
                   })
                 }}
               />
-            </FormField>
+            </Field>
           </div>
         ) : undefined
       }

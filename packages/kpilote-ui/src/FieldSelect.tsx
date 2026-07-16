@@ -1,8 +1,8 @@
 import { ChevronDown } from 'lucide-react'
 import { useId, type ReactNode, type Ref, type SelectHTMLAttributes } from 'react'
 
-import { Field } from '@/components/ui/Field'
-import { clsxm } from '@/lib/clsxm'
+import { Field } from './Field'
+import { clsxm } from './clsxm'
 
 export type FieldSelectProps = SelectHTMLAttributes<HTMLSelectElement> & {
   label: string

@@ -17,11 +17,11 @@ import {
   type IndicateurFormValues,
 } from '@/components/indicateurs/indicateurFormSchema'
 import { Button } from '@pilote/kpilote-ui/Button'
-import { Field } from '@/components/ui/Field'
-import { FieldInput } from '@/components/ui/FieldInput'
-import { FieldSelect } from '@/components/ui/FieldSelect'
-import { FieldTextarea } from '@/components/ui/FieldTextarea'
-import { SegmentedField } from '@/components/ui/SegmentedField'
+import { Field } from '@pilote/kpilote-ui/Field'
+import { FieldInput } from '@pilote/kpilote-ui/FieldInput'
+import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
+import { FieldTextarea } from '@pilote/kpilote-ui/FieldTextarea'
+import { SegmentedField } from '@pilote/kpilote-ui/SegmentedField'
 import { useAppConfig } from '@/context/AppConfigContext'
 
 const VISIBILITE_OPTIONS = [

@@ -52,6 +52,34 @@
     "./SegmentedControl": {
       "types": "./src/SegmentedControl.tsx",
       "default": "./src/SegmentedControl.tsx"
+    },
+    "./Table": {
+      "types": "./src/Table.tsx",
+      "default": "./src/Table.tsx"
+    },
+    "./Field": {
+      "types": "./src/Field.tsx",
+      "default": "./src/Field.tsx"
+    },
+    "./FieldInput": {
+      "types": "./src/FieldInput.tsx",
+      "default": "./src/FieldInput.tsx"
+    },
+    "./FieldSelect": {
+      "types": "./src/FieldSelect.tsx",
+      "default": "./src/FieldSelect.tsx"
+    },
+    "./FieldTextarea": {
+      "types": "./src/FieldTextarea.tsx",
+      "default": "./src/FieldTextarea.tsx"
+    },
+    "./Select": {
+      "types": "./src/Select.tsx",
+      "default": "./src/Select.tsx"
+    },
+    "./SegmentedField": {
+      "types": "./src/SegmentedField.tsx",
+      "default": "./src/SegmentedField.tsx"
     }
   },
   "files": [

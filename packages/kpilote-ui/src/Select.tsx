@@ -2,7 +2,7 @@ import { Select as SelectPrimitive } from 'radix-ui'
 import { ChevronDown } from 'lucide-react'
 import type { ComponentProps } from 'react'
 
-import { clsxm } from '@/lib/clsxm'
+import { clsxm } from './clsxm'
 
 export const Select = SelectPrimitive.Root
 export const SelectValue = SelectPrimitive.Value

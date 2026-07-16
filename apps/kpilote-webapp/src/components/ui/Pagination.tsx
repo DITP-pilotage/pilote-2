@@ -8,7 +8,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/Select'
+} from '@pilote/kpilote-ui/Select'
 import { clsxm } from '@/lib/clsxm'
 
 export const DEFAULT_PAGE_SIZE_OPTIONS = [20, 50, 100] as const

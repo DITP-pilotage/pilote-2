@@ -1,7 +1,7 @@
 import { useId, type InputHTMLAttributes, type Ref } from 'react'
 
-import { Field } from '@/components/ui/Field'
-import { clsxm } from '@/lib/clsxm'
+import { Field } from './Field'
+import { clsxm } from './clsxm'
 
 export type FieldInputProps = InputHTMLAttributes<HTMLInputElement> & {
   label: string
