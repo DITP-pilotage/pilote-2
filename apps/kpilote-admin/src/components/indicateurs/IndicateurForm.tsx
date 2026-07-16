@@ -16,7 +16,7 @@ import {
   buildIndicateurFormSchema,
   type IndicateurFormValues,
 } from '@/components/indicateurs/indicateurFormSchema'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@pilote/kpilote-ui/Button'
 import { Field } from '@/components/ui/Field'
 import { FieldInput } from '@/components/ui/FieldInput'
 import { FieldSelect } from '@/components/ui/FieldSelect'
@@ -209,7 +209,7 @@ export function IndicateurForm({
           <Button
             type="submit"
             disabled={!form.formState.isValid || pending}
-            className={isProd ? 'bg-accent hover:bg-accent' : undefined}
+            className={isProd ? 'bg-accent-rouge hover:bg-accent-rouge' : undefined}
           >
             {pending ? 'Enregistrement…' : isProd ? '🚨 Enregistrer en Prod' : 'Enregistrer'}
           </Button>

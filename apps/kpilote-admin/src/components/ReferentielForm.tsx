@@ -1,7 +1,7 @@
 import { Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
-import { Button } from '@/components/ui/Button'
+import { Button } from '@pilote/kpilote-ui/Button'
 import { clsxm } from '@/lib/clsxm'
 
 type IndividuItem = { publicId: string; nom: string }
@@ -70,7 +70,7 @@ export function ReferentielForm({
 
         <div className="mb-5">
           <label className="mb-1.5 block text-xs font-semibold">
-            Nom <span className="text-accent">*</span>
+            Nom <span className="text-accent-rouge">*</span>
           </label>
           <input
             value={values.nom}
@@ -126,7 +126,7 @@ export function ReferentielForm({
               <button
                 type="button"
                 onClick={() => removeIndividu(index)}
-                className="text-accent"
+                className="text-accent-rouge"
                 aria-label="Retirer"
               >
                 <Trash2 className="size-4" />
@@ -144,7 +144,7 @@ export function ReferentielForm({
           type="button"
           disabled={!canSubmit || pending}
           onClick={() => onSubmit(values)}
-          className={clsxm(isProd && 'bg-accent hover:bg-accent')}
+          className={clsxm(isProd && 'bg-accent-rouge hover:bg-accent-rouge')}
         >
           {pending ? 'Enregistrement…' : isProd ? '🚨 Enregistrer en Prod' : 'Enregistrer'}
         </Button>

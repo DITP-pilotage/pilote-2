@@ -5,7 +5,7 @@ import {
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { createNiveauConfiance, updateNiveauConfiance } from '@/api/niveauConfiance'
-import { useToast } from '@/components/ui/Toast'
+import { useToast } from '@pilote/kpilote-ui/Toast'
 import { niveauConfianceKeys, niveauConfiancePanierKeys } from '@/queries/niveauConfiance'
 
 function useEnregistrerNiveauConfianceInterne(invalider: () => Promise<void>) {

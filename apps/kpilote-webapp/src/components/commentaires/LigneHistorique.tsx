@@ -8,7 +8,7 @@ import {
   couleurIndice,
   niveauConfianceFromIndice,
 } from '@/components/commentaires/niveauConfianceAffichage'
-import { Text } from '@/components/ui/Typography'
+import { Text } from '@pilote/kpilote-ui/Typography'
 import { clsxm } from '@/lib/clsxm'
 import { formatDateHeureFr } from '@/lib/format'
 

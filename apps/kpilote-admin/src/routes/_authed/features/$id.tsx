@@ -8,7 +8,7 @@ import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { UtilisateurPicker } from '@/components/UtilisateurPicker'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
-import { useToast } from '@/components/ui/Toast'
+import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { featureQueryOptions, useModifierEtatFeatureMutation } from '@/queries/feature'
 import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
@@ -142,7 +142,7 @@ function FeatureDetailComponent() {
                     aria-label={`Retirer ${utilisateur.prenom} ${utilisateur.nom}`}
                     disabled={utilisateursMutation.isPending}
                     onClick={() => retirer(utilisateur.id)}
-                    className="shrink-0 rounded-md p-1.5 text-text-muted hover:bg-accent/10 hover:text-accent disabled:opacity-50"
+                    className="shrink-0 rounded-md p-1.5 text-text-muted hover:bg-accent-rouge/10 hover:text-accent-rouge disabled:opacity-50"
                   >
                     <Trash2 className="size-4" />
                   </button>

@@ -11,7 +11,7 @@ import {
   type PanierCommentaireType,
   updateCommentaire,
 } from '@/api/commentaires'
-import { useToast } from '@/components/ui/Toast'
+import { useToast } from '@pilote/kpilote-ui/Toast'
 import { commentairesKeys, commentairesPanierKeys } from '@/queries/commentaires'
 import { niveauConfianceKeys, niveauConfiancePanierKeys } from '@/queries/niveauConfiance'
 

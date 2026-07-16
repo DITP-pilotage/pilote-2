@@ -40,11 +40,11 @@ export function Field({
         className={clsxm('mb-1.5 block text-xs font-semibold', hideLabel && 'sr-only')}
       >
         {label}
-        {required ? <span className="text-accent"> *</span> : null}
+        {required ? <span className="text-accent-rouge"> *</span> : null}
         {hint ? <span className="ml-2 text-xs font-normal text-text-muted">{hint}</span> : null}
       </label>
       {children}
-      {error ? <p className="mt-1 text-xs text-accent">{error}</p> : null}
+      {error ? <p className="mt-1 text-xs text-accent-rouge">{error}</p> : null}
     </div>
   )
 }

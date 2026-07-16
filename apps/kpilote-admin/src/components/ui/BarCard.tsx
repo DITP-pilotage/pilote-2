@@ -28,11 +28,13 @@ export function BarCard({
       className={clsxm(
         'group flex w-full max-w-[280px] flex-col overflow-hidden border bg-surface text-left',
         'transition-all duration-150 hover:-translate-y-0.5',
-        danger ? 'border-[#f0d2d2] hover:border-accent' : 'border-border hover:border-primary',
+        danger
+          ? 'border-[#f0d2d2] hover:border-accent-rouge'
+          : 'border-border hover:border-primary',
       )}
     >
       {topRibbon ? (
-        <div className="flex items-center justify-center gap-1.5 bg-accent px-2 py-1.5 text-[10px] font-extrabold uppercase tracking-wide text-white">
+        <div className="flex items-center justify-center gap-1.5 bg-accent-rouge px-2 py-1.5 text-[10px] font-extrabold uppercase tracking-wide text-white">
           {topRibbon}
         </div>
       ) : (
@@ -45,9 +47,9 @@ export function BarCard({
             danger ? 'bg-[#fdecec]' : 'bg-surface-tinted',
           )}
         >
-          <Icon className={clsxm('size-6', danger ? 'text-accent' : 'text-primary')} />
+          <Icon className={clsxm('size-6', danger ? 'text-accent-rouge' : 'text-primary')} />
         </span>
-        <span className={clsxm('mt-4 text-lg font-extrabold', danger && 'text-accent')}>
+        <span className={clsxm('mt-4 text-lg font-extrabold', danger && 'text-accent-rouge')}>
           {title}
         </span>
         <span
@@ -60,9 +62,9 @@ export function BarCard({
         </span>
       </div>
       <div className="flex justify-end px-6 pb-4 pt-6">
-        <ArrowRight className={clsxm('size-5', danger ? 'text-accent' : 'text-primary')} />
+        <ArrowRight className={clsxm('size-5', danger ? 'text-accent-rouge' : 'text-primary')} />
       </div>
-      <div className={clsxm('h-[5px]', danger ? 'bg-accent' : 'bg-primary')} />
+      <div className={clsxm('h-[5px]', danger ? 'bg-accent-rouge' : 'bg-primary')} />
     </button>
   )
 }

@@ -10,7 +10,7 @@ import { type ResponsableApiModel } from '@pilote/kpilote-shared/responsable'
 
 import { DescriptionList } from '@/components/ui/DescriptionList'
 import { ResponsablesList } from '@/components/ui/ResponsablesList'
-import { Heading } from '@/components/ui/Typography'
+import { Heading } from '@pilote/kpilote-ui/Typography'
 import { formatDateTimeFr, formatMoisAnneeLongFr } from '@/lib/format'
 
 const VALEUR_VIDE = '—'

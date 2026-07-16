@@ -5,7 +5,7 @@ import type { ReactNode } from 'react'
 import { useState } from 'react'
 
 import { clsxm } from './clsxm'
-import { searchUnaccent } from './searchUnaccent'
+import { searchUnaccent } from '@pilote/kpilote-shared/texte'
 
 // Filtre par sous-chaîne insensible à la casse ET aux accents, prévisible plutôt
 // que le scoring fuzzy par défaut de cmdk. `getSearchText` peut donc renvoyer le

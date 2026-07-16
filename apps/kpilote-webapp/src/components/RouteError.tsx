@@ -3,8 +3,8 @@ import { Link } from '@tanstack/react-router'
 import { HTTPError } from 'ky'
 
 import { BackLink } from '@/components/ui/BackLink'
-import { Button } from '@/components/ui/Button'
-import { EmptyState } from '@/components/ui/EmptyState'
+import { Button } from '@pilote/kpilote-ui/Button'
+import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Section } from '@/components/ui/Section'
 
 const isNotFoundError = (error: Error): boolean => {

@@ -6,9 +6,9 @@ import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfi
 import { CarteCommentaire } from '@/components/commentaires/CarteCommentaire'
 import { EditeurCommentaire } from '@/components/commentaires/EditeurCommentaire'
 import { LigneHistorique } from '@/components/commentaires/LigneHistorique'
-import { Button } from '@/components/ui/Button'
-import { EmptyState } from '@/components/ui/EmptyState'
-import { Text } from '@/components/ui/Typography'
+import { Button } from '@pilote/kpilote-ui/Button'
+import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { Text } from '@pilote/kpilote-ui/Typography'
 
 function Intitule({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (

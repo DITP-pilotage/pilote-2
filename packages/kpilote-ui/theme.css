@@ -60,6 +60,15 @@
   --color-success-tinted: #e3fbe9;
   --color-warning: #b34000;
   --color-warning-tinted: #fff4e6;
+  --color-error: #ce0500;
+  --color-error-tinted: #fff4f3;
+
+  /* Couleurs décoratives DSFR — tons foncés lisibles (texte blanc sur plein /
+   * texte coloré sur fond clair). Servent d'échelle d'état intermédiaire. */
+  --color-orange-terre-battue: #c44d00;
+  --color-orange-terre-battue-tinted: #fff6f0;
+  --color-yellow-tournesol: #946700;
+  --color-yellow-tournesol-tinted: #fdf9ea;
 
   /* Display type scale */
   --text-display-xl: 4.5rem; /* 72px */
@@ -81,6 +90,40 @@
   --text-display-sm--line-height: 1.2;
   --text-display-sm--letter-spacing: -0.01em;
   --text-display-sm--font-weight: 700;
+
+  /* Animations Collapsible (radix expose --radix-collapsible-content-height). */
+  --animate-collapsible-down: collapsible-down 220ms ease-out;
+  --animate-collapsible-up: collapsible-up 220ms ease-out;
+
+  @keyframes collapsible-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-collapsible-content-height);
+    }
+  }
+
+  @keyframes collapsible-up {
+    from {
+      height: var(--radix-collapsible-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+/* Apparition douce (utilisée via animate-[fadeInUp_...]). */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 @layer base {

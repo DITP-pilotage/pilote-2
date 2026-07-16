@@ -5,7 +5,7 @@ import { createRoot } from 'react-dom/client'
 
 import { auth } from '@/auth'
 import { ImportModalProvider } from '@/components/import-valeurs/ImportModalProvider'
-import { ToastProvider } from '@/components/ui/Toast'
+import { ToastProvider } from '@pilote/kpilote-ui/Toast'
 import '@/index.css'
 import { routeTree } from '@/routeTree.gen'
 

@@ -2,7 +2,7 @@ import { Slot as SlotPrimitive } from 'radix-ui'
 import { ArrowUpRight } from 'lucide-react'
 import type { ComponentProps, ReactNode } from 'react'
 
-import { Heading, Text } from '@/components/ui/Typography'
+import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 import { clsxm } from '@/lib/clsxm'
 
 type EntityCardProps = Omit<ComponentProps<'div'>, 'title'> & {

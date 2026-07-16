@@ -3,7 +3,7 @@ import { type ResponsableApiModel } from '@pilote/kpilote-shared/responsable'
 
 import { PanierContactsUtiles } from '@/components/paniers/PanierContactsUtiles'
 import { ResponsablesList } from '@/components/ui/ResponsablesList'
-import { Heading } from '@/components/ui/Typography'
+import { Heading } from '@pilote/kpilote-ui/Typography'
 
 export function PanierGouvernanceTab({
   responsables,

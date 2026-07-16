@@ -1,7 +1,7 @@
 import { UNITES_INDICATEUR, UNITES_INDICATEUR_CONFIG } from '@pilote/kpilote-shared/indicateur'
 
 import { Field } from '@/components/ui/Field'
-import { Picker } from '@/components/ui/Picker'
+import { Picker } from '@pilote/kpilote-ui/Picker'
 
 type UniteItem = { code: string; libelle: string }
 

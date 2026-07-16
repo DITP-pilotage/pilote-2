@@ -5,7 +5,7 @@ import { upsertReferentiel } from '@/api/referentiels'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { ReferentielForm, type ReferentielFormValues } from '@/components/ReferentielForm'
-import { useToast } from '@/components/ui/Toast'
+import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { useAppConfig } from '@/context/AppConfigContext'
 

@@ -1,7 +1,7 @@
 import { Link } from '@tanstack/react-router'
 import { KeyRound, TriangleAlert } from 'lucide-react'
 
-import { Marianne } from '@/components/ui/Marianne'
+import { Marianne } from '@pilote/kpilote-ui/Marianne'
 import { clsxm } from '@/lib/clsxm'
 import type { SessionState } from '@/session'
 
@@ -33,7 +33,7 @@ export function AdminHeader({
             <span
               className={clsxm(
                 'flex items-center gap-1 rounded-full px-3 py-1 font-extrabold uppercase tracking-wide',
-                isProd ? 'bg-accent text-white' : 'border border-border text-text-muted',
+                isProd ? 'bg-accent-rouge text-white' : 'border border-border text-text-muted',
               )}
             >
               {isProd ? <TriangleAlert className="size-3" /> : null}

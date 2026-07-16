@@ -971,6 +971,10 @@ importers:
         version: 3.8.3
 
   packages/kpilote-ui:
+    dependencies:
+      '@pilote/kpilote-shared':
+        specifier: workspace:*
+        version: link:../kpilote-shared
     devDependencies:
       '@types/react':
         specifier: ^19.2.14

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { Picker } from '@/components/ui/Picker'
+import { Picker } from '@pilote/kpilote-ui/Picker'
 import { clsxm } from '@/lib/clsxm'
 import type { OpenapiEndpoint } from '@/queries/console'
 import { openapiEndpointsQueryOptions } from '@/queries/console'
@@ -24,7 +24,7 @@ export function EndpointPicker({ onSelect }: { onSelect: (endpoint: OpenapiEndpo
             <span
               className={clsxm(
                 'w-14 shrink-0 text-xs font-bold',
-                endpoint.method === 'GET' ? 'text-primary' : 'text-accent',
+                endpoint.method === 'GET' ? 'text-primary' : 'text-accent-rouge',
               )}
             >
               {endpoint.method}

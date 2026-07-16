@@ -1,7 +1,7 @@
 import { Plus, Trash2 } from 'lucide-react'
 
 import type { HeaderPair } from '@/api/console'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@pilote/kpilote-ui/Button'
 
 export function HeadersEditor({
   headers,
@@ -41,7 +41,7 @@ export function HeadersEditor({
             type="button"
             onClick={() => remove(index)}
             aria-label="Supprimer l'en-tête"
-            className="text-text-muted hover:text-accent"
+            className="text-text-muted hover:text-accent-rouge"
           >
             <Trash2 className="size-4" />
           </button>

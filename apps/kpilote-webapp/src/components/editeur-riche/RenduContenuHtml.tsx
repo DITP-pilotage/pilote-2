@@ -1,6 +1,6 @@
 import DOMPurify from 'dompurify'
 
-import { Text } from '@/components/ui/Typography'
+import { Text } from '@pilote/kpilote-ui/Typography'
 import { clsxm } from '@/lib/clsxm'
 
 const classesRendu =

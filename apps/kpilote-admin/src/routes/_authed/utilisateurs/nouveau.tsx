@@ -5,7 +5,7 @@ import { createUtilisateur } from '@/api/utilisateurs'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { UtilisateurForm, type UtilisateurFormValues } from '@/components/UtilisateurForm'
-import { useToast } from '@/components/ui/Toast'
+import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 
 export const Route = createFileRoute('/_authed/utilisateurs/nouveau')({

@@ -3,7 +3,7 @@ import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
-import { ToastProvider } from '@/components/ui/Toast'
+import { ToastProvider } from '@pilote/kpilote-ui/Toast'
 import '@/index.css'
 import { routeTree } from '@/routeTree.gen'
 import { session } from '@/session'

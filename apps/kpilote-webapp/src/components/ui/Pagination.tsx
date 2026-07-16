@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useId } from 'react'
 
-import { Button } from '@/components/ui/Button'
+import { Button } from '@pilote/kpilote-ui/Button'
 import {
   Select,
   SelectContent,

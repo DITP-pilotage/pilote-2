@@ -5,7 +5,7 @@ import { Suspense, useState, type ReactNode } from 'react'
 import { CommandPalette } from '@/components/command-palette/CommandPalette'
 import { RaccourciKbd } from '@/components/command-palette/RaccourciKbd'
 import { UserMenu } from '@/components/UserMenu'
-import { Button } from '@/components/ui/Button'
+import { Button } from '@pilote/kpilote-ui/Button'
 import type { Auth } from '@/auth'
 
 /**

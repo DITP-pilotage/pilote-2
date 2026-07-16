@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { Button } from '@/components/ui/Button'
+import { Button } from '@pilote/kpilote-ui/Button'
 import { FieldInput } from '@/components/ui/FieldInput'
 import { useAppConfig } from '@/context/AppConfigContext'
 import { clsxm } from '@/lib/clsxm'
@@ -122,7 +122,7 @@ export function UtilisateurForm({
         <Button
           type="submit"
           disabled={!isValid || pending}
-          className={clsxm(isProd && 'bg-accent hover:bg-accent')}
+          className={clsxm(isProd && 'bg-accent-rouge hover:bg-accent-rouge')}
         >
           {submitLabel}
         </Button>

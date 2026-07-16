@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { Heading, Text } from '@/components/ui/Typography'
+import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 import { clsxm } from '@/lib/clsxm'
 
 type Tone = 'neutral' | 'positive' | 'negative' | 'muted' | 'primary'

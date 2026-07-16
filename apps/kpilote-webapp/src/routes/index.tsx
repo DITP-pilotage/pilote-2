@@ -2,9 +2,9 @@ import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { ArrowRight, BarChart3, ShoppingBasket } from 'lucide-react'
 import type { ReactNode } from 'react'
 
-import { Button } from '@/components/ui/Button'
+import { Button } from '@pilote/kpilote-ui/Button'
 import { Section } from '@/components/ui/Section'
-import { Heading, Text } from '@/components/ui/Typography'
+import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 
 export const Route = createFileRoute('/')({
   beforeLoad: ({ context }) => {

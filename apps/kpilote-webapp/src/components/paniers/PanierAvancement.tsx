@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { ProgressBar } from '@/components/ui/ProgressBar'
-import { Text } from '@/components/ui/Typography'
+import { Text } from '@pilote/kpilote-ui/Typography'
 import { formatNumberFr } from '@/lib/format'
 import { panierTauxProgressionIndividuQueryOptions } from '@/queries/panierTauxProgression'
 

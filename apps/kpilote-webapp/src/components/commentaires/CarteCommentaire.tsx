@@ -13,7 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu'
-import { Text } from '@/components/ui/Typography'
+import { Text } from '@pilote/kpilote-ui/Typography'
 import { auth } from '@/auth'
 import { clsxm } from '@/lib/clsxm'
 import { formatDateHeureFr } from '@/lib/format'

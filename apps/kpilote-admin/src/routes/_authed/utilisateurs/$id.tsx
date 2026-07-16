@@ -8,7 +8,7 @@ import { PageHeading } from '@/components/PageHeading'
 import { PrincipalPermissions } from '@/components/PrincipalPermissions'
 import { TabNav } from '@/components/ui/TabNav'
 import { UtilisateurForm, type UtilisateurFormValues } from '@/components/UtilisateurForm'
-import { useToast } from '@/components/ui/Toast'
+import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { indicateursAllQueryOptions } from '@/queries/indicateurs'
 import { paniersAllQueryOptions } from '@/queries/paniers'
@@ -92,7 +92,7 @@ function EditUtilisateurComponent() {
             onSubmit={(values) => mutation.mutate(values)}
           />
         ) : (
-          <p className="text-sm font-medium text-accent">Utilisateur introuvable.</p>
+          <p className="text-sm font-medium text-accent-rouge">Utilisateur introuvable.</p>
         )
       ) : (
         <div>

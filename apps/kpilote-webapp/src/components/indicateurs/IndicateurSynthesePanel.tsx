@@ -3,7 +3,7 @@ import { useSuspenseQueries } from '@tanstack/react-query'
 
 import { IndicateurProgression } from '@/components/indicateurs/IndicateurProgression'
 import { Pill } from '@/components/ui/Pill'
-import { Heading, Text } from '@/components/ui/Typography'
+import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 import { clsxm } from '@/lib/clsxm'
 import {
   formatDateFr,

@@ -3,19 +3,3 @@
 
 /* Scanne les composants partagés (@pilote/kpilote-ui) pour ne pas purger leurs classes. */
 @source '../../../packages/kpilote-ui/src';
-
-@theme {
-  /* Accent spécifique admin (alias historique de accent-rouge) */
-  --color-accent: #c9191e;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}

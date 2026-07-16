@@ -9,10 +9,6 @@
       "types": "./src/clsxm.ts",
       "default": "./src/clsxm.ts"
     },
-    "./searchUnaccent": {
-      "types": "./src/searchUnaccent.ts",
-      "default": "./src/searchUnaccent.ts"
-    },
     "./Button": {
       "types": "./src/Button.tsx",
       "default": "./src/Button.tsx"
@@ -62,6 +58,9 @@
     "lint": "prettier --check .",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "@pilote/kpilote-shared": "workspace:*"
   },
   "peerDependencies": {
     "class-variance-authority": "^0.7.1",

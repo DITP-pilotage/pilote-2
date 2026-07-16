@@ -8,11 +8,11 @@ import { useState } from 'react'
 import { revokeApiKey } from '@/api/apiKeys'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
-import { Button } from '@/components/ui/Button'
-import { EmptyState } from '@/components/ui/EmptyState'
+import { Button } from '@pilote/kpilote-ui/Button'
+import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Table } from '@/components/ui/Table'
 import { clickableRowProps, stopRowActivation } from '@/lib/clickableRow'
-import { useToast } from '@/components/ui/Toast'
+import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { useAppConfig } from '@/context/AppConfigContext'
 import { apiKeysQueryOptions } from '@/queries/apiKeys'
@@ -30,7 +30,7 @@ const STATUS_LABEL: Record<ApiKeyApiModel['status'], string> = {
 const STATUS_CLASS: Record<ApiKeyApiModel['status'], string> = {
   active: 'font-semibold text-primary',
   expired: 'text-text-muted',
-  revoked: 'text-accent',
+  revoked: 'text-accent-rouge',
 }
 
 function ApiKeysListComponent() {
@@ -68,7 +68,7 @@ function ApiKeysListComponent() {
         subtitle={
           <>
             {items.length} clé{items.length > 1 ? 's' : ''} · environnement{' '}
-            <b className={isProd ? 'text-accent' : undefined}>{environment}</b>
+            <b className={isProd ? 'text-accent-rouge' : undefined}>{environment}</b>
           </>
         }
         action={
@@ -81,7 +81,7 @@ function ApiKeysListComponent() {
       />
 
       {query.isError ? (
-        <p className="mb-4 text-sm font-medium text-accent">
+        <p className="mb-4 text-sm font-medium text-accent-rouge">
           Impossible de charger les clés API. Une clé de session de rôle ADMIN est requise.
         </p>
       ) : null}
@@ -133,7 +133,7 @@ function ApiKeysListComponent() {
                         type="button"
                         disabled={revokeMutation.isPending}
                         onClick={() => revokeMutation.mutate(apiKey.id)}
-                        className="border-accent bg-accent text-primary-foreground hover:bg-accent"
+                        className="border-accent-rouge bg-accent-rouge text-primary-foreground hover:bg-accent-rouge"
                       >
                         Confirmer
                       </Button>
