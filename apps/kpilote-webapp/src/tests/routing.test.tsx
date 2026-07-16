@@ -64,6 +64,13 @@ describe('routing', () => {
     })
   })
 
+  it("redirige vers /indicateurs si l'utilisateur est authentifié et accède à /", async () => {
+    renderAt('/', stubAuth({ userId: 'sub-1', prenom: 'Admin', nom: 'DITP' }))
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { level: 1, name: 'Tableau de bord' })).toBeInTheDocument()
+    })
+  })
+
   it('ne rend pas /indicateurs sans être authentifié (le beforeLoad bloque le rendu)', async () => {
     renderAt('/indicateurs', stubAuth(null))
     await new Promise((resolve) => setTimeout(resolve, 50))

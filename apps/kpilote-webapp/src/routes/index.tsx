@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect } from '@tanstack/react-router'
 import { ArrowRight, BarChart3, ShoppingBasket } from 'lucide-react'
 import type { ReactNode } from 'react'
 
@@ -7,6 +7,11 @@ import { Section } from '@/components/ui/Section'
 import { Heading, Text } from '@/components/ui/Typography'
 
 export const Route = createFileRoute('/')({
+  beforeLoad: ({ context }) => {
+    if (context.auth.isAuthenticated) {
+      throw redirect({ to: '/indicateurs', search: {} })
+    }
+  },
   component: HomeComponent,
 })
 
