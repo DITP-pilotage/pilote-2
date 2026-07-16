@@ -1,11 +1,13 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { indicateurPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
-import { normaliserValeursImportResponseApiModelSchema } from '@pilote/kpilote-shared/valeurImport'
+import {
+  normaliserErrorApiModelSchema,
+  normaliserValeursImportResponseApiModelSchema,
+} from '@pilote/kpilote-shared/valeurImport'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { ErrorApiModelSchema } from '@/framework/openapi/responses'
 import { normaliserValeursImport } from '@/valeurImport/commands/normaliserValeursImport'
 
 const MAX_ROWS = 1000
@@ -23,6 +25,7 @@ const NormaliserBodySchema = normaliserBodySchema.openapi('NormaliserValeursImpo
 const NormaliserResponseSchema = normaliserValeursImportResponseApiModelSchema.openapi(
   'NormaliserValeursImportResponse',
 )
+const NormaliserErrorSchema = normaliserErrorApiModelSchema.openapi('NormaliserValeursImportError')
 
 const normaliserRoute = createRoute({
   method: 'post',
@@ -48,7 +51,7 @@ const normaliserRoute = createRoute({
       description: 'Triplets normalisés + résolution + warnings + rapport.',
     },
     422: {
-      content: { 'application/json': { schema: ErrorApiModelSchema } },
+      content: { 'application/json': { schema: NormaliserErrorSchema } },
       description:
         "Albert n'a pas su structurer le fichier (`PLAN_ECHEC`) ou résoudre les individus " +
         '(`RESOLUTION_ECHEC`).',
@@ -78,7 +81,7 @@ valeurImportRoutes.openapi(normaliserRoute, async (context) => {
             message: error.explication,
             details: { raison: error.raison, explication: error.explication },
           },
-          schema: ErrorApiModelSchema,
+          schema: NormaliserErrorSchema,
           status: 422,
         })
       }
@@ -89,7 +92,7 @@ valeurImportRoutes.openapi(normaliserRoute, async (context) => {
           code: 'RESOLUTION_ECHEC',
           message: "Albert n'a pas fourni de mapping valide après plusieurs tentatives.",
         },
-        schema: ErrorApiModelSchema,
+        schema: NormaliserErrorSchema,
         status: 422,
       })
     },

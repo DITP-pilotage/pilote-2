@@ -1,19 +1,20 @@
-import { useState, type ChangeEvent, type DragEvent } from 'react'
-import { Upload } from 'lucide-react'
+import { useState } from 'react'
+import { Loader2 } from 'lucide-react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useQuery } from '@tanstack/react-query'
-import type { NormaliserValeursImportResponseApiModel } from '@pilote/kpilote-shared/valeurImport'
 import { ModaleForm } from '@pilote/kpilote-ui/ModaleForm'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { ImportError } from '@/api/valeursImport'
 import { useImportValeursBatch } from '@/mutations/valeursImport'
+import { normaliserValeursQueryOptions } from '@/queries/valeursNormaliser'
 import { parseFichierValeurs, type ParseResult } from './parseFichierValeurs'
-import { AlbertFallback } from './AlbertFallback'
 import { traduireErreursBatch, traduireIssuesValidation } from './traduireErreursBatch'
-import { ImportPreviewTable } from './ImportPreviewTable'
-import { NormalisationReviewView } from './NormalisationReviewView'
+import { EncadreMessage } from './EncadreMessage'
+import { ImportDropZone } from './ImportDropZone'
+import { ImportFormatValide } from './ImportFormatValide'
+import { NormalisationRevue } from './NormalisationRevue'
 import type { ImportTarget } from './useImportModal'
 
 const schema = z.object({
@@ -45,7 +46,6 @@ export function ImportValeursModal({
   const toast = useToast()
   const mutation = useImportValeursBatch({ indicateurId: target.indicateur.id })
   const [erreursServeur, setErreursServeur] = useState<string[]>([])
-  const [revue, setRevue] = useState<NormaliserValeursImportResponseApiModel | null>(null)
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -66,28 +66,27 @@ export function ImportValeursModal({
 
   const parseResult = parseQuery.data
   const rows = parseResult?.ok ? parseResult.rows : null
-  // Sur MISSING_COLUMNS : extraction assistée par Albert via <AlbertFallback>,
-  // qui remonte la revue ici (setRevue) en cas de succès.
+
+  // Fichier hors format standard (colonnes manquantes) → extraction assistée par
+  // Albert. La query est désactivée (skipToken) tant qu'aucun tel fichier n'est
+  // détecté, donc `revue` se réinitialise seul au changement de fichier.
   const fichierHorsFormat =
     file && parseResult && !parseResult.ok && parseResult.error.code === 'MISSING_COLUMNS'
       ? { file, message: messageParseError(parseResult) }
       : null
 
+  const albertQuery = useQuery(
+    normaliserValeursQueryOptions({
+      indicateurId: target.indicateur.id,
+      file: fichierHorsFormat?.file ?? null,
+    }),
+  )
+  const revue = albertQuery.data?.isOk() ? albertQuery.data.value : null
+  const albertEchec = albertQuery.data?.isErr() === true || albertQuery.isError
+
   const onFileChange = (newFile: File) => {
     form.setValue('file', newFile, { shouldValidate: true })
     setErreursServeur([])
-    setRevue(null)
-  }
-
-  const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const picked = event.target.files?.[0]
-    if (picked) onFileChange(picked)
-  }
-
-  const onDrop = (event: DragEvent<HTMLLabelElement>) => {
-    event.preventDefault()
-    const dropped = event.dataTransfer.files?.[0]
-    if (dropped) onFileChange(dropped)
   }
 
   const genericToast = () => {
@@ -133,6 +132,44 @@ export function ImportValeursModal({
       ? `Importer ${payload.length} valeur${payload.length > 1 ? 's' : ''}`
       : 'Importer'
 
+  const encadreChargement = (texte: string) => (
+    <EncadreMessage>
+      <span className="flex items-center gap-2">
+        <Loader2 className="size-4 animate-spin" />
+        {texte}
+      </span>
+    </EncadreMessage>
+  )
+
+  const body = () => {
+    if (revue) return <NormalisationRevue revue={revue} erreursServeur={erreursServeur} />
+    if (rows)
+      return (
+        <ImportFormatValide nomFichier={file?.name} rows={rows} erreursServeur={erreursServeur} />
+      )
+
+    // Traitement en cours : on masque la zone de dépôt, seul le statut s'affiche.
+    if (file && parseQuery.isPending) return encadreChargement('Analyse du fichier en cours…')
+    if (fichierHorsFormat && !albertEchec)
+      return encadreChargement('Format non standard détecté — extraction assistée par IA en cours…')
+
+    // Sinon : zone de dépôt, avec un message d'erreur éventuel pour re-déposer.
+    return (
+      <>
+        <ImportDropZone onFile={onFileChange} />
+        {messageErreurSaisie()}
+      </>
+    )
+  }
+
+  const messageErreurSaisie = () => {
+    if (fichierHorsFormat && albertEchec)
+      return <EncadreMessage variant="erreur">{fichierHorsFormat.message}</EncadreMessage>
+    if (parseResult && !parseResult.ok && parseResult.error.code !== 'MISSING_COLUMNS')
+      return <EncadreMessage variant="erreur">{messageParseError(parseResult)}</EncadreMessage>
+    return null
+  }
+
   return (
     <ModaleForm
       open
@@ -145,77 +182,7 @@ export function ImportValeursModal({
       submitPendingLabel="Import en cours…"
       submitDisabled={!payload || payload.length === 0}
     >
-      {revue ? (
-        <>
-          {erreursServeur.length > 0 ? (
-            <div className="mb-3 rounded-lg border border-red-marianne/30 bg-red-marianne/5 px-4 py-3 text-sm">
-              <p className="font-medium text-red-marianne">
-                Aucune valeur n'a été appliquée. Corrigez puis réessayez :
-              </p>
-              <ul className="mt-2 space-y-1">
-                {erreursServeur.map((message, index) => (
-                  <li key={index} className="text-text-muted">
-                    {message}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-          <NormalisationReviewView response={revue} />
-        </>
-      ) : rows ? (
-        <>
-          <div className="mb-3 flex items-center justify-between text-sm">
-            <span className="font-medium text-text">
-              {file?.name} · {rows.length} ligne{rows.length > 1 ? 's' : ''}
-            </span>
-          </div>
-          {erreursServeur.length > 0 ? (
-            <div className="mb-3 rounded-lg border border-red-marianne/30 bg-red-marianne/5 px-4 py-3 text-sm">
-              <p className="font-medium text-red-marianne">
-                Aucune valeur n'a été appliquée. Corrigez puis réessayez :
-              </p>
-              <ul className="mt-2 space-y-1">
-                {erreursServeur.map((message, index) => (
-                  <li key={index} className="text-text-muted">
-                    {message}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-          <ImportPreviewTable rows={rows} />
-        </>
-      ) : (
-        <>
-          <label
-            onDragOver={(event) => event.preventDefault()}
-            onDrop={onDrop}
-            className="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border bg-background/60 px-6 py-12 text-center hover:bg-background"
-          >
-            <Upload className="size-10 text-text-subtle" />
-            <div>
-              <p className="text-sm font-medium text-text">Glissez un fichier ou parcourez</p>
-              <p className="mt-1 text-xs text-text-subtle">
-                CSV ou Excel · colonnes individu, date, valeur · 1000 lignes max
-              </p>
-            </div>
-            <input type="file" accept=".csv,.xlsx" className="hidden" onChange={onInputChange} />
-          </label>
-          {fichierHorsFormat ? (
-            <AlbertFallback
-              file={fichierHorsFormat.file}
-              indicateurId={target.indicateur.id}
-              onResolved={setRevue}
-              messageSiEchec={fichierHorsFormat.message}
-            />
-          ) : parseResult && !parseResult.ok ? (
-            <p className="mt-3 rounded-lg border border-red-marianne/30 bg-red-marianne/5 px-4 py-3 text-sm text-red-marianne">
-              {messageParseError(parseResult)}
-            </p>
-          ) : null}
-        </>
-      )}
+      {body()}
     </ModaleForm>
   )
 }

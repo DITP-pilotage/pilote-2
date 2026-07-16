@@ -1,9 +1,7 @@
-import { ChevronDown } from 'lucide-react'
 import { useState } from 'react'
 import { type NormaliserValeursImportResponseApiModel } from '@pilote/kpilote-shared/valeurImport'
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/Collapsible'
-import { clsxm } from '@/lib/clsxm'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@pilote/kpilote-ui/Collapsible'
 import { ImportPreviewTable } from './ImportPreviewTable'
 
 const decrirePlan = (plan: NormaliserValeursImportResponseApiModel['plan']): string => {
@@ -40,29 +38,29 @@ export function NormalisationReviewView({
 
   return (
     <div>
-      <p className="mb-3 rounded-lg border border-border bg-background/60 px-4 py-3 text-sm text-text">
-        Extraction assistée : <strong>{nbImportables}</strong> valeur{nbImportables > 1 ? 's' : ''}{' '}
-        à partir de {rapport.totalLignes} ligne{rapport.totalLignes > 1 ? 's' : ''} du fichier.
-      </p>
-
       <Collapsible open={detailsOuverts} onOpenChange={setDetailsOuverts} className="mb-3">
-        <CollapsibleTrigger className="flex w-full items-center gap-1 text-sm font-medium text-text-muted hover:text-text">
-          <ChevronDown
-            className={clsxm('size-4 transition-transform', detailsOuverts && 'rotate-180')}
-          />
-          Détails de l'extraction
-          {warnings.length > 0 ? (
-            <span className="ml-auto font-semibold text-red-marianne">
-              {warnings.length} ligne{warnings.length > 1 ? 's' : ''} ignorée
-              {warnings.length > 1 ? 's' : ''}
-            </span>
-          ) : null}
-        </CollapsibleTrigger>
+        <div className="rounded-lg border border-border bg-background/60 px-4 py-3 text-sm text-text">
+          <p>
+            Extraction assistée : <strong>{nbImportables}</strong> valeur
+            {nbImportables > 1 ? 's' : ''} à partir de {rapport.totalLignes} ligne
+            {rapport.totalLignes > 1 ? 's' : ''} du fichier.
+          </p>
+          <CollapsibleTrigger className="mt-1 text-text-subtle underline-offset-2 hover:text-text hover:underline">
+            {detailsOuverts ? 'Masquer' : 'Afficher'} le détail de l'extraction
+            {warnings.length > 0 ? (
+              <>
+                {' '}
+                ({warnings.length} ligne{warnings.length > 1 ? 's' : ''} ignorée
+                {warnings.length > 1 ? 's' : ''})
+              </>
+            ) : null}
+          </CollapsibleTrigger>
+        </div>
         <CollapsibleContent>
           <div className="mt-3 space-y-4 rounded-lg border border-border bg-background/40 px-4 py-3">
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               <Stat libelle="Lignes du fichier" valeur={rapport.totalLignes} />
-              <Stat libelle="Valeurs générées" valeur={rapport.totalItemsProduits} />
+              <Stat libelle="Valeurs détectées" valeur={rapport.totalItemsProduits} />
               <Stat libelle="Individus reconnus" valeur={rapport.totalLibellesMappes} />
               <Stat libelle="Non reconnus" valeur={rapport.totalLibellesNonResolus} />
             </div>
@@ -148,7 +146,12 @@ export function NormalisationReviewView({
         </CollapsibleContent>
       </Collapsible>
 
-      {nbImportables > 0 ? <ImportPreviewTable rows={items} /> : null}
+      {nbImportables > 0 ? (
+        <div>
+          <h3 className="mb-2 text-sm font-semibold text-text">Valeurs détectées</h3>
+          <ImportPreviewTable rows={items} />
+        </div>
+      ) : null}
     </div>
   )
 }

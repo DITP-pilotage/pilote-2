@@ -1,10 +1,10 @@
 import { HTTPError } from 'ky'
 import { type Result, err, ok } from 'neverthrow'
 import {
+  normaliserErrorApiModelSchema,
   normaliserValeursImportResponseApiModelSchema,
   type NormaliserValeursImportResponseApiModel,
 } from '@pilote/kpilote-shared/valeurImport'
-import { z } from 'zod'
 
 import { apiClient } from '@/api/client'
 
@@ -13,18 +13,14 @@ export type NormaliserError =
   | { type: 'RESOLUTION_ECHEC' }
   | { type: 'UNKNOWN' }
 
-const errorPayloadSchema = z.object({ code: z.string(), message: z.string() })
-
 const mapErrorBody = (body: unknown): NormaliserError => {
-  const parsed = errorPayloadSchema.safeParse(body)
+  const parsed = normaliserErrorApiModelSchema.safeParse(body)
   if (!parsed.success) return { type: 'UNKNOWN' }
   switch (parsed.data.code) {
     case 'PLAN_ECHEC':
       return { type: 'PLAN_ECHEC', message: parsed.data.message }
     case 'RESOLUTION_ECHEC':
       return { type: 'RESOLUTION_ECHEC' }
-    default:
-      return { type: 'UNKNOWN' }
   }
 }
 

@@ -83,3 +83,18 @@ export const normaliserValeursImportResponseApiModelSchema = z.object({
 export type NormaliserValeursImportResponseApiModel = z.infer<
   typeof normaliserValeursImportResponseApiModelSchema
 >
+
+// Erreurs métier 422 de la normalisation. Source de vérité partagée back/front :
+// la route type ses réponses contre ce schéma, le client parse le body avec.
+export const normaliserErrorApiModelSchema = z.discriminatedUnion('code', [
+  z.object({
+    code: z.literal('PLAN_ECHEC'),
+    message: z.string(),
+    details: z.object({ raison: z.string(), explication: z.string() }),
+  }),
+  z.object({
+    code: z.literal('RESOLUTION_ECHEC'),
+    message: z.string(),
+  }),
+])
+export type NormaliserErrorApiModel = z.infer<typeof normaliserErrorApiModelSchema>
