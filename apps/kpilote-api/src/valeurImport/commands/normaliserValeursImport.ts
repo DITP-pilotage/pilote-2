@@ -22,6 +22,7 @@ import {
   type ResoudreTypeValeurError,
 } from '@/valeurImport/calls/resoudreTypeValeur'
 import { collecterValeursDistinctes } from '@/valeurImport/helpers/collecterValeursDistinctes'
+import { resoudreColonneTypeValeur } from '@/valeurImport/helpers/resoudreColonneTypeValeur'
 import { safeStringify } from '@/valeurImport/helpers/safeStringify'
 import { listIndividusForIndicateur } from '@/valeurImport/queries/listIndividusForIndicateur'
 
@@ -106,10 +107,11 @@ export const normaliserValeursImport = (
         individus,
       })),
     )
-    .andThen(({ indicateur, individus }) =>
-      decouvrirStructure({
+    .andThen(({ indicateur, individus }) => {
+      const headers = collectHeaders(rows)
+      return decouvrirStructure({
         indicateur: { nom: indicateur.nom, uniteLibelle: indicateur.unite?.libelle ?? null },
-        headers: collectHeaders(rows),
+        headers,
         rows,
         ...(nomFichier ? { nomFichier } : {}),
       })
@@ -126,13 +128,17 @@ export const normaliserValeursImport = (
           const libellesSources = extraireLibellesSources(rows, plan.colonneIndividu)
 
           // Passe 1b (conditionnelle) : résolution sémantique du type de valeur (fichiers PPG).
-          const colonneTypeValeur = plan.colonneTypeValeur
+          // On ne retient la colonne que si Albert a fourni un nom valide et réel
+          // (il remplit parfois ce champ optionnel avec un nom vide ou halluciné).
+          const colonne = resoudreColonneTypeValeur({
+            colonneTypeValeur: plan.colonneTypeValeur,
+            headers,
+          })
           const etapeTypeValeur: ResultAsync<
             NormaliserValeursImportResult['resolutionTypeValeur'] | null,
             NormaliserValeursImportError
-          > = colonneTypeValeur
+          > = colonne
             ? (() => {
-                const colonne = colonneTypeValeur.nom
                 const typesValeurDistincts = collecterValeursDistinctes({ rows, colonne })
                 return resoudreTypeValeur({ colonne, typesValeurDistincts })
                   .mapErr(mapTypeValeurError)
@@ -185,5 +191,5 @@ export const normaliserValeursImport = (
                 }
               }),
           )
-        }),
-    )
+        })
+    })
