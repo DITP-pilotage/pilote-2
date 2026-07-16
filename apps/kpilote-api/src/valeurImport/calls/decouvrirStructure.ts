@@ -22,6 +22,12 @@ const colonneDateSchema = z.object({
     ),
 })
 
+const colonneTypeValeurSchema = z.object({
+  nom: z
+    .string()
+    .describe('Header exact de la colonne indiquant le type de valeur (recopie exacte).'),
+})
+
 const planLongSchema = z.object({
   layout: z
     .literal('long')
@@ -35,6 +41,13 @@ const planLongSchema = z.object({
     .describe("Header de la colonne contenant le libellé de l'individu (territoire, entité…)."),
   colonneDate: colonneDateSchema,
   colonneValeur: z.string().describe('Header de la colonne contenant la valeur numérique.'),
+  colonneTypeValeur: colonneTypeValeurSchema
+    .optional()
+    .describe(
+      'Colonne OPTIONNELLE distinguant plusieurs types de valeur : valeur initiale, ' +
+        "valeur cible, valeur d'avancement / valeur actuelle (typique des exports Pilote PPG). " +
+        'Ne renseigne ce champ QUE si une telle colonne existe réellement dans les headers.',
+    ),
 })
 
 const planPivotSchema = z.object({
@@ -62,6 +75,13 @@ const planPivotSchema = z.object({
     .describe(
       'Une entrée par colonne du fichier qui porte une valeur datée. ' +
         "Ne pas inclure la colonne individu ni d'éventuelles colonnes de méta-données.",
+    ),
+  colonneTypeValeur: colonneTypeValeurSchema
+    .optional()
+    .describe(
+      'Colonne OPTIONNELLE distinguant plusieurs types de valeur : valeur initiale, ' +
+        "valeur cible, valeur d'avancement / valeur actuelle (typique des exports Pilote PPG). " +
+        'Ne renseigne ce champ QUE si une telle colonne existe réellement dans les headers.',
     ),
 })
 
@@ -110,6 +130,13 @@ const SYSTEM_PROMPT =
   '\n' +
   "Si la structure ne permet PAS de produire un plan exploitable, renvoie statut='echec' " +
   "avec une raison et une explication destinée à l'utilisateur.\n" +
+  '\n' +
+  'DÉTECTION OPTIONNELLE — TYPE DE VALEUR :\n' +
+  'Certains fichiers (exports Pilote PPG) contiennent une colonne distinguant plusieurs ' +
+  "types de valeur : valeur initiale, valeur cible, valeur d'avancement (aussi « valeur " +
+  'actuelle »). Si une telle colonne existe, renseigne `colonneTypeValeur.nom` avec son ' +
+  'header exact. Sinon, laisse ce champ absent.\n' +
+  '\n' +
   'Ne renvoie jamais un plan dont les noms de colonnes ne correspondent pas aux headers fournis.'
 
 const MAX_LIGNES_ECHANTILLON = 8
