@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { Picker } from '@/components/ui/Picker'
+import { PickerOptionNomId } from '@/components/ui/PickerOptionNomId'
 import { indicateursAllQueryOptions } from '@/queries/indicateurs'
 
 export function IndicateurPicker({
@@ -22,12 +23,7 @@ export function IndicateurPicker({
       onSelect={(indicateur) => onSelect(indicateur.id)}
       getKey={(indicateur) => indicateur.id}
       getSearchText={(indicateur) => `${indicateur.id} ${indicateur.nom}`}
-      renderItem={(indicateur) => (
-        <span className="flex min-w-0 flex-1 items-center justify-between gap-3">
-          <span className="truncate text-sm text-text">{indicateur.nom}</span>
-          <span className="shrink-0 font-mono text-xs text-text-muted">{indicateur.id}</span>
-        </span>
-      )}
+      renderItem={(indicateur) => <PickerOptionNomId nom={indicateur.nom} id={indicateur.id} />}
       triggerLabel="Ajouter un indicateur"
       disabled={disabled ?? false}
     />

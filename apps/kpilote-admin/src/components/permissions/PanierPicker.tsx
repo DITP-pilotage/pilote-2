@@ -1,6 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { Picker } from '@/components/ui/Picker'
+import { PickerOptionNomId } from '@/components/ui/PickerOptionNomId'
 import { paniersAllQueryOptions } from '@/queries/paniers'
 
 export function PanierPicker({
@@ -22,12 +23,7 @@ export function PanierPicker({
       onSelect={(panier) => onSelect(panier.id)}
       getKey={(panier) => panier.id}
       getSearchText={(panier) => `${panier.id} ${panier.nom}`}
-      renderItem={(panier) => (
-        <span className="flex min-w-0 flex-1 items-center justify-between gap-3">
-          <span className="truncate text-sm text-text">{panier.nom}</span>
-          <span className="shrink-0 font-mono text-xs text-text-muted">{panier.id}</span>
-        </span>
-      )}
+      renderItem={(panier) => <PickerOptionNomId nom={panier.nom} id={panier.id} />}
       triggerLabel="Ajouter un panier"
       disabled={disabled ?? false}
     />

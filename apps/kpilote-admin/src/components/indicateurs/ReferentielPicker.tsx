@@ -2,6 +2,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 
 import { Picker } from '@/components/ui/Picker'
+import { PickerOptionNomId } from '@/components/ui/PickerOptionNomId'
 import { referentielsAllQueryOptions } from '@/queries/referentiels'
 
 // Champ contrôlé (value/onChange) : s'utilise tel quel dans un <Controller> RHF.
@@ -32,12 +33,7 @@ export function ReferentielPicker({
       onSelect={(referentiel) => onChange(referentiel.id)}
       getKey={(referentiel) => referentiel.id}
       getSearchText={(referentiel) => `${referentiel.id} ${referentiel.nom}`}
-      renderItem={(referentiel) => (
-        <span className="flex min-w-0 flex-1 items-center justify-between gap-3">
-          <span className="truncate text-sm text-text">{referentiel.nom}</span>
-          <span className="shrink-0 font-mono text-xs text-text-muted">{referentiel.id}</span>
-        </span>
-      )}
+      renderItem={(referentiel) => <PickerOptionNomId nom={referentiel.nom} id={referentiel.id} />}
       triggerLabel={placeholder}
       disabled={disabled ?? false}
     />
