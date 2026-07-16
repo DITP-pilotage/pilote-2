@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./theme.css": "./theme.css",
     "./clsxm": {
       "types": "./src/clsxm.ts",
       "default": "./src/clsxm.ts"
@@ -54,7 +55,8 @@
     }
   },
   "files": [
-    "src"
+    "src",
+    "theme.css"
   ],
   "scripts": {
     "lint": "prettier --check .",
