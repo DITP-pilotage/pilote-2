@@ -39,7 +39,6 @@ function ApiKeysListComponent() {
   const isProd = session.current?.environment === 'prod'
   const query = useQuery(apiKeysQueryOptions())
   const items = query.data ?? []
-  const [error, setError] = useState<string | null>(null)
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
 
   const toast = useToast()
@@ -52,7 +51,7 @@ function ApiKeysListComponent() {
     },
     onError: (err: unknown) => {
       setConfirmingId(null)
-      void extractApiError(err).then(setError)
+      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' }))
     },
   })
 
@@ -86,7 +85,6 @@ function ApiKeysListComponent() {
           Impossible de charger les clés API. Une clé de session de rôle ADMIN est requise.
         </p>
       ) : null}
-      {error ? <p className="mb-4 text-sm font-medium text-accent">{error}</p> : null}
 
       {items.length === 0 && !query.isLoading && !query.isError ? (
         <EmptyState title="Aucune clé API" description="Créez votre première clé API." />

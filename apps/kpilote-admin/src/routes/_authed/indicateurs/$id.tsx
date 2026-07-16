@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
 
 import { upsertIndicateur } from '@/api/indicateurs'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -32,7 +31,6 @@ function EditIndicateurComponent() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(id))
-  const [error, setError] = useState<string | null>(null)
 
   const toast = useToast()
   const mutation = useMutation({
@@ -44,7 +42,7 @@ function EditIndicateurComponent() {
       void navigate({ to: '/indicateurs' })
     },
     onError: (err: unknown) => {
-      void extractApiError(err).then(setError)
+      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' }))
     },
   })
 
@@ -64,7 +62,6 @@ function EditIndicateurComponent() {
         mode="edit"
         initial={buildInitialValues(indicateur)}
         pending={mutation.isPending}
-        errorMessage={error}
         onCancel={() => void navigate({ to: '/indicateurs' })}
         onSubmit={(values) => mutation.mutate(values)}
       />

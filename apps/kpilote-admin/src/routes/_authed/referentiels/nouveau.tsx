@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
 
 import { upsertReferentiel } from '@/api/referentiels'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -18,7 +17,6 @@ function NewReferentielComponent() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const isProd = session.current?.environment === 'prod'
-  const [error, setError] = useState<string | null>(null)
 
   const toast = useToast()
   const mutation = useMutation({
@@ -34,7 +32,7 @@ function NewReferentielComponent() {
       void navigate({ to: '/referentiels' })
     },
     onError: (err: unknown) => {
-      void extractApiError(err).then(setError)
+      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' }))
     },
   })
 
@@ -54,7 +52,6 @@ function NewReferentielComponent() {
         mode="create"
         initial={{ id: '', nom: '', description: '', individus: [] }}
         pending={mutation.isPending}
-        errorMessage={error}
         isProd={isProd}
         onCancel={() => void navigate({ to: '/referentiels' })}
         onSubmit={(values) => mutation.mutate(values)}

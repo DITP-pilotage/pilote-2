@@ -31,12 +31,12 @@ function FeatureListComponent() {
   const isProd = session.current?.environment === 'prod'
   const { data: features } = useSuspenseQuery(featuresQueryOptions())
   const [recherche, setRecherche] = useState('')
-  const [error, setError] = useState<string | null>(null)
   const toast = useToast()
 
   const mutation = useModifierEtatFeatureMutation({
     onSuccess: () => toast({ title: 'État mis à jour.' }),
-    onError: (err) => void extractApiError(err).then(setError),
+    onError: (err) =>
+      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' })),
   })
 
   const items = useMemo(() => {
@@ -64,8 +64,6 @@ function FeatureListComponent() {
           </>
         }
       />
-
-      {error ? <p className="mb-4 text-sm font-medium text-accent">{error}</p> : null}
 
       <div className="mb-4 flex max-w-sm items-center gap-2 rounded-md border border-border px-3 py-2 text-sm">
         <Search className="size-4 text-text-subtle" />

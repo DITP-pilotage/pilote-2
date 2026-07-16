@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
 
 import { createUtilisateur } from '@/api/utilisateurs'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -16,7 +15,6 @@ export const Route = createFileRoute('/_authed/utilisateurs/nouveau')({
 function NewUtilisateurComponent() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [error, setError] = useState<string | null>(null)
 
   const toast = useToast()
   const mutation = useMutation({
@@ -27,7 +25,7 @@ function NewUtilisateurComponent() {
       await navigate({ to: '/utilisateurs' })
     },
     onError: (err: unknown) => {
-      void extractApiError(err).then(setError)
+      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' }))
     },
   })
 
@@ -46,7 +44,6 @@ function NewUtilisateurComponent() {
       <UtilisateurForm
         mode="create"
         pending={mutation.isPending}
-        errorMessage={error}
         onCancel={() => void navigate({ to: '/utilisateurs' })}
         onSubmit={(values) => mutation.mutate(values)}
       />

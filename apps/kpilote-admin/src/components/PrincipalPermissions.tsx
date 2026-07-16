@@ -34,7 +34,6 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const queryClient = useQueryClient()
   const toast = useToast()
   const { isProd, locked, unlock } = useProdEditUnlock()
-  const [error, setError] = useState<string | null>(null)
   const [modal, setModal] = useState<'indicateur' | 'panier' | null>(null)
 
   const options = principalPermissionsQueryOptions(principalId)
@@ -46,13 +45,13 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
       queryClient.setQueryData(options.queryKey, fresh)
       toast({ title: 'Permissions mises à jour.' })
     },
-    onError: (err: unknown) => void extractApiError(err).then(setError),
+    onError: (err: unknown) =>
+      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' })),
   })
 
   const disabled = locked || mutation.isPending
 
   const run = (task: () => Promise<PrincipalPermissionsApiModel>) => {
-    setError(null)
     mutation.mutate(task)
   }
 
@@ -230,8 +229,6 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           </Button>
         </div>
       ) : null}
-
-      {error ? <p className="mb-4 text-sm font-medium text-accent">{error}</p> : null}
 
       {isEmpty ? (
         <EmptyState

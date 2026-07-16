@@ -17,7 +17,6 @@ export function ReferentielForm({
   mode,
   initial,
   pending,
-  errorMessage,
   isProd,
   onSubmit,
   onCancel,
@@ -25,7 +24,6 @@ export function ReferentielForm({
   mode: 'create' | 'edit'
   initial: ReferentielFormValues
   pending: boolean
-  errorMessage: string | null
   isProd: boolean
   onSubmit: (values: ReferentielFormValues) => void
   onCancel: () => void
@@ -137,10 +135,6 @@ export function ReferentielForm({
           ))}
         </div>
       </div>
-
-      {errorMessage ? (
-        <p className="mt-3 text-right text-sm font-medium text-accent">{errorMessage}</p>
-      ) : null}
 
       <div className="mt-5 flex justify-end gap-3">
         <Button variant="secondary" type="button" onClick={onCancel}>

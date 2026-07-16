@@ -18,7 +18,6 @@ export const Route = createFileRoute('/_authed/api-keys/nouveau')({
 function NewApiKeyComponent() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [error, setError] = useState<string | null>(null)
   const [created, setCreated] = useState<CreatedApiKeyApiModel | null>(null)
 
   const toast = useToast()
@@ -35,7 +34,7 @@ function NewApiKeyComponent() {
       setCreated(result)
     },
     onError: (err: unknown) => {
-      void extractApiError(err).then(setError)
+      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' }))
     },
   })
 
@@ -60,7 +59,6 @@ function NewApiKeyComponent() {
       ) : (
         <ApiKeyForm
           pending={mutation.isPending}
-          errorMessage={error}
           onCancel={() => void navigate({ to: '/api-keys' })}
           onSubmit={(values) => mutation.mutate(values)}
         />

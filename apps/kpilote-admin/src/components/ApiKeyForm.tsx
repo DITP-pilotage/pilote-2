@@ -17,12 +17,10 @@ export type ApiKeyFormValues = z.infer<typeof apiKeyFormSchema>
 
 export function ApiKeyForm({
   pending,
-  errorMessage,
   onSubmit,
   onCancel,
 }: {
   pending: boolean
-  errorMessage: string | null
   onSubmit: (values: ApiKeyFormValues) => void
   onCancel: () => void
 }) {
@@ -70,10 +68,6 @@ export function ApiKeyForm({
           />
         </div>
       </div>
-
-      {errorMessage ? (
-        <p className="mt-3 text-right text-sm font-medium text-accent">{errorMessage}</p>
-      ) : null}
 
       <div className="mt-5 flex justify-end gap-3">
         <Button variant="secondary" type="button" onClick={onCancel}>

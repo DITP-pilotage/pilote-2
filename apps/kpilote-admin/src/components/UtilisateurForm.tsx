@@ -21,14 +21,12 @@ export function UtilisateurForm({
   mode,
   initialValues,
   pending,
-  errorMessage,
   onSubmit,
   onCancel,
 }: {
   mode: 'create' | 'update'
   initialValues?: Partial<UtilisateurFormValues>
   pending: boolean
-  errorMessage: string | null
   onSubmit: (values: UtilisateurFormValues) => void
   onCancel: () => void
 }) {
@@ -116,10 +114,6 @@ export function UtilisateurForm({
           />
         </div>
       </div>
-
-      {errorMessage ? (
-        <p className="mt-3 text-right text-sm font-medium text-accent">{errorMessage}</p>
-      ) : null}
 
       <div className="mt-5 flex justify-end gap-3">
         <Button variant="secondary" type="button" onClick={onCancel}>

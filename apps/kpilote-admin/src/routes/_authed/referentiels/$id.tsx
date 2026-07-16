@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
 
 import { upsertReferentiel } from '@/api/referentiels'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -28,7 +27,6 @@ function EditReferentielComponent() {
   const isProd = session.current?.environment === 'prod'
   const { data: referentiel } = useSuspenseQuery(referentielQueryOptions(id))
   const { data: individus } = useSuspenseQuery(referentielIndividusQueryOptions(id))
-  const [error, setError] = useState<string | null>(null)
 
   const initial: ReferentielFormValues = {
     id: referentiel.id,
@@ -52,7 +50,7 @@ function EditReferentielComponent() {
       void navigate({ to: '/referentiels' })
     },
     onError: (err: unknown) => {
-      void extractApiError(err).then(setError)
+      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' }))
     },
   })
 
@@ -72,7 +70,6 @@ function EditReferentielComponent() {
         mode="edit"
         initial={initial}
         pending={mutation.isPending}
-        errorMessage={error}
         isProd={isProd}
         onCancel={() => void navigate({ to: '/referentiels' })}
         onSubmit={(values) => mutation.mutate(values)}

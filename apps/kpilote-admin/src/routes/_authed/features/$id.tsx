@@ -12,7 +12,6 @@ import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { featureQueryOptions, useModifierEtatFeatureMutation } from '@/queries/feature'
 import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
-import { useState } from 'react'
 
 export const Route = createFileRoute('/_authed/features/$id')({
   loader: ({ context, params }) =>
@@ -37,7 +36,6 @@ function FeatureDetailComponent() {
   const queryClient = useQueryClient()
   const { data: feature } = useSuspenseQuery(featureQueryOptions(id))
   const { data: tousLesUtilisateurs } = useSuspenseQuery(utilisateursAllQueryOptions())
-  const [error, setError] = useState<string | null>(null)
   const toast = useToast()
 
   const cibleUtilisateurs = feature.etat === 'ACTIVE_POUR_UTILISATEUR'
@@ -48,7 +46,8 @@ function FeatureDetailComponent() {
 
   const etatMutation = useModifierEtatFeatureMutation({
     onSuccess: () => toast({ title: 'État mis à jour.' }),
-    onError: (err) => void extractApiError(err).then(setError),
+    onError: (err) =>
+      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' })),
   })
 
   const utilisateursMutation = useMutation({
@@ -57,7 +56,8 @@ function FeatureDetailComponent() {
       await queryClient.invalidateQueries({ queryKey: ['features'] })
       toast({ title: 'Utilisateurs autorisés mis à jour.' })
     },
-    onError: (err: unknown) => void extractApiError(err).then(setError),
+    onError: (err: unknown) =>
+      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' })),
   })
 
   const ajouter = (utilisateurId: string) =>
@@ -80,8 +80,6 @@ function FeatureDetailComponent() {
         title={feature.nom}
         subtitle={<span className="font-mono">{feature.key}</span>}
       />
-
-      {error ? <p className="mb-4 text-sm font-medium text-accent">{error}</p> : null}
 
       <div className="flex flex-col gap-8">
         <section className="rounded-xl border border-border bg-surface p-6">
