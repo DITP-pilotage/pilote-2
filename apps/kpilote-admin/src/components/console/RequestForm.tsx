@@ -48,13 +48,20 @@ export function RequestForm({
       />
 
       <div className="flex items-end gap-2">
-        <FieldSelect
+        <Controller
           control={control}
           name="method"
-          label="Méthode"
-          hideLabel
-          className="w-32"
-          options={HTTP_METHODS.map((httpMethod) => ({ value: httpMethod, label: httpMethod }))}
+          render={({ field }) => (
+            <FieldSelect
+              label="Méthode"
+              hideLabel
+              className="w-32"
+              value={field.value}
+              onValueChange={field.onChange}
+              onBlur={field.onBlur}
+              options={HTTP_METHODS.map((httpMethod) => ({ value: httpMethod, label: httpMethod }))}
+            />
+          )}
         />
         <div className="flex flex-1 items-center rounded-md border border-border">
           <span className="max-w-[45%] truncate px-2 py-2.5 text-xs text-text-muted">

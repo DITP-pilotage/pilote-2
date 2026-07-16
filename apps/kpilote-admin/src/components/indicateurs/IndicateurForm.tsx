@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMemo } from 'react'
-import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 
 import {
   PERIODE_MISE_A_JOUR_LABELS,
@@ -49,7 +49,6 @@ export function IndicateurForm({
     mode: 'onChange',
     defaultValues: initial,
   })
-  const visibilite = useWatch({ control: form.control, name: 'visibilite' })
 
   return (
     <FormProvider {...form}>
@@ -91,13 +90,18 @@ export function IndicateurForm({
 
           <div className="mb-6 flex gap-4">
             <div className="flex-1">
-              <SegmentedField
-                label="Visibilité"
-                value={visibilite}
-                onValueChange={(value) =>
-                  form.setValue('visibilite', value, { shouldValidate: true })
-                }
-                options={VISIBILITE_OPTIONS}
+              <Controller
+                control={form.control}
+                name="visibilite"
+                render={({ field, fieldState }) => (
+                  <SegmentedField
+                    label="Visibilité"
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    error={fieldState.error?.message}
+                    options={VISIBILITE_OPTIONS}
+                  />
+                )}
               />
             </div>
             <div className="flex-1">
@@ -147,17 +151,25 @@ export function IndicateurForm({
 
             <div className="flex gap-4">
               <div className="flex-1">
-                <FieldSelect
+                <Controller
                   control={form.control}
                   name="periodeMiseAJour"
-                  label="Période de mise à jour"
-                  options={[
-                    { value: '', label: 'Non renseignée' },
-                    ...PERIODES_MISE_A_JOUR.map((periode) => ({
-                      value: periode,
-                      label: PERIODE_MISE_A_JOUR_LABELS[periode],
-                    })),
-                  ]}
+                  render={({ field, fieldState }) => (
+                    <FieldSelect
+                      label="Période de mise à jour"
+                      value={field.value ?? ''}
+                      onValueChange={field.onChange}
+                      onBlur={field.onBlur}
+                      error={fieldState.error?.message}
+                      options={[
+                        { value: '', label: 'Non renseignée' },
+                        ...PERIODES_MISE_A_JOUR.map((periode) => ({
+                          value: periode,
+                          label: PERIODE_MISE_A_JOUR_LABELS[periode],
+                        })),
+                      ]}
+                    />
+                  )}
                 />
               </div>
               <div className="flex-1">
@@ -185,17 +197,25 @@ export function IndicateurForm({
                 />
               </div>
               <div className="flex-1">
-                <FieldSelect
+                <Controller
                   control={form.control}
                   name="delaiUnite"
-                  label="Unité du délai"
-                  options={[
-                    { value: '', label: 'Aucune' },
-                    ...UNITES_DUREE.map((unite) => ({
-                      value: unite,
-                      label: UNITE_DUREE_LABELS[unite],
-                    })),
-                  ]}
+                  render={({ field, fieldState }) => (
+                    <FieldSelect
+                      label="Unité du délai"
+                      value={field.value ?? ''}
+                      onValueChange={field.onChange}
+                      onBlur={field.onBlur}
+                      error={fieldState.error?.message}
+                      options={[
+                        { value: '', label: 'Aucune' },
+                        ...UNITES_DUREE.map((unite) => ({
+                          value: unite,
+                          label: UNITE_DUREE_LABELS[unite],
+                        })),
+                      ]}
+                    />
+                  )}
                 />
               </div>
             </div>
