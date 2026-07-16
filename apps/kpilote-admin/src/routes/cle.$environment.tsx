@@ -11,8 +11,9 @@ const isEnvironment = (value: string): value is Environment =>
   value === 'local' || value === 'dev' || value === 'prod'
 
 export const Route = createFileRoute('/cle/$environment')({
-  beforeLoad: ({ params }) => {
+  beforeLoad: ({ params, context }) => {
     if (!isEnvironment(params.environment)) throw redirect({ to: '/' })
+    if (context.session.current) throw redirect({ to: '/fonctionnalites' })
   },
   component: KeyComponent,
 })
