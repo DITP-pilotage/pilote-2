@@ -36,6 +36,55 @@ KEYCLOAK_ADMIN_PASSWORD=<MON_MOT_DE_PASSE>
 PROJECT_DIR=auth
 ```
 
+## Build Keycloak optimisé (`--optimized`)
+
+### Le problème
+
+Au boot, `kc.sh start` relance automatiquement le **build d'augmentation
+Quarkus** dès qu'un changement de configuration est détecté (log
+« Changes detected in configuration. Updating the server image »). Ce build est
+gourmand en RAM et se faisait **OOM-killer** dans le dyno Scalingo (process java
+`Killed` = SIGKILL), ce qui mettait l'app en crash-loop.
+
+### La solution
+
+Le repo **versionne toute la distribution Keycloak** (`bin/`, `lib/quarkus/`,
+`conf/`, `themes/`…). Le build d'augmentation écrit justement dans
+`lib/quarkus/*`. On **bake l'augmentation une fois** et on **committe** le
+résultat, puis le dyno démarre en `--optimized` sur ces artefacts déjà
+construits. C'est le pattern Keycloak officiel (`build` puis `start
+--optimized`), transposé au vendoring déjà en place.
+
+Concrètement :
+
+- `scripts/start.sh` lance `kc.sh start --optimized` → **aucun build à runtime**,
+  donc plus d'OOM.
+- Les artefacts `lib/quarkus/*` sont versionnés et suffisent au boot.
+- `conf/keycloak.conf` fixe `db=postgres`, une option **build-time** : elle est
+  bakée dans les artefacts et **doit** correspondre au runtime (`create-env.sh`
+  exporte `KC_DB=postgres`).
+
+> Pourquoi pas un build au build-time via buildpack ? `kc.sh build` a besoin de
+> Java, or le buildpack `nodejs` tourne avant `jvm-common`. Réordonner les
+> buildpacks échoue au deploy : `jvm-common` est un buildpack helper qui cherche
+> `system.properties` à la racine du build, alors que c'est `nodejs` qui
+> relocalise `PROJECT_DIR`. Il ne peut donc pas passer en premier, et il n'y a
+> pas de hook build après lui. Préconstruire + committer contourne tout ça.
+
+### Régénérer les artefacts
+
+Toute modification d'une option **build-time** de Keycloak (vendor `db`,
+`features`, `cache`, `metrics-enabled`…) ou tout ajout de provider dans
+`providers/` nécessite de régénérer et committer les artefacts :
+
+```bash
+pnpm run build:keycloak   # = bash bin/kc.sh build
+git add lib/quarkus/
+```
+
+Sans ça, `start --optimized` refuse de démarrer si une option build-time diffère
+de ce qui a été baké.
+
 ## Configuration de la WebApp
 
 ```ini
