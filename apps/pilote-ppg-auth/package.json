@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "tsx acme-proxy/server.ts",
     "build": "esbuild acme-proxy/server.ts --bundle --platform=node --target=node22 --format=esm --outfile=acme-proxy/dist/server.mjs --banner:js=\"import { createRequire } from 'module'; const require = createRequire(import.meta.url);\"",
+    "build:keycloak": "bash bin/kc.sh build",
     "start": "node acme-proxy/dist/server.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
