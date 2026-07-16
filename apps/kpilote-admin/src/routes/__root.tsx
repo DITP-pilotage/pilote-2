@@ -11,9 +11,9 @@ export const Route = createRootRouteWithContext<RouterContext>()({ component: Ro
 
 function RootComponent() {
   const { session } = Route.useRouteContext()
-  const isProd = session.current?.environment === 'prod'
+  const environment = session.current?.environment ?? null
   return (
-    <AppConfigProvider isProd={isProd}>
+    <AppConfigProvider environment={environment}>
       <div className="flex min-h-screen flex-col bg-background text-text">
         <AdminHeader
           session={session.current}

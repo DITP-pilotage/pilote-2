@@ -1,5 +1,6 @@
 import { createRoute } from '@hono/zod-openapi'
 import { meApiModelSchema } from '@pilote/kpilote-shared/me'
+import { meFeatureApiModelSchema } from '@pilote/kpilote-shared/meFeature'
 import { mePermissionsApiModelSchema } from '@pilote/kpilote-shared/mePermissions'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
@@ -7,10 +8,12 @@ import { requireUser } from '@/framework/auth/userContext'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
+import { listerMesFeatures } from '@/me/queries/listerMesFeatures'
 import { listerMesPermissions } from '@/me/queries/listerMesPermissions'
 
 const MeOkSchema = meApiModelSchema.openapi('Me')
 const MePermissionsOkSchema = mePermissionsApiModelSchema.openapi('MePermissions')
+const MeFeatureOkSchema = meFeatureApiModelSchema.openapi('MeFeature')
 
 const meRoute = createRoute({
   method: 'get',
@@ -45,6 +48,20 @@ const mePermissionsRoute = createRoute({
   },
 })
 
+const meFeatureRoute = createRoute({
+  method: 'get',
+  path: '/me/features',
+  tags: ['Authentication'],
+  summary: 'Features actifs pour l’utilisateur courant',
+  middleware: [requireAuthentication],
+  responses: {
+    200: {
+      content: { 'application/json': { schema: MeFeatureOkSchema } },
+      description: 'Clés des features actifs',
+    },
+  },
+})
+
 export const meRoutes = createOpenApiHono()
 
 meRoutes.openapi(meRoute, (context) => {
@@ -68,6 +85,19 @@ meRoutes.openapi(mePermissionsRoute, async (context) =>
         context,
         data,
         schema: MePermissionsOkSchema,
+        status: 200,
+      }),
+    never,
+  ),
+)
+
+meRoutes.openapi(meFeatureRoute, async (context) =>
+  listerMesFeatures().match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: MeFeatureOkSchema,
         status: 200,
       }),
     never,

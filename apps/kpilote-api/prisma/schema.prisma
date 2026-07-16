@@ -47,6 +47,7 @@ model Utilisateur {
   identites                 IdentiteExterne[]
   responsabilitesPanier     PanierResponsable[]
   responsabilitesIndicateur IndicateurResponsable[]
+  featuresAutorises FeatureUtilisateur[]
 
   @@map("utilisateur")
 }
@@ -577,4 +578,37 @@ model NiveauConfiance {
   @@index([createdBy])
   @@index([updatedBy])
   @@map("niveau_confiance")
+}
+
+enum FeatureEtat {
+  ACTIVE
+  ACTIVE_POUR_UTILISATEUR
+  DESACTIVE
+}
+
+model Feature {
+  id        String              @id @db.Uuid
+  key       String              @unique
+  nom       String
+  etat      FeatureEtat @default(DESACTIVE)
+  createdAt DateTime            @default(now()) @map("created_at")
+  updatedAt DateTime            @updatedAt @map("updated_at")
+
+  utilisateursAutorises FeatureUtilisateur[]
+
+  @@map("feature")
+}
+
+model FeatureUtilisateur {
+  featureId String   @map("feature_id") @db.Uuid
+  utilisateurId     String   @map("utilisateur_id") @db.Uuid
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  feature Feature @relation(fields: [featureId], references: [id], onDelete: Cascade)
+  utilisateur     Utilisateur     @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+
+  @@id([featureId, utilisateurId])
+  @@index([featureId])
+  @@index([utilisateurId])
+  @@map("feature_utilisateur")
 }

@@ -50,7 +50,7 @@ function ApiKeyDetailComponent() {
         onChange={(key) => setTab(key as 'identite' | 'permissions')}
       />
 
-      <div className="mx-auto max-w-2xl">
+      <div>
         {tab === 'identite' ? (
           <ApiKeyInfos apiKey={apiKey} />
         ) : (

@@ -30,6 +30,7 @@ import {
   type ReferentielModel,
   type ReferentielWidgetModel,
   type RelationModel,
+  type FeatureModel,
   type UtilisateurModel,
   type ValeurAvancementModel,
   type WidgetModel,
@@ -39,6 +40,7 @@ import {
   PermissionAction,
   ProviderType,
   Visibilite,
+  type FeatureEtat,
   type FonctionAgregation,
   type PeriodeMiseAJour,
   type UniteDuree,
@@ -975,8 +977,46 @@ async function panierContactUtile(
   return upsertPanierContactUtile(override)
 }
 
+// --- Feature ---------------------------------------------------------
+
+type FeatureOverrides = Partial<{
+  id: string
+  key: string
+  nom: string
+  etat: FeatureEtat
+  utilisateurs: { id: string }[]
+}>
+
+let featureSeq = 0
+
+const upsertFeature = async (o: FeatureOverrides = {}) => {
+  const id = o.id ?? uuidv7()
+  featureSeq += 1
+  const created = await db().feature.create({
+    data: {
+      id,
+      key: o.key ?? `FEATURE_TEST_${featureSeq}`,
+      nom: o.nom ?? 'Feature de test',
+      etat: o.etat ?? 'DESACTIVE',
+    },
+  })
+  for (const utilisateur of o.utilisateurs ?? []) {
+    await db().featureUtilisateur.create({
+      data: { featureId: id, utilisateurId: utilisateur.id },
+    })
+  }
+  return created
+}
+
+function feature(): Promise<FeatureModel>
+function feature(override: FeatureOverrides): Promise<FeatureModel>
+async function feature(o?: FeatureOverrides): Promise<FeatureModel> {
+  return upsertFeature(o)
+}
+
 export const fixtures = {
   indicateur,
+  feature,
   commentaire,
   referentiel,
   individu,

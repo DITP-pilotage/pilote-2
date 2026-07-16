@@ -16,9 +16,7 @@ export function EndpointPicker({ onSelect }: { onSelect: (endpoint: OpenapiEndpo
         disabled={isPending || isError}
         getKey={(endpoint) => `${endpoint.method} ${endpoint.path}`}
         getSearchText={(endpoint) => `${endpoint.method} ${endpoint.path} ${endpoint.summary}`}
-        triggerLabel={
-          isPending ? 'Chargement des endpoints…' : 'Rechercher un endpoint (OpenAPI)…'
-        }
+        triggerLabel={isPending ? 'Chargement des endpoints…' : 'Rechercher un endpoint (OpenAPI)…'}
         searchPlaceholder="Rechercher un endpoint…"
         emptyLabel="Aucun endpoint trouvé."
         renderItem={(endpoint) => (

@@ -8,6 +8,7 @@ import { PageHeading } from '@/components/PageHeading'
 import { PrincipalPermissions } from '@/components/PrincipalPermissions'
 import { TabNav } from '@/components/ui/TabNav'
 import { UtilisateurForm, type UtilisateurFormValues } from '@/components/UtilisateurForm'
+import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { principalPermissionsQueryOptions } from '@/queries/permissions'
 import { utilisateurQueryOptions } from '@/queries/utilisateurs'
@@ -26,11 +27,11 @@ function EditUtilisateurComponent() {
   const { id } = Route.useParams()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [error, setError] = useState<string | null>(null)
   const [tab, setTab] = useState<'identite' | 'permissions'>('identite')
 
   const { data: utilisateur } = useSuspenseQuery(utilisateurQueryOptions(id))
 
+  const toast = useToast()
   const mutation = useMutation({
     mutationFn: (values: UtilisateurFormValues) =>
       updateUtilisateur(id, {
@@ -41,10 +42,11 @@ function EditUtilisateurComponent() {
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['utilisateurs'] })
+      toast({ title: 'Utilisateur modifié.' })
       await navigate({ to: '/utilisateurs' })
     },
     onError: (err: unknown) => {
-      void extractApiError(err).then(setError)
+      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' }))
     },
   })
 
@@ -82,7 +84,6 @@ function EditUtilisateurComponent() {
               fonction: utilisateur.fonction,
             }}
             pending={mutation.isPending}
-            errorMessage={error}
             onCancel={() => void navigate({ to: '/utilisateurs' })}
             onSubmit={(values) => mutation.mutate(values)}
           />
@@ -90,7 +91,7 @@ function EditUtilisateurComponent() {
           <p className="text-sm font-medium text-accent">Utilisateur introuvable.</p>
         )
       ) : (
-        <div className="mx-auto max-w-2xl">
+        <div>
           <PrincipalPermissions principalId={id} />
         </div>
       )}

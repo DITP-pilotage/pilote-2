@@ -1,7 +1,7 @@
 import type { ApiKeyApiModel } from '@pilote/kpilote-shared/apiKey'
 import { formatDate } from '@pilote/kpilote-shared/formatDate'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
 
@@ -11,9 +11,11 @@ import { PageHeading } from '@/components/PageHeading'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Table } from '@/components/ui/Table'
+import { clickableRowProps, stopRowActivation } from '@/lib/clickableRow'
+import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
+import { useAppConfig } from '@/context/AppConfigContext'
 import { apiKeysQueryOptions } from '@/queries/apiKeys'
-import { session } from '@/session'
 
 export const Route = createFileRoute('/_authed/api-keys/')({
   component: ApiKeysListComponent,
@@ -33,21 +35,23 @@ const STATUS_CLASS: Record<ApiKeyApiModel['status'], string> = {
 
 function ApiKeysListComponent() {
   const queryClient = useQueryClient()
-  const isProd = session.current?.environment === 'prod'
+  const navigate = useNavigate()
+  const { isProd, environment } = useAppConfig()
   const query = useQuery(apiKeysQueryOptions())
   const items = query.data ?? []
-  const [error, setError] = useState<string | null>(null)
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
 
+  const toast = useToast()
   const revokeMutation = useMutation({
     mutationFn: (id: string) => revokeApiKey(id),
     onSuccess: async () => {
       setConfirmingId(null)
       await queryClient.invalidateQueries({ queryKey: ['api-keys'] })
+      toast({ title: 'Clé API révoquée.' })
     },
     onError: (err: unknown) => {
       setConfirmingId(null)
-      void extractApiError(err).then(setError)
+      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' }))
     },
   })
 
@@ -64,7 +68,7 @@ function ApiKeysListComponent() {
         subtitle={
           <>
             {items.length} clé{items.length > 1 ? 's' : ''} · environnement{' '}
-            <b className={isProd ? 'text-accent' : undefined}>{session.current?.environment}</b>
+            <b className={isProd ? 'text-accent' : undefined}>{environment}</b>
           </>
         }
         action={
@@ -81,7 +85,6 @@ function ApiKeysListComponent() {
           Impossible de charger les clés API. Une clé de session de rôle ADMIN est requise.
         </p>
       ) : null}
-      {error ? <p className="mb-4 text-sm font-medium text-accent">{error}</p> : null}
 
       {items.length === 0 && !query.isLoading && !query.isError ? (
         <EmptyState title="Aucune clé API" description="Créez votre première clé API." />
@@ -95,19 +98,19 @@ function ApiKeysListComponent() {
               <Table.HeaderCell>Statut</Table.HeaderCell>
               <Table.HeaderCell>Créée le</Table.HeaderCell>
               <Table.HeaderCell align="right" />
+              <Table.HeaderCell />
             </Table.Row>
           </Table.Head>
           <Table.Body>
             {items.map((apiKey) => (
-              <Table.Row key={apiKey.id}>
+              <Table.Row
+                key={apiKey.id}
+                {...clickableRowProps(
+                  () => void navigate({ to: '/api-keys/$id', params: { id: apiKey.id } }),
+                )}
+              >
                 <Table.Cell>
-                  <Link
-                    to="/api-keys/$id"
-                    params={{ id: apiKey.id }}
-                    className="font-semibold text-primary hover:underline"
-                  >
-                    {apiKey.label}
-                  </Link>
+                  <span className="font-semibold text-primary">{apiKey.label}</span>
                 </Table.Cell>
                 <Table.Cell>
                   <span className="font-mono text-text-muted">{apiKey.prefix}…</span>
@@ -119,7 +122,7 @@ function ApiKeysListComponent() {
                 <Table.Cell>
                   <span className="text-text-muted">{formatDate(apiKey.createdAt)}</span>
                 </Table.Cell>
-                <Table.Cell align="right">
+                <Table.Cell align="right" {...stopRowActivation}>
                   {apiKey.status === 'revoked' ? (
                     <span className="text-text-subtle">—</span>
                   ) : confirmingId === apiKey.id ? (
@@ -153,6 +156,9 @@ function ApiKeysListComponent() {
                       Révoquer
                     </Button>
                   )}
+                </Table.Cell>
+                <Table.Cell align="right">
+                  <span className="text-primary">→</span>
                 </Table.Cell>
               </Table.Row>
             ))}

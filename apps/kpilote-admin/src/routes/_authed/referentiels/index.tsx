@@ -10,7 +10,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { Table } from '@/components/ui/Table'
 import { clickableRowProps } from '@/lib/clickableRow'
 import { referentielsInfiniteQueryOptions } from '@/queries/referentiels'
-import { session } from '@/session'
+import { useAppConfig } from '@/context/AppConfigContext'
 
 export const Route = createFileRoute('/_authed/referentiels/')({
   component: ReferentielsListComponent,
@@ -18,7 +18,7 @@ export const Route = createFileRoute('/_authed/referentiels/')({
 
 function ReferentielsListComponent() {
   const navigate = useNavigate()
-  const isProd = session.current?.environment === 'prod'
+  const { isProd, environment } = useAppConfig()
   const [recherche, setRecherche] = useState('')
   const query = useInfiniteQuery(referentielsInfiniteQueryOptions(recherche))
   const items = query.data?.pages.flatMap((page) => page.items) ?? []
@@ -37,7 +37,7 @@ function ReferentielsListComponent() {
         subtitle={
           <>
             {total} référentiel{total > 1 ? 's' : ''} · environnement{' '}
-            <b className={isProd ? 'text-accent' : undefined}>{session.current?.environment}</b>
+            <b className={isProd ? 'text-accent' : undefined}>{environment}</b>
           </>
         }
         action={

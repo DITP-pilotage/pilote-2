@@ -8,6 +8,7 @@ import { ApiKeyForm, type ApiKeyFormValues } from '@/components/ApiKeyForm'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { CreatedApiKeyResult } from '@/components/CreatedApiKeyResult'
 import { PageHeading } from '@/components/PageHeading'
+import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 
 export const Route = createFileRoute('/_authed/api-keys/nouveau')({
@@ -17,9 +18,9 @@ export const Route = createFileRoute('/_authed/api-keys/nouveau')({
 function NewApiKeyComponent() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
-  const [error, setError] = useState<string | null>(null)
   const [created, setCreated] = useState<CreatedApiKeyApiModel | null>(null)
 
+  const toast = useToast()
   const mutation = useMutation({
     mutationFn: (values: ApiKeyFormValues) =>
       createApiKey({
@@ -29,10 +30,11 @@ function NewApiKeyComponent() {
       }),
     onSuccess: async (result) => {
       await queryClient.invalidateQueries({ queryKey: ['api-keys'] })
+      toast({ title: 'Clé API créée.' })
       setCreated(result)
     },
     onError: (err: unknown) => {
-      void extractApiError(err).then(setError)
+      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' }))
     },
   })
 
@@ -57,7 +59,6 @@ function NewApiKeyComponent() {
       ) : (
         <ApiKeyForm
           pending={mutation.isPending}
-          errorMessage={error}
           onCancel={() => void navigate({ to: '/api-keys' })}
           onSubmit={(values) => mutation.mutate(values)}
         />

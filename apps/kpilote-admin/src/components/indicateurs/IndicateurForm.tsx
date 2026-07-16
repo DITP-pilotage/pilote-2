@@ -34,14 +34,12 @@ export function IndicateurForm({
   mode,
   initial,
   pending,
-  errorMessage,
   onSubmit,
   onCancel,
 }: {
   mode: 'create' | 'edit'
   initial: IndicateurFormValues
   pending: boolean
-  errorMessage: string | null
   onSubmit: (values: IndicateurFormValues) => void
   onCancel: () => void
 }) {
@@ -56,10 +54,7 @@ export function IndicateurForm({
 
   return (
     <FormProvider {...form}>
-      <form
-        onSubmit={(event) => void form.handleSubmit(onSubmit)(event)}
-        className="mx-auto max-w-2xl"
-      >
+      <form onSubmit={(event) => void form.handleSubmit(onSubmit)(event)}>
         <div className="rounded-xl border border-border bg-surface p-6">
           <div className="mb-5">
             {mode === 'edit' ? (
@@ -208,10 +203,6 @@ export function IndicateurForm({
 
           <AdminResponsables />
         </div>
-
-        {errorMessage ? (
-          <p className="mt-3 text-right text-sm font-medium text-accent">{errorMessage}</p>
-        ) : null}
 
         <div className="mt-5 flex justify-end gap-3">
           <Button variant="secondary" type="button" onClick={onCancel}>

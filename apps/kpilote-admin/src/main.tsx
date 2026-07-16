@@ -3,6 +3,7 @@ import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
+import { ToastProvider } from '@/components/ui/Toast'
 import '@/index.css'
 import { routeTree } from '@/routeTree.gen'
 import { session } from '@/session'
@@ -29,7 +30,9 @@ void session.bootstrap().then(() => {
   root.render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <ToastProvider>
+          <RouterProvider router={router} />
+        </ToastProvider>
       </QueryClientProvider>
     </StrictMode>,
   )

@@ -1,13 +1,25 @@
 import { createContext, type ReactNode, useContext, useMemo } from 'react'
 
+import type { Environment } from '@/session'
+
 export type AppConfig = {
   isProd: boolean
+  environment: Environment | null
 }
 
 const AppConfigContext = createContext<AppConfig | null>(null)
 
-export function AppConfigProvider({ isProd, children }: { isProd: boolean; children: ReactNode }) {
-  const value = useMemo<AppConfig>(() => ({ isProd }), [isProd])
+export function AppConfigProvider({
+  environment,
+  children,
+}: {
+  environment: Environment | null
+  children: ReactNode
+}) {
+  const value = useMemo<AppConfig>(
+    () => ({ environment, isProd: environment === 'prod' }),
+    [environment],
+  )
   return <AppConfigContext.Provider value={value}>{children}</AppConfigContext.Provider>
 }
 
