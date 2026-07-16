@@ -37,7 +37,13 @@ export INTERNAL_PORT="${INTERNAL_PORT:-8080}"
 echo "[start] launching Keycloak on internal port $INTERNAL_PORT"
 # KC_HTTP_PORT est lu par kc.sh pour configurer Quarkus. On lance en background
 # pour pouvoir enchaîner le démarrage du proxy ensuite.
-KC_HTTP_PORT="$INTERNAL_PORT" /app/bin/kc.sh start &
+# --optimized : l'augmentation Quarkus est déjà bakée dans les artefacts
+# lib/quarkus/* versionnés (régénérables via `pnpm run build:keycloak`). On saute
+# donc le build-and-exit que kc.sh lançait sinon au boot — c'est lui qui se
+# faisait OOM-killer dans le dyno. Prérequis : les options build-time
+# (db=postgres) sont bakées et NE doivent PAS changer au runtime, sinon Keycloak
+# refuse de démarrer.
+KC_HTTP_PORT="$INTERNAL_PORT" /app/bin/kc.sh start --optimized &
 # $! = PID du dernier process lancé en background. On le mémorise pour pouvoir
 # surveiller / tuer Keycloak plus tard.
 KC_PID=$!
