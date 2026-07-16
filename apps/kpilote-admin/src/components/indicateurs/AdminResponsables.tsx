@@ -2,7 +2,7 @@ import { Trash2 } from 'lucide-react'
 import { useFieldArray, useWatch } from 'react-hook-form'
 
 import { useIndicateurFormContext } from '@/components/indicateurs/indicateurFormContext'
-import { UtilisateurPicker } from '@/components/indicateurs/UtilisateurPicker'
+import { UtilisateurPicker } from '@/components/UtilisateurPicker'
 
 export function AdminResponsables() {
   const form = useIndicateurFormContext()

@@ -1,18 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMemo } from 'react'
-import { FormProvider, useForm, useWatch } from 'react-hook-form'
+import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form'
 
 import {
   PERIODE_MISE_A_JOUR_LABELS,
   PERIODES_MISE_A_JOUR,
   UNITE_DUREE_LABELS,
   UNITES_DUREE,
-  UNITES_INDICATEUR,
-  UNITES_INDICATEUR_CONFIG,
 } from '@pilote/kpilote-shared/indicateur'
 
 import { AdminReferentiels } from '@/components/indicateurs/AdminReferentiels'
 import { AdminResponsables } from '@/components/indicateurs/AdminResponsables'
+import { UnitePicker } from '@/components/indicateurs/UnitePicker'
 import {
   buildIndicateurFormSchema,
   type IndicateurFormValues,
@@ -102,14 +101,13 @@ export function IndicateurForm({
               />
             </div>
             <div className="flex-1">
-              <FieldSelect label="Unité" {...form.register('unite')}>
-                <option value="">Aucune</option>
-                {UNITES_INDICATEUR.map((code) => (
-                  <option key={code} value={code}>
-                    {UNITES_INDICATEUR_CONFIG[code].libelle}
-                  </option>
-                ))}
-              </FieldSelect>
+              <Controller
+                control={form.control}
+                name="unite"
+                render={({ field }) => (
+                  <UnitePicker label="Unité" value={field.value ?? ''} onChange={field.onChange} />
+                )}
+              />
             </div>
           </div>
 
