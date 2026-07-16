@@ -1,22 +1,15 @@
+import { unique } from '@/framework/array'
 import { safeStringify } from '@/valeurImport/helpers/safeStringify'
 
+// Glue tabulaire : stringify + trim de chaque cellule d'une colonne, sans les
+// vides, dédoublonné via l'util générique `unique` (ordre de 1re occurrence).
 export const collecterValeursDistinctes = ({
   rows,
   colonne,
 }: {
   rows: ReadonlyArray<Record<string, unknown>>
   colonne: string
-}): string[] => {
-  const set = new Set<string>()
-  const ordered: string[] = []
-  for (const row of rows) {
-    const brut = row[colonne]
-    if (brut === null || brut === undefined) continue
-    const valeur = safeStringify(brut).trim()
-    if (valeur && !set.has(valeur)) {
-      set.add(valeur)
-      ordered.push(valeur)
-    }
-  }
-  return ordered
-}
+}): string[] =>
+  unique(
+    rows.map((row) => safeStringify(row[colonne]).trim()).filter((valeur) => valeur.length > 0),
+  )
