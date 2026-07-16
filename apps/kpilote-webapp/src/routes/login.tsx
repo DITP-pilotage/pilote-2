@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { z } from 'zod'
 
 import { Button } from '@pilote/kpilote-ui/Button'
-import { Section } from '@/components/ui/Section'
+import { Section } from '@pilote/kpilote-ui/Section'
 import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 
 const loginSearchSchema = z.object({

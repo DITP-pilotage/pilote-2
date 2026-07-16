@@ -2,7 +2,7 @@ import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { FlaskConical, Laptop, Siren } from 'lucide-react'
 
 import { BarCard } from '@/components/ui/BarCard'
-import { FadeIn } from '@/components/ui/FadeIn'
+import { FadeIn } from '@pilote/kpilote-ui/FadeIn'
 import type { Environment } from '@/session'
 
 export const Route = createFileRoute('/')({

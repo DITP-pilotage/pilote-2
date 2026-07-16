@@ -1,7 +1,7 @@
 import type { ComponentProps, ReactNode } from 'react'
 
-import { Text } from '@pilote/kpilote-ui/Typography'
-import { clsxm } from '@/lib/clsxm'
+import { Text } from './Typography'
+import { clsxm } from './clsxm'
 
 type CardProps = ComponentProps<'div'> & {
   kicker?: ReactNode

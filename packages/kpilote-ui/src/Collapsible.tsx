@@ -1,7 +1,7 @@
 import { Collapsible as CollapsiblePrimitive } from 'radix-ui'
 import type { ComponentProps } from 'react'
 
-import { clsxm } from '@/lib/clsxm'
+import { clsxm } from './clsxm'
 
 export const Collapsible = CollapsiblePrimitive.Root
 export const CollapsibleTrigger = CollapsiblePrimitive.Trigger

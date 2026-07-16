@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
-import { StatCard } from '@/components/ui/StatCard'
+import { StatCard } from '@pilote/kpilote-ui/StatCard'
 import { panierTauxProgressionQueryOptions } from '@/queries/paniers'
 
 const formatTaux = (taux: number | null): string => {

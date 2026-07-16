@@ -3,7 +3,7 @@ import { z } from 'zod'
 
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
-import { Section } from '@/components/ui/Section'
+import { Section } from '@pilote/kpilote-ui/Section'
 import { auth } from '@/auth'
 
 const reasonSchema = z.enum([

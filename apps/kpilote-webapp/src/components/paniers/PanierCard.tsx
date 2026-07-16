@@ -3,7 +3,7 @@ import { Link } from '@tanstack/react-router'
 import { Suspense } from 'react'
 
 import { PanierAvancement, PanierAvancementSkeleton } from '@/components/paniers/PanierAvancement'
-import { EntityCard } from '@/components/ui/EntityCard'
+import { EntityCard } from '@pilote/kpilote-ui/EntityCard'
 
 export type PanierCardContext = {
   individu: string

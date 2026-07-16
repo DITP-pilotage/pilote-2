@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react'
 
-import { clsxm } from '@/lib/clsxm'
+import { clsxm } from './clsxm'
 
 type PillTone = 'success' | 'warning' | 'neutral'
 

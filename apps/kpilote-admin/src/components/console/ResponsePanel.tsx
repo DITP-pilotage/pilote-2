@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
 import type { ConsoleResponse } from '@/api/console'
-import { CopyButton } from '@/components/ui/CopyButton'
+import { CopyButton } from '@pilote/kpilote-ui/CopyButton'
 import { formatJson, JsonEditor } from '@/components/ui/JsonEditor'
 import { clsxm } from '@/lib/clsxm'
 

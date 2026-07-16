@@ -1,7 +1,7 @@
 import { Check, Copy } from 'lucide-react'
 import { useState } from 'react'
 
-import { clsxm } from '@/lib/clsxm'
+import { clsxm } from './clsxm'
 
 export function CopyButton({
   value,

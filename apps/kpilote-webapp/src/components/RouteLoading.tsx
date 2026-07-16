@@ -1,4 +1,4 @@
-import { Section } from '@/components/ui/Section'
+import { Section } from '@pilote/kpilote-ui/Section'
 import { Text } from '@pilote/kpilote-ui/Typography'
 
 type RouteLoadingProps = {

@@ -1,7 +1,7 @@
 import { DropdownMenu as DropdownMenuPrimitive } from 'radix-ui'
 import type { ComponentProps } from 'react'
 
-import { clsxm } from '@/lib/clsxm'
+import { clsxm } from './clsxm'
 
 export const DropdownMenu = DropdownMenuPrimitive.Root
 export const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger

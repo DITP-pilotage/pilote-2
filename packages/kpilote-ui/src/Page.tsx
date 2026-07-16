@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { Heading, Text } from '@pilote/kpilote-ui/Typography'
+import { Heading, Text } from './Typography'
 
 type PageProps = {
   kicker?: ReactNode

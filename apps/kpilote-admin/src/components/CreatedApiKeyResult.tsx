@@ -1,5 +1,5 @@
 import { Button } from '@pilote/kpilote-ui/Button'
-import { CopyButton } from '@/components/ui/CopyButton'
+import { CopyButton } from '@pilote/kpilote-ui/CopyButton'
 
 export function CreatedApiKeyResult({
   rawKey,

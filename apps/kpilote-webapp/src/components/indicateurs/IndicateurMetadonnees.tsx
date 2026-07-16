@@ -8,7 +8,7 @@ import {
 } from '@pilote/kpilote-shared/indicateur'
 import { type ResponsableApiModel } from '@pilote/kpilote-shared/responsable'
 
-import { DescriptionList } from '@/components/ui/DescriptionList'
+import { DescriptionList } from '@pilote/kpilote-ui/DescriptionList'
 import { ResponsablesList } from '@/components/ui/ResponsablesList'
 import { Heading } from '@pilote/kpilote-ui/Typography'
 import { formatDateTimeFr, formatMoisAnneeLongFr } from '@/lib/format'

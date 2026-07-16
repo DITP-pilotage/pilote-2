@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { Table } from '@pilote/kpilote-ui/Table'
+import { Table } from './Table'
 
 export type DataTableColumn<T> = {
   key: string

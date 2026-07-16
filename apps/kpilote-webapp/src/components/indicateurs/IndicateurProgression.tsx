@@ -1,6 +1,6 @@
 import { type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
 
-import { ProgressBar } from '@/components/ui/ProgressBar'
+import { ProgressBar } from '@pilote/kpilote-ui/ProgressBar'
 import { Text } from '@pilote/kpilote-ui/Typography'
 import { formatDateFr, formatNumberAvecUniteFr, formatNumberFr } from '@/lib/format'
 

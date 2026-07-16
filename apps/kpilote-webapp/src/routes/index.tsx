@@ -3,7 +3,7 @@ import { ArrowRight, BarChart3, ShoppingBasket } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 import { Button } from '@pilote/kpilote-ui/Button'
-import { Section } from '@/components/ui/Section'
+import { Section } from '@pilote/kpilote-ui/Section'
 import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 
 export const Route = createFileRoute('/')({

@@ -1,15 +1,9 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useId } from 'react'
 
-import { Button } from '@pilote/kpilote-ui/Button'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@pilote/kpilote-ui/Select'
-import { clsxm } from '@/lib/clsxm'
+import { Button } from './Button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './Select'
+import { clsxm } from './clsxm'
 
 export const DEFAULT_PAGE_SIZE_OPTIONS = [20, 50, 100] as const
 

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 
-import { Text } from '@pilote/kpilote-ui/Typography'
+import { Text } from './Typography'
 
 function Root({ children }: { children: ReactNode }) {
   return (

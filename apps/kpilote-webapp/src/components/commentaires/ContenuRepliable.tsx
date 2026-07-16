@@ -3,7 +3,7 @@ import { Collapsible as CollapsiblePrimitive } from 'radix-ui'
 import { useEffect, useRef, useState } from 'react'
 
 import { RenduContenuHtml } from '@/components/editeur-riche/RenduContenuHtml'
-import { Collapsible, CollapsibleTrigger } from '@/components/ui/Collapsible'
+import { Collapsible, CollapsibleTrigger } from '@pilote/kpilote-ui/Collapsible'
 import { clsxm } from '@/lib/clsxm'
 
 // Hauteur de l'aperçu replié (~3 lignes).

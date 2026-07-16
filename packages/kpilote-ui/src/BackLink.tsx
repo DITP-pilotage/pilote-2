@@ -2,7 +2,7 @@ import { Slot as SlotPrimitive } from 'radix-ui'
 import { ArrowLeft } from 'lucide-react'
 import type { ComponentProps } from 'react'
 
-import { clsxm } from '@/lib/clsxm'
+import { clsxm } from './clsxm'
 
 type BackLinkProps = ComponentProps<'button'> & {
   asChild?: boolean

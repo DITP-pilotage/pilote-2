@@ -12,7 +12,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/DropdownMenu'
+} from '@pilote/kpilote-ui/DropdownMenu'
 import { Text } from '@pilote/kpilote-ui/Typography'
 import { auth } from '@/auth'
 import { clsxm } from '@/lib/clsxm'

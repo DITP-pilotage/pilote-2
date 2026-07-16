@@ -1,6 +1,6 @@
 import { Progress } from 'radix-ui'
 
-import { clsxm } from '@/lib/clsxm'
+import { clsxm } from './clsxm'
 
 export function ProgressBar({
   value,
