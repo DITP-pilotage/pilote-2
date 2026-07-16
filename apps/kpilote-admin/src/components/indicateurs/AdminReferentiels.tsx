@@ -1,11 +1,9 @@
-import { useSuspenseQuery } from '@tanstack/react-query'
 import { Plus, Trash2 } from 'lucide-react'
-import { useFieldArray, type UseFormRegister } from 'react-hook-form'
+import { Controller, useFieldArray } from 'react-hook-form'
 
+import { ReferentielPicker } from '@/components/indicateurs/ReferentielPicker'
 import { useIndicateurFormContext } from '@/components/indicateurs/indicateurFormContext'
-import { type IndicateurFormValues } from '@/components/indicateurs/indicateurFormSchema'
 import { FieldSelect } from '@/components/ui/FieldSelect'
-import { referentielsAllQueryOptions } from '@/queries/referentiels'
 
 type FonctionAgregation = 'SUM' | 'AVG' | 'NONE'
 
@@ -18,7 +16,8 @@ const AGREGATION_LABEL: Record<FonctionAgregation, string> = {
 export function AdminReferentiels() {
   const form = useIndicateurFormContext()
   const { fields, append, remove } = useFieldArray({ control: form.control, name: 'referentiels' })
-  const { data: options } = useSuspenseQuery(referentielsAllQueryOptions())
+  const values = form.watch('referentiels') ?? []
+  const selectedIds = values.map((value) => value.id).filter(Boolean)
 
   return (
     <div className="border-t border-border pt-5">
@@ -40,9 +39,7 @@ export function AdminReferentiels() {
         <ReferentielRow
           key={field.id}
           index={index}
-          register={form.register}
-          error={form.formState.errors.referentiels?.[index]?.id?.message}
-          options={options}
+          selectedIds={selectedIds}
           onRemove={() => remove(index)}
         />
       ))}
@@ -52,43 +49,39 @@ export function AdminReferentiels() {
 
 function ReferentielRow({
   index,
-  register,
-  error,
-  options,
+  selectedIds,
   onRemove,
 }: {
   index: number
-  register: UseFormRegister<IndicateurFormValues>
-  error?: string | undefined
-  options: { id: string; nom: string }[]
+  selectedIds: string[]
   onRemove: () => void
 }) {
+  const form = useIndicateurFormContext()
+  const currentId = form.watch(`referentiels.${index}.id`)
+  const excludedIds = selectedIds.filter((id) => id !== currentId)
+  const error = form.formState.errors.referentiels?.[index]?.id?.message
+
   return (
     <div className="mb-2.5 flex items-start gap-2.5 rounded-lg border border-border bg-surface-muted px-3 py-2.5">
       <div className="flex-[2]">
-        <FieldSelect
-          label="Référentiel"
-          hideLabel
-          required
-          error={error}
-          aria-invalid={error ? true : undefined}
-          {...register(`referentiels.${index}.id`)}
-        >
-          <option value="" disabled>
-            Choisir un référentiel…
-          </option>
-          {options.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.id} · {option.nom}
-            </option>
-          ))}
-        </FieldSelect>
+        <Controller
+          control={form.control}
+          name={`referentiels.${index}.id`}
+          render={({ field }) => (
+            <ReferentielPicker
+              value={field.value}
+              onChange={field.onChange}
+              excludedIds={excludedIds}
+            />
+          )}
+        />
+        {error ? <p className="mt-1 text-xs text-accent">{error}</p> : null}
       </div>
       <div className="flex-1">
         <FieldSelect
           label="Fonction d'agrégation"
           hideLabel
-          {...register(`referentiels.${index}.fonctionAgregation`)}
+          {...form.register(`referentiels.${index}.fonctionAgregation`)}
         >
           {Object.entries(AGREGATION_LABEL).map(([value, label]) => (
             <option key={value} value={value}>
