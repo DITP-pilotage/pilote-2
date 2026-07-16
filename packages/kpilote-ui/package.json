@@ -48,6 +48,10 @@
     "./PickerOptionNomId": {
       "types": "./src/PickerOptionNomId.tsx",
       "default": "./src/PickerOptionNomId.tsx"
+    },
+    "./SegmentedControl": {
+      "types": "./src/SegmentedControl.tsx",
+      "default": "./src/SegmentedControl.tsx"
     }
   },
   "files": [

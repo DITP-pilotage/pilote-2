@@ -7,7 +7,7 @@ import { remplacerUtilisateursAutorises } from '@/api/feature'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { UtilisateurPicker } from '@/components/UtilisateurPicker'
-import { SegmentedControl } from '@/components/ui/SegmentedControl'
+import { SegmentedField } from '@/components/ui/SegmentedField'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { featureQueryOptions, useModifierEtatFeatureMutation } from '@/queries/feature'
@@ -79,7 +79,7 @@ function FeatureDetailComponent() {
 
       <div className="flex flex-col gap-8">
         <section className="rounded-xl border border-border bg-surface p-6">
-          <SegmentedControl
+          <SegmentedField
             label="État"
             value={feature.etat}
             onValueChange={(etat) => etatMutation.mutate({ id, etat })}

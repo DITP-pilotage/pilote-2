@@ -1,7 +1,7 @@
 import { ToggleGroup as ToggleGroupPrimitive } from 'radix-ui'
 import type { ReactNode } from 'react'
 
-import { clsxm } from '@/lib/clsxm'
+import { clsxm } from './clsxm'
 
 export type SegmentedControlOption<TValue extends string> = {
   value: TValue
@@ -12,9 +12,12 @@ export type SegmentedControlOption<TValue extends string> = {
 type SegmentedControlProps<TValue extends string> = {
   value: TValue
   onValueChange: (value: TValue) => void
-  options: SegmentedControlOption<TValue>[]
-  'aria-label': string
+  options: readonly SegmentedControlOption<TValue>[]
   className?: string
+  // Fournir l'un OU l'autre : `aria-label` pour un usage autonome,
+  // `aria-labelledby` quand un `<label>` externe (ex. Field) décrit le groupe.
+  'aria-label'?: string
+  'aria-labelledby'?: string
 }
 
 export function SegmentedControl<TValue extends string>({
@@ -22,7 +25,7 @@ export function SegmentedControl<TValue extends string>({
   onValueChange,
   options,
   className,
-  ...props
+  ...aria
 }: SegmentedControlProps<TValue>) {
   return (
     <ToggleGroupPrimitive.Root
@@ -32,7 +35,8 @@ export function SegmentedControl<TValue extends string>({
         // Radix renvoie une chaîne vide quand on reclique le segment actif : on ignore pour rester non-déselectionnable
         if (next) onValueChange(next as TValue)
       }}
-      aria-label={props['aria-label']}
+      aria-label={aria['aria-label']}
+      aria-labelledby={aria['aria-labelledby']}
       className={clsxm(
         'inline-flex items-center gap-1 rounded-lg border border-border bg-surface-tinted p-1',
         className,

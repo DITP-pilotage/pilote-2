@@ -21,7 +21,7 @@ import { Field } from '@/components/ui/Field'
 import { FieldInput } from '@/components/ui/FieldInput'
 import { FieldSelect } from '@/components/ui/FieldSelect'
 import { FieldTextarea } from '@/components/ui/FieldTextarea'
-import { SegmentedControl } from '@/components/ui/SegmentedControl'
+import { SegmentedField } from '@/components/ui/SegmentedField'
 import { useAppConfig } from '@/context/AppConfigContext'
 
 const VISIBILITE_OPTIONS = [
@@ -91,7 +91,7 @@ export function IndicateurForm({
 
           <div className="mb-6 flex gap-4">
             <div className="flex-1">
-              <SegmentedControl
+              <SegmentedField
                 label="Visibilité"
                 value={visibilite}
                 onValueChange={(value) =>
