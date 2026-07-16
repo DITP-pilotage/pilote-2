@@ -8,6 +8,15 @@ describe('parseFrLibre', () => {
     expect(parseFrLibre('2022-09-30T21:59:39.000Z')).toBe('2022-09-30')
   })
 
+  it('ramène un datetime à offset sur la date calendaire Europe/Paris', () => {
+    // 23h UTC en hiver (Paris = UTC+1) → bascule au lendemain.
+    expect(parseFrLibre('2022-12-31T23:00:00Z')).toBe('2023-01-01')
+    // 23h UTC en été (Paris = UTC+2) → bascule aussi au lendemain.
+    expect(parseFrLibre('2022-06-30T23:00:00Z')).toBe('2022-07-01')
+    // 21h UTC en hiver reste le même jour à Paris (22h locale).
+    expect(parseFrLibre('2022-12-31T21:00:00Z')).toBe('2022-12-31')
+  })
+
   it('priorise trimestre puis mois sur l’extraction d’année', () => {
     expect(parseFrLibre('T1 2023')).toBe('2023-01-01')
     expect(parseFrLibre('janvier 2023')).toBe('2023-01-01')
