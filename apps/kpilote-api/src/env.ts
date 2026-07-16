@@ -25,6 +25,7 @@ const envSchema = z.object({
   API_KEY_HMAC_SECRET: z.string().min(32),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
   LOG_TO_DATABASE: z.stringbool().default(false),
+  MAX_ASYNC_CONCURRENCY: z.coerce.number().int().positive().default(5),
 })
 
 export type Env = z.infer<typeof envSchema>

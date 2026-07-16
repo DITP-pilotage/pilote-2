@@ -8,6 +8,8 @@ import {
 import {
   type PanierTauxProgressionApiModel,
   panierTauxProgressionApiModelSchema,
+  type PanierTauxProgressionSummaryListApiModel,
+  panierTauxProgressionSummaryListApiModelSchema,
 } from '@pilote/kpilote-shared/panierTauxProgression'
 
 import { apiClient } from '@/api/client'
@@ -33,4 +35,16 @@ export const fetchPanierTauxProgression = async ({
     .get(`paniers/${panierId}/taux-progression`, { searchParams: { individu } })
     .json()
   return panierTauxProgressionApiModelSchema.parse(json)
+}
+
+export const fetchPanierTauxProgressionForIndividu = async (
+  individuId: string,
+  panierIds: string[],
+): Promise<PanierTauxProgressionSummaryListApiModel> => {
+  const json = await apiClient
+    .get(`individus/${individuId}/taux-progression/paniers`, {
+      searchParams: { paniers: panierIds.join(',') },
+    })
+    .json()
+  return panierTauxProgressionSummaryListApiModelSchema.parse(json)
 }
