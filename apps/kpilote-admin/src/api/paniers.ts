@@ -1,7 +1,8 @@
-import type { PanierListApiModel } from '@pilote/kpilote-shared/panier'
+import type { PanierApiModel, PanierListApiModel } from '@pilote/kpilote-shared/panier'
 import { panierListApiModelSchema } from '@pilote/kpilote-shared/panier'
 
 import { bffClient } from '@/api/client'
+import { fetchAllPages } from '@/lib/fetchAllPages'
 
 export type ListPaniersParams = {
   recherche?: string | undefined
@@ -17,3 +18,6 @@ export const fetchPaniers = async (params: ListPaniersParams): Promise<PanierLis
   const json = await bffClient.get('paniers', { searchParams }).json()
   return panierListApiModelSchema.parse(json)
 }
+
+export const fetchAllPaniers = (): Promise<PanierApiModel[]> =>
+  fetchAllPages((cursor) => fetchPaniers({ cursor }))

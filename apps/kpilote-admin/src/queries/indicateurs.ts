@@ -1,6 +1,12 @@
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query'
 
-import { fetchIndicateurById, fetchIndicateurs } from '@/api/indicateurs'
+import { fetchAllIndicateurs, fetchIndicateurById, fetchIndicateurs } from '@/api/indicateurs'
+
+export const indicateursAllQueryOptions = () =>
+  queryOptions({
+    queryKey: ['indicateurs', 'all'],
+    queryFn: () => fetchAllIndicateurs(),
+  })
 
 export const indicateursInfiniteQueryOptions = (recherche: string) =>
   infiniteQueryOptions({

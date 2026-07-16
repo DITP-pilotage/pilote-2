@@ -1,7 +1,8 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { Plus, Trash2 } from 'lucide-react'
-import { useFieldArray, type UseFormRegister } from 'react-hook-form'
+import { Trash2 } from 'lucide-react'
+import { useFieldArray, useWatch, type UseFormRegister } from 'react-hook-form'
 
+import { ReferentielPicker } from '@/components/indicateurs/ReferentielPicker'
 import { useIndicateurFormContext } from '@/components/indicateurs/indicateurFormContext'
 import { type IndicateurFormValues } from '@/components/indicateurs/indicateurFormSchema'
 import { FieldSelect } from '@/components/ui/FieldSelect'
@@ -18,72 +19,55 @@ const AGREGATION_LABEL: Record<FonctionAgregation, string> = {
 export function AdminReferentiels() {
   const form = useIndicateurFormContext()
   const { fields, append, remove } = useFieldArray({ control: form.control, name: 'referentiels' })
+  const referentielsSelectionnes = useWatch({ control: form.control, name: 'referentiels' })
   const { data: options } = useSuspenseQuery(referentielsAllQueryOptions())
+
+  const nomById = new Map(options.map((option) => [option.id, option.nom]))
+  const selectedIds = (referentielsSelectionnes ?? []).map((referentiel) => referentiel.id)
 
   return (
     <div className="border-t border-border pt-5">
-      <div className="mb-1 flex items-center justify-between">
-        <span className="text-sm font-bold">Référentiels liés</span>
-        <button
-          type="button"
-          onClick={() => append({ id: '', fonctionAgregation: 'SUM' })}
-          className="flex items-center gap-1 text-sm font-semibold text-primary"
-        >
-          <Plus className="size-4" /> Ajouter
-        </button>
-      </div>
+      <span className="mb-1 block text-sm font-bold">Référentiels liés</span>
       <p className="mb-4 text-xs text-text-subtle">
         ⚠ Cette liste remplace <b>intégralement</b> l'existant (replace-all). Retirer une ligne
         supprime le lien.
       </p>
-      {fields.map((field, index) => (
-        <ReferentielRow
-          key={field.id}
-          index={index}
-          register={form.register}
-          error={form.formState.errors.referentiels?.[index]?.id?.message}
-          options={options}
-          onRemove={() => remove(index)}
-        />
-      ))}
+
+      <ReferentielPicker
+        excludedIds={selectedIds}
+        onSelect={(id) => append({ id, fonctionAgregation: 'SUM' })}
+        placeholder="Ajouter un référentiel"
+      />
+
+      <ul className="mt-3 space-y-2">
+        {fields.map((field, index) => (
+          <ReferentielRow
+            key={field.id}
+            index={index}
+            referentielNom={nomById.get(selectedIds[index] ?? '') ?? selectedIds[index] ?? ''}
+            register={form.register}
+            onRemove={() => remove(index)}
+          />
+        ))}
+      </ul>
     </div>
   )
 }
 
 function ReferentielRow({
   index,
+  referentielNom,
   register,
-  error,
-  options,
   onRemove,
 }: {
   index: number
+  referentielNom: string
   register: UseFormRegister<IndicateurFormValues>
-  error?: string | undefined
-  options: { id: string; nom: string }[]
   onRemove: () => void
 }) {
   return (
-    <div className="mb-2.5 flex items-start gap-2.5 rounded-lg border border-border bg-surface-muted px-3 py-2.5">
-      <div className="flex-[2]">
-        <FieldSelect
-          label="Référentiel"
-          hideLabel
-          required
-          error={error}
-          aria-invalid={error ? true : undefined}
-          {...register(`referentiels.${index}.id`)}
-        >
-          <option value="" disabled>
-            Choisir un référentiel…
-          </option>
-          {options.map((option) => (
-            <option key={option.id} value={option.id}>
-              {option.id} · {option.nom}
-            </option>
-          ))}
-        </FieldSelect>
-      </div>
+    <li className="flex items-center gap-2.5 rounded-lg border border-border bg-surface-muted px-3 py-2">
+      <span className="flex-[2] text-sm text-text">{referentielNom}</span>
       <div className="flex-1">
         <FieldSelect
           label="Fonction d'agrégation"
@@ -97,9 +81,9 @@ function ReferentielRow({
           ))}
         </FieldSelect>
       </div>
-      <button type="button" onClick={onRemove} className="mt-2 text-accent" aria-label="Retirer">
+      <button type="button" onClick={onRemove} className="text-accent" aria-label="Retirer">
         <Trash2 className="size-4" />
       </button>
-    </div>
+    </li>
   )
 }

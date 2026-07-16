@@ -10,6 +10,8 @@ import { TabNav } from '@/components/ui/TabNav'
 import { UtilisateurForm, type UtilisateurFormValues } from '@/components/UtilisateurForm'
 import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
+import { indicateursAllQueryOptions } from '@/queries/indicateurs'
+import { paniersAllQueryOptions } from '@/queries/paniers'
 import { principalPermissionsQueryOptions } from '@/queries/permissions'
 import { utilisateurQueryOptions } from '@/queries/utilisateurs'
 
@@ -18,6 +20,8 @@ export const Route = createFileRoute('/_authed/utilisateurs/$id')({
     await Promise.all([
       context.queryClient.ensureQueryData(utilisateurQueryOptions(params.id)),
       context.queryClient.ensureQueryData(principalPermissionsQueryOptions(params.id)),
+      context.queryClient.ensureQueryData(indicateursAllQueryOptions()),
+      context.queryClient.ensureQueryData(paniersAllQueryOptions()),
     ])
   },
   component: EditUtilisateurComponent,

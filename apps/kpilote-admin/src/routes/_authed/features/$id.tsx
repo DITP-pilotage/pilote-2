@@ -6,7 +6,7 @@ import { Trash2 } from 'lucide-react'
 import { remplacerUtilisateursAutorises } from '@/api/feature'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
-import { Picker } from '@/components/ui/Picker'
+import { UtilisateurPicker } from '@/components/UtilisateurPicker'
 import { SegmentedControl } from '@/components/ui/SegmentedControl'
 import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
@@ -35,14 +35,10 @@ function FeatureDetailComponent() {
   const { id } = Route.useParams()
   const queryClient = useQueryClient()
   const { data: feature } = useSuspenseQuery(featureQueryOptions(id))
-  const { data: tousLesUtilisateurs } = useSuspenseQuery(utilisateursAllQueryOptions())
   const toast = useToast()
 
   const cibleUtilisateurs = feature.etat === 'ACTIVE_POUR_UTILISATEUR'
   const utilisateurIdsAutorises = feature.utilisateursAutorises.map((u) => u.id)
-  const utilisateursDisponibles = tousLesUtilisateurs.filter(
-    (u) => !utilisateurIdsAutorises.includes(u.id),
-  )
 
   const etatMutation = useModifierEtatFeatureMutation({
     onSuccess: () => toast({ title: 'État mis à jour.' }),
@@ -113,32 +109,11 @@ function FeatureDetailComponent() {
           ) : null}
 
           <div className="mb-4">
-            <Picker
-              items={utilisateursDisponibles}
+            <UtilisateurPicker
+              excludedIds={utilisateurIdsAutorises}
               onSelect={(utilisateur) => ajouter(utilisateur.id)}
-              getKey={(utilisateur) => utilisateur.id}
-              getSearchText={(utilisateur) =>
-                `${utilisateur.prenom} ${utilisateur.nom} ${utilisateur.email}`
-              }
               disabled={utilisateursMutation.isPending}
-              triggerLabel="Ajouter un utilisateur…"
-              searchPlaceholder="Rechercher un utilisateur…"
-              emptyLabel="Aucun utilisateur."
-              renderItem={(utilisateur) => (
-                <>
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[10px] font-semibold text-primary">
-                    {initiales(utilisateur)}
-                  </span>
-                  <span className="min-w-0">
-                    <span className="block truncate">
-                      {utilisateur.prenom} {utilisateur.nom}
-                    </span>
-                    <span className="block truncate text-xs text-text-muted">
-                      {utilisateur.email}
-                    </span>
-                  </span>
-                </>
-              )}
+              placeholder="Ajouter un utilisateur…"
             />
           </div>
 
