@@ -1,5 +1,8 @@
 @import 'tailwindcss';
 
+/* Scanne les composants partagés (@pilote/kpilote-ui) pour ne pas purger leurs classes. */
+@source '../../../packages/kpilote-ui/src';
+
 @theme {
   /* Typographie — sans-serif géométrique (Marianne-like) */
   --font-sans:
