@@ -11,6 +11,7 @@ import {
   type IndicateurFormValues,
 } from '@/components/indicateurs/indicateurFormSchema'
 import { PageHeading } from '@/components/PageHeading'
+import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { indicateurQueryOptions } from '@/queries/indicateurs'
 import { referentielsAllQueryOptions } from '@/queries/referentiels'
@@ -33,11 +34,13 @@ function EditIndicateurComponent() {
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(id))
   const [error, setError] = useState<string | null>(null)
 
+  const toast = useToast()
   const mutation = useMutation({
     mutationFn: (values: IndicateurFormValues) => upsertIndicateur(id, toUpsertBody(values)),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['indicateurs'] })
       await queryClient.invalidateQueries({ queryKey: ['indicateur', id] })
+      toast({ title: 'Indicateur modifié.' })
       void navigate({ to: '/indicateurs' })
     },
     onError: (err: unknown) => {

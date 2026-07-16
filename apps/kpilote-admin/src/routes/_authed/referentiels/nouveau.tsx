@@ -6,6 +6,7 @@ import { upsertReferentiel } from '@/api/referentiels'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { ReferentielForm, type ReferentielFormValues } from '@/components/ReferentielForm'
+import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { session } from '@/session'
 
@@ -19,6 +20,7 @@ function NewReferentielComponent() {
   const isProd = session.current?.environment === 'prod'
   const [error, setError] = useState<string | null>(null)
 
+  const toast = useToast()
   const mutation = useMutation({
     mutationFn: (values: ReferentielFormValues) =>
       upsertReferentiel(values.id, {
@@ -28,6 +30,7 @@ function NewReferentielComponent() {
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['referentiels'] })
+      toast({ title: 'Référentiel créé.' })
       void navigate({ to: '/referentiels' })
     },
     onError: (err: unknown) => {

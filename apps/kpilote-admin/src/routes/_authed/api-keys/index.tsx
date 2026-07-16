@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { Table } from '@/components/ui/Table'
 import { clickableRowProps, stopRowActivation } from '@/lib/clickableRow'
+import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { apiKeysQueryOptions } from '@/queries/apiKeys'
 import { session } from '@/session'
@@ -41,11 +42,13 @@ function ApiKeysListComponent() {
   const [error, setError] = useState<string | null>(null)
   const [confirmingId, setConfirmingId] = useState<string | null>(null)
 
+  const toast = useToast()
   const revokeMutation = useMutation({
     mutationFn: (id: string) => revokeApiKey(id),
     onSuccess: async () => {
       setConfirmingId(null)
       await queryClient.invalidateQueries({ queryKey: ['api-keys'] })
+      toast({ title: 'Clé API révoquée.' })
     },
     onError: (err: unknown) => {
       setConfirmingId(null)

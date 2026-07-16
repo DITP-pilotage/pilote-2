@@ -16,6 +16,7 @@ import { IndicateurSearchModal } from '@/components/IndicateurSearchModal'
 import { PanierSearchModal } from '@/components/PanierSearchModal'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
+import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { clsxm } from '@/lib/clsxm'
 import { useProdEditUnlock } from '@/lib/useProdEditUnlock'
@@ -31,6 +32,7 @@ type SectionHandlers = {
 
 export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const queryClient = useQueryClient()
+  const toast = useToast()
   const { isProd, locked, unlock } = useProdEditUnlock()
   const [error, setError] = useState<string | null>(null)
   const [modal, setModal] = useState<'indicateur' | 'panier' | null>(null)
@@ -40,7 +42,10 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
 
   const mutation = useMutation({
     mutationFn: (run: () => Promise<PrincipalPermissionsApiModel>) => run(),
-    onSuccess: (fresh) => queryClient.setQueryData(options.queryKey, fresh),
+    onSuccess: (fresh) => {
+      queryClient.setQueryData(options.queryKey, fresh)
+      toast({ title: 'Permissions mises à jour.' })
+    },
     onError: (err: unknown) => void extractApiError(err).then(setError),
   })
 

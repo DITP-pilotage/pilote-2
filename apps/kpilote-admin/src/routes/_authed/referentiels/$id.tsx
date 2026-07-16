@@ -6,6 +6,7 @@ import { upsertReferentiel } from '@/api/referentiels'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { ReferentielForm, type ReferentielFormValues } from '@/components/ReferentielForm'
+import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { referentielIndividusQueryOptions, referentielQueryOptions } from '@/queries/referentiels'
 import { session } from '@/session'
@@ -36,6 +37,7 @@ function EditReferentielComponent() {
     individus: individus.map((individu) => ({ publicId: individu.id, nom: individu.nom })),
   }
 
+  const toast = useToast()
   const mutation = useMutation({
     mutationFn: (values: ReferentielFormValues) =>
       upsertReferentiel(id, {
@@ -46,6 +48,7 @@ function EditReferentielComponent() {
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['referentiels'] })
       await queryClient.invalidateQueries({ queryKey: ['referentiel', id] })
+      toast({ title: 'Référentiel modifié.' })
       void navigate({ to: '/referentiels' })
     },
     onError: (err: unknown) => {

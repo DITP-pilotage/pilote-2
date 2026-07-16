@@ -8,6 +8,7 @@ import { PageHeading } from '@/components/PageHeading'
 import { PrincipalPermissions } from '@/components/PrincipalPermissions'
 import { TabNav } from '@/components/ui/TabNav'
 import { UtilisateurForm, type UtilisateurFormValues } from '@/components/UtilisateurForm'
+import { useToast } from '@/components/ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { principalPermissionsQueryOptions } from '@/queries/permissions'
 import { utilisateurQueryOptions } from '@/queries/utilisateurs'
@@ -31,6 +32,7 @@ function EditUtilisateurComponent() {
 
   const { data: utilisateur } = useSuspenseQuery(utilisateurQueryOptions(id))
 
+  const toast = useToast()
   const mutation = useMutation({
     mutationFn: (values: UtilisateurFormValues) =>
       updateUtilisateur(id, {
@@ -41,6 +43,7 @@ function EditUtilisateurComponent() {
       }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['utilisateurs'] })
+      toast({ title: 'Utilisateur modifié.' })
       await navigate({ to: '/utilisateurs' })
     },
     onError: (err: unknown) => {
