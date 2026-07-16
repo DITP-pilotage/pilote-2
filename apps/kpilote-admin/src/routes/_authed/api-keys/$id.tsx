@@ -8,6 +8,8 @@ import { PageHeading } from '@/components/PageHeading'
 import { PrincipalPermissions } from '@/components/PrincipalPermissions'
 import { TabNav } from '@/components/ui/TabNav'
 import { apiKeyQueryOptions } from '@/queries/apiKeys'
+import { indicateursAllQueryOptions } from '@/queries/indicateurs'
+import { paniersAllQueryOptions } from '@/queries/paniers'
 import { principalPermissionsQueryOptions } from '@/queries/permissions'
 
 export const Route = createFileRoute('/_authed/api-keys/$id')({
@@ -15,6 +17,8 @@ export const Route = createFileRoute('/_authed/api-keys/$id')({
     await Promise.all([
       context.queryClient.ensureQueryData(apiKeyQueryOptions(params.id)),
       context.queryClient.ensureQueryData(principalPermissionsQueryOptions(params.id)),
+      context.queryClient.ensureQueryData(indicateursAllQueryOptions()),
+      context.queryClient.ensureQueryData(paniersAllQueryOptions()),
     ])
   },
   component: ApiKeyDetailComponent,

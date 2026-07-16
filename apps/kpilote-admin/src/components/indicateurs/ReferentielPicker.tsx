@@ -24,11 +24,11 @@ export function ReferentielPicker({
   const items = data.filter(
     (referentiel) => referentiel.id === value || !excluded.has(referentiel.id),
   )
-  const selected = data.find((referentiel) => referentiel.id === value)
 
   return (
     <Picker
       items={items}
+      value={value}
       onSelect={(referentiel) => onChange(referentiel.id)}
       getKey={(referentiel) => referentiel.id}
       getSearchText={(referentiel) => `${referentiel.id} ${referentiel.nom}`}
@@ -38,7 +38,7 @@ export function ReferentielPicker({
           <span className="shrink-0 font-mono text-xs text-text-muted">{referentiel.id}</span>
         </span>
       )}
-      triggerLabel={selected ? `${selected.id} · ${selected.nom}` : placeholder}
+      triggerLabel={placeholder}
       disabled={disabled ?? false}
     />
   )

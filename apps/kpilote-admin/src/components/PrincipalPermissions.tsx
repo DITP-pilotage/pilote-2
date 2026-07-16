@@ -3,8 +3,8 @@ import type {
   PrincipalPermissionsApiModel,
 } from '@pilote/kpilote-shared/permission'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { Eye, Lock, Plus, Trash2 } from 'lucide-react'
-import { type ReactNode, useState } from 'react'
+import { Eye, Lock, Trash2 } from 'lucide-react'
+import { type ReactNode } from 'react'
 
 import {
   grantIndicateurPermission,
@@ -12,8 +12,8 @@ import {
   revokeIndicateurPermission,
   revokePanierPermission,
 } from '@/api/permissions'
-import { IndicateurSearchModal } from '@/components/IndicateurSearchModal'
-import { PanierSearchModal } from '@/components/PanierSearchModal'
+import { IndicateurPicker } from '@/components/permissions/IndicateurPicker'
+import { PanierPicker } from '@/components/permissions/PanierPicker'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { useToast } from '@/components/ui/Toast'
@@ -25,7 +25,6 @@ import { principalPermissionsQueryOptions } from '@/queries/permissions'
 type DirectRow = { publicId: string; nom: string; actions: PermissionActionValue[] }
 
 type SectionHandlers = {
-  onAdd: () => void
   onToggleWrite: (publicId: string, active: boolean) => void
   onRemove: (publicId: string) => void
 }
@@ -34,7 +33,6 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const queryClient = useQueryClient()
   const toast = useToast()
   const { isProd, locked, unlock } = useProdEditUnlock()
-  const [modal, setModal] = useState<'indicateur' | 'panier' | null>(null)
 
   const options = principalPermissionsQueryOptions(principalId)
   const { data } = useSuspenseQuery(options)
@@ -57,7 +55,6 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
 
   // Indicateurs — appels directs, aucune factorisation avec les paniers.
   const addIndicateur = (indicateurPublicId: string) => {
-    setModal(null)
     run(() => grantIndicateurPermission({ principalId, indicateurPublicId, action: 'READ' }))
   }
   const toggleIndicateurWrite = (indicateurPublicId: string, active: boolean) =>
@@ -71,7 +68,6 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
 
   // Paniers — appels directs, aucune factorisation avec les indicateurs.
   const addPanier = (panierPublicId: string) => {
-    setModal(null)
     run(() => grantPanierPermission({ principalId, panierPublicId, action: 'READ' }))
   }
   const togglePanierWrite = (panierPublicId: string, active: boolean) =>
@@ -86,22 +82,15 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const renderSection = (
     title: string,
     rows: DirectRow[],
+    addControl: ReactNode,
     handlers: SectionHandlers,
     extraForRow?: (publicId: string) => ReactNode,
   ) => (
     <div className="mb-6">
-      <div className="mb-2 flex items-center justify-between">
-        <h3 className="text-sm font-semibold uppercase tracking-wide text-text-muted">{title}</h3>
-        <Button
-          variant="tertiary"
-          size="sm"
-          type="button"
-          disabled={disabled}
-          onClick={handlers.onAdd}
-        >
-          <Plus className="size-4" /> Ajouter
-        </Button>
-      </div>
+      <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-text-muted">
+        {title}
+      </h3>
+      <div className="mb-2">{addControl}</div>
       {rows.length === 0 ? (
         <p className="rounded-lg border border-dashed border-border px-3 py-4 text-center text-sm text-text-subtle">
           Aucune permission directe.
@@ -237,36 +226,29 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
         />
       ) : null}
 
-      {renderSection('Indicateurs', data.indicateurs, {
-        onAdd: () => setModal('indicateur'),
-        onToggleWrite: toggleIndicateurWrite,
-        onRemove: removeIndicateur,
-      })}
+      {renderSection(
+        'Indicateurs',
+        data.indicateurs,
+        <IndicateurPicker
+          excludedIds={excludedIndicateurs}
+          onSelect={addIndicateur}
+          disabled={disabled}
+        />,
+        {
+          onToggleWrite: toggleIndicateurWrite,
+          onRemove: removeIndicateur,
+        },
+      )}
       {renderSection(
         'Paniers',
         data.paniers,
+        <PanierPicker excludedIds={excludedPaniers} onSelect={addPanier} disabled={disabled} />,
         {
-          onAdd: () => setModal('panier'),
           onToggleWrite: togglePanierWrite,
           onRemove: removePanier,
         },
         renderHeritesForPanier,
       )}
-
-      {modal === 'indicateur' ? (
-        <IndicateurSearchModal
-          excludedPublicIds={excludedIndicateurs}
-          onSelect={(hit) => addIndicateur(hit.publicId)}
-          onClose={() => setModal(null)}
-        />
-      ) : null}
-      {modal === 'panier' ? (
-        <PanierSearchModal
-          excludedPublicIds={excludedPaniers}
-          onSelect={(hit) => addPanier(hit.publicId)}
-          onClose={() => setModal(null)}
-        />
-      ) : null}
     </section>
   )
 }
