@@ -5,8 +5,10 @@ import {
 } from '@pilote/kpilote-shared/dossierTauxProgression'
 import { ResultAsync } from 'neverthrow'
 
+import { type DateTrunc } from '@pilote/kpilote-shared/dates'
+
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { compareBuckets, formatBucket } from '@/framework/bucket'
+import { type Bucket, compareBuckets, formatBucket } from '@/framework/bucket'
 import { logger } from '@/framework/logger/logger'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
