@@ -41,8 +41,8 @@ importers:
         specifier: '>=1.19.13'
         version: 2.0.8(hono@4.12.27)
       '@hono/zod-validator':
-        specifier: ^0.7.6
-        version: 0.7.6(hono@4.12.27)(zod@4.4.3)
+        specifier: ^0.8.0
+        version: 0.8.0(hono@4.12.27)(zod@4.4.3)
       '@hookform/resolvers':
         specifier: ^5.4.0
         version: 5.4.0(react-hook-form@7.80.0(react@19.2.7))
@@ -12098,11 +12098,6 @@ snapshots:
     dependencies:
       hono: 4.12.18
       zod: 4.3.6
-
-  '@hono/zod-validator@0.7.6(hono@4.12.27)(zod@4.4.3)':
-    dependencies:
-      hono: 4.12.27
-      zod: 4.4.3
 
   '@hono/zod-validator@0.8.0(hono@4.12.27)(zod@4.4.3)':
     dependencies:
