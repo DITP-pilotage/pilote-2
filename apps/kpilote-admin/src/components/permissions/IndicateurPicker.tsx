@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
-import { Picker } from '@/components/ui/Picker'
-import { PickerOptionNomId } from '@/components/ui/PickerOptionNomId'
+import { Picker } from '@pilote/kpilote-ui/Picker'
+import { PickerOptionNomId } from '@pilote/kpilote-ui/PickerOptionNomId'
 import { indicateursAllQueryOptions } from '@/queries/indicateurs'
 
 export function IndicateurPicker({

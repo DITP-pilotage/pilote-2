@@ -4,6 +4,10 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./texte": {
+      "types": "./src/texte.ts",
+      "default": "./src/texte.ts"
+    },
     "./dates": {
       "types": "./src/dates.ts",
       "default": "./src/dates.ts"

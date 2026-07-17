@@ -3,7 +3,7 @@ import { createRootRouteWithContext, Link, Outlet } from '@tanstack/react-router
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 
 import { HeaderNav } from '@/components/HeaderNav'
-import { Marianne } from '@/components/ui/Marianne'
+import { Marianne } from '@pilote/kpilote-ui/Marianne'
 import type { Auth } from '@/auth'
 
 export type RouterContext = {

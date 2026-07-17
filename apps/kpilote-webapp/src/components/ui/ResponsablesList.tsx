@@ -1,8 +1,8 @@
 import { Mail } from 'lucide-react'
 import { type ResponsableApiModel } from '@pilote/kpilote-shared/responsable'
 
-import { EmptyState } from '@/components/ui/EmptyState'
-import { Text } from '@/components/ui/Typography'
+import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { Text } from '@pilote/kpilote-ui/Typography'
 
 function Initiales({ nom, prenom }: { nom: string; prenom: string }) {
   const initiales = [prenom, nom]

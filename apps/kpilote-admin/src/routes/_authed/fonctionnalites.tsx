@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { BarChart3, FolderTree, KeyRound, Terminal, ToggleLeft, Users } from 'lucide-react'
 
 import { BarCard } from '@/components/ui/BarCard'
-import { FadeIn } from '@/components/ui/FadeIn'
+import { FadeIn } from '@pilote/kpilote-ui/FadeIn'
 
 export const Route = createFileRoute('/_authed/fonctionnalites')({ component: FeaturesComponent })
 

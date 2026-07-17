@@ -1,8 +1,8 @@
 import { type PanierContactsUtilesGroup } from '@pilote/kpilote-shared/panierContactUtile'
 import { Globe, Mail, MapPin, Phone } from 'lucide-react'
 
-import { EmptyState } from '@/components/ui/EmptyState'
-import { Heading } from '@/components/ui/Typography'
+import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { Heading } from '@pilote/kpilote-ui/Typography'
 
 export function PanierContactsUtiles({
   contactsUtiles,

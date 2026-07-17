@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
-import { Picker } from '@/components/ui/Picker'
+import { Picker } from '@pilote/kpilote-ui/Picker'
 import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
 
 type UtilisateurOption = { id: string; nom: string; prenom: string; email: string }

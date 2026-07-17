@@ -3,24 +3,23 @@ import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
 import { panierPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
-import { startTransition, Suspense, useId } from 'react'
+import { startTransition, Suspense } from 'react'
 import { z } from 'zod'
 
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { SectionCommentaire } from '@/components/commentaires/SectionCommentaire'
 import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
-import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
+import { FieldIndividuSelect } from '@/components/indicateurs/FieldIndividuSelect'
 import { PanierCommentaireConfigProvider } from '@/components/paniers/PanierCommentaireConfigProvider'
 import { PanierGouvernanceTab } from '@/components/paniers/PanierGouvernanceTab'
 import { PanierTauxProgression } from '@/components/paniers/PanierTauxProgression'
-import { BackLink } from '@/components/ui/BackLink'
-import { CardGrid } from '@/components/ui/CardGrid'
-import { EmptyState } from '@/components/ui/EmptyState'
-import { FormField } from '@/components/ui/FormField'
-import { Page } from '@/components/ui/Page'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs'
-import { Text } from '@/components/ui/Typography'
+import { BackLink } from '@pilote/kpilote-ui/BackLink'
+import { CardGrid } from '@pilote/kpilote-ui/CardGrid'
+import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { Page } from '@pilote/kpilote-ui/Page'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tabs'
+import { Text } from '@pilote/kpilote-ui/Typography'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import { useRecordVisit } from '@/lib/recentlyVisited'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
@@ -90,7 +89,6 @@ function PanierDetailComponent() {
   const { id } = Route.useParams()
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
-  const selectId = useId()
   const { data: panier } = useSuspenseQuery(panierQueryOptions(id))
   useRecordVisit({ type: 'panier', id: panier.id, label: panier.nom })
   const { data: indicateurs } = useSuspenseQuery(
@@ -127,20 +125,17 @@ function PanierDetailComponent() {
       stickybar={
         search.individu ? (
           <div className="max-w-md">
-            <FormField label="Individu" htmlFor={selectId}>
-              <IndividuSelect
-                id={selectId}
-                referentielIds={referentielIds}
-                value={search.individu}
-                onChange={({ individu, referentiel }) => {
-                  startTransition(() => {
-                    void navigate({
-                      search: (prev) => ({ ...prev, individu, referentiel }),
-                    })
+            <FieldIndividuSelect
+              referentielIds={referentielIds}
+              value={search.individu}
+              onChange={({ individu, referentiel }) => {
+                startTransition(() => {
+                  void navigate({
+                    search: (prev) => ({ ...prev, individu, referentiel }),
                   })
-                }}
-              />
-            </FormField>
+                })
+              }}
+            />
           </div>
         ) : undefined
       }

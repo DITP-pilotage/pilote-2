@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useMemo } from 'react'
-import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
 
 import {
   PERIODE_MISE_A_JOUR_LABELS,
@@ -16,12 +16,12 @@ import {
   buildIndicateurFormSchema,
   type IndicateurFormValues,
 } from '@/components/indicateurs/indicateurFormSchema'
-import { Button } from '@/components/ui/Button'
-import { Field } from '@/components/ui/Field'
-import { FieldInput } from '@/components/ui/FieldInput'
-import { FieldSelect } from '@/components/ui/FieldSelect'
-import { FieldTextarea } from '@/components/ui/FieldTextarea'
-import { SegmentedControl } from '@/components/ui/SegmentedControl'
+import { Button } from '@pilote/kpilote-ui/Button'
+import { Field } from '@pilote/kpilote-ui/Field'
+import { FieldInput } from '@pilote/kpilote-ui/FieldInput'
+import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
+import { FieldTextarea } from '@pilote/kpilote-ui/FieldTextarea'
+import { SegmentedField } from '@pilote/kpilote-ui/SegmentedField'
 import { useAppConfig } from '@/context/AppConfigContext'
 
 const VISIBILITE_OPTIONS = [
@@ -49,7 +49,6 @@ export function IndicateurForm({
     mode: 'onChange',
     defaultValues: initial,
   })
-  const visibilite = useWatch({ control: form.control, name: 'visibilite' })
 
   return (
     <FormProvider {...form}>
@@ -91,13 +90,18 @@ export function IndicateurForm({
 
           <div className="mb-6 flex gap-4">
             <div className="flex-1">
-              <SegmentedControl
-                label="Visibilité"
-                value={visibilite}
-                onValueChange={(value) =>
-                  form.setValue('visibilite', value, { shouldValidate: true })
-                }
-                options={VISIBILITE_OPTIONS}
+              <Controller
+                control={form.control}
+                name="visibilite"
+                render={({ field, fieldState }) => (
+                  <SegmentedField
+                    label="Visibilité"
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    error={fieldState.error?.message}
+                    options={VISIBILITE_OPTIONS}
+                  />
+                )}
               />
             </div>
             <div className="flex-1">
@@ -147,14 +151,26 @@ export function IndicateurForm({
 
             <div className="flex gap-4">
               <div className="flex-1">
-                <FieldSelect label="Période de mise à jour" {...form.register('periodeMiseAJour')}>
-                  <option value="">Non renseignée</option>
-                  {PERIODES_MISE_A_JOUR.map((periode) => (
-                    <option key={periode} value={periode}>
-                      {PERIODE_MISE_A_JOUR_LABELS[periode]}
-                    </option>
-                  ))}
-                </FieldSelect>
+                <Controller
+                  control={form.control}
+                  name="periodeMiseAJour"
+                  render={({ field, fieldState }) => (
+                    <FieldSelect
+                      label="Période de mise à jour"
+                      value={field.value ?? ''}
+                      onValueChange={field.onChange}
+                      onBlur={field.onBlur}
+                      error={fieldState.error?.message}
+                      options={[
+                        { value: '', label: 'Non renseignée' },
+                        ...PERIODES_MISE_A_JOUR.map((periode) => ({
+                          value: periode,
+                          label: PERIODE_MISE_A_JOUR_LABELS[periode],
+                        })),
+                      ]}
+                    />
+                  )}
+                />
               </div>
               <div className="flex-1">
                 <FieldInput
@@ -181,18 +197,26 @@ export function IndicateurForm({
                 />
               </div>
               <div className="flex-1">
-                <FieldSelect
-                  label="Unité du délai"
-                  error={form.formState.errors.delaiUnite?.message}
-                  {...form.register('delaiUnite')}
-                >
-                  <option value="">Aucune</option>
-                  {UNITES_DUREE.map((unite) => (
-                    <option key={unite} value={unite}>
-                      {UNITE_DUREE_LABELS[unite]}
-                    </option>
-                  ))}
-                </FieldSelect>
+                <Controller
+                  control={form.control}
+                  name="delaiUnite"
+                  render={({ field, fieldState }) => (
+                    <FieldSelect
+                      label="Unité du délai"
+                      value={field.value ?? ''}
+                      onValueChange={field.onChange}
+                      onBlur={field.onBlur}
+                      error={fieldState.error?.message}
+                      options={[
+                        { value: '', label: 'Aucune' },
+                        ...UNITES_DUREE.map((unite) => ({
+                          value: unite,
+                          label: UNITE_DUREE_LABELS[unite],
+                        })),
+                      ]}
+                    />
+                  )}
+                />
               </div>
             </div>
           </div>
@@ -209,7 +233,7 @@ export function IndicateurForm({
           <Button
             type="submit"
             disabled={!form.formState.isValid || pending}
-            className={isProd ? 'bg-accent hover:bg-accent' : undefined}
+            className={isProd ? 'bg-red-marianne hover:bg-red-marianne' : undefined}
           >
             {pending ? 'Enregistrement…' : isProd ? '🚨 Enregistrer en Prod' : 'Enregistrer'}
           </Button>

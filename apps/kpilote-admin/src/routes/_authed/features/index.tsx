@@ -6,12 +6,12 @@ import { useMemo, useState } from 'react'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
-import { EmptyState } from '@/components/ui/EmptyState'
-import { Table } from '@/components/ui/Table'
-import { useToast } from '@/components/ui/Toast'
+import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { Table } from '@pilote/kpilote-ui/Table'
+import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { clickableRowProps, stopRowActivation } from '@/lib/clickableRow'
-import { searchUnaccent } from '@/lib/texte'
+import { searchUnaccent } from '@pilote/kpilote-shared/texte'
 import { useAppConfig } from '@/context/AppConfigContext'
 import { featuresQueryOptions, useModifierEtatFeatureMutation } from '@/queries/feature'
 
@@ -60,7 +60,7 @@ function FeatureListComponent() {
         subtitle={
           <>
             {features.length} fonctionnalité{features.length > 1 ? 's' : ''} · environnement{' '}
-            <b className={isProd ? 'text-accent' : undefined}>{environment}</b>
+            <b className={isProd ? 'text-red-marianne' : undefined}>{environment}</b>
           </>
         }
       />

@@ -7,9 +7,9 @@ import { useState } from 'react'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
-import { Button } from '@/components/ui/Button'
-import { EmptyState } from '@/components/ui/EmptyState'
-import { Table } from '@/components/ui/Table'
+import { Button } from '@pilote/kpilote-ui/Button'
+import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { Table } from '@pilote/kpilote-ui/Table'
 import { utilisateursInfiniteQueryOptions } from '@/queries/utilisateurs'
 import { session } from '@/session'
 
@@ -55,7 +55,9 @@ function UtilisateursListComponent() {
         subtitle={
           <>
             {total} utilisateur{total > 1 ? 's' : ''} · environnement{' '}
-            <b className={isProd ? 'text-accent' : undefined}>{session.current?.environment}</b>
+            <b className={isProd ? 'text-red-marianne' : undefined}>
+              {session.current?.environment}
+            </b>
           </>
         }
         action={

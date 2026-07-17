@@ -2,7 +2,7 @@ import { DropdownMenu } from 'radix-ui'
 import type { MeApiModel } from '@pilote/kpilote-shared/me'
 import { ChevronDown, CircleUserRound, LogOut } from 'lucide-react'
 
-import { Button } from '@/components/ui/Button'
+import { Button } from '@pilote/kpilote-ui/Button'
 
 type UserMenuProps = {
   user: Pick<MeApiModel, 'prenom' | 'nom'>

@@ -8,7 +8,7 @@ import { ApiKeyForm, type ApiKeyFormValues } from '@/components/ApiKeyForm'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { CreatedApiKeyResult } from '@/components/CreatedApiKeyResult'
 import { PageHeading } from '@/components/PageHeading'
-import { useToast } from '@/components/ui/Toast'
+import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 
 export const Route = createFileRoute('/_authed/api-keys/nouveau')({

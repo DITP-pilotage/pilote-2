@@ -10,7 +10,7 @@ import {
   type IndicateurFormValues,
 } from '@/components/indicateurs/indicateurFormSchema'
 import { PageHeading } from '@/components/PageHeading'
-import { useToast } from '@/components/ui/Toast'
+import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { indicateurQueryOptions } from '@/queries/indicateurs'
 import { referentielsAllQueryOptions } from '@/queries/referentiels'

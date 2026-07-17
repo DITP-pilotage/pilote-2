@@ -5,9 +5,9 @@ import { useState } from 'react'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
-import { Button } from '@/components/ui/Button'
-import { EmptyState } from '@/components/ui/EmptyState'
-import { Table } from '@/components/ui/Table'
+import { Button } from '@pilote/kpilote-ui/Button'
+import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { Table } from '@pilote/kpilote-ui/Table'
 import { clickableRowProps } from '@/lib/clickableRow'
 import { referentielsInfiniteQueryOptions } from '@/queries/referentiels'
 import { useAppConfig } from '@/context/AppConfigContext'
@@ -37,7 +37,7 @@ function ReferentielsListComponent() {
         subtitle={
           <>
             {total} référentiel{total > 1 ? 's' : ''} · environnement{' '}
-            <b className={isProd ? 'text-accent' : undefined}>{environment}</b>
+            <b className={isProd ? 'text-red-marianne' : undefined}>{environment}</b>
           </>
         }
         action={

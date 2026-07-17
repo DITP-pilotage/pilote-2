@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
-import { EmptyState } from '@/components/ui/EmptyState'
-import { Table } from '@/components/ui/Table'
+import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { Table } from '@pilote/kpilote-ui/Table'
 import { formatDateFr, formatNumberFr } from '@/lib/format'
 import { indicateurValeursQueryOptions } from '@/queries/indicateurs'
 

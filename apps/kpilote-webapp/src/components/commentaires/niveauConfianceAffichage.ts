@@ -17,32 +17,30 @@ export type CouleurIndice = {
 
 const COULEUR_PAR_INDICE: Record<IndiceConfiance, CouleurIndice> = {
   OBJECTIF_COMPROMIS: {
-    actif: 'border-confiance-rouge bg-confiance-rouge text-white',
-    inactif:
-      'border-confiance-rouge-light bg-confiance-rouge-light text-confiance-rouge hover:border-confiance-rouge',
-    badge: 'bg-confiance-rouge-light text-confiance-rouge',
-    texte: 'text-confiance-rouge',
+    actif: 'border-error bg-error text-white',
+    inactif: 'border-error-tinted bg-error-tinted text-error hover:border-error',
+    badge: 'bg-error-tinted text-error',
+    texte: 'text-error',
   },
   APPUIS_NECESSAIRE: {
-    actif: 'border-confiance-orange bg-confiance-orange text-white',
+    actif: 'border-orange-terre-battue bg-orange-terre-battue text-white',
     inactif:
-      'border-confiance-orange-light bg-confiance-orange-light text-confiance-orange hover:border-confiance-orange',
-    badge: 'bg-confiance-orange-light text-confiance-orange',
-    texte: 'text-confiance-orange',
+      'border-orange-terre-battue-tinted bg-orange-terre-battue-tinted text-orange-terre-battue hover:border-orange-terre-battue',
+    badge: 'bg-orange-terre-battue-tinted text-orange-terre-battue',
+    texte: 'text-orange-terre-battue',
   },
   OBJECTIF_ATTEIGNABLE: {
-    actif: 'border-confiance-jaune bg-confiance-jaune text-white',
+    actif: 'border-yellow-tournesol bg-yellow-tournesol text-white',
     inactif:
-      'border-confiance-jaune-light bg-confiance-jaune-light text-confiance-jaune hover:border-confiance-jaune',
-    badge: 'bg-confiance-jaune-light text-confiance-jaune',
-    texte: 'text-confiance-jaune',
+      'border-yellow-tournesol-tinted bg-yellow-tournesol-tinted text-yellow-tournesol hover:border-yellow-tournesol',
+    badge: 'bg-yellow-tournesol-tinted text-yellow-tournesol',
+    texte: 'text-yellow-tournesol',
   },
   OBJECTIF_SECURISE: {
-    actif: 'border-confiance-vert bg-confiance-vert text-white',
-    inactif:
-      'border-confiance-vert-light bg-confiance-vert-light text-confiance-vert hover:border-confiance-vert',
-    badge: 'bg-confiance-vert-light text-confiance-vert',
-    texte: 'text-confiance-vert',
+    actif: 'border-success bg-success text-white',
+    inactif: 'border-success-tinted bg-success-tinted text-success hover:border-success',
+    badge: 'bg-success-tinted text-success',
+    texte: 'text-success',
   },
 }
 

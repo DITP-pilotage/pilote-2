@@ -1,0 +1,144 @@
+/*
+ * Thème partagé kpilote — tokens DSFR communs aux apps (admin, webapp) et aux
+ * composants de @pilote/kpilote-ui. À importer APRÈS `@import 'tailwindcss'` :
+ *
+ *   @import 'tailwindcss';
+ *   @import '@pilote/kpilote-ui/theme.css';
+ */
+
+@theme {
+  /* Typographie — sans-serif géométrique (Marianne-like) */
+  --font-sans:
+    'Inter', 'Marianne', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    sans-serif;
+
+  /* Surfaces */
+  --color-background: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-tinted: #f5f5fe;
+  --color-surface-tinted-strong: #ececfe;
+  --color-surface-muted: #f6f6f6;
+
+  /* Borders */
+  --color-border: #ececec;
+  --color-border-strong: #e0e0e0;
+
+  /* Texte */
+  --color-text: #161616;
+  --color-text-muted: #666666;
+  --color-text-subtle: #929292;
+
+  /* Bleu République — accent */
+  --color-primary: #000091;
+  --color-primary-hover: #1212a8;
+  --color-primary-foreground: #ffffff;
+  --color-primary-tinted: #ececfe;
+
+  /* Action secondary — outline bleu République */
+  --color-secondary: #ffffff;
+  --color-secondary-hover: #ececfe;
+  --color-secondary-foreground: #000091;
+  --color-secondary-border: #000091;
+
+  /* Action tertiary — ghost */
+  --color-tertiary-hover: #ececfe;
+  --color-tertiary-foreground: #000091;
+
+  /* État disabled */
+  --color-disabled: #f0f0f0;
+  --color-disabled-foreground: #929292;
+
+  /* Rouge Marianne (DSFR red-marianne) — signaux prod/danger, erreurs, requis */
+  --color-red-marianne: #c9191e;
+  --color-red-marianne-tinted: #fddede;
+
+  /* Statuts (sémantique DSFR) */
+  --color-success: #18753c;
+  --color-success-tinted: #e3fbe9;
+  --color-warning: #b34000;
+  --color-warning-tinted: #fff4e6;
+  --color-error: #ce0500;
+  --color-error-tinted: #fff4f3;
+
+  /* Couleurs décoratives DSFR — tons foncés lisibles (texte blanc sur plein /
+   * texte coloré sur fond clair). Servent d'échelle d'état intermédiaire. */
+  --color-orange-terre-battue: #c44d00;
+  --color-orange-terre-battue-tinted: #fff6f0;
+  --color-yellow-tournesol: #946700;
+  --color-yellow-tournesol-tinted: #fdf9ea;
+
+  /* Display type scale */
+  --text-display-xl: 4.5rem; /* 72px */
+  --text-display-xl--line-height: 1.05;
+  --text-display-xl--letter-spacing: -0.02em;
+  --text-display-xl--font-weight: 800;
+
+  --text-display-lg: 3.5rem; /* 56px */
+  --text-display-lg--line-height: 1.08;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-lg--font-weight: 800;
+
+  --text-display-md: 2.5rem; /* 40px */
+  --text-display-md--line-height: 1.15;
+  --text-display-md--letter-spacing: -0.015em;
+  --text-display-md--font-weight: 700;
+
+  --text-display-sm: 2rem; /* 32px */
+  --text-display-sm--line-height: 1.2;
+  --text-display-sm--letter-spacing: -0.01em;
+  --text-display-sm--font-weight: 700;
+
+  /* Animations Collapsible (radix expose --radix-collapsible-content-height). */
+  --animate-collapsible-down: collapsible-down 220ms ease-out;
+  --animate-collapsible-up: collapsible-up 220ms ease-out;
+
+  @keyframes collapsible-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-collapsible-content-height);
+    }
+  }
+
+  @keyframes collapsible-up {
+    from {
+      height: var(--radix-collapsible-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+/* Apparition douce (utilisée via animate-[fadeInUp_...]). */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  ::selection {
+    background-color: var(--color-primary-tinted);
+    color: var(--color-primary);
+  }
+}

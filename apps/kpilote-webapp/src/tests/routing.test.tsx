@@ -8,7 +8,7 @@ import type { MeApiModel } from '@pilote/kpilote-shared/me'
 import type { Auth } from '@/auth'
 import { tokenStore } from '@/auth/tokenStore'
 import { ImportModalProvider } from '@/components/import-valeurs/ImportModalProvider'
-import { ToastProvider } from '@/components/ui/Toast'
+import { ToastProvider } from '@pilote/kpilote-ui/Toast'
 import { routeTree } from '@/routeTree.gen'
 
 const stubAuth = (user: MeApiModel | null): Auth => ({

@@ -1,5 +1,5 @@
-import type { DataTableColumn } from '@/components/ui/DataTable'
-import { DataTable } from '@/components/ui/DataTable'
+import type { DataTableColumn } from '@pilote/kpilote-ui/DataTable'
+import { DataTable } from '@pilote/kpilote-ui/DataTable'
 
 import type { ParsedRow } from './parseFichierValeurs'
 

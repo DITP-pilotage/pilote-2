@@ -30,6 +30,7 @@
     "@hookform/resolvers": "^5.4.0",
     "@js-temporal/polyfill": "^0.5.1",
     "@pilote/kpilote-shared": "workspace:*",
+    "@pilote/kpilote-ui": "workspace:*",
     "@tanstack/react-query": "^5.62.7",
     "@tanstack/react-router": "^1.168.26",
     "@tanstack/react-router-devtools": "^1.166.13",

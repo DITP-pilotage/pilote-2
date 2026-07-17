@@ -1,11 +1,11 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { Trash2 } from 'lucide-react'
-import { useFieldArray, useWatch, type UseFormRegister } from 'react-hook-form'
+import { Controller, useFieldArray, useWatch, type Control } from 'react-hook-form'
 
 import { ReferentielPicker } from '@/components/indicateurs/ReferentielPicker'
 import { useIndicateurFormContext } from '@/components/indicateurs/indicateurFormContext'
 import { type IndicateurFormValues } from '@/components/indicateurs/indicateurFormSchema'
-import { FieldSelect } from '@/components/ui/FieldSelect'
+import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
 import { referentielsAllQueryOptions } from '@/queries/referentiels'
 
 type FonctionAgregation = 'SUM' | 'AVG' | 'NONE'
@@ -45,7 +45,7 @@ export function AdminReferentiels() {
             key={field.id}
             index={index}
             referentielNom={nomById.get(selectedIds[index] ?? '') ?? selectedIds[index] ?? ''}
-            register={form.register}
+            control={form.control}
             onRemove={() => remove(index)}
           />
         ))}
@@ -57,31 +57,34 @@ export function AdminReferentiels() {
 function ReferentielRow({
   index,
   referentielNom,
-  register,
+  control,
   onRemove,
 }: {
   index: number
   referentielNom: string
-  register: UseFormRegister<IndicateurFormValues>
+  control: Control<IndicateurFormValues>
   onRemove: () => void
 }) {
   return (
     <li className="flex items-center gap-2.5 rounded-lg border border-border bg-surface-muted px-3 py-2">
       <span className="flex-[2] text-sm text-text">{referentielNom}</span>
       <div className="flex-1">
-        <FieldSelect
-          label="Fonction d'agrégation"
-          hideLabel
-          {...register(`referentiels.${index}.fonctionAgregation`)}
-        >
-          {Object.entries(AGREGATION_LABEL).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </FieldSelect>
+        <Controller
+          control={control}
+          name={`referentiels.${index}.fonctionAgregation`}
+          render={({ field }) => (
+            <FieldSelect
+              label="Fonction d'agrégation"
+              hideLabel
+              value={field.value}
+              onValueChange={field.onChange}
+              onBlur={field.onBlur}
+              options={Object.entries(AGREGATION_LABEL).map(([value, label]) => ({ value, label }))}
+            />
+          )}
+        />
       </div>
-      <button type="button" onClick={onRemove} className="text-accent" aria-label="Retirer">
+      <button type="button" onClick={onRemove} className="text-red-marianne" aria-label="Retirer">
         <Trash2 className="size-4" />
       </button>
     </li>

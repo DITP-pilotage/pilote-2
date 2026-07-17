@@ -6,9 +6,9 @@ import { updateUtilisateur } from '@/api/utilisateurs'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { PrincipalPermissions } from '@/components/PrincipalPermissions'
-import { TabNav } from '@/components/ui/TabNav'
+import { Tabs, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tabs'
 import { UtilisateurForm, type UtilisateurFormValues } from '@/components/UtilisateurForm'
-import { useToast } from '@/components/ui/Toast'
+import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { indicateursAllQueryOptions } from '@/queries/indicateurs'
 import { paniersAllQueryOptions } from '@/queries/paniers'
@@ -67,14 +67,12 @@ function EditUtilisateurComponent() {
       </Breadcrumb>
       <PageHeading title="Modifier l'utilisateur" />
 
-      <TabNav
-        tabs={[
-          { key: 'identite', label: 'Identité' },
-          { key: 'permissions', label: 'Permissions' },
-        ]}
-        active={tab}
-        onChange={(key) => setTab(key as 'identite' | 'permissions')}
-      />
+      <Tabs value={tab} onValueChange={(key) => setTab(key as 'identite' | 'permissions')}>
+        <TabsList className="mb-6">
+          <TabsTrigger value="identite">Identité</TabsTrigger>
+          <TabsTrigger value="permissions">Permissions</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       {tab === 'identite' ? (
         utilisateur ? (
@@ -92,7 +90,7 @@ function EditUtilisateurComponent() {
             onSubmit={(values) => mutation.mutate(values)}
           />
         ) : (
-          <p className="text-sm font-medium text-accent">Utilisateur introuvable.</p>
+          <p className="text-sm font-medium text-red-marianne">Utilisateur introuvable.</p>
         )
       ) : (
         <div>

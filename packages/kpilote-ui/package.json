@@ -1,0 +1,199 @@
+{
+  "name": "@pilote/kpilote-ui",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./theme.css": "./theme.css",
+    "./BackLink": {
+      "types": "./src/BackLink.tsx",
+      "default": "./src/BackLink.tsx"
+    },
+    "./Button": {
+      "types": "./src/Button.tsx",
+      "default": "./src/Button.tsx"
+    },
+    "./Card": {
+      "types": "./src/Card.tsx",
+      "default": "./src/Card.tsx"
+    },
+    "./CardGrid": {
+      "types": "./src/CardGrid.tsx",
+      "default": "./src/CardGrid.tsx"
+    },
+    "./Collapsible": {
+      "types": "./src/Collapsible.tsx",
+      "default": "./src/Collapsible.tsx"
+    },
+    "./CopyButton": {
+      "types": "./src/CopyButton.tsx",
+      "default": "./src/CopyButton.tsx"
+    },
+    "./DataTable": {
+      "types": "./src/DataTable.tsx",
+      "default": "./src/DataTable.tsx"
+    },
+    "./DescriptionList": {
+      "types": "./src/DescriptionList.tsx",
+      "default": "./src/DescriptionList.tsx"
+    },
+    "./Dialog": {
+      "types": "./src/Dialog.tsx",
+      "default": "./src/Dialog.tsx"
+    },
+    "./DropdownMenu": {
+      "types": "./src/DropdownMenu.tsx",
+      "default": "./src/DropdownMenu.tsx"
+    },
+    "./EmptyState": {
+      "types": "./src/EmptyState.tsx",
+      "default": "./src/EmptyState.tsx"
+    },
+    "./EntityCard": {
+      "types": "./src/EntityCard.tsx",
+      "default": "./src/EntityCard.tsx"
+    },
+    "./FadeIn": {
+      "types": "./src/FadeIn.tsx",
+      "default": "./src/FadeIn.tsx"
+    },
+    "./Field": {
+      "types": "./src/Field.tsx",
+      "default": "./src/Field.tsx"
+    },
+    "./FieldInput": {
+      "types": "./src/FieldInput.tsx",
+      "default": "./src/FieldInput.tsx"
+    },
+    "./FieldSelect": {
+      "types": "./src/FieldSelect.tsx",
+      "default": "./src/FieldSelect.tsx"
+    },
+    "./FieldTextarea": {
+      "types": "./src/FieldTextarea.tsx",
+      "default": "./src/FieldTextarea.tsx"
+    },
+    "./Marianne": {
+      "types": "./src/Marianne.tsx",
+      "default": "./src/Marianne.tsx"
+    },
+    "./Modale": {
+      "types": "./src/Modale.tsx",
+      "default": "./src/Modale.tsx"
+    },
+    "./ModaleForm": {
+      "types": "./src/ModaleForm.tsx",
+      "default": "./src/ModaleForm.tsx"
+    },
+    "./Page": {
+      "types": "./src/Page.tsx",
+      "default": "./src/Page.tsx"
+    },
+    "./Pagination": {
+      "types": "./src/Pagination.tsx",
+      "default": "./src/Pagination.tsx"
+    },
+    "./Picker": {
+      "types": "./src/Picker.tsx",
+      "default": "./src/Picker.tsx"
+    },
+    "./PickerOptionNomId": {
+      "types": "./src/PickerOptionNomId.tsx",
+      "default": "./src/PickerOptionNomId.tsx"
+    },
+    "./Pill": {
+      "types": "./src/Pill.tsx",
+      "default": "./src/Pill.tsx"
+    },
+    "./ProgressBar": {
+      "types": "./src/ProgressBar.tsx",
+      "default": "./src/ProgressBar.tsx"
+    },
+    "./SearchField": {
+      "types": "./src/SearchField.tsx",
+      "default": "./src/SearchField.tsx"
+    },
+    "./Section": {
+      "types": "./src/Section.tsx",
+      "default": "./src/Section.tsx"
+    },
+    "./SegmentedControl": {
+      "types": "./src/SegmentedControl.tsx",
+      "default": "./src/SegmentedControl.tsx"
+    },
+    "./SegmentedField": {
+      "types": "./src/SegmentedField.tsx",
+      "default": "./src/SegmentedField.tsx"
+    },
+    "./Select": {
+      "types": "./src/Select.tsx",
+      "default": "./src/Select.tsx"
+    },
+    "./StatCard": {
+      "types": "./src/StatCard.tsx",
+      "default": "./src/StatCard.tsx"
+    },
+    "./StatGrid": {
+      "types": "./src/StatGrid.tsx",
+      "default": "./src/StatGrid.tsx"
+    },
+    "./Table": {
+      "types": "./src/Table.tsx",
+      "default": "./src/Table.tsx"
+    },
+    "./Tabs": {
+      "types": "./src/Tabs.tsx",
+      "default": "./src/Tabs.tsx"
+    },
+    "./Toast": {
+      "types": "./src/Toast.tsx",
+      "default": "./src/Toast.tsx"
+    },
+    "./Typography": {
+      "types": "./src/Typography.tsx",
+      "default": "./src/Typography.tsx"
+    },
+    "./clsxm": {
+      "types": "./src/clsxm.ts",
+      "default": "./src/clsxm.ts"
+    }
+  },
+  "files": [
+    "src",
+    "theme.css"
+  ],
+  "scripts": {
+    "lint": "prettier --check .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "dependencies": {
+    "@pilote/kpilote-shared": "workspace:*"
+  },
+  "peerDependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "lucide-react": "^1.14.0",
+    "radix-ui": "^1.4.3",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-hook-form": "^7.78.0",
+    "tailwind-merge": "^3.5.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "lucide-react": "^1.14.0",
+    "prettier": "^3.6.2",
+    "radix-ui": "^1.4.3",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "react-hook-form": "^7.78.0",
+    "tailwind-merge": "^3.5.0",
+    "typescript": "5.9.3"
+  }
+}

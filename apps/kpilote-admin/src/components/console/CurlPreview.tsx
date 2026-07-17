@@ -1,6 +1,6 @@
 import { useFormContext, useWatch } from 'react-hook-form'
 
-import { CopyButton } from '@/components/ui/CopyButton'
+import { CopyButton } from '@pilote/kpilote-ui/CopyButton'
 import type { ConsoleFormValues } from '@/lib/consoleForm'
 import { toCurl } from '@/lib/toCurl'
 

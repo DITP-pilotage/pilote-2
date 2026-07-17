@@ -1,8 +1,8 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 
-import { Picker } from '@/components/ui/Picker'
-import { PickerOptionNomId } from '@/components/ui/PickerOptionNomId'
+import { Picker } from '@pilote/kpilote-ui/Picker'
+import { PickerOptionNomId } from '@pilote/kpilote-ui/PickerOptionNomId'
 import { referentielsAllQueryOptions } from '@/queries/referentiels'
 
 // Contrôle d'ajout : sélectionner un référentiel appelle onSelect(id), le trigger

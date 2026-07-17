@@ -43,7 +43,7 @@ export function AdminResponsables() {
             <button
               type="button"
               onClick={() => remove(index)}
-              className="text-accent"
+              className="text-red-marianne"
               aria-label="Retirer"
             >
               <Trash2 className="size-4" />

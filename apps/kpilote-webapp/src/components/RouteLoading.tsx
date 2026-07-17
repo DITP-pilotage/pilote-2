@@ -1,5 +1,5 @@
-import { Section } from '@/components/ui/Section'
-import { Text } from '@/components/ui/Typography'
+import { Section } from '@pilote/kpilote-ui/Section'
+import { Text } from '@pilote/kpilote-ui/Typography'
 
 type RouteLoadingProps = {
   message?: string

@@ -6,7 +6,7 @@ import {
   IndicateurAvancement,
   IndicateurAvancementSkeleton,
 } from '@/components/indicateurs/IndicateurAvancement'
-import { EntityCard } from '@/components/ui/EntityCard'
+import { EntityCard } from '@pilote/kpilote-ui/EntityCard'
 
 export type IndicateurCardContext = {
   individu: string

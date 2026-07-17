@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 
 import { WidgetRenderer } from '@/components/widgets/WidgetRenderer'
-import { Card } from '@/components/ui/Card'
+import { Card } from '@pilote/kpilote-ui/Card'
 import { referentielQueryOptions } from '@/queries/referentiels'
 
 type IndicateurWidgetsProps = {

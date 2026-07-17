@@ -2,8 +2,8 @@ import { type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
 import { useSuspenseQueries } from '@tanstack/react-query'
 
 import { IndicateurProgression } from '@/components/indicateurs/IndicateurProgression'
-import { Pill } from '@/components/ui/Pill'
-import { Heading, Text } from '@/components/ui/Typography'
+import { Pill } from '@pilote/kpilote-ui/Pill'
+import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 import { clsxm } from '@/lib/clsxm'
 import {
   formatDateFr,
@@ -144,7 +144,7 @@ export function IndicateurSynthesePanel({
               unite={unite}
             />
             <ComparaisonRow
-              dotClassName="bg-accent-rouge"
+              dotClassName="bg-red-marianne"
               label="Valeur minimale observée"
               value={stats.min}
               unite={unite}

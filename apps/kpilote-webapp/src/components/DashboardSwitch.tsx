@@ -1,7 +1,7 @@
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { FolderClosed, LineChart } from 'lucide-react'
 
-import { SegmentedControl } from '@/components/ui/SegmentedControl'
+import { SegmentedControl } from '@pilote/kpilote-ui/SegmentedControl'
 
 const ROUTE_BY_VUE = {
   indicateurs: '/indicateurs',
