@@ -63,6 +63,17 @@ test('parseOutdated marque les majors en comparant current et latest', () => {
   assert.equal(parNom['@tiptap/core'].isMajor, false, '3.22.3 -> 3.27.1 est un minor')
 })
 
+test('parseOutdated distingue les devDependencies des dependencies', () => {
+  // Décisif : `pnpm add` sans -D déplacerait typescript de devDependencies vers dependencies.
+  const deps = parseOutdated(FIXTURE)
+  const parNom = Object.fromEntries(deps.map((d) => [d.name, d]))
+
+  assert.equal(parNom['typescript'].estDevDependency, true)
+  assert.equal(parNom['eslint'].estDevDependency, true)
+  assert.equal(parNom['react'].estDevDependency, false)
+  assert.equal(parNom['@tiptap/core'].estDevDependency, false)
+})
+
 test('parseOutdated expose les dependents à plat', () => {
   const deps = parseOutdated(FIXTURE)
   const react = deps.find((d) => d.name === 'react')

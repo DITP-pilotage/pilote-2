@@ -1,6 +1,42 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { nomPaquetDepuisCle, verdictOverride } from './overrides.mjs'
+import { nomPaquetDepuisCle, verdictOverride, versionsResoluesDepuisWhy } from './overrides.mjs'
+
+/**
+ * Forme réelle de `pnpm why <pkg> -r --json --depth Infinity` : un tableau d'entrées
+ * workspace, chacune portant un arbre imbriqué. Le paquet cherché apparaît à des
+ * profondeurs variables, souvent plusieurs fois.
+ */
+const WHY_FIXTURE = [
+  { name: 'pilote-monorepo', path: '/', private: true },
+  {
+    name: '@pilote/kpilote-api',
+    version: '0.1.0',
+    dependencies: {
+      vite: {
+        version: '8.0.10',
+        dependencies: {
+          terser: { version: '5.46.2' },
+        },
+      },
+    },
+  },
+  {
+    name: '@pilote/kpilote-webapp',
+    version: '0.1.0',
+    devDependencies: {
+      'un-outil': {
+        version: '1.0.0',
+        dependencies: {
+          terser: { version: '5.47.1' },
+        },
+      },
+    },
+    dependencies: {
+      terser: { version: '5.46.2' },
+    },
+  },
+]
 
 test('nomPaquetDepuisCle gère un nom simple', () => {
   assert.equal(nomPaquetDepuisCle('hono'), 'hono')
@@ -83,4 +119,32 @@ test('aucune version résolue = paquet disparu de l arbre, donc inerte', () => {
 
   assert.equal(v.porteur, false)
   assert.match(v.preuve, /absent de l'arbre/)
+})
+
+test('versionsResoluesDepuisWhy trouve le paquet à toutes les profondeurs, dédupliqué', () => {
+  const versions = versionsResoluesDepuisWhy(WHY_FIXTURE, 'terser')
+
+  assert.deepEqual(versions.sort(), ['5.46.2', '5.47.1'])
+})
+
+test('versionsResoluesDepuisWhy explore aussi les devDependencies', () => {
+  // 5.47.1 n'est atteignable que via la branche devDependencies de la fixture.
+  const versions = versionsResoluesDepuisWhy(WHY_FIXTURE, 'terser')
+
+  assert.ok(versions.includes('5.47.1'), 'la branche devDependencies doit être explorée')
+})
+
+test('versionsResoluesDepuisWhy rend un tableau vide si le paquet est absent', () => {
+  assert.deepEqual(versionsResoluesDepuisWhy(WHY_FIXTURE, 'paquet-inexistant'), [])
+})
+
+test('versionsResoluesDepuisWhy tolère une entrée workspace sans arbre', () => {
+  // La première entrée de pnpm why est la racine du monorepo : ni dependencies ni version.
+  assert.doesNotThrow(() => versionsResoluesDepuisWhy(WHY_FIXTURE, 'terser'))
+})
+
+test('versionsResoluesDepuisWhy ignore un noeud sans version', () => {
+  const arbre = [{ name: 'x', dependencies: { terser: { from: 'terser' } } }]
+
+  assert.deepEqual(versionsResoluesDepuisWhy(arbre, 'terser'), [])
 })

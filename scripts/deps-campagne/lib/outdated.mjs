@@ -28,6 +28,9 @@ export function parseOutdated(raw) {
         current: info.current,
         latest: info.latest,
         isMajor: semver.major(latest) !== semver.major(current),
+        // Indispensable : `pnpm add` écrit dans `dependencies` par défaut. Sans savoir
+        // qu'un paquet est une devDependency, on le déplacerait silencieusement de section.
+        estDevDependency: info.dependencyType === 'devDependencies',
         dependents: (info.dependentPackages ?? []).map((p) => p.name),
       }
     })

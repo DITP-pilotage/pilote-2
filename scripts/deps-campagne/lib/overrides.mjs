@@ -13,6 +13,34 @@ export function nomPaquetDepuisCle(cle) {
   return (scope ? '@' : '') + reste.slice(0, separateur)
 }
 
+const TYPES_DEPS = ['dependencies', 'devDependencies', 'optionalDependencies']
+
+/**
+ * Extrait toutes les versions d'un paquet depuis la sortie de
+ * `pnpm why <pkg> -r --json --depth Infinity`.
+ *
+ * La sortie est un tableau d'entrées workspace portant chacune un arbre imbriqué ; le
+ * paquet cherché y apparaît à des profondeurs variables et souvent plusieurs fois. La
+ * première entrée est la racine du monorepo et n'a pas d'arbre du tout.
+ */
+export function versionsResoluesDepuisWhy(whyJson, nom) {
+  const versions = new Set()
+
+  const explorer = (noeud) => {
+    for (const type of TYPES_DEPS) {
+      const enfants = noeud[type]
+      if (!enfants) continue
+      for (const [cle, enfant] of Object.entries(enfants)) {
+        if (cle === nom && enfant.version) versions.add(enfant.version)
+        explorer(enfant)
+      }
+    }
+  }
+
+  for (const entree of whyJson) explorer(entree)
+  return [...versions]
+}
+
 /**
  * Un override est PORTEUR si, sans lui, au moins une version résolue tombe hors de son range.
  * Il est INERTE si tout se résout déjà dans le range — il ne sert alors plus à rien.
