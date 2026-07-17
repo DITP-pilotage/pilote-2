@@ -98,11 +98,22 @@ function bancEssaiOverrides() {
     )
     installer()
 
+    // `pnpm install` seul NE RE-RÉSOUT PAS : il garde la version du lockfile tant qu'elle
+    // satisfait les ranges des parents. Ça masque tout plafond. Vérifié sur terser : retirer
+    // "<5.47.0" puis installer laisse 5.46.2 (verdict « inerte », faux) ; forcer la
+    // re-résolution l'envoie en 5.48.0 (verdict « porteur », vrai).
+    // Les planchers, eux, provoquent une chute visible dès l'install — mais on force
+    // partout, pour poser la même question à tout le monde.
+    run(['pnpm', 'update', nomPaquetDepuisCle(cle), '-r', '--depth', 'Infinity'])
+
     const verdict = verdictOverride({ cle, range, versionsResolues: versionsResoluesDe(cle) })
     verdicts.push(verdict)
     journal(`  -> ${verdict.porteur ? 'PORTEUR' : 'inerte'} : ${verdict.preuve}`)
 
-    run(['git', 'checkout', '--', 'package.json', 'pnpm-lock.yaml'])
+    // Restaurer TOUT, pas seulement la racine : `pnpm update -r` réécrit aussi les ranges
+    // déclarés dans les apps (constaté : hono ^4.12.18 -> ^4.12.27 sur 4 package.json,
+    // dont pilote-ppg-auth, hors périmètre). Le banc observe, il ne décide pas.
+    run(['git', 'checkout', '--', 'package.json', 'pnpm-lock.yaml', 'apps', 'packages'])
   }
 
   installer()
