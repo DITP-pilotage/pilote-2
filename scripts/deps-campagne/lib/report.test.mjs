@@ -1,6 +1,12 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { creerReport, ajouterCommit, ajouterVerdictOverride, serialiser } from './report.mjs'
+import {
+  creerReport,
+  ajouterCommit,
+  ajouterVerdictOverride,
+  serialiser,
+  resumerAudit,
+} from './report.mjs'
 
 const SNAPSHOT = { outdated: 47, majors: 7, vulnerabilites: 0 }
 
@@ -61,6 +67,29 @@ test('ajouterVerdictOverride empile les verdicts', () => {
 
   assert.equal(report.overrides.length, 1)
   assert.equal(report.overrides[0].porteur, true)
+})
+
+test('resumerAudit compte par sévérité et déduplique les advisories', () => {
+  // Forme réelle de `pnpm audit --json` : le même advisory apparaît sur plusieurs chemins.
+  const brut = JSON.stringify({
+    metadata: { vulnerabilities: { info: 0, low: 4, moderate: 29, high: 12, critical: 0 } },
+    actions: [{ resolves: [{ id: 1120311 }, { id: 1120311 }] }, { resolves: [{ id: 1098765 }] }],
+  })
+
+  const resume = resumerAudit(brut)
+
+  assert.equal(resume.total, 45)
+  assert.equal(resume.parSeverite.high, 12)
+  assert.equal(resume.advisoriesDistinctes, 2, 'le même id sur deux chemins ne compte qu une fois')
+})
+
+test('resumerAudit ne jette pas sur une sortie illisible', () => {
+  // Cas réel du premier run : la sortie brute était tronquée à 2000 caractères,
+  // donc coupée en plein milieu du JSON.
+  const resume = resumerAudit('{"actions": [{"action": "upda')
+
+  assert.equal(resume.total, null)
+  assert.equal(resume.erreur, 'audit illisible')
 })
 
 test('serialiser produit du JSON relisible', () => {

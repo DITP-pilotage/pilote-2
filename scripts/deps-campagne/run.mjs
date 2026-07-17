@@ -3,7 +3,13 @@ import { writeFileSync, mkdirSync, readFileSync } from 'node:fs'
 import { run } from './lib/shell.mjs'
 import { parseOutdated, grouperCouples } from './lib/outdated.mjs'
 import { verdictOverride, nomPaquetDepuisCle, versionsResoluesDepuisWhy } from './lib/overrides.mjs'
-import { creerReport, ajouterCommit, ajouterVerdictOverride, serialiser } from './lib/report.mjs'
+import {
+  creerReport,
+  ajouterCommit,
+  ajouterVerdictOverride,
+  serialiser,
+  resumerAudit,
+} from './lib/report.mjs'
 import {
   oracleRapide,
   oracleComplet,
@@ -117,6 +123,16 @@ function diffInRange(avant, apres) {
     .filter(Boolean)
 }
 
+/**
+ * Les paquets d'un groupe couplé ne vont pas forcément à la même version : eslint monte en
+ * 10.6.0 pendant que @eslint/js monte en 10.0.1. Annoncer « eslint -> 10.0.1 » serait faux.
+ */
+function libelleCible(groupe) {
+  const versions = [...new Set(groupe.deps.map((d) => d.latest))]
+  if (versions.length === 1) return `-> ${versions[0]}`
+  return `(${groupe.deps.map((d) => `${d.name}@${d.latest}`).join(', ')})`
+}
+
 function appliquerGroupe(groupe) {
   for (const dep of groupe.deps) {
     for (const dependent of dep.dependents) {
@@ -138,12 +154,17 @@ function main() {
     `départ : ${depart.length} deps périmées, ${depart.filter((d) => d.isMajor).length} majors`,
   )
 
+  const resumeAudit = resumerAudit(audit.stdout)
+  journal(
+    `  audit : ${resumeAudit.total} vulnérabilités (${JSON.stringify(resumeAudit.parSeverite)})`,
+  )
+
   let report = creerReport({
     date,
     snapshot: {
       outdated: depart.length,
       majors: depart.filter((d) => d.isMajor).length,
-      audit: audit.stdout.slice(0, 2000),
+      audit: resumeAudit,
     },
   })
 
@@ -173,11 +194,12 @@ function main() {
   // --- Ce qui reste : pins et majors, groupés par couplage.
   for (const groupe of grouperCouples(apres)) {
     const categorie = groupe.deps.some((d) => d.isMajor) ? 'major' : 'pin-minor'
-    journal(`${categorie} : ${groupe.nom} -> ${groupe.deps[0].latest}`)
+    const cible = libelleCible(groupe)
+    journal(`${categorie} : ${groupe.nom} ${cible}`)
 
     appliquerGroupe(groupe)
 
-    const sha = commiter(`chore(deps): ${groupe.nom} -> ${groupe.deps[0].latest} [${categorie}]`)
+    const sha = commiter(`chore(deps): ${groupe.nom} ${cible} [${categorie}]`)
     report = ajouterCommit(report, {
       sha,
       libelle: `${groupe.nom} (${groupe.deps.map((d) => `${d.name}@${d.latest}`).join(' ')})`,

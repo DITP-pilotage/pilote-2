@@ -1,6 +1,11 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { nomPaquetDepuisCle, verdictOverride, versionsResoluesDepuisWhy } from './overrides.mjs'
+import {
+  nomPaquetDepuisCle,
+  selecteurDepuisCle,
+  verdictOverride,
+  versionsResoluesDepuisWhy,
+} from './overrides.mjs'
 
 /**
  * Forme réelle de `pnpm why <pkg> -r --json --depth Infinity` : un tableau d'entrées
@@ -52,6 +57,42 @@ test('nomPaquetDepuisCle gère un sélecteur versionné', () => {
 
 test('nomPaquetDepuisCle gère un sélecteur versionné sur un paquet scopé', () => {
   assert.equal(nomPaquetDepuisCle('@types/node@>=20'), '@types/node')
+})
+
+test('selecteurDepuisCle rend * quand la clé ne porte pas de sélecteur', () => {
+  assert.equal(selecteurDepuisCle('hono'), '*')
+  assert.equal(selecteurDepuisCle('@hono/node-server'), '*')
+})
+
+test('selecteurDepuisCle extrait le range du sélecteur versionné', () => {
+  assert.equal(selecteurDepuisCle('uuid@>=11.0.0 <11.1.1'), '>=11.0.0 <11.1.1')
+  assert.equal(selecteurDepuisCle('@types/node@>=20'), '>=20')
+})
+
+test('un override à sélecteur versionné est INERTE si rien ne tombe dans sa fenêtre', () => {
+  // Cas réel trouvé au premier run : "uuid@>=11.0.0 <11.1.1": ">=11.1.1".
+  // Sans l'override, uuid se résout en 8.3.2 — hors de la fenêtre [11.0.0, 11.1.1),
+  // donc l'override ne le réécrirait jamais. Comparer 8.3.2 à ">=11.1.1" est un
+  // contresens : la valeur ne s'applique qu'aux versions que le sélecteur attrape.
+  const v = verdictOverride({
+    cle: 'uuid@>=11.0.0 <11.1.1',
+    range: '>=11.1.1',
+    versionsResolues: ['8.3.2'],
+  })
+
+  assert.equal(v.porteur, false, '8.3.2 est hors du sélecteur, donc jamais réécrit')
+  assert.match(v.preuve, /sélecteur/)
+})
+
+test('un override à sélecteur versionné est PORTEUR si une version tombe dans sa fenêtre', () => {
+  const v = verdictOverride({
+    cle: 'uuid@>=11.0.0 <11.1.1',
+    range: '>=11.1.1',
+    versionsResolues: ['8.3.2', '11.0.5'],
+  })
+
+  assert.equal(v.porteur, true, '11.0.5 est dans le sélecteur et viole la valeur')
+  assert.match(v.preuve, /11\.0\.5/)
 })
 
 test('un plancher déjà satisfait naturellement est inerte', () => {

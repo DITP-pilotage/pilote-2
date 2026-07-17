@@ -13,6 +13,21 @@ export function nomPaquetDepuisCle(cle) {
   return (scope ? '@' : '') + reste.slice(0, separateur)
 }
 
+/**
+ * Extrait le sélecteur de version d'une clé d'override, ou '*' s'il n'y en a pas.
+ * "uuid@>=11.0.0 <11.1.1" -> ">=11.0.0 <11.1.1" ; "hono" -> "*".
+ *
+ * Le sélecteur dit QUELLES versions l'override réécrit. Sans lui, on compare des versions
+ * que l'override ne toucherait jamais et on conclut n'importe quoi.
+ */
+export function selecteurDepuisCle(cle) {
+  const scope = cle.startsWith('@')
+  const reste = scope ? cle.slice(1) : cle
+  const separateur = reste.indexOf('@')
+  if (separateur === -1) return '*'
+  return reste.slice(separateur + 1)
+}
+
 const TYPES_DEPS = ['dependencies', 'devDependencies', 'optionalDependencies']
 
 /**
@@ -50,29 +65,37 @@ export function versionsResoluesDepuisWhy(whyJson, nom) {
  */
 export function verdictOverride({ cle, range, versionsResolues }) {
   const nom = nomPaquetDepuisCle(cle)
+  const selecteur = selecteurDepuisCle(cle)
+  const base = { cle, nom, range, selecteur, versionsResolues }
 
   if (versionsResolues.length === 0) {
     return {
-      cle,
-      nom,
-      range,
-      versionsResolues,
+      ...base,
       porteur: false,
       preuve: `${nom} est absent de l'arbre de dépendances sans l'override — plus rien ne le tire`,
     }
   }
 
-  const horsRange = versionsResolues.filter((version) => !semver.satisfies(version, range))
+  // L'override ne réécrit QUE les versions attrapées par le sélecteur de sa clé.
+  // Juger les autres reviendrait à leur appliquer une règle qui ne les concerne pas.
+  const cibles = versionsResolues.filter((version) => semver.satisfies(version, selecteur))
+
+  if (cibles.length === 0) {
+    return {
+      ...base,
+      porteur: false,
+      preuve: `sans l'override, ${nom} se résout en ${versionsResolues.join(', ')} — aucune version ne tombe dans le sélecteur "${selecteur}", l'override ne s'appliquerait jamais`,
+    }
+  }
+
+  const horsRange = cibles.filter((version) => !semver.satisfies(version, range))
 
   return {
-    cle,
-    nom,
-    range,
-    versionsResolues,
+    ...base,
     porteur: horsRange.length > 0,
     preuve:
       horsRange.length > 0
         ? `sans l'override, ${nom} se résout en ${horsRange.join(', ')} — hors de "${range}"`
-        : `sans l'override, ${nom} se résout en ${versionsResolues.join(', ')} — déjà conforme à "${range}"`,
+        : `sans l'override, ${nom} se résout en ${cibles.join(', ')} — déjà conforme à "${range}"`,
   }
 }
