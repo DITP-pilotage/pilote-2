@@ -41,24 +41,16 @@ export function installer() {
 }
 
 /**
- * `prisma db execute` exige --schema (ou --url) explicitement, sinon il échoue de façon
- * confuse. DATABASE_URL vient du .env de l'app, chargé par Prisma.
+ * Depuis Prisma 7, `db execute` lit la datasource depuis `prisma.config.ts` et REFUSE
+ * --schema (« unknown or unexpected option »). Ne pas le rajouter : la doc et les
+ * habitudes d'avant Prisma 7 induisent en erreur ici.
  */
 export function verifierBaseAccessible() {
   const { code } = run(
-    [
-      'pnpm',
-      '-F',
-      '@pilote/kpilote-api',
-      'exec',
-      'prisma',
-      'db',
-      'execute',
-      '--schema',
-      'prisma/schema.prisma',
-      '--stdin',
-    ],
-    { input: 'SELECT 1;' },
+    ['pnpm', '-F', '@pilote/kpilote-api', 'exec', 'prisma', 'db', 'execute', '--stdin'],
+    {
+      input: 'SELECT 1;',
+    },
   )
   return code === 0
 }
