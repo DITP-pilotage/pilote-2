@@ -2,7 +2,10 @@ import type { DossierApiModel } from '@pilote/kpilote-shared/dossier'
 import { Link } from '@tanstack/react-router'
 import { Suspense } from 'react'
 
-import { DossierAvancement, DossierAvancementSkeleton } from '@/components/dossiers/DossierAvancement'
+import {
+  DossierAvancement,
+  DossierAvancementSkeleton,
+} from '@/components/dossiers/DossierAvancement'
 import { EntityCard } from '@pilote/kpilote-ui/EntityCard'
 
 export type DossierCardContext = {

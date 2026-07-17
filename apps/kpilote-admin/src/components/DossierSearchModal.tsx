@@ -20,7 +20,9 @@ export function DossierSearchModal({
   const [rechercheIdentifiant, setRechercheIdentifiant] = useState('')
   const excluded = new Set(excludedPublicIds)
 
-  const query = useInfiniteQuery(searchDossiersInfiniteQueryOptions(recherche, rechercheIdentifiant))
+  const query = useInfiniteQuery(
+    searchDossiersInfiniteQueryOptions(recherche, rechercheIdentifiant),
+  )
 
   const hits: DossierHit[] = (query.data?.pages ?? [])
     .flatMap((page) => page.hits)

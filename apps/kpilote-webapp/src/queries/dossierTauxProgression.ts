@@ -36,10 +36,7 @@ const getBatcher = (individuId: string): Batcher => {
   return batcher
 }
 
-export const dossierTauxProgressionIndividuQueryOptions = (
-  individuId: string,
-  dossierId: string,
-) =>
+export const dossierTauxProgressionIndividuQueryOptions = (individuId: string, dossierId: string) =>
   queryOptions({
     queryKey: ['dossier-taux-progression', individuId, dossierId],
     queryFn: (): Promise<DossierTauxProgressionSummaryApiModel | null> =>
