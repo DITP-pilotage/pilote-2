@@ -50,6 +50,7 @@ docs/superpowers/*
 !docs/superpowers/specs/
 docs/superpowers/specs/*
 !docs/superpowers/specs/2026-06-23-commentaires-niveau-confiance-design.md
+!docs/superpowers/specs/2026-07-17-renouvellement-ssl-acme-design.md
 
 # superpowers visual companion (mockups)
 .superpowers/
