@@ -2,7 +2,7 @@ import { useInfiniteQuery } from '@tanstack/react-query'
 import { Search, X } from 'lucide-react'
 import { useState } from 'react'
 
-import { Button } from '@/components/ui/Button'
+import { Button } from '@pilote/kpilote-ui/Button'
 import { searchDossiersInfiniteQueryOptions } from '@/queries/permissions'
 
 export type DossierHit = { publicId: string; nom: string }
