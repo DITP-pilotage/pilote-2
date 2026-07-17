@@ -52,7 +52,7 @@
     "hono": "^4.12.27",
     "hono-rate-limiter": "^0.5.3",
     "iron-session": "^8.0.4",
-    "ky": "^1.14.3",
+    "ky": "^2.0.2",
     "lucide-react": "^1.23.0",
     "neverthrow": "^8.2.0",
     "openid-client": "^6.8.4",
