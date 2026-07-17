@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { parseOutdated, grouperCouples } from './outdated.mjs'
+import { parseOutdated, grouperCouples, interpreterOutdated } from './outdated.mjs'
 
 const FIXTURE = {
   react: {
@@ -85,6 +85,42 @@ test('parseOutdated ignore une entrée sans current exploitable', () => {
     bidon: { latest: '2.0.0', dependentPackages: [] },
   })
   assert.deepEqual(deps, [])
+})
+
+test('interpreterOutdated accepte exit 1 + JSON : c est le cas nominal', () => {
+  // Mesuré : `pnpm outdated` sort en 1 dès qu'une dep est périmée. Ce n'est pas une erreur.
+  const deps = interpreterOutdated({ code: 1, stdout: JSON.stringify(FIXTURE), stderr: '' })
+
+  assert.equal(deps.length, 6)
+})
+
+test('interpreterOutdated accepte exit 0 + vide : rien de périmé', () => {
+  assert.deepEqual(interpreterOutdated({ code: 0, stdout: '', stderr: '' }), [])
+})
+
+test('interpreterOutdated accepte exit 0 + objet vide : rien de périmé', () => {
+  assert.deepEqual(interpreterOutdated({ code: 0, stdout: '{}', stderr: '' }), [])
+})
+
+test('interpreterOutdated LÈVE sur stdout vide avec un code non nul', () => {
+  // Le trou à ne pas laisser : rendre [] ici ferait croire à une campagne « déjà à jour ».
+  assert.throws(
+    () => interpreterOutdated({ code: 1, stdout: '', stderr: 'ERR_PNPM_FETCH failed' }),
+    /a échoué.*ERR_PNPM_FETCH/s,
+  )
+})
+
+test('interpreterOutdated LÈVE sur une sortie non-JSON', () => {
+  // Mesuré : un filtre invalide sort du texte brut AVEC un exit code 0.
+  assert.throws(
+    () =>
+      interpreterOutdated({
+        code: 0,
+        stdout: 'No projects matched the filters in "/repo"',
+        stderr: '',
+      }),
+    /n'a pas rendu du JSON.*No projects matched/s,
+  )
 })
 
 test('grouperCouples réunit tout le bloc @tiptap/* sous un seul groupe', () => {

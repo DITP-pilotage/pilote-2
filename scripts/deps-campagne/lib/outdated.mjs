@@ -37,6 +37,39 @@ export function parseOutdated(raw) {
     .filter((dep) => dep !== null)
 }
 
+/**
+ * Interprète le résultat brut de `pnpm outdated --format json`, et LÈVE plutôt que de
+ * rendre une liste vide quand quelque chose s'est mal passé.
+ *
+ * Mesuré le 2026-07-17 :
+ * - deps périmées      -> exit 1 + JSON        (cas nominal : 1 n'est PAS une erreur)
+ * - filtre invalide    -> exit 0 + texte brut  ("No projects matched the filters...")
+ * - rien de périmé     -> exit 0 + vide/{}
+ *
+ * Le trou à ne pas laisser : stdout vide avec un code non nul (pnpm plante et écrit sur
+ * stderr) serait lu comme « rien de périmé », et la campagne produirait une branche vide
+ * en se croyant à jour. C'est exactement le no-op silencieux qu'on reproche à Dependabot.
+ */
+export function interpreterOutdated({ code, stdout, stderr }) {
+  const texte = (stdout ?? '').trim()
+
+  if (!texte) {
+    if (code === 0) return []
+    throw new Error(
+      `pnpm outdated a échoué (code ${code}) sans rien produire : ${(stderr ?? '').trim() || '(aucune sortie)'}`,
+    )
+  }
+
+  let brut
+  try {
+    brut = JSON.parse(texte)
+  } catch {
+    throw new Error(`pnpm outdated n'a pas rendu du JSON : ${texte.slice(0, 200)}`)
+  }
+
+  return parseOutdated(brut)
+}
+
 /** Regroupe les paquets couplés ; les autres forment un groupe d'un seul élément. */
 export function grouperCouples(deps) {
   const groupes = new Map()

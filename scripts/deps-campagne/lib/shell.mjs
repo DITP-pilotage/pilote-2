@@ -1,6 +1,9 @@
 import { execFileSync } from 'node:child_process'
+import { fileURLToPath } from 'node:url'
 
-const RACINE = new URL('../../..', import.meta.url).pathname
+// fileURLToPath, pas .pathname : ce dernier laisse les séquences percent-encoded.
+// Un repo cloné dans "~/My Docs/" donnerait un cwd "/Users/moi/My%20Docs/" inexistant.
+const RACINE = fileURLToPath(new URL('../../..', import.meta.url))
 
 /**
  * Exécute une commande à la racine du monorepo, SANS passer par un shell.

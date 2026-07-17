@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { writeFileSync, mkdirSync, readFileSync } from 'node:fs'
 import { run } from './lib/shell.mjs'
-import { parseOutdated, grouperCouples } from './lib/outdated.mjs'
+import { interpreterOutdated, grouperCouples } from './lib/outdated.mjs'
 import { verdictOverride, nomPaquetDepuisCle, versionsResoluesDepuisWhy } from './lib/overrides.mjs'
 import {
   creerReport,
@@ -29,10 +29,29 @@ function journal(message) {
 }
 
 function lireOutdated() {
-  // exit 1 = « il y a des deps périmées », ce n'est pas une erreur.
-  const { stdout } = run(['pnpm', 'outdated', '-r', ...FILTRES_KPILOTE, '--format', 'json'])
-  if (!stdout.trim()) return []
-  return parseOutdated(JSON.parse(stdout))
+  // interpreterOutdated lève si pnpm a échoué, au lieu de rendre [] — un « rien de périmé »
+  // silencieux produirait une campagne vide en se croyant à jour.
+  return interpreterOutdated(
+    run(['pnpm', 'outdated', '-r', ...FILTRES_KPILOTE, '--format', 'json']),
+  )
+}
+
+/** Lève si une commande a échoué. À utiliser dès qu'un échec fausserait le rapport. */
+function exigerSucces(resultat, quoi) {
+  if (resultat.code !== 0) {
+    const detail = (resultat.stderr || resultat.stdout || '')
+      .trim()
+      .split('\n')
+      .slice(-3)
+      .join('\n')
+    throw new Error(`${quoi} a échoué (code ${resultat.code}) :\n${detail}`)
+  }
+  return resultat
+}
+
+/** Y a-t-il quelque chose à commiter ? Seul git le sait vraiment. */
+function ilYADesChangements() {
+  return run(['git', 'status', '--porcelain']).stdout.trim().length > 0
 }
 
 function verifierPrealables() {
@@ -49,10 +68,18 @@ function verifierPrealables() {
   }
 }
 
+/**
+ * Commite et rend le SHA produit.
+ *
+ * Exiger le succès de `git commit` est indispensable : sans ça, un commit refusé (rien à
+ * commiter, hook, conflit) laisserait `rev-parse HEAD` rendre le SHA PRÉCÉDENT, et le
+ * rapport attribuerait les changements au mauvais commit. Toute l'attribution par commit
+ * atomique — la raison d'être du découpage — reposerait sur un mensonge.
+ */
 function commiter(message) {
-  run(['git', 'add', 'package.json', 'pnpm-lock.yaml', 'apps', 'packages'])
-  run(['git', 'commit', '-m', message, '--no-verify'])
-  return run(['git', 'rev-parse', '--short', 'HEAD']).stdout.trim()
+  exigerSucces(run(['git', 'add', 'package.json', 'pnpm-lock.yaml', 'apps', 'packages']), 'git add')
+  exigerSucces(run(['git', 'commit', '-m', message, '--no-verify']), 'git commit')
+  return exigerSucces(run(['git', 'rev-parse', '--short', 'HEAD']), 'git rev-parse').stdout.trim()
 }
 
 /** Oracle complet seulement si le rapide passe : inutile de tester ce qui ne compile pas. */
@@ -144,13 +171,18 @@ function libelleCible(groupe) {
   return `(${groupe.deps.map((d) => `${d.name}@${d.latest}`).join(', ')})`
 }
 
+/**
+ * Un `pnpm add` qui échoue (conflit de peers, résolution impossible) doit arrêter la
+ * campagne, pas la laisser commiter un état partiel : l'oracle jugerait alors autre chose
+ * que ce que le rapport annonce, et le verdict serait faux sans que rien ne le signale.
+ */
 function appliquerGroupe(groupe) {
   for (const dep of groupe.deps) {
     for (const dependent of dep.dependents) {
       const argv = ['pnpm', '-F', dependent, 'add']
       if (dep.estDevDependency) argv.push('-D')
       argv.push(`${dep.name}@${dep.latest}`)
-      run(argv)
+      exigerSucces(run(argv), `pnpm add ${dep.name}@${dep.latest} sur ${dependent}`)
     }
   }
 }
@@ -184,16 +216,24 @@ function main() {
   // --- Lot in-range : on fait, puis on observe.
   journal('lot in-range : pnpm update')
   const avant = lireOutdated()
-  run(['pnpm', 'update', '-r', ...FILTRES_KPILOTE])
+  exigerSucces(run(['pnpm', 'update', '-r', ...FILTRES_KPILOTE]), 'pnpm update')
   const apres = lireOutdated()
   const bouges = diffInRange(avant, apres)
 
-  if (bouges.length > 0) {
+  // C'est git qui décide s'il y a matière à commiter, pas diffInRange : `pnpm update`
+  // peut ne rafraîchir que des transitives dans le lockfile, sans qu'aucune entrée
+  // `outdated` ne bouge. Sans ce garde, ces changements fuiraient dans le commit du
+  // groupe suivant et lui seraient attribués à tort — or l'attribution par commit est
+  // toute la raison d'être du découpage atomique.
+  if (ilYADesChangements()) {
     const sha = commiter(`chore(deps): bumps in-range (${bouges.length} paquets)`)
     journal(`  ${bouges.length} paquets bougés, commit ${sha}`)
+    if (bouges.length === 0) {
+      journal('  (aucune dep directe bougée : ce commit ne contient que du refresh de transitives)')
+    }
     report = ajouterCommit(report, {
       sha,
-      libelle: 'bumps in-range',
+      libelle: bouges.length > 0 ? 'bumps in-range' : 'refresh de transitives (lockfile seul)',
       categorie: 'in-range',
       deps: bouges,
       oracle: evaluer(),
@@ -209,6 +249,11 @@ function main() {
     journal(`${categorie} : ${groupe.nom} ${cible}`)
 
     appliquerGroupe(groupe)
+
+    if (!ilYADesChangements()) {
+      journal(`  rien n'a bougé — groupe ignoré (déjà à la version cible ?)`)
+      continue
+    }
 
     const sha = commiter(`chore(deps): ${groupe.nom} ${cible} [${categorie}]`)
     report = ajouterCommit(report, {
