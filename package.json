@@ -25,7 +25,9 @@
     "test:database:init": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} test:database:init",
     "database:init": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} database:init",
     "database:init-force": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} database:init-force",
-    "database:migration": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} database:migration"
+    "database:migration": "pnpm -F ${APP_PACKAGE:-@pilote/ppg} database:migration",
+    "deps:campagne": "node scripts/deps-campagne/run.mjs",
+    "deps:campagne:test": "node --test \"scripts/deps-campagne/lib/**/*.test.mjs\""
   },
   "pnpm": {
     "onlyBuiltDependencies": [
@@ -51,5 +53,8 @@
       "terser": "<5.47.0",
       "uuid@>=11.0.0 <11.1.1": ">=11.1.1"
     }
+  },
+  "devDependencies": {
+    "semver": "^7.8.5"
   }
 }

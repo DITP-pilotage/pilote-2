@@ -56,6 +56,7 @@ Définis dans `pnpm.overrides` du `package.json` racine. Tous ajoutés lors de l
 | `mermaid: >=11.15.0` | GHSA-6m6c-36f7-fhxh + 3 autres (DoS, CSS/HTML injection) | Tiré par `nextra > @theguild/remark-mermaid` qui autorise `^11.0.0` mais le lockfile résolvait toujours 11.14.0 | Refresh naturel après quelques campagnes |
 | `postcss: >=8.5.10` | GHSA-qx2v-qp2m-jg93 (XSS via `</style>`) | Tiré par `next` et `@tailwindcss/postcss` | Bumpera naturellement |
 | `uuid@>=11.0.0 <11.1.1: >=11.1.1` | GHSA-w5hq-g745-h8pq (buffer bounds check) | Tiré par `mermaid` (note : mermaid 11.15 loosens le range pour autoriser v14, donc l'override est précis sur la fenêtre vuln seulement) | Bump effectif de mermaid |
+| `terser: <5.47.0` | **Aucune CVE** — c'est un plafond, pas un plancher | Posé le 2026-05-20 ([`77452bbb2`](https://github.com/DITP-pilotage/pilote-2/commit/77452bbb2), #2153) parce que `terser 5.47.1`, publiée 13 jours plus tôt, bloquait `pnpm deploy --prod` via `minimumReleaseAge: 20160`. C'est un **contournement temporaire de la quarantaine**, pas une décision technique sur terser. | **Échue depuis le 2026-05-21.** 5.47.1 est mûre (71 j), 5.48.0 aussi (56 j). Vérifié le 2026-07-17 : retirer l'override et forcer la re-résolution envoie terser en 5.48.0 sans rien casser. **À supprimer.** |
 
 Historique supprimé lors de la campagne d'avril 2026 :
 
@@ -69,16 +70,48 @@ Historique supprimé lors de la campagne d'avril 2026 :
 
 1. **Documenter la raison ici** (CVE, bug upstream, conflit de résolution), avec un lien vers l'issue/CVE.
 2. **Définir une condition de sortie** : quelle version upstream ou quel upgrade rend l'override inutile.
-3. À **re-tester** à chaque campagne en le commentant temporairement + `pnpm install` + `pnpm audit` + lint.
+3. À **re-tester** à chaque campagne — voir la mise en garde ci-dessous sur le protocole.
+4. **Borner les planchers.** Préférer `">=1.19.13 <2"` à `">=1.19.13"`.
+
+### ⚠️ Un plancher non borné autorise les sauts de major
+
+Un override `">=X"` ne dit pas « au moins X dans la branche courante » : il dit **« n'importe quoi ≥ X »**, major compris. Il **remplace** le range déclaré dans les apps, donc il les court-circuite.
+
+Constaté le 2026-07-17 : `@hono/node-server` est passé de **1.19.14 à 2.0.8** lors d'un simple `pnpm update`, alors qu'aucune app ne déclare `^2`. C'est l'override `">=1.19.13"`, posé pour une CVE, qui a autorisé le major.
+
+**Six des huit planchers actuels sont non bornés** et exposés au même effet : `@xmldom/xmldom`, `fast-uri`, `fast-xml-builder`, `hono`, `mermaid`, `@hono/node-server`. Seul `uuid@>=11.0.0 <11.1.1` est protégé — et c'est son *sélecteur* qui borne, pas sa valeur.
+
+### ⚠️ `pnpm install` ne re-résout pas — les plafonds sont invisibles sans `pnpm update`
+
+Retirer un override puis lancer `pnpm install` ne suffit pas à savoir s'il servait encore : pnpm **garde la version du lockfile** tant qu'elle satisfait les ranges des parents.
+
+- **Planchers** (`">=X"`) : retirer l'override provoque une chute visible dès l'install. Le test naïf marche.
+- **Plafonds** (`"<X"`) : la version en place satisfait toujours, **aucune montée ne se produit**, et l'override paraît inerte à tort.
+
+Mesuré sur `terser` : retirer `"<5.47.0"` puis `pnpm install` laisse 5.46.2 (verdict « inerte », **faux**) ; ajouter `pnpm update terser -r --depth Infinity` l'envoie en 5.48.0 (verdict « porteur », **vrai**).
+
+**Protocole correct** : retirer l'override → `pnpm install` → **`pnpm update <paquet> -r --depth Infinity`** → observer la résolution. C'est ce que fait `pnpm deps:campagne`.
 
 ## Campagne d'upgrade : procédure type
+
+**Périmètre kpilote : la campagne est outillée.** `pnpm deps:campagne` (ou le skill `/deps-campagne`)
+fait tout ce qui suit automatiquement — snapshot, branche, commits atomiques, oracle après chacun,
+banc d'essai des 9 overrides, et un `report.json`. Compter ~40-60 min non surveillées. Voir
+`docs/superpowers/specs/2026-07-17-campagne-deps-ia-design.md`. La procédure manuelle ci-dessous
+reste la référence pour `pilote-ppg`, hors périmètre de l'outil.
 
 1. `pnpm outdated` + `pnpm audit` → snapshot du point de départ.
 2. **Lot 1 — sécu + patches** : `pnpm update` pour tous les bumps in-range, puis `pnpm audit --fix` (sans `--force`). Vérifier `pnpm audit` → 0 vulns idéalement.
 3. **Lot 2 — majors low-risk** : dev deps principalement (lint plugins, test utils, type-only). PR séparée.
 4. **Lot 3+ — majors breaking** : un package (ou un groupe couplé) par PR. Toujours lancer `pnpm lint` + `pnpm test` + `pnpm test:e2e` sur chaque.
-5. **Vérifier les overrides** : commenter chaque override, `pnpm install`, relancer lint/audit. Si OK → supprimer pour de bon.
+5. **Vérifier les overrides** : retirer l'override → `pnpm install` → **`pnpm update <paquet> -r --depth Infinity`** → observer la résolution. **Ne pas se contenter de `pnpm install`** : il ne re-résout pas, et masque tout plafond (voir la mise en garde plus haut). Si le paquet se résout de lui-même dans le range de l'override → supprimer.
 6. **Mettre à jour ce document** avec les nouvelles décisions.
+
+### Attention : `tsc --noEmit` est le meilleur oracle, pas les tests
+
+Sur un codebase TypeScript, c'est `tsc` qui attrape la majorité des breaking changes d'un upgrade (signature changée, export retiré, type modifié). Les tests ne couvrent que les chemins écrits. `kpilote-admin` n'a **aucun test** : pour cette app, `tsc` est le seul filet.
+
+Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 erreurs tsc sur kpilote-api et 21 sur kpilote-admin** — `.openapi()` disparu de zod, suite au bump `zod 4.3.6 → 4.4.3` et/ou `@hono/zod-openapi 1.3.0 → 1.4.0`. Un `pnpm update` mergé sans passer `tsc` aurait cassé l'API.
 
 ### Pièges connus
 

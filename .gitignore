@@ -53,3 +53,6 @@ docs/superpowers/specs/*
 
 # superpowers visual companion (mockups)
 .superpowers/
+
+# sortie de la campagne de deps (rapport de travail, jamais commité)
+.deps-campagne/
