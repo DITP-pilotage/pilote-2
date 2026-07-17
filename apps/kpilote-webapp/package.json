@@ -46,7 +46,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "dompurify": "^3.4.11",
-    "dotenv": "16.4.5",
+    "dotenv": "17.4.2",
     "echarts": "^6.1.0",
     "echarts-for-react": "3.0.6",
     "hono": "^4.12.27",
