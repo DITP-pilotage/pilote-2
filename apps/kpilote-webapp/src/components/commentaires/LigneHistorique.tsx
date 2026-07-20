@@ -5,11 +5,11 @@ import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfi
 import { ContenuRepliable } from '@/components/commentaires/ContenuRepliable'
 import { libelleAuteur } from '@/components/commentaires/libelleAuteur'
 import {
-  couleurIndice,
+  iconeMeteoIndice,
+  meteoLabelIndice,
   niveauConfianceFromIndice,
 } from '@/components/commentaires/niveauConfianceAffichage'
 import { Text } from '@pilote/kpilote-ui/Typography'
-import { clsxm } from '@/lib/clsxm'
 import { formatDateHeureFr } from '@/lib/format'
 
 export function LigneHistorique({
@@ -37,15 +37,18 @@ function NiveauConfianceInline({ commentaireId }: { commentaireId: string }) {
   const { niveauPourCommentaireQueryOptions } = useCommentaireConfig()
   const { data: niveau } = useSuspenseQuery(niveauPourCommentaireQueryOptions(commentaireId))
   if (!niveau) return null
-  const { label } = niveauConfianceFromIndice(niveau.indice)
   return (
     <span
-      className={clsxm(
-        'inline-flex items-center text-sm font-semibold leading-none',
-        couleurIndice(niveau.indice).texte,
-      )}
+      title={niveauConfianceFromIndice(niveau.indice).label}
+      className="inline-flex items-center gap-1.5 text-sm font-semibold leading-none text-text"
     >
-      {label}
+      <img
+        src={iconeMeteoIndice(niveau.indice)}
+        alt=""
+        aria-hidden
+        className="h-5 w-auto shrink-0"
+      />
+      {meteoLabelIndice(niveau.indice)}
     </span>
   )
 }

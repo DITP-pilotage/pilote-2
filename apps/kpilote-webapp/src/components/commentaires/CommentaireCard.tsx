@@ -3,7 +3,6 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { MoreVertical, Pencil } from 'lucide-react'
 
 import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfigContext'
-import { BadgeStatut } from '@/components/commentaires/BadgeStatut'
 import { ContenuRepliable } from '@/components/commentaires/ContenuRepliable'
 import { libelleAuteur } from '@/components/commentaires/libelleAuteur'
 import { NiveauConfianceTag } from '@/components/commentaires/NiveauConfianceTag'
@@ -18,7 +17,7 @@ import { auth } from '@/auth'
 import { clsxm } from '@/lib/clsxm'
 import { formatDateHeureFr } from '@/lib/format'
 
-export function CarteCommentaire({
+export function CommentaireCard({
   commentaire,
   avecNiveauConfiance,
   onEdit,
@@ -40,27 +39,27 @@ export function CarteCommentaire({
         brouillon ? 'border-l-warning' : 'border-l-primary',
       )}
     >
-      <div className="mb-4 flex items-center gap-3">
-        <BadgeStatut statut={commentaire.statut} />
-        {peutModifier && (
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              aria-label="Actions"
-              className="ml-auto flex size-8 items-center justify-center rounded-md border border-border text-text-muted transition-colors hover:bg-surface-tinted hover:text-primary"
-            >
-              <MoreVertical className="size-4" />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onSelect={onEdit}>
-                <Pencil />
-                Éditer
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
-      </div>
-
-      {avecNiveauConfiance && <NiveauConfianceBadge commentaireId={commentaire.id} />}
+      {(avecNiveauConfiance || peutModifier) && (
+        <div className="mb-4 flex items-center gap-3">
+          {avecNiveauConfiance && <NiveauConfianceBadge commentaireId={commentaire.id} />}
+          {peutModifier && (
+            <DropdownMenu>
+              <DropdownMenuTrigger
+                aria-label="Actions"
+                className="ml-auto flex size-8 items-center justify-center rounded-md border border-border text-text-muted transition-colors hover:bg-surface-tinted hover:text-primary"
+              >
+                <MoreVertical className="size-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onSelect={onEdit}>
+                  <Pencil />
+                  Éditer
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
+        </div>
+      )}
 
       <ContenuRepliable html={commentaire.contenu} />
 
@@ -78,9 +77,5 @@ function NiveauConfianceBadge({ commentaireId }: { commentaireId: string }) {
   const { niveauPourCommentaireQueryOptions } = useCommentaireConfig()
   const { data: niveau } = useSuspenseQuery(niveauPourCommentaireQueryOptions(commentaireId))
   if (!niveau) return null
-  return (
-    <div className="mb-3">
-      <NiveauConfianceTag indice={niveau.indice} />
-    </div>
-  )
+  return <NiveauConfianceTag indice={niveau.indice} />
 }
