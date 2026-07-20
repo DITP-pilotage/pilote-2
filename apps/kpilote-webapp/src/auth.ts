@@ -16,7 +16,7 @@ export type Auth = {
 }
 
 const bffClient = ky.create({
-  prefixUrl: new URL('/auth/', location.origin).toString(),
+  prefix: new URL('/auth/', location.origin).toString(),
   credentials: 'include',
 })
 

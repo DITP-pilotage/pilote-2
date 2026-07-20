@@ -39,7 +39,7 @@ export async function importValeursBatch({
     return ok(upsertValeursAvancementBatchResultApiModelSchema.parse(json))
   } catch (error) {
     if (error instanceof HTTPError && error.response.status === 400) {
-      const body: unknown = await error.response.json()
+      const body: unknown = error.data
 
       const batchInvalidParsed = batchInvalidErrorDetailsApiModelSchema.safeParse(
         (body as { details?: unknown } | null)?.details,

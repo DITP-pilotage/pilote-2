@@ -15,7 +15,7 @@ export const isApiOrigin = (url: string): boolean => {
 }
 
 export const apiClient = ky.create({
-  prefixUrl: env.apiUrl,
+  prefix: env.apiUrl,
   retry: {
     limit: 1,
     statusCodes: [401],
@@ -23,7 +23,7 @@ export const apiClient = ky.create({
   },
   hooks: {
     beforeRequest: [
-      (request) => {
+      ({ request }) => {
         if (!isApiOrigin(request.url)) return
         const token = tokenStore.get()
         if (token) {
