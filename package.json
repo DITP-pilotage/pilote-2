@@ -43,15 +43,10 @@
       "unrs-resolver"
     ],
     "overrides": {
-      "@hono/node-server": ">=1.19.13",
-      "@xmldom/xmldom": ">=0.9.10",
-      "fast-uri": ">=3.1.2",
-      "fast-xml-builder": ">=1.1.7",
-      "hono": ">=4.12.18",
-      "mermaid": ">=11.15.0",
-      "postcss": ">=8.5.10",
-      "terser": "<5.47.0",
-      "uuid@>=11.0.0 <11.1.1": ">=11.1.1"
+      "@hono/node-server": ">=1.19.13 <2",
+      "@xmldom/xmldom": ">=0.9.10 <0.10",
+      "hono": ">=4.12.25 <5",
+      "postcss": ">=8.5.10 <9"
     }
   },
   "devDependencies": {

@@ -28,7 +28,7 @@
     "@codemirror/lint": "^6.9.7",
     "@codemirror/state": "^6.7.0",
     "@codemirror/view": "^6.43.4",
-    "@hono/node-server": "^2.0.8",
+    "@hono/node-server": "^1.19.13",
     "@hono/zod-validator": "^0.8.0",
     "@hookform/resolvers": "^5.4.0",
     "@pilote/kpilote-shared": "workspace:*",
