@@ -41,7 +41,11 @@ export function EntityCard({
           {kicker}
         </Text>
       )}
-      <Heading as="h3" size="md" className="text-text transition-colors group-hover:text-primary">
+      <Heading
+        as="h3"
+        size="md"
+        className="text-blue-cumulus transition-colors group-hover:text-primary"
+      >
         {title}
       </Heading>
       <SlotPrimitive.Slottable>{children}</SlotPrimitive.Slottable>
