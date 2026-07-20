@@ -158,7 +158,7 @@ FROM (
         COALESCE(computed_value, illegal_input_value::FLOAT) AS metric_value
     FROM join_correct_and_illegal_values_vc
     WHERE metric_type = 'vc'
-)
+) AS valeurs_cibles
 UNION ALL
 (
     SELECT
