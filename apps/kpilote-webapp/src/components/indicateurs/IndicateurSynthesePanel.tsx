@@ -74,25 +74,23 @@ export function IndicateurSynthesePanel({
             </Text>
             {derniere ? (
               <>
-                <div className="mt-3 flex flex-wrap items-end gap-3">
-                  <Heading as="p" size="display-lg">
-                    {formatNumberFr(derniere.valeur)}
-                    {unite?.abbreviation && (
-                      <span className="ml-[0.06em] text-[0.46em] font-bold text-text-muted">
-                        {unite.abbreviation}
-                      </span>
-                    )}
-                  </Heading>
-                  {variation !== null && variation !== 0 && (
-                    <Pill tone={variation > 0 ? 'success' : 'warning'} className="mb-2">
-                      {variation > 0 ? '↑' : '↓'} {formatVariationFr(variation)} ·{' '}
-                      {variation > 0 ? 'en hausse' : 'en baisse'}
-                    </Pill>
+                <Heading as="p" size="display-lg" className="mt-3 text-blue-cumulus">
+                  {formatNumberFr(derniere.valeur)}
+                  {unite?.abbreviation && (
+                    <span className="ml-[0.06em] text-[0.46em] font-bold text-blue-cumulus">
+                      {unite.abbreviation}
+                    </span>
                   )}
-                </div>
+                </Heading>
                 <Text variant="caption" tone="subtle" className="mt-2">
                   au {formatDateFr(derniere.date)}
                 </Text>
+                {variation !== null && variation !== 0 && (
+                  <Pill tone={variation > 0 ? 'success' : 'warning'} className="mt-3 w-fit">
+                    {variation > 0 ? '↑' : '↓'} {variation > 0 ? 'EN HAUSSE' : 'EN BAISSE'} :{' '}
+                    {formatVariationFr(variation)}
+                  </Pill>
+                )}
               </>
             ) : (
               <Heading as="p" size="display-lg" tone="muted" className="mt-3">
@@ -103,7 +101,7 @@ export function IndicateurSynthesePanel({
             {precedente && (
               <Text variant="body" tone="muted" className="mt-3">
                 Valeur précédente :{' '}
-                <span className="font-semibold text-text">
+                <span className="font-semibold text-primary">
                   {formatNumberAvecUniteFr(precedente.valeur, unite)}
                 </span>{' '}
                 ({formatDateFr(precedente.date)})
@@ -132,19 +130,19 @@ export function IndicateurSynthesePanel({
           </Text>
           <ul className="mt-3 flex flex-col gap-0.5">
             <ComparaisonRow
-              dotClassName="bg-success"
+              valueClassName="text-success-425"
               label="Valeur maximale observée"
               value={stats.max}
               unite={unite}
             />
             <ComparaisonRow
-              dotClassName="bg-text-subtle"
+              valueClassName="text-blue-425"
               label="Valeur médiane observée"
               value={stats.mediane}
               unite={unite}
             />
             <ComparaisonRow
-              dotClassName="bg-red-marianne"
+              valueClassName="text-warning-425"
               label="Valeur minimale observée"
               value={stats.min}
               unite={unite}
@@ -156,7 +154,7 @@ export function IndicateurSynthesePanel({
               <Text variant="body" tone="muted">
                 Écart à la médiane
               </Text>
-              <Pill tone={ecartMediane > 0 ? 'success' : ecartMediane < 0 ? 'warning' : 'neutral'}>
+              <Pill tone={ecartMediane > 0 ? 'success' : ecartMediane < 0 ? 'warning' : 'info'}>
                 {formatVariationAvecUniteFr(ecartMediane, unite)} ·{' '}
                 {ecartMediane > 0 ? 'en avance' : ecartMediane < 0 ? 'en retard' : 'à la médiane'}
               </Pill>
@@ -169,23 +167,25 @@ export function IndicateurSynthesePanel({
 }
 
 function ComparaisonRow({
-  dotClassName,
+  valueClassName,
   label,
   value,
   unite,
 }: {
-  dotClassName: string
+  valueClassName: string
   label: string
   value: number | null
   unite: UniteIndicateurApiModel | null
 }) {
   return (
     <li className="flex items-baseline justify-between gap-3 py-1.5">
-      <span className="flex items-center gap-2.5 text-sm text-text-muted">
-        <span className={clsxm('size-2 rounded-full', dotClassName)} aria-hidden />
-        {label}
-      </span>
-      <span className="whitespace-nowrap text-base font-bold tabular-nums text-text">
+      <span className="text-sm text-text-muted">{label}</span>
+      <span
+        className={clsxm(
+          'whitespace-nowrap text-base font-bold tabular-nums',
+          value === null ? 'text-text-subtle' : valueClassName,
+        )}
+      >
         {value === null ? (
           '—'
         ) : (
