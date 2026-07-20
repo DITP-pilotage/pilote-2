@@ -87,7 +87,7 @@ export const auth: Auth = {
     window.location.assign(`/auth/login?${params.toString()}`)
   },
   async logout() {
-    let logoutUrl: string | null = null
+    let logoutUrl: string | null
     try {
       const json = await bffClient.post('logout').json()
       const parsed = logoutResponseSchema.safeParse(json)
