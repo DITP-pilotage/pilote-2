@@ -28,7 +28,7 @@ uv run /bin/bash scripts/2_seed_ppg_metadata.sh
 ```
 
 *Note:* 
-*[docker]:* Ne pas oublier d'éxécuter `docker compose build` à la première éxécution **ET** lorsque le fichier `Pipfile.lock` a été modifié (dépendances du projet Python).
+*[docker]:* Ne pas oublier d'éxécuter `docker compose build` à la première éxécution.
 
 
 ## Exécuter sur Scalingo

@@ -1,8 +1,9 @@
 FROM ghcr.io/astral-sh/uv:trixie-slim
-# [setup.root-dir]
+
+# Set working directory
 WORKDIR /app/data_management
 
-# [install.postgres]
+# Install PostgreSQL dependencies
 RUN apt-get update && apt-get install -y \
     postgresql \
  && rm -rf /var/lib/apt/lists/*
@@ -11,8 +12,6 @@ ENV UV_ENV_FILE="/app/data_management/.env"
 
 COPY . /app/data_management/
 
-RUN uv python install
-
-ENTRYPOINT ["uv","run", "python"]
-
-CMD ["scripts/__main__.py"]
+# Use uv run as default entrypoint for all commands
+ENTRYPOINT ["uv", "run"]
+CMD ["python", "scripts/__main__.py"]

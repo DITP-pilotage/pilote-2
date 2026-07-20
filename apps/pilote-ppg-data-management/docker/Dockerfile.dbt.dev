@@ -1,17 +1,15 @@
 FROM ghcr.io/astral-sh/uv:trixie-slim
 
-# Définir le répertoire de travail
+# Set working directory
 WORKDIR /app/data_management
 
 ENV UV_ENV_FILE="/app/data_management/.env"
 
 COPY . /app/data_management/
-# Installer les dépendances avec uv en utilisant le chemin absolu
-RUN uv python install
 
 ENV UV_ENV_FILE="/app/data_management/.env"
 
-# Point d'entrée avec le chemin absolu
+# Use uv run as default entrypoint for all commands
 ENTRYPOINT ["uv", "run"]
 
 CMD ["dbt", "deps"]
