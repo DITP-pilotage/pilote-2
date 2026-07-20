@@ -126,7 +126,7 @@
     "format:check": "prettier --check ."
   },
   "peerDependencies": {
-    "zod": "^4.4.3"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "prettier": "^3.6.2"
