@@ -5,6 +5,7 @@ import { Heading, Text } from './Typography'
 type PageProps = {
   kicker?: ReactNode
   title: ReactNode
+  titleTone?: 'neutral' | 'primary'
   description?: ReactNode
   back?: ReactNode
   actions?: ReactNode
@@ -15,6 +16,7 @@ type PageProps = {
 export function Page({
   kicker,
   title,
+  titleTone = 'primary',
   description,
   back,
   actions,
@@ -31,7 +33,7 @@ export function Page({
               {kicker}
             </Text>
           )}
-          <Heading as="h1" size="display-lg" className="text-balance">
+          <Heading as="h1" size="display-lg" tone={titleTone} className="text-balance">
             {title}
           </Heading>
           {description && (

@@ -148,26 +148,7 @@ function IndicateurDetailComponent() {
   const referentielNom = indicateur.referentiels.find((c) => c.id === referentielId)?.nom ?? null
 
   return (
-    <Page
-      title={indicateur.nom}
-      back={back}
-      actions={actionsFiche}
-      stickybar={
-        <div className="max-w-md">
-          <FieldIndividuSelect
-            referentielIds={referentielIds}
-            value={individuId}
-            onChange={({ individu, referentiel }) => {
-              startTransition(() => {
-                void navigate({
-                  search: (prev) => ({ ...prev, individu, referentiel }),
-                })
-              })
-            }}
-          />
-        </div>
-      }
-    >
+    <Page title={indicateur.nom} back={back} actions={actionsFiche}>
       <Tabs
         value={search.onglet}
         onValueChange={(onglet) => {
@@ -178,21 +159,38 @@ function IndicateurDetailComponent() {
       >
         <TabsList>
           <TabsTrigger value="resultats">Résultats</TabsTrigger>
-          <TabsTrigger value="metadonnees">Métadonnées</TabsTrigger>
+          <TabsTrigger value="metadonnees">Informations sur l'indicateur</TabsTrigger>
         </TabsList>
 
         <TabsContent value="resultats">
-          <IndicateurResultatsTab
-            indicateurId={id}
-            individuId={individuId}
-            referentielId={referentielId}
-            unite={indicateur.unite}
-            referentielNom={referentielNom}
-            sousOnglet={search.sousOnglet}
-            onSousOngletChange={(sousOnglet) => {
-              void navigate({ search: (prev) => ({ ...prev, sousOnglet }) })
-            }}
-          />
+          <div className="flex flex-col gap-8">
+            {/* Sélecteur d'individu propre à l'onglet Résultats : positionné sous la
+                navigation primaire et masqué sur l'onglet Informations. */}
+            <div className="max-w-md">
+              <FieldIndividuSelect
+                referentielIds={referentielIds}
+                value={individuId}
+                onChange={({ individu, referentiel }) => {
+                  startTransition(() => {
+                    void navigate({
+                      search: (prev) => ({ ...prev, individu, referentiel }),
+                    })
+                  })
+                }}
+              />
+            </div>
+            <IndicateurResultatsTab
+              indicateurId={id}
+              individuId={individuId}
+              referentielId={referentielId}
+              unite={indicateur.unite}
+              referentielNom={referentielNom}
+              sousOnglet={search.sousOnglet}
+              onSousOngletChange={(sousOnglet) => {
+                void navigate({ search: (prev) => ({ ...prev, sousOnglet }) })
+              }}
+            />
+          </div>
         </TabsContent>
 
         <TabsContent value="metadonnees">

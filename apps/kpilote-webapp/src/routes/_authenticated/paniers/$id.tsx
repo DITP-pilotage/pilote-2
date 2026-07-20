@@ -118,28 +118,7 @@ function PanierDetailComponent() {
       : undefined
 
   return (
-    <Page
-      title={panier.nom}
-      description={panier.description ?? undefined}
-      back={back}
-      stickybar={
-        search.individu ? (
-          <div className="max-w-md">
-            <FieldIndividuSelect
-              referentielIds={referentielIds}
-              value={search.individu}
-              onChange={({ individu, referentiel }) => {
-                startTransition(() => {
-                  void navigate({
-                    search: (prev) => ({ ...prev, individu, referentiel }),
-                  })
-                })
-              }}
-            />
-          </div>
-        ) : undefined
-      }
-    >
+    <Page title={panier.nom} description={panier.description ?? undefined} back={back}>
       <Tabs
         value={search.onglet}
         onValueChange={(onglet) => {
@@ -158,9 +137,26 @@ function PanierDetailComponent() {
         <TabsContent value="resultats">
           <div className="flex flex-col gap-6">
             {search.individu && (
-              <div className="max-w-xs">
-                <PanierTauxProgression panierId={id} individu={search.individu} />
-              </div>
+              <>
+                {/* Sélecteur d'individu propre à l'onglet Résultats : positionné sous
+                    la navigation primaire et masqué sur les autres onglets. */}
+                <div className="max-w-md">
+                  <FieldIndividuSelect
+                    referentielIds={referentielIds}
+                    value={search.individu}
+                    onChange={({ individu, referentiel }) => {
+                      startTransition(() => {
+                        void navigate({
+                          search: (prev) => ({ ...prev, individu, referentiel }),
+                        })
+                      })
+                    }}
+                  />
+                </div>
+                <div className="max-w-xs">
+                  <PanierTauxProgression panierId={id} individu={search.individu} />
+                </div>
+              </>
             )}
 
             <Text as="span" variant="kicker" tone="muted">
