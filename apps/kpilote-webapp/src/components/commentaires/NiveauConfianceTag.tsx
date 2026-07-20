@@ -1,21 +1,19 @@
 import { type IndiceConfiance } from '@pilote/kpilote-shared/niveauConfiance'
 
 import {
-  couleurIndice,
+  iconeMeteoIndice,
+  meteoLabelIndice,
   niveauConfianceFromIndice,
 } from '@/components/commentaires/niveauConfianceAffichage'
-import { clsxm } from '@/lib/clsxm'
 
 export function NiveauConfianceTag({ indice }: { indice: IndiceConfiance }) {
-  const { label } = niveauConfianceFromIndice(indice)
   return (
     <span
-      className={clsxm(
-        'inline-flex items-center rounded-xl px-4 py-2 text-sm font-semibold leading-none',
-        couleurIndice(indice).badge,
-      )}
+      title={niveauConfianceFromIndice(indice).label}
+      className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2 text-sm font-semibold leading-none text-text"
     >
-      {label}
+      <img src={iconeMeteoIndice(indice)} alt="" aria-hidden className="h-6 w-auto shrink-0" />
+      {meteoLabelIndice(indice)}
     </span>
   )
 }

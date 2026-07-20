@@ -3,7 +3,7 @@ import { CheckCircle2, Eye, EyeOff, History, Pencil, Plus } from 'lucide-react'
 import { type ReactNode, useState } from 'react'
 
 import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfigContext'
-import { CarteCommentaire } from '@/components/commentaires/CarteCommentaire'
+import { CommentaireCard } from '@/components/commentaires/CommentaireCard'
 import { EditeurCommentaire } from '@/components/commentaires/EditeurCommentaire'
 import { LigneHistorique } from '@/components/commentaires/LigneHistorique'
 import { Button } from '@pilote/kpilote-ui/Button'
@@ -71,7 +71,7 @@ export function ListeCommentaires({
             <div className="flex items-center gap-2 text-text-muted">
               <Pencil className="size-4" />
               <Text as="span" variant="kicker" tone="muted">
-                Brouillon, à venir
+                Brouillon
               </Text>
             </div>
             <button
@@ -103,7 +103,7 @@ export function ListeCommentaires({
 
       {etatEnCours && (
         <section>
-          <Intitule icon={<CheckCircle2 />}>État en cours</Intitule>
+          <Intitule icon={<CheckCircle2 />}>Publié</Intitule>
           {editionId === etatEnCours.id ? (
             <EditeurCommentaire
               type={type}
@@ -112,7 +112,7 @@ export function ListeCommentaires({
               onClose={() => setEditionId(null)}
             />
           ) : (
-            <CarteCommentaire
+            <CommentaireCard
               commentaire={etatEnCours}
               avecNiveauConfiance={avecNiveauConfiance}
               onEdit={() => setEditionId(etatEnCours.id)}

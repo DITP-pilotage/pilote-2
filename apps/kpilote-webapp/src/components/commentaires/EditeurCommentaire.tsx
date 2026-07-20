@@ -8,7 +8,6 @@ import { z } from 'zod'
 
 import { useCommentaireConfig } from '@/components/commentaires/CommentaireConfigContext'
 import { EditeurRiche } from '@/components/editeur-riche/EditeurRiche'
-import { BadgeStatut } from '@/components/commentaires/BadgeStatut'
 import { libelleAuteur } from '@/components/commentaires/libelleAuteur'
 import { SelecteurNiveauConfiance } from '@/components/commentaires/SelecteurNiveauConfiance'
 import { Button } from '@pilote/kpilote-ui/Button'
@@ -109,15 +108,14 @@ function EditeurInterne({
       )}
     >
       <form onSubmit={soumettre()} noValidate>
-        <div className="mb-4 flex flex-wrap items-center gap-3">
-          <BadgeStatut statut={commentaire.statut} />
-          {brouillon && (
+        {brouillon && (
+          <div className="mb-4 flex flex-wrap items-center gap-3">
             <span className="inline-flex items-center gap-1.5 text-xs text-text-muted">
               <EyeOff className="size-3.5" />
               Seul vous pouvez voir ce commentaire tant qu'il n'est pas publié.
             </span>
-          )}
-        </div>
+          </div>
+        )}
 
         {avecNiveauConfiance && (
           <div className="mb-5">
