@@ -28,7 +28,7 @@ export const joinUrl = ({ path, query }: { path: string; query: string }): strin
   query ? `${path}?${query}` : path
 
 const consoleClient = ky.create({
-  prefixUrl: new URL('/console/', location.origin).toString(),
+  prefix: new URL('/console/', location.origin).toString(),
   credentials: 'include',
   retry: 0,
   throwHttpErrors: false,

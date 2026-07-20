@@ -41,7 +41,7 @@ const _assertUnitesSynchronisees: TypesUnitesSynchronises = true
 // silencieusement, car une divergence est un défaut de déploiement (enum Prisma
 // étendu sans mise à jour de `UNITES_INDICATEUR`), pas une donnée manquante.
 const toUniteIndicateurCode = (unite: UniteIndicateur): UniteIndicateurCode => {
-  if (unite in UNITES_INDICATEUR_CONFIG) return unite as UniteIndicateurCode
+  if (unite in UNITES_INDICATEUR_CONFIG) return unite
   throw new Error(
     `Unité Prisma '${unite}' absente du catalogue mb-shared (UNITES_INDICATEUR). Ajouter ce code et redéployer.`,
   )

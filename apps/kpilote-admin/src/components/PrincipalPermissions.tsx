@@ -43,8 +43,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
       queryClient.setQueryData(options.queryKey, fresh)
       toast({ title: 'Permissions mises à jour.' })
     },
-    onError: (err: unknown) =>
-      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' })),
+    onError: (err: unknown) => toast({ title: extractApiError(err), variant: 'error' }),
   })
 
   const disabled = locked || mutation.isPending

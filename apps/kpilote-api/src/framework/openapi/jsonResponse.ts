@@ -13,7 +13,7 @@ const jsonResponse = <S extends ZodType, Status extends ContentfulStatusCode>({
   schema: S
   status: Status
 }) => {
-  const parsed = schema.parse(data) as z.infer<S>
+  const parsed = schema.parse(data)
   return context.json(parsed, status)
 }
 

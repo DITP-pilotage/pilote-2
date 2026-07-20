@@ -2,10 +2,17 @@
 
 Ce document centralise les décisions prises autour des dépendances : pins, overrides, packages à surveiller, et procédure pour une campagne d'upgrade. À maintenir à chaque itération.
 
-Le monorepo contient 3 apps :
+Le monorepo contient **6 apps** (le doc en annonçait 3 jusqu'au 2026-07-17 ; l'app oubliée, `pilote-ppg-auth`, est précisément celle qui portait un `hono` vulnérable non détecté) :
 - `@pilote/ppg` (`apps/pilote-ppg`) : app Next.js historique (PILOTE)
-- `@pilote/kpilote-api` (`apps/kpilote-api`) : backend Hono (pilote MB)
-- `@pilote/kpilote-webapp` (`apps/kpilote-webapp`) : webapp (pilote MB)
+- `@pilote/kpilote-api` (`apps/kpilote-api`) : backend Hono (kpilote)
+- `@pilote/kpilote-webapp` (`apps/kpilote-webapp`) : webapp (kpilote)
+- `@pilote/kpilote-admin` (`apps/kpilote-admin`) : back-office (kpilote) — **aucun test**
+- `pilote-ppg-auth` (`apps/pilote-ppg-auth`) : proxy auth/ACME — **hors périmètre de `pnpm deps:campagne`**
+- `apps/pilote-ppg-data-management` : modèles dbt (SQL, pas de deps npm)
+
+Plus les packages partagés `packages/kpilote-shared` et `packages/kpilote-ui`.
+
+> **`pilote-ppg-auth` n'est bumpé par personne.** Il est hors du filtre kpilote de l'outil de campagne, et personne ne le met à jour à la main. C'est ainsi qu'il s'est retrouvé sur `hono@4.12.18` (9 advisories, dont une HIGH) pendant que les apps kpilote flottaient jusqu'à 4.12.27. À traiter.
 
 Toutes les décisions ci-dessous s'appliquent au monorepo (root `package.json` pour les overrides ; pins et deps directes dans chaque app).
 
@@ -46,17 +53,21 @@ Tous les environnements (dev, CI, prod) tournent sur Node 24.9.0. Pas de fallbac
 
 Définis dans `pnpm.overrides` du `package.json` racine. Tous ajoutés lors de la campagne sécu de mai 2026 pour corriger des CVEs dans des transitives profondes que les ranges parents ne pouvaient pas mettre à jour seuls.
 
-| Override | Cible CVE | Raison / chaîne transitive | Condition de sortie |
-|---|---|---|---|
-| `@hono/node-server: >=1.19.13` | [GHSA-…](https://github.com/honojs/node-server) | Tiré par `prisma > @prisma/dev` qui pinne strict | Quand `@prisma/dev` bumpera sa version |
-| `@xmldom/xmldom: >=0.9.10` | GHSA-2v35-w6hq-6mfw + 3 autres (XML injection / DoS) | Tiré par `nextra > better-react-mathjax > mathjax-full > speech-rule-engine` qui pinne `0.9.9`. `speech-rule-engine 5.x` (alpha/rc) embarque déjà la 0.9.10 | Mise à jour upstream de `speech-rule-engine` en stable 5.x |
-| `fast-uri: >=3.1.2` | GHSA-q3j6-qgpj-74h6 + GHSA-v39h-62p7-jpjc | Tiré par `webpack > schema-utils > ajv` (build) et `prisma > @prisma/dev > @prisma/streams-local > ajv` | Bump des chaînes ajv |
-| `fast-xml-builder: >=1.1.7` | GHSA-5wm8-gmm8-39j9 | Tiré par `fast-xml-parser` (bumpé 5.7.3 mais résout 1.1.6 sans override sur cette branche) | Bump effectif via `fast-xml-parser` |
-| `hono: >=4.12.18` | 4 advisories (Cache leak, CSS injection, body limit bypass, JWT validation) | Override pour garantir l'alignement partout (`@ai-sdk/devtools`, `prisma > @prisma/dev`, etc.) | Une fois que tous les parents ont bumpé |
-| `mermaid: >=11.15.0` | GHSA-6m6c-36f7-fhxh + 3 autres (DoS, CSS/HTML injection) | Tiré par `nextra > @theguild/remark-mermaid` qui autorise `^11.0.0` mais le lockfile résolvait toujours 11.14.0 | Refresh naturel après quelques campagnes |
-| `postcss: >=8.5.10` | GHSA-qx2v-qp2m-jg93 (XSS via `</style>`) | Tiré par `next` et `@tailwindcss/postcss` | Bumpera naturellement |
-| `uuid@>=11.0.0 <11.1.1: >=11.1.1` | GHSA-w5hq-g745-h8pq (buffer bounds check) | Tiré par `mermaid` (note : mermaid 11.15 loosens le range pour autoriser v14, donc l'override est précis sur la fenêtre vuln seulement) | Bump effectif de mermaid |
-| `terser: <5.47.0` | **Aucune CVE** — c'est un plafond, pas un plancher | Posé le 2026-05-20 ([`77452bbb2`](https://github.com/DITP-pilotage/pilote-2/commit/77452bbb2), #2153) parce que `terser 5.47.1`, publiée 13 jours plus tôt, bloquait `pnpm deploy --prod` via `minimumReleaseAge: 20160`. C'est un **contournement temporaire de la quarantaine**, pas une décision technique sur terser. | **Échue depuis le 2026-05-21.** 5.47.1 est mûre (71 j), 5.48.0 aussi (56 j). Vérifié le 2026-07-17 : retirer l'override et forcer la re-résolution envoie terser en 5.48.0 sans rien casser. **À supprimer.** |
+**Verdicts du 2026-07-17**, établis mécaniquement par `pnpm deps:campagne` (retrait de l'override → install → **re-résolution forcée** → observation) puis croisés avec les conditions de sortie. *Porteur* = le retirer change la résolution. *Inerte* = il ne retient plus rien.
+
+| Override | Verdict | Cible CVE | Condition de sortie (corrigée) | Action |
+|---|---|---|---|---|
+| `@hono/node-server: >=1.19.13` | **PORTEUR** — se résout en 1.19.11 sans lui | GHSA-92pp-h63x-v22m (bypass middleware, `<1.19.13`) — **réelle** | ~~« Quand `@prisma/dev` bumpera »~~ **visait le mauvais paquet.** `@prisma/dev@0.24.14` a *supprimé* la dep — mais `prisma@7.8.0` le pinne à `0.24.3` exact. Vraie condition : **quand `prisma` relèvera son pin `@prisma/dev`** (probablement 7.9.0). | **CIBLER** `"@prisma/dev>@hono/node-server": ">=1.19.13 <2"`. Ne **jamais** poser `<2` en global : les 3 apps kpilote sont en `^2.0.8` depuis `8c1d0b548`. |
+| `@xmldom/xmldom: >=0.9.10` | **PORTEUR** — 0.9.9 sans lui | 4× **HIGH** (GHSA-2v35-w6hq-6mfw, -f6ww-3ggp-fr8h, -x6wf-f3px-wcqx, -j759-j44w-7fr8) — **réelles** | ~~« stable 5.x de `speech-rule-engine` »~~ **incomplète.** `mathjax-full@3.2.2` déclare `^4.0.6` : même une 5.0.0 stable ne serait pas prise. Vraie condition : **stable 5.x de speech-rule-engine ET bump de `mathjax-full`.** (`latest` = `5.0.0-rc.4`) | **GARDER**, borner `">=0.9.10 <0.10"` |
+| `postcss: >=8.5.10` | **PORTEUR** — 8.4.31 sans lui | GHSA-qx2v-qp2m-jg93 — **réelle** | ~~« Bumpera naturellement »~~ **structurellement impossible** : `next@16.2.6` **pinne** `postcss: 8.4.31` (exact, pas un caret). Vraie condition : **quand `next` relèvera son pin** — à retester par `npm view next@<v> dependencies.postcss`. | **GARDER**, borner `">=8.5.10 <9"` |
+| `terser: <5.47.0` | **PORTEUR** — 5.48.0 sans lui | **Aucune CVE**, sur aucune version — c'est un **plafond**, pas un plancher | **Échue depuis le 2026-05-21.** Contournement de quarantaine posé le 2026-05-20 ([`77452bbb2`](https://github.com/DITP-pilotage/pilote-2/commit/77452bbb2), #2153) : terser 5.47.1 avait 13 j et bloquait `pnpm deploy --prod` via `minimumReleaseAge`. Sa condition de sortie était « demain ». | **SUPPRIMER.** 5.48.0 a 57 j (quarantaine passée), `vite` peer `^5.16.0` satisfait, devDeps only. |
+| `hono: >=4.12.18` | inerte — 4.12.27 sans lui | **9 advisories** dont une **HIGH** (GHSA-88fw-hqm2-52qc, CORS wildcard + credentials). Le doc annonçait « 4 ». Correctifs en 4.12.21 et **4.12.25**. | ~~« quand tous les parents auront bumpé »~~ **non remplie** — et le plancher est **sous** le plancher réel des advisories. | **RELEVER** `">=4.12.25 <5"`. `pilote-ppg-auth` tourne **aujourd'hui** en 4.12.18. |
+| `fast-uri: >=3.1.2` | inerte — 3.1.3 sans lui | Aucune advisory sur 3.1.3 **ni** 4.1.0 | ~~« bump des chaînes ajv »~~ **jamais remplie** (ajv n'a pas bougé, `^3.0.1` en `latest`). Le correctif est venu du **backport 3.x de fast-uri**, pas d'ajv. | **SUPPRIMER** — il force 4.1.0 hors du range d'ajv, sans bénéfice. Voir « un override inerte n'est pas inoffensif ». |
+| `fast-xml-builder: >=1.1.7` | inerte — 1.2.1 sans lui | GHSA-5wm8-gmm8-39j9 | **Remplie.** `fast-xml-parser@5.7.3` (pinné exact) déclare déjà `^1.1.7` → l'override est redondant tant que le pin tient. | **SUPPRIMER** |
+| `mermaid: >=11.15.0` | inerte — 11.16.0 sans lui | GHSA-6m6c-36f7-fhxh + 3 autres | **Remplie** (refresh naturel). | **SUPPRIMER** (ou borner `"<12"`) |
+| `uuid@>=11.0.0 <11.1.1: >=11.1.1` | inerte — se résout en **14.0.1** et 8.3.2, aucune version dans le sélecteur | GHSA-w5hq-g745-h8pq | **Remplie.** Le doc anticipait « mermaid loosens le range pour autoriser v14 » — **c'est arrivé**. Plus rien ne traverse la fenêtre `[11.0.0, 11.1.1)`. | **SUPPRIMER** |
+
+> ⚠️ **`pnpm audit` remonte `uuid@8.3.2`** (via `@hookform/devtools`, devDep) sur GHSA-w5hq-g745-h8pq, dont le range est `<11.1.1` — donc 8.3.2 matche. Le sélecteur `uuid@>=11.0.0 <11.1.1` ne le couvre pas. Dev-only, mais une affirmation « 0 vuln » serait fausse.
 
 Historique supprimé lors de la campagne d'avril 2026 :
 
@@ -73,13 +84,31 @@ Historique supprimé lors de la campagne d'avril 2026 :
 3. À **re-tester** à chaque campagne — voir la mise en garde ci-dessous sur le protocole.
 4. **Borner les planchers.** Préférer `">=1.19.13 <2"` à `">=1.19.13"`.
 
-### ⚠️ Un plancher non borné autorise les sauts de major
+### 🔴 Un plancher non borné fabrique des majors — et les blanchit dans les manifestes
 
 Un override `">=X"` ne dit pas « au moins X dans la branche courante » : il dit **« n'importe quoi ≥ X »**, major compris. Il **remplace** le range déclaré dans les apps, donc il les court-circuite.
 
-Constaté le 2026-07-17 : `@hono/node-server` est passé de **1.19.14 à 2.0.8** lors d'un simple `pnpm update`, alors qu'aucune app ne déclare `^2`. C'est l'override `">=1.19.13"`, posé pour une CVE, qui a autorisé le major.
+Constaté le 2026-07-17, et le mécanisme est vicieux :
 
-**Six des huit planchers actuels sont non bornés** et exposés au même effet : `@xmldom/xmldom`, `fast-uri`, `fast-xml-builder`, `hono`, `mermaid`, `@hono/node-server`. Seul `uuid@>=11.0.0 <11.1.1` est protégé — et c'est son *sélecteur* qui borne, pas sa valeur.
+1. L'override `"@hono/node-server": ">=1.19.13"` (posé pour une CVE) autorise n'importe quel `>=1.19.13`.
+2. `pnpm update` résout donc **2.0.8** — un major — alors qu'aucune app ne déclarait `^2`.
+3. L'outillage de campagne réécrit ensuite la version résolue comme nouveau caret : **`"^2.0.8"` est écrit dans trois `package.json`**, par un commit étiqueté « bumps in-range ».
+
+**L'override a fabriqué le major, et la campagne l'a blanchi dans les manifestes.** C'est le commit `8c1d0b548`. Une version antérieure de cette mise en garde affirmait « aucune app ne déclare `^2` » — c'était vrai à l'écriture, faux une heure plus tard, à cause du commit qui l'avait inspirée.
+
+**Conséquence : on ne peut plus poser `<2` en global** — ça downgraderait les trois apps kpilote qui sont maintenant en `^2.0.8`. Il faut un **override ciblé sur le parent fautif** :
+
+```json
+"@prisma/dev>@hono/node-server": ">=1.19.13 <2"
+```
+
+**Six des huit planchers sont non bornés** : `@xmldom/xmldom`, `fast-uri`, `fast-xml-builder`, `hono`, `mermaid`, `@hono/node-server`. Seul `uuid@>=11.0.0 <11.1.1` est protégé — et c'est son *sélecteur* qui borne, pas sa valeur.
+
+### 🔴 Un override inerte n'est pas forcément inoffensif
+
+`fast-uri: ">=3.1.2"` est **inerte** au sens du banc d'essai (sans lui, la résolution reste conforme). Mais il n'est pas neutre pour autant : il force **4.1.0** là où `ajv@8.20.0` — le `latest` — déclare `"fast-uri": "^3.0.1"`. L'override injecte donc un **major hors du range validé par ajv**, sans aucun bénéfice sécurité (aucune advisory sur 3.1.3 ni sur 4.1.0). `fast-uri` maintient d'ailleurs une ligne 3.x exprès (dist-tag `three: 3.1.3`).
+
+La leçon : « inerte » répond à *« puis-je le retirer sans risque ? »*, pas à *« fait-il quelque chose de nuisible ? »*. Les deux questions méritent d'être posées.
 
 ### ⚠️ `pnpm install` ne re-résout pas — les plafonds sont invisibles sans `pnpm update`
 
@@ -107,6 +136,28 @@ reste la référence pour `pilote-ppg`, hors périmètre de l'outil.
 5. **Vérifier les overrides** : retirer l'override → `pnpm install` → **`pnpm update <paquet> -r --depth Infinity`** → observer la résolution. **Ne pas se contenter de `pnpm install`** : il ne re-résout pas, et masque tout plafond (voir la mise en garde plus haut). Si le paquet se résout de lui-même dans le range de l'override → supprimer.
 6. **Mettre à jour ce document** avec les nouvelles décisions.
 
+### 🔴 `pnpm outdated` ne voit pas les `peerDependencies` — et zod estampille sa version dans ses types
+
+**Le mode d'échec le plus coûteux trouvé le 2026-07-17**, et il se reproduira à chaque campagne tant qu'il n'est pas outillé.
+
+`packages/kpilote-shared` déclare `zod` en **`peerDependencies`**. `pnpm outdated` ne remonte **pas** les peers, donc la campagne ne l'a jamais vu : elle a bumpé zod en `^4.4.3` dans les 3 apps et laissé shared en `^4.3.6`.
+
+Deux zod physiques coexistent alors dans le même programme `tsc` — et `kpilote-shared` exporte du **TS source brut** (`"types": "./src/*.ts"`), donc le `tsc` des apps compile ses sources, dont l'`import { z } from 'zod'` résout en 4.3.6.
+
+**Or zod estampille ses schémas avec sa propre version, en type littéral :**
+
+```ts
+interface _$ZodTypeInternals { version: typeof version }
+// 4.3.6 -> { major: 4; minor: 3; patch: number }
+// 4.4.3 -> { major: 4; minor: 4; patch: number }
+```
+
+`minor` est un **littéral** : tout schéma 4.3.6 devient structurellement non-assignable aux types 4.4.3. `patch` est un `number`, donc les patches passent — **les minors, non**. Résultat : **138 erreurs sur `kpilote-api`, 21 sur `kpilote-admin`**, dont le fameux `Property 'openapi' does not exist`. `.openapi()` fonctionne très bien : ce sont les schémas importés de shared qui ne l'ont pas.
+
+**Invariant à tenir : un seul minor de zod par programme `tsc`.** Concrètement, toute dep en `peerDependencies` d'un package workspace qui exporte du TS source doit être bumpée **en même temps** que les apps qui la consomment.
+
+**Ne pas** poser d'override zod global : `apps/pilote-ppg` est en zod `^3.21.4`, un override racine le casserait. Si override il faut, le scoper : `"@pilote/kpilote-shared>zod"`.
+
 ### Attention : `tsc --noEmit` est le meilleur oracle, pas les tests
 
 Sur un codebase TypeScript, c'est `tsc` qui attrape la majorité des breaking changes d'un upgrade (signature changée, export retiré, type modifié). Les tests ne couvrent que les chemins écrits. `kpilote-admin` n'a **aucun test** : pour cette app, `tsc` est le seul filet.
@@ -124,6 +175,16 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
 - **`swagger-ui-react`** pull un `react-inspector` qui a un peer dep `react ^16 || ^17 || ^18`. On est en React 19 → warnings peer tolérables (`strict-peer-dependencies=false` dans `.npmrc`), à surveiller.
 
 ## Packages à surveiller pour les prochaines itérations
+
+> **Ce tableau a dérivé.** Trois de ses lignes ont été démenties par la campagne du 2026-07-17, qui les a mesurées au lieu de les estimer. Une ligne « à surveiller » que personne ne réévalue devient une superstition — c'est exactement ce que `pnpm deps:campagne` sert à éviter. Les verdicts mesurés sont notés en regard.
+
+| Package | Verdict mesuré le 2026-07-17 |
+|---|---|
+| `eslint` 9 → 10 | ✅ **Passe.** Coût réel : **1 erreur, 1 ligne** (`no-useless-assignment` sur `kpilote-webapp/src/auth.ts:90`, un vrai positif). Baseline vs ESLint 9 : 287 fichiers lintés, 0 message nouveau ailleurs. Tous les plugins autorisent `^10` (`react-hooks@7.1.1` explicitement). Le blocage `eslint-plugin-react` **ne concerne que ppg**, qui reste en 9 — les deux majors cohabitent sans conflit. |
+| `typescript` 5.9 → 6 | ✅ **Ne casse aucun code.** Avec `--ignoreDeprecations 6.0`, les compteurs d'erreurs sont *identiques* (24 / 4 / 138). Seul coût : `baseUrl` est déprécié (TS5101) sur admin et webapp → le retirer et préfixer les paths en `./src/*`. **`kpilote-api` fait déjà ça** — le pattern est validé dans le repo. |
+| `dotenv` 16 → 17 | ✅ **Parsing identique**, vérifié en exécutant les deux versions sur les 5 `.env` réels. Un seul BC : `quiet` passe à `false` → log `◇ injected env (N)` sur **stdout** à chaque boot, y compris sans `.env`, y compris en prod. Pollue le flux JSON de pino. Fix : `quiet: true` / `DOTENV_CONFIG_QUIET=true`. |
+| `prisma` 6 → 7 | ⚠️ La ligne dit « à faire ». **`kpilote-api` est déjà en 7.8.0.** Seul `ppg` reste en 6.2.1. |
+| `zod` 3 → 4 | ⚠️ La ligne vise ppg. Les apps kpilote sont en zod 4 depuis longtemps. |
 
 ### Majors breaking qui mériteraient leur propre PR
 

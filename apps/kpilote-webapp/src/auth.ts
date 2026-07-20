@@ -16,7 +16,7 @@ export type Auth = {
 }
 
 const bffClient = ky.create({
-  prefixUrl: new URL('/auth/', location.origin).toString(),
+  prefix: new URL('/auth/', location.origin).toString(),
   credentials: 'include',
 })
 
@@ -87,7 +87,7 @@ export const auth: Auth = {
     window.location.assign(`/auth/login?${params.toString()}`)
   },
   async logout() {
-    let logoutUrl: string | null = null
+    let logoutUrl: string | null
     try {
       const json = await bffClient.post('logout').json()
       const parsed = logoutResponseSchema.safeParse(json)

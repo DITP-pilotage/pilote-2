@@ -51,7 +51,7 @@ function ApiKeysListComponent() {
     },
     onError: (err: unknown) => {
       setConfirmingId(null)
-      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' }))
+      toast({ title: extractApiError(err), variant: 'error' })
     },
   })
 

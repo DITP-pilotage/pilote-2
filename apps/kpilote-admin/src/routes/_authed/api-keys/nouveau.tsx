@@ -34,7 +34,7 @@ function NewApiKeyComponent() {
       setCreated(result)
     },
     onError: (err: unknown) => {
-      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' }))
+      toast({ title: extractApiError(err), variant: 'error' })
     },
   })
 

@@ -17,8 +17,7 @@ export type ApiKeyAuthentifiee = {
 }
 
 export type Principal =
-  | { kind: 'user'; user: UtilisateurAuthentifie }
-  | { kind: 'apiKey'; apiKey: ApiKeyAuthentifiee }
+  { kind: 'user'; user: UtilisateurAuthentifie } | { kind: 'apiKey'; apiKey: ApiKeyAuthentifiee }
 
 type Store = { principal: Principal | null }
 
