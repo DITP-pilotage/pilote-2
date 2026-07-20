@@ -50,7 +50,7 @@ function EditReferentielComponent() {
       void navigate({ to: '/referentiels' })
     },
     onError: (err: unknown) => {
-      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' }))
+      toast({ title: extractApiError(err), variant: 'error' })
     },
   })
 

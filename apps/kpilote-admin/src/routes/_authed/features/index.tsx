@@ -35,8 +35,7 @@ function FeatureListComponent() {
 
   const mutation = useModifierEtatFeatureMutation({
     onSuccess: () => toast({ title: 'État mis à jour.' }),
-    onError: (err) =>
-      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' })),
+    onError: (err) => toast({ title: extractApiError(err), variant: 'error' }),
   })
 
   const items = useMemo(() => {

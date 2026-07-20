@@ -92,7 +92,7 @@ const buildLimiter = (limit: number): MiddlewareHandler =>
     limit,
     standardHeaders: 'draft-6',
     keyGenerator: clientIp,
-  }) as unknown as MiddlewareHandler
+  })
 
 const loginLimiter = buildLimiter(10)
 const refreshLimiter = buildLimiter(60)

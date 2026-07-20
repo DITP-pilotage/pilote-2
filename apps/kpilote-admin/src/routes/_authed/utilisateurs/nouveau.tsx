@@ -25,7 +25,7 @@ function NewUtilisateurComponent() {
       await navigate({ to: '/utilisateurs' })
     },
     onError: (err: unknown) => {
-      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' }))
+      toast({ title: extractApiError(err), variant: 'error' })
     },
   })
 

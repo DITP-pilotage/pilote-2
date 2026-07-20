@@ -7,13 +7,12 @@ const errorBodySchema = z.object({
   details: z.unknown().optional(),
 })
 
-export const extractApiError = async (error: unknown): Promise<string> => {
+export const extractApiError = (error: unknown): string => {
   if (error instanceof HTTPError) {
     try {
       const body = errorBodySchema.parse(error.data)
       const details = body.details as
-        | { unknownReferentielIds?: string[]; individuIds?: string[] }
-        | undefined
+        { unknownReferentielIds?: string[]; individuIds?: string[] } | undefined
 
       const unknownRefs = details?.unknownReferentielIds
       if (unknownRefs && unknownRefs.length > 0) {

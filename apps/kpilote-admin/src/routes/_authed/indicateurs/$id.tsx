@@ -42,7 +42,7 @@ function EditIndicateurComponent() {
       void navigate({ to: '/indicateurs' })
     },
     onError: (err: unknown) => {
-      void extractApiError(err).then((message) => toast({ title: message, variant: 'error' }))
+      toast({ title: extractApiError(err), variant: 'error' })
     },
   })
 
