@@ -8,7 +8,7 @@ export const Tabs = TabsPrimitive.Root
 export function TabsList({ className, ...props }: ComponentProps<typeof TabsPrimitive.List>) {
   return (
     <TabsPrimitive.List
-      className={clsxm('flex gap-1 border-b border-border', className)}
+      className={clsxm('relative z-10 flex flex-wrap items-end gap-1', className)}
       {...props}
     />
   )
@@ -18,10 +18,16 @@ export function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsP
   return (
     <TabsPrimitive.Trigger
       className={clsxm(
-        '-mb-px inline-flex items-center border-b-2 border-transparent px-4 py-3 text-sm font-medium text-text-muted transition-colors',
-        'hover:text-text',
-        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:rounded-sm',
-        'data-[state=active]:border-primary data-[state=active]:text-primary data-[state=active]:font-semibold',
+        // Onglet DSFR : bouton « dossier » bordé, coins hauts arrondis. Le -mb-px
+        // fait chevaucher la bordure du panneau pour connecter l'onglet actif.
+        '-mb-px inline-flex items-center gap-2 whitespace-nowrap rounded-t-md px-4 py-2.5 text-base font-bold transition-colors',
+        'border border-border border-t-2 border-t-transparent',
+        'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+        // Inactif : fond bleu clair (bleu France « low »), texte foncé.
+        'bg-primary-tinted text-text hover:bg-primary/10',
+        // Actif : fond de la surface, texte + trait haut bleu marianne, bordure
+        // basse masquée pour se fondre dans le panneau de contenu.
+        'data-[state=active]:border-t-primary data-[state=active]:border-b-surface data-[state=active]:bg-surface data-[state=active]:text-primary',
         className,
       )}
       {...props}
@@ -32,7 +38,10 @@ export function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsP
 export function TabsContent({ className, ...props }: ComponentProps<typeof TabsPrimitive.Content>) {
   return (
     <TabsPrimitive.Content
-      className={clsxm('pt-8 focus-visible:outline-none', className)}
+      className={clsxm(
+        'rounded-b-md border border-border bg-surface p-6 focus-visible:outline-none',
+        className,
+      )}
       {...props}
     />
   )
