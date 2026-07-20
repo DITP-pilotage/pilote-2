@@ -2,11 +2,12 @@ import { type ReactNode } from 'react'
 
 import { clsxm } from './clsxm'
 
-type PillTone = 'success' | 'warning' | 'neutral'
+type PillTone = 'success' | 'warning' | 'info' | 'neutral'
 
 const pillToneClasses: Record<PillTone, string> = {
-  success: 'bg-success-tinted text-success',
-  warning: 'bg-warning-tinted text-warning',
+  success: 'bg-success-tinted text-success-425',
+  warning: 'bg-warning-tinted text-warning-425',
+  info: 'bg-primary-tinted text-blue-425',
   neutral: 'bg-surface-muted text-text-muted',
 }
 

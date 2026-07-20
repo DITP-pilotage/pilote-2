@@ -25,6 +25,7 @@ export function IndicateurProgression({
       </div>
       <ProgressBar
         value={taux}
+        tone="neutral"
         label={`Progression vers l'objectif : ${formatNumberFr(taux)} %`}
         className="mt-2"
       />
