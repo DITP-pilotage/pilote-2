@@ -30,9 +30,9 @@ ch_unnest_porteurs_dac_pnames AS (
 ch_unnest_porteurs_dac_pnames_agg AS (
     SELECT
         chantier_id,
-        ARRAY_AGG(pi) AS p_id,
-        ARRAY_AGG(directeur) AS p_directeurs,
-        ARRAY_AGG(acronyme) AS p_acronymes
+        ARRAY_AGG(pi ORDER BY pi) AS p_id,
+        ARRAY_AGG(directeur ORDER BY pi) AS p_directeurs,
+        ARRAY_AGG(acronyme ORDER BY pi) AS p_acronymes
     FROM ch_unnest_porteurs_dac_pnames
     GROUP BY chantier_id
 ),
