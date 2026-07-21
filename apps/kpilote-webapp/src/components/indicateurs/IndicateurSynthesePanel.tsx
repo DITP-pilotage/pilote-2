@@ -74,7 +74,7 @@ export function IndicateurSynthesePanel({
             </Text>
             {derniere ? (
               <>
-                <Heading as="p" size="display-lg" className="mt-3 text-blue-cumulus">
+                <Heading as="p" size="display-sm" className="mt-3 text-blue-cumulus">
                   {formatNumberFr(derniere.valeur)}
                   {unite?.abbreviation && (
                     <span className="ml-[0.06em] text-[0.46em] font-bold text-blue-cumulus">
@@ -93,7 +93,7 @@ export function IndicateurSynthesePanel({
                 )}
               </>
             ) : (
-              <Heading as="p" size="display-lg" tone="muted" className="mt-3">
+              <Heading as="p" size="display-sm" tone="muted" className="mt-3">
                 —
               </Heading>
             )}
