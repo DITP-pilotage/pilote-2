@@ -21,7 +21,6 @@ export function PanierCard({
   return (
     <EntityCard
       asChild
-      kicker={panier.id}
       title={panier.nom}
       body={
         context ? (

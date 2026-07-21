@@ -23,6 +23,8 @@
   --color-border: #ececec;
   --color-border-strong: #e0e0e0;
 
+  --shadow-raised: 0 1px 3px rgba(0, 0, 18, 0.16);
+
   /* Texte */
   --color-text: #161616;
   --color-text-muted: #666666;

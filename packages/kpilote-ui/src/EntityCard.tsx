@@ -18,7 +18,7 @@ type EntityCardProps = Omit<ComponentProps<'div'>, 'title'> & {
 
 const styles = [
   'group relative flex h-full flex-col gap-3 overflow-hidden rounded-xl bg-surface py-5 pl-6 pr-5',
-  'border border-border transition-all duration-150',
+  'border border-text-subtle transition-all duration-150',
   'hover:border-primary hover:bg-surface-tinted hover:-translate-y-0.5',
   'focus-within:border-primary focus-within:bg-surface-tinted',
 ].join(' ')
@@ -41,7 +41,11 @@ export function EntityCard({
           {kicker}
         </Text>
       )}
-      <Heading as="h3" size="md" className="text-text transition-colors group-hover:text-primary">
+      <Heading
+        as="h3"
+        size="md"
+        className="text-blue-cumulus transition-colors group-hover:text-primary"
+      >
         {title}
       </Heading>
       <SlotPrimitive.Slottable>{children}</SlotPrimitive.Slottable>
