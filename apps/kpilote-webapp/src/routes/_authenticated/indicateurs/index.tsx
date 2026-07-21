@@ -13,7 +13,6 @@ import { FieldIndividuSelect } from '@/components/indicateurs/FieldIndividuSelec
 import { CardGrid } from '@pilote/kpilote-ui/CardGrid'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Page } from '@pilote/kpilote-ui/Page'
-import { SearchField } from '@pilote/kpilote-ui/SearchField'
 import { Text } from '@pilote/kpilote-ui/Typography'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@pilote/kpilote-ui/Pagination'
@@ -21,7 +20,6 @@ import { indicateursQueryOptions, loadIndicateurs } from '@/queries/indicateurs'
 import { allReferentielsQueryOptions, loadAllReferentielIds } from '@/queries/referentiels'
 
 const indicateursSearchSchema = z.object({
-  recherche: z.string().optional(),
   cursor: z.string().optional(),
   pageSize: z.coerce.number().int().min(1).max(100).optional(),
   individu: individuPublicIdSchema.optional(),
@@ -89,26 +87,12 @@ function IndicateursListComponent() {
       }
     >
       <div className="flex flex-col gap-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <Text as="span" variant="kicker" tone="muted">
-            {data.total} indicateur{data.total > 1 ? 's' : ''}
-          </Text>
-          <SearchField
-            label="Rechercher un indicateur par nom"
-            placeholder="Rechercher un indicateur…"
-            value={search.recherche ?? ''}
-            onChange={(value) => {
-              const recherche = value || undefined
-              void navigate({ search: (prev) => ({ ...prev, recherche, cursor: undefined }) })
-            }}
-          />
-        </div>
+        <Text as="span" variant="kicker" tone="muted">
+          {data.total} indicateur{data.total > 1 ? 's' : ''}
+        </Text>
 
         {data.items.length === 0 ? (
-          <EmptyState
-            title="Aucun indicateur ne correspond"
-            description="Essayez d'élargir votre recherche ou de réinitialiser les filtres."
-          />
+          <EmptyState title="Aucun indicateur disponible." />
         ) : (
           <CardGrid>
             {data.items.map((indicateur) => (

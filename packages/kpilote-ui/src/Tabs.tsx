@@ -18,9 +18,9 @@ export function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsP
   return (
     <TabsPrimitive.Trigger
       className={clsxm(
-        // Onglet DSFR : bouton « dossier » bordé, coins hauts arrondis. Le -mb-px
-        // fait chevaucher la bordure du panneau pour connecter l'onglet actif.
-        '-mb-px inline-flex items-center gap-2 whitespace-nowrap rounded-t-md px-4 py-2.5 text-base font-bold transition-colors',
+        // Onglet DSFR : bouton « dossier » bordé. Le -mb-px fait chevaucher la
+        // bordure du panneau pour connecter l'onglet actif.
+        '-mb-px inline-flex items-center gap-2 whitespace-nowrap px-4 py-2.5 text-base font-bold transition-colors',
         'border border-border border-t-2 border-t-transparent',
         'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
         // Inactif : fond bleu clair (bleu France « low »), texte foncé.
@@ -39,7 +39,7 @@ export function TabsContent({ className, ...props }: ComponentProps<typeof TabsP
   return (
     <TabsPrimitive.Content
       className={clsxm(
-        'rounded-b-md border border-border bg-surface p-6 focus-visible:outline-none',
+        'border border-border bg-surface p-6 focus-visible:outline-none',
         className,
       )}
       {...props}

@@ -61,15 +61,6 @@ const ICONE_METEO_PAR_INDICE: Record<IndiceConfiance, string> = {
 
 export const iconeMeteoIndice = (indice: IndiceConfiance): string => ICONE_METEO_PAR_INDICE[indice]
 
-const METEO_LABEL_PAR_INDICE: Record<IndiceConfiance, string> = {
-  OBJECTIF_COMPROMIS: 'Orage',
-  APPUIS_NECESSAIRE: 'Nuage',
-  OBJECTIF_ATTEIGNABLE: 'Couvert',
-  OBJECTIF_SECURISE: 'Soleil',
-}
-
-export const meteoLabelIndice = (indice: IndiceConfiance): string => METEO_LABEL_PAR_INDICE[indice]
-
 // Ordre d'affichage du sélecteur, du plus dégradé au plus serein.
 const ORDRE_SELECTEUR: readonly IndiceConfiance[] = [
   'OBJECTIF_COMPROMIS',

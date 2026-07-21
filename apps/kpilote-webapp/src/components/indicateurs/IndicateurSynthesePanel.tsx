@@ -6,7 +6,7 @@ import { Pill } from '@pilote/kpilote-ui/Pill'
 import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 import { clsxm } from '@/lib/clsxm'
 import {
-  formatDateFr,
+  formatMonthYearNumericFr,
   formatNumberAvecUniteFr,
   formatNumberFr,
   formatVariationAvecUniteFr,
@@ -76,14 +76,10 @@ export function IndicateurSynthesePanel({
               <>
                 <Heading as="p" size="display-sm" className="mt-3 text-blue-cumulus">
                   {formatNumberFr(derniere.valeur)}
-                  {unite?.abbreviation && (
-                    <span className="ml-[0.06em] text-[0.46em] font-bold text-blue-cumulus">
-                      {unite.abbreviation}
-                    </span>
-                  )}
+                  {unite?.abbreviation && <span className="ml-2">{unite.abbreviation}</span>}
                 </Heading>
-                <Text variant="caption" tone="subtle" className="mt-2">
-                  au {formatDateFr(derniere.date)}
+                <Text variant="body" tone="subtle" className="mt-2">
+                  {formatMonthYearNumericFr(derniere.date)}
                 </Text>
                 {variation !== null && variation !== 0 && (
                   <Pill tone={variation > 0 ? 'success' : 'warning'} className="mt-3 w-fit">
@@ -104,7 +100,7 @@ export function IndicateurSynthesePanel({
                 <span className="font-semibold text-primary">
                   {formatNumberAvecUniteFr(precedente.valeur, unite)}
                 </span>{' '}
-                ({formatDateFr(precedente.date)})
+                ({formatMonthYearNumericFr(precedente.date)})
               </Text>
             )}
           </div>
