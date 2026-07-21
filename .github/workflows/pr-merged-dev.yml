@@ -115,6 +115,7 @@ jobs:
           
           # Génère la doc (le tunnel doit rester ouvert pendant toute la commande suivante)
           cd apps/pilote-ppg-data-management
+          uv run dbt deps
           uv run dbt docs generate --static
 
       # Prépare et push la doc générée sur gh-pages
