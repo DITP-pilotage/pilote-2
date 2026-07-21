@@ -32,15 +32,16 @@ export function PanierAvancement({
   return (
     <div>
       <div className="flex items-baseline justify-between">
-        <Text variant="kicker" tone="subtle" as="p">
+        <Text variant="kicker" tone="muted" as="p">
           Progression
         </Text>
-        <span className="text-sm font-bold tabular-nums text-text">
+        <span className="text-sm font-bold tabular-nums text-text-muted">
           {formatNumberFr(data.tauxProgression)} %
         </span>
       </div>
       <ProgressBar
         value={data.tauxProgression}
+        tone="neutral"
         label={`Progression du panier : ${formatNumberFr(data.tauxProgression)} %`}
         className="mt-2"
       />
