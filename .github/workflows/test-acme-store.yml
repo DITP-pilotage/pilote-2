@@ -74,6 +74,10 @@ jobs:
         env:
           # Lus par les hooks scripts/acme/*.sh
           CERTBOT_DOMAIN: ${{ steps.cible.outputs.domaine }}
+          # Diagnostic uniquement : on force tout en HTTP (pas de SSL valide pour
+          # l'instant, et la redirection http->https est désactivée sur ces envs).
+          # Le HTTP-01 se valide de toute façon en http côté CA.
+          ACME_BASE_URL: http://${{ steps.cible.outputs.domaine }}
           ACME_PUSH_PATH: ${{ steps.cible.outputs.push_path }}
           ACME_DELETE_STYLE: ${{ steps.cible.outputs.delete_style }}
           ACME_UPLOAD_API_KEY: ${{ secrets.ACME_UPLOAD_API_KEY }}
@@ -94,7 +98,7 @@ jobs:
           bash "$GITHUB_WORKSPACE/scripts/acme/cleanup-hook.sh"
 
           echo "== Vérification : le challenge n'est plus servi (404 attendu) =="
-          url="https://$CERTBOT_DOMAIN/.well-known/acme-challenge/$CERTBOT_TOKEN"
+          url="$ACME_BASE_URL/.well-known/acme-challenge/$CERTBOT_TOKEN"
           code="$(curl -sS -o /dev/null -w '%{http_code}' "$url")"
           echo "GET $url -> HTTP $code"
           if [ "$code" != "404" ]; then
