@@ -102,7 +102,7 @@ jobs:
             --eab-hmac-key "${{ secrets.SECTIGO_ACME_EAB_HMAC_KEY }}" \
             --email "${{ secrets.ACME_EMAIL }}" \
             --agree-tos --no-eff-email \
-            --key-type rsa2048 \
+            --key-type rsa --rsa-key-size 2048 \
             --domain "${{ steps.cible.outputs.domaine }}" \
             --config-dir "$GITHUB_WORKSPACE/.certbot/config" \
             --work-dir "$GITHUB_WORKSPACE/.certbot/work" \
