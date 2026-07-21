@@ -18,10 +18,12 @@ export function IndicateurProgression({
   return (
     <div>
       <div className="flex items-baseline justify-between">
-        <Text variant="kicker" tone="subtle" as="p">
+        <Text variant="kicker" tone="muted" as="p">
           Progression
         </Text>
-        <span className="text-sm font-bold tabular-nums text-text">{formatNumberFr(taux)} %</span>
+        <span className="text-sm font-bold tabular-nums text-text-muted">
+          {formatNumberFr(taux)} %
+        </span>
       </div>
       <ProgressBar
         value={taux}
@@ -29,13 +31,17 @@ export function IndicateurProgression({
         label={`Progression vers l'objectif : ${formatNumberFr(taux)} %`}
         className="mt-2"
       />
-      <Text variant="caption" tone="subtle" className="mt-2 text-right">
-        Objectif :{' '}
-        <span className="font-semibold text-text-muted">
-          {formatNumberAvecUniteFr(valeurCible, unite)}
-        </span>{' '}
-        · au {formatDateFr(dateCible)}
-      </Text>
+      <div className="mt-2 text-right">
+        <Text variant="caption" tone="muted">
+          Objectif :{' '}
+          <span className="font-semibold text-text-muted">
+            {formatNumberAvecUniteFr(valeurCible, unite)}
+          </span>
+        </Text>
+        <Text variant="caption" tone="muted">
+          {formatDateFr(dateCible)}
+        </Text>
+      </div>
     </div>
   )
 }

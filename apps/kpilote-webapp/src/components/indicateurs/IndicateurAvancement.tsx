@@ -39,7 +39,7 @@ export function IndicateurAvancement({
   }
   return (
     <div className="flex flex-1 flex-col gap-1">
-      <span className="text-2xl font-bold leading-none text-primary">
+      <span className="text-2xl font-bold leading-none text-blue-cumulus">
         {formatNumberAvecUniteFr(data.valeur, unite)}
       </span>
       {tauxData?.tauxProgression != null && (
