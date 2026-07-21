@@ -1,6 +1,6 @@
 import { ErreursServeurBloc } from './ErreursServeurBloc'
 import { ImportPreviewTable } from './ImportPreviewTable'
-import { type ParsedRow } from './parseFichierValeurs'
+import { type ParsedRow } from './lecture/matriceVersRows'
 
 // Fichier au format standard : entête récapitulatif + aperçu des lignes.
 export function ImportFormatValide({

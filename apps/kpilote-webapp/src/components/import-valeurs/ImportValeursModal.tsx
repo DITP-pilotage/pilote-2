@@ -3,13 +3,12 @@ import { Loader2 } from 'lucide-react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useQuery } from '@tanstack/react-query'
 import { ModaleForm } from '@pilote/kpilote-ui/ModaleForm'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { ImportError } from '@/api/valeursImport'
 import { useImportValeursBatch } from '@/mutations/valeursImport'
-import { normaliserValeursQueryOptions } from '@/queries/valeursNormaliser'
-import { parseFichierValeurs, type ParseResult } from './parseFichierValeurs'
+import { type ParseError } from './lecture/matriceVersRows'
+import { useImportValeurs } from './useImportValeurs'
 import { traduireErreursBatch, traduireIssuesValidation } from './traduireErreursBatch'
 import { EncadreMessage } from './EncadreMessage'
 import { ImportDropZone } from './ImportDropZone'
@@ -23,14 +22,14 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>
 
-const messageParseError = (result: Extract<ParseResult, { ok: false }>): string => {
-  switch (result.error.code) {
+const messageParseError = (error: ParseError): string => {
+  switch (error.code) {
     case 'EMPTY':
       return 'Le fichier ne contient aucune ligne de données.'
     case 'TOO_MANY_ROWS':
-      return `${result.error.count} lignes — la limite est de ${result.error.max} lignes par import. Scindez le fichier.`
+      return `${error.count} lignes — la limite est de ${error.max} lignes par import. Scindez le fichier.`
     case 'MISSING_COLUMNS':
-      return `Colonne(s) manquante(s) : ${result.error.missing.join(', ')}. Attendu : individu, date, valeur.`
+      return `Colonne(s) manquante(s) : ${error.missing.join(', ')}. Attendu : individu, date, valeur.`
     case 'UNREADABLE':
       return "Fichier illisible. Vérifiez qu'il s'agit d'un CSV ou d'un Excel valide."
   }
@@ -52,37 +51,9 @@ export function ImportValeursModal({
     defaultValues: { file: target.initialFile ?? null } as unknown as FormValues,
   })
 
-  const file = useWatch({ control: form.control, name: 'file' })
+  const file = useWatch({ control: form.control, name: 'file' }) ?? null
 
-  const parseQuery = useQuery({
-    queryKey: ['import-parse', file?.name, file?.size, file?.lastModified],
-    queryFn: () => {
-      // `enabled: file != null` guarantees file is defined when queryFn runs
-      if (!file) throw new Error('file attendu')
-      return parseFichierValeurs({ file })
-    },
-    enabled: file != null,
-  })
-
-  const parseResult = parseQuery.data
-  const rows = parseResult?.ok ? parseResult.rows : null
-
-  // Fichier hors format standard (colonnes manquantes) → extraction assistée par
-  // Albert. La query est désactivée (skipToken) tant qu'aucun tel fichier n'est
-  // détecté, donc `revue` se réinitialise seul au changement de fichier.
-  const fichierHorsFormat =
-    file && parseResult && !parseResult.ok && parseResult.error.code === 'MISSING_COLUMNS'
-      ? { file, message: messageParseError(parseResult) }
-      : null
-
-  const albertQuery = useQuery(
-    normaliserValeursQueryOptions({
-      indicateurId: target.indicateur.id,
-      file: fichierHorsFormat?.file ?? null,
-    }),
-  )
-  const revue = albertQuery.data?.isOk() ? albertQuery.data.value : null
-  const albertEchec = albertQuery.data?.isErr() === true || albertQuery.isError
+  const { etat, payload } = useImportValeurs({ file, indicateurId: target.indicateur.id })
 
   const onFileChange = (newFile: File) => {
     form.setValue('file', newFile, { shouldValidate: true })
@@ -96,9 +67,6 @@ export function ImportValeursModal({
       variant: 'error',
     })
   }
-
-  // En mode revue, on importe le sous-ensemble résolu par Albert ; sinon le parse standard.
-  const payload = revue ? revue.items : rows
 
   const onSubmit = async () => {
     if (!payload || payload.length === 0) return
@@ -141,33 +109,39 @@ export function ImportValeursModal({
     </EncadreMessage>
   )
 
+  // Zone de dépôt + message d'erreur éventuel (format non parsable ou échec Albert)
+  // invitant à re-déposer un fichier.
+  const zoneDepot = (error?: ParseError) => (
+    <>
+      <ImportDropZone onFile={onFileChange} />
+      {error ? <EncadreMessage variant="erreur">{messageParseError(error)}</EncadreMessage> : null}
+    </>
+  )
+
   const body = () => {
-    if (revue) return <NormalisationRevue revue={revue} erreursServeur={erreursServeur} />
-    if (rows)
-      return (
-        <ImportFormatValide nomFichier={file?.name} rows={rows} erreursServeur={erreursServeur} />
-      )
-
-    // Traitement en cours : on masque la zone de dépôt, seul le statut s'affiche.
-    if (file && parseQuery.isPending) return encadreChargement('Analyse du fichier en cours…')
-    if (fichierHorsFormat && !albertEchec)
-      return encadreChargement('Format non standard détecté — extraction assistée par IA en cours…')
-
-    // Sinon : zone de dépôt, avec un message d'erreur éventuel pour re-déposer.
-    return (
-      <>
-        <ImportDropZone onFile={onFileChange} />
-        {messageErreurSaisie()}
-      </>
-    )
-  }
-
-  const messageErreurSaisie = () => {
-    if (fichierHorsFormat && albertEchec)
-      return <EncadreMessage variant="erreur">{fichierHorsFormat.message}</EncadreMessage>
-    if (parseResult && !parseResult.ok && parseResult.error.code !== 'MISSING_COLUMNS')
-      return <EncadreMessage variant="erreur">{messageParseError(parseResult)}</EncadreMessage>
-    return null
+    switch (etat.kind) {
+      case 'vide':
+        return zoneDepot()
+      case 'lecture':
+        return encadreChargement('Analyse du fichier en cours…')
+      case 'albertEnCours':
+        return encadreChargement(
+          'Format non standard détecté — extraction assistée par IA en cours…',
+        )
+      case 'standard':
+        return (
+          <ImportFormatValide
+            nomFichier={etat.nomFichier}
+            rows={etat.rows}
+            erreursServeur={erreursServeur}
+          />
+        )
+      case 'albertRevue':
+        return <NormalisationRevue revue={etat.revue} erreursServeur={erreursServeur} />
+      case 'illisible':
+      case 'albertEchec':
+        return zoneDepot(etat.error)
+    }
   }
 
   return (
