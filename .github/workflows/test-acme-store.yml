@@ -1,0 +1,105 @@
+name: Test store ACME HTTP-01
+
+# Workflow de diagnostic : valide le round-trip du challenge HTTP-01 contre les
+# apps réelles (webapp / auth), SANS passer par Sectigo. Rejoue exactement ce que
+# certbot déclenche via les hooks : dépôt du challenge (auth-hook) → attente qu'il
+# soit servi sur /.well-known/acme-challenge/<token> → suppression (cleanup-hook)
+# → vérification du 404. Utilise un token/keyAuthorization bidon.
+# À lancer manuellement. Peut être supprimé une fois le store validé.
+
+on:
+  workflow_dispatch:
+    inputs:
+      cible:
+        description: "Environnement à tester"
+        type: choice
+        required: true
+        default: dev
+        options:
+          - tous
+          - prod
+          - preprod
+          - dev
+
+jobs:
+  test-store:
+    name: "Test store ${{ matrix.environnement }} / ${{ matrix.application }}"
+    runs-on: ubuntu-latest
+    environment: ${{ matrix.environnement }}
+    strategy:
+      fail-fast: false
+      matrix:
+        environnement: [prod, preprod, dev]
+        application: [webapp, auth]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Résoudre la cible (domaine, routes de challenge)
+        id: cible
+        env:
+          WEBAPP_DOMAIN: ${{ vars.WEBAPP_DOMAIN }}
+          AUTH_DOMAIN: ${{ vars.AUTH_DOMAIN }}
+        run: |
+          CIBLE="${{ github.event.inputs.cible }}"
+          if [ -n "$CIBLE" ] && [ "$CIBLE" != "tous" ] && [ "$CIBLE" != "${{ matrix.environnement }}" ]; then
+            echo "Cible '$CIBLE' != ${{ matrix.environnement }} — job ignoré."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ "${{ matrix.application }}" = "webapp" ]; then
+            DOMAINE="$WEBAPP_DOMAIN"
+            PUSH_PATH="/api/admin/acme-challenge"
+            DELETE_STYLE="query"
+          else
+            DOMAINE="$AUTH_DOMAIN"
+            PUSH_PATH="/api/acme/challenge"
+            DELETE_STYLE="path"
+          fi
+
+          if [ -z "$DOMAINE" ]; then
+            echo "Aucun domaine pour ${{ matrix.environnement }}/${{ matrix.application }} — job ignoré."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "domaine=$DOMAINE" >> "$GITHUB_OUTPUT"
+          echo "push_path=$PUSH_PATH" >> "$GITHUB_OUTPUT"
+          echo "delete_style=$DELETE_STYLE" >> "$GITHUB_OUTPUT"
+
+      - name: Round-trip du challenge (dépôt → servi → suppression → 404)
+        if: steps.cible.outputs.skip == 'false'
+        env:
+          # Lus par les hooks scripts/acme/*.sh
+          CERTBOT_DOMAIN: ${{ steps.cible.outputs.domaine }}
+          ACME_PUSH_PATH: ${{ steps.cible.outputs.push_path }}
+          ACME_DELETE_STYLE: ${{ steps.cible.outputs.delete_style }}
+          ACME_UPLOAD_API_KEY: ${{ secrets.ACME_UPLOAD_API_KEY }}
+          ACME_POLL_TIMEOUT: "30"
+          ACME_POLL_INTERVAL: "2"
+        run: |
+          set -euo pipefail
+
+          # Token/keyAuthorization bidon (le token respecte le regex [A-Za-z0-9_-]+
+          # exigé par la route webapp).
+          export CERTBOT_TOKEN="smoketest-${GITHUB_RUN_ID}-${{ matrix.application }}"
+          export CERTBOT_VALIDATION="smoketest-validation-${GITHUB_RUN_ID}"
+
+          echo "== Dépôt + attente que le challenge soit servi =="
+          bash "$GITHUB_WORKSPACE/scripts/acme/auth-hook.sh"
+
+          echo "== Suppression du challenge =="
+          bash "$GITHUB_WORKSPACE/scripts/acme/cleanup-hook.sh"
+
+          echo "== Vérification : le challenge n'est plus servi (404 attendu) =="
+          url="https://$CERTBOT_DOMAIN/.well-known/acme-challenge/$CERTBOT_TOKEN"
+          code="$(curl -sS -o /dev/null -w '%{http_code}' "$url")"
+          echo "GET $url -> HTTP $code"
+          if [ "$code" != "404" ]; then
+            echo "::error::Après suppression, le challenge est toujours servi (HTTP $code au lieu de 404)"
+            exit 1
+          fi
+
+          echo "Round-trip OK pour $CERTBOT_DOMAIN"
