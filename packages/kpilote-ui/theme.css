@@ -140,7 +140,6 @@
     background-color: var(--color-background);
     color: var(--color-text);
     font-feature-settings: 'cv11', 'ss01';
-    font-weight: 700;
   }
 
   ::selection {

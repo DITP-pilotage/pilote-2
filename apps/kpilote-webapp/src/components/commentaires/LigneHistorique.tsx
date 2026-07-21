@@ -6,7 +6,6 @@ import { ContenuRepliable } from '@/components/commentaires/ContenuRepliable'
 import { libelleAuteur } from '@/components/commentaires/libelleAuteur'
 import {
   iconeMeteoIndice,
-  meteoLabelIndice,
   niveauConfianceFromIndice,
 } from '@/components/commentaires/niveauConfianceAffichage'
 import { Text } from '@pilote/kpilote-ui/Typography'
@@ -38,17 +37,14 @@ function NiveauConfianceInline({ commentaireId }: { commentaireId: string }) {
   const { data: niveau } = useSuspenseQuery(niveauPourCommentaireQueryOptions(commentaireId))
   if (!niveau) return null
   return (
-    <span
-      title={niveauConfianceFromIndice(niveau.indice).label}
-      className="inline-flex items-center gap-1.5 text-sm font-semibold leading-none text-text"
-    >
+    <span className="inline-flex items-center gap-1.5 text-sm font-normal leading-none text-text">
       <img
         src={iconeMeteoIndice(niveau.indice)}
         alt=""
         aria-hidden
         className="h-5 w-auto shrink-0"
       />
-      {meteoLabelIndice(niveau.indice)}
+      {niveauConfianceFromIndice(niveau.indice).label}
     </span>
   )
 }
