@@ -1,7 +1,7 @@
 [project]
 name = "datafactory-pilote-ppg"
 version = "0.1.0"
-description = "Datafactory utili"
+description = "Datafactory de l'outil PILOTE"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
