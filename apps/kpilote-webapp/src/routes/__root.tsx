@@ -20,7 +20,7 @@ function RootComponent() {
 
   return (
     <div className="flex min-h-screen flex-col bg-background text-text">
-      <header className="sticky top-0 z-30 border-b border-border bg-surface/90 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-border bg-surface/90 shadow-raised backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-8 px-6 py-3 sm:px-10">
           <Link
             to="/"
