@@ -107,7 +107,7 @@ function PanierDetailComponent() {
   const back = (
     <BackLink asChild>
       <Link to="/paniers" search={{ individu: search.individu, referentiel: search.referentiel }}>
-        Retour aux paniers
+        Tableau de bord
       </Link>
     </BackLink>
   )
@@ -130,7 +130,7 @@ function PanierDetailComponent() {
         <TabsList>
           <TabsTrigger value="resultats">Résultats</TabsTrigger>
           <TabsTrigger value="gouvernance">Gouvernance</TabsTrigger>
-          <TabsTrigger value="confiance">Niveau de confiance</TabsTrigger>
+          <TabsTrigger value="confiance">Niveaux de confiance</TabsTrigger>
           <TabsTrigger value="commentaires">Commentaires</TabsTrigger>
         </TabsList>
 

@@ -96,7 +96,7 @@ export function IndicateurSynthesePanel({
 
             {precedente && (
               <Text variant="body" tone="muted" className="mt-3">
-                Valeur précédente :{' '}
+                <span className="font-bold">Valeur précédente :</span>{' '}
                 <span className="font-semibold text-primary">
                   {formatNumberAvecUniteFr(precedente.valeur, unite)}
                 </span>{' '}
@@ -147,7 +147,7 @@ export function IndicateurSynthesePanel({
 
           {ecartMediane !== null && (
             <div className="mt-3 flex items-center justify-between gap-3 border-t border-border pt-3">
-              <Text variant="body" tone="muted">
+              <Text variant="body" tone="muted" className="font-bold">
                 Écart à la médiane
               </Text>
               <Pill tone={ecartMediane > 0 ? 'success' : ecartMediane < 0 ? 'warning' : 'info'}>
@@ -175,7 +175,7 @@ function ComparaisonRow({
 }) {
   return (
     <li className="flex items-baseline justify-between gap-3 py-1.5">
-      <span className="text-sm text-text-muted">{label}</span>
+      <span className="text-sm font-bold text-text-muted">{label}</span>
       <span
         className={clsxm(
           'whitespace-nowrap text-base font-bold tabular-nums',
@@ -188,9 +188,7 @@ function ComparaisonRow({
           <>
             {formatNumberFr(value)}
             {unite?.abbreviation && (
-              <span className="ml-0.5 text-xs font-medium text-text-subtle">
-                {unite.abbreviation}
-              </span>
+              <span className="ml-1 font-medium text-text-subtle">{unite.abbreviation}</span>
             )}
           </>
         )}
