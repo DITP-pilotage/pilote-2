@@ -3,6 +3,7 @@ La Documentation officielle a été suivie pour la création de assets de Keyclo
 Voir aussi :
 
 - [/auth/README.md](/DITP-pilotage/pilote-2/blob/main/auth/README.md)
+- [Renouvellement SSL / TLS (ACME HTTP-01)](./docs/renouvellement-ssl.md)
 
 ## Installation dans une app scalingo
 
