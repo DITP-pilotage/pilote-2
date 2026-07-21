@@ -41,13 +41,13 @@ export function IndicateurResultatsTab({
       <Tabs value={sousOnglet} onValueChange={(valeur) => onSousOngletChange(valeur as SousOnglet)}>
         <TabsList>
           <TabsTrigger value="confiance" className="text-xs">
-            Niveau de confiance
+            Niveaux de confiance
           </TabsTrigger>
           <TabsTrigger value="evolution" className="text-xs">
             Evolution et répartition
           </TabsTrigger>
           <TabsTrigger value="commentaire" className="text-xs">
-            Commentaire
+            Commentaires
           </TabsTrigger>
         </TabsList>
 

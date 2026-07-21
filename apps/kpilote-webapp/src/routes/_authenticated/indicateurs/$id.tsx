@@ -121,7 +121,7 @@ function IndicateurDetailComponent() {
         to="/indicateurs"
         search={{ individu: search.individu, referentiel: search.referentiel }}
       >
-        Retour à la liste
+        Tableau de bord
       </Link>
     </BackLink>
   )
