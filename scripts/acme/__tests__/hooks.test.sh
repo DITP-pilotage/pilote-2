@@ -99,6 +99,24 @@ assert_contient "DELETE sur /:token" '"method":"DELETE".*"path":"/api/acme/chall
 arreter_mock
 
 echo ""
+echo "== auth-hook : ACME_INSECURE + bases API/challenge séparées =="
+demarrer_mock
+CERTBOT_DOMAIN=exemple.test \
+CERTBOT_TOKEN=tok-insecure \
+CERTBOT_VALIDATION=val-insecure \
+ACME_PUSH_PATH=/api/admin/acme-challenge \
+ACME_UPLOAD_API_KEY=secret-key \
+ACME_API_BASE_URL="$BASE_URL" \
+ACME_CHALLENGE_BASE_URL="$BASE_URL" \
+ACME_INSECURE=true \
+ACME_POLL_INTERVAL=1 ACME_POLL_TIMEOUT=8 \
+  bash "$ACME_DIR/auth-hook.sh"
+assert_code "auth-hook (insecure) exit 0" 0 "$?"
+assert_contient "dépôt via API_BASE" '"method":"POST".*"path":"/api/admin/acme-challenge"' "$MOCK_LOG"
+assert_contient "poll via CHALLENGE_BASE" '"method":"GET".*"/.well-known/acme-challenge/tok-insecure"' "$MOCK_LOG"
+arreter_mock
+
+echo ""
 if [ "$ECHECS" -eq 0 ]; then
   echo "TOUS LES TESTS PASSENT"
   exit 0

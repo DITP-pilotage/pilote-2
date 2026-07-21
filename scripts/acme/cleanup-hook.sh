@@ -12,16 +12,21 @@ set -uo pipefail
 : "${ACME_PUSH_PATH:?ACME_PUSH_PATH manquant}"
 : "${ACME_UPLOAD_API_KEY:?ACME_UPLOAD_API_KEY manquant}"
 
-BASE_URL="${ACME_BASE_URL:-https://$CERTBOT_DOMAIN}"
+# API en HTTPS (l'app redirige http->https sur /api/*). ACME_BASE_URL force la
+# base — utilisé par les tests. ACME_INSECURE tolère un cert invalide (amorçage).
+API_BASE="${ACME_API_BASE_URL:-${ACME_BASE_URL:-https://$CERTBOT_DOMAIN}}"
 STYLE="${ACME_DELETE_STYLE:-query}"
 
+curl_cmd=(curl -sS)
+[ -n "${ACME_INSECURE:-}" ] && curl_cmd+=(-k)
+
 if [ "$STYLE" = "path" ]; then
-  url="$BASE_URL$ACME_PUSH_PATH/$CERTBOT_TOKEN"
+  url="$API_BASE$ACME_PUSH_PATH/$CERTBOT_TOKEN"
 else
-  url="$BASE_URL$ACME_PUSH_PATH?token=$CERTBOT_TOKEN"
+  url="$API_BASE$ACME_PUSH_PATH?token=$CERTBOT_TOKEN"
 fi
 
-code="$(curl -sS -o /dev/null -w '%{http_code}' -X DELETE \
+code="$("${curl_cmd[@]}" -o /dev/null -w '%{http_code}' -X DELETE \
   -H "Authorization: Bearer $ACME_UPLOAD_API_KEY" \
   "$url" || echo "000")"
 echo "[cleanup-hook] DELETE $url -> HTTP $code"
