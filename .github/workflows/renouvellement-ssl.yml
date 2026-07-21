@@ -81,7 +81,10 @@ jobs:
         run: |
           python3 -m venv "$HOME/.certbot-venv"
           "$HOME/.certbot-venv/bin/pip" install --quiet --upgrade pip
-          "$HOME/.certbot-venv/bin/pip" install --quiet 'certbot==3.1.0'
+          # pyopenssl<25 : pyOpenSSL 25.x supprime crypto.X509Req, encore référencé
+          # par la josepy embarquée avec certbot 3.1.0 (AttributeError au démarrage).
+          # 24.x est la version testée pour cette certbot.
+          "$HOME/.certbot-venv/bin/pip" install --quiet 'certbot==3.1.0' 'pyopenssl<25'
           "$HOME/.certbot-venv/bin/certbot" --version
 
       - name: Émettre le certificat (HTTP-01 via hooks)
