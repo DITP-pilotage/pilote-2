@@ -1,0 +1,185 @@
+name: Renouvellement certificats SSL
+
+on:
+  workflow_dispatch:
+    inputs:
+      cible:
+        description: "Environnement à renouveler"
+        type: choice
+        required: true
+        default: tous
+        options:
+          - tous
+          - prod
+          - preprod
+          - dev
+  schedule:
+    # Le 1er du mois à 03h00 UTC
+    - cron: "0 3 1 * *"
+
+jobs:
+  renouveler:
+    name: "Renouveler ${{ matrix.environnement }} / ${{ matrix.application }}"
+    runs-on: ubuntu-latest
+    # Sur workflow_dispatch avec une cible précise, on ne garde que l'env visé.
+    # Sur schedule (inputs.cible vide) ou cible=tous, on garde tout.
+    if: >-
+      github.event_name == 'schedule' ||
+      github.event.inputs.cible == 'tous' ||
+      github.event.inputs.cible == matrix.environnement
+    environment: ${{ matrix.environnement }}
+    strategy:
+      fail-fast: false
+      matrix:
+        environnement: [prod, preprod, dev]
+        application: [webapp, auth]
+    env:
+      ACME_DIRECTORY_URL: https://acme.sectigo.com/v2/OV
+      SCALINGO_API_BASE: https://api.osc-secnum-fr1.scalingo.com
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Résoudre la cible (domaine, app, routes de challenge)
+        id: cible
+        env:
+          WEBAPP_DOMAIN: ${{ vars.WEBAPP_DOMAIN }}
+          WEBAPP_SCALINGO_APP: ${{ vars.WEBAPP_SCALINGO_APP }}
+          AUTH_DOMAIN: ${{ vars.AUTH_DOMAIN }}
+          AUTH_SCALINGO_APP: ${{ vars.AUTH_SCALINGO_APP }}
+        run: |
+          if [ "${{ matrix.application }}" = "webapp" ]; then
+            DOMAINE="$WEBAPP_DOMAIN"
+            SCALINGO_APP="$WEBAPP_SCALINGO_APP"
+            PUSH_PATH="/api/admin/acme-challenge"
+            DELETE_STYLE="query"
+          else
+            DOMAINE="$AUTH_DOMAIN"
+            SCALINGO_APP="$AUTH_SCALINGO_APP"
+            PUSH_PATH="/api/acme/challenge"
+            DELETE_STYLE="path"
+          fi
+
+          if [ -z "$DOMAINE" ] || [ -z "$SCALINGO_APP" ]; then
+            echo "Aucune config pour ${{ matrix.environnement }}/${{ matrix.application }} — job ignoré."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "domaine=$DOMAINE" >> "$GITHUB_OUTPUT"
+          echo "scalingo_app=$SCALINGO_APP" >> "$GITHUB_OUTPUT"
+          echo "push_path=$PUSH_PATH" >> "$GITHUB_OUTPUT"
+          echo "delete_style=$DELETE_STYLE" >> "$GITHUB_OUTPUT"
+
+      - name: Installer certbot
+        if: steps.cible.outputs.skip == 'false'
+        run: |
+          python3 -m venv "$HOME/.certbot-venv"
+          "$HOME/.certbot-venv/bin/pip" install --quiet --upgrade pip
+          "$HOME/.certbot-venv/bin/pip" install --quiet 'certbot==3.1.0'
+          "$HOME/.certbot-venv/bin/certbot" --version
+
+      - name: Émettre le certificat (HTTP-01 via hooks)
+        if: steps.cible.outputs.skip == 'false'
+        env:
+          # Lus par les hooks scripts/acme/*.sh
+          ACME_PUSH_PATH: ${{ steps.cible.outputs.push_path }}
+          ACME_DELETE_STYLE: ${{ steps.cible.outputs.delete_style }}
+          ACME_UPLOAD_API_KEY: ${{ secrets.ACME_UPLOAD_API_KEY }}
+        run: |
+          "$HOME/.certbot-venv/bin/certbot" certonly \
+            --manual --preferred-challenges http \
+            --server "$ACME_DIRECTORY_URL" \
+            --eab-kid "${{ secrets.SECTIGO_ACME_EAB_KID }}" \
+            --eab-hmac-key "${{ secrets.SECTIGO_ACME_EAB_HMAC_KEY }}" \
+            --email "${{ secrets.ACME_EMAIL }}" \
+            --agree-tos --no-eff-email \
+            --key-type rsa2048 \
+            --domain "${{ steps.cible.outputs.domaine }}" \
+            --config-dir "$GITHUB_WORKSPACE/.certbot/config" \
+            --work-dir "$GITHUB_WORKSPACE/.certbot/work" \
+            --logs-dir "$GITHUB_WORKSPACE/.certbot/logs" \
+            --manual-auth-hook "$GITHUB_WORKSPACE/scripts/acme/auth-hook.sh" \
+            --manual-cleanup-hook "$GITHUB_WORKSPACE/scripts/acme/cleanup-hook.sh" \
+            --non-interactive
+
+      - name: Vérifier le certificat émis
+        if: steps.cible.outputs.skip == 'false'
+        run: |
+          DOMAIN="${{ steps.cible.outputs.domaine }}"
+          LIVE="$GITHUB_WORKSPACE/.certbot/config/live/$DOMAIN"
+          BUNDLE="$LIVE/fullchain.pem"
+          KEY="$LIVE/privkey.pem"
+
+          echo "=== Fichiers ==="
+          ls -la "$LIVE"
+
+          NB_CERTS=$(grep -c "BEGIN CERTIFICATE" "$BUNDLE")
+          echo "Bundle : $NB_CERTS certificat(s) (attendu >= 2)"
+          if [ "$NB_CERTS" -lt 2 ]; then
+            echo "::warning::Chaîne incomplète (< 2 certificats) — origin strict pourrait échouer"
+          fi
+
+          echo "=== Subject / Issuer / Validity ==="
+          openssl x509 -in "$BUNDLE" -noout -subject -issuer -dates
+
+          echo "=== Cohérence clé/certificat ==="
+          CERT_PUBKEY=$(openssl x509 -in "$BUNDLE" -noout -pubkey | openssl sha256 | awk '{print $2}')
+          KEY_PUBKEY=$(openssl pkey -in "$KEY" -pubout | openssl sha256 | awk '{print $2}')
+          if [ "$CERT_PUBKEY" != "$KEY_PUBKEY" ]; then
+            echo "::error::La clé privée ne correspond pas au certificat"
+            exit 1
+          fi
+          echo "Cohérence clé/certificat OK"
+
+      - name: Échanger le token Scalingo contre un JWT
+        id: scalingo-auth
+        if: steps.cible.outputs.skip == 'false'
+        env:
+          SCALINGO_API_TOKEN: ${{ secrets.SCALINGO_API_TOKEN }}
+        run: |
+          JWT=$(curl -sSf -X POST https://auth.scalingo.com/v1/tokens/exchange \
+            -u ":$SCALINGO_API_TOKEN" | jq -r .token)
+          if [ -z "$JWT" ] || [ "$JWT" = "null" ]; then
+            echo "Échec de l'échange du token Scalingo (.token absent)"
+            exit 1
+          fi
+          echo "::add-mask::$JWT"
+          echo "jwt=$JWT" >> "$GITHUB_OUTPUT"
+
+      - name: Trouver l'ID du domaine Scalingo
+        id: scalingo-domain
+        if: steps.cible.outputs.skip == 'false'
+        run: |
+          DOMAIN_ID=$(curl -sSf \
+            -H "Authorization: Bearer ${{ steps.scalingo-auth.outputs.jwt }}" \
+            "${SCALINGO_API_BASE}/v1/apps/${{ steps.cible.outputs.scalingo_app }}/domains" \
+            | jq -r --arg name "${{ steps.cible.outputs.domaine }}" \
+              '.domains[] | select(.name == $name) | .id')
+          if [ -z "$DOMAIN_ID" ] || [ "$DOMAIN_ID" = "null" ]; then
+            echo "Domaine ${{ steps.cible.outputs.domaine }} introuvable sur ${{ steps.cible.outputs.scalingo_app }}"
+            exit 1
+          fi
+          echo "domain_id=$DOMAIN_ID" >> "$GITHUB_OUTPUT"
+
+      - name: Pousser le certificat sur Scalingo
+        if: steps.cible.outputs.skip == 'false'
+        run: |
+          DOMAIN="${{ steps.cible.outputs.domaine }}"
+          LIVE="$GITHUB_WORKSPACE/.certbot/config/live/$DOMAIN"
+          CERT=$(cat "$LIVE/fullchain.pem")
+          KEY=$(cat "$LIVE/privkey.pem")
+          RESP=$(mktemp)
+          HTTP_CODE=$(jq -n --arg cert "$CERT" --arg key "$KEY" \
+            '{domain: {tlscert: $cert, tlskey: $key}}' \
+            | curl -sS -X PATCH -o "$RESP" -w "%{http_code}" \
+              -H "Authorization: Bearer ${{ steps.scalingo-auth.outputs.jwt }}" \
+              -H "Content-Type: application/json" \
+              --data-binary @- \
+              "${SCALINGO_API_BASE}/v1/apps/${{ steps.cible.outputs.scalingo_app }}/domains/${{ steps.scalingo-domain.outputs.domain_id }}")
+          echo "HTTP $HTTP_CODE"
+          cat "$RESP"; echo ""
+          if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
+            exit 1
+          fi
