@@ -9,7 +9,7 @@ Workflow : `.github/workflows/renouvellement-ssl.yml`.
 
 - **Automatique** : cron le 1er du mois à 03h UTC.
 - **Manuel** : onglet Actions → *Renouvellement certificats SSL* → *Run workflow*,
-  choisir la cible (`tous` / `prod` / `preprod` / `dev`).
+  choisir la cible parmi `tous` / `prod` / `preprod` / `dev` (défaut : `dev`).
 
 ## Configuration requise
 
