@@ -1,25 +1,15 @@
-FROM python:3.11
+FROM ghcr.io/astral-sh/uv:trixie-slim
 
-# [setup.root-dir]
+# Set working directory
 WORKDIR /app/data_management
 
-## [install.pipenv] (last version)
-RUN python -m pip install --no-cache pipenv
+ENV UV_ENV_FILE="/app/data_management/.env"
 
-## [install.pipenv-deps]
-COPY Pipfile .
-COPY Pipfile.lock .
+COPY . /app/data_management/
 
-# Install exact versions of Pipfile.lock with "pipenv sync"
-RUN pipenv sync
-## [log] Show path of env just created
-RUN pipenv --venv
-## [log] Show versions of packages installed in env just created
-RUN pipenv run pip freeze
+ENV UV_ENV_FILE="/app/data_management/.env"
 
-
-WORKDIR /app/data_management
-
-ENTRYPOINT ["pipenv","run"]
+# Use uv run as default entrypoint for all commands
+ENTRYPOINT ["uv", "run"]
 
 CMD ["dbt", "deps"]

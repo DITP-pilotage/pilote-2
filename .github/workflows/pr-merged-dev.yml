@@ -57,30 +57,13 @@ jobs:
             echo "changed=false" >> $GITHUB_OUTPUT
           fi
 
-      - id: setup-python
-        name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - id: install-pipenv
-        name: Install pipenv
-        run: |
-          python -m pip install --upgrade --no-cache-dir pip
-          python -m pip install --no-cache-dir pipenv
-        shell: bash
-
-      - id: cache-pipfile
-        name: Cache Pipfile
-        uses: actions/cache@v4
-        with:
-          path: ~/.local/share/virtualenvs
-          key: ${{ runner.os }}-python-${{ steps.setup-python.outputs.python-version }}-pipenv-${{ hashFiles('apps/pilote-ppg-data-management/Pipfile.lock') }}
-        
-      - name: "install dependencies"
+      - id: install-uv
+        name: Install uv
         if: steps.datamgmt_changes.outputs.changed == 'true'
-        run: cd apps/pilote-ppg-data-management && pipenv sync && pipenv run dbt deps
-
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          python-version: 3.11
+      
       - uses: scalingo-community/setup-scalingo@v0.1.1
         if: steps.datamgmt_changes.outputs.changed == 'true'
         with:
@@ -132,7 +115,7 @@ jobs:
           
           # Génère la doc (le tunnel doit rester ouvert pendant toute la commande suivante)
           cd apps/pilote-ppg-data-management
-          pipenv run dbt docs generate --static
+          uv run dbt docs generate --static
 
       # Prépare et push la doc générée sur gh-pages
       - name: "Deploy dbt docs to GitHub Pages"

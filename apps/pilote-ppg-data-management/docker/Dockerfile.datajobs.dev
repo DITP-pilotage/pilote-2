@@ -1,30 +1,17 @@
-FROM python:3.10
+FROM ghcr.io/astral-sh/uv:trixie-slim
 
-# [setup.root-dir]
+# Set working directory
 WORKDIR /app/data_management
 
-# [install.postgres]
+# Install PostgreSQL dependencies
 RUN apt-get update && apt-get install -y \
     postgresql \
  && rm -rf /var/lib/apt/lists/*
 
-## [install.pipenv] (last version)
-RUN python -m pip install --no-cache pipenv
+ENV UV_ENV_FILE="/app/data_management/.env"
 
-## [install.pipenv-deps]
-COPY Pipfile .
-COPY Pipfile.lock .
+COPY . /app/data_management/
 
-# Install exact versions of Pipfile.lock with "pipenv sync"
-RUN pipenv sync
-## [log] Show path of env just created
-RUN pipenv --venv
-## [log] Show versions of packages installed in env just created
-RUN pipenv run pip freeze
-
-
-WORKDIR /app/data_management
-
-ENTRYPOINT ["pipenv","run", "/bin/bash"]
-
-CMD ["scripts/run_datajobs.sh"]
+# Use uv run as default entrypoint for all commands
+ENTRYPOINT ["uv", "run"]
+CMD ["python", "scripts/__main__.py"]

@@ -4,9 +4,9 @@ Ce répertoire administre les pipelines d'import, de chargement et transformatio
 ## Description
 
 
-La mise à jour des données de la datafactory se fait automatiquement via l'exécution du script `scripts/run_datajobs.sh`. La fréquence de mise à jour est définie par le job cron de l'app Scalingo (exemple [pour la dev](https://dashboard.scalingo.com/apps/osc-secnum-fr1/dev-datajobs/resources)).
+La mise à jour des données de la datafactory se fait automatiquement via l'exécution du script `scripts/__main__.py`. La fréquence de mise à jour est définie par le job cron de l'app Scalingo (exemple [pour la dev](https://dashboard.scalingo.com/apps/osc-secnum-fr1/dev-datajobs/resources)).
 
-Les modèles de données *dbt* sont dans le dossier [models/](models/). La doc *dbt* est générée via `pipenv run dbt docs generate`.
+Les modèles de données *dbt* sont dans le dossier [models/](models/). La doc *dbt* est générée via `uv run dbt docs generate`.
 
 ## Avant de démarrer
 
@@ -24,24 +24,18 @@ Pensez à mettre jour le fichier `.env` en demandant les variables à l'équipe.
 
 #### Gestion des packages
 
-Utilisation de [Pipenv](https://pipenv.pypa.io/en/latest/commands.html) pour la gestion des dépendances Python.
+Utilisation d'[uv](https://docs.astral.sh/uv/) pour la gestion des dépendances Python.
 
 Commandes utiles:
 ```sh
-# [Installation de packages]
-# Installation des versions exactes du Pipenv.lock
-pipenv sync
-# /!\ Installation des versions les plus récentes compatibles avec le Pipenv
-pipenv install pyarrow
-# /!\ Installation des versions les plus récentes compatibles avec le Pipenv
-#     -> Attention aux màj cassantes
-pipenv update
+# Téléchargement de la version de Python nécessaire
+uv python install
 
 # [Excécution commandes]
 # Exécuter une commande dans l'environnement
-pipenv run dbt compile --select model_1
+uv run dbt compile --select model_1
 # Exécuter des commandes interactivement dans l'environnement
-pipenv shell
+source .venv/bin/activate
 ```
 
 #### Initialisation des dépendances de DBT
@@ -50,9 +44,9 @@ Utilisation des [commandes dbt](https://docs.getdbt.com/reference/dbt-commands):
 
 ```sh
 # Mise à jour des dépendances
-pipenv run dbt deps
+uv run dbt deps
 # Exécution d'un modèle
-pipenv run dbt run --select model_1
+uv run dbt run --select model_1
 ```
 
 ### [docker-conf] Installation
@@ -63,8 +57,6 @@ Pour l'utiliser:
 
 - *optionnel* `docker compose build` pour construire les images Docker nécessaires
 - `docker compose up` pour lancer la base de données, la documentation interactive (dbt et prisma), et la webapp
-- *optionnel* `docker compose run pilote_scripts` pour entrer dans le container et lancer les scripts dbt via `/bin/bash scripts/<name-of-the-script>.sh`
-- *optionnel* OU `docker compose run pilote_scripts scripts/<name-of-the-script>.sh` pour lancer le script dbt `<name-of-the-script>.sh`
 - *optionnel* `docker container exec -it pilote_webapp /bin/sh` pour entrer dans le container webapp et éventuellement entrer des commandes (ex: npm, yarn, ...)
 
 Le *reverse-proxy* [Traefik](https://traefik.io/traefik/) est utilisé pour définir les différentes routes. Ainsi, on a:
@@ -88,23 +80,7 @@ NEXTAUTH_URL=http://pilote.localhost
 - `pilote_webapp`: webapp
 
 
-
-
-Un exemple complet d'utilisation de docker pour cette partie data pourrait être:
-
-```sh
-# Build the image
-docker compose build
-# Lancement de la base de données, documentation, et webapp
-docker compose up
-# Run prisma migrations
-docker compose run pilote_scripts scripts/0_prisma_migrate.sh
-# Run script 1
-docker compose run pilote_scripts scripts/1_dump_dfakto.sh
-# and so on for all the scripts
-```
-
-Pour exécuter les datajobs via Docker, voir [run_datajobs_docker.sh](./run_datajobs_docker.sh). Il est aussi possible de n'exécuter que les datajobs de production avec la variable d'environnement :
+Il est aussi possible de n'exécuter que les datajobs de production avec la variable d'environnement :
 
 ```sh
 # Force to run datajobs as in specific env. Leave "" to ignore
@@ -117,9 +93,9 @@ L'outil `SQLFluff` permet d'avoir une écriture consistente du code SQL. Pour la
 
 ```sh
 # Lancer le linter
-pipenv run sqlfluff lint <path-to-file>
+uv run sqlfluff lint <path-to-file>
 # Corriger les erreurs
-pipenv run sqlfluff fix <path-to-file>
+uv run sqlfluff fix <path-to-file>
 ```
 
 Afin de merger une PR, il est nécessaire qu'il n'y ait aucune erreur de lint. 
@@ -272,16 +248,12 @@ Ces données seront ensuite utilisées pour avoir l'historique des va des indica
 Afin d'exécuter les jobs de la data factory, il suffit de :
 
 ```bash
-/bin/bash scripts/6_fill_tables_marts.sh
+uv run /bin/bash scripts/6_fill_tables_marts.sh
 ```
 
 ### Tests sur les données
 
-Des tests sur les données ont été implémentés. Ils sont situés dans le dossier [tests](./tests). Pour les exécuter, utiliser le script `scripts/test_data.sh` ou via Docker: 
-
-```sh
-docker-compose run pilote_scripts scripts/test_data.sh
-```
+Des tests sur les données ont été implémentés. Ils sont situés dans le dossier [tests](./tests). Pour les exécuter, utiliser le script `uv run dbt test`.
 
 *Note:* Vous pouvez également exécuter uniquement certains tests (en se basant sur le dossier ou les tags associés) comme détaillé dans la [documentation dbt](https://docs.getdbt.com/reference/node-selection/test-selection-examples).
 
@@ -291,9 +263,7 @@ docker-compose run pilote_scripts scripts/test_data.sh
 Afin de remplir les tables du schéma `public` et ainsi alimenter l'application _Pilote 2_, il faut exécuter le script suivant en local :
 
 ```bash
-bash scripts/7_fill_tables_public.sh
-# ou via docker
-docker-compose run pilote_scripts scripts/7_fill_tables_public.sh
+uv run bash scripts/7_fill_tables_public.sh
 ```
 
 ### Développement et comparaison des données local vs prod/dev
@@ -302,7 +272,7 @@ Afin de pouvoir anticiper les conséquences de changements sur la datafactory il
 
 Typiquement, après avoir créé un tunnel vers la dev, fait une descente de dev et lancé les jobs en local :
 ```bash
-pipenv run LOG_LEVEL=WARN PGHOST="localhost" python scripts/compare_local_vs_target.py
+LOG_LEVEL=WARN PGHOST="localhost" uv run python scripts/compare_local_vs_target.py
 ```
 
 Il est possible de préciser des connections strings de 2 bases de données différentes et de passer des noms de table précis au script (cf doc du script). Par défaut il compare une liste de tables d'exposition.
@@ -344,7 +314,11 @@ Afin de mieux visualiser le DAG à l'intérieur du projet, nous vous proposons d
 Il est possible d'y avoir accès en exécutant la commande suivante : 
 
 ```bash
-pipenv run dbt docs generate && pipenv run dbt docs serve
+uv run dbt docs generate && uv run dbt docs serve
+```
+ou plus simplement :
+```bash
+make docs
 ```
 
 Cette ligne de commande ouvrira une interface web avec laquelle vous pourrez interagir. 

@@ -10,7 +10,16 @@
 WITH mailles_applicables AS (
     SELECT
         id AS indic_id,
-        ARRAY_AGG(LOWER(maille)::MAILLE) AS mailles_applicables
+        ARRAY_AGG(
+            LOWER(maille)::MAILLE ORDER BY
+                CASE LOWER(maille)
+                    WHEN 'nat' THEN 1
+                    WHEN 'reg' THEN 2
+                    WHEN 'dept' THEN 3
+                    ELSE 4
+                END
+                ASC
+        ) AS mailles_applicables
     FROM {{ ref('int_indicateurs_mailles_applicables') }}
     WHERE maille_est_applicable
     GROUP BY id

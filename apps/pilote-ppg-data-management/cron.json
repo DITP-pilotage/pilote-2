@@ -1,10 +1,10 @@
 {
   "jobs": [
     {
-      "command": "0 * * * * /bin/bash scripts/run_datajobs.sh"
+      "command": "0 * * * * uv run python scripts/__main__.py"
     },
     {
-      "command": "0 0 * * * pipenv run dbt deps && pipenv run dbt test"
+      "command": "0 0 * * * uv run dbt deps && uv run dbt test"
     }
   ]
 }
