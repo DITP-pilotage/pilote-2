@@ -94,6 +94,10 @@ jobs:
           ACME_PUSH_PATH: ${{ steps.cible.outputs.push_path }}
           ACME_DELETE_STYLE: ${{ steps.cible.outputs.delete_style }}
           ACME_UPLOAD_API_KEY: ${{ secrets.ACME_UPLOAD_API_KEY }}
+          # Amorçage : à la première émission le cert n'est pas encore valide.
+          # Le dépôt/suppression (HTTPS, /api/*) tolère un cert invalide ; le
+          # challenge se lit en HTTP (exempté). Cf. défauts des hooks.
+          ACME_INSECURE: "true"
         run: |
           "$HOME/.certbot-venv/bin/certbot" certonly \
             --manual --preferred-challenges http \
