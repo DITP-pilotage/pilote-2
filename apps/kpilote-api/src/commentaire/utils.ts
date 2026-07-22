@@ -17,13 +17,13 @@ export const commentaireInclude = {
   auteurCreation: auteurInclude,
   auteurModification: auteurInclude,
   indicateurIndividu: { include: { individu: { select: { publicId: true } } } },
-  dossier: true,
+  collection: true,
 } satisfies Prisma.CommentaireInclude
 
 export type CommentaireRow = Prisma.CommentaireGetPayload<{ include: typeof commentaireInclude }>
 
 const typeDuCommentaire = (row: CommentaireRow): string =>
-  row.indicateurIndividu?.type ?? row.dossier?.type ?? 'DEFAUT'
+  row.indicateurIndividu?.type ?? row.collection?.type ?? 'DEFAUT'
 
 const individuPublicId = (row: CommentaireRow): string | null =>
   row.indicateurIndividu?.individu.publicId ?? null

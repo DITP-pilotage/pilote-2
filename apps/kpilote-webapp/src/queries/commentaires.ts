@@ -6,11 +6,11 @@ import { type QueryKey, queryOptions } from '@tanstack/react-query'
 
 import {
   fetchBrouillon,
-  fetchBrouillonDossier,
+  fetchBrouillonCollection,
   fetchCommentaires,
-  fetchCommentairesDossier,
+  fetchCommentairesCollection,
   type IndicateurIndividuCommentaireType,
-  type DossierCommentaireType,
+  type CollectionCommentaireType,
 } from '@/api/commentaires'
 
 import { DEFAULT_STALE_TIME, fetchAllPaginatedItems } from './utils'
@@ -54,33 +54,36 @@ export const brouillonQueryOptions = (
     staleTime: DEFAULT_STALE_TIME,
   })
 
-// --- Dossier global -----------------------------------------------------------
+// --- Collection global -----------------------------------------------------------
 
-export const commentairesDossierKeys = {
-  parType: (dossierId: string, type: DossierCommentaireType) =>
-    ['dossier', dossierId, 'commentaires', type] as const,
-  publies: (dossierId: string, type: DossierCommentaireType) =>
-    [...commentairesDossierKeys.parType(dossierId, type), 'publies'] as const,
-  brouillon: (dossierId: string, type: DossierCommentaireType) =>
-    [...commentairesDossierKeys.parType(dossierId, type), 'brouillon'] as const,
+export const commentairesCollectionKeys = {
+  parType: (collectionId: string, type: CollectionCommentaireType) =>
+    ['collection', collectionId, 'commentaires', type] as const,
+  publies: (collectionId: string, type: CollectionCommentaireType) =>
+    [...commentairesCollectionKeys.parType(collectionId, type), 'publies'] as const,
+  brouillon: (collectionId: string, type: CollectionCommentaireType) =>
+    [...commentairesCollectionKeys.parType(collectionId, type), 'brouillon'] as const,
 }
 
-export const commentairesDossierPubliesQueryOptions = (
-  dossierId: string,
-  type: DossierCommentaireType,
+export const commentairesCollectionPubliesQueryOptions = (
+  collectionId: string,
+  type: CollectionCommentaireType,
 ) =>
   queryOptions<CommentaireApiModel[], Error, CommentaireApiModel[], QueryKey>({
-    queryKey: commentairesDossierKeys.publies(dossierId, type),
+    queryKey: commentairesCollectionKeys.publies(collectionId, type),
     queryFn: () =>
       fetchAllPaginatedItems((cursor) =>
-        fetchCommentairesDossier(dossierId, { type, ...(cursor ? { cursor } : {}) }),
+        fetchCommentairesCollection(collectionId, { type, ...(cursor ? { cursor } : {}) }),
       ),
     staleTime: DEFAULT_STALE_TIME,
   })
 
-export const brouillonDossierQueryOptions = (dossierId: string, type: DossierCommentaireType) =>
+export const brouillonCollectionQueryOptions = (
+  collectionId: string,
+  type: CollectionCommentaireType,
+) =>
   queryOptions<BrouillonApiModel, Error, BrouillonApiModel, QueryKey>({
-    queryKey: commentairesDossierKeys.brouillon(dossierId, type),
-    queryFn: () => fetchBrouillonDossier(dossierId, type),
+    queryKey: commentairesCollectionKeys.brouillon(collectionId, type),
+    queryFn: () => fetchBrouillonCollection(collectionId, type),
     staleTime: DEFAULT_STALE_TIME,
   })

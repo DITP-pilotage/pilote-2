@@ -1,10 +1,10 @@
 import { createRoute } from '@hono/zod-openapi'
 import {
-  grantDossierPermissionBodySchema,
+  grantCollectionPermissionBodySchema,
   grantIndicateurPermissionBodySchema,
   listPrincipalPermissionsQuerySchema,
   principalPermissionsApiModelSchema,
-  revokeDossierPermissionQuerySchema,
+  revokeCollectionPermissionQuerySchema,
   revokeIndicateurPermissionQuerySchema,
 } from '@pilote/kpilote-shared/permission'
 
@@ -15,9 +15,9 @@ import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { erreur400, erreur403, erreur404, succes200 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { grantIndicateurPermission } from '@/permission/commands/grantIndicateurPermission'
-import { grantDossierPermission } from '@/permission/commands/grantDossierPermission'
+import { grantCollectionPermission } from '@/permission/commands/grantCollectionPermission'
 import { revokeIndicateurPermission } from '@/permission/commands/revokeIndicateurPermission'
-import { revokeDossierPermission } from '@/permission/commands/revokeDossierPermission'
+import { revokeCollectionPermission } from '@/permission/commands/revokeCollectionPermission'
 import { getPrincipalPermissions } from '@/permission/queries/getPrincipalPermissions'
 
 const PrincipalPermissionsApiModelSchema = principalPermissionsApiModelSchema.openapi(
@@ -26,8 +26,8 @@ const PrincipalPermissionsApiModelSchema = principalPermissionsApiModelSchema.op
 const GrantIndicateurPermissionBodySchema = grantIndicateurPermissionBodySchema.openapi(
   'GrantIndicateurPermissionBody',
 )
-const GrantDossierPermissionBodySchema = grantDossierPermissionBodySchema.openapi(
-  'GrantDossierPermissionBody',
+const GrantCollectionPermissionBodySchema = grantCollectionPermissionBodySchema.openapi(
+  'GrantCollectionPermissionBody',
 )
 
 // --- GET /permissions --------------------------------------------------------
@@ -38,8 +38,8 @@ const getPermissionsRoute = createRoute({
   tags: ['Permission', 'Admin'],
   summary: "Lister les permissions d'un principal",
   description:
-    `Réservé aux clés API de rôle \`ADMIN\`. Retourne les permissions directes (dossiers + indicateurs) du principal, plus ` +
-    'les indicateurs en READ hérités via propagation dossier → indicateur.',
+    `Réservé aux clés API de rôle \`ADMIN\`. Retourne les permissions directes (collections + indicateurs) du principal, plus ` +
+    'les indicateurs en READ hérités via propagation collection → indicateur.',
   middleware: [requireAuthentication],
   request: { query: listPrincipalPermissionsQuerySchema },
   responses: {
@@ -91,18 +91,18 @@ const revokeIndicateurPermissionRoute = createRoute({
   },
 })
 
-// --- POST /permissions/dossier -----------------------------------------------
+// --- POST /permissions/collection -----------------------------------------------
 
-const grantDossierPermissionRoute = createRoute({
+const grantCollectionPermissionRoute = createRoute({
   method: 'post',
-  path: '/permissions/dossier',
+  path: '/permissions/collection',
   tags: ['Permission', 'Admin'],
-  summary: 'Accorder une permission sur un dossier',
-  description: `Réservé aux clés API de rôle \`ADMIN\`. Accorde une action (\`READ\`/\`WRITE\`) sur un dossier à un principal. **Idempotent**. Retourne l'état à jour.`,
+  summary: 'Accorder une permission sur un collection',
+  description: `Réservé aux clés API de rôle \`ADMIN\`. Accorde une action (\`READ\`/\`WRITE\`) sur un collection à un principal. **Idempotent**. Retourne l'état à jour.`,
   middleware: [requireAuthentication],
   request: {
     body: {
-      content: { 'application/json': { schema: GrantDossierPermissionBodySchema } },
+      content: { 'application/json': { schema: GrantCollectionPermissionBodySchema } },
       required: true,
     },
   },
@@ -114,16 +114,16 @@ const grantDossierPermissionRoute = createRoute({
   },
 })
 
-// --- DELETE /permissions/dossier ---------------------------------------------
+// --- DELETE /permissions/collection ---------------------------------------------
 
-const revokeDossierPermissionRoute = createRoute({
+const revokeCollectionPermissionRoute = createRoute({
   method: 'delete',
-  path: '/permissions/dossier',
+  path: '/permissions/collection',
   tags: ['Permission', 'Admin'],
-  summary: 'Retirer une permission sur un dossier',
-  description: `Réservé aux clés API de rôle \`ADMIN\`. Retire une action précise si \`action\` est fournie, sinon toutes les actions du dossier. **Idempotent**. Retourne l'état à jour.`,
+  summary: 'Retirer une permission sur un collection',
+  description: `Réservé aux clés API de rôle \`ADMIN\`. Retire une action précise si \`action\` est fournie, sinon toutes les actions du collection. **Idempotent**. Retourne l'état à jour.`,
   middleware: [requireAuthentication],
-  request: { query: revokeDossierPermissionQuerySchema },
+  request: { query: revokeCollectionPermissionQuerySchema },
   responses: {
     200: succes200('Permission retirée, état à jour', PrincipalPermissionsApiModelSchema),
     400: erreur400,
@@ -161,18 +161,18 @@ permissionRoutes.openapi(revokeIndicateurPermissionRoute, async (context) => {
   )
 })
 
-permissionRoutes.openapi(grantDossierPermissionRoute, async (context) => {
+permissionRoutes.openapi(grantCollectionPermissionRoute, async (context) => {
   const body = context.req.valid('json')
-  return (await withTransaction(async () => grantDossierPermission(body))).match(
+  return (await withTransaction(async () => grantCollectionPermission(body))).match(
     (data) =>
       jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
     never,
   )
 })
 
-permissionRoutes.openapi(revokeDossierPermissionRoute, async (context) => {
+permissionRoutes.openapi(revokeCollectionPermissionRoute, async (context) => {
   const query = context.req.valid('query')
-  return (await withTransaction(async () => revokeDossierPermission(query))).match(
+  return (await withTransaction(async () => revokeCollectionPermission(query))).match(
     (data) =>
       jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
     never,

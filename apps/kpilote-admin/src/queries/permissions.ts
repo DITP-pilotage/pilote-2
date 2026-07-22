@@ -1,6 +1,6 @@
 import { infiniteQueryOptions, queryOptions } from '@tanstack/react-query'
 
-import { fetchDossiers } from '@/api/dossiers'
+import { fetchCollections } from '@/api/collections'
 import { fetchIndicateurs } from '@/api/indicateurs'
 import { fetchPrincipalPermissions } from '@/api/permissions'
 
@@ -35,14 +35,14 @@ export const searchIndicateursInfiniteQueryOptions = (
       lastPage.pagination.hasMore ? (lastPage.pagination.cursor ?? undefined) : undefined,
   })
 
-export const searchDossiersInfiniteQueryOptions = (
+export const searchCollectionsInfiniteQueryOptions = (
   recherche: string,
   rechercheIdentifiant: string,
 ) =>
   infiniteQueryOptions({
-    queryKey: ['dossiers-search', { recherche, rechercheIdentifiant }],
+    queryKey: ['collections-search', { recherche, rechercheIdentifiant }],
     queryFn: async ({ pageParam }) => {
-      const page = await fetchDossiers({
+      const page = await fetchCollections({
         recherche: recherche || undefined,
         rechercheIdentifiant: rechercheIdentifiant || undefined,
         cursor: pageParam ?? undefined,

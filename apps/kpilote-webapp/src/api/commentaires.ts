@@ -9,7 +9,7 @@ import {
   indicateurIndividuCommentaireTypeSchema,
   type ListerCommentairesQuery,
   type ModifierCommentaireBody,
-  dossierCommentaireTypeSchema,
+  collectionCommentaireTypeSchema,
 } from '@pilote/kpilote-shared/commentaire'
 import { z } from 'zod'
 
@@ -19,7 +19,7 @@ export type IndicateurIndividuCommentaireType = z.infer<
   typeof indicateurIndividuCommentaireTypeSchema
 >
 
-export type DossierCommentaireType = z.infer<typeof dossierCommentaireTypeSchema>
+export type CollectionCommentaireType = z.infer<typeof collectionCommentaireTypeSchema>
 
 // Seul le type CONFIANCE (synthèse des résultats) porte un niveau de confiance.
 export const typeAvecNiveauConfiance = (type: string): boolean => type === 'CONFIANCE'
@@ -69,32 +69,34 @@ export const updateCommentaire = async (
   return commentaireApiModelSchema.parse(json)
 }
 
-// --- Dossier global -----------------------------------------------------------
+// --- Collection global -----------------------------------------------------------
 
-export const fetchCommentairesDossier = async (
-  dossierId: string,
+export const fetchCommentairesCollection = async (
+  collectionId: string,
   query: ListerCommentairesQuery,
 ): Promise<CommentaireListApiModel> => {
   const json = await apiClient
-    .get(`dossiers/${dossierId}/commentaires`, { searchParams: query })
+    .get(`collections/${collectionId}/commentaires`, { searchParams: query })
     .json()
   return commentaireListApiModelSchema.parse(json)
 }
 
-export const fetchBrouillonDossier = async (
-  dossierId: string,
-  type: DossierCommentaireType,
+export const fetchBrouillonCollection = async (
+  collectionId: string,
+  type: CollectionCommentaireType,
 ): Promise<BrouillonApiModel> => {
   const json = await apiClient
-    .get(`dossiers/${dossierId}/commentaires/brouillon`, { searchParams: { type } })
+    .get(`collections/${collectionId}/commentaires/brouillon`, { searchParams: { type } })
     .json()
   return brouillonApiModelSchema.parse(json)
 }
 
-export const createCommentaireDossier = async (
-  dossierId: string,
+export const createCommentaireCollection = async (
+  collectionId: string,
   body: CreerCommentaireBody,
 ): Promise<CommentaireApiModel> => {
-  const json = await apiClient.post(`dossiers/${dossierId}/commentaires`, { json: body }).json()
+  const json = await apiClient
+    .post(`collections/${collectionId}/commentaires`, { json: body })
+    .json()
   return commentaireApiModelSchema.parse(json)
 }

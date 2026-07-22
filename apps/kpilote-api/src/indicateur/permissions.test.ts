@@ -7,7 +7,7 @@ import {
 } from '@/indicateur/permissions'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testIndicateurIds, testDossierId } from '@/test/randomIds'
+import { testIndicateurIds, testCollectionId } from '@/test/randomIds'
 
 const listIndicateursWithReadPermission = async (principalId: string, isAdmin = false) =>
   db().indicateur.findMany({
@@ -74,54 +74,54 @@ describe.concurrent('withIndicateurReadPermission', () => {
   )
 
   it(
-    'propage READ depuis un dossier (action READ sur le dossier)',
+    'propage READ depuis un collection (action READ sur le collection)',
     integrationTest(async () => {
-      const [viaDossier] = testIndicateurIds(1)
-      const panRpropR = testDossierId()
-      await fixtures.indicateur({ publicId: viaDossier, visibilite: 'PRIVE' })
-      await fixtures.dossier({
+      const [viaCollection] = testIndicateurIds(1)
+      const panRpropR = testCollectionId()
+      await fixtures.indicateur({ publicId: viaCollection, visibilite: 'PRIVE' })
+      await fixtures.collection({
         publicId: panRpropR,
         visibilite: 'PRIVE',
-        indicateurs: [{ publicId: viaDossier }],
+        indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        dossierPermissions: [{ dossier: { publicId: panRpropR }, action: 'READ' }],
+        collectionPermissions: [{ collection: { publicId: panRpropR }, action: 'READ' }],
       })
 
       const rows = await listIndicateursWithReadPermission(apiKey.id)
 
-      expect(rows.map((r) => r.publicId)).toContain(viaDossier)
+      expect(rows.map((r) => r.publicId)).toContain(viaCollection)
     }),
   )
 
   it(
-    'propage READ depuis un dossier (action WRITE sur le dossier)',
+    'propage READ depuis un collection (action WRITE sur le collection)',
     integrationTest(async () => {
-      const [viaDossier] = testIndicateurIds(1)
-      const panRpropW = testDossierId()
-      await fixtures.indicateur({ publicId: viaDossier, visibilite: 'PRIVE' })
-      await fixtures.dossier({
+      const [viaCollection] = testIndicateurIds(1)
+      const panRpropW = testCollectionId()
+      await fixtures.indicateur({ publicId: viaCollection, visibilite: 'PRIVE' })
+      await fixtures.collection({
         publicId: panRpropW,
         visibilite: 'PRIVE',
-        indicateurs: [{ publicId: viaDossier }],
+        indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        dossierPermissions: [{ dossier: { publicId: panRpropW }, action: 'WRITE' }],
+        collectionPermissions: [{ collection: { publicId: panRpropW }, action: 'WRITE' }],
       })
 
       const rows = await listIndicateursWithReadPermission(apiKey.id)
 
-      expect(rows.map((r) => r.publicId)).toContain(viaDossier)
+      expect(rows.map((r) => r.publicId)).toContain(viaCollection)
     }),
   )
 
   it(
-    "ne propage rien depuis un dossier auquel le principal n'a pas accès",
+    "ne propage rien depuis un collection auquel le principal n'a pas accès",
     integrationTest(async () => {
       const [hidden] = testIndicateurIds(1)
-      const panRpropNone = testDossierId()
+      const panRpropNone = testCollectionId()
       await fixtures.indicateur({ publicId: hidden, visibilite: 'PRIVE' })
-      await fixtures.dossier({
+      await fixtures.collection({
         publicId: panRpropNone,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: hidden }],
@@ -221,18 +221,18 @@ describe.concurrent('ensureIndicateurWritePermission', () => {
   )
 
   it(
-    "rejette même si le principal a WRITE sur un dossier qui contient l'indicateur (WRITE indicateur reste direct, pas de propagation)",
+    "rejette même si le principal a WRITE sur un collection qui contient l'indicateur (WRITE indicateur reste direct, pas de propagation)",
     integrationTest(async () => {
-      const [viaDossier] = testIndicateurIds(1)
-      const panWpropNo = testDossierId()
-      const indicateur = await fixtures.indicateur({ publicId: viaDossier, visibilite: 'PRIVE' })
-      await fixtures.dossier({
+      const [viaCollection] = testIndicateurIds(1)
+      const panWpropNo = testCollectionId()
+      const indicateur = await fixtures.indicateur({ publicId: viaCollection, visibilite: 'PRIVE' })
+      await fixtures.collection({
         publicId: panWpropNo,
         visibilite: 'PRIVE',
-        indicateurs: [{ publicId: viaDossier }],
+        indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        dossierPermissions: [{ dossier: { publicId: panWpropNo }, action: 'WRITE' }],
+        collectionPermissions: [{ collection: { publicId: panWpropNo }, action: 'WRITE' }],
       })
 
       await expect(

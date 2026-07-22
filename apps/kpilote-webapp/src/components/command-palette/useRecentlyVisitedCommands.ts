@@ -7,12 +7,12 @@ import { getRecentlyVisited } from '@/lib/recentlyVisited'
 import { useImportModal } from '@/components/import-valeurs/useImportModal'
 
 import { buildIndicateurActions } from './indicateurActions'
-import { buildDossierActions } from './dossierActions'
+import { buildCollectionActions } from './collectionActions'
 import { useCanImport } from './useCanImport'
 
 const ICON_BY_TYPE = {
   indicateur: BarChart3,
-  dossier: FolderOpen,
+  collection: FolderOpen,
 } as const
 
 /**
@@ -39,7 +39,7 @@ export function useRecentlyVisitedCommands(open: boolean, close: () => void): Co
         const actions =
           entry.type === 'indicateur'
             ? buildIndicateurActions(cible, { navigate, close, openImport, canImport })
-            : buildDossierActions(cible, { navigate, close })
+            : buildCollectionActions(cible, { navigate, close })
         return {
           id: `recent:${entry.type}:${entry.id}`,
           label: entry.label,
@@ -51,7 +51,7 @@ export function useRecentlyVisitedCommands(open: boolean, close: () => void): Co
             if (entry.type === 'indicateur') {
               void navigate({ to: '/indicateurs/$id', params: { id: entry.id } })
             } else {
-              void navigate({ to: '/dossiers/$id', params: { id: entry.id } })
+              void navigate({ to: '/collections/$id', params: { id: entry.id } })
             }
             close()
           },

@@ -286,7 +286,7 @@ function DonneesPersonnellesPage() {
           </Heading>
           <ul className="list-disc space-y-1 pl-5">
             <Text as="li">
-              Évitez de saisir des données personnelles (noms, numéros de dossier, etc.) dans les
+              Évitez de saisir des données personnelles (noms, numéros de collection, etc.) dans les
               prompts ou commentaires.
             </Text>
             <Text as="li">

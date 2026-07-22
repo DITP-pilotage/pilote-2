@@ -62,7 +62,7 @@ function IndicateursListComponent() {
   return (
     <Page
       title="Tableau de bord"
-      description="Consultez et gérez l'ensemble de vos indicateurs par valeur ou par dossier."
+      description="Consultez et gérez l'ensemble de vos indicateurs par valeur ou par collection."
       stickybar={
         <>
           {search.individu ? (

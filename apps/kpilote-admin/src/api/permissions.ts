@@ -1,5 +1,5 @@
 import type {
-  GrantDossierPermissionBody,
+  GrantCollectionPermissionBody,
   GrantIndicateurPermissionBody,
   PermissionActionValue,
   PrincipalPermissionsApiModel,
@@ -38,25 +38,25 @@ export const revokeIndicateurPermission = async (params: {
   return principalPermissionsApiModelSchema.parse(json)
 }
 
-// --- Dossier -----------------------------------------------------------------
+// --- Collection -----------------------------------------------------------------
 
-export const grantDossierPermission = async (
-  body: GrantDossierPermissionBody,
+export const grantCollectionPermission = async (
+  body: GrantCollectionPermissionBody,
 ): Promise<PrincipalPermissionsApiModel> => {
-  const json = await bffClient.post('permissions/dossier', { json: body }).json()
+  const json = await bffClient.post('permissions/collection', { json: body }).json()
   return principalPermissionsApiModelSchema.parse(json)
 }
 
-export const revokeDossierPermission = async (params: {
+export const revokeCollectionPermission = async (params: {
   principalId: string
-  dossierPublicId: string
+  collectionPublicId: string
   action?: PermissionActionValue
 }): Promise<PrincipalPermissionsApiModel> => {
   const searchParams: Record<string, string> = {
     principalId: params.principalId,
-    dossierPublicId: params.dossierPublicId,
+    collectionPublicId: params.collectionPublicId,
   }
   if (params.action) searchParams.action = params.action
-  const json = await bffClient.delete('permissions/dossier', { searchParams }).json()
+  const json = await bffClient.delete('permissions/collection', { searchParams }).json()
   return principalPermissionsApiModelSchema.parse(json)
 }

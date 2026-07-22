@@ -21,13 +21,13 @@ const ensureAuteurDuCommentaireConfiance = async (
     select: {
       createdBy: true,
       indicateurIndividu: { select: { type: true } },
-      dossier: { select: { type: true } },
+      collection: { select: { type: true } },
     },
   })
   if (commentaire.createdBy !== principalId) {
     throw new ForbiddenError('Seul l’auteur du commentaire peut y attacher un niveau de confiance')
   }
-  const typeSatellite = commentaire.indicateurIndividu?.type ?? commentaire.dossier?.type
+  const typeSatellite = commentaire.indicateurIndividu?.type ?? commentaire.collection?.type
   if (typeSatellite !== 'CONFIANCE') {
     throw new ValidationError('Le commentaire ciblé n’est pas de type CONFIANCE')
   }

@@ -1,5 +1,5 @@
 import {
-  DossierCommentaireType,
+  CollectionCommentaireType,
   IndicateurIndividuCommentaireType,
   type Prisma,
 } from '@/generated/prisma/client'
@@ -12,8 +12,8 @@ export const filtreParType = (type: string): Prisma.CommentaireWhereInput => {
   if (type in IndicateurIndividuCommentaireType) {
     branches.push({ indicateurIndividu: { type: type as IndicateurIndividuCommentaireType } })
   }
-  if (type in DossierCommentaireType) {
-    branches.push({ dossier: { type: type as DossierCommentaireType } })
+  if (type in CollectionCommentaireType) {
+    branches.push({ collection: { type: type as CollectionCommentaireType } })
   }
   return { OR: branches }
 }

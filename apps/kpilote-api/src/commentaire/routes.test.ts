@@ -14,8 +14,8 @@ describe('routes commentaires — câblage OpenAPI', () => {
     const attendu: Array<[string, string]> = [
       ['/indicateurs/{indicateurId}/individus/{individuId}/commentaires', 'post'],
       ['/indicateurs/{indicateurId}/individus/{individuId}/commentaires', 'get'],
-      ['/dossiers/{dossierId}/commentaires', 'post'],
-      ['/dossiers/{dossierId}/commentaires', 'get'],
+      ['/collections/{collectionId}/commentaires', 'post'],
+      ['/collections/{collectionId}/commentaires', 'get'],
       ['/commentaires/{commentaireId}', 'put'],
       ['/commentaires/{commentaireId}', 'delete'],
     ]

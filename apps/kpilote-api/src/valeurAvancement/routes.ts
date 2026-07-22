@@ -27,9 +27,9 @@ import {
   tauxProgressionListApiModelSchema,
 } from '@pilote/kpilote-shared/tauxProgression'
 import {
-  listDossierTauxProgressionForIndividuQuerySchema,
-  dossierTauxProgressionSummaryListApiModelSchema,
-} from '@pilote/kpilote-shared/dossierTauxProgression'
+  listCollectionTauxProgressionForIndividuQuerySchema,
+  collectionTauxProgressionSummaryListApiModelSchema,
+} from '@pilote/kpilote-shared/collectionTauxProgression'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
@@ -42,7 +42,7 @@ import { upsertValeurAvancement } from '@/valeurAvancement/commands/upsertValeur
 import { upsertValeursAvancementBatch } from '@/valeurAvancement/commands/upsertValeursAvancementBatch'
 import { listDernieresValeursForIndividu } from '@/valeurAvancement/queries/listDernieresValeursForIndividu'
 import { listTauxProgressionForIndividu } from '@/valeurAvancement/queries/listTauxProgressionForIndividu'
-import { listDossierTauxProgressionForIndividu } from '@/dossier/queries/listDossierTauxProgressionForIndividu'
+import { listCollectionTauxProgressionForIndividu } from '@/collection/queries/listCollectionTauxProgressionForIndividu'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
 import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
 import { listTauxProgressionForIndicateur } from '@/valeurAvancement/queries/listTauxProgressionForIndicateur'
@@ -91,9 +91,9 @@ const TauxProgressionListApiModelSchema = tauxProgressionListApiModelSchema.open
 const TauxProgressionIndividuListApiModelSchema = tauxProgressionIndividuListApiModelSchema.openapi(
   'TauxProgressionIndividuListApiModel',
 )
-const DossierTauxProgressionSummaryListApiModelSchema =
-  dossierTauxProgressionSummaryListApiModelSchema.openapi(
-    'DossierTauxProgressionSummaryListApiModel',
+const CollectionTauxProgressionSummaryListApiModelSchema =
+  collectionTauxProgressionSummaryListApiModelSchema.openapi(
+    'CollectionTauxProgressionSummaryListApiModel',
   )
 
 const indicateurParamsSchema = z.object({
@@ -371,30 +371,30 @@ const getTauxProgressionForIndividuRoute = createRoute({
   },
 })
 
-// --- GET /individus/:id/taux-progression/dossiers ------------------------------
+// --- GET /individus/:id/taux-progression/collections ------------------------------
 
-const getDossierTauxProgressionForIndividuRoute = createRoute({
+const getCollectionTauxProgressionForIndividuRoute = createRoute({
   method: 'get',
-  path: '/individus/{id}/taux-progression/dossiers',
+  path: '/individus/{id}/taux-progression/collections',
   tags: ['Individu'],
-  summary: "Lister le taux de progression d'un lot de dossiers pour un individu",
+  summary: "Lister le taux de progression d'un lot de collections pour un individu",
   description:
-    'Retourne, pour chaque dossier demandé accessible en lecture, la moyenne pondérée du ' +
-    "dernier taux de progression connu de chaque indicateur du dossier pour l'individu. " +
-    'Règle tout-ou-rien : `tauxProgression` est null si au moins un indicateur du dossier ' +
-    "n'est pas calculable. Les dossiers inaccessibles ou inexistants sont omis. " +
-    'Endpoint pensé pour des appels batch côté client (liste de cartes de dossiers).',
+    'Retourne, pour chaque collection demandé accessible en lecture, la moyenne pondérée du ' +
+    "dernier taux de progression connu de chaque indicateur du collection pour l'individu. " +
+    'Règle tout-ou-rien : `tauxProgression` est null si au moins un indicateur du collection ' +
+    "n'est pas calculable. Les collections inaccessibles ou inexistants sont omis. " +
+    'Endpoint pensé pour des appels batch côté client (liste de cartes de collections).',
   middleware: [requireAuthentication],
   request: {
     params: individuParamsSchema,
-    query: listDossierTauxProgressionForIndividuQuerySchema,
+    query: listCollectionTauxProgressionForIndividuQuerySchema,
   },
   responses: {
     200: {
       content: {
-        'application/json': { schema: DossierTauxProgressionSummaryListApiModelSchema },
+        'application/json': { schema: CollectionTauxProgressionSummaryListApiModelSchema },
       },
-      description: 'Taux de progression pour les dossiers demandés',
+      description: 'Taux de progression pour les collections demandés',
     },
     400: erreur400,
   },
@@ -619,16 +619,16 @@ valeurAvancementRoutes.openapi(getTauxProgressionForIndividuRoute, async (contex
   )
 })
 
-valeurAvancementRoutes.openapi(getDossierTauxProgressionForIndividuRoute, async (context) => {
+valeurAvancementRoutes.openapi(getCollectionTauxProgressionForIndividuRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { dossiers } = context.req.valid('query')
+  const { collections } = context.req.valid('query')
 
-  return listDossierTauxProgressionForIndividu(id, { dossiers }).match(
+  return listCollectionTauxProgressionForIndividu(id, { collections }).match(
     (data) =>
       jsonResponseOk({
         context,
         data,
-        schema: DossierTauxProgressionSummaryListApiModelSchema,
+        schema: CollectionTauxProgressionSummaryListApiModelSchema,
         status: 200,
       }),
     never,

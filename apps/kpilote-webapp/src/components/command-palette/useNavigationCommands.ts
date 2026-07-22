@@ -36,13 +36,13 @@ export function useNavigationCommands(close: () => void): Command[] {
         },
       },
       {
-        id: 'nav:dossiers',
-        label: 'Dossiers',
+        id: 'nav:collections',
+        label: 'Collections',
         group: 'navigation',
         icon: FolderOpen,
         keywords: ['collections'],
         run: () => {
-          void navigate({ to: '/dossiers', search: {} })
+          void navigate({ to: '/collections', search: {} })
           close()
         },
       },

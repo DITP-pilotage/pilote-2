@@ -4,7 +4,7 @@ import { db } from '@/framework/persistence/dbStore'
 import { getIndicateurByPublicId } from '@/indicateur/queries/getIndicateurByPublicId'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testIndicateurId, testDossierId, testReferentielId } from '@/test/randomIds'
+import { testIndicateurId, testCollectionId, testReferentielId } from '@/test/randomIds'
 import { runAsAdmin, runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('getIndicateurByPublicId', () => {
@@ -307,17 +307,17 @@ describe.concurrent('getIndicateurByPublicId', () => {
   )
 
   it(
-    'expose les responsables via une permission READ propagée par un dossier',
+    'expose les responsables via une permission READ propagée par un collection',
     integrationTest(async () => {
       const indId = testIndicateurId()
-      const dosId = testDossierId()
+      const dosId = testCollectionId()
       await fixtures.indicateurResponsable({
         indicateur: { publicId: indId, visibilite: 'PRIVE' },
         utilisateur: { email: `resp2-${indId}@example.com` },
       })
-      await fixtures.dossier({ publicId: dosId, indicateurs: [{ publicId: indId }] })
+      await fixtures.collection({ publicId: dosId, indicateurs: [{ publicId: indId }] })
       const apiKey = await fixtures.apiKey({
-        dossierPermissions: [{ dossier: { publicId: dosId }, action: 'READ' }],
+        collectionPermissions: [{ collection: { publicId: dosId }, action: 'READ' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))

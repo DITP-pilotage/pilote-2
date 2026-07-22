@@ -172,7 +172,7 @@ Indépendamment des choix ci-dessus, voici les invariants à respecter dans tout
 - **Cards plates** sur background tinté, sans border lourde, radius 8-12px, padding 24-32px.
 - **Pas de gradient, pas d'ombre marquée, pas de border-radius > 16px.**
 - **Densité = pédagogie** : préférer empiler verticalement avec respiration plutôt que de juxtaposer en grille dense. Une vue qui scrolle un peu vaut mieux qu'une vue qui suffoque.
-- **Chiffres et données structurantes en display type** — c'est notre cœur de métier (indicateurs, paniers).
+- **Chiffres et données structurantes en display type** — c'est notre cœur de métier (indicateurs, collections).
 
 ### 3.3 Anti-patterns à proscrire
 

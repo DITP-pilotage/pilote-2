@@ -7,12 +7,12 @@ import { Eye, Lock, Trash2 } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 
 import {
-  grantDossierPermission,
+  grantCollectionPermission,
   grantIndicateurPermission,
-  revokeDossierPermission,
+  revokeCollectionPermission,
   revokeIndicateurPermission,
 } from '@/api/permissions'
-import { DossierSearchModal } from '@/components/DossierSearchModal'
+import { CollectionSearchModal } from '@/components/CollectionSearchModal'
 import { IndicateurPicker } from '@/components/permissions/IndicateurPicker'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
@@ -33,7 +33,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const queryClient = useQueryClient()
   const toast = useToast()
   const { isProd, locked, unlock } = useProdEditUnlock()
-  const [modal, setModal] = useState<'dossier' | null>(null)
+  const [modal, setModal] = useState<'collection' | null>(null)
 
   const options = principalPermissionsQueryOptions(principalId)
   const { data } = useSuspenseQuery(options)
@@ -53,7 +53,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
     mutation.mutate(task)
   }
 
-  // Indicateurs — appels directs, aucune factorisation avec les dossiers.
+  // Indicateurs — appels directs, aucune factorisation avec les collections.
   const addIndicateur = (indicateurPublicId: string) => {
     run(() => grantIndicateurPermission({ principalId, indicateurPublicId, action: 'READ' }))
   }
@@ -66,19 +66,19 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const removeIndicateur = (indicateurPublicId: string) =>
     run(() => revokeIndicateurPermission({ principalId, indicateurPublicId }))
 
-  // Dossiers — appels directs, aucune factorisation avec les indicateurs.
-  const addDossier = (dossierPublicId: string) => {
+  // Collections — appels directs, aucune factorisation avec les indicateurs.
+  const addCollection = (collectionPublicId: string) => {
     setModal(null)
-    run(() => grantDossierPermission({ principalId, dossierPublicId, action: 'READ' }))
+    run(() => grantCollectionPermission({ principalId, collectionPublicId, action: 'READ' }))
   }
-  const toggleDossierWrite = (dossierPublicId: string, active: boolean) =>
+  const toggleCollectionWrite = (collectionPublicId: string, active: boolean) =>
     run(() =>
       active
-        ? revokeDossierPermission({ principalId, dossierPublicId, action: 'WRITE' })
-        : grantDossierPermission({ principalId, dossierPublicId, action: 'WRITE' }),
+        ? revokeCollectionPermission({ principalId, collectionPublicId, action: 'WRITE' })
+        : grantCollectionPermission({ principalId, collectionPublicId, action: 'WRITE' }),
     )
-  const removeDossier = (dossierPublicId: string) =>
-    run(() => revokeDossierPermission({ principalId, dossierPublicId }))
+  const removeCollection = (collectionPublicId: string) =>
+    run(() => revokeCollectionPermission({ principalId, collectionPublicId }))
 
   const renderSection = (
     title: string,
@@ -149,15 +149,15 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
     </div>
   )
 
-  const heritesByDossier = new Map<string, typeof data.indicateursHerites>()
+  const heritesByCollection = new Map<string, typeof data.indicateursHerites>()
   for (const herite of data.indicateursHerites) {
-    const list = heritesByDossier.get(herite.viaDossierPublicId) ?? []
+    const list = heritesByCollection.get(herite.viaCollectionPublicId) ?? []
     list.push(herite)
-    heritesByDossier.set(herite.viaDossierPublicId, list)
+    heritesByCollection.set(herite.viaCollectionPublicId, list)
   }
 
-  const renderHeritesForDossier = (dossierPublicId: string): ReactNode => {
-    const herites = heritesByDossier.get(dossierPublicId)
+  const renderHeritesForCollection = (collectionPublicId: string): ReactNode => {
+    const herites = heritesByCollection.get(collectionPublicId)
     if (!herites || herites.length === 0) return null
     return (
       <ul className="mt-2 space-y-1.5 border-l-2 border-dashed border-border pl-3">
@@ -165,7 +165,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           <li
             key={herite.publicId}
             className="flex items-center gap-2 text-text-subtle"
-            title="Lecture héritée via ce dossier"
+            title="Lecture héritée via ce collection"
           >
             <span className="min-w-0 flex-1 truncate text-xs">{herite.nom}</span>
             <span className="shrink-0 font-mono text-xs">{herite.publicId}</span>
@@ -176,14 +176,14 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
     )
   }
 
-  const excludedDossiers = data.dossiers.map((p) => p.publicId)
+  const excludedCollections = data.collections.map((p) => p.publicId)
   const excludedIndicateurs = [
     ...data.indicateurs.map((i) => i.publicId),
     ...data.indicateursHerites.map((i) => i.publicId),
   ]
 
   const isEmpty =
-    data.dossiers.length === 0 &&
+    data.collections.length === 0 &&
     data.indicateurs.length === 0 &&
     data.indicateursHerites.length === 0
 
@@ -226,7 +226,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
       {isEmpty ? (
         <EmptyState
           title="Aucune permission"
-          description="Ce principal n'a aucune permission directe. Ajoutez un dossier ou un indicateur."
+          description="Ce principal n'a aucune permission directe. Ajoutez un collection ou un indicateur."
         />
       ) : null}
 
@@ -244,28 +244,28 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
         },
       )}
       {renderSection(
-        'Dossiers',
-        data.dossiers,
+        'Collections',
+        data.collections,
         <Button
           variant="secondary"
           size="sm"
           type="button"
           disabled={disabled}
-          onClick={() => setModal('dossier')}
+          onClick={() => setModal('collection')}
         >
-          + Ajouter un dossier
+          + Ajouter un collection
         </Button>,
         {
-          onToggleWrite: toggleDossierWrite,
-          onRemove: removeDossier,
+          onToggleWrite: toggleCollectionWrite,
+          onRemove: removeCollection,
         },
-        renderHeritesForDossier,
+        renderHeritesForCollection,
       )}
 
-      {modal === 'dossier' ? (
-        <DossierSearchModal
-          excludedPublicIds={excludedDossiers}
-          onSelect={(hit) => addDossier(hit.publicId)}
+      {modal === 'collection' ? (
+        <CollectionSearchModal
+          excludedPublicIds={excludedCollections}
+          onSelect={(hit) => addCollection(hit.publicId)}
           onClose={() => setModal(null)}
         />
       ) : null}

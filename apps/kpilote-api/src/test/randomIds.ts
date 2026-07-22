@@ -25,7 +25,7 @@ export const testIndividuId = (): string => `TEST-${randomToken(12)}`
 
 export const testWidgetId = (): string => `WID-${randomToken(12).toUpperCase()}`
 
-export const testDossierId = (): string => `DOS-${randomToken(12)}`
+export const testCollectionId = (): string => `COL-${randomToken(12)}`
 
 // Suffixe aléatoire (et non un code INSEE tiré d'un petit pool) : avec jusqu'à
 // 10 transactions concurrentes, piocher parmi 18 régions / ~100 départements

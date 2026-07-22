@@ -9,7 +9,7 @@ import {
   testEmail,
   testIndicateurId,
   testIndividuId,
-  testDossierId,
+  testCollectionId,
   testReferentielId,
   testWidgetId,
 } from '@/test/randomIds'
@@ -22,11 +22,11 @@ import {
   type IndividuModel,
   type ObjectifIndicateurIndividuModel,
   type OrganismeModel,
-  type DossierContactUtileModel,
-  type DossierModel,
-  type DossierPermissionModel,
+  type CollectionContactUtileModel,
+  type CollectionModel,
+  type CollectionPermissionModel,
   type IndicateurResponsableModel,
-  type DossierResponsableModel,
+  type CollectionResponsableModel,
   type ReferentielModel,
   type ReferentielWidgetModel,
   type RelationModel,
@@ -471,9 +471,9 @@ async function objectifIndicateurIndividu(
   return results
 }
 
-// --- Dossier ------------------------------------------------------------------
+// --- Collection ------------------------------------------------------------------
 
-type DossierOverrides = Partial<{
+type CollectionOverrides = Partial<{
   id: string
   publicId: string
   nom: string
@@ -482,17 +482,17 @@ type DossierOverrides = Partial<{
   indicateurs: IndicateurOverrides[]
 }>
 
-const upsertDossier = async (o: DossierOverrides = {}) => {
-  const publicId = o.publicId ?? testDossierId()
+const upsertCollection = async (o: CollectionOverrides = {}) => {
+  const publicId = o.publicId ?? testCollectionId()
   const { indicateurs, id: _id, publicId: _pub, ...rest } = o
   const create = {
     id: o.id ?? uuidv7(),
     publicId,
-    nom: o.nom ?? 'Dossier de test',
+    nom: o.nom ?? 'Collection de test',
     description: o.description ?? null,
     visibilite: o.visibilite ?? Visibilite.PRIVE,
   }
-  const dossier = await db().dossier.upsert({
+  const collection = await db().collection.upsert({
     where: { publicId },
     update: rest,
     create,
@@ -500,32 +500,34 @@ const upsertDossier = async (o: DossierOverrides = {}) => {
   if (indicateurs) {
     for (const indicateurOverride of indicateurs) {
       const indicateurRow = await upsertIndicateur(indicateurOverride)
-      await db().dossierIndicateur.upsert({
+      await db().collectionIndicateur.upsert({
         where: {
-          dossierId_indicateurId: {
-            dossierId: dossier.id,
+          collectionId_indicateurId: {
+            collectionId: collection.id,
             indicateurId: indicateurRow.id,
           },
         },
         update: {},
-        create: { dossierId: dossier.id, indicateurId: indicateurRow.id },
+        create: { collectionId: collection.id, indicateurId: indicateurRow.id },
       })
     }
   }
-  return dossier
+  return collection
 }
 
-function dossier(): Promise<DossierModel>
-function dossier(override: DossierOverrides): Promise<DossierModel>
-function dossier(
-  o1: DossierOverrides,
-  o2: DossierOverrides,
-  ...rest: DossierOverrides[]
-): Promise<DossierModel[]>
-async function dossier(...overrides: DossierOverrides[]): Promise<DossierModel | DossierModel[]> {
-  if (overrides.length <= 1) return upsertDossier(overrides[0])
-  const results: DossierModel[] = []
-  for (const o of overrides) results.push(await upsertDossier(o))
+function collection(): Promise<CollectionModel>
+function collection(override: CollectionOverrides): Promise<CollectionModel>
+function collection(
+  o1: CollectionOverrides,
+  o2: CollectionOverrides,
+  ...rest: CollectionOverrides[]
+): Promise<CollectionModel[]>
+async function collection(
+  ...overrides: CollectionOverrides[]
+): Promise<CollectionModel | CollectionModel[]> {
+  if (overrides.length <= 1) return upsertCollection(overrides[0])
+  const results: CollectionModel[] = []
+  for (const o of overrides) results.push(await upsertCollection(o))
   return results
 }
 
@@ -536,8 +538,8 @@ type PrincipalIndicateurPermissionOverrides = {
   action: PermissionAction
 }
 
-type PrincipalDossierPermissionOverrides = {
-  dossier: DossierOverrides
+type PrincipalCollectionPermissionOverrides = {
+  collection: CollectionOverrides
   action: PermissionAction
 }
 
@@ -551,7 +553,7 @@ type ApiKeyOverrides = Partial<{
   revokedAt: Date | null
   lastUsedAt: Date | null
   permissions: PrincipalIndicateurPermissionOverrides[]
-  dossierPermissions: PrincipalDossierPermissionOverrides[]
+  collectionPermissions: PrincipalCollectionPermissionOverrides[]
 }>
 
 const grantPermissions = async (
@@ -564,13 +566,13 @@ const grantPermissions = async (
   }
 }
 
-const grantDossierPermissions = async (
+const grantCollectionPermissions = async (
   principalId: string,
-  permissions: PrincipalDossierPermissionOverrides[] | undefined,
+  permissions: PrincipalCollectionPermissionOverrides[] | undefined,
 ): Promise<void> => {
   if (!permissions || permissions.length === 0) return
   for (const p of permissions) {
-    await upsertDossierPermission({ principalId, ...p })
+    await upsertCollectionPermission({ principalId, ...p })
   }
 }
 
@@ -587,18 +589,18 @@ const upsertApiKey = async (o: ApiKeyOverrides = {}) => {
     revokedAt: o.revokedAt ?? null,
     lastUsedAt: o.lastUsedAt ?? null,
   }
-  const { id: _id, rawKey: _raw, permissions, dossierPermissions, ...update } = o
+  const { id: _id, rawKey: _raw, permissions, collectionPermissions, ...update } = o
   const existing = await db().apiKey.findUnique({ where: { keyHash } })
   if (existing) {
     await grantPermissions(existing.id, permissions)
-    await grantDossierPermissions(existing.id, dossierPermissions)
+    await grantCollectionPermissions(existing.id, collectionPermissions)
     if (Object.keys(update).length === 0) return existing
     return db().apiKey.update({ where: { keyHash }, data: update })
   }
   await db().principal.create({ data: { id: create.id } })
   const created = await db().apiKey.create({ data: create })
   await grantPermissions(created.id, permissions)
-  await grantDossierPermissions(created.id, dossierPermissions)
+  await grantCollectionPermissions(created.id, collectionPermissions)
   return created
 }
 
@@ -627,7 +629,7 @@ type UtilisateurOverrides = Partial<{
   fonction: string
   identite: { provider: ProviderType; providerSub: string }
   permissions: PrincipalIndicateurPermissionOverrides[]
-  dossierPermissions: PrincipalDossierPermissionOverrides[]
+  collectionPermissions: PrincipalCollectionPermissionOverrides[]
 }>
 
 const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
@@ -635,7 +637,7 @@ const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
   const existing = await db().utilisateur.findUnique({ where: { email } })
   if (existing) {
     await grantPermissions(existing.id, o.permissions)
-    await grantDossierPermissions(existing.id, o.dossierPermissions)
+    await grantCollectionPermissions(existing.id, o.collectionPermissions)
     return existing
   }
   const id = o.id ?? uuidv7()
@@ -660,7 +662,7 @@ const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
     })
   }
   await grantPermissions(created.id, o.permissions)
-  await grantDossierPermissions(created.id, o.dossierPermissions)
+  await grantCollectionPermissions(created.id, o.collectionPermissions)
   return created
 }
 
@@ -724,82 +726,86 @@ async function indicateurPermission(
   return results
 }
 
-// --- DossierPermission (deps requises) ----------------------------------------
+// --- CollectionPermission (deps requises) ----------------------------------------
 
-type DossierPermissionOverrides = {
+type CollectionPermissionOverrides = {
   principalId: string
-  dossier: DossierOverrides
+  collection: CollectionOverrides
   action: PermissionAction
 }
 
-const upsertDossierPermission = async (o: DossierPermissionOverrides) => {
-  const dossierRow = await upsertDossier(o.dossier)
-  return db().dossierPermission.upsert({
+const upsertCollectionPermission = async (o: CollectionPermissionOverrides) => {
+  const collectionRow = await upsertCollection(o.collection)
+  return db().collectionPermission.upsert({
     where: {
-      principalId_dossierId_action: {
+      principalId_collectionId_action: {
         principalId: o.principalId,
-        dossierId: dossierRow.id,
+        collectionId: collectionRow.id,
         action: o.action,
       },
     },
     update: {},
     create: {
       principalId: o.principalId,
-      dossierId: dossierRow.id,
+      collectionId: collectionRow.id,
       action: o.action,
     },
   })
 }
 
-function dossierPermission(override: DossierPermissionOverrides): Promise<DossierPermissionModel>
-function dossierPermission(
-  o1: DossierPermissionOverrides,
-  o2: DossierPermissionOverrides,
-  ...rest: DossierPermissionOverrides[]
-): Promise<DossierPermissionModel[]>
-async function dossierPermission(
-  ...overrides: DossierPermissionOverrides[]
-): Promise<DossierPermissionModel | DossierPermissionModel[]> {
-  if (overrides.length === 1) return upsertDossierPermission(overrides[0]!)
-  const results: DossierPermissionModel[] = []
-  for (const o of overrides) results.push(await upsertDossierPermission(o))
+function collectionPermission(
+  override: CollectionPermissionOverrides,
+): Promise<CollectionPermissionModel>
+function collectionPermission(
+  o1: CollectionPermissionOverrides,
+  o2: CollectionPermissionOverrides,
+  ...rest: CollectionPermissionOverrides[]
+): Promise<CollectionPermissionModel[]>
+async function collectionPermission(
+  ...overrides: CollectionPermissionOverrides[]
+): Promise<CollectionPermissionModel | CollectionPermissionModel[]> {
+  if (overrides.length === 1) return upsertCollectionPermission(overrides[0]!)
+  const results: CollectionPermissionModel[] = []
+  for (const o of overrides) results.push(await upsertCollectionPermission(o))
   return results
 }
 
-// --- DossierResponsable (deps requises) ----------------------------------------
+// --- CollectionResponsable (deps requises) ----------------------------------------
 
-type DossierResponsableOverrides = {
-  dossier: DossierOverrides
+type CollectionResponsableOverrides = {
+  collection: CollectionOverrides
   utilisateur: UtilisateurOverrides
 }
 
-const upsertDossierResponsable = async (o: DossierResponsableOverrides) => {
-  const dossierRow = await upsertDossier(o.dossier)
+const upsertCollectionResponsable = async (o: CollectionResponsableOverrides) => {
+  const collectionRow = await upsertCollection(o.collection)
   const utilisateurRow = await upsertUtilisateur(o.utilisateur)
-  return db().dossierResponsable.upsert({
+  return db().collectionResponsable.upsert({
     where: {
-      dossierId_utilisateurId: {
-        dossierId: dossierRow.id,
+      collectionId_utilisateurId: {
+        collectionId: collectionRow.id,
         utilisateurId: utilisateurRow.id,
       },
     },
     update: {},
-    create: { dossierId: dossierRow.id, utilisateurId: utilisateurRow.id },
+    create: { collectionId: collectionRow.id, utilisateurId: utilisateurRow.id },
   })
 }
 
-function dossierResponsable(override: DossierResponsableOverrides): Promise<DossierResponsableModel>
-function dossierResponsable(
-  o1: DossierResponsableOverrides,
-  o2: DossierResponsableOverrides,
-  ...rest: DossierResponsableOverrides[]
-): Promise<DossierResponsableModel[]>
-async function dossierResponsable(
-  ...overrides: DossierResponsableOverrides[]
-): Promise<DossierResponsableModel | DossierResponsableModel[]> {
-  if (overrides.length === 1) return upsertDossierResponsable(overrides[0]!)
-  const results: DossierResponsableModel[] = []
-  for (const o of overrides) results.push(await upsertDossierResponsable(o))
+function collectionResponsable(
+  override: CollectionResponsableOverrides,
+): Promise<CollectionResponsableModel>
+function collectionResponsable(
+  o1: CollectionResponsableOverrides,
+  o2: CollectionResponsableOverrides,
+  ...rest: CollectionResponsableOverrides[]
+): Promise<CollectionResponsableModel[]>
+async function collectionResponsable(
+  ...overrides: CollectionResponsableOverrides[]
+): Promise<CollectionResponsableModel | CollectionResponsableModel[]> {
+  if (overrides.length === 1) return upsertCollectionResponsable(overrides[0]!)
+  const results: CollectionResponsableModel[] = []
+  for (const o of overrides) results.push(await upsertCollectionResponsable(o))
   return results
 }
 
@@ -946,37 +952,37 @@ async function contactUtile(override?: ContactUtileOverrides): Promise<ContactUt
   return upsertContactUtile(override)
 }
 
-// --- DossierContactUtile ------------------------------------------------------
+// --- CollectionContactUtile ------------------------------------------------------
 
-type DossierContactUtileOverrides = {
-  dossier?: DossierOverrides
+type CollectionContactUtileOverrides = {
+  collection?: CollectionOverrides
   contactUtile?: ContactUtileOverrides
 }
 
-const upsertDossierContactUtile = async (
-  o: DossierContactUtileOverrides,
-): Promise<DossierContactUtileModel> => {
-  const dossierRow = await upsertDossier(o.dossier)
+const upsertCollectionContactUtile = async (
+  o: CollectionContactUtileOverrides,
+): Promise<CollectionContactUtileModel> => {
+  const collectionRow = await upsertCollection(o.collection)
   const contactUtileRow = await upsertContactUtile(o.contactUtile)
-  return db().dossierContactUtile.upsert({
+  return db().collectionContactUtile.upsert({
     where: {
-      dossierId_contactUtileId: {
-        dossierId: dossierRow.id,
+      collectionId_contactUtileId: {
+        collectionId: collectionRow.id,
         contactUtileId: contactUtileRow.id,
       },
     },
     update: {},
-    create: { dossierId: dossierRow.id, contactUtileId: contactUtileRow.id },
+    create: { collectionId: collectionRow.id, contactUtileId: contactUtileRow.id },
   })
 }
 
-function dossierContactUtile(
-  override: DossierContactUtileOverrides,
-): Promise<DossierContactUtileModel>
-async function dossierContactUtile(
-  override: DossierContactUtileOverrides,
-): Promise<DossierContactUtileModel> {
-  return upsertDossierContactUtile(override)
+function collectionContactUtile(
+  override: CollectionContactUtileOverrides,
+): Promise<CollectionContactUtileModel>
+async function collectionContactUtile(
+  override: CollectionContactUtileOverrides,
+): Promise<CollectionContactUtileModel> {
+  return upsertCollectionContactUtile(override)
 }
 
 // --- Feature ---------------------------------------------------------
@@ -1028,14 +1034,14 @@ export const fixtures = {
   relation,
   valeurAvancement,
   objectifIndicateurIndividu,
-  dossier,
+  collection,
   apiKey,
   utilisateur,
   indicateurPermission,
-  dossierPermission,
-  dossierResponsable,
+  collectionPermission,
+  collectionResponsable,
   indicateurResponsable,
   organisme,
   contactUtile,
-  dossierContactUtile,
+  collectionContactUtile,
 }

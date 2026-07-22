@@ -4,7 +4,7 @@ import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { ensureIndicateurWritePermission } from '@/indicateur/permissions'
-import { ensureDossierWritePermission } from '@/dossier/permissions'
+import { ensureCollectionWritePermission } from '@/collection/permissions'
 
 // Charge le commentaire + son satellite, vérifie que le principal courant en est l'auteur
 // ET dispose de WRITE sur le sujet. Throw ForbiddenError / 404 (P2025) sinon.
@@ -19,7 +19,7 @@ export const resolveCommentairePourEcriture = (
         select: {
           createdBy: true,
           indicateurIndividu: { select: { indicateurId: true } },
-          dossier: { select: { dossierId: true } },
+          collection: { select: { collectionId: true } },
         },
       })
       if (commentaire.createdBy !== principalId) {
@@ -32,9 +32,9 @@ export const resolveCommentairePourEcriture = (
         })
         return { principalId }
       }
-      const dossierId = commentaire.dossier?.dossierId
-      if (dossierId) {
-        await ensureDossierWritePermission({ dossierId, principalId })
+      const collectionId = commentaire.collection?.collectionId
+      if (collectionId) {
+        await ensureCollectionWritePermission({ collectionId, principalId })
         return { principalId }
       }
       throw new ForbiddenError('Commentaire sans sujet rattaché')

@@ -3,11 +3,11 @@ import { z } from 'zod'
 export const permissionActionSchema = z.enum(['READ', 'WRITE'])
 export type PermissionActionValue = z.infer<typeof permissionActionSchema>
 
-export const permissionResourceTypeSchema = z.enum(['DOSSIER', 'INDICATEUR'])
+export const permissionResourceTypeSchema = z.enum(['COLLECTION', 'INDICATEUR'])
 export type PermissionResourceType = z.infer<typeof permissionResourceTypeSchema>
 
 const directPermissionSchema = z.object({
-  publicId: z.string().describe('Identifiant public de la ressource (`DOS-…` / `IND-…`).'),
+  publicId: z.string().describe('Identifiant public de la ressource (`COL-…` / `IND-…`).'),
   nom: z.string().describe('Nom lisible de la ressource.'),
   actions: z
     .array(permissionActionSchema)
@@ -18,21 +18,21 @@ const directPermissionSchema = z.object({
 const indicateurHeriteSchema = z.object({
   publicId: z.string().describe("Identifiant public de l'indicateur hérité."),
   nom: z.string().describe("Nom lisible de l'indicateur."),
-  viaDossierPublicId: z.string().describe('Dossier source de la propagation READ.'),
-  viaDossierNom: z.string().describe('Nom du dossier source.'),
+  viaCollectionPublicId: z.string().describe('Collection source de la propagation READ.'),
+  viaCollectionNom: z.string().describe('Nom du collection source.'),
 })
 
 export const principalPermissionsApiModelSchema = z.object({
-  dossiers: z
+  collections: z
     .array(directPermissionSchema)
-    .describe('Permissions directes sur les dossiers, triées par `publicId` ASC.'),
+    .describe('Permissions directes sur les collections, triées par `publicId` ASC.'),
   indicateurs: z
     .array(directPermissionSchema)
     .describe('Permissions directes sur les indicateurs, triées par `publicId` ASC.'),
   indicateursHerites: z
     .array(indicateurHeriteSchema)
     .describe(
-      'Indicateurs en READ hérité via un dossier (propagation), lecture seule. Exclut ceux ' +
+      'Indicateurs en READ hérité via un collection (propagation), lecture seule. Exclut ceux ' +
         'déjà présents en direct dans `indicateurs`. Triés par `publicId` ASC.',
     ),
 })
@@ -61,20 +61,20 @@ export const revokeIndicateurPermissionQuerySchema = z.object({
 })
 export type RevokeIndicateurPermissionQuery = z.infer<typeof revokeIndicateurPermissionQuerySchema>
 
-// --- Dossier -----------------------------------------------------------------
+// --- Collection -----------------------------------------------------------------
 
-export const grantDossierPermissionBodySchema = z.object({
+export const grantCollectionPermissionBodySchema = z.object({
   principalId: z.string().uuid().describe('Principal (UUID) à qui accorder le droit.'),
-  dossierPublicId: z.string().describe('Identifiant public du dossier (`DOS-…`).'),
+  collectionPublicId: z.string().describe('Identifiant public du collection (`COL-…`).'),
   action: permissionActionSchema,
 })
-export type GrantDossierPermissionBody = z.infer<typeof grantDossierPermissionBodySchema>
+export type GrantCollectionPermissionBody = z.infer<typeof grantCollectionPermissionBodySchema>
 
-export const revokeDossierPermissionQuerySchema = z.object({
+export const revokeCollectionPermissionQuerySchema = z.object({
   principalId: z.string().uuid(),
-  dossierPublicId: z.string(),
+  collectionPublicId: z.string(),
   action: permissionActionSchema
     .optional()
-    .describe('Action à retirer. Si absent, retire toutes les actions du dossier.'),
+    .describe('Action à retirer. Si absent, retire toutes les actions du collection.'),
 })
-export type RevokeDossierPermissionQuery = z.infer<typeof revokeDossierPermissionQuerySchema>
+export type RevokeCollectionPermissionQuery = z.infer<typeof revokeCollectionPermissionQuerySchema>

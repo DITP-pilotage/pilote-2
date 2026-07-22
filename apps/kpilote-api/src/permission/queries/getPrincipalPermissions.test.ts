@@ -17,8 +17,8 @@ describe.concurrent('getPrincipalPermissions', () => {
       const target = await fixtures.utilisateur({})
       const ind1 = await fixtures.indicateur({ nom: 'Indic 1' })
       const ind2 = await fixtures.indicateur({ nom: 'Indic 2' })
-      const dos = await fixtures.dossier({
-        nom: 'Dossier',
+      const dos = await fixtures.collection({
+        nom: 'Collection',
         indicateurs: [{ publicId: ind2.publicId }],
       })
       await fixtures.indicateurPermission({
@@ -26,17 +26,17 @@ describe.concurrent('getPrincipalPermissions', () => {
         indicateur: { publicId: ind1.publicId },
         action: PermissionAction.WRITE,
       })
-      await fixtures.dossierPermission({
+      await fixtures.collectionPermission({
         principalId: target.id,
-        dossier: { publicId: dos.publicId },
+        collection: { publicId: dos.publicId },
         action: PermissionAction.READ,
       })
 
       const result = await runAsAdmin(CALLER_ID, () => getPrincipalPermissions(target.id))
       const model = result._unsafeUnwrap()
 
-      expect(model.dossiers).toEqual([
-        { publicId: dos.publicId, nom: 'Dossier', actions: ['READ'] },
+      expect(model.collections).toEqual([
+        { publicId: dos.publicId, nom: 'Collection', actions: ['READ'] },
       ])
       expect(model.indicateurs).toEqual([
         { publicId: ind1.publicId, nom: 'Indic 1', actions: ['WRITE'] },
@@ -45,8 +45,8 @@ describe.concurrent('getPrincipalPermissions', () => {
         {
           publicId: ind2.publicId,
           nom: 'Indic 2',
-          viaDossierPublicId: dos.publicId,
-          viaDossierNom: 'Dossier',
+          viaCollectionPublicId: dos.publicId,
+          viaCollectionNom: 'Collection',
         },
       ])
     }),
@@ -56,11 +56,11 @@ describe.concurrent('getPrincipalPermissions', () => {
     "n'expose pas un indicateur en hérité s'il est déjà direct",
     integrationTest(async () => {
       const target = await fixtures.utilisateur({})
-      const ind = await fixtures.indicateur({ nom: 'Direct et dans dossier' })
-      const dos = await fixtures.dossier({ nom: 'P', indicateurs: [{ publicId: ind.publicId }] })
-      await fixtures.dossierPermission({
+      const ind = await fixtures.indicateur({ nom: 'Direct et dans collection' })
+      const dos = await fixtures.collection({ nom: 'P', indicateurs: [{ publicId: ind.publicId }] })
+      await fixtures.collectionPermission({
         principalId: target.id,
-        dossier: { publicId: dos.publicId },
+        collection: { publicId: dos.publicId },
         action: PermissionAction.READ,
       })
       await fixtures.indicateurPermission({
@@ -73,7 +73,7 @@ describe.concurrent('getPrincipalPermissions', () => {
       const model = result._unsafeUnwrap()
 
       expect(model.indicateurs).toEqual([
-        { publicId: ind.publicId, nom: 'Direct et dans dossier', actions: ['WRITE'] },
+        { publicId: ind.publicId, nom: 'Direct et dans collection', actions: ['WRITE'] },
       ])
       expect(model.indicateursHerites).toEqual([])
     }),

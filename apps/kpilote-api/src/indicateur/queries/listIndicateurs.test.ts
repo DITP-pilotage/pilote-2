@@ -5,7 +5,7 @@ import { encodeCursor } from '@/framework/persistence/paginate'
 import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testIndicateurIds, testDossierId, testReferentielId } from '@/test/randomIds'
+import { testIndicateurIds, testCollectionId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listIndicateurs', () => {
@@ -60,50 +60,50 @@ describe.concurrent('listIndicateurs', () => {
   )
 
   it(
-    'propage READ via les permissions dossier : un principal qui a accès à un dossier voit ses indicateurs PRIVE',
+    'propage READ via les permissions collection : un principal qui a accès à un collection voit ses indicateurs PRIVE',
     integrationTest(async () => {
-      const [viaDossier, hidden] = testIndicateurIds(2)
-      const dosPropag = testDossierId()
+      const [viaCollection, hidden] = testIndicateurIds(2)
+      const dosPropag = testCollectionId()
       await fixtures.indicateur(
-        { publicId: viaDossier, visibilite: 'PRIVE' },
+        { publicId: viaCollection, visibilite: 'PRIVE' },
         { publicId: hidden, visibilite: 'PRIVE' },
       )
-      await fixtures.dossier({
+      await fixtures.collection({
         publicId: dosPropag,
         visibilite: 'PRIVE',
-        indicateurs: [{ publicId: viaDossier }],
+        indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        dossierPermissions: [{ dossier: { publicId: dosPropag }, action: 'READ' }],
+        collectionPermissions: [{ collection: { publicId: dosPropag }, action: 'READ' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((i) => i.id)).toEqual([viaDossier])
+      expect(value.items.map((i) => i.id)).toEqual([viaCollection])
       expect(value.total).toBe(1)
     }),
   )
 
   it(
-    'la propagation dossier → indicateur fonctionne aussi avec WRITE sur le dossier',
+    'la propagation collection → indicateur fonctionne aussi avec WRITE sur le collection',
     integrationTest(async () => {
-      const [viaDossier] = testIndicateurIds(1)
-      const dosPropag = testDossierId()
-      await fixtures.indicateur({ publicId: viaDossier, visibilite: 'PRIVE' })
-      await fixtures.dossier({
+      const [viaCollection] = testIndicateurIds(1)
+      const dosPropag = testCollectionId()
+      await fixtures.indicateur({ publicId: viaCollection, visibilite: 'PRIVE' })
+      await fixtures.collection({
         publicId: dosPropag,
         visibilite: 'PRIVE',
-        indicateurs: [{ publicId: viaDossier }],
+        indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        dossierPermissions: [{ dossier: { publicId: dosPropag }, action: 'WRITE' }],
+        collectionPermissions: [{ collection: { publicId: dosPropag }, action: 'WRITE' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((i) => i.id)).toEqual([viaDossier])
+      expect(value.items.map((i) => i.id)).toEqual([viaCollection])
     }),
   )
 

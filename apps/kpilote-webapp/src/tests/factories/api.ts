@@ -24,7 +24,7 @@ export const buildMePermissions = (
   override: Partial<MePermissionsApiModel> = {},
 ): MePermissionsApiModel =>
   mePermissionsApiModelSchema.parse({
-    dossiers: [],
+    collections: [],
     indicateurs: [],
     ...override,
   })

@@ -10,7 +10,7 @@ export type CommentaireStatut = z.infer<typeof commentaireStatutSchema>
 
 // Enums `type` par sujet (chaque sujet a ses propres valeurs).
 export const indicateurIndividuCommentaireTypeSchema = z.enum(['DEFAUT', 'CONFIANCE'])
-export const dossierCommentaireTypeSchema = z.enum(['DEFAUT', 'CONFIANCE', 'OBJECTIF'])
+export const collectionCommentaireTypeSchema = z.enum(['DEFAUT', 'CONFIANCE', 'OBJECTIF'])
 
 export const commentaireApiModelSchema = z
   .object({
@@ -20,7 +20,7 @@ export const commentaireApiModelSchema = z
       .string()
       .nullable()
       .describe(
-        'Identifiant public de l’individu rattaché, ou null pour un commentaire global de dossier.',
+        'Identifiant public de l’individu rattaché, ou null pour un commentaire global de collection.',
       ),
     contenu: z.string().describe('Contenu HTML riche (peut être vide).'),
     statut: commentaireStatutSchema,
@@ -43,8 +43,8 @@ const creerCommentaireBodySchema = <T extends z.ZodTypeAny>(typeSchema: T) =>
 export const creerIndicateurIndividuCommentaireBodySchema = creerCommentaireBodySchema(
   indicateurIndividuCommentaireTypeSchema,
 )
-export const creerDossierCommentaireBodySchema = creerCommentaireBodySchema(
-  dossierCommentaireTypeSchema,
+export const creerCollectionCommentaireBodySchema = creerCommentaireBodySchema(
+  collectionCommentaireTypeSchema,
 )
 // `type` est paramétré par sujet (cf. schémas ci-dessus) ; le générique permet
 // au consommateur de fixer l'enum exact attendu (sinon `string`).
@@ -76,8 +76,8 @@ const listerCommentairesQuerySchema = <T extends z.ZodTypeAny>(typeSchema: T) =>
 export const listerIndicateurIndividuCommentairesQuerySchema = listerCommentairesQuerySchema(
   indicateurIndividuCommentaireTypeSchema,
 )
-export const listerDossierCommentairesQuerySchema = listerCommentairesQuerySchema(
-  dossierCommentaireTypeSchema,
+export const listerCollectionCommentairesQuerySchema = listerCommentairesQuerySchema(
+  collectionCommentaireTypeSchema,
 )
 // Type « élargi » consommé par la couche générique : le `type` est déjà validé
 // par le schéma propre au sujet (route).
@@ -94,8 +94,8 @@ const recupererBrouillonQuerySchema = <T extends z.ZodTypeAny>(typeSchema: T) =>
 export const recupererIndicateurIndividuBrouillonQuerySchema = recupererBrouillonQuerySchema(
   indicateurIndividuCommentaireTypeSchema,
 )
-export const recupererDossierBrouillonQuerySchema = recupererBrouillonQuerySchema(
-  dossierCommentaireTypeSchema,
+export const recupererCollectionBrouillonQuerySchema = recupererBrouillonQuerySchema(
+  collectionCommentaireTypeSchema,
 )
 export type RecupererBrouillonQuery = { type: string }
 

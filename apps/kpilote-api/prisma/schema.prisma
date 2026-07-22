@@ -17,7 +17,7 @@ model Principal {
   utilisateur              Utilisateur?
   apiKey                   ApiKey?
   indicateurPermissions    IndicateurPermission[]
-  dossierPermissions       DossierPermission[]
+  collectionPermissions       CollectionPermission[]
   commentairesCrees        Commentaire[]          @relation("commentaireCreatedBy")
   commentairesModifies     Commentaire[]          @relation("commentaireUpdatedBy")
   niveauxConfianceCrees    NiveauConfiance[]      @relation("niveauConfianceCreatedBy")
@@ -45,7 +45,7 @@ model Utilisateur {
 
   principal                 Principal               @relation(fields: [id], references: [id], onDelete: Cascade)
   identites                 IdentiteExterne[]
-  responsabilitesDossier    DossierResponsable[]
+  responsabilitesCollection    CollectionResponsable[]
   responsabilitesIndicateur IndicateurResponsable[]
   featuresAutorises FeatureUtilisateur[]
 
@@ -112,7 +112,7 @@ model Indicateur {
   objectifs            ObjectifIndicateurIndividu[]
   referentiels         IndicateurReferentiel[]
   permissions          IndicateurPermission[]
-  dossiers             DossierIndicateur[]
+  collections             CollectionIndicateur[]
   individuCommentaires IndicateurIndividuCommentaire[]
   responsables         IndicateurResponsable[]
 
@@ -342,7 +342,7 @@ model ObjectifIndicateurIndividu {
   @@map("objectif_indicateur_individu")
 }
 
-model Dossier {
+model Collection {
   id          String     @id @db.Uuid
   publicId    String     @unique @map("public_id")
   nom         String
@@ -351,54 +351,54 @@ model Dossier {
   createdAt   DateTime   @default(now()) @map("created_at")
   updatedAt   DateTime   @updatedAt @map("updated_at")
 
-  indicateurs  DossierIndicateur[]
-  permissions  DossierPermission[]
-  responsables DossierResponsable[]
-  commentaires DossierCommentaire[]
-  contactsUtiles DossierContactUtile[]
+  indicateurs  CollectionIndicateur[]
+  permissions  CollectionPermission[]
+  responsables CollectionResponsable[]
+  commentaires CollectionCommentaire[]
+  contactsUtiles CollectionContactUtile[]
 
-  @@map("dossier")
+  @@map("collection")
 }
 
-model DossierPermission {
+model CollectionPermission {
   principalId String           @map("principal_id") @db.Uuid
-  dossierId   String           @map("dossier_id") @db.Uuid
+  collectionId   String           @map("collection_id") @db.Uuid
   action      PermissionAction
   createdAt   DateTime         @default(now()) @map("created_at")
 
   principal Principal @relation(fields: [principalId], references: [id], onDelete: Cascade)
-  dossier   Dossier   @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  collection   Collection   @relation(fields: [collectionId], references: [id], onDelete: Cascade)
 
-  @@id([principalId, dossierId, action])
-  @@index([dossierId])
-  @@map("dossier_permission")
+  @@id([principalId, collectionId, action])
+  @@index([collectionId])
+  @@map("collection_permission")
 }
 
-model DossierIndicateur {
-  dossierId    String   @map("dossier_id") @db.Uuid
+model CollectionIndicateur {
+  collectionId    String   @map("collection_id") @db.Uuid
   indicateurId String   @map("indicateur_id") @db.Uuid
   ponderation  Decimal  @default(1) @db.Decimal(20, 2)
   createdAt    DateTime @default(now()) @map("created_at")
 
-  dossier    Dossier    @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  collection    Collection    @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
 
-  @@id([dossierId, indicateurId])
-  @@index([dossierId, createdAt])
-  @@map("dossier_indicateur")
+  @@id([collectionId, indicateurId])
+  @@index([collectionId, createdAt])
+  @@map("collection_indicateur")
 }
 
-model DossierResponsable {
-  dossierId     String   @map("dossier_id") @db.Uuid
+model CollectionResponsable {
+  collectionId     String   @map("collection_id") @db.Uuid
   utilisateurId String   @map("utilisateur_id") @db.Uuid
   createdAt     DateTime @default(now()) @map("created_at")
 
-  dossier     Dossier     @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  collection     Collection     @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
 
-  @@id([dossierId, utilisateurId])
-  @@index([dossierId, createdAt])
-  @@map("dossier_responsable")
+  @@id([collectionId, utilisateurId])
+  @@index([collectionId, createdAt])
+  @@map("collection_responsable")
 }
 
 model IndicateurResponsable {
@@ -438,22 +438,22 @@ model ContactUtile {
   updatedAt   DateTime @updatedAt @map("updated_at")
 
   organisme Organisme            @relation(fields: [organismeId], references: [id])
-  dossiers  DossierContactUtile[]
+  collections  CollectionContactUtile[]
 
   @@map("contact_utile")
 }
 
-model DossierContactUtile {
-  dossierId      String   @map("dossier_id") @db.Uuid
+model CollectionContactUtile {
+  collectionId      String   @map("collection_id") @db.Uuid
   contactUtileId String   @map("contact_utile_id") @db.Uuid
   createdAt      DateTime @default(now()) @map("created_at")
 
-  dossier      Dossier      @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  collection      Collection      @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   contactUtile ContactUtile @relation(fields: [contactUtileId], references: [id], onDelete: Cascade)
 
-  @@id([dossierId, contactUtileId])
-  @@index([dossierId])
-  @@map("dossier_contact_utile")
+  @@id([collectionId, contactUtileId])
+  @@index([collectionId])
+  @@map("collection_contact_utile")
 }
 
 enum ApplicationLogLevel {
@@ -505,12 +505,12 @@ enum IndicateurIndividuCommentaireType {
   @@map("indicateur_individu_commentaire_type_enum")
 }
 
-enum DossierCommentaireType {
+enum CollectionCommentaireType {
   DEFAUT
   CONFIANCE
   OBJECTIF
 
-  @@map("dossier_commentaire_type_enum")
+  @@map("collection_commentaire_type_enum")
 }
 
 model Commentaire {
@@ -527,7 +527,7 @@ model Commentaire {
   auteurModification Principal @relation("commentaireUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
 
   indicateurIndividu IndicateurIndividuCommentaire?
-  dossier            DossierCommentaire?
+  collection            CollectionCommentaire?
   niveauxConfiance   NiveauConfiance[]
 
   @@index([createdBy])
@@ -549,16 +549,16 @@ model IndicateurIndividuCommentaire {
   @@map("indicateur_individu_commentaire")
 }
 
-model DossierCommentaire {
+model CollectionCommentaire {
   commentaireId String                @id @map("commentaire_id") @db.Uuid
-  dossierId     String                @map("dossier_id") @db.Uuid
-  type          DossierCommentaireType
+  collectionId     String                @map("collection_id") @db.Uuid
+  type          CollectionCommentaireType
 
   commentaire Commentaire @relation(fields: [commentaireId], references: [id], onDelete: Cascade)
-  dossier     Dossier     @relation(fields: [dossierId], references: [id], onDelete: Cascade)
+  collection     Collection     @relation(fields: [collectionId], references: [id], onDelete: Cascade)
 
-  @@index([dossierId])
-  @@map("dossier_commentaire")
+  @@index([collectionId])
+  @@map("collection_commentaire")
 }
 
 model NiveauConfiance {

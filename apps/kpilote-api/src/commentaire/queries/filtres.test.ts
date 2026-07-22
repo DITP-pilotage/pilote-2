@@ -5,19 +5,19 @@ import { filtreParType } from '@/commentaire/queries/filtres'
 describe('filtreParType', () => {
   it('inclut les 2 satellites pour un type partagé (DEFAUT)', () => {
     expect(filtreParType('DEFAUT')).toEqual({
-      OR: [{ indicateurIndividu: { type: 'DEFAUT' } }, { dossier: { type: 'DEFAUT' } }],
+      OR: [{ indicateurIndividu: { type: 'DEFAUT' } }, { collection: { type: 'DEFAUT' } }],
     })
   })
 
   it('inclut les 2 satellites pour CONFIANCE', () => {
     expect(filtreParType('CONFIANCE')).toEqual({
-      OR: [{ indicateurIndividu: { type: 'CONFIANCE' } }, { dossier: { type: 'CONFIANCE' } }],
+      OR: [{ indicateurIndividu: { type: 'CONFIANCE' } }, { collection: { type: 'CONFIANCE' } }],
     })
   })
 
-  it("n'inclut que le satellite dossier pour OBJECTIF (seul enum à le contenir)", () => {
+  it("n'inclut que le satellite collection pour OBJECTIF (seul enum à le contenir)", () => {
     expect(filtreParType('OBJECTIF')).toEqual({
-      OR: [{ dossier: { type: 'OBJECTIF' } }],
+      OR: [{ collection: { type: 'OBJECTIF' } }],
     })
   })
 

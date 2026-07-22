@@ -7,7 +7,7 @@ import { readSession } from '@/server/session'
 // Segments sûrs uniquement : une ressource autorisée, puis des segments composés
 // de caractères de public id (alphanum, `_`, `-`). Tout le reste est rejeté.
 const SAFE_PATH =
-  /^(indicateurs|referentiels|individus|api-keys|utilisateurs|dossiers|permissions|features)(\/[A-Za-z0-9_-]+)*$/
+  /^(indicateurs|referentiels|individus|api-keys|utilisateurs|collections|permissions|features)(\/[A-Za-z0-9_-]+)*$/
 
 // Rejette toute tentative de traversal / d'injection d'URL absolue AVANT de
 // matcher l'allowlist (sinon la normalisation d'URL des `..` permettrait

@@ -6,7 +6,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import { createNiveauConfiance, updateNiveauConfiance } from '@/api/niveauConfiance'
 import { useToast } from '@pilote/kpilote-ui/Toast'
-import { niveauConfianceKeys, niveauConfianceDossierKeys } from '@/queries/niveauConfiance'
+import { niveauConfianceKeys, niveauConfianceCollectionKeys } from '@/queries/niveauConfiance'
 
 function useEnregistrerNiveauConfianceInterne(invalider: () => Promise<void>) {
   const toast = useToast()
@@ -42,11 +42,11 @@ export function useEnregistrerNiveauConfiance(indicateurId: string, individuId: 
   })
 }
 
-export function useEnregistrerNiveauConfianceDossier(dossierId: string) {
+export function useEnregistrerNiveauConfianceCollection(collectionId: string) {
   const queryClient = useQueryClient()
   return useEnregistrerNiveauConfianceInterne(async () => {
     await queryClient.invalidateQueries({
-      queryKey: niveauConfianceDossierKeys.parScope(dossierId),
+      queryKey: niveauConfianceCollectionKeys.parScope(collectionId),
     })
   })
 }

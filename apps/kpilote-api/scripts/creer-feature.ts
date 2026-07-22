@@ -83,18 +83,18 @@ const main = (): void => {
     { stdio: 'inherit' },
   )
 
-  // Retrouve le dossier fraîchement créé (celui dont le nom finit par nomMigration).
-  const dossier = readdirSync(MIGRATIONS_DIR, { withFileTypes: true })
+  // Retrouve le collection fraîchement créé (celui dont le nom finit par nomMigration).
+  const collection = readdirSync(MIGRATIONS_DIR, { withFileTypes: true })
     .filter((entry) => entry.isDirectory() && entry.name.endsWith(nomMigration))
     .map((entry) => entry.name)
     .sort()
     .at(-1)
-  if (!dossier) {
+  if (!collection) {
     process.stderr.write('Migration introuvable après scaffold.\n')
     process.exit(1)
   }
 
-  const sqlPath = join(MIGRATIONS_DIR, dossier, 'migration.sql')
+  const sqlPath = join(MIGRATIONS_DIR, collection, 'migration.sql')
   // `updated_at` est @updatedAt côté Prisma (pas de default SQL) : on l'alimente
   // explicitement en INSERT brut, sinon violation NOT NULL. `created_at` a un
   // default DB (now()), donc facultatif — fourni aussi par cohérence.

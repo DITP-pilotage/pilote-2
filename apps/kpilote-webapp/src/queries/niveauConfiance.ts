@@ -4,7 +4,7 @@ import { create, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
 import {
   fetchNiveauxParCommentaires,
-  fetchNiveauxParCommentairesDossier,
+  fetchNiveauxParCommentairesCollection,
 } from '@/api/niveauConfiance'
 
 import { DEFAULT_STALE_TIME } from './utils'
@@ -63,16 +63,16 @@ export const niveauPourCommentaireQueryOptions = (
     staleTime: DEFAULT_STALE_TIME,
   })
 
-// --- Dossier global -----------------------------------------------------------
+// --- Collection global -----------------------------------------------------------
 
-const batchersDossierByScope = new Map<string, BatcherDossier>()
+const batchersCollectionByScope = new Map<string, BatcherCollection>()
 
-type BatcherDossier = ReturnType<typeof createBatcherDossier>
+type BatcherCollection = ReturnType<typeof createBatcherCollection>
 
-const createBatcherDossier = (dossierId: string) =>
+const createBatcherCollection = (collectionId: string) =>
   create({
     fetcher: async (commentaireIds: string[]): Promise<ReadonlyArray<NiveauConfianceApiModel>> => {
-      const { items } = await fetchNiveauxParCommentairesDossier(dossierId, commentaireIds)
+      const { items } = await fetchNiveauxParCommentairesCollection(collectionId, commentaireIds)
       return items
     },
     resolver: (items, commentaireId) =>
@@ -80,27 +80,27 @@ const createBatcherDossier = (dossierId: string) =>
     scheduler: windowedFiniteBatchScheduler({ windowMs: 10, maxBatchSize: 100 }),
   })
 
-const getBatcherDossier = (dossierId: string): BatcherDossier => {
-  const existing = batchersDossierByScope.get(dossierId)
+const getBatcherCollection = (collectionId: string): BatcherCollection => {
+  const existing = batchersCollectionByScope.get(collectionId)
   if (existing) return existing
-  const batcher = createBatcherDossier(dossierId)
-  batchersDossierByScope.set(dossierId, batcher)
+  const batcher = createBatcherCollection(collectionId)
+  batchersCollectionByScope.set(collectionId, batcher)
   return batcher
 }
 
-export const niveauConfianceDossierKeys = {
-  parScope: (dossierId: string) => ['dossier', dossierId, 'niveau-confiance'] as const,
-  parCommentaire: (dossierId: string, commentaireId: string) =>
-    [...niveauConfianceDossierKeys.parScope(dossierId), commentaireId] as const,
+export const niveauConfianceCollectionKeys = {
+  parScope: (collectionId: string) => ['collection', collectionId, 'niveau-confiance'] as const,
+  parCommentaire: (collectionId: string, commentaireId: string) =>
+    [...niveauConfianceCollectionKeys.parScope(collectionId), commentaireId] as const,
 }
 
-export const niveauPourCommentaireDossierQueryOptions = (
-  dossierId: string,
+export const niveauPourCommentaireCollectionQueryOptions = (
+  collectionId: string,
   commentaireId: string,
 ) =>
   queryOptions<NiveauConfianceApiModel | null, Error, NiveauConfianceApiModel | null, QueryKey>({
-    queryKey: niveauConfianceDossierKeys.parCommentaire(dossierId, commentaireId),
+    queryKey: niveauConfianceCollectionKeys.parCommentaire(collectionId, commentaireId),
     queryFn: (): Promise<NiveauConfianceApiModel | null> =>
-      getBatcherDossier(dossierId).fetch(commentaireId),
+      getBatcherCollection(collectionId).fetch(commentaireId),
     staleTime: DEFAULT_STALE_TIME,
   })

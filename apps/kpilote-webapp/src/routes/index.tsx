@@ -45,7 +45,7 @@ function HeroSection({
         </Heading>
         <Text variant="lead" tone="muted" className="max-w-xl">
           Consultez, analysez et partagez les données qui structurent l'action publique. Une seule
-          interface pour explorer indicateurs, dossiers thématiques et territoires.
+          interface pour explorer indicateurs, collections thématiques et territoires.
         </Text>
 
         <div className="flex flex-wrap items-center gap-3 pt-2">
@@ -155,10 +155,10 @@ function CapabilitiesSection() {
         />
         <CapabilityCard
           icon={<ShoppingBasket className="size-5" />}
-          title="Dossiers"
+          title="Collections"
           description="Des collections thématiques d'indicateurs, conçues pour répondre à une question publique précise."
-          to="/dossiers"
-          cta="Explorer les dossiers"
+          to="/collections"
+          cta="Explorer les collections"
         />
       </div>
     </Section>
@@ -175,7 +175,7 @@ function CapabilityCard({
   icon: ReactNode
   title: string
   description: string
-  to: '/indicateurs' | '/dossiers'
+  to: '/indicateurs' | '/collections'
   cta: string
 }) {
   return (

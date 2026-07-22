@@ -5,7 +5,7 @@ import { SegmentedControl } from '@pilote/kpilote-ui/SegmentedControl'
 
 const ROUTE_BY_VUE = {
   indicateurs: '/indicateurs',
-  dossiers: '/dossiers',
+  collections: '/collections',
 } as const
 
 type VueTableauDeBord = keyof typeof ROUTE_BY_VUE
@@ -14,11 +14,11 @@ export function DashboardSwitch() {
   const navigate = useNavigate()
   const search = useSearch({ strict: false })
   const { pathname } = useLocation()
-  const vue: VueTableauDeBord = pathname.startsWith('/dossiers') ? 'dossiers' : 'indicateurs'
+  const vue: VueTableauDeBord = pathname.startsWith('/collections') ? 'collections' : 'indicateurs'
 
   return (
     <SegmentedControl
-      aria-label="Basculer entre indicateurs et dossiers"
+      aria-label="Basculer entre indicateurs et collections"
       value={vue}
       onValueChange={(prochaineVue) => {
         void navigate({
@@ -33,8 +33,8 @@ export function DashboardSwitch() {
           icon: <LineChart />,
         },
         {
-          value: 'dossiers',
-          label: <span className="sr-only md:not-sr-only">Mes dossiers</span>,
+          value: 'collections',
+          label: <span className="sr-only md:not-sr-only">Mes collections</span>,
           icon: <FolderClosed />,
         },
       ]}
