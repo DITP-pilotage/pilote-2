@@ -36,20 +36,22 @@ export function HeaderNav({ auth }: { auth: Auth }) {
 
         <div className="mx-2 hidden h-6 w-px bg-border sm:block" />
 
-        <ContacterEquipe />
+        <div className="flex flex-col items-start gap-1">
+          <ContacterEquipe />
 
-        {auth.isAuthenticated && auth.user ? (
-          <UserMenu
-            user={auth.user}
-            onLogout={() => {
-              void auth.logout()
-            }}
-          />
-        ) : (
-          <Button size="sm" type="button" onClick={() => void navigate({ to: '/login' })}>
-            Se connecter
-          </Button>
-        )}
+          {auth.isAuthenticated && auth.user ? (
+            <UserMenu
+              user={auth.user}
+              onLogout={() => {
+                void auth.logout()
+              }}
+            />
+          ) : (
+            <Button size="sm" type="button" onClick={() => void navigate({ to: '/login' })}>
+              Se connecter
+            </Button>
+          )}
+        </div>
       </nav>
 
       {auth.isAuthenticated ? (

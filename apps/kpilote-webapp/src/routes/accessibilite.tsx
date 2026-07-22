@@ -8,7 +8,7 @@ export const Route = createFileRoute('/accessibilite')({
 
 function AccessibilitePage() {
   return (
-    <div className="mx-auto max-w-3xl space-y-8">
+    <div className="space-y-8">
       <Heading as="h1" size="display-md" tone="primary">
         Accessibilité
       </Heading>

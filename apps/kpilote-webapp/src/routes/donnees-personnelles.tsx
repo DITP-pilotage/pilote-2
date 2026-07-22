@@ -8,7 +8,7 @@ export const Route = createFileRoute('/donnees-personnelles')({
 
 function DonneesPersonnellesPage() {
   return (
-    <div className="mx-auto max-w-3xl space-y-8 px-4 py-8">
+    <div className="space-y-8">
       <Heading as="h1" size="display-md" tone="primary">
         Données personnelles et cookies
       </Heading>
