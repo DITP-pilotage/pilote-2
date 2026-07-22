@@ -4,7 +4,14 @@ import { encodeCursor } from '@/framework/persistence/paginate'
 import { listReferentiels } from '@/referentiel/queries/listReferentiels'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testIndividuId, testReferentielId, testWidgetId } from '@/test/randomIds'
+import {
+  testIndicateurId,
+  testIndividuId,
+  testPanierId,
+  testReferentielId,
+  testWidgetId,
+} from '@/test/randomIds'
+import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listReferentiels', () => {
   it(
@@ -159,6 +166,74 @@ describe.concurrent('listReferentiels', () => {
       expect(value.items.map((r) => r.id)).toEqual([ref1, ref2, ref3, ref4, ref5])
       expect(value.pagination).toEqual({ cursor: encodeCursor(created[4]!.id), hasMore: true })
       expect(value.total).toBe(6)
+    }),
+  )
+
+  it(
+    'scope=me ne renvoie que les référentiels reliés à un indicateur lisible',
+    integrationTest(async () => {
+      const refAvec = testReferentielId()
+      const refSans = testReferentielId()
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: testIndicateurId(), visibilite: 'PUBLIC' },
+        referentiel: { publicId: refAvec, nom: 'Avec' },
+      })
+      await fixtures.referentiel({ publicId: refSans, nom: 'Sans' })
+
+      const apiKey = await fixtures.apiKey()
+      const result = await runAsPrincipal(apiKey.id, () => listReferentiels({ scope: 'me' }))
+
+      const ids = result._unsafeUnwrap().items.map((r) => r.id)
+      expect(ids).toContain(refAvec)
+      expect(ids).not.toContain(refSans)
+    }),
+  )
+
+  it(
+    "scope=me exclut les référentiels dont l'indicateur n'est pas lisible par le principal",
+    integrationTest(async () => {
+      const refPrive = testReferentielId()
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: testIndicateurId(), visibilite: 'PRIVE' },
+        referentiel: { publicId: refPrive, nom: 'Privé' },
+      })
+
+      const apiKey = await fixtures.apiKey()
+      const result = await runAsPrincipal(apiKey.id, () => listReferentiels({ scope: 'me' }))
+
+      expect(result._unsafeUnwrap().items.map((r) => r.id)).not.toContain(refPrive)
+    }),
+  )
+
+  it(
+    'scope=panier renvoie les référentiels des indicateurs du panier',
+    integrationTest(async () => {
+      const refDuPanier = testReferentielId()
+      const refHorsPanier = testReferentielId()
+      const indicateurPublicId = testIndicateurId()
+      const panierPublicId = testPanierId()
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: indicateurPublicId, visibilite: 'PUBLIC' },
+        referentiel: { publicId: refDuPanier, nom: 'Dans le panier' },
+      })
+      await fixtures.indicateurReferentiel({
+        indicateur: { publicId: testIndicateurId(), visibilite: 'PUBLIC' },
+        referentiel: { publicId: refHorsPanier, nom: 'Hors panier' },
+      })
+      await fixtures.panier({
+        publicId: panierPublicId,
+        visibilite: 'PUBLIC',
+        indicateurs: [{ publicId: indicateurPublicId }],
+      })
+
+      const apiKey = await fixtures.apiKey()
+      const result = await runAsPrincipal(apiKey.id, () =>
+        listReferentiels({ scope: `panier:${panierPublicId}` }),
+      )
+
+      const ids = result._unsafeUnwrap().items.map((r) => r.id)
+      expect(ids).toContain(refDuPanier)
+      expect(ids).not.toContain(refHorsPanier)
     }),
   )
 })
