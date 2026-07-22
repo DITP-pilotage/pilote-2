@@ -1,10 +1,11 @@
 import { Popover as PopoverPrimitive } from 'radix-ui'
 import { useSuspenseQueries } from '@tanstack/react-query'
-import { Command } from 'cmdk'
+import { Command, defaultFilter } from 'cmdk'
 import { Check, ChevronDown, ChevronRight, Search } from 'lucide-react'
 import { useMemo, useState, type ReactNode } from 'react'
 
 import { clsxm } from '@/lib/clsxm'
+import { normaliserTexte } from '@/lib/texte'
 import {
   buildOrderedNodes,
   findRootReferentielIdForIndividu,
@@ -22,12 +23,13 @@ type IndividuSelectProps = {
   onChange: (next: IndividuSelection) => void
 }
 
-const commandFilter = (itemValue: string, query: string) => {
-  const haystack = itemValue.toLowerCase()
-  const needle = query.trim().toLowerCase()
-  if (!needle) return 1
-  return haystack.includes(needle) ? 1 : 0
-}
+// Réutilise le scorer par défaut de cmdk (matching par initiales, sous-séquence,
+// préfixe…) plutôt qu'un simple `includes`, en neutralisant les accents des deux
+// côtés — ce que cmdk ne fait pas nativement (ex. « idf » matche « Île-de-France »).
+// On ne s'en sert que comme prédicat de filtre (score > 0) : l'ordre hiérarchique
+// des résultats est préservé, pas trié par score.
+const commandFilter = (itemValue: string, query: string) =>
+  defaultFilter(normaliserTexte(itemValue), normaliserTexte(query.trim()))
 
 // Valeur textuelle sur laquelle on filtre un individu : nom + id + chemin parent.
 const searchableValue = (node: IndividuNode) =>
