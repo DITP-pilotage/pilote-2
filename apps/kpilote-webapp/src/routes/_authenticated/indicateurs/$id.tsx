@@ -117,10 +117,7 @@ function IndicateurDetailComponent() {
 
   const back = (
     <BackLink asChild>
-      <Link
-        to="/indicateurs"
-        search={{ individu: search.individu, referentiel: search.referentiel }}
-      >
+      <Link to="/indicateurs" search={{}}>
         Tableau de bord
       </Link>
     </BackLink>
