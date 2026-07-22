@@ -9,7 +9,7 @@ type PermissionEntry = MePermissionsApiModel['collections'][number]
 
 const ACTION_ORDER: PermissionAction[] = [PermissionAction.READ, PermissionAction.WRITE]
 
-// READ collection (direct ou WRITE) propage en READ sur les indicateurs du collection.
+// READ collection (direct ou WRITE) propage en READ sur les indicateurs de la collection.
 // WRITE indicateur reste strictement direct — cf. permissions-design.md.
 export const listerMesPermissions = (): ResultAsync<MePermissionsApiModel, never> => {
   if (isAdminPrincipal()) {

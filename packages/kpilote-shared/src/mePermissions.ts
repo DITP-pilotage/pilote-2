@@ -6,7 +6,7 @@ const permissionEntrySchema = z.object({
   id: z
     .string()
     .describe(
-      'Identifiant public de la ressource (`COL-…` pour un collection, `IND-…` pour un indicateur).',
+      'Identifiant public de la ressource (`COL-…` pour une collection, `IND-…` pour un indicateur).',
     ),
   actions: z
     .array(permissionActionSchema)
@@ -29,13 +29,13 @@ export const mePermissionsApiModelSchema = z.object({
     .array(permissionEntrySchema)
     .describe(
       "Permissions explicites du principal sur les collections, triées par `id` ASC. N'inclut PAS " +
-        'le READ implicite des collections `PUBLIC` (le client le sait en affichant le collection).',
+        'le READ implicite des collections `PUBLIC` (le client le sait en affichant la collection).',
     ),
   indicateurs: z
     .array(permissionEntrySchema)
     .describe(
       'Permissions du principal sur les indicateurs, triées par `id` ASC. Inclut les permissions ' +
-        'directes et le READ propagé depuis un collection où le principal a READ ou WRITE. Le WRITE ' +
+        'directes et le READ propagé depuis une collection où le principal a READ ou WRITE. Le WRITE ' +
         "indicateur reste strictement direct (jamais propagé). N'inclut PAS le READ implicite des " +
         'indicateurs `PUBLIC`.',
     ),

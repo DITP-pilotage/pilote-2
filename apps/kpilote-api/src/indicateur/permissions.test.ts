@@ -74,7 +74,7 @@ describe.concurrent('withIndicateurReadPermission', () => {
   )
 
   it(
-    'propage READ depuis un collection (action READ sur le collection)',
+    'propage READ depuis une collection (action READ sur la collection)',
     integrationTest(async () => {
       const [viaCollection] = testIndicateurIds(1)
       const panRpropR = testCollectionId()
@@ -95,7 +95,7 @@ describe.concurrent('withIndicateurReadPermission', () => {
   )
 
   it(
-    'propage READ depuis un collection (action WRITE sur le collection)',
+    'propage READ depuis une collection (action WRITE sur la collection)',
     integrationTest(async () => {
       const [viaCollection] = testIndicateurIds(1)
       const panRpropW = testCollectionId()
@@ -116,7 +116,7 @@ describe.concurrent('withIndicateurReadPermission', () => {
   )
 
   it(
-    "ne propage rien depuis un collection auquel le principal n'a pas accès",
+    "ne propage rien depuis une collection auquel le principal n'a pas accès",
     integrationTest(async () => {
       const [hidden] = testIndicateurIds(1)
       const panRpropNone = testCollectionId()
@@ -221,7 +221,7 @@ describe.concurrent('ensureIndicateurWritePermission', () => {
   )
 
   it(
-    "rejette même si le principal a WRITE sur un collection qui contient l'indicateur (WRITE indicateur reste direct, pas de propagation)",
+    "rejette même si le principal a WRITE sur une collection qui contient l'indicateur (WRITE indicateur reste direct, pas de propagation)",
     integrationTest(async () => {
       const [viaCollection] = testIndicateurIds(1)
       const panWpropNo = testCollectionId()

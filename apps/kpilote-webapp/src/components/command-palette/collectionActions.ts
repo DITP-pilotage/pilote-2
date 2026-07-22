@@ -9,7 +9,7 @@ type BuildActionsContext = {
 }
 
 /**
- * Sous-actions (`Tab`) proposées sur un collection : pure navigation vers un onglet
+ * Sous-actions (`Tab`) proposées sur une collection : pure navigation vers un onglet
  * de la fiche `/collections/$id`, aucun appel API supplémentaire.
  *
  * Point d'extension du domaine collection : les actions futures s'ajoutent ici avec

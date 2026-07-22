@@ -11,7 +11,7 @@ const CALLER_ID = '00000000-0000-0000-0000-0000000000a1'
 
 describe.concurrent('revokeCollectionPermission', () => {
   it(
-    'retire toutes les actions du collection quand action est omise',
+    'retire toutes les actions de la collection quand action est omise',
     integrationTest(async () => {
       const target = await fixtures.utilisateur({})
       const dos = await fixtures.collection({})

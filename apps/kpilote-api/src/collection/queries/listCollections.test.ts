@@ -9,7 +9,7 @@ import { runAsAdmin, runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listCollections', () => {
   it(
-    "retourne une liste vide quand aucun collection n'existe",
+    "retourne une liste vide quand aucune collection n'existe",
     integrationTest(async () => {
       const apiKey = await fixtures.apiKey()
       const result = await runAsPrincipal(apiKey.id, () => listCollections({}))
@@ -24,7 +24,7 @@ describe.concurrent('listCollections', () => {
   )
 
   it(
-    'retourne tous les collections PUBLIC quand leur nombre est inférieur à la taille de page',
+    'retourne toutes les collections PUBLIC quand leur nombre est inférieur à la taille de page',
     integrationTest(async () => {
       // Ordre de création = ordre attendu (orderBy id interne uuidv7).
       const dosList1 = testCollectionId()
@@ -87,7 +87,7 @@ describe.concurrent('listCollections', () => {
   )
 
   it(
-    "expose les indicateurs du collection triés par ordre d'insertion (createdAt ASC)",
+    "expose les indicateurs de la collection triés par ordre d'insertion (createdAt ASC)",
     integrationTest(async () => {
       const [indA, indB, indC] = testIndicateurIds(3)
       const dosOrder = testCollectionId()
@@ -107,7 +107,7 @@ describe.concurrent('listCollections', () => {
   )
 
   it(
-    'retourne un collection sans indicateurs avec un tableau vide',
+    'retourne une collection sans indicateurs avec un tableau vide',
     integrationTest(async () => {
       const dosEmpty = testCollectionId()
       await fixtures.collection({ publicId: dosEmpty, visibilite: 'PUBLIC' })
@@ -202,7 +202,7 @@ describe.concurrent('listCollections', () => {
   )
 
   it(
-    'un principal non-ADMIN ne voit pas un collection PRIVÉ sans permission',
+    'un principal non-ADMIN ne voit pas une collection PRIVÉ sans permission',
     integrationTest(async () => {
       const pubId = testCollectionId()
       await fixtures.collection({ publicId: pubId, visibilite: 'PRIVE' })

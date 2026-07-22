@@ -60,7 +60,7 @@ describe.concurrent('listIndicateurs', () => {
   )
 
   it(
-    'propage READ via les permissions collection : un principal qui a accès à un collection voit ses indicateurs PRIVE',
+    'propage READ via les permissions collection : un principal qui a accès à une collection voit ses indicateurs PRIVE',
     integrationTest(async () => {
       const [viaCollection, hidden] = testIndicateurIds(2)
       const dosPropag = testCollectionId()
@@ -86,7 +86,7 @@ describe.concurrent('listIndicateurs', () => {
   )
 
   it(
-    'la propagation collection → indicateur fonctionne aussi avec WRITE sur le collection',
+    'la propagation collection → indicateur fonctionne aussi avec WRITE sur la collection',
     integrationTest(async () => {
       const [viaCollection] = testIndicateurIds(1)
       const dosPropag = testCollectionId()

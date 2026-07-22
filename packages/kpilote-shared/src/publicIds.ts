@@ -8,7 +8,7 @@ export const indicateurPublicIdSchema = z
 export const collectionPublicIdSchema = z
   .string()
   .regex(/^COL-\d+$/, 'Identifiant public attendu au format COL-XXX')
-  .describe('Identifiant public du collection (format COL-XXX).')
+  .describe('Identifiant public de la collection (format COL-XXX).')
 
 export const referentielPublicIdSchema = z
   .string()

@@ -8,7 +8,7 @@ import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
   it(
-    'retourne items vide quand aucun collection demandé',
+    'retourne items vide quand aucune collection demandé',
     integrationTest(async () => {
       const deptId = testDeptId()
       await fixtures.individu({ publicId: deptId })
@@ -23,7 +23,7 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
   )
 
   it(
-    'retourne tauxProgression null pour un collection sans indicateur',
+    'retourne tauxProgression null pour une collection sans indicateur',
     integrationTest(async () => {
       const deptId = testDeptId()
       const dosId = testCollectionId()
@@ -305,7 +305,7 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
   )
 
   it(
-    'exclut silencieusement un collection PRIVE sans permission',
+    'exclut silencieusement une collection PRIVE sans permission',
     integrationTest(async () => {
       const deptId = testDeptId()
       const dosPublic = testCollectionId()

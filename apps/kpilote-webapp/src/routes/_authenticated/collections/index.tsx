@@ -102,7 +102,7 @@ function CollectionsListComponent() {
         </Text>
 
         {data.items.length === 0 ? (
-          <EmptyState title="Aucun collection disponible" />
+          <EmptyState title="Aucune collection disponible" />
         ) : (
           <CardGrid>
             {data.items.map((collection) => (

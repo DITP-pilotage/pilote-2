@@ -9,7 +9,7 @@ const CALLER_ID = '00000000-0000-0000-0000-0000000000a1'
 
 describe.concurrent('grantCollectionPermission', () => {
   it(
-    'accorde une action sur un collection et propage READ aux indicateurs hérités',
+    'accorde une action sur une collection et propage READ aux indicateurs hérités',
     integrationTest(async () => {
       const target = await fixtures.utilisateur({})
       const ind = await fixtures.indicateur({ nom: 'Contenu' })
@@ -42,7 +42,7 @@ describe.concurrent('grantCollectionPermission', () => {
   )
 
   it(
-    'rejette un collection inconnu',
+    'rejette une collection inconnu',
     integrationTest(async () => {
       const target = await fixtures.utilisateur({})
       await expect(

@@ -97,8 +97,8 @@ const grantCollectionPermissionRoute = createRoute({
   method: 'post',
   path: '/permissions/collection',
   tags: ['Permission', 'Admin'],
-  summary: 'Accorder une permission sur un collection',
-  description: `Réservé aux clés API de rôle \`ADMIN\`. Accorde une action (\`READ\`/\`WRITE\`) sur un collection à un principal. **Idempotent**. Retourne l'état à jour.`,
+  summary: 'Accorder une permission sur une collection',
+  description: `Réservé aux clés API de rôle \`ADMIN\`. Accorde une action (\`READ\`/\`WRITE\`) sur une collection à un principal. **Idempotent**. Retourne l'état à jour.`,
   middleware: [requireAuthentication],
   request: {
     body: {
@@ -120,8 +120,8 @@ const revokeCollectionPermissionRoute = createRoute({
   method: 'delete',
   path: '/permissions/collection',
   tags: ['Permission', 'Admin'],
-  summary: 'Retirer une permission sur un collection',
-  description: `Réservé aux clés API de rôle \`ADMIN\`. Retire une action précise si \`action\` est fournie, sinon toutes les actions du collection. **Idempotent**. Retourne l'état à jour.`,
+  summary: 'Retirer une permission sur une collection',
+  description: `Réservé aux clés API de rôle \`ADMIN\`. Retire une action précise si \`action\` est fournie, sinon toutes les actions de la collection. **Idempotent**. Retourne l'état à jour.`,
   middleware: [requireAuthentication],
   request: { query: revokeCollectionPermissionQuerySchema },
   responses: {

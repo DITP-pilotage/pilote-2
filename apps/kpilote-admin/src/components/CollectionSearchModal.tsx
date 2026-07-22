@@ -38,7 +38,7 @@ export function CollectionSearchModal({
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-text">Ajouter un collection</h2>
+          <h2 className="text-lg font-semibold text-text">Ajouter une collection</h2>
           <button
             type="button"
             onClick={onClose}
@@ -74,7 +74,7 @@ export function CollectionSearchModal({
               <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-subtle" />
               <input
                 id="collection-search-nom"
-                placeholder="Nom du collection…"
+                placeholder="Nom de la collection…"
                 value={recherche}
                 onChange={(event) => setRecherche(event.target.value)}
                 className="w-full rounded-md border border-border bg-surface py-2.5 pl-9 pr-3 text-sm focus:border-primary focus:outline-none"

@@ -10,7 +10,7 @@ export function CollectionAvancementSkeleton() {
     <span
       className="flex animate-pulse flex-col gap-1"
       role="status"
-      aria-label="Chargement de la progression du collection"
+      aria-label="Chargement de la progression de la collection"
     >
       <span className="h-[18px] w-20 rounded bg-border" />
       <span className="h-2 w-full rounded bg-border" />
@@ -44,7 +44,7 @@ export function CollectionAvancement({
       <ProgressBar
         value={data.tauxProgression}
         tone="neutral"
-        label={`Progression du collection : ${formatNumberFr(data.tauxProgression)} %`}
+        label={`Progression de la collection : ${formatNumberFr(data.tauxProgression)} %`}
         className="mt-2"
       />
     </div>

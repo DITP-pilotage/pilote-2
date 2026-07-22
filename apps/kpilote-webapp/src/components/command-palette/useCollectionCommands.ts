@@ -11,7 +11,7 @@ import { buildCollectionActions } from './collectionActions'
 const MAX_RESULTS = 8
 
 /**
- * Commandes de recherche de collections. Tous les collections sont chargés à l'ouverture
+ * Commandes de recherche de collections. Toutes les collections sont chargées à l'ouverture
  * de la palette (`open`) et filtrés côté client (insensible casse + accents) sur
  * le nom et le publicId. Chaque résultat navigue vers la fiche `/collections/$id`
  * puis ferme la palette.

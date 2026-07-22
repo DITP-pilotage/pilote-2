@@ -40,9 +40,9 @@ export const collectionTauxProgressionSummaryApiModelSchema = z.object({
     .number()
     .nullable()
     .describe(
-      'Moyenne pondérée des taux de progression des indicateurs du collection, tronquée à 2 décimales. ' +
-        "null si au moins un indicateur du collection n'est pas calculable (règle tout-ou-rien) ou si " +
-        'le collection est vide.',
+      'Moyenne pondérée des taux de progression des indicateurs de la collection, tronquée à 2 décimales. ' +
+        "null si au moins un indicateur de la collection n'est pas calculable (règle tout-ou-rien) ou si " +
+        'la collection est vide.',
     ),
 })
 export type CollectionTauxProgressionSummaryApiModel = z.infer<
@@ -63,7 +63,7 @@ export type CollectionTauxProgressionSummaryListApiModel = z.infer<
 
 export const getCollectionTauxProgressionQuerySchema = z.object({
   individu: individuPublicIdSchema.describe(
-    "Identifiant public de l'individu pour lequel calculer le taux de progression du collection.",
+    "Identifiant public de l'individu pour lequel calculer le taux de progression de la collection.",
   ),
 })
 export type GetCollectionTauxProgressionQuery = z.infer<
@@ -88,7 +88,7 @@ export const collectionTauxProgressionContributionApiModelSchema = z.object({
   ponderation: z
     .number()
     .describe(
-      'Pondération appliquée à cet indicateur dans la moyenne pondérée du collection. Fixé à 1 en v0.',
+      'Pondération appliquée à cet indicateur dans la moyenne pondérée de la collection. Fixé à 1 en v0.',
     ),
 })
 export type CollectionTauxProgressionContributionApiModel = z.infer<
@@ -102,14 +102,14 @@ export const collectionTauxProgressionApiModelSchema = z.object({
     .number()
     .nullable()
     .describe(
-      'Moyenne pondérée des taux de progression des indicateurs du collection, tronquée à 2 décimales. ' +
-        "null si au moins un indicateur du collection n'est pas calculable (règle tout-ou-rien) ou si " +
-        'le collection est vide.',
+      'Moyenne pondérée des taux de progression des indicateurs de la collection, tronquée à 2 décimales. ' +
+        "null si au moins un indicateur de la collection n'est pas calculable (règle tout-ou-rien) ou si " +
+        'la collection est vide.',
     ),
   contributions: z
     .array(collectionTauxProgressionContributionApiModelSchema)
     .describe(
-      "Détail par indicateur du collection (dernier taux connu pour l'individu, date, pondération). " +
+      "Détail par indicateur de la collection (dernier taux connu pour l'individu, date, pondération). " +
         'Toujours renseigné même si la moyenne globale est null — utile pour expliciter au client ' +
         'quels indicateurs bloquent le calcul.',
     ),

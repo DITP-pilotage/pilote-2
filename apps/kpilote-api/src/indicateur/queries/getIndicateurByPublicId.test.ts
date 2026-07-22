@@ -307,7 +307,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
   )
 
   it(
-    'expose les responsables via une permission READ propagée par un collection',
+    'expose les responsables via une permission READ propagée par une collection',
     integrationTest(async () => {
       const indId = testIndicateurId()
       const dosId = testCollectionId()

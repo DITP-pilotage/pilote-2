@@ -45,7 +45,7 @@ export const ensureCollectionWritePermission = ({
       })
       .then((hasWrite) => {
         if (!hasWrite) {
-          throw new ForbiddenError("Vous n'avez pas la permission de modifier ce collection")
+          throw new ForbiddenError("Vous n'avez pas la permission de modifier cette collection")
         }
       }),
   )

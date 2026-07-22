@@ -30,7 +30,7 @@ export function CollectionTauxProgression({
   )
   return (
     <StatCard
-      label="Avancement du collection"
+      label="Avancement de la collection"
       value={formatTaux(data.tauxProgression)}
       caption={buildCaption(data.tauxProgression, data.contributions)}
       tone={data.tauxProgression === null ? 'muted' : 'primary'}

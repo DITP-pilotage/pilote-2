@@ -380,8 +380,8 @@ const getCollectionTauxProgressionForIndividuRoute = createRoute({
   summary: "Lister le taux de progression d'un lot de collections pour un individu",
   description:
     'Retourne, pour chaque collection demandé accessible en lecture, la moyenne pondérée du ' +
-    "dernier taux de progression connu de chaque indicateur du collection pour l'individu. " +
-    'Règle tout-ou-rien : `tauxProgression` est null si au moins un indicateur du collection ' +
+    "dernier taux de progression connu de chaque indicateur de la collection pour l'individu. " +
+    'Règle tout-ou-rien : `tauxProgression` est null si au moins un indicateur de la collection ' +
     "n'est pas calculable. Les collections inaccessibles ou inexistants sont omis. " +
     'Endpoint pensé pour des appels batch côté client (liste de cartes de collections).',
   middleware: [requireAuthentication],

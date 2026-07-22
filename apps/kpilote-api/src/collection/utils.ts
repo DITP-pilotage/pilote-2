@@ -19,7 +19,7 @@ export type CollectionWithIndicateurs = CollectionModel & {
 
 // Regroupe les contacts utiles par organisme, organismes et contacts triés par
 // nom. Le tri se fait ici (et non côté SQL) car les contacts sont chargés via
-// `include` sur le collection, sans passer par une query dédiée.
+// `include` sur la collection, sans passer par une query dédiée.
 const toContactsUtilesGroups = (liens: ContactUtileLien[]): CollectionContactsUtilesGroup[] => {
   const parOrganisme = new Map<string, CollectionContactsUtilesGroup>()
   for (const { contactUtile } of liens) {

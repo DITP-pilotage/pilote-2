@@ -11,7 +11,7 @@ avant d'envoyer la mutation. Résultat : les boutons « Enregistrer » s'affiche
 même pour des principals en lecture seule, qui reçoivent ensuite un `403` au
 clic.
 
-Premier cas remonté : onglet « Commentaires » du collection (PIL-1588). Le besoin
+Premier cas remonté : onglet « Commentaires » de la collection (PIL-1588). Le besoin
 est transverse : même problème pour les commentaires indicateurs, les
 contacts utiles, les responsables, etc.
 
@@ -33,7 +33,7 @@ Le modèle de permissions est décrit dans
 ## 3. Non-objectifs
 
 - Ne **pas** matérialiser le READ implicite des ressources `PUBLIC`. Le
-  client connaît déjà la visibilité d'un collection qu'il affiche ; il fera la
+  client connaît déjà la visibilité d'une collection qu'il affiche ; il fera la
   condition « public OR permission explicite » côté webapp. Cela évite de
   renvoyer la totalité du catalogue à chaque appel.
 - Ne **pas** introduire de filtre `?type=collection` ou de pagination dès le
@@ -119,7 +119,7 @@ et `apps/mb-api/src/indicateur/permissions.ts`) :
 |---|---|
 | READ collection | direct uniquement (la visibilité PUBLIC n'est pas matérialisée) |
 | WRITE collection | direct uniquement |
-| READ indicateur | direct **OU** propagé depuis un collection où le principal a READ ou WRITE |
+| READ indicateur | direct **OU** propagé depuis une collection où le principal a READ ou WRITE |
 | WRITE indicateur | direct uniquement (**pas de propagation**) |
 
 Concrètement, on assemble la réponse à partir de :

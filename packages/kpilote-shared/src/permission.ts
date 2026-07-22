@@ -19,7 +19,7 @@ const indicateurHeriteSchema = z.object({
   publicId: z.string().describe("Identifiant public de l'indicateur hérité."),
   nom: z.string().describe("Nom lisible de l'indicateur."),
   viaCollectionPublicId: z.string().describe('Collection source de la propagation READ.'),
-  viaCollectionNom: z.string().describe('Nom du collection source.'),
+  viaCollectionNom: z.string().describe('Nom de la collection source.'),
 })
 
 export const principalPermissionsApiModelSchema = z.object({
@@ -32,7 +32,7 @@ export const principalPermissionsApiModelSchema = z.object({
   indicateursHerites: z
     .array(indicateurHeriteSchema)
     .describe(
-      'Indicateurs en READ hérité via un collection (propagation), lecture seule. Exclut ceux ' +
+      'Indicateurs en READ hérité via une collection (propagation), lecture seule. Exclut ceux ' +
         'déjà présents en direct dans `indicateurs`. Triés par `publicId` ASC.',
     ),
 })
@@ -65,7 +65,7 @@ export type RevokeIndicateurPermissionQuery = z.infer<typeof revokeIndicateurPer
 
 export const grantCollectionPermissionBodySchema = z.object({
   principalId: z.string().uuid().describe('Principal (UUID) à qui accorder le droit.'),
-  collectionPublicId: z.string().describe('Identifiant public du collection (`COL-…`).'),
+  collectionPublicId: z.string().describe('Identifiant public de la collection (`COL-…`).'),
   action: permissionActionSchema,
 })
 export type GrantCollectionPermissionBody = z.infer<typeof grantCollectionPermissionBodySchema>
@@ -75,6 +75,6 @@ export const revokeCollectionPermissionQuerySchema = z.object({
   collectionPublicId: z.string(),
   action: permissionActionSchema
     .optional()
-    .describe('Action à retirer. Si absent, retire toutes les actions du collection.'),
+    .describe('Action à retirer. Si absent, retire toutes les actions de la collection.'),
 })
 export type RevokeCollectionPermissionQuery = z.infer<typeof revokeCollectionPermissionQuerySchema>

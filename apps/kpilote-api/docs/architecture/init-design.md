@@ -139,7 +139,7 @@ Conséquence de 5.1 : on ne documente pas de Context Map DDD. Il n'y a pas plusi
 
 La règle architecturale unique qui se substitue au Context Map est dans 5.5 : **pas d'accès direct aux tables Prisma d'un autre module**.
 
-### 5.4 Structure des collections
+### 5.4 Structure des dossiers
 
 ```
 apps/mb-api/
@@ -277,10 +277,10 @@ apps/mb-api/
 
 Tests co-localisés : `foo.ts` + `foo.test.ts` côte-à-côte.
 
-**Convention de nommage :** un fichier exporte une chose, et **le nom du fichier = le nom de la chose exportée** (ex: `getHealth.ts` exporte `getHealth`, `health.ts` exporte `health`). Pas de suffixe redondant avec le collection (`routes/health.ts`, pas `routes/health.route.ts`).
+**Convention de nommage :** un fichier exporte une chose, et **le nom du fichier = le nom de la chose exportée** (ex: `getHealth.ts` exporte `getHealth`, `health.ts` exporte `health`). Pas de suffixe redondant avec le dossier (`routes/health.ts`, pas `routes/health.route.ts`).
 
 **Points clés :**
-- **Un collection racine par module** — `framework/`, `authentication/`, `healthcheck/`
+- **Un dossier racine par module** — `framework/`, `authentication/`, `healthcheck/`
 - **`framework/`** : tuyauterie technique, importable de partout, sans dépendance vers les modules métier
 - **`model/`** : functional core d'un module — types, factories pures, **et ports (interfaces)** consommés par les use cases. **Aucun I/O.**
 - **`commands/`** + **`queries/`** : imperative shell — use cases qui orchestrent I/O
@@ -546,7 +546,7 @@ Si plus tard un cas nécessite events ou invariants complexes, on l'introduira s
 
 ### 5.12 Domain services / fonctions transverses
 
-Pas de "Domain Service" formalisé. Les calculs transverses (ex: agrégation de plusieurs indicateurs pour un collection, à venir dans `pilotage`) seront des **fonctions pures** dans `model/` (ou un sous-collection `model/services/` si la lisibilité l'exige).
+Pas de "Domain Service" formalisé. Les calculs transverses (ex: agrégation de plusieurs indicateurs pour une collection, à venir dans `pilotage`) seront des **fonctions pures** dans `model/` (ou un sous-dossier `model/services/` si la lisibilité l'exige).
 
 À l'init : zéro fonction transverse — on a uniquement `createApiKey`, `revokeApiKey`, `parseEmail` et factories utilisateur stubées.
 

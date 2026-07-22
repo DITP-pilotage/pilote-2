@@ -15,7 +15,7 @@ const INDICATEUR_READ_PERMISSIONS: PermissionAction[] = [
 // - le principal est ADMIN (bypass : administre PUBLIC + PRIVÉ, aligné avec /me/permissions), OU
 // - l'indicateur est PUBLIC, OU
 // - le principal a READ/WRITE direct sur l'indicateur, OU
-// - le principal a READ/WRITE sur un collection qui contient l'indicateur
+// - le principal a READ/WRITE sur une collection qui contient l'indicateur
 //   (propagation collection → indicateur, cf. permissions-design.md).
 // Le WRITE indicateur reste strictement direct (ensureIndicateurWritePermission).
 export const withIndicateurReadPermission = (

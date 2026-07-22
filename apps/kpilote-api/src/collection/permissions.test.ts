@@ -18,7 +18,7 @@ const listCollectionsWithReadPermission = async (principalId: string) =>
 
 describe.concurrent('withCollectionReadPermission', () => {
   it(
-    'expose un collection PUBLIC à un principal sans aucune permission',
+    'expose une collection PUBLIC à un principal sans aucune permission',
     integrationTest(async () => {
       const panPub = testCollectionId()
       await fixtures.collection({ publicId: panPub, visibilite: 'PUBLIC' })
@@ -31,7 +31,7 @@ describe.concurrent('withCollectionReadPermission', () => {
   )
 
   it(
-    'cache un collection PRIVE à un principal sans permission',
+    'cache une collection PRIVE à un principal sans permission',
     integrationTest(async () => {
       const panPri = testCollectionId()
       await fixtures.collection({ publicId: panPri, visibilite: 'PRIVE' })
@@ -44,7 +44,7 @@ describe.concurrent('withCollectionReadPermission', () => {
   )
 
   it(
-    'expose un collection PRIVE à un principal avec permission READ directe',
+    'expose une collection PRIVE à un principal avec permission READ directe',
     integrationTest(async () => {
       const panPriRead = testCollectionId()
       await fixtures.collection({ publicId: panPriRead, visibilite: 'PRIVE' })
@@ -59,7 +59,7 @@ describe.concurrent('withCollectionReadPermission', () => {
   )
 
   it(
-    'expose un collection PRIVE à un principal avec permission WRITE directe (WRITE implique READ)',
+    'expose une collection PRIVE à un principal avec permission WRITE directe (WRITE implique READ)',
     integrationTest(async () => {
       const panPriWrite = testCollectionId()
       await fixtures.collection({ publicId: panPriWrite, visibilite: 'PRIVE' })
@@ -74,7 +74,7 @@ describe.concurrent('withCollectionReadPermission', () => {
   )
 
   it(
-    'isole les permissions par principal : un collection PRIVE accessible à A reste caché à B',
+    'isole les permissions par principal : une collection PRIVE accessible à A reste caché à B',
     integrationTest(async () => {
       const panIso = testCollectionId()
       await fixtures.collection({ publicId: panIso, visibilite: 'PRIVE' })
@@ -160,7 +160,7 @@ describe.concurrent('ensureCollectionWritePermission', () => {
   )
 
   it(
-    'rejette quand le collection est PUBLIC mais sans permission WRITE explicite (PUBLIC ne couvre que la lecture)',
+    'rejette quand la collection est PUBLIC mais sans permission WRITE explicite (PUBLIC ne couvre que la lecture)',
     integrationTest(async () => {
       const panEwPub = testCollectionId()
       const collection = await fixtures.collection({ publicId: panEwPub, visibilite: 'PUBLIC' })

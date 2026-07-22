@@ -8,7 +8,7 @@ import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('getCollectionByPublicId', () => {
   it(
-    "retourne le collection PUBLIC avec ses indicateurs triés par ordre d'insertion",
+    "retourne la collection PUBLIC avec ses indicateurs triés par ordre d'insertion",
     integrationTest(async () => {
       const [indA, indB] = testIndicateurIds(2)
       const panDetail = testCollectionId()
@@ -39,7 +39,7 @@ describe.concurrent('getCollectionByPublicId', () => {
   )
 
   it(
-    'retourne un collection sans indicateurs avec un tableau vide',
+    'retourne une collection sans indicateurs avec un tableau vide',
     integrationTest(async () => {
       const dosEmpty = testCollectionId()
       await fixtures.collection({
@@ -60,7 +60,7 @@ describe.concurrent('getCollectionByPublicId', () => {
   )
 
   it(
-    "retourne un collection PRIVE quand le principal dispose d'une permission",
+    "retourne une collection PRIVE quand le principal dispose d'une permission",
     integrationTest(async () => {
       const panPriv = testCollectionId()
       await fixtures.collection({ publicId: panPriv, visibilite: 'PRIVE' })
@@ -75,7 +75,7 @@ describe.concurrent('getCollectionByPublicId', () => {
   )
 
   it(
-    'lève une erreur quand un collection PRIVE est demandé sans permission',
+    'lève une erreur quand une collection PRIVE est demandé sans permission',
     integrationTest(async () => {
       const panNoacl = testCollectionId()
       await fixtures.collection({ publicId: panNoacl, visibilite: 'PRIVE' })
@@ -88,7 +88,7 @@ describe.concurrent('getCollectionByPublicId', () => {
   )
 
   it(
-    'lève une erreur quand aucun collection ne correspond',
+    'lève une erreur quand aucune collection ne correspond',
     integrationTest(async () => {
       const panNope = testCollectionId()
       const apiKey = await fixtures.apiKey()
@@ -100,7 +100,7 @@ describe.concurrent('getCollectionByPublicId', () => {
   )
 
   it(
-    "retourne les responsables du collection triés par ordre d'assignation",
+    "retourne les responsables de la collection triés par ordre d'assignation",
     integrationTest(async () => {
       const dosId = testCollectionId()
       const liaison = await fixtures.collectionResponsable({

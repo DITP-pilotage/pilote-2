@@ -102,7 +102,7 @@ ressource (cf. invariant ci-dessous).
 
 ## Propagation collection → indicateur
 
-Cas particulier explicite : un principal qui a READ ou WRITE sur un collection
+Cas particulier explicite : un principal qui a READ ou WRITE sur une collection
 gagne **automatiquement** READ sur tous les indicateurs qui composent le
 collection. Le helper `withIndicateurReadPermission` ajoute donc une troisième
 branche OR :
@@ -112,16 +112,16 @@ branche OR :
 ```
 
 **Pourquoi cette direction (collection → indicateur, pas indicateur → collection) :**
-le collection est une « vue » composée, c'est un cas d'usage explicite de
+la collection est une « vue » composée, c'est un cas d'usage explicite de
 partage groupé. Permettre à un destinataire de collection de consulter les
 indicateurs qu'il contient est attendu et naturel. L'inverse (accès à un
-indicateur ⇒ accès à tous les collections qui le citent) n'aurait pas de sens.
+indicateur ⇒ accès à toutes les collections qui le citent) n'aurait pas de sens.
 
-**Pourquoi READ uniquement, pas WRITE :** un collection est un container — le
-fait de pouvoir gérer un collection (ajouter/retirer des indicateurs) ne doit
+**Pourquoi READ uniquement, pas WRITE :** une collection est un container — le
+fait de pouvoir gérer une collection (ajouter/retirer des indicateurs) ne doit
 **pas** permettre de modifier les valeurs ou la définition des indicateurs
 eux-mêmes. La distinction container vs contenu est portée par la sémantique
-des permissions : `WRITE` sur collection = modifier le collection, pas son contenu.
+des permissions : `WRITE` sur collection = modifier la collection, pas son contenu.
 
 ## Invariants
 
@@ -204,7 +204,7 @@ Pour ajouter le modèle de permissions à une nouvelle ressource `Foo` :
   principal par principal. Pour un usage large, on passera par un système
   de groupes (`PrincipalGroup` + `GroupPermission`) — pas avant qu'un cas
   d'usage métier l'exige.
-- **Pas d'héritage hiérarchique.** Un collection de collections, ou un référentiel
+- **Pas d'héritage hiérarchique.** Une collection de collections, ou un référentiel
   parent qui propage à ses enfants, n'existe pas. À traiter au cas par cas
   si le besoin émerge.
 - **Pas de permissions négatives (deny).** Le modèle est purement additif :

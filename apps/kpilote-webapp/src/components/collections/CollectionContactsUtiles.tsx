@@ -10,7 +10,7 @@ export function CollectionContactsUtiles({
   contactsUtiles: ReadonlyArray<CollectionContactsUtilesGroup>
 }) {
   if (contactsUtiles.length === 0) {
-    return <EmptyState title="Aucun contact utile pour ce collection." />
+    return <EmptyState title="Aucun contact utile pour cette collection." />
   }
 
   return (

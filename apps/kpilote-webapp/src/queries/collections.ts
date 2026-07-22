@@ -17,7 +17,7 @@ export const collectionsQueryOptions = (params: ListCollectionsQuery) =>
   })
 
 /**
- * Tous les collections en une liste, pour un filtrage 100% client
+ * Toutes les collections en une liste, pour un filtrage 100% client
  * (ex: command palette ⌘K). Cache dédié — pattern d'accès distinct des pages
  * liste paginées côté serveur.
  */

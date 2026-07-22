@@ -80,7 +80,7 @@ export const Route = createFileRoute('/_authenticated/collections/$id')({
 
     return { collection }
   },
-  pendingComponent: () => <RouteLoading message="Chargement du collection…" />,
+  pendingComponent: () => <RouteLoading message="Chargement de la collection…" />,
   errorComponent: RouteError,
   component: CollectionDetailComponent,
 })
@@ -97,7 +97,7 @@ function CollectionDetailComponent() {
   const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
   const referentielIds = referentiels.map((r) => r.id)
 
-  // Re-tri selon l'ordre du collection : la query indicateurs ne garantit pas
+  // Re-tri selon l'ordre de la collection : la query indicateurs ne garantit pas
   // l'ordre du filtre `ids`.
   const indicateurById = new Map(indicateurs.items.map((i) => [i.id, i]))
   const orderedIndicateurs = collection.indicateurIds
@@ -166,7 +166,7 @@ function CollectionDetailComponent() {
               {orderedIndicateurs.length} indicateur{orderedIndicateurs.length > 1 ? 's' : ''}
             </Text>
             {orderedIndicateurs.length === 0 ? (
-              <EmptyState title="Ce collection ne contient aucun indicateur." />
+              <EmptyState title="Cette collection ne contient aucun indicateur." />
             ) : (
               <CardGrid>
                 {orderedIndicateurs.map((indicateur) => (

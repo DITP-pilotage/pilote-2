@@ -727,7 +727,7 @@ const main = async () => {
   // Visibilité (cf. docs/architecture/permissions-design.md) :
   // - PUBLIC : visible à tout principal authentifié ;
   // - PRIVE : visible uniquement aux principals avec une permission explicite
-  //   sur le collection (et propage READ sur ses indicateurs).
+  //   sur la collection (et propage READ sur ses indicateurs).
   //
   // COL-001..004 restent PUBLIC pour conserver le comportement antérieur (les
   // 5 indicateurs IND-046..050 sont eux-mêmes PUBLIC, donc accessibles à tous).
@@ -819,7 +819,7 @@ const main = async () => {
   )
 
   // Permissions collection : on accorde READ + WRITE à ditp.admin sur COL-005
-  // (le collection privé). Comme COL-005 contient des indicateurs PRIVE
+  // (la collection privée). Comme COL-005 contient des indicateurs PRIVE
   // (IND-001..003) sur lesquels ditp.admin a déjà des permissions directes
   // (cf. boucle indicateursSeed.slice(0, 8) plus haut), la propagation
   // n'apporte rien ici en pratique pour ditp.admin — c'est volontaire : la

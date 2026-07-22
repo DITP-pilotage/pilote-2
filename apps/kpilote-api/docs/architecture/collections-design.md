@@ -11,7 +11,7 @@ sélection thématique vers les indicateurs qui la composent.
 
 Périmètre v0 délibérément minimaliste :
 
-- Pas de création/édition côté API. Les collections sont **créés par seed**
+- Pas de création/édition côté API. Les collections sont **créées par seed**
   uniquement.
 - Lecture exposée via API publique (liste paginée + détail).
 - Affichage côté front : entrée « Collections » dans la top bar, page liste,
@@ -37,10 +37,10 @@ Périmètre v0 délibérément minimaliste :
 
 ### D1. Collections globaux, pas de scope
 
-Un collection n'appartient ni à une organisation, ni à un référentiel, ni à un
-principal. Tout principal authentifié peut lister et lire tous les collections.
+Une collection n'appartient ni à une organisation, ni à un référentiel, ni à un
+principal. Tout principal authentifié peut lister et lire toutes les collections.
 
-### D2. Modèle de permissions sur le collection (révisé)
+### D2. Modèle de permissions sur la collection (révisé)
 
 **Statut : implémenté.** Initialement reporté à plus tard, le besoin de collections
 privés est arrivé immédiatement après la mise en production v0. Le modèle
@@ -52,7 +52,7 @@ reprend point pour point le pattern indicateur :
 - Helper `withCollectionReadPermission(where, principalId)` appliqué dans
   `listCollections` et `getCollectionByPublicId`.
 - **Propagation collection → indicateurs** : un principal qui a READ ou WRITE sur
-  un collection obtient automatiquement READ sur tous ses indicateurs (la clause
+  une collection obtient automatiquement READ sur tous ses indicateurs (la clause
   `withIndicateurReadPermission` ajoute un branche OR via `collections.some`). Le
   WRITE indicateur reste exclusivement direct.
 
@@ -61,7 +61,7 @@ Détails et invariants généraux : voir `permissions-design.md`.
 ### D3. Composition N-N via join table, ordre par `createdAt`
 
 Table de jonction `CollectionIndicateur(collectionId, indicateurId, createdAt)`.
-L'ordre d'affichage des indicateurs dans un collection = `createdAt ASC` de la
+L'ordre d'affichage des indicateurs dans une collection = `createdAt ASC` de la
 ligne de jonction, c'est-à-dire **l'ordre d'insertion au seed**. Pas de champ
 `position` explicite.
 
@@ -83,13 +83,13 @@ arrive (admin UI, intégration externe).
 `GET /collections/:publicId` renvoie l'**intégralité** des `indicateurPublicIds`
 de la jonction, sans intersection avec les droits du principal courant.
 
-L'invariant « tous les indicateurs d'un collection sont accessibles au principal »
+L'invariant « tous les indicateurs d'une collection sont accessibles au principal »
 est désormais garanti **par le modèle de permissions** (D2 révisée) : la
-visibilité d'un collection propage READ vers ses indicateurs, donc un principal
-qui voit un collection voit nécessairement les indicateurs qui le composent.
+visibilité d'une collection propage READ vers ses indicateurs, donc un principal
+qui voit une collection voit nécessairement les indicateurs qui le composent.
 
 Conséquence : pas besoin d'intersection sur les `indicateurPublicIds` — la
-contention est portée au niveau du collection lui-même.
+contention est portée au niveau de la collection lui-même.
 
 ### D7. Recomposition côté front via bulk fetch `GET /indicateurs?ids=...`
 
@@ -280,7 +280,7 @@ fixtures.collection({ publicId?, nom?, description?, indicateurPublicIds? })
 Queries :
 
 - `listCollections.test.ts` : liste vide, ordre alphabétique stable, pagination,
-  un collection avec 0 indicateurs, contenu de `indicateurPublicIds` dans l'ordre
+  une collection avec 0 indicateurs, contenu de `indicateurPublicIds` dans l'ordre
   d'insertion.
 - `getCollectionByPublicId.test.ts` : présent, absent (null), ordre des
   indicateurs respecté.
@@ -351,10 +351,10 @@ côté de l'entrée Indicateurs.
 ## Hors scope (v0)
 
 - Endpoints de création / édition / suppression (POST/PUT/DELETE).
-- Permissions sur le collection lui-même (visibilité, principal-based).
+- Permissions sur la collection lui-même (visibilité, principal-based).
 - Filtrage des `indicateurPublicIds` selon les permissions du principal.
 - Recherche / filtres sur la liste des collections.
-- Pagination des indicateurs *à l'intérieur* d'un collection (assumé petite
+- Pagination des indicateurs *à l'intérieur* d'une collection (assumé petite
   collection).
 - Tri / réordonnancement explicite (l'ordre = `createdAt` de la jonction).
 

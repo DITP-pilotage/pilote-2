@@ -165,7 +165,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           <li
             key={herite.publicId}
             className="flex items-center gap-2 text-text-subtle"
-            title="Lecture héritée via ce collection"
+            title="Lecture héritée via cette collection"
           >
             <span className="min-w-0 flex-1 truncate text-xs">{herite.nom}</span>
             <span className="shrink-0 font-mono text-xs">{herite.publicId}</span>
@@ -226,7 +226,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
       {isEmpty ? (
         <EmptyState
           title="Aucune permission"
-          description="Ce principal n'a aucune permission directe. Ajoutez un collection ou un indicateur."
+          description="Ce principal n'a aucune permission directe. Ajoutez une collection ou un indicateur."
         />
       ) : null}
 
@@ -253,7 +253,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           disabled={disabled}
           onClick={() => setModal('collection')}
         >
-          + Ajouter un collection
+          + Ajouter une collection
         </Button>,
         {
           onToggleWrite: toggleCollectionWrite,

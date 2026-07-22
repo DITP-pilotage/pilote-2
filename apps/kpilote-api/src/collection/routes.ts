@@ -59,7 +59,7 @@ const getCollectionsRoute = createRoute({
   tags: ['Collection'],
   summary: "Lister les collections d'indicateurs",
   description:
-    "Chaque item inclut `indicateurIds`, triés par ordre d'insertion dans le collection (createdAt ASC de la jonction).",
+    "Chaque item inclut `indicateurIds`, triés par ordre d'insertion dans la collection (createdAt ASC de la jonction).",
   middleware: [requireAuthentication],
   request: { query: listCollectionsQuerySchema },
   responses: {
@@ -80,7 +80,7 @@ const getCollectionByIdRoute = createRoute({
   method: 'get',
   path: '/collections/{id}',
   tags: ['Collection'],
-  summary: 'Récupérer un collection par identifiant public',
+  summary: 'Récupérer une collection par identifiant public',
   description:
     "La réponse inclut `indicateurIds` triés par ordre d'insertion (createdAt ASC de la jonction).",
   middleware: [requireAuthentication],
@@ -99,18 +99,18 @@ const getCollectionTauxProgressionRoute = createRoute({
   method: 'get',
   path: '/collections/{id}/taux-progression',
   tags: ['Collection'],
-  summary: "Récupérer le taux de progression agrégé d'un collection pour un individu",
+  summary: "Récupérer le taux de progression agrégé d'une collection pour un individu",
   description:
     'Retourne la moyenne pondérée du dernier taux de progression connu de chaque indicateur ' +
-    "du collection pour l'individu demandé. La pondération est lue sur la jonction " +
-    '`collection_indicateur.ponderation` (par défaut 1). Règle tout-ou-rien : si au moins un indicateur du collection ' +
+    "de la collection pour l'individu demandé. La pondération est lue sur la jonction " +
+    '`collection_indicateur.ponderation` (par défaut 1). Règle tout-ou-rien : si au moins un indicateur de la collection ' +
     "n'a pas de dernier taux calculable (aucun objectif, aucune valeur, ou dernier point avec " +
     '`valeurCible = 0`), le champ `tauxProgression` global vaut `null`. Le tableau ' +
     "`contributions` est toujours renseigné, ce qui permet au client d'identifier les " +
     'indicateurs bloquants. Granularité de troncature fixée à `month` (cf. ' +
     '`docs/architecture/taux-progression.md`). Le taux est tronqué à 2 décimales (ROUND_DOWN) ' +
     'pour préserver la sémantique « ne jamais afficher 100 % avant atteinte stricte ». ' +
-    "Renvoie 404 (`ENTITY_NOT_FOUND`) si le collection ou l'individu est introuvable.",
+    "Renvoie 404 (`ENTITY_NOT_FOUND`) si la collection ou l'individu est introuvable.",
   middleware: [requireAuthentication],
   request: {
     params: detailParamsSchema,
@@ -119,7 +119,7 @@ const getCollectionTauxProgressionRoute = createRoute({
   responses: {
     200: {
       content: { 'application/json': { schema: CollectionTauxProgressionApiModelSchema } },
-      description: "Taux de progression du collection pour l'individu demandé",
+      description: "Taux de progression de la collection pour l'individu demandé",
     },
     400: erreur400,
     404: erreur404,
@@ -184,7 +184,7 @@ const creerCollectionCommentaireRoute = createRoute({
   method: 'post',
   path: '/collections/{collectionId}/commentaires',
   tags: ['Collection'],
-  summary: 'Créer un commentaire global sur un collection',
+  summary: 'Créer un commentaire global sur une collection',
   middleware: [requireAuthentication],
   request: {
     params: collectionCommentaireParamsSchema,
@@ -212,7 +212,7 @@ const listerCollectionCommentairesRoute = createRoute({
   method: 'get',
   path: '/collections/{collectionId}/commentaires',
   tags: ['Collection'],
-  summary: "Lister les commentaires globaux d'un collection",
+  summary: "Lister les commentaires globaux d'une collection",
   middleware: [requireAuthentication],
   request: {
     params: collectionCommentaireParamsSchema,

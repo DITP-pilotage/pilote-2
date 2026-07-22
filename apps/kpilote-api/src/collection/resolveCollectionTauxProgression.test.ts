@@ -15,7 +15,7 @@ const c = (overrides: Partial<IndicateurContribution> = {}): IndicateurContribut
 })
 
 describe('resolveCollectionTauxProgression', () => {
-  it('retourne null pour un collection vide', () => {
+  it('retourne null pour une collection vide', () => {
     const result = resolveCollectionTauxProgression([])
     expect(result.tauxProgression).toBeNull()
     expect(result.contributions).toEqual([])

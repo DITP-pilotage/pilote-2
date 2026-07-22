@@ -8,7 +8,7 @@ import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('getCollectionTauxProgression', () => {
   it(
-    'retourne null avec contributions vides pour un collection vide',
+    'retourne null avec contributions vides pour une collection vide',
     integrationTest(async () => {
       await fixtures.collection({
         publicId: 'COL-PROG-EMPTY',
@@ -328,7 +328,7 @@ describe.concurrent('getCollectionTauxProgression', () => {
   )
 
   it(
-    'lève une erreur sur un collection PRIVE sans permission',
+    'lève une erreur sur une collection PRIVE sans permission',
     integrationTest(async () => {
       await fixtures.collection({
         publicId: 'COL-PROG-PRIV',
@@ -345,7 +345,7 @@ describe.concurrent('getCollectionTauxProgression', () => {
   )
 
   it(
-    "autorise l'accès à un collection PRIVE avec permission READ",
+    "autorise l'accès à une collection PRIVE avec permission READ",
     integrationTest(async () => {
       const refId = testReferentielId()
       const deptId = testDeptId()
