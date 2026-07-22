@@ -11,7 +11,7 @@ import {
   type ValidationIssueApiModel,
 } from '@pilote/kpilote-shared/error'
 import { apiClient } from '@/api/client'
-import type { ParsedRow } from '@/components/import-valeurs/parseFichierValeurs'
+import type { ParsedRow } from '@/components/import-valeurs/lecture/matriceVersRows'
 
 export type ImportBatchError =
   | { type: 'BATCH_INVALID'; details: BatchInvalidErrorDetailsApiModel }

@@ -1,7 +1,7 @@
 import type { DataTableColumn } from '@pilote/kpilote-ui/DataTable'
 import { DataTable } from '@pilote/kpilote-ui/DataTable'
 
-import type { ParsedRow } from './parseFichierValeurs'
+import type { ParsedRow } from './lecture/matriceVersRows'
 
 const MAX_LIGNES_AFFICHEES = 100
 

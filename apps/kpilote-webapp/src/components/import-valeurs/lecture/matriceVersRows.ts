@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { MAX_VALEURS_PAR_BATCH } from '@pilote/kpilote-shared/valeurAvancement'
+import { celluleVersTexte } from './celluleXlsx'
 
 export type ParseError =
   | { code: 'EMPTY' }
@@ -12,15 +13,6 @@ export type ParseResult = { ok: true; rows: ParsedRow[] } | { ok: false; error: 
 const COLONNES = ['individu', 'date', 'valeur'] as const
 
 const pad = (valeur: number): string => String(valeur).padStart(2, '0')
-
-const celluleVersTexte = (cellule: unknown): string => {
-  if (cellule == null) return ''
-  if (typeof cellule === 'string') return cellule
-  if (typeof cellule === 'number' || typeof cellule === 'boolean' || typeof cellule === 'bigint') {
-    return String(cellule)
-  }
-  return ''
-}
 
 export function formatDateCell({ cell }: { cell: unknown }): string {
   if (cell instanceof Date) {
@@ -44,25 +36,9 @@ const rowSchema = z.object({
 
 export type ParsedRow = z.infer<typeof rowSchema>
 
-export async function parseFichierValeurs({ file }: { file: File }): Promise<ParseResult> {
-  const XLSX = await import('xlsx')
-  let matrice: unknown[][]
-  try {
-    const data = await file.arrayBuffer()
-    const workbook = XLSX.read(data, { type: 'array', cellDates: true })
-    const nomFeuille = workbook.SheetNames[0]
-    if (nomFeuille === undefined) return { ok: false, error: { code: 'UNREADABLE' } }
-    const feuille = workbook.Sheets[nomFeuille]
-    if (feuille === undefined) return { ok: false, error: { code: 'UNREADABLE' } }
-    matrice = XLSX.utils.sheet_to_json<unknown[]>(feuille, {
-      header: 1,
-      raw: true,
-      blankrows: false,
-    })
-  } catch {
-    return { ok: false, error: { code: 'UNREADABLE' } }
-  }
-
+// Projection stricte d'une matrice de cellules vers des lignes normalisées.
+// Attend les colonnes individu, date, valeur (ordre et casse libres).
+export function matriceVersRows({ matrice }: { matrice: unknown[][] }): ParseResult {
   const [ligneEntetes, ...lignesSuivantes] = matrice
   if (ligneEntetes === undefined) return { ok: false, error: { code: 'EMPTY' } }
 
@@ -71,11 +47,11 @@ export async function parseFichierValeurs({ file }: { file: File }): Promise<Par
   const missing = COLONNES.filter((nom) => (indexParColonne.get(nom) ?? -1) < 0)
   if (missing.length > 0) return { ok: false, error: { code: 'MISSING_COLUMNS', missing } }
 
-  // After the missing check, all three columns are guaranteed present — indexOf returns a valid number
+  // Après le check missing, les trois colonnes sont garanties présentes.
   const indices = {
-    individu: entetes.indexOf('individu'),
-    date: entetes.indexOf('date'),
-    valeur: entetes.indexOf('valeur'),
+    individu: indexParColonne.get('individu') ?? -1,
+    date: indexParColonne.get('date') ?? -1,
+    valeur: indexParColonne.get('valeur') ?? -1,
   }
 
   const lignesData = lignesSuivantes.filter((ligne) =>

@@ -1,16 +1,19 @@
-import { useState, type ChangeEvent, type DragEvent } from 'react'
-import { Upload } from 'lucide-react'
+import { useState } from 'react'
+import { Loader2 } from 'lucide-react'
 import { useForm, useWatch } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useQuery } from '@tanstack/react-query'
 import { ModaleForm } from '@pilote/kpilote-ui/ModaleForm'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { ImportError } from '@/api/valeursImport'
 import { useImportValeursBatch } from '@/mutations/valeursImport'
-import { parseFichierValeurs, type ParseResult } from './parseFichierValeurs'
+import { type ParseError } from './lecture/matriceVersRows'
+import { useImportValeurs } from './useImportValeurs'
 import { traduireErreursBatch, traduireIssuesValidation } from './traduireErreursBatch'
-import { ImportPreviewTable } from './ImportPreviewTable'
+import { EncadreMessage } from './EncadreMessage'
+import { ImportDropZone } from './ImportDropZone'
+import { ImportFormatValide } from './ImportFormatValide'
+import { NormalisationRevue } from './NormalisationRevue'
 import type { ImportTarget } from './useImportModal'
 
 const schema = z.object({
@@ -19,14 +22,14 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>
 
-const messageParseError = (result: Extract<ParseResult, { ok: false }>): string => {
-  switch (result.error.code) {
+const messageParseError = (error: ParseError): string => {
+  switch (error.code) {
     case 'EMPTY':
       return 'Le fichier ne contient aucune ligne de données.'
     case 'TOO_MANY_ROWS':
-      return `${result.error.count} lignes — la limite est de ${result.error.max} lignes par import. Scindez le fichier.`
+      return `${error.count} lignes — la limite est de ${error.max} lignes par import. Scindez le fichier.`
     case 'MISSING_COLUMNS':
-      return `Colonne(s) manquante(s) : ${result.error.missing.join(', ')}. Attendu : individu, date, valeur.`
+      return `Colonne(s) manquante(s) : ${error.missing.join(', ')}. Attendu : individu, date, valeur.`
     case 'UNREADABLE':
       return "Fichier illisible. Vérifiez qu'il s'agit d'un CSV ou d'un Excel valide."
   }
@@ -48,35 +51,13 @@ export function ImportValeursModal({
     defaultValues: { file: target.initialFile ?? null } as unknown as FormValues,
   })
 
-  const file = useWatch({ control: form.control, name: 'file' })
+  const file = useWatch({ control: form.control, name: 'file' }) ?? null
 
-  const parseQuery = useQuery({
-    queryKey: ['import-parse', file?.name, file?.size, file?.lastModified],
-    queryFn: () => {
-      // `enabled: file != null` guarantees file is defined when queryFn runs
-      if (!file) throw new Error('file attendu')
-      return parseFichierValeurs({ file })
-    },
-    enabled: file != null,
-  })
-
-  const parseResult = parseQuery.data
-  const rows = parseResult?.ok ? parseResult.rows : null
+  const { etat, payload } = useImportValeurs({ file, indicateurId: target.indicateur.id })
 
   const onFileChange = (newFile: File) => {
     form.setValue('file', newFile, { shouldValidate: true })
     setErreursServeur([])
-  }
-
-  const onInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const picked = event.target.files?.[0]
-    if (picked) onFileChange(picked)
-  }
-
-  const onDrop = (event: DragEvent<HTMLLabelElement>) => {
-    event.preventDefault()
-    const dropped = event.dataTransfer.files?.[0]
-    if (dropped) onFileChange(dropped)
   }
 
   const genericToast = () => {
@@ -88,10 +69,10 @@ export function ImportValeursModal({
   }
 
   const onSubmit = async () => {
-    if (!rows) return
+    if (!payload || payload.length === 0) return
     setErreursServeur([])
     try {
-      const result = await mutation.mutateAsync(rows)
+      const result = await mutation.mutateAsync(payload)
       toast({
         title: 'Import réussi.',
         description: `${result.created} créée(s) · ${result.updated} mise(s) à jour`,
@@ -114,9 +95,54 @@ export function ImportValeursModal({
     }
   }
 
-  const submitLabel = rows
-    ? `Importer ${rows.length} valeur${rows.length > 1 ? 's' : ''}`
-    : 'Importer'
+  const submitLabel =
+    payload && payload.length > 0
+      ? `Importer ${payload.length} valeur${payload.length > 1 ? 's' : ''}`
+      : 'Importer'
+
+  const encadreChargement = (texte: string) => (
+    <EncadreMessage>
+      <span className="flex items-center gap-2">
+        <Loader2 className="size-4 animate-spin" />
+        {texte}
+      </span>
+    </EncadreMessage>
+  )
+
+  // Zone de dépôt + message d'erreur éventuel (format non parsable ou échec Albert)
+  // invitant à re-déposer un fichier.
+  const zoneDepot = (error?: ParseError) => (
+    <>
+      <ImportDropZone onFile={onFileChange} />
+      {error ? <EncadreMessage variant="erreur">{messageParseError(error)}</EncadreMessage> : null}
+    </>
+  )
+
+  const body = () => {
+    switch (etat.kind) {
+      case 'vide':
+        return zoneDepot()
+      case 'lecture':
+        return encadreChargement('Analyse du fichier en cours…')
+      case 'albertEnCours':
+        return encadreChargement(
+          'Format non standard détecté — extraction assistée par IA en cours…',
+        )
+      case 'standard':
+        return (
+          <ImportFormatValide
+            nomFichier={etat.nomFichier}
+            rows={etat.rows}
+            erreursServeur={erreursServeur}
+          />
+        )
+      case 'albertRevue':
+        return <NormalisationRevue revue={etat.revue} erreursServeur={erreursServeur} />
+      case 'illisible':
+      case 'albertEchec':
+        return zoneDepot(etat.error)
+    }
+  }
 
   return (
     <ModaleForm
@@ -128,54 +154,9 @@ export function ImportValeursModal({
       onSubmit={onSubmit}
       submitLabel={submitLabel}
       submitPendingLabel="Import en cours…"
-      submitDisabled={!rows}
+      submitDisabled={!payload || payload.length === 0}
     >
-      {rows ? (
-        <>
-          <div className="mb-3 flex items-center justify-between text-sm">
-            <span className="font-medium text-text">
-              {file?.name} · {rows.length} ligne{rows.length > 1 ? 's' : ''}
-            </span>
-          </div>
-          {erreursServeur.length > 0 ? (
-            <div className="mb-3 rounded-lg border border-red-marianne/30 bg-red-marianne/5 px-4 py-3 text-sm">
-              <p className="font-medium text-red-marianne">
-                Aucune valeur n'a été appliquée. Corrigez puis réessayez :
-              </p>
-              <ul className="mt-2 space-y-1">
-                {erreursServeur.map((message, index) => (
-                  <li key={index} className="text-text-muted">
-                    {message}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
-          <ImportPreviewTable rows={rows} />
-        </>
-      ) : (
-        <>
-          <label
-            onDragOver={(event) => event.preventDefault()}
-            onDrop={onDrop}
-            className="flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-border bg-background/60 px-6 py-12 text-center hover:bg-background"
-          >
-            <Upload className="size-10 text-text-subtle" />
-            <div>
-              <p className="text-sm font-medium text-text">Glissez un fichier ou parcourez</p>
-              <p className="mt-1 text-xs text-text-subtle">
-                CSV ou Excel · colonnes individu, date, valeur · 1000 lignes max
-              </p>
-            </div>
-            <input type="file" accept=".csv,.xlsx" className="hidden" onChange={onInputChange} />
-          </label>
-          {parseResult && !parseResult.ok ? (
-            <p className="mt-3 rounded-lg border border-red-marianne/30 bg-red-marianne/5 px-4 py-3 text-sm text-red-marianne">
-              {messageParseError(parseResult)}
-            </p>
-          ) : null}
-        </>
-      )}
+      {body()}
     </ModaleForm>
   )
 }

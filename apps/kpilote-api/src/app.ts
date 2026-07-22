@@ -20,6 +20,7 @@ import { referentielRoutes } from '@/referentiel/routes'
 import { objectifIndicateurIndividuRoutes } from '@/objectifIndicateurIndividu/routes'
 import { utilisateurRoutes } from '@/utilisateur/routes'
 import { valeurAvancementRoutes } from '@/valeurAvancement/routes'
+import { valeurImportRoutes } from '@/valeurImport/routes'
 import { whoamiRoutes } from '@/whoami/routes'
 
 export const app = new OpenAPIHono()
@@ -39,6 +40,7 @@ app.get('/', (context) => context.json({ hello: 'world' }))
 app.route('/', health)
 app.route('/', indicateurRoutes)
 app.route('/', valeurAvancementRoutes)
+app.route('/', valeurImportRoutes)
 app.route('/', objectifIndicateurIndividuRoutes)
 app.route('/', referentielRoutes)
 app.route('/', individuRoutes)

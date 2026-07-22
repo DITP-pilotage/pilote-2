@@ -26,6 +26,7 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
   LOG_TO_DATABASE: z.stringbool().default(false),
   MAX_ASYNC_CONCURRENCY: z.coerce.number().int().positive().default(5),
+  ALBERT_API_KEY: z.string().min(1).optional(),
 })
 
 export type Env = z.infer<typeof envSchema>
