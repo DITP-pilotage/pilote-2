@@ -12,7 +12,7 @@ import {
 import { apiClient } from '@/api/client'
 
 export const fetchReferentiels = async (
-  params: { cursor?: string } = {},
+  params: { cursor?: string; scope?: string } = {},
 ): Promise<ReferentielListApiModel> => {
   const json = await apiClient.get('referentiels', { searchParams: params }).json()
   return referentielListApiModelSchema.parse(json)

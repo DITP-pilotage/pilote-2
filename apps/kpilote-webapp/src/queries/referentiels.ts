@@ -32,6 +32,18 @@ export const allReferentielsQueryOptions = queryOptions({
   staleTime: DEFAULT_STALE_TIME,
 })
 
+// Référentiels pertinents pour la page selon le scope (`me` = indicateurs
+// lisibles par l'utilisateur, `panier:<publicId>` = indicateurs du panier).
+export const pertinentReferentielsQueryOptions = (scope: string) =>
+  queryOptions({
+    queryKey: ['referentiels', 'pertinents', scope],
+    queryFn: () =>
+      fetchAllPaginatedItems((cursor) =>
+        fetchReferentiels({ scope, ...(cursor ? { cursor } : {}) }),
+      ),
+    staleTime: DEFAULT_STALE_TIME,
+  })
+
 export const loadAllReferentielIds = async ({
   queryClient,
 }: {

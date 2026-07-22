@@ -95,7 +95,7 @@ function RootReferentielsCommandStep({
 }
 
 // Étape 2 : choix d'un individu dans la hiérarchie complète du référentiel racine.
-function ReferentielSelectCommandStep({
+export function ReferentielSelectCommandStep({
   referentielNom,
   nodes,
   value,
