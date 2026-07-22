@@ -25,13 +25,13 @@ function RootComponent() {
           <Link
             to="/"
             className="flex items-stretch gap-5 transition-opacity hover:opacity-80"
-            aria-label="Accueil Pilote"
+            aria-label="Accueil KPilote"
           >
             <Marianne />
             <span className="hidden w-px bg-border sm:block" aria-hidden />
             <span className="hidden flex-col justify-center gap-0.5 sm:flex">
               <span className="text-xl font-bold uppercase leading-none tracking-tight text-text">
-                Pilote
+                KPilote
               </span>
               <span className="text-sm font-normal text-text-muted">
                 Piloter l'action publique par les résultats
@@ -43,17 +43,41 @@ function RootComponent() {
         </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 py-6 sm:px-8 sm:py-10">
+      <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-6 py-6 sm:px-10 sm:py-10">
         <Outlet />
       </main>
 
-      <footer className="border-t border-border bg-surface-tinted">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between sm:px-10">
-          <span>Pilote — République Française</span>
-          <div className="flex flex-wrap gap-x-5 gap-y-2">
-            <span>Accessibilité</span>
-            <span>Mentions légales</span>
-            <span>Données personnelles</span>
+      <footer className="border-t-2 border-primary bg-surface">
+        <div className="mx-auto max-w-7xl px-6 py-10 sm:px-10">
+          <div className="flex flex-col gap-8 pb-8 sm:flex-row sm:gap-12">
+            <Marianne className="shrink-0" />
+            <div className="max-w-2xl">
+              <p className="text-sm leading-relaxed text-text-muted">
+                À DÉFINIR — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+              </p>
+            </div>
+          </div>
+
+          <div className="border-t border-border pt-6">
+            <ul className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-text-muted">
+              <li>
+                <Link to="/accessibilite" className="transition-colors hover:text-primary">
+                  Accessibilité : non conforme
+                </Link>
+              </li>
+              <li>
+                <Link to="/mentions-legales" className="transition-colors hover:text-primary">
+                  Mentions légales
+                </Link>
+              </li>
+              <li>
+                <Link to="/donnees-personnelles" className="transition-colors hover:text-primary">
+                  Données personnelles et cookies
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
       </footer>

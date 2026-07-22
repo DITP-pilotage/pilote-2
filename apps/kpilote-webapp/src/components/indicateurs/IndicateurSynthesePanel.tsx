@@ -82,7 +82,7 @@ export function IndicateurSynthesePanel({
                   {formatMonthYearNumericFr(derniere.date)}
                 </Text>
                 {variation !== null && variation !== 0 && (
-                  <Pill tone={variation > 0 ? 'success' : 'warning'} className="mt-3 w-fit">
+                  <Pill tone={variation > 0 ? 'success' : 'warning'} className="mt-3 w-fit text-sm">
                     {variation > 0 ? '↑' : '↓'} {variation > 0 ? 'EN HAUSSE' : 'EN BAISSE'} :{' '}
                     {formatVariationFr(variation)}
                   </Pill>

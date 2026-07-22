@@ -2,7 +2,7 @@ import { type UniteIndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
 import { useSuspenseQueries } from '@tanstack/react-query'
 
 import { IndicateurProgression } from '@/components/indicateurs/IndicateurProgression'
-import { formatNumberAvecUniteFr } from '@/lib/format'
+import { formatMonthYearNumericFr, formatNumberAvecUniteFr } from '@/lib/format'
 import { dernierValeurIndividuQueryOptions } from '@/queries/dernieresValeurs'
 import { tauxProgressionIndividuQueryOptions } from '@/queries/tauxProgression'
 
@@ -42,6 +42,7 @@ export function IndicateurAvancement({
       <span className="text-2xl font-bold leading-none text-blue-cumulus">
         {formatNumberAvecUniteFr(data.valeur, unite)}
       </span>
+      <span className="text-xs text-text-muted">{formatMonthYearNumericFr(data.date)}</span>
       {tauxData?.tauxProgression != null && (
         <div className="mt-auto pt-4">
           <IndicateurProgression

@@ -22,9 +22,7 @@ export function AdminHeader({
           <Marianne />
           <span className="hidden w-px bg-border sm:block" aria-hidden />
           <span className="hidden flex-col justify-center gap-0.5 sm:flex">
-            <span className="text-xl font-bold uppercase leading-none tracking-tight">
-              Pilote MB
-            </span>
+            <span className="text-xl font-bold uppercase leading-none tracking-tight">KPilote</span>
             <span className="text-sm text-text-muted">Console d'administration</span>
           </span>
         </Link>

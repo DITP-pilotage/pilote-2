@@ -3,6 +3,7 @@ import { Search } from 'lucide-react'
 import { Suspense, useState } from 'react'
 
 import { CommandPalette } from '@/components/command-palette/CommandPalette'
+import { ContacterEquipe } from '@/components/ContacterEquipe'
 import { RaccourciKbd } from '@/components/command-palette/RaccourciKbd'
 import { UserMenu } from '@/components/UserMenu'
 import { Button } from '@pilote/kpilote-ui/Button'
@@ -35,18 +36,22 @@ export function HeaderNav({ auth }: { auth: Auth }) {
 
         <div className="mx-2 hidden h-6 w-px bg-border sm:block" />
 
-        {auth.isAuthenticated && auth.user ? (
-          <UserMenu
-            user={auth.user}
-            onLogout={() => {
-              void auth.logout()
-            }}
-          />
-        ) : (
-          <Button size="sm" type="button" onClick={() => void navigate({ to: '/login' })}>
-            Se connecter
-          </Button>
-        )}
+        <div className="flex flex-col items-start">
+          <ContacterEquipe />
+
+          {auth.isAuthenticated && auth.user ? (
+            <UserMenu
+              user={auth.user}
+              onLogout={() => {
+                void auth.logout()
+              }}
+            />
+          ) : (
+            <Button size="sm" type="button" onClick={() => void navigate({ to: '/login' })}>
+              Se connecter
+            </Button>
+          )}
+        </div>
       </nav>
 
       {auth.isAuthenticated ? (
