@@ -32,7 +32,7 @@ export function EnsembleIndividuSelect({
       <PopoverPrimitive.Trigger
         id={id}
         className={clsxm(
-          'inline-flex w-full min-w-[18rem] items-center justify-between gap-2 rounded-md border border-border bg-surface px-3 py-2.5 text-left text-sm font-medium text-text sm:min-w-[25rem]',
+          'inline-flex min-w-[16rem] items-center justify-between gap-2 rounded-md border border-border bg-surface px-3 py-2.5 text-left text-sm font-medium text-text',
           'hover:border-border-strong',
           'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
           'data-[state=open]:border-primary',
