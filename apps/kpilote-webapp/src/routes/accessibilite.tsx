@@ -34,7 +34,8 @@ function AccessibilitePage() {
           </a>
         </Text>
         <Text>
-          Cette déclaration d'accessibilité s'applique à PILOTE (pilote.ditp@modernisation.gouv.fr).
+          Cette déclaration d'accessibilité s'applique à KPILOTE
+          (pilote.ditp@modernisation.gouv.fr).
         </Text>
       </section>
 
@@ -42,7 +43,7 @@ function AccessibilitePage() {
         <Heading as="h2" size="lg">
           Etat de conformité
         </Heading>
-        <Text>PILOTE est non conforme avec le RGAA. Le site n'a pas encore été audité.</Text>
+        <Text>KPILOTE est non conforme avec le RGAA. Le site n'a pas encore été audité.</Text>
       </section>
 
       <section className="space-y-3">
@@ -51,8 +52,8 @@ function AccessibilitePage() {
         </Heading>
         <Text>
           Si vous n'arrivez pas à accéder à un contenu ou à un service, vous pouvez contacter
-          l'équipe de PILOTE pour être orienté vers une alternative accessible ou obtenir le contenu
-          sous une autre forme.
+          l'équipe de KPILOTE pour être orienté vers une alternative accessible ou obtenir le
+          contenu sous une autre forme.
         </Text>
         <ul className="list-disc space-y-1 pl-5">
           <Text as="li">E-mail: pilote.ditp@modernisation.gouv.fr</Text>

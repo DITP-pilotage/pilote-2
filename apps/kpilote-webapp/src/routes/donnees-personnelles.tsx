@@ -20,7 +20,7 @@ function DonneesPersonnellesPage() {
         <Text>
           La Direction interministérielle de la transformation publique (mission Pilotage), située
           au 20 avenue de Ségur, 75007 Paris, est responsable du traitement des données personnelles
-          pour le site PILOTE et ses fonctionnalités, y compris le chatbot expérimental.
+          pour le site KPILOTE et ses fonctionnalités, y compris le chatbot expérimental.
         </Text>
         <Text>
           Pour toute question relative à la protection des données, vous pouvez contacter :
@@ -73,7 +73,7 @@ function DonneesPersonnellesPage() {
 
         <div className="space-y-3">
           <Heading as="h3" size="md">
-            Cookies utilisés sur PILOTE
+            Cookies utilisés sur KPILOTE
           </Heading>
           <Text>Deux types de cookies sont déposés :</Text>
 
@@ -127,7 +127,7 @@ function DonneesPersonnellesPage() {
 
         <div className="space-y-3">
           <Heading as="h3" size="md">
-            Traitement des données via le site PILOTE
+            Traitement des données via le site KPILOTE
           </Heading>
           <Text>
             Conformément au RGPD et à la loi &quot;Informatique et Libertés&quot; du 6 janvier 1978
@@ -171,7 +171,7 @@ function DonneesPersonnellesPage() {
 
         <div className="space-y-3">
           <Heading as="h3" size="md">
-            Dans le cadre de l&apos;expérimentation Assistant IA PILOTE
+            Dans le cadre de l&apos;expérimentation Assistant IA KPILOTE
           </Heading>
 
           <Heading as="h4" size="sm" tone="primary">

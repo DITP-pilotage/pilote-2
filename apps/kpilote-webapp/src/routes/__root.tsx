@@ -25,13 +25,13 @@ function RootComponent() {
           <Link
             to="/"
             className="flex items-stretch gap-5 transition-opacity hover:opacity-80"
-            aria-label="Accueil Pilote"
+            aria-label="Accueil KPilote"
           >
             <Marianne />
             <span className="hidden w-px bg-border sm:block" aria-hidden />
             <span className="hidden flex-col justify-center gap-0.5 sm:flex">
               <span className="text-xl font-bold uppercase leading-none tracking-tight text-text">
-                Pilote
+                KPilote
               </span>
               <span className="text-sm font-normal text-text-muted">
                 Piloter l'action publique par les résultats
@@ -54,7 +54,7 @@ function RootComponent() {
               République Française
             </p>
             <p className="text-sm leading-relaxed text-text-muted">
-              PILOTE est le dispositif de suivi des politiques prioritaires du gouvernement. Il
+              KPILOTE est le dispositif de suivi des politiques prioritaires du gouvernement. Il
               permet d'évaluer les résultats des politiques publiques dans les territoires.
             </p>
           </div>
