@@ -21,9 +21,17 @@ export function DashboardSwitch() {
       aria-label="Basculer entre indicateurs et dossiers"
       value={vue}
       onValueChange={(prochaineVue) => {
+        // On transporte les deux modèles de sélection : `/indicateurs` lit
+        // `individus` (sélection par ensemble) et strippe le reste ; `/paniers`
+        // (liste, ancien modèle) lit `individu`/`referentiel`. Chaque face ignore
+        // ce qu'elle ne connaît pas.
         void navigate({
           to: ROUTE_BY_VUE[prochaineVue],
-          search: { individu: search.individu, referentiel: search.referentiel },
+          search: {
+            individus: search.individus,
+            individu: search.individu,
+            referentiel: search.referentiel,
+          },
         })
       }}
       options={[

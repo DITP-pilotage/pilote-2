@@ -1,8 +1,6 @@
-import { individuPublicIdSchema } from '@pilote/kpilote-shared/individu'
-import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
 import { panierPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
-import { useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
+import { useSuspenseQuery, useSuspenseQueries } from '@tanstack/react-query'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { startTransition, Suspense } from 'react'
 import { z } from 'zod'
 
@@ -10,7 +8,7 @@ import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { SectionCommentaire } from '@/components/commentaires/SectionCommentaire'
 import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
-import { FieldIndividuSelect } from '@/components/indicateurs/FieldIndividuSelect'
+import { IndividusSelectorBar } from '@/components/indicateurs/IndividusSelectorBar'
 import { PanierCommentaireConfigProvider } from '@/components/paniers/PanierCommentaireConfigProvider'
 import { PanierGouvernanceTab } from '@/components/paniers/PanierGouvernanceTab'
 import { PanierTauxProgression } from '@/components/paniers/PanierTauxProgression'
@@ -20,7 +18,15 @@ import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Page } from '@pilote/kpilote-ui/Page'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tabs'
 import { Text } from '@pilote/kpilote-ui/Typography'
-import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
+import {
+  buildOrderedNodes,
+  filterGroupsForReferentiels,
+  groupNodesByRootReferentiel,
+  pickRoot,
+  resolveIndividuForIndicateur,
+  type ReferentielGroup,
+} from '@/lib/individus/hierarchy'
+import { parseIndividusParam, serializeIndividusParam } from '@/lib/individus/selection'
 import { useRecordVisit } from '@/lib/recentlyVisited'
 import { indicateursQueryOptions } from '@/queries/indicateurs'
 import {
@@ -28,17 +34,31 @@ import {
   panierQueryOptions,
   panierTauxProgressionQueryOptions,
 } from '@/queries/paniers'
-import { allReferentielsQueryOptions, loadAllReferentielIds } from '@/queries/referentiels'
+import {
+  loadHierarchyFromReferentiels,
+  pertinentReferentielsQueryOptions,
+  referentielIndividusQueryOptions,
+} from '@/queries/referentiels'
 
 const paramsSchema = z.object({
   id: panierPublicIdSchema,
 })
 
 const searchSchema = z.object({
-  individu: individuPublicIdSchema.optional(),
-  referentiel: referentielPublicIdSchema.optional(),
+  individus: z.string().optional(),
   onglet: z.enum(['resultats', 'gouvernance', 'confiance', 'commentaires']).default('resultats'),
 })
+
+// Individu de l'agrégat panier : uniquement défini quand le panier tient dans un
+// seul ensemble (sinon le taux global n'a pas de sens — masqué, cf. PIL-1677).
+const singleEnsembleIndividu = (
+  groups: ReadonlyArray<ReferentielGroup>,
+  selected: ReadonlyMap<string, string>,
+): string | null => {
+  if (groups.length !== 1) return null
+  const group = groups[0]!
+  return selected.get(group.referentiel.id) ?? pickRoot(group.nodes)?.individu.id ?? null
+}
 
 export const Route = createFileRoute('/_authenticated/paniers/$id')({
   params: {
@@ -46,35 +66,25 @@ export const Route = createFileRoute('/_authenticated/paniers/$id')({
     stringify: ({ id }) => ({ id }),
   },
   validateSearch: searchSchema,
-  loaderDeps: ({ search }) => ({ individu: search.individu, referentiel: search.referentiel }),
-  loader: async ({ context, params, deps, location }) => {
+  loaderDeps: ({ search }) => ({ individus: search.individus }),
+  loader: async ({ context, params, deps }) => {
     const { queryClient } = context
     const panier = await loadPanier({ queryClient, panierId: params.id })
     if (panier.indicateurIds.length > 0) {
       await queryClient.ensureQueryData(indicateursQueryOptions({ ids: panier.indicateurIds }))
     }
 
-    const referentielIds = await loadAllReferentielIds({ queryClient })
-    await ensureIndividuReferentielPair({
-      queryClient,
-      referentielIds,
-      deps,
-      onMismatch: ({ individu, referentiel }) => {
-        throw redirect({
-          to: '/paniers/$id',
-          params,
-          // On préserve le reste du search (onglet…) : seul le couple
-          // individu/referentiel est corrigé. Sinon un lien profond vers un
-          // onglet (ex. depuis la palette ⌘K) le perdrait au redirect.
-          search: { ...location.search, individu, referentiel },
-          replace: true,
-        })
-      },
-    })
+    const referentiels = await queryClient.ensureQueryData(
+      pertinentReferentielsQueryOptions(`panier:${params.id}`),
+    )
+    const referentielIds = referentiels.map((r) => r.id)
+    const nodes = await loadHierarchyFromReferentiels({ queryClient, referentielIds })
+    const groups = filterGroupsForReferentiels(groupNodesByRootReferentiel(nodes), referentielIds)
 
-    if (deps.individu) {
+    const individu = singleEnsembleIndividu(groups, parseIndividusParam(deps.individus))
+    if (individu) {
       await queryClient.prefetchQuery(
-        panierTauxProgressionQueryOptions({ panierId: params.id, individu: deps.individu }),
+        panierTauxProgressionQueryOptions({ panierId: params.id, individu }),
       )
     }
 
@@ -94,8 +104,33 @@ function PanierDetailComponent() {
   const { data: indicateurs } = useSuspenseQuery(
     indicateursQueryOptions({ ids: panier.indicateurIds }),
   )
-  const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
+  const { data: referentiels } = useSuspenseQuery(
+    pertinentReferentielsQueryOptions(`panier:${id}`),
+  )
   const referentielIds = referentiels.map((r) => r.id)
+  const individusByReferentiel = useSuspenseQueries({
+    queries: referentielIds.map((refId) => referentielIndividusQueryOptions(refId)),
+    combine: (results) => results.map((r) => r.data),
+  })
+
+  const referentielsById = new Map(referentiels.map((r) => [r.id, r] as const))
+  const nodes = buildOrderedNodes(
+    individusByReferentiel.flatMap((batch) => [...batch]),
+    referentielsById,
+  )
+  const groups = filterGroupsForReferentiels(groupNodesByRootReferentiel(nodes), referentielIds)
+  const selected = parseIndividusParam(search.individus)
+  const panierIndividu = singleEnsembleIndividu(groups, selected)
+
+  const onSelect = (rootReferentielId: string, individuId: string) => {
+    const next = new Map(selected)
+    next.set(rootReferentielId, individuId)
+    startTransition(() => {
+      void navigate({
+        search: (prev) => ({ ...prev, individus: serializeIndividusParam(next) }),
+      })
+    })
+  }
 
   // Re-tri selon l'ordre du panier : la query indicateurs ne garantit pas
   // l'ordre du filtre `ids`.
@@ -106,16 +141,11 @@ function PanierDetailComponent() {
 
   const back = (
     <BackLink asChild>
-      <Link to="/paniers" search={{ individu: search.individu, referentiel: search.referentiel }}>
+      <Link to="/paniers" search={{}}>
         Tableau de bord
       </Link>
     </BackLink>
   )
-
-  const cardContext =
-    search.individu && search.referentiel
-      ? { individu: search.individu, referentiel: search.referentiel }
-      : undefined
 
   return (
     <Page title={panier.nom} description={panier.description ?? undefined} back={back}>
@@ -136,28 +166,16 @@ function PanierDetailComponent() {
 
         <TabsContent value="resultats">
           <div className="flex flex-col gap-6">
-            {search.individu && (
-              <>
-                {/* Sélecteur d'individu propre à l'onglet Résultats : positionné sous
-                    la navigation primaire et masqué sur les autres onglets. */}
-                <div className="max-w-md">
-                  <FieldIndividuSelect
-                    referentielIds={referentielIds}
-                    value={search.individu}
-                    onChange={({ individu, referentiel }) => {
-                      startTransition(() => {
-                        void navigate({
-                          search: (prev) => ({ ...prev, individu, referentiel }),
-                        })
-                      })
-                    }}
-                  />
-                </div>
-                <div className="max-w-xs">
-                  <PanierTauxProgression panierId={id} individu={search.individu} />
-                </div>
-              </>
-            )}
+            {/* Sélecteur d'individu par ensemble, propre à l'onglet Résultats. */}
+            <IndividusSelectorBar groups={groups} selected={selected} onSelect={onSelect} />
+
+            {/* Taux global du panier : affiché seulement quand le panier tient dans
+                un seul ensemble (un individu applicable non ambigu). */}
+            {panierIndividu ? (
+              <div className="max-w-xs">
+                <PanierTauxProgression panierId={id} individu={panierIndividu} />
+              </div>
+            ) : null}
 
             <Text as="span" variant="kicker" tone="muted">
               {orderedIndicateurs.length} indicateur{orderedIndicateurs.length > 1 ? 's' : ''}
@@ -166,13 +184,22 @@ function PanierDetailComponent() {
               <EmptyState title="Ce panier ne contient aucun indicateur." />
             ) : (
               <CardGrid>
-                {orderedIndicateurs.map((indicateur) => (
-                  <IndicateurCard
-                    key={indicateur.id}
-                    indicateur={indicateur}
-                    {...(cardContext ? { context: cardContext } : {})}
-                  />
-                ))}
+                {orderedIndicateurs.map((indicateur) => {
+                  const resolved = resolveIndividuForIndicateur({
+                    indicateurReferentielIds: indicateur.referentiels.map((r) => r.id),
+                    selectedByRoot: selected,
+                    groups,
+                  })
+                  return (
+                    <IndicateurCard
+                      key={indicateur.id}
+                      indicateur={indicateur}
+                      {...(resolved
+                        ? { context: { individu: resolved.individu.id, individus: search.individus } }
+                        : {})}
+                    />
+                  )
+                })}
               </CardGrid>
             )}
           </div>
