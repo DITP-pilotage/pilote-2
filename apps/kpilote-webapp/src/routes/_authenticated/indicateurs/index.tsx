@@ -123,7 +123,7 @@ function IndicateursListComponent() {
                     ? {
                         context: {
                           individu: resolved.individu.id,
-                          referentiel: resolved.referentiel.id,
+                          individus: search.individus,
                         },
                       }
                     : {})}

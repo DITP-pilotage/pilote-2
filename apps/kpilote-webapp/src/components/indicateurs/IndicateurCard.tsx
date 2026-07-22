@@ -9,8 +9,11 @@ import {
 import { EntityCard } from '@pilote/kpilote-ui/EntityCard'
 
 export type IndicateurCardContext = {
+  // Individu résolu pour cet indicateur (publicId) — sert à l'affichage de l'avancement.
   individu: string
-  referentiel: string
+  // Sélection complète par ensemble (search `individus`), propagée telle quelle
+  // au détail : la page détail y résout l'individu de son propre ensemble.
+  individus?: string | undefined
 }
 
 export function IndicateurCard({
@@ -36,7 +39,11 @@ export function IndicateurCard({
         ) : undefined
       }
     >
-      <Link to="/indicateurs/$id" params={{ id: indicateur.id }} search={context ?? {}} />
+      <Link
+        to="/indicateurs/$id"
+        params={{ id: indicateur.id }}
+        search={context ? { individus: context.individus } : {}}
+      />
     </EntityCard>
   )
 }
