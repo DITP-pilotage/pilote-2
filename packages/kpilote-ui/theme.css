@@ -19,8 +19,8 @@
   --color-surface-muted: #f6f6f6;
 
   /* Borders */
-  --color-border: #ececec;
-  --color-border-strong: #e0e0e0;
+  --color-border: #e0e0e0;
+  --color-border-strong: #cecece;
 
   --shadow-raised: 0 1px 3px rgba(0, 0, 18, 0.16);
 

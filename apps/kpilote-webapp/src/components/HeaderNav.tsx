@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
-import { Search } from 'lucide-react'
+import { Mail, Search } from 'lucide-react'
 import { Suspense, useState } from 'react'
 
 import { CommandPalette } from '@/components/command-palette/CommandPalette'
@@ -34,6 +34,14 @@ export function HeaderNav({ auth }: { auth: Auth }) {
         ) : null}
 
         <div className="mx-2 hidden h-6 w-px bg-border sm:block" />
+
+        <a
+          href="mailto:pilote.ditp@modernisation.gouv.fr"
+          className="hidden items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-surface-tinted sm:inline-flex"
+        >
+          <Mail className="size-4" />
+          Contacter l'équipe PILOTE
+        </a>
 
         {auth.isAuthenticated && auth.user ? (
           <UserMenu
