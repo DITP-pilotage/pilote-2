@@ -48,12 +48,26 @@ function RootComponent() {
       </main>
 
       <footer className="border-t border-border bg-surface-tinted">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-xs text-text-muted sm:flex-row sm:items-center sm:justify-between sm:px-10">
-          <span>Pilote — République Française</span>
-          <div className="flex flex-wrap gap-x-5 gap-y-2">
-            <span>Accessibilité</span>
-            <span>Mentions légales</span>
-            <span>Données personnelles</span>
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-10 sm:px-10">
+          <div className="max-w-2xl space-y-3">
+            <p className="text-sm font-bold uppercase tracking-tight text-text">
+              République Française
+            </p>
+            <p className="text-sm leading-relaxed text-text-muted">
+              PILOTE est le dispositif de suivi des politiques prioritaires du gouvernement. Il
+              permet d'évaluer les résultats des politiques publiques dans les territoires.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 border-t border-border pt-6 text-sm text-text-muted">
+            <Link to="/accessibilite" className="transition-colors hover:text-primary">
+              Accessibilité : non conforme
+            </Link>
+            <Link to="/mentions-legales" className="transition-colors hover:text-primary">
+              Mentions légales
+            </Link>
+            <Link to="/donnees-personnelles" className="transition-colors hover:text-primary">
+              Données personnelles et cookies
+            </Link>
           </div>
         </div>
       </footer>
