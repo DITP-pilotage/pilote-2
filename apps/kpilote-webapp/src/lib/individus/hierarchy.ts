@@ -71,3 +71,13 @@ export const groupNodesByRootReferentiel = (
   }
   return groups
 }
+
+// Renvoie l'id du référentiel *racine* du groupe contenant l'individu donné
+// (utilisé pour ouvrir par défaut le bon collapsible dans le sélecteur), ou null
+// si l'individu n'appartient à aucun groupe.
+export const findRootReferentielIdForIndividu = (
+  groups: ReadonlyArray<ReferentielGroup>,
+  individuId: string,
+): string | null =>
+  groups.find((group) => group.nodes.some((node) => node.individu.id === individuId))?.referentiel
+    .id ?? null
