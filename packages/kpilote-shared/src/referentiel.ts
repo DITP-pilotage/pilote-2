@@ -29,7 +29,8 @@ export const referentielListApiModelSchema = createPaginatedApiListSchema(refere
 export type ReferentielListApiModel = z.infer<typeof referentielListApiModelSchema>
 
 export const referentielScopeSchema = z
-  .union([z.literal('me'), z.string().regex(/^panier:.+$/)])
+  .string()
+  .regex(/^(me|panier:.+)$/)
   .describe(
     "Restreint aux référentiels reliés à ≥1 indicateur pertinent : `me` (indicateurs lisibles par l'utilisateur) ou `panier:<publicId>` (indicateurs du panier).",
   )
