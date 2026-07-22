@@ -213,10 +213,9 @@ export const decouvrirStructure = ({
       )
       return output
     }),
-  ).andThen(
-    (output): Result<Plan, DecouvrirStructureError> =>
-      output.statut === 'echec'
-        ? err({ type: 'PLAN_ECHEC', raison: output.raison, explication: output.explication })
-        : ok(output.plan),
+  ).andThen((output): Result<Plan, DecouvrirStructureError> =>
+    output.statut === 'echec'
+      ? err({ type: 'PLAN_ECHEC', raison: output.raison, explication: output.explication })
+      : ok(output.plan),
   )
 }

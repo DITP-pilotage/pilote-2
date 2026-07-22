@@ -19,12 +19,12 @@ départements réels du seed (`prisma/seedData/geo.ts`).
 
 ## Fichiers
 
-| Fichier | Chemin testé | Attendu |
-|---|---|---|
-| `01_import_normal.csv` | Import normal | Aperçu direct, 36 lignes (12 dépts × 3 ans), import batch. |
-| `02_import_albert_long.csv` | Fallback Albert — layout `long` | Headers `Département/Période/Émissions`, noms de dépts, dates FR mélangées → normalisation puis revue. |
-| `03_import_albert_pivot.csv` | Fallback Albert — layout `pivot` | Années en colonnes (`2021/2022/2023`) → normalisation puis revue. |
-| `04_import_albert_echec.csv` | Fallback Albert — échec | Pas de colonne valeur/individu exploitable → `PLAN_ECHEC` (message d'erreur). |
+| Fichier                      | Chemin testé                     | Attendu                                                                                                |
+| ---------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `01_import_normal.csv`       | Import normal                    | Aperçu direct, 36 lignes (12 dépts × 3 ans), import batch.                                             |
+| `02_import_albert_long.csv`  | Fallback Albert — layout `long`  | Headers `Département/Période/Émissions`, noms de dépts, dates FR mélangées → normalisation puis revue. |
+| `03_import_albert_pivot.csv` | Fallback Albert — layout `pivot` | Années en colonnes (`2021/2022/2023`) → normalisation puis revue.                                      |
+| `04_import_albert_echec.csv` | Fallback Albert — échec          | Pas de colonne valeur/individu exploitable → `PLAN_ECHEC` (message d'erreur).                          |
 
 > ⚠️ Les fichiers Albert nécessitent `ALBERT_API_KEY` côté `kpilote-api`. Sans
 > configuration, le fallback renvoie `ALBERT_NON_CONFIGURE` et l'UI retombe sur le

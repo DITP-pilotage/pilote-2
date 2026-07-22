@@ -256,8 +256,7 @@ export const resoudreIndividus = ({
       )
       return derniereTentative
     }),
-  ).andThen(
-    (tentative): Result<ResolutionResult, ResoudreIndividusError> =>
-      tentative ? ok(tentative) : err({ type: 'RESOLUTION_ECHEC', derniereErreur }),
+  ).andThen((tentative): Result<ResolutionResult, ResoudreIndividusError> =>
+    tentative ? ok(tentative) : err({ type: 'RESOLUTION_ECHEC', derniereErreur }),
   )
 }

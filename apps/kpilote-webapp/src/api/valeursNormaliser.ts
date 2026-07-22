@@ -9,9 +9,7 @@ import {
 import { apiClient } from '@/api/client'
 
 export type NormaliserError =
-  | { type: 'PLAN_ECHEC'; message: string }
-  | { type: 'RESOLUTION_ECHEC' }
-  | { type: 'UNKNOWN' }
+  { type: 'PLAN_ECHEC'; message: string } | { type: 'RESOLUTION_ECHEC' } | { type: 'UNKNOWN' }
 
 const mapErrorBody = (body: unknown): NormaliserError => {
   const parsed = normaliserErrorApiModelSchema.safeParse(body)
