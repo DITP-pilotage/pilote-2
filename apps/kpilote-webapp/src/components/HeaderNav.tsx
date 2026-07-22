@@ -36,7 +36,7 @@ export function HeaderNav({ auth }: { auth: Auth }) {
 
         <div className="mx-2 hidden h-6 w-px bg-border sm:block" />
 
-        <div className="flex flex-col items-start gap-1">
+        <div className="flex flex-col items-start">
           <ContacterEquipe />
 
           {auth.isAuthenticated && auth.user ? (

@@ -50,11 +50,12 @@ function RootComponent() {
       <footer className="border-t-2 border-primary bg-surface">
         <div className="mx-auto max-w-7xl px-6 py-10 sm:px-10">
           <div className="flex flex-col gap-8 pb-8 sm:flex-row sm:gap-12">
-            <Marianne className="shrink-0 text-base" />
+            <Marianne className="shrink-0" />
             <div className="max-w-2xl">
               <p className="text-sm leading-relaxed text-text-muted">
-                KPILOTE est le dispositif de suivi des politiques prioritaires du gouvernement. Il
-                permet d'évaluer les résultats des politiques publiques dans les territoires.
+                À DÉFINIR — Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+                tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+                nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
               </p>
             </div>
           </div>
