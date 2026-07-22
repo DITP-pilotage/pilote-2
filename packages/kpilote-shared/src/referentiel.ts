@@ -28,7 +28,17 @@ export type ReferentielApiModel = z.infer<typeof referentielApiModelSchema>
 export const referentielListApiModelSchema = createPaginatedApiListSchema(referentielApiModelSchema)
 export type ReferentielListApiModel = z.infer<typeof referentielListApiModelSchema>
 
-export const listReferentielsQuerySchema = listQuerySchema
+export const referentielScopeSchema = z
+  .string()
+  .regex(/^(me|panier:.+)$/)
+  .describe(
+    "Restreint aux référentiels reliés à ≥1 indicateur pertinent : `me` (indicateurs lisibles par l'utilisateur) ou `panier:<publicId>` (indicateurs du panier).",
+  )
+export type ReferentielScope = z.infer<typeof referentielScopeSchema>
+
+export const listReferentielsQuerySchema = listQuerySchema.extend({
+  scope: referentielScopeSchema.optional(),
+})
 export type ListReferentielsQuery = z.infer<typeof listReferentielsQuerySchema>
 
 export const upsertReferentielIndividuItemSchema = z.object({

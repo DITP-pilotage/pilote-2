@@ -36,7 +36,7 @@ export function PanierCard({
         </>
       }
     >
-      <Link to="/paniers/$id" params={{ id: panier.id }} search={context ?? {}} />
+      <Link to="/paniers/$id" params={{ id: panier.id }} search={{}} />
     </EntityCard>
   )
 }

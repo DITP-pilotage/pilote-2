@@ -37,7 +37,7 @@ const getReferentielsRoute = createRoute({
   tags: ['Referentiel'],
   summary: 'Lister les référentiels',
   description:
-    'Retourne la liste paginée des référentiels avec un filtre de recherche par nom. La pagination est cursor-based : passez `cursor` (renvoyé dans la réponse précédente) pour obtenir la page suivante. Chaque item inclut `nombreIndividus` (population du référentiel).',
+    'Retourne la liste paginée des référentiels avec un filtre de recherche par nom. La pagination est cursor-based : passez `cursor` (renvoyé dans la réponse précédente) pour obtenir la page suivante. Chaque item inclut `nombreIndividus` (population du référentiel). Paramètre optionnel `scope` (`me` ou `panier:<publicId>`) pour ne renvoyer que les référentiels reliés à au moins un indicateur pertinent (respectivement lisible par l’utilisateur, ou appartenant au panier).',
   middleware: [requireAuthentication],
   request: { query: listReferentielsQuerySchema },
   responses: {
@@ -127,9 +127,9 @@ const getIndividusForReferentielRoute = createRoute({
 export const referentielRoutes = createOpenApiHono()
 
 referentielRoutes.openapi(getReferentielsRoute, async (context) => {
-  const { recherche, cursor, pageSize } = context.req.valid('query')
+  const { recherche, cursor, pageSize, scope } = context.req.valid('query')
 
-  return listReferentiels({ recherche, cursor, pageSize }).match(
+  return listReferentiels({ recherche, cursor, pageSize, scope }).match(
     (data) =>
       jsonResponseOk({
         context,

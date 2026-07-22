@@ -2,7 +2,13 @@ import { type IndividuApiModel } from '@pilote/kpilote-shared/individu'
 import { type ReferentielApiModel } from '@pilote/kpilote-shared/referentiel'
 import { describe, expect, it } from 'vitest'
 
-import { buildOrderedNodes, groupNodesByRootReferentiel, pickRoot } from './hierarchy'
+import {
+  buildOrderedNodes,
+  filterGroupsForReferentiels,
+  groupNodesByRootReferentiel,
+  pickRoot,
+  resolveIndividuForIndicateur,
+} from './hierarchy'
 
 const referentiel = (id: string, nom: string): ReferentielApiModel => ({
   id,
@@ -167,5 +173,93 @@ describe('groupNodesByRootReferentiel', () => {
 
   it('renvoie un tableau vide sans nœud', () => {
     expect(groupNodesByRootReferentiel([])).toEqual([])
+  })
+})
+
+// Forêt de référence : un ensemble France (NAT > REG > DEPT) et un ensemble Bassins.
+const buildReferenceGroups = () => {
+  const refNat = referentiel('REF-NAT', 'France (national)')
+  const refReg = referentiel('REF-REG', 'Régions')
+  const refDept = referentiel('REF-DEPT', 'Départements')
+  const refBv = referentiel('REF-BV', 'Bassins versants')
+  const refsById = new Map([
+    [refNat.id, refNat],
+    [refReg.id, refReg],
+    [refDept.id, refDept],
+    [refBv.id, refBv],
+  ])
+  const fr = individu('IND-FR', 'France', 'REF-NAT')
+  const idf = individu('IND-IDF', 'Île-de-France', 'REF-REG', ['IND-FR'])
+  const paris = individu('IND-PARIS', 'Paris', 'REF-DEPT', ['IND-IDF'])
+  const bv = individu('IND-BV1', 'Rhône', 'REF-BV')
+  return groupNodesByRootReferentiel(buildOrderedNodes([fr, idf, paris, bv], refsById))
+}
+
+describe('filterGroupsForReferentiels', () => {
+  it("ne garde que les groupes dont l'arbre intersecte les référentiels voulus", () => {
+    const groups = buildReferenceGroups()
+
+    const kept = filterGroupsForReferentiels(groups, ['REF-DEPT'])
+
+    expect(kept.map((g) => g.referentiel.id)).toEqual(['REF-NAT'])
+  })
+
+  it('renvoie tous les groupes concernés et exclut les autres', () => {
+    const groups = buildReferenceGroups()
+
+    const kept = filterGroupsForReferentiels(groups, ['REF-REG', 'REF-BV'])
+
+    expect(kept.map((g) => g.referentiel.id)).toEqual(['REF-NAT', 'REF-BV'])
+  })
+})
+
+describe('resolveIndividuForIndicateur', () => {
+  it("renvoie l'individu sélectionné quand son référentiel est associé à l'indicateur", () => {
+    const groups = buildReferenceGroups()
+
+    const res = resolveIndividuForIndicateur({
+      indicateurReferentielIds: ['REF-DEPT'],
+      selectedByRoot: new Map([['REF-NAT', 'IND-PARIS']]),
+      groups,
+    })
+
+    expect(res?.individu.id).toBe('IND-PARIS')
+  })
+
+  it('ignore un individu dont le référentiel n’est pas associé et retombe sur le défaut applicable', () => {
+    const groups = buildReferenceGroups()
+
+    // Indicateur région-only, mais un département est sélectionné → ignoré au profit de la région.
+    const res = resolveIndividuForIndicateur({
+      indicateurReferentielIds: ['REF-REG'],
+      selectedByRoot: new Map([['REF-NAT', 'IND-PARIS']]),
+      groups,
+    })
+
+    expect(res?.individu.id).toBe('IND-IDF')
+  })
+
+  it('utilise le premier nœud applicable en l’absence de sélection', () => {
+    const groups = buildReferenceGroups()
+
+    const res = resolveIndividuForIndicateur({
+      indicateurReferentielIds: ['REF-BV'],
+      selectedByRoot: new Map(),
+      groups,
+    })
+
+    expect(res?.individu.id).toBe('IND-BV1')
+  })
+
+  it('renvoie null si aucun ensemble ne correspond', () => {
+    const groups = buildReferenceGroups()
+
+    const res = resolveIndividuForIndicateur({
+      indicateurReferentielIds: ['REF-INCONNU'],
+      selectedByRoot: new Map(),
+      groups,
+    })
+
+    expect(res).toBeNull()
   })
 })

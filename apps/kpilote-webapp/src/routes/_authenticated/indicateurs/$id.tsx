@@ -1,8 +1,6 @@
 import { indicateurPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
-import { individuPublicIdSchema } from '@pilote/kpilote-shared/individu'
-import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
-import { useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
+import { useSuspenseQuery, useSuspenseQueries } from '@tanstack/react-query'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Upload } from 'lucide-react'
 import { startTransition, useCallback } from 'react'
 import { z } from 'zod'
@@ -11,7 +9,7 @@ import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetadonnees'
 import { IndicateurResultatsTab } from '@/components/indicateurs/IndicateurResultatsTab'
-import { FieldIndividuSelect } from '@/components/indicateurs/FieldIndividuSelect'
+import { IndividusSelectorBar } from '@/components/indicateurs/IndividusSelectorBar'
 import { useImportModal } from '@/components/import-valeurs/useImportModal'
 import { usePageFileDrop } from '@/components/import-valeurs/usePageFileDrop'
 import { BackLink } from '@pilote/kpilote-ui/BackLink'
@@ -19,13 +17,24 @@ import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Page } from '@pilote/kpilote-ui/Page'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tabs'
-import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
+import {
+  buildOrderedNodes,
+  filterGroupsForReferentiels,
+  groupNodesByRootReferentiel,
+  resolveIndividuForIndicateur,
+} from '@/lib/individus/hierarchy'
+import { parseIndividusParam, serializeIndividusParam } from '@/lib/individus/selection'
 import { useRecordVisit } from '@/lib/recentlyVisited'
 import {
   indicateurQueryOptions,
   loadIndicateur,
   prefetchIndicateurValeursForIndividu,
 } from '@/queries/indicateurs'
+import {
+  loadHierarchyFromReferentiels,
+  referentielIndividusQueryOptions,
+  referentielQueryOptions,
+} from '@/queries/referentiels'
 import { useCanWriteIndicateur } from '@/queries/mePermissions'
 
 const paramsSchema = z.object({
@@ -33,8 +42,7 @@ const paramsSchema = z.object({
 })
 
 const searchSchema = z.object({
-  individu: individuPublicIdSchema.optional(),
-  referentiel: referentielPublicIdSchema.optional(),
+  individus: z.string().optional(),
   onglet: z.enum(['resultats', 'metadonnees']).default('resultats'),
   sousOnglet: z.enum(['confiance', 'evolution', 'commentaire']).default('confiance'),
 })
@@ -45,35 +53,26 @@ export const Route = createFileRoute('/_authenticated/indicateurs/$id')({
     stringify: ({ id }) => ({ id }),
   },
   validateSearch: searchSchema,
-  loaderDeps: ({ search }) => ({ individu: search.individu, referentiel: search.referentiel }),
-  loader: async ({ context, params, deps, location }) => {
+  loaderDeps: ({ search }) => ({ individus: search.individus }),
+  loader: async ({ context, params, deps }) => {
     const { queryClient } = context
     const indicateur = await loadIndicateur({ queryClient, indicateurId: params.id })
 
     const referentielIds = indicateur.referentiels.map((configuration) => configuration.id)
-    const pair = await ensureIndividuReferentielPair({
-      queryClient,
-      referentielIds,
-      deps,
-      onMismatch: ({ individu, referentiel }) => {
-        throw redirect({
-          to: '/indicateurs/$id',
-          params,
-          // On préserve le reste du search (onglet, sousOnglet…) : seul le
-          // couple individu/referentiel est corrigé. Sinon un lien profond vers
-          // un sous-onglet (ex. depuis la palette ⌘K) le perdrait au redirect.
-          search: { ...location.search, individu, referentiel },
-          replace: true,
-        })
-      },
+    const nodes = await loadHierarchyFromReferentiels({ queryClient, referentielIds })
+    const groups = filterGroupsForReferentiels(groupNodesByRootReferentiel(nodes), referentielIds)
+    const resolved = resolveIndividuForIndicateur({
+      indicateurReferentielIds: referentielIds,
+      selectedByRoot: parseIndividusParam(deps.individus),
+      groups,
     })
 
-    if (pair) {
+    if (resolved) {
       await prefetchIndicateurValeursForIndividu({
         queryClient,
         indicateurId: params.id,
-        individuId: pair.individu,
-        referentielId: pair.referentiel,
+        individuId: resolved.individu.id,
+        referentielId: resolved.referentiel.id,
       })
     }
 
@@ -95,6 +94,29 @@ function IndicateurDetailComponent() {
   const canWrite = useCanWriteIndicateur(id)
   const { open, target } = useImportModal()
 
+  const referentielIds = indicateur.referentiels.map((c) => c.id)
+  const referentielsData = useSuspenseQueries({
+    queries: referentielIds.map((refId) => referentielQueryOptions(refId)),
+    combine: (results) => results.map((r) => r.data),
+  })
+  const individusByReferentiel = useSuspenseQueries({
+    queries: referentielIds.map((refId) => referentielIndividusQueryOptions(refId)),
+    combine: (results) => results.map((r) => r.data),
+  })
+
+  const referentielsById = new Map(referentielsData.map((r) => [r.id, r] as const))
+  const nodes = buildOrderedNodes(
+    individusByReferentiel.flatMap((batch) => [...batch]),
+    referentielsById,
+  )
+  const groups = filterGroupsForReferentiels(groupNodesByRootReferentiel(nodes), referentielIds)
+  const selected = parseIndividusParam(search.individus)
+  const resolved = resolveIndividuForIndicateur({
+    indicateurReferentielIds: referentielIds,
+    selectedByRoot: selected,
+    groups,
+  })
+
   const onFile = useCallback(
     (file: File) =>
       open({ indicateur: { id: indicateur.id, nom: indicateur.nom }, initialFile: file }),
@@ -103,6 +125,16 @@ function IndicateurDetailComponent() {
   // Désactive le drop de page quand la modale d'import est ouverte : le drop doit
   // viser la dropzone de la modale, pas déclencher un second overlay par-dessus.
   const { isDragging } = usePageFileDrop({ enabled: canWrite && target === null, onFile })
+
+  const onSelect = (rootReferentielId: string, individuId: string) => {
+    const next = new Map(selected)
+    next.set(rootReferentielId, individuId)
+    startTransition(() => {
+      void navigate({
+        search: (prev) => ({ ...prev, individus: serializeIndividusParam(next) }),
+      })
+    })
+  }
 
   const actionsFiche = canWrite ? (
     <Button
@@ -117,10 +149,7 @@ function IndicateurDetailComponent() {
 
   const back = (
     <BackLink asChild>
-      <Link
-        to="/indicateurs"
-        search={{ individu: search.individu, referentiel: search.referentiel }}
-      >
+      <Link to="/indicateurs" search={{ individus: search.individus }}>
         Tableau de bord
       </Link>
     </BackLink>
@@ -134,7 +163,7 @@ function IndicateurDetailComponent() {
     )
   }
 
-  if (!search.individu || !search.referentiel) {
+  if (!resolved) {
     return (
       <Page title={indicateur.nom} back={back}>
         <EmptyState title="Aucun individu disponible dans les référentiels liés." />
@@ -142,10 +171,9 @@ function IndicateurDetailComponent() {
     )
   }
 
-  const individuId = search.individu
-  const referentielId = search.referentiel
-  const referentielIds = indicateur.referentiels.map((c) => c.id)
-  const referentielNom = indicateur.referentiels.find((c) => c.id === referentielId)?.nom ?? null
+  const individuId = resolved.individu.id
+  const referentielId = resolved.referentiel.id
+  const referentielNom = resolved.referentiel.nom
 
   return (
     <Page title={indicateur.nom} back={back} actions={actionsFiche}>
@@ -164,21 +192,9 @@ function IndicateurDetailComponent() {
 
         <TabsContent value="resultats">
           <div className="flex flex-col gap-8">
-            {/* Sélecteur d'individu propre à l'onglet Résultats : positionné sous la
-                navigation primaire et masqué sur l'onglet Informations. */}
-            <div className="max-w-md">
-              <FieldIndividuSelect
-                referentielIds={referentielIds}
-                value={individuId}
-                onChange={({ individu, referentiel }) => {
-                  startTransition(() => {
-                    void navigate({
-                      search: (prev) => ({ ...prev, individu, referentiel }),
-                    })
-                  })
-                }}
-              />
-            </div>
+            {/* Sélecteur d'individu propre à l'onglet Résultats : un seul ensemble
+                pour un indicateur donné (règle du ticket). */}
+            <IndividusSelectorBar groups={groups} selected={selected} onSelect={onSelect} />
             <IndicateurResultatsTab
               indicateurId={id}
               individuId={individuId}
