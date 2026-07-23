@@ -1,5 +1,6 @@
-import { Collapsible as CollapsiblePrimitive, Popover as PopoverPrimitive } from 'radix-ui'
+import { Popover as PopoverPrimitive } from 'radix-ui'
 import { useSuspenseQueries } from '@tanstack/react-query'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@pilote/kpilote-ui/Collapsible'
 import { Command, defaultFilter } from 'cmdk'
 import { Check, ChevronDown, ChevronRight, Search } from 'lucide-react'
 import { useMemo, useState, type ReactNode } from 'react'
@@ -123,8 +124,8 @@ function ReferentielGroupSection({
   children: ReactNode
 }) {
   return (
-    <CollapsiblePrimitive.Root open={isExpanded} onOpenChange={onToggle}>
-      <CollapsiblePrimitive.Trigger className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm font-medium text-text hover:bg-surface-tinted">
+    <Collapsible open={isExpanded} onOpenChange={onToggle}>
+      <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm font-medium text-text hover:bg-surface-tinted">
         <ChevronRight
           className={clsxm(
             'size-4 shrink-0 text-text-muted transition-transform',
@@ -135,9 +136,9 @@ function ReferentielGroupSection({
         <span className="shrink-0 rounded-full bg-surface-tinted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
           {count}
         </span>
-      </CollapsiblePrimitive.Trigger>
-      <CollapsiblePrimitive.Content>{children}</CollapsiblePrimitive.Content>
-    </CollapsiblePrimitive.Root>
+      </CollapsibleTrigger>
+      <CollapsibleContent>{children}</CollapsibleContent>
+    </Collapsible>
   )
 }
 
