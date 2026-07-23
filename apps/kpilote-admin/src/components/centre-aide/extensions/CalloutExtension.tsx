@@ -5,38 +5,14 @@ import {
   ReactNodeViewRenderer,
   type NodeViewProps,
 } from '@tiptap/react'
-import { Callout, COULEURS_CALLOUT, type CalloutColor } from '@pilote/kpilote-ui/centre-aide'
+import { Callout, type CalloutColor } from '@pilote/kpilote-ui/centre-aide'
 
-const LIBELLES: Record<CalloutColor, string> = {
-  info: 'Info',
-  success: 'Succès',
-  warning: 'Attention',
-  error: 'Alerte',
-}
-
-function CalloutNodeView({ node, updateAttributes, editor }: NodeViewProps) {
+function CalloutNodeView({ node }: NodeViewProps) {
   const color = (node.attrs.color as CalloutColor) ?? 'info'
   return (
     <NodeViewWrapper className="my-2">
       <Callout color={color}>
-        <div className="min-w-0 flex-1">
-          {editor.isEditable ? (
-            <div contentEditable={false} className="mb-1">
-              <select
-                value={color}
-                onChange={(event) => updateAttributes({ color: event.target.value })}
-                className="rounded border border-border bg-surface px-1 py-0.5 text-xs"
-              >
-                {COULEURS_CALLOUT.map((couleur) => (
-                  <option key={couleur} value={couleur}>
-                    {LIBELLES[couleur]}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ) : null}
-          <NodeViewContent />
-        </div>
+        <NodeViewContent />
       </Callout>
     </NodeViewWrapper>
   )
