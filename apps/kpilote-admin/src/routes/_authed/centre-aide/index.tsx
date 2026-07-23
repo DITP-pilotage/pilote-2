@@ -1,7 +1,7 @@
 import type { ArticleCentreAideApiModel } from '@pilote/kpilote-shared/centreAide'
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Eye, EyeOff, FilePlus2, FolderPlus, RotateCcw, Trash2 } from 'lucide-react'
+import { ExternalLink, Eye, EyeOff, FilePlus2, FolderPlus, RotateCcw, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 import {
@@ -17,10 +17,12 @@ import { Breadcrumb } from '@/components/Breadcrumb'
 import { EditeurCentreAide } from '@/components/centre-aide/EditeurCentreAide'
 import { aDesModificationsNonPubliees, construireArbre } from '@/components/centre-aide/arbre'
 import { PageHeading } from '@/components/PageHeading'
+import { useAppConfig } from '@/context/AppConfigContext'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { clsxm } from '@/lib/clsxm'
 import { extractApiError } from '@/lib/apiError'
+import { urlWebappArticle } from '@/lib/webapp'
 import {
   articlesCentreAideCorbeilleQueryOptions,
   articlesCentreAideQueryOptions,
@@ -240,6 +242,8 @@ function EditionArticle({
   onEnregistre: () => Promise<unknown>
 }) {
   const toast = useToast()
+  const { environment } = useAppConfig()
+  const urlArticle = urlWebappArticle(environment, article.id)
   const [titre, setTitre] = useState(article.titreBrouillon || article.titre)
   const [contenu, setContenu] = useState(article.contenuBrouillon || article.contenu)
 
@@ -286,6 +290,13 @@ function EditionArticle({
           placeholder="Titre de la page"
           className="flex-1 rounded-md border border-border px-3 py-2 text-lg font-bold outline-none focus:border-primary"
         />
+        {urlArticle ? (
+          <Button asChild variant="tertiary" title="Ouvrir l’article publié dans le webapp">
+            <a href={urlArticle} target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="size-4" /> Accéder à cet article
+            </a>
+          </Button>
+        ) : null}
         <Button variant="secondary" onClick={() => enregistrer.mutate()} disabled={enAttente}>
           Enregistrer
         </Button>

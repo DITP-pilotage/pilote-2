@@ -8,12 +8,16 @@ import { clsxm } from '@/lib/clsxm'
 import { articlesCentreAidePubliesQueryOptions } from '@/queries/centreAide'
 
 export const Route = createFileRoute('/_authenticated/centre-aide/')({
+  validateSearch: (search: Record<string, unknown>): { article: string | undefined } => ({
+    article: typeof search.article === 'string' ? search.article : undefined,
+  }),
   component: CentreAidePage,
 })
 
 function CentreAidePage() {
+  const { article: articleParam } = Route.useSearch()
   const { data: articles, isPending, isError } = useQuery(articlesCentreAidePubliesQueryOptions())
-  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [selectedId, setSelectedId] = useState<string | null>(articleParam ?? null)
 
   if (isPending) return <Text tone="muted">Chargement…</Text>
   if (isError) return <Text tone="muted">Le centre d’aide est momentanément indisponible.</Text>

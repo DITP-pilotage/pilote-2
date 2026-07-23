@@ -78,7 +78,11 @@ function RootComponent() {
                 </Link>
               </li>
               <li>
-                <Link to="/centre-aide" className="transition-colors hover:text-primary">
+                <Link
+                  to="/centre-aide"
+                  search={{ article: undefined }}
+                  className="transition-colors hover:text-primary"
+                >
                   Centre d’aide
                 </Link>
               </li>
