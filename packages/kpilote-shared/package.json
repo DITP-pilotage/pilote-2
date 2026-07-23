@@ -28,6 +28,10 @@
       "types": "./src/commentaire.ts",
       "default": "./src/commentaire.ts"
     },
+    "./centreAide": {
+      "types": "./src/centreAide.ts",
+      "default": "./src/centreAide.ts"
+    },
     "./console": {
       "types": "./src/console.ts",
       "default": "./src/console.ts"
