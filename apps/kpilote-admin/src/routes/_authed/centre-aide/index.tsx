@@ -57,6 +57,7 @@ function CentreAideComponent() {
       }),
     onSuccess: async (article) => {
       await rafraichir()
+      setCorbeilleOuverte(false)
       setSelectedId(article.id)
     },
     onError: surErreur,
@@ -108,8 +109,11 @@ function CentreAideComponent() {
                 key={noeud.id}
                 noeud={noeud}
                 profondeur={0}
-                selectedId={selectedId}
-                onSelect={setSelectedId}
+                selectedId={corbeilleOuverte ? null : selectedId}
+                onSelect={(id) => {
+                  setCorbeilleOuverte(false)
+                  setSelectedId(id)
+                }}
                 onSupprimer={(id) => suppression.mutate(id)}
                 onVisibilite={(article) => visibilite.mutate(article)}
               />
