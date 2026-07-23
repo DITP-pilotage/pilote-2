@@ -12,3 +12,9 @@ it('rend une iframe vidéo', () => {
   const iframe = container.querySelector('iframe')
   expect(iframe).toHaveAttribute('src', 'https://x/embed')
 })
+
+it('retire l’autoplay de l’URL de la vidéo', () => {
+  const { container } = render(<VideoCentreAide src="https://x/embed?autoplay=1&start=5" />)
+  const iframe = container.querySelector('iframe')
+  expect(iframe?.getAttribute('src')).toBe('https://x/embed?start=5')
+})
