@@ -27,7 +27,7 @@ function CentreAidePage() {
 
   if (articles.length === 0) {
     return (
-      <div className="mx-auto max-w-3xl px-6 py-10">
+      <div>
         <Heading>Centre d’aide</Heading>
         <Text tone="muted">Aucun article n’est publié pour le moment.</Text>
       </div>
@@ -35,7 +35,7 @@ function CentreAidePage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-6xl gap-10 px-6 py-10">
+    <div className="flex gap-10">
       <nav className="w-64 shrink-0">
         <ul className="space-y-0.5 text-sm">
           {articles.map((article) =>
