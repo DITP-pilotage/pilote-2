@@ -7,6 +7,9 @@ import {
   Heading1,
   Heading2,
   Heading3,
+  Heading4,
+  Heading5,
+  Heading6,
   Image as ImageIcon,
   Info,
   List,
@@ -101,28 +104,23 @@ export const construireOptionsBlocs = (editor: Editor): OptionBloc[] => {
     },
     {
       label: 'Titre',
-      keywords: 'titre heading h1 h2 h3',
+      keywords: 'titre heading h1 h2 h3 h4 h5 h6',
       Icon: Heading,
-      sousOptions: [
-        {
-          label: 'Titre H1',
-          keywords: 'titre h1',
-          Icon: Heading1,
-          run: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
-        },
-        {
-          label: 'Titre H2',
-          keywords: 'titre h2',
-          Icon: Heading2,
-          run: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
-        },
-        {
-          label: 'Titre H3',
-          keywords: 'titre h3',
-          Icon: Heading3,
-          run: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
-        },
-      ],
+      sousOptions: (
+        [
+          [1, Heading1],
+          [2, Heading2],
+          [3, Heading3],
+          [4, Heading4],
+          [5, Heading5],
+          [6, Heading6],
+        ] as const
+      ).map(([niveau, Icone]) => ({
+        label: `Titre H${niveau}`,
+        keywords: `titre h${niveau}`,
+        Icon: Icone,
+        run: () => editor.chain().focus().toggleHeading({ level: niveau }).run(),
+      })),
     },
     {
       label: 'Liste à puces',
