@@ -68,6 +68,8 @@ const ListeSlash = forwardRef<ListeHandle, SuggestionProps<OptionBloc>>(
         {sousListe ? (
           <button
             type="button"
+            // Empêche le blur de l'éditeur (qui refermerait la suggestion au clic).
+            onMouseDown={(event) => event.preventDefault()}
             onClick={revenir}
             className="flex w-full items-center gap-2 border-b border-border px-3 py-1.5 text-left text-xs text-text-muted hover:bg-surface-tinted"
           >
@@ -78,6 +80,7 @@ const ListeSlash = forwardRef<ListeHandle, SuggestionProps<OptionBloc>>(
           <button
             key={item.label}
             type="button"
+            onMouseDown={(event) => event.preventDefault()}
             onMouseEnter={() => setIndex(position)}
             onClick={() => choisir(position)}
             className={clsxm(
