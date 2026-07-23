@@ -46,8 +46,8 @@ function BoutonBulle({
 
 const classesContenu = clsxm(
   classesRenduBase,
-  'px-6 py-4 text-text',
-  // Surface d'édition pleine largeur qui occupe toute la hauteur d'écran disponible.
+  'text-text',
+  // Surface d'édition pleine largeur/hauteur, sans marge ni padding.
   '[&_.ProseMirror]:min-h-[calc(100vh-13rem)] [&_.ProseMirror]:outline-none',
   '[&_.ProseMirror_.is-editor-empty:first-child]:before:pointer-events-none',
   '[&_.ProseMirror_.is-editor-empty:first-child]:before:float-left',

@@ -12,11 +12,13 @@ const ListeSlash = forwardRef<ListeHandle, SuggestionProps<OptionBloc>>(
   function ListeSlash(props, ref) {
     const [index, setIndex] = useState(0)
     const [sousListe, setSousListe] = useState<OptionBloc[] | null>(null)
-    // Une nouvelle recherche (frappe) réinitialise le sous-menu et la sélection.
+    // Réinitialise le sous-menu uniquement quand la recherche change (frappe),
+    // pas à chaque mise à jour de Suggestion (props.items change de référence en
+    // continu, ce qui refermait le sous-menu aussitôt ouvert).
     useEffect(() => {
       setSousListe(null)
       setIndex(0)
-    }, [props.items])
+    }, [props.query])
 
     const liste = sousListe ?? props.items
 
