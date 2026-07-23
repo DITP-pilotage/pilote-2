@@ -16,7 +16,7 @@ export const extensionsCentreAide = (
 ): Extensions => [
   // Entrée = nouveau paragraphe (bloc distinct) : la mise en titre ne s'applique
   // qu'au bloc sélectionné, jamais aux lignes adjacentes (PIL-1685 #3).
-  StarterKit.configure({ heading: { levels: [2, 3] }, code: false, codeBlock: false }),
+  StarterKit.configure({ heading: { levels: [1, 2, 3] }, code: false, codeBlock: false }),
   Underline,
   Link.configure({ openOnClick: false }),
   Image.configure({ allowBase64: false, HTMLAttributes: { class: 'max-w-full rounded-md' } }),

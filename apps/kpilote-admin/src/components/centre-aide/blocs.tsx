@@ -3,6 +3,8 @@ import type { Editor } from '@tiptap/react'
 import {
   CircleCheck,
   CircleX,
+  Heading,
+  Heading1,
   Heading2,
   Heading3,
   Image as ImageIcon,
@@ -98,16 +100,29 @@ export const construireOptionsBlocs = (editor: Editor): OptionBloc[] => {
       })),
     },
     {
-      label: 'Titre H2',
-      keywords: 'titre heading h2',
-      Icon: Heading2,
-      run: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
-    },
-    {
-      label: 'Titre H3',
-      keywords: 'titre heading h3',
-      Icon: Heading3,
-      run: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
+      label: 'Titre',
+      keywords: 'titre heading h1 h2 h3',
+      Icon: Heading,
+      sousOptions: [
+        {
+          label: 'Titre H1',
+          keywords: 'titre h1',
+          Icon: Heading1,
+          run: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
+        },
+        {
+          label: 'Titre H2',
+          keywords: 'titre h2',
+          Icon: Heading2,
+          run: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
+        },
+        {
+          label: 'Titre H3',
+          keywords: 'titre h3',
+          Icon: Heading3,
+          run: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
+        },
+      ],
     },
     {
       label: 'Liste à puces',
