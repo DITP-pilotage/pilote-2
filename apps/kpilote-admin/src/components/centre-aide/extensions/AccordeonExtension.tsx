@@ -24,18 +24,10 @@ function AccordeonNodeView({ node, updateAttributes, editor }: NodeViewProps) {
         onOpenChange={setOuvert}
         className="overflow-hidden rounded-md border border-border"
       >
-        <div className="flex items-center gap-2 bg-surface-tinted p-3" contentEditable={false}>
-          <Collapsible.Trigger asChild>
-            <button
-              type="button"
-              aria-label={ouvert ? 'Replier' : 'Déplier'}
-              className="flex shrink-0 text-text-subtle"
-            >
-              <ChevronDown
-                className={clsxm('size-4 transition-transform', !ouvert && '-rotate-90')}
-              />
-            </button>
-          </Collapsible.Trigger>
+        <div
+          className="flex items-center justify-between gap-2 bg-surface-tinted p-4"
+          contentEditable={false}
+        >
           {editor.isEditable ? (
             <input
               value={title}
@@ -46,6 +38,20 @@ function AccordeonNodeView({ node, updateAttributes, editor }: NodeViewProps) {
           ) : (
             <span className="flex-1 text-base font-medium">{title}</span>
           )}
+          <Collapsible.Trigger asChild>
+            <button
+              type="button"
+              aria-label={ouvert ? 'Replier' : 'Déplier'}
+              className="flex shrink-0 text-text-subtle"
+            >
+              <ChevronDown
+                className={clsxm(
+                  'size-5 transition-transform duration-200',
+                  ouvert && 'rotate-180',
+                )}
+              />
+            </button>
+          </Collapsible.Trigger>
         </div>
         <Collapsible.Content forceMount className="data-[state=closed]:hidden">
           <div className="px-4 pb-4 pt-3 text-sm leading-relaxed">
