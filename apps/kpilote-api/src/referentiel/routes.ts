@@ -37,7 +37,7 @@ const getReferentielsRoute = createRoute({
   tags: ['Referentiel'],
   summary: 'Lister les référentiels',
   description:
-    'Retourne la liste paginée des référentiels avec un filtre de recherche par nom. La pagination est cursor-based : passez `cursor` (renvoyé dans la réponse précédente) pour obtenir la page suivante. Chaque item inclut `nombreIndividus` (population du référentiel).',
+    'Retourne la liste paginée des référentiels avec un filtre de recherche par nom. La pagination est cursor-based : passez `cursor` (renvoyé dans la réponse précédente) pour obtenir la page suivante. Chaque item inclut `nombreIndividus` (population du référentiel). Paramètre optionnel `scope=me` pour ne renvoyer que les référentiels reliés à au moins un indicateur lisible par l’utilisateur authentifié.',
   middleware: [requireAuthentication],
   request: { query: listReferentielsQuerySchema },
   responses: {
