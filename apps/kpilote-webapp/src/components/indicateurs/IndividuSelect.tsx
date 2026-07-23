@@ -263,9 +263,7 @@ export function IndividuSelect({ id, referentielIds, value, onChange }: Individu
                     ),
                   )
                 : groups.map((group) => {
-                    const visibleNodes = hasSearch
-                      ? group.nodes.filter(nodeMatches)
-                      : group.nodes
+                    const visibleNodes = hasSearch ? group.nodes.filter(nodeMatches) : group.nodes
                     if (hasSearch && visibleNodes.length === 0) return null
                     const isExpanded = hasSearch ? true : expandedGroups.has(group.referentiel.id)
                     return (
