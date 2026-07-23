@@ -14,14 +14,16 @@ model Principal {
   id        String   @id @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  utilisateur              Utilisateur?
-  apiKey                   ApiKey?
-  indicateurPermissions    IndicateurPermission[]
-  collectionPermissions       CollectionPermission[]
-  commentairesCrees        Commentaire[]          @relation("commentaireCreatedBy")
-  commentairesModifies     Commentaire[]          @relation("commentaireUpdatedBy")
-  niveauxConfianceCrees    NiveauConfiance[]      @relation("niveauConfianceCreatedBy")
-  niveauxConfianceModifies NiveauConfiance[]      @relation("niveauConfianceUpdatedBy")
+  utilisateur                Utilisateur?
+  apiKey                     ApiKey?
+  indicateurPermissions      IndicateurPermission[]
+  collectionPermissions      CollectionPermission[]
+  commentairesCrees          Commentaire[]          @relation("commentaireCreatedBy")
+  commentairesModifies       Commentaire[]          @relation("commentaireUpdatedBy")
+  niveauxConfianceCrees      NiveauConfiance[]      @relation("niveauConfianceCreatedBy")
+  niveauxConfianceModifies   NiveauConfiance[]      @relation("niveauConfianceUpdatedBy")
+  articlesCentreAideCrees    ArticleCentreAide[]    @relation("articleCentreAideCreatedBy")
+  articlesCentreAideModifies ArticleCentreAide[]    @relation("articleCentreAideUpdatedBy")
 
   @@map("principal")
 }
@@ -47,7 +49,7 @@ model Utilisateur {
   identites                 IdentiteExterne[]
   responsabilitesCollection    CollectionResponsable[]
   responsabilitesIndicateur IndicateurResponsable[]
-  featuresAutorises FeatureUtilisateur[]
+  featuresAutorises         FeatureUtilisateur[]
 
   @@map("utilisateur")
 }
@@ -105,8 +107,8 @@ model Indicateur {
   delaiMiseADispositionNombre Int?        @map("delai_mad_nombre")
   delaiMiseADispositionUnite  UniteDuree? @map("delai_mad_unite")
 
-  createdAt        DateTime          @default(now()) @map("created_at")
-  updatedAt        DateTime          @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   valeurs              ValeurAvancement[]
   objectifs            ObjectifIndicateurIndividu[]
@@ -587,12 +589,12 @@ enum FeatureEtat {
 }
 
 model Feature {
-  id        String              @id @db.Uuid
-  key       String              @unique
+  id        String      @id @db.Uuid
+  key       String      @unique
   nom       String
   etat      FeatureEtat @default(DESACTIVE)
-  createdAt DateTime            @default(now()) @map("created_at")
-  updatedAt DateTime            @updatedAt @map("updated_at")
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
 
   utilisateursAutorises FeatureUtilisateur[]
 
@@ -600,15 +602,52 @@ model Feature {
 }
 
 model FeatureUtilisateur {
-  featureId String   @map("feature_id") @db.Uuid
-  utilisateurId     String   @map("utilisateur_id") @db.Uuid
-  createdAt         DateTime @default(now()) @map("created_at")
+  featureId     String   @map("feature_id") @db.Uuid
+  utilisateurId String   @map("utilisateur_id") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at")
 
-  feature Feature @relation(fields: [featureId], references: [id], onDelete: Cascade)
-  utilisateur     Utilisateur     @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  feature     Feature     @relation(fields: [featureId], references: [id], onDelete: Cascade)
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
 
   @@id([featureId, utilisateurId])
   @@index([featureId])
   @@index([utilisateurId])
   @@map("feature_utilisateur")
+}
+
+enum ArticleCentreAideType {
+  GROUPE
+  PAGE
+
+  @@map("article_centre_aide_type_enum")
+}
+
+model ArticleCentreAide {
+  id                    String                @id @db.Uuid
+  type                  ArticleCentreAideType
+  parentId              String?               @map("parent_id") @db.Uuid
+  ordre                 Int
+  estPublie             Boolean               @default(false) @map("est_publie")
+  estMasque             Boolean               @default(false) @map("est_masque")
+  titre                 String                @default("")
+  titreAffiche          String                @default("") @map("titre_affiche")
+  contenu               String                @default("")
+  contenuTexte          String                @default("") @map("contenu_texte")
+  titreBrouillon        String                @default("") @map("titre_brouillon")
+  titreAfficheBrouillon String                @default("") @map("titre_affiche_brouillon")
+  contenuBrouillon      String                @default("") @map("contenu_brouillon")
+  createdBy             String                @map("created_by") @db.Uuid
+  updatedBy             String                @map("updated_by") @db.Uuid
+  createdAt             DateTime              @default(now()) @map("created_at")
+  updatedAt             DateTime              @updatedAt @map("updated_at")
+
+  auteurCreation     Principal           @relation("articleCentreAideCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  auteurModification Principal           @relation("articleCentreAideUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+  parent             ArticleCentreAide?  @relation("articleCentreAideParent", fields: [parentId], references: [id], onDelete: Cascade)
+  enfants            ArticleCentreAide[] @relation("articleCentreAideParent")
+
+  @@index([parentId])
+  @@index([createdBy])
+  @@index([updatedBy])
+  @@map("article_centre_aide")
 }
