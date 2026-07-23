@@ -3,6 +3,7 @@ import { Callout } from './Callout'
 import { IconeCentreAide } from './IconeCentreAide'
 import { ImageCentreAide } from './ImageCentreAide'
 import { VideoCentreAide } from './VideoCentreAide'
+import { estUrlHttpSure } from './securiteUrl'
 import { COULEURS_CALLOUT, type CalloutColor, type RegistreBlocs } from './types'
 
 const lireCouleur = (element: Element): CalloutColor => {
@@ -47,8 +48,10 @@ export const registreBlocs: RegistreBlocs = {
   video: {
     type: 'video',
     dataType: 'video',
-    rendreDepuisElement: (element) => (
-      <VideoCentreAide src={element.getAttribute('data-src') ?? ''} />
-    ),
+    rendreDepuisElement: (element) => {
+      const src = element.getAttribute('data-src') ?? ''
+      if (!estUrlHttpSure(src)) return null
+      return <VideoCentreAide src={src} />
+    },
   },
 }

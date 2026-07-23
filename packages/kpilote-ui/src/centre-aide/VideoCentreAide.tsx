@@ -17,6 +17,8 @@ export function VideoCentreAide({
         className="size-full"
         allowFullScreen
         loading="lazy"
+        referrerPolicy="strict-origin-when-cross-origin"
+        sandbox="allow-scripts allow-same-origin allow-presentation allow-popups"
       />
     </div>
   )
