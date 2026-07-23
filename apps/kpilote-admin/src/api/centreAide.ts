@@ -63,6 +63,27 @@ export const deplacerArticleCentreAide = async (
   return articleCentreAideApiModelSchema.parse(json)
 }
 
-export const supprimerArticleCentreAide = async (id: string): Promise<void> => {
-  await bffClient.delete(`${CHEMIN}/${id}`)
+export const fetchArticlesCentreAideCorbeille =
+  async (): Promise<ArticleCentreAideListApiModel> => {
+    const json = await bffClient.get(`${CHEMIN}/corbeille`).json()
+    return articleCentreAideListApiModelSchema.parse(json)
+  }
+
+// Suppression logique : l'article part en corbeille (PIL-1685 #2).
+export const supprimerArticleCentreAide = async (
+  id: string,
+): Promise<ArticleCentreAideApiModel> => {
+  const json = await bffClient.delete(`${CHEMIN}/${id}`).json()
+  return articleCentreAideApiModelSchema.parse(json)
+}
+
+export const restaurerArticleCentreAide = async (
+  id: string,
+): Promise<ArticleCentreAideApiModel> => {
+  const json = await bffClient.post(`${CHEMIN}/${id}/restaurer`).json()
+  return articleCentreAideApiModelSchema.parse(json)
+}
+
+export const supprimerDefinitivementArticleCentreAide = async (id: string): Promise<void> => {
+  await bffClient.delete(`${CHEMIN}/${id}/definitif`)
 }

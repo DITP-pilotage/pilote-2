@@ -1,7 +1,7 @@
 import type { ArticleCentreAideApiModel } from '@pilote/kpilote-shared/centreAide'
-import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
-import { Eye, EyeOff, FilePlus2, FolderPlus, Trash2 } from 'lucide-react'
+import { Eye, EyeOff, FilePlus2, FolderPlus, RotateCcw, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 import {
@@ -9,7 +9,9 @@ import {
   creerArticleCentreAide,
   modifierBrouillonArticleCentreAide,
   publierArticleCentreAide,
+  restaurerArticleCentreAide,
   supprimerArticleCentreAide,
+  supprimerDefinitivementArticleCentreAide,
 } from '@/api/centreAide'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { EditeurCentreAide } from '@/components/centre-aide/EditeurCentreAide'
@@ -19,7 +21,10 @@ import { Button } from '@pilote/kpilote-ui/Button'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { clsxm } from '@/lib/clsxm'
 import { extractApiError } from '@/lib/apiError'
-import { articlesCentreAideQueryOptions } from '@/queries/centreAide'
+import {
+  articlesCentreAideCorbeilleQueryOptions,
+  articlesCentreAideQueryOptions,
+} from '@/queries/centreAide'
 
 export const Route = createFileRoute('/_authed/centre-aide/')({
   loader: ({ context }) => context.queryClient.ensureQueryData(articlesCentreAideQueryOptions()),
@@ -29,6 +34,7 @@ export const Route = createFileRoute('/_authed/centre-aide/')({
 function CentreAideComponent() {
   const { data: articles } = useSuspenseQuery(articlesCentreAideQueryOptions())
   const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [corbeilleOuverte, setCorbeilleOuverte] = useState(false)
   const queryClient = useQueryClient()
   const toast = useToast()
 
@@ -59,7 +65,7 @@ function CentreAideComponent() {
     onSuccess: async () => {
       await rafraichir()
       setSelectedId(null)
-      toast({ title: 'Article supprimé.' })
+      toast({ title: 'Article mis en corbeille.' })
     },
     onError: surErreur,
   })
@@ -112,10 +118,24 @@ function CentreAideComponent() {
               </li>
             ) : null}
           </ul>
+          <button
+            type="button"
+            onClick={() => setCorbeilleOuverte((precedent) => !precedent)}
+            className={clsxm(
+              'mt-4 flex w-full items-center gap-2 rounded px-2 py-1.5 text-sm transition-colors',
+              corbeilleOuverte
+                ? 'bg-primary-tinted text-primary'
+                : 'text-text-muted hover:bg-surface-tinted',
+            )}
+          >
+            <Trash2 className="size-4" /> Corbeille
+          </button>
         </aside>
 
         <section className="min-w-0 flex-1">
-          {selectionne && selectionne.type === 'PAGE' ? (
+          {corbeilleOuverte ? (
+            <Corbeille onRafraichir={rafraichir} />
+          ) : selectionne && selectionne.type === 'PAGE' ? (
             <EditionArticle key={selectionne.id} article={selectionne} onEnregistre={rafraichir} />
           ) : (
             <div className="rounded-md border border-dashed border-border p-10 text-center text-sm text-text-muted">
@@ -277,6 +297,65 @@ function EditionArticle({
         <p className="mb-2 text-xs text-warning">Modifications non publiées</p>
       ) : null}
       <EditeurCentreAide contenu={contenu} onChange={setContenu} />
+    </div>
+  )
+}
+
+function Corbeille({ onRafraichir }: { onRafraichir: () => Promise<unknown> }) {
+  const { data: articles } = useQuery(articlesCentreAideCorbeilleQueryOptions())
+  const toast = useToast()
+  const surErreur = (erreur: unknown) => toast({ title: extractApiError(erreur), variant: 'error' })
+
+  const restauration = useMutation({
+    mutationFn: (id: string) => restaurerArticleCentreAide(id),
+    onSuccess: async () => {
+      await onRafraichir()
+      toast({ title: 'Article restauré.' })
+    },
+    onError: surErreur,
+  })
+
+  const suppressionDefinitive = useMutation({
+    mutationFn: (id: string) => supprimerDefinitivementArticleCentreAide(id),
+    onSuccess: async () => {
+      await onRafraichir()
+      toast({ title: 'Article supprimé définitivement.' })
+    },
+    onError: surErreur,
+  })
+
+  return (
+    <div>
+      <h2 className="mb-3 text-lg font-bold">Corbeille</h2>
+      {!articles ? (
+        <p className="text-sm text-text-muted">Chargement…</p>
+      ) : articles.length === 0 ? (
+        <p className="text-sm text-text-muted">La corbeille est vide.</p>
+      ) : (
+        <ul className="space-y-1">
+          {articles.map((article) => (
+            <li
+              key={article.id}
+              className="flex items-center gap-2 rounded border border-border px-3 py-2 text-sm"
+            >
+              <span className="flex-1 truncate">
+                {article.titreBrouillon || article.titre || '(sans titre)'}
+              </span>
+              <Button size="sm" variant="secondary" onClick={() => restauration.mutate(article.id)}>
+                <RotateCcw className="size-4" /> Restaurer
+              </Button>
+              <Button
+                size="sm"
+                variant="tertiary"
+                className="text-red-marianne"
+                onClick={() => suppressionDefinitive.mutate(article.id)}
+              >
+                <Trash2 className="size-4" /> Supprimer
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
