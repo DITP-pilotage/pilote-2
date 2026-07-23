@@ -41,6 +41,7 @@ export const toArticleCentreAideApiModel = (row: ArticleCentreAide): ArticleCent
   contenuBrouillon: row.contenuBrouillon,
   createdAt: row.createdAt.toISOString(),
   updatedAt: row.updatedAt.toISOString(),
+  deletedAt: row.deletedAt?.toISOString() ?? null,
 })
 
 export const toArticleCentreAidePublicApiModel = (

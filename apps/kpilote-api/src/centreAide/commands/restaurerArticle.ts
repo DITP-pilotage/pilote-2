@@ -4,23 +4,20 @@ import { ResultAsync } from 'neverthrow'
 import { MESSAGE_ADMIN, toArticleCentreAideApiModel } from '@/centreAide/utils'
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
-import { now, toDate } from '@/framework/date'
 import { db } from '@/framework/persistence/dbStore'
 
-// Suppression logique (corbeille) : l'article part en corbeille (deletedAt) avant
-// une éventuelle suppression définitive (PIL-1685 #2).
-const performSupprimer = async (id: string): Promise<ArticleCentreAideApiModel> => {
+const performRestaurer = async (id: string): Promise<ArticleCentreAideApiModel> => {
   ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
   const principalId = requireCurrentPrincipalId()
 
   const updated = await db().articleCentreAide.update({
     where: { id },
-    data: { deletedAt: toDate(now()), updatedBy: principalId },
+    data: { deletedAt: null, updatedBy: principalId },
   })
   return toArticleCentreAideApiModel(updated)
 }
 
-export const supprimerArticleCentreAide = (
+export const restaurerArticleCentreAide = (
   id: string,
 ): ResultAsync<ArticleCentreAideApiModel, never> =>
-  ResultAsync.fromSafePromise(performSupprimer(id))
+  ResultAsync.fromSafePromise(performRestaurer(id))

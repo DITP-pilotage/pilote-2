@@ -5,14 +5,16 @@ import { MESSAGE_ADMIN, toArticleCentreAideApiModel } from '@/centreAide/utils'
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 
-const performLister = async (): Promise<ArticleCentreAideListApiModel> => {
+const performListerCorbeille = async (): Promise<ArticleCentreAideListApiModel> => {
   ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
   const rows = await db().articleCentreAide.findMany({
-    where: { deletedAt: null },
-    orderBy: [{ parentId: 'asc' }, { ordre: 'asc' }],
+    where: { deletedAt: { not: null } },
+    orderBy: { deletedAt: 'desc' },
   })
   return rows.map(toArticleCentreAideApiModel)
 }
 
-export const listerArticlesCentreAide = (): ResultAsync<ArticleCentreAideListApiModel, never> =>
-  ResultAsync.fromSafePromise(performLister())
+export const listerArticlesCentreAideCorbeille = (): ResultAsync<
+  ArticleCentreAideListApiModel,
+  never
+> => ResultAsync.fromSafePromise(performListerCorbeille())

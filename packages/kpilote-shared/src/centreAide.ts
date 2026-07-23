@@ -27,6 +27,11 @@ export const articleCentreAideApiModelSchema = z
     contenuBrouillon: z.string().describe('Corps brouillon (HTML riche).'),
     createdAt: z.string().datetime().describe('Date ISO 8601 de création.'),
     updatedAt: z.string().datetime().describe('Date ISO 8601 de dernière modification.'),
+    deletedAt: z
+      .string()
+      .datetime()
+      .nullable()
+      .describe('Date ISO 8601 de mise en corbeille, ou null si actif.'),
   })
   .describe('Article du centre d’aide (vue admin).')
 export type ArticleCentreAideApiModel = z.infer<typeof articleCentreAideApiModelSchema>

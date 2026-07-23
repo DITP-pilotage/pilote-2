@@ -8,7 +8,7 @@ import { db } from '@/framework/persistence/dbStore'
 // et jamais les champs brouillon (cf. toArticleCentreAidePublicApiModel).
 const performListerPublies = async (): Promise<ArticleCentreAidePublicListApiModel> => {
   const rows = await db().articleCentreAide.findMany({
-    where: { estPublie: true, estMasque: false },
+    where: { estPublie: true, estMasque: false, deletedAt: null },
     orderBy: [{ parentId: 'asc' }, { ordre: 'asc' }],
   })
   return rows.map(toArticleCentreAidePublicApiModel)

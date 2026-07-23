@@ -15,9 +15,12 @@ import { deplacerArticleCentreAide } from '@/centreAide/commands/deplacerArticle
 import { depublierArticleCentreAide } from '@/centreAide/commands/depublierArticle'
 import { modifierBrouillonArticleCentreAide } from '@/centreAide/commands/modifierBrouillonArticle'
 import { publierArticleCentreAide } from '@/centreAide/commands/publierArticle'
+import { restaurerArticleCentreAide } from '@/centreAide/commands/restaurerArticle'
 import { supprimerArticleCentreAide } from '@/centreAide/commands/supprimerArticle'
+import { supprimerDefinitivementArticleCentreAide } from '@/centreAide/commands/supprimerDefinitivementArticle'
 import { getArticleCentreAideById } from '@/centreAide/queries/getArticleById'
 import { listerArticlesCentreAide } from '@/centreAide/queries/listerArticles'
+import { listerArticlesCentreAideCorbeille } from '@/centreAide/queries/listerArticlesCorbeille'
 import { listerArticlesCentreAidePublies } from '@/centreAide/queries/listerArticlesPublies'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
@@ -221,16 +224,60 @@ const deplacerRoute = createRoute({
 
 // --- DELETE /centre-aide/articles/{id} ---------------------------------------
 
+const corbeilleRoute = createRoute({
+  method: 'get',
+  path: '/centre-aide/articles/corbeille',
+  tags: ['CentreAide', 'Admin'],
+  summary: 'Lister les articles en corbeille',
+  description: 'Réservé aux clés API de rôle `ADMIN`.',
+  middleware: [requireAuthentication],
+  responses: {
+    200: succes200('Articles en corbeille', ArticleListApiModelSchema),
+    403: erreur403,
+  },
+})
+
 const supprimerRoute = createRoute({
   method: 'delete',
   path: '/centre-aide/articles/{id}',
   tags: ['CentreAide', 'Admin'],
-  summary: 'Supprimer un article et ses descendants',
+  summary: 'Mettre un article en corbeille (suppression logique)',
+  description:
+    'Réservé aux clés API de rôle `ADMIN`. L’article part en corbeille, pas d’effacement.',
+  middleware: [requireAuthentication],
+  request: { params: detailParamsSchema },
+  responses: {
+    200: succes200('Article mis en corbeille', ArticleApiModelSchema),
+    403: erreur403,
+    404: erreur404,
+  },
+})
+
+const restaurerRoute = createRoute({
+  method: 'post',
+  path: '/centre-aide/articles/{id}/restaurer',
+  tags: ['CentreAide', 'Admin'],
+  summary: 'Restaurer un article depuis la corbeille',
   description: 'Réservé aux clés API de rôle `ADMIN`.',
   middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {
-    204: { description: 'Article supprimé' },
+    200: succes200('Article restauré', ArticleApiModelSchema),
+    403: erreur403,
+    404: erreur404,
+  },
+})
+
+const supprimerDefinitivementRoute = createRoute({
+  method: 'delete',
+  path: '/centre-aide/articles/{id}/definitif',
+  tags: ['CentreAide', 'Admin'],
+  summary: 'Supprimer définitivement un article et ses descendants',
+  description: 'Réservé aux clés API de rôle `ADMIN`. Effacement irréversible depuis la corbeille.',
+  middleware: [requireAuthentication],
+  request: { params: detailParamsSchema },
+  responses: {
+    204: { description: 'Article supprimé définitivement' },
     403: erreur403,
     404: erreur404,
   },
@@ -246,6 +293,13 @@ centreAideRoutes.openapi(listerPubliesRoute, async (context) =>
 
 centreAideRoutes.openapi(listerRoute, async (context) =>
   listerArticlesCentreAide().match(
+    (data) => jsonResponseOk({ context, data, schema: ArticleListApiModelSchema, status: 200 }),
+    never,
+  ),
+)
+
+centreAideRoutes.openapi(corbeilleRoute, async (context) =>
+  listerArticlesCentreAideCorbeille().match(
     (data) => jsonResponseOk({ context, data, schema: ArticleListApiModelSchema, status: 200 }),
     never,
   ),
@@ -313,6 +367,22 @@ centreAideRoutes.openapi(deplacerRoute, async (context) => {
 centreAideRoutes.openapi(supprimerRoute, async (context) => {
   const { id } = context.req.valid('param')
   return (await withTransaction(async () => supprimerArticleCentreAide(id))).match(
+    (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
+centreAideRoutes.openapi(restaurerRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  return (await withTransaction(async () => restaurerArticleCentreAide(id))).match(
+    (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
+centreAideRoutes.openapi(supprimerDefinitivementRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  return (await withTransaction(async () => supprimerDefinitivementArticleCentreAide(id))).match(
     () => context.body(null, 204),
     never,
   )

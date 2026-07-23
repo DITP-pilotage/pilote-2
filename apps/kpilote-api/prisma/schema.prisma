@@ -640,6 +640,7 @@ model ArticleCentreAide {
   updatedBy             String                @map("updated_by") @db.Uuid
   createdAt             DateTime              @default(now()) @map("created_at")
   updatedAt             DateTime              @updatedAt @map("updated_at")
+  deletedAt             DateTime?             @map("deleted_at")
 
   auteurCreation     Principal           @relation("articleCentreAideCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
   auteurModification Principal           @relation("articleCentreAideUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
@@ -649,5 +650,6 @@ model ArticleCentreAide {
   @@index([parentId])
   @@index([createdBy])
   @@index([updatedBy])
+  @@index([deletedAt])
   @@map("article_centre_aide")
 }
