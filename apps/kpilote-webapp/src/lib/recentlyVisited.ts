@@ -22,9 +22,7 @@ function isRecentEntry(value: unknown): value is RecentEntry {
   if (typeof value !== 'object' || value === null) return false
   const entry = value as Record<string, unknown>
   return (
-    (entry.type === 'indicateur' ||
-      entry.type === 'collection' ||
-      entry.type === 'article') &&
+    (entry.type === 'indicateur' || entry.type === 'collection' || entry.type === 'article') &&
     typeof entry.id === 'string' &&
     typeof entry.label === 'string'
   )

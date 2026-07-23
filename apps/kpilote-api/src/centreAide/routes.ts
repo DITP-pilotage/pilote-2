@@ -247,7 +247,7 @@ const deplacerVersRoute = createRoute({
   },
 })
 
-// --- DELETE /centre-aide/articles/{id} ---------------------------------------
+// --- GET /centre-aide/articles/corbeille -------------------------------------
 
 const corbeilleRoute = createRoute({
   method: 'get',

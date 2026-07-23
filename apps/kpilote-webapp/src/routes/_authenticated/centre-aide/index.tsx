@@ -127,11 +127,12 @@ function NavCentreAide({
         const replie = replies.has(article.id)
         return (
           <li key={article.id}>
-            <div
+            <button
+              type="button"
               onClick={() => (estGroupe ? basculer(article.id) : onSelect(article.id))}
               style={{ paddingLeft: depth * INDENTATION_NAV + 6 }}
               className={clsxm(
-                'relative flex cursor-pointer items-center gap-1 rounded-md py-1.5 pr-2',
+                'relative flex w-full cursor-pointer items-center gap-1 rounded-md py-1.5 pr-2 text-left',
                 !estGroupe && selectedId === article.id
                   ? 'bg-primary-tinted font-medium text-primary'
                   : estGroupe
@@ -159,7 +160,7 @@ function NavCentreAide({
                 <span className="w-3.5 shrink-0" />
               )}
               <span className="flex-1 truncate">{titre}</span>
-            </div>
+            </button>
           </li>
         )
       })}

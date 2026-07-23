@@ -40,7 +40,8 @@ const performDeplacer = async (
 
   if (direction === 'entrer') {
     const precedent = freres[index - 1]
-    if (!precedent) return toArticleCentreAideApiModel(article)
+    // On ne peut ranger un article que dans un GROUPE (une PAGE ne peut pas être parent).
+    if (!precedent || precedent.type !== 'GROUPE') return toArticleCentreAideApiModel(article)
     const agregat = await db().articleCentreAide.aggregate({
       where: { parentId: precedent.id },
       _max: { ordre: true },
