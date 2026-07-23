@@ -1,35 +1,42 @@
 import { Popover as PopoverPrimitive } from 'radix-ui'
 import { useSuspenseQueries } from '@tanstack/react-query'
-import { Command } from 'cmdk'
-import { Check, ChevronDown, ChevronLeft, ChevronRight, Search } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@pilote/kpilote-ui/Collapsible'
+import { Command, defaultFilter } from 'cmdk'
+import { Check, ChevronDown, ChevronRight, Search } from 'lucide-react'
+import { useMemo, useState, type ReactNode } from 'react'
 
 import { clsxm } from '@/lib/clsxm'
+import { normaliserTexte } from '@/lib/texte'
 import {
   buildOrderedNodes,
+  findRootReferentielIdForIndividu,
   groupNodesByRootReferentiel,
   type IndividuNode,
   type ReferentielGroup,
 } from '@/lib/individus/hierarchy'
 import { referentielIndividusQueryOptions, referentielQueryOptions } from '@/queries/referentiels'
 
+type IndividuSelection = { individu: string; referentiel: string }
+
 type IndividuSelectProps = {
   id?: string
   referentielIds: ReadonlyArray<string>
   value: string
-  onChange: (next: { individu: string; referentiel: string }) => void
+  onChange: (next: IndividuSelection) => void
 }
 
-const commandFilter = (itemValue: string, query: string) => {
-  const haystack = itemValue.toLowerCase()
-  const needle = query.trim().toLowerCase()
-  if (!needle) return 1
-  return haystack.includes(needle) ? 1 : 0
-}
+// Réutilise le scorer par défaut de cmdk (matching par initiales, sous-séquence,
+// préfixe…) plutôt qu'un simple `includes`, en neutralisant les accents des deux
+// côtés — ce que cmdk ne fait pas nativement (ex. « idf » matche « Île-de-France »).
+// On ne s'en sert que comme prédicat de filtre (score > 0) : l'ordre hiérarchique
+// des résultats est préservé, pas trié par score.
+const commandFilter = (itemValue: string, query: string) =>
+  defaultFilter(normaliserTexte(itemValue), normaliserTexte(query.trim()))
 
-const listClassName =
-  'max-h-[min(20rem,var(--radix-popover-content-available-height))] overflow-y-auto p-1.5'
-const emptyClassName = 'px-3 py-6 text-center text-sm text-text-muted'
+// Valeur textuelle sur laquelle on filtre un individu : nom + id + chemin parent.
+const searchableValue = (node: IndividuNode) =>
+  [node.individu.nom, node.individu.id, ...node.parentPath].join(' ')
+
 const itemClassName = clsxm(
   'flex cursor-pointer select-none items-center gap-2 rounded-md px-2.5 py-2 text-sm text-text outline-none',
   'data-[selected=true]:bg-surface-tinted data-[selected=true]:text-primary',
@@ -57,118 +64,161 @@ function CommandSearchInput({
   )
 }
 
-// Étape 1 : choix du référentiel racine parmi la forêt.
-function RootReferentielsCommandStep({
-  groups,
+// Message centré affiché dans la liste quand aucun individu ne correspond.
+function CommandEmptyMessage({ children }: { children: ReactNode }) {
+  return <p className="px-3 py-6 text-center text-sm text-text-muted">{children}</p>
+}
+
+// Un individu dans la liste : coche de sélection, nom, id monospace, breadcrumb du
+// chemin parent, indentation selon la profondeur dans la hiérarchie.
+function IndividuCommandItem({
+  node,
+  value,
   onSelect,
 }: {
-  groups: ReadonlyArray<ReferentielGroup>
-  onSelect: (referentielId: string) => void
+  node: IndividuNode
+  value: string
+  onSelect: (next: IndividuSelection) => void
 }) {
-  const [search, setSearch] = useState('')
+  const isSelected = node.individu.id === value
   return (
-    <Command label="Choisir un référentiel" filter={commandFilter}>
-      <CommandSearchInput
-        value={search}
-        onValueChange={setSearch}
-        placeholder="Rechercher un référentiel…"
-      />
-      <Command.List className={listClassName}>
-        <Command.Empty className={emptyClassName}>Aucun référentiel trouvé.</Command.Empty>
-        {groups.map((group) => (
-          <Command.Item
-            key={group.referentiel.id}
-            value={group.referentiel.nom}
-            onSelect={() => onSelect(group.referentiel.id)}
-            className={itemClassName}
-          >
-            <span className="min-w-0 flex-1 truncate font-medium">{group.referentiel.nom}</span>
-            <span className="shrink-0 rounded-full bg-surface-tinted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
-              {group.nodes.length}
-            </span>
-            <ChevronRight className="size-4 shrink-0 text-text-muted" />
-          </Command.Item>
-        ))}
-      </Command.List>
-    </Command>
+    <Command.Item
+      value={node.individu.id}
+      onSelect={() =>
+        onSelect({ individu: node.individu.id, referentiel: node.individu.referentiel })
+      }
+      className={clsxm(itemClassName, isSelected && 'bg-primary-tinted font-semibold text-primary')}
+      style={{ paddingLeft: `${0.625 + node.depth * 0.875}rem` }}
+    >
+      <Check className={clsxm('size-4 shrink-0', isSelected ? 'opacity-100' : 'opacity-0')} />
+      <span className="flex min-w-0 flex-1 flex-col">
+        <span className="flex items-baseline gap-2">
+          <span className="truncate">{node.individu.nom}</span>
+          <span className="shrink-0 font-mono text-[11px] font-normal text-text-subtle">
+            {node.individu.id}
+          </span>
+        </span>
+        {node.parentPath.length > 0 ? (
+          <span className="truncate text-xs font-normal text-text-muted">
+            {node.parentPath.join(' › ')}
+          </span>
+        ) : null}
+      </span>
+    </Command.Item>
   )
 }
 
-// Étape 2 : choix d'un individu dans la hiérarchie complète du référentiel racine.
-function ReferentielSelectCommandStep({
+// En-tête repliable d'un groupe (référentiel racine) : chevron animé, nom, badge
+// du nombre total d'individus du groupe. Les items ne sont rendus que si déplié.
+function ReferentielGroupSection({
   referentielNom,
-  nodes,
-  value,
-  onBack,
-  onSelect,
+  count,
+  isExpanded,
+  onToggle,
+  children,
 }: {
   referentielNom: string
+  count: number
+  isExpanded: boolean
+  onToggle: () => void
+  children: ReactNode
+}) {
+  return (
+    <Collapsible open={isExpanded} onOpenChange={onToggle}>
+      <CollapsibleTrigger className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-sm font-medium text-text hover:bg-surface-tinted">
+        <ChevronRight
+          className={clsxm(
+            'size-4 shrink-0 text-text-muted transition-transform',
+            isExpanded && 'rotate-90',
+          )}
+        />
+        <span className="min-w-0 flex-1 truncate">{referentielNom}</span>
+        <span className="shrink-0 rounded-full bg-surface-tinted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-text-muted">
+          {count}
+        </span>
+      </CollapsibleTrigger>
+      <CollapsibleContent>{children}</CollapsibleContent>
+    </Collapsible>
+  )
+}
+
+// Variante mono-référentiel : les individus à plat, sans en-tête de groupe.
+function FlatIndividuList({
+  nodes,
+  value,
+  hasSearch,
+  nodeMatches,
+  onSelect,
+}: {
   nodes: ReadonlyArray<IndividuNode>
   value: string
-  onBack: (() => void) | null
-  onSelect: (next: { individu: string; referentiel: string }) => void
+  hasSearch: boolean
+  nodeMatches: (node: IndividuNode) => boolean
+  onSelect: (next: IndividuSelection) => void
 }) {
-  const [search, setSearch] = useState('')
+  const visibleNodes = hasSearch ? nodes.filter(nodeMatches) : nodes
   return (
-    <Command label="Rechercher un individu" filter={commandFilter}>
-      {onBack ? (
-        <button
-          type="button"
-          onClick={onBack}
-          className="flex w-full items-center gap-1.5 border-b border-border px-3 py-2 text-left text-xs font-semibold text-text-muted hover:text-text"
-        >
-          <ChevronLeft className="size-4 shrink-0" />
-          <span className="truncate">{referentielNom}</span>
-        </button>
-      ) : null}
-      <CommandSearchInput value={search} onValueChange={setSearch} placeholder="Rechercher…" />
-      <Command.List className={listClassName}>
-        <Command.Empty className={emptyClassName}>Aucun individu trouvé.</Command.Empty>
-        {nodes.map((node) => {
-          const isSelected = node.individu.id === value
-          const searchableValue = [node.individu.nom, node.individu.id, ...node.parentPath].join(
-            ' ',
-          )
-          return (
-            <Command.Item
-              key={node.individu.id}
-              value={searchableValue}
-              onSelect={() =>
-                onSelect({ individu: node.individu.id, referentiel: node.individu.referentiel })
-              }
-              className={clsxm(
-                itemClassName,
-                isSelected && 'bg-primary-tinted font-semibold text-primary',
-              )}
-              style={{ paddingLeft: `${0.625 + node.depth * 0.875}rem` }}
-            >
-              <Check
-                className={clsxm('size-4 shrink-0', isSelected ? 'opacity-100' : 'opacity-0')}
+    <>
+      {visibleNodes.map((node) => (
+        <IndividuCommandItem key={node.individu.id} node={node} value={value} onSelect={onSelect} />
+      ))}
+    </>
+  )
+}
+
+// Variante multi-référentiels : un collapsible par groupe racine. En recherche,
+// tout groupe sans résultat est masqué et les autres sont forcés dépliés ; sinon
+// l'ouverture suit `expandedGroups`.
+function GroupedIndividuList({
+  groups,
+  value,
+  hasSearch,
+  nodeMatches,
+  expandedGroups,
+  onToggleGroup,
+  onSelect,
+}: {
+  groups: ReadonlyArray<ReferentielGroup>
+  value: string
+  hasSearch: boolean
+  nodeMatches: (node: IndividuNode) => boolean
+  expandedGroups: ReadonlySet<string>
+  onToggleGroup: (referentielId: string) => void
+  onSelect: (next: IndividuSelection) => void
+}) {
+  return (
+    <>
+      {groups.map((group) => {
+        const visibleNodes = hasSearch ? group.nodes.filter(nodeMatches) : group.nodes
+        if (hasSearch && visibleNodes.length === 0) return null
+        const isExpanded = hasSearch ? true : expandedGroups.has(group.referentiel.id)
+        return (
+          <ReferentielGroupSection
+            key={group.referentiel.id}
+            referentielNom={group.referentiel.nom}
+            count={group.nodes.length}
+            isExpanded={isExpanded}
+            onToggle={() => onToggleGroup(group.referentiel.id)}
+          >
+            {visibleNodes.map((node) => (
+              <IndividuCommandItem
+                key={node.individu.id}
+                node={node}
+                value={value}
+                onSelect={onSelect}
               />
-              <span className="flex min-w-0 flex-1 flex-col">
-                <span className="flex items-baseline gap-2">
-                  <span className="truncate">{node.individu.nom}</span>
-                  <span className="shrink-0 font-mono text-[11px] font-normal text-text-subtle">
-                    {node.individu.id}
-                  </span>
-                </span>
-                {node.parentPath.length > 0 ? (
-                  <span className="truncate text-xs font-normal text-text-muted">
-                    {node.parentPath.join(' › ')}
-                  </span>
-                ) : null}
-              </span>
-            </Command.Item>
-          )
-        })}
-      </Command.List>
-    </Command>
+            ))}
+          </ReferentielGroupSection>
+        )
+      })}
+    </>
   )
 }
 
 export function IndividuSelect({ id, referentielIds, value, onChange }: IndividuSelectProps) {
   const [open, setOpen] = useState(false)
-  const [activeReferentielId, setActiveReferentielId] = useState<string | null>(null)
+  const [search, setSearch] = useState('')
+  const [expandedGroups, setExpandedGroups] = useState<ReadonlySet<string>>(new Set())
 
   const referentiels = useSuspenseQueries({
     queries: referentielIds.map((refId) => referentielQueryOptions(refId)),
@@ -190,27 +240,41 @@ export function IndividuSelect({ id, referentielIds, value, onChange }: Individu
   const groups = useMemo(() => groupNodesByRootReferentiel(nodes), [nodes])
 
   const selected = nodes.find((node) => node.individu.id === value)
-  const hasSingleRootReferentiel = groups.length === 1
-  const activeGroup = groups.find((group) => group.referentiel.id === activeReferentielId)
+  const hasSearch = search.trim() !== ''
+  const nodeMatches = (node: IndividuNode) => commandFilter(searchableValue(node), search) > 0
 
-  // Étape d'ouverture : on ouvre directement sur le référentiel racine de l'arbre
-  // de l'individu déjà sélectionné, ou sur l'unique référentiel racine ; sinon on
-  // liste les référentiels racines.
-  const resolveInitialReferentiel = () => {
-    if (selected) {
-      const group = groups.find((g) => g.nodes.some((n) => n.individu.id === value))
-      if (group) return group.referentiel.id
-    }
-    if (hasSingleRootReferentiel) return groups[0]?.referentiel.id ?? null
-    return null
+  const handleSelect = (next: IndividuSelection) => {
+    onChange(next)
+    setOpen(false)
   }
+
+  const toggleGroup = (referentielId: string) => {
+    setExpandedGroups((prev) => {
+      const next = new Set(prev)
+      if (next.has(referentielId)) next.delete(referentielId)
+      else next.add(referentielId)
+      return next
+    })
+  }
+
+  // À l'ouverture : recherche vide et seul le groupe de l'individu sélectionné déplié.
+  const resolveInitialExpanded = (): ReadonlySet<string> => {
+    const referentielId = findRootReferentielIdForIndividu(groups, value)
+    return referentielId ? new Set([referentielId]) : new Set()
+  }
+
+  const singleGroup = groups.length === 1 ? groups[0] : null
+  const isEmpty = hasSearch && groups.every((group) => !group.nodes.some(nodeMatches))
 
   return (
     <PopoverPrimitive.Root
       open={open}
       onOpenChange={(next) => {
         setOpen(next)
-        if (next) setActiveReferentielId(resolveInitialReferentiel())
+        if (next) {
+          setSearch('')
+          setExpandedGroups(resolveInitialExpanded())
+        }
       }}
     >
       <PopoverPrimitive.Trigger
@@ -250,20 +314,36 @@ export function IndividuSelect({ id, referentielIds, value, onChange }: Individu
           sideOffset={6}
           className="z-50 w-[var(--radix-popover-trigger-width)] min-w-[32rem] overflow-hidden rounded-lg border border-border bg-surface shadow-[0_8px_24px_rgba(0,0,0,0.06)]"
         >
-          {activeGroup ? (
-            <ReferentielSelectCommandStep
-              referentielNom={activeGroup.referentiel.nom}
-              nodes={activeGroup.nodes}
-              value={value}
-              onBack={hasSingleRootReferentiel ? null : () => setActiveReferentielId(null)}
-              onSelect={(next) => {
-                onChange(next)
-                setOpen(false)
-              }}
+          <Command label="Rechercher un individu" shouldFilter={false}>
+            <CommandSearchInput
+              value={search}
+              onValueChange={setSearch}
+              placeholder="Rechercher un individu…"
             />
-          ) : (
-            <RootReferentielsCommandStep groups={groups} onSelect={setActiveReferentielId} />
-          )}
+            <Command.List className="max-h-[min(20rem,var(--radix-popover-content-available-height))] overflow-y-auto p-1.5">
+              {isEmpty ? <CommandEmptyMessage>Aucun individu trouvé.</CommandEmptyMessage> : null}
+
+              {singleGroup ? (
+                <FlatIndividuList
+                  nodes={singleGroup.nodes}
+                  value={value}
+                  hasSearch={hasSearch}
+                  nodeMatches={nodeMatches}
+                  onSelect={handleSelect}
+                />
+              ) : (
+                <GroupedIndividuList
+                  groups={groups}
+                  value={value}
+                  hasSearch={hasSearch}
+                  nodeMatches={nodeMatches}
+                  expandedGroups={expandedGroups}
+                  onToggleGroup={toggleGroup}
+                  onSelect={handleSelect}
+                />
+              )}
+            </Command.List>
+          </Command>
         </PopoverPrimitive.Content>
       </PopoverPrimitive.Portal>
     </PopoverPrimitive.Root>

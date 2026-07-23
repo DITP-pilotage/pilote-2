@@ -26,9 +26,15 @@ export const referentielIndividusQueryOptions = (referentielId: string) =>
     staleTime: DEFAULT_STALE_TIME,
   })
 
+// Scopé à l'utilisateur (`scope=me`) : uniquement les référentiels reliés à un
+// indicateur qu'il peut lire, pour ne pas noyer le sélecteur d'individus sous
+// l'intégralité du catalogue.
 export const allReferentielsQueryOptions = queryOptions({
-  queryKey: ['referentiels', 'all'],
-  queryFn: () => fetchAllPaginatedItems((cursor) => fetchReferentiels(cursor ? { cursor } : {})),
+  queryKey: ['referentiels', 'scope', 'me'],
+  queryFn: () =>
+    fetchAllPaginatedItems((cursor) =>
+      fetchReferentiels({ scope: 'me', ...(cursor ? { cursor } : {}) }),
+    ),
   staleTime: DEFAULT_STALE_TIME,
 })
 

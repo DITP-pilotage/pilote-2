@@ -7,12 +7,13 @@ import {
   referentielApiModelSchema,
   type ReferentielListApiModel,
   referentielListApiModelSchema,
+  type ReferentielScope,
 } from '@pilote/kpilote-shared/referentiel'
 
 import { apiClient } from '@/api/client'
 
 export const fetchReferentiels = async (
-  params: { cursor?: string } = {},
+  params: { cursor?: string; scope?: ReferentielScope } = {},
 ): Promise<ReferentielListApiModel> => {
   const json = await apiClient.get('referentiels', { searchParams: params }).json()
   return referentielListApiModelSchema.parse(json)

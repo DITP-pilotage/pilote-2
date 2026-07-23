@@ -2,7 +2,12 @@ import { type IndividuApiModel } from '@pilote/kpilote-shared/individu'
 import { type ReferentielApiModel } from '@pilote/kpilote-shared/referentiel'
 import { describe, expect, it } from 'vitest'
 
-import { buildOrderedNodes, groupNodesByRootReferentiel, pickRoot } from './hierarchy'
+import {
+  buildOrderedNodes,
+  findRootReferentielIdForIndividu,
+  groupNodesByRootReferentiel,
+  pickRoot,
+} from './hierarchy'
 
 const referentiel = (id: string, nom: string): ReferentielApiModel => ({
   id,
@@ -167,5 +172,49 @@ describe('groupNodesByRootReferentiel', () => {
 
   it('renvoie un tableau vide sans nœud', () => {
     expect(groupNodesByRootReferentiel([])).toEqual([])
+  })
+})
+
+describe('findRootReferentielIdForIndividu', () => {
+  it('renvoie le référentiel racine du groupe contenant un individu racine', () => {
+    const refA = referentiel('REF-A', 'Alpha')
+    const refB = referentiel('REF-B', 'Bravo')
+    const refsById = new Map([
+      [refA.id, refA],
+      [refB.id, refB],
+    ])
+    const a = individu('IND-A', 'Racine A', 'REF-A')
+    const b = individu('IND-B', 'Racine B', 'REF-B')
+    const groups = groupNodesByRootReferentiel(buildOrderedNodes([a, b], refsById))
+
+    expect(findRootReferentielIdForIndividu(groups, 'IND-B')).toBe('REF-B')
+  })
+
+  it('rattache un individu d’un sous-arbre transverse au référentiel de sa racine', () => {
+    const refNat = referentiel('REF-NAT', 'France (national)')
+    const refDept = referentiel('REF-DEPT', 'Départements')
+    const refsById = new Map([
+      [refNat.id, refNat],
+      [refDept.id, refDept],
+    ])
+    const fr = individu('IND-FR', 'France', 'REF-NAT')
+    const paris = individu('IND-PARIS', 'Paris', 'REF-DEPT', ['IND-FR'])
+    const groups = groupNodesByRootReferentiel(buildOrderedNodes([fr, paris], refsById))
+
+    // Paris est rattaché au référentiel de sa racine (REF-NAT), pas à REF-DEPT.
+    expect(findRootReferentielIdForIndividu(groups, 'IND-PARIS')).toBe('REF-NAT')
+  })
+
+  it('renvoie null quand l’individu est introuvable', () => {
+    const refA = referentiel('REF-A', 'Alpha')
+    const refsById = new Map([[refA.id, refA]])
+    const a = individu('IND-A', 'Racine A', 'REF-A')
+    const groups = groupNodesByRootReferentiel(buildOrderedNodes([a], refsById))
+
+    expect(findRootReferentielIdForIndividu(groups, 'IND-INCONNU')).toBeNull()
+  })
+
+  it('renvoie null sur une liste de groupes vide', () => {
+    expect(findRootReferentielIdForIndividu([], 'IND-A')).toBeNull()
   })
 })
