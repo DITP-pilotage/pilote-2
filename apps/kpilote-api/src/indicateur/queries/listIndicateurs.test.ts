@@ -5,7 +5,7 @@ import { encodeCursor } from '@/framework/persistence/paginate'
 import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testIndicateurIds, testPanierId, testReferentielId } from '@/test/randomIds'
+import { testIndicateurIds, testCollectionId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listIndicateurs', () => {
@@ -60,50 +60,50 @@ describe.concurrent('listIndicateurs', () => {
   )
 
   it(
-    'propage READ via les permissions panier : un principal qui a accès à un panier voit ses indicateurs PRIVE',
+    'propage READ via les permissions collection : un principal qui a accès à une collection voit ses indicateurs PRIVE',
     integrationTest(async () => {
-      const [viaPanier, hidden] = testIndicateurIds(2)
-      const panPropag = testPanierId()
+      const [viaCollection, hidden] = testIndicateurIds(2)
+      const dosPropag = testCollectionId()
       await fixtures.indicateur(
-        { publicId: viaPanier, visibilite: 'PRIVE' },
+        { publicId: viaCollection, visibilite: 'PRIVE' },
         { publicId: hidden, visibilite: 'PRIVE' },
       )
-      await fixtures.panier({
-        publicId: panPropag,
+      await fixtures.collection({
+        publicId: dosPropag,
         visibilite: 'PRIVE',
-        indicateurs: [{ publicId: viaPanier }],
+        indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: panPropag }, action: 'READ' }],
+        collectionPermissions: [{ collection: { publicId: dosPropag }, action: 'READ' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((i) => i.id)).toEqual([viaPanier])
+      expect(value.items.map((i) => i.id)).toEqual([viaCollection])
       expect(value.total).toBe(1)
     }),
   )
 
   it(
-    'la propagation panier → indicateur fonctionne aussi avec WRITE sur le panier',
+    'la propagation collection → indicateur fonctionne aussi avec WRITE sur la collection',
     integrationTest(async () => {
-      const [viaPanier] = testIndicateurIds(1)
-      const panPropag = testPanierId()
-      await fixtures.indicateur({ publicId: viaPanier, visibilite: 'PRIVE' })
-      await fixtures.panier({
-        publicId: panPropag,
+      const [viaCollection] = testIndicateurIds(1)
+      const dosPropag = testCollectionId()
+      await fixtures.indicateur({ publicId: viaCollection, visibilite: 'PRIVE' })
+      await fixtures.collection({
+        publicId: dosPropag,
         visibilite: 'PRIVE',
-        indicateurs: [{ publicId: viaPanier }],
+        indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: panPropag }, action: 'WRITE' }],
+        collectionPermissions: [{ collection: { publicId: dosPropag }, action: 'WRITE' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((i) => i.id)).toEqual([viaPanier])
+      expect(value.items.map((i) => i.id)).toEqual([viaCollection])
     }),
   )
 

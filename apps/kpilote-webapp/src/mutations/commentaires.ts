@@ -6,14 +6,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import {
   createCommentaire,
-  createCommentairePanier,
+  createCommentaireCollection,
   type IndicateurIndividuCommentaireType,
-  type PanierCommentaireType,
+  type CollectionCommentaireType,
   updateCommentaire,
 } from '@/api/commentaires'
 import { useToast } from '@pilote/kpilote-ui/Toast'
-import { commentairesKeys, commentairesPanierKeys } from '@/queries/commentaires'
-import { niveauConfianceKeys, niveauConfiancePanierKeys } from '@/queries/niveauConfiance'
+import { commentairesKeys, commentairesCollectionKeys } from '@/queries/commentaires'
+import { niveauConfianceKeys, niveauConfianceCollectionKeys } from '@/queries/niveauConfiance'
 
 const messageErreur = {
   title: 'Action impossible.',
@@ -71,16 +71,19 @@ export function useModifierCommentaire(
   })
 }
 
-// --- Panier global -----------------------------------------------------------
+// --- Collection global -----------------------------------------------------------
 
-export function useCreerCommentairePanier(panierId: string, type: PanierCommentaireType) {
+export function useCreerCommentaireCollection(
+  collectionId: string,
+  type: CollectionCommentaireType,
+) {
   const queryClient = useQueryClient()
   const toast = useToast()
   return useMutation({
-    mutationFn: (body: CreerCommentaireBody) => createCommentairePanier(panierId, body),
+    mutationFn: (body: CreerCommentaireBody) => createCommentaireCollection(collectionId, body),
     onSuccess: () => {
       void queryClient.invalidateQueries({
-        queryKey: commentairesPanierKeys.parType(panierId, type),
+        queryKey: commentairesCollectionKeys.parType(collectionId, type),
       })
       toast({ title: 'Commentaire créé.' })
     },
@@ -88,7 +91,10 @@ export function useCreerCommentairePanier(panierId: string, type: PanierCommenta
   })
 }
 
-export function useModifierCommentairePanier(panierId: string, type: PanierCommentaireType) {
+export function useModifierCommentaireCollection(
+  collectionId: string,
+  type: CollectionCommentaireType,
+) {
   const queryClient = useQueryClient()
   const toast = useToast()
   return useMutation({
@@ -101,10 +107,10 @@ export function useModifierCommentairePanier(panierId: string, type: PanierComme
     }) => updateCommentaire(commentaireId, body),
     onSuccess: (_data, variables) => {
       void queryClient.invalidateQueries({
-        queryKey: commentairesPanierKeys.parType(panierId, type),
+        queryKey: commentairesCollectionKeys.parType(collectionId, type),
       })
       void queryClient.invalidateQueries({
-        queryKey: niveauConfiancePanierKeys.parScope(panierId),
+        queryKey: niveauConfianceCollectionKeys.parScope(collectionId),
       })
       toast({
         title:

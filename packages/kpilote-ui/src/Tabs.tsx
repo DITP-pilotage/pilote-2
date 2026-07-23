@@ -18,7 +18,7 @@ export function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsP
   return (
     <TabsPrimitive.Trigger
       className={clsxm(
-        // Onglet DSFR : bouton « dossier » bordé. Le -mb-px fait chevaucher la
+        // Onglet DSFR : bouton « collection » bordé. Le -mb-px fait chevaucher la
         // bordure du panneau pour connecter l'onglet actif.
         '-mb-px inline-flex items-center gap-2 whitespace-nowrap px-4 py-2.5 text-base font-bold transition-colors',
         'border border-border border-t-2 border-t-transparent',

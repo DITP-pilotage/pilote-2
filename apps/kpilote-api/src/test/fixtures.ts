@@ -9,7 +9,7 @@ import {
   testEmail,
   testIndicateurId,
   testIndividuId,
-  testPanierId,
+  testCollectionId,
   testReferentielId,
   testWidgetId,
 } from '@/test/randomIds'
@@ -22,11 +22,11 @@ import {
   type IndividuModel,
   type ObjectifIndicateurIndividuModel,
   type OrganismeModel,
-  type PanierContactUtileModel,
-  type PanierModel,
-  type PanierPermissionModel,
+  type CollectionContactUtileModel,
+  type CollectionModel,
+  type CollectionPermissionModel,
   type IndicateurResponsableModel,
-  type PanierResponsableModel,
+  type CollectionResponsableModel,
   type ReferentielModel,
   type ReferentielWidgetModel,
   type RelationModel,
@@ -471,9 +471,9 @@ async function objectifIndicateurIndividu(
   return results
 }
 
-// --- Panier ------------------------------------------------------------------
+// --- Collection ------------------------------------------------------------------
 
-type PanierOverrides = Partial<{
+type CollectionOverrides = Partial<{
   id: string
   publicId: string
   nom: string
@@ -482,17 +482,17 @@ type PanierOverrides = Partial<{
   indicateurs: IndicateurOverrides[]
 }>
 
-const upsertPanier = async (o: PanierOverrides = {}) => {
-  const publicId = o.publicId ?? testPanierId()
+const upsertCollection = async (o: CollectionOverrides = {}) => {
+  const publicId = o.publicId ?? testCollectionId()
   const { indicateurs, id: _id, publicId: _pub, ...rest } = o
   const create = {
     id: o.id ?? uuidv7(),
     publicId,
-    nom: o.nom ?? 'Panier de test',
+    nom: o.nom ?? 'Collection de test',
     description: o.description ?? null,
     visibilite: o.visibilite ?? Visibilite.PRIVE,
   }
-  const panier = await db().panier.upsert({
+  const collection = await db().collection.upsert({
     where: { publicId },
     update: rest,
     create,
@@ -500,32 +500,34 @@ const upsertPanier = async (o: PanierOverrides = {}) => {
   if (indicateurs) {
     for (const indicateurOverride of indicateurs) {
       const indicateurRow = await upsertIndicateur(indicateurOverride)
-      await db().panierIndicateur.upsert({
+      await db().collectionIndicateur.upsert({
         where: {
-          panierId_indicateurId: {
-            panierId: panier.id,
+          collectionId_indicateurId: {
+            collectionId: collection.id,
             indicateurId: indicateurRow.id,
           },
         },
         update: {},
-        create: { panierId: panier.id, indicateurId: indicateurRow.id },
+        create: { collectionId: collection.id, indicateurId: indicateurRow.id },
       })
     }
   }
-  return panier
+  return collection
 }
 
-function panier(): Promise<PanierModel>
-function panier(override: PanierOverrides): Promise<PanierModel>
-function panier(
-  o1: PanierOverrides,
-  o2: PanierOverrides,
-  ...rest: PanierOverrides[]
-): Promise<PanierModel[]>
-async function panier(...overrides: PanierOverrides[]): Promise<PanierModel | PanierModel[]> {
-  if (overrides.length <= 1) return upsertPanier(overrides[0])
-  const results: PanierModel[] = []
-  for (const o of overrides) results.push(await upsertPanier(o))
+function collection(): Promise<CollectionModel>
+function collection(override: CollectionOverrides): Promise<CollectionModel>
+function collection(
+  o1: CollectionOverrides,
+  o2: CollectionOverrides,
+  ...rest: CollectionOverrides[]
+): Promise<CollectionModel[]>
+async function collection(
+  ...overrides: CollectionOverrides[]
+): Promise<CollectionModel | CollectionModel[]> {
+  if (overrides.length <= 1) return upsertCollection(overrides[0])
+  const results: CollectionModel[] = []
+  for (const o of overrides) results.push(await upsertCollection(o))
   return results
 }
 
@@ -536,8 +538,8 @@ type PrincipalIndicateurPermissionOverrides = {
   action: PermissionAction
 }
 
-type PrincipalPanierPermissionOverrides = {
-  panier: PanierOverrides
+type PrincipalCollectionPermissionOverrides = {
+  collection: CollectionOverrides
   action: PermissionAction
 }
 
@@ -551,7 +553,7 @@ type ApiKeyOverrides = Partial<{
   revokedAt: Date | null
   lastUsedAt: Date | null
   permissions: PrincipalIndicateurPermissionOverrides[]
-  panierPermissions: PrincipalPanierPermissionOverrides[]
+  collectionPermissions: PrincipalCollectionPermissionOverrides[]
 }>
 
 const grantPermissions = async (
@@ -564,13 +566,13 @@ const grantPermissions = async (
   }
 }
 
-const grantPanierPermissions = async (
+const grantCollectionPermissions = async (
   principalId: string,
-  permissions: PrincipalPanierPermissionOverrides[] | undefined,
+  permissions: PrincipalCollectionPermissionOverrides[] | undefined,
 ): Promise<void> => {
   if (!permissions || permissions.length === 0) return
   for (const p of permissions) {
-    await upsertPanierPermission({ principalId, ...p })
+    await upsertCollectionPermission({ principalId, ...p })
   }
 }
 
@@ -587,18 +589,18 @@ const upsertApiKey = async (o: ApiKeyOverrides = {}) => {
     revokedAt: o.revokedAt ?? null,
     lastUsedAt: o.lastUsedAt ?? null,
   }
-  const { id: _id, rawKey: _raw, permissions, panierPermissions, ...update } = o
+  const { id: _id, rawKey: _raw, permissions, collectionPermissions, ...update } = o
   const existing = await db().apiKey.findUnique({ where: { keyHash } })
   if (existing) {
     await grantPermissions(existing.id, permissions)
-    await grantPanierPermissions(existing.id, panierPermissions)
+    await grantCollectionPermissions(existing.id, collectionPermissions)
     if (Object.keys(update).length === 0) return existing
     return db().apiKey.update({ where: { keyHash }, data: update })
   }
   await db().principal.create({ data: { id: create.id } })
   const created = await db().apiKey.create({ data: create })
   await grantPermissions(created.id, permissions)
-  await grantPanierPermissions(created.id, panierPermissions)
+  await grantCollectionPermissions(created.id, collectionPermissions)
   return created
 }
 
@@ -627,7 +629,7 @@ type UtilisateurOverrides = Partial<{
   fonction: string
   identite: { provider: ProviderType; providerSub: string }
   permissions: PrincipalIndicateurPermissionOverrides[]
-  panierPermissions: PrincipalPanierPermissionOverrides[]
+  collectionPermissions: PrincipalCollectionPermissionOverrides[]
 }>
 
 const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
@@ -635,7 +637,7 @@ const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
   const existing = await db().utilisateur.findUnique({ where: { email } })
   if (existing) {
     await grantPermissions(existing.id, o.permissions)
-    await grantPanierPermissions(existing.id, o.panierPermissions)
+    await grantCollectionPermissions(existing.id, o.collectionPermissions)
     return existing
   }
   const id = o.id ?? uuidv7()
@@ -660,7 +662,7 @@ const upsertUtilisateur = async (o: UtilisateurOverrides = {}) => {
     })
   }
   await grantPermissions(created.id, o.permissions)
-  await grantPanierPermissions(created.id, o.panierPermissions)
+  await grantCollectionPermissions(created.id, o.collectionPermissions)
   return created
 }
 
@@ -724,82 +726,86 @@ async function indicateurPermission(
   return results
 }
 
-// --- PanierPermission (deps requises) ----------------------------------------
+// --- CollectionPermission (deps requises) ----------------------------------------
 
-type PanierPermissionOverrides = {
+type CollectionPermissionOverrides = {
   principalId: string
-  panier: PanierOverrides
+  collection: CollectionOverrides
   action: PermissionAction
 }
 
-const upsertPanierPermission = async (o: PanierPermissionOverrides) => {
-  const panierRow = await upsertPanier(o.panier)
-  return db().panierPermission.upsert({
+const upsertCollectionPermission = async (o: CollectionPermissionOverrides) => {
+  const collectionRow = await upsertCollection(o.collection)
+  return db().collectionPermission.upsert({
     where: {
-      principalId_panierId_action: {
+      principalId_collectionId_action: {
         principalId: o.principalId,
-        panierId: panierRow.id,
+        collectionId: collectionRow.id,
         action: o.action,
       },
     },
     update: {},
     create: {
       principalId: o.principalId,
-      panierId: panierRow.id,
+      collectionId: collectionRow.id,
       action: o.action,
     },
   })
 }
 
-function panierPermission(override: PanierPermissionOverrides): Promise<PanierPermissionModel>
-function panierPermission(
-  o1: PanierPermissionOverrides,
-  o2: PanierPermissionOverrides,
-  ...rest: PanierPermissionOverrides[]
-): Promise<PanierPermissionModel[]>
-async function panierPermission(
-  ...overrides: PanierPermissionOverrides[]
-): Promise<PanierPermissionModel | PanierPermissionModel[]> {
-  if (overrides.length === 1) return upsertPanierPermission(overrides[0]!)
-  const results: PanierPermissionModel[] = []
-  for (const o of overrides) results.push(await upsertPanierPermission(o))
+function collectionPermission(
+  override: CollectionPermissionOverrides,
+): Promise<CollectionPermissionModel>
+function collectionPermission(
+  o1: CollectionPermissionOverrides,
+  o2: CollectionPermissionOverrides,
+  ...rest: CollectionPermissionOverrides[]
+): Promise<CollectionPermissionModel[]>
+async function collectionPermission(
+  ...overrides: CollectionPermissionOverrides[]
+): Promise<CollectionPermissionModel | CollectionPermissionModel[]> {
+  if (overrides.length === 1) return upsertCollectionPermission(overrides[0]!)
+  const results: CollectionPermissionModel[] = []
+  for (const o of overrides) results.push(await upsertCollectionPermission(o))
   return results
 }
 
-// --- PanierResponsable (deps requises) ----------------------------------------
+// --- CollectionResponsable (deps requises) ----------------------------------------
 
-type PanierResponsableOverrides = {
-  panier: PanierOverrides
+type CollectionResponsableOverrides = {
+  collection: CollectionOverrides
   utilisateur: UtilisateurOverrides
 }
 
-const upsertPanierResponsable = async (o: PanierResponsableOverrides) => {
-  const panierRow = await upsertPanier(o.panier)
+const upsertCollectionResponsable = async (o: CollectionResponsableOverrides) => {
+  const collectionRow = await upsertCollection(o.collection)
   const utilisateurRow = await upsertUtilisateur(o.utilisateur)
-  return db().panierResponsable.upsert({
+  return db().collectionResponsable.upsert({
     where: {
-      panierId_utilisateurId: {
-        panierId: panierRow.id,
+      collectionId_utilisateurId: {
+        collectionId: collectionRow.id,
         utilisateurId: utilisateurRow.id,
       },
     },
     update: {},
-    create: { panierId: panierRow.id, utilisateurId: utilisateurRow.id },
+    create: { collectionId: collectionRow.id, utilisateurId: utilisateurRow.id },
   })
 }
 
-function panierResponsable(override: PanierResponsableOverrides): Promise<PanierResponsableModel>
-function panierResponsable(
-  o1: PanierResponsableOverrides,
-  o2: PanierResponsableOverrides,
-  ...rest: PanierResponsableOverrides[]
-): Promise<PanierResponsableModel[]>
-async function panierResponsable(
-  ...overrides: PanierResponsableOverrides[]
-): Promise<PanierResponsableModel | PanierResponsableModel[]> {
-  if (overrides.length === 1) return upsertPanierResponsable(overrides[0]!)
-  const results: PanierResponsableModel[] = []
-  for (const o of overrides) results.push(await upsertPanierResponsable(o))
+function collectionResponsable(
+  override: CollectionResponsableOverrides,
+): Promise<CollectionResponsableModel>
+function collectionResponsable(
+  o1: CollectionResponsableOverrides,
+  o2: CollectionResponsableOverrides,
+  ...rest: CollectionResponsableOverrides[]
+): Promise<CollectionResponsableModel[]>
+async function collectionResponsable(
+  ...overrides: CollectionResponsableOverrides[]
+): Promise<CollectionResponsableModel | CollectionResponsableModel[]> {
+  if (overrides.length === 1) return upsertCollectionResponsable(overrides[0]!)
+  const results: CollectionResponsableModel[] = []
+  for (const o of overrides) results.push(await upsertCollectionResponsable(o))
   return results
 }
 
@@ -946,35 +952,37 @@ async function contactUtile(override?: ContactUtileOverrides): Promise<ContactUt
   return upsertContactUtile(override)
 }
 
-// --- PanierContactUtile ------------------------------------------------------
+// --- CollectionContactUtile ------------------------------------------------------
 
-type PanierContactUtileOverrides = {
-  panier?: PanierOverrides
+type CollectionContactUtileOverrides = {
+  collection?: CollectionOverrides
   contactUtile?: ContactUtileOverrides
 }
 
-const upsertPanierContactUtile = async (
-  o: PanierContactUtileOverrides,
-): Promise<PanierContactUtileModel> => {
-  const panierRow = await upsertPanier(o.panier)
+const upsertCollectionContactUtile = async (
+  o: CollectionContactUtileOverrides,
+): Promise<CollectionContactUtileModel> => {
+  const collectionRow = await upsertCollection(o.collection)
   const contactUtileRow = await upsertContactUtile(o.contactUtile)
-  return db().panierContactUtile.upsert({
+  return db().collectionContactUtile.upsert({
     where: {
-      panierId_contactUtileId: {
-        panierId: panierRow.id,
+      collectionId_contactUtileId: {
+        collectionId: collectionRow.id,
         contactUtileId: contactUtileRow.id,
       },
     },
     update: {},
-    create: { panierId: panierRow.id, contactUtileId: contactUtileRow.id },
+    create: { collectionId: collectionRow.id, contactUtileId: contactUtileRow.id },
   })
 }
 
-function panierContactUtile(override: PanierContactUtileOverrides): Promise<PanierContactUtileModel>
-async function panierContactUtile(
-  override: PanierContactUtileOverrides,
-): Promise<PanierContactUtileModel> {
-  return upsertPanierContactUtile(override)
+function collectionContactUtile(
+  override: CollectionContactUtileOverrides,
+): Promise<CollectionContactUtileModel>
+async function collectionContactUtile(
+  override: CollectionContactUtileOverrides,
+): Promise<CollectionContactUtileModel> {
+  return upsertCollectionContactUtile(override)
 }
 
 // --- Feature ---------------------------------------------------------
@@ -1026,14 +1034,14 @@ export const fixtures = {
   relation,
   valeurAvancement,
   objectifIndicateurIndividu,
-  panier,
+  collection,
   apiKey,
   utilisateur,
   indicateurPermission,
-  panierPermission,
-  panierResponsable,
+  collectionPermission,
+  collectionResponsable,
   indicateurResponsable,
   organisme,
   contactUtile,
-  panierContactUtile,
+  collectionContactUtile,
 }

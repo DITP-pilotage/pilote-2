@@ -5,15 +5,15 @@ import { isAdminPrincipal, requireCurrentPrincipalId } from '@/framework/auth/us
 import { db } from '@/framework/persistence/dbStore'
 import { PermissionAction } from '@/generated/prisma/enums'
 
-type PermissionEntry = MePermissionsApiModel['paniers'][number]
+type PermissionEntry = MePermissionsApiModel['collections'][number]
 
 const ACTION_ORDER: PermissionAction[] = [PermissionAction.READ, PermissionAction.WRITE]
 
-// READ panier (direct ou WRITE) propage en READ sur les indicateurs du panier.
+// READ collection (direct ou WRITE) propage en READ sur les indicateurs de la collection.
 // WRITE indicateur reste strictement direct — cf. permissions-design.md.
 export const listerMesPermissions = (): ResultAsync<MePermissionsApiModel, never> => {
   if (isAdminPrincipal()) {
-    return okAsync({ isAdmin: true, paniers: [], indicateurs: [] })
+    return okAsync({ isAdmin: true, collections: [], indicateurs: [] })
   }
 
   return ResultAsync.fromSafePromise(loadPermissions(requireCurrentPrincipalId())).map(
@@ -23,10 +23,10 @@ export const listerMesPermissions = (): ResultAsync<MePermissionsApiModel, never
 
 const loadPermissions = (principalId: string) =>
   Promise.all([
-    db().panierPermission.findMany({
+    db().collectionPermission.findMany({
       where: { principalId },
       include: {
-        panier: {
+        collection: {
           select: {
             publicId: true,
             indicateurs: { select: { indicateur: { select: { publicId: true } } } },
@@ -42,14 +42,14 @@ const loadPermissions = (principalId: string) =>
 
 type LoadResult = Awaited<ReturnType<typeof loadPermissions>>
 
-const buildResponse = ([panierPerms, indicateurPerms]: LoadResult): MePermissionsApiModel => {
-  const paniersActions = new Map<string, Set<PermissionAction>>()
+const buildResponse = ([collectionPerms, indicateurPerms]: LoadResult): MePermissionsApiModel => {
+  const collectionsActions = new Map<string, Set<PermissionAction>>()
   const indicateursActions = new Map<string, Set<PermissionAction>>()
 
-  for (const perm of panierPerms) {
-    addAction(paniersActions, perm.panier.publicId, perm.action)
-    // Propagation : READ ou WRITE panier → READ sur chaque indicateur lié.
-    for (const link of perm.panier.indicateurs) {
+  for (const perm of collectionPerms) {
+    addAction(collectionsActions, perm.collection.publicId, perm.action)
+    // Propagation : READ ou WRITE collection → READ sur chaque indicateur lié.
+    for (const link of perm.collection.indicateurs) {
       addAction(indicateursActions, link.indicateur.publicId, PermissionAction.READ)
     }
   }
@@ -58,7 +58,7 @@ const buildResponse = ([panierPerms, indicateurPerms]: LoadResult): MePermission
   }
 
   return {
-    paniers: serialize(paniersActions),
+    collections: serialize(collectionsActions),
     indicateurs: serialize(indicateursActions),
   }
 }

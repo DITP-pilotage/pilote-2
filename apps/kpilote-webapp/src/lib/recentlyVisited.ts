@@ -1,12 +1,12 @@
 import { useEffect } from 'react'
 
 /** Type de ressource dont on mémorise la visite (fiche de détail). */
-export type RecentType = 'indicateur' | 'panier'
+export type RecentType = 'indicateur' | 'collection'
 
 /** Une entrée « visité récemment » : de quoi reconstruire une commande de navigation. */
 export type RecentEntry = {
   type: RecentType
-  /** publicId de la ressource (ex: `IND-42`, `PAN-01`). */
+  /** publicId de la ressource (ex: `IND-42`, `COL-01`). */
   id: string
   /** Libellé affiché (le nom au moment de la visite). */
   label: string
@@ -22,7 +22,7 @@ function isRecentEntry(value: unknown): value is RecentEntry {
   if (typeof value !== 'object' || value === null) return false
   const entry = value as Record<string, unknown>
   return (
-    (entry.type === 'indicateur' || entry.type === 'panier') &&
+    (entry.type === 'indicateur' || entry.type === 'collection') &&
     typeof entry.id === 'string' &&
     typeof entry.label === 'string'
   )

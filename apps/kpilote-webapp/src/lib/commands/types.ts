@@ -4,9 +4,9 @@ import { normaliserTexte } from '@/lib/texte'
 
 /**
  * Regroupement d'une commande dans la palette. Volontairement extensible :
- * les itérations futures ajouteront `'paniers'`, `'actions'`, etc.
+ * les itérations futures ajouteront `'collections'`, `'actions'`, etc.
  */
-export type CommandGroup = 'navigation' | 'recents' | 'indicateurs' | 'paniers'
+export type CommandGroup = 'navigation' | 'recents' | 'indicateurs' | 'collections'
 
 /**
  * Sous-action accessible via `Tab` sur une commande actionnable (ex: sur un

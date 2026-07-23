@@ -27,9 +27,9 @@ import {
   tauxProgressionListApiModelSchema,
 } from '@pilote/kpilote-shared/tauxProgression'
 import {
-  listPanierTauxProgressionForIndividuQuerySchema,
-  panierTauxProgressionSummaryListApiModelSchema,
-} from '@pilote/kpilote-shared/panierTauxProgression'
+  listCollectionTauxProgressionForIndividuQuerySchema,
+  collectionTauxProgressionSummaryListApiModelSchema,
+} from '@pilote/kpilote-shared/collectionTauxProgression'
 
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
@@ -42,7 +42,7 @@ import { upsertValeurAvancement } from '@/valeurAvancement/commands/upsertValeur
 import { upsertValeursAvancementBatch } from '@/valeurAvancement/commands/upsertValeursAvancementBatch'
 import { listDernieresValeursForIndividu } from '@/valeurAvancement/queries/listDernieresValeursForIndividu'
 import { listTauxProgressionForIndividu } from '@/valeurAvancement/queries/listTauxProgressionForIndividu'
-import { listPanierTauxProgressionForIndividu } from '@/panier/queries/listPanierTauxProgressionForIndividu'
+import { listCollectionTauxProgressionForIndividu } from '@/collection/queries/listCollectionTauxProgressionForIndividu'
 import { listIndividusWithValeurs } from '@/valeurAvancement/queries/listIndividusWithValeurs'
 import { listSyntheseIndividus } from '@/valeurAvancement/queries/listSyntheseIndividus'
 import { listTauxProgressionForIndicateur } from '@/valeurAvancement/queries/listTauxProgressionForIndicateur'
@@ -91,8 +91,10 @@ const TauxProgressionListApiModelSchema = tauxProgressionListApiModelSchema.open
 const TauxProgressionIndividuListApiModelSchema = tauxProgressionIndividuListApiModelSchema.openapi(
   'TauxProgressionIndividuListApiModel',
 )
-const PanierTauxProgressionSummaryListApiModelSchema =
-  panierTauxProgressionSummaryListApiModelSchema.openapi('PanierTauxProgressionSummaryListApiModel')
+const CollectionTauxProgressionSummaryListApiModelSchema =
+  collectionTauxProgressionSummaryListApiModelSchema.openapi(
+    'CollectionTauxProgressionSummaryListApiModel',
+  )
 
 const indicateurParamsSchema = z.object({
   id: indicateurPublicIdSchema,
@@ -369,30 +371,30 @@ const getTauxProgressionForIndividuRoute = createRoute({
   },
 })
 
-// --- GET /individus/:id/taux-progression/paniers ------------------------------
+// --- GET /individus/:id/taux-progression/collections ------------------------------
 
-const getPanierTauxProgressionForIndividuRoute = createRoute({
+const getCollectionTauxProgressionForIndividuRoute = createRoute({
   method: 'get',
-  path: '/individus/{id}/taux-progression/paniers',
+  path: '/individus/{id}/taux-progression/collections',
   tags: ['Individu'],
-  summary: "Lister le taux de progression d'un lot de paniers pour un individu",
+  summary: "Lister le taux de progression d'un lot de collections pour un individu",
   description:
-    'Retourne, pour chaque panier demandé accessible en lecture, la moyenne pondérée du ' +
-    "dernier taux de progression connu de chaque indicateur du panier pour l'individu. " +
-    'Règle tout-ou-rien : `tauxProgression` est null si au moins un indicateur du panier ' +
-    "n'est pas calculable. Les paniers inaccessibles ou inexistants sont omis. " +
-    'Endpoint pensé pour des appels batch côté client (liste de cartes de paniers).',
+    'Retourne, pour chaque collection demandé accessible en lecture, la moyenne pondérée du ' +
+    "dernier taux de progression connu de chaque indicateur de la collection pour l'individu. " +
+    'Règle tout-ou-rien : `tauxProgression` est null si au moins un indicateur de la collection ' +
+    "n'est pas calculable. Les collections inaccessibles ou inexistants sont omis. " +
+    'Endpoint pensé pour des appels batch côté client (liste de cartes de collections).',
   middleware: [requireAuthentication],
   request: {
     params: individuParamsSchema,
-    query: listPanierTauxProgressionForIndividuQuerySchema,
+    query: listCollectionTauxProgressionForIndividuQuerySchema,
   },
   responses: {
     200: {
       content: {
-        'application/json': { schema: PanierTauxProgressionSummaryListApiModelSchema },
+        'application/json': { schema: CollectionTauxProgressionSummaryListApiModelSchema },
       },
-      description: 'Taux de progression pour les paniers demandés',
+      description: 'Taux de progression pour les collections demandés',
     },
     400: erreur400,
   },
@@ -617,16 +619,16 @@ valeurAvancementRoutes.openapi(getTauxProgressionForIndividuRoute, async (contex
   )
 })
 
-valeurAvancementRoutes.openapi(getPanierTauxProgressionForIndividuRoute, async (context) => {
+valeurAvancementRoutes.openapi(getCollectionTauxProgressionForIndividuRoute, async (context) => {
   const { id } = context.req.valid('param')
-  const { paniers } = context.req.valid('query')
+  const { collections } = context.req.valid('query')
 
-  return listPanierTauxProgressionForIndividu(id, { paniers }).match(
+  return listCollectionTauxProgressionForIndividu(id, { collections }).match(
     (data) =>
       jsonResponseOk({
         context,
         data,
-        schema: PanierTauxProgressionSummaryListApiModelSchema,
+        schema: CollectionTauxProgressionSummaryListApiModelSchema,
         status: 200,
       }),
     never,

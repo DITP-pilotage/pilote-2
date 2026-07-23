@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { listerMesPermissions } from '@/me/queries/listerMesPermissions'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
-import { testIndicateurIds, testPanierId } from '@/test/randomIds'
+import { testIndicateurIds, testCollectionId } from '@/test/randomIds'
 import { runAsAdmin, runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('listerMesPermissions', () => {
@@ -14,48 +14,51 @@ describe.concurrent('listerMesPermissions', () => {
 
       const result = await runAsPrincipal(apiKey.id, () => listerMesPermissions())
 
-      expect(result._unsafeUnwrap()).toEqual({ paniers: [], indicateurs: [] })
+      expect(result._unsafeUnwrap()).toEqual({ collections: [], indicateurs: [] })
     }),
   )
 
   it(
     'renvoie isAdmin: true et des listes vides pour une API key ADMIN',
     integrationTest(async () => {
-      const panierId = testPanierId()
+      const collectionId = testCollectionId()
       const [indicateurId] = testIndicateurIds(1)
       // On crée des permissions explicites pour vérifier qu'elles sont quand même
       // ignorées (le client doit s'appuyer uniquement sur isAdmin).
-      await fixtures.panier({ publicId: panierId, indicateurs: [{ publicId: indicateurId }] })
+      await fixtures.collection({
+        publicId: collectionId,
+        indicateurs: [{ publicId: indicateurId }],
+      })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: panierId }, action: 'WRITE' }],
+        collectionPermissions: [{ collection: { publicId: collectionId }, action: 'WRITE' }],
       })
 
       const result = await runAsAdmin(apiKey.id, () => listerMesPermissions())
 
       expect(result._unsafeUnwrap()).toEqual({
         isAdmin: true,
-        paniers: [],
+        collections: [],
         indicateurs: [],
       })
     }),
   )
 
   it(
-    'inclut les permissions directes sur les paniers et les indicateurs',
+    'inclut les permissions directes sur les collections et les indicateurs',
     integrationTest(async () => {
-      const panierId = testPanierId()
+      const collectionId = testCollectionId()
       const [indicateurId] = testIndicateurIds(1)
-      await fixtures.panier({ publicId: panierId })
+      await fixtures.collection({ publicId: collectionId })
       await fixtures.indicateur({ publicId: indicateurId })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: panierId }, action: 'READ' }],
+        collectionPermissions: [{ collection: { publicId: collectionId }, action: 'READ' }],
         permissions: [{ indicateur: { publicId: indicateurId }, action: 'WRITE' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listerMesPermissions())
 
       expect(result._unsafeUnwrap()).toEqual({
-        paniers: [{ id: panierId, actions: ['READ'] }],
+        collections: [{ id: collectionId, actions: ['READ'] }],
         indicateurs: [{ id: indicateurId, actions: ['WRITE'] }],
       })
     }),
@@ -64,44 +67,46 @@ describe.concurrent('listerMesPermissions', () => {
   it(
     'fusionne READ et WRITE directs sur la même ressource en une seule entrée triée READ avant WRITE',
     integrationTest(async () => {
-      const panierId = testPanierId()
-      await fixtures.panier({ publicId: panierId })
+      const collectionId = testCollectionId()
+      await fixtures.collection({ publicId: collectionId })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [
-          { panier: { publicId: panierId }, action: 'WRITE' },
-          { panier: { publicId: panierId }, action: 'READ' },
+        collectionPermissions: [
+          { collection: { publicId: collectionId }, action: 'WRITE' },
+          { collection: { publicId: collectionId }, action: 'READ' },
         ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listerMesPermissions())
 
-      expect(result._unsafeUnwrap().paniers).toEqual([{ id: panierId, actions: ['READ', 'WRITE'] }])
+      expect(result._unsafeUnwrap().collections).toEqual([
+        { id: collectionId, actions: ['READ', 'WRITE'] },
+      ])
     }),
   )
 
   it(
-    'propage READ panier → READ sur tous ses indicateurs (depuis READ ou WRITE panier)',
+    'propage READ collection → READ sur tous ses indicateurs (depuis READ ou WRITE collection)',
     integrationTest(async () => {
-      const panierWriteId = testPanierId()
-      const panierReadId = testPanierId()
+      const collectionWriteId = testCollectionId()
+      const collectionReadId = testCollectionId()
       const [indWrite1, indWrite2, indRead] = testIndicateurIds(3)
-      await fixtures.panier(
+      await fixtures.collection(
         {
-          publicId: panierWriteId,
+          publicId: collectionWriteId,
           indicateurs: [{ publicId: indWrite1 }, { publicId: indWrite2 }],
         },
-        { publicId: panierReadId, indicateurs: [{ publicId: indRead }] },
+        { publicId: collectionReadId, indicateurs: [{ publicId: indRead }] },
       )
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [
-          { panier: { publicId: panierWriteId }, action: 'WRITE' },
-          { panier: { publicId: panierReadId }, action: 'READ' },
+        collectionPermissions: [
+          { collection: { publicId: collectionWriteId }, action: 'WRITE' },
+          { collection: { publicId: collectionReadId }, action: 'READ' },
         ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listerMesPermissions())
 
-      // Les 3 indicateurs liés sont propagés en READ. WRITE panier ne propage jamais WRITE.
+      // Les 3 indicateurs liés sont propagés en READ. WRITE collection ne propage jamais WRITE.
       const indicateurs = result._unsafeUnwrap().indicateurs
       expect(indicateurs).toEqual(
         [
@@ -114,19 +119,22 @@ describe.concurrent('listerMesPermissions', () => {
   )
 
   it(
-    'fusionne une permission directe et la propagation panier en une seule entrée dédupliquée',
+    'fusionne une permission directe et la propagation collection en une seule entrée dédupliquée',
     integrationTest(async () => {
-      const panierId = testPanierId()
+      const collectionId = testCollectionId()
       const [indicateurId] = testIndicateurIds(1)
-      await fixtures.panier({ publicId: panierId, indicateurs: [{ publicId: indicateurId }] })
+      await fixtures.collection({
+        publicId: collectionId,
+        indicateurs: [{ publicId: indicateurId }],
+      })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: panierId }, action: 'WRITE' }],
+        collectionPermissions: [{ collection: { publicId: collectionId }, action: 'WRITE' }],
         permissions: [{ indicateur: { publicId: indicateurId }, action: 'READ' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listerMesPermissions())
 
-      // READ direct + READ propagé via panierWrite → une seule entrée, pas de doublon.
+      // READ direct + READ propagé via collectionWrite → une seule entrée, pas de doublon.
       expect(result._unsafeUnwrap().indicateurs).toEqual([{ id: indicateurId, actions: ['READ'] }])
     }),
   )
@@ -134,11 +142,14 @@ describe.concurrent('listerMesPermissions', () => {
   it(
     'combine WRITE direct sur indicateur et READ propagé en une entrée triée READ avant WRITE',
     integrationTest(async () => {
-      const panierId = testPanierId()
+      const collectionId = testCollectionId()
       const [indicateurId] = testIndicateurIds(1)
-      await fixtures.panier({ publicId: panierId, indicateurs: [{ publicId: indicateurId }] })
+      await fixtures.collection({
+        publicId: collectionId,
+        indicateurs: [{ publicId: indicateurId }],
+      })
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [{ panier: { publicId: panierId }, action: 'READ' }],
+        collectionPermissions: [{ collection: { publicId: collectionId }, action: 'READ' }],
         permissions: [{ indicateur: { publicId: indicateurId }, action: 'WRITE' }],
       })
 
@@ -151,14 +162,14 @@ describe.concurrent('listerMesPermissions', () => {
   )
 
   it(
-    'trie paniers et indicateurs par id ASC indépendamment de l’ordre de création',
+    'trie collections et indicateurs par id ASC indépendamment de l’ordre de création',
     integrationTest(async () => {
       const indicateurs = testIndicateurIds(3) // tuple trié ASC
-      const paniers = [testPanierId(), testPanierId(), testPanierId()].sort()
-      await fixtures.panier(
-        { publicId: paniers[2]! },
-        { publicId: paniers[0]! },
-        { publicId: paniers[1]! },
+      const collections = [testCollectionId(), testCollectionId(), testCollectionId()].sort()
+      await fixtures.collection(
+        { publicId: collections[2]! },
+        { publicId: collections[0]! },
+        { publicId: collections[1]! },
       )
       await fixtures.indicateur(
         { publicId: indicateurs[2] },
@@ -166,10 +177,10 @@ describe.concurrent('listerMesPermissions', () => {
         { publicId: indicateurs[1] },
       )
       const apiKey = await fixtures.apiKey({
-        panierPermissions: [
-          { panier: { publicId: paniers[2]! }, action: 'READ' },
-          { panier: { publicId: paniers[0]! }, action: 'READ' },
-          { panier: { publicId: paniers[1]! }, action: 'READ' },
+        collectionPermissions: [
+          { collection: { publicId: collections[2]! }, action: 'READ' },
+          { collection: { publicId: collections[0]! }, action: 'READ' },
+          { collection: { publicId: collections[1]! }, action: 'READ' },
         ],
         permissions: [
           { indicateur: { publicId: indicateurs[2] }, action: 'WRITE' },
@@ -181,7 +192,7 @@ describe.concurrent('listerMesPermissions', () => {
       const result = await runAsPrincipal(apiKey.id, () => listerMesPermissions())
 
       const value = result._unsafeUnwrap()
-      expect(value.paniers.map((p) => p.id)).toEqual(paniers)
+      expect(value.collections.map((p) => p.id)).toEqual(collections)
       expect(value.indicateurs.map((i) => i.id)).toEqual(indicateurs)
     }),
   )

@@ -22,7 +22,7 @@ import {
 import { useCommandPaletteShortcut } from './useCommandPaletteShortcut'
 import { useIndicateurCommands } from './useIndicateurCommands'
 import { useNavigationCommands } from './useNavigationCommands'
-import { usePanierCommands } from './usePanierCommands'
+import { useCollectionCommands } from './useCollectionCommands'
 import { useRecentlyVisitedCommands } from './useRecentlyVisitedCommands'
 
 type CommandPaletteProps = {
@@ -63,15 +63,15 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const navigationCommands = filterCommands(useNavigationCommands(close), query)
   const recentCommands = useRecentlyVisitedCommands(open, close)
   const indicateurCommands = useIndicateurCommands(query, open, close)
-  const { commands: panierCommands, isLoading: isLoadingPaniers } = usePanierCommands(
+  const { commands: collectionCommands, isLoading: isLoadingCollections } = useCollectionCommands(
     query,
     open,
     close,
   )
-  const isLoading = isLoadingPaniers
+  const isLoading = isLoadingCollections
 
   // Les fiches récentes servent de point de départ : on les masque dès que
-  // l'utilisateur tape, les résultats de recherche (indicateurs, paniers)
+  // l'utilisateur tape, les résultats de recherche (indicateurs, collections)
   // prenant alors le relais.
   const showRecents = query.trim().length === 0
 
@@ -82,9 +82,9 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       ...navigationCommands,
       ...(showRecents ? recentCommands : []),
       ...indicateurCommands,
-      ...panierCommands,
+      ...collectionCommands,
     ],
-    [navigationCommands, showRecents, recentCommands, indicateurCommands, panierCommands],
+    [navigationCommands, showRecents, recentCommands, indicateurCommands, collectionCommands],
   )
 
   const highlightedCommand = useMemo(
@@ -221,9 +221,9 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                     </CommandPrimitive.Group>
                   ) : null}
 
-                  {panierCommands.length > 0 ? (
-                    <CommandPrimitive.Group heading="Paniers" className={GROUP_HEADING_CLASS}>
-                      {panierCommands.map((command) => (
+                  {collectionCommands.length > 0 ? (
+                    <CommandPrimitive.Group heading="Collections" className={GROUP_HEADING_CLASS}>
+                      {collectionCommands.map((command) => (
                         <CommandRow key={command.id} command={command} />
                       ))}
                     </CommandPrimitive.Group>

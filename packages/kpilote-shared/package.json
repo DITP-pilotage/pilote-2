@@ -84,21 +84,21 @@
       "types": "./src/widget.ts",
       "default": "./src/widget.ts"
     },
-    "./panier": {
-      "types": "./src/panier.ts",
-      "default": "./src/panier.ts"
+    "./collection": {
+      "types": "./src/collection.ts",
+      "default": "./src/collection.ts"
     },
     "./tauxProgression": {
       "types": "./src/tauxProgression.ts",
       "default": "./src/tauxProgression.ts"
     },
-    "./panierTauxProgression": {
-      "types": "./src/panierTauxProgression.ts",
-      "default": "./src/panierTauxProgression.ts"
+    "./collectionTauxProgression": {
+      "types": "./src/collectionTauxProgression.ts",
+      "default": "./src/collectionTauxProgression.ts"
     },
-    "./panierContactUtile": {
-      "types": "./src/panierContactUtile.ts",
-      "default": "./src/panierContactUtile.ts"
+    "./collectionContactUtile": {
+      "types": "./src/collectionContactUtile.ts",
+      "default": "./src/collectionContactUtile.ts"
     },
     "./utilisateur": {
       "types": "./src/utilisateur.ts",

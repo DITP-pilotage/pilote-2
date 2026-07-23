@@ -6,7 +6,7 @@ import { IndividuSelect } from '@/components/indicateurs/IndividuSelect'
 
 // Champ « Individu » : Field (label) + IndividuSelect, avec un id généré par
 // useId pour l'association label ↔ contrôle. Factorise le combo répété dans les
-// tableaux de bord indicateurs/paniers.
+// tableaux de bord indicateurs/collections.
 export function FieldIndividuSelect({
   label = 'Individu',
   referentielIds,

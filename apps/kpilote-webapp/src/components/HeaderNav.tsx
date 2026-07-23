@@ -29,7 +29,7 @@ export function HeaderNav({ auth }: { auth: Auth }) {
             className="flex items-center gap-2 rounded-md border border-border bg-surface px-2 py-1.5 text-sm text-text-subtle transition-colors hover:border-border-strong hover:text-text sm:min-w-96 sm:px-3"
           >
             <Search className="size-4 shrink-0" />
-            <span className="hidden sm:inline">Rechercher un indicateur, un dossier, …</span>
+            <span className="hidden sm:inline">Rechercher un indicateur, une collection, …</span>
             <RaccourciKbd className="ml-auto hidden sm:inline-block" />
           </button>
         ) : null}

@@ -85,7 +85,7 @@ Ce document décrit l'**initialisation du backend** (`mb-api`), premier composan
 
 mb-api démarre **sans DDD by the book** : pas d'aggregate roots, pas de domain events, pas de bounded contexts ni de context map. La justification est pragmatique :
 
-- **L'app est neuve, le scope produit n'est pas encore stabilisé** : on ne connaît ni les invariants métier (probablement peu : c'est principalement CRUD + quelques calculs), ni les frontières naturelles entre sous-domaines, ni la roadmap au-delà des pages "indicateur" et "panier".
+- **L'app est neuve, le scope produit n'est pas encore stabilisé** : on ne connaît ni les invariants métier (probablement peu : c'est principalement CRUD + quelques calculs), ni les frontières naturelles entre sous-domaines, ni la roadmap au-delà des pages "indicateur" et "collection".
 - **TS full-stack avec types partagés back/front** : modéliser les entités via des classes (AggregateRoot, ValueObject) introduit un coût de sérialisation et empêche de partager simplement les types entre `mb-api` et `pilote-mb-webapp`. Des types nus + factory functions sont strictement plus simples et plus partageables.
 - **Une seule équipe, pas de problème de communication inter-équipes** : le context mapping DDD résout des frictions humaines qu'on n'a pas. Importé prématurément, il ajoute de l'indirection sans bénéfice.
 
@@ -546,7 +546,7 @@ Si plus tard un cas nécessite events ou invariants complexes, on l'introduira s
 
 ### 5.12 Domain services / fonctions transverses
 
-Pas de "Domain Service" formalisé. Les calculs transverses (ex: agrégation de plusieurs indicateurs pour un panier, à venir dans `pilotage`) seront des **fonctions pures** dans `model/` (ou un sous-dossier `model/services/` si la lisibilité l'exige).
+Pas de "Domain Service" formalisé. Les calculs transverses (ex: agrégation de plusieurs indicateurs pour une collection, à venir dans `pilotage`) seront des **fonctions pures** dans `model/` (ou un sous-dossier `model/services/` si la lisibilité l'exige).
 
 À l'init : zéro fonction transverse — on a uniquement `createApiKey`, `revokeApiKey`, `parseEmail` et factories utilisateur stubées.
 

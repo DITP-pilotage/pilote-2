@@ -4,7 +4,7 @@ import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
 import { PermissionAction, Visibilite } from '@/generated/prisma/enums'
-import { PANIER_READ_PERMISSIONS } from '@/panier/permissions'
+import { COLLECTION_READ_PERMISSIONS } from '@/collection/permissions'
 
 const INDICATEUR_READ_PERMISSIONS: PermissionAction[] = [
   PermissionAction.READ,
@@ -15,8 +15,8 @@ const INDICATEUR_READ_PERMISSIONS: PermissionAction[] = [
 // - le principal est ADMIN (bypass : administre PUBLIC + PRIVÉ, aligné avec /me/permissions), OU
 // - l'indicateur est PUBLIC, OU
 // - le principal a READ/WRITE direct sur l'indicateur, OU
-// - le principal a READ/WRITE sur un panier qui contient l'indicateur
-//   (propagation panier → indicateur, cf. permissions-design.md).
+// - le principal a READ/WRITE sur une collection qui contient l'indicateur
+//   (propagation collection → indicateur, cf. permissions-design.md).
 // Le WRITE indicateur reste strictement direct (ensureIndicateurWritePermission).
 export const withIndicateurReadPermission = (
   where: Prisma.IndicateurWhereInput,
@@ -34,11 +34,11 @@ export const withIndicateurReadPermission = (
           { visibilite: Visibilite.PUBLIC },
           { permissions: { some: { principalId, action: { in: INDICATEUR_READ_PERMISSIONS } } } },
           {
-            paniers: {
+            collections: {
               some: {
-                panier: {
+                collection: {
                   permissions: {
-                    some: { principalId, action: { in: PANIER_READ_PERMISSIONS } },
+                    some: { principalId, action: { in: COLLECTION_READ_PERMISSIONS } },
                   },
                 },
               },

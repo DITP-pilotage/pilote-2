@@ -4,7 +4,7 @@ import type { MePermissionsApiModel } from '@pilote/kpilote-shared/mePermissions
 
 import { canWriteIndicateur } from '@/queries/mePermissions'
 
-const base: MePermissionsApiModel = { indicateurs: [], paniers: [] }
+const base: MePermissionsApiModel = { indicateurs: [], collections: [] }
 
 describe('canWriteIndicateur', () => {
   it("autorise un admin sur n'importe quel indicateur", () => {

@@ -4,16 +4,16 @@ import type {
 } from '@pilote/kpilote-shared/permission'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { Eye, Lock, Trash2 } from 'lucide-react'
-import { type ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 
 import {
+  grantCollectionPermission,
   grantIndicateurPermission,
-  grantPanierPermission,
+  revokeCollectionPermission,
   revokeIndicateurPermission,
-  revokePanierPermission,
 } from '@/api/permissions'
+import { CollectionSearchModal } from '@/components/CollectionSearchModal'
 import { IndicateurPicker } from '@/components/permissions/IndicateurPicker'
-import { PanierPicker } from '@/components/permissions/PanierPicker'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { useToast } from '@pilote/kpilote-ui/Toast'
@@ -33,6 +33,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const queryClient = useQueryClient()
   const toast = useToast()
   const { isProd, locked, unlock } = useProdEditUnlock()
+  const [modal, setModal] = useState<'collection' | null>(null)
 
   const options = principalPermissionsQueryOptions(principalId)
   const { data } = useSuspenseQuery(options)
@@ -52,7 +53,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
     mutation.mutate(task)
   }
 
-  // Indicateurs — appels directs, aucune factorisation avec les paniers.
+  // Indicateurs — appels directs, aucune factorisation avec les collections.
   const addIndicateur = (indicateurPublicId: string) => {
     run(() => grantIndicateurPermission({ principalId, indicateurPublicId, action: 'READ' }))
   }
@@ -65,18 +66,19 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const removeIndicateur = (indicateurPublicId: string) =>
     run(() => revokeIndicateurPermission({ principalId, indicateurPublicId }))
 
-  // Paniers — appels directs, aucune factorisation avec les indicateurs.
-  const addPanier = (panierPublicId: string) => {
-    run(() => grantPanierPermission({ principalId, panierPublicId, action: 'READ' }))
+  // Collections — appels directs, aucune factorisation avec les indicateurs.
+  const addCollection = (collectionPublicId: string) => {
+    setModal(null)
+    run(() => grantCollectionPermission({ principalId, collectionPublicId, action: 'READ' }))
   }
-  const togglePanierWrite = (panierPublicId: string, active: boolean) =>
+  const toggleCollectionWrite = (collectionPublicId: string, active: boolean) =>
     run(() =>
       active
-        ? revokePanierPermission({ principalId, panierPublicId, action: 'WRITE' })
-        : grantPanierPermission({ principalId, panierPublicId, action: 'WRITE' }),
+        ? revokeCollectionPermission({ principalId, collectionPublicId, action: 'WRITE' })
+        : grantCollectionPermission({ principalId, collectionPublicId, action: 'WRITE' }),
     )
-  const removePanier = (panierPublicId: string) =>
-    run(() => revokePanierPermission({ principalId, panierPublicId }))
+  const removeCollection = (collectionPublicId: string) =>
+    run(() => revokeCollectionPermission({ principalId, collectionPublicId }))
 
   const renderSection = (
     title: string,
@@ -147,15 +149,15 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
     </div>
   )
 
-  const heritesByPanier = new Map<string, typeof data.indicateursHerites>()
+  const heritesByCollection = new Map<string, typeof data.indicateursHerites>()
   for (const herite of data.indicateursHerites) {
-    const list = heritesByPanier.get(herite.viaPanierPublicId) ?? []
+    const list = heritesByCollection.get(herite.viaCollectionPublicId) ?? []
     list.push(herite)
-    heritesByPanier.set(herite.viaPanierPublicId, list)
+    heritesByCollection.set(herite.viaCollectionPublicId, list)
   }
 
-  const renderHeritesForPanier = (panierPublicId: string): ReactNode => {
-    const herites = heritesByPanier.get(panierPublicId)
+  const renderHeritesForCollection = (collectionPublicId: string): ReactNode => {
+    const herites = heritesByCollection.get(collectionPublicId)
     if (!herites || herites.length === 0) return null
     return (
       <ul className="mt-2 space-y-1.5 border-l-2 border-dashed border-border pl-3">
@@ -163,7 +165,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           <li
             key={herite.publicId}
             className="flex items-center gap-2 text-text-subtle"
-            title="Lecture héritée via ce panier"
+            title="Lecture héritée via cette collection"
           >
             <span className="min-w-0 flex-1 truncate text-xs">{herite.nom}</span>
             <span className="shrink-0 font-mono text-xs">{herite.publicId}</span>
@@ -174,14 +176,14 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
     )
   }
 
-  const excludedPaniers = data.paniers.map((p) => p.publicId)
+  const excludedCollections = data.collections.map((p) => p.publicId)
   const excludedIndicateurs = [
     ...data.indicateurs.map((i) => i.publicId),
     ...data.indicateursHerites.map((i) => i.publicId),
   ]
 
   const isEmpty =
-    data.paniers.length === 0 &&
+    data.collections.length === 0 &&
     data.indicateurs.length === 0 &&
     data.indicateursHerites.length === 0
 
@@ -211,12 +213,12 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
             size="sm"
             type="button"
             onClick={() => {
-              if (window.confirm('Déverrouiller l’édition des permissions en PRODUCTION ?'))
+              if (window.confirm("Déverrouiller l'édition des permissions en PRODUCTION ?"))
                 unlock()
             }}
             className="border-red-marianne bg-red-marianne text-primary-foreground hover:bg-red-marianne"
           >
-            Déverrouiller l’édition en PROD
+            Déverrouiller l'édition en PROD
           </Button>
         </div>
       ) : null}
@@ -224,7 +226,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
       {isEmpty ? (
         <EmptyState
           title="Aucune permission"
-          description="Ce principal n’a aucune permission directe. Ajoutez un panier ou un indicateur."
+          description="Ce principal n'a aucune permission directe. Ajoutez une collection ou un indicateur."
         />
       ) : null}
 
@@ -242,15 +244,31 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
         },
       )}
       {renderSection(
-        'Paniers',
-        data.paniers,
-        <PanierPicker excludedIds={excludedPaniers} onSelect={addPanier} disabled={disabled} />,
+        'Collections',
+        data.collections,
+        <Button
+          variant="secondary"
+          size="sm"
+          type="button"
+          disabled={disabled}
+          onClick={() => setModal('collection')}
+        >
+          + Ajouter une collection
+        </Button>,
         {
-          onToggleWrite: togglePanierWrite,
-          onRemove: removePanier,
+          onToggleWrite: toggleCollectionWrite,
+          onRemove: removeCollection,
         },
-        renderHeritesForPanier,
+        renderHeritesForCollection,
       )}
+
+      {modal === 'collection' ? (
+        <CollectionSearchModal
+          excludedPublicIds={excludedCollections}
+          onSelect={(hit) => addCollection(hit.publicId)}
+          onClose={() => setModal(null)}
+        />
+      ) : null}
     </section>
   )
 }

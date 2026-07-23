@@ -17,16 +17,16 @@ const serializeDirect = (map: Map<string, DirectEntry>) =>
     .sort((a, b) => a.publicId.localeCompare(b.publicId))
 
 // Charge les permissions directes (groupées par ressource) + les indicateurs
-// hérités en READ via propagation panier → indicateur (cf. permissions-design.md).
+// hérités en READ via propagation collection → indicateur (cf. permissions-design.md).
 // Pur : aucune garde d'autorisation ici (assurée par l'appelant).
 export const loadPrincipalPermissions = async (
   principalId: string,
 ): Promise<PrincipalPermissionsApiModel> => {
-  const [panierPerms, indicateurPerms] = await Promise.all([
-    db().panierPermission.findMany({
+  const [collectionPerms, indicateurPerms] = await Promise.all([
+    db().collectionPermission.findMany({
       where: { principalId },
       include: {
-        panier: {
+        collection: {
           select: {
             publicId: true,
             nom: true,
@@ -41,15 +41,15 @@ export const loadPrincipalPermissions = async (
     }),
   ])
 
-  const paniersMap = new Map<string, DirectEntry>()
-  for (const p of panierPerms) {
-    const entry = paniersMap.get(p.panier.publicId) ?? {
-      publicId: p.panier.publicId,
-      nom: p.panier.nom,
+  const collectionsMap = new Map<string, DirectEntry>()
+  for (const p of collectionPerms) {
+    const entry = collectionsMap.get(p.collection.publicId) ?? {
+      publicId: p.collection.publicId,
+      nom: p.collection.nom,
       actions: new Set<PermissionAction>(),
     }
     entry.actions.add(p.action)
-    paniersMap.set(p.panier.publicId, entry)
+    collectionsMap.set(p.collection.publicId, entry)
   }
 
   const indicateursMap = new Map<string, DirectEntry>()
@@ -65,23 +65,23 @@ export const loadPrincipalPermissions = async (
 
   const heritesMap = new Map<
     string,
-    { publicId: string; nom: string; viaPanierPublicId: string; viaPanierNom: string }
+    { publicId: string; nom: string; viaCollectionPublicId: string; viaCollectionNom: string }
   >()
-  for (const p of panierPerms) {
-    for (const lien of p.panier.indicateurs) {
+  for (const p of collectionPerms) {
+    for (const lien of p.collection.indicateurs) {
       const pubId = lien.indicateur.publicId
       if (indicateursMap.has(pubId) || heritesMap.has(pubId)) continue
       heritesMap.set(pubId, {
         publicId: pubId,
         nom: lien.indicateur.nom,
-        viaPanierPublicId: p.panier.publicId,
-        viaPanierNom: p.panier.nom,
+        viaCollectionPublicId: p.collection.publicId,
+        viaCollectionNom: p.collection.nom,
       })
     }
   }
 
   return {
-    paniers: serializeDirect(paniersMap),
+    collections: serializeDirect(collectionsMap),
     indicateurs: serializeDirect(indicateursMap),
     indicateursHerites: Array.from(heritesMap.values()).sort((a, b) =>
       a.publicId.localeCompare(b.publicId),

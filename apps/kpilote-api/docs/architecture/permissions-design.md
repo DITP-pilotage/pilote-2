@@ -5,7 +5,7 @@ Statut : implémenté
 
 ## Contexte
 
-mb-api expose plusieurs ressources métier (indicateurs, paniers, à terme :
+mb-api expose plusieurs ressources métier (indicateurs, collections, à terme :
 référentiels, individus, widgets) que tout principal authentifié n'a pas
 forcément le droit de voir ou modifier. Ce document décrit le **modèle de
 permissions transverse** utilisé pour ces ressources, les invariants qu'il
@@ -13,7 +13,7 @@ garantit, et les conventions à respecter pour étendre le modèle à une nouvel
 ressource.
 
 Le besoin produit qui a déclenché la formalisation : permettre des
-paniers d'indicateurs privés (visibles uniquement par certains principals)
+collections d'indicateurs privés (visibles uniquement par certains principals)
 sans dupliquer la mécanique déjà en place pour les indicateurs eux-mêmes.
 
 ## Modèle
@@ -41,7 +41,7 @@ deux valeurs :
 - `PRIVE` — accessible uniquement aux principals avec une permission explicite
   sur la ressource.
 
-C'est la sémantique appliquée aujourd'hui aux indicateurs et aux paniers. Les
+C'est la sémantique appliquée aujourd'hui aux indicateurs et aux collections. Les
 ressources sans concept de visibilité (référentiels, widgets, individus en v0)
 restent ouvertes à tout principal authentifié.
 
@@ -55,7 +55,7 @@ les droits explicites :
   avoir plusieurs actions sur une ressource (typiquement READ et WRITE).
 - Index sur `{ressource}_id` (lookups inverses fréquents).
 - Index sur `principal_id` quand la table est utilisée pour des `where`
-  filtrés par principal (cas paniers/indicateurs : la PK couvre déjà ce
+  filtrés par principal (cas collections/indicateurs : la PK couvre déjà ce
   cas via son ordre, donc pas d'index supplémentaire nécessaire).
 - FK avec `ON DELETE CASCADE` sur les deux côtés.
 
@@ -70,7 +70,7 @@ PermissionAction ∈ { READ, WRITE }
   n'implique pas READ par la sémantique de l'enum**, mais par convention, les
   helpers `with*ReadPermission` acceptent les deux actions comme valant un
   READ (un principal qui peut écrire peut lire). Voir constantes
-  `INDICATEUR_READ_PERMISSIONS` / `PANIER_READ_PERMISSIONS`.
+  `INDICATEUR_READ_PERMISSIONS` / `COLLECTION_READ_PERMISSIONS`.
 
 ## Helpers
 
@@ -100,28 +100,28 @@ début de toute command (`upsert`, `delete`).
 Le WRITE est strictement direct : il ne se propage **jamais** depuis une autre
 ressource (cf. invariant ci-dessous).
 
-## Propagation panier → indicateur
+## Propagation collection → indicateur
 
-Cas particulier explicite : un principal qui a READ ou WRITE sur un panier
+Cas particulier explicite : un principal qui a READ ou WRITE sur une collection
 gagne **automatiquement** READ sur tous les indicateurs qui composent le
-panier. Le helper `withIndicateurReadPermission` ajoute donc une troisième
+collection. Le helper `withIndicateurReadPermission` ajoute donc une troisième
 branche OR :
 
 ```ts
-{ paniers: { some: { panier: { permissions: { some: { principalId, action: { in: [READ, WRITE] } } } } } } }
+{ collections: { some: { collection: { permissions: { some: { principalId, action: { in: [READ, WRITE] } } } } } } }
 ```
 
-**Pourquoi cette direction (panier → indicateur, pas indicateur → panier) :**
-le panier est une « vue » composée, c'est un cas d'usage explicite de
-partage groupé. Permettre à un destinataire de panier de consulter les
+**Pourquoi cette direction (collection → indicateur, pas indicateur → collection) :**
+la collection est une « vue » composée, c'est un cas d'usage explicite de
+partage groupé. Permettre à un destinataire de collection de consulter les
 indicateurs qu'il contient est attendu et naturel. L'inverse (accès à un
-indicateur ⇒ accès à tous les paniers qui le citent) n'aurait pas de sens.
+indicateur ⇒ accès à toutes les collections qui le citent) n'aurait pas de sens.
 
-**Pourquoi READ uniquement, pas WRITE :** un panier est un container — le
-fait de pouvoir gérer un panier (ajouter/retirer des indicateurs) ne doit
+**Pourquoi READ uniquement, pas WRITE :** une collection est un container — le
+fait de pouvoir gérer une collection (ajouter/retirer des indicateurs) ne doit
 **pas** permettre de modifier les valeurs ou la définition des indicateurs
 eux-mêmes. La distinction container vs contenu est portée par la sémantique
-des permissions : `WRITE` sur panier = modifier le panier, pas son contenu.
+des permissions : `WRITE` sur collection = modifier la collection, pas son contenu.
 
 ## Invariants
 
@@ -147,7 +147,7 @@ des permissions : `WRITE` sur panier = modifier le panier, pas son contenu.
 5. **PUBLIC vs PRIVE est une propriété de la ressource, pas du contenu.**
    Le contenu d'une ressource publique peut inclure des éléments privés (rare
    mais possible) : la visibilité du conteneur ne « rend » pas son contenu
-   public. La propagation panier → indicateur est l'inverse — elle propage la
+   public. La propagation collection → indicateur est l'inverse — elle propage la
    visibilité du conteneur vers son contenu, ce qui est explicite et
    sémantiquement justifié.
 
@@ -158,8 +158,8 @@ Les helpers `with*ReadPermission` introduisent un OR avec une sous-requête
 
 - Index sur `{ressource}_permission.principal_id` (ou couverture par la PK
   composite si l'ordre est `(principal_id, ...)`, ce qui est le cas).
-- Quand on ajoute une branche de propagation traversant N-N (ex. paniers via
-  `panier_indicateur` puis `panier_permission`), l'index `panier_permission(principal_id)`
+- Quand on ajoute une branche de propagation traversant N-N (ex. collections via
+  `collection_indicateur` puis `collection_permission`), l'index `collection_permission(principal_id)`
   devient critique — la profondeur du `some.some` ne permet pas à PostgreSQL
   de l'inférer sans aide.
 - Le pattern actuel (≤ 3 branches OR par helper) reste OK jusqu'à quelques
@@ -204,7 +204,7 @@ Pour ajouter le modèle de permissions à une nouvelle ressource `Foo` :
   principal par principal. Pour un usage large, on passera par un système
   de groupes (`PrincipalGroup` + `GroupPermission`) — pas avant qu'un cas
   d'usage métier l'exige.
-- **Pas d'héritage hiérarchique.** Un panier de paniers, ou un référentiel
+- **Pas d'héritage hiérarchique.** Une collection de collections, ou un référentiel
   parent qui propage à ses enfants, n'existe pas. À traiter au cas par cas
   si le besoin émerge.
 - **Pas de permissions négatives (deny).** Le modèle est purement additif :

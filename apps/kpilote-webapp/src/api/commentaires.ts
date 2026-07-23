@@ -9,7 +9,7 @@ import {
   indicateurIndividuCommentaireTypeSchema,
   type ListerCommentairesQuery,
   type ModifierCommentaireBody,
-  panierCommentaireTypeSchema,
+  collectionCommentaireTypeSchema,
 } from '@pilote/kpilote-shared/commentaire'
 import { z } from 'zod'
 
@@ -19,7 +19,7 @@ export type IndicateurIndividuCommentaireType = z.infer<
   typeof indicateurIndividuCommentaireTypeSchema
 >
 
-export type PanierCommentaireType = z.infer<typeof panierCommentaireTypeSchema>
+export type CollectionCommentaireType = z.infer<typeof collectionCommentaireTypeSchema>
 
 // Seul le type CONFIANCE (synthèse des résultats) porte un niveau de confiance.
 export const typeAvecNiveauConfiance = (type: string): boolean => type === 'CONFIANCE'
@@ -69,32 +69,34 @@ export const updateCommentaire = async (
   return commentaireApiModelSchema.parse(json)
 }
 
-// --- Panier global -----------------------------------------------------------
+// --- Collection global -----------------------------------------------------------
 
-export const fetchCommentairesPanier = async (
-  panierId: string,
+export const fetchCommentairesCollection = async (
+  collectionId: string,
   query: ListerCommentairesQuery,
 ): Promise<CommentaireListApiModel> => {
   const json = await apiClient
-    .get(`paniers/${panierId}/commentaires`, { searchParams: query })
+    .get(`collections/${collectionId}/commentaires`, { searchParams: query })
     .json()
   return commentaireListApiModelSchema.parse(json)
 }
 
-export const fetchBrouillonPanier = async (
-  panierId: string,
-  type: PanierCommentaireType,
+export const fetchBrouillonCollection = async (
+  collectionId: string,
+  type: CollectionCommentaireType,
 ): Promise<BrouillonApiModel> => {
   const json = await apiClient
-    .get(`paniers/${panierId}/commentaires/brouillon`, { searchParams: { type } })
+    .get(`collections/${collectionId}/commentaires/brouillon`, { searchParams: { type } })
     .json()
   return brouillonApiModelSchema.parse(json)
 }
 
-export const createCommentairePanier = async (
-  panierId: string,
+export const createCommentaireCollection = async (
+  collectionId: string,
   body: CreerCommentaireBody,
 ): Promise<CommentaireApiModel> => {
-  const json = await apiClient.post(`paniers/${panierId}/commentaires`, { json: body }).json()
+  const json = await apiClient
+    .post(`collections/${collectionId}/commentaires`, { json: body })
+    .json()
   return commentaireApiModelSchema.parse(json)
 }

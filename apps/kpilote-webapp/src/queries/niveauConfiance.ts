@@ -4,7 +4,7 @@ import { create, windowedFiniteBatchScheduler } from '@yornaath/batshit'
 
 import {
   fetchNiveauxParCommentaires,
-  fetchNiveauxParCommentairesPanier,
+  fetchNiveauxParCommentairesCollection,
 } from '@/api/niveauConfiance'
 
 import { DEFAULT_STALE_TIME } from './utils'
@@ -63,16 +63,16 @@ export const niveauPourCommentaireQueryOptions = (
     staleTime: DEFAULT_STALE_TIME,
   })
 
-// --- Panier global -----------------------------------------------------------
+// --- Collection global -----------------------------------------------------------
 
-const batchersPanierByScope = new Map<string, BatcherPanier>()
+const batchersCollectionByScope = new Map<string, BatcherCollection>()
 
-type BatcherPanier = ReturnType<typeof createBatcherPanier>
+type BatcherCollection = ReturnType<typeof createBatcherCollection>
 
-const createBatcherPanier = (panierId: string) =>
+const createBatcherCollection = (collectionId: string) =>
   create({
     fetcher: async (commentaireIds: string[]): Promise<ReadonlyArray<NiveauConfianceApiModel>> => {
-      const { items } = await fetchNiveauxParCommentairesPanier(panierId, commentaireIds)
+      const { items } = await fetchNiveauxParCommentairesCollection(collectionId, commentaireIds)
       return items
     },
     resolver: (items, commentaireId) =>
@@ -80,24 +80,27 @@ const createBatcherPanier = (panierId: string) =>
     scheduler: windowedFiniteBatchScheduler({ windowMs: 10, maxBatchSize: 100 }),
   })
 
-const getBatcherPanier = (panierId: string): BatcherPanier => {
-  const existing = batchersPanierByScope.get(panierId)
+const getBatcherCollection = (collectionId: string): BatcherCollection => {
+  const existing = batchersCollectionByScope.get(collectionId)
   if (existing) return existing
-  const batcher = createBatcherPanier(panierId)
-  batchersPanierByScope.set(panierId, batcher)
+  const batcher = createBatcherCollection(collectionId)
+  batchersCollectionByScope.set(collectionId, batcher)
   return batcher
 }
 
-export const niveauConfiancePanierKeys = {
-  parScope: (panierId: string) => ['panier', panierId, 'niveau-confiance'] as const,
-  parCommentaire: (panierId: string, commentaireId: string) =>
-    [...niveauConfiancePanierKeys.parScope(panierId), commentaireId] as const,
+export const niveauConfianceCollectionKeys = {
+  parScope: (collectionId: string) => ['collection', collectionId, 'niveau-confiance'] as const,
+  parCommentaire: (collectionId: string, commentaireId: string) =>
+    [...niveauConfianceCollectionKeys.parScope(collectionId), commentaireId] as const,
 }
 
-export const niveauPourCommentairePanierQueryOptions = (panierId: string, commentaireId: string) =>
+export const niveauPourCommentaireCollectionQueryOptions = (
+  collectionId: string,
+  commentaireId: string,
+) =>
   queryOptions<NiveauConfianceApiModel | null, Error, NiveauConfianceApiModel | null, QueryKey>({
-    queryKey: niveauConfiancePanierKeys.parCommentaire(panierId, commentaireId),
+    queryKey: niveauConfianceCollectionKeys.parCommentaire(collectionId, commentaireId),
     queryFn: (): Promise<NiveauConfianceApiModel | null> =>
-      getBatcherPanier(panierId).fetch(commentaireId),
+      getBatcherCollection(collectionId).fetch(commentaireId),
     staleTime: DEFAULT_STALE_TIME,
   })

@@ -86,7 +86,8 @@ const indicateursSeed: ReadonlyArray<{
     publicId: 'IND-004',
     nom: 'Délai de traitement préfectures',
     unite: 'JOURS',
-    description: "Délai moyen d'instruction des dossiers déposés en préfecture, en jours ouvrés.",
+    description:
+      "Délai moyen d'instruction des collections déposés en préfecture, en jours ouvrés.",
     sourceDonnees: 'Ministère de l’Intérieur — DGCL',
     periodeMiseAJour: 'MENSUELLE',
     jourMiseAJour: 5,
@@ -665,8 +666,8 @@ const main = async () => {
   // Objectifs d'avancement : indicateurs avec une maille de saisie connue —
   // 3 dates-cibles annuelles (2024, 2025, 2026) × individus de la maille.
   // - IND-001..005 : indicateurs PRIVE de démonstration (ditp.admin a accès).
-  // - IND-046..050 : indicateurs PUBLIC, indispensables pour que les paniers
-  //   publics (PAN-001..004) exposent un taux de progression calculable à tout
+  // - IND-046..050 : indicateurs PUBLIC, indispensables pour que les collections
+  //   publics (COL-001..004) exposent un taux de progression calculable à tout
   //   utilisateur authentifié.
   const INDICATEURS_OBJECTIFS = [
     'IND-001',
@@ -719,21 +720,21 @@ const main = async () => {
     objectifsCount += result.count
   }
 
-  // Paniers d'indicateurs : collections thématiques pour le front. L'ordre
+  // Collections d'indicateurs : collections thématiques pour le front. L'ordre
   // du tableau `indicateurPublicIds` détermine l'ordre d'affichage (via createdAt
   // ASC de la jonction).
   //
   // Visibilité (cf. docs/architecture/permissions-design.md) :
   // - PUBLIC : visible à tout principal authentifié ;
   // - PRIVE : visible uniquement aux principals avec une permission explicite
-  //   sur le panier (et propage READ sur ses indicateurs).
+  //   sur la collection (et propage READ sur ses indicateurs).
   //
-  // PAN-001..004 restent PUBLIC pour conserver le comportement antérieur (les
+  // COL-001..004 restent PUBLIC pour conserver le comportement antérieur (les
   // 5 indicateurs IND-046..050 sont eux-mêmes PUBLIC, donc accessibles à tous).
-  // PAN-005 est PRIVE et contient des indicateurs PRIVE (IND-001..003) : il
-  // démontre la propagation panier → indicateur (un principal qui a accès à
-  // PAN-005 voit IND-001..003 même sans permission directe sur eux).
-  const paniersSeed: ReadonlyArray<{
+  // COL-005 est PRIVE et contient des indicateurs PRIVE (IND-001..003) : il
+  // démontre la propagation collection → indicateur (un principal qui a accès à
+  // COL-005 voit IND-001..003 même sans permission directe sur eux).
+  const collectionsSeed: ReadonlyArray<{
     publicId: string
     nom: string
     description: string | null
@@ -741,124 +742,124 @@ const main = async () => {
     indicateurPublicIds: ReadonlyArray<string>
   }> = [
     {
-      publicId: 'PAN-001',
+      publicId: 'COL-001',
       nom: 'Indicateurs sociaux',
       description: 'Pauvreté, alphabétisation et accès numérique.',
       visibilite: 'PUBLIC',
       indicateurPublicIds: ['IND-048', 'IND-049', 'IND-050'],
     },
     {
-      publicId: 'PAN-002',
+      publicId: 'COL-002',
       nom: 'Santé et démographie',
       description: 'Démographie générale et espérance de vie.',
       visibilite: 'PUBLIC',
       indicateurPublicIds: ['IND-046', 'IND-047'],
     },
     {
-      publicId: 'PAN-003',
+      publicId: 'COL-003',
       nom: "Vue d'ensemble — indicateurs publics",
       description: "L'ensemble des indicateurs publics du référentiel mb.",
       visibilite: 'PUBLIC',
       indicateurPublicIds: ['IND-046', 'IND-047', 'IND-048', 'IND-049', 'IND-050'],
     },
     {
-      publicId: 'PAN-004',
+      publicId: 'COL-004',
       nom: 'Niveau de vie',
       description: 'Indicateurs de bien-être matériel et de connectivité.',
       visibilite: 'PUBLIC',
       indicateurPublicIds: ['IND-048', 'IND-050'],
     },
     {
-      publicId: 'PAN-005',
-      nom: 'Panier admin — économie',
-      description: 'Panier privé démontrant la propagation READ vers ses indicateurs.',
+      publicId: 'COL-005',
+      nom: 'Collection admin — économie',
+      description: 'Collection privé démontrant la propagation READ vers ses indicateurs.',
       visibilite: 'PRIVE',
       indicateurPublicIds: ['IND-001', 'IND-002', 'IND-003'],
     },
   ]
 
-  const paniersByPublicId = new Map<string, { id: string }>()
-  for (const panierItem of paniersSeed) {
-    const panier = await prisma.panier.upsert({
-      where: { publicId: panierItem.publicId },
+  const collectionsByPublicId = new Map<string, { id: string }>()
+  for (const collectionItem of collectionsSeed) {
+    const collection = await prisma.collection.upsert({
+      where: { publicId: collectionItem.publicId },
       update: {
-        nom: panierItem.nom,
-        description: panierItem.description,
-        visibilite: panierItem.visibilite,
+        nom: collectionItem.nom,
+        description: collectionItem.description,
+        visibilite: collectionItem.visibilite,
       },
       create: {
         id: uuidv7(),
-        publicId: panierItem.publicId,
-        nom: panierItem.nom,
-        description: panierItem.description,
-        visibilite: panierItem.visibilite,
+        publicId: collectionItem.publicId,
+        nom: collectionItem.nom,
+        description: collectionItem.description,
+        visibilite: collectionItem.visibilite,
       },
     })
-    paniersByPublicId.set(panierItem.publicId, { id: panier.id })
-    for (const indicateurPublicId of panierItem.indicateurPublicIds) {
+    collectionsByPublicId.set(collectionItem.publicId, { id: collection.id })
+    for (const indicateurPublicId of collectionItem.indicateurPublicIds) {
       const indicateur = await prisma.indicateur.findUniqueOrThrow({
         where: { publicId: indicateurPublicId },
         select: { id: true },
       })
-      await prisma.panierIndicateur.upsert({
+      await prisma.collectionIndicateur.upsert({
         where: {
-          panierId_indicateurId: {
-            panierId: panier.id,
+          collectionId_indicateurId: {
+            collectionId: collection.id,
             indicateurId: indicateur.id,
           },
         },
         update: {},
-        create: { panierId: panier.id, indicateurId: indicateur.id },
+        create: { collectionId: collection.id, indicateurId: indicateur.id },
       })
     }
   }
-  const panierLiaisonsCount = paniersSeed.reduce(
+  const collectionLiaisonsCount = collectionsSeed.reduce(
     (acc, item) => acc + item.indicateurPublicIds.length,
     0,
   )
 
-  // Permissions panier : on accorde READ + WRITE à ditp.admin sur PAN-005
-  // (le panier privé). Comme PAN-005 contient des indicateurs PRIVE
+  // Permissions collection : on accorde READ + WRITE à ditp.admin sur COL-005
+  // (la collection privée). Comme COL-005 contient des indicateurs PRIVE
   // (IND-001..003) sur lesquels ditp.admin a déjà des permissions directes
   // (cf. boucle indicateursSeed.slice(0, 8) plus haut), la propagation
   // n'apporte rien ici en pratique pour ditp.admin — c'est volontaire : la
   // démo de propagation reste vérifiée en tests d'intégration.
   for (const action of ['READ', 'WRITE'] as const) {
-    const panier = paniersByPublicId.get('PAN-005')
-    if (!panier) continue
-    await prisma.panierPermission.upsert({
+    const collection = collectionsByPublicId.get('COL-005')
+    if (!collection) continue
+    await prisma.collectionPermission.upsert({
       where: {
-        principalId_panierId_action: {
+        principalId_collectionId_action: {
           principalId: ditpAdmin.id,
-          panierId: panier.id,
+          collectionId: collection.id,
           action,
         },
       },
       update: {},
       create: {
         principalId: ditpAdmin.id,
-        panierId: panier.id,
+        collectionId: collection.id,
         action,
       },
     })
   }
-  const panierPermissionsCount = 2
+  const collectionPermissionsCount = 2
 
-  // Responsables panier : ditp.admin et claire.dupont sont responsables de PAN-005.
-  const pan005 = paniersByPublicId.get('PAN-005')!
-  const pan004 = paniersByPublicId.get('PAN-004')!
+  // Responsables collection : ditp.admin et claire.dupont sont responsables de COL-005.
+  const col005 = collectionsByPublicId.get('COL-005')!
+  const col004 = collectionsByPublicId.get('COL-004')!
   const claireDupont = await prisma.utilisateur.findUniqueOrThrow({
     where: { email: 'claire.dupont@example.com' },
     select: { id: true },
   })
   for (const utilisateurId of [ditpAdmin.id, claireDupont.id]) {
-    await prisma.panierResponsable.upsert({
-      where: { panierId_utilisateurId: { panierId: pan005.id, utilisateurId } },
+    await prisma.collectionResponsable.upsert({
+      where: { collectionId_utilisateurId: { collectionId: col005.id, utilisateurId } },
       update: {},
-      create: { panierId: pan005.id, utilisateurId },
+      create: { collectionId: col005.id, utilisateurId },
     })
   }
-  const panierResponsablesCount = 2
+  const collectionResponsablesCount = 2
 
   // Responsables indicateur : ditp.admin et claire.dupont sont responsables de IND-001.
   const indicateurIdInd001 = indicateursParPublicId.get('IND-001')!
@@ -950,19 +951,21 @@ const main = async () => {
   // ── Rattachements ──────────────────────────────────────────────────────────────
 
   for (const contact of [supportMethodo, celluleFormation, supportTechnique, ouvertureDonnees]) {
-    await prisma.panierContactUtile.upsert({
-      where: { panierId_contactUtileId: { panierId: pan005.id, contactUtileId: contact.id } },
+    await prisma.collectionContactUtile.upsert({
+      where: {
+        collectionId_contactUtileId: { collectionId: col005.id, contactUtileId: contact.id },
+      },
       update: {},
-      create: { panierId: pan005.id, contactUtileId: contact.id },
+      create: { collectionId: col005.id, contactUtileId: contact.id },
     })
   }
 
-  await prisma.panierContactUtile.upsert({
+  await prisma.collectionContactUtile.upsert({
     where: {
-      panierId_contactUtileId: { panierId: pan004.id, contactUtileId: ouvertureDonnees.id },
+      collectionId_contactUtileId: { collectionId: col004.id, contactUtileId: ouvertureDonnees.id },
     },
     update: {},
-    create: { panierId: pan004.id, contactUtileId: ouvertureDonnees.id },
+    create: { collectionId: col004.id, contactUtileId: ouvertureDonnees.id },
   })
 
   const contactsUtilesCount = 4
@@ -970,7 +973,7 @@ const main = async () => {
   const permissionsCount = 8 * 2
   const widgetLiaisonsCount = widgetsSeed.reduce((acc, w) => acc + w.referentielPublicIds.length, 0)
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${paniersSeed.length} paniers (${panierLiaisonsCount} liaisons panier-indicateur, ${panierPermissionsCount} permissions panier, ${panierResponsablesCount} responsable panier, ${contactsUtilesCount} contacts utiles), ${indicateurResponsablesCount} responsables indicateur.`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${collectionsSeed.length} collections (${collectionLiaisonsCount} liaisons collection-indicateur, ${collectionPermissionsCount} permissions collection, ${collectionResponsablesCount} responsable collection, ${contactsUtilesCount} contacts utiles), ${indicateurResponsablesCount} responsables indicateur.`,
   )
 }
 

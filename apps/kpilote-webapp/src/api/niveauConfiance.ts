@@ -23,13 +23,13 @@ export const fetchNiveauxParCommentaires = async (
   return niveauConfianceListApiModelSchema.parse(json)
 }
 
-// Variante panier global — même contrat, route propre.
-export const fetchNiveauxParCommentairesPanier = async (
-  panierId: string,
+// Variante collection global — même contrat, route propre.
+export const fetchNiveauxParCommentairesCollection = async (
+  collectionId: string,
   commentaireIds: string[],
 ): Promise<NiveauConfianceListApiModel> => {
   const json = await apiClient
-    .get(`paniers/${panierId}/niveaux-confiance`, {
+    .get(`collections/${collectionId}/niveaux-confiance`, {
       searchParams: { commentaires: commentaireIds.join(',') },
     })
     .json()

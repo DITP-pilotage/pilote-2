@@ -14,7 +14,7 @@ import { health } from '@/healthcheck/routes/health'
 import { indicateurRoutes } from '@/indicateur/routes'
 import { individuRoutes } from '@/individu/routes'
 import { meRoutes } from '@/me/routes'
-import { panierRoutes } from '@/panier/routes'
+import { collectionRoutes } from '@/collection/routes'
 import { permissionRoutes } from '@/permission/routes'
 import { referentielRoutes } from '@/referentiel/routes'
 import { objectifIndicateurIndividuRoutes } from '@/objectifIndicateurIndividu/routes'
@@ -44,7 +44,7 @@ app.route('/', valeurImportRoutes)
 app.route('/', objectifIndicateurIndividuRoutes)
 app.route('/', referentielRoutes)
 app.route('/', individuRoutes)
-app.route('/', panierRoutes)
+app.route('/', collectionRoutes)
 app.route('/', commentaireRoutes)
 app.route('/', niveauConfianceRoutes)
 app.route('/', featureRoutes)
