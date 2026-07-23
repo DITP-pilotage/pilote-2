@@ -6,12 +6,14 @@ import {
   basculerVisibiliteArticleBodySchema,
   creerArticleCentreAideBodySchema,
   deplacerArticleBodySchema,
+  deplacerArticleVersBodySchema,
   modifierBrouillonArticleBodySchema,
 } from '@pilote/kpilote-shared/centreAide'
 
 import { basculerVisibiliteArticleCentreAide } from '@/centreAide/commands/basculerVisibiliteArticle'
 import { creerArticleCentreAide } from '@/centreAide/commands/creerArticle'
 import { deplacerArticleCentreAide } from '@/centreAide/commands/deplacerArticle'
+import { deplacerArticleVersCentreAide } from '@/centreAide/commands/deplacerArticleVers'
 import { depublierArticleCentreAide } from '@/centreAide/commands/depublierArticle'
 import { modifierBrouillonArticleCentreAide } from '@/centreAide/commands/modifierBrouillonArticle'
 import { publierArticleCentreAide } from '@/centreAide/commands/publierArticle'
@@ -26,7 +28,7 @@ import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { erreur403, erreur404, succes200 } from '@/framework/openapi/responses'
+import { erreur400, erreur403, erreur404, succes200 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 
 const ArticleApiModelSchema = articleCentreAideApiModelSchema.openapi('ArticleCentreAideApiModel')
@@ -46,6 +48,7 @@ const BasculerVisibiliteBodySchema = basculerVisibiliteArticleBodySchema.openapi
   'BasculerVisibiliteArticleBody',
 )
 const DeplacerBodySchema = deplacerArticleBodySchema.openapi('DeplacerArticleBody')
+const DeplacerVersBodySchema = deplacerArticleVersBodySchema.openapi('DeplacerArticleVersBody')
 
 const detailParamsSchema = z.object({
   id: z.string().uuid().openapi({ description: "Identifiant (UUID) de l'article." }),
@@ -222,6 +225,28 @@ const deplacerRoute = createRoute({
   },
 })
 
+// --- POST /centre-aide/articles/{id}/deplacer-vers ---------------------------
+
+const deplacerVersRoute = createRoute({
+  method: 'post',
+  path: '/centre-aide/articles/{id}/deplacer-vers',
+  tags: ['CentreAide', 'Admin'],
+  summary: 'Déplacer un article (drag-and-drop, absolu)',
+  description:
+    'Réservé aux clés API de rôle `ADMIN`. Range l’article sous un parent à une position.',
+  middleware: [requireAuthentication],
+  request: {
+    params: detailParamsSchema,
+    body: { content: { 'application/json': { schema: DeplacerVersBodySchema } }, required: true },
+  },
+  responses: {
+    200: succes200('Article déplacé', ArticleApiModelSchema),
+    400: erreur400,
+    403: erreur403,
+    404: erreur404,
+  },
+})
+
 // --- DELETE /centre-aide/articles/{id} ---------------------------------------
 
 const corbeilleRoute = createRoute({
@@ -359,6 +384,15 @@ centreAideRoutes.openapi(deplacerRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
   return (await withTransaction(async () => deplacerArticleCentreAide(id, body.direction))).match(
+    (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
+centreAideRoutes.openapi(deplacerVersRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  const body = context.req.valid('json')
+  return (await withTransaction(async () => deplacerArticleVersCentreAide(id, body))).match(
     (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 200 }),
     never,
   )

@@ -93,5 +93,17 @@ export type BasculerVisibiliteArticleBody = z.infer<typeof basculerVisibiliteArt
 
 export const deplacerArticleBodySchema = z
   .object({ direction: directionDeplacementSchema })
-  .describe('Déplacement d’un article dans l’arbre.')
+  .describe('Déplacement relatif d’un article dans l’arbre.')
 export type DeplacerArticleBody = z.infer<typeof deplacerArticleBodySchema>
+
+export const deplacerArticleVersBodySchema = z
+  .object({
+    parentId: z
+      .string()
+      .uuid()
+      .nullable()
+      .describe('Nouveau parent (un groupe), ou null pour la racine.'),
+    index: z.number().int().min(0).describe('Position parmi les frères du parent cible.'),
+  })
+  .describe('Déplacement absolu (drag-and-drop) : parent + position.')
+export type DeplacerArticleVersBody = z.infer<typeof deplacerArticleVersBodySchema>
