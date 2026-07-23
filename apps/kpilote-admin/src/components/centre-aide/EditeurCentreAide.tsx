@@ -1,9 +1,10 @@
 import { EditorContent, useEditor } from '@tiptap/react'
 import { BubbleMenu } from '@tiptap/react/menus'
 import { classesRenduBase } from '@pilote/kpilote-ui/centre-aide'
-import { Bold, Italic, Strikethrough, Underline as UnderlineIcon } from 'lucide-react'
+import { Bold, Italic, Link2, Strikethrough, Underline as UnderlineIcon } from 'lucide-react'
 import type { ComponentType } from 'react'
 
+import { estUrlHttp } from '@/components/centre-aide/blocs'
 import { extensionsCentreAide } from '@/components/centre-aide/extensions'
 import { clsxm } from '@/lib/clsxm'
 
@@ -63,6 +64,18 @@ export function EditeurCentreAide({
 
   if (!editor) return null
 
+  // Depuis la bulle : agit sur le texte sélectionné (poser / retirer le lien).
+  const definirLien = () => {
+    const precedent = editor.getAttributes('link').href as string | undefined
+    const url = window.prompt('URL du lien', precedent ?? '')
+    if (url === null) return
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run()
+      return
+    }
+    if (estUrlHttp(url)) editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+  }
+
   return (
     <div>
       <BubbleMenu
@@ -92,6 +105,13 @@ export function EditeurCentreAide({
           Icon={Strikethrough}
           actif={editor.isActive('strike')}
           onClick={() => editor.chain().focus().toggleStrike().run()}
+        />
+        <span className="mx-1 h-5 w-px bg-white/20" aria-hidden />
+        <BoutonBulle
+          label="Lien"
+          Icon={Link2}
+          actif={editor.isActive('link')}
+          onClick={definirLien}
         />
       </BubbleMenu>
 
