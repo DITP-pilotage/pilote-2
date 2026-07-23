@@ -17,6 +17,7 @@
       "@/framework/*": ["./src/framework/*"],
       "@/authentication/*": ["./src/authentication/*"],
       "@/commentaire/*": ["./src/commentaire/*"],
+      "@/centreAide/*": ["./src/centreAide/*"],
       "@/feature/*": ["./src/feature/*"],
       "@/healthcheck/*": ["./src/healthcheck/*"],
       "@/indicateur/*": ["./src/indicateur/*"],

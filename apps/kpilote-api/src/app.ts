@@ -3,6 +3,7 @@ import { OpenAPIHono } from '@hono/zod-openapi'
 import { cors } from 'hono/cors'
 
 import { apiKeyRoutes } from '@/apiKey/routes'
+import { centreAideRoutes } from '@/centreAide/routes'
 import { commentaireRoutes } from '@/commentaire/routes'
 import { featureRoutes } from '@/feature/routes'
 import { niveauConfianceRoutes } from '@/niveauConfiance/routes'
@@ -46,6 +47,7 @@ app.route('/', referentielRoutes)
 app.route('/', individuRoutes)
 app.route('/', collectionRoutes)
 app.route('/', commentaireRoutes)
+app.route('/', centreAideRoutes)
 app.route('/', niveauConfianceRoutes)
 app.route('/', featureRoutes)
 app.route('/', meRoutes)
