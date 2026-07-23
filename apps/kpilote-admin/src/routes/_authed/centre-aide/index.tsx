@@ -288,7 +288,7 @@ function EditionArticle({
           value={titre}
           onChange={(event) => setTitre(event.target.value)}
           placeholder="Titre de la page"
-          className="flex-1 rounded-md border border-border px-3 py-2 text-lg font-bold outline-none focus:border-primary"
+          className="flex-1 border-none bg-transparent px-0 py-2 text-2xl font-bold outline-none placeholder:text-text-subtle"
         />
         {urlArticle ? (
           <Button asChild variant="tertiary" title="Ouvrir l’article publié dans le webapp">
