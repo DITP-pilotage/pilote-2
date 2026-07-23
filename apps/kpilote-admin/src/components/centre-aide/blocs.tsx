@@ -16,6 +16,7 @@ import {
   List,
   ListOrdered,
   MessageSquareText,
+  Minus,
   TriangleAlert,
   Video as VideoIcon,
 } from 'lucide-react'
@@ -169,6 +170,12 @@ export const construireOptionsBlocs = (
       keywords: 'liste numerotee ordered',
       Icon: ListOrdered,
       run: () => editor.chain().focus().toggleOrderedList().run(),
+    },
+    {
+      label: 'Séparateur',
+      keywords: 'separateur trait ligne horizontal rule hr',
+      Icon: Minus,
+      run: () => editor.chain().focus().setHorizontalRule().run(),
     },
   ]
 }

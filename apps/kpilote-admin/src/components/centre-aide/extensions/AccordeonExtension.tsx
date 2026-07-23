@@ -5,13 +5,37 @@ import {
   ReactNodeViewRenderer,
   type NodeViewProps,
 } from '@tiptap/react'
+import { ChevronDown } from 'lucide-react'
+import { Collapsible } from 'radix-ui'
+import { useState } from 'react'
+
+import { clsxm } from '@/lib/clsxm'
 
 function AccordeonNodeView({ node, updateAttributes, editor }: NodeViewProps) {
   const title = (node.attrs.title as string) ?? ''
+  // Ouvert par défaut pour pouvoir éditer le contenu. `forceMount` garde le
+  // NodeViewContent monté quand c'est replié, sinon ProseMirror perd le contenu.
+  const [ouvert, setOuvert] = useState(true)
+
   return (
     <NodeViewWrapper className="my-2">
-      <div className="overflow-hidden rounded-md border border-border">
-        <div contentEditable={false} className="flex items-center gap-2 bg-surface-tinted p-3">
+      <Collapsible.Root
+        open={ouvert}
+        onOpenChange={setOuvert}
+        className="overflow-hidden rounded-md border border-border"
+      >
+        <div className="flex items-center gap-2 bg-surface-tinted p-3" contentEditable={false}>
+          <Collapsible.Trigger asChild>
+            <button
+              type="button"
+              aria-label={ouvert ? 'Replier' : 'Déplier'}
+              className="flex shrink-0 text-text-subtle"
+            >
+              <ChevronDown
+                className={clsxm('size-4 transition-transform', !ouvert && '-rotate-90')}
+              />
+            </button>
+          </Collapsible.Trigger>
           {editor.isEditable ? (
             <input
               value={title}
@@ -20,13 +44,15 @@ function AccordeonNodeView({ node, updateAttributes, editor }: NodeViewProps) {
               className="flex-1 bg-transparent text-base font-medium outline-none"
             />
           ) : (
-            <span className="text-base font-medium">{title}</span>
+            <span className="flex-1 text-base font-medium">{title}</span>
           )}
         </div>
-        <div className="px-4 pb-4 pt-3 text-sm leading-relaxed">
-          <NodeViewContent />
-        </div>
-      </div>
+        <Collapsible.Content forceMount className="data-[state=closed]:hidden">
+          <div className="px-4 pb-4 pt-3 text-sm leading-relaxed">
+            <NodeViewContent />
+          </div>
+        </Collapsible.Content>
+      </Collapsible.Root>
     </NodeViewWrapper>
   )
 }
