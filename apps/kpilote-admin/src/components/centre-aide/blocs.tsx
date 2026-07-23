@@ -48,15 +48,22 @@ const LABELS_ICONE: Record<string, string> = {
   question: 'Question',
 }
 
-// Source unique des blocs insérables : consommée par le menu « Insérer » (souris)
-// et par la commande « / » (clavier). Un bloc peut ouvrir un sous-menu de variantes
-// (ex. couleur du callout) plutôt qu'un select dans le composant.
-export const construireOptionsBlocs = (editor: Editor): OptionBloc[] => {
+export type ActionsBlocs = {
+  // Ouvre la modale d'insertion d'une vidéo video.finances.gouv.fr.
+  ouvrirVideoFinance?: () => void
+}
+
+// Source unique des blocs insérables, consommée par la commande « / ». Un bloc
+// peut ouvrir un sous-menu de variantes (couleur du callout, source vidéo…).
+export const construireOptionsBlocs = (
+  editor: Editor,
+  actions: ActionsBlocs = {},
+): OptionBloc[] => {
   const insererImage = () => {
     const url = window.prompt('URL de l’image')
     if (url && estUrlHttp(url)) editor.chain().focus().setImage({ src: url }).run()
   }
-  const insererVideo = () => {
+  const insererVideoUrl = () => {
     const url = window.prompt('URL d’intégration de la vidéo (iframe)')
     if (url && estUrlHttp(url)) editor.chain().focus().insertVideo({ src: url }).run()
   }
@@ -105,7 +112,20 @@ export const construireOptionsBlocs = (editor: Editor): OptionBloc[] => {
       run: () => editor.chain().focus().insertAccordion().run(),
     },
     { label: 'Image', keywords: 'image photo', Icon: ImageIcon, run: insererImage },
-    { label: 'Vidéo', keywords: 'video iframe', Icon: VideoIcon, run: insererVideo },
+    {
+      label: 'Vidéo',
+      keywords: 'video iframe',
+      Icon: VideoIcon,
+      sousOptions: [
+        { label: 'Par URL', keywords: 'video url', Icon: Link2, run: insererVideoUrl },
+        {
+          label: 'Par vidéo finance',
+          keywords: 'video finance video.finances.gouv.fr',
+          Icon: VideoIcon,
+          run: () => actions.ouvrirVideoFinance?.(),
+        },
+      ],
+    },
     { label: 'Lien', keywords: 'lien url link', Icon: Link2, run: insererLien },
     {
       label: 'Icône',

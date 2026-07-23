@@ -3,7 +3,11 @@ import { ReactRenderer } from '@tiptap/react'
 import { Suggestion, type SuggestionKeyDownProps, type SuggestionProps } from '@tiptap/suggestion'
 import { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
-import { construireOptionsBlocs, type OptionBloc } from '@/components/centre-aide/blocs'
+import {
+  construireOptionsBlocs,
+  type ActionsBlocs,
+  type OptionBloc,
+} from '@/components/centre-aide/blocs'
 import { clsxm } from '@/lib/clsxm'
 
 type ListeHandle = { onKeyDown: (event: KeyboardEvent) => boolean }
@@ -150,18 +154,23 @@ const render = () => {
   }
 }
 
-export const SlashCommand = Extension.create({
+export const SlashCommand = Extension.create<ActionsBlocs>({
   name: 'slashCommand',
+
+  addOptions() {
+    return {}
+  },
 
   addProseMirrorPlugins() {
     const editor = this.editor
+    const actions = this.options
     return [
       Suggestion<OptionBloc, OptionBloc>({
         editor,
         char: '/',
         items: ({ query }) => {
           const recherche = query.toLowerCase()
-          return construireOptionsBlocs(editor).filter(
+          return construireOptionsBlocs(editor, actions).filter(
             (option) =>
               option.label.toLowerCase().includes(recherche) || option.keywords.includes(recherche),
           )

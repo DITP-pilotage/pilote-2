@@ -5,6 +5,8 @@ import Underline from '@tiptap/extension-underline'
 import type { Extensions } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 
+import type { ActionsBlocs } from '@/components/centre-aide/blocs'
+
 import { AccordeonExtension } from './AccordeonExtension'
 import { CalloutExtension } from './CalloutExtension'
 import { IconeExtension } from './IconeExtension'
@@ -12,6 +14,7 @@ import { SlashCommand } from './SlashCommand'
 import { VideoExtension } from './VideoExtension'
 
 export const extensionsCentreAide = (
+  actions: ActionsBlocs = {},
   placeholder = 'Écrivez, ou tapez « / » pour insérer un bloc…',
 ): Extensions => [
   // Entrée = nouveau paragraphe (bloc distinct) : la mise en titre ne s'applique
@@ -29,5 +32,5 @@ export const extensionsCentreAide = (
   AccordeonExtension,
   IconeExtension,
   VideoExtension,
-  SlashCommand,
+  SlashCommand.configure(actions),
 ]

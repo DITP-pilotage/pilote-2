@@ -2,10 +2,11 @@ import { EditorContent, useEditor, useEditorState } from '@tiptap/react'
 import { BubbleMenu } from '@tiptap/react/menus'
 import { classesRenduBase } from '@pilote/kpilote-ui/centre-aide'
 import { Bold, Italic, Link2, Strikethrough, Underline as UnderlineIcon } from 'lucide-react'
-import type { ComponentType } from 'react'
+import { useState, type ComponentType } from 'react'
 
 import { estUrlHttp } from '@/components/centre-aide/blocs'
 import { extensionsCentreAide } from '@/components/centre-aide/extensions'
+import { ModaleVideoFinance } from '@/components/centre-aide/ModaleVideoFinance'
 import { clsxm } from '@/lib/clsxm'
 
 function BoutonBulle({
@@ -59,8 +60,10 @@ export function EditeurCentreAide({
   contenu: string
   onChange: (contenu: string) => void
 }) {
+  const [modaleVideoFinance, setModaleVideoFinance] = useState(false)
+
   const editor = useEditor({
-    extensions: extensionsCentreAide(),
+    extensions: extensionsCentreAide({ ouvrirVideoFinance: () => setModaleVideoFinance(true) }),
     content: contenu,
     onUpdate: ({ editor: instance }) => onChange(instance.isEmpty ? '' : instance.getHTML()),
   })
@@ -127,6 +130,12 @@ export function EditeurCentreAide({
       </BubbleMenu>
 
       <EditorContent editor={editor} className={classesContenu} />
+
+      <ModaleVideoFinance
+        open={modaleVideoFinance}
+        onClose={() => setModaleVideoFinance(false)}
+        onValider={(url) => editor.chain().focus().insertVideo({ src: url }).run()}
+      />
     </div>
   )
 }
