@@ -5,6 +5,7 @@ import { Heading, Text } from '@pilote/kpilote-ui/Typography'
 import { useState } from 'react'
 
 import { clsxm } from '@/lib/clsxm'
+import { useRecordVisit } from '@/lib/recentlyVisited'
 import { articlesCentreAidePubliesQueryOptions } from '@/queries/centreAide'
 
 export const Route = createFileRoute('/_authenticated/centre-aide/')({
@@ -68,14 +69,26 @@ function CentreAidePage() {
 
       <article className="min-w-0 max-w-3xl flex-1">
         {selectionne ? (
-          <>
-            <Heading className="mb-4">{selectionne.titreAffiche || selectionne.titre}</Heading>
-            <RenduContenuCentreAide html={selectionne.contenu} />
-          </>
+          <ContenuArticle article={selectionne} />
         ) : (
           <Text tone="muted">Sélectionnez un article.</Text>
         )}
       </article>
     </div>
+  )
+}
+
+function ContenuArticle({
+  article,
+}: {
+  article: { id: string; titre: string; titreAffiche: string; contenu: string }
+}) {
+  const titre = article.titreAffiche || article.titre
+  useRecordVisit({ type: 'article', id: article.id, label: titre })
+  return (
+    <>
+      <Heading className="mb-4">{titre}</Heading>
+      <RenduContenuCentreAide html={article.contenu} />
+    </>
   )
 }

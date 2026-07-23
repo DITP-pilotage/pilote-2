@@ -1,5 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
-import { BarChart3, FolderOpen } from 'lucide-react'
+import { BarChart3, FileText, FolderOpen } from 'lucide-react'
 import { useMemo } from 'react'
 
 import type { Command } from '@/lib/commands/types'
@@ -13,6 +13,7 @@ import { useCanImport } from './useCanImport'
 const ICON_BY_TYPE = {
   indicateur: BarChart3,
   collection: FolderOpen,
+  article: FileText,
 } as const
 
 /**
@@ -36,6 +37,20 @@ export function useRecentlyVisitedCommands(open: boolean, close: () => void): Co
     () =>
       entries.map((entry) => {
         const cible = { id: entry.id, nom: entry.label }
+        // Les articles du centre d'aide n'ont pas de sous-actions : ils naviguent
+        // directement vers le lecteur. Indicateurs et collections gardent leurs actions.
+        if (entry.type === 'article') {
+          return {
+            id: `recent:article:${entry.id}`,
+            label: entry.label,
+            group: 'recents',
+            icon: ICON_BY_TYPE.article,
+            run: () => {
+              void navigate({ to: '/centre-aide', search: { article: entry.id } })
+              close()
+            },
+          }
+        }
         const actions =
           entry.type === 'indicateur'
             ? buildIndicateurActions(cible, { navigate, close, openImport, canImport })

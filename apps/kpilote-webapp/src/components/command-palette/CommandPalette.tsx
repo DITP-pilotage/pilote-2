@@ -19,6 +19,7 @@ import {
   type CommandAction,
 } from '@/lib/commands/types'
 
+import { useCentreAideCommands } from './useCentreAideCommands'
 import { useCommandPaletteShortcut } from './useCommandPaletteShortcut'
 import { useIndicateurCommands } from './useIndicateurCommands'
 import { useNavigationCommands } from './useNavigationCommands'
@@ -68,12 +69,24 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     open,
     close,
   )
+  const { results: centreAideResults, entry: centreAideEntry } = useCentreAideCommands(
+    query,
+    open,
+    close,
+  )
   const isLoading = isLoadingCollections
 
   // Les fiches récentes servent de point de départ : on les masque dès que
   // l'utilisateur tape, les résultats de recherche (indicateurs, collections)
   // prenant alors le relais.
   const showRecents = query.trim().length === 0
+
+  // À vide : l'entrée « Centre d'aide » (Tab → liste des articles). En recherche :
+  // les articles qui matchent, avec extrait.
+  const centreAideCommands = useMemo<Command[]>(
+    () => (showRecents ? (centreAideEntry ? [centreAideEntry] : []) : centreAideResults),
+    [showRecents, centreAideEntry, centreAideResults],
+  )
 
   // Toutes les commandes racine affichées, indexées pour résoudre l'item
   // surligné au moment du `Tab`.
@@ -83,8 +96,16 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       ...(showRecents ? recentCommands : []),
       ...indicateurCommands,
       ...collectionCommands,
+      ...centreAideCommands,
     ],
-    [navigationCommands, showRecents, recentCommands, indicateurCommands, collectionCommands],
+    [
+      navigationCommands,
+      showRecents,
+      recentCommands,
+      indicateurCommands,
+      collectionCommands,
+      centreAideCommands,
+    ],
   )
 
   const highlightedCommand = useMemo(
@@ -148,7 +169,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
         <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm" />
         <DialogPrimitive.Content
           aria-label="Palette de commandes"
-          className="fixed left-1/2 top-[15vh] z-50 w-[min(36rem,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-xl border border-border bg-surface shadow-[0_16px_48px_rgba(0,0,0,0.16)] focus:outline-none"
+          className="fixed left-1/2 top-[8vh] z-50 flex h-[84vh] w-[min(56rem,calc(100vw-2rem))] -translate-x-1/2 flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-[0_16px_48px_rgba(0,0,0,0.16)] focus:outline-none"
         >
           <DialogPrimitive.Title className="sr-only">
             Rechercher une page ou un indicateur
@@ -159,6 +180,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
             value={highlighted}
             onValueChange={setHighlighted}
             onKeyDown={handleKeyDown}
+            className="flex min-h-0 flex-1 flex-col"
           >
             <div className="flex items-center gap-2 border-b border-border px-3.5">
               {activeItem ? (
@@ -185,7 +207,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 className="h-12 w-full bg-transparent text-sm text-text outline-none placeholder:text-text-subtle"
               />
             </div>
-            <CommandPrimitive.List className="max-h-[min(24rem,60vh)] overflow-y-auto p-1.5">
+            <CommandPrimitive.List className="min-h-0 flex-1 overflow-y-auto p-1.5">
               <CommandPrimitive.Empty className="px-3 py-8 text-center text-sm text-text-muted">
                 {activeItem ? 'Aucune action.' : isLoading ? 'Recherche…' : 'Aucun résultat.'}
               </CommandPrimitive.Empty>
@@ -228,6 +250,14 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                       ))}
                     </CommandPrimitive.Group>
                   ) : null}
+
+                  {centreAideCommands.length > 0 ? (
+                    <CommandPrimitive.Group heading="Centre d’aide" className={GROUP_HEADING_CLASS}>
+                      {centreAideCommands.map((command) => (
+                        <CommandRow key={command.id} command={command} />
+                      ))}
+                    </CommandPrimitive.Group>
+                  ) : null}
                 </>
               )}
             </CommandPrimitive.List>
@@ -254,10 +284,19 @@ function CommandRow({ command }: { command: Command }) {
         'data-[selected=true]:bg-surface-tinted data-[selected=true]:text-primary',
       )}
     >
-      {Icon ? <Icon className="size-4 shrink-0 text-text-muted" /> : null}
-      <span className="min-w-0 flex-1 truncate">{command.label}</span>
+      {Icon ? <Icon className="size-4 shrink-0 self-start text-text-muted [&]:mt-0.5" /> : null}
+      <span className="min-w-0 flex-1">
+        <span className="block truncate">{command.label}</span>
+        {command.description ? (
+          <span className="mt-0.5 block truncate text-xs text-text-subtle">
+            {command.description}
+          </span>
+        ) : null}
+      </span>
       {command.hint ? (
-        <span className="shrink-0 font-mono text-xs text-text-subtle">{command.hint}</span>
+        <span className="shrink-0 self-start font-mono text-xs text-text-subtle">
+          {command.hint}
+        </span>
       ) : null}
     </CommandPrimitive.Item>
   )
