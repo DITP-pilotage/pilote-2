@@ -61,7 +61,6 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   const handleOpen = useCallback(() => onOpenChange(true), [onOpenChange])
   useCommandPaletteShortcut(handleOpen)
 
-  const navigationCommands = filterCommands(useNavigationCommands(close), query)
   const recentCommands = useRecentlyVisitedCommands(open, close)
   const indicateurCommands = useIndicateurCommands(query, open, close)
   const { commands: collectionCommands, isLoading: isLoadingCollections } = useCollectionCommands(
@@ -69,10 +68,17 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     open,
     close,
   )
+  const navigationBase = useNavigationCommands(close)
   const { results: centreAideResults, entry: centreAideEntry } = useCentreAideCommands(
     query,
     open,
     close,
+  )
+  // L'entrée « Centre d'aide » vit dans le groupe Navigation, à la suite des pages
+  // principales, et se filtre comme les autres commandes de navigation.
+  const navigationCommands = filterCommands(
+    centreAideEntry ? [...navigationBase, centreAideEntry] : navigationBase,
+    query,
   )
   const isLoading = isLoadingCollections
 
@@ -80,13 +86,6 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   // l'utilisateur tape, les résultats de recherche (indicateurs, collections)
   // prenant alors le relais.
   const showRecents = query.trim().length === 0
-
-  // À vide : l'entrée « Centre d'aide » (Tab → liste des articles). En recherche :
-  // les articles qui matchent, avec extrait.
-  const centreAideCommands = useMemo<Command[]>(
-    () => (showRecents ? (centreAideEntry ? [centreAideEntry] : []) : centreAideResults),
-    [showRecents, centreAideEntry, centreAideResults],
-  )
 
   // Toutes les commandes racine affichées, indexées pour résoudre l'item
   // surligné au moment du `Tab`.
@@ -96,7 +95,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       ...(showRecents ? recentCommands : []),
       ...indicateurCommands,
       ...collectionCommands,
-      ...centreAideCommands,
+      ...centreAideResults,
     ],
     [
       navigationCommands,
@@ -104,7 +103,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       recentCommands,
       indicateurCommands,
       collectionCommands,
-      centreAideCommands,
+      centreAideResults,
     ],
   )
 
@@ -251,9 +250,9 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                     </CommandPrimitive.Group>
                   ) : null}
 
-                  {centreAideCommands.length > 0 ? (
+                  {centreAideResults.length > 0 ? (
                     <CommandPrimitive.Group heading="Centre d’aide" className={GROUP_HEADING_CLASS}>
-                      {centreAideCommands.map((command) => (
+                      {centreAideResults.map((command) => (
                         <CommandRow key={command.id} command={command} />
                       ))}
                     </CommandPrimitive.Group>

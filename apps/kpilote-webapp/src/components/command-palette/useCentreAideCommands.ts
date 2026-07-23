@@ -88,7 +88,9 @@ export function useCentreAideCommands(
     return {
       id: 'centre-aide-entry',
       label: 'Centre d’aide',
-      group: 'centre-aide',
+      // Rendu dans le groupe Navigation, à la suite des pages principales.
+      group: 'navigation',
+      keywords: ['aide', 'faq', 'documentation', 'help', 'support'],
       icon: LifeBuoy,
       run: () => {
         void navigate({ to: '/centre-aide', search: { article: undefined } })
