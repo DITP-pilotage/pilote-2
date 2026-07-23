@@ -12,6 +12,7 @@ import {
   Heading6,
   Image as ImageIcon,
   Info,
+  Link2,
   List,
   ListOrdered,
   MessageSquareText,
@@ -59,6 +60,20 @@ export const construireOptionsBlocs = (editor: Editor): OptionBloc[] => {
     const url = window.prompt('URL d’intégration de la vidéo (iframe)')
     if (url && estUrlHttp(url)) editor.chain().focus().insertVideo({ src: url }).run()
   }
+  const insererLien = () => {
+    const url = window.prompt('URL du lien')
+    if (!url || !estUrlHttp(url)) return
+    // Sélection présente → on pose le lien dessus ; sinon on insère l'URL comme texte lié.
+    if (editor.state.selection.empty) {
+      editor
+        .chain()
+        .focus()
+        .insertContent({ type: 'text', text: url, marks: [{ type: 'link', attrs: { href: url } }] })
+        .run()
+    } else {
+      editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+    }
+  }
 
   const varianteCallout = (
     color: 'info' | 'success' | 'warning' | 'error',
@@ -91,6 +106,7 @@ export const construireOptionsBlocs = (editor: Editor): OptionBloc[] => {
     },
     { label: 'Image', keywords: 'image photo', Icon: ImageIcon, run: insererImage },
     { label: 'Vidéo', keywords: 'video iframe', Icon: VideoIcon, run: insererVideo },
+    { label: 'Lien', keywords: 'lien url link', Icon: Link2, run: insererLien },
     {
       label: 'Icône',
       keywords: 'icone pictogramme',
