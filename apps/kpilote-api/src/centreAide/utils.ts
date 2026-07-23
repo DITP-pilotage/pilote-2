@@ -54,4 +54,5 @@ export const toArticleCentreAidePublicApiModel = (
   titre: row.titre,
   titreAffiche: row.titreAffiche,
   contenu: row.contenu,
+  contenuTexte: row.contenuTexte,
 })

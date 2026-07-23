@@ -48,7 +48,10 @@ export const articleCentreAidePublicApiModelSchema = z
     ordre: z.number().int(),
     titre: z.string(),
     titreAffiche: z.string(),
-    contenu: z.string(),
+    contenu: z.string().describe('Corps publié (HTML riche), pour le rendu.'),
+    contenuTexte: z
+      .string()
+      .describe('Corps publié en texte brut, pour la recherche et l’affichage sans HTML.'),
   })
   .describe('Article du centre d’aide (vue publique, publié uniquement).')
 export type ArticleCentreAidePublicApiModel = z.infer<typeof articleCentreAidePublicApiModelSchema>
