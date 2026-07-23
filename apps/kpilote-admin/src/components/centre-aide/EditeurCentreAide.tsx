@@ -25,6 +25,9 @@ function BoutonBulle({
       aria-label={label}
       aria-pressed={actif}
       title={label}
+      // Empêche le blur de l'éditeur au clic : ProseMirror garde le focus et la
+      // sélection courante (sinon l'ancienne sélection reste figée à l'écran).
+      onMouseDown={(event) => event.preventDefault()}
       onClick={onClick}
       className={clsxm(
         'flex size-8 items-center justify-center rounded text-white/90 transition-colors hover:bg-white/15',
