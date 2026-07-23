@@ -46,10 +46,9 @@ function BoutonBulle({
 
 const classesContenu = clsxm(
   classesRenduBase,
-  'py-4 text-text',
-  // Largeur de lecture identique au centre d'aide réel (aperçu fidèle, PIL-1685 #1).
-  '[&_.ProseMirror]:mx-auto [&_.ProseMirror]:max-w-3xl',
-  '[&_.ProseMirror]:min-h-64 [&_.ProseMirror]:outline-none',
+  'px-6 py-4 text-text',
+  // Surface d'édition pleine largeur qui occupe toute la hauteur d'écran disponible.
+  '[&_.ProseMirror]:min-h-[calc(100vh-13rem)] [&_.ProseMirror]:outline-none',
   '[&_.ProseMirror_.is-editor-empty:first-child]:before:pointer-events-none',
   '[&_.ProseMirror_.is-editor-empty:first-child]:before:float-left',
   '[&_.ProseMirror_.is-editor-empty:first-child]:before:h-0',
