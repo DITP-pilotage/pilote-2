@@ -11,6 +11,7 @@ import {
   findRootReferentielIdForIndividu,
   groupNodesByRootReferentiel,
   type IndividuNode,
+  type ReferentielGroup,
 } from '@/lib/individus/hierarchy'
 import { referentielIndividusQueryOptions, referentielQueryOptions } from '@/queries/referentiels'
 
@@ -35,9 +36,6 @@ const commandFilter = (itemValue: string, query: string) =>
 const searchableValue = (node: IndividuNode) =>
   [node.individu.nom, node.individu.id, ...node.parentPath].join(' ')
 
-const listClassName =
-  'max-h-[min(20rem,var(--radix-popover-content-available-height))] overflow-y-auto p-1.5'
-const emptyClassName = 'px-3 py-6 text-center text-sm text-text-muted'
 const itemClassName = clsxm(
   'flex cursor-pointer select-none items-center gap-2 rounded-md px-2.5 py-2 text-sm text-text outline-none',
   'data-[selected=true]:bg-surface-tinted data-[selected=true]:text-primary',
@@ -63,6 +61,11 @@ function CommandSearchInput({
       />
     </div>
   )
+}
+
+// Message centré affiché dans la liste quand aucun individu ne correspond.
+function CommandEmptyMessage({ children }: { children: ReactNode }) {
+  return <p className="px-3 py-6 text-center text-sm text-text-muted">{children}</p>
 }
 
 // Un individu dans la liste : coche de sélection, nom, id monospace, breadcrumb du
@@ -140,6 +143,79 @@ function ReferentielGroupSection({
       </button>
       {isExpanded ? children : null}
     </div>
+  )
+}
+
+// Variante mono-référentiel : les individus à plat, sans en-tête de groupe.
+function FlatIndividuList({
+  nodes,
+  value,
+  hasSearch,
+  nodeMatches,
+  onSelect,
+}: {
+  nodes: ReadonlyArray<IndividuNode>
+  value: string
+  hasSearch: boolean
+  nodeMatches: (node: IndividuNode) => boolean
+  onSelect: (next: IndividuSelection) => void
+}) {
+  const visibleNodes = hasSearch ? nodes.filter(nodeMatches) : nodes
+  return (
+    <>
+      {visibleNodes.map((node) => (
+        <IndividuCommandItem key={node.individu.id} node={node} value={value} onSelect={onSelect} />
+      ))}
+    </>
+  )
+}
+
+// Variante multi-référentiels : un collapsible par groupe racine. En recherche,
+// tout groupe sans résultat est masqué et les autres sont forcés dépliés ; sinon
+// l'ouverture suit `expandedGroups`.
+function GroupedIndividuList({
+  groups,
+  value,
+  hasSearch,
+  nodeMatches,
+  expandedGroups,
+  onToggleGroup,
+  onSelect,
+}: {
+  groups: ReadonlyArray<ReferentielGroup>
+  value: string
+  hasSearch: boolean
+  nodeMatches: (node: IndividuNode) => boolean
+  expandedGroups: ReadonlySet<string>
+  onToggleGroup: (referentielId: string) => void
+  onSelect: (next: IndividuSelection) => void
+}) {
+  return (
+    <>
+      {groups.map((group) => {
+        const visibleNodes = hasSearch ? group.nodes.filter(nodeMatches) : group.nodes
+        if (hasSearch && visibleNodes.length === 0) return null
+        const isExpanded = hasSearch ? true : expandedGroups.has(group.referentiel.id)
+        return (
+          <ReferentielGroupSection
+            key={group.referentiel.id}
+            referentielNom={group.referentiel.nom}
+            count={group.nodes.length}
+            isExpanded={isExpanded}
+            onToggle={() => onToggleGroup(group.referentiel.id)}
+          >
+            {visibleNodes.map((node) => (
+              <IndividuCommandItem
+                key={node.individu.id}
+                node={node}
+                value={value}
+                onSelect={onSelect}
+              />
+            ))}
+          </ReferentielGroupSection>
+        )
+      })}
+    </>
   )
 }
 
@@ -248,43 +324,28 @@ export function IndividuSelect({ id, referentielIds, value, onChange }: Individu
               onValueChange={setSearch}
               placeholder="Rechercher un individu…"
             />
-            <Command.List className={listClassName}>
-              {isEmpty ? <p className={emptyClassName}>Aucun individu trouvé.</p> : null}
+            <Command.List className="max-h-[min(20rem,var(--radix-popover-content-available-height))] overflow-y-auto p-1.5">
+              {isEmpty ? <CommandEmptyMessage>Aucun individu trouvé.</CommandEmptyMessage> : null}
 
-              {singleGroup
-                ? (hasSearch ? singleGroup.nodes.filter(nodeMatches) : singleGroup.nodes).map(
-                    (node) => (
-                      <IndividuCommandItem
-                        key={node.individu.id}
-                        node={node}
-                        value={value}
-                        onSelect={handleSelect}
-                      />
-                    ),
-                  )
-                : groups.map((group) => {
-                    const visibleNodes = hasSearch ? group.nodes.filter(nodeMatches) : group.nodes
-                    if (hasSearch && visibleNodes.length === 0) return null
-                    const isExpanded = hasSearch ? true : expandedGroups.has(group.referentiel.id)
-                    return (
-                      <ReferentielGroupSection
-                        key={group.referentiel.id}
-                        referentielNom={group.referentiel.nom}
-                        count={group.nodes.length}
-                        isExpanded={isExpanded}
-                        onToggle={() => toggleGroup(group.referentiel.id)}
-                      >
-                        {visibleNodes.map((node) => (
-                          <IndividuCommandItem
-                            key={node.individu.id}
-                            node={node}
-                            value={value}
-                            onSelect={handleSelect}
-                          />
-                        ))}
-                      </ReferentielGroupSection>
-                    )
-                  })}
+              {singleGroup ? (
+                <FlatIndividuList
+                  nodes={singleGroup.nodes}
+                  value={value}
+                  hasSearch={hasSearch}
+                  nodeMatches={nodeMatches}
+                  onSelect={handleSelect}
+                />
+              ) : (
+                <GroupedIndividuList
+                  groups={groups}
+                  value={value}
+                  hasSearch={hasSearch}
+                  nodeMatches={nodeMatches}
+                  expandedGroups={expandedGroups}
+                  onToggleGroup={toggleGroup}
+                  onSelect={handleSelect}
+                />
+              )}
             </Command.List>
           </Command>
         </PopoverPrimitive.Content>
