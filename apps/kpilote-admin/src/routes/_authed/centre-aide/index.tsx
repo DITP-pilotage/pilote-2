@@ -303,17 +303,19 @@ function EditionArticle({
         <Button variant="secondary" onClick={() => enregistrer.mutate()} disabled={enAttente}>
           Enregistrer
         </Button>
-        <Button onClick={() => publier.mutate()} disabled={enAttente}>
-          Publier
-        </Button>
+        {estGroupe ? null : (
+          <Button onClick={() => publier.mutate()} disabled={enAttente}>
+            Publier
+          </Button>
+        )}
       </div>
-      {aDesModificationsNonPubliees(article) ? (
+      {!estGroupe && aDesModificationsNonPubliees(article) ? (
         <p className="mb-2 text-xs text-warning">Modifications non publiées</p>
       ) : null}
       {estGroupe ? (
         <p className="text-sm text-text-muted">
-          Un groupe organise l’arborescence : donnez-lui un titre puis publiez-le pour qu’il
-          apparaisse comme section dans le centre d’aide.
+          Un groupe organise l’arborescence. Il apparaît automatiquement dans le centre d’aide dès
+          qu’il contient au moins une page publiée — pas besoin de le publier lui-même.
         </p>
       ) : (
         <EditeurCentreAide contenu={contenu} onChange={setContenu} />

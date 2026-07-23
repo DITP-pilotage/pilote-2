@@ -44,6 +44,8 @@ export const toArticleCentreAideApiModel = (row: ArticleCentreAide): ArticleCent
   deletedAt: row.deletedAt?.toISOString() ?? null,
 })
 
+// Un groupe n'a pas d'état publié : son titre courant vit dans les champs
+// brouillon. On retombe donc sur le brouillon quand le titre publié est vide.
 export const toArticleCentreAidePublicApiModel = (
   row: ArticleCentreAide,
 ): ArticleCentreAidePublicApiModel => ({
@@ -51,8 +53,8 @@ export const toArticleCentreAidePublicApiModel = (
   type: row.type,
   parentId: row.parentId,
   ordre: row.ordre,
-  titre: row.titre,
-  titreAffiche: row.titreAffiche,
+  titre: row.titre || row.titreBrouillon,
+  titreAffiche: row.titreAffiche || row.titreAfficheBrouillon || row.titre || row.titreBrouillon,
   contenu: row.contenu,
   contenuTexte: row.contenuTexte,
 })
