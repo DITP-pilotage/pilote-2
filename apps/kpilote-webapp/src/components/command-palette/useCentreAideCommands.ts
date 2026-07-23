@@ -10,18 +10,45 @@ import { articlesCentreAidePubliesQueryOptions } from '@/queries/centreAide'
 const MAX_RESULTS = 8
 const LONGUEUR_EXTRAIT = 140
 
-// Construit un extrait de `texte` centré autour de la position du terme recherché.
-const construireExtrait = (texte: string, requeteNormalisee: string): string => {
-  const position = normaliserTexte(texte).indexOf(requeteNormalisee)
-  if (position === -1) return texte.slice(0, LONGUEUR_EXTRAIT).trim()
+type Extrait = { texte: string; match?: { start: number; end: number } }
 
-  const debut = Math.max(0, position - LONGUEUR_EXTRAIT / 3)
-  const fin = Math.min(
-    texte.length,
-    position + requeteNormalisee.length + (LONGUEUR_EXTRAIT * 2) / 3,
-  )
-  const extrait = texte.slice(debut, fin).trim()
-  return `${debut > 0 ? '… ' : ''}${extrait}${fin < texte.length ? ' …' : ''}`
+// Localise `requeteNormalisee` dans `texte` en renvoyant la plage d'indices
+// ORIGINAUX. La normalisation (NFD, accents) peut changer la longueur, donc on
+// mappe chaque caractère normalisé vers sa position d'origine.
+const localiserMatch = (texte: string, requeteNormalisee: string): [number, number] | null => {
+  let normalise = ''
+  const indexOrigine: number[] = []
+  for (let i = 0; i < texte.length; i++) {
+    for (const caractere of normaliserTexte(texte[i] ?? '')) {
+      normalise += caractere
+      indexOrigine.push(i)
+    }
+  }
+  const position = normalise.indexOf(requeteNormalisee)
+  if (position === -1) return null
+  const debut = indexOrigine[position] ?? 0
+  const fin = (indexOrigine[position + requeteNormalisee.length - 1] ?? debut) + 1
+  return [debut, fin]
+}
+
+// Extrait centré sur le terme, avec la plage du match (relative à l'extrait) pour
+// la mise en gras.
+const construireExtrait = (texte: string, requeteNormalisee: string): Extrait => {
+  const plage = localiserMatch(texte, requeteNormalisee)
+  if (!plage) return { texte: texte.slice(0, LONGUEUR_EXTRAIT).trim() }
+
+  const [positionMatch, finMatch] = plage
+  const debut = Math.max(0, Math.round(positionMatch - LONGUEUR_EXTRAIT / 3))
+  const fin = Math.min(texte.length, Math.round(finMatch + (LONGUEUR_EXTRAIT * 2) / 3))
+  const prefixe = debut > 0 ? '… ' : ''
+  const brut = texte.slice(debut, fin)
+  const rognesGauche = brut.length - brut.trimStart().length
+  const corps = brut.trim()
+  const base = prefixe.length - rognesGauche
+  return {
+    texte: `${prefixe}${corps}${fin < texte.length ? ' …' : ''}`,
+    match: { start: base + (positionMatch - debut), end: base + (finMatch - debut) },
+  }
 }
 
 type ResultatCentreAide = {
@@ -67,14 +94,18 @@ export function useCentreAideCommands(
           normaliserTexte(article.contenuTexte).includes(requete),
       )
       .slice(0, MAX_RESULTS)
-      .map((article) => ({
-        id: `centre-aide:${article.id}`,
-        label: article.titreAffiche || article.titre || '(sans titre)',
-        group: 'centre-aide',
-        icon: FileText,
-        description: construireExtrait(article.contenuTexte, requete),
-        run: () => ouvrirArticle(article.id),
-      }))
+      .map((article) => {
+        const extrait = construireExtrait(article.contenuTexte, requete)
+        return {
+          id: `centre-aide:${article.id}`,
+          label: article.titreAffiche || article.titre || '(sans titre)',
+          group: 'centre-aide',
+          icon: FileText,
+          description: extrait.texte,
+          ...(extrait.match ? { descriptionMatch: extrait.match } : {}),
+          run: () => ouvrirArticle(article.id),
+        }
+      })
   }, [pages, query, ouvrirArticle])
 
   const entry = useMemo<Command | null>(() => {

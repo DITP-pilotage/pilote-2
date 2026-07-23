@@ -288,7 +288,7 @@ function CommandRow({ command }: { command: Command }) {
         <span className="block truncate">{command.label}</span>
         {command.description ? (
           <span className="mt-0.5 block truncate text-xs text-text-subtle">
-            {command.description}
+            <Extrait texte={command.description} match={command.descriptionMatch} />
           </span>
         ) : null}
       </span>
@@ -298,6 +298,26 @@ function CommandRow({ command }: { command: Command }) {
         </span>
       ) : null}
     </CommandPrimitive.Item>
+  )
+}
+
+// Rend l'extrait avec le terme matché en gras (plage `match` fournie par la source).
+function Extrait({
+  texte,
+  match,
+}: {
+  texte: string
+  match: { start: number; end: number } | undefined
+}) {
+  if (!match || match.start < 0 || match.end > texte.length || match.start >= match.end) {
+    return <>{texte}</>
+  }
+  return (
+    <>
+      {texte.slice(0, match.start)}
+      <strong className="font-semibold text-text">{texte.slice(match.start, match.end)}</strong>
+      {texte.slice(match.end)}
+    </>
   )
 }
 

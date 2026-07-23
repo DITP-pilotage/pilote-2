@@ -59,6 +59,8 @@ export type Command = {
   hint?: string
   /** Extrait affiché sur une seconde ligne (ex: passage d'article qui matche). */
   description?: string
+  /** Plage `[start, end)` du terme matché dans `description`, à mettre en gras. */
+  descriptionMatch?: { start: number; end: number }
   /** Action primaire déclenchée par `Entrée`. */
   run: () => void
   /** Sous-actions accessibles via `Tab` (page dédiée). Opt-in par commande. */
