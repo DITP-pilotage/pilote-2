@@ -62,7 +62,7 @@ function CentreAidePage() {
         </ul>
       </nav>
 
-      <article className="min-w-0 flex-1">
+      <article className="min-w-0 max-w-3xl flex-1">
         {selectionne ? (
           <>
             <Heading className="mb-4">{selectionne.titreAffiche || selectionne.titre}</Heading>
