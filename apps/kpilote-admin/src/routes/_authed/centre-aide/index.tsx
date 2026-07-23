@@ -141,13 +141,11 @@ function CentreAideComponent() {
         <section className="min-w-0 flex-1">
           {corbeilleOuverte ? (
             <Corbeille onRafraichir={rafraichir} />
-          ) : selectionne && selectionne.type === 'PAGE' ? (
+          ) : selectionne ? (
             <EditionArticle key={selectionne.id} article={selectionne} onEnregistre={rafraichir} />
           ) : (
             <div className="rounded-md border border-dashed border-border p-10 text-center text-sm text-text-muted">
-              {selectionne?.type === 'GROUPE'
-                ? 'Les groupes organisent l’arborescence — sélectionnez une page pour l’éditer.'
-                : 'Sélectionnez une page à gauche pour l’éditer.'}
+              Sélectionnez une page ou un groupe à gauche.
             </div>
           )}
         </section>
@@ -284,6 +282,7 @@ function EditionArticle({
   })
 
   const enAttente = enregistrer.isPending || publier.isPending
+  const estGroupe = article.type === 'GROUPE'
 
   return (
     <div>
@@ -291,7 +290,7 @@ function EditionArticle({
         <input
           value={titre}
           onChange={(event) => setTitre(event.target.value)}
-          placeholder="Titre de la page"
+          placeholder={estGroupe ? 'Titre du groupe' : 'Titre de la page'}
           className="flex-1 border-none bg-transparent px-0 py-2 text-2xl font-bold outline-none placeholder:text-text-subtle"
         />
         {urlArticle ? (
@@ -311,7 +310,14 @@ function EditionArticle({
       {aDesModificationsNonPubliees(article) ? (
         <p className="mb-2 text-xs text-warning">Modifications non publiées</p>
       ) : null}
-      <EditeurCentreAide contenu={contenu} onChange={setContenu} />
+      {estGroupe ? (
+        <p className="text-sm text-text-muted">
+          Un groupe organise l’arborescence : donnez-lui un titre puis publiez-le pour qu’il
+          apparaisse comme section dans le centre d’aide.
+        </p>
+      ) : (
+        <EditeurCentreAide contenu={contenu} onChange={setContenu} />
+      )}
     </div>
   )
 }
