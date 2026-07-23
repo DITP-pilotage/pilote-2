@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { RenduContenuCentreAide } from '@pilote/kpilote-ui/centre-aide'
 import { Heading, Text } from '@pilote/kpilote-ui/Typography'
+import { ChevronDown, ChevronRight } from 'lucide-react'
+import { useState } from 'react'
 
 import { clsxm } from '@/lib/clsxm'
 import { useRecordVisit } from '@/lib/recentlyVisited'
@@ -43,33 +45,11 @@ function CentreAidePage() {
   return (
     <div className="flex gap-10">
       <nav className="w-64 shrink-0">
-        <ul className="space-y-0.5 text-sm">
-          {articles.map((article) =>
-            article.type === 'GROUPE' ? (
-              <li
-                key={article.id}
-                className="px-2 pb-1 pt-4 text-xs font-semibold uppercase tracking-wide text-text-subtle"
-              >
-                {article.titreAffiche || article.titre}
-              </li>
-            ) : (
-              <li key={article.id}>
-                <button
-                  type="button"
-                  onClick={() => selectionner(article.id)}
-                  className={clsxm(
-                    'w-full truncate rounded px-2 py-1.5 text-left transition-colors',
-                    selectionne?.id === article.id
-                      ? 'bg-primary-tinted font-medium text-primary'
-                      : 'text-text-muted hover:bg-surface-tinted hover:text-text',
-                  )}
-                >
-                  {article.titreAffiche || article.titre}
-                </button>
-              </li>
-            ),
-          )}
-        </ul>
+        <NavCentreAide
+          articles={articles}
+          selectedId={selectionne?.id ?? null}
+          onSelect={selectionner}
+        />
       </nav>
 
       <article className="min-w-0 max-w-3xl flex-1">
@@ -80,6 +60,110 @@ function CentreAidePage() {
         )}
       </article>
     </div>
+  )
+}
+
+const INDENTATION_NAV = 16
+
+type ArticlePublic = {
+  id: string
+  type: 'GROUPE' | 'PAGE'
+  parentId: string | null
+  ordre: number
+  titre: string
+  titreAffiche: string
+}
+
+type NoeudNav = { article: ArticlePublic; depth: number }
+
+const aplatirNav = (articles: ArticlePublic[], replies: ReadonlySet<string>): NoeudNav[] => {
+  const enfantsDe = new Map<string | null, ArticlePublic[]>()
+  for (const article of articles) {
+    const liste = enfantsDe.get(article.parentId) ?? []
+    liste.push(article)
+    enfantsDe.set(article.parentId, liste)
+  }
+  for (const liste of enfantsDe.values()) liste.sort((a, b) => a.ordre - b.ordre)
+
+  const sortie: NoeudNav[] = []
+  const parcourir = (parentId: string | null, depth: number): void => {
+    for (const article of enfantsDe.get(parentId) ?? []) {
+      sortie.push({ article, depth })
+      if (!replies.has(article.id)) parcourir(article.id, depth + 1)
+    }
+  }
+  parcourir(null, 0)
+  return sortie
+}
+
+// Arborescence de lecture : lignes de guidage + repli des groupes, alignée sur le
+// design de l'éditeur admin (lecture seule, sans drag).
+function NavCentreAide({
+  articles,
+  selectedId,
+  onSelect,
+}: {
+  articles: ArticlePublic[]
+  selectedId: string | null
+  onSelect: (id: string) => void
+}) {
+  const [replies, setReplies] = useState<ReadonlySet<string>>(new Set())
+  const noeuds = aplatirNav(articles, replies)
+  const aDesEnfants = (id: string) => articles.some((article) => article.parentId === id)
+
+  const basculer = (id: string) =>
+    setReplies((precedent) => {
+      const suivant = new Set(precedent)
+      if (suivant.has(id)) suivant.delete(id)
+      else suivant.add(id)
+      return suivant
+    })
+
+  return (
+    <ul className="select-none text-sm">
+      {noeuds.map(({ article, depth }) => {
+        const estGroupe = article.type === 'GROUPE'
+        const titre = article.titreAffiche || article.titre
+        const replie = replies.has(article.id)
+        return (
+          <li key={article.id}>
+            <div
+              onClick={() => (estGroupe ? basculer(article.id) : onSelect(article.id))}
+              style={{ paddingLeft: depth * INDENTATION_NAV + 6 }}
+              className={clsxm(
+                'relative flex cursor-pointer items-center gap-1 rounded-md py-1.5 pr-2',
+                !estGroupe && selectedId === article.id
+                  ? 'bg-primary-tinted font-medium text-primary'
+                  : estGroupe
+                    ? 'font-semibold text-text hover:bg-surface-tinted'
+                    : 'text-text-muted hover:bg-surface-tinted hover:text-text',
+              )}
+            >
+              {Array.from({ length: depth }).map((_, niveau) => (
+                <span
+                  key={niveau}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-y-0 border-l border-border"
+                  style={{ left: niveau * INDENTATION_NAV + 13 }}
+                />
+              ))}
+              {estGroupe && aDesEnfants(article.id) ? (
+                <span className="flex text-text-subtle">
+                  {replie ? (
+                    <ChevronRight className="size-3.5" />
+                  ) : (
+                    <ChevronDown className="size-3.5" />
+                  )}
+                </span>
+              ) : (
+                <span className="w-3.5 shrink-0" />
+              )}
+              <span className="flex-1 truncate">{titre}</span>
+            </div>
+          </li>
+        )
+      })}
+    </ul>
   )
 }
 
