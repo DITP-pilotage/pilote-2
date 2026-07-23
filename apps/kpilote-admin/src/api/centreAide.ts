@@ -4,6 +4,7 @@ import type {
   BasculerVisibiliteArticleBody,
   CreerArticleCentreAideBody,
   DeplacerArticleBody,
+  DeplacerArticleVersBody,
   ModifierBrouillonArticleBody,
 } from '@pilote/kpilote-shared/centreAide'
 import {
@@ -60,6 +61,14 @@ export const deplacerArticleCentreAide = async (
   body: DeplacerArticleBody,
 ): Promise<ArticleCentreAideApiModel> => {
   const json = await bffClient.post(`${CHEMIN}/${id}/deplacer`, { json: body }).json()
+  return articleCentreAideApiModelSchema.parse(json)
+}
+
+export const deplacerArticleVersCentreAide = async (
+  id: string,
+  body: DeplacerArticleVersBody,
+): Promise<ArticleCentreAideApiModel> => {
+  const json = await bffClient.post(`${CHEMIN}/${id}/deplacer-vers`, { json: body }).json()
   return articleCentreAideApiModelSchema.parse(json)
 }
 

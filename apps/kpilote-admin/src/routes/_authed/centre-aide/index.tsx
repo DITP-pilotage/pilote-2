@@ -7,15 +7,17 @@ import { useState } from 'react'
 import {
   basculerVisibiliteArticleCentreAide,
   creerArticleCentreAide,
+  deplacerArticleVersCentreAide,
   modifierBrouillonArticleCentreAide,
   publierArticleCentreAide,
   restaurerArticleCentreAide,
   supprimerArticleCentreAide,
   supprimerDefinitivementArticleCentreAide,
 } from '@/api/centreAide'
+import { ArbreCentreAide } from '@/components/centre-aide/ArbreCentreAide'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { EditeurCentreAide } from '@/components/centre-aide/EditeurCentreAide'
-import { aDesModificationsNonPubliees, construireArbre } from '@/components/centre-aide/arbre'
+import { aDesModificationsNonPubliees } from '@/components/centre-aide/arbre'
 import { PageHeading } from '@/components/PageHeading'
 import { useAppConfig } from '@/context/AppConfigContext'
 import { Button } from '@pilote/kpilote-ui/Button'
@@ -43,7 +45,6 @@ function CentreAideComponent() {
   const rafraichir = () => queryClient.invalidateQueries({ queryKey: ['centre-aide'] })
   const surErreur = (erreur: unknown) => toast({ title: extractApiError(erreur), variant: 'error' })
 
-  const arbre = construireArbre(articles)
   const selectionne = articles.find((article) => article.id === selectedId) ?? null
   const parentPourCreation =
     selectionne?.type === 'GROUPE' ? selectionne.id : (selectionne?.parentId ?? null)
@@ -80,6 +81,18 @@ function CentreAideComponent() {
     onError: surErreur,
   })
 
+  const deplacement = useMutation({
+    mutationFn: ({
+      id,
+      cible,
+    }: {
+      id: string
+      cible: { parentId: string | null; index: number }
+    }) => deplacerArticleVersCentreAide(id, cible),
+    onSuccess: rafraichir,
+    onError: surErreur,
+  })
+
   return (
     <div>
       <Breadcrumb>
@@ -103,27 +116,15 @@ function CentreAideComponent() {
               <FilePlus2 className="size-4" /> Page
             </Button>
           </div>
-          <ul className="space-y-0.5">
-            {arbre.map((noeud) => (
-              <NoeudLigne
-                key={noeud.id}
-                noeud={noeud}
-                profondeur={0}
-                selectedId={corbeilleOuverte ? null : selectedId}
-                onSelect={(id) => {
-                  setCorbeilleOuverte(false)
-                  setSelectedId(id)
-                }}
-                onSupprimer={(id) => suppression.mutate(id)}
-                onVisibilite={(article) => visibilite.mutate(article)}
-              />
-            ))}
-            {arbre.length === 0 ? (
-              <li className="px-2 py-6 text-center text-sm text-text-subtle">
-                Aucun article. Créez un groupe ou une page.
-              </li>
-            ) : null}
-          </ul>
+          <ArbreCentreAide
+            articles={articles}
+            selectedId={corbeilleOuverte ? null : selectedId}
+            onSelect={(id) => {
+              setCorbeilleOuverte(false)
+              setSelectedId(id)
+            }}
+            onDeplacer={(id, cible) => deplacement.mutate({ id, cible })}
+          />
           <button
             type="button"
             onClick={() => setCorbeilleOuverte((precedent) => !precedent)}
@@ -142,7 +143,13 @@ function CentreAideComponent() {
           {corbeilleOuverte ? (
             <Corbeille onRafraichir={rafraichir} />
           ) : selectionne ? (
-            <EditionArticle key={selectionne.id} article={selectionne} onEnregistre={rafraichir} />
+            <EditionArticle
+              key={selectionne.id}
+              article={selectionne}
+              onEnregistre={rafraichir}
+              onSupprimer={() => suppression.mutate(selectionne.id)}
+              onBasculerVisibilite={() => visibilite.mutate(selectionne)}
+            />
           ) : (
             <div className="rounded-md border border-dashed border-border p-10 text-center text-sm text-text-muted">
               Sélectionnez une page ou un groupe à gauche.
@@ -154,94 +161,16 @@ function CentreAideComponent() {
   )
 }
 
-function NoeudLigne({
-  noeud,
-  profondeur,
-  selectedId,
-  onSelect,
-  onSupprimer,
-  onVisibilite,
-}: {
-  noeud: ReturnType<typeof construireArbre>[number]
-  profondeur: number
-  selectedId: string | null
-  onSelect: (id: string) => void
-  onSupprimer: (id: string) => void
-  onVisibilite: (article: ArticleCentreAideApiModel) => void
-}) {
-  return (
-    <li>
-      <div
-        className={clsxm(
-          'group flex items-center gap-1 rounded px-2 py-1.5 text-sm',
-          selectedId === noeud.id ? 'bg-primary-tinted text-primary' : 'hover:bg-surface-tinted',
-        )}
-        style={{ paddingLeft: `${8 + profondeur * 16}px` }}
-      >
-        <button
-          type="button"
-          onClick={() => onSelect(noeud.id)}
-          className="flex-1 truncate text-left"
-          title={noeud.titreBrouillon || noeud.titre}
-        >
-          {noeud.type === 'GROUPE' ? '📁 ' : ''}
-          {noeud.titreBrouillon || noeud.titre || '(sans titre)'}
-        </button>
-        {noeud.estPublie ? (
-          <span className="size-1.5 rounded-full bg-success" title="Publié" aria-label="Publié" />
-        ) : (
-          <span
-            className="size-1.5 rounded-full bg-warning"
-            title="Brouillon"
-            aria-label="Brouillon"
-          />
-        )}
-        <button
-          type="button"
-          onClick={() => onVisibilite(noeud)}
-          title={noeud.estMasque ? 'Masqué' : 'Visible'}
-          className="opacity-0 transition-opacity group-hover:opacity-100"
-        >
-          {noeud.estMasque ? (
-            <EyeOff className="size-3.5 text-text-muted" />
-          ) : (
-            <Eye className="size-3.5 text-text-muted" />
-          )}
-        </button>
-        <button
-          type="button"
-          onClick={() => onSupprimer(noeud.id)}
-          title="Supprimer"
-          className="opacity-0 transition-opacity group-hover:opacity-100"
-        >
-          <Trash2 className="size-3.5 text-red-marianne" />
-        </button>
-      </div>
-      {noeud.enfants.length > 0 ? (
-        <ul className="space-y-0.5">
-          {noeud.enfants.map((enfant) => (
-            <NoeudLigne
-              key={enfant.id}
-              noeud={enfant}
-              profondeur={profondeur + 1}
-              selectedId={selectedId}
-              onSelect={onSelect}
-              onSupprimer={onSupprimer}
-              onVisibilite={onVisibilite}
-            />
-          ))}
-        </ul>
-      ) : null}
-    </li>
-  )
-}
-
 function EditionArticle({
   article,
   onEnregistre,
+  onSupprimer,
+  onBasculerVisibilite,
 }: {
   article: ArticleCentreAideApiModel
   onEnregistre: () => Promise<unknown>
+  onSupprimer: () => void
+  onBasculerVisibilite: () => void
 }) {
   const toast = useToast()
   const { environment } = useAppConfig()
@@ -300,6 +229,23 @@ function EditionArticle({
             </a>
           </Button>
         ) : null}
+        {estGroupe ? null : (
+          <Button
+            variant="tertiary"
+            onClick={onBasculerVisibilite}
+            title={article.estMasque ? 'Rendre visible' : 'Masquer du centre d’aide'}
+          >
+            {article.estMasque ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+          </Button>
+        )}
+        <Button
+          variant="tertiary"
+          onClick={onSupprimer}
+          title="Mettre à la corbeille"
+          className="text-red-marianne"
+        >
+          <Trash2 className="size-4" />
+        </Button>
         <Button variant="secondary" onClick={() => enregistrer.mutate()} disabled={enAttente}>
           Enregistrer
         </Button>
