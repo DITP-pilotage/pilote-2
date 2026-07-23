@@ -1,4 +1,4 @@
-import { EditorContent, useEditor } from '@tiptap/react'
+import { EditorContent, useEditor, useEditorState } from '@tiptap/react'
 import { BubbleMenu } from '@tiptap/react/menus'
 import { classesRenduBase } from '@pilote/kpilote-ui/centre-aide'
 import { Bold, Italic, Link2, Strikethrough, Underline as UnderlineIcon } from 'lucide-react'
@@ -65,7 +65,20 @@ export function EditeurCentreAide({
     onUpdate: ({ editor: instance }) => onChange(instance.isEmpty ? '' : instance.getHTML()),
   })
 
-  if (!editor) return null
+  // tiptap v3 ne re-render plus le composant à chaque transaction : on souscrit
+  // explicitement aux états actifs pour que la bulle reflète la sélection courante.
+  const etats = useEditorState({
+    editor,
+    selector: ({ editor: instance }) => ({
+      bold: instance?.isActive('bold') ?? false,
+      italic: instance?.isActive('italic') ?? false,
+      underline: instance?.isActive('underline') ?? false,
+      strike: instance?.isActive('strike') ?? false,
+      link: instance?.isActive('link') ?? false,
+    }),
+  })
+
+  if (!editor || !etats) return null
 
   // Depuis la bulle : agit sur le texte sélectionné (poser / retirer le lien).
   const definirLien = () => {
@@ -88,34 +101,29 @@ export function EditeurCentreAide({
         <BoutonBulle
           label="Gras"
           Icon={Bold}
-          actif={editor.isActive('bold')}
+          actif={etats.bold}
           onClick={() => editor.chain().focus().toggleBold().run()}
         />
         <BoutonBulle
           label="Italique"
           Icon={Italic}
-          actif={editor.isActive('italic')}
+          actif={etats.italic}
           onClick={() => editor.chain().focus().toggleItalic().run()}
         />
         <BoutonBulle
           label="Souligné"
           Icon={UnderlineIcon}
-          actif={editor.isActive('underline')}
+          actif={etats.underline}
           onClick={() => editor.chain().focus().toggleUnderline().run()}
         />
         <BoutonBulle
           label="Barré"
           Icon={Strikethrough}
-          actif={editor.isActive('strike')}
+          actif={etats.strike}
           onClick={() => editor.chain().focus().toggleStrike().run()}
         />
         <span className="mx-1 h-5 w-px bg-white/20" aria-hidden />
-        <BoutonBulle
-          label="Lien"
-          Icon={Link2}
-          actif={editor.isActive('link')}
-          onClick={definirLien}
-        />
+        <BoutonBulle label="Lien" Icon={Link2} actif={etats.link} onClick={definirLien} />
       </BubbleMenu>
 
       <EditorContent editor={editor} className={classesContenu} />
