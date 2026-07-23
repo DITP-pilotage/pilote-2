@@ -32,6 +32,10 @@
       "types": "./src/centreAide.ts",
       "default": "./src/centreAide.ts"
     },
+    "./url": {
+      "types": "./src/url.ts",
+      "default": "./src/url.ts"
+    },
     "./console": {
       "types": "./src/console.ts",
       "default": "./src/console.ts"

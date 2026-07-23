@@ -1,4 +1,5 @@
 import { registreIcones, TYPES_ICONE } from '@pilote/kpilote-ui/centre-aide'
+import { estUrlHttpSure } from '@pilote/kpilote-shared/url'
 import type { Editor } from '@tiptap/react'
 import {
   CircleCheck,
@@ -21,15 +22,6 @@ import {
   Video as VideoIcon,
 } from 'lucide-react'
 import type { ComponentType } from 'react'
-
-export const estUrlHttp = (url: string): boolean => {
-  try {
-    const parsee = new URL(url)
-    return parsee.protocol === 'https:' || parsee.protocol === 'http:'
-  } catch {
-    return false
-  }
-}
 
 export type OptionBloc = {
   label: string
@@ -62,15 +54,15 @@ export const construireOptionsBlocs = (
 ): OptionBloc[] => {
   const insererImage = () => {
     const url = window.prompt('URL de l’image')
-    if (url && estUrlHttp(url)) editor.chain().focus().setImage({ src: url }).run()
+    if (url && estUrlHttpSure(url)) editor.chain().focus().setImage({ src: url }).run()
   }
   const insererVideoUrl = () => {
     const url = window.prompt('URL d’intégration de la vidéo (iframe)')
-    if (url && estUrlHttp(url)) editor.chain().focus().insertVideo({ src: url }).run()
+    if (url && estUrlHttpSure(url)) editor.chain().focus().insertVideo({ src: url }).run()
   }
   const insererLien = () => {
     const url = window.prompt('URL du lien')
-    if (!url || !estUrlHttp(url)) return
+    if (!url || !estUrlHttpSure(url)) return
     // Sélection présente → on pose le lien dessus ; sinon on insère l'URL comme texte lié.
     if (editor.state.selection.empty) {
       editor

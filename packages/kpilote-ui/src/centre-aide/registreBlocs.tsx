@@ -1,10 +1,11 @@
-import { Accordeon } from './Accordeon'
-import { Callout } from './Callout'
+import { estUrlHttpSure } from '@pilote/kpilote-shared/url'
+
+import { Accordeon } from '../Accordeon'
+import { Callout, COULEURS_CALLOUT, type CalloutColor } from '../Callout'
 import { IconeCentreAide } from './IconeCentreAide'
 import { ImageCentreAide } from './ImageCentreAide'
 import { VideoCentreAide } from './VideoCentreAide'
-import { estUrlHttpSure } from './securiteUrl'
-import { COULEURS_CALLOUT, type CalloutColor, type RegistreBlocs } from './types'
+import { type RegistreBlocs } from './types'
 
 const lireCouleur = (element: Element): CalloutColor => {
   const brut = element.getAttribute('data-color')

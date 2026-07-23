@@ -5,6 +5,10 @@
   "type": "module",
   "exports": {
     "./theme.css": "./theme.css",
+    "./Accordeon": {
+      "types": "./src/Accordeon.tsx",
+      "default": "./src/Accordeon.tsx"
+    },
     "./BackLink": {
       "types": "./src/BackLink.tsx",
       "default": "./src/BackLink.tsx"
@@ -12,6 +16,10 @@
     "./Button": {
       "types": "./src/Button.tsx",
       "default": "./src/Button.tsx"
+    },
+    "./Callout": {
+      "types": "./src/Callout.tsx",
+      "default": "./src/Callout.tsx"
     },
     "./Card": {
       "types": "./src/Card.tsx",

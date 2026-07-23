@@ -5,7 +5,7 @@ import {
   ReactNodeViewRenderer,
   type NodeViewProps,
 } from '@tiptap/react'
-import { Callout, type CalloutColor } from '@pilote/kpilote-ui/centre-aide'
+import { Callout, type CalloutColor } from '@pilote/kpilote-ui/Callout'
 
 function CalloutNodeView({ node }: NodeViewProps) {
   const color = (node.attrs.color as CalloutColor) ?? 'info'

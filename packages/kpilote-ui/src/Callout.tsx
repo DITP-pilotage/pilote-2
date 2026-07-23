@@ -1,8 +1,11 @@
 import { Info, CircleCheck, TriangleAlert, CircleX } from 'lucide-react'
 import type { ComponentType, ReactNode } from 'react'
 
-import { clsxm } from '../clsxm'
-import type { CalloutColor } from './types'
+import { clsxm } from './clsxm'
+
+export type CalloutColor = 'info' | 'success' | 'warning' | 'error'
+
+export const COULEURS_CALLOUT: readonly CalloutColor[] = ['info', 'success', 'warning', 'error']
 
 const variantes: Record<
   CalloutColor,

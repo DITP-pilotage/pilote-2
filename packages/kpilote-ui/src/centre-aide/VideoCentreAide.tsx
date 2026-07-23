@@ -1,18 +1,9 @@
+import { sansAutoplay } from '@pilote/kpilote-shared/url'
+
 import { clsxm } from '../clsxm'
 
-// Retire toute demande d'autoplay de l'URL d'intégration : la vidéo ne doit pas
-// démarrer seule au chargement (retour client). L'iframe ne déclare pas non plus
-// allow="autoplay", donc le navigateur bloque l'autoplay dans tous les cas.
-export const sansAutoplay = (src: string): string => {
-  try {
-    const url = new URL(src)
-    for (const cle of ['autoplay', 'auto_play', 'autostart']) url.searchParams.delete(cle)
-    return url.toString()
-  } catch {
-    return src
-  }
-}
-
+// L'iframe ne déclare pas allow="autoplay" et `sansAutoplay` retire les paramètres
+// d'autoplay de l'URL : la vidéo ne démarre jamais seule au chargement.
 export function VideoCentreAide({
   src,
   titre,

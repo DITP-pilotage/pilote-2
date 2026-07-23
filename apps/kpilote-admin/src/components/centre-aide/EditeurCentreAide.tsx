@@ -4,7 +4,7 @@ import { classesRenduBase } from '@pilote/kpilote-ui/centre-aide'
 import { Bold, Italic, Link2, Strikethrough, Underline as UnderlineIcon } from 'lucide-react'
 import { useState, type ComponentType } from 'react'
 
-import { estUrlHttp } from '@/components/centre-aide/blocs'
+import { estUrlHttpSure } from '@pilote/kpilote-shared/url'
 import { extensionsCentreAide } from '@/components/centre-aide/extensions'
 import { ModaleVideoFinance } from '@/components/centre-aide/ModaleVideoFinance'
 import { clsxm } from '@/lib/clsxm'
@@ -92,7 +92,8 @@ export function EditeurCentreAide({
       editor.chain().focus().extendMarkRange('link').unsetLink().run()
       return
     }
-    if (estUrlHttp(url)) editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
+    if (estUrlHttpSure(url))
+      editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run()
   }
 
   return (

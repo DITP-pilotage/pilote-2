@@ -1,8 +1,8 @@
 import { ChevronDown } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../Collapsible'
-import { clsxm } from '../clsxm'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './Collapsible'
+import { clsxm } from './clsxm'
 
 export function Accordeon({
   titre,
