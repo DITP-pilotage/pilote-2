@@ -11,7 +11,9 @@ import { IconeExtension } from './IconeExtension'
 import { SlashCommand } from './SlashCommand'
 import { VideoExtension } from './VideoExtension'
 
-export const extensionsCentreAide = (placeholder = 'Rédigez votre article…'): Extensions => [
+export const extensionsCentreAide = (
+  placeholder = 'Écrivez, ou tapez « / » pour insérer un bloc…',
+): Extensions => [
   // Entrée = nouveau paragraphe (bloc distinct) : la mise en titre ne s'applique
   // qu'au bloc sélectionné, jamais aux lignes adjacentes (PIL-1685 #3).
   StarterKit.configure({ heading: { levels: [2, 3] }, code: false, codeBlock: false }),

@@ -49,11 +49,12 @@ const classesContenu = clsxm(
   'text-text',
   // Surface d'édition pleine largeur/hauteur, sans marge ni padding.
   '[&_.ProseMirror]:min-h-[calc(100vh-13rem)] [&_.ProseMirror]:outline-none',
-  '[&_.ProseMirror_.is-editor-empty:first-child]:before:pointer-events-none',
-  '[&_.ProseMirror_.is-editor-empty:first-child]:before:float-left',
-  '[&_.ProseMirror_.is-editor-empty:first-child]:before:h-0',
-  '[&_.ProseMirror_.is-editor-empty:first-child]:before:text-text-subtle',
-  '[&_.ProseMirror_.is-editor-empty:first-child]:before:content-[attr(data-placeholder)]',
+  // Placeholder « / » sur la ligne vide courante (façon Linear), pas seulement la première.
+  '[&_.ProseMirror_.is-empty]:before:pointer-events-none',
+  '[&_.ProseMirror_.is-empty]:before:float-left',
+  '[&_.ProseMirror_.is-empty]:before:h-0',
+  '[&_.ProseMirror_.is-empty]:before:text-text-subtle',
+  '[&_.ProseMirror_.is-empty]:before:content-[attr(data-placeholder)]',
 )
 
 export function EditeurCentreAide({
