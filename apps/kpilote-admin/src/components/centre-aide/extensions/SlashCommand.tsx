@@ -54,7 +54,17 @@ const ListeSlash = forwardRef<ListeHandle, SuggestionProps<OptionBloc>>(
           setIndex((courant) => (courant + 1) % liste.length)
           return true
         }
+        // Entrée valide ; → entre dans le sous-menu (symétrique de ← qui en sort).
         if (event.key === 'Enter') {
+          choisir(index)
+          return true
+        }
+        if (event.key === 'ArrowRight') {
+          if (!liste[index]?.sousOptions) return false
+          choisir(index)
+          return true
+        }
+        if (event.key === 'Tab') {
           choisir(index)
           return true
         }
