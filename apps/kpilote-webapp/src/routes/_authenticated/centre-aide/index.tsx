@@ -1,8 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { RenduContenuCentreAide } from '@pilote/kpilote-ui/centre-aide'
 import { Heading, Text } from '@pilote/kpilote-ui/Typography'
-import { useState } from 'react'
 
 import { clsxm } from '@/lib/clsxm'
 import { useRecordVisit } from '@/lib/recentlyVisited'
@@ -16,15 +15,21 @@ export const Route = createFileRoute('/_authenticated/centre-aide/')({
 })
 
 function CentreAidePage() {
+  // Le param d'URL `article` est la source de vérité : deep-links, cmd+K et clics
+  // de la sidebar passent tous par lui, donc la page reste synchro même quand on
+  // change d'article sans remonter le composant.
   const { article: articleParam } = Route.useSearch()
+  const navigate = useNavigate()
   const { data: articles, isPending, isError } = useQuery(articlesCentreAidePubliesQueryOptions())
-  const [selectedId, setSelectedId] = useState<string | null>(articleParam ?? null)
+
+  const selectionner = (id: string) =>
+    void navigate({ to: '/centre-aide', search: { article: id } })
 
   if (isPending) return <Text tone="muted">Chargement…</Text>
   if (isError) return <Text tone="muted">Le centre d’aide est momentanément indisponible.</Text>
 
   const pages = articles.filter((article) => article.type === 'PAGE')
-  const selectionne = articles.find((article) => article.id === selectedId) ?? pages[0] ?? null
+  const selectionne = articles.find((article) => article.id === articleParam) ?? pages[0] ?? null
 
   if (articles.length === 0) {
     return (
@@ -51,7 +56,7 @@ function CentreAidePage() {
               <li key={article.id}>
                 <button
                   type="button"
-                  onClick={() => setSelectedId(article.id)}
+                  onClick={() => selectionner(article.id)}
                   className={clsxm(
                     'w-full truncate rounded px-2 py-1.5 text-left transition-colors',
                     selectionne?.id === article.id
