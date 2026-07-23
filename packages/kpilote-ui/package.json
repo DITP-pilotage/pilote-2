@@ -156,6 +156,10 @@
     "./clsxm": {
       "types": "./src/clsxm.ts",
       "default": "./src/clsxm.ts"
+    },
+    "./centre-aide": {
+      "types": "./src/centre-aide/index.ts",
+      "default": "./src/centre-aide/index.ts"
     }
   },
   "files": [
