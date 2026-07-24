@@ -4,8 +4,7 @@ type Point = [number, number]
 type Ring = Point[]
 
 export type GeoJsonGeometry =
-  | { type: 'Polygon'; coordinates: Ring[] }
-  | { type: 'MultiPolygon'; coordinates: Ring[][] }
+  { type: 'Polygon'; coordinates: Ring[] } | { type: 'MultiPolygon'; coordinates: Ring[][] }
 
 export type GeoJsonFeature = {
   type: 'Feature'
@@ -96,6 +95,7 @@ const fermerEtProjeter = (anneau: Ring, maxY: number): Ring => {
   const projete: Ring = anneau.map(([x, y]) => [arrondir(x), arrondir(maxY - y)])
   const premier = projete[0]
   const dernier = projete[projete.length - 1]
+  if (!premier || !dernier) return projete
   if (premier[0] !== dernier[0] || premier[1] !== dernier[1]) {
     projete.push([premier[0], premier[1]])
   }
@@ -119,10 +119,11 @@ export const convertirSvgEnGeoJson = ({
     const nom = nomsParCode[code]
     if (!nom) throw new Error(`Nom introuvable pour le territoire ${code}`)
     const anneaux = pathVersAnneaux(d).map((anneau) => fermerEtProjeter(anneau, maxY))
-    if (anneaux.length === 0) throw new Error(`Aucun anneau pour le territoire ${code}`)
+    const [premierAnneau] = anneaux
+    if (!premierAnneau) throw new Error(`Aucun anneau pour le territoire ${code}`)
     const geometry: GeoJsonGeometry =
       anneaux.length === 1
-        ? { type: 'Polygon', coordinates: [anneaux[0]] }
+        ? { type: 'Polygon', coordinates: [premierAnneau] }
         : { type: 'MultiPolygon', coordinates: anneaux.map((anneau) => [anneau]) }
     features.push({
       type: 'Feature',

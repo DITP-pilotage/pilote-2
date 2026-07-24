@@ -11,5 +11,6 @@ declare module 'svgpath' {
     ): SvgPath
   }
 
-  export default function svgpath(path: string): SvgPath
+  function svgpath(path: string): SvgPath
+  export = svgpath
 }

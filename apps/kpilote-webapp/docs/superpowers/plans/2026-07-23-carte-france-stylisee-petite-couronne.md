@@ -24,6 +24,7 @@
 ### Task 1 : Module de conversion pur + validation
 
 **Files:**
+
 - Create: `apps/kpilote-webapp/src/scripts/svgpath.d.ts`
 - Create: `apps/kpilote-webapp/src/scripts/svgVersGeoJson.ts`
 - Create: `apps/kpilote-webapp/src/scripts/svgVersGeoJson.test.ts`
@@ -31,6 +32,7 @@
 - Modify: `apps/kpilote-webapp/package.json` (devDeps `svgpath`, `tsx`)
 
 **Interfaces:**
+
 - Produces: `convertirSvgEnGeoJson({ svg: string, prefixe: string, maxY: number, nomsParCode: Record<string, string> }): GeoJsonFeatureCollection` et les types `GeoJsonFeatureCollection`, `GeoJsonFeature`, `GeoJsonGeometry`.
 - Produces: `franceGeoJsonSchema` exporté depuis `src/api/geoJson.ts`.
 
@@ -165,8 +167,7 @@ type Point = [number, number]
 type Ring = Point[]
 
 export type GeoJsonGeometry =
-  | { type: 'Polygon'; coordinates: Ring[] }
-  | { type: 'MultiPolygon'; coordinates: Ring[][] }
+  { type: 'Polygon'; coordinates: Ring[] } | { type: 'MultiPolygon'; coordinates: Ring[][] }
 
 export type GeoJsonFeature = {
   type: 'Feature'
@@ -318,12 +319,14 @@ git commit -m "feat(kpilote): module de conversion SVG ppg -> GeoJSON stylisé"
 ### Task 2 : Script CLI + régénération des cartes
 
 **Files:**
+
 - Create: `apps/kpilote-webapp/src/scripts/genererGeoJsonFrance.ts`
 - Modify: `apps/kpilote-webapp/package.json` (script `maps:generate`)
 - Modify: `apps/kpilote-webapp/public/maps/france-departements.json` (régénéré)
 - Modify: `apps/kpilote-webapp/public/maps/france-regions.json` (régénéré)
 
 **Interfaces:**
+
 - Consumes: `convertirSvgEnGeoJson`, `franceGeoJsonSchema` (Task 1).
 - Produces: commande `pnpm run maps:generate` qui régénère les deux fichiers.
 
@@ -412,18 +415,22 @@ Dans `apps/kpilote-webapp/package.json`, section `scripts`, ajouter :
 Demander à l'utilisateur de lancer (depuis `apps/kpilote-webapp`) :
 `pnpm run maps:generate`
 Attendu (sortie console) :
+
 ```
 france-departements.json : 101 territoires
 france-regions.json : 18 territoires
 ```
+
 Si le compte diffère (101 / 18) ou si `franceGeoJsonSchema.parse` jette, s'arrêter et diagnostiquer avant de continuer.
 
 - [ ] **Step 4 : Contrôle rapide des fichiers générés**
 
 Demander à l'utilisateur de lancer :
+
 ```bash
 node -e "const f=require('./public/maps/france-departements.json'); console.log('dept', f.features.length, f.features.find(x=>x.properties.code==='75')?.properties.nom)"
 ```
+
 Attendu : `dept 101 Paris`
 
 - [ ] **Step 5 : Commit**
@@ -441,9 +448,11 @@ git commit -m "feat(kpilote): régénère les cartes France en GeoJSON stylisé 
 ### Task 3 : Ajuster l'aspectScale ECharts
 
 **Files:**
+
 - Modify: `apps/kpilote-webapp/src/components/widgets/CarteFrance.tsx:69`
 
 **Interfaces:**
+
 - Consumes: les GeoJSON stylisés régénérés (Task 2).
 
 - [ ] **Step 1 : Passer aspectScale à 1**
@@ -463,6 +472,7 @@ par :
 - [ ] **Step 2 : Vérifier le rendu dans l'app**
 
 Demander à l'utilisateur de lancer `pnpm dev`, d'ouvrir la vue carte, et de confirmer visuellement :
+
 - la France est à l'endroit et non écrasée verticalement ;
 - Paris (75) et la petite couronne (92/93/94) sont agrandies, visibles et survolables ;
 - le survol affiche le bon nom (tooltip) et le matching des valeurs par `code` fonctionne (départements et régions).

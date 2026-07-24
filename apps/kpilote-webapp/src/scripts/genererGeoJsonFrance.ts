@@ -24,7 +24,10 @@ const chargerNoms = (): Record<string, string> => {
 const lireMaxY = (svg: string): number => {
   const viewBox = svg.match(/viewBox="([^"]*)"/)?.[1]
   if (!viewBox) throw new Error('viewBox introuvable dans le SVG')
-  const [, minY, , hauteur] = viewBox.trim().split(/\s+/).map(Number)
+  const parties = viewBox.trim().split(/\s+/).map(Number)
+  const minY = parties[1]
+  const hauteur = parties[3]
+  if (minY === undefined || hauteur === undefined) throw new Error('viewBox invalide')
   return minY + hauteur
 }
 
@@ -44,7 +47,6 @@ const genererCarte = ({
   franceGeoJsonSchema.parse(geoJson)
   const chemin = resolve(racineKpilote, 'public/maps', fichierSortie)
   writeFileSync(chemin, JSON.stringify(geoJson))
-  // eslint-disable-next-line no-console
   console.log(`${fichierSortie} : ${geoJson.features.length} territoires`)
 }
 
