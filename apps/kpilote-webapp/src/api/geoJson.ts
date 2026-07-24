@@ -7,7 +7,7 @@ const geoJsonFeatureSchema = z.object({
   properties: z.object({ code: z.string(), nom: z.string() }),
 })
 
-const franceGeoJsonSchema = z.object({
+export const franceGeoJsonSchema = z.object({
   type: z.literal('FeatureCollection'),
   features: z.array(geoJsonFeatureSchema).readonly(),
 })
