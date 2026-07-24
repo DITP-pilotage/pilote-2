@@ -66,7 +66,7 @@ export function CarteFrance({
           map: mapName,
           nameProperty: 'code',
           roam: false,
-          aspectScale: 0.65,
+          aspectScale: 1,
           layoutCenter: ['50%', '50%'] as [string, string],
           layoutSize: '90%',
           label: { show: false },
