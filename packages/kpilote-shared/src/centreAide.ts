@@ -10,6 +10,11 @@ export const directionDeplacementSchema = z
   .describe('Sens du déplacement dans l’arborescence.')
 export type DirectionDeplacement = z.infer<typeof directionDeplacementSchema>
 
+export const articleCentreAideStatutSchema = z
+  .enum(['ACTIF', 'CORBEILLE'])
+  .describe('Cycle de vie : ACTIF, ou CORBEILLE (en attente de suppression définitive).')
+export type ArticleCentreAideStatut = z.infer<typeof articleCentreAideStatutSchema>
+
 // Modèle admin : expose à la fois les valeurs publiées et les valeurs brouillon.
 export const articleCentreAideApiModelSchema = z
   .object({
@@ -25,13 +30,9 @@ export const articleCentreAideApiModelSchema = z
     titreBrouillon: z.string().describe('Titre brouillon.'),
     titreAfficheBrouillon: z.string().describe('Titre affiché brouillon.'),
     contenuBrouillon: z.string().describe('Corps brouillon (HTML riche).'),
+    statut: articleCentreAideStatutSchema,
     createdAt: z.string().datetime().describe('Date ISO 8601 de création.'),
     updatedAt: z.string().datetime().describe('Date ISO 8601 de dernière modification.'),
-    deletedAt: z
-      .string()
-      .datetime()
-      .nullable()
-      .describe('Date ISO 8601 de mise en corbeille, ou null si actif.'),
   })
   .describe('Article du centre d’aide (vue admin).')
 export type ArticleCentreAideApiModel = z.infer<typeof articleCentreAideApiModelSchema>
@@ -90,6 +91,11 @@ export const basculerVisibiliteArticleBodySchema = z
   .object({ estMasque: z.boolean().describe('Nouvelle valeur de masquage.') })
   .describe('Masquer ou ré-afficher un article publié.')
 export type BasculerVisibiliteArticleBody = z.infer<typeof basculerVisibiliteArticleBodySchema>
+
+export const modifierStatutArticleBodySchema = z
+  .object({ statut: articleCentreAideStatutSchema })
+  .describe('Transition de cycle de vie : CORBEILLE (mettre en corbeille) ou ACTIF (restaurer).')
+export type ModifierStatutArticleBody = z.infer<typeof modifierStatutArticleBodySchema>
 
 export const deplacerArticleBodySchema = z
   .object({ direction: directionDeplacementSchema })

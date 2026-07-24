@@ -17,7 +17,7 @@ const article = (over: Partial<ArticleCentreAideApiModel>): ArticleCentreAideApi
   contenuBrouillon: 'c',
   createdAt: '2026-07-23T00:00:00.000Z',
   updatedAt: '2026-07-23T00:00:00.000Z',
-  deletedAt: null,
+  statut: 'ACTIF',
   ...over,
 })
 

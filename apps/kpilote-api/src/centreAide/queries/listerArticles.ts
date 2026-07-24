@@ -8,7 +8,7 @@ import { db } from '@/framework/persistence/dbStore'
 const performLister = async (): Promise<ArticleCentreAideListApiModel> => {
   ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
   const rows = await db().articleCentreAide.findMany({
-    where: { deletedAt: null },
+    where: { statut: 'ACTIF' },
     orderBy: [{ parentId: 'asc' }, { ordre: 'asc' }],
   })
   return rows.map(toArticleCentreAideApiModel)

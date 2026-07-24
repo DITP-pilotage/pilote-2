@@ -24,7 +24,7 @@ const performDeplacerVers = async (
   await db().articleCentreAide.findUniqueOrThrow({ where: { id } })
 
   const tous = await db().articleCentreAide.findMany({
-    where: { deletedAt: null },
+    where: { statut: 'ACTIF' },
     select: { id: true, parentId: true, type: true, ordre: true },
   })
   const parId = new Map(tous.map((article) => [article.id, article]))

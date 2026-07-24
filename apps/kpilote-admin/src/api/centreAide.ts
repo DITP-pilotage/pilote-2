@@ -6,6 +6,7 @@ import type {
   DeplacerArticleBody,
   DeplacerArticleVersBody,
   ModifierBrouillonArticleBody,
+  ModifierStatutArticleBody,
 } from '@pilote/kpilote-shared/centreAide'
 import {
   articleCentreAideApiModelSchema,
@@ -78,21 +79,16 @@ export const fetchArticlesCentreAideCorbeille =
     return articleCentreAideListApiModelSchema.parse(json)
   }
 
-// Suppression logique : l'article part en corbeille (PIL-1685 #2).
-export const supprimerArticleCentreAide = async (
+// Transition de cycle de vie : CORBEILLE = mettre à la corbeille, ACTIF = restaurer.
+export const modifierStatutArticleCentreAide = async (
   id: string,
+  body: ModifierStatutArticleBody,
 ): Promise<ArticleCentreAideApiModel> => {
-  const json = await bffClient.delete(`${CHEMIN}/${id}`).json()
+  const json = await bffClient.patch(`${CHEMIN}/${id}/statut`, { json: body }).json()
   return articleCentreAideApiModelSchema.parse(json)
 }
 
-export const restaurerArticleCentreAide = async (
-  id: string,
-): Promise<ArticleCentreAideApiModel> => {
-  const json = await bffClient.post(`${CHEMIN}/${id}/restaurer`).json()
-  return articleCentreAideApiModelSchema.parse(json)
-}
-
-export const supprimerDefinitivementArticleCentreAide = async (id: string): Promise<void> => {
-  await bffClient.delete(`${CHEMIN}/${id}/definitif`)
+// Suppression définitive (l'article doit être en corbeille).
+export const supprimerArticleCentreAide = async (id: string): Promise<void> => {
+  await bffClient.delete(`${CHEMIN}/${id}`)
 }

@@ -8,6 +8,7 @@ import {
   deplacerArticleBodySchema,
   deplacerArticleVersBodySchema,
   modifierBrouillonArticleBodySchema,
+  modifierStatutArticleBodySchema,
 } from '@pilote/kpilote-shared/centreAide'
 
 import { basculerVisibiliteArticleCentreAide } from '@/centreAide/commands/basculerVisibiliteArticle'
@@ -16,10 +17,9 @@ import { deplacerArticleCentreAide } from '@/centreAide/commands/deplacerArticle
 import { deplacerArticleVersCentreAide } from '@/centreAide/commands/deplacerArticleVers'
 import { depublierArticleCentreAide } from '@/centreAide/commands/depublierArticle'
 import { modifierBrouillonArticleCentreAide } from '@/centreAide/commands/modifierBrouillonArticle'
+import { modifierStatutArticleCentreAide } from '@/centreAide/commands/modifierStatutArticle'
 import { publierArticleCentreAide } from '@/centreAide/commands/publierArticle'
-import { restaurerArticleCentreAide } from '@/centreAide/commands/restaurerArticle'
 import { supprimerArticleCentreAide } from '@/centreAide/commands/supprimerArticle'
-import { supprimerDefinitivementArticleCentreAide } from '@/centreAide/commands/supprimerDefinitivementArticle'
 import { getArticleCentreAideById } from '@/centreAide/queries/getArticleById'
 import { listerArticlesCentreAide } from '@/centreAide/queries/listerArticles'
 import { listerArticlesCentreAideCorbeille } from '@/centreAide/queries/listerArticlesCorbeille'
@@ -28,7 +28,13 @@ import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { erreur400, erreur403, erreur404, succes200 } from '@/framework/openapi/responses'
+import {
+  erreur400,
+  erreur403,
+  erreur404,
+  erreur409,
+  succes200,
+} from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 
 const ArticleApiModelSchema = articleCentreAideApiModelSchema.openapi('ArticleCentreAideApiModel')
@@ -49,6 +55,9 @@ const BasculerVisibiliteBodySchema = basculerVisibiliteArticleBodySchema.openapi
 )
 const DeplacerBodySchema = deplacerArticleBodySchema.openapi('DeplacerArticleBody')
 const DeplacerVersBodySchema = deplacerArticleVersBodySchema.openapi('DeplacerArticleVersBody')
+const ModifierStatutBodySchema = modifierStatutArticleBodySchema.openapi(
+  'ModifierStatutArticleBody',
+)
 
 const detailParamsSchema = z.object({
   id: z.string().uuid().openapi({ description: "Identifiant (UUID) de l'article." }),
@@ -262,49 +271,39 @@ const corbeilleRoute = createRoute({
   },
 })
 
+const statutRoute = createRoute({
+  method: 'patch',
+  path: '/centre-aide/articles/{id}/statut',
+  tags: ['CentreAide', 'Admin'],
+  summary: 'Mettre à la corbeille ou restaurer un article',
+  description:
+    'Réservé aux clés API de rôle `ADMIN`. `CORBEILLE` = mettre à la corbeille, `ACTIF` = restaurer.',
+  middleware: [requireAuthentication],
+  request: {
+    params: detailParamsSchema,
+    body: { content: { 'application/json': { schema: ModifierStatutBodySchema } }, required: true },
+  },
+  responses: {
+    200: succes200('Statut mis à jour', ArticleApiModelSchema),
+    403: erreur403,
+    404: erreur404,
+  },
+})
+
 const supprimerRoute = createRoute({
   method: 'delete',
   path: '/centre-aide/articles/{id}',
   tags: ['CentreAide', 'Admin'],
-  summary: 'Mettre un article en corbeille (suppression logique)',
-  description:
-    'Réservé aux clés API de rôle `ADMIN`. L’article part en corbeille, pas d’effacement.',
-  middleware: [requireAuthentication],
-  request: { params: detailParamsSchema },
-  responses: {
-    200: succes200('Article mis en corbeille', ArticleApiModelSchema),
-    403: erreur403,
-    404: erreur404,
-  },
-})
-
-const restaurerRoute = createRoute({
-  method: 'post',
-  path: '/centre-aide/articles/{id}/restaurer',
-  tags: ['CentreAide', 'Admin'],
-  summary: 'Restaurer un article depuis la corbeille',
-  description: 'Réservé aux clés API de rôle `ADMIN`.',
-  middleware: [requireAuthentication],
-  request: { params: detailParamsSchema },
-  responses: {
-    200: succes200('Article restauré', ArticleApiModelSchema),
-    403: erreur403,
-    404: erreur404,
-  },
-})
-
-const supprimerDefinitivementRoute = createRoute({
-  method: 'delete',
-  path: '/centre-aide/articles/{id}/definitif',
-  tags: ['CentreAide', 'Admin'],
   summary: 'Supprimer définitivement un article et ses descendants',
-  description: 'Réservé aux clés API de rôle `ADMIN`. Effacement irréversible depuis la corbeille.',
+  description:
+    'Réservé aux clés API de rôle `ADMIN`. Effacement irréversible ; l’article doit d’abord être en corbeille (sinon 409).',
   middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {
-    204: { description: 'Article supprimé définitivement' },
+    204: { description: 'Article supprimé' },
     403: erreur403,
     404: erreur404,
+    409: erreur409,
   },
 })
 
@@ -398,25 +397,20 @@ centreAideRoutes.openapi(deplacerVersRoute, async (context) => {
   )
 })
 
+centreAideRoutes.openapi(statutRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  const body = context.req.valid('json')
+  return (
+    await withTransaction(async () => modifierStatutArticleCentreAide(id, body.statut))
+  ).match(
+    (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
 centreAideRoutes.openapi(supprimerRoute, async (context) => {
   const { id } = context.req.valid('param')
   return (await withTransaction(async () => supprimerArticleCentreAide(id))).match(
-    (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 200 }),
-    never,
-  )
-})
-
-centreAideRoutes.openapi(restaurerRoute, async (context) => {
-  const { id } = context.req.valid('param')
-  return (await withTransaction(async () => restaurerArticleCentreAide(id))).match(
-    (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 200 }),
-    never,
-  )
-})
-
-centreAideRoutes.openapi(supprimerDefinitivementRoute, async (context) => {
-  const { id } = context.req.valid('param')
-  return (await withTransaction(async () => supprimerDefinitivementArticleCentreAide(id))).match(
     () => context.body(null, 204),
     never,
   )

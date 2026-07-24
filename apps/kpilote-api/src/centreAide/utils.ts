@@ -39,9 +39,9 @@ export const toArticleCentreAideApiModel = (row: ArticleCentreAide): ArticleCent
   titreBrouillon: row.titreBrouillon,
   titreAfficheBrouillon: row.titreAfficheBrouillon,
   contenuBrouillon: row.contenuBrouillon,
+  statut: row.statut,
   createdAt: row.createdAt.toISOString(),
   updatedAt: row.updatedAt.toISOString(),
-  deletedAt: row.deletedAt?.toISOString() ?? null,
 })
 
 // Un groupe n'a pas d'état publié : son titre courant vit dans les champs

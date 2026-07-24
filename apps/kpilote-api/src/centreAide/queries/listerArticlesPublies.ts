@@ -10,7 +10,7 @@ import { db } from '@/framework/persistence/dbStore'
 //   (non masqué) d'au moins une page publiée. Un groupe vide reste invisible.
 const performListerPublies = async (): Promise<ArticleCentreAidePublicListApiModel> => {
   const articles = await db().articleCentreAide.findMany({
-    where: { deletedAt: null, estMasque: false },
+    where: { statut: 'ACTIF', estMasque: false },
     orderBy: [{ parentId: 'asc' }, { ordre: 'asc' }],
   })
 

@@ -8,8 +8,8 @@ import { db } from '@/framework/persistence/dbStore'
 const performListerCorbeille = async (): Promise<ArticleCentreAideListApiModel> => {
   ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
   const rows = await db().articleCentreAide.findMany({
-    where: { deletedAt: { not: null } },
-    orderBy: { deletedAt: 'desc' },
+    where: { statut: 'CORBEILLE' },
+    orderBy: { updatedAt: 'desc' },
   })
   return rows.map(toArticleCentreAideApiModel)
 }

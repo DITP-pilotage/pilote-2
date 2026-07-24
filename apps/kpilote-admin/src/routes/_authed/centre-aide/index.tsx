@@ -10,9 +10,8 @@ import {
   deplacerArticleVersCentreAide,
   modifierBrouillonArticleCentreAide,
   publierArticleCentreAide,
-  restaurerArticleCentreAide,
+  modifierStatutArticleCentreAide,
   supprimerArticleCentreAide,
-  supprimerDefinitivementArticleCentreAide,
 } from '@/api/centreAide'
 import { ArbreCentreAide } from '@/components/centre-aide/ArbreCentreAide'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -64,8 +63,8 @@ function CentreAideComponent() {
     onError: surErreur,
   })
 
-  const suppression = useMutation({
-    mutationFn: (id: string) => supprimerArticleCentreAide(id),
+  const miseEnCorbeille = useMutation({
+    mutationFn: (id: string) => modifierStatutArticleCentreAide(id, { statut: 'CORBEILLE' }),
     onSuccess: async () => {
       await rafraichir()
       setSelectedId(null)
@@ -147,7 +146,7 @@ function CentreAideComponent() {
               key={selectionne.id}
               article={selectionne}
               onEnregistre={rafraichir}
-              onSupprimer={() => suppression.mutate(selectionne.id)}
+              onSupprimer={() => miseEnCorbeille.mutate(selectionne.id)}
               onBasculerVisibilite={() => visibilite.mutate(selectionne)}
             />
           ) : (
@@ -276,7 +275,7 @@ function Corbeille({ onRafraichir }: { onRafraichir: () => Promise<unknown> }) {
   const surErreur = (erreur: unknown) => toast({ title: extractApiError(erreur), variant: 'error' })
 
   const restauration = useMutation({
-    mutationFn: (id: string) => restaurerArticleCentreAide(id),
+    mutationFn: (id: string) => modifierStatutArticleCentreAide(id, { statut: 'ACTIF' }),
     onSuccess: async () => {
       await onRafraichir()
       toast({ title: 'Article restauré.' })
@@ -285,7 +284,7 @@ function Corbeille({ onRafraichir }: { onRafraichir: () => Promise<unknown> }) {
   })
 
   const suppressionDefinitive = useMutation({
-    mutationFn: (id: string) => supprimerDefinitivementArticleCentreAide(id),
+    mutationFn: (id: string) => supprimerArticleCentreAide(id),
     onSuccess: async () => {
       await onRafraichir()
       toast({ title: 'Article supprimé définitivement.' })
