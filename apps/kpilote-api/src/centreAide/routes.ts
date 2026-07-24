@@ -3,22 +3,12 @@ import {
   articleCentreAideApiModelSchema,
   articleCentreAideListApiModelSchema,
   articleCentreAidePublicListApiModelSchema,
-  basculerVisibiliteArticleBodySchema,
   creerArticleCentreAideBodySchema,
-  deplacerArticleBodySchema,
-  deplacerArticleVersBodySchema,
-  modifierBrouillonArticleBodySchema,
-  modifierStatutArticleBodySchema,
+  modifierArticleBodySchema,
 } from '@pilote/kpilote-shared/centreAide'
 
-import { basculerVisibiliteArticleCentreAide } from '@/centreAide/commands/basculerVisibiliteArticle'
 import { creerArticleCentreAide } from '@/centreAide/commands/creerArticle'
-import { deplacerArticleCentreAide } from '@/centreAide/commands/deplacerArticle'
-import { deplacerArticleVersCentreAide } from '@/centreAide/commands/deplacerArticleVers'
-import { depublierArticleCentreAide } from '@/centreAide/commands/depublierArticle'
-import { modifierBrouillonArticleCentreAide } from '@/centreAide/commands/modifierBrouillonArticle'
-import { modifierStatutArticleCentreAide } from '@/centreAide/commands/modifierStatutArticle'
-import { publierArticleCentreAide } from '@/centreAide/commands/publierArticle'
+import { modifierArticleCentreAide } from '@/centreAide/commands/modifierArticle'
 import { supprimerArticleCentreAide } from '@/centreAide/commands/supprimerArticle'
 import { getArticleCentreAideById } from '@/centreAide/queries/getArticleById'
 import { listerArticlesCentreAide } from '@/centreAide/queries/listerArticles'
@@ -47,17 +37,7 @@ const ArticlePublicListApiModelSchema = articleCentreAidePublicListApiModelSchem
 const CreerArticleBodySchema = creerArticleCentreAideBodySchema.openapi(
   'CreerArticleCentreAideBody',
 )
-const ModifierBrouillonBodySchema = modifierBrouillonArticleBodySchema.openapi(
-  'ModifierBrouillonArticleBody',
-)
-const BasculerVisibiliteBodySchema = basculerVisibiliteArticleBodySchema.openapi(
-  'BasculerVisibiliteArticleBody',
-)
-const DeplacerBodySchema = deplacerArticleBodySchema.openapi('DeplacerArticleBody')
-const DeplacerVersBodySchema = deplacerArticleVersBodySchema.openapi('DeplacerArticleVersBody')
-const ModifierStatutBodySchema = modifierStatutArticleBodySchema.openapi(
-  'ModifierStatutArticleBody',
-)
+const ModifierBodySchema = modifierArticleBodySchema.openapi('ModifierArticleBody')
 
 const detailParamsSchema = z.object({
   id: z.string().uuid().openapi({ description: "Identifiant (UUID) de l'article." }),
@@ -139,117 +119,18 @@ const modifierRoute = createRoute({
   method: 'put',
   path: '/centre-aide/articles/{id}',
   tags: ['CentreAide', 'Admin'],
-  summary: 'Enregistrer le brouillon',
-  description: 'Réservé aux clés API de rôle `ADMIN`. Met à jour les champs brouillon.',
-  middleware: [requireAuthentication],
-  request: {
-    params: detailParamsSchema,
-    body: {
-      content: { 'application/json': { schema: ModifierBrouillonBodySchema } },
-      required: true,
-    },
-  },
-  responses: {
-    200: succes200('Brouillon enregistré', ArticleApiModelSchema),
-    403: erreur403,
-    404: erreur404,
-  },
-})
-
-// --- POST /centre-aide/articles/{id}/publier ---------------------------------
-
-const publierRoute = createRoute({
-  method: 'post',
-  path: '/centre-aide/articles/{id}/publier',
-  tags: ['CentreAide', 'Admin'],
-  summary: 'Publier un article',
+  summary: 'Remplacer l’état éditable d’un article',
   description:
-    'Réservé aux clés API de rôle `ADMIN`. Copie le brouillon vers le publié et dérive le texte de recherche.',
-  middleware: [requireAuthentication],
-  request: { params: detailParamsSchema },
-  responses: {
-    200: succes200('Article publié', ArticleApiModelSchema),
-    403: erreur403,
-    404: erreur404,
-  },
-})
-
-// --- POST /centre-aide/articles/{id}/depublier -------------------------------
-
-const depublierRoute = createRoute({
-  method: 'post',
-  path: '/centre-aide/articles/{id}/depublier',
-  tags: ['CentreAide', 'Admin'],
-  summary: 'Dépublier un article',
-  description: 'Réservé aux clés API de rôle `ADMIN`.',
-  middleware: [requireAuthentication],
-  request: { params: detailParamsSchema },
-  responses: {
-    200: succes200('Article dépublié', ArticleApiModelSchema),
-    403: erreur403,
-    404: erreur404,
-  },
-})
-
-// --- POST /centre-aide/articles/{id}/visibilite ------------------------------
-
-const visibiliteRoute = createRoute({
-  method: 'post',
-  path: '/centre-aide/articles/{id}/visibilite',
-  tags: ['CentreAide', 'Admin'],
-  summary: 'Masquer ou ré-afficher un article',
-  description: 'Réservé aux clés API de rôle `ADMIN`.',
+    'Réservé aux clés API de rôle `ADMIN`. Remplacement complet et idempotent : brouillon, ' +
+    'champs publiés (le serveur dérive le texte de recherche), position (réindexée), ' +
+    'visibilité, publication et cycle de vie.',
   middleware: [requireAuthentication],
   request: {
     params: detailParamsSchema,
-    body: {
-      content: { 'application/json': { schema: BasculerVisibiliteBodySchema } },
-      required: true,
-    },
+    body: { content: { 'application/json': { schema: ModifierBodySchema } }, required: true },
   },
   responses: {
-    200: succes200('Visibilité mise à jour', ArticleApiModelSchema),
-    403: erreur403,
-    404: erreur404,
-  },
-})
-
-// --- POST /centre-aide/articles/{id}/deplacer --------------------------------
-
-const deplacerRoute = createRoute({
-  method: 'post',
-  path: '/centre-aide/articles/{id}/deplacer',
-  tags: ['CentreAide', 'Admin'],
-  summary: 'Déplacer un article dans l’arbre',
-  description: 'Réservé aux clés API de rôle `ADMIN`. monter/descendre/entrer/sortir.',
-  middleware: [requireAuthentication],
-  request: {
-    params: detailParamsSchema,
-    body: { content: { 'application/json': { schema: DeplacerBodySchema } }, required: true },
-  },
-  responses: {
-    200: succes200('Article déplacé', ArticleApiModelSchema),
-    403: erreur403,
-    404: erreur404,
-  },
-})
-
-// --- POST /centre-aide/articles/{id}/deplacer-vers ---------------------------
-
-const deplacerVersRoute = createRoute({
-  method: 'post',
-  path: '/centre-aide/articles/{id}/deplacer-vers',
-  tags: ['CentreAide', 'Admin'],
-  summary: 'Déplacer un article (drag-and-drop, absolu)',
-  description:
-    'Réservé aux clés API de rôle `ADMIN`. Range l’article sous un parent à une position.',
-  middleware: [requireAuthentication],
-  request: {
-    params: detailParamsSchema,
-    body: { content: { 'application/json': { schema: DeplacerVersBodySchema } }, required: true },
-  },
-  responses: {
-    200: succes200('Article déplacé', ArticleApiModelSchema),
+    200: succes200('Article mis à jour', ArticleApiModelSchema),
     400: erreur400,
     403: erreur403,
     404: erreur404,
@@ -268,25 +149,6 @@ const corbeilleRoute = createRoute({
   responses: {
     200: succes200('Articles en corbeille', ArticleListApiModelSchema),
     403: erreur403,
-  },
-})
-
-const statutRoute = createRoute({
-  method: 'patch',
-  path: '/centre-aide/articles/{id}/statut',
-  tags: ['CentreAide', 'Admin'],
-  summary: 'Mettre à la corbeille ou restaurer un article',
-  description:
-    'Réservé aux clés API de rôle `ADMIN`. `CORBEILLE` = mettre à la corbeille, `ACTIF` = restaurer.',
-  middleware: [requireAuthentication],
-  request: {
-    params: detailParamsSchema,
-    body: { content: { 'application/json': { schema: ModifierStatutBodySchema } }, required: true },
-  },
-  responses: {
-    200: succes200('Statut mis à jour', ArticleApiModelSchema),
-    403: erreur403,
-    404: erreur404,
   },
 })
 
@@ -348,61 +210,7 @@ centreAideRoutes.openapi(creerRoute, async (context) => {
 centreAideRoutes.openapi(modifierRoute, async (context) => {
   const { id } = context.req.valid('param')
   const body = context.req.valid('json')
-  return (await withTransaction(async () => modifierBrouillonArticleCentreAide(id, body))).match(
-    (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 200 }),
-    never,
-  )
-})
-
-centreAideRoutes.openapi(publierRoute, async (context) => {
-  const { id } = context.req.valid('param')
-  return (await withTransaction(async () => publierArticleCentreAide(id))).match(
-    (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 200 }),
-    never,
-  )
-})
-
-centreAideRoutes.openapi(depublierRoute, async (context) => {
-  const { id } = context.req.valid('param')
-  return (await withTransaction(async () => depublierArticleCentreAide(id))).match(
-    (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 200 }),
-    never,
-  )
-})
-
-centreAideRoutes.openapi(visibiliteRoute, async (context) => {
-  const { id } = context.req.valid('param')
-  const body = context.req.valid('json')
-  return (await withTransaction(async () => basculerVisibiliteArticleCentreAide(id, body))).match(
-    (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 200 }),
-    never,
-  )
-})
-
-centreAideRoutes.openapi(deplacerRoute, async (context) => {
-  const { id } = context.req.valid('param')
-  const body = context.req.valid('json')
-  return (await withTransaction(async () => deplacerArticleCentreAide(id, body.direction))).match(
-    (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 200 }),
-    never,
-  )
-})
-
-centreAideRoutes.openapi(deplacerVersRoute, async (context) => {
-  const { id } = context.req.valid('param')
-  const body = context.req.valid('json')
-  return (await withTransaction(async () => deplacerArticleVersCentreAide(id, body))).match(
-    (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 200 }),
-    never,
-  )
-})
-
-centreAideRoutes.openapi(statutRoute, async (context) => {
-  const { id } = context.req.valid('param')
-  const body = context.req.valid('json')
-  return (
-    await withTransaction(async () => modifierStatutArticleCentreAide(id, body.statut))
-  ).match(
+  return (await withTransaction(async () => modifierArticleCentreAide(id, body))).match(
     (data) => jsonResponseOk({ context, data, schema: ArticleApiModelSchema, status: 200 }),
     never,
   )

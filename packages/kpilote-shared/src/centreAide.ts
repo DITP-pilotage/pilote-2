@@ -5,11 +5,6 @@ export const articleCentreAideTypeSchema = z
   .describe('Nature du noeud : GROUPE (dossier) ou PAGE (article).')
 export type ArticleCentreAideType = z.infer<typeof articleCentreAideTypeSchema>
 
-export const directionDeplacementSchema = z
-  .enum(['monter', 'descendre', 'entrer', 'sortir'])
-  .describe('Sens du déplacement dans l’arborescence.')
-export type DirectionDeplacement = z.infer<typeof directionDeplacementSchema>
-
 export const articleCentreAideStatutSchema = z
   .enum(['ACTIF', 'CORBEILLE'])
   .describe('Cycle de vie : ACTIF, ou CORBEILLE (en attente de suppression définitive).')
@@ -78,38 +73,40 @@ export const creerArticleCentreAideBodySchema = z
   .describe('Création d’un noeud (groupe ou page).')
 export type CreerArticleCentreAideBody = z.infer<typeof creerArticleCentreAideBodySchema>
 
-export const modifierBrouillonArticleBodySchema = z
+// Mutation unique et idempotente : le payload porte tout l'état éditable de l'article et l'écrase.
+// Les champs publiés (titre/titreAffiche/contenu) sont possédés par le client ; le serveur ne
+// dérive que contenuTexte. La position (parentId/ordre) est réindexée parmi les frères côté serveur.
+export const modifierArticleBodySchema = z
   .object({
-    titreBrouillon: z.string().optional(),
-    titreAfficheBrouillon: z.string().optional(),
-    contenuBrouillon: z.string().optional(),
+    titreBrouillon: z.string().describe('Titre brouillon.'),
+    titreAfficheBrouillon: z.string().describe('Titre affiché brouillon.'),
+    contenuBrouillon: z.string().describe('Corps brouillon (HTML riche).'),
+    titre: z.string().describe('Titre publié (clé d’arbre).'),
+    titreAffiche: z.string().describe('Titre publié affiché.'),
+    contenu: z.string().describe('Corps publié (HTML riche).'),
+    parentId: z.string().uuid().nullable().describe('Parent (un groupe), ou null pour la racine.'),
+    ordre: z.number().int().min(0).describe('Position parmi les frères du parent cible.'),
+    estMasque: z.boolean().describe('Masqué du lecteur même si publié.'),
+    estPublie: z.boolean().describe('L’article a une version publiée.'),
+    statut: articleCentreAideStatutSchema,
   })
-  .describe('Enregistrement du brouillon (titre et/ou contenu).')
-export type ModifierBrouillonArticleBody = z.infer<typeof modifierBrouillonArticleBodySchema>
+  .describe('Remplacement complet de l’état éditable d’un article.')
+export type ModifierArticleBody = z.infer<typeof modifierArticleBodySchema>
 
-export const basculerVisibiliteArticleBodySchema = z
-  .object({ estMasque: z.boolean().describe('Nouvelle valeur de masquage.') })
-  .describe('Masquer ou ré-afficher un article publié.')
-export type BasculerVisibiliteArticleBody = z.infer<typeof basculerVisibiliteArticleBodySchema>
-
-export const modifierStatutArticleBodySchema = z
-  .object({ statut: articleCentreAideStatutSchema })
-  .describe('Transition de cycle de vie : CORBEILLE (mettre en corbeille) ou ACTIF (restaurer).')
-export type ModifierStatutArticleBody = z.infer<typeof modifierStatutArticleBodySchema>
-
-export const deplacerArticleBodySchema = z
-  .object({ direction: directionDeplacementSchema })
-  .describe('Déplacement relatif d’un article dans l’arbre.')
-export type DeplacerArticleBody = z.infer<typeof deplacerArticleBodySchema>
-
-export const deplacerArticleVersBodySchema = z
-  .object({
-    parentId: z
-      .string()
-      .uuid()
-      .nullable()
-      .describe('Nouveau parent (un groupe), ou null pour la racine.'),
-    index: z.number().int().min(0).describe('Position parmi les frères du parent cible.'),
-  })
-  .describe('Déplacement absolu (drag-and-drop) : parent + position.')
-export type DeplacerArticleVersBody = z.infer<typeof deplacerArticleVersBodySchema>
+// Projette le modèle admin vers un payload de mutation complet : base pour construire un PUT
+// en ne surchargeant que le(s) champ(s) réellement modifié(s).
+export const articleVersModification = (
+  article: ArticleCentreAideApiModel,
+): ModifierArticleBody => ({
+  titreBrouillon: article.titreBrouillon,
+  titreAfficheBrouillon: article.titreAfficheBrouillon,
+  contenuBrouillon: article.contenuBrouillon,
+  titre: article.titre,
+  titreAffiche: article.titreAffiche,
+  contenu: article.contenu,
+  parentId: article.parentId,
+  ordre: article.ordre,
+  estMasque: article.estMasque,
+  estPublie: article.estPublie,
+  statut: article.statut,
+})

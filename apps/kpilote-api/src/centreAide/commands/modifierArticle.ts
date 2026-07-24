@@ -1,25 +1,26 @@
 import {
   type ArticleCentreAideApiModel,
-  type DeplacerArticleVersBody,
+  type ModifierArticleBody,
 } from '@pilote/kpilote-shared/centreAide'
 import { ResultAsync } from 'neverthrow'
 
-import { MESSAGE_ADMIN, toArticleCentreAideApiModel } from '@/centreAide/utils'
+import { htmlToPlainText, MESSAGE_ADMIN, toArticleCentreAideApiModel } from '@/centreAide/utils'
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 
-// Déplacement absolu (drag-and-drop) : place l'article sous `parentId` à la
-// position `index`, et réindexe l'ordre des frères. Valide que la cible est un
-// groupe (ou la racine) et qu'on ne crée pas de cycle.
-const performDeplacerVers = async (
+// Remplacement complet et idempotent de l'état éditable d'un article. Le client possède
+// l'instantané publié (titre/titreAffiche/contenu) ; le serveur dérive contenuTexte et
+// réindexe les frères pour placer l'article à `ordre`. Valide que le parent cible est un
+// groupe et qu'on ne crée pas de cycle.
+const performModifier = async (
   id: string,
-  body: DeplacerArticleVersBody,
+  body: ModifierArticleBody,
 ): Promise<ArticleCentreAideApiModel> => {
   ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
   const principalId = requireCurrentPrincipalId()
-  const { parentId, index } = body
+  const { parentId, ordre } = body
 
   await db().articleCentreAide.findUniqueOrThrow({ where: { id } })
 
@@ -45,31 +46,41 @@ const performDeplacerVers = async (
     }
   }
 
+  await db().articleCentreAide.update({
+    where: { id },
+    data: {
+      titreBrouillon: body.titreBrouillon,
+      titreAfficheBrouillon: body.titreAfficheBrouillon,
+      contenuBrouillon: body.contenuBrouillon,
+      titre: body.titre,
+      titreAffiche: body.titreAffiche,
+      contenu: body.contenu,
+      contenuTexte: htmlToPlainText(body.contenu),
+      parentId,
+      estMasque: body.estMasque,
+      estPublie: body.estPublie,
+      statut: body.statut,
+      updatedBy: principalId,
+    },
+  })
+
   const freres = tous
     .filter((article) => article.parentId === parentId && article.id !== id)
     .sort((a, b) => a.ordre - b.ordre)
     .map((article) => article.id)
 
-  const position = Math.max(0, Math.min(index, freres.length))
+  const position = Math.max(0, Math.min(ordre, freres.length))
   const ordonnes = [...freres.slice(0, position), id, ...freres.slice(position)]
-
-  await db().articleCentreAide.update({
-    where: { id },
-    data: { parentId, updatedBy: principalId },
-  })
   for (const [rang, articleId] of ordonnes.entries()) {
-    await db().articleCentreAide.update({
-      where: { id: articleId },
-      data: { ordre: rang },
-    })
+    await db().articleCentreAide.update({ where: { id: articleId }, data: { ordre: rang } })
   }
 
   const maj = await db().articleCentreAide.findUniqueOrThrow({ where: { id } })
   return toArticleCentreAideApiModel(maj)
 }
 
-export const deplacerArticleVersCentreAide = (
+export const modifierArticleCentreAide = (
   id: string,
-  body: DeplacerArticleVersBody,
+  body: ModifierArticleBody,
 ): ResultAsync<ArticleCentreAideApiModel, never> =>
-  ResultAsync.fromSafePromise(performDeplacerVers(id, body))
+  ResultAsync.fromSafePromise(performModifier(id, body))

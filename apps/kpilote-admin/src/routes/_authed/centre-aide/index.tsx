@@ -1,16 +1,13 @@
 import type { ArticleCentreAideApiModel } from '@pilote/kpilote-shared/centreAide'
+import { articleVersModification } from '@pilote/kpilote-shared/centreAide'
 import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ExternalLink, Eye, EyeOff, FilePlus2, FolderPlus, RotateCcw, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 import {
-  basculerVisibiliteArticleCentreAide,
   creerArticleCentreAide,
-  deplacerArticleVersCentreAide,
-  modifierBrouillonArticleCentreAide,
-  publierArticleCentreAide,
-  modifierStatutArticleCentreAide,
+  modifierArticleCentreAide,
   supprimerArticleCentreAide,
 } from '@/api/centreAide'
 import { ArbreCentreAide } from '@/components/centre-aide/ArbreCentreAide'
@@ -64,7 +61,11 @@ function CentreAideComponent() {
   })
 
   const miseEnCorbeille = useMutation({
-    mutationFn: (id: string) => modifierStatutArticleCentreAide(id, { statut: 'CORBEILLE' }),
+    mutationFn: (article: ArticleCentreAideApiModel) =>
+      modifierArticleCentreAide(article.id, {
+        ...articleVersModification(article),
+        statut: 'CORBEILLE',
+      }),
     onSuccess: async () => {
       await rafraichir()
       setSelectedId(null)
@@ -75,19 +76,27 @@ function CentreAideComponent() {
 
   const visibilite = useMutation({
     mutationFn: (article: ArticleCentreAideApiModel) =>
-      basculerVisibiliteArticleCentreAide(article.id, { estMasque: !article.estMasque }),
+      modifierArticleCentreAide(article.id, {
+        ...articleVersModification(article),
+        estMasque: !article.estMasque,
+      }),
     onSuccess: rafraichir,
     onError: surErreur,
   })
 
   const deplacement = useMutation({
     mutationFn: ({
-      id,
+      article,
       cible,
     }: {
-      id: string
+      article: ArticleCentreAideApiModel
       cible: { parentId: string | null; index: number }
-    }) => deplacerArticleVersCentreAide(id, cible),
+    }) =>
+      modifierArticleCentreAide(article.id, {
+        ...articleVersModification(article),
+        parentId: cible.parentId,
+        ordre: cible.index,
+      }),
     onSuccess: rafraichir,
     onError: surErreur,
   })
@@ -122,7 +131,10 @@ function CentreAideComponent() {
               setCorbeilleOuverte(false)
               setSelectedId(id)
             }}
-            onDeplacer={(id, cible) => deplacement.mutate({ id, cible })}
+            onDeplacer={(id, cible) => {
+              const article = articles.find((candidat) => candidat.id === id)
+              if (article) deplacement.mutate({ article, cible })
+            }}
           />
           <button
             type="button"
@@ -146,7 +158,7 @@ function CentreAideComponent() {
               key={selectionne.id}
               article={selectionne}
               onEnregistre={rafraichir}
-              onSupprimer={() => miseEnCorbeille.mutate(selectionne.id)}
+              onSupprimer={() => miseEnCorbeille.mutate(selectionne)}
               onBasculerVisibilite={() => visibilite.mutate(selectionne)}
             />
           ) : (
@@ -181,7 +193,8 @@ function EditionArticle({
 
   const enregistrer = useMutation({
     mutationFn: () =>
-      modifierBrouillonArticleCentreAide(article.id, {
+      modifierArticleCentreAide(article.id, {
+        ...articleVersModification(article),
         titreBrouillon: titre,
         titreAfficheBrouillon: titre,
         contenuBrouillon: contenu,
@@ -193,15 +206,19 @@ function EditionArticle({
     onError: surErreur,
   })
 
+  // Publier = recopier le brouillon courant dans les champs publiés + estPublie.
   const publier = useMutation({
-    mutationFn: async () => {
-      await modifierBrouillonArticleCentreAide(article.id, {
+    mutationFn: () =>
+      modifierArticleCentreAide(article.id, {
+        ...articleVersModification(article),
         titreBrouillon: titre,
         titreAfficheBrouillon: titre,
         contenuBrouillon: contenu,
-      })
-      return publierArticleCentreAide(article.id)
-    },
+        titre,
+        titreAffiche: titre,
+        contenu,
+        estPublie: true,
+      }),
     onSuccess: async () => {
       await onEnregistre()
       toast({ title: 'Article publié.' })
@@ -275,7 +292,11 @@ function Corbeille({ onRafraichir }: { onRafraichir: () => Promise<unknown> }) {
   const surErreur = (erreur: unknown) => toast({ title: extractApiError(erreur), variant: 'error' })
 
   const restauration = useMutation({
-    mutationFn: (id: string) => modifierStatutArticleCentreAide(id, { statut: 'ACTIF' }),
+    mutationFn: (article: ArticleCentreAideApiModel) =>
+      modifierArticleCentreAide(article.id, {
+        ...articleVersModification(article),
+        statut: 'ACTIF',
+      }),
     onSuccess: async () => {
       await onRafraichir()
       toast({ title: 'Article restauré.' })
@@ -309,7 +330,7 @@ function Corbeille({ onRafraichir }: { onRafraichir: () => Promise<unknown> }) {
               <span className="flex-1 truncate">
                 {article.titreBrouillon || article.titre || '(sans titre)'}
               </span>
-              <Button size="sm" variant="secondary" onClick={() => restauration.mutate(article.id)}>
+              <Button size="sm" variant="secondary" onClick={() => restauration.mutate(article)}>
                 <RotateCcw className="size-4" /> Restaurer
               </Button>
               <Button
