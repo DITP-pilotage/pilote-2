@@ -19,6 +19,8 @@ jobs:
       kpilote-api: ${{ steps.filter.outputs.kpilote-api }}
       kpilote-webapp: ${{ steps.filter.outputs.kpilote-webapp }}
       kpilote-shared: ${{ steps.filter.outputs.kpilote-shared }}
+      kpilote-ui: ${{ steps.filter.outputs.kpilote-ui }}
+      kpilote-admin: ${{ steps.filter.outputs.kpilote-admin }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
@@ -41,6 +43,12 @@ jobs:
               - 'pnpm-lock.yaml'
             kpilote-shared:
               - 'packages/kpilote-shared/**'
+            kpilote-ui:
+              - 'packages/kpilote-ui/**'
+            kpilote-admin:
+              - 'apps/kpilote-admin/**'
+              - 'package.json'
+              - 'pnpm-lock.yaml'
 
   test:
     name: Run tests
@@ -237,6 +245,42 @@ jobs:
         run: pnpm lint
         env:
           APP_PACKAGE: '@pilote/kpilote-shared'
+
+  lint-kpilote-ui:
+    name: Run linters for kpilote-ui
+    needs: changes
+    if: needs.changes.outputs['kpilote-ui'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Run lint command
+        run: pnpm lint
+        env:
+          APP_PACKAGE: '@pilote/kpilote-ui'
+
+  lint-kpilote-admin:
+    name: Run linters for kpilote-admin
+    needs: changes
+    if: needs.changes.outputs['kpilote-admin'] == 'true' || needs.changes.outputs['kpilote-ui'] == 'true' || needs.changes.outputs['kpilote-shared'] == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Run lint command
+        run: pnpm lint
+        env:
+          APP_PACKAGE: '@pilote/kpilote-admin'
 
   lint-sql:
     name: Run SQL linter on dbt models
