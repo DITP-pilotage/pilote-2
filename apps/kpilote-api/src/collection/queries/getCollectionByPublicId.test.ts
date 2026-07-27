@@ -4,7 +4,7 @@ import { getCollectionByPublicId } from '@/collection/queries/getCollectionByPub
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurIds, testCollectionId } from '@/test/randomIds'
-import { runAsPrincipal } from '@/test/runAsPrincipal'
+import { runAsAdmin, runAsPrincipal } from '@/test/runAsPrincipal'
 
 describe.concurrent('getCollectionByPublicId', () => {
   it(
@@ -74,6 +74,24 @@ describe.concurrent('getCollectionByPublicId', () => {
       const result = await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(panPriv))
 
       expect(result._unsafeUnwrap().id).toBe(panPriv)
+    }),
+  )
+
+  it(
+    'retourne une collection PRIVE à une clé ADMIN sans permission directe',
+    integrationTest(async () => {
+      const colPrive = testCollectionId()
+      await fixtures.collection({
+        publicId: colPrive,
+        nom: 'Collection privée',
+        visibilite: 'PRIVE',
+      })
+      const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
+
+      const result = await runAsAdmin(apiKey.id, () => getCollectionByPublicId(colPrive))
+
+      expect(result.isOk()).toBe(true)
+      expect(result._unsafeUnwrap()).toMatchObject({ id: colPrive, visibilite: 'PRIVE' })
     }),
   )
 
