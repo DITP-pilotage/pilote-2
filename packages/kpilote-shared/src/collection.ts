@@ -50,6 +50,13 @@ export type CollectionApiModel = z.infer<typeof collectionApiModelSchema>
 export const collectionListApiModelSchema = createPaginatedApiListSchema(collectionApiModelSchema)
 export type CollectionListApiModel = z.infer<typeof collectionListApiModelSchema>
 
+export const createCollectionBodySchema = z.object({
+  nom: z.string().trim().min(1, 'Le nom est requis').describe('Nom lisible de la collection.'),
+  description: z.string().nullable().describe('Description libre, `null` pour aucune.'),
+  visibilite: collectionVisibiliteSchema,
+})
+export type CreateCollectionBody = z.infer<typeof createCollectionBodySchema>
+
 export const listCollectionsQuerySchema = z.object({
   recherche: z.string().optional().describe('Filtre case-insensitive sur le nom de la collection.'),
   rechercheIdentifiant: z

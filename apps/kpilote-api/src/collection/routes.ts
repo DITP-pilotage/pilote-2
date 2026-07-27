@@ -8,6 +8,7 @@ import { listerNiveauxConfianceQuerySchema } from '@pilote/kpilote-shared/niveau
 import {
   collectionApiModelSchema,
   collectionListApiModelSchema,
+  createCollectionBodySchema,
   listCollectionsQuerySchema,
 } from '@pilote/kpilote-shared/collection'
 import {
@@ -34,8 +35,9 @@ import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { erreur400, erreur404 } from '@/framework/openapi/responses'
+import { erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
+import { createCollection } from '@/collection/commands/createCollection'
 import {
   creerCollectionCommentaire,
   collectionConfig,
@@ -50,6 +52,7 @@ const CollectionListApiModelSchema = collectionListApiModelSchema.openapi('Colle
 const CollectionTauxProgressionApiModelSchema = collectionTauxProgressionApiModelSchema.openapi(
   'CollectionTauxProgressionApiModel',
 )
+const CreateCollectionBodySchema = createCollectionBodySchema.openapi('CreateCollectionBody')
 
 // --- GET /collections ------------------------------------------------------------
 
@@ -172,6 +175,41 @@ collectionRoutes.openapi(getCollectionTauxProgressionRoute, async (context) => {
         schema: CollectionTauxProgressionApiModelSchema,
         status: 200,
       }),
+    never,
+  )
+})
+
+// --- POST /collections -----------------------------------------------------------
+
+const createCollectionRoute = createRoute({
+  method: 'post',
+  path: '/collections',
+  tags: ['Collection', 'Admin'],
+  summary: 'Créer une collection',
+  description:
+    "Réservé aux clés API de rôle `ADMIN`. L'identifiant public est généré par l'API au format `COL-NNN` : il suit le plus grand identifiant numérique existant. Pour imposer un identifiant, utiliser `PUT /collections/{id}`.",
+  middleware: [requireAuthentication],
+  request: {
+    body: {
+      content: { 'application/json': { schema: CreateCollectionBodySchema } },
+      required: true,
+    },
+  },
+  responses: {
+    201: {
+      content: { 'application/json': { schema: CollectionApiModelSchema } },
+      description: 'Collection créée',
+    },
+    400: erreur400,
+    403: erreur403,
+  },
+})
+
+collectionRoutes.openapi(createCollectionRoute, async (context) => {
+  const body = context.req.valid('json')
+  const result = await withTransaction(async () => createCollection(body))
+  return result.match(
+    (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 201 }),
     never,
   )
 })
