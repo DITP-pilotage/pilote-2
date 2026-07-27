@@ -6,17 +6,22 @@ import {
 } from '@pilote/kpilote-shared/commentaire'
 import { listerNiveauxConfianceQuerySchema } from '@pilote/kpilote-shared/niveauConfiance'
 import {
+  addCollectionIndicateurBodySchema,
   collectionApiModelSchema,
   collectionListApiModelSchema,
   createCollectionBodySchema,
   listCollectionsQuerySchema,
+  updateCollectionIndicateurPonderationBodySchema,
   upsertCollectionBodySchema,
 } from '@pilote/kpilote-shared/collection'
 import {
   collectionTauxProgressionApiModelSchema,
   getCollectionTauxProgressionQuerySchema,
 } from '@pilote/kpilote-shared/collectionTauxProgression'
-import { collectionPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
+import {
+  collectionPublicIdSchema,
+  indicateurPublicIdSchema,
+} from '@pilote/kpilote-shared/publicIds'
 
 import {
   NiveauConfianceListApiModelSchema,
@@ -36,10 +41,13 @@ import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { never } from '@/framework/errors/never'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
-import { erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
+import { erreur400, erreur403, erreur404, erreur409 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
+import { addCollectionIndicateur } from '@/collection/commands/addCollectionIndicateur'
 import { createCollection } from '@/collection/commands/createCollection'
 import { deleteCollection } from '@/collection/commands/deleteCollection'
+import { removeCollectionIndicateur } from '@/collection/commands/removeCollectionIndicateur'
+import { updateCollectionIndicateurPonderation } from '@/collection/commands/updateCollectionIndicateurPonderation'
 import { upsertCollection } from '@/collection/commands/upsertCollection'
 import {
   creerCollectionCommentaire,
@@ -57,6 +65,18 @@ const CollectionTauxProgressionApiModelSchema = collectionTauxProgressionApiMode
 )
 const CreateCollectionBodySchema = createCollectionBodySchema.openapi('CreateCollectionBody')
 const UpsertCollectionBodySchema = upsertCollectionBodySchema.openapi('UpsertCollectionBody')
+const AddCollectionIndicateurBodySchema = addCollectionIndicateurBodySchema.openapi(
+  'AddCollectionIndicateurBody',
+)
+const UpdateCollectionIndicateurPonderationBodySchema =
+  updateCollectionIndicateurPonderationBodySchema.openapi(
+    'UpdateCollectionIndicateurPonderationBody',
+  )
+
+const collectionIndicateurParamsSchema = z.object({
+  id: collectionPublicIdSchema,
+  indicateurId: indicateurPublicIdSchema,
+})
 
 // --- GET /collections ------------------------------------------------------------
 
@@ -275,6 +295,108 @@ const deleteCollectionRoute = createRoute({
 collectionRoutes.openapi(deleteCollectionRoute, async (context) => {
   const { id } = context.req.valid('param')
   const result = await withTransaction(async () => deleteCollection(id))
+  return result.match(() => context.body(null, 204), never)
+})
+
+// --- POST /collections/:id/indicateurs -------------------------------------------
+
+const addCollectionIndicateurRoute = createRoute({
+  method: 'post',
+  path: '/collections/{id}/indicateurs',
+  tags: ['Collection', 'Admin'],
+  summary: 'Affecter un indicateur à une collection',
+  description:
+    "Réservé aux clés API de rôle `ADMIN`. `ponderation` est optionnelle et vaut `1` par défaut. Renvoie `409` si l'indicateur est déjà affecté, `404` si la collection ou l'indicateur est introuvable. La réponse est la collection à jour.",
+  middleware: [requireAuthentication],
+  request: {
+    params: detailParamsSchema,
+    body: {
+      content: { 'application/json': { schema: AddCollectionIndicateurBodySchema } },
+      required: true,
+    },
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: CollectionApiModelSchema } },
+      description: 'Collection à jour',
+    },
+    400: erreur400,
+    403: erreur403,
+    404: erreur404,
+    409: erreur409,
+  },
+})
+
+collectionRoutes.openapi(addCollectionIndicateurRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  const body = context.req.valid('json')
+  const result = await withTransaction(async () => addCollectionIndicateur(id, body))
+  return result.match(
+    (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
+// --- PATCH /collections/:id/indicateurs/:indicateurId ----------------------------
+
+const updateCollectionIndicateurPonderationRoute = createRoute({
+  method: 'patch',
+  path: '/collections/{id}/indicateurs/{indicateurId}',
+  tags: ['Collection', 'Admin'],
+  summary: "Modifier la pondération d'un indicateur dans une collection",
+  description:
+    "Réservé aux clés API de rôle `ADMIN`. La pondération règle le poids de l'indicateur dans la moyenne pondérée renvoyée par `GET /collections/{id}/taux-progression` : la modification y est immédiatement prise en compte. Une pondération de `0` exclut l'indicateur du calcul. Renvoie `404` si l'indicateur n'est pas affecté à la collection.",
+  middleware: [requireAuthentication],
+  request: {
+    params: collectionIndicateurParamsSchema,
+    body: {
+      content: { 'application/json': { schema: UpdateCollectionIndicateurPonderationBodySchema } },
+      required: true,
+    },
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: CollectionApiModelSchema } },
+      description: 'Collection à jour',
+    },
+    400: erreur400,
+    403: erreur403,
+    404: erreur404,
+  },
+})
+
+collectionRoutes.openapi(updateCollectionIndicateurPonderationRoute, async (context) => {
+  const { id, indicateurId } = context.req.valid('param')
+  const body = context.req.valid('json')
+  const result = await withTransaction(async () =>
+    updateCollectionIndicateurPonderation(id, indicateurId, body),
+  )
+  return result.match(
+    (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
+// --- DELETE /collections/:id/indicateurs/:indicateurId ---------------------------
+
+const removeCollectionIndicateurRoute = createRoute({
+  method: 'delete',
+  path: '/collections/{id}/indicateurs/{indicateurId}',
+  tags: ['Collection', 'Admin'],
+  summary: "Retirer un indicateur d'une collection",
+  description:
+    "Réservé aux clés API de rôle `ADMIN`. Retire uniquement l'affectation : l'indicateur n'est pas supprimé. Idempotent, renvoie `204` même si l'indicateur n'était pas affecté.",
+  middleware: [requireAuthentication],
+  request: { params: collectionIndicateurParamsSchema },
+  responses: {
+    204: { description: 'Indicateur retiré de la collection' },
+    403: erreur403,
+  },
+})
+
+collectionRoutes.openapi(removeCollectionIndicateurRoute, async (context) => {
+  const { id, indicateurId } = context.req.valid('param')
+  const result = await withTransaction(async () => removeCollectionIndicateur(id, indicateurId))
   return result.match(() => context.body(null, 204), never)
 })
 

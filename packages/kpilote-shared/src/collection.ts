@@ -60,6 +60,27 @@ export type CreateCollectionBody = z.infer<typeof createCollectionBodySchema>
 export const upsertCollectionBodySchema = createCollectionBodySchema
 export type UpsertCollectionBody = z.infer<typeof upsertCollectionBodySchema>
 
+export const ponderationSchema = z
+  .number()
+  .min(0, 'La pondération ne peut pas être négative')
+  .refine((valeur) => Number(valeur.toFixed(2)) === valeur, 'Deux décimales au maximum')
+  .describe(
+    'Poids de l’indicateur dans la moyenne pondérée de la collection. 0 exclut l’indicateur du calcul.',
+  )
+
+export const addCollectionIndicateurBodySchema = z.object({
+  indicateurId: indicateurPublicIdSchema,
+  ponderation: ponderationSchema.optional(),
+})
+export type AddCollectionIndicateurBody = z.infer<typeof addCollectionIndicateurBodySchema>
+
+export const updateCollectionIndicateurPonderationBodySchema = z.object({
+  ponderation: ponderationSchema,
+})
+export type UpdateCollectionIndicateurPonderationBody = z.infer<
+  typeof updateCollectionIndicateurPonderationBodySchema
+>
+
 export const listCollectionsQuerySchema = z.object({
   recherche: z.string().optional().describe('Filtre case-insensitive sur le nom de la collection.'),
   rechercheIdentifiant: z

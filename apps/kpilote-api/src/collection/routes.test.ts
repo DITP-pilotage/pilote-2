@@ -14,6 +14,9 @@ describe('routes collection — câblage', () => {
     expect(doc.paths['/collections']?.post).toBeDefined()
     expect(doc.paths['/collections/{id}']?.put).toBeDefined()
     expect(doc.paths['/collections/{id}']?.delete).toBeDefined()
+    expect(doc.paths['/collections/{id}/indicateurs']?.post).toBeDefined()
+    expect(doc.paths['/collections/{id}/indicateurs/{indicateurId}']?.patch).toBeDefined()
+    expect(doc.paths['/collections/{id}/indicateurs/{indicateurId}']?.delete).toBeDefined()
   })
 
   it('renvoie 401 sur une création non authentifiée', async () => {
