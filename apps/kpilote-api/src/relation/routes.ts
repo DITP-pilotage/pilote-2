@@ -55,7 +55,7 @@ const upsertRelationRoute = createRoute({
   tags: ['Relation', 'Admin'],
   summary: "Définir le parent d'un individu",
   description:
-    "Réservé aux clés API de rôle `ADMIN` (les utilisateurs OIDC authentifiés restent autorisés). `id` est l'identifiant public de l'individu **enfant** : un individu a au plus un parent, l'enfant identifie donc la relation. Crée la relation si l'enfant n'en a pas, remplace son parent sinon. Opération idempotente, exécutée dans une transaction. Rejetée si le parent est l'individu lui-même (`AUTO_PARENT`) ou l'un de ses descendants (`CYCLE_DETECTE`).",
+    "Réservé aux clés API de rôle `ADMIN`. `id` est l'identifiant public de l'individu **enfant** : un individu a au plus un parent, l'enfant identifie donc la relation. Crée la relation si l'enfant n'en a pas, remplace son parent sinon. Opération idempotente, exécutée dans une transaction. Rejetée si le parent est l'individu lui-même (`AUTO_PARENT`) ou l'un de ses descendants (`CYCLE_DETECTE`).",
   middleware: [requireAuthentication],
   request: {
     params: detailParamsSchema,
@@ -83,7 +83,7 @@ const supprimerRelationRoute = createRoute({
   tags: ['Relation', 'Admin'],
   summary: "Supprimer le parent d'un individu",
   description:
-    "Réservé aux clés API de rôle `ADMIN` (les utilisateurs OIDC authentifiés restent autorisés). `id` est l'identifiant public de l'individu **enfant**. Idempotent : retourne `204` même si l'individu n'avait pas de parent.",
+    "Réservé aux clés API de rôle `ADMIN`. `id` est l'identifiant public de l'individu **enfant**. Idempotent : retourne `204` même si l'individu n'avait pas de parent.",
   middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {

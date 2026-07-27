@@ -1,13 +1,11 @@
 import { ResultAsync } from 'neverthrow'
 
-import { ensurePrincipal, isApiKeyAdmin, isOidcUser } from '@/framework/auth/principalPredicates'
+import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
+import { MESSAGE_ADMIN } from '@/relation/utils'
 
 const performSuppression = async (enfantPublicId: string): Promise<void> => {
-  ensurePrincipal(
-    (principal) => isApiKeyAdmin(principal) || isOidcUser(principal),
-    'Cette opération requiert un utilisateur OIDC ou une clé API de rôle ADMIN',
-  )
+  ensurePrincipal(isApiKeyAdmin, MESSAGE_ADMIN)
 
   await db().relation.deleteMany({ where: { child: { publicId: enfantPublicId } } })
 }

@@ -6,6 +6,7 @@ import type {
 import { relationApiModelSchema, relationListApiModelSchema } from '@pilote/kpilote-shared/relation'
 
 import { bffClient } from '@/api/client'
+import { fetchAllPages } from '@/lib/fetchAllPages'
 
 export const fetchRelations = async (
   params: { recherche?: string | undefined; cursor?: string | undefined } = {},
@@ -16,6 +17,9 @@ export const fetchRelations = async (
   const json = await bffClient.get('relations', { searchParams }).json()
   return relationListApiModelSchema.parse(json)
 }
+
+export const fetchAllRelations = (): Promise<RelationApiModel[]> =>
+  fetchAllPages((cursor) => fetchRelations(cursor ? { cursor } : {}))
 
 export const upsertRelationParent = async (
   id: string,

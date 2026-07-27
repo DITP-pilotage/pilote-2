@@ -1,13 +1,9 @@
-import { infiniteQueryOptions } from '@tanstack/react-query'
+import { queryOptions } from '@tanstack/react-query'
 
-import { fetchRelations } from '@/api/relations'
+import { fetchAllRelations } from '@/api/relations'
 
-export const relationsInfiniteQueryOptions = (recherche: string) =>
-  infiniteQueryOptions({
-    queryKey: ['relations', { recherche }],
-    queryFn: ({ pageParam }) =>
-      fetchRelations({ recherche: recherche || undefined, cursor: pageParam ?? undefined }),
-    initialPageParam: undefined as string | undefined,
-    getNextPageParam: (lastPage) =>
-      lastPage.pagination.hasMore ? (lastPage.pagination.cursor ?? undefined) : undefined,
+export const relationsAllQueryOptions = () =>
+  queryOptions({
+    queryKey: ['relations', 'all'],
+    queryFn: () => fetchAllRelations(),
   })

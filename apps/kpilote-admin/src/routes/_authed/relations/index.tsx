@@ -1,9 +1,5 @@
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from '@tanstack/react-query'
+import { searchUnaccent } from '@pilote/kpilote-shared/texte'
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Search, Trash2 } from 'lucide-react'
 import { useState } from 'react'
@@ -16,7 +12,7 @@ import { useAppConfig } from '@/context/AppConfigContext'
 import { extractApiError } from '@/lib/apiError'
 import { useProdEditUnlock } from '@/lib/useProdEditUnlock'
 import { individusAllQueryOptions } from '@/queries/individus'
-import { relationsInfiniteQueryOptions } from '@/queries/relations'
+import { relationsAllQueryOptions } from '@/queries/relations'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Table } from '@pilote/kpilote-ui/Table'
@@ -24,7 +20,10 @@ import { useToast } from '@pilote/kpilote-ui/Toast'
 
 export const Route = createFileRoute('/_authed/relations/')({
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData(individusAllQueryOptions())
+    await Promise.all([
+      context.queryClient.ensureQueryData(individusAllQueryOptions()),
+      context.queryClient.ensureQueryData(relationsAllQueryOptions()),
+    ])
   },
   component: RelationsComponent,
 })
@@ -39,11 +38,14 @@ function RelationsComponent() {
   const [recherche, setRecherche] = useState('')
   const [enAttente, setEnAttente] = useState<LigneEnAttente[]>([])
 
-  const query = useInfiniteQuery(relationsInfiniteQueryOptions(recherche))
+  const { data: toutesRelations } = useSuspenseQuery(relationsAllQueryOptions())
   const { data: individus } = useSuspenseQuery(individusAllQueryOptions())
 
-  const relations = query.data?.pages.flatMap((page) => page.items) ?? []
-  const total = query.data?.pages[0]?.total ?? 0
+  const terme = searchUnaccent(recherche)
+  const relations = terme
+    ? toutesRelations.filter((relation) => searchUnaccent(relation.enfant.nom).includes(terme))
+    : toutesRelations
+  const total = toutesRelations.length
 
   const invalider = async () => {
     await queryClient.invalidateQueries({ queryKey: ['relations'] })
@@ -75,7 +77,9 @@ function RelationsComponent() {
   })
 
   const idsEnAttente = enAttente.map((ligne) => ligne.id)
-  const idsDejaRattaches = relations.map((relation) => relation.enfant.id)
+  // Sur la liste complète, pas sur la liste filtrée : un individu masqué par le
+  // filtre reste rattaché et ne doit pas réapparaître dans le sélecteur d'ajout.
+  const idsDejaRattaches = toutesRelations.map((relation) => relation.enfant.id)
 
   const ajouterLigne = (id: string) => {
     const individu = individus.find((candidat) => candidat.id === id)
@@ -136,10 +140,14 @@ function RelationsComponent() {
         />
       </div>
 
-      {relations.length === 0 && enAttente.length === 0 && !query.isLoading ? (
+      {relations.length === 0 && enAttente.length === 0 ? (
         <EmptyState
-          title="Aucune relation"
-          description="Ajoutez un individu ci-dessus pour lui définir un parent."
+          title={terme ? 'Aucun résultat' : 'Aucune relation'}
+          description={
+            terme
+              ? 'Aucun individu ne correspond à ce filtre.'
+              : 'Ajoutez un individu ci-dessus pour lui définir un parent.'
+          }
         />
       ) : (
         <Table>
@@ -218,19 +226,6 @@ function RelationsComponent() {
           </Table.Body>
         </Table>
       )}
-
-      {query.hasNextPage ? (
-        <div className="mt-4 flex justify-center">
-          <Button
-            variant="secondary"
-            type="button"
-            disabled={query.isFetchingNextPage}
-            onClick={() => void query.fetchNextPage()}
-          >
-            {query.isFetchingNextPage ? 'Chargement…' : 'Charger plus'}
-          </Button>
-        </div>
-      ) : null}
     </div>
   )
 }

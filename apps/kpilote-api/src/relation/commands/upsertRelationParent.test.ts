@@ -5,7 +5,7 @@ import { upsertRelationParent } from '@/relation/commands/upsertRelationParent'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testDeptIds, testRegIds } from '@/test/randomIds'
-import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
+import { runAsAdmin, runAsContributor, runAsUser } from '@/test/runAsPrincipal'
 
 const parentsDe = async (publicId: string): Promise<string[]> => {
   const relations = await db().relation.findMany({
@@ -151,7 +151,20 @@ describe.concurrent('upsertRelationParent', () => {
         runAsContributor('principal-upsert-contributor', () =>
           upsertRelationParent(dept, { parent: reg }),
         ),
-      ).rejects.toThrow('Cette opération requiert un utilisateur OIDC ou une clé API de rôle ADMIN')
+      ).rejects.toThrow('Cette opération requiert une clé API de rôle ADMIN')
+    }),
+  )
+
+  it(
+    'refuse un utilisateur OIDC : la hiérarchie ne se modifie que par clé ADMIN',
+    integrationTest(async () => {
+      const [dept] = testDeptIds(1)
+      const [reg] = testRegIds(1)
+      await fixtures.individu({ publicId: dept }, { publicId: reg })
+
+      await expect(
+        runAsUser('utilisateur-upsert-oidc', () => upsertRelationParent(dept, { parent: reg })),
+      ).rejects.toThrow('Cette opération requiert une clé API de rôle ADMIN')
     }),
   )
 })

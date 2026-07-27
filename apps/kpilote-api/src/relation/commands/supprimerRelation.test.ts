@@ -5,7 +5,7 @@ import { supprimerRelation } from '@/relation/commands/supprimerRelation'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testDeptIds, testRegIds } from '@/test/randomIds'
-import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
+import { runAsAdmin, runAsContributor, runAsUser } from '@/test/runAsPrincipal'
 
 const compteRelations = (publicId: string) =>
   db().relation.count({ where: { child: { publicId } } })
@@ -63,7 +63,20 @@ describe.concurrent('supprimerRelation', () => {
 
       await expect(
         runAsContributor('principal-delete-contributor', () => supprimerRelation(dept)),
-      ).rejects.toThrow('Cette opération requiert un utilisateur OIDC ou une clé API de rôle ADMIN')
+      ).rejects.toThrow('Cette opération requiert une clé API de rôle ADMIN')
+    }),
+  )
+
+  it(
+    'refuse un utilisateur OIDC : la hiérarchie ne se modifie que par clé ADMIN',
+    integrationTest(async () => {
+      const [dept] = testDeptIds(1)
+      const [reg] = testRegIds(1)
+      await fixtures.relation({ parent: { publicId: reg }, child: { publicId: dept } })
+
+      await expect(
+        runAsUser('utilisateur-delete-oidc', () => supprimerRelation(dept)),
+      ).rejects.toThrow('Cette opération requiert une clé API de rôle ADMIN')
     }),
   )
 })
