@@ -728,8 +728,8 @@ importers:
         specifier: ^16.2.11
         version: 16.2.12(@opentelemetry/api@1.9.0)(@playwright/test@1.59.1)(@types/node@22.19.17)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(sass@1.78.0)
       next-auth:
-        specifier: 5.0.0-beta.30
-        version: 5.0.0-beta.30(next@16.2.12(@opentelemetry/api@1.9.0)(@playwright/test@1.59.1)(@types/node@22.19.17)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(sass@1.78.0))(react@19.2.5)
+        specifier: 5.0.0-beta.32
+        version: 5.0.0-beta.32(next@16.2.12(@opentelemetry/api@1.9.0)(@playwright/test@1.59.1)(@types/node@22.19.17)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(sass@1.78.0))(react@19.2.5)
       nextra:
         specifier: ^4.6.1
         version: 4.6.1(next@16.2.12(@opentelemetry/api@1.9.0)(@playwright/test@1.59.1)(@types/node@22.19.17)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(sass@1.78.0))(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(typescript@5.9.3)
@@ -1190,12 +1190,12 @@ packages:
     peerDependencies:
       zod: ^4.0.0
 
-  '@auth/core@0.41.0':
-    resolution: {integrity: sha512-Wd7mHPQ/8zy6Qj7f4T46vg3aoor8fskJm6g2Zyj064oQ3+p0xNZXAV60ww0hY+MbTesfu29kK14Zk5d5JTazXQ==}
+  '@auth/core@0.41.3':
+    resolution: {integrity: sha512-sJ3JMHHkXMD3aOjopv7mOBTO1Ocw4b0fAEXJBz6k7YHLpYQI6C40jCUPc5fNvUKxXRXNE1/sRISA15UrwWJBTw==}
     peerDependencies:
       '@simplewebauthn/browser': ^9.0.1
       '@simplewebauthn/server': ^9.0.2
-      nodemailer: ^6.8.0
+      nodemailer: ^7.0.7 || ^8.0.5
     peerDependenciesMeta:
       '@simplewebauthn/browser':
         optional: true
@@ -8586,13 +8586,13 @@ packages:
     resolution: {integrity: sha512-kOCT/1MCPAxY5iUV3wytNFUMUolzuwd/VF/1KCx7kf6CutrOsTie+84zTGTpgQycjvfLdBBdvBvFLqFD2c0wkQ==}
     engines: {node: '>=18'}
 
-  next-auth@5.0.0-beta.30:
-    resolution: {integrity: sha512-+c51gquM3F6nMVmoAusRJ7RIoY0K4Ts9HCCwyy/BRoe4mp3msZpOzYMyb5LAYc1wSo74PMQkGDcaghIO7W6Xjg==}
+  next-auth@5.0.0-beta.32:
+    resolution: {integrity: sha512-CGlChIEWZ6LltNVxrE5yiySMID+Idpmry47JYA5lLwgD8Sx02a8M65VL0TWVz9nbnOioS/tCW/rP/0+mE7Qp4Q==}
     peerDependencies:
       '@simplewebauthn/browser': ^9.0.1
       '@simplewebauthn/server': ^9.0.2
       next: ^14.0.0-0 || ^15.0.0 || ^16.0.0
-      nodemailer: ^7.0.7
+      nodemailer: ^7.0.7 || ^8.0.5
       react: ^18.2.0 || ^19.0.0
     peerDependenciesMeta:
       '@simplewebauthn/browser':
@@ -11103,7 +11103,7 @@ snapshots:
       openapi3-ts: 4.5.0
       zod: 4.3.6
 
-  '@auth/core@0.41.0':
+  '@auth/core@0.41.3':
     dependencies:
       '@panva/hkdf': 1.2.1
       jose: 6.2.3
@@ -19768,9 +19768,9 @@ snapshots:
     optionalDependencies:
       '@rollup/rollup-linux-x64-gnu': 4.60.2
 
-  next-auth@5.0.0-beta.30(next@16.2.12(@opentelemetry/api@1.9.0)(@playwright/test@1.59.1)(@types/node@22.19.17)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(sass@1.78.0))(react@19.2.5):
+  next-auth@5.0.0-beta.32(next@16.2.12(@opentelemetry/api@1.9.0)(@playwright/test@1.59.1)(@types/node@22.19.17)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(sass@1.78.0))(react@19.2.5):
     dependencies:
-      '@auth/core': 0.41.0
+      '@auth/core': 0.41.3
       next: 16.2.12(@opentelemetry/api@1.9.0)(@playwright/test@1.59.1)(@types/node@22.19.17)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(sass@1.78.0)
       react: 19.2.5
 
