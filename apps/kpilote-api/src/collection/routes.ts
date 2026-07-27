@@ -7,6 +7,7 @@ import {
 import { listerNiveauxConfianceQuerySchema } from '@pilote/kpilote-shared/niveauConfiance'
 import {
   addCollectionIndicateurBodySchema,
+  addCollectionResponsableBodySchema,
   collectionApiModelSchema,
   collectionListApiModelSchema,
   createCollectionBodySchema,
@@ -44,9 +45,11 @@ import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { erreur400, erreur403, erreur404, erreur409 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { addCollectionIndicateur } from '@/collection/commands/addCollectionIndicateur'
+import { addCollectionResponsable } from '@/collection/commands/addCollectionResponsable'
 import { createCollection } from '@/collection/commands/createCollection'
 import { deleteCollection } from '@/collection/commands/deleteCollection'
 import { removeCollectionIndicateur } from '@/collection/commands/removeCollectionIndicateur'
+import { removeCollectionResponsable } from '@/collection/commands/removeCollectionResponsable'
 import { updateCollectionIndicateurPonderation } from '@/collection/commands/updateCollectionIndicateurPonderation'
 import { upsertCollection } from '@/collection/commands/upsertCollection'
 import {
@@ -73,9 +76,18 @@ const UpdateCollectionIndicateurPonderationBodySchema =
     'UpdateCollectionIndicateurPonderationBody',
   )
 
+const AddCollectionResponsableBodySchema = addCollectionResponsableBodySchema.openapi(
+  'AddCollectionResponsableBody',
+)
+
 const collectionIndicateurParamsSchema = z.object({
   id: collectionPublicIdSchema,
   indicateurId: indicateurPublicIdSchema,
+})
+
+const collectionResponsableParamsSchema = z.object({
+  id: collectionPublicIdSchema,
+  utilisateurId: z.string().uuid(),
 })
 
 // --- GET /collections ------------------------------------------------------------
@@ -397,6 +409,68 @@ const removeCollectionIndicateurRoute = createRoute({
 collectionRoutes.openapi(removeCollectionIndicateurRoute, async (context) => {
   const { id, indicateurId } = context.req.valid('param')
   const result = await withTransaction(async () => removeCollectionIndicateur(id, indicateurId))
+  return result.match(() => context.body(null, 204), never)
+})
+
+// --- POST /collections/:id/responsables ------------------------------------------
+
+const addCollectionResponsableRoute = createRoute({
+  method: 'post',
+  path: '/collections/{id}/responsables',
+  tags: ['Collection', 'Admin'],
+  summary: 'Désigner un responsable de collection',
+  description:
+    "Réservé aux clés API de rôle `ADMIN`. Désignation métier : elle n'accorde aucun droit d'accès, qui relève de `POST /permissions/collection`. Renvoie `409` si l'utilisateur est déjà responsable, `404` si la collection ou l'utilisateur est introuvable.",
+  middleware: [requireAuthentication],
+  request: {
+    params: detailParamsSchema,
+    body: {
+      content: { 'application/json': { schema: AddCollectionResponsableBodySchema } },
+      required: true,
+    },
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: CollectionApiModelSchema } },
+      description: 'Collection à jour',
+    },
+    400: erreur400,
+    403: erreur403,
+    404: erreur404,
+    409: erreur409,
+  },
+})
+
+collectionRoutes.openapi(addCollectionResponsableRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  const body = context.req.valid('json')
+  const result = await withTransaction(async () => addCollectionResponsable(id, body))
+  return result.match(
+    (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
+// --- DELETE /collections/:id/responsables/:utilisateurId -------------------------
+
+const removeCollectionResponsableRoute = createRoute({
+  method: 'delete',
+  path: '/collections/{id}/responsables/{utilisateurId}',
+  tags: ['Collection', 'Admin'],
+  summary: "Retirer un responsable d'une collection",
+  description:
+    "Réservé aux clés API de rôle `ADMIN`. Retire uniquement la désignation : l'utilisateur n'est pas supprimé et ses permissions ne sont pas modifiées. Idempotent, renvoie `204` même si l'utilisateur n'était pas responsable.",
+  middleware: [requireAuthentication],
+  request: { params: collectionResponsableParamsSchema },
+  responses: {
+    204: { description: 'Responsable retiré de la collection' },
+    403: erreur403,
+  },
+})
+
+collectionRoutes.openapi(removeCollectionResponsableRoute, async (context) => {
+  const { id, utilisateurId } = context.req.valid('param')
+  const result = await withTransaction(async () => removeCollectionResponsable(id, utilisateurId))
   return result.match(() => context.body(null, 204), never)
 })
 

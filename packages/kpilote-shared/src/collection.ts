@@ -81,6 +81,11 @@ export type UpdateCollectionIndicateurPonderationBody = z.infer<
   typeof updateCollectionIndicateurPonderationBodySchema
 >
 
+export const addCollectionResponsableBodySchema = z.object({
+  utilisateurId: z.string().uuid().describe("Identifiant (UUID) de l'utilisateur responsable."),
+})
+export type AddCollectionResponsableBody = z.infer<typeof addCollectionResponsableBodySchema>
+
 export const listCollectionsQuerySchema = z.object({
   recherche: z.string().optional().describe('Filtre case-insensitive sur le nom de la collection.'),
   rechercheIdentifiant: z
