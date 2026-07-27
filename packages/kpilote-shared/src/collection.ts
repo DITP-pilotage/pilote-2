@@ -57,6 +57,9 @@ export const createCollectionBodySchema = z.object({
 })
 export type CreateCollectionBody = z.infer<typeof createCollectionBodySchema>
 
+export const upsertCollectionBodySchema = createCollectionBodySchema
+export type UpsertCollectionBody = z.infer<typeof upsertCollectionBodySchema>
+
 export const listCollectionsQuerySchema = z.object({
   recherche: z.string().optional().describe('Filtre case-insensitive sur le nom de la collection.'),
   rechercheIdentifiant: z

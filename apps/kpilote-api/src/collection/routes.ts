@@ -10,6 +10,7 @@ import {
   collectionListApiModelSchema,
   createCollectionBodySchema,
   listCollectionsQuerySchema,
+  upsertCollectionBodySchema,
 } from '@pilote/kpilote-shared/collection'
 import {
   collectionTauxProgressionApiModelSchema,
@@ -38,6 +39,7 @@ import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { createCollection } from '@/collection/commands/createCollection'
+import { upsertCollection } from '@/collection/commands/upsertCollection'
 import {
   creerCollectionCommentaire,
   collectionConfig,
@@ -53,6 +55,7 @@ const CollectionTauxProgressionApiModelSchema = collectionTauxProgressionApiMode
   'CollectionTauxProgressionApiModel',
 )
 const CreateCollectionBodySchema = createCollectionBodySchema.openapi('CreateCollectionBody')
+const UpsertCollectionBodySchema = upsertCollectionBodySchema.openapi('UpsertCollectionBody')
 
 // --- GET /collections ------------------------------------------------------------
 
@@ -210,6 +213,43 @@ collectionRoutes.openapi(createCollectionRoute, async (context) => {
   const result = await withTransaction(async () => createCollection(body))
   return result.match(
     (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 201 }),
+    never,
+  )
+})
+
+// --- PUT /collections/:id --------------------------------------------------------
+
+const upsertCollectionRoute = createRoute({
+  method: 'put',
+  path: '/collections/{id}',
+  tags: ['Collection', 'Admin'],
+  summary: 'Créer ou remplacer une collection',
+  description:
+    "Réservé aux clés API de rôle `ADMIN`. Crée la collection si l'identifiant est libre, remplace sinon `nom`, `description` et `visibilite`. Les indicateurs, responsables et permissions affectés ne sont pas modifiés : ils ont leurs propres routes.",
+  middleware: [requireAuthentication],
+  request: {
+    params: detailParamsSchema,
+    body: {
+      content: { 'application/json': { schema: UpsertCollectionBodySchema } },
+      required: true,
+    },
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: CollectionApiModelSchema } },
+      description: 'Collection créée ou mise à jour',
+    },
+    400: erreur400,
+    403: erreur403,
+  },
+})
+
+collectionRoutes.openapi(upsertCollectionRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  const body = context.req.valid('json')
+  const result = await withTransaction(async () => upsertCollection(id, body))
+  return result.match(
+    (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
     never,
   )
 })
