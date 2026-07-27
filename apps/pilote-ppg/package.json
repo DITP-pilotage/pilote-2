@@ -137,7 +137,7 @@
     "react-select": "^5.10.0",
     "remark-gfm": "^4.0.1",
     "sanitize-html": "2.17.0",
-    "sharp": "^0.34.5",
+    "sharp": "^0.35.0",
     "sonner": "^2.0.7",
     "superjson": "^1.12.2",
     "swagger-ui-react": "5.32.1",
