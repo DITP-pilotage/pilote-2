@@ -70,6 +70,29 @@ export const grantCollectionPermissionBodySchema = z.object({
 })
 export type GrantCollectionPermissionBody = z.infer<typeof grantCollectionPermissionBodySchema>
 
+export const collectionPermissionPrincipalTypeSchema = z.enum(['UTILISATEUR', 'API_KEY'])
+export type CollectionPermissionPrincipalType = z.infer<
+  typeof collectionPermissionPrincipalTypeSchema
+>
+
+export const collectionPermissionsApiModelSchema = z.object({
+  items: z
+    .array(
+      z.object({
+        principalId: z.string().uuid(),
+        type: collectionPermissionPrincipalTypeSchema,
+        libelle: z
+          .string()
+          .describe("Email de l'utilisateur, ou libellé de la clé API selon le `type`."),
+        actions: z.array(permissionActionSchema).min(1).describe('Triées `READ` avant `WRITE`.'),
+      }),
+    )
+    .describe(
+      'Principals disposant d’une permission directe sur la collection, triés par `type` puis `libelle`.',
+    ),
+})
+export type CollectionPermissionsApiModel = z.infer<typeof collectionPermissionsApiModelSchema>
+
 export const revokeCollectionPermissionQuerySchema = z.object({
   principalId: z.string().uuid(),
   collectionPublicId: z.string(),

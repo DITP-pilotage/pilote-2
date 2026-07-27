@@ -19,6 +19,7 @@ import {
   collectionTauxProgressionApiModelSchema,
   getCollectionTauxProgressionQuerySchema,
 } from '@pilote/kpilote-shared/collectionTauxProgression'
+import { collectionPermissionsApiModelSchema } from '@pilote/kpilote-shared/permission'
 import {
   collectionPublicIdSchema,
   indicateurPublicIdSchema,
@@ -58,6 +59,7 @@ import {
 } from '@/collection/commands/creerCollectionCommentaire'
 import { getCollectionByPublicId } from '@/collection/queries/getCollectionByPublicId'
 import { getCollectionTauxProgression } from '@/collection/queries/getCollectionTauxProgression'
+import { listCollectionPermissions } from '@/collection/queries/listCollectionPermissions'
 import { listCollections } from '@/collection/queries/listCollections'
 import { listerCollectionCommentaires } from '@/collection/queries/listerCollectionCommentaires'
 
@@ -78,6 +80,9 @@ const UpdateCollectionIndicateurPonderationBodySchema =
 
 const AddCollectionResponsableBodySchema = addCollectionResponsableBodySchema.openapi(
   'AddCollectionResponsableBody',
+)
+const CollectionPermissionsApiModelSchema = collectionPermissionsApiModelSchema.openapi(
+  'CollectionPermissionsApiModel',
 )
 
 const collectionIndicateurParamsSchema = z.object({
@@ -472,6 +477,40 @@ collectionRoutes.openapi(removeCollectionResponsableRoute, async (context) => {
   const { id, utilisateurId } = context.req.valid('param')
   const result = await withTransaction(async () => removeCollectionResponsable(id, utilisateurId))
   return result.match(() => context.body(null, 204), never)
+})
+
+// --- GET /collections/:id/permissions --------------------------------------------
+
+const listCollectionPermissionsRoute = createRoute({
+  method: 'get',
+  path: '/collections/{id}/permissions',
+  tags: ['Collection', 'Permission', 'Admin'],
+  summary: 'Lister les principals ayant accès à une collection',
+  description:
+    "Lecture inverse de `GET /permissions?principalId=…`, qui ne répond qu'à « à quoi ce principal a-t-il accès ». Retourne les principals — utilisateurs et clés API — disposant d'une permission directe sur la collection, triés par `type` puis `libelle`. L'octroi et le retrait passent par `POST` / `DELETE /permissions/collection`.",
+  middleware: [requireAuthentication],
+  request: { params: detailParamsSchema },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: CollectionPermissionsApiModelSchema } },
+      description: 'Principals disposant d’une permission directe',
+    },
+    400: erreur400,
+  },
+})
+
+collectionRoutes.openapi(listCollectionPermissionsRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  return listCollectionPermissions(id).match(
+    (data) =>
+      jsonResponseOk({
+        context,
+        data,
+        schema: CollectionPermissionsApiModelSchema,
+        status: 200,
+      }),
+    never,
+  )
 })
 
 // --- POST /collections/:id/commentaires ------------------------------------------
