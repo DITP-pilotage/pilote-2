@@ -32,3 +32,6 @@ export const listIndividusForReferentielQuerySchema = listQuerySchema
 export type ListIndividusForReferentielQuery = z.infer<
   typeof listIndividusForReferentielQuerySchema
 >
+
+export const listIndividusQuerySchema = listQuerySchema
+export type ListIndividusQuery = z.infer<typeof listIndividusQuerySchema>
