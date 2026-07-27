@@ -66,26 +66,29 @@ describe.concurrent('modifierArticleCentreAide', () => {
   )
 
   it(
-    'réindexe les frères pour placer l’article à la position demandée',
+    'réindexe les frères et propage updatedBy aux articles réordonnés',
     integrationTest(async () => {
       const admin = await fixtures.apiKey({ role: 'ADMIN' })
+      const autre = await fixtures.apiKey({ role: 'ADMIN' })
       const a = await seed(admin.id, { ordre: 0 })
       const b = await seed(admin.id, { ordre: 1 })
       const c = await seed(admin.id, { ordre: 2 })
 
-      await runAsAdmin(admin.id, () =>
+      await runAsAdmin(autre.id, () =>
         modifierArticleCentreAide(c.id, { ...base, parentId: null, ordre: 0 }),
       )
 
-      const ordres = Object.fromEntries(
+      const parId = Object.fromEntries(
         (await db().articleCentreAide.findMany({ where: { parentId: null } })).map((article) => [
           article.id,
-          article.ordre,
+          article,
         ]),
       )
-      expect(ordres[c.id]).toBe(0)
-      expect(ordres[a.id]).toBe(1)
-      expect(ordres[b.id]).toBe(2)
+      expect(parId[c.id]!.ordre).toBe(0)
+      expect(parId[a.id]!.ordre).toBe(1)
+      expect(parId[b.id]!.ordre).toBe(2)
+      // Un frère réordonné doit refléter l'auteur du déplacement, pas l'ancien.
+      expect(parId[a.id]!.updatedBy).toBe(autre.id)
     }),
   )
 

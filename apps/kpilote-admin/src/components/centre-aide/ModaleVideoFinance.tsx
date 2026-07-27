@@ -1,3 +1,4 @@
+import { estUrlHttpSure } from '@pilote/kpilote-shared/url'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { FieldInput } from '@pilote/kpilote-ui/FieldInput'
 import { Modale } from '@pilote/kpilote-ui/Modale'
@@ -24,18 +25,16 @@ export function ModaleVideoFinance({
   }
 
   const valider = () => {
-    let hostname: string
-    try {
-      hostname = new URL(url.trim()).hostname
-    } catch {
-      setErreur('L’URL saisie n’est pas valide.')
+    const propre = url.trim()
+    if (!estUrlHttpSure(propre)) {
+      setErreur('L’URL doit être un lien http(s) valide.')
       return
     }
-    if (hostname !== HOST_AUTORISE) {
+    if (new URL(propre).hostname !== HOST_AUTORISE) {
       setErreur(`L’URL doit provenir de ${HOST_AUTORISE}.`)
       return
     }
-    onValider(url.trim())
+    onValider(propre)
     fermer()
   }
 

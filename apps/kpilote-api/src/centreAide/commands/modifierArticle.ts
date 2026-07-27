@@ -72,7 +72,10 @@ const performModifier = async (
   const position = Math.max(0, Math.min(ordre, freres.length))
   const ordonnes = [...freres.slice(0, position), id, ...freres.slice(position)]
   for (const [rang, articleId] of ordonnes.entries()) {
-    await db().articleCentreAide.update({ where: { id: articleId }, data: { ordre: rang } })
+    await db().articleCentreAide.update({
+      where: { id: articleId },
+      data: { ordre: rang, updatedBy: principalId },
+    })
   }
 
   const maj = await db().articleCentreAide.findUniqueOrThrow({ where: { id } })

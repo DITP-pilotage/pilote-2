@@ -31,7 +31,8 @@ function CentreAidePage() {
   if (isError) return <Text tone="muted">Le centre d’aide est momentanément indisponible.</Text>
 
   const pages = articles.filter((article) => article.type === 'PAGE')
-  const selectionne = articles.find((article) => article.id === articleParam) ?? pages[0] ?? null
+  // Le lecteur n'affiche que des pages : un deep-link vers un groupe retombe sur la première page.
+  const selectionne = pages.find((page) => page.id === articleParam) ?? pages[0] ?? null
 
   if (articles.length === 0) {
     return (

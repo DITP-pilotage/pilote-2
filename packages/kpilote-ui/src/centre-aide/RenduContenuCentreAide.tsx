@@ -29,6 +29,8 @@ const rendreNoeud = (noeud: Node): ReactNode => {
   for (const attr of Array.from(element.attributes)) {
     if (attr.name === 'class') props.className = attr.value
     else if (attr.name === 'data-type') continue
+    // React attend un objet pour `style`, pas une string : on l'ignore ici.
+    else if (attr.name === 'style') continue
     else props[attr.name] = attr.value
   }
   if (tag === 'br' || tag === 'img' || tag === 'hr') {
