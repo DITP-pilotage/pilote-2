@@ -11,7 +11,7 @@ const relationIndividuSchema = z.object({
 
 export const relationApiModelSchema = z.object({
   enfant: relationIndividuSchema.describe(
-    "Individu enfant. Il identifie la relation : un individu a au plus un parent.",
+    'Individu enfant. Il identifie la relation : un individu a au plus un parent.',
   ),
   parent: relationIndividuSchema.describe('Individu parent.'),
 })
