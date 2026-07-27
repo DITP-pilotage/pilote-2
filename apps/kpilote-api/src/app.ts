@@ -18,6 +18,7 @@ import { meRoutes } from '@/me/routes'
 import { collectionRoutes } from '@/collection/routes'
 import { permissionRoutes } from '@/permission/routes'
 import { referentielRoutes } from '@/referentiel/routes'
+import { relationRoutes } from '@/relation/routes'
 import { objectifIndicateurIndividuRoutes } from '@/objectifIndicateurIndividu/routes'
 import { utilisateurRoutes } from '@/utilisateur/routes'
 import { valeurAvancementRoutes } from '@/valeurAvancement/routes'
@@ -45,6 +46,7 @@ app.route('/', valeurImportRoutes)
 app.route('/', objectifIndicateurIndividuRoutes)
 app.route('/', referentielRoutes)
 app.route('/', individuRoutes)
+app.route('/', relationRoutes)
 app.route('/', collectionRoutes)
 app.route('/', commentaireRoutes)
 app.route('/', centreAideRoutes)
