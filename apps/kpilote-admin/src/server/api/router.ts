@@ -3,11 +3,11 @@ import { Hono } from 'hono'
 import { kpiloteApiUrlFor } from '@/server/environments'
 import { readSession } from '@/server/session'
 
-// Ressources relayables (lecture + upsert indicateurs/référentiels/individus).
+// Ressources relayables, à tenir à jour avec la regex ci-dessous.
 // Segments sûrs uniquement : une ressource autorisée, puis des segments composés
 // de caractères de public id (alphanum, `_`, `-`). Tout le reste est rejeté.
 const SAFE_PATH =
-  /^(indicateurs|referentiels|individus|api-keys|utilisateurs|collections|permissions|features|centre-aide)(\/[A-Za-z0-9_-]+)*$/
+  /^(indicateurs|referentiels|individus|relations|api-keys|utilisateurs|collections|permissions|features|centre-aide)(\/[A-Za-z0-9_-]+)*$/
 
 // Rejette toute tentative de traversal / d'injection d'URL absolue AVANT de
 // matcher l'allowlist (sinon la normalisation d'URL des `..` permettrait

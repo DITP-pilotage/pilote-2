@@ -24,6 +24,7 @@
       "@/individu/*": ["./src/individu/*"],
       "@/me/*": ["./src/me/*"],
       "@/referentiel/*": ["./src/referentiel/*"],
+      "@/relation/*": ["./src/relation/*"],
       "@/niveauConfiance/*": ["./src/niveauConfiance/*"],
       "@/valeurAvancement/*": ["./src/valeurAvancement/*"],
       "@/valeurImport/*": ["./src/valeurImport/*"],
