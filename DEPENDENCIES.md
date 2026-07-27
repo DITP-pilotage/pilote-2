@@ -218,6 +218,55 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
 
 ## Historique des campagnes
 
+### Juillet 2026 (2026-07-27) — Campagne sécu
+
+Menée **commit par commit** sur `deps/campagne-2026-07-27`, ciblée vulnérabilités (`pnpm audit`).
+**73 → 14 advisories** : **4 → 0 critical**, **33 → 6 high**.
+
+Contrainte structurante : `minimumReleaseAge: 20160` (14 j). Toute version patchée publiée
+**après le 2026-07-13** est refusée à l'install (sauf `next`/`@next/*`, exclus). Chaque patch a
+donc été vérifié contre cette fenêtre avant bump.
+
+**Bumps directs `pilote-ppg`** :
+- `axios ^1.15.2 → ^1.18.0`, `form-data ^4.0.0 → ^4.0.6`, `next ^16.2.6 → ^16.2.11` (résolu 16.2.12) — couverts par caret
+- `sharp ^0.34.5 → ^0.35.0` (+ override, voir ci-dessous)
+- `ws 8.18.0 → 8.21.0`
+- `next-auth 5.0.0-beta.30 → 5.0.0-beta.32` — **one-shot quarantaine** (voir encadré)
+
+**Bump direct `kpilote-webapp`** : `dompurify ^3.4.11 → ^3.4.12`.
+
+**Overrides ajoutés / relevés** (root, bornés par ligne majeure pour ne pas collapser les consommateurs) :
+
+| Override | Cible CVE |
+|---|---|
+| `sharp: >=0.35.0 <0.36` | force aussi la sharp transitive de `next` (CVE libvips) |
+| `postcss: >=8.5.10 → >=8.5.18 <9` | path traversal source-map (relevé) |
+| `brace-expansion@<2: >=1.1.16`, `@>=2 <3: >=2.1.2`, `@>=5 <6: >=5.0.7` | DoS expansion exponentielle |
+| `undici@>=7 <8: >=7.28.0` | TLS bypass, DoS websocket, SOCKS5 routing |
+| `linkify-it@>=5 <6: >=5.0.2` | ReDoS quadratique |
+| `immutable@>=4 <5: >=4.3.9` | trie overflow + hash-collision DoS (ligne 4.x) |
+| `js-yaml@<4: >=3.15.0`, `@>=4 <5: >=4.3.0` | merge-key CPU quadratique |
+| `tar@>=7 <8: >=7.5.19` | **critical** : negative-size infinite loop + decompression DoS |
+| `fast-uri@>=3 <4: >=3.1.3` | host confusion IDN (borné `<4` = range ajv, cf. mise en garde) |
+
+**Résiduels assumés** (6 high + 6 moderate + 2 low) :
+- `xlsx` (2 high, webapp) — **aucun patch npm** (SheetJS hors registre). Décision séparée : pin CDN ou remplacement.
+- `immutable 3.8.3` (2 high, ppg) — ligne 3.x **sans patch**, tirée par `swagger-ui-react` via `react-immutable-proptypes@2.2.0` (peer immutable 3.x). Forcer 4.x casse swagger-ui-react. **Sortie** : swagger-ui-react lâche immutable 3.x.
+- `fast-uri 3.1.4` (1 high, admin) — **bloqué quarantaine** (publié 2026-07-19). Relever `fast-uri@>=3 <4` à `>=3.1.4` après le ~2026-08-02.
+- `brace-expansion 5.0.8` (1 high, **dev-only** via eslint→minimatch) — **bloqué quarantaine** (2026-07-23). Relever `@>=5 <6` à `>=5.0.8` après le ~2026-08-06.
+
+> 🔴 **One-shot quarantaine `next-auth`.** beta.32 (+ `@auth/core@0.41.3`, épinglé par beta.32) ferme
+> **3 critical + 2 high** Auth.js mais a `<14 j` (publié 2026-07-20). Installé en ajoutant
+> temporairement `next-auth` + `@auth/core` à `minimumReleaseAgeExclude`, puis en **retirant**
+> l'exclusion (`pnpm-workspace.yaml` net-inchangé). Le lock épingle beta.32 ; `pnpm install` et
+> `--frozen-lockfile` (CI) le réutilisent **sans re-résoudre**. **Fenêtre fragile ~7 j** : ne pas
+> lancer `pnpm update next-auth` ni supprimer le lock avant le ~**2026-08-03** — le pin exact
+> beta.32 est non résoluble sous quarantaine et sans fallback. Après cette date, beta.32 franchit
+> elle-même les 14 j et la fenêtre se referme.
+
+**Vérifications** : `tsc --noEmit` **vert (0 erreur) sur ppg, kpilote-api, kpilote-webapp, kpilote-admin**.
+E2E non lancés (cron). Lockfile partagé avec ppg → la CI ppg tourne aussi sur la PR.
+
 ### Mai 2026 — Campagne sécu
 
 **Bumps directs** :
