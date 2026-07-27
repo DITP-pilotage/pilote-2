@@ -11,13 +11,15 @@ import {
   type CollectionFormValues,
 } from '@/components/collections/CollectionForm'
 import { CollectionIndicateurs } from '@/components/collections/CollectionIndicateurs'
+import { CollectionUtilisateurs } from '@/components/collections/CollectionUtilisateurs'
 import { PageHeading } from '@/components/PageHeading'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { Tabs, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tabs'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
-import { collectionQueryOptions } from '@/queries/collections'
+import { collectionPermissionsQueryOptions, collectionQueryOptions } from '@/queries/collections'
 import { indicateursAllQueryOptions } from '@/queries/indicateurs'
+import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
 
 type Onglet = 'details' | 'indicateurs' | 'utilisateurs'
 
@@ -25,7 +27,9 @@ export const Route = createFileRoute('/_authed/collections/$id')({
   loader: async ({ context, params }) => {
     await Promise.all([
       context.queryClient.ensureQueryData(collectionQueryOptions(params.id)),
+      context.queryClient.ensureQueryData(collectionPermissionsQueryOptions(params.id)),
       context.queryClient.ensureQueryData(indicateursAllQueryOptions()),
+      context.queryClient.ensureQueryData(utilisateursAllQueryOptions()),
     ])
   },
   component: EditCollectionComponent,
@@ -124,7 +128,7 @@ function EditCollectionComponent() {
 
       {onglet === 'indicateurs' ? <CollectionIndicateurs collectionId={id} /> : null}
 
-      {onglet === 'utilisateurs' ? <p className="text-sm text-text-muted">À brancher.</p> : null}
+      {onglet === 'utilisateurs' ? <CollectionUtilisateurs collectionId={id} /> : null}
     </div>
   )
 }

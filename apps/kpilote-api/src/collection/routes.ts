@@ -103,7 +103,7 @@ const getCollectionsRoute = createRoute({
   tags: ['Collection'],
   summary: "Lister les collections d'indicateurs",
   description:
-    "Chaque item inclut `indicateurIds`, triés par ordre d'insertion dans la collection (createdAt ASC de la jonction).",
+    "Chaque item inclut `indicateurs` — identifiant public et pondération —, triés par ordre d'insertion dans la collection (createdAt ASC de la jonction).",
   middleware: [requireAuthentication],
   request: { query: listCollectionsQuerySchema },
   responses: {
@@ -126,7 +126,7 @@ const getCollectionByIdRoute = createRoute({
   tags: ['Collection'],
   summary: 'Récupérer une collection par identifiant public',
   description:
-    "La réponse inclut `indicateurIds` triés par ordre d'insertion (createdAt ASC de la jonction).",
+    "La réponse inclut `indicateurs` — identifiant public et pondération —, triés par ordre d'insertion (createdAt ASC de la jonction).",
   middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {

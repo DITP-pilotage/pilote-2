@@ -21,9 +21,9 @@ describe.concurrent('removeCollectionIndicateur', () => {
 
       await runAsAdmin(apiKey.id, () => removeCollectionIndicateur(publicId, indicateurId))
 
-      expect(await db().collectionIndicateur.count({ where: { collectionId: collection.id } })).toBe(
-        0,
-      )
+      expect(
+        await db().collectionIndicateur.count({ where: { collectionId: collection.id } }),
+      ).toBe(0)
       expect(await db().indicateur.findUnique({ where: { publicId: indicateurId } })).not.toBeNull()
     }),
   )

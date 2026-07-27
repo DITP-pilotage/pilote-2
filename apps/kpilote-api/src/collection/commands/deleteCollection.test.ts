@@ -22,9 +22,9 @@ describe.concurrent('deleteCollection', () => {
       await runAsAdmin(apiKey.id, () => deleteCollection(publicId))
 
       expect(await db().collection.findUnique({ where: { publicId } })).toBeNull()
-      expect(await db().collectionIndicateur.count({ where: { collectionId: collection.id } })).toBe(
-        0,
-      )
+      expect(
+        await db().collectionIndicateur.count({ where: { collectionId: collection.id } }),
+      ).toBe(0)
       expect(await db().indicateur.findUnique({ where: { publicId: indicateurId } })).not.toBeNull()
     }),
   )
@@ -34,9 +34,7 @@ describe.concurrent('deleteCollection', () => {
     integrationTest(async () => {
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
 
-      const result = await runAsAdmin(apiKey.id, () =>
-        deleteCollection(testCollectionNumericId()),
-      )
+      const result = await runAsAdmin(apiKey.id, () => deleteCollection(testCollectionNumericId()))
 
       expect(result.isOk()).toBe(true)
     }),
