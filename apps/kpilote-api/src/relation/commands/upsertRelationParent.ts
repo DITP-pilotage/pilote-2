@@ -44,6 +44,13 @@ const performUpsert = async (
     select: { id: true },
   })
 
+  // Verrou sur la ligne de l'enfant pour la durée de la transaction. Sans lui,
+  // et faute de contrainte d'unicité sur `child_id`, deux écritures concurrentes
+  // sur le même enfant intercalent leur deleteMany/create et laissent deux
+  // parents — le cas se produit même sans relation préexistante, puisque
+  // `deleteMany` ne verrouille alors aucune ligne.
+  await db().$executeRaw`SELECT id FROM individu WHERE id = ${enfant.id}::uuid FOR UPDATE`
+
   if (await estDescendant(parent.id, enfant.id)) return err({ type: 'CYCLE_DETECTE' })
 
   await db().relation.deleteMany({ where: { childId: enfant.id } })

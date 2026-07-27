@@ -3,7 +3,7 @@ import { Hono } from 'hono'
 import { kpiloteApiUrlFor } from '@/server/environments'
 import { readSession } from '@/server/session'
 
-// Ressources relayables (lecture + upsert indicateurs/référentiels/individus).
+// Ressources relayables, à tenir à jour avec la regex ci-dessous.
 // Segments sûrs uniquement : une ressource autorisée, puis des segments composés
 // de caractères de public id (alphanum, `_`, `-`). Tout le reste est rejeté.
 const SAFE_PATH =
