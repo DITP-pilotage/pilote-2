@@ -66,6 +66,13 @@ describe('PUT /relations/{id} — câblage', () => {
     const doc = (await response.json()) as { paths: Record<string, Record<string, unknown>> }
     expect(doc.paths['/relations']?.get).toBeDefined()
     expect(doc.paths['/relations/{id}']?.put).toBeDefined()
+    expect(doc.paths['/relations/{id}']?.delete).toBeDefined()
+  })
+
+  it('renvoie 401 sur une suppression non authentifiée', async () => {
+    const response = await app.request('/relations/DEPT-01', { method: 'DELETE' })
+
+    expect(response.status).toBe(401)
   })
 
   it('renvoie 401 sans authentification', async () => {

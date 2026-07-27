@@ -13,6 +13,7 @@ import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
 import { jsonResponseError, jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { ErrorApiModelSchema, erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
+import { supprimerRelation } from '@/relation/commands/supprimerRelation'
 import { upsertRelationParent } from '@/relation/commands/upsertRelationParent'
 import { getRelationByEnfant } from '@/relation/queries/getRelationByEnfant'
 import { listRelations } from '@/relation/queries/listRelations'
@@ -74,6 +75,23 @@ const upsertRelationRoute = createRoute({
   },
 })
 
+// --- DELETE /relations/:id ---------------------------------------------------
+
+const supprimerRelationRoute = createRoute({
+  method: 'delete',
+  path: '/relations/{id}',
+  tags: ['Relation', 'Admin'],
+  summary: "Supprimer le parent d'un individu",
+  description:
+    "Réservé aux clés API de rôle `ADMIN` (les utilisateurs OIDC authentifiés restent autorisés). `id` est l'identifiant public de l'individu **enfant**. Idempotent : retourne `204` même si l'individu n'avait pas de parent.",
+  middleware: [requireAuthentication],
+  request: { params: detailParamsSchema },
+  responses: {
+    204: { description: 'Relation supprimée' },
+    403: erreur403,
+  },
+})
+
 const MESSAGES_ERREUR: Record<'AUTO_PARENT' | 'CYCLE_DETECTE', string> = {
   AUTO_PARENT: 'Un individu ne peut pas être son propre parent',
   CYCLE_DETECTE:
@@ -123,4 +141,10 @@ relationRoutes.openapi(upsertRelationRoute, async (context) => {
         status: 400,
       }),
   )
+})
+
+relationRoutes.openapi(supprimerRelationRoute, async (context) => {
+  const { id } = context.req.valid('param')
+
+  return (await supprimerRelation(id)).match(() => context.body(null, 204), never)
 })
