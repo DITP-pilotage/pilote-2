@@ -76,6 +76,10 @@
       "types": "./src/referentiel.ts",
       "default": "./src/referentiel.ts"
     },
+    "./relation": {
+      "types": "./src/relation.ts",
+      "default": "./src/relation.ts"
+    },
     "./valeurAvancement": {
       "types": "./src/valeurAvancement.ts",
       "default": "./src/valeurAvancement.ts"
