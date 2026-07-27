@@ -12,15 +12,25 @@ export const collectionVisibiliteSchema = z
   )
 export type CollectionVisibilite = z.infer<typeof collectionVisibiliteSchema>
 
+export const collectionIndicateurApiModelSchema = z.object({
+  id: indicateurPublicIdSchema,
+  ponderation: z
+    .number()
+    .describe(
+      'Poids de l’indicateur dans la moyenne pondérée du taux de progression de la collection. 1 par défaut ; 0 exclut l’indicateur du calcul.',
+    ),
+})
+export type CollectionIndicateurApiModel = z.infer<typeof collectionIndicateurApiModelSchema>
+
 export const collectionApiModelSchema = z.object({
   id: collectionPublicIdSchema,
   nom: z.string().describe('Nom lisible de la collection.'),
   description: z.string().nullable().describe('Description libre de la collection.'),
   visibilite: collectionVisibiliteSchema,
-  indicateurIds: z
-    .array(indicateurPublicIdSchema)
+  indicateurs: z
+    .array(collectionIndicateurApiModelSchema)
     .describe(
-      "Identifiants publics des indicateurs composant la collection, triés par ordre d'insertion (createdAt ASC).",
+      "Indicateurs composant la collection, triés par ordre d'insertion (createdAt ASC), avec leur pondération.",
     ),
   responsables: z
     .array(responsableApiModelSchema)

@@ -29,7 +29,10 @@ describe.concurrent('getCollectionByPublicId', () => {
         nom: 'Collection de détail',
         description: 'Une description',
         visibilite: 'PUBLIC',
-        indicateurIds: [indA, indB],
+        indicateurs: [
+          { id: indA, ponderation: 1 },
+          { id: indB, ponderation: 1 },
+        ],
         responsables: [],
         contactsUtiles: [],
         createdAt: collection.createdAt.toISOString(),
@@ -53,7 +56,7 @@ describe.concurrent('getCollectionByPublicId', () => {
 
       expect(result._unsafeUnwrap()).toMatchObject({
         id: dosEmpty,
-        indicateurIds: [],
+        indicateurs: [],
         description: null,
       })
     }),

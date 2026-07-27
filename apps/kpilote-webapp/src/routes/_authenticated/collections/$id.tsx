@@ -50,8 +50,9 @@ export const Route = createFileRoute('/_authenticated/collections/$id')({
   loader: async ({ context, params, deps, location }) => {
     const { queryClient } = context
     const collection = await loadCollection({ queryClient, collectionId: params.id })
-    if (collection.indicateurIds.length > 0) {
-      await queryClient.ensureQueryData(indicateursQueryOptions({ ids: collection.indicateurIds }))
+    const indicateurIds = collection.indicateurs.map((lien) => lien.id)
+    if (indicateurIds.length > 0) {
+      await queryClient.ensureQueryData(indicateursQueryOptions({ ids: indicateurIds }))
     }
 
     const referentielIds = await loadAllReferentielIds({ queryClient })
@@ -91,16 +92,15 @@ function CollectionDetailComponent() {
   const navigate = useNavigate({ from: Route.fullPath })
   const { data: collection } = useSuspenseQuery(collectionQueryOptions(id))
   useRecordVisit({ type: 'collection', id: collection.id, label: collection.nom })
-  const { data: indicateurs } = useSuspenseQuery(
-    indicateursQueryOptions({ ids: collection.indicateurIds }),
-  )
+  const indicateurIds = collection.indicateurs.map((lien) => lien.id)
+  const { data: indicateurs } = useSuspenseQuery(indicateursQueryOptions({ ids: indicateurIds }))
   const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
   const referentielIds = referentiels.map((r) => r.id)
 
   // Re-tri selon l'ordre de la collection : la query indicateurs ne garantit pas
   // l'ordre du filtre `ids`.
   const indicateurById = new Map(indicateurs.items.map((i) => [i.id, i]))
-  const orderedIndicateurs = collection.indicateurIds
+  const orderedIndicateurs = indicateurIds
     .map((indicateurId) => indicateurById.get(indicateurId))
     .filter((i): i is NonNullable<typeof i> => i !== undefined)
 

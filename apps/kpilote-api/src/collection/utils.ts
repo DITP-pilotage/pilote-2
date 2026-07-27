@@ -1,6 +1,7 @@
 import { type CollectionApiModel } from '@pilote/kpilote-shared/collection'
 import { type CollectionContactsUtilesGroup } from '@pilote/kpilote-shared/collectionContactUtile'
 
+import { type Decimal } from '@/framework/decimal'
 import {
   type ContactUtileModel,
   type CollectionModel,
@@ -12,7 +13,7 @@ import {
 type ContactUtileLien = { contactUtile: ContactUtileModel & { organisme: OrganismeModel } }
 
 export type CollectionWithIndicateurs = CollectionModel & {
-  indicateurs: Array<{ indicateur: Pick<IndicateurModel, 'publicId'> }>
+  indicateurs: Array<{ ponderation: Decimal; indicateur: Pick<IndicateurModel, 'publicId'> }>
   responsables: Array<{ utilisateur: UtilisateurModel }>
   contactsUtiles: ContactUtileLien[]
 }
@@ -56,7 +57,10 @@ export const toCollectionApiModel = (
   nom: collection.nom,
   description: collection.description,
   visibilite: collection.visibilite,
-  indicateurIds: collection.indicateurs.map((lien) => lien.indicateur.publicId),
+  indicateurs: collection.indicateurs.map((lien) => ({
+    id: lien.indicateur.publicId,
+    ponderation: lien.ponderation.toNumber(),
+  })),
   responsables: collection.responsables.map(({ utilisateur }) => ({
     id: utilisateur.id,
     email: utilisateur.email,

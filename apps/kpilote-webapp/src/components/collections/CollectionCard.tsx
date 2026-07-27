@@ -17,10 +17,10 @@ export function CollectionCard({
   collection,
   context,
 }: {
-  collection: Pick<CollectionApiModel, 'id' | 'nom' | 'description' | 'indicateurIds'>
+  collection: Pick<CollectionApiModel, 'id' | 'nom' | 'description' | 'indicateurs'>
   context?: CollectionCardContext | undefined
 }) {
-  const nb = collection.indicateurIds.length
+  const nb = collection.indicateurs.length
   return (
     <EntityCard
       asChild
