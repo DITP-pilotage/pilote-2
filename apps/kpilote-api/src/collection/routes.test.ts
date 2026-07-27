@@ -13,6 +13,7 @@ describe('routes collection — câblage', () => {
     const doc = (await response.json()) as { paths: Record<string, Record<string, unknown>> }
     expect(doc.paths['/collections']?.post).toBeDefined()
     expect(doc.paths['/collections/{id}']?.put).toBeDefined()
+    expect(doc.paths['/collections/{id}']?.delete).toBeDefined()
   })
 
   it('renvoie 401 sur une création non authentifiée', async () => {

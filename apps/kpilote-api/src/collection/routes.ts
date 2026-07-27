@@ -39,6 +39,7 @@ import { jsonResponseOk } from '@/framework/openapi/jsonResponse'
 import { erreur400, erreur403, erreur404 } from '@/framework/openapi/responses'
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { createCollection } from '@/collection/commands/createCollection'
+import { deleteCollection } from '@/collection/commands/deleteCollection'
 import { upsertCollection } from '@/collection/commands/upsertCollection'
 import {
   creerCollectionCommentaire,
@@ -252,6 +253,29 @@ collectionRoutes.openapi(upsertCollectionRoute, async (context) => {
     (data) => jsonResponseOk({ context, data, schema: CollectionApiModelSchema, status: 200 }),
     never,
   )
+})
+
+// --- DELETE /collections/:id -----------------------------------------------------
+
+const deleteCollectionRoute = createRoute({
+  method: 'delete',
+  path: '/collections/{id}',
+  tags: ['Collection', 'Admin'],
+  summary: 'Supprimer une collection',
+  description:
+    "Réservé aux clés API de rôle `ADMIN`. Supprime définitivement la collection ainsi que ses indicateurs affectés, responsables, permissions, contacts utiles et commentaires. Les indicateurs eux-mêmes ne sont pas supprimés. Idempotent : renvoie `204` même si la collection n'existait pas.",
+  middleware: [requireAuthentication],
+  request: { params: detailParamsSchema },
+  responses: {
+    204: { description: 'Collection supprimée' },
+    403: erreur403,
+  },
+})
+
+collectionRoutes.openapi(deleteCollectionRoute, async (context) => {
+  const { id } = context.req.valid('param')
+  const result = await withTransaction(async () => deleteCollection(id))
+  return result.match(() => context.body(null, 204), never)
 })
 
 // --- POST /collections/:id/commentaires ------------------------------------------
