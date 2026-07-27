@@ -6,7 +6,7 @@ import { normaliserTexte } from '@/lib/texte'
  * Regroupement d'une commande dans la palette. Volontairement extensible :
  * les itérations futures ajouteront `'collections'`, `'actions'`, etc.
  */
-export type CommandGroup = 'navigation' | 'recents' | 'indicateurs' | 'collections'
+export type CommandGroup = 'navigation' | 'recents' | 'indicateurs' | 'collections' | 'centre-aide'
 
 /**
  * Sous-action accessible via `Tab` sur une commande actionnable (ex: sur un
@@ -52,6 +52,10 @@ export type Command = {
   icon?: LucideIcon
   /** Texte secondaire discret (ex: le publicId affiché en mono). */
   hint?: string
+  /** Extrait affiché sur une seconde ligne (ex: passage d'article qui matche). */
+  description?: string
+  /** Plage `[start, end)` du terme matché dans `description`, à mettre en gras. */
+  descriptionMatch?: { start: number; end: number }
   /** Action primaire déclenchée par `Entrée`. */
   run: () => void
   /** Sous-actions accessibles via `Tab` (page dédiée). Opt-in par commande. */

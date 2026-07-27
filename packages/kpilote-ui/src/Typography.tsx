@@ -3,14 +3,7 @@ import { createElement, type ReactNode } from 'react'
 import { clsxm } from './clsxm'
 
 type HeadingSize =
-  | 'sm'
-  | 'md'
-  | 'lg'
-  | 'xl'
-  | 'display-sm'
-  | 'display-md'
-  | 'display-lg'
-  | 'display-xl'
+  'sm' | 'md' | 'lg' | 'xl' | 'display-sm' | 'display-md' | 'display-lg' | 'display-xl'
 type HeadingTone = 'neutral' | 'muted' | 'primary'
 type HeadingAs = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'p' | 'span' | 'div'
 

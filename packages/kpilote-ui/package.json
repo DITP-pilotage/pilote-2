@@ -5,6 +5,10 @@
   "type": "module",
   "exports": {
     "./theme.css": "./theme.css",
+    "./Accordeon": {
+      "types": "./src/Accordeon.tsx",
+      "default": "./src/Accordeon.tsx"
+    },
     "./BackLink": {
       "types": "./src/BackLink.tsx",
       "default": "./src/BackLink.tsx"
@@ -12,6 +16,10 @@
     "./Button": {
       "types": "./src/Button.tsx",
       "default": "./src/Button.tsx"
+    },
+    "./Callout": {
+      "types": "./src/Callout.tsx",
+      "default": "./src/Callout.tsx"
     },
     "./Card": {
       "types": "./src/Card.tsx",
@@ -156,6 +164,10 @@
     "./clsxm": {
       "types": "./src/clsxm.ts",
       "default": "./src/clsxm.ts"
+    },
+    "./centre-aide": {
+      "types": "./src/centre-aide/index.ts",
+      "default": "./src/centre-aide/index.ts"
     }
   },
   "files": [
@@ -163,6 +175,8 @@
     "theme.css"
   ],
   "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
     "lint": "prettier --check .",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
@@ -174,6 +188,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "dompurify": "^3.4.11",
     "lucide-react": "^1.14.0",
     "radix-ui": "^1.4.3",
     "react": "^19.2.5",
@@ -182,11 +197,16 @@
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "dompurify": "^3.4.11",
+    "jsdom": "^29.1.1",
     "lucide-react": "^1.23.0",
     "prettier": "^3.9.4",
     "radix-ui": "^1.6.1",
@@ -194,6 +214,7 @@
     "react-dom": "^19.2.7",
     "react-hook-form": "^7.80.0",
     "tailwind-merge": "^3.6.0",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "vitest": "^4.1.9"
   }
 }

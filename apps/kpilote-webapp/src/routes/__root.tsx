@@ -77,6 +77,15 @@ function RootComponent() {
                   Données personnelles et cookies
                 </Link>
               </li>
+              <li>
+                <Link
+                  to="/centre-aide"
+                  search={{ article: undefined }}
+                  className="transition-colors hover:text-primary"
+                >
+                  Centre d’aide
+                </Link>
+              </li>
             </ul>
           </div>
         </div>

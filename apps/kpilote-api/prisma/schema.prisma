@@ -14,14 +14,16 @@ model Principal {
   id        String   @id @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  utilisateur              Utilisateur?
-  apiKey                   ApiKey?
-  indicateurPermissions    IndicateurPermission[]
-  collectionPermissions       CollectionPermission[]
-  commentairesCrees        Commentaire[]          @relation("commentaireCreatedBy")
-  commentairesModifies     Commentaire[]          @relation("commentaireUpdatedBy")
-  niveauxConfianceCrees    NiveauConfiance[]      @relation("niveauConfianceCreatedBy")
-  niveauxConfianceModifies NiveauConfiance[]      @relation("niveauConfianceUpdatedBy")
+  utilisateur                Utilisateur?
+  apiKey                     ApiKey?
+  indicateurPermissions      IndicateurPermission[]
+  collectionPermissions      CollectionPermission[]
+  commentairesCrees          Commentaire[]          @relation("commentaireCreatedBy")
+  commentairesModifies       Commentaire[]          @relation("commentaireUpdatedBy")
+  niveauxConfianceCrees      NiveauConfiance[]      @relation("niveauConfianceCreatedBy")
+  niveauxConfianceModifies   NiveauConfiance[]      @relation("niveauConfianceUpdatedBy")
+  articlesCentreAideCrees    ArticleCentreAide[]    @relation("articleCentreAideCreatedBy")
+  articlesCentreAideModifies ArticleCentreAide[]    @relation("articleCentreAideUpdatedBy")
 
   @@map("principal")
 }
@@ -45,9 +47,9 @@ model Utilisateur {
 
   principal                 Principal               @relation(fields: [id], references: [id], onDelete: Cascade)
   identites                 IdentiteExterne[]
-  responsabilitesCollection    CollectionResponsable[]
+  responsabilitesCollection CollectionResponsable[]
   responsabilitesIndicateur IndicateurResponsable[]
-  featuresAutorises FeatureUtilisateur[]
+  featuresAutorises         FeatureUtilisateur[]
 
   @@map("utilisateur")
 }
@@ -105,14 +107,14 @@ model Indicateur {
   delaiMiseADispositionNombre Int?        @map("delai_mad_nombre")
   delaiMiseADispositionUnite  UniteDuree? @map("delai_mad_unite")
 
-  createdAt        DateTime          @default(now()) @map("created_at")
-  updatedAt        DateTime          @updatedAt @map("updated_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   valeurs              ValeurAvancement[]
   objectifs            ObjectifIndicateurIndividu[]
   referentiels         IndicateurReferentiel[]
   permissions          IndicateurPermission[]
-  collections             CollectionIndicateur[]
+  collections          CollectionIndicateur[]
   individuCommentaires IndicateurIndividuCommentaire[]
   responsables         IndicateurResponsable[]
 
@@ -351,23 +353,23 @@ model Collection {
   createdAt   DateTime   @default(now()) @map("created_at")
   updatedAt   DateTime   @updatedAt @map("updated_at")
 
-  indicateurs  CollectionIndicateur[]
-  permissions  CollectionPermission[]
-  responsables CollectionResponsable[]
-  commentaires CollectionCommentaire[]
+  indicateurs    CollectionIndicateur[]
+  permissions    CollectionPermission[]
+  responsables   CollectionResponsable[]
+  commentaires   CollectionCommentaire[]
   contactsUtiles CollectionContactUtile[]
 
   @@map("collection")
 }
 
 model CollectionPermission {
-  principalId String           @map("principal_id") @db.Uuid
-  collectionId   String           @map("collection_id") @db.Uuid
-  action      PermissionAction
-  createdAt   DateTime         @default(now()) @map("created_at")
+  principalId  String           @map("principal_id") @db.Uuid
+  collectionId String           @map("collection_id") @db.Uuid
+  action       PermissionAction
+  createdAt    DateTime         @default(now()) @map("created_at")
 
-  principal Principal @relation(fields: [principalId], references: [id], onDelete: Cascade)
-  collection   Collection   @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  principal  Principal  @relation(fields: [principalId], references: [id], onDelete: Cascade)
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
 
   @@id([principalId, collectionId, action])
   @@index([collectionId])
@@ -375,12 +377,12 @@ model CollectionPermission {
 }
 
 model CollectionIndicateur {
-  collectionId    String   @map("collection_id") @db.Uuid
+  collectionId String   @map("collection_id") @db.Uuid
   indicateurId String   @map("indicateur_id") @db.Uuid
   ponderation  Decimal  @default(1) @db.Decimal(20, 2)
   createdAt    DateTime @default(now()) @map("created_at")
 
-  collection    Collection    @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
 
   @@id([collectionId, indicateurId])
@@ -389,11 +391,11 @@ model CollectionIndicateur {
 }
 
 model CollectionResponsable {
-  collectionId     String   @map("collection_id") @db.Uuid
+  collectionId  String   @map("collection_id") @db.Uuid
   utilisateurId String   @map("utilisateur_id") @db.Uuid
   createdAt     DateTime @default(now()) @map("created_at")
 
-  collection     Collection     @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collection  Collection  @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
 
   @@id([collectionId, utilisateurId])
@@ -437,18 +439,18 @@ model ContactUtile {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  organisme Organisme            @relation(fields: [organismeId], references: [id])
-  collections  CollectionContactUtile[]
+  organisme   Organisme                @relation(fields: [organismeId], references: [id])
+  collections CollectionContactUtile[]
 
   @@map("contact_utile")
 }
 
 model CollectionContactUtile {
-  collectionId      String   @map("collection_id") @db.Uuid
+  collectionId   String   @map("collection_id") @db.Uuid
   contactUtileId String   @map("contact_utile_id") @db.Uuid
   createdAt      DateTime @default(now()) @map("created_at")
 
-  collection      Collection      @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collection   Collection   @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   contactUtile ContactUtile @relation(fields: [contactUtileId], references: [id], onDelete: Cascade)
 
   @@id([collectionId, contactUtileId])
@@ -527,7 +529,7 @@ model Commentaire {
   auteurModification Principal @relation("commentaireUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
 
   indicateurIndividu IndicateurIndividuCommentaire?
-  collection            CollectionCommentaire?
+  collection         CollectionCommentaire?
   niveauxConfiance   NiveauConfiance[]
 
   @@index([createdBy])
@@ -550,12 +552,12 @@ model IndicateurIndividuCommentaire {
 }
 
 model CollectionCommentaire {
-  commentaireId String                @id @map("commentaire_id") @db.Uuid
-  collectionId     String                @map("collection_id") @db.Uuid
+  commentaireId String                    @id @map("commentaire_id") @db.Uuid
+  collectionId  String                    @map("collection_id") @db.Uuid
   type          CollectionCommentaireType
 
   commentaire Commentaire @relation(fields: [commentaireId], references: [id], onDelete: Cascade)
-  collection     Collection     @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  collection  Collection  @relation(fields: [collectionId], references: [id], onDelete: Cascade)
 
   @@index([collectionId])
   @@map("collection_commentaire")
@@ -587,12 +589,12 @@ enum FeatureEtat {
 }
 
 model Feature {
-  id        String              @id @db.Uuid
-  key       String              @unique
+  id        String      @id @db.Uuid
+  key       String      @unique
   nom       String
   etat      FeatureEtat @default(DESACTIVE)
-  createdAt DateTime            @default(now()) @map("created_at")
-  updatedAt DateTime            @updatedAt @map("updated_at")
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @updatedAt @map("updated_at")
 
   utilisateursAutorises FeatureUtilisateur[]
 
@@ -600,15 +602,61 @@ model Feature {
 }
 
 model FeatureUtilisateur {
-  featureId String   @map("feature_id") @db.Uuid
-  utilisateurId     String   @map("utilisateur_id") @db.Uuid
-  createdAt         DateTime @default(now()) @map("created_at")
+  featureId     String   @map("feature_id") @db.Uuid
+  utilisateurId String   @map("utilisateur_id") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at")
 
-  feature Feature @relation(fields: [featureId], references: [id], onDelete: Cascade)
-  utilisateur     Utilisateur     @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  feature     Feature     @relation(fields: [featureId], references: [id], onDelete: Cascade)
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
 
   @@id([featureId, utilisateurId])
   @@index([featureId])
   @@index([utilisateurId])
   @@map("feature_utilisateur")
+}
+
+enum ArticleCentreAideType {
+  GROUPE
+  PAGE
+
+  @@map("article_centre_aide_type_enum")
+}
+
+enum ArticleCentreAideStatut {
+  ACTIF
+  CORBEILLE
+
+  @@map("article_centre_aide_statut_enum")
+}
+
+model ArticleCentreAide {
+  id                    String                  @id @db.Uuid
+  type                  ArticleCentreAideType
+  statut                ArticleCentreAideStatut @default(ACTIF)
+  parentId              String?                 @map("parent_id") @db.Uuid
+  ordre                 Int
+  estPublie             Boolean                 @default(false) @map("est_publie")
+  estMasque             Boolean                 @default(false) @map("est_masque")
+  titre                 String                  @default("")
+  titreAffiche          String                  @default("") @map("titre_affiche")
+  contenu               String                  @default("")
+  contenuTexte          String                  @default("") @map("contenu_texte")
+  titreBrouillon        String                  @default("") @map("titre_brouillon")
+  titreAfficheBrouillon String                  @default("") @map("titre_affiche_brouillon")
+  contenuBrouillon      String                  @default("") @map("contenu_brouillon")
+  createdBy             String                  @map("created_by") @db.Uuid
+  updatedBy             String                  @map("updated_by") @db.Uuid
+  createdAt             DateTime                @default(now()) @map("created_at")
+  updatedAt             DateTime                @updatedAt @map("updated_at")
+
+  auteurCreation     Principal           @relation("articleCentreAideCreatedBy", fields: [createdBy], references: [id], onDelete: Restrict)
+  auteurModification Principal           @relation("articleCentreAideUpdatedBy", fields: [updatedBy], references: [id], onDelete: Restrict)
+  parent             ArticleCentreAide?  @relation("articleCentreAideParent", fields: [parentId], references: [id], onDelete: Cascade)
+  enfants            ArticleCentreAide[] @relation("articleCentreAideParent")
+
+  @@index([parentId])
+  @@index([createdBy])
+  @@index([updatedBy])
+  @@index([statut])
+  @@map("article_centre_aide")
 }

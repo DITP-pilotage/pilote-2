@@ -38,10 +38,7 @@ export function TabsTrigger({ className, ...props }: ComponentProps<typeof TabsP
 export function TabsContent({ className, ...props }: ComponentProps<typeof TabsPrimitive.Content>) {
   return (
     <TabsPrimitive.Content
-      className={clsxm(
-        'border border-border bg-surface p-6 focus-visible:outline-none',
-        className,
-      )}
+      className={clsxm('border border-border bg-surface p-6 focus-visible:outline-none', className)}
       {...props}
     />
   )

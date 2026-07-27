@@ -1,0 +1,350 @@
+import type { ArticleCentreAideApiModel } from '@pilote/kpilote-shared/centreAide'
+import { articleVersModification } from '@pilote/kpilote-shared/centreAide'
+import { useMutation, useQuery, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { ExternalLink, Eye, EyeOff, FilePlus2, FolderPlus, RotateCcw, Trash2 } from 'lucide-react'
+import { useState } from 'react'
+
+import {
+  creerArticleCentreAide,
+  modifierArticleCentreAide,
+  supprimerArticleCentreAide,
+} from '@/api/centreAide'
+import { ArbreCentreAide } from '@/components/centre-aide/ArbreCentreAide'
+import { Breadcrumb } from '@/components/Breadcrumb'
+import { EditeurCentreAide } from '@/components/centre-aide/EditeurCentreAide'
+import { aDesModificationsNonPubliees } from '@/components/centre-aide/arbre'
+import { PageHeading } from '@/components/PageHeading'
+import { useAppConfig } from '@/context/AppConfigContext'
+import { Button } from '@pilote/kpilote-ui/Button'
+import { useToast } from '@pilote/kpilote-ui/Toast'
+import { clsxm } from '@/lib/clsxm'
+import { extractApiError } from '@/lib/apiError'
+import { urlWebappArticle } from '@/lib/webapp'
+import {
+  articlesCentreAideCorbeilleQueryOptions,
+  articlesCentreAideQueryOptions,
+} from '@/queries/centreAide'
+
+export const Route = createFileRoute('/_authed/centre-aide/')({
+  loader: ({ context }) => context.queryClient.ensureQueryData(articlesCentreAideQueryOptions()),
+  component: CentreAideComponent,
+})
+
+function CentreAideComponent() {
+  const { data: articles } = useSuspenseQuery(articlesCentreAideQueryOptions())
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [corbeilleOuverte, setCorbeilleOuverte] = useState(false)
+  const queryClient = useQueryClient()
+  const toast = useToast()
+
+  const rafraichir = () => queryClient.invalidateQueries({ queryKey: ['centre-aide'] })
+  const surErreur = (erreur: unknown) => toast({ title: extractApiError(erreur), variant: 'error' })
+
+  const selectionne = articles.find((article) => article.id === selectedId) ?? null
+  const parentPourCreation =
+    selectionne?.type === 'GROUPE' ? selectionne.id : (selectionne?.parentId ?? null)
+
+  const creation = useMutation({
+    mutationFn: (type: 'GROUPE' | 'PAGE') =>
+      creerArticleCentreAide({
+        type,
+        parentId: parentPourCreation,
+        titre: type === 'GROUPE' ? 'Nouveau groupe' : 'Nouvelle page',
+      }),
+    onSuccess: async (article) => {
+      await rafraichir()
+      setCorbeilleOuverte(false)
+      setSelectedId(article.id)
+    },
+    onError: surErreur,
+  })
+
+  const miseEnCorbeille = useMutation({
+    mutationFn: (article: ArticleCentreAideApiModel) =>
+      modifierArticleCentreAide(article.id, {
+        ...articleVersModification(article),
+        statut: 'CORBEILLE',
+      }),
+    onSuccess: async () => {
+      await rafraichir()
+      setSelectedId(null)
+      toast({ title: 'Article mis en corbeille.' })
+    },
+    onError: surErreur,
+  })
+
+  const visibilite = useMutation({
+    mutationFn: (article: ArticleCentreAideApiModel) =>
+      modifierArticleCentreAide(article.id, {
+        ...articleVersModification(article),
+        estMasque: !article.estMasque,
+      }),
+    onSuccess: rafraichir,
+    onError: surErreur,
+  })
+
+  const deplacement = useMutation({
+    mutationFn: ({
+      article,
+      cible,
+    }: {
+      article: ArticleCentreAideApiModel
+      cible: { parentId: string | null; index: number }
+    }) =>
+      modifierArticleCentreAide(article.id, {
+        ...articleVersModification(article),
+        parentId: cible.parentId,
+        ordre: cible.index,
+      }),
+    onSuccess: rafraichir,
+    onError: surErreur,
+  })
+
+  return (
+    <div>
+      <Breadcrumb>
+        <Link to="/fonctionnalites" className="hover:text-primary">
+          Fonctionnalités
+        </Link>
+        <span className="font-medium text-text">Centre d’aide</span>
+      </Breadcrumb>
+      <PageHeading
+        title="Centre d’aide"
+        subtitle="Rédigez les articles tels qu’ils s’afficheront, puis publiez."
+      />
+
+      <div className="flex gap-6">
+        <aside className="w-72 shrink-0">
+          <div className="mb-3 flex gap-2">
+            <Button size="sm" variant="secondary" onClick={() => creation.mutate('GROUPE')}>
+              <FolderPlus className="size-4" /> Groupe
+            </Button>
+            <Button size="sm" variant="secondary" onClick={() => creation.mutate('PAGE')}>
+              <FilePlus2 className="size-4" /> Page
+            </Button>
+          </div>
+          <ArbreCentreAide
+            articles={articles}
+            selectedId={corbeilleOuverte ? null : selectedId}
+            onSelect={(id) => {
+              setCorbeilleOuverte(false)
+              setSelectedId(id)
+            }}
+            onDeplacer={(id, cible) => {
+              const article = articles.find((candidat) => candidat.id === id)
+              if (article) deplacement.mutate({ article, cible })
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => setCorbeilleOuverte((precedent) => !precedent)}
+            className={clsxm(
+              'mt-4 flex w-full items-center gap-2 rounded px-2 py-1.5 text-sm transition-colors',
+              corbeilleOuverte
+                ? 'bg-primary-tinted text-primary'
+                : 'text-text-muted hover:bg-surface-tinted',
+            )}
+          >
+            <Trash2 className="size-4" /> Corbeille
+          </button>
+        </aside>
+
+        <section className="min-w-0 flex-1">
+          {corbeilleOuverte ? (
+            <Corbeille onRafraichir={rafraichir} />
+          ) : selectionne ? (
+            <EditionArticle
+              key={selectionne.id}
+              article={selectionne}
+              onEnregistre={rafraichir}
+              onSupprimer={() => miseEnCorbeille.mutate(selectionne)}
+              onBasculerVisibilite={() => visibilite.mutate(selectionne)}
+            />
+          ) : (
+            <div className="rounded-md border border-dashed border-border p-10 text-center text-sm text-text-muted">
+              Sélectionnez une page ou un groupe à gauche.
+            </div>
+          )}
+        </section>
+      </div>
+    </div>
+  )
+}
+
+function EditionArticle({
+  article,
+  onEnregistre,
+  onSupprimer,
+  onBasculerVisibilite,
+}: {
+  article: ArticleCentreAideApiModel
+  onEnregistre: () => Promise<unknown>
+  onSupprimer: () => void
+  onBasculerVisibilite: () => void
+}) {
+  const toast = useToast()
+  const { environment } = useAppConfig()
+  const urlArticle = urlWebappArticle(environment, article.id)
+  const [titre, setTitre] = useState(article.titreBrouillon || article.titre)
+  const [contenu, setContenu] = useState(article.contenuBrouillon || article.contenu)
+
+  const surErreur = (erreur: unknown) => toast({ title: extractApiError(erreur), variant: 'error' })
+
+  const enregistrer = useMutation({
+    mutationFn: () =>
+      modifierArticleCentreAide(article.id, {
+        ...articleVersModification(article),
+        titreBrouillon: titre,
+        titreAfficheBrouillon: titre,
+        contenuBrouillon: contenu,
+      }),
+    onSuccess: async () => {
+      await onEnregistre()
+      toast({ title: 'Brouillon enregistré.' })
+    },
+    onError: surErreur,
+  })
+
+  // Publier = recopier le brouillon courant dans les champs publiés + estPublie.
+  const publier = useMutation({
+    mutationFn: () =>
+      modifierArticleCentreAide(article.id, {
+        ...articleVersModification(article),
+        titreBrouillon: titre,
+        titreAfficheBrouillon: titre,
+        contenuBrouillon: contenu,
+        titre,
+        titreAffiche: titre,
+        contenu,
+        estPublie: true,
+      }),
+    onSuccess: async () => {
+      await onEnregistre()
+      toast({ title: 'Article publié.' })
+    },
+    onError: surErreur,
+  })
+
+  const enAttente = enregistrer.isPending || publier.isPending
+  const estGroupe = article.type === 'GROUPE'
+
+  return (
+    <div>
+      <div className="mb-3 flex items-center gap-3">
+        <input
+          value={titre}
+          onChange={(event) => setTitre(event.target.value)}
+          placeholder={estGroupe ? 'Titre du groupe' : 'Titre de la page'}
+          className="flex-1 border-none bg-transparent px-0 py-2 text-2xl font-bold outline-none placeholder:text-text-subtle"
+        />
+        {urlArticle ? (
+          <Button asChild variant="tertiary" title="Ouvrir l’article publié dans le webapp">
+            <a href={urlArticle} target="_blank" rel="noopener noreferrer">
+              <ExternalLink className="size-4" /> Accéder à cet article
+            </a>
+          </Button>
+        ) : null}
+        {estGroupe ? null : (
+          <Button
+            variant="tertiary"
+            onClick={onBasculerVisibilite}
+            title={article.estMasque ? 'Rendre visible' : 'Masquer du centre d’aide'}
+          >
+            {article.estMasque ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+          </Button>
+        )}
+        <Button
+          variant="tertiary"
+          onClick={onSupprimer}
+          title="Mettre à la corbeille"
+          className="text-red-marianne"
+        >
+          <Trash2 className="size-4" />
+        </Button>
+        <Button variant="secondary" onClick={() => enregistrer.mutate()} disabled={enAttente}>
+          Enregistrer
+        </Button>
+        {estGroupe ? null : (
+          <Button onClick={() => publier.mutate()} disabled={enAttente}>
+            Publier
+          </Button>
+        )}
+      </div>
+      {!estGroupe && aDesModificationsNonPubliees(article) ? (
+        <p className="mb-2 text-xs text-warning">Modifications non publiées</p>
+      ) : null}
+      {estGroupe ? (
+        <p className="text-sm text-text-muted">
+          Un groupe organise l’arborescence. Il apparaît automatiquement dans le centre d’aide dès
+          qu’il contient au moins une page publiée — pas besoin de le publier lui-même.
+        </p>
+      ) : (
+        <EditeurCentreAide contenu={contenu} onChange={setContenu} />
+      )}
+    </div>
+  )
+}
+
+function Corbeille({ onRafraichir }: { onRafraichir: () => Promise<unknown> }) {
+  const { data: articles } = useQuery(articlesCentreAideCorbeilleQueryOptions())
+  const toast = useToast()
+  const surErreur = (erreur: unknown) => toast({ title: extractApiError(erreur), variant: 'error' })
+
+  const restauration = useMutation({
+    mutationFn: (article: ArticleCentreAideApiModel) =>
+      modifierArticleCentreAide(article.id, {
+        ...articleVersModification(article),
+        statut: 'ACTIF',
+      }),
+    onSuccess: async () => {
+      await onRafraichir()
+      toast({ title: 'Article restauré.' })
+    },
+    onError: surErreur,
+  })
+
+  const suppressionDefinitive = useMutation({
+    mutationFn: (id: string) => supprimerArticleCentreAide(id),
+    onSuccess: async () => {
+      await onRafraichir()
+      toast({ title: 'Article supprimé définitivement.' })
+    },
+    onError: surErreur,
+  })
+
+  return (
+    <div>
+      <h2 className="mb-3 text-lg font-bold">Corbeille</h2>
+      {!articles ? (
+        <p className="text-sm text-text-muted">Chargement…</p>
+      ) : articles.length === 0 ? (
+        <p className="text-sm text-text-muted">La corbeille est vide.</p>
+      ) : (
+        <ul className="space-y-1">
+          {articles.map((article) => (
+            <li
+              key={article.id}
+              className="flex items-center gap-2 rounded border border-border px-3 py-2 text-sm"
+            >
+              <span className="flex-1 truncate">
+                {article.titreBrouillon || article.titre || '(sans titre)'}
+              </span>
+              <Button size="sm" variant="secondary" onClick={() => restauration.mutate(article)}>
+                <RotateCcw className="size-4" /> Restaurer
+              </Button>
+              <Button
+                size="sm"
+                variant="tertiary"
+                className="text-red-marianne"
+                onClick={() => suppressionDefinitive.mutate(article.id)}
+              >
+                <Trash2 className="size-4" /> Supprimer
+              </Button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}

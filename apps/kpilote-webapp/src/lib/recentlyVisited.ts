@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 /** Type de ressource dont on mémorise la visite (fiche de détail). */
-export type RecentType = 'indicateur' | 'collection'
+export type RecentType = 'indicateur' | 'collection' | 'article'
 
 /** Une entrée « visité récemment » : de quoi reconstruire une commande de navigation. */
 export type RecentEntry = {
@@ -22,7 +22,7 @@ function isRecentEntry(value: unknown): value is RecentEntry {
   if (typeof value !== 'object' || value === null) return false
   const entry = value as Record<string, unknown>
   return (
-    (entry.type === 'indicateur' || entry.type === 'collection') &&
+    (entry.type === 'indicateur' || entry.type === 'collection' || entry.type === 'article') &&
     typeof entry.id === 'string' &&
     typeof entry.label === 'string'
   )

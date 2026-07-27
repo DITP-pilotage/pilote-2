@@ -1,5 +1,13 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { BarChart3, FolderTree, KeyRound, Terminal, ToggleLeft, Users } from 'lucide-react'
+import {
+  BarChart3,
+  FolderTree,
+  KeyRound,
+  LifeBuoy,
+  Terminal,
+  ToggleLeft,
+  Users,
+} from 'lucide-react'
 
 import { BarCard } from '@/components/ui/BarCard'
 import { FadeIn } from '@pilote/kpilote-ui/FadeIn'
@@ -60,6 +68,14 @@ function FeaturesComponent() {
             title="Gérer les features"
             description="Activer, désactiver ou cibler des fonctionnalités par utilisateur (réservé aux clés ADMIN)."
             onClick={() => void navigate({ to: '/features' })}
+          />
+        </FadeIn>
+        <FadeIn delayMs={420}>
+          <BarCard
+            icon={LifeBuoy}
+            title="Centre d’aide"
+            description="Rédiger les articles d’aide en édition « en place », puis les publier (réservé aux clés ADMIN)."
+            onClick={() => void navigate({ to: '/centre-aide' })}
           />
         </FadeIn>
       </div>
