@@ -4,6 +4,7 @@ import {
   FolderTree,
   KeyRound,
   LifeBuoy,
+  Network,
   Terminal,
   ToggleLeft,
   Users,
@@ -40,13 +41,21 @@ function FeaturesComponent() {
         </FadeIn>
         <FadeIn delayMs={180}>
           <BarCard
+            icon={Network}
+            title="Gérer les relations"
+            description="Définir le parent de chaque individu dans la hiérarchie des référentiels."
+            onClick={() => void navigate({ to: '/relations' })}
+          />
+        </FadeIn>
+        <FadeIn delayMs={240}>
+          <BarCard
             icon={KeyRound}
             title="Gérer les clés API"
             description="Créer, lister et révoquer les clés API (réservé aux clés ADMIN)."
             onClick={() => void navigate({ to: '/api-keys' })}
           />
         </FadeIn>
-        <FadeIn delayMs={240}>
+        <FadeIn delayMs={300}>
           <BarCard
             icon={Users}
             title="Gérer les utilisateurs"
@@ -54,7 +63,7 @@ function FeaturesComponent() {
             onClick={() => void navigate({ to: '/utilisateurs' })}
           />
         </FadeIn>
-        <FadeIn delayMs={300}>
+        <FadeIn delayMs={360}>
           <BarCard
             icon={Terminal}
             title="Console API"
@@ -62,7 +71,7 @@ function FeaturesComponent() {
             onClick={() => void navigate({ to: '/console' })}
           />
         </FadeIn>
-        <FadeIn delayMs={360}>
+        <FadeIn delayMs={420}>
           <BarCard
             icon={ToggleLeft}
             title="Gérer les features"
@@ -70,7 +79,7 @@ function FeaturesComponent() {
             onClick={() => void navigate({ to: '/features' })}
           />
         </FadeIn>
-        <FadeIn delayMs={420}>
+        <FadeIn delayMs={480}>
           <BarCard
             icon={LifeBuoy}
             title="Centre d’aide"
