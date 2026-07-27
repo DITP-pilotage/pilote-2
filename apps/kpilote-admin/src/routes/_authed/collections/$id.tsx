@@ -10,18 +10,23 @@ import {
   toCollectionBody,
   type CollectionFormValues,
 } from '@/components/collections/CollectionForm'
+import { CollectionIndicateurs } from '@/components/collections/CollectionIndicateurs'
 import { PageHeading } from '@/components/PageHeading'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { Tabs, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tabs'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { collectionQueryOptions } from '@/queries/collections'
+import { indicateursAllQueryOptions } from '@/queries/indicateurs'
 
 type Onglet = 'details' | 'indicateurs' | 'utilisateurs'
 
 export const Route = createFileRoute('/_authed/collections/$id')({
   loader: async ({ context, params }) => {
-    await context.queryClient.ensureQueryData(collectionQueryOptions(params.id))
+    await Promise.all([
+      context.queryClient.ensureQueryData(collectionQueryOptions(params.id)),
+      context.queryClient.ensureQueryData(indicateursAllQueryOptions()),
+    ])
   },
   component: EditCollectionComponent,
 })
@@ -117,7 +122,7 @@ function EditCollectionComponent() {
         </>
       ) : null}
 
-      {onglet === 'indicateurs' ? <p className="text-sm text-text-muted">À brancher.</p> : null}
+      {onglet === 'indicateurs' ? <CollectionIndicateurs collectionId={id} /> : null}
 
       {onglet === 'utilisateurs' ? <p className="text-sm text-text-muted">À brancher.</p> : null}
     </div>
