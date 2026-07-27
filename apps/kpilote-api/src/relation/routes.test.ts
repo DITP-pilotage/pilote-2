@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
+import { app } from '../app'
+
 import { relationRoutes } from '@/relation/routes'
 import { buildTestApp } from '@/test/buildTestApp'
 import { fixtures } from '@/test/fixtures'
@@ -48,6 +50,50 @@ describe.concurrent('GET /relations', () => {
       const response = await buildApp().request('/relations')
 
       expect(response.status).toBe(401)
+    }),
+  )
+})
+
+// Les routes d'écriture ouvrent leur propre transaction (`withTransaction`), qui
+// ne voit pas les fixtures de la transaction de test : leur comportement est
+// couvert par les tests de commande. Ici on vérifie le câblage et le mapping
+// d'erreur qui n'a pas besoin de la base.
+describe('PUT /relations/{id} — câblage', () => {
+  it('déclare la route dans le doc OpenAPI', async () => {
+    const response = await app.request('/openapi.json')
+
+    expect(response.status).toBe(200)
+    const doc = (await response.json()) as { paths: Record<string, Record<string, unknown>> }
+    expect(doc.paths['/relations']?.get).toBeDefined()
+    expect(doc.paths['/relations/{id}']?.put).toBeDefined()
+  })
+
+  it('renvoie 401 sans authentification', async () => {
+    const response = await app.request('/relations/DEPT-01', {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ parent: 'REG-93' }),
+    })
+
+    expect(response.status).toBe(401)
+  })
+
+  it(
+    'mappe AUTO_PARENT sur un 400',
+    integrationTest(async () => {
+      const [dept] = testDeptIds(1)
+      const rawKey = testApiKeyRawKey()
+      await fixtures.individu({ publicId: dept })
+      await fixtures.apiKey({ rawKey, role: 'ADMIN' })
+
+      const response = await buildApp().request(`/relations/${dept}`, {
+        method: 'PUT',
+        headers: { Authorization: `Bearer ${rawKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ parent: dept }),
+      })
+
+      expect(response.status).toBe(400)
+      expect(await response.json()).toMatchObject({ code: 'AUTO_PARENT' })
     }),
   )
 })
