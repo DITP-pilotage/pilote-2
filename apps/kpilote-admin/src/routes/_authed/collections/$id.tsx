@@ -14,7 +14,7 @@ import { indicateursAllQueryOptions } from '@/queries/indicateurs'
 import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
 
 const searchSchema = z.object({
-  onglet: z.enum(['details', 'indicateurs', 'responsables', 'acces']).default('details'),
+  onglet: z.enum(['details', 'indicateurs', 'acces', 'responsables']).default('details'),
 })
 
 export const Route = createFileRoute('/_authed/collections/$id')({
@@ -70,10 +70,10 @@ function EditCollectionComponent() {
           <TabsTrigger value="indicateurs">
             Indicateurs ({collection.indicateurs.length})
           </TabsTrigger>
+          <TabsTrigger value="acces">Accès ({permissions.items.length})</TabsTrigger>
           <TabsTrigger value="responsables">
             Responsables ({collection.responsables.length})
           </TabsTrigger>
-          <TabsTrigger value="acces">Accès ({permissions.items.length})</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -81,9 +81,9 @@ function EditCollectionComponent() {
 
       {onglet === 'indicateurs' ? <CollectionIndicateurs collectionId={id} /> : null}
 
-      {onglet === 'responsables' ? <CollectionResponsables collectionId={id} /> : null}
-
       {onglet === 'acces' ? <CollectionAcces collectionId={id} /> : null}
+
+      {onglet === 'responsables' ? <CollectionResponsables collectionId={id} /> : null}
     </div>
   )
 }
