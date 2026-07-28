@@ -17,6 +17,13 @@ const randomToken = (length: number): string => {
   return out
 }
 
+const DIGITS = '0123456789'
+const randomDigits = (length: number): string => {
+  let out = ''
+  for (let i = 0; i < length; i++) out += DIGITS[Math.floor(Math.random() * DIGITS.length)]
+  return out
+}
+
 export const testIndicateurId = (): string => `IND-${randomToken(12)}`
 
 export const testReferentielId = (): string => `REF-${randomToken(12)}`
@@ -26,6 +33,12 @@ export const testIndividuId = (): string => `TEST-${randomToken(12)}`
 export const testWidgetId = (): string => `WID-${randomToken(12).toUpperCase()}`
 
 export const testCollectionId = (): string => `COL-${randomToken(12)}`
+
+// Suffixe numérique, seul format accepté par `collectionPublicIdSchema` (qui
+// valide les réponses de route) et seul format pris en compte par le calcul de
+// l'identifiant suivant. Le préfixe `9` place la valeur au-dessus des
+// identifiants du seed, ce qui rend les tests de génération déterministes.
+export const testCollectionNumericId = (): string => `COL-9${randomDigits(11)}`
 
 // Suffixe aléatoire (et non un code INSEE tiré d'un petit pool) : avec jusqu'à
 // 10 transactions concurrentes, piocher parmi 18 régions / ~100 départements

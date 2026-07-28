@@ -102,7 +102,11 @@ describe.concurrent('listCollections', () => {
 
       const value = result._unsafeUnwrap()
       const collection = value.items.find((p) => p.id === dosOrder)
-      expect(collection?.indicateurIds).toEqual([indA, indB, indC])
+      expect(collection?.indicateurs).toEqual([
+        { id: indA, ponderation: 1 },
+        { id: indB, ponderation: 1 },
+        { id: indC, ponderation: 1 },
+      ])
     }),
   )
 
@@ -117,7 +121,7 @@ describe.concurrent('listCollections', () => {
 
       const value = result._unsafeUnwrap()
       const collection = value.items.find((p) => p.id === dosEmpty)
-      expect(collection?.indicateurIds).toEqual([])
+      expect(collection?.indicateurs).toEqual([])
     }),
   )
 

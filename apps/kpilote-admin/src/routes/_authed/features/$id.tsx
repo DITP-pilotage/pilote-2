@@ -16,8 +16,8 @@ import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
 export const Route = createFileRoute('/_authed/features/$id')({
   loader: ({ context, params }) =>
     Promise.all([
-      context.queryClient.ensureQueryData(featureQueryOptions(params.id)),
-      context.queryClient.ensureQueryData(utilisateursAllQueryOptions()),
+      context.queryClient.fetchQuery(featureQueryOptions(params.id)),
+      context.queryClient.fetchQuery(utilisateursAllQueryOptions()),
     ]),
   component: FeatureDetailComponent,
 })

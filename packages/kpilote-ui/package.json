@@ -81,6 +81,10 @@
       "types": "./src/FieldTextarea.tsx",
       "default": "./src/FieldTextarea.tsx"
     },
+    "./IconButton": {
+      "types": "./src/IconButton.tsx",
+      "default": "./src/IconButton.tsx"
+    },
     "./Marianne": {
       "types": "./src/Marianne.tsx",
       "default": "./src/Marianne.tsx"
@@ -144,6 +148,10 @@
     "./StatGrid": {
       "types": "./src/StatGrid.tsx",
       "default": "./src/StatGrid.tsx"
+    },
+    "./Subtitle": {
+      "types": "./src/Subtitle.tsx",
+      "default": "./src/Subtitle.tsx"
     },
     "./Table": {
       "types": "./src/Table.tsx",

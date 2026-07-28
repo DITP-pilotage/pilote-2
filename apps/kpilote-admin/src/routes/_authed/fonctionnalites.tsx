@@ -3,6 +3,7 @@ import {
   BarChart3,
   FolderTree,
   KeyRound,
+  Layers,
   LifeBuoy,
   Network,
   Terminal,
@@ -33,13 +34,21 @@ function FeaturesComponent() {
         </FadeIn>
         <FadeIn delayMs={120}>
           <BarCard
+            icon={Layers}
+            title="Gérer les collections"
+            description="Créer ou modifier une collection, ses indicateurs et ses utilisateurs."
+            onClick={() => void navigate({ to: '/collections' })}
+          />
+        </FadeIn>
+        <FadeIn delayMs={180}>
+          <BarCard
             icon={FolderTree}
             title="Gérer les référentiels"
             description="Créer ou modifier un référentiel et ses individus."
             onClick={() => void navigate({ to: '/referentiels' })}
           />
         </FadeIn>
-        <FadeIn delayMs={180}>
+        <FadeIn delayMs={240}>
           <BarCard
             icon={Network}
             title="Gérer les relations"
@@ -47,7 +56,7 @@ function FeaturesComponent() {
             onClick={() => void navigate({ to: '/relations' })}
           />
         </FadeIn>
-        <FadeIn delayMs={240}>
+        <FadeIn delayMs={300}>
           <BarCard
             icon={KeyRound}
             title="Gérer les clés API"
@@ -55,7 +64,7 @@ function FeaturesComponent() {
             onClick={() => void navigate({ to: '/api-keys' })}
           />
         </FadeIn>
-        <FadeIn delayMs={300}>
+        <FadeIn delayMs={360}>
           <BarCard
             icon={Users}
             title="Gérer les utilisateurs"
@@ -63,7 +72,7 @@ function FeaturesComponent() {
             onClick={() => void navigate({ to: '/utilisateurs' })}
           />
         </FadeIn>
-        <FadeIn delayMs={360}>
+        <FadeIn delayMs={420}>
           <BarCard
             icon={Terminal}
             title="Console API"
@@ -71,7 +80,7 @@ function FeaturesComponent() {
             onClick={() => void navigate({ to: '/console' })}
           />
         </FadeIn>
-        <FadeIn delayMs={420}>
+        <FadeIn delayMs={480}>
           <BarCard
             icon={ToggleLeft}
             title="Gérer les features"
@@ -79,7 +88,7 @@ function FeaturesComponent() {
             onClick={() => void navigate({ to: '/features' })}
           />
         </FadeIn>
-        <FadeIn delayMs={480}>
+        <FadeIn delayMs={540}>
           <BarCard
             icon={LifeBuoy}
             title="Centre d’aide"

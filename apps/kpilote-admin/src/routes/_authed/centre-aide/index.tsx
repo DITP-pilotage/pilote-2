@@ -27,7 +27,7 @@ import {
 } from '@/queries/centreAide'
 
 export const Route = createFileRoute('/_authed/centre-aide/')({
-  loader: ({ context }) => context.queryClient.ensureQueryData(articlesCentreAideQueryOptions()),
+  loader: ({ context }) => context.queryClient.fetchQuery(articlesCentreAideQueryOptions()),
   component: CentreAideComponent,
 })
 
