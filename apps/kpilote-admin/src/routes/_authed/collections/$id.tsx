@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { useState } from 'react'
+import { z } from 'zod'
 
 import { deleteCollection, upsertCollection } from '@/api/collections'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -10,8 +10,9 @@ import {
   toCollectionBody,
   type CollectionFormValues,
 } from '@/components/collections/CollectionForm'
+import { CollectionAcces } from '@/components/collections/CollectionAcces'
 import { CollectionIndicateurs } from '@/components/collections/CollectionIndicateurs'
-import { CollectionUtilisateurs } from '@/components/collections/CollectionUtilisateurs'
+import { CollectionResponsables } from '@/components/collections/CollectionResponsables'
 import { PageHeading } from '@/components/PageHeading'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { Tabs, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tabs'
@@ -21,9 +22,12 @@ import { collectionPermissionsQueryOptions, collectionQueryOptions } from '@/que
 import { indicateursAllQueryOptions } from '@/queries/indicateurs'
 import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
 
-type Onglet = 'details' | 'indicateurs' | 'utilisateurs'
+const searchSchema = z.object({
+  onglet: z.enum(['details', 'indicateurs', 'responsables', 'acces']).default('details'),
+})
 
 export const Route = createFileRoute('/_authed/collections/$id')({
+  validateSearch: searchSchema,
   loader: async ({ context, params }) => {
     await Promise.all([
       context.queryClient.ensureQueryData(collectionQueryOptions(params.id)),
@@ -37,12 +41,13 @@ export const Route = createFileRoute('/_authed/collections/$id')({
 
 function EditCollectionComponent() {
   const { id } = Route.useParams()
-  const navigate = useNavigate()
+  const { onglet } = Route.useSearch()
+  const navigate = useNavigate({ from: Route.fullPath })
   const queryClient = useQueryClient()
   const toast = useToast()
-  const [onglet, setOnglet] = useState<Onglet>('details')
 
   const { data: collection } = useSuspenseQuery(collectionQueryOptions(id))
+  const { data: permissions } = useSuspenseQuery(collectionPermissionsQueryOptions(id))
 
   const invalider = async () => {
     await queryClient.invalidateQueries({ queryKey: ['collections'] })
@@ -84,18 +89,29 @@ function EditCollectionComponent() {
         subtitle={<span className="font-mono">{collection.id}</span>}
       />
 
-      <Tabs value={onglet} onValueChange={(valeur) => setOnglet(valeur as Onglet)}>
+      <Tabs
+        value={onglet}
+        onValueChange={(valeur) => {
+          void navigate({
+            search: (prev) => ({ ...prev, onglet: valeur as typeof onglet }),
+            replace: true,
+          })
+        }}
+      >
         <TabsList className="mb-6">
           <TabsTrigger value="details">Détails</TabsTrigger>
           <TabsTrigger value="indicateurs">
             Indicateurs ({collection.indicateurs.length})
           </TabsTrigger>
-          <TabsTrigger value="utilisateurs">Utilisateurs</TabsTrigger>
+          <TabsTrigger value="responsables">
+            Responsables ({collection.responsables.length})
+          </TabsTrigger>
+          <TabsTrigger value="acces">Accès ({permissions.items.length})</TabsTrigger>
         </TabsList>
       </Tabs>
 
       {onglet === 'details' ? (
-        <>
+        <div className="flex flex-col gap-4">
           <CollectionForm
             mode="update"
             initial={buildCollectionInitialValues(collection)}
@@ -104,7 +120,7 @@ function EditCollectionComponent() {
             onSubmit={(values) => modification.mutate(values)}
           />
 
-          <div className="mt-8 rounded-xl border border-red-marianne/40 bg-red-marianne/5 p-6">
+          <div className="rounded-xl border border-red-marianne/40 bg-red-marianne/5 p-6">
             <h2 className="text-base font-semibold text-text">Supprimer la collection</h2>
             <p className="mt-1 text-sm text-text-muted">
               La suppression est définitive. Elle retire aussi les indicateurs affectés, les
@@ -123,12 +139,14 @@ function EditCollectionComponent() {
               {suppression.isPending ? 'Suppression…' : 'Supprimer la collection'}
             </Button>
           </div>
-        </>
+        </div>
       ) : null}
 
       {onglet === 'indicateurs' ? <CollectionIndicateurs collectionId={id} /> : null}
 
-      {onglet === 'utilisateurs' ? <CollectionUtilisateurs collectionId={id} /> : null}
+      {onglet === 'responsables' ? <CollectionResponsables collectionId={id} /> : null}
+
+      {onglet === 'acces' ? <CollectionAcces collectionId={id} /> : null}
     </div>
   )
 }

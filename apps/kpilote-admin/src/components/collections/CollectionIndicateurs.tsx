@@ -1,6 +1,6 @@
 import type { CollectionApiModel } from '@pilote/kpilote-shared/collection'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { Lock, Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 import {
@@ -9,11 +9,10 @@ import {
   updateCollectionIndicateurPonderation,
 } from '@/api/collections'
 import { IndicateurPicker } from '@/components/permissions/IndicateurPicker'
-import { Button } from '@pilote/kpilote-ui/Button'
+import { ProdEditSectionHeader } from '@/components/ProdEditSectionHeader'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
-import { clsxm } from '@/lib/clsxm'
 import { useProdEditUnlock } from '@/lib/useProdEditUnlock'
 import { collectionQueryOptions } from '@/queries/collections'
 import { indicateursAllQueryOptions } from '@/queries/indicateurs'
@@ -84,50 +83,21 @@ export function CollectionIndicateurs({ collectionId }: { collectionId: string }
   const nomParId = new Map(catalogue.map((indicateur) => [indicateur.id, indicateur.nom]))
 
   return (
-    <section className="rounded-xl border border-border bg-surface p-6">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-text">Indicateurs</h2>
-        {isProd ? (
-          <span
-            className={clsxm(
-              'text-xs font-medium',
-              locked ? 'text-red-marianne' : 'text-text-muted',
-            )}
-          >
-            {locked ? 'Édition verrouillée (PROD)' : 'Édition déverrouillée (PROD)'}
-          </span>
-        ) : null}
-      </div>
+    <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-6">
+      <ProdEditSectionHeader
+        titre="Indicateurs"
+        isProd={isProd}
+        locked={locked}
+        onUnlock={unlock}
+      />
 
-      {locked ? (
-        <div className="mb-5 flex items-center justify-between gap-4 rounded-lg border border-red-marianne/40 bg-red-marianne/5 px-4 py-3">
-          <span className="flex items-center gap-2 text-sm text-text">
-            <Lock className="size-4 text-red-marianne" /> Modifications désactivées en production.
-          </span>
-          <Button
-            variant="secondary"
-            size="sm"
-            type="button"
-            onClick={() => {
-              if (window.confirm("Déverrouiller l'édition des collections en PRODUCTION ?"))
-                unlock()
-            }}
-            className="border-red-marianne bg-red-marianne text-primary-foreground hover:bg-red-marianne"
-          >
-            Déverrouiller l'édition en PROD
-          </Button>
-        </div>
-      ) : null}
-
-      <div className="mb-3">
-        <IndicateurPicker
-          excludedIds={collection.indicateurs.map((lien) => lien.id)}
-          onSelect={(indicateurId) =>
-            mutation.mutate(() => addCollectionIndicateur(collectionId, { indicateurId }))
-          }
-          disabled={disabled}
-        />
-      </div>
+      <IndicateurPicker
+        excludedIds={collection.indicateurs.map((lien) => lien.id)}
+        onSelect={(indicateurId) =>
+          mutation.mutate(() => addCollectionIndicateur(collectionId, { indicateurId }))
+        }
+        disabled={disabled}
+      />
 
       {collection.indicateurs.length === 0 ? (
         <EmptyState
@@ -169,7 +139,7 @@ export function CollectionIndicateurs({ collectionId }: { collectionId: string }
         </ul>
       )}
 
-      <p className="mt-3 text-xs text-text-subtle">
+      <p className="text-xs text-text-subtle">
         La pondération règle le poids de l’indicateur dans le taux de progression de la collection.
         0 l’exclut du calcul.
       </p>

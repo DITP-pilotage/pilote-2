@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { useState } from 'react'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { z } from 'zod'
 
 import { ApiKeyInfos } from '@/components/ApiKeyInfos'
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -11,7 +11,12 @@ import { apiKeyQueryOptions } from '@/queries/apiKeys'
 import { indicateursAllQueryOptions } from '@/queries/indicateurs'
 import { principalPermissionsQueryOptions } from '@/queries/permissions'
 
+const searchSchema = z.object({
+  onglet: z.enum(['identite', 'permissions']).default('identite'),
+})
+
 export const Route = createFileRoute('/_authed/api-keys/$id')({
+  validateSearch: searchSchema,
   loader: async ({ context, params }) => {
     await Promise.all([
       context.queryClient.ensureQueryData(apiKeyQueryOptions(params.id)),
@@ -25,7 +30,8 @@ export const Route = createFileRoute('/_authed/api-keys/$id')({
 function ApiKeyDetailComponent() {
   const { id } = Route.useParams()
   const { data: apiKey } = useSuspenseQuery(apiKeyQueryOptions(id))
-  const [tab, setTab] = useState<'identite' | 'permissions'>('identite')
+  const { onglet } = Route.useSearch()
+  const navigate = useNavigate({ from: Route.fullPath })
 
   return (
     <div>
@@ -43,7 +49,15 @@ function ApiKeyDetailComponent() {
         subtitle={<span className="font-mono">{apiKey.prefix}…</span>}
       />
 
-      <Tabs value={tab} onValueChange={(key) => setTab(key as 'identite' | 'permissions')}>
+      <Tabs
+        value={onglet}
+        onValueChange={(valeur) => {
+          void navigate({
+            search: (prev) => ({ ...prev, onglet: valeur as typeof onglet }),
+            replace: true,
+          })
+        }}
+      >
         <TabsList className="mb-6">
           <TabsTrigger value="identite">Identité</TabsTrigger>
           <TabsTrigger value="permissions">Permissions</TabsTrigger>
@@ -51,7 +65,7 @@ function ApiKeyDetailComponent() {
       </Tabs>
 
       <div>
-        {tab === 'identite' ? (
+        {onglet === 'identite' ? (
           <ApiKeyInfos apiKey={apiKey} />
         ) : (
           <PrincipalPermissions principalId={id} />
