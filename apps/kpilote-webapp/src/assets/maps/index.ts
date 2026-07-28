@@ -5,7 +5,7 @@ import regions from './france-regions.json'
 
 // Cartes générées par `pnpm maps:generate` et importées statiquement (bundlées
 // dans le chunk de la route via le code splitting). `parse` donne le type sans
-// cast et valide la structure (bon marché : la géométrie n'est pas parcourue).
+// cast et valide la structure au chargement du chunk.
 export const franceDepartementsGeoJson = franceGeoJsonSchema.parse(departements)
 export const franceRegionsGeoJson = franceGeoJsonSchema.parse(regions)
 export const franceDepartementsFrontieresGeoJson = franceGeoJsonSchema.parse(departementsFrontieres)

@@ -37,15 +37,12 @@ export function CarteFrance({
 
   useEffect(() => {
     if (registeredRef.current === mapName) return
-    echarts.registerMap(mapName, geoJson as unknown as Parameters<typeof echarts.registerMap>[1])
+    echarts.registerMap(mapName, geoJson)
     registeredRef.current = mapName
   }, [mapName, geoJson])
 
   useEffect(() => {
-    echarts.registerMap(
-      frontieresMapName,
-      frontieres as unknown as Parameters<typeof echarts.registerMap>[1],
-    )
+    echarts.registerMap(frontieresMapName, frontieres)
   }, [frontieresMapName, frontieres])
 
   const option = useMemo(() => {
