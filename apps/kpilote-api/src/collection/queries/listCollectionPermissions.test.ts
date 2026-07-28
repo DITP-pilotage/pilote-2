@@ -4,7 +4,7 @@ import { listCollectionPermissions } from '@/collection/queries/listCollectionPe
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testCollectionNumericId, testEmail } from '@/test/randomIds'
-import { runAsAdmin } from '@/test/runAsPrincipal'
+import { runAsAdmin, runAsContributor } from '@/test/runAsPrincipal'
 
 describe.concurrent('listCollectionPermissions', () => {
   it(
@@ -68,6 +68,23 @@ describe.concurrent('listCollectionPermissions', () => {
         { principalId: cle.id, type: 'API_KEY', libelle: 'sync-ppg', actions: ['READ'] },
         { principalId: utilisateur.id, type: 'UTILISATEUR', libelle: email, actions: ['READ'] },
       ])
+    }),
+  )
+
+  it(
+    'refuse la lecture à une clé non ADMIN',
+    integrationTest(async () => {
+      const publicId = testCollectionNumericId()
+      await fixtures.collection({ publicId })
+      await fixtures.utilisateur({
+        email: testEmail(),
+        collectionPermissions: [{ collection: { publicId }, action: 'READ' }],
+      })
+      const apiKey = await fixtures.apiKey()
+
+      await expect(
+        runAsContributor(apiKey.id, () => listCollectionPermissions(publicId)),
+      ).rejects.toThrow('Cette opération requiert une clé API de rôle ADMIN')
     }),
   )
 })

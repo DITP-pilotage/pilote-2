@@ -81,6 +81,8 @@ export function CollectionAcces({ collectionId }: { collectionId: string }) {
                 </span>
                 <button
                   type="button"
+                  aria-pressed={ecritureActive}
+                  aria-label={`Droit d’écriture pour ${item.libelle}`}
                   disabled={disabled}
                   onClick={() =>
                     mutation.mutate(() =>

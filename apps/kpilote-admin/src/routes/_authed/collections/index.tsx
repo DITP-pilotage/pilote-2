@@ -61,6 +61,8 @@ function CollectionsListComponent() {
       <div className="mb-4 flex max-w-sm items-center gap-2 rounded-md border border-border px-3 py-2 text-sm">
         <Search className="size-4 text-text-subtle" />
         <input
+          type="search"
+          aria-label="Rechercher une collection"
           value={recherche}
           onChange={(event) => setRecherche(event.target.value)}
           placeholder="Rechercher une collection…"

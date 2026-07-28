@@ -26,7 +26,8 @@ export class DatabaseSink implements LogSink {
           level: LEVEL_MAP[entry.level],
           message: entry.message,
           date: entry.timestamp,
-          // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- l'élargissement en `object` est requis pour l'entrée JSON de Prisma sous exactOptionalPropertyTypes
+          // L'élargissement en `object` est requis pour l'entrée JSON de Prisma
+          // sous exactOptionalPropertyTypes.
           ...(Object.keys(rest).length > 0 ? { contexte: rest as object } : {}),
           ...(source !== undefined ? { source } : {}),
           ...(dureeMs !== undefined ? { dureeMs } : {}),

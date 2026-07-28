@@ -496,6 +496,7 @@ const listCollectionPermissionsRoute = createRoute({
       description: 'Principals disposant d’une permission directe',
     },
     400: erreur400,
+    403: erreur403,
   },
 })
 
