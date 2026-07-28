@@ -71,6 +71,41 @@ describe('construireFrontieresRegions', () => {
     expect(set.has('2,0|2,1')).toBe(true)
   })
 
+  it('dissout une frontière interne malgré un léger décalage entre départements', () => {
+    // 02 partage sa frontière avec 01 (x≈1) mais dessinée à 1.03 : la soudure des
+    // sommets quasi-coïncidents doit quand même annuler cette arête interne.
+    const decale: GeoJsonFeature = {
+      type: 'Feature',
+      properties: { code: '02', nom: '02' },
+      geometry: {
+        type: 'Polygon',
+        coordinates: [
+          [
+            [1.03, 0],
+            [2, 0],
+            [2, 1],
+            [1.03, 1],
+            [1.03, 0],
+          ],
+        ],
+      },
+    }
+    const collection: GeoJsonFeatureCollection = {
+      type: 'FeatureCollection',
+      features: [carre('01', 0, 0, 1, 1), decale],
+    }
+    const result = construireFrontieresRegions({
+      departements: collection,
+      regionDe: () => 'G1',
+      nomRegion: (code) => code,
+    })
+    const anneaux = anneauxDe(result, 'G1')
+    expect(anneaux).toHaveLength(1)
+    // Aucune arête interne verticale près de x=1 : elle a été soudée puis dissoute.
+    const set = arêtes(anneaux[0] ?? [])
+    expect(set.has('1,0|1,1')).toBe(false)
+  })
+
   it('recolle un anneau fermé', () => {
     const result = construireFrontieresRegions({ departements, regionDe, nomRegion })
     const [anneau] = anneauxDe(result, 'G1')
