@@ -66,6 +66,9 @@ export function IndicateurResultatsTab({
               individuId={individuId}
               unite={unite}
             />
+            {/* Données (referentiel, individus, valeurs remarquables) déjà
+                préfetchées par le loader de la route, et la carte est un import
+                statique : aucune suspension ici, donc pas de boundary. */}
             <IndicateurWidgets indicateurId={indicateurId} referentielId={referentielId} />
           </div>
         </TabsContent>

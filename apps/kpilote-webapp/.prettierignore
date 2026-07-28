@@ -1,1 +1,2 @@
-public/maps/
+# Cartes GeoJSON générées (minifiées) — cf. `pnpm maps:generate`
+src/assets/maps/*.json

@@ -2,7 +2,7 @@ import * as echarts from 'echarts'
 import ReactECharts from 'echarts-for-react'
 import { useEffect, useMemo, useRef } from 'react'
 
-import { type FranceGeoJson } from '@/api/geoJson'
+import { type FranceGeoJson } from '@/assets/maps/geoJson'
 import { formatNumberFr } from '@/lib/format'
 
 export type CartePoint = {
@@ -11,30 +11,62 @@ export type CartePoint = {
   nom: string
 }
 
+// Cadrage partagé entre le choroplèthe et l'overlay des frontières pour qu'ils
+// se superposent exactement.
+const LAYOUT = {
+  aspectScale: 1,
+  layoutCenter: ['50%', '50%'] as [string, string],
+  layoutSize: '90%',
+}
+
 export function CarteFrance({
   mapName,
   geoJson,
+  frontieres,
   points,
   onSelect,
 }: {
   mapName: string
   geoJson: FranceGeoJson
+  frontieres: FranceGeoJson
   points: ReadonlyArray<CartePoint>
   onSelect?: (joinValue: string) => void
 }) {
   const registeredRef = useRef<string | null>(null)
+  const frontieresMapName = `${mapName}__frontieres`
 
   useEffect(() => {
     if (registeredRef.current === mapName) return
-    echarts.registerMap(mapName, geoJson as unknown as Parameters<typeof echarts.registerMap>[1])
+    echarts.registerMap(mapName, geoJson)
     registeredRef.current = mapName
   }, [mapName, geoJson])
+
+  useEffect(() => {
+    echarts.registerMap(frontieresMapName, frontieres)
+  }, [frontieresMapName, frontieres])
 
   const option = useMemo(() => {
     const data = points.map((p) => ({ name: p.joinValue, value: p.valeur, nomLisible: p.nom }))
     const values = points.map((p) => p.valeur)
     const min = values.length > 0 ? Math.min(...values) : 0
     const max = values.length > 0 ? Math.max(...values) : 1
+
+    const frontieresSeries = {
+      type: 'map' as const,
+      map: frontieresMapName,
+      ...LAYOUT,
+      roam: false,
+      silent: true,
+      label: { show: false },
+      emphasis: { disabled: true },
+      tooltip: { show: false },
+      itemStyle: {
+        areaColor: 'transparent',
+        // Frontières entre régions : trait épais uniforme par-dessus le choroplèthe.
+        borderColor: '#ffffff',
+        borderWidth: 2.4,
+      },
+    }
 
     return {
       tooltip: {
@@ -50,6 +82,8 @@ export function CarteFrance({
       visualMap: {
         min,
         max: max === min ? min + 1 : max,
+        // Seul le choroplèthe (série 0) est coloré par la valeur.
+        seriesIndex: 0,
         orient: 'horizontal' as const,
         left: 'center',
         bottom: 8,
@@ -66,9 +100,12 @@ export function CarteFrance({
           map: mapName,
           nameProperty: 'code',
           roam: false,
-          aspectScale: 0.65,
-          layoutCenter: ['50%', '50%'] as [string, string],
-          layoutSize: '90%',
+          ...LAYOUT,
+          itemStyle: {
+            // Liseré fin distinguant les départements au sein d'une même région.
+            borderColor: '#ffffff',
+            borderWidth: 0.5,
+          },
           label: { show: false },
           emphasis: {
             label: { show: false },
@@ -76,9 +113,10 @@ export function CarteFrance({
           },
           data,
         },
+        frontieresSeries,
       ],
     }
-  }, [mapName, points])
+  }, [mapName, frontieresMapName, points])
 
   const onEvents = useMemo(
     () => ({

@@ -3,30 +3,29 @@ import { useSuspenseQueries } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { startTransition, useMemo } from 'react'
 
+import { type FranceGeoJson } from '@/assets/maps/geoJson'
 import { CarteFrance } from '@/components/widgets/CarteFrance'
 import { buildCarteFranceBindings } from '@/components/widgets/carteFranceData'
-import { type franceDepartementsGeoJsonQueryOptions } from '@/queries/geoJson'
 import { indicateurValeursRemarquablesQueryOptions } from '@/queries/indicateurs'
 import { referentielIndividusQueryOptions } from '@/queries/referentiels'
-
-type GeoJsonQueryOptions = ReturnType<typeof franceDepartementsGeoJsonQueryOptions>
 
 export function CarteFranceWidget({
   indicateurId,
   referentielId,
   mapName,
-  geoJsonQueryOptions,
+  geoJson,
+  frontieres,
 }: {
   widget: WidgetApiModel
   indicateurId: string
   referentielId: string
   mapName: string
-  geoJsonQueryOptions: GeoJsonQueryOptions
+  geoJson: FranceGeoJson
+  frontieres: FranceGeoJson
 }) {
   const navigate = useNavigate()
-  const [{ data: geoJson }, { data: individus }, { data: remarquables }] = useSuspenseQueries({
+  const [{ data: individus }, { data: remarquables }] = useSuspenseQueries({
     queries: [
-      geoJsonQueryOptions,
       referentielIndividusQueryOptions(referentielId),
       indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId),
     ],
@@ -54,5 +53,13 @@ export function CarteFranceWidget({
     })
   }
 
-  return <CarteFrance mapName={mapName} geoJson={geoJson} points={points} onSelect={handleSelect} />
+  return (
+    <CarteFrance
+      mapName={mapName}
+      geoJson={geoJson}
+      frontieres={frontieres}
+      points={points}
+      onSelect={handleSelect}
+    />
+  )
 }
