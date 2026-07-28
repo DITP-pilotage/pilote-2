@@ -3,6 +3,8 @@ import { useFieldArray, useWatch } from 'react-hook-form'
 
 import { useIndicateurFormContext } from '@/components/indicateurs/indicateurFormContext'
 import { UtilisateurPicker } from '@/components/UtilisateurPicker'
+import { IconButton } from '@pilote/kpilote-ui/IconButton'
+import { Subtitle } from '@pilote/kpilote-ui/Subtitle'
 
 export function AdminResponsables() {
   const form = useIndicateurFormContext()
@@ -13,10 +15,10 @@ export function AdminResponsables() {
   return (
     <div className="border-t border-border pt-5">
       <span className="mb-1 block text-sm font-bold">Responsables</span>
-      <p className="mb-4 text-xs text-text-subtle">
+      <Subtitle className="mb-4">
         Utilisateurs désignés responsables de l'indicateur. Cette liste remplace{' '}
         <b>intégralement</b> l'existant à l'enregistrement.
-      </p>
+      </Subtitle>
 
       <UtilisateurPicker
         excludedIds={selectedIds}
@@ -40,14 +42,9 @@ export function AdminResponsables() {
               {responsable.prenom} {responsable.nom}{' '}
               <span className="text-text-subtle">· {responsable.email}</span>
             </span>
-            <button
-              type="button"
-              onClick={() => remove(index)}
-              className="text-red-marianne"
-              aria-label="Retirer"
-            >
-              <Trash2 className="size-4" />
-            </button>
+            <IconButton variant="danger" label="Retirer" onClick={() => remove(index)}>
+              <Trash2 />
+            </IconButton>
           </li>
         ))}
       </ul>

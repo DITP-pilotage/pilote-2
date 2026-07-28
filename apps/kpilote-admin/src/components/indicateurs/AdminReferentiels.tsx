@@ -6,6 +6,8 @@ import { ReferentielPicker } from '@/components/indicateurs/ReferentielPicker'
 import { useIndicateurFormContext } from '@/components/indicateurs/indicateurFormContext'
 import { type IndicateurFormValues } from '@/components/indicateurs/indicateurFormSchema'
 import { FieldSelect } from '@pilote/kpilote-ui/FieldSelect'
+import { IconButton } from '@pilote/kpilote-ui/IconButton'
+import { Subtitle } from '@pilote/kpilote-ui/Subtitle'
 import { referentielsAllQueryOptions } from '@/queries/referentiels'
 
 type FonctionAgregation = 'SUM' | 'AVG' | 'NONE'
@@ -28,10 +30,10 @@ export function AdminReferentiels() {
   return (
     <div className="border-t border-border pt-5">
       <span className="mb-1 block text-sm font-bold">Référentiels liés</span>
-      <p className="mb-4 text-xs text-text-subtle">
+      <Subtitle className="mb-4">
         ⚠ Cette liste remplace <b>intégralement</b> l'existant (replace-all). Retirer une ligne
         supprime le lien.
-      </p>
+      </Subtitle>
 
       <ReferentielPicker
         excludedIds={selectedIds}
@@ -84,9 +86,9 @@ function ReferentielRow({
           )}
         />
       </div>
-      <button type="button" onClick={onRemove} className="text-red-marianne" aria-label="Retirer">
-        <Trash2 className="size-4" />
-      </button>
+      <IconButton variant="danger" label="Retirer" onClick={onRemove}>
+        <Trash2 />
+      </IconButton>
     </li>
   )
 }

@@ -2,6 +2,8 @@ import { Plus, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '@pilote/kpilote-ui/Button'
+import { IconButton } from '@pilote/kpilote-ui/IconButton'
+import { Subtitle } from '@pilote/kpilote-ui/Subtitle'
 import { clsxm } from '@/lib/clsxm'
 
 type IndividuItem = { publicId: string; nom: string }
@@ -100,10 +102,10 @@ export function ReferentielForm({
               <Plus className="size-4" /> Ajouter
             </button>
           </div>
-          <p className="mb-4 text-xs text-text-subtle">
+          <Subtitle className="mb-4">
             Un individu ne peut appartenir qu'à un seul référentiel. En ajouter un déjà rattaché
             ailleurs sera refusé (409).
-          </p>
+          </Subtitle>
           {values.individus.map((item, index) => (
             <div
               key={index}
@@ -123,14 +125,9 @@ export function ReferentielForm({
                 placeholder="Paris"
                 className="flex-[2] rounded-md border border-border bg-surface px-2.5 py-2 text-sm focus:border-primary focus:outline-none"
               />
-              <button
-                type="button"
-                onClick={() => removeIndividu(index)}
-                className="text-red-marianne"
-                aria-label="Retirer"
-              >
-                <Trash2 className="size-4" />
-              </button>
+              <IconButton variant="danger" label="Retirer" onClick={() => removeIndividu(index)}>
+                <Trash2 />
+              </IconButton>
             </div>
           ))}
         </div>

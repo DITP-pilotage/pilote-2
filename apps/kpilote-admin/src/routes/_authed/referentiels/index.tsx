@@ -1,12 +1,13 @@
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { Plus, Search } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { useState } from 'react'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { SearchField } from '@pilote/kpilote-ui/SearchField'
 import { Table } from '@pilote/kpilote-ui/Table'
 import { clickableRowProps } from '@/lib/clickableRow'
 import { referentielsInfiniteQueryOptions } from '@/queries/referentiels'
@@ -49,13 +50,12 @@ function ReferentielsListComponent() {
         }
       />
 
-      <div className="mb-4 flex max-w-sm items-center gap-2 rounded-md border border-border px-3 py-2 text-sm">
-        <Search className="size-4 text-text-subtle" />
-        <input
-          value={recherche}
-          onChange={(event) => setRecherche(event.target.value)}
+      <div className="mb-4">
+        <SearchField
+          label="Rechercher un référentiel"
           placeholder="Rechercher un référentiel…"
-          className="w-full bg-transparent focus:outline-none"
+          value={recherche}
+          onChange={setRecherche}
         />
       </div>
 

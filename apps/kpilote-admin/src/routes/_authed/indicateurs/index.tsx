@@ -1,12 +1,15 @@
+import type { IndicateurVisibilite } from '@pilote/kpilote-shared/indicateur'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { Plus, Search } from 'lucide-react'
-import { useState } from 'react'
+import { Plus } from 'lucide-react'
+import { useState, type ComponentProps } from 'react'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { Pill } from '@pilote/kpilote-ui/Pill'
+import { SearchField } from '@pilote/kpilote-ui/SearchField'
 import { Table } from '@pilote/kpilote-ui/Table'
 import { clickableRowProps } from '@/lib/clickableRow'
 import { indicateursInfiniteQueryOptions } from '@/queries/indicateurs'
@@ -16,10 +19,10 @@ export const Route = createFileRoute('/_authed/indicateurs/')({
   component: IndicateursListComponent,
 })
 
-const VISIBILITE_BADGE: Record<string, string> = {
-  PUBLIC: 'bg-[#e8f5ec] text-[#18753c]',
-  PRIVE: 'bg-[#f0eefb] text-[#5246a8]',
-}
+const VISIBILITE_TONE = {
+  PUBLIC: 'success',
+  PRIVE: 'neutral',
+} as const satisfies Record<IndicateurVisibilite, ComponentProps<typeof Pill>['tone']>
 
 function IndicateursListComponent() {
   const navigate = useNavigate()
@@ -56,13 +59,12 @@ function IndicateursListComponent() {
         }
       />
 
-      <div className="mb-4 flex max-w-sm items-center gap-2 rounded-md border border-border px-3 py-2 text-sm">
-        <Search className="size-4 text-text-subtle" />
-        <input
-          value={recherche}
-          onChange={(event) => setRecherche(event.target.value)}
+      <div className="mb-4">
+        <SearchField
+          label="Rechercher un indicateur"
           placeholder="Rechercher un indicateur…"
-          className="w-full bg-transparent focus:outline-none"
+          value={recherche}
+          onChange={setRecherche}
         />
       </div>
 
@@ -95,11 +97,7 @@ function IndicateursListComponent() {
                   <span className="font-semibold">{indicateur.nom}</span>
                 </Table.Cell>
                 <Table.Cell>
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-semibold ${VISIBILITE_BADGE[indicateur.visibilite]}`}
-                  >
-                    {indicateur.visibilite}
-                  </span>
+                  <Pill tone={VISIBILITE_TONE[indicateur.visibilite]}>{indicateur.visibilite}</Pill>
                 </Table.Cell>
                 <Table.Cell>{indicateur.unite?.libelle ?? '—'}</Table.Cell>
                 <Table.Cell align="center">{indicateur.referentiels.length}</Table.Cell>

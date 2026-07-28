@@ -1,15 +1,17 @@
 import { formatDate } from '@pilote/kpilote-shared/formatDate'
 import type { UtilisateurApiModel } from '@pilote/kpilote-shared/utilisateur'
 import { useInfiniteQuery } from '@tanstack/react-query'
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { Plus, Search } from 'lucide-react'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { Plus } from 'lucide-react'
 import { useState } from 'react'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { SearchField } from '@pilote/kpilote-ui/SearchField'
 import { Table } from '@pilote/kpilote-ui/Table'
+import { clickableRowProps } from '@/lib/clickableRow'
 import { utilisateursInfiniteQueryOptions } from '@/queries/utilisateurs'
 import { session } from '@/session'
 
@@ -36,6 +38,7 @@ const PROVIDER_LABEL: Record<UtilisateurApiModel['providers'][number], string> =
 }
 
 function UtilisateursListComponent() {
+  const navigate = useNavigate()
   const isProd = session.current?.environment === 'prod'
   const [recherche, setRecherche] = useState('')
   const query = useInfiniteQuery(utilisateursInfiniteQueryOptions(recherche))
@@ -69,13 +72,12 @@ function UtilisateursListComponent() {
         }
       />
 
-      <div className="mb-4 flex max-w-sm items-center gap-2 rounded-md border border-border px-3 py-2 text-sm">
-        <Search className="size-4 text-text-subtle" />
-        <input
-          value={recherche}
-          onChange={(event) => setRecherche(event.target.value)}
+      <div className="mb-4">
+        <SearchField
+          label="Rechercher un utilisateur"
           placeholder="Rechercher un utilisateur…"
-          className="w-full bg-transparent focus:outline-none"
+          value={recherche}
+          onChange={setRecherche}
         />
       </div>
 
@@ -95,12 +97,17 @@ function UtilisateursListComponent() {
               <Table.HeaderCell>Statut</Table.HeaderCell>
               <Table.HeaderCell>Providers</Table.HeaderCell>
               <Table.HeaderCell>Créé le</Table.HeaderCell>
-              <Table.HeaderCell align="right" />
+              <Table.HeaderCell />
             </Table.Row>
           </Table.Head>
           <Table.Body>
             {items.map((u) => (
-              <Table.Row key={u.id}>
+              <Table.Row
+                key={u.id}
+                {...clickableRowProps(
+                  () => void navigate({ to: '/utilisateurs/$id', params: { id: u.id } }),
+                )}
+              >
                 <Table.Cell>
                   <span className="font-mono text-sm">{u.email}</span>
                 </Table.Cell>
@@ -134,11 +141,7 @@ function UtilisateursListComponent() {
                   <span className="text-text-muted">{formatDate(u.createdAt)}</span>
                 </Table.Cell>
                 <Table.Cell align="right">
-                  <Button variant="tertiary" size="sm" type="button" asChild>
-                    <Link to="/utilisateurs/$id" params={{ id: u.id }}>
-                      Modifier
-                    </Link>
-                  </Button>
+                  <span className="text-primary">→</span>
                 </Table.Cell>
               </Table.Row>
             ))}

@@ -3,6 +3,7 @@ import { Search, X } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '@pilote/kpilote-ui/Button'
+import { IconButton } from '@pilote/kpilote-ui/IconButton'
 import { searchCollectionsInfiniteQueryOptions } from '@/queries/permissions'
 
 export type CollectionHit = { publicId: string; nom: string }
@@ -39,14 +40,9 @@ export function CollectionSearchModal({
       >
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-text">Ajouter une collection</h2>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Fermer"
-            className="text-text-muted hover:text-text"
-          >
-            <X className="size-5" />
-          </button>
+          <IconButton label="Fermer" onClick={onClose}>
+            <X />
+          </IconButton>
         </div>
 
         <div className="mb-4 space-y-3">

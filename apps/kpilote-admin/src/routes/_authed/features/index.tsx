@@ -1,12 +1,12 @@
 import type { FeatureApiModel, FeatureEtat } from '@pilote/kpilote-shared/feature'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { SearchField } from '@pilote/kpilote-ui/SearchField'
 import { Table } from '@pilote/kpilote-ui/Table'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
@@ -64,13 +64,12 @@ function FeatureListComponent() {
         }
       />
 
-      <div className="mb-4 flex max-w-sm items-center gap-2 rounded-md border border-border px-3 py-2 text-sm">
-        <Search className="size-4 text-text-subtle" />
-        <input
-          value={recherche}
-          onChange={(event) => setRecherche(event.target.value)}
+      <div className="mb-4">
+        <SearchField
+          label="Rechercher une feature"
           placeholder="Rechercher une feature…"
-          className="w-full bg-transparent focus:outline-none"
+          value={recherche}
+          onChange={setRecherche}
         />
       </div>
 

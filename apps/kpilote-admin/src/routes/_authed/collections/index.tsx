@@ -1,7 +1,7 @@
 import type { CollectionVisibilite } from '@pilote/kpilote-shared/collection'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { Plus, Search } from 'lucide-react'
+import { Plus } from 'lucide-react'
 import { useState, type ComponentProps } from 'react'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
@@ -9,6 +9,7 @@ import { PageHeading } from '@/components/PageHeading'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Pill } from '@pilote/kpilote-ui/Pill'
+import { SearchField } from '@pilote/kpilote-ui/SearchField'
 import { Table } from '@pilote/kpilote-ui/Table'
 import { clickableRowProps } from '@/lib/clickableRow'
 import { collectionsInfiniteQueryOptions } from '@/queries/collections'
@@ -58,15 +59,12 @@ function CollectionsListComponent() {
         }
       />
 
-      <div className="mb-4 flex max-w-sm items-center gap-2 rounded-md border border-border px-3 py-2 text-sm">
-        <Search className="size-4 text-text-subtle" />
-        <input
-          type="search"
-          aria-label="Rechercher une collection"
-          value={recherche}
-          onChange={(event) => setRecherche(event.target.value)}
+      <div className="mb-4">
+        <SearchField
+          label="Rechercher une collection"
           placeholder="Rechercher une collection…"
-          className="w-full bg-transparent focus:outline-none"
+          value={recherche}
+          onChange={setRecherche}
         />
       </div>
 

@@ -2,6 +2,7 @@ import { Plus, Trash2 } from 'lucide-react'
 
 import type { HeaderPair } from '@/api/console'
 import { Button } from '@pilote/kpilote-ui/Button'
+import { IconButton } from '@pilote/kpilote-ui/IconButton'
 
 export function HeadersEditor({
   headers,
@@ -37,14 +38,9 @@ export function HeadersEditor({
             placeholder="application/json"
             className="flex-1 rounded-md border border-border px-3 py-2 text-sm focus:border-primary focus:outline-none"
           />
-          <button
-            type="button"
-            onClick={() => remove(index)}
-            aria-label="Supprimer l'en-tête"
-            className="text-text-muted hover:text-red-marianne"
-          >
-            <Trash2 className="size-4" />
-          </button>
+          <IconButton variant="danger" label="Supprimer l'en-tête" onClick={() => remove(index)}>
+            <Trash2 />
+          </IconButton>
         </div>
       ))}
       <div>

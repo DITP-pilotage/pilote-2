@@ -7,6 +7,7 @@ import { remplacerUtilisateursAutorises } from '@/api/feature'
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { UtilisateurPicker } from '@/components/UtilisateurPicker'
+import { IconButton } from '@pilote/kpilote-ui/IconButton'
 import { SegmentedField } from '@pilote/kpilote-ui/SegmentedField'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
@@ -135,15 +136,15 @@ function FeatureDetailComponent() {
                       {utilisateur.email}
                     </span>
                   </span>
-                  <button
-                    type="button"
-                    aria-label={`Retirer ${utilisateur.prenom} ${utilisateur.nom}`}
+                  <IconButton
+                    variant="danger"
+                    label={`Retirer ${utilisateur.prenom} ${utilisateur.nom}`}
                     disabled={utilisateursMutation.isPending}
                     onClick={() => retirer(utilisateur.id)}
-                    className="shrink-0 rounded-md p-1.5 text-text-muted hover:bg-red-marianne/10 hover:text-red-marianne disabled:opacity-50"
+                    className="shrink-0"
                   >
-                    <Trash2 className="size-4" />
-                  </button>
+                    <Trash2 />
+                  </IconButton>
                 </li>
               ))}
             </ul>
