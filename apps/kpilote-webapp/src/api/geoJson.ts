@@ -23,3 +23,6 @@ export const fetchFranceDepartementsGeoJson = (): Promise<FranceGeoJson> =>
 
 export const fetchFranceRegionsGeoJson = (): Promise<FranceGeoJson> =>
   fetchGeoJson('/maps/france-regions.json')
+
+export const fetchFranceDepartementsFrontieresGeoJson = (): Promise<FranceGeoJson> =>
+  fetchGeoJson('/maps/france-departements-frontieres.json')

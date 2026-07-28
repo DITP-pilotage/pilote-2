@@ -3,23 +3,41 @@ import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 import { franceGeoJsonSchema } from '../api/geoJson'
-import { convertirSvgEnGeoJson } from './svgVersGeoJson'
+import { construireFrontieresRegions } from './frontieresRegions'
+import { convertirSvgEnGeoJson, type GeoJsonFeatureCollection } from './svgVersGeoJson'
 
 const ici = dirname(fileURLToPath(import.meta.url))
 const racineKpilote = resolve(ici, '../..')
 const racinePpg = resolve(ici, '../../../pilote-ppg')
 
-type Territoire = { code: string; nomAffiché: string }
+type Territoire = { code: string; nom: string; nomAffiché: string; codeParent: string | null }
 
-const chargerNoms = (): Record<string, string> => {
+const chargerTerritoires = (): Territoire[] => {
   const chemin = resolve(racinePpg, 'src/client/constants/territoires.json')
   const contenu = JSON.parse(readFileSync(chemin, 'utf8')) as { territoires: Territoire[] }
-  const noms: Record<string, string> = {}
-  for (const territoire of contenu.territoires) {
-    noms[territoire.code] = territoire.nomAffiché
-  }
-  return noms
+  return contenu.territoires
 }
+
+const territoires = chargerTerritoires()
+
+const noms = territoires.reduce<Record<string, string>>((acc, territoire) => {
+  acc[territoire.code] = territoire.nomAffiché
+  return acc
+}, {})
+
+// Mapping code département (sans préfixe) → code région (sans préfixe).
+const regionParDept = territoires.reduce<Record<string, string>>((acc, territoire) => {
+  if (territoire.code.startsWith('DEPT-') && territoire.codeParent?.startsWith('REG-')) {
+    acc[territoire.code.slice('DEPT-'.length)] = territoire.codeParent.slice('REG-'.length)
+  }
+  return acc
+}, {})
+
+// Nom lisible d'une région à partir de son code sans préfixe.
+const nomParRegion = territoires.reduce<Record<string, string>>((acc, territoire) => {
+  if (territoire.code.startsWith('REG-')) acc[territoire.code.slice('REG-'.length)] = territoire.nom
+  return acc
+}, {})
 
 const lireMaxY = (svg: string): number => {
   const viewBox = svg.match(/viewBox="([^"]*)"/)?.[1]
@@ -31,37 +49,31 @@ const lireMaxY = (svg: string): number => {
   return minY + hauteur
 }
 
-const genererCarte = ({
-  fichierSvg,
-  prefixe,
-  fichierSortie,
-  noms,
-}: {
-  fichierSvg: string
-  prefixe: string
-  fichierSortie: string
-  noms: Record<string, string>
-}): void => {
-  const svg = readFileSync(resolve(racinePpg, 'public/img', fichierSvg), 'utf8')
-  const geoJson = convertirSvgEnGeoJson({ svg, prefixe, maxY: lireMaxY(svg), nomsParCode: noms })
+const ecrire = (fichierSortie: string, geoJson: GeoJsonFeatureCollection): void => {
   franceGeoJsonSchema.parse(geoJson)
-  const chemin = resolve(racineKpilote, 'public/maps', fichierSortie)
-  writeFileSync(chemin, JSON.stringify(geoJson))
+  writeFileSync(resolve(racineKpilote, 'public/maps', fichierSortie), JSON.stringify(geoJson))
   console.log(`${fichierSortie} : ${geoJson.features.length} territoires`)
 }
 
-const noms = chargerNoms()
+const convertir = (fichierSvg: string, prefixe: string): GeoJsonFeatureCollection => {
+  const svg = readFileSync(resolve(racinePpg, 'public/img', fichierSvg), 'utf8')
+  return convertirSvgEnGeoJson({ svg, prefixe, maxY: lireMaxY(svg), nomsParCode: noms })
+}
 
-genererCarte({
-  fichierSvg: 'cartographie-vue-departements.svg',
-  prefixe: 'DEPT-',
-  fichierSortie: 'france-departements.json',
-  noms,
-})
+const departements = convertir('cartographie-vue-departements.svg', 'DEPT-')
+ecrire('france-departements.json', departements)
 
-genererCarte({
-  fichierSvg: 'cartographie-vue-regions.svg',
-  prefixe: 'REG-',
-  fichierSortie: 'france-regions.json',
-  noms,
-})
+ecrire('france-regions.json', convertir('cartographie-vue-regions.svg', 'REG-'))
+
+// Frontières de régions dérivées des départements (contours dissous), alignées
+// sur la carte départements — sert d'overlay épais pour marquer les régions.
+const regionDe = (codeDept: string): string => {
+  const region = regionParDept[codeDept]
+  if (!region) throw new Error(`Région introuvable pour le département ${codeDept}`)
+  return region
+}
+const nomRegion = (codeRegion: string): string => nomParRegion[codeRegion] ?? codeRegion
+ecrire(
+  'france-departements-frontieres.json',
+  construireFrontieresRegions({ departements, regionDe, nomRegion }),
+)

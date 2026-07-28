@@ -11,18 +11,29 @@ export type CartePoint = {
   nom: string
 }
 
+// Cadrage partagé entre le choroplèthe et l'overlay des frontières pour qu'ils
+// se superposent exactement.
+const LAYOUT = {
+  aspectScale: 1,
+  layoutCenter: ['50%', '50%'] as [string, string],
+  layoutSize: '90%',
+}
+
 export function CarteFrance({
   mapName,
   geoJson,
+  frontieres,
   points,
   onSelect,
 }: {
   mapName: string
   geoJson: FranceGeoJson
+  frontieres?: FranceGeoJson
   points: ReadonlyArray<CartePoint>
   onSelect?: (joinValue: string) => void
 }) {
   const registeredRef = useRef<string | null>(null)
+  const frontieresMapName = `${mapName}__frontieres`
 
   useEffect(() => {
     if (registeredRef.current === mapName) return
@@ -30,11 +41,40 @@ export function CarteFrance({
     registeredRef.current = mapName
   }, [mapName, geoJson])
 
+  useEffect(() => {
+    if (!frontieres) return
+    echarts.registerMap(
+      frontieresMapName,
+      frontieres as unknown as Parameters<typeof echarts.registerMap>[1],
+    )
+  }, [frontieresMapName, frontieres])
+
   const option = useMemo(() => {
     const data = points.map((p) => ({ name: p.joinValue, value: p.valeur, nomLisible: p.nom }))
     const values = points.map((p) => p.valeur)
     const min = values.length > 0 ? Math.min(...values) : 0
     const max = values.length > 0 ? Math.max(...values) : 1
+
+    const frontieresSeries = frontieres
+      ? [
+          {
+            type: 'map' as const,
+            map: frontieresMapName,
+            ...LAYOUT,
+            roam: false,
+            silent: true,
+            label: { show: false },
+            emphasis: { disabled: true },
+            tooltip: { show: false },
+            itemStyle: {
+              areaColor: 'transparent',
+              // Frontières entre régions : trait épais uniforme par-dessus le choroplèthe.
+              borderColor: '#ffffff',
+              borderWidth: 2.4,
+            },
+          },
+        ]
+      : []
 
     return {
       tooltip: {
@@ -50,6 +90,8 @@ export function CarteFrance({
       visualMap: {
         min,
         max: max === min ? min + 1 : max,
+        // Seul le choroplèthe (série 0) est coloré par la valeur.
+        seriesIndex: 0,
         orient: 'horizontal' as const,
         left: 'center',
         bottom: 8,
@@ -66,12 +108,11 @@ export function CarteFrance({
           map: mapName,
           nameProperty: 'code',
           roam: false,
-          aspectScale: 1,
-          layoutCenter: ['50%', '50%'] as [string, string],
-          layoutSize: '90%',
+          ...LAYOUT,
           itemStyle: {
+            // Liseré fin distinguant les départements au sein d'une même région.
             borderColor: '#ffffff',
-            borderWidth: 1.5,
+            borderWidth: 0.5,
           },
           label: { show: false },
           emphasis: {
@@ -80,9 +121,10 @@ export function CarteFrance({
           },
           data,
         },
+        ...frontieresSeries,
       ],
     }
-  }, [mapName, points])
+  }, [mapName, frontieresMapName, frontieres, points])
 
   const onEvents = useMemo(
     () => ({

@@ -2,6 +2,7 @@ import { type WidgetApiModel } from '@pilote/kpilote-shared/widget'
 
 import { CarteFranceWidget } from '@/components/widgets/CarteFranceWidget'
 import {
+  franceDepartementsFrontieresGeoJsonQueryOptions,
   franceDepartementsGeoJsonQueryOptions,
   franceRegionsGeoJsonQueryOptions,
 } from '@/queries/geoJson'
@@ -18,6 +19,7 @@ const RENDERERS: Record<string, (props: WidgetRendererProps) => React.ReactNode>
       {...props}
       mapName="france-departements"
       geoJsonQueryOptions={franceDepartementsGeoJsonQueryOptions()}
+      frontieresQueryOptions={franceDepartementsFrontieresGeoJsonQueryOptions()}
     />
   ),
   'carte-france-regions': (props) => (
@@ -25,6 +27,7 @@ const RENDERERS: Record<string, (props: WidgetRendererProps) => React.ReactNode>
       {...props}
       mapName="france-regions"
       geoJsonQueryOptions={franceRegionsGeoJsonQueryOptions()}
+      frontieresQueryOptions={franceRegionsGeoJsonQueryOptions()}
     />
   ),
 }

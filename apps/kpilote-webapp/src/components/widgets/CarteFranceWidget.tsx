@@ -16,21 +16,25 @@ export function CarteFranceWidget({
   referentielId,
   mapName,
   geoJsonQueryOptions,
+  frontieresQueryOptions,
 }: {
   widget: WidgetApiModel
   indicateurId: string
   referentielId: string
   mapName: string
   geoJsonQueryOptions: GeoJsonQueryOptions
+  frontieresQueryOptions: GeoJsonQueryOptions
 }) {
   const navigate = useNavigate()
-  const [{ data: geoJson }, { data: individus }, { data: remarquables }] = useSuspenseQueries({
-    queries: [
-      geoJsonQueryOptions,
-      referentielIndividusQueryOptions(referentielId),
-      indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId),
-    ],
-  })
+  const [{ data: geoJson }, { data: frontieres }, { data: individus }, { data: remarquables }] =
+    useSuspenseQueries({
+      queries: [
+        geoJsonQueryOptions,
+        frontieresQueryOptions,
+        referentielIndividusQueryOptions(referentielId),
+        indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId),
+      ],
+    })
 
   const contributions = useMemo(
     () => remarquables.items.find((r) => r.referentiel === referentielId)?.contributions ?? [],
@@ -54,5 +58,13 @@ export function CarteFranceWidget({
     })
   }
 
-  return <CarteFrance mapName={mapName} geoJson={geoJson} points={points} onSelect={handleSelect} />
+  return (
+    <CarteFrance
+      mapName={mapName}
+      geoJson={geoJson}
+      frontieres={frontieres}
+      points={points}
+      onSelect={handleSelect}
+    />
+  )
 }

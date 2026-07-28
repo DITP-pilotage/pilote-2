@@ -1,4 +1,4 @@
-# Gaps entre régions bakés dans le GeoJSON — carte France
+# Marquer les frontières entre régions sur la carte France
 
 ## Contexte
 
@@ -8,90 +8,88 @@ GeoJSON stylisé (petite couronne visible) via
 `public/maps/france-departements.json` / `france-regions.json`, affichés par
 `CarteFrance.tsx` (`echarts.registerMap`).
 
-Les bordures blanches actuelles sont un `itemStyle.borderWidth: 1.5` uniforme
-appliqué entre **toutes** les zones. On veut à la place **marquer les frontières
-entre régions** : un espacement plus large entre régions, notamment sur la carte
-des départements, en incluant cet espacement dans la **géométrie GeoJSON** plutôt
-que dans la config echarts.
+On veut **marquer les frontières entre régions** : un trait épais et de largeur
+**uniforme** entre régions, notamment sur la carte des départements, tout en
+gardant un liseré fin entre départements d'une même région.
 
-## Objectif
+## Approche écartée : contraction des régions
 
-- Sur la carte des départements : les départements d'une même région restent
-  jointifs (distingués par un liseré fin), et un **gap visible** apparaît entre
-  régions.
-- Sur la carte des régions : même traitement pour cohérence (chaque région
-  contractée vers son propre centre).
-- L'espacement inter-régions vit dans le GeoJSON généré, pas dans echarts.
+Première tentative : contracter chaque groupe de départements vers son centre
+pour créer un gap baké dans le GeoJSON. Rejetée car l'espacement obtenu n'est
+**pas uniforme** (il dépend de la distance bord → centre de chaque région).
 
-## Donnée clé
+## Approche retenue : overlay de frontières dérivé des départements
 
-`apps/pilote-ppg/src/client/constants/territoires.json` fournit `codeParent` sur
-chaque département (`DEPT-08 → REG-44`), d'où le mapping département → région
-nécessaire pour grouper.
+On superpose au choroplèthe un second calque (série `map` echarts) qui ne dessine
+que les **contours de régions**, en trait épais uniforme.
 
-## Mécanisme
+Point clé : la carte régions SVG **ne s'aligne pas** avec la carte départements
+sur la petite couronne (dans les départements, la petite couronne est explosée en
+médaillon ; dans les régions, l'IdF reste compacte). On ne peut donc pas
+superposer `france-regions.json` tel quel sur la carte départements.
 
-Contraction affine par groupe : pour chaque groupe (région), on calcule le
-**centre de la bounding box** de l'union de ses polygones, puis on applique
-`p' = centre + facteur·(p − centre)` à tous les anneaux de tous les polygones du
-groupe.
+Solution : dériver les contours de régions **depuis la géométrie des
+départements** (qui contient le médaillon), par **parité d'arêtes** :
 
-Propriétés :
-- Transformation affine à centre commun ⇒ les arêtes partagées entre départements
-  d'un même groupe sont préservées (départements restent jointifs).
-- Groupes distincts contractés vers des centres distincts ⇒ un gap apparaît entre
-  eux.
-- La petite couronne (toute en IdF) est contractée d'un bloc ⇒ arrangement
-  préservé.
+- Une arête interne à une région (partagée par deux départements de cette région)
+  apparaît un nombre pair de fois → elle s'annule.
+- Les arêtes restantes (nombre impair) forment la frontière de la région.
+- Ces arêtes sont recollées en anneaux fermés (contour dissous = union des
+  départements de la région).
 
-Facteur de départ : **0.95** pour les deux cartes (constante en tête de script, à
-affiner visuellement).
+Prérequis vérifié : dans le SVG départements, ~63 % des arêtes sont partagées
+exactement entre départements adjacents (subdivision planaire propre), ce qui rend
+la parité d'arêtes fiable.
 
 ## Composants
 
-### 1. `src/scripts/contracterGeoJson.ts` (nouveau, pur, testé)
+### 1. `src/scripts/frontieresRegions.ts` (nouveau, pur, testé)
 
 ```
-contracterGeoJson({ collection, groupePar, facteur }): GeoJsonFeatureCollection
+construireFrontieresRegions({ departements, regionDe, nomRegion }): GeoJsonFeatureCollection
 ```
-- `collection: GeoJsonFeatureCollection`
-- `groupePar: (feature) => string` — clé de groupe
-- `facteur: number` — ex. 0.95
-- Réutilise les types `GeoJsonFeatureCollection` / `GeoJsonGeometry` de
-  `svgVersGeoJson.ts`.
-- Ne mute pas l'entrée ; renvoie une nouvelle collection.
+- Groupe les départements par région, calcule le contour dissous (parité d'arêtes
+  + recollement en anneaux), renvoie une feature `MultiPolygon` par région.
 
-### 2. `src/scripts/genererGeoJsonFrance.ts` (câblage)
+### 2. `src/scripts/genererGeoJsonFrance.ts`
 
-- Charge `codeParent` depuis `territoires.json` → `regionParDept: Record<string,string>`.
-- Après `convertirSvgEnGeoJson`, applique `contracterGeoJson` :
-  - départements : `groupePar = f => regionParDept[f.properties.code]` (throw si absent)
-  - régions : `groupePar = f => f.properties.code`
-- Puis `franceGeoJsonSchema.parse` (déjà en place) et écriture.
+- Génère `france-departements.json` et `france-regions.json` bruts (sans
+  contraction).
+- Génère en plus `france-departements-frontieres.json` via
+  `construireFrontieresRegions` (contours alignés sur la carte départements).
 
 ### 3. `src/components/widgets/CarteFrance.tsx`
 
-- Le liseré itemStyle change de rôle : de « séparer toutes les zones » à
-  « distinguer les départements au sein d'une région ».
-- `borderColor: '#ffffff'`, `borderWidth: 0.5`.
-- La séparation entre régions vient du gap GeoJSON (le fond transparaît).
+- Prop optionnelle `frontieres?: FranceGeoJson`.
+- Quand fournie : enregistre une seconde carte `${mapName}__frontieres` et ajoute
+  une série `map` silencieuse (fond transparent, bordure blanche épaisse ~2.4),
+  avec le **même cadrage** (`aspectScale` / `layoutCenter` / `layoutSize`) que le
+  choroplèthe pour une superposition exacte.
+- `visualMap.seriesIndex: 0` pour que seul le choroplèthe soit coloré.
+- Base : liseré fin `borderWidth: 0.5` (distinction des départements).
+
+### 4. Câblage widget
+
+- `api/geoJson.ts` + `queries/geoJson.ts` : fetch/query de
+  `france-departements-frontieres.json`.
+- `CarteFranceWidget` : fetch de l'overlay et passage à `CarteFrance`.
+- `WidgetRenderer` :
+  - carte départements → overlay = `france-departements-frontieres`.
+  - carte régions → overlay = `france-regions` (contours des régions eux-mêmes),
+    qui s'aligne trivialement avec le choroplèthe régions.
 
 ## Tests
 
-`src/scripts/contracterGeoJson.test.ts` :
-- Deux features de groupes différents, adjacentes → après contraction, leurs
-  arêtes ne se touchent plus (gap).
-- Deux features d'un même groupe partageant une arête → arête toujours partagée
-  après contraction (mêmes coordonnées transformées).
-- Immutabilité : la collection d'entrée n'est pas modifiée.
+`src/scripts/frontieresRegions.test.ts` : dissolution des arêtes internes, un
+contour par région, anneau fermé, conformité au schéma de l'app.
 
 ## Livrable
 
-- Régénérer les deux `.json` via `pnpm maps:generate`.
+- `pnpm maps:generate` régénère les trois `.json`.
 - `pnpm test`, `pnpm lint` verts.
 - Vérification visuelle via l'app.
 
 ## Hors scope
 
 - Pas de changement de l'API / des données métier.
-- Pas de configuration runtime du facteur (constante de génération).
+- Pas de configuration runtime de l'épaisseur (constante côté composant).
