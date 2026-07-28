@@ -187,7 +187,7 @@ function IndicateurDetailComponent() {
               referentielNom={referentielNom}
               sousOnglet={search.sousOnglet}
               onSousOngletChange={(sousOnglet) => {
-                void navigate({ search: (prev) => ({ ...prev, sousOnglet }) })
+                void navigate({ search: (prev) => ({ ...prev, sousOnglet }), resetScroll: false })
               }}
             />
           </div>
