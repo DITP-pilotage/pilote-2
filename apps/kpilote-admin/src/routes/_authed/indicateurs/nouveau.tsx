@@ -18,8 +18,8 @@ import { utilisateursAllQueryOptions } from '@/queries/utilisateurs'
 export const Route = createFileRoute('/_authed/indicateurs/nouveau')({
   loader: ({ context }) =>
     Promise.all([
-      context.queryClient.ensureQueryData(referentielsAllQueryOptions()),
-      context.queryClient.ensureQueryData(utilisateursAllQueryOptions()),
+      context.queryClient.fetchQuery(referentielsAllQueryOptions()),
+      context.queryClient.fetchQuery(utilisateursAllQueryOptions()),
     ]),
   component: NewIndicateurComponent,
 })

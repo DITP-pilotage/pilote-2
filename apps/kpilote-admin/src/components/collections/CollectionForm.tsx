@@ -21,8 +21,8 @@ const collectionFormSchema = z.object({
 export type CollectionFormValues = z.infer<typeof collectionFormSchema>
 
 const VISIBILITE_OPTIONS = [
-  { value: 'PUBLIC', label: 'PUBLIC — lisible par tout principal authentifié' },
-  { value: 'PRIVE', label: 'PRIVE — réservé aux principals ayant une permission' },
+  { value: 'PUBLIC', label: 'PUBLIC : lisible par tout principal authentifié' },
+  { value: 'PRIVE', label: 'PRIVE : réservé aux principals ayant une permission' },
 ] as const
 
 export const buildCollectionInitialValues = (

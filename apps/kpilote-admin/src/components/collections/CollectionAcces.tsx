@@ -6,6 +6,8 @@ import { grantCollectionPermission, revokeCollectionPermission } from '@/api/per
 import { ProdEditSectionHeader } from '@/components/ProdEditSectionHeader'
 import { UtilisateurPicker } from '@/components/UtilisateurPicker'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { IconButton } from '@pilote/kpilote-ui/IconButton'
+import { Subtitle } from '@pilote/kpilote-ui/Subtitle'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { clsxm } from '@/lib/clsxm'
@@ -37,9 +39,7 @@ export function CollectionAcces({ collectionId }: { collectionId: string }) {
     <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-6">
       <ProdEditSectionHeader titre="Accès" isProd={isProd} locked={locked} onUnlock={unlock} />
 
-      <p className="text-xs text-text-subtle">
-        Qui peut lire, et éventuellement écrire, cette collection.
-      </p>
+      <Subtitle>Qui peut lire, et éventuellement écrire, cette collection.</Subtitle>
 
       <UtilisateurPicker
         excludedIds={permissions.items.map((item) => item.principalId)}
@@ -107,8 +107,9 @@ export function CollectionAcces({ collectionId }: { collectionId: string }) {
                 >
                   Écriture
                 </button>
-                <button
-                  type="button"
+                <IconButton
+                  variant="danger"
+                  label="Retirer l'accès"
                   disabled={disabled}
                   onClick={() =>
                     mutation.mutate(() =>
@@ -118,20 +119,18 @@ export function CollectionAcces({ collectionId }: { collectionId: string }) {
                       }),
                     )
                   }
-                  className="text-text-subtle hover:text-red-marianne disabled:opacity-50"
-                  aria-label="Retirer l'accès"
                 >
-                  <Trash2 className="size-4" />
-                </button>
+                  <Trash2 />
+                </IconButton>
               </li>
             )
           })}
         </ul>
       )}
 
-      <p className="text-xs text-text-subtle">
+      <Subtitle>
         Les clés API sont listées ici mais s’ajoutent depuis « Gérer les clés API ».
-      </p>
+      </Subtitle>
     </section>
   )
 }

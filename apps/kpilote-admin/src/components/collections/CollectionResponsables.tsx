@@ -6,6 +6,8 @@ import { addCollectionResponsable, removeCollectionResponsable } from '@/api/col
 import { ProdEditSectionHeader } from '@/components/ProdEditSectionHeader'
 import { UtilisateurPicker } from '@/components/UtilisateurPicker'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { IconButton } from '@pilote/kpilote-ui/IconButton'
+import { Subtitle } from '@pilote/kpilote-ui/Subtitle'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { useProdEditUnlock } from '@/lib/useProdEditUnlock'
@@ -42,9 +44,7 @@ export function CollectionResponsables({ collectionId }: { collectionId: string 
         onUnlock={unlock}
       />
 
-      <p className="text-xs text-text-subtle">
-        Désignation métier, sans effet sur les droits d’accès.
-      </p>
+      <Subtitle>Désignation métier, sans effet sur les droits d’accès.</Subtitle>
 
       <UtilisateurPicker
         excludedIds={collection.responsables.map((responsable) => responsable.id)}
@@ -72,17 +72,16 @@ export function CollectionResponsables({ collectionId }: { collectionId: string 
                 </span>
                 <span className="font-mono text-xs text-text-muted">{responsable.email}</span>
               </span>
-              <button
-                type="button"
+              <IconButton
+                variant="danger"
+                label="Retirer le responsable"
                 disabled={disabled}
                 onClick={() =>
                   mutation.mutate(() => removeCollectionResponsable(collectionId, responsable.id))
                 }
-                className="text-text-subtle hover:text-red-marianne disabled:opacity-50"
-                aria-label="Retirer le responsable"
               >
-                <Trash2 className="size-4" />
-              </button>
+                <Trash2 />
+              </IconButton>
             </li>
           ))}
         </ul>

@@ -1,12 +1,14 @@
+import type { CollectionVisibilite } from '@pilote/kpilote-shared/collection'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Plus, Search } from 'lucide-react'
-import { useState } from 'react'
+import { useState, type ComponentProps } from 'react'
 
 import { Breadcrumb } from '@/components/Breadcrumb'
 import { PageHeading } from '@/components/PageHeading'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { Pill } from '@pilote/kpilote-ui/Pill'
 import { Table } from '@pilote/kpilote-ui/Table'
 import { clickableRowProps } from '@/lib/clickableRow'
 import { collectionsInfiniteQueryOptions } from '@/queries/collections'
@@ -16,10 +18,10 @@ export const Route = createFileRoute('/_authed/collections/')({
   component: CollectionsListComponent,
 })
 
-const VISIBILITE_BADGE: Record<string, string> = {
-  PUBLIC: 'bg-[#e8f5ec] text-[#18753c]',
-  PRIVE: 'bg-[#f0eefb] text-[#5246a8]',
-}
+const VISIBILITE_TONE = {
+  PUBLIC: 'success',
+  PRIVE: 'neutral',
+} as const satisfies Record<CollectionVisibilite, ComponentProps<typeof Pill>['tone']>
 
 function CollectionsListComponent() {
   const navigate = useNavigate()
@@ -95,11 +97,7 @@ function CollectionsListComponent() {
                   <span className="font-semibold">{collection.nom}</span>
                 </Table.Cell>
                 <Table.Cell>
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-semibold ${VISIBILITE_BADGE[collection.visibilite]}`}
-                  >
-                    {collection.visibilite}
-                  </span>
+                  <Pill tone={VISIBILITE_TONE[collection.visibilite]}>{collection.visibilite}</Pill>
                 </Table.Cell>
                 <Table.Cell align="center">{collection.indicateurs.length}</Table.Cell>
                 <Table.Cell align="center">{collection.responsables.length}</Table.Cell>

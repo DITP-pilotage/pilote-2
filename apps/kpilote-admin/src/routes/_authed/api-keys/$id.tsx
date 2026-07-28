@@ -19,9 +19,9 @@ export const Route = createFileRoute('/_authed/api-keys/$id')({
   validateSearch: searchSchema,
   loader: async ({ context, params }) => {
     await Promise.all([
-      context.queryClient.ensureQueryData(apiKeyQueryOptions(params.id)),
-      context.queryClient.ensureQueryData(principalPermissionsQueryOptions(params.id)),
-      context.queryClient.ensureQueryData(indicateursAllQueryOptions()),
+      context.queryClient.fetchQuery(apiKeyQueryOptions(params.id)),
+      context.queryClient.fetchQuery(principalPermissionsQueryOptions(params.id)),
+      context.queryClient.fetchQuery(indicateursAllQueryOptions()),
     ])
   },
   component: ApiKeyDetailComponent,

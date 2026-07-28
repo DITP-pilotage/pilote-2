@@ -10,9 +10,12 @@ import { db } from '@/framework/persistence/dbStore'
 import { getCollectionByPublicId } from '@/collection/queries/getCollectionByPublicId'
 import { MESSAGE_ADMIN } from '@/collection/utils'
 
+// TODO PIL-1688 : remplacer ce calcul de MAX + verrou consultatif par une vraie
+// séquence Postgres. https://data-ditp.atlassian.net/browse/PIL-1688
+
 // Verrou consultatif porté par la transaction : deux créations concurrentes
 // calculeraient sinon le même identifiant. Un retry sur violation d'unicité ne
-// suffirait pas — sous Postgres, l'erreur avorte la transaction courante.
+// suffirait pas : sous Postgres, l'erreur avorte la transaction courante.
 const lockPublicIdSequence = async (): Promise<void> => {
   await db().$executeRaw`SELECT pg_advisory_xact_lock(hashtext('collection_public_id'))`
 }

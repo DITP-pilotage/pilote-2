@@ -10,7 +10,7 @@ minimumReleaseAge: 20160
 minimumReleaseAgeExclude:
   - next
   - "@next/*"
-  # TEMPORAIRE — à retirer après le 2026-08-03 22:57 UTC.
+  # TEMPORAIRE : à retirer après le 2026-08-03 22:57 UTC.
   # next-auth est épinglé en exact 5.0.0-beta.32 (campagne du 2026-07-27, 5 advisories
   # Auth.js dont 2 critical), publiée le 2026-07-20 : encore sous quarantaine. Le lock la
   # réutilise sans broncher, mais `pnpm deploy --legacy` (deploy-bundle des apps kpilote)

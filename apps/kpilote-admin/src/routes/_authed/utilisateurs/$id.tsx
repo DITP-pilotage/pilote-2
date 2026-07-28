@@ -22,9 +22,9 @@ export const Route = createFileRoute('/_authed/utilisateurs/$id')({
   validateSearch: searchSchema,
   loader: async ({ context, params }) => {
     await Promise.all([
-      context.queryClient.ensureQueryData(utilisateurQueryOptions(params.id)),
-      context.queryClient.ensureQueryData(principalPermissionsQueryOptions(params.id)),
-      context.queryClient.ensureQueryData(indicateursAllQueryOptions()),
+      context.queryClient.fetchQuery(utilisateurQueryOptions(params.id)),
+      context.queryClient.fetchQuery(principalPermissionsQueryOptions(params.id)),
+      context.queryClient.fetchQuery(indicateursAllQueryOptions()),
     ])
   },
   component: EditUtilisateurComponent,

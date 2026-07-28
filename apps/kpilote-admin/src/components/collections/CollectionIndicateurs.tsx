@@ -1,7 +1,8 @@
+import { zodResolver } from '@hookform/resolvers/zod'
 import type { CollectionApiModel } from '@pilote/kpilote-shared/collection'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { Trash2 } from 'lucide-react'
-import { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 
 import {
   addCollectionIndicateur,
@@ -11,15 +12,23 @@ import {
 import { IndicateurPicker } from '@/components/permissions/IndicateurPicker'
 import { ProdEditSectionHeader } from '@/components/ProdEditSectionHeader'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { FieldInput } from '@pilote/kpilote-ui/FieldInput'
+import { IconButton } from '@pilote/kpilote-ui/IconButton'
+import { Subtitle } from '@pilote/kpilote-ui/Subtitle'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
+import {
+  ponderationFormSchema,
+  type PonderationFormInput,
+  type PonderationFormValues,
+} from '@/lib/ponderationForm'
 import { useProdEditUnlock } from '@/lib/useProdEditUnlock'
 import { collectionQueryOptions } from '@/queries/collections'
 import { indicateursAllQueryOptions } from '@/queries/indicateurs'
 
-// Saisie locale validée au blur ou sur Entrée : sans état local, chaque frappe
+// Validation au blur ou sur Entrée : sans formulaire local, chaque frappe
 // déclencherait un appel réseau.
-function PonderationInput({
+function PonderationField({
   valeur,
   disabled,
   onValider,
@@ -28,32 +37,41 @@ function PonderationInput({
   disabled: boolean
   onValider: (ponderation: number) => void
 }) {
-  const [saisie, setSaisie] = useState(String(valeur))
+  const { control, handleSubmit } = useForm<PonderationFormInput, unknown, PonderationFormValues>({
+    resolver: zodResolver(ponderationFormSchema),
+    defaultValues: { ponderation: String(valeur) },
+  })
 
-  const valider = () => {
-    const nombre = Number(saisie)
-    if (!Number.isFinite(nombre) || nombre < 0) {
-      setSaisie(String(valeur))
-      return
-    }
-    if (nombre === valeur) return
-    onValider(nombre)
-  }
+  const valider = handleSubmit(({ ponderation }) => {
+    if (ponderation !== valeur) onValider(ponderation)
+  })
 
   return (
-    <input
-      type="number"
-      min={0}
-      step={0.01}
-      value={saisie}
-      disabled={disabled}
-      aria-label="Pondération"
-      onChange={(event) => setSaisie(event.target.value)}
-      onBlur={valider}
-      onKeyDown={(event) => {
-        if (event.key === 'Enter') event.currentTarget.blur()
-      }}
-      className="w-20 rounded-md border border-border bg-surface px-2 py-1 text-sm disabled:opacity-50"
+    <Controller
+      control={control}
+      name="ponderation"
+      render={({ field, fieldState }) => (
+        <FieldInput
+          label="Pondération"
+          hideLabel
+          type="number"
+          min={0}
+          step={0.01}
+          disabled={disabled}
+          className="w-20 px-2 py-1"
+          name={field.name}
+          value={field.value}
+          onChange={(event) => field.onChange(event.target.value)}
+          onBlur={() => {
+            field.onBlur()
+            void valider()
+          }}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') event.currentTarget.blur()
+          }}
+          error={fieldState.error?.message}
+        />
+      )}
     />
   )
 }
@@ -114,7 +132,9 @@ export function CollectionIndicateurs({ collectionId }: { collectionId: string }
                 </span>
                 <span className="font-mono text-xs text-text-muted">{lien.id}</span>
               </span>
-              <PonderationInput
+              <PonderationField
+                // Remonte la valeur du serveur dans le formulaire après mutation.
+                key={lien.ponderation}
                 valeur={lien.ponderation}
                 disabled={disabled}
                 onValider={(ponderation) =>
@@ -123,26 +143,25 @@ export function CollectionIndicateurs({ collectionId }: { collectionId: string }
                   )
                 }
               />
-              <button
-                type="button"
+              <IconButton
+                variant="danger"
+                label="Retirer l'indicateur"
                 disabled={disabled}
                 onClick={() =>
                   mutation.mutate(() => removeCollectionIndicateur(collectionId, lien.id))
                 }
-                className="text-text-subtle hover:text-red-marianne disabled:opacity-50"
-                aria-label="Retirer l'indicateur"
               >
-                <Trash2 className="size-4" />
-              </button>
+                <Trash2 />
+              </IconButton>
             </li>
           ))}
         </ul>
       )}
 
-      <p className="text-xs text-text-subtle">
+      <Subtitle>
         La pondération règle le poids de l’indicateur dans le taux de progression de la collection.
         0 l’exclut du calcul.
-      </p>
+      </Subtitle>
     </section>
   )
 }

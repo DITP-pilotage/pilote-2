@@ -35,7 +35,7 @@ export function CollectionCard({
       footer={
         <>
           {nb} indicateur{nb > 1 ? 's' : ''}
-          {collection.description ? ` — ${collection.description}` : ''}
+          {collection.description ? ` · ${collection.description}` : ''}
         </>
       }
     >

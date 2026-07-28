@@ -13,8 +13,8 @@ import { useAppConfig } from '@/context/AppConfigContext'
 export const Route = createFileRoute('/_authed/referentiels/$id')({
   loader: async ({ context, params }) => {
     await Promise.all([
-      context.queryClient.ensureQueryData(referentielQueryOptions(params.id)),
-      context.queryClient.ensureQueryData(referentielIndividusQueryOptions(params.id)),
+      context.queryClient.fetchQuery(referentielQueryOptions(params.id)),
+      context.queryClient.fetchQuery(referentielIndividusQueryOptions(params.id)),
     ])
   },
   component: EditReferentielComponent,

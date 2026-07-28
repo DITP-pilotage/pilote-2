@@ -103,7 +103,7 @@ const getCollectionsRoute = createRoute({
   tags: ['Collection'],
   summary: "Lister les collections d'indicateurs",
   description:
-    "Chaque item inclut `indicateurs` — identifiant public et pondération —, triés par ordre d'insertion dans la collection (createdAt ASC de la jonction).",
+    "Chaque item inclut `indicateurs` (identifiant public et pondération), triés par ordre d'insertion dans la collection (createdAt ASC de la jonction).",
   middleware: [requireAuthentication],
   request: { query: listCollectionsQuerySchema },
   responses: {
@@ -126,7 +126,7 @@ const getCollectionByIdRoute = createRoute({
   tags: ['Collection'],
   summary: 'Récupérer une collection par identifiant public',
   description:
-    "La réponse inclut `indicateurs` — identifiant public et pondération —, triés par ordre d'insertion (createdAt ASC de la jonction).",
+    "La réponse inclut `indicateurs` (identifiant public et pondération), triés par ordre d'insertion (createdAt ASC de la jonction).",
   middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {
@@ -487,7 +487,7 @@ const listCollectionPermissionsRoute = createRoute({
   tags: ['Collection', 'Permission', 'Admin'],
   summary: 'Lister les principals ayant accès à une collection',
   description:
-    "Lecture inverse de `GET /permissions?principalId=…`, qui ne répond qu'à « à quoi ce principal a-t-il accès ». Retourne les principals — utilisateurs et clés API — disposant d'une permission directe sur la collection, triés par `type` puis `libelle`. L'octroi et le retrait passent par `POST` / `DELETE /permissions/collection`.",
+    "Lecture inverse de `GET /permissions?principalId=…`, qui ne répond qu'à « à quoi ce principal a-t-il accès ». Retourne les principals (utilisateurs et clés API) disposant d'une permission directe sur la collection, triés par `type` puis `libelle`. L'octroi et le retrait passent par `POST` / `DELETE /permissions/collection`.",
   middleware: [requireAuthentication],
   request: { params: detailParamsSchema },
   responses: {

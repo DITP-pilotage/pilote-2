@@ -16,7 +16,7 @@ import { useAppConfig } from '@/context/AppConfigContext'
 import { featuresQueryOptions, useModifierEtatFeatureMutation } from '@/queries/feature'
 
 export const Route = createFileRoute('/_authed/features/')({
-  loader: ({ context }) => context.queryClient.ensureQueryData(featuresQueryOptions()),
+  loader: ({ context }) => context.queryClient.fetchQuery(featuresQueryOptions()),
   component: FeatureListComponent,
 })
 

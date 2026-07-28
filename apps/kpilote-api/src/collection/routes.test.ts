@@ -5,7 +5,7 @@ import { app } from '../app'
 // Les routes d'écriture ouvrent leur propre transaction (`withTransaction`), qui
 // ne voit pas les fixtures de la transaction de test : leur comportement est
 // couvert par les tests de commande. Ici on vérifie le câblage.
-describe('routes collection — câblage', () => {
+describe('routes collection : câblage', () => {
   it('déclare les routes d’écriture dans le doc OpenAPI', async () => {
     const response = await app.request('/openapi.json')
 

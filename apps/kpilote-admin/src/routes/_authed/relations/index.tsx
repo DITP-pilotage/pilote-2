@@ -21,8 +21,8 @@ import { useToast } from '@pilote/kpilote-ui/Toast'
 export const Route = createFileRoute('/_authed/relations/')({
   loader: async ({ context }) => {
     await Promise.all([
-      context.queryClient.ensureQueryData(individusAllQueryOptions()),
-      context.queryClient.ensureQueryData(relationsAllQueryOptions()),
+      context.queryClient.fetchQuery(individusAllQueryOptions()),
+      context.queryClient.fetchQuery(relationsAllQueryOptions()),
     ])
   },
   component: RelationsComponent,

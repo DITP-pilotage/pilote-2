@@ -5,7 +5,7 @@ import { clsxm } from '@/lib/clsxm'
 
 // Entête de section administrable : titre, état du verrou de production et
 // bandeau de déverrouillage. Le hook `useProdEditUnlock` reste appelé par le
-// parent, qui a besoin de `locked` pour désactiver ses contrôles — l'appeler
+// parent, qui a besoin de `locked` pour désactiver ses contrôles : l'appeler
 // ici aussi créerait deux états indépendants.
 export function ProdEditSectionHeader({
   titre,

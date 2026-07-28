@@ -22,7 +22,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@pilote/kpilote-ui/Tab
 import { Text } from '@pilote/kpilote-ui/Typography'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import { useRecordVisit } from '@/lib/recentlyVisited'
-import { indicateursQueryOptions } from '@/queries/indicateurs'
+import { indicateursQueryOptions, loadIndicateurs } from '@/queries/indicateurs'
 import {
   loadCollection,
   collectionQueryOptions,
@@ -52,7 +52,7 @@ export const Route = createFileRoute('/_authenticated/collections/$id')({
     const collection = await loadCollection({ queryClient, collectionId: params.id })
     const indicateurIds = collection.indicateurs.map((lien) => lien.id)
     if (indicateurIds.length > 0) {
-      await queryClient.ensureQueryData(indicateursQueryOptions({ ids: indicateurIds }))
+      await loadIndicateurs({ queryClient, query: { ids: indicateurIds } })
     }
 
     const referentielIds = await loadAllReferentielIds({ queryClient })
