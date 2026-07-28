@@ -15,6 +15,7 @@ import { individusAllQueryOptions } from '@/queries/individus'
 import { relationsAllQueryOptions } from '@/queries/relations'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { IconButton } from '@pilote/kpilote-ui/IconButton'
 import { SearchField } from '@pilote/kpilote-ui/SearchField'
 import { Table } from '@pilote/kpilote-ui/Table'
 import { useToast } from '@pilote/kpilote-ui/Toast'
@@ -178,16 +179,15 @@ function RelationsComponent() {
                   />
                 </Table.Cell>
                 <Table.Cell align="right">
-                  <button
-                    type="button"
-                    aria-label="Retirer la ligne"
+                  <IconButton
+                    variant="danger"
+                    label="Retirer la ligne"
                     onClick={() =>
                       setEnAttente((lignes) => lignes.filter((autre) => autre.id !== ligne.id))
                     }
-                    className="text-text-muted hover:text-red-marianne"
                   >
-                    <Trash2 className="size-4" />
-                  </button>
+                    <Trash2 />
+                  </IconButton>
                 </Table.Cell>
               </Table.Row>
             ))}
@@ -211,15 +211,14 @@ function RelationsComponent() {
                   />
                 </Table.Cell>
                 <Table.Cell align="right">
-                  <button
-                    type="button"
-                    aria-label={`Supprimer la relation de ${relation.enfant.nom}`}
+                  <IconButton
+                    variant="danger"
+                    label={`Supprimer la relation de ${relation.enfant.nom}`}
                     disabled={locked || suppression.isPending}
                     onClick={() => suppression.mutate(relation.enfant.id)}
-                    className="text-text-muted hover:text-red-marianne disabled:opacity-50"
                   >
-                    <Trash2 className="size-4" />
-                  </button>
+                    <Trash2 />
+                  </IconButton>
                 </Table.Cell>
               </Table.Row>
             ))}

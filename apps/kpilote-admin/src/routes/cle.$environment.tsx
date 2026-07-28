@@ -4,6 +4,7 @@ import { KeyRound } from 'lucide-react'
 import { useState } from 'react'
 
 import { Button } from '@pilote/kpilote-ui/Button'
+import { Subtitle } from '@pilote/kpilote-ui/Subtitle'
 import { type Environment, session } from '@/session'
 
 const ENV_LABEL: Record<Environment, string> = { local: 'Local', dev: 'Dev', prod: 'Prod' }
@@ -139,9 +140,9 @@ function KeyComponent() {
           </div>
         ) : null}
 
-        <p className="text-xs text-text-subtle">
+        <Subtitle>
           🔒 La clé est validée puis stockée chiffrée côté serveur, jamais exposée au navigateur.
-        </p>
+        </Subtitle>
       </div>
     </div>
   )

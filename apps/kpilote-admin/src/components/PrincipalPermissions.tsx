@@ -16,6 +16,7 @@ import { CollectionSearchModal } from '@/components/CollectionSearchModal'
 import { IndicateurPicker } from '@/components/permissions/IndicateurPicker'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
+import { IconButton } from '@pilote/kpilote-ui/IconButton'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { clsxm } from '@/lib/clsxm'
@@ -129,15 +130,16 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
                     >
                       Écriture
                     </button>
-                    <button
-                      type="button"
+                    <IconButton
+                      variant="danger"
+                      size="sm"
+                      label="Retirer la ressource"
                       disabled={disabled}
                       onClick={() => handlers.onRemove(row.publicId)}
-                      className="ml-1 text-text-subtle hover:text-red-marianne disabled:opacity-50"
-                      aria-label="Retirer la ressource"
+                      className="ml-1"
                     >
-                      <Trash2 className="size-4" />
-                    </button>
+                      <Trash2 />
+                    </IconButton>
                   </span>
                 </div>
                 {extra}
