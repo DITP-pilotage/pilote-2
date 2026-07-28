@@ -51,7 +51,7 @@ const lireMaxY = (svg: string): number => {
 
 const ecrire = (fichierSortie: string, geoJson: GeoJsonFeatureCollection): void => {
   franceGeoJsonSchema.parse(geoJson)
-  writeFileSync(resolve(racineKpilote, 'public/maps', fichierSortie), JSON.stringify(geoJson))
+  writeFileSync(resolve(racineKpilote, 'src/assets/maps', fichierSortie), JSON.stringify(geoJson))
   console.log(`${fichierSortie} : ${geoJson.features.length} territoires`)
 }
 

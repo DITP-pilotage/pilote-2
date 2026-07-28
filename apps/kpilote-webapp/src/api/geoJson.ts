@@ -1,4 +1,3 @@
-import ky from 'ky'
 import { z } from 'zod'
 
 const geoJsonFeatureSchema = z.object({
@@ -7,22 +6,10 @@ const geoJsonFeatureSchema = z.object({
   properties: z.object({ code: z.string(), nom: z.string() }),
 })
 
+// Contrat des cartes France. Validé à la génération (`pnpm maps:generate`) ;
+// les cartes sont ensuite importées statiquement (cf. `@/assets/maps`).
 export const franceGeoJsonSchema = z.object({
   type: z.literal('FeatureCollection'),
   features: z.array(geoJsonFeatureSchema).readonly(),
 })
 export type FranceGeoJson = z.infer<typeof franceGeoJsonSchema>
-
-const fetchGeoJson = async (url: string): Promise<FranceGeoJson> => {
-  const json = await ky.get(url).json()
-  return franceGeoJsonSchema.parse(json)
-}
-
-export const fetchFranceDepartementsGeoJson = (): Promise<FranceGeoJson> =>
-  fetchGeoJson('/maps/france-departements.json')
-
-export const fetchFranceRegionsGeoJson = (): Promise<FranceGeoJson> =>
-  fetchGeoJson('/maps/france-regions.json')
-
-export const fetchFranceDepartementsFrontieresGeoJson = (): Promise<FranceGeoJson> =>
-  fetchGeoJson('/maps/france-departements-frontieres.json')

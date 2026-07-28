@@ -3,38 +3,33 @@ import { useSuspenseQueries } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { startTransition, useMemo } from 'react'
 
+import { type FranceGeoJson } from '@/api/geoJson'
 import { CarteFrance } from '@/components/widgets/CarteFrance'
 import { buildCarteFranceBindings } from '@/components/widgets/carteFranceData'
-import { type franceDepartementsGeoJsonQueryOptions } from '@/queries/geoJson'
 import { indicateurValeursRemarquablesQueryOptions } from '@/queries/indicateurs'
 import { referentielIndividusQueryOptions } from '@/queries/referentiels'
-
-type GeoJsonQueryOptions = ReturnType<typeof franceDepartementsGeoJsonQueryOptions>
 
 export function CarteFranceWidget({
   indicateurId,
   referentielId,
   mapName,
-  geoJsonQueryOptions,
-  frontieresQueryOptions,
+  geoJson,
+  frontieres,
 }: {
   widget: WidgetApiModel
   indicateurId: string
   referentielId: string
   mapName: string
-  geoJsonQueryOptions: GeoJsonQueryOptions
-  frontieresQueryOptions: GeoJsonQueryOptions
+  geoJson: FranceGeoJson
+  frontieres: FranceGeoJson
 }) {
   const navigate = useNavigate()
-  const [{ data: geoJson }, { data: frontieres }, { data: individus }, { data: remarquables }] =
-    useSuspenseQueries({
-      queries: [
-        geoJsonQueryOptions,
-        frontieresQueryOptions,
-        referentielIndividusQueryOptions(referentielId),
-        indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId),
-      ],
-    })
+  const [{ data: individus }, { data: remarquables }] = useSuspenseQueries({
+    queries: [
+      referentielIndividusQueryOptions(referentielId),
+      indicateurValeursRemarquablesQueryOptions(indicateurId, referentielId),
+    ],
+  })
 
   const contributions = useMemo(
     () => remarquables.items.find((r) => r.referentiel === referentielId)?.contributions ?? [],

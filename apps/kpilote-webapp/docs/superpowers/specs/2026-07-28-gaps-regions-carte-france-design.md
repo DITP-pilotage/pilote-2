@@ -48,8 +48,9 @@ la parité d'arêtes fiable.
 ```
 construireFrontieresRegions({ departements, regionDe, nomRegion }): GeoJsonFeatureCollection
 ```
+
 - Groupe les départements par région, calcule le contour dissous (parité d'arêtes
-  + recollement en anneaux), renvoie une feature `MultiPolygon` par région.
+  - recollement en anneaux), renvoie une feature `MultiPolygon` par région.
 
 ### 2. `src/scripts/genererGeoJsonFrance.ts`
 
@@ -68,15 +69,23 @@ construireFrontieresRegions({ departements, regionDe, nomRegion }): GeoJsonFeatu
 - `visualMap.seriesIndex: 0` pour que seul le choroplèthe soit coloré.
 - Base : liseré fin `borderWidth: 0.5` (distinction des départements).
 
-### 4. Câblage widget
+### 4. Câblage widget (imports statiques)
 
-- `api/geoJson.ts` + `queries/geoJson.ts` : fetch/query de
-  `france-departements-frontieres.json`.
-- `CarteFranceWidget` : fetch de l'overlay et passage à `CarteFrance`.
-- `WidgetRenderer` :
-  - carte départements → overlay = `france-departements-frontieres`.
-  - carte régions → overlay = `france-regions` (contours des régions eux-mêmes),
-    qui s'aligne trivialement avec le choroplèthe régions.
+Les cartes sont générées dans `src/assets/maps/*.json` et **importées
+statiquement** (pas de fetch runtime) : le code splitting par route les place dans
+le chunk de la route, elles sont déjà validées à la génération.
+
+- `src/assets/maps/index.ts` : importe les trois JSON et les expose typés
+  `FranceGeoJson`.
+- `WidgetRenderer` passe les objets en props :
+  - carte départements → `geoJson` = départements, `frontieres` =
+    `france-departements-frontieres`.
+  - carte régions → `geoJson` = régions, `frontieres` = régions (contours des
+    régions eux-mêmes), qui s'aligne trivialement avec le choroplèthe.
+- `CarteFranceWidget` reçoit `geoJson`/`frontieres` en props ; il ne garde en
+  `useSuspenseQueries` que les données métier (individus, valeurs remarquables).
+- `api/geoJson.ts` ne conserve que le schéma/type ; `queries/geoJson.ts` est
+  supprimé.
 
 ## Tests
 
