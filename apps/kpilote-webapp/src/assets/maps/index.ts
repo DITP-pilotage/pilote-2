@@ -1,13 +1,11 @@
-import { type FranceGeoJson } from '@/api/geoJson'
-
 import departements from './france-departements.json'
 import departementsFrontieres from './france-departements-frontieres.json'
+import { franceGeoJsonSchema } from './geoJson'
 import regions from './france-regions.json'
 
 // Cartes générées par `pnpm maps:generate` et importées statiquement (bundlées
-// dans le chunk de la route via le code splitting). Déjà validées par le schéma
-// à la génération, d'où le cast direct.
-export const franceDepartementsGeoJson = departements as unknown as FranceGeoJson
-export const franceRegionsGeoJson = regions as unknown as FranceGeoJson
-export const franceDepartementsFrontieresGeoJson =
-  departementsFrontieres as unknown as FranceGeoJson
+// dans le chunk de la route via le code splitting). `parse` donne le type sans
+// cast et valide la structure (bon marché : la géométrie n'est pas parcourue).
+export const franceDepartementsGeoJson = franceGeoJsonSchema.parse(departements)
+export const franceRegionsGeoJson = franceGeoJsonSchema.parse(regions)
+export const franceDepartementsFrontieresGeoJson = franceGeoJsonSchema.parse(departementsFrontieres)

@@ -66,12 +66,10 @@ export function IndicateurResultatsTab({
               individuId={individuId}
               unite={unite}
             />
-            {/* Suspense local : les queries de la carte/widgets (referentiel, geoJson,
-                individus) ne sont pas préfetchées par le loader. Sans ce boundary, leur
-                suspension remonte au pendingComponent de la route → loading global. */}
-            <Suspense fallback={<RouteLoading message="Chargement de la répartition…" />}>
-              <IndicateurWidgets indicateurId={indicateurId} referentielId={referentielId} />
-            </Suspense>
+            {/* Données (referentiel, individus, valeurs remarquables) déjà
+                préfetchées par le loader de la route, et la carte est un import
+                statique : aucune suspension ici, donc pas de boundary. */}
+            <IndicateurWidgets indicateurId={indicateurId} referentielId={referentielId} />
           </div>
         </TabsContent>
 

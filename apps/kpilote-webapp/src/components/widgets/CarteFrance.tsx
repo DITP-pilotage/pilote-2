@@ -2,7 +2,7 @@ import * as echarts from 'echarts'
 import ReactECharts from 'echarts-for-react'
 import { useEffect, useMemo, useRef } from 'react'
 
-import { type FranceGeoJson } from '@/api/geoJson'
+import { type FranceGeoJson } from '@/assets/maps/geoJson'
 import { formatNumberFr } from '@/lib/format'
 
 export type CartePoint = {
@@ -28,7 +28,7 @@ export function CarteFrance({
 }: {
   mapName: string
   geoJson: FranceGeoJson
-  frontieres?: FranceGeoJson
+  frontieres: FranceGeoJson
   points: ReadonlyArray<CartePoint>
   onSelect?: (joinValue: string) => void
 }) {
@@ -42,7 +42,6 @@ export function CarteFrance({
   }, [mapName, geoJson])
 
   useEffect(() => {
-    if (!frontieres) return
     echarts.registerMap(
       frontieresMapName,
       frontieres as unknown as Parameters<typeof echarts.registerMap>[1],
@@ -55,26 +54,22 @@ export function CarteFrance({
     const min = values.length > 0 ? Math.min(...values) : 0
     const max = values.length > 0 ? Math.max(...values) : 1
 
-    const frontieresSeries = frontieres
-      ? [
-          {
-            type: 'map' as const,
-            map: frontieresMapName,
-            ...LAYOUT,
-            roam: false,
-            silent: true,
-            label: { show: false },
-            emphasis: { disabled: true },
-            tooltip: { show: false },
-            itemStyle: {
-              areaColor: 'transparent',
-              // Frontières entre régions : trait épais uniforme par-dessus le choroplèthe.
-              borderColor: '#ffffff',
-              borderWidth: 2.4,
-            },
-          },
-        ]
-      : []
+    const frontieresSeries = {
+      type: 'map' as const,
+      map: frontieresMapName,
+      ...LAYOUT,
+      roam: false,
+      silent: true,
+      label: { show: false },
+      emphasis: { disabled: true },
+      tooltip: { show: false },
+      itemStyle: {
+        areaColor: 'transparent',
+        // Frontières entre régions : trait épais uniforme par-dessus le choroplèthe.
+        borderColor: '#ffffff',
+        borderWidth: 2.4,
+      },
+    }
 
     return {
       tooltip: {
@@ -121,10 +116,10 @@ export function CarteFrance({
           },
           data,
         },
-        ...frontieresSeries,
+        frontieresSeries,
       ],
     }
-  }, [mapName, frontieresMapName, frontieres, points])
+  }, [mapName, frontieresMapName, points])
 
   const onEvents = useMemo(
     () => ({

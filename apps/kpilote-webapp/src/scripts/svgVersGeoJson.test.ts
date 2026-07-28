@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { franceGeoJsonSchema } from '@/api/geoJson'
+import { franceGeoJsonSchema } from '@/assets/maps/geoJson'
 import { convertirSvgEnGeoJson } from '@/scripts/svgVersGeoJson'
 
 const svgFake = `

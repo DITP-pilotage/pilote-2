@@ -2,7 +2,7 @@ import { readFileSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-import { franceGeoJsonSchema } from '../api/geoJson'
+import { franceGeoJsonSchema } from '../assets/maps/geoJson'
 import { construireFrontieresRegions } from './frontieresRegions'
 import { convertirSvgEnGeoJson, type GeoJsonFeatureCollection } from './svgVersGeoJson'
 

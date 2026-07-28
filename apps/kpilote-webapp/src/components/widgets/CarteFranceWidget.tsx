@@ -3,7 +3,7 @@ import { useSuspenseQueries } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { startTransition, useMemo } from 'react'
 
-import { type FranceGeoJson } from '@/api/geoJson'
+import { type FranceGeoJson } from '@/assets/maps/geoJson'
 import { CarteFrance } from '@/components/widgets/CarteFrance'
 import { buildCarteFranceBindings } from '@/components/widgets/carteFranceData'
 import { indicateurValeursRemarquablesQueryOptions } from '@/queries/indicateurs'

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { franceGeoJsonSchema } from '@/api/geoJson'
+import { franceGeoJsonSchema } from '@/assets/maps/geoJson'
 import { construireFrontieresRegions } from '@/scripts/frontieresRegions'
 import { type GeoJsonFeature, type GeoJsonFeatureCollection } from '@/scripts/svgVersGeoJson'
 
