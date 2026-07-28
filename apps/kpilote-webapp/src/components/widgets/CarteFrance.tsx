@@ -69,6 +69,10 @@ export function CarteFrance({
           aspectScale: 1,
           layoutCenter: ['50%', '50%'] as [string, string],
           layoutSize: '90%',
+          itemStyle: {
+            borderColor: '#ffffff',
+            borderWidth: 1.5,
+          },
           label: { show: false },
           emphasis: {
             label: { show: false },
