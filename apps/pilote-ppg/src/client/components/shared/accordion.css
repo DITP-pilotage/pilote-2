@@ -44,3 +44,12 @@
 .accordion-content[data-state="closed"] {
   animation: accordion-close 200ms ease-in;
 }
+
+@media print {
+  .accordion-content {
+    height: auto !important;
+    overflow: visible !important;
+    animation: none !important;
+    opacity: 1 !important;
+  }
+}
