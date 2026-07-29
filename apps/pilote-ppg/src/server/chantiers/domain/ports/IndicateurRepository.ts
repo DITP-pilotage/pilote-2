@@ -44,6 +44,16 @@ export interface IndicateurRepository {
   recupererIndicateursNonAJourParChantierId(): Promise<
     Map<string, { id: string; nom: string; mailles: string[] }[]>
   >;
+  recupererIndicateursNonAJourAvecResponsablesDonneesPourChantierId(
+    chantierId: string,
+  ): Promise<
+    {
+      id: string;
+      nom: string;
+      mailles: string[];
+      responsablesDonneesMails: string[];
+    }[]
+  >;
   recupererIndicateursAParametrerParChantierId(
     jalon: number,
   ): Promise<Map<string, { id: string; nom: string }[]>>;

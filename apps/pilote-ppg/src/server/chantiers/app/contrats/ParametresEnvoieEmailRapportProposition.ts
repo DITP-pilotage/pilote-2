@@ -6,6 +6,37 @@ import {
 } from "@/server/chantiers/domain/RapportPropositionsAvancement";
 import { PropositionValeurAvancementRapport } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 
+export const genererParametresRapportResponsableDonnees = (
+  chantierInfo: { id: string; nom: string; conseillerMail: string },
+  indicateurs: { id: string; nom: string; mailles: string[] }[],
+): ContenuRapport => {
+  const nombreIndicateurs = indicateurs.length;
+
+  const chantierRapport: ChantierRapport = {
+    nom_chantier: chantierInfo.nom,
+    id_chantier: chantierInfo.id,
+    nombre_propositions: "",
+    conseiller_email: chantierInfo.conseillerMail,
+    afficherSectionPropositions: false,
+    indicateursPropositions: [],
+    afficherSectionMajIndicateur: true,
+    indicateursNonMisAJour: indicateurs,
+    nombreIndicateursNonMisAJour:
+      nombreIndicateurs > 1
+        ? `${nombreIndicateurs} indicateurs à mettre à jour`
+        : `${nombreIndicateurs} indicateur à mettre à jour`,
+    afficherSectionParametrage: false,
+    indicateursAParametrer: [],
+    nombreIndicateursAParametrer: "",
+  };
+
+  return {
+    chantiers: [chantierRapport],
+    conseillerEmail: chantierInfo.conseillerMail,
+    texteIntro: "votre chantier prioritaire",
+  };
+};
+
 export const genererParametresEnvoieRapportProposition = (
   listeChantierIds: string[],
   mapChantiersInformation: Map<

@@ -1468,6 +1468,71 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     return indicateursParChantier;
   }
 
+  async recupererIndicateursNonAJourAvecResponsablesDonneesPourChantierId(
+    chantierId: string,
+  ): Promise<
+    {
+      id: string;
+      nom: string;
+      mailles: string[];
+      responsablesDonneesMails: string[];
+    }[]
+  > {
+    const indicateurs = await this.prisma.indicateur_territoire.findMany({
+      where: {
+        indicateur_identite: {
+          chantier_id: chantierId,
+          statut: "PUBLIE",
+          chantier_identite: {
+            statut: { in: ["PUBLIE", "BROUILLON"] },
+          },
+        },
+        est_applicable: true,
+        OR: [{ est_a_jour: false }, { est_a_jour: null }],
+      },
+      select: {
+        maille: true,
+        indicateur_identite: {
+          select: {
+            id: true,
+            nom: true,
+            responsables_donnees_mails: true,
+          },
+        },
+      },
+      distinct: ["id", "maille"],
+    });
+
+    const indicateursMap = new Map<
+      string,
+      {
+        id: string;
+        nom: string;
+        mailles: string[];
+        responsablesDonneesMails: string[];
+      }
+    >();
+
+    for (const indicateur of indicateurs) {
+      const indicateurId = indicateur.indicateur_identite.id;
+      const maille = indicateur.maille;
+
+      if (indicateursMap.has(indicateurId)) {
+        indicateursMap.get(indicateurId)!.mailles.push(maille);
+      } else {
+        indicateursMap.set(indicateurId, {
+          id: indicateurId,
+          nom: indicateur.indicateur_identite.nom,
+          mailles: [maille],
+          responsablesDonneesMails:
+            indicateur.indicateur_identite.responsables_donnees_mails,
+        });
+      }
+    }
+
+    return [...indicateursMap.values()];
+  }
+
   async recupererIndicateursAParametrerParChantierId(
     jalon: number,
   ): Promise<Map<string, { id: string; nom: string }[]>> {

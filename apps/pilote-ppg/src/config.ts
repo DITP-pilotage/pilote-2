@@ -289,6 +289,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_RAPPORT_PVA",
     },
+    rapportResponsablesDonnees: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_RAPPORT_RESPONSABLES_DONNEES",
+    },
     creationCompteArs: {
       format: Boolean,
       default: false,
