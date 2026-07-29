@@ -35,7 +35,7 @@ export const ObjectifSection = ({
           {libellésTypesObjectif[type]}
         </Accordion.Trigger>
       </Accordion.Header>
-      <Accordion.Content className="bg-white">
+      <Accordion.Content forceMount className="bg-white">
         <PublicationSection
           actions={actions}
           brouillon={brouillon}
