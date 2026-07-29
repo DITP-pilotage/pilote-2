@@ -73,7 +73,6 @@ export const Accordion = Object.assign({}, RadixAccordion, {
       {...props}
       className={clsxm(
         "!bg-dsfr-alt-blue-france",
-        "!px-6 !pb-6 !pt-4",
         "overflow-hidden",
         "accordion-content",
         props.className,

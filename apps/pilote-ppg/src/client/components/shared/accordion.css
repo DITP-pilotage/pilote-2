@@ -39,6 +39,8 @@
 
 .accordion-content[data-state="open"] {
   animation: accordion-open 200ms ease-out;
+  padding: 16px;
+
 }
 
 .accordion-content[data-state="closed"] {
