@@ -42,7 +42,7 @@
 }
 
 .accordion-content[data-state="closed"] {
-  animation: accordion-close 200ms ease-in;
+  animation: accordion-close 200ms ease-in forwards;
 }
 
 @media print {
