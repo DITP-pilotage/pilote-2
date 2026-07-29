@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { clsxm } from './clsxm'
 
 export const DEFAULT_PAGE_SIZE_OPTIONS = [20, 50, 100] as const
+export const DEFAULT_PAGE_SIZE = 100
 
 export interface PaginationProps {
   hasPrevious?: boolean

@@ -15,7 +15,7 @@ import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Page } from '@pilote/kpilote-ui/Page'
 import { Text } from '@pilote/kpilote-ui/Typography'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
-import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@pilote/kpilote-ui/Pagination'
+import { DEFAULT_PAGE_SIZE, Pagination } from '@pilote/kpilote-ui/Pagination'
 import { indicateursQueryOptions, loadIndicateurs } from '@/queries/indicateurs'
 import { allReferentielsQueryOptions, loadAllReferentielIds } from '@/queries/referentiels'
 
@@ -24,6 +24,13 @@ const indicateursSearchSchema = z.object({
   pageSize: z.coerce.number().int().min(1).max(100).optional(),
   individu: individuPublicIdSchema.optional(),
   referentiel: referentielPublicIdSchema.optional(),
+})
+
+type IndicateursSearch = z.infer<typeof indicateursSearchSchema>
+
+const toIndicateursQuery = (search: IndicateursSearch) => ({
+  ...search,
+  pageSize: search.pageSize ?? DEFAULT_PAGE_SIZE,
 })
 
 export const Route = createFileRoute('/_authenticated/indicateurs/')({
@@ -45,7 +52,7 @@ export const Route = createFileRoute('/_authenticated/indicateurs/')({
       },
     })
 
-    return loadIndicateurs({ queryClient, query: deps })
+    return loadIndicateurs({ queryClient, query: toIndicateursQuery(deps) })
   },
   pendingComponent: () => <RouteLoading message="Chargement des indicateurs…" />,
   errorComponent: RouteError,
@@ -55,7 +62,7 @@ export const Route = createFileRoute('/_authenticated/indicateurs/')({
 function IndicateursListComponent() {
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
-  const { data } = useSuspenseQuery(indicateursQueryOptions(search))
+  const { data } = useSuspenseQuery(indicateursQueryOptions(toIndicateursQuery(search)))
   const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
   const referentielIds = referentiels.map((r) => r.id)
 
@@ -113,7 +120,7 @@ function IndicateursListComponent() {
             const next = data.pagination.cursor
             if (next) void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
           }}
-          pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+          pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE}
           onPageSizeChange={(pageSize) => {
             void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
           }}

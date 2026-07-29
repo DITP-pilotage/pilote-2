@@ -13,7 +13,7 @@ import { FieldIndividuSelect } from '@/components/indicateurs/FieldIndividuSelec
 import { CardGrid } from '@pilote/kpilote-ui/CardGrid'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { Page } from '@pilote/kpilote-ui/Page'
-import { DEFAULT_PAGE_SIZE_OPTIONS, Pagination } from '@pilote/kpilote-ui/Pagination'
+import { DEFAULT_PAGE_SIZE, Pagination } from '@pilote/kpilote-ui/Pagination'
 import { Text } from '@pilote/kpilote-ui/Typography'
 import { ensureIndividuReferentielPair } from '@/lib/individus/pair'
 import { loadCollections, collectionsQueryOptions } from '@/queries/collections'
@@ -47,7 +47,7 @@ export const Route = createFileRoute('/_authenticated/collections/')({
 
     return loadCollections({
       queryClient,
-      query: { cursor: deps.cursor, pageSize: deps.pageSize },
+      query: { cursor: deps.cursor, pageSize: deps.pageSize ?? DEFAULT_PAGE_SIZE },
     })
   },
   pendingComponent: () => <RouteLoading message="Chargement des collections…" />,
@@ -59,7 +59,10 @@ function CollectionsListComponent() {
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const { data } = useSuspenseQuery(
-    collectionsQueryOptions({ cursor: search.cursor, pageSize: search.pageSize }),
+    collectionsQueryOptions({
+      cursor: search.cursor,
+      pageSize: search.pageSize ?? DEFAULT_PAGE_SIZE,
+    }),
   )
   const { data: referentiels } = useSuspenseQuery(allReferentielsQueryOptions)
   const referentielIds = referentiels.map((r) => r.id)
@@ -117,7 +120,7 @@ function CollectionsListComponent() {
             const next = data.pagination.cursor
             if (next) void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
           }}
-          pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE_OPTIONS[0]}
+          pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE}
           onPageSizeChange={(pageSize) => {
             void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
           }}
