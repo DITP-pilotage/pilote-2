@@ -92,13 +92,13 @@ SELECT
             THEN NULL::TYPE_TENDANCE
         WHEN
             ta_ch_prev_month.tag_ch IS NULL
-            OR ta_ch_today.tag_ch = ta_ch_prev_month.tag_ch
+            OR ROUND(ta_ch_today.tag_ch) = ROUND(ta_ch_prev_month.tag_ch)
             THEN 'STAGNATION'::TYPE_TENDANCE
         WHEN
-            ta_ch_today.tag_ch > ta_ch_prev_month.tag_ch
+            ROUND(ta_ch_today.tag_ch) > ROUND(ta_ch_prev_month.tag_ch)
             THEN 'HAUSSE'::TYPE_TENDANCE
         WHEN
-            ta_ch_today.tag_ch < ta_ch_prev_month.tag_ch
+            ROUND(ta_ch_today.tag_ch) < ROUND(ta_ch_prev_month.tag_ch)
             THEN 'BAISSE'::TYPE_TENDANCE
     END AS tendance,
     CASE
