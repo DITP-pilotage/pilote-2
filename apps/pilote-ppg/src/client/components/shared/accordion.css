@@ -39,15 +39,11 @@
 
 .accordion-content[data-state="open"] {
   animation: accordion-open 200ms ease-out;
-  padding: 16px;
-
 }
 
 .accordion-content[data-state="closed"] {
   animation: accordion-close 200ms ease-in;
   height: 0;
-  overflow: hidden;
-  opacity: 0;
 }
 
 @media print {
