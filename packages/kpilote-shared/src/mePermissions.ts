@@ -12,7 +12,7 @@ const permissionEntrySchema = z.object({
     .array(permissionActionSchema)
     .min(1)
     .describe(
-      'Actions accordées au principal courant sur cette ressource. Trié `READ` avant `WRITE`.',
+      'Actions accordées au principal courant sur cette ressource. Trié `READ` avant `WRITE_DATA` avant `WRITE_COMMENT`.',
     ),
 })
 
@@ -35,8 +35,9 @@ export const mePermissionsApiModelSchema = z.object({
     .array(permissionEntrySchema)
     .describe(
       'Permissions du principal sur les indicateurs, triées par `id` ASC. Inclut les permissions ' +
-        'directes et le READ propagé depuis une collection où le principal a READ ou WRITE. Le WRITE ' +
-        "indicateur reste strictement direct (jamais propagé). N'inclut PAS le READ implicite des " +
+        'directes et le READ propagé depuis une collection où le principal a READ ou WRITE_COMMENT. ' +
+        'Le WRITE_DATA et WRITE_COMMENT indicateur restent strictement directs (jamais propagés). ' +
+        "N'inclut PAS le READ implicite des " +
         'indicateurs `PUBLIC`.',
     ),
 })
