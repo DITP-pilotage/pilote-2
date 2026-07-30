@@ -18,24 +18,34 @@ export const mePermissionsQueryOptions = () =>
 export const loadMePermissions = ({ queryClient }: { queryClient: QueryClient }) =>
   queryClient.ensureQueryData(mePermissionsQueryOptions())
 
-const hasWrite = (entries: PermissionEntryApiModel[], publicId: string): boolean =>
-  entries.some((entry) => entry.id === publicId && entry.actions.includes('WRITE'))
+const hasAction =
+  (action: 'WRITE_DATA' | 'WRITE_COMMENT') =>
+  (entries: PermissionEntryApiModel[], publicId: string): boolean =>
+    entries.some((entry) => entry.id === publicId && entry.actions.includes(action))
 
-export const canWriteIndicateur = ({
+const hasWriteData = hasAction('WRITE_DATA')
+const hasWriteComment = hasAction('WRITE_COMMENT')
+
+export const canWriteDataIndicateur = ({
   permissions,
   indicateurId,
 }: {
   permissions: MePermissionsApiModel
   indicateurId: string
-}): boolean => permissions.isAdmin === true || hasWrite(permissions.indicateurs, indicateurId)
+}): boolean => permissions.isAdmin === true || hasWriteData(permissions.indicateurs, indicateurId)
 
-export const useCanWriteIndicateur = (indicateurId: string): boolean => {
+export const useCanWriteDataIndicateur = (indicateurId: string): boolean => {
   const { data } = useSuspenseQuery(mePermissionsQueryOptions())
-  return canWriteIndicateur({ permissions: data, indicateurId })
+  return canWriteDataIndicateur({ permissions: data, indicateurId })
 }
 
-// WRITE collection reste strictement direct (jamais propagé) — cf. me-permissions-design.md.
-export const useCanWriteCollection = (collectionId: string): boolean => {
+export const useCanWriteCommentIndicateur = (indicateurId: string): boolean => {
   const { data } = useSuspenseQuery(mePermissionsQueryOptions())
-  return data.isAdmin === true || hasWrite(data.collections, collectionId)
+  return data.isAdmin === true || hasWriteComment(data.indicateurs, indicateurId)
+}
+
+// WRITE_COMMENT collection reste strictement direct (jamais propagé) — cf. me-permissions-design.md.
+export const useCanWriteCommentCollection = (collectionId: string): boolean => {
+  const { data } = useSuspenseQuery(mePermissionsQueryOptions())
+  return data.isAdmin === true || hasWriteComment(data.collections, collectionId)
 }

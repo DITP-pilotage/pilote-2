@@ -64,7 +64,7 @@ export function CollectionAcces({ collectionId }: { collectionId: string }) {
       ) : (
         <ul className="divide-y divide-border rounded-lg border border-border">
           {permissions.items.map((item) => {
-            const ecritureActive = item.actions.includes('WRITE')
+            const ecritureActive = item.actions.includes('WRITE_COMMENT')
             return (
               <li key={item.principalId} className="flex items-center gap-3 px-3 py-2.5">
                 <span className="min-w-0 flex-1">
@@ -90,12 +90,12 @@ export function CollectionAcces({ collectionId }: { collectionId: string }) {
                         ? revokeCollectionPermission({
                             principalId: item.principalId,
                             collectionPublicId: collectionId,
-                            action: 'WRITE',
+                            action: 'WRITE_COMMENT',
                           })
                         : grantCollectionPermission({
                             principalId: item.principalId,
                             collectionPublicId: collectionId,
-                            action: 'WRITE',
+                            action: 'WRITE_COMMENT',
                           }),
                     )
                   }

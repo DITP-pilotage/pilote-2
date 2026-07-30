@@ -26,7 +26,8 @@ import { principalPermissionsQueryOptions } from '@/queries/permissions'
 type DirectRow = { publicId: string; nom: string; actions: PermissionActionValue[] }
 
 type SectionHandlers = {
-  onToggleWrite: (publicId: string, active: boolean) => void
+  onToggleWriteData?: (publicId: string, active: boolean) => void
+  onToggleWriteComment?: (publicId: string, active: boolean) => void
   onRemove: (publicId: string) => void
 }
 
@@ -58,11 +59,17 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const addIndicateur = (indicateurPublicId: string) => {
     run(() => grantIndicateurPermission({ principalId, indicateurPublicId, action: 'READ' }))
   }
-  const toggleIndicateurWrite = (indicateurPublicId: string, active: boolean) =>
+  const toggleIndicateurWriteData = (indicateurPublicId: string, active: boolean) =>
     run(() =>
       active
-        ? revokeIndicateurPermission({ principalId, indicateurPublicId, action: 'WRITE' })
-        : grantIndicateurPermission({ principalId, indicateurPublicId, action: 'WRITE' }),
+        ? revokeIndicateurPermission({ principalId, indicateurPublicId, action: 'WRITE_DATA' })
+        : grantIndicateurPermission({ principalId, indicateurPublicId, action: 'WRITE_DATA' }),
+    )
+  const toggleIndicateurWriteComment = (indicateurPublicId: string, active: boolean) =>
+    run(() =>
+      active
+        ? revokeIndicateurPermission({ principalId, indicateurPublicId, action: 'WRITE_COMMENT' })
+        : grantIndicateurPermission({ principalId, indicateurPublicId, action: 'WRITE_COMMENT' }),
     )
   const removeIndicateur = (indicateurPublicId: string) =>
     run(() => revokeIndicateurPermission({ principalId, indicateurPublicId }))
@@ -72,11 +79,11 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
     setModal(null)
     run(() => grantCollectionPermission({ principalId, collectionPublicId, action: 'READ' }))
   }
-  const toggleCollectionWrite = (collectionPublicId: string, active: boolean) =>
+  const toggleCollectionWriteComment = (collectionPublicId: string, active: boolean) =>
     run(() =>
       active
-        ? revokeCollectionPermission({ principalId, collectionPublicId, action: 'WRITE' })
-        : grantCollectionPermission({ principalId, collectionPublicId, action: 'WRITE' }),
+        ? revokeCollectionPermission({ principalId, collectionPublicId, action: 'WRITE_COMMENT' })
+        : grantCollectionPermission({ principalId, collectionPublicId, action: 'WRITE_COMMENT' }),
     )
   const removeCollection = (collectionPublicId: string) =>
     run(() => revokeCollectionPermission({ principalId, collectionPublicId }))
@@ -100,7 +107,8 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
       ) : (
         <ul className="divide-y divide-border rounded-lg border border-border">
           {rows.map((row) => {
-            const writeActive = row.actions.includes('WRITE')
+            const writeDataActive = row.actions.includes('WRITE_DATA')
+            const writeCommentActive = row.actions.includes('WRITE_COMMENT')
             const extra = extraForRow?.(row.publicId)
             return (
               <li key={row.publicId} className="px-3 py-2.5">
@@ -116,20 +124,40 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
                     >
                       <Eye className="size-3.5" /> Lecture
                     </span>
-                    <button
-                      type="button"
-                      disabled={disabled}
-                      onClick={() => handlers.onToggleWrite(row.publicId, writeActive)}
-                      className={clsxm(
-                        'rounded-md border px-2 py-1 text-xs font-medium transition-colors',
-                        writeActive
-                          ? 'border-primary bg-primary text-primary-foreground'
-                          : 'border-border bg-surface text-text-muted hover:border-primary',
-                        disabled && 'cursor-not-allowed opacity-50',
-                      )}
-                    >
-                      Écriture
-                    </button>
+                    {handlers.onToggleWriteData !== undefined ? (
+                      <button
+                        type="button"
+                        disabled={disabled}
+                        onClick={() => handlers.onToggleWriteData!(row.publicId, writeDataActive)}
+                        className={clsxm(
+                          'rounded-md border px-2 py-1 text-xs font-medium transition-colors',
+                          writeDataActive
+                            ? 'border-primary bg-primary text-primary-foreground'
+                            : 'border-border bg-surface text-text-muted hover:border-primary',
+                          disabled && 'cursor-not-allowed opacity-50',
+                        )}
+                      >
+                        Données
+                      </button>
+                    ) : null}
+                    {handlers.onToggleWriteComment !== undefined ? (
+                      <button
+                        type="button"
+                        disabled={disabled}
+                        onClick={() =>
+                          handlers.onToggleWriteComment!(row.publicId, writeCommentActive)
+                        }
+                        className={clsxm(
+                          'rounded-md border px-2 py-1 text-xs font-medium transition-colors',
+                          writeCommentActive
+                            ? 'border-primary bg-primary text-primary-foreground'
+                            : 'border-border bg-surface text-text-muted hover:border-primary',
+                          disabled && 'cursor-not-allowed opacity-50',
+                        )}
+                      >
+                        Commentaires
+                      </button>
+                    ) : null}
                     <IconButton
                       variant="danger"
                       size="sm"
@@ -241,7 +269,8 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           disabled={disabled}
         />,
         {
-          onToggleWrite: toggleIndicateurWrite,
+          onToggleWriteData: toggleIndicateurWriteData,
+          onToggleWriteComment: toggleIndicateurWriteComment,
           onRemove: removeIndicateur,
         },
       )}
@@ -258,7 +287,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           + Ajouter une collection
         </Button>,
         {
-          onToggleWrite: toggleCollectionWrite,
+          onToggleWriteComment: toggleCollectionWriteComment,
           onRemove: removeCollection,
         },
         renderHeritesForCollection,

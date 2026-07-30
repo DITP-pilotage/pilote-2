@@ -14,7 +14,7 @@ import {
   brouillonCollectionQueryOptions,
   commentairesCollectionPubliesQueryOptions,
 } from '@/queries/commentaires'
-import { useCanWriteCollection } from '@/queries/mePermissions'
+import { useCanWriteCommentCollection } from '@/queries/mePermissions'
 import { niveauPourCommentaireCollectionQueryOptions } from '@/queries/niveauConfiance'
 
 export function CollectionCommentaireConfigProvider({
@@ -37,7 +37,7 @@ export function CollectionCommentaireConfigProvider({
       useModifierCommentaire: (type) =>
         useModifierCommentaireCollection(collectionId, type as CollectionCommentaireType),
       useEnregistrerNiveauConfiance: () => useEnregistrerNiveauConfianceCollection(collectionId),
-      useCanWrite: () => useCanWriteCollection(collectionId),
+      useCanWrite: () => useCanWriteCommentCollection(collectionId),
     }),
     [collectionId],
   )

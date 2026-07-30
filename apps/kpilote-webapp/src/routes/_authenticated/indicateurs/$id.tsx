@@ -26,7 +26,7 @@ import {
   loadIndicateur,
   prefetchIndicateurValeursForIndividu,
 } from '@/queries/indicateurs'
-import { useCanWriteIndicateur } from '@/queries/mePermissions'
+import { useCanWriteDataIndicateur } from '@/queries/mePermissions'
 
 const paramsSchema = z.object({
   id: indicateurPublicIdSchema,
@@ -92,7 +92,7 @@ function IndicateurDetailComponent() {
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(id))
   useRecordVisit({ type: 'indicateur', id: indicateur.id, label: indicateur.nom })
 
-  const canWrite = useCanWriteIndicateur(id)
+  const canWrite = useCanWriteDataIndicateur(id)
   const { open, target } = useImportModal()
 
   const onFile = useCallback(
