@@ -20,7 +20,9 @@ describe.concurrent('GET /me/permissions', () => {
       })
       await fixtures.apiKey({
         rawKey: 'pilote_live_meperms_principal_with_perms',
-        collectionPermissions: [{ collection: { publicId: collectionId }, action: 'WRITE_COMMENT' }],
+        collectionPermissions: [
+          { collection: { publicId: collectionId }, action: 'WRITE_COMMENT' },
+        ],
       })
 
       const response = await buildApp().request('/me/permissions', {

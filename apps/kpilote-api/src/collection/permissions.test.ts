@@ -139,7 +139,10 @@ describe.concurrent('ensureCollectionWriteCommentPermission', () => {
       const apiKey = await fixtures.apiKey()
 
       await expect(
-        ensureCollectionWriteCommentPermission({ collectionId: collection.id, principalId: apiKey.id }),
+        ensureCollectionWriteCommentPermission({
+          collectionId: collection.id,
+          principalId: apiKey.id,
+        }),
       ).rejects.toThrow(/permission/i)
     }),
   )
@@ -154,7 +157,10 @@ describe.concurrent('ensureCollectionWriteCommentPermission', () => {
       })
 
       await expect(
-        ensureCollectionWriteCommentPermission({ collectionId: collection.id, principalId: apiKey.id }),
+        ensureCollectionWriteCommentPermission({
+          collectionId: collection.id,
+          principalId: apiKey.id,
+        }),
       ).rejects.toThrow(/permission/i)
     }),
   )
@@ -167,7 +173,10 @@ describe.concurrent('ensureCollectionWriteCommentPermission', () => {
       const apiKey = await fixtures.apiKey()
 
       await expect(
-        ensureCollectionWriteCommentPermission({ collectionId: collection.id, principalId: apiKey.id }),
+        ensureCollectionWriteCommentPermission({
+          collectionId: collection.id,
+          principalId: apiKey.id,
+        }),
       ).rejects.toThrow(/permission/i)
     }),
   )

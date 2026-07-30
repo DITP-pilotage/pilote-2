@@ -11,7 +11,10 @@ import { PermissionAction } from '@/generated/prisma/enums'
 
 type Entree = CollectionPermissionsApiModel['items'][number]
 
-const ORDRE_ACTIONS: PermissionActionValue[] = [PermissionAction.READ, PermissionAction.WRITE_COMMENT]
+const ORDRE_ACTIONS: PermissionActionValue[] = [
+  PermissionAction.READ,
+  PermissionAction.WRITE_COMMENT,
+]
 
 const performList = async (publicId: string): Promise<CollectionPermissionsApiModel> => {
   // Réservé aux clés ADMIN comme le reste de la gestion des collections : la

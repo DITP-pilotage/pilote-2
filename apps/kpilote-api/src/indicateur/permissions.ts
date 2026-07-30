@@ -71,7 +71,9 @@ export const ensureIndicateurWriteDataPermission = ({
       })
       .then((hasWrite) => {
         if (!hasWrite) {
-          throw new ForbiddenError("Vous n'avez pas la permission de modifier les données de cet indicateur")
+          throw new ForbiddenError(
+            "Vous n'avez pas la permission de modifier les données de cet indicateur",
+          )
         }
       }),
   )
@@ -96,7 +98,9 @@ export const ensureIndicateurWriteCommentPermission = ({
       })
       .then((hasWrite) => {
         if (!hasWrite) {
-          throw new ForbiddenError("Vous n'avez pas la permission d'écrire un commentaire sur cet indicateur")
+          throw new ForbiddenError(
+            "Vous n'avez pas la permission d'écrire un commentaire sur cet indicateur",
+          )
         }
       }),
   )

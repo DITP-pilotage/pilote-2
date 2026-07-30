@@ -22,12 +22,14 @@ export const collectionConfig: SujetCommentaireConfig<Params> = {
         select: { id: true },
       }),
     ).andThen((collection) =>
-      ensureCollectionWriteCommentPermission({ collectionId: collection.id, principalId }).map(() => ({
-        principalId,
-        satelliteCreate: (type: string) => ({
-          collection: { create: { collectionId: collection.id, type: type as never } },
+      ensureCollectionWriteCommentPermission({ collectionId: collection.id, principalId }).map(
+        () => ({
+          principalId,
+          satelliteCreate: (type: string) => ({
+            collection: { create: { collectionId: collection.id, type: type as never } },
+          }),
         }),
-      })),
+      ),
     )
   },
   whereLecture: ({ collectionId }, principalId) => ({

@@ -30,7 +30,9 @@ describe.concurrent('listerMesPermissions', () => {
         indicateurs: [{ publicId: indicateurId }],
       })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: collectionId }, action: 'WRITE_COMMENT' }],
+        collectionPermissions: [
+          { collection: { publicId: collectionId }, action: 'WRITE_COMMENT' },
+        ],
       })
 
       const result = await runAsAdmin(apiKey.id, () => listerMesPermissions())
@@ -128,7 +130,9 @@ describe.concurrent('listerMesPermissions', () => {
         indicateurs: [{ publicId: indicateurId }],
       })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: collectionId }, action: 'WRITE_COMMENT' }],
+        collectionPermissions: [
+          { collection: { publicId: collectionId }, action: 'WRITE_COMMENT' },
+        ],
         permissions: [{ indicateur: { publicId: indicateurId }, action: 'READ' }],
       })
 

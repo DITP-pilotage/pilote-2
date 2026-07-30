@@ -45,7 +45,9 @@ export const ensureCollectionWriteCommentPermission = ({
       })
       .then((hasWrite) => {
         if (!hasWrite) {
-          throw new ForbiddenError("Vous n'avez pas la permission d'écrire un commentaire sur cette collection")
+          throw new ForbiddenError(
+            "Vous n'avez pas la permission d'écrire un commentaire sur cette collection",
+          )
         }
       }),
   )
