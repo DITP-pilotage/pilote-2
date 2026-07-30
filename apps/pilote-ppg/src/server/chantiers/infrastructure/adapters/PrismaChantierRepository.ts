@@ -1132,7 +1132,7 @@ export class PrismaChantierRepository implements ChantierRepository {
     };
   }
 
-  async recupererListePropositionValeurAvancementChantierInformationParChantiersIds({
+  async recupererChantierInformationsParIds({
     listeChantiersIds,
   }: {
     listeChantiersIds: string[];

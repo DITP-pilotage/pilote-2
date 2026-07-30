@@ -52,7 +52,7 @@ export class CreerLesRapportsPropositionsUseCase {
       );
 
     const listeChantiersProposition =
-      await this.dependencies.chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds(
+      await this.dependencies.chantierRepository.recupererChantierInformationsParIds(
         { listeChantiersIds: listeChantiersIdsRapport },
       );
 

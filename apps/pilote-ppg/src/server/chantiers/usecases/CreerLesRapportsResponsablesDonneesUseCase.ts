@@ -3,7 +3,7 @@ import { creerRapportResponsableDonnees } from "@/server/chantiers/domain/Rappor
 import { genererParametresRapportResponsableDonnees } from "@/server/chantiers/app/contrats/ParametresEnvoieEmailRapportProposition";
 import type { Inject } from "@/server/chantiers/module";
 
-const CHANTIER_ID_CH197 = "CH-197";
+const CHANTIERS_IDS_CONCERNES = ["CH-197"];
 
 export interface CreerLesRapportsResponsablesDonneesResultat {
   rapportsCrees: number;
@@ -20,90 +20,102 @@ export class CreerLesRapportsResponsablesDonneesUseCase {
   ) {}
 
   async run(): Promise<CreerLesRapportsResponsablesDonneesResultat> {
-    const indicateurs =
-      await this.dependencies.indicateurRepository.recupererIndicateursNonAJourAvecResponsablesDonneesPourChantierId(
-        CHANTIER_ID_CH197,
+    const indicateursParChantier =
+      await this.dependencies.indicateurRepository.recupererIndicateursNonAJourParChantierId(
+        {
+          chantiersIds: CHANTIERS_IDS_CONCERNES,
+          inclureChantiersBrouillon: true,
+        },
       );
 
-    if (indicateurs.length === 0) {
+    if (indicateursParChantier.size === 0) {
       return { rapportsCrees: 0, erreursCreation: 0 };
     }
 
-    const [chantierInfo] =
-      await this.dependencies.chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds(
-        { listeChantiersIds: [CHANTIER_ID_CH197] },
+    const chantiersInfos =
+      await this.dependencies.chantierRepository.recupererChantierInformationsParIds(
+        {
+          listeChantiersIds: CHANTIERS_IDS_CONCERNES,
+        },
       );
-
-    if (!chantierInfo) {
-      logger.warn(
-        { categorie: "responsables-donnees", chantierId: CHANTIER_ID_CH197 },
-        "Chantier CH-197 introuvable, arrêt de la création des rapports",
-      );
-      return { rapportsCrees: 0, erreursCreation: 0 };
-    }
-
-    const indicateursParResponsable = new Map<
-      string,
-      { id: string; nom: string; mailles: string[] }[]
-    >();
-
-    for (const indicateur of indicateurs) {
-      if (indicateur.responsablesDonneesMails.length === 0) {
-        logger.warn(
-          {
-            categorie: "responsables-donnees",
-            indicateurId: indicateur.id,
-          },
-          "Indicateur non à jour sans responsable de données, ignoré",
-        );
-        continue;
-      }
-
-      for (const email of indicateur.responsablesDonneesMails) {
-        if (!indicateursParResponsable.has(email)) {
-          indicateursParResponsable.set(email, []);
-        }
-        indicateursParResponsable.get(email)!.push({
-          id: indicateur.id,
-          nom: indicateur.nom,
-          mailles: indicateur.mailles,
-        });
-      }
-    }
+    const mapChantiersInfos = new Map(
+      chantiersInfos.map((chantier) => [chantier.id, chantier]),
+    );
 
     let rapportsCrees = 0;
     let erreursCreation = 0;
 
-    for (const [
-      emailResponsable,
-      indicateursResponsable,
-    ] of indicateursParResponsable) {
-      try {
-        const contenuRapport = genererParametresRapportResponsableDonnees(
-          chantierInfo,
-          indicateursResponsable,
-        );
+    for (const [chantierId, indicateurs] of indicateursParChantier) {
+      const chantierInfo = mapChantiersInfos.get(chantierId);
 
-        const rapport = creerRapportResponsableDonnees({
-          emailResponsable,
-          contenuRapport,
-          dateCreation: new Date(),
-        });
+      if (!chantierInfo) {
+        logger.warn(
+          { categorie: "responsables-donnees", chantierId },
+          "Chantier introuvable, ignoré",
+        );
+        continue;
+      }
 
-        await this.dependencies.rapportResponsableDonneesRepository.sauvegarder(
-          rapport,
-        );
-        rapportsCrees++;
-      } catch (error) {
-        logger.error(
-          {
-            categorie: "responsables-donnees",
-            source: "CreerLesRapportsResponsablesDonneesUseCase",
-            email: emailResponsable,
-          },
-          `Erreur création rapport : ${(error as Error).message}`,
-        );
-        erreursCreation++;
+      const indicateursParResponsable = new Map<
+        string,
+        { id: string; nom: string; mailles: string[] }[]
+      >();
+
+      for (const indicateur of indicateurs) {
+        if (indicateur.responsablesDonneesMails.length === 0) {
+          logger.warn(
+            {
+              categorie: "responsables-donnees",
+              indicateurId: indicateur.id,
+            },
+            "Indicateur non à jour sans responsable de données, ignoré",
+          );
+          continue;
+        }
+
+        for (const email of indicateur.responsablesDonneesMails) {
+          if (!indicateursParResponsable.has(email)) {
+            indicateursParResponsable.set(email, []);
+          }
+          indicateursParResponsable.get(email)!.push({
+            id: indicateur.id,
+            nom: indicateur.nom,
+            mailles: indicateur.mailles,
+          });
+        }
+      }
+
+      for (const [
+        emailResponsable,
+        indicateursResponsable,
+      ] of indicateursParResponsable) {
+        try {
+          const contenuRapport = genererParametresRapportResponsableDonnees(
+            chantierInfo,
+            indicateursResponsable,
+          );
+
+          const rapport = creerRapportResponsableDonnees({
+            emailResponsable,
+            contenuRapport,
+            dateCreation: new Date(),
+          });
+
+          await this.dependencies.rapportResponsableDonneesRepository.sauvegarder(
+            rapport,
+          );
+          rapportsCrees++;
+        } catch (error) {
+          logger.error(
+            {
+              categorie: "responsables-donnees",
+              source: "CreerLesRapportsResponsablesDonneesUseCase",
+              email: emailResponsable,
+            },
+            `Erreur création rapport : ${(error as Error).message}`,
+          );
+          erreursCreation++;
+        }
       }
     }
 

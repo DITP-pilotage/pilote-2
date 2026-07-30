@@ -15,7 +15,7 @@ const querySchema = z.object({
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const baseUrl = configuration().tchap.baseUrl;
-  const roomId = configuration().tchap.roomIdRapportPva;
+  const roomId = configuration().tchap.roomIdRapportResponsablesDonnees;
   const accessToken = configuration().tchap.accessToken;
 
   const { force } = querySchema.parse(req.query);
@@ -104,11 +104,8 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     return res.status(200).json({ resultatCreation, resultatEnvoi });
   } catch (error) {
-    const messageEchec = [
-      "## ⚠️ Erreur lors de l'envoi des rapports responsables de données (CH-197)",
-      "Veuillez regarder les logs pour en savoir plus :",
-      `- [Logs](${process.env.SCALINGO_LOGS_URL})`,
-    ].join("\n");
+    const messageEchec =
+      "## ⚠️ Erreur lors de l'envoi des rapports responsables de données (CH-197) — veuillez regarder les logs pour en savoir plus";
     envoieMessageTchap(messageEchec, baseUrl, roomId, accessToken);
     logger.error(
       {

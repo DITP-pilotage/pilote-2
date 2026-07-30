@@ -1407,15 +1407,31 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
     };
   }
 
-  async recupererIndicateursNonAJourParChantierId(): Promise<
-    Map<string, { id: string; nom: string; mailles: string[] }[]>
+  async recupererIndicateursNonAJourParChantierId(options?: {
+    chantiersIds?: string[];
+    inclureChantiersBrouillon?: boolean;
+  }): Promise<
+    Map<
+      string,
+      {
+        id: string;
+        nom: string;
+        mailles: string[];
+        responsablesDonneesMails: string[];
+      }[]
+    >
   > {
     const indicateurs = await this.prisma.indicateur_territoire.findMany({
       where: {
         indicateur_identite: {
+          ...(options?.chantiersIds
+            ? { chantier_id: { in: options.chantiersIds } }
+            : {}),
           statut: "PUBLIE",
           chantier_identite: {
-            statut: "PUBLIE",
+            statut: options?.inclureChantiersBrouillon
+              ? { in: ["PUBLIE", "BROUILLON"] }
+              : "PUBLIE",
           },
         },
         est_applicable: true,
@@ -1428,6 +1444,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
             id: true,
             nom: true,
             chantier_id: true,
+            responsables_donnees_mails: true,
           },
         },
       },
@@ -1436,13 +1453,17 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
 
     const indicateursParChantier = new Map<
       string,
-      { id: string; nom: string; mailles: string[] }[]
+      {
+        id: string;
+        nom: string;
+        mailles: string[];
+        responsablesDonneesMails: string[];
+      }[]
     >();
 
     for (const indicateur of indicateurs) {
       const chantierId = indicateur.indicateur_identite.chantier_id;
       const indicateurId = indicateur.indicateur_identite.id;
-      const indicateurNom = indicateur.indicateur_identite.nom;
       const maille = indicateur.maille;
 
       if (!indicateursParChantier.has(chantierId)) {
@@ -1459,69 +1480,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       } else {
         indicateursChantier.push({
           id: indicateurId,
-          nom: indicateurNom,
-          mailles: [maille],
-        });
-      }
-    }
-
-    return indicateursParChantier;
-  }
-
-  async recupererIndicateursNonAJourAvecResponsablesDonneesPourChantierId(
-    chantierId: string,
-  ): Promise<
-    {
-      id: string;
-      nom: string;
-      mailles: string[];
-      responsablesDonneesMails: string[];
-    }[]
-  > {
-    const indicateurs = await this.prisma.indicateur_territoire.findMany({
-      where: {
-        indicateur_identite: {
-          chantier_id: chantierId,
-          statut: "PUBLIE",
-          chantier_identite: {
-            statut: { in: ["PUBLIE", "BROUILLON"] },
-          },
-        },
-        est_applicable: true,
-        OR: [{ est_a_jour: false }, { est_a_jour: null }],
-      },
-      select: {
-        maille: true,
-        indicateur_identite: {
-          select: {
-            id: true,
-            nom: true,
-            responsables_donnees_mails: true,
-          },
-        },
-      },
-      distinct: ["id", "maille"],
-    });
-
-    const indicateursMap = new Map<
-      string,
-      {
-        id: string;
-        nom: string;
-        mailles: string[];
-        responsablesDonneesMails: string[];
-      }
-    >();
-
-    for (const indicateur of indicateurs) {
-      const indicateurId = indicateur.indicateur_identite.id;
-      const maille = indicateur.maille;
-
-      if (indicateursMap.has(indicateurId)) {
-        indicateursMap.get(indicateurId)!.mailles.push(maille);
-      } else {
-        indicateursMap.set(indicateurId, {
-          id: indicateurId,
           nom: indicateur.indicateur_identite.nom,
           mailles: [maille],
           responsablesDonneesMails:
@@ -1530,7 +1488,7 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
       }
     }
 
-    return [...indicateursMap.values()];
+    return indicateursParChantier;
   }
 
   async recupererIndicateursAParametrerParChantierId(

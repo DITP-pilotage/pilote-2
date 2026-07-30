@@ -473,6 +473,11 @@ const config = convict({
       default: "",
       env: "TCHAP_ROOM_ID_RAPPORT_PVA",
     },
+    roomIdRapportResponsablesDonnees: {
+      format: String,
+      default: "",
+      env: "TCHAP_ROOM_ID_RAPPORT_RESPONSABLES_DONNEES",
+    },
     roomIdDesactivationComptes: {
       format: String,
       default: "",

@@ -100,16 +100,14 @@ describe("CreerLesRapportsPropositionsUseCase", () => {
         }),
       ],
     );
-    chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds.mockResolvedValue(
-      [
-        {
-          id: "CH-001",
-          nom: "Chantier 1",
-          statut: "PUBLIE",
-          conseillerMail: "conseiller@test.com",
-        },
-      ],
-    );
+    chantierRepository.recupererChantierInformationsParIds.mockResolvedValue([
+      {
+        id: "CH-001",
+        nom: "Chantier 1",
+        statut: "PUBLIE",
+        conseillerMail: "conseiller@test.com",
+      },
+    ]);
 
     // When
     const resultat = await useCase.run();
@@ -153,8 +151,18 @@ describe("CreerLesRapportsPropositionsUseCase", () => {
         [
           "CH-001",
           [
-            { id: "IND-001", nom: "Indicateur 1", mailles: ["NAT"] },
-            { id: "IND-002", nom: "Indicateur 2", mailles: ["REG"] },
+            {
+              id: "IND-001",
+              nom: "Indicateur 1",
+              mailles: ["NAT"],
+              responsablesDonneesMails: [],
+            },
+            {
+              id: "IND-002",
+              nom: "Indicateur 2",
+              mailles: ["REG"],
+              responsablesDonneesMails: [],
+            },
           ],
         ],
       ]),
@@ -170,16 +178,14 @@ describe("CreerLesRapportsPropositionsUseCase", () => {
         }),
       ],
     );
-    chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds.mockResolvedValue(
-      [
-        {
-          id: "CH-001",
-          nom: "Chantier 1",
-          statut: "PUBLIE",
-          conseillerMail: "conseiller@test.com",
-        },
-      ],
-    );
+    chantierRepository.recupererChantierInformationsParIds.mockResolvedValue([
+      {
+        id: "CH-001",
+        nom: "Chantier 1",
+        statut: "PUBLIE",
+        conseillerMail: "conseiller@test.com",
+      },
+    ]);
 
     // When
     const resultat = await useCase.run();
@@ -216,7 +222,17 @@ describe("CreerLesRapportsPropositionsUseCase", () => {
     );
     indicateurRepository.recupererIndicateursNonAJourParChantierId.mockResolvedValue(
       new Map([
-        ["CH-002", [{ id: "IND-001", nom: "Indicateur", mailles: [] }]],
+        [
+          "CH-002",
+          [
+            {
+              id: "IND-001",
+              nom: "Indicateur",
+              mailles: [],
+              responsablesDonneesMails: [],
+            },
+          ],
+        ],
       ]),
     );
     utilisateurRepository.recupererUtilisateursParProfilEtChantierIds.mockResolvedValue(
@@ -230,16 +246,14 @@ describe("CreerLesRapportsPropositionsUseCase", () => {
         }),
       ],
     );
-    chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds.mockResolvedValue(
-      [
-        {
-          id: "CH-001",
-          nom: "Chantier 1",
-          statut: "PUBLIE",
-          conseillerMail: "conseiller@test.com",
-        },
-      ],
-    );
+    chantierRepository.recupererChantierInformationsParIds.mockResolvedValue([
+      {
+        id: "CH-001",
+        nom: "Chantier 1",
+        statut: "PUBLIE",
+        conseillerMail: "conseiller@test.com",
+      },
+    ]);
 
     // When
     const resultat = await useCase.run();
@@ -265,7 +279,7 @@ describe("CreerLesRapportsPropositionsUseCase", () => {
     utilisateurRepository.recupererUtilisateursParProfilEtChantierIds.mockResolvedValue(
       [],
     );
-    chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds.mockResolvedValue(
+    chantierRepository.recupererChantierInformationsParIds.mockResolvedValue(
       [],
     );
 
@@ -325,22 +339,20 @@ describe("CreerLesRapportsPropositionsUseCase", () => {
         }),
       ],
     );
-    chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds.mockResolvedValue(
-      [
-        {
-          id: "CH-001",
-          nom: "Chantier 1",
-          statut: "PUBLIE",
-          conseillerMail: "",
-        },
-        {
-          id: "CH-002",
-          nom: "Chantier 2",
-          statut: "PUBLIE",
-          conseillerMail: "",
-        },
-      ],
-    );
+    chantierRepository.recupererChantierInformationsParIds.mockResolvedValue([
+      {
+        id: "CH-001",
+        nom: "Chantier 1",
+        statut: "PUBLIE",
+        conseillerMail: "",
+      },
+      {
+        id: "CH-002",
+        nom: "Chantier 2",
+        statut: "PUBLIE",
+        conseillerMail: "",
+      },
+    ]);
 
     rapportPropositionsAvancementRepository.sauvegarder
       .mockRejectedValueOnce(new Error("Erreur BDD"))
@@ -389,16 +401,14 @@ describe("CreerLesRapportsPropositionsUseCase", () => {
         }),
       ],
     );
-    chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds.mockResolvedValue(
-      [
-        {
-          id: "CH-001",
-          nom: "Chantier 1",
-          statut: "PUBLIE",
-          conseillerMail: "conseiller@test.com",
-        },
-      ],
-    );
+    chantierRepository.recupererChantierInformationsParIds.mockResolvedValue([
+      {
+        id: "CH-001",
+        nom: "Chantier 1",
+        statut: "PUBLIE",
+        conseillerMail: "conseiller@test.com",
+      },
+    ]);
 
     // When
     const resultat = await useCase.run();
@@ -471,16 +481,14 @@ describe("CreerLesRapportsPropositionsUseCase", () => {
         }),
       ],
     );
-    chantierRepository.recupererListePropositionValeurAvancementChantierInformationParChantiersIds.mockResolvedValue(
-      [
-        {
-          id: "CH-001",
-          nom: "Chantier 1",
-          statut: "PUBLIE",
-          conseillerMail: "conseiller@test.com",
-        },
-      ],
-    );
+    chantierRepository.recupererChantierInformationsParIds.mockResolvedValue([
+      {
+        id: "CH-001",
+        nom: "Chantier 1",
+        statut: "PUBLIE",
+        conseillerMail: "conseiller@test.com",
+      },
+    ]);
 
     // When
     const resultat = await useCase.run();
