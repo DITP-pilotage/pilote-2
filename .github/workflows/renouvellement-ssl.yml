@@ -174,26 +174,23 @@ jobs:
           fi
           echo "domain_id=$DOMAIN_ID" >> "$GITHUB_OUTPUT"
 
-      # Upload du certificat désactivé temporairement : on émet + vérifie le
-      # cert et on valide l'accès à l'API Scalingo (JWT + domain ID), mais on ne
-      # remplace pas encore le cert en place. Décommenter pour réactiver le push.
-      # - name: Pousser le certificat sur Scalingo
-      #   if: steps.cible.outputs.skip == 'false'
-      #   run: |
-      #     DOMAIN="${{ steps.cible.outputs.domaine }}"
-      #     LIVE="$GITHUB_WORKSPACE/.certbot/config/live/$DOMAIN"
-      #     CERT=$(cat "$LIVE/fullchain.pem")
-      #     KEY=$(cat "$LIVE/privkey.pem")
-      #     RESP=$(mktemp)
-      #     HTTP_CODE=$(jq -n --arg cert "$CERT" --arg key "$KEY" \
-      #       '{domain: {tlscert: $cert, tlskey: $key}}' \
-      #       | curl -sS -X PATCH -o "$RESP" -w "%{http_code}" \
-      #         -H "Authorization: Bearer ${{ steps.scalingo-auth.outputs.jwt }}" \
-      #         -H "Content-Type: application/json" \
-      #         --data-binary @- \
-      #         "${SCALINGO_API_BASE}/v1/apps/${{ steps.cible.outputs.scalingo_app }}/domains/${{ steps.scalingo-domain.outputs.domain_id }}")
-      #     echo "HTTP $HTTP_CODE"
-      #     cat "$RESP"; echo ""
-      #     if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
-      #       exit 1
-      #     fi
+      - name: Pousser le certificat sur Scalingo
+        if: steps.cible.outputs.skip == 'false'
+        run: |
+          DOMAIN="${{ steps.cible.outputs.domaine }}"
+          LIVE="$GITHUB_WORKSPACE/.certbot/config/live/$DOMAIN"
+          CERT=$(cat "$LIVE/fullchain.pem")
+          KEY=$(cat "$LIVE/privkey.pem")
+          RESP=$(mktemp)
+          HTTP_CODE=$(jq -n --arg cert "$CERT" --arg key "$KEY" \
+            '{domain: {tlscert: $cert, tlskey: $key}}' \
+            | curl -sS -X PATCH -o "$RESP" -w "%{http_code}" \
+              -H "Authorization: Bearer ${{ steps.scalingo-auth.outputs.jwt }}" \
+              -H "Content-Type: application/json" \
+              --data-binary @- \
+              "${SCALINGO_API_BASE}/v1/apps/${{ steps.cible.outputs.scalingo_app }}/domains/${{ steps.scalingo-domain.outputs.domain_id }}")
+          echo "HTTP $HTTP_CODE"
+          cat "$RESP"; echo ""
+          if [ "$HTTP_CODE" -lt 200 ] || [ "$HTTP_CODE" -ge 300 ]; then
+            exit 1
+          fi
