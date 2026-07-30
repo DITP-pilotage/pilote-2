@@ -539,6 +539,25 @@ export const fixtures = {
     });
   },
 
+  async rapportResponsableDonnees(
+    overrides?: Partial<Prisma.rapport_responsable_donneesUncheckedCreateInput>,
+  ) {
+    const prisma = getPrisma();
+    return prisma.rapport_responsable_donnees.create({
+      data: {
+        id: randomUUID(),
+        email_responsable: "responsable@test.com",
+        contenu_rapport: {
+          chantiers: [],
+          conseillerEmail: "",
+          texteIntro: "",
+        },
+        statut_envoi: "CREE",
+        ...overrides,
+      },
+    });
+  },
+
   async commentaire(
     overrides: Partial<Prisma.commentaireUncheckedCreateInput> & {
       chantier_id: string;
