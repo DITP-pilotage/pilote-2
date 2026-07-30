@@ -122,7 +122,7 @@ describe.concurrent('upsertIndicateur', () => {
         where: { principalId: apiKey.id, indicateur: { publicId: indId } },
         orderBy: { action: 'asc' },
       })
-      expect(grants.map((g) => g.action)).toEqual(['READ', 'WRITE_COMMENT', 'WRITE_DATA'])
+      expect(grants.map((g) => g.action)).toEqual(['READ', 'WRITE_DATA', 'WRITE_COMMENT'])
     }),
   )
 
