@@ -24,7 +24,7 @@ describe.concurrent('getPrincipalPermissions', () => {
       await fixtures.indicateurPermission({
         principalId: target.id,
         indicateur: { publicId: ind1.publicId },
-        action: PermissionAction.WRITE,
+        action: PermissionAction.WRITE_DATA,
       })
       await fixtures.collectionPermission({
         principalId: target.id,
@@ -39,7 +39,7 @@ describe.concurrent('getPrincipalPermissions', () => {
         { publicId: dos.publicId, nom: 'Collection', actions: ['READ'] },
       ])
       expect(model.indicateurs).toEqual([
-        { publicId: ind1.publicId, nom: 'Indic 1', actions: ['WRITE'] },
+        { publicId: ind1.publicId, nom: 'Indic 1', actions: ['WRITE_DATA'] },
       ])
       expect(model.indicateursHerites).toEqual([
         {
@@ -66,14 +66,14 @@ describe.concurrent('getPrincipalPermissions', () => {
       await fixtures.indicateurPermission({
         principalId: target.id,
         indicateur: { publicId: ind.publicId },
-        action: PermissionAction.WRITE,
+        action: PermissionAction.WRITE_DATA,
       })
 
       const result = await runAsAdmin(CALLER_ID, () => getPrincipalPermissions(target.id))
       const model = result._unsafeUnwrap()
 
       expect(model.indicateurs).toEqual([
-        { publicId: ind.publicId, nom: 'Direct et dans collection', actions: ['WRITE'] },
+        { publicId: ind.publicId, nom: 'Direct et dans collection', actions: ['WRITE_DATA'] },
       ])
       expect(model.indicateursHerites).toEqual([])
     }),

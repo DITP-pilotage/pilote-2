@@ -7,7 +7,7 @@ import { type SujetCommentaireConfig } from '@/commentaire/sujets'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import {
-  ensureIndicateurWritePermission,
+  ensureIndicateurWriteCommentPermission,
   withIndicateurReadPermission,
 } from '@/indicateur/permissions'
 
@@ -28,7 +28,7 @@ export const indicateurIndividuConfig: SujetCommentaireConfig<Params> = {
         ).map((individu) => ({ indId: indicateur.id, indivId: individu.id })),
       )
       .andThen(({ indId, indivId }) =>
-        ensureIndicateurWritePermission({ indicateurId: indId, principalId }).map(() => ({
+        ensureIndicateurWriteCommentPermission({ indicateurId: indId, principalId }).map(() => ({
           principalId,
           satelliteCreate: (type: string) => ({
             indicateurIndividu: {

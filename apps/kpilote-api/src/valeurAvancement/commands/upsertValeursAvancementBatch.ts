@@ -8,7 +8,7 @@ import { uuidv7 } from 'uuidv7'
 
 import { db } from '@/framework/persistence/dbStore'
 import { upsertValeursAvancementBatch as upsertValeursAvancementBatchQuery } from '@/generated/prisma/sql'
-import { resolveIndicateurForWrite } from '@/indicateur/resolveIndicateurForWrite'
+import { resolveIndicateurForWriteData } from '@/indicateur/resolveIndicateurForWrite'
 
 export type BatchInvalidError = {
   type: 'BATCH_INVALID'
@@ -24,7 +24,7 @@ export const upsertValeursAvancementBatch = (
   indicateurPublicId: string,
   { items }: UpsertValeursAvancementBatchBody,
 ): ResultAsync<UpsertValeursAvancementBatchResultApiModel, UpsertValeursAvancementBatchError> =>
-  resolveIndicateurForWrite({ indicateurPublicId }).andThen(({ indicateur }) =>
+  resolveIndicateurForWriteData({ indicateurPublicId }).andThen(({ indicateur }) =>
     validateAndResolveIndividus({ indicateurId: indicateur.id, items }).andThen((individus) =>
       executeBatch({ indicateurId: indicateur.id, individus, items }),
     ),

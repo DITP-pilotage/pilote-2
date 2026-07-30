@@ -28,7 +28,7 @@ describe.concurrent('listCollectionPermissions', () => {
       const utilisateur = await fixtures.utilisateur({
         email,
         collectionPermissions: [
-          { collection: { publicId }, action: 'WRITE' },
+          { collection: { publicId }, action: 'WRITE_COMMENT' },
           { collection: { publicId }, action: 'READ' },
         ],
       })
@@ -41,7 +41,7 @@ describe.concurrent('listCollectionPermissions', () => {
           principalId: utilisateur.id,
           type: 'UTILISATEUR',
           libelle: email,
-          actions: ['READ', 'WRITE'],
+          actions: ['READ', 'WRITE_COMMENT'],
         },
       ])
     }),

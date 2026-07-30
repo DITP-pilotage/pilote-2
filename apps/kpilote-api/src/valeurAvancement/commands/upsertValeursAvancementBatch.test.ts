@@ -32,7 +32,7 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
         valeur: 1,
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -79,7 +79,7 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
         { publicId: deptB, referentiel: { publicId: refId } },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -125,7 +125,7 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
         referentiel: { publicId: refNonLieAIndicateur },
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -172,7 +172,7 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
         { publicId: deptB, referentiel: { publicId: refId } },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -272,7 +272,7 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
         valeur: 2,
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>

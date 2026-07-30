@@ -139,7 +139,7 @@ const assertWritePermission = async (indicateurId: string, principalId: string):
       principalId_indicateurId_action: {
         principalId,
         indicateurId,
-        action: PermissionAction.WRITE,
+        action: PermissionAction.WRITE_DATA,
       },
     },
   })
@@ -192,7 +192,8 @@ const grantOwnerPermissions = async (principalId: string, indicateurId: string):
   await db().indicateurPermission.createMany({
     data: [
       { principalId, indicateurId, action: PermissionAction.READ },
-      { principalId, indicateurId, action: PermissionAction.WRITE },
+      { principalId, indicateurId, action: PermissionAction.WRITE_DATA },
+      { principalId, indicateurId, action: PermissionAction.WRITE_COMMENT },
     ],
   })
 }

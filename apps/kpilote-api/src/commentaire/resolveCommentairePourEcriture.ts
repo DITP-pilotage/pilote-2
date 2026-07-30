@@ -3,8 +3,8 @@ import { ResultAsync } from 'neverthrow'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
-import { ensureIndicateurWritePermission } from '@/indicateur/permissions'
-import { ensureCollectionWritePermission } from '@/collection/permissions'
+import { ensureIndicateurWriteCommentPermission } from '@/indicateur/permissions'
+import { ensureCollectionWriteCommentPermission } from '@/collection/permissions'
 
 // Charge le commentaire + son satellite, vérifie que le principal courant en est l'auteur
 // ET dispose de WRITE sur le sujet. Throw ForbiddenError / 404 (P2025) sinon.
@@ -26,7 +26,7 @@ export const resolveCommentairePourEcriture = (
         throw new ForbiddenError("Seul l'auteur peut modifier ce commentaire")
       }
       if (commentaire.indicateurIndividu) {
-        await ensureIndicateurWritePermission({
+        await ensureIndicateurWriteCommentPermission({
           indicateurId: commentaire.indicateurIndividu.indicateurId,
           principalId,
         })
@@ -34,7 +34,7 @@ export const resolveCommentairePourEcriture = (
       }
       const collectionId = commentaire.collection?.collectionId
       if (collectionId) {
-        await ensureCollectionWritePermission({ collectionId, principalId })
+        await ensureCollectionWriteCommentPermission({ collectionId, principalId })
         return { principalId }
       }
       throw new ForbiddenError('Commentaire sans sujet rattaché')

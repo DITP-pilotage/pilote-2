@@ -7,7 +7,7 @@ import { type SujetCommentaireConfig } from '@/commentaire/sujets'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import {
-  ensureCollectionWritePermission,
+  ensureCollectionWriteCommentPermission,
   withCollectionReadPermission,
 } from '@/collection/permissions'
 
@@ -22,7 +22,7 @@ export const collectionConfig: SujetCommentaireConfig<Params> = {
         select: { id: true },
       }),
     ).andThen((collection) =>
-      ensureCollectionWritePermission({ collectionId: collection.id, principalId }).map(() => ({
+      ensureCollectionWriteCommentPermission({ collectionId: collection.id, principalId }).map(() => ({
         principalId,
         satelliteCreate: (type: string) => ({
           collection: { create: { collectionId: collection.id, type: type as never } },

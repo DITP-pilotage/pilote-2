@@ -206,7 +206,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
       const indId = testIndicateurId()
       await fixtures.indicateur({ publicId: indId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))

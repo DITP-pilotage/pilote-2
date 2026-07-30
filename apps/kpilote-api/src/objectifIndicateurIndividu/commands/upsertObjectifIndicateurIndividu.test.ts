@@ -25,7 +25,7 @@ describe.concurrent('upsertObjectifIndicateurIndividu', () => {
         referentiel: { publicId: refId },
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -75,7 +75,7 @@ describe.concurrent('upsertObjectifIndicateurIndividu', () => {
         valeurCible: 50,
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -158,7 +158,7 @@ describe.concurrent('upsertObjectifIndicateurIndividu', () => {
         referentiel: { publicId: refId },
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -189,7 +189,7 @@ describe.concurrent('upsertObjectifIndicateurIndividu', () => {
       })
       await fixtures.individu({ publicId: individuId, referentiel: { publicId: refOrphelin } })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>

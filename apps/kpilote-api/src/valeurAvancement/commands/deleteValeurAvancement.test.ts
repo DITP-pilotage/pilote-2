@@ -31,7 +31,7 @@ describe.concurrent('deleteValeurAvancement', () => {
         valeur: 12.34,
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -80,7 +80,7 @@ describe.concurrent('deleteValeurAvancement', () => {
         valeur: 20,
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -115,7 +115,7 @@ describe.concurrent('deleteValeurAvancement', () => {
         referentiel: { publicId: refId },
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -224,7 +224,7 @@ describe.concurrent('deleteValeurAvancement', () => {
         referentiel: { publicId: refId },
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -258,7 +258,7 @@ describe.concurrent('deleteValeurAvancement', () => {
         referentiel: { publicId: refOrphelin },
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>

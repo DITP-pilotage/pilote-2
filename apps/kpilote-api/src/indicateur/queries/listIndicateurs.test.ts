@@ -97,7 +97,7 @@ describe.concurrent('listIndicateurs', () => {
         indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: dosPropag }, action: 'WRITE' }],
+        collectionPermissions: [{ collection: { publicId: dosPropag }, action: 'WRITE_COMMENT' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))

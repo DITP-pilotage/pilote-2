@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { db } from '@/framework/persistence/dbStore'
 import {
-  ensureCollectionWritePermission,
+  ensureCollectionWriteCommentPermission,
   withCollectionReadPermission,
 } from '@/collection/permissions'
 import { fixtures } from '@/test/fixtures'
@@ -64,7 +64,7 @@ describe.concurrent('withCollectionReadPermission', () => {
       const panPriWrite = testCollectionId()
       await fixtures.collection({ publicId: panPriWrite, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: panPriWrite }, action: 'WRITE' }],
+        collectionPermissions: [{ collection: { publicId: panPriWrite }, action: 'WRITE_COMMENT' }],
       })
 
       const rows = await listCollectionsWithReadPermission(apiKey.id)
@@ -112,17 +112,17 @@ describe.concurrent('withCollectionReadPermission', () => {
   )
 })
 
-describe.concurrent('ensureCollectionWritePermission', () => {
+describe.concurrent('ensureCollectionWriteCommentPermission', () => {
   it(
     'passe quand le principal a la permission WRITE directe',
     integrationTest(async () => {
       const panEwOk = testCollectionId()
       const collection = await fixtures.collection({ publicId: panEwOk, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: panEwOk }, action: 'WRITE' }],
+        collectionPermissions: [{ collection: { publicId: panEwOk }, action: 'WRITE_COMMENT' }],
       })
 
-      const result = await ensureCollectionWritePermission({
+      const result = await ensureCollectionWriteCommentPermission({
         collectionId: collection.id,
         principalId: apiKey.id,
       })
@@ -139,7 +139,7 @@ describe.concurrent('ensureCollectionWritePermission', () => {
       const apiKey = await fixtures.apiKey()
 
       await expect(
-        ensureCollectionWritePermission({ collectionId: collection.id, principalId: apiKey.id }),
+        ensureCollectionWriteCommentPermission({ collectionId: collection.id, principalId: apiKey.id }),
       ).rejects.toThrow(/permission/i)
     }),
   )
@@ -154,7 +154,7 @@ describe.concurrent('ensureCollectionWritePermission', () => {
       })
 
       await expect(
-        ensureCollectionWritePermission({ collectionId: collection.id, principalId: apiKey.id }),
+        ensureCollectionWriteCommentPermission({ collectionId: collection.id, principalId: apiKey.id }),
       ).rejects.toThrow(/permission/i)
     }),
   )
@@ -167,7 +167,7 @@ describe.concurrent('ensureCollectionWritePermission', () => {
       const apiKey = await fixtures.apiKey()
 
       await expect(
-        ensureCollectionWritePermission({ collectionId: collection.id, principalId: apiKey.id }),
+        ensureCollectionWriteCommentPermission({ collectionId: collection.id, principalId: apiKey.id }),
       ).rejects.toThrow(/permission/i)
     }),
   )

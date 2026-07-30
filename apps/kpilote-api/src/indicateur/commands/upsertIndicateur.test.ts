@@ -122,7 +122,7 @@ describe.concurrent('upsertIndicateur', () => {
         where: { principalId: apiKey.id, indicateur: { publicId: indId } },
         orderBy: { action: 'asc' },
       })
-      expect(grants.map((g) => g.action)).toEqual(['READ', 'WRITE'])
+      expect(grants.map((g) => g.action)).toEqual(['READ', 'WRITE_COMMENT', 'WRITE_DATA'])
     }),
   )
 
@@ -251,7 +251,7 @@ describe.concurrent('upsertIndicateur', () => {
       const indId = testIndicateurId()
       await fixtures.indicateur({ publicId: indId, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       await runAsAdmin(apiKey.id, () =>
@@ -648,7 +648,7 @@ describe.concurrent('upsertIndicateur — garde ADMIN', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
       })
 
       await expect(

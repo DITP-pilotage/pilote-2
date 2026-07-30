@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest'
 
 import { db } from '@/framework/persistence/dbStore'
 import {
-  ensureIndicateurWritePermission,
+  ensureIndicateurWriteDataPermission,
+  ensureIndicateurWriteCommentPermission,
   withIndicateurReadPermission,
 } from '@/indicateur/permissions'
 import { fixtures } from '@/test/fixtures'
@@ -59,12 +60,27 @@ describe.concurrent('withIndicateurReadPermission', () => {
   )
 
   it(
-    'expose un indicateur PRIVE à un principal avec permission WRITE directe (WRITE implique READ)',
+    'expose un indicateur PRIVE à un principal avec permission WRITE_DATA directe (WRITE_DATA implique READ)',
     integrationTest(async () => {
       const [priv] = testIndicateurIds(1)
       await fixtures.indicateur({ publicId: priv, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: priv }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: priv }, action: 'WRITE_DATA' }],
+      })
+
+      const rows = await listIndicateursWithReadPermission(apiKey.id)
+
+      expect(rows.map((r) => r.publicId)).toContain(priv)
+    }),
+  )
+
+  it(
+    'expose un indicateur PRIVE à un principal avec permission WRITE_COMMENT directe (WRITE_COMMENT implique READ)',
+    integrationTest(async () => {
+      const [priv] = testIndicateurIds(1)
+      await fixtures.indicateur({ publicId: priv, visibilite: 'PRIVE' })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: priv }, action: 'WRITE_COMMENT' }],
       })
 
       const rows = await listIndicateursWithReadPermission(apiKey.id)
@@ -95,7 +111,7 @@ describe.concurrent('withIndicateurReadPermission', () => {
   )
 
   it(
-    'propage READ depuis une collection (action WRITE sur la collection)',
+    'propage READ depuis une collection (action WRITE_COMMENT sur la collection)',
     integrationTest(async () => {
       const [viaCollection] = testIndicateurIds(1)
       const panRpropW = testCollectionId()
@@ -106,7 +122,7 @@ describe.concurrent('withIndicateurReadPermission', () => {
         indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: panRpropW }, action: 'WRITE' }],
+        collectionPermissions: [{ collection: { publicId: panRpropW }, action: 'WRITE_COMMENT' }],
       })
 
       const rows = await listIndicateursWithReadPermission(apiKey.id)
@@ -167,17 +183,17 @@ describe.concurrent('withIndicateurReadPermission', () => {
   )
 })
 
-describe.concurrent('ensureIndicateurWritePermission', () => {
+describe.concurrent('ensureIndicateurWriteDataPermission', () => {
   it(
-    'passe quand le principal a la permission WRITE directe',
+    'passe quand le principal a la permission WRITE_DATA directe',
     integrationTest(async () => {
       const [pub] = testIndicateurIds(1)
       const indicateur = await fixtures.indicateur({ publicId: pub, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: pub }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: pub }, action: 'WRITE_DATA' }],
       })
 
-      const result = await ensureIndicateurWritePermission({
+      const result = await ensureIndicateurWriteDataPermission({
         indicateurId: indicateur.id,
         principalId: apiKey.id,
       })
@@ -187,7 +203,7 @@ describe.concurrent('ensureIndicateurWritePermission', () => {
   )
 
   it(
-    "rejette quand le principal n'a que la permission READ (READ n'implique pas WRITE)",
+    "rejette quand le principal n'a que la permission READ (READ n'implique pas WRITE_DATA)",
     integrationTest(async () => {
       const [pub] = testIndicateurIds(1)
       const indicateur = await fixtures.indicateur({ publicId: pub, visibilite: 'PRIVE' })
@@ -196,7 +212,25 @@ describe.concurrent('ensureIndicateurWritePermission', () => {
       })
 
       await expect(
-        ensureIndicateurWritePermission({
+        ensureIndicateurWriteDataPermission({
+          indicateurId: indicateur.id,
+          principalId: apiKey.id,
+        }),
+      ).rejects.toThrow(/permission/i)
+    }),
+  )
+
+  it(
+    "rejette quand le principal a seulement WRITE_COMMENT (WRITE_COMMENT n'implique pas WRITE_DATA)",
+    integrationTest(async () => {
+      const [pub] = testIndicateurIds(1)
+      const indicateur = await fixtures.indicateur({ publicId: pub, visibilite: 'PRIVE' })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: pub }, action: 'WRITE_COMMENT' }],
+      })
+
+      await expect(
+        ensureIndicateurWriteDataPermission({
           indicateurId: indicateur.id,
           principalId: apiKey.id,
         }),
@@ -212,7 +246,7 @@ describe.concurrent('ensureIndicateurWritePermission', () => {
       const apiKey = await fixtures.apiKey()
 
       await expect(
-        ensureIndicateurWritePermission({
+        ensureIndicateurWriteDataPermission({
           indicateurId: indicateur.id,
           principalId: apiKey.id,
         }),
@@ -221,7 +255,7 @@ describe.concurrent('ensureIndicateurWritePermission', () => {
   )
 
   it(
-    "rejette même si le principal a WRITE sur une collection qui contient l'indicateur (WRITE indicateur reste direct, pas de propagation)",
+    "rejette même si le principal a WRITE_COMMENT sur une collection qui contient l'indicateur (WRITE_DATA reste direct, pas de propagation)",
     integrationTest(async () => {
       const [viaCollection] = testIndicateurIds(1)
       const panWpropNo = testCollectionId()
@@ -232,11 +266,107 @@ describe.concurrent('ensureIndicateurWritePermission', () => {
         indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: panWpropNo }, action: 'WRITE' }],
+        collectionPermissions: [{ collection: { publicId: panWpropNo }, action: 'WRITE_COMMENT' }],
       })
 
       await expect(
-        ensureIndicateurWritePermission({
+        ensureIndicateurWriteDataPermission({
+          indicateurId: indicateur.id,
+          principalId: apiKey.id,
+        }),
+      ).rejects.toThrow(/permission/i)
+    }),
+  )
+})
+
+describe.concurrent('ensureIndicateurWriteCommentPermission', () => {
+  it(
+    'passe quand le principal a la permission WRITE_COMMENT directe',
+    integrationTest(async () => {
+      const [pub] = testIndicateurIds(1)
+      const indicateur = await fixtures.indicateur({ publicId: pub, visibilite: 'PRIVE' })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: pub }, action: 'WRITE_COMMENT' }],
+      })
+
+      const result = await ensureIndicateurWriteCommentPermission({
+        indicateurId: indicateur.id,
+        principalId: apiKey.id,
+      })
+
+      expect(result.isOk()).toBe(true)
+    }),
+  )
+
+  it(
+    "rejette quand le principal n'a que la permission READ (READ n'implique pas WRITE_COMMENT)",
+    integrationTest(async () => {
+      const [pub] = testIndicateurIds(1)
+      const indicateur = await fixtures.indicateur({ publicId: pub, visibilite: 'PRIVE' })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: pub }, action: 'READ' }],
+      })
+
+      await expect(
+        ensureIndicateurWriteCommentPermission({
+          indicateurId: indicateur.id,
+          principalId: apiKey.id,
+        }),
+      ).rejects.toThrow(/permission/i)
+    }),
+  )
+
+  it(
+    "rejette quand le principal a seulement WRITE_DATA (WRITE_DATA n'implique pas WRITE_COMMENT)",
+    integrationTest(async () => {
+      const [pub] = testIndicateurIds(1)
+      const indicateur = await fixtures.indicateur({ publicId: pub, visibilite: 'PRIVE' })
+      const apiKey = await fixtures.apiKey({
+        permissions: [{ indicateur: { publicId: pub }, action: 'WRITE_DATA' }],
+      })
+
+      await expect(
+        ensureIndicateurWriteCommentPermission({
+          indicateurId: indicateur.id,
+          principalId: apiKey.id,
+        }),
+      ).rejects.toThrow(/permission/i)
+    }),
+  )
+
+  it(
+    "rejette même si l'indicateur est PUBLIC",
+    integrationTest(async () => {
+      const [pub] = testIndicateurIds(1)
+      const indicateur = await fixtures.indicateur({ publicId: pub, visibilite: 'PUBLIC' })
+      const apiKey = await fixtures.apiKey()
+
+      await expect(
+        ensureIndicateurWriteCommentPermission({
+          indicateurId: indicateur.id,
+          principalId: apiKey.id,
+        }),
+      ).rejects.toThrow(/permission/i)
+    }),
+  )
+
+  it(
+    "rejette même si le principal a WRITE_COMMENT sur une collection qui contient l'indicateur (WRITE_COMMENT indicateur reste direct, pas de propagation)",
+    integrationTest(async () => {
+      const [viaCollection] = testIndicateurIds(1)
+      const panWpropNo = testCollectionId()
+      const indicateur = await fixtures.indicateur({ publicId: viaCollection, visibilite: 'PRIVE' })
+      await fixtures.collection({
+        publicId: panWpropNo,
+        visibilite: 'PRIVE',
+        indicateurs: [{ publicId: viaCollection }],
+      })
+      const apiKey = await fixtures.apiKey({
+        collectionPermissions: [{ collection: { publicId: panWpropNo }, action: 'WRITE_COMMENT' }],
+      })
+
+      await expect(
+        ensureIndicateurWriteCommentPermission({
           indicateurId: indicateur.id,
           principalId: apiKey.id,
         }),

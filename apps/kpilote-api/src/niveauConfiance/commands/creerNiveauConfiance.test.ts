@@ -17,7 +17,7 @@ describe.concurrent('creerNiveauConfiance', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
       })
       const params = { indicateurId: indId, individuId: indivId }
       const commentaire = await runAsPrincipal(apiKey.id, () =>
@@ -50,7 +50,7 @@ describe.concurrent('creerNiveauConfiance', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
       })
       const commentaire = await runAsPrincipal(apiKey.id, () =>
         creerIndicateurIndividuCommentaire({
@@ -78,7 +78,7 @@ describe.concurrent('creerNiveauConfiance', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
       })
       const commentaire = await runAsPrincipal(apiKey.id, () =>
         creerIndicateurIndividuCommentaire({
