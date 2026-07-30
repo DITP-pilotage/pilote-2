@@ -1,0 +1,107 @@
+name: "Seed de la base kpilote de dev"
+
+# Le seed ne fait pas qu'ajouter : il purge les valeurs et objectifs des
+# indicateurs de démonstration en POURCENTAGE (apps/kpilote-api/prisma/seed.ts).
+# Il a donc quitté le script `build` de kpilote-api, que Scalingo exécute pour
+# chaque application déployée. Ce workflow est désormais le seul chemin qui le
+# lance, et il ne connaît que dev-kpilote-api.
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - 'dev'
+    paths:
+      - 'apps/kpilote-api/prisma/seed.ts'
+      - 'apps/kpilote-api/prisma/seedData/**'
+  # Rejeu manuel : base de dev réinitialisée, ou seed à repasser sans
+  # modification du jeu de données.
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: 24.9.0
+  SCALINGO_APP: dev-kpilote-api
+  TUNNEL_PORT: 10000
+
+concurrency:
+  group: seed-kpilote-dev
+  cancel-in-progress: false
+
+jobs:
+  seed:
+    name: "Seed de dev-kpilote-api"
+    if: github.event_name == 'workflow_dispatch' || github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - uses: scalingo-community/setup-scalingo@v0.1.1
+        with:
+          region: 'osc-secnum-fr1'
+          api_token: ${{ secrets.SCALINGO_API_TOKEN }}
+          app_name: ${{ env.SCALINGO_APP }}
+
+      - name: "Écrire la clé SSH du tunnel"
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          # Le tunnel Scalingo passe par SSH : sans clé, la commande resterait
+          # bloquée sur une demande de passphrase.
+        run: |
+          mkdir -p /home/runner/.ssh
+          echo "$SSH_PRIVATE_KEY" > /home/runner/.ssh/id_rsa
+          chmod 600 /home/runner/.ssh/id_rsa
+
+      # Migration puis seed dans le même shell : le tunnel doit rester ouvert
+      # pendant toute la durée des deux commandes.
+      - name: "Migrer et seeder la base de dev"
+        run: |
+          set -e
+          scalingo --app "$SCALINGO_APP" db-tunnel SCALINGO_POSTGRESQL_URL &
+          TUNNEL_PID=$!
+
+          cleanup_tunnel() {
+            if kill -0 "$TUNNEL_PID" 2>/dev/null; then
+              kill "$TUNNEL_PID"
+            fi
+          }
+          trap cleanup_tunnel EXIT ERR
+
+          for i in {1..20}; do
+            sleep 2
+            if nc -z localhost "$TUNNEL_PORT"; then
+              echo "Tunnel ouvert sur le port $TUNNEL_PORT"
+              break
+            fi
+            if [ "$i" -eq 20 ]; then
+              echo "Le tunnel vers $SCALINGO_APP n'est pas joignable après 40 s"
+              exit 1
+            fi
+          done
+
+          # L'URL de la base est lue depuis l'application : aucun identifiant
+          # de base n'a besoin d'être dupliqué dans les secrets GitHub, et une
+          # rotation du mot de passe ne demande rien ici.
+          URL_DISTANTE=$(scalingo --app "$SCALINGO_APP" env-get SCALINGO_POSTGRESQL_URL)
+          if [ -z "$URL_DISTANTE" ]; then
+            echo "SCALINGO_POSTGRESQL_URL est introuvable sur $SCALINGO_APP"
+            exit 1
+          fi
+          # Seuls l'hôte et le port sont réécrits vers le tunnel ; identifiants,
+          # nom de base et paramètres de connexion sont conservés tels quels.
+          DATABASE_URL=$(echo "$URL_DISTANTE" | sed -E "s#@[^@/]+/#@localhost:$TUNNEL_PORT/#")
+          export DATABASE_URL
+
+          # Le déploiement Scalingo migre déjà pendant son build, mais rien ne
+          # garantit qu'il soit terminé quand ce job démarre. `migrate deploy`
+          # est idempotent et pose un verrou consultatif : le rejouer ici évite
+          # de seeder contre un schéma périmé, sans attendre Scalingo.
+          pnpm -F @pilote/kpilote-api exec prisma migrate deploy
+          pnpm -F @pilote/kpilote-api exec prisma generate --sql
+          pnpm -F @pilote/kpilote-api db:seed

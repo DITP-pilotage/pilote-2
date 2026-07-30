@@ -13,7 +13,8 @@
   "scripts": {
     "dev": "portless kpilote-api.modernisation vite",
     "deploy:prepare": "bash deploy-prepare.sh",
-    "build": "prisma migrate deploy && prisma generate --sql && prisma db seed && vite build",
+    "build": "prisma migrate deploy && prisma generate --sql && vite build",
+    "db:seed": "prisma db seed",
     "deploy:bundle": "bash deploy-bundle.sh",
     "start": "node dist/index.js",
     "test": "vitest run",
