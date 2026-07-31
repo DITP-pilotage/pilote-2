@@ -2,13 +2,13 @@ import { describe, expect, it } from 'vitest'
 
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { Prisma } from '@/generated/prisma/client'
-import { resolveIndicateurAndIndividuForWrite } from '@/indicateur/resolveIndicateurAndIndividuForWrite'
+import { resolveIndicateurAndIndividuForWriteData } from '@/indicateur/resolveIndicateurAndIndividuForWriteData'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testDeptId, testIndicateurId, testReferentielId } from '@/test/randomIds'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
 
-describe.concurrent('resolveIndicateurAndIndividuForWrite', () => {
+describe.concurrent('resolveIndicateurAndIndividuForWriteData', () => {
   it(
     "retourne le contexte résolu quand le principal a la permission WRITE et que l'individu est connu",
     integrationTest(async () => {
@@ -28,7 +28,7 @@ describe.concurrent('resolveIndicateurAndIndividuForWrite', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        resolveIndicateurAndIndividuForWrite({
+        resolveIndicateurAndIndividuForWriteData({
           indicateurPublicId: indId,
           individuPublicId: individuId,
         }),
@@ -54,7 +54,7 @@ describe.concurrent('resolveIndicateurAndIndividuForWrite', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          resolveIndicateurAndIndividuForWrite({
+          resolveIndicateurAndIndividuForWriteData({
             indicateurPublicId: indId,
             individuPublicId: individuId,
           }),
@@ -83,7 +83,7 @@ describe.concurrent('resolveIndicateurAndIndividuForWrite', () => {
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          resolveIndicateurAndIndividuForWrite({
+          resolveIndicateurAndIndividuForWriteData({
             indicateurPublicId: indId,
             individuPublicId: individuId,
           }),
@@ -106,7 +106,7 @@ describe.concurrent('resolveIndicateurAndIndividuForWrite', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        resolveIndicateurAndIndividuForWrite({
+        resolveIndicateurAndIndividuForWriteData({
           indicateurPublicId: indId,
           individuPublicId: 'DEPT-999',
         }),
@@ -134,7 +134,7 @@ describe.concurrent('resolveIndicateurAndIndividuForWrite', () => {
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        resolveIndicateurAndIndividuForWrite({
+        resolveIndicateurAndIndividuForWriteData({
           indicateurPublicId: indId,
           individuPublicId: individuId,
         }),

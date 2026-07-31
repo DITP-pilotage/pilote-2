@@ -10,7 +10,7 @@ type ResolvedContext = {
   principalId: string
 }
 
-export const resolveIndicateurAndIndividuForWrite = ({
+export const resolveIndicateurAndIndividuForWriteData = ({
   indicateurPublicId,
   individuPublicId,
 }: {

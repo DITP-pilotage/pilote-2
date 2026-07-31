@@ -59,18 +59,13 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const addIndicateur = (indicateurPublicId: string) => {
     run(() => grantIndicateurPermission({ principalId, indicateurPublicId, action: 'READ' }))
   }
-  const toggleIndicateurWriteData = (indicateurPublicId: string, active: boolean) =>
-    run(() =>
-      active
-        ? revokeIndicateurPermission({ principalId, indicateurPublicId, action: 'WRITE_DATA' })
-        : grantIndicateurPermission({ principalId, indicateurPublicId, action: 'WRITE_DATA' }),
-    )
-  const toggleIndicateurWriteComment = (indicateurPublicId: string, active: boolean) =>
-    run(() =>
-      active
-        ? revokeIndicateurPermission({ principalId, indicateurPublicId, action: 'WRITE_COMMENT' })
-        : grantIndicateurPermission({ principalId, indicateurPublicId, action: 'WRITE_COMMENT' }),
-    )
+  const toggleIndicateurWrite =
+    (action: 'WRITE_DATA' | 'WRITE_COMMENT') => (indicateurPublicId: string, active: boolean) =>
+      run(() =>
+        active
+          ? revokeIndicateurPermission({ principalId, indicateurPublicId, action })
+          : grantIndicateurPermission({ principalId, indicateurPublicId, action }),
+      )
   const removeIndicateur = (indicateurPublicId: string) =>
     run(() => revokeIndicateurPermission({ principalId, indicateurPublicId }))
 
@@ -269,8 +264,8 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           disabled={disabled}
         />,
         {
-          onToggleWriteData: toggleIndicateurWriteData,
-          onToggleWriteComment: toggleIndicateurWriteComment,
+          onToggleWriteData: toggleIndicateurWrite('WRITE_DATA'),
+          onToggleWriteComment: toggleIndicateurWrite('WRITE_COMMENT'),
           onRemove: removeIndicateur,
         },
       )}

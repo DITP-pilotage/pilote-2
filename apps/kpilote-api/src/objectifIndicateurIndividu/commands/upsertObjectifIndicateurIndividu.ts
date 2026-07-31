@@ -8,7 +8,7 @@ import { uuidv7 } from 'uuidv7'
 import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError } from '@/individu/permission'
-import { resolveIndicateurAndIndividuForWrite } from '@/indicateur/resolveIndicateurAndIndividuForWrite'
+import { resolveIndicateurAndIndividuForWriteData } from '@/indicateur/resolveIndicateurAndIndividuForWriteData'
 import { toObjectifIndicateurIndividuApiModel } from '@/objectifIndicateurIndividu/utils'
 
 export type UpsertObjectifIndicateurIndividuError = IndividuInconnuError
@@ -25,7 +25,7 @@ export const upsertObjectifIndicateurIndividu = ({
   ObjectifIndicateurIndividuApiModel,
   UpsertObjectifIndicateurIndividuError
 > =>
-  resolveIndicateurAndIndividuForWrite({
+  resolveIndicateurAndIndividuForWriteData({
     indicateurPublicId,
     individuPublicId: body.individu,
   }).andThen(({ indicateur, individu }) =>

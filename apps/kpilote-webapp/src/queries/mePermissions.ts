@@ -34,6 +34,25 @@ export const canWriteDataIndicateur = ({
   indicateurId: string
 }): boolean => permissions.isAdmin === true || hasWriteData(permissions.indicateurs, indicateurId)
 
+export const canWriteCommentIndicateur = ({
+  permissions,
+  indicateurId,
+}: {
+  permissions: MePermissionsApiModel
+  indicateurId: string
+}): boolean =>
+  permissions.isAdmin === true || hasWriteComment(permissions.indicateurs, indicateurId)
+
+// WRITE_COMMENT collection reste strictement direct (jamais propagé) — cf. me-permissions-design.md.
+export const canWriteCommentCollection = ({
+  permissions,
+  collectionId,
+}: {
+  permissions: MePermissionsApiModel
+  collectionId: string
+}): boolean =>
+  permissions.isAdmin === true || hasWriteComment(permissions.collections, collectionId)
+
 export const useCanWriteDataIndicateur = (indicateurId: string): boolean => {
   const { data } = useSuspenseQuery(mePermissionsQueryOptions())
   return canWriteDataIndicateur({ permissions: data, indicateurId })
@@ -41,11 +60,10 @@ export const useCanWriteDataIndicateur = (indicateurId: string): boolean => {
 
 export const useCanWriteCommentIndicateur = (indicateurId: string): boolean => {
   const { data } = useSuspenseQuery(mePermissionsQueryOptions())
-  return data.isAdmin === true || hasWriteComment(data.indicateurs, indicateurId)
+  return canWriteCommentIndicateur({ permissions: data, indicateurId })
 }
 
-// WRITE_COMMENT collection reste strictement direct (jamais propagé) — cf. me-permissions-design.md.
 export const useCanWriteCommentCollection = (collectionId: string): boolean => {
   const { data } = useSuspenseQuery(mePermissionsQueryOptions())
-  return data.isAdmin === true || hasWriteComment(data.collections, collectionId)
+  return canWriteCommentCollection({ permissions: data, collectionId })
 }

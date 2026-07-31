@@ -7,7 +7,7 @@ import { ensureIndicateurWriteCommentPermission } from '@/indicateur/permissions
 import { ensureCollectionWriteCommentPermission } from '@/collection/permissions'
 
 // Charge le commentaire + son satellite, vérifie que le principal courant en est l'auteur
-// ET dispose de WRITE sur le sujet. Throw ForbiddenError / 404 (P2025) sinon.
+// ET dispose de WRITE_COMMENT sur le sujet. Throw ForbiddenError / 404 (P2025) sinon.
 export const resolveCommentairePourEcriture = (
   commentaireId: string,
 ): ResultAsync<{ principalId: string }, never> => {
