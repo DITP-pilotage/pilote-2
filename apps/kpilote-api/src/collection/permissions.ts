@@ -3,11 +3,11 @@ import { ResultAsync } from 'neverthrow'
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
-import { PermissionAction, Visibilite } from '@/generated/prisma/enums'
+import { CollectionPermissionAction, Visibilite } from '@/generated/prisma/enums'
 
-export const COLLECTION_READ_PERMISSIONS: PermissionAction[] = [
-  PermissionAction.READ,
-  PermissionAction.WRITE_COMMENT,
+export const COLLECTION_READ_PERMISSIONS: CollectionPermissionAction[] = [
+  CollectionPermissionAction.READ,
+  CollectionPermissionAction.WRITE_COMMENT,
 ]
 
 export const withCollectionReadPermission = (
@@ -39,7 +39,7 @@ export const ensureCollectionWriteCommentPermission = ({
           principalId_collectionId_action: {
             principalId,
             collectionId,
-            action: PermissionAction.WRITE_COMMENT,
+            action: CollectionPermissionAction.WRITE_COMMENT,
           },
         },
       })

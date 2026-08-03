@@ -9,7 +9,7 @@ import { ensurePrincipal, isApiKeyAdmin, isOidcUser } from '@/framework/auth/pri
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { ForbiddenError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
-import { type FonctionAgregation, PermissionAction } from '@/generated/prisma/enums'
+import { type FonctionAgregation, IndicateurPermissionAction } from '@/generated/prisma/enums'
 
 type ConfigurationResolue = {
   referentielId: string
@@ -139,7 +139,7 @@ const assertWritePermission = async (indicateurId: string, principalId: string):
       principalId_indicateurId_action: {
         principalId,
         indicateurId,
-        action: PermissionAction.WRITE_DATA,
+        action: IndicateurPermissionAction.WRITE_DATA,
       },
     },
   })
@@ -191,9 +191,9 @@ const updateIndicateurExistant = async (
 const grantOwnerPermissions = async (principalId: string, indicateurId: string): Promise<void> => {
   await db().indicateurPermission.createMany({
     data: [
-      { principalId, indicateurId, action: PermissionAction.READ },
-      { principalId, indicateurId, action: PermissionAction.WRITE_DATA },
-      { principalId, indicateurId, action: PermissionAction.WRITE_COMMENT },
+      { principalId, indicateurId, action: IndicateurPermissionAction.READ },
+      { principalId, indicateurId, action: IndicateurPermissionAction.WRITE_DATA },
+      { principalId, indicateurId, action: IndicateurPermissionAction.WRITE_COMMENT },
     ],
   })
 }

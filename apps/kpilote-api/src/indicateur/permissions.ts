@@ -3,13 +3,13 @@ import { ResultAsync } from 'neverthrow'
 import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
-import { PermissionAction, Visibilite } from '@/generated/prisma/enums'
+import { IndicateurPermissionAction, Visibilite } from '@/generated/prisma/enums'
 import { COLLECTION_READ_PERMISSIONS } from '@/collection/permissions'
 
-const INDICATEUR_READ_PERMISSIONS: PermissionAction[] = [
-  PermissionAction.READ,
-  PermissionAction.WRITE_DATA,
-  PermissionAction.WRITE_COMMENT,
+const INDICATEUR_READ_PERMISSIONS: IndicateurPermissionAction[] = [
+  IndicateurPermissionAction.READ,
+  IndicateurPermissionAction.WRITE_DATA,
+  IndicateurPermissionAction.WRITE_COMMENT,
 ]
 
 // La permission de lecture sur un indicateur est accordée si :
@@ -65,7 +65,7 @@ export const ensureIndicateurWriteDataPermission = ({
           principalId_indicateurId_action: {
             principalId,
             indicateurId,
-            action: PermissionAction.WRITE_DATA,
+            action: IndicateurPermissionAction.WRITE_DATA,
           },
         },
       })
@@ -92,7 +92,7 @@ export const ensureIndicateurWriteCommentPermission = ({
           principalId_indicateurId_action: {
             principalId,
             indicateurId,
-            action: PermissionAction.WRITE_COMMENT,
+            action: IndicateurPermissionAction.WRITE_COMMENT,
           },
         },
       })

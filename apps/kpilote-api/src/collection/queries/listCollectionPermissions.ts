@@ -1,19 +1,20 @@
 import {
   type CollectionPermissionsApiModel,
-  type PermissionActionValue,
+  type CollectionPermissionActionValue,
+  CollectionPermissionAction,
 } from '@pilote/kpilote-shared/permission'
 import { ResultAsync } from 'neverthrow'
 
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 import { MESSAGE_ADMIN } from '@/collection/utils'
-import { PermissionAction } from '@/generated/prisma/enums'
+import { sortByOrder } from '@/permission/utils'
 
 type Entree = CollectionPermissionsApiModel['items'][number]
 
-const ORDRE_ACTIONS: PermissionActionValue[] = [
-  PermissionAction.READ,
-  PermissionAction.WRITE_COMMENT,
+const ORDRE_ACTIONS: CollectionPermissionActionValue[] = [
+  CollectionPermissionAction.READ,
+  CollectionPermissionAction.WRITE_COMMENT,
 ]
 
 const performList = async (publicId: string): Promise<CollectionPermissionsApiModel> => {
@@ -42,7 +43,7 @@ const performList = async (publicId: string): Promise<CollectionPermissionsApiMo
   const items = [...parPrincipal.values()]
     .map((entree) => ({
       ...entree,
-      actions: ORDRE_ACTIONS.filter((action) => entree.actions.includes(action)),
+      actions: sortByOrder(entree.actions, ORDRE_ACTIONS),
     }))
     .sort((a, b) => a.type.localeCompare(b.type) || a.libelle.localeCompare(b.libelle))
 

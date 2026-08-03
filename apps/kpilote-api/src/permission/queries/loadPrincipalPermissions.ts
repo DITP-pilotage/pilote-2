@@ -1,22 +1,41 @@
 import { type PrincipalPermissionsApiModel } from '@pilote/kpilote-shared/permission'
 
 import { db } from '@/framework/persistence/dbStore'
-import { PermissionAction } from '@/generated/prisma/enums'
+import {
+  CollectionPermissionAction,
+  IndicateurPermissionAction,
+} from '@/generated/prisma/enums'
+import { sortByOrder } from '@/permission/utils'
 
-const ACTION_ORDER: PermissionAction[] = [
-  PermissionAction.READ,
-  PermissionAction.WRITE_DATA,
-  PermissionAction.WRITE_COMMENT,
-]
+const INDICATEUR_ACTION_ORDER = [
+  IndicateurPermissionAction.READ,
+  IndicateurPermissionAction.WRITE_DATA,
+  IndicateurPermissionAction.WRITE_COMMENT,
+] as const
 
-type DirectEntry = { publicId: string; nom: string; actions: Set<PermissionAction> }
+const COLLECTION_ACTION_ORDER = [
+  CollectionPermissionAction.READ,
+  CollectionPermissionAction.WRITE_COMMENT,
+] as const
 
-const serializeDirect = (map: Map<string, DirectEntry>) =>
+type IndicateurEntry = { publicId: string; nom: string; actions: Set<IndicateurPermissionAction> }
+type CollectionEntry = { publicId: string; nom: string; actions: Set<CollectionPermissionAction> }
+
+const serializeIndicateurs = (map: Map<string, IndicateurEntry>) =>
   Array.from(map.values())
     .map((e) => ({
       publicId: e.publicId,
       nom: e.nom,
-      actions: ACTION_ORDER.filter((a) => e.actions.has(a)),
+      actions: sortByOrder([...e.actions], INDICATEUR_ACTION_ORDER),
+    }))
+    .sort((a, b) => a.publicId.localeCompare(b.publicId))
+
+const serializeCollections = (map: Map<string, CollectionEntry>) =>
+  Array.from(map.values())
+    .map((e) => ({
+      publicId: e.publicId,
+      nom: e.nom,
+      actions: sortByOrder([...e.actions], COLLECTION_ACTION_ORDER),
     }))
     .sort((a, b) => a.publicId.localeCompare(b.publicId))
 
@@ -45,23 +64,23 @@ export const loadPrincipalPermissions = async (
     }),
   ])
 
-  const collectionsMap = new Map<string, DirectEntry>()
+  const collectionsMap = new Map<string, CollectionEntry>()
   for (const p of collectionPerms) {
     const entry = collectionsMap.get(p.collection.publicId) ?? {
       publicId: p.collection.publicId,
       nom: p.collection.nom,
-      actions: new Set<PermissionAction>(),
+      actions: new Set<CollectionPermissionAction>(),
     }
     entry.actions.add(p.action)
     collectionsMap.set(p.collection.publicId, entry)
   }
 
-  const indicateursMap = new Map<string, DirectEntry>()
+  const indicateursMap = new Map<string, IndicateurEntry>()
   for (const i of indicateurPerms) {
     const entry = indicateursMap.get(i.indicateur.publicId) ?? {
       publicId: i.indicateur.publicId,
       nom: i.indicateur.nom,
-      actions: new Set<PermissionAction>(),
+      actions: new Set<IndicateurPermissionAction>(),
     }
     entry.actions.add(i.action)
     indicateursMap.set(i.indicateur.publicId, entry)
@@ -85,8 +104,8 @@ export const loadPrincipalPermissions = async (
   }
 
   return {
-    collections: serializeDirect(collectionsMap),
-    indicateurs: serializeDirect(indicateursMap),
+    collections: serializeCollections(collectionsMap),
+    indicateurs: serializeIndicateurs(indicateursMap),
     indicateursHerites: Array.from(heritesMap.values()).sort((a, b) =>
       a.publicId.localeCompare(b.publicId),
     ),
