@@ -1,3 +1,4 @@
+import { PermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { ForbiddenError } from '@/framework/errors/AppError'
@@ -32,7 +33,7 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
         valeur: 1,
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_DATA }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -79,7 +80,7 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
         { publicId: deptB, referentiel: { publicId: refId } },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_DATA }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -125,7 +126,7 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
         referentiel: { publicId: refNonLieAIndicateur },
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_DATA }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -172,7 +173,7 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
         { publicId: deptB, referentiel: { publicId: refId } },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_DATA }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -232,7 +233,7 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
       })
       await fixtures.individu({ publicId: deptA, referentiel: { publicId: refId } })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       await expect(
@@ -272,7 +273,7 @@ describe.concurrent('upsertValeursAvancementBatch', () => {
         valeur: 2,
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_DATA }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>

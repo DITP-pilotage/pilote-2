@@ -1,3 +1,4 @@
+import { PermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { fixtures } from '@/test/fixtures'
@@ -33,7 +34,7 @@ describe.concurrent('listValeursForIndicateur', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -74,7 +75,7 @@ describe.concurrent('listValeursForIndicateur', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -121,7 +122,7 @@ describe.concurrent('listValeursForIndicateur', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -146,7 +147,7 @@ describe.concurrent('listValeursForIndicateur', () => {
       await fixtures.indicateur({ publicId: indId, nom: 'T' })
       await fixtures.individu({ publicId: deptId, nom: 'Vaucluse' })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -235,7 +236,7 @@ describe.concurrent('listValeursForIndicateur', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -311,7 +312,7 @@ describe.concurrent('listValeursForIndicateur', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -419,7 +420,7 @@ describe.concurrent('listValeursForIndicateur', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -473,7 +474,7 @@ describe.concurrent('listValeursForIndicateur', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -528,7 +529,7 @@ describe.concurrent('listValeursForIndicateur', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -588,7 +589,7 @@ describe.concurrent('listValeursForIndicateur', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>

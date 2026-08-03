@@ -2,6 +2,7 @@ import {
   type MePermissionsApiModel,
   type PermissionEntryApiModel,
 } from '@pilote/kpilote-shared/mePermissions'
+import { PermissionAction, type PermissionActionValue } from '@pilote/kpilote-shared/permission'
 import { type QueryClient, queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 
 import { fetchMePermissions } from '@/api/mePermissions'
@@ -19,12 +20,12 @@ export const loadMePermissions = ({ queryClient }: { queryClient: QueryClient })
   queryClient.ensureQueryData(mePermissionsQueryOptions())
 
 const hasAction =
-  (action: 'WRITE_DATA' | 'WRITE_COMMENT') =>
+  (action: PermissionActionValue) =>
   (entries: PermissionEntryApiModel[], publicId: string): boolean =>
     entries.some((entry) => entry.id === publicId && entry.actions.includes(action))
 
-const hasWriteData = hasAction('WRITE_DATA')
-const hasWriteComment = hasAction('WRITE_COMMENT')
+const hasWriteData = hasAction(PermissionAction.WRITE_DATA)
+const hasWriteComment = hasAction(PermissionAction.WRITE_COMMENT)
 
 export const canWriteDataIndicateur = ({
   permissions,

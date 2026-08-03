@@ -1,4 +1,7 @@
-import type { PrincipalPermissionsApiModel } from '@pilote/kpilote-shared/permission'
+import {
+  PermissionAction,
+  type PrincipalPermissionsApiModel,
+} from '@pilote/kpilote-shared/permission'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { Eye, Trash2 } from 'lucide-react'
 
@@ -48,7 +51,7 @@ export function CollectionAcces({ collectionId }: { collectionId: string }) {
             grantCollectionPermission({
               principalId: utilisateur.id,
               collectionPublicId: collectionId,
-              action: 'READ',
+              action: PermissionAction.READ,
             }),
           )
         }
@@ -64,7 +67,7 @@ export function CollectionAcces({ collectionId }: { collectionId: string }) {
       ) : (
         <ul className="divide-y divide-border rounded-lg border border-border">
           {permissions.items.map((item) => {
-            const ecritureActive = item.actions.includes('WRITE_COMMENT')
+            const ecritureActive = item.actions.includes(PermissionAction.WRITE_COMMENT)
             return (
               <li key={item.principalId} className="flex items-center gap-3 px-3 py-2.5">
                 <span className="min-w-0 flex-1">
@@ -90,12 +93,12 @@ export function CollectionAcces({ collectionId }: { collectionId: string }) {
                         ? revokeCollectionPermission({
                             principalId: item.principalId,
                             collectionPublicId: collectionId,
-                            action: 'WRITE_COMMENT',
+                            action: PermissionAction.WRITE_COMMENT,
                           })
                         : grantCollectionPermission({
                             principalId: item.principalId,
                             collectionPublicId: collectionId,
-                            action: 'WRITE_COMMENT',
+                            action: PermissionAction.WRITE_COMMENT,
                           }),
                     )
                   }

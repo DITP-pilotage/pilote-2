@@ -1,3 +1,4 @@
+import { PermissionAction } from '@/generated/prisma/enums'
 import { assert, describe, expect, it } from 'vitest'
 
 import { listObjectifsForIndicateur } from '@/objectifIndicateurIndividu/queries/listObjectifsForIndicateur'
@@ -43,7 +44,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -96,7 +97,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -124,7 +125,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
       })
       await fixtures.individu({ publicId: deptId, referentiel: { publicId: refId } })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -152,7 +153,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         valeurCible: 50,
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -194,7 +195,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       // dateTrunc=year → les deux tombent dans le bucket '2025-01-01', on retient le plus récent
@@ -265,7 +266,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -339,7 +340,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -419,7 +420,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -488,7 +489,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         valeurCible: 50,
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -534,7 +535,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         valeurCible: 200,
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -600,7 +601,7 @@ describe.concurrent('listObjectifsForIndicateur', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>

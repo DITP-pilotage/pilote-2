@@ -1,3 +1,4 @@
+import { PermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { encodeCursor } from '@/framework/persistence/paginate'
@@ -56,7 +57,9 @@ describe.concurrent('listCollections', () => {
         { publicId: colPermHid, visibilite: 'PRIVE' },
       )
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: colPermAcc }, action: 'READ' }],
+        collectionPermissions: [
+          { collection: { publicId: colPermAcc }, action: PermissionAction.READ },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listCollections({}))

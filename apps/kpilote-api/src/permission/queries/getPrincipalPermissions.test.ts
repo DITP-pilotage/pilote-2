@@ -36,10 +36,10 @@ describe.concurrent('getPrincipalPermissions', () => {
       const model = result._unsafeUnwrap()
 
       expect(model.collections).toEqual([
-        { publicId: dos.publicId, nom: 'Collection', actions: ['READ'] },
+        { publicId: dos.publicId, nom: 'Collection', actions: [PermissionAction.READ] },
       ])
       expect(model.indicateurs).toEqual([
-        { publicId: ind1.publicId, nom: 'Indic 1', actions: ['WRITE_DATA'] },
+        { publicId: ind1.publicId, nom: 'Indic 1', actions: [PermissionAction.WRITE_DATA] },
       ])
       expect(model.indicateursHerites).toEqual([
         {
@@ -73,7 +73,11 @@ describe.concurrent('getPrincipalPermissions', () => {
       const model = result._unsafeUnwrap()
 
       expect(model.indicateurs).toEqual([
-        { publicId: ind.publicId, nom: 'Direct et dans collection', actions: ['WRITE_DATA'] },
+        {
+          publicId: ind.publicId,
+          nom: 'Direct et dans collection',
+          actions: [PermissionAction.WRITE_DATA],
+        },
       ])
       expect(model.indicateursHerites).toEqual([])
     }),

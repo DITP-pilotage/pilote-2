@@ -1,3 +1,4 @@
+import { PermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { getCollectionByPublicId } from '@/collection/queries/getCollectionByPublicId'
@@ -68,7 +69,9 @@ describe.concurrent('getCollectionByPublicId', () => {
       const colPriv = testCollectionId()
       await fixtures.collection({ publicId: colPriv, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: colPriv }, action: 'READ' }],
+        collectionPermissions: [
+          { collection: { publicId: colPriv }, action: PermissionAction.READ },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(colPriv))

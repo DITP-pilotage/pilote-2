@@ -1,3 +1,4 @@
+import { PermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { ForbiddenError } from '@/framework/errors/AppError'
@@ -20,12 +21,12 @@ describe.concurrent('grantIndicateurPermission', () => {
         grantIndicateurPermission({
           principalId: target.id,
           indicateurPublicId: ind.publicId,
-          action: 'READ',
+          action: PermissionAction.READ,
         }),
       )
 
       expect(result._unsafeUnwrap().indicateurs).toEqual([
-        { publicId: ind.publicId, nom: 'Mon indic', actions: ['READ'] },
+        { publicId: ind.publicId, nom: 'Mon indic', actions: [PermissionAction.READ] },
       ])
     }),
   )
@@ -38,7 +39,7 @@ describe.concurrent('grantIndicateurPermission', () => {
       const body = {
         principalId: target.id,
         indicateurPublicId: ind.publicId,
-        action: 'READ' as const,
+        action: PermissionAction.READ as const,
       }
 
       await runAsAdmin(CALLER_ID, () => grantIndicateurPermission(body))
@@ -58,7 +59,7 @@ describe.concurrent('grantIndicateurPermission', () => {
           grantIndicateurPermission({
             principalId: target.id,
             indicateurPublicId: 'IND-INEXISTANT',
-            action: 'READ',
+            action: PermissionAction.READ,
           }),
         ),
       ).rejects.toThrow()
@@ -75,7 +76,7 @@ describe.concurrent('grantIndicateurPermission', () => {
           grantIndicateurPermission({
             principalId: target.id,
             indicateurPublicId: ind.publicId,
-            action: 'READ',
+            action: PermissionAction.READ,
           }),
         ),
       ).rejects.toBeInstanceOf(ForbiddenError)

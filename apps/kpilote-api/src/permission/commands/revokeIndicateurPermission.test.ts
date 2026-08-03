@@ -33,12 +33,12 @@ describe.concurrent('revokeIndicateurPermission', () => {
         revokeIndicateurPermission({
           principalId: target.id,
           indicateurPublicId: ind.publicId,
-          action: 'WRITE_DATA',
+          action: PermissionAction.WRITE_DATA,
         }),
       )
 
       expect(result._unsafeUnwrap().indicateurs).toEqual([
-        { publicId: ind.publicId, nom: 'Indic', actions: ['READ'] },
+        { publicId: ind.publicId, nom: 'Indic', actions: [PermissionAction.READ] },
       ])
     }),
   )

@@ -8,7 +8,7 @@ import {
 } from '@pilote/kpilote-shared/indicateur'
 
 import { Prisma, PrismaClient } from '../src/generated/prisma/client.js'
-import { type FonctionAgregation } from '../src/generated/prisma/enums.js'
+import { type FonctionAgregation, PermissionAction } from '../src/generated/prisma/enums.js'
 
 import {
   buildObjectifsPourIndicateur,
@@ -353,7 +353,11 @@ const main = async () => {
       where: { publicId: item.publicId },
       select: { id: true },
     })
-    for (const action of ['READ', 'WRITE_DATA', 'WRITE_COMMENT'] as const) {
+    for (const action of [
+      PermissionAction.READ,
+      PermissionAction.WRITE_DATA,
+      PermissionAction.WRITE_COMMENT,
+    ]) {
       await prisma.indicateurPermission.upsert({
         where: {
           principalId_indicateurId_action: {
@@ -824,7 +828,7 @@ const main = async () => {
   // (cf. boucle indicateursSeed.slice(0, 8) plus haut), la propagation
   // n'apporte rien ici en pratique pour ditp.admin — c'est volontaire : la
   // démo de propagation reste vérifiée en tests d'intégration.
-  for (const action of ['READ', 'WRITE_COMMENT'] as const) {
+  for (const action of [PermissionAction.READ, PermissionAction.WRITE_COMMENT]) {
     const collection = collectionsByPublicId.get('COL-005')
     if (!collection) continue
     await prisma.collectionPermission.upsert({

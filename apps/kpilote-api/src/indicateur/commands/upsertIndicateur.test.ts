@@ -1,3 +1,4 @@
+import { PermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 import { uuidv7 } from 'uuidv7'
 
@@ -122,7 +123,11 @@ describe.concurrent('upsertIndicateur', () => {
         where: { principalId: apiKey.id, indicateur: { publicId: indId } },
         orderBy: { action: 'asc' },
       })
-      expect(grants.map((g) => g.action)).toEqual(['READ', 'WRITE_DATA', 'WRITE_COMMENT'])
+      expect(grants.map((g) => g.action)).toEqual([
+        PermissionAction.READ,
+        PermissionAction.WRITE_DATA,
+        PermissionAction.WRITE_COMMENT,
+      ])
     }),
   )
 
@@ -251,7 +256,7 @@ describe.concurrent('upsertIndicateur', () => {
       const indId = testIndicateurId()
       await fixtures.indicateur({ publicId: indId, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_DATA }],
       })
 
       await runAsAdmin(apiKey.id, () =>
@@ -415,7 +420,7 @@ describe.concurrent('upsertIndicateur', () => {
       const indId = testIndicateurId()
       await fixtures.indicateur({ publicId: indId, nom: 'Ancien' })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       await expect(
@@ -648,7 +653,7 @@ describe.concurrent('upsertIndicateur — garde ADMIN', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE_DATA' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_DATA }],
       })
 
       await expect(

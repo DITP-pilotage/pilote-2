@@ -1,3 +1,4 @@
+import { PermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { listerMesPermissions } from '@/me/queries/listerMesPermissions'
@@ -31,7 +32,7 @@ describe.concurrent('listerMesPermissions', () => {
       })
       const apiKey = await fixtures.apiKey({
         collectionPermissions: [
-          { collection: { publicId: collectionId }, action: 'WRITE_COMMENT' },
+          { collection: { publicId: collectionId }, action: PermissionAction.WRITE_COMMENT },
         ],
       })
 
@@ -53,15 +54,19 @@ describe.concurrent('listerMesPermissions', () => {
       await fixtures.collection({ publicId: collectionId })
       await fixtures.indicateur({ publicId: indicateurId })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: collectionId }, action: 'READ' }],
-        permissions: [{ indicateur: { publicId: indicateurId }, action: 'WRITE_DATA' }],
+        collectionPermissions: [
+          { collection: { publicId: collectionId }, action: PermissionAction.READ },
+        ],
+        permissions: [
+          { indicateur: { publicId: indicateurId }, action: PermissionAction.WRITE_DATA },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listerMesPermissions())
 
       expect(result._unsafeUnwrap()).toEqual({
-        collections: [{ id: collectionId, actions: ['READ'] }],
-        indicateurs: [{ id: indicateurId, actions: ['WRITE_DATA'] }],
+        collections: [{ id: collectionId, actions: [PermissionAction.READ] }],
+        indicateurs: [{ id: indicateurId, actions: [PermissionAction.WRITE_DATA] }],
       })
     }),
   )
@@ -73,15 +78,15 @@ describe.concurrent('listerMesPermissions', () => {
       await fixtures.collection({ publicId: collectionId })
       const apiKey = await fixtures.apiKey({
         collectionPermissions: [
-          { collection: { publicId: collectionId }, action: 'WRITE_COMMENT' },
-          { collection: { publicId: collectionId }, action: 'READ' },
+          { collection: { publicId: collectionId }, action: PermissionAction.WRITE_COMMENT },
+          { collection: { publicId: collectionId }, action: PermissionAction.READ },
         ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listerMesPermissions())
 
       expect(result._unsafeUnwrap().collections).toEqual([
-        { id: collectionId, actions: ['READ', 'WRITE_COMMENT'] },
+        { id: collectionId, actions: [PermissionAction.READ, PermissionAction.WRITE_COMMENT] },
       ])
     }),
   )
@@ -101,8 +106,8 @@ describe.concurrent('listerMesPermissions', () => {
       )
       const apiKey = await fixtures.apiKey({
         collectionPermissions: [
-          { collection: { publicId: collectionWriteId }, action: 'WRITE_COMMENT' },
-          { collection: { publicId: collectionReadId }, action: 'READ' },
+          { collection: { publicId: collectionWriteId }, action: PermissionAction.WRITE_COMMENT },
+          { collection: { publicId: collectionReadId }, action: PermissionAction.READ },
         ],
       })
 
@@ -112,9 +117,9 @@ describe.concurrent('listerMesPermissions', () => {
       const indicateurs = result._unsafeUnwrap().indicateurs
       expect(indicateurs).toEqual(
         [
-          { id: indWrite1, actions: ['READ'] },
-          { id: indWrite2, actions: ['READ'] },
-          { id: indRead, actions: ['READ'] },
+          { id: indWrite1, actions: [PermissionAction.READ] },
+          { id: indWrite2, actions: [PermissionAction.READ] },
+          { id: indRead, actions: [PermissionAction.READ] },
         ].sort((a, b) => a.id.localeCompare(b.id)),
       )
     }),
@@ -131,15 +136,17 @@ describe.concurrent('listerMesPermissions', () => {
       })
       const apiKey = await fixtures.apiKey({
         collectionPermissions: [
-          { collection: { publicId: collectionId }, action: 'WRITE_COMMENT' },
+          { collection: { publicId: collectionId }, action: PermissionAction.WRITE_COMMENT },
         ],
-        permissions: [{ indicateur: { publicId: indicateurId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indicateurId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listerMesPermissions())
 
       // READ direct + READ propagé via collectionWriteComment → une seule entrée, pas de doublon.
-      expect(result._unsafeUnwrap().indicateurs).toEqual([{ id: indicateurId, actions: ['READ'] }])
+      expect(result._unsafeUnwrap().indicateurs).toEqual([
+        { id: indicateurId, actions: [PermissionAction.READ] },
+      ])
     }),
   )
 
@@ -153,14 +160,18 @@ describe.concurrent('listerMesPermissions', () => {
         indicateurs: [{ publicId: indicateurId }],
       })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: collectionId }, action: 'READ' }],
-        permissions: [{ indicateur: { publicId: indicateurId }, action: 'WRITE_DATA' }],
+        collectionPermissions: [
+          { collection: { publicId: collectionId }, action: PermissionAction.READ },
+        ],
+        permissions: [
+          { indicateur: { publicId: indicateurId }, action: PermissionAction.WRITE_DATA },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listerMesPermissions())
 
       expect(result._unsafeUnwrap().indicateurs).toEqual([
-        { id: indicateurId, actions: ['READ', 'WRITE_DATA'] },
+        { id: indicateurId, actions: [PermissionAction.READ, PermissionAction.WRITE_DATA] },
       ])
     }),
   )
@@ -182,14 +193,14 @@ describe.concurrent('listerMesPermissions', () => {
       )
       const apiKey = await fixtures.apiKey({
         collectionPermissions: [
-          { collection: { publicId: collections[2]! }, action: 'READ' },
-          { collection: { publicId: collections[0]! }, action: 'READ' },
-          { collection: { publicId: collections[1]! }, action: 'READ' },
+          { collection: { publicId: collections[2]! }, action: PermissionAction.READ },
+          { collection: { publicId: collections[0]! }, action: PermissionAction.READ },
+          { collection: { publicId: collections[1]! }, action: PermissionAction.READ },
         ],
         permissions: [
-          { indicateur: { publicId: indicateurs[2] }, action: 'WRITE_DATA' },
-          { indicateur: { publicId: indicateurs[0] }, action: 'WRITE_DATA' },
-          { indicateur: { publicId: indicateurs[1] }, action: 'WRITE_DATA' },
+          { indicateur: { publicId: indicateurs[2] }, action: PermissionAction.WRITE_DATA },
+          { indicateur: { publicId: indicateurs[0] }, action: PermissionAction.WRITE_DATA },
+          { indicateur: { publicId: indicateurs[1] }, action: PermissionAction.WRITE_DATA },
         ],
       })
 

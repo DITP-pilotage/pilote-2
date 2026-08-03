@@ -1,6 +1,7 @@
-import type {
-  PermissionActionValue,
-  PrincipalPermissionsApiModel,
+import {
+  PermissionAction,
+  type PermissionActionValue,
+  type PrincipalPermissionsApiModel,
 } from '@pilote/kpilote-shared/permission'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { Eye, Lock, Trash2 } from 'lucide-react'
@@ -57,10 +58,12 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
 
   // Indicateurs — appels directs, aucune factorisation avec les collections.
   const addIndicateur = (indicateurPublicId: string) => {
-    run(() => grantIndicateurPermission({ principalId, indicateurPublicId, action: 'READ' }))
+    run(() =>
+      grantIndicateurPermission({ principalId, indicateurPublicId, action: PermissionAction.READ }),
+    )
   }
   const toggleIndicateurWrite =
-    (action: 'WRITE_DATA' | 'WRITE_COMMENT') => (indicateurPublicId: string, active: boolean) =>
+    (action: PermissionActionValue) => (indicateurPublicId: string, active: boolean) =>
       run(() =>
         active
           ? revokeIndicateurPermission({ principalId, indicateurPublicId, action })
@@ -72,13 +75,23 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   // Collections — appels directs, aucune factorisation avec les indicateurs.
   const addCollection = (collectionPublicId: string) => {
     setModal(null)
-    run(() => grantCollectionPermission({ principalId, collectionPublicId, action: 'READ' }))
+    run(() =>
+      grantCollectionPermission({ principalId, collectionPublicId, action: PermissionAction.READ }),
+    )
   }
   const toggleCollectionWriteComment = (collectionPublicId: string, active: boolean) =>
     run(() =>
       active
-        ? revokeCollectionPermission({ principalId, collectionPublicId, action: 'WRITE_COMMENT' })
-        : grantCollectionPermission({ principalId, collectionPublicId, action: 'WRITE_COMMENT' }),
+        ? revokeCollectionPermission({
+            principalId,
+            collectionPublicId,
+            action: PermissionAction.WRITE_COMMENT,
+          })
+        : grantCollectionPermission({
+            principalId,
+            collectionPublicId,
+            action: PermissionAction.WRITE_COMMENT,
+          }),
     )
   const removeCollection = (collectionPublicId: string) =>
     run(() => revokeCollectionPermission({ principalId, collectionPublicId }))
@@ -102,8 +115,8 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
       ) : (
         <ul className="divide-y divide-border rounded-lg border border-border">
           {rows.map((row) => {
-            const writeDataActive = row.actions.includes('WRITE_DATA')
-            const writeCommentActive = row.actions.includes('WRITE_COMMENT')
+            const writeDataActive = row.actions.includes(PermissionAction.WRITE_DATA)
+            const writeCommentActive = row.actions.includes(PermissionAction.WRITE_COMMENT)
             const extra = extraForRow?.(row.publicId)
             return (
               <li key={row.publicId} className="px-3 py-2.5">
@@ -264,8 +277,8 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           disabled={disabled}
         />,
         {
-          onToggleWriteData: toggleIndicateurWrite('WRITE_DATA'),
-          onToggleWriteComment: toggleIndicateurWrite('WRITE_COMMENT'),
+          onToggleWriteData: toggleIndicateurWrite(PermissionAction.WRITE_DATA),
+          onToggleWriteComment: toggleIndicateurWrite(PermissionAction.WRITE_COMMENT),
           onRemove: removeIndicateur,
         },
       )}
