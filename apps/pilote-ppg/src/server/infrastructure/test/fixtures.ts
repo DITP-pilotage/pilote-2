@@ -549,8 +549,6 @@ export const fixtures = {
         email_responsable: "responsable@test.com",
         contenu_rapport: {
           chantiers: [],
-          conseillerEmail: "",
-          texteIntro: "",
         },
         statut_envoi: "CREE",
         ...overrides,
