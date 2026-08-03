@@ -8,7 +8,7 @@ import { uuidv7 } from 'uuidv7'
 import { Decimal } from '@/framework/decimal'
 import { db } from '@/framework/persistence/dbStore'
 import { type IndividuInconnuError } from '@/individu/permission'
-import { resolveIndicateurAndIndividuForWrite } from '@/indicateur/resolveIndicateurAndIndividuForWrite'
+import { resolveIndicateurAndIndividuForWriteData } from '@/indicateur/resolveIndicateurAndIndividuForWriteData'
 import { toValeurSaisieApiModel } from '@/valeurAvancement/utils'
 
 export type UpsertValeurAvancementError = IndividuInconnuError
@@ -22,7 +22,7 @@ export const upsertValeurAvancement = ({
   indicateurPublicId,
   body,
 }: UpsertValeurAvancementParams): ResultAsync<ValeurSaisieApiModel, UpsertValeurAvancementError> =>
-  resolveIndicateurAndIndividuForWrite({
+  resolveIndicateurAndIndividuForWriteData({
     indicateurPublicId,
     individuPublicId: body.individu,
   }).andThen(({ indicateur, individu }) =>

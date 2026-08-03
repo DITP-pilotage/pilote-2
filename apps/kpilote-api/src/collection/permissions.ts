@@ -7,7 +7,7 @@ import { PermissionAction, Visibilite } from '@/generated/prisma/enums'
 
 export const COLLECTION_READ_PERMISSIONS: PermissionAction[] = [
   PermissionAction.READ,
-  PermissionAction.WRITE,
+  PermissionAction.WRITE_COMMENT,
 ]
 
 export const withCollectionReadPermission = (
@@ -25,7 +25,7 @@ export const withCollectionReadPermission = (
   ],
 })
 
-export const ensureCollectionWritePermission = ({
+export const ensureCollectionWriteCommentPermission = ({
   collectionId,
   principalId,
 }: {
@@ -39,13 +39,15 @@ export const ensureCollectionWritePermission = ({
           principalId_collectionId_action: {
             principalId,
             collectionId,
-            action: PermissionAction.WRITE,
+            action: PermissionAction.WRITE_COMMENT,
           },
         },
       })
       .then((hasWrite) => {
         if (!hasWrite) {
-          throw new ForbiddenError("Vous n'avez pas la permission de modifier cette collection")
+          throw new ForbiddenError(
+            "Vous n'avez pas la permission d'écrire un commentaire sur cette collection",
+          )
         }
       }),
   )

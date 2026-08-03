@@ -7,10 +7,14 @@ import { PermissionAction } from '@/generated/prisma/enums'
 
 type PermissionEntry = MePermissionsApiModel['collections'][number]
 
-const ACTION_ORDER: PermissionAction[] = [PermissionAction.READ, PermissionAction.WRITE]
+const ACTION_ORDER: PermissionAction[] = [
+  PermissionAction.READ,
+  PermissionAction.WRITE_DATA,
+  PermissionAction.WRITE_COMMENT,
+]
 
-// READ collection (direct ou WRITE) propage en READ sur les indicateurs de la collection.
-// WRITE indicateur reste strictement direct — cf. permissions-design.md.
+// READ collection (direct ou WRITE_COMMENT) propage en READ sur les indicateurs de la collection.
+// WRITE_DATA et WRITE_COMMENT restent strictement directs — cf. permissions-design.md.
 export const listerMesPermissions = (): ResultAsync<MePermissionsApiModel, never> => {
   if (isAdminPrincipal()) {
     return okAsync({ isAdmin: true, collections: [], indicateurs: [] })

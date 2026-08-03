@@ -41,7 +41,7 @@ describe.concurrent('modifierNiveauConfiance', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
       })
       const cree = await creerNcSur({
         apiKeyId: apiKey.id,
@@ -68,10 +68,10 @@ describe.concurrent('modifierNiveauConfiance', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const auteur = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
       })
       const autre = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
       })
       const cree = await creerNcSur({
         apiKeyId: auteur.id,

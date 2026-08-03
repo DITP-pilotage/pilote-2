@@ -1,7 +1,9 @@
 import { z } from 'zod'
 
-export const permissionActionSchema = z.enum(['READ', 'WRITE'])
+export const permissionActionSchema = z.enum(['READ', 'WRITE_DATA', 'WRITE_COMMENT'])
 export type PermissionActionValue = z.infer<typeof permissionActionSchema>
+export const PermissionAction = permissionActionSchema.enum
+export type PermissionWriteActionValue = Exclude<PermissionActionValue, 'READ'>
 
 export const permissionResourceTypeSchema = z.enum(['COLLECTION', 'INDICATEUR'])
 export type PermissionResourceType = z.infer<typeof permissionResourceTypeSchema>
@@ -12,7 +14,9 @@ const directPermissionSchema = z.object({
   actions: z
     .array(permissionActionSchema)
     .min(1)
-    .describe('Actions directes accordées, triées `READ` avant `WRITE`.'),
+    .describe(
+      'Actions directes accordées, triées `READ` avant `WRITE_DATA` avant `WRITE_COMMENT`.',
+    ),
 })
 
 const indicateurHeriteSchema = z.object({
@@ -84,7 +88,10 @@ export const collectionPermissionsApiModelSchema = z.object({
         libelle: z
           .string()
           .describe("Email de l'utilisateur, ou libellé de la clé API selon le `type`."),
-        actions: z.array(permissionActionSchema).min(1).describe('Triées `READ` avant `WRITE`.'),
+        actions: z
+          .array(permissionActionSchema)
+          .min(1)
+          .describe('Triées `READ` avant `WRITE_COMMENT`.'),
       }),
     )
     .describe(

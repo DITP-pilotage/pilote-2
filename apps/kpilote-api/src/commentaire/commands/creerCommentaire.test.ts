@@ -18,7 +18,7 @@ describe.concurrent('creerCommentaire', () => {
       const indicateur = await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -69,7 +69,7 @@ describe.concurrent('creerCommentaire', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
       })
       const creerBrouillon = () =>
         runAsPrincipal(apiKey.id, () =>

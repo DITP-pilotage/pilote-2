@@ -39,7 +39,7 @@ describe.concurrent('listerNiveauxParCommentaires', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const moi = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
       })
       const params = { indicateurId: indId, individuId: indivId }
       const idA = await creerCommentaireAvecNiveau(moi.id, params, 'OBJECTIF_SECURISE')
@@ -66,10 +66,10 @@ describe.concurrent('listerNiveauxParCommentaires', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const moi = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
       })
       const autre = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
       })
       const params = { indicateurId: indId, individuId: indivId }
       const idAutre = await creerCommentaireAvecNiveau(

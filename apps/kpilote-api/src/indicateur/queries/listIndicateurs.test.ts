@@ -1,3 +1,4 @@
+import { PermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { db } from '@/framework/persistence/dbStore'
@@ -30,7 +31,7 @@ describe.concurrent('listIndicateurs', () => {
       const [accessible, hidden] = testIndicateurIds(2)
       await fixtures.indicateur({ publicId: accessible }, { publicId: hidden })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: accessible }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: accessible }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
@@ -63,18 +64,20 @@ describe.concurrent('listIndicateurs', () => {
     'propage READ via les permissions collection : un principal qui a accès à une collection voit ses indicateurs PRIVE',
     integrationTest(async () => {
       const [viaCollection, hidden] = testIndicateurIds(2)
-      const dosPropag = testCollectionId()
+      const colPropag = testCollectionId()
       await fixtures.indicateur(
         { publicId: viaCollection, visibilite: 'PRIVE' },
         { publicId: hidden, visibilite: 'PRIVE' },
       )
       await fixtures.collection({
-        publicId: dosPropag,
+        publicId: colPropag,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: dosPropag }, action: 'READ' }],
+        collectionPermissions: [
+          { collection: { publicId: colPropag }, action: PermissionAction.READ },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
@@ -89,15 +92,17 @@ describe.concurrent('listIndicateurs', () => {
     'la propagation collection → indicateur fonctionne aussi avec WRITE sur la collection',
     integrationTest(async () => {
       const [viaCollection] = testIndicateurIds(1)
-      const dosPropag = testCollectionId()
+      const colPropag = testCollectionId()
       await fixtures.indicateur({ publicId: viaCollection, visibilite: 'PRIVE' })
       await fixtures.collection({
-        publicId: dosPropag,
+        publicId: colPropag,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: dosPropag }, action: 'WRITE' }],
+        collectionPermissions: [
+          { collection: { publicId: colPropag }, action: PermissionAction.WRITE_COMMENT },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
@@ -118,9 +123,9 @@ describe.concurrent('listIndicateurs', () => {
       )
       const apiKey = await fixtures.apiKey({
         permissions: [
-          { indicateur: { publicId: ind1 }, action: 'READ' },
-          { indicateur: { publicId: ind2 }, action: 'READ' },
-          { indicateur: { publicId: ind3 }, action: 'READ' },
+          { indicateur: { publicId: ind1 }, action: PermissionAction.READ },
+          { indicateur: { publicId: ind2 }, action: PermissionAction.READ },
+          { indicateur: { publicId: ind3 }, action: PermissionAction.READ },
         ],
       })
 
@@ -148,7 +153,7 @@ describe.concurrent('listIndicateurs', () => {
       const apiKey = await fixtures.apiKey({
         permissions: ids.map((publicId) => ({
           indicateur: { publicId },
-          action: 'READ' as const,
+          action: PermissionAction.READ,
         })),
       })
 
@@ -176,7 +181,7 @@ describe.concurrent('listIndicateurs', () => {
       const apiKey = await fixtures.apiKey({
         permissions: ids.map((publicId) => ({
           indicateur: { publicId },
-          action: 'READ' as const,
+          action: PermissionAction.READ,
         })),
       })
 
@@ -202,9 +207,9 @@ describe.concurrent('listIndicateurs', () => {
       )
       const apiKey = await fixtures.apiKey({
         permissions: [
-          { indicateur: { publicId: ind1 }, action: 'READ' },
-          { indicateur: { publicId: ind2 }, action: 'READ' },
-          { indicateur: { publicId: ind3 }, action: 'READ' },
+          { indicateur: { publicId: ind1 }, action: PermissionAction.READ },
+          { indicateur: { publicId: ind2 }, action: PermissionAction.READ },
+          { indicateur: { publicId: ind3 }, action: PermissionAction.READ },
         ],
       })
 
@@ -235,7 +240,7 @@ describe.concurrent('listIndicateurs', () => {
       const apiKey = await fixtures.apiKey({
         permissions: ids.map((publicId) => ({
           indicateur: { publicId },
-          action: 'READ' as const,
+          action: PermissionAction.READ,
         })),
       })
 
@@ -257,9 +262,9 @@ describe.concurrent('listIndicateurs', () => {
       await fixtures.indicateur({ publicId: ind1 }, { publicId: ind2 }, { publicId: ind3 })
       const apiKey = await fixtures.apiKey({
         permissions: [
-          { indicateur: { publicId: ind1 }, action: 'READ' },
-          { indicateur: { publicId: ind2 }, action: 'READ' },
-          { indicateur: { publicId: ind3 }, action: 'READ' },
+          { indicateur: { publicId: ind1 }, action: PermissionAction.READ },
+          { indicateur: { publicId: ind2 }, action: PermissionAction.READ },
+          { indicateur: { publicId: ind3 }, action: PermissionAction.READ },
         ],
       })
 
@@ -277,7 +282,7 @@ describe.concurrent('listIndicateurs', () => {
       const [accessible, hidden] = testIndicateurIds(2)
       await fixtures.indicateur({ publicId: accessible }, { publicId: hidden })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: accessible }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: accessible }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -308,7 +313,7 @@ describe.concurrent('listIndicateurs', () => {
         ],
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: accessible }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: accessible }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))

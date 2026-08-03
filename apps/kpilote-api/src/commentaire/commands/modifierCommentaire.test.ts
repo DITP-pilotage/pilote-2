@@ -14,7 +14,7 @@ describe.concurrent('modifierCommentaire', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
       })
       const c = await fixtures.commentaire({
         indicateur: { publicId: indId },
@@ -39,10 +39,10 @@ describe.concurrent('modifierCommentaire', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const auteur = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
       })
       const autre = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
       })
       const c = await fixtures.commentaire({
         indicateur: { publicId: indId },

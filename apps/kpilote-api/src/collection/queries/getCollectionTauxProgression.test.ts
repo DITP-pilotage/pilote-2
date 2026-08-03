@@ -1,3 +1,4 @@
+import { PermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { getCollectionTauxProgression } from '@/collection/queries/getCollectionTauxProgression'
@@ -372,7 +373,9 @@ describe.concurrent('getCollectionTauxProgression', () => {
         indicateurs: [{ publicId: indA }],
       })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: 'COL-PROG-PRIV-OK' }, action: 'READ' }],
+        collectionPermissions: [
+          { collection: { publicId: 'COL-PROG-PRIV-OK' }, action: PermissionAction.READ },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>

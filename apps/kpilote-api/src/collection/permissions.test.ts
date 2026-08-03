@@ -1,8 +1,9 @@
+import { PermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { db } from '@/framework/persistence/dbStore'
 import {
-  ensureCollectionWritePermission,
+  ensureCollectionWriteCommentPermission,
   withCollectionReadPermission,
 } from '@/collection/permissions'
 import { fixtures } from '@/test/fixtures'
@@ -20,85 +21,93 @@ describe.concurrent('withCollectionReadPermission', () => {
   it(
     'expose une collection PUBLIC à un principal sans aucune permission',
     integrationTest(async () => {
-      const panPub = testCollectionId()
-      await fixtures.collection({ publicId: panPub, visibilite: 'PUBLIC' })
+      const colPub = testCollectionId()
+      await fixtures.collection({ publicId: colPub, visibilite: 'PUBLIC' })
       const apiKey = await fixtures.apiKey()
 
       const rows = await listCollectionsWithReadPermission(apiKey.id)
 
-      expect(rows.map((r) => r.publicId)).toContain(panPub)
+      expect(rows.map((r) => r.publicId)).toContain(colPub)
     }),
   )
 
   it(
     'cache une collection PRIVE à un principal sans permission',
     integrationTest(async () => {
-      const panPri = testCollectionId()
-      await fixtures.collection({ publicId: panPri, visibilite: 'PRIVE' })
+      const colPri = testCollectionId()
+      await fixtures.collection({ publicId: colPri, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey()
 
       const rows = await listCollectionsWithReadPermission(apiKey.id)
 
-      expect(rows.map((r) => r.publicId)).not.toContain(panPri)
+      expect(rows.map((r) => r.publicId)).not.toContain(colPri)
     }),
   )
 
   it(
     'expose une collection PRIVE à un principal avec permission READ directe',
     integrationTest(async () => {
-      const panPriRead = testCollectionId()
-      await fixtures.collection({ publicId: panPriRead, visibilite: 'PRIVE' })
+      const colPriRead = testCollectionId()
+      await fixtures.collection({ publicId: colPriRead, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: panPriRead }, action: 'READ' }],
+        collectionPermissions: [
+          { collection: { publicId: colPriRead }, action: PermissionAction.READ },
+        ],
       })
 
       const rows = await listCollectionsWithReadPermission(apiKey.id)
 
-      expect(rows.map((r) => r.publicId)).toContain(panPriRead)
+      expect(rows.map((r) => r.publicId)).toContain(colPriRead)
     }),
   )
 
   it(
     'expose une collection PRIVE à un principal avec permission WRITE directe (WRITE implique READ)',
     integrationTest(async () => {
-      const panPriWrite = testCollectionId()
-      await fixtures.collection({ publicId: panPriWrite, visibilite: 'PRIVE' })
+      const colPriWrite = testCollectionId()
+      await fixtures.collection({ publicId: colPriWrite, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: panPriWrite }, action: 'WRITE' }],
+        collectionPermissions: [
+          { collection: { publicId: colPriWrite }, action: PermissionAction.WRITE_COMMENT },
+        ],
       })
 
       const rows = await listCollectionsWithReadPermission(apiKey.id)
 
-      expect(rows.map((r) => r.publicId)).toContain(panPriWrite)
+      expect(rows.map((r) => r.publicId)).toContain(colPriWrite)
     }),
   )
 
   it(
     'isole les permissions par principal : une collection PRIVE accessible à A reste caché à B',
     integrationTest(async () => {
-      const panIso = testCollectionId()
-      await fixtures.collection({ publicId: panIso, visibilite: 'PRIVE' })
+      const colIso = testCollectionId()
+      await fixtures.collection({ publicId: colIso, visibilite: 'PRIVE' })
       const [a, b] = await fixtures.apiKey(
-        { collectionPermissions: [{ collection: { publicId: panIso }, action: 'READ' }] },
+        {
+          collectionPermissions: [
+            { collection: { publicId: colIso }, action: PermissionAction.READ },
+          ],
+        },
         {},
       )
 
       const rowsA = await listCollectionsWithReadPermission(a!.id)
       const rowsB = await listCollectionsWithReadPermission(b!.id)
 
-      expect(rowsA.map((r) => r.publicId)).toContain(panIso)
-      expect(rowsB.map((r) => r.publicId)).not.toContain(panIso)
+      expect(rowsA.map((r) => r.publicId)).toContain(colIso)
+      expect(rowsB.map((r) => r.publicId)).not.toContain(colIso)
     }),
   )
 
   it(
     'préserve le where externe (AND avec la clause de permission)',
     integrationTest(async () => {
-      const panAndCible = testCollectionId()
-      const panAndAutre = testCollectionId()
+      const colAndCible = testCollectionId()
+      const colAndAutre = testCollectionId()
       await fixtures.collection(
-        { publicId: panAndCible, nom: 'Cible', visibilite: 'PUBLIC' },
-        { publicId: panAndAutre, nom: 'Autre', visibilite: 'PUBLIC' },
+        { publicId: colAndCible, nom: 'Cible', visibilite: 'PUBLIC' },
+        { publicId: colAndAutre, nom: 'Autre', visibilite: 'PUBLIC' },
       )
       const apiKey = await fixtures.apiKey()
 
@@ -107,22 +116,24 @@ describe.concurrent('withCollectionReadPermission', () => {
         select: { publicId: true },
       })
 
-      expect(rows.map((r) => r.publicId)).toEqual([panAndCible])
+      expect(rows.map((r) => r.publicId)).toEqual([colAndCible])
     }),
   )
 })
 
-describe.concurrent('ensureCollectionWritePermission', () => {
+describe.concurrent('ensureCollectionWriteCommentPermission', () => {
   it(
     'passe quand le principal a la permission WRITE directe',
     integrationTest(async () => {
-      const panEwOk = testCollectionId()
-      const collection = await fixtures.collection({ publicId: panEwOk, visibilite: 'PRIVE' })
+      const colEwOk = testCollectionId()
+      const collection = await fixtures.collection({ publicId: colEwOk, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: panEwOk }, action: 'WRITE' }],
+        collectionPermissions: [
+          { collection: { publicId: colEwOk }, action: PermissionAction.WRITE_COMMENT },
+        ],
       })
 
-      const result = await ensureCollectionWritePermission({
+      const result = await ensureCollectionWriteCommentPermission({
         collectionId: collection.id,
         principalId: apiKey.id,
       })
@@ -134,12 +145,15 @@ describe.concurrent('ensureCollectionWritePermission', () => {
   it(
     "rejette quand le principal n'a aucune permission",
     integrationTest(async () => {
-      const panEwNone = testCollectionId()
-      const collection = await fixtures.collection({ publicId: panEwNone, visibilite: 'PRIVE' })
+      const colEwNone = testCollectionId()
+      const collection = await fixtures.collection({ publicId: colEwNone, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey()
 
       await expect(
-        ensureCollectionWritePermission({ collectionId: collection.id, principalId: apiKey.id }),
+        ensureCollectionWriteCommentPermission({
+          collectionId: collection.id,
+          principalId: apiKey.id,
+        }),
       ).rejects.toThrow(/permission/i)
     }),
   )
@@ -147,14 +161,19 @@ describe.concurrent('ensureCollectionWritePermission', () => {
   it(
     "rejette quand le principal n'a que la permission READ (READ n'implique pas WRITE)",
     integrationTest(async () => {
-      const panEwRonly = testCollectionId()
-      const collection = await fixtures.collection({ publicId: panEwRonly, visibilite: 'PRIVE' })
+      const colEwRonly = testCollectionId()
+      const collection = await fixtures.collection({ publicId: colEwRonly, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: panEwRonly }, action: 'READ' }],
+        collectionPermissions: [
+          { collection: { publicId: colEwRonly }, action: PermissionAction.READ },
+        ],
       })
 
       await expect(
-        ensureCollectionWritePermission({ collectionId: collection.id, principalId: apiKey.id }),
+        ensureCollectionWriteCommentPermission({
+          collectionId: collection.id,
+          principalId: apiKey.id,
+        }),
       ).rejects.toThrow(/permission/i)
     }),
   )
@@ -162,12 +181,15 @@ describe.concurrent('ensureCollectionWritePermission', () => {
   it(
     'rejette quand la collection est PUBLIC mais sans permission WRITE explicite (PUBLIC ne couvre que la lecture)',
     integrationTest(async () => {
-      const panEwPub = testCollectionId()
-      const collection = await fixtures.collection({ publicId: panEwPub, visibilite: 'PUBLIC' })
+      const colEwPub = testCollectionId()
+      const collection = await fixtures.collection({ publicId: colEwPub, visibilite: 'PUBLIC' })
       const apiKey = await fixtures.apiKey()
 
       await expect(
-        ensureCollectionWritePermission({ collectionId: collection.id, principalId: apiKey.id }),
+        ensureCollectionWriteCommentPermission({
+          collectionId: collection.id,
+          principalId: apiKey.id,
+        }),
       ).rejects.toThrow(/permission/i)
     }),
   )

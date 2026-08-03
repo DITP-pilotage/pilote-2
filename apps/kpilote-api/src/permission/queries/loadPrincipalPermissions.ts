@@ -3,7 +3,11 @@ import { type PrincipalPermissionsApiModel } from '@pilote/kpilote-shared/permis
 import { db } from '@/framework/persistence/dbStore'
 import { PermissionAction } from '@/generated/prisma/enums'
 
-const ACTION_ORDER: PermissionAction[] = [PermissionAction.READ, PermissionAction.WRITE]
+const ACTION_ORDER: PermissionAction[] = [
+  PermissionAction.READ,
+  PermissionAction.WRITE_DATA,
+  PermissionAction.WRITE_COMMENT,
+]
 
 type DirectEntry = { publicId: string; nom: string; actions: Set<PermissionAction> }
 

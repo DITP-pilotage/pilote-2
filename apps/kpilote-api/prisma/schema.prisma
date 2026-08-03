@@ -213,7 +213,8 @@ model IndicateurReferentiel {
 
 enum PermissionAction {
   READ
-  WRITE
+  WRITE_DATA
+  WRITE_COMMENT
 
   @@map("permission_action_enum")
 }

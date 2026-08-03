@@ -8,16 +8,17 @@ import { COLLECTION_READ_PERMISSIONS } from '@/collection/permissions'
 
 const INDICATEUR_READ_PERMISSIONS: PermissionAction[] = [
   PermissionAction.READ,
-  PermissionAction.WRITE,
+  PermissionAction.WRITE_DATA,
+  PermissionAction.WRITE_COMMENT,
 ]
 
 // La permission de lecture sur un indicateur est accordée si :
 // - le principal est ADMIN (bypass : administre PUBLIC + PRIVÉ, aligné avec /me/permissions), OU
 // - l'indicateur est PUBLIC, OU
-// - le principal a READ/WRITE direct sur l'indicateur, OU
-// - le principal a READ/WRITE sur une collection qui contient l'indicateur
+// - le principal a READ/WRITE_DATA/WRITE_COMMENT direct sur l'indicateur, OU
+// - le principal a READ/WRITE_COMMENT sur une collection qui contient l'indicateur
 //   (propagation collection → indicateur, cf. permissions-design.md).
-// Le WRITE indicateur reste strictement direct (ensureIndicateurWritePermission).
+// WRITE_DATA et WRITE_COMMENT restent strictement directs (jamais propagés).
 export const withIndicateurReadPermission = (
   where: Prisma.IndicateurWhereInput,
   principalId: string,
@@ -50,7 +51,7 @@ export const withIndicateurReadPermission = (
   }
 }
 
-export const ensureIndicateurWritePermission = ({
+export const ensureIndicateurWriteDataPermission = ({
   indicateurId,
   principalId,
 }: {
@@ -64,13 +65,42 @@ export const ensureIndicateurWritePermission = ({
           principalId_indicateurId_action: {
             principalId,
             indicateurId,
-            action: PermissionAction.WRITE,
+            action: PermissionAction.WRITE_DATA,
           },
         },
       })
       .then((hasWrite) => {
         if (!hasWrite) {
-          throw new ForbiddenError("Vous n'avez pas la permission de modifier cet indicateur")
+          throw new ForbiddenError(
+            "Vous n'avez pas la permission de modifier les données de cet indicateur",
+          )
+        }
+      }),
+  )
+
+export const ensureIndicateurWriteCommentPermission = ({
+  indicateurId,
+  principalId,
+}: {
+  indicateurId: string
+  principalId: string
+}): ResultAsync<void, never> =>
+  ResultAsync.fromSafePromise(
+    db()
+      .indicateurPermission.findUnique({
+        where: {
+          principalId_indicateurId_action: {
+            principalId,
+            indicateurId,
+            action: PermissionAction.WRITE_COMMENT,
+          },
+        },
+      })
+      .then((hasWrite) => {
+        if (!hasWrite) {
+          throw new ForbiddenError(
+            "Vous n'avez pas la permission d'écrire un commentaire sur cet indicateur",
+          )
         }
       }),
   )

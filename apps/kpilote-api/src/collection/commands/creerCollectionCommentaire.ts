@@ -4,10 +4,11 @@ import { ResultAsync } from 'neverthrow'
 import { creerCommentaire } from '@/commentaire/commands/creerCommentaire'
 import { type CommentaireType } from '@/commentaire/ensureBrouillonUnique'
 import { type SujetCommentaireConfig } from '@/commentaire/sujets'
+import { type CollectionCommentaireType } from '@/generated/prisma/enums'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import {
-  ensureCollectionWritePermission,
+  ensureCollectionWriteCommentPermission,
   withCollectionReadPermission,
 } from '@/collection/permissions'
 
@@ -22,12 +23,16 @@ export const collectionConfig: SujetCommentaireConfig<Params> = {
         select: { id: true },
       }),
     ).andThen((collection) =>
-      ensureCollectionWritePermission({ collectionId: collection.id, principalId }).map(() => ({
-        principalId,
-        satelliteCreate: (type: string) => ({
-          collection: { create: { collectionId: collection.id, type: type as never } },
+      ensureCollectionWriteCommentPermission({ collectionId: collection.id, principalId }).map(
+        () => ({
+          principalId,
+          satelliteCreate: (type: CommentaireType) => ({
+            collection: {
+              create: { collectionId: collection.id, type: type as CollectionCommentaireType },
+            },
+          }),
         }),
-      })),
+      ),
     )
   },
   whereLecture: ({ collectionId }, principalId) => ({

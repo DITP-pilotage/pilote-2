@@ -1,3 +1,4 @@
+import { PermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { meRoutes } from '@/me/routes'
@@ -20,7 +21,9 @@ describe.concurrent('GET /me/permissions', () => {
       })
       await fixtures.apiKey({
         rawKey: 'pilote_live_meperms_principal_with_perms',
-        collectionPermissions: [{ collection: { publicId: collectionId }, action: 'WRITE' }],
+        collectionPermissions: [
+          { collection: { publicId: collectionId }, action: PermissionAction.WRITE_COMMENT },
+        ],
       })
 
       const response = await buildApp().request('/me/permissions', {
@@ -29,8 +32,8 @@ describe.concurrent('GET /me/permissions', () => {
 
       expect(response.status).toBe(200)
       expect(await response.json()).toEqual({
-        collections: [{ id: collectionId, actions: ['WRITE'] }],
-        indicateurs: [{ id: indicateurId, actions: ['READ'] }],
+        collections: [{ id: collectionId, actions: [PermissionAction.WRITE_COMMENT] }],
+        indicateurs: [{ id: indicateurId, actions: [PermissionAction.READ] }],
       })
     }),
   )

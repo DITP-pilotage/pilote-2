@@ -3,14 +3,14 @@ import { ResultAsync } from 'neverthrow'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 
-import { ensureIndicateurWritePermission, withIndicateurReadPermission } from './permissions'
+import { ensureIndicateurWriteDataPermission, withIndicateurReadPermission } from './permissions'
 
 type ResolvedIndicateur = {
   indicateur: { id: string; publicId: string }
   principalId: string
 }
 
-export const resolveIndicateurForWrite = ({
+export const resolveIndicateurForWriteData = ({
   indicateurPublicId,
 }: {
   indicateurPublicId: string
@@ -22,7 +22,7 @@ export const resolveIndicateurForWrite = ({
       select: { id: true, publicId: true },
     }),
   ).andThen((indicateur) =>
-    ensureIndicateurWritePermission({ indicateurId: indicateur.id, principalId }).map(() => ({
+    ensureIndicateurWriteDataPermission({ indicateurId: indicateur.id, principalId }).map(() => ({
       indicateur,
       principalId,
     })),

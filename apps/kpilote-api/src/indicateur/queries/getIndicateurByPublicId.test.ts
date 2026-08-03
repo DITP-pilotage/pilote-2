@@ -1,3 +1,4 @@
+import { PermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { db } from '@/framework/persistence/dbStore'
@@ -26,7 +27,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
         ],
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
@@ -74,7 +75,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
       const indId = testIndicateurId()
       await fixtures.indicateur({ publicId: indId, unite: 'POURCENTAGE' })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
@@ -101,7 +102,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
         jourMiseAJour: 15,
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
@@ -140,7 +141,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
@@ -171,7 +172,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
         },
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'READ' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
@@ -206,7 +207,7 @@ describe.concurrent('getIndicateurByPublicId', () => {
       const indId = testIndicateurId()
       await fixtures.indicateur({ publicId: indId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: 'WRITE' }],
+        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_DATA }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
@@ -310,14 +311,14 @@ describe.concurrent('getIndicateurByPublicId', () => {
     'expose les responsables via une permission READ propagée par une collection',
     integrationTest(async () => {
       const indId = testIndicateurId()
-      const dosId = testCollectionId()
+      const colId = testCollectionId()
       await fixtures.indicateurResponsable({
         indicateur: { publicId: indId, visibilite: 'PRIVE' },
         utilisateur: { email: `resp2-${indId}@example.com` },
       })
-      await fixtures.collection({ publicId: dosId, indicateurs: [{ publicId: indId }] })
+      await fixtures.collection({ publicId: colId, indicateurs: [{ publicId: indId }] })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: dosId }, action: 'READ' }],
+        collectionPermissions: [{ collection: { publicId: colId }, action: PermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))

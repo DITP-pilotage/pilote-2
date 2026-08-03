@@ -39,7 +39,7 @@ describe.concurrent('revokeCollectionPermission', () => {
           revokeCollectionPermission({
             principalId: target.id,
             collectionPublicId: dos.publicId,
-            action: 'READ',
+            action: PermissionAction.READ,
           }),
         ),
       ).rejects.toBeInstanceOf(ForbiddenError)

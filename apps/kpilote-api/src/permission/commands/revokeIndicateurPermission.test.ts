@@ -17,7 +17,7 @@ const grantReadWrite = async (principalId: string, indicateurPublicId: string) =
   await fixtures.indicateurPermission({
     principalId,
     indicateur: { publicId: indicateurPublicId },
-    action: PermissionAction.WRITE,
+    action: PermissionAction.WRITE_DATA,
   })
 }
 
@@ -33,12 +33,12 @@ describe.concurrent('revokeIndicateurPermission', () => {
         revokeIndicateurPermission({
           principalId: target.id,
           indicateurPublicId: ind.publicId,
-          action: 'WRITE',
+          action: PermissionAction.WRITE_DATA,
         }),
       )
 
       expect(result._unsafeUnwrap().indicateurs).toEqual([
-        { publicId: ind.publicId, nom: 'Indic', actions: ['READ'] },
+        { publicId: ind.publicId, nom: 'Indic', actions: [PermissionAction.READ] },
       ])
     }),
   )
