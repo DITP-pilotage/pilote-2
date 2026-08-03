@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { creerCommentaire } from '@/commentaire/commands/creerCommentaire'
 import { indicateurIndividuConfig } from '@/indicateur/commands/creerIndicateurIndividuCommentaire'
 import { db } from '@/framework/persistence/dbStore'
-import { PermissionAction } from '@/generated/prisma/enums'
+import { IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurId, testIndividuId } from '@/test/randomIds'
@@ -18,7 +18,7 @@ describe.concurrent('creerCommentaire', () => {
       const indicateur = await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_COMMENT }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -69,7 +69,7 @@ describe.concurrent('creerCommentaire', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_COMMENT }],
       })
       const creerBrouillon = () =>
         runAsPrincipal(apiKey.id, () =>

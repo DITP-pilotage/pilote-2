@@ -37,7 +37,8 @@ import {
 } from '@/generated/prisma/models'
 import {
   ApiKeyRole,
-  PermissionAction,
+  CollectionPermissionAction,
+  IndicateurPermissionAction,
   ProviderType,
   Visibilite,
   type FeatureEtat,
@@ -535,12 +536,12 @@ async function collection(
 
 type PrincipalIndicateurPermissionOverrides = {
   indicateur: IndicateurOverrides
-  action: PermissionAction
+  action: IndicateurPermissionAction
 }
 
 type PrincipalCollectionPermissionOverrides = {
   collection: CollectionOverrides
-  action: PermissionAction
+  action: CollectionPermissionAction
 }
 
 type ApiKeyOverrides = Partial<{
@@ -687,7 +688,7 @@ async function utilisateur(
 type IndicateurPermissionOverrides = {
   principalId: string
   indicateur: IndicateurOverrides
-  action: PermissionAction
+  action: IndicateurPermissionAction
 }
 
 const upsertIndicateurPermission = async (o: IndicateurPermissionOverrides) => {
@@ -731,7 +732,7 @@ async function indicateurPermission(
 type CollectionPermissionOverrides = {
   principalId: string
   collection: CollectionOverrides
-  action: PermissionAction
+  action: CollectionPermissionAction
 }
 
 const upsertCollectionPermission = async (o: CollectionPermissionOverrides) => {

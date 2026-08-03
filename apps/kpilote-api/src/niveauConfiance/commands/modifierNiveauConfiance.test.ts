@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { creerIndicateurIndividuCommentaire } from '@/indicateur/commands/creerIndicateurIndividuCommentaire'
-import { PermissionAction } from '@/generated/prisma/enums'
+import { IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { creerNiveauConfiance } from '@/niveauConfiance/commands/creerNiveauConfiance'
 import { modifierNiveauConfiance } from '@/niveauConfiance/commands/modifierNiveauConfiance'
 import { fixtures } from '@/test/fixtures'
@@ -41,7 +41,7 @@ describe.concurrent('modifierNiveauConfiance', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_COMMENT }],
       })
       const cree = await creerNcSur({
         apiKeyId: apiKey.id,
@@ -68,10 +68,10 @@ describe.concurrent('modifierNiveauConfiance', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const auteur = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_COMMENT }],
       })
       const autre = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_COMMENT }],
       })
       const cree = await creerNcSur({
         apiKeyId: auteur.id,

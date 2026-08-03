@@ -1,4 +1,4 @@
-import { PermissionAction } from '@/generated/prisma/enums'
+import { CollectionPermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { grantCollectionPermission } from '@/permission/commands/grantCollectionPermission'
@@ -23,13 +23,13 @@ describe.concurrent('grantCollectionPermission', () => {
         grantCollectionPermission({
           principalId: target.id,
           collectionPublicId: dos.publicId,
-          action: PermissionAction.READ,
+          action: CollectionPermissionAction.READ,
         }),
       )
       const model = result._unsafeUnwrap()
 
       expect(model.collections).toEqual([
-        { publicId: dos.publicId, nom: 'Mon collection', actions: [PermissionAction.READ] },
+        { publicId: dos.publicId, nom: 'Mon collection', actions: [CollectionPermissionAction.READ] },
       ])
       expect(model.indicateursHerites).toEqual([
         {
@@ -51,7 +51,7 @@ describe.concurrent('grantCollectionPermission', () => {
           grantCollectionPermission({
             principalId: target.id,
             collectionPublicId: 'COL-INEXISTANT',
-            action: PermissionAction.READ,
+            action: CollectionPermissionAction.READ,
           }),
         ),
       ).rejects.toThrow()

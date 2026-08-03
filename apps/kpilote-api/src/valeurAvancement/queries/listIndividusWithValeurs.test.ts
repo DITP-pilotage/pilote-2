@@ -1,4 +1,4 @@
-import { PermissionAction } from '@/generated/prisma/enums'
+import { IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { fixtures } from '@/test/fixtures'
@@ -58,7 +58,7 @@ describe.concurrent('listIndividusWithValeurs', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listIndividusWithValeurs(indId, {}))
@@ -133,7 +133,7 @@ describe.concurrent('listIndividusWithValeurs', () => {
         },
       )
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -184,7 +184,7 @@ describe.concurrent('listIndividusWithValeurs', () => {
       const indId = testIndicateurId()
       await fixtures.indicateur({ publicId: indId, nom: 'T' })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>

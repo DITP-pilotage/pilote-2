@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { ForbiddenError } from '@/framework/errors/AppError'
-import { PermissionAction } from '@/generated/prisma/enums'
+import { CollectionPermissionAction } from '@/generated/prisma/enums'
 import { revokeCollectionPermission } from '@/permission/commands/revokeCollectionPermission'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
@@ -18,7 +18,7 @@ describe.concurrent('revokeCollectionPermission', () => {
       await fixtures.collectionPermission({
         principalId: target.id,
         collection: { publicId: dos.publicId },
-        action: PermissionAction.READ,
+        action: CollectionPermissionAction.READ,
       })
 
       const result = await runAsAdmin(CALLER_ID, () =>
@@ -39,7 +39,7 @@ describe.concurrent('revokeCollectionPermission', () => {
           revokeCollectionPermission({
             principalId: target.id,
             collectionPublicId: dos.publicId,
-            action: PermissionAction.READ,
+            action: CollectionPermissionAction.READ,
           }),
         ),
       ).rejects.toBeInstanceOf(ForbiddenError)

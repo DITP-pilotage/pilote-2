@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import { creerIndicateurIndividuCommentaire } from '@/indicateur/commands/creerIndicateurIndividuCommentaire'
-import { PermissionAction } from '@/generated/prisma/enums'
+import { IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { creerNiveauConfiance } from '@/niveauConfiance/commands/creerNiveauConfiance'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
@@ -17,7 +17,7 @@ describe.concurrent('creerNiveauConfiance', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_COMMENT }],
       })
       const params = { indicateurId: indId, individuId: indivId }
       const commentaire = await runAsPrincipal(apiKey.id, () =>
@@ -50,7 +50,7 @@ describe.concurrent('creerNiveauConfiance', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_COMMENT }],
       })
       const commentaire = await runAsPrincipal(apiKey.id, () =>
         creerIndicateurIndividuCommentaire({
@@ -78,7 +78,7 @@ describe.concurrent('creerNiveauConfiance', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_COMMENT }],
       })
       const commentaire = await runAsPrincipal(apiKey.id, () =>
         creerIndicateurIndividuCommentaire({

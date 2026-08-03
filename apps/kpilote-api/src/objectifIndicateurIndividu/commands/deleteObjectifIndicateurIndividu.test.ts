@@ -1,4 +1,4 @@
-import { PermissionAction } from '@/generated/prisma/enums'
+import { IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { ForbiddenError } from '@/framework/errors/AppError'
@@ -32,7 +32,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
         valeurCible: 100,
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_DATA }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -69,7 +69,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
         referentiel: { publicId: refId },
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_DATA }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -110,7 +110,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
         valeurCible: 100,
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_DATA }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -165,7 +165,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
       })
       await fixtures.individu({ publicId: individuId, referentiel: { publicId: refId } })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.READ }],
       })
 
       await expect(
@@ -189,7 +189,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
         referentiel: { publicId: refId },
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_DATA }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -220,7 +220,7 @@ describe.concurrent('deleteObjectifIndicateurIndividu', () => {
       })
       await fixtures.individu({ publicId: individuId, referentiel: { publicId: refOrphelin } })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_DATA }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>

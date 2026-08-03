@@ -5,7 +5,7 @@ import {
   creerIndicateurIndividuCommentaire,
   indicateurIndividuConfig,
 } from '@/indicateur/commands/creerIndicateurIndividuCommentaire'
-import { PermissionAction } from '@/generated/prisma/enums'
+import { IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { creerNiveauConfiance } from '@/niveauConfiance/commands/creerNiveauConfiance'
 import { listerNiveauxParCommentaires } from '@/niveauConfiance/queries/listerNiveauxParCommentaires'
 import { fixtures } from '@/test/fixtures'
@@ -39,7 +39,7 @@ describe.concurrent('listerNiveauxParCommentaires', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const moi = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_COMMENT }],
       })
       const params = { indicateurId: indId, individuId: indivId }
       const idA = await creerCommentaireAvecNiveau(moi.id, params, 'OBJECTIF_SECURISE')
@@ -66,10 +66,10 @@ describe.concurrent('listerNiveauxParCommentaires', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const moi = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_COMMENT }],
       })
       const autre = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_COMMENT }],
       })
       const params = { indicateurId: indId, individuId: indivId }
       const idAutre = await creerCommentaireAvecNiveau(
@@ -98,7 +98,7 @@ describe.concurrent('listerNiveauxParCommentaires', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const moi = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.READ }],
       })
 
       const result = await runAsPrincipal(moi.id, () =>

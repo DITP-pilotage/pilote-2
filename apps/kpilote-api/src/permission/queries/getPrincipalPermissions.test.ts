@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { uuidv7 } from 'uuidv7'
 
 import { ForbiddenError } from '@/framework/errors/AppError'
-import { PermissionAction } from '@/generated/prisma/enums'
+import { CollectionPermissionAction, IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { getPrincipalPermissions } from '@/permission/queries/getPrincipalPermissions'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
@@ -24,22 +24,22 @@ describe.concurrent('getPrincipalPermissions', () => {
       await fixtures.indicateurPermission({
         principalId: target.id,
         indicateur: { publicId: ind1.publicId },
-        action: PermissionAction.WRITE_DATA,
+        action: IndicateurPermissionAction.WRITE_DATA,
       })
       await fixtures.collectionPermission({
         principalId: target.id,
         collection: { publicId: dos.publicId },
-        action: PermissionAction.READ,
+        action: CollectionPermissionAction.READ,
       })
 
       const result = await runAsAdmin(CALLER_ID, () => getPrincipalPermissions(target.id))
       const model = result._unsafeUnwrap()
 
       expect(model.collections).toEqual([
-        { publicId: dos.publicId, nom: 'Collection', actions: [PermissionAction.READ] },
+        { publicId: dos.publicId, nom: 'Collection', actions: [CollectionPermissionAction.READ] },
       ])
       expect(model.indicateurs).toEqual([
-        { publicId: ind1.publicId, nom: 'Indic 1', actions: [PermissionAction.WRITE_DATA] },
+        { publicId: ind1.publicId, nom: 'Indic 1', actions: [IndicateurPermissionAction.WRITE_DATA] },
       ])
       expect(model.indicateursHerites).toEqual([
         {
@@ -61,12 +61,12 @@ describe.concurrent('getPrincipalPermissions', () => {
       await fixtures.collectionPermission({
         principalId: target.id,
         collection: { publicId: dos.publicId },
-        action: PermissionAction.READ,
+        action: CollectionPermissionAction.READ,
       })
       await fixtures.indicateurPermission({
         principalId: target.id,
         indicateur: { publicId: ind.publicId },
-        action: PermissionAction.WRITE_DATA,
+        action: IndicateurPermissionAction.WRITE_DATA,
       })
 
       const result = await runAsAdmin(CALLER_ID, () => getPrincipalPermissions(target.id))
@@ -76,7 +76,7 @@ describe.concurrent('getPrincipalPermissions', () => {
         {
           publicId: ind.publicId,
           nom: 'Direct et dans collection',
-          actions: [PermissionAction.WRITE_DATA],
+          actions: [IndicateurPermissionAction.WRITE_DATA],
         },
       ])
       expect(model.indicateursHerites).toEqual([])

@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { getDernierBrouillon } from '@/commentaire/queries/getDernierBrouillon'
 import { indicateurIndividuConfig } from '@/indicateur/commands/creerIndicateurIndividuCommentaire'
-import { PermissionAction } from '@/generated/prisma/enums'
+import { IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurId, testIndividuId } from '@/test/randomIds'
@@ -17,7 +17,7 @@ describe.concurrent('getDernierBrouillon', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const moi = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.READ }],
       })
       const autre = await fixtures.apiKey({ permissions: [] })
       const scope = { indicateur: { publicId: indId }, individu: { publicId: indivId } }
@@ -56,7 +56,7 @@ describe.concurrent('getDernierBrouillon', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const moi = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.READ }],
       })
       await fixtures.commentaire({
         indicateur: { publicId: indId },
