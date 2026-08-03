@@ -1,7 +1,8 @@
 import {
-  PermissionAction,
-  type PermissionActionValue,
-  type PermissionWriteActionValue,
+  CollectionPermissionAction,
+  IndicateurPermissionAction,
+  type IndicateurPermissionActionValue,
+  type IndicateurPermissionWriteActionValue,
   type PrincipalPermissionsApiModel,
 } from '@pilote/kpilote-shared/permission'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
@@ -25,7 +26,7 @@ import { clsxm } from '@/lib/clsxm'
 import { useProdEditUnlock } from '@/lib/useProdEditUnlock'
 import { principalPermissionsQueryOptions } from '@/queries/permissions'
 
-type DirectRow = { publicId: string; nom: string; actions: PermissionActionValue[] }
+type DirectRow = { publicId: string; nom: string; actions: IndicateurPermissionActionValue[] }
 
 type SectionHandlers = {
   onToggleWriteData?: (publicId: string, active: boolean) => void
@@ -60,11 +61,11 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   // Indicateurs — appels directs, aucune factorisation avec les collections.
   const addIndicateur = (indicateurPublicId: string) => {
     run(() =>
-      grantIndicateurPermission({ principalId, indicateurPublicId, action: PermissionAction.READ }),
+      grantIndicateurPermission({ principalId, indicateurPublicId, action: IndicateurPermissionAction.READ }),
     )
   }
   const toggleIndicateurWrite =
-    (action: PermissionWriteActionValue) => (indicateurPublicId: string, active: boolean) =>
+    (action: IndicateurPermissionWriteActionValue) => (indicateurPublicId: string, active: boolean) =>
       run(() =>
         active
           ? revokeIndicateurPermission({ principalId, indicateurPublicId, action })
@@ -77,7 +78,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const addCollection = (collectionPublicId: string) => {
     setModal(null)
     run(() =>
-      grantCollectionPermission({ principalId, collectionPublicId, action: PermissionAction.READ }),
+      grantCollectionPermission({ principalId, collectionPublicId, action: CollectionPermissionAction.READ }),
     )
   }
   const toggleCollectionWriteComment = (collectionPublicId: string, active: boolean) =>
@@ -86,12 +87,12 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
         ? revokeCollectionPermission({
             principalId,
             collectionPublicId,
-            action: PermissionAction.WRITE_COMMENT,
+            action: CollectionPermissionAction.WRITE_COMMENT,
           })
         : grantCollectionPermission({
             principalId,
             collectionPublicId,
-            action: PermissionAction.WRITE_COMMENT,
+            action: CollectionPermissionAction.WRITE_COMMENT,
           }),
     )
   const removeCollection = (collectionPublicId: string) =>
@@ -116,8 +117,8 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
       ) : (
         <ul className="divide-y divide-border rounded-lg border border-border">
           {rows.map((row) => {
-            const writeDataActive = row.actions.includes(PermissionAction.WRITE_DATA)
-            const writeCommentActive = row.actions.includes(PermissionAction.WRITE_COMMENT)
+            const writeDataActive = row.actions.includes(IndicateurPermissionAction.WRITE_DATA)
+            const writeCommentActive = row.actions.includes(IndicateurPermissionAction.WRITE_COMMENT)
             const extra = extraForRow?.(row.publicId)
             return (
               <li key={row.publicId} className="px-3 py-2.5">
@@ -278,8 +279,8 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           disabled={disabled}
         />,
         {
-          onToggleWriteData: toggleIndicateurWrite(PermissionAction.WRITE_DATA),
-          onToggleWriteComment: toggleIndicateurWrite(PermissionAction.WRITE_COMMENT),
+          onToggleWriteData: toggleIndicateurWrite(IndicateurPermissionAction.WRITE_DATA),
+          onToggleWriteComment: toggleIndicateurWrite(IndicateurPermissionAction.WRITE_COMMENT),
           onRemove: removeIndicateur,
         },
       )}

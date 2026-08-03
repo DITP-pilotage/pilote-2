@@ -1,7 +1,8 @@
 import type {
+  CollectionPermissionActionValue,
   GrantCollectionPermissionBody,
   GrantIndicateurPermissionBody,
-  PermissionActionValue,
+  IndicateurPermissionActionValue,
   PrincipalPermissionsApiModel,
 } from '@pilote/kpilote-shared/permission'
 import { principalPermissionsApiModelSchema } from '@pilote/kpilote-shared/permission'
@@ -27,7 +28,7 @@ export const grantIndicateurPermission = async (
 export const revokeIndicateurPermission = async (params: {
   principalId: string
   indicateurPublicId: string
-  action?: PermissionActionValue
+  action?: IndicateurPermissionActionValue
 }): Promise<PrincipalPermissionsApiModel> => {
   const searchParams: Record<string, string> = {
     principalId: params.principalId,
@@ -50,7 +51,7 @@ export const grantCollectionPermission = async (
 export const revokeCollectionPermission = async (params: {
   principalId: string
   collectionPublicId: string
-  action?: PermissionActionValue
+  action?: CollectionPermissionActionValue
 }): Promise<PrincipalPermissionsApiModel> => {
   const searchParams: Record<string, string> = {
     principalId: params.principalId,
