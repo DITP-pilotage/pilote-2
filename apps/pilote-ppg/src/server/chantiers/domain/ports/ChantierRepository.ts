@@ -41,7 +41,7 @@ export interface ChantierRepository {
   }: {
     indicId: string;
   }): Promise<RapportDirecteurProjetChantierInformation>;
-  recupererListePropositionValeurAvancementChantierInformationParChantiersIds({
+  recupererChantierInformationsParIds({
     listeChantiersIds,
   }: {
     listeChantiersIds: string[];

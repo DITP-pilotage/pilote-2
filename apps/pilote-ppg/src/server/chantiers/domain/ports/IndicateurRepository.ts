@@ -41,8 +41,19 @@ export interface IndicateurRepository {
     jalon: number,
     dateDerniereExecutionDatajobs: Date,
   ): Promise<DetailsIndicateurTerritoire>;
-  recupererIndicateursNonAJourParChantierId(): Promise<
-    Map<string, { id: string; nom: string; mailles: string[] }[]>
+  recupererIndicateursNonAJourParChantierId(options?: {
+    chantiersIds?: string[];
+    inclureChantiersBrouillon?: boolean;
+  }): Promise<
+    Map<
+      string,
+      {
+        id: string;
+        nom: string;
+        mailles: string[];
+        responsablesDonneesMails: string[];
+      }[]
+    >
   >;
   recupererIndicateursAParametrerParChantierId(
     jalon: number,

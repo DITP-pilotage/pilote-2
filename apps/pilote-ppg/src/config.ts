@@ -289,6 +289,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_RAPPORT_PVA",
     },
+    rapportResponsablesDonnees: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_RAPPORT_RESPONSABLES_DONNEES",
+    },
     creationCompteArs: {
       format: Boolean,
       default: false,
@@ -467,6 +472,11 @@ const config = convict({
       format: String,
       default: "",
       env: "TCHAP_ROOM_ID_RAPPORT_PVA",
+    },
+    roomIdRapportResponsablesDonnees: {
+      format: String,
+      default: "",
+      env: "TCHAP_ROOM_ID_RAPPORT_RESPONSABLES_DONNEES",
     },
     roomIdDesactivationComptes: {
       format: String,

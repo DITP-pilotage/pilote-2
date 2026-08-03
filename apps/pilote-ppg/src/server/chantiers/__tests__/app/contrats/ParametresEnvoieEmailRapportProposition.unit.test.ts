@@ -256,13 +256,28 @@ describe("genererParametresEnvoieRapportProposition", () => {
 
       const indicateursNonAJourParChantier = new Map<
         string,
-        { id: string; nom: string; mailles: string[] }[]
+        {
+          id: string;
+          nom: string;
+          mailles: string[];
+          responsablesDonneesMails: string[];
+        }[]
       >([
         [
           "CH-001",
           [
-            { id: "IND-001", nom: "Indicateur 1", mailles: ["NAT"] },
-            { id: "IND-002", nom: "Indicateur 2", mailles: ["NAT", "REG"] },
+            {
+              id: "IND-001",
+              nom: "Indicateur 1",
+              mailles: ["NAT"],
+              responsablesDonneesMails: [],
+            },
+            {
+              id: "IND-002",
+              nom: "Indicateur 2",
+              mailles: ["NAT", "REG"],
+              responsablesDonneesMails: [],
+            },
           ],
         ],
       ]);

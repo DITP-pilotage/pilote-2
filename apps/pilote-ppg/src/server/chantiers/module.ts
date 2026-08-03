@@ -34,6 +34,10 @@ import { RapportPropositionsAvancementRepository } from "./domain/ports/RapportP
 import { PrismaRapportPropositionsAvancementRepository } from "./infrastructure/adapters/PrismaRapportPropositionsAvancementRepository";
 import { CreerLesRapportsPropositionsUseCase } from "./usecases/CreerLesRapportsPropositionsUseCase";
 import { EnvoyerLesRapportsPropositionsUseCase } from "./usecases/EnvoyerLesRapportsPropositionsUseCase";
+import { RapportResponsableDonneesRepository } from "./domain/ports/RapportResponsableDonneesRepository";
+import { PrismaRapportResponsableDonneesRepository } from "./infrastructure/adapters/PrismaRapportResponsableDonneesRepository";
+import { CreerLesRapportsResponsablesDonneesUseCase } from "./usecases/CreerLesRapportsResponsablesDonneesUseCase";
+import { EnvoyerLesRapportsResponsablesDonneesUseCase } from "./usecases/EnvoyerLesRapportsResponsablesDonneesUseCase";
 import { GetChantierMeteosTerritoiresQuery } from "./infrastructure/queries/GetChantierMeteosTerritoiresQuery";
 import { GetChantierPVACountTerritoiresQuery } from "./infrastructure/queries/GetChantierPVACountTerritoiresQuery";
 import { GetIndicateurPVACountTerritoiresQuery } from "./infrastructure/queries/GetIndicateurPVACountTerritoiresQuery";
@@ -95,6 +99,9 @@ type ChantierOwnCradle = ChantierExports & {
   rapportPropositionsAvancementRepository: RapportPropositionsAvancementRepository;
   creerLesRapportsPropositionsUseCase: CreerLesRapportsPropositionsUseCase;
   envoyerLesRapportsPropositionsUseCase: EnvoyerLesRapportsPropositionsUseCase;
+  rapportResponsableDonneesRepository: RapportResponsableDonneesRepository;
+  creerLesRapportsResponsablesDonneesUseCase: CreerLesRapportsResponsablesDonneesUseCase;
+  envoyerLesRapportsResponsablesDonneesUseCase: EnvoyerLesRapportsResponsablesDonneesUseCase;
   getChantierMeteosTerritoiresQuery: GetChantierMeteosTerritoiresQuery;
   getChantierPVACountTerritoiresQuery: GetChantierPVACountTerritoiresQuery;
   getIndicateurPVACountTerritoiresQuery: GetIndicateurPVACountTerritoiresQuery;
@@ -165,6 +172,15 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       ),
       envoyerLesRapportsPropositionsUseCase: asModuleClass(
         EnvoyerLesRapportsPropositionsUseCase,
+      ),
+      rapportResponsableDonneesRepository: asModuleClass(
+        PrismaRapportResponsableDonneesRepository,
+      ),
+      creerLesRapportsResponsablesDonneesUseCase: asModuleClass(
+        CreerLesRapportsResponsablesDonneesUseCase,
+      ),
+      envoyerLesRapportsResponsablesDonneesUseCase: asModuleClass(
+        EnvoyerLesRapportsResponsablesDonneesUseCase,
       ),
       recupererDetailsIndicateursV2UseCase: asModuleClass(
         RecupererDetailsIndicateursV2UseCase,

@@ -93,7 +93,12 @@ export const genererParametresEnvoieRapportProposition = (
         afficherSectionPropositions,
         indicateursPropositions: indicateursPropositions,
         afficherSectionMajIndicateur,
-        indicateursNonMisAJour: indicateursNonMisAJour ?? [],
+        indicateursNonMisAJour:
+          indicateursNonMisAJour?.map(({ id, nom, mailles }) => ({
+            id,
+            nom,
+            mailles,
+          })) ?? [],
         nombreIndicateursNonMisAJour:
           nombreIndicateursNonMisAJour === 0
             ? "aucun indicateur à mettre à jour"

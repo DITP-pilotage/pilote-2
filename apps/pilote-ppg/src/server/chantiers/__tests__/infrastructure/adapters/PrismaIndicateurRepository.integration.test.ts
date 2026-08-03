@@ -5550,11 +5550,21 @@ describe("PrismaIndicateurRepository", () => {
         expect(result.size).toEqual(2);
         expect(result.get("CH-001")).toEqual(
           expect.arrayContaining([
-            { id: "IND-001", nom: "Indicateur 001", mailles: ["NAT"] },
+            {
+              id: "IND-001",
+              nom: "Indicateur 001",
+              mailles: ["NAT"],
+              responsablesDonneesMails: [],
+            },
           ]),
         );
         expect(result.get("CH-002")).toEqual([
-          { id: "IND-003", nom: "Indicateur 003", mailles: ["NAT"] },
+          {
+            id: "IND-003",
+            nom: "Indicateur 003",
+            mailles: ["NAT"],
+            responsablesDonneesMails: [],
+          },
         ]);
       }),
     );
@@ -5641,7 +5651,12 @@ describe("PrismaIndicateurRepository", () => {
         // Then
         expect(result.size).toEqual(1);
         expect(result.get("CH-001")).toEqual([
-          { id: "IND-003", nom: "Indicateur 003", mailles: ["NAT"] },
+          {
+            id: "IND-003",
+            nom: "Indicateur 003",
+            mailles: ["NAT"],
+            responsablesDonneesMails: [],
+          },
         ]);
       }),
     );
@@ -5768,7 +5783,12 @@ describe("PrismaIndicateurRepository", () => {
         // Then
         expect(result.size).toEqual(1);
         expect(result.get("CH-001")).toEqual([
-          { id: "IND-001", nom: "Indicateur 001", mailles: ["NAT"] },
+          {
+            id: "IND-001",
+            nom: "Indicateur 001",
+            mailles: ["NAT"],
+            responsablesDonneesMails: [],
+          },
         ]);
         expect(result.has("CH-002")).toEqual(false);
       }),
@@ -5867,7 +5887,12 @@ describe("PrismaIndicateurRepository", () => {
         // Then
         expect(result.size).toEqual(1);
         expect(result.get("CH-001")).toEqual([
-          { id: "IND-001", nom: "Indicateur 001", mailles: ["NAT"] },
+          {
+            id: "IND-001",
+            nom: "Indicateur 001",
+            mailles: ["NAT"],
+            responsablesDonneesMails: [],
+          },
         ]);
         expect(result.has("CH-002")).toEqual(false);
       }),
@@ -6001,15 +6026,187 @@ describe("PrismaIndicateurRepository", () => {
             id: "IND-001",
             nom: "Indicateur 001",
             mailles: expect.arrayContaining(["NAT", "REG"]),
+            responsablesDonneesMails: [],
           },
           {
             id: "IND-002",
             nom: "Indicateur 002",
             mailles: expect.arrayContaining(["REG", "DEPT"]),
+            responsablesDonneesMails: [],
           },
         ]);
         expect(result.get("CH-001")![0].mailles).toHaveLength(2);
         expect(result.get("CH-001")![1].mailles).toHaveLength(2);
+      }),
+    );
+
+    it(
+      "doit filtrer sur une liste de chantiers quand chantiersIds est fourni",
+      createIntegrationTest(async () => {
+        // Given
+        const chantier1 = await fixtures.chantierIdentite({
+          id: "CH-001",
+          statut: "PUBLIE",
+        });
+        const chantier2 = await fixtures.chantierIdentite({
+          id: "CH-002",
+          statut: "PUBLIE",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantier1.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantier2.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        const indicateur1 = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantier1.id,
+          statut: "PUBLIE",
+        });
+        const indicateur2 = await fixtures.indicateurIdentite({
+          id: "IND-002",
+          nom: "Indicateur 002",
+          chantier_id: chantier2.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur1.id,
+          chantier_id: chantier1.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: false,
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur2.id,
+          chantier_id: chantier2.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: false,
+        });
+
+        // When
+        const result =
+          await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId(
+            {
+              chantiersIds: ["CH-001"],
+            },
+          );
+
+        // Then
+        expect(result.size).toEqual(1);
+        expect(result.get("CH-001")).toEqual([
+          {
+            id: "IND-001",
+            nom: "Indicateur 001",
+            mailles: ["NAT"],
+            responsablesDonneesMails: [],
+          },
+        ]);
+        expect(result.has("CH-002")).toEqual(false);
+      }),
+    );
+
+    it(
+      "doit inclure les chantiers BROUILLON quand inclureChantiersBrouillon est true",
+      createIntegrationTest(async () => {
+        // Given
+        const chantierPublie = await fixtures.chantierIdentite({
+          id: "CH-001",
+          statut: "PUBLIE",
+        });
+        const chantierBrouillon = await fixtures.chantierIdentite({
+          id: "CH-002",
+          statut: "BROUILLON",
+        });
+
+        await fixtures.chantierTerritoire({
+          id: chantierPublie.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+        await fixtures.chantierTerritoire({
+          id: chantierBrouillon.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+        });
+
+        const indicateur1 = await fixtures.indicateurIdentite({
+          id: "IND-001",
+          nom: "Indicateur 001",
+          chantier_id: chantierPublie.id,
+          statut: "PUBLIE",
+        });
+        const indicateur2 = await fixtures.indicateurIdentite({
+          id: "IND-002",
+          nom: "Indicateur 002",
+          chantier_id: chantierBrouillon.id,
+          statut: "PUBLIE",
+        });
+
+        await fixtures.indicateurTerritoire({
+          id: indicateur1.id,
+          chantier_id: chantierPublie.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: false,
+        });
+        await fixtures.indicateurTerritoire({
+          id: indicateur2.id,
+          chantier_id: chantierBrouillon.id,
+          territoire_code: "NAT-FR",
+          code_insee: "FR",
+          maille: "NAT",
+          zone_id: "FRANCE",
+          est_applicable: true,
+          est_a_jour: false,
+        });
+
+        // When - sans option : seul le chantier PUBLIE est retourné
+        const resultSansOption =
+          await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId();
+
+        // Then
+        expect(resultSansOption.size).toEqual(1);
+        expect(resultSansOption.has("CH-001")).toEqual(true);
+        expect(resultSansOption.has("CH-002")).toEqual(false);
+
+        // When - avec inclureChantiersBrouillon : les deux chantiers sont retournés
+        const resultAvecBrouillon =
+          await prismaIndicateurRepository.recupererIndicateursNonAJourParChantierId(
+            {
+              inclureChantiersBrouillon: true,
+            },
+          );
+
+        // Then
+        expect(resultAvecBrouillon.size).toEqual(2);
+        expect(resultAvecBrouillon.has("CH-001")).toEqual(true);
+        expect(resultAvecBrouillon.has("CH-002")).toEqual(true);
       }),
     );
   });

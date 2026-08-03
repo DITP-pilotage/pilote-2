@@ -560,6 +560,22 @@ model rapport_propositions_avancement {
   @@schema("public")
 }
 
+model rapport_responsable_donnees {
+  id                      String               @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email_responsable       String
+  contenu_rapport         Json
+  statut_envoi            statut_envoi_rapport @default(CREE)
+  date_creation           DateTime             @default(now())
+  date_envoi              DateTime?
+  date_derniere_tentative DateTime?
+  nombre_tentatives       Int                  @default(0)
+  erreur_envoi            String?
+
+  @@index([statut_envoi])
+  @@index([email_responsable])
+  @@schema("public")
+}
+
 enum type_objectif {
   notre_ambition
   deja_fait
