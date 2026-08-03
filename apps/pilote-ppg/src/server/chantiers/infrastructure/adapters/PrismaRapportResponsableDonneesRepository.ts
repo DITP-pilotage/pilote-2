@@ -2,13 +2,19 @@ import { $Enums, Prisma } from "@prisma/client";
 import { z } from "zod";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { RapportResponsableDonneesRepository } from "@/server/chantiers/domain/ports/RapportResponsableDonneesRepository";
-import {
-  ChantierRapportResponsableDonnees,
-  RapportResponsableDonnees,
-} from "@/server/chantiers/domain/RapportResponsableDonnees";
+import { RapportResponsableDonnees } from "@/server/chantiers/domain/RapportResponsableDonnees";
+
+const chantierRapportSchema = z.object({
+  nom_chantier: z.string(),
+  id_chantier: z.string(),
+  indicateursNonMisAJour: z.array(
+    z.object({ id: z.string(), nom: z.string(), mailles: z.array(z.string()) }),
+  ),
+  nombreIndicateursNonMisAJour: z.string(),
+});
 
 const contenuRapportSchema = z.object({
-  chantiers: z.custom<ChantierRapportResponsableDonnees[]>(),
+  chantiers: z.array(chantierRapportSchema),
 });
 
 export class PrismaRapportResponsableDonneesRepository implements RapportResponsableDonneesRepository {
