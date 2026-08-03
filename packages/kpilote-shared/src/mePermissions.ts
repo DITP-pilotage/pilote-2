@@ -3,9 +3,7 @@ import { z } from 'zod'
 import { collectionPermissionActionSchema, indicateurPermissionActionSchema } from './permission'
 
 const collectionPermissionEntrySchema = z.object({
-  id: z
-    .string()
-    .describe("Identifiant public de la collection (`COL-…`)."),
+  id: z.string().describe('Identifiant public de la collection (`COL-…`).'),
   actions: z
     .array(collectionPermissionActionSchema)
     .min(1)
@@ -13,15 +11,11 @@ const collectionPermissionEntrySchema = z.object({
 })
 
 const indicateurPermissionEntrySchema = z.object({
-  id: z
-    .string()
-    .describe("Identifiant public de l'indicateur (`IND-…`)."),
+  id: z.string().describe("Identifiant public de l'indicateur (`IND-…`)."),
   actions: z
     .array(indicateurPermissionActionSchema)
     .min(1)
-    .describe(
-      'Actions accordées. Triées `READ` avant `WRITE_DATA` avant `WRITE_COMMENT`.',
-    ),
+    .describe('Actions accordées. Triées `READ` avant `WRITE_DATA` avant `WRITE_COMMENT`.'),
 })
 
 export const mePermissionsApiModelSchema = z.object({
