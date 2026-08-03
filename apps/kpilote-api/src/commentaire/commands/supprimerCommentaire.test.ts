@@ -14,7 +14,9 @@ describe.concurrent('supprimerCommentaire', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_COMMENT }],
+        permissions: [
+          { indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_COMMENT },
+        ],
       })
       const c = await fixtures.commentaire({
         indicateur: { publicId: indId },

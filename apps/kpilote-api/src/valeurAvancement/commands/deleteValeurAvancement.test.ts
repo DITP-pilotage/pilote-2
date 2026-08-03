@@ -32,7 +32,9 @@ describe.concurrent('deleteValeurAvancement', () => {
         valeur: 12.34,
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA }],
+        permissions: [
+          { indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -81,7 +83,9 @@ describe.concurrent('deleteValeurAvancement', () => {
         valeur: 20,
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA }],
+        permissions: [
+          { indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -116,7 +120,9 @@ describe.concurrent('deleteValeurAvancement', () => {
         referentiel: { publicId: refId },
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA }],
+        permissions: [
+          { indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -225,7 +231,9 @@ describe.concurrent('deleteValeurAvancement', () => {
         referentiel: { publicId: refId },
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA }],
+        permissions: [
+          { indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -259,7 +267,9 @@ describe.concurrent('deleteValeurAvancement', () => {
         referentiel: { publicId: refOrphelin },
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA }],
+        permissions: [
+          { indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>

@@ -68,7 +68,10 @@ describe.concurrent('withCollectionReadPermission', () => {
       await fixtures.collection({ publicId: colPriWrite, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
         collectionPermissions: [
-          { collection: { publicId: colPriWrite }, action: CollectionPermissionAction.WRITE_COMMENT },
+          {
+            collection: { publicId: colPriWrite },
+            action: CollectionPermissionAction.WRITE_COMMENT,
+          },
         ],
       })
 

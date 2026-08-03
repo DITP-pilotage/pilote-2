@@ -66,7 +66,9 @@ describe.concurrent('withIndicateurReadPermission', () => {
       const [priv] = testIndicateurIds(1)
       await fixtures.indicateur({ publicId: priv, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: priv }, action: IndicateurPermissionAction.WRITE_DATA }],
+        permissions: [
+          { indicateur: { publicId: priv }, action: IndicateurPermissionAction.WRITE_DATA },
+        ],
       })
 
       const rows = await listIndicateursWithReadPermission(apiKey.id)
@@ -81,7 +83,9 @@ describe.concurrent('withIndicateurReadPermission', () => {
       const [priv] = testIndicateurIds(1)
       await fixtures.indicateur({ publicId: priv, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: priv }, action: IndicateurPermissionAction.WRITE_COMMENT }],
+        permissions: [
+          { indicateur: { publicId: priv }, action: IndicateurPermissionAction.WRITE_COMMENT },
+        ],
       })
 
       const rows = await listIndicateursWithReadPermission(apiKey.id)
@@ -195,7 +199,9 @@ describe.concurrent('ensureIndicateurWriteDataPermission', () => {
       const [pub] = testIndicateurIds(1)
       const indicateur = await fixtures.indicateur({ publicId: pub, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: pub }, action: IndicateurPermissionAction.WRITE_DATA }],
+        permissions: [
+          { indicateur: { publicId: pub }, action: IndicateurPermissionAction.WRITE_DATA },
+        ],
       })
 
       const result = await ensureIndicateurWriteDataPermission({
@@ -231,7 +237,9 @@ describe.concurrent('ensureIndicateurWriteDataPermission', () => {
       const [pub] = testIndicateurIds(1)
       const indicateur = await fixtures.indicateur({ publicId: pub, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: pub }, action: IndicateurPermissionAction.WRITE_COMMENT }],
+        permissions: [
+          { indicateur: { publicId: pub }, action: IndicateurPermissionAction.WRITE_COMMENT },
+        ],
       })
 
       await expect(
@@ -272,7 +280,10 @@ describe.concurrent('ensureIndicateurWriteDataPermission', () => {
       })
       const apiKey = await fixtures.apiKey({
         collectionPermissions: [
-          { collection: { publicId: colWpropNo }, action: CollectionPermissionAction.WRITE_COMMENT },
+          {
+            collection: { publicId: colWpropNo },
+            action: CollectionPermissionAction.WRITE_COMMENT,
+          },
         ],
       })
 
@@ -293,7 +304,9 @@ describe.concurrent('ensureIndicateurWriteCommentPermission', () => {
       const [pub] = testIndicateurIds(1)
       const indicateur = await fixtures.indicateur({ publicId: pub, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: pub }, action: IndicateurPermissionAction.WRITE_COMMENT }],
+        permissions: [
+          { indicateur: { publicId: pub }, action: IndicateurPermissionAction.WRITE_COMMENT },
+        ],
       })
 
       const result = await ensureIndicateurWriteCommentPermission({
@@ -329,7 +342,9 @@ describe.concurrent('ensureIndicateurWriteCommentPermission', () => {
       const [pub] = testIndicateurIds(1)
       const indicateur = await fixtures.indicateur({ publicId: pub, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: pub }, action: IndicateurPermissionAction.WRITE_DATA }],
+        permissions: [
+          { indicateur: { publicId: pub }, action: IndicateurPermissionAction.WRITE_DATA },
+        ],
       })
 
       await expect(
@@ -370,7 +385,10 @@ describe.concurrent('ensureIndicateurWriteCommentPermission', () => {
       })
       const apiKey = await fixtures.apiKey({
         collectionPermissions: [
-          { collection: { publicId: colWpropNo }, action: CollectionPermissionAction.WRITE_COMMENT },
+          {
+            collection: { publicId: colWpropNo },
+            action: CollectionPermissionAction.WRITE_COMMENT,
+          },
         ],
       })
 

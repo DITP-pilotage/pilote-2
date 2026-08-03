@@ -29,7 +29,11 @@ describe.concurrent('grantCollectionPermission', () => {
       const model = result._unsafeUnwrap()
 
       expect(model.collections).toEqual([
-        { publicId: dos.publicId, nom: 'Mon collection', actions: [CollectionPermissionAction.READ] },
+        {
+          publicId: dos.publicId,
+          nom: 'Mon collection',
+          actions: [CollectionPermissionAction.READ],
+        },
       ])
       expect(model.indicateursHerites).toEqual([
         {

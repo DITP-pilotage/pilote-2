@@ -25,7 +25,9 @@ describe.concurrent('resolveIndicateurAndIndividuForWriteData', () => {
         referentiel: { publicId: refId },
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA }],
+        permissions: [
+          { indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -103,7 +105,9 @@ describe.concurrent('resolveIndicateurAndIndividuForWriteData', () => {
         referentiel: { publicId: refId },
       })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA }],
+        permissions: [
+          { indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>
@@ -131,7 +135,9 @@ describe.concurrent('resolveIndicateurAndIndividuForWriteData', () => {
       })
       await fixtures.individu({ publicId: individuId, referentiel: { publicId: refOrphelin } })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA }],
+        permissions: [
+          { indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () =>

@@ -61,11 +61,16 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   // Indicateurs — appels directs, aucune factorisation avec les collections.
   const addIndicateur = (indicateurPublicId: string) => {
     run(() =>
-      grantIndicateurPermission({ principalId, indicateurPublicId, action: IndicateurPermissionAction.READ }),
+      grantIndicateurPermission({
+        principalId,
+        indicateurPublicId,
+        action: IndicateurPermissionAction.READ,
+      }),
     )
   }
   const toggleIndicateurWrite =
-    (action: IndicateurPermissionWriteActionValue) => (indicateurPublicId: string, active: boolean) =>
+    (action: IndicateurPermissionWriteActionValue) =>
+    (indicateurPublicId: string, active: boolean) =>
       run(() =>
         active
           ? revokeIndicateurPermission({ principalId, indicateurPublicId, action })
@@ -78,7 +83,11 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const addCollection = (collectionPublicId: string) => {
     setModal(null)
     run(() =>
-      grantCollectionPermission({ principalId, collectionPublicId, action: CollectionPermissionAction.READ }),
+      grantCollectionPermission({
+        principalId,
+        collectionPublicId,
+        action: CollectionPermissionAction.READ,
+      }),
     )
   }
   const toggleCollectionWriteComment = (collectionPublicId: string, active: boolean) =>
@@ -118,7 +127,9 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
         <ul className="divide-y divide-border rounded-lg border border-border">
           {rows.map((row) => {
             const writeDataActive = row.actions.includes(IndicateurPermissionAction.WRITE_DATA)
-            const writeCommentActive = row.actions.includes(IndicateurPermissionAction.WRITE_COMMENT)
+            const writeCommentActive = row.actions.includes(
+              IndicateurPermissionAction.WRITE_COMMENT,
+            )
             const extra = extraForRow?.(row.publicId)
             return (
               <li key={row.publicId} className="px-3 py-2.5">

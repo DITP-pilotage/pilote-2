@@ -55,11 +55,15 @@ describe.concurrent('listCollectionPermissions', () => {
       const email = testEmail()
       const cle = await fixtures.apiKey({
         label: 'sync-ppg',
-        collectionPermissions: [{ collection: { publicId }, action: CollectionPermissionAction.READ }],
+        collectionPermissions: [
+          { collection: { publicId }, action: CollectionPermissionAction.READ },
+        ],
       })
       const utilisateur = await fixtures.utilisateur({
         email,
-        collectionPermissions: [{ collection: { publicId }, action: CollectionPermissionAction.READ }],
+        collectionPermissions: [
+          { collection: { publicId }, action: CollectionPermissionAction.READ },
+        ],
       })
       const admin = await fixtures.apiKey({ role: 'ADMIN' })
 
@@ -89,7 +93,9 @@ describe.concurrent('listCollectionPermissions', () => {
       await fixtures.collection({ publicId })
       await fixtures.utilisateur({
         email: testEmail(),
-        collectionPermissions: [{ collection: { publicId }, action: CollectionPermissionAction.READ }],
+        collectionPermissions: [
+          { collection: { publicId }, action: CollectionPermissionAction.READ },
+        ],
       })
       const apiKey = await fixtures.apiKey()
 

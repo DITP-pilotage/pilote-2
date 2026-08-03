@@ -1,10 +1,7 @@
 import { type PrincipalPermissionsApiModel } from '@pilote/kpilote-shared/permission'
 
 import { db } from '@/framework/persistence/dbStore'
-import {
-  CollectionPermissionAction,
-  IndicateurPermissionAction,
-} from '@/generated/prisma/enums'
+import { CollectionPermissionAction, IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { sortByOrder } from '@/permission/utils'
 
 const INDICATEUR_ACTION_ORDER = [

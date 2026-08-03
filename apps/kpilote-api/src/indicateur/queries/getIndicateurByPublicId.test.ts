@@ -207,7 +207,9 @@ describe.concurrent('getIndicateurByPublicId', () => {
       const indId = testIndicateurId()
       await fixtures.indicateur({ publicId: indId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA }],
+        permissions: [
+          { indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_DATA },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))
@@ -318,7 +320,9 @@ describe.concurrent('getIndicateurByPublicId', () => {
       })
       await fixtures.collection({ publicId: colId, indicateurs: [{ publicId: indId }] })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: colId }, action: CollectionPermissionAction.READ }],
+        collectionPermissions: [
+          { collection: { publicId: colId }, action: CollectionPermissionAction.READ },
+        ],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))

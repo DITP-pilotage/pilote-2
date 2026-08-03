@@ -1004,7 +1004,9 @@ describe.concurrent('listTauxProgressionForIndicateur', () => {
       const deptId = testDeptId()
       // clé sans permission sur indId
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: autreIndId }, action: IndicateurPermissionAction.READ }],
+        permissions: [
+          { indicateur: { publicId: autreIndId }, action: IndicateurPermissionAction.READ },
+        ],
       })
 
       await expect(

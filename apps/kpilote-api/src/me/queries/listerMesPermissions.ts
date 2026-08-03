@@ -3,10 +3,7 @@ import { okAsync, ResultAsync } from 'neverthrow'
 
 import { isAdminPrincipal, requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
-import {
-  CollectionPermissionAction,
-  IndicateurPermissionAction,
-} from '@/generated/prisma/enums'
+import { CollectionPermissionAction, IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { sortByOrder } from '@/permission/utils'
 
 const INDICATEUR_ACTION_ORDER = [

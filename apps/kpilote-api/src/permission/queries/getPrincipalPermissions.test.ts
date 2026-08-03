@@ -39,7 +39,11 @@ describe.concurrent('getPrincipalPermissions', () => {
         { publicId: dos.publicId, nom: 'Collection', actions: [CollectionPermissionAction.READ] },
       ])
       expect(model.indicateurs).toEqual([
-        { publicId: ind1.publicId, nom: 'Indic 1', actions: [IndicateurPermissionAction.WRITE_DATA] },
+        {
+          publicId: ind1.publicId,
+          nom: 'Indic 1',
+          actions: [IndicateurPermissionAction.WRITE_DATA],
+        },
       ])
       expect(model.indicateursHerites).toEqual([
         {
