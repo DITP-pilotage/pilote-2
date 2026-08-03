@@ -63,18 +63,18 @@ describe.concurrent('listIndicateurs', () => {
     'propage READ via les permissions collection : un principal qui a accès à une collection voit ses indicateurs PRIVE',
     integrationTest(async () => {
       const [viaCollection, hidden] = testIndicateurIds(2)
-      const dosPropag = testCollectionId()
+      const colPropag = testCollectionId()
       await fixtures.indicateur(
         { publicId: viaCollection, visibilite: 'PRIVE' },
         { publicId: hidden, visibilite: 'PRIVE' },
       )
       await fixtures.collection({
-        publicId: dosPropag,
+        publicId: colPropag,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: dosPropag }, action: 'READ' }],
+        collectionPermissions: [{ collection: { publicId: colPropag }, action: 'READ' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))
@@ -89,15 +89,15 @@ describe.concurrent('listIndicateurs', () => {
     'la propagation collection → indicateur fonctionne aussi avec WRITE sur la collection',
     integrationTest(async () => {
       const [viaCollection] = testIndicateurIds(1)
-      const dosPropag = testCollectionId()
+      const colPropag = testCollectionId()
       await fixtures.indicateur({ publicId: viaCollection, visibilite: 'PRIVE' })
       await fixtures.collection({
-        publicId: dosPropag,
+        publicId: colPropag,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: dosPropag }, action: 'WRITE_COMMENT' }],
+        collectionPermissions: [{ collection: { publicId: colPropag }, action: 'WRITE_COMMENT' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listIndicateurs({}))

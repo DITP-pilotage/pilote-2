@@ -310,14 +310,14 @@ describe.concurrent('getIndicateurByPublicId', () => {
     'expose les responsables via une permission READ propagée par une collection',
     integrationTest(async () => {
       const indId = testIndicateurId()
-      const dosId = testCollectionId()
+      const colId = testCollectionId()
       await fixtures.indicateurResponsable({
         indicateur: { publicId: indId, visibilite: 'PRIVE' },
         utilisateur: { email: `resp2-${indId}@example.com` },
       })
-      await fixtures.collection({ publicId: dosId, indicateurs: [{ publicId: indId }] })
+      await fixtures.collection({ publicId: colId, indicateurs: [{ publicId: indId }] })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: dosId }, action: 'READ' }],
+        collectionPermissions: [{ collection: { publicId: colId }, action: 'READ' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => getIndicateurByPublicId(indId))

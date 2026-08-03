@@ -27,20 +27,20 @@ describe.concurrent('listCollections', () => {
     'retourne toutes les collections PUBLIC quand leur nombre est inférieur à la taille de page',
     integrationTest(async () => {
       // Ordre de création = ordre attendu (orderBy id interne uuidv7).
-      const dosList1 = testCollectionId()
-      const dosList2 = testCollectionId()
-      const dosList3 = testCollectionId()
+      const colList1 = testCollectionId()
+      const colList2 = testCollectionId()
+      const colList3 = testCollectionId()
       await fixtures.collection(
-        { publicId: dosList1, nom: 'Collection 1', visibilite: 'PUBLIC' },
-        { publicId: dosList2, nom: 'Collection 2', visibilite: 'PUBLIC' },
-        { publicId: dosList3, nom: 'Collection 3', visibilite: 'PUBLIC' },
+        { publicId: colList1, nom: 'Collection 1', visibilite: 'PUBLIC' },
+        { publicId: colList2, nom: 'Collection 2', visibilite: 'PUBLIC' },
+        { publicId: colList3, nom: 'Collection 3', visibilite: 'PUBLIC' },
       )
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () => listCollections({}))
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((p) => p.id)).toEqual([dosList1, dosList2, dosList3])
+      expect(value.items.map((p) => p.id)).toEqual([colList1, colList2, colList3])
       expect(value.pagination).toEqual({ cursor: null, hasMore: false })
       expect(value.total).toBe(3)
     }),
@@ -49,20 +49,20 @@ describe.concurrent('listCollections', () => {
   it(
     "n'inclut que les collections sur lesquels le principal a une permission",
     integrationTest(async () => {
-      const panPermAcc = testCollectionId()
-      const panPermHid = testCollectionId()
+      const colPermAcc = testCollectionId()
+      const colPermHid = testCollectionId()
       await fixtures.collection(
-        { publicId: panPermAcc, visibilite: 'PRIVE' },
-        { publicId: panPermHid, visibilite: 'PRIVE' },
+        { publicId: colPermAcc, visibilite: 'PRIVE' },
+        { publicId: colPermHid, visibilite: 'PRIVE' },
       )
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: panPermAcc }, action: 'READ' }],
+        collectionPermissions: [{ collection: { publicId: colPermAcc }, action: 'READ' }],
       })
 
       const result = await runAsPrincipal(apiKey.id, () => listCollections({}))
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((p) => p.id)).toEqual([panPermAcc])
+      expect(value.items.map((p) => p.id)).toEqual([colPermAcc])
       expect(value.total).toBe(1)
     }),
   )
@@ -70,18 +70,18 @@ describe.concurrent('listCollections', () => {
   it(
     "inclut les collections PUBLIC sur lesquels le principal n'a aucune permission",
     integrationTest(async () => {
-      const panVisPub = testCollectionId()
-      const panVisPri = testCollectionId()
+      const colVisPub = testCollectionId()
+      const colVisPri = testCollectionId()
       await fixtures.collection(
-        { publicId: panVisPub, visibilite: 'PUBLIC' },
-        { publicId: panVisPri, visibilite: 'PRIVE' },
+        { publicId: colVisPub, visibilite: 'PUBLIC' },
+        { publicId: colVisPri, visibilite: 'PRIVE' },
       )
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () => listCollections({}))
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((p) => p.id)).toEqual([panVisPub])
+      expect(value.items.map((p) => p.id)).toEqual([colVisPub])
       expect(value.items.map((p) => p.visibilite)).toEqual(['PUBLIC'])
     }),
   )
@@ -90,9 +90,9 @@ describe.concurrent('listCollections', () => {
     "expose les indicateurs de la collection triés par ordre d'insertion (createdAt ASC)",
     integrationTest(async () => {
       const [indA, indB, indC] = testIndicateurIds(3)
-      const dosOrder = testCollectionId()
+      const colOrder = testCollectionId()
       await fixtures.collection({
-        publicId: dosOrder,
+        publicId: colOrder,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indA }, { publicId: indB }, { publicId: indC }],
       })
@@ -101,7 +101,7 @@ describe.concurrent('listCollections', () => {
       const result = await runAsPrincipal(apiKey.id, () => listCollections({}))
 
       const value = result._unsafeUnwrap()
-      const collection = value.items.find((p) => p.id === dosOrder)
+      const collection = value.items.find((p) => p.id === colOrder)
       expect(collection?.indicateurs).toEqual([
         { id: indA, ponderation: 1 },
         { id: indB, ponderation: 1 },
@@ -113,14 +113,14 @@ describe.concurrent('listCollections', () => {
   it(
     'retourne une collection sans indicateurs avec un tableau vide',
     integrationTest(async () => {
-      const dosEmpty = testCollectionId()
-      await fixtures.collection({ publicId: dosEmpty, visibilite: 'PUBLIC' })
+      const colEmpty = testCollectionId()
+      await fixtures.collection({ publicId: colEmpty, visibilite: 'PUBLIC' })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () => listCollections({}))
 
       const value = result._unsafeUnwrap()
-      const collection = value.items.find((p) => p.id === dosEmpty)
+      const collection = value.items.find((p) => p.id === colEmpty)
       expect(collection?.indicateurs).toEqual([])
     }),
   )
@@ -129,19 +129,19 @@ describe.concurrent('listCollections', () => {
     'pagine quand le nombre de collections dépasse la taille de page',
     integrationTest(async () => {
       // Ordre de création = ordre attendu (orderBy id interne uuidv7).
-      const panPage1 = testCollectionId()
-      const panPage2 = testCollectionId()
-      const panPage3 = testCollectionId()
-      const panPage4 = testCollectionId()
-      const panPage5 = testCollectionId()
-      const panPage6 = testCollectionId()
+      const colPage1 = testCollectionId()
+      const colPage2 = testCollectionId()
+      const colPage3 = testCollectionId()
+      const colPage4 = testCollectionId()
+      const colPage5 = testCollectionId()
+      const colPage6 = testCollectionId()
       const created = await fixtures.collection(
-        { publicId: panPage1, visibilite: 'PUBLIC' },
-        { publicId: panPage2, visibilite: 'PUBLIC' },
-        { publicId: panPage3, visibilite: 'PUBLIC' },
-        { publicId: panPage4, visibilite: 'PUBLIC' },
-        { publicId: panPage5, visibilite: 'PUBLIC' },
-        { publicId: panPage6, visibilite: 'PUBLIC' },
+        { publicId: colPage1, visibilite: 'PUBLIC' },
+        { publicId: colPage2, visibilite: 'PUBLIC' },
+        { publicId: colPage3, visibilite: 'PUBLIC' },
+        { publicId: colPage4, visibilite: 'PUBLIC' },
+        { publicId: colPage5, visibilite: 'PUBLIC' },
+        { publicId: colPage6, visibilite: 'PUBLIC' },
       )
       const apiKey = await fixtures.apiKey()
 
@@ -149,11 +149,11 @@ describe.concurrent('listCollections', () => {
 
       const value = result._unsafeUnwrap()
       expect(value.items.map((p) => p.id)).toEqual([
-        panPage1,
-        panPage2,
-        panPage3,
-        panPage4,
-        panPage5,
+        colPage1,
+        colPage2,
+        colPage3,
+        colPage4,
+        colPage5,
       ])
       expect(value.pagination).toEqual({ cursor: encodeCursor(created[4]!.id), hasMore: true })
       expect(value.total).toBe(6)
@@ -164,19 +164,19 @@ describe.concurrent('listCollections', () => {
     'retourne la page suivante en utilisant le cursor',
     integrationTest(async () => {
       // Ordre de création = ordre attendu (orderBy id interne uuidv7).
-      const panCursor1 = testCollectionId()
-      const panCursor2 = testCollectionId()
-      const panCursor3 = testCollectionId()
-      const panCursor4 = testCollectionId()
-      const panCursor5 = testCollectionId()
-      const panCursor6 = testCollectionId()
+      const colCursor1 = testCollectionId()
+      const colCursor2 = testCollectionId()
+      const colCursor3 = testCollectionId()
+      const colCursor4 = testCollectionId()
+      const colCursor5 = testCollectionId()
+      const colCursor6 = testCollectionId()
       const created = await fixtures.collection(
-        { publicId: panCursor1, visibilite: 'PUBLIC' },
-        { publicId: panCursor2, visibilite: 'PUBLIC' },
-        { publicId: panCursor3, visibilite: 'PUBLIC' },
-        { publicId: panCursor4, visibilite: 'PUBLIC' },
-        { publicId: panCursor5, visibilite: 'PUBLIC' },
-        { publicId: panCursor6, visibilite: 'PUBLIC' },
+        { publicId: colCursor1, visibilite: 'PUBLIC' },
+        { publicId: colCursor2, visibilite: 'PUBLIC' },
+        { publicId: colCursor3, visibilite: 'PUBLIC' },
+        { publicId: colCursor4, visibilite: 'PUBLIC' },
+        { publicId: colCursor5, visibilite: 'PUBLIC' },
+        { publicId: colCursor6, visibilite: 'PUBLIC' },
       )
       const apiKey = await fixtures.apiKey()
 
@@ -185,7 +185,7 @@ describe.concurrent('listCollections', () => {
       )
 
       const value = result._unsafeUnwrap()
-      expect(value.items.map((p) => p.id)).toEqual([panCursor6])
+      expect(value.items.map((p) => p.id)).toEqual([colCursor6])
       expect(value.pagination).toEqual({ cursor: null, hasMore: false })
       expect(value.total).toBe(6)
     }),

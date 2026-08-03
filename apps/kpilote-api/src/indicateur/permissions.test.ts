@@ -93,15 +93,15 @@ describe.concurrent('withIndicateurReadPermission', () => {
     'propage READ depuis une collection (action READ sur la collection)',
     integrationTest(async () => {
       const [viaCollection] = testIndicateurIds(1)
-      const panRpropR = testCollectionId()
+      const colRpropR = testCollectionId()
       await fixtures.indicateur({ publicId: viaCollection, visibilite: 'PRIVE' })
       await fixtures.collection({
-        publicId: panRpropR,
+        publicId: colRpropR,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: panRpropR }, action: 'READ' }],
+        collectionPermissions: [{ collection: { publicId: colRpropR }, action: 'READ' }],
       })
 
       const rows = await listIndicateursWithReadPermission(apiKey.id)
@@ -114,15 +114,15 @@ describe.concurrent('withIndicateurReadPermission', () => {
     'propage READ depuis une collection (action WRITE_COMMENT sur la collection)',
     integrationTest(async () => {
       const [viaCollection] = testIndicateurIds(1)
-      const panRpropW = testCollectionId()
+      const colRpropW = testCollectionId()
       await fixtures.indicateur({ publicId: viaCollection, visibilite: 'PRIVE' })
       await fixtures.collection({
-        publicId: panRpropW,
+        publicId: colRpropW,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: panRpropW }, action: 'WRITE_COMMENT' }],
+        collectionPermissions: [{ collection: { publicId: colRpropW }, action: 'WRITE_COMMENT' }],
       })
 
       const rows = await listIndicateursWithReadPermission(apiKey.id)
@@ -135,10 +135,10 @@ describe.concurrent('withIndicateurReadPermission', () => {
     "ne propage rien depuis une collection auquel le principal n'a pas accès",
     integrationTest(async () => {
       const [hidden] = testIndicateurIds(1)
-      const panRpropNone = testCollectionId()
+      const colRpropNone = testCollectionId()
       await fixtures.indicateur({ publicId: hidden, visibilite: 'PRIVE' })
       await fixtures.collection({
-        publicId: panRpropNone,
+        publicId: colRpropNone,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: hidden }],
       })
@@ -258,15 +258,15 @@ describe.concurrent('ensureIndicateurWriteDataPermission', () => {
     "rejette même si le principal a WRITE_COMMENT sur une collection qui contient l'indicateur (WRITE_DATA reste direct, pas de propagation)",
     integrationTest(async () => {
       const [viaCollection] = testIndicateurIds(1)
-      const panWpropNo = testCollectionId()
+      const colWpropNo = testCollectionId()
       const indicateur = await fixtures.indicateur({ publicId: viaCollection, visibilite: 'PRIVE' })
       await fixtures.collection({
-        publicId: panWpropNo,
+        publicId: colWpropNo,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: panWpropNo }, action: 'WRITE_COMMENT' }],
+        collectionPermissions: [{ collection: { publicId: colWpropNo }, action: 'WRITE_COMMENT' }],
       })
 
       await expect(
@@ -354,15 +354,15 @@ describe.concurrent('ensureIndicateurWriteCommentPermission', () => {
     "rejette même si le principal a WRITE_COMMENT sur une collection qui contient l'indicateur (WRITE_COMMENT indicateur reste direct, pas de propagation)",
     integrationTest(async () => {
       const [viaCollection] = testIndicateurIds(1)
-      const panWpropNo = testCollectionId()
+      const colWpropNo = testCollectionId()
       const indicateur = await fixtures.indicateur({ publicId: viaCollection, visibilite: 'PRIVE' })
       await fixtures.collection({
-        publicId: panWpropNo,
+        publicId: colWpropNo,
         visibilite: 'PRIVE',
         indicateurs: [{ publicId: viaCollection }],
       })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: panWpropNo }, action: 'WRITE_COMMENT' }],
+        collectionPermissions: [{ collection: { publicId: colWpropNo }, action: 'WRITE_COMMENT' }],
       })
 
       await expect(

@@ -11,9 +11,9 @@ describe.concurrent('getCollectionByPublicId', () => {
     "retourne la collection PUBLIC avec ses indicateurs triés par ordre d'insertion",
     integrationTest(async () => {
       const [indA, indB] = testIndicateurIds(2)
-      const panDetail = testCollectionId()
+      const colDetail = testCollectionId()
       const collection = await fixtures.collection({
-        publicId: panDetail,
+        publicId: colDetail,
         nom: 'Collection de détail',
         description: 'Une description',
         visibilite: 'PUBLIC',
@@ -21,11 +21,11 @@ describe.concurrent('getCollectionByPublicId', () => {
       })
       const apiKey = await fixtures.apiKey()
 
-      const result = await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(panDetail))
+      const result = await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(colDetail))
 
       expect(result.isOk()).toBe(true)
       expect(result._unsafeUnwrap()).toEqual({
-        id: panDetail,
+        id: colDetail,
         nom: 'Collection de détail',
         description: 'Une description',
         visibilite: 'PUBLIC',
@@ -44,18 +44,18 @@ describe.concurrent('getCollectionByPublicId', () => {
   it(
     'retourne une collection sans indicateurs avec un tableau vide',
     integrationTest(async () => {
-      const dosEmpty = testCollectionId()
+      const colEmpty = testCollectionId()
       await fixtures.collection({
-        publicId: dosEmpty,
+        publicId: colEmpty,
         nom: 'Sans indicateurs',
         visibilite: 'PUBLIC',
       })
       const apiKey = await fixtures.apiKey()
 
-      const result = await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(dosEmpty))
+      const result = await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(colEmpty))
 
       expect(result._unsafeUnwrap()).toMatchObject({
-        id: dosEmpty,
+        id: colEmpty,
         indicateurs: [],
         description: null,
       })
@@ -65,15 +65,15 @@ describe.concurrent('getCollectionByPublicId', () => {
   it(
     "retourne une collection PRIVE quand le principal dispose d'une permission",
     integrationTest(async () => {
-      const panPriv = testCollectionId()
-      await fixtures.collection({ publicId: panPriv, visibilite: 'PRIVE' })
+      const colPriv = testCollectionId()
+      await fixtures.collection({ publicId: colPriv, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
-        collectionPermissions: [{ collection: { publicId: panPriv }, action: 'READ' }],
+        collectionPermissions: [{ collection: { publicId: colPriv }, action: 'READ' }],
       })
 
-      const result = await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(panPriv))
+      const result = await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(colPriv))
 
-      expect(result._unsafeUnwrap().id).toBe(panPriv)
+      expect(result._unsafeUnwrap().id).toBe(colPriv)
     }),
   )
 
@@ -98,12 +98,12 @@ describe.concurrent('getCollectionByPublicId', () => {
   it(
     'lève une erreur quand une collection PRIVE est demandé sans permission',
     integrationTest(async () => {
-      const panNoacl = testCollectionId()
-      await fixtures.collection({ publicId: panNoacl, visibilite: 'PRIVE' })
+      const colNoacl = testCollectionId()
+      await fixtures.collection({ publicId: colNoacl, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey()
 
       await expect(
-        runAsPrincipal(apiKey.id, () => getCollectionByPublicId(panNoacl)),
+        runAsPrincipal(apiKey.id, () => getCollectionByPublicId(colNoacl)),
       ).rejects.toThrow()
     }),
   )
@@ -111,11 +111,11 @@ describe.concurrent('getCollectionByPublicId', () => {
   it(
     'lève une erreur quand aucune collection ne correspond',
     integrationTest(async () => {
-      const panNope = testCollectionId()
+      const colNope = testCollectionId()
       const apiKey = await fixtures.apiKey()
 
       await expect(
-        runAsPrincipal(apiKey.id, () => getCollectionByPublicId(panNope)),
+        runAsPrincipal(apiKey.id, () => getCollectionByPublicId(colNope)),
       ).rejects.toThrow()
     }),
   )
@@ -123,11 +123,11 @@ describe.concurrent('getCollectionByPublicId', () => {
   it(
     "retourne les responsables de la collection triés par ordre d'assignation",
     integrationTest(async () => {
-      const dosId = testCollectionId()
+      const colId = testCollectionId()
       const liaison = await fixtures.collectionResponsable({
-        collection: { publicId: dosId, visibilite: 'PUBLIC' },
+        collection: { publicId: colId, visibilite: 'PUBLIC' },
         utilisateur: {
-          email: `resp-a-${dosId}@example.com`,
+          email: `resp-a-${colId}@example.com`,
           nom: 'Martin',
           prenom: 'Alice',
           service: 'DITP',
@@ -136,12 +136,12 @@ describe.concurrent('getCollectionByPublicId', () => {
       })
       const apiKey = await fixtures.apiKey()
 
-      const result = await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(dosId))
+      const result = await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(colId))
 
       expect(result._unsafeUnwrap().responsables).toEqual([
         {
           id: liaison.utilisateurId,
-          email: `resp-a-${dosId}@example.com`,
+          email: `resp-a-${colId}@example.com`,
           nom: 'Martin',
           prenom: 'Alice',
           service: 'DITP',
@@ -154,31 +154,31 @@ describe.concurrent('getCollectionByPublicId', () => {
   it(
     'retourne les responsables dans le bon ordre (createdAt ASC) quand plusieurs sont assignés',
     integrationTest(async () => {
-      const dosOrd = testCollectionId()
+      const colOrd = testCollectionId()
       // Insertions séquentielles pour garantir des createdAt distincts.
       await fixtures.collectionResponsable({
-        collection: { publicId: dosOrd, visibilite: 'PUBLIC' },
-        utilisateur: { email: `aa-ord-${dosOrd}@example.com` },
+        collection: { publicId: colOrd, visibilite: 'PUBLIC' },
+        utilisateur: { email: `aa-ord-${colOrd}@example.com` },
       })
       await fixtures.collectionResponsable({
-        collection: { publicId: dosOrd },
-        utilisateur: { email: `bb-ord-${dosOrd}@example.com` },
+        collection: { publicId: colOrd },
+        utilisateur: { email: `bb-ord-${colOrd}@example.com` },
       })
       const apiKey = await fixtures.apiKey()
 
-      const result = await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(dosOrd))
+      const result = await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(colOrd))
       const emails = result._unsafeUnwrap().responsables.map((r) => r.email)
 
-      expect(emails).toEqual([`aa-ord-${dosOrd}@example.com`, `bb-ord-${dosOrd}@example.com`])
+      expect(emails).toEqual([`aa-ord-${colOrd}@example.com`, `bb-ord-${colOrd}@example.com`])
     }),
   )
 
   it(
     "retourne tous les champs d'un contact utile groupé par organisme",
     integrationTest(async () => {
-      const panContact = testCollectionId()
+      const colContact = testCollectionId()
       await fixtures.collectionContactUtile({
-        collection: { publicId: panContact, visibilite: 'PUBLIC' },
+        collection: { publicId: colContact, visibilite: 'PUBLIC' },
         contactUtile: {
           nom: 'Contact complet',
           description: 'Une description',
@@ -191,7 +191,7 @@ describe.concurrent('getCollectionByPublicId', () => {
       })
       const apiKey = await fixtures.apiKey()
 
-      const result = await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(panContact))
+      const result = await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(colContact))
       const [group] = result._unsafeUnwrap().contactsUtiles
 
       expect(group?.organisme.nom).toBe('Organisme A')
@@ -209,14 +209,14 @@ describe.concurrent('getCollectionByPublicId', () => {
   it(
     "retourne null pour les champs absents d'un contact utile minimal",
     integrationTest(async () => {
-      const panMinimal = testCollectionId()
+      const colMinimal = testCollectionId()
       await fixtures.collectionContactUtile({
-        collection: { publicId: panMinimal, visibilite: 'PUBLIC' },
+        collection: { publicId: colMinimal, visibilite: 'PUBLIC' },
         contactUtile: { nom: 'Contact minimal' },
       })
       const apiKey = await fixtures.apiKey()
 
-      const result = await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(panMinimal))
+      const result = await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(colMinimal))
       const contact = result._unsafeUnwrap().contactsUtiles[0]!.contacts[0]!
 
       expect(contact).toMatchObject({
@@ -233,8 +233,8 @@ describe.concurrent('getCollectionByPublicId', () => {
   it(
     'regroupe les contacts par organisme et trie organismes puis contacts par nom',
     integrationTest(async () => {
-      const dosTri = testCollectionId()
-      await fixtures.collection({ publicId: dosTri, visibilite: 'PUBLIC' })
+      const colTri = testCollectionId()
+      await fixtures.collection({ publicId: colTri, visibilite: 'PUBLIC' })
       const orgZ = await fixtures.organisme({ nom: 'Zzz Organisation' })
       const orgA = await fixtures.organisme({ nom: 'Aaa Organisation' })
       const cZebra = await fixtures.contactUtile({
@@ -250,21 +250,21 @@ describe.concurrent('getCollectionByPublicId', () => {
         organisme: { id: orgZ.id, nom: orgZ.nom },
       })
       await fixtures.collectionContactUtile({
-        collection: { publicId: dosTri },
+        collection: { publicId: colTri },
         contactUtile: { id: cZebra.id },
       })
       await fixtures.collectionContactUtile({
-        collection: { publicId: dosTri },
+        collection: { publicId: colTri },
         contactUtile: { id: cAlpha.id },
       })
       await fixtures.collectionContactUtile({
-        collection: { publicId: dosTri },
+        collection: { publicId: colTri },
         contactUtile: { id: cZeta.id },
       })
       const apiKey = await fixtures.apiKey()
 
       const groups = (
-        await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(dosTri))
+        await runAsPrincipal(apiKey.id, () => getCollectionByPublicId(colTri))
       )._unsafeUnwrap().contactsUtiles
 
       expect(groups.map((g) => g.organisme.nom)).toEqual(['Aaa Organisation', 'Zzz Organisation'])

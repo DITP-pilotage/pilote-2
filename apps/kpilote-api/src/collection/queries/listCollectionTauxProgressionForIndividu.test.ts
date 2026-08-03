@@ -26,17 +26,17 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
     'retourne tauxProgression null pour une collection sans indicateur',
     integrationTest(async () => {
       const deptId = testDeptId()
-      const dosId = testCollectionId()
+      const colId = testCollectionId()
       await fixtures.individu({ publicId: deptId })
-      await fixtures.collection({ publicId: dosId, visibilite: 'PUBLIC' })
+      await fixtures.collection({ publicId: colId, visibilite: 'PUBLIC' })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [dosId] }),
+        listCollectionTauxProgressionForIndividu(deptId, { collections: [colId] }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ collection: dosId, tauxProgression: null }],
+        items: [{ collection: colId, tauxProgression: null }],
       })
     }),
   )
@@ -46,7 +46,7 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
     integrationTest(async () => {
       const deptId = testDeptId()
       const refId = testReferentielId()
-      const dosId = testCollectionId()
+      const colId = testCollectionId()
       const indA = testIndicateurId()
       const indB = testIndicateurId()
 
@@ -83,18 +83,18 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
         },
       )
       await fixtures.collection({
-        publicId: dosId,
+        publicId: colId,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indA }, { publicId: indB }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [dosId] }),
+        listCollectionTauxProgressionForIndividu(deptId, { collections: [colId] }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ collection: dosId, tauxProgression: 65 }],
+        items: [{ collection: colId, tauxProgression: 65 }],
       })
     }),
   )
@@ -104,7 +104,7 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
     integrationTest(async () => {
       const deptId = testDeptId()
       const refId = testReferentielId()
-      const dosId = testCollectionId()
+      const colId = testCollectionId()
       const indOk = testIndicateurId()
       const indSansObjectif = testIndicateurId()
 
@@ -133,18 +133,18 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
         valeurCible: 100,
       })
       await fixtures.collection({
-        publicId: dosId,
+        publicId: colId,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indOk }, { publicId: indSansObjectif }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [dosId] }),
+        listCollectionTauxProgressionForIndividu(deptId, { collections: [colId] }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ collection: dosId, tauxProgression: null }],
+        items: [{ collection: colId, tauxProgression: null }],
       })
     }),
   )
@@ -154,7 +154,7 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
     integrationTest(async () => {
       const deptId = testDeptId()
       const refId = testReferentielId()
-      const dosId = testCollectionId()
+      const colId = testCollectionId()
       const indOk = testIndicateurId()
       const indSansValeur = testIndicateurId()
 
@@ -183,18 +183,18 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
         },
       )
       await fixtures.collection({
-        publicId: dosId,
+        publicId: colId,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indOk }, { publicId: indSansValeur }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [dosId] }),
+        listCollectionTauxProgressionForIndividu(deptId, { collections: [colId] }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ collection: dosId, tauxProgression: null }],
+        items: [{ collection: colId, tauxProgression: null }],
       })
     }),
   )
@@ -204,7 +204,7 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
     integrationTest(async () => {
       const deptId = testDeptId()
       const refId = testReferentielId()
-      const dosId = testCollectionId()
+      const colId = testCollectionId()
       const indId = testIndicateurId()
 
       await fixtures.indicateurReferentiel({
@@ -224,18 +224,18 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
         valeurCible: 0,
       })
       await fixtures.collection({
-        publicId: dosId,
+        publicId: colId,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indId }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [dosId] }),
+        listCollectionTauxProgressionForIndividu(deptId, { collections: [colId] }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ collection: dosId, tauxProgression: null }],
+        items: [{ collection: colId, tauxProgression: null }],
       })
     }),
   )
@@ -245,7 +245,7 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
     integrationTest(async () => {
       const deptId = testDeptId()
       const refId = testReferentielId()
-      const dosId = testCollectionId()
+      const colId = testCollectionId()
       const indId = testIndicateurId()
 
       await fixtures.indicateurReferentiel({
@@ -273,18 +273,18 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
         valeurCible: 100,
       })
       await fixtures.collection({
-        publicId: dosId,
+        publicId: colId,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indId }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [dosId] }),
+        listCollectionTauxProgressionForIndividu(deptId, { collections: [colId] }),
       )
 
       expect(result._unsafeUnwrap()).toEqual({
-        items: [{ collection: dosId, tauxProgression: 90 }],
+        items: [{ collection: colId, tauxProgression: 90 }],
       })
     }),
   )
@@ -292,13 +292,13 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
   it(
     'lève une erreur si l individu est inconnu',
     integrationTest(async () => {
-      const dosId = testCollectionId()
-      await fixtures.collection({ publicId: dosId, visibilite: 'PUBLIC' })
+      const colId = testCollectionId()
+      await fixtures.collection({ publicId: colId, visibilite: 'PUBLIC' })
       const apiKey = await fixtures.apiKey()
 
       await expect(
         runAsPrincipal(apiKey.id, () =>
-          listCollectionTauxProgressionForIndividu('DEPT-INCONNU', { collections: [dosId] }),
+          listCollectionTauxProgressionForIndividu('DEPT-INCONNU', { collections: [colId] }),
         ),
       ).rejects.toThrow()
     }),
@@ -308,8 +308,8 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
     'exclut silencieusement une collection PRIVE sans permission',
     integrationTest(async () => {
       const deptId = testDeptId()
-      const dosPublic = testCollectionId()
-      const dosPrive = testCollectionId()
+      const colPublic = testCollectionId()
+      const colPrive = testCollectionId()
       const refId = testReferentielId()
       const indId = testIndicateurId()
 
@@ -330,20 +330,20 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
         valeurCible: 100,
       })
       await fixtures.collection({
-        publicId: dosPublic,
+        publicId: colPublic,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indId }],
       })
-      await fixtures.collection({ publicId: dosPrive, visibilite: 'PRIVE' })
+      await fixtures.collection({ publicId: colPrive, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [dosPublic, dosPrive] }),
+        listCollectionTauxProgressionForIndividu(deptId, { collections: [colPublic, colPrive] }),
       )
 
       const items = result._unsafeUnwrap().items
       expect(items).toHaveLength(1)
-      expect(items[0]).toEqual({ collection: dosPublic, tauxProgression: 50 })
+      expect(items[0]).toEqual({ collection: colPublic, tauxProgression: 50 })
     }),
   )
 
@@ -352,8 +352,8 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
     integrationTest(async () => {
       const deptId = testDeptId()
       const refId = testReferentielId()
-      const dosA = testCollectionId()
-      const dosB = testCollectionId()
+      const colA = testCollectionId()
+      const colB = testCollectionId()
       const indA = testIndicateurId()
       const indB = testIndicateurId()
 
@@ -390,25 +390,25 @@ describe.concurrent('listCollectionTauxProgressionForIndividu', () => {
         },
       )
       await fixtures.collection({
-        publicId: dosA,
+        publicId: colA,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indA }],
       })
       await fixtures.collection({
-        publicId: dosB,
+        publicId: colB,
         visibilite: 'PUBLIC',
         indicateurs: [{ publicId: indB }],
       })
       const apiKey = await fixtures.apiKey()
 
       const result = await runAsPrincipal(apiKey.id, () =>
-        listCollectionTauxProgressionForIndividu(deptId, { collections: [dosA, dosB] }),
+        listCollectionTauxProgressionForIndividu(deptId, { collections: [colA, colB] }),
       )
 
       const items = result._unsafeUnwrap().items
       expect(items).toHaveLength(2)
-      expect(items.find((i) => i.collection === dosA)?.tauxProgression).toBe(40)
-      expect(items.find((i) => i.collection === dosB)?.tauxProgression).toBe(70)
+      expect(items.find((i) => i.collection === colA)?.tauxProgression).toBe(40)
+      expect(items.find((i) => i.collection === colB)?.tauxProgression).toBe(70)
     }),
   )
 })
