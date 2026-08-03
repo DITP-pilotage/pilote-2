@@ -211,19 +211,26 @@ model IndicateurReferentiel {
   @@map("indicateur_referentiel")
 }
 
-enum PermissionAction {
+enum IndicateurPermissionAction {
   READ
   WRITE_DATA
   WRITE_COMMENT
 
-  @@map("permission_action_enum")
+  @@map("indicateur_permission_action_enum")
+}
+
+enum CollectionPermissionAction {
+  READ
+  WRITE_COMMENT
+
+  @@map("collection_permission_action_enum")
 }
 
 model IndicateurPermission {
-  principalId  String           @map("principal_id") @db.Uuid
-  indicateurId String           @map("indicateur_id") @db.Uuid
-  action       PermissionAction
-  createdAt    DateTime         @default(now()) @map("created_at")
+  principalId  String                    @map("principal_id") @db.Uuid
+  indicateurId String                    @map("indicateur_id") @db.Uuid
+  action       IndicateurPermissionAction
+  createdAt    DateTime                  @default(now()) @map("created_at")
 
   principal  Principal  @relation(fields: [principalId], references: [id], onDelete: Cascade)
   indicateur Indicateur @relation(fields: [indicateurId], references: [id], onDelete: Cascade)
@@ -364,10 +371,10 @@ model Collection {
 }
 
 model CollectionPermission {
-  principalId  String           @map("principal_id") @db.Uuid
-  collectionId String           @map("collection_id") @db.Uuid
-  action       PermissionAction
-  createdAt    DateTime         @default(now()) @map("created_at")
+  principalId  String                     @map("principal_id") @db.Uuid
+  collectionId String                     @map("collection_id") @db.Uuid
+  action       CollectionPermissionAction
+  createdAt    DateTime                   @default(now()) @map("created_at")
 
   principal  Principal  @relation(fields: [principalId], references: [id], onDelete: Cascade)
   collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
