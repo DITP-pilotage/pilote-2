@@ -4,6 +4,7 @@ import { ResultAsync } from 'neverthrow'
 import { creerCommentaire } from '@/commentaire/commands/creerCommentaire'
 import { type CommentaireType } from '@/commentaire/ensureBrouillonUnique'
 import { type SujetCommentaireConfig } from '@/commentaire/sujets'
+import { type IndicateurIndividuCommentaireType } from '@/generated/prisma/enums'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import {
@@ -30,9 +31,13 @@ export const indicateurIndividuConfig: SujetCommentaireConfig<Params> = {
       .andThen(({ indId, indivId }) =>
         ensureIndicateurWriteCommentPermission({ indicateurId: indId, principalId }).map(() => ({
           principalId,
-          satelliteCreate: (type: string) => ({
+          satelliteCreate: (type: CommentaireType) => ({
             indicateurIndividu: {
-              create: { indicateurId: indId, individuId: indivId, type: type as never },
+              create: {
+                indicateurId: indId,
+                individuId: indivId,
+                type: type as IndicateurIndividuCommentaireType,
+              },
             },
           }),
         })),

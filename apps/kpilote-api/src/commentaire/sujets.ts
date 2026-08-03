@@ -1,6 +1,12 @@
 import { type ResultAsync } from 'neverthrow'
 
 import { type Prisma } from '@/generated/prisma/client'
+import {
+  type CollectionCommentaireType,
+  type IndicateurIndividuCommentaireType,
+} from '@/generated/prisma/enums'
+
+type CommentaireType = IndicateurIndividuCommentaireType | CollectionCommentaireType
 
 // Fragment `data` du satellite à greffer sur la création d'un Commentaire.
 type SatelliteCreate = Pick<Prisma.CommentaireCreateInput, 'indicateurIndividu' | 'collection'>
@@ -8,7 +14,7 @@ type SatelliteCreate = Pick<Prisma.CommentaireCreateInput, 'indicateurIndividu' 
 // Données nécessaires pour rattacher un nouveau commentaire à son satellite.
 type CibleEcriture = {
   principalId: string
-  satelliteCreate: (type: string) => SatelliteCreate
+  satelliteCreate: (type: CommentaireType) => SatelliteCreate
 }
 
 // Contrat des configs colocalisées avec les use cases de chaque domaine

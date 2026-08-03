@@ -4,6 +4,7 @@ import { ResultAsync } from 'neverthrow'
 import { creerCommentaire } from '@/commentaire/commands/creerCommentaire'
 import { type CommentaireType } from '@/commentaire/ensureBrouillonUnique'
 import { type SujetCommentaireConfig } from '@/commentaire/sujets'
+import { type CollectionCommentaireType } from '@/generated/prisma/enums'
 import { requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import {
@@ -25,8 +26,10 @@ export const collectionConfig: SujetCommentaireConfig<Params> = {
       ensureCollectionWriteCommentPermission({ collectionId: collection.id, principalId }).map(
         () => ({
           principalId,
-          satelliteCreate: (type: string) => ({
-            collection: { create: { collectionId: collection.id, type: type as never } },
+          satelliteCreate: (type: CommentaireType) => ({
+            collection: {
+              create: { collectionId: collection.id, type: type as CollectionCommentaireType },
+            },
           }),
         }),
       ),
