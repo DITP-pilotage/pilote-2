@@ -35,10 +35,10 @@ export const mePermissionsApiModelSchema = z.object({
     .array(permissionEntrySchema)
     .describe(
       'Permissions du principal sur les indicateurs, triées par `id` ASC. Inclut les permissions ' +
-        'directes et le READ propagé depuis une collection où le principal a READ ou WRITE_COMMENT. ' +
-        'Le WRITE_DATA et WRITE_COMMENT indicateur restent strictement directs (jamais propagés). ' +
-        "N'inclut PAS le READ implicite des " +
-        'indicateurs `PUBLIC`.',
+        'directes et le READ dans le cas où le principal possède READ ou WRITE_COMMENT sur une ' +
+        'collection contenant cet indicateur (propagation). ' +
+        'WRITE_DATA et WRITE_COMMENT ne se propagent jamais depuis une collection. ' +
+        "N'inclut PAS le READ implicite des indicateurs `PUBLIC`.",
     ),
 })
 
