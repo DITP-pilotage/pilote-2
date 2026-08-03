@@ -1,6 +1,6 @@
 import logger from "@/server/infrastructure/Logger";
 import { creerRapportResponsableDonnees } from "@/server/chantiers/domain/RapportResponsableDonnees";
-import { genererParametresRapportResponsableDonnees } from "@/server/chantiers/app/contrats/ParametresEnvoieEmailRapportProposition";
+import { genererParametresRapportResponsableDonnees } from "@/server/chantiers/app/contrats/ParametresEnvoieEmailRapportResponsableDonnees";
 import type { Inject } from "@/server/chantiers/module";
 
 const CHANTIERS_IDS_CONCERNES = ["CH-197"];

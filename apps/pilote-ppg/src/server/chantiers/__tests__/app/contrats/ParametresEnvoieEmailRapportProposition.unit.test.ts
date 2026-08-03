@@ -1,7 +1,4 @@
-import {
-  genererParametresEnvoieRapportProposition,
-  genererParametresRapportResponsableDonnees,
-} from "@/server/chantiers/app/contrats/ParametresEnvoieEmailRapportProposition";
+import { genererParametresEnvoieRapportProposition } from "@/server/chantiers/app/contrats/ParametresEnvoieEmailRapportProposition";
 import { RapportDirecteurProjetChantierInformation } from "@/server/chantiers/domain/PropositionValeurAvancementChantierInformation";
 import { PropositionValeurAvancementRapport } from "@/server/indicateur-territoire-valeur-evenement/domain/ports/IndicateurTerritoireValeurEvenementRepository";
 
@@ -784,86 +781,5 @@ describe("genererParametresEnvoieRapportProposition", () => {
         "aucun indicateur dont le taux d'avancement ne peut être calculé",
       );
     });
-  });
-});
-
-describe("genererParametresRapportResponsableDonnees", () => {
-  const chantierInfo = {
-    id: "CH-001",
-    nom: "Chantier 1",
-    conseillerMail: "conseiller@test.com",
-  };
-
-  it("génère la structure correcte du rapport", () => {
-    // Given
-    const indicateurs = [
-      { id: "IND-001", nom: "Indicateur 1", mailles: ["NAT"] },
-    ];
-
-    // When
-    const result = genererParametresRapportResponsableDonnees(
-      chantierInfo,
-      indicateurs,
-    );
-
-    // Then
-    expect(result).toEqual({
-      chantiers: [
-        {
-          nom_chantier: "Chantier 1",
-          id_chantier: "CH-001",
-          nombre_propositions: "",
-          conseiller_email: "conseiller@test.com",
-          afficherSectionPropositions: false,
-          indicateursPropositions: [],
-          afficherSectionMajIndicateur: true,
-          indicateursNonMisAJour: indicateurs,
-          nombreIndicateursNonMisAJour: "1 indicateur à mettre à jour",
-          afficherSectionParametrage: false,
-          indicateursAParametrer: [],
-          nombreIndicateursAParametrer: "",
-        },
-      ],
-      conseillerEmail: "conseiller@test.com",
-      texteIntro: "votre chantier prioritaire",
-    });
-  });
-
-  it("utilise le singulier pour nombreIndicateursNonMisAJour avec 1 indicateur", () => {
-    // Given
-    const indicateurs = [
-      { id: "IND-001", nom: "Indicateur 1", mailles: ["NAT"] },
-    ];
-
-    // When
-    const result = genererParametresRapportResponsableDonnees(
-      chantierInfo,
-      indicateurs,
-    );
-
-    // Then
-    expect(result.chantiers[0].nombreIndicateursNonMisAJour).toEqual(
-      "1 indicateur à mettre à jour",
-    );
-  });
-
-  it("utilise le pluriel pour nombreIndicateursNonMisAJour avec plusieurs indicateurs", () => {
-    // Given
-    const indicateurs = [
-      { id: "IND-001", nom: "Indicateur 1", mailles: ["NAT"] },
-      { id: "IND-002", nom: "Indicateur 2", mailles: ["REG"] },
-      { id: "IND-003", nom: "Indicateur 3", mailles: ["DEPT"] },
-    ];
-
-    // When
-    const result = genererParametresRapportResponsableDonnees(
-      chantierInfo,
-      indicateurs,
-    );
-
-    // Then
-    expect(result.chantiers[0].nombreIndicateursNonMisAJour).toEqual(
-      "3 indicateurs à mettre à jour",
-    );
   });
 });

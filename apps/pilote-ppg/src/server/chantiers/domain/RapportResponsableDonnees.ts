@@ -1,11 +1,21 @@
 import { $Enums } from "@prisma/client";
 import { randomUUID } from "node:crypto";
-import { ContenuRapport } from "@/server/chantiers/domain/RapportPropositionsAvancement";
+
+export interface ChantierRapportResponsableDonnees {
+  nom_chantier: string;
+  id_chantier: string;
+  indicateursNonMisAJour: { id: string; nom: string; mailles: string[] }[];
+  nombreIndicateursNonMisAJour: string;
+}
+
+export interface ContenuRapportResponsableDonnees {
+  chantiers: ChantierRapportResponsableDonnees[];
+}
 
 export interface RapportResponsableDonnees {
   id: string;
   emailResponsable: string;
-  contenuRapport: ContenuRapport;
+  contenuRapport: ContenuRapportResponsableDonnees;
   statutEnvoi: $Enums.statut_envoi_rapport;
   dateCreation: Date;
   dateEnvoi: Date | null;
@@ -16,7 +26,7 @@ export interface RapportResponsableDonnees {
 
 export function creerRapportResponsableDonnees(params: {
   emailResponsable: string;
-  contenuRapport: ContenuRapport;
+  contenuRapport: ContenuRapportResponsableDonnees;
   dateCreation: Date;
 }): RapportResponsableDonnees {
   return {

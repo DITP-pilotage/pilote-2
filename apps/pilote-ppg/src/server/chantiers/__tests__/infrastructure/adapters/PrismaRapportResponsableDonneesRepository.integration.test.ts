@@ -28,22 +28,12 @@ describe("PrismaRapportResponsableDonneesRepository", () => {
               {
                 nom_chantier: "Chantier 197",
                 id_chantier: "CH-197",
-                nombre_propositions: "",
-                conseiller_email: "conseiller@test.com",
-                afficherSectionPropositions: false,
-                indicateursPropositions: [],
-                afficherSectionMajIndicateur: true,
                 indicateursNonMisAJour: [
                   { id: "IND-001", nom: "Indicateur 1", mailles: ["NAT"] },
                 ],
                 nombreIndicateursNonMisAJour: "1 indicateur à mettre à jour",
-                afficherSectionParametrage: false,
-                indicateursAParametrer: [],
-                nombreIndicateursAParametrer: "",
               },
             ],
-            conseillerEmail: "conseiller@test.com",
-            texteIntro: "votre chantier prioritaire",
           },
           statutEnvoi: "CREE",
           dateCreation: new Date("2026-02-03"),
@@ -86,8 +76,6 @@ describe("PrismaRapportResponsableDonneesRepository", () => {
           emailResponsable: "responsable@test.com",
           contenuRapport: {
             chantiers: [],
-            conseillerEmail: "",
-            texteIntro: "",
           },
           statutEnvoi: "ECHEC",
           dateCreation: rapportExistant.date_creation,
@@ -175,22 +163,12 @@ describe("PrismaRapportResponsableDonneesRepository", () => {
               {
                 nom_chantier: "Chantier 197",
                 id_chantier: "CH-197",
-                nombre_propositions: "",
-                conseiller_email: "conseiller@test.com",
-                afficherSectionPropositions: false,
-                indicateursPropositions: [],
-                afficherSectionMajIndicateur: true,
                 indicateursNonMisAJour: [
                   { id: "IND-001", nom: "Indicateur 1", mailles: ["NAT"] },
                 ],
                 nombreIndicateursNonMisAJour: "1 indicateur à mettre à jour",
-                afficherSectionParametrage: false,
-                indicateursAParametrer: [],
-                nombreIndicateursAParametrer: "",
               },
             ],
-            conseillerEmail: "conseiller@test.com",
-            texteIntro: "votre chantier prioritaire",
           },
         });
 
@@ -201,9 +179,6 @@ describe("PrismaRapportResponsableDonneesRepository", () => {
         expect(result.contenuRapport.chantiers).toHaveLength(1);
         expect(result.contenuRapport.chantiers[0].id_chantier).toEqual(
           "CH-197",
-        );
-        expect(result.contenuRapport.conseillerEmail).toEqual(
-          "conseiller@test.com",
         );
       }),
     );

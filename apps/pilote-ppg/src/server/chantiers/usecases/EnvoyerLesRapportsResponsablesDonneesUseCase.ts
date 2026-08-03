@@ -11,7 +11,7 @@ export interface EnvoyerLesRapportsResponsablesDonneesResultat {
   emailsEnEchec: string[];
 }
 
-const TEMPLATE_ID_RAPPORT_PROPOSITIONS = 4;
+const TEMPLATE_ID_RAPPORT_RESPONSABLE_DONNEES = 84;
 
 export class EnvoyerLesRapportsResponsablesDonneesUseCase {
   constructor(
@@ -34,13 +34,12 @@ export class EnvoyerLesRapportsResponsablesDonneesUseCase {
       const email = rapport.emailResponsable;
 
       try {
-        const { chantiers, conseillerEmail, texteIntro } =
-          rapport.contenuRapport;
+        const { chantiers } = rapport.contenuRapport;
 
         await this.dependencies.envoieEmailService.envoieUnEmail(
           [{ email }],
-          TEMPLATE_ID_RAPPORT_PROPOSITIONS,
-          { chantiers, conseiller_email: conseillerEmail, texteIntro },
+          TEMPLATE_ID_RAPPORT_RESPONSABLE_DONNEES,
+          { chantiers },
         );
 
         const rapportEnvoye = marquerRapportResponsableCommeEnvoye({
