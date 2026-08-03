@@ -3,6 +3,7 @@ import { z } from 'zod'
 export const permissionActionSchema = z.enum(['READ', 'WRITE_DATA', 'WRITE_COMMENT'])
 export type PermissionActionValue = z.infer<typeof permissionActionSchema>
 export const PermissionAction = permissionActionSchema.enum
+export type PermissionWriteActionValue = Exclude<PermissionActionValue, 'READ'>
 
 export const permissionResourceTypeSchema = z.enum(['COLLECTION', 'INDICATEUR'])
 export type PermissionResourceType = z.infer<typeof permissionResourceTypeSchema>

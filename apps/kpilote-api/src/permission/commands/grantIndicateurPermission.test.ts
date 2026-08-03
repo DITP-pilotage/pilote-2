@@ -39,7 +39,7 @@ describe.concurrent('grantIndicateurPermission', () => {
       const body = {
         principalId: target.id,
         indicateurPublicId: ind.publicId,
-        action: PermissionAction.READ as const,
+        action: PermissionAction.READ,
       }
 
       await runAsAdmin(CALLER_ID, () => grantIndicateurPermission(body))

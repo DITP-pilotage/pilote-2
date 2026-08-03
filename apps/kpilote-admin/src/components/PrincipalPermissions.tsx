@@ -1,6 +1,7 @@
 import {
   PermissionAction,
   type PermissionActionValue,
+  type PermissionWriteActionValue,
   type PrincipalPermissionsApiModel,
 } from '@pilote/kpilote-shared/permission'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
@@ -63,7 +64,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
     )
   }
   const toggleIndicateurWrite =
-    (action: PermissionActionValue) => (indicateurPublicId: string, active: boolean) =>
+    (action: PermissionWriteActionValue) => (indicateurPublicId: string, active: boolean) =>
       run(() =>
         active
           ? revokeIndicateurPermission({ principalId, indicateurPublicId, action })

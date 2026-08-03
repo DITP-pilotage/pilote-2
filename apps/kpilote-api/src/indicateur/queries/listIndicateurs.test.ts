@@ -153,7 +153,7 @@ describe.concurrent('listIndicateurs', () => {
       const apiKey = await fixtures.apiKey({
         permissions: ids.map((publicId) => ({
           indicateur: { publicId },
-          action: PermissionAction.READ as const,
+          action: PermissionAction.READ,
         })),
       })
 
@@ -181,7 +181,7 @@ describe.concurrent('listIndicateurs', () => {
       const apiKey = await fixtures.apiKey({
         permissions: ids.map((publicId) => ({
           indicateur: { publicId },
-          action: PermissionAction.READ as const,
+          action: PermissionAction.READ,
         })),
       })
 
@@ -240,7 +240,7 @@ describe.concurrent('listIndicateurs', () => {
       const apiKey = await fixtures.apiKey({
         permissions: ids.map((publicId) => ({
           indicateur: { publicId },
-          action: PermissionAction.READ as const,
+          action: PermissionAction.READ,
         })),
       })
 
