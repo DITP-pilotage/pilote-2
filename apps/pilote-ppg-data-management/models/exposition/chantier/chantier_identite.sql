@@ -9,6 +9,7 @@ WITH
 
 -- On récupère les directeurs des directions porteuses de chaque chantier
 
+
 ch_unnest_porteurs_dac AS (
     SELECT
         id AS chantier_id,
@@ -91,20 +92,21 @@ ch_has_meteo AS (
         chantier_id,
         BOOL_OR(meteo IS NOT NULL) FILTER (
             WHERE
-            maille = 'DEPT'
+                maille = 'DEPT'
         ) AS has_meteo_dept,
         BOOL_OR(meteo IS NOT NULL) FILTER (
             WHERE
-            maille = 'REG'
+                maille = 'REG'
         ) AS has_meteo_reg,
         BOOL_OR(meteo IS NOT NULL) FILTER (
             WHERE
-            maille = 'NAT'
+                maille = 'NAT'
         ) AS has_meteo_nat
     FROM synthese_triee_par_date
     GROUP BY
         chantier_id
 )
+
 
 SELECT
     meta_ch.id,
@@ -123,7 +125,7 @@ SELECT
     ppgs.ppg_nom AS ppg,
     chantier_est_barometre.est_barometre,
     meta_ch.est_territorialise,
-    meta_ch.ate AS ate,
+    meta_ch.ate,
     has_ta.has_ta_dept AS possede_taux_avancement_departemental,
     has_ta.has_ta_reg AS possede_taux_avancement_regional,
     ch_has_meteo.has_meteo_dept AS possede_meteo_departemental,
