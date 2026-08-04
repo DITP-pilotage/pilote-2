@@ -10,7 +10,6 @@ renamed AS (
 
     SELECT
         axe_id AS id,
-        axe_short AS nom_court,
         axe_name AS nom,
         axe_desc AS description
 

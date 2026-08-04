@@ -13,7 +13,6 @@ sources:
       - name: metadata_ppgs
       - name: metadata_axes
       - name: metadata_zonegroup
-      - name: metadata_chantier_meteos
       - name: metadata_indicateur_types
       - name: metadata_porteurs
       - name: metadata_parametrage_indicateurs

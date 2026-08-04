@@ -11,8 +11,7 @@ renamed AS (
     SELECT
         indic_type_id AS id,
         indic_type_name AS nom,
-        indic_type_descr AS description,
-        indic_type_rank AS rang
+        indic_type_descr AS description
 
     FROM source
 
