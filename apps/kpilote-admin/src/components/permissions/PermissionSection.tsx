@@ -66,7 +66,9 @@ export function PermissionSection({
                     <MultiToggle
                       disabled={disabled}
                       aria-label="Permissions d'écriture"
-                      value={writePermissions.filter((s) => s.isActive(row.actions)).map((s) => s.value)}
+                      value={writePermissions
+                        .filter((s) => s.isActive(row.actions))
+                        .map((s) => s.value)}
                       onValueChange={(next: string[]) => {
                         for (const spec of writePermissions) {
                           const wasActive = spec.isActive(row.actions)
