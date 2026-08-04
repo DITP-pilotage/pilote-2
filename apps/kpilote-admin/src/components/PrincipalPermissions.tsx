@@ -192,7 +192,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
         }
         disabled={disabled}
         onRemove={removeIndicateur}
-        writeSpecs={[
+        writePermissions={[
           {
             value: 'data',
             label: 'Données',
@@ -224,7 +224,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
         }
         disabled={disabled}
         onRemove={removeCollection}
-        writeSpecs={[
+        writePermissions={[
           {
             value: 'comment',
             label: 'Commentaires',

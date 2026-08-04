@@ -22,7 +22,7 @@ export function MultiToggle<TValue extends string>({
   value,
   onValueChange,
   options,
-  disabled,
+  disabled = false,
   className,
   ...aria
 }: MultiToggleProps<TValue>) {
@@ -31,7 +31,7 @@ export function MultiToggle<TValue extends string>({
       type="multiple"
       value={value}
       onValueChange={(next) => onValueChange(next as TValue[])}
-      disabled={disabled ?? false}
+      disabled={disabled}
       aria-label={aria['aria-label']}
       aria-labelledby={aria['aria-labelledby']}
       className={clsxm('inline-flex items-center gap-2', className)}

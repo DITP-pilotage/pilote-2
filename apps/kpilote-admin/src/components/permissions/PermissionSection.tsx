@@ -24,7 +24,7 @@ type PermissionSectionProps = {
   addControl: ReactNode
   disabled: boolean
   onRemove: (publicId: string) => void
-  writeSpecs: WriteToggleSpec[]
+  writePermissions: WriteToggleSpec[]
   extraForRow?: (publicId: string) => ReactNode
 }
 
@@ -34,7 +34,7 @@ export function PermissionSection({
   addControl,
   disabled,
   onRemove,
-  writeSpecs,
+  writePermissions,
   extraForRow,
 }: PermissionSectionProps) {
   return (
@@ -63,19 +63,19 @@ export function PermissionSection({
                   >
                     <Eye className="size-3.5" /> Lecture
                   </span>
-                  {writeSpecs.length > 0 ? (
+                  {writePermissions.length > 0 ? (
                     <MultiToggle
                       disabled={disabled}
                       aria-label="Permissions d'écriture"
-                      value={writeSpecs.filter((s) => s.isActive(row.actions)).map((s) => s.value)}
+                      value={writePermissions.filter((s) => s.isActive(row.actions)).map((s) => s.value)}
                       onValueChange={(next: string[]) => {
-                        for (const spec of writeSpecs) {
+                        for (const spec of writePermissions) {
                           const wasActive = spec.isActive(row.actions)
                           if (wasActive !== next.includes(spec.value))
                             spec.onToggle(row.publicId, wasActive)
                         }
                       }}
-                      options={writeSpecs.map((s) => ({ value: s.value, label: s.label }))}
+                      options={writePermissions.map((s) => ({ value: s.value, label: s.label }))}
                     />
                   ) : null}
                   <IconButton
