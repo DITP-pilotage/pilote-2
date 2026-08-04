@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import { Maille, territoire as TerritoireModel } from "@prisma/client";
 import { prisma } from "@/server/db/prisma";
 import seedProfil from "@/server/seeds/profil.json";
@@ -71,11 +73,25 @@ async function upsertTerritoire(seedsTerritoires: TerritoireSeed[]) {
   }
 }
 
+async function seedPpgMetadata() {
+  const sql = fs.readFileSync(
+    path.join(__dirname, "seeds/seed_ppg_metadata.sql"),
+    "utf-8",
+  );
+  const statements = sql
+    .split("\n")
+    .filter((line) => line.startsWith("INSERT "));
+  for (const statement of statements) {
+    await prisma.$executeRawUnsafe(statement);
+  }
+}
+
 async function main() {
   await upsertProfile();
   await upsertScope();
   await upsertTerritoire(seedsRegionsEtNational);
   await upsertTerritoire(seedsDepartements);
+  await seedPpgMetadata();
 }
 
 // eslint-disable-next-line no-console

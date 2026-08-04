@@ -494,7 +494,7 @@ model metadata_zones {
 model metadata_chantiers {
   chantier_id          String      @id
   ch_nom               String
-  ch_descr             String
+  ch_descr             String?
   ch_ppg               String
   ch_territo           Boolean     @default(false)
   engagement_short     String?
@@ -507,7 +507,7 @@ model metadata_chantiers {
   porteur_ids_DAC      String?
   porteur_shorts_DAC   String?
   ch_per               String
-  maille_applicable    String
+  maille_applicable    String?
   replicate_val_reg_to String?
   replicate_val_nat_to String?
   ch_cible_attendue    Boolean
