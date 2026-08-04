@@ -8,11 +8,11 @@ import {
 } from '@pilote/kpilote-shared/indicateur'
 
 import { Prisma, PrismaClient } from '../src/generated/prisma/client.js'
-import { type FonctionAgregation } from '../src/generated/prisma/enums.js'
 import {
+  type FonctionAgregation,
   CollectionPermissionAction,
   IndicateurPermissionAction,
-} from '@pilote/kpilote-shared/permission'
+} from '../src/generated/prisma/enums.js'
 
 import {
   buildObjectifsPourIndicateur,

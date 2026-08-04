@@ -4,18 +4,7 @@ import { okAsync, ResultAsync } from 'neverthrow'
 import { isAdminPrincipal, requireCurrentPrincipalId } from '@/framework/auth/userContext'
 import { db } from '@/framework/persistence/dbStore'
 import { CollectionPermissionAction, IndicateurPermissionAction } from '@/generated/prisma/enums'
-import { sortByOrder } from '@/permission/utils'
-
-const INDICATEUR_ACTION_ORDER = [
-  IndicateurPermissionAction.READ,
-  IndicateurPermissionAction.WRITE_DATA,
-  IndicateurPermissionAction.WRITE_COMMENT,
-] as const
-
-const COLLECTION_ACTION_ORDER = [
-  CollectionPermissionAction.READ,
-  CollectionPermissionAction.WRITE_COMMENT,
-] as const
+import { COLLECTION_ACTION_ORDER, INDICATEUR_ACTION_ORDER, sortByOrder } from '@/permission/order'
 
 // READ collection (direct ou WRITE_COMMENT) propage en READ sur les indicateurs de la collection.
 // WRITE_DATA et WRITE_COMMENT restent strictement directs — cf. permissions-design.md.

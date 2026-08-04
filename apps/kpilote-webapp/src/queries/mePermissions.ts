@@ -35,7 +35,7 @@ const hasCollectionAction =
   (entries: CollectionPermissionEntryApiModel[], publicId: string): boolean =>
     entries.some((entry) => entry.id === publicId && entry.actions.includes(action))
 
-const hasWriteData = hasIndicateurAction(IndicateurPermissionAction.WRITE_DATA)
+const hasIndicateurWriteData = hasIndicateurAction(IndicateurPermissionAction.WRITE_DATA)
 const hasIndicateurWriteComment = hasIndicateurAction(IndicateurPermissionAction.WRITE_COMMENT)
 const hasCollectionWriteComment = hasCollectionAction(CollectionPermissionAction.WRITE_COMMENT)
 
@@ -45,7 +45,8 @@ export const canWriteDataIndicateur = ({
 }: {
   permissions: MePermissionsApiModel
   indicateurId: string
-}): boolean => permissions.isAdmin === true || hasWriteData(permissions.indicateurs, indicateurId)
+}): boolean =>
+  permissions.isAdmin === true || hasIndicateurWriteData(permissions.indicateurs, indicateurId)
 
 export const canWriteCommentIndicateur = ({
   permissions,

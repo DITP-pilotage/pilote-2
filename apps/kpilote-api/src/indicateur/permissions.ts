@@ -4,9 +4,9 @@ import { ForbiddenError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
 import { IndicateurPermissionAction, Visibilite } from '@/generated/prisma/enums'
-import { COLLECTION_READ_PERMISSIONS } from '@/collection/permissions'
+import { COLLECTION_PERMISSIONS_GRANTING_READ } from '@/collection/permissions'
 
-const INDICATEUR_READ_PERMISSIONS: IndicateurPermissionAction[] = [
+const INDICATEUR_PERMISSIONS_GRANTING_READ: IndicateurPermissionAction[] = [
   IndicateurPermissionAction.READ,
   IndicateurPermissionAction.WRITE_DATA,
   IndicateurPermissionAction.WRITE_COMMENT,
@@ -33,13 +33,17 @@ export const withIndicateurReadPermission = (
       {
         OR: [
           { visibilite: Visibilite.PUBLIC },
-          { permissions: { some: { principalId, action: { in: INDICATEUR_READ_PERMISSIONS } } } },
+          {
+            permissions: {
+              some: { principalId, action: { in: INDICATEUR_PERMISSIONS_GRANTING_READ } },
+            },
+          },
           {
             collections: {
               some: {
                 collection: {
                   permissions: {
-                    some: { principalId, action: { in: COLLECTION_READ_PERMISSIONS } },
+                    some: { principalId, action: { in: COLLECTION_PERMISSIONS_GRANTING_READ } },
                   },
                 },
               },

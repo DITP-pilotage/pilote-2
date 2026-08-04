@@ -5,7 +5,7 @@ import { db } from '@/framework/persistence/dbStore'
 import { Prisma } from '@/generated/prisma/client'
 import { CollectionPermissionAction, Visibilite } from '@/generated/prisma/enums'
 
-export const COLLECTION_READ_PERMISSIONS: CollectionPermissionAction[] = [
+export const COLLECTION_PERMISSIONS_GRANTING_READ: CollectionPermissionAction[] = [
   CollectionPermissionAction.READ,
   CollectionPermissionAction.WRITE_COMMENT,
 ]
@@ -19,7 +19,11 @@ export const withCollectionReadPermission = (
     {
       OR: [
         { visibilite: Visibilite.PUBLIC },
-        { permissions: { some: { principalId, action: { in: COLLECTION_READ_PERMISSIONS } } } },
+        {
+          permissions: {
+            some: { principalId, action: { in: COLLECTION_PERMISSIONS_GRANTING_READ } },
+          },
+        },
       ],
     },
   ],

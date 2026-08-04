@@ -8,7 +8,7 @@ import { ResultAsync } from 'neverthrow'
 import { ensurePrincipal, isApiKeyAdmin } from '@/framework/auth/principalPredicates'
 import { db } from '@/framework/persistence/dbStore'
 import { MESSAGE_ADMIN } from '@/collection/utils'
-import { sortByOrder } from '@/permission/utils'
+import { sortByOrder } from '@/permission/order'
 
 type Entree = CollectionPermissionsApiModel['items'][number]
 

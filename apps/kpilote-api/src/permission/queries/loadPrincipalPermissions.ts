@@ -2,18 +2,7 @@ import { type PrincipalPermissionsApiModel } from '@pilote/kpilote-shared/permis
 
 import { db } from '@/framework/persistence/dbStore'
 import { CollectionPermissionAction, IndicateurPermissionAction } from '@/generated/prisma/enums'
-import { sortByOrder } from '@/permission/utils'
-
-const INDICATEUR_ACTION_ORDER = [
-  IndicateurPermissionAction.READ,
-  IndicateurPermissionAction.WRITE_DATA,
-  IndicateurPermissionAction.WRITE_COMMENT,
-] as const
-
-const COLLECTION_ACTION_ORDER = [
-  CollectionPermissionAction.READ,
-  CollectionPermissionAction.WRITE_COMMENT,
-] as const
+import { COLLECTION_ACTION_ORDER, INDICATEUR_ACTION_ORDER, sortByOrder } from '@/permission/order'
 
 type IndicateurEntry = { publicId: string; nom: string; actions: Set<IndicateurPermissionAction> }
 type CollectionEntry = { publicId: string; nom: string; actions: Set<CollectionPermissionAction> }
