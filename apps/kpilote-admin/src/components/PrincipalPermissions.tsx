@@ -228,7 +228,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           {
             value: 'comment',
             label: 'Commentaires',
-            isActive: (actions) => actions.includes(IndicateurPermissionAction.WRITE_COMMENT),
+            isActive: (actions) => actions.includes(CollectionPermissionAction.WRITE_COMMENT),
             onToggle: toggleCollectionWriteComment,
           },
         ]}

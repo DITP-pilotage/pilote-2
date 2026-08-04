@@ -1,4 +1,3 @@
-import type { IndicateurPermissionActionValue } from '@pilote/kpilote-shared/permission'
 import { Eye, Trash2 } from 'lucide-react'
 import type { ReactNode } from 'react'
 
@@ -8,13 +7,13 @@ import { MultiToggle } from '@pilote/kpilote-ui/MultiToggle'
 export type DirectRow = {
   publicId: string
   nom: string
-  actions: IndicateurPermissionActionValue[]
+  actions: string[]
 }
 
 export type WriteToggleSpec = {
   value: string
   label: string
-  isActive: (actions: IndicateurPermissionActionValue[]) => boolean
+  isActive: (actions: string[]) => boolean
   onToggle: (publicId: string, wasActive: boolean) => void
 }
 
