@@ -7,21 +7,15 @@ import { COLLECTION_ACTION_ORDER, INDICATEUR_ACTION_ORDER, sortByOrder } from '@
 type IndicateurEntry = { publicId: string; nom: string; actions: Set<IndicateurPermissionAction> }
 type CollectionEntry = { publicId: string; nom: string; actions: Set<CollectionPermissionAction> }
 
-const serializeIndicateurs = (map: Map<string, IndicateurEntry>) =>
+const serializeMap = <T>(
+  map: Map<string, { publicId: string; nom: string; actions: Set<T> }>,
+  order: readonly T[],
+) =>
   Array.from(map.values())
     .map((e) => ({
       publicId: e.publicId,
       nom: e.nom,
-      actions: sortByOrder([...e.actions], INDICATEUR_ACTION_ORDER),
-    }))
-    .sort((a, b) => a.publicId.localeCompare(b.publicId))
-
-const serializeCollections = (map: Map<string, CollectionEntry>) =>
-  Array.from(map.values())
-    .map((e) => ({
-      publicId: e.publicId,
-      nom: e.nom,
-      actions: sortByOrder([...e.actions], COLLECTION_ACTION_ORDER),
+      actions: sortByOrder([...e.actions], order),
     }))
     .sort((a, b) => a.publicId.localeCompare(b.publicId))
 
@@ -90,8 +84,8 @@ export const loadPrincipalPermissions = async (
   }
 
   return {
-    collections: serializeCollections(collectionsMap),
-    indicateurs: serializeIndicateurs(indicateursMap),
+    collections: serializeMap(collectionsMap, COLLECTION_ACTION_ORDER),
+    indicateurs: serializeMap(indicateursMap, INDICATEUR_ACTION_ORDER),
     indicateursHerites: Array.from(heritesMap.values()).sort((a, b) =>
       a.publicId.localeCompare(b.publicId),
     ),
