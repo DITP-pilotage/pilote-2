@@ -1,12 +1,11 @@
 import {
   CollectionPermissionAction,
   IndicateurPermissionAction,
-  type IndicateurPermissionActionValue,
   type IndicateurPermissionWriteActionValue,
   type PrincipalPermissionsApiModel,
 } from '@pilote/kpilote-shared/permission'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { Eye, Lock, Trash2 } from 'lucide-react'
+import { Lock } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 
 import {
@@ -17,23 +16,15 @@ import {
 } from '@/api/permissions'
 import { CollectionSearchModal } from '@/components/CollectionSearchModal'
 import { IndicateurPicker } from '@/components/permissions/IndicateurPicker'
+import { PermissionSection } from '@/components/permissions/PermissionSection'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
-import { IconButton } from '@pilote/kpilote-ui/IconButton'
-import { MultiToggle } from '@pilote/kpilote-ui/MultiToggle'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { clsxm } from '@/lib/clsxm'
 import { useProdEditUnlock } from '@/lib/useProdEditUnlock'
 import { principalPermissionsQueryOptions } from '@/queries/permissions'
 
-type DirectRow = { publicId: string; nom: string; actions: IndicateurPermissionActionValue[] }
-
-type SectionHandlers = {
-  onToggleWriteData?: (publicId: string, active: boolean) => void
-  onToggleWriteComment?: (publicId: string, active: boolean) => void
-  onRemove: (publicId: string) => void
-}
 
 export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const queryClient = useQueryClient()
@@ -107,96 +98,6 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
     )
   const removeCollection = (collectionPublicId: string) =>
     run(() => revokeCollectionPermission({ principalId, collectionPublicId }))
-
-  const renderSection = (
-    title: string,
-    rows: DirectRow[],
-    addControl: ReactNode,
-    handlers: SectionHandlers,
-    extraForRow?: (publicId: string) => ReactNode,
-  ) => (
-    <div className="mb-6">
-      <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-text-muted">
-        {title}
-      </h3>
-      <div className="mb-2">{addControl}</div>
-      {rows.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border px-3 py-4 text-center text-sm text-text-subtle">
-          Aucune permission directe.
-        </p>
-      ) : (
-        <ul className="divide-y divide-border rounded-lg border border-border">
-          {rows.map((row) => {
-            const writeDataActive = row.actions.includes(IndicateurPermissionAction.WRITE_DATA)
-            const writeCommentActive = row.actions.includes(
-              IndicateurPermissionAction.WRITE_COMMENT,
-            )
-            const extra = extraForRow?.(row.publicId)
-            return (
-              <li key={row.publicId} className="px-3 py-2.5">
-                <div className="flex items-center gap-3">
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm text-text">{row.nom}</span>
-                    <span className="font-mono text-xs text-text-muted">{row.publicId}</span>
-                  </span>
-                  <span className="flex items-center gap-2.5">
-                    <span
-                      title="Lecture toujours accordée pour une ressource ajoutée. Utilisez la corbeille pour la retirer."
-                      className="flex items-center gap-1 text-xs font-medium text-text-muted"
-                    >
-                      <Eye className="size-3.5" /> Lecture
-                    </span>
-                    {handlers.onToggleWriteData !== undefined ||
-                    handlers.onToggleWriteComment !== undefined ? (
-                      <MultiToggle
-                        disabled={disabled}
-                        aria-label="Permissions d'écriture"
-                        value={[
-                          ...(writeDataActive ? (['data'] as const) : []),
-                          ...(writeCommentActive ? (['comment'] as const) : []),
-                        ]}
-                        onValueChange={(next: string[]) => {
-                          if (handlers.onToggleWriteData) {
-                            const isNow = next.includes('data')
-                            if (isNow !== writeDataActive)
-                              handlers.onToggleWriteData(row.publicId, writeDataActive)
-                          }
-                          if (handlers.onToggleWriteComment) {
-                            const isNow = next.includes('comment')
-                            if (isNow !== writeCommentActive)
-                              handlers.onToggleWriteComment(row.publicId, writeCommentActive)
-                          }
-                        }}
-                        options={[
-                          ...(handlers.onToggleWriteData !== undefined
-                            ? [{ value: 'data' as const, label: 'Données' }]
-                            : []),
-                          ...(handlers.onToggleWriteComment !== undefined
-                            ? [{ value: 'comment' as const, label: 'Commentaires' }]
-                            : []),
-                        ]}
-                      />
-                    ) : null}
-                    <IconButton
-                      variant="danger"
-                      size="sm"
-                      label="Retirer la ressource"
-                      disabled={disabled}
-                      onClick={() => handlers.onRemove(row.publicId)}
-                      className="ml-1"
-                    >
-                      <Trash2 />
-                    </IconButton>
-                  </span>
-                </div>
-                {extra}
-              </li>
-            )
-          })}
-        </ul>
-      )}
-    </div>
-  )
 
   const heritesByCollection = new Map<string, typeof data.indicateursHerites>()
   for (const herite of data.indicateursHerites) {
@@ -279,38 +180,60 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
         />
       ) : null}
 
-      {renderSection(
-        'Indicateurs',
-        data.indicateurs,
-        <IndicateurPicker
-          excludedIds={excludedIndicateurs}
-          onSelect={addIndicateur}
-          disabled={disabled}
-        />,
-        {
-          onToggleWriteData: toggleIndicateurWrite(IndicateurPermissionAction.WRITE_DATA),
-          onToggleWriteComment: toggleIndicateurWrite(IndicateurPermissionAction.WRITE_COMMENT),
-          onRemove: removeIndicateur,
-        },
-      )}
-      {renderSection(
-        'Collections',
-        data.collections,
-        <Button
-          variant="secondary"
-          size="sm"
-          type="button"
-          disabled={disabled}
-          onClick={() => setModal('collection')}
-        >
-          + Ajouter une collection
-        </Button>,
-        {
-          onToggleWriteComment: toggleCollectionWriteComment,
-          onRemove: removeCollection,
-        },
-        renderHeritesForCollection,
-      )}
+      <PermissionSection
+        title="Indicateurs"
+        rows={data.indicateurs}
+        addControl={
+          <IndicateurPicker
+            excludedIds={excludedIndicateurs}
+            onSelect={addIndicateur}
+            disabled={disabled}
+          />
+        }
+        disabled={disabled}
+        onRemove={removeIndicateur}
+        writeSpecs={[
+          {
+            value: 'data',
+            label: 'Données',
+            isActive: (actions) => actions.includes(IndicateurPermissionAction.WRITE_DATA),
+            onToggle: toggleIndicateurWrite(IndicateurPermissionAction.WRITE_DATA),
+          },
+          {
+            value: 'comment',
+            label: 'Commentaires',
+            isActive: (actions) => actions.includes(IndicateurPermissionAction.WRITE_COMMENT),
+            onToggle: toggleIndicateurWrite(IndicateurPermissionAction.WRITE_COMMENT),
+          },
+        ]}
+      />
+
+      <PermissionSection
+        title="Collections"
+        rows={data.collections}
+        addControl={
+          <Button
+            variant="secondary"
+            size="sm"
+            type="button"
+            disabled={disabled}
+            onClick={() => setModal('collection')}
+          >
+            + Ajouter une collection
+          </Button>
+        }
+        disabled={disabled}
+        onRemove={removeCollection}
+        writeSpecs={[
+          {
+            value: 'comment',
+            label: 'Commentaires',
+            isActive: (actions) => actions.includes(IndicateurPermissionAction.WRITE_COMMENT),
+            onToggle: toggleCollectionWriteComment,
+          },
+        ]}
+        extraForRow={renderHeritesForCollection}
+      />
 
       {modal === 'collection' ? (
         <CollectionSearchModal
