@@ -20,6 +20,7 @@ import { IndicateurPicker } from '@/components/permissions/IndicateurPicker'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { IconButton } from '@pilote/kpilote-ui/IconButton'
+import { MultiToggle } from '@pilote/kpilote-ui/MultiToggle'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { clsxm } from '@/lib/clsxm'
@@ -145,39 +146,36 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
                     >
                       <Eye className="size-3.5" /> Lecture
                     </span>
-                    {handlers.onToggleWriteData !== undefined ? (
-                      <button
-                        type="button"
+                    {handlers.onToggleWriteData !== undefined ||
+                    handlers.onToggleWriteComment !== undefined ? (
+                      <MultiToggle
                         disabled={disabled}
-                        onClick={() => handlers.onToggleWriteData!(row.publicId, writeDataActive)}
-                        className={clsxm(
-                          'rounded-md border px-2 py-1 text-xs font-medium transition-colors',
-                          writeDataActive
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-border bg-surface text-text-muted hover:border-primary',
-                          disabled && 'cursor-not-allowed opacity-50',
-                        )}
-                      >
-                        Données
-                      </button>
-                    ) : null}
-                    {handlers.onToggleWriteComment !== undefined ? (
-                      <button
-                        type="button"
-                        disabled={disabled}
-                        onClick={() =>
-                          handlers.onToggleWriteComment!(row.publicId, writeCommentActive)
-                        }
-                        className={clsxm(
-                          'rounded-md border px-2 py-1 text-xs font-medium transition-colors',
-                          writeCommentActive
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-border bg-surface text-text-muted hover:border-primary',
-                          disabled && 'cursor-not-allowed opacity-50',
-                        )}
-                      >
-                        Commentaires
-                      </button>
+                        aria-label="Permissions d'écriture"
+                        value={[
+                          ...(writeDataActive ? (['data'] as const) : []),
+                          ...(writeCommentActive ? (['comment'] as const) : []),
+                        ]}
+                        onValueChange={(next: string[]) => {
+                          if (handlers.onToggleWriteData) {
+                            const isNow = next.includes('data')
+                            if (isNow !== writeDataActive)
+                              handlers.onToggleWriteData(row.publicId, writeDataActive)
+                          }
+                          if (handlers.onToggleWriteComment) {
+                            const isNow = next.includes('comment')
+                            if (isNow !== writeCommentActive)
+                              handlers.onToggleWriteComment(row.publicId, writeCommentActive)
+                          }
+                        }}
+                        options={[
+                          ...(handlers.onToggleWriteData !== undefined
+                            ? [{ value: 'data' as const, label: 'Données' }]
+                            : []),
+                          ...(handlers.onToggleWriteComment !== undefined
+                            ? [{ value: 'comment' as const, label: 'Commentaires' }]
+                            : []),
+                        ]}
+                      />
                     ) : null}
                     <IconButton
                       variant="danger"

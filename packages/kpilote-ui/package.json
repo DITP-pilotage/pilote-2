@@ -89,6 +89,10 @@
       "types": "./src/Marianne.tsx",
       "default": "./src/Marianne.tsx"
     },
+    "./MultiToggle": {
+      "types": "./src/MultiToggle.tsx",
+      "default": "./src/MultiToggle.tsx"
+    },
     "./Modale": {
       "types": "./src/Modale.tsx",
       "default": "./src/Modale.tsx"
