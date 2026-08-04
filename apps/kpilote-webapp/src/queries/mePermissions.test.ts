@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest'
 
 import type { MePermissionsApiModel } from '@pilote/kpilote-shared/mePermissions'
-import { PermissionAction } from '@pilote/kpilote-shared/permission'
+import {
+  CollectionPermissionAction,
+  IndicateurPermissionAction,
+} from '@pilote/kpilote-shared/permission'
 
 import {
   canWriteDataIndicateur,
@@ -21,7 +24,7 @@ describe('canWriteDataIndicateur', () => {
   it("autorise si une entrée WRITE_DATA existe pour l'indicateur", () => {
     const permissions: MePermissionsApiModel = {
       ...base,
-      indicateurs: [{ id: 'IND-1', actions: [PermissionAction.WRITE_DATA] }],
+      indicateurs: [{ id: 'IND-1', actions: [IndicateurPermissionAction.WRITE_DATA] }],
     }
     expect(canWriteDataIndicateur({ permissions, indicateurId: 'IND-1' })).toBe(true)
   })
@@ -29,7 +32,7 @@ describe('canWriteDataIndicateur', () => {
   it('refuse avec seulement READ', () => {
     const permissions: MePermissionsApiModel = {
       ...base,
-      indicateurs: [{ id: 'IND-1', actions: [PermissionAction.READ] }],
+      indicateurs: [{ id: 'IND-1', actions: [IndicateurPermissionAction.READ] }],
     }
     expect(canWriteDataIndicateur({ permissions, indicateurId: 'IND-1' })).toBe(false)
   })
@@ -37,7 +40,7 @@ describe('canWriteDataIndicateur', () => {
   it('refuse avec seulement WRITE_COMMENT (WRITE_COMMENT ne donne pas WRITE_DATA)', () => {
     const permissions: MePermissionsApiModel = {
       ...base,
-      indicateurs: [{ id: 'IND-1', actions: [PermissionAction.WRITE_COMMENT] }],
+      indicateurs: [{ id: 'IND-1', actions: [IndicateurPermissionAction.WRITE_COMMENT] }],
     }
     expect(canWriteDataIndicateur({ permissions, indicateurId: 'IND-1' })).toBe(false)
   })
@@ -53,7 +56,7 @@ describe('canWriteCommentIndicateur', () => {
   it("autorise si une entrée WRITE_COMMENT existe pour l'indicateur", () => {
     const permissions: MePermissionsApiModel = {
       ...base,
-      indicateurs: [{ id: 'IND-1', actions: [PermissionAction.WRITE_COMMENT] }],
+      indicateurs: [{ id: 'IND-1', actions: [IndicateurPermissionAction.WRITE_COMMENT] }],
     }
     expect(canWriteCommentIndicateur({ permissions, indicateurId: 'IND-1' })).toBe(true)
   })
@@ -61,7 +64,7 @@ describe('canWriteCommentIndicateur', () => {
   it('refuse avec seulement READ', () => {
     const permissions: MePermissionsApiModel = {
       ...base,
-      indicateurs: [{ id: 'IND-1', actions: [PermissionAction.READ] }],
+      indicateurs: [{ id: 'IND-1', actions: [IndicateurPermissionAction.READ] }],
     }
     expect(canWriteCommentIndicateur({ permissions, indicateurId: 'IND-1' })).toBe(false)
   })
@@ -69,7 +72,7 @@ describe('canWriteCommentIndicateur', () => {
   it('refuse avec seulement WRITE_DATA (WRITE_DATA ne donne pas WRITE_COMMENT)', () => {
     const permissions: MePermissionsApiModel = {
       ...base,
-      indicateurs: [{ id: 'IND-1', actions: [PermissionAction.WRITE_DATA] }],
+      indicateurs: [{ id: 'IND-1', actions: [IndicateurPermissionAction.WRITE_DATA] }],
     }
     expect(canWriteCommentIndicateur({ permissions, indicateurId: 'IND-1' })).toBe(false)
   })
@@ -85,7 +88,7 @@ describe('canWriteCommentCollection', () => {
   it('autorise si une entrée WRITE_COMMENT existe pour la collection', () => {
     const permissions: MePermissionsApiModel = {
       ...base,
-      collections: [{ id: 'COL-1', actions: [PermissionAction.WRITE_COMMENT] }],
+      collections: [{ id: 'COL-1', actions: [CollectionPermissionAction.WRITE_COMMENT] }],
     }
     expect(canWriteCommentCollection({ permissions, collectionId: 'COL-1' })).toBe(true)
   })
@@ -93,7 +96,7 @@ describe('canWriteCommentCollection', () => {
   it('refuse avec seulement READ', () => {
     const permissions: MePermissionsApiModel = {
       ...base,
-      collections: [{ id: 'COL-1', actions: [PermissionAction.READ] }],
+      collections: [{ id: 'COL-1', actions: [CollectionPermissionAction.READ] }],
     }
     expect(canWriteCommentCollection({ permissions, collectionId: 'COL-1' })).toBe(false)
   })
@@ -101,7 +104,7 @@ describe('canWriteCommentCollection', () => {
   it("refuse si la collection n'est pas dans les permissions", () => {
     const permissions: MePermissionsApiModel = {
       ...base,
-      collections: [{ id: 'COL-2', actions: [PermissionAction.WRITE_COMMENT] }],
+      collections: [{ id: 'COL-2', actions: [CollectionPermissionAction.WRITE_COMMENT] }],
     }
     expect(canWriteCommentCollection({ permissions, collectionId: 'COL-1' })).toBe(false)
   })

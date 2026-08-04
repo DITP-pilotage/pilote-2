@@ -1,22 +1,41 @@
 import { z } from 'zod'
 
-export const permissionActionSchema = z.enum(['READ', 'WRITE_DATA', 'WRITE_COMMENT'])
-export type PermissionActionValue = z.infer<typeof permissionActionSchema>
-export const PermissionAction = permissionActionSchema.enum
-export type PermissionWriteActionValue = Exclude<PermissionActionValue, 'READ'>
+// --- Indicateur --------------------------------------------------------------
+
+export const indicateurPermissionActionSchema = z.enum(['READ', 'WRITE_DATA', 'WRITE_COMMENT'])
+export type IndicateurPermissionActionValue = z.infer<typeof indicateurPermissionActionSchema>
+export const IndicateurPermissionAction = indicateurPermissionActionSchema.enum
+export type IndicateurPermissionWriteActionValue = Exclude<IndicateurPermissionActionValue, 'READ'>
+
+// --- Collection --------------------------------------------------------------
+
+export const collectionPermissionActionSchema = z.enum(['READ', 'WRITE_COMMENT'])
+export type CollectionPermissionActionValue = z.infer<typeof collectionPermissionActionSchema>
+export const CollectionPermissionAction = collectionPermissionActionSchema.enum
+
+// --- Commun ------------------------------------------------------------------
 
 export const permissionResourceTypeSchema = z.enum(['COLLECTION', 'INDICATEUR'])
 export type PermissionResourceType = z.infer<typeof permissionResourceTypeSchema>
 
-const directPermissionSchema = z.object({
-  publicId: z.string().describe('Identifiant public de la ressource (`COL-…` / `IND-…`).'),
+const directIndicateurPermissionSchema = z.object({
+  publicId: z.string().describe('Identifiant public de la ressource (`IND-…`).'),
   nom: z.string().describe('Nom lisible de la ressource.'),
   actions: z
-    .array(permissionActionSchema)
+    .array(indicateurPermissionActionSchema)
     .min(1)
     .describe(
       'Actions directes accordées, triées `READ` avant `WRITE_DATA` avant `WRITE_COMMENT`.',
     ),
+})
+
+const directCollectionPermissionSchema = z.object({
+  publicId: z.string().describe('Identifiant public de la ressource (`COL-…`).'),
+  nom: z.string().describe('Nom lisible de la ressource.'),
+  actions: z
+    .array(collectionPermissionActionSchema)
+    .min(1)
+    .describe('Actions directes accordées, triées `READ` avant `WRITE_COMMENT`.'),
 })
 
 const indicateurHeriteSchema = z.object({
@@ -28,10 +47,10 @@ const indicateurHeriteSchema = z.object({
 
 export const principalPermissionsApiModelSchema = z.object({
   collections: z
-    .array(directPermissionSchema)
+    .array(directCollectionPermissionSchema)
     .describe('Permissions directes sur les collections, triées par `publicId` ASC.'),
   indicateurs: z
-    .array(directPermissionSchema)
+    .array(directIndicateurPermissionSchema)
     .describe('Permissions directes sur les indicateurs, triées par `publicId` ASC.'),
   indicateursHerites: z
     .array(indicateurHeriteSchema)
@@ -47,30 +66,30 @@ export const listPrincipalPermissionsQuerySchema = z.object({
 })
 export type ListPrincipalPermissionsQuery = z.infer<typeof listPrincipalPermissionsQuerySchema>
 
-// --- Indicateur --------------------------------------------------------------
+// --- Requêtes indicateur -----------------------------------------------------
 
 export const grantIndicateurPermissionBodySchema = z.object({
   principalId: z.string().uuid().describe('Principal (UUID) à qui accorder le droit.'),
   indicateurPublicId: z.string().describe("Identifiant public de l'indicateur (`IND-…`)."),
-  action: permissionActionSchema,
+  action: indicateurPermissionActionSchema,
 })
 export type GrantIndicateurPermissionBody = z.infer<typeof grantIndicateurPermissionBodySchema>
 
 export const revokeIndicateurPermissionQuerySchema = z.object({
   principalId: z.string().uuid(),
   indicateurPublicId: z.string(),
-  action: permissionActionSchema
+  action: indicateurPermissionActionSchema
     .optional()
     .describe("Action à retirer. Si absent, retire toutes les actions de l'indicateur."),
 })
 export type RevokeIndicateurPermissionQuery = z.infer<typeof revokeIndicateurPermissionQuerySchema>
 
-// --- Collection -----------------------------------------------------------------
+// --- Requêtes collection -----------------------------------------------------
 
 export const grantCollectionPermissionBodySchema = z.object({
   principalId: z.string().uuid().describe('Principal (UUID) à qui accorder le droit.'),
   collectionPublicId: z.string().describe('Identifiant public de la collection (`COL-…`).'),
-  action: permissionActionSchema,
+  action: collectionPermissionActionSchema,
 })
 export type GrantCollectionPermissionBody = z.infer<typeof grantCollectionPermissionBodySchema>
 
@@ -89,13 +108,13 @@ export const collectionPermissionsApiModelSchema = z.object({
           .string()
           .describe("Email de l'utilisateur, ou libellé de la clé API selon le `type`."),
         actions: z
-          .array(permissionActionSchema)
+          .array(collectionPermissionActionSchema)
           .min(1)
           .describe('Triées `READ` avant `WRITE_COMMENT`.'),
       }),
     )
     .describe(
-      'Principals disposant d’une permission directe sur la collection, triés par `type` puis `libelle`.',
+      "Principals disposant d'une permission directe sur la collection, triés par `type` puis `libelle`.",
     ),
 })
 export type CollectionPermissionsApiModel = z.infer<typeof collectionPermissionsApiModelSchema>
@@ -103,7 +122,7 @@ export type CollectionPermissionsApiModel = z.infer<typeof collectionPermissions
 export const revokeCollectionPermissionQuerySchema = z.object({
   principalId: z.string().uuid(),
   collectionPublicId: z.string(),
-  action: permissionActionSchema
+  action: collectionPermissionActionSchema
     .optional()
     .describe('Action à retirer. Si absent, retire toutes les actions de la collection.'),
 })

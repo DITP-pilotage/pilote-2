@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { listerCommentaires } from '@/commentaire/queries/listerCommentaires'
 import { indicateurIndividuConfig } from '@/indicateur/commands/creerIndicateurIndividuCommentaire'
-import { PermissionAction } from '@/generated/prisma/enums'
+import { IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurId, testIndividuId } from '@/test/randomIds'
@@ -17,7 +17,7 @@ describe.concurrent('listerCommentaires', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.READ }],
       })
       await fixtures.commentaire({
         indicateur: { publicId: indId },
@@ -58,7 +58,7 @@ describe.concurrent('listerCommentaires', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.READ }],
       })
       await fixtures.commentaire({
         indicateur: { publicId: indId },
@@ -94,7 +94,7 @@ describe.concurrent('listerCommentaires', () => {
       await fixtures.indicateur({ publicId: indId })
       await fixtures.individu({ publicId: indivId })
       const moi = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.READ }],
+        permissions: [{ indicateur: { publicId: indId }, action: IndicateurPermissionAction.READ }],
       })
       const scope = { indicateur: { publicId: indId }, individu: { publicId: indivId } }
       await fixtures.commentaire({ ...scope, createdBy: moi.id, type: 'DEFAUT', statut: 'PUBLIE' })

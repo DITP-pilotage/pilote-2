@@ -1,19 +1,21 @@
 import { z } from 'zod'
 
-import { permissionActionSchema } from './permission'
+import { collectionPermissionActionSchema, indicateurPermissionActionSchema } from './permission'
 
-const permissionEntrySchema = z.object({
-  id: z
-    .string()
-    .describe(
-      'Identifiant public de la ressource (`COL-…` pour une collection, `IND-…` pour un indicateur).',
-    ),
+const collectionPermissionEntrySchema = z.object({
+  id: z.string().describe('Identifiant public de la collection (`COL-…`).'),
   actions: z
-    .array(permissionActionSchema)
+    .array(collectionPermissionActionSchema)
     .min(1)
-    .describe(
-      'Actions accordées au principal courant sur cette ressource. Trié `READ` avant `WRITE_DATA` avant `WRITE_COMMENT`.',
-    ),
+    .describe('Actions accordées. Triées `READ` avant `WRITE_COMMENT`.'),
+})
+
+const indicateurPermissionEntrySchema = z.object({
+  id: z.string().describe("Identifiant public de l'indicateur (`IND-…`)."),
+  actions: z
+    .array(indicateurPermissionActionSchema)
+    .min(1)
+    .describe('Actions accordées. Triées `READ` avant `WRITE_DATA` avant `WRITE_COMMENT`.'),
 })
 
 export const mePermissionsApiModelSchema = z.object({
@@ -26,13 +28,13 @@ export const mePermissionsApiModelSchema = z.object({
         '(retournés vides). Pour les principals standards, ce champ est absent.',
     ),
   collections: z
-    .array(permissionEntrySchema)
+    .array(collectionPermissionEntrySchema)
     .describe(
       "Permissions explicites du principal sur les collections, triées par `id` ASC. N'inclut PAS " +
         'le READ implicite des collections `PUBLIC` (le client le sait en affichant la collection).',
     ),
   indicateurs: z
-    .array(permissionEntrySchema)
+    .array(indicateurPermissionEntrySchema)
     .describe(
       'Permissions du principal sur les indicateurs, triées par `id` ASC. Inclut les permissions ' +
         'directes et le READ dans le cas où le principal possède READ ou WRITE_COMMENT sur une ' +
@@ -44,5 +46,5 @@ export const mePermissionsApiModelSchema = z.object({
 
 export type MePermissionsApiModel = z.infer<typeof mePermissionsApiModelSchema>
 
-// Entrée de permission (id + actions), partagée par `collections` et `indicateurs`.
-export type PermissionEntryApiModel = z.infer<typeof permissionEntrySchema>
+export type CollectionPermissionEntryApiModel = z.infer<typeof collectionPermissionEntrySchema>
+export type IndicateurPermissionEntryApiModel = z.infer<typeof indicateurPermissionEntrySchema>

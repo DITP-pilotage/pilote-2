@@ -1,4 +1,4 @@
-import { PermissionAction } from '@/generated/prisma/enums'
+import { CollectionPermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { db } from '@/framework/persistence/dbStore'
@@ -51,7 +51,7 @@ describe.concurrent('withCollectionReadPermission', () => {
       await fixtures.collection({ publicId: colPriRead, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
         collectionPermissions: [
-          { collection: { publicId: colPriRead }, action: PermissionAction.READ },
+          { collection: { publicId: colPriRead }, action: CollectionPermissionAction.READ },
         ],
       })
 
@@ -68,7 +68,10 @@ describe.concurrent('withCollectionReadPermission', () => {
       await fixtures.collection({ publicId: colPriWrite, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
         collectionPermissions: [
-          { collection: { publicId: colPriWrite }, action: PermissionAction.WRITE_COMMENT },
+          {
+            collection: { publicId: colPriWrite },
+            action: CollectionPermissionAction.WRITE_COMMENT,
+          },
         ],
       })
 
@@ -86,7 +89,7 @@ describe.concurrent('withCollectionReadPermission', () => {
       const [a, b] = await fixtures.apiKey(
         {
           collectionPermissions: [
-            { collection: { publicId: colIso }, action: PermissionAction.READ },
+            { collection: { publicId: colIso }, action: CollectionPermissionAction.READ },
           ],
         },
         {},
@@ -129,7 +132,7 @@ describe.concurrent('ensureCollectionWriteCommentPermission', () => {
       const collection = await fixtures.collection({ publicId: colEwOk, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
         collectionPermissions: [
-          { collection: { publicId: colEwOk }, action: PermissionAction.WRITE_COMMENT },
+          { collection: { publicId: colEwOk }, action: CollectionPermissionAction.WRITE_COMMENT },
         ],
       })
 
@@ -165,7 +168,7 @@ describe.concurrent('ensureCollectionWriteCommentPermission', () => {
       const collection = await fixtures.collection({ publicId: colEwRonly, visibilite: 'PRIVE' })
       const apiKey = await fixtures.apiKey({
         collectionPermissions: [
-          { collection: { publicId: colEwRonly }, action: PermissionAction.READ },
+          { collection: { publicId: colEwRonly }, action: CollectionPermissionAction.READ },
         ],
       })
 

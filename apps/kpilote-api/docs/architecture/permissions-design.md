@@ -70,7 +70,7 @@ PermissionAction ∈ { READ, WRITE }
   n'implique pas READ par la sémantique de l'enum**, mais par convention, les
   helpers `with*ReadPermission` acceptent les deux actions comme valant un
   READ (un principal qui peut écrire peut lire). Voir constantes
-  `INDICATEUR_READ_PERMISSIONS` / `COLLECTION_READ_PERMISSIONS`.
+  `INDICATEUR_PERMISSIONS_GRANTING_READ` / `COLLECTION_PERMISSIONS_GRANTING_READ`.
 
 ## Helpers
 

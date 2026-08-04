@@ -1,4 +1,4 @@
-import { PermissionAction } from '@/generated/prisma/enums'
+import { CollectionPermissionAction } from '@/generated/prisma/enums'
 import { describe, expect, it } from 'vitest'
 
 import { listCollectionPermissions } from '@/collection/queries/listCollectionPermissions'
@@ -29,8 +29,8 @@ describe.concurrent('listCollectionPermissions', () => {
       const utilisateur = await fixtures.utilisateur({
         email,
         collectionPermissions: [
-          { collection: { publicId }, action: PermissionAction.WRITE_COMMENT },
-          { collection: { publicId }, action: PermissionAction.READ },
+          { collection: { publicId }, action: CollectionPermissionAction.WRITE_COMMENT },
+          { collection: { publicId }, action: CollectionPermissionAction.READ },
         ],
       })
       const apiKey = await fixtures.apiKey({ role: 'ADMIN' })
@@ -42,7 +42,7 @@ describe.concurrent('listCollectionPermissions', () => {
           principalId: utilisateur.id,
           type: 'UTILISATEUR',
           libelle: email,
-          actions: [PermissionAction.READ, PermissionAction.WRITE_COMMENT],
+          actions: [CollectionPermissionAction.READ, CollectionPermissionAction.WRITE_COMMENT],
         },
       ])
     }),
@@ -55,11 +55,15 @@ describe.concurrent('listCollectionPermissions', () => {
       const email = testEmail()
       const cle = await fixtures.apiKey({
         label: 'sync-ppg',
-        collectionPermissions: [{ collection: { publicId }, action: PermissionAction.READ }],
+        collectionPermissions: [
+          { collection: { publicId }, action: CollectionPermissionAction.READ },
+        ],
       })
       const utilisateur = await fixtures.utilisateur({
         email,
-        collectionPermissions: [{ collection: { publicId }, action: PermissionAction.READ }],
+        collectionPermissions: [
+          { collection: { publicId }, action: CollectionPermissionAction.READ },
+        ],
       })
       const admin = await fixtures.apiKey({ role: 'ADMIN' })
 
@@ -70,13 +74,13 @@ describe.concurrent('listCollectionPermissions', () => {
           principalId: cle.id,
           type: 'API_KEY',
           libelle: 'sync-ppg',
-          actions: [PermissionAction.READ],
+          actions: [CollectionPermissionAction.READ],
         },
         {
           principalId: utilisateur.id,
           type: 'UTILISATEUR',
           libelle: email,
-          actions: [PermissionAction.READ],
+          actions: [CollectionPermissionAction.READ],
         },
       ])
     }),
@@ -89,7 +93,9 @@ describe.concurrent('listCollectionPermissions', () => {
       await fixtures.collection({ publicId })
       await fixtures.utilisateur({
         email: testEmail(),
-        collectionPermissions: [{ collection: { publicId }, action: PermissionAction.READ }],
+        collectionPermissions: [
+          { collection: { publicId }, action: CollectionPermissionAction.READ },
+        ],
       })
       const apiKey = await fixtures.apiKey()
 

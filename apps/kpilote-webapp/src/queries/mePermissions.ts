@@ -1,8 +1,14 @@
 import {
   type MePermissionsApiModel,
-  type PermissionEntryApiModel,
+  type CollectionPermissionEntryApiModel,
+  type IndicateurPermissionEntryApiModel,
 } from '@pilote/kpilote-shared/mePermissions'
-import { PermissionAction, type PermissionActionValue } from '@pilote/kpilote-shared/permission'
+import {
+  CollectionPermissionAction,
+  IndicateurPermissionAction,
+  type CollectionPermissionActionValue,
+  type IndicateurPermissionActionValue,
+} from '@pilote/kpilote-shared/permission'
 import { type QueryClient, queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 
 import { fetchMePermissions } from '@/api/mePermissions'
@@ -19,13 +25,19 @@ export const mePermissionsQueryOptions = () =>
 export const loadMePermissions = ({ queryClient }: { queryClient: QueryClient }) =>
   queryClient.ensureQueryData(mePermissionsQueryOptions())
 
-const hasAction =
-  (action: PermissionActionValue) =>
-  (entries: PermissionEntryApiModel[], publicId: string): boolean =>
+const hasIndicateurAction =
+  (action: IndicateurPermissionActionValue) =>
+  (entries: IndicateurPermissionEntryApiModel[], publicId: string): boolean =>
     entries.some((entry) => entry.id === publicId && entry.actions.includes(action))
 
-const hasWriteData = hasAction(PermissionAction.WRITE_DATA)
-const hasWriteComment = hasAction(PermissionAction.WRITE_COMMENT)
+const hasCollectionAction =
+  (action: CollectionPermissionActionValue) =>
+  (entries: CollectionPermissionEntryApiModel[], publicId: string): boolean =>
+    entries.some((entry) => entry.id === publicId && entry.actions.includes(action))
+
+const hasIndicateurWriteData = hasIndicateurAction(IndicateurPermissionAction.WRITE_DATA)
+const hasIndicateurWriteComment = hasIndicateurAction(IndicateurPermissionAction.WRITE_COMMENT)
+const hasCollectionWriteComment = hasCollectionAction(CollectionPermissionAction.WRITE_COMMENT)
 
 export const canWriteDataIndicateur = ({
   permissions,
@@ -33,7 +45,8 @@ export const canWriteDataIndicateur = ({
 }: {
   permissions: MePermissionsApiModel
   indicateurId: string
-}): boolean => permissions.isAdmin === true || hasWriteData(permissions.indicateurs, indicateurId)
+}): boolean =>
+  permissions.isAdmin === true || hasIndicateurWriteData(permissions.indicateurs, indicateurId)
 
 export const canWriteCommentIndicateur = ({
   permissions,
@@ -42,7 +55,7 @@ export const canWriteCommentIndicateur = ({
   permissions: MePermissionsApiModel
   indicateurId: string
 }): boolean =>
-  permissions.isAdmin === true || hasWriteComment(permissions.indicateurs, indicateurId)
+  permissions.isAdmin === true || hasIndicateurWriteComment(permissions.indicateurs, indicateurId)
 
 // WRITE_COMMENT collection reste strictement direct (jamais propagé) — cf. me-permissions-design.md.
 export const canWriteCommentCollection = ({
@@ -52,7 +65,7 @@ export const canWriteCommentCollection = ({
   permissions: MePermissionsApiModel
   collectionId: string
 }): boolean =>
-  permissions.isAdmin === true || hasWriteComment(permissions.collections, collectionId)
+  permissions.isAdmin === true || hasCollectionWriteComment(permissions.collections, collectionId)
 
 export const useCanWriteDataIndicateur = (indicateurId: string): boolean => {
   const { data } = useSuspenseQuery(mePermissionsQueryOptions())

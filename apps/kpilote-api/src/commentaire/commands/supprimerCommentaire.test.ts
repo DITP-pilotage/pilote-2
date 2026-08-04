@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import { supprimerCommentaire } from '@/commentaire/commands/supprimerCommentaire'
 import { db } from '@/framework/persistence/dbStore'
-import { PermissionAction } from '@/generated/prisma/enums'
+import { IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
 import { testIndicateurId, testIndividuId } from '@/test/randomIds'
@@ -14,7 +14,9 @@ describe.concurrent('supprimerCommentaire', () => {
     integrationTest(async () => {
       const indId = testIndicateurId()
       const apiKey = await fixtures.apiKey({
-        permissions: [{ indicateur: { publicId: indId }, action: PermissionAction.WRITE_COMMENT }],
+        permissions: [
+          { indicateur: { publicId: indId }, action: IndicateurPermissionAction.WRITE_COMMENT },
+        ],
       })
       const c = await fixtures.commentaire({
         indicateur: { publicId: indId },

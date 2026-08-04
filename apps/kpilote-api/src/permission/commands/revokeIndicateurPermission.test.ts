@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { PermissionAction } from '@/generated/prisma/enums'
+import { IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { revokeIndicateurPermission } from '@/permission/commands/revokeIndicateurPermission'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
@@ -12,12 +12,12 @@ const grantReadWrite = async (principalId: string, indicateurPublicId: string) =
   await fixtures.indicateurPermission({
     principalId,
     indicateur: { publicId: indicateurPublicId },
-    action: PermissionAction.READ,
+    action: IndicateurPermissionAction.READ,
   })
   await fixtures.indicateurPermission({
     principalId,
     indicateur: { publicId: indicateurPublicId },
-    action: PermissionAction.WRITE_DATA,
+    action: IndicateurPermissionAction.WRITE_DATA,
   })
 }
 
@@ -33,12 +33,12 @@ describe.concurrent('revokeIndicateurPermission', () => {
         revokeIndicateurPermission({
           principalId: target.id,
           indicateurPublicId: ind.publicId,
-          action: PermissionAction.WRITE_DATA,
+          action: IndicateurPermissionAction.WRITE_DATA,
         }),
       )
 
       expect(result._unsafeUnwrap().indicateurs).toEqual([
-        { publicId: ind.publicId, nom: 'Indic', actions: [PermissionAction.READ] },
+        { publicId: ind.publicId, nom: 'Indic', actions: [IndicateurPermissionAction.READ] },
       ])
     }),
   )
