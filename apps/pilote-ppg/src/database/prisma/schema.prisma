@@ -520,6 +520,7 @@ model metadata_ppgs {
   ppg_id   String  @id
   ppg_nom  String
   ppg_desc String?
+  ppg_axe  String?
 
   @@schema("raw_data")
 }

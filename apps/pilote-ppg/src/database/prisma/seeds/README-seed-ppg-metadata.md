@@ -51,7 +51,7 @@ tables = {
             "ch_hidden_pilote": "COALESCE(ch_hidden_pilote::integer::boolean, false) AS \"ch_hidden_pilote\"",
         },
     },
-    "metadata_ppgs": {"cols": ["ppg_id", "ppg_nom", "ppg_desc"]},
+    "metadata_ppgs": {"cols": ["ppg_id", "ppg_nom", "ppg_desc", "ppg_axe"]},
     "metadata_porteurs": {
         "cols": ["porteur_id", "porteur_short", "porteur_name", "porteur_desc", "porteur_type_id", "porteur_type_short", "porteur_directeur", "porteur_name_short", "porteur_picto"],
         "casts": {"porteur_id": "::text"},

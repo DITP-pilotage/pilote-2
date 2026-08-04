@@ -123,7 +123,7 @@ SELECT
     ppgs.ppg_nom AS ppg,
     chantier_est_barometre.est_barometre,
     meta_ch.est_territorialise,
-    LOWER(meta_ch.ate)::TYPE_ATE AS ate,
+    meta_ch.ate AS ate,
     has_ta.has_ta_dept AS possede_taux_avancement_departemental,
     has_ta.has_ta_reg AS possede_taux_avancement_regional,
     ch_has_meteo.has_meteo_dept AS possede_meteo_departemental,
