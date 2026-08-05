@@ -556,6 +556,7 @@ model metadata_axes {
   @@schema("raw_data")
 }
 
+// Utilisé uniquement par les modèles baromètre (baro_meta_engagement, baro_meta_chantiers) côté datajobs — à supprimer lors du décommissionnement du baromètre
 model metadata_engagement {
   engagement_id    String @id
   engagement_short String
