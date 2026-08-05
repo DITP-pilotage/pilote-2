@@ -1,4 +1,5 @@
 -- CreateTable
+DROP TABLE IF EXISTS "raw_data"."metadata_zones" CASCADE;
 CREATE TABLE "raw_data"."metadata_zones" (
     "zone_id" TEXT NOT NULL,
     "nom" TEXT NOT NULL,
@@ -10,6 +11,7 @@ CREATE TABLE "raw_data"."metadata_zones" (
 );
 
 -- CreateTable
+DROP TABLE IF EXISTS "raw_data"."metadata_chantiers" CASCADE;
 CREATE TABLE "raw_data"."metadata_chantiers" (
     "chantier_id" TEXT NOT NULL,
     "ch_nom" TEXT NOT NULL,
@@ -36,6 +38,7 @@ CREATE TABLE "raw_data"."metadata_chantiers" (
 );
 
 -- CreateTable
+DROP TABLE IF EXISTS "raw_data"."metadata_ppgs" CASCADE;
 CREATE TABLE "raw_data"."metadata_ppgs" (
     "ppg_id" TEXT NOT NULL,
     "ppg_nom" TEXT NOT NULL,
@@ -46,6 +49,7 @@ CREATE TABLE "raw_data"."metadata_ppgs" (
 );
 
 -- CreateTable
+DROP TABLE IF EXISTS "raw_data"."metadata_porteurs" CASCADE;
 CREATE TABLE "raw_data"."metadata_porteurs" (
     "porteur_id" TEXT NOT NULL,
     "porteur_short" TEXT NOT NULL,
@@ -61,6 +65,7 @@ CREATE TABLE "raw_data"."metadata_porteurs" (
 );
 
 -- CreateTable
+DROP TABLE IF EXISTS "raw_data"."metadata_perimetres" CASCADE;
 CREATE TABLE "raw_data"."metadata_perimetres" (
     "perimetre_id" TEXT NOT NULL,
     "per_nom" TEXT NOT NULL,
@@ -71,6 +76,7 @@ CREATE TABLE "raw_data"."metadata_perimetres" (
 );
 
 -- CreateTable
+DROP TABLE IF EXISTS "raw_data"."metadata_axes" CASCADE;
 CREATE TABLE "raw_data"."metadata_axes" (
     "axe_id" TEXT NOT NULL,
     "axe_name" TEXT NOT NULL,
@@ -80,6 +86,7 @@ CREATE TABLE "raw_data"."metadata_axes" (
 );
 
 -- CreateTable
+DROP TABLE IF EXISTS "raw_data"."metadata_engagement" CASCADE;
 CREATE TABLE "raw_data"."metadata_engagement" (
     "engagement_id" TEXT NOT NULL,
     "engagement_short" TEXT NOT NULL,
@@ -89,6 +96,7 @@ CREATE TABLE "raw_data"."metadata_engagement" (
 );
 
 -- CreateTable
+DROP TABLE IF EXISTS "raw_data"."metadata_indicateur_types" CASCADE;
 CREATE TABLE "raw_data"."metadata_indicateur_types" (
     "indic_type_id" TEXT NOT NULL,
     "indic_type_name" TEXT NOT NULL,
@@ -98,6 +106,7 @@ CREATE TABLE "raw_data"."metadata_indicateur_types" (
 );
 
 -- CreateTable
+DROP TABLE IF EXISTS "raw_data"."metadata_zonegroup" CASCADE;
 CREATE TABLE "raw_data"."metadata_zonegroup" (
     "zone_group_id" TEXT NOT NULL,
     "zg_zones" TEXT NOT NULL,
