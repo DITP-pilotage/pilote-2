@@ -106,7 +106,7 @@ for table_name, cfg in tables.items():
 cur.close()
 conn.close()
 
-output_path = "../pilote-ppg/src/database/prisma/seeds/seed_ppg_metadata.sql"
+output_path = "../pilote-ppg/scripts/migration/20260805-seed-ppg-metadata.sql"
 with open(output_path, "w") as f:
     f.write("\n".join(lines))
 
