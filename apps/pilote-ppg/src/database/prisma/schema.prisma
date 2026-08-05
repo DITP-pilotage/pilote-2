@@ -61,6 +61,16 @@ enum type_statut_indicateur {
   @@schema("public")
 }
 
+enum TypeIndicateur {
+  IMPACT
+  DEPL
+  Q_SERV
+  REBOND
+  CONTEXTE
+
+  @@schema("public")
+}
+
 enum type_tendance {
   HAUSSE
   BAISSE
@@ -194,8 +204,7 @@ model indicateur_identite {
   id                         String                  @id
   nom                        String
   chantier_id                String
-  type_id                    String?
-  type_nom                   String?
+  type_id                    TypeIndicateur
   est_barometre              Boolean?
   est_phare                  Boolean?
   description                String?
@@ -565,13 +574,6 @@ model metadata_engagement {
   @@schema("raw_data")
 }
 
-model metadata_indicateur_types {
-  indic_type_id    String  @id
-  indic_type_name  String
-  indic_type_descr String?
-
-  @@schema("raw_data")
-}
 
 model metadata_zonegroup {
   zone_group_id String @id
