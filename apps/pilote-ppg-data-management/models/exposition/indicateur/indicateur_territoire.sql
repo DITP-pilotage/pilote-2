@@ -111,7 +111,7 @@ LEFT JOIN {{ ref('get_date_pro_maj_indic') }} AS date_pro_maj
         AND meta_zone.maille = date_pro_maj.maille
 -- TODO: create stg table for this
 LEFT JOIN
-    {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }}
+    {{ source('ppg_metadata', 'metadata_parametrage_indicateurs') }}
         AS meta_indic_parametrage
     ON meta_indic.id = meta_indic_parametrage.indic_id
 LEFT JOIN get_evol_vaca AS evol_va

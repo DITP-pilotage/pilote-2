@@ -31,7 +31,7 @@ poids_declare AS (
         indic.chantier_id,
         territoires.maille AS zone_type
     FROM
-        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} -- noqa: LT05
+        {{ source('ppg_metadata', 'metadata_parametrage_indicateurs') }} -- noqa: LT05
             AS parametrage_indicateurs
     CROSS JOIN {{ source('db_schema_public', 'territoire') }} AS territoires
     LEFT JOIN {{ ref('stg_ppg_metadata__zones') }} AS zones

@@ -25,7 +25,6 @@ if (RUN_FULL_DATAJOBS):
     JOBS_TO_RUN = [
         'scripts/0_dbt_deps.sh',
         'scripts/0_init_elementary.sh',
-        'scripts/2_seed_ppg_metadata.sh',
         'scripts/4_seed_private.sh',
         'scripts/5_staging.sh',
         'scripts/7_exposition.sh'
@@ -33,7 +32,6 @@ if (RUN_FULL_DATAJOBS):
 else:
     JOBS_TO_RUN = [
         'scripts/0_dbt_deps.sh',
-        'scripts/2_seed_ppg_metadata.sh',
         'scripts/5_staging.sh',
         'scripts/7_exposition.sh'
     ]

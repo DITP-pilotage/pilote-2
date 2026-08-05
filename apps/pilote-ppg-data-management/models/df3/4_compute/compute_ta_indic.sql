@@ -9,7 +9,7 @@ WITH get_unbounded_ta AS (
         {{ compute_ta('computed_values.vig', 'computed_values.vca_adate', 'computed_values.vacp', 'parametre_indic.tendance') }} AS unbounded_tap_adate -- noqa: LT05
     FROM {{ ref('merge_computed_values') }} AS computed_values
     LEFT OUTER JOIN
-        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} -- noqa: LT05
+        {{ source('ppg_metadata', 'metadata_parametrage_indicateurs') }} -- noqa: LT05
             AS parametre_indic
         ON computed_values.indic_id = parametre_indic.indic_id
     WHERE parametre_indic.tendance IS NOT NULL

@@ -481,6 +481,105 @@ model commentaires {
   @@schema("raw_data")
 }
 
+model metadata_zones {
+  zone_id     String  @id
+  nom         String
+  zone_code   String
+  zone_type   String
+  zone_parent String?
+
+  @@schema("raw_data")
+}
+
+model metadata_chantiers {
+  chantier_id          String      @id
+  ch_nom               String
+  ch_descr             String?
+  ch_ppg               String
+  ch_territo           Boolean     @default(false)
+  engagement_short     String?
+  ch_hidden_pilote     Boolean     @default(false)
+  ch_saisie_ate        type_ate?
+  ch_state             type_statut
+  zg_applicable        String?
+  porteur_ids_noDAC    String?
+  porteur_shorts_noDAC String?
+  porteur_ids_DAC      String?
+  porteur_shorts_DAC   String?
+  ch_per               String
+  maille_applicable    String?
+  replicate_val_reg_to String?
+  replicate_val_nat_to String?
+  ch_cible_attendue    Boolean
+  conseiller_mail      String?
+
+  @@schema("raw_data")
+}
+
+model metadata_ppgs {
+  ppg_id   String  @id
+  ppg_nom  String
+  ppg_desc String?
+  ppg_axe  String?
+
+  @@schema("raw_data")
+}
+
+model metadata_porteurs {
+  porteur_id         String  @id
+  porteur_short      String
+  porteur_name       String
+  porteur_desc       String?
+  porteur_type_id    String?
+  porteur_type_short String?
+  porteur_directeur  String?
+  porteur_name_short String?
+  porteur_picto      String?
+
+  @@schema("raw_data")
+}
+
+model metadata_perimetres {
+  perimetre_id           String  @id
+  per_nom                String
+  per_porteur_id         String?
+  per_porteur_name_short String?
+
+  @@schema("raw_data")
+}
+
+model metadata_axes {
+  axe_id   String  @id
+  axe_name String
+  axe_desc String?
+
+  @@schema("raw_data")
+}
+
+// Utilisé uniquement par les modèles baromètre (baro_meta_engagement, baro_meta_chantiers) côté datajobs — à supprimer lors du décommissionnement du baromètre
+model metadata_engagement {
+  engagement_id    String @id
+  engagement_short String
+  engagement_name  String
+
+  @@schema("raw_data")
+}
+
+model metadata_indicateur_types {
+  indic_type_id    String  @id
+  indic_type_name  String
+  indic_type_descr String?
+
+  @@schema("raw_data")
+}
+
+model metadata_zonegroup {
+  zone_group_id String @id
+  zg_zones      String
+
+  @@schema("raw_data")
+}
+
 model mesure_indicateur_temporaire {
   id           String                           @id @db.Uuid
   indic_id     String?

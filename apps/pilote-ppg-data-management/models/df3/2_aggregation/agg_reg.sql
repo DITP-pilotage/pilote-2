@@ -24,7 +24,7 @@ mesure_last_params_reg AS (
         {{ ref('mesure_last') }}
             AS mesure_lastvalmonth
     LEFT JOIN
-        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} -- noqa: LT05
+        {{ source('ppg_metadata', 'metadata_parametrage_indicateurs') }} -- noqa: LT05
             AS metadata_indic
         ON mesure_lastvalmonth.indic_id = metadata_indic.indic_id
 ),
@@ -78,7 +78,7 @@ indic_agg_from_dept AS (
         metadata_indic.vc_reg_from,
         metadata_indic.vc_reg_op
     FROM
-        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} -- noqa: LT05
+        {{ source('ppg_metadata', 'metadata_parametrage_indicateurs') }} -- noqa: LT05
             AS metadata_indic
     WHERE
         metadata_indic.vi_reg_from NOT IN ('_', 'user_input')

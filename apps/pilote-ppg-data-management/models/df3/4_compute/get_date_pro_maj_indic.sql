@@ -11,7 +11,7 @@ src_indic_territo AS (
         indic_id,
         indic_territorialise AS indic_territo
     FROM
-        {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }} -- noqa: LT05
+        {{ source('ppg_metadata', 'metadata_indicateurs_complementaire') }} -- noqa: LT05
     WHERE indic_territorialise
 ),
 
@@ -66,7 +66,7 @@ src_config_tempo AS (
         periodicite,
         delai_disponibilite
     FROM
-        {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }} -- noqa: LT05
+        {{ source('ppg_metadata', 'metadata_indicateurs_complementaire') }} -- noqa: LT05
     ORDER BY indic_id
 ),
 

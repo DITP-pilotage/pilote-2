@@ -28,7 +28,7 @@ mediane_par_chantier_jalon AS (
             AS mediane
     FROM {{ ref('compute_ta_ch_jalon') }} AS ta_ch_jalon
     LEFT JOIN
-        {{ source('python_load', 'metadata_zones') }} AS zones
+        {{ source('ppg_metadata', 'metadata_zones') }} AS zones
         ON ta_ch_jalon.zone_id = zones.zone_id
     WHERE ta_ch_jalon.taa_courant_ch IS NOT NULL AND zones.zone_type <> 'NAT'
     GROUP BY ta_ch_jalon.chantier_id, zones.zone_type, ta_ch_jalon.jalon

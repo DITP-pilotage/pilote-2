@@ -2,7 +2,7 @@ WITH
 
 source AS (
 
-    SELECT * FROM {{ source('python_load', 'metadata_axes') }}
+    SELECT * FROM {{ source('ppg_metadata', 'metadata_axes') }}
 
 ),
 
@@ -10,7 +10,6 @@ renamed AS (
 
     SELECT
         axe_id AS id,
-        axe_short AS nom_court,
         axe_name AS nom,
         axe_desc AS description
 
