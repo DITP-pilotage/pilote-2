@@ -365,6 +365,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
           id: "IND-001",
           chantier_id: "CH-001",
           nom: "Test Indicateur",
+          type_id: "IMPACT",
         },
       });
 
@@ -854,6 +855,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
           id: "IND-001",
           chantier_id: "CH-001",
           nom: "Test Indicateur",
+          type_id: "IMPACT",
         },
       });
 

@@ -39,6 +39,7 @@ describe("PrismaIndicateurRepository", () => {
         data: {
           id: "IND-001",
           nom: "Indicateur Test 1",
+          type_id: "IMPACT",
           est_barometre: false,
           est_phare: false,
           chantier_identite: {
@@ -158,6 +159,7 @@ describe("PrismaIndicateurRepository", () => {
         data: {
           id: "IND-002",
           nom: "Indicateur Test 2",
+          type_id: "IMPACT",
           est_barometre: false,
           est_phare: false,
           chantier_identite: {
