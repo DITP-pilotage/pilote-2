@@ -91,16 +91,13 @@ ch_has_meteo AS (
     SELECT
         chantier_id,
         BOOL_OR(meteo IS NOT NULL) FILTER (
-            WHERE
-                maille = 'DEPT'
+            WHERE maille = 'DEPT'
         ) AS has_meteo_dept,
         BOOL_OR(meteo IS NOT NULL) FILTER (
-            WHERE
-                maille = 'REG'
+            WHERE maille = 'REG'
         ) AS has_meteo_reg,
         BOOL_OR(meteo IS NOT NULL) FILTER (
-            WHERE
-                maille = 'NAT'
+            WHERE maille = 'NAT'
         ) AS has_meteo_nat
     FROM synthese_triee_par_date
     GROUP BY
