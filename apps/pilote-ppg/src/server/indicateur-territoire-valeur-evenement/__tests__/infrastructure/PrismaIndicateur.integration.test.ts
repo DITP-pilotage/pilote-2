@@ -254,6 +254,7 @@ describe("PrismaIndicateurRepository", () => {
         data: {
           id: "IND-003",
           nom: "Indicateur Test 3",
+          type_id: "IMPACT",
           est_barometre: false,
           est_phare: false,
           chantier_identite: {
