@@ -5,7 +5,7 @@ export type IndicateurIdentiteResult = {
   id: string;
   nom: string;
   description: string | null;
-  type_nom: string | null;
+  type_id: $Enums.TypeIndicateur;
   est_phare: boolean;
   chantier: {
     id: string;
@@ -41,7 +41,7 @@ export class GetIndicateursIdentiteQuery {
       id: indicateur.id,
       nom: indicateur.nom,
       description: indicateur.description,
-      type_nom: indicateur.type_nom,
+      type_id: indicateur.type_id,
       est_phare: indicateur.est_phare ?? false,
       chantier: {
         id: indicateur.chantier_identite.id,

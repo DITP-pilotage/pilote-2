@@ -52,23 +52,6 @@ describe("IndicateurSQLRepository", () => {
           delai_disponibilite: null,
           responsables_donnees_mails: ["jane.doe@pilote.fr"],
         });
-        // IND-003 est exclu du résultat car type_id est null (non IMPACT)
-        await fixtures.indicateurIdentite({
-          id: "IND-003",
-          nom: "Indicateur 003",
-          chantier_id: chantier2.id,
-          type_id: null,
-          est_barometre: true,
-          description: "Indicateur 3 chantier 2",
-          source: "Une source indic 3",
-          mode_de_calcul: "Un mode indic 3",
-          unite_mesure: "kg",
-          parent_id: null,
-          periodicite: null,
-          delai_disponibilite: null,
-          responsables_donnees_mails: ["john.doe@pilote.fr"],
-        });
-
         // When
         const result =
           await prismaIndicateurRepository.récupérerGroupésParChantier([
@@ -178,12 +161,6 @@ describe("IndicateurSQLRepository", () => {
           chantier_id: chantier2.id,
           type_id: "IMPACT",
           unite_mesure: "mg",
-        });
-        // IND-003 sans type_id (exclu des résultats)
-        await fixtures.indicateurIdentite({
-          id: "IND-003",
-          chantier_id: chantier3.id,
-          type_id: null,
         });
         // IND-004 n'a pas de territoire DEPT-01 (exclu des résultats)
         await fixtures.indicateurIdentite({
@@ -871,22 +848,6 @@ describe("IndicateurSQLRepository", () => {
           periodicite: null,
           delai_disponibilite: null,
           responsables_donnees_mails: ["jane.doe@pilote.fr"],
-        });
-        // IND-003 sans type_id (exclu du résultat)
-        await fixtures.indicateurIdentite({
-          id: "IND-003",
-          nom: "Indicateur 003",
-          chantier_id: chantier2.id,
-          type_id: null,
-          est_barometre: true,
-          description: "Indicateur 3 chantier 2",
-          source: "Une source indic 3",
-          mode_de_calcul: "Un mode indic 3",
-          unite_mesure: "kg",
-          parent_id: null,
-          periodicite: null,
-          delai_disponibilite: null,
-          responsables_donnees_mails: ["john.doe@pilote.fr"],
         });
         await fixtures.indicateurIdentite({
           id: "IND-004",
