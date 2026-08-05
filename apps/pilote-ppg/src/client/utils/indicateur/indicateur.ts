@@ -1,5 +1,4 @@
 import Indicateur, {
-  TypeIndicateur,
   libellesTypeIndicateur,
 } from "@/server/domain/indicateur/Indicateur.interface";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";

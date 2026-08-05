@@ -29,7 +29,7 @@ SELECT
     meta_indic.id,
     meta_indic.nom,
     meta_indic.chantier_id,
-    meta_indic.indicateur_type_id AS type_id,
+    meta_indic.indicateur_type_id::"TypeIndicateur" AS type_id,
     meta_indic.est_barometre,
     meta_indic.est_phare,
     meta_indic.description,
