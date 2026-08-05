@@ -36,7 +36,7 @@ mesure_last_params_nat AS (
         {{ ref('mesure_last') }}
             AS mesure_lastvalmonth
     LEFT JOIN
-        {{ source('parametrage_indicateurs', 'metadata_parametrage_indicateurs') }} -- noqa: LT05
+        {{ source('ppg_metadata', 'metadata_parametrage_indicateurs') }} -- noqa: LT05
             AS metadata_indic
         ON mesure_lastvalmonth.indic_id = metadata_indic.indic_id
 ),

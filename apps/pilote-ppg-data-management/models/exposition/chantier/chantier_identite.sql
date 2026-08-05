@@ -64,7 +64,7 @@ ch_maille_has_ta_pivot_clean AS (
         {{ source('db_schema_public', 'territoire') }} AS territoire
         ON ta_chantier.territoire_code = territoire.code
     LEFT JOIN
-        {{ source('python_load', 'metadata_zones') }} AS zones
+        {{ source('ppg_metadata', 'metadata_zones') }} AS zones
         ON territoire.zone_id = zones.zone_id
     GROUP BY ta_chantier.chantier_id
 ),
@@ -159,10 +159,10 @@ LEFT JOIN
     {{ ref('int_directeurs_projets') }} AS dir_projets
     ON meta_ch.id = dir_projets.chantier_id
 LEFT JOIN
-    {{ source('python_load', 'metadata_ppgs') }} AS ppgs
+    {{ source('ppg_metadata', 'metadata_ppgs') }} AS ppgs
     ON meta_ch.ppg_id = ppgs.ppg_id
 LEFT JOIN
-    {{ source('python_load', 'metadata_axes') }} AS axes
+    {{ source('ppg_metadata', 'metadata_axes') }} AS axes
     ON ppgs.ppg_axe = axes.axe_id
 LEFT JOIN
     chantier_est_barometre

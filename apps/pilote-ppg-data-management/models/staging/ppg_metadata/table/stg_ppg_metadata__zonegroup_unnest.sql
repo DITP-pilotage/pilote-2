@@ -1,7 +1,7 @@
 WITH
 
 init AS (
-    SELECT * FROM {{ source('python_load', 'metadata_zonegroup') }}
+    SELECT * FROM {{ source('ppg_metadata', 'metadata_zonegroup') }}
 ),
 
 unnest_trgt AS (
@@ -23,7 +23,7 @@ unnest_parents AS (
     SELECT
         *,
         UNNEST(STRING_TO_ARRAY(zone_parent, ' | ')) AS parent
-    FROM {{ source('python_load', 'metadata_zones') }}
+    FROM {{ source('ppg_metadata', 'metadata_zones') }}
 ),
 
 find_children AS (

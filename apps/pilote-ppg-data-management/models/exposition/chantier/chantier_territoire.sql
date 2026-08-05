@@ -31,7 +31,7 @@ mediane_par_chantier AS (
     FROM
         {{ ref('compute_ta_ch') }} AS ta_ch_today
     LEFT JOIN
-        {{ source('python_load', 'metadata_zones') }} AS zones
+        {{ source('ppg_metadata', 'metadata_zones') }} AS zones
         ON ta_ch_today.zone_id = zones.zone_id
     WHERE
         ta_ch_today.valid_on = 'today'
@@ -155,7 +155,7 @@ SELECT
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
 CROSS JOIN {{ source('db_schema_public', 'territoire') }} AS territoire
 LEFT JOIN
-    {{ source('python_load', 'metadata_zones') }} AS zones
+    {{ source('ppg_metadata', 'metadata_zones') }} AS zones
     ON territoire.zone_id = zones.zone_id
 LEFT JOIN {{ ref('int_last_meteo') }} AS last_meteo
     ON

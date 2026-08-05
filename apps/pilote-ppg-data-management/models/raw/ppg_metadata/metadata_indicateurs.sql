@@ -3,9 +3,9 @@ SELECT
     metadata_complementaire.indic_territorialise,
     metadata_complementaire.mailles
 FROM
-    {{ source('parametrage_indicateurs', 'metadata_indicateurs_hidden') }}
+    {{ source('ppg_metadata', 'metadata_indicateurs_hidden') }}
         AS metadata_hidden
 LEFT JOIN
-    {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }} -- noqa: LT05
+    {{ source('ppg_metadata', 'metadata_indicateurs_complementaire') }} -- noqa: LT05
         AS metadata_complementaire
     ON metadata_hidden.indic_id = metadata_complementaire.indic_id

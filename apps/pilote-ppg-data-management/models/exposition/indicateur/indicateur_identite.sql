@@ -62,7 +62,7 @@ LEFT JOIN
         AS meta_parametrage_indicateurs
     ON meta_indic.id = meta_parametrage_indicateurs.indicateur_id
 LEFT JOIN
-    {{ source('parametrage_indicateurs', 'metadata_indicateurs_complementaire') }} -- noqa: LT05
+    {{ source('ppg_metadata', 'metadata_indicateurs_complementaire') }} -- noqa: LT05
         AS complementaires
     ON meta_indic.id = complementaires.indic_id
 LEFT JOIN

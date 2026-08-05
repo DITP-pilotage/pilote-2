@@ -101,8 +101,8 @@ exposures:
       - ref('compute_vaca')
       - ref('indicateur_identite')
       - ref('metadata_indicateurs')
-      - source('python_load', 'metadata_indicateurs_complementaire')
-      - source('python_load', 'metadata_parametrage_indicateurs')
+      - source('ppg_metadata', 'metadata_indicateurs_complementaire')
+      - source('ppg_metadata', 'metadata_parametrage_indicateurs')
     owner:
       name: Romain Thoyer
       email: romain.thoyer@modernisation.gouv.fr

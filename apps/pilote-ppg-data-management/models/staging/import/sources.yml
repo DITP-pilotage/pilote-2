@@ -1,10 +1,20 @@
 version: 2
 
 sources:
-  - name: parametrage_indicateurs
-    description: "Cette base correspond aux tables de paramétrage des indicateurs"
+  - name: ppg_metadata
+    description: "Tables de métadonnées PPG chargées dans le schema *raw_data* (dlt + paramétrage indicateurs)."
     schema: raw_data
     tables:
+      - name: metadata_engagement
+        description: Table référentielle des engagements du gouvernement
+      - name: metadata_zones
+      - name: metadata_chantiers
+      - name: metadata_perimetres
+      - name: metadata_ppgs
+      - name: metadata_axes
+      - name: metadata_zonegroup
+      - name: metadata_indicateur_types
+      - name: metadata_porteurs
       - name: metadata_indicateurs
         description: "Cette **table** contient les indicateurs Pilote qui ne sont **pas masqués**. Pour avoir l'ensemble des indicateurs **non masqués**, voir la table `metadata_indicateurs_hidden`."
       - name: metadata_indicateurs_hidden

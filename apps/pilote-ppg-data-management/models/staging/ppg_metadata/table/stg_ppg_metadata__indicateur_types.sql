@@ -2,7 +2,7 @@ WITH
 
 source AS (
 
-    SELECT * FROM {{ source('python_load', 'metadata_indicateur_types') }}
+    SELECT * FROM {{ source('ppg_metadata', 'metadata_indicateur_types') }}
 
 ),
 
