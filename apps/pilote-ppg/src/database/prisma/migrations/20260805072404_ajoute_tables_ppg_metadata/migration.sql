@@ -13,7 +13,7 @@ CREATE TABLE "raw_data"."metadata_zones" (
 CREATE TABLE "raw_data"."metadata_chantiers" (
     "chantier_id" TEXT NOT NULL,
     "ch_nom" TEXT NOT NULL,
-    "ch_descr" TEXT NOT NULL,
+    "ch_descr" TEXT,
     "ch_ppg" TEXT NOT NULL,
     "ch_territo" BOOLEAN NOT NULL DEFAULT false,
     "engagement_short" TEXT,
@@ -26,7 +26,7 @@ CREATE TABLE "raw_data"."metadata_chantiers" (
     "porteur_ids_DAC" TEXT,
     "porteur_shorts_DAC" TEXT,
     "ch_per" TEXT NOT NULL,
-    "maille_applicable" TEXT NOT NULL,
+    "maille_applicable" TEXT,
     "replicate_val_reg_to" TEXT,
     "replicate_val_nat_to" TEXT,
     "ch_cible_attendue" BOOLEAN NOT NULL,
@@ -40,6 +40,7 @@ CREATE TABLE "raw_data"."metadata_ppgs" (
     "ppg_id" TEXT NOT NULL,
     "ppg_nom" TEXT NOT NULL,
     "ppg_desc" TEXT,
+    "ppg_axe" TEXT,
 
     CONSTRAINT "metadata_ppgs_pkey" PRIMARY KEY ("ppg_id")
 );
