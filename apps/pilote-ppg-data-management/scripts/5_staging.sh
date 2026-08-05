@@ -15,5 +15,4 @@ then
   fi
 fi
 
-dbt run --select raw.ppg_metadata.metadata_indicateurs
 dbt run --select staging

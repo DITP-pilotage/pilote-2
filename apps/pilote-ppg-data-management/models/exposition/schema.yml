@@ -100,7 +100,7 @@ exposures:
     depends_on:
       - ref('compute_vaca')
       - ref('indicateur_identite')
-      - ref('metadata_indicateurs')
+      - source('ppg_metadata', 'metadata_indicateurs_hidden')
       - source('ppg_metadata', 'metadata_indicateurs_complementaire')
       - source('ppg_metadata', 'metadata_parametrage_indicateurs')
     owner:
