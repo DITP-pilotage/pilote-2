@@ -1,11 +1,11 @@
-import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { libellesTypeIndicateur } from "@/server/domain/indicateur/Indicateur.interface";
 
 export type IndicateurIdentiteResult = {
   id: string;
   nom: string;
   description: string | null;
-  type_id: $Enums.TypeIndicateur;
+  type_nom: string;
   est_phare: boolean;
   chantier: {
     id: string;
@@ -41,7 +41,7 @@ export class GetIndicateursIdentiteQuery {
       id: indicateur.id,
       nom: indicateur.nom,
       description: indicateur.description,
-      type_id: indicateur.type_id,
+      type_nom: libellesTypeIndicateur[indicateur.type_id],
       est_phare: indicateur.est_phare ?? false,
       chantier: {
         id: indicateur.chantier_identite.id,

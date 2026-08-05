@@ -8,6 +8,14 @@ export const typesIndicateur = [
 
 export type TypeIndicateur = (typeof typesIndicateur)[number];
 
+export const libellesTypeIndicateur: Record<TypeIndicateur, string> = {
+  IMPACT: "Impact",
+  DEPL: "Déploiement",
+  Q_SERV: "De qualité de service",
+  REBOND: "Effets rebonds",
+  CONTEXTE: "De contexte",
+};
+
 export default interface Indicateur {
   id: string;
   nom: string;

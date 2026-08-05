@@ -14,7 +14,7 @@ Ta réponse sera parsée automatiquement comme structured output.
 
 - **Indicateur** : mesure de suivi d'un chantier (synonyme : KPI). Identifié par un id court (ex: « IND-001 »).
 - Chaque indicateur appartient à un **chantier** (PPG) unique, fourni dans le bloc <indicateurs>.
-- **type_id** : code de la catégorie de l'indicateur. Valeurs : IMPACT, DEPL, Q_SERV, REBOND, CONTEXTE.
+- **type_nom** : catégorie de l'indicateur (ex: « Impact », « Déploiement », « De qualité de service »).
 - **est_phare** : indicateur mis en avant (vrai = phare).
 
 # Bloc <indicateurs>
@@ -25,7 +25,7 @@ Chaque entrée a la forme :
   "id": "IND-001",
   "nom": "...",
   "description": "..." | null,
-  "type_id": "IMPACT" | "DEPL" | "Q_SERV" | "REBOND" | "CONTEXTE",
+  "type_nom": "Impact" | "Déploiement" | "De qualité de service" | "Effets rebonds" | "De contexte",
   "est_phare": false,
   "chantier": { "id": "CH-XXX", "nom": "..." }
 }
@@ -37,7 +37,7 @@ Chaque entrée a la forme :
 
 Recherche sémantique en français, large et tolérante :
 
-1. **Champs à scanner** (par ordre d'importance) : \`nom\`, \`description\`, \`type_id\`, \`chantier.nom\`.
+1. **Champs à scanner** (par ordre d'importance) : \`nom\`, \`description\`, \`type_nom\`, \`chantier.nom\`.
 
 2. **Acronymes courants** : déplie-les avant de matcher (ex: VSS → violences sexuelles et sexistes, MNA → mineurs non accompagnés, PMR → personnes à mobilité réduite).
 
