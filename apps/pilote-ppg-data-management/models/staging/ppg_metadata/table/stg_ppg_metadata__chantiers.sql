@@ -39,7 +39,7 @@ renamed AS (
                 AND 'NAT' = ANY(maille_applicable)
                 AND NOT 'DEPT' = ANY(maille_applicable)
                 THEN 'REG'
-            WHEN ch_territo AND cardinality(maille_applicable) = 0 THEN 'DEPT'
+            WHEN ch_territo AND CARDINALITY(maille_applicable) = 0 THEN 'DEPT'
             ELSE 'NAT'
         END AS maille_pilotage,
         conseiller_mail
