@@ -512,9 +512,7 @@ model metadata_chantiers {
   ch_state             type_statut
   zg_applicable        String?
   porteur_ids_noDAC    String?
-  porteur_shorts_noDAC String?
   porteur_ids_DAC      String?
-  porteur_shorts_DAC   String?
   ch_per               String
   maille_applicable    String?
   replicate_val_reg_to String?
@@ -576,7 +574,9 @@ model metadata_engagement {
 
 
 model metadata_zonegroup {
-  zone_group_id String @id
+  zone_group_id String  @id
+  zg_name       String?
+  zg_desc       String?
   zg_zones      String
 
   @@schema("raw_data")

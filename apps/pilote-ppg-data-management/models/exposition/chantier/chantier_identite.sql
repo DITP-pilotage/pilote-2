@@ -9,6 +9,29 @@ WITH
 
 -- On récupère les directeurs des directions porteuses de chaque chantier
 
+ch_unnest_porteurs_nodac AS (
+    SELECT
+        id AS chantier_id,
+        UNNEST(ministeres_ids) AS pi
+    FROM {{ ref('stg_ppg_metadata__chantiers') }}
+),
+
+ch_unnest_porteurs_nodac_acronymes AS (
+    SELECT
+        ch_unnest_porteurs_nodac.*,
+        COALESCE(porteurs.acronyme, '-') AS acronyme
+    FROM ch_unnest_porteurs_nodac
+    LEFT JOIN {{ ref('stg_ppg_metadata__porteurs') }} AS porteurs
+        ON ch_unnest_porteurs_nodac.pi = porteurs.id
+),
+
+ch_unnest_porteurs_nodac_agg AS (
+    SELECT
+        chantier_id,
+        ARRAY_AGG(acronyme ORDER BY pi) AS p_ministeres_acronymes
+    FROM ch_unnest_porteurs_nodac_acronymes
+    GROUP BY chantier_id
+),
 
 ch_unnest_porteurs_dac AS (
     SELECT
@@ -116,7 +139,9 @@ SELECT
         p_names.p_acronymes, STRING_TO_ARRAY('', '')
     ) AS directions_administration_centrale,
     meta_ch.ministeres_ids AS ministeres,
-    meta_ch.ministeres_polygrammes AS ministeres_acronymes,
+    COALESCE(
+        nodac_names.p_ministeres_acronymes, STRING_TO_ARRAY('', '')
+    ) AS ministeres_acronymes,
     dir_projets.ids AS directeurs_projet_ids,
     axes.axe_name AS axe,
     ppgs.ppg_nom AS ppg,
@@ -149,6 +174,9 @@ SELECT
     FALSE AS a_supprimer
 
 FROM {{ ref('stg_ppg_metadata__chantiers') }} AS meta_ch
+LEFT JOIN
+    ch_unnest_porteurs_nodac_agg AS nodac_names
+    ON meta_ch.id = nodac_names.chantier_id
 LEFT JOIN
     ch_unnest_porteurs_dac_pnames_agg AS p_names
     ON meta_ch.id = p_names.chantier_id
