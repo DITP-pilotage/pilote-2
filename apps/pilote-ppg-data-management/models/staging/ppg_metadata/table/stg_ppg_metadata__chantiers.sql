@@ -23,12 +23,6 @@ renamed AS (
         zg_applicable::TEXT AS zone_groupe_applicable,
         STRING_TO_ARRAY("porteur_ids_noDAC", ' | ') AS ministeres_ids,
         STRING_TO_ARRAY(
-            "porteur_shorts_noDAC", ' | '
-        ) AS ministeres_polygrammes,
-        STRING_TO_ARRAY(
-            "porteur_shorts_DAC", ' | '
-        ) AS directeurs_administration_centrale_polygrammes,
-        STRING_TO_ARRAY(
             "porteur_ids_DAC", ' | '
         ) AS directeurs_administration_centrale_ids,
         STRING_TO_ARRAY(ch_per, ' | ') AS perimetre_ids,
