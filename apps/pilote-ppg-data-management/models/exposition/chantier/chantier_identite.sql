@@ -139,7 +139,9 @@ SELECT
         p_names.p_acronymes, STRING_TO_ARRAY('', '')
     ) AS directions_administration_centrale,
     meta_ch.ministeres_ids AS ministeres,
-    COALESCE(nodac_names.p_ministeres_acronymes, STRING_TO_ARRAY('', '')) AS ministeres_acronymes,
+    COALESCE(
+        nodac_names.p_ministeres_acronymes, STRING_TO_ARRAY('', '')
+    ) AS ministeres_acronymes,
     dir_projets.ids AS directeurs_projet_ids,
     axes.axe_name AS axe,
     ppgs.ppg_nom AS ppg,
