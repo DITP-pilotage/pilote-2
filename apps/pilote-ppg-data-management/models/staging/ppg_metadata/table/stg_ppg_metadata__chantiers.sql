@@ -21,22 +21,25 @@ renamed AS (
         ch_saisie_ate AS ate,
         ch_state AS statut,
         zg_applicable::TEXT AS zone_groupe_applicable,
-        STRING_TO_ARRAY("porteur_ids_noDAC", ' | ') AS ministeres_ids,
-        STRING_TO_ARRAY(
-            "porteur_ids_DAC", ' | '
-        ) AS directeurs_administration_centrale_ids,
+        "porteur_ids_noDAC" AS ministeres_ids,
+        "porteur_ids_DAC" AS directeurs_administration_centrale_ids,
         STRING_TO_ARRAY(ch_per, ' | ') AS perimetre_ids,
         -- Géré via gestion des comptes désormais
         -- STRING_TO_ARRAY(ch_dp, ' | ') AS directeurs_projet_noms,
         -- STRING_TO_ARRAY(ch_dp_mail, ' | ') AS directeurs_projet_mails,
         -- Maille applicable déclarée
-        STRING_TO_ARRAY(maille_applicable, ' | ') AS maille_applicable_declaree,
+        maille_applicable AS maille_applicable_declaree,
         UPPER(replicate_val_reg_to) AS replicate_val_reg_to,
         UPPER(replicate_val_nat_to) AS replicate_val_nat_to,
         ch_cible_attendue::BOOLEAN AS ch_cible_attendue,
         CASE
-            WHEN ch_territo AND maille_applicable = 'REG | NAT' THEN 'REG'
-            WHEN ch_territo AND maille_applicable IS NULL THEN 'DEPT'
+            WHEN
+                ch_territo
+                AND 'REG' = ANY(maille_applicable)
+                AND 'NAT' = ANY(maille_applicable)
+                AND NOT 'DEPT' = ANY(maille_applicable)
+                THEN 'REG'
+            WHEN ch_territo AND cardinality(maille_applicable) = 0 THEN 'DEPT'
             ELSE 'NAT'
         END AS maille_pilotage,
         conseiller_mail

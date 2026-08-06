@@ -41,8 +41,8 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
         pageKey: "parametrage-metadata-indicateur",
       },
       {
-        label: "🚧 Paramétrage metadata chantier 🚧",
-        href: "/panel-administrateur/parametrage-metadata-chantier",
+        label: "Chantiers",
+        href: "/panel-administrateur/chantiers",
         pageKey: "metadata-chantier",
       },
       {
