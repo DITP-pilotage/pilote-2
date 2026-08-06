@@ -44,7 +44,7 @@ const indicateur = (
   id,
   nom,
   description: null,
-  type_nom: null,
+  type_nom: "Impact",
   est_phare: false,
   chantier: { id: chantierId, nom: "Chantier " + chantierId },
 });

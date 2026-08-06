@@ -14,7 +14,7 @@ Ta réponse sera parsée automatiquement comme structured output.
 
 - **Indicateur** : mesure de suivi d'un chantier (synonyme : KPI). Identifié par un id court (ex: « IND-001 »).
 - Chaque indicateur appartient à un **chantier** (PPG) unique, fourni dans le bloc <indicateurs>.
-- **type_nom** : catégorie de l'indicateur (ex: « Impact », « Résultat », « Réalisation »).
+- **type_nom** : catégorie de l'indicateur (ex: « Impact », « Déploiement », « De qualité de service »).
 - **est_phare** : indicateur mis en avant (vrai = phare).
 
 # Bloc <indicateurs>
@@ -25,7 +25,7 @@ Chaque entrée a la forme :
   "id": "IND-001",
   "nom": "...",
   "description": "..." | null,
-  "type_nom": "..." | null,
+  "type_nom": "Impact" | "Déploiement" | "De qualité de service" | "Effets rebonds" | "De contexte",
   "est_phare": false,
   "chantier": { "id": "CH-XXX", "nom": "..." }
 }

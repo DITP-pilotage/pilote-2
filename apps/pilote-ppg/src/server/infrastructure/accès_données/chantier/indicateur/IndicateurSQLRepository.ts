@@ -6,9 +6,7 @@ import {
   metadata_parametrage_indicateurs as PrismaMetadataParametrageIndicateurs,
 } from "@prisma/client";
 import IndicateurRepository from "@/server/domain/indicateur/IndicateurRepository.interface";
-import Indicateur, {
-  TypeIndicateur,
-} from "@/server/domain/indicateur/Indicateur.interface";
+import Indicateur from "@/server/domain/indicateur/Indicateur.interface";
 import { CODES_MAILLES } from "@/server/infrastructure/accès_données/maille/mailleSQLParser";
 import { DétailsIndicateurs } from "@/server/domain/indicateur/DétailsIndicateur.interface";
 import { Maille } from "@/server/domain/maille/Maille.interface";
@@ -45,7 +43,7 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
     return {
       id: prismaIndicateurIdentite.id,
       nom: prismaIndicateurIdentite.nom,
-      type: prismaIndicateurIdentite.type_id as TypeIndicateur,
+      type: prismaIndicateurIdentite.type_id,
       estIndicateurDuBaromètre: prismaIndicateurIdentite.est_barometre ?? false,
       description: prismaIndicateurIdentite.description,
       source: prismaIndicateurIdentite.source,
@@ -170,9 +168,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         where: {
           chantier_id: { in: chantiersIds },
           statut: "PUBLIE",
-          NOT: {
-            type_id: null,
-          },
         },
       });
 
@@ -197,9 +192,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         indicateur_identite: {
           chantier_id: { in: chantiersIds },
           statut: "PUBLIE",
-          NOT: {
-            type_id: null,
-          },
         },
       },
       include: {
@@ -278,9 +270,6 @@ export default class IndicateurSQLRepository implements IndicateurRepository {
         where: {
           chantier_id: chantierId,
           statut: "PUBLIE",
-          NOT: {
-            type_id: null,
-          },
         },
       });
 

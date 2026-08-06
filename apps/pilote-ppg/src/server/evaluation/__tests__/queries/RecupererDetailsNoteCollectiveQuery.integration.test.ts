@@ -576,6 +576,7 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
             id: "IND-001",
             nom: "Indicateur Alpha",
             chantier_id: chantier1.id,
+            type_id: "IMPACT",
           },
         });
 
@@ -584,6 +585,7 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
             id: "IND-002",
             nom: "Indicateur Beta",
             chantier_id: chantier1.id,
+            type_id: "IMPACT",
           },
         });
 
@@ -592,6 +594,7 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
             id: "IND-003",
             nom: "Indicateur Gamma",
             chantier_id: chantier1.id,
+            type_id: "IMPACT",
           },
         });
 
@@ -600,6 +603,7 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
             id: "IND-004",
             nom: "Indicateur Autre Chantier",
             chantier_id: chantier2.id,
+            type_id: "IMPACT",
           },
         });
 
@@ -608,6 +612,7 @@ describe("RecupererDetailsNoteCollectiveQuery", () => {
             id: "IND-005",
             nom: "Indicateur Autre Territoire",
             chantier_id: chantier1.id,
+            type_id: "IMPACT",
           },
         });
 

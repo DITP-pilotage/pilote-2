@@ -13,7 +13,6 @@ sources:
       - name: metadata_ppgs
       - name: metadata_axes
       - name: metadata_zonegroup
-      - name: metadata_indicateur_types
       - name: metadata_porteurs
       - name: metadata_indicateurs
         description: "Cette **table** contient les indicateurs Pilote qui ne sont **pas masqués**. Pour avoir l'ensemble des indicateurs **non masqués**, voir la table `metadata_indicateurs_hidden`."

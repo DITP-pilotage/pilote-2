@@ -779,9 +779,6 @@ export class PrismaIndicateurRepository implements IndicateurRepository {
         indicateur_identite: {
           chantier_id: chantierId,
           statut: "PUBLIE",
-          NOT: {
-            type_id: null,
-          },
         },
       },
       include: {

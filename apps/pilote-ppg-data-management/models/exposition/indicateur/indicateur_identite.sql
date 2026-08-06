@@ -29,8 +29,7 @@ SELECT
     meta_indic.id,
     meta_indic.nom,
     meta_indic.chantier_id,
-    meta_indic.indicateur_type_id AS type_id,
-    meta_indic_types.nom AS type_nom,
+    meta_indic.indicateur_type_id::"TypeIndicateur" AS type_id,
     meta_indic.est_barometre,
     meta_indic.est_phare,
     meta_indic.description,
@@ -65,9 +64,6 @@ LEFT JOIN
     {{ source('ppg_metadata', 'metadata_indicateurs_complementaire') }} -- noqa: LT05
         AS complementaires
     ON meta_indic.id = complementaires.indic_id
-LEFT JOIN
-    {{ ref('stg_ppg_metadata__indicateur_types') }} AS meta_indic_types
-    ON meta_indic.indicateur_type_id = meta_indic_types.id
 LEFT JOIN mailles_applicables ON meta_indic.id = mailles_applicables.indic_id
 LEFT JOIN
     {{ ref('stg_ppg_metadata__chantiers') }} AS meta_chantier

@@ -56,6 +56,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         data: {
           id: "IND-001",
           nom: "Indicateur Test 1",
+          type_id: "IMPACT",
           est_barometre: false,
           est_phare: false,
           chantier_identite: {
@@ -165,6 +166,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         data: {
           id: "IND-002",
           nom: "Indicateur Test 2",
+          type_id: "IMPACT",
           est_barometre: false,
           est_phare: false,
           chantier_identite: {
@@ -336,6 +338,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         data: {
           id: "IND-003",
           nom: "Indicateur Test 3",
+          type_id: "IMPACT",
           est_barometre: false,
           est_phare: false,
           chantier_identite: {
@@ -350,6 +353,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         data: {
           id: "IND-004",
           nom: "Indicateur Test 4",
+          type_id: "IMPACT",
           est_barometre: false,
           est_phare: false,
           chantier_identite: {
@@ -542,6 +546,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         data: {
           id: "IND-005",
           nom: "Indicateur Test 5",
+          type_id: "IMPACT",
           est_barometre: false,
           est_phare: false,
           chantier_identite: {
@@ -685,6 +690,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         data: {
           id: "IND-006",
           nom: "Indicateur Test 6",
+          type_id: "IMPACT",
           est_barometre: false,
           est_phare: false,
           chantier_identite: {
@@ -821,6 +827,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         data: {
           id: "IND-007",
           nom: "Indicateur Test 7",
+          type_id: "IMPACT",
           est_barometre: false,
           est_phare: false,
           chantier_identite: {
@@ -1021,6 +1028,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         data: {
           id: "IND-010",
           nom: "Indicateur Test 10",
+          type_id: "IMPACT",
           est_barometre: false,
           est_phare: false,
           chantier_identite: {
@@ -1182,6 +1190,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         data: {
           id: "IND-011",
           nom: "Indicateur Test 11",
+          type_id: "IMPACT",
           est_barometre: false,
           est_phare: false,
           chantier_identite: {
@@ -1317,6 +1326,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         data: {
           id: "IND-008",
           nom: "Indicateur Test 8",
+          type_id: "IMPACT",
           est_barometre: false,
           est_phare: false,
           chantier_identite: {
@@ -1514,6 +1524,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           id: "IND-PVA-001",
           nom: "Indicateur PVA Test 1",
           unite_mesure: "%",
+          type_id: "IMPACT",
           est_barometre: false,
           est_phare: false,
           statut: "PUBLIE",
@@ -1636,6 +1647,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
           id: "IND-PVA-002",
           nom: "Indicateur PVA Test 2",
           unite_mesure: "unité",
+          type_id: "IMPACT",
           est_barometre: false,
           est_phare: false,
           statut: "PUBLIE",
@@ -1794,6 +1806,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
         data: {
           id: "IND-PVA-003",
           nom: "Indicateur PVA Test 3",
+          type_id: "IMPACT",
           est_barometre: false,
           est_phare: false,
           statut: "PUBLIE",
@@ -1939,6 +1952,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
             id: "IND-PVA-005",
             chantier_id: "CH-PVA-005",
             nom: "Indicateur PVA Test 5 (Chantier Brouillon)",
+            type_id: "IMPACT",
             est_barometre: false,
             est_phare: false,
             statut: "PUBLIE",
@@ -1947,6 +1961,7 @@ describe("PrismaIndicateurTerritoireValeurEvenementRepository", () => {
             id: "IND-PVA-006",
             chantier_id: "CH-PVA-006",
             nom: "Indicateur PVA Test 6 (Indicateur Brouillon)",
+            type_id: "IMPACT",
             est_barometre: false,
             est_phare: false,
             statut: "SUPPRIME",
