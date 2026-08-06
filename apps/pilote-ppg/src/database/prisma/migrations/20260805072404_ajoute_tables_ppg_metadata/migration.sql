@@ -24,9 +24,7 @@ CREATE TABLE "raw_data"."metadata_chantiers" (
     "ch_state" "public"."type_statut" NOT NULL,
     "zg_applicable" TEXT,
     "porteur_ids_noDAC" TEXT,
-    "porteur_shorts_noDAC" TEXT,
     "porteur_ids_DAC" TEXT,
-    "porteur_shorts_DAC" TEXT,
     "ch_per" TEXT NOT NULL,
     "maille_applicable" TEXT,
     "replicate_val_reg_to" TEXT,
@@ -96,20 +94,21 @@ CREATE TABLE "raw_data"."metadata_engagement" (
 );
 
 -- CreateTable
-DROP TABLE IF EXISTS "raw_data"."metadata_indicateur_types" CASCADE;
-CREATE TABLE "raw_data"."metadata_indicateur_types" (
-    "indic_type_id" TEXT NOT NULL,
-    "indic_type_name" TEXT NOT NULL,
-    "indic_type_descr" TEXT,
-
-    CONSTRAINT "metadata_indicateur_types_pkey" PRIMARY KEY ("indic_type_id")
-);
-
--- CreateTable
 DROP TABLE IF EXISTS "raw_data"."metadata_zonegroup" CASCADE;
 CREATE TABLE "raw_data"."metadata_zonegroup" (
     "zone_group_id" TEXT NOT NULL,
+    "zg_name" TEXT,
+    "zg_desc" TEXT,
     "zg_zones" TEXT NOT NULL,
 
     CONSTRAINT "metadata_zonegroup_pkey" PRIMARY KEY ("zone_group_id")
 );
+
+-- CreateEnum
+CREATE TYPE "public"."TypeIndicateur" AS ENUM ('IMPACT', 'DEPL', 'Q_SERV', 'REBOND', 'CONTEXTE');
+
+-- AlterTable
+ALTER TABLE "public"."indicateur_identite"
+DROP COLUMN "type_nom",
+ALTER COLUMN "type_id" TYPE "public"."TypeIndicateur" USING "type_id"::"public"."TypeIndicateur",
+ALTER COLUMN "type_id" SET NOT NULL;
