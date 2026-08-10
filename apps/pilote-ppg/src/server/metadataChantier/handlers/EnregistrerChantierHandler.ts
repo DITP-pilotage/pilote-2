@@ -48,7 +48,7 @@ export class EnregistrerChantierHandler {
       ch_per: command.chPer,
       maille_applicable: command.mailleApplicable,
       ch_cible_attendue: command.chCibleAttendue,
-      conseiller_mail: command.conseillerMail,
+      conseiller_mail: command.conseillerMail || null,
     };
     await this.prisma.getInstance().metadata_chantiers.upsert({
       where: { chantier_id: command.chantierId },
