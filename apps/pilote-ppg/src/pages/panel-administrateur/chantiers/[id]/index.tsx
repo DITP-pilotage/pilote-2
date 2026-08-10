@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
-import { FunctionComponent } from "react";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { getContainer } from "@/server/dependances";
@@ -50,16 +49,14 @@ export async function getServerSideProps(
   };
 }
 
-const NextPageAdminChantierEdition: FunctionComponent<
-  InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({
+const NextPageAdminChantierEdition = ({
   chantierId,
   estUneCréation,
   chantierData,
   idSuivant,
   modificationReussie,
   creationReussie,
-}) => (
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => (
   <>
     <Head>
       <title>Panel Administrateur - Chantier {chantierId} - PILOTE</title>

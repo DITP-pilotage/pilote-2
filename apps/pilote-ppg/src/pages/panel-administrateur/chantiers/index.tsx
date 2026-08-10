@@ -1,6 +1,5 @@
 import Head from "next/head";
 import { GetServerSidePropsContext } from "next";
-import { FunctionComponent } from "react";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
@@ -24,7 +23,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   return { props: {} };
 }
 
-const NextPageAdminChantiers: FunctionComponent = () => (
+const NextPageAdminChantiers = () => (
   <>
     <Head>
       <title>Panel Administrateur - Gestion des chantiers - PILOTE</title>

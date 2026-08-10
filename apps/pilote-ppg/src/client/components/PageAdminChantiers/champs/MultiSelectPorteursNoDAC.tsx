@@ -1,10 +1,9 @@
-import { FunctionComponent } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import MultiSelect from "@/components/_commons/MultiSelectNew/MultiSelect";
 import api from "@/server/infrastructure/api/trpc/api";
-import { ChantierForm } from "@/components/PageAdminChantiers/useChantierMutations";
+import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
-const MultiSelectPorteursNoDAC: FunctionComponent = () => {
+const MultiSelectPorteursNoDAC = () => {
   const { data: porteurs = [] } =
     api.metadataChantier.listerPorteursMIN.useQuery();
   const { control } = useFormContext<ChantierForm>();

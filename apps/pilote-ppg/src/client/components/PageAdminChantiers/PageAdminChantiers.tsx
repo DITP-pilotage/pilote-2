@@ -1,10 +1,9 @@
-import { FunctionComponent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import api from "@/server/infrastructure/api/trpc/api";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 
-const PageAdminChantiers: FunctionComponent = () => {
+const PageAdminChantiers = () => {
   const router = useRouter();
   const { data: chantiers, isLoading } = api.metadataChantier.lister.useQuery();
 

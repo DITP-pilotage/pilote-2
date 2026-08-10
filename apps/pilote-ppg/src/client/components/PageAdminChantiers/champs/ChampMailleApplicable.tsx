@@ -1,12 +1,10 @@
-import { FunctionComponent } from "react";
 import { Controller, useFormContext } from "react-hook-form";
-import { ChantierForm } from "@/components/PageAdminChantiers/useChantierMutations";
+import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
 const MAILLES = ["NAT", "REG", "DEPT"] as const;
 
-const ChampMailleApplicable: FunctionComponent = () => {
-  const { control, watch } = useFormContext<ChantierForm>();
-  const mailleApplicable = watch("mailleApplicable");
+const ChampMailleApplicable = () => {
+  const { control } = useFormContext<ChantierForm>();
 
   return (
     <Controller
@@ -42,7 +40,7 @@ const ChampMailleApplicable: FunctionComponent = () => {
             >
               Tout sélectionner
             </button>
-            {mailleApplicable.length > 0 && (
+            {field.value.length > 0 && (
               <button
                 type="button"
                 className="text-xs text-gray-500 underline hover:no-underline"

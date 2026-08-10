@@ -52,7 +52,7 @@ export const defaultChantierVide = (chantierId: string): ChantierForm => ({
   conseillerMail: null,
 });
 
-export const useChantierMutations = ({
+export const useChantierForm = ({
   defaultValues,
   chantierId,
 }: {

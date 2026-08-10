@@ -1,14 +1,13 @@
 import { FormProvider } from "react-hook-form";
-import { FunctionComponent } from "react";
 import Link from "next/link";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import FicheChantier from "@/components/PageAdminChantiers/FicheChantier";
 import { MetadataChantier } from "@/server/metadataChantier/queries/RecupererChantierQuery";
 import {
-  useChantierMutations,
+  useChantierForm,
   defaultChantierVide,
   ChantierForm,
-} from "@/components/PageAdminChantiers/useChantierMutations";
+} from "@/components/PageAdminChantiers/useChantierForm";
 
 interface PageAdminChantierEditionProps {
   chantierId: string;
@@ -19,16 +18,14 @@ interface PageAdminChantierEditionProps {
   creationReussie: boolean;
 }
 
-const PageAdminChantierEdition: FunctionComponent<
-  PageAdminChantierEditionProps
-> = ({
+const PageAdminChantierEdition = ({
   chantierId,
   estUneCréation,
   chantierData,
   idSuivant,
   modificationReussie,
   creationReussie,
-}) => {
+}: PageAdminChantierEditionProps) => {
   const chantierIdEffectif = estUneCréation
     ? (idSuivant ?? chantierId)
     : chantierId;
@@ -38,7 +35,7 @@ const PageAdminChantierEdition: FunctionComponent<
     : defaultChantierVide(chantierIdEffectif);
 
   const { reactHookForm, modifierChantier, creerChantier, alerte } =
-    useChantierMutations({ defaultValues, chantierId: chantierIdEffectif });
+    useChantierForm({ defaultValues, chantierId: chantierIdEffectif });
 
   const titre = estUneCréation
     ? `Nouveau chantier — ${chantierIdEffectif}`

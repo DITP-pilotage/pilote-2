@@ -1,5 +1,4 @@
 import { Controller, useFormContext } from "react-hook-form";
-import { FunctionComponent } from "react";
 import { Input } from "@/components/_commons/Input";
 import { Textarea } from "@/components/_commons/Textarea";
 import Champ from "@/components/_commons/Champ";
@@ -11,7 +10,7 @@ import SélecteurZonegroup from "@/components/PageAdminChantiers/champs/Sélecte
 import MultiSelectPorteursNoDAC from "@/components/PageAdminChantiers/champs/MultiSelectPorteursNoDAC";
 import MultiSelectPorteursDAC from "@/components/PageAdminChantiers/champs/MultiSelectPorteursDAC";
 import ChampMailleApplicable from "@/components/PageAdminChantiers/champs/ChampMailleApplicable";
-import { ChantierForm } from "@/components/PageAdminChantiers/useChantierMutations";
+import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
 const OPTIONS_STATUT = [
   { libellé: "Brouillon", valeur: "BROUILLON" },
@@ -27,7 +26,7 @@ const OPTIONS_ATE = [
   { libellé: "Hors ATE centralisé", valeur: "hors_ate_centralise" },
 ];
 
-const FicheChantier: FunctionComponent = () => {
+const FicheChantier = () => {
   const form = useFormContext<ChantierForm>();
   const chantierId = form.watch("chantierId");
 

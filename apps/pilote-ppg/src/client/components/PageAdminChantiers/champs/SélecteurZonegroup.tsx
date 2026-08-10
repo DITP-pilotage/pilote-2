@@ -1,10 +1,9 @@
-import { FunctionComponent } from "react";
 import { Controller, useFormContext } from "react-hook-form";
 import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import api from "@/server/infrastructure/api/trpc/api";
-import { ChantierForm } from "@/components/PageAdminChantiers/useChantierMutations";
+import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
-const SélecteurZonegroup: FunctionComponent = () => {
+const SélecteurZonegroup = () => {
   const { data: zonegroups = [] } =
     api.metadataChantier.listerZonegroups.useQuery();
   const { control } = useFormContext<ChantierForm>();
