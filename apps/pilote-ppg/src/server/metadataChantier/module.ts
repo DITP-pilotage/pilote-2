@@ -8,8 +8,7 @@ import { ListerChantiersQuery } from "./queries/ListerChantiersQuery";
 import { RecupererChantierQuery } from "./queries/RecupererChantierQuery";
 import { RecupererIdSuivantQuery } from "./queries/RecupererIdSuivantQuery";
 import { ListerPpgsQuery } from "./queries/ListerPpgsQuery";
-import { ListerPorteursMinQuery } from "./queries/ListerPorteursMinQuery";
-import { ListerPorteursDacQuery } from "./queries/ListerPorteursDacQuery";
+import { ListerPorteursQuery } from "./queries/ListerPorteursQuery";
 import { ListerPerimetresQuery } from "./queries/ListerPerimetresQuery";
 import { ListerZonegroupsQuery } from "./queries/ListerZonegroupsQuery";
 import { ModifierChantierHandler } from "./handlers/ModifierChantierHandler";
@@ -20,8 +19,7 @@ type MetadataChantierCradle = {
   recupererChantierQuery: RecupererChantierQuery;
   recupererIdSuivantQuery: RecupererIdSuivantQuery;
   listerPpgsQuery: ListerPpgsQuery;
-  listerPorteursMinQuery: ListerPorteursMinQuery;
-  listerPorteursDacQuery: ListerPorteursDacQuery;
+  listerPorteursQuery: ListerPorteursQuery;
   listerPerimetresQuery: ListerPerimetresQuery;
   listerZonegroupsQuery: ListerZonegroupsQuery;
   modifierChantierHandler: ModifierChantierHandler;
@@ -41,8 +39,7 @@ export const metadataChantierModule = defineModule<
       recupererChantierQuery: asModuleClass(RecupererChantierQuery),
       recupererIdSuivantQuery: asModuleClass(RecupererIdSuivantQuery),
       listerPpgsQuery: asModuleClass(ListerPpgsQuery),
-      listerPorteursMinQuery: asModuleClass(ListerPorteursMinQuery),
-      listerPorteursDacQuery: asModuleClass(ListerPorteursDacQuery),
+      listerPorteursQuery: asModuleClass(ListerPorteursQuery),
       listerPerimetresQuery: asModuleClass(ListerPerimetresQuery),
       listerZonegroupsQuery: asModuleClass(ListerZonegroupsQuery),
       modifierChantierHandler: asModuleClass(ModifierChantierHandler),

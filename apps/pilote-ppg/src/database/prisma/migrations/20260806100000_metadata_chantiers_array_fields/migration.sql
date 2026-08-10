@@ -22,6 +22,10 @@ WHERE array_length(maille_applicable, 1) IS NULL;
 ALTER TABLE raw_data.metadata_chantiers
   ALTER COLUMN maille_applicable SET NOT NULL;
 
+-- zg_name est toujours renseigné dans les données de référence
+ALTER TABLE raw_data.metadata_zonegroup
+  ALTER COLUMN "zg_name" SET NOT NULL;
+
 -- Clés étrangères déclaratives
 ALTER TABLE raw_data.metadata_chantiers
   ADD CONSTRAINT fk_chantier_ppg

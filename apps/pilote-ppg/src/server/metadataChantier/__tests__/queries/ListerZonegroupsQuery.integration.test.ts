@@ -52,22 +52,5 @@ describe("ListerZonegroupsQuery", () => {
       }),
     );
 
-    it(
-      "utilise zone_group_id comme nom de fallback si zg_name est null",
-      createIntegrationTest(async () => {
-        // Given
-        const prisma = getPrisma();
-        await prisma.metadata_zonegroup.create({
-          // zg_name absent → le nom doit être l'id
-          data: { zone_group_id: "ZG-SANS-NOM", zg_zones: "[]" },
-        });
-
-        // When
-        const resultat = await query.run();
-
-        // Then
-        expect(resultat).toEqual([{ id: "ZG-SANS-NOM", nom: "ZG-SANS-NOM" }]);
-      }),
-    );
   });
 });

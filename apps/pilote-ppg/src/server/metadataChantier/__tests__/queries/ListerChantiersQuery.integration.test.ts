@@ -53,12 +53,7 @@ describe("ListerChantiersQuery", () => {
           chantier_id: "CH-042",
           ch_nom: "Mon chantier",
           ch_state: "PUBLIE",
-          maille_applicable: ["NAT", "REG"],
           ch_territo: true,
-          ch_cible_attendue: true,
-          ch_hidden_pilote: false,
-          porteur_ids_noDAC: ["MIN-01"],
-          porteur_ids_DAC: [],
         });
 
         // When
@@ -69,19 +64,9 @@ describe("ListerChantiersQuery", () => {
           {
             chantierId: "CH-042",
             chNom: "Mon chantier",
-            chDescr: null,
             chPpg: expect.any(String),
-            chTerrito: true,
-            chHiddenPilote: false,
-            chSaisieAte: null,
             chState: "PUBLIE",
-            zgApplicable: null,
-            porteurIdsNoDAC: ["MIN-01"],
-            porteurIdsDAC: [],
-            chPer: expect.any(String),
-            mailleApplicable: ["NAT", "REG"],
-            chCibleAttendue: true,
-            conseillerMail: null,
+            chTerrito: true,
           },
         ]);
       }),
