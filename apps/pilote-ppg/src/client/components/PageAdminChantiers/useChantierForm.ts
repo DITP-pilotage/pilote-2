@@ -16,7 +16,6 @@ export const validationChantierSchema = z.object({
   chDescr: z.string().nullable(),
   chPpg: z.string().min(1, "Le PPG est obligatoire"),
   chTerrito: z.boolean(),
-  chHiddenPilote: z.boolean(),
   chSaisieAte: z
     .enum(["ate", "hors_ate_deconcentre", "hors_ate_centralise"])
     .nullable(),
@@ -40,7 +39,6 @@ export const defaultChantierVide = (chantierId: string): ChantierForm => ({
   chDescr: null,
   chPpg: "",
   chTerrito: false,
-  chHiddenPilote: false,
   chSaisieAte: null,
   chState: $Enums.type_statut.BROUILLON,
   zgApplicable: null,

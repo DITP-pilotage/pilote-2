@@ -28,7 +28,6 @@ describe("EnregistrerChantierHandler", () => {
           chDescr: null,
           chPpg: ppg.ppg_id,
           chTerrito: false,
-          chHiddenPilote: false,
           chSaisieAte: null,
           chState: $Enums.type_statut.BROUILLON,
           zgApplicable: null,
@@ -70,7 +69,6 @@ describe("EnregistrerChantierHandler", () => {
           chDescr: "Une description",
           chPpg: ppg.ppg_id,
           chTerrito: true,
-          chHiddenPilote: true,
           chSaisieAte: $Enums.type_ate.ate,
           chState: $Enums.type_statut.PUBLIE,
           zgApplicable: null,
@@ -89,7 +87,6 @@ describe("EnregistrerChantierHandler", () => {
         expect(chantier.ch_nom).toBe("Nouveau nom");
         expect(chantier.ch_descr).toBe("Une description");
         expect(chantier.ch_territo).toBe(true);
-        expect(chantier.ch_hidden_pilote).toBe(true);
         expect(chantier.ch_saisie_ate).toBe($Enums.type_ate.ate);
         expect(chantier.ch_state).toBe($Enums.type_statut.PUBLIE);
         expect(chantier.porteur_ids_noDAC).toEqual(["MIN-01"]);
@@ -112,7 +109,6 @@ describe("EnregistrerChantierHandler", () => {
           chDescr: null,
           chPpg: ppg.ppg_id,
           chTerrito: false,
-          chHiddenPilote: false,
           chSaisieAte: null,
           chState: $Enums.type_statut.BROUILLON,
           zgApplicable: null,

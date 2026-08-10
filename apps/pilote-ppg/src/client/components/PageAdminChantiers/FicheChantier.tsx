@@ -120,17 +120,6 @@ const FicheChantier = () => {
           />
           <Controller
             control={form.control}
-            name="chHiddenPilote"
-            render={({ field }) => (
-              <Interrupteur
-                checked={field.value}
-                onChange={field.onChange}
-                libellé="Masqué dans PILOTE"
-              />
-            )}
-          />
-          <Controller
-            control={form.control}
             name="chCibleAttendue"
             render={({ field }) => (
               <Interrupteur

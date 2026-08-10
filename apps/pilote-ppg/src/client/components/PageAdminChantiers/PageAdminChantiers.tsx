@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import api from "@/server/infrastructure/api/trpc/api";
-import Alerte from "@/components/_commons/Alerte/Alerte";
+import AlerteConditionnelle from "@/components/_commons/Alerte/AlerteConditionnelle";
 
 const PageAdminChantiers = () => {
   const router = useRouter();
@@ -22,17 +22,16 @@ const PageAdminChantiers = () => {
         </Link>
       </div>
 
-      {modificationReussie && (
-        <div className="mb-4">
-          <Alerte titre="Chantier modifié avec succès !" type="succès" />
-        </div>
-      )}
-
-      {creationReussie && (
-        <div className="mb-4">
-          <Alerte titre="Chantier créé avec succès !" type="succès" />
-        </div>
-      )}
+      <AlerteConditionnelle
+        show={modificationReussie}
+        titre="Chantier modifié avec succès !"
+        type="succès"
+      />
+      <AlerteConditionnelle
+        show={creationReussie}
+        titre="Chantier créé avec succès !"
+        type="succès"
+      />
 
       {isLoading ? (
         <p className="text-gray-500">Chargement...</p>

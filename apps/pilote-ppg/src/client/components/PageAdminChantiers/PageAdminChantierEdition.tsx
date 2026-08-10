@@ -1,6 +1,6 @@
 import { FormProvider } from "react-hook-form";
 import Link from "next/link";
-import Alerte from "@/components/_commons/Alerte/Alerte";
+import AlerteConditionnelle from "@/components/_commons/Alerte/AlerteConditionnelle";
 import FicheChantier from "@/components/PageAdminChantiers/FicheChantier";
 import { MetadataChantier } from "@/server/metadataChantier/queries/RecupererChantierQuery";
 import {
@@ -52,31 +52,23 @@ const PageAdminChantierEdition = ({
         </Link>
       </nav>
 
-      {alerte && (
-        <div className="mb-4">
-          <Alerte titre={alerte.titre} type={alerte.type} />
-        </div>
-      )}
-
-      {modificationReussie && !alerte && (
-        <div className="mb-4">
-          <Alerte
-            message="Les modifications ont bien été prises en compte."
-            titre="Chantier modifié avec succès !"
-            type="succès"
-          />
-        </div>
-      )}
-
-      {creationReussie && !alerte && (
-        <div className="mb-4">
-          <Alerte
-            message="Le chantier a bien été créé."
-            titre="Chantier créé avec succès !"
-            type="succès"
-          />
-        </div>
-      )}
+      <AlerteConditionnelle
+        show={!!alerte}
+        titre={alerte?.titre}
+        type={alerte?.type ?? "erreur"}
+      />
+      <AlerteConditionnelle
+        show={modificationReussie && !alerte}
+        message="Les modifications ont bien été prises en compte."
+        titre="Chantier modifié avec succès !"
+        type="succès"
+      />
+      <AlerteConditionnelle
+        show={creationReussie && !alerte}
+        message="Le chantier a bien été créé."
+        titre="Chantier créé avec succès !"
+        type="succès"
+      />
 
       <FormProvider {...reactHookForm}>
         <form
