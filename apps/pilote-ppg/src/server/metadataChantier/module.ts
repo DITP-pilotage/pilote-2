@@ -6,16 +6,24 @@ import {
 } from "@/server/module-system";
 import { ListerChantiersQuery } from "./queries/ListerChantiersQuery";
 import { RecupererChantierQuery } from "./queries/RecupererChantierQuery";
-import { RecupererOptionsChantierQuery } from "./queries/RecupererOptionsChantierQuery";
 import { RecupererIdSuivantQuery } from "./queries/RecupererIdSuivantQuery";
+import { ListerPpgsQuery } from "./queries/ListerPpgsQuery";
+import { ListerPorteursMinQuery } from "./queries/ListerPorteursMinQuery";
+import { ListerPorteursDacQuery } from "./queries/ListerPorteursDacQuery";
+import { ListerPerimetresQuery } from "./queries/ListerPerimetresQuery";
+import { ListerZonegroupsQuery } from "./queries/ListerZonegroupsQuery";
 import { ModifierChantierHandler } from "./handlers/ModifierChantierHandler";
 import { CreerChantierHandler } from "./handlers/CreerChantierHandler";
 
 type MetadataChantierCradle = {
   listerChantiersQuery: ListerChantiersQuery;
   recupererChantierQuery: RecupererChantierQuery;
-  recupererOptionsChantierQuery: RecupererOptionsChantierQuery;
   recupererIdSuivantQuery: RecupererIdSuivantQuery;
+  listerPpgsQuery: ListerPpgsQuery;
+  listerPorteursMinQuery: ListerPorteursMinQuery;
+  listerPorteursDacQuery: ListerPorteursDacQuery;
+  listerPerimetresQuery: ListerPerimetresQuery;
+  listerZonegroupsQuery: ListerZonegroupsQuery;
   modifierChantierHandler: ModifierChantierHandler;
   creerChantierHandler: CreerChantierHandler;
 };
@@ -31,10 +39,12 @@ export const metadataChantierModule = defineModule<
     container.register({
       listerChantiersQuery: asModuleClass(ListerChantiersQuery),
       recupererChantierQuery: asModuleClass(RecupererChantierQuery),
-      recupererOptionsChantierQuery: asModuleClass(
-        RecupererOptionsChantierQuery,
-      ),
       recupererIdSuivantQuery: asModuleClass(RecupererIdSuivantQuery),
+      listerPpgsQuery: asModuleClass(ListerPpgsQuery),
+      listerPorteursMinQuery: asModuleClass(ListerPorteursMinQuery),
+      listerPorteursDacQuery: asModuleClass(ListerPorteursDacQuery),
+      listerPerimetresQuery: asModuleClass(ListerPerimetresQuery),
+      listerZonegroupsQuery: asModuleClass(ListerZonegroupsQuery),
       modifierChantierHandler: asModuleClass(ModifierChantierHandler),
       creerChantierHandler: asModuleClass(CreerChantierHandler),
     } satisfies VerifyCradle<MetadataChantierCradle>);

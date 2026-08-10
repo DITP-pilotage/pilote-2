@@ -2,8 +2,12 @@ import { FormProvider } from "react-hook-form";
 import { FunctionComponent } from "react";
 import Link from "next/link";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import { usePageChantier } from "./usePageChantier";
-import FicheChantier from "./FicheChantier";
+import api from "@/server/infrastructure/api/trpc/api";
+import FicheChantier from "@/components/PageAdminChantiers/FicheChantier";
+import {
+  useChantierMutations,
+  defaultChantierVide,
+} from "@/components/PageAdminChantiers/useChantierMutations";
 
 interface PageAdminChantierEditionProps {
   chantierId: string;
@@ -15,21 +19,61 @@ interface PageAdminChantierEditionProps {
 const PageAdminChantierEdition: FunctionComponent<
   PageAdminChantierEditionProps
 > = ({ chantierId, estUneCréation, modificationReussie, creationReussie }) => {
-  const {
-    reactHookForm,
-    modifierChantier,
-    creerChantier,
-    alerte,
-    options,
-    isLoading,
-    chantierId: chantierIdEffectif,
-  } = usePageChantier({ chantierId, estUneCréation });
+  const { data: chantierData, isLoading: isLoadingChantier } =
+    api.metadataChantier.récupérer.useQuery(
+      { chantierId },
+      { enabled: !estUneCréation },
+    );
 
-  const titre = estUneCréation
-    ? `Nouveau chantier — ${chantierIdEffectif}`
-    : `Chantier ${chantierIdEffectif}`;
+  const { data: idSuivant, isLoading: isLoadingIdSuivant } =
+    api.metadataChantier.récupérerIdSuivant.useQuery(undefined, {
+      enabled: estUneCréation,
+    });
+
+  const isLoading = estUneCréation ? isLoadingIdSuivant : isLoadingChantier;
 
   if (isLoading) return null;
+
+  const chantierIdEffectif = estUneCréation
+    ? (idSuivant ?? chantierId)
+    : chantierId;
+
+  const defaultValues = chantierData
+    ? { ...chantierData, conseillerMail: chantierData.conseillerMail ?? "" }
+    : defaultChantierVide(chantierIdEffectif);
+
+  return (
+    <ChantierEditionForm
+      chantierId={chantierIdEffectif}
+      defaultValues={defaultValues}
+      estUneCréation={estUneCréation}
+      modificationReussie={modificationReussie}
+      creationReussie={creationReussie}
+    />
+  );
+};
+
+interface ChantierEditionFormProps {
+  chantierId: string;
+  defaultValues: ReturnType<typeof defaultChantierVide>;
+  estUneCréation: boolean;
+  modificationReussie: boolean;
+  creationReussie: boolean;
+}
+
+const ChantierEditionForm: FunctionComponent<ChantierEditionFormProps> = ({
+  chantierId,
+  defaultValues,
+  estUneCréation,
+  modificationReussie,
+  creationReussie,
+}) => {
+  const { reactHookForm, modifierChantier, creerChantier, alerte } =
+    useChantierMutations({ defaultValues, chantierId });
+
+  const titre = estUneCréation
+    ? `Nouveau chantier — ${chantierId}`
+    : `Chantier ${chantierId}`;
 
   return (
     <div className="p-6">
@@ -86,7 +130,7 @@ const PageAdminChantierEdition: FunctionComponent<
           </div>
 
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <FicheChantier chantierId={chantierIdEffectif} options={options!} />
+            <FicheChantier />
           </div>
 
           <div className="flex justify-end mt-4">

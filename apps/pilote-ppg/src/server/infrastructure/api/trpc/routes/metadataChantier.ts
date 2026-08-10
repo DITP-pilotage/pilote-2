@@ -45,10 +45,36 @@ export const metadataChantierRouter = créerRouteurTRPC({
       .run();
   }),
 
-  récupérerOptions: procédureProtégée.query(async ({ ctx }) => {
+  listerPpgs: procédureProtégée.query(async ({ ctx }) => {
+    vérifierPermissionAdmin(ctx.session);
+    return getContainer("metadataChantier").resolve("listerPpgsQuery").run();
+  }),
+
+  listerPorteursMIN: procédureProtégée.query(async ({ ctx }) => {
     vérifierPermissionAdmin(ctx.session);
     return getContainer("metadataChantier")
-      .resolve("recupererOptionsChantierQuery")
+      .resolve("listerPorteursMinQuery")
+      .run();
+  }),
+
+  listerPorteursDAC: procédureProtégée.query(async ({ ctx }) => {
+    vérifierPermissionAdmin(ctx.session);
+    return getContainer("metadataChantier")
+      .resolve("listerPorteursDacQuery")
+      .run();
+  }),
+
+  listerPerimetres: procédureProtégée.query(async ({ ctx }) => {
+    vérifierPermissionAdmin(ctx.session);
+    return getContainer("metadataChantier")
+      .resolve("listerPerimetresQuery")
+      .run();
+  }),
+
+  listerZonegroups: procédureProtégée.query(async ({ ctx }) => {
+    vérifierPermissionAdmin(ctx.session);
+    return getContainer("metadataChantier")
+      .resolve("listerZonegroupsQuery")
       .run();
   }),
 

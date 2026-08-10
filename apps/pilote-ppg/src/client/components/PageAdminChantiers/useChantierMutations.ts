@@ -1,5 +1,5 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -34,7 +34,7 @@ export const validationChantierSchema = z.object({
 
 export type ChantierForm = z.infer<typeof validationChantierSchema>;
 
-const defaultChantierVide = (chantierId: string): ChantierForm => ({
+export const defaultChantierVide = (chantierId: string): ChantierForm => ({
   chantierId,
   chNom: "",
   chDescr: null,
@@ -52,54 +52,20 @@ const defaultChantierVide = (chantierId: string): ChantierForm => ({
   conseillerMail: null,
 });
 
-export const usePageChantier = ({
+export const useChantierMutations = ({
+  defaultValues,
   chantierId,
-  estUneCréation,
 }: {
+  defaultValues: ChantierForm;
   chantierId: string;
-  estUneCréation: boolean;
 }) => {
   const router = useRouter();
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
-  const { data: options, isLoading: isLoadingOptions } =
-    api.metadataChantier.récupérerOptions.useQuery();
-
-  const { data: chantierData, isLoading: isLoadingChantier } =
-    api.metadataChantier.récupérer.useQuery(
-      { chantierId },
-      { enabled: !estUneCréation },
-    );
-
-  const { data: idSuivant, isLoading: isLoadingIdSuivant } =
-    api.metadataChantier.récupérerIdSuivant.useQuery(undefined, {
-      enabled: estUneCréation,
-    });
-
-  const isLoading = estUneCréation
-    ? isLoadingOptions || isLoadingIdSuivant
-    : isLoadingOptions || isLoadingChantier;
-
   const reactHookForm = useForm<ChantierForm>({
     resolver: zodResolver(validationChantierSchema),
-    defaultValues: defaultChantierVide(chantierId),
+    defaultValues,
   });
-
-  useEffect(() => {
-    if (estUneCréation && idSuivant) {
-      reactHookForm.reset(defaultChantierVide(idSuivant));
-    }
-  }, [estUneCréation, idSuivant, reactHookForm]);
-
-  useEffect(() => {
-    if (!estUneCréation && chantierData) {
-      reactHookForm.reset({
-        ...chantierData,
-        chSaisieAte: chantierData.chSaisieAte ?? null,
-        conseillerMail: chantierData.conseillerMail ?? "",
-      });
-    }
-  }, [estUneCréation, chantierData, reactHookForm]);
 
   const mutationModifier = api.metadataChantier.modifier.useMutation({
     onSuccess: () => {
@@ -107,18 +73,14 @@ export const usePageChantier = ({
         `/panel-administrateur/chantiers/${chantierId}?_action=modification-reussie`,
       );
     },
-    onError: (error) => {
-      setAlerte({ type: "erreur", titre: error.message });
-    },
+    onError: (error) => setAlerte({ type: "erreur", titre: error.message }),
   });
 
   const mutationCreer = api.metadataChantier.creer.useMutation({
     onSuccess: () => {
       router.push("/panel-administrateur/chantiers?_action=creation-reussie");
     },
-    onError: (error) => {
-      setAlerte({ type: "erreur", titre: error.message });
-    },
+    onError: (error) => setAlerte({ type: "erreur", titre: error.message }),
   });
 
   const modifierChantier: SubmitHandler<ChantierForm> = (data) => {
@@ -137,13 +99,5 @@ export const usePageChantier = ({
     });
   };
 
-  return {
-    modifierChantier,
-    creerChantier,
-    reactHookForm,
-    alerte,
-    options,
-    isLoading,
-    chantierId: estUneCréation ? (idSuivant ?? chantierId) : chantierId,
-  };
+  return { reactHookForm, modifierChantier, creerChantier, alerte };
 };
