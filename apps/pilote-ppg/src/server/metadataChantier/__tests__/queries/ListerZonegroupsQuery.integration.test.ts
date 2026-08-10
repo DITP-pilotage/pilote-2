@@ -51,6 +51,5 @@ describe("ListerZonegroupsQuery", () => {
         ]);
       }),
     );
-
   });
 });

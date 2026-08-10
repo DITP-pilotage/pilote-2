@@ -2,7 +2,11 @@ import { useRouter } from "next/router";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 
-const AlerteMetadataChantier = ({ alerte }: { alerte?: AlerteProps | null }) => {
+const AlerteMetadataChantier = ({
+  alerte,
+}: {
+  alerte?: AlerteProps | null;
+}) => {
   const { query } = useRouter();
 
   if (alerte) {
