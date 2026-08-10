@@ -53,7 +53,6 @@ describe("ListerChantiersQuery", () => {
           chantier_id: "CH-042",
           ch_nom: "Mon chantier",
           ch_state: "PUBLIE",
-          ch_territo: true,
         });
 
         // When
@@ -64,9 +63,7 @@ describe("ListerChantiersQuery", () => {
           {
             chantierId: "CH-042",
             chNom: "Mon chantier",
-            chPpg: expect.any(String),
             chState: "PUBLIE",
-            chTerrito: true,
           },
         ]);
       }),

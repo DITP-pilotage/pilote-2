@@ -26,14 +26,20 @@ const OPTIONS_ATE = [
   { libellé: "Hors ATE centralisé", valeur: "hors_ate_centralise" },
 ];
 
+const SectionTitle = ({ children }: { children: React.ReactNode }) => (
+  <h2 className="text-base font-semibold text-[#1e1e1e] uppercase tracking-wide border-l-[3px] border-[#000091] pl-3 mb-5">
+    {children}
+  </h2>
+);
+
 const FicheChantier = () => {
   const form = useFormContext<ChantierForm>();
   const chantierId = form.watch("chantierId");
 
   return (
-    <div className="flex flex-col gap-8">
-      <section>
-        <h2 className="text-lg font-semibold mb-4">Identification</h2>
+    <div className="divide-y divide-gray-100">
+      <section className="pb-8">
+        <SectionTitle>Identification</SectionTitle>
         <div className="flex flex-col gap-4">
           <Champ label="ID chantier" valeur={chantierId} />
           <Textarea<ChantierForm>
@@ -53,8 +59,8 @@ const FicheChantier = () => {
         </div>
       </section>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-4">Rattachements</h2>
+      <section className="py-8">
+        <SectionTitle>Rattachements</SectionTitle>
         <div className="grid grid-cols-3 gap-4">
           <SélecteurPpg />
           <SélecteurPerimetre />
@@ -62,16 +68,16 @@ const FicheChantier = () => {
         </div>
       </section>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-4">Porteurs</h2>
+      <section className="py-8">
+        <SectionTitle>Porteurs</SectionTitle>
         <div className="grid grid-cols-2 gap-4">
           <MultiSelectPorteursNoDAC />
           <MultiSelectPorteursDAC />
         </div>
       </section>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-4">Territorialisation</h2>
+      <section className="py-8">
+        <SectionTitle>Territorialisation</SectionTitle>
         <div className="flex flex-col gap-4">
           <Controller
             control={form.control}
@@ -88,8 +94,8 @@ const FicheChantier = () => {
         </div>
       </section>
 
-      <section>
-        <h2 className="text-lg font-semibold mb-4">Statut & paramètres</h2>
+      <section className="pt-8">
+        <SectionTitle>Statut & paramètres</SectionTitle>
         <div className="grid grid-cols-2 gap-4">
           <Controller
             control={form.control}

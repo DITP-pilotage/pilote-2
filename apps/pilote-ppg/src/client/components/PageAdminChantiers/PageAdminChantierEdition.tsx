@@ -37,50 +37,63 @@ const PageAdminChantierEdition = ({
     ? `Nouveau chantier — ${chantierIdEffectif}`
     : `Chantier ${chantierId}`;
 
+  const labelBouton = estUneCréation ? "Créer le chantier" : "Sauvegarder";
+
   return (
-    <div className="p-6">
-      <nav className="mb-4">
-        <Link
-          className="text-sm text-blue-600 hover:underline"
-          href="/panel-administrateur/chantiers"
-        >
-          ← Gestion des chantiers
-        </Link>
-      </nav>
+    <div className="min-h-screen bg-[#f5f5fe]">
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        <nav className="mb-6 flex items-center gap-2 text-sm">
+          <Link
+            className="text-[#000091] hover:text-[#1212ff] font-medium hover:underline underline-offset-2 transition-colors"
+            href="/panel-administrateur/chantiers"
+          >
+            Gestion des chantiers
+          </Link>
+          <span className="text-gray-400">/</span>
+          <span className="text-gray-500">{titre}</span>
+        </nav>
 
-      <AlerteMetadataChantier alerte={alerte} />
+        <AlerteMetadataChantier alerte={alerte} />
 
-      <FormProvider {...reactHookForm}>
-        <form
-          method="post"
-          onSubmit={reactHookForm.handleSubmit(
-            estUneCréation ? creerChantier : modifierChantier,
-          )}
-        >
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">{titre}</h1>
-            <button
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium"
-              type="submit"
-            >
-              {estUneCréation ? "Créer le chantier" : "Sauvegarder"}
-            </button>
-          </div>
+        <FormProvider {...reactHookForm}>
+          <form
+            method="post"
+            onSubmit={reactHookForm.handleSubmit(
+              estUneCréation ? creerChantier : modifierChantier,
+            )}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <p className="text-sm font-medium text-[#000091] uppercase tracking-widest mb-1">
+                  {estUneCréation ? "Nouveau chantier" : "Édition"}
+                </p>
+                <h1 className="text-3xl font-bold text-[#1e1e1e]">{titre}</h1>
+              </div>
+              <button
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#000091] text-white rounded-sm text-sm font-medium hover:bg-[#1212ff] transition-colors shadow-sm"
+                type="submit"
+              >
+                {labelBouton}
+              </button>
+            </div>
 
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <FicheChantier />
-          </div>
+            <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden">
+              <div className="px-6 py-6">
+                <FicheChantier />
+              </div>
+            </div>
 
-          <div className="flex justify-end mt-4">
-            <button
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium"
-              type="submit"
-            >
-              {estUneCréation ? "Créer le chantier" : "Sauvegarder"}
-            </button>
-          </div>
-        </form>
-      </FormProvider>
+            <div className="flex justify-end mt-6 pt-4 border-t border-gray-200">
+              <button
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#000091] text-white rounded-sm text-sm font-medium hover:bg-[#1212ff] transition-colors shadow-sm"
+                type="submit"
+              >
+                {labelBouton}
+              </button>
+            </div>
+          </form>
+        </FormProvider>
+      </div>
     </div>
   );
 };
