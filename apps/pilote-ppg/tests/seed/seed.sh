@@ -23,7 +23,6 @@ psql -q -d "$DATABASE_URL" -c "\COPY raw_data.metadata_ppgs FROM '$SCRIPT_DIR/$R
 psql -q -d "$DATABASE_URL" -c "\COPY raw_data.metadata_chantier_meteos FROM '$SCRIPT_DIR/$RAW_DATA_SEED_DIR/metadata_chantier_meteos.csv' WITH (FORMAT csv, HEADER true)"
 psql -q -d "$DATABASE_URL" -c "\COPY raw_data.metadata_chantiers FROM '$SCRIPT_DIR/$RAW_DATA_SEED_DIR/metadata_chantiers.csv' WITH (FORMAT csv, HEADER true)"
 psql -q -d "$DATABASE_URL" -c "\COPY raw_data.metadata_engagement FROM '$SCRIPT_DIR/$RAW_DATA_SEED_DIR/metadata_engagement.csv' WITH (FORMAT csv, HEADER true)"
-psql -q -d "$DATABASE_URL" -c "\COPY raw_data.metadata_indicateur_types FROM '$SCRIPT_DIR/$RAW_DATA_SEED_DIR/metadata_indicateur_types.csv' WITH (FORMAT csv, HEADER true)"
 psql -q -d "$DATABASE_URL" -c "\COPY raw_data.metadata_perimetres FROM '$SCRIPT_DIR/$RAW_DATA_SEED_DIR/metadata_perimetres.csv' WITH (FORMAT csv, HEADER true)"
 psql -q -d "$DATABASE_URL" -c "\COPY raw_data.metadata_porteurs FROM '$SCRIPT_DIR/$RAW_DATA_SEED_DIR/metadata_porteurs.csv' WITH (FORMAT csv, HEADER true)"
 psql -q -d "$DATABASE_URL" -c "\COPY raw_data.metadata_zonegroup FROM '$SCRIPT_DIR/$RAW_DATA_SEED_DIR/metadata_zonegroup.csv' WITH (FORMAT csv, HEADER true)"
