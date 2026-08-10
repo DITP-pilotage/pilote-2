@@ -1,9 +1,13 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataChantier/module";
-import {
-  OptionsChantierContrat,
-  presenterEnOptionsChantierContrat,
-} from "@/server/app/contrats/MetadataChantierContrat";
+
+export interface OptionsChantier {
+  ppgs: { id: string; nom: string }[];
+  porteursMIN: { id: string; label: string }[];
+  porteursDac: { id: string; label: string }[];
+  perimetres: { id: string; nom: string }[];
+  zonegroups: { id: string; nom: string }[];
+}
 
 export class RecupererOptionsChantierQuery {
   private readonly prisma: PrismaPilote;
@@ -12,7 +16,7 @@ export class RecupererOptionsChantierQuery {
     this.prisma = prisma;
   }
 
-  async run(): Promise<OptionsChantierContrat> {
+  async run(): Promise<OptionsChantier> {
     const prismaClient = this.prisma.getInstance();
     const [ppgs, porteursMIN, porteursDac, perimetres, zonegroups] =
       await Promise.all([
@@ -32,12 +36,24 @@ export class RecupererOptionsChantierQuery {
           orderBy: { zone_group_id: "asc" },
         }),
       ]);
-    return presenterEnOptionsChantierContrat({
-      ppgs,
-      porteursMIN,
-      porteursDac,
-      perimetres,
-      zonegroups,
-    });
+    return {
+      ppgs: ppgs.map((p) => ({ id: p.ppg_id, nom: p.ppg_nom })),
+      porteursMIN: porteursMIN.map((p) => ({
+        id: p.porteur_id,
+        label: p.porteur_name_short ?? p.porteur_short,
+      })),
+      porteursDac: porteursDac.map((p) => ({
+        id: p.porteur_id,
+        label: p.porteur_name_short ?? p.porteur_short,
+      })),
+      perimetres: perimetres.map((p) => ({
+        id: p.perimetre_id,
+        nom: p.per_nom,
+      })),
+      zonegroups: zonegroups.map((z) => ({
+        id: z.zone_group_id,
+        nom: z.zg_name ?? z.zone_group_id,
+      })),
+    };
   }
 }

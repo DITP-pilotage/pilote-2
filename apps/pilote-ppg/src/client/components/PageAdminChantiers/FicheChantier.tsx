@@ -6,7 +6,7 @@ import Champ from "@/components/_commons/Champ";
 import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import MultiSelect from "@/components/_commons/MultiSelectNew/MultiSelect";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
-import { OptionsChantierContrat } from "@/server/app/contrats/MetadataChantierContrat";
+import { OptionsChantier } from "@/server/metadataChantier/queries/RecupererOptionsChantierQuery";
 import { ChantierForm } from "./usePageChantier";
 
 const MAILLES = ["NAT", "REG", "DEPT"] as const;
@@ -24,7 +24,7 @@ const OPTIONS_ATE = [
 ];
 
 interface FicheChantierProps {
-  options: OptionsChantierContrat;
+  options: OptionsChantier;
   chantierId: string;
 }
 

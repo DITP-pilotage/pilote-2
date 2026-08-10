@@ -114,9 +114,7 @@ export const usePageChantier = ({
 
   const mutationCreer = api.metadataChantier.creer.useMutation({
     onSuccess: () => {
-      router.push(
-        `/panel-administrateur/chantiers/${chantierId}?_action=creation-reussie`,
-      );
+      router.push("/panel-administrateur/chantiers?_action=creation-reussie");
     },
     onError: (error) => {
       setAlerte({ type: "erreur", titre: error.message });
