@@ -31,14 +31,29 @@ describe("ListerPorteursDacQuery", () => {
         // Given
         const prisma = getPrisma();
         await prisma.metadata_porteurs.create({
-          data: { porteur_id: "DAC-B", porteur_short: "DAC B", porteur_name: "DAC B", porteur_type_short: "DAC" },
+          data: {
+            porteur_id: "DAC-B",
+            porteur_short: "DAC B",
+            porteur_name: "DAC B",
+            porteur_type_short: "DAC",
+          },
         });
         await prisma.metadata_porteurs.create({
-          data: { porteur_id: "DAC-A", porteur_short: "DAC A", porteur_name: "DAC A", porteur_type_short: "DAC" },
+          data: {
+            porteur_id: "DAC-A",
+            porteur_short: "DAC A",
+            porteur_name: "DAC A",
+            porteur_type_short: "DAC",
+          },
         });
         await prisma.metadata_porteurs.create({
           // Ce porteur MIN ne doit pas apparaître
-          data: { porteur_id: "MIN-X", porteur_short: "MIN X", porteur_name: "MIN X", porteur_type_short: "MIN" },
+          data: {
+            porteur_id: "MIN-X",
+            porteur_short: "MIN X",
+            porteur_name: "MIN X",
+            porteur_type_short: "MIN",
+          },
         });
 
         // When

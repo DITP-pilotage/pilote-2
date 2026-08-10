@@ -26,7 +26,11 @@ export class ListerChantiersQuery {
       porteurIdsNoDAC: chantier.porteur_ids_noDAC,
       porteurIdsDAC: chantier.porteur_ids_DAC,
       chPer: chantier.ch_per,
-      mailleApplicable: chantier.maille_applicable as ("NAT" | "REG" | "DEPT")[],
+      mailleApplicable: chantier.maille_applicable as (
+        | "NAT"
+        | "REG"
+        | "DEPT"
+      )[],
       chCibleAttendue: chantier.ch_cible_attendue,
       conseillerMail: chantier.conseiller_mail,
     }));
