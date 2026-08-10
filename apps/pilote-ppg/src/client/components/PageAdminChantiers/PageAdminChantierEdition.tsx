@@ -1,6 +1,6 @@
 import { FormProvider } from "react-hook-form";
 import Link from "next/link";
-import AlerteConditionnelle from "@/components/_commons/Alerte/AlerteConditionnelle";
+import AlerteMetadataChantier from "@/components/PageAdminChantiers/AlerteMetadataChantier";
 import FicheChantier from "@/components/PageAdminChantiers/FicheChantier";
 import { MetadataChantier } from "@/server/metadataChantier/queries/RecupererChantierQuery";
 import {
@@ -14,8 +14,6 @@ interface PageAdminChantierEditionProps {
   estUneCréation: boolean;
   chantierData: MetadataChantier | null;
   idSuivant: string | null;
-  modificationReussie: boolean;
-  creationReussie: boolean;
 }
 
 const PageAdminChantierEdition = ({
@@ -23,8 +21,6 @@ const PageAdminChantierEdition = ({
   estUneCréation,
   chantierData,
   idSuivant,
-  modificationReussie,
-  creationReussie,
 }: PageAdminChantierEditionProps) => {
   const chantierIdEffectif = estUneCréation
     ? (idSuivant ?? chantierId)
@@ -52,23 +48,7 @@ const PageAdminChantierEdition = ({
         </Link>
       </nav>
 
-      <AlerteConditionnelle
-        show={!!alerte}
-        titre={alerte?.titre}
-        type={alerte?.type ?? "erreur"}
-      />
-      <AlerteConditionnelle
-        show={modificationReussie && !alerte}
-        message="Les modifications ont bien été prises en compte."
-        titre="Chantier modifié avec succès !"
-        type="succès"
-      />
-      <AlerteConditionnelle
-        show={creationReussie && !alerte}
-        message="Le chantier a bien été créé."
-        titre="Chantier créé avec succès !"
-        type="succès"
-      />
+      <AlerteMetadataChantier alerte={alerte} />
 
       <FormProvider {...reactHookForm}>
         <form

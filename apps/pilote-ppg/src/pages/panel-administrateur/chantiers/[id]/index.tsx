@@ -43,8 +43,6 @@ export async function getServerSideProps(
       estUneCréation,
       chantierData,
       idSuivant,
-      modificationReussie: query._action === "modification-reussie",
-      creationReussie: query._action === "creation-reussie",
     },
   };
 }
@@ -54,8 +52,6 @@ const NextPageAdminChantierEdition = ({
   estUneCréation,
   chantierData,
   idSuivant,
-  modificationReussie,
-  creationReussie,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => (
   <>
     <Head>
@@ -65,10 +61,8 @@ const NextPageAdminChantierEdition = ({
       <PageAdminChantierEdition
         chantierId={chantierId}
         chantierData={chantierData}
-        creationReussie={creationReussie}
         estUneCréation={estUneCréation}
         idSuivant={idSuivant}
-        modificationReussie={modificationReussie}
       />
     </NextPanelAdministrateurLayout>
   </>

@@ -1,14 +1,9 @@
 import Link from "next/link";
-import { useRouter } from "next/router";
 import api from "@/server/infrastructure/api/trpc/api";
-import AlerteConditionnelle from "@/components/_commons/Alerte/AlerteConditionnelle";
+import AlerteMetadataChantier from "@/components/PageAdminChantiers/AlerteMetadataChantier";
 
 const PageAdminChantiers = () => {
-  const router = useRouter();
   const { data: chantiers, isLoading } = api.metadataChantier.lister.useQuery();
-
-  const modificationReussie = router.query._action === "modification-reussie";
-  const creationReussie = router.query._action === "creation-reussie";
 
   return (
     <div className="p-6">
@@ -22,16 +17,7 @@ const PageAdminChantiers = () => {
         </Link>
       </div>
 
-      <AlerteConditionnelle
-        show={modificationReussie}
-        titre="Chantier modifié avec succès !"
-        type="succès"
-      />
-      <AlerteConditionnelle
-        show={creationReussie}
-        titre="Chantier créé avec succès !"
-        type="succès"
-      />
+      <AlerteMetadataChantier />
 
       {isLoading ? (
         <p className="text-gray-500">Chargement...</p>
