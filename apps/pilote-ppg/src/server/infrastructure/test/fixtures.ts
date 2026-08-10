@@ -717,4 +717,63 @@ export const fixtures = {
       },
     });
   },
+
+  async metadataPpg(
+    overrides: Partial<Prisma.metadata_ppgsUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const ppgId = overrides.ppg_id ?? `PPG-${randomUUID().slice(0, 6)}`;
+    return prisma.metadata_ppgs.create({
+      data: {
+        ppg_id: ppgId,
+        ppg_nom: `PPG test ${ppgId}`,
+        ...overrides,
+      },
+    });
+  },
+
+  async metadataPerimetre(
+    overrides: Partial<Prisma.metadata_perimetresUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const perimetreId =
+      overrides.perimetre_id ?? `PER-${randomUUID().slice(0, 6)}`;
+    return prisma.metadata_perimetres.create({
+      data: {
+        perimetre_id: perimetreId,
+        per_nom: `Périmètre test ${perimetreId}`,
+        ...overrides,
+      },
+    });
+  },
+
+  async metadataChantier(
+    overrides: Partial<Prisma.metadata_chantiersUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const ppg = overrides.ch_ppg
+      ? { ppg_id: overrides.ch_ppg }
+      : await fixtures.metadataPpg();
+    const perimetre = overrides.ch_per
+      ? { perimetre_id: overrides.ch_per }
+      : await fixtures.metadataPerimetre();
+    const chantierId =
+      overrides.chantier_id ?? `CH-${randomUUID().slice(0, 3).toUpperCase()}`;
+    return prisma.metadata_chantiers.create({
+      data: {
+        chantier_id: chantierId,
+        ch_nom: `Chantier test ${chantierId}`,
+        ch_ppg: ppg.ppg_id,
+        ch_per: perimetre.perimetre_id,
+        ch_state: $Enums.type_statut.BROUILLON,
+        maille_applicable: ["NAT", "REG", "DEPT"],
+        ch_territo: false,
+        ch_hidden_pilote: false,
+        ch_cible_attendue: false,
+        porteur_ids_noDAC: [],
+        porteur_ids_DAC: [],
+        ...overrides,
+      },
+    });
+  },
 };

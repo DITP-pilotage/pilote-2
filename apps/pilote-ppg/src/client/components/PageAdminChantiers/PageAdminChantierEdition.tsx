@@ -2,16 +2,11 @@ import { FormProvider } from "react-hook-form";
 import { FunctionComponent } from "react";
 import Link from "next/link";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import {
-  MetadataChantierContrat,
-  OptionsChantierContrat,
-} from "@/server/app/contrats/MetadataChantierContrat";
-import FicheChantier from "./FicheChantier";
 import { usePageChantier } from "./usePageChantier";
+import FicheChantier from "./FicheChantier";
 
 interface PageAdminChantierEditionProps {
-  chantier: MetadataChantierContrat;
-  options: OptionsChantierContrat;
+  chantierId: string;
   estUneCréation: boolean;
   modificationReussie: boolean;
   creationReussie: boolean;
@@ -19,13 +14,7 @@ interface PageAdminChantierEditionProps {
 
 const PageAdminChantierEdition: FunctionComponent<
   PageAdminChantierEditionProps
-> = ({
-  chantier,
-  options,
-  estUneCréation,
-  modificationReussie,
-  creationReussie,
-}) => {
+> = ({ chantierId, estUneCréation, modificationReussie, creationReussie }) => {
   const {
     reactHookForm,
     modifierChantier,
@@ -34,11 +23,16 @@ const PageAdminChantierEdition: FunctionComponent<
     setEstEnCoursDeModification,
     alerte,
     reinitialiser,
-  } = usePageChantier(chantier);
+    options,
+    isLoading,
+    chantierId: chantierIdEffectif,
+  } = usePageChantier({ chantierId, estUneCréation });
 
   const titre = estUneCréation
-    ? `Nouveau chantier — ${chantier.chantierId}`
-    : `Chantier ${chantier.chantierId}`;
+    ? `Nouveau chantier — ${chantierIdEffectif}`
+    : `Chantier ${chantierIdEffectif}`;
+
+  if (isLoading) return null;
 
   return (
     <div className="p-6">
@@ -124,11 +118,11 @@ const PageAdminChantierEdition: FunctionComponent<
 
           <div className="bg-white rounded-lg border border-gray-200 p-6">
             <FicheChantier
-              chantierId={chantier.chantierId}
+              chantierId={chantierIdEffectif}
               estEnCoursDeModification={
                 estUneCréation || estEnCoursDeModification
               }
-              options={options}
+              options={options!}
             />
           </div>
 

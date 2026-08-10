@@ -35,12 +35,8 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
   options,
   chantierId,
 }) => {
-  const {
-    control,
-    watch,
-    formState: { errors },
-  } = useFormContext<ChantierForm>();
-  const mailleApplicable = watch("mailleApplicable");
+  const form = useFormContext<ChantierForm>();
+  const mailleApplicable = form.watch("mailleApplicable");
 
   return (
     <div className="flex flex-col gap-8">
@@ -50,7 +46,7 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
         <div className="grid grid-cols-2 gap-4">
           <Champ label="ID chantier" valeur={chantierId} />
           <Input<ChantierForm>
-            control={control}
+            control={form.control}
             name="chNom"
             label="Nom *"
             required
@@ -60,7 +56,7 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
         </div>
         <div className="mt-4">
           <Textarea<ChantierForm>
-            control={control}
+            control={form.control}
             name="chDescr"
             label="Description"
             readOnly={!estEnCoursDeModification}
@@ -74,7 +70,7 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
         <h2 className="text-lg font-semibold mb-4">Rattachements</h2>
         <div className="grid grid-cols-3 gap-4">
           <Controller
-            control={control}
+            control={form.control}
             name="chPpg"
             render={({ field }) => (
               <div className="flex flex-col gap-1">
@@ -89,13 +85,13 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
                   }))}
                   valeurModifiéeCallback={field.onChange}
                   valeurSélectionnée={field.value}
-                  erreurMessage={errors.chPpg?.message}
+                  erreurMessage={form.formState.errors.chPpg?.message}
                 />
               </div>
             )}
           />
           <Controller
-            control={control}
+            control={form.control}
             name="chPer"
             render={({ field }) => (
               <Sélecteur
@@ -108,12 +104,12 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
                 onChange={field.onChange}
                 valeurSélectionnée={field.value}
                 estDesactive={!estEnCoursDeModification}
-                erreur={errors.chPer}
+                erreur={form.formState.errors.chPer}
               />
             )}
           />
           <Controller
-            control={control}
+            control={form.control}
             name="zgApplicable"
             render={({ field }) => (
               <Sélecteur
@@ -140,7 +136,7 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
         <h2 className="text-lg font-semibold mb-4">Porteurs</h2>
         <div className="grid grid-cols-2 gap-4">
           <Controller
-            control={control}
+            control={form.control}
             name="porteurIdsNoDAC"
             render={({ field }) => (
               <MultiSelect
@@ -162,7 +158,7 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
             )}
           />
           <Controller
-            control={control}
+            control={form.control}
             name="porteurIdsDAC"
             render={({ field }) => (
               <MultiSelect
@@ -191,7 +187,7 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
         <h2 className="text-lg font-semibold mb-4">Territorialisation</h2>
         <div className="flex flex-col gap-4">
           <Controller
-            control={control}
+            control={form.control}
             name="chTerrito"
             render={({ field }) => (
               <Interrupteur
@@ -202,7 +198,7 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
             )}
           />
           <Controller
-            control={control}
+            control={form.control}
             name="mailleApplicable"
             render={({ field, fieldState }) => (
               <div>
@@ -265,7 +261,7 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
         <h2 className="text-lg font-semibold mb-4">Statut & paramètres</h2>
         <div className="grid grid-cols-2 gap-4">
           <Controller
-            control={control}
+            control={form.control}
             name="chSaisieAte"
             render={({ field }) => (
               <Sélecteur
@@ -282,7 +278,7 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
             )}
           />
           <Controller
-            control={control}
+            control={form.control}
             name="chState"
             render={({ field }) => (
               <Sélecteur
@@ -295,12 +291,12 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
                 onChange={field.onChange}
                 valeurSélectionnée={field.value}
                 estDesactive={!estEnCoursDeModification}
-                erreur={errors.chState}
+                erreur={form.formState.errors.chState}
               />
             )}
           />
           <Controller
-            control={control}
+            control={form.control}
             name="chHiddenPilote"
             render={({ field }) => (
               <Interrupteur
@@ -311,7 +307,7 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
             )}
           />
           <Controller
-            control={control}
+            control={form.control}
             name="chCibleAttendue"
             render={({ field }) => (
               <Interrupteur
@@ -324,7 +320,7 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
         </div>
         <div className="mt-4">
           <Input<ChantierForm>
-            control={control}
+            control={form.control}
             name="conseillerMail"
             label="Mail conseiller"
             type="email"

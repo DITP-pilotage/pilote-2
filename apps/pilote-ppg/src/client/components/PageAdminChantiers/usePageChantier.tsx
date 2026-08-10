@@ -1,11 +1,11 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { $Enums } from "@prisma/client";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import { MetadataChantierContrat } from "@/server/app/contrats/MetadataChantierContrat";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 
 const MAILLES = ["NAT", "REG", "DEPT"] as const;
@@ -34,26 +34,79 @@ export const validationChantierSchema = z.object({
 
 export type ChantierForm = z.infer<typeof validationChantierSchema>;
 
-export const usePageChantier = (chantier: MetadataChantierContrat) => {
+const defaultChantierVide = (chantierId: string): ChantierForm => ({
+  chantierId,
+  chNom: "",
+  chDescr: null,
+  chPpg: "",
+  chTerrito: false,
+  chHiddenPilote: false,
+  chSaisieAte: null,
+  chState: $Enums.type_statut.BROUILLON,
+  zgApplicable: null,
+  porteurIdsNoDAC: [],
+  porteurIdsDAC: [],
+  chPer: "",
+  mailleApplicable: ["NAT", "REG", "DEPT"],
+  chCibleAttendue: false,
+  conseillerMail: null,
+});
+
+export const usePageChantier = ({
+  chantierId,
+  estUneCréation,
+}: {
+  chantierId: string;
+  estUneCréation: boolean;
+}) => {
   const router = useRouter();
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const [estEnCoursDeModification, setEstEnCoursDeModification] =
     useState<boolean>(false);
 
+  const { data: options, isLoading: isLoadingOptions } =
+    api.metadataChantier.récupérerOptions.useQuery();
+
+  const { data: chantierData, isLoading: isLoadingChantier } =
+    api.metadataChantier.récupérer.useQuery(
+      { chantierId },
+      { enabled: !estUneCréation },
+    );
+
+  const { data: idSuivant, isLoading: isLoadingIdSuivant } =
+    api.metadataChantier.récupérerIdSuivant.useQuery(undefined, {
+      enabled: estUneCréation,
+    });
+
+  const isLoading = estUneCréation
+    ? isLoadingOptions || isLoadingIdSuivant
+    : isLoadingOptions || isLoadingChantier;
+
   const reactHookForm = useForm<ChantierForm>({
     resolver: zodResolver(validationChantierSchema),
-    defaultValues: {
-      ...chantier,
-      chSaisieAte: chantier.chSaisieAte ?? null,
-      conseillerMail: chantier.conseillerMail ?? "",
-    },
   });
+
+  useEffect(() => {
+    if (estUneCréation && idSuivant) {
+      reactHookForm.reset(defaultChantierVide(idSuivant));
+    }
+  }, [estUneCréation, idSuivant, reactHookForm]);
+
+  useEffect(() => {
+    if (!estUneCréation && chantierData) {
+      reactHookForm.reset({
+        ...chantierData,
+        chSaisieAte: chantierData.chSaisieAte ?? null,
+        conseillerMail: chantierData.conseillerMail ?? "",
+      });
+    }
+  }, [estUneCréation, chantierData, reactHookForm]);
 
   const mutationModifier = api.metadataChantier.modifier.useMutation({
     onSuccess: () => {
       setEstEnCoursDeModification(false);
       router.push(
-        `/panel-administrateur/chantiers/${chantier.chantierId}?_action=modification-reussie`,
+        `/panel-administrateur/chantiers/${chantierId}?_action=modification-reussie`,
       );
     },
     onError: (error) => {
@@ -65,7 +118,7 @@ export const usePageChantier = (chantier: MetadataChantierContrat) => {
     onSuccess: () => {
       setEstEnCoursDeModification(false);
       router.push(
-        `/panel-administrateur/chantiers/${chantier.chantierId}?_action=creation-reussie`,
+        `/panel-administrateur/chantiers/${chantierId}?_action=creation-reussie`,
       );
     },
     onError: (error) => {
@@ -73,18 +126,20 @@ export const usePageChantier = (chantier: MetadataChantierContrat) => {
     },
   });
 
-  const buildMutateInput = (data: ChantierForm) => ({
-    csrf: récupérerUnCookie("csrf") ?? "",
-    ...data,
-    conseillerMail: data.conseillerMail || null,
-  });
-
   const modifierChantier: SubmitHandler<ChantierForm> = (data) => {
-    mutationModifier.mutate(buildMutateInput(data));
+    mutationModifier.mutate({
+      csrf: récupérerUnCookie("csrf") ?? "",
+      ...data,
+      conseillerMail: data.conseillerMail || null,
+    });
   };
 
   const creerChantier: SubmitHandler<ChantierForm> = (data) => {
-    mutationCreer.mutate(buildMutateInput(data));
+    mutationCreer.mutate({
+      csrf: récupérerUnCookie("csrf") ?? "",
+      ...data,
+      conseillerMail: data.conseillerMail || null,
+    });
   };
 
   const reinitialiser = () => {
@@ -100,5 +155,8 @@ export const usePageChantier = (chantier: MetadataChantierContrat) => {
     reactHookForm,
     alerte,
     reinitialiser,
+    options,
+    isLoading,
+    chantierId: estUneCréation ? (idSuivant ?? chantierId) : chantierId,
   };
 };
