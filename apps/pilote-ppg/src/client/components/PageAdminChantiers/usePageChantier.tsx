@@ -84,6 +84,7 @@ export const usePageChantier = ({
 
   const reactHookForm = useForm<ChantierForm>({
     resolver: zodResolver(validationChantierSchema),
+    defaultValues: defaultChantierVide(chantierId),
   });
 
   useEffect(() => {
