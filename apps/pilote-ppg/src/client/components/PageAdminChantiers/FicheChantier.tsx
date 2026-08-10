@@ -4,7 +4,7 @@ import { Input } from "@/components/_commons/Input";
 import { Textarea } from "@/components/_commons/Textarea";
 import Champ from "@/components/_commons/Champ";
 import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
-import SélecteurAvecRecherche from "@/components/_commons/SélecteurAvecRecherche/SélecteurAvecRecherche";
+import SélecteurCustom from "@/components/_commons/SelecteurCustom/SélecteurAvecRecherche/SélecteurCustom";
 import MultiSelect from "@/components/_commons/MultiSelectNew/MultiSelect";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import { OptionsChantierContrat } from "@/server/app/contrats/MetadataChantierContrat";
@@ -74,19 +74,21 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
             name="chPpg"
             render={({ field }) => (
               <div className="flex flex-col gap-1">
-                <SélecteurAvecRecherche
-                  estVueMobile={false}
-                  estVisibleEnMobile
+                <p className="italic text-xs font-medium mb-1">PPG *</p>
+                <SélecteurCustom
                   htmlName="chPpg"
-                  libellé="PPG *"
                   options={options.ppgs.map((p) => ({
                     libellé: `${p.id} — ${p.nom}`,
                     valeur: p.id,
                   }))}
                   valeurModifiéeCallback={field.onChange}
                   valeurSélectionnée={field.value}
-                  erreurMessage={form.formState.errors.chPpg?.message}
                 />
+                {form.formState.errors.chPpg && (
+                  <p className="text-xs text-red-500">
+                    {form.formState.errors.chPpg.message}
+                  </p>
+                )}
               </div>
             )}
           />
