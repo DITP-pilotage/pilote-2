@@ -19,10 +19,7 @@ const PageAdminChantierEdition: FunctionComponent<
     reactHookForm,
     modifierChantier,
     creerChantier,
-    estEnCoursDeModification,
-    setEstEnCoursDeModification,
     alerte,
-    reinitialiser,
     options,
     isLoading,
     chantierId: chantierIdEffectif,
@@ -80,80 +77,26 @@ const PageAdminChantierEdition: FunctionComponent<
         >
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold">{titre}</h1>
-            <div className="flex gap-2">
-              {estUneCréation ? (
-                <button
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium"
-                  type="submit"
-                >
-                  Créer le chantier
-                </button>
-              ) : estEnCoursDeModification ? (
-                <>
-                  <button
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium"
-                    type="submit"
-                  >
-                    Confirmer les changements
-                  </button>
-                  <button
-                    className="px-4 py-2 border border-gray-400 rounded hover:bg-gray-100 text-sm font-medium"
-                    onClick={reinitialiser}
-                    type="button"
-                  >
-                    Annuler
-                  </button>
-                </>
-              ) : (
-                <button
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium"
-                  onClick={() => setEstEnCoursDeModification(true)}
-                  type="button"
-                >
-                  Modifier
-                </button>
-              )}
-            </div>
+            <button
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium"
+              type="submit"
+            >
+              {estUneCréation ? "Créer le chantier" : "Sauvegarder"}
+            </button>
           </div>
 
           <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <FicheChantier
-              chantierId={chantierIdEffectif}
-              estEnCoursDeModification={
-                estUneCréation || estEnCoursDeModification
-              }
-              options={options!}
-            />
+            <FicheChantier chantierId={chantierIdEffectif} options={options!} />
           </div>
 
-          {(estUneCréation || estEnCoursDeModification) && (
-            <div className="flex gap-2 mt-4">
-              {estUneCréation ? (
-                <button
-                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium"
-                  type="submit"
-                >
-                  Créer le chantier
-                </button>
-              ) : (
-                <>
-                  <button
-                    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium"
-                    type="submit"
-                  >
-                    Confirmer les changements
-                  </button>
-                  <button
-                    className="px-4 py-2 border border-gray-400 rounded hover:bg-gray-100 text-sm font-medium"
-                    onClick={reinitialiser}
-                    type="button"
-                  >
-                    Annuler
-                  </button>
-                </>
-              )}
-            </div>
-          )}
+          <div className="flex justify-end mt-4">
+            <button
+              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium"
+              type="submit"
+            >
+              {estUneCréation ? "Créer le chantier" : "Sauvegarder"}
+            </button>
+          </div>
         </form>
       </FormProvider>
     </div>

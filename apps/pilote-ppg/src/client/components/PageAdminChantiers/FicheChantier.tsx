@@ -4,7 +4,6 @@ import { Input } from "@/components/_commons/Input";
 import { Textarea } from "@/components/_commons/Textarea";
 import Champ from "@/components/_commons/Champ";
 import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
-import SélecteurCustom from "@/components/_commons/SelecteurCustom/SélecteurAvecRecherche/SélecteurCustom";
 import MultiSelect from "@/components/_commons/MultiSelectNew/MultiSelect";
 import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import { OptionsChantierContrat } from "@/server/app/contrats/MetadataChantierContrat";
@@ -25,13 +24,11 @@ const OPTIONS_ATE = [
 ];
 
 interface FicheChantierProps {
-  estEnCoursDeModification: boolean;
   options: OptionsChantierContrat;
   chantierId: string;
 }
 
 const FicheChantier: FunctionComponent<FicheChantierProps> = ({
-  estEnCoursDeModification,
   options,
   chantierId,
 }) => {
@@ -43,23 +40,20 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
       {/* Section Identification */}
       <section>
         <h2 className="text-lg font-semibold mb-4">Identification</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="flex flex-col gap-4">
           <Champ label="ID chantier" valeur={chantierId} />
-          <Input<ChantierForm>
+          <Textarea<ChantierForm>
             control={form.control}
             name="chNom"
             label="Nom *"
             required
-            readOnly={!estEnCoursDeModification}
             charLimit={500}
+            rows={2}
           />
-        </div>
-        <div className="mt-4">
           <Textarea<ChantierForm>
             control={form.control}
             name="chDescr"
             label="Description"
-            readOnly={!estEnCoursDeModification}
             rows={4}
           />
         </div>
@@ -73,23 +67,17 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
             control={form.control}
             name="chPpg"
             render={({ field }) => (
-              <div className="flex flex-col gap-1">
-                <p className="italic text-xs font-medium mb-1">PPG *</p>
-                <SélecteurCustom
-                  htmlName="chPpg"
-                  options={options.ppgs.map((p) => ({
-                    libellé: `${p.id} — ${p.nom}`,
-                    valeur: p.id,
-                  }))}
-                  valeurModifiéeCallback={field.onChange}
-                  valeurSélectionnée={field.value}
-                />
-                {form.formState.errors.chPpg && (
-                  <p className="text-xs text-red-500">
-                    {form.formState.errors.chPpg.message}
-                  </p>
-                )}
-              </div>
+              <Sélecteur
+                htmlName="chPpg"
+                libellé="PPG *"
+                options={options.ppgs.map((p) => ({
+                  libellé: `${p.id} — ${p.nom}`,
+                  valeur: p.id,
+                }))}
+                onChange={field.onChange}
+                valeurSélectionnée={field.value}
+                erreur={form.formState.errors.chPpg}
+              />
             )}
           />
           <Controller
@@ -105,7 +93,6 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
                 }))}
                 onChange={field.onChange}
                 valeurSélectionnée={field.value}
-                estDesactive={!estEnCoursDeModification}
                 erreur={form.formState.errors.chPer}
               />
             )}
@@ -126,7 +113,6 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
                 ]}
                 onChange={(val) => field.onChange(val || null)}
                 valeurSélectionnée={field.value ?? ""}
-                estDesactive={!estEnCoursDeModification}
               />
             )}
           />
@@ -155,7 +141,6 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
                 ]}
                 valeursSélectionnéesParDéfaut={field.value}
                 changementValeursSélectionnéesCallback={field.onChange}
-                desactive={!estEnCoursDeModification}
               />
             )}
           />
@@ -177,7 +162,6 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
                 ]}
                 valeursSélectionnéesParDéfaut={field.value}
                 changementValeursSélectionnéesCallback={field.onChange}
-                desactive={!estEnCoursDeModification}
               />
             )}
           />
@@ -216,7 +200,6 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
                       <input
                         type="checkbox"
                         checked={field.value.includes(maille)}
-                        disabled={!estEnCoursDeModification}
                         onChange={(event) => {
                           const next = event.target.checked
                             ? [...field.value, maille]
@@ -228,16 +211,14 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
                       <span className="text-sm">{maille}</span>
                     </label>
                   ))}
-                  {estEnCoursDeModification && (
-                    <button
-                      type="button"
-                      className="text-xs text-blue-600 underline hover:no-underline"
-                      onClick={() => field.onChange(["NAT", "REG", "DEPT"])}
-                    >
-                      Tout sélectionner
-                    </button>
-                  )}
-                  {mailleApplicable.length > 0 && estEnCoursDeModification && (
+                  <button
+                    type="button"
+                    className="text-xs text-blue-600 underline hover:no-underline"
+                    onClick={() => field.onChange(["NAT", "REG", "DEPT"])}
+                  >
+                    Tout sélectionner
+                  </button>
+                  {mailleApplicable.length > 0 && (
                     <button
                       type="button"
                       className="text-xs text-gray-500 underline hover:no-underline"
@@ -275,7 +256,6 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
                 }))}
                 onChange={(val) => field.onChange(val || null)}
                 valeurSélectionnée={field.value ?? ""}
-                estDesactive={!estEnCoursDeModification}
               />
             )}
           />
@@ -292,7 +272,6 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
                 }))}
                 onChange={field.onChange}
                 valeurSélectionnée={field.value}
-                estDesactive={!estEnCoursDeModification}
                 erreur={form.formState.errors.chState}
               />
             )}
@@ -326,7 +305,6 @@ const FicheChantier: FunctionComponent<FicheChantierProps> = ({
             name="conseillerMail"
             label="Mail conseiller"
             type="email"
-            readOnly={!estEnCoursDeModification}
           />
         </div>
       </section>

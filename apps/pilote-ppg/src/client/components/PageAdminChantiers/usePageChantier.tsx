@@ -61,8 +61,6 @@ export const usePageChantier = ({
 }) => {
   const router = useRouter();
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
-  const [estEnCoursDeModification, setEstEnCoursDeModification] =
-    useState<boolean>(false);
 
   const { data: options, isLoading: isLoadingOptions } =
     api.metadataChantier.récupérerOptions.useQuery();
@@ -105,7 +103,6 @@ export const usePageChantier = ({
 
   const mutationModifier = api.metadataChantier.modifier.useMutation({
     onSuccess: () => {
-      setEstEnCoursDeModification(false);
       router.push(
         `/panel-administrateur/chantiers/${chantierId}?_action=modification-reussie`,
       );
@@ -117,7 +114,6 @@ export const usePageChantier = ({
 
   const mutationCreer = api.metadataChantier.creer.useMutation({
     onSuccess: () => {
-      setEstEnCoursDeModification(false);
       router.push(
         `/panel-administrateur/chantiers/${chantierId}?_action=creation-reussie`,
       );
@@ -143,19 +139,11 @@ export const usePageChantier = ({
     });
   };
 
-  const reinitialiser = () => {
-    reactHookForm.reset();
-    setEstEnCoursDeModification(false);
-  };
-
   return {
-    estEnCoursDeModification,
-    setEstEnCoursDeModification,
     modifierChantier,
     creerChantier,
     reactHookForm,
     alerte,
-    reinitialiser,
     options,
     isLoading,
     chantierId: estUneCréation ? (idSuivant ?? chantierId) : chantierId,
