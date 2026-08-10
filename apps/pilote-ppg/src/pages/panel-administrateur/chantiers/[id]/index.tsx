@@ -3,6 +3,7 @@ import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { FunctionComponent } from "react";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
+import { getContainer } from "@/server/dependances";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 import PageAdminChantierEdition from "@/components/PageAdminChantiers/PageAdminChantierEdition";
 
@@ -24,10 +25,25 @@ export async function getServerSideProps(
     return redirigerVersAccueil;
 
   const { params, query } = context;
+  const chantierId = params!.id;
+  const estUneCréation = query._action === "creer-chantier";
+
+  const container = getContainer("metadataChantier");
+
+  const chantierData = estUneCréation
+    ? null
+    : await container.resolve("recupererChantierQuery").run({ chantierId });
+
+  const idSuivant = estUneCréation
+    ? await container.resolve("recupererIdSuivantQuery").run()
+    : null;
+
   return {
     props: {
-      chantierId: params!.id,
-      estUneCréation: query._action === "creer-chantier",
+      chantierId,
+      estUneCréation,
+      chantierData,
+      idSuivant,
       modificationReussie: query._action === "modification-reussie",
       creationReussie: query._action === "creation-reussie",
     },
@@ -36,7 +52,14 @@ export async function getServerSideProps(
 
 const NextPageAdminChantierEdition: FunctionComponent<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ chantierId, estUneCréation, modificationReussie, creationReussie }) => (
+> = ({
+  chantierId,
+  estUneCréation,
+  chantierData,
+  idSuivant,
+  modificationReussie,
+  creationReussie,
+}) => (
   <>
     <Head>
       <title>Panel Administrateur - Chantier {chantierId} - PILOTE</title>
@@ -44,8 +67,10 @@ const NextPageAdminChantierEdition: FunctionComponent<
     <NextPanelAdministrateurLayout pageActive="metadata-chantier">
       <PageAdminChantierEdition
         chantierId={chantierId}
+        chantierData={chantierData}
         creationReussie={creationReussie}
         estUneCréation={estUneCréation}
+        idSuivant={idSuivant}
         modificationReussie={modificationReussie}
       />
     </NextPanelAdministrateurLayout>
