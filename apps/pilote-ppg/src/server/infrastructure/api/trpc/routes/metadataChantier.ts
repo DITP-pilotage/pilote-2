@@ -8,8 +8,7 @@ import {
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
-import { modifierChantierCommandSchema } from "@/server/metadataChantier/handlers/ModifierChantierHandler";
-import { creerChantierCommandSchema } from "@/server/metadataChantier/handlers/CreerChantierHandler";
+import { chantierCommandSchema } from "@/server/metadataChantier/handlers/EnregistrerChantierHandler";
 
 function vérifierPermissionAdmin(session: Session & { user: Session["user"] }) {
   const habilitation = new Habilitation({
@@ -78,23 +77,13 @@ export const metadataChantierRouter = créerRouteurTRPC({
       .run();
   }),
 
-  modifier: procédureProtégée
-    .input(modifierChantierCommandSchema.and(zodValidateurCSRF))
+  enregistrer: procédureProtégée
+    .input(chantierCommandSchema.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       vérifierPermissionAdmin(ctx.session);
       await getContainer("metadataChantier")
-        .resolve("modifierChantierHandler")
-        .execute(input);
-    }),
-
-  creer: procédureProtégée
-    .input(creerChantierCommandSchema.and(zodValidateurCSRF))
-    .mutation(async ({ input, ctx }) => {
-      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
-      vérifierPermissionAdmin(ctx.session);
-      await getContainer("metadataChantier")
-        .resolve("creerChantierHandler")
+        .resolve("enregistrerChantierHandler")
         .execute(input);
     }),
 });

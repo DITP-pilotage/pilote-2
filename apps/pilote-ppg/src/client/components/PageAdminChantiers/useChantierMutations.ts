@@ -67,7 +67,7 @@ export const useChantierMutations = ({
     defaultValues,
   });
 
-  const mutationModifier = api.metadataChantier.modifier.useMutation({
+  const mutationModifier = api.metadataChantier.enregistrer.useMutation({
     onSuccess: () => {
       router.push(
         `/panel-administrateur/chantiers/${chantierId}?_action=modification-reussie`,
@@ -76,7 +76,7 @@ export const useChantierMutations = ({
     onError: (error) => setAlerte({ type: "erreur", titre: error.message }),
   });
 
-  const mutationCreer = api.metadataChantier.creer.useMutation({
+  const mutationCreer = api.metadataChantier.enregistrer.useMutation({
     onSuccess: () => {
       router.push("/panel-administrateur/chantiers?_action=creation-reussie");
     },

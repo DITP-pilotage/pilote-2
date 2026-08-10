@@ -11,8 +11,7 @@ import { ListerPpgsQuery } from "./queries/ListerPpgsQuery";
 import { ListerPorteursQuery } from "./queries/ListerPorteursQuery";
 import { ListerPerimetresQuery } from "./queries/ListerPerimetresQuery";
 import { ListerZonegroupsQuery } from "./queries/ListerZonegroupsQuery";
-import { ModifierChantierHandler } from "./handlers/ModifierChantierHandler";
-import { CreerChantierHandler } from "./handlers/CreerChantierHandler";
+import { EnregistrerChantierHandler } from "./handlers/EnregistrerChantierHandler";
 
 type MetadataChantierCradle = {
   listerChantiersQuery: ListerChantiersQuery;
@@ -22,8 +21,7 @@ type MetadataChantierCradle = {
   listerPorteursQuery: ListerPorteursQuery;
   listerPerimetresQuery: ListerPerimetresQuery;
   listerZonegroupsQuery: ListerZonegroupsQuery;
-  modifierChantierHandler: ModifierChantierHandler;
-  creerChantierHandler: CreerChantierHandler;
+  enregistrerChantierHandler: EnregistrerChantierHandler;
 };
 
 export const metadataChantierModule = defineModule<
@@ -42,8 +40,7 @@ export const metadataChantierModule = defineModule<
       listerPorteursQuery: asModuleClass(ListerPorteursQuery),
       listerPerimetresQuery: asModuleClass(ListerPerimetresQuery),
       listerZonegroupsQuery: asModuleClass(ListerZonegroupsQuery),
-      modifierChantierHandler: asModuleClass(ModifierChantierHandler),
-      creerChantierHandler: asModuleClass(CreerChantierHandler),
+      enregistrerChantierHandler: asModuleClass(EnregistrerChantierHandler),
     } satisfies VerifyCradle<MetadataChantierCradle>);
   },
 });
