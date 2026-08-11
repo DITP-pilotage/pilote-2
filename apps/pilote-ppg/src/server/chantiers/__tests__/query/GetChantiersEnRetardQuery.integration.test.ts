@@ -60,6 +60,7 @@ describe("GetChantiersQuery — view en_retard", () => {
             ppg: "PPG 1",
             ministeres: ["MIN-01"],
           },
+          page_url: "/chantier/CH-001/NAT-FR?jalon=2025",
           ecart: -15,
           taux_avancement: 30,
           meteo: "NON_RENSEIGNEE",

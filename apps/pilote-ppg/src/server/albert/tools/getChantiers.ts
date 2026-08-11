@@ -62,6 +62,9 @@ export type GetChantiersOutput = {
 const NON_APPLICABLE_EN_RETARD_NAT_FR =
   "L'analyse des chantiers en retard ne peut pas être réalisée au niveau national.\n\nEn effet, cet indicateur repose sur une comparaison entre le taux d'avancement d'un chantier pour un territoire donné et la valeur médiane observée sur l'ensemble des autres territoires.";
 
+const LIEN_MARKDOWN_INSTRUCTION =
+  "Chaque chantier dans les résultats dispose d'un champ `page_url`. Quand tu affiches l'identifiant (CH-XXX) ou le nom d'un chantier, utilise systématiquement un lien Markdown vers ce champ, par exemple : `[CH-001 – Nom du chantier](page_url)`.";
+
 function getOutputInstructions(
   input: GetChantiersInput,
   resultats: GetChantiersResult[],
@@ -87,12 +90,12 @@ function getOutputInstructions(
     .map((r) => r.territoire_code)
     .filter((code) => !territoiresAccessibles.includes(code));
 
-  if (codesRestreints.length === 0) return base;
+  const restrictionPrefix =
+    codesRestreints.length > 0
+      ? `⚠️ Restriction d'accès — territoires ${codesRestreints.join(", ")} : seuls le taux d'avancement, la météo et l'écart à la médiane sont disponibles. Les champs tendance et synthèse (commentaire) sont null par restriction d'accès, et non par absence de données. Tu DOIS le mentionner explicitement dans ta réponse quand ces champs sont retournés.\n\n`
+      : "";
 
-  return (
-    `⚠️ Restriction d'accès — territoires ${codesRestreints.join(", ")} : seuls le taux d'avancement, la météo et l'écart à la médiane sont disponibles. Les champs tendance et synthèse (commentaire) sont null par restriction d'accès, et non par absence de données. Tu DOIS le mentionner explicitement dans ta réponse quand ces champs sont retournés.\n\n` +
-    base
-  );
+  return `${restrictionPrefix}${base}\n\n${LIEN_MARKDOWN_INSTRUCTION}`;
 }
 
 function toQueryParams(
