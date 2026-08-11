@@ -33,9 +33,18 @@ const executeTool = async (
 const resultWith3Objectifs = {
   chantier_id: "CH-001",
   objectifs: {
-    notre_ambition: { date_publication: "2025-01-01T00:00:00.000Z", contenu: "<p>Ambition</p>" },
-    deja_fait: { date_publication: "2025-01-02T00:00:00.000Z", contenu: "<p>Fait</p>" },
-    a_faire: { date_publication: "2025-01-03T00:00:00.000Z", contenu: "<p>À faire</p>" },
+    notre_ambition: {
+      date_publication: "2025-01-01T00:00:00.000Z",
+      contenu: "<p>Ambition</p>",
+    },
+    deja_fait: {
+      date_publication: "2025-01-02T00:00:00.000Z",
+      contenu: "<p>Fait</p>",
+    },
+    a_faire: {
+      date_publication: "2025-01-03T00:00:00.000Z",
+      contenu: "<p>À faire</p>",
+    },
   },
 };
 
@@ -54,9 +63,18 @@ describe("createGetChantierObjectifsTool execute", () => {
     expect(result).toEqual({
       chantier_id: "CH-001",
       objectifs: {
-        notre_ambition: { date_publication: "2025-01-01T00:00:00.000Z", contenu: "<p>Ambition</p>" },
-        deja_fait: { date_publication: "2025-01-02T00:00:00.000Z", contenu: "<p>Fait</p>" },
-        a_faire: { date_publication: "2025-01-03T00:00:00.000Z", contenu: "<p>À faire</p>" },
+        notre_ambition: {
+          date_publication: "2025-01-01T00:00:00.000Z",
+          contenu: "<p>Ambition</p>",
+        },
+        deja_fait: {
+          date_publication: "2025-01-02T00:00:00.000Z",
+          contenu: "<p>Fait</p>",
+        },
+        a_faire: {
+          date_publication: "2025-01-03T00:00:00.000Z",
+          contenu: "<p>À faire</p>",
+        },
       },
       _output_instructions: expect.any(String),
     });
@@ -68,7 +86,10 @@ describe("createGetChantierObjectifsTool execute", () => {
       queryResult: {
         chantier_id: "CH-001",
         objectifs: {
-          notre_ambition: { date_publication: "2025-01-01T00:00:00.000Z", contenu: "<p>Ambition</p>" },
+          notre_ambition: {
+            date_publication: "2025-01-01T00:00:00.000Z",
+            contenu: "<p>Ambition</p>",
+          },
           deja_fait: null,
           a_faire: null,
         },
@@ -83,7 +104,10 @@ describe("createGetChantierObjectifsTool execute", () => {
     expect(result).toEqual({
       chantier_id: "CH-001",
       objectifs: {
-        notre_ambition: { date_publication: "2025-01-01T00:00:00.000Z", contenu: "<p>Ambition</p>" },
+        notre_ambition: {
+          date_publication: "2025-01-01T00:00:00.000Z",
+          contenu: "<p>Ambition</p>",
+        },
         deja_fait: null,
         a_faire: null,
       },

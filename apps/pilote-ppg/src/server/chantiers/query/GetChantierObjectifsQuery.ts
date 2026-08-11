@@ -33,9 +33,7 @@ export class GetChantierObjectifsQuery {
       },
     });
 
-    const toItem = (
-      type: $Enums.type_objectif,
-    ): ObjectifItem | null => {
+    const toItem = (type: $Enums.type_objectif): ObjectifItem | null => {
       const objectif = objectifs.find((o) => o.type === type);
       if (!objectif) return null;
       return {
