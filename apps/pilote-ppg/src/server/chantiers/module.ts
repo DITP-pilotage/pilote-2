@@ -63,6 +63,7 @@ import { GetTerritoiresIdentiteQuery } from "./query/GetTerritoiresIdentiteQuery
 import { RecupererTauxAvancementTerritoireQuery } from "./query/RecupererTauxAvancementTerritoireQuery";
 import { RecupererStatistiquesAvancementTousChantiersPubliesQuery } from "./query/RecupererStatistiquesAvancementTousChantiersPubliesQuery";
 import { GetChantiersHabilitesQuery } from "./infrastructure/queries/GetChantiersHabilitesQuery";
+import { GetChantierObjectifsQuery } from "./query/GetChantierObjectifsQuery";
 
 type ChantierExports = {
   recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
@@ -70,6 +71,7 @@ type ChantierExports = {
   getChantiersQuery: GetChantiersQuery;
   getChantierIndicateursQuery: GetChantierIndicateursQuery;
   getChantierCommentairesQuery: GetChantierCommentairesQuery;
+  getChantierObjectifsQuery: GetChantierObjectifsQuery;
   getChantiersIdentiteQuery: GetChantiersIdentiteQuery;
   getIndicateursIdentiteQuery: GetIndicateursIdentiteQuery;
   getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
@@ -139,6 +141,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
     "getChantiersQuery",
     "getChantierIndicateursQuery",
     "getChantierCommentairesQuery",
+    "getChantierObjectifsQuery",
     "getChantiersIdentiteQuery",
     "getIndicateursIdentiteQuery",
     "getTerritoiresIdentiteQuery",
@@ -248,6 +251,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       getChantiersQuery: asModuleClass(GetChantiersQuery),
       getChantierIndicateursQuery: asModuleClass(GetChantierIndicateursQuery),
       getChantierCommentairesQuery: asModuleClass(GetChantierCommentairesQuery),
+      getChantierObjectifsQuery: asModuleClass(GetChantierObjectifsQuery),
       getChantiersIdentiteQuery: asModuleClass(GetChantiersIdentiteQuery),
       getIndicateursIdentiteQuery: asModuleClass(GetIndicateursIdentiteQuery),
       getTerritoiresIdentiteQuery: asModuleClass(GetTerritoiresIdentiteQuery),

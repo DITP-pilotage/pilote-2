@@ -22,12 +22,10 @@ export class GetChantierCommentairesQuery {
   async execute(params: {
     territoireCode: string;
     chantierId: string;
-    inclureObjectifs?: boolean;
   }): Promise<GetChantierCommentairesResult> {
     const prisma = this.deps.prisma.getInstance();
-    const inclureObjectifs = params.inclureObjectifs ?? true;
 
-    const [commentaires, syntheses, objectifs] = await Promise.all([
+    const [commentaires, syntheses] = await Promise.all([
       prisma.commentaire.findMany({
         where: {
           chantier_id: params.chantierId,
@@ -45,15 +43,6 @@ export class GetChantierCommentairesQuery {
         },
         include: { auteur_modification: true },
       }),
-      inclureObjectifs
-        ? prisma.objectif.findMany({
-            where: {
-              chantier_id: params.chantierId,
-              statut: $Enums.statut_publication.PUBLIE,
-            },
-            include: { auteur_modification: true },
-          })
-        : Promise.resolve([]),
     ]);
 
     const items: GetChantierCommentairesResult["commentaires"] = [
@@ -76,16 +65,6 @@ export class GetChantierCommentairesQuery {
           nom: `${synthese.auteur_modification.prenom} ${synthese.auteur_modification.nom}`,
         },
         type: "synthese_des_resultats",
-      })),
-      ...objectifs.map((objectif) => ({
-        id: objectif.id,
-        date_publication: objectif.date_modification.toISOString(),
-        contenu: objectif.contenu,
-        auteur: {
-          id: objectif.auteur_modification.id,
-          nom: `${objectif.auteur_modification.prenom} ${objectif.auteur_modification.nom}`,
-        },
-        type: `objectif_${objectif.type}`,
       })),
     ];
 
