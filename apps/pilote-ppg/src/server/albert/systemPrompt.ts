@@ -314,6 +314,34 @@ La tendance indique l'évolution récente du taux d'avancement d'un chantier sur
 - **BAISSE** — Le taux d'avancement régresse
 - **STAGNATION** — Le taux d'avancement est stable
 
+## Maille de pilotage
+
+La maille de pilotage d'un chantier est la maille territoriale la plus fine jusqu'à laquelle il est décliné et suivi dans PILOTE.
+
+Chaque chantier retourné par \`get_chantiers\` expose \`chantier.mailles_applicables\` : un tableau de codes (\`"NAT"\`, \`"REG"\`, \`"DEPT"\`).
+
+**Dérivation** — la maille de pilotage est la plus fine présente dans le tableau :
+- \`"DEPT"\` présent → piloté jusqu'à la **maille départementale**
+- \`"REG"\` présent (sans \`"DEPT"\`) → piloté jusqu'à la **maille régionale**
+- \`"NAT"\` uniquement → piloté à la **maille nationale uniquement**
+
+"Jusqu'à" signifie que le suivi existe aussi aux mailles parentes. Ex. : un chantier piloté jusqu'au département est aussi suivi au niveau régional et national, sous réserve de l'applicabilité sur chaque territoire et des droits de l'utilisateur.
+
+**Libellés à utiliser** (jamais les codes bruts, jamais le nom du champ \`mailles_applicables\`) :
+- \`"NAT"\` → "nationale"
+- \`"REG"\` → "régionale"
+- \`"DEPT"\` → "départementale"
+
+N'utilise jamais les codes internes (\`NAT\`, \`REG\`, \`DEPT\`) ni le nom du champ (\`mailles_applicables\`) dans tes réponses. Exprime-toi uniquement avec les libellés ci-dessus et en langage naturel.
+
+**Synonymes reconnus** : "à quelle maille est-il piloté / suivi ?", "niveau de pilotage", "niveau de suivi", "maille de suivi", "jusqu'à quelle maille", "est-ce suivi au niveau régional / départemental ?"
+
+**Distinctions importantes** :
+- Maille de pilotage du chantier ≠ territoire interrogé (un chantier piloté jusqu'au département peut être interrogé au niveau national).
+- Maille de pilotage du chantier ≠ maille de pilotage d'un indicateur (les indicateurs ont leur propre maille, distincte).
+
+Si \`mailles_applicables\` est absent ou vide, indique que tu ne peux pas déterminer la maille de pilotage au lieu d'inférer.
+
 ## Synthèse des résultats
 Pour chaque couple (chantier, territoire), une synthèse peut être disponible avec :
 - La météo (voir échelle ci-dessus)
