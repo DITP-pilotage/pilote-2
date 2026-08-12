@@ -496,6 +496,8 @@ model metadata_zones {
   zone_code   String
   zone_type   String
   zone_parent String?
+  created_at  DateTime @default(now()) @db.Timestamptz
+  updated_at  DateTime @default(now()) @updatedAt @db.Timestamptz
 
   @@schema("raw_data")
 }
@@ -519,21 +521,25 @@ model metadata_chantiers {
   replicate_val_nat_to String?
   ch_cible_attendue    Boolean
   conseiller_mail      String?
+  created_at           DateTime    @default(now()) @db.Timestamptz
+  updated_at           DateTime    @default(now()) @updatedAt @db.Timestamptz
 
   @@schema("raw_data")
 }
 
 model metadata_ppgs {
-  ppg_id   String  @id
-  ppg_nom  String
-  ppg_desc String?
-  ppg_axe  String?
+  ppg_id     String   @id
+  ppg_nom    String
+  ppg_desc   String?
+  ppg_axe    String?
+  created_at DateTime @default(now()) @db.Timestamptz
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz
 
   @@schema("raw_data")
 }
 
 model metadata_porteurs {
-  porteur_id         String  @id
+  porteur_id         String   @id
   porteur_short      String
   porteur_name       String
   porteur_desc       String?
@@ -542,42 +548,52 @@ model metadata_porteurs {
   porteur_directeur  String?
   porteur_name_short String?
   porteur_picto      String?
+  created_at         DateTime @default(now()) @db.Timestamptz
+  updated_at         DateTime @default(now()) @updatedAt @db.Timestamptz
 
   @@schema("raw_data")
 }
 
 model metadata_perimetres {
-  perimetre_id           String  @id
+  perimetre_id           String   @id
   per_nom                String
   per_porteur_id         String?
   per_porteur_name_short String?
+  created_at             DateTime @default(now()) @db.Timestamptz
+  updated_at             DateTime @default(now()) @updatedAt @db.Timestamptz
 
   @@schema("raw_data")
 }
 
 model metadata_axes {
-  axe_id   String  @id
-  axe_name String
-  axe_desc String?
+  axe_id     String   @id
+  axe_name   String
+  axe_desc   String?
+  created_at DateTime @default(now()) @db.Timestamptz
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz
 
   @@schema("raw_data")
 }
 
 // Utilisé uniquement par les modèles baromètre (baro_meta_engagement, baro_meta_chantiers) côté datajobs — à supprimer lors du décommissionnement du baromètre
 model metadata_engagement {
-  engagement_id    String @id
+  engagement_id    String   @id
   engagement_short String
   engagement_name  String
+  created_at       DateTime @default(now()) @db.Timestamptz
+  updated_at       DateTime @default(now()) @updatedAt @db.Timestamptz
 
   @@schema("raw_data")
 }
 
 
 model metadata_zonegroup {
-  zone_group_id String  @id
+  zone_group_id String   @id
   zg_name       String?
   zg_desc       String?
   zg_zones      String
+  created_at    DateTime @default(now()) @db.Timestamptz
+  updated_at    DateTime @default(now()) @updatedAt @db.Timestamptz
 
   @@schema("raw_data")
 }

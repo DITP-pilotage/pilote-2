@@ -6,6 +6,8 @@ CREATE TABLE "raw_data"."metadata_zones" (
     "zone_code" TEXT NOT NULL,
     "zone_type" TEXT NOT NULL,
     "zone_parent" TEXT,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT "metadata_zones_pkey" PRIMARY KEY ("zone_id")
 );
@@ -31,6 +33,8 @@ CREATE TABLE "raw_data"."metadata_chantiers" (
     "replicate_val_nat_to" TEXT,
     "ch_cible_attendue" BOOLEAN NOT NULL,
     "conseiller_mail" TEXT,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT "metadata_chantiers_pkey" PRIMARY KEY ("chantier_id")
 );
@@ -42,6 +46,8 @@ CREATE TABLE "raw_data"."metadata_ppgs" (
     "ppg_nom" TEXT NOT NULL,
     "ppg_desc" TEXT,
     "ppg_axe" TEXT,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT "metadata_ppgs_pkey" PRIMARY KEY ("ppg_id")
 );
@@ -58,6 +64,8 @@ CREATE TABLE "raw_data"."metadata_porteurs" (
     "porteur_directeur" TEXT,
     "porteur_name_short" TEXT,
     "porteur_picto" TEXT,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT "metadata_porteurs_pkey" PRIMARY KEY ("porteur_id")
 );
@@ -69,6 +77,8 @@ CREATE TABLE "raw_data"."metadata_perimetres" (
     "per_nom" TEXT NOT NULL,
     "per_porteur_id" TEXT,
     "per_porteur_name_short" TEXT,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT "metadata_perimetres_pkey" PRIMARY KEY ("perimetre_id")
 );
@@ -79,6 +89,8 @@ CREATE TABLE "raw_data"."metadata_axes" (
     "axe_id" TEXT NOT NULL,
     "axe_name" TEXT NOT NULL,
     "axe_desc" TEXT,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT "metadata_axes_pkey" PRIMARY KEY ("axe_id")
 );
@@ -89,6 +101,8 @@ CREATE TABLE "raw_data"."metadata_engagement" (
     "engagement_id" TEXT NOT NULL,
     "engagement_short" TEXT NOT NULL,
     "engagement_name" TEXT NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT "metadata_engagement_pkey" PRIMARY KEY ("engagement_id")
 );
@@ -100,6 +114,8 @@ CREATE TABLE "raw_data"."metadata_zonegroup" (
     "zg_name" TEXT,
     "zg_desc" TEXT,
     "zg_zones" TEXT NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
     CONSTRAINT "metadata_zonegroup_pkey" PRIMARY KEY ("zone_group_id")
 );
