@@ -3,7 +3,7 @@ import MultiSelect from "@/components/_commons/MultiSelectNew/MultiSelect";
 import api from "@/server/infrastructure/api/trpc/api";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
-const MultiSelectPorteursNoDAC = () => {
+const MultiSelectPorteursSecondaires = () => {
   const { data: porteurs = [] } =
     api.metadataChantier.listerPorteursMIN.useQuery();
   const { control } = useFormContext<ChantierForm>();
@@ -11,10 +11,10 @@ const MultiSelectPorteursNoDAC = () => {
   return (
     <Controller
       control={control}
-      name="porteurIdsNoDAC"
+      name="porteurIdsSecondaires"
       render={({ field }) => (
         <MultiSelect
-          label="Porteurs non-DAC (ministères)"
+          label="Porteurs secondaires (ministères)"
           suffixeLibellé="ministère(s)"
           optionsGroupées={[
             {
@@ -30,4 +30,4 @@ const MultiSelectPorteursNoDAC = () => {
   );
 };
 
-export default MultiSelectPorteursNoDAC;
+export default MultiSelectPorteursSecondaires;

@@ -21,7 +21,17 @@ renamed AS (
         ch_saisie_ate AS ate,
         ch_state AS statut,
         zg_applicable::TEXT AS zone_groupe_applicable,
-        "porteur_ids_noDAC" AS ministeres_ids,
+        -- Reconstruction de ministeres_ids : principal en premier, secondaires ensuite,
+        -- avec déduplication si un secondaire == principal
+        CASE
+            WHEN "porteur_id_principal" IS NOT NULL
+                THEN ARRAY["porteur_id_principal"] || ARRAY(
+                    SELECT id
+                    FROM UNNEST("porteur_ids_secondaires") AS id
+                    WHERE id IS DISTINCT FROM "porteur_id_principal"
+                )
+            ELSE COALESCE("porteur_ids_secondaires", ARRAY[]::TEXT[])
+        END AS ministeres_ids,
         "porteur_ids_DAC" AS directeurs_administration_centrale_ids,
         STRING_TO_ARRAY(ch_per, ' | ') AS perimetre_ids,
         -- Géré via gestion des comptes désormais
