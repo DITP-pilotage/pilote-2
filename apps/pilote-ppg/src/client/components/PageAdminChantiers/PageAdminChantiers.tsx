@@ -135,6 +135,9 @@ const PageAdminChantiers = () => {
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
                     Statut
                   </th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                    Mise à jour
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -165,6 +168,16 @@ const PageAdminChantiers = () => {
                         >
                           {badge.label}
                         </span>
+                      </td>
+                      <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
+                        {new Date(chantier.updatedAt).toLocaleDateString(
+                          "fr-FR",
+                          {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          },
+                        )}
                       </td>
                     </tr>
                   );

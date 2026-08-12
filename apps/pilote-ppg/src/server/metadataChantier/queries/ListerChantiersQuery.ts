@@ -6,6 +6,7 @@ export interface ChantierListItem {
   chantierId: string;
   chNom: string;
   chState: $Enums.type_statut;
+  updatedAt: Date;
 }
 
 export class ListerChantiersQuery {
@@ -23,13 +24,15 @@ export class ListerChantiersQuery {
           chantier_id: true,
           ch_nom: true,
           ch_state: true,
+          updated_at: true,
         },
-        orderBy: { chantier_id: "asc" },
+        orderBy: { updated_at: "desc" },
       });
     return chantiers.map((chantier) => ({
       chantierId: chantier.chantier_id,
       chNom: chantier.ch_nom,
       chState: chantier.ch_state,
+      updatedAt: chantier.updated_at,
     }));
   }
 }
