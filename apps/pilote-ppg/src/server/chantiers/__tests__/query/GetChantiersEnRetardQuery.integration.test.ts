@@ -59,6 +59,7 @@ describe("GetChantiersQuery — view en_retard", () => {
             axe: "Axe 1",
             ppg: "PPG 1",
             ministeres: ["MIN-01"],
+            mailles_applicables: [],
           },
           ecart: -15,
           taux_avancement: 30,
