@@ -1,5 +1,6 @@
 import { FormProvider } from "react-hook-form";
 import Link from "next/link";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import AlerteMetadataChantier from "@/components/PageAdminChantiers/AlerteMetadataChantier";
 import FicheChantier from "@/components/PageAdminChantiers/FicheChantier";
 import { MetadataChantier } from "@/server/metadataChantier/queries/RecupererChantierQuery";
@@ -69,12 +70,7 @@ const PageAdminChantierEdition = ({
                 </p>
                 <h1 className="text-3xl font-bold text-[#1e1e1e]">{titre}</h1>
               </div>
-              <button
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#000091] text-white rounded-sm text-sm font-medium hover:bg-[#1212ff] transition-colors shadow-sm"
-                type="submit"
-              >
-                {labelBouton}
-              </button>
+              <Bouton label={labelBouton} variant="primary" type="submit" />
             </div>
 
             <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden">
@@ -84,12 +80,7 @@ const PageAdminChantierEdition = ({
             </div>
 
             <div className="flex justify-end mt-6 pt-4 border-t border-gray-200">
-              <button
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#000091] text-white rounded-sm text-sm font-medium hover:bg-[#1212ff] transition-colors shadow-sm"
-                type="submit"
-              >
-                {labelBouton}
-              </button>
+              <Bouton label={labelBouton} variant="primary" type="submit" />
             </div>
           </form>
         </FormProvider>

@@ -1,4 +1,5 @@
 import { Controller, useFormContext } from "react-hook-form";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 import { MAILLES } from "@/server/metadataChantier/handlers/EnregistrerChantierHandler";
 
@@ -32,21 +33,19 @@ const ChampMailleApplicable = () => {
                 <span className="text-sm">{maille}</span>
               </label>
             ))}
-            <button
-              type="button"
-              className="text-xs text-blue-600 underline hover:no-underline"
+            <Bouton
+              label="Tout sélectionner"
+              variant="link"
+              size="sm"
               onClick={() => field.onChange(MAILLES)}
-            >
-              Tout sélectionner
-            </button>
+            />
             {field.value.length > 0 && (
-              <button
-                type="button"
-                className="text-xs text-gray-500 underline hover:no-underline"
+              <Bouton
+                label="Tout désélectionner"
+                variant="link"
+                size="sm"
                 onClick={() => field.onChange([])}
-              >
-                Tout désélectionner
-              </button>
+              />
             )}
           </div>
           {fieldState.error && (
