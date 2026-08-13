@@ -1,4 +1,5 @@
 import { Controller, useFormContext } from "react-hook-form";
+import { $Enums } from "@prisma/client";
 import { Input } from "@/components/_commons/Input";
 import { Textarea } from "@/components/_commons/Textarea";
 import Champ from "@/components/_commons/Champ";
@@ -11,15 +12,16 @@ import MultiSelectPorteursNoDAC from "@/components/PageAdminChantiers/champs/Mul
 import MultiSelectPorteursDAC from "@/components/PageAdminChantiers/champs/MultiSelectPorteursDAC";
 import ChampMailleApplicable from "@/components/PageAdminChantiers/champs/ChampMailleApplicable";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
+import { SélecteurOption } from "@/client/components/_commons/Sélecteur/Sélecteur.interface";
 
-const OPTIONS_STATUT = [
+const OPTIONS_STATUT: SélecteurOption<$Enums.type_statut>[] = [
   { libellé: "Brouillon", valeur: "BROUILLON" },
   { libellé: "Publié", valeur: "PUBLIE" },
   { libellé: "Archivé", valeur: "ARCHIVE" },
   { libellé: "Supprimé", valeur: "SUPPRIME" },
 ];
 
-const OPTIONS_ATE = [
+const OPTIONS_ATE: SélecteurOption<$Enums.type_ate | "">[] = [
   { libellé: "— Aucun —", valeur: "" },
   { libellé: "ATE", valeur: "ate" },
   { libellé: "Hors ATE déconcentré", valeur: "hors_ate_deconcentre" },

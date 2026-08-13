@@ -1,7 +1,6 @@
 import { Controller, useFormContext } from "react-hook-form";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
-
-const MAILLES = ["NAT", "REG", "DEPT"] as const;
+import { MAILLES } from "@/server/metadataChantier/handlers/EnregistrerChantierHandler";
 
 const ChampMailleApplicable = () => {
   const { control } = useFormContext<ChantierForm>();
@@ -36,7 +35,7 @@ const ChampMailleApplicable = () => {
             <button
               type="button"
               className="text-xs text-blue-600 underline hover:no-underline"
-              onClick={() => field.onChange(["NAT", "REG", "DEPT"])}
+              onClick={() => field.onChange(MAILLES)}
             >
               Tout sélectionner
             </button>
