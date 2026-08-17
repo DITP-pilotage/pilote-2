@@ -24,9 +24,10 @@ describe("EnregistrerPerimetreHandler", () => {
         });
 
         // Then
-        const perimetre = await getPrisma().metadata_perimetres.findUniqueOrThrow({
-          where: { perimetre_id: "PER-099" },
-        });
+        const perimetre =
+          await getPrisma().metadata_perimetres.findUniqueOrThrow({
+            where: { perimetre_id: "PER-099" },
+          });
         expect(perimetre.per_nom).toBe("Périmètre de test");
         expect(perimetre.per_porteur_id).toBeNull();
         expect(perimetre.deleted_at).toBeNull();
@@ -47,9 +48,10 @@ describe("EnregistrerPerimetreHandler", () => {
         });
 
         // Then
-        const perimetre = await getPrisma().metadata_perimetres.findUniqueOrThrow({
-          where: { perimetre_id: "PER-098" },
-        });
+        const perimetre =
+          await getPrisma().metadata_perimetres.findUniqueOrThrow({
+            where: { perimetre_id: "PER-098" },
+          });
         expect(perimetre.per_porteur_id).toBe("88001");
       }),
     );
@@ -58,7 +60,10 @@ describe("EnregistrerPerimetreHandler", () => {
       "met à jour un périmètre existant",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.metadataPerimetre({ perimetre_id: "PER-097", per_nom: "Ancien nom" });
+        await fixtures.metadataPerimetre({
+          perimetre_id: "PER-097",
+          per_nom: "Ancien nom",
+        });
 
         // When
         await handler.execute({
@@ -68,9 +73,10 @@ describe("EnregistrerPerimetreHandler", () => {
         });
 
         // Then
-        const perimetre = await getPrisma().metadata_perimetres.findUniqueOrThrow({
-          where: { perimetre_id: "PER-097" },
-        });
+        const perimetre =
+          await getPrisma().metadata_perimetres.findUniqueOrThrow({
+            where: { perimetre_id: "PER-097" },
+          });
         expect(perimetre.per_nom).toBe("Nouveau nom");
       }),
     );

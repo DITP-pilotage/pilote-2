@@ -58,7 +58,10 @@ describe("ListerPerimetresQuery", () => {
       "exclut les périmètres supprimés",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.metadataPerimetre({ perimetre_id: "PER-010", per_nom: "Actif" });
+        await fixtures.metadataPerimetre({
+          perimetre_id: "PER-010",
+          per_nom: "Actif",
+        });
         await fixtures.metadataPerimetre({
           perimetre_id: "PER-011",
           per_nom: "Supprimé",

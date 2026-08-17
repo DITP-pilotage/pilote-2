@@ -17,7 +17,9 @@ describe("SupprimerZonegroupHandler", () => {
       "pose deleted_at sur le zone group",
       createIntegrationTest(async () => {
         // Given
-        const zonegroup = await fixtures.metadataZonegroup({ zone_group_id: "ZG-090" });
+        const zonegroup = await fixtures.metadataZonegroup({
+          zone_group_id: "ZG-090",
+        });
 
         // When
         await handler.execute({ zoneGroupId: zonegroup.zone_group_id });

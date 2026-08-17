@@ -25,9 +25,10 @@ describe("EnregistrerZonegroupHandler", () => {
         });
 
         // Then
-        const zonegroup = await getPrisma().metadata_zonegroup.findUniqueOrThrow({
-          where: { zone_group_id: "ZG-099" },
-        });
+        const zonegroup =
+          await getPrisma().metadata_zonegroup.findUniqueOrThrow({
+            where: { zone_group_id: "ZG-099" },
+          });
         expect(zonegroup.zg_name).toBe("Zone test");
         expect(zonegroup.zg_zones).toEqual(["D01", "D02", "D03"]);
         expect(zonegroup.zg_desc).toBe("Description test");
@@ -47,9 +48,10 @@ describe("EnregistrerZonegroupHandler", () => {
         });
 
         // Then
-        const zonegroup = await getPrisma().metadata_zonegroup.findUniqueOrThrow({
-          where: { zone_group_id: "ZG-098" },
-        });
+        const zonegroup =
+          await getPrisma().metadata_zonegroup.findUniqueOrThrow({
+            where: { zone_group_id: "ZG-098" },
+          });
         expect(zonegroup.zg_desc).toBeNull();
       }),
     );
@@ -58,7 +60,10 @@ describe("EnregistrerZonegroupHandler", () => {
       "met à jour un zone group existant",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.metadataZonegroup({ zone_group_id: "ZG-097", zg_name: "Ancien nom" });
+        await fixtures.metadataZonegroup({
+          zone_group_id: "ZG-097",
+          zg_name: "Ancien nom",
+        });
 
         // When
         await handler.execute({
@@ -69,9 +74,10 @@ describe("EnregistrerZonegroupHandler", () => {
         });
 
         // Then
-        const zonegroup = await getPrisma().metadata_zonegroup.findUniqueOrThrow({
-          where: { zone_group_id: "ZG-097" },
-        });
+        const zonegroup =
+          await getPrisma().metadata_zonegroup.findUniqueOrThrow({
+            where: { zone_group_id: "ZG-097" },
+          });
         expect(zonegroup.zg_name).toBe("Nouveau nom");
         expect(zonegroup.zg_zones).toEqual(["D10", "D20"]);
       }),

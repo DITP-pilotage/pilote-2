@@ -143,13 +143,12 @@ const PageAdminPorteurs = () => {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {porteursFiltres?.map((porteur) => {
-                  const typeBadge =
-                    porteur.porteurTypeShort
-                      ? (TYPE_BADGE[porteur.porteurTypeShort] ?? {
-                          label: porteur.porteurTypeShort,
-                          className: "bg-gray-100 text-gray-600",
-                        })
-                      : null;
+                  const typeBadge = porteur.porteurTypeShort
+                    ? (TYPE_BADGE[porteur.porteurTypeShort] ?? {
+                        label: porteur.porteurTypeShort,
+                        className: "bg-gray-100 text-gray-600",
+                      })
+                    : null;
                   const supprimé = porteur.deletedAt !== null;
                   return (
                     <tr
@@ -168,7 +167,11 @@ const PageAdminPorteurs = () => {
                         {porteur.porteurShort}
                       </td>
                       <td className="px-6 py-4 text-gray-700">
-                        <span className={supprimé ? "line-through text-gray-400" : ""}>
+                        <span
+                          className={
+                            supprimé ? "line-through text-gray-400" : ""
+                          }
+                        >
                           {porteur.porteurName}
                         </span>
                       </td>
@@ -189,11 +192,14 @@ const PageAdminPorteurs = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
-                        {new Date(porteur.updatedAt).toLocaleDateString("fr-FR", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })}
+                        {new Date(porteur.updatedAt).toLocaleDateString(
+                          "fr-FR",
+                          {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          },
+                        )}
                       </td>
                     </tr>
                   );

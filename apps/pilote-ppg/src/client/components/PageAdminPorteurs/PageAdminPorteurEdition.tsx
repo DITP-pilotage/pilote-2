@@ -41,7 +41,9 @@ const PageAdminPorteurEdition = ({
   idSuivant,
 }: Props) => {
   const router = useRouter();
-  const porteurIdEffectif = estUneCréation ? (idSuivant ?? porteurId) : porteurId;
+  const porteurIdEffectif = estUneCréation
+    ? (idSuivant ?? porteurId)
+    : porteurId;
 
   const defaultValues: PorteurForm = porteurData
     ? {
@@ -49,7 +51,8 @@ const PageAdminPorteurEdition = ({
         porteurShort: porteurData.porteurShort,
         porteurName: porteurData.porteurName,
         porteurDesc: porteurData.porteurDesc,
-        porteurTypeShort: (porteurData.porteurTypeShort as "MIN" | "DAC" | "AUTRE") ?? "MIN",
+        porteurTypeShort:
+          (porteurData.porteurTypeShort as "MIN" | "DAC" | "AUTRE") ?? "MIN",
         porteurDirecteur: porteurData.porteurDirecteur,
         porteurNameShort: porteurData.porteurNameShort,
         porteurPicto: porteurData.porteurPicto,
@@ -69,7 +72,8 @@ const PageAdminPorteurEdition = ({
       ),
   });
 
-  const estSupprimé = porteurData?.deletedAt !== null && porteurData?.deletedAt !== undefined;
+  const estSupprimé =
+    porteurData?.deletedAt !== null && porteurData?.deletedAt !== undefined;
 
   const {
     register,
@@ -108,7 +112,10 @@ const PageAdminPorteurEdition = ({
         )}
 
         <FormProvider {...reactHookForm}>
-          <form method="post" onSubmit={reactHookForm.handleSubmit(enregistrer)}>
+          <form
+            method="post"
+            onSubmit={reactHookForm.handleSubmit(enregistrer)}
+          >
             <div className="flex items-center justify-between mb-6">
               <div>
                 <p className="text-sm font-medium text-[#000091] uppercase tracking-widest mb-1">
@@ -168,7 +175,9 @@ const PageAdminPorteurEdition = ({
                           className={inputClass}
                           id="porteurTypeShort"
                           onChange={(e) =>
-                            field.onChange(e.target.value as "MIN" | "DAC" | "AUTRE")
+                            field.onChange(
+                              e.target.value as "MIN" | "DAC" | "AUTRE",
+                            )
                           }
                           value={field.value}
                         >
@@ -181,7 +190,9 @@ const PageAdminPorteurEdition = ({
                       )}
                     />
                     {errors.porteurTypeShort && (
-                      <p className={errorClass}>{errors.porteurTypeShort.message}</p>
+                      <p className={errorClass}>
+                        {errors.porteurTypeShort.message}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -203,7 +214,9 @@ const PageAdminPorteurEdition = ({
                         {...register("porteurShort")}
                       />
                       {errors.porteurShort && (
-                        <p className={errorClass}>{errors.porteurShort.message}</p>
+                        <p className={errorClass}>
+                          {errors.porteurShort.message}
+                        </p>
                       )}
                     </div>
                     <div>

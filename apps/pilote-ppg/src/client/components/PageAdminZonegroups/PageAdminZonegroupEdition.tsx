@@ -42,7 +42,9 @@ const PageAdminZonegroupEdition = ({
   idSuivant,
 }: Props) => {
   const router = useRouter();
-  const zoneGroupIdEffectif = estUneCréation ? (idSuivant ?? zoneGroupId) : zoneGroupId;
+  const zoneGroupIdEffectif = estUneCréation
+    ? (idSuivant ?? zoneGroupId)
+    : zoneGroupId;
   const [filtreZone, setFiltreZone] = useState("");
 
   const defaultValues: ZonegroupForm = zonegroupData
@@ -70,16 +72,16 @@ const PageAdminZonegroupEdition = ({
   const estSupprimé =
     zonegroupData?.deletedAt !== null && zonegroupData?.deletedAt !== undefined;
 
-  const { data: zonesDisponibles = [] } = api.metadataZonegroup.listerZonesDisponibles.useQuery();
-  const zonesGroupées = zonesDisponibles.reduce<Record<string, typeof zonesDisponibles>>(
-    (acc, zone) => {
-      const type = zone.zoneType;
-      if (!acc[type]) acc[type] = [];
-      acc[type].push(zone);
-      return acc;
-    },
-    {},
-  );
+  const { data: zonesDisponibles = [] } =
+    api.metadataZonegroup.listerZonesDisponibles.useQuery();
+  const zonesGroupées = zonesDisponibles.reduce<
+    Record<string, typeof zonesDisponibles>
+  >((acc, zone) => {
+    const type = zone.zoneType;
+    if (!acc[type]) acc[type] = [];
+    acc[type].push(zone);
+    return acc;
+  }, {});
   const ordreTypes = ["NAT", "REG", "DEPT"];
 
   const {
@@ -119,7 +121,10 @@ const PageAdminZonegroupEdition = ({
         )}
 
         <FormProvider {...reactHookForm}>
-          <form method="post" onSubmit={reactHookForm.handleSubmit(enregistrer)}>
+          <form
+            method="post"
+            onSubmit={reactHookForm.handleSubmit(enregistrer)}
+          >
             <div className="flex items-center justify-between mb-6">
               <div>
                 <p className="text-sm font-medium text-[#000091] uppercase tracking-widest mb-1">
@@ -211,7 +216,8 @@ const PageAdminZonegroupEdition = ({
                     <div>
                       <div className="flex items-center justify-between mb-3">
                         <p className="text-sm text-gray-600">
-                          {field.value.length} zone{field.value.length !== 1 ? "s" : ""} sélectionnée
+                          {field.value.length} zone
+                          {field.value.length !== 1 ? "s" : ""} sélectionnée
                           {field.value.length !== 1 ? "s" : ""}
                         </p>
                         <input
@@ -227,8 +233,12 @@ const PageAdminZonegroupEdition = ({
                           const zones = (zonesGroupées[type] ?? []).filter(
                             (zone) =>
                               !filtreZone ||
-                              zone.zoneId.toLowerCase().includes(filtreZone.toLowerCase()) ||
-                              zone.nom.toLowerCase().includes(filtreZone.toLowerCase()),
+                              zone.zoneId
+                                .toLowerCase()
+                                .includes(filtreZone.toLowerCase()) ||
+                              zone.nom
+                                .toLowerCase()
+                                .includes(filtreZone.toLowerCase()),
                           );
                           if (zones.length === 0) return null;
                           return (
@@ -253,8 +263,14 @@ const PageAdminZonegroupEdition = ({
                                   <button
                                     className="text-xs text-gray-500 hover:underline"
                                     onClick={() => {
-                                      const ids = new Set(zones.map((z) => z.zoneId));
-                                      field.onChange(field.value.filter((id) => !ids.has(id)));
+                                      const ids = new Set(
+                                        zones.map((z) => z.zoneId),
+                                      );
+                                      field.onChange(
+                                        field.value.filter(
+                                          (id) => !ids.has(id),
+                                        ),
+                                      );
                                     }}
                                     type="button"
                                   >
@@ -269,13 +285,17 @@ const PageAdminZonegroupEdition = ({
                                     key={zone.zoneId}
                                   >
                                     <input
-                                      checked={field.value.includes(zone.zoneId)}
+                                      checked={field.value.includes(
+                                        zone.zoneId,
+                                      )}
                                       className="rounded border-gray-300 text-[#000091] focus:ring-[#000091]"
                                       onChange={(e) => {
                                         field.onChange(
                                           e.target.checked
                                             ? [...field.value, zone.zoneId]
-                                            : field.value.filter((id) => id !== zone.zoneId),
+                                            : field.value.filter(
+                                                (id) => id !== zone.zoneId,
+                                              ),
                                         );
                                       }}
                                       type="checkbox"
@@ -283,7 +303,9 @@ const PageAdminZonegroupEdition = ({
                                     <span className="font-mono text-xs text-gray-500 w-12 shrink-0">
                                       {zone.zoneId}
                                     </span>
-                                    <span className="text-gray-700 truncate">{zone.nom}</span>
+                                    <span className="text-gray-700 truncate">
+                                      {zone.nom}
+                                    </span>
                                   </label>
                                 ))}
                               </div>

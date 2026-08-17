@@ -29,7 +29,9 @@ export const metadataPorteurModule = defineModule<
     container.register({
       listerPorteursAdminQuery: asModuleClass(ListerPorteursAdminQuery),
       recupererPorteurQuery: asModuleClass(RecupererPorteurQuery),
-      recupererIdSuivantPorteurQuery: asModuleClass(RecupererIdSuivantPorteurQuery),
+      recupererIdSuivantPorteurQuery: asModuleClass(
+        RecupererIdSuivantPorteurQuery,
+      ),
       enregistrerPorteurHandler: asModuleClass(EnregistrerPorteurHandler),
       supprimerPorteurHandler: asModuleClass(SupprimerPorteurHandler),
     } satisfies VerifyCradle<MetadataPorteurCradle>);

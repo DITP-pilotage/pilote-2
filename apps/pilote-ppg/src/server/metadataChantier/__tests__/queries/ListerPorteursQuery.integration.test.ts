@@ -147,7 +147,10 @@ describe("ListerPorteursQuery", () => {
       "exclut les porteurs supprimés",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.metadataPorteur({ porteur_id: "20001", porteur_type_short: "MIN" });
+        await fixtures.metadataPorteur({
+          porteur_id: "20001",
+          porteur_type_short: "MIN",
+        });
         await fixtures.metadataPorteur({
           porteur_id: "20002",
           porteur_type_short: "MIN",

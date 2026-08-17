@@ -5,7 +5,9 @@ import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habil
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 import PageAdminZonegroups from "@/components/PageAdminZonegroups/PageAdminZonegroups";
 
-const redirigerVersAccueil = { redirect: { destination: "/", permanent: false } };
+const redirigerVersAccueil = {
+  redirect: { destination: "/", permanent: false },
+};
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const session = await auth(context);
@@ -15,7 +17,8 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     habilitations: session.habilitations,
     profil: session.profil,
   });
-  if (!habilitation.estAutoriseAAccederALaPageAdmin()) return redirigerVersAccueil;
+  if (!habilitation.estAutoriseAAccederALaPageAdmin())
+    return redirigerVersAccueil;
 
   return { props: {} };
 }

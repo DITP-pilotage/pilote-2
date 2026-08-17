@@ -15,13 +15,11 @@ export class ListerZonesDisponiblesQuery {
   }
 
   async run(): Promise<ZoneDisponible[]> {
-    const zones = await this.prisma
-      .getInstance()
-      .metadata_zones.findMany({
-        where: { zone_type: { in: ["DEPT", "REG", "NAT"] } },
-        select: { zone_id: true, nom: true, zone_type: true },
-        orderBy: [{ zone_type: "asc" }, { zone_id: "asc" }],
-      });
+    const zones = await this.prisma.getInstance().metadata_zones.findMany({
+      where: { zone_type: { in: ["DEPT", "REG", "NAT"] } },
+      select: { zone_id: true, nom: true, zone_type: true },
+      orderBy: [{ zone_type: "asc" }, { zone_id: "asc" }],
+    });
     return zones.map((z) => ({
       zoneId: z.zone_id,
       nom: z.nom,

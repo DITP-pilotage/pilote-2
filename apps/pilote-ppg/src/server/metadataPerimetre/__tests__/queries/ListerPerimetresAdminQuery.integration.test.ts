@@ -16,8 +16,15 @@ describe("ListerPerimetresAdminQuery", () => {
       "retourne tous les périmètres y compris les supprimés avec porteur_short résolu",
       createIntegrationTest(async () => {
         // Given
-        const porteur = await fixtures.metadataPorteur({ porteur_id: "77001", porteur_short: "MIN" });
-        await fixtures.metadataPerimetre({ perimetre_id: "PER-080", per_nom: "Actif", per_porteur_id: porteur.porteur_id });
+        const porteur = await fixtures.metadataPorteur({
+          porteur_id: "77001",
+          porteur_short: "MIN",
+        });
+        await fixtures.metadataPerimetre({
+          perimetre_id: "PER-080",
+          per_nom: "Actif",
+          per_porteur_id: porteur.porteur_id,
+        });
         await fixtures.metadataPerimetre({
           perimetre_id: "PER-081",
           per_nom: "Supprimé",

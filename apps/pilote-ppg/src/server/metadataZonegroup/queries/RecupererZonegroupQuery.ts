@@ -16,7 +16,11 @@ export class RecupererZonegroupQuery {
     this.prisma = prisma;
   }
 
-  async run({ zoneGroupId }: { zoneGroupId: string }): Promise<MetadataZonegroup> {
+  async run({
+    zoneGroupId,
+  }: {
+    zoneGroupId: string;
+  }): Promise<MetadataZonegroup> {
     const zonegroup = await this.prisma
       .getInstance()
       .metadata_zonegroup.findUniqueOrThrow({

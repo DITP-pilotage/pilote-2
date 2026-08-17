@@ -6,7 +6,9 @@ import { getContainer } from "@/server/dependances";
 import { NextPanelAdministrateurLayout } from "@/components/PagePanelAdministrateur/PanelAdministrateurLayout/layout";
 import PageAdminZonegroupEdition from "@/components/PageAdminZonegroups/PageAdminZonegroupEdition";
 
-const redirigerVersAccueil = { redirect: { destination: "/", permanent: false } };
+const redirigerVersAccueil = {
+  redirect: { destination: "/", permanent: false },
+};
 
 export async function getServerSideProps(
   context: GetServerSidePropsContext<{ id: string }>,
@@ -18,7 +20,8 @@ export async function getServerSideProps(
     habilitations: session.habilitations,
     profil: session.profil,
   });
-  if (!habilitation.estAutoriseAAccederALaPageAdmin()) return redirigerVersAccueil;
+  if (!habilitation.estAutoriseAAccederALaPageAdmin())
+    return redirigerVersAccueil;
 
   const { params, query } = context;
   const zoneGroupId = params!.id;

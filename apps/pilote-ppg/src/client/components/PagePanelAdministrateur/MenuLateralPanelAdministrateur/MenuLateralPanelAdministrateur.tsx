@@ -9,7 +9,13 @@ interface MenuLateralPanelAdministrateurProps {
 
 type MenuItem =
   | { type: "heading"; label: string }
-  | { type: "item"; label: string; href: string; pageKey: string; indent?: boolean };
+  | {
+      type: "item";
+      label: string;
+      href: string;
+      pageKey: string;
+      indent?: boolean;
+    };
 
 export const MenuLateralPanelAdministrateur: FunctionComponent<
   MenuLateralPanelAdministrateurProps

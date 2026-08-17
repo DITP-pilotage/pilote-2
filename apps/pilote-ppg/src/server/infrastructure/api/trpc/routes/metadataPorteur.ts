@@ -56,7 +56,9 @@ export const metadataPorteurRouter = créerRouteurTRPC({
 
   supprimer: procédureProtégée
     .input(
-      z.object({ porteurId: z.string(), restaurer: z.boolean().optional() }).and(zodValidateurCSRF),
+      z
+        .object({ porteurId: z.string(), restaurer: z.boolean().optional() })
+        .and(zodValidateurCSRF),
     )
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);

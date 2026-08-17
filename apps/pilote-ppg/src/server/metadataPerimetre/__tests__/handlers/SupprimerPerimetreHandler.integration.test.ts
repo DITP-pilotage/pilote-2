@@ -17,7 +17,9 @@ describe("SupprimerPerimetreHandler", () => {
       "pose deleted_at sur le périmètre",
       createIntegrationTest(async () => {
         // Given
-        const perimetre = await fixtures.metadataPerimetre({ perimetre_id: "PER-090" });
+        const perimetre = await fixtures.metadataPerimetre({
+          perimetre_id: "PER-090",
+        });
 
         // When
         await handler.execute({ perimetreId: perimetre.perimetre_id });

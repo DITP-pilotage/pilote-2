@@ -57,7 +57,10 @@ describe("ListerZonegroupsQuery", () => {
       "exclut les zonegroups supprimés",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.metadataZonegroup({ zone_group_id: "ZG-010", zg_name: "Actif" });
+        await fixtures.metadataZonegroup({
+          zone_group_id: "ZG-010",
+          zg_name: "Actif",
+        });
         await fixtures.metadataZonegroup({
           zone_group_id: "ZG-011",
           zg_name: "Supprimé",

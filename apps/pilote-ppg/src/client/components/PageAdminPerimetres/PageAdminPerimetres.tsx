@@ -5,7 +5,8 @@ import api from "@/server/infrastructure/api/trpc/api";
 
 const PageAdminPerimetres = () => {
   const router = useRouter();
-  const { data: perimetres, isLoading } = api.metadataPerimetre.lister.useQuery();
+  const { data: perimetres, isLoading } =
+    api.metadataPerimetre.lister.useQuery();
   const [recherche, setRecherche] = useState("");
 
   const perimetresFiltres = perimetres?.filter((perimetre) => {
@@ -36,7 +37,8 @@ const PageAdminPerimetres = () => {
             <h1 className="text-3xl font-bold text-[#1e1e1e]">Périmètres</h1>
             {!isLoading && perimetres && (
               <p className="mt-1 text-sm text-gray-500">
-                {perimetres.length} périmètre{perimetres.length !== 1 ? "s" : ""}
+                {perimetres.length} périmètre
+                {perimetres.length !== 1 ? "s" : ""}
               </p>
             )}
           </div>
@@ -140,7 +142,11 @@ const PageAdminPerimetres = () => {
                         {perimetre.perimetreId}
                       </td>
                       <td className="px-6 py-4 font-medium text-[#1e1e1e]">
-                        <span className={supprimé ? "line-through text-gray-400" : ""}>
+                        <span
+                          className={
+                            supprimé ? "line-through text-gray-400" : ""
+                          }
+                        >
                           {perimetre.perNom}
                         </span>
                       </td>
@@ -155,11 +161,14 @@ const PageAdminPerimetres = () => {
                         )}
                       </td>
                       <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
-                        {new Date(perimetre.updatedAt).toLocaleDateString("fr-FR", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })}
+                        {new Date(perimetre.updatedAt).toLocaleDateString(
+                          "fr-FR",
+                          {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          },
+                        )}
                       </td>
                     </tr>
                   );

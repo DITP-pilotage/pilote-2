@@ -751,7 +751,8 @@ export const fixtures = {
     overrides: Partial<Prisma.metadata_porteursUncheckedCreateInput> = {},
   ) {
     const prisma = getPrisma();
-    const porteurId = overrides.porteur_id ?? String(Math.floor(Math.random() * 90000) + 10000);
+    const porteurId =
+      overrides.porteur_id ?? String(Math.floor(Math.random() * 90000) + 10000);
     return prisma.metadata_porteurs.create({
       data: {
         porteur_id: porteurId,
@@ -768,7 +769,8 @@ export const fixtures = {
     overrides: Partial<Prisma.metadata_zonegroupUncheckedCreateInput> = {},
   ) {
     const prisma = getPrisma();
-    const zoneGroupId = overrides.zone_group_id ?? `ZG-${randomUUID().slice(0, 6)}`;
+    const zoneGroupId =
+      overrides.zone_group_id ?? `ZG-${randomUUID().slice(0, 6)}`;
     return prisma.metadata_zonegroup.create({
       data: {
         zone_group_id: zoneGroupId,

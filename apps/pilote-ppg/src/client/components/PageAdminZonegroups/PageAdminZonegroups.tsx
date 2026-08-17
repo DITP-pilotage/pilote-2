@@ -5,7 +5,8 @@ import api from "@/server/infrastructure/api/trpc/api";
 
 const PageAdminZonegroups = () => {
   const router = useRouter();
-  const { data: zonegroups, isLoading } = api.metadataZonegroup.lister.useQuery();
+  const { data: zonegroups, isLoading } =
+    api.metadataZonegroup.lister.useQuery();
   const [recherche, setRecherche] = useState("");
 
   const zonegroupsFiltres = zonegroups?.filter((zonegroup) => {
@@ -36,7 +37,8 @@ const PageAdminZonegroups = () => {
             <h1 className="text-3xl font-bold text-[#1e1e1e]">Zones groupes</h1>
             {!isLoading && zonegroups && (
               <p className="mt-1 text-sm text-gray-500">
-                {zonegroups.length} zone{zonegroups.length !== 1 ? "s" : ""} groupe
+                {zonegroups.length} zone{zonegroups.length !== 1 ? "s" : ""}{" "}
+                groupe
               </p>
             )}
           </div>
@@ -140,12 +142,17 @@ const PageAdminZonegroups = () => {
                         {zonegroup.zoneGroupId}
                       </td>
                       <td className="px-6 py-4 font-medium text-[#1e1e1e]">
-                        <span className={supprimé ? "line-through text-gray-400" : ""}>
+                        <span
+                          className={
+                            supprimé ? "line-through text-gray-400" : ""
+                          }
+                        >
                           {zonegroup.zgName}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-xs text-gray-500">
-                        {zonegroup.nbZones} zone{zonegroup.nbZones !== 1 ? "s" : ""}
+                        {zonegroup.nbZones} zone
+                        {zonegroup.nbZones !== 1 ? "s" : ""}
                       </td>
                       <td className="px-6 py-4">
                         {supprimé && (
@@ -155,11 +162,14 @@ const PageAdminZonegroups = () => {
                         )}
                       </td>
                       <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
-                        {new Date(zonegroup.updatedAt).toLocaleDateString("fr-FR", {
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        })}
+                        {new Date(zonegroup.updatedAt).toLocaleDateString(
+                          "fr-FR",
+                          {
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          },
+                        )}
                       </td>
                     </tr>
                   );

@@ -35,7 +35,9 @@ const PageAdminPerimetreEdition = ({
   idSuivant,
 }: Props) => {
   const router = useRouter();
-  const perimetreIdEffectif = estUneCréation ? (idSuivant ?? perimetreId) : perimetreId;
+  const perimetreIdEffectif = estUneCréation
+    ? (idSuivant ?? perimetreId)
+    : perimetreId;
 
   const defaultValues: PerimetreForm = perimetreData
     ? {
@@ -101,7 +103,10 @@ const PageAdminPerimetreEdition = ({
         )}
 
         <FormProvider {...reactHookForm}>
-          <form method="post" onSubmit={reactHookForm.handleSubmit(enregistrer)}>
+          <form
+            method="post"
+            onSubmit={reactHookForm.handleSubmit(enregistrer)}
+          >
             <div className="flex items-center justify-between mb-6">
               <div>
                 <p className="text-sm font-medium text-[#000091] uppercase tracking-widest mb-1">
@@ -188,7 +193,10 @@ const PageAdminPerimetreEdition = ({
                         >
                           <option value="">— Aucun —</option>
                           {porteursActifs.map((porteur) => (
-                            <option key={porteur.porteurId} value={porteur.porteurId}>
+                            <option
+                              key={porteur.porteurId}
+                              value={porteur.porteurId}
+                            >
                               {porteur.porteurShort} — {porteur.porteurName}
                             </option>
                           ))}
