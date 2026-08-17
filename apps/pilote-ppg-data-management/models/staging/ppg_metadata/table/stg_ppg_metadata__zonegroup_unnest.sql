@@ -7,7 +7,7 @@ init AS (
 unnest_trgt AS (
     SELECT
         *,
-        UNNEST(STRING_TO_ARRAY(zg_zones, ' | ')) AS zg_zones_unnest
+        UNNEST(zg_zones) AS zg_zones_unnest
     FROM init
 ),
 

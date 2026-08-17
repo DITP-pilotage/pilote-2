@@ -554,20 +554,23 @@ model metadata_porteurs {
   porteur_directeur  String?
   porteur_name_short String?
   porteur_picto      String?
-  created_at         DateTime @default(now()) @db.Timestamptz
-  updated_at         DateTime @default(now()) @updatedAt @db.Timestamptz
+  created_at         DateTime  @default(now()) @db.Timestamptz
+  updated_at         DateTime  @default(now()) @updatedAt @db.Timestamptz
+  deleted_at         DateTime? @db.Timestamptz
+  perimetres         metadata_perimetres[]
 
   @@schema("raw_data")
 }
 
 model metadata_perimetres {
-  perimetre_id           String   @id
-  per_nom                String
-  per_porteur_id         String?
-  per_porteur_name_short String?
-  created_at             DateTime            @default(now()) @db.Timestamptz
-  updated_at             DateTime            @default(now()) @updatedAt @db.Timestamptz
-  chantiers              metadata_chantiers[]
+  perimetre_id   String    @id
+  per_nom        String
+  per_porteur_id String?
+  porteur        metadata_porteurs?  @relation(fields: [per_porteur_id], references: [porteur_id])
+  created_at     DateTime  @default(now()) @db.Timestamptz
+  updated_at     DateTime  @default(now()) @updatedAt @db.Timestamptz
+  deleted_at     DateTime? @db.Timestamptz
+  chantiers      metadata_chantiers[]
 
   @@schema("raw_data")
 }
@@ -595,12 +598,13 @@ model metadata_engagement {
 
 
 model metadata_zonegroup {
-  zone_group_id String               @id
+  zone_group_id String    @id
   zg_name       String
   zg_desc       String?
-  zg_zones      String
-  created_at    DateTime             @default(now()) @db.Timestamptz
-  updated_at    DateTime             @default(now()) @updatedAt @db.Timestamptz
+  zg_zones      String[]
+  created_at    DateTime  @default(now()) @db.Timestamptz
+  updated_at    DateTime  @default(now()) @updatedAt @db.Timestamptz
+  deleted_at    DateTime? @db.Timestamptz
   chantiers     metadata_chantiers[]
 
   @@schema("raw_data")
