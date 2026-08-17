@@ -23,6 +23,9 @@ import { parametrageCentreAideRouter } from "./parametrageCentreAide";
 import { applicationLogRouter } from "./applicationLog";
 import { actualitesRouter } from "./actualites";
 import { metadataChantierRouter } from "./metadataChantier";
+import { metadataPorteurRouter } from "./metadataPorteur";
+import { metadataPerimetreRouter } from "./metadataPerimetre";
+import { metadataZonegroupRouter } from "./metadataZonegroup";
 
 export const appRouter = créerRouteurTRPC({
   chantier: chantierRouter,
@@ -49,4 +52,7 @@ export const appRouter = créerRouteurTRPC({
   applicationLog: applicationLogRouter,
   actualites: actualitesRouter,
   metadataChantier: metadataChantierRouter,
+  metadataPorteur: metadataPorteurRouter,
+  metadataPerimetre: metadataPerimetreRouter,
+  metadataZonegroup: metadataZonegroupRouter,
 });

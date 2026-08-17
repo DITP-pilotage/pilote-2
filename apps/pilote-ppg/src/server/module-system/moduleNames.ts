@@ -24,6 +24,9 @@ export const moduleNames = [
   "actualites",
   "mbSync",
   "metadataChantier",
+  "metadataPorteur",
+  "metadataPerimetre",
+  "metadataZonegroup",
 ] as const;
 
 export type ModuleName = (typeof moduleNames)[number];

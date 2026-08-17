@@ -30,6 +30,9 @@ import { legacyModule } from "./legacy/module";
 import { actualitesModule } from "./actualites/module";
 import { mbSyncModule } from "./mb-sync/module";
 import { metadataChantierModule } from "./metadataChantier/module";
+import { metadataPorteurModule } from "./metadataPorteur/module";
+import { metadataPerimetreModule } from "./metadataPerimetre/module";
+import { metadataZonegroupModule } from "./metadataZonegroup/module";
 
 const allModules = [
   sharedModule,
@@ -57,6 +60,9 @@ const allModules = [
   actualitesModule,
   mbSyncModule,
   metadataChantierModule,
+  metadataPorteurModule,
+  metadataPerimetreModule,
+  metadataZonegroupModule,
 ];
 
 // Compile-time check: errors with missing module name(s) if allModules is not exhaustive
@@ -102,6 +108,9 @@ function registerContainer(): ContainerDependencies {
     actualites: getContainer("actualites"),
     mbSync: getContainer("mbSync"),
     metadataChantier: getContainer("metadataChantier"),
+    metadataPorteur: getContainer("metadataPorteur"),
+    metadataPerimetre: getContainer("metadataPerimetre"),
+    metadataZonegroup: getContainer("metadataZonegroup"),
   };
 }
 

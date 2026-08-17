@@ -142,4 +142,26 @@ describe("ListerPorteursQuery", () => {
       }),
     );
   });
+
+    it(
+      "exclut les porteurs supprimés",
+      createIntegrationTest(async () => {
+        // Given
+        await fixtures.metadataPorteur({ porteur_id: "20001", porteur_type_short: "MIN" });
+        await fixtures.metadataPorteur({
+          porteur_id: "20002",
+          porteur_type_short: "MIN",
+          deleted_at: new Date("2026-01-01"),
+        });
+
+        // When
+        const resultat = await query.run();
+
+        // Then
+        const ids = resultat.map((p) => p.id);
+        expect(ids).toContain("20001");
+        expect(ids).not.toContain("20002");
+      }),
+    );
+  });
 });
