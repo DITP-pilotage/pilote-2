@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import api from "@/server/infrastructure/api/trpc/api";
-import { récupérerUnCookie } from "@/client/utils/cookies";
 
 const TYPE_BADGE: Record<string, { label: string; className: string }> = {
   MIN: {

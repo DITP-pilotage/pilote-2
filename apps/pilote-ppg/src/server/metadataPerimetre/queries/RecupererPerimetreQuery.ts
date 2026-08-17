@@ -15,10 +15,16 @@ export class RecupererPerimetreQuery {
     this.prisma = prisma;
   }
 
-  async run({ perimetreId }: { perimetreId: string }): Promise<MetadataPerimetre> {
+  async run({
+    perimetreId,
+  }: {
+    perimetreId: string;
+  }): Promise<MetadataPerimetre> {
     const perimetre = await this.prisma
       .getInstance()
-      .metadata_perimetres.findUniqueOrThrow({ where: { perimetre_id: perimetreId } });
+      .metadata_perimetres.findUniqueOrThrow({
+        where: { perimetre_id: perimetreId },
+      });
     return {
       perimetreId: perimetre.perimetre_id,
       perNom: perimetre.per_nom,

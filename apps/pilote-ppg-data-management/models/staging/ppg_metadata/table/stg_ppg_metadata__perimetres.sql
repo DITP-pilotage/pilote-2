@@ -21,7 +21,8 @@ renamed AS (
         porteurs.porteur_name_short AS ministere_nom
 
     FROM source
-    LEFT JOIN porteurs ON source.per_porteur_id::TEXT = porteurs.porteur_id::TEXT
+    LEFT JOIN porteurs
+        ON source.per_porteur_id::TEXT = porteurs.porteur_id::TEXT
 
 )
 

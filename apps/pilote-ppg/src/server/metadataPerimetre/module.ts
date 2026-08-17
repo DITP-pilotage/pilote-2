@@ -29,7 +29,9 @@ export const metadataPerimetreModule = defineModule<
     container.register({
       listerPerimetresAdminQuery: asModuleClass(ListerPerimetresAdminQuery),
       recupererPerimetreQuery: asModuleClass(RecupererPerimetreQuery),
-      recupererIdSuivantPerimetreQuery: asModuleClass(RecupererIdSuivantPerimetreQuery),
+      recupererIdSuivantPerimetreQuery: asModuleClass(
+        RecupererIdSuivantPerimetreQuery,
+      ),
       enregistrerPerimetreHandler: asModuleClass(EnregistrerPerimetreHandler),
       supprimerPerimetreHandler: asModuleClass(SupprimerPerimetreHandler),
     } satisfies VerifyCradle<MetadataPerimetreCradle>);

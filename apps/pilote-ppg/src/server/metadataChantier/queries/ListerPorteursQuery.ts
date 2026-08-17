@@ -19,7 +19,10 @@ export class ListerPorteursQuery {
     const porteurs = await this.prisma
       .getInstance()
       .metadata_porteurs.findMany({
-        where: { deleted_at: null, ...(type ? { porteur_type_short: type } : {}) },
+        where: {
+          deleted_at: null,
+          ...(type ? { porteur_type_short: type } : {}),
+        },
         orderBy: { porteur_id: "asc" },
       });
     return porteurs.map(toApiModel);

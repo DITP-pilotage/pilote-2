@@ -31,7 +31,9 @@ export const metadataZonegroupModule = defineModule<
     container.register({
       listerZonegroupsAdminQuery: asModuleClass(ListerZonegroupsAdminQuery),
       recupererZonegroupQuery: asModuleClass(RecupererZonegroupQuery),
-      recupererIdSuivantZonegroupQuery: asModuleClass(RecupererIdSuivantZonegroupQuery),
+      recupererIdSuivantZonegroupQuery: asModuleClass(
+        RecupererIdSuivantZonegroupQuery,
+      ),
       listerZonesDisponiblesQuery: asModuleClass(ListerZonesDisponiblesQuery),
       enregistrerZonegroupHandler: asModuleClass(EnregistrerZonegroupHandler),
       supprimerZonegroupHandler: asModuleClass(SupprimerZonegroupHandler),

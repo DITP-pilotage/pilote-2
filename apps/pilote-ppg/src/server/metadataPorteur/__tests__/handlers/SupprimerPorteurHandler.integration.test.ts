@@ -40,7 +40,10 @@ describe("SupprimerPorteurHandler", () => {
         });
 
         // When
-        await handler.execute({ porteurId: porteur.porteur_id, restaurer: true });
+        await handler.execute({
+          porteurId: porteur.porteur_id,
+          restaurer: true,
+        });
 
         // Then
         const result = await getPrisma().metadata_porteurs.findUniqueOrThrow({

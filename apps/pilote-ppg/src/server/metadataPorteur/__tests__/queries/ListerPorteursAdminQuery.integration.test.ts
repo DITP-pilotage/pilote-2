@@ -16,7 +16,11 @@ describe("ListerPorteursAdminQuery", () => {
       "retourne tous les porteurs y compris les supprimés",
       createIntegrationTest(async () => {
         // Given
-        await fixtures.metadataPorteur({ porteur_id: "AA001", porteur_short: "AA", porteur_name: "Actif" });
+        await fixtures.metadataPorteur({
+          porteur_id: "AA001",
+          porteur_short: "AA",
+          porteur_name: "Actif",
+        });
         await fixtures.metadataPorteur({
           porteur_id: "BB001",
           porteur_short: "BB",
