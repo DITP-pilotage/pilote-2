@@ -53,7 +53,6 @@ describe("ListerPerimetresQuery", () => {
         ]);
       }),
     );
-  });
 
     it(
       "exclut les périmètres supprimés",

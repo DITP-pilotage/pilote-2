@@ -2,6 +2,7 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { ListerPorteursQuery } from "@/server/metadataChantier/queries/ListerPorteursQuery";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { getPrisma } from "@/server/db/PrismaTransaction";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
 
 describe("ListerPorteursQuery", () => {
   let query: ListerPorteursQuery;
@@ -141,7 +142,6 @@ describe("ListerPorteursQuery", () => {
         ]);
       }),
     );
-  });
 
     it(
       "exclut les porteurs supprimés",

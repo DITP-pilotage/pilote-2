@@ -7,6 +7,10 @@ interface MenuLateralPanelAdministrateurProps {
   pageActive: string;
 }
 
+type MenuItem =
+  | { type: "heading"; label: string }
+  | { type: "item"; label: string; href: string; pageKey: string; indent?: boolean };
+
 export const MenuLateralPanelAdministrateur: FunctionComponent<
   MenuLateralPanelAdministrateurProps
 > = ({ pageActive }) => {
@@ -14,9 +18,10 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
   const ffGestionTokenAPI = useEnv("NEXT_PUBLIC_FF_GESTION_TOKEN_API");
   const ffCentreAide = useEnv("NEXT_PUBLIC_FF_CENTRE_AIDE_ADMIN");
 
-  const menuItems = useMemo(
+  const menuItems = useMemo<MenuItem[]>(
     () => [
       {
+        type: "item",
         label: "Message d'information",
         href: "/panel-administrateur/message-information",
         pageKey: "message-information",
@@ -24,6 +29,7 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
       ...(ffGestionTokenAPI
         ? [
             {
+              type: "item" as const,
               label: "Token API",
               href: "/panel-administrateur/gestion-token-api",
               pageKey: "gestion-token-api",
@@ -31,26 +37,53 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
           ]
         : []),
       {
+        type: "item",
         label: "Indicateurs des chantiers",
         href: "/panel-administrateur/indicateurs",
         pageKey: "indicateurs",
       },
       {
+        type: "item",
         label: "Paramétrage metadata indicateur",
         href: "/panel-administrateur/parametrage-metadata-indicateur",
         pageKey: "parametrage-metadata-indicateur",
       },
       {
+        type: "item",
         label: "Chantiers",
         href: "/panel-administrateur/chantiers",
         pageKey: "metadata-chantier",
       },
+      { type: "heading", label: "Référentiels" },
       {
+        type: "item",
+        label: "Porteurs",
+        href: "/panel-administrateur/referentiels/porteurs",
+        pageKey: "referentiels-porteurs",
+        indent: true,
+      },
+      {
+        type: "item",
+        label: "Périmètres",
+        href: "/panel-administrateur/referentiels/perimetres",
+        pageKey: "referentiels-perimetres",
+        indent: true,
+      },
+      {
+        type: "item",
+        label: "Zones groupes",
+        href: "/panel-administrateur/referentiels/zonegroups",
+        pageKey: "referentiels-zonegroups",
+        indent: true,
+      },
+      {
+        type: "item",
         label: "Habilitations coordinateurs",
         href: "/panel-administrateur/habilitations-coordinateur",
         pageKey: "habilitations-coordinateur",
       },
       {
+        type: "item",
         label: "Nouveautés",
         href: "/panel-administrateur/nouveaute",
         pageKey: "nouveaute",
@@ -58,6 +91,7 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
       ...(ffCentreAide
         ? [
             {
+              type: "item" as const,
               label: "Centre d'aide",
               href: "/panel-administrateur/centre-aide",
               pageKey: "centre-aide",
@@ -65,16 +99,19 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
           ]
         : []),
       {
+        type: "item",
         label: "Albert",
         href: "/panel-administrateur/albert",
         pageKey: "albert",
       },
       {
+        type: "item",
         label: "Feature flipping",
         href: "/panel-administrateur/feature-flipping",
         pageKey: "feature-flipping",
       },
       {
+        type: "item",
         label: "Logs applicatifs",
         href: "/panel-administrateur/logs",
         pageKey: "logs",
@@ -125,14 +162,24 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
             Panel Administrateur
           </div>
           <ul className="space-y-1 list-style-none !pl-0">
-            {menuItems.map((item) => {
+            {menuItems.map((item, index) => {
+              if (item.type === "heading") {
+                return (
+                  <li className="pt-3 pb-1" key={`heading-${index}`}>
+                    <span className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+                      {item.label}
+                    </span>
+                  </li>
+                );
+              }
               const isActive = pageActive === item.pageKey;
               return (
                 <li key={item.pageKey}>
                   <Link
                     aria-current={isActive ? "page" : undefined}
                     className={clsxm(
-                      `!block !px-4 !py-2 !rounded-md !transition-colors !bg-none`,
+                      `!block !py-2 !rounded-md !transition-colors !bg-none`,
+                      item.indent ? "!pl-7 !pr-4" : "!px-4",
                       {
                         "!bg-blue-100 !text-blue-700 !font-medium": isActive,
                         "!text-gray-700 !hover:bg-gray-100": !isActive,

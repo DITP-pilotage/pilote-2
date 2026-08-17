@@ -52,7 +52,6 @@ describe("ListerZonegroupsQuery", () => {
         ]);
       }),
     );
-  });
 
     it(
       "exclut les zonegroups supprimés",
