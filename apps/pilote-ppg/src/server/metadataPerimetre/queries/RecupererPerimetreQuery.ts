@@ -5,7 +5,7 @@ export interface MetadataPerimetre {
   perimetreId: string;
   perNom: string;
   perPorteurId: string | null;
-  deletedAt: Date | null;
+  deletedAt: string | null;
 }
 
 export class RecupererPerimetreQuery {
@@ -29,7 +29,7 @@ export class RecupererPerimetreQuery {
       perimetreId: perimetre.perimetre_id,
       perNom: perimetre.per_nom,
       perPorteurId: perimetre.per_porteur_id,
-      deletedAt: perimetre.deleted_at,
+      deletedAt: perimetre.deleted_at?.toISOString() ?? null,
     };
   }
 }

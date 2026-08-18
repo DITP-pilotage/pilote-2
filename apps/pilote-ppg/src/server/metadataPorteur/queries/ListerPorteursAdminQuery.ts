@@ -29,7 +29,7 @@ export class ListerPorteursAdminQuery {
           updated_at: true,
           deleted_at: true,
         },
-        orderBy: [{ deleted_at: "asc" }, { porteur_id: "asc" }],
+        orderBy: [{ updated_at: "desc" }],
       });
     return porteurs.map((p) => ({
       porteurId: p.porteur_id,

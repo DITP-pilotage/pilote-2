@@ -6,7 +6,7 @@ export interface MetadataZonegroup {
   zgName: string;
   zgDesc: string | null;
   zgZones: string[];
-  deletedAt: Date | null;
+  deletedAt: string | null;
 }
 
 export class RecupererZonegroupQuery {
@@ -31,7 +31,7 @@ export class RecupererZonegroupQuery {
       zgName: zonegroup.zg_name,
       zgDesc: zonegroup.zg_desc,
       zgZones: zonegroup.zg_zones,
-      deletedAt: zonegroup.deleted_at,
+      deletedAt: zonegroup.deleted_at?.toISOString() ?? null,
     };
   }
 }

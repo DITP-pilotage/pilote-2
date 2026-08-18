@@ -27,7 +27,7 @@ export class ListerZonegroupsAdminQuery {
           updated_at: true,
           deleted_at: true,
         },
-        orderBy: [{ deleted_at: "asc" }, { zone_group_id: "asc" }],
+        orderBy: [{ updated_at: "desc" }],
       });
     return zonegroups.map((z) => ({
       zoneGroupId: z.zone_group_id,

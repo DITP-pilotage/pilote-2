@@ -10,7 +10,7 @@ export interface MetadataPorteur {
   porteurDirecteur: string | null;
   porteurNameShort: string | null;
   porteurPicto: string | null;
-  deletedAt: Date | null;
+  deletedAt: string | null;
 }
 
 export class RecupererPorteurQuery {
@@ -35,7 +35,7 @@ export class RecupererPorteurQuery {
       porteurDirecteur: porteur.porteur_directeur,
       porteurNameShort: porteur.porteur_name_short,
       porteurPicto: porteur.porteur_picto,
-      deletedAt: porteur.deleted_at,
+      deletedAt: porteur.deleted_at?.toISOString() ?? null,
     };
   }
 }

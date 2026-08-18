@@ -27,7 +27,7 @@ export class ListerPerimetresAdminQuery {
           deleted_at: true,
           porteur: { select: { porteur_short: true } },
         },
-        orderBy: [{ deleted_at: "asc" }, { perimetre_id: "asc" }],
+        orderBy: [{ updated_at: "desc" }],
       });
     return perimetres.map((p) => ({
       perimetreId: p.perimetre_id,
