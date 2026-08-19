@@ -8,6 +8,9 @@ export const principalPermissionsQueryOptions = (principalId: string) =>
   queryOptions({
     queryKey: ['permissions', principalId],
     queryFn: () => fetchPrincipalPermissions(principalId),
+    // Le formulaire est propriétaire de l'état après montage : un refetch au
+    // retour de focus écraserait silencieusement le brouillon en cours.
+    refetchOnWindowFocus: false,
   })
 
 // `recherche` filtre sur le nom, `rechercheIdentifiant` sur l'identifiant public.
