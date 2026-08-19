@@ -7,7 +7,7 @@ import { $Enums } from "@prisma/client";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
-import { MAILLES } from "@/server/metadataChantier/handlers/EnregistrerChantierHandler";
+import { MAILLES } from "@/server/metadataChantier/domain/maille";
 
 export const validationChantierSchema = z.object({
   chantierId: z.string().regex(/^CH-\d{3}$/),
