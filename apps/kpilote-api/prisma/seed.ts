@@ -481,6 +481,7 @@ const main = async () => {
     where: { email: 'ditp.admin@example.com' },
     select: { id: true },
   })
+  let permissionsCount = 0
   for (const item of indicateursSeed.slice(0, 8)) {
     const indicateur = await prisma.indicateur.findUniqueOrThrow({
       where: { publicId: item.publicId },
@@ -491,6 +492,7 @@ const main = async () => {
       IndicateurPermissionAction.WRITE_DATA,
       IndicateurPermissionAction.WRITE_COMMENT,
     ]) {
+      permissionsCount += 1
       await prisma.indicateurPermission.upsert({
         where: {
           principalId_indicateurId_action: {
@@ -1087,7 +1089,6 @@ const main = async () => {
 
   const contactsUtilesCount = 4
 
-  const permissionsCount = 8 * 2
   const widgetLiaisonsCount = widgetsSeed.reduce((acc, w) => acc + w.referentielPublicIds.length, 0)
   console.log(
     `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs écrites, ${objectifsCount} objectifs écrits (créés ou restaurés ; les lignes déjà conformes ne sont pas réécrites), ${valeursHorsJeuCount} valeurs et ${objectifsHorsJeuCount} objectifs hors jeu supprimés,${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${collectionsSeed.length} collections (${collectionLiaisonsCount} liaisons collection-indicateur, ${collectionPermissionsCount} permissions collection, ${collectionResponsablesCount} responsable collection, ${contactsUtilesCount} contacts utiles), ${indicateurResponsablesCount} responsables indicateur.`,
