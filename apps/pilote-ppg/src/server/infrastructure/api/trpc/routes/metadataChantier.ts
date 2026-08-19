@@ -9,6 +9,7 @@ import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { chantierCommandSchema } from "@/server/metadataChantier/handlers/EnregistrerChantierHandler";
+import { ForbiddenError } from "@/server/app/error-boundary/forbidden-error";
 
 function vérifierPermissionAdmin(session: Session & { user: Session["user"] }) {
   const habilitation = new Habilitation({
@@ -16,7 +17,7 @@ function vérifierPermissionAdmin(session: Session & { user: Session["user"] }) 
     profil: session.profil,
   });
   if (!habilitation.estAutoriseAAccederALaPageAdmin()) {
-    throw new Error("Accès non autorisé");
+    throw new ForbiddenError("Accès non autorisé");
   }
 }
 

@@ -29,7 +29,7 @@ const OPTIONS_ATE: SélecteurOption<$Enums.type_ate | "">[] = [
 ];
 
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <h2 className="text-base font-semibold text-[#1e1e1e] uppercase tracking-wide border-l-[3px] border-[#000091] pl-3 mb-5">
+  <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide border-l-[3px] border-primary pl-3 mb-5">
     {children}
   </h2>
 );
@@ -47,7 +47,7 @@ const FicheChantier = () => {
           <Textarea<ChantierForm>
             control={form.control}
             name="chNom"
-            label="Nom *"
+            label="Nom"
             required
             charLimit={500}
             rows={2}

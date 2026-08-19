@@ -1,6 +1,7 @@
-import { $Enums } from "@prisma/client";
+import { $Enums, metadata_chantiers } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataChantier/module";
+import { Maille } from "@/server/metadataChantier/domain/maille";
 
 export interface MetadataChantier {
   chantierId: string;
@@ -15,9 +16,29 @@ export interface MetadataChantier {
   porteurIdsNoDAC: string[];
   porteurIdsDAC: string[];
   chPer: string;
-  mailleApplicable: ("NAT" | "REG" | "DEPT")[];
+  mailleApplicable: Maille[];
   chCibleAttendue: boolean;
   conseillerMail: string | null;
+}
+
+function toApiModel(chantier: metadata_chantiers): MetadataChantier {
+  return {
+    chantierId: chantier.chantier_id,
+    chNom: chantier.ch_nom,
+    chDescr: chantier.ch_descr,
+    chPpg: chantier.ch_ppg,
+    chTerrito: chantier.ch_territo,
+    chHiddenPilote: chantier.ch_hidden_pilote,
+    chSaisieAte: chantier.ch_saisie_ate,
+    chState: chantier.ch_state,
+    zgApplicable: chantier.zg_applicable,
+    porteurIdsNoDAC: chantier.porteur_ids_noDAC,
+    porteurIdsDAC: chantier.porteur_ids_DAC,
+    chPer: chantier.ch_per,
+    mailleApplicable: chantier.maille_applicable as Maille[],
+    chCibleAttendue: chantier.ch_cible_attendue,
+    conseillerMail: chantier.conseiller_mail,
+  };
 }
 
 export class RecupererChantierQuery {
@@ -33,26 +54,6 @@ export class RecupererChantierQuery {
       .metadata_chantiers.findUniqueOrThrow({
         where: { chantier_id: chantierId },
       });
-    return {
-      chantierId: chantier.chantier_id,
-      chNom: chantier.ch_nom,
-      chDescr: chantier.ch_descr,
-      chPpg: chantier.ch_ppg,
-      chTerrito: chantier.ch_territo,
-      chHiddenPilote: chantier.ch_hidden_pilote,
-      chSaisieAte: chantier.ch_saisie_ate,
-      chState: chantier.ch_state,
-      zgApplicable: chantier.zg_applicable,
-      porteurIdsNoDAC: chantier.porteur_ids_noDAC,
-      porteurIdsDAC: chantier.porteur_ids_DAC,
-      chPer: chantier.ch_per,
-      mailleApplicable: chantier.maille_applicable as (
-        | "NAT"
-        | "REG"
-        | "DEPT"
-      )[],
-      chCibleAttendue: chantier.ch_cible_attendue,
-      conseillerMail: chantier.conseiller_mail,
-    };
+    return toApiModel(chantier);
   }
 }

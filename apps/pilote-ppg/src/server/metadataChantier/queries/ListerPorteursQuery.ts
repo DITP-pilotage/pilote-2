@@ -22,9 +22,10 @@ export class ListerPorteursQuery {
         where: type ? { porteur_type_short: type } : undefined,
         orderBy: { porteur_id: "asc" },
       });
-    return porteurs.map((p) => ({
-      id: p.porteur_id,
-      label: p.porteur_name,
-    }));
+    return porteurs.map(toApiModel);
   }
+}
+
+function toApiModel(p: { porteur_id: string; porteur_name: string }): PorteurOption {
+  return { id: p.porteur_id, label: p.porteur_name };
 }

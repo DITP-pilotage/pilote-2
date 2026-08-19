@@ -17,6 +17,10 @@ export class ListerPpgsQuery {
     const ppgs = await this.prisma
       .getInstance()
       .metadata_ppgs.findMany({ orderBy: { ppg_id: "asc" } });
-    return ppgs.map((p) => ({ id: p.ppg_id, nom: p.ppg_nom }));
+    return ppgs.map(toApiModel);
   }
+}
+
+function toApiModel(p: { ppg_id: string; ppg_nom: string }): Ppg {
+  return { id: p.ppg_id, nom: p.ppg_nom };
 }

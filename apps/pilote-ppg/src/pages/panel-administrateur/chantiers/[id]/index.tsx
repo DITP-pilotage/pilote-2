@@ -1,4 +1,5 @@
 import Head from "next/head";
+import { z } from "zod";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
@@ -24,7 +25,7 @@ export async function getServerSideProps(
     return redirigerVersAccueil;
 
   const { params, query } = context;
-  const chantierId = params!.id;
+  const chantierId = z.string().parse(params?.id);
   const estUneCréation = query._action === "creer-chantier";
 
   const container = getContainer("metadataChantier");

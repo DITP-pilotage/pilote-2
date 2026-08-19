@@ -17,6 +17,10 @@ export class ListerPerimetresQuery {
     const perimetres = await this.prisma
       .getInstance()
       .metadata_perimetres.findMany({ orderBy: { perimetre_id: "asc" } });
-    return perimetres.map((p) => ({ id: p.perimetre_id, nom: p.per_nom }));
+    return perimetres.map(toApiModel);
   }
+}
+
+function toApiModel(p: { perimetre_id: string; per_nom: string }): Perimetre {
+  return { id: p.perimetre_id, nom: p.per_nom };
 }

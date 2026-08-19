@@ -2,8 +2,7 @@ import { z } from "zod";
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataChantier/module";
-
-export const MAILLES = ["NAT", "REG", "DEPT"] as const;
+import { MAILLES } from "@/server/metadataChantier/domain/maille";
 
 export const chantierCommandSchema = z.object({
   chantierId: z.string().regex(/^CH-\d{3}$/),

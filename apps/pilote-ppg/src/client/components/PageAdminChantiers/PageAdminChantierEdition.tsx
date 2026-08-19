@@ -41,11 +41,11 @@ const PageAdminChantierEdition = ({
   const labelBouton = estUneCréation ? "Créer le chantier" : "Sauvegarder";
 
   return (
-    <div className="min-h-screen bg-[#f5f5fe]">
+    <div className="min-h-screen bg-dsfr-alt-blue-france">
       <div className="max-w-4xl mx-auto px-6 py-8">
         <nav className="mb-6 flex items-center gap-2 text-sm">
           <Link
-            className="text-[#000091] hover:text-[#1212ff] font-medium hover:underline underline-offset-2 transition-colors"
+            className="text-primary hover:text-dsfr-blue-france-sun-113-hover font-medium hover:underline underline-offset-2 transition-colors"
             href="/panel-administrateur/chantiers"
           >
             Gestion des chantiers
@@ -65,10 +65,10 @@ const PageAdminChantierEdition = ({
           >
             <div className="flex items-center justify-between mb-6">
               <div>
-                <p className="text-sm font-medium text-[#000091] uppercase tracking-widest mb-1">
+                <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
                   {estUneCréation ? "Nouveau chantier" : "Édition"}
                 </p>
-                <h1 className="text-3xl font-bold text-[#1e1e1e]">{titre}</h1>
+                <h1 className="text-3xl font-bold text-gray-900">{titre}</h1>
               </div>
               <Bouton label={labelBouton} variant="primary" type="submit" />
             </div>

@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { $Enums } from "@prisma/client";
 import api from "@/server/infrastructure/api/trpc/api";
 import AlerteMetadataChantier from "@/components/PageAdminChantiers/AlerteMetadataChantier";
+import { LoupePleineIcon } from "@/components/_commons/Icones/LoupePleineIcon";
+import Loader from "@/components/_commons/Loader/Loader";
 
-const STATUT_BADGE: Record<string, { label: string; className: string }> = {
+const STATUT_BADGE: Record<$Enums.type_statut, { label: string; className: string }> = {
   BROUILLON: {
     label: "Brouillon",
     className: "bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-200",
@@ -38,14 +41,14 @@ const PageAdminChantiers = () => {
   });
 
   return (
-    <div className="min-h-screen bg-[#f5f5fe]">
+    <div className="min-h-screen bg-dsfr-alt-blue-france">
       <div className="max-w-7xl mx-auto px-6 py-8">
         <div className="mb-8 flex items-end justify-between">
           <div>
-            <p className="text-sm font-medium text-[#000091] uppercase tracking-widest mb-1">
+            <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
               Panel administrateur
             </p>
-            <h1 className="text-3xl font-bold text-[#1e1e1e]">
+            <h1 className="text-3xl font-bold text-gray-900">
               Gestion des chantiers
             </h1>
             {!isLoading && chantiers && (
@@ -55,7 +58,7 @@ const PageAdminChantiers = () => {
             )}
           </div>
           <Link
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#000091] text-white rounded-sm text-sm font-medium hover:bg-[#1212ff] transition-colors shadow-sm"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-sm text-sm font-medium hover:bg-dsfr-blue-france-sun-113-hover transition-colors shadow-sm"
             href="/panel-administrateur/chantiers/nouveau?_action=creer-chantier"
           >
             <span className="text-base leading-none">+</span>
@@ -67,23 +70,11 @@ const PageAdminChantiers = () => {
 
         <div className="mb-4">
           <div className="relative w-full max-w-md">
-            <svg
-              aria-hidden="true"
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-              fill="none"
-              height="16"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-              width="16"
-            >
-              <circle cx="11" cy="11" r="8" />
-              <path d="m21 21-4.35-4.35" />
-            </svg>
+            <LoupePleineIcon
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none size-4"
+            />
             <input
-              className="w-full pl-9 pr-4 py-2.5 text-sm bg-white border border-gray-300 rounded-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#000091] focus:border-[#000091]"
+              className="w-full pl-9 pr-4 py-2.5 text-sm bg-white border border-gray-300 rounded-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
               onChange={(event) => setRecherche(event.target.value)}
               placeholder="Rechercher par ID ou nom…"
               type="search"
@@ -94,17 +85,8 @@ const PageAdminChantiers = () => {
 
         <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden">
           {isLoading ? (
-            <div className="divide-y divide-gray-100">
-              {[...Array(5)].map((_, i) => (
-                <div
-                  className="flex items-center gap-6 px-6 py-4 animate-pulse"
-                  key={i}
-                >
-                  <div className="h-3 bg-gray-100 rounded w-24" />
-                  <div className="h-3 bg-gray-100 rounded flex-1" />
-                  <div className="h-5 bg-gray-100 rounded-full w-16" />
-                </div>
-              ))}
+            <div className="relative py-20">
+              <Loader />
             </div>
           ) : chantiersFiltres?.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-gray-400">
@@ -148,7 +130,7 @@ const PageAdminChantiers = () => {
                   };
                   return (
                     <tr
-                      className="hover:bg-[#f5f5fe] transition-colors cursor-pointer"
+                      className="hover:bg-dsfr-alt-blue-france transition-colors cursor-pointer"
                       key={chantier.chantierId}
                       onClick={() =>
                         router.push(
@@ -159,7 +141,7 @@ const PageAdminChantiers = () => {
                       <td className="px-6 py-4 font-mono text-xs text-gray-400">
                         {chantier.chantierId}
                       </td>
-                      <td className="px-6 py-4 font-medium text-[#1e1e1e]">
+                      <td className="px-6 py-4 font-medium text-gray-900">
                         {chantier.chNom}
                       </td>
                       <td className="px-6 py-4">
