@@ -26,6 +26,9 @@ export class ListerPorteursQuery {
   }
 }
 
-function toApiModel(p: { porteur_id: string; porteur_name: string }): PorteurOption {
+function toApiModel(p: {
+  porteur_id: string;
+  porteur_name: string;
+}): PorteurOption {
   return { id: p.porteur_id, label: p.porteur_name };
 }
