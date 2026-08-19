@@ -12,6 +12,7 @@ export type IndicateurPermissionWriteActionValue = Exclude<IndicateurPermissionA
 export const collectionPermissionActionSchema = z.enum(['READ', 'WRITE_COMMENT'])
 export type CollectionPermissionActionValue = z.infer<typeof collectionPermissionActionSchema>
 export const CollectionPermissionAction = collectionPermissionActionSchema.enum
+export type CollectionPermissionWriteActionValue = Exclude<CollectionPermissionActionValue, 'READ'>
 
 // --- Commun ------------------------------------------------------------------
 

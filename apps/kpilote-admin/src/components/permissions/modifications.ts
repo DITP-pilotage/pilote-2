@@ -1,4 +1,4 @@
-import type { PermissionRow } from '@/components/permissions/PermissionSection'
+import type { PermissionRow } from '@/components/permissions/formValues'
 
 const memesActions = (a: readonly string[], b: readonly string[]): boolean =>
   a.length === b.length && [...a].sort().join('|') === [...b].sort().join('|')
@@ -6,9 +6,9 @@ const memesActions = (a: readonly string[], b: readonly string[]): boolean =>
 // Compte les lignes retirées, ajoutées, et celles dont les actions d'écriture
 // ont changé. `formState.dirtyFields` ne convient pas : react-hook-form marque
 // tout un tableau comme sale dès que sa longueur change.
-export const compterModifications = <TWrite extends string>(
-  initiales: readonly PermissionRow<TWrite>[],
-  courantes: readonly PermissionRow<TWrite>[],
+export const compterModifications = (
+  initiales: readonly PermissionRow[],
+  courantes: readonly PermissionRow[],
 ): number => {
   const initialesParId = new Map(initiales.map((row) => [row.publicId, row.writeActions]))
   const idsCourants = new Set(courantes.map((row) => row.publicId))

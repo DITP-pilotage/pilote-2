@@ -1,7 +1,7 @@
 import {
   CollectionPermissionAction,
   IndicateurPermissionAction,
-  type IndicateurPermissionWriteActionValue,
+  type CollectionPermissionWriteActionValue,
   type PrincipalPermissionsApiModel,
 } from '@pilote/kpilote-shared/permission'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
@@ -13,7 +13,8 @@ import { replacePrincipalPermissions } from '@/api/permissions'
 import { CollectionSearchModal } from '@/components/CollectionSearchModal'
 import { IndicateurPicker } from '@/components/permissions/IndicateurPicker'
 import { compterModifications } from '@/components/permissions/modifications'
-import { PermissionSection, type PermissionRow } from '@/components/permissions/PermissionSection'
+import type { PermissionsFormValues } from '@/components/permissions/formValues'
+import { PermissionSection } from '@/components/permissions/PermissionSection'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { useToast } from '@pilote/kpilote-ui/Toast'
@@ -21,14 +22,6 @@ import { extractApiError } from '@/lib/apiError'
 import { clsxm } from '@/lib/clsxm'
 import { useProdEditUnlock } from '@/lib/useProdEditUnlock'
 import { principalPermissionsQueryOptions } from '@/queries/permissions'
-
-type IndicateurRow = PermissionRow<IndicateurPermissionWriteActionValue>
-type CollectionRow = PermissionRow<'WRITE_COMMENT'>
-
-type PermissionsFormValues = {
-  indicateurs: IndicateurRow[]
-  collections: CollectionRow[]
-}
 
 const INDICATEUR_WRITE_OPTIONS = [
   { value: IndicateurPermissionAction.WRITE_DATA, label: 'Données' },
@@ -43,17 +36,12 @@ const toFormValues = (data: PrincipalPermissionsApiModel): PermissionsFormValues
   indicateurs: data.indicateurs.map((indicateur) => ({
     publicId: indicateur.publicId,
     nom: indicateur.nom,
-    writeActions: indicateur.actions.filter(
-      (action): action is IndicateurPermissionWriteActionValue =>
-        action !== IndicateurPermissionAction.READ,
-    ),
+    writeActions: indicateur.actions.filter((action) => action !== IndicateurPermissionAction.READ),
   })),
   collections: data.collections.map((collection) => ({
     publicId: collection.publicId,
     nom: collection.nom,
-    writeActions: collection.actions.filter(
-      (action): action is 'WRITE_COMMENT' => action !== CollectionPermissionAction.READ,
-    ),
+    writeActions: collection.actions.filter((action) => action !== CollectionPermissionAction.READ),
   })),
 })
 
@@ -67,7 +55,15 @@ const toApiBody = (principalId: string, values: PermissionsFormValues) => ({
   })),
   collections: values.collections.map((row) => ({
     publicId: row.publicId,
-    actions: [CollectionPermissionAction.READ, ...row.writeActions],
+    // Une collection ne porte jamais WRITE_DATA : la section ne propose que
+    // WRITE_COMMENT, on le vérifie ici plutôt que de l'affirmer par un cast.
+    actions: [
+      CollectionPermissionAction.READ,
+      ...row.writeActions.filter(
+        (action): action is CollectionPermissionWriteActionValue =>
+          action === CollectionPermissionAction.WRITE_COMMENT,
+      ),
+    ],
   })),
 })
 
@@ -199,7 +195,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
       ) : null}
 
       <form onSubmit={(event) => void handleSubmit((values) => mutation.mutate(values))(event)}>
-        <PermissionSection<PermissionsFormValues, IndicateurPermissionWriteActionValue>
+        <PermissionSection
           title="Indicateurs"
           control={control}
           name="indicateurs"
@@ -220,7 +216,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           )}
         />
 
-        <PermissionSection<PermissionsFormValues, 'WRITE_COMMENT'>
+        <PermissionSection
           title="Collections"
           control={control}
           name="collections"

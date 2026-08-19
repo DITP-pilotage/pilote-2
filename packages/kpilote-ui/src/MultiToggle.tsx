@@ -14,8 +14,10 @@ type MultiToggleProps<TValue extends string> = {
   options: readonly MultiToggleOption<TValue>[]
   disabled?: boolean
   className?: string
-  'aria-label'?: string
-  'aria-labelledby'?: string
+  // Fournir l'un OU l'autre : `ariaLabel` pour un usage autonome,
+  // `ariaLabelledBy` quand un `<label>` externe décrit le groupe.
+  ariaLabel?: string
+  ariaLabelledBy?: string
 }
 
 export function MultiToggle<TValue extends string>({
@@ -24,7 +26,8 @@ export function MultiToggle<TValue extends string>({
   options,
   disabled = false,
   className,
-  ...aria
+  ariaLabel,
+  ariaLabelledBy,
 }: MultiToggleProps<TValue>) {
   return (
     <ToggleGroupPrimitive.Root
@@ -32,8 +35,8 @@ export function MultiToggle<TValue extends string>({
       value={value}
       onValueChange={(next) => onValueChange(next as TValue[])}
       disabled={disabled}
-      aria-label={aria['aria-label']}
-      aria-labelledby={aria['aria-labelledby']}
+      aria-label={ariaLabel}
+      aria-labelledby={ariaLabelledBy}
       className={clsxm('inline-flex items-center gap-2', className)}
     >
       {options.map((option) => (
