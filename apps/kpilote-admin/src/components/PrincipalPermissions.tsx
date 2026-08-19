@@ -252,32 +252,36 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
           )}
         />
 
-        {isDirty ? (
-          <div className="mt-6 flex items-center justify-between gap-4 border-t border-border pt-4">
-            <span className="text-sm text-text-muted">
-              {nombreModifications} modification{nombreModifications > 1 ? 's' : ''} non enregistrée
-              {nombreModifications > 1 ? 's' : ''}
-            </span>
-            <span className="flex items-center gap-2">
-              <Button
-                variant="secondary"
-                size="sm"
-                type="button"
-                disabled={disabled}
-                onClick={() => reset(initialValues)}
-              >
-                Annuler
-              </Button>
-              <Button size="sm" type="submit" disabled={disabled || locked}>
-                {mutation.isPending
-                  ? 'Enregistrement…'
-                  : isProd
-                    ? '🚨 Enregistrer en Prod'
-                    : 'Enregistrer'}
-              </Button>
-            </span>
-          </div>
-        ) : null}
+        <div className="mt-6 flex items-center justify-between gap-4 border-t border-border pt-4">
+          <span className="text-sm text-text-muted">
+            {isDirty ? (
+              <>
+                {nombreModifications} modification{nombreModifications > 1 ? 's' : ''} non
+                enregistrée{nombreModifications > 1 ? 's' : ''}
+              </>
+            ) : (
+              'Aucune modification en attente.'
+            )}
+          </span>
+          <span className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              type="button"
+              disabled={disabled || !isDirty}
+              onClick={() => reset(initialValues)}
+            >
+              Annuler
+            </Button>
+            <Button size="sm" type="submit" disabled={disabled || locked || !isDirty}>
+              {mutation.isPending
+                ? 'Enregistrement…'
+                : isProd
+                  ? '🚨 Enregistrer en Prod'
+                  : 'Enregistrer'}
+            </Button>
+          </span>
+        </div>
       </form>
     </section>
   )
