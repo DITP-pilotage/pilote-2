@@ -7,16 +7,13 @@ import {
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
 import { Lock } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
 
-import {
-  grantCollectionPermission,
-  grantIndicateurPermission,
-  revokeCollectionPermission,
-  revokeIndicateurPermission,
-} from '@/api/permissions'
+import { replacePrincipalPermissions } from '@/api/permissions'
 import { CollectionSearchModal } from '@/components/CollectionSearchModal'
 import { IndicateurPicker } from '@/components/permissions/IndicateurPicker'
-import { PermissionSection } from '@/components/permissions/PermissionSection'
+import { compterModifications } from '@/components/permissions/modifications'
+import { PermissionSection, type PermissionRow } from '@/components/permissions/PermissionSection'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
 import { useToast } from '@pilote/kpilote-ui/Toast'
@@ -24,6 +21,55 @@ import { extractApiError } from '@/lib/apiError'
 import { clsxm } from '@/lib/clsxm'
 import { useProdEditUnlock } from '@/lib/useProdEditUnlock'
 import { principalPermissionsQueryOptions } from '@/queries/permissions'
+
+type IndicateurRow = PermissionRow<IndicateurPermissionWriteActionValue>
+type CollectionRow = PermissionRow<'WRITE_COMMENT'>
+
+type PermissionsFormValues = {
+  indicateurs: IndicateurRow[]
+  collections: CollectionRow[]
+}
+
+const INDICATEUR_WRITE_OPTIONS = [
+  { value: IndicateurPermissionAction.WRITE_DATA, label: 'Données' },
+  { value: IndicateurPermissionAction.WRITE_COMMENT, label: 'Commentaires' },
+] as const
+
+const COLLECTION_WRITE_OPTIONS = [
+  { value: CollectionPermissionAction.WRITE_COMMENT, label: 'Commentaires' },
+] as const
+
+const toFormValues = (data: PrincipalPermissionsApiModel): PermissionsFormValues => ({
+  indicateurs: data.indicateurs.map((indicateur) => ({
+    publicId: indicateur.publicId,
+    nom: indicateur.nom,
+    writeActions: indicateur.actions.filter(
+      (action): action is IndicateurPermissionWriteActionValue =>
+        action !== IndicateurPermissionAction.READ,
+    ),
+  })),
+  collections: data.collections.map((collection) => ({
+    publicId: collection.publicId,
+    nom: collection.nom,
+    writeActions: collection.actions.filter(
+      (action): action is 'WRITE_COMMENT' => action !== CollectionPermissionAction.READ,
+    ),
+  })),
+})
+
+// READ est réinjecté ici, et seulement ici : c'est l'invariant de l'écran
+// d'administration, l'API accepte une écriture sans lecture.
+const toApiBody = (principalId: string, values: PermissionsFormValues) => ({
+  principalId,
+  indicateurs: values.indicateurs.map((row) => ({
+    publicId: row.publicId,
+    actions: [IndicateurPermissionAction.READ, ...row.writeActions],
+  })),
+  collections: values.collections.map((row) => ({
+    publicId: row.publicId,
+    actions: [CollectionPermissionAction.READ, ...row.writeActions],
+  })),
+})
 
 export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const queryClient = useQueryClient()
@@ -34,69 +80,47 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const options = principalPermissionsQueryOptions(principalId)
   const { data } = useSuspenseQuery(options)
 
+  const initialValues = toFormValues(data)
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isDirty },
+  } = useForm<PermissionsFormValues>({ defaultValues: initialValues })
+
   const mutation = useMutation({
-    mutationFn: (run: () => Promise<PrincipalPermissionsApiModel>) => run(),
+    mutationFn: (values: PermissionsFormValues) =>
+      replacePrincipalPermissions(toApiBody(principalId, values)),
     onSuccess: (fresh) => {
       queryClient.setQueryData(options.queryKey, fresh)
+      reset(toFormValues(fresh))
       toast({ title: 'Permissions mises à jour.' })
     },
     onError: (err: unknown) => toast({ title: extractApiError(err), variant: 'error' }),
   })
 
-  const disabled = locked || mutation.isPending
+  const disabled = mutation.isPending
 
-  const run = (task: () => Promise<PrincipalPermissionsApiModel>) => {
-    mutation.mutate(task)
-  }
+  const indicateursCourants = useWatch({ control, name: 'indicateurs' }) ?? []
+  const collectionsCourantes = useWatch({ control, name: 'collections' }) ?? []
 
-  // Indicateurs — appels directs, aucune factorisation avec les collections.
-  const addIndicateur = (indicateurPublicId: string) => {
-    run(() =>
-      grantIndicateurPermission({
-        principalId,
-        indicateurPublicId,
-        action: IndicateurPermissionAction.READ,
-      }),
-    )
-  }
-  const toggleIndicateurWrite =
-    (action: IndicateurPermissionWriteActionValue) =>
-    (indicateurPublicId: string, active: boolean) =>
-      run(() =>
-        active
-          ? revokeIndicateurPermission({ principalId, indicateurPublicId, action })
-          : grantIndicateurPermission({ principalId, indicateurPublicId, action }),
-      )
-  const removeIndicateur = (indicateurPublicId: string) =>
-    run(() => revokeIndicateurPermission({ principalId, indicateurPublicId }))
+  const initialIndicateurIds = new Set(initialValues.indicateurs.map((row) => row.publicId))
+  const initialCollectionIds = new Set(initialValues.collections.map((row) => row.publicId))
 
-  // Collections — appels directs, aucune factorisation avec les indicateurs.
-  const addCollection = (collectionPublicId: string) => {
-    setModal(null)
-    run(() =>
-      grantCollectionPermission({
-        principalId,
-        collectionPublicId,
-        action: CollectionPermissionAction.READ,
-      }),
-    )
-  }
-  const toggleCollectionWriteComment = (collectionPublicId: string, active: boolean) =>
-    run(() =>
-      active
-        ? revokeCollectionPermission({
-            principalId,
-            collectionPublicId,
-            action: CollectionPermissionAction.WRITE_COMMENT,
-          })
-        : grantCollectionPermission({
-            principalId,
-            collectionPublicId,
-            action: CollectionPermissionAction.WRITE_COMMENT,
-          }),
-    )
-  const removeCollection = (collectionPublicId: string) =>
-    run(() => revokeCollectionPermission({ principalId, collectionPublicId }))
+  const nouveauxIndicateurs = new Set(
+    indicateursCourants
+      .map((row) => row.publicId)
+      .filter((publicId) => !initialIndicateurIds.has(publicId)),
+  )
+  const nouvellesCollections = new Set(
+    collectionsCourantes
+      .map((row) => row.publicId)
+      .filter((publicId) => !initialCollectionIds.has(publicId)),
+  )
+
+  const nombreModifications =
+    compterModifications(initialValues.indicateurs, indicateursCourants) +
+    compterModifications(initialValues.collections, collectionsCourantes)
 
   const heritesByCollection = new Map<string, typeof data.indicateursHerites>()
   for (const herite of data.indicateursHerites) {
@@ -124,12 +148,6 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
       </ul>
     )
   }
-
-  const excludedCollections = data.collections.map((p) => p.publicId)
-  const excludedIndicateurs = [
-    ...data.indicateurs.map((i) => i.publicId),
-    ...data.indicateursHerites.map((i) => i.publicId),
-  ]
 
   const isEmpty =
     data.collections.length === 0 &&
@@ -179,68 +197,88 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
         />
       ) : null}
 
-      <PermissionSection
-        title="Indicateurs"
-        rows={data.indicateurs}
-        addControl={
-          <IndicateurPicker
-            excludedIds={excludedIndicateurs}
-            onSelect={addIndicateur}
-            disabled={disabled}
-          />
-        }
-        disabled={disabled}
-        onRemove={removeIndicateur}
-        writePermissions={[
-          {
-            value: 'data',
-            label: 'Données',
-            isActive: (actions) => actions.includes(IndicateurPermissionAction.WRITE_DATA),
-            onToggle: toggleIndicateurWrite(IndicateurPermissionAction.WRITE_DATA),
-          },
-          {
-            value: 'comment',
-            label: 'Commentaires',
-            isActive: (actions) => actions.includes(IndicateurPermissionAction.WRITE_COMMENT),
-            onToggle: toggleIndicateurWrite(IndicateurPermissionAction.WRITE_COMMENT),
-          },
-        ]}
-      />
-
-      <PermissionSection
-        title="Collections"
-        rows={data.collections}
-        addControl={
-          <Button
-            variant="secondary"
-            size="sm"
-            type="button"
-            disabled={disabled}
-            onClick={() => setModal('collection')}
-          >
-            + Ajouter une collection
-          </Button>
-        }
-        disabled={disabled}
-        onRemove={removeCollection}
-        writePermissions={[
-          {
-            value: 'comment',
-            label: 'Commentaires',
-            isActive: (actions) => actions.includes(CollectionPermissionAction.WRITE_COMMENT),
-            onToggle: toggleCollectionWriteComment,
-          },
-        ]}
-        extraForRow={renderHeritesForCollection}
-      />
-
-      {modal === 'collection' ? (
-        <CollectionSearchModal
-          excludedPublicIds={excludedCollections}
-          onSelect={(hit) => addCollection(hit.publicId)}
-          onClose={() => setModal(null)}
+      <form onSubmit={(event) => void handleSubmit((values) => mutation.mutate(values))(event)}>
+        <PermissionSection<PermissionsFormValues, IndicateurPermissionWriteActionValue>
+          title="Indicateurs"
+          control={control}
+          name="indicateurs"
+          writeActions={INDICATEUR_WRITE_OPTIONS}
+          disabled={disabled}
+          nouveauxPublicIds={nouveauxIndicateurs}
+          addControl={(append, publicIds) => (
+            <IndicateurPicker
+              excludedIds={[
+                ...publicIds,
+                ...data.indicateursHerites.map((herite) => herite.publicId),
+              ]}
+              onSelect={(indicateur) =>
+                append({ publicId: indicateur.id, nom: indicateur.nom, writeActions: [] })
+              }
+              disabled={disabled}
+            />
+          )}
         />
-      ) : null}
+
+        <PermissionSection<PermissionsFormValues, 'WRITE_COMMENT'>
+          title="Collections"
+          control={control}
+          name="collections"
+          writeActions={COLLECTION_WRITE_OPTIONS}
+          disabled={disabled}
+          nouveauxPublicIds={nouvellesCollections}
+          extraForRow={renderHeritesForCollection}
+          addControl={(append, publicIds) => (
+            <>
+              <Button
+                variant="secondary"
+                size="sm"
+                type="button"
+                disabled={disabled}
+                onClick={() => setModal('collection')}
+              >
+                + Ajouter une collection
+              </Button>
+              {modal === 'collection' ? (
+                <CollectionSearchModal
+                  excludedPublicIds={publicIds}
+                  onSelect={(hit) => {
+                    append({ publicId: hit.publicId, nom: hit.nom, writeActions: [] })
+                    setModal(null)
+                  }}
+                  onClose={() => setModal(null)}
+                />
+              ) : null}
+            </>
+          )}
+        />
+
+        {isDirty ? (
+          <div className="mt-6 flex items-center justify-between gap-4 border-t border-border pt-4">
+            <span className="text-sm text-text-muted">
+              {nombreModifications} modification{nombreModifications > 1 ? 's' : ''} non enregistrée
+              {nombreModifications > 1 ? 's' : ''}
+            </span>
+            <span className="flex items-center gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                type="button"
+                disabled={disabled}
+                onClick={() => reset(initialValues)}
+              >
+                Annuler
+              </Button>
+              <Button size="sm" type="submit" disabled={disabled || locked}>
+                {mutation.isPending
+                  ? 'Enregistrement…'
+                  : isProd
+                    ? '🚨 Enregistrer en Prod'
+                    : 'Enregistrer'}
+              </Button>
+            </span>
+          </div>
+        ) : null}
+      </form>
     </section>
   )
 }
