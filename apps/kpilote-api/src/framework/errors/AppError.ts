@@ -26,3 +26,8 @@ export class ConflictError extends AppError {
   readonly code = 'CONFLICT'
   readonly kind = 'conflict' as const
 }
+
+export class NotFoundError extends AppError {
+  readonly code = 'ENTITY_NOT_FOUND'
+  readonly kind = 'not-found' as const
+}

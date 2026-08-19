@@ -127,3 +127,26 @@ export const revokeCollectionPermissionQuerySchema = z.object({
     .describe('Action à retirer. Si absent, retire toutes les actions de la collection.'),
 })
 export type RevokeCollectionPermissionQuery = z.infer<typeof revokeCollectionPermissionQuerySchema>
+
+// --- Requête de remplacement global ------------------------------------------
+
+const replaceCollectionEntrySchema = z.object({
+  publicId: z.string().describe('Identifiant public de la collection (`COL-…`).'),
+  actions: z.array(collectionPermissionActionSchema).min(1),
+})
+
+const replaceIndicateurEntrySchema = z.object({
+  publicId: z.string().describe("Identifiant public de l'indicateur (`IND-…`)."),
+  actions: z.array(indicateurPermissionActionSchema).min(1),
+})
+
+export const replacePrincipalPermissionsBodySchema = z.object({
+  principalId: z.string().uuid().describe('Principal (UUID) dont on remplace les permissions.'),
+  collections: z
+    .array(replaceCollectionEntrySchema)
+    .describe('État désiré. Toute collection absente de la liste voit ses permissions révoquées.'),
+  indicateurs: z
+    .array(replaceIndicateurEntrySchema)
+    .describe('État désiré. Tout indicateur absent de la liste voit ses permissions révoquées.'),
+})
+export type ReplacePrincipalPermissionsBody = z.infer<typeof replacePrincipalPermissionsBodySchema>
