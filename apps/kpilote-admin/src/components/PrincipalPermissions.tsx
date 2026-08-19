@@ -1,38 +1,71 @@
 import {
   CollectionPermissionAction,
   IndicateurPermissionAction,
-  type IndicateurPermissionActionValue,
-  type IndicateurPermissionWriteActionValue,
+  type CollectionPermissionWriteActionValue,
   type PrincipalPermissionsApiModel,
 } from '@pilote/kpilote-shared/permission'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { Eye, Lock, Trash2 } from 'lucide-react'
+import { Lock } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
 
-import {
-  grantCollectionPermission,
-  grantIndicateurPermission,
-  revokeCollectionPermission,
-  revokeIndicateurPermission,
-} from '@/api/permissions'
+import { replacePrincipalPermissions } from '@/api/permissions'
 import { CollectionSearchModal } from '@/components/CollectionSearchModal'
 import { IndicateurPicker } from '@/components/permissions/IndicateurPicker'
+import { compterModifications } from '@/components/permissions/modifications'
+import type { PermissionsFormValues } from '@/components/permissions/formValues'
+import { PermissionSection } from '@/components/permissions/PermissionSection'
 import { Button } from '@pilote/kpilote-ui/Button'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
-import { IconButton } from '@pilote/kpilote-ui/IconButton'
 import { useToast } from '@pilote/kpilote-ui/Toast'
 import { extractApiError } from '@/lib/apiError'
 import { clsxm } from '@/lib/clsxm'
 import { useProdEditUnlock } from '@/lib/useProdEditUnlock'
 import { principalPermissionsQueryOptions } from '@/queries/permissions'
 
-type DirectRow = { publicId: string; nom: string; actions: IndicateurPermissionActionValue[] }
+const INDICATEUR_WRITE_OPTIONS = [
+  { value: IndicateurPermissionAction.WRITE_DATA, label: 'Données' },
+  { value: IndicateurPermissionAction.WRITE_COMMENT, label: 'Commentaires' },
+] as const
 
-type SectionHandlers = {
-  onToggleWriteData?: (publicId: string, active: boolean) => void
-  onToggleWriteComment?: (publicId: string, active: boolean) => void
-  onRemove: (publicId: string) => void
-}
+const COLLECTION_WRITE_OPTIONS = [
+  { value: CollectionPermissionAction.WRITE_COMMENT, label: 'Commentaires' },
+] as const
+
+const toFormValues = (data: PrincipalPermissionsApiModel): PermissionsFormValues => ({
+  indicateurs: data.indicateurs.map((indicateur) => ({
+    publicId: indicateur.publicId,
+    nom: indicateur.nom,
+    writeActions: indicateur.actions.filter((action) => action !== IndicateurPermissionAction.READ),
+  })),
+  collections: data.collections.map((collection) => ({
+    publicId: collection.publicId,
+    nom: collection.nom,
+    writeActions: collection.actions.filter((action) => action !== CollectionPermissionAction.READ),
+  })),
+})
+
+// READ est réinjecté ici, et seulement ici : c'est l'invariant de l'écran
+// d'administration, l'API accepte une écriture sans lecture.
+const toApiBody = (principalId: string, values: PermissionsFormValues) => ({
+  principalId,
+  indicateurs: values.indicateurs.map((row) => ({
+    publicId: row.publicId,
+    actions: [IndicateurPermissionAction.READ, ...row.writeActions],
+  })),
+  collections: values.collections.map((row) => ({
+    publicId: row.publicId,
+    // Une collection ne porte jamais WRITE_DATA : la section ne propose que
+    // WRITE_COMMENT, on le vérifie ici plutôt que de l'affirmer par un cast.
+    actions: [
+      CollectionPermissionAction.READ,
+      ...row.writeActions.filter(
+        (action): action is CollectionPermissionWriteActionValue =>
+          action === CollectionPermissionAction.WRITE_COMMENT,
+      ),
+    ],
+  })),
+})
 
 export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const queryClient = useQueryClient()
@@ -43,162 +76,48 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const options = principalPermissionsQueryOptions(principalId)
   const { data } = useSuspenseQuery(options)
 
+  const initialValues = toFormValues(data)
+  const { control, handleSubmit, reset } = useForm<PermissionsFormValues>({
+    defaultValues: initialValues,
+  })
+
   const mutation = useMutation({
-    mutationFn: (run: () => Promise<PrincipalPermissionsApiModel>) => run(),
+    mutationFn: (values: PermissionsFormValues) =>
+      replacePrincipalPermissions(toApiBody(principalId, values)),
     onSuccess: (fresh) => {
       queryClient.setQueryData(options.queryKey, fresh)
+      reset(toFormValues(fresh))
       toast({ title: 'Permissions mises à jour.' })
     },
     onError: (err: unknown) => toast({ title: extractApiError(err), variant: 'error' }),
   })
 
-  const disabled = locked || mutation.isPending
+  const disabled = mutation.isPending
 
-  const run = (task: () => Promise<PrincipalPermissionsApiModel>) => {
-    mutation.mutate(task)
-  }
+  const indicateursCourants = useWatch({ control, name: 'indicateurs' }) ?? []
+  const collectionsCourantes = useWatch({ control, name: 'collections' }) ?? []
 
-  // Indicateurs — appels directs, aucune factorisation avec les collections.
-  const addIndicateur = (indicateurPublicId: string) => {
-    run(() =>
-      grantIndicateurPermission({
-        principalId,
-        indicateurPublicId,
-        action: IndicateurPermissionAction.READ,
-      }),
-    )
-  }
-  const toggleIndicateurWrite =
-    (action: IndicateurPermissionWriteActionValue) =>
-    (indicateurPublicId: string, active: boolean) =>
-      run(() =>
-        active
-          ? revokeIndicateurPermission({ principalId, indicateurPublicId, action })
-          : grantIndicateurPermission({ principalId, indicateurPublicId, action }),
-      )
-  const removeIndicateur = (indicateurPublicId: string) =>
-    run(() => revokeIndicateurPermission({ principalId, indicateurPublicId }))
+  const initialIndicateurIds = new Set(initialValues.indicateurs.map((row) => row.publicId))
+  const initialCollectionIds = new Set(initialValues.collections.map((row) => row.publicId))
 
-  // Collections — appels directs, aucune factorisation avec les indicateurs.
-  const addCollection = (collectionPublicId: string) => {
-    setModal(null)
-    run(() =>
-      grantCollectionPermission({
-        principalId,
-        collectionPublicId,
-        action: CollectionPermissionAction.READ,
-      }),
-    )
-  }
-  const toggleCollectionWriteComment = (collectionPublicId: string, active: boolean) =>
-    run(() =>
-      active
-        ? revokeCollectionPermission({
-            principalId,
-            collectionPublicId,
-            action: CollectionPermissionAction.WRITE_COMMENT,
-          })
-        : grantCollectionPermission({
-            principalId,
-            collectionPublicId,
-            action: CollectionPermissionAction.WRITE_COMMENT,
-          }),
-    )
-  const removeCollection = (collectionPublicId: string) =>
-    run(() => revokeCollectionPermission({ principalId, collectionPublicId }))
-
-  const renderSection = (
-    title: string,
-    rows: DirectRow[],
-    addControl: ReactNode,
-    handlers: SectionHandlers,
-    extraForRow?: (publicId: string) => ReactNode,
-  ) => (
-    <div className="mb-6">
-      <h3 className="mb-2 text-sm font-semibold uppercase tracking-wide text-text-muted">
-        {title}
-      </h3>
-      <div className="mb-2">{addControl}</div>
-      {rows.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-border px-3 py-4 text-center text-sm text-text-subtle">
-          Aucune permission directe.
-        </p>
-      ) : (
-        <ul className="divide-y divide-border rounded-lg border border-border">
-          {rows.map((row) => {
-            const writeDataActive = row.actions.includes(IndicateurPermissionAction.WRITE_DATA)
-            const writeCommentActive = row.actions.includes(
-              IndicateurPermissionAction.WRITE_COMMENT,
-            )
-            const extra = extraForRow?.(row.publicId)
-            return (
-              <li key={row.publicId} className="px-3 py-2.5">
-                <div className="flex items-center gap-3">
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm text-text">{row.nom}</span>
-                    <span className="font-mono text-xs text-text-muted">{row.publicId}</span>
-                  </span>
-                  <span className="flex items-center gap-2.5">
-                    <span
-                      title="Lecture toujours accordée pour une ressource ajoutée. Utilisez la corbeille pour la retirer."
-                      className="flex items-center gap-1 text-xs font-medium text-text-muted"
-                    >
-                      <Eye className="size-3.5" /> Lecture
-                    </span>
-                    {handlers.onToggleWriteData !== undefined ? (
-                      <button
-                        type="button"
-                        disabled={disabled}
-                        onClick={() => handlers.onToggleWriteData!(row.publicId, writeDataActive)}
-                        className={clsxm(
-                          'rounded-md border px-2 py-1 text-xs font-medium transition-colors',
-                          writeDataActive
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-border bg-surface text-text-muted hover:border-primary',
-                          disabled && 'cursor-not-allowed opacity-50',
-                        )}
-                      >
-                        Données
-                      </button>
-                    ) : null}
-                    {handlers.onToggleWriteComment !== undefined ? (
-                      <button
-                        type="button"
-                        disabled={disabled}
-                        onClick={() =>
-                          handlers.onToggleWriteComment!(row.publicId, writeCommentActive)
-                        }
-                        className={clsxm(
-                          'rounded-md border px-2 py-1 text-xs font-medium transition-colors',
-                          writeCommentActive
-                            ? 'border-primary bg-primary text-primary-foreground'
-                            : 'border-border bg-surface text-text-muted hover:border-primary',
-                          disabled && 'cursor-not-allowed opacity-50',
-                        )}
-                      >
-                        Commentaires
-                      </button>
-                    ) : null}
-                    <IconButton
-                      variant="danger"
-                      size="sm"
-                      label="Retirer la ressource"
-                      disabled={disabled}
-                      onClick={() => handlers.onRemove(row.publicId)}
-                      className="ml-1"
-                    >
-                      <Trash2 />
-                    </IconButton>
-                  </span>
-                </div>
-                {extra}
-              </li>
-            )
-          })}
-        </ul>
-      )}
-    </div>
+  const nouveauxIndicateurs = new Set(
+    indicateursCourants
+      .map((row) => row.publicId)
+      .filter((publicId) => !initialIndicateurIds.has(publicId)),
   )
+  const nouvellesCollections = new Set(
+    collectionsCourantes
+      .map((row) => row.publicId)
+      .filter((publicId) => !initialCollectionIds.has(publicId)),
+  )
+
+  // `formState.isDirty` ne convient pas : un useFieldArray reste marqué sale
+  // après un ajout suivi d'un retrait, et un simple changement d'ordre des
+  // actions suffit à le déclencher. Le comparateur par contenu fait foi.
+  const nombreModifications =
+    compterModifications(initialValues.indicateurs, indicateursCourants) +
+    compterModifications(initialValues.collections, collectionsCourantes)
+  const aDesModifications = nombreModifications > 0
 
   const heritesByCollection = new Map<string, typeof data.indicateursHerites>()
   for (const herite of data.indicateursHerites) {
@@ -226,12 +145,6 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
       </ul>
     )
   }
-
-  const excludedCollections = data.collections.map((p) => p.publicId)
-  const excludedIndicateurs = [
-    ...data.indicateurs.map((i) => i.publicId),
-    ...data.indicateursHerites.map((i) => i.publicId),
-  ]
 
   const isEmpty =
     data.collections.length === 0 &&
@@ -281,46 +194,92 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
         />
       ) : null}
 
-      {renderSection(
-        'Indicateurs',
-        data.indicateurs,
-        <IndicateurPicker
-          excludedIds={excludedIndicateurs}
-          onSelect={addIndicateur}
+      <form onSubmit={(event) => void handleSubmit((values) => mutation.mutate(values))(event)}>
+        <PermissionSection
+          title="Indicateurs"
+          control={control}
+          name="indicateurs"
+          writeActions={INDICATEUR_WRITE_OPTIONS}
           disabled={disabled}
-        />,
-        {
-          onToggleWriteData: toggleIndicateurWrite(IndicateurPermissionAction.WRITE_DATA),
-          onToggleWriteComment: toggleIndicateurWrite(IndicateurPermissionAction.WRITE_COMMENT),
-          onRemove: removeIndicateur,
-        },
-      )}
-      {renderSection(
-        'Collections',
-        data.collections,
-        <Button
-          variant="secondary"
-          size="sm"
-          type="button"
-          disabled={disabled}
-          onClick={() => setModal('collection')}
-        >
-          + Ajouter une collection
-        </Button>,
-        {
-          onToggleWriteComment: toggleCollectionWriteComment,
-          onRemove: removeCollection,
-        },
-        renderHeritesForCollection,
-      )}
-
-      {modal === 'collection' ? (
-        <CollectionSearchModal
-          excludedPublicIds={excludedCollections}
-          onSelect={(hit) => addCollection(hit.publicId)}
-          onClose={() => setModal(null)}
+          nouveauxPublicIds={nouveauxIndicateurs}
+          addControl={(append, publicIds) => (
+            <IndicateurPicker
+              excludedIds={[
+                ...publicIds,
+                ...data.indicateursHerites.map((herite) => herite.publicId),
+              ]}
+              onSelect={(indicateur) =>
+                append({ publicId: indicateur.id, nom: indicateur.nom, writeActions: [] })
+              }
+              disabled={disabled}
+            />
+          )}
         />
-      ) : null}
+
+        <PermissionSection
+          title="Collections"
+          control={control}
+          name="collections"
+          writeActions={COLLECTION_WRITE_OPTIONS}
+          disabled={disabled}
+          nouveauxPublicIds={nouvellesCollections}
+          extraForRow={renderHeritesForCollection}
+          addControl={(append, publicIds) => (
+            <>
+              <Button
+                variant="secondary"
+                size="sm"
+                type="button"
+                disabled={disabled}
+                onClick={() => setModal('collection')}
+              >
+                + Ajouter une collection
+              </Button>
+              {modal === 'collection' ? (
+                <CollectionSearchModal
+                  excludedPublicIds={publicIds}
+                  onSelect={(hit) => {
+                    append({ publicId: hit.publicId, nom: hit.nom, writeActions: [] })
+                    setModal(null)
+                  }}
+                  onClose={() => setModal(null)}
+                />
+              ) : null}
+            </>
+          )}
+        />
+
+        <div className="mt-6 flex items-center justify-between gap-4 border-t border-border pt-4">
+          <span className="text-sm text-text-muted">
+            {aDesModifications ? (
+              <>
+                {nombreModifications} modification{nombreModifications > 1 ? 's' : ''} non
+                enregistrée{nombreModifications > 1 ? 's' : ''}
+              </>
+            ) : (
+              'Aucune modification en attente.'
+            )}
+          </span>
+          <span className="flex items-center gap-2">
+            <Button
+              variant="secondary"
+              size="sm"
+              type="button"
+              disabled={disabled || !aDesModifications}
+              onClick={() => reset(initialValues)}
+            >
+              Annuler
+            </Button>
+            <Button size="sm" type="submit" disabled={disabled || locked || !aDesModifications}>
+              {mutation.isPending
+                ? 'Enregistrement…'
+                : isProd
+                  ? '🚨 Enregistrer en Prod'
+                  : 'Enregistrer'}
+            </Button>
+          </span>
+        </div>
+      </form>
     </section>
   )
 }

@@ -111,8 +111,10 @@ export function CollectionIndicateurs({ collectionId }: { collectionId: string }
 
       <IndicateurPicker
         excludedIds={collection.indicateurs.map((lien) => lien.id)}
-        onSelect={(indicateurId) =>
-          mutation.mutate(() => addCollectionIndicateur(collectionId, { indicateurId }))
+        onSelect={(indicateur) =>
+          mutation.mutate(() =>
+            addCollectionIndicateur(collectionId, { indicateurId: indicateur.id }),
+          )
         }
         disabled={disabled}
       />

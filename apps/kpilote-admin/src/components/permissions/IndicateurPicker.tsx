@@ -10,7 +10,7 @@ export function IndicateurPicker({
   disabled,
 }: {
   excludedIds: string[]
-  onSelect: (publicId: string) => void
+  onSelect: (indicateur: { id: string; nom: string }) => void
   disabled?: boolean
 }) {
   const { data } = useSuspenseQuery(indicateursAllQueryOptions())
@@ -20,7 +20,7 @@ export function IndicateurPicker({
   return (
     <Picker
       items={items}
-      onSelect={(indicateur) => onSelect(indicateur.id)}
+      onSelect={(indicateur) => onSelect({ id: indicateur.id, nom: indicateur.nom })}
       getKey={(indicateur) => indicateur.id}
       getSearchText={(indicateur) => `${indicateur.id} ${indicateur.nom}`}
       renderItem={(indicateur) => <PickerOptionNomId nom={indicateur.nom} id={indicateur.id} />}

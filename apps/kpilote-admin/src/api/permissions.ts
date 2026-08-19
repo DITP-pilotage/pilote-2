@@ -4,6 +4,7 @@ import type {
   GrantIndicateurPermissionBody,
   IndicateurPermissionActionValue,
   PrincipalPermissionsApiModel,
+  ReplacePrincipalPermissionsBody,
 } from '@pilote/kpilote-shared/permission'
 import { principalPermissionsApiModelSchema } from '@pilote/kpilote-shared/permission'
 
@@ -13,6 +14,13 @@ export const fetchPrincipalPermissions = async (
   principalId: string,
 ): Promise<PrincipalPermissionsApiModel> => {
   const json = await bffClient.get('permissions', { searchParams: { principalId } }).json()
+  return principalPermissionsApiModelSchema.parse(json)
+}
+
+export const replacePrincipalPermissions = async (
+  body: ReplacePrincipalPermissionsBody,
+): Promise<PrincipalPermissionsApiModel> => {
+  const json = await bffClient.put('permissions', { json: body }).json()
   return principalPermissionsApiModelSchema.parse(json)
 }
 

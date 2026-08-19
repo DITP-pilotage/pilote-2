@@ -3,9 +3,10 @@ import {
   type PrincipalPermissionsApiModel,
 } from '@pilote/kpilote-shared/permission'
 import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { Eye, Trash2 } from 'lucide-react'
+import { Trash2 } from 'lucide-react'
 
 import { grantCollectionPermission, revokeCollectionPermission } from '@/api/permissions'
+import { BadgeLectureAccordee } from '@/components/permissions/BadgeLectureAccordee'
 import { ProdEditSectionHeader } from '@/components/ProdEditSectionHeader'
 import { UtilisateurPicker } from '@/components/UtilisateurPicker'
 import { EmptyState } from '@pilote/kpilote-ui/EmptyState'
@@ -76,12 +77,7 @@ export function CollectionAcces({ collectionId }: { collectionId: string }) {
                     <span className="text-xs text-text-muted">Clé API</span>
                   ) : null}
                 </span>
-                <span
-                  title="Lecture toujours accordée pour un principal ajouté. Utilisez la corbeille pour la retirer."
-                  className="flex items-center gap-1 text-xs font-medium text-text-muted"
-                >
-                  <Eye className="size-3.5" /> Lecture
-                </span>
+                <BadgeLectureAccordee title="Lecture toujours accordée pour un principal ajouté. Utilisez la corbeille pour la retirer." />
                 <button
                   type="button"
                   aria-pressed={ecritureActive}

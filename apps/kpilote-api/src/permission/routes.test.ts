@@ -10,6 +10,7 @@ describe('routes permissions — câblage OpenAPI', () => {
 
     const attendu: Array<[string, string]> = [
       ['/permissions', 'get'],
+      ['/permissions', 'put'],
       ['/permissions/indicateur', 'post'],
       ['/permissions/indicateur', 'delete'],
       ['/permissions/collection', 'post'],

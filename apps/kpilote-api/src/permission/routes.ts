@@ -4,6 +4,7 @@ import {
   grantIndicateurPermissionBodySchema,
   listPrincipalPermissionsQuerySchema,
   principalPermissionsApiModelSchema,
+  replacePrincipalPermissionsBodySchema,
   revokeCollectionPermissionQuerySchema,
   revokeIndicateurPermissionQuerySchema,
 } from '@pilote/kpilote-shared/permission'
@@ -16,6 +17,7 @@ import { erreur400, erreur403, erreur404, succes200 } from '@/framework/openapi/
 import { withTransaction } from '@/framework/persistence/withTransaction'
 import { grantIndicateurPermission } from '@/permission/commands/grantIndicateurPermission'
 import { grantCollectionPermission } from '@/permission/commands/grantCollectionPermission'
+import { replacePrincipalPermissions } from '@/permission/commands/replacePrincipalPermissions'
 import { revokeIndicateurPermission } from '@/permission/commands/revokeIndicateurPermission'
 import { revokeCollectionPermission } from '@/permission/commands/revokeCollectionPermission'
 import { getPrincipalPermissions } from '@/permission/queries/getPrincipalPermissions'
@@ -28,6 +30,9 @@ const GrantIndicateurPermissionBodySchema = grantIndicateurPermissionBodySchema.
 )
 const GrantCollectionPermissionBodySchema = grantCollectionPermissionBodySchema.openapi(
   'GrantCollectionPermissionBody',
+)
+const ReplacePrincipalPermissionsBodySchema = replacePrincipalPermissionsBodySchema.openapi(
+  'ReplacePrincipalPermissionsBody',
 )
 
 // --- GET /permissions --------------------------------------------------------
@@ -44,6 +49,31 @@ const getPermissionsRoute = createRoute({
   request: { query: listPrincipalPermissionsQuerySchema },
   responses: {
     200: succes200('Permissions du principal', PrincipalPermissionsApiModelSchema),
+    400: erreur400,
+    403: erreur403,
+    404: erreur404,
+  },
+})
+
+// --- PUT /permissions --------------------------------------------------------
+
+const replacePermissionsRoute = createRoute({
+  method: 'put',
+  path: '/permissions',
+  tags: ['Permission', 'Admin'],
+  summary: "Remplacer l'ensemble des permissions d'un principal",
+  description:
+    'Réservé aux clés API de rôle `ADMIN`. Reçoit l’état désiré complet : toute permission directe ' +
+    'absente du payload est révoquée. **Idempotent**, appliqué en transaction. Retourne l’état à jour.',
+  middleware: [requireAuthentication],
+  request: {
+    body: {
+      content: { 'application/json': { schema: ReplacePrincipalPermissionsBodySchema } },
+      required: true,
+    },
+  },
+  responses: {
+    200: succes200('Permissions remplacées, état à jour', PrincipalPermissionsApiModelSchema),
     400: erreur400,
     403: erreur403,
     404: erreur404,
@@ -137,6 +167,15 @@ export const permissionRoutes = createOpenApiHono()
 permissionRoutes.openapi(getPermissionsRoute, async (context) => {
   const { principalId } = context.req.valid('query')
   return getPrincipalPermissions(principalId).match(
+    (data) =>
+      jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
+    never,
+  )
+})
+
+permissionRoutes.openapi(replacePermissionsRoute, async (context) => {
+  const body = context.req.valid('json')
+  return (await withTransaction(async () => replacePrincipalPermissions(body))).match(
     (data) =>
       jsonResponseOk({ context, data, schema: PrincipalPermissionsApiModelSchema, status: 200 }),
     never,
