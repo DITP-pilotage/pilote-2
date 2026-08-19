@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { ForbiddenError, NotFoundError } from '@/framework/errors/AppError'
+import { ForbiddenError, NotFoundError, ValidationError } from '@/framework/errors/AppError'
 import { db } from '@/framework/persistence/dbStore'
 import { CollectionPermissionAction, IndicateurPermissionAction } from '@/generated/prisma/enums'
 import { replacePrincipalPermissions } from '@/permission/commands/replacePrincipalPermissions'
@@ -159,6 +159,62 @@ describe.concurrent('replacePrincipalPermissions', () => {
         where: { principalId: target.id },
       })
       expect(restantes).toBe(1)
+    }),
+  )
+
+  it(
+    "rejette un indicateur listé deux fois sans toucher à l'état existant",
+    integrationTest(async () => {
+      const target = await fixtures.utilisateur({})
+      const deja = await fixtures.indicateur({ nom: 'Déjà accordé' })
+      const doublon = await fixtures.indicateur({ nom: 'En double' })
+      await fixtures.indicateurPermission({
+        principalId: target.id,
+        indicateur: { publicId: deja.publicId },
+        action: IndicateurPermissionAction.READ,
+      })
+
+      await expect(
+        runAsAdmin(CALLER_ID, () =>
+          replacePrincipalPermissions({
+            principalId: target.id,
+            collections: [],
+            indicateurs: [
+              { publicId: doublon.publicId, actions: [IndicateurPermissionAction.READ] },
+              { publicId: doublon.publicId, actions: [IndicateurPermissionAction.WRITE_DATA] },
+            ],
+          }),
+        ),
+      ).rejects.toBeInstanceOf(ValidationError)
+
+      const restantes = await db().indicateurPermission.count({
+        where: { principalId: target.id },
+      })
+      expect(restantes).toBe(1)
+    }),
+  )
+
+  it(
+    'rejette une collection listée deux fois',
+    integrationTest(async () => {
+      const target = await fixtures.utilisateur({})
+      const collection = await fixtures.collection({ nom: 'En double' })
+
+      await expect(
+        runAsAdmin(CALLER_ID, () =>
+          replacePrincipalPermissions({
+            principalId: target.id,
+            collections: [
+              { publicId: collection.publicId, actions: [CollectionPermissionAction.READ] },
+              {
+                publicId: collection.publicId,
+                actions: [CollectionPermissionAction.WRITE_COMMENT],
+              },
+            ],
+            indicateurs: [],
+          }),
+        ),
+      ).rejects.toBeInstanceOf(ValidationError)
     }),
   )
 

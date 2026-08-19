@@ -89,10 +89,6 @@
       "types": "./src/Marianne.tsx",
       "default": "./src/Marianne.tsx"
     },
-    "./MultiToggle": {
-      "types": "./src/MultiToggle.tsx",
-      "default": "./src/MultiToggle.tsx"
-    },
     "./Modale": {
       "types": "./src/Modale.tsx",
       "default": "./src/Modale.tsx"
@@ -100,6 +96,10 @@
     "./ModaleForm": {
       "types": "./src/ModaleForm.tsx",
       "default": "./src/ModaleForm.tsx"
+    },
+    "./MultiToggle": {
+      "types": "./src/MultiToggle.tsx",
+      "default": "./src/MultiToggle.tsx"
     },
     "./Page": {
       "types": "./src/Page.tsx",
