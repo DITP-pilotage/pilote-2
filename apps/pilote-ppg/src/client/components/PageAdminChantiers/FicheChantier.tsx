@@ -8,7 +8,8 @@ import Interrupteur from "@/components/_commons/Interrupteur/Interrupteur";
 import SélecteurPpg from "@/components/PageAdminChantiers/champs/SélecteurPpg";
 import SélecteurPerimetre from "@/components/PageAdminChantiers/champs/SélecteurPerimetre";
 import SélecteurZonegroup from "@/components/PageAdminChantiers/champs/SélecteurZonegroup";
-import MultiSelectPorteursNoDAC from "@/components/PageAdminChantiers/champs/MultiSelectPorteursNoDAC";
+import SélecteurPorteurPrincipal from "@/components/PageAdminChantiers/champs/SélecteurPorteurPrincipal";
+import MultiSelectPorteursSecondaires from "@/components/PageAdminChantiers/champs/MultiSelectPorteursSecondaires";
 import MultiSelectPorteursDAC from "@/components/PageAdminChantiers/champs/MultiSelectPorteursDAC";
 import ChampMailleApplicable from "@/components/PageAdminChantiers/champs/ChampMailleApplicable";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
@@ -73,7 +74,10 @@ const FicheChantier = () => {
       <section className="py-8">
         <SectionTitle>Porteurs</SectionTitle>
         <div className="grid grid-cols-2 gap-4">
-          <MultiSelectPorteursNoDAC />
+          <SélecteurPorteurPrincipal />
+          <MultiSelectPorteursSecondaires />
+        </div>
+        <div className="grid grid-cols-2 gap-4 mt-4">
           <MultiSelectPorteursDAC />
         </div>
       </section>

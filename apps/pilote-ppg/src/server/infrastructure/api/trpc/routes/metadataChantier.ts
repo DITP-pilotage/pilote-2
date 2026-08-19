@@ -50,7 +50,7 @@ export const metadataChantierRouter = créerRouteurTRPC({
     return getContainer("metadataChantier").resolve("listerPpgsQuery").run();
   }),
 
-  listerPorteursMIN: procédureProtégée.query(async ({ ctx }) => {
+  listerPorteursMinistere: procédureProtégée.query(async ({ ctx }) => {
     vérifierPermissionAdmin(ctx.session);
     return getContainer("metadataChantier")
       .resolve("listerPorteursQuery")

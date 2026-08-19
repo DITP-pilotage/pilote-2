@@ -13,7 +13,8 @@ export interface MetadataChantier {
   chSaisieAte: $Enums.type_ate | null;
   chState: $Enums.type_statut;
   zgApplicable: string | null;
-  porteurIdsNoDAC: string[];
+  porteurIdPrincipal: string | null;
+  porteurIdsSecondaires: string[];
   porteurIdsDAC: string[];
   chPer: string;
   mailleApplicable: Maille[];
@@ -32,7 +33,8 @@ function toApiModel(chantier: metadata_chantiers): MetadataChantier {
     chSaisieAte: chantier.ch_saisie_ate,
     chState: chantier.ch_state,
     zgApplicable: chantier.zg_applicable,
-    porteurIdsNoDAC: chantier.porteur_ids_noDAC,
+    porteurIdPrincipal: chantier.porteur_id_principal,
+    porteurIdsSecondaires: chantier.porteur_ids_secondaires,
     porteurIdsDAC: chantier.porteur_ids_DAC,
     chPer: chantier.ch_per,
     mailleApplicable: chantier.maille_applicable as Maille[],

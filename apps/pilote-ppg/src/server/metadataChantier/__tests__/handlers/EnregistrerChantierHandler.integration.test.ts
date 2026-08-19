@@ -31,7 +31,8 @@ describe("EnregistrerChantierHandler", () => {
           chSaisieAte: null,
           chState: $Enums.type_statut.BROUILLON,
           zgApplicable: null,
-          porteurIdsNoDAC: [],
+          porteurIdPrincipal: null,
+          porteurIdsSecondaires: [],
           porteurIdsDAC: [],
           chPer: perimetre.perimetre_id,
           mailleApplicable: ["NAT", "REG", "DEPT"],
@@ -72,7 +73,8 @@ describe("EnregistrerChantierHandler", () => {
           chSaisieAte: $Enums.type_ate.ate,
           chState: $Enums.type_statut.PUBLIE,
           zgApplicable: null,
-          porteurIdsNoDAC: ["MIN-01"],
+          porteurIdPrincipal: "MIN-01",
+          porteurIdsSecondaires: [],
           porteurIdsDAC: [],
           chPer: perimetre.perimetre_id,
           mailleApplicable: ["NAT"],
@@ -89,9 +91,45 @@ describe("EnregistrerChantierHandler", () => {
         expect(chantier.ch_territo).toBe(true);
         expect(chantier.ch_saisie_ate).toBe($Enums.type_ate.ate);
         expect(chantier.ch_state).toBe($Enums.type_statut.PUBLIE);
-        expect(chantier.porteur_ids_noDAC).toEqual(["MIN-01"]);
+        expect(chantier.porteur_id_principal).toBe("MIN-01");
+        expect(chantier.porteur_ids_secondaires).toEqual([]);
         expect(chantier.maille_applicable).toEqual(["NAT"]);
         expect(chantier.ch_cible_attendue).toBe(true);
+      }),
+    );
+
+    it(
+      "enregistre un chantier avec porteur principal et porteurs secondaires",
+      createIntegrationTest(async () => {
+        // Given
+        const ppg = await fixtures.metadataPpg();
+        const perimetre = await fixtures.metadataPerimetre();
+
+        // When
+        await handler.execute({
+          chantierId: "CH-099",
+          chNom: "Chantier multi-porteurs",
+          chDescr: null,
+          chPpg: ppg.ppg_id,
+          chTerrito: false,
+          chSaisieAte: null,
+          chState: $Enums.type_statut.BROUILLON,
+          zgApplicable: null,
+          porteurIdPrincipal: "MIN-01",
+          porteurIdsSecondaires: ["MIN-02", "MIN-03"],
+          porteurIdsDAC: [],
+          chPer: perimetre.perimetre_id,
+          mailleApplicable: ["NAT"],
+          chCibleAttendue: false,
+          conseillerMail: null,
+        });
+
+        // Then
+        const chantier = await getPrisma().metadata_chantiers.findUniqueOrThrow(
+          { where: { chantier_id: "CH-099" } },
+        );
+        expect(chantier.porteur_id_principal).toBe("MIN-01");
+        expect(chantier.porteur_ids_secondaires).toEqual(["MIN-02", "MIN-03"]);
       }),
     );
 
@@ -112,7 +150,8 @@ describe("EnregistrerChantierHandler", () => {
           chSaisieAte: null,
           chState: $Enums.type_statut.BROUILLON,
           zgApplicable: null,
-          porteurIdsNoDAC: [],
+          porteurIdPrincipal: null,
+          porteurIdsSecondaires: [],
           porteurIdsDAC: [],
           chPer: perimetre.perimetre_id,
           mailleApplicable: ["NAT"],
