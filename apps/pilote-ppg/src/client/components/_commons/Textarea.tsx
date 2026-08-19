@@ -24,6 +24,7 @@ export function Textarea<T extends FieldValues>({
   className,
   textareaRef,
   charLimit,
+  required,
   ...props
 }: ComponentProps<"textarea"> & {
   label?: ReactNode;
@@ -32,6 +33,7 @@ export function Textarea<T extends FieldValues>({
   control: Control<T>;
   textareaRef?: RefObject<TextareaRef | null>;
   charLimit?: number;
+  required?: boolean;
 }) {
   const internalRef = useRef<HTMLTextAreaElement | null>(null);
 
@@ -55,7 +57,8 @@ export function Textarea<T extends FieldValues>({
               })}
               htmlFor={fieldId}
             >
-              {label}
+              {label}{" "}
+              {required ? <span className="text-red-500">*</span> : null}
             </label>
             <textarea
               {...props}

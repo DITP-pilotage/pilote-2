@@ -29,6 +29,7 @@ import { datajobsExecutionModule } from "./datajobs-execution/module";
 import { legacyModule } from "./legacy/module";
 import { actualitesModule } from "./actualites/module";
 import { mbSyncModule } from "./mb-sync/module";
+import { metadataChantierModule } from "./metadataChantier/module";
 
 const allModules = [
   sharedModule,
@@ -55,6 +56,7 @@ const allModules = [
   applicationLogModule,
   actualitesModule,
   mbSyncModule,
+  metadataChantierModule,
 ];
 
 // Compile-time check: errors with missing module name(s) if allModules is not exhaustive
@@ -99,6 +101,7 @@ function registerContainer(): ContainerDependencies {
     applicationLog: getContainer("applicationLog"),
     actualites: getContainer("actualites"),
     mbSync: getContainer("mbSync"),
+    metadataChantier: getContainer("metadataChantier"),
   };
 }
 

@@ -513,16 +513,20 @@ model metadata_chantiers {
   ch_saisie_ate        type_ate?
   ch_state             type_statut
   zg_applicable        String?
-  porteur_ids_noDAC    String?
-  porteur_ids_DAC      String?
+  porteur_ids_noDAC    String[]
+  porteur_ids_DAC      String[]
   ch_per               String
-  maille_applicable    String?
+  maille_applicable    String[]
   replicate_val_reg_to String?
   replicate_val_nat_to String?
   ch_cible_attendue    Boolean
   conseiller_mail      String?
   created_at           DateTime    @default(now()) @db.Timestamptz
   updated_at           DateTime    @default(now()) @updatedAt @db.Timestamptz
+
+  ppg       metadata_ppgs        @relation(fields: [ch_ppg],        references: [ppg_id])
+  perimetre metadata_perimetres  @relation(fields: [ch_per],        references: [perimetre_id])
+  zonegroup metadata_zonegroup?  @relation(fields: [zg_applicable], references: [zone_group_id])
 
   @@schema("raw_data")
 }
@@ -534,6 +538,7 @@ model metadata_ppgs {
   ppg_axe    String?
   created_at DateTime @default(now()) @db.Timestamptz
   updated_at DateTime @default(now()) @updatedAt @db.Timestamptz
+  chantiers  metadata_chantiers[]
 
   @@schema("raw_data")
 }
@@ -559,8 +564,9 @@ model metadata_perimetres {
   per_nom                String
   per_porteur_id         String?
   per_porteur_name_short String?
-  created_at             DateTime @default(now()) @db.Timestamptz
-  updated_at             DateTime @default(now()) @updatedAt @db.Timestamptz
+  created_at             DateTime            @default(now()) @db.Timestamptz
+  updated_at             DateTime            @default(now()) @updatedAt @db.Timestamptz
+  chantiers              metadata_chantiers[]
 
   @@schema("raw_data")
 }
@@ -588,12 +594,13 @@ model metadata_engagement {
 
 
 model metadata_zonegroup {
-  zone_group_id String   @id
-  zg_name       String?
+  zone_group_id String               @id
+  zg_name       String
   zg_desc       String?
   zg_zones      String
-  created_at    DateTime @default(now()) @db.Timestamptz
-  updated_at    DateTime @default(now()) @updatedAt @db.Timestamptz
+  created_at    DateTime             @default(now()) @db.Timestamptz
+  updated_at    DateTime             @default(now()) @updatedAt @db.Timestamptz
+  chantiers     metadata_chantiers[]
 
   @@schema("raw_data")
 }
