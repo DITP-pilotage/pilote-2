@@ -81,12 +81,9 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
   const { data } = useSuspenseQuery(options)
 
   const initialValues = toFormValues(data)
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: { isDirty },
-  } = useForm<PermissionsFormValues>({ defaultValues: initialValues })
+  const { control, handleSubmit, reset } = useForm<PermissionsFormValues>({
+    defaultValues: initialValues,
+  })
 
   const mutation = useMutation({
     mutationFn: (values: PermissionsFormValues) =>
@@ -118,9 +115,13 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
       .filter((publicId) => !initialCollectionIds.has(publicId)),
   )
 
+  // `formState.isDirty` ne convient pas : un useFieldArray reste marqué sale
+  // après un ajout suivi d'un retrait, et un simple changement d'ordre des
+  // actions suffit à le déclencher. Le comparateur par contenu fait foi.
   const nombreModifications =
     compterModifications(initialValues.indicateurs, indicateursCourants) +
     compterModifications(initialValues.collections, collectionsCourantes)
+  const aDesModifications = nombreModifications > 0
 
   const heritesByCollection = new Map<string, typeof data.indicateursHerites>()
   for (const herite of data.indicateursHerites) {
@@ -254,7 +255,7 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
 
         <div className="mt-6 flex items-center justify-between gap-4 border-t border-border pt-4">
           <span className="text-sm text-text-muted">
-            {isDirty ? (
+            {aDesModifications ? (
               <>
                 {nombreModifications} modification{nombreModifications > 1 ? 's' : ''} non
                 enregistrée{nombreModifications > 1 ? 's' : ''}
@@ -268,12 +269,12 @@ export function PrincipalPermissions({ principalId }: { principalId: string }) {
               variant="secondary"
               size="sm"
               type="button"
-              disabled={disabled || !isDirty}
+              disabled={disabled || !aDesModifications}
               onClick={() => reset(initialValues)}
             >
               Annuler
             </Button>
-            <Button size="sm" type="submit" disabled={disabled || locked || !isDirty}>
+            <Button size="sm" type="submit" disabled={disabled || locked || !aDesModifications}>
               {mutation.isPending
                 ? 'Enregistrement…'
                 : isProd
