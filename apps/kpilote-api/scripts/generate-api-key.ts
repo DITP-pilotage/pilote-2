@@ -69,11 +69,13 @@ const main = (): void => {
       `${sqlString(generated.id)}, ${sqlString(label)}, ${sqlString(generated.keyHash)}, ${sqlString(generated.prefix)}, ` +
       `${sqlString(role)}::api_key_role_enum, ` +
       `${expiresAt ? sqlString(expiresAt.toISOString()) : 'NULL'});`,
-    `-- Grants READ + WRITE sur les 10 premiers indicateurs (ordre publicId ASC)`,
+    `-- Grants READ + WRITE_DATA + WRITE_COMMENT sur les 10 premiers indicateurs (ordre publicId ASC)`,
     `INSERT INTO indicateur_permission (principal_id, indicateur_id, action)`,
     `SELECT ${sqlString(generated.id)}, i.id, a.action`,
     `FROM (SELECT id FROM indicateur ORDER BY public_id ASC LIMIT 10) AS i`,
-    `CROSS JOIN (VALUES ('READ'::permission_action_enum), ('WRITE'::permission_action_enum)) AS a(action);`,
+    `CROSS JOIN (VALUES ('READ'::indicateur_permission_action_enum), ` +
+      `('WRITE_DATA'::indicateur_permission_action_enum), ` +
+      `('WRITE_COMMENT'::indicateur_permission_action_enum)) AS a(action);`,
     'COMMIT;',
   ].join('\n  ')
 
