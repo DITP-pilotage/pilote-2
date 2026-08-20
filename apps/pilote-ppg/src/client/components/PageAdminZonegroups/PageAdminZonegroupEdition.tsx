@@ -10,6 +10,9 @@ import {
   ZonegroupForm,
   useZonegroupForm,
 } from "@/components/PageAdminZonegroups/useZonegroupForm";
+import { Input } from "@/components/_commons/Input";
+import { Textarea } from "@/components/_commons/Textarea";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
 
 interface Props {
   zoneGroupId: string;
@@ -19,7 +22,7 @@ interface Props {
 }
 
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <h2 className="text-base font-semibold text-[#1e1e1e] uppercase tracking-wide border-l-[3px] border-[#000091] pl-3 mb-5">
+  <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide border-l-[3px] border-primary pl-3 mb-5">
     {children}
   </h2>
 );
@@ -29,11 +32,6 @@ const LABELS_TYPE: Record<string, string> = {
   REG: "Région",
   DEPT: "Département",
 };
-
-const labelClass = "block text-sm font-medium text-gray-700 mb-1";
-const inputClass =
-  "w-full px-3 py-2 text-sm border border-gray-300 rounded-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#000091] focus:border-[#000091]";
-const errorClass = "mt-1 text-xs text-red-600";
 
 const PageAdminZonegroupEdition = ({
   zoneGroupId,
@@ -85,7 +83,6 @@ const PageAdminZonegroupEdition = ({
   const ordreTypes = ["NAT", "REG", "DEPT"];
 
   const {
-    register,
     control,
     formState: { errors },
   } = reactHookForm;
@@ -96,11 +93,11 @@ const PageAdminZonegroupEdition = ({
     : `Groupe ${zoneGroupId}`;
 
   return (
-    <div className="min-h-screen bg-[#f5f5fe]">
+    <div className="min-h-screen bg-dsfr-alt-blue-france">
       <div className="max-w-4xl mx-auto px-6 py-8">
         <nav className="mb-6 flex items-center gap-2 text-sm">
           <Link
-            className="text-[#000091] hover:text-[#1212ff] font-medium hover:underline underline-offset-2 transition-colors"
+            className="text-primary hover:text-dsfr-blue-france-sun-113-hover font-medium hover:underline underline-offset-2 transition-colors"
             href="/panel-administrateur/referentiels/zonegroups"
           >
             Zones groupes
@@ -127,10 +124,10 @@ const PageAdminZonegroupEdition = ({
           >
             <div className="flex items-center justify-between mb-6">
               <div>
-                <p className="text-sm font-medium text-[#000091] uppercase tracking-widest mb-1">
+                <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
                   {estUneCréation ? "Nouveau groupe de zones" : "Édition"}
                 </p>
-                <h1 className="text-3xl font-bold text-[#1e1e1e]">{titre}</h1>
+                <h1 className="text-3xl font-bold text-gray-900">{titre}</h1>
               </div>
               <div className="flex items-center gap-3">
                 {!estUneCréation && (
@@ -152,13 +149,12 @@ const PageAdminZonegroupEdition = ({
                     {estSupprimé ? "Restaurer" : "Supprimer"}
                   </button>
                 )}
-                <button
-                  className="px-5 py-2.5 bg-[#000091] text-white rounded-sm text-sm font-medium hover:bg-[#1212ff] transition-colors disabled:opacity-60"
+                <Bouton
                   disabled={isPending}
+                  label={estUneCréation ? "Créer" : "Sauvegarder"}
                   type="submit"
-                >
-                  {estUneCréation ? "Créer" : "Sauvegarder"}
-                </button>
+                  variant="primary"
+                />
               </div>
             </div>
 
@@ -167,7 +163,7 @@ const PageAdminZonegroupEdition = ({
                 <SectionTitle>Identification</SectionTitle>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <span className={labelClass}>ID</span>
+                    <span className="block text-xs text-gray-500 mb-1">ID</span>
                     <p className="px-3 py-2 text-sm font-mono text-gray-500 bg-gray-50 border border-gray-200 rounded-sm">
                       {zoneGroupIdEffectif}
                     </p>
@@ -178,32 +174,18 @@ const PageAdminZonegroupEdition = ({
               <section className="px-6 py-8">
                 <SectionTitle>Informations</SectionTitle>
                 <div className="flex flex-col gap-4">
-                  <div>
-                    <label className={labelClass} htmlFor="zgName">
-                      Nom *
-                    </label>
-                    <input
-                      className={inputClass}
-                      id="zgName"
-                      maxLength={200}
-                      type="text"
-                      {...register("zgName")}
-                    />
-                    {errors.zgName && (
-                      <p className={errorClass}>{errors.zgName.message}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label className={labelClass} htmlFor="zgDesc">
-                      Description
-                    </label>
-                    <textarea
-                      className={inputClass}
-                      id="zgDesc"
-                      rows={3}
-                      {...register("zgDesc")}
-                    />
-                  </div>
+                  <Input<ZonegroupForm>
+                    control={control}
+                    label="Nom"
+                    name="zgName"
+                    required
+                  />
+                  <Textarea<ZonegroupForm>
+                    control={control}
+                    label="Description"
+                    name="zgDesc"
+                    rows={3}
+                  />
                 </div>
               </section>
 
@@ -221,7 +203,7 @@ const PageAdminZonegroupEdition = ({
                           {field.value.length !== 1 ? "s" : ""}
                         </p>
                         <input
-                          className="px-3 py-1.5 text-sm border border-gray-300 rounded-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#000091] w-64"
+                          className="px-3 py-1.5 text-sm border border-gray-300 rounded-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary w-64"
                           onChange={(e) => setFiltreZone(e.target.value)}
                           placeholder="Filtrer les zones…"
                           type="search"
@@ -249,7 +231,7 @@ const PageAdminZonegroupEdition = ({
                                 </h4>
                                 <div className="flex gap-2">
                                   <button
-                                    className="text-xs text-[#000091] hover:underline"
+                                    className="text-xs text-primary hover:underline"
                                     onClick={() => {
                                       const ids = zones.map((z) => z.zoneId);
                                       const current = new Set(field.value);
@@ -288,7 +270,7 @@ const PageAdminZonegroupEdition = ({
                                       checked={field.value.includes(
                                         zone.zoneId,
                                       )}
-                                      className="rounded border-gray-300 text-[#000091] focus:ring-[#000091]"
+                                      className="rounded border-gray-300 text-primary focus:ring-primary"
                                       onChange={(e) => {
                                         field.onChange(
                                           e.target.checked
@@ -314,7 +296,9 @@ const PageAdminZonegroupEdition = ({
                         })}
                       </div>
                       {errors.zgZones && (
-                        <p className={errorClass}>{errors.zgZones.message}</p>
+                        <p className="mt-1 text-xs text-red-600">
+                          {errors.zgZones.message}
+                        </p>
                       )}
                     </div>
                   )}
@@ -323,13 +307,12 @@ const PageAdminZonegroupEdition = ({
             </div>
 
             <div className="flex justify-end mt-6 pt-4 border-t border-gray-200">
-              <button
-                className="px-5 py-2.5 bg-[#000091] text-white rounded-sm text-sm font-medium hover:bg-[#1212ff] transition-colors disabled:opacity-60"
+              <Bouton
                 disabled={isPending}
+                label={estUneCréation ? "Créer" : "Sauvegarder"}
                 type="submit"
-              >
-                {estUneCréation ? "Créer" : "Sauvegarder"}
-              </button>
+                variant="primary"
+              />
             </div>
           </form>
         </FormProvider>

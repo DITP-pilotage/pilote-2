@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
+import { z } from "zod";
 import { auth } from "@/server/infrastructure/api/auth/[...nextauth]";
 import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { getContainer } from "@/server/dependances";
@@ -24,7 +25,9 @@ export async function getServerSideProps(
     return redirigerVersAccueil;
 
   const { params, query } = context;
-  const porteurId = params!.id;
+  const parsed = z.string().min(1).safeParse(params?.id);
+  if (!parsed.success) return redirigerVersAccueil;
+  const porteurId = parsed.data;
   const estUneCréation = query._action === "creer-porteur";
   const container = getContainer("metadataPorteur");
 

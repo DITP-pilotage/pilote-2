@@ -1,15 +1,15 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { SupprimerPerimetreHandler } from "@/server/metadataPerimetre/handlers/SupprimerPerimetreHandler";
+import { ArchiverOuRestorerPerimetreHandler } from "@/server/metadataPerimetre/handlers/ArchiverOuRestorerPerimetreHandler";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 
-describe("SupprimerPerimetreHandler", () => {
-  let handler: SupprimerPerimetreHandler;
+describe("ArchiverOuRestorerPerimetreHandler", () => {
+  let handler: ArchiverOuRestorerPerimetreHandler;
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
-    handler = new SupprimerPerimetreHandler({ prisma: prismaPilote });
+    handler = new ArchiverOuRestorerPerimetreHandler({ prisma: prismaPilote });
   });
 
   describe("execute", () => {

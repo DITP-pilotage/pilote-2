@@ -9,6 +9,11 @@ import {
   PorteurForm,
   usePorteurForm,
 } from "@/components/PageAdminPorteurs/usePorteurForm";
+import { Input } from "@/components/_commons/Input";
+import { Textarea } from "@/components/_commons/Textarea";
+import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import type { SélecteurOption } from "@/client/components/_commons/Sélecteur/Sélecteur.interface";
 
 interface Props {
   porteurId: string;
@@ -17,22 +22,17 @@ interface Props {
   idSuivant: string | null;
 }
 
-const TYPES: { value: "MIN" | "DAC" | "AUTRE"; label: string }[] = [
-  { value: "MIN", label: "Ministère (MIN)" },
-  { value: "DAC", label: "DAC" },
-  { value: "AUTRE", label: "Autre" },
+const OPTIONS_TYPE: SélecteurOption<"MIN" | "DAC" | "AUTRE">[] = [
+  { libellé: "Ministère (MIN)", valeur: "MIN" },
+  { libellé: "DAC", valeur: "DAC" },
+  { libellé: "Autre", valeur: "AUTRE" },
 ];
 
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <h2 className="text-base font-semibold text-[#1e1e1e] uppercase tracking-wide border-l-[3px] border-[#000091] pl-3 mb-5">
+  <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide border-l-[3px] border-primary pl-3 mb-5">
     {children}
   </h2>
 );
-
-const labelClass = "block text-sm font-medium text-gray-700 mb-1";
-const inputClass =
-  "w-full px-3 py-2 text-sm border border-gray-300 rounded-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#000091] focus:border-[#000091]";
-const errorClass = "mt-1 text-xs text-red-600";
 
 const PageAdminPorteurEdition = ({
   porteurId,
@@ -75,11 +75,7 @@ const PageAdminPorteurEdition = ({
   const estSupprimé =
     porteurData?.deletedAt !== null && porteurData?.deletedAt !== undefined;
 
-  const {
-    register,
-    control,
-    formState: { errors },
-  } = reactHookForm;
+  const { control } = reactHookForm;
 
   const succès = router.query._action === "modification-reussie";
   const titre = estUneCréation
@@ -87,11 +83,11 @@ const PageAdminPorteurEdition = ({
     : `Porteur ${porteurId}`;
 
   return (
-    <div className="min-h-screen bg-[#f5f5fe]">
+    <div className="min-h-screen bg-dsfr-alt-blue-france">
       <div className="max-w-4xl mx-auto px-6 py-8">
         <nav className="mb-6 flex items-center gap-2 text-sm">
           <Link
-            className="text-[#000091] hover:text-[#1212ff] font-medium hover:underline underline-offset-2 transition-colors"
+            className="text-primary hover:text-dsfr-blue-france-sun-113-hover font-medium hover:underline underline-offset-2 transition-colors"
             href="/panel-administrateur/referentiels/porteurs"
           >
             Porteurs
@@ -118,10 +114,10 @@ const PageAdminPorteurEdition = ({
           >
             <div className="flex items-center justify-between mb-6">
               <div>
-                <p className="text-sm font-medium text-[#000091] uppercase tracking-widest mb-1">
+                <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
                   {estUneCréation ? "Nouveau porteur" : "Édition"}
                 </p>
-                <h1 className="text-3xl font-bold text-[#1e1e1e]">{titre}</h1>
+                <h1 className="text-3xl font-bold text-gray-900">{titre}</h1>
               </div>
               <div className="flex items-center gap-3">
                 {!estUneCréation && (
@@ -143,13 +139,12 @@ const PageAdminPorteurEdition = ({
                     {estSupprimé ? "Restaurer" : "Supprimer"}
                   </button>
                 )}
-                <button
-                  className="px-5 py-2.5 bg-[#000091] text-white rounded-sm text-sm font-medium hover:bg-[#1212ff] transition-colors disabled:opacity-60"
+                <Bouton
                   disabled={isPending}
+                  label={estUneCréation ? "Créer" : "Sauvegarder"}
                   type="submit"
-                >
-                  {estUneCréation ? "Créer" : "Sauvegarder"}
-                </button>
+                  variant="primary"
+                />
               </div>
             </div>
 
@@ -158,43 +153,24 @@ const PageAdminPorteurEdition = ({
                 <SectionTitle>Identification</SectionTitle>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <span className={labelClass}>ID</span>
+                    <span className="block text-xs text-gray-500 mb-1">ID</span>
                     <p className="px-3 py-2 text-sm font-mono text-gray-500 bg-gray-50 border border-gray-200 rounded-sm">
                       {porteurIdEffectif}
                     </p>
                   </div>
-                  <div>
-                    <label className={labelClass} htmlFor="porteurTypeShort">
-                      Type *
-                    </label>
-                    <Controller
-                      control={control}
-                      name="porteurTypeShort"
-                      render={({ field }) => (
-                        <select
-                          className={inputClass}
-                          id="porteurTypeShort"
-                          onChange={(e) =>
-                            field.onChange(
-                              e.target.value as "MIN" | "DAC" | "AUTRE",
-                            )
-                          }
-                          value={field.value}
-                        >
-                          {TYPES.map((type) => (
-                            <option key={type.value} value={type.value}>
-                              {type.label}
-                            </option>
-                          ))}
-                        </select>
-                      )}
-                    />
-                    {errors.porteurTypeShort && (
-                      <p className={errorClass}>
-                        {errors.porteurTypeShort.message}
-                      </p>
+                  <Controller
+                    control={control}
+                    name="porteurTypeShort"
+                    render={({ field }) => (
+                      <Sélecteur
+                        htmlName="porteurTypeShort"
+                        libellé="Type *"
+                        onChange={field.onChange}
+                        options={OPTIONS_TYPE}
+                        valeurSélectionnée={field.value}
+                      />
                     )}
-                  </div>
+                  />
                 </div>
               </section>
 
@@ -202,101 +178,57 @@ const PageAdminPorteurEdition = ({
                 <SectionTitle>Dénomination</SectionTitle>
                 <div className="flex flex-col gap-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className={labelClass} htmlFor="porteurShort">
-                        Sigle *
-                      </label>
-                      <input
-                        className={inputClass}
-                        id="porteurShort"
-                        maxLength={20}
-                        type="text"
-                        {...register("porteurShort")}
-                      />
-                      {errors.porteurShort && (
-                        <p className={errorClass}>
-                          {errors.porteurShort.message}
-                        </p>
-                      )}
-                    </div>
-                    <div>
-                      <label className={labelClass} htmlFor="porteurNameShort">
-                        Nom court
-                      </label>
-                      <input
-                        className={inputClass}
-                        id="porteurNameShort"
-                        type="text"
-                        {...register("porteurNameShort")}
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className={labelClass} htmlFor="porteurName">
-                      Nom complet *
-                    </label>
-                    <input
-                      className={inputClass}
-                      id="porteurName"
-                      maxLength={300}
-                      type="text"
-                      {...register("porteurName")}
+                    <Input<PorteurForm>
+                      control={control}
+                      label="Sigle *"
+                      name="porteurShort"
+                      required
                     />
-                    {errors.porteurName && (
-                      <p className={errorClass}>{errors.porteurName.message}</p>
-                    )}
-                  </div>
-                  <div>
-                    <label className={labelClass} htmlFor="porteurDesc">
-                      Description
-                    </label>
-                    <textarea
-                      className={inputClass}
-                      id="porteurDesc"
-                      rows={3}
-                      {...register("porteurDesc")}
+                    <Input<PorteurForm>
+                      control={control}
+                      label="Nom court"
+                      name="porteurNameShort"
                     />
                   </div>
+                  <Input<PorteurForm>
+                    control={control}
+                    label="Nom complet *"
+                    name="porteurName"
+                    required
+                  />
+                  <Textarea<PorteurForm>
+                    control={control}
+                    label="Description"
+                    name="porteurDesc"
+                    rows={3}
+                  />
                 </div>
               </section>
 
               <section className="px-6 py-8">
                 <SectionTitle>Informations complémentaires</SectionTitle>
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className={labelClass} htmlFor="porteurDirecteur">
-                      Directeur
-                    </label>
-                    <input
-                      className={inputClass}
-                      id="porteurDirecteur"
-                      type="text"
-                      {...register("porteurDirecteur")}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelClass} htmlFor="porteurPicto">
-                      Picto (code)
-                    </label>
-                    <input
-                      className={inputClass}
-                      id="porteurPicto"
-                      type="text"
-                      {...register("porteurPicto")}
-                    />
-                  </div>
+                  <Input<PorteurForm>
+                    control={control}
+                    label="Directeur"
+                    name="porteurDirecteur"
+                  />
+                  <Input<PorteurForm>
+                    control={control}
+                    label="Picto (code)"
+                    name="porteurPicto"
+                  />
                 </div>
               </section>
             </div>
 
             <div className="flex justify-end mt-6 pt-4 border-t border-gray-200">
-              <button
-                className="px-5 py-2.5 bg-[#000091] text-white rounded-sm text-sm font-medium hover:bg-[#1212ff] transition-colors disabled:opacity-60"
+              <Bouton
                 disabled={isPending}
+                label={estUneCréation ? "Créer" : "Sauvegarder"}
                 type="submit"
-              >
-                {estUneCréation ? "Créer" : "Sauvegarder"}
-              </button>
+                variant="primary"
+              />
             </div>
           </form>
         </FormProvider>

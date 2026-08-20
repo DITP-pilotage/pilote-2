@@ -1,7 +1,7 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataPerimetre/module";
 
-export class SupprimerPerimetreHandler {
+export class ArchiverOuRestorerPerimetreHandler {
   private readonly prisma: PrismaPilote;
 
   constructor({ prisma }: Inject<"prisma">) {

@@ -7,6 +7,20 @@ export interface ZoneDisponible {
   zoneType: string;
 }
 
+type ZoneRow = {
+  zone_id: string;
+  nom: string;
+  zone_type: string;
+};
+
+function toApiModel(zone: ZoneRow): ZoneDisponible {
+  return {
+    zoneId: zone.zone_id,
+    nom: zone.nom,
+    zoneType: zone.zone_type,
+  };
+}
+
 export class ListerZonesDisponiblesQuery {
   private readonly prisma: PrismaPilote;
 
@@ -18,12 +32,8 @@ export class ListerZonesDisponiblesQuery {
     const zones = await this.prisma.getInstance().metadata_zones.findMany({
       where: { zone_type: { in: ["DEPT", "REG", "NAT"] } },
       select: { zone_id: true, nom: true, zone_type: true },
-      orderBy: [{ zone_type: "asc" }, { zone_id: "asc" }],
+      orderBy: [{ updated_at: "desc" }],
     });
-    return zones.map((z) => ({
-      zoneId: z.zone_id,
-      nom: z.nom,
-      zoneType: z.zone_type,
-    }));
+    return zones.map(toApiModel);
   }
 }

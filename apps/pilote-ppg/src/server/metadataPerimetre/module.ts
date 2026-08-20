@@ -8,14 +8,14 @@ import { ListerPerimetresAdminQuery } from "./queries/ListerPerimetresAdminQuery
 import { RecupererPerimetreQuery } from "./queries/RecupererPerimetreQuery";
 import { RecupererIdSuivantPerimetreQuery } from "./queries/RecupererIdSuivantPerimetreQuery";
 import { EnregistrerPerimetreHandler } from "./handlers/EnregistrerPerimetreHandler";
-import { SupprimerPerimetreHandler } from "./handlers/SupprimerPerimetreHandler";
+import { ArchiverOuRestorerPerimetreHandler } from "./handlers/ArchiverOuRestorerPerimetreHandler";
 
 type MetadataPerimetreCradle = {
   listerPerimetresAdminQuery: ListerPerimetresAdminQuery;
   recupererPerimetreQuery: RecupererPerimetreQuery;
   recupererIdSuivantPerimetreQuery: RecupererIdSuivantPerimetreQuery;
   enregistrerPerimetreHandler: EnregistrerPerimetreHandler;
-  supprimerPerimetreHandler: SupprimerPerimetreHandler;
+  archiverOuRestorerPerimetreHandler: ArchiverOuRestorerPerimetreHandler;
 };
 
 export const metadataPerimetreModule = defineModule<
@@ -33,7 +33,9 @@ export const metadataPerimetreModule = defineModule<
         RecupererIdSuivantPerimetreQuery,
       ),
       enregistrerPerimetreHandler: asModuleClass(EnregistrerPerimetreHandler),
-      supprimerPerimetreHandler: asModuleClass(SupprimerPerimetreHandler),
+      archiverOuRestorerPerimetreHandler: asModuleClass(
+        ArchiverOuRestorerPerimetreHandler,
+      ),
     } satisfies VerifyCradle<MetadataPerimetreCradle>);
   },
 });

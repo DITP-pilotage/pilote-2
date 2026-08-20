@@ -1,7 +1,7 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataZonegroup/module";
 
-export class SupprimerZonegroupHandler {
+export class ArchiverOuRestorerZonegroupHandler {
   private readonly prisma: PrismaPilote;
 
   constructor({ prisma }: Inject<"prisma">) {

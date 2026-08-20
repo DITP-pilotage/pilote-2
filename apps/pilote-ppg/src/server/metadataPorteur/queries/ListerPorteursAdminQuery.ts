@@ -10,6 +10,26 @@ export interface PorteurAdminListItem {
   deletedAt: Date | null;
 }
 
+type PorteurRow = {
+  porteur_id: string;
+  porteur_short: string;
+  porteur_name: string;
+  porteur_type_short: string | null;
+  updated_at: Date;
+  deleted_at: Date | null;
+};
+
+function toApiModel(porteur: PorteurRow): PorteurAdminListItem {
+  return {
+    porteurId: porteur.porteur_id,
+    porteurShort: porteur.porteur_short,
+    porteurName: porteur.porteur_name,
+    porteurTypeShort: porteur.porteur_type_short,
+    updatedAt: porteur.updated_at,
+    deletedAt: porteur.deleted_at,
+  };
+}
+
 export class ListerPorteursAdminQuery {
   private readonly prisma: PrismaPilote;
 
@@ -31,13 +51,6 @@ export class ListerPorteursAdminQuery {
         },
         orderBy: [{ updated_at: "desc" }],
       });
-    return porteurs.map((p) => ({
-      porteurId: p.porteur_id,
-      porteurShort: p.porteur_short,
-      porteurName: p.porteur_name,
-      porteurTypeShort: p.porteur_type_short,
-      updatedAt: p.updated_at,
-      deletedAt: p.deleted_at,
-    }));
+    return porteurs.map(toApiModel);
   }
 }

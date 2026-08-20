@@ -9,6 +9,24 @@ export interface PerimetreAdminListItem {
   deletedAt: Date | null;
 }
 
+type PerimetreRow = {
+  perimetre_id: string;
+  per_nom: string;
+  updated_at: Date;
+  deleted_at: Date | null;
+  porteur: { porteur_short: string } | null;
+};
+
+function toApiModel(perimetre: PerimetreRow): PerimetreAdminListItem {
+  return {
+    perimetreId: perimetre.perimetre_id,
+    perNom: perimetre.per_nom,
+    porteurShort: perimetre.porteur?.porteur_short ?? null,
+    updatedAt: perimetre.updated_at,
+    deletedAt: perimetre.deleted_at,
+  };
+}
+
 export class ListerPerimetresAdminQuery {
   private readonly prisma: PrismaPilote;
 
@@ -29,12 +47,6 @@ export class ListerPerimetresAdminQuery {
         },
         orderBy: [{ updated_at: "desc" }],
       });
-    return perimetres.map((p) => ({
-      perimetreId: p.perimetre_id,
-      perNom: p.per_nom,
-      porteurShort: p.porteur?.porteur_short ?? null,
-      updatedAt: p.updated_at,
-      deletedAt: p.deleted_at,
-    }));
+    return perimetres.map(toApiModel);
   }
 }

@@ -1,15 +1,15 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { SupprimerZonegroupHandler } from "@/server/metadataZonegroup/handlers/SupprimerZonegroupHandler";
+import { ArchiverOuRestorerZonegroupHandler } from "@/server/metadataZonegroup/handlers/ArchiverOuRestorerZonegroupHandler";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 
-describe("SupprimerZonegroupHandler", () => {
-  let handler: SupprimerZonegroupHandler;
+describe("ArchiverOuRestorerZonegroupHandler", () => {
+  let handler: ArchiverOuRestorerZonegroupHandler;
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
-    handler = new SupprimerZonegroupHandler({ prisma: prismaPilote });
+    handler = new ArchiverOuRestorerZonegroupHandler({ prisma: prismaPilote });
   });
 
   describe("execute", () => {

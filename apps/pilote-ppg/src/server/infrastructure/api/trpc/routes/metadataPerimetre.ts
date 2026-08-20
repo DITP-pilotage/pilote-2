@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { Session } from "next-auth";
 import {
   créerRouteurTRPC,
   procédureProtégée,
@@ -7,18 +6,8 @@ import {
 } from "@/server/infrastructure/api/trpc/trpc";
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
-import Habilitation from "@/server/gestion-utilisateur/domain/habilitation/Habilitation";
 import { perimetreCommandSchema } from "@/server/metadataPerimetre/handlers/EnregistrerPerimetreHandler";
-
-function vérifierPermissionAdmin(session: Session & { user: Session["user"] }) {
-  const habilitation = new Habilitation({
-    habilitations: session.habilitations,
-    profil: session.profil,
-  });
-  if (!habilitation.estAutoriseAAccederALaPageAdmin()) {
-    throw new Error("Accès non autorisé");
-  }
-}
+import { vérifierPermissionAdmin } from "@/server/infrastructure/api/trpc/routes/vérifierPermissionAdmin";
 
 export const metadataPerimetreRouter = créerRouteurTRPC({
   lister: procédureProtégée.query(async ({ ctx }) => {
@@ -64,7 +53,7 @@ export const metadataPerimetreRouter = créerRouteurTRPC({
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       vérifierPermissionAdmin(ctx.session);
       await getContainer("metadataPerimetre")
-        .resolve("supprimerPerimetreHandler")
+        .resolve("archiverOuRestorerPerimetreHandler")
         .execute({
           perimetreId: input.perimetreId,
           restaurer: input.restaurer,

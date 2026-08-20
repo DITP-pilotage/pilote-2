@@ -1,7 +1,7 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataPorteur/module";
 
-export class SupprimerPorteurHandler {
+export class ArchiverOuRestorerPorteurHandler {
   private readonly prisma: PrismaPilote;
 
   constructor({ prisma }: Inject<"prisma">) {

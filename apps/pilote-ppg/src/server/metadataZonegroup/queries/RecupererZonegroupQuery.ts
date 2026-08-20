@@ -1,3 +1,4 @@
+import { metadata_zonegroup } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataZonegroup/module";
 
@@ -7,6 +8,16 @@ export interface MetadataZonegroup {
   zgDesc: string | null;
   zgZones: string[];
   deletedAt: string | null;
+}
+
+function toApiModel(zonegroup: metadata_zonegroup): MetadataZonegroup {
+  return {
+    zoneGroupId: zonegroup.zone_group_id,
+    zgName: zonegroup.zg_name,
+    zgDesc: zonegroup.zg_desc,
+    zgZones: zonegroup.zg_zones,
+    deletedAt: zonegroup.deleted_at?.toISOString() ?? null,
+  };
 }
 
 export class RecupererZonegroupQuery {
@@ -26,12 +37,6 @@ export class RecupererZonegroupQuery {
       .metadata_zonegroup.findUniqueOrThrow({
         where: { zone_group_id: zoneGroupId },
       });
-    return {
-      zoneGroupId: zonegroup.zone_group_id,
-      zgName: zonegroup.zg_name,
-      zgDesc: zonegroup.zg_desc,
-      zgZones: zonegroup.zg_zones,
-      deletedAt: zonegroup.deleted_at?.toISOString() ?? null,
-    };
+    return toApiModel(zonegroup);
   }
 }

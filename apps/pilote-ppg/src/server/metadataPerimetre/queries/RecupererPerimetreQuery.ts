@@ -1,3 +1,4 @@
+import { metadata_perimetres } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataPerimetre/module";
 
@@ -6,6 +7,15 @@ export interface MetadataPerimetre {
   perNom: string;
   perPorteurId: string | null;
   deletedAt: string | null;
+}
+
+function toApiModel(perimetre: metadata_perimetres): MetadataPerimetre {
+  return {
+    perimetreId: perimetre.perimetre_id,
+    perNom: perimetre.per_nom,
+    perPorteurId: perimetre.per_porteur_id,
+    deletedAt: perimetre.deleted_at?.toISOString() ?? null,
+  };
 }
 
 export class RecupererPerimetreQuery {
@@ -25,11 +35,6 @@ export class RecupererPerimetreQuery {
       .metadata_perimetres.findUniqueOrThrow({
         where: { perimetre_id: perimetreId },
       });
-    return {
-      perimetreId: perimetre.perimetre_id,
-      perNom: perimetre.per_nom,
-      perPorteurId: perimetre.per_porteur_id,
-      deletedAt: perimetre.deleted_at?.toISOString() ?? null,
-    };
+    return toApiModel(perimetre);
   }
 }

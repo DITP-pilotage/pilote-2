@@ -9,7 +9,7 @@ import { RecupererZonegroupQuery } from "./queries/RecupererZonegroupQuery";
 import { RecupererIdSuivantZonegroupQuery } from "./queries/RecupererIdSuivantZonegroupQuery";
 import { ListerZonesDisponiblesQuery } from "./queries/ListerZonesDisponiblesQuery";
 import { EnregistrerZonegroupHandler } from "./handlers/EnregistrerZonegroupHandler";
-import { SupprimerZonegroupHandler } from "./handlers/SupprimerZonegroupHandler";
+import { ArchiverOuRestorerZonegroupHandler } from "./handlers/ArchiverOuRestorerZonegroupHandler";
 
 type MetadataZonegroupCradle = {
   listerZonegroupsAdminQuery: ListerZonegroupsAdminQuery;
@@ -17,7 +17,7 @@ type MetadataZonegroupCradle = {
   recupererIdSuivantZonegroupQuery: RecupererIdSuivantZonegroupQuery;
   listerZonesDisponiblesQuery: ListerZonesDisponiblesQuery;
   enregistrerZonegroupHandler: EnregistrerZonegroupHandler;
-  supprimerZonegroupHandler: SupprimerZonegroupHandler;
+  archiverOuRestorerZonegroupHandler: ArchiverOuRestorerZonegroupHandler;
 };
 
 export const metadataZonegroupModule = defineModule<
@@ -36,7 +36,9 @@ export const metadataZonegroupModule = defineModule<
       ),
       listerZonesDisponiblesQuery: asModuleClass(ListerZonesDisponiblesQuery),
       enregistrerZonegroupHandler: asModuleClass(EnregistrerZonegroupHandler),
-      supprimerZonegroupHandler: asModuleClass(SupprimerZonegroupHandler),
+      archiverOuRestorerZonegroupHandler: asModuleClass(
+        ArchiverOuRestorerZonegroupHandler,
+      ),
     } satisfies VerifyCradle<MetadataZonegroupCradle>);
   },
 });

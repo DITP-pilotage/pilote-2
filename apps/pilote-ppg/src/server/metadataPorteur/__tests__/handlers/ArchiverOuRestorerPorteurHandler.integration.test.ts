@@ -1,15 +1,15 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { SupprimerPorteurHandler } from "@/server/metadataPorteur/handlers/SupprimerPorteurHandler";
+import { ArchiverOuRestorerPorteurHandler } from "@/server/metadataPorteur/handlers/ArchiverOuRestorerPorteurHandler";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 
-describe("SupprimerPorteurHandler", () => {
-  let handler: SupprimerPorteurHandler;
+describe("ArchiverOuRestorerPorteurHandler", () => {
+  let handler: ArchiverOuRestorerPorteurHandler;
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
-    handler = new SupprimerPorteurHandler({ prisma: prismaPilote });
+    handler = new ArchiverOuRestorerPorteurHandler({ prisma: prismaPilote });
   });
 
   describe("execute", () => {

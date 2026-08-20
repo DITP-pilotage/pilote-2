@@ -9,6 +9,24 @@ export interface ZonegroupAdminListItem {
   deletedAt: Date | null;
 }
 
+type ZonegroupRow = {
+  zone_group_id: string;
+  zg_name: string;
+  zg_zones: string[];
+  updated_at: Date;
+  deleted_at: Date | null;
+};
+
+function toApiModel(zonegroup: ZonegroupRow): ZonegroupAdminListItem {
+  return {
+    zoneGroupId: zonegroup.zone_group_id,
+    zgName: zonegroup.zg_name,
+    nbZones: zonegroup.zg_zones.length,
+    updatedAt: zonegroup.updated_at,
+    deletedAt: zonegroup.deleted_at,
+  };
+}
+
 export class ListerZonegroupsAdminQuery {
   private readonly prisma: PrismaPilote;
 
@@ -29,12 +47,6 @@ export class ListerZonegroupsAdminQuery {
         },
         orderBy: [{ updated_at: "desc" }],
       });
-    return zonegroups.map((z) => ({
-      zoneGroupId: z.zone_group_id,
-      zgName: z.zg_name,
-      nbZones: z.zg_zones.length,
-      updatedAt: z.updated_at,
-      deletedAt: z.deleted_at,
-    }));
+    return zonegroups.map(toApiModel);
   }
 }
