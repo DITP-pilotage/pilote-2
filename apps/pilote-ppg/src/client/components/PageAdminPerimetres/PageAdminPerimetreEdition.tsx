@@ -112,7 +112,9 @@ const PageAdminPerimetreEdition = ({
                 <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
                   {estUneCréation ? "Nouveau périmètre" : "Édition"}
                 </p>
-                <h1 className="text-3xl font-bold text-dsfr-grey-200">{titre}</h1>
+                <h1 className="text-3xl font-bold text-dsfr-grey-200">
+                  {titre}
+                </h1>
               </div>
               <div className="flex items-center gap-3">
                 {!estUneCréation && (
@@ -148,7 +150,9 @@ const PageAdminPerimetreEdition = ({
                 <SectionTitle>Identification</SectionTitle>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <span className="block text-xs text-dsfr-grey-625 mb-1">ID</span>
+                    <span className="block text-xs text-dsfr-grey-625 mb-1">
+                      ID
+                    </span>
                     <p className="px-3 py-2 text-sm font-mono text-dsfr-grey-625 bg-dsfr-grey-1000 border border-dsfr-grey-925 rounded-sm">
                       {perimetreIdEffectif}
                     </p>
