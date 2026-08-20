@@ -43,17 +43,23 @@ export const metadataPorteurRouter = créerRouteurTRPC({
         .execute(input);
     }),
 
-  supprimer: procédureProtégée
-    .input(
-      z
-        .object({ porteurId: z.string(), restaurer: z.boolean().optional() })
-        .and(zodValidateurCSRF),
-    )
+  archiver: procédureProtégée
+    .input(z.object({ porteurId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       vérifierPermissionAdmin(ctx.session);
       await getContainer("metadataPorteur")
-        .resolve("archiverOuRestorerPorteurHandler")
-        .execute({ porteurId: input.porteurId, restaurer: input.restaurer });
+        .resolve("archiverPorteurHandler")
+        .execute({ porteurId: input.porteurId });
+    }),
+
+  restorer: procédureProtégée
+    .input(z.object({ porteurId: z.string() }).and(zodValidateurCSRF))
+    .mutation(async ({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      vérifierPermissionAdmin(ctx.session);
+      await getContainer("metadataPorteur")
+        .resolve("restorerPorteurHandler")
+        .execute({ porteurId: input.porteurId });
     }),
 });

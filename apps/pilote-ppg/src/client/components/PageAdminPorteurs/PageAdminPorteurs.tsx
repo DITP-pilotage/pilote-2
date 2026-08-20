@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import api from "@/server/infrastructure/api/trpc/api";
 import Loader from "@/components/_commons/Loader/Loader";
-import { LoupePleineIcon } from "@/components/_commons/Icones/LoupePleineIcon";
 import { Lien } from "@/components/_commons/Lien/Lien";
 import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
+import { InputRecherche } from "@/components/_commons/InputRecherche/InputRecherche";
 import type { PorteurTypeShort } from "@/server/metadataPorteur/handlers/EnregistrerPorteurHandler";
 import type { PorteurAdminListItem } from "@/server/metadataPorteur/queries/ListerPorteursAdminQuery";
 
@@ -122,16 +122,12 @@ const PageAdminPorteurs = () => {
         </div>
 
         <div className="mb-4">
-          <div className="relative w-full max-w-md">
-            <LoupePleineIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none size-4" />
-            <input
-              className="w-full pl-9 pr-4 py-2.5 text-sm bg-white border border-gray-300 rounded-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-              onChange={(event) => setRecherche(event.target.value)}
-              placeholder="Rechercher par ID, sigle ou nom…"
-              type="search"
-              value={recherche}
-            />
-          </div>
+          <InputRecherche
+            className="w-full max-w-md"
+            onChange={setRecherche}
+            placeholder="Rechercher par ID, sigle ou nom…"
+            value={recherche}
+          />
         </div>
 
         <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden">

@@ -2,7 +2,10 @@ import { z } from "zod";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataPorteur/module";
 
-const TYPE_ID_PAR_SHORT: Record<string, string> = {
+const PORTEUR_TYPE_SHORTS = ["MIN", "DAC", "AUTRE"] as const;
+export type PorteurTypeShort = (typeof PORTEUR_TYPE_SHORTS)[number];
+
+const TYPE_ID_PAR_SHORT: Record<PorteurTypeShort, string> = {
   MIN: "1",
   DAC: "7",
   AUTRE: "5",
@@ -13,14 +16,13 @@ export const porteurCommandSchema = z.object({
   porteurShort: z.string().min(1).max(20),
   porteurName: z.string().min(1).max(300),
   porteurDesc: z.string().nullable(),
-  porteurTypeShort: z.enum(["MIN", "DAC", "AUTRE"]),
+  porteurTypeShort: z.enum(PORTEUR_TYPE_SHORTS),
   porteurDirecteur: z.string().nullable(),
   porteurNameShort: z.string().nullable(),
   porteurPicto: z.string().nullable(),
 });
 
 export type PorteurCommand = z.infer<typeof porteurCommandSchema>;
-export type PorteurTypeShort = PorteurCommand["porteurTypeShort"];
 
 export class EnregistrerPorteurHandler {
   private readonly prisma: PrismaPilote;

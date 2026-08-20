@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { Controller, FormProvider } from "react-hook-form";
+import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { MetadataZonegroup } from "@/server/metadataZonegroup/queries/RecupererZonegroupQuery";
@@ -37,9 +37,9 @@ const PageAdminZonegroupEdition = ({
   const defaultValues: ZonegroupForm = zonegroupData
     ? {
         zoneGroupId: zonegroupData.zoneGroupId,
-        zgName: zonegroupData.zgName,
-        zgDesc: zonegroupData.zgDesc,
-        zgZones: zonegroupData.zgZones,
+        zoneGroupName: zonegroupData.zgName,
+        zoneGroupDesc: zonegroupData.zgDesc,
+        zoneGroupZones: zonegroupData.zgZones,
       }
     : defaultZonegroupVide(zoneGroupIdEffectif);
 
@@ -49,7 +49,14 @@ const PageAdminZonegroupEdition = ({
     estUneCréation,
   });
 
-  const suppressionMutation = api.metadataZonegroup.supprimer.useMutation({
+  const archiverMutation = api.metadataZonegroup.archiver.useMutation({
+    onSuccess: () =>
+      router.push(
+        `/panel-administrateur/referentiels/zonegroups/${zoneGroupIdEffectif}?_action=modification-reussie`,
+      ),
+  });
+
+  const restorerMutation = api.metadataZonegroup.restorer.useMutation({
     onSuccess: () =>
       router.push(
         `/panel-administrateur/referentiels/zonegroups/${zoneGroupIdEffectif}?_action=modification-reussie`,
@@ -63,22 +70,21 @@ const PageAdminZonegroupEdition = ({
 
   const succès = router.query._action === "modification-reussie";
   const titre = estUneCréation
-    ? `Nouveau groupe — ${zoneGroupIdEffectif}`
+    ? `Nouveau groupe - ${zoneGroupIdEffectif}`
     : `Groupe ${zoneGroupId}`;
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
       <div className="max-w-4xl mx-auto px-6 py-8">
-        <nav className="mb-6 flex items-center gap-2 text-sm">
-          <Link
-            className="text-primary hover:text-dsfr-blue-france-sun-113-hover font-medium hover:underline underline-offset-2 transition-colors"
-            href="/panel-administrateur/referentiels/zonegroups"
-          >
-            Zones groupes
-          </Link>
-          <span className="text-dsfr-grey-625">/</span>
-          <span className="text-dsfr-grey-625">{titre}</span>
-        </nav>
+        <FilAriane
+          chemin={[
+            {
+              nom: "Zones groupes",
+              lien: "/panel-administrateur/referentiels/zonegroups",
+            },
+          ]}
+          libelléPageCourante={titre}
+        />
 
         {succès && (
           <Alerte
@@ -119,11 +125,15 @@ const PageAdminZonegroupEdition = ({
                     }
                     label={estSupprime ? "Restaurer" : "Supprimer"}
                     onClick={() =>
-                      suppressionMutation.mutate({
-                        csrf: récupérerUnCookie("csrf") ?? "",
-                        zoneGroupId: zoneGroupIdEffectif,
-                        restaurer: estSupprime,
-                      })
+                      estSupprime
+                        ? restorerMutation.mutate({
+                            csrf: récupérerUnCookie("csrf") ?? "",
+                            zoneGroupId: zoneGroupIdEffectif,
+                          })
+                        : archiverMutation.mutate({
+                            csrf: récupérerUnCookie("csrf") ?? "",
+                            zoneGroupId: zoneGroupIdEffectif,
+                          })
                     }
                     variant="primary"
                     type="button"
@@ -159,13 +169,13 @@ const PageAdminZonegroupEdition = ({
                   <Input<ZonegroupForm>
                     control={reactHookForm.control}
                     label="Nom"
-                    name="zgName"
+                    name="zoneGroupName"
                     required
                   />
                   <Textarea<ZonegroupForm>
                     control={reactHookForm.control}
                     label="Description"
-                    name="zgDesc"
+                    name="zoneGroupDesc"
                     rows={3}
                   />
                 </div>
@@ -175,10 +185,12 @@ const PageAdminZonegroupEdition = ({
                 <SectionTitle>Zones</SectionTitle>
                 <Controller
                   control={reactHookForm.control}
-                  name="zgZones"
+                  name="zoneGroupZones"
                   render={({ field }) => (
                     <SélecteurZones
-                      error={reactHookForm.formState.errors.zgZones?.message}
+                      error={
+                        reactHookForm.formState.errors.zoneGroupZones?.message
+                      }
                       onChange={field.onChange}
                       value={field.value}
                       zonesDisponibles={zonesDisponibles}

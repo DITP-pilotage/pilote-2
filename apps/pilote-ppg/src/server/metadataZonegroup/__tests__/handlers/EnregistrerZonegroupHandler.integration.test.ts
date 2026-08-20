@@ -19,9 +19,9 @@ describe("EnregistrerZonegroupHandler", () => {
         // When
         await handler.execute({
           zoneGroupId: "ZG-099",
-          zgName: "Zone test",
-          zgDesc: "Description test",
-          zgZones: ["D01", "D02", "D03"],
+          zoneGroupName: "Zone test",
+          zoneGroupDesc: "Description test",
+          zoneGroupZones: ["D01", "D02", "D03"],
         });
 
         // Then
@@ -42,9 +42,9 @@ describe("EnregistrerZonegroupHandler", () => {
         // When
         await handler.execute({
           zoneGroupId: "ZG-098",
-          zgName: "Zone sans desc",
-          zgDesc: null,
-          zgZones: ["FRANCE"],
+          zoneGroupName: "Zone sans desc",
+          zoneGroupDesc: null,
+          zoneGroupZones: ["FRANCE"],
         });
 
         // Then
@@ -68,9 +68,9 @@ describe("EnregistrerZonegroupHandler", () => {
         // When
         await handler.execute({
           zoneGroupId: "ZG-097",
-          zgName: "Nouveau nom",
-          zgDesc: null,
-          zgZones: ["D10", "D20"],
+          zoneGroupName: "Nouveau nom",
+          zoneGroupDesc: null,
+          zoneGroupZones: ["D10", "D20"],
         });
 
         // Then

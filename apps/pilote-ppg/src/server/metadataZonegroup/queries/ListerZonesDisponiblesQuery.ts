@@ -1,4 +1,4 @@
-import type { metadata_zones } from "@prisma/client";
+import type { metadata_zones as MetadataZonesPrisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataZonegroup/module";
 
@@ -8,9 +8,7 @@ export interface ZoneDisponible {
   zoneType: string;
 }
 
-function toApiModel(
-  zone: Pick<metadata_zones, "zone_id" | "nom" | "zone_type">,
-): ZoneDisponible {
+function toApiModel(zone: MetadataZonesPrisma): ZoneDisponible {
   return {
     zoneId: zone.zone_id,
     nom: zone.nom,
@@ -28,7 +26,6 @@ export class ListerZonesDisponiblesQuery {
   async run(): Promise<ZoneDisponible[]> {
     const zones = await this.prisma.getInstance().metadata_zones.findMany({
       where: { zone_type: { in: ["DEPT", "REG", "NAT"] } },
-      select: { zone_id: true, nom: true, zone_type: true },
       orderBy: [{ updated_at: "desc" }],
     });
     return zones.map(toApiModel);

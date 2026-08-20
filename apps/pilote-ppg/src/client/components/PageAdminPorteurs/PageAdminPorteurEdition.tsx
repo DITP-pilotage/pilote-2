@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { Controller, FormProvider } from "react-hook-form";
+import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { MetadataPorteur } from "@/server/metadataPorteur/queries/RecupererPorteurQuery";
@@ -62,7 +62,14 @@ const PageAdminPorteurEdition = ({
     estUneCréation,
   });
 
-  const suppressionMutation = api.metadataPorteur.supprimer.useMutation({
+  const archiverMutation = api.metadataPorteur.archiver.useMutation({
+    onSuccess: () =>
+      router.push(
+        `/panel-administrateur/referentiels/porteurs/${porteurIdEffectif}?_action=modification-reussie`,
+      ),
+  });
+
+  const restorerMutation = api.metadataPorteur.restorer.useMutation({
     onSuccess: () =>
       router.push(
         `/panel-administrateur/referentiels/porteurs/${porteurIdEffectif}?_action=modification-reussie`,
@@ -73,22 +80,21 @@ const PageAdminPorteurEdition = ({
 
   const succès = router.query._action === "modification-reussie";
   const titre = estUneCréation
-    ? `Nouveau porteur — ${porteurIdEffectif}`
+    ? `Nouveau porteur - ${porteurIdEffectif}`
     : `Porteur ${porteurId}`;
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
       <div className="max-w-4xl mx-auto px-6 py-8">
-        <nav className="mb-6 flex items-center gap-2 text-sm">
-          <Link
-            className="text-primary hover:text-dsfr-blue-france-sun-113-hover font-medium hover:underline underline-offset-2 transition-colors"
-            href="/panel-administrateur/referentiels/porteurs"
-          >
-            Porteurs
-          </Link>
-          <span className="text-dsfr-grey-625">/</span>
-          <span className="text-dsfr-grey-625">{titre}</span>
-        </nav>
+        <FilAriane
+          chemin={[
+            {
+              nom: "Porteurs",
+              lien: "/panel-administrateur/referentiels/porteurs",
+            },
+          ]}
+          libelléPageCourante={titre}
+        />
 
         {succès && (
           <Alerte
@@ -129,11 +135,15 @@ const PageAdminPorteurEdition = ({
                     }
                     label={estSupprime ? "Restaurer" : "Supprimer"}
                     onClick={() =>
-                      suppressionMutation.mutate({
-                        csrf: récupérerUnCookie("csrf") ?? "",
-                        porteurId: porteurIdEffectif,
-                        restaurer: estSupprime,
-                      })
+                      estSupprime
+                        ? restorerMutation.mutate({
+                            csrf: récupérerUnCookie("csrf") ?? "",
+                            porteurId: porteurIdEffectif,
+                          })
+                        : archiverMutation.mutate({
+                            csrf: récupérerUnCookie("csrf") ?? "",
+                            porteurId: porteurIdEffectif,
+                          })
                     }
                     variant="primary"
                     type="button"

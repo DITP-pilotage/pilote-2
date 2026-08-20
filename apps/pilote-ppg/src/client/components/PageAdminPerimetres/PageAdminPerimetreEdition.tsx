@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { Controller, FormProvider } from "react-hook-form";
+import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { MetadataPerimetre } from "@/server/metadataPerimetre/queries/RecupererPerimetreQuery";
@@ -37,8 +37,8 @@ const PageAdminPerimetreEdition = ({
   const defaultValues: PerimetreForm = perimetreData
     ? {
         perimetreId: perimetreData.perimetreId,
-        perNom: perimetreData.perNom,
-        perPorteurId: perimetreData.perPorteurId,
+        perimetreNom: perimetreData.perNom,
+        perimetrePorteurId: perimetreData.perPorteurId,
       }
     : defaultPerimetreVide(perimetreIdEffectif);
 
@@ -48,7 +48,14 @@ const PageAdminPerimetreEdition = ({
     estUneCréation,
   });
 
-  const suppressionMutation = api.metadataPerimetre.supprimer.useMutation({
+  const archiverMutation = api.metadataPerimetre.archiver.useMutation({
+    onSuccess: () =>
+      router.push(
+        `/panel-administrateur/referentiels/perimetres/${perimetreIdEffectif}?_action=modification-reussie`,
+      ),
+  });
+
+  const restorerMutation = api.metadataPerimetre.restorer.useMutation({
     onSuccess: () =>
       router.push(
         `/panel-administrateur/referentiels/perimetres/${perimetreIdEffectif}?_action=modification-reussie`,
@@ -60,31 +67,30 @@ const PageAdminPerimetreEdition = ({
   const { data: porteurs = [] } = api.metadataPorteur.lister.useQuery();
   const porteursActifs = porteurs.filter((p) => p.deletedAt === null);
   const optionsPorteurs: SélecteurOption<string>[] = [
-    { libellé: "— Aucun —", valeur: "" },
+    { libellé: "- Aucun -", valeur: "" },
     ...porteursActifs.map((porteur) => ({
-      libellé: `${porteur.porteurShort} — ${porteur.porteurName}`,
+      libellé: `${porteur.porteurShort} - ${porteur.porteurName}`,
       valeur: porteur.porteurId,
     })),
   ];
 
   const succès = router.query._action === "modification-reussie";
   const titre = estUneCréation
-    ? `Nouveau périmètre — ${perimetreIdEffectif}`
+    ? `Nouveau périmètre - ${perimetreIdEffectif}`
     : `Périmètre ${perimetreId}`;
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
       <div className="max-w-4xl mx-auto px-6 py-8">
-        <nav className="mb-6 flex items-center gap-2 text-sm">
-          <Link
-            className="text-primary hover:text-dsfr-blue-france-sun-113-hover font-medium hover:underline underline-offset-2 transition-colors"
-            href="/panel-administrateur/referentiels/perimetres"
-          >
-            Périmètres
-          </Link>
-          <span className="text-dsfr-grey-625">/</span>
-          <span className="text-dsfr-grey-625">{titre}</span>
-        </nav>
+        <FilAriane
+          chemin={[
+            {
+              nom: "Périmètres",
+              lien: "/panel-administrateur/referentiels/perimetres",
+            },
+          ]}
+          libelléPageCourante={titre}
+        />
 
         {succès && (
           <Alerte
@@ -125,11 +131,15 @@ const PageAdminPerimetreEdition = ({
                     }
                     label={estSupprimé ? "Restaurer" : "Supprimer"}
                     onClick={() =>
-                      suppressionMutation.mutate({
-                        csrf: récupérerUnCookie("csrf") ?? "",
-                        perimetreId: perimetreIdEffectif,
-                        restaurer: estSupprimé,
-                      })
+                      estSupprimé
+                        ? restorerMutation.mutate({
+                            csrf: récupérerUnCookie("csrf") ?? "",
+                            perimetreId: perimetreIdEffectif,
+                          })
+                        : archiverMutation.mutate({
+                            csrf: récupérerUnCookie("csrf") ?? "",
+                            perimetreId: perimetreIdEffectif,
+                          })
                     }
                     variant="primary"
                     type="button"
@@ -165,15 +175,15 @@ const PageAdminPerimetreEdition = ({
                   <Input<PerimetreForm>
                     control={reactHookForm.control}
                     label="Nom"
-                    name="perNom"
+                    name="perimetreNom"
                     required
                   />
                   <Controller
                     control={reactHookForm.control}
-                    name="perPorteurId"
+                    name="perimetrePorteurId"
                     render={({ field }) => (
                       <Sélecteur
-                        htmlName="perPorteurId"
+                        htmlName="perimetrePorteurId"
                         libellé="Porteur"
                         onChange={(val) => field.onChange(val || null)}
                         options={optionsPorteurs}

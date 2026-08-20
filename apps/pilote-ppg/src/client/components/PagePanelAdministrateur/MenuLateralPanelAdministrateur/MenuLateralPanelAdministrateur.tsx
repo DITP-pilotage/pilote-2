@@ -24,24 +24,37 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
   const ffGestionTokenAPI = useEnv("NEXT_PUBLIC_FF_GESTION_TOKEN_API");
   const ffCentreAide = useEnv("NEXT_PUBLIC_FF_CENTRE_AIDE_ADMIN");
 
-  const menuItems = useMemo<MenuItem[]>(
-    () => [
+  const menuItems = useMemo<MenuItem[]>(() => {
+    const gestionTokenItem: MenuItem[] = ffGestionTokenAPI
+      ? [
+          {
+            type: "item",
+            label: "Token API",
+            href: "/panel-administrateur/gestion-token-api",
+            pageKey: "gestion-token-api",
+          },
+        ]
+      : [];
+
+    const centreAideItem: MenuItem[] = ffCentreAide
+      ? [
+          {
+            type: "item",
+            label: "Centre d'aide",
+            href: "/panel-administrateur/centre-aide",
+            pageKey: "centre-aide",
+          },
+        ]
+      : [];
+
+    return [
       {
         type: "item",
         label: "Message d'information",
         href: "/panel-administrateur/message-information",
         pageKey: "message-information",
       },
-      ...(ffGestionTokenAPI
-        ? [
-            {
-              type: "item" as const,
-              label: "Token API",
-              href: "/panel-administrateur/gestion-token-api",
-              pageKey: "gestion-token-api",
-            },
-          ]
-        : []),
+      ...gestionTokenItem,
       {
         type: "item",
         label: "Indicateurs des chantiers",
@@ -94,16 +107,7 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
         href: "/panel-administrateur/nouveaute",
         pageKey: "nouveaute",
       },
-      ...(ffCentreAide
-        ? [
-            {
-              type: "item" as const,
-              label: "Centre d'aide",
-              href: "/panel-administrateur/centre-aide",
-              pageKey: "centre-aide",
-            },
-          ]
-        : []),
+      ...centreAideItem,
       {
         type: "item",
         label: "Albert",
@@ -122,9 +126,8 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
         href: "/panel-administrateur/logs",
         pageKey: "logs",
       },
-    ],
-    [ffGestionTokenAPI, ffCentreAide],
-  );
+    ];
+  }, [ffGestionTokenAPI, ffCentreAide]);
 
   return (
     <nav

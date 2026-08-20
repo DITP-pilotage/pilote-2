@@ -1,4 +1,4 @@
-import { metadata_porteurs } from "@prisma/client";
+import type { metadata_porteurs as MetadataPorteursPrisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataPorteur/module";
 
@@ -14,7 +14,7 @@ export interface MetadataPorteur {
   deletedAt: string | null;
 }
 
-function toApiModel(porteur: metadata_porteurs): MetadataPorteur {
+function toApiModel(porteur: MetadataPorteursPrisma): MetadataPorteur {
   return {
     porteurId: porteur.porteur_id,
     porteurShort: porteur.porteur_short,

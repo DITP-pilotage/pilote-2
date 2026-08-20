@@ -1,6 +1,9 @@
 import { useState } from "react";
 import type { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
 import type { ZoneDisponible } from "@/server/metadataZonegroup/queries/ListerZonesDisponiblesQuery";
+import { InputRecherche } from "@/components/_commons/InputRecherche/InputRecherche";
+import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import Alerte from "@/components/_commons/Alerte/Alerte";
 
 const LABELS_TYPE: Record<MailleTerritoireSelectionne, string> = {
   NAT: "National",
@@ -9,6 +12,22 @@ const LABELS_TYPE: Record<MailleTerritoireSelectionne, string> = {
 };
 
 const ORDRE_TYPES: MailleTerritoireSelectionne[] = ["NAT", "REG", "DEPT"];
+
+const BoutonAction = ({
+  label,
+  onClick,
+}: {
+  label: string;
+  onClick: () => void;
+}) => (
+  <Bouton
+    label={label}
+    onClick={onClick}
+    size="sm"
+    type="button"
+    variant="secondary"
+  />
+);
 
 interface Props {
   zonesDisponibles: ZoneDisponible[];
@@ -44,11 +63,10 @@ export const SélecteurZones = ({
           {value.length} zone{value.length !== 1 ? "s" : ""} sélectionnée
           {value.length !== 1 ? "s" : ""}
         </p>
-        <input
-          className="px-3 py-1.5 text-sm border border-gray-300 rounded-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary w-64"
-          onChange={(event) => setFiltreZone(event.target.value)}
+        <InputRecherche
+          className="w-64"
+          onChange={setFiltreZone}
           placeholder="Filtrer les zones…"
-          type="search"
           value={filtreZone}
         />
       </div>
@@ -68,28 +86,22 @@ export const SélecteurZones = ({
                   {LABELS_TYPE[type]}
                 </h4>
                 <div className="flex gap-2">
-                  <button
-                    className="text-xs text-primary hover:underline"
+                  <BoutonAction
+                    label="Tout cocher"
                     onClick={() => {
                       const ids = zones.map((zone) => zone.zoneId);
                       const current = new Set(value);
                       ids.forEach((id) => current.add(id));
                       onChange(Array.from(current));
                     }}
-                    type="button"
-                  >
-                    Tout cocher
-                  </button>
-                  <button
-                    className="text-xs text-gray-500 hover:underline"
+                  />
+                  <BoutonAction
+                    label="Tout décocher"
                     onClick={() => {
                       const ids = new Set(zones.map((zone) => zone.zoneId));
                       onChange(value.filter((id) => !ids.has(id)));
                     }}
-                    type="button"
-                  >
-                    Tout décocher
-                  </button>
+                  />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-1">
@@ -121,7 +133,7 @@ export const SélecteurZones = ({
           );
         })}
       </div>
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+      {error && <Alerte message={error} type="erreur" />}
     </div>
   );
 };

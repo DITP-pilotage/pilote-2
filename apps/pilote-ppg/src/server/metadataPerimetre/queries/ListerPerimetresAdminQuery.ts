@@ -1,4 +1,7 @@
-import type { metadata_perimetres, metadata_porteurs } from "@prisma/client";
+import type {
+  metadata_perimetres as MetadataPerimetresPrisma,
+  metadata_porteurs as MetadataPorteursPrisma,
+} from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataPerimetre/module";
 
@@ -11,10 +14,9 @@ export interface PerimetreAdminListItem {
 }
 
 function toApiModel(
-  perimetre: Pick<
-    metadata_perimetres,
-    "perimetre_id" | "per_nom" | "updated_at" | "deleted_at"
-  > & { porteur: Pick<metadata_porteurs, "porteur_short"> | null },
+  perimetre: MetadataPerimetresPrisma & {
+    porteur: MetadataPorteursPrisma | null;
+  },
 ): PerimetreAdminListItem {
   return {
     perimetreId: perimetre.perimetre_id,
@@ -36,13 +38,7 @@ export class ListerPerimetresAdminQuery {
     const perimetres = await this.prisma
       .getInstance()
       .metadata_perimetres.findMany({
-        select: {
-          perimetre_id: true,
-          per_nom: true,
-          updated_at: true,
-          deleted_at: true,
-          porteur: { select: { porteur_short: true } },
-        },
+        include: { porteur: true },
         orderBy: [{ updated_at: "desc" }],
       });
     return perimetres.map(toApiModel);

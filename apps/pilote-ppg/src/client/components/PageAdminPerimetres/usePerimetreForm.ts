@@ -12,8 +12,8 @@ export type PerimetreForm = z.infer<typeof perimetreCommandSchema>;
 
 export const defaultPerimetreVide = (perimetreId: string): PerimetreForm => ({
   perimetreId,
-  perNom: "",
-  perPorteurId: null,
+  perimetreNom: "",
+  perimetrePorteurId: null,
 });
 
 export const usePerimetreForm = ({

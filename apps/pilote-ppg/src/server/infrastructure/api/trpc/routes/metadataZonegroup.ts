@@ -50,20 +50,23 @@ export const metadataZonegroupRouter = créerRouteurTRPC({
         .execute(input);
     }),
 
-  supprimer: procédureProtégée
-    .input(
-      z
-        .object({ zoneGroupId: z.string(), restaurer: z.boolean().optional() })
-        .and(zodValidateurCSRF),
-    )
+  archiver: procédureProtégée
+    .input(z.object({ zoneGroupId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       vérifierPermissionAdmin(ctx.session);
       await getContainer("metadataZonegroup")
-        .resolve("archiverOuRestorerZonegroupHandler")
-        .execute({
-          zoneGroupId: input.zoneGroupId,
-          restaurer: input.restaurer,
-        });
+        .resolve("archiverZonegroupHandler")
+        .execute({ zoneGroupId: input.zoneGroupId });
+    }),
+
+  restorer: procédureProtégée
+    .input(z.object({ zoneGroupId: z.string() }).and(zodValidateurCSRF))
+    .mutation(async ({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      vérifierPermissionAdmin(ctx.session);
+      await getContainer("metadataZonegroup")
+        .resolve("restorerZonegroupHandler")
+        .execute({ zoneGroupId: input.zoneGroupId });
     }),
 });

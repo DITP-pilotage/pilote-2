@@ -9,7 +9,8 @@ import { RecupererZonegroupQuery } from "./queries/RecupererZonegroupQuery";
 import { RecupererIdSuivantZonegroupQuery } from "./queries/RecupererIdSuivantZonegroupQuery";
 import { ListerZonesDisponiblesQuery } from "./queries/ListerZonesDisponiblesQuery";
 import { EnregistrerZonegroupHandler } from "./handlers/EnregistrerZonegroupHandler";
-import { ArchiverOuRestorerZonegroupHandler } from "./handlers/ArchiverOuRestorerZonegroupHandler";
+import { ArchiverZonegroupHandler } from "./handlers/ArchiverZonegroupHandler";
+import { RestorerZonegroupHandler } from "./handlers/RestorerZonegroupHandler";
 
 type MetadataZonegroupCradle = {
   listerZonegroupsAdminQuery: ListerZonegroupsAdminQuery;
@@ -17,7 +18,8 @@ type MetadataZonegroupCradle = {
   recupererIdSuivantZonegroupQuery: RecupererIdSuivantZonegroupQuery;
   listerZonesDisponiblesQuery: ListerZonesDisponiblesQuery;
   enregistrerZonegroupHandler: EnregistrerZonegroupHandler;
-  archiverOuRestorerZonegroupHandler: ArchiverOuRestorerZonegroupHandler;
+  archiverZonegroupHandler: ArchiverZonegroupHandler;
+  restorerZonegroupHandler: RestorerZonegroupHandler;
 };
 
 export const metadataZonegroupModule = defineModule<
@@ -36,9 +38,8 @@ export const metadataZonegroupModule = defineModule<
       ),
       listerZonesDisponiblesQuery: asModuleClass(ListerZonesDisponiblesQuery),
       enregistrerZonegroupHandler: asModuleClass(EnregistrerZonegroupHandler),
-      archiverOuRestorerZonegroupHandler: asModuleClass(
-        ArchiverOuRestorerZonegroupHandler,
-      ),
+      archiverZonegroupHandler: asModuleClass(ArchiverZonegroupHandler),
+      restorerZonegroupHandler: asModuleClass(RestorerZonegroupHandler),
     } satisfies VerifyCradle<MetadataZonegroupCradle>);
   },
 });

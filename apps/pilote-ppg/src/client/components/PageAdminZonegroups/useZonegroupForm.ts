@@ -12,9 +12,9 @@ export type ZonegroupForm = z.infer<typeof zonegroupCommandSchema>;
 
 export const defaultZonegroupVide = (zoneGroupId: string): ZonegroupForm => ({
   zoneGroupId,
-  zgName: "",
-  zgDesc: null,
-  zgZones: [],
+  zoneGroupName: "",
+  zoneGroupDesc: null,
+  zoneGroupZones: [],
 });
 
 export const useZonegroupForm = ({
@@ -53,7 +53,7 @@ export const useZonegroupForm = ({
     mutation.mutate({
       csrf: récupérerUnCookie("csrf") ?? "",
       ...data,
-      zgDesc: data.zgDesc || null,
+      zoneGroupDesc: data.zoneGroupDesc || null,
     });
   };
 

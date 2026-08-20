@@ -43,20 +43,23 @@ export const metadataPerimetreRouter = créerRouteurTRPC({
         .execute(input);
     }),
 
-  supprimer: procédureProtégée
-    .input(
-      z
-        .object({ perimetreId: z.string(), restaurer: z.boolean().optional() })
-        .and(zodValidateurCSRF),
-    )
+  archiver: procédureProtégée
+    .input(z.object({ perimetreId: z.string() }).and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {
       vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
       vérifierPermissionAdmin(ctx.session);
       await getContainer("metadataPerimetre")
-        .resolve("archiverOuRestorerPerimetreHandler")
-        .execute({
-          perimetreId: input.perimetreId,
-          restaurer: input.restaurer,
-        });
+        .resolve("archiverPerimetreHandler")
+        .execute({ perimetreId: input.perimetreId });
+    }),
+
+  restorer: procédureProtégée
+    .input(z.object({ perimetreId: z.string() }).and(zodValidateurCSRF))
+    .mutation(async ({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      vérifierPermissionAdmin(ctx.session);
+      await getContainer("metadataPerimetre")
+        .resolve("restorerPerimetreHandler")
+        .execute({ perimetreId: input.perimetreId });
     }),
 });

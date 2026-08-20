@@ -19,8 +19,8 @@ describe("EnregistrerPerimetreHandler", () => {
         // When
         await handler.execute({
           perimetreId: "PER-099",
-          perNom: "Périmètre de test",
-          perPorteurId: null,
+          perimetreNom: "Périmètre de test",
+          perimetrePorteurId: null,
         });
 
         // Then
@@ -43,8 +43,8 @@ describe("EnregistrerPerimetreHandler", () => {
         // When
         await handler.execute({
           perimetreId: "PER-098",
-          perNom: "Périmètre avec porteur",
-          perPorteurId: porteur.porteur_id,
+          perimetreNom: "Périmètre avec porteur",
+          perimetrePorteurId: porteur.porteur_id,
         });
 
         // Then
@@ -68,8 +68,8 @@ describe("EnregistrerPerimetreHandler", () => {
         // When
         await handler.execute({
           perimetreId: "PER-097",
-          perNom: "Nouveau nom",
-          perPorteurId: null,
+          perimetreNom: "Nouveau nom",
+          perimetrePorteurId: null,
         });
 
         // Then

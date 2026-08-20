@@ -1,4 +1,4 @@
-import { metadata_perimetres } from "@prisma/client";
+import type { metadata_perimetres as MetadataPerimetresPrisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataPerimetre/module";
 
@@ -9,7 +9,7 @@ export interface MetadataPerimetre {
   deletedAt: string | null;
 }
 
-function toApiModel(perimetre: metadata_perimetres): MetadataPerimetre {
+function toApiModel(perimetre: MetadataPerimetresPrisma): MetadataPerimetre {
   return {
     perimetreId: perimetre.perimetre_id,
     perNom: perimetre.per_nom,
