@@ -1,3 +1,4 @@
+import type { metadata_zonegroup } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataZonegroup/module";
 
@@ -9,15 +10,12 @@ export interface ZonegroupAdminListItem {
   deletedAt: string | null;
 }
 
-type ZonegroupRow = {
-  zone_group_id: string;
-  zg_name: string;
-  zg_zones: string[];
-  updated_at: Date;
-  deleted_at: Date | null;
-};
-
-function toApiModel(zonegroup: ZonegroupRow): ZonegroupAdminListItem {
+function toApiModel(
+  zonegroup: Pick<
+    metadata_zonegroup,
+    "zone_group_id" | "zg_name" | "zg_zones" | "updated_at" | "deleted_at"
+  >,
+): ZonegroupAdminListItem {
   return {
     zoneGroupId: zonegroup.zone_group_id,
     zgName: zonegroup.zg_name,

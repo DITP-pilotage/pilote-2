@@ -1,3 +1,4 @@
+import type { metadata_perimetres, metadata_porteurs } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataPerimetre/module";
 
@@ -9,15 +10,12 @@ export interface PerimetreAdminListItem {
   deletedAt: string | null;
 }
 
-type PerimetreRow = {
-  perimetre_id: string;
-  per_nom: string;
-  updated_at: Date;
-  deleted_at: Date | null;
-  porteur: { porteur_short: string } | null;
-};
-
-function toApiModel(perimetre: PerimetreRow): PerimetreAdminListItem {
+function toApiModel(
+  perimetre: Pick<
+    metadata_perimetres,
+    "perimetre_id" | "per_nom" | "updated_at" | "deleted_at"
+  > & { porteur: Pick<metadata_porteurs, "porteur_short"> | null },
+): PerimetreAdminListItem {
   return {
     perimetreId: perimetre.perimetre_id,
     perNom: perimetre.per_nom,

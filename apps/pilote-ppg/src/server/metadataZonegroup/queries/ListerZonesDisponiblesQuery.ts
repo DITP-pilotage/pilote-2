@@ -1,3 +1,4 @@
+import type { metadata_zones } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataZonegroup/module";
 
@@ -7,13 +8,9 @@ export interface ZoneDisponible {
   zoneType: string;
 }
 
-type ZoneRow = {
-  zone_id: string;
-  nom: string;
-  zone_type: string;
-};
-
-function toApiModel(zone: ZoneRow): ZoneDisponible {
+function toApiModel(
+  zone: Pick<metadata_zones, "zone_id" | "nom" | "zone_type">,
+): ZoneDisponible {
   return {
     zoneId: zone.zone_id,
     nom: zone.nom,

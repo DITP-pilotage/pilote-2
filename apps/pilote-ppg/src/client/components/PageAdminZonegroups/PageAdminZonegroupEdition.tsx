@@ -56,8 +56,7 @@ const PageAdminZonegroupEdition = ({
       ),
   });
 
-  const estSupprimé =
-    zonegroupData?.deletedAt !== null && zonegroupData?.deletedAt !== undefined;
+  const estSupprime = zonegroupData?.deletedAt != null;
 
   const { data: zonesDisponibles = [] } =
     api.metadataZonegroup.listerZonesDisponibles.useQuery();
@@ -114,16 +113,16 @@ const PageAdminZonegroupEdition = ({
                 {!estUneCréation && (
                   <Bouton
                     className={
-                      estSupprimé
+                      estSupprime
                         ? "bg-pilote-vert text-white hover:bg-success"
                         : "bg-dsfr-warning-950 text-error border border-dsfr-warning-925 hover:bg-dsfr-warning-925"
                     }
-                    label={estSupprimé ? "Restaurer" : "Supprimer"}
+                    label={estSupprime ? "Restaurer" : "Supprimer"}
                     onClick={() =>
                       suppressionMutation.mutate({
                         csrf: récupérerUnCookie("csrf") ?? "",
                         zoneGroupId: zoneGroupIdEffectif,
-                        restaurer: estSupprimé,
+                        restaurer: estSupprime,
                       })
                     }
                     variant="primary"

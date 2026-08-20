@@ -55,8 +55,7 @@ const PageAdminPerimetreEdition = ({
       ),
   });
 
-  const estSupprimé =
-    perimetreData?.deletedAt !== null && perimetreData?.deletedAt !== undefined;
+  const estSupprimé = perimetreData?.deletedAt != null;
 
   const { data: porteurs = [] } = api.metadataPorteur.lister.useQuery();
   const porteursActifs = porteurs.filter((p) => p.deletedAt === null);

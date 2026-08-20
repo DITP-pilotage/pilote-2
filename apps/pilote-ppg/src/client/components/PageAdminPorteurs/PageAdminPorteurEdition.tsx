@@ -69,8 +69,7 @@ const PageAdminPorteurEdition = ({
       ),
   });
 
-  const estSupprimé =
-    porteurData?.deletedAt !== null && porteurData?.deletedAt !== undefined;
+  const estSupprime = porteurData?.deletedAt != null;
 
   const succès = router.query._action === "modification-reussie";
   const titre = estUneCréation
@@ -124,16 +123,16 @@ const PageAdminPorteurEdition = ({
                 {!estUneCréation && (
                   <Bouton
                     className={
-                      estSupprimé
+                      estSupprime
                         ? "bg-pilote-vert text-white hover:bg-success"
                         : "bg-dsfr-warning-950 text-error border border-dsfr-warning-925 hover:bg-dsfr-warning-925"
                     }
-                    label={estSupprimé ? "Restaurer" : "Supprimer"}
+                    label={estSupprime ? "Restaurer" : "Supprimer"}
                     onClick={() =>
                       suppressionMutation.mutate({
                         csrf: récupérerUnCookie("csrf") ?? "",
                         porteurId: porteurIdEffectif,
-                        restaurer: estSupprimé,
+                        restaurer: estSupprime,
                       })
                     }
                     variant="primary"

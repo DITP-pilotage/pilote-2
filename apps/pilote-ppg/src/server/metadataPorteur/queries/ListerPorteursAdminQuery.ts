@@ -1,3 +1,4 @@
+import type { metadata_porteurs } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataPorteur/module";
 
@@ -10,16 +11,17 @@ export interface PorteurAdminListItem {
   deletedAt: string | null;
 }
 
-type PorteurRow = {
-  porteur_id: string;
-  porteur_short: string;
-  porteur_name: string;
-  porteur_type_short: string | null;
-  updated_at: Date;
-  deleted_at: Date | null;
-};
-
-function toApiModel(porteur: PorteurRow): PorteurAdminListItem {
+function toApiModel(
+  porteur: Pick<
+    metadata_porteurs,
+    | "porteur_id"
+    | "porteur_short"
+    | "porteur_name"
+    | "porteur_type_short"
+    | "updated_at"
+    | "deleted_at"
+  >,
+): PorteurAdminListItem {
   return {
     porteurId: porteur.porteur_id,
     porteurShort: porteur.porteur_short,
