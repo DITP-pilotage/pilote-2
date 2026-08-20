@@ -77,8 +77,8 @@ const PageAdminZonegroupEdition = ({
           >
             Zones groupes
           </Link>
-          <span className="text-gray-400">/</span>
-          <span className="text-gray-500">{titre}</span>
+          <span className="text-dsfr-grey-625">/</span>
+          <span className="text-dsfr-grey-625">{titre}</span>
         </nav>
 
         {succès && (
@@ -106,15 +106,15 @@ const PageAdminZonegroupEdition = ({
                 <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
                   {estUneCréation ? "Nouveau groupe de zones" : "Édition"}
                 </p>
-                <h1 className="text-3xl font-bold text-gray-900">{titre}</h1>
+                <h1 className="text-3xl font-bold text-dsfr-grey-200">{titre}</h1>
               </div>
               <div className="flex items-center gap-3">
                 {!estUneCréation && (
                   <Bouton
                     className={
                       estSupprimé
-                        ? "bg-green-600 text-white hover:bg-green-700"
-                        : "bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
+                        ? "bg-pilote-vert text-white hover:bg-success"
+                        : "bg-dsfr-warning-950 text-error border border-dsfr-warning-925 hover:bg-dsfr-warning-925"
                     }
                     label={estSupprimé ? "Restaurer" : "Supprimer"}
                     onClick={() =>
@@ -124,6 +124,7 @@ const PageAdminZonegroupEdition = ({
                         restaurer: estSupprimé,
                       })
                     }
+                    variant="primary"
                     type="button"
                   />
                 )}
@@ -136,13 +137,13 @@ const PageAdminZonegroupEdition = ({
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden divide-y divide-gray-100">
+            <div className="bg-white rounded-lg shadow-sm ring-1 ring-dsfr-grey-900 overflow-hidden divide-y divide-dsfr-grey-925">
               <section className="px-6 py-8">
                 <SectionTitle>Identification</SectionTitle>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <span className="block text-xs text-gray-500 mb-1">ID</span>
-                    <p className="px-3 py-2 text-sm font-mono text-gray-500 bg-gray-50 border border-gray-200 rounded-sm">
+                    <span className="block text-xs text-dsfr-grey-625 mb-1">ID</span>
+                    <p className="px-3 py-2 text-sm font-mono text-dsfr-grey-625 bg-dsfr-grey-1000 border border-dsfr-grey-925 rounded-sm">
                       {zoneGroupIdEffectif}
                     </p>
                   </div>
@@ -184,7 +185,7 @@ const PageAdminZonegroupEdition = ({
               </section>
             </div>
 
-            <div className="flex justify-end mt-6 pt-4 border-t border-gray-200">
+            <div className="flex justify-end mt-6 pt-4 border-t border-dsfr-grey-925">
               <Bouton
                 disabled={isPending}
                 label={estUneCréation ? "Créer" : "Sauvegarder"}
