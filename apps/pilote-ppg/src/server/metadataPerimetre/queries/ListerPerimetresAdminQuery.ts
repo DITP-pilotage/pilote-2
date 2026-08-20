@@ -5,8 +5,8 @@ export interface PerimetreAdminListItem {
   perimetreId: string;
   perNom: string;
   porteurShort: string | null;
-  updatedAt: Date;
-  deletedAt: Date | null;
+  updatedAt: string;
+  deletedAt: string | null;
 }
 
 type PerimetreRow = {
@@ -22,8 +22,8 @@ function toApiModel(perimetre: PerimetreRow): PerimetreAdminListItem {
     perimetreId: perimetre.perimetre_id,
     perNom: perimetre.per_nom,
     porteurShort: perimetre.porteur?.porteur_short ?? null,
-    updatedAt: perimetre.updated_at,
-    deletedAt: perimetre.deleted_at,
+    updatedAt: perimetre.updated_at.toISOString(),
+    deletedAt: perimetre.deleted_at?.toISOString() ?? null,
   };
 }
 

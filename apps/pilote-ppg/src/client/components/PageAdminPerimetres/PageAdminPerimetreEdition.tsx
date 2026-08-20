@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { FormProvider } from "react-hook-form";
+import { Controller, FormProvider } from "react-hook-form";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { MetadataPerimetre } from "@/server/metadataPerimetre/queries/RecupererPerimetreQuery";
@@ -12,6 +12,8 @@ import {
 import { Input } from "@/components/_commons/Input";
 import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { SectionTitle } from "@/components/_commons/SectionTitle";
+import Alerte from "@/components/_commons/Alerte/Alerte";
 import type { SélecteurOption } from "@/client/components/_commons/Sélecteur/Sélecteur.interface";
 
 interface Props {
@@ -20,12 +22,6 @@ interface Props {
   perimetreData: MetadataPerimetre | null;
   idSuivant: string | null;
 }
-
-const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide border-l-[3px] border-primary pl-3 mb-5">
-    {children}
-  </h2>
-);
 
 const PageAdminPerimetreEdition = ({
   perimetreId,
@@ -72,8 +68,6 @@ const PageAdminPerimetreEdition = ({
     })),
   ];
 
-  const { control, setValue } = reactHookForm;
-
   const succès = router.query._action === "modification-reussie";
   const titre = estUneCréation
     ? `Nouveau périmètre — ${perimetreIdEffectif}`
@@ -94,14 +88,18 @@ const PageAdminPerimetreEdition = ({
         </nav>
 
         {succès && (
-          <div className="mb-6 rounded-md bg-green-50 border border-green-200 px-4 py-3 text-green-800 text-sm font-medium">
-            Périmètre enregistré avec succès.
-          </div>
+          <Alerte
+            classesSupplementaires="mb-6"
+            message="Périmètre enregistré avec succès."
+            type="succès"
+          />
         )}
         {alerte && (
-          <div className="mb-6 rounded-md bg-red-50 border border-red-200 px-4 py-3 text-red-800 text-sm font-medium">
-            {alerte.titre}
-          </div>
+          <Alerte
+            classesSupplementaires="mb-6"
+            titre={alerte.titre}
+            type="erreur"
+          />
         )}
 
         <FormProvider {...reactHookForm}>
@@ -118,12 +116,13 @@ const PageAdminPerimetreEdition = ({
               </div>
               <div className="flex items-center gap-3">
                 {!estUneCréation && (
-                  <button
-                    className={`px-4 py-2 text-sm font-medium rounded-sm transition-colors ${
+                  <Bouton
+                    className={
                       estSupprimé
                         ? "bg-green-600 text-white hover:bg-green-700"
                         : "bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
-                    }`}
+                    }
+                    label={estSupprimé ? "Restaurer" : "Supprimer"}
                     onClick={() =>
                       suppressionMutation.mutate({
                         csrf: récupérerUnCookie("csrf") ?? "",
@@ -132,9 +131,7 @@ const PageAdminPerimetreEdition = ({
                       })
                     }
                     type="button"
-                  >
-                    {estSupprimé ? "Restaurer" : "Supprimer"}
-                  </button>
+                  />
                 )}
                 <Bouton
                   disabled={isPending}
@@ -162,23 +159,23 @@ const PageAdminPerimetreEdition = ({
                 <SectionTitle>Informations</SectionTitle>
                 <div className="flex flex-col gap-4">
                   <Input<PerimetreForm>
-                    control={control}
+                    control={reactHookForm.control}
                     label="Nom"
                     name="perNom"
                     required
                   />
-                  <Sélecteur
-                    htmlName="perPorteurId"
-                    libellé="Porteur"
-                    onChange={(val) =>
-                      setValue("perPorteurId", val || null, {
-                        shouldValidate: true,
-                      })
-                    }
-                    options={optionsPorteurs}
-                    valeurSélectionnée={
-                      reactHookForm.watch("perPorteurId") ?? ""
-                    }
+                  <Controller
+                    control={reactHookForm.control}
+                    name="perPorteurId"
+                    render={({ field }) => (
+                      <Sélecteur
+                        htmlName="perPorteurId"
+                        libellé="Porteur"
+                        onChange={(val) => field.onChange(val || null)}
+                        options={optionsPorteurs}
+                        valeurSélectionnée={field.value ?? ""}
+                      />
+                    )}
                   />
                 </div>
               </section>

@@ -5,8 +5,8 @@ export interface ZonegroupAdminListItem {
   zoneGroupId: string;
   zgName: string;
   nbZones: number;
-  updatedAt: Date;
-  deletedAt: Date | null;
+  updatedAt: string;
+  deletedAt: string | null;
 }
 
 type ZonegroupRow = {
@@ -22,8 +22,8 @@ function toApiModel(zonegroup: ZonegroupRow): ZonegroupAdminListItem {
     zoneGroupId: zonegroup.zone_group_id,
     zgName: zonegroup.zg_name,
     nbZones: zonegroup.zg_zones.length,
-    updatedAt: zonegroup.updated_at,
-    deletedAt: zonegroup.deleted_at,
+    updatedAt: zonegroup.updated_at.toISOString(),
+    deletedAt: zonegroup.deleted_at?.toISOString() ?? null,
   };
 }
 

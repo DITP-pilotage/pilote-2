@@ -7,7 +7,7 @@ import {
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import { zonegroupCommandSchema } from "@/server/metadataZonegroup/handlers/EnregistrerZonegroupHandler";
-import { vérifierPermissionAdmin } from "@/server/infrastructure/api/trpc/routes/vérifierPermissionAdmin";
+import { vérifierPermissionAdmin } from "@/server/infrastructure/api/trpc/vérifierPermissionAdmin";
 
 export const metadataZonegroupRouter = créerRouteurTRPC({
   lister: procédureProtégée.query(async ({ ctx }) => {

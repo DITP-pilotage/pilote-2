@@ -7,7 +7,7 @@ import {
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import { porteurCommandSchema } from "@/server/metadataPorteur/handlers/EnregistrerPorteurHandler";
-import { vérifierPermissionAdmin } from "@/server/infrastructure/api/trpc/routes/vérifierPermissionAdmin";
+import { vérifierPermissionAdmin } from "@/server/infrastructure/api/trpc/vérifierPermissionAdmin";
 
 export const metadataPorteurRouter = créerRouteurTRPC({
   lister: procédureProtégée.query(async ({ ctx }) => {

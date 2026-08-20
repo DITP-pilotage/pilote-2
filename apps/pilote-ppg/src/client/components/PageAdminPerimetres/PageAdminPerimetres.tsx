@@ -1,9 +1,53 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import api from "@/server/infrastructure/api/trpc/api";
 import Loader from "@/components/_commons/Loader/Loader";
 import { LoupePleineIcon } from "@/components/_commons/Icones/LoupePleineIcon";
+import { Lien } from "@/components/_commons/Lien/Lien";
+import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
+import type { PerimetreAdminListItem } from "@/server/metadataPerimetre/queries/ListerPerimetresAdminQuery";
+
+const LignePerimetre = ({
+  perimetre,
+}: {
+  perimetre: PerimetreAdminListItem;
+}) => {
+  const router = useRouter();
+  const supprimé = perimetre.deletedAt !== null;
+  return (
+    <tr
+      className="hover:bg-dsfr-alt-blue-france transition-colors cursor-pointer"
+      key={perimetre.perimetreId}
+      onClick={() =>
+        router.push(
+          `/panel-administrateur/referentiels/perimetres/${perimetre.perimetreId}`,
+        )
+      }
+    >
+      <td className="px-6 py-4 font-mono text-xs text-gray-400">
+        {perimetre.perimetreId}
+      </td>
+      <td className="px-6 py-4 font-medium text-gray-900">
+        <span className={supprimé ? "line-through text-gray-400" : ""}>
+          {perimetre.perNom}
+        </span>
+      </td>
+      <td className="px-6 py-4 text-xs text-gray-500">
+        {perimetre.porteurShort ?? "—"}
+      </td>
+      <td className="px-6 py-4">
+        <BadgeStatutReferentiel supprimé={supprimé} />
+      </td>
+      <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
+        {new Date(perimetre.updatedAt).toLocaleDateString("fr-FR", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        })}
+      </td>
+    </tr>
+  );
+};
 
 const PageAdminPerimetres = () => {
   const router = useRouter();
@@ -44,13 +88,11 @@ const PageAdminPerimetres = () => {
               </p>
             )}
           </div>
-          <Link
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-sm text-sm font-medium hover:bg-dsfr-blue-france-sun-113-hover transition-colors shadow-sm"
+          <Lien
             href="/panel-administrateur/referentiels/perimetres/nouveau?_action=creer-perimetre"
-          >
-            <span className="text-base leading-none">+</span>
-            Créer un périmètre
-          </Link>
+            label="+ Créer un périmètre"
+            variant="button"
+          />
         </div>
 
         <div className="mb-4">
@@ -104,57 +146,12 @@ const PageAdminPerimetres = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {perimetresFiltres?.map((perimetre) => {
-                  const supprimé = perimetre.deletedAt !== null;
-                  return (
-                    <tr
-                      className="hover:bg-dsfr-alt-blue-france transition-colors cursor-pointer"
-                      key={perimetre.perimetreId}
-                      onClick={() =>
-                        router.push(
-                          `/panel-administrateur/referentiels/perimetres/${perimetre.perimetreId}`,
-                        )
-                      }
-                    >
-                      <td className="px-6 py-4 font-mono text-xs text-gray-400">
-                        {perimetre.perimetreId}
-                      </td>
-                      <td className="px-6 py-4 font-medium text-gray-900">
-                        <span
-                          className={
-                            supprimé ? "line-through text-gray-400" : ""
-                          }
-                        >
-                          {perimetre.perNom}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-xs text-gray-500">
-                        {perimetre.porteurShort ?? "—"}
-                      </td>
-                      <td className="px-6 py-4">
-                        {supprimé ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-600 ring-1 ring-inset ring-red-200">
-                            Supprimé
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 ring-1 ring-inset ring-green-200">
-                            Actif
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
-                        {new Date(perimetre.updatedAt).toLocaleDateString(
-                          "fr-FR",
-                          {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          },
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
+                {perimetresFiltres?.map((perimetre) => (
+                  <LignePerimetre
+                    key={perimetre.perimetreId}
+                    perimetre={perimetre}
+                  />
+                ))}
               </tbody>
             </table>
           )}

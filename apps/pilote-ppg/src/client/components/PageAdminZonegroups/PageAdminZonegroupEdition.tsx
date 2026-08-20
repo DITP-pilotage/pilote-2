@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { Controller, FormProvider } from "react-hook-form";
@@ -13,6 +12,9 @@ import {
 import { Input } from "@/components/_commons/Input";
 import { Textarea } from "@/components/_commons/Textarea";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { SectionTitle } from "@/components/_commons/SectionTitle";
+import Alerte from "@/components/_commons/Alerte/Alerte";
+import { SélecteurZones } from "@/components/PageAdminZonegroups/SélecteurZones";
 
 interface Props {
   zoneGroupId: string;
@@ -20,18 +22,6 @@ interface Props {
   zonegroupData: MetadataZonegroup | null;
   idSuivant: string | null;
 }
-
-const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide border-l-[3px] border-primary pl-3 mb-5">
-    {children}
-  </h2>
-);
-
-const LABELS_TYPE: Record<string, string> = {
-  NAT: "National",
-  REG: "Région",
-  DEPT: "Département",
-};
 
 const PageAdminZonegroupEdition = ({
   zoneGroupId,
@@ -43,7 +33,6 @@ const PageAdminZonegroupEdition = ({
   const zoneGroupIdEffectif = estUneCréation
     ? (idSuivant ?? zoneGroupId)
     : zoneGroupId;
-  const [filtreZone, setFiltreZone] = useState("");
 
   const defaultValues: ZonegroupForm = zonegroupData
     ? {
@@ -72,20 +61,6 @@ const PageAdminZonegroupEdition = ({
 
   const { data: zonesDisponibles = [] } =
     api.metadataZonegroup.listerZonesDisponibles.useQuery();
-  const zonesGroupées = zonesDisponibles.reduce<
-    Record<string, typeof zonesDisponibles>
-  >((acc, zone) => {
-    const type = zone.zoneType;
-    if (!acc[type]) acc[type] = [];
-    acc[type].push(zone);
-    return acc;
-  }, {});
-  const ordreTypes = ["NAT", "REG", "DEPT"];
-
-  const {
-    control,
-    formState: { errors },
-  } = reactHookForm;
 
   const succès = router.query._action === "modification-reussie";
   const titre = estUneCréation
@@ -107,14 +82,18 @@ const PageAdminZonegroupEdition = ({
         </nav>
 
         {succès && (
-          <div className="mb-6 rounded-md bg-green-50 border border-green-200 px-4 py-3 text-green-800 text-sm font-medium">
-            Zone groupe enregistré avec succès.
-          </div>
+          <Alerte
+            classesSupplementaires="mb-6"
+            message="Zone groupe enregistré avec succès."
+            type="succès"
+          />
         )}
         {alerte && (
-          <div className="mb-6 rounded-md bg-red-50 border border-red-200 px-4 py-3 text-red-800 text-sm font-medium">
-            {alerte.titre}
-          </div>
+          <Alerte
+            classesSupplementaires="mb-6"
+            titre={alerte.titre}
+            type="erreur"
+          />
         )}
 
         <FormProvider {...reactHookForm}>
@@ -131,12 +110,13 @@ const PageAdminZonegroupEdition = ({
               </div>
               <div className="flex items-center gap-3">
                 {!estUneCréation && (
-                  <button
-                    className={`px-4 py-2 text-sm font-medium rounded-sm transition-colors ${
+                  <Bouton
+                    className={
                       estSupprimé
                         ? "bg-green-600 text-white hover:bg-green-700"
                         : "bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
-                    }`}
+                    }
+                    label={estSupprimé ? "Restaurer" : "Supprimer"}
                     onClick={() =>
                       suppressionMutation.mutate({
                         csrf: récupérerUnCookie("csrf") ?? "",
@@ -145,9 +125,7 @@ const PageAdminZonegroupEdition = ({
                       })
                     }
                     type="button"
-                  >
-                    {estSupprimé ? "Restaurer" : "Supprimer"}
-                  </button>
+                  />
                 )}
                 <Bouton
                   disabled={isPending}
@@ -175,13 +153,13 @@ const PageAdminZonegroupEdition = ({
                 <SectionTitle>Informations</SectionTitle>
                 <div className="flex flex-col gap-4">
                   <Input<ZonegroupForm>
-                    control={control}
+                    control={reactHookForm.control}
                     label="Nom"
                     name="zgName"
                     required
                   />
                   <Textarea<ZonegroupForm>
-                    control={control}
+                    control={reactHookForm.control}
                     label="Description"
                     name="zgDesc"
                     rows={3}
@@ -192,115 +170,15 @@ const PageAdminZonegroupEdition = ({
               <section className="px-6 py-8">
                 <SectionTitle>Zones</SectionTitle>
                 <Controller
-                  control={control}
+                  control={reactHookForm.control}
                   name="zgZones"
                   render={({ field }) => (
-                    <div>
-                      <div className="flex items-center justify-between mb-3">
-                        <p className="text-sm text-gray-600">
-                          {field.value.length} zone
-                          {field.value.length !== 1 ? "s" : ""} sélectionnée
-                          {field.value.length !== 1 ? "s" : ""}
-                        </p>
-                        <input
-                          className="px-3 py-1.5 text-sm border border-gray-300 rounded-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary w-64"
-                          onChange={(e) => setFiltreZone(e.target.value)}
-                          placeholder="Filtrer les zones…"
-                          type="search"
-                          value={filtreZone}
-                        />
-                      </div>
-                      <div className="space-y-4 max-h-96 overflow-y-auto border border-gray-200 rounded-sm p-4">
-                        {ordreTypes.map((type) => {
-                          const zones = (zonesGroupées[type] ?? []).filter(
-                            (zone) =>
-                              !filtreZone ||
-                              zone.zoneId
-                                .toLowerCase()
-                                .includes(filtreZone.toLowerCase()) ||
-                              zone.nom
-                                .toLowerCase()
-                                .includes(filtreZone.toLowerCase()),
-                          );
-                          if (zones.length === 0) return null;
-                          return (
-                            <div key={type}>
-                              <div className="flex items-center justify-between mb-2">
-                                <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-                                  {LABELS_TYPE[type] ?? type}
-                                </h4>
-                                <div className="flex gap-2">
-                                  <button
-                                    className="text-xs text-primary hover:underline"
-                                    onClick={() => {
-                                      const ids = zones.map((z) => z.zoneId);
-                                      const current = new Set(field.value);
-                                      ids.forEach((id) => current.add(id));
-                                      field.onChange(Array.from(current));
-                                    }}
-                                    type="button"
-                                  >
-                                    Tout cocher
-                                  </button>
-                                  <button
-                                    className="text-xs text-gray-500 hover:underline"
-                                    onClick={() => {
-                                      const ids = new Set(
-                                        zones.map((z) => z.zoneId),
-                                      );
-                                      field.onChange(
-                                        field.value.filter(
-                                          (id) => !ids.has(id),
-                                        ),
-                                      );
-                                    }}
-                                    type="button"
-                                  >
-                                    Tout décocher
-                                  </button>
-                                </div>
-                              </div>
-                              <div className="grid grid-cols-2 gap-1">
-                                {zones.map((zone) => (
-                                  <label
-                                    className="flex items-center gap-2 py-1 px-2 rounded hover:bg-gray-50 cursor-pointer text-sm"
-                                    key={zone.zoneId}
-                                  >
-                                    <input
-                                      checked={field.value.includes(
-                                        zone.zoneId,
-                                      )}
-                                      className="rounded border-gray-300 text-primary focus:ring-primary"
-                                      onChange={(e) => {
-                                        field.onChange(
-                                          e.target.checked
-                                            ? [...field.value, zone.zoneId]
-                                            : field.value.filter(
-                                                (id) => id !== zone.zoneId,
-                                              ),
-                                        );
-                                      }}
-                                      type="checkbox"
-                                    />
-                                    <span className="font-mono text-xs text-gray-500 w-12 shrink-0">
-                                      {zone.zoneId}
-                                    </span>
-                                    <span className="text-gray-700 truncate">
-                                      {zone.nom}
-                                    </span>
-                                  </label>
-                                ))}
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                      {errors.zgZones && (
-                        <p className="mt-1 text-xs text-red-600">
-                          {errors.zgZones.message}
-                        </p>
-                      )}
-                    </div>
+                    <SélecteurZones
+                      error={reactHookForm.formState.errors.zgZones?.message}
+                      onChange={field.onChange}
+                      value={field.value}
+                      zonesDisponibles={zonesDisponibles}
+                    />
                   )}
                 />
               </section>

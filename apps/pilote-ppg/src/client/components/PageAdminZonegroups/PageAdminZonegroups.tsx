@@ -1,9 +1,52 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import api from "@/server/infrastructure/api/trpc/api";
 import Loader from "@/components/_commons/Loader/Loader";
 import { LoupePleineIcon } from "@/components/_commons/Icones/LoupePleineIcon";
+import { Lien } from "@/components/_commons/Lien/Lien";
+import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
+import type { ZonegroupAdminListItem } from "@/server/metadataZonegroup/queries/ListerZonegroupsAdminQuery";
+
+const LigneZonegroup = ({
+  zonegroup,
+}: {
+  zonegroup: ZonegroupAdminListItem;
+}) => {
+  const router = useRouter();
+  const supprimé = zonegroup.deletedAt !== null;
+  return (
+    <tr
+      className="hover:bg-dsfr-alt-blue-france transition-colors cursor-pointer"
+      onClick={() =>
+        router.push(
+          `/panel-administrateur/referentiels/zonegroups/${zonegroup.zoneGroupId}`,
+        )
+      }
+    >
+      <td className="px-6 py-4 font-mono text-xs text-gray-400">
+        {zonegroup.zoneGroupId}
+      </td>
+      <td className="px-6 py-4 font-medium text-gray-900">
+        <span className={supprimé ? "line-through text-gray-400" : ""}>
+          {zonegroup.zgName}
+        </span>
+      </td>
+      <td className="px-6 py-4 text-xs text-gray-500">
+        {zonegroup.nbZones} zone{zonegroup.nbZones !== 1 ? "s" : ""}
+      </td>
+      <td className="px-6 py-4">
+        <BadgeStatutReferentiel supprimé={supprimé} />
+      </td>
+      <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
+        {new Date(zonegroup.updatedAt).toLocaleDateString("fr-FR", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        })}
+      </td>
+    </tr>
+  );
+};
 
 const PageAdminZonegroups = () => {
   const router = useRouter();
@@ -44,13 +87,11 @@ const PageAdminZonegroups = () => {
               </p>
             )}
           </div>
-          <Link
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-sm text-sm font-medium hover:bg-dsfr-blue-france-sun-113-hover transition-colors shadow-sm"
+          <Lien
             href="/panel-administrateur/referentiels/zonegroups/nouveau?_action=creer-zonegroup"
-          >
-            <span className="text-base leading-none">+</span>
-            Créer un groupe
-          </Link>
+            label="+ Créer un groupe"
+            variant="button"
+          />
         </div>
 
         <div className="mb-4">
@@ -104,58 +145,12 @@ const PageAdminZonegroups = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {zonegroupsFiltres?.map((zonegroup) => {
-                  const supprimé = zonegroup.deletedAt !== null;
-                  return (
-                    <tr
-                      className="hover:bg-dsfr-alt-blue-france transition-colors cursor-pointer"
-                      key={zonegroup.zoneGroupId}
-                      onClick={() =>
-                        router.push(
-                          `/panel-administrateur/referentiels/zonegroups/${zonegroup.zoneGroupId}`,
-                        )
-                      }
-                    >
-                      <td className="px-6 py-4 font-mono text-xs text-gray-400">
-                        {zonegroup.zoneGroupId}
-                      </td>
-                      <td className="px-6 py-4 font-medium text-gray-900">
-                        <span
-                          className={
-                            supprimé ? "line-through text-gray-400" : ""
-                          }
-                        >
-                          {zonegroup.zgName}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-xs text-gray-500">
-                        {zonegroup.nbZones} zone
-                        {zonegroup.nbZones !== 1 ? "s" : ""}
-                      </td>
-                      <td className="px-6 py-4">
-                        {supprimé ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-600 ring-1 ring-inset ring-red-200">
-                            Supprimé
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 ring-1 ring-inset ring-green-200">
-                            Actif
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
-                        {new Date(zonegroup.updatedAt).toLocaleDateString(
-                          "fr-FR",
-                          {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          },
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
+                {zonegroupsFiltres?.map((zonegroup) => (
+                  <LigneZonegroup
+                    key={zonegroup.zoneGroupId}
+                    zonegroup={zonegroup}
+                  />
+                ))}
               </tbody>
             </table>
           )}

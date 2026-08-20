@@ -6,8 +6,8 @@ export interface PorteurAdminListItem {
   porteurShort: string;
   porteurName: string;
   porteurTypeShort: string | null;
-  updatedAt: Date;
-  deletedAt: Date | null;
+  updatedAt: string;
+  deletedAt: string | null;
 }
 
 type PorteurRow = {
@@ -25,8 +25,8 @@ function toApiModel(porteur: PorteurRow): PorteurAdminListItem {
     porteurShort: porteur.porteur_short,
     porteurName: porteur.porteur_name,
     porteurTypeShort: porteur.porteur_type_short,
-    updatedAt: porteur.updated_at,
-    deletedAt: porteur.deleted_at,
+    updatedAt: porteur.updated_at.toISOString(),
+    deletedAt: porteur.deleted_at?.toISOString() ?? null,
   };
 }
 

@@ -1,11 +1,17 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import api from "@/server/infrastructure/api/trpc/api";
 import Loader from "@/components/_commons/Loader/Loader";
 import { LoupePleineIcon } from "@/components/_commons/Icones/LoupePleineIcon";
+import { Lien } from "@/components/_commons/Lien/Lien";
+import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
+import type { PorteurTypeShort } from "@/server/metadataPorteur/handlers/EnregistrerPorteurHandler";
+import type { PorteurAdminListItem } from "@/server/metadataPorteur/queries/ListerPorteursAdminQuery";
 
-const TYPE_BADGE: Record<string, { label: string; className: string }> = {
+const TYPE_BADGE: Record<
+  PorteurTypeShort,
+  { label: string; className: string }
+> = {
   MIN: {
     label: "Ministère",
     className: "bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200",
@@ -18,6 +24,56 @@ const TYPE_BADGE: Record<string, { label: string; className: string }> = {
     label: "Autre",
     className: "bg-gray-100 text-gray-600 ring-1 ring-inset ring-gray-200",
   },
+};
+
+const LignePorteur = ({ porteur }: { porteur: PorteurAdminListItem }) => {
+  const router = useRouter();
+  const supprimé = porteur.deletedAt !== null;
+  const typeBadge =
+    porteur.porteurTypeShort && porteur.porteurTypeShort in TYPE_BADGE
+      ? TYPE_BADGE[porteur.porteurTypeShort as PorteurTypeShort]
+      : null;
+  return (
+    <tr
+      className="hover:bg-dsfr-alt-blue-france transition-colors cursor-pointer"
+      onClick={() =>
+        router.push(
+          `/panel-administrateur/referentiels/porteurs/${porteur.porteurId}`,
+        )
+      }
+    >
+      <td className="px-6 py-4 font-mono text-xs text-gray-400">
+        {porteur.porteurId}
+      </td>
+      <td className="px-6 py-4 font-medium text-gray-900">
+        {porteur.porteurShort}
+      </td>
+      <td className="px-6 py-4 text-gray-700">
+        <span className={supprimé ? "line-through text-gray-400" : ""}>
+          {porteur.porteurName}
+        </span>
+      </td>
+      <td className="px-6 py-4">
+        {typeBadge && (
+          <span
+            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${typeBadge.className}`}
+          >
+            {typeBadge.label}
+          </span>
+        )}
+      </td>
+      <td className="px-6 py-4">
+        <BadgeStatutReferentiel supprimé={supprimé} />
+      </td>
+      <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
+        {new Date(porteur.updatedAt).toLocaleDateString("fr-FR", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+        })}
+      </td>
+    </tr>
+  );
 };
 
 const PageAdminPorteurs = () => {
@@ -58,13 +114,11 @@ const PageAdminPorteurs = () => {
               </p>
             )}
           </div>
-          <Link
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-sm text-sm font-medium hover:bg-dsfr-blue-france-sun-113-hover transition-colors shadow-sm"
+          <Lien
             href="/panel-administrateur/referentiels/porteurs/nouveau?_action=creer-porteur"
-          >
-            <span className="text-base leading-none">+</span>
-            Créer un porteur
-          </Link>
+            label="+ Créer un porteur"
+            variant="button"
+          />
         </div>
 
         <div className="mb-4">
@@ -121,72 +175,9 @@ const PageAdminPorteurs = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {porteursFiltres?.map((porteur) => {
-                  const typeBadge = porteur.porteurTypeShort
-                    ? (TYPE_BADGE[porteur.porteurTypeShort] ?? {
-                        label: porteur.porteurTypeShort,
-                        className: "bg-gray-100 text-gray-600",
-                      })
-                    : null;
-                  const supprimé = porteur.deletedAt !== null;
-                  return (
-                    <tr
-                      className="hover:bg-dsfr-alt-blue-france transition-colors cursor-pointer"
-                      key={porteur.porteurId}
-                      onClick={() =>
-                        router.push(
-                          `/panel-administrateur/referentiels/porteurs/${porteur.porteurId}`,
-                        )
-                      }
-                    >
-                      <td className="px-6 py-4 font-mono text-xs text-gray-400">
-                        {porteur.porteurId}
-                      </td>
-                      <td className="px-6 py-4 font-medium text-gray-900">
-                        {porteur.porteurShort}
-                      </td>
-                      <td className="px-6 py-4 text-gray-700">
-                        <span
-                          className={
-                            supprimé ? "line-through text-gray-400" : ""
-                          }
-                        >
-                          {porteur.porteurName}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        {typeBadge && (
-                          <span
-                            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${typeBadge.className}`}
-                          >
-                            {typeBadge.label}
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        {supprimé ? (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-50 text-red-600 ring-1 ring-inset ring-red-200">
-                            Supprimé
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 ring-1 ring-inset ring-green-200">
-                            Actif
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
-                        {new Date(porteur.updatedAt).toLocaleDateString(
-                          "fr-FR",
-                          {
-                            day: "numeric",
-                            month: "short",
-                            year: "numeric",
-                          },
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
+                {porteursFiltres?.map((porteur) => (
+                  <LignePorteur key={porteur.porteurId} porteur={porteur} />
+                ))}
               </tbody>
             </table>
           )}

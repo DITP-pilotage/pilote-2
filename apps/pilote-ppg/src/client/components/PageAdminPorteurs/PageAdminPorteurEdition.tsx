@@ -13,7 +13,10 @@ import { Input } from "@/components/_commons/Input";
 import { Textarea } from "@/components/_commons/Textarea";
 import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import { SectionTitle } from "@/components/_commons/SectionTitle";
+import Alerte from "@/components/_commons/Alerte/Alerte";
 import type { SélecteurOption } from "@/client/components/_commons/Sélecteur/Sélecteur.interface";
+import type { PorteurTypeShort } from "@/server/metadataPorteur/handlers/EnregistrerPorteurHandler";
 
 interface Props {
   porteurId: string;
@@ -22,17 +25,11 @@ interface Props {
   idSuivant: string | null;
 }
 
-const OPTIONS_TYPE: SélecteurOption<"MIN" | "DAC" | "AUTRE">[] = [
+const OPTIONS_TYPE: SélecteurOption<PorteurTypeShort>[] = [
   { libellé: "Ministère (MIN)", valeur: "MIN" },
   { libellé: "DAC", valeur: "DAC" },
   { libellé: "Autre", valeur: "AUTRE" },
 ];
-
-const SectionTitle = ({ children }: { children: React.ReactNode }) => (
-  <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide border-l-[3px] border-primary pl-3 mb-5">
-    {children}
-  </h2>
-);
 
 const PageAdminPorteurEdition = ({
   porteurId,
@@ -52,7 +49,7 @@ const PageAdminPorteurEdition = ({
         porteurName: porteurData.porteurName,
         porteurDesc: porteurData.porteurDesc,
         porteurTypeShort:
-          (porteurData.porteurTypeShort as "MIN" | "DAC" | "AUTRE") ?? "MIN",
+          (porteurData.porteurTypeShort as PorteurTypeShort) ?? "MIN",
         porteurDirecteur: porteurData.porteurDirecteur,
         porteurNameShort: porteurData.porteurNameShort,
         porteurPicto: porteurData.porteurPicto,
@@ -75,8 +72,6 @@ const PageAdminPorteurEdition = ({
   const estSupprimé =
     porteurData?.deletedAt !== null && porteurData?.deletedAt !== undefined;
 
-  const { control } = reactHookForm;
-
   const succès = router.query._action === "modification-reussie";
   const titre = estUneCréation
     ? `Nouveau porteur — ${porteurIdEffectif}`
@@ -97,14 +92,18 @@ const PageAdminPorteurEdition = ({
         </nav>
 
         {succès && (
-          <div className="mb-6 rounded-md bg-green-50 border border-green-200 px-4 py-3 text-green-800 text-sm font-medium">
-            Porteur enregistré avec succès.
-          </div>
+          <Alerte
+            classesSupplementaires="mb-6"
+            message="Porteur enregistré avec succès."
+            type="succès"
+          />
         )}
         {alerte && (
-          <div className="mb-6 rounded-md bg-red-50 border border-red-200 px-4 py-3 text-red-800 text-sm font-medium">
-            {alerte.titre}
-          </div>
+          <Alerte
+            classesSupplementaires="mb-6"
+            titre={alerte.titre}
+            type="erreur"
+          />
         )}
 
         <FormProvider {...reactHookForm}>
@@ -121,12 +120,13 @@ const PageAdminPorteurEdition = ({
               </div>
               <div className="flex items-center gap-3">
                 {!estUneCréation && (
-                  <button
-                    className={`px-4 py-2 text-sm font-medium rounded-sm transition-colors ${
+                  <Bouton
+                    className={
                       estSupprimé
                         ? "bg-green-600 text-white hover:bg-green-700"
                         : "bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
-                    }`}
+                    }
+                    label={estSupprimé ? "Restaurer" : "Supprimer"}
                     onClick={() =>
                       suppressionMutation.mutate({
                         csrf: récupérerUnCookie("csrf") ?? "",
@@ -135,9 +135,7 @@ const PageAdminPorteurEdition = ({
                       })
                     }
                     type="button"
-                  >
-                    {estSupprimé ? "Restaurer" : "Supprimer"}
-                  </button>
+                  />
                 )}
                 <Bouton
                   disabled={isPending}
@@ -159,12 +157,12 @@ const PageAdminPorteurEdition = ({
                     </p>
                   </div>
                   <Controller
-                    control={control}
+                    control={reactHookForm.control}
                     name="porteurTypeShort"
                     render={({ field }) => (
                       <Sélecteur
                         htmlName="porteurTypeShort"
-                        libellé="Type *"
+                        libellé="Type"
                         onChange={field.onChange}
                         options={OPTIONS_TYPE}
                         valeurSélectionnée={field.value}
@@ -179,25 +177,25 @@ const PageAdminPorteurEdition = ({
                 <div className="flex flex-col gap-4">
                   <div className="grid grid-cols-2 gap-4">
                     <Input<PorteurForm>
-                      control={control}
-                      label="Sigle *"
+                      control={reactHookForm.control}
+                      label="Sigle"
                       name="porteurShort"
                       required
                     />
                     <Input<PorteurForm>
-                      control={control}
+                      control={reactHookForm.control}
                       label="Nom court"
                       name="porteurNameShort"
                     />
                   </div>
                   <Input<PorteurForm>
-                    control={control}
-                    label="Nom complet *"
+                    control={reactHookForm.control}
+                    label="Nom complet"
                     name="porteurName"
                     required
                   />
                   <Textarea<PorteurForm>
-                    control={control}
+                    control={reactHookForm.control}
                     label="Description"
                     name="porteurDesc"
                     rows={3}
@@ -209,12 +207,12 @@ const PageAdminPorteurEdition = ({
                 <SectionTitle>Informations complémentaires</SectionTitle>
                 <div className="grid grid-cols-2 gap-4">
                   <Input<PorteurForm>
-                    control={control}
+                    control={reactHookForm.control}
                     label="Directeur"
                     name="porteurDirecteur"
                   />
                   <Input<PorteurForm>
-                    control={control}
+                    control={reactHookForm.control}
                     label="Picto (code)"
                     name="porteurPicto"
                   />

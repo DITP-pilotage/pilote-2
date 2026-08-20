@@ -20,6 +20,7 @@ export const porteurCommandSchema = z.object({
 });
 
 export type PorteurCommand = z.infer<typeof porteurCommandSchema>;
+export type PorteurTypeShort = PorteurCommand["porteurTypeShort"];
 
 export class EnregistrerPorteurHandler {
   private readonly prisma: PrismaPilote;
