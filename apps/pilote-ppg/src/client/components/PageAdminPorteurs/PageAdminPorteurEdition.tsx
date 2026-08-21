@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { useRouter } from "next/router";
 import { Controller, FormProvider } from "react-hook-form";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
@@ -24,7 +25,7 @@ interface Props {
   idSuivant: string | null;
 }
 
-const OPTIONS_TYPE: SélecteurOption<PorteurForm["porteurType"]>[] = [
+const OPTIONS_TYPE: SélecteurOption<$Enums.porteur_type>[] = [
   { libellé: "Ministère (MIN)", valeur: "MIN" },
   { libellé: "DAC", valeur: "DAC" },
   { libellé: "Délégation interministérielle (DI)", valeur: "DI" },

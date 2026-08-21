@@ -7,8 +7,6 @@ export interface PorteurOption {
   label: string;
 }
 
-type PorteurType = Extract<$Enums.porteur_type, "MIN" | "DAC" | "DI">;
-
 export class ListerPorteursQuery {
   private readonly prisma: PrismaPilote;
 
@@ -16,7 +14,9 @@ export class ListerPorteursQuery {
     this.prisma = prisma;
   }
 
-  async run({ type }: { type?: PorteurType } = {}): Promise<PorteurOption[]> {
+  async run({ type }: { type?: $Enums.porteur_type } = {}): Promise<
+    PorteurOption[]
+  > {
     const porteurs = await this.prisma
       .getInstance()
       .metadata_porteurs.findMany({
