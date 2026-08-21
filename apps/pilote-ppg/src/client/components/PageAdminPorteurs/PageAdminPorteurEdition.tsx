@@ -27,6 +27,7 @@ interface Props {
 const OPTIONS_TYPE: SélecteurOption<PorteurForm["porteurType"]>[] = [
   { libellé: "Ministère (MIN)", valeur: "MIN" },
   { libellé: "DAC", valeur: "DAC" },
+  { libellé: "Délégation interministérielle (DI)", valeur: "DI" },
   { libellé: "Autre", valeur: "AUTRE" },
 ];
 

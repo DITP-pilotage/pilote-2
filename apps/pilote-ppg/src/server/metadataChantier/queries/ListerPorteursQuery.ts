@@ -7,7 +7,7 @@ export interface PorteurOption {
   label: string;
 }
 
-type PorteurType = Extract<$Enums.porteur_type, "MIN" | "DAC">;
+type PorteurType = Extract<$Enums.porteur_type, "MIN" | "DAC" | "DI">;
 
 export class ListerPorteursQuery {
   private readonly prisma: PrismaPilote;

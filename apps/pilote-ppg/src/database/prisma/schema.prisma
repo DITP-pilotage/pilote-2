@@ -564,6 +564,7 @@ model metadata_porteurs {
 enum porteur_type {
   MIN
   DAC
+  DI
   AUTRE
 
   @@schema("raw_data")

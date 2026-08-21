@@ -1,5 +1,5 @@
 -- Création du type enum porteur_type
-CREATE TYPE "raw_data"."porteur_type" AS ENUM ('MIN', 'DAC', 'AUTRE');
+CREATE TYPE "raw_data"."porteur_type" AS ENUM ('MIN', 'DAC', 'DI', 'AUTRE');
 
 -- Ajout de la nouvelle colonne typée enum
 ALTER TABLE "raw_data"."metadata_porteurs"
