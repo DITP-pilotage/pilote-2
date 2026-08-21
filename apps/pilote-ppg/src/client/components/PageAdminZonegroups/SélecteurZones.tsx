@@ -1,9 +1,9 @@
 import { useState } from "react";
 import type { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
 import type { ZoneDisponible } from "@/server/metadataZonegroup/queries/ListerZonesDisponiblesQuery";
-import { InputRecherche } from "@/components/_commons/InputRecherche/InputRecherche";
-import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
 import Alerte from "@/components/_commons/Alerte/Alerte";
+import { ActionsSelection } from "./ActionsSelection";
 
 const LABELS_TYPE: Record<MailleTerritoireSelectionne, string> = {
   NAT: "National",
@@ -12,22 +12,6 @@ const LABELS_TYPE: Record<MailleTerritoireSelectionne, string> = {
 };
 
 const ORDRE_TYPES: MailleTerritoireSelectionne[] = ["NAT", "REG", "DEPT"];
-
-const BoutonAction = ({
-  label,
-  onClick,
-}: {
-  label: string;
-  onClick: () => void;
-}) => (
-  <Bouton
-    label={label}
-    onClick={onClick}
-    size="sm"
-    type="button"
-    variant="secondary"
-  />
-);
 
 interface Props {
   zonesDisponibles: ZoneDisponible[];
@@ -63,12 +47,14 @@ export const SélecteurZones = ({
           {value.length} zone{value.length !== 1 ? "s" : ""} sélectionnée
           {value.length !== 1 ? "s" : ""}
         </p>
-        <InputRecherche
-          className="w-64"
-          onChange={setFiltreZone}
-          placeholder="Filtrer les zones…"
-          value={filtreZone}
-        />
+        <div className="w-64">
+          <BarreDeRecherche
+            changementDeLaRechercheCallback={(event) =>
+              setFiltreZone(event.target.value)
+            }
+            valeur={filtreZone}
+          />
+        </div>
       </div>
       <div className="space-y-4 max-h-96 overflow-y-auto border border-gray-200 rounded-sm p-4">
         {ORDRE_TYPES.map((type) => {
@@ -85,24 +71,11 @@ export const SélecteurZones = ({
                 <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                   {LABELS_TYPE[type]}
                 </h4>
-                <div className="flex gap-2">
-                  <BoutonAction
-                    label="Tout cocher"
-                    onClick={() => {
-                      const ids = zones.map((zone) => zone.zoneId);
-                      const current = new Set(value);
-                      ids.forEach((id) => current.add(id));
-                      onChange(Array.from(current));
-                    }}
-                  />
-                  <BoutonAction
-                    label="Tout décocher"
-                    onClick={() => {
-                      const ids = new Set(zones.map((zone) => zone.zoneId));
-                      onChange(value.filter((id) => !ids.has(id)));
-                    }}
-                  />
-                </div>
+                <ActionsSelection
+                  onChange={onChange}
+                  selection={value}
+                  zones={zones}
+                />
               </div>
               <div className="grid grid-cols-2 gap-1">
                 {zones.map((zone) => (

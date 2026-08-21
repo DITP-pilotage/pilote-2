@@ -4,7 +4,7 @@ import api from "@/server/infrastructure/api/trpc/api";
 import Loader from "@/components/_commons/Loader/Loader";
 import { Lien } from "@/components/_commons/Lien/Lien";
 import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
-import { InputRecherche } from "@/components/_commons/InputRecherche/InputRecherche";
+import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
 import type { PorteurTypeShort } from "@/server/metadataPorteur/handlers/EnregistrerPorteurHandler";
 import type { PorteurAdminListItem } from "@/server/metadataPorteur/queries/ListerPorteursAdminQuery";
 
@@ -121,12 +121,12 @@ const PageAdminPorteurs = () => {
           />
         </div>
 
-        <div className="mb-4">
-          <InputRecherche
-            className="w-full max-w-md"
-            onChange={setRecherche}
-            placeholder="Rechercher par ID, sigle ou nom…"
-            value={recherche}
+        <div className="mb-4 max-w-sm">
+          <BarreDeRecherche
+            changementDeLaRechercheCallback={(event) =>
+              setRecherche(event.target.value)
+            }
+            valeur={recherche}
           />
         </div>
 
