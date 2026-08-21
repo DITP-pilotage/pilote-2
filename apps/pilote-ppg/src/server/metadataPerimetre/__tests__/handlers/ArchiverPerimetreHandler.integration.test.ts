@@ -1,15 +1,15 @@
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { ArchiverOuRestorerPerimetreHandler } from "@/server/metadataPerimetre/handlers/ArchiverOuRestorerPerimetreHandler";
+import { ArchiverPerimetreHandler } from "@/server/metadataPerimetre/handlers/ArchiverPerimetreHandler";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 
-describe("ArchiverOuRestorerPerimetreHandler", () => {
-  let handler: ArchiverOuRestorerPerimetreHandler;
+describe("ArchiverPerimetreHandler", () => {
+  let handler: ArchiverPerimetreHandler;
   const prismaPilote = new PrismaPilote();
 
   beforeEach(() => {
-    handler = new ArchiverOuRestorerPerimetreHandler({ prisma: prismaPilote });
+    handler = new ArchiverPerimetreHandler({ prisma: prismaPilote });
   });
 
   describe("execute", () => {
@@ -29,26 +29,6 @@ describe("ArchiverOuRestorerPerimetreHandler", () => {
           where: { perimetre_id: "PER-090" },
         });
         expect(result.deleted_at).not.toBeNull();
-      }),
-    );
-
-    it(
-      "restaure un périmètre supprimé",
-      createIntegrationTest(async () => {
-        // Given
-        await fixtures.metadataPerimetre({
-          perimetre_id: "PER-091",
-          deleted_at: new Date("2026-01-01"),
-        });
-
-        // When
-        await handler.execute({ perimetreId: "PER-091", restaurer: true });
-
-        // Then
-        const result = await getPrisma().metadata_perimetres.findUniqueOrThrow({
-          where: { perimetre_id: "PER-091" },
-        });
-        expect(result.deleted_at).toBeNull();
       }),
     );
   });
