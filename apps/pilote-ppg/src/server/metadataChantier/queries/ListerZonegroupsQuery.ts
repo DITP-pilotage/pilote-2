@@ -16,7 +16,10 @@ export class ListerZonegroupsQuery {
   async run(): Promise<Zonegroup[]> {
     const zonegroups = await this.prisma
       .getInstance()
-      .metadata_zonegroup.findMany({ orderBy: { zone_group_id: "asc" } });
+      .metadata_zonegroup.findMany({
+        where: { deleted_at: null },
+        orderBy: { zone_group_id: "asc" },
+      });
     return zonegroups.map(toApiModel);
   }
 }

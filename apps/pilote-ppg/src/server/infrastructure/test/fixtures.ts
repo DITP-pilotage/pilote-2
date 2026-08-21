@@ -747,6 +747,40 @@ export const fixtures = {
     });
   },
 
+  async metadataPorteur(
+    overrides: Partial<Prisma.metadata_porteursUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const porteurId =
+      overrides.porteur_id ?? String(Math.floor(Math.random() * 90000) + 10000);
+    return prisma.metadata_porteurs.create({
+      data: {
+        porteur_id: porteurId,
+        porteur_short: `PORT-${porteurId}`,
+        porteur_name: `Porteur test ${porteurId}`,
+        porteur_type_short: "MIN",
+        porteur_type_id: "1",
+        ...overrides,
+      },
+    });
+  },
+
+  async metadataZonegroup(
+    overrides: Partial<Prisma.metadata_zonegroupUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const zoneGroupId =
+      overrides.zone_group_id ?? `ZG-${randomUUID().slice(0, 6)}`;
+    return prisma.metadata_zonegroup.create({
+      data: {
+        zone_group_id: zoneGroupId,
+        zg_name: `Zone group test ${zoneGroupId}`,
+        zg_zones: ["FRANCE"],
+        ...overrides,
+      },
+    });
+  },
+
   async metadataChantier(
     overrides: Partial<Prisma.metadata_chantiersUncheckedCreateInput> = {},
   ) {

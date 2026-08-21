@@ -4,7 +4,7 @@ import Link from "next/link";
 import { $Enums } from "@prisma/client";
 import api from "@/server/infrastructure/api/trpc/api";
 import AlerteMetadataChantier from "@/components/PageAdminChantiers/AlerteMetadataChantier";
-import { LoupePleineIcon } from "@/components/_commons/Icones/LoupePleineIcon";
+import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
 import Loader from "@/components/_commons/Loader/Loader";
 
 const STATUT_BADGE: Record<
@@ -71,17 +71,13 @@ const PageAdminChantiers = () => {
 
         <AlerteMetadataChantier />
 
-        <div className="mb-4">
-          <div className="relative w-full max-w-md">
-            <LoupePleineIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none size-4" />
-            <input
-              className="w-full pl-9 pr-4 py-2.5 text-sm bg-white border border-gray-300 rounded-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-              onChange={(event) => setRecherche(event.target.value)}
-              placeholder="Rechercher par ID ou nom…"
-              type="search"
-              value={recherche}
-            />
-          </div>
+        <div className="mb-4 max-w-sm">
+          <BarreDeRecherche
+            changementDeLaRechercheCallback={(event) =>
+              setRecherche(event.target.value)
+            }
+            valeur={recherche}
+          />
         </div>
 
         <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden">

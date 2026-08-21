@@ -53,5 +53,29 @@ describe("ListerPerimetresQuery", () => {
         ]);
       }),
     );
+
+    it(
+      "exclut les périmètres supprimés",
+      createIntegrationTest(async () => {
+        // Given
+        await fixtures.metadataPerimetre({
+          perimetre_id: "PER-010",
+          per_nom: "Actif",
+        });
+        await fixtures.metadataPerimetre({
+          perimetre_id: "PER-011",
+          per_nom: "Supprimé",
+          deleted_at: new Date("2026-01-01"),
+        });
+
+        // When
+        const resultat = await query.run();
+
+        // Then
+        const ids = resultat.map((p) => p.id);
+        expect(ids).toContain("PER-010");
+        expect(ids).not.toContain("PER-011");
+      }),
+    );
   });
 });

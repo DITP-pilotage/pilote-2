@@ -1,32 +1,32 @@
-perimetre_id,per_nom,per_porteur_id,per_porteur_name_short
-PER-001,Agriculture,130,-
-PER-002,Armées,150,-
-PER-003,"Autonomie, Handicap",120,-
-PER-004,Aménagement du territoire,190,-
-PER-005,Comptes publics,290,-
-PER-006,Culture,140,-
-PER-007,Vie associative,1009,-
-PER-008,Économie et Entreprises,290,-
-PER-009,Éducation nationale,180,-
-PER-010,Égalité Femmes-Hommes,1007,-
-PER-011,Enfance et Famille,120,-
-PER-012,"Enseignement supérieur, Recherche",280,-
-PER-013,Europe et Affaires étrangères,110,-
-PER-014,Intérieur,200,-
-PER-015,Justice,220,-
-PER-016,Logement,190,-
-PER-017,Mer et Biodiversité,190,-
-PER-018,Outre-Mer,200,-
-PER-019,Premier Ministre,1009,-
-PER-020,Renouveau Démocratique,1006,-
-PER-021,Santé,120,-
-PER-022,Solidarité,120,-
-PER-023,Sports,340,-
-PER-024,Transformation et Fonction Publiques,250,-
-PER-025,Transition Écologique,190,-
-PER-026,Industrie et Énergie,290,-
-PER-027,Transports,190,-
-PER-028,"Travail, Emploi",120,-
-PER-029,todo,,-
-PER-030,Numérique et IA,290,-
-PER-031,Jeunesse,340,-
+perimetre_id,per_nom,per_porteur_id
+PER-001,Agriculture,130
+PER-002,Armées,150
+PER-003,"Autonomie, Handicap",120
+PER-004,Aménagement du territoire,190
+PER-005,Comptes publics,290
+PER-006,Culture,140
+PER-007,Vie associative,1009
+PER-008,Économie et Entreprises,290
+PER-009,Éducation nationale,180
+PER-010,Égalité Femmes-Hommes,1007
+PER-011,Enfance et Famille,120
+PER-012,"Enseignement supérieur, Recherche",280
+PER-013,Europe et Affaires étrangères,110
+PER-014,Intérieur,200
+PER-015,Justice,220
+PER-016,Logement,190
+PER-017,Mer et Biodiversité,190
+PER-018,Outre-Mer,200
+PER-019,Premier Ministre,1009
+PER-020,Renouveau Démocratique,1006
+PER-021,Santé,120
+PER-022,Solidarité,120
+PER-023,Sports,340
+PER-024,Transformation et Fonction Publiques,250
+PER-025,Transition Écologique,190
+PER-026,Industrie et Énergie,290
+PER-027,Transports,190
+PER-028,"Travail, Emploi",120
+PER-029,todo,
+PER-030,Numérique et IA,290
+PER-031,Jeunesse,340
