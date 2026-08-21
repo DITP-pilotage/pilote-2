@@ -16,7 +16,6 @@ import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { SectionTitle } from "@/components/_commons/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
 import type { SélecteurOption } from "@/client/components/_commons/Sélecteur/Sélecteur.interface";
-import type { PorteurTypeShort } from "@/server/metadataPorteur/handlers/EnregistrerPorteurHandler";
 
 interface Props {
   porteurId: string;
@@ -25,7 +24,7 @@ interface Props {
   idSuivant: string | null;
 }
 
-const OPTIONS_TYPE: SélecteurOption<PorteurTypeShort>[] = [
+const OPTIONS_TYPE: SélecteurOption<PorteurForm["porteurType"]>[] = [
   { libellé: "Ministère (MIN)", valeur: "MIN" },
   { libellé: "DAC", valeur: "DAC" },
   { libellé: "Autre", valeur: "AUTRE" },
@@ -48,8 +47,7 @@ const PageAdminPorteurEdition = ({
         porteurShort: porteurData.porteurShort,
         porteurName: porteurData.porteurName,
         porteurDesc: porteurData.porteurDesc,
-        porteurTypeShort:
-          (porteurData.porteurTypeShort as PorteurTypeShort) ?? "MIN",
+        porteurType: porteurData.porteurType ?? "MIN",
         porteurDirecteur: porteurData.porteurDirecteur,
         porteurNameShort: porteurData.porteurNameShort,
         porteurPicto: porteurData.porteurPicto,
@@ -172,10 +170,10 @@ const PageAdminPorteurEdition = ({
                   </div>
                   <Controller
                     control={reactHookForm.control}
-                    name="porteurTypeShort"
+                    name="porteurType"
                     render={({ field }) => (
                       <Sélecteur
-                        htmlName="porteurTypeShort"
+                        htmlName="porteurType"
                         libellé="Type"
                         onChange={field.onChange}
                         options={OPTIONS_TYPE}

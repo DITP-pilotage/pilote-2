@@ -5,11 +5,10 @@ import Loader from "@/components/_commons/Loader/Loader";
 import { Lien } from "@/components/_commons/Lien/Lien";
 import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
-import type { PorteurTypeShort } from "@/server/metadataPorteur/handlers/EnregistrerPorteurHandler";
 import type { PorteurAdminListItem } from "@/server/metadataPorteur/queries/ListerPorteursAdminQuery";
 
 const TYPE_BADGE: Record<
-  PorteurTypeShort,
+  PorteurAdminListItem["porteurType"],
   { label: string; className: string }
 > = {
   MIN: {
@@ -30,8 +29,8 @@ const LignePorteur = ({ porteur }: { porteur: PorteurAdminListItem }) => {
   const router = useRouter();
   const supprimé = porteur.deletedAt !== null;
   const typeBadge =
-    porteur.porteurTypeShort && porteur.porteurTypeShort in TYPE_BADGE
-      ? TYPE_BADGE[porteur.porteurTypeShort as PorteurTypeShort]
+    porteur.porteurType && porteur.porteurType in TYPE_BADGE
+      ? TYPE_BADGE[porteur.porteurType]
       : null;
   return (
     <tr

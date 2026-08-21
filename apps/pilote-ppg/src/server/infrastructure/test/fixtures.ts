@@ -758,8 +758,7 @@ export const fixtures = {
         porteur_id: porteurId,
         porteur_short: `PORT-${porteurId}`,
         porteur_name: `Porteur test ${porteurId}`,
-        porteur_type_short: "MIN",
-        porteur_type_id: "1",
+        porteur_type: "MIN",
         ...overrides,
       },
     });

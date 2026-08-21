@@ -21,7 +21,7 @@ describe("EnregistrerPorteurHandler", () => {
           porteurShort: "TEST",
           porteurName: "Ministère de test",
           porteurDesc: null,
-          porteurTypeShort: "MIN",
+          porteurType: "MIN",
           porteurDirecteur: null,
           porteurNameShort: "Test",
           porteurPicto: null,
@@ -33,34 +33,8 @@ describe("EnregistrerPorteurHandler", () => {
         });
         expect(porteur.porteur_name).toBe("Ministère de test");
         expect(porteur.porteur_short).toBe("TEST");
-        expect(porteur.porteur_type_short).toBe("MIN");
-        expect(porteur.porteur_type_id).toBe("1");
+        expect(porteur.porteur_type).toBe("MIN");
         expect(porteur.deleted_at).toBeNull();
-      }),
-    );
-
-    it(
-      "dénormalise porteur_type_id depuis porteur_type_short",
-      createIntegrationTest(async () => {
-        // When
-        await handler.execute({
-          porteurId: "99002",
-          porteurShort: "DAC",
-          porteurName: "DAC de test",
-          porteurDesc: null,
-          porteurTypeShort: "DAC",
-          porteurDirecteur: "Directeur Test",
-          porteurNameShort: null,
-          porteurPicto: "remix::earth::fill",
-        });
-
-        // Then
-        const porteur = await getPrisma().metadata_porteurs.findUniqueOrThrow({
-          where: { porteur_id: "99002" },
-        });
-        expect(porteur.porteur_type_id).toBe("7");
-        expect(porteur.porteur_directeur).toBe("Directeur Test");
-        expect(porteur.porteur_picto).toBe("remix::earth::fill");
       }),
     );
 
@@ -73,8 +47,7 @@ describe("EnregistrerPorteurHandler", () => {
             porteur_id: "99003",
             porteur_short: "OLD",
             porteur_name: "Ancien nom",
-            porteur_type_short: "MIN",
-            porteur_type_id: "1",
+            porteur_type: "MIN",
           },
         });
 
@@ -84,7 +57,7 @@ describe("EnregistrerPorteurHandler", () => {
           porteurShort: "NEW",
           porteurName: "Nouveau nom",
           porteurDesc: "Une desc",
-          porteurTypeShort: "DAC",
+          porteurType: "DAC",
           porteurDirecteur: null,
           porteurNameShort: null,
           porteurPicto: null,
@@ -95,8 +68,7 @@ describe("EnregistrerPorteurHandler", () => {
           where: { porteur_id: "99003" },
         });
         expect(porteur.porteur_name).toBe("Nouveau nom");
-        expect(porteur.porteur_type_short).toBe("DAC");
-        expect(porteur.porteur_type_id).toBe("7");
+        expect(porteur.porteur_type).toBe("DAC");
       }),
     );
   });

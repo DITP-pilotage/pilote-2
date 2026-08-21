@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import type { metadata_porteurs as MetadataPorteursPrisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataPorteur/module";
@@ -7,7 +8,7 @@ export interface MetadataPorteur {
   porteurShort: string;
   porteurName: string;
   porteurDesc: string | null;
-  porteurTypeShort: string | null;
+  porteurType: $Enums.porteur_type;
   porteurDirecteur: string | null;
   porteurNameShort: string | null;
   porteurPicto: string | null;
@@ -20,7 +21,7 @@ function toApiModel(porteur: MetadataPorteursPrisma): MetadataPorteur {
     porteurShort: porteur.porteur_short,
     porteurName: porteur.porteur_name,
     porteurDesc: porteur.porteur_desc,
-    porteurTypeShort: porteur.porteur_type_short,
+    porteurType: porteur.porteur_type,
     porteurDirecteur: porteur.porteur_directeur,
     porteurNameShort: porteur.porteur_name_short,
     porteurPicto: porteur.porteur_picto,
