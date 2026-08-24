@@ -35,11 +35,9 @@ export function createGetChantierCommentairesTool({
   return ({ territoiresAccessibles }: { territoiresAccessibles: string[] }) => {
     return tool({
       description: `Récupère les contenus textuels publiés rattachés à un chantier sur un territoire donné (uniquement les contenus publiés — les brouillons sont exclus).
-Quand include_sous_territoires=true, retourne aussi les commentaires de chaque sous-territoire (les objectifs du chantier ne sont renvoyés qu'une fois, pour le territoire principal).
+Quand include_sous_territoires=true, retourne aussi les commentaires de chaque sous-territoire.
 
 Chaque résultat porte un champ \`type\` permettant de distinguer la nature du contenu :
-
-Commentaires liés au couple chantier × territoire :
 - \`synthese_des_resultats\` : commentaire d'analyse accompagnant la météo de la synthèse du chantier sur le territoire
 - \`commentaires_sur_les_donnees\` : commentaires explicatifs sur les données du chantier sur le territoire
 - \`freins_a_lever\` : risques et freins à lever identifiés sur le territoire
@@ -47,12 +45,7 @@ Commentaires liés au couple chantier × territoire :
 - \`actions_a_valoriser\` : exemples concrets de réussite à valoriser sur le territoire
 - \`autres_resultats_obtenus_non_correles_aux_indicateurs\` : autres résultats obtenus non corrélés aux indicateurs sur le territoire
 
-Objectifs rattachés au chantier (indépendamment du territoire) :
-- \`objectif_notre_ambition\` : ambition du chantier ("Notre ambition")
-- \`objectif_deja_fait\` : ce qui a déjà été fait
-- \`objectif_a_faire\` : ce qu'il reste à faire
-
-Utilise cet outil quand l'utilisateur demande l'analyse qualitative ou contextuelle d'un chantier : ambitions, objectifs, freins, actions, réussites ou commentaires explicatifs.`,
+Utilise cet outil quand l'utilisateur demande l'analyse qualitative ou contextuelle d'un chantier sur un territoire : freins, actions, réussites ou commentaires explicatifs. Pour les objectifs stratégiques du chantier (ambition, ce qui a été fait, ce qu'il reste à faire), utilise \`get_chantier_objectifs\`.`,
       inputSchema: getChantierCommentairesInputSchema,
       execute: async (input): Promise<GetChantierCommentairesOutput> => {
         if (!territoiresAccessibles.includes(input.territoire_code)) {
@@ -74,7 +67,6 @@ Utilise cet outil quand l'utilisateur demande l'analyse qualitative ou contextue
             getChantierCommentairesQuery.execute({
               territoireCode: code,
               chantierId: input.chantier_id,
-              inclureObjectifs: code === input.territoire_code,
             }),
           ),
         );
