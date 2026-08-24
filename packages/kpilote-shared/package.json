@@ -4,6 +4,10 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./analytics": {
+      "types": "./src/analytics/index.ts",
+      "default": "./src/analytics/index.ts"
+    },
     "./texte": {
       "types": "./src/texte.ts",
       "default": "./src/texte.ts"
