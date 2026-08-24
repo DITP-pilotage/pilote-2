@@ -13,24 +13,24 @@ export type BrowserAnalyticsOptions = {
   send?: (url: string) => void
 }
 
-const ANALYTICS_ETEINT: Analytics = {
+const NOOP_ANALYTICS: Analytics = {
   trackPageView: () => {},
   trackEvent: () => {},
 }
 
-const envoyer = (url: string): void => {
+const sendBeacon = (url: string): void => {
   if (navigator.sendBeacon(url)) return
   void fetch(url, { method: 'POST', mode: 'no-cors', keepalive: true }).catch(() => {})
 }
 
 export const createBrowserAnalytics = (options: BrowserAnalyticsOptions): Analytics => {
   const { config, enabled, doNotTrack } = options
-  if (!config || !enabled || doNotTrack) return ANALYTICS_ETEINT
+  if (!config || !enabled || doNotTrack) return NOOP_ANALYTICS
 
-  const send = options.send ?? envoyer
+  const send = options.send ?? sendBeacon
   const endpoint = `${config.matomoUrl.replace(/\/$/, '')}/matomo.php`
 
-  const emettre = (query: string): void => {
+  const emit = (query: string): void => {
     try {
       send(`${endpoint}?${query}`)
     } catch {
@@ -39,7 +39,7 @@ export const createBrowserAnalytics = (options: BrowserAnalyticsOptions): Analyt
   }
 
   return {
-    trackPageView: (pageView) => emettre(buildPageViewRequest(pageView, config)),
-    trackEvent: (event) => emettre(buildEventRequest(event, config)),
+    trackPageView: (pageView) => emit(buildPageViewRequest(pageView, config)),
+    trackEvent: (event) => emit(buildEventRequest(event, config)),
   }
 }

@@ -3,91 +3,93 @@ import { describe, expect, it } from 'vitest'
 import { buildEventRequest, buildPageViewRequest } from './buildRequest'
 import type { AnalyticsConfig } from './schema'
 
+// URLs volontairement non résolvables : `.test` est réservé par la RFC 2606,
+// aucun test ne peut donc joindre une vraie instance Matomo par inadvertance.
 const config: AnalyticsConfig = {
-  matomoUrl: 'https://stats.beta.gouv.fr',
+  matomoUrl: 'https://matomo.test',
   siteId: '42',
-  appUrl: 'https://kpilote.example',
+  appUrl: 'https://kpilote.test',
 }
 
 const params = (query: string): URLSearchParams => new URLSearchParams(query)
 
 describe('buildEventRequest', () => {
   it('envoie les paramètres obligatoires de Matomo', () => {
-    const resultat = params(
+    const result = params(
       buildEventRequest({ category: 'kpilote.error', action: 'error', name: 'mutation' }, config),
     )
 
-    expect(resultat.get('idsite')).toBe('42')
-    expect(resultat.get('rec')).toBe('1')
-    expect(resultat.get('apiv')).toBe('1')
-    expect(resultat.get('e_c')).toBe('kpilote.error')
-    expect(resultat.get('e_a')).toBe('error')
-    expect(resultat.get('e_n')).toBe('mutation')
+    expect(result.get('idsite')).toBe('42')
+    expect(result.get('rec')).toBe('1')
+    expect(result.get('apiv')).toBe('1')
+    expect(result.get('e_c')).toBe('kpilote.error')
+    expect(result.get('e_a')).toBe('error')
+    expect(result.get('e_n')).toBe('mutation')
   })
 
   it('replie le contexte sans slot dans e_n, trié par clé', () => {
-    const resultat = params(
+    const result = params(
       buildEventRequest(
         {
           category: 'kpilote.indicateur',
           action: 'open',
           name: 'indicateur.open',
-          contexte: { source: 'dashboard', entity_id: 'IND-506' },
+          context: { source: 'dashboard', entity_id: 'IND-506' },
         },
         config,
       ),
     )
 
-    expect(resultat.get('e_n')).toBe('indicateur.open?entity_id=IND-506&source=dashboard')
+    expect(result.get('e_n')).toBe('indicateur.open?entity_id=IND-506&source=dashboard')
   })
 
   it('envoie une clé en dimension quand elle a un slot, et la retire de e_n', () => {
-    const resultat = params(
+    const result = params(
       buildEventRequest(
         {
           category: 'kpilote.indicateur',
           action: 'open',
           name: 'indicateur.open',
-          contexte: { source: 'dashboard', entity_id: 'IND-506' },
+          context: { source: 'dashboard', entity_id: 'IND-506' },
         },
         { ...config, dimensionSlots: { source: 3 } },
       ),
     )
 
-    expect(resultat.get('dimension3')).toBe('dashboard')
-    expect(resultat.get('e_n')).toBe('indicateur.open?entity_id=IND-506')
+    expect(result.get('dimension3')).toBe('dashboard')
+    expect(result.get('e_n')).toBe('indicateur.open?entity_id=IND-506')
   })
 
   it("fusionne le contexte global sous le contexte de l'événement", () => {
-    const resultat = params(
+    const result = params(
       buildEventRequest(
         {
           category: 'kpilote.error',
           action: 'error',
           name: 'mutation',
-          contexte: { app_area: 'admin' },
+          context: { app_area: 'admin' },
         },
-        { ...config, globalContexte: { app_area: 'webapp', environment: 'production' } },
+        { ...config, globalContext: { app_area: 'webapp', environment: 'production' } },
       ),
     )
 
-    expect(resultat.get('e_n')).toBe('mutation?app_area=admin&environment=production')
+    expect(result.get('e_n')).toBe('mutation?app_area=admin&environment=production')
   })
 
   it('ignore les valeurs indéfinies du contexte', () => {
-    const resultat = params(
+    const result = params(
       buildEventRequest(
         {
           category: 'kpilote.dashboard',
           action: 'search',
           name: 'dashboard.search',
-          contexte: { has_query: true, source: undefined },
+          context: { has_query: true, source: undefined },
         },
         config,
       ),
     )
 
-    expect(resultat.get('e_n')).toBe('dashboard.search?has_query=true')
+    expect(result.get('e_n')).toBe('dashboard.search?has_query=true')
   })
 
   it("n'envoie e_v que si une valeur numérique est fournie", () => {
@@ -110,11 +112,11 @@ describe('buildEventRequest', () => {
 
 describe('buildPageViewRequest', () => {
   it("construit l'URL depuis l'URL applicative et le motif de route", () => {
-    const resultat = params(buildPageViewRequest({ path: '/indicateurs/$id' }, config))
+    const result = params(buildPageViewRequest({ path: '/indicateurs/$id' }, config))
 
-    expect(resultat.get('url')).toBe('https://kpilote.example/indicateurs/$id')
-    expect(resultat.get('idsite')).toBe('42')
-    expect(resultat.get('rec')).toBe('1')
+    expect(result.get('url')).toBe('https://kpilote.test/indicateurs/$id')
+    expect(result.get('idsite')).toBe('42')
+    expect(result.get('rec')).toBe('1')
   })
 
   it("n'envoie action_name que si un titre est fourni", () => {
@@ -125,13 +127,13 @@ describe('buildPageViewRequest', () => {
   })
 
   it("replie le contexte sans slot dans la query string de l'URL", () => {
-    const resultat = params(
+    const result = params(
       buildPageViewRequest(
         { path: '/indicateurs/$id' },
-        { ...config, globalContexte: { app_area: 'webapp' } },
+        { ...config, globalContext: { app_area: 'webapp' } },
       ),
     )
 
-    expect(resultat.get('url')).toBe('https://kpilote.example/indicateurs/$id?app_area=webapp')
+    expect(result.get('url')).toBe('https://kpilote.test/indicateurs/$id?app_area=webapp')
   })
 })

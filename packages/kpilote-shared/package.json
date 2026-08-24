@@ -4,9 +4,17 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./analytics": {
-      "types": "./src/analytics/index.ts",
-      "default": "./src/analytics/index.ts"
+    "./analytics/schema": {
+      "types": "./src/analytics/schema.ts",
+      "default": "./src/analytics/schema.ts"
+    },
+    "./analytics/buildRequest": {
+      "types": "./src/analytics/buildRequest.ts",
+      "default": "./src/analytics/buildRequest.ts"
+    },
+    "./analytics/events": {
+      "types": "./src/analytics/events.ts",
+      "default": "./src/analytics/events.ts"
     },
     "./analytics/browser": {
       "types": "./src/analytics/browser.ts",

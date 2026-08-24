@@ -25,20 +25,20 @@ export const ANALYTICS_ACTIONS = [
 
 export type AnalyticsAction = (typeof ANALYTICS_ACTIONS)[number]
 
-export type AnalyticsContexte = Record<string, string | number | boolean | undefined>
+export type AnalyticsContext = Record<string, string | number | boolean | undefined>
 
 export type AnalyticsEvent = {
   category: AnalyticsCategory
   action: AnalyticsAction
   name: string
   value?: number
-  contexte?: AnalyticsContexte
+  context?: AnalyticsContext
 }
 
 export type AnalyticsPageView = {
   path: string
   title?: string
-  contexte?: AnalyticsContexte
+  context?: AnalyticsContext
 }
 
 export type AnalyticsConfig = {
@@ -46,5 +46,5 @@ export type AnalyticsConfig = {
   siteId: string
   appUrl: string
   dimensionSlots?: Record<string, number>
-  globalContexte?: AnalyticsContexte
+  globalContext?: AnalyticsContext
 }

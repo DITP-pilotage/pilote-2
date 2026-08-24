@@ -1,55 +1,47 @@
-import type {
-  AnalyticsConfig,
-  AnalyticsContexte,
-  AnalyticsEvent,
-  AnalyticsPageView,
-} from './schema'
+import type { AnalyticsConfig, AnalyticsContext, AnalyticsEvent, AnalyticsPageView } from './schema'
 
-type ContexteSepare = {
+type SplitContext = {
   dimensions: Record<string, string>
-  reste: Array<[string, string]>
+  rest: Array<[string, string]>
 }
 
-const separerContexte = (
-  contexte: AnalyticsContexte,
-  slots: Record<string, number>,
-): ContexteSepare => {
+const splitContext = (context: AnalyticsContext, slots: Record<string, number>): SplitContext => {
   const dimensions: Record<string, string> = {}
-  const reste: Array<[string, string]> = []
+  const rest: Array<[string, string]> = []
 
-  for (const [cle, valeur] of Object.entries(contexte)) {
-    if (valeur === undefined) continue
-    const slot = slots[cle]
-    if (slot === undefined) reste.push([cle, String(valeur)])
-    else dimensions[`dimension${slot}`] = String(valeur)
+  for (const [key, value] of Object.entries(context)) {
+    if (value === undefined) continue
+    const slot = slots[key]
+    if (slot === undefined) rest.push([key, String(value)])
+    else dimensions[`dimension${slot}`] = String(value)
   }
 
-  reste.sort(([gauche], [droite]) => gauche.localeCompare(droite))
-  return { dimensions, reste }
+  rest.sort(([left], [right]) => left.localeCompare(right))
+  return { dimensions, rest }
 }
 
-const encoderReste = (reste: Array<[string, string]>): string =>
-  reste.map(([cle, valeur]) => `${cle}=${valeur}`).join('&')
+const encodeRest = (rest: Array<[string, string]>): string =>
+  rest.map(([key, value]) => `${key}=${value}`).join('&')
 
-const parametresDeBase = (config: AnalyticsConfig): Record<string, string> => ({
+const baseParams = (config: AnalyticsConfig): Record<string, string> => ({
   idsite: config.siteId,
   rec: '1',
   apiv: '1',
 })
 
 export const buildEventRequest = (event: AnalyticsEvent, config: AnalyticsConfig): string => {
-  const { dimensions, reste } = separerContexte(
-    { ...config.globalContexte, ...event.contexte },
+  const { dimensions, rest } = splitContext(
+    { ...config.globalContext, ...event.context },
     config.dimensionSlots ?? {},
   )
-  const suffixe = encoderReste(reste)
+  const suffix = encodeRest(rest)
 
   const params = new URLSearchParams({
-    ...parametresDeBase(config),
+    ...baseParams(config),
     ...dimensions,
     e_c: event.category,
     e_a: event.action,
-    e_n: suffixe ? `${event.name}?${suffixe}` : event.name,
+    e_n: suffix ? `${event.name}?${suffix}` : event.name,
   })
 
   if (event.value !== undefined) params.set('e_v', String(event.value))
@@ -61,18 +53,16 @@ export const buildPageViewRequest = (
   pageView: AnalyticsPageView,
   config: AnalyticsConfig,
 ): string => {
-  const { dimensions, reste } = separerContexte(
-    { ...config.globalContexte, ...pageView.contexte },
+  const { dimensions, rest } = splitContext(
+    { ...config.globalContext, ...pageView.context },
     config.dimensionSlots ?? {},
   )
-  const suffixe = encoderReste(reste)
+  const suffix = encodeRest(rest)
 
   const params = new URLSearchParams({
-    ...parametresDeBase(config),
+    ...baseParams(config),
     ...dimensions,
-    url: suffixe
-      ? `${config.appUrl}${pageView.path}?${suffixe}`
-      : `${config.appUrl}${pageView.path}`,
+    url: suffix ? `${config.appUrl}${pageView.path}?${suffix}` : `${config.appUrl}${pageView.path}`,
   })
 
   if (pageView.title !== undefined) params.set('action_name', pageView.title)

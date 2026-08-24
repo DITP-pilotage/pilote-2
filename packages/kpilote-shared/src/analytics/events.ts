@@ -1,17 +1,17 @@
 import type { AnalyticsEvent } from './schema'
 
-export type ErreurMutationContexte = {
+export type MutationErrorContext = {
   mutation: string
   status: string
 }
 
 export const analyticsEvents = {
   error: {
-    mutation: (contexte: ErreurMutationContexte): AnalyticsEvent => ({
+    mutation: (context: MutationErrorContext): AnalyticsEvent => ({
       category: 'kpilote.error',
       action: 'error',
       name: 'mutation.error',
-      contexte: { ...contexte },
+      context: { ...context },
     }),
   },
 } as const

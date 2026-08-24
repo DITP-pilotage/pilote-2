@@ -1,9 +1,9 @@
-import type { AnalyticsConfig } from '@pilote/kpilote-shared/analytics'
 import { createBrowserAnalytics } from '@pilote/kpilote-shared/analytics/browser'
+import type { AnalyticsConfig } from '@pilote/kpilote-shared/analytics/schema'
 
 import { env } from '@/env'
 
-const respecteDoNotTrack = (): boolean =>
+const respectDoNotTrack = (): boolean =>
   typeof navigator !== 'undefined' &&
   (navigator.doNotTrack === '1' || navigator.doNotTrack === 'yes')
 
@@ -13,7 +13,7 @@ const config: AnalyticsConfig | null =
         matomoUrl: env.matomoUrl,
         siteId: env.matomoSiteId,
         appUrl: window.location.origin,
-        globalContexte: {
+        globalContext: {
           app_area: 'webapp',
         },
       }
@@ -22,5 +22,5 @@ const config: AnalyticsConfig | null =
 export const analytics = createBrowserAnalytics({
   config,
   enabled: import.meta.env.PROD && env.analyticsEnabled,
-  doNotTrack: respecteDoNotTrack(),
+  doNotTrack: respectDoNotTrack(),
 })
