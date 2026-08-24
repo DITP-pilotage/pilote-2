@@ -288,6 +288,135 @@ const INDICATEURS_EN_MOYENNE = new Set<string>([
 const fonctionAgregationGenerique = (publicId: string): FonctionAgregation =>
   INDICATEURS_EN_MOYENNE.has(publicId) ? 'AVG' : 'SUM'
 
+// Valeurs et objectifs sont remis à leur valeur d'origine à chaque seed, sans
+// que les lignes hors jeu de données soient touchées : le jeu est déterministe
+// (dates fixes, aucun random — cf. seedData/geo.ts), donc les clés produites
+// sont les mêmes d'une exécution à l'autre.
+//
+// `createMany` + `skipDuplicates` laissait au contraire intacte toute ligne
+// déjà présente : une valeur modifiée depuis le dernier seed ne revenait jamais
+// à son origine. `upsert` ligne à ligne le ferait, mais coûterait ~5 ms × 100k,
+// soit 8 minutes. `ON CONFLICT DO UPDATE` donne le bon comportement au prix
+// d'un `createMany`.
+//
+// Deux précautions propres au SQL brut : `updated_at` est fourni explicitement
+// (Prisma ne renseigne `@updatedAt` que via son client, et la colonne est NOT
+// NULL sans défaut), et les décimales transitent en texte puis sont castées,
+// pour ne pas dépendre de la sérialisation d'un objet Decimal.
+const TAILLE_LOT = 2000
+
+const parLots = <T>(rows: ReadonlyArray<T>): Array<ReadonlyArray<T>> => {
+  const lots: Array<ReadonlyArray<T>> = []
+  for (let debut = 0; debut < rows.length; debut += TAILLE_LOT) {
+    lots.push(rows.slice(debut, debut + TAILLE_LOT))
+  }
+  return lots
+}
+
+// Sur les indicateurs du seed, le jeu de données fait autorité : ce qui n'en
+// fait pas partie est supprimé. Sans cela, une valeur importée à une date hors
+// série survivrait à tous les seeds et fausserait tendances et taux de
+// progression — la dégradation silencieuse que l'upsert corrige pour les
+// valeurs reviendrait par les dates.
+//
+// La condition est exacte parce que les générateurs produisent le produit
+// cartésien complet individus × dates (cf. seedData/geo.ts) : appartenir au jeu
+// équivaut à être dans les deux listes à la fois. Les indicateurs hors seed ne
+// sont jamais concernés, la clause portant sur un seul indicateur_id.
+const supprimerHorsJeu = async ({
+  table,
+  colonneDate,
+  indicateurId,
+  dates,
+  individuIds,
+}: {
+  table: 'valeur_avancement' | 'objectif_indicateur_individu'
+  colonneDate: 'date' | 'date_cible'
+  indicateurId: string
+  dates: ReadonlyArray<string>
+  individuIds: ReadonlyArray<string>
+}): Promise<number> => {
+  // Garde-fou : sur des listes vides la condition serait vraie partout et
+  // viderait l'indicateur.
+  if (dates.length === 0 || individuIds.length === 0) return 0
+  return prisma.$executeRaw`
+    DELETE FROM ${Prisma.raw(table)}
+    WHERE indicateur_id = ${indicateurId}::uuid
+      AND NOT (
+        ${Prisma.raw(`"${colonneDate}"`)} = ANY(${dates as string[]}::text[])
+        AND individu_id = ANY(${individuIds as string[]}::uuid[])
+      )
+  `
+}
+
+const upsertValeurs = async (
+  rows: ReadonlyArray<{
+    id: string
+    indicateurId: string
+    individuId: string
+    date: string
+    valeur: Prisma.Decimal
+  }>,
+): Promise<{ ecrites: number; supprimees: number }> => {
+  if (rows.length === 0) return { ecrites: 0, supprimees: 0 }
+  let ecrites = 0
+  for (const lot of parLots(rows)) {
+    const tuples = lot.map(
+      (row) =>
+        Prisma.sql`(${row.id}::uuid, ${row.indicateurId}::uuid, ${row.individuId}::uuid, ${row.date}, ${row.valeur.toString()}::decimal, NOW())`,
+    )
+    ecrites += await prisma.$executeRaw`
+      INSERT INTO valeur_avancement (id, indicateur_id, individu_id, "date", valeur, updated_at)
+      VALUES ${Prisma.join(tuples)}
+      ON CONFLICT (indicateur_id, individu_id, "date") DO UPDATE
+        SET valeur = EXCLUDED.valeur, updated_at = NOW()
+        WHERE valeur_avancement.valeur IS DISTINCT FROM EXCLUDED.valeur
+    `
+  }
+  const supprimees = await supprimerHorsJeu({
+    table: 'valeur_avancement',
+    colonneDate: 'date',
+    indicateurId: rows[0]!.indicateurId,
+    dates: [...new Set(rows.map((row) => row.date))],
+    individuIds: [...new Set(rows.map((row) => row.individuId))],
+  })
+  return { ecrites, supprimees }
+}
+
+const upsertObjectifs = async (
+  rows: ReadonlyArray<{
+    id: string
+    indicateurId: string
+    individuId: string
+    dateCible: string
+    valeurCible: Prisma.Decimal
+  }>,
+): Promise<{ ecrites: number; supprimees: number }> => {
+  if (rows.length === 0) return { ecrites: 0, supprimees: 0 }
+  let ecrites = 0
+  for (const lot of parLots(rows)) {
+    const tuples = lot.map(
+      (row) =>
+        Prisma.sql`(${row.id}::uuid, ${row.indicateurId}::uuid, ${row.individuId}::uuid, ${row.dateCible}, ${row.valeurCible.toString()}::decimal, NOW())`,
+    )
+    ecrites += await prisma.$executeRaw`
+      INSERT INTO objectif_indicateur_individu (id, indicateur_id, individu_id, date_cible, valeur_cible, updated_at)
+      VALUES ${Prisma.join(tuples)}
+      ON CONFLICT (indicateur_id, individu_id, date_cible) DO UPDATE
+        SET valeur_cible = EXCLUDED.valeur_cible, updated_at = NOW()
+        WHERE objectif_indicateur_individu.valeur_cible IS DISTINCT FROM EXCLUDED.valeur_cible
+    `
+  }
+  const supprimees = await supprimerHorsJeu({
+    table: 'objectif_indicateur_individu',
+    colonneDate: 'date_cible',
+    indicateurId: rows[0]!.indicateurId,
+    dates: [...new Set(rows.map((row) => row.dateCible))],
+    individuIds: [...new Set(rows.map((row) => row.individuId))],
+  })
+  return { ecrites, supprimees }
+}
+
 const main = async () => {
   for (const [index, item] of indicateursSeed.entries()) {
     const { createdAt, updatedAt } = indicateurDates(index)
@@ -352,6 +481,7 @@ const main = async () => {
     where: { email: 'ditp.admin@example.com' },
     select: { id: true },
   })
+  let permissionsCount = 0
   for (const item of indicateursSeed.slice(0, 8)) {
     const indicateur = await prisma.indicateur.findUniqueOrThrow({
       where: { publicId: item.publicId },
@@ -362,6 +492,7 @@ const main = async () => {
       IndicateurPermissionAction.WRITE_DATA,
       IndicateurPermissionAction.WRITE_COMMENT,
     ]) {
+      permissionsCount += 1
       await prisma.indicateurPermission.upsert({
         where: {
           principalId_indicateurId_action: {
@@ -613,25 +744,8 @@ const main = async () => {
 
   const unitePourIndicateur = new Map(indicateursSeed.map((i) => [i.publicId, i.unite ?? null]))
 
-  // Purge ciblée pour les indicateurs en POURCENTAGE : la contrainte d'unicité
-  // (indicateurId, individuId, date) + `skipDuplicates` garderait sinon les
-  // valeurs des seeds antérieurs (où ces indicateurs héritaient d'un profil
-  // cyclique générique, ex. base 720 000 pour le chômage). On supprime pour
-  // forcer un ré-insert avec le profil borné [0, 100].
-  const indicateursAPurger = indicateursSeed
-    .filter((i) => i.unite === 'POURCENTAGE')
-    .map((i) => indicateursParPublicId.get(i.publicId))
-    .filter((id): id is string => id !== undefined)
-  if (indicateursAPurger.length > 0) {
-    await prisma.valeurAvancement.deleteMany({
-      where: { indicateurId: { in: indicateursAPurger } },
-    })
-    await prisma.objectifIndicateurIndividu.deleteMany({
-      where: { indicateurId: { in: indicateursAPurger } },
-    })
-  }
-
   let valeursCount = 0
+  let valeursHorsJeuCount = 0
   for (const lien of indicateurReferentielsSeed) {
     const refPublicId = mailleLaPlusFine(lien.referentiels.map((r) => r.id))
     if (!refPublicId) continue // ex. REF-EMPTY → pas de saisie
@@ -661,14 +775,9 @@ const main = async () => {
       })
       .filter((row): row is NonNullable<typeof row> => row !== null)
 
-    // createMany skipDuplicates : la contrainte unique
-    // (indicateurId, individuId, date) garantit l'idempotence du seed sans
-    // payer le coût d'un upsert par ligne (~5ms × 100k = 8 min vs ~10s).
-    const result = await prisma.valeurAvancement.createMany({
-      data: rows,
-      skipDuplicates: true,
-    })
-    valeursCount += result.count
+    const ecriture = await upsertValeurs(rows)
+    valeursCount += ecriture.ecrites
+    valeursHorsJeuCount += ecriture.supprimees
   }
 
   // Objectifs d'avancement : indicateurs avec une maille de saisie connue —
@@ -690,6 +799,7 @@ const main = async () => {
     'IND-050',
   ]
   let objectifsCount = 0
+  let objectifsHorsJeuCount = 0
   for (const indicateurPublicId of INDICATEURS_OBJECTIFS) {
     const lien = indicateurReferentielsSeed.find((l) => l.indicateurPublicId === indicateurPublicId)
     if (!lien) continue
@@ -721,11 +831,9 @@ const main = async () => {
       })
       .filter((row): row is NonNullable<typeof row> => row !== null)
 
-    const result = await prisma.objectifIndicateurIndividu.createMany({
-      data: rows,
-      skipDuplicates: true,
-    })
-    objectifsCount += result.count
+    const ecriture = await upsertObjectifs(rows)
+    objectifsCount += ecriture.ecrites
+    objectifsHorsJeuCount += ecriture.supprimees
   }
 
   // Collections d'indicateurs : collections thématiques pour le front. L'ordre
@@ -981,10 +1089,9 @@ const main = async () => {
 
   const contactsUtilesCount = 4
 
-  const permissionsCount = 8 * 2
   const widgetLiaisonsCount = widgetsSeed.reduce((acc, w) => acc + w.referentielPublicIds.length, 0)
   console.log(
-    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs insérées, ${objectifsCount} objectifs insérés (les doublons ont été ignorés), ${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${collectionsSeed.length} collections (${collectionLiaisonsCount} liaisons collection-indicateur, ${collectionPermissionsCount} permissions collection, ${collectionResponsablesCount} responsable collection, ${contactsUtilesCount} contacts utiles), ${indicateurResponsablesCount} responsables indicateur.`,
+    `Seed terminé : ${indicateursSeed.length} indicateurs, ${utilisateursSeed.length} utilisateurs, ${permissionsCount} permissions indicateur, ${referentielsSeed.length} référentiels, ${individusSeed.length} individus, ${liaisonsCount} liaisons indicateur-référentiel, ${relationsSeed.length} relations, ${valeursCount} valeurs écrites, ${objectifsCount} objectifs écrits (créés ou restaurés ; les lignes déjà conformes ne sont pas réécrites), ${valeursHorsJeuCount} valeurs et ${objectifsHorsJeuCount} objectifs hors jeu supprimés,${widgetsSeed.length} widgets, ${widgetLiaisonsCount} liaisons référentiel-widget, ${collectionsSeed.length} collections (${collectionLiaisonsCount} liaisons collection-indicateur, ${collectionPermissionsCount} permissions collection, ${collectionResponsablesCount} responsable collection, ${contactsUtilesCount} contacts utiles), ${indicateurResponsablesCount} responsables indicateur.`,
   )
 }
 
