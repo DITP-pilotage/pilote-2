@@ -8,6 +8,10 @@
       "types": "./src/analytics/index.ts",
       "default": "./src/analytics/index.ts"
     },
+    "./analytics/browser": {
+      "types": "./src/analytics/browser.ts",
+      "default": "./src/analytics/browser.ts"
+    },
     "./texte": {
       "types": "./src/texte.ts",
       "default": "./src/texte.ts"
