@@ -3,6 +3,7 @@ import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
+import { analytics } from '@/analytics'
 import { auth } from '@/auth'
 import { ImportModalProvider } from '@/components/import-valeurs/ImportModalProvider'
 import { ToastProvider } from '@pilote/kpilote-ui/Toast'
@@ -28,6 +29,17 @@ declare module '@tanstack/react-router' {
     router: typeof router
   }
 }
+
+const motifDeRoute = (): string => {
+  const matches = router.state.matches
+  const derniere = matches[matches.length - 1]
+  if (!derniere || derniere.routeId === '__root__') return '/'
+  return derniere.routeId.replace(/\/_[^/]+/g, '') || '/'
+}
+
+router.subscribe('onResolved', () => {
+  analytics.trackPageView({ path: motifDeRoute(), title: document.title })
+})
 
 const root = createRoot(rootElement)
 
