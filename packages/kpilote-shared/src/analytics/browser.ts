@@ -1,7 +1,12 @@
 import { buildEventRequest, buildPageViewRequest } from './buildRequest'
 import type { AnalyticsConfig, AnalyticsEvent, AnalyticsPageView } from './schema'
 
+export type InactiveAnalyticsReason = 'not-configured' | 'disabled' | 'do-not-track'
+
+export type AnalyticsStatus = { active: true } | { active: false; reason: InactiveAnalyticsReason }
+
 export type Analytics = {
+  status: AnalyticsStatus
   trackPageView: (pageView: AnalyticsPageView) => void
   trackEvent: (event: AnalyticsEvent) => void
 }
@@ -13,10 +18,11 @@ export type BrowserAnalyticsOptions = {
   send?: (url: string) => void
 }
 
-const NOOP_ANALYTICS: Analytics = {
+const noopAnalytics = (reason: InactiveAnalyticsReason): Analytics => ({
+  status: { active: false, reason },
   trackPageView: () => {},
   trackEvent: () => {},
-}
+})
 
 const sendBeacon = (url: string): void => {
   if (navigator.sendBeacon(url)) return
@@ -25,7 +31,9 @@ const sendBeacon = (url: string): void => {
 
 export const createBrowserAnalytics = (options: BrowserAnalyticsOptions): Analytics => {
   const { config, enabled, doNotTrack } = options
-  if (!config || !enabled || doNotTrack) return NOOP_ANALYTICS
+  if (!config) return noopAnalytics('not-configured')
+  if (!enabled) return noopAnalytics('disabled')
+  if (doNotTrack) return noopAnalytics('do-not-track')
 
   const send = options.send ?? sendBeacon
   const endpoint = `${config.matomoUrl.replace(/\/$/, '')}/matomo.php`
@@ -39,6 +47,7 @@ export const createBrowserAnalytics = (options: BrowserAnalyticsOptions): Analyt
   }
 
   return {
+    status: { active: true },
     trackPageView: (pageView) => emit(buildPageViewRequest(pageView, config)),
     trackEvent: (event) => emit(buildEventRequest(event, config)),
   }

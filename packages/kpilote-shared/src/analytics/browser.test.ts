@@ -57,6 +57,25 @@ describe('createBrowserAnalytics', () => {
     expect(send).not.toHaveBeenCalled()
   })
 
+  it('expose un statut actif quand rien ne le bloque', () => {
+    expect(createBrowserAnalytics(options({ send: vi.fn() })).status).toEqual({ active: true })
+  })
+
+  it("expose la condition qui l'a éteint", () => {
+    expect(createBrowserAnalytics(options({ config: null })).status).toEqual({
+      active: false,
+      reason: 'not-configured',
+    })
+    expect(createBrowserAnalytics(options({ enabled: false })).status).toEqual({
+      active: false,
+      reason: 'disabled',
+    })
+    expect(createBrowserAnalytics(options({ doNotTrack: true })).status).toEqual({
+      active: false,
+      reason: 'do-not-track',
+    })
+  })
+
   it("n'expose jamais une erreur d'envoi à l'appelant", () => {
     const send = vi.fn(() => {
       throw new Error('réseau indisponible')
