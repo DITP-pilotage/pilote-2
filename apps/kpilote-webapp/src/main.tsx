@@ -1,7 +1,11 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { MutationCache, QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
+import { HTTPError } from 'ky'
 import { createRoot } from 'react-dom/client'
+
+import type { AnalyticsEvent } from '@pilote/kpilote-shared/analytics'
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics'
 
 import { analytics } from '@/analytics'
 import { auth } from '@/auth'
@@ -16,7 +20,44 @@ if (!rootElement) {
   throw new Error('Root element #root not found in index.html')
 }
 
-const queryClient = new QueryClient()
+type AnalyticsMutationMeta = Record<string, unknown> & {
+  analyticsName?: string
+  analyticsSuccess?: AnalyticsEvent
+}
+
+declare module '@tanstack/react-query' {
+  interface Register {
+    mutationMeta: AnalyticsMutationMeta
+  }
+}
+
+const statutErreur = (error: unknown): string =>
+  error instanceof HTTPError ? String(error.response.status) : 'network'
+
+const queryClient = new QueryClient({
+  mutationCache: new MutationCache({
+    onSuccess: (_data, _variables, _onMutateResult, mutation) => {
+      try {
+        const event = mutation.meta?.analyticsSuccess
+        if (event) analytics.trackEvent(event)
+      } catch {
+        // L'analytics ne peut pas casser une mutation.
+      }
+    },
+    onError: (error, _variables, _onMutateResult, mutation) => {
+      try {
+        analytics.trackEvent(
+          analyticsEvents.error.mutation({
+            mutation: mutation.meta?.analyticsName ?? 'inconnue',
+            status: statutErreur(error),
+          }),
+        )
+      } catch {
+        // L'analytics ne peut pas casser une mutation.
+      }
+    },
+  }),
+})
 
 const router = createRouter({
   routeTree,
