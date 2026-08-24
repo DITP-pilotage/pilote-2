@@ -67,16 +67,27 @@ Contrepartie assumée : les visites se fragmentent si l'IP change en cours de se
 promet que « Matomo respectera » le Do Not Track du navigateur. C'est normalement `matomo.js` qui
 l'implémente. En ne le chargeant pas, nous héritons de cette responsabilité.
 
-### 3. Trois conditions d'extinction, décidées au démarrage
+### 3. Quatre conditions d'extinction, décidées au démarrage
 
-`createBrowserEmitter()` retourne soit un émetteur réel, soit un **émetteur mort** dont le
+`createBrowserAnalytics()` retourne soit un émetteur réel, soit un **émetteur mort** dont le
 `track()` ne fait rien. Le choix est fait une fois au boot ; aucun code appelant ne teste jamais
-si l'analytics est branché. On fabrique l'émetteur mort si :
+si l'analytics est branché. On fabrique l'émetteur mort si l'une de ces conditions tient :
 
-- `VITE_MATOMO_URL` ou `VITE_MATOMO_SITE_ID` est absent — critère de validation du Lot 1 :
-  « sans configuration Matomo, aucun appel externe n'est émis » ;
-- le mode est `dev` ou `test` — « ne pas envoyer d'événements en local / test » ;
-- `navigator.doNotTrack` est actif — voir la responsabilité héritée au point 2.
+| Condition | Ce qu'elle protège |
+| --- | --- |
+| `VITE_ANALYTICS_ENABLED` n'est pas `true` | L'intention. Sépare « configuré » de « voulu » : on coupe l'analytics sans perdre la configuration Matomo, et l'état est lisible d'un coup d'œil dans les variables de l'environnement. |
+| `VITE_MATOMO_URL` ou `VITE_MATOMO_SITE_ID` est absent | La cible. Critère de validation du Lot 1 : « sans configuration Matomo, aucun appel externe n'est émis ». |
+| Le build n'est pas un build de production | Le poste de développement. Répond à « ne pas envoyer d'événements en local / test », y compris si quelqu'un copie un `.env` de recette en local. À ne pas confondre avec l'environnement de déploiement : un déploiement de recette est un build de production, donc il émet. |
+| `navigator.doNotTrack` est actif | L'utilisateur. Voir la responsabilité héritée au point 2. |
+
+Une cinquième barrière existe hors de ce code : la CSP n'autorise l'origine Matomo sur
+`connect-src` que si `VITE_MATOMO_URL` est présent côté serveur. `sendBeacon` et le `fetch` de
+repli étant tous deux gouvernés par `connect-src`, le navigateur bloquerait une requête émise par
+un bundle configuré face à un serveur qui ne l'est pas.
+
+**Limite connue :** toute variable `VITE_*` est inlinée au build. Passer
+`VITE_ANALYTICS_ENABLED` à `false` demande donc un redéploiement, pas un redémarrage. Ce n'est pas
+un coupe-circuit d'urgence.
 
 ### 4. Le contexte des événements dégrade au lieu d'échouer
 
@@ -219,7 +230,11 @@ pas la faisabilité :
 
 - combien de slots de dimensions custom sont disponibles sur le site KPilote, et qui peut en
   créer. Priorisation proposée si le quota est serré : `app_area`, `environment`, `auth_state` en
-  scope visite ; `entity_type`, `source` en scope action — soit exactement le quota par défaut ;
+  scope visite ; `entity_type`, `source` en scope action — soit exactement le quota par défaut.
+  Attention, `environment` et `auth_state` ne sont **pas** émises aujourd'hui : `environment`
+  vaudrait `production` sur recette comme en prod, faute d'une notion d'environnement dans
+  l'application, et `auth_state` vaudrait `authenticated` y compris sur `/login`. Elles demandent
+  chacune une décision avant d'exister ;
 - si l'anonymisation d'IP exigée par la CNIL (au moins deux octets masqués) est bien active sur
   ce site.
 

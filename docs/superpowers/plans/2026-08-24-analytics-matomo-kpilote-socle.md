@@ -759,6 +759,7 @@ const envSchema = z.object({
   VITE_API_URL: z.url(),
   VITE_MATOMO_URL: z.url().optional(),
   VITE_MATOMO_SITE_ID: z.string().min(1).optional(),
+  VITE_ANALYTICS_ENABLED: z.stringbool().default(false),
 })
 
 const parsed = envSchema.parse(import.meta.env)
@@ -767,6 +768,7 @@ export const env = {
   apiUrl: parsed.VITE_API_URL,
   matomoUrl: parsed.VITE_MATOMO_URL,
   matomoSiteId: parsed.VITE_MATOMO_SITE_ID,
+  analyticsEnabled: parsed.VITE_ANALYTICS_ENABLED,
 }
 ```
 
@@ -775,14 +777,19 @@ La valeur de `VITE_MATOMO_SITE_ID` se récupère dans l'administration Matomo �
 Dans `apps/kpilote-webapp/.env.example`, ajouter sous la ligne `VITE_API_URL` :
 
 ```
-# Analytics Matomo — laisser vide pour désactiver totalement l'envoi
+# Analytics Matomo — l'envoi n'a lieu que si VITE_ANALYTICS_ENABLED vaut true,
+# que les deux variables ci-dessous sont renseignées, sur un build de production,
+# et si le navigateur n'a pas activé Do Not Track.
+VITE_ANALYTICS_ENABLED=false
 VITE_MATOMO_URL=https://stats.beta.gouv.fr
 VITE_MATOMO_SITE_ID=
 ```
 
 - [ ] **Step 2: Créer l'instance applicative**
 
-Les trois conditions d'extinction sont évaluées ici, une fois, au chargement du module. La dimension `auth_state` du plan de taggage n'est volontairement pas renseignée : elle vaudrait `authenticated` y compris sur `/login` et `/mentions-legales`. Elle viendra avec le lot qui en a besoin.
+Les quatre conditions d'extinction sont évaluées ici, une fois, au chargement du module.
+
+Deux dimensions du plan de taggage ne sont volontairement pas renseignées. `auth_state` vaudrait `authenticated` y compris sur `/login` et `/mentions-legales`. `environment` vaudrait `production` sur recette comme en prod, `import.meta.env.MODE` étant une notion Vite — elle ne distingue que le serveur de développement local d'un build — et l'application n'ayant aucune notion d'environnement de déploiement. Chacune demande une décision avant d'exister ; les envoyer fausses serait pire que de les omettre.
 
 ```ts
 // apps/kpilote-webapp/src/analytics.ts
@@ -803,14 +810,13 @@ const config: AnalyticsConfig | null =
         appUrl: window.location.origin,
         globalContexte: {
           app_area: 'webapp',
-          environment: import.meta.env.MODE,
         },
       }
     : null
 
 export const analytics = createBrowserAnalytics({
   config,
-  enabled: import.meta.env.PROD,
+  enabled: import.meta.env.PROD && env.analyticsEnabled,
   doNotTrack: respecteDoNotTrack(),
 })
 ```

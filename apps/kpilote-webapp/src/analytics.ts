@@ -15,13 +15,12 @@ const config: AnalyticsConfig | null =
         appUrl: window.location.origin,
         globalContexte: {
           app_area: 'webapp',
-          environment: import.meta.env.MODE,
         },
       }
     : null
 
 export const analytics = createBrowserAnalytics({
   config,
-  enabled: import.meta.env.PROD,
+  enabled: import.meta.env.PROD && env.analyticsEnabled,
   doNotTrack: respecteDoNotTrack(),
 })
