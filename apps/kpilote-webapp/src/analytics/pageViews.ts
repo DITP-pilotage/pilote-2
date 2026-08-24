@@ -12,8 +12,11 @@ const routePattern = (router: AnyRouter): string => {
   return last.routeId.replace(/\/_[^/]+/g, '') || '/'
 }
 
+// `title` n'est volontairement pas envoyé : la SPA ne met pas `document.title`
+// à jour selon la route, le rapport Titres de page de Matomo n'aurait donc
+// qu'une seule ligne. À rebrancher avec PIL-1724, qui donne un titre par route.
 export const trackPageViews = (router: AnyRouter): void => {
   router.subscribe('onResolved', () => {
-    analytics.trackPageView({ path: routePattern(router), title: document.title })
+    analytics.trackPageView({ path: routePattern(router) })
   })
 }
