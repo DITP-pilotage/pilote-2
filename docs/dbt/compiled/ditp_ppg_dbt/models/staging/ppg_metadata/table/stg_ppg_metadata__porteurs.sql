@@ -13,8 +13,7 @@ renamed AS (
         porteur_short AS acronyme,
         porteur_name AS nom,
         porteur_desc AS description,
-        porteur_type_id,
-        porteur_type_short AS porteur_type_acronyme,
+        porteur_type AS porteur_type_acronyme,
         porteur_directeur AS directeur,
         porteur_name_short AS nom_court,
         porteur_picto AS icone
