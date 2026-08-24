@@ -12,6 +12,12 @@
 
 **Ticket :** PIL-1712 « Lot 1 - Mettre en place le socle Matomo ».
 
+> **État : plan exécuté.** Les extraits de code ci-dessous décrivent l'implémentation initiale.
+> La revue de code a ensuite fait passer tout le nommage interne en anglais, supprimé le barrel
+> `index.ts` au profit d'un sous-chemin d'import par fichier, et sorti le câblage de `main.tsx`
+> vers `apps/kpilote-webapp/src/analytics/`. La source de vérité est le code ; ce plan reste
+> utile pour son raisonnement et pour son annexe sur l'administration Matomo.
+
 ## Global Constraints
 
 - **Le noyau est pur.** Aucun `window`, `navigator`, `document` ni `import.meta.env` dans `packages/kpilote-shared/src/analytics/schema.ts`, `buildRequest.ts` et `events.ts`. La configuration arrive en argument.

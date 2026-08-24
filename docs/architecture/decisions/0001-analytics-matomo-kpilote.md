@@ -41,9 +41,11 @@ Enfin, une demande hors ticket a été formulée en séance : pouvoir marquer qu
 ### 1. Un noyau pur partagé, des émetteurs séparés
 
 Le vocabulaire de mesure et la traduction vers le protocole Matomo vivent dans un noyau **pur**,
-dans `packages/kpilote-shared/src/analytics/` : schéma typé (catégories, actions, dimensions),
-catalogue des événements du plan de taggage, et `buildTrackingRequest` qui transforme un
-événement en query string Matomo.
+dans `packages/kpilote-shared/src/analytics/` : `schema.ts` (catégories, actions, types),
+`events.ts` (le catalogue des événements du plan de taggage) et `buildRequest.ts`
+(`buildEventRequest` et `buildPageViewRequest`, qui transforment un événement en query string
+Matomo). Pas de barrel : chaque module est exposé par son propre sous-chemin d'import, comme les
+autres modules de `kpilote-shared`.
 
 Le noyau ne référence ni `window`, ni `navigator`, ni `document`, et reçoit sa configuration en
 argument plutôt que de lire `import.meta.env`. C'est la seule propriété nécessaire pour qu'un
@@ -145,6 +147,10 @@ Deux branchements couvrent la majorité des trente événements sans modifier un
 
 Le reste — `switch`, `filter`, `search` — passe par un `track()` explicite : ce sont des
 changements d'état, sans point d'accroche automatique honnête.
+
+Ces branchements vivent dans `apps/kpilote-webapp/src/analytics/`, un fichier par responsabilité :
+`tracker.ts` porte l'instance, `pageViews.ts` la souscription au router, `mutationCache.ts` le
+`MutationCache` et le typage du `meta`. `main.tsx` ne garde que deux lignes d'assemblage.
 
 **Écarté :** une délégation d'événements par attributs `data-*`. Elle ne servirait qu'à porter la
 dimension `source` sur `indicateur.open` / `collection.open`, ce qu'un `track()` sur le `Link`
