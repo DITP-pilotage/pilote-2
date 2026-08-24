@@ -7,6 +7,7 @@ type ChantierIdentite = {
   axe: string;
   ppg: string;
   ministeres: string[];
+  mailles_applicables: string[];
 };
 
 type SyntheseResultat = {
@@ -110,6 +111,7 @@ export class GetChantiersQuery {
           axe: ct.chantier_identite.axe,
           ppg: ct.chantier_identite.ppg,
           ministeres: ct.chantier_identite.ministeres_acronymes,
+          mailles_applicables: ct.chantier_identite.mailles_applicables,
         },
         meteo: ct.meteo,
         tendance: ct.tendance,
