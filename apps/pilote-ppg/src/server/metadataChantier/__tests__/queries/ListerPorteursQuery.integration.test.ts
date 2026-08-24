@@ -36,7 +36,7 @@ describe("ListerPorteursQuery", () => {
             porteur_id: "DAC-A",
             porteur_short: "DAC A court",
             porteur_name: "DAC A long",
-            porteur_type_short: "DAC",
+            porteur_type: "DAC",
           },
         });
         await prisma.metadata_porteurs.create({
@@ -44,7 +44,7 @@ describe("ListerPorteursQuery", () => {
             porteur_id: "MIN-A",
             porteur_short: "MIN A court",
             porteur_name: "Ministère A",
-            porteur_type_short: "MIN",
+            porteur_type: "MIN",
           },
         });
 
@@ -69,7 +69,7 @@ describe("ListerPorteursQuery", () => {
             porteur_id: "MIN-B",
             porteur_short: "B court",
             porteur_name: "Ministère B",
-            porteur_type_short: "MIN",
+            porteur_type: "MIN",
           },
         });
         await prisma.metadata_porteurs.create({
@@ -77,7 +77,7 @@ describe("ListerPorteursQuery", () => {
             porteur_id: "MIN-A",
             porteur_short: "A court",
             porteur_name: "Ministère A",
-            porteur_type_short: "MIN",
+            porteur_type: "MIN",
           },
         });
         await prisma.metadata_porteurs.create({
@@ -86,7 +86,7 @@ describe("ListerPorteursQuery", () => {
             porteur_id: "DAC-X",
             porteur_short: "DAC X",
             porteur_name: "DAC X",
-            porteur_type_short: "DAC",
+            porteur_type: "DAC",
           },
         });
 
@@ -111,7 +111,7 @@ describe("ListerPorteursQuery", () => {
             porteur_id: "DAC-B",
             porteur_short: "DAC B court",
             porteur_name: "DAC B long",
-            porteur_type_short: "DAC",
+            porteur_type: "DAC",
           },
         });
         await prisma.metadata_porteurs.create({
@@ -119,7 +119,7 @@ describe("ListerPorteursQuery", () => {
             porteur_id: "DAC-A",
             porteur_short: "DAC A court",
             porteur_name: "DAC A long",
-            porteur_type_short: "DAC",
+            porteur_type: "DAC",
           },
         });
         await prisma.metadata_porteurs.create({
@@ -128,7 +128,7 @@ describe("ListerPorteursQuery", () => {
             porteur_id: "MIN-X",
             porteur_short: "MIN X",
             porteur_name: "MIN X",
-            porteur_type_short: "MIN",
+            porteur_type: "MIN",
           },
         });
 
@@ -149,11 +149,11 @@ describe("ListerPorteursQuery", () => {
         // Given
         await fixtures.metadataPorteur({
           porteur_id: "20001",
-          porteur_type_short: "MIN",
+          porteur_type: "MIN",
         });
         await fixtures.metadataPorteur({
           porteur_id: "20002",
-          porteur_type_short: "MIN",
+          porteur_type: "MIN",
           deleted_at: new Date("2026-01-01"),
         });
 

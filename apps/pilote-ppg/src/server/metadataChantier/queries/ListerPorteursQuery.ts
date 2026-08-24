@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import type { Inject } from "@/server/metadataChantier/module";
 
@@ -6,8 +7,6 @@ export interface PorteurOption {
   label: string;
 }
 
-type PorteurType = "MIN" | "DAC";
-
 export class ListerPorteursQuery {
   private readonly prisma: PrismaPilote;
 
@@ -15,13 +14,15 @@ export class ListerPorteursQuery {
     this.prisma = prisma;
   }
 
-  async run({ type }: { type?: PorteurType } = {}): Promise<PorteurOption[]> {
+  async run({ type }: { type?: $Enums.porteur_type } = {}): Promise<
+    PorteurOption[]
+  > {
     const porteurs = await this.prisma
       .getInstance()
       .metadata_porteurs.findMany({
         where: {
           deleted_at: null,
-          ...(type ? { porteur_type_short: type } : {}),
+          ...(type ? { porteur_type: type } : {}),
         },
         orderBy: { porteur_id: "asc" },
       });

@@ -15,7 +15,7 @@ export const defaultPorteurVide = (porteurId: string): PorteurForm => ({
   porteurShort: "",
   porteurName: "",
   porteurDesc: null,
-  porteurTypeShort: "MIN",
+  porteurType: "MIN",
   porteurDirecteur: null,
   porteurNameShort: null,
   porteurPicto: null,

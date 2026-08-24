@@ -1,3 +1,4 @@
+import { $Enums } from "@prisma/client";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -5,11 +6,10 @@ import Loader from "@/components/_commons/Loader/Loader";
 import { Lien } from "@/components/_commons/Lien/Lien";
 import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
-import type { PorteurTypeShort } from "@/server/metadataPorteur/handlers/EnregistrerPorteurHandler";
 import type { PorteurAdminListItem } from "@/server/metadataPorteur/queries/ListerPorteursAdminQuery";
 
 const TYPE_BADGE: Record<
-  PorteurTypeShort,
+  $Enums.porteur_type,
   { label: string; className: string }
 > = {
   MIN: {
@@ -19,6 +19,10 @@ const TYPE_BADGE: Record<
   DAC: {
     label: "DAC",
     className: "bg-purple-50 text-purple-700 ring-1 ring-inset ring-purple-200",
+  },
+  DI: {
+    label: "DI",
+    className: "bg-green-50 text-green-700 ring-1 ring-inset ring-green-200",
   },
   AUTRE: {
     label: "Autre",
@@ -30,8 +34,8 @@ const LignePorteur = ({ porteur }: { porteur: PorteurAdminListItem }) => {
   const router = useRouter();
   const supprimé = porteur.deletedAt !== null;
   const typeBadge =
-    porteur.porteurTypeShort && porteur.porteurTypeShort in TYPE_BADGE
-      ? TYPE_BADGE[porteur.porteurTypeShort as PorteurTypeShort]
+    porteur.porteurType && porteur.porteurType in TYPE_BADGE
+      ? TYPE_BADGE[porteur.porteurType]
       : null;
   return (
     <tr
