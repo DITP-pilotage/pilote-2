@@ -1,6 +1,16 @@
 import { run } from './shell.mjs'
 
-/** Périmètre des bumps : kpilote uniquement. pilote-ppg n'est jamais touché. */
+/**
+ * Périmètre des bumps : kpilote uniquement. pilote-ppg n'est jamais touché.
+ *
+ * Le périmètre doit couvrir TOUS les workspaces kpilote, y compris ceux qui n'ont pas de
+ * tsc à eux. Un package laissé hors filtre garde ses ranges figés pendant que les apps
+ * montent : la dépendance se dédouble dans l'arbre, et une augmentation de type appliquée
+ * à une instance ne vaut plus pour l'autre. Concrètement, oublier kpilote-shared ici a
+ * laissé zod en 4.3.6 côté shared face à 4.4.3 côté apps, et `.openapi()` de
+ * @hono/zod-openapi a disparu de tous les schémas venus de shared — 160 erreurs tsc sur
+ * kpilote-api, attribuées à tort au lot in-range.
+ */
 export const FILTRES_KPILOTE = [
   '--filter',
   '@pilote/kpilote-api',
@@ -10,6 +20,8 @@ export const FILTRES_KPILOTE = [
   '@pilote/kpilote-admin',
   '--filter',
   '@pilote/kpilote-ui',
+  '--filter',
+  '@pilote/kpilote-shared',
 ]
 
 /**
