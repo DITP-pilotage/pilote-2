@@ -226,7 +226,7 @@
     "react-dom": "^19.2.8",
     "react-hook-form": "^7.85.0",
     "tailwind-merge": "^3.6.0",
-    "typescript": "6.0.3",
+    "typescript": "7.0.2",
     "vitest": "^4.1.10"
   }
 }
