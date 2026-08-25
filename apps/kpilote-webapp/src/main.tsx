@@ -3,6 +3,8 @@ import { createRouter, RouterProvider } from '@tanstack/react-router'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 
+import { createAnalyticsMutationCache } from '@/analytics/mutationCache'
+import { trackPageViews } from '@/analytics/pageViews'
 import { auth } from '@/auth'
 import { ImportModalProvider } from '@/components/import-valeurs/ImportModalProvider'
 import { ToastProvider } from '@pilote/kpilote-ui/Toast'
@@ -15,7 +17,7 @@ if (!rootElement) {
   throw new Error('Root element #root not found in index.html')
 }
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({ mutationCache: createAnalyticsMutationCache() })
 
 const router = createRouter({
   routeTree,
@@ -28,6 +30,8 @@ declare module '@tanstack/react-router' {
     router: typeof router
   }
 }
+
+trackPageViews(router)
 
 const root = createRoot(rootElement)
 

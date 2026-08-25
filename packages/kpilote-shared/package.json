@@ -4,6 +4,22 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./analytics/schema": {
+      "types": "./src/analytics/schema.ts",
+      "default": "./src/analytics/schema.ts"
+    },
+    "./analytics/buildRequest": {
+      "types": "./src/analytics/buildRequest.ts",
+      "default": "./src/analytics/buildRequest.ts"
+    },
+    "./analytics/events": {
+      "types": "./src/analytics/events.ts",
+      "default": "./src/analytics/events.ts"
+    },
+    "./analytics/browser": {
+      "types": "./src/analytics/browser.ts",
+      "default": "./src/analytics/browser.ts"
+    },
     "./texte": {
       "types": "./src/texte.ts",
       "default": "./src/texte.ts"
@@ -138,6 +154,8 @@
   ],
   "scripts": {
     "lint": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
@@ -145,6 +163,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "vitest": "^4.1.9"
   }
 }

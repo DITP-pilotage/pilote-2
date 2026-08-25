@@ -228,6 +228,24 @@ jobs:
         env:
           APP_PACKAGE: '@pilote/kpilote-webapp'
 
+  test-kpilote-shared:
+    name: Run tests for kpilote-shared
+    needs: changes
+    if: needs.changes.outputs['kpilote-shared'] == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node and packages
+        uses: ./.github/actions/setupNodeAndPackages
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Run test command
+        run: pnpm test
+        env:
+          APP_PACKAGE: '@pilote/kpilote-shared'
+
   lint-kpilote-shared:
     name: Run linters for kpilote-shared
     needs: changes

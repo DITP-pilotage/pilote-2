@@ -5,6 +5,9 @@ import { authRouter } from '@/server/auth/router'
 import { serverEnv } from '@/server/env'
 
 const apiOrigin = new URL(serverEnv.VITE_API_URL).origin
+const matomoOrigin = serverEnv.VITE_MATOMO_URL
+  ? new URL(serverEnv.VITE_MATOMO_URL).origin
+  : undefined
 
 export const app = new Hono()
 
@@ -18,7 +21,7 @@ app.use(
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", 'data:'],
       fontSrc: ["'self'", 'data:'],
-      connectSrc: ["'self'", apiOrigin],
+      connectSrc: ["'self'", apiOrigin, ...(matomoOrigin ? [matomoOrigin] : [])],
       frameAncestors: ["'none'"],
       baseUri: ["'self'"],
       formAction: ["'self'"],
