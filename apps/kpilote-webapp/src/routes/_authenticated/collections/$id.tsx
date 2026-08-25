@@ -3,9 +3,12 @@ import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
 import { collectionPublicIdSchema } from '@pilote/kpilote-shared/publicIds'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
-import { startTransition, Suspense } from 'react'
+import { Suspense, startTransition, useEffect } from 'react'
 import { z } from 'zod'
 
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
+
+import { analytics } from '@/analytics/tracker'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { SectionCommentaire } from '@/components/commentaires/SectionCommentaire'
@@ -104,6 +107,30 @@ function CollectionDetailComponent() {
     .map((indicateurId) => indicateurById.get(indicateurId))
     .filter((i): i is NonNullable<typeof i> => i !== undefined)
 
+  // Emis aussi a l'arrivee sur la page, pas seulement au changement d'onglet :
+  // un lien profond ou l'onglet par defaut sont des consultations.
+  useEffect(() => {
+    if (search.onglet === 'gouvernance') {
+      analytics.trackEvent(analyticsEvents.collection.gouvernanceView({ entity_id: id }))
+      return
+    }
+    if (search.onglet === 'resultats') {
+      analytics.trackEvent(
+        analyticsEvents.collection.resultatsView({
+          entity_id: id,
+          indicateurs_count: orderedIndicateurs.length,
+        }),
+      )
+      return
+    }
+    analytics.trackEvent(
+      analyticsEvents.commentaire.sectionView({
+        entity_type: 'collection',
+        section: search.onglet,
+      }),
+    )
+  }, [id, search.onglet, orderedIndicateurs.length])
+
   const back = (
     <BackLink asChild>
       <Link
@@ -125,6 +152,7 @@ function CollectionDetailComponent() {
       <Tabs
         value={search.onglet}
         onValueChange={(onglet) => {
+          analytics.trackEvent(analyticsEvents.collection.onglet({ entity_id: id, onglet }))
           void navigate({
             search: (prev) => ({ ...prev, onglet: onglet as typeof search.onglet }),
           })
@@ -148,6 +176,9 @@ function CollectionDetailComponent() {
                     referentielIds={referentielIds}
                     value={search.individu}
                     onChange={({ individu, referentiel }) => {
+                      analytics.trackEvent(
+                        analyticsEvents.collection.individuChange({ referentiel_id: referentiel }),
+                      )
                       startTransition(() => {
                         void navigate({
                           search: (prev) => ({ ...prev, individu, referentiel }),
@@ -174,6 +205,7 @@ function CollectionDetailComponent() {
                     key={indicateur.id}
                     indicateur={indicateur}
                     source="collection"
+                    collectionId={id}
                     {...(cardContext ? { context: cardContext } : {})}
                   />
                 ))}

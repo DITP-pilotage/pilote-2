@@ -19,10 +19,12 @@ export function IndicateurCard({
   indicateur,
   context,
   source,
+  collectionId,
 }: {
   indicateur: Pick<IndicateurApiModel, 'id' | 'nom' | 'unite'>
   context?: IndicateurCardContext | undefined
   source: AnalyticsSource
+  collectionId?: string | undefined
 }) {
   return (
     <EntityCard
@@ -46,7 +48,11 @@ export function IndicateurCard({
         search={context ?? {}}
         onClick={() =>
           analytics.trackEvent(
-            analyticsEvents.indicateur.open({ entity_id: indicateur.id, source }),
+            analyticsEvents.indicateur.open({
+              entity_id: indicateur.id,
+              source,
+              ...(collectionId ? { collection_id: collectionId } : {}),
+            }),
           )
         }
       />
