@@ -1,4 +1,5 @@
 import type { IndicateurApiModel } from '@pilote/kpilote-shared/indicateur'
+import { analyticsEvents, type AnalyticsSource } from '@pilote/kpilote-shared/analytics/events'
 import { Link } from '@tanstack/react-router'
 import { Suspense } from 'react'
 
@@ -6,6 +7,7 @@ import {
   IndicateurAvancement,
   IndicateurAvancementSkeleton,
 } from '@/components/indicateurs/IndicateurAvancement'
+import { analytics } from '@/analytics/tracker'
 import { EntityCard } from '@pilote/kpilote-ui/EntityCard'
 
 export type IndicateurCardContext = {
@@ -16,9 +18,11 @@ export type IndicateurCardContext = {
 export function IndicateurCard({
   indicateur,
   context,
+  source,
 }: {
   indicateur: Pick<IndicateurApiModel, 'id' | 'nom' | 'unite'>
   context?: IndicateurCardContext | undefined
+  source: AnalyticsSource
 }) {
   return (
     <EntityCard
@@ -36,7 +40,16 @@ export function IndicateurCard({
         ) : undefined
       }
     >
-      <Link to="/indicateurs/$id" params={{ id: indicateur.id }} search={context ?? {}} />
+      <Link
+        to="/indicateurs/$id"
+        params={{ id: indicateur.id }}
+        search={context ?? {}}
+        onClick={() =>
+          analytics.trackEvent(
+            analyticsEvents.indicateur.open({ entity_id: indicateur.id, source }),
+          )
+        }
+      />
     </EntityCard>
   )
 }

@@ -5,7 +5,9 @@ import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { startTransition } from 'react'
 import { z } from 'zod'
 
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 import { DashboardSwitch } from '@/components/DashboardSwitch'
+import { analytics } from '@/analytics/tracker'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { CollectionCard } from '@/components/collections/CollectionCard'
@@ -84,6 +86,9 @@ function CollectionsListComponent() {
                 referentielIds={referentielIds}
                 value={search.individu}
                 onChange={({ individu, referentiel }) => {
+                  analytics.trackEvent(
+                    analyticsEvents.dashboard.individuChange({ referentiel_id: referentiel }),
+                  )
                   startTransition(() => {
                     void navigate({
                       search: (prev) => ({ ...prev, individu, referentiel }),
@@ -109,7 +114,12 @@ function CollectionsListComponent() {
         ) : (
           <CardGrid>
             {data.items.map((collection) => (
-              <CollectionCard key={collection.id} collection={collection} context={cardContext} />
+              <CollectionCard
+                key={collection.id}
+                collection={collection}
+                context={cardContext}
+                source="dashboard"
+              />
             ))}
           </CardGrid>
         )}
@@ -118,10 +128,23 @@ function CollectionsListComponent() {
           hasNext={data.pagination.hasMore}
           onNext={() => {
             const next = data.pagination.cursor
-            if (next) void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
+            if (!next) return
+            analytics.trackEvent(
+              analyticsEvents.dashboard.paginationNext({
+                entity_type: 'collection',
+                page_size: search.pageSize ?? DEFAULT_PAGE_SIZE,
+              }),
+            )
+            void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
           }}
           pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE}
           onPageSizeChange={(pageSize) => {
+            analytics.trackEvent(
+              analyticsEvents.dashboard.paginationSize({
+                entity_type: 'collection',
+                page_size: pageSize,
+              }),
+            )
             void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
           }}
         />
