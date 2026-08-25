@@ -4,9 +4,12 @@ import { referentielPublicIdSchema } from '@pilote/kpilote-shared/referentiel'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
 import { Upload } from 'lucide-react'
-import { startTransition, useCallback } from 'react'
+import { startTransition, useCallback, useEffect } from 'react'
 import { z } from 'zod'
 
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
+
+import { analytics } from '@/analytics/tracker'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurMetadonnees } from '@/components/indicateurs/IndicateurMetadonnees'
@@ -92,6 +95,28 @@ function IndicateurDetailComponent() {
   const { data: indicateur } = useSuspenseQuery(indicateurQueryOptions(id))
   useRecordVisit({ type: 'indicateur', id: indicateur.id, label: indicateur.nom })
 
+  // Les événements de consultation partent aussi à l'arrivée sur la page, pas
+  // seulement au changement d'onglet : un lien profond ou l'onglet par défaut
+  // sont des consultations que le seul `switch` manquerait.
+  useEffect(() => {
+    analytics.trackEvent(
+      search.onglet === 'metadonnees'
+        ? analyticsEvents.indicateur.metadonneesView({ entity_id: id })
+        : analyticsEvents.indicateur.resultatsView({ entity_id: id }),
+    )
+  }, [id, search.onglet])
+
+  useEffect(() => {
+    if (search.onglet !== 'resultats') return
+    if (search.sousOnglet !== 'confiance' && search.sousOnglet !== 'commentaire') return
+    analytics.trackEvent(
+      analyticsEvents.commentaire.sectionView({
+        entity_type: 'indicateur',
+        section: search.sousOnglet,
+      }),
+    )
+  }, [search.onglet, search.sousOnglet])
+
   const canWrite = useCanWriteDataIndicateur(id)
   const { open, target } = useImportModal()
 
@@ -152,6 +177,7 @@ function IndicateurDetailComponent() {
       <Tabs
         value={search.onglet}
         onValueChange={(onglet) => {
+          analytics.trackEvent(analyticsEvents.indicateur.onglet({ entity_id: id, onglet }))
           void navigate({
             search: (prev) => ({ ...prev, onglet: onglet as typeof search.onglet }),
           })
@@ -171,6 +197,9 @@ function IndicateurDetailComponent() {
                 referentielIds={referentielIds}
                 value={individuId}
                 onChange={({ individu, referentiel }) => {
+                  analytics.trackEvent(
+                    analyticsEvents.indicateur.individuChange({ referentiel_id: referentiel }),
+                  )
                   startTransition(() => {
                     void navigate({
                       search: (prev) => ({ ...prev, individu, referentiel }),
