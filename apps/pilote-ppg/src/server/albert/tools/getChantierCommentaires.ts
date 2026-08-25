@@ -14,7 +14,7 @@ export const getChantierCommentairesInputSchema = z.object({
     .optional()
     .default(false)
     .describe(
-      "Si true, inclut les commentaires des sous-territoires (ex: départements d'une région, ou toutes les régions depuis NAT-FR). Les objectifs du chantier ne sont retournés que pour le territoire principal puisqu'ils ne sont pas territorialisés.",
+      "Si true, inclut les contenus des sous-territoires (ex: départements d'une région, ou toutes les régions depuis NAT-FR).",
     ),
 });
 
@@ -23,7 +23,7 @@ export type GetChantierCommentairesOutput = {
   _output_instructions: string;
 };
 
-const OUTPUT_INSTRUCTIONS = `Restitue chaque commentaire avec sa date, son auteur et son contenu verbatim, sans reformulation ni interprétation. Les contenus sont en HTML : extrais uniquement le texte (sans les balises) tout en conservant la formulation d'origine. Regroupe par type ou trie par date selon la demande de l'utilisateur. Ne reformule ou ne synthétise que si l'utilisateur le demande explicitement.`;
+const OUTPUT_INSTRUCTIONS = `Restitue chaque contenu avec sa date et son texte verbatim, sans reformulation ni interprétation. Regroupe par type ou trie par date selon la demande de l'utilisateur. Ne reformule ou ne synthétise que si l'utilisateur le demande explicitement.`;
 
 export function createGetChantierCommentairesTool({
   getChantierCommentairesQuery,
@@ -34,18 +34,39 @@ export function createGetChantierCommentairesTool({
 }) {
   return ({ territoiresAccessibles }: { territoiresAccessibles: string[] }) => {
     return tool({
-      description: `Récupère les contenus textuels publiés rattachés à un chantier sur un territoire donné (uniquement les contenus publiés — les brouillons sont exclus).
-Quand include_sous_territoires=true, retourne aussi les commentaires de chaque sous-territoire.
+      description: `Récupère les contenus qualitatifs publiés d'un chantier sur un territoire donné (brouillons exclus).
+Quand include_sous_territoires=true, retourne aussi les contenus de chaque sous-territoire (régions depuis NAT-FR, départements depuis une région).
 
-Chaque résultat porte un champ \`type\` permettant de distinguer la nature du contenu :
-- \`synthese_des_resultats\` : commentaire d'analyse accompagnant la météo de la synthèse du chantier sur le territoire
-- \`commentaires_sur_les_donnees\` : commentaires explicatifs sur les données du chantier sur le territoire
-- \`freins_a_lever\` : risques et freins à lever identifiés sur le territoire
-- \`actions_a_venir\` : solutions et actions à venir prévues sur le territoire
-- \`actions_a_valoriser\` : exemples concrets de réussite à valoriser sur le territoire
-- \`autres_resultats_obtenus_non_correles_aux_indicateurs\` : autres résultats obtenus non corrélés aux indicateurs sur le territoire
+Chaque résultat expose sa \`maille\` ("nationale", "régionale" ou "départementale") et contient trois catégories :
 
-Utilise cet outil quand l'utilisateur demande l'analyse qualitative ou contextuelle d'un chantier sur un territoire : freins, actions, réussites ou commentaires explicatifs. Pour les objectifs stratégiques du chantier (ambition, ce qui a été fait, ce qu'il reste à faire), utilise \`get_chantier_objectifs\`.`,
+---
+
+**\`synthese_des_resultats\`** (toutes mailles) — bilan global du chantier sur le territoire à une date donnée.
+- \`meteo\` : niveau de confiance dans l'atteinte des objectifs. Valeurs possibles : SOLEIL (Objectifs sécurisés), COUVERT (Objectifs atteignables), NUAGE (Appuis nécessaires), ORAGE (Objectifs compromis), NON_RENSEIGNEE, NON_NECESSAIRE.
+- \`contenu\` : analyse textuelle associée à la météo. Peut être null si seule la météo a été renseignée.
+
+---
+
+**\`commentaires\`** — contenus détaillés, dont la nature dépend de la maille :
+
+Maille nationale uniquement :
+- \`autres_resultats_obtenus_non_correles_aux_indicateurs\` : résultats importants obtenus sur le chantier qui ne transparaissent pas dans les indicateurs de mesure
+- \`freins_a_lever\` : principaux risques et freins identifiés, notamment ceux nécessitant un soutien ou un arbitrage de niveau national
+- \`actions_a_venir\` : solutions envisagées et actions initiées ou prévues pour lever les freins ou accélérer
+- \`actions_a_valoriser\` : exemples concrets de réussite à partager et à valoriser
+
+Maille régionale et départementale uniquement :
+- \`commentaires_sur_les_donnees\` : explication des résultats du territoire, des écarts éventuels avec d'autres territoires ou avec la moyenne nationale
+- \`autres_resultats_obtenus\` : résultats locaux significatifs qui ne transparaissent pas dans les chiffres des indicateurs
+
+---
+
+**\`decisions_strategiques\`** (uniquement NAT-FR) — décisions prises lors des réunions de suivi Élysée-Matignon et actions envisagées ou réalisées en conséquence. Ce champ est vide pour tout territoire non national ou si l'utilisateur n'a pas accès au niveau national.
+
+---
+
+Utilise cet outil quand l'utilisateur demande l'analyse qualitative d'un chantier : météo, freins, actions, réussites, commentaires sur les données ou décisions stratégiques.
+Pour les objectifs stratégiques du chantier (ambition politique, ce qui a été fait, ce qu'il reste à faire), utilise \`get_chantier_objectifs\`.`,
       inputSchema: getChantierCommentairesInputSchema,
       execute: async (input): Promise<GetChantierCommentairesOutput> => {
         if (!territoiresAccessibles.includes(input.territoire_code)) {
