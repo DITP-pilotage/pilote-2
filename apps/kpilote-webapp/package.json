@@ -27,7 +27,7 @@
     "test:watch": "tsr generate && vitest"
   },
   "dependencies": {
-    "@hono/node-server": "^1.19.17",
+    "@hono/node-server": "2.1.0",
     "@hookform/resolvers": "^5.7.1",
     "@js-temporal/polyfill": "^0.5.1",
     "@pilote/kpilote-shared": "workspace:*",

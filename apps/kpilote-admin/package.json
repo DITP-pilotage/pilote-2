@@ -34,7 +34,7 @@
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@hono/node-server": "^1.19.17",
+    "@hono/node-server": "2.1.0",
     "@hono/zod-validator": "^0.8.0",
     "@hookform/resolvers": "^5.7.1",
     "@pilote/kpilote-shared": "workspace:*",
