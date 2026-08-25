@@ -139,11 +139,49 @@ apps déclarent `"2.1.0"` dans leur manifeste et **le lockfile installe 1.19.17*
 > `context.body(null, 204)` de `kpilote-api` ; `serveStatic` + `compress()` des `src/server/index.ts`
 > de webapp et admin.
 
+#### `pnpm audit` au 2026-08-25 : 41 → 33 (0 critical, 14 high, 16 moderate, 3 low)
+
+Réparti par app, **3 advisories sur 33 touchent kpilote** — le reste est dans `pilote-ppg`
+(25) et `pilote-ppg-auth` (5), tous deux hors périmètre de la campagne :
+
+| App | Advisories | Détail |
+|---|---|---|
+| `apps/pilote-ppg` | 11 high, 12 moderate, 2 low | hors périmètre |
+| `apps/pilote-ppg-auth` | 4 moderate, 1 low | hors périmètre, **et bumpé par personne** |
+| `apps/kpilote-webapp` | 2 high | `xlsx` — **aucun patch** (`patched: <0.0.0`), résiduel déjà assumé |
+| `apps/kpilote-api` | 1 high | `deepmerge-ts@7.1.5` (requiert `>=8.0.0`), via `@prisma/config`. **Préexistant** : déjà présent dans le lockfile de `dev`. Sortie : bump amont de Prisma, ou override `>=8.0.0` (non testé — `@prisma/config` pourrait ne pas le supporter) |
+
+#### 🔴 Quatre planchers d'overrides sont repassés SOUS l'advisory qu'ils corrigeaient
+
+Le motif décrit pour `hono` au 2026-07-17 (« le plancher est **sous** le plancher réel des
+advisories ») n'était pas un accident : il se reproduit dès qu'une advisory est révisée à la
+hausse après la pose de l'override. **À vérifier systématiquement à chaque campagne.**
+
+| Override | Plancher posé | Advisory exige | Installé |
+|---|---|---|---|
+| `brace-expansion@<2` | `>=1.1.16` | **`>=1.1.18`** | **1.1.16** ❌ |
+| `brace-expansion@>=5 <6` | `>=5.0.7` | **`>=5.0.9`** | **5.0.7** ❌ |
+| `hono` | `>=4.12.25` | **`>=4.12.34`** | 4.12.27 ❌ (ppg-auth) |
+| `@hono/node-server` | `>=1.19.13` | **`>=1.19.15`** | 1.19.14 ❌ (ppg-auth) |
+
+> Note : la ligne `brace-expansion@>=5 <6` demandait `>=5.0.8` en juillet. L'advisory a depuis
+> été révisée à `>=5.0.9` — d'où l'intérêt de relire le `patched_versions` réel plutôt que la
+> consigne écrite la campagne précédente.
+
+**`brace-expansion@<2` est la démonstration la plus nette de « un override inerte n'est pas
+inoffensif »** : le banc d'essai mesure que **sans** l'override la résolution monte à **1.1.18**
+(saine), alors qu'**avec** lui le lockfile conserve **1.1.16** (high). Le plancher est assez bas
+pour tolérer la version vulnérable, et rien ne force la re-résolution puisque `ppg` est hors du
+filtre kpilote. L'override ne *cause* pas la vulnérabilité — mais son absence l'aurait corrigée.
+
+Même effet pour `@hono/node-server` : le retirer (sa condition de sortie est remplie, cf. plus
+haut) ferait remonter `ppg-auth` au-dessus du plancher de l'advisory par son propre caret.
+
 #### Conditions de sortie échues et non appliquées
 
 | Override | Plancher actuel | Ce que le doc demandait | État au 2026-08-25 |
 |---|---|---|---|
-| `brace-expansion@>=5 <6` | `>=5.0.7` | relever à `>=5.0.8` « après le ~2026-08-06 » | **19 j de retard.** `brace-expansion@5.0.7` **est installé** (via `minimatch@10.2.5`, dev-only) — la version identifiée comme vulnérable en juillet |
+| `brace-expansion@>=5 <6` | `>=5.0.7` | relever à `>=5.0.8` « après le ~2026-08-06 » | **19 j de retard**, et l'advisory demande désormais `>=5.0.9` (cf. tableau ci-dessus). `5.0.7` **est installé** (via `minimatch@10.2.5`, dev-only) |
 | `fast-uri@>=3 <4` | `>=3.1.3` | relever à `>=3.1.4` « après le ~2026-08-02 » | Résolution actuelle 3.1.5, donc conforme **en fait** — mais le plancher laisse repasser 3.1.3. Cas d'école : « inerte » au banc d'essai, condition de sortie non remplie |
 | quarantaine `next-auth` beta.32 | — | fenêtre fragile jusqu'au ~2026-08-03 | **Échue**, la contrainte est levée |
 
