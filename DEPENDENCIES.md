@@ -6,7 +6,7 @@ Le monorepo contient **6 apps** (le doc en annonçait 3 jusqu'au 2026-07-17 ; l'
 - `@pilote/ppg` (`apps/pilote-ppg`) : app Next.js historique (PILOTE)
 - `@pilote/kpilote-api` (`apps/kpilote-api`) : backend Hono (kpilote)
 - `@pilote/kpilote-webapp` (`apps/kpilote-webapp`) : webapp (kpilote)
-- `@pilote/kpilote-admin` (`apps/kpilote-admin`) : back-office (kpilote) — **aucun test**
+- `@pilote/kpilote-admin` (`apps/kpilote-admin`) : back-office (kpilote) — **3 fichiers de test** (`src/components/centre-aide/{arbre,arbreDnd}.test.ts`, `extensions/miseEnTitre.test.ts`). Ce document et l'outil de campagne ont longtemps affirmé « aucun test » : c'était faux, corrigé le 2026-08-25.
 - `pilote-ppg-auth` (`apps/pilote-ppg-auth`) : proxy auth/ACME — **hors périmètre de `pnpm deps:campagne`**
 - `apps/pilote-ppg-data-management` : modèles dbt (SQL, pas de deps npm)
 
@@ -69,6 +69,84 @@ Définis dans `pnpm.overrides` du `package.json` racine. Tous ajoutés lors de l
 
 > ⚠️ **`pnpm audit` remonte `uuid@8.3.2`** (via `@hookform/devtools`, devDep) sur GHSA-w5hq-g745-h8pq, dont le range est `<11.1.1` — donc 8.3.2 matche. Le sélecteur `uuid@>=11.0.0 <11.1.1` ne le couvre pas. Dev-only, mais une affirmation « 0 vuln » serait fausse.
 
+### Verdicts du 2026-08-25 — 15 overrides au banc d'essai
+
+Le tableau du 2026-07-17 ci-dessus décrit un jeu de 8 overrides. Depuis, la campagne du
+2026-07-27 en a ajouté 7 et les actions **SUPPRIMER** du 2026-07-17 ont été appliquées
+(`terser`, `fast-xml-builder`, `mermaid`, `uuid` ont disparu ; `hono` a été relevé à
+`>=4.12.25 <5`, `postcss` à `>=8.5.18 <9`, `@xmldom/xmldom` borné `<0.10`). L'ensemble compte
+désormais **15 overrides**, tous re-testés mécaniquement.
+
+| Override | Verdict mesuré | Preuve du banc d'essai |
+|---|---|---|
+| `@hono/node-server: >=1.19.13 <2` | **PORTEUR** | se résout en 2.1.0 sans lui |
+| `@xmldom/xmldom: >=0.9.10 <0.10` | **PORTEUR** | 0.9.9 sans lui |
+| `postcss: >=8.5.18 <9` | **PORTEUR** | 8.4.31 sans lui |
+| `sharp: >=0.35.0 <0.36` | **PORTEUR** | 0.34.5 sans lui |
+| `js-yaml@>=4 <5: >=4.3.0` | **PORTEUR** | 4.1.1 sans lui |
+| `hono: >=4.12.25 <5` | inerte | 4.13.1 sans lui, déjà conforme |
+| `brace-expansion@<2: >=1.1.16 <2` | inerte | 1.1.18 sans lui |
+| `brace-expansion@>=2 <3: >=2.1.2 <3` | inerte | 2.1.4 sans lui |
+| `brace-expansion@>=5 <6: >=5.0.7 <6` | inerte | 5.0.9 sans lui |
+| `undici@>=7 <8: >=7.28.0 <8` | inerte | 7.29.0 sans lui |
+| `linkify-it@>=5 <6: >=5.0.2 <6` | inerte | 5.0.2 sans lui |
+| `immutable@>=4 <5: >=4.3.9 <5` | inerte | 4.3.9 sans lui |
+| `js-yaml@<4: >=3.15.0 <4` | inerte | 3.15.1 sans lui |
+| `tar@>=7 <8: >=7.5.19 <8` | inerte | 7.5.22 sans lui |
+| `fast-uri@>=3 <4: >=3.1.3 <4` | inerte | 3.1.5 sans lui |
+
+#### 🔴 `@hono/node-server` : la condition de sortie est REMPLIE, et l'override est devenu nuisible
+
+**La condition documentée au 2026-07-17 (« quand `prisma` relèvera son pin `@prisma/dev` ») est
+atteinte** :
+
+| | avant | après (`prisma 7.9.1`) |
+|---|---|---|
+| pin `@prisma/dev` dans `prisma` | `0.24.3` exact | **`0.24.17`** exact |
+| `@prisma/dev` → `@hono/node-server` | `1.19.11` exact (vulnérable) | **dépendance supprimée** |
+
+Vérifié par `npm view prisma@7.9.1 dependencies`, `npm view @prisma/dev@0.24.17 dependencies`
+et le lockfile. **`@prisma/dev` était la seule raison d'être de l'override.** Le ciblage
+`"@prisma/dev>@hono/node-server"` recommandé au 2026-07-17 est même devenu **sans objet** :
+cette arête n'existe plus.
+
+Consommateurs transitifs restants — inventaire exhaustif (2) :
+
+| Parent | Range déclaré | Sans l'override |
+|---|---|---|
+| `@hono/vite-dev-server@0.26.1` (devDep des 3 apps) | `^1.19.11` | caret → plafonné `<2`, résout 1.19.17 |
+| `@ai-sdk/devtools@0.0.18` (via `pilote-ppg`) | `^1.13.7` | caret → plafonné `<2`, résout 1.19.17 |
+
+Aucun ne peut descendre sous 1.19.13 ni monter en 2.x : **leurs carets suffisent**.
+
+**Le verdict « PORTEUR » du banc d'essai est donc auto-infligé** : l'override n'est porteur que
+parce qu'il combat les **dépendances directes** des 3 apps. C'est un cas nouveau, à ajouter aux
+deux mises en garde existantes — un override peut être « porteur » sans retenir la moindre
+transitive, simplement parce qu'il écrase ce que les apps déclarent.
+
+**Et l'interdit du 2026-07-17 n'a pas été respecté** : `package.json` porte
+`"@hono/node-server": ">=1.19.13 <2"` **en global**, alors que le doc écrivait « ne **jamais**
+poser `<2` en global ». Conséquence mesurée sur la branche `deps/campagne-2026-08-25` : les 3
+apps déclarent `"2.1.0"` dans leur manifeste et **le lockfile installe 1.19.17**. Aucune entrée
+2.1.0 n'existe dans le lockfile. Le major est un **mensonge de manifeste**.
+
+> ⚠️ Supprimer cet override libère la v2 **d'un coup** sur les 3 apps, sans qu'aucun test ne
+> l'ait jamais exercée (v2 est une réécriture du chemin d'exécution à signature identique :
+> `tsc` y est structurellement aveugle). À faire dans un commit dédié, avec oracle complet vert
+> **et** E2E, en relisant : lecture du corps de requête (`c.req.valid('json')`, plus gros
+> payload `valeurImport/routes.ts:14-22`, `MAX_ROWS = 1000`) ; `app.onError`
+> (`framework/errors/errorHandler.ts:23`, tout l'inconnu tombe en 500) ; les 8 sites
+> `context.body(null, 204)` de `kpilote-api` ; `serveStatic` + `compress()` des `src/server/index.ts`
+> de webapp et admin.
+
+#### Conditions de sortie échues et non appliquées
+
+| Override | Plancher actuel | Ce que le doc demandait | État au 2026-08-25 |
+|---|---|---|---|
+| `brace-expansion@>=5 <6` | `>=5.0.7` | relever à `>=5.0.8` « après le ~2026-08-06 » | **19 j de retard.** `brace-expansion@5.0.7` **est installé** (via `minimatch@10.2.5`, dev-only) — la version identifiée comme vulnérable en juillet |
+| `fast-uri@>=3 <4` | `>=3.1.3` | relever à `>=3.1.4` « après le ~2026-08-02 » | Résolution actuelle 3.1.5, donc conforme **en fait** — mais le plancher laisse repasser 3.1.3. Cas d'école : « inerte » au banc d'essai, condition de sortie non remplie |
+| quarantaine `next-auth` beta.32 | — | fenêtre fragile jusqu'au ~2026-08-03 | **Échue**, la contrainte est levée |
+
 Historique supprimé lors de la campagne d'avril 2026 :
 
 | Override supprimé | Raison d'origine | Pourquoi on peut s'en passer aujourd'hui |
@@ -125,7 +203,7 @@ Mesuré sur `terser` : retirer `"<5.47.0"` puis `pnpm install` laisse 5.46.2 (ve
 
 **Périmètre kpilote : la campagne est outillée.** `pnpm deps:campagne` (ou le skill `/deps-campagne`)
 fait tout ce qui suit automatiquement — snapshot, branche, commits atomiques, oracle après chacun,
-banc d'essai des 9 overrides, et un `report.json`. Compter ~40-60 min non surveillées. Voir
+banc d'essai des overrides (15 au 2026-08-25), et un `report.json`. Compter ~40-60 min non surveillées. Voir
 `docs/superpowers/specs/2026-07-17-campagne-deps-ia-design.md`. La procédure manuelle ci-dessous
 reste la référence pour `pilote-ppg`, hors périmètre de l'outil.
 
@@ -160,12 +238,46 @@ interface _$ZodTypeInternals { version: typeof version }
 
 ### Attention : `tsc --noEmit` est le meilleur oracle, pas les tests
 
-Sur un codebase TypeScript, c'est `tsc` qui attrape la majorité des breaking changes d'un upgrade (signature changée, export retiré, type modifié). Les tests ne couvrent que les chemins écrits. `kpilote-admin` n'a **aucun test** : pour cette app, `tsc` est le seul filet.
+Sur un codebase TypeScript, c'est `tsc` qui attrape la majorité des breaking changes d'un upgrade (signature changée, export retiré, type modifié). Les tests ne couvrent que les chemins écrits. `kpilote-admin` a **3 fichiers de test** seulement (centre d'aide) : sa couverture runtime est marginale, mais elle n'est pas nulle — l'affirmation « aucun test » était fausse et faussait les verdicts d'outillage de test.
 
 Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 erreurs tsc sur kpilote-api et 21 sur kpilote-admin** — `.openapi()` disparu de zod, suite au bump `zod 4.3.6 → 4.4.3` et/ou `@hono/zod-openapi 1.3.0 → 1.4.0`. Un `pnpm update` mergé sans passer `tsc` aurait cassé l'API.
 
 ### Pièges connus
 
+- **`@hono/zod-openapi@1.5.2` publie un `.d.ts` cassé** (et c'est `minimumReleaseAge` qui a fait
+  atterrir la campagne dessus). Son `dist/index.d.mts:259` contient `import z = zodModule.z;`
+  alors que `zodModule` n'est **jamais importé** — `z` prend donc le *type d'erreur* intrinsèque
+  de TypeScript. `skipLibCheck: true` masque le diagnostic mais **pas** le type cassé : `tsc`
+  reste vert, tandis que les règles `@typescript-eslint/no-unsafe-*` le détectent (le libellé
+  « on a type that cannot be resolved », par opposition à « on an any value », **est** la
+  signature du type d'erreur). Symptôme : **563 erreurs de lint** sur `kpilote-api` avec un
+  `tsc` vert. Amont : [honojs/middleware#2078](https://github.com/honojs/middleware/issues/2078),
+  corrigé en **1.5.3** (PR #2084, revert de #2069). Seule la 1.5.2 est touchée — 1.4.0, 1.5.0,
+  1.5.1, 1.5.3, 1.6.0 et 1.6.1 sont saines.
+  **Pourquoi la campagne l'a choisie** : `minimumReleaseAge` (14 j) rejetait 1.5.3, qui avait
+  11 jours (`ERR_PNPM_NO_MATURE_MATCHING_VERSION`). Le garde-fou de quarantaine a donc forcé le
+  choix de la seule version défectueuse. **Leçon générale : quand un bump in-range casse quelque
+  chose, vérifier si une version plus récente et déjà corrigée est simplement bloquée par la
+  quarantaine.** Ne **pas** désactiver `skipLibCheck` (masque ≠ cause, et fait apparaître
+  428 lignes de diagnostics dans les `.d.ts` tiers) ni les règles `no-unsafe-*`.
+- **`@types/node` doit suivre la majeure du runtime déclaré dans `engines`, pas le `latest` npm.**
+  Un décalage *en retard* (ex. `^22` face à Node 24, cas de `pilote-ppg`) ne produit que des faux
+  négatifs : bruyants, corrigibles. Un décalage *en avance* produit des **faux positifs
+  silencieux** — `tsc` valide un symbole que le runtime n'a pas, et ça casse en prod. Mesuré au
+  2026-08-25 : sous `@types/node@26` avec Node 24.9.0, `AsyncLocalStorage.withScope()`
+  (`@since v25.9.0`) compile alors que `typeof storage.withScope === 'undefined'` à l'exécution —
+  or `AsyncLocalStorage` est instancié dans `framework/persistence/dbStore.ts:7` et
+  `framework/auth/userContext.ts:24`. 161 marqueurs `@since v25/v26` dans les typings 26.2.0.
+- **`typescript-eslint` ne supporte pas TypeScript 7 et ne le supportera pas avant l'API stable.**
+  TS 7 est le portage natif Go : le paquet npm n'expose plus l'API programmatique
+  (`exports` réduit à `./lib/version.cjs`, `tsserver` supprimé, `ts.createProgram`/`ts.SyntaxKind`
+  = `undefined`). `@typescript-eslint/typescript-estree` code en dur
+  `SUPPORTED_TYPESCRIPT_VERSIONS = '>=4.8.4 <6.1.0'` et appelle ces API : ce n'est pas un warning
+  de version, c'est un crash. Amont :
+  [typescript-eslint#12518](https://github.com/typescript-eslint/typescript-eslint/issues/12518)
+  **closed / not_planned**. Conséquence : **ne pas « aligner » les 3 apps kpilote sur TS 7** —
+  elles utilisent toutes `recommendedTypeChecked` avec `parserOptions.project`, leur lint casserait
+  immédiatement. Elles restent en `5.9.3` par pin exact, et c'est volontaire.
 - **Phantom deps** : pnpm en mode `node-linker=isolated` refuse toute dépendance non déclarée. Si un `Cannot find module X` apparaît après upgrade, la solution est **toujours** d'ajouter `X` explicitement via `pnpm add` / `pnpm add -D`. Ne **pas** utiliser `public-hoist-pattern[]` pour contourner (cf. ADR / PRD migration npm→pnpm).
 - **Build scripts ignorés** : pnpm 10 ignore par défaut tous les `postinstall`. Toute nouvelle dep avec build natif (Prisma, sharp, esbuild, tree-sitter…) doit être ajoutée à `pnpm.onlyBuiltDependencies` dans `package.json`, sinon binaires manquants à l'exécution.
 - **`eslint-import-resolver-typescript` doit être en devDep direct** et pas seulement transitive via `eslint-config-next`. Sinon `eslint-module-utils` ne le trouve pas (il est nested) et tout le lint casse avec `Resolve error: typescript with invalid interface loaded as resolver`.
@@ -201,7 +313,7 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
 | `marked` | `15.x` → `18.x` | 🟡 low-medium | Renderer API modifiée |
 | `dotenv` + `dotenv-cli` + `dotenv-expand` | `16 + 7 + 11` → `17 + 11 + 12` | 🟠 medium | Parser rewrite, tester tous les `.env*` |
 | `pdfmake` | `0.2.x` → `0.3.x` | 🟠 medium | Pre-1.0, saut important |
-| `typescript` | `5.9.x` → `6.x` | 🔴 trop récent | **Laisser décanter 2-3 mois** avant de tenter |
+| `typescript` | `5.9.3` → `7.x` | 🟠 bloqué par l'outillage | **Le code est prêt, l'outillage non.** Mesuré le 2026-08-25 : les 4 tsconfig kpilote compilent en 7.0.2 (exit 0), aucune option retirée n'est utilisée. Mais `typescript-eslint` crashe sur TS 7 (API programmatique supprimée), et l'issue amont est **closed / not_planned**. `kpilote-ui` est en 7.0.2 (aucun ESLint, aucun `tsc`) ; les 3 apps restent en `5.9.3` **volontairement**. Condition de sortie : support TS 7 dans `typescript-eslint`. |
 | `htmlparser2` | `8.x` → `12.x` | 🟡 low | 4 majors successifs |
 | `mime` | `3.x` → `4.x` | 🟡 low | ESM-only |
 | `chroma-js` | `2.x` → `3.x` | 🟡 low | Types officiels + renames |
@@ -214,9 +326,53 @@ Illustration du 2026-07-17 : le seul lot in-range (aucun major) a produit **138 
 - **Bundle 2** : pino + pino-pretty
 - **Bundle 3** : dotenv family
 - **Un par un** : Prisma 7, Zod 4, superjson 2, awilix 13, faker 10, isomorphic-dompurify 3 (chacun mérite sa PR + QA E2E)
-- **Attendre** : TypeScript 6
+- **Attendre** : TypeScript 7 sur les 3 apps (verrou `typescript-eslint`, cf. « Pièges connus ») ; `@hono/node-server` v2 (retirer l'override d'abord, cf. « Overrides »)
 
 ## Historique des campagnes
+
+### Août 2026 (2026-08-25) — Campagne d'upgrade
+
+Branche `deps/campagne-2026-08-25`. Départ : **58 deps périmées, 7 majors, 41 advisories**
+(18 high, 19 moderate, 4 low, 0 critical). 12 commits atomiques.
+
+**Le premier run a été jeté.** `FILTRES_KPILOTE` omettait `@pilote/kpilote-shared` : le
+`pnpm update` montait zod dans les apps en laissant shared figé, deux minors de zod se
+retrouvaient dans un seul programme `tsc`, et **160 erreurs** tombaient dès le lot in-range —
+noyant tous les verdicts majors. C'est exactement le mode d'échec décrit plus haut
+(« `pnpm outdated` ne voit pas les `peerDependencies` »), déjà rencontré le 2026-07-17 : il
+était documenté, mais l'outillage ne le couvrait toujours pas. Corrigé, puis campagne relancée.
+
+**Verdicts des 7 majors** (oracle = `tsc` sur les 3 apps typées ; lint et tests **jamais
+atteints**, voir plus bas) :
+
+| Major | Verdict |
+|---|---|
+| `@ai-sdk/openai` 3.0.93 → 4.0.37 | ⚠️ **Indissociable de `ai` 7.** La v4 émet des modèles en spec `v4` que `ai` 6 ne sait pas typer. Les deux commits forment l'unité atomique réelle. Une seule ligne d'usage (`valeurImport/helpers/albert.ts`). |
+| `ai` 6.0.248 → 7.0.59 | ✅ `tsc` vert, et **répare** l'erreur ci-dessus. Les 4 chemins runtime invisibles à `tsc` (prompt système, JSON Schema, tool result, comptage de steps) ont été **vérifiés identiques à la source**, pas supposés. `system` survit en alias pur de `instructions`. |
+| `@testing-library/jest-dom` 6.9.1 → 7.0.1 | ✅ **Prouvé par exécution** : 134 tests passent (webapp 106, ui 19, admin 9). v7 est un sur-ensemble strict de v6, aucun matcher retiré. |
+| `jsdom` 29.1.1 → 30.0.1 | ⚠️ Tests verts, **mais `engines` incompatible** : jsdom 30 exige `^22.22.2 \|\| ^24.15.0 \|\| >=26`, le projet est pinné **24.9.0**. L'install passe (pas d'`engine-strict`), mais on est hors support déclaré. Requiert un bump Node ≥ 24.15.0. |
+| `@types/node` 24.13.3 → 26.2.0 | 🔴 **À ne pas garder tel quel.** Bénéfice mesuré nul (0 erreur corrigée, aucune API v25/v26 utilisée), et introduit des faux positifs silencieux face au runtime 24.9.0. **Plafonner à `^24`.** Voir « Pièges connus ». |
+| `typescript` 6.0.3 → 7.0.2 | ⚠️ **Ne concerne que `kpilote-ui`** (seul workspace bumpé, et il n'a **aucun script `tsc`**) : l'oracle a exécuté **zéro compilation TS 7**. Vérifié à la main : les 4 projets compilent en 7.0.2 (exit 0), donc le *code* est prêt. L'*outillage* ne l'est pas — voir « Pièges connus ». |
+| `@hono/node-server` 1.19.17 → 2.1.0 | 🔴 **Bump cosmétique.** Les 3 manifestes annoncent `2.1.0`, le lockfile installe **1.19.17** : l'override global `<2` réécrit le specifier. Aucune entrée 2.1.0 dans le lockfile. |
+
+**Régression lint introduite par un bump in-range** : `@hono/zod-openapi` 1.4.0 → 1.5.2 produit
+**563 erreurs** de lint sur `kpilote-api` avec un `tsc` vert. Cause racine établie (`.d.ts` cassé
+en amont) et détaillée dans « Pièges connus ». Passer en 1.5.3+ ramène à **2 erreurs**, elles-mêmes
+auto-corrigeables (`--fix`).
+
+> ⚠️ **Conséquence de portée : les tests n'ont tourné sur aucun commit.** L'oracle complet
+> enchaîne lint → tests, et le lint échouait dès le premier commit. Les verdicts `jsdom` et
+> `jest-dom` ci-dessus reposent sur des exécutions **manuelles**, faites hors oracle.
+
+**Correctifs d'outillage** (`scripts/deps-campagne/lib/oracle.mjs`) :
+- `@pilote/kpilote-shared` ajouté à `FILTRES_KPILOTE` — cause du run jeté.
+- `@pilote/kpilote-admin` ajouté à `APPS_TESTEES` : il **a** des tests, contrairement à ce
+  qu'affirmaient ce document et le commentaire du moteur.
+
+**Vérifications** : `tsc` vert sur les 3 apps au tip. Lint **rouge** (cause amont identifiée).
+Tests non joués par l'oracle ; 134 tests joués à la main sur webapp/ui/admin. **E2E non lancés**
+(`e2e.yml` est en cron) — à déclencher via `workflow_dispatch`. Lockfile partagé avec `ppg` :
+la CI ppg tourne aussi sur la PR.
 
 ### Juillet 2026 (2026-07-27) — Campagne sécu
 
