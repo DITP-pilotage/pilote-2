@@ -137,7 +137,11 @@ Deux branchements couvrent la majorité des trente événements sans modifier un
   (`/indicateurs/$id`), jamais le pathname réel — ce qui satisfait directement
   « URLs normalisées, sans paramètre sensible » et donne un rapport *Pages* où chaque route est
   une ligne. Le `defaultPreload: 'intent'` ne déclenche pas de résolution : pas de faux page view
-  au survol.
+  au survol. En revanche `onResolved` se déclenche aussi quand **seuls les search params
+  changent** — or filtres, pagination et recherche vivent dans l'URL. On n'émet donc que si le
+  chemin a changé, en s'appuyant sur le `pathChanged` fourni par le router, avec une exception
+  pour le premier chargement où `fromLocation` est absent. Sans ce filtre, un simple tri de
+  tableau compterait en page vue ce que le plan de taggage mesure en événement.
 - **Mutations** : un `MutationCache` avec `onSuccess`/`onError` passé au `QueryClient`. Chaque
   mutation déclare son événement dans son `meta`, une ligne dans le fichier de mutation. Les
   mutations étant déjà centralisées dans trois fichiers (`mutations/commentaires.ts`,

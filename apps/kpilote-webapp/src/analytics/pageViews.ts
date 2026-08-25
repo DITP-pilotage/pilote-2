@@ -12,11 +12,15 @@ const routePattern = (router: AnyRouter): string => {
   return last.routeId.replace(/\/_[^/]+/g, '') || '/'
 }
 
-// `title` n'est volontairement pas envoyé : la SPA ne met pas `document.title`
-// à jour selon la route, le rapport Titres de page de Matomo n'aurait donc
-// qu'une seule ligne. À rebrancher avec PIL-1724, qui donne un titre par route.
+// `onResolved` se déclenche aussi quand seuls les search params changent — or
+// filtres, pagination et recherche vivent dans l'URL. Sans ce filtre, un tri de
+// tableau compterait en page vue ce que le plan de taggage mesure en événement.
+// `fromLocation` est absent au premier chargement : cette page vue doit partir.
 export const trackPageViews = (router: AnyRouter): void => {
-  router.subscribe('onResolved', () => {
+  router.subscribe('onResolved', ({ fromLocation, pathChanged }) => {
+    if (fromLocation && !pathChanged) return
+    // `title` omis : `document.title` est figé tant que PIL-1724 n'a pas donné
+    // un titre à chaque route.
     analytics.trackPageView({ path: routePattern(router) })
   })
 }
