@@ -989,7 +989,11 @@ git commit -m "feat(webapp): trace les erreurs de mutation via le MutationCache"
 
 Instance : `https://stats.beta.gouv.fr`. Les libellés sont donnés en français puis en anglais, l'interface pouvant être dans l'une ou l'autre langue.
 
-Aucune de ces vérifications ne bloque l'implémentation : le plan est conçu pour démarrer avec `dimensionSlots` vide. Elles conditionnent le confort des rapports, pas la faisabilité.
+**Constat de terrain, août 2026 :** un compte disposant d'un accès en lecture seule sur le site KPilote ne voit ni la page *Dimensions personnalisées*, ni la page *Confidentialité*, et l'appel API `CustomDimensions.getConfiguredCustomDimensions` ne renvoie rien. Le Journal des visites est par ailleurs **désactivé globalement** sur l'instance. Les points B et C ci-dessous ne sont donc pas réalisables en libre-service : ce sont des **demandes à adresser à l'exploitant**, pas des vérifications à faire soi-même. Les procédures d'interface sont conservées pour le jour où les droits seront accordés.
+
+Aucune ne bloque l'implémentation : le plan est conçu pour démarrer avec `dimensionSlots` vide. Elles conditionnent le confort des rapports, pas la faisabilité.
+
+Note sur la conformité : le Journal des visites désactivé globalement est un indice sérieux que l'exploitant a traité l'exemption CNIL, dont la condition 4 exige précisément qu'aucune donnée au niveau de la visite ne soit accessible. Ce n'est pas une preuve que l'anonymisation d'IP est active, mais c'est assez pour ne pas bloquer une livraison en attendant la confirmation écrite.
 
 ### A. Trouver l'identifiant du site KPilote
 
@@ -1039,15 +1043,9 @@ Condition de l'exemption de consentement CNIL : au moins les deux derniers octet
 
 Cette page est réservée au **Super User** de l'instance. Sur une instance mutualisée comme `stats.beta.gouv.fr`, ce droit n'est pas le nôtre.
 
-**Vérification sans droits, qui donne la réponse aussi sûrement :**
+**Il n'existe pas de vérification en libre-service.** Le contournement naturel — lire une adresse IP dans le Journal des visites et regarder si elle se termine par `.0.0` — est impossible : le Journal des visites est désactivé globalement sur l'instance, ce qui coupe aussi la carte temps réel et le widget *Visites en direct*, donc toute la famille d'API `Live`.
 
-1. **Visiteurs** (*Visitors*) → **Journal des visites** (*Visits Log*), sur le site KPilote.
-2. Ouvrir n'importe quelle visite.
-3. Regarder l'adresse IP affichée.
-   - Elle se termine par `.0.0` → les deux derniers octets sont bien masqués, la condition CNIL est remplie.
-   - L'adresse complète apparaît → l'anonymisation n'est pas conforme, il faut la demander à l'exploitant (point E).
-
-Cette vérification suppose que du trafic est déjà remonté : elle se fait donc **après** la tâche 5, pas avant.
+Ce point est donc une **attestation à obtenir par écrit** auprès de l'exploitant, pas un contrôle technique. Il compte parce que `apps/kpilote-webapp/src/routes/donnees-personnelles.tsx` promet déjà aux utilisateurs que Matomo est configuré conformément à la recommandation Cookies de la CNIL, anonymisation d'IP comprise. Cette promesse préexiste au socle analytics.
 
 ### D. Vérifier que les hits arrivent bien
 
