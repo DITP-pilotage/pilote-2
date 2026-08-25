@@ -33,7 +33,7 @@
     "schema": "prisma/schema.prisma"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^3.0.93",
+    "@ai-sdk/openai": "^4.0.37",
     "@hono/node-server": "^1.19.17",
     "@hono/swagger-ui": "^0.6.1",
     "@hono/zod-openapi": "^1.5.2",

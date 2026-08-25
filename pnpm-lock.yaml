@@ -237,8 +237,8 @@ importers:
   apps/kpilote-api:
     dependencies:
       '@ai-sdk/openai':
-        specifier: ^3.0.93
-        version: 3.0.93(zod@4.4.3)
+        specifier: ^4.0.37
+        version: 4.0.37(zod@4.4.3)
       '@hono/node-server':
         specifier: '>=1.19.13 <2'
         version: 1.19.17(hono@4.13.1)
@@ -1147,9 +1147,9 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
-  '@ai-sdk/openai@3.0.93':
-    resolution: {integrity: sha512-Y4T5nL5tuzQ0/VeqS2pnbbIzYQc006H9YavKoTEHmKmETPZ57H0VVS9QZLd1uczThfeUPr1Fuc4x+zHNMMlgHg==}
-    engines: {node: '>=18'}
+  '@ai-sdk/openai@4.0.37':
+    resolution: {integrity: sha512-rQIdkvqHaqyu94zMJKkhucRwsyTpYUmI+vrH/Dm1Erc6ypURikOV+9e51Pni6RL8IxFlu2bv6y8hA1ghzCy7Gw==}
+    engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
@@ -1165,6 +1165,12 @@ packages:
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
 
+  '@ai-sdk/provider-utils@5.0.26':
+    resolution: {integrity: sha512-0mqhqx+Dcv+msI84+zkbLXmnCHb/mpkYJ9DU3HBvB1px+UjFQss4lLZqRCSzJ0w3NxwQk4Ishk7cP0r8wEQD5w==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
   '@ai-sdk/provider@3.0.10':
     resolution: {integrity: sha512-Q3BZ27qfpYqnCYGvE3vt+Qi6LGOF9R5Nmzn+9JoM1lCRsD9mYaIhfJLkSunN48nfGXJ6n+XNV0J/XVpqGQl7Dw==}
     engines: {node: '>=18'}
@@ -1176,6 +1182,10 @@ packages:
   '@ai-sdk/provider@3.0.8':
     resolution: {integrity: sha512-oGMAgGoQdBXbZqNG0Ze56CHjDZ1IDYOwGYxYjO5KLSlz5HiNQ9udIXsPZ61VWaHGZ5XW/jyjmr6t2xz2jGVwbQ==}
     engines: {node: '>=18'}
+
+  '@ai-sdk/provider@4.0.7':
+    resolution: {integrity: sha512-6or44XprPzKbr8zkmzosowSE0pxkvJcoojBL+mCZvPUt3kvXp3XSNqeVun9golb1acEfSo6yaEBRT18h2VU+1Q==}
+    engines: {node: '>=22'}
 
   '@ai-sdk/react@3.0.163':
     resolution: {integrity: sha512-UM8BwNx4YFcG1XIBSTepIGx48RXk974qVSplVZc2JPiY86tC4Qpb8trquh5MdtSKzlS6yrUX46n8gS2WZaUIXQ==}
@@ -6111,6 +6121,9 @@ packages:
   '@webassemblyjs/wast-printer@1.14.1':
     resolution: {integrity: sha512-kPSSXE6De1XOR820C90RIo2ogvZG+c3KiHzqUoO/F34Y2shGzesfqv7o57xrxovZJH/MetF5UjroJ/R/3isoiw==}
 
+  '@workflow/serde@4.1.0':
+    resolution: {integrity: sha512-pav4F2BoirECWR7Nf1TKt+2eETcBj7jj4cBefQ8VXQCA6NPkaKeLfj/zMgi+3zYV5ZIBT4GuUiphsj0/b9hPQQ==}
+
   '@xmldom/xmldom@0.9.10':
     resolution: {integrity: sha512-A9gOqLdi6cV4ibazAjcQufGj0B1y/vDqYrcuP6d/6x8P27gRS8643Dj9o1dEKtB6O7fwxb2FgBmJS2mX7gpvdw==}
     engines: {node: '>=14.6'}
@@ -7493,10 +7506,6 @@ packages:
   events@3.3.0:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
     engines: {node: '>=0.8.x'}
-
-  eventsource-parser@3.0.6:
-    resolution: {integrity: sha512-Vo1ab+QXPzZ4tCa8SwIHJFaSzy4R6SHf7BY79rFBDf0idraZWAkYrDjDj8uWaSm3S2TK+hJ7/t1CEmZ7jXw+pg==}
-    engines: {node: '>=18.0.0'}
 
   eventsource-parser@3.1.1:
     resolution: {integrity: sha512-EKN1vKAMcZ8MlYMpaNuxN6R9yakzH6uajHcHVTqWJzvu5pWw9DyhbP35HH8MVBQ+dZjAfDxk+A8NiR9KWaXiyQ==}
@@ -11674,17 +11683,17 @@ snapshots:
       '@ai-sdk/provider-utils': 4.0.23(zod@3.25.76)
       zod: 3.25.76
 
-  '@ai-sdk/openai@3.0.93(zod@4.4.3)':
+  '@ai-sdk/openai@4.0.37(zod@4.4.3)':
     dependencies:
-      '@ai-sdk/provider': 3.0.15
-      '@ai-sdk/provider-utils': 4.0.44(zod@4.4.3)
+      '@ai-sdk/provider': 4.0.7
+      '@ai-sdk/provider-utils': 5.0.26(zod@4.4.3)
       zod: 4.4.3
 
   '@ai-sdk/provider-utils@4.0.23(zod@3.25.76)':
     dependencies:
       '@ai-sdk/provider': 3.0.8
       '@standard-schema/spec': 1.1.0
-      eventsource-parser: 3.0.6
+      eventsource-parser: 3.1.1
       zod: 3.25.76
 
   '@ai-sdk/provider-utils@4.0.44(zod@4.4.3)':
@@ -11693,6 +11702,15 @@ snapshots:
       '@standard-schema/spec': 1.1.0
       eventsource-parser: 3.1.1
       undici: 5.29.0
+      zod: 4.4.3
+
+  '@ai-sdk/provider-utils@5.0.26(zod@4.4.3)':
+    dependencies:
+      '@ai-sdk/provider': 4.0.7
+      '@standard-schema/spec': 1.1.0
+      '@workflow/serde': 4.1.0
+      eventsource-parser: 3.1.1
+      undici: 7.29.0
       zod: 4.4.3
 
   '@ai-sdk/provider@3.0.10':
@@ -11704,6 +11722,10 @@ snapshots:
       json-schema: 0.4.0
 
   '@ai-sdk/provider@3.0.8':
+    dependencies:
+      json-schema: 0.4.0
+
+  '@ai-sdk/provider@4.0.7':
     dependencies:
       json-schema: 0.4.0
 
@@ -17138,6 +17160,8 @@ snapshots:
       '@webassemblyjs/ast': 1.14.1
       '@xtuc/long': 4.2.2
 
+  '@workflow/serde@4.1.0': {}
+
   '@xmldom/xmldom@0.9.10': {}
 
   '@xtuc/ieee754@1.2.0': {}
@@ -18855,8 +18879,6 @@ snapshots:
   event-target-shim@5.0.1: {}
 
   events@3.3.0: {}
-
-  eventsource-parser@3.0.6: {}
 
   eventsource-parser@3.1.1: {}
 
