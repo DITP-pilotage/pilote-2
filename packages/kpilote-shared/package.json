@@ -12,6 +12,10 @@
       "types": "./src/analytics/buildRequest.ts",
       "default": "./src/analytics/buildRequest.ts"
     },
+    "./analytics/buckets": {
+      "types": "./src/analytics/buckets.ts",
+      "default": "./src/analytics/buckets.ts"
+    },
     "./analytics/events": {
       "types": "./src/analytics/events.ts",
       "default": "./src/analytics/events.ts"

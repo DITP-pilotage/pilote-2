@@ -11,6 +11,10 @@ import {
   type ReactNode,
 } from 'react'
 
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
+import { bucketQueryLength } from '@pilote/kpilote-shared/analytics/buckets'
+
+import { analytics } from '@/analytics/tracker'
 import { clsxm } from '@/lib/clsxm'
 import {
   filterActions,
@@ -19,6 +23,7 @@ import {
   type CommandAction,
 } from '@/lib/commands/types'
 
+import { actionTypeFromActionId, targetTypeFromCommandId } from './commandTargets'
 import { useCentreAideCommands } from './useCentreAideCommands'
 import { useCommandPaletteShortcut } from './useCommandPaletteShortcut'
 import { useIndicateurCommands } from './useIndicateurCommands'
@@ -58,7 +63,12 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
     resetToRoot()
   }, [onOpenChange, resetToRoot])
 
-  const handleOpen = useCallback(() => onOpenChange(true), [onOpenChange])
+  const handleOpen = useCallback(() => {
+    // Le raccourci reste actif palette ouverte : sans ce garde, chaque ⌘K
+    // supplémentaire compterait une ouverture de plus.
+    if (!open) analytics.trackEvent(analyticsEvents.commandPalette.open({ method: 'keyboard' }))
+    onOpenChange(true)
+  }, [onOpenChange, open])
   useCommandPaletteShortcut(handleOpen)
 
   const recentCommands = useRecentlyVisitedCommands(open, close)
@@ -159,6 +169,30 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       if (highlightedCommand?.actions?.length) enterActions(highlightedCommand)
     }
   }
+
+  const resultsCount = rootCommands.length
+
+  // La requête est synchronisée à chaque frappe : sans ce délai, taper « indic »
+  // enverrait cinq événements de recherche. On ne mesure que la requête sur
+  // laquelle l'utilisateur s'arrête.
+  useEffect(() => {
+    if (!open || activeItem) return
+    const trimmed = query.trim()
+    if (trimmed.length === 0) return
+
+    const timer = setTimeout(() => {
+      analytics.trackEvent(analyticsEvents.commandPalette.search({ results_count: resultsCount }))
+      if (resultsCount === 0) {
+        analytics.trackEvent(
+          analyticsEvents.commandPalette.noResult({
+            query_length_bucket: bucketQueryLength(trimmed.length),
+          }),
+        )
+      }
+    }, 600)
+
+    return () => clearTimeout(timer)
+  }, [open, activeItem, query, resultsCount])
 
   const pageActions = activeItem ? filterActions(activeItem.actions ?? [], query) : []
 
@@ -277,7 +311,15 @@ function CommandRow({ command }: { command: Command }) {
   return (
     <CommandPrimitive.Item
       value={command.id}
-      onSelect={command.run}
+      onSelect={() => {
+        analytics.trackEvent(
+          analyticsEvents.commandPalette.commandRun({
+            command_group: command.group,
+            target_type: targetTypeFromCommandId(command.id),
+          }),
+        )
+        command.run()
+      }}
       className={clsxm(
         'flex cursor-pointer select-none items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-text outline-none',
         'data-[selected=true]:bg-surface-tinted data-[selected=true]:text-primary',
@@ -326,7 +368,15 @@ function ActionRow({ action }: { action: CommandAction }) {
   return (
     <CommandPrimitive.Item
       value={action.id}
-      onSelect={action.run}
+      onSelect={() => {
+        analytics.trackEvent(
+          analyticsEvents.commandPalette.actionRun({
+            action_type: actionTypeFromActionId(action.id),
+            target_type: targetTypeFromCommandId(action.id),
+          }),
+        )
+        action.run()
+      }}
       className={clsxm(
         'flex cursor-pointer select-none items-center gap-2.5 rounded-md px-2.5 py-2 text-sm text-text outline-none',
         'data-[selected=true]:bg-surface-tinted data-[selected=true]:text-primary',

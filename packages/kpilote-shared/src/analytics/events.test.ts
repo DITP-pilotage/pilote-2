@@ -56,6 +56,31 @@ const CONTRAT = [
   ],
   ['commentaire.publish', analyticsEvents.commentaire.publish, 'kpilote.commentaire', 'success'],
   ['import.valeurs.success', analyticsEvents.import.valeursSuccess, 'kpilote.import', 'success'],
+  ['command_palette.open', analyticsEvents.commandPalette.open, 'kpilote.command_palette', 'open'],
+  [
+    'command_palette.search',
+    analyticsEvents.commandPalette.search,
+    'kpilote.command_palette',
+    'search',
+  ],
+  [
+    'command_palette.no_result',
+    analyticsEvents.commandPalette.noResult,
+    'kpilote.command_palette',
+    'error',
+  ],
+  [
+    'command_palette.command.run',
+    analyticsEvents.commandPalette.commandRun,
+    'kpilote.command_palette',
+    'select',
+  ],
+  [
+    'command_palette.action.run',
+    analyticsEvents.commandPalette.actionRun,
+    'kpilote.command_palette',
+    'select',
+  ],
   ['collection.open', analyticsEvents.collection.open, 'kpilote.collection', 'open'],
   ['collection.onglet', analyticsEvents.collection.onglet, 'kpilote.collection', 'switch'],
   [
