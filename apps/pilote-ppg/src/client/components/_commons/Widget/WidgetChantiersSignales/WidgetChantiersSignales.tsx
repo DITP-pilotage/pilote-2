@@ -3,6 +3,14 @@ import { parseAsBoolean, parseAsInteger, useQueryState } from "nuqs";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import { TypeAlerteChantier } from "@/server/chantiers/app/contrats/TypeAlerteChantier";
 import { ChantiersSignalesContrat } from "@/server/chantiers/app/contrats/ChantiersSignalesContrat";
+import {
+  LIBELLE_TAUX_NON_CALCULE,
+  LIBELLE_ABSENCE_TAUX_DEPARTEMENTAL,
+  LIBELLE_METEO_SYNTHESE_NON_RENSEIGNEES,
+  LIBELLE_PROPOSITION_VALEUR_AVANCEMENT,
+  LIBELLE_TENDANCE_BAISSE,
+  libelleRetardMediane,
+} from "@/server/chantiers/app/contrats/LibellesAlerteChantier";
 import { sauvegarderFiltres } from "@/client/stores/useFiltresStoreNew/useFiltresStoreNew";
 import { clsxm } from "@/utils/clsxm";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -21,39 +29,38 @@ type AlerteDefinition = {
 const alertesNationales: AlerteDefinition[] = [
   {
     nomCritère: "estEnAlerteTauxAvancementNonCalculé",
-    libellé:
-      "Taux d'avancement non calculé(s) en raison d'indicateurs non renseignés",
+    libellé: LIBELLE_TAUX_NON_CALCULE,
   },
   {
     nomCritère: "estEnAlerteAbscenceTauxAvancementDepartemental",
-    libellé: "Chantier(s) sans taux d'avancement au niveau départemental",
+    libellé: LIBELLE_ABSENCE_TAUX_DEPARTEMENTAL,
   },
   {
     nomCritère: "estEnAlerteMétéoNonRenseignée",
-    libellé: "Chantier(s) avec météo et synthèse des résultats non renseignés",
+    libellé: LIBELLE_METEO_SYNTHESE_NON_RENSEIGNEES,
   },
   {
     nomCritère: "estEnAlertePossedePropositionsValeurAvancement",
-    libellé: "Chantier(s) avec proposition(s) de valeur d'avancement",
+    libellé: LIBELLE_PROPOSITION_VALEUR_AVANCEMENT,
   },
 ];
 
 const alertesTerritoriales = (mailleChantier: string): AlerteDefinition[] => [
   {
     nomCritère: "estEnAlerteÉcart",
-    libellé: `Chantier(s) avec un retard de 10 points par rapport à leur médiane ${mailleChantier}`,
+    libellé: libelleRetardMediane(mailleChantier),
   },
   {
     nomCritère: "estEnAlerteBaisse",
-    libellé: "Chantier(s) avec tendance en baisse",
+    libellé: LIBELLE_TENDANCE_BAISSE,
   },
   {
     nomCritère: "estEnAlerteMétéoNonRenseignée",
-    libellé: "Chantier(s) avec météo et synthèse des résultats non renseignés",
+    libellé: LIBELLE_METEO_SYNTHESE_NON_RENSEIGNEES,
   },
   {
     nomCritère: "estEnAlertePossedePropositionsValeurAvancement",
-    libellé: "Chantier(s) avec proposition(s) de valeur d'avancement",
+    libellé: LIBELLE_PROPOSITION_VALEUR_AVANCEMENT,
   },
 ];
 
