@@ -407,10 +407,47 @@ auto-corrigeables (`--fix`).
 - `@pilote/kpilote-admin` ajouté à `APPS_TESTEES` : il **a** des tests, contrairement à ce
   qu'affirmaient ce document et le commentaire du moteur.
 
-**Vérifications** : `tsc` vert sur les 3 apps au tip. Lint **rouge** (cause amont identifiée).
-Tests non joués par l'oracle ; 134 tests joués à la main sur webapp/ui/admin. **E2E non lancés**
-(`e2e.yml` est en cron) — à déclencher via `workflow_dispatch`. Lockfile partagé avec `ppg` :
-la CI ppg tourne aussi sur la PR.
+**Correctifs appliqués sur la branche (2026-08-26)** — la campagne ne s'est pas arrêtée au constat :
+
+| Action | Effet mesuré |
+|---|---|
+| `@hono/zod-openapi` `^1.5.2` → `^1.5.3` | lint **563 → 2** erreurs, puis **0** après nettoyage |
+| Plafonnement `@types/node` à `^24.13.3` (3 apps) | supprime le décalage types/runtime ; `tsc` reste vert |
+| 5 planchers d'overrides relevés à leur advisory | audit **33 → 24** ; **`pilote-ppg-auth` disparaît entièrement de l'audit** |
+| `@testing-library/dom` en devDep explicite (webapp, admin, ui) | la peer devenue requise en jest-dom 7 n'est plus implicite |
+
+La 1.5.3 étant à 13 j de publication (quarantaine à 14 j), elle a été installée via un ajout
+**temporaire** de `@hono/zod-openapi` à `minimumReleaseAgeExclude`, puis l'exclusion a été
+retirée : `pnpm-workspace.yaml` est **net-inchangé** et le lock épingle 1.5.3, que
+`--frozen-lockfile` réutilise. Fenêtre fragile très courte — 1.5.3 sort de quarantaine le
+**2026-08-27**, après quoi le caret `^1.5.3` a de nouveau un repli mûr.
+
+> Deux fichiers applicatifs ont été touchés, ce que la campagne s'interdit normalement. Les deux
+> sont des conséquences directes du lint : `eslint --fix` a retiré une assertion devenue
+> réellement inutile dans `collection/commands/creerCollectionCommentaire.ts` (types Prisma
+> régénérés) — plus son import orphelin ; et il a **cassé** `framework/logger/sinks/database.sink.ts`
+> en retirant une assertion `as object` pourtant **requise** (TS2375 sous
+> `exactOptionalPropertyTypes`), restaurée avec un `eslint-disable-next-line` motivé.
+> `@typescript-eslint/no-unnecessary-type-assertion` juge l'expression isolément et ne voit pas
+> le contexte d'assignation : **ne pas lui faire confiance en `--fix` aveugle sur ce dépôt.**
+
+**`deepmerge-ts` : override testé, mais volontairement NON appliqué.** C'est la dernière advisory
+kpilote corrigeable (high, via `@prisma/config`). L'override `">=8.0.0 <9"` a été essayé :
+`prisma generate`, chargement de `prisma.config.ts` et **662 tests** passent en 8.0.2. Mais 8.0.0
+n'a que 10 j — l'appliquer exigerait un contournement de quarantaine pour une advisory
+**préexistante** (déjà dans `dev`) et non atteignable depuis une requête. **À poser après le
+~2026-08-30**, sans nouveau test : il est déjà validé.
+
+**Vérifications au tip** : `pnpm lint` (eslint + tsc + prettier) **vert sur les 3 apps**.
+**777 tests verts** — kpilote-api 662, webapp 106, kpilote-ui 19, admin 9 : c'est le premier run
+de tests réel de cette campagne, le lint les bloquait jusque-là. `pnpm audit` : **24 advisories**
+(0 critical, 10 high, 12 moderate, 2 low), dont **3 seulement côté kpilote** — `xlsx` ×2 sans
+patch possible, et `deepmerge-ts` ci-dessus. **E2E non lancés** (`e2e.yml` est en cron) — à
+déclencher via `workflow_dispatch`. Lockfile partagé avec `ppg` : la CI ppg tourne aussi sur la PR.
+
+À noter pour une prochaine campagne : `pg` émet désormais un `DeprecationWarning` sur
+`client.query()` appelé en concurrence, retiré en `pg@9`. Sans effet aujourd'hui, à traiter avant
+ce major.
 
 ### Juillet 2026 (2026-07-27) — Campagne sécu
 
