@@ -51,8 +51,18 @@ const APPS_TYPEES = [
  * `environment: 'jsdom'`. L'exclure faisait passer ses bumps d'outillage de test (jsdom,
  * @testing-library/*) pour non couverts alors qu'ils le sont — et inversement, laissait croire
  * qu'un « tsc vert » y était le seul filet possible.
+ *
+ * kpilote-ui (19 tests) et kpilote-shared (53 tests depuis le socle analytics) en portent
+ * aussi. Ce sont les deux workspaces sans `tsc` à eux : leurs tests sont donc leur SEUL
+ * filet, ce qui rend leur omission d'autant plus coûteuse.
  */
-const APPS_TESTEES = ['@pilote/kpilote-api', '@pilote/kpilote-webapp', '@pilote/kpilote-admin']
+const APPS_TESTEES = [
+  '@pilote/kpilote-api',
+  '@pilote/kpilote-webapp',
+  '@pilote/kpilote-admin',
+  '@pilote/kpilote-ui',
+  '@pilote/kpilote-shared',
+]
 
 /** Env que la CI fournit aux tests (cf. testAndLint.yml). Aucun vrai backend n'est appelé. */
 const ENV_TESTS = {
