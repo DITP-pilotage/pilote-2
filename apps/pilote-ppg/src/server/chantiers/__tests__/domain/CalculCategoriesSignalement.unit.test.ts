@@ -92,9 +92,9 @@ describe("categoriesDuChantier", () => {
       ...chantierBase,
       chantier_territoire_jalon: [{ ecart: -11, taux_avancement: 50 }],
     };
-    expect(categoriesDuChantier(chantier, "DEPT", new Set(), new Set())).toEqual([
-      "retard_mediane",
-    ]);
+    expect(
+      categoriesDuChantier(chantier, "DEPT", new Set(), new Set()),
+    ).toEqual(["retard_mediane"]);
   });
 
   test("pas de retard_mediane quand ecart vaut exactement -10 (seuil strict)", () => {
@@ -102,7 +102,9 @@ describe("categoriesDuChantier", () => {
       ...chantierBase,
       chantier_territoire_jalon: [{ ecart: -10, taux_avancement: 50 }],
     };
-    expect(categoriesDuChantier(chantier, "DEPT", new Set(), new Set())).toEqual([]);
+    expect(
+      categoriesDuChantier(chantier, "DEPT", new Set(), new Set()),
+    ).toEqual([]);
   });
 
   test("retard_mediane et tendance_baisse ne s'appliquent jamais en maille NAT", () => {
@@ -111,7 +113,9 @@ describe("categoriesDuChantier", () => {
       tendance: "BAISSE",
       chantier_territoire_jalon: [{ ecart: -20, taux_avancement: 50 }],
     };
-    expect(categoriesDuChantier(chantier, "NAT", new Set(), new Set())).toEqual([]);
+    expect(categoriesDuChantier(chantier, "NAT", new Set(), new Set())).toEqual(
+      [],
+    );
   });
 
   test("taux_avancement_non_calcule et absence_taux_avancement_departemental ne s'appliquent qu'au NAT", () => {
@@ -140,9 +144,9 @@ describe("categoriesDuChantier", () => {
       ...chantierBase,
       meteo: "NON_RENSEIGNEE",
     };
-    expect(categoriesDuChantier(chantierNull, "DEPT", new Set(), new Set())).toEqual([
-      "meteo_synthese_non_renseignees",
-    ]);
+    expect(
+      categoriesDuChantier(chantierNull, "DEPT", new Set(), new Set()),
+    ).toEqual(["meteo_synthese_non_renseignees"]);
     expect(
       categoriesDuChantier(chantierNonRenseignee, "NAT", new Set(), new Set()),
     ).toEqual(["meteo_synthese_non_renseignees"]);
@@ -153,9 +157,9 @@ describe("categoriesDuChantier", () => {
       ...chantierBase,
       nombre_propositions_valeur_actuelle: 2,
     };
-    expect(categoriesDuChantier(chantier, "DEPT", new Set(), new Set())).toEqual([
-      "proposition_valeur_avancement",
-    ]);
+    expect(
+      categoriesDuChantier(chantier, "DEPT", new Set(), new Set()),
+    ).toEqual(["proposition_valeur_avancement"]);
   });
 
   test("proposition_valeur_avancement en NAT/REG utilise le set de roll-up, pas le compteur direct", () => {
@@ -166,7 +170,9 @@ describe("categoriesDuChantier", () => {
     expect(
       categoriesDuChantier(chantier, "NAT", new Set(["CH-001"]), new Set()),
     ).toEqual(["proposition_valeur_avancement"]);
-    expect(categoriesDuChantier(chantier, "NAT", new Set(), new Set())).toEqual([]);
+    expect(categoriesDuChantier(chantier, "NAT", new Set(), new Set())).toEqual(
+      [],
+    );
   });
 
   test("regroupe plusieurs catégories pour un même chantier", () => {
@@ -176,10 +182,8 @@ describe("categoriesDuChantier", () => {
       meteo: null,
       chantier_territoire_jalon: [{ ecart: -15, taux_avancement: 50 }],
     };
-    expect(categoriesDuChantier(chantier, "REG", new Set(), new Set())).toEqual([
-      "meteo_synthese_non_renseignees",
-      "retard_mediane",
-      "tendance_baisse",
-    ]);
+    expect(categoriesDuChantier(chantier, "REG", new Set(), new Set())).toEqual(
+      ["meteo_synthese_non_renseignees", "retard_mediane", "tendance_baisse"],
+    );
   });
 });
