@@ -69,6 +69,7 @@ export class GetChantiersSignalesListQuery {
 
     const territoire = await prisma.territoire.findUniqueOrThrow({
       where: { code: params.territoireCode },
+      select: { nom: true },
     });
 
     const { maille } = territoireCodeVersMailleCodeInsee(params.territoireCode);

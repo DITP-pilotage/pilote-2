@@ -3,6 +3,10 @@ import { ChantiersSignalesContrat } from "@/server/chantiers/app/contrats/Chanti
 import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 import {
+  aEcartEnRetard,
+  aMeteoNonRenseignee,
+  aTauxNonCalcule,
+  aTendanceEnBaisse,
   ChantierTerritoireAvecJalon,
   chantiersSansTauxDepartemental,
   compterPva,
@@ -70,7 +74,6 @@ export class GetChantiersSignalesQuery {
         meteo: true,
         tendance: true,
         nombre_propositions_valeur_actuelle: true,
-        maille: true,
         chantier_identite: {
           select: { cible_attendue: true },
         },
@@ -97,22 +100,20 @@ export class GetChantiersSignalesQuery {
     for (const ct of chantierTerritoires) {
       const jalonData = ct.chantier_territoire_jalon[0];
 
-      if (jalonData?.ecart !== null && jalonData?.ecart !== undefined) {
-        if (jalonData.ecart < -10) ecart++;
-      }
+      if (aEcartEnRetard(jalonData?.ecart)) ecart++;
 
-      if (ct.tendance === "BAISSE") baisse++;
+      if (aTendanceEnBaisse(ct.tendance)) baisse++;
 
       if (
-        ct.chantier_identite.cible_attendue &&
-        (jalonData?.taux_avancement === null ||
-          jalonData?.taux_avancement === undefined)
+        aTauxNonCalcule(
+          ct.chantier_identite.cible_attendue,
+          jalonData?.taux_avancement,
+        )
       ) {
         tauxNonCalcule++;
       }
 
-      if (ct.meteo === "NON_RENSEIGNEE" || ct.meteo === null)
-        meteoNonRenseignee++;
+      if (aMeteoNonRenseignee(ct.meteo)) meteoNonRenseignee++;
 
       if (maille === "DEPT") {
         if (ct.nombre_propositions_valeur_actuelle > 0) pva++;

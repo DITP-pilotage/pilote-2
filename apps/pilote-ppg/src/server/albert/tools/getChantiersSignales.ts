@@ -79,6 +79,40 @@ function raisonNonApplicable(
   return `La catégorie "${nom}" ne s'applique qu'au niveau national, pas à la maille régionale ou départementale.`;
 }
 
+function estNonApplicable(resultat: ResultatTerritoire): resultat is {
+  territoire_code: string;
+  chantiers: [];
+  non_applicable: { raison: string };
+} {
+  return "non_applicable" in resultat;
+}
+
+function getOutputInstructions(
+  resultats: ResultatTerritoire[],
+  territoiresAccessibles: string[],
+): string {
+  const codesRestreints = resultats
+    .filter((resultat) => !estNonApplicable(resultat))
+    .map((resultat) => resultat.territoire_code)
+    .filter((code) => !territoiresAccessibles.includes(code));
+
+  let instructions = OUTPUT_INSTRUCTIONS;
+
+  if (codesRestreints.length > 0) {
+    instructions =
+      `⚠️ Restriction d'accès — territoires ${codesRestreints.join(", ")} : la catégorie "tendance en baisse" n'est pas disponible pour ces territoires (le champ tendance est retourné à null). Un chantier dont c'était l'unique catégorie de signalement n'apparaît alors plus du tout dans la liste retournée. Ne présente donc pas cette liste comme exhaustive pour ces territoires, et mentionne cette restriction explicitement dans ta réponse.\n\n` +
+      instructions;
+  }
+
+  if (resultats.some(estNonApplicable)) {
+    instructions =
+      "L'analyse demandée n'est pas applicable pour au moins un des territoires interrogés. Explique-le clairement à l'utilisateur en reprenant fidèlement la raison fournie dans non_applicable.raison pour ce territoire. Ne présente pas de liste vide ni ne conclus qu'aucun chantier n'est signalé pour ce territoire.\n\n" +
+      instructions;
+  }
+
+  return instructions;
+}
+
 function masquerCategoriesNonAccessibles(
   resultat: GetChantiersSignalesListResult,
   territoiresAccessibles: string[],
@@ -175,7 +209,7 @@ Utilise categorie_signalement pour restreindre à une seule catégorie précise 
             const resultat = await getChantiersSignalesListQuery.execute({
               territoireCode: code,
               jalon: input.jalon,
-              chantierIds: filteredChantierIds,
+              chantierIds: filteredChantierIds ?? chantiersAccessibles,
               categorieSignalement: input.categorie_signalement,
             });
 
@@ -188,7 +222,10 @@ Utilise categorie_signalement pour restreindre à une seule catégorie précise 
 
         return {
           resultats,
-          _output_instructions: OUTPUT_INSTRUCTIONS,
+          _output_instructions: getOutputInstructions(
+            resultats,
+            territoiresAccessibles,
+          ),
         };
       },
     });
