@@ -64,6 +64,7 @@ import { RecupererTauxAvancementTerritoireQuery } from "./query/RecupererTauxAva
 import { RecupererStatistiquesAvancementTousChantiersPubliesQuery } from "./query/RecupererStatistiquesAvancementTousChantiersPubliesQuery";
 import { GetChantiersHabilitesQuery } from "./infrastructure/queries/GetChantiersHabilitesQuery";
 import { GetChantierObjectifsQuery } from "./query/GetChantierObjectifsQuery";
+import { GetChantiersSignalesListQuery } from "./query/GetChantiersSignalesListQuery";
 
 type ChantierExports = {
   recupererChantiersQuery: RecupererChantiersApplicablesParTerritoiresQuery;
@@ -75,6 +76,7 @@ type ChantierExports = {
   getChantiersIdentiteQuery: GetChantiersIdentiteQuery;
   getIndicateursIdentiteQuery: GetIndicateursIdentiteQuery;
   getTerritoiresIdentiteQuery: GetTerritoiresIdentiteQuery;
+  getChantiersSignalesListQuery: GetChantiersSignalesListQuery;
 };
 
 type ChantierImports = IndicateurTerritoireValeurEvenementExports &
@@ -145,6 +147,7 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
     "getChantiersIdentiteQuery",
     "getIndicateursIdentiteQuery",
     "getTerritoiresIdentiteQuery",
+    "getChantiersSignalesListQuery",
   ],
   register: (container, { asModuleClass }) => {
     container.register({
@@ -252,6 +255,9 @@ export const chantiersModule = defineModule<ChantierExports, ChantierCradle>()({
       getChantierIndicateursQuery: asModuleClass(GetChantierIndicateursQuery),
       getChantierCommentairesQuery: asModuleClass(GetChantierCommentairesQuery),
       getChantierObjectifsQuery: asModuleClass(GetChantierObjectifsQuery),
+      getChantiersSignalesListQuery: asModuleClass(
+        GetChantiersSignalesListQuery,
+      ),
       getChantiersIdentiteQuery: asModuleClass(GetChantiersIdentiteQuery),
       getIndicateursIdentiteQuery: asModuleClass(GetIndicateursIdentiteQuery),
       getTerritoiresIdentiteQuery: asModuleClass(GetTerritoiresIdentiteQuery),
