@@ -1,3 +1,4 @@
+import { Maille } from "@prisma/client";
 import {
   LIBELLE_ABSENCE_TAUX_DEPARTEMENTAL,
   LIBELLE_METEO_SYNTHESE_NON_RENSEIGNEES,
@@ -19,40 +20,43 @@ export const CATEGORIES_SIGNALEMENT = [
 
 export type CategorieSignalement = (typeof CATEGORIES_SIGNALEMENT)[number];
 
-const CATEGORIES_NATIONALES: CategorieSignalement[] = [
+const CATEGORIES_NATIONALES: readonly CategorieSignalement[] = [
   "taux_avancement_non_calcule",
   "absence_taux_avancement_departemental",
   "meteo_synthese_non_renseignees",
   "proposition_valeur_avancement",
 ];
 
-const CATEGORIES_TERRITORIALES: CategorieSignalement[] = [
+const CATEGORIES_TERRITORIALES: readonly CategorieSignalement[] = [
   "retard_mediane",
   "tendance_baisse",
   "meteo_synthese_non_renseignees",
   "proposition_valeur_avancement",
 ];
 
-export function categoriesApplicables(maille: string): CategorieSignalement[] {
+export function categoriesApplicables(
+  maille: Maille,
+): readonly CategorieSignalement[] {
   return maille === "NAT" ? CATEGORIES_NATIONALES : CATEGORIES_TERRITORIALES;
 }
 
+const NOMS_CATEGORIES: Record<CategorieSignalement, string> = {
+  taux_avancement_non_calcule: "Taux d'avancement non calculé",
+  absence_taux_avancement_departemental:
+    "Absence de taux d'avancement départemental",
+  meteo_synthese_non_renseignees: "Météo et synthèse non renseignées",
+  proposition_valeur_avancement: "Proposition de valeur d'avancement",
+  retard_mediane: "Retard par rapport à la médiane",
+  tendance_baisse: "Tendance en baisse",
+};
+
 export function nomCategorie(categorie: CategorieSignalement): string {
-  const noms: Record<CategorieSignalement, string> = {
-    taux_avancement_non_calcule: "Taux d'avancement non calculé",
-    absence_taux_avancement_departemental:
-      "Absence de taux d'avancement départemental",
-    meteo_synthese_non_renseignees: "Météo et synthèse non renseignées",
-    proposition_valeur_avancement: "Proposition de valeur d'avancement",
-    retard_mediane: "Retard par rapport à la médiane",
-    tendance_baisse: "Tendance en baisse",
-  };
-  return noms[categorie];
+  return NOMS_CATEGORIES[categorie];
 }
 
 export function libelleCategorieSignalement(
   categorie: CategorieSignalement,
-  maille: string,
+  maille: Maille,
 ): string {
   switch (categorie) {
     case "taux_avancement_non_calcule":
@@ -84,9 +88,30 @@ export type ChantierTerritoireAvecJalon = {
   }[];
 };
 
+export function aEcartEnRetard(ecart: number | null | undefined): boolean {
+  return ecart !== null && ecart !== undefined && ecart < -10;
+}
+
+export function aMeteoNonRenseignee(meteo: string | null): boolean {
+  return meteo === "NON_RENSEIGNEE" || meteo === null;
+}
+
+export function aTauxNonCalcule(
+  cibleAttendue: boolean,
+  tauxAvancement: number | null | undefined,
+): boolean {
+  return (
+    cibleAttendue && (tauxAvancement === null || tauxAvancement === undefined)
+  );
+}
+
+export function aTendanceEnBaisse(tendance: string | null): boolean {
+  return tendance === "BAISSE";
+}
+
 export function categoriesDuChantier(
   ct: ChantierTerritoireAvecJalon,
-  maille: string,
+  maille: Maille,
   pvaChantierIds: ReadonlySet<string>,
   sansTauxDepartementalIds: ReadonlySet<string>,
 ): CategorieSignalement[] {
@@ -96,9 +121,10 @@ export function categoriesDuChantier(
 
   if (
     applicables.includes("taux_avancement_non_calcule") &&
-    ct.chantier_identite.cible_attendue &&
-    (jalonData?.taux_avancement === null ||
-      jalonData?.taux_avancement === undefined)
+    aTauxNonCalcule(
+      ct.chantier_identite.cible_attendue,
+      jalonData?.taux_avancement,
+    )
   ) {
     categories.push("taux_avancement_non_calcule");
   }
@@ -112,7 +138,7 @@ export function categoriesDuChantier(
 
   if (
     applicables.includes("meteo_synthese_non_renseignees") &&
-    (ct.meteo === "NON_RENSEIGNEE" || ct.meteo === null)
+    aMeteoNonRenseignee(ct.meteo)
   ) {
     categories.push("meteo_synthese_non_renseignees");
   }
@@ -127,14 +153,15 @@ export function categoriesDuChantier(
 
   if (
     applicables.includes("retard_mediane") &&
-    jalonData?.ecart !== null &&
-    jalonData?.ecart !== undefined &&
-    jalonData.ecart < -10
+    aEcartEnRetard(jalonData?.ecart)
   ) {
     categories.push("retard_mediane");
   }
 
-  if (applicables.includes("tendance_baisse") && ct.tendance === "BAISSE") {
+  if (
+    applicables.includes("tendance_baisse") &&
+    aTendanceEnBaisse(ct.tendance)
+  ) {
     categories.push("tendance_baisse");
   }
 
