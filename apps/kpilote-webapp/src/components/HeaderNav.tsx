@@ -2,6 +2,9 @@ import { useNavigate } from '@tanstack/react-router'
 import { Search } from 'lucide-react'
 import { Suspense, useState } from 'react'
 
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
+
+import { analytics } from '@/analytics/tracker'
 import { CommandPalette } from '@/components/command-palette/CommandPalette'
 import { ContacterEquipe } from '@/components/ContacterEquipe'
 import { RaccourciKbd } from '@/components/command-palette/RaccourciKbd'
@@ -24,7 +27,10 @@ export function HeaderNav({ auth }: { auth: Auth }) {
         {auth.isAuthenticated ? (
           <button
             type="button"
-            onClick={() => setPaletteOpen(true)}
+            onClick={() => {
+              analytics.trackEvent(analyticsEvents.commandPalette.open({ method: 'button' }))
+              setPaletteOpen(true)
+            }}
             aria-label="Ouvrir la recherche"
             className="flex items-center gap-2 rounded-md border border-border bg-surface px-2 py-1.5 text-sm text-text-subtle transition-colors hover:border-border-strong hover:text-text sm:min-w-96 sm:px-3"
           >

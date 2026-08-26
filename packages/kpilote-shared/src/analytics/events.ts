@@ -71,6 +71,28 @@ export type CollectionIndividuChangeContext = {
   referentiel_id: string
 }
 
+export type CommandPaletteOpenContext = {
+  method: 'keyboard' | 'button'
+}
+
+export type CommandPaletteSearchContext = {
+  results_count: number
+}
+
+export type CommandPaletteNoResultContext = {
+  query_length_bucket: string
+}
+
+export type CommandPaletteCommandRunContext = {
+  command_group: string
+  target_type: string
+}
+
+export type CommandPaletteActionRunContext = {
+  action_type: string
+  target_type: string
+}
+
 export type ImportValeursSuccessContext = {
   entity_id: string
   created_count: number
@@ -147,6 +169,38 @@ export const analyticsEvents = {
       category: 'kpilote.commentaire',
       action: 'success',
       name: 'commentaire.publish',
+      context: { ...context },
+    }),
+  },
+  commandPalette: {
+    open: (context: CommandPaletteOpenContext): AnalyticsEvent => ({
+      category: 'kpilote.command_palette',
+      action: 'open',
+      name: 'command_palette.open',
+      context: { ...context },
+    }),
+    search: (context: CommandPaletteSearchContext): AnalyticsEvent => ({
+      category: 'kpilote.command_palette',
+      action: 'search',
+      name: 'command_palette.search',
+      context: { ...context },
+    }),
+    noResult: (context: CommandPaletteNoResultContext): AnalyticsEvent => ({
+      category: 'kpilote.command_palette',
+      action: 'error',
+      name: 'command_palette.no_result',
+      context: { ...context },
+    }),
+    commandRun: (context: CommandPaletteCommandRunContext): AnalyticsEvent => ({
+      category: 'kpilote.command_palette',
+      action: 'select',
+      name: 'command_palette.command.run',
+      context: { ...context },
+    }),
+    actionRun: (context: CommandPaletteActionRunContext): AnalyticsEvent => ({
+      category: 'kpilote.command_palette',
+      action: 'select',
+      name: 'command_palette.action.run',
       context: { ...context },
     }),
   },
