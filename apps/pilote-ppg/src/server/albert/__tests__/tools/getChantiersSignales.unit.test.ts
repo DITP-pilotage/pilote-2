@@ -166,6 +166,52 @@ describe("createGetChantiersSignalesTool execute", () => {
     ]);
   });
 
+  test("retire entièrement un chantier dont la seule catégorie devient masquée", async () => {
+    // Given — chantier avec pour unique catégorie tendance_baisse, sur un territoire hors périmètre accessible
+    const resultatUniqueCategorie: Awaited<
+      ReturnType<GetChantiersSignalesListQuery["execute"]>
+    > = {
+      territoire_code: "REG-99",
+      territoire_nom: "Région test",
+      jalon: 2025,
+      maille: "REG",
+      chantiers: [
+        {
+          chantier: {
+            id: "CH-001",
+            nom: "Chantier",
+            axe: "Axe 1",
+            ppg: "PPG 1",
+            ministeres: ["MIN-01"],
+          },
+          categories_signalement: ["Chantier(s) avec tendance en baisse"],
+          meteo: "SOLEIL",
+          tendance: "BAISSE",
+          ecart: 0,
+          taux_avancement: 50,
+        },
+      ],
+    };
+    const tool = buildTool({
+      queryResults: { "REG-99": resultatUniqueCategorie },
+      territoiresAccessibles: ["REG-11"],
+      resoudre: ["REG-99"],
+    });
+
+    // When
+    const result = await executeTool(tool, {
+      territoire_code: "REG-99",
+      jalon: 2025,
+    });
+
+    // Then — le chantier disparaît entièrement, il ne lui reste aucune catégorie
+    expect(result.resultats).toEqual([
+      expect.objectContaining({
+        chantiers: [],
+      }),
+    ]);
+  });
+
   test("retourne un message dédié quand aucun des chantiers demandés n'est accessible", async () => {
     // Given
     const tool = buildTool({
