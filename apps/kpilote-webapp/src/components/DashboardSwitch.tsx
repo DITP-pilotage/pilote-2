@@ -1,7 +1,10 @@
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { FolderClosed, LineChart } from 'lucide-react'
 
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 import { SegmentedControl } from '@pilote/kpilote-ui/SegmentedControl'
+
+import { analytics } from '@/analytics/tracker'
 
 const ROUTE_BY_VUE = {
   indicateurs: '/indicateurs',
@@ -21,6 +24,7 @@ export function DashboardSwitch() {
       aria-label="Basculer entre indicateurs et collections"
       value={vue}
       onValueChange={(prochaineVue) => {
+        analytics.trackEvent(analyticsEvents.dashboard.view({ from: vue, to: prochaineVue }))
         void navigate({
           to: ROUTE_BY_VUE[prochaineVue],
           search: { individu: search.individu, referentiel: search.referentiel },

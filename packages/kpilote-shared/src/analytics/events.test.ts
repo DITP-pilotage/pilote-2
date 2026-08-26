@@ -5,16 +5,50 @@ import { ANALYTICS_ACTIONS, ANALYTICS_CATEGORIES, type AnalyticsEvent } from './
 
 type AnyEventFactory = (context: Record<string, string>) => AnalyticsEvent
 
+// Le triplet catégorie / action / nom est le contrat du plan de taggage : c'est
+// lui qui détermine dans quel rapport Matomo l'événement atterrit. Le figer ici
+// fait échouer le test si un renommage le fait dériver.
+const CONTRAT = [
+  ['dashboard.view', analyticsEvents.dashboard.view, 'kpilote.dashboard', 'switch'],
+  [
+    'dashboard.individu.change',
+    analyticsEvents.dashboard.individuChange,
+    'kpilote.dashboard',
+    'filter',
+  ],
+  [
+    'dashboard.pagination.next',
+    analyticsEvents.dashboard.paginationNext,
+    'kpilote.dashboard',
+    'select',
+  ],
+  [
+    'dashboard.pagination.size',
+    analyticsEvents.dashboard.paginationSize,
+    'kpilote.dashboard',
+    'select',
+  ],
+  ['indicateur.open', analyticsEvents.indicateur.open, 'kpilote.indicateur', 'open'],
+  ['collection.open', analyticsEvents.collection.open, 'kpilote.collection', 'open'],
+  ['mutation.error', analyticsEvents.error.mutation, 'kpilote.error', 'error'],
+] as const
+
 describe('analyticsEvents', () => {
-  it('décrit une erreur de mutation', () => {
-    expect(analyticsEvents.error.mutation({ mutation: 'creerCommentaire', status: '500' })).toEqual(
-      {
-        category: 'kpilote.error',
-        action: 'error',
-        name: 'mutation.error',
-        context: { mutation: 'creerCommentaire', status: '500' },
-      },
-    )
+  it.each(CONTRAT)('%s est émis en %s / %s', (name, factory, category, action) => {
+    const event = (factory as AnyEventFactory)({})
+
+    expect(event.name).toBe(name)
+    expect(event.category).toBe(category)
+    expect(event.action).toBe(action)
+  })
+
+  it('reporte le contexte reçu tel quel', () => {
+    expect(analyticsEvents.indicateur.open({ entity_id: 'IND-506', source: 'dashboard' })).toEqual({
+      category: 'kpilote.indicateur',
+      action: 'open',
+      name: 'indicateur.open',
+      context: { entity_id: 'IND-506', source: 'dashboard' },
+    })
   })
 
   it("n'expose que des catégories et des actions du schéma", () => {

@@ -5,7 +5,9 @@ import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { startTransition } from 'react'
 import { z } from 'zod'
 
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 import { DashboardSwitch } from '@/components/DashboardSwitch'
+import { analytics } from '@/analytics/tracker'
 import { RouteError } from '@/components/RouteError'
 import { RouteLoading } from '@/components/RouteLoading'
 import { IndicateurCard } from '@/components/indicateurs/IndicateurCard'
@@ -78,6 +80,9 @@ function IndicateursListComponent() {
                 referentielIds={referentielIds}
                 value={search.individu}
                 onChange={({ individu, referentiel }) => {
+                  analytics.trackEvent(
+                    analyticsEvents.dashboard.individuChange({ referentiel_id: referentiel }),
+                  )
                   startTransition(() => {
                     void navigate({
                       search: (prev) => ({ ...prev, individu, referentiel }),
@@ -106,6 +111,7 @@ function IndicateursListComponent() {
               <IndicateurCard
                 key={indicateur.id}
                 indicateur={indicateur}
+                source="dashboard"
                 {...(search.individu && search.referentiel
                   ? { context: { individu: search.individu, referentiel: search.referentiel } }
                   : {})}
@@ -118,10 +124,23 @@ function IndicateursListComponent() {
           hasNext={data.pagination.hasMore}
           onNext={() => {
             const next = data.pagination.cursor
-            if (next) void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
+            if (!next) return
+            analytics.trackEvent(
+              analyticsEvents.dashboard.paginationNext({
+                entity_type: 'indicateur',
+                page_size: search.pageSize ?? DEFAULT_PAGE_SIZE,
+              }),
+            )
+            void navigate({ search: (prev) => ({ ...prev, cursor: next }) })
           }}
           pageSize={search.pageSize ?? DEFAULT_PAGE_SIZE}
           onPageSizeChange={(pageSize) => {
+            analytics.trackEvent(
+              analyticsEvents.dashboard.paginationSize({
+                entity_type: 'indicateur',
+                page_size: pageSize,
+              }),
+            )
             void navigate({ search: (prev) => ({ ...prev, pageSize, cursor: undefined }) })
           }}
         />

@@ -1,4 +1,5 @@
 import type { CollectionApiModel } from '@pilote/kpilote-shared/collection'
+import { analyticsEvents, type AnalyticsSource } from '@pilote/kpilote-shared/analytics/events'
 import { Link } from '@tanstack/react-router'
 import { Suspense } from 'react'
 
@@ -6,6 +7,7 @@ import {
   CollectionAvancement,
   CollectionAvancementSkeleton,
 } from '@/components/collections/CollectionAvancement'
+import { analytics } from '@/analytics/tracker'
 import { EntityCard } from '@pilote/kpilote-ui/EntityCard'
 
 export type CollectionCardContext = {
@@ -16,9 +18,11 @@ export type CollectionCardContext = {
 export function CollectionCard({
   collection,
   context,
+  source,
 }: {
   collection: Pick<CollectionApiModel, 'id' | 'nom' | 'description' | 'indicateurs'>
   context?: CollectionCardContext | undefined
+  source: AnalyticsSource
 }) {
   const nb = collection.indicateurs.length
   return (
@@ -39,7 +43,16 @@ export function CollectionCard({
         </>
       }
     >
-      <Link to="/collections/$id" params={{ id: collection.id }} search={context ?? {}} />
+      <Link
+        to="/collections/$id"
+        params={{ id: collection.id }}
+        search={context ?? {}}
+        onClick={() =>
+          analytics.trackEvent(
+            analyticsEvents.collection.open({ entity_id: collection.id, source }),
+          )
+        }
+      />
     </EntityCard>
   )
 }

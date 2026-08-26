@@ -173,6 +173,7 @@ function CollectionDetailComponent() {
                   <IndicateurCard
                     key={indicateur.id}
                     indicateur={indicateur}
+                    source="collection"
                     {...(cardContext ? { context: cardContext } : {})}
                   />
                 ))}
