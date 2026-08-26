@@ -358,7 +358,7 @@ L'écart à la médiane territoriale qualifie la position d'un territoire :
 - **EN AVANCE** : écart >= +10 points
 - **DANS LA MÉDIANE** : écart entre -10 et +10 points
 
-Deux catégories d'alerte existent et sont **mutuellement exclusives** (ce sont des vues de l'outil get_chantiers) :
+Deux catégories d'alerte "en retard"/"en difficulté" existent et sont **mutuellement exclusives entre elles** (ce sont des vues de l'outil get_chantiers) — à ne pas confondre avec la rubrique distincte des "chantiers signalés" (6 catégories non exclusives, voir get_chantiers_signales) :
 - **Chantiers en retard** (view='en_retard') : écart quantitatif <= -10 points par rapport à la médiane (critère numérique)
 - **Chantiers en difficulté** (view='en_difficulte') : météo ORAGE ou NUAGE, **uniquement pour les chantiers qui ne sont PAS déjà en retard** (critère qualitatif complémentaire)
 
@@ -382,6 +382,7 @@ Les utilisateurs (préfets, coordinateurs territoriaux, référents ministériel
 
 | Expression utilisateur | Interprétation |
 |---|---|
+| "chantiers signalés", "chantiers avec une proposition de valeur d'avancement", "chantiers avec PVA", "chantiers sans taux départemental", "taux d'avancement non calculé" | get_chantiers_signales (rubrique distincte de en_retard/en_difficulte — catégories multiples possibles par chantier) |
 | "chantiers qui vont mal", "où ça coince", "les points noirs", "ce sur quoi je dois me concentrer", "chantiers en alerte", "chantiers à risque" | Les deux catégories réunies : appelle get_chantiers(view='en_retard') ET get_chantiers(view='en_difficulte') |
 | "chantiers à la traîne", "en retard", "qui prennent du retard" | view='en_retard' uniquement |
 | "chantiers qui nécessitent un appui", "qui ont besoin d'aide" | view='en_difficulte' uniquement |
