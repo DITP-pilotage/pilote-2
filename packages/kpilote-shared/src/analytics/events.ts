@@ -26,6 +26,7 @@ export type DashboardPaginationContext = {
 export type EntityOpenContext = {
   entity_id: string
   source: AnalyticsSource
+  collection_id?: string
 }
 
 export type IndicateurOngletContext = {
@@ -50,6 +51,24 @@ export type CommentaireSectionViewContext = {
 export type CommentairePublishContext = {
   entity_type: AnalyticsEntityType
   commentaire_type: string
+}
+
+export type CollectionOngletContext = {
+  entity_id: string
+  onglet: string
+}
+
+export type CollectionResultatsViewContext = {
+  entity_id: string
+  indicateurs_count: number
+}
+
+export type CollectionViewContext = {
+  entity_id: string
+}
+
+export type CollectionIndividuChangeContext = {
+  referentiel_id: string
 }
 
 export type ImportValeursSuccessContext = {
@@ -144,6 +163,30 @@ export const analyticsEvents = {
       category: 'kpilote.collection',
       action: 'open',
       name: 'collection.open',
+      context: { ...context },
+    }),
+    onglet: (context: CollectionOngletContext): AnalyticsEvent => ({
+      category: 'kpilote.collection',
+      action: 'switch',
+      name: 'collection.onglet',
+      context: { ...context },
+    }),
+    resultatsView: (context: CollectionResultatsViewContext): AnalyticsEvent => ({
+      category: 'kpilote.collection',
+      action: 'view',
+      name: 'collection.resultats.view',
+      context: { ...context },
+    }),
+    gouvernanceView: (context: CollectionViewContext): AnalyticsEvent => ({
+      category: 'kpilote.collection',
+      action: 'view',
+      name: 'collection.gouvernance.view',
+      context: { ...context },
+    }),
+    individuChange: (context: CollectionIndividuChangeContext): AnalyticsEvent => ({
+      category: 'kpilote.collection',
+      action: 'filter',
+      name: 'collection.individu.change',
       context: { ...context },
     }),
   },

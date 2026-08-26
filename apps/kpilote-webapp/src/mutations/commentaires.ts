@@ -93,6 +93,12 @@ export function useCreerCommentaireCollection(
   const queryClient = useQueryClient()
   const toast = useToast()
   return useMutation({
+    meta: {
+      analyticsSuccess: analyticsEvents.commentaire.publish({
+        entity_type: 'collection',
+        commentaire_type: type,
+      }),
+    },
     mutationFn: (body: CreerCommentaireBody) => createCommentaireCollection(collectionId, body),
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -111,6 +117,12 @@ export function useModifierCommentaireCollection(
   const queryClient = useQueryClient()
   const toast = useToast()
   return useMutation({
+    meta: {
+      analyticsSuccess: analyticsEvents.commentaire.publish({
+        entity_type: 'collection',
+        commentaire_type: type,
+      }),
+    },
     mutationFn: ({
       commentaireId,
       body,

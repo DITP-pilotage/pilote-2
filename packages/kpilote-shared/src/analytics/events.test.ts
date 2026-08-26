@@ -57,6 +57,25 @@ const CONTRAT = [
   ['commentaire.publish', analyticsEvents.commentaire.publish, 'kpilote.commentaire', 'success'],
   ['import.valeurs.success', analyticsEvents.import.valeursSuccess, 'kpilote.import', 'success'],
   ['collection.open', analyticsEvents.collection.open, 'kpilote.collection', 'open'],
+  ['collection.onglet', analyticsEvents.collection.onglet, 'kpilote.collection', 'switch'],
+  [
+    'collection.resultats.view',
+    analyticsEvents.collection.resultatsView,
+    'kpilote.collection',
+    'view',
+  ],
+  [
+    'collection.gouvernance.view',
+    analyticsEvents.collection.gouvernanceView,
+    'kpilote.collection',
+    'view',
+  ],
+  [
+    'collection.individu.change',
+    analyticsEvents.collection.individuChange,
+    'kpilote.collection',
+    'filter',
+  ],
   ['mutation.error', analyticsEvents.error.mutation, 'kpilote.error', 'error'],
 ] as const
 
