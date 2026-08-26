@@ -177,6 +177,28 @@ filtre kpilote. L'override ne *cause* pas la vulnérabilité — mais son absenc
 Même effet pour `@hono/node-server` : le retirer (sa condition de sortie est remplie, cf. plus
 haut) ferait remonter `ppg-auth` au-dessus du plancher de l'advisory par son propre caret.
 
+#### Les 9 advisories résiduelles (2026-08-26)
+
+| Sévérité | Paquet | Correctif | App | Tirée par | Statut |
+|---|---|---|---|---|---|
+| high ×2 | `xlsx` | **aucun** (`<0.0.0`) | kpilote-webapp | dep directe | SheetJS est hors registre npm. Décision séparée : pin CDN ou remplacement |
+| high | `deepmerge-ts` | `>=8.0.0` | kpilote-api | `prisma` → `@prisma/config` | **Override testé et validé**, en attente de quarantaine (~2026-08-30) |
+| high ×2 | `immutable` (3.8.3) | `>=4.3.9` | pilote-ppg | `swagger-ui-react` → `react-immutable-proptypes` | Ligne 3.x **sans patch**. Forcer 4.x casse `swagger-ui-react`. Sortie : swagger-ui-react lâche immutable 3.x |
+| moderate | `echarts` (6.0.0) | `>=6.1.0` | pilote-ppg | dep directe | **6.1.0 est déjà dans l'arbre.** Bump direct côté ppg, hors périmètre kpilote |
+| moderate | `sanitize-html` (2.17.0) | `>=2.17.5` | pilote-ppg | dep directe **pinnée exact** | Relever le pin côté ppg |
+| moderate | `uuid` (8.3.2) | `>=11.1.1` | pilote-ppg | `@hookform/devtools` | **dev-only.** Un override `>=11.1.1` sur la ligne 8.x serait un saut de 3 majors — à ne pas forcer |
+| low | `esbuild` (0.25.12) | `>=0.28.1` | pilote-ppg | `tsx` | Serveur de dev uniquement. `0.28.2` est déjà dans l'arbre pour d'autres consommateurs |
+
+**Aucune n'est corrigeable par un simple relèvement de plancher** : c'est ce qui les distingue des
+10 traitées ci-dessus. Quatre relèvent de `pilote-ppg` (hors périmètre de l'outil de campagne),
+deux n'ont pas de correctif publié, une attend la quarantaine.
+
+> **Le motif à retenir de cette campagne** : sur les 32 advisories fermées, **aucune** n'a
+> demandé de bump applicatif. Elles sont tombées en relevant des planchers d'overrides qui
+> avaient dérivé sous leur advisory, et en réintroduisant un override supprimé à tort. Une
+> advisory est révisée à la hausse sans prévenir : **relire `patched_versions` à chaque campagne
+> plutôt que la consigne écrite la campagne d'avant.**
+
 #### Conditions de sortie échues et non appliquées
 
 | Override | Plancher actuel | Ce que le doc demandait | État au 2026-08-25 |
@@ -413,7 +435,8 @@ auto-corrigeables (`--fix`).
 |---|---|
 | `@hono/zod-openapi` `^1.5.2` → `^1.5.3` | lint **563 → 2** erreurs, puis **0** après nettoyage |
 | Plafonnement `@types/node` à `^24.13.3` (3 apps) | supprime le décalage types/runtime ; `tsc` reste vert |
-| 5 planchers d'overrides relevés à leur advisory | audit **33 → 24** ; **`pilote-ppg-auth` disparaît entièrement de l'audit** |
+| 10 planchers d'overrides relevés à leur advisory | audit **33 → 14** ; **`pilote-ppg-auth` disparaît entièrement de l'audit** |
+| Override `mermaid` réintroduit en `>=11.16.1 <12` | audit **14 → 9** (5 advisories `nextra`) |
 | `@testing-library/dom` en devDep explicite (webapp, admin, ui) | la peer devenue requise en jest-dom 7 n'est plus implicite |
 
 La 1.5.3 étant à 13 j de publication (quarantaine à 14 j), elle a été installée via un ajout
@@ -440,9 +463,9 @@ n'a que 10 j — l'appliquer exigerait un contournement de quarantaine pour une 
 
 **Vérifications au tip** : `pnpm lint` (eslint + tsc + prettier) **vert sur les 3 apps**.
 **777 tests verts** — kpilote-api 662, webapp 106, kpilote-ui 19, admin 9 : c'est le premier run
-de tests réel de cette campagne, le lint les bloquait jusque-là. `pnpm audit` : **24 advisories**
-(0 critical, 10 high, 12 moderate, 2 low), dont **3 seulement côté kpilote** — `xlsx` ×2 sans
-patch possible, et `deepmerge-ts` ci-dessus. **E2E non lancés** (`e2e.yml` est en cron) — à
+de tests réel de cette campagne, le lint les bloquait jusque-là. `pnpm audit` : **41 → 9 advisories**
+(0 critical, 5 high, 3 moderate, 1 low), dont **3 seulement côté kpilote** — `xlsx` ×2 sans
+patch publié, et `deepmerge-ts` ci-dessus. **E2E non lancés** (`e2e.yml` est en cron) — à
 déclencher via `workflow_dispatch`. Lockfile partagé avec `ppg` : la CI ppg tourne aussi sur la PR.
 
 À noter pour une prochaine campagne : `pg` émet désormais un `DeprecationWarning` sur
