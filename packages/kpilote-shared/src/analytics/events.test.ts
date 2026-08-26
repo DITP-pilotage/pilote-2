@@ -29,6 +29,33 @@ const CONTRAT = [
     'select',
   ],
   ['indicateur.open', analyticsEvents.indicateur.open, 'kpilote.indicateur', 'open'],
+  ['indicateur.onglet', analyticsEvents.indicateur.onglet, 'kpilote.indicateur', 'switch'],
+  [
+    'indicateur.resultats.view',
+    analyticsEvents.indicateur.resultatsView,
+    'kpilote.indicateur',
+    'view',
+  ],
+  [
+    'indicateur.metadonnees.view',
+    analyticsEvents.indicateur.metadonneesView,
+    'kpilote.indicateur',
+    'view',
+  ],
+  [
+    'indicateur.individu.change',
+    analyticsEvents.indicateur.individuChange,
+    'kpilote.indicateur',
+    'filter',
+  ],
+  [
+    'commentaire.section.view',
+    analyticsEvents.commentaire.sectionView,
+    'kpilote.commentaire',
+    'view',
+  ],
+  ['commentaire.publish', analyticsEvents.commentaire.publish, 'kpilote.commentaire', 'success'],
+  ['import.valeurs.success', analyticsEvents.import.valeursSuccess, 'kpilote.import', 'success'],
   ['collection.open', analyticsEvents.collection.open, 'kpilote.collection', 'open'],
   ['mutation.error', analyticsEvents.error.mutation, 'kpilote.error', 'error'],
 ] as const

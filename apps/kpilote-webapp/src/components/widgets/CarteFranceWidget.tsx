@@ -3,6 +3,9 @@ import { useSuspenseQueries } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { startTransition, useMemo } from 'react'
 
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
+
+import { analytics } from '@/analytics/tracker'
 import { type FranceGeoJson } from '@/assets/maps/geoJson'
 import { CarteFrance } from '@/components/widgets/CarteFrance'
 import { buildCarteFranceBindings } from '@/components/widgets/carteFranceData'
@@ -44,6 +47,9 @@ export function CarteFranceWidget({
   const handleSelect = (joinValue: string): void => {
     const individuId = individuIdByJoinValue.get(joinValue)
     if (!individuId) return
+    analytics.trackEvent(
+      analyticsEvents.indicateur.individuChange({ referentiel_id: referentielId, source: 'map' }),
+    )
     startTransition(() => {
       void navigate({
         to: '.',

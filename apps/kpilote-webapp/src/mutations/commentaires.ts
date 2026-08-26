@@ -2,6 +2,7 @@ import {
   type CreerCommentaireBody,
   type ModifierCommentaireBody,
 } from '@pilote/kpilote-shared/commentaire'
+import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 
 import {
@@ -29,6 +30,12 @@ export function useCreerCommentaire(
   const queryClient = useQueryClient()
   const toast = useToast()
   return useMutation({
+    meta: {
+      analyticsSuccess: analyticsEvents.commentaire.publish({
+        entity_type: 'indicateur',
+        commentaire_type: type,
+      }),
+    },
     mutationFn: (body: CreerCommentaireBody) => createCommentaire(indicateurId, individuId, body),
     onSuccess: () => {
       void queryClient.invalidateQueries({
@@ -48,6 +55,12 @@ export function useModifierCommentaire(
   const queryClient = useQueryClient()
   const toast = useToast()
   return useMutation({
+    meta: {
+      analyticsSuccess: analyticsEvents.commentaire.publish({
+        entity_type: 'indicateur',
+        commentaire_type: type,
+      }),
+    },
     mutationFn: ({
       commentaireId,
       body,
