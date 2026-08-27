@@ -18,7 +18,9 @@ renamed AS (
         source.perimetre_id AS id,
         source.per_nom AS nom,
         source.per_porteur_id::TEXT AS ministere_id,
-        porteurs.porteur_name_short AS ministere_nom
+        COALESCE(
+            porteurs.porteur_name_short, porteurs.porteur_name
+        ) AS ministere_nom
 
     FROM source
     LEFT JOIN porteurs

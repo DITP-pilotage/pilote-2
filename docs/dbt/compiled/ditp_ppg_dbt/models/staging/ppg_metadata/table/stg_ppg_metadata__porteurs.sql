@@ -15,7 +15,7 @@ renamed AS (
         porteur_desc AS description,
         porteur_type AS porteur_type_acronyme,
         porteur_directeur AS directeur,
-        porteur_name_short AS nom_court,
+        COALESCE(porteur_name_short, porteur_name) AS nom_court,
         porteur_picto AS icone
 
     FROM source
