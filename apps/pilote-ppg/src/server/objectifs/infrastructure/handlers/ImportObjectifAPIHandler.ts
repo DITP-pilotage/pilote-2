@@ -72,7 +72,7 @@ export class ImportObjectifAPIHandler {
           categorie: "import",
           source: "ImportObjectifAPIHandler",
           chantierId,
-          nombreErreurs: validationResult.error.errors.length,
+          nombreErreurs: validationResult.error.issues.length,
         },
         "Validation Zod échouée pour import objectifs",
       );
@@ -116,7 +116,7 @@ export class ImportObjectifAPIHandler {
   }
 
   private formatZodError(error: ZodError): ImportObjectifErrorResponse {
-    const erreurs: ImportObjectifErreur[] = error.errors.map((zodError) => {
+    const erreurs: ImportObjectifErreur[] = error.issues.map((zodError) => {
       const path = zodError.path;
       const index = typeof path[1] === "number" ? path[1] : 0;
 

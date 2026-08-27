@@ -14,12 +14,18 @@ const createValidationMetadataIndicateurContexte = (
   metadata: MapInformationMetadataIndicateurContrat,
 ) =>
   z.object({
-    indicId: z.string().refine(
-      (value) => new RegExp(metadata.indic_id.metaPiloteEditRegex).test(value),
-      (value) => ({
-        message: `valeur: '${value}'. message: ${metadata.indic_id.metaPiloteEditRegexViolationMessage}`,
-      }),
-    ),
+    indicId: z
+      .string()
+      .refine(
+        (value) =>
+          new RegExp(metadata.indic_id.metaPiloteEditRegex).test(value),
+        {
+          // zod 4 : le 2e argument de `refine` est un objet de params, plus une fonction.
+          // La valeur rejetee est exposee par `issue.input`.
+          error: (issue) =>
+            `valeur: '${String(issue.input)}'. message: ${metadata.indic_id.metaPiloteEditRegexViolationMessage}`,
+        },
+      ),
   });
 
 export const createValidationMetadataIndicateurFormulaire = (
@@ -494,12 +500,11 @@ export const createValidationImportMetadataIndicateurFormulaire = (
         .string()
         .min(1, "Veuillez choisir une option valide pour la periodicité"),
       delaiDisponibilite: z.number({
-        invalid_type_error:
-          metadata.delai_disponibilite.metaPiloteEditRegexViolationMessage,
+        error: metadata.delai_disponibilite.metaPiloteEditRegexViolationMessage,
       }),
       indicTerritorialise: z.boolean(),
       frequenceTerritoriale: z.number({
-        invalid_type_error:
+        error:
           metadata.frequence_territoriale.metaPiloteEditRegexViolationMessage,
       }),
       mailles: z.string().nullable(),

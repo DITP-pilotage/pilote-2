@@ -22,9 +22,8 @@ export function mapTypeObjectifAPIVersDomaine(
 
 export const importObjectifSchema = z.object({
   type: z.enum(tousLesTypesObjectifAPI, {
-    errorMap: () => ({
-      message: `Le type d'objectif doit être l'un des suivants : ${tousLesTypesObjectifAPI.join(", ")}`,
-    }),
+    error: () =>
+      `Le type d'objectif doit être l'un des suivants : ${tousLesTypesObjectifAPI.join(", ")}`,
   }),
   contenu: z
     .string()

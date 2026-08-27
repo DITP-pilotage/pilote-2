@@ -82,7 +82,7 @@ export class ImportCommentaireAPIHandler {
           categorie: "import",
           source: "ImportCommentaireAPIHandler",
           chantierId,
-          nombreErreurs: validationResult.error.errors.length,
+          nombreErreurs: validationResult.error.issues.length,
         },
         "Validation Zod échouée pour import commentaires",
       );
@@ -149,7 +149,7 @@ export class ImportCommentaireAPIHandler {
   }
 
   private formatZodError(error: ZodError): ImportCommentaireErrorResponse {
-    const erreurs = error.errors.map((zodError) => {
+    const erreurs = error.issues.map((zodError) => {
       const path = zodError.path;
       const index = typeof path[1] === "number" ? path[1] : 0;
 

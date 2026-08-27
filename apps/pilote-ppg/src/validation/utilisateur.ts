@@ -9,33 +9,35 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 const customErrorMail =
   "Vous essayez de créer un compte pour une adresse dont le domaine n'est pas en .gouv.fr. Veuillez contacter pilote.ditp@modernisation.gouv.fr pour plus d'informations.";
 
-const customErrorMap: z.ZodErrorMap = (issue, ctx) => {
-  if (
-    issue.code === z.ZodIssueCode.invalid_string &&
-    issue.validation === "email"
-  ) {
+// zod 4 : l'error map ne recoit plus de `ctx`, et rendre `undefined` retombe sur le
+// message par defaut. Les codes ont change : `invalid_string` + `validation: "email"`
+// est devenu `invalid_format` + `format: "email"`, et `invalid_enum_value` est devenu
+// `invalid_value`. Cette map tient les messages FR de tous les formulaires : la laisser
+// retomber en silence sur les defauts les repasserait en anglais.
+const customErrorMap: z.core.$ZodErrorMap = (issue) => {
+  if (issue.code === "invalid_format" && issue.format === "email") {
     return { message: "L'adresse électronique saisie n'est pas valide" };
   }
-  if (issue.code === z.ZodIssueCode.too_small) {
-    return issue.minimum > 1
+  if (issue.code === "too_small") {
+    return Number(issue.minimum) > 1
       ? {
           message: `Le champ est requis (${issue.minimum} caractère(s) minimum)`,
         }
       : { message: "Le champ est requis" };
   }
-  if (issue.code === z.ZodIssueCode.too_big) {
+  if (issue.code === "too_big") {
     return {
       message: `La longueur maximale du champ est dépassée (${issue.maximum} caractères maximum)`,
     };
   }
 
-  if (issue.code === z.ZodIssueCode.invalid_enum_value) {
+  if (issue.code === "invalid_value") {
     return { message: "Veuillez choisir une option" };
   }
-  return { message: ctx.defaultError };
+  return undefined;
 };
 
-z.setErrorMap(customErrorMap);
+z.config({ customError: customErrorMap });
 
 export const validationInfosBaseUtilisateur = z
   .object({

@@ -81,7 +81,7 @@ export class ImportSyntheseDesResultatsAPIHandler {
           categorie: "import",
           source: "ImportSyntheseDesResultatsAPIHandler",
           chantierId,
-          nombreErreurs: validationResult.error.errors.length,
+          nombreErreurs: validationResult.error.issues.length,
         },
         "Validation Zod échouée pour import synthèses des résultats",
       );
@@ -151,7 +151,7 @@ export class ImportSyntheseDesResultatsAPIHandler {
   private formatZodError(
     error: ZodError,
   ): ImportSyntheseDesResultatsErrorResponse {
-    const erreurs: ImportSyntheseDesResultatsErreur[] = error.errors.map(
+    const erreurs: ImportSyntheseDesResultatsErreur[] = error.issues.map(
       (zodError) => {
         const path = zodError.path;
         const index = typeof path[1] === "number" ? path[1] : 0;
