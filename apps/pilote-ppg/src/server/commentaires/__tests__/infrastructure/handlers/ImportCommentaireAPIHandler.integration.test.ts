@@ -9,7 +9,6 @@ import { UtilisateurAuthentifie } from "@/server/authentification/domain/Utilisa
 // node-mocks-http 1.18 rend `_getJSONData()` en `unknown` et non plus `any`.
 type CorpsReponseImport = { message: string; erreurs: { message: string }[] };
 
-
 async function créerUtilisateurEnBase() {
   const auteurId = randomUUID();
   await prisma.utilisateur.create({
@@ -307,7 +306,9 @@ describe("ImportCommentaireAPIHandler", () => {
 
     // Then
     expect(response._getStatusCode()).toEqual(400);
-    expect((response._getJSONData() as CorpsReponseImport).erreurs).toBeDefined();
+    expect(
+      (response._getJSONData() as CorpsReponseImport).erreurs,
+    ).toBeDefined();
   });
 
   it("retourne 400 quand un type national est utilisé sur maille régionale", async () => {
@@ -369,9 +370,9 @@ describe("ImportCommentaireAPIHandler", () => {
 
     // Then
     expect(response._getStatusCode()).toEqual(400);
-    expect((response._getJSONData() as CorpsReponseImport).erreurs[0].message).toContain(
-      "n'est pas autorisé pour la maille régionale",
-    );
+    expect(
+      (response._getJSONData() as CorpsReponseImport).erreurs[0].message,
+    ).toContain("n'est pas autorisé pour la maille régionale");
   });
 
   it("retourne 400 quand la date est dans le futur", async () => {
@@ -413,6 +414,8 @@ describe("ImportCommentaireAPIHandler", () => {
 
     // Then
     expect(response._getStatusCode()).toEqual(400);
-    expect((response._getJSONData() as CorpsReponseImport).erreurs).toBeDefined();
+    expect(
+      (response._getJSONData() as CorpsReponseImport).erreurs,
+    ).toBeDefined();
   });
 });

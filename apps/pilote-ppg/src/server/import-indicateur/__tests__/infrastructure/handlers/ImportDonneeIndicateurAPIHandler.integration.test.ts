@@ -17,7 +17,6 @@ type CorpsReponseImport = {
   erreurs: { message: string; cellule?: string; nomDuChamp?: string }[];
 };
 
-
 vi.mock("@/server/import-indicateur/infrastructure/handlers/ParseForm", () => ({
   parseForm: () => ({
     file: mock<PersistentFile>(),
@@ -136,7 +135,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
           profil: ProfilEnum.DITP_ADMIN,
         });
       // Then
-      const data = (response._getJSONData() as CorpsReponseImport);
+      const data = response._getJSONData() as CorpsReponseImport;
       expect(response._getStatusCode()).toEqual(400);
       expect(data.message).toEqual(
         "Une erreur est survenue lors de l'import des données",
@@ -631,7 +630,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
           profil: ProfilEnum.DITP_ADMIN,
         });
       // Then
-      const data = (response._getJSONData() as CorpsReponseImport);
+      const data = response._getJSONData() as CorpsReponseImport;
       expect(response._getStatusCode()).toEqual(400);
       expect(data.message).toEqual(
         "Une erreur est survenue lors de l'import des données",
