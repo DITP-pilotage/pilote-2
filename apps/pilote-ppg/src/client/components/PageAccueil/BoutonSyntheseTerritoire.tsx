@@ -22,8 +22,7 @@ export const BoutonSyntheseTerritoire = ({
   const ffHistorique = useEnv("NEXT_PUBLIC_FF_HISTORIQUE_ALBERT");
   const utilsTrpc = api.useUtils();
   type ConversationActive =
-    | { kind: "nouvelle"; id: string }
-    | { kind: "existante"; id: string };
+    { kind: "nouvelle"; id: string } | { kind: "existante"; id: string };
   const [conversation, setConversation] = useState<ConversationActive>(() => ({
     kind: "nouvelle",
     id: crypto.randomUUID(),

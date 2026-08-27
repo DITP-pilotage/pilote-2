@@ -18,10 +18,7 @@ export class InformationMetadataIndicateur {
   private readonly _metaPiloteEditRegexViolationMessage: string | null;
 
   private readonly _metaPiloteEditBoxType:
-    | "text"
-    | "textarea"
-    | "boolean"
-    | "multi-select";
+    "text" | "textarea" | "boolean" | "multi-select";
 
   private readonly _metaPiloteDefaultValue: string | number | null | boolean;
 
@@ -109,10 +106,7 @@ export class InformationMetadataIndicateur {
   }
 
   get metaPiloteEditBoxType():
-    | "text"
-    | "textarea"
-    | "boolean"
-    | "multi-select" {
+    "text" | "textarea" | "boolean" | "multi-select" {
     return this._metaPiloteEditBoxType;
   }
 

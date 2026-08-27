@@ -14,5 +14,4 @@ export interface ImportObjectifErrorResponse {
 }
 
 export type ImportObjectifAPIResponse =
-  | ImportObjectifSuccessResponse
-  | ImportObjectifErrorResponse;
+  ImportObjectifSuccessResponse | ImportObjectifErrorResponse;

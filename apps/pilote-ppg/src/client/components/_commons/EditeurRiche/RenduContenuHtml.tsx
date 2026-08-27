@@ -41,12 +41,8 @@ function renderNode(node: Node): ReactNode {
   if (dataType === "callout") {
     const color =
       (element.getAttribute("data-color") as
-        | "info"
-        | "success"
-        | "warning"
-        | "error"
-        | "blue"
-        | "moutarde") || "info";
+        "info" | "success" | "warning" | "error" | "blue" | "moutarde") ||
+      "info";
     const IconeCallout = calloutIconMap[color] || InformationPleineIcon;
 
     return (

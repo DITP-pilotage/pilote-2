@@ -11,6 +11,13 @@ import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/db/prisma";
 
+// node-mocks-http 1.18 rend `_getJSONData()` en `unknown` et non plus `any`.
+type CorpsReponseImport = {
+  message: string;
+  erreurs: { message: string; cellule?: string; nomDuChamp?: string }[];
+};
+
+
 vi.mock("@/server/import-indicateur/infrastructure/handlers/ParseForm", () => ({
   parseForm: () => ({
     file: mock<PersistentFile>(),
@@ -129,7 +136,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
           profil: ProfilEnum.DITP_ADMIN,
         });
       // Then
-      const data = response._getJSONData();
+      const data = (response._getJSONData() as CorpsReponseImport);
       expect(response._getStatusCode()).toEqual(400);
       expect(data.message).toEqual(
         "Une erreur est survenue lors de l'import des données",
@@ -524,7 +531,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         });
       // Then
       expect(response._getStatusCode()).toEqual(200);
-      expect(response._getJSONData().message).toEqual(
+      expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
         "Les données ont correctement été importés",
       );
       const listeMesuresIndicateursTemporaire =
@@ -624,7 +631,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
           profil: ProfilEnum.DITP_ADMIN,
         });
       // Then
-      const data = response._getJSONData();
+      const data = (response._getJSONData() as CorpsReponseImport);
       expect(response._getStatusCode()).toEqual(400);
       expect(data.message).toEqual(
         "Une erreur est survenue lors de l'import des données",
@@ -1011,7 +1018,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         });
       // Then
       expect(response._getStatusCode()).toEqual(200);
-      expect(response._getJSONData().message).toEqual(
+      expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
         "Les données ont correctement été importés",
       );
 

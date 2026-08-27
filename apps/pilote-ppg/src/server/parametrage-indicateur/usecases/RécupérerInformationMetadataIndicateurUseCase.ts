@@ -92,10 +92,7 @@ export default class RécupérerInformationMetadataIndicateurUseCase {
       metaPiloteEditRegexViolationMessage:
         metadata.validation_regex_error_message,
       metaPiloteEditBoxType: (metadata.edit_box_type || "text") as
-        | "text"
-        | "textarea"
-        | "boolean"
-        | "multi-select",
+        "text" | "textarea" | "boolean" | "multi-select",
       metaPiloteDefaultValue: defaultValue,
       metaPiloteMandatory: metadata.est_obligatoire,
       metaPiloteDispDispDesc: metadata.doit_afficher_la_description,

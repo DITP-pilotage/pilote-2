@@ -12,13 +12,7 @@ import { clsxm } from "@/utils/clsxm";
 import { InformationPleineIcon } from "@/components/_commons/Icones/InformationPleineIcon";
 
 export type CalloutColor =
-  | "info"
-  | "success"
-  | "warning"
-  | "error"
-  | "blue"
-  | "moutarde"
-  | "neutral";
+  "info" | "success" | "warning" | "error" | "blue" | "moutarde" | "neutral";
 
 const colorVariants: Record<
   CalloutColor,

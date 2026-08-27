@@ -138,10 +138,7 @@ Utilise cet outil quand l'utilisateur demande :
           const mediane_repartition = statsByMaille.get(maille) ?? null;
 
           let position_mediane:
-            | "EN_RETARD"
-            | "EN_AVANCE"
-            | "DANS_LA_MEDIANE"
-            | null = null;
+            "EN_RETARD" | "EN_AVANCE" | "DANS_LA_MEDIANE" | null = null;
           if (taux_avancement_global !== null && mediane_repartition !== null) {
             const ecart = taux_avancement_global - mediane_repartition;
             if (ecart <= -10) {

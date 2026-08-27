@@ -146,8 +146,7 @@ export type FormCritereCommentaireName =
 export type FormCritereNoteName =
   `fichesEvaluation.${string}.criteres.${string}.note`;
 export type FormCommentaireName =
-  | FormObjectifCommentaireName
-  | FormCritereCommentaireName;
+  FormObjectifCommentaireName | FormCritereCommentaireName;
 export type FormNoteName = FormObjectifNoteName | FormCritereNoteName;
 
 export const enregistrerUnChamp = (

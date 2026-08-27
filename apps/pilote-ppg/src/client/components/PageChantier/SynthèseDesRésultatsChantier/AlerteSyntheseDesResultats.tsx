@@ -3,8 +3,7 @@ import Alerte from "@/components/_commons/Alerte/Alerte";
 import { typeAlerte } from "@/components/_commons/Alerte/Alerte.interface";
 
 export type SyntheseDesResultatsAction =
-  | "publication-reussie"
-  | "modification-reussie";
+  "publication-reussie" | "modification-reussie";
 
 const ALERTES: Record<
   SyntheseDesResultatsAction,

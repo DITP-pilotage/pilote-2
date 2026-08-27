@@ -199,9 +199,10 @@ export default class ChantierSQLRepository implements ChantierRepository {
       );
 
       chantierIds = await prisma
-        .$queryRawUnsafe<
-          { id: string }[]
-        >("SELECT distinct(id) FROM chantier_identite where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)", `%${testLower}%`)
+        .$queryRawUnsafe<{ id: string }[]>(
+          "SELECT distinct(id) FROM chantier_identite where (LOWER(unaccent(nom)) ILIKE $1 OR LOWER(unaccent(id)) ILIKE $1)",
+          `%${testLower}%`,
+        )
         .then((chantiersMatched) =>
           chantiersMatched
             .map((chantierMatched) => chantierMatched.id)

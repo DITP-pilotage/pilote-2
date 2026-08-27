@@ -13,9 +13,7 @@ export class HistorisationModification<
   private readonly _idObjetModifie: string;
 
   private readonly _typeDeModification:
-    | "creation"
-    | "modification"
-    | "suppression";
+    "creation" | "modification" | "suppression";
 
   private readonly _dateDeModification: string;
 

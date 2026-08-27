@@ -151,8 +151,7 @@ export function FiltresTableauEvaluation<T>({ table }: { table: Table<T> }) {
             }
             case "tags": {
               const currentFilterValue = column.getFilterValue() as
-                | string[]
-                | undefined;
+                string[] | undefined;
               return (
                 <TagsFiltre
                   getOptionLabel={(option) => filter.getOptionLabel(option)}

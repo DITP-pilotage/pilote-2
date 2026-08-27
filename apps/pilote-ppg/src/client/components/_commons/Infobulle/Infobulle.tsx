@@ -19,10 +19,7 @@ export const Infobulle: FunctionComponent<
     classNameInfoBulle?: string;
     classNameIcone?: string;
     styleIconInfoBulle?:
-      | "information"
-      | "question"
-      | "documentation"
-      | "warning";
+      "information" | "question" | "documentation" | "warning";
   }>
 > = ({
   children,

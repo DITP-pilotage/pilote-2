@@ -4,7 +4,7 @@ import {
   NodeViewWrapper,
   ReactNodeViewRenderer,
 } from "@tiptap/react";
-import { registreIcones } from "../registreIcones";
+import { registreIcones } from "@/client/components/_commons/EditeurRiche/registreIcones";
 
 function IconeNodeView({ node }: NodeViewProps) {
   const type = (node.attrs.type as string) || "info";

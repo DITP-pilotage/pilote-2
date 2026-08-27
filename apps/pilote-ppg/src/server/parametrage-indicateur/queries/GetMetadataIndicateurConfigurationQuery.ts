@@ -70,11 +70,7 @@ export class GetMetadataIndicateurConfigurationQuery {
         validationRegex: metadata.validation_regex,
         validationRegexErrorMessage: metadata.validation_regex_error_message,
         editBoxType: metadata.edit_box_type as
-          | "text"
-          | "textarea"
-          | "boolean"
-          | "multi-select"
-          | null,
+          "text" | "textarea" | "boolean" | "multi-select" | null,
         defaultValue: metadata.default_value
           ? this.parseDefaultValue(
               metadata.default_value,

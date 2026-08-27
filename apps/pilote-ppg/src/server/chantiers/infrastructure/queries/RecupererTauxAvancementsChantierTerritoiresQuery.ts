@@ -8,8 +8,10 @@ import {
 
 export class RecupererTauxAvancementsChantierTerritoiresQuery {
   constructor(
-    private readonly deps: Inject<// TODO: cette query de couche infra ne devrait pas dépendre d'un use case — toléré ici pour des raisons legacy
-    "agregerAvancementsChantiersUseCase">,
+    private readonly deps: Inject<
+      // TODO: cette query de couche infra ne devrait pas dépendre d'un use case — toléré ici pour des raisons legacy
+      "agregerAvancementsChantiersUseCase"
+    >,
   ) {}
 
   async run(params: {

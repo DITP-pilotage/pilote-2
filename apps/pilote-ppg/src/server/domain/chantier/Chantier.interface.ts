@@ -70,9 +70,7 @@ export type ChantierVueDEnsemble = {
     estBrouillon: boolean;
   };
   porteur:
-    | MinistereAccueilPorteur
-    | MinisterePorteurRapportDetailleContrat
-    | null;
+    MinistereAccueilPorteur | MinisterePorteurRapportDetailleContrat | null;
   tendance: ChantierTendance | null;
   écart: number | null;
   dateDeMàjDonnéesQualitatives: string | null;

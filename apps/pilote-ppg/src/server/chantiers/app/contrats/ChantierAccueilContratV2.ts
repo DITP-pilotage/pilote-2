@@ -44,9 +44,7 @@ export type ListeTerritoiresDonnéeAccueilContrat = Record<
 >;
 
 export type MailleChantierContrat =
-  | "nationale"
-  | "regionale"
-  | "departementale";
+  "nationale" | "regionale" | "departementale";
 
 type MailleAccueilContrat = Record<
   MailleChantierContrat,

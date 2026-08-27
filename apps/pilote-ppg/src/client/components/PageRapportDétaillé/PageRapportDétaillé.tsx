@@ -170,12 +170,12 @@ const PageRapportDétaillé: FunctionComponent<PageRapportDétailléProps> = ({
                         chantier.id
                       ] ?? []
                     }
-                    donnéesCartographieAvancement={
-                      mapDonnéesCartographieAvancement.get(chantier.id)!
-                    }
-                    donnéesCartographieMétéo={
-                      mapDonnéesCartographieMétéo.get(chantier.id)!
-                    }
+                    donnéesCartographieAvancement={mapDonnéesCartographieAvancement.get(
+                      chantier.id,
+                    )!}
+                    donnéesCartographieMétéo={mapDonnéesCartographieMétéo.get(
+                      chantier.id,
+                    )!}
                     décisionStratégique={
                       publicationsGroupéesParChantier.décisionStratégique[
                         chantier.id
