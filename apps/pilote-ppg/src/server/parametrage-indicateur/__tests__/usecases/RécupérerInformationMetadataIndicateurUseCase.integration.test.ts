@@ -1,6 +1,7 @@
 import { getContainer } from "@/server/dependances";
 import RécupérerInformationMetadataIndicateurUseCase from "@/server/parametrage-indicateur/usecases/RécupérerInformationMetadataIndicateurUseCase";
 import { prisma } from "@/server/db/prisma";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
 
 describe("RécupérerInformationMetadataIndicateurUseCase", () => {
   let useCase: RécupérerInformationMetadataIndicateurUseCase;
@@ -42,19 +43,15 @@ describe("RécupérerInformationMetadataIndicateurUseCase", () => {
       },
     });
 
-    await prisma.metadata_zonegroup.create({
-      data: {
-        zone_group_id: "ZG-ACTIF-TEST",
-        zg_name: "Zone active de test",
-        zg_desc: "Description de la zone active",
-      },
+    await fixtures.metadataZonegroup({
+      zone_group_id: "ZG-ACTIF-TEST",
+      zg_name: "Zone active de test",
+      zg_desc: "Description de la zone active",
     });
-    await prisma.metadata_zonegroup.create({
-      data: {
-        zone_group_id: "ZG-ARCHIVE-TEST",
-        zg_name: "Zone archivée de test",
-        deleted_at: new Date(),
-      },
+    await fixtures.metadataZonegroup({
+      zone_group_id: "ZG-ARCHIVE-TEST",
+      zg_name: "Zone archivée de test",
+      deleted_at: new Date(),
     });
 
     // When

@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom";
 import { render, screen } from "@testing-library/react";
-import { ZonegroupValuesPreview } from "./ZonegroupValuesPreview";
 import type { ZonegroupAdminListItem } from "@/server/metadataZonegroup/queries/ListerZonegroupsAdminQuery";
+import { ZonegroupValuesPreview } from "./ZonegroupValuesPreview";
 
 const zonegroupActif: ZonegroupAdminListItem = {
   zoneGroupId: "ZG-001",

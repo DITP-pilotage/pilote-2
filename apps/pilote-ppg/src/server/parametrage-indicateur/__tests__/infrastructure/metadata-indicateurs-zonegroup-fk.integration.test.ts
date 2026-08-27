@@ -1,13 +1,12 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/server/db/prisma";
+import { fixtures } from "@/server/infrastructure/test/fixtures";
 
 describe("Contrainte FK metadata_indicateurs(_hidden).zg_applicable -> metadata_zonegroup", () => {
   beforeEach(async () => {
-    await prisma.metadata_zonegroup.create({
-      data: {
-        zone_group_id: "ZG-TEST-FK",
-        zg_name: "Zone de test FK",
-      },
+    await fixtures.metadataZonegroup({
+      zone_group_id: "ZG-TEST-FK",
+      zg_name: "Zone de test FK",
     });
   });
 
