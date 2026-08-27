@@ -1,14 +1,19 @@
+import { Prisma } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { PilotePrismaClient } from "@/server/db/PrismaTransaction";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
+import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
+import { configuration } from "@/config";
 import {
-  categoriesApplicables,
+  categoriesSignalementDeLaMaille,
   categoriesDuChantier,
-  chantiersSansTauxDepartemental,
-  compterPva,
   libelleCategorieSignalement,
   type CategorieSignalement,
 } from "@/server/chantiers/domain/CalculCategoriesSignalement";
+import {
+  chantiersSansTauxDepartemental,
+  compterPva,
+} from "@/server/chantiers/infrastructure/queries/RequetesCategoriesSignalement";
 
 type ChantierTerritoireRow = {
   id: string;
@@ -31,7 +36,6 @@ type ChantierTerritoireRow = {
 
 export type GetChantiersSignalesListParams = {
   territoireCode: string;
-  jalon: number;
   chantierIds?: string[];
   categorieSignalement?: CategorieSignalement;
 };
@@ -74,16 +78,22 @@ export class GetChantiersSignalesListQuery {
 
     const { maille } = territoireCodeVersMailleCodeInsee(params.territoireCode);
 
+    const jalonParDefaut = getAnneeDateDeBascule(
+      new Date(),
+      configuration().dateBasculeAffichageValeursAnneePrecedente,
+    );
+
     const chantierTerritoires = await this.recupererChantierTerritoires(
       prisma,
       params,
+      jalonParDefaut,
     );
 
     const chantierIdsApplicables = chantierTerritoires.map((ct) => ct.id);
 
     const categoriesRecherchees = params.categorieSignalement
       ? [params.categorieSignalement]
-      : categoriesApplicables(maille);
+      : categoriesSignalementDeLaMaille(maille);
 
     const pvaChantierIds = categoriesRecherchees.includes(
       "proposition_valeur_avancement",
@@ -98,7 +108,7 @@ export class GetChantiersSignalesListQuery {
           prisma,
           maille,
           chantierTerritoires,
-          params.jalon,
+          jalonParDefaut,
         )
       : new Set<string>();
 
@@ -139,7 +149,7 @@ export class GetChantiersSignalesListQuery {
     return {
       territoire_code: params.territoireCode,
       territoire_nom: territoire.nom,
-      jalon: params.jalon,
+      jalon: jalonParDefaut,
       maille,
       chantiers,
     };
@@ -148,8 +158,9 @@ export class GetChantiersSignalesListQuery {
   private async recupererChantierTerritoires(
     prisma: PilotePrismaClient,
     params: GetChantiersSignalesListParams,
+    jalonParDefaut: number,
   ): Promise<ChantierTerritoireRow[]> {
-    return prisma.chantier_territoire.findMany({
+    const chantierTerritoires = await prisma.chantier_territoire.findMany({
       where: {
         territoire_code: params.territoireCode,
         est_applicable: true,
@@ -161,26 +172,44 @@ export class GetChantiersSignalesListQuery {
           ? { id: { in: params.chantierIds } }
           : {}),
       },
-      select: {
-        id: true,
-        meteo: true,
-        tendance: true,
-        nombre_propositions_valeur_actuelle: true,
-        chantier_identite: {
-          select: {
-            id: true,
-            nom: true,
-            axe: true,
-            ppg: true,
-            ministeres_acronymes: true,
-            cible_attendue: true,
-          },
-        },
+      include: {
+        chantier_identite: true,
         chantier_territoire_jalon: {
-          where: { jalon: params.jalon },
-          select: { ecart: true, taux_avancement: true },
+          where: { jalon: jalonParDefaut },
         },
       },
     });
+
+    return chantierTerritoires.map(toChantierTerritoireRow);
   }
+}
+
+type ChantierTerritoireAvecRelations = Prisma.chantier_territoireGetPayload<{
+  include: {
+    chantier_identite: true;
+    chantier_territoire_jalon: true;
+  };
+}>;
+
+function toChantierTerritoireRow(
+  ct: ChantierTerritoireAvecRelations,
+): ChantierTerritoireRow {
+  return {
+    id: ct.id,
+    meteo: ct.meteo,
+    tendance: ct.tendance,
+    nombre_propositions_valeur_actuelle: ct.nombre_propositions_valeur_actuelle,
+    chantier_identite: {
+      id: ct.chantier_identite.id,
+      nom: ct.chantier_identite.nom,
+      axe: ct.chantier_identite.axe,
+      ppg: ct.chantier_identite.ppg,
+      ministeres_acronymes: ct.chantier_identite.ministeres_acronymes,
+      cible_attendue: ct.chantier_identite.cible_attendue,
+    },
+    chantier_territoire_jalon: ct.chantier_territoire_jalon.map((jalon) => ({
+      ecart: jalon.ecart,
+      taux_avancement: jalon.taux_avancement,
+    })),
+  };
 }

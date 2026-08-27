@@ -8,9 +8,11 @@ import {
   aTauxNonCalcule,
   aTendanceEnBaisse,
   ChantierTerritoireAvecJalon,
+} from "@/server/chantiers/domain/CalculCategoriesSignalement";
+import {
   chantiersSansTauxDepartemental,
   compterPva,
-} from "@/server/chantiers/domain/CalculCategoriesSignalement";
+} from "@/server/chantiers/infrastructure/queries/RequetesCategoriesSignalement";
 
 export class GetChantiersSignalesQuery {
   constructor(private readonly deps: Inject<"prisma">) {}

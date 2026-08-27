@@ -3,6 +3,13 @@ import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { GetChantiersSignalesListQuery } from "@/server/chantiers/query/GetChantiersSignalesListQuery";
 import { LIBELLE_ABSENCE_TAUX_DEPARTEMENTAL } from "@/server/chantiers/app/contrats/LibellesAlerteChantier";
+import { getAnneeDateDeBascule } from "@/components/_commons/IndicateursChantier/Bloc/ValeurEtDate/getAnneeDateDeBascule";
+import { configuration } from "@/config";
+
+const jalonParDefaut = getAnneeDateDeBascule(
+  new Date(),
+  configuration().dateBasculeAffichageValeursAnneePrecedente,
+);
 
 describe("GetChantiersSignalesListQuery", () => {
   let query: GetChantiersSignalesListQuery;
@@ -39,14 +46,13 @@ describe("GetChantiersSignalesListQuery", () => {
         code_insee: "75",
         maille: "DEPT",
         zone_id: "zone-1",
-        jalon: 2025,
+        jalon: jalonParDefaut,
         ecart: 0,
       });
 
       // When
       const result = await query.execute({
         territoireCode: "DEPT-75",
-        jalon: 2025,
       });
 
       // Then
@@ -97,7 +103,7 @@ describe("GetChantiersSignalesListQuery", () => {
         code_insee: "75",
         maille: "DEPT",
         zone_id: "zone-1",
-        jalon: 2025,
+        jalon: jalonParDefaut,
         ecart: 0,
         taux_avancement: 50,
       });
@@ -105,7 +111,6 @@ describe("GetChantiersSignalesListQuery", () => {
       // When
       const result = await query.execute({
         territoireCode: "DEPT-75",
-        jalon: 2025,
       });
 
       // Then
@@ -138,7 +143,7 @@ describe("GetChantiersSignalesListQuery", () => {
         code_insee: "75",
         maille: "DEPT",
         zone_id: "zone-1",
-        jalon: 2025,
+        jalon: jalonParDefaut,
         ecart: 0,
         taux_avancement: 50,
       });
@@ -146,7 +151,6 @@ describe("GetChantiersSignalesListQuery", () => {
       // When
       const result = await query.execute({
         territoireCode: "DEPT-75",
-        jalon: 2025,
       });
 
       // Then — la météo ORAGE seule ne suffit pas à signaler ce chantier
@@ -178,7 +182,7 @@ describe("GetChantiersSignalesListQuery", () => {
         code_insee: "75",
         maille: "DEPT",
         zone_id: "zone-1",
-        jalon: 2025,
+        jalon: jalonParDefaut,
         ecart: -15,
       });
       await fixtures.chantierIdentite({
@@ -202,14 +206,13 @@ describe("GetChantiersSignalesListQuery", () => {
         code_insee: "75",
         maille: "DEPT",
         zone_id: "zone-1",
-        jalon: 2025,
+        jalon: jalonParDefaut,
         ecart: 0,
       });
 
       // When — on ne demande que la PVA
       const result = await query.execute({
         territoireCode: "DEPT-75",
-        jalon: 2025,
         categorieSignalement: "proposition_valeur_avancement",
       });
 
@@ -253,7 +256,7 @@ describe("GetChantiersSignalesListQuery", () => {
         code_insee: "FR",
         maille: "NAT",
         zone_id: "zone-1",
-        jalon: 2025,
+        jalon: jalonParDefaut,
         taux_avancement: 50,
       });
       await fixtures.chantierTerritoire({
@@ -270,7 +273,6 @@ describe("GetChantiersSignalesListQuery", () => {
       // When
       const result = await query.execute({
         territoireCode: "NAT-FR",
-        jalon: 2025,
       });
 
       // Then
@@ -310,7 +312,7 @@ describe("GetChantiersSignalesListQuery", () => {
         code_insee: "FR",
         maille: "NAT",
         zone_id: "zone-1",
-        jalon: 2025,
+        jalon: jalonParDefaut,
         taux_avancement: 50,
       });
       await fixtures.chantierTerritoire({
@@ -328,14 +330,13 @@ describe("GetChantiersSignalesListQuery", () => {
         code_insee: "75",
         maille: "DEPT",
         zone_id: "zone-2",
-        jalon: 2025,
+        jalon: jalonParDefaut,
         taux_avancement: null,
       });
 
       // When
       const result = await query.execute({
         territoireCode: "NAT-FR",
-        jalon: 2025,
       });
 
       // Then
@@ -372,7 +373,7 @@ describe("GetChantiersSignalesListQuery", () => {
         code_insee: "75",
         maille: "DEPT",
         zone_id: "zone-1",
-        jalon: 2025,
+        jalon: jalonParDefaut,
       });
       await fixtures.chantierTerritoire({
         id: "CH-001",
@@ -388,7 +389,6 @@ describe("GetChantiersSignalesListQuery", () => {
       // When — on interroge DEPT-76 uniquement
       const result = await query.execute({
         territoireCode: "DEPT-76",
-        jalon: 2025,
       });
 
       // Then
@@ -417,7 +417,6 @@ describe("GetChantiersSignalesListQuery", () => {
       // When
       const result = await query.execute({
         territoireCode: "DEPT-75",
-        jalon: 2025,
       });
 
       // Then
