@@ -512,3 +512,28 @@ test.describe("Formulaire indicateur — Accès refusé", () => {
     );
   });
 });
+
+test.describe("Formulaire indicateur — Restriction géographique", () => {
+  test("doit proposer les zone-groupes du référentiel comme valeurs sélectionnables", async ({
+    page,
+    e2eContext,
+    step,
+  }) => {
+    const appActions = new AppActions(page, e2eContext);
+    const pageForm = new PageAdminIndicateurForm(page, e2eContext);
+
+    await step("Connexion et passage en mode modification", async () => {
+      await appActions.loginAs(DITP_ADMIN);
+      await pageForm.goto("IND-021");
+      await pageForm.clickModifier();
+      await pageForm.expectModeModification();
+    });
+
+    await step(
+      "Le sélecteur de zone-groupe propose ZG-001 (Groupement 1), issu du référentiel",
+      async () => {
+        await pageForm.expectOptionZoneGroupeVisible("Groupement 1");
+      },
+    );
+  });
+});

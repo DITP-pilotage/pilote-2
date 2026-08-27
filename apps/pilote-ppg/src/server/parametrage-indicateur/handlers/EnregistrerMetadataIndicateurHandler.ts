@@ -75,12 +75,20 @@ export class EnregistrerMetadataIndicateurHandler {
 
       // Upsert chaque métadonnée
       for (const metadata of command.metadataList) {
-        // D'abord, supprimer les valeurs acceptées existantes pour cette métadonnée
-        await prisma.metadata_indicateur_valeur_acceptee.deleteMany({
-          where: {
-            metadata_indicateur_name: metadata.name,
-          },
-        });
+        // zg_applicable est adossé au référentiel metadata_zonegroup (voir
+        // referentiels/zonegroups) : ses valeurs sélectionnables ne passent
+        // plus par ce mécanisme générique de saisie libre.
+        const gèreSesValeursViaLeRéférentielZonegroup =
+          metadata.name === "zg_applicable";
+
+        if (!gèreSesValeursViaLeRéférentielZonegroup) {
+          // D'abord, supprimer les valeurs acceptées existantes pour cette métadonnée
+          await prisma.metadata_indicateur_valeur_acceptee.deleteMany({
+            where: {
+              metadata_indicateur_name: metadata.name,
+            },
+          });
+        }
 
         // Convertir defaultValue en string pour la BDD
         const defaultValueString = this.convertDefaultValueToString(
@@ -128,7 +136,10 @@ export class EnregistrerMetadataIndicateurHandler {
         });
 
         // Créer les nouvelles valeurs acceptées
-        if (metadata.listeValeursAcceptes.length > 0) {
+        if (
+          !gèreSesValeursViaLeRéférentielZonegroup &&
+          metadata.listeValeursAcceptes.length > 0
+        ) {
           await prisma.metadata_indicateur_valeur_acceptee.createMany({
             data: metadata.listeValeursAcceptes.map((valeur) => ({
               metadata_indicateur_name: metadata.name,

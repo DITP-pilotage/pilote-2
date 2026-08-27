@@ -53,6 +53,10 @@ export class PageAdminIndicateurForm extends BasePage {
     });
   }
 
+  private get selecteurZoneGroupe() {
+    return this.page.locator('select[name="zgApplicable"]');
+  }
+
   async goto(indicateurId: string): Promise<void> {
     await this.page.goto(`/panel-administrateur/indicateurs/${indicateurId}`);
     await this.titreFiche.waitFor({ state: "visible" });
@@ -123,6 +127,12 @@ export class PageAdminIndicateurForm extends BasePage {
     await expect(this.boutonConfirmerChangements).toBeVisible();
     await expect(this.boutonAnnuler).toBeVisible();
     await expect(this.boutonModifier).not.toBeVisible();
+  }
+
+  async expectOptionZoneGroupeVisible(nom: string): Promise<void> {
+    await expect(
+      this.selecteurZoneGroupe.locator("option", { hasText: nom }),
+    ).toHaveCount(1);
   }
 
   async expectModeCreation(): Promise<void> {

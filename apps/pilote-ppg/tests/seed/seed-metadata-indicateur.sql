@@ -113,41 +113,6 @@ INSERT INTO public.metadata_indicateur_valeur_acceptee (metadata_indicateur_name
 ('indic_schema', 3, 'restrict-reg.json', 'Saisie régionale', 'Saisie restreinte au niveau régional'),
 ('indic_schema', 4, 'restrict-0-100.json', 'Dans [0,100]', 'Saisie entre 0 et 100.');
 
--- zg_applicable - Restrictions géographiques
-INSERT INTO public.metadata_indicateur_valeur_acceptee (metadata_indicateur_name, ordre, valeur, nom, description) VALUES
-('zg_applicable', 1, '', 'Toutes zones', 'Toutes zones'),
-('zg_applicable', 2, 'ZG-002', 'Façades maritimes département', 'Départements avec façade maritime'),
-('zg_applicable', 3, 'ZG-003', 'Façades maritimes région', 'Régions avec façade maritime'),
-('zg_applicable', 4, 'ZG-004', 'ZFE département', 'Départements avec au moins une ZFE'),
-('zg_applicable', 5, 'ZG-005', 'ZFE région', 'Régions avec au moins une ZFE'),
-('zg_applicable', 6, 'ZG-006', 'Façades maritimes hors OM', 'Ensemble des territoires avec façade maritime hors Outre-Mer'),
-('zg_applicable', 7, 'ZG-007', 'ZFE', 'Territoires avec au moins une ZFE'),
-('zg_applicable', 8, 'ZG-008', 'Ports CH-049', 'Ports de la PPG « Verdir les ports et les flottes »'),
-('zg_applicable', 9, 'ZG-009', 'Ports CH-059', 'Ports de la PPG « Devenir leader de l''hydrogène décarboné »'),
-('zg_applicable', 10, 'ZG-010', 'Façade maritime Méditerranée', 'Territoires de la façade maritime méditerranéenne'),
-('zg_applicable', 11, 'ZG-011', 'ANRU', 'Territoires concernés par le programme Accélérer le renouvellement urbain des quartiers'),
-('zg_applicable', 12, 'ZG-012', 'ACV', 'Territoires concernés par le programme Action Coeur de Ville'),
-('zg_applicable', 13, 'ZG-013', 'PVD', 'Territoires concernés par le programme Petites Villes de Demain'),
-('zg_applicable', 14, 'ZG-014', 'Outre-Mer', 'DROM'),
-('zg_applicable', 15, 'ZG-015', 'Façades maritimes dont OM', 'Territoires avec façade maritime dont Outre-Mer'),
-('zg_applicable', 16, 'ZG-016', 'Prisons', 'Territoires concernés par le programme 15 000 places de prisons'),
-('zg_applicable', 17, 'ZG-017', 'GUDA', 'Territoires concernés par les GUDA'),
-('zg_applicable', 18, 'ZG-018', 'Toutes zones sauf Mayotte', 'Tous départements et régions Hexagone et OM, hors Mayotte'),
-('zg_applicable', 19, 'ZG-019', 'Toutes zones métropole', 'Tous départements et régions Hexagone'),
-('zg_applicable', 20, 'ZG-020', '50 sites + émetteurs', 'Territoires des 50 sites industriels les plus émetteurs'),
-('zg_applicable', 21, 'ZG-021', 'Force aux Frontières', 'Territoires de la PPG « Force aux Frontières »'),
-('zg_applicable', 22, 'ZG-022', 'Stationnement vélo sécurisé en gare', 'Territoires de l''indicateur Places de stationnement vélo sécurisé en gare (IND-215) de la PPG « Amplifier le plan vélo »'),
-('zg_applicable', 23, 'ZG-023', 'Industrie décarbonnée', 'Régions de la PPG « Devenir la première grande économie décarbonée »'),
-('zg_applicable', 24, 'ZG-024', 'Education prioritaire', 'Territoires contenant des écoles en Education Prioritaire (Cantal,Haute-Loire,Lot et Lozère n''ont pas de REP)'),
-('zg_applicable', 25, 'ZG-025', 'Bon état écologique des cours d''eau', 'Toutes zones sauf départements 09, 64, 75, 93 et DROM (pas de station de mesure)'),
-('zg_applicable', 26, 'ZG-026', 'PCAET (CH-161)', 'Toutes zones sauf Lozère'),
-('zg_applicable', 27, 'ZG-027', 'Toutes zones sauf Corse', 'Tous départements et régions sauf Corse'),
-('zg_applicable', 28, 'ZG-028', 'REP', 'Tous territoires contenant des REP (8 terr exclus)'),
-('zg_applicable', 29, 'ZG-029', 'REP+', 'Tous territoires contenant des REP+ (31 dept exclus)'),
-('zg_applicable', 30, 'ZG-030', 'Accessibilité tribunaux', 'CH-196 - Mise en accessibilité des tribunaux'),
-('zg_applicable', 31, 'ZG-031', 'Accessibilité PN', 'CH-196 - Mise en accessibilité des lieux Police Nationale'),
-('zg_applicable', 32, 'ZG-032', 'Accessibilité GN', 'CH-196 - Mise en accessibilité des lieux Gendarmerie Nationale');
-
 -- vi_dept_from, va_dept_from, vc_dept_from
 INSERT INTO public.metadata_indicateur_valeur_acceptee (metadata_indicateur_name, ordre, valeur, nom, description) VALUES
 ('vi_dept_from', 1, '_', 'Pas de saisie', 'Pas de saisie attendue à cette maille'),

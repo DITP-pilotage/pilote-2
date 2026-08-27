@@ -404,6 +404,77 @@ describe("EnregistrerMetadataIndicateurHandler", () => {
       });
     });
 
+    it("ne touche pas aux valeurs acceptées existantes de zg_applicable (source = référentiel zonegroup)", async () => {
+      // Given - zg_applicable existe avec des valeurs acceptées héritées de l'ancien mécanisme
+      await prisma.metadata_indicateur.create({
+        data: {
+          name: "zg_applicable",
+          data_type: "text",
+          description: "Zone-group applicable",
+          est_visible: true,
+          alias: "Restriction géographique",
+          est_editable: true,
+          validation_regex: "",
+          validation_regex_error_message: null,
+          edit_box_type: "multi-select",
+          default_value: null,
+          est_obligatoire: false,
+          doit_afficher_la_description: false,
+          groupe: "METADATA_INDICATEURS",
+          bloc_id: null,
+          valeurs_acceptees: {
+            create: [
+              {
+                ordre: 1,
+                valeur: "ZG-001",
+                nom: "Groupement 1",
+                description: "Ancienne valeur héritée",
+              },
+            ],
+          },
+        },
+      });
+
+      const command = {
+        metadataList: [
+          {
+            name: "zg_applicable",
+            dataType: "text" as const,
+            description: "Zone-group applicable (modifiée)",
+            estVisible: true,
+            alias: "Restriction géographique",
+            estEditable: true,
+            validationRegex: "",
+            validationRegexErrorMessage: null,
+            editBoxType: "multi-select" as const,
+            defaultValue: null,
+            estObligatoire: false,
+            doitAfficherLaDescription: false,
+            listeValeursAcceptes: [],
+            groupe: "METADATA_INDICATEURS" as const,
+            blocId: null,
+          },
+        ],
+      };
+
+      // When
+      await handler.execute(command);
+
+      // Then - les propriétés génériques sont mises à jour...
+      const metadata = await prisma.metadata_indicateur.findUnique({
+        where: { name: "zg_applicable" },
+        include: { valeurs_acceptees: true },
+      });
+      expect(metadata?.description).toBe("Zone-group applicable (modifiée)");
+
+      // ...mais les valeurs acceptées héritées ne sont pas supprimées
+      expect(metadata?.valeurs_acceptees).toHaveLength(1);
+      expect(metadata?.valeurs_acceptees[0]).toMatchObject({
+        valeur: "ZG-001",
+        nom: "Groupement 1",
+      });
+    });
+
     it("doit gérer les valeurs par défaut de différents types", async () => {
       // Given
       const command = {

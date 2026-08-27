@@ -385,6 +385,8 @@ model metadata_indicateurs {
   indic_territorialise Boolean?
   mailles              String?
 
+  zonegroup metadata_zonegroup? @relation(fields: [zg_applicable], references: [zone_group_id])
+
   @@schema("raw_data")
 }
 
@@ -407,6 +409,8 @@ model metadata_indicateurs_hidden {
   indic_hidden_pilote  Boolean?
   indic_schema         String?
   zg_applicable        String?
+
+  zonegroup metadata_zonegroup? @relation(fields: [zg_applicable], references: [zone_group_id])
 
   @@schema("raw_data")
 }
@@ -606,14 +610,16 @@ model metadata_engagement {
 
 
 model metadata_zonegroup {
-  zone_group_id String    @id
-  zg_name       String
-  zg_desc       String?
-  zg_zones      String[]
-  created_at    DateTime  @default(now()) @db.Timestamptz
-  updated_at    DateTime  @default(now()) @updatedAt @db.Timestamptz
-  deleted_at    DateTime? @db.Timestamptz
-  chantiers     metadata_chantiers[]
+  zone_group_id     String    @id
+  zg_name           String
+  zg_desc           String?
+  zg_zones          String[]
+  created_at        DateTime  @default(now()) @db.Timestamptz
+  updated_at        DateTime  @default(now()) @updatedAt @db.Timestamptz
+  deleted_at        DateTime? @db.Timestamptz
+  chantiers         metadata_chantiers[]
+  indicateurs       metadata_indicateurs[]
+  indicateursHidden metadata_indicateurs_hidden[]
 
   @@schema("raw_data")
 }
