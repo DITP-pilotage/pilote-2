@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import {
-  categoriesApplicables,
+  categoriesSignalementDeLaMaille,
   categoriesDuChantier,
   libelleCategorieSignalement,
   nomCategorie,
@@ -16,9 +16,9 @@ const chantierBase: ChantierTerritoireAvecJalon = {
   chantier_territoire_jalon: [{ ecart: 0, taux_avancement: 50 }],
 };
 
-describe("categoriesApplicables", () => {
+describe("categoriesSignalementDeLaMaille", () => {
   test("retourne les catégories nationales pour la maille NAT", () => {
-    expect(categoriesApplicables("NAT")).toEqual([
+    expect(categoriesSignalementDeLaMaille("NAT")).toEqual([
       "taux_avancement_non_calcule",
       "absence_taux_avancement_departemental",
       "meteo_synthese_non_renseignees",
@@ -27,7 +27,7 @@ describe("categoriesApplicables", () => {
   });
 
   test("retourne les catégories territoriales pour la maille REG", () => {
-    expect(categoriesApplicables("REG")).toEqual([
+    expect(categoriesSignalementDeLaMaille("REG")).toEqual([
       "retard_mediane",
       "tendance_baisse",
       "meteo_synthese_non_renseignees",
@@ -36,7 +36,7 @@ describe("categoriesApplicables", () => {
   });
 
   test("retourne les catégories territoriales pour la maille DEPT", () => {
-    expect(categoriesApplicables("DEPT")).toEqual([
+    expect(categoriesSignalementDeLaMaille("DEPT")).toEqual([
       "retard_mediane",
       "tendance_baisse",
       "meteo_synthese_non_renseignees",

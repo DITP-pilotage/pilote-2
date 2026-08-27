@@ -114,7 +114,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     // When
     const result = await executeTool(tool, {
       territoire_code: "DEPT-75",
-      jalon: 2025,
     });
 
     // Then
@@ -131,7 +130,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     // When
     const result = await executeTool(tool, {
       territoire_code: "NAT-FR",
-      jalon: 2025,
       categorie_signalement: "retard_mediane",
     });
 
@@ -145,105 +143,39 @@ describe("createGetChantiersSignalesTool execute", () => {
     ]);
   });
 
-  test("masque la catégorie tendance_baisse pour un territoire hors périmètre accessible", async () => {
-    // Given — REG-99 résolu via sous-territoires mais absent de territoiresAccessibles
-    const resultatMulti: Awaited<
-      ReturnType<GetChantiersSignalesListQuery["execute"]>
-    > = {
-      territoire_code: "REG-99",
-      territoire_nom: "Région test",
-      jalon: 2025,
-      maille: "REG",
-      chantiers: [
-        {
-          chantier: {
-            id: "CH-001",
-            nom: "Chantier",
-            axe: "Axe 1",
-            ppg: "PPG 1",
-            ministeres: ["MIN-01"],
-          },
-          categories_signalement: [
-            "Chantier(s) avec météo et synthèse des résultats non renseignés",
-            "Chantier(s) avec tendance en baisse",
-          ],
-          meteo: "NON_RENSEIGNEE",
-          tendance: "BAISSE",
-          ecart: 0,
-          taux_avancement: 50,
-        },
-      ],
-    };
+  test("rejette l'accès à un territoire non accessible", async () => {
+    // Given
     const tool = buildTool({
-      queryResults: { "REG-99": resultatMulti },
+      queryResults: {},
       territoiresAccessibles: ["REG-11"],
-      resoudre: ["REG-99"],
+      resoudre: [],
     });
 
-    // When
-    const result = await executeTool(tool, {
-      territoire_code: "REG-99",
-      jalon: 2025,
-    });
-
-    // Then — tendance_baisse retirée, meteo_synthese conservée
-    expect(result.resultats).toEqual([
-      expect.objectContaining({
-        chantiers: [
-          expect.objectContaining({
-            tendance: null,
-            categories_signalement: [
-              "Chantier(s) avec météo et synthèse des résultats non renseignés",
-            ],
-          }),
-        ],
-      }),
-    ]);
+    // When / Then
+    await expect(
+      executeTool(tool, { territoire_code: "REG-99" }),
+    ).rejects.toThrow("Accès non autorisé au territoire REG-99");
   });
 
-  test("retire entièrement un chantier dont la seule catégorie devient masquée", async () => {
-    // Given — chantier avec pour unique catégorie tendance_baisse, sur un territoire hors périmètre accessible
-    const resultatUniqueCategorie: Awaited<
-      ReturnType<GetChantiersSignalesListQuery["execute"]>
-    > = {
-      territoire_code: "REG-99",
-      territoire_nom: "Région test",
-      jalon: 2025,
-      maille: "REG",
-      chantiers: [
-        {
-          chantier: {
-            id: "CH-001",
-            nom: "Chantier",
-            axe: "Axe 1",
-            ppg: "PPG 1",
-            ministeres: ["MIN-01"],
-          },
-          categories_signalement: ["Chantier(s) avec tendance en baisse"],
-          meteo: "SOLEIL",
-          tendance: "BAISSE",
-          ecart: 0,
-          taux_avancement: 50,
-        },
-      ],
-    };
-    const tool = buildTool({
-      queryResults: { "REG-99": resultatUniqueCategorie },
+  test("filtre silencieusement les sous-territoires non accessibles résolus via include_sous_territoires", async () => {
+    // Given — REG-11 accessible, mais DEPT-99 (résolu comme sous-territoire) ne l'est pas
+    const { tool, capturedParams } = buildToolCapturing({
       territoiresAccessibles: ["REG-11"],
-      resoudre: ["REG-99"],
+      resoudre: ["REG-11", "DEPT-99"],
     });
 
     // When
     const result = await executeTool(tool, {
-      territoire_code: "REG-99",
-      jalon: 2025,
+      territoire_code: "REG-11",
+      include_sous_territoires: true,
     });
 
-    // Then — le chantier disparaît entièrement, il ne lui reste aucune catégorie
+    // Then — seul REG-11 est interrogé, DEPT-99 est exclu sans erreur
+    expect(capturedParams.map((params) => params.territoireCode)).toEqual([
+      "REG-11",
+    ]);
     expect(result.resultats).toEqual([
-      expect.objectContaining({
-        chantiers: [],
-      }),
+      expect.objectContaining({ territoire_code: "REG-11" }),
     ]);
   });
 
@@ -258,7 +190,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     // When
     const result = await executeTool(tool, {
       territoire_code: "DEPT-75",
-      jalon: 2025,
       chantier_ids: ["CH-001"],
     });
 
@@ -279,7 +210,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     // When
     await executeTool(tool, {
       territoire_code: "DEPT-75",
-      jalon: 2025,
     });
 
     // Then — pas de bypass de l'habilitation chantier : la liste accessible sert de filtre implicite
@@ -297,7 +227,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     // When
     await executeTool(tool, {
       territoire_code: "DEPT-75",
-      jalon: 2025,
       categorie_signalement: "retard_mediane",
     });
 
@@ -317,7 +246,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     // When
     const result = await executeTool(tool, {
       territoire_code: "REG-11",
-      jalon: 2025,
       include_sous_territoires: true,
     });
 
@@ -332,49 +260,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     ]);
   });
 
-  test("mentionne la restriction d'accès dans les instructions de sortie quand un territoire est masqué", async () => {
-    // Given — REG-99 hors du périmètre accessible, avec un chantier en tendance_baisse
-    const resultatMasque: Awaited<
-      ReturnType<GetChantiersSignalesListQuery["execute"]>
-    > = {
-      territoire_code: "REG-99",
-      territoire_nom: "Région test",
-      jalon: 2025,
-      maille: "REG",
-      chantiers: [
-        {
-          chantier: {
-            id: "CH-001",
-            nom: "Chantier",
-            axe: "Axe 1",
-            ppg: "PPG 1",
-            ministeres: ["MIN-01"],
-          },
-          categories_signalement: ["Chantier(s) avec tendance en baisse"],
-          meteo: "SOLEIL",
-          tendance: "BAISSE",
-          ecart: 0,
-          taux_avancement: 50,
-        },
-      ],
-    };
-    const tool = buildTool({
-      queryResults: { "REG-99": resultatMasque },
-      territoiresAccessibles: ["REG-11"],
-      resoudre: ["REG-99"],
-    });
-
-    // When
-    const result = await executeTool(tool, {
-      territoire_code: "REG-99",
-      jalon: 2025,
-    });
-
-    // Then
-    expect(result._output_instructions).toContain("Restriction d'accès");
-    expect(result._output_instructions).toContain("REG-99");
-  });
-
   test("donne une consigne dédiée quand un résultat est non_applicable", async () => {
     // Given — retard_mediane demandé sur un territoire national
     const tool = buildTool({
@@ -385,7 +270,6 @@ describe("createGetChantiersSignalesTool execute", () => {
     // When
     const result = await executeTool(tool, {
       territoire_code: "NAT-FR",
-      jalon: 2025,
       categorie_signalement: "retard_mediane",
     });
 

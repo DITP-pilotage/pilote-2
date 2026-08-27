@@ -5,23 +5,16 @@ import type { GetChantiersSignalesListResult } from "@/server/chantiers/query/Ge
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 import {
   CATEGORIES_SIGNALEMENT,
-  categoriesApplicables,
+  categoriesSignalementDeLaMaille,
   nomCategorie,
   type CategorieSignalement,
 } from "@/server/chantiers/domain/CalculCategoriesSignalement";
-import { LIBELLE_TENDANCE_BAISSE } from "@/server/chantiers/app/contrats/LibellesAlerteChantier";
 import { territoireCodeVersMailleCodeInsee } from "@/server/utils/territoires";
 
 export const getChantiersSignalesInputSchema = z.object({
   territoire_code: z
     .string()
     .describe("Code du territoire (ex: NAT-FR, REG-11, DEPT-75)"),
-  jalon: z
-    .number()
-    .int()
-    .min(2022)
-    .max(new Date().getFullYear())
-    .describe("Année du jalon (ex: 2024, 2025)"),
   include_sous_territoires: z
     .boolean()
     .optional()
@@ -87,22 +80,8 @@ function estNonApplicable(resultat: ResultatTerritoire): resultat is {
   return "non_applicable" in resultat;
 }
 
-function getOutputInstructions(
-  resultats: ResultatTerritoire[],
-  territoiresAccessibles: string[],
-): string {
-  const codesRestreints = resultats
-    .filter((resultat) => !estNonApplicable(resultat))
-    .map((resultat) => resultat.territoire_code)
-    .filter((code) => !territoiresAccessibles.includes(code));
-
+function getOutputInstructions(resultats: ResultatTerritoire[]): string {
   let instructions = OUTPUT_INSTRUCTIONS;
-
-  if (codesRestreints.length > 0) {
-    instructions =
-      `⚠️ Restriction d'accès — territoires ${codesRestreints.join(", ")} : la catégorie "tendance en baisse" n'est pas disponible pour ces territoires (le champ tendance est retourné à null). Un chantier dont c'était l'unique catégorie de signalement n'apparaît alors plus du tout dans la liste retournée. Ne présente donc pas cette liste comme exhaustive pour ces territoires, et mentionne cette restriction explicitement dans ta réponse.\n\n` +
-      instructions;
-  }
 
   if (resultats.some(estNonApplicable)) {
     instructions =
@@ -111,27 +90,6 @@ function getOutputInstructions(
   }
 
   return instructions;
-}
-
-function masquerCategoriesNonAccessibles(
-  resultat: GetChantiersSignalesListResult,
-  territoiresAccessibles: string[],
-): GetChantiersSignalesListResult {
-  if (territoiresAccessibles.includes(resultat.territoire_code)) {
-    return resultat;
-  }
-  return {
-    ...resultat,
-    chantiers: resultat.chantiers
-      .map((chantier) => ({
-        ...chantier,
-        tendance: null,
-        categories_signalement: chantier.categories_signalement.filter(
-          (libelle) => libelle !== LIBELLE_TENDANCE_BAISSE,
-        ),
-      }))
-      .filter((chantier) => chantier.categories_signalement.length > 0),
-  };
 }
 
 export function createGetChantiersSignalesTool({
@@ -149,7 +107,7 @@ export function createGetChantiersSignalesTool({
     chantiersAccessibles: string[];
   }) => {
     return tool({
-      description: `Récupère les chantiers signalés (rubrique "Chantiers signalés" de PILOTE) pour un territoire et un jalon.
+      description: `Récupère les chantiers signalés (rubrique "Chantiers signalés" de PILOTE) pour un territoire. Cette rubrique porte toujours sur le jalon par défaut (jalon courant) et n'est pas navigable par jalon : n'essaie pas de la comparer entre plusieurs années.
 
 Un chantier est signalé s'il répond à au moins une catégorie de signalement. Les catégories diffèrent selon la maille :
 - Au national : taux_avancement_non_calcule, absence_taux_avancement_departemental, meteo_synthese_non_renseignees, proposition_valeur_avancement
@@ -162,6 +120,12 @@ Utilise categorie_signalement pour restreindre à une seule catégorie précise 
       execute: async (
         input: GetChantiersSignalesInput,
       ): Promise<GetChantiersSignalesOutput> => {
+        if (!territoiresAccessibles.includes(input.territoire_code)) {
+          throw new Error(
+            `Accès non autorisé au territoire ${input.territoire_code}`,
+          );
+        }
+
         const filteredChantierIds = input.chantier_ids?.filter((id) =>
           chantiersAccessibles.includes(id),
         );
@@ -183,14 +147,17 @@ Utilise categorie_signalement pour restreindre à une seule catégorie précise 
           input.territoire_code,
           input.include_sous_territoires,
         );
+        const codesAccessibles = codes.filter((code) =>
+          territoiresAccessibles.includes(code),
+        );
 
         const resultats = await Promise.all(
-          codes.map(async (code): Promise<ResultatTerritoire> => {
+          codesAccessibles.map(async (code): Promise<ResultatTerritoire> => {
             const { maille } = territoireCodeVersMailleCodeInsee(code);
 
             if (
               input.categorie_signalement &&
-              !categoriesApplicables(maille).includes(
+              !categoriesSignalementDeLaMaille(maille).includes(
                 input.categorie_signalement,
               )
             ) {
@@ -206,26 +173,17 @@ Utilise categorie_signalement pour restreindre à une seule catégorie précise 
               };
             }
 
-            const resultat = await getChantiersSignalesListQuery.execute({
+            return getChantiersSignalesListQuery.execute({
               territoireCode: code,
-              jalon: input.jalon,
               chantierIds: filteredChantierIds ?? chantiersAccessibles,
               categorieSignalement: input.categorie_signalement,
             });
-
-            return masquerCategoriesNonAccessibles(
-              resultat,
-              territoiresAccessibles,
-            );
           }),
         );
 
         return {
           resultats,
-          _output_instructions: getOutputInstructions(
-            resultats,
-            territoiresAccessibles,
-          ),
+          _output_instructions: getOutputInstructions(resultats),
         };
       },
     });
