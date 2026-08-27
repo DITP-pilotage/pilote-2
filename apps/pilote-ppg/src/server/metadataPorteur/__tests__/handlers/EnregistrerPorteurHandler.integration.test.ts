@@ -23,7 +23,6 @@ describe("EnregistrerPorteurHandler", () => {
           porteurDesc: null,
           porteurType: "MIN",
           porteurDirecteur: null,
-          porteurNameShort: "Test",
           porteurPicto: null,
         });
 
@@ -59,7 +58,6 @@ describe("EnregistrerPorteurHandler", () => {
           porteurDesc: "Une desc",
           porteurType: "DAC",
           porteurDirecteur: null,
-          porteurNameShort: null,
           porteurPicto: null,
         });
 
