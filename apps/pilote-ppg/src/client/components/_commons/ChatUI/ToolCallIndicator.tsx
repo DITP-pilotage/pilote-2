@@ -14,6 +14,7 @@ type DataFetchingToolPart = Extract<
     type:
       | "tool-get_taux_avancement_territoire"
       | "tool-get_chantiers"
+      | "tool-get_chantiers_signales"
       | "tool-get_indicateurs"
       | "tool-get_chantier_commentaires"
       | "tool-get_chantier_objectifs"
@@ -27,6 +28,7 @@ const TOOL_LABELS: Record<DataFetchingToolPart["type"], string> = {
   "tool-get_taux_avancement_territoire":
     "Récupération du taux d'avancement du territoire",
   "tool-get_chantiers": "Récupération des chantiers",
+  "tool-get_chantiers_signales": "Récupération des chantiers signalés",
   "tool-get_indicateurs": "Récupération des indicateurs",
   "tool-get_chantier_commentaires": "Récupération des commentaires du chantier",
   "tool-get_chantier_objectifs": "Récupération des objectifs du chantier",

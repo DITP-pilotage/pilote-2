@@ -154,6 +154,7 @@ export class GetChantiersSignalesListQuery {
         territoire_code: params.territoireCode,
         est_applicable: true,
         chantier_identite: {
+          statut: "PUBLIE",
           NOT: { ministeres: { isEmpty: true } },
         },
         ...(params.chantierIds && params.chantierIds.length > 0
