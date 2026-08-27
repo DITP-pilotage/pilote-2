@@ -549,18 +549,17 @@ model metadata_ppgs {
 }
 
 model metadata_porteurs {
-  porteur_id         String       @id
-  porteur_short      String
-  porteur_name       String
-  porteur_desc       String?
-  porteur_type       porteur_type
-  porteur_directeur  String?
-  porteur_name_short String?
-  porteur_picto      String?
-  created_at         DateTime     @default(now()) @db.Timestamptz
-  updated_at         DateTime     @default(now()) @updatedAt @db.Timestamptz
-  deleted_at         DateTime?    @db.Timestamptz
-  perimetres         metadata_perimetres[]
+  porteur_id        String       @id
+  porteur_short     String
+  porteur_name      String
+  porteur_desc      String?
+  porteur_type      porteur_type
+  porteur_directeur String?
+  porteur_picto     String?
+  created_at        DateTime     @default(now()) @db.Timestamptz
+  updated_at        DateTime     @default(now()) @updatedAt @db.Timestamptz
+  deleted_at        DateTime?    @db.Timestamptz
+  perimetres        metadata_perimetres[]
 
   @@schema("raw_data")
 }
