@@ -177,7 +177,7 @@ const PageAdminPorteurEdition = ({
             <div className="bg-white rounded-lg shadow-sm ring-1 ring-dsfr-grey-900 overflow-hidden divide-y divide-dsfr-grey-925">
               <section className="px-6 py-8">
                 <SectionTitle>Identification</SectionTitle>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <div>
                     <span className="block text-xs text-dsfr-grey-625 mb-1">
                       ID
@@ -186,6 +186,12 @@ const PageAdminPorteurEdition = ({
                       {porteurIdEffectif}
                     </p>
                   </div>
+                  <Input<PorteurForm>
+                    control={reactHookForm.control}
+                    label="Sigle"
+                    name="porteurShort"
+                    required
+                  />
                   <Controller
                     control={reactHookForm.control}
                     name="porteurType"
@@ -205,14 +211,6 @@ const PageAdminPorteurEdition = ({
               <section className="px-6 py-8">
                 <SectionTitle>Dénomination</SectionTitle>
                 <div className="flex flex-col gap-4">
-                  <div className="max-w-[240px]">
-                    <Input<PorteurForm>
-                      control={reactHookForm.control}
-                      label="Sigle"
-                      name="porteurShort"
-                      required
-                    />
-                  </div>
                   <Input<PorteurForm>
                     control={reactHookForm.control}
                     label="Nom complet"
