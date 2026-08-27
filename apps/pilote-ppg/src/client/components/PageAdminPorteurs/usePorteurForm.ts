@@ -17,7 +17,6 @@ export const defaultPorteurVide = (porteurId: string): PorteurForm => ({
   porteurDesc: null,
   porteurType: "MIN",
   porteurDirecteur: null,
-  porteurNameShort: null,
   porteurPicto: null,
 });
 
@@ -59,7 +58,6 @@ export const usePorteurForm = ({
       ...data,
       porteurDesc: data.porteurDesc || null,
       porteurDirecteur: data.porteurDirecteur || null,
-      porteurNameShort: data.porteurNameShort || null,
       porteurPicto: data.porteurPicto || null,
     });
   };
