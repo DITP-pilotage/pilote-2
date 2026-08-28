@@ -71,4 +71,52 @@ describe("RécupérerInformationMetadataIndicateurUseCase", () => {
       desc: "Description de la zone active",
     });
   });
+
+  it("source les valeurs acceptées d'une metadata standard depuis metadata_indicateur_valeur_acceptee", async () => {
+    // Given
+    await prisma.metadata_indicateur.create({
+      data: {
+        name: "test_metadata_standard",
+        data_type: "text",
+        description: "Metadata standard",
+        est_visible: true,
+        alias: "Standard",
+        est_editable: true,
+        validation_regex: "",
+        validation_regex_error_message: null,
+        edit_box_type: "multi-select",
+        default_value: null,
+        est_obligatoire: false,
+        doit_afficher_la_description: false,
+        groupe: "METADATA_INDICATEURS",
+        bloc_id: null,
+        valeurs_acceptees: {
+          create: [
+            { ordre: 2, valeur: "b", nom: "Option B", description: "Deuxième option" },
+            { ordre: 1, valeur: "a", nom: "Option A", description: "Première option" },
+          ],
+        },
+      },
+    });
+
+    // When
+    const résultat = await useCase.run();
+
+    // Then
+    const infoStandard = résultat.find(
+      (info) => info.name === "test_metadata_standard",
+    );
+    expect(infoStandard).toBeDefined();
+    expect(
+      infoStandard?.acceptedValues.map((valeur) => ({
+        orderId: valeur.orderId,
+        value: valeur.value,
+        name: valeur.name,
+        desc: valeur.desc,
+      })),
+    ).toEqual([
+      { orderId: 1, value: "a", name: "Option A", desc: "Première option" },
+      { orderId: 2, value: "b", name: "Option B", desc: "Deuxième option" },
+    ]);
+  });
 });
