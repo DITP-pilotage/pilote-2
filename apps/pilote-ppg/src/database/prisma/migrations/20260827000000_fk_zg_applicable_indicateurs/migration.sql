@@ -1,3 +1,9 @@
+-- Les valeurs acceptées de zg_applicable proviennent désormais exclusivement
+-- du référentiel metadata_zonegroup : les lignes héritées de l'ancien
+-- mécanisme de saisie libre n'ont plus lieu d'être.
+DELETE FROM "public"."metadata_indicateur_valeur_acceptee"
+WHERE "metadata_indicateur_name" = 'zg_applicable';
+
 -- Nettoyage préalable : toute valeur de zg_applicable qui ne correspond à
 -- aucun zone-groupe réel (ancien mécanisme de saisie libre, y compris la
 -- chaîne vide historique de l'option "Toutes zones") est mise à NULL avant
