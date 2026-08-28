@@ -152,10 +152,6 @@ models:
           - dbt_utils.expression_is_true:
               arguments:
                 expression: 'SIMILAR TO ''PPG-(\d|[A-Z]){1,3}'''
-      - name: axe_id
-        description: "Identifiant unique de l'axe de la PPG (Politique Prioritaire du Gouvernement)"
-        data_tests:
-          - not_null
       - name: code
         description: "Code de la PPG (souvent null). Ex. 'SNU'"
       - name: description
