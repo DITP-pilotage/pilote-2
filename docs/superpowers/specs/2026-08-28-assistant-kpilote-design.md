@@ -177,8 +177,17 @@ dérivation automatique du nom depuis le chemin serait fragile (singularisation)
 
 ### 6.2 Couche métier
 
-Écrite à la main, appelle les queries directement — on est déjà dans le scope `AsyncLocalStorage`
-du principal, donc rien à transmettre. Son rôle est de **composer**, pas de réécrire l'API.
+Écrite à la main. Son rôle est de **composer**, pas de réécrire l'API : la différence avec la
+couche dérivée est le nombre d'appels qu'elle épargne au modèle, pas son mode d'accès aux données.
+
+Les outils de synthèse composent plusieurs `app.request()` en parallèle, comme la couche dérivée :
+les queries sous-jacentes prennent un objet `params` typé par leur schéma de query string, que
+reconstruire à la main dupliquerait sans bénéfice. Les outils de recherche, eux, appellent
+`listIndicateurs` / `listCollections` directement, car ils ont besoin du catalogue complet plutôt
+que d'une page.
+
+Dans les deux cas les habilitations s'appliquent : par la chaîne de middlewares pour le premier
+mode, par le `AsyncLocalStorage` du principal pour le second.
 
 Convention de nommage : verbe anglais + entité française, comme le reste de kpilote.
 
