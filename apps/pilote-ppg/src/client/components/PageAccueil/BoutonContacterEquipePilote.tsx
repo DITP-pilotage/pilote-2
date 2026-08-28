@@ -7,7 +7,7 @@ import { Lien } from "@/components/_commons/Lien/Lien";
 export const BoutonContacterEquipePilote = ({
   variant = "primary",
 }: {
-  variant?: ComponentProps<typeof Lien>["variant"];
+  variant?: NonNullable<ComponentProps<typeof Lien>["variant"]>;
 }) => (
   <Lien
     className={clsxm("!bg-none shadow-none !text-sm !font-normal")}

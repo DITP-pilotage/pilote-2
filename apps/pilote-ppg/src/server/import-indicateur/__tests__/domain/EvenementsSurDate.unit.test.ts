@@ -1530,7 +1530,7 @@ describe("EvenementsSurDate", () => {
       expect(nouveauxEvenements[1].valeur).toEqual(80);
       expect(nouveauxEvenements[1].idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauxEvenements[1].ordre).toEqual(5);
-      expect(nouveauxEvenements[1].donneesComplementaires).toEqual(undefined);
+      expect(nouveauxEvenements[1].donneesComplementaires).toBeUndefined();
     });
 
     it("doit créer un événement PROPOSITION_VALEUR_ACCEPTEE avec succès quand une PROPOSITION_VALEUR_ACCUSEE_RECEPTION existe", () => {
@@ -1897,7 +1897,7 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(80);
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(3);
-      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+      expect(nouveauEvenement.donneesComplementaires).toBeUndefined();
     });
 
     it("doit échouer quand aucune proposition n'est en cours", () => {
@@ -1972,7 +1972,7 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(90);
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(3);
-      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+      expect(nouveauEvenement.donneesComplementaires).toBeUndefined();
     });
 
     it("doit échouer quand aucune proposition n'est en cours", () => {
@@ -2033,7 +2033,7 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(85);
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(1);
-      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+      expect(nouveauEvenement.donneesComplementaires).toBeUndefined();
     });
 
     it("doit créer un événement VALEUR_MODIFIEE avec succès quand estValeurModifiee est true", () => {
@@ -2076,7 +2076,7 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(90);
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(2);
-      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+      expect(nouveauEvenement.donneesComplementaires).toBeUndefined();
     });
   });
 
@@ -2113,7 +2113,7 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(75);
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(2);
-      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+      expect(nouveauEvenement.donneesComplementaires).toBeUndefined();
     });
 
     it("valeur en cours est null, doit créer un événement VALEUR_HISTORISEE avec succès quand une valeur en cours existe", () => {
@@ -2154,10 +2154,10 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.territoireCode).toEqual(TERRITOIRE_CODE);
       expect(nouveauEvenement.typeValeur).toEqual("VALEUR_AVANCEMENT");
       expect(nouveauEvenement.dateValeur).toEqual(new Date("2023-01-01"));
-      expect(nouveauEvenement.valeur).toEqual(null);
+      expect(nouveauEvenement.valeur).toBeNull();
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(3);
-      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+      expect(nouveauEvenement.donneesComplementaires).toBeUndefined();
     });
 
     it("doit échouer quand aucune valeur en cours n'existe", () => {
@@ -2207,7 +2207,7 @@ describe("EvenementsSurDate", () => {
       expect(nouveauEvenement.valeur).toEqual(85.5);
       expect(nouveauEvenement.idAuteurModification).toEqual(AUTEUR_ID);
       expect(nouveauEvenement.ordre).toEqual(1);
-      expect(nouveauEvenement.donneesComplementaires).toEqual(undefined);
+      expect(nouveauEvenement.donneesComplementaires).toBeUndefined();
     });
   });
 });

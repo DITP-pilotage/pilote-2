@@ -170,7 +170,7 @@ describe.skip("TableauChantiers", () => {
     // Then
     expect(tableau.récupérerLeNombreDeLignesDuTableau()).toBe(2);
     tableau.récupérerLesLignesDuTableau().forEach((ligne) => {
-      expect(ligne).toHaveTextContent(/.*fr.*/i);
+      expect(ligne).toHaveTextContent(/fr/i);
     });
   });
 

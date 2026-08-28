@@ -276,8 +276,8 @@ describe("RécupérerAvancementUseCase", () => {
     });
 
     // Then
-    expect(avancement.minimum).toEqual(null);
-    expect(avancement.mediane).toEqual(null);
-    expect(avancement.maximum).toEqual(null);
+    expect(avancement.minimum).toBeNull();
+    expect(avancement.mediane).toBeNull();
+    expect(avancement.maximum).toBeNull();
   });
 });

@@ -23,7 +23,7 @@ export class PageAdminUtilisateurs extends BasePage {
   private get titreNombreComptes() {
     return this.page
       .getByRole("heading", { level: 2 })
-      .filter({ hasText: /\d+ comptes?/ });
+      .filter({ hasText: /\d{1,10} comptes?/ });
   }
 
   private get barreRecherche() {

@@ -67,7 +67,7 @@ export function stripPseudoToolCalls(text: string): string {
   return kept
     .join("\n")
     .replace(/(\n\s*---\s*)+\s*$/u, "")
-    .replace(/\s+$/u, "");
+    .trimEnd();
 }
 
 /**
@@ -78,7 +78,14 @@ export function stripPseudoToolCalls(text: string): string {
 export function stripParagraphesVides(text: string): string {
   return text
     .split("\n")
-    .filter((ligne) => !/^\s*(&nbsp;| )+\s*$/u.test(ligne))
+    .filter((ligne) => {
+      // Sans regex : `(&nbsp;| )+` etait un quantificateur imbrique, donc
+      // super-lineaire. On retire les insecables et on ne filtre la ligne que si
+      // elle en portait au moins un ET que le reste n'est que du blanc — une ligne
+      // de pur blanc reste un separateur de paragraphe et doit etre conservee.
+      const sansInsecables = ligne.replaceAll("&nbsp;", "").replaceAll(" ", "");
+      return !(sansInsecables !== ligne && sansInsecables.trim() === "");
+    })
     .join("\n");
 }
 

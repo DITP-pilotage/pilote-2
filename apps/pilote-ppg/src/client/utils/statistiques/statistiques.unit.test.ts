@@ -59,7 +59,7 @@ describe("statistiques", () => {
         //WHEN
         const résultat = calculerMoyenne(valeursInitiales);
         //THEN
-        expect(résultat).toStrictEqual(null);
+        expect(résultat).toBeNull();
       });
     });
 
@@ -70,7 +70,7 @@ describe("statistiques", () => {
         //WHEN
         const résultat = calculerMoyenne(valeursInitiales);
         //THEN
-        expect(résultat).toStrictEqual(null);
+        expect(résultat).toBeNull();
       });
     });
   });
@@ -94,7 +94,7 @@ describe("statistiques", () => {
         //WHEN
         const résultat = calculerMediane(valeursInitiales);
         //THEN
-        expect(résultat).toStrictEqual(null);
+        expect(résultat).toBeNull();
       });
     });
 
@@ -105,7 +105,7 @@ describe("statistiques", () => {
         //WHEN
         const résultat = calculerMediane(valeursInitiales);
         //THEN
-        expect(résultat).toStrictEqual(null);
+        expect(résultat).toBeNull();
       });
     });
   });

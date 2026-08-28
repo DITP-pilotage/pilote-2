@@ -49,6 +49,6 @@ describe("#recupererTokenAPIInformation", () => {
     expect(
       tokenAPIInformationRepository.recupererTokenAPIInformation,
     ).toHaveBeenNthCalledWith(1, { email });
-    expect(result).toEqual(null);
+    expect(result).toBeNull();
   });
 });

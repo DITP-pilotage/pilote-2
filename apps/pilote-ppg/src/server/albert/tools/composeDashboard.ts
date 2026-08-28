@@ -275,7 +275,9 @@ Ne reproduis JAMAIS de valeurs chiffrées dans ta réponse textuelle (les chiffr
 Tu peux ajouter une phrase courte d'introduction ("Voici le dashboard demandé.") mais pas de commentaire sur les chiffres.
 Si l'utilisateur demande à modifier le dashboard, rappelle compose_dashboard avec une nouvelle définition complète qui reprend les containers à conserver et applique les changements.`;
 
-const FORBIDDEN_NUMBER_PATTERN = /\d+\s*(?:%|(?:points?|pts)\b)/i;
+// Quantificateurs bornes : `\d+\s*` suivi d'une alternation retrogradait en
+// O(n2) sur une longue suite de chiffres. Applique a du texte produit par le LLM.
+const FORBIDDEN_NUMBER_PATTERN = /\d{1,10}\s{0,5}(?:%|points?\b|pts\b)/i;
 
 function findForbiddenNumber(text: string | undefined): string | null {
   if (!text) return null;

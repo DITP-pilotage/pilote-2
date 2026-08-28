@@ -286,7 +286,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementHistorise.typeEvenement).toEqual("VALEUR_MODIFIEE");
     expect(evenementHistorise.typeValeur).toEqual("VALEUR_AVANCEMENT");
     expect(evenementHistorise.dateValeur).toEqual(new Date("2023-02-01"));
-    expect(evenementHistorise.valeur).toEqual(null);
+    expect(evenementHistorise.valeur).toBeNull();
     expect(evenementHistorise.ordre).toEqual(2);
   });
 
@@ -362,7 +362,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementModifieANullJanvier.dateValeur).toEqual(
       new Date("2023-01-01"),
     );
-    expect(evenementModifieANullJanvier.valeur).toEqual(null);
+    expect(evenementModifieANullJanvier.valeur).toBeNull();
     expect(evenementModifieANullJanvier.ordre).toEqual(2);
 
     const evenementModifieeJanvier = evenementCaptor.value[2];
@@ -454,7 +454,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementModifieANullJanvier.dateValeur).toEqual(
       new Date("2023-01-01"),
     );
-    expect(evenementModifieANullJanvier.valeur).toEqual(null);
+    expect(evenementModifieANullJanvier.valeur).toBeNull();
     expect(evenementModifieANullJanvier.ordre).toEqual(2);
 
     expect(evenementHistoriseJanvier.indicId).toEqual("IND-001");
@@ -466,7 +466,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementHistoriseJanvier.dateValeur).toEqual(
       new Date("2023-01-01"),
     );
-    expect(evenementHistoriseJanvier.valeur).toEqual(null);
+    expect(evenementHistoriseJanvier.valeur).toBeNull();
     expect(evenementHistoriseJanvier.ordre).toEqual(3);
 
     expect(evenementCreeFevrier.indicId).toEqual("IND-001");
@@ -579,7 +579,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementModifieANullJanvier.dateValeur).toEqual(
       new Date("2023-01-01"),
     );
-    expect(evenementModifieANullJanvier.valeur).toEqual(null);
+    expect(evenementModifieANullJanvier.valeur).toBeNull();
     expect(evenementModifieANullJanvier.ordre).toEqual(3);
   });
 
@@ -701,7 +701,7 @@ describe("PublierFichierIndicateurImporteUseCase", () => {
     expect(evenementHistoriseJanvier.dateValeur).toEqual(
       new Date("2023-01-01"),
     );
-    expect(evenementHistoriseJanvier.valeur).toEqual(null);
+    expect(evenementHistoriseJanvier.valeur).toBeNull();
     expect(evenementHistoriseJanvier.ordre).toEqual(3);
 
     const evenementCreeFevrier = evenementCaptor.value[1];

@@ -300,7 +300,7 @@ describe("RécupérerListeChantierFicheTerritorialeUseCase", () => {
     );
     expect(result.at(2)?.meteo).toEqual("SOLEIL");
     expect(result.at(2)?.dateQualitative).toEqual("2024-01-03T00:00:00.000Z");
-    expect(result.at(2)?.tauxAvancement).toEqual(null);
+    expect(result.at(2)?.tauxAvancement).toBeNull();
     expect(result.at(2)?.dateQuantitative).toEqual("2024-01-02T00:00:00.000Z");
     expect(result.at(2)?.indicateurs).toHaveLength(2);
     expect(result.at(2)?.indicateurs.at(0)?.nom).toEqual(

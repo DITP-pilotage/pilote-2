@@ -255,6 +255,11 @@ export default tseslint.config(
       "vitest/expect-expect": "off",
       "vitest/valid-title": "off",
       "vitest/no-conditional-expect": "off",
+      // La regle vise les flottants CALCULES, dont l'egalite exacte est un piege.
+      // Dans les tests, ces comparaisons portent sur des valeurs de fixtures relues
+      // telles quelles : l'exactitude est justement ce qu'on veut verifier, et passer
+      // a toBeCloseTo masquerait un arrondi introduit par le code teste.
+      "sonarjs/no-floating-point-equality": "off",
     },
   },
 

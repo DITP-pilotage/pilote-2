@@ -8,13 +8,13 @@ describe("formaterDate", () => {
     it("quand la date est invalide car inexistante", () => {
       const date = "2023-99-01";
       const résultat = formaterDate(date, "DD/MM/YYYY");
-      expect(résultat).toEqual(null);
+      expect(résultat).toBeNull();
     });
 
     it("quand la date est invalide car ne respectant pas le format", () => {
       const date = "2023-0112";
       const résultat = formaterDate(date, "DD/MM/YYYY");
-      expect(résultat).toEqual(null);
+      expect(résultat).toBeNull();
     });
   });
 
