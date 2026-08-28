@@ -1,9 +1,8 @@
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { useEffect } from "react";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 import { MAILLES, Maille } from "@/server/metadataChantier/domain/maille";
 
-function maillesAttendues(
+export function maillesAttendues(
   chTerrito: boolean,
   mailleApplicable: readonly Maille[],
 ): Maille[] {
@@ -13,28 +12,13 @@ function maillesAttendues(
     : ["NAT", "REG"];
 }
 
-function sontIdentiques(a: readonly Maille[], b: readonly Maille[]): boolean {
-  return a.length === b.length && a.every((maille) => b.includes(maille));
-}
-
 const ChampMailleApplicable = () => {
-  const { control, setValue } = useFormContext<ChantierForm>();
-  const chTerrito = useWatch({ control, name: "chTerrito" });
-  const mailleApplicable = useWatch({ control, name: "mailleApplicable" });
-
-  useEffect(() => {
-    const attendues = maillesAttendues(chTerrito, mailleApplicable);
-    if (!sontIdentiques(attendues, mailleApplicable)) {
-      setValue("mailleApplicable", attendues, {
-        shouldDirty: true,
-        shouldValidate: true,
-      });
-    }
-  }, [chTerrito, mailleApplicable, setValue]);
+  const form = useFormContext<ChantierForm>();
+  const chTerrito = useWatch({ control: form.control, name: "chTerrito" });
 
   return (
     <Controller
-      control={control}
+      control={form.control}
       name="mailleApplicable"
       render={({ field, fieldState }) => (
         <div>

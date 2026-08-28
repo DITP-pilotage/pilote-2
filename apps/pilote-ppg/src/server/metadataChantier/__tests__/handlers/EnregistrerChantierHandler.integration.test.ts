@@ -173,45 +173,43 @@ describe("EnregistrerChantierHandler", () => {
     );
   });
 
-  describe("chantierCommandSchema", () => {
-    const commandeValide = {
-      chantierId: "CH-099",
-      chNom: "Chantier",
-      chDescr: null,
-      chPpg: "PPG-01",
-      chTerrito: false,
-      chSaisieAte: null,
-      chState: $Enums.type_statut.BROUILLON,
-      zgApplicable: null,
-      porteurIdPrincipal: "MIN-01",
-      porteurIdsSecondaires: [],
-      porteurIdsDAC: [],
-      chPer: "PER-01",
-      mailleApplicable: ["NAT"] as const,
-      chCibleAttendue: false,
-      conseillerMail: null,
-    };
+  const commandeValide = {
+    chantierId: "CH-099",
+    chNom: "Chantier",
+    chDescr: null,
+    chPpg: "PPG-01",
+    chTerrito: false,
+    chSaisieAte: null,
+    chState: $Enums.type_statut.BROUILLON,
+    zgApplicable: null,
+    porteurIdPrincipal: "MIN-01",
+    porteurIdsSecondaires: [],
+    porteurIdsDAC: [],
+    chPer: "PER-01",
+    mailleApplicable: ["NAT"] as const,
+    chCibleAttendue: false,
+    conseillerMail: null,
+  };
 
-    it("rejette un porteur principal manquant", () => {
-      // Given
-      const commande = { ...commandeValide, porteurIdPrincipal: "" };
+  it("chantierCommandSchema rejette un porteur principal manquant", () => {
+    // Given
+    const commande = { ...commandeValide, porteurIdPrincipal: "" };
 
-      // When
-      const résultat = chantierCommandSchema.safeParse(commande);
+    // When
+    const résultat = chantierCommandSchema.safeParse(commande);
 
-      // Then
-      expect(résultat.success).toBe(false);
-    });
+    // Then
+    expect(résultat.success).toBe(false);
+  });
 
-    it("accepte un porteur principal renseigné", () => {
-      // Given
-      const commande = commandeValide;
+  it("chantierCommandSchema accepte un porteur principal renseigné", () => {
+    // Given
+    const commande = commandeValide;
 
-      // When
-      const résultat = chantierCommandSchema.safeParse(commande);
+    // When
+    const résultat = chantierCommandSchema.safeParse(commande);
 
-      // Then
-      expect(résultat.success).toBe(true);
-    });
+    // Then
+    expect(résultat.success).toBe(true);
   });
 });

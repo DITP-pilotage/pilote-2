@@ -1,34 +1,24 @@
 import { Controller, useFormContext, useWatch } from "react-hook-form";
-import { useEffect } from "react";
 import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import api from "@/server/infrastructure/api/trpc/api";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
 const SélecteurPerimetre = () => {
-  const { control, formState, setValue, getValues } =
-    useFormContext<ChantierForm>();
-  const porteurIdPrincipal = useWatch({ control, name: "porteurIdPrincipal" });
-  const { data: perimetres, isSuccess } =
-    api.metadataChantier.listerPerimetres.useQuery(
-      { porteurId: porteurIdPrincipal },
-      { enabled: !!porteurIdPrincipal },
-    );
-
-  useEffect(() => {
-    if (!isSuccess) return;
-    const chPerActuel = getValues("chPer");
-    const chPerEstToujoursValide = perimetres.some(
-      (perimetre) => perimetre.id === chPerActuel,
-    );
-    if (chPerActuel && !chPerEstToujoursValide) {
-      setValue("chPer", "", { shouldValidate: true });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [porteurIdPrincipal, perimetres, isSuccess]);
+  const form = useFormContext<ChantierForm>();
+  const porteurIdPrincipal = useWatch({
+    control: form.control,
+    name: "porteurIdPrincipal",
+  });
+  const { data: perimetres } = api.metadataChantier.listerPerimetres.useQuery(
+    { porteurId: porteurIdPrincipal },
+    // Sans porteur sélectionné, le champ est désactivé : on évite de charger
+    // la liste complète (non filtrée) des périmètres pour rien.
+    { enabled: !!porteurIdPrincipal },
+  );
 
   return (
     <Controller
-      control={control}
+      control={form.control}
       name="chPer"
       render={({ field }) => (
         <Sélecteur
@@ -46,7 +36,7 @@ const SélecteurPerimetre = () => {
           }))}
           onChange={field.onChange}
           valeurSélectionnée={field.value}
-          erreur={formState.errors.chPer}
+          erreur={form.formState.errors.chPer}
         />
       )}
     />

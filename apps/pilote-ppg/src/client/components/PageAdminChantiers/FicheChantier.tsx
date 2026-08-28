@@ -11,7 +11,9 @@ import SélecteurZonegroup from "@/components/PageAdminChantiers/champs/Sélecte
 import SélecteurPorteurPrincipal from "@/components/PageAdminChantiers/champs/SélecteurPorteurPrincipal";
 import MultiSelectPorteursSecondaires from "@/components/PageAdminChantiers/champs/MultiSelectPorteursSecondaires";
 import MultiSelectPorteursDAC from "@/components/PageAdminChantiers/champs/MultiSelectPorteursDAC";
-import ChampMailleApplicable from "@/components/PageAdminChantiers/champs/ChampMailleApplicable";
+import ChampMailleApplicable, {
+  maillesAttendues,
+} from "@/components/PageAdminChantiers/champs/ChampMailleApplicable";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 import { SélecteurOption } from "@/client/components/_commons/Sélecteur/Sélecteur.interface";
 
@@ -91,7 +93,17 @@ const FicheChantier = () => {
             render={({ field }) => (
               <Interrupteur
                 checked={field.value}
-                onChange={field.onChange}
+                onChange={(checked) => {
+                  field.onChange(checked);
+                  form.setValue(
+                    "mailleApplicable",
+                    maillesAttendues(
+                      checked,
+                      form.getValues("mailleApplicable"),
+                    ),
+                    { shouldDirty: true, shouldValidate: true },
+                  );
+                }}
                 libellé="Territorialisé"
               />
             )}

@@ -31,6 +31,8 @@ const PageAdminChantierEdition = ({
     ? {
         ...chantierData,
         conseillerMail: chantierData.conseillerMail ?? "",
+        // Le porteur principal est obligatoire dans le formulaire, mais des
+        // chantiers créés avant cette contrainte peuvent l'avoir à null en base.
         porteurIdPrincipal: chantierData.porteurIdPrincipal ?? "",
       }
     : defaultChantierVide(chantierIdEffectif);
