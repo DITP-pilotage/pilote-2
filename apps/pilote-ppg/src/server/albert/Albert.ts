@@ -9,14 +9,14 @@ import {
   UIMessage,
   wrapLanguageModel,
 } from "ai";
-import type { LanguageModelV3 } from "@ai-sdk/provider";
+import type { LanguageModelV4 } from "@ai-sdk/provider";
 import { Prisma } from "@prisma/client";
 import { devToolsMiddleware } from "@ai-sdk/devtools";
 import { z } from "zod";
 import { configuration } from "@/config";
 import { prisma } from "@/server/db/prisma";
 
-export function withOptionalDevTools(model: LanguageModelV3): LanguageModelV3 {
+export function withOptionalDevTools(model: LanguageModelV4): LanguageModelV4 {
   if (!configuration().albert.devTools) {
     return model;
   }
@@ -54,11 +54,18 @@ export class Albert {
       JSON.stringify(event),
     ) as Prisma.InputJsonValue;
 
-    const usage = (
-      event as {
-        usage?: { inputTokens?: number; outputTokens?: number };
-      }
-    )?.usage;
+    // ai v7 a change le sens de `usage` dans onFinish : il porte desormais le CUMUL
+    // de toutes les etapes, alors qu'en v6 il portait la DERNIERE etape. Avec
+    // `stopWhen: stepCountIs(50)` et 11 outils, le multi-etapes est la norme ici :
+    // conserver `event.usage` changerait silencieusement le sens des colonnes
+    // llm_calls.input_tokens / output_tokens et rendrait l'historique incomparable.
+    // On lit donc explicitement la derniere etape, comme avant. Le cumul reste
+    // disponible via `event.usage` si l'equipe decide un jour de basculer.
+    const évènement = event as {
+      finalStep?: { usage?: { inputTokens?: number; outputTokens?: number } };
+      usage?: { inputTokens?: number; outputTokens?: number };
+    };
+    const usage = évènement?.finalStep?.usage ?? évènement?.usage;
 
     await prisma.llm_calls.create({
       data: {

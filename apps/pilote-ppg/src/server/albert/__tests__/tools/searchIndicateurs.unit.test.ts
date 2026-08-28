@@ -34,6 +34,7 @@ const executeTool = (
     toolCallId: "test",
     messages: [],
     abortSignal: undefined,
+    context: {},
   });
 
 const indicateur = (

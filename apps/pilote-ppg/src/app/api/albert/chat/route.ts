@@ -132,6 +132,16 @@ export async function POST(request: Request) {
       tools,
     });
 
+    // ai v7 a change le defaut de `onError` du flux UI : la v6 rendait le message de
+    // l'erreur, la v7 rend "An error occurred.". Sans ce handler, l'utilisateur verrait
+    // "Erreur : An error occurred." et le detail disparaitrait aussi des logs, le catch
+    // du POST ne couvrant pas les erreurs survenant pendant le flux.
+    const onErreurFlux = (error: unknown) => {
+      // eslint-disable-next-line no-console
+      console.error("Erreur dans le flux Albert:", error);
+      return error instanceof Error ? error.message : String(error);
+    };
+
     const variables = await getContainer("legacy")
       .resolve("recupererToutesLesVariablesContenuUseCase")
       .run();
@@ -139,7 +149,7 @@ export async function POST(request: Request) {
       variables.NEXT_PUBLIC_FF_HISTORIQUE_ALBERT === true;
 
     if (!persistanceActive) {
-      return result.toUIMessageStreamResponse();
+      return result.toUIMessageStreamResponse({ onError: onErreurFlux });
     }
 
     const enregistrerConversation = container.resolve(
@@ -148,6 +158,7 @@ export async function POST(request: Request) {
 
     return result.toUIMessageStreamResponse<PiloteUIMessage>({
       originalMessages: messagesPilote,
+      onError: onErreurFlux,
       onFinish: async ({ messages: messagesFinaux }) => {
         await enregistrerConversation.execute({
           id: body.id,

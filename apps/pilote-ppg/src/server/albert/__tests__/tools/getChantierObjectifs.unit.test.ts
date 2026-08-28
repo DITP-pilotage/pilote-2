@@ -27,7 +27,12 @@ const executeTool = async (
 ): Promise<GetChantierObjectifsOutput> =>
   tool.execute!(
     { chantier_id },
-    { toolCallId: "test", messages: [], abortSignal: undefined },
+    {
+      toolCallId: "test",
+      messages: [],
+      abortSignal: undefined,
+      context: {},
+    },
   ) as Promise<GetChantierObjectifsOutput>;
 
 const resultWith3Objectifs = {

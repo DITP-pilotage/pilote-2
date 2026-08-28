@@ -27,7 +27,12 @@ const executeTool = (
 ) =>
   tool.execute!(
     { query },
-    { toolCallId: "test", messages: [], abortSignal: undefined },
+    {
+      toolCallId: "test",
+      messages: [],
+      abortSignal: undefined,
+      context: {},
+    },
   );
 
 const chantier = (id: string, nom: string): ChantierIdentiteResult => ({
