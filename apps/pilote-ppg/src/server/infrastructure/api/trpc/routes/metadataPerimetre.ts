@@ -33,6 +33,15 @@ export const metadataPerimetreRouter = créerRouteurTRPC({
       .run();
   }),
 
+  verifierUtilisation: procédureProtégée
+    .input(z.object({ perimetreId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      vérifierPermissionAdmin(ctx.session);
+      return getContainer("metadataPerimetre")
+        .resolve("verifierUtilisationPerimetreQuery")
+        .run({ perimetreId: input.perimetreId });
+    }),
+
   enregistrer: procédureProtégée
     .input(perimetreCommandSchema.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {

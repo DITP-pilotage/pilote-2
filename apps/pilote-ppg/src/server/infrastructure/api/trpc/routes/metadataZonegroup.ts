@@ -42,6 +42,15 @@ export const metadataZonegroupRouter = créerRouteurTRPC({
       .run();
   }),
 
+  verifierUtilisation: procédureProtégée
+    .input(z.object({ zoneGroupId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      vérifierPermissionAdmin(ctx.session);
+      return getContainer("metadataZonegroup")
+        .resolve("verifierUtilisationZonegroupQuery")
+        .run({ zoneGroupId: input.zoneGroupId });
+    }),
+
   enregistrer: procédureProtégée
     .input(zonegroupCommandSchema.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {

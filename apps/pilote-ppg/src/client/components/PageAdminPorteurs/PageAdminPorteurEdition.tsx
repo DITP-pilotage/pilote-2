@@ -78,6 +78,13 @@ const PageAdminPorteurEdition = ({
 
   const estSupprime = porteurData?.deletedAt != null;
 
+  const { data: utilisation } =
+    api.metadataPorteur.verifierUtilisation.useQuery(
+      { porteurId: porteurIdEffectif },
+      { enabled: !estUneCréation && !estSupprime },
+    );
+  const estUtilisé = utilisation?.estUtilise ?? false;
+
   const succès = router.query._action === "modification-reussie";
   const titre = estUneCréation
     ? `Nouveau porteur - ${porteurIdEffectif}`
@@ -110,6 +117,13 @@ const PageAdminPorteurEdition = ({
             type="erreur"
           />
         )}
+        {!estUneCréation && !estSupprime && estUtilisé && (
+          <Alerte
+            classesSupplementaires="mb-6"
+            titre={`Ce porteur est associé à ${utilisation?.nombrePerimetres} périmètre(s) et ${utilisation?.nombreChantiers} chantier(s) et ne peut pas être supprimé.`}
+            type="warning"
+          />
+        )}
 
         <FormProvider {...reactHookForm}>
           <form
@@ -127,27 +141,30 @@ const PageAdminPorteurEdition = ({
               </div>
               <div className="flex items-center gap-3">
                 {!estUneCréation && (
-                  <Bouton
-                    className={
-                      estSupprime
-                        ? "bg-pilote-vert text-white hover:bg-success"
-                        : "bg-dsfr-warning-950 text-error border border-dsfr-warning-925 hover:bg-dsfr-warning-925"
-                    }
-                    label={estSupprime ? "Restaurer" : "Supprimer"}
-                    onClick={() =>
-                      estSupprime
-                        ? restorerMutation.mutate({
-                            csrf: récupérerUnCookie("csrf") ?? "",
-                            porteurId: porteurIdEffectif,
-                          })
-                        : archiverMutation.mutate({
-                            csrf: récupérerUnCookie("csrf") ?? "",
-                            porteurId: porteurIdEffectif,
-                          })
-                    }
-                    variant="primary"
-                    type="button"
-                  />
+                  <div className="flex items-center gap-2">
+                    <Bouton
+                      className={
+                        estSupprime
+                          ? "bg-pilote-vert text-white hover:bg-success"
+                          : "bg-dsfr-warning-950 text-error border border-dsfr-warning-925 hover:bg-dsfr-warning-925 disabled:opacity-50 disabled:cursor-not-allowed"
+                      }
+                      disabled={!estSupprime && estUtilisé}
+                      label={estSupprime ? "Restaurer" : "Supprimer"}
+                      onClick={() =>
+                        estSupprime
+                          ? restorerMutation.mutate({
+                              csrf: récupérerUnCookie("csrf") ?? "",
+                              porteurId: porteurIdEffectif,
+                            })
+                          : archiverMutation.mutate({
+                              csrf: récupérerUnCookie("csrf") ?? "",
+                              porteurId: porteurIdEffectif,
+                            })
+                      }
+                      variant="primary"
+                      type="button"
+                    />
+                  </div>
                 )}
                 <Bouton
                   disabled={isPending}

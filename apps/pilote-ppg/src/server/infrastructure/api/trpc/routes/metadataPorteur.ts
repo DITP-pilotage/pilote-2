@@ -33,6 +33,15 @@ export const metadataPorteurRouter = créerRouteurTRPC({
       .run();
   }),
 
+  verifierUtilisation: procédureProtégée
+    .input(z.object({ porteurId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      vérifierPermissionAdmin(ctx.session);
+      return getContainer("metadataPorteur")
+        .resolve("verifierUtilisationPorteurQuery")
+        .run({ porteurId: input.porteurId });
+    }),
+
   enregistrer: procédureProtégée
     .input(porteurCommandSchema.and(zodValidateurCSRF))
     .mutation(async ({ input, ctx }) => {

@@ -8,6 +8,7 @@ import { ListerZonegroupsAdminQuery } from "./queries/ListerZonegroupsAdminQuery
 import { RecupererZonegroupQuery } from "./queries/RecupererZonegroupQuery";
 import { RecupererIdSuivantZonegroupQuery } from "./queries/RecupererIdSuivantZonegroupQuery";
 import { ListerZonesDisponiblesQuery } from "./queries/ListerZonesDisponiblesQuery";
+import { VerifierUtilisationZonegroupQuery } from "./queries/VerifierUtilisationZonegroupQuery";
 import { EnregistrerZonegroupHandler } from "./handlers/EnregistrerZonegroupHandler";
 import { ArchiverZonegroupHandler } from "./handlers/ArchiverZonegroupHandler";
 import { RestorerZonegroupHandler } from "./handlers/RestorerZonegroupHandler";
@@ -17,6 +18,7 @@ type MetadataZonegroupCradle = {
   recupererZonegroupQuery: RecupererZonegroupQuery;
   recupererIdSuivantZonegroupQuery: RecupererIdSuivantZonegroupQuery;
   listerZonesDisponiblesQuery: ListerZonesDisponiblesQuery;
+  verifierUtilisationZonegroupQuery: VerifierUtilisationZonegroupQuery;
   enregistrerZonegroupHandler: EnregistrerZonegroupHandler;
   archiverZonegroupHandler: ArchiverZonegroupHandler;
   restorerZonegroupHandler: RestorerZonegroupHandler;
@@ -37,6 +39,9 @@ export const metadataZonegroupModule = defineModule<
         RecupererIdSuivantZonegroupQuery,
       ),
       listerZonesDisponiblesQuery: asModuleClass(ListerZonesDisponiblesQuery),
+      verifierUtilisationZonegroupQuery: asModuleClass(
+        VerifierUtilisationZonegroupQuery,
+      ),
       enregistrerZonegroupHandler: asModuleClass(EnregistrerZonegroupHandler),
       archiverZonegroupHandler: asModuleClass(ArchiverZonegroupHandler),
       restorerZonegroupHandler: asModuleClass(RestorerZonegroupHandler),

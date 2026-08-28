@@ -780,6 +780,23 @@ export const fixtures = {
     });
   },
 
+  async metadataIndicateur(
+    overrides: Partial<Prisma.metadata_indicateursUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const indicId = overrides.indic_id ?? `IND-${randomUUID().slice(0, 6)}`;
+    return prisma.metadata_indicateurs.create({
+      data: {
+        indic_id: indicId,
+        indic_parent_ch:
+          overrides.indic_parent_ch ??
+          `CH-${randomUUID().slice(0, 3).toUpperCase()}`,
+        indic_nom: `Indicateur test ${indicId}`,
+        ...overrides,
+      },
+    });
+  },
+
   async metadataChantier(
     overrides: Partial<Prisma.metadata_chantiersUncheckedCreateInput> = {},
   ) {
