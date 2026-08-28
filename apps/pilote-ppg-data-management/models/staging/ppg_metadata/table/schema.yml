@@ -61,7 +61,8 @@ models:
           - dbt_utils.expression_is_true:
               arguments:
                 expression: "IN ('ATE', 'HORS_ATE_DECONCENTRE', 'HORS_ATE_CENTRALISE')"
-              where: "ate IS NOT NULL"
+              config:
+                where: "ate IS NOT NULL"
       - name: statut
         description: "Statut du chantier"
         data_tests:
@@ -78,7 +79,8 @@ models:
           - dbt_utils.expression_is_true:
               arguments:
                 expression: 'SIMILAR TO ''ZG-\d{3}'''
-              where: "zone_groupe_applicable IS NOT NULL"
+              config:
+                where: "zone_groupe_applicable IS NOT NULL"
       - name: ministeres_ids
         description: "Liste des identifiants des ministères porteurs. Ex: [120, 220]"
       - name: ministeres_polygrammes
@@ -106,7 +108,8 @@ models:
           - dbt_utils.expression_is_true:
               arguments:
                 expression: "IN ('REG', 'DEPT')"
-              where: "replicate_val_nat_to IS NOT NULL"
+              config:
+                where: "replicate_val_nat_to IS NOT NULL"
       - name: ch_cible_attendue
         description: "Indique si le chantier a une cible attendue (booléen)."
       - name: maille_pilotage
