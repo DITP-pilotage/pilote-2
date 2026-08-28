@@ -1,5 +1,4 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { Controller, FormProvider } from "react-hook-form";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -15,7 +14,6 @@ import { Textarea } from "@/components/_commons/Textarea";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { SectionTitle } from "@/components/_commons/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { SélecteurZones } from "@/components/PageAdminZonegroups/SélecteurZones";
 
 interface Props {
@@ -51,16 +49,11 @@ const PageAdminZonegroupEdition = ({
     estUneCréation,
   });
 
-  const [erreurSuppression, setErreurSuppression] = useState<string | null>(
-    null,
-  );
-
   const archiverMutation = api.metadataZonegroup.archiver.useMutation({
     onSuccess: () =>
       router.push(
         `/panel-administrateur/referentiels/zonegroups/${zoneGroupIdEffectif}?_action=modification-reussie`,
       ),
-    onError: (error) => setErreurSuppression(error.message),
   });
 
   const restorerMutation = api.metadataZonegroup.restorer.useMutation({
@@ -114,11 +107,11 @@ const PageAdminZonegroupEdition = ({
             type="erreur"
           />
         )}
-        {erreurSuppression && (
+        {!estUneCréation && !estSupprime && estUtilisé && (
           <Alerte
             classesSupplementaires="mb-6"
-            titre={erreurSuppression}
-            type="erreur"
+            titre={`Cette zone-groupe est associée à ${utilisation?.nombreChantiers} chantier(s) et ${utilisation?.nombreIndicateurs} indicateur(s) et ne peut pas être supprimée.`}
+            type="warning"
           />
         )}
 
@@ -161,14 +154,6 @@ const PageAdminZonegroupEdition = ({
                       variant="primary"
                       type="button"
                     />
-                    {!estSupprime && estUtilisé && (
-                      <Infobulle styleIconInfoBulle="warning">
-                        Cette zone-groupe est associée à{" "}
-                        {utilisation?.nombreChantiers} chantier(s) et{" "}
-                        {utilisation?.nombreIndicateurs} indicateur(s) et ne
-                        peut pas être supprimée.
-                      </Infobulle>
-                    )}
                   </div>
                 )}
                 <Bouton

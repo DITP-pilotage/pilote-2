@@ -1,6 +1,5 @@
 import { $Enums } from "@prisma/client";
 import { useRouter } from "next/router";
-import { useState } from "react";
 import { Controller, FormProvider } from "react-hook-form";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -17,7 +16,6 @@ import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { SectionTitle } from "@/components/_commons/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import type { SélecteurOption } from "@/client/components/_commons/Sélecteur/Sélecteur.interface";
 
 interface Props {
@@ -64,16 +62,11 @@ const PageAdminPorteurEdition = ({
     estUneCréation,
   });
 
-  const [erreurSuppression, setErreurSuppression] = useState<string | null>(
-    null,
-  );
-
   const archiverMutation = api.metadataPorteur.archiver.useMutation({
     onSuccess: () =>
       router.push(
         `/panel-administrateur/referentiels/porteurs/${porteurIdEffectif}?_action=modification-reussie`,
       ),
-    onError: (error) => setErreurSuppression(error.message),
   });
 
   const restorerMutation = api.metadataPorteur.restorer.useMutation({
@@ -124,11 +117,11 @@ const PageAdminPorteurEdition = ({
             type="erreur"
           />
         )}
-        {erreurSuppression && (
+        {!estUneCréation && !estSupprime && estUtilisé && (
           <Alerte
             classesSupplementaires="mb-6"
-            titre={erreurSuppression}
-            type="erreur"
+            titre={`Ce porteur est associé à ${utilisation?.nombrePerimetres} périmètre(s) et ${utilisation?.nombreChantiers} chantier(s) et ne peut pas être supprimé.`}
+            type="warning"
           />
         )}
 
@@ -171,13 +164,6 @@ const PageAdminPorteurEdition = ({
                       variant="primary"
                       type="button"
                     />
-                    {!estSupprime && estUtilisé && (
-                      <Infobulle styleIconInfoBulle="warning">
-                        Ce porteur est associé à {utilisation?.nombrePerimetres}{" "}
-                        périmètre(s) et {utilisation?.nombreChantiers}{" "}
-                        chantier(s) et ne peut pas être supprimé.
-                      </Infobulle>
-                    )}
                   </div>
                 )}
                 <Bouton
