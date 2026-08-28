@@ -11,7 +11,8 @@ renamed AS (
     SELECT
         ppg_id AS id,
         ppg_desc AS description,
-        ppg_nom AS nom
+        ppg_nom AS nom,
+        ppg_axe AS axe_id
 
     FROM source
 

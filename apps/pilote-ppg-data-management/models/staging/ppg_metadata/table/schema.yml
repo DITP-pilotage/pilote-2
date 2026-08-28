@@ -8,10 +8,6 @@ models:
         data_tests:
           - unique
           - not_null
-      - name: nom_court
-        description: "Nom court de l'axe (ex. Transition écologique)"
-        data_tests:
-          - not_null
       - name: nom
         description: "Nom complet de l'axe (ex. Planifier et accélérer la transition écologique)"
         data_tests:
@@ -60,7 +56,7 @@ models:
         data_tests:
           - dbt_utils.expression_is_true:
               arguments:
-                expression: "IN ('ATE', 'HORS_ATE_DECONCENTRE', 'HORS_ATE_CENTRALISE')"
+                expression: "IN ('ate', 'hors_ate_deconcentre', 'hors_ate_centralise')"
               config:
                 where: "ate IS NOT NULL"
       - name: statut
