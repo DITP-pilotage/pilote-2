@@ -29,10 +29,13 @@ export class ListerZonegroupsAdminQuery {
     this.prisma = prisma;
   }
 
-  async run(): Promise<ZonegroupAdminListItem[]> {
+  async run(
+    options: { actifsSeulement?: boolean } = {},
+  ): Promise<ZonegroupAdminListItem[]> {
     const zonegroups = await this.prisma
       .getInstance()
       .metadata_zonegroup.findMany({
+        where: options.actifsSeulement ? { deleted_at: null } : undefined,
         orderBy: [{ updated_at: "desc" }],
       });
     return zonegroups.map(toApiModel);

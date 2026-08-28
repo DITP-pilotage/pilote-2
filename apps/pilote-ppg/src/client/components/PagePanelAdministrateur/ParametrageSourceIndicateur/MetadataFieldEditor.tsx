@@ -1,17 +1,33 @@
 import { Lien } from "@/components/_commons/Lien/Lien";
 import { Input } from "@/components/_commons/Input";
 import { Textarea } from "@/components/_commons/Textarea";
+import api from "@/server/infrastructure/api/trpc/api";
 import { useFormParametrageSource } from "./form";
 import { SelectMetadata } from "./SelectMetadata";
 import { CheckboxMetadata } from "./CheckboxMetadata";
 import { AcceptedValuesEditor } from "./AcceptedValuesEditor";
+import { ZonegroupValuesPreview } from "./ZonegroupValuesPreview";
+
+const NOM_CHAMP_ZONE_GROUPE = "zg_applicable";
 
 export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
   const form = useFormParametrageSource();
+  const name = form.watch(`metadataList.${fieldIndex}.name`);
   const editBoxType = form.watch(`metadataList.${fieldIndex}.editBoxType`);
   const listeValeursAcceptes = form.watch(
     `metadataList.${fieldIndex}.listeValeursAcceptes`,
   );
+  const estChampZoneGroupe = name === NOM_CHAMP_ZONE_GROUPE;
+  const { data: zonegroupsActifs = [] } = api.metadataZonegroup.lister.useQuery(
+    { actifsSeulement: true },
+    { enabled: estChampZoneGroupe },
+  );
+  const optionsValeurParDefaut = estChampZoneGroupe
+    ? zonegroupsActifs.map((zonegroup) => ({
+        valeur: zonegroup.zoneGroupId,
+        nom: zonegroup.zgName,
+      }))
+    : listeValeursAcceptes;
 
   return (
     <div className="bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden w-full">
@@ -83,7 +99,11 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
                 <h3 className="text-lg font-bold text-dsfr-blue-france-sun-113 mb-4 flex items-center gap-2 !mb-2">
                   Valeurs acceptées
                 </h3>
-                <AcceptedValuesEditor fieldIndex={fieldIndex} />
+                {estChampZoneGroupe ? (
+                  <ZonegroupValuesPreview zonegroupsActifs={zonegroupsActifs} />
+                ) : (
+                  <AcceptedValuesEditor fieldIndex={fieldIndex} />
+                )}
               </div>
             )}
 
@@ -93,7 +113,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
                 name={`metadataList.${fieldIndex}.defaultValue`}
               >
                 <option value="">Aucune valeur par défaut</option>
-                {listeValeursAcceptes?.map((valeur) => (
+                {optionsValeurParDefaut?.map((valeur) => (
                   <option key={valeur.valeur} value={valeur.valeur}>
                     {valeur.nom || valeur.valeur}
                   </option>
