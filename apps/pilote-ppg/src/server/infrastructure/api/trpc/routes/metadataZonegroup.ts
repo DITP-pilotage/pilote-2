@@ -10,12 +10,14 @@ import { zonegroupCommandSchema } from "@/server/metadataZonegroup/handlers/Enre
 import { vérifierPermissionAdmin } from "@/server/infrastructure/api/trpc/vérifierPermissionAdmin";
 
 export const metadataZonegroupRouter = créerRouteurTRPC({
-  lister: procédureProtégée.query(async ({ ctx }) => {
-    vérifierPermissionAdmin(ctx.session);
-    return getContainer("metadataZonegroup")
-      .resolve("listerZonegroupsAdminQuery")
-      .run();
-  }),
+  lister: procédureProtégée
+    .input(z.object({ actifsSeulement: z.boolean().optional() }).optional())
+    .query(async ({ ctx, input }) => {
+      vérifierPermissionAdmin(ctx.session);
+      return getContainer("metadataZonegroup")
+        .resolve("listerZonegroupsAdminQuery")
+        .run({ actifsSeulement: input?.actifsSeulement });
+    }),
 
   récupérer: procédureProtégée
     .input(z.object({ zoneGroupId: z.string() }))

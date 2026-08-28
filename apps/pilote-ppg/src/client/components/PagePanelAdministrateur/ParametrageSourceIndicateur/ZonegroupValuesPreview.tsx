@@ -2,14 +2,10 @@ import { Lien } from "@/components/_commons/Lien/Lien";
 import type { ZonegroupAdminListItem } from "@/server/metadataZonegroup/queries/ListerZonegroupsAdminQuery";
 
 export const ZonegroupValuesPreview = ({
-  zonegroups,
+  zonegroupsActifs,
 }: {
-  zonegroups: ZonegroupAdminListItem[];
+  zonegroupsActifs: ZonegroupAdminListItem[];
 }) => {
-  const zonegroupsActifs = zonegroups.filter(
-    (zonegroup) => zonegroup.deletedAt === null,
-  );
-
   return (
     <div className="fr-mt-2w">
       <p className="text-sm text-gray-600 mb-3">

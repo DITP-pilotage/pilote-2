@@ -42,5 +42,29 @@ describe("ListerZonegroupsAdminQuery", () => {
         expect(supprime?.deletedAt).not.toBeNull();
       }),
     );
+
+    it(
+      "n'inclut que les zone groups actifs quand actifsSeulement vaut true",
+      createIntegrationTest(async () => {
+        // Given
+        await fixtures.metadataZonegroup({
+          zone_group_id: "ZG-090",
+          zg_name: "Actif",
+        });
+        await fixtures.metadataZonegroup({
+          zone_group_id: "ZG-091",
+          zg_name: "Supprimé",
+          deleted_at: new Date("2026-01-01"),
+        });
+
+        // When
+        const resultat = await query.run({ actifsSeulement: true });
+
+        // Then
+        const ids = resultat.map((z) => z.zoneGroupId);
+        expect(ids).toContain("ZG-090");
+        expect(ids).not.toContain("ZG-091");
+      }),
+    );
   });
 });

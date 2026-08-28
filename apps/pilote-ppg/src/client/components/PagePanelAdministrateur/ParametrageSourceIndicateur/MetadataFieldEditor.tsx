@@ -18,17 +18,15 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
     `metadataList.${fieldIndex}.listeValeursAcceptes`,
   );
   const estChampZoneGroupe = name === NOM_CHAMP_ZONE_GROUPE;
-  const { data: zonegroups = [] } = api.metadataZonegroup.lister.useQuery(
-    undefined,
+  const { data: zonegroupsActifs = [] } = api.metadataZonegroup.lister.useQuery(
+    { actifsSeulement: true },
     { enabled: estChampZoneGroupe },
   );
   const optionsValeurParDefaut = estChampZoneGroupe
-    ? zonegroups
-        .filter((zonegroup) => zonegroup.deletedAt === null)
-        .map((zonegroup) => ({
-          valeur: zonegroup.zoneGroupId,
-          nom: zonegroup.zgName,
-        }))
+    ? zonegroupsActifs.map((zonegroup) => ({
+        valeur: zonegroup.zoneGroupId,
+        nom: zonegroup.zgName,
+      }))
     : listeValeursAcceptes;
 
   return (
@@ -102,7 +100,7 @@ export const MetadataFieldEditor = ({ fieldIndex }: { fieldIndex: number }) => {
                   Valeurs acceptées
                 </h3>
                 {estChampZoneGroupe ? (
-                  <ZonegroupValuesPreview zonegroups={zonegroups} />
+                  <ZonegroupValuesPreview zonegroupsActifs={zonegroupsActifs} />
                 ) : (
                   <AcceptedValuesEditor fieldIndex={fieldIndex} />
                 )}
