@@ -4,7 +4,7 @@
       "command": "0 * * * * python scripts/__main__.py"
     },
     {
-      "command": "0 0 * * * dbt deps && dbt test"
+      "command": "0 0 * * * RUN_TESTS=true python scripts/__main__.py"
     }
   ]
 }
