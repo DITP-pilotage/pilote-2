@@ -56,7 +56,12 @@ models:
         data_tests:
           - dbt_utils.expression_is_true:
               arguments:
-                expression: "IN ('ate', 'hors_ate_deconcentre', 'hors_ate_centralise')"
+                expression: "IN ('ATE', 'HORS_ATE_DECONCENTRE', 'HORS_ATE_CENTRALISE')"
+              config:
+                where: "ate IS NOT NULL"
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "::TEXT = UPPER(ate::TEXT)"
               config:
                 where: "ate IS NOT NULL"
       - name: statut
