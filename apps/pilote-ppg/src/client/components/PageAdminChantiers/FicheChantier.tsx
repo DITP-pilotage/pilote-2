@@ -63,15 +63,6 @@ const FicheChantier = () => {
       </section>
 
       <section className="py-8">
-        <SectionTitle>Rattachements</SectionTitle>
-        <div className="grid grid-cols-3 gap-4">
-          <SélecteurPpg />
-          <SélecteurPerimetre />
-          <SélecteurZonegroup />
-        </div>
-      </section>
-
-      <section className="py-8">
         <SectionTitle>Porteurs</SectionTitle>
         <div className="grid grid-cols-2 gap-4">
           <SélecteurPorteurPrincipal />
@@ -79,6 +70,15 @@ const FicheChantier = () => {
         </div>
         <div className="grid grid-cols-2 gap-4 mt-4">
           <MultiSelectPorteursDAC />
+        </div>
+      </section>
+
+      <section className="py-8">
+        <SectionTitle>Rattachements</SectionTitle>
+        <div className="grid grid-cols-3 gap-4">
+          <SélecteurPpg />
+          <SélecteurPerimetre />
+          <SélecteurZonegroup />
         </div>
       </section>
 

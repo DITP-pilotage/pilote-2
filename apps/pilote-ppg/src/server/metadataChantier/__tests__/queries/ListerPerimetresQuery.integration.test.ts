@@ -77,5 +77,54 @@ describe("ListerPerimetresQuery", () => {
         expect(ids).not.toContain("PER-011");
       }),
     );
+
+    it(
+      "filtre les périmètres sur le porteur fourni",
+      createIntegrationTest(async () => {
+        // Given
+        await fixtures.metadataPorteur({ porteur_id: "MIN-A" });
+        await fixtures.metadataPorteur({ porteur_id: "MIN-B" });
+        await fixtures.metadataPerimetre({
+          perimetre_id: "PER-A1",
+          per_nom: "Périmètre A1",
+          per_porteur_id: "MIN-A",
+        });
+        await fixtures.metadataPerimetre({
+          perimetre_id: "PER-B1",
+          per_nom: "Périmètre B1",
+          per_porteur_id: "MIN-B",
+        });
+
+        // When
+        const resultat = await query.run({ porteurId: "MIN-A" });
+
+        // Then
+        expect(resultat).toEqual([{ id: "PER-A1", nom: "Périmètre A1" }]);
+      }),
+    );
+
+    it(
+      "retourne tous les périmètres si aucun porteur n'est fourni",
+      createIntegrationTest(async () => {
+        // Given
+        await fixtures.metadataPorteur({ porteur_id: "MIN-A" });
+        await fixtures.metadataPerimetre({
+          perimetre_id: "PER-A1",
+          per_nom: "Périmètre A1",
+          per_porteur_id: "MIN-A",
+        });
+        await fixtures.metadataPerimetre({
+          perimetre_id: "PER-C1",
+          per_nom: "Périmètre sans porteur",
+        });
+
+        // When
+        const resultat = await query.run();
+
+        // Then
+        const ids = resultat.map((p) => p.id);
+        expect(ids).toEqual(["PER-A1", "PER-C1"]);
+      }),
+    );
   });
 });

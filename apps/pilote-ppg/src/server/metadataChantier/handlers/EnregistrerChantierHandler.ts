@@ -13,7 +13,7 @@ export const chantierCommandSchema = z.object({
   chSaisieAte: z.nativeEnum($Enums.type_ate).nullable(),
   chState: z.nativeEnum($Enums.type_statut),
   zgApplicable: z.string().nullable(),
-  porteurIdPrincipal: z.string().nullable(),
+  porteurIdPrincipal: z.string().min(1, "Le porteur principal est obligatoire"),
   porteurIdsSecondaires: z.array(z.string()),
   porteurIdsDAC: z.array(z.string()),
   chPer: z.string(),

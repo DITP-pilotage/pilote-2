@@ -13,11 +13,16 @@ export class ListerPerimetresQuery {
     this.prisma = prisma;
   }
 
-  async run(): Promise<Perimetre[]> {
+  async run({ porteurId }: { porteurId?: string } = {}): Promise<
+    Perimetre[]
+  > {
     const perimetres = await this.prisma
       .getInstance()
       .metadata_perimetres.findMany({
-        where: { deleted_at: null },
+        where: {
+          deleted_at: null,
+          ...(porteurId ? { per_porteur_id: porteurId } : {}),
+        },
         orderBy: { perimetre_id: "asc" },
       });
     return perimetres.map(toApiModel);
