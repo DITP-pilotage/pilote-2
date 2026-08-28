@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { Controller, FormProvider } from "react-hook-form";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -14,6 +15,7 @@ import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { SectionTitle } from "@/components/_commons/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import type { SélecteurOption } from "@/client/components/_commons/Sélecteur/Sélecteur.interface";
 
 interface Props {
@@ -48,11 +50,16 @@ const PageAdminPerimetreEdition = ({
     estUneCréation,
   });
 
+  const [erreurSuppression, setErreurSuppression] = useState<string | null>(
+    null,
+  );
+
   const archiverMutation = api.metadataPerimetre.archiver.useMutation({
     onSuccess: () =>
       router.push(
         `/panel-administrateur/referentiels/perimetres/${perimetreIdEffectif}?_action=modification-reussie`,
       ),
+    onError: (error) => setErreurSuppression(error.message),
   });
 
   const restorerMutation = api.metadataPerimetre.restorer.useMutation({
@@ -63,6 +70,13 @@ const PageAdminPerimetreEdition = ({
   });
 
   const estSupprimé = perimetreData?.deletedAt != null;
+
+  const { data: utilisation } =
+    api.metadataPerimetre.verifierUtilisation.useQuery(
+      { perimetreId: perimetreIdEffectif },
+      { enabled: !estUneCréation && !estSupprimé },
+    );
+  const estUtilisé = utilisation?.estUtilise ?? false;
 
   const { data: porteurs = [] } = api.metadataPorteur.lister.useQuery();
   const porteursActifs = porteurs.filter((p) => p.deletedAt === null);
@@ -106,6 +120,13 @@ const PageAdminPerimetreEdition = ({
             type="erreur"
           />
         )}
+        {erreurSuppression && (
+          <Alerte
+            classesSupplementaires="mb-6"
+            titre={erreurSuppression}
+            type="erreur"
+          />
+        )}
 
         <FormProvider {...reactHookForm}>
           <form
@@ -123,27 +144,37 @@ const PageAdminPerimetreEdition = ({
               </div>
               <div className="flex items-center gap-3">
                 {!estUneCréation && (
-                  <Bouton
-                    className={
-                      estSupprimé
-                        ? "bg-pilote-vert text-white hover:bg-success"
-                        : "bg-dsfr-warning-950 text-error border border-dsfr-warning-925 hover:bg-dsfr-warning-925"
-                    }
-                    label={estSupprimé ? "Restaurer" : "Supprimer"}
-                    onClick={() =>
-                      estSupprimé
-                        ? restorerMutation.mutate({
-                            csrf: récupérerUnCookie("csrf") ?? "",
-                            perimetreId: perimetreIdEffectif,
-                          })
-                        : archiverMutation.mutate({
-                            csrf: récupérerUnCookie("csrf") ?? "",
-                            perimetreId: perimetreIdEffectif,
-                          })
-                    }
-                    variant="primary"
-                    type="button"
-                  />
+                  <div className="flex items-center gap-2">
+                    <Bouton
+                      className={
+                        estSupprimé
+                          ? "bg-pilote-vert text-white hover:bg-success"
+                          : "bg-dsfr-warning-950 text-error border border-dsfr-warning-925 hover:bg-dsfr-warning-925 disabled:opacity-50 disabled:cursor-not-allowed"
+                      }
+                      disabled={!estSupprimé && estUtilisé}
+                      label={estSupprimé ? "Restaurer" : "Supprimer"}
+                      onClick={() =>
+                        estSupprimé
+                          ? restorerMutation.mutate({
+                              csrf: récupérerUnCookie("csrf") ?? "",
+                              perimetreId: perimetreIdEffectif,
+                            })
+                          : archiverMutation.mutate({
+                              csrf: récupérerUnCookie("csrf") ?? "",
+                              perimetreId: perimetreIdEffectif,
+                            })
+                      }
+                      variant="primary"
+                      type="button"
+                    />
+                    {!estSupprimé && estUtilisé && (
+                      <Infobulle styleIconInfoBulle="warning">
+                        Ce périmètre est associé à{" "}
+                        {utilisation?.nombreChantiers} chantier(s) et ne peut
+                        pas être supprimé.
+                      </Infobulle>
+                    )}
+                  </div>
                 )}
                 <Bouton
                   disabled={isPending}

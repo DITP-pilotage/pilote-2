@@ -1,4 +1,5 @@
 import { useRouter } from "next/router";
+import { useState } from "react";
 import { Controller, FormProvider } from "react-hook-form";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import api from "@/server/infrastructure/api/trpc/api";
@@ -14,6 +15,7 @@ import { Textarea } from "@/components/_commons/Textarea";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { SectionTitle } from "@/components/_commons/SectionTitle";
 import Alerte from "@/components/_commons/Alerte/Alerte";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import { SélecteurZones } from "@/components/PageAdminZonegroups/SélecteurZones";
 
 interface Props {
@@ -49,11 +51,16 @@ const PageAdminZonegroupEdition = ({
     estUneCréation,
   });
 
+  const [erreurSuppression, setErreurSuppression] = useState<string | null>(
+    null,
+  );
+
   const archiverMutation = api.metadataZonegroup.archiver.useMutation({
     onSuccess: () =>
       router.push(
         `/panel-administrateur/referentiels/zonegroups/${zoneGroupIdEffectif}?_action=modification-reussie`,
       ),
+    onError: (error) => setErreurSuppression(error.message),
   });
 
   const restorerMutation = api.metadataZonegroup.restorer.useMutation({
@@ -64,6 +71,13 @@ const PageAdminZonegroupEdition = ({
   });
 
   const estSupprime = zonegroupData?.deletedAt != null;
+
+  const { data: utilisation } =
+    api.metadataZonegroup.verifierUtilisation.useQuery(
+      { zoneGroupId: zoneGroupIdEffectif },
+      { enabled: !estUneCréation && !estSupprime },
+    );
+  const estUtilisé = utilisation?.estUtilise ?? false;
 
   const { data: zonesDisponibles = [] } =
     api.metadataZonegroup.listerZonesDisponibles.useQuery();
@@ -100,6 +114,13 @@ const PageAdminZonegroupEdition = ({
             type="erreur"
           />
         )}
+        {erreurSuppression && (
+          <Alerte
+            classesSupplementaires="mb-6"
+            titre={erreurSuppression}
+            type="erreur"
+          />
+        )}
 
         <FormProvider {...reactHookForm}>
           <form
@@ -117,27 +138,38 @@ const PageAdminZonegroupEdition = ({
               </div>
               <div className="flex items-center gap-3">
                 {!estUneCréation && (
-                  <Bouton
-                    className={
-                      estSupprime
-                        ? "bg-pilote-vert text-white hover:bg-success"
-                        : "bg-dsfr-warning-950 text-error border border-dsfr-warning-925 hover:bg-dsfr-warning-925"
-                    }
-                    label={estSupprime ? "Restaurer" : "Supprimer"}
-                    onClick={() =>
-                      estSupprime
-                        ? restorerMutation.mutate({
-                            csrf: récupérerUnCookie("csrf") ?? "",
-                            zoneGroupId: zoneGroupIdEffectif,
-                          })
-                        : archiverMutation.mutate({
-                            csrf: récupérerUnCookie("csrf") ?? "",
-                            zoneGroupId: zoneGroupIdEffectif,
-                          })
-                    }
-                    variant="primary"
-                    type="button"
-                  />
+                  <div className="flex items-center gap-2">
+                    <Bouton
+                      className={
+                        estSupprime
+                          ? "bg-pilote-vert text-white hover:bg-success"
+                          : "bg-dsfr-warning-950 text-error border border-dsfr-warning-925 hover:bg-dsfr-warning-925 disabled:opacity-50 disabled:cursor-not-allowed"
+                      }
+                      disabled={!estSupprime && estUtilisé}
+                      label={estSupprime ? "Restaurer" : "Supprimer"}
+                      onClick={() =>
+                        estSupprime
+                          ? restorerMutation.mutate({
+                              csrf: récupérerUnCookie("csrf") ?? "",
+                              zoneGroupId: zoneGroupIdEffectif,
+                            })
+                          : archiverMutation.mutate({
+                              csrf: récupérerUnCookie("csrf") ?? "",
+                              zoneGroupId: zoneGroupIdEffectif,
+                            })
+                      }
+                      variant="primary"
+                      type="button"
+                    />
+                    {!estSupprime && estUtilisé && (
+                      <Infobulle styleIconInfoBulle="warning">
+                        Cette zone-groupe est associée à{" "}
+                        {utilisation?.nombreChantiers} chantier(s) et{" "}
+                        {utilisation?.nombreIndicateurs} indicateur(s) et ne
+                        peut pas être supprimée.
+                      </Infobulle>
+                    )}
+                  </div>
                 )}
                 <Bouton
                   disabled={isPending}

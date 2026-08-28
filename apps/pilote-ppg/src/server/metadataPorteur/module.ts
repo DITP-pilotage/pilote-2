@@ -7,6 +7,7 @@ import {
 import { ListerPorteursAdminQuery } from "./queries/ListerPorteursAdminQuery";
 import { RecupererPorteurQuery } from "./queries/RecupererPorteurQuery";
 import { RecupererIdSuivantPorteurQuery } from "./queries/RecupererIdSuivantPorteurQuery";
+import { VerifierUtilisationPorteurQuery } from "./queries/VerifierUtilisationPorteurQuery";
 import { EnregistrerPorteurHandler } from "./handlers/EnregistrerPorteurHandler";
 import { ArchiverPorteurHandler } from "./handlers/ArchiverPorteurHandler";
 import { RestorerPorteurHandler } from "./handlers/RestorerPorteurHandler";
@@ -15,6 +16,7 @@ type MetadataPorteurCradle = {
   listerPorteursAdminQuery: ListerPorteursAdminQuery;
   recupererPorteurQuery: RecupererPorteurQuery;
   recupererIdSuivantPorteurQuery: RecupererIdSuivantPorteurQuery;
+  verifierUtilisationPorteurQuery: VerifierUtilisationPorteurQuery;
   enregistrerPorteurHandler: EnregistrerPorteurHandler;
   archiverPorteurHandler: ArchiverPorteurHandler;
   restorerPorteurHandler: RestorerPorteurHandler;
@@ -33,6 +35,9 @@ export const metadataPorteurModule = defineModule<
       recupererPorteurQuery: asModuleClass(RecupererPorteurQuery),
       recupererIdSuivantPorteurQuery: asModuleClass(
         RecupererIdSuivantPorteurQuery,
+      ),
+      verifierUtilisationPorteurQuery: asModuleClass(
+        VerifierUtilisationPorteurQuery,
       ),
       enregistrerPorteurHandler: asModuleClass(EnregistrerPorteurHandler),
       archiverPorteurHandler: asModuleClass(ArchiverPorteurHandler),
