@@ -92,8 +92,18 @@ describe("RécupérerInformationMetadataIndicateurUseCase", () => {
         bloc_id: null,
         valeurs_acceptees: {
           create: [
-            { ordre: 2, valeur: "b", nom: "Option B", description: "Deuxième option" },
-            { ordre: 1, valeur: "a", nom: "Option A", description: "Première option" },
+            {
+              ordre: 2,
+              valeur: "b",
+              nom: "Option B",
+              description: "Deuxième option",
+            },
+            {
+              ordre: 1,
+              valeur: "a",
+              nom: "Option A",
+              description: "Première option",
+            },
           ],
         },
       },
