@@ -62,7 +62,7 @@ l'assistant a le droit d'assembler, et le contrat qui la partage entre le serveu
 | V2 | Catalogue **nominal**, une vignette par intention | Reprise de D3. ppg §1.1 : un `kpi_card` paramétré par `metric ∈ {…}` faisait confondre les métriques au modèle. Un enum ne peut porter qu'un périmètre, jamais la nature de ce qui est affiché. |
 | V3 | Le catalogue vit dans **`kpilote-shared`** | Il est simultanément le schéma d'entrée du tool côté serveur et la table d'aiguillage côté front. Deux copies divergeraient, comme les listes d'outils chez ppg. |
 | V4 | Le registre front est un `Record<TypeVignette, …>` | Ajouter une vignette au catalogue fait échouer la compilation du front tant que son composant n'existe pas. Le `WidgetRenderer` actuel est keyé sur `string` et n'offre pas cette garantie. |
-| V5 | **Grille plate**, pas de containers imbriqués | Le document d'itération de ppg laisse la question ouverte : « si l'équipe préfère basculer sur une seule grille plate, la bascule reste simple ». `CardGrid` existe déjà. On part simple. |
+| V5 | **Grille plate** à six colonnes, pas de containers imbriqués | Le document d'itération de ppg laisse la question ouverte : « si l'équipe préfère basculer sur une seule grille plate, la bascule reste simple ». On part simple. `CardGrid` de kpilote-ui ne convient pas : elle fixe trois colonnes sans contrôle de portée, donc la grille de l'assistant lui est propre — six colonnes, `tiers` = 2, `moitie` = 3, `pleine` = 6. |
 | V6 | Le savoir de composition vit dans la **`description` du tool** | Reprise de D2, et c'est leur meilleure décision rétrospective (commit `6138cbd69`) : catalogue, règles et exemples au même endroit, hors du prompt envoyé à chaque tour. |
 | V7 | Des **exemples few-shot** dans cette description dès la v1 | ppg les a ajoutés après coup (commit `7954bf043`) parce que le modèle produisait des vues mal structurées. C'est le prix de la fiabilité tant que le modèle n'est pas meilleur ; autant le payer d'emblée. |
 | V8 | Tout identifiant produit est **validé contre le contexte** | Reprise de D5 et du `validateDashboardIdentifiers` de ppg. Une vignette qui référencerait un indicateur hors droits doit être rejetée avant le rendu, pas laissée au filtre de la query. |
@@ -110,8 +110,8 @@ modèle produit.
 | `vignette_carte_indicateur` | `WidgetRenderer` | `indicateurId`, `referentielId` |
 | `vignette_avancement_collection` | `CollectionAvancement` | `collectionId`, `individuId` |
 | `vignette_taux_collection` | `CollectionTauxProgression` | `collectionId`, `individuId` |
-| `vignette_titre_section` | `Subtitle` | `texte` |
-| `vignette_paragraphe` | `Typography` | `texte` |
+| `vignette_titre_section` | `Heading` de `Typography` | `texte` |
+| `vignette_paragraphe` | `Text` de `Typography` | `texte` |
 
 `vignette_paragraphe` est la seule où le modèle écrit du contenu. Sa description interdit
 explicitement d'y placer une valeur chiffrée : les chiffres appartiennent aux autres vignettes,
@@ -133,8 +133,16 @@ Une vignette a donc presque toujours besoin de deux références : l'entité et 
 exactement le `focus` + `cadrage` du contrat de surface du sous-projet 1. La forme du contexte,
 écrite d'avance là-bas, trouve ici son premier consommateur réel.
 
-Conséquence pratique : **si aucun individu n'est déterminable, le tool ne compose pas.** Il
-demande lequel, plutôt que d'en choisir un.
+**Le territoire vient de la surface, jamais d'une inférence sur la conversation.** Si le contexte
+en fournit un, on l'utilise ; sinon on demande. Aucune heuristique du type « la conversation n'a
+mentionné qu'un seul territoire, prenons celui-là » : ce serait exactement le genre de devinette
+que le contrat de surface existe pour supprimer.
+
+Conséquence de séquencement, à assumer : depuis la palette, un `Tab` sur un indicateur donne
+l'indicateur mais pas le territoire, donc la composition demandera presque toujours une précision.
+Elle prend sa pleine valeur depuis une page, où l'entité consultée et l'individu sélectionné
+partent ensemble — c'est-à-dire **après le sous-projet 2**. Ce sous-projet reste implémentable
+avant, mais son intérêt réel en dépend.
 
 ## 5. Le registre front
 
@@ -197,8 +205,8 @@ de ppg après leur itération 2 : « le tool est une fonction de validation qui 
 `KpiloteUITools` porte la sortie du tool — c'est précisément ce que le typage posé au sous-projet 1
 rend possible, et sans quoi rien de ceci ne serait rendable.
 
-La vue est rendue dans un `CardGrid`, chaque vignette dans son `Suspense` et sa frontière
-d'erreur. Une vignette en échec affiche un encart d'erreur ; les autres continuent de s'afficher.
+La vue est rendue dans une grille à six colonnes propre à l'assistant, chaque vignette dans son
+`Suspense` et sa frontière d'erreur. Une vignette en échec affiche un encart d'erreur ; les autres continuent de s'afficher.
 ppg a implémenté cette frontière en composant de classe custom plutôt que d'ajouter une
 dépendance pour vingt-cinq lignes — on fait pareil.
 
@@ -259,5 +267,6 @@ choisi arbitrairement.
   mélange les langues ; la convention kpilote est verbe anglais et entité française.
 - **Modèle du sous-agent** : le même que le principal par défaut. La composition structurée est
   peut-être le cas où un modèle plus léger suffit — à mesurer sur les trois cas d'éval.
-- **Territoire par défaut** : quand la conversation ne porte qu'un seul individu depuis le début,
-  faut-il l'utiliser sans demander ? Proposition : oui, et le dire dans la réponse. À confirmer.
+- **Modèle bouchonné des tests d'intégration** : `MockLanguageModelV3` doit rendre une sortie
+  structurée conforme à `vueSchema`. Vérifier au démarrage que le mock du SDK supporte
+  `Output.object` ; sinon tester la validation séparément de l'appel.
