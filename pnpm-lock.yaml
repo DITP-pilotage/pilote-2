@@ -355,6 +355,9 @@ importers:
 
   apps/kpilote-webapp:
     dependencies:
+      '@ai-sdk/react':
+        specifier: ^3.0.163
+        version: 3.0.163(react@19.2.7)(zod@4.3.6)
       '@hono/node-server':
         specifier: '>=1.19.15 <2'
         version: 1.19.17(hono@4.13.1)
@@ -403,6 +406,9 @@ importers:
       '@yornaath/batshit':
         specifier: ^0.14.0
         version: 0.14.0
+      ai:
+        specifier: ^6.0.161
+        version: 6.0.161(zod@4.3.6)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1191,6 +1197,8 @@ packages:
   '@ai-sdk/provider@4.0.7':
     resolution: {integrity: sha512-6or44XprPzKbr8zkmzosowSE0pxkvJcoojBL+mCZvPUt3kvXp3XSNqeVun9golb1acEfSo6yaEBRT18h2VU+1Q==}
     engines: {node: '>=22'}
+
+  '@ai-sdk/react@3.0.163': {}
 
   '@ai-sdk/react@4.0.68':
     resolution: {integrity: sha512-zz/CtHN6Wu9i3Fmv/1pZOVRQ8de03t5o7XDVn1KXPVEbIrc5KsV+B+d3tbsBB/d4+Q2yUtZ/BhkP7ubLH6LhUg==}
@@ -8585,6 +8593,8 @@ packages:
       react: '>=16.8.0 <20'
       react-dom: '>=16.8.0 <20'
 
+  swr@2.4.1: {}
+
   swr@2.5.1:
     resolution: {integrity: sha512-BRw55e8r0B7SpDN20CAzoQAHl7y1yP7/Zt7oqUjMv0vSt2u2Xnkm88Ws+VypbV9BXHQVuSuyVq7zMjO16wSExw==}
     peerDependencies:
@@ -9520,6 +9530,16 @@ snapshots:
   '@ai-sdk/provider@4.0.7':
     dependencies:
       json-schema: 0.4.0
+
+  '@ai-sdk/react@3.0.163(react@19.2.7)(zod@4.3.6)':
+    dependencies:
+      '@ai-sdk/provider-utils': 4.0.23(zod@4.3.6)
+      ai: 6.0.161(zod@4.3.6)
+      react: 19.2.7
+      swr: 2.4.1(react@19.2.7)
+      throttleit: 2.1.0
+    transitivePeerDependencies:
+      - zod
 
   '@ai-sdk/react@4.0.68(react@19.2.8)(zod@4.4.3)':
     dependencies:
@@ -18051,6 +18071,12 @@ snapshots:
       - '@types/react'
       - debug
       - supports-color
+
+  swr@2.4.1(react@19.2.7):
+    dependencies:
+      dequal: 2.0.3
+      react: 19.2.7
+      use-sync-external-store: 1.6.0(react@19.2.7)
 
   swr@2.5.1(react@19.2.8):
     dependencies:
