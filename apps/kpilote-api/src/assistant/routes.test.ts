@@ -61,3 +61,53 @@ describe.concurrent('POST /assistant/chat', () => {
     }),
   )
 })
+
+const evaluer = (cleBrute: string, body: Record<string, unknown>) =>
+  buildApp().request(`/assistant/conversations/${conversationId}/evaluation`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', Authorization: `Bearer ${cleBrute}` },
+    body: JSON.stringify(body),
+  })
+
+describe.concurrent('POST /assistant/conversations/{id}/evaluation', () => {
+  it(
+    'refuse un feedback négatif sans catégorie',
+    integrationTest(async () => {
+      const cleBrute = 'pilote_live_assistant_eval_sans_categ_ok'
+      await fixtures.apiKey({ rawKey: cleBrute })
+      expect((await evaluer(cleBrute, { evaluation: 'NEGATIVE', categories: [] })).status).toBe(400)
+    }),
+  )
+
+  it(
+    'refuse la catégorie AUTRE sans commentaire',
+    integrationTest(async () => {
+      const cleBrute = 'pilote_live_assistant_eval_autre_vide_ok'
+      await fixtures.apiKey({ rawKey: cleBrute })
+      expect(
+        (await evaluer(cleBrute, { evaluation: 'NEGATIVE', categories: ['AUTRE'] })).status,
+      ).toBe(400)
+    }),
+  )
+
+  it(
+    'accepte un feedback positif sans commentaire',
+    integrationTest(async () => {
+      const cleBrute = 'pilote_live_assistant_eval_positif_okay'
+      await fixtures.apiKey({ rawKey: cleBrute })
+      expect((await evaluer(cleBrute, { evaluation: 'POSITIVE' })).status).toBe(204)
+    }),
+  )
+
+  it(
+    'reste en 204 sur une conversation sans tour enregistré',
+    integrationTest(async () => {
+      const cleBrute = 'pilote_live_assistant_eval_sans_tour_ok'
+      await fixtures.apiKey({ rawKey: cleBrute })
+      expect(
+        (await evaluer(cleBrute, { evaluation: 'NEGATIVE', categories: ['INCOMPREHENSION'] }))
+          .status,
+      ).toBe(204)
+    }),
+  )
+})
