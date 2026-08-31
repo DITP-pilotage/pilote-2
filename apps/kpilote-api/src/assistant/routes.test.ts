@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest'
 
+import { evaluerReponse } from '@/assistant/commands/evaluerReponse'
 import { assistantRoutes } from '@/assistant/routes'
+import { db } from '@/framework/persistence/dbStore'
+import { runAsPrincipal } from '@/test/runAsPrincipal'
 import { buildTestApp } from '@/test/buildTestApp'
 import { fixtures } from '@/test/fixtures'
 import { integrationTest } from '@/test/integrationTest'
@@ -108,6 +111,68 @@ describe.concurrent('POST /assistant/conversations/{id}/evaluation', () => {
         (await evaluer(cleBrute, { evaluation: 'NEGATIVE', categories: ['INCOMPREHENSION'] }))
           .status,
       ).toBe(204)
+    }),
+  )
+})
+
+describe.concurrent('cloisonnement de l’évaluation', () => {
+  const creerTour = async (principalId: string, conversation: string) => {
+    await db().assistantConversation.create({
+      data: {
+        id: conversation,
+        principalId,
+        surface: 'ask-libre',
+        titre: 'Test',
+        messages: [],
+      },
+    })
+    await db().assistantAppel.create({
+      data: {
+        conversationId: conversation,
+        principalId,
+        modele: 'openweight-large',
+        surface: 'ask-libre',
+        transcript: {},
+      },
+    })
+  }
+
+  it(
+    'enregistre le retour du principal qui a produit le tour',
+    integrationTest(async () => {
+      const proprietaire = await fixtures.apiKey()
+      const conversation = '018f3a2b-0000-7000-8000-0000000000aa'
+      await creerTour(proprietaire.id, conversation)
+
+      await runAsPrincipal(proprietaire.id, () =>
+        evaluerReponse({
+          conversationId: conversation,
+          corps: { evaluation: 'POSITIVE', commentaire: 'utile' },
+        }),
+      )
+
+      const tour = await db().assistantAppel.findFirst({ where: { conversationId: conversation } })
+      expect(tour?.evaluation).toBe('POSITIVE')
+    }),
+  )
+
+  it(
+    'ignore le retour d’un principal qui n’est pas propriétaire de la conversation',
+    integrationTest(async () => {
+      const proprietaire = await fixtures.apiKey()
+      const intrus = await fixtures.apiKey()
+      const conversation = '018f3a2b-0000-7000-8000-0000000000bb'
+      await creerTour(proprietaire.id, conversation)
+
+      await runAsPrincipal(intrus.id, () =>
+        evaluerReponse({
+          conversationId: conversation,
+          corps: { evaluation: 'NEGATIVE', categories: ['INCOMPREHENSION'] },
+        }),
+      )
+
+      const tour = await db().assistantAppel.findFirst({ where: { conversationId: conversation } })
+      expect(tour?.evaluation).toBeNull()
     }),
   )
 })
