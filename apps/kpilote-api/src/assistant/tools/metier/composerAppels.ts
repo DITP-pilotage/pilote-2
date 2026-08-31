@@ -11,29 +11,37 @@ import { type Requeteur } from '@/assistant/tools/requeteur'
  * Une branche en échec porte SA RAISON plutôt qu'un `null` nu — sans quoi le modèle lit un
  * refus de droit comme « pas de données » et l'affirme à l'utilisateur.
  */
+/** Un appel documenté, rendu soit en données soit avec sa raison d'indisponibilité. */
+export const lireBranche = async (
+  requeteur: Requeteur,
+  url: string,
+): Promise<BrancheSynthese<unknown>> => {
+  const reponse = await requeteur(url)
+  if (reponse.ok) {
+    const donnees: unknown = await reponse.json()
+    return { donnees }
+  }
+  return {
+    indisponible:
+      reponse.status === 403
+        ? `Accès refusé (statut ${reponse.status}) : l'utilisateur n'a pas les droits sur cette donnée.`
+        : `Donnée non récupérée (statut ${reponse.status}).`,
+  }
+}
+
+/** Ce qu'on renvoie pour une branche qui exige un territoire quand aucun n'a été fourni. */
+export const SANS_TERRITOIRE = {
+  indisponible:
+    "Cette donnée est lue pour un territoire donné, et aucun n'a été fourni. Demande à l'utilisateur lequel l'intéresse, puis rappelle cet outil avec `individuId`.",
+} as const
+
 export const composerAppels = async <T extends Record<string, BrancheSynthese<unknown>>>(
   requeteur: Requeteur,
   appels: Record<keyof T & string, string>,
 ): Promise<T> => {
   const entrees = Object.entries(appels) as Array<[keyof T & string, string]>
 
-  const branches = await Promise.all(
-    entrees.map(async ([, url]): Promise<BrancheSynthese<unknown>> => {
-      const reponse = await requeteur(url)
-      if (!reponse.ok) {
-        return {
-          indisponible:
-            reponse.status === 403
-              ? `Accès refusé (statut ${reponse.status}) : l'utilisateur n'a pas les droits sur cette donnée.`
-              : `Donnée non récupérée (statut ${reponse.status}).`,
-        }
-      }
-      // Annotation plutôt qu'assertion : `Response.json()` rend `any`, et on veut couper
-      // sa propagation sans que l'assertion soit signalée comme superflue.
-      const donnees: unknown = await reponse.json()
-      return { donnees }
-    }),
-  )
+  const branches = await Promise.all(entrees.map(([, url]) => lireBranche(requeteur, url)))
 
   return Object.fromEntries(entrees.map(([cle], index) => [cle, branches[index]])) as T
 }
