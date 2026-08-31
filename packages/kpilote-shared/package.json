@@ -52,6 +52,14 @@
       "types": "./src/assistant/surfaces.ts",
       "default": "./src/assistant/surfaces.ts"
     },
+    "./assistant/tools": {
+      "types": "./src/assistant/tools.ts",
+      "default": "./src/assistant/tools.ts"
+    },
+    "./assistant/message": {
+      "types": "./src/assistant/message.ts",
+      "default": "./src/assistant/message.ts"
+    },
     "./commentaire": {
       "types": "./src/commentaire.ts",
       "default": "./src/commentaire.ts"
@@ -172,10 +180,12 @@
     "format:check": "prettier --check ."
   },
   "peerDependencies": {
+    "ai": "^6.0.161",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
+    "ai": "^6.0.161",
     "prettier": "^3.9.6",
     "vitest": "^4.1.9"
   }
