@@ -48,6 +48,10 @@
       "types": "./src/assistant/sources.ts",
       "default": "./src/assistant/sources.ts"
     },
+    "./assistant/surfaces": {
+      "types": "./src/assistant/surfaces.ts",
+      "default": "./src/assistant/surfaces.ts"
+    },
     "./commentaire": {
       "types": "./src/commentaire.ts",
       "default": "./src/commentaire.ts"
