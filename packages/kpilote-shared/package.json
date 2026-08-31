@@ -64,6 +64,10 @@
       "types": "./src/assistant/feedback.ts",
       "default": "./src/assistant/feedback.ts"
     },
+    "./assistant/vignettes": {
+      "types": "./src/assistant/vignettes.ts",
+      "default": "./src/assistant/vignettes.ts"
+    },
     "./commentaire": {
       "types": "./src/commentaire.ts",
       "default": "./src/commentaire.ts"
