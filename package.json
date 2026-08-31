@@ -60,7 +60,9 @@
       "tar@>=7 <8": ">=7.5.21 <8",
       "fast-uri@>=3 <4": ">=3.1.4 <4",
       "eslint-plugin-sonarjs>typescript": "5.9.3",
-      "deepmerge-ts": ">=8.0.0 <9"
+      "deepmerge-ts": ">=8.0.0 <9",
+      "nextra>zod": ">=4.1.12 <4.4",
+      "nextra-theme-docs>zod": ">=4.1.12 <4.4"
     }
   },
   "devDependencies": {
