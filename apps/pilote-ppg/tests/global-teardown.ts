@@ -14,10 +14,18 @@ import { exec, execFile } from "child_process";
  */
 const MOTIFS_SERVEUR = ["next/dist/bin/next", "dotenv-cli/cli.js"];
 
-/** `pkill` sort en 1 quand rien ne correspond : c'est un cas nominal ici. */
+/**
+ * Chemin absolu volontaire : resoudre `pkill` via PATH laisserait un repertoire
+ * inscriptible du PATH decider quel binaire s'execute (sonarjs/no-os-command-from-path).
+ * `/usr/bin/pkill` est l'emplacement standard sous macOS comme sous Linux.
+ *
+ * `pkill` sort en 1 quand rien ne correspond : c'est un cas nominal ici.
+ */
+const PKILL = "/usr/bin/pkill";
+
 function tuerParMotif(motif: string): Promise<void> {
   return new Promise((resolve) => {
-    execFile("pkill", ["-9", "-f", motif], () => resolve());
+    execFile(PKILL, ["-9", "-f", motif], () => resolve());
   });
 }
 
