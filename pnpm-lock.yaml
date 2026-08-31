@@ -351,6 +351,9 @@ importers:
 
   apps/kpilote-webapp:
     dependencies:
+      '@ai-sdk/react':
+        specifier: ^3.0.163
+        version: 3.0.163(react@19.2.7)(zod@4.3.6)
       '@hono/node-server':
         specifier: '>=1.19.13 <2'
         version: 1.19.14(hono@4.12.27)
@@ -399,6 +402,9 @@ importers:
       '@yornaath/batshit':
         specifier: ^0.14.0
         version: 0.14.0
+      ai:
+        specifier: ^6.0.161
+        version: 6.0.161(zod@4.3.6)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -11054,6 +11060,16 @@ snapshots:
       ai: 6.0.161(zod@3.25.76)
       react: 19.2.5
       swr: 2.4.1(react@19.2.5)
+      throttleit: 2.1.0
+    transitivePeerDependencies:
+      - zod
+
+  '@ai-sdk/react@3.0.163(react@19.2.7)(zod@4.3.6)':
+    dependencies:
+      '@ai-sdk/provider-utils': 4.0.23(zod@4.3.6)
+      ai: 6.0.161(zod@4.3.6)
+      react: 19.2.7
+      swr: 2.4.1(react@19.2.7)
       throttleit: 2.1.0
     transitivePeerDependencies:
       - zod
@@ -21757,6 +21773,12 @@ snapshots:
       dequal: 2.0.3
       react: 19.2.5
       use-sync-external-store: 1.6.0(react@19.2.5)
+
+  swr@2.4.1(react@19.2.7):
+    dependencies:
+      dequal: 2.0.3
+      react: 19.2.7
+      use-sync-external-store: 1.6.0(react@19.2.7)
 
   symbol-tree@3.2.4: {}
 
