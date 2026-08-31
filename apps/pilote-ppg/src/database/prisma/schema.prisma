@@ -517,7 +517,7 @@ model metadata_chantiers {
   ch_saisie_ate        type_ate?
   ch_state             type_statut
   zg_applicable        String?
-  porteur_id_principal    String?
+  porteur_id_principal    String
   porteur_ids_secondaires String[]
   porteur_ids_DAC         String[]
   ch_per               String

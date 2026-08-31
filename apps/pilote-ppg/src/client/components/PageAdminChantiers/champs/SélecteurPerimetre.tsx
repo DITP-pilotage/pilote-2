@@ -11,8 +11,6 @@ const SélecteurPerimetre = () => {
   });
   const { data: perimetres } = api.metadataChantier.listerPerimetres.useQuery(
     { porteurId: porteurIdPrincipal },
-    // Sans porteur sélectionné, le champ est désactivé : on évite de charger
-    // la liste complète (non filtrée) des périmètres pour rien.
     { enabled: !!porteurIdPrincipal },
   );
 

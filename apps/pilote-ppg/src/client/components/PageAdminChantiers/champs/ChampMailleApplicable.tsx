@@ -1,16 +1,6 @@
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
-import { MAILLES, Maille } from "@/server/metadataChantier/domain/maille";
-
-export function maillesAttendues(
-  chTerrito: boolean,
-  mailleApplicable: readonly Maille[],
-): Maille[] {
-  if (!chTerrito) return ["NAT"];
-  return mailleApplicable.includes("DEPT")
-    ? ["NAT", "REG", "DEPT"]
-    : ["NAT", "REG"];
-}
+import { MAILLES } from "@/server/metadataChantier/domain/maille";
 
 const ChampMailleApplicable = () => {
   const form = useFormContext<ChantierForm>();

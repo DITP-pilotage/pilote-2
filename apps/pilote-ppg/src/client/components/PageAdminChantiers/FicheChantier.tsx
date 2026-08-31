@@ -11,11 +11,10 @@ import SélecteurZonegroup from "@/components/PageAdminChantiers/champs/Sélecte
 import SélecteurPorteurPrincipal from "@/components/PageAdminChantiers/champs/SélecteurPorteurPrincipal";
 import MultiSelectPorteursSecondaires from "@/components/PageAdminChantiers/champs/MultiSelectPorteursSecondaires";
 import MultiSelectPorteursDAC from "@/components/PageAdminChantiers/champs/MultiSelectPorteursDAC";
-import ChampMailleApplicable, {
-  maillesAttendues,
-} from "@/components/PageAdminChantiers/champs/ChampMailleApplicable";
+import ChampMailleApplicable from "@/components/PageAdminChantiers/champs/ChampMailleApplicable";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 import { SélecteurOption } from "@/client/components/_commons/Sélecteur/Sélecteur.interface";
+import { Maille } from "@/server/metadataChantier/domain/maille";
 
 const OPTIONS_STATUT: SélecteurOption<$Enums.type_statut>[] = [
   { libellé: "Brouillon", valeur: "BROUILLON" },
@@ -30,6 +29,16 @@ const OPTIONS_ATE: SélecteurOption<$Enums.type_ate | "">[] = [
   { libellé: "Hors ATE déconcentré", valeur: "hors_ate_deconcentre" },
   { libellé: "Hors ATE centralisé", valeur: "hors_ate_centralise" },
 ];
+
+function maillesAttendues(
+  chTerrito: boolean,
+  mailleApplicable: readonly Maille[],
+): Maille[] {
+  if (!chTerrito) return ["NAT"];
+  return mailleApplicable.includes("DEPT")
+    ? ["NAT", "REG", "DEPT"]
+    : ["NAT", "REG"];
+}
 
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
   <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide border-l-[3px] border-primary pl-3 mb-5">
@@ -101,7 +110,7 @@ const FicheChantier = () => {
                       checked,
                       form.getValues("mailleApplicable"),
                     ),
-                    { shouldDirty: true, shouldValidate: true },
+                    { shouldValidate: true },
                   );
                 }}
                 libellé="Territorialisé"

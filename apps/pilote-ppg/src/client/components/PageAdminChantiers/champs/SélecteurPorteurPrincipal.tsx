@@ -7,21 +7,6 @@ const SélecteurPorteurPrincipal = () => {
   const { data: porteurs = [] } =
     api.metadataChantier.listerPorteursMinistere.useQuery();
   const form = useFormContext<ChantierForm>();
-  const utils = api.useUtils();
-
-  const invaliderPerimetreSiBesoin = async (porteurId: string) => {
-    const chPerActuel = form.getValues("chPer");
-    if (!chPerActuel) return;
-    const perimetres = await utils.metadataChantier.listerPerimetres.fetch({
-      porteurId,
-    });
-    const chPerEstToujoursValide = perimetres.some(
-      (perimetre) => perimetre.id === chPerActuel,
-    );
-    if (!chPerEstToujoursValide) {
-      form.setValue("chPer", "", { shouldValidate: true });
-    }
-  };
 
   return (
     <Controller
@@ -34,7 +19,7 @@ const SélecteurPorteurPrincipal = () => {
           options={porteurs.map((p) => ({ libellé: p.label, valeur: p.id }))}
           onChange={(valeur) => {
             field.onChange(valeur);
-            void invaliderPerimetreSiBesoin(valeur);
+            form.setValue("chPer", "", { shouldValidate: true });
           }}
           valeurSélectionnée={field.value}
           erreur={form.formState.errors.porteurIdPrincipal}
