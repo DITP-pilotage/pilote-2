@@ -19,7 +19,7 @@ export function AssistantMessage({ message }: { message: KpiloteUIMessage }) {
     // le texte paraît centré au lieu d'être collé à droite.
     return (
       <div className="flex justify-end">
-        <p className="w-fit max-w-[80%] rounded-2xl rounded-br-sm bg-surface-tinted px-3.5 py-2 text-text">
+        <p className="w-fit max-w-[80%] rounded-2xl rounded-br-sm bg-primary px-3.5 py-2 text-primary-foreground">
           {message.parts
             .filter((part) => part.type === 'text')
             .map((part) => part.text)
