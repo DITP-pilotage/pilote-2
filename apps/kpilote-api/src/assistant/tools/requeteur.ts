@@ -1,5 +1,3 @@
-import { type Hono } from 'hono'
-
 /**
  * Une fonction qui joue un appel documenté et rend sa réponse.
  *
@@ -15,13 +13,21 @@ import { type Hono } from 'hono'
 export type Requeteur = (url: string) => Promise<Response>
 
 /**
+ * Le strict nécessaire pour jouer un appel. Structurel plutôt que `Pick<Hono, 'request'>` :
+ * `OpenAPIHono` porte des génériques d'environnement incompatibles avec `Hono` nu.
+ */
+type AppRequetable = {
+  request: (input: string, init?: RequestInit) => Response | Promise<Response>
+}
+
+/**
  * En production, l'app complète : pas de socket, mais toute la chaîne de middlewares
  * s'exécute — `databaseContext`, `authContext`, `requireAuthentication`, puis les filtres
  * de permission des queries. L'outil ne peut donc pas voir plus que l'appelant dont il
  * porte le jeton.
  */
 export const creerRequeteur =
-  (app: Pick<Hono, 'request'>, jeton: string): Requeteur =>
+  (app: AppRequetable, jeton: string): Requeteur =>
   // `app.request` peut rendre une `Response` synchrone : l'`async` la normalise en promesse.
   async (url) =>
     app.request(url, { headers: { authorization: `Bearer ${jeton}` } })
