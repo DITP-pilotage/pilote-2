@@ -42,13 +42,9 @@ renamed AS (
         UPPER(replicate_val_nat_to) AS replicate_val_nat_to,
         ch_cible_attendue::BOOLEAN AS ch_cible_attendue,
         CASE
-            WHEN
-                ch_territo
-                AND 'REG' = ANY(maille_applicable)
-                AND 'NAT' = ANY(maille_applicable)
-                AND NOT 'DEPT' = ANY(maille_applicable)
-                THEN 'REG'
-            WHEN ch_territo AND CARDINALITY(maille_applicable) = 0 THEN 'DEPT'
+            WHEN NOT ch_territo THEN 'NAT'
+            WHEN 'DEPT' = ANY(maille_applicable) THEN 'DEPT'
+            WHEN 'REG' = ANY(maille_applicable) THEN 'REG'
             ELSE 'NAT'
         END AS maille_pilotage,
         conseiller_mail
