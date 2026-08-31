@@ -16,6 +16,10 @@ export type CasEval = {
     aucuneSource?: boolean
     /** Le tour ne doit avoir déclenché aucun appel d'outil. */
     aucunOutil?: boolean
+    /** Types de vignette qui doivent figurer dans la vue composée. */
+    vignettesContiennent?: ReadonlyArray<string>
+    /** Nombre minimal de territoires distincts portés par les vignettes. */
+    territoiresDistincts?: number
   }
 }
 
@@ -74,5 +78,28 @@ export const CAS: ReadonlyArray<CasEval> = [
     question: 'et les chiffres ?',
     surface: 'ask-libre',
     attendu: { aucunOutil: true },
+  },
+  {
+    nom: 'composition avec entité et territoire fournis',
+    question: 'montre-moi IND-1 sur DEPT-84',
+    surface: 'ask-libre',
+    attendu: {
+      outilsAppeles: ['compose_vue'],
+      vignettesContiennent: ['vignette_avancement_indicateur'],
+    },
+  },
+  {
+    nom: 'comparaison : une vignette par territoire',
+    question: 'compare IND-1 entre DEPT-84 et DEPT-13',
+    surface: 'ask-libre',
+    attendu: { outilsAppeles: ['compose_vue'], territoiresDistincts: 2 },
+  },
+  {
+    // Le cas le plus important : composer sur un territoire choisi au hasard serait pire
+    // que ne rien afficher.
+    nom: 'sans territoire, l’assistant demande au lieu de composer',
+    question: 'montre-moi la fraude fiscale',
+    surface: 'ask-libre',
+    attendu: { outilsInterdits: ['compose_vue'] },
   },
 ]
