@@ -10,7 +10,6 @@ export interface MetadataPorteur {
   porteurDesc: string | null;
   porteurType: $Enums.porteur_type;
   porteurDirecteur: string | null;
-  porteurNameShort: string | null;
   porteurPicto: string | null;
   deletedAt: string | null;
 }
@@ -23,7 +22,6 @@ function toApiModel(porteur: MetadataPorteursPrisma): MetadataPorteur {
     porteurDesc: porteur.porteur_desc,
     porteurType: porteur.porteur_type,
     porteurDirecteur: porteur.porteur_directeur,
-    porteurNameShort: porteur.porteur_name_short,
     porteurPicto: porteur.porteur_picto,
     deletedAt: porteur.deleted_at?.toISOString() ?? null,
   };

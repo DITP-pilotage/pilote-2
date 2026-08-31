@@ -10,7 +10,6 @@ export const porteurCommandSchema = z.object({
   porteurDesc: z.string().nullable(),
   porteurType: z.nativeEnum($Enums.porteur_type),
   porteurDirecteur: z.string().nullable(),
-  porteurNameShort: z.string().nullable(),
   porteurPicto: z.string().nullable(),
 });
 
@@ -30,7 +29,6 @@ export class EnregistrerPorteurHandler {
       porteur_desc: command.porteurDesc,
       porteur_type: command.porteurType,
       porteur_directeur: command.porteurDirecteur,
-      porteur_name_short: command.porteurNameShort,
       porteur_picto: command.porteurPicto,
     };
     await this.prisma.getInstance().metadata_porteurs.upsert({
