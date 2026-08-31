@@ -13,6 +13,7 @@ import { type NomOutil } from '@pilote/kpilote-shared/assistant/tools'
 import { type ToolSet } from 'ai'
 
 import { deriverTool } from '@/assistant/tools/deriverTool'
+import { creerComposeVueTool } from '@/assistant/tools/metier/composeVue'
 import { creerGetSyntheseCollectionTool } from '@/assistant/tools/metier/getSyntheseCollection'
 import { creerGetSyntheseIndicateurTool } from '@/assistant/tools/metier/getSyntheseIndicateur'
 import { creerSearchCollectionsTool } from '@/assistant/tools/metier/searchCollections'
@@ -26,6 +27,7 @@ const OUTILS_PAR_SURFACE: Record<Surface, ReadonlyArray<NomOutil>> = {
     'search_collections',
     'get_synthese_indicateur',
     'get_synthese_collection',
+    'compose_vue',
     ...WHITELIST.map((entree) => entree.nom),
   ],
 }
@@ -36,6 +38,7 @@ export const resoudreOutils = (surface: Surface, requeteur: Requeteur): ToolSet 
     search_collections: creerSearchCollectionsTool(),
     get_synthese_indicateur: creerGetSyntheseIndicateurTool(requeteur),
     get_synthese_collection: creerGetSyntheseCollectionTool(requeteur),
+    compose_vue: creerComposeVueTool(),
   }
   const derives: ToolSet = Object.fromEntries(
     WHITELIST.map((entree) => [entree.nom, deriverTool(entree, requeteur)]),
