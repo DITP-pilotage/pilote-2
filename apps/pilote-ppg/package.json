@@ -151,7 +151,6 @@
   "devDependencies": {
     "@eslint/compat": "^1.4.1",
     "@eslint/js": "^9.39.5",
-    "@hookform/devtools": "^4.4.0",
     "@next/eslint-plugin-next": "^16.3.3",
     "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "4.1.12",
