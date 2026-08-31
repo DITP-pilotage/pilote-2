@@ -9,9 +9,11 @@ import {
   collectionPublicIdSchema,
   indicateurPublicIdSchema,
   individuPublicIdSchema,
+  referentielPublicIdSchema,
 } from '../publicIds'
 import type { ReferentielListApiModel } from '../referentiel'
 import type { TauxProgressionListApiModel } from '../tauxProgression'
+import { type Vue } from './vignettes'
 import type {
   DernieresValeursIndividuListApiModel,
   SyntheseIndividusListApiModel,
@@ -28,6 +30,7 @@ export const NOMS_OUTILS = [
   'search_collections',
   'get_synthese_indicateur',
   'get_synthese_collection',
+  'compose_vue',
   'get_indicateurs',
   'get_indicateur',
   'get_indicateur_valeurs',
@@ -45,6 +48,7 @@ export const LIBELLES_OUTILS: Record<NomOutil, string> = {
   search_collections: 'Recherche des collections correspondantes',
   get_synthese_indicateur: "Synthèse de l'indicateur",
   get_synthese_collection: 'Synthèse de la collection',
+  compose_vue: 'Composition de la vue',
   get_indicateurs: 'Liste des indicateurs',
   get_indicateur: "Détail de l'indicateur",
   get_indicateur_valeurs: "Valeurs de l'indicateur",
@@ -62,6 +66,16 @@ export const inputRechercheSchema = z.object({
     .string()
     .min(1)
     .describe('La formulation de l’utilisateur, telle quelle, sans reformulation.'),
+})
+
+export const inputComposeVueSchema = z.object({
+  demande: z.string().min(1).describe("Ce que l'utilisateur veut voir, dans ses termes."),
+  indicateurs: z.array(indicateurPublicIdSchema).max(8).default([]),
+  collections: z.array(collectionPublicIdSchema).max(8).default([]),
+  // Au moins un territoire : toute donnée d'indicateur de kpilote est indexée par individu.
+  // Sans lui, il n'y a rien à afficher — l'agent doit demander plutôt que de choisir.
+  individus: z.array(individuPublicIdSchema).min(1).max(4),
+  referentiels: z.array(referentielPublicIdSchema).max(4).default([]),
 })
 
 export const inputIdIndicateurSchema = z.object({ id: indicateurPublicIdSchema })
@@ -97,6 +111,9 @@ export type SyntheseIndicateurOutput = {
   syntheseIndividus: BrancheSynthese<SyntheseIndividusListApiModel>
 }
 
+/** La vue validée, ou la raison d'un refus que le modèle doit rapporter. */
+export type ComposeVueOutput = Vue | { erreur: string }
+
 export type SyntheseCollectionOutput = {
   identite: BrancheSynthese<CollectionApiModel>
   tauxProgression: BrancheSynthese<CollectionTauxProgressionApiModel>
@@ -121,6 +138,10 @@ export type KpiloteUITools = {
   get_synthese_collection: {
     input: z.input<typeof inputIdCollectionSchema>
     output: SyntheseCollectionOutput
+  }
+  compose_vue: {
+    input: z.input<typeof inputComposeVueSchema>
+    output: ComposeVueOutput
   }
   get_indicateurs: { input: Record<string, unknown>; output: IndicateurListApiModel | ErreurOutil }
   get_indicateur: {
