@@ -1,17 +1,27 @@
-import nock from "nock";
 import { createMocks } from "node-mocks-http";
 import { anyString, mock } from "vitest-mock-extended";
 import PersistentFile from "formidable/PersistentFile";
 import { NextApiRequest, NextApiResponse } from "next";
 import { randomUUID } from "node:crypto";
-import { ReportErrorBuilder } from "@/server/import-indicateur/app/builder/ReportErrorBuilder";
-import { ReportValidataWithDataBuilder } from "@/server/import-indicateur/app/builder/ReportValidataWithDataBuilder";
+import { DetailValidationFichierBuilder } from "@/server/import-indicateur/app/builder/DetailValidationFichier.builder";
+import { ErreurValidationFichierBuilder } from "@/server/import-indicateur/app/builder/ErreurValidationFichier.builder";
+import { MesureIndicateurTemporaireBuilder } from "@/server/import-indicateur/app/builder/MesureIndicateurTemporaire.builder";
 import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder";
 import { getNextAuthSessionTokenPourUtilisateurEmail } from "@/server/infrastructure/test/NextAuthHelper";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/db/prisma";
 
+const validerFichierMock = vi.fn();
+
+vi.mock(
+  "@/server/import-indicateur/infrastructure/adapters/validation-fichier/LocalFichierIndicateurValidationService",
+  () => ({
+    LocalFichierIndicateurValidationService: vi
+      .fn()
+      .mockImplementation(() => ({ validerFichier: validerFichierMock })),
+  }),
+);
 vi.mock("@/server/import-indicateur/infrastructure/handlers/ParseForm", () => ({
   parseForm: () => ({
     file: mock<PersistentFile>(),
@@ -27,9 +37,6 @@ vi.mock(
 
 const DONNEE_DATE_1 = "2023-12-30";
 const DONNEE_DATE_2 = "31/12/2023";
-
-// Il y a un pb si on set un env var différente pour ces tests => to fix
-const BASE_URL_VALIDATA = "https://api.validata.etalab.studio";
 
 // next-auth v5 lit les cookies depuis le header "cookie", pas depuis req.cookies
 async function createMocksAvecSessionToken(
@@ -68,25 +75,43 @@ async function creeUnUtilisateurEnBase() {
   return auteurId;
 }
 
+beforeEach(() => {
+  validerFichierMock.mockReset();
+});
+
 describe("VerifierImportIndicateurHandler", () => {
   describe("Quand le fichier envoyé est correct", () => {
     it("doit retourner que le fichier est valide", async () => {
       // Given
       const auteurId = await creeUnUtilisateurEnBase();
-      const report = new ReportValidataWithDataBuilder()
-        .avecValid(true)
-        .avecResourceData(
-          [
-            "identifiant_indic",
-            "zone_id",
-            "date_valeur",
-            "type_valeur",
-            "valeur",
-          ],
-          ["IND-001", "D001", DONNEE_DATE_1, "vi", "9"],
-          ["IND-001", "D004", DONNEE_DATE_2, "vc", "3"],
-        )
-        .build();
+      const rapportId = randomUUID();
+      validerFichierMock.mockResolvedValue(
+        new DetailValidationFichierBuilder()
+          .avecId(rapportId)
+          .avecEstValide(true)
+          .avecUtilisateurEmail("ditp.admin@example.com")
+          .avecListeMesuresIndicateurTemporaire(
+            new MesureIndicateurTemporaireBuilder()
+              .avecId(randomUUID())
+              .avecRapportId(rapportId)
+              .avecIndicId("IND-001")
+              .avecZoneId("D001")
+              .avecMetricDate(DONNEE_DATE_1)
+              .avecMetricType("vi")
+              .avecMetricValue("9")
+              .build(),
+            new MesureIndicateurTemporaireBuilder()
+              .avecId(randomUUID())
+              .avecRapportId(rapportId)
+              .avecIndicId("IND-001")
+              .avecZoneId("D004")
+              .avecMetricDate(DONNEE_DATE_2)
+              .avecMetricType("vc")
+              .avecMetricValue("3")
+              .build(),
+          )
+          .build(),
+      );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
         .avecEmail("ditp.admin@example.com")
@@ -96,13 +121,6 @@ describe("VerifierImportIndicateurHandler", () => {
       await getContainer("authentification")
         .resolve("utilisateurRepository")
         .créerOuMettreÀJour(utilisateur, auteurId);
-
-      nock(BASE_URL_VALIDATA)
-        .post("/validate")
-        .reply(
-          200,
-          JSON.stringify({ report, resource_data: report.resource_data }),
-        );
 
       // When
       const sessionToken = await getNextAuthSessionTokenPourUtilisateurEmail(
@@ -129,26 +147,34 @@ describe("VerifierImportIndicateurHandler", () => {
     it("doit sauvegarder les données du fichier", async () => {
       // Given
       const auteurId = await creeUnUtilisateurEnBase();
-      const report = new ReportValidataWithDataBuilder()
-        .avecValid(true)
-        .avecResourceData(
-          [
-            "identifiant_indic",
-            "zone_id",
-            "date_valeur",
-            "type_valeur",
-            "valeur",
-          ],
-          ["IND-001", "D001", DONNEE_DATE_1, "vi", "9"],
-          ["IND-001", "D004", DONNEE_DATE_2, "vc", "3"],
-        )
-        .build();
-      nock(BASE_URL_VALIDATA)
-        .post("/validate")
-        .reply(
-          200,
-          JSON.stringify({ report, resource_data: report.resource_data }),
-        );
+      const rapportId = randomUUID();
+      validerFichierMock.mockResolvedValue(
+        new DetailValidationFichierBuilder()
+          .avecId(rapportId)
+          .avecEstValide(true)
+          .avecUtilisateurEmail("ditp.admin@example.com")
+          .avecListeMesuresIndicateurTemporaire(
+            new MesureIndicateurTemporaireBuilder()
+              .avecId(randomUUID())
+              .avecRapportId(rapportId)
+              .avecIndicId("IND-001")
+              .avecZoneId("D001")
+              .avecMetricDate(DONNEE_DATE_1)
+              .avecMetricType("vi")
+              .avecMetricValue("9")
+              .build(),
+            new MesureIndicateurTemporaireBuilder()
+              .avecId(randomUUID())
+              .avecRapportId(rapportId)
+              .avecIndicId("IND-001")
+              .avecZoneId("D004")
+              .avecMetricDate(DONNEE_DATE_2)
+              .avecMetricType("vc")
+              .avecMetricValue("3")
+              .build(),
+          )
+          .build(),
+      );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
         .avecEmail("ditp.admin@example.com")
@@ -194,26 +220,13 @@ describe("VerifierImportIndicateurHandler", () => {
     it("doit sauvegarder le rapport pour lié à l'utilisateur", async () => {
       // Given
       const auteurId = await creeUnUtilisateurEnBase();
-      const report = new ReportValidataWithDataBuilder()
-        .avecValid(true)
-        .avecResourceData(
-          [
-            "identifiant_indic",
-            "zone_id",
-            "date_valeur",
-            "type_valeur",
-            "valeur",
-          ],
-          ["IND-001", "D001", DONNEE_DATE_1, "vi", "9"],
-          ["IND-001", "D004", DONNEE_DATE_2, "vc", "3"],
-        )
-        .build();
-      nock(BASE_URL_VALIDATA)
-        .post("/validate")
-        .reply(
-          200,
-          JSON.stringify({ report, resource_data: report.resource_data }),
-        );
+      validerFichierMock.mockResolvedValue(
+        new DetailValidationFichierBuilder()
+          .avecId(randomUUID())
+          .avecEstValide(true)
+          .avecUtilisateurEmail("ditp.admin@example.com")
+          .build(),
+      );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
         .avecEmail("ditp.admin@example.com")
@@ -251,40 +264,38 @@ describe("VerifierImportIndicateurHandler", () => {
   it("Quand le fichier envoyé est incorrect, doit retourner les erreurs du fichier", async () => {
     // Given
     const auteurId = await creeUnUtilisateurEnBase();
-    const report = new ReportValidataWithDataBuilder()
-      .avecValid(false)
-      .avecErrors(
-        new ReportErrorBuilder()
-          .avecCell("cellule 1")
-          .avecName("nom 1")
-          .avecFieldName("nom du champ 1")
-          .avecFieldPosition(1)
-          .avecMessage("message 1")
-          .avecRowNumber(1)
-          .avecRowPosition(1)
-          .build(),
-        new ReportErrorBuilder()
-          .avecCell("cellule 2")
-          .avecName("nom 2")
-          .avecFieldName("nom du champ 2")
-          .avecFieldPosition(2)
-          .avecMessage("message 2")
-          .avecRowNumber(2)
-          .avecRowPosition(2)
-          .build(),
-      )
-      .avecResourceData(
-        [
-          "identifiant_indic",
-          "zone_id",
-          "date_valeur",
-          "type_valeur",
-          "valeur",
-        ],
-        ["IND-001", "D001", "30/12/2023", "vi", "9"],
-        ["IND-001", "D004", "31/12/2023", "vc", "3"],
-      )
-      .build();
+    const rapportId = randomUUID();
+    validerFichierMock.mockResolvedValue(
+      new DetailValidationFichierBuilder()
+        .avecId(rapportId)
+        .avecEstValide(false)
+        .avecUtilisateurEmail("ditp.admin@example.com")
+        .avecListeErreursValidation(
+          new ErreurValidationFichierBuilder()
+            .avecId(randomUUID())
+            .avecRapportId(rapportId)
+            .avecCellule("cellule 1")
+            .avecNom("nom 1")
+            .avecNomDuChamp("nom du champ 1")
+            .avecPositionDuChamp(1)
+            .avecMessage("message 1")
+            .avecNumeroDeLigne(1)
+            .avecPositionDeLigne(0)
+            .build(),
+          new ErreurValidationFichierBuilder()
+            .avecId(randomUUID())
+            .avecRapportId(rapportId)
+            .avecCellule("cellule 2")
+            .avecNom("nom 2")
+            .avecNomDuChamp("nom du champ 2")
+            .avecPositionDuChamp(2)
+            .avecMessage("message 2")
+            .avecNumeroDeLigne(2)
+            .avecPositionDeLigne(1)
+            .build(),
+        )
+        .build(),
+    );
 
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
       .avecEmail("ditp.admin@example.com")
@@ -294,13 +305,6 @@ describe("VerifierImportIndicateurHandler", () => {
     await getContainer("authentification")
       .resolve("utilisateurRepository")
       .créerOuMettreÀJour(utilisateur, auteurId);
-
-    nock(BASE_URL_VALIDATA)
-      .post("/validate")
-      .reply(
-        200,
-        JSON.stringify({ report, resource_data: report.resource_data }),
-      );
 
     // When
     const sessionToken = await getNextAuthSessionTokenPourUtilisateurEmail(
@@ -346,40 +350,38 @@ describe("VerifierImportIndicateurHandler", () => {
   it("Quand le fichier envoyé est incorrect, doit sauvegarder les erreurs du fichier", async () => {
     // Given
     const auteurId = await creeUnUtilisateurEnBase();
-    const report = new ReportValidataWithDataBuilder()
-      .avecValid(false)
-      .avecErrors(
-        new ReportErrorBuilder()
-          .avecCell("cellule 1")
-          .avecName("nom 1")
-          .avecFieldName("nom du champ 1")
-          .avecFieldPosition(1)
-          .avecMessage("message 1")
-          .avecRowNumber(1)
-          .avecRowPosition(1)
-          .build(),
-        new ReportErrorBuilder()
-          .avecCell("cellule 2")
-          .avecName("nom 2")
-          .avecFieldName("nom du champ 2")
-          .avecFieldPosition(2)
-          .avecMessage("message 2")
-          .avecRowNumber(2)
-          .avecRowPosition(2)
-          .build(),
-      )
-      .avecResourceData(
-        [
-          "identifiant_indic",
-          "zone_id",
-          "date_valeur",
-          "type_valeur",
-          "valeur",
-        ],
-        ["IND-001", "D001", "30/12/2023", "vi", "9"],
-        ["IND-001", "D004", "31/12/2023", "vc", "3"],
-      )
-      .build();
+    const rapportId = randomUUID();
+    validerFichierMock.mockResolvedValue(
+      new DetailValidationFichierBuilder()
+        .avecId(rapportId)
+        .avecEstValide(false)
+        .avecUtilisateurEmail("ditp.admin@example.com")
+        .avecListeErreursValidation(
+          new ErreurValidationFichierBuilder()
+            .avecId(randomUUID())
+            .avecRapportId(rapportId)
+            .avecCellule("cellule 1")
+            .avecNom("nom 1")
+            .avecNomDuChamp("nom du champ 1")
+            .avecPositionDuChamp(1)
+            .avecMessage("message 1")
+            .avecNumeroDeLigne(1)
+            .avecPositionDeLigne(0)
+            .build(),
+          new ErreurValidationFichierBuilder()
+            .avecId(randomUUID())
+            .avecRapportId(rapportId)
+            .avecCellule("cellule 2")
+            .avecNom("nom 2")
+            .avecNomDuChamp("nom du champ 2")
+            .avecPositionDuChamp(2)
+            .avecMessage("message 2")
+            .avecNumeroDeLigne(2)
+            .avecPositionDeLigne(1)
+            .build(),
+        )
+        .build(),
+    );
 
     const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
       .avecEmail("ditp.admin@example.com")
@@ -389,13 +391,6 @@ describe("VerifierImportIndicateurHandler", () => {
     await getContainer("authentification")
       .resolve("utilisateurRepository")
       .créerOuMettreÀJour(utilisateur, auteurId);
-
-    nock(BASE_URL_VALIDATA)
-      .post("/validate")
-      .reply(
-        200,
-        JSON.stringify({ report, resource_data: report.resource_data }),
-      );
 
     // When
     const sessionToken = await getNextAuthSessionTokenPourUtilisateurEmail(

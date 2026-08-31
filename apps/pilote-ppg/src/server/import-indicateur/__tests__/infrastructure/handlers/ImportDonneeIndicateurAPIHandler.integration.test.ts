@@ -1,16 +1,26 @@
-import nock from "nock";
 import { mock } from "vitest-mock-extended";
 import PersistentFile from "formidable/PersistentFile";
 import { createMocks } from "node-mocks-http";
 import { NextApiRequest, NextApiResponse } from "next";
 import { randomUUID } from "node:crypto";
-import { ReportValidataWithDataBuilder } from "@/server/import-indicateur/app/builder/ReportValidataWithDataBuilder";
-import { ReportErrorBuilder } from "@/server/import-indicateur/app/builder/ReportErrorBuilder";
+import { DetailValidationFichierBuilder } from "@/server/import-indicateur/app/builder/DetailValidationFichier.builder";
+import { ErreurValidationFichierBuilder } from "@/server/import-indicateur/app/builder/ErreurValidationFichier.builder";
+import { MesureIndicateurTemporaireBuilder } from "@/server/import-indicateur/app/builder/MesureIndicateurTemporaire.builder";
 import UtilisateurÀCréerOuMettreÀJourBuilder from "@/server/domain/utilisateur/UtilisateurÀCréerOuMettreÀJour.builder";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/db/prisma";
 
+const validerFichierMock = vi.fn();
+
+vi.mock(
+  "@/server/import-indicateur/infrastructure/adapters/validation-fichier/LocalFichierIndicateurValidationService",
+  () => ({
+    LocalFichierIndicateurValidationService: vi
+      .fn()
+      .mockImplementation(() => ({ validerFichier: validerFichierMock })),
+  }),
+);
 vi.mock("@/server/import-indicateur/infrastructure/handlers/ParseForm", () => ({
   parseForm: () => ({
     file: mock<PersistentFile>(),
@@ -24,7 +34,6 @@ vi.mock(
   }),
 );
 
-const BASE_URL_VALIDATA = "https://api.validata.etalab.studio";
 async function creeUnUtilisateurEnBase() {
   const auteurId = randomUUID();
   await prisma.utilisateur.create({
@@ -44,46 +53,243 @@ async function creeUnUtilisateurEnBase() {
   return auteurId;
 }
 
+function construireRapportErreurs(
+  rapportId: string,
+): DetailValidationFichierBuilder {
+  return new DetailValidationFichierBuilder()
+    .avecId(rapportId)
+    .avecEstValide(false)
+    .avecUtilisateurEmail("ditp.admin@example.com")
+    .avecListeErreursValidation(
+      new ErreurValidationFichierBuilder()
+        .avecId(randomUUID())
+        .avecRapportId(rapportId)
+        .avecCellule("cellule 1")
+        .avecNom("nom 1")
+        .avecNomDuChamp("nom du champ 1")
+        .avecPositionDuChamp(1)
+        .avecMessage("message 1")
+        .avecNumeroDeLigne(1)
+        .avecPositionDeLigne(0)
+        .build(),
+      new ErreurValidationFichierBuilder()
+        .avecId(randomUUID())
+        .avecRapportId(rapportId)
+        .avecCellule("cellule 2")
+        .avecNom("nom 2")
+        .avecNomDuChamp("nom du champ 2")
+        .avecPositionDuChamp(2)
+        .avecMessage("message 2")
+        .avecNumeroDeLigne(2)
+        .avecPositionDeLigne(1)
+        .build(),
+    );
+}
+
+function construireRapportIndicIdIncoherent(
+  rapportId: string,
+): DetailValidationFichierBuilder {
+  return new DetailValidationFichierBuilder()
+    .avecId(rapportId)
+    .avecEstValide(true)
+    .avecUtilisateurEmail("ditp.admin@example.com")
+    .avecListeMesuresIndicateurTemporaire(
+      new MesureIndicateurTemporaireBuilder()
+        .avecId(randomUUID())
+        .avecRapportId(rapportId)
+        .avecIndicId("IND-002")
+        .avecZoneId("D12")
+        .avecMetricDate("2023-03-31")
+        .avecMetricType("va")
+        .avecMetricValue("9")
+        .build(),
+      new MesureIndicateurTemporaireBuilder()
+        .avecId(randomUUID())
+        .avecRapportId(rapportId)
+        .avecIndicId("IND-002")
+        .avecZoneId("D13")
+        .avecMetricDate("2023-01-17")
+        .avecMetricType("vc")
+        .avecMetricValue("12")
+        .build(),
+      new MesureIndicateurTemporaireBuilder()
+        .avecId(randomUUID())
+        .avecRapportId(rapportId)
+        .avecIndicId("IND-002")
+        .avecZoneId("D14")
+        .avecMetricDate("2023-02-26")
+        .avecMetricType("vi")
+        .avecMetricValue("20")
+        .build(),
+    );
+}
+
+function construireRapportValide(
+  rapportId: string,
+): DetailValidationFichierBuilder {
+  return new DetailValidationFichierBuilder()
+    .avecId(rapportId)
+    .avecEstValide(true)
+    .avecUtilisateurEmail("ditp.admin@example.com")
+    .avecListeMesuresIndicateurTemporaire(
+      new MesureIndicateurTemporaireBuilder()
+        .avecId(randomUUID())
+        .avecRapportId(rapportId)
+        .avecIndicId("IND-001")
+        .avecZoneId("D12")
+        .avecMetricDate("2023-03-31")
+        .avecMetricType("va")
+        .avecMetricValue("9")
+        .build(),
+      new MesureIndicateurTemporaireBuilder()
+        .avecId(randomUUID())
+        .avecRapportId(rapportId)
+        .avecIndicId("IND-001")
+        .avecZoneId("D13")
+        .avecMetricDate("2023-01-17")
+        .avecMetricType("vc")
+        .avecMetricValue("12")
+        .build(),
+      new MesureIndicateurTemporaireBuilder()
+        .avecId(randomUUID())
+        .avecRapportId(rapportId)
+        .avecIndicId("IND-001")
+        .avecZoneId("D14")
+        .avecMetricDate("2023-02-26")
+        .avecMetricType("vi")
+        .avecMetricValue("20")
+        .build(),
+    );
+}
+
+async function creerDonneesPrerequisesPourImportValide() {
+  await prisma.chantier_identite.create({
+    data: {
+      id: "CH-001",
+      nom: "Test Chantier",
+      est_territorialise: true,
+      directeurs_administration_centrale: [],
+      directeurs_projet_ids: [],
+    },
+  });
+
+  await prisma.indicateur_identite.create({
+    data: {
+      id: "IND-001",
+      chantier_id: "CH-001",
+      nom: "Test Indicateur",
+      type_id: "IMPACT",
+    },
+  });
+
+  await Promise.all([
+    prisma.territoire.upsert({
+      where: { code: "DEPT-12" },
+      update: {},
+      create: {
+        code: "DEPT-12",
+        nom: "Département 12",
+        nom_affiche: "Département 12",
+        maille: "DEPT",
+        code_insee: "12",
+        zone_id: "D12",
+      },
+    }),
+    prisma.territoire.upsert({
+      where: { code: "DEPT-13" },
+      update: {},
+      create: {
+        code: "DEPT-13",
+        nom: "Département 13",
+        nom_affiche: "Département 13",
+        maille: "DEPT",
+        code_insee: "13",
+        zone_id: "D13",
+      },
+    }),
+    prisma.territoire.upsert({
+      where: { code: "DEPT-14" },
+      update: {},
+      create: {
+        code: "DEPT-14",
+        nom: "Département 14",
+        nom_affiche: "Département 14",
+        maille: "DEPT",
+        code_insee: "14",
+        zone_id: "D14",
+      },
+    }),
+  ]);
+
+  await prisma.chantier_territoire.createMany({
+    data: [
+      {
+        id: "CH-001",
+        territoire_code: "DEPT-12",
+        code_insee: "12",
+        zone_id: "D12",
+        maille: "DEPT",
+      },
+      {
+        id: "CH-001",
+        territoire_code: "DEPT-13",
+        code_insee: "13",
+        zone_id: "D13",
+        maille: "DEPT",
+      },
+      {
+        id: "CH-001",
+        territoire_code: "DEPT-14",
+        code_insee: "14",
+        zone_id: "D14",
+        maille: "DEPT",
+      },
+    ],
+  });
+
+  await prisma.indicateur_territoire.createMany({
+    data: [
+      {
+        id: "IND-001",
+        chantier_id: "CH-001",
+        territoire_code: "DEPT-12",
+        code_insee: "12",
+        zone_id: "D12",
+        maille: "DEPT",
+      },
+      {
+        id: "IND-001",
+        chantier_id: "CH-001",
+        territoire_code: "DEPT-13",
+        code_insee: "13",
+        zone_id: "D13",
+        maille: "DEPT",
+      },
+      {
+        id: "IND-001",
+        chantier_id: "CH-001",
+        territoire_code: "DEPT-14",
+        code_insee: "14",
+        zone_id: "D14",
+        maille: "DEPT",
+      },
+    ],
+  });
+}
+
+beforeEach(() => {
+  validerFichierMock.mockReset();
+});
+
 describe("ImportDonneeIndicateurAPIHandler", () => {
   describe("quand on import un fichier via une donnee en JSON", () => {
     it("quand le fichier est invalide a cause de validata, doit remonter les erreurs validata", async () => {
       // Given
       const auteurId = await creeUnUtilisateurEnBase();
-      const report = new ReportValidataWithDataBuilder()
-        .avecValid(false)
-        .avecErrors(
-          new ReportErrorBuilder()
-            .avecCell("cellule 1")
-            .avecName("nom 1")
-            .avecFieldName("nom du champ 1")
-            .avecFieldPosition(1)
-            .avecMessage("message 1")
-            .avecRowNumber(1)
-            .avecRowPosition(1)
-            .build(),
-          new ReportErrorBuilder()
-            .avecCell("cellule 2")
-            .avecName("nom 2")
-            .avecFieldName("nom du champ 2")
-            .avecFieldPosition(2)
-            .avecMessage("message 2")
-            .avecRowNumber(2)
-            .avecRowPosition(2)
-            .build(),
-        )
-        .avecResourceData(
-          [
-            "identifiant_indic",
-            "zone_id",
-            "date_valeur",
-            "type_valeur",
-            "valeur",
-          ],
-          ["IND-001", "D12", "2023-03-31", "va", "9"],
-          ["IND-001", "D13", "2023-01-17", "vc", "12"],
-          ["IND-001", "D14", "2023-02-26", "vi", "20"],
-        )
-        .build();
+      const rapportId = randomUUID();
+      validerFichierMock.mockResolvedValue(
+        construireRapportErreurs(rapportId).build(),
+      );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
         .avecEmail("ditp.admin@example.com")
@@ -94,14 +300,8 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .resolve("utilisateurRepository")
         .créerOuMettreÀJour(utilisateur, auteurId);
 
-      nock(BASE_URL_VALIDATA)
-        .post("/validate")
-        .reply(
-          200,
-          JSON.stringify({ report, resource_data: report.resource_data }),
-        );
       // When
-      // Les données sont mockés après dans le retour validata
+      // Les données sont mockées après dans le retour de validation
       const body = {
         donnees: [],
       };
@@ -146,41 +346,10 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
     it("quand le fichier est invalide a cause de validata, doit sauvegarder les erreurs validata", async () => {
       // Given
       const auteurId = await creeUnUtilisateurEnBase();
-      const report = new ReportValidataWithDataBuilder()
-        .avecValid(false)
-        .avecErrors(
-          new ReportErrorBuilder()
-            .avecCell("cellule 1")
-            .avecName("nom 1")
-            .avecFieldName("nom du champ 1")
-            .avecFieldPosition(1)
-            .avecMessage("message 1")
-            .avecRowNumber(1)
-            .avecRowPosition(1)
-            .build(),
-          new ReportErrorBuilder()
-            .avecCell("cellule 2")
-            .avecName("nom 2")
-            .avecFieldName("nom du champ 2")
-            .avecFieldPosition(2)
-            .avecMessage("message 2")
-            .avecRowNumber(2)
-            .avecRowPosition(2)
-            .build(),
-        )
-        .avecResourceData(
-          [
-            "identifiant_indic",
-            "zone_id",
-            "date_valeur",
-            "type_valeur",
-            "valeur",
-          ],
-          ["IND-001", "D12", "2023-03-31", "va", "9"],
-          ["IND-001", "D13", "2023-01-17", "vc", "12"],
-          ["IND-001", "D14", "2023-02-26", "vi", "20"],
-        )
-        .build();
+      const rapportId = randomUUID();
+      validerFichierMock.mockResolvedValue(
+        construireRapportErreurs(rapportId).build(),
+      );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
         .avecEmail("ditp.admin@example.com")
@@ -191,14 +360,8 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .resolve("utilisateurRepository")
         .créerOuMettreÀJour(utilisateur, auteurId);
 
-      nock(BASE_URL_VALIDATA)
-        .post("/validate")
-        .reply(
-          200,
-          JSON.stringify({ report, resource_data: report.resource_data }),
-        );
       // When
-      // Les données sont mockés après dans le retour validata
+      // Les données sont mockées après dans le retour de validation
       const body = {
         donnees: [],
       };
@@ -225,6 +388,7 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
           email: "ditp.admin@example.com",
           profil: ProfilEnum.DITP_ADMIN,
         });
+
       // Then
       expect(response._getStatusCode()).toEqual(400);
       const listeErreursValidationFichier =
@@ -253,21 +417,10 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
     it("quand le fichier est invalide a cause de règle DITP <<indic_id request different des indic_id dans fichier>>, doit sauvegarder les erreurs", async () => {
       // Given
       const auteurId = await creeUnUtilisateurEnBase();
-      const report = new ReportValidataWithDataBuilder()
-        .avecValid(true)
-        .avecResourceData(
-          [
-            "identifiant_indic",
-            "zone_id",
-            "date_valeur",
-            "type_valeur",
-            "valeur",
-          ],
-          ["IND-002", "D12", "2023-03-31", "va", "9"],
-          ["IND-002", "D13", "2023-01-17", "vc", "12"],
-          ["IND-002", "D14", "2023-02-26", "vi", "20"],
-        )
-        .build();
+      const rapportId = randomUUID();
+      validerFichierMock.mockResolvedValue(
+        construireRapportIndicIdIncoherent(rapportId).build(),
+      );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
         .avecEmail("ditp.admin@example.com")
@@ -278,14 +431,8 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .resolve("utilisateurRepository")
         .créerOuMettreÀJour(utilisateur, auteurId);
 
-      nock(BASE_URL_VALIDATA)
-        .post("/validate")
-        .reply(
-          200,
-          JSON.stringify({ report, resource_data: report.resource_data }),
-        );
       // When
-      // Les données sont mockés après dans le retour validata
+      // Les données sont mockées après dans le retour de validation
       const body = {
         donnees: [],
       };
@@ -350,134 +497,12 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
       const auteurId = await creeUnUtilisateurEnBase();
 
       // Create prerequisite data for foreign key constraints
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Test Chantier",
-          est_territorialise: true,
-          directeurs_administration_centrale: [],
-          directeurs_projet_ids: [],
-        },
-      });
+      await creerDonneesPrerequisesPourImportValide();
 
-      await prisma.indicateur_identite.create({
-        data: {
-          id: "IND-001",
-          chantier_id: "CH-001",
-          nom: "Test Indicateur",
-          type_id: "IMPACT",
-        },
-      });
-
-      await Promise.all([
-        prisma.territoire.upsert({
-          where: { code: "DEPT-12" },
-          update: {},
-          create: {
-            code: "DEPT-12",
-            nom: "Département 12",
-            nom_affiche: "Département 12",
-            maille: "DEPT",
-            code_insee: "12",
-            zone_id: "D12",
-          },
-        }),
-        prisma.territoire.upsert({
-          where: { code: "DEPT-13" },
-          update: {},
-          create: {
-            code: "DEPT-13",
-            nom: "Département 13",
-            nom_affiche: "Département 13",
-            maille: "DEPT",
-            code_insee: "13",
-            zone_id: "D13",
-          },
-        }),
-        prisma.territoire.upsert({
-          where: { code: "DEPT-14" },
-          update: {},
-          create: {
-            code: "DEPT-14",
-            nom: "Département 14",
-            nom_affiche: "Département 14",
-            maille: "DEPT",
-            code_insee: "14",
-            zone_id: "D14",
-          },
-        }),
-      ]);
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            territoire_code: "DEPT-12",
-            code_insee: "12",
-            zone_id: "D12",
-            maille: "DEPT",
-          },
-          {
-            id: "CH-001",
-            territoire_code: "DEPT-13",
-            code_insee: "13",
-            zone_id: "D13",
-            maille: "DEPT",
-          },
-          {
-            id: "CH-001",
-            territoire_code: "DEPT-14",
-            code_insee: "14",
-            zone_id: "D14",
-            maille: "DEPT",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            territoire_code: "DEPT-12",
-            code_insee: "12",
-            zone_id: "D12",
-            maille: "DEPT",
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            territoire_code: "DEPT-13",
-            code_insee: "13",
-            zone_id: "D13",
-            maille: "DEPT",
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            territoire_code: "DEPT-14",
-            code_insee: "14",
-            zone_id: "D14",
-            maille: "DEPT",
-          },
-        ],
-      });
-
-      const report = new ReportValidataWithDataBuilder()
-        .avecValid(true)
-        .avecResourceData(
-          [
-            "identifiant_indic",
-            "zone_id",
-            "date_valeur",
-            "type_valeur",
-            "valeur",
-          ],
-          ["IND-001", "D12", "2023-03-31", "va", "9"],
-          ["IND-001", "D13", "2023-01-17", "vc", "12"],
-          ["IND-001", "D14", "2023-02-26", "vi", "20"],
-        )
-        .build();
+      const rapportId = randomUUID();
+      validerFichierMock.mockResolvedValue(
+        construireRapportValide(rapportId).build(),
+      );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
         .avecEmail("ditp.admin@example.com")
@@ -488,14 +513,8 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .resolve("utilisateurRepository")
         .créerOuMettreÀJour(utilisateur, auteurId);
 
-      nock(BASE_URL_VALIDATA)
-        .post("/validate")
-        .reply(
-          200,
-          JSON.stringify({ report, resource_data: report.resource_data }),
-        );
       // When
-      // Les données sont mockés après dans le retour validata
+      // Les données sont mockées après dans le retour de validation
       const body = {
         donnees: [],
       };
@@ -546,41 +565,10 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
     it("quand le fichier est invalide a cause de validata, doit remonter les erreurs validata", async () => {
       // Given
       const auteurId = await creeUnUtilisateurEnBase();
-      const report = new ReportValidataWithDataBuilder()
-        .avecValid(false)
-        .avecErrors(
-          new ReportErrorBuilder()
-            .avecCell("cellule 1")
-            .avecName("nom 1")
-            .avecFieldName("nom du champ 1")
-            .avecFieldPosition(1)
-            .avecMessage("message 1")
-            .avecRowNumber(1)
-            .avecRowPosition(1)
-            .build(),
-          new ReportErrorBuilder()
-            .avecCell("cellule 2")
-            .avecName("nom 2")
-            .avecFieldName("nom du champ 2")
-            .avecFieldPosition(2)
-            .avecMessage("message 2")
-            .avecRowNumber(2)
-            .avecRowPosition(2)
-            .build(),
-        )
-        .avecResourceData(
-          [
-            "identifiant_indic",
-            "zone_id",
-            "date_valeur",
-            "type_valeur",
-            "valeur",
-          ],
-          ["IND-001", "D12", "2023-03-31", "va", "9"],
-          ["IND-001", "D13", "2023-01-17", "vc", "12"],
-          ["IND-001", "D14", "2023-02-26", "vi", "20"],
-        )
-        .build();
+      const rapportId = randomUUID();
+      validerFichierMock.mockResolvedValue(
+        construireRapportErreurs(rapportId).build(),
+      );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
         .avecEmail("ditp.admin@example.com")
@@ -591,12 +579,6 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .resolve("utilisateurRepository")
         .créerOuMettreÀJour(utilisateur, auteurId);
 
-      nock(BASE_URL_VALIDATA)
-        .post("/validate")
-        .reply(
-          200,
-          JSON.stringify({ report, resource_data: report.resource_data }),
-        );
       // When
       const formData = new FormData();
       const file = mock<File>();
@@ -641,41 +623,10 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
     it("quand le fichier est invalide a cause de validata, doit sauvegarder les erreurs validata", async () => {
       // Given
       const auteurId = await creeUnUtilisateurEnBase();
-      const report = new ReportValidataWithDataBuilder()
-        .avecValid(false)
-        .avecErrors(
-          new ReportErrorBuilder()
-            .avecCell("cellule 1")
-            .avecName("nom 1")
-            .avecFieldName("nom du champ 1")
-            .avecFieldPosition(1)
-            .avecMessage("message 1")
-            .avecRowNumber(1)
-            .avecRowPosition(1)
-            .build(),
-          new ReportErrorBuilder()
-            .avecCell("cellule 2")
-            .avecName("nom 2")
-            .avecFieldName("nom du champ 2")
-            .avecFieldPosition(2)
-            .avecMessage("message 2")
-            .avecRowNumber(2)
-            .avecRowPosition(2)
-            .build(),
-        )
-        .avecResourceData(
-          [
-            "identifiant_indic",
-            "zone_id",
-            "date_valeur",
-            "type_valeur",
-            "valeur",
-          ],
-          ["IND-001", "D12", "2023-03-31", "va", "9"],
-          ["IND-001", "D13", "2023-01-17", "vc", "12"],
-          ["IND-001", "D14", "2023-02-26", "vi", "20"],
-        )
-        .build();
+      const rapportId = randomUUID();
+      validerFichierMock.mockResolvedValue(
+        construireRapportErreurs(rapportId).build(),
+      );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
         .avecEmail("ditp.admin@example.com")
@@ -686,12 +637,6 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .resolve("utilisateurRepository")
         .créerOuMettreÀJour(utilisateur, auteurId);
 
-      nock(BASE_URL_VALIDATA)
-        .post("/validate")
-        .reply(
-          200,
-          JSON.stringify({ report, resource_data: report.resource_data }),
-        );
       // When
       const formData = new FormData();
       const file = mock<File>();
@@ -746,21 +691,10 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
     it("quand le fichier est invalide a cause de règle DITP <<indic_id request different des indic_id dans fichier>>, doit sauvegarder les erreurs", async () => {
       // Given
       const auteurId = await creeUnUtilisateurEnBase();
-      const report = new ReportValidataWithDataBuilder()
-        .avecValid(true)
-        .avecResourceData(
-          [
-            "identifiant_indic",
-            "zone_id",
-            "date_valeur",
-            "type_valeur",
-            "valeur",
-          ],
-          ["IND-002", "D12", "2023-03-31", "va", "9"],
-          ["IND-002", "D13", "2023-01-17", "vc", "12"],
-          ["IND-002", "D14", "2023-02-26", "vi", "20"],
-        )
-        .build();
+      const rapportId = randomUUID();
+      validerFichierMock.mockResolvedValue(
+        construireRapportIndicIdIncoherent(rapportId).build(),
+      );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
         .avecEmail("ditp.admin@example.com")
@@ -771,12 +705,6 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .resolve("utilisateurRepository")
         .créerOuMettreÀJour(utilisateur, auteurId);
 
-      nock(BASE_URL_VALIDATA)
-        .post("/validate")
-        .reply(
-          200,
-          JSON.stringify({ report, resource_data: report.resource_data }),
-        );
       // When
       const formData = new FormData();
       const file = mock<File>();
@@ -840,134 +768,12 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
       const auteurId = await creeUnUtilisateurEnBase();
 
       // Create prerequisite data for foreign key constraints
-      await prisma.chantier_identite.create({
-        data: {
-          id: "CH-001",
-          nom: "Test Chantier",
-          est_territorialise: true,
-          directeurs_administration_centrale: [],
-          directeurs_projet_ids: [],
-        },
-      });
+      await creerDonneesPrerequisesPourImportValide();
 
-      await prisma.indicateur_identite.create({
-        data: {
-          id: "IND-001",
-          chantier_id: "CH-001",
-          nom: "Test Indicateur",
-          type_id: "IMPACT",
-        },
-      });
-
-      await Promise.all([
-        prisma.territoire.upsert({
-          where: { code: "DEPT-12" },
-          update: {},
-          create: {
-            code: "DEPT-12",
-            nom: "Département 12",
-            nom_affiche: "Département 12",
-            maille: "DEPT",
-            code_insee: "12",
-            zone_id: "D12",
-          },
-        }),
-        prisma.territoire.upsert({
-          where: { code: "DEPT-13" },
-          update: {},
-          create: {
-            code: "DEPT-13",
-            nom: "Département 13",
-            nom_affiche: "Département 13",
-            maille: "DEPT",
-            code_insee: "13",
-            zone_id: "D13",
-          },
-        }),
-        prisma.territoire.upsert({
-          where: { code: "DEPT-14" },
-          update: {},
-          create: {
-            code: "DEPT-14",
-            nom: "Département 14",
-            nom_affiche: "Département 14",
-            maille: "DEPT",
-            code_insee: "14",
-            zone_id: "D14",
-          },
-        }),
-      ]);
-
-      await prisma.chantier_territoire.createMany({
-        data: [
-          {
-            id: "CH-001",
-            territoire_code: "DEPT-12",
-            code_insee: "12",
-            zone_id: "D12",
-            maille: "DEPT",
-          },
-          {
-            id: "CH-001",
-            territoire_code: "DEPT-13",
-            code_insee: "13",
-            zone_id: "D13",
-            maille: "DEPT",
-          },
-          {
-            id: "CH-001",
-            territoire_code: "DEPT-14",
-            code_insee: "14",
-            zone_id: "D14",
-            maille: "DEPT",
-          },
-        ],
-      });
-
-      await prisma.indicateur_territoire.createMany({
-        data: [
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            territoire_code: "DEPT-12",
-            code_insee: "12",
-            zone_id: "D12",
-            maille: "DEPT",
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            territoire_code: "DEPT-13",
-            code_insee: "13",
-            zone_id: "D13",
-            maille: "DEPT",
-          },
-          {
-            id: "IND-001",
-            chantier_id: "CH-001",
-            territoire_code: "DEPT-14",
-            code_insee: "14",
-            zone_id: "D14",
-            maille: "DEPT",
-          },
-        ],
-      });
-
-      const report = new ReportValidataWithDataBuilder()
-        .avecValid(true)
-        .avecResourceData(
-          [
-            "identifiant_indic",
-            "zone_id",
-            "date_valeur",
-            "type_valeur",
-            "valeur",
-          ],
-          ["IND-001", "D12", "2023-03-31", "va", "9"],
-          ["IND-001", "D13", "2023-01-17", "vc", "12"],
-          ["IND-001", "D14", "2023-02-26", "vi", "20"],
-        )
-        .build();
+      const rapportId = randomUUID();
+      validerFichierMock.mockResolvedValue(
+        construireRapportValide(rapportId).build(),
+      );
 
       const utilisateur = new UtilisateurÀCréerOuMettreÀJourBuilder()
         .avecEmail("ditp.admin@example.com")
@@ -978,12 +784,6 @@ describe("ImportDonneeIndicateurAPIHandler", () => {
         .resolve("utilisateurRepository")
         .créerOuMettreÀJour(utilisateur, auteurId);
 
-      nock(BASE_URL_VALIDATA)
-        .post("/validate")
-        .reply(
-          200,
-          JSON.stringify({ report, resource_data: report.resource_data }),
-        );
       // When
       const formData = new FormData();
       const file = mock<File>();
