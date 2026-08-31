@@ -60,6 +60,10 @@
       "types": "./src/assistant/message.ts",
       "default": "./src/assistant/message.ts"
     },
+    "./assistant/feedback": {
+      "types": "./src/assistant/feedback.ts",
+      "default": "./src/assistant/feedback.ts"
+    },
     "./commentaire": {
       "types": "./src/commentaire.ts",
       "default": "./src/commentaire.ts"
