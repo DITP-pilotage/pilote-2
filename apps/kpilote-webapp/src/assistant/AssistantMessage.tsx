@@ -6,6 +6,7 @@ import { clsxm } from '@/lib/clsxm'
 
 import { nettoyerPseudoAppels } from './nettoyerPseudoAppels'
 import { PanneauSources } from './PanneauSources'
+import { GrilleVue } from './vignettes/GrilleVue'
 
 const libelleOutil = (typePart: string): string => {
   const nom = typePart.replace(/^tool-/u, '') as NomOutil
@@ -41,6 +42,14 @@ export function AssistantMessage({ message }: { message: KpiloteUIMessage }) {
         // `Source[]`, pas `unknown`.
         if (part.type === 'data-sources') {
           return <PanneauSources key={index} sources={part.data} />
+        }
+
+        // Part typée grâce à `KpiloteUITools` : `part.output` est `Vue | { erreur }`.
+        if (part.type === 'tool-compose_vue' && part.state === 'output-available') {
+          // Le cas d'erreur ne rend rien : le modèle recoit le message et l'explique
+          // lui-même dans sa réponse texte.
+          if ('erreur' in part.output) return null
+          return <GrilleVue key={index} vue={part.output} />
         }
 
         // `startsWith('tool-')` ne restreint pas l'union pour TypeScript : le garde du SDK, si.
