@@ -24,6 +24,7 @@ type CommentaireResult = {
 
 export type ChantierResult = {
   chantier: ChantierIdentite;
+  page_url: string;
   meteo: string | null;
   tendance: string | null;
   ecart: number | null;
@@ -113,6 +114,7 @@ export class GetChantiersQuery {
           ministeres: ct.chantier_identite.ministeres_acronymes,
           mailles_applicables: ct.chantier_identite.mailles_applicables,
         },
+        page_url: `/chantier/${ct.chantier_identite.id}/${params.territoireCode}?jalon=${params.jalon}`,
         meteo: ct.meteo,
         tendance: ct.tendance,
         ecart,
