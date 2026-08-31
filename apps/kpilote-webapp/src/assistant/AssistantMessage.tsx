@@ -4,8 +4,8 @@ import { isToolUIPart } from 'ai'
 
 import { clsxm } from '@/lib/clsxm'
 
-import { nettoyerPseudoAppels } from './nettoyerPseudoAppels'
 import { PanneauSources } from './PanneauSources'
+import { ReponseMarkdown } from './ReponseMarkdown'
 import { GrilleVue } from './vignettes/GrilleVue'
 
 const libelleOutil = (typePart: string): string => {
@@ -32,14 +32,9 @@ export function AssistantMessage({ message }: { message: KpiloteUIMessage }) {
   return (
     <div className="flex max-w-[85%] flex-col gap-2">
       {message.parts.map((part, index) => {
+        // Le modèle répond en markdown : gras, listes, citations, parfois un tableau.
         if (part.type === 'text') {
-          const texte = nettoyerPseudoAppels(part.text)
-          if (texte.length === 0) return null
-          return (
-            <p key={index} className="whitespace-pre-wrap">
-              {texte}
-            </p>
-          )
+          return <ReponseMarkdown key={index} texte={part.text} />
         }
 
         // Part typée grâce au paramètre TOOLS de KpiloteUIMessage : `part.data` est
