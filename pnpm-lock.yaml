@@ -341,6 +341,9 @@ importers:
 
   apps/kpilote-webapp:
     dependencies:
+      '@ai-sdk/react':
+        specifier: ^3.0.163
+        version: 3.0.275(react@19.2.8)(zod@4.4.3)
       '@hono/node-server':
         specifier: 2.1.1
         version: 2.1.1(hono@4.13.5)
@@ -389,6 +392,9 @@ importers:
       '@yornaath/batshit':
         specifier: ^0.14.0
         version: 0.14.0
+      ai:
+        specifier: ^6.0.161
+        version: 6.0.272(zod@4.4.3)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1169,6 +1175,12 @@ packages:
   '@ai-sdk/provider@4.0.8':
     resolution: {integrity: sha512-aWO7iwhFUGf347tCwNGggggfmZigaSu7TF739IZSrWWABUp7zkb4Cr3fMqvBe5EIS7ABJJu3Cadn0g/zs1G0QQ==}
     engines: {node: '>=22'}
+
+  '@ai-sdk/react@3.0.275':
+    resolution: {integrity: sha512-lC6mtuufvDtNhVJW3zXCjmx0Nx31UnbS0+BS/IfxGT4fsx3sVIgqvAGpQ+/WimwMtNZ5ND3Lz/mfhSrGXgIZBg==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      react: ^18 || ~19.0.1 || ~19.1.2 || ^19.2.1
 
   '@ai-sdk/react@4.0.68':
     resolution: {integrity: sha512-zz/CtHN6Wu9i3Fmv/1pZOVRQ8de03t5o7XDVn1KXPVEbIrc5KsV+B+d3tbsBB/d4+Q2yUtZ/BhkP7ubLH6LhUg==}
@@ -9244,6 +9256,16 @@ snapshots:
   '@ai-sdk/provider@4.0.8':
     dependencies:
       json-schema: 0.4.0
+
+  '@ai-sdk/react@3.0.275(react@19.2.8)(zod@4.4.3)':
+    dependencies:
+      '@ai-sdk/provider-utils': 4.0.50(zod@4.4.3)
+      ai: 6.0.272(zod@4.4.3)
+      react: 19.2.8
+      swr: 2.5.1(react@19.2.8)
+      throttleit: 2.1.0
+    transitivePeerDependencies:
+      - zod
 
   '@ai-sdk/react@4.0.68(react@19.2.8)(zod@4.4.3)':
     dependencies:
