@@ -797,6 +797,23 @@ export const fixtures = {
     });
   },
 
+  async metadataIndicateurHidden(
+    overrides: Partial<Prisma.metadata_indicateurs_hiddenUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const indicId = overrides.indic_id ?? `IND-${randomUUID().slice(0, 6)}`;
+    return prisma.metadata_indicateurs_hidden.create({
+      data: {
+        indic_id: indicId,
+        indic_parent_ch:
+          overrides.indic_parent_ch ??
+          `CH-${randomUUID().slice(0, 3).toUpperCase()}`,
+        indic_nom: `Indicateur hidden test ${indicId}`,
+        ...overrides,
+      },
+    });
+  },
+
   async metadataChantier(
     overrides: Partial<Prisma.metadata_chantiersUncheckedCreateInput> = {},
   ) {

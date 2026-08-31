@@ -35,7 +35,6 @@ INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type",
 INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A43', 'Mayotte', '43', 'ACAD', 'R06') ON CONFLICT DO NOTHING;
 INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A44', 'Académie spmq ?', '44', 'ACAD', 'COM') ON CONFLICT DO NOTHING;
 INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('A70', 'Normandie', '70', 'ACAD', 'R28') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('COM', 'Collectivité d''outre-mer', 'COM', 'REG', 'FRANCE') ON CONFLICT DO NOTHING;
 INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D01', 'Ain', '01', 'DEPT', 'A10 | R84') ON CONFLICT DO NOTHING;
 INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D02', 'Aisne', '02', 'DEPT', 'A20 | R32') ON CONFLICT DO NOTHING;
 INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D03', 'Allier', '03', 'DEPT', 'A06 | R84') ON CONFLICT DO NOTHING;
@@ -136,15 +135,7 @@ INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type",
 INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D972', 'Martinique', '972', 'DEPT', 'A31 | R02') ON CONFLICT DO NOTHING;
 INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D973', 'Guyane', '973', 'DEPT', 'A33 | R03') ON CONFLICT DO NOTHING;
 INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D974', 'La Réunion', '974', 'DEPT', 'A28 | R04') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D975', 'Saint-Pierre-et-Miquelon', '975', 'DEPT', 'A44 | COM') ON CONFLICT DO NOTHING;
 INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D976', 'Mayotte', '976', 'DEPT', 'A43 | R06') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D977', 'Saint-Barthélemy', '977', 'DEPT', 'A32 | COM') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D978', 'Saint-Martin', '978', 'DEPT', 'A32 | COM') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D984', 'Terres australes et antarctiques françaises', '984', 'DEPT', 'COM') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D986', 'Wallis-et-Futuna', '986', 'DEPT', 'A42 | COM') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D987', 'Polynésie française', '987', 'DEPT', 'A41 | COM') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D988', 'Nouvelle-Calédonie', '988', 'DEPT', 'A40 | COM') ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('D989', 'Clipperton', '989', 'DEPT', 'COM') ON CONFLICT DO NOTHING;
 INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('FRANCE', 'National', 'FR', 'NAT', NULL) ON CONFLICT DO NOTHING;
 INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R01', 'Guadeloupe', '01', 'REG', 'FRANCE') ON CONFLICT DO NOTHING;
 INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('R02', 'Martinique', '02', 'REG', 'FRANCE') ON CONFLICT DO NOTHING;
