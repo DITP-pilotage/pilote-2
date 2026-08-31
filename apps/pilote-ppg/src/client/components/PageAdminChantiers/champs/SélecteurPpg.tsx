@@ -15,6 +15,7 @@ const SélecteurPpg = () => {
         <Sélecteur
           htmlName="chPpg"
           libellé="PPG *"
+          texteFantôme="Sélectionnez un PPG"
           options={ppgs.map((p) => ({
             libellé: `${p.id} — ${p.nom}`,
             valeur: p.id,

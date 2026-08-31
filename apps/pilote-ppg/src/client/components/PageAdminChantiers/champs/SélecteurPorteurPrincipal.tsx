@@ -16,10 +16,11 @@ const SélecteurPorteurPrincipal = () => {
         <Sélecteur
           htmlName="porteurIdPrincipal"
           libellé="Porteur principal (ministère) *"
+          texteFantôme="Sélectionnez un porteur"
           options={porteurs.map((p) => ({ libellé: p.label, valeur: p.id }))}
           onChange={(valeur) => {
             field.onChange(valeur);
-            form.setValue("chPer", "", { shouldValidate: true });
+            form.setValue("chPer", "");
           }}
           valeurSélectionnée={field.value}
           erreur={form.formState.errors.porteurIdPrincipal}

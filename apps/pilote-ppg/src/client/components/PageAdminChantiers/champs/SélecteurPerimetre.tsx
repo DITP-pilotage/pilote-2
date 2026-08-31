@@ -25,7 +25,7 @@ const SélecteurPerimetre = () => {
           estDesactive={!porteurIdPrincipal}
           texteFantôme={
             porteurIdPrincipal
-              ? undefined
+              ? "Sélectionnez un périmètre"
               : "Sélectionnez d'abord un porteur principal"
           }
           options={(perimetres ?? []).map((p) => ({
