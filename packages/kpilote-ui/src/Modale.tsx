@@ -1,7 +1,19 @@
 import { X } from 'lucide-react'
 import type { ReactNode } from 'react'
 
+import { clsxm } from './clsxm'
 import { Dialog } from './Dialog'
+
+/**
+ * `large` sert aux contenus qui se lisent en pleine largeur — une conversation, un tableau.
+ * `standard` reste le défaut : un formulaire ou une confirmation n'y gagnent rien.
+ */
+const LARGEURS = {
+  standard: '',
+  large: 'w-[min(64rem,calc(100vw-2rem))] max-h-[88vh]',
+} as const
+
+export type TailleModale = keyof typeof LARGEURS
 
 export function Modale({
   open,
@@ -10,6 +22,7 @@ export function Modale({
   description,
   children,
   footer,
+  taille = 'standard',
 }: {
   open: boolean
   onClose: () => void
@@ -17,12 +30,13 @@ export function Modale({
   description?: ReactNode
   children: ReactNode
   footer?: ReactNode
+  taille?: TailleModale
 }): React.JSX.Element {
   return (
     <Dialog open={open} onOpenChange={(ouvert: boolean) => (ouvert ? undefined : onClose())}>
       <Dialog.Portal>
         <Dialog.Overlay />
-        <Dialog.Content>
+        <Dialog.Content className={clsxm(LARGEURS[taille])}>
           <div className="flex items-start justify-between border-b border-border px-6 py-4">
             <div>
               <Dialog.Title>{titre}</Dialog.Title>
