@@ -8,10 +8,6 @@ models:
         data_tests:
           - unique
           - not_null
-      - name: nom_court
-        description: "Nom court de l'axe (ex. Transition écologique)"
-        data_tests:
-          - not_null
       - name: nom
         description: "Nom complet de l'axe (ex. Planifier et accélérer la transition écologique)"
         data_tests:
@@ -60,8 +56,14 @@ models:
         data_tests:
           - dbt_utils.expression_is_true:
               arguments:
-                expression: "IN ('ATE', 'HORS_ATE_DECONCENTRE', 'HORS_ATE_CENTRALISE')"
-              where: "ate IS NOT NULL"
+                expression: "IN ('ate', 'hors_ate_deconcentre', 'hors_ate_centralise')"
+              config:
+                where: "ate IS NOT NULL"
+          - dbt_utils.expression_is_true:
+              arguments:
+                expression: "::TEXT = LOWER(ate::TEXT)"
+              config:
+                where: "ate IS NOT NULL"
       - name: statut
         description: "Statut du chantier"
         data_tests:
@@ -78,7 +80,8 @@ models:
           - dbt_utils.expression_is_true:
               arguments:
                 expression: 'SIMILAR TO ''ZG-\d{3}'''
-              where: "zone_groupe_applicable IS NOT NULL"
+              config:
+                where: "zone_groupe_applicable IS NOT NULL"
       - name: ministeres_ids
         description: "Liste des identifiants des ministères porteurs. Ex: [120, 220]"
       - name: ministeres_polygrammes
@@ -106,7 +109,8 @@ models:
           - dbt_utils.expression_is_true:
               arguments:
                 expression: "IN ('REG', 'DEPT')"
-              where: "replicate_val_nat_to IS NOT NULL"
+              config:
+                where: "replicate_val_nat_to IS NOT NULL"
       - name: ch_cible_attendue
         description: "Indique si le chantier a une cible attendue (booléen)."
       - name: maille_pilotage
@@ -153,10 +157,6 @@ models:
           - dbt_utils.expression_is_true:
               arguments:
                 expression: 'SIMILAR TO ''PPG-(\d|[A-Z]){1,3}'''
-      - name: axe_id
-        description: "Identifiant unique de l'axe de la PPG (Politique Prioritaire du Gouvernement)"
-        data_tests:
-          - not_null
       - name: code
         description: "Code de la PPG (souvent null). Ex. 'SNU'"
       - name: description
