@@ -349,6 +349,9 @@ importers:
 
   apps/kpilote-webapp:
     dependencies:
+      '@ai-sdk/react':
+        specifier: ^4.0.145
+        version: 4.0.145(react@19.3.1)(zod@4.6.7)
       '@hono/node-server':
         specifier: 2.1.5
         version: 2.1.5(hono@4.13.13)
@@ -400,6 +403,9 @@ importers:
       '@yornaath/batshit':
         specifier: ^0.14.0
         version: 0.14.0
+      ai:
+        specifier: ^7.0.141
+        version: 7.0.141(zod@4.6.7)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
