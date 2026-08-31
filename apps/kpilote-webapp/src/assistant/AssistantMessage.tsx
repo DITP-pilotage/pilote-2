@@ -15,18 +15,22 @@ const libelleOutil = (typePart: string): string => {
 
 export function AssistantMessage({ message }: { message: KpiloteUIMessage }) {
   if (message.role === 'user') {
+    // `w-fit` en plus de `ml-auto` : sans lui la bulle occupe toute sa largeur maximale et
+    // le texte paraît centré au lieu d'être collé à droite.
     return (
-      <p className="ml-auto max-w-[80%] rounded bg-surface px-3 py-2">
-        {message.parts
-          .filter((part) => part.type === 'text')
-          .map((part) => part.text)
-          .join(' ')}
-      </p>
+      <div className="flex justify-end">
+        <p className="w-fit max-w-[80%] rounded-2xl rounded-br-sm bg-surface-tinted px-3.5 py-2 text-text">
+          {message.parts
+            .filter((part) => part.type === 'text')
+            .map((part) => part.text)
+            .join(' ')}
+        </p>
+      </div>
     )
   }
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex max-w-[85%] flex-col gap-2">
       {message.parts.map((part, index) => {
         if (part.type === 'text') {
           const texte = nettoyerPseudoAppels(part.text)

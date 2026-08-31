@@ -85,8 +85,9 @@ export function HeaderNav({ auth }: { auth: Auth }) {
           onClose={() => setAssistant(null)}
           titre="Assistant kpilote"
           description="Les réponses proviennent de vos données kpilote. Vérifiez-les avant de les diffuser."
+          taille="large"
         >
-          <div className="h-[60vh]">
+          <div className="h-[68vh]">
             <AssistantPanel
               key={assistant.conversationId}
               conversationId={assistant.conversationId}
