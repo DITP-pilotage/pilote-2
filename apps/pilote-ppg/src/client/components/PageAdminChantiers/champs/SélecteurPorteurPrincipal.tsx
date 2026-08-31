@@ -6,20 +6,24 @@ import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 const SélecteurPorteurPrincipal = () => {
   const { data: porteurs = [] } =
     api.metadataChantier.listerPorteursMinistere.useQuery();
-  const { control } = useFormContext<ChantierForm>();
+  const form = useFormContext<ChantierForm>();
 
   return (
     <Controller
-      control={control}
+      control={form.control}
       name="porteurIdPrincipal"
       render={({ field }) => (
         <Sélecteur
           htmlName="porteurIdPrincipal"
-          libellé="Porteur principal (ministère)"
-          texteFantôme="— Aucun —"
+          libellé="Porteur principal (ministère) *"
+          texteFantôme="Sélectionnez un porteur"
           options={porteurs.map((p) => ({ libellé: p.label, valeur: p.id }))}
-          onChange={(val) => field.onChange(val || null)}
-          valeurSélectionnée={field.value ?? ""}
+          onChange={(valeur) => {
+            field.onChange(valeur);
+            form.setValue("chPer", "");
+          }}
+          valeurSélectionnée={field.value}
+          erreur={form.formState.errors.porteurIdPrincipal}
         />
       )}
     />

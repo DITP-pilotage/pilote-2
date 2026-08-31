@@ -14,6 +14,7 @@ import MultiSelectPorteursDAC from "@/components/PageAdminChantiers/champs/Multi
 import ChampMailleApplicable from "@/components/PageAdminChantiers/champs/ChampMailleApplicable";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 import { SélecteurOption } from "@/client/components/_commons/Sélecteur/Sélecteur.interface";
+import { Maille } from "@/server/metadataChantier/domain/maille";
 
 const OPTIONS_STATUT: SélecteurOption<$Enums.type_statut>[] = [
   { libellé: "Brouillon", valeur: "BROUILLON" },
@@ -28,6 +29,16 @@ const OPTIONS_ATE: SélecteurOption<$Enums.type_ate | "">[] = [
   { libellé: "Hors ATE déconcentré", valeur: "hors_ate_deconcentre" },
   { libellé: "Hors ATE centralisé", valeur: "hors_ate_centralise" },
 ];
+
+function maillesAttendues(
+  chTerrito: boolean,
+  mailleApplicable: readonly Maille[],
+): Maille[] {
+  if (!chTerrito) return ["NAT"];
+  return mailleApplicable.includes("DEPT")
+    ? ["NAT", "REG", "DEPT"]
+    : ["NAT", "REG"];
+}
 
 const SectionTitle = ({ children }: { children: React.ReactNode }) => (
   <h2 className="text-base font-semibold text-gray-900 uppercase tracking-wide border-l-[3px] border-primary pl-3 mb-5">
@@ -63,15 +74,6 @@ const FicheChantier = () => {
       </section>
 
       <section className="py-8">
-        <SectionTitle>Rattachements</SectionTitle>
-        <div className="grid grid-cols-3 gap-4">
-          <SélecteurPpg />
-          <SélecteurPerimetre />
-          <SélecteurZonegroup />
-        </div>
-      </section>
-
-      <section className="py-8">
         <SectionTitle>Porteurs</SectionTitle>
         <div className="grid grid-cols-2 gap-4">
           <SélecteurPorteurPrincipal />
@@ -79,6 +81,15 @@ const FicheChantier = () => {
         </div>
         <div className="grid grid-cols-2 gap-4 mt-4">
           <MultiSelectPorteursDAC />
+        </div>
+      </section>
+
+      <section className="py-8">
+        <SectionTitle>Rattachements</SectionTitle>
+        <div className="grid grid-cols-3 gap-4">
+          <SélecteurPpg />
+          <SélecteurPerimetre />
+          <SélecteurZonegroup />
         </div>
       </section>
 
@@ -91,7 +102,17 @@ const FicheChantier = () => {
             render={({ field }) => (
               <Interrupteur
                 checked={field.value}
-                onChange={field.onChange}
+                onChange={(checked) => {
+                  field.onChange(checked);
+                  form.setValue(
+                    "mailleApplicable",
+                    maillesAttendues(
+                      checked,
+                      form.getValues("mailleApplicable"),
+                    ),
+                    { shouldValidate: true },
+                  );
+                }}
                 libellé="Territorialisé"
               />
             )}

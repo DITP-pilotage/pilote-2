@@ -13,7 +13,7 @@ export interface MetadataChantier {
   chSaisieAte: $Enums.type_ate | null;
   chState: $Enums.type_statut;
   zgApplicable: string | null;
-  porteurIdPrincipal: string | null;
+  porteurIdPrincipal: string;
   porteurIdsSecondaires: string[];
   porteurIdsDAC: string[];
   chPer: string;

@@ -807,6 +807,9 @@ export const fixtures = {
     const perimetre = overrides.ch_per
       ? { perimetre_id: overrides.ch_per }
       : await fixtures.metadataPerimetre();
+    const porteur = overrides.porteur_id_principal
+      ? { porteur_id: overrides.porteur_id_principal }
+      : await fixtures.metadataPorteur();
     const chantierId =
       overrides.chantier_id ?? `CH-${randomUUID().slice(0, 3).toUpperCase()}`;
     return prisma.metadata_chantiers.create({
@@ -820,7 +823,7 @@ export const fixtures = {
         ch_territo: false,
         ch_hidden_pilote: false,
         ch_cible_attendue: false,
-        porteur_id_principal: null,
+        porteur_id_principal: porteur.porteur_id,
         porteur_ids_secondaires: [],
         porteur_ids_DAC: [],
         ...overrides,

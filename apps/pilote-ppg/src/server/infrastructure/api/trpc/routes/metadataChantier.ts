@@ -52,12 +52,14 @@ export const metadataChantierRouter = créerRouteurTRPC({
       .run({ type: "DAC" });
   }),
 
-  listerPerimetres: procédureProtégée.query(async ({ ctx }) => {
-    vérifierPermissionAdmin(ctx.session);
-    return getContainer("metadataChantier")
-      .resolve("listerPerimetresQuery")
-      .run();
-  }),
+  listerPerimetres: procédureProtégée
+    .input(z.object({ porteurId: z.string().optional() }).optional())
+    .query(async ({ input, ctx }) => {
+      vérifierPermissionAdmin(ctx.session);
+      return getContainer("metadataChantier")
+        .resolve("listerPerimetresQuery")
+        .run({ porteurId: input?.porteurId });
+    }),
 
   listerZonegroups: procédureProtégée.query(async ({ ctx }) => {
     vérifierPermissionAdmin(ctx.session);

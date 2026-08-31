@@ -1,28 +1,40 @@
-import { Controller, useFormContext } from "react-hook-form";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import Sélecteur from "@/components/_commons/Sélecteur/Sélecteur";
 import api from "@/server/infrastructure/api/trpc/api";
 import { ChantierForm } from "@/components/PageAdminChantiers/useChantierForm";
 
 const SélecteurPerimetre = () => {
-  const { data: perimetres = [] } =
-    api.metadataChantier.listerPerimetres.useQuery();
-  const { control, formState } = useFormContext<ChantierForm>();
+  const form = useFormContext<ChantierForm>();
+  const porteurIdPrincipal = useWatch({
+    control: form.control,
+    name: "porteurIdPrincipal",
+  });
+  const { data: perimetres } = api.metadataChantier.listerPerimetres.useQuery(
+    { porteurId: porteurIdPrincipal },
+    { enabled: !!porteurIdPrincipal },
+  );
 
   return (
     <Controller
-      control={control}
+      control={form.control}
       name="chPer"
       render={({ field }) => (
         <Sélecteur
           htmlName="chPer"
           libellé="Périmètre *"
-          options={perimetres.map((p) => ({
+          estDesactive={!porteurIdPrincipal}
+          texteFantôme={
+            porteurIdPrincipal
+              ? "Sélectionnez un périmètre"
+              : "Sélectionnez d'abord un porteur principal"
+          }
+          options={(perimetres ?? []).map((p) => ({
             libellé: `${p.id} — ${p.nom}`,
             valeur: p.id,
           }))}
           onChange={field.onChange}
           valeurSélectionnée={field.value}
-          erreur={formState.errors.chPer}
+          erreur={form.formState.errors.chPer}
         />
       )}
     />

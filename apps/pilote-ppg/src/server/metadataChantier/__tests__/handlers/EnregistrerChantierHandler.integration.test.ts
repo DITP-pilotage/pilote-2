@@ -1,6 +1,9 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
-import { EnregistrerChantierHandler } from "@/server/metadataChantier/handlers/EnregistrerChantierHandler";
+import {
+  chantierCommandSchema,
+  EnregistrerChantierHandler,
+} from "@/server/metadataChantier/handlers/EnregistrerChantierHandler";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { getPrisma } from "@/server/db/PrismaTransaction";
@@ -20,6 +23,7 @@ describe("EnregistrerChantierHandler", () => {
         // Given
         const ppg = await fixtures.metadataPpg();
         const perimetre = await fixtures.metadataPerimetre();
+        const porteur = await fixtures.metadataPorteur();
 
         // When
         await handler.execute({
@@ -31,7 +35,7 @@ describe("EnregistrerChantierHandler", () => {
           chSaisieAte: null,
           chState: $Enums.type_statut.BROUILLON,
           zgApplicable: null,
-          porteurIdPrincipal: null,
+          porteurIdPrincipal: porteur.porteur_id,
           porteurIdsSecondaires: [],
           porteurIdsDAC: [],
           chPer: perimetre.perimetre_id,
@@ -139,6 +143,7 @@ describe("EnregistrerChantierHandler", () => {
         // Given
         const ppg = await fixtures.metadataPpg();
         const perimetre = await fixtures.metadataPerimetre();
+        const porteur = await fixtures.metadataPorteur();
 
         // When
         await handler.execute({
@@ -150,7 +155,7 @@ describe("EnregistrerChantierHandler", () => {
           chSaisieAte: null,
           chState: $Enums.type_statut.BROUILLON,
           zgApplicable: null,
-          porteurIdPrincipal: null,
+          porteurIdPrincipal: porteur.porteur_id,
           porteurIdsSecondaires: [],
           porteurIdsDAC: [],
           chPer: perimetre.perimetre_id,
@@ -166,5 +171,45 @@ describe("EnregistrerChantierHandler", () => {
         expect(chantier.conseiller_mail).toBeNull();
       }),
     );
+  });
+
+  const commandeValide = {
+    chantierId: "CH-099",
+    chNom: "Chantier",
+    chDescr: null,
+    chPpg: "PPG-01",
+    chTerrito: false,
+    chSaisieAte: null,
+    chState: $Enums.type_statut.BROUILLON,
+    zgApplicable: null,
+    porteurIdPrincipal: "MIN-01",
+    porteurIdsSecondaires: [],
+    porteurIdsDAC: [],
+    chPer: "PER-01",
+    mailleApplicable: ["NAT"] as const,
+    chCibleAttendue: false,
+    conseillerMail: null,
+  };
+
+  it("chantierCommandSchema rejette un porteur principal manquant", () => {
+    // Given
+    const commande = { ...commandeValide, porteurIdPrincipal: "" };
+
+    // When
+    const résultat = chantierCommandSchema.safeParse(commande);
+
+    // Then
+    expect(résultat.success).toBe(false);
+  });
+
+  it("chantierCommandSchema accepte un porteur principal renseigné", () => {
+    // Given
+    const commande = commandeValide;
+
+    // When
+    const résultat = chantierCommandSchema.safeParse(commande);
+
+    // Then
+    expect(résultat.success).toBe(true);
   });
 });

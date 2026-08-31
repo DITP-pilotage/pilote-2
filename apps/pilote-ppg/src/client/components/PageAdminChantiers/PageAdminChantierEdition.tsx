@@ -28,7 +28,10 @@ const PageAdminChantierEdition = ({
     : chantierId;
 
   const defaultValues: ChantierForm = chantierData
-    ? { ...chantierData, conseillerMail: chantierData.conseillerMail ?? "" }
+    ? {
+        ...chantierData,
+        conseillerMail: chantierData.conseillerMail ?? "",
+      }
     : defaultChantierVide(chantierIdEffectif);
 
   const { reactHookForm, modifierChantier, creerChantier, alerte } =
