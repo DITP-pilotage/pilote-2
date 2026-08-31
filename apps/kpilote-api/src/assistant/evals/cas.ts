@@ -102,4 +102,12 @@ export const CAS: ReadonlyArray<CasEval> = [
     surface: 'ask-libre',
     attendu: { outilsInterdits: ['compose_vue'] },
   },
+  {
+    // Le modele s'est bien borne sur ce cas, mais proposait des themes inexistants pour
+    // demander une precision. On verifie qu'il va desormais chercher les choix reels.
+    nom: 'demande trop large : propose des choix reels, pas supposes',
+    question: 'compare tous les indicateurs sur toutes les régions',
+    surface: 'ask-libre',
+    attendu: { outilsAppeles: ['get_indicateurs'], outilsInterdits: ['compose_vue'] },
+  },
 ]
