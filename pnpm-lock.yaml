@@ -1004,6 +1004,9 @@ importers:
       '@types/node':
         specifier: ^26.6.5
         version: 26.6.5
+      ai:
+        specifier: ^7.0.141
+        version: 7.0.141(zod@4.6.7)
       oxlint:
         specifier: ^1.88.0
         version: 1.88.0(oxlint-tsgolint@7.0.2004)
