@@ -80,6 +80,26 @@ export const inputComposeVueSchema = z.object({
 
 export const inputIdIndicateurSchema = z.object({ id: indicateurPublicIdSchema })
 export const inputIdCollectionSchema = z.object({ id: collectionPublicIdSchema })
+
+// Presque toutes les données d'avancement de kpilote sont indexées par individu : sans
+// territoire, les routes de progression, d'objectifs et de variation exigent leur paramètre
+// et refusent l'appel. Le territoire est donc optionnel mais déterminant, et son absence
+// est rapportée branche par branche plutôt que de faire échouer la synthèse entière.
+const territoireOptionnel = individuPublicIdSchema
+  .optional()
+  .describe(
+    "Territoire pour lequel lire la progression, les objectifs et la variation. Sans lui, seules l'identité et la répartition entre territoires sont renvoyées.",
+  )
+
+export const inputSyntheseIndicateurSchema = z.object({
+  id: indicateurPublicIdSchema,
+  individuId: territoireOptionnel,
+})
+
+export const inputSyntheseCollectionSchema = z.object({
+  id: collectionPublicIdSchema,
+  individuId: territoireOptionnel,
+})
 export const inputIdIndividuSchema = z.object({ id: individuPublicIdSchema })
 
 // --- Types de sortie ---------------------------------------------------------------------
@@ -132,11 +152,11 @@ export type KpiloteUITools = {
   search_indicateurs: { input: z.input<typeof inputRechercheSchema>; output: SearchOutput }
   search_collections: { input: z.input<typeof inputRechercheSchema>; output: SearchOutput }
   get_synthese_indicateur: {
-    input: z.input<typeof inputIdIndicateurSchema>
+    input: z.input<typeof inputSyntheseIndicateurSchema>
     output: SyntheseIndicateurOutput
   }
   get_synthese_collection: {
-    input: z.input<typeof inputIdCollectionSchema>
+    input: z.input<typeof inputSyntheseCollectionSchema>
     output: SyntheseCollectionOutput
   }
   compose_vue: {
