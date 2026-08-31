@@ -808,7 +808,22 @@ export const fixtures = {
         indic_parent_ch:
           overrides.indic_parent_ch ??
           `CH-${randomUUID().slice(0, 3).toUpperCase()}`,
-        indic_nom: `Indicateur hidden test ${indicId}`,
+        indic_nom: `Indicateur test ${indicId}`,
+        ...overrides,
+      },
+    });
+  },
+
+  async metadataIndicateurComplementaire(
+    overrides: Partial<Prisma.metadata_indicateurs_complementaireUncheckedCreateInput> & {
+      indic_id: string;
+    },
+  ) {
+    const prisma = getPrisma();
+    return prisma.metadata_indicateurs_complementaire.create({
+      data: {
+        maille_pilotage: "NAT",
+        couverture_temporelle: "",
         ...overrides,
       },
     });

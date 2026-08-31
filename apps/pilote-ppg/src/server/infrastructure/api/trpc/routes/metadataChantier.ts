@@ -7,6 +7,7 @@ import {
 import { zodValidateurCSRF } from "@/validation/publication";
 import { getContainer } from "@/server/dependances";
 import { chantierCommandSchema } from "@/server/metadataChantier/handlers/EnregistrerChantierHandler";
+import { enregistrerPonderationsIndicateursCommandSchema } from "@/server/metadataChantier/handlers/EnregistrerPonderationsIndicateursHandler";
 import { vérifierPermissionAdmin } from "@/server/infrastructure/api/trpc/vérifierPermissionAdmin";
 
 export const metadataChantierRouter = créerRouteurTRPC({
@@ -75,6 +76,27 @@ export const metadataChantierRouter = créerRouteurTRPC({
       vérifierPermissionAdmin(ctx.session);
       await getContainer("metadataChantier")
         .resolve("enregistrerChantierHandler")
+        .execute(input);
+    }),
+
+  récupérerIndicateursPonderations: procédureProtégée
+    .input(z.object({ chantierId: z.string() }))
+    .query(async ({ input, ctx }) => {
+      vérifierPermissionAdmin(ctx.session);
+      return getContainer("metadataChantier")
+        .resolve("recupererIndicateursPonderationsChantierQuery")
+        .run({ chantierId: input.chantierId });
+    }),
+
+  enregistrerPonderationsIndicateurs: procédureProtégée
+    .input(
+      enregistrerPonderationsIndicateursCommandSchema.and(zodValidateurCSRF),
+    )
+    .mutation(async ({ input, ctx }) => {
+      vérifierSiLeCSRFEstValide(ctx.csrfDuCookie, input.csrf);
+      vérifierPermissionAdmin(ctx.session);
+      await getContainer("metadataChantier")
+        .resolve("enregistrerPonderationsIndicateursHandler")
         .execute(input);
     }),
 });
