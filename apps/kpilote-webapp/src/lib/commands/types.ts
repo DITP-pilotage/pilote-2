@@ -6,7 +6,8 @@ import { normaliserTexte } from '@/lib/texte'
  * Regroupement d'une commande dans la palette. Volontairement extensible :
  * les itérations futures ajouteront `'collections'`, `'actions'`, etc.
  */
-export type CommandGroup = 'navigation' | 'recents' | 'indicateurs' | 'collections' | 'centre-aide'
+export type CommandGroup =
+  'navigation' | 'recents' | 'indicateurs' | 'collections' | 'centre-aide' | 'assistant'
 
 /**
  * Sous-action accessible via `Tab` sur une commande actionnable (ex: sur un
