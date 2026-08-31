@@ -27,7 +27,7 @@ interface Props {
 
 const OPTIONS_TYPE: SélecteurOption<$Enums.porteur_type>[] = [
   { libellé: "Ministère (MIN)", valeur: "MIN" },
-  { libellé: "DAC", valeur: "DAC" },
+  { libellé: "Direction d'Administration Centrale (DAC)", valeur: "DAC" },
   { libellé: "Délégation interministérielle (DI)", valeur: "DI" },
   { libellé: "Autre", valeur: "AUTRE" },
 ];

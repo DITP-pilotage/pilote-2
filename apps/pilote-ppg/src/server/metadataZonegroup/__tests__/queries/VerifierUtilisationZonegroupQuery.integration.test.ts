@@ -44,10 +44,10 @@ describe("VerifierUtilisationZonegroupQuery", () => {
         await fixtures.metadataChantier({
           zg_applicable: zonegroup.zone_group_id,
         });
-        await fixtures.metadataIndicateur({
+        await fixtures.metadataIndicateurHidden({
           zg_applicable: zonegroup.zone_group_id,
         });
-        await fixtures.metadataIndicateur({
+        await fixtures.metadataIndicateurHidden({
           zg_applicable: zonegroup.zone_group_id,
         });
 

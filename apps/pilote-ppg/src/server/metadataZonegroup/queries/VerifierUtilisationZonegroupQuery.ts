@@ -25,7 +25,7 @@ export class VerifierUtilisationZonegroupQuery {
       instance.metadata_chantiers.count({
         where: { zg_applicable: zoneGroupId },
       }),
-      instance.metadata_indicateurs.count({
+      instance.metadata_indicateurs_hidden.count({
         where: { zg_applicable: zoneGroupId },
       }),
     ]);

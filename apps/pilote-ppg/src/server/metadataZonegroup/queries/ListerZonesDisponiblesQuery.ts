@@ -26,7 +26,7 @@ export class ListerZonesDisponiblesQuery {
   async run(): Promise<ZoneDisponible[]> {
     const zones = await this.prisma.getInstance().metadata_zones.findMany({
       where: { zone_type: { in: ["DEPT", "REG", "NAT"] } },
-      orderBy: [{ updated_at: "desc" }],
+      orderBy: [{ zone_id: "asc" }],
     });
     return zones.map(toApiModel);
   }

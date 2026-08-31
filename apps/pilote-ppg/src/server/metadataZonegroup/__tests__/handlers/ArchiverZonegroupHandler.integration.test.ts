@@ -70,7 +70,7 @@ describe("ArchiverZonegroupHandler", () => {
         const zonegroup = await fixtures.metadataZonegroup({
           zone_group_id: "ZG-094",
         });
-        await fixtures.metadataIndicateur({
+        await fixtures.metadataIndicateurHidden({
           zg_applicable: zonegroup.zone_group_id,
         });
 
