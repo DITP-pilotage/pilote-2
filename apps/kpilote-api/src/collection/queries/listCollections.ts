@@ -22,6 +22,9 @@ export const listCollections = (
   if (params.rechercheIdentifiant) {
     filters.publicId = { contains: params.rechercheIdentifiant, mode: 'insensitive' }
   }
+  if (params.ids && params.ids.length > 0) {
+    filters.publicId = { in: params.ids }
+  }
   // Un principal ADMIN administre toutes les collections (PUBLIC + PRIVÉ), cohérent
   // avec isAdminPrincipal qui court-circuite déjà /me/permissions.
   const where = isAdminPrincipal() ? filters : withCollectionReadPermission(filters, principalId)
