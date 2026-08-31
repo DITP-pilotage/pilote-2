@@ -6,8 +6,8 @@ import { resoudreOutils } from '@/assistant/tools/registry'
 const requeteur = () => Promise.resolve(new Response('{}'))
 
 describe('resoudreOutils', () => {
-  it('expose douze outils pour la surface ask-libre', () => {
-    expect(Object.keys(resoudreOutils('ask-libre', requeteur))).toHaveLength(12)
+  it('expose treize outils pour la surface ask-libre', () => {
+    expect(Object.keys(resoudreOutils('ask-libre', requeteur))).toHaveLength(13)
   })
 
   it('couvre exactement les noms déclarés dans le contrat partagé', () => {
