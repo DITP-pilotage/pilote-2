@@ -18,10 +18,6 @@ export class RecupererVariableContenuUseCase {
         return configuration().featureFlip
           .limiteCaracteresPublication as VariableContenuDisponibleEnv[T];
       }
-      case "NEXT_PUBLIC_SCHEMA_VALIDATA_URL": {
-        return configuration()
-          .schemaValidataUrl as VariableContenuDisponibleEnv[T];
-      }
       case "NEXT_PUBLIC_DATE_BASCULE_AFFICHAGE_VALEURS_ANNEE_PRECEDENTE": {
         return configuration()
           .dateBasculeAffichageValeursAnneePrecedente as VariableContenuDisponibleEnv[T];

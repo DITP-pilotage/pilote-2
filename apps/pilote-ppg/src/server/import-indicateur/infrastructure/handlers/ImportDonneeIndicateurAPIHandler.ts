@@ -14,7 +14,6 @@ import { PublierFichierIndicateurImporteUseCase } from "@/server/import-indicate
 import { VerifierFichierIndicateurImporteUseCase } from "@/server/import-indicateur/usecases/VerifierFichierIndicateurImporteUseCase";
 import { isENOENTError } from "@/server/utils/errors";
 import logger from "@/server/infrastructure/Logger";
-import { configuration } from "@/config";
 
 function convertirEnTableauPourCSV(
   donnees: ImportDonneeIndicateurAPIContrat[],
@@ -164,7 +163,6 @@ export class ImportDonneeIndicateurAPIHandler {
     const report = await this.verifierFichierIndicateurImporteUseCase.execute({
       cheminCompletDuFichier,
       nomDuFichier,
-      baseSchemaUrl: configuration().schemaValidataUrl,
       indicateurId,
       utilisateurAuteurDeLimportEmail,
       isAdmin,

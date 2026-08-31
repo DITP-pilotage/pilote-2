@@ -141,14 +141,12 @@ export class VerifierFichierIndicateurImporteUseCase {
   async execute({
     cheminCompletDuFichier,
     nomDuFichier,
-    baseSchemaUrl,
     indicateurId,
     utilisateurAuteurDeLimportEmail,
     isAdmin = false,
   }: {
     cheminCompletDuFichier: string;
     nomDuFichier: string;
-    baseSchemaUrl: string;
     indicateurId: string;
     utilisateurAuteurDeLimportEmail: string;
     isAdmin?: boolean;
@@ -167,7 +165,7 @@ export class VerifierFichierIndicateurImporteUseCase {
       {
         cheminCompletDuFichier,
         nomDuFichier,
-        schema: `${baseSchemaUrl}${schema}`,
+        schema,
         utilisateurEmail: utilisateurAuteurDeLimportEmail,
       },
     );
