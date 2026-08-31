@@ -97,7 +97,7 @@ const collectionResponsableParamsSchema = z.object({
 
 // --- GET /collections ------------------------------------------------------------
 
-const getCollectionsRoute = createRoute({
+export const getCollectionsRoute = createRoute({
   method: 'get',
   path: '/collections',
   tags: ['Collection'],
@@ -120,7 +120,7 @@ const detailParamsSchema = z.object({
   id: collectionPublicIdSchema,
 })
 
-const getCollectionByIdRoute = createRoute({
+export const getCollectionByIdRoute = createRoute({
   method: 'get',
   path: '/collections/{id}',
   tags: ['Collection'],
