@@ -1,7 +1,9 @@
 import { createRoute, z } from '@hono/zod-openapi'
+import { evaluerBodySchema } from '@pilote/kpilote-shared/assistant/feedback'
 import { chatRequestSchema } from '@pilote/kpilote-shared/assistant/surfaces'
 import { validateUIMessages } from 'ai'
 
+import { evaluerReponse } from '@/assistant/commands/evaluerReponse'
 import { MODELE_PAR_DEFAUT } from '@/assistant/runtime/modele'
 import { streamerTour } from '@/assistant/runtime/AssistantRuntime'
 import { creerRequeteur, type Requeteur } from '@/assistant/tools/requeteur'
@@ -65,4 +67,35 @@ assistantRoutes.openapi(chatRoute, async (context) => {
     requeteur: await requeteurDeLApp(jeton),
     abortSignal: context.req.raw.signal,
   })
+})
+
+const evaluerRoute = createRoute({
+  method: 'post',
+  path: '/assistant/conversations/{id}/evaluation',
+  tags: ['Assistant'],
+  summary: 'Évaluer la dernière réponse de l’assistant',
+  description:
+    "Enregistre un retour utilisateur sur le dernier tour de la conversation. Un retour négatif exige au moins une catégorie de problème ; la catégorie `AUTRE` exige en plus un commentaire non vide. Sans conversation ni tour correspondant, l'appel reste en 204 : le retour est une donnée d'amélioration, pas une opération métier dont l'échec doit remonter.",
+  middleware: [requireAuthentication],
+  request: {
+    params: z.object({ id: z.uuid() }),
+    body: {
+      content: {
+        'application/json': { schema: evaluerBodySchema.openapi('AssistantEvaluerBody') },
+      },
+      required: true,
+    },
+  },
+  responses: {
+    204: { description: 'Retour enregistré' },
+    400: erreur400,
+  },
+})
+
+assistantRoutes.openapi(evaluerRoute, async (context) => {
+  await evaluerReponse({
+    conversationId: context.req.valid('param').id,
+    corps: context.req.valid('json'),
+  })
+  return context.body(null, 204)
 })
