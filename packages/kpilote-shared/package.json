@@ -44,6 +44,10 @@
       "types": "./src/apiKey.ts",
       "default": "./src/apiKey.ts"
     },
+    "./assistant/sources": {
+      "types": "./src/assistant/sources.ts",
+      "default": "./src/assistant/sources.ts"
+    },
     "./commentaire": {
       "types": "./src/commentaire.ts",
       "default": "./src/commentaire.ts"
