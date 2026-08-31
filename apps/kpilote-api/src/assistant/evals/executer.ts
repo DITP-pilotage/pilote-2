@@ -57,6 +57,31 @@ const evaluer = async (cas: CasEval): Promise<Verdict> => {
     details.push(`aucun outil attendu, ${appeles.length} appelé(s) : ${appeles.join(', ')}`)
   }
 
+  const vignettes = sorties
+    .filter((sortie): sortie is { vignettes: Array<Record<string, unknown>> } => {
+      const candidat = sortie as { vignettes?: unknown }
+      return Array.isArray(candidat.vignettes)
+    })
+    .flatMap((vue) => vue.vignettes)
+
+  for (const attendue of attendu.vignettesContiennent ?? []) {
+    if (!vignettes.some((vignette) => vignette.type === attendue)) {
+      details.push(`vignette manquante : ${attendue}`)
+    }
+  }
+  if (attendu.territoiresDistincts !== undefined) {
+    const territoires = new Set(
+      vignettes
+        .map((vignette) => vignette.individuId)
+        .filter((valeur): valeur is string => typeof valeur === 'string'),
+    )
+    if (territoires.size < attendu.territoiresDistincts) {
+      details.push(
+        `${attendu.territoiresDistincts} territoires attendus, ${territoires.size} trouvé(s)`,
+      )
+    }
+  }
+
   return { cas: cas.nom, ok: details.length === 0, details }
 }
 
