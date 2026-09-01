@@ -177,7 +177,37 @@ filtre kpilote. L'override ne *cause* pas la vulnérabilité — mais son absenc
 Même effet pour `@hono/node-server` : le retirer (sa condition de sortie est remplie, cf. plus
 haut) ferait remonter `ppg-auth` au-dessus du plancher de l'advisory par son propre caret.
 
-#### Les 9 advisories résiduelles (2026-08-26)
+#### Les 6 advisories résiduelles (2026-08-31, fin de la stack ppg)
+
+Point d'arrivée de la campagne : **41 → 6**. Le tableau du 2026-08-26 en listait 9 ; trois ont
+été fermées depuis (`deepmerge-ts`, `sanitize-html`, `echarts` — cette dernière par le lot
+in-range de ppg).
+
+| Sévérité | Paquet | Installé → requis | App | Tirée par | Pourquoi ça résiste |
+|---|---|---|---|---|---|
+| high ×2 | `xlsx` | 0.18.5 → **aucun correctif** | kpilote-webapp | dep directe (`^0.18.5`) | `patched_versions: <0.0.0` — SheetJS est **hors registre npm**. Sortie : pin CDN ou remplacement |
+| high ×2 | `immutable` | 3.8.3 → `>=4.3.9` | pilote-ppg | `swagger-ui-react` → `react-immutable-proptypes@2.2.0` | La ligne **3.x n'a pas de correctif**, et le parent déclare un peer `immutable` 3.x : forcer la 4.x casse `swagger-ui-react`. Sortie : que ce dernier lâche immutable 3 |
+| moderate | `uuid` | 8.3.2 → `>=11.1.1` | pilote-ppg | `@hookform/devtools` (`^4.4.0`) | **Dev-only.** Le correctif est **3 majeures** plus loin ; un override sur la ligne 8.x serait un saut non testé pour un outil de développement |
+| low | `esbuild` | 0.25.12 → `>=0.28.1` | pilote-ppg-auth | `vite@8.2.1` (lui-même via `tsx`) | `pilote-ppg-auth` déclare `esbuild: "^0.25.0"` : **son caret plafonne sous 0.26**. La 0.28.2 est pourtant déjà dans l'arbre pour d'autres consommateurs. Serveur de dev uniquement |
+
+**Aucune n'est corrigeable par un relèvement de plancher ni par un override raisonnable** —
+c'est ce qui les distingue des 35 fermées pendant la campagne. Deux n'ont aucun correctif publié,
+deux sont bloquées par un parent, une demande un saut de 3 majeures sur un outil de dev.
+
+> #### 🔴 Le trou structurel : `pilote-ppg-auth`
+>
+> La seule résiduelle *techniquement* triviale — `esbuild`, dont la version corrigée est déjà
+> dans l'arbre — est bloquée par un caret dans le manifeste de `pilote-ppg-auth`. Or cette app
+> est **hors périmètre de `pnpm deps:campagne`** et, comme ce document le note depuis le
+> 2026-07-17, **elle n'est bumpée par personne**.
+>
+> Elle a bénéficié par ricochet des planchers d'overrides relevés côté kpilote — ses 5 advisories
+> `hono` et `@hono/node-server` sont tombées sans qu'on y touche — mais **ses dépendances
+> directes ne bougeront jamais** tant que personne ne s'en occupe. C'est le seul angle mort qui
+> subsiste à la fin de cette campagne, et il mérite son propre ticket plutôt qu'un énième report.
+
+
+#### Les 9 advisories résiduelles (2026-08-26) — état intermédiaire, conservé pour trace
 
 | Sévérité | Paquet | Correctif | App | Tirée par | Statut |
 |---|---|---|---|---|---|
