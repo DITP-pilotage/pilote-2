@@ -19,6 +19,9 @@ if (hasSubmodule) {
 
 const nextConfig = {
   reactStrictMode: true,
+  experimental: {
+    turbopackFileSystemCacheForBuild: process.env.CI !== "true",
+  },
   output: "standalone",
   outputFileTracingRoot: path.join(__dirname, '../..'),
   bundlePagesRouterDependencies: true,
