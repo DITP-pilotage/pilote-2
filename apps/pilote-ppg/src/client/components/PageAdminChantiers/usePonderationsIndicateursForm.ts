@@ -44,15 +44,13 @@ function calculerSommesParMaille(
   return sommes;
 }
 
-const TOLÉRANCE_SOMME = 0.01;
-
 function calculerErreursSommes(
   sommesParMaille: Partial<Record<Maille, number>>,
 ): Partial<Record<Maille, string>> {
   const erreurs: Partial<Record<Maille, string>> = {};
   for (const maille of MAILLES) {
     const somme = sommesParMaille[maille];
-    if (somme !== undefined && Math.abs(somme - 100) > TOLÉRANCE_SOMME) {
+    if (somme !== undefined && Math.abs(somme - 100) > 0) {
       erreurs[maille] =
         `La somme doit être égale à 100 (actuellement ${somme}).`;
     }

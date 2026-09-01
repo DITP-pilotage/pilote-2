@@ -60,13 +60,16 @@ const OngletPonderationsIndicateurs = ({
         />
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-x-auto">
-        <table className="w-full text-sm">
+      <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200">
+        <table className="w-full table-fixed text-sm">
           <thead>
             <tr className="bg-gray-50 text-xs uppercase text-gray-500">
               <th className="text-left px-4 py-3 font-medium">Indicateur</th>
               {MAILLES.map((maille) => (
-                <th className="text-right px-4 py-3 font-medium" key={maille}>
+                <th
+                  className="w-36 text-right px-4 py-3 font-medium"
+                  key={maille}
+                >
                   {LIBELLÉ_MAILLE[maille]} (%)
                 </th>
               ))}
@@ -75,7 +78,12 @@ const OngletPonderationsIndicateurs = ({
           <tbody>
             {fields.map((field, index) => (
               <tr className="border-t border-gray-100" key={field.id}>
-                <td className="px-4 py-3 text-gray-900">{field.indicNom}</td>
+                <td
+                  className="px-4 py-3 text-gray-900 truncate"
+                  title={`${field.indicId} - ${field.indicNom}`}
+                >
+                  {field.indicId} - {field.indicNom}
+                </td>
                 {MAILLES.map((maille) => {
                   const applicable = field.maillesApplicables.includes(maille);
                   return (
@@ -86,7 +94,7 @@ const OngletPonderationsIndicateurs = ({
                         render={({ field: champ }) => (
                           <input
                             className={clsxm(
-                              "w-24 text-right border rounded !py-1 !px-2",
+                              "w-full text-right border rounded !py-1 !px-2",
                               applicable
                                 ? "!bg-white border-gray-300"
                                 : "!bg-gray-50 border-gray-100 text-gray-300",
@@ -99,7 +107,6 @@ const OngletPonderationsIndicateurs = ({
                                   : Number(event.target.value),
                               )
                             }
-                            step="0.01"
                             type="number"
                             value={champ.value ?? ""}
                           />

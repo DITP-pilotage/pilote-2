@@ -60,7 +60,7 @@ const PageAdminChantierEdition = ({
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-6 py-8">
         <nav className="mb-6 flex items-center gap-2 text-sm">
           <Link
             className="text-primary hover:text-dsfr-blue-france-sun-113-hover font-medium hover:underline underline-offset-2 transition-colors"
