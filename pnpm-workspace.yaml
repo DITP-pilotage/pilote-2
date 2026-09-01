@@ -18,3 +18,10 @@ minimumReleaseAgeExclude:
   # @auth/core est du même lot : next-auth l'épingle en exact 0.41.3, publiée le même jour.
   - next-auth
   - "@auth/core"
+  # TEMPORAIRE : contournement assume pour fermer la derniere advisory high
+  # corrigeable de kpilote-api (deepmerge-ts < 8.0.0, stack exhaustion, tiree par
+  # @prisma/config). Le lock epingle 8.0.2, publiee le 2026-08-21 : elle franchit les
+  # 14 j de quarantaine le 2026-09-04. A RETIRER APRES CETTE DATE. La retirer avant
+  # ouvrirait une fenetre ou une re-resolution (pnpm update, pnpm deploy --legacy)
+  # ne trouverait aucune version mure satisfaisant l'override ">=8.0.0 <9".
+  - deepmerge-ts
