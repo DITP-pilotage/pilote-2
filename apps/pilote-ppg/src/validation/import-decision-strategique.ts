@@ -20,9 +20,8 @@ export function mapTypeDecisionStrategiqueAPIVersDomaine(
 
 export const importDecisionStrategiqueSchema = z.object({
   type: z.enum(tousLesTypesDecisionStrategiqueAPI, {
-    errorMap: () => ({
-      message: `Le type de décision stratégique doit être l'un des suivants : ${tousLesTypesDecisionStrategiqueAPI.join(", ")}`,
-    }),
+    error: () =>
+      `Le type de décision stratégique doit être l'un des suivants : ${tousLesTypesDecisionStrategiqueAPI.join(", ")}`,
   }),
   contenu: z
     .string()

@@ -5,9 +5,10 @@ import { Rattachement } from "@/server/evaluation/queries/types";
 
 export const baseFormSchema = z.object({
   fichesEvaluation: z.record(
+    z.string(),
     z.object({
-      objectifs: z.record(evaluationSchema),
-      criteres: z.record(evaluationSchema),
+      objectifs: z.record(z.string(), evaluationSchema),
+      criteres: z.record(z.string(), evaluationSchema),
     }),
   ),
 });

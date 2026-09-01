@@ -563,13 +563,13 @@ importers:
         version: 0.0.18
       '@ai-sdk/openai':
         specifier: ^3.0.96
-        version: 3.0.96(zod@3.25.76)
+        version: 3.0.96(zod@4.4.3)
       '@ai-sdk/provider':
         specifier: ^3.0.15
         version: 3.0.15
       '@ai-sdk/react':
         specifier: ^3.0.256
-        version: 3.0.256(react@19.2.8)(zod@3.25.76)
+        version: 3.0.256(react@19.2.8)(zod@4.4.3)
       '@faker-js/faker':
         specifier: ^7.6.0
         version: 7.6.0
@@ -581,7 +581,7 @@ importers:
         version: 1.11.0
       '@hookform/resolvers':
         specifier: ^5.7.1
-        version: 5.7.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@6.15.0))(ajv@6.15.0)(effect@3.20.0)(react-hook-form@7.85.0(react@19.2.8))(valibot@1.4.2(typescript@5.9.3))(zod@3.25.76)
+        version: 5.7.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@6.15.0))(ajv@6.15.0)(effect@3.20.0)(react-hook-form@7.85.0(react@19.2.8))(valibot@1.4.2(typescript@5.9.3))(zod@4.4.3)
       '@keycloak/keycloak-admin-client':
         specifier: 26.5.6
         version: 26.5.6
@@ -647,7 +647,7 @@ importers:
         version: 11.18.0(typescript@5.9.3)
       ai:
         specifier: ^6.0.253
-        version: 6.0.253(zod@3.25.76)
+        version: 6.0.253(zod@4.4.3)
       awilix:
         specifier: ^12.1.1
         version: 12.1.1
@@ -811,8 +811,8 @@ importers:
         specifier: ^2.9.0
         version: 2.9.0
       zod:
-        specifier: ^3.25.76
-        version: 3.25.76
+        specifier: ^4.4.3
+        version: 4.4.3
       zustand:
         specifier: 5.0.11
         version: 5.0.11(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))
@@ -10698,9 +10698,6 @@ packages:
     peerDependencies:
       zod: ^3.25.0 || ^4.0.0
 
-  zod@3.25.76:
-    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
-
   zod@4.3.6:
     resolution: {integrity: sha512-rftlrkhHZOcjDwkGlnUtZZkvaPHCsDATp4pGpuOOMDaTdDDXF91wuVDJoWoPsKX/3YPQ5fHuF3STjcYyKr+Qhg==}
 
@@ -10741,12 +10738,12 @@ snapshots:
       '@hono/node-server': 1.19.17(hono@4.13.1)
       hono: 4.13.1
 
-  '@ai-sdk/gateway@3.0.172(zod@3.25.76)':
+  '@ai-sdk/gateway@3.0.172(zod@4.4.3)':
     dependencies:
       '@ai-sdk/provider': 3.0.15
-      '@ai-sdk/provider-utils': 4.0.45(zod@3.25.76)
+      '@ai-sdk/provider-utils': 4.0.45(zod@4.4.3)
       '@vercel/oidc': 3.2.0
-      zod: 3.25.76
+      zod: 4.4.3
 
   '@ai-sdk/gateway@4.0.47(zod@4.4.3)':
     dependencies:
@@ -10755,11 +10752,11 @@ snapshots:
       '@vercel/oidc': 3.2.0
       zod: 4.4.3
 
-  '@ai-sdk/openai@3.0.96(zod@3.25.76)':
+  '@ai-sdk/openai@3.0.96(zod@4.4.3)':
     dependencies:
       '@ai-sdk/provider': 3.0.15
-      '@ai-sdk/provider-utils': 4.0.45(zod@3.25.76)
-      zod: 3.25.76
+      '@ai-sdk/provider-utils': 4.0.45(zod@4.4.3)
+      zod: 4.4.3
 
   '@ai-sdk/openai@4.0.37(zod@4.4.3)':
     dependencies:
@@ -10767,13 +10764,13 @@ snapshots:
       '@ai-sdk/provider-utils': 5.0.26(zod@4.4.3)
       zod: 4.4.3
 
-  '@ai-sdk/provider-utils@4.0.45(zod@3.25.76)':
+  '@ai-sdk/provider-utils@4.0.45(zod@4.4.3)':
     dependencies:
       '@ai-sdk/provider': 3.0.15
       '@standard-schema/spec': 1.1.0
       eventsource-parser: 3.1.1
       undici: 5.29.0
-      zod: 3.25.76
+      zod: 4.4.3
 
   '@ai-sdk/provider-utils@5.0.26(zod@4.4.3)':
     dependencies:
@@ -10796,10 +10793,10 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
-  '@ai-sdk/react@3.0.256(react@19.2.8)(zod@3.25.76)':
+  '@ai-sdk/react@3.0.256(react@19.2.8)(zod@4.4.3)':
     dependencies:
-      '@ai-sdk/provider-utils': 4.0.45(zod@3.25.76)
-      ai: 6.0.253(zod@3.25.76)
+      '@ai-sdk/provider-utils': 4.0.45(zod@4.4.3)
+      ai: 6.0.253(zod@4.4.3)
       react: 19.2.8
       swr: 2.5.1(react@19.2.8)
       throttleit: 2.1.0
@@ -11716,7 +11713,7 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@hookform/resolvers@5.7.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@6.15.0))(ajv@6.15.0)(effect@3.20.0)(react-hook-form@7.85.0(react@19.2.8))(valibot@1.4.2(typescript@5.9.3))(zod@3.25.76)':
+  '@hookform/resolvers@5.7.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@6.15.0))(ajv@6.15.0)(effect@3.20.0)(react-hook-form@7.85.0(react@19.2.8))(valibot@1.4.2(typescript@5.9.3))(zod@4.4.3)':
     dependencies:
       '@standard-schema/utils': 0.3.0
       react-hook-form: 7.85.0(react@19.2.8)
@@ -11727,7 +11724,7 @@ snapshots:
       ajv-formats: 2.1.1(ajv@6.15.0)
       effect: 3.20.0
       valibot: 1.4.2(typescript@5.9.3)
-      zod: 3.25.76
+      zod: 4.4.3
 
   '@hookform/resolvers@5.7.1(@sinclair/typebox@0.27.12)(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.20.0))(ajv@8.20.0)(effect@3.20.0)(react-hook-form@7.85.0(react@19.2.8))(valibot@1.4.2(typescript@5.9.3))(zod@4.4.3)':
     dependencies:
@@ -15327,13 +15324,13 @@ snapshots:
 
   agent-base@7.1.4: {}
 
-  ai@6.0.253(zod@3.25.76):
+  ai@6.0.253(zod@4.4.3):
     dependencies:
-      '@ai-sdk/gateway': 3.0.172(zod@3.25.76)
+      '@ai-sdk/gateway': 3.0.172(zod@4.4.3)
       '@ai-sdk/provider': 3.0.15
-      '@ai-sdk/provider-utils': 4.0.45(zod@3.25.76)
+      '@ai-sdk/provider-utils': 4.0.45(zod@4.4.3)
       '@opentelemetry/api': 1.9.1
-      zod: 3.25.76
+      zod: 4.4.3
 
   ai@7.0.59(zod@4.4.3):
     dependencies:
@@ -21786,8 +21783,6 @@ snapshots:
   zod-validation-error@4.0.2(zod@4.4.3):
     dependencies:
       zod: 4.4.3
-
-  zod@3.25.76: {}
 
   zod@4.3.6: {}
 

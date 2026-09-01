@@ -89,7 +89,10 @@ export class Albert {
       system: systemPrompt,
       prompt,
       stopWhen: stepCountIs(5),
-      output: Output.object({ schema }),
+      // `Output.object` infere son type depuis le schema ; quand celui-ci est un
+      // parametre generique, l'inference retombe sur `unknown`. On declare donc la
+      // sortie attendue explicitement.
+      output: Output.object<z.infer<T>>({ schema }),
       temperature: TEMPERATURE_STRUCTURED_OUTPUT,
       abortSignal,
     });

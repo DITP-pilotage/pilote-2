@@ -47,9 +47,8 @@ export const importCommentaireSchema = z.object({
       "Le format du territoire doit être NAT-XX, REG-XX ou DEPT-XX",
     ),
   type: z.enum(tousLesTypesCommentaireAPI, {
-    errorMap: () => ({
-      message: `Le type de commentaire doit être l'un des suivants : ${tousLesTypesCommentaireAPI.join(", ")}`,
-    }),
+    error: () =>
+      `Le type de commentaire doit être l'un des suivants : ${tousLesTypesCommentaireAPI.join(", ")}`,
   }),
   contenu: z
     .string()

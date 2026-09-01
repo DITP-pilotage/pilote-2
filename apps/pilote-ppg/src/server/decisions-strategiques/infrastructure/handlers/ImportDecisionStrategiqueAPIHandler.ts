@@ -77,7 +77,7 @@ export class ImportDecisionStrategiqueAPIHandler {
           categorie: "import",
           source: "ImportDecisionStrategiqueAPIHandler",
           chantierId,
-          nombreErreurs: validationResult.error.errors.length,
+          nombreErreurs: validationResult.error.issues.length,
         },
         "Validation Zod échouée pour import décisions stratégiques",
       );
@@ -123,7 +123,7 @@ export class ImportDecisionStrategiqueAPIHandler {
   private formatZodError(
     error: ZodError,
   ): ImportDecisionStrategiqueErrorResponse {
-    const erreurs: ImportDecisionStrategiqueErreur[] = error.errors.map(
+    const erreurs: ImportDecisionStrategiqueErreur[] = error.issues.map(
       (zodError) => {
         const path = zodError.path;
         const index = typeof path[1] === "number" ? path[1] : 0;

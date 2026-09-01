@@ -30,9 +30,8 @@ export const importSyntheseDesResultatsSchema = z.object({
     .max(10000, "Le contenu ne peut pas dépasser 10000 caractères"),
   meteo: z
     .enum(météosOpenAPI, {
-      errorMap: () => ({
-        message: `La météo doit être l'une des suivantes : ${météosOpenAPI.join(", ")}`,
-      }),
+      error: () =>
+        `La météo doit être l'une des suivantes : ${météosOpenAPI.join(", ")}`,
     })
     .transform((valeur) => méteoOpenAPIVersInterne[valeur]),
   date_synthese: z
