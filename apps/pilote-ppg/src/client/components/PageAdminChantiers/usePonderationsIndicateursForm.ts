@@ -1,14 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useMemo, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import { MAILLES, Maille } from "@/server/metadataChantier/domain/maille";
+import { IndicateurPonderation } from "@/server/metadataChantier/queries/RecupererIndicateursPonderationsChantierQuery";
 
 export interface LignePonderationForm {
-  indicId: string;
-  indicNom: string;
-  maillesApplicables: Maille[];
   poidsPourcentDept: number | null;
   poidsPourcentReg: number | null;
   poidsPourcentNat: number | null;
@@ -27,17 +25,33 @@ export const CHAMP_POIDS_PAR_MAILLE: Record<
   DEPT: "poidsPourcentDept",
 };
 
+function versLignesForm(
+  ponderations: IndicateurPonderation[],
+): LignePonderationForm[] {
+  return ponderations.map((ponderation) => ({
+    poidsPourcentDept: ponderation.poidsPourcentDept,
+    poidsPourcentReg: ponderation.poidsPourcentReg,
+    poidsPourcentNat: ponderation.poidsPourcentNat,
+  }));
+}
+
 function calculerSommesParMaille(
   lignes: LignePonderationForm[],
+  ponderations: IndicateurPonderation[],
 ): Partial<Record<Maille, number>> {
   const sommes: Partial<Record<Maille, number>> = {};
   for (const maille of MAILLES) {
-    const lignesConcernées = lignes.filter((ligne) =>
-      ligne.maillesApplicables.includes(maille),
+    const indicesConcernés = ponderations.reduce<number[]>(
+      (indices, ponderation, index) =>
+        ponderation.maillesApplicables.includes(maille)
+          ? [...indices, index]
+          : indices,
+      [],
     );
-    if (lignesConcernées.length === 0) continue;
-    sommes[maille] = lignesConcernées.reduce(
-      (total, ligne) => total + (ligne[CHAMP_POIDS_PAR_MAILLE[maille]] ?? 0),
+    if (indicesConcernés.length === 0) continue;
+    sommes[maille] = indicesConcernés.reduce(
+      (total, index) =>
+        total + (lignes[index]?.[CHAMP_POIDS_PAR_MAILLE[maille]] ?? 0),
       0,
     );
   }
@@ -59,64 +73,51 @@ function calculerErreursSommes(
 }
 
 export const usePonderationsIndicateursForm = ({
-  chantierId,
+  ponderations,
 }: {
   chantierId: string;
+  ponderations: IndicateurPonderation[];
 }) => {
-  const requête =
-    api.metadataChantier.récupérerIndicateursPonderations.useQuery({
-      chantierId,
-    });
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
-  const [erreursSommes, setErreursSommes] = useState<
-    Partial<Record<Maille, string>>
-  >({});
 
   const reactHookForm = useForm<PonderationsForm>({
-    defaultValues: { lignes: [] },
-  });
-  const { fields } = useFieldArray({
-    control: reactHookForm.control,
-    name: "lignes",
+    defaultValues: { lignes: versLignesForm(ponderations) },
   });
 
-  useEffect(() => {
-    if (requête.data) {
-      reactHookForm.reset({ lignes: requête.data });
-      setErreursSommes({});
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [requête.data]);
-
-  const lignes = reactHookForm.watch("lignes");
+  const lignes = useWatch({ control: reactHookForm.control, name: "lignes" });
   const sommesParMaille = useMemo(
-    () => calculerSommesParMaille(lignes),
-    [lignes],
+    () => calculerSommesParMaille(lignes, ponderations),
+    [lignes, ponderations],
+  );
+  const erreursSommes = useMemo(
+    () => calculerErreursSommes(sommesParMaille),
+    [sommesParMaille],
   );
 
   const mutation =
     api.metadataChantier.enregistrerPonderationsIndicateurs.useMutation({
-      onSuccess: () => {
+      onSuccess: (_, variables) => {
         setAlerte({
           type: "succès",
           titre: "Les pondérations ont bien été enregistrées.",
         });
-        requête.refetch();
+        reactHookForm.reset({
+          lignes: variables.lignes.map((ligne) => ({
+            poidsPourcentDept: ligne.poidsPourcentDept,
+            poidsPourcentReg: ligne.poidsPourcentReg,
+            poidsPourcentNat: ligne.poidsPourcentNat,
+          })),
+        });
       },
       onError: (error) => setAlerte({ type: "erreur", titre: error.message }),
     });
 
   const enregistrer = reactHookForm.handleSubmit((data) => {
-    const erreurs = calculerErreursSommes(calculerSommesParMaille(data.lignes));
-    if (Object.keys(erreurs).length > 0) {
-      setErreursSommes(erreurs);
-      return;
-    }
-    setErreursSommes({});
+    if (Object.keys(erreursSommes).length > 0) return;
     mutation.mutate({
       csrf: récupérerUnCookie("csrf") ?? "",
-      lignes: data.lignes.map((ligne) => ({
-        indicId: ligne.indicId,
+      lignes: data.lignes.map((ligne, index) => ({
+        indicId: ponderations[index].indicId,
         poidsPourcentDept: ligne.poidsPourcentDept,
         poidsPourcentReg: ligne.poidsPourcentReg,
         poidsPourcentNat: ligne.poidsPourcentNat,
@@ -126,8 +127,6 @@ export const usePonderationsIndicateursForm = ({
 
   return {
     reactHookForm,
-    fields,
-    estEnChargement: requête.isLoading,
     sommesParMaille,
     erreursSommes,
     enregistrer,

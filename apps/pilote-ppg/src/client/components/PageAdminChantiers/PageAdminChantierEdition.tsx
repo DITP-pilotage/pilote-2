@@ -7,6 +7,7 @@ import AlerteMetadataChantier from "@/components/PageAdminChantiers/AlerteMetada
 import FicheChantier from "@/components/PageAdminChantiers/FicheChantier";
 import OngletPonderationsIndicateurs from "@/components/PageAdminChantiers/OngletPonderationsIndicateurs";
 import { MetadataChantier } from "@/server/metadataChantier/queries/RecupererChantierQuery";
+import { IndicateurPonderation } from "@/server/metadataChantier/queries/RecupererIndicateursPonderationsChantierQuery";
 import {
   useChantierForm,
   defaultChantierVide,
@@ -17,6 +18,7 @@ interface PageAdminChantierEditionProps {
   chantierId: string;
   estUneCréation: boolean;
   chantierData: MetadataChantier | null;
+  ponderations: IndicateurPonderation[] | null;
   idSuivant: string | null;
 }
 
@@ -34,6 +36,7 @@ const PageAdminChantierEdition = ({
   chantierId,
   estUneCréation,
   chantierData,
+  ponderations,
   idSuivant,
 }: PageAdminChantierEditionProps) => {
   const chantierIdEffectif = estUneCréation
@@ -120,7 +123,10 @@ const PageAdminChantierEdition = ({
             </FormProvider>
           </>
         ) : (
-          <OngletPonderationsIndicateurs chantierId={chantierIdEffectif} />
+          <OngletPonderationsIndicateurs
+            chantierId={chantierIdEffectif}
+            ponderations={ponderations ?? []}
+          />
         )}
       </div>
     </div>

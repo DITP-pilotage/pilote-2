@@ -1,4 +1,4 @@
-import { Controller } from "react-hook-form";
+import { Control, Controller } from "react-hook-form";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import { MessageErreur } from "@/components/PageAutoEvaluation/MessageErreur";
 import Alerte from "@/components/_commons/Alerte/Alerte";
@@ -7,6 +7,7 @@ import {
   CHAMP_POIDS_PAR_MAILLE,
   usePonderationsIndicateursForm,
 } from "@/components/PageAdminChantiers/usePonderationsIndicateursForm";
+import { IndicateurPonderation } from "@/server/metadataChantier/queries/RecupererIndicateursPonderationsChantierQuery";
 import { clsxm } from "@/utils/clsxm";
 
 const LIBELLÉ_MAILLE: Record<Maille, string> = {
@@ -15,33 +16,124 @@ const LIBELLÉ_MAILLE: Record<Maille, string> = {
   DEPT: "Départemental",
 };
 
+interface LignePonderationProps {
+  control: Control<{
+    lignes: {
+      poidsPourcentDept: number | null;
+      poidsPourcentReg: number | null;
+      poidsPourcentNat: number | null;
+    }[];
+  }>;
+  index: number;
+  ponderation: IndicateurPonderation;
+}
+
+const LignePonderation = ({
+  control,
+  index,
+  ponderation,
+}: LignePonderationProps) => (
+  <tr className="border-t border-gray-100">
+    <td
+      className="px-4 py-3 text-gray-900 truncate"
+      title={`${ponderation.indicId} - ${ponderation.indicNom}`}
+    >
+      {ponderation.indicId} - {ponderation.indicNom}
+    </td>
+    {MAILLES.map((maille) => {
+      const applicable = ponderation.maillesApplicables.includes(maille);
+      return (
+        <td className="px-4 py-2 text-right" key={maille}>
+          <Controller
+            control={control}
+            name={`lignes.${index}.${CHAMP_POIDS_PAR_MAILLE[maille]}`}
+            render={({ field: champ }) => (
+              <input
+                className={clsxm(
+                  "w-full text-right border rounded !py-1 !px-2",
+                  applicable
+                    ? "!bg-white border-gray-300"
+                    : "!bg-gray-50 border-gray-100 text-gray-300",
+                )}
+                disabled={!applicable}
+                onChange={(event) =>
+                  champ.onChange(
+                    event.target.value === ""
+                      ? null
+                      : Number(event.target.value),
+                  )
+                }
+                type="number"
+                value={champ.value ?? ""}
+              />
+            )}
+          />
+        </td>
+      );
+    })}
+  </tr>
+);
+
+const PiedTableauPonderations = ({
+  sommesParMaille,
+  erreursSommes,
+}: {
+  sommesParMaille: Partial<Record<Maille, number>>;
+  erreursSommes: Partial<Record<Maille, string>>;
+}) => (
+  <tfoot>
+    <tr className="border-t-2 border-gray-200 bg-gray-50">
+      <td className="px-4 py-3 font-semibold text-gray-900">Somme</td>
+      {MAILLES.map((maille) => {
+        const somme = sommesParMaille[maille];
+        const enErreur = !!erreursSommes[maille];
+        return (
+          <td className="px-4 py-3 text-right" key={maille}>
+            <span
+              className={clsxm(
+                "font-semibold",
+                enErreur ? "text-error" : "text-gray-900",
+              )}
+            >
+              {somme === undefined ? "-" : somme}
+            </span>
+            {erreursSommes[maille] && (
+              <div>
+                <MessageErreur>{erreursSommes[maille]}</MessageErreur>
+              </div>
+            )}
+          </td>
+        );
+      })}
+    </tr>
+  </tfoot>
+);
+
 const OngletPonderationsIndicateurs = ({
   chantierId,
+  ponderations,
 }: {
   chantierId: string;
+  ponderations: IndicateurPonderation[];
 }) => {
   const {
     reactHookForm,
-    fields,
-    estEnChargement,
     sommesParMaille,
     erreursSommes,
     enregistrer,
     alerte,
     estEnCoursDEnregistrement,
-  } = usePonderationsIndicateursForm({ chantierId });
+  } = usePonderationsIndicateursForm({ chantierId, ponderations });
 
-  if (estEnChargement) {
-    return <p className="text-sm text-gray-500">Chargement…</p>;
-  }
-
-  if (fields.length === 0) {
+  if (ponderations.length === 0) {
     return (
       <p className="text-sm text-gray-500">
         Aucun indicateur n&apos;est rattaché à ce chantier.
       </p>
     );
   }
+
+  const auMoinsUneErreur = Object.keys(erreursSommes).length > 0;
 
   return (
     <form onSubmit={enregistrer}>
@@ -53,7 +145,7 @@ const OngletPonderationsIndicateurs = ({
 
       <div className="flex items-center justify-end mb-4">
         <Bouton
-          disabled={estEnCoursDEnregistrement}
+          disabled={estEnCoursDEnregistrement || auMoinsUneErreur}
           label="Enregistrer"
           type="submit"
           variant="primary"
@@ -76,74 +168,19 @@ const OngletPonderationsIndicateurs = ({
             </tr>
           </thead>
           <tbody>
-            {fields.map((field, index) => (
-              <tr className="border-t border-gray-100" key={field.id}>
-                <td
-                  className="px-4 py-3 text-gray-900 truncate"
-                  title={`${field.indicId} - ${field.indicNom}`}
-                >
-                  {field.indicId} - {field.indicNom}
-                </td>
-                {MAILLES.map((maille) => {
-                  const applicable = field.maillesApplicables.includes(maille);
-                  return (
-                    <td className="px-4 py-2 text-right" key={maille}>
-                      <Controller
-                        control={reactHookForm.control}
-                        name={`lignes.${index}.${CHAMP_POIDS_PAR_MAILLE[maille]}`}
-                        render={({ field: champ }) => (
-                          <input
-                            className={clsxm(
-                              "w-full text-right border rounded !py-1 !px-2",
-                              applicable
-                                ? "!bg-white border-gray-300"
-                                : "!bg-gray-50 border-gray-100 text-gray-300",
-                            )}
-                            disabled={!applicable}
-                            onChange={(event) =>
-                              champ.onChange(
-                                event.target.value === ""
-                                  ? null
-                                  : Number(event.target.value),
-                              )
-                            }
-                            type="number"
-                            value={champ.value ?? ""}
-                          />
-                        )}
-                      />
-                    </td>
-                  );
-                })}
-              </tr>
+            {ponderations.map((ponderation, index) => (
+              <LignePonderation
+                control={reactHookForm.control}
+                index={index}
+                key={ponderation.indicId}
+                ponderation={ponderation}
+              />
             ))}
           </tbody>
-          <tfoot>
-            <tr className="border-t-2 border-gray-200 bg-gray-50">
-              <td className="px-4 py-3 font-semibold text-gray-900">Somme</td>
-              {MAILLES.map((maille) => {
-                const somme = sommesParMaille[maille];
-                const enErreur = !!erreursSommes[maille];
-                return (
-                  <td className="px-4 py-3 text-right" key={maille}>
-                    <span
-                      className={clsxm(
-                        "font-semibold",
-                        enErreur ? "text-error" : "text-gray-900",
-                      )}
-                    >
-                      {somme === undefined ? "-" : somme}
-                    </span>
-                    {erreursSommes[maille] && (
-                      <div>
-                        <MessageErreur>{erreursSommes[maille]}</MessageErreur>
-                      </div>
-                    )}
-                  </td>
-                );
-              })}
-            </tr>
-          </tfoot>
+          <PiedTableauPonderations
+            erreursSommes={erreursSommes}
+            sommesParMaille={sommesParMaille}
+          />
         </table>
       </div>
     </form>
