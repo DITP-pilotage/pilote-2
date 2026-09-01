@@ -61,10 +61,10 @@
     ]
   },
   "dependencies": {
-    "@ai-sdk/devtools": "^0.0.18",
-    "@ai-sdk/openai": "^3.0.96",
-    "@ai-sdk/provider": "^3.0.15",
-    "@ai-sdk/react": "^3.0.256",
+    "@ai-sdk/devtools": "^1.0.12",
+    "@ai-sdk/openai": "^4.0.40",
+    "@ai-sdk/provider": "^4.0.7",
+    "@ai-sdk/react": "^4.0.65",
     "@faker-js/faker": "^7.6.0",
     "@getbrevo/brevo": "^3.0.4",
     "@gouvfr/dsfr": "1.11.0",
@@ -90,7 +90,7 @@
     "@trpc/next": "^11.18.0",
     "@trpc/react-query": "^11.18.0",
     "@trpc/server": "^11.18.0",
-    "ai": "^6.0.253",
+    "ai": "^7.0.62",
     "awilix": "^13.0.5",
     "axios": "^1.19.0",
     "chart.js": "^4.5.1",

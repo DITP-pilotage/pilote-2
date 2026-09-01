@@ -26,6 +26,7 @@ const executeTool = async (
   return tool.execute!(input, {
     toolCallId: "test",
     messages: [],
+    context: {},
   });
 };
 

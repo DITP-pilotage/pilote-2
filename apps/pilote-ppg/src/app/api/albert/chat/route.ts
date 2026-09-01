@@ -132,6 +132,18 @@ export async function POST(request: Request) {
       tools,
     });
 
+    // Le detail de l'erreur reste cote serveur : une erreur d'appel LLM peut porter un
+    // corps de reponse, une URL interne ou des details d'infrastructure. C'est le
+    // durcissement introduit par ai v7, dont le defaut est passe a un message generique.
+    // Ce handler existe pour deux raisons : rendre ce message en francais, et surtout
+    // logger l'erreur — le catch du POST ne couvre pas celles survenant PENDANT le flux,
+    // qui disparaissaient donc sans laisser de trace.
+    const onErreurFlux = (error: unknown) => {
+      // eslint-disable-next-line no-console
+      console.error("Erreur dans le flux Albert:", error);
+      return "la génération de la réponse a échoué. Vous pouvez réessayer.";
+    };
+
     const variables = await getContainer("legacy")
       .resolve("recupererToutesLesVariablesContenuUseCase")
       .run();
@@ -139,7 +151,7 @@ export async function POST(request: Request) {
       variables.NEXT_PUBLIC_FF_HISTORIQUE_ALBERT === true;
 
     if (!persistanceActive) {
-      return result.toUIMessageStreamResponse();
+      return result.toUIMessageStreamResponse({ onError: onErreurFlux });
     }
 
     const enregistrerConversation = container.resolve(
@@ -148,6 +160,7 @@ export async function POST(request: Request) {
 
     return result.toUIMessageStreamResponse<PiloteUIMessage>({
       originalMessages: messagesPilote,
+      onError: onErreurFlux,
       onFinish: async ({ messages: messagesFinaux }) => {
         await enregistrerConversation.execute({
           id: body.id,
