@@ -95,9 +95,11 @@ export default class UtilisateurCSVParseur {
   }
 
   _splitCsvCell(cell?: string | null): string[] {
+    // Decoupage sans regex : ` *\| *` retrogradait en O(n2) sur une suite d'espaces
+    // sans pipe, et cette methode s'applique a du CSV televerse par l'utilisateur.
     return cell === undefined || cell === null || cell === ""
       ? []
-      : cell?.split(/ *\| */);
+      : cell.split("|").map((valeur) => valeur.trim());
   }
 
   _générerUneHabilitation(

@@ -129,8 +129,10 @@ test("doit valider les champs obligatoires à la modification et supprimer la mo
   await step(
     "Re-connexion en coordinateur — la modale ne réapparaît plus",
     async () => {
-      await appActions.switchUser(MODALE_PROFIL);
-      await page.waitForTimeout(3000);
+      const pageAccueil = await appActions.switchUser(MODALE_PROFIL);
+      // On attend que la reconnexion soit reellement effective plutot qu'un delai
+      // fixe : c'est a ce moment-la que la modale reapparaitrait si le bug revenait.
+      await pageAccueil.header.expectUserLoggedIn();
       await expect(modaleCompletezProfil).not.toBeVisible();
     },
   );

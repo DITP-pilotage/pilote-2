@@ -21,10 +21,17 @@ import { DecisionStrategiqueType } from "@/server/fiche-conducteur/domain/Decisi
 import { CommentaireType } from "@/server/fiche-conducteur/domain/CommentaireType";
 import type { Inject } from "@/server/fiche-conducteur/module";
 
+// Groupement par milliers sans regex : `\B(?=(\d{3})+(?!\d))` retrogradait en
+// super-lineaire sur les longues suites de chiffres. Sortie verifiee identique.
 const numberWithSpaces = (nombreATransformer: number) => {
-  const parts = nombreATransformer.toString().split(".");
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-  return parts.join(".");
+  const [partieEntiere, ...reste] = nombreATransformer.toString().split(".");
+  const signe = partieEntiere.startsWith("-") ? "-" : "";
+  const chiffres = signe ? partieEntiere.slice(1) : partieEntiere;
+  const groupes: string[] = [];
+  for (let i = chiffres.length; i > 0; i -= 3) {
+    groupes.unshift(chiffres.slice(Math.max(0, i - 3), i));
+  }
+  return [signe + groupes.join(" "), ...reste].join(".");
 };
 
 const presenterEnChantierFicheConducteurContrat = (

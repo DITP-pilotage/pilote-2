@@ -29,7 +29,9 @@ const stripHtml = (html: string | null) => {
   // Remplace les éléments de liste par des puces
   text = text.replace(/<li[^>]*>/gi, "\n• ");
   // Supprime toutes les balises HTML restantes
-  text = text.replace(/<[^>]*>/g, "");
+  // `[^<>]` au lieu de `[^>]` : sur une suite de `<` sans fermeture, l'ancienne
+  // forme backtrackait sur tout le reste a chaque position (O(n2)).
+  text = text.replace(/<[^<>]*>/g, "");
   // Décode les entités HTML courantes
   text = text
     .replace(/&nbsp;/g, " ")

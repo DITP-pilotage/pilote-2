@@ -426,7 +426,10 @@ test.describe("Gestion des comptes utilisateurs", () => {
       await page
         .getByRole("button", { name: /Réinitialiser les filtres/ })
         .click();
-      await page.waitForTimeout(1000);
+      // Condition observable plutot qu'un delai fixe : les utilisateurs masques par
+      // le filtre doivent etre revenus. Ca verifie aussi la reinitialisation, qui
+      // n'etait jusqu'ici pas assertee du tout.
+      await pageUtilisateurs.expectUtilisateurDansTableau(DITP_ADMIN);
     });
 
     await test.step("Réinitialisation avec filtres combinés", async () => {

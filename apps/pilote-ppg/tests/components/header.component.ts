@@ -65,4 +65,8 @@ export class HeaderComponent {
   async expectUserLoggedIn(): Promise<void> {
     await expect(this.userButton()).toBeVisible({ timeout: 100_000 });
   }
+
+  async expectUserLoggedOut(): Promise<void> {
+    await expect(this.loginButton).toBeVisible({ timeout: 100_000 });
+  }
 }

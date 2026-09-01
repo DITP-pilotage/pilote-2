@@ -36,7 +36,7 @@ describe("PrismaTokenAPIInformationRepository", () => {
           email,
         });
       // Then
-      expect(result).toEqual(null);
+      expect(result).toBeNull();
     });
   });
 
@@ -60,7 +60,7 @@ describe("PrismaTokenAPIInformationRepository", () => {
           email: "test@example.com",
         },
       });
-      expect(result).toEqual(null);
+      expect(result).toBeNull();
     });
   });
 

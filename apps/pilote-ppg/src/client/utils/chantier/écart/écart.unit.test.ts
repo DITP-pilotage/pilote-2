@@ -6,7 +6,7 @@ describe("définirCouleurÉcartArrondi", () => {
     const couleurÉcartArrondi = definirCouleurEcartArrondi(null);
 
     // Then
-    expect(couleurÉcartArrondi).toStrictEqual(null);
+    expect(couleurÉcartArrondi).toBeNull();
   });
 
   describe("couleur", () => {

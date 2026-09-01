@@ -18,7 +18,7 @@ export class PageAccueil extends BasePage {
 
   async expectStructure(): Promise<void> {
     await expect(
-      this.page.getByRole("heading", { name: /\d+ chantiers/ }),
+      this.page.getByRole("heading", { name: /\d{1,10} chantiers/ }),
     ).toBeVisible();
     await expect(
       this.page.getByRole("heading", { name: /Taux d'avancement moyen/ }),

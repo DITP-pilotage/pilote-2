@@ -22,7 +22,7 @@ export class PageAdminIndicateurs extends BasePage {
   private get titreNombreIndicateurs() {
     return this.page
       .getByRole("heading", { level: 2 })
-      .filter({ hasText: /\d+ indicateurs?/ });
+      .filter({ hasText: /\d{1,10} indicateurs?/ });
   }
 
   private get barreRecherche() {

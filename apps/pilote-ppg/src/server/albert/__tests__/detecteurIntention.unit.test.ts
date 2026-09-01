@@ -77,31 +77,22 @@ describe("detecterCapacities", () => {
     });
   });
 
-  it("détecte une demande de dashboard via 'cartographie'", () => {
+  it.each([
+    {
+      motCle: "cartographie",
+      demande: "Affiche la cartographie des taux d'avancement",
+    },
+    {
+      motCle: "indicateurs",
+      demande: "Montre-moi les indicateurs du chantier CH-064",
+    },
+    {
+      motCle: "indicateur",
+      demande: "Affiche l'indicateur principal du territoire",
+    },
+  ])("détecte une demande de dashboard via '$motCle'", ({ demande }) => {
     // when
-    const result = detecterCapacities(
-      "Affiche la cartographie des taux d'avancement",
-    );
-
-    // then
-    expect(result.dashboard).toBe(true);
-  });
-
-  it("détecte une demande de dashboard via 'indicateurs'", () => {
-    // when
-    const result = detecterCapacities(
-      "Montre-moi les indicateurs du chantier CH-064",
-    );
-
-    // then
-    expect(result.dashboard).toBe(true);
-  });
-
-  it("détecte une demande de dashboard via 'indicateur'", () => {
-    // when
-    const result = detecterCapacities(
-      "Affiche l'indicateur principal du territoire",
-    );
+    const result = detecterCapacities(demande);
 
     // then
     expect(result.dashboard).toBe(true);
