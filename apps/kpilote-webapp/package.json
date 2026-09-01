@@ -27,6 +27,7 @@
     "test:watch": "tsr generate && vitest"
   },
   "dependencies": {
+    "@ai-sdk/react": "^3.0.163",
     "@hono/node-server": "^1.19.13",
     "@hookform/resolvers": "^5.4.0",
     "@js-temporal/polyfill": "^0.5.1",
@@ -43,6 +44,7 @@
     "@tiptap/react": "3.22.3",
     "@tiptap/starter-kit": "3.22.3",
     "@yornaath/batshit": "^0.14.0",
+    "ai": "^6.0.161",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -62,6 +64,8 @@
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-hook-form": "^7.80.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.6.0",
     "xlsx": "^0.18.5",
     "zod": "^4.3.6"

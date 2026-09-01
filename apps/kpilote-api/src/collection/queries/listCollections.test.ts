@@ -256,4 +256,35 @@ describe.concurrent('listCollections', () => {
       expect(ids).not.toContain(other)
     }),
   )
+
+  it(
+    'filtre sur les identifiants publics fournis',
+    integrationTest(async () => {
+      const gardee = testCollectionId()
+      const ignoree = testCollectionId()
+      await fixtures.collection(
+        { publicId: gardee, nom: 'Gardée', visibilite: 'PUBLIC' },
+        { publicId: ignoree, nom: 'Ignorée', visibilite: 'PUBLIC' },
+      )
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () => listCollections({ ids: [gardee] }))
+
+      // Le modèle d'API expose l'identifiant public sous `id` ; la fixture sous `publicId`.
+      expect(result._unsafeUnwrap().items.map((item) => item.id)).toEqual([gardee])
+    }),
+  )
+
+  it(
+    'ignore un tableau ids vide plutôt que de tout filtrer',
+    integrationTest(async () => {
+      const presente = testCollectionId()
+      await fixtures.collection({ publicId: presente, nom: 'Présente', visibilite: 'PUBLIC' })
+      const apiKey = await fixtures.apiKey()
+
+      const result = await runAsPrincipal(apiKey.id, () => listCollections({ ids: [] }))
+
+      expect(result._unsafeUnwrap().items.map((item) => item.id)).toContain(presente)
+    }),
+  )
 })

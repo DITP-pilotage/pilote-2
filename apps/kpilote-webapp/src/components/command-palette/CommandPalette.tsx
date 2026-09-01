@@ -24,6 +24,7 @@ import {
 } from '@/lib/commands/types'
 
 import { actionTypeFromActionId, targetTypeFromCommandId } from './commandTargets'
+import { useAssistantCommand } from './useAssistantCommand'
 import { useCentreAideCommands } from './useCentreAideCommands'
 import { useCommandPaletteShortcut } from './useCommandPaletteShortcut'
 import { useIndicateurCommands } from './useIndicateurCommands'
@@ -34,12 +35,13 @@ import { useRecentlyVisitedCommands } from './useRecentlyVisitedCommands'
 type CommandPaletteProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
+  ouvrirAssistant: (question: string) => void
 }
 
 const GROUP_HEADING_CLASS =
   '[&_[cmdk-group-heading]]:px-2.5 [&_[cmdk-group-heading]]:pb-1 [&_[cmdk-group-heading]]:pt-2 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-text-subtle'
 
-export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
+export function CommandPalette({ open, onOpenChange, ouvrirAssistant }: CommandPaletteProps) {
   const [query, setQuery] = useState('')
   // Item dont on affiche la page d'actions (`Tab`). `null` = liste racine.
   const [activeItem, setActiveItem] = useState<Command | null>(null)
@@ -71,6 +73,10 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   }, [onOpenChange, open])
   useCommandPaletteShortcut(handleOpen)
 
+  const assistantCommand = useAssistantCommand(query, (question) => {
+    close()
+    ouvrirAssistant(question)
+  })
   const recentCommands = useRecentlyVisitedCommands(open, close)
   const indicateurCommands = useIndicateurCommands(query, open, close)
   const { commands: collectionCommands, isLoading: isLoadingCollections } = useCollectionCommands(
@@ -101,6 +107,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
   // surligné au moment du `Tab`.
   const rootCommands = useMemo<Command[]>(
     () => [
+      assistantCommand,
       ...navigationCommands,
       ...(showRecents ? recentCommands : []),
       ...indicateurCommands,
@@ -108,6 +115,7 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
       ...centreAideResults,
     ],
     [
+      assistantCommand,
       navigationCommands,
       showRecents,
       recentCommands,
@@ -249,6 +257,10 @@ export function CommandPalette({ open, onOpenChange }: CommandPaletteProps) {
                 pageActions.map((action) => <ActionRow key={action.id} action={action} />)
               ) : (
                 <>
+                  <CommandPrimitive.Group heading="Assistant" className={GROUP_HEADING_CLASS}>
+                    <CommandRow key={assistantCommand.id} command={assistantCommand} />
+                  </CommandPrimitive.Group>
+
                   {navigationCommands.length > 0 ? (
                     <CommandPrimitive.Group heading="Navigation" className={GROUP_HEADING_CLASS}>
                       {navigationCommands.map((command) => (

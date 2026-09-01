@@ -5,11 +5,13 @@ import { Suspense, useState } from 'react'
 import { analyticsEvents } from '@pilote/kpilote-shared/analytics/events'
 
 import { analytics } from '@/analytics/tracker'
+import { AssistantPanel } from '@/assistant/AssistantPanel'
 import { CommandPalette } from '@/components/command-palette/CommandPalette'
 import { ContacterEquipe } from '@/components/ContacterEquipe'
 import { RaccourciKbd } from '@/components/command-palette/RaccourciKbd'
 import { UserMenu } from '@/components/UserMenu'
 import { Button } from '@pilote/kpilote-ui/Button'
+import { Modale } from '@pilote/kpilote-ui/Modale'
 import type { Auth } from '@/auth'
 
 /**
@@ -20,6 +22,9 @@ import type { Auth } from '@/auth'
 export function HeaderNav({ auth }: { auth: Auth }) {
   const navigate = useNavigate()
   const [paletteOpen, setPaletteOpen] = useState(false)
+  const [assistant, setAssistant] = useState<{ conversationId: string; question: string } | null>(
+    null,
+  )
 
   return (
     <>
@@ -62,8 +67,34 @@ export function HeaderNav({ auth }: { auth: Auth }) {
 
       {auth.isAuthenticated ? (
         <Suspense fallback={null}>
-          <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} />
+          <CommandPalette
+            open={paletteOpen}
+            onOpenChange={setPaletteOpen}
+            ouvrirAssistant={(question) => {
+              // Un identifiant neuf par ouverture : chaque session de questions est sa
+              // propre conversation tant que l'historique n'existe pas.
+              setAssistant({ conversationId: crypto.randomUUID(), question })
+            }}
+          />
         </Suspense>
+      ) : null}
+
+      {assistant ? (
+        <Modale
+          open
+          onClose={() => setAssistant(null)}
+          titre="Assistant kpilote"
+          description="Les réponses proviennent de vos données kpilote. Vérifiez-les avant de les diffuser."
+          taille="large"
+        >
+          <div className="h-[68vh]">
+            <AssistantPanel
+              key={assistant.conversationId}
+              conversationId={assistant.conversationId}
+              questionInitiale={assistant.question}
+            />
+          </div>
+        </Modale>
       ) : null}
     </>
   )

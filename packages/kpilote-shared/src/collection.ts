@@ -92,6 +92,18 @@ export const listCollectionsQuerySchema = z.object({
     .string()
     .optional()
     .describe("Filtre case-insensitive sur l'identifiant public (`publicId`, ex. `COL-01`)."),
+  ids: z
+    .preprocess((val) => {
+      if (typeof val !== 'string') return val
+      const parts = val
+        .split(',')
+        .map((p) => p.trim())
+        .filter(Boolean)
+      return parts.length === 0 ? undefined : parts
+    }, z.array(collectionPublicIdSchema).optional())
+    .describe(
+      'Filtre par identifiants publics (CSV, ex. `COL-001,COL-002`). Vide ou absent = aucun filtre.',
+    ),
   cursor: paginationCursorSchema.optional(),
   pageSize: pageSizeSchema,
 })
