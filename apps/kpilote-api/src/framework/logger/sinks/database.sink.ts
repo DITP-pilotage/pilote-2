@@ -27,7 +27,10 @@ export class DatabaseSink implements LogSink {
           message: entry.message,
           date: entry.timestamp,
           // L'élargissement en `object` est requis pour l'entrée JSON de Prisma
-          // sous exactOptionalPropertyTypes.
+          // sous exactOptionalPropertyTypes. La règle ci-dessous la croit inutile parce
+          // qu'elle ne change pas le type de l'expression — mais la retirer casse
+          // l'assignation (TS2375 sur `NullableJsonNullValueInput | InputJsonValue`).
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
           ...(Object.keys(rest).length > 0 ? { contexte: rest as object } : {}),
           ...(source !== undefined ? { source } : {}),
           ...(dureeMs !== undefined ? { dureeMs } : {}),

@@ -167,7 +167,8 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "prettier": "^3.6.2",
+    "@types/node": "^24.13.3",
+    "prettier": "^3.9.6",
     "vitest": "^4.1.9"
   }
 }

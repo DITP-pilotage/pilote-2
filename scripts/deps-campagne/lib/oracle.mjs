@@ -1,6 +1,22 @@
 import { run } from './shell.mjs'
 
-/** Périmètre des bumps : kpilote uniquement. pilote-ppg n'est jamais touché. */
+/**
+ * Périmètre des bumps : kpilote uniquement. pilote-ppg n'est jamais touché.
+ *
+ * Le périmètre doit couvrir TOUS les workspaces kpilote, y compris ceux qui n'ont pas de
+ * tsc à eux. Un package laissé hors filtre garde sa résolution figée pendant que les apps
+ * montent, et deux copies de la même dépendance se retrouvent dans un seul programme tsc.
+ *
+ * Pour zod c'est fatal : il estampille ses schémas avec sa propre version, en type LITTÉRAL
+ * (`_$ZodTypeInternals { version: typeof version }`, dont `minor` est un littéral). Deux
+ * minors différents rendent les schémas mutuellement non-assignables. Les patches passent,
+ * les minors non. Oublier kpilote-shared ici a laissé zod en 4.3.6 côté shared face à 4.4.3
+ * côté apps => 160 erreurs tsc sur kpilote-api, attribuées à tort au lot in-range.
+ *
+ * Ce n'est PAS `.openapi()` qui casse : la méthode fonctionne, ce sont les schémas importés
+ * de shared qui ne la portent pas. Le mode d'échec est décrit dans DEPENDENCIES.md, section
+ * « `pnpm outdated` ne voit pas les `peerDependencies` ».
+ */
 export const FILTRES_KPILOTE = [
   '--filter',
   '@pilote/kpilote-api',
@@ -10,6 +26,8 @@ export const FILTRES_KPILOTE = [
   '@pilote/kpilote-admin',
   '--filter',
   '@pilote/kpilote-ui',
+  '--filter',
+  '@pilote/kpilote-shared',
 ]
 
 /**
@@ -24,8 +42,27 @@ const APPS_TYPEES = [
   { pkg: '@pilote/kpilote-admin', prepare: ['tsr', 'generate'] },
 ]
 
-/** Apps qui portent des tests. kpilote-admin n'en a AUCUN — ne pas l'ajouter ici. */
-const APPS_TESTEES = ['@pilote/kpilote-api', '@pilote/kpilote-webapp']
+/**
+ * Apps qui portent des tests.
+ *
+ * kpilote-admin en a bien, contrairement à ce que ce commentaire a longtemps affirmé :
+ * `src/components/centre-aide/{arbre,arbreDnd}.test.ts` et
+ * `src/components/centre-aide/extensions/miseEnTitre.test.ts`, avec un `vitest.setup.ts` et
+ * `environment: 'jsdom'`. L'exclure faisait passer ses bumps d'outillage de test (jsdom,
+ * @testing-library/*) pour non couverts alors qu'ils le sont — et inversement, laissait croire
+ * qu'un « tsc vert » y était le seul filet possible.
+ *
+ * kpilote-ui (19 tests) et kpilote-shared (53 tests depuis le socle analytics) en portent
+ * aussi. Ce sont les deux workspaces sans `tsc` à eux : leurs tests sont donc leur SEUL
+ * filet, ce qui rend leur omission d'autant plus coûteuse.
+ */
+const APPS_TESTEES = [
+  '@pilote/kpilote-api',
+  '@pilote/kpilote-webapp',
+  '@pilote/kpilote-admin',
+  '@pilote/kpilote-ui',
+  '@pilote/kpilote-shared',
+]
 
 /** Env que la CI fournit aux tests (cf. testAndLint.yml). Aucun vrai backend n'est appelé. */
 const ENV_TESTS = {
