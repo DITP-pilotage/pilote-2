@@ -694,7 +694,7 @@ model AssistantConversation {
   titre       String
   surface     String
   messages    Json
-  contexte    Json?
+  contexte    Json? 
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
