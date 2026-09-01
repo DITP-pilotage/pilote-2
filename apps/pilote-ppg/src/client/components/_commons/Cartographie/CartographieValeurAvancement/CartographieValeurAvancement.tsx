@@ -20,8 +20,7 @@ interface CartographieValeurAvancementProps {
   ) => void;
   territoireCode: string;
   pathname:
-    | "/accueil/chantier/[territoireCode]"
-    | "/chantier/[id]/[territoireCode]";
+    "/accueil/chantier/[territoireCode]" | "/chantier/[id]/[territoireCode]";
   mailleSelectionnee: MailleInterne;
   jalon: number;
 }

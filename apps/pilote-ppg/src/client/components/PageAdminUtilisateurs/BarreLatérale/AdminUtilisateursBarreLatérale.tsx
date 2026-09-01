@@ -83,10 +83,7 @@ export const AdminUtilisateursBarreLatérale: FunctionComponent<
   const modifierFiltre = (
     listeValues: string[],
     idFiltre:
-      | "territoires"
-      | "perimetresMinisteriels"
-      | "chantiers"
-      | "profils",
+      "territoires" | "perimetresMinisteriels" | "chantiers" | "profils",
   ) => {
     if (
       filtres[idFiltre]

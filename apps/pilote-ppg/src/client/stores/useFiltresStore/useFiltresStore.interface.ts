@@ -19,10 +19,7 @@ export type FiltreAlerte = {
 };
 
 export type Filtre =
-  | PérimètreMinistériel
-  | FiltreTypologieType
-  | Axe
-  | FiltreAlerte;
+  PérimètreMinistériel | FiltreTypologieType | Axe | FiltreAlerte;
 
 export interface FiltreCatégorieTuple {
   catégorie: FiltreCatégorie;

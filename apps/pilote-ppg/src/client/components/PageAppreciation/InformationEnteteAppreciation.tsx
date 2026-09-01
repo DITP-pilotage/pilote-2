@@ -7,10 +7,7 @@ export const InformationEnteteAppreciation = ({
   statutCompletionAppreciation = "PAS_DEBUTE",
 }: {
   statutCompletionAppreciation:
-    | "PAS_DEBUTE"
-    | "AUTO_EVAL_EN_COURS"
-    | "APPRECIATION_EN_COURS"
-    | "TERMINE";
+    "PAS_DEBUTE" | "AUTO_EVAL_EN_COURS" | "APPRECIATION_EN_COURS" | "TERMINE";
 }) => {
   const { fichesParGroupePuisPhase } =
     pageAppreciation.useServerSidePropsContext();

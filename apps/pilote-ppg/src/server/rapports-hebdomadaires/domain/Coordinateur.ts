@@ -1,6 +1,5 @@
 export type ProfilCoordinateur =
-  | "COORDINATEUR_REGION"
-  | "COORDINATEUR_DEPARTEMENT";
+  "COORDINATEUR_REGION" | "COORDINATEUR_DEPARTEMENT";
 
 export type TerritoireCoordinateur = {
   code: string;

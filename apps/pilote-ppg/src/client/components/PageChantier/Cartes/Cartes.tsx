@@ -9,9 +9,7 @@ import { useEnv } from "@/client/hooks/useEnv";
 import { ComparaisonTerritoires } from "@/components/PageChantier/ComparaisonTerritoires/ComparaisonTerritoires";
 
 export type CartographieType =
-  | "avancementJalon"
-  | "meteo"
-  | "propositionValeur";
+  "avancementJalon" | "meteo" | "propositionValeur";
 interface CartesProps {
   estInteractif?: boolean;
   mailleSourceDonnees?: Maille | null;

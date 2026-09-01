@@ -13,9 +13,7 @@ import { ComparaisonTerritoiresIndicateur } from "@/components/_commons/Indicate
 import { useIndicateurDétails } from "./useIndicateurDétails";
 
 export type CartographieIndicateurType =
-  | "avancementJalon"
-  | "propositionValeur"
-  | "valeurAvancement";
+  "avancementJalon" | "propositionValeur" | "valeurAvancement";
 interface IndicateurDétailsProps {
   indicateurDétailsParTerritoiresComparés: IndicateurDetailsParTerritoire[];
   dateDeMiseAJourIndicateur: string | null;

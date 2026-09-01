@@ -128,8 +128,7 @@ export class AccepterAvecModificationPropositionValeurAvancementUseCase {
     dateValeurAvancement: string;
     valeurAvancementAvantAcceptation: ValeurEvenement<TypeEvenement>;
     valeurPropositionAvantAcceptation:
-      | ValeurEvenement<TypeEvenement>
-      | undefined;
+      ValeurEvenement<TypeEvenement> | undefined;
     valeurAcceptee: number;
     motif: string;
   }): Promise<void> {

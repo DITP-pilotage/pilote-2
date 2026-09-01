@@ -7,9 +7,7 @@ export type Rubrique = {
 };
 
 export type CategoriesIndicateur =
-  | "participation_ta"
-  | "non_participation_ta"
-  | "autre";
+  "participation_ta" | "non_participation_ta" | "autre";
 export type ÉlémentPageIndicateursType = Rubrique & {
   categorieIndicateur: CategoriesIndicateur;
   description: string | null;

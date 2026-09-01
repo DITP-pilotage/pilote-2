@@ -15,5 +15,4 @@ export interface ImportCommentaireErrorResponse {
 }
 
 export type ImportCommentaireAPIResponse =
-  | ImportCommentaireSuccessResponse
-  | ImportCommentaireErrorResponse;
+  ImportCommentaireSuccessResponse | ImportCommentaireErrorResponse;

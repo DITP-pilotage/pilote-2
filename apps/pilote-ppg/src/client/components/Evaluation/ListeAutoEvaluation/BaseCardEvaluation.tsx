@@ -17,11 +17,7 @@ interface BaseCardEvaluationProps {
   texteLienNavigation?: string;
   statutCompletion?: "COMPLETER" | "NON_COMPLETE";
   texteCompletion?:
-    | "À COMPLÉTER"
-    | "À TRANSMETTRE"
-    | "TRANSMIS"
-    | "À TRAITER"
-    | "TRAITÉ";
+    "À COMPLÉTER" | "À TRANSMETTRE" | "TRANSMIS" | "À TRAITER" | "TRAITÉ";
 }
 
 export const BaseCardEvaluation = ({

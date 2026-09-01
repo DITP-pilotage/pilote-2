@@ -6,6 +6,9 @@ import { getContainer } from "@/server/dependances";
 import { prisma } from "@/server/db/prisma";
 import { UtilisateurAuthentifie } from "@/server/authentification/domain/UtilisateurAuthentifie";
 
+// node-mocks-http 1.18 rend `_getJSONData()` en `unknown` et non plus `any`.
+type CorpsReponseImport = { message: string; erreurs: { message: string }[] };
+
 async function créerUtilisateurEnBase() {
   const auteurId = randomUUID();
   await prisma.utilisateur.create({
@@ -146,7 +149,7 @@ describe("ImportDecisionStrategiqueAPIHandler", () => {
 
     // Then
     expect(response._getStatusCode()).toEqual(200);
-    expect(response._getJSONData().message).toEqual(
+    expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
       "Les décisions stratégiques ont correctement été importées",
     );
 
@@ -185,7 +188,7 @@ describe("ImportDecisionStrategiqueAPIHandler", () => {
 
     // Then
     expect(response._getStatusCode()).toEqual(400);
-    expect(response._getJSONData().message).toEqual(
+    expect((response._getJSONData() as CorpsReponseImport).message).toEqual(
       "Le corps de la requête n'est pas un JSON valide",
     );
   });
@@ -272,7 +275,9 @@ describe("ImportDecisionStrategiqueAPIHandler", () => {
 
     // Then
     expect(response._getStatusCode()).toEqual(400);
-    expect(response._getJSONData().erreurs).toBeDefined();
+    expect(
+      (response._getJSONData() as CorpsReponseImport).erreurs,
+    ).toBeDefined();
   });
 
   it("retourne 400 quand la date est dans le futur", async () => {
@@ -313,6 +318,8 @@ describe("ImportDecisionStrategiqueAPIHandler", () => {
 
     // Then
     expect(response._getStatusCode()).toEqual(400);
-    expect(response._getJSONData().erreurs).toBeDefined();
+    expect(
+      (response._getJSONData() as CorpsReponseImport).erreurs,
+    ).toBeDefined();
   });
 });

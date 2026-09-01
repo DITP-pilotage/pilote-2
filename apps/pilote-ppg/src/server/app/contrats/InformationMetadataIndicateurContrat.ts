@@ -108,7 +108,9 @@ type AvailableInformationMetadataIndicateur =
   | "maille_pilotage";
 
 export type MapInformationMetadataIndicateurContrat = {
-  [key in AvailableInformationMetadataIndicateur]: InformationMetadataIndicateurContrat;
+  [
+    key in AvailableInformationMetadataIndicateur
+  ]: InformationMetadataIndicateurContrat;
 };
 
 export const presenterEnInformationMetadataIndicateurContrat = (

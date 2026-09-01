@@ -1,7 +1,5 @@
 export type TypeValeurIndicateur =
-  | "VALEUR_AVANCEMENT"
-  | "VALEUR_INITIALE"
-  | "VALEUR_CIBLE";
+  "VALEUR_AVANCEMENT" | "VALEUR_INITIALE" | "VALEUR_CIBLE";
 
 export type EvenementIndicateur = {
   id: string;
