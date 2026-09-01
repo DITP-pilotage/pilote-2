@@ -22,9 +22,17 @@ time pg_dump -d $CONN_STR_PROD --verbose \
     --table public.utilisateur \
     --table raw_data.mesure_indicateur \
     --table raw_data.commentaires \
-    --table raw_data.metadata_indicateurs_complementaire \
+    --table raw_data.metadata_zonegroup \
     --table raw_data.metadata_indicateurs_hidden \
+    --table raw_data.metadata_indicateurs_complementaire \
     --table raw_data.metadata_parametrage_indicateurs \
+    --table raw_data.metadata_zones \
+    --table raw_data.metadata_ppgs \
+    --table raw_data.metadata_porteurs \
+    --table raw_data.metadata_perimetres \
+    --table raw_data.metadata_axes \
+    --table raw_data.metadata_engagement \
+    --table raw_data.metadata_chantiers \
     --table public.mesure_indicateur_temporaire \
     --table public.erreur_validation_fichier \
     --table public.objectif \

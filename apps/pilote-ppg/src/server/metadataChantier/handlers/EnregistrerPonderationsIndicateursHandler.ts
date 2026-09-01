@@ -58,14 +58,14 @@ export class EnregistrerPonderationsIndicateursHandler {
   ): Promise<void> {
     const instance = this.prisma.getInstance();
     const indicIds = command.lignes.map((ligne) => ligne.indicId);
-    const complémentaires =
-      await instance.metadata_indicateurs_complementaire.findMany({
-        where: { indic_id: { in: indicIds } },
-      });
+    const indicateurs = await instance.metadata_indicateurs_hidden.findMany({
+      where: { indic_id: { in: indicIds } },
+      include: { complementaire: true },
+    });
     const complémentaireParId = new Map(
-      complémentaires.map((complémentaire) => [
-        complémentaire.indic_id,
-        complémentaire,
+      indicateurs.map((indicateur) => [
+        indicateur.indic_id,
+        indicateur.complementaire,
       ]),
     );
 

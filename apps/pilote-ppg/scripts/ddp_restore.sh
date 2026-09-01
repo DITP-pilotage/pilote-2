@@ -40,15 +40,26 @@ TRUNCATE TABLE
     public.synthese_des_resultats,
     raw_data.mesure_indicateur,
     raw_data.commentaires,
+    raw_data.metadata_indicateurs,
     raw_data.metadata_indicateurs_complementaire,
     raw_data.metadata_indicateurs_hidden,
     raw_data.metadata_parametrage_indicateurs,
+    raw_data.metadata_chantiers,
+    raw_data.metadata_zones,
+    raw_data.metadata_ppgs,
+    raw_data.metadata_porteurs,
+    raw_data.metadata_perimetres,
+    raw_data.metadata_axes,
+    raw_data.metadata_engagement,
+    raw_data.metadata_zonegroup,
     public.mesure_indicateur_temporaire,
     public.objectif,
     public.utilisateur,
     public.erreur_validation_fichier;"
 
 echo ">> pg_restore dumped file..."
+# --disable-triggers désactive les triggers (donc les
+# contraintes FK) le temps du chargement de chaque table, puis les réactive.
 time pg_restore -d $DATABASE_URL --verbose \
-    --no-owner --no-privileges --exit-on-error \
+    --no-owner --no-privileges --exit-on-error --disable-triggers \
     $DUMP_DEST
