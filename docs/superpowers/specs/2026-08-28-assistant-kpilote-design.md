@@ -29,7 +29,6 @@ Le périmètre est découpé en trois sous-projets. **Cette spec couvre le premi
 - **Une seule surface implémentée** : `ask-libre`, atteinte par `Tab` sur l'état initial de la palette `⌘K`.
 - Le panneau de sources et la barre de retour utilisateur.
 - La persistance (conversation + audit) et l'observabilité.
-- Le harnais d'évaluation.
 
 ### Préparé, pas implémenté
 
@@ -75,7 +74,7 @@ pas — il ne le rend pas gratuit non plus.
 | D5 | Les habilitations sont **ambiantes**, jamais transmises à la main | `framework/auth/userContext.ts` porte le `Principal` dans un `AsyncLocalStorage` et les queries filtrent déjà. Un outil oublié ne peut pas fuiter. |
 | D6 | Les sources sont **extraites par le moteur**, jamais citées par le modèle | Ni oubli ni invention possibles. Coût nul par outil ajouté. |
 | D7 | Pas de `_output_instructions` | ppg mélange donnée et directive de rendu dans le même payload, d'où le conflit de priorité que son PRD documente. La politique de rendu appartient à la couche de surface. |
-| D8 | Un harnais d'**évals** dès la v1 | ppg n'en a aucun et ne peut pas répondre à « ce modèle est-il meilleur ? ». On prévoit de changer de modèle. |
+| D8 | **Pas de harnais d'évals.** L'observabilité du tour en tient lieu | Décision révisée — voir §12. Un jeu de cas fige une stratégie d'appel d'outils plutôt que de vérifier une réponse, et incite à ajuster le prompt pour faire passer le test. Les logs de tour donnent le même signal sur du trafic réel, sans cette incitation. |
 | D9 | Entrées **et sorties** d'outils typées dans le contrat partagé | Chez ppg le rendu riche dépend de `PiloteUITools` ; sans lui, `part.output` est `unknown` et aucun outil produisant de l'interface n'est rendable. Le typage doit exister avant d'en avoir besoin, sinon il faut refondre le contrat. |
 | D10 | La recherche d'entité **pré-filtre de façon déterministe** avant d'appeler le modèle | ppg injecte tout son catalogue dans le prompt — viable pour 60 chantiers, pas pour des centaines d'indicateurs. Coût, latence et précision se dégradent tous les trois. |
 | D11 | Le registry reçoit sa fonction de requête par **injection** | Importer `@/app` depuis un outil crée un cycle et, en test, réintroduit `databaseContext` par-dessus la transaction de test — ce contre quoi `buildTestApp` met explicitement en garde. |
@@ -427,35 +426,48 @@ Le module de retour de ppg est repris tel quel
 `SUGGESTION` / `AUTRE`, commentaire optionnel des deux côtés, obligatoire si `AUTRE` est cochée.
 Écriture sur la dernière ligne `AssistantAppel` de la conversation.
 
-## 12. Évals
+## 12. Comment on saura que ça marche
 
-Un jeu de cas figés, versionné avec le code, exécuté par un script dédié (`pnpm eval`) et non par
-la CI — pour ne pas taper Albert à chaque commit.
+**Décision révisée le 2026-09-02.** La v1 prévoyait un harnais d'évaluation — un jeu de cas
+figés vérifiant les décisions d'outils. Il a été écrit, puis retiré avant la mise en revue.
 
-Le principe : **on n'évalue pas la prose, on évalue les décisions vérifiables.** Le texte d'un
-modèle est instable et le noter demanderait un juge, donc du bruit. « Quel outil a-t-il appelé »,
-« avec quels paramètres », « quelles sources a-t-il émises » sont des faits binaires, extraits du
-transcript qu'on stocke déjà.
+### Pourquoi il a été retiré
 
-```ts
-{
-  question: "l'indicateur sur la fraude fiscale, il en est où ?",
-  surface: 'ask-libre',
-  attendu: {
-    outilsAppeles: ['search_indicateurs', 'get_synthese_indicateur'],
-    sourcesContiennent: ['IND-42'],
-  },
-}
-```
+Un cas d'éval de ce type affirme « pour cette question, appelle `search_indicateurs` puis
+`get_synthese_indicateur` ». Ce n'est pas une vérification de la réponse, c'est le **gel d'une
+stratégie**. Un meilleur modèle qui résoudrait l'entité autrement ferait échouer le test alors
+qu'il ferait mieux — et la pente naturelle serait d'ajuster le prompt pour faire repasser le
+test plutôt que pour mieux servir l'utilisateur.
 
-Le jeu initial couvre : résolution d'entité depuis un libellé approximatif, résolution depuis un
-acronyme (le cas où le pré-filtre échoue et où le repli doit prendre le relais), question sur une
-entité nommée explicitement, préférence pour la synthèse composée plutôt que les appels unitaires,
-question hors périmètre, question portant sur une entité inaccessible (aucune fuite en sources), et
-question ambiguë appelant une précision.
+À la relecture des huit cas écrits : deux portaient sur de la prose et ne prouvaient rien,
+un doublonnait des tests déterministes existants (l'absence de fuite en sources est vérifiée
+unitairement dans `resoudreSources`), et quatre figeaient une stratégie. Un seul gardait une
+décision réelle — la préférence pour la synthèse composée, qui protège la whitelist resserrée.
 
-Le paramètre `modele` de la requête permet de rejouer le même jeu sur deux modèles : c'est ce qui
-rend un changement de modèle décidable autrement qu'à l'intuition.
+### Ce qui le remplace
+
+**L'observabilité du tour.** Chaque tour émet
+`{ event: 'assistant.tour.done', conversationId, surface, modele, durationMs, inputTokens, outputTokens, outils }`.
+La liste des outils appelés, la durée et les jetons suffisent à voir une régression
+d'enchaînement — le modèle qui se met à faire quatre appels là où un suffisait — **sur du
+trafic réel plutôt que sur sept prompts artificiels**, et sans avoir figé de stratégie.
+
+**Le passage par les environnements.** Un changement de modèle traverse dev puis preprod,
+essayé à la main avant d'atteindre la production.
+
+**Le paramètre `modele` de la requête.** Il permet de faire tourner deux modèles côte à côte
+sur les mêmes questions réelles, ce qui est une comparaison plus honnête qu'un score sur un
+jeu fermé.
+
+**Le retour utilisateur** (§11), qui reste le seul instrument capable d'attraper ce qu'aucun
+test automatique ne voit : une réponse correcte mais mal formulée, ou des exemples inventés.
+
+### Ce qu'on accepte de perdre
+
+La capacité à répondre par un chiffre à « ce nouveau modèle est-il meilleur ? ». On y répondra
+par l'essai en dev et par les retours, pas par un score. C'est un choix assumé : un score sur
+un jeu fermé aurait donné une fausse assurance sur une question — la qualité conversationnelle
+— qui ne se mesure pas ainsi.
 
 ## 13. Tests
 
@@ -468,14 +480,16 @@ ses court-circuits ; composition du prompt par couches ; dérivation d'un outil 
 vérifie l'orchestration, l'application des habilitations, l'émission des sources et la persistance
 du tour. Les outils reçoivent le requêteur du test, donc voient les fixtures de leur transaction.
 
+Tous les tests sont déterministes et tournent en CI. Rien ne dépend d'un appel à Albert.
+
 Conformément à l'usage du projet, pas de plan de tests pour les composants front.
 
 ## 14. Points à trancher au démarrage de l'implémentation
 
 - **Modèle du sous-agent de recherche** : le même que le modèle principal, ou `openweight-medium`
-  qui suffirait à un classement. À mesurer sur le jeu d'évals ; par défaut, le même.
+  qui suffirait à un classement. À essayer en dev ; par défaut, le même.
 - **Seuil de rétention** : 14 jours repris de ppg. À confirmer côté DITP au regard des données
   personnelles contenues dans les transcripts.
 - **Bornes de la recherche** : 60 candidats après pré-filtre, 300 entrées pour le repli sémantique.
   Ces valeurs sont des points de départ à ajuster une fois la taille réelle du parc connue et le
-  taux de repli mesuré.
+  taux de repli mesuré — l'événement `assistant.recherche.repli` le donne.
