@@ -1,5 +1,19 @@
-export const MAILLES = ["NAT", "REG", "DEPT"] as const;
-export type Maille = (typeof MAILLES)[number];
+import { MailleTerritoireSelectionne } from "@/server/domain/maille/Maille.interface";
+
+export type Maille = MailleTerritoireSelectionne;
+export const MAILLES: readonly Maille[] = ["NAT", "REG", "DEPT"];
+
+export const LIBELLÉ_MAILLE: Record<Maille, string> = {
+  NAT: "National",
+  REG: "Régional",
+  DEPT: "Départemental",
+};
+
+export const LIBELLÉ_MAILLE_ADJECTIF: Record<Maille, string> = {
+  NAT: "nationale",
+  REG: "régionale",
+  DEPT: "départementale",
+};
 
 export function calculerMaillesApplicablesIndicateur(
   indicTerritorialise: boolean,

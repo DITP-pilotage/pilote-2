@@ -1,20 +1,18 @@
 import { Control, Controller } from "react-hook-form";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
-import { MessageErreur } from "@/components/PageAutoEvaluation/MessageErreur";
 import Alerte from "@/components/_commons/Alerte/Alerte";
-import { MAILLES, Maille } from "@/server/metadataChantier/domain/maille";
+import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
+import {
+  MAILLES,
+  Maille,
+  LIBELLÉ_MAILLE,
+} from "@/server/metadataChantier/domain/maille";
 import {
   CHAMP_POIDS_PAR_MAILLE,
   usePonderationsIndicateursForm,
 } from "@/components/PageAdminChantiers/usePonderationsIndicateursForm";
 import { IndicateurPonderation } from "@/server/metadataChantier/queries/RecupererIndicateursPonderationsChantierQuery";
 import { clsxm } from "@/utils/clsxm";
-
-const LIBELLÉ_MAILLE: Record<Maille, string> = {
-  NAT: "National",
-  REG: "Régional",
-  DEPT: "Départemental",
-};
 
 interface LignePonderationProps {
   control: Control<{
@@ -33,9 +31,9 @@ const LignePonderation = ({
   index,
   ponderation,
 }: LignePonderationProps) => (
-  <tr className="border-t border-gray-100">
+  <tr className="border-t border-dsfr-grey-1000">
     <td
-      className="px-4 py-3 text-gray-900 truncate"
+      className="px-4 py-3 text-dsfr-grey-50 truncate"
       title={`${ponderation.indicId} - ${ponderation.indicNom}`}
     >
       {ponderation.indicId} - {ponderation.indicNom}
@@ -47,24 +45,24 @@ const LignePonderation = ({
           <Controller
             control={control}
             name={`lignes.${index}.${CHAMP_POIDS_PAR_MAILLE[maille]}`}
-            render={({ field: champ }) => (
+            render={({ field }) => (
               <input
                 className={clsxm(
                   "w-full text-right border rounded !py-1 !px-2",
                   applicable
-                    ? "!bg-white border-gray-300"
-                    : "!bg-gray-50 border-gray-100 text-gray-300",
+                    ? "!bg-white border-dsfr-grey-900"
+                    : "!bg-dsfr-grey-1000 border-dsfr-grey-1000 text-dsfr-grey-900",
                 )}
                 disabled={!applicable}
                 onChange={(event) =>
-                  champ.onChange(
+                  field.onChange(
                     event.target.value === ""
                       ? null
                       : Number(event.target.value),
                   )
                 }
                 type="number"
-                value={champ.value ?? ""}
+                value={field.value ?? ""}
               />
             )}
           />
@@ -82,8 +80,8 @@ const PiedTableauPonderations = ({
   erreursSommes: Partial<Record<Maille, string>>;
 }) => (
   <tfoot>
-    <tr className="border-t-2 border-gray-200 bg-gray-50">
-      <td className="px-4 py-3 font-semibold text-gray-900">Somme</td>
+    <tr className="border-t-2 border-dsfr-grey-925 bg-dsfr-grey-1000">
+      <td className="px-4 py-3 font-semibold text-dsfr-grey-50">Somme</td>
       {MAILLES.map((maille) => {
         const somme = sommesParMaille[maille];
         const enErreur = !!erreursSommes[maille];
@@ -91,17 +89,20 @@ const PiedTableauPonderations = ({
           <td className="px-4 py-3 text-right" key={maille}>
             <span
               className={clsxm(
-                "font-semibold",
-                enErreur ? "text-error" : "text-gray-900",
+                "inline-flex items-center gap-1 font-semibold",
+                enErreur ? "text-error" : "text-dsfr-grey-50",
               )}
             >
               {somme === undefined ? "-" : somme}
+              {erreursSommes[maille] && (
+                <Infobulle
+                  classNameIcone="w-4 h-4 text-error"
+                  styleIconInfoBulle="warning"
+                >
+                  {erreursSommes[maille]}
+                </Infobulle>
+              )}
             </span>
-            {erreursSommes[maille] && (
-              <div>
-                <MessageErreur>{erreursSommes[maille]}</MessageErreur>
-              </div>
-            )}
           </td>
         );
       })}
@@ -127,7 +128,7 @@ const OngletPonderationsIndicateurs = ({
 
   if (ponderations.length === 0) {
     return (
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-dsfr-mention-grey">
         Aucun indicateur n&apos;est rattaché à ce chantier.
       </p>
     );
@@ -152,10 +153,10 @@ const OngletPonderationsIndicateurs = ({
         />
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200">
+      <div className="bg-white rounded-lg shadow-sm ring-1 ring-dsfr-grey-925">
         <table className="w-full table-fixed text-sm">
           <thead>
-            <tr className="bg-gray-50 text-xs uppercase text-gray-500">
+            <tr className="bg-dsfr-grey-1000 text-xs uppercase text-dsfr-mention-grey">
               <th className="text-left px-4 py-3 font-medium">Indicateur</th>
               {MAILLES.map((maille) => (
                 <th
@@ -182,6 +183,15 @@ const OngletPonderationsIndicateurs = ({
             sommesParMaille={sommesParMaille}
           />
         </table>
+      </div>
+
+      <div className="flex justify-end mt-6 pt-4 border-t border-dsfr-grey-925">
+        <Bouton
+          disabled={estEnCoursDEnregistrement || auMoinsUneErreur}
+          label="Enregistrer"
+          type="submit"
+          variant="primary"
+        />
       </div>
     </form>
   );

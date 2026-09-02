@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import { MAILLES, Maille } from "@/server/metadataChantier/domain/maille";
 import { IndicateurPonderation } from "@/server/metadataChantier/queries/RecupererIndicateursPonderationsChantierQuery";
@@ -24,16 +25,6 @@ export const CHAMP_POIDS_PAR_MAILLE: Record<
   REG: "poidsPourcentReg",
   DEPT: "poidsPourcentDept",
 };
-
-function versLignesForm(
-  ponderations: IndicateurPonderation[],
-): LignePonderationForm[] {
-  return ponderations.map((ponderation) => ({
-    poidsPourcentDept: ponderation.poidsPourcentDept,
-    poidsPourcentReg: ponderation.poidsPourcentReg,
-    poidsPourcentNat: ponderation.poidsPourcentNat,
-  }));
-}
 
 function calculerSommesParMaille(
   lignes: LignePonderationForm[],
@@ -64,7 +55,7 @@ function calculerErreursSommes(
   const erreurs: Partial<Record<Maille, string>> = {};
   for (const maille of MAILLES) {
     const somme = sommesParMaille[maille];
-    if (somme !== undefined && Math.abs(somme - 100) > 0) {
+    if (somme !== undefined && somme !== 100) {
       erreurs[maille] =
         `La somme doit être égale à 100 (actuellement ${somme}).`;
     }
@@ -79,9 +70,16 @@ export const usePonderationsIndicateursForm = ({
   ponderations: IndicateurPonderation[];
 }) => {
   const [alerte, setAlerte] = useState<AlerteProps | null>(null);
+  const refreshRouter = useRefreshRouter();
 
   const reactHookForm = useForm<PonderationsForm>({
-    defaultValues: { lignes: versLignesForm(ponderations) },
+    defaultValues: {
+      lignes: ponderations.map((ponderation) => ({
+        poidsPourcentDept: ponderation.poidsPourcentDept,
+        poidsPourcentReg: ponderation.poidsPourcentReg,
+        poidsPourcentNat: ponderation.poidsPourcentNat,
+      })),
+    },
   });
 
   const lignes = useWatch({ control: reactHookForm.control, name: "lignes" });
@@ -96,18 +94,12 @@ export const usePonderationsIndicateursForm = ({
 
   const mutation =
     api.metadataChantier.enregistrerPonderationsIndicateurs.useMutation({
-      onSuccess: (_, variables) => {
+      onSuccess: () => {
         setAlerte({
           type: "succès",
           titre: "Les pondérations ont bien été enregistrées.",
         });
-        reactHookForm.reset({
-          lignes: variables.lignes.map((ligne) => ({
-            poidsPourcentDept: ligne.poidsPourcentDept,
-            poidsPourcentReg: ligne.poidsPourcentReg,
-            poidsPourcentNat: ligne.poidsPourcentNat,
-          })),
-        });
+        refreshRouter();
       },
       onError: (error) => setAlerte({ type: "erreur", titre: error.message }),
     });

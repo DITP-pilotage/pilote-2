@@ -4,6 +4,7 @@ import type { Inject } from "@/server/metadataChantier/module";
 import {
   MAILLES,
   Maille,
+  LIBELLÉ_MAILLE_ADJECTIF,
   calculerMaillesApplicablesIndicateur,
 } from "@/server/metadataChantier/domain/maille";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
@@ -36,14 +37,6 @@ const CHAMP_POIDS_PAR_MAILLE: Record<
   NAT: "poidsPourcentNat",
   REG: "poidsPourcentReg",
   DEPT: "poidsPourcentDept",
-};
-
-const TOLÉRANCE_SOMME = 0.01;
-
-const LIBELLÉ_MAILLE: Record<Maille, string> = {
-  NAT: "nationale",
-  REG: "régionale",
-  DEPT: "départementale",
 };
 
 export class EnregistrerPonderationsIndicateursHandler {
@@ -83,9 +76,9 @@ export class EnregistrerPonderationsIndicateursHandler {
         (total, ligne) => total + (ligne[CHAMP_POIDS_PAR_MAILLE[maille]] ?? 0),
         0,
       );
-      if (Math.abs(somme - 100) > TOLÉRANCE_SOMME) {
+      if (somme !== 100) {
         throw new BadRequestError(
-          `La somme des pondérations pour la maille ${LIBELLÉ_MAILLE[maille]} doit être égale à 100 (actuellement ${somme}).`,
+          `La somme des pondérations pour la maille ${LIBELLÉ_MAILLE_ADJECTIF[maille]} doit être égale à 100 (actuellement ${somme}).`,
         );
       }
     }

@@ -71,8 +71,8 @@ const PageAdminChantierEdition = ({
           >
             Gestion des chantiers
           </Link>
-          <span className="text-gray-400">/</span>
-          <span className="text-gray-500">{titre}</span>
+          <span className="text-dsfr-grey-625">/</span>
+          <span className="text-dsfr-mention-grey">{titre}</span>
         </nav>
 
         {!estUneCréation && (
@@ -103,20 +103,20 @@ const PageAdminChantierEdition = ({
                     <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
                       {estUneCréation ? "Nouveau chantier" : "Édition"}
                     </p>
-                    <h1 className="text-3xl font-bold text-gray-900">
+                    <h1 className="text-3xl font-bold text-dsfr-grey-50">
                       {titre}
                     </h1>
                   </div>
                   <Bouton label={labelBouton} variant="primary" type="submit" />
                 </div>
 
-                <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden">
+                <div className="bg-white rounded-lg shadow-sm ring-1 ring-dsfr-grey-925 overflow-hidden">
                   <div className="px-6 py-6">
                     <FicheChantier />
                   </div>
                 </div>
 
-                <div className="flex justify-end mt-6 pt-4 border-t border-gray-200">
+                <div className="flex justify-end mt-6 pt-4 border-t border-dsfr-grey-925">
                   <Bouton label={labelBouton} variant="primary" type="submit" />
                 </div>
               </form>
