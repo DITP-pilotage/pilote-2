@@ -412,6 +412,9 @@ model metadata_indicateurs_hidden {
 
   zonegroup metadata_zonegroup? @relation(fields: [zg_applicable], references: [zone_group_id])
 
+  complementaire metadata_indicateurs_complementaire?
+  parametrage    metadata_parametrage_indicateurs?
+
   @@schema("raw_data")
 }
 
@@ -449,6 +452,8 @@ model metadata_parametrage_indicateurs {
   poids_pourcent_eval_nat_declaree  Float?
   tendance                          String?
 
+  hidden metadata_indicateurs_hidden @relation(fields: [indic_id], references: [indic_id])
+
   @@schema("raw_data")
 }
 
@@ -475,6 +480,8 @@ model metadata_indicateurs_complementaire {
   maille_pilotage           String
   cible_attendue            Boolean  @default(true)
   couverture_temporelle     String
+
+  hidden metadata_indicateurs_hidden @relation(fields: [indic_id], references: [indic_id])
 
   @@schema("raw_data")
 }

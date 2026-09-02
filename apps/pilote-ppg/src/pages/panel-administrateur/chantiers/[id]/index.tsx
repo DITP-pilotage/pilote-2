@@ -34,6 +34,12 @@ export async function getServerSideProps(
     ? null
     : await container.resolve("recupererChantierQuery").run({ chantierId });
 
+  const ponderations = estUneCréation
+    ? null
+    : await container
+        .resolve("recupererIndicateursPonderationsChantierQuery")
+        .run({ chantierId });
+
   const idSuivant = estUneCréation
     ? await container.resolve("recupererIdSuivantQuery").run()
     : null;
@@ -43,6 +49,7 @@ export async function getServerSideProps(
       chantierId,
       estUneCréation,
       chantierData,
+      ponderations,
       idSuivant,
     },
   };
@@ -52,6 +59,7 @@ const NextPageAdminChantierEdition = ({
   chantierId,
   estUneCréation,
   chantierData,
+  ponderations,
   idSuivant,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => (
   <>
@@ -64,6 +72,7 @@ const NextPageAdminChantierEdition = ({
         chantierData={chantierData}
         estUneCréation={estUneCréation}
         idSuivant={idSuivant}
+        ponderations={ponderations}
       />
     </NextPanelAdministrateurLayout>
   </>

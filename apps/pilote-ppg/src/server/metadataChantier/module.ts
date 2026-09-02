@@ -12,6 +12,8 @@ import { ListerPorteursQuery } from "./queries/ListerPorteursQuery";
 import { ListerPerimetresQuery } from "./queries/ListerPerimetresQuery";
 import { ListerZonegroupsQuery } from "./queries/ListerZonegroupsQuery";
 import { EnregistrerChantierHandler } from "./handlers/EnregistrerChantierHandler";
+import { RecupererIndicateursPonderationsChantierQuery } from "./queries/RecupererIndicateursPonderationsChantierQuery";
+import { EnregistrerPonderationsIndicateursHandler } from "./handlers/EnregistrerPonderationsIndicateursHandler";
 
 type MetadataChantierCradle = {
   listerChantiersQuery: ListerChantiersQuery;
@@ -22,6 +24,8 @@ type MetadataChantierCradle = {
   listerPerimetresQuery: ListerPerimetresQuery;
   listerZonegroupsQuery: ListerZonegroupsQuery;
   enregistrerChantierHandler: EnregistrerChantierHandler;
+  recupererIndicateursPonderationsChantierQuery: RecupererIndicateursPonderationsChantierQuery;
+  enregistrerPonderationsIndicateursHandler: EnregistrerPonderationsIndicateursHandler;
 };
 
 export const metadataChantierModule = defineModule<
@@ -41,6 +45,12 @@ export const metadataChantierModule = defineModule<
       listerPerimetresQuery: asModuleClass(ListerPerimetresQuery),
       listerZonegroupsQuery: asModuleClass(ListerZonegroupsQuery),
       enregistrerChantierHandler: asModuleClass(EnregistrerChantierHandler),
+      recupererIndicateursPonderationsChantierQuery: asModuleClass(
+        RecupererIndicateursPonderationsChantierQuery,
+      ),
+      enregistrerPonderationsIndicateursHandler: asModuleClass(
+        EnregistrerPonderationsIndicateursHandler,
+      ),
     } satisfies VerifyCradle<MetadataChantierCradle>);
   },
 });

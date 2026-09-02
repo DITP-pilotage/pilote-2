@@ -1,9 +1,13 @@
 import { FormProvider } from "react-hook-form";
-import Link from "next/link";
+import { useState } from "react";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import FilAriane from "@/components/_commons/FilAriane/FilAriane";
+import { NavigationTertiaire } from "@/components/_commons/NavigationTertiaire/NavigationTertiaire";
 import AlerteMetadataChantier from "@/components/PageAdminChantiers/AlerteMetadataChantier";
 import FicheChantier from "@/components/PageAdminChantiers/FicheChantier";
+import OngletPonderationsIndicateurs from "@/components/PageAdminChantiers/OngletPonderationsIndicateurs";
 import { MetadataChantier } from "@/server/metadataChantier/queries/RecupererChantierQuery";
+import { IndicateurPonderation } from "@/server/metadataChantier/queries/RecupererIndicateursPonderationsChantierQuery";
 import {
   useChantierForm,
   defaultChantierVide,
@@ -14,13 +18,25 @@ interface PageAdminChantierEditionProps {
   chantierId: string;
   estUneCréation: boolean;
   chantierData: MetadataChantier | null;
+  ponderations: IndicateurPonderation[] | null;
   idSuivant: string | null;
 }
+
+type Onglet = "metadata" | "ponderations";
+
+const ONGLETS = [
+  { value: "metadata", label: "Metadata" },
+  { value: "ponderations", label: "Pondérations" },
+];
+
+const isOnglet = (value: string): value is Onglet =>
+  value === "metadata" || value === "ponderations";
 
 const PageAdminChantierEdition = ({
   chantierId,
   estUneCréation,
   chantierData,
+  ponderations,
   idSuivant,
 }: PageAdminChantierEditionProps) => {
   const chantierIdEffectif = estUneCréation
@@ -37,6 +53,8 @@ const PageAdminChantierEdition = ({
   const { reactHookForm, modifierChantier, creerChantier, alerte } =
     useChantierForm({ defaultValues, chantierId: chantierIdEffectif });
 
+  const [ongletActif, setOngletActif] = useState<Onglet>("metadata");
+
   const titre = estUneCréation
     ? `Nouveau chantier — ${chantierIdEffectif}`
     : `Chantier ${chantierId}`;
@@ -45,48 +63,69 @@ const PageAdminChantierEdition = ({
 
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        <nav className="mb-6 flex items-center gap-2 text-sm">
-          <Link
-            className="text-primary hover:text-dsfr-blue-france-sun-113-hover font-medium hover:underline underline-offset-2 transition-colors"
-            href="/panel-administrateur/chantiers"
-          >
-            Gestion des chantiers
-          </Link>
-          <span className="text-gray-400">/</span>
-          <span className="text-gray-500">{titre}</span>
-        </nav>
+      <div className="max-w-7xl mx-auto px-6 py-8">
+        <FilAriane
+          chemin={[
+            {
+              nom: "Chantiers",
+              lien: "/panel-administrateur/chantiers",
+            },
+          ]}
+          libelléPageCourante={titre}
+        />
 
-        <AlerteMetadataChantier alerte={alerte} />
+        <div className="mb-6">
+          <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
+            {estUneCréation ? "Nouveau chantier" : "Édition"}
+          </p>
+          <h1 className="text-3xl font-bold text-dsfr-grey-50">{titre}</h1>
+        </div>
 
-        <FormProvider {...reactHookForm}>
-          <form
-            method="post"
-            onSubmit={reactHookForm.handleSubmit(
-              estUneCréation ? creerChantier : modifierChantier,
-            )}
-          >
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
-                  {estUneCréation ? "Nouveau chantier" : "Édition"}
-                </p>
-                <h1 className="text-3xl font-bold text-gray-900">{titre}</h1>
-              </div>
-              <Bouton label={labelBouton} variant="primary" type="submit" />
-            </div>
+        {!estUneCréation && (
+          <div className="mb-6">
+            <NavigationTertiaire
+              items={ONGLETS}
+              onValueChange={(valeur) => {
+                if (isOnglet(valeur)) setOngletActif(valeur);
+              }}
+              value={ongletActif}
+            />
+          </div>
+        )}
 
-            <div className="bg-white rounded-lg shadow-sm ring-1 ring-gray-200 overflow-hidden">
-              <div className="px-6 py-6">
-                <FicheChantier />
-              </div>
-            </div>
+        {estUneCréation || ongletActif === "metadata" ? (
+          <>
+            <AlerteMetadataChantier alerte={alerte} />
 
-            <div className="flex justify-end mt-6 pt-4 border-t border-gray-200">
-              <Bouton label={labelBouton} variant="primary" type="submit" />
-            </div>
-          </form>
-        </FormProvider>
+            <FormProvider {...reactHookForm}>
+              <form
+                method="post"
+                onSubmit={reactHookForm.handleSubmit(
+                  estUneCréation ? creerChantier : modifierChantier,
+                )}
+              >
+                <div className="flex justify-end mb-6">
+                  <Bouton label={labelBouton} variant="primary" type="submit" />
+                </div>
+
+                <div className="bg-white rounded-lg shadow-sm ring-1 ring-dsfr-grey-925 overflow-hidden">
+                  <div className="px-6 py-6">
+                    <FicheChantier />
+                  </div>
+                </div>
+
+                <div className="flex justify-end mt-6 pt-4 border-t border-dsfr-grey-925">
+                  <Bouton label={labelBouton} variant="primary" type="submit" />
+                </div>
+              </form>
+            </FormProvider>
+          </>
+        ) : (
+          <OngletPonderationsIndicateurs
+            chantierId={chantierIdEffectif}
+            ponderations={ponderations ?? []}
+          />
+        )}
       </div>
     </div>
   );
