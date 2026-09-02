@@ -47,7 +47,7 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
   const archiverMutation = api.metadataPpg.archiver.useMutation({
     onSuccess: () => {
       toast.success("PPG archivé avec succès.", {
-        position: "top-right",
+        position: "bottom-right",
         richColors: true,
       });
       void refreshRouter();
@@ -57,7 +57,7 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
   const restorerMutation = api.metadataPpg.restorer.useMutation({
     onSuccess: () => {
       toast.success("PPG restauré avec succès.", {
-        position: "top-right",
+        position: "bottom-right",
         richColors: true,
       });
       void refreshRouter();

@@ -51,7 +51,7 @@ const PageAdminPerimetreEdition = ({
   const archiverMutation = api.metadataPerimetre.archiver.useMutation({
     onSuccess: () => {
       toast.success("Périmètre archivé avec succès.", {
-        position: "top-right",
+        position: "bottom-right",
         richColors: true,
       });
       void refreshRouter();
@@ -61,7 +61,7 @@ const PageAdminPerimetreEdition = ({
   const restorerMutation = api.metadataPerimetre.restorer.useMutation({
     onSuccess: () => {
       toast.success("Périmètre restauré avec succès.", {
-        position: "top-right",
+        position: "bottom-right",
         richColors: true,
       });
       void refreshRouter();

@@ -42,7 +42,7 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
   const archiverMutation = api.metadataAxe.archiver.useMutation({
     onSuccess: () => {
       toast.success("Axe archivé avec succès.", {
-        position: "top-right",
+        position: "bottom-right",
         richColors: true,
       });
       void refreshRouter();
@@ -52,7 +52,7 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
   const restorerMutation = api.metadataAxe.restorer.useMutation({
     onSuccess: () => {
       toast.success("Axe restauré avec succès.", {
-        position: "top-right",
+        position: "bottom-right",
         richColors: true,
       });
       void refreshRouter();

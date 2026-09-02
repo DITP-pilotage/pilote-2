@@ -35,14 +35,17 @@ export const usePpgForm = ({
     onSuccess: () => {
       toast.success(
         estUneCréation ? "PPG créé avec succès." : "PPG modifié avec succès.",
-        { position: "top-right", richColors: true },
+        { position: "bottom-right", richColors: true },
       );
       if (estUneCréation) {
         void router.push("/panel-administrateur/referentiels-deprecies/ppgs");
       }
     },
     onError: (error) =>
-      toast.error(error.message, { position: "top-right", richColors: true }),
+      toast.error(error.message, {
+        position: "bottom-right",
+        richColors: true,
+      }),
   });
 
   const enregistrer: SubmitHandler<PpgForm> = (data) => {

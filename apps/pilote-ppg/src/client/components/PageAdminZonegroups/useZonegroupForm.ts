@@ -36,14 +36,17 @@ export const useZonegroupForm = ({
         estUneCréation
           ? "Zone groupe créée avec succès."
           : "Zone groupe modifiée avec succès.",
-        { position: "top-right", richColors: true },
+        { position: "bottom-right", richColors: true },
       );
       if (estUneCréation) {
         void router.push("/panel-administrateur/referentiels/zonegroups");
       }
     },
     onError: (error) =>
-      toast.error(error.message, { position: "top-right", richColors: true }),
+      toast.error(error.message, {
+        position: "bottom-right",
+        richColors: true,
+      }),
   });
 
   const enregistrer: SubmitHandler<ZonegroupForm> = (data) => {

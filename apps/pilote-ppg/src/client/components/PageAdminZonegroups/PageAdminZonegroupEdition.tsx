@@ -52,7 +52,7 @@ const PageAdminZonegroupEdition = ({
   const archiverMutation = api.metadataZonegroup.archiver.useMutation({
     onSuccess: () => {
       toast.success("Zone groupe archivée avec succès.", {
-        position: "top-right",
+        position: "bottom-right",
         richColors: true,
       });
       void refreshRouter();
@@ -62,7 +62,7 @@ const PageAdminZonegroupEdition = ({
   const restorerMutation = api.metadataZonegroup.restorer.useMutation({
     onSuccess: () => {
       toast.success("Zone groupe restaurée avec succès.", {
-        position: "top-right",
+        position: "bottom-right",
         richColors: true,
       });
       void refreshRouter();

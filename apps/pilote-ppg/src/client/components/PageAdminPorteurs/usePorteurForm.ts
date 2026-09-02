@@ -39,14 +39,17 @@ export const usePorteurForm = ({
         estUneCréation
           ? "Porteur créé avec succès."
           : "Porteur modifié avec succès.",
-        { position: "top-right", richColors: true },
+        { position: "bottom-right", richColors: true },
       );
       if (estUneCréation) {
         void router.push("/panel-administrateur/referentiels/porteurs");
       }
     },
     onError: (error) =>
-      toast.error(error.message, { position: "top-right", richColors: true }),
+      toast.error(error.message, {
+        position: "bottom-right",
+        richColors: true,
+      }),
   });
 
   const enregistrer: SubmitHandler<PorteurForm> = (data) => {

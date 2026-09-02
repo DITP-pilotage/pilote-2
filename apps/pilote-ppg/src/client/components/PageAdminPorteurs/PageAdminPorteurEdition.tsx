@@ -64,7 +64,7 @@ const PageAdminPorteurEdition = ({
   const archiverMutation = api.metadataPorteur.archiver.useMutation({
     onSuccess: () => {
       toast.success("Porteur archivé avec succès.", {
-        position: "top-right",
+        position: "bottom-right",
         richColors: true,
       });
       void refreshRouter();
@@ -74,7 +74,7 @@ const PageAdminPorteurEdition = ({
   const restorerMutation = api.metadataPorteur.restorer.useMutation({
     onSuccess: () => {
       toast.success("Porteur restauré avec succès.", {
-        position: "top-right",
+        position: "bottom-right",
         richColors: true,
       });
       void refreshRouter();

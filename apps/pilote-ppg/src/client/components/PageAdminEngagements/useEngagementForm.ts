@@ -38,7 +38,7 @@ export const useEngagementForm = ({
         estUneCréation
           ? "Engagement créé avec succès."
           : "Engagement modifié avec succès.",
-        { position: "top-right", richColors: true },
+        { position: "bottom-right", richColors: true },
       );
       if (estUneCréation) {
         void router.push(
@@ -47,7 +47,10 @@ export const useEngagementForm = ({
       }
     },
     onError: (error) =>
-      toast.error(error.message, { position: "top-right", richColors: true }),
+      toast.error(error.message, {
+        position: "bottom-right",
+        richColors: true,
+      }),
   });
 
   const enregistrer: SubmitHandler<EngagementForm> = (data) => {

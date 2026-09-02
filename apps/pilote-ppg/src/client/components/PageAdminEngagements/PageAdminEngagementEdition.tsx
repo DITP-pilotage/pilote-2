@@ -50,7 +50,7 @@ const PageAdminEngagementEdition = ({
   const archiverMutation = api.metadataEngagement.archiver.useMutation({
     onSuccess: () => {
       toast.success("Engagement archivé avec succès.", {
-        position: "top-right",
+        position: "bottom-right",
         richColors: true,
       });
       void refreshRouter();
@@ -60,7 +60,7 @@ const PageAdminEngagementEdition = ({
   const restorerMutation = api.metadataEngagement.restorer.useMutation({
     onSuccess: () => {
       toast.success("Engagement restauré avec succès.", {
-        position: "top-right",
+        position: "bottom-right",
         richColors: true,
       });
       void refreshRouter();
