@@ -43,11 +43,11 @@ const PageAdminPpgs = () => {
   const [recherche, setRecherche] = useState("");
 
   const ppgsFiltres = ppgs?.filter((ppg) => {
-    const q = recherche.toLowerCase().trim();
-    if (!q) return true;
+    const termeRecherche = recherche.toLowerCase().trim();
+    if (!termeRecherche) return true;
     return (
-      ppg.ppgId.toLowerCase().includes(q) ||
-      ppg.ppgNom.toLowerCase().includes(q)
+      ppg.ppgId.toLowerCase().includes(termeRecherche) ||
+      ppg.ppgNom.toLowerCase().includes(termeRecherche)
     );
   });
 

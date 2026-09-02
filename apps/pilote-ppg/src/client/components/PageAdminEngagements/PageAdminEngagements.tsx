@@ -52,12 +52,12 @@ const PageAdminEngagements = () => {
   const [recherche, setRecherche] = useState("");
 
   const engagementsFiltres = engagements?.filter((engagement) => {
-    const q = recherche.toLowerCase().trim();
-    if (!q) return true;
+    const termeRecherche = recherche.toLowerCase().trim();
+    if (!termeRecherche) return true;
     return (
-      engagement.engagementId.toLowerCase().includes(q) ||
-      engagement.engagementShort.toLowerCase().includes(q) ||
-      engagement.engagementName.toLowerCase().includes(q)
+      engagement.engagementId.toLowerCase().includes(termeRecherche) ||
+      engagement.engagementShort.toLowerCase().includes(termeRecherche) ||
+      engagement.engagementName.toLowerCase().includes(termeRecherche)
     );
   });
 

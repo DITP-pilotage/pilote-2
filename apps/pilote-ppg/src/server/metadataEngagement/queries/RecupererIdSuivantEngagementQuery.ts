@@ -12,9 +12,9 @@ export class RecupererIdSuivantEngagementQuery {
     const engagements = await this.prisma
       .getInstance()
       .metadata_engagement.findMany({ select: { engagement_id: true } });
-    const maxId = engagements.reduce((max, e) => {
-      const n = parseInt(e.engagement_id, 10);
-      return isNaN(n) ? max : Math.max(max, n);
+    const maxId = engagements.reduce((max, engagement) => {
+      const idNumérique = parseInt(engagement.engagement_id, 10);
+      return isNaN(idNumérique) ? max : Math.max(max, idNumérique);
     }, 0);
     return String(maxId + 1);
   }

@@ -42,11 +42,11 @@ const PageAdminAxes = () => {
   const [recherche, setRecherche] = useState("");
 
   const axesFiltres = axes?.filter((axe) => {
-    const q = recherche.toLowerCase().trim();
-    if (!q) return true;
+    const termeRecherche = recherche.toLowerCase().trim();
+    if (!termeRecherche) return true;
     return (
-      axe.axeId.toLowerCase().includes(q) ||
-      axe.axeName.toLowerCase().includes(q)
+      axe.axeId.toLowerCase().includes(termeRecherche) ||
+      axe.axeName.toLowerCase().includes(termeRecherche)
     );
   });
 

@@ -37,6 +37,7 @@ const PageAdminEngagementEdition = ({
         engagementId: engagementData.engagementId,
         engagementShort: engagementData.engagementShort,
         engagementName: engagementData.engagementName,
+        estUneCréation: false,
       }
     : defaultEngagementVide(engagementIdEffectif);
 

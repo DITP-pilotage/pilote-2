@@ -16,6 +16,7 @@ export const defaultEngagementVide = (
   engagementId,
   engagementShort: "",
   engagementName: "",
+  estUneCréation: true,
 });
 
 export const useEngagementForm = ({
