@@ -176,6 +176,12 @@ INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type",
 INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('ZFE11', 'ZFE Grand-Est (Reims, Nancy, Metz, Strasbourg, Mulhouse)', '11', 'ZFE', 'FRANCE') ON CONFLICT DO NOTHING;
 INSERT INTO raw_data.metadata_zones ("zone_id", "nom", "zone_code", "zone_type", "zone_parent") VALUES ('ZFE12', 'ZFE Hauts-de-France (Dunkerque, Lille, Valenciennes, Béthune, Douai-Lens, Amiens)', '12', 'ZFE', 'FRANCE') ON CONFLICT DO NOTHING;
 
+-- metadata_axes (4 rows)
+INSERT INTO raw_data.metadata_axes ("axe_id", "axe_name", "axe_desc") VALUES ('EMPLOI', 'Atteindre le plein emploi et réindustrialiser le pays', NULL) ON CONFLICT DO NOTHING;
+INSERT INTO raw_data.metadata_axes ("axe_id", "axe_name", "axe_desc") VALUES ('TE', 'Planifier et accélérer la transition écologique', NULL) ON CONFLICT DO NOTHING;
+INSERT INTO raw_data.metadata_axes ("axe_id", "axe_name", "axe_desc") VALUES ('PROGRES', 'Bâtir de nouveaux progrès et refonder nos services publics', NULL) ON CONFLICT DO NOTHING;
+INSERT INTO raw_data.metadata_axes ("axe_id", "axe_name", "axe_desc") VALUES ('ENGAG', 'Renforcer l’ordre républicain et encourager l’engagement', NULL) ON CONFLICT DO NOTHING;
+
 -- metadata_ppgs (60 rows)
 INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-1', 'Faire réussir les élèves dans une école des savoirs fondamentaux qui favorise l’épanouissement et qui protège nos enfants', NULL, 'PROGRES') ON CONFLICT DO NOTHING;
 INSERT INTO raw_data.metadata_ppgs ("ppg_id", "ppg_nom", "ppg_desc", "ppg_axe") VALUES ('PPG-10', 'Lutter contre l''ensemble des discriminations', NULL, 'ENGAG') ON CONFLICT DO NOTHING;
@@ -362,12 +368,6 @@ INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteu
 INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-029', 'todo', NULL) ON CONFLICT DO NOTHING;
 INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-030', 'Numérique et IA', '290') ON CONFLICT DO NOTHING;
 INSERT INTO raw_data.metadata_perimetres ("perimetre_id", "per_nom", "per_porteur_id") VALUES ('PER-031', 'Jeunesse', '340') ON CONFLICT DO NOTHING;
-
--- metadata_axes (4 rows)
-INSERT INTO raw_data.metadata_axes ("axe_id", "axe_name", "axe_desc") VALUES ('EMPLOI', 'Atteindre le plein emploi et réindustrialiser le pays', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_axes ("axe_id", "axe_name", "axe_desc") VALUES ('TE', 'Planifier et accélérer la transition écologique', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_axes ("axe_id", "axe_name", "axe_desc") VALUES ('PROGRES', 'Bâtir de nouveaux progrès et refonder nos services publics', NULL) ON CONFLICT DO NOTHING;
-INSERT INTO raw_data.metadata_axes ("axe_id", "axe_name", "axe_desc") VALUES ('ENGAG', 'Renforcer l’ordre républicain et encourager l’engagement', NULL) ON CONFLICT DO NOTHING;
 
 -- metadata_engagement (5 rows)
 INSERT INTO raw_data.metadata_engagement ("engagement_id", "engagement_short", "engagement_name") VALUES ('1', 'EMPLOI', 'Atteindre le plein emploi et réindustrialiser le pays') ON CONFLICT DO NOTHING;

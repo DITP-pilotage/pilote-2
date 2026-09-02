@@ -51,3 +51,11 @@ export const comparerDateDeMàjDonnées = (
 export function formatDate(date: Date | null): string | null {
   return date !== null ? date.toISOString() : null;
 }
+
+export function formaterDateCourte(date: Date): string {
+  return date.toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}

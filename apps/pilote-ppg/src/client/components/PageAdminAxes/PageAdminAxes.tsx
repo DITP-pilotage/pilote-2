@@ -5,6 +5,7 @@ import Loader from "@/components/_commons/Loader/Loader";
 import { Lien } from "@/components/_commons/Lien/Lien";
 import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
+import { formaterDateCourte } from "@/client/utils/date/date";
 import type { AxeAdminListItem } from "@/server/metadataAxe/queries/ListerAxesAdminQuery";
 
 const LigneAxe = ({ axe }: { axe: AxeAdminListItem }) => {
@@ -29,11 +30,7 @@ const LigneAxe = ({ axe }: { axe: AxeAdminListItem }) => {
         <BadgeStatutReferentiel supprimé={supprimé} />
       </td>
       <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
-        {new Date(axe.updatedAt).toLocaleDateString("fr-FR", {
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        })}
+        {formaterDateCourte(new Date(axe.updatedAt))}
       </td>
     </tr>
   );
