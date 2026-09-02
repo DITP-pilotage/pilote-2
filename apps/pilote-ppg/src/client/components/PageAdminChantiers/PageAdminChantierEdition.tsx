@@ -119,10 +119,7 @@ const PageAdminChantierEdition = ({
             </FormProvider>
           </>
         ) : (
-          <OngletPonderationsIndicateurs
-            chantierId={chantierIdEffectif}
-            ponderations={ponderations ?? []}
-          />
+          <OngletPonderationsIndicateurs ponderations={ponderations ?? []} />
         )}
       </div>
     </div>

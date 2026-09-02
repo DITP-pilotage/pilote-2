@@ -1,6 +1,5 @@
 import { Control, Controller } from "react-hook-form";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
-import Alerte from "@/components/_commons/Alerte/Alerte";
 import { Infobulle } from "@/components/_commons/Infobulle/Infobulle";
 import {
   MAILLES,
@@ -109,10 +108,8 @@ const PiedTableauPonderations = ({
 );
 
 const OngletPonderationsIndicateurs = ({
-  chantierId,
   ponderations,
 }: {
-  chantierId: string;
   ponderations: IndicateurPonderation[];
 }) => {
   const {
@@ -120,9 +117,8 @@ const OngletPonderationsIndicateurs = ({
     sommesParMaille,
     erreursSommes,
     enregistrer,
-    alerte,
     estEnCoursDEnregistrement,
-  } = usePonderationsIndicateursForm({ chantierId, ponderations });
+  } = usePonderationsIndicateursForm({ ponderations });
 
   if (ponderations.length === 0) {
     return (
@@ -134,12 +130,6 @@ const OngletPonderationsIndicateurs = ({
 
   return (
     <form onSubmit={enregistrer}>
-      {alerte && (
-        <div className="mb-4">
-          <Alerte titre={alerte.titre} type={alerte.type} />
-        </div>
-      )}
-
       <div className="flex items-center justify-end mb-4">
         <Bouton
           disabled={estEnCoursDEnregistrement}
