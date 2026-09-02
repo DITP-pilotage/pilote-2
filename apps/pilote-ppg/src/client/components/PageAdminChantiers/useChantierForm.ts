@@ -1,12 +1,11 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useState } from "react";
 import { useRouter } from "next/router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { $Enums } from "@prisma/client";
+import { toast } from "sonner";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
-import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import { MAILLES } from "@/server/metadataChantier/domain/maille";
 
 export const validationChantierSchema = z.object({
@@ -53,13 +52,10 @@ export const defaultChantierVide = (chantierId: string): ChantierForm => ({
 
 export const useChantierForm = ({
   defaultValues,
-  chantierId,
 }: {
   defaultValues: ChantierForm;
-  chantierId: string;
 }) => {
   const router = useRouter();
-  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
   const reactHookForm = useForm<ChantierForm>({
     resolver: zodResolver(validationChantierSchema),
@@ -68,18 +64,31 @@ export const useChantierForm = ({
 
   const mutationModifier = api.metadataChantier.enregistrer.useMutation({
     onSuccess: () => {
-      router.push(
-        `/panel-administrateur/chantiers/${chantierId}?_action=modification-reussie`,
-      );
+      toast.success("Chantier modifié avec succès.", {
+        position: "bottom-right",
+        richColors: true,
+      });
     },
-    onError: (error) => setAlerte({ type: "erreur", titre: error.message }),
+    onError: (error) =>
+      toast.error(error.message, {
+        position: "bottom-right",
+        richColors: true,
+      }),
   });
 
   const mutationCreer = api.metadataChantier.enregistrer.useMutation({
     onSuccess: () => {
-      router.push("/panel-administrateur/chantiers?_action=creation-reussie");
+      toast.success("Chantier créé avec succès.", {
+        position: "bottom-right",
+        richColors: true,
+      });
+      void router.push("/panel-administrateur/chantiers");
     },
-    onError: (error) => setAlerte({ type: "erreur", titre: error.message }),
+    onError: (error) =>
+      toast.error(error.message, {
+        position: "bottom-right",
+        richColors: true,
+      }),
   });
 
   const modifierChantier: SubmitHandler<ChantierForm> = (data) => {
@@ -98,5 +107,5 @@ export const useChantierForm = ({
     });
   };
 
-  return { reactHookForm, modifierChantier, creerChantier, alerte };
+  return { reactHookForm, modifierChantier, creerChantier };
 };

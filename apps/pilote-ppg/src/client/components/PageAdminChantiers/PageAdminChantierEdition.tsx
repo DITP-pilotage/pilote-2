@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { NavigationTertiaire } from "@/components/_commons/NavigationTertiaire/NavigationTertiaire";
-import AlerteMetadataChantier from "@/components/PageAdminChantiers/AlerteMetadataChantier";
 import FicheChantier from "@/components/PageAdminChantiers/FicheChantier";
 import OngletPonderationsIndicateurs from "@/components/PageAdminChantiers/OngletPonderationsIndicateurs";
 import { MetadataChantier } from "@/server/metadataChantier/queries/RecupererChantierQuery";
@@ -50,8 +49,9 @@ const PageAdminChantierEdition = ({
       }
     : defaultChantierVide(chantierIdEffectif);
 
-  const { reactHookForm, modifierChantier, creerChantier, alerte } =
-    useChantierForm({ defaultValues, chantierId: chantierIdEffectif });
+  const { reactHookForm, modifierChantier, creerChantier } = useChantierForm({
+    defaultValues,
+  });
 
   const [ongletActif, setOngletActif] = useState<Onglet>("metadata");
 
@@ -95,8 +95,6 @@ const PageAdminChantierEdition = ({
 
         {estUneCréation || ongletActif === "metadata" ? (
           <>
-            <AlerteMetadataChantier alerte={alerte} />
-
             <FormProvider {...reactHookForm}>
               <form
                 method="post"
