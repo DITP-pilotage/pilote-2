@@ -3108,6 +3108,13 @@ git commit -m "[DITP-pilotage/pilote-2] feature(PIL-1684): retour utilisateur su
 
 ## Task 15: Harnais d'évaluation
 
+> **Retirée le 2026-09-02, après exécution.** Le harnais a été écrit puis supprimé : un jeu de
+> cas fige une stratégie d'appel d'outils au lieu de vérifier une réponse, et incite à ajuster
+> le prompt pour faire passer le test. L'observabilité du tour donne le même signal sur du
+> trafic réel. Voir §12 de `docs/superpowers/specs/2026-08-28-assistant-kpilote-design.md`.
+> Cette tâche est conservée comme trace de ce qui a été fait, pas comme travail à refaire.
+
+
 **Files:**
 - Create: `apps/kpilote-api/src/assistant/evals/cas.ts`
 - Create: `apps/kpilote-api/src/assistant/evals/executer.ts`

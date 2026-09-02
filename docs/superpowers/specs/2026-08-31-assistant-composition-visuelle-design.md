@@ -44,7 +44,6 @@ l'assistant a le droit d'assembler, et le contrat qui la partage entre le serveu
 - Le tool `compose_vue` et son sous-agent en sortie structurée.
 - La validation des identifiants produits contre le contexte fourni.
 - Le rendu : grille plate, Suspense et frontière d'erreur par vignette.
-- Les cas d'évaluation correspondants.
 
 ### Hors périmètre
 
@@ -249,24 +248,26 @@ registre (un test de type qui échoue si une vignette n'a pas de composant).
 **Intégration** — le tool avec un modèle bouchonné rendant une vue valide, une vue avec un
 identifiant hors contexte, et une vue dépassant la borne de vignettes.
 
-**Évals** — trois cas ajoutés au harnais existant, sur le même principe : on n'évalue pas
-l'esthétique, on évalue les décisions vérifiables.
+**Pas d'évals.** Le harnais a été retiré du projet — voir §12 de la spec du moteur. Sur la
+composition, un jeu de cas serait d'autant plus discutable qu'il figerait une mise en page :
+« la vue doit contenir telle vignette » n'est pas une propriété qu'on veut verrouiller.
 
-- « montre-moi IND-1 sur DEPT-84 » → `compose_vue` appelé, la vue contient au moins une vignette
-  d'indicateur, tous ses identifiants proviennent du contexte.
-- « compare IND-1 entre DEPT-84 et DEPT-13 » → la vue contient une vignette par territoire.
-- « montre-moi la fraude fiscale » sans territoire → `compose_vue` **non** appelé, l'assistant
-  demande le territoire.
+Ce qu'on surveille à la place, c'est l'événement `assistant.composeVue.rejet` : il dit à quelle
+fréquence le sous-agent produit une vue invalide et pourquoi. Un taux qui monte après une
+retouche du catalogue ou des exemples est le vrai signal — sur du trafic réel, sans avoir figé
+de composition.
 
-Ce dernier cas est le plus important : il vérifie qu'on ne compose pas une vue sur un individu
-choisi arbitrairement.
+La règle qui compte, elle, est verrouillée par le code et non par un test de comportement :
+`inputComposeVueSchema` exige au moins un individu, donc l'outil ne peut pas composer sans
+territoire.
 
 ## 10. Points à trancher au démarrage
 
 - **Nom de l'outil** : `compose_vue` proposé. `compose_dashboard` serait plus proche de ppg mais
   mélange les langues ; la convention kpilote est verbe anglais et entité française.
 - **Modèle du sous-agent** : le même que le principal par défaut. La composition structurée est
-  peut-être le cas où un modèle plus léger suffit — à mesurer sur les trois cas d'éval.
+  peut-être le cas où un modèle plus léger suffit — à essayer en dev, en surveillant le taux de
+  rejet.
 - **Modèle bouchonné des tests d'intégration** : `MockLanguageModelV3` doit rendre une sortie
   structurée conforme à `vueSchema`. Vérifier au démarrage que le mock du SDK supporte
   `Output.object` ; sinon tester la validation séparément de l'appel.
