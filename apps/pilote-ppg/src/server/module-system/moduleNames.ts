@@ -27,6 +27,9 @@ export const moduleNames = [
   "metadataPorteur",
   "metadataPerimetre",
   "metadataZonegroup",
+  "metadataAxe",
+  "metadataPpg",
+  "metadataEngagement",
 ] as const;
 
 export type ModuleName = (typeof moduleNames)[number];

@@ -536,21 +536,25 @@ model metadata_chantiers {
   created_at           DateTime    @default(now()) @db.Timestamptz
   updated_at           DateTime    @default(now()) @updatedAt @db.Timestamptz
 
-  ppg       metadata_ppgs        @relation(fields: [ch_ppg],        references: [ppg_id])
-  perimetre metadata_perimetres  @relation(fields: [ch_per],        references: [perimetre_id])
-  zonegroup metadata_zonegroup?  @relation(fields: [zg_applicable], references: [zone_group_id])
+  ppg        metadata_ppgs        @relation(fields: [ch_ppg],        references: [ppg_id])
+  perimetre  metadata_perimetres  @relation(fields: [ch_per],        references: [perimetre_id])
+  zonegroup  metadata_zonegroup?  @relation(fields: [zg_applicable], references: [zone_group_id])
+  engagement metadata_engagement? @relation(fields: [engagement_short], references: [engagement_short])
 
   @@schema("raw_data")
 }
 
 model metadata_ppgs {
-  ppg_id     String   @id
+  ppg_id     String    @id
   ppg_nom    String
   ppg_desc   String?
   ppg_axe    String?
-  created_at DateTime @default(now()) @db.Timestamptz
-  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz
-  chantiers  metadata_chantiers[]
+  created_at DateTime  @default(now()) @db.Timestamptz
+  updated_at DateTime  @default(now()) @updatedAt @db.Timestamptz
+  deleted_at DateTime? @db.Timestamptz
+
+  axe       metadata_axes?       @relation(fields: [ppg_axe], references: [axe_id])
+  chantiers metadata_chantiers[]
 
   @@schema("raw_data")
 }
@@ -594,22 +598,28 @@ model metadata_perimetres {
 }
 
 model metadata_axes {
-  axe_id     String   @id
+  axe_id     String    @id
   axe_name   String
   axe_desc   String?
-  created_at DateTime @default(now()) @db.Timestamptz
-  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz
+  created_at DateTime  @default(now()) @db.Timestamptz
+  updated_at DateTime  @default(now()) @updatedAt @db.Timestamptz
+  deleted_at DateTime? @db.Timestamptz
+
+  ppgs metadata_ppgs[]
 
   @@schema("raw_data")
 }
 
 // Utilisé uniquement par les modèles baromètre (baro_meta_engagement, baro_meta_chantiers) côté datajobs — à supprimer lors du décommissionnement du baromètre
 model metadata_engagement {
-  engagement_id    String   @id
-  engagement_short String
+  engagement_id    String    @id
+  engagement_short String    @unique
   engagement_name  String
-  created_at       DateTime @default(now()) @db.Timestamptz
-  updated_at       DateTime @default(now()) @updatedAt @db.Timestamptz
+  created_at       DateTime  @default(now()) @db.Timestamptz
+  updated_at       DateTime  @default(now()) @updatedAt @db.Timestamptz
+  deleted_at       DateTime? @db.Timestamptz
+
+  chantiers metadata_chantiers[]
 
   @@schema("raw_data")
 }

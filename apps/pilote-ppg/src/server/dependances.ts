@@ -33,6 +33,9 @@ import { metadataChantierModule } from "./metadataChantier/module";
 import { metadataPorteurModule } from "./metadataPorteur/module";
 import { metadataPerimetreModule } from "./metadataPerimetre/module";
 import { metadataZonegroupModule } from "./metadataZonegroup/module";
+import { metadataAxeModule } from "./metadataAxe/module";
+import { metadataPpgModule } from "./metadataPpg/module";
+import { metadataEngagementModule } from "./metadataEngagement/module";
 
 const allModules = [
   sharedModule,
@@ -63,6 +66,9 @@ const allModules = [
   metadataPorteurModule,
   metadataPerimetreModule,
   metadataZonegroupModule,
+  metadataAxeModule,
+  metadataPpgModule,
+  metadataEngagementModule,
 ];
 
 // Compile-time check: errors with missing module name(s) if allModules is not exhaustive
@@ -111,6 +117,9 @@ function registerContainer(): ContainerDependencies {
     metadataPorteur: getContainer("metadataPorteur"),
     metadataPerimetre: getContainer("metadataPerimetre"),
     metadataZonegroup: getContainer("metadataZonegroup"),
+    metadataAxe: getContainer("metadataAxe"),
+    metadataPpg: getContainer("metadataPpg"),
+    metadataEngagement: getContainer("metadataEngagement"),
   };
 }
 

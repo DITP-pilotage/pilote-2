@@ -95,6 +95,28 @@ export const MenuLateralPanelAdministrateur: FunctionComponent<
         pageKey: "referentiels-zonegroups",
         indent: true,
       },
+      { type: "heading", label: "Référentiels dépréciés" },
+      {
+        type: "item",
+        label: "PPG",
+        href: "/panel-administrateur/referentiels-deprecies/ppgs",
+        pageKey: "referentiels-deprecies-ppgs",
+        indent: true,
+      },
+      {
+        type: "item",
+        label: "Axes",
+        href: "/panel-administrateur/referentiels-deprecies/axes",
+        pageKey: "referentiels-deprecies-axes",
+        indent: true,
+      },
+      {
+        type: "item",
+        label: "Engagements",
+        href: "/panel-administrateur/referentiels-deprecies/engagements",
+        pageKey: "referentiels-deprecies-engagements",
+        indent: true,
+      },
       {
         type: "item",
         label: "Habilitations coordinateurs",

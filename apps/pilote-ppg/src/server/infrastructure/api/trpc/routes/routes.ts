@@ -26,6 +26,9 @@ import { metadataChantierRouter } from "./metadataChantier";
 import { metadataPorteurRouter } from "./metadataPorteur";
 import { metadataPerimetreRouter } from "./metadataPerimetre";
 import { metadataZonegroupRouter } from "./metadataZonegroup";
+import { metadataAxeRouter } from "./metadataAxe";
+import { metadataPpgRouter } from "./metadataPpg";
+import { metadataEngagementRouter } from "./metadataEngagement";
 
 export const appRouter = créerRouteurTRPC({
   chantier: chantierRouter,
@@ -55,4 +58,7 @@ export const appRouter = créerRouteurTRPC({
   metadataPorteur: metadataPorteurRouter,
   metadataPerimetre: metadataPerimetreRouter,
   metadataZonegroup: metadataZonegroupRouter,
+  metadataAxe: metadataAxeRouter,
+  metadataPpg: metadataPpgRouter,
+  metadataEngagement: metadataEngagementRouter,
 });
