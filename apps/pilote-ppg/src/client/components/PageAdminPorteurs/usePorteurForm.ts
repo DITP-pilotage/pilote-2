@@ -1,12 +1,11 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useState } from "react";
 import { useRouter } from "next/router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { toast } from "sonner";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { porteurCommandSchema } from "@/server/metadataPorteur/handlers/EnregistrerPorteurHandler";
-import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 
 export type PorteurForm = z.infer<typeof porteurCommandSchema>;
 
@@ -22,15 +21,12 @@ export const defaultPorteurVide = (porteurId: string): PorteurForm => ({
 
 export const usePorteurForm = ({
   defaultValues,
-  porteurId,
   estUneCréation,
 }: {
   defaultValues: PorteurForm;
-  porteurId: string;
   estUneCréation: boolean;
 }) => {
   const router = useRouter();
-  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
   const reactHookForm = useForm<PorteurForm>({
     resolver: zodResolver(porteurCommandSchema),
@@ -39,17 +35,18 @@ export const usePorteurForm = ({
 
   const mutation = api.metadataPorteur.enregistrer.useMutation({
     onSuccess: () => {
+      toast.success(
+        estUneCréation
+          ? "Porteur créé avec succès."
+          : "Porteur modifié avec succès.",
+        { position: "top-right", richColors: true },
+      );
       if (estUneCréation) {
-        void router.push(
-          "/panel-administrateur/referentiels/porteurs?_action=creation-reussie",
-        );
-      } else {
-        void router.push(
-          `/panel-administrateur/referentiels/porteurs/${porteurId}?_action=modification-reussie`,
-        );
+        void router.push("/panel-administrateur/referentiels/porteurs");
       }
     },
-    onError: (error) => setAlerte({ type: "erreur", titre: error.message }),
+    onError: (error) =>
+      toast.error(error.message, { position: "top-right", richColors: true }),
   });
 
   const enregistrer: SubmitHandler<PorteurForm> = (data) => {
@@ -65,7 +62,6 @@ export const usePorteurForm = ({
   return {
     reactHookForm,
     enregistrer,
-    alerte,
     isPending: mutation.isPending,
   };
 };

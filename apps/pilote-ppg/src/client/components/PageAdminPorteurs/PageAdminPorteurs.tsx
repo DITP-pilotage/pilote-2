@@ -78,7 +78,6 @@ const LignePorteur = ({ porteur }: { porteur: PorteurAdminListItem }) => {
 };
 
 const PageAdminPorteurs = () => {
-  const router = useRouter();
   const { data: porteurs, isLoading } = api.metadataPorteur.lister.useQuery();
   const [recherche, setRecherche] = useState("");
 
@@ -92,17 +91,9 @@ const PageAdminPorteurs = () => {
     );
   });
 
-  const succès = router.query._action === "creation-reussie";
-
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {succès && (
-          <div className="mb-6 rounded-md bg-green-50 border border-green-200 px-4 py-3 text-green-800 text-sm font-medium">
-            Porteur créé avec succès.
-          </div>
-        )}
-
         <div className="mb-8 flex items-end justify-between">
           <div>
             <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">

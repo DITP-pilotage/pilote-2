@@ -1,12 +1,11 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useState } from "react";
 import { useRouter } from "next/router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { toast } from "sonner";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { axeCommandSchema } from "@/server/metadataAxe/handlers/EnregistrerAxeHandler";
-import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 
 export type AxeForm = z.infer<typeof axeCommandSchema>;
 
@@ -19,15 +18,12 @@ export const defaultAxeVide = (): AxeForm => ({
 
 export const useAxeForm = ({
   defaultValues,
-  axeId,
   estUneCréation,
 }: {
   defaultValues: AxeForm;
-  axeId: string;
   estUneCréation: boolean;
 }) => {
   const router = useRouter();
-  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
   const reactHookForm = useForm<AxeForm>({
     resolver: zodResolver(axeCommandSchema),
@@ -36,17 +32,16 @@ export const useAxeForm = ({
 
   const mutation = api.metadataAxe.enregistrer.useMutation({
     onSuccess: () => {
+      toast.success(
+        estUneCréation ? "Axe créé avec succès." : "Axe modifié avec succès.",
+        { position: "top-right", richColors: true },
+      );
       if (estUneCréation) {
-        void router.push(
-          "/panel-administrateur/referentiels-deprecies/axes?_action=creation-reussie",
-        );
-      } else {
-        void router.push(
-          `/panel-administrateur/referentiels-deprecies/axes/${axeId}?_action=modification-reussie`,
-        );
+        void router.push("/panel-administrateur/referentiels-deprecies/axes");
       }
     },
-    onError: (error) => setAlerte({ type: "erreur", titre: error.message }),
+    onError: (error) =>
+      toast.error(error.message, { position: "top-right", richColors: true }),
   });
 
   const enregistrer: SubmitHandler<AxeForm> = (data) => {
@@ -60,7 +55,6 @@ export const useAxeForm = ({
   return {
     reactHookForm,
     enregistrer,
-    alerte,
     isPending: mutation.isPending,
   };
 };

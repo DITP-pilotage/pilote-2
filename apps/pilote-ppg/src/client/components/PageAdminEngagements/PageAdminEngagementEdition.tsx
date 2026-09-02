@@ -1,8 +1,9 @@
-import { useRouter } from "next/router";
 import { FormProvider } from "react-hook-form";
+import { toast } from "sonner";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { MetadataEngagement } from "@/server/metadataEngagement/queries/RecupererEngagementQuery";
 import {
   defaultEngagementVide,
@@ -27,7 +28,7 @@ const PageAdminEngagementEdition = ({
   engagementData,
   idSuivant,
 }: Props) => {
-  const router = useRouter();
+  const refreshRouter = useRefreshRouter();
   const engagementIdEffectif = estUneCréation
     ? (idSuivant ?? engagementId)
     : engagementId;
@@ -41,24 +42,29 @@ const PageAdminEngagementEdition = ({
       }
     : defaultEngagementVide(engagementIdEffectif);
 
-  const { reactHookForm, enregistrer, alerte, isPending } = useEngagementForm({
+  const { reactHookForm, enregistrer, isPending } = useEngagementForm({
     defaultValues,
-    engagementId: engagementIdEffectif,
     estUneCréation,
   });
 
   const archiverMutation = api.metadataEngagement.archiver.useMutation({
-    onSuccess: () =>
-      router.push(
-        `/panel-administrateur/referentiels-deprecies/engagements/${engagementIdEffectif}?_action=modification-reussie`,
-      ),
+    onSuccess: () => {
+      toast.success("Engagement archivé avec succès.", {
+        position: "top-right",
+        richColors: true,
+      });
+      void refreshRouter();
+    },
   });
 
   const restorerMutation = api.metadataEngagement.restorer.useMutation({
-    onSuccess: () =>
-      router.push(
-        `/panel-administrateur/referentiels-deprecies/engagements/${engagementIdEffectif}?_action=modification-reussie`,
-      ),
+    onSuccess: () => {
+      toast.success("Engagement restauré avec succès.", {
+        position: "top-right",
+        richColors: true,
+      });
+      void refreshRouter();
+    },
   });
 
   const estSupprime = engagementData?.deletedAt != null;
@@ -70,7 +76,6 @@ const PageAdminEngagementEdition = ({
     );
   const estUtilisé = utilisation?.estUtilise ?? false;
 
-  const succès = router.query._action === "modification-reussie";
   const titre = estUneCréation
     ? `Nouvel engagement - ${engagementIdEffectif}`
     : `Engagement ${engagementId}`;
@@ -88,20 +93,6 @@ const PageAdminEngagementEdition = ({
           libelléPageCourante={titre}
         />
 
-        {succès && (
-          <Alerte
-            classesSupplementaires="mb-6"
-            message="Engagement enregistré avec succès."
-            type="succès"
-          />
-        )}
-        {alerte && (
-          <Alerte
-            classesSupplementaires="mb-6"
-            titre={alerte.titre}
-            type="erreur"
-          />
-        )}
         {!estUneCréation && !estSupprime && estUtilisé && (
           <Alerte
             classesSupplementaires="mb-6"

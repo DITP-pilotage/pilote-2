@@ -1,8 +1,9 @@
-import { useRouter } from "next/router";
 import { FormProvider } from "react-hook-form";
+import { toast } from "sonner";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { MetadataAxe } from "@/server/metadataAxe/queries/RecupererAxeQuery";
 import {
   AxeForm,
@@ -22,7 +23,7 @@ interface Props {
 }
 
 const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
-  const router = useRouter();
+  const refreshRouter = useRefreshRouter();
 
   const defaultValues: AxeForm = axeData
     ? {
@@ -33,24 +34,29 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
       }
     : defaultAxeVide();
 
-  const { reactHookForm, enregistrer, alerte, isPending } = useAxeForm({
+  const { reactHookForm, enregistrer, isPending } = useAxeForm({
     defaultValues,
-    axeId,
     estUneCréation,
   });
 
   const archiverMutation = api.metadataAxe.archiver.useMutation({
-    onSuccess: () =>
-      router.push(
-        `/panel-administrateur/referentiels-deprecies/axes/${axeId}?_action=modification-reussie`,
-      ),
+    onSuccess: () => {
+      toast.success("Axe archivé avec succès.", {
+        position: "top-right",
+        richColors: true,
+      });
+      void refreshRouter();
+    },
   });
 
   const restorerMutation = api.metadataAxe.restorer.useMutation({
-    onSuccess: () =>
-      router.push(
-        `/panel-administrateur/referentiels-deprecies/axes/${axeId}?_action=modification-reussie`,
-      ),
+    onSuccess: () => {
+      toast.success("Axe restauré avec succès.", {
+        position: "top-right",
+        richColors: true,
+      });
+      void refreshRouter();
+    },
   });
 
   const estSupprime = axeData?.deletedAt != null;
@@ -61,7 +67,6 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
   );
   const estUtilisé = utilisation?.estUtilise ?? false;
 
-  const succès = router.query._action === "modification-reussie";
   const titre = estUneCréation ? "Nouvel axe" : `Axe ${axeId}`;
 
   return (
@@ -77,20 +82,6 @@ const PageAdminAxeEdition = ({ axeId, estUneCréation, axeData }: Props) => {
           libelléPageCourante={titre}
         />
 
-        {succès && (
-          <Alerte
-            classesSupplementaires="mb-6"
-            message="Axe enregistré avec succès."
-            type="succès"
-          />
-        )}
-        {alerte && (
-          <Alerte
-            classesSupplementaires="mb-6"
-            titre={alerte.titre}
-            type="erreur"
-          />
-        )}
         {!estUneCréation && !estSupprime && estUtilisé && (
           <Alerte
             classesSupplementaires="mb-6"
