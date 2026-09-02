@@ -23,6 +23,7 @@ time pg_dump -d $CONN_STR_PROD --verbose \
     --table raw_data.mesure_indicateur \
     --table raw_data.commentaires \
     --table raw_data.metadata_zonegroup \
+    --table raw_data.metadata_indicateurs \
     --table raw_data.metadata_indicateurs_hidden \
     --table raw_data.metadata_indicateurs_complementaire \
     --table raw_data.metadata_parametrage_indicateurs \

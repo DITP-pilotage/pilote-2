@@ -14,7 +14,11 @@ import {
 import { IndicateurPonderation } from "@/server/metadataChantier/queries/RecupererIndicateursPonderationsChantierQuery";
 import { clsxm } from "@/utils/clsxm";
 
-interface LignePonderationProps {
+const LignePonderation = ({
+  control,
+  index,
+  ponderation,
+}: {
   control: Control<{
     lignes: {
       poidsPourcentDept: number | null;
@@ -24,13 +28,7 @@ interface LignePonderationProps {
   }>;
   index: number;
   ponderation: IndicateurPonderation;
-}
-
-const LignePonderation = ({
-  control,
-  index,
-  ponderation,
-}: LignePonderationProps) => (
+}) => (
   <tr className="border-t border-dsfr-grey-1000">
     <td
       className="px-4 py-3 text-dsfr-grey-50 truncate"

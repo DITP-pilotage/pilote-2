@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
+import { getPrisma } from "@/server/db/PrismaTransaction";
 import type { Inject } from "@/server/metadataChantier/module";
 import {
   MAILLES,
@@ -42,8 +43,8 @@ const CHAMP_POIDS_PAR_MAILLE: Record<
 export class EnregistrerPonderationsIndicateursHandler {
   private readonly prisma: PrismaPilote;
 
-  constructor({ prisma }: Inject<"prisma">) {
-    this.prisma = prisma;
+  constructor(private readonly dependencies: Inject<"prisma" | "transaction">) {
+    this.prisma = dependencies.prisma;
   }
 
   async execute(
@@ -83,17 +84,20 @@ export class EnregistrerPonderationsIndicateursHandler {
       }
     }
 
-    await Promise.all(
-      command.lignes.map((ligne) =>
-        instance.metadata_parametrage_indicateurs.update({
-          where: { indic_id: ligne.indicId },
-          data: {
-            poids_pourcent_dept_declaree: ligne.poidsPourcentDept,
-            poids_pourcent_reg_declaree: ligne.poidsPourcentReg,
-            poids_pourcent_nat_declaree: ligne.poidsPourcentNat,
-          },
-        }),
-      ),
-    );
+    await this.dependencies.transaction.run(async () => {
+      const prisma = getPrisma();
+      await Promise.all(
+        command.lignes.map((ligne) =>
+          prisma.metadata_parametrage_indicateurs.update({
+            where: { indic_id: ligne.indicId },
+            data: {
+              poids_pourcent_dept_declaree: ligne.poidsPourcentDept,
+              poids_pourcent_reg_declaree: ligne.poidsPourcentReg,
+              poids_pourcent_nat_declaree: ligne.poidsPourcentNat,
+            },
+          }),
+        ),
+      );
+    });
   }
 }

@@ -3,15 +3,18 @@ import { EnregistrerPonderationsIndicateursHandler } from "@/server/metadataChan
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { getPrisma } from "@/server/db/PrismaTransaction";
+import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
 import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 
 describe("EnregistrerPonderationsIndicateursHandler", () => {
   let handler: EnregistrerPonderationsIndicateursHandler;
   const prismaPilote = new PrismaPilote();
+  const transaction = new InMemoryTransaction();
 
   beforeEach(() => {
     handler = new EnregistrerPonderationsIndicateursHandler({
       prisma: prismaPilote,
+      transaction,
     });
   });
 
