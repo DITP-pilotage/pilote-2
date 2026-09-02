@@ -705,7 +705,7 @@ model AssistantConversation {
   @@map("assistant_conversation")
 }
 
-/// Audit brut : une ligne par tour. Sert au suivi et au harnais d'evaluation.
+/// Audit brut : une ligne par tour. Sert au suivi et a l'analyse a posteriori.
 /// Pas de relation vers Principal : une trace d'audit doit survivre a la rotation d'une cle.
 model AssistantAppel {
   id                 String                       @id @default(uuid()) @db.Uuid
