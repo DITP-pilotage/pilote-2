@@ -1,7 +1,7 @@
 import { FormProvider } from "react-hook-form";
-import Link from "next/link";
 import { useState } from "react";
 import { Bouton } from "@/components/_commons/Bouton/Bouton";
+import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import { NavigationTertiaire } from "@/components/_commons/NavigationTertiaire/NavigationTertiaire";
 import AlerteMetadataChantier from "@/components/PageAdminChantiers/AlerteMetadataChantier";
 import FicheChantier from "@/components/PageAdminChantiers/FicheChantier";
@@ -64,16 +64,22 @@ const PageAdminChantierEdition = ({
   return (
     <div className="min-h-screen bg-dsfr-alt-blue-france">
       <div className="max-w-7xl mx-auto px-6 py-8">
-        <nav className="mb-6 flex items-center gap-2 text-sm">
-          <Link
-            className="text-primary hover:text-dsfr-blue-france-sun-113-hover font-medium hover:underline underline-offset-2 transition-colors"
-            href="/panel-administrateur/chantiers"
-          >
-            Gestion des chantiers
-          </Link>
-          <span className="text-dsfr-grey-625">/</span>
-          <span className="text-dsfr-mention-grey">{titre}</span>
-        </nav>
+        <FilAriane
+          chemin={[
+            {
+              nom: "Chantiers",
+              lien: "/panel-administrateur/chantiers",
+            },
+          ]}
+          libelléPageCourante={titre}
+        />
+
+        <div className="mb-6">
+          <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
+            {estUneCréation ? "Nouveau chantier" : "Édition"}
+          </p>
+          <h1 className="text-3xl font-bold text-dsfr-grey-50">{titre}</h1>
+        </div>
 
         {!estUneCréation && (
           <div className="mb-6">
@@ -98,15 +104,7 @@ const PageAdminChantierEdition = ({
                   estUneCréation ? creerChantier : modifierChantier,
                 )}
               >
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <p className="text-sm font-medium text-primary uppercase tracking-widest mb-1">
-                      {estUneCréation ? "Nouveau chantier" : "Édition"}
-                    </p>
-                    <h1 className="text-3xl font-bold text-dsfr-grey-50">
-                      {titre}
-                    </h1>
-                  </div>
+                <div className="flex justify-end mb-6">
                   <Bouton label={labelBouton} variant="primary" type="submit" />
                 </div>
 
