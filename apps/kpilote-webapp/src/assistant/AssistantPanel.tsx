@@ -1,4 +1,5 @@
 import { Button } from '@pilote/kpilote-ui/Button'
+import { FieldInput } from '@pilote/kpilote-ui/FieldInput'
 import { useState } from 'react'
 
 import { AssistantMessage } from './AssistantMessage'
@@ -36,12 +37,17 @@ export function AssistantPanel({
           setInput('')
         }}
       >
-        <input
-          value={input}
-          onChange={(event) => setInput(event.target.value)}
-          placeholder="Posez votre question…"
-          className="flex-1 rounded border border-border px-3 py-2"
-        />
+        {/* Le libellé reste dans le DOM pour les lecteurs d'écran ; le placeholder
+            suffit à l'œil dans un fil de conversation. */}
+        <div className="flex-1">
+          <FieldInput
+            label="Votre question"
+            hideLabel
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            placeholder="Posez votre question…"
+          />
+        </div>
         <Button type="submit" disabled={status !== 'ready'}>
           Envoyer
         </Button>

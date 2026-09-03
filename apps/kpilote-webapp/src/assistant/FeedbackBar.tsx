@@ -4,10 +4,12 @@ import {
   type IssueCategory,
 } from '@pilote/kpilote-shared/assistant/feedback'
 import { Button } from '@pilote/kpilote-ui/Button'
-import { useState } from 'react'
+import { FieldTextarea } from '@pilote/kpilote-ui/FieldTextarea'
+import { MultiToggle } from '@pilote/kpilote-ui/MultiToggle'
+import { Subtitle } from '@pilote/kpilote-ui/Subtitle'
+import { useId, useState } from 'react'
 
 import { apiClient } from '@/api/client'
-import { clsxm } from '@/lib/clsxm'
 
 const Status = {
   Idle: 'idle',
@@ -18,10 +20,23 @@ const Status = {
 
 type Status = (typeof Status)[keyof typeof Status]
 
+// Chaque catégorie porte son intitulé et l'exemple qui la désambiguïse : « Suggestion »
+// seul ne dit pas s'il s'agit du produit ou de la réponse.
+const CATEGORY_OPTIONS = ISSUE_CATEGORIES.map((category) => ({
+  value: category,
+  label: (
+    <span className="flex flex-col text-left">
+      <span className="font-medium">{CATEGORY_LABELS[category].title}</span>
+      <span className="text-[11px] opacity-80">{CATEGORY_LABELS[category].hint}</span>
+    </span>
+  ),
+}))
+
 export function FeedbackBar({ conversationId }: { conversationId: string }) {
   const [status, setStatus] = useState<Status>(Status.Idle)
   const [categories, setCategories] = useState<IssueCategory[]>([])
   const [comment, setComment] = useState('')
+  const categoriesLabelId = useId()
 
   const send = async (body: Record<string, unknown>) => {
     await apiClient.post(`assistant/conversations/${conversationId}/evaluation`, { json: body })
@@ -32,14 +47,12 @@ export function FeedbackBar({ conversationId }: { conversationId: string }) {
   const negativeSubmitBlocked =
     categories.length === 0 || (categories.includes('AUTRE') && comment.trim().length === 0)
 
-  if (status === Status.Sent) {
-    return <p className="text-sm text-text-subtle">Merci pour votre retour.</p>
-  }
+  if (status === Status.Sent) return <Subtitle>Merci pour votre retour.</Subtitle>
 
   if (status === Status.Idle) {
     return (
-      <div className="flex items-center gap-2 text-sm">
-        <span className="text-text-subtle">Cette réponse vous a-t-elle aidé ?</span>
+      <div className="flex items-center gap-2">
+        <Subtitle>Cette réponse vous a-t-elle aidé ?</Subtitle>
         <Button variant="tertiary" size="sm" onClick={() => setStatus(Status.Positive)}>
           Oui
         </Button>
@@ -53,52 +66,30 @@ export function FeedbackBar({ conversationId }: { conversationId: string }) {
   return (
     <div className="flex flex-col gap-3 rounded border border-border p-3">
       {status === Status.Negative && (
-        <fieldset className="flex flex-col gap-2">
-          <legend className="text-sm font-medium">
+        <div className="flex flex-col gap-2">
+          <p id={categoriesLabelId} className="text-sm font-medium">
             Quel type de problème avez-vous rencontré ?
-          </legend>
-          <div className="flex flex-wrap gap-2">
-            {ISSUE_CATEGORIES.map((category) => {
-              const checked = categories.includes(category)
-              return (
-                <button
-                  key={category}
-                  type="button"
-                  aria-pressed={checked}
-                  onClick={() =>
-                    setCategories((previous) =>
-                      checked
-                        ? previous.filter((value) => value !== category)
-                        : [...previous, category],
-                    )
-                  }
-                  className={clsxm(
-                    'rounded border px-2 py-1 text-left text-sm',
-                    checked ? 'border-border-strong bg-surface' : 'border-border',
-                  )}
-                >
-                  <span className="block font-medium">{CATEGORY_LABELS[category].title}</span>
-                  <span className="block text-xs text-text-subtle">
-                    {CATEGORY_LABELS[category].hint}
-                  </span>
-                </button>
-              )
-            })}
-          </div>
-        </fieldset>
+          </p>
+          <MultiToggle
+            value={categories}
+            onValueChange={setCategories}
+            options={CATEGORY_OPTIONS}
+            ariaLabelledBy={categoriesLabelId}
+            className="flex-wrap"
+          />
+        </div>
       )}
 
-      <label className="flex flex-col gap-1 text-sm">
-        {status === Status.Positive
-          ? "Qu'avez-vous apprécié ? (optionnel)"
-          : 'Décrivez le problème'}
-        <textarea
-          value={comment}
-          onChange={(event) => setComment(event.target.value)}
-          className="rounded border border-border p-2"
-          rows={3}
-        />
-      </label>
+      <FieldTextarea
+        label={
+          status === Status.Positive
+            ? "Qu'avez-vous apprécié ? (optionnel)"
+            : 'Décrivez le problème'
+        }
+        value={comment}
+        onChange={(event) => setComment(event.target.value)}
+        rows={3}
+      />
 
       <div className="flex justify-end gap-2">
         <Button variant="tertiary" size="sm" onClick={() => setStatus(Status.Idle)}>
