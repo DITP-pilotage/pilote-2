@@ -29,10 +29,15 @@ psql -q -d "$DATABASE_URL" -c "\COPY raw_data.metadata_zones (zone_id, nom, zone
 psql -q -d "$DATABASE_URL" -c "\COPY raw_data.metadata_chantiers (chantier_id, ch_nom, ch_descr, ch_ppg, ch_territo, engagement_short, ch_hidden_pilote, ch_saisie_ate, ch_state, zg_applicable, \"porteur_id_principal\", \"porteur_ids_secondaires\", \"porteur_ids_DAC\", ch_per, maille_applicable, replicate_val_reg_to, replicate_val_nat_to, ch_cible_attendue, conseiller_mail) FROM '$SCRIPT_DIR/$RAW_DATA_SEED_DIR/metadata_chantiers.csv' WITH (FORMAT csv, HEADER true)"
 
 # Tables avec dependance sur indicateurs (ordre important)
+# metadata_indicateurs_hidden doit precéder metadata_parametrage_indicateurs et
+# metadata_indicateurs_complementaire, qui la référencent par FK deferrable
+# (cf. migration 20260901000000_fk_extensions_indicateurs_hidden) : chaque
+# \COPY s'exécute dans sa propre transaction psql, donc le "deferred" ne
+# s'applique pas entre ces commandes distinctes.
 psql -q -d "$DATABASE_URL" -c "\COPY raw_data.metadata_indicateurs FROM '$SCRIPT_DIR/$RAW_DATA_SEED_DIR/metadata_indicateurs.csv' WITH (FORMAT csv, HEADER true)"
+psql -q -d "$DATABASE_URL" -c "\COPY raw_data.metadata_indicateurs_hidden FROM '$SCRIPT_DIR/$RAW_DATA_SEED_DIR/metadata_indicateurs_hidden.csv' WITH (FORMAT csv, HEADER true)"
 psql -q -d "$DATABASE_URL" -c "\COPY raw_data.metadata_parametrage_indicateurs FROM '$SCRIPT_DIR/$RAW_DATA_SEED_DIR/metadata_parametrage_indicateurs.csv' WITH (FORMAT csv, HEADER true)"
 psql -q -d "$DATABASE_URL" -c "\COPY raw_data.metadata_indicateurs_complementaire FROM '$SCRIPT_DIR/$RAW_DATA_SEED_DIR/metadata_indicateurs_complementaire.csv' WITH (FORMAT csv, HEADER true)"
-psql -q -d "$DATABASE_URL" -c "\COPY raw_data.metadata_indicateurs_hidden FROM '$SCRIPT_DIR/$RAW_DATA_SEED_DIR/metadata_indicateurs_hidden.csv' WITH (FORMAT csv, HEADER true)"
 
 # Table des rapports d'import (doit être chargée avant mesure_indicateur)
 psql -q -d "$DATABASE_URL" -c "\COPY public.rapport_import_mesure_indicateur FROM '$SCRIPT_DIR/$RAW_DATA_SEED_DIR/rapport_import_mesure_indicateur.csv' WITH (FORMAT csv, HEADER true)"
