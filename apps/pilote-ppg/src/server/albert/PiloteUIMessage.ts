@@ -21,6 +21,10 @@ import {
   type GetChantiersOutput,
 } from "@/server/albert/tools/getChantiers";
 import {
+  getChantiersSignalesInputSchema,
+  type GetChantiersSignalesOutput,
+} from "@/server/albert/tools/getChantiersSignales";
+import {
   getChantierIndicateursInputSchema,
   type GetChantierIndicateursOutput,
 } from "@/server/albert/tools/getChantierIndicateurs";
@@ -57,6 +61,10 @@ export type PiloteUITools = {
   get_chantiers: {
     input: z.input<typeof getChantiersInputSchema>;
     output: GetChantiersOutput;
+  };
+  get_chantiers_signales: {
+    input: z.input<typeof getChantiersSignalesInputSchema>;
+    output: GetChantiersSignalesOutput;
   };
   get_indicateurs: {
     input: z.input<typeof getChantierIndicateursInputSchema>;

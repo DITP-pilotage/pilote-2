@@ -5,6 +5,7 @@ import { createGetChantiersTool } from "@/server/albert/tools/getChantiers";
 import { createGetChantierIndicateursTool } from "@/server/albert/tools/getChantierIndicateurs";
 import { createGetChantierCommentairesTool } from "@/server/albert/tools/getChantierCommentaires";
 import { createGetChantierObjectifsTool } from "@/server/albert/tools/getChantierObjectifs";
+import { createGetChantiersSignalesTool } from "@/server/albert/tools/getChantiersSignales";
 import { createSearchChantiersTool } from "@/server/albert/tools/searchChantiers";
 import { createSearchIndicateursTool } from "@/server/albert/tools/searchIndicateurs";
 import { createSearchTerritoiresTool } from "@/server/albert/tools/searchTerritoires";
@@ -49,6 +50,9 @@ type AlbertOwnCradle = {
   createGetChantierObjectifsTool: ReturnType<
     typeof createGetChantierObjectifsTool
   >;
+  createGetChantiersSignalesTool: ReturnType<
+    typeof createGetChantiersSignalesTool
+  >;
   createSearchChantiersTool: ReturnType<typeof createSearchChantiersTool>;
   createSearchIndicateursTool: ReturnType<typeof createSearchIndicateursTool>;
   createSearchTerritoiresTool: ReturnType<typeof createSearchTerritoiresTool>;
@@ -87,6 +91,9 @@ export const albertModule = defineModule<NoExports, AlbertCradle>()({
       ),
       createGetChantierObjectifsTool: asModuleFunction(
         createGetChantierObjectifsTool,
+      ),
+      createGetChantiersSignalesTool: asModuleFunction(
+        createGetChantiersSignalesTool,
       ),
       createSearchChantiersTool: asModuleFunction(createSearchChantiersTool),
       createSearchIndicateursTool: asModuleFunction(
