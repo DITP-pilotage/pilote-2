@@ -85,15 +85,15 @@ export function HeaderNav({ auth }: { auth: Auth }) {
           onClose={() => setAssistant(null)}
           titre="Assistant kpilote"
           description="Les réponses proviennent de vos données kpilote. Vérifiez-les avant de les diffuser."
-          taille="large"
+          size="lg"
         >
-          <div className="h-[68vh]">
-            <AssistantPanel
-              key={assistant.conversationId}
-              conversationId={assistant.conversationId}
-              initialQuestion={assistant.question}
-            />
-          </div>
+          {/* `size="lg"` donne sa hauteur à la modale : le panneau la remplit au lieu
+              de la fixer lui-même en vh, ce qui débordait sur petit écran. */}
+          <AssistantPanel
+            key={assistant.conversationId}
+            conversationId={assistant.conversationId}
+            initialQuestion={assistant.question}
+          />
         </Modale>
       ) : null}
     </>
