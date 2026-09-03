@@ -47,7 +47,7 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCodes: [TERRITOIRE_CODE],
+        territoireCode: TERRITOIRE_CODE,
         types: ["commentaires_sur_les_donnees"],
         inclureCommentairesNationaux: false,
       });
@@ -97,7 +97,7 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCodes: [TERRITOIRE_CODE],
+        territoireCode: TERRITOIRE_CODE,
         types: ["commentaires_sur_les_donnees"],
         inclureCommentairesNationaux: false,
       });
@@ -137,7 +137,7 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCodes: [TERRITOIRE_CODE],
+        territoireCode: TERRITOIRE_CODE,
         types: ["commentaires_sur_les_donnees"],
         inclureCommentairesNationaux: false,
       });
@@ -172,7 +172,7 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCodes: [TERRITOIRE_CODE],
+        territoireCode: TERRITOIRE_CODE,
         types: ["synthese_des_resultats"],
         inclureCommentairesNationaux: false,
       });
@@ -210,7 +210,7 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCodes: [TERRITOIRE_CODE],
+        territoireCode: TERRITOIRE_CODE,
         types: ["commentaires_sur_les_donnees"],
         inclureCommentairesNationaux: false,
       });
@@ -243,7 +243,7 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCodes: [TERRITOIRE_CODE],
+        territoireCode: TERRITOIRE_CODE,
         types: ["synthese_des_resultats"],
         inclureCommentairesNationaux: false,
       });
@@ -273,7 +273,7 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCodes: ["NAT-FR"],
+        territoireCode: "NAT-FR",
         types: ["decision_strategique"],
         inclureCommentairesNationaux: true,
       });
@@ -309,7 +309,7 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCodes: ["NAT-FR"],
+        territoireCode: "NAT-FR",
         types: ["decision_strategique"],
         inclureCommentairesNationaux: true,
       });
@@ -349,7 +349,7 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCodes: [TERRITOIRE_CODE],
+        territoireCode: TERRITOIRE_CODE,
         types: ["commentaires_sur_les_donnees", "synthese_des_resultats"],
         inclureCommentairesNationaux: false,
       });
@@ -390,7 +390,7 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCodes: [TERRITOIRE_CODE],
+        territoireCode: TERRITOIRE_CODE,
         types: ["freins_a_lever"],
         inclureCommentairesNationaux: true,
       });
@@ -424,7 +424,7 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCodes: [TERRITOIRE_CODE],
+        territoireCode: TERRITOIRE_CODE,
         types: [...TYPES_NATIONAUX],
         inclureCommentairesNationaux: false,
       });
@@ -453,7 +453,7 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCodes: ["NAT-FR"],
+        territoireCode: "NAT-FR",
         types: ["decision_strategique"],
         inclureCommentairesNationaux: true,
       });

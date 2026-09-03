@@ -2,6 +2,7 @@ import { tool } from "ai";
 import { z } from "zod";
 import {
   GetChantierCommentairesQuery,
+  typesContenuChantierNationaux,
   typesContenuChantier,
 } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type {
@@ -89,16 +90,32 @@ Utilise cet outil quand l'utilisateur demande l'analyse qualitative ou contextue
           territoiresAccessibles.includes(code),
         );
 
-        const result = await getChantierCommentairesQuery.execute({
-          chantierId: input.chantier_id,
-          territoireCodes: codesAccessibles,
-          types: typesDemandes,
-          inclureCommentairesNationaux:
-            territoiresAccessibles.includes(TERRITOIRE_NATIONAL),
-        });
+        const doitInclureCommentairesNationaux =
+          typesDemandes.some((type) =>
+            typesContenuChantierNationaux.includes(type),
+          ) &&
+          territoiresAccessibles.includes(TERRITOIRE_NATIONAL) &&
+          !codesAccessibles.includes(TERRITOIRE_NATIONAL);
+
+        const results = await Promise.all(
+          codesAccessibles.map((code, index) =>
+            getChantierCommentairesQuery.execute({
+              chantierId: input.chantier_id,
+              territoireCode: code,
+              types: typesDemandes,
+              inclureCommentairesNationaux:
+                doitInclureCommentairesNationaux && index === 0,
+            }),
+          ),
+        );
 
         return {
-          ...result,
+          resultats: results.flatMap((result) => result.resultats),
+          types_non_accessibles: [
+            ...new Set(
+              results.flatMap((result) => result.types_non_accessibles),
+            ),
+          ],
           _output_instructions: OUTPUT_INSTRUCTIONS,
         };
       },

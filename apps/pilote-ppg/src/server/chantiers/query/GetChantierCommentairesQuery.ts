@@ -13,7 +13,7 @@ export const typesContenuChantier = [
 ] as const;
 export type TypeContenuChantier = (typeof typesContenuChantier)[number];
 
-const TYPES_NATIONAUX: TypeContenuChantier[] = [
+export const typesContenuChantierNationaux: TypeContenuChantier[] = [
   "freins_a_lever",
   "actions_a_venir",
   "actions_a_valoriser",
@@ -26,6 +26,27 @@ const TYPES_TERRITORIAUX: TypeContenuChantier[] = [
 ];
 
 const TERRITOIRE_NATIONAL = "NAT-FR";
+
+export function getTypesContenuChantierPourTerritoire({
+  types,
+  territoireCode,
+}: {
+  types: TypeContenuChantier[];
+  territoireCode: string;
+}): TypeContenuChantier[] {
+  const typesExclusDeLaMaille =
+    territoireCode === TERRITOIRE_NATIONAL
+      ? TYPES_TERRITORIAUX
+      : typesContenuChantierNationaux;
+
+  return types.filter((type) => !typesExclusDeLaMaille.includes(type));
+}
+
+function getTypesNationauxDemandes(
+  types: TypeContenuChantier[],
+): TypeContenuChantier[] {
+  return types.filter((type) => typesContenuChantierNationaux.includes(type));
+}
 
 export type GetChantierCommentairesResult = {
   territoire_code: string;
@@ -49,37 +70,26 @@ export class GetChantierCommentairesQuery {
 
   async execute(params: {
     chantierId: string;
-    territoireCodes: string[];
+    territoireCode: string;
     types: TypeContenuChantier[];
     inclureCommentairesNationaux: boolean;
   }): Promise<GetChantierCommentairesQueryResult> {
-    const typesPourTerritoire = (
-      territoireCode: string,
-    ): TypeContenuChantier[] => {
-      const typesExclusDeLaMaille =
-        territoireCode === TERRITOIRE_NATIONAL
-          ? TYPES_TERRITORIAUX
-          : TYPES_NATIONAUX;
-      return params.types.filter(
-        (type) => !typesExclusDeLaMaille.includes(type),
-      );
-    };
+    const appels = [
+      {
+        territoireCode: params.territoireCode,
+        types: getTypesContenuChantierPourTerritoire({
+          territoireCode: params.territoireCode,
+          types: params.types,
+        }),
+      },
+    ].filter((appel) => appel.types.length > 0);
 
-    const appels = params.territoireCodes
-      .map((territoireCode) => ({
-        territoireCode,
-        types: typesPourTerritoire(territoireCode),
-      }))
-      .filter((appel) => appel.types.length > 0);
-
-    const typesNationauxDemandes = params.types.filter((type) =>
-      TYPES_NATIONAUX.includes(type),
-    );
+    const typesNationauxDemandes = getTypesNationauxDemandes(params.types);
     const typesNonAccessibles: TypeContenuChantier[] = [];
 
     if (
       typesNationauxDemandes.length > 0 &&
-      !params.territoireCodes.includes(TERRITOIRE_NATIONAL)
+      params.territoireCode !== TERRITOIRE_NATIONAL
     ) {
       if (params.inclureCommentairesNationaux) {
         appels.push({
