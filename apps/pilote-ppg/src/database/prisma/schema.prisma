@@ -1001,6 +1001,7 @@ model llm_calls {
   commentaire         String?
   categories_probleme llm_call_categorie_probleme[] @default([])
   created_at          DateTime                      @default(now())
+  updated_at          DateTime                      @default(now()) @updatedAt
 
   utilisateur utilisateur @relation(fields: [utilisateur_id], references: [id])
 
