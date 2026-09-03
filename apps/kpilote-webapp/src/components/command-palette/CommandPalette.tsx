@@ -35,13 +35,13 @@ import { useRecentlyVisitedCommands } from './useRecentlyVisitedCommands'
 type CommandPaletteProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  ouvrirAssistant: (question: string) => void
+  openAssistant: (question: string) => void
 }
 
 const GROUP_HEADING_CLASS =
   '[&_[cmdk-group-heading]]:px-2.5 [&_[cmdk-group-heading]]:pb-1 [&_[cmdk-group-heading]]:pt-2 [&_[cmdk-group-heading]]:text-[11px] [&_[cmdk-group-heading]]:font-semibold [&_[cmdk-group-heading]]:uppercase [&_[cmdk-group-heading]]:tracking-wider [&_[cmdk-group-heading]]:text-text-subtle'
 
-export function CommandPalette({ open, onOpenChange, ouvrirAssistant }: CommandPaletteProps) {
+export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPaletteProps) {
   const [query, setQuery] = useState('')
   // Item dont on affiche la page d'actions (`Tab`). `null` = liste racine.
   const [activeItem, setActiveItem] = useState<Command | null>(null)
@@ -75,7 +75,7 @@ export function CommandPalette({ open, onOpenChange, ouvrirAssistant }: CommandP
 
   const assistantCommand = useAssistantCommand(query, (question) => {
     close()
-    ouvrirAssistant(question)
+    openAssistant(question)
   })
   const recentCommands = useRecentlyVisitedCommands(open, close)
   const indicateurCommands = useIndicateurCommands(query, open, close)

@@ -13,7 +13,7 @@ import {
 } from '../publicIds'
 import type { ReferentielListApiModel } from '../referentiel'
 import type { TauxProgressionListApiModel } from '../tauxProgression'
-import { type Vue } from './vignettes'
+import { type View } from './tiles'
 import type {
   DernieresValeursIndividuListApiModel,
   SyntheseIndividusListApiModel,
@@ -25,12 +25,12 @@ import type {
 // ses libellés et son nettoyage des pseudo-appels : aucune liste dupliquée ne peut diverger.
 // Chez ppg, `AssistantMessageText.tsx` en déclare 7 quand la route en expose 11, et les
 // pseudo-appels des 4 manquants passent au travers.
-export const NOMS_OUTILS = [
+export const TOOL_NAMES = [
   'search_indicateurs',
   'search_collections',
   'get_synthese_indicateur',
   'get_synthese_collection',
-  'compose_vue',
+  'compose_view',
   'get_indicateurs',
   'get_indicateur',
   'get_indicateur_valeurs',
@@ -41,14 +41,14 @@ export const NOMS_OUTILS = [
   'get_referentiel_individus',
 ] as const
 
-export type NomOutil = (typeof NOMS_OUTILS)[number]
+export type ToolName = (typeof TOOL_NAMES)[number]
 
-export const LIBELLES_OUTILS: Record<NomOutil, string> = {
+export const TOOL_LABELS: Record<ToolName, string> = {
   search_indicateurs: 'Recherche des indicateurs correspondants',
   search_collections: 'Recherche des collections correspondantes',
   get_synthese_indicateur: "Synthèse de l'indicateur",
   get_synthese_collection: 'Synthèse de la collection',
-  compose_vue: 'Composition de la vue',
+  compose_view: 'Composition de la vue',
   get_indicateurs: 'Liste des indicateurs',
   get_indicateur: "Détail de l'indicateur",
   get_indicateur_valeurs: "Valeurs de l'indicateur",
@@ -61,15 +61,15 @@ export const LIBELLES_OUTILS: Record<NomOutil, string> = {
 
 // --- Schémas d'entrée : source de vérité, le serveur les utilise tels quels --------------
 
-export const inputRechercheSchema = z.object({
-  requete: z
+export const searchInputSchema = z.object({
+  query: z
     .string()
     .min(1)
-    .describe('La formulation de l’utilisateur, telle quelle, sans reformulation.'),
+    .describe("La formulation de l'utilisateur, telle quelle, sans reformulation."),
 })
 
-export const inputComposeVueSchema = z.object({
-  demande: z.string().min(1).describe("Ce que l'utilisateur veut voir, dans ses termes."),
+export const composeViewInputSchema = z.object({
+  request: z.string().min(1).describe("Ce que l'utilisateur veut voir, dans ses termes."),
   indicateurs: z.array(indicateurPublicIdSchema).max(8).default([]),
   collections: z.array(collectionPublicIdSchema).max(8).default([]),
   // Au moins un territoire : toute donnée d'indicateur de kpilote est indexée par individu.
@@ -78,65 +78,65 @@ export const inputComposeVueSchema = z.object({
   referentiels: z.array(referentielPublicIdSchema).max(4).default([]),
 })
 
-export const inputIdIndicateurSchema = z.object({ id: indicateurPublicIdSchema })
-export const inputIdCollectionSchema = z.object({ id: collectionPublicIdSchema })
+export const indicateurIdInputSchema = z.object({ id: indicateurPublicIdSchema })
+export const collectionIdInputSchema = z.object({ id: collectionPublicIdSchema })
 
 // Presque toutes les données d'avancement de kpilote sont indexées par individu : sans
 // territoire, les routes de progression, d'objectifs et de variation exigent leur paramètre
 // et refusent l'appel. Le territoire est donc optionnel mais déterminant, et son absence
 // est rapportée branche par branche plutôt que de faire échouer la synthèse entière.
-const territoireOptionnel = individuPublicIdSchema
+const optionalTerritoire = individuPublicIdSchema
   .optional()
   .describe(
     "Territoire pour lequel lire la progression, les objectifs et la variation. Sans lui, seules l'identité et la répartition entre territoires sont renvoyées.",
   )
 
-export const inputSyntheseIndicateurSchema = z.object({
+export const syntheseIndicateurInputSchema = z.object({
   id: indicateurPublicIdSchema,
-  individuId: territoireOptionnel,
+  individuId: optionalTerritoire,
 })
 
-export const inputSyntheseCollectionSchema = z.object({
+export const syntheseCollectionInputSchema = z.object({
   id: collectionPublicIdSchema,
-  individuId: territoireOptionnel,
+  individuId: optionalTerritoire,
 })
-export const inputIdIndividuSchema = z.object({ id: individuPublicIdSchema })
+export const individuIdInputSchema = z.object({ id: individuPublicIdSchema })
 
 // --- Types de sortie ---------------------------------------------------------------------
 
 /** Un outil dérivé dont l'appel échoue renvoie ceci plutôt que de faire tomber le tour. */
-export type ErreurOutil = { erreur: string }
+export type ToolError = { error: string }
 
-export type EntiteTrouvee = { publicId: string; nom: string }
+export type FoundEntite = { publicId: string; nom: string }
 
 export type SearchOutput = {
-  resultats: EntiteTrouvee[]
+  results: FoundEntite[]
   /** Vrai quand le pré-filtre déterministe n'a rien donné et qu'on a rechargé le catalogue. */
-  repli: boolean
-  /** Renseignée quand `resultats` est vide, pour que le modèle sache quoi dire. */
-  raison?: string
+  fallback: boolean
+  /** Renseignée quand `results` est vide, pour que le modèle sache quoi dire. */
+  reason?: string
 }
 
 /**
  * Une branche de synthèse porte sa raison d'absence plutôt qu'un `null` nu : sans cela le
  * modèle lit un refus de droit comme « pas de données ».
  */
-export type BrancheSynthese<T> = { donnees: T } | { indisponible: string }
+export type SyntheseBranch<T> = { data: T } | { unavailable: string }
 
 export type SyntheseIndicateurOutput = {
-  identite: BrancheSynthese<IndicateurApiModel>
-  tauxProgression: BrancheSynthese<TauxProgressionListApiModel>
-  valeursRemarquables: BrancheSynthese<ValeursRemarquablesListApiModel>
-  objectifs: BrancheSynthese<ObjectifIndicateurIndividuListApiModel>
-  syntheseIndividus: BrancheSynthese<SyntheseIndividusListApiModel>
+  identite: SyntheseBranch<IndicateurApiModel>
+  tauxProgression: SyntheseBranch<TauxProgressionListApiModel>
+  valeursRemarquables: SyntheseBranch<ValeursRemarquablesListApiModel>
+  objectifs: SyntheseBranch<ObjectifIndicateurIndividuListApiModel>
+  syntheseIndividus: SyntheseBranch<SyntheseIndividusListApiModel>
 }
 
 /** La vue validée, ou la raison d'un refus que le modèle doit rapporter. */
-export type ComposeVueOutput = Vue | { erreur: string }
+export type ComposeViewOutput = View | ToolError
 
 export type SyntheseCollectionOutput = {
-  identite: BrancheSynthese<CollectionApiModel>
-  tauxProgression: BrancheSynthese<CollectionTauxProgressionApiModel>
+  identite: SyntheseBranch<CollectionApiModel>
+  tauxProgression: SyntheseBranch<CollectionTauxProgressionApiModel>
 }
 
 /**
@@ -149,45 +149,45 @@ export type SyntheseCollectionOutput = {
  * route ; ce sont les tests de route qui en garantissent la forme.
  */
 export type KpiloteUITools = {
-  search_indicateurs: { input: z.input<typeof inputRechercheSchema>; output: SearchOutput }
-  search_collections: { input: z.input<typeof inputRechercheSchema>; output: SearchOutput }
+  search_indicateurs: { input: z.input<typeof searchInputSchema>; output: SearchOutput }
+  search_collections: { input: z.input<typeof searchInputSchema>; output: SearchOutput }
   get_synthese_indicateur: {
-    input: z.input<typeof inputSyntheseIndicateurSchema>
+    input: z.input<typeof syntheseIndicateurInputSchema>
     output: SyntheseIndicateurOutput
   }
   get_synthese_collection: {
-    input: z.input<typeof inputSyntheseCollectionSchema>
+    input: z.input<typeof syntheseCollectionInputSchema>
     output: SyntheseCollectionOutput
   }
-  compose_vue: {
-    input: z.input<typeof inputComposeVueSchema>
-    output: ComposeVueOutput
+  compose_view: {
+    input: z.input<typeof composeViewInputSchema>
+    output: ComposeViewOutput
   }
-  get_indicateurs: { input: Record<string, unknown>; output: IndicateurListApiModel | ErreurOutil }
+  get_indicateurs: { input: Record<string, unknown>; output: IndicateurListApiModel | ToolError }
   get_indicateur: {
-    input: z.input<typeof inputIdIndicateurSchema>
-    output: IndicateurApiModel | ErreurOutil
+    input: z.input<typeof indicateurIdInputSchema>
+    output: IndicateurApiModel | ToolError
   }
   get_indicateur_valeurs: {
-    input: z.input<typeof inputIdIndicateurSchema>
-    output: ValeurAvancementListApiModel | ErreurOutil
+    input: z.input<typeof indicateurIdInputSchema>
+    output: ValeurAvancementListApiModel | ToolError
   }
-  get_collections: { input: Record<string, unknown>; output: CollectionListApiModel | ErreurOutil }
+  get_collections: { input: Record<string, unknown>; output: CollectionListApiModel | ToolError }
   get_collection: {
-    input: z.input<typeof inputIdCollectionSchema>
-    output: CollectionApiModel | ErreurOutil
+    input: z.input<typeof collectionIdInputSchema>
+    output: CollectionApiModel | ToolError
   }
   get_individu_dernieres_valeurs: {
-    input: z.input<typeof inputIdIndividuSchema>
-    output: DernieresValeursIndividuListApiModel | ErreurOutil
+    input: z.input<typeof individuIdInputSchema>
+    output: DernieresValeursIndividuListApiModel | ToolError
   }
   get_referentiels: {
     input: Record<string, unknown>
-    output: ReferentielListApiModel | ErreurOutil
+    output: ReferentielListApiModel | ToolError
   }
   get_referentiel_individus: {
     input: { id: string }
-    output: IndividuListApiModel | ErreurOutil
+    output: IndividuListApiModel | ToolError
   }
 }
 
@@ -195,13 +195,13 @@ export type KpiloteUITools = {
 // dessus, ce que le lint de ce paquet ne fait pas. Ici, la garde est dans le source : elle
 // est attrapée par le `tsc --noEmit` de kpilote-api, qui importe ce module.
 //
-// Une entrée manquante rend `_COUVERTURE_OUTILS` égal à `never` et l'affectation échoue ;
+// Une entrée manquante rend `_TOOL_COVERAGE` égal à `never` et l'affectation échoue ;
 // une entrée en trop échoue sur la seconde branche.
-type _CouvertureOutils = keyof KpiloteUITools extends NomOutil
-  ? NomOutil extends keyof KpiloteUITools
+type _ToolCoverage = keyof KpiloteUITools extends ToolName
+  ? ToolName extends keyof KpiloteUITools
     ? true
     : never
   : never
 
-const _COUVERTURE_OUTILS: _CouvertureOutils = true
-void _COUVERTURE_OUTILS
+const _TOOL_COVERAGE: _ToolCoverage = true
+void _TOOL_COVERAGE

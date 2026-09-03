@@ -5,22 +5,22 @@ import {
   referentielPublicIdSchema,
 } from '../publicIds'
 
-export type TypeSource = 'indicateur' | 'collection' | 'referentiel' | 'individu'
+export type SourceType = 'indicateur' | 'collection' | 'referentiel' | 'individu'
 
 /** Ce qu'on sait d'une source à l'extraction : son type et son identifiant. */
-export type ReferenceSource = { type: TypeSource; publicId: string }
+export type SourceReference = { type: SourceType; publicId: string }
 
 /**
- * Une source résolue. `chemin` est `null` pour les types qui n'ont pas de page de détail
+ * Une source résolue. `path` est `null` pour les types qui n'ont pas de page de détail
  * dans le front : ils sont affichés sans lien plutôt qu'omis, sinon une réponse entièrement
  * fondée sur des individus afficherait « aucune source ».
  */
-export type Source = ReferenceSource & { libelle: string; chemin: string | null }
+export type Source = SourceReference & { label: string; path: string | null }
 
 // L'extraction est guidée par les CLÉS et non par les valeurs : `individuPublicIdSchema`
 // accepte `^[A-Z][A-Z0-9-]{0,19}$`, donc un balayage de toutes les chaînes ramasserait
 // `READ`, `PUBLIC` ou `SOLEIL`. Seules les clés qui portent une identité sont lues.
-const CLES_PAR_TYPE: Record<TypeSource, ReadonlyArray<string>> = {
+const KEYS_BY_TYPE: Record<SourceType, ReadonlyArray<string>> = {
   indicateur: ['indicateurId', 'indicateurPublicId'],
   collection: ['collectionId', 'collectionPublicId'],
   // `referentiel` tout court : c'est le nom du champ dans le modèle d'API d'un individu.
@@ -28,7 +28,7 @@ const CLES_PAR_TYPE: Record<TypeSource, ReadonlyArray<string>> = {
   individu: ['individuId', 'individuPublicId'],
 }
 
-const SCHEMAS_PAR_TYPE: Record<TypeSource, { safeParse: (v: unknown) => { success: boolean } }> = {
+const SCHEMAS_BY_TYPE: Record<SourceType, { safeParse: (v: unknown) => { success: boolean } }> = {
   indicateur: indicateurPublicIdSchema,
   collection: collectionPublicIdSchema,
   referentiel: referentielPublicIdSchema,
@@ -38,64 +38,64 @@ const SCHEMAS_PAR_TYPE: Record<TypeSource, { safeParse: (v: unknown) => { succes
 // Les modèles d'API exposent leur identifiant public sous `id` (c'est `publicId` côté
 // Prisma seulement), et les fixtures sous `publicId` : les deux clés sont ambiguës, on
 // résout le type par le préfixe de la valeur.
-const TYPES_A_PREFIXE: ReadonlyArray<TypeSource> = ['indicateur', 'collection', 'referentiel']
-const CLES_AMBIGUES: ReadonlyArray<string> = ['publicId', 'id']
+const PREFIXED_TYPES: ReadonlyArray<SourceType> = ['indicateur', 'collection', 'referentiel']
+const AMBIGUOUS_KEYS: ReadonlyArray<string> = ['publicId', 'id']
 
 // L'individu n'a aucun préfixe discriminant : `DEPT-84` ne se distingue pas d'un mot en
 // capitales. Sous une clé ambiguë, on ne le retient donc que si l'objet porte aussi un
 // champ `referentiel` — obligatoire dans le modèle d'individu, donc un signal stable.
-const CLE_TEMOIN_INDIVIDU = 'referentiel'
+const INDIVIDU_MARKER_KEY = 'referentiel'
 
-const typeDepuisCle = (cle: string): TypeSource | null => {
-  for (const type of Object.keys(CLES_PAR_TYPE) as TypeSource[]) {
-    if (CLES_PAR_TYPE[type].includes(cle)) return type
+const typeFromKey = (key: string): SourceType | null => {
+  for (const type of Object.keys(KEYS_BY_TYPE) as SourceType[]) {
+    if (KEYS_BY_TYPE[type].includes(key)) return type
   }
   return null
 }
 
-const typeDepuisValeur = (valeur: string): TypeSource | null =>
-  TYPES_A_PREFIXE.find((type) => SCHEMAS_PAR_TYPE[type].safeParse(valeur).success) ?? null
+const typeFromValue = (value: string): SourceType | null =>
+  PREFIXED_TYPES.find((type) => SCHEMAS_BY_TYPE[type].safeParse(value).success) ?? null
 
-export const extraireReferences = (valeur: unknown): ReferenceSource[] => {
-  const trouvees: ReferenceSource[] = []
-  const vues = new Set<string>()
+export const extractReferences = (value: unknown): SourceReference[] => {
+  const found: SourceReference[] = []
+  const seen = new Set<string>()
 
-  const ajouter = (type: TypeSource, publicId: string): void => {
-    if (!SCHEMAS_PAR_TYPE[type].safeParse(publicId).success) return
-    const cle = `${type}:${publicId}`
-    if (vues.has(cle)) return
-    vues.add(cle)
-    trouvees.push({ type, publicId })
+  const add = (type: SourceType, publicId: string): void => {
+    if (!SCHEMAS_BY_TYPE[type].safeParse(publicId).success) return
+    const key = `${type}:${publicId}`
+    if (seen.has(key)) return
+    seen.add(key)
+    found.push({ type, publicId })
   }
 
-  const parcourir = (noeud: unknown): void => {
-    if (Array.isArray(noeud)) {
-      noeud.forEach(parcourir)
+  const walk = (node: unknown): void => {
+    if (Array.isArray(node)) {
+      node.forEach(walk)
       return
     }
-    if (noeud === null || typeof noeud !== 'object') return
+    if (node === null || typeof node !== 'object') return
 
-    const objet = noeud as Record<string, unknown>
-    const ressembleAUnIndividu = typeof objet[CLE_TEMOIN_INDIVIDU] === 'string'
+    const object = node as Record<string, unknown>
+    const looksLikeIndividu = typeof object[INDIVIDU_MARKER_KEY] === 'string'
 
-    for (const [cle, contenu] of Object.entries(objet)) {
-      if (typeof contenu === 'string') {
-        const typeExplicite = typeDepuisCle(cle)
-        if (typeExplicite) {
-          ajouter(typeExplicite, contenu)
+    for (const [key, content] of Object.entries(object)) {
+      if (typeof content === 'string') {
+        const explicitType = typeFromKey(key)
+        if (explicitType) {
+          add(explicitType, content)
           continue
         }
-        if (CLES_AMBIGUES.includes(cle)) {
-          const typeDeduit = typeDepuisValeur(contenu)
-          if (typeDeduit) ajouter(typeDeduit, contenu)
-          else if (ressembleAUnIndividu) ajouter('individu', contenu)
+        if (AMBIGUOUS_KEYS.includes(key)) {
+          const inferredType = typeFromValue(content)
+          if (inferredType) add(inferredType, content)
+          else if (looksLikeIndividu) add('individu', content)
         }
         continue
       }
-      parcourir(contenu)
+      walk(content)
     }
   }
 
-  parcourir(valeur)
-  return trouvees
+  walk(value)
+  return found
 }

@@ -1,12 +1,12 @@
 import { createRoute, z } from '@hono/zod-openapi'
-import { evaluerBodySchema } from '@pilote/kpilote-shared/assistant/feedback'
+import { rateBodySchema } from '@pilote/kpilote-shared/assistant/feedback'
 import { chatRequestSchema } from '@pilote/kpilote-shared/assistant/surfaces'
 import { validateUIMessages } from 'ai'
 
-import { evaluerReponse } from '@/assistant/commands/evaluerReponse'
-import { MODELE_PAR_DEFAUT } from '@/assistant/runtime/modele'
-import { streamerTour } from '@/assistant/runtime/AssistantRuntime'
-import { creerRequeteur, type Requeteur } from '@/assistant/tools/requeteur'
+import { rateResponse } from '@/assistant/commands/rateResponse'
+import { streamTurn } from '@/assistant/runtime/AssistantRuntime'
+import { DEFAULT_MODEL } from '@/assistant/runtime/model'
+import { createFetcher, type Fetcher } from '@/assistant/tools/fetcher'
 import { requireAuthentication } from '@/framework/auth/requireAuthentication'
 import { requireCurrentPrincipalId, requirePrincipal } from '@/framework/auth/userContext'
 import { createOpenApiHono } from '@/framework/openapi/createOpenApiHono'
@@ -18,9 +18,9 @@ const chatRoute = createRoute({
   method: 'post',
   path: '/assistant/chat',
   tags: ['Assistant'],
-  summary: 'Ouvrir un tour de conversation avec l’assistant',
+  summary: "Ouvrir un tour de conversation avec l'assistant",
   description:
-    "Streame la réponse de l'assistant au format UIMessage du SDK `ai` (flux SSE). La `surface` est déclarée par l'appelant et détermine la couche de prompt et les outils autorisés : le moteur ne déduit jamais l'intention du texte. Les sources consultées sont émises en fin de tour dans une part `data-sources`, dérivée des identifiants publics réellement renvoyés par les outils et refiltrée par les habilitations de l'appelant. Le paramètre `modele` permet de rejouer un même échange sur un autre modèle Albert.",
+    "Streame la réponse de l'assistant au format UIMessage du SDK `ai` (flux SSE). La `surface` est déclarée par l'appelant et détermine la couche de prompt et les outils autorisés : le moteur ne déduit jamais l'intention du texte. Les sources consultées sont émises en fin de tour dans une part `data-sources`, dérivée des identifiants publics réellement renvoyés par les outils et refiltrée par les habilitations de l'appelant. Le paramètre `model` permet de rejouer un même échange sur un autre modèle Albert.",
   middleware: [requireAuthentication],
   request: {
     body: { content: { 'application/json': { schema: ChatBodySchema } }, required: true },
@@ -44,36 +44,36 @@ const chatRoute = createRoute({
  * quand l'app est entièrement construite ; les modules ESM étant mis en cache, il ne coûte
  * rien aux appels suivants.
  */
-const requeteurDeLApp = async (jeton: string): Promise<Requeteur> => {
+const fetcherFromApp = async (token: string): Promise<Fetcher> => {
   const { app } = await import('../app')
-  return creerRequeteur(app, jeton)
+  return createFetcher(app, token)
 }
 
 export const assistantRoutes = createOpenApiHono()
 
 assistantRoutes.openapi(chatRoute, async (context) => {
-  const corps = context.req.valid('json')
-  const jeton = (context.req.header('authorization') ?? '').replace(/^Bearer\s+/iu, '')
-  const messages = await validateUIMessages({ messages: corps.messages })
+  const body = context.req.valid('json')
+  const token = (context.req.header('authorization') ?? '').replace(/^Bearer\s+/iu, '')
+  const messages = await validateUIMessages({ messages: body.messages })
 
-  return streamerTour({
-    surface: corps.surface,
-    conversationId: corps.conversationId,
+  return streamTurn({
+    surface: body.surface,
+    conversationId: body.conversationId,
     // Capturés MAINTENANT : les callbacks du flux tournent après le dénouement des middlewares.
     principal: requirePrincipal(),
     principalId: requireCurrentPrincipalId(),
     messages,
-    modele: corps.modele ?? MODELE_PAR_DEFAUT,
-    requeteur: await requeteurDeLApp(jeton),
+    model: body.model ?? DEFAULT_MODEL,
+    fetcher: await fetcherFromApp(token),
     abortSignal: context.req.raw.signal,
   })
 })
 
-const evaluerRoute = createRoute({
+const rateRoute = createRoute({
   method: 'post',
   path: '/assistant/conversations/{id}/evaluation',
   tags: ['Assistant'],
-  summary: 'Évaluer la dernière réponse de l’assistant',
+  summary: "Évaluer la dernière réponse de l'assistant",
   description:
     "Enregistre un retour utilisateur sur le dernier tour de la conversation. Un retour négatif exige au moins une catégorie de problème ; la catégorie `AUTRE` exige en plus un commentaire non vide. Sans conversation ni tour correspondant, l'appel reste en 204 : le retour est une donnée d'amélioration, pas une opération métier dont l'échec doit remonter.",
   middleware: [requireAuthentication],
@@ -81,7 +81,7 @@ const evaluerRoute = createRoute({
     params: z.object({ id: z.uuid() }),
     body: {
       content: {
-        'application/json': { schema: evaluerBodySchema.openapi('AssistantEvaluerBody') },
+        'application/json': { schema: rateBodySchema.openapi('AssistantRateBody') },
       },
       required: true,
     },
@@ -92,10 +92,10 @@ const evaluerRoute = createRoute({
   },
 })
 
-assistantRoutes.openapi(evaluerRoute, async (context) => {
-  await evaluerReponse({
+assistantRoutes.openapi(rateRoute, async (context) => {
+  await rateResponse({
     conversationId: context.req.valid('param').id,
-    corps: context.req.valid('json'),
+    body: context.req.valid('json'),
   })
   return context.body(null, 204)
 })
