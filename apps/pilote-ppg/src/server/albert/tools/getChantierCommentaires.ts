@@ -4,6 +4,34 @@ import { GetChantierCommentairesQuery } from "@/server/chantiers/query/GetChanti
 import type { GetChantierCommentairesResult } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 
+export const typesContenuChantier = [
+  "freins_a_lever",
+  "actions_a_venir",
+  "actions_a_valoriser",
+  "autres_resultats_obtenus_non_correles_aux_indicateurs",
+  "decision_strategique",
+  "commentaires_sur_les_donnees",
+  "autres_resultats_obtenus",
+  "synthese_des_resultats",
+] as const;
+export type TypeContenuChantier = (typeof typesContenuChantier)[number];
+
+// Les types nationaux n'existent qu'à la maille nationale (NAT-FR) ; les
+// types territoriaux n'existent qu'aux mailles régionale et départementale.
+const TYPES_NATIONAUX: TypeContenuChantier[] = [
+  "freins_a_lever",
+  "actions_a_venir",
+  "actions_a_valoriser",
+  "autres_resultats_obtenus_non_correles_aux_indicateurs",
+  "decision_strategique",
+];
+const TYPES_TERRITORIAUX: TypeContenuChantier[] = [
+  "commentaires_sur_les_donnees",
+  "autres_resultats_obtenus",
+];
+
+const TERRITOIRE_NATIONAL = "NAT-FR";
+
 export const getChantierCommentairesInputSchema = z.object({
   chantier_id: z.string().describe("Identifiant du chantier (ex: CH-001)"),
   territoire_code: z
@@ -16,14 +44,22 @@ export const getChantierCommentairesInputSchema = z.object({
     .describe(
       "Si true, inclut les commentaires des sous-territoires (ex: départements d'une région, ou toutes les régions depuis NAT-FR). Les objectifs du chantier ne sont retournés que pour le territoire principal puisqu'ils ne sont pas territorialisés.",
     ),
+  types: z
+    .array(z.enum(typesContenuChantier))
+    .optional()
+    .describe(
+      "Types de contenus à récupérer. Omettre pour tout récupérer. Les types nationaux sont automatiquement recherchés au niveau national (NAT-FR) si l'utilisateur y a accès, même quand territoire_code est régional ou départemental.",
+    ),
 });
 
 export type GetChantierCommentairesOutput = {
   resultats: GetChantierCommentairesResult[];
+  types_non_accessibles: TypeContenuChantier[];
   _output_instructions: string;
 };
 
-const OUTPUT_INSTRUCTIONS = `Restitue chaque commentaire avec sa date, son auteur et son contenu verbatim, sans reformulation ni interprétation. Les contenus sont en HTML : extrais uniquement le texte (sans les balises) tout en conservant la formulation d'origine. Regroupe par type ou trie par date selon la demande de l'utilisateur. Ne reformule ou ne synthétise que si l'utilisateur le demande explicitement.`;
+const OUTPUT_INSTRUCTIONS = `Restitue chaque commentaire avec sa date et son contenu verbatim, sans reformulation ni interprétation. Les contenus sont en HTML : extrais uniquement le texte (sans les balises) tout en conservant la formulation d'origine. Regroupe par type ou trie par date selon la demande de l'utilisateur, en précisant toujours le territoire de rattachement de chaque contenu. Ne reformule ou ne synthétise que si l'utilisateur le demande explicitement.
+Si types_non_accessibles n'est pas vide, ces types sont hors du périmètre d'accès de l'utilisateur : ne dis JAMAIS qu'il n'existe pas de contenu pour ces types — indique que l'utilisateur n'a pas accès à ces informations (elles relèvent de la vue nationale).`;
 
 export function createGetChantierCommentairesTool({
   getChantierCommentairesQuery,
@@ -37,15 +73,19 @@ export function createGetChantierCommentairesTool({
       description: `Récupère les contenus textuels publiés rattachés à un chantier sur un territoire donné (uniquement les contenus publiés — les brouillons sont exclus).
 Quand include_sous_territoires=true, retourne aussi les commentaires de chaque sous-territoire.
 
-Chaque résultat porte un champ \`type\` permettant de distinguer la nature du contenu :
-- \`synthese_des_resultats\` : commentaire d'analyse accompagnant la météo de la synthèse du chantier sur le territoire
-- \`commentaires_sur_les_donnees\` : commentaires explicatifs sur les données du chantier sur le territoire
-- \`freins_a_lever\` : risques et freins à lever identifiés sur le territoire
-- \`actions_a_venir\` : solutions et actions à venir prévues sur le territoire
-- \`actions_a_valoriser\` : exemples concrets de réussite à valoriser sur le territoire
-- \`autres_resultats_obtenus_non_correles_aux_indicateurs\` : autres résultats obtenus non corrélés aux indicateurs sur le territoire
+Chaque résultat porte un champ \`type\` permettant de distinguer la nature du contenu et sa maille :
+- \`freins_a_lever\` (maille nationale uniquement) : risques et freins à lever, notamment ceux nécessitant un soutien ou un arbitrage
+- \`actions_a_venir\` (maille nationale uniquement) : solutions envisagées et actions initiées ou prévues
+- \`actions_a_valoriser\` (maille nationale uniquement) : exemples concrets de réussite à partager
+- \`autres_resultats_obtenus_non_correles_aux_indicateurs\` (maille nationale uniquement) : résultats importants qui ne transparaissent pas dans les indicateurs
+- \`decision_strategique\` (maille nationale uniquement) : décisions prises lors des réunions Élysée-Matignon et actions envisagées ou réalisées
+- \`commentaires_sur_les_donnees\` (mailles régionale et départementale) : explication des résultats du territoire et des écarts avec les autres territoires
+- \`autres_resultats_obtenus\` (mailles régionale et départementale) : résultats locaux qui ne transparaissent pas dans les chiffres
+- \`synthese_des_resultats\` (toutes mailles) : commentaire d'analyse accompagnant la météo du chantier sur le territoire
 
-Utilise cet outil quand l'utilisateur demande l'analyse qualitative ou contextuelle d'un chantier sur un territoire : freins, actions, réussites ou commentaires explicatifs. Pour les objectifs stratégiques du chantier (ambition, ce qui a été fait, ce qu'il reste à faire), utilise \`get_chantier_objectifs\`.`,
+Les types nationaux sont automatiquement recherchés sur NAT-FR quand l'utilisateur y a accès, même si territoire_code est régional ou départemental : inutile de faire un second appel sur NAT-FR pour les obtenir. Les types listés dans types_non_accessibles sont hors du périmètre d'accès de l'utilisateur.
+
+Utilise cet outil quand l'utilisateur demande l'analyse qualitative ou contextuelle d'un chantier sur un territoire : freins, actions, réussites, décisions stratégiques ou commentaires explicatifs. Pour les objectifs stratégiques du chantier (ambition, ce qui a été fait, ce qu'il reste à faire), utilise \`get_chantier_objectifs\`.`,
       inputSchema: getChantierCommentairesInputSchema,
       execute: async (input): Promise<GetChantierCommentairesOutput> => {
         if (!territoiresAccessibles.includes(input.territoire_code)) {
@@ -53,6 +93,8 @@ Utilise cet outil quand l'utilisateur demande l'analyse qualitative ou contextue
             `Accès non autorisé au territoire ${input.territoire_code}`,
           );
         }
+
+        const typesDemandes = input.types ?? [...typesContenuChantier];
 
         const codes = await territoireResolver.resoudre(
           input.territoire_code,
@@ -62,17 +104,57 @@ Utilise cet outil quand l'utilisateur demande l'analyse qualitative ou contextue
           territoiresAccessibles.includes(code),
         );
 
+        const typesPourTerritoire = (
+          territoireCode: string,
+        ): TypeContenuChantier[] => {
+          const typesExclusDeLaMaille =
+            territoireCode === TERRITOIRE_NATIONAL
+              ? TYPES_TERRITORIAUX
+              : TYPES_NATIONAUX;
+          return typesDemandes.filter(
+            (type) => !typesExclusDeLaMaille.includes(type),
+          );
+        };
+
+        const appels = codesAccessibles
+          .map((territoireCode) => ({
+            territoireCode,
+            types: typesPourTerritoire(territoireCode),
+          }))
+          .filter((appel) => appel.types.length > 0);
+
+        const typesNationauxDemandes = typesDemandes.filter((type) =>
+          TYPES_NATIONAUX.includes(type),
+        );
+        const typesNonAccessibles: TypeContenuChantier[] = [];
+
+        if (
+          typesNationauxDemandes.length > 0 &&
+          !codesAccessibles.includes(TERRITOIRE_NATIONAL)
+        ) {
+          if (territoiresAccessibles.includes(TERRITOIRE_NATIONAL)) {
+            appels.push({
+              territoireCode: TERRITOIRE_NATIONAL,
+              types: typesNationauxDemandes,
+            });
+          } else {
+            typesNonAccessibles.push(...typesNationauxDemandes);
+          }
+        }
+
         const resultats = await Promise.all(
-          codesAccessibles.map((code) =>
+          appels.map((appel) =>
             getChantierCommentairesQuery.execute({
-              territoireCode: code,
               chantierId: input.chantier_id,
+              territoireCode: appel.territoireCode,
+              types: appel.types,
             }),
           ),
         );
 
         return {
           resultats,
+          types_non_accessibles: typesNonAccessibles,
           _output_instructions: OUTPUT_INSTRUCTIONS,
         };
       },
