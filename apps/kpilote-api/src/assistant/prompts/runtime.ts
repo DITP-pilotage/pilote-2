@@ -1,3 +1,3 @@
-export const construireContexteRuntime = ({ maintenant }: { maintenant: Date }): string =>
+export const buildRuntimeContext = ({ now }: { now: Date }): string =>
   `Contexte du tour :
-- Date du jour : ${maintenant.toISOString().slice(0, 10)}`
+- Date du jour : ${now.toISOString().slice(0, 10)}`

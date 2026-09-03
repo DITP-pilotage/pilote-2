@@ -2,18 +2,18 @@ import { Button } from '@pilote/kpilote-ui/Button'
 import { useState } from 'react'
 
 import { AssistantMessage } from './AssistantMessage'
-import { BarreFeedback } from './BarreFeedback'
+import { FeedbackBar } from './FeedbackBar'
 import { useAssistant } from './useAssistant'
 
 export function AssistantPanel({
   conversationId,
-  questionInitiale,
+  initialQuestion,
 }: {
   conversationId: string
-  questionInitiale?: string
+  initialQuestion?: string
 }) {
   const { messages, sendMessage, status, error } = useAssistant(conversationId)
-  const [saisie, setSaisie] = useState(questionInitiale ?? '')
+  const [input, setInput] = useState(initialQuestion ?? '')
 
   return (
     <div className="flex h-full flex-col gap-4">
@@ -25,22 +25,20 @@ export function AssistantPanel({
         {error && <p className="text-sm text-text-muted">Erreur : {error.message}</p>}
       </div>
 
-      {messages.length > 0 && status === 'ready' && (
-        <BarreFeedback conversationId={conversationId} />
-      )}
+      {messages.length > 0 && status === 'ready' && <FeedbackBar conversationId={conversationId} />}
 
       <form
         className="flex gap-2"
-        onSubmit={(evenement) => {
-          evenement.preventDefault()
-          if (saisie.trim().length === 0) return
-          void sendMessage({ text: saisie.trim() })
-          setSaisie('')
+        onSubmit={(event) => {
+          event.preventDefault()
+          if (input.trim().length === 0) return
+          void sendMessage({ text: input.trim() })
+          setInput('')
         }}
       >
         <input
-          value={saisie}
-          onChange={(evenement) => setSaisie(evenement.target.value)}
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
           placeholder="Posez votre question…"
           className="flex-1 rounded border border-border px-3 py-2"
         />

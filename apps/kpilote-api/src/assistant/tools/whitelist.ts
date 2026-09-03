@@ -1,4 +1,4 @@
-import { type EntreeWhitelist } from '@/assistant/tools/deriverTool'
+import { type WhitelistEntry } from '@/assistant/tools/deriveTool'
 import { getCollectionByIdRoute, getCollectionsRoute } from '@/collection/routes'
 import { getIndicateurByIdRoute, getIndicateursRoute } from '@/indicateur/routes'
 import { getIndividusForReferentielRoute, getReferentielsRoute } from '@/referentiel/routes'
@@ -12,18 +12,17 @@ import {
 //
 // Volontairement absentes : les routes que `get_synthese_indicateur` compose déjà
 // (taux-progression, valeurs-remarquables, objectifs, synthese-individus). Les exposer
-// offrirait au modèle un chemin plus verbeux vers le même résultat. Le jeu d'évals dira
-// s'il en manque une.
+// offrirait au modèle un chemin plus verbeux vers le même résultat.
 //
 // Volontairement hors périmètre : apiKey, feature, permission, utilisateur, me, whoami,
 // brouillons de commentaire — administration, pas analyse.
-export const WHITELIST: ReadonlyArray<EntreeWhitelist> = [
-  { nom: 'get_indicateurs', route: getIndicateursRoute },
-  { nom: 'get_indicateur', route: getIndicateurByIdRoute },
-  { nom: 'get_indicateur_valeurs', route: getValeursForIndicateurRoute },
-  { nom: 'get_collections', route: getCollectionsRoute },
-  { nom: 'get_collection', route: getCollectionByIdRoute },
-  { nom: 'get_individu_dernieres_valeurs', route: getDernieresValeursForIndividuRoute },
-  { nom: 'get_referentiels', route: getReferentielsRoute },
-  { nom: 'get_referentiel_individus', route: getIndividusForReferentielRoute },
+export const WHITELIST: ReadonlyArray<WhitelistEntry> = [
+  { name: 'get_indicateurs', route: getIndicateursRoute },
+  { name: 'get_indicateur', route: getIndicateurByIdRoute },
+  { name: 'get_indicateur_valeurs', route: getValeursForIndicateurRoute },
+  { name: 'get_collections', route: getCollectionsRoute },
+  { name: 'get_collection', route: getCollectionByIdRoute },
+  { name: 'get_individu_dernieres_valeurs', route: getDernieresValeursForIndividuRoute },
+  { name: 'get_referentiels', route: getReferentielsRoute },
+  { name: 'get_referentiel_individus', route: getIndividusForReferentielRoute },
 ]

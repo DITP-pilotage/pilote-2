@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { evaluerReponse } from '@/assistant/commands/evaluerReponse'
+import { rateResponse } from '@/assistant/commands/rateResponse'
 import { assistantRoutes } from '@/assistant/routes'
 import { db } from '@/framework/persistence/dbStore'
 import { runAsPrincipal } from '@/test/runAsPrincipal'
@@ -11,7 +11,7 @@ import { integrationTest } from '@/test/integrationTest'
 const buildApp = () => buildTestApp(assistantRoutes)
 const conversationId = '018f3a2b-0000-7000-8000-000000000001'
 
-const corps = (surcharge: Record<string, unknown> = {}) =>
+const body = (surcharge: Record<string, unknown> = {}) =>
   JSON.stringify({
     surface: 'ask-libre',
     conversationId,
@@ -33,7 +33,7 @@ describe.concurrent('POST /assistant/chat', () => {
   it(
     'renvoie 401 sans authentification',
     integrationTest(async () => {
-      expect((await appeler(null, corps())).status).toBe(401)
+      expect((await appeler(null, body())).status).toBe(401)
     }),
   )
 
@@ -42,7 +42,7 @@ describe.concurrent('POST /assistant/chat', () => {
     integrationTest(async () => {
       const cleBrute = 'pilote_live_assistant_surface_inconnue_ok'
       await fixtures.apiKey({ rawKey: cleBrute })
-      expect((await appeler(cleBrute, corps({ surface: 'ask-entite' }))).status).toBe(400)
+      expect((await appeler(cleBrute, body({ surface: 'ask-entite' }))).status).toBe(400)
     }),
   )
 
@@ -51,7 +51,7 @@ describe.concurrent('POST /assistant/chat', () => {
     integrationTest(async () => {
       const cleBrute = 'pilote_live_assistant_uuid_invalide_okay'
       await fixtures.apiKey({ rawKey: cleBrute })
-      expect((await appeler(cleBrute, corps({ conversationId: 'pas-un-uuid' }))).status).toBe(400)
+      expect((await appeler(cleBrute, body({ conversationId: 'pas-un-uuid' }))).status).toBe(400)
     }),
   )
 
@@ -60,7 +60,7 @@ describe.concurrent('POST /assistant/chat', () => {
     integrationTest(async () => {
       const cleBrute = 'pilote_live_assistant_modele_hors_liste'
       await fixtures.apiKey({ rawKey: cleBrute })
-      expect((await appeler(cleBrute, corps({ modele: 'gpt-4' }))).status).toBe(400)
+      expect((await appeler(cleBrute, body({ model: 'gpt-4' }))).status).toBe(400)
     }),
   )
 })
@@ -145,9 +145,9 @@ describe.concurrent('cloisonnement de l’évaluation', () => {
       await creerTour(proprietaire.id, conversation)
 
       await runAsPrincipal(proprietaire.id, () =>
-        evaluerReponse({
+        rateResponse({
           conversationId: conversation,
-          corps: { evaluation: 'POSITIVE', commentaire: 'utile' },
+          body: { evaluation: 'POSITIVE', commentaire: 'utile' },
         }),
       )
 
@@ -165,9 +165,9 @@ describe.concurrent('cloisonnement de l’évaluation', () => {
       await creerTour(proprietaire.id, conversation)
 
       await runAsPrincipal(intrus.id, () =>
-        evaluerReponse({
+        rateResponse({
           conversationId: conversation,
-          corps: { evaluation: 'NEGATIVE', categories: ['INCOMPREHENSION'] },
+          body: { evaluation: 'NEGATIVE', categories: ['INCOMPREHENSION'] },
         }),
       )
 

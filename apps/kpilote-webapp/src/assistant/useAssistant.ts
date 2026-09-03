@@ -18,8 +18,8 @@ export const useAssistant = (conversationId: string) => {
           body: { surface: 'ask-libre', conversationId },
           // Le jeton est lu à chaque envoi, pas capturé à la construction : il tourne.
           headers: () => {
-            const jeton = tokenStore.get()
-            return jeton ? { Authorization: `Bearer ${jeton}` } : {}
+            const token = tokenStore.get()
+            return token ? { Authorization: `Bearer ${token}` } : {}
           },
         }),
       }),

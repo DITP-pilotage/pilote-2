@@ -1,5 +1,5 @@
-import { extraireReferences } from '@pilote/kpilote-shared/assistant/sources'
-import { type Modele, type Surface } from '@pilote/kpilote-shared/assistant/surfaces'
+import { extractReferences } from '@pilote/kpilote-shared/assistant/sources'
+import { type Model, type Surface } from '@pilote/kpilote-shared/assistant/surfaces'
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -9,19 +9,16 @@ import {
   type UIMessage,
 } from 'ai'
 
+import { recordCall, recordConversation } from '@/assistant/commands/recordConversation'
+import { buildSystemPrompt } from '@/assistant/prompts/buildSystemPrompt'
 import {
-  enregistrerAppel,
-  enregistrerConversation,
-} from '@/assistant/commands/enregistrerConversation'
-import { construireSystemPrompt } from '@/assistant/prompts/construireSystemPrompt'
-import {
-  creerModeleAssistant,
-  MAX_ETAPES,
-  TEMPERATURE_CONVERSATION,
-} from '@/assistant/runtime/modele'
-import { resoudreSources } from '@/assistant/runtime/sources'
-import { resoudreOutils } from '@/assistant/tools/registry'
-import { type Requeteur } from '@/assistant/tools/requeteur'
+  CONVERSATION_TEMPERATURE,
+  createAssistantModel,
+  MAX_STEPS,
+} from '@/assistant/runtime/model'
+import { resolveSources } from '@/assistant/runtime/resolveSources'
+import { type Fetcher } from '@/assistant/tools/fetcher'
+import { resolveTools } from '@/assistant/tools/registry'
 import { runWithPrincipal, type Principal } from '@/framework/auth/userContext'
 import { logger } from '@/framework/logger/logger'
 import { runWithDb } from '@/framework/persistence/dbStore'
@@ -36,17 +33,17 @@ import { startTimer } from '@/framework/timer'
  * l'AsyncLocalStorage jusque-là n'est pas garanti : on obtiendrait un `dbStore is empty`
  * ou un `UnauthorizedError` levés dans le flux, par intermittence.
  */
-const dansLeContexte = <T>(principal: Principal, fn: () => Promise<T>): Promise<T> =>
+const inContext = <T>(principal: Principal, fn: () => Promise<T>): Promise<T> =>
   runWithDb(prisma, () => runWithPrincipal(principal, fn)) as Promise<T>
 
-export const streamerTour = async ({
+export const streamTurn = async ({
   surface,
   conversationId,
   principal,
   principalId,
   messages,
-  modele,
-  requeteur,
+  model,
+  fetcher,
   abortSignal,
 }: {
   surface: Surface
@@ -54,71 +51,71 @@ export const streamerTour = async ({
   principal: Principal
   principalId: string
   messages: UIMessage[]
-  modele: Modele
-  requeteur: Requeteur
+  model: Model
+  fetcher: Fetcher
   abortSignal?: AbortSignal
 }): Promise<Response> => {
   const elapsed = startTimer()
 
-  const resultat = streamText({
-    model: creerModeleAssistant(modele),
-    system: construireSystemPrompt({ surface, maintenant: new Date() }),
+  const result = streamText({
+    model: createAssistantModel(model),
+    system: buildSystemPrompt({ surface, now: new Date() }),
     messages: await convertToModelMessages(messages),
-    tools: resoudreOutils(surface, requeteur),
-    stopWhen: stepCountIs(MAX_ETAPES),
-    temperature: TEMPERATURE_CONVERSATION,
+    tools: resolveTools(surface, fetcher),
+    stopWhen: stepCountIs(MAX_STEPS),
+    temperature: CONVERSATION_TEMPERATURE,
     // `exactOptionalPropertyTypes` interdit de passer explicitement `undefined`.
     ...(abortSignal ? { abortSignal } : {}),
   })
 
-  const flux = createUIMessageStream({
+  const stream = createUIMessageStream({
     originalMessages: messages,
     execute: async ({ writer }) => {
-      writer.merge(resultat.toUIMessageStream())
+      writer.merge(result.toUIMessageStream())
 
-      const etapes = await resultat.steps
-      const sortiesOutils = etapes.flatMap((etape) =>
-        etape.toolResults.map((appel) => appel.output as unknown),
+      const steps = await result.steps
+      const toolOutputs = steps.flatMap((step) =>
+        step.toolResults.map((call) => call.output as unknown),
       )
 
       // Les sources sont dérivées de ce que les outils ont RÉELLEMENT renvoyé, pas citées
       // par le modèle : ni oubli ni invention possibles.
-      const sources = await dansLeContexte(principal, () =>
-        resoudreSources(extraireReferences(sortiesOutils)),
+      const sources = await inContext(principal, () =>
+        resolveSources(extractReferences(toolOutputs)),
       )
       if (sources.length > 0) writer.write({ type: 'data-sources', data: sources })
 
-      const usage = await resultat.usage
+      const usage = await result.usage
       logger.info(
         {
           event: 'assistant.tour.done',
           conversationId,
           surface,
-          modele,
+          model,
           durationMs: elapsed(),
           inputTokens: usage.inputTokens ?? 0,
           outputTokens: usage.outputTokens ?? 0,
-          outils: etapes.flatMap((etape) => etape.toolCalls.map((appel) => appel.toolName)),
+          tools: steps.flatMap((step) => step.toolCalls.map((call) => call.toolName)),
         },
         'Assistant — tour terminé',
       )
     },
-    onFinish: async ({ messages: messagesFinaux }) => {
-      const usage = await resultat.usage
-      const transcript = await resultat.response
-      await dansLeContexte(principal, async () => {
+    onFinish: async ({ messages: finalMessages }) => {
+      const usage = await result.usage
+      const transcript = await result.response
+      await inContext(principal, async () => {
         // La conversation AVANT l'appel : assistant_appel.conversation_id la référence, la
         // contrainte de clé étrangère échouerait au premier tour dans l'autre ordre.
-        await enregistrerConversation({
+        await recordConversation({
           id: conversationId,
           principalId,
           surface,
-          messages: messagesFinaux,
+          messages: finalMessages,
         })
-        await enregistrerAppel({
+        await recordCall({
           conversationId,
           principalId,
-          modele,
+          model,
           surface,
           transcript,
           inputTokens: usage.inputTokens ?? 0,
@@ -129,5 +126,5 @@ export const streamerTour = async ({
     },
   })
 
-  return createUIMessageStreamResponse({ stream: flux })
+  return createUIMessageStreamResponse({ stream })
 }
