@@ -27,9 +27,11 @@ export interface VARIABLE_CONTENU_DISPONIBLE {
   NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET: boolean;
   NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE: boolean;
   NEXT_PUBLIC_FF_ASK_AI_TERRITOIRE: boolean;
+  NEXT_PUBLIC_FF_ASK_AI_COORDINATEUR: boolean;
   NEXT_PUBLIC_FF_HISTORIQUE_ALBERT: boolean;
   NEXT_PUBLIC_FF_CENTRE_AIDE_ADMIN: boolean;
   NEXT_PUBLIC_FF_CENTRE_AIDE_PILOTE: boolean;
+  NEXT_PUBLIC_FF_ANCIEN_CENTRE_AIDE: boolean;
   NEXT_PUBLIC_FF_PILOTE_EVAL: boolean;
   NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS: boolean;
   NEXT_PUBLIC_FF_RAPPORT_PVA: boolean;
@@ -168,6 +170,11 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     label: "Ask AI — ouverture Territoire",
   },
   {
+    envKey: "NEXT_PUBLIC_FF_ASK_AI_COORDINATEUR",
+    configKey: "askAICoordinateur",
+    label: "Ask AI — ouverture Coordinateurs région et département",
+  },
+  {
     envKey: "NEXT_PUBLIC_FF_HISTORIQUE_ALBERT",
     configKey: "historiqueAlbert",
     label: "Albert — historique des conversations",
@@ -181,6 +188,11 @@ const FEATURE_FLIP_DEFINITIONS: FeatureFlipDefinition[] = [
     envKey: "NEXT_PUBLIC_FF_CENTRE_AIDE_PILOTE",
     configKey: "centreAidePilote",
     label: "Centre d'aide — onglet dans la navigation utilisateur",
+  },
+  {
+    envKey: "NEXT_PUBLIC_FF_ANCIEN_CENTRE_AIDE",
+    configKey: "ancienCentreAide",
+    label: "Centre d'aide — ancien onglet dans la navigation utilisateur",
   },
   {
     envKey: "NEXT_PUBLIC_FF_PILOTE_EVAL",

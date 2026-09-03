@@ -1,30 +1,10 @@
 import { useSession } from "next-auth/react";
 import { useEnv } from "@/client/hooks/useEnv";
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
-
-function profilAutoriseParFeatureFlip(params: {
-  profil: string | null;
-  ffAskAIDitpAdmin: boolean;
-  ffAskAIEquipeDirProjet: boolean;
-  ffAskAIDitpPilotage: boolean;
-}): boolean {
-  if (params.ffAskAIDitpAdmin && params.profil === ProfilEnum.DITP_ADMIN) {
-    return true;
-  }
-  if (
-    params.ffAskAIEquipeDirProjet &&
-    params.profil === ProfilEnum.EQUIPE_DIR_PROJET
-  ) {
-    return true;
-  }
-  if (
-    params.ffAskAIDitpPilotage &&
-    params.profil === ProfilEnum.DITP_PILOTAGE
-  ) {
-    return true;
-  }
-  return false;
-}
+import {
+  calculerAccesAskAI,
+  construireFeatureFlipsAskAI,
+} from "@/server/albert/accesAskAI";
 
 export function useAskAIAccess({
   emailAutoriseAskAITerritoire,
@@ -39,21 +19,22 @@ export function useAskAIAccess({
   );
   const ffAskAIDitpPilotage = useEnv("NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE");
   const ffAskAITerritoire = useEnv("NEXT_PUBLIC_FF_ASK_AI_TERRITOIRE");
+  const ffAskAICoordinateur = useEnv("NEXT_PUBLIC_FF_ASK_AI_COORDINATEUR");
 
   const profil = session?.profil ?? null;
 
-  const autoriseParProfil = profilAutoriseParFeatureFlip({
+  const { peutUtiliserAskAI, estEligibleTerritoire } = calculerAccesAskAI({
     profil,
-    ffAskAIDitpAdmin: Boolean(ffAskAIDitpAdmin),
-    ffAskAIEquipeDirProjet: Boolean(ffAskAIEquipeDirProjet),
-    ffAskAIDitpPilotage: Boolean(ffAskAIDitpPilotage),
+    emailAutoriseAskAITerritoire,
+    featureFlips: construireFeatureFlipsAskAI({
+      NEXT_PUBLIC_FF_ASK_AI: ffAskAI,
+      NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN: ffAskAIDitpAdmin,
+      NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET: ffAskAIEquipeDirProjet,
+      NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE: ffAskAIDitpPilotage,
+      NEXT_PUBLIC_FF_ASK_AI_TERRITOIRE: ffAskAITerritoire,
+      NEXT_PUBLIC_FF_ASK_AI_COORDINATEUR: ffAskAICoordinateur,
+    }),
   });
-
-  const estEligibleTerritoire =
-    Boolean(ffAskAITerritoire) && emailAutoriseAskAITerritoire;
-
-  const peutUtiliserAskAI =
-    Boolean(ffAskAI) && (autoriseParProfil || estEligibleTerritoire);
 
   return {
     peutUtiliserAskAI,

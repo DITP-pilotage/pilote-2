@@ -13,6 +13,11 @@ import {
 import type { PiloteUIMessage } from "@/server/albert/PiloteUIMessage";
 import { getContainer } from "@/server/dependances";
 import { createCreateDashboardTool } from "@/server/albert/tools/createDashboard";
+import {
+  calculerAccesAskAI,
+  construireFeatureFlipsAskAI,
+} from "@/server/albert/accesAskAI";
+import { estEmailAutoriseAskAITerritoire } from "@/server/albert/emailsAutorisesAskAITerritoire";
 
 const chatRequestSchema = z
   .object({
@@ -33,6 +38,22 @@ export async function POST(request: Request) {
   }
 
   try {
+    const variables = await getContainer("legacy")
+      .resolve("recupererToutesLesVariablesContenuUseCase")
+      .run();
+
+    const { peutUtiliserAskAI } = calculerAccesAskAI({
+      profil: session.profil ?? null,
+      emailAutoriseAskAITerritoire: estEmailAutoriseAskAITerritoire(
+        session.user.email,
+      ),
+      featureFlips: construireFeatureFlipsAskAI(variables),
+    });
+
+    if (!peutUtiliserAskAI) {
+      return new Response("Forbidden", { status: 403 });
+    }
+
     const body = chatRequestSchema.parse(await request.json());
     const messages = await validateUIMessages({ messages: body.messages });
 
@@ -144,9 +165,6 @@ export async function POST(request: Request) {
       return "la génération de la réponse a échoué. Vous pouvez réessayer.";
     };
 
-    const variables = await getContainer("legacy")
-      .resolve("recupererToutesLesVariablesContenuUseCase")
-      .run();
     const persistanceActive =
       variables.NEXT_PUBLIC_FF_HISTORIQUE_ALBERT === true;
 
