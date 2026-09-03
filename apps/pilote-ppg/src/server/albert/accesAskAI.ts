@@ -1,11 +1,6 @@
 import { ProfilEnum } from "@/server/app/enum/profil.enum";
 import type { VariableContenuDisponibleEnv } from "@/server/gestion-contenu/domain/VariableContenuDisponible";
 
-const PROFILS_COORDINATEUR: string[] = [
-  ProfilEnum.COORDINATEUR_REGION,
-  ProfilEnum.COORDINATEUR_DEPARTEMENT,
-];
-
 export interface FeatureFlipsAskAI {
   askAI: boolean;
   ditpAdmin: boolean;
@@ -14,6 +9,16 @@ export interface FeatureFlipsAskAI {
   territoire: boolean;
   coordinateur: boolean;
 }
+
+const FEATURE_FLIP_PAR_PROFIL: Partial<
+  Record<string, keyof FeatureFlipsAskAI>
+> = {
+  [ProfilEnum.DITP_ADMIN]: "ditpAdmin",
+  [ProfilEnum.EQUIPE_DIR_PROJET]: "equipeDirProjet",
+  [ProfilEnum.DITP_PILOTAGE]: "ditpPilotage",
+  [ProfilEnum.COORDINATEUR_REGION]: "coordinateur",
+  [ProfilEnum.COORDINATEUR_DEPARTEMENT]: "coordinateur",
+};
 
 type VariablesAskAI = Pick<
   VariableContenuDisponibleEnv,
@@ -28,12 +33,12 @@ type VariablesAskAI = Pick<
 export const construireFeatureFlipsAskAI = (
   variables: VariablesAskAI,
 ): FeatureFlipsAskAI => ({
-  askAI: Boolean(variables.NEXT_PUBLIC_FF_ASK_AI),
-  ditpAdmin: Boolean(variables.NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN),
-  equipeDirProjet: Boolean(variables.NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET),
-  ditpPilotage: Boolean(variables.NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE),
-  territoire: Boolean(variables.NEXT_PUBLIC_FF_ASK_AI_TERRITOIRE),
-  coordinateur: Boolean(variables.NEXT_PUBLIC_FF_ASK_AI_COORDINATEUR),
+  askAI: variables.NEXT_PUBLIC_FF_ASK_AI,
+  ditpAdmin: variables.NEXT_PUBLIC_FF_ASK_AI_DITP_ADMIN,
+  equipeDirProjet: variables.NEXT_PUBLIC_FF_ASK_AI_EQUIPE_DIR_PROJET,
+  ditpPilotage: variables.NEXT_PUBLIC_FF_ASK_AI_DITP_PILOTAGE,
+  territoire: variables.NEXT_PUBLIC_FF_ASK_AI_TERRITOIRE,
+  coordinateur: variables.NEXT_PUBLIC_FF_ASK_AI_COORDINATEUR,
 });
 
 interface ParametresAccesAskAI {
@@ -46,22 +51,10 @@ const profilAutoriseParFeatureFlip = ({
   profil,
   featureFlips,
 }: ParametresAccesAskAI): boolean => {
-  if (profil === null) {
-    return false;
-  }
-  if (featureFlips.ditpAdmin && profil === ProfilEnum.DITP_ADMIN) {
-    return true;
-  }
-  if (featureFlips.equipeDirProjet && profil === ProfilEnum.EQUIPE_DIR_PROJET) {
-    return true;
-  }
-  if (featureFlips.ditpPilotage && profil === ProfilEnum.DITP_PILOTAGE) {
-    return true;
-  }
-  if (featureFlips.coordinateur && PROFILS_COORDINATEUR.includes(profil)) {
-    return true;
-  }
-  return false;
+  const featureFlip =
+    profil === null ? undefined : FEATURE_FLIP_PAR_PROFIL[profil];
+
+  return featureFlip !== undefined && featureFlips[featureFlip];
 };
 
 export const calculerAccesAskAI = (
