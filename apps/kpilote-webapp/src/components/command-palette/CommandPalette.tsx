@@ -1,5 +1,5 @@
 import { Command as CommandPrimitive } from 'cmdk'
-import { ArrowLeft, CornerDownLeft, Search } from 'lucide-react'
+import { ArrowLeft, CornerDownLeft, Search, Sparkles } from 'lucide-react'
 import { Dialog as DialogPrimitive } from 'radix-ui'
 import {
   useCallback,
@@ -24,7 +24,7 @@ import {
 } from '@/lib/commands/types'
 
 import { actionTypeFromActionId, targetTypeFromCommandId } from './commandTargets'
-import { useAssistantCommand } from './useAssistantCommand'
+import { useRaccourciPalette } from './RaccourciKbd'
 import { useCentreAideCommands } from './useCentreAideCommands'
 import { useCommandPaletteShortcut } from './useCommandPaletteShortcut'
 import { useIndicateurCommands } from './useIndicateurCommands'
@@ -43,11 +43,11 @@ const GROUP_HEADING_CLASS =
 
 export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPaletteProps) {
   const [query, setQuery] = useState('')
-  // Item dont on affiche la page d'actions (`Tab`). `null` = liste racine.
+  // Item dont on affiche la page d'actions (⌘K). `null` = liste racine.
   const [activeItem, setActiveItem] = useState<Command | null>(null)
   // Valeur cmdk de la ligne surlignée. Contrôlée : cmdk n'émet `onValueChange`
   // sur la racine que si `value` l'est aussi (indispensable pour résoudre l'item
-  // ciblé au `Tab`).
+  // ciblé au ⌘K).
   const [highlighted, setHighlighted] = useState('')
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -73,10 +73,20 @@ export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPal
   }, [onOpenChange, open])
   useCommandPaletteShortcut(handleOpen)
 
-  const assistantCommand = useAssistantCommand(query, (question) => {
+  // La demande à l'IA n'est plus une ligne de résultat : elle est attachée au champ
+  // de recherche, comme le fait Raycast. La question part telle quelle avec sa surface,
+  // le moteur ne devine rien de l'intention.
+  const askAssistant = useCallback(() => {
+    analytics.trackEvent(
+      analyticsEvents.commandPalette.commandRun({
+        command_group: 'assistant',
+        target_type: 'assistant',
+      }),
+    )
+    const question = query.trim()
     close()
     openAssistant(question)
-  })
+  }, [close, openAssistant, query])
   const recentCommands = useRecentlyVisitedCommands(open, close)
   const indicateurCommands = useIndicateurCommands(query, open, close)
   const { commands: collectionCommands, isLoading: isLoadingCollections } = useCollectionCommands(
@@ -104,10 +114,9 @@ export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPal
   const showRecents = query.trim().length === 0
 
   // Toutes les commandes racine affichées, indexées pour résoudre l'item
-  // surligné au moment du `Tab`.
+  // surligné au moment du ⌘K.
   const rootCommands = useMemo<Command[]>(
     () => [
-      assistantCommand,
       ...navigationCommands,
       ...(showRecents ? recentCommands : []),
       ...indicateurCommands,
@@ -115,7 +124,6 @@ export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPal
       ...centreAideResults,
     ],
     [
-      assistantCommand,
       navigationCommands,
       showRecents,
       recentCommands,
@@ -164,8 +172,9 @@ export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPal
       }
       return
     }
-    // À la racine : `Tab` ouvre les actions de l'item surligné (si actionnable).
-    // On neutralise `Tab` dans tous les cas pour ne pas perdre le focus.
+    // À la racine, `Tab` transmet la recherche à l'assistant : c'est la touche que
+    // l'affordance du champ annonce. On la neutralise dans tous les cas pour ne pas
+    // perdre le focus.
     if (
       event.key === 'Tab' &&
       !event.shiftKey &&
@@ -173,6 +182,14 @@ export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPal
       !event.ctrlKey &&
       !event.altKey
     ) {
+      event.preventDefault()
+      askAssistant()
+      return
+    }
+    // Les actions de l'item surligné passent donc sur ⌘K, comme chez Raycast. Le
+    // raccourci global d'ouverture ignore les champs de saisie, et le focus vit dans
+    // l'input : aucune collision possible avec la réouverture de la palette.
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
       event.preventDefault()
       if (highlightedCommand?.actions?.length) enterActions(highlightedCommand)
     }
@@ -247,6 +264,7 @@ export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPal
                 }
                 className="h-12 w-full bg-transparent text-sm text-text outline-none placeholder:text-text-subtle"
               />
+              {activeItem ? null : <AskAiTrigger onAsk={askAssistant} />}
             </div>
             <CommandPrimitive.List className="min-h-0 flex-1 overflow-y-auto p-1.5">
               <CommandPrimitive.Empty className="px-3 py-8 text-center text-sm text-text-muted">
@@ -257,10 +275,6 @@ export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPal
                 pageActions.map((action) => <ActionRow key={action.id} action={action} />)
               ) : (
                 <>
-                  <CommandPrimitive.Group heading="Assistant" className={GROUP_HEADING_CLASS}>
-                    <CommandRow key={assistantCommand.id} command={assistantCommand} />
-                  </CommandPrimitive.Group>
-
                   {navigationCommands.length > 0 ? (
                     <CommandPrimitive.Group heading="Navigation" className={GROUP_HEADING_CLASS}>
                       {navigationCommands.map((command) => (
@@ -315,6 +329,26 @@ export function CommandPalette({ open, onOpenChange, openAssistant }: CommandPal
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>
     </DialogPrimitive.Root>
+  )
+}
+
+/**
+ * « Demander à l'IA » vit dans la barre de recherche, pas dans les résultats : la
+ * question posée EST la recherche en cours, et non une commande à trouver parmi
+ * d'autres. Cliquable à la souris, et annoncé au clavier par la touche qu'il porte.
+ */
+function AskAiTrigger({ onAsk }: { onAsk: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onAsk}
+      aria-keyshortcuts="Tab"
+      className="flex shrink-0 items-center gap-1.5 rounded-md px-1.5 py-1 text-xs text-text-muted transition-colors hover:bg-surface-tinted hover:text-text"
+    >
+      <Sparkles className="size-3.5" aria-hidden />
+      Demander à l'IA
+      <KeyChip>Tab</KeyChip>
+    </button>
   )
 }
 
@@ -410,6 +444,8 @@ function PaletteFooter({
   inActions: boolean
   showActionsHint: boolean
 }) {
+  const raccourciActions = useRaccourciPalette()
+
   return (
     <div className="flex items-center justify-end gap-4 border-t border-border px-3.5 py-2 text-xs text-text-subtle">
       {inActions ? (
@@ -420,7 +456,9 @@ function PaletteFooter({
       ) : (
         <>
           <FooterHint keys={<KeyChip icon={CornerDownLeft} />} label="Aller à" />
-          {showActionsHint ? <FooterHint keys={<KeyChip>Tab</KeyChip>} label="Actions" /> : null}
+          {showActionsHint ? (
+            <FooterHint keys={<KeyChip>{raccourciActions}</KeyChip>} label="Actions" />
+          ) : null}
         </>
       )}
     </div>

@@ -10,14 +10,19 @@ const getRaccourci = () => (estApple() ? '⌘K' : 'Ctrl+K')
 const getRaccourciServeur = () => 'Ctrl+K'
 
 /**
- * Affiche le raccourci d'ouverture de la palette, adapté à la plateforme :
- * « ⌘K » sur Apple, « Ctrl+K » ailleurs. Source unique de vérité pour ce label.
+ * Le libellé du raccourci ⌘K adapté à la plateforme. Source unique de vérité,
+ * partagée par le badge du header et par le pied de la palette.
  *
  * `useSyncExternalStore` lit la plateforme côté client tout en fournissant un
  * snapshot serveur stable, ce qui évite tout mismatch d'hydratation SSR.
  */
+export function useRaccourciPalette(): string {
+  return useSyncExternalStore(subscribe, getRaccourci, getRaccourciServeur)
+}
+
+/** Affiche le raccourci d'ouverture de la palette : « ⌘K » sur Apple, « Ctrl+K » ailleurs. */
 export function RaccourciKbd({ className }: { className?: string }) {
-  const raccourci = useSyncExternalStore(subscribe, getRaccourci, getRaccourciServeur)
+  const raccourci = useRaccourciPalette()
 
   return (
     <kbd
