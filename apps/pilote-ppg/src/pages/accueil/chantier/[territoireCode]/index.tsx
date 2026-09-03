@@ -16,20 +16,7 @@ import { getContainer } from "@/server/dependances";
 import { loadAccueilSearchParams } from "@/client/searchParams/accueilSearchParams";
 import { PageAccueil } from "@/components/PageAccueil/PageAccueil";
 import { PageAccueilLegacy } from "@/components/PageAccueil/PageAccueilLegacy";
-
-let emailsAutorisesAskAITerritoireCache: ReadonlySet<string> | null = null;
-
-const getEmailsAutorisesAskAITerritoire = (): ReadonlySet<string> => {
-  if (emailsAutorisesAskAITerritoireCache === null) {
-    emailsAutorisesAskAITerritoireCache = new Set(
-      configuration()
-        .askAITerritoireEmails.split(",")
-        .map((email) => email.trim().toLowerCase())
-        .filter((email) => email.length > 0),
-    );
-  }
-  return emailsAutorisesAskAITerritoireCache;
-};
+import { estEmailAutoriseAskAITerritoire } from "@/server/albert/emailsAutorisesAskAITerritoire";
 
 export const getServerSideProps = async (
   context: GetServerSidePropsContext,
@@ -256,10 +243,9 @@ export const getServerSideProps = async (
     .resolve("recupererEtatModaleInscriptionUseCase")
     .execute(session.user.id);
 
-  const emailUtilisateur = session.user.email?.toLowerCase() ?? null;
-  const emailAutoriseAskAITerritoire =
-    emailUtilisateur !== null &&
-    getEmailsAutorisesAskAITerritoire().has(emailUtilisateur);
+  const emailAutoriseAskAITerritoire = estEmailAutoriseAskAITerritoire(
+    session.user.email,
+  );
 
   return {
     props: {

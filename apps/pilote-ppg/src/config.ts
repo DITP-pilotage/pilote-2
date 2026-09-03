@@ -329,6 +329,11 @@ const config = convict({
       default: false,
       env: "NEXT_PUBLIC_FF_ASK_AI_TERRITOIRE",
     },
+    askAICoordinateur: {
+      format: Boolean,
+      default: false,
+      env: "NEXT_PUBLIC_FF_ASK_AI_COORDINATEUR",
+    },
     historiqueAlbert: {
       format: Boolean,
       default: false,
@@ -343,6 +348,11 @@ const config = convict({
       format: Boolean,
       default: false,
       env: "NEXT_PUBLIC_FF_CENTRE_AIDE_PILOTE",
+    },
+    ancienCentreAide: {
+      format: Boolean,
+      default: true,
+      env: "NEXT_PUBLIC_FF_ANCIEN_CENTRE_AIDE",
     },
     accesPilote: {
       format: Boolean,

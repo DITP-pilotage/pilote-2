@@ -50,6 +50,7 @@ export const NavigationPilote = () => {
 
   const ffRapportCoordinateurs = useEnv("NEXT_PUBLIC_FF_RAPPORT_COORDINATEURS");
   const ffCentreAidePilote = useEnv("NEXT_PUBLIC_FF_CENTRE_AIDE_PILOTE");
+  const ffAncienCentreAide = useEnv("NEXT_PUBLIC_FF_ANCIEN_CENTRE_AIDE");
   const ffPageActualites = useEnv("NEXT_PUBLIC_FF_PAGE_ACTUALITES");
   const { vérifierSuiviCompletudeEstDisponibleEstIndisponible } =
     useNavigation();
@@ -126,7 +127,7 @@ export const NavigationPilote = () => {
           nom: "Centre d'aide",
           lien: "/centre-aide-pilote-2/centre-aide",
           matcher: "/centre-aide-pilote-2/centre-aide",
-          accessible: true,
+          accessible: ffAncienCentreAide,
           prefetch: false,
           target: "_blank",
         },
