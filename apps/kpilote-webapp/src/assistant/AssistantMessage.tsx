@@ -1,16 +1,16 @@
 import type { KpiloteUIMessage } from '@pilote/kpilote-shared/assistant/message'
-import { LIBELLES_OUTILS, type NomOutil } from '@pilote/kpilote-shared/assistant/tools'
+import { TOOL_LABELS, type ToolName } from '@pilote/kpilote-shared/assistant/tools'
 import { isToolUIPart } from 'ai'
 
 import { clsxm } from '@/lib/clsxm'
 
-import { PanneauSources } from './PanneauSources'
-import { ReponseMarkdown } from './ReponseMarkdown'
-import { GrilleVue } from './vignettes/GrilleVue'
+import { MarkdownResponse } from './MarkdownResponse'
+import { SourcesPanel } from './SourcesPanel'
+import { ViewGrid } from './tiles/ViewGrid'
 
-const libelleOutil = (typePart: string): string => {
-  const nom = typePart.replace(/^tool-/u, '') as NomOutil
-  return LIBELLES_OUTILS[nom] ?? nom
+const toolLabel = (partType: string): string => {
+  const name = partType.replace(/^tool-/u, '') as ToolName
+  return TOOL_LABELS[name] ?? name
 }
 
 export function AssistantMessage({ message }: { message: KpiloteUIMessage }) {
@@ -34,34 +34,34 @@ export function AssistantMessage({ message }: { message: KpiloteUIMessage }) {
       {message.parts.map((part, index) => {
         // Le modèle répond en markdown : gras, listes, citations, parfois un tableau.
         if (part.type === 'text') {
-          return <ReponseMarkdown key={index} texte={part.text} />
+          return <MarkdownResponse key={index} text={part.text} />
         }
 
         // Part typée grâce au paramètre TOOLS de KpiloteUIMessage : `part.data` est
         // `Source[]`, pas `unknown`.
         if (part.type === 'data-sources') {
-          return <PanneauSources key={index} sources={part.data} />
+          return <SourcesPanel key={index} sources={part.data} />
         }
 
-        // Part typée grâce à `KpiloteUITools` : `part.output` est `Vue | { erreur }`.
-        if (part.type === 'tool-compose_vue' && part.state === 'output-available') {
+        // Part typée grâce à `KpiloteUITools` : `part.output` est `View | { error }`.
+        if (part.type === 'tool-compose_view' && part.state === 'output-available') {
           // Le cas d'erreur ne rend rien : le modèle recoit le message et l'explique
           // lui-même dans sa réponse texte.
-          if ('erreur' in part.output) return null
-          return <GrilleVue key={index} vue={part.output} />
+          if ('error' in part.output) return null
+          return <ViewGrid key={index} view={part.output} />
         }
 
         // `startsWith('tool-')` ne restreint pas l'union pour TypeScript : le garde du SDK, si.
         if (isToolUIPart(part)) {
-          const enCours = part.state !== 'output-available' && part.state !== 'output-error'
+          const pending = part.state !== 'output-available' && part.state !== 'output-error'
           return (
             <p
               key={index}
-              className={clsxm('text-xs italic text-text-subtle', enCours && 'animate-pulse')}
+              className={clsxm('text-xs italic text-text-subtle', pending && 'animate-pulse')}
               aria-live="polite"
             >
-              {libelleOutil(part.type)}
-              {part.state === 'output-error' ? ' — échec' : enCours ? '…' : ''}
+              {toolLabel(part.type)}
+              {part.state === 'output-error' ? ' — échec' : pending ? '…' : ''}
             </p>
           )
         }

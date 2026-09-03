@@ -9,43 +9,43 @@
 import '@hono/zod-openapi'
 
 import { type Surface } from '@pilote/kpilote-shared/assistant/surfaces'
-import { type NomOutil } from '@pilote/kpilote-shared/assistant/tools'
+import { type ToolName } from '@pilote/kpilote-shared/assistant/tools'
 import { type ToolSet } from 'ai'
 
-import { deriverTool } from '@/assistant/tools/deriverTool'
-import { creerComposeVueTool } from '@/assistant/tools/metier/composeVue'
-import { creerGetSyntheseCollectionTool } from '@/assistant/tools/metier/getSyntheseCollection'
-import { creerGetSyntheseIndicateurTool } from '@/assistant/tools/metier/getSyntheseIndicateur'
-import { creerSearchCollectionsTool } from '@/assistant/tools/metier/searchCollections'
-import { creerSearchIndicateursTool } from '@/assistant/tools/metier/searchIndicateurs'
-import { type Requeteur } from '@/assistant/tools/requeteur'
+import { createComposeViewTool } from '@/assistant/tools/business/composeView'
+import { createGetSyntheseCollectionTool } from '@/assistant/tools/business/getSyntheseCollection'
+import { createGetSyntheseIndicateurTool } from '@/assistant/tools/business/getSyntheseIndicateur'
+import { createSearchCollectionsTool } from '@/assistant/tools/business/searchCollections'
+import { createSearchIndicateursTool } from '@/assistant/tools/business/searchIndicateurs'
+import { deriveTool } from '@/assistant/tools/deriveTool'
+import { type Fetcher } from '@/assistant/tools/fetcher'
 import { WHITELIST } from '@/assistant/tools/whitelist'
 
-const OUTILS_PAR_SURFACE: Record<Surface, ReadonlyArray<NomOutil>> = {
+const TOOLS_BY_SURFACE: Record<Surface, ReadonlyArray<ToolName>> = {
   'ask-libre': [
     'search_indicateurs',
     'search_collections',
     'get_synthese_indicateur',
     'get_synthese_collection',
-    'compose_vue',
-    ...WHITELIST.map((entree) => entree.nom),
+    'compose_view',
+    ...WHITELIST.map((entry) => entry.name),
   ],
 }
 
-export const resoudreOutils = (surface: Surface, requeteur: Requeteur): ToolSet => {
-  const metier: ToolSet = {
-    search_indicateurs: creerSearchIndicateursTool(),
-    search_collections: creerSearchCollectionsTool(),
-    get_synthese_indicateur: creerGetSyntheseIndicateurTool(requeteur),
-    get_synthese_collection: creerGetSyntheseCollectionTool(requeteur),
-    compose_vue: creerComposeVueTool(),
+export const resolveTools = (surface: Surface, fetcher: Fetcher): ToolSet => {
+  const business: ToolSet = {
+    search_indicateurs: createSearchIndicateursTool(),
+    search_collections: createSearchCollectionsTool(),
+    get_synthese_indicateur: createGetSyntheseIndicateurTool(fetcher),
+    get_synthese_collection: createGetSyntheseCollectionTool(fetcher),
+    compose_view: createComposeViewTool(),
   }
-  const derives: ToolSet = Object.fromEntries(
-    WHITELIST.map((entree) => [entree.nom, deriverTool(entree, requeteur)]),
+  const derived: ToolSet = Object.fromEntries(
+    WHITELIST.map((entry) => [entry.name, deriveTool(entry, fetcher)]),
   )
 
-  const autorises = new Set<string>(OUTILS_PAR_SURFACE[surface])
+  const allowed = new Set<string>(TOOLS_BY_SURFACE[surface])
   return Object.fromEntries(
-    Object.entries({ ...metier, ...derives }).filter(([nom]) => autorises.has(nom)),
+    Object.entries({ ...business, ...derived }).filter(([name]) => allowed.has(name)),
   )
 }

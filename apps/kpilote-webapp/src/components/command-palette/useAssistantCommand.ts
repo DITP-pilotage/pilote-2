@@ -9,7 +9,7 @@ import type { Command } from '@/lib/commands/types'
  */
 export const useAssistantCommand = (
   query: string,
-  ouvrirAssistant: (question: string) => void,
+  openAssistant: (question: string) => void,
 ): Command =>
   useMemo(() => {
     const question = query.trim()
@@ -20,6 +20,6 @@ export const useAssistantCommand = (
       keywords: ['ia', 'assistant', 'question', 'chat'],
       icon: Sparkles,
       hint: 'Entrée',
-      run: () => ouvrirAssistant(question),
+      run: () => openAssistant(question),
     }
-  }, [query, ouvrirAssistant])
+  }, [query, openAssistant])

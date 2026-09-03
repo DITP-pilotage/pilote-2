@@ -70,7 +70,7 @@ export function HeaderNav({ auth }: { auth: Auth }) {
           <CommandPalette
             open={paletteOpen}
             onOpenChange={setPaletteOpen}
-            ouvrirAssistant={(question) => {
+            openAssistant={(question) => {
               // Un identifiant neuf par ouverture : chaque session de questions est sa
               // propre conversation tant que l'historique n'existe pas.
               setAssistant({ conversationId: crypto.randomUUID(), question })
@@ -91,7 +91,7 @@ export function HeaderNav({ auth }: { auth: Auth }) {
             <AssistantPanel
               key={assistant.conversationId}
               conversationId={assistant.conversationId}
-              questionInitiale={assistant.question}
+              initialQuestion={assistant.question}
             />
           </div>
         </Modale>
