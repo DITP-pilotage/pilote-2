@@ -6,6 +6,7 @@ import Loader from "@/components/_commons/Loader/Loader";
 import { Lien } from "@/components/_commons/Lien/Lien";
 import { BadgeStatutReferentiel } from "@/components/_commons/BadgeStatutReferentiel";
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
+import { formaterDateCourte } from "@/client/utils/date/date";
 import type { PorteurAdminListItem } from "@/server/metadataPorteur/queries/ListerPorteursAdminQuery";
 
 const TYPE_BADGE: Record<
@@ -70,11 +71,7 @@ const LignePorteur = ({ porteur }: { porteur: PorteurAdminListItem }) => {
         <BadgeStatutReferentiel supprimé={supprimé} />
       </td>
       <td className="px-6 py-4 text-xs text-gray-500 whitespace-nowrap">
-        {new Date(porteur.updatedAt).toLocaleDateString("fr-FR", {
-          day: "numeric",
-          month: "short",
-          year: "numeric",
-        })}
+        {formaterDateCourte(new Date(porteur.updatedAt))}
       </td>
     </tr>
   );

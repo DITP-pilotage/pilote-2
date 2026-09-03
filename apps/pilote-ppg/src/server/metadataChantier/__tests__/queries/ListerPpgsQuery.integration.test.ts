@@ -44,5 +44,24 @@ describe("ListerPpgsQuery", () => {
         ]);
       }),
     );
+
+    it(
+      "exclut les ppgs archivés",
+      createIntegrationTest(async () => {
+        // Given
+        await fixtures.metadataPpg({ ppg_id: "PPG-004", ppg_nom: "Actif" });
+        await fixtures.metadataPpg({
+          ppg_id: "PPG-005",
+          ppg_nom: "Archivé",
+          deleted_at: new Date("2026-01-01"),
+        });
+
+        // When
+        const resultat = await query.run();
+
+        // Then
+        expect(resultat).toEqual([{ id: "PPG-004", nom: "Actif" }]);
+      }),
+    );
   });
 });

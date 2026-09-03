@@ -14,9 +14,10 @@ export class ListerPpgsQuery {
   }
 
   async run(): Promise<Ppg[]> {
-    const ppgs = await this.prisma
-      .getInstance()
-      .metadata_ppgs.findMany({ orderBy: { ppg_id: "asc" } });
+    const ppgs = await this.prisma.getInstance().metadata_ppgs.findMany({
+      where: { deleted_at: null },
+      orderBy: { ppg_id: "asc" },
+    });
     return ppgs.map(toApiModel);
   }
 }

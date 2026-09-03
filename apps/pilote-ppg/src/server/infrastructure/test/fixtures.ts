@@ -732,6 +732,37 @@ export const fixtures = {
     });
   },
 
+  async metadataAxe(
+    overrides: Partial<Prisma.metadata_axesUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const axeId = overrides.axe_id ?? `AXE-${randomUUID().slice(0, 6)}`;
+    return prisma.metadata_axes.create({
+      data: {
+        axe_id: axeId,
+        axe_name: `Axe test ${axeId}`,
+        ...overrides,
+      },
+    });
+  },
+
+  async metadataEngagement(
+    overrides: Partial<Prisma.metadata_engagementUncheckedCreateInput> = {},
+  ) {
+    const prisma = getPrisma();
+    const engagementId =
+      overrides.engagement_id ??
+      String(Math.floor(Math.random() * 90000) + 10000);
+    return prisma.metadata_engagement.create({
+      data: {
+        engagement_id: engagementId,
+        engagement_short: `ENG-${engagementId}`,
+        engagement_name: `Engagement test ${engagementId}`,
+        ...overrides,
+      },
+    });
+  },
+
   async metadataPerimetre(
     overrides: Partial<Prisma.metadata_perimetresUncheckedCreateInput> = {},
   ) {
