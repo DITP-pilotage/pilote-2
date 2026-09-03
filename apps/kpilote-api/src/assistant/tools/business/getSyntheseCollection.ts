@@ -1,11 +1,12 @@
+import { type CollectionApiModel } from '@pilote/kpilote-shared/collection'
+import { type CollectionTauxProgressionApiModel } from '@pilote/kpilote-shared/collectionTauxProgression'
 import {
   syntheseCollectionInputSchema,
-  type SyntheseBranch,
   type SyntheseCollectionOutput,
 } from '@pilote/kpilote-shared/assistant/tools'
 import { tool, type Tool } from 'ai'
 
-import { readBranch, WITHOUT_TERRITOIRE } from '@/assistant/tools/business/composeCalls'
+import { readBranch, WITHOUT_TERRITOIRE } from '@/assistant/tools/business/readBranch'
 import { type Fetcher } from '@/assistant/tools/fetcher'
 
 const DESCRIPTION = `Dresse en un seul appel l'état d'une collection : son identité, les indicateurs qu'elle regroupe, et — si un territoire est fourni — son taux d'avancement.
@@ -23,14 +24,16 @@ export const createGetSyntheseCollectionTool = (fetcher: Fetcher): Tool =>
     description: DESCRIPTION,
     inputSchema: syntheseCollectionInputSchema,
     execute: async ({ id, individuId }): Promise<SyntheseCollectionOutput> => {
-      const withoutTerritoire: SyntheseBranch<never> = WITHOUT_TERRITOIRE
       const [identite, tauxProgression] = await Promise.all([
-        readBranch(fetcher, `/collections/${id}`),
+        readBranch<CollectionApiModel>(fetcher, `/collections/${id}`),
         individuId
-          ? readBranch(fetcher, `/collections/${id}/taux-progression?individu=${individuId}`)
-          : Promise.resolve(withoutTerritoire),
+          ? readBranch<CollectionTauxProgressionApiModel>(
+              fetcher,
+              `/collections/${id}/taux-progression?individu=${individuId}`,
+            )
+          : WITHOUT_TERRITOIRE,
       ])
 
-      return { identite, tauxProgression } as SyntheseCollectionOutput
+      return { identite, tauxProgression }
     },
   })
