@@ -316,6 +316,9 @@ importers:
       '@types/pg':
         specifier: ^8.23.1
         version: 8.23.1
+      jest-extended:
+        specifier: 7.0.0
+        version: 7.0.0(typescript@7.0.2)
       oxlint:
         specifier: ^1.88.0
         version: 1.88.0(oxlint-tsgolint@7.0.2004)
