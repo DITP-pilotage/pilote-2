@@ -5,38 +5,19 @@ import {
   type GetChantierCommentairesOutput,
   type TypeContenuChantier,
 } from "@/server/albert/tools/getChantierCommentaires";
-import type {
-  GetChantierCommentairesQuery,
-  GetChantierCommentairesResult,
-} from "@/server/chantiers/query/GetChantierCommentairesQuery";
+import type { GetChantierCommentairesQuery } from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 
-const TYPES_NATIONAUX = [
+const TOUS_LES_TYPES = [
   "freins_a_lever",
   "actions_a_venir",
   "actions_a_valoriser",
   "autres_resultats_obtenus_non_correles_aux_indicateurs",
   "decision_strategique",
-];
-const TYPES_TERRITORIAUX = [
   "commentaires_sur_les_donnees",
   "autres_resultats_obtenus",
-];
-
-const nomTerritoires: Record<string, string> = {
-  "DEPT-75": "Paris",
-  "REG-11": "Île-de-France",
-  "NAT-FR": "France",
-};
-
-const resultatVide = (
-  territoireCode: string,
-): GetChantierCommentairesResult => ({
-  territoire_code: territoireCode,
-  territoire_nom: nomTerritoires[territoireCode] ?? territoireCode,
-  chantier_id: "CH-001",
-  commentaires: [],
-});
+  "synthese_des_resultats",
+] satisfies TypeContenuChantier[];
 
 const buildTool = ({
   territoiresAccessibles,
@@ -45,13 +26,10 @@ const buildTool = ({
   territoiresAccessibles: string[];
   sousTerritoires?: Record<string, string[]>;
 }) => {
-  const executeQuery = vi.fn(
-    async (params: {
-      chantierId: string;
-      territoireCode: string;
-      types: string[];
-    }) => resultatVide(params.territoireCode),
-  );
+  const executeQuery = vi.fn(async () => ({
+    resultats: [],
+    types_non_accessibles: [],
+  }));
   const query = mock<GetChantierCommentairesQuery>({
     execute: executeQuery,
   });
@@ -102,7 +80,7 @@ describe("createGetChantierCommentairesTool execute", () => {
     ).rejects.toThrow("Accès non autorisé au territoire REG-11");
   });
 
-  test("get all sur un département remonte aussi les types nationaux quand NAT-FR est accessible", async () => {
+  test("appelle la query avec le territoire demandé et tous les types par défaut", async () => {
     // Given
     const { tool, executeQuery } = buildTool({
       territoiresAccessibles: ["DEPT-75", "NAT-FR"],
@@ -116,104 +94,50 @@ describe("createGetChantierCommentairesTool execute", () => {
     });
 
     // Then
-    expect(executeQuery.mock.calls.map(([params]) => params)).toEqual([
-      {
-        chantierId: "CH-001",
-        territoireCode: "DEPT-75",
-        types: [...TYPES_TERRITORIAUX, "synthese_des_resultats"],
-      },
-      {
-        chantierId: "CH-001",
-        territoireCode: "NAT-FR",
-        types: TYPES_NATIONAUX,
-      },
-    ]);
-    expect(result.resultats).toEqual([
-      resultatVide("DEPT-75"),
-      resultatVide("NAT-FR"),
-    ]);
-    expect(result.types_non_accessibles).toEqual([]);
-  });
-
-  test("get all sur un département sans accès à NAT-FR signale les types nationaux non accessibles", async () => {
-    // Given
-    const { tool, executeQuery } = buildTool({
-      territoiresAccessibles: ["DEPT-75"],
+    expect(executeQuery).toHaveBeenCalledWith({
+      chantierId: "CH-001",
+      territoireCodes: ["DEPT-75"],
+      types: TOUS_LES_TYPES,
+      inclureCommentairesNationaux: true,
     });
-
-    // When
-    const result = await executeTool(tool, {
-      chantier_id: "CH-001",
-      territoire_code: "DEPT-75",
-      include_sous_territoires: false,
-    });
-
-    // Then
-    expect(executeQuery.mock.calls.map(([params]) => params)).toEqual([
-      {
-        chantierId: "CH-001",
-        territoireCode: "DEPT-75",
-        types: [...TYPES_TERRITORIAUX, "synthese_des_resultats"],
-      },
-    ]);
-    expect(result.resultats).toEqual([resultatVide("DEPT-75")]);
-    expect(result.types_non_accessibles).toEqual(TYPES_NATIONAUX);
-  });
-
-  test("un type national demandé depuis un département est recherché sur NAT-FR uniquement", async () => {
-    // Given
-    const { tool, executeQuery } = buildTool({
-      territoiresAccessibles: ["DEPT-75", "NAT-FR"],
-    });
-
-    // When
-    const result = await executeTool(tool, {
-      chantier_id: "CH-001",
-      territoire_code: "DEPT-75",
-      include_sous_territoires: false,
-      types: ["freins_a_lever"],
-    });
-
-    // Then — aucun appel sur DEPT-75 : freins_a_lever n'existe pas à cette maille
-    expect(executeQuery.mock.calls.map(([params]) => params)).toEqual([
-      {
-        chantierId: "CH-001",
-        territoireCode: "NAT-FR",
-        types: ["freins_a_lever"],
-      },
-    ]);
-    expect(result.resultats).toEqual([resultatVide("NAT-FR")]);
-    expect(result.types_non_accessibles).toEqual([]);
-  });
-
-  test("un type national demandé sans accès à NAT-FR est signalé sans résultat", async () => {
-    // Given
-    const { tool, executeQuery } = buildTool({
-      territoiresAccessibles: ["DEPT-75"],
-    });
-
-    // When
-    const result = await executeTool(tool, {
-      chantier_id: "CH-001",
-      territoire_code: "DEPT-75",
-      include_sous_territoires: false,
-      types: ["freins_a_lever"],
-    });
-
-    // Then
-    expect(executeQuery).not.toHaveBeenCalled();
     expect(result.resultats).toEqual([]);
-    expect(result.types_non_accessibles).toEqual(["freins_a_lever"]);
+    expect(result.types_non_accessibles).toEqual([]);
+    expect(result._output_instructions).toContain(
+      "Rédigé pour <territoire_nom>",
+    );
   });
 
-  test("un type territorial demandé ne déclenche ni remontée nationale ni signalement", async () => {
+  test("filtre les sous-territoires inaccessibles avant d'appeler la query", async () => {
+    // Given
+    const { tool, executeQuery } = buildTool({
+      territoiresAccessibles: ["REG-11", "DEPT-75"],
+      sousTerritoires: { "REG-11": ["DEPT-75", "DEPT-77"] },
+    });
+
+    // When
+    await executeTool(tool, {
+      chantier_id: "CH-001",
+      territoire_code: "REG-11",
+      include_sous_territoires: true,
+    });
+
+    // Then
+    expect(executeQuery).toHaveBeenCalledWith({
+      chantierId: "CH-001",
+      territoireCodes: ["REG-11", "DEPT-75"],
+      types: TOUS_LES_TYPES,
+      inclureCommentairesNationaux: false,
+    });
+  });
+
+  test("transmet les types explicitement demandés à la query", async () => {
     // Given
     const { tool, executeQuery } = buildTool({
       territoiresAccessibles: ["DEPT-75"],
     });
 
     // When
-    const result = await executeTool(tool, {
+    await executeTool(tool, {
       chantier_id: "CH-001",
       territoire_code: "DEPT-75",
       include_sous_territoires: false,
@@ -221,106 +145,11 @@ describe("createGetChantierCommentairesTool execute", () => {
     });
 
     // Then
-    expect(executeQuery.mock.calls.map(([params]) => params)).toEqual([
-      {
-        chantierId: "CH-001",
-        territoireCode: "DEPT-75",
-        types: ["commentaires_sur_les_donnees"],
-      },
-    ]);
-    expect(result.types_non_accessibles).toEqual([]);
-  });
-
-  test("get all sur NAT-FR interroge une seule fois NAT-FR avec la synthèse incluse", async () => {
-    // Given
-    const { tool, executeQuery } = buildTool({
-      territoiresAccessibles: ["NAT-FR"],
+    expect(executeQuery).toHaveBeenCalledWith({
+      chantierId: "CH-001",
+      territoireCodes: ["DEPT-75"],
+      types: ["commentaires_sur_les_donnees"],
+      inclureCommentairesNationaux: false,
     });
-
-    // When
-    const result = await executeTool(tool, {
-      chantier_id: "CH-001",
-      territoire_code: "NAT-FR",
-      include_sous_territoires: false,
-    });
-
-    // Then — pas de double appel NAT-FR, et la synthèse nationale fait partie du territoire demandé
-    expect(executeQuery.mock.calls.map(([params]) => params)).toEqual([
-      {
-        chantierId: "CH-001",
-        territoireCode: "NAT-FR",
-        types: [...TYPES_NATIONAUX, "synthese_des_resultats"],
-      },
-    ]);
-    expect(result.resultats).toEqual([resultatVide("NAT-FR")]);
-    expect(result.types_non_accessibles).toEqual([]);
-  });
-
-  test("include_sous_territoires filtre les sous-territoires inaccessibles et remonte NAT-FR une seule fois", async () => {
-    // Given — DEPT-77 n'est pas accessible
-    const { tool, executeQuery } = buildTool({
-      territoiresAccessibles: ["REG-11", "DEPT-75", "NAT-FR"],
-      sousTerritoires: { "REG-11": ["DEPT-75", "DEPT-77"] },
-    });
-
-    // When
-    const result = await executeTool(tool, {
-      chantier_id: "CH-001",
-      territoire_code: "REG-11",
-      include_sous_territoires: true,
-    });
-
-    // Then
-    expect(executeQuery.mock.calls.map(([params]) => params)).toEqual([
-      {
-        chantierId: "CH-001",
-        territoireCode: "REG-11",
-        types: [...TYPES_TERRITORIAUX, "synthese_des_resultats"],
-      },
-      {
-        chantierId: "CH-001",
-        territoireCode: "DEPT-75",
-        types: [...TYPES_TERRITORIAUX, "synthese_des_resultats"],
-      },
-      {
-        chantierId: "CH-001",
-        territoireCode: "NAT-FR",
-        types: TYPES_NATIONAUX,
-      },
-    ]);
-    expect(result.resultats).toEqual([
-      resultatVide("REG-11"),
-      resultatVide("DEPT-75"),
-      resultatVide("NAT-FR"),
-    ]);
-  });
-
-  test("include_sous_territoires depuis NAT-FR ne duplique pas NAT-FR", async () => {
-    // Given
-    const { tool, executeQuery } = buildTool({
-      territoiresAccessibles: ["NAT-FR", "REG-11"],
-      sousTerritoires: { "NAT-FR": ["REG-11"] },
-    });
-
-    // When
-    await executeTool(tool, {
-      chantier_id: "CH-001",
-      territoire_code: "NAT-FR",
-      include_sous_territoires: true,
-    });
-
-    // Then
-    expect(executeQuery.mock.calls.map(([params]) => params)).toEqual([
-      {
-        chantierId: "CH-001",
-        territoireCode: "NAT-FR",
-        types: [...TYPES_NATIONAUX, "synthese_des_resultats"],
-      },
-      {
-        chantierId: "CH-001",
-        territoireCode: "REG-11",
-        types: [...TYPES_TERRITORIAUX, "synthese_des_resultats"],
-      },
-    ]);
   });
 });

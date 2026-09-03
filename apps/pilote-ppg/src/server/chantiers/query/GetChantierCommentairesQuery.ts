@@ -1,6 +1,32 @@
 import { $Enums } from "@prisma/client";
 import { PrismaPilote } from "@/server/db/PrismaPilote";
 
+export const typesContenuChantier = [
+  "freins_a_lever",
+  "actions_a_venir",
+  "actions_a_valoriser",
+  "autres_resultats_obtenus_non_correles_aux_indicateurs",
+  "decision_strategique",
+  "commentaires_sur_les_donnees",
+  "autres_resultats_obtenus",
+  "synthese_des_resultats",
+] as const;
+export type TypeContenuChantier = (typeof typesContenuChantier)[number];
+
+const TYPES_NATIONAUX: TypeContenuChantier[] = [
+  "freins_a_lever",
+  "actions_a_venir",
+  "actions_a_valoriser",
+  "autres_resultats_obtenus_non_correles_aux_indicateurs",
+  "decision_strategique",
+];
+const TYPES_TERRITORIAUX: TypeContenuChantier[] = [
+  "commentaires_sur_les_donnees",
+  "autres_resultats_obtenus",
+];
+
+const TERRITOIRE_NATIONAL = "NAT-FR";
+
 export type GetChantierCommentairesResult = {
   territoire_code: string;
   territoire_nom: string;
@@ -13,13 +39,78 @@ export type GetChantierCommentairesResult = {
   }[];
 };
 
+export type GetChantierCommentairesQueryResult = {
+  resultats: GetChantierCommentairesResult[];
+  types_non_accessibles: TypeContenuChantier[];
+};
+
 export class GetChantierCommentairesQuery {
   constructor(private readonly deps: { prisma: PrismaPilote }) {}
 
   async execute(params: {
     chantierId: string;
+    territoireCodes: string[];
+    types: TypeContenuChantier[];
+    inclureCommentairesNationaux: boolean;
+  }): Promise<GetChantierCommentairesQueryResult> {
+    const typesPourTerritoire = (
+      territoireCode: string,
+    ): TypeContenuChantier[] => {
+      const typesExclusDeLaMaille =
+        territoireCode === TERRITOIRE_NATIONAL
+          ? TYPES_TERRITORIAUX
+          : TYPES_NATIONAUX;
+      return params.types.filter(
+        (type) => !typesExclusDeLaMaille.includes(type),
+      );
+    };
+
+    const appels = params.territoireCodes
+      .map((territoireCode) => ({
+        territoireCode,
+        types: typesPourTerritoire(territoireCode),
+      }))
+      .filter((appel) => appel.types.length > 0);
+
+    const typesNationauxDemandes = params.types.filter((type) =>
+      TYPES_NATIONAUX.includes(type),
+    );
+    const typesNonAccessibles: TypeContenuChantier[] = [];
+
+    if (
+      typesNationauxDemandes.length > 0 &&
+      !params.territoireCodes.includes(TERRITOIRE_NATIONAL)
+    ) {
+      if (params.inclureCommentairesNationaux) {
+        appels.push({
+          territoireCode: TERRITOIRE_NATIONAL,
+          types: typesNationauxDemandes,
+        });
+      } else {
+        typesNonAccessibles.push(...typesNationauxDemandes);
+      }
+    }
+
+    const resultats = await Promise.all(
+      appels.map((appel) =>
+        this.executePourTerritoire({
+          chantierId: params.chantierId,
+          territoireCode: appel.territoireCode,
+          types: appel.types,
+        }),
+      ),
+    );
+
+    return {
+      resultats,
+      types_non_accessibles: typesNonAccessibles,
+    };
+  }
+
+  private async executePourTerritoire(params: {
+    chantierId: string;
     territoireCode: string;
-    types: string[];
+    types: TypeContenuChantier[];
   }): Promise<GetChantierCommentairesResult> {
     const prisma = this.deps.prisma.getInstance();
 

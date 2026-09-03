@@ -1,34 +1,17 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { GetChantierCommentairesQuery } from "@/server/chantiers/query/GetChantierCommentairesQuery";
-import type { GetChantierCommentairesResult } from "@/server/chantiers/query/GetChantierCommentairesQuery";
+import {
+  GetChantierCommentairesQuery,
+  typesContenuChantier,
+} from "@/server/chantiers/query/GetChantierCommentairesQuery";
+import type {
+  GetChantierCommentairesQueryResult,
+  GetChantierCommentairesResult,
+  TypeContenuChantier,
+} from "@/server/chantiers/query/GetChantierCommentairesQuery";
 import type { TerritoireResolver } from "@/server/albert/domain/TerritoireResolver";
 
-export const typesContenuChantier = [
-  "freins_a_lever",
-  "actions_a_venir",
-  "actions_a_valoriser",
-  "autres_resultats_obtenus_non_correles_aux_indicateurs",
-  "decision_strategique",
-  "commentaires_sur_les_donnees",
-  "autres_resultats_obtenus",
-  "synthese_des_resultats",
-] as const;
-export type TypeContenuChantier = (typeof typesContenuChantier)[number];
-
-// Les types nationaux n'existent qu'à la maille nationale (NAT-FR) ; les
-// types territoriaux n'existent qu'aux mailles régionale et départementale.
-const TYPES_NATIONAUX: TypeContenuChantier[] = [
-  "freins_a_lever",
-  "actions_a_venir",
-  "actions_a_valoriser",
-  "autres_resultats_obtenus_non_correles_aux_indicateurs",
-  "decision_strategique",
-];
-const TYPES_TERRITORIAUX: TypeContenuChantier[] = [
-  "commentaires_sur_les_donnees",
-  "autres_resultats_obtenus",
-];
+export type { TypeContenuChantier };
 
 const TERRITOIRE_NATIONAL = "NAT-FR";
 
@@ -54,7 +37,7 @@ export const getChantierCommentairesInputSchema = z.object({
 
 export type GetChantierCommentairesOutput = {
   resultats: GetChantierCommentairesResult[];
-  types_non_accessibles: TypeContenuChantier[];
+  types_non_accessibles: GetChantierCommentairesQueryResult["types_non_accessibles"];
   _output_instructions: string;
 };
 
@@ -106,57 +89,16 @@ Utilise cet outil quand l'utilisateur demande l'analyse qualitative ou contextue
           territoiresAccessibles.includes(code),
         );
 
-        const typesPourTerritoire = (
-          territoireCode: string,
-        ): TypeContenuChantier[] => {
-          const typesExclusDeLaMaille =
-            territoireCode === TERRITOIRE_NATIONAL
-              ? TYPES_TERRITORIAUX
-              : TYPES_NATIONAUX;
-          return typesDemandes.filter(
-            (type) => !typesExclusDeLaMaille.includes(type),
-          );
-        };
-
-        const appels = codesAccessibles
-          .map((territoireCode) => ({
-            territoireCode,
-            types: typesPourTerritoire(territoireCode),
-          }))
-          .filter((appel) => appel.types.length > 0);
-
-        const typesNationauxDemandes = typesDemandes.filter((type) =>
-          TYPES_NATIONAUX.includes(type),
-        );
-        const typesNonAccessibles: TypeContenuChantier[] = [];
-
-        if (
-          typesNationauxDemandes.length > 0 &&
-          !codesAccessibles.includes(TERRITOIRE_NATIONAL)
-        ) {
-          if (territoiresAccessibles.includes(TERRITOIRE_NATIONAL)) {
-            appels.push({
-              territoireCode: TERRITOIRE_NATIONAL,
-              types: typesNationauxDemandes,
-            });
-          } else {
-            typesNonAccessibles.push(...typesNationauxDemandes);
-          }
-        }
-
-        const resultats = await Promise.all(
-          appels.map((appel) =>
-            getChantierCommentairesQuery.execute({
-              chantierId: input.chantier_id,
-              territoireCode: appel.territoireCode,
-              types: appel.types,
-            }),
-          ),
-        );
+        const result = await getChantierCommentairesQuery.execute({
+          chantierId: input.chantier_id,
+          territoireCodes: codesAccessibles,
+          types: typesDemandes,
+          inclureCommentairesNationaux:
+            territoiresAccessibles.includes(TERRITOIRE_NATIONAL),
+        });
 
         return {
-          resultats,
-          types_non_accessibles: typesNonAccessibles,
+          ...result,
           _output_instructions: OUTPUT_INSTRUCTIONS,
         };
       },

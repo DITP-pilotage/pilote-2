@@ -501,7 +501,7 @@ Une question de suivi qui élargit ou modifie le périmètre nécessite un **nou
 - Nouveau chantier non analysé précédemment
 - Toute formulation de type "complète", "ajoute", "élargis", "et aussi…"
 
-**Exemple concret** : tu as analysé REG-32 et ses départements ; l'utilisateur demande "complète avec les commentaires au niveau national". Tu DOIS appeler les outils avec territoire_code=NAT-FR avant de répondre. Tu ne dois PAS conclure "il n'y a pas de commentaires nationaux" depuis ton contexte — tu n'as simplement pas encore interrogé NAT-FR (cf. règle d'or "Résultats vides vs périmètre non interrogé"). Exception : \`get_chantier_commentaires\` remonte déjà automatiquement les types nationaux (freins_a_lever, actions_a_venir, actions_a_valoriser, autres_resultats_obtenus_non_correles_aux_indicateurs, decision_strategique) quand l'utilisateur a accès à NAT-FR — si son résultat les contient déjà, inutile de le rappeler.
+**Exemple concret** : tu as analysé REG-32 et ses départements ; l'utilisateur demande "complète avec les commentaires au niveau national". Tu DOIS appeler les outils avec territoire_code=NAT-FR avant de répondre. Tu ne dois PAS conclure "il n'y a pas de commentaires nationaux" depuis ton contexte — tu n'as simplement pas encore interrogé NAT-FR (cf. règle d'or "Résultats vides vs périmètre non interrogé").
 
 ## display_choices
 **N'utilise PAS** display_choices pour :

@@ -7,6 +7,13 @@ import { GetChantierCommentairesQuery } from "@/server/chantiers/query/GetChanti
 const TERRITOIRE_CODE = "DEPT-75";
 const MAILLE = "DEPT";
 const CODE_INSEE = "75";
+const TYPES_NATIONAUX = [
+  "freins_a_lever",
+  "actions_a_venir",
+  "actions_a_valoriser",
+  "autres_resultats_obtenus_non_correles_aux_indicateurs",
+  "decision_strategique",
+] as const;
 
 describe("GetChantierCommentairesQuery", () => {
   let query: GetChantierCommentairesQuery;
@@ -40,23 +47,29 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCode: TERRITOIRE_CODE,
+        territoireCodes: [TERRITOIRE_CODE],
         types: ["commentaires_sur_les_donnees"],
+        inclureCommentairesNationaux: false,
       });
 
       // Then
       expect(result).toEqual({
-        territoire_code: TERRITOIRE_CODE,
-        territoire_nom: expect.any(String),
-        chantier_id: chantier.id,
-        commentaires: [
+        resultats: [
           {
-            id: commentaire.id,
-            date_publication: new Date("2025-06-01").toISOString(),
-            contenu: "Commentaire sur les données",
-            type: "commentaires_sur_les_donnees",
+            territoire_code: TERRITOIRE_CODE,
+            territoire_nom: expect.any(String),
+            chantier_id: chantier.id,
+            commentaires: [
+              {
+                id: commentaire.id,
+                date_publication: new Date("2025-06-01").toISOString(),
+                contenu: "Commentaire sur les données",
+                type: "commentaires_sur_les_donnees",
+              },
+            ],
           },
         ],
+        types_non_accessibles: [],
       });
     }),
   );
@@ -84,12 +97,13 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCode: TERRITOIRE_CODE,
+        territoireCodes: [TERRITOIRE_CODE],
         types: ["commentaires_sur_les_donnees"],
+        inclureCommentairesNationaux: false,
       });
 
       // Then
-      expect(result.commentaires).toEqual([]);
+      expect(result.resultats[0].commentaires).toEqual([]);
     }),
   );
 
@@ -123,12 +137,13 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCode: TERRITOIRE_CODE,
+        territoireCodes: [TERRITOIRE_CODE],
         types: ["commentaires_sur_les_donnees"],
+        inclureCommentairesNationaux: false,
       });
 
       // Then
-      expect(result.commentaires.map((item) => item.id)).toEqual([
+      expect(result.resultats[0].commentaires.map((item) => item.id)).toEqual([
         commentaireDemandé.id,
       ]);
     }),
@@ -157,12 +172,13 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCode: TERRITOIRE_CODE,
+        territoireCodes: [TERRITOIRE_CODE],
         types: ["synthese_des_resultats"],
+        inclureCommentairesNationaux: false,
       });
 
       // Then
-      expect(result.commentaires).toEqual([
+      expect(result.resultats[0].commentaires).toEqual([
         {
           id: synthese.id,
           date_publication: new Date("2025-03-01").toISOString(),
@@ -194,12 +210,13 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCode: TERRITOIRE_CODE,
+        territoireCodes: [TERRITOIRE_CODE],
         types: ["commentaires_sur_les_donnees"],
+        inclureCommentairesNationaux: false,
       });
 
       // Then
-      expect(result.commentaires).toEqual([]);
+      expect(result.resultats[0].commentaires).toEqual([]);
     }),
   );
 
@@ -226,12 +243,13 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCode: TERRITOIRE_CODE,
+        territoireCodes: [TERRITOIRE_CODE],
         types: ["synthese_des_resultats"],
+        inclureCommentairesNationaux: false,
       });
 
       // Then
-      expect(result.commentaires).toEqual([]);
+      expect(result.resultats[0].commentaires).toEqual([]);
     }),
   );
 
@@ -255,12 +273,13 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCode: "NAT-FR",
+        territoireCodes: ["NAT-FR"],
         types: ["decision_strategique"],
+        inclureCommentairesNationaux: true,
       });
 
       // Then
-      expect(result.commentaires).toEqual([
+      expect(result.resultats[0].commentaires).toEqual([
         {
           id: decision.id,
           date_publication: new Date("2025-04-01").toISOString(),
@@ -290,12 +309,13 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCode: "NAT-FR",
+        territoireCodes: ["NAT-FR"],
         types: ["decision_strategique"],
+        inclureCommentairesNationaux: true,
       });
 
       // Then
-      expect(result.commentaires).toEqual([]);
+      expect(result.resultats[0].commentaires).toEqual([]);
     }),
   );
 
@@ -329,14 +349,120 @@ describe("GetChantierCommentairesQuery", () => {
       // When
       const result = await query.execute({
         chantierId: chantier.id,
-        territoireCode: TERRITOIRE_CODE,
+        territoireCodes: [TERRITOIRE_CODE],
         types: ["commentaires_sur_les_donnees", "synthese_des_resultats"],
+        inclureCommentairesNationaux: false,
       });
 
       // Then
-      expect(result.commentaires.map((item) => item.id)).toEqual([
+      expect(result.resultats[0].commentaires.map((item) => item.id)).toEqual([
         récente.id,
         ancien.id,
+      ]);
+    }),
+  );
+
+  it(
+    "remonte les types nationaux sur NAT-FR quand ils sont demandés depuis un territoire local et accessibles",
+    createIntegrationTest(async () => {
+      // Given
+      const chantier = await fixtures.chantierIdentite();
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+      });
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: "NAT-FR",
+        maille: "NAT",
+        code_insee: "FR",
+      });
+      const commentaireNational = await fixtures.commentaire({
+        chantier_id: chantier.id,
+        territoire_code: "NAT-FR",
+        maille: "NAT",
+        code_insee: "FR",
+        type: "freins_a_lever",
+      });
+
+      // When
+      const result = await query.execute({
+        chantierId: chantier.id,
+        territoireCodes: [TERRITOIRE_CODE],
+        types: ["freins_a_lever"],
+        inclureCommentairesNationaux: true,
+      });
+
+      // Then
+      expect(result.types_non_accessibles).toEqual([]);
+      expect(result.resultats).toHaveLength(1);
+      expect(result.resultats[0]).toMatchObject({
+        territoire_code: "NAT-FR",
+        territoire_nom: expect.any(String),
+        chantier_id: chantier.id,
+      });
+      expect(result.resultats[0].commentaires.map((item) => item.id)).toEqual([
+        commentaireNational.id,
+      ]);
+    }),
+  );
+
+  it(
+    "signale les types nationaux non accessibles sans interroger NAT-FR",
+    createIntegrationTest(async () => {
+      // Given
+      const chantier = await fixtures.chantierIdentite();
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: TERRITOIRE_CODE,
+        maille: MAILLE,
+        code_insee: CODE_INSEE,
+      });
+
+      // When
+      const result = await query.execute({
+        chantierId: chantier.id,
+        territoireCodes: [TERRITOIRE_CODE],
+        types: [...TYPES_NATIONAUX],
+        inclureCommentairesNationaux: false,
+      });
+
+      // Then
+      expect(result.resultats).toEqual([]);
+      expect(result.types_non_accessibles).toEqual([...TYPES_NATIONAUX]);
+    }),
+  );
+
+  it(
+    "ne duplique pas NAT-FR quand le territoire national est déjà dans le périmètre",
+    createIntegrationTest(async () => {
+      // Given
+      const chantier = await fixtures.chantierIdentite();
+      await fixtures.chantierTerritoire({
+        id: chantier.id,
+        territoire_code: "NAT-FR",
+        maille: "NAT",
+        code_insee: "FR",
+      });
+      const decision = await fixtures.decisionStrategique({
+        chantier_id: chantier.id,
+      });
+
+      // When
+      const result = await query.execute({
+        chantierId: chantier.id,
+        territoireCodes: ["NAT-FR"],
+        types: ["decision_strategique"],
+        inclureCommentairesNationaux: true,
+      });
+
+      // Then
+      expect(result.resultats).toHaveLength(1);
+      expect(result.resultats[0].territoire_code).toBe("NAT-FR");
+      expect(result.resultats[0].commentaires.map((item) => item.id)).toEqual([
+        decision.id,
       ]);
     }),
   );
