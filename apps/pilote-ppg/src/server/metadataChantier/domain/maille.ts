@@ -9,12 +9,6 @@ export const LIBELLÉ_MAILLE: Record<Maille, string> = {
   DEPT: "Départemental",
 };
 
-export const LIBELLÉ_MAILLE_ADJECTIF: Record<Maille, string> = {
-  NAT: "nationale",
-  REG: "régionale",
-  DEPT: "départementale",
-};
-
 export function calculerMaillesApplicablesIndicateur(
   indicTerritorialise: boolean,
   mailleLaPlusFine: string | null,

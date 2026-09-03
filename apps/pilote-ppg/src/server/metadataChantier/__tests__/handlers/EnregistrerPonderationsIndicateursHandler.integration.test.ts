@@ -1,19 +1,15 @@
-import { PrismaPilote } from "@/server/db/PrismaPilote";
 import { EnregistrerPonderationsIndicateursHandler } from "@/server/metadataChantier/handlers/EnregistrerPonderationsIndicateursHandler";
 import { createIntegrationTest } from "@/server/infrastructure/test/createIntegrationTest";
 import { fixtures } from "@/server/infrastructure/test/fixtures";
 import { getPrisma } from "@/server/db/PrismaTransaction";
 import { InMemoryTransaction } from "@/server/db/InMemoryTransaction";
-import { BadRequestError } from "@/server/app/error-boundary/bad-request-error";
 
 describe("EnregistrerPonderationsIndicateursHandler", () => {
   let handler: EnregistrerPonderationsIndicateursHandler;
-  const prismaPilote = new PrismaPilote();
   const transaction = new InMemoryTransaction();
 
   beforeEach(() => {
     handler = new EnregistrerPonderationsIndicateursHandler({
-      prisma: prismaPilote,
       transaction,
     });
   });
@@ -79,7 +75,7 @@ describe("EnregistrerPonderationsIndicateursHandler", () => {
   );
 
   it(
-    "rejette l'enregistrement si la somme d'une maille applicable est différente de 100",
+    "enregistre les pondérations même si la somme d'une maille applicable est différente de 100",
     createIntegrationTest(async () => {
       // Given
       await fixtures.metadataChantier({ chantier_id: "CH-010" });
@@ -109,7 +105,7 @@ describe("EnregistrerPonderationsIndicateursHandler", () => {
       });
 
       // When
-      const exécution = handler.execute({
+      await handler.execute({
         lignes: [
           {
             indicId: indicateur1.indic_id,
@@ -127,12 +123,16 @@ describe("EnregistrerPonderationsIndicateursHandler", () => {
       });
 
       // Then
-      await expect(exécution).rejects.toThrow(BadRequestError);
       const parametrage1 =
         await getPrisma().metadata_parametrage_indicateurs.findUniqueOrThrow({
           where: { indic_id: indicateur1.indic_id },
         });
-      expect(parametrage1.poids_pourcent_nat_declaree).toBe(10);
+      const parametrage2 =
+        await getPrisma().metadata_parametrage_indicateurs.findUniqueOrThrow({
+          where: { indic_id: indicateur2.indic_id },
+        });
+      expect(parametrage1.poids_pourcent_nat_declaree).toBe(40);
+      expect(parametrage2.poids_pourcent_nat_declaree).toBe(40);
     }),
   );
 
