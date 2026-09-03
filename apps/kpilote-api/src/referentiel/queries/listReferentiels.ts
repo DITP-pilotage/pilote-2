@@ -30,6 +30,7 @@ export const listReferentiels = (
       ? { nom: { contains: params.recherche, mode: 'insensitive' as const } }
       : {}),
     ...buildScopeFilter(params.scope),
+    ...(params.ids?.length ? { publicId: { in: params.ids } } : {}),
   }
 
   const fetchPage = db().referentiel.findMany({
