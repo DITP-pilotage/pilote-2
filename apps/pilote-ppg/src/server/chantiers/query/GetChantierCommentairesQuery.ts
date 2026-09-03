@@ -3,6 +3,7 @@ import { PrismaPilote } from "@/server/db/PrismaPilote";
 
 export type GetChantierCommentairesResult = {
   territoire_code: string;
+  territoire_nom: string;
   chantier_id: string;
   commentaires: {
     id: string;
@@ -21,6 +22,10 @@ export class GetChantierCommentairesQuery {
     types: string[];
   }): Promise<GetChantierCommentairesResult> {
     const prisma = this.deps.prisma.getInstance();
+
+    const territoire = await prisma.territoire.findUniqueOrThrow({
+      where: { code: params.territoireCode },
+    });
 
     const typesCommentaire = params.types.filter(
       (type) =>
@@ -89,6 +94,7 @@ export class GetChantierCommentairesQuery {
 
     return {
       territoire_code: params.territoireCode,
+      territoire_nom: territoire.nom,
       chantier_id: params.chantierId,
       commentaires: items,
     };

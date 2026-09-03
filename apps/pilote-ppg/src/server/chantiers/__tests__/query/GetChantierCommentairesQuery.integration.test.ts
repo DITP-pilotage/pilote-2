@@ -47,6 +47,7 @@ describe("GetChantierCommentairesQuery", () => {
       // Then
       expect(result).toEqual({
         territoire_code: TERRITOIRE_CODE,
+        territoire_nom: expect.any(String),
         chantier_id: chantier.id,
         commentaires: [
           {

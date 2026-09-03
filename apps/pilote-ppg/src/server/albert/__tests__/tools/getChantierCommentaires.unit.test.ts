@@ -23,10 +23,17 @@ const TYPES_TERRITORIAUX = [
   "autres_resultats_obtenus",
 ];
 
+const nomTerritoires: Record<string, string> = {
+  "DEPT-75": "Paris",
+  "REG-11": "Île-de-France",
+  "NAT-FR": "France",
+};
+
 const resultatVide = (
   territoireCode: string,
 ): GetChantierCommentairesResult => ({
   territoire_code: territoireCode,
+  territoire_nom: nomTerritoires[territoireCode] ?? territoireCode,
   chantier_id: "CH-001",
   commentaires: [],
 });
