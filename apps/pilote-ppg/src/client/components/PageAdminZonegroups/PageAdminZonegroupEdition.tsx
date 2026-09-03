@@ -1,8 +1,9 @@
-import { useRouter } from "next/router";
 import { Controller, FormProvider } from "react-hook-form";
+import { toast } from "sonner";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { MetadataZonegroup } from "@/server/metadataZonegroup/queries/RecupererZonegroupQuery";
 import {
   defaultZonegroupVide,
@@ -29,7 +30,7 @@ const PageAdminZonegroupEdition = ({
   zonegroupData,
   idSuivant,
 }: Props) => {
-  const router = useRouter();
+  const refreshRouter = useRefreshRouter();
   const zoneGroupIdEffectif = estUneCréation
     ? (idSuivant ?? zoneGroupId)
     : zoneGroupId;
@@ -43,24 +44,29 @@ const PageAdminZonegroupEdition = ({
       }
     : defaultZonegroupVide(zoneGroupIdEffectif);
 
-  const { reactHookForm, enregistrer, alerte, isPending } = useZonegroupForm({
+  const { reactHookForm, enregistrer, isPending } = useZonegroupForm({
     defaultValues,
-    zoneGroupId: zoneGroupIdEffectif,
     estUneCréation,
   });
 
   const archiverMutation = api.metadataZonegroup.archiver.useMutation({
-    onSuccess: () =>
-      router.push(
-        `/panel-administrateur/referentiels/zonegroups/${zoneGroupIdEffectif}?_action=modification-reussie`,
-      ),
+    onSuccess: () => {
+      toast.success("Zone groupe archivée avec succès.", {
+        position: "bottom-right",
+        richColors: true,
+      });
+      void refreshRouter();
+    },
   });
 
   const restorerMutation = api.metadataZonegroup.restorer.useMutation({
-    onSuccess: () =>
-      router.push(
-        `/panel-administrateur/referentiels/zonegroups/${zoneGroupIdEffectif}?_action=modification-reussie`,
-      ),
+    onSuccess: () => {
+      toast.success("Zone groupe restaurée avec succès.", {
+        position: "bottom-right",
+        richColors: true,
+      });
+      void refreshRouter();
+    },
   });
 
   const estSupprime = zonegroupData?.deletedAt != null;
@@ -75,7 +81,6 @@ const PageAdminZonegroupEdition = ({
   const { data: zonesDisponibles = [] } =
     api.metadataZonegroup.listerZonesDisponibles.useQuery();
 
-  const succès = router.query._action === "modification-reussie";
   const titre = estUneCréation
     ? `Nouveau groupe - ${zoneGroupIdEffectif}`
     : `Groupe ${zoneGroupId}`;
@@ -93,20 +98,6 @@ const PageAdminZonegroupEdition = ({
           libelléPageCourante={titre}
         />
 
-        {succès && (
-          <Alerte
-            classesSupplementaires="mb-6"
-            message="Zone groupe enregistré avec succès."
-            type="succès"
-          />
-        )}
-        {alerte && (
-          <Alerte
-            classesSupplementaires="mb-6"
-            titre={alerte.titre}
-            type="erreur"
-          />
-        )}
         {!estUneCréation && !estSupprime && estUtilisé && (
           <Alerte
             classesSupplementaires="mb-6"

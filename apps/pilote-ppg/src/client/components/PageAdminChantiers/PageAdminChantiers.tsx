@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { $Enums } from "@prisma/client";
 import api from "@/server/infrastructure/api/trpc/api";
-import AlerteMetadataChantier from "@/components/PageAdminChantiers/AlerteMetadataChantier";
 import BarreDeRecherche from "@/components/_commons/BarreDeRecherche/BarreDeRecherche";
 import Loader from "@/components/_commons/Loader/Loader";
 
@@ -68,8 +67,6 @@ const PageAdminChantiers = () => {
             Créer un chantier
           </Link>
         </div>
-
-        <AlerteMetadataChantier />
 
         <div className="mb-4 max-w-sm">
           <BarreDeRecherche

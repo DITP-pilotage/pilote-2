@@ -1,8 +1,9 @@
-import { useRouter } from "next/router";
 import { Controller, FormProvider } from "react-hook-form";
+import { toast } from "sonner";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { MetadataPerimetre } from "@/server/metadataPerimetre/queries/RecupererPerimetreQuery";
 import {
   defaultPerimetreVide,
@@ -29,7 +30,7 @@ const PageAdminPerimetreEdition = ({
   perimetreData,
   idSuivant,
 }: Props) => {
-  const router = useRouter();
+  const refreshRouter = useRefreshRouter();
   const perimetreIdEffectif = estUneCréation
     ? (idSuivant ?? perimetreId)
     : perimetreId;
@@ -42,24 +43,29 @@ const PageAdminPerimetreEdition = ({
       }
     : defaultPerimetreVide(perimetreIdEffectif);
 
-  const { reactHookForm, enregistrer, alerte, isPending } = usePerimetreForm({
+  const { reactHookForm, enregistrer, isPending } = usePerimetreForm({
     defaultValues,
-    perimetreId: perimetreIdEffectif,
     estUneCréation,
   });
 
   const archiverMutation = api.metadataPerimetre.archiver.useMutation({
-    onSuccess: () =>
-      router.push(
-        `/panel-administrateur/referentiels/perimetres/${perimetreIdEffectif}?_action=modification-reussie`,
-      ),
+    onSuccess: () => {
+      toast.success("Périmètre archivé avec succès.", {
+        position: "bottom-right",
+        richColors: true,
+      });
+      void refreshRouter();
+    },
   });
 
   const restorerMutation = api.metadataPerimetre.restorer.useMutation({
-    onSuccess: () =>
-      router.push(
-        `/panel-administrateur/referentiels/perimetres/${perimetreIdEffectif}?_action=modification-reussie`,
-      ),
+    onSuccess: () => {
+      toast.success("Périmètre restauré avec succès.", {
+        position: "bottom-right",
+        richColors: true,
+      });
+      void refreshRouter();
+    },
   });
 
   const estSupprimé = perimetreData?.deletedAt != null;
@@ -81,7 +87,6 @@ const PageAdminPerimetreEdition = ({
     })),
   ];
 
-  const succès = router.query._action === "modification-reussie";
   const titre = estUneCréation
     ? `Nouveau périmètre - ${perimetreIdEffectif}`
     : `Périmètre ${perimetreId}`;
@@ -99,20 +104,6 @@ const PageAdminPerimetreEdition = ({
           libelléPageCourante={titre}
         />
 
-        {succès && (
-          <Alerte
-            classesSupplementaires="mb-6"
-            message="Périmètre enregistré avec succès."
-            type="succès"
-          />
-        )}
-        {alerte && (
-          <Alerte
-            classesSupplementaires="mb-6"
-            titre={alerte.titre}
-            type="erreur"
-          />
-        )}
         {!estUneCréation && !estSupprimé && estUtilisé && (
           <Alerte
             classesSupplementaires="mb-6"

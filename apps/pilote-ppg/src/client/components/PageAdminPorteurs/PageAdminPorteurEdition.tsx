@@ -1,9 +1,10 @@
 import { $Enums } from "@prisma/client";
-import { useRouter } from "next/router";
 import { Controller, FormProvider } from "react-hook-form";
+import { toast } from "sonner";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { MetadataPorteur } from "@/server/metadataPorteur/queries/RecupererPorteurQuery";
 import {
   defaultPorteurVide,
@@ -38,7 +39,7 @@ const PageAdminPorteurEdition = ({
   porteurData,
   idSuivant,
 }: Props) => {
-  const router = useRouter();
+  const refreshRouter = useRefreshRouter();
   const porteurIdEffectif = estUneCréation
     ? (idSuivant ?? porteurId)
     : porteurId;
@@ -55,24 +56,29 @@ const PageAdminPorteurEdition = ({
       }
     : defaultPorteurVide(porteurIdEffectif);
 
-  const { reactHookForm, enregistrer, alerte, isPending } = usePorteurForm({
+  const { reactHookForm, enregistrer, isPending } = usePorteurForm({
     defaultValues,
-    porteurId: porteurIdEffectif,
     estUneCréation,
   });
 
   const archiverMutation = api.metadataPorteur.archiver.useMutation({
-    onSuccess: () =>
-      router.push(
-        `/panel-administrateur/referentiels/porteurs/${porteurIdEffectif}?_action=modification-reussie`,
-      ),
+    onSuccess: () => {
+      toast.success("Porteur archivé avec succès.", {
+        position: "bottom-right",
+        richColors: true,
+      });
+      void refreshRouter();
+    },
   });
 
   const restorerMutation = api.metadataPorteur.restorer.useMutation({
-    onSuccess: () =>
-      router.push(
-        `/panel-administrateur/referentiels/porteurs/${porteurIdEffectif}?_action=modification-reussie`,
-      ),
+    onSuccess: () => {
+      toast.success("Porteur restauré avec succès.", {
+        position: "bottom-right",
+        richColors: true,
+      });
+      void refreshRouter();
+    },
   });
 
   const estSupprime = porteurData?.deletedAt != null;
@@ -84,7 +90,6 @@ const PageAdminPorteurEdition = ({
     );
   const estUtilisé = utilisation?.estUtilise ?? false;
 
-  const succès = router.query._action === "modification-reussie";
   const titre = estUneCréation
     ? `Nouveau porteur - ${porteurIdEffectif}`
     : `Porteur ${porteurId}`;
@@ -102,20 +107,6 @@ const PageAdminPorteurEdition = ({
           libelléPageCourante={titre}
         />
 
-        {succès && (
-          <Alerte
-            classesSupplementaires="mb-6"
-            message="Porteur enregistré avec succès."
-            type="succès"
-          />
-        )}
-        {alerte && (
-          <Alerte
-            classesSupplementaires="mb-6"
-            titre={alerte.titre}
-            type="erreur"
-          />
-        )}
         {!estUneCréation && !estSupprime && estUtilisé && (
           <Alerte
             classesSupplementaires="mb-6"

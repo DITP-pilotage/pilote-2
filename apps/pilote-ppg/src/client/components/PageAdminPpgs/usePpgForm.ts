@@ -1,12 +1,11 @@
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useState } from "react";
 import { useRouter } from "next/router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { toast } from "sonner";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { ppgCommandSchema } from "@/server/metadataPpg/handlers/EnregistrerPpgHandler";
-import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 
 export type PpgForm = z.infer<typeof ppgCommandSchema>;
 
@@ -20,15 +19,12 @@ export const defaultPpgVide = (): PpgForm => ({
 
 export const usePpgForm = ({
   defaultValues,
-  ppgId,
   estUneCréation,
 }: {
   defaultValues: PpgForm;
-  ppgId: string;
   estUneCréation: boolean;
 }) => {
   const router = useRouter();
-  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
 
   const reactHookForm = useForm<PpgForm>({
     resolver: zodResolver(ppgCommandSchema),
@@ -37,17 +33,19 @@ export const usePpgForm = ({
 
   const mutation = api.metadataPpg.enregistrer.useMutation({
     onSuccess: () => {
+      toast.success(
+        estUneCréation ? "PPG créé avec succès." : "PPG modifié avec succès.",
+        { position: "bottom-right", richColors: true },
+      );
       if (estUneCréation) {
-        void router.push(
-          "/panel-administrateur/referentiels-deprecies/ppgs?_action=creation-reussie",
-        );
-      } else {
-        void router.push(
-          `/panel-administrateur/referentiels-deprecies/ppgs/${ppgId}?_action=modification-reussie`,
-        );
+        void router.push("/panel-administrateur/referentiels-deprecies/ppgs");
       }
     },
-    onError: (error) => setAlerte({ type: "erreur", titre: error.message }),
+    onError: (error) =>
+      toast.error(error.message, {
+        position: "bottom-right",
+        richColors: true,
+      }),
   });
 
   const enregistrer: SubmitHandler<PpgForm> = (data) => {
@@ -62,7 +60,6 @@ export const usePpgForm = ({
   return {
     reactHookForm,
     enregistrer,
-    alerte,
     isPending: mutation.isPending,
   };
 };

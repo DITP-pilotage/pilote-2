@@ -1,8 +1,9 @@
-import { useRouter } from "next/router";
 import { Controller, FormProvider } from "react-hook-form";
+import { toast } from "sonner";
 import FilAriane from "@/components/_commons/FilAriane/FilAriane";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
+import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
 import { MetadataPpg } from "@/server/metadataPpg/queries/RecupererPpgQuery";
 import {
   defaultPpgVide,
@@ -23,7 +24,7 @@ interface Props {
 }
 
 const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
-  const router = useRouter();
+  const refreshRouter = useRefreshRouter();
 
   const defaultValues: PpgForm = ppgData
     ? {
@@ -35,9 +36,8 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
       }
     : defaultPpgVide();
 
-  const { reactHookForm, enregistrer, alerte, isPending } = usePpgForm({
+  const { reactHookForm, enregistrer, isPending } = usePpgForm({
     defaultValues,
-    ppgId,
     estUneCréation,
   });
 
@@ -45,17 +45,23 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
   const axesActifs = axes.filter((axe) => axe.deletedAt === null);
 
   const archiverMutation = api.metadataPpg.archiver.useMutation({
-    onSuccess: () =>
-      router.push(
-        `/panel-administrateur/referentiels-deprecies/ppgs/${ppgId}?_action=modification-reussie`,
-      ),
+    onSuccess: () => {
+      toast.success("PPG archivé avec succès.", {
+        position: "bottom-right",
+        richColors: true,
+      });
+      void refreshRouter();
+    },
   });
 
   const restorerMutation = api.metadataPpg.restorer.useMutation({
-    onSuccess: () =>
-      router.push(
-        `/panel-administrateur/referentiels-deprecies/ppgs/${ppgId}?_action=modification-reussie`,
-      ),
+    onSuccess: () => {
+      toast.success("PPG restauré avec succès.", {
+        position: "bottom-right",
+        richColors: true,
+      });
+      void refreshRouter();
+    },
   });
 
   const estSupprime = ppgData?.deletedAt != null;
@@ -66,7 +72,6 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
   );
   const estUtilisé = utilisation?.estUtilise ?? false;
 
-  const succès = router.query._action === "modification-reussie";
   const titre = estUneCréation ? "Nouveau PPG" : `PPG ${ppgId}`;
 
   return (
@@ -82,20 +87,6 @@ const PageAdminPpgEdition = ({ ppgId, estUneCréation, ppgData }: Props) => {
           libelléPageCourante={titre}
         />
 
-        {succès && (
-          <Alerte
-            classesSupplementaires="mb-6"
-            message="PPG enregistré avec succès."
-            type="succès"
-          />
-        )}
-        {alerte && (
-          <Alerte
-            classesSupplementaires="mb-6"
-            titre={alerte.titre}
-            type="erreur"
-          />
-        )}
         {!estUneCréation && !estSupprime && estUtilisé && (
           <Alerte
             classesSupplementaires="mb-6"

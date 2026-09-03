@@ -1,9 +1,9 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { toast } from "sonner";
 import api from "@/server/infrastructure/api/trpc/api";
 import { récupérerUnCookie } from "@/client/utils/cookies";
 import { useRefreshRouter } from "@/client/hooks/useRefreshRouter";
-import AlerteProps from "@/components/_commons/Alerte/Alerte.interface";
 import { MAILLES, Maille } from "@/server/metadataChantier/domain/maille";
 import { IndicateurPonderation } from "@/server/metadataChantier/queries/RecupererIndicateursPonderationsChantierQuery";
 
@@ -66,10 +66,8 @@ function calculerErreursSommes(
 export const usePonderationsIndicateursForm = ({
   ponderations,
 }: {
-  chantierId: string;
   ponderations: IndicateurPonderation[];
 }) => {
-  const [alerte, setAlerte] = useState<AlerteProps | null>(null);
   const refreshRouter = useRefreshRouter();
 
   const reactHookForm = useForm<PonderationsForm>({
@@ -95,13 +93,17 @@ export const usePonderationsIndicateursForm = ({
   const mutation =
     api.metadataChantier.enregistrerPonderationsIndicateurs.useMutation({
       onSuccess: () => {
-        setAlerte({
-          type: "succès",
-          titre: "Les pondérations ont bien été enregistrées.",
+        toast.success("Les pondérations ont bien été enregistrées.", {
+          position: "bottom-right",
+          richColors: true,
         });
-        refreshRouter();
+        void refreshRouter();
       },
-      onError: (error) => setAlerte({ type: "erreur", titre: error.message }),
+      onError: (error) =>
+        toast.error(error.message, {
+          position: "bottom-right",
+          richColors: true,
+        }),
     });
 
   const enregistrer = reactHookForm.handleSubmit((data) => {
@@ -121,7 +123,6 @@ export const usePonderationsIndicateursForm = ({
     sommesParMaille,
     erreursSommes,
     enregistrer,
-    alerte,
     estEnCoursDEnregistrement: mutation.isPending,
   };
 };
