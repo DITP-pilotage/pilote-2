@@ -132,8 +132,6 @@ const OngletPonderationsIndicateurs = ({
     );
   }
 
-  const auMoinsUneErreur = Object.keys(erreursSommes).length > 0;
-
   return (
     <form onSubmit={enregistrer}>
       {alerte && (
@@ -144,7 +142,7 @@ const OngletPonderationsIndicateurs = ({
 
       <div className="flex items-center justify-end mb-4">
         <Bouton
-          disabled={estEnCoursDEnregistrement || auMoinsUneErreur}
+          disabled={estEnCoursDEnregistrement}
           label="Enregistrer"
           type="submit"
           variant="primary"
@@ -185,7 +183,7 @@ const OngletPonderationsIndicateurs = ({
 
       <div className="flex justify-end mt-6 pt-4 border-t border-dsfr-grey-925">
         <Bouton
-          disabled={estEnCoursDEnregistrement || auMoinsUneErreur}
+          disabled={estEnCoursDEnregistrement}
           label="Enregistrer"
           type="submit"
           variant="primary"

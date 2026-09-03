@@ -105,7 +105,6 @@ export const usePonderationsIndicateursForm = ({
     });
 
   const enregistrer = reactHookForm.handleSubmit((data) => {
-    if (Object.keys(erreursSommes).length > 0) return;
     mutation.mutate({
       csrf: récupérerUnCookie("csrf") ?? "",
       lignes: data.lignes.map((ligne, index) => ({
