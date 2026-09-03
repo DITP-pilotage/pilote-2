@@ -31,6 +31,7 @@ export class GetChantierObjectifsQuery {
         contenu: true,
         date_modification: true,
       },
+      orderBy: { date_modification: "desc" },
     });
 
     const toItem = (type: $Enums.type_objectif): ObjectifItem | null => {
