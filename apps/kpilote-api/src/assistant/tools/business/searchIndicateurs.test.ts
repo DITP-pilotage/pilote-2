@@ -85,7 +85,7 @@ describe('searchEntites', () => {
     expect(output.results.map((entite) => entite.publicId)).toEqual(['IND-1'])
   })
 
-  it('renvoie vide avec une raison quand la requête n’a aucun terme exploitable', async () => {
+  it("renvoie vide avec une raison quand la requête n'a aucun terme exploitable", async () => {
     const rank = vi.fn(() => Promise.resolve([]))
     const output = await searchEntites({
       query: 'et le ?',
