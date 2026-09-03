@@ -22,7 +22,7 @@ export const listCollections = (
   if (params.rechercheIdentifiant) {
     filters.publicId = { contains: params.rechercheIdentifiant, mode: 'insensitive' }
   }
-  if (params.ids && params.ids.length > 0) {
+  if (params.ids?.length) {
     filters.publicId = { in: params.ids }
   }
   // Un principal ADMIN administre toutes les collections (PUBLIC + PRIVÉ), cohérent

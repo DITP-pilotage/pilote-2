@@ -1,3 +1,5 @@
+import { type streamText } from 'ai'
+
 import { db } from '@/framework/persistence/dbStore'
 
 const MAX_TITLE_LENGTH = 80
@@ -44,6 +46,13 @@ export const recordConversation = async ({
   })
 }
 
+/**
+ * Ce que rend `streamText().response` : les métadonnées du tour et les messages générés,
+ * appels et résultats d'outils compris. Dérivé du SDK plutôt que redéclaré — la trace
+ * suit le format que `ai` produit, sans qu'on ait à le maintenir à la main.
+ */
+export type AssistantTranscript = Awaited<ReturnType<typeof streamText>['response']>
+
 export const recordCall = async ({
   conversationId,
   principalId,
@@ -58,7 +67,7 @@ export const recordCall = async ({
   principalId: string
   model: string
   surface: string
-  transcript: unknown
+  transcript: AssistantTranscript
   inputTokens: number
   outputTokens: number
   dureeMs: number

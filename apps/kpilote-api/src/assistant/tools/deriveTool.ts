@@ -9,16 +9,15 @@ export type WhitelistEntry = { name: ToolName; route: RouteConfig }
 
 const PATH_PARAM = /\{([^}]+)\}/g
 
+const SCALAR_TYPES = new Set(['string', 'number', 'boolean'])
+
 /**
  * Un paramètre d'URL ne peut être qu'un scalaire. Tout le reste renvoie `null` et est
  * ignoré : `String({})` produirait `[object Object]` dans l'URL, ce qu'aucune route
  * n'attend et que personne ne diagnostiquerait facilement.
  */
-const toScalar = (value: unknown): string | null => {
-  if (typeof value === 'string') return value
-  if (typeof value === 'number' || typeof value === 'boolean') return String(value)
-  return null
-}
+const toScalar = (value: unknown): string | null =>
+  SCALAR_TYPES.has(typeof value) ? String(value) : null
 
 /**
  * Reconstitue l'URL documentée par la route : les paramètres qui apparaissent entre

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { buildUrl, deriveTool } from '@/assistant/tools/deriveTool'
+import { buildUrl, deriveTool, type WhitelistEntry } from '@/assistant/tools/deriveTool'
 import { WHITELIST } from '@/assistant/tools/whitelist'
 
 describe('buildUrl', () => {
@@ -38,47 +38,46 @@ describe('buildUrl', () => {
 })
 
 describe('deriveTool', () => {
-  const entree = WHITELIST.find((candidat) => candidat.name === 'get_indicateur')!
+  const entry = WHITELIST.find((candidat) => candidat.name === 'get_indicateur')!
 
   it('passe par le requêteur injecté, jamais par une app importée', async () => {
-    const requeteur = vi.fn(() => Promise.resolve(new Response(JSON.stringify({ id: 'IND-42' }))))
-    const outil = deriveTool(entree, requeteur)
+    const fetcher = vi.fn(() => Promise.resolve(new Response(JSON.stringify({ id: 'IND-42' }))))
+    const tool = deriveTool(entry, fetcher)
 
-    const sortie = await outil.execute?.({ id: 'IND-42' }, { toolCallId: 't', messages: [] })
+    const output = await tool.execute?.({ id: 'IND-42' }, { toolCallId: 't', messages: [] })
 
-    expect(requeteur).toHaveBeenCalledWith('/indicateurs/IND-42')
-    expect(sortie).toEqual({ id: 'IND-42' })
+    expect(fetcher).toHaveBeenCalledWith('/indicateurs/IND-42')
+    expect(output).toEqual({ id: 'IND-42' })
   })
 
-  it('renvoie une error lisible plutôt que de faire tomber le tour', async () => {
-    const requeteur = vi.fn(() => Promise.resolve(new Response('nope', { status: 403 })))
-    const outil = deriveTool(entree, requeteur)
+  it('renvoie une erreur lisible plutôt que de faire tomber le tour', async () => {
+    const fetcher = vi.fn(() => Promise.resolve(new Response('nope', { status: 403 })))
+    const tool = deriveTool(entry, fetcher)
 
-    const sortie = await outil.execute?.({ id: 'IND-42' }, { toolCallId: 't', messages: [] })
+    const output = await tool.execute?.({ id: 'IND-42' }, { toolCallId: 't', messages: [] })
 
-    expect(sortie).toEqual({ error: expect.stringContaining('403') })
+    expect(output).toContainEntry(['error', expect.stringContaining('403')])
   })
 
   it('reprend la description de la route, que le modèle lit au moment de décider', () => {
-    const outil = deriveTool(entree, () => Promise.resolve(new Response('{}')))
-    expect(outil.description).toBe(entree.route.description)
+    const tool = deriveTool(entry, () => Promise.resolve(new Response('{}')))
+    expect(tool.description).toBe(entry.route.description)
   })
 })
 
 describe('WHITELIST', () => {
-  it('expose huit entrées aux noms uniques', () => {
-    const noms = WHITELIST.map((entreeCourante) => entreeCourante.name)
-    expect(noms).toHaveLength(8)
-    expect(new Set(noms).size).toBe(8)
+  it('expose huit entrées aux names uniques', () => {
+    const names = WHITELIST.map((entry) => entry.name)
+    expect(names).toHaveLength(8)
+    expect(names).toBeArrayOfSize(8)
+    expect(new Set(names).size).toBe(8)
   })
 
   it('ne référence que des routes de lecture', () => {
-    expect(WHITELIST.every((entreeCourante) => entreeCourante.route.method === 'get')).toBe(true)
+    expect(WHITELIST).toSatisfyAll((entry: WhitelistEntry) => entry.route.method === 'get')
   })
 
   it('porte une description substantielle sur chaque route, lue par le modèle', () => {
-    expect(
-      WHITELIST.every((entreeCourante) => (entreeCourante.route.description ?? '').length > 40),
-    ).toBe(true)
+    expect(WHITELIST.every((entry) => (entry.route.description ?? '').length > 40)).toBe(true)
   })
 })

@@ -54,7 +54,7 @@ describe('composeView', () => {
     expect(compose.mock.calls[1]?.[0]).toContain('IND-9')
   })
 
-  it('abandonne après une relance et renvoie une error lisible', async () => {
+  it('abandonne après une relance et renvoie une erreur lisible', async () => {
     const compose = vi.fn(() => Promise.resolve(invalidView))
 
     const output = await composeView({ ...context, compose })
