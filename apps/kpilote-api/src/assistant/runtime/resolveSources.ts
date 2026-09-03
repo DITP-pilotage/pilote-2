@@ -9,6 +9,10 @@ import { listIndicateurs } from '@/indicateur/queries/listIndicateurs'
 import { listIndividus } from '@/individu/queries/listIndividus'
 import { listReferentiels } from '@/referentiel/queries/listReferentiels'
 
+// Les quatre queries filtrent par `ids` : BATCH_SIZE borne le nombre de sources
+// CITÉES dans un tour, pas la taille du catalogue. Un tour qui dépasserait cent
+// entités distinctes n'existe pas — les entrées d'outils sont déjà bornées bien
+// en dessous.
 const BATCH_SIZE = 100
 
 // Les quatre types sont résolus, mais seuls deux ont une page de détail dans le front.
@@ -50,23 +54,18 @@ export const resolveSources = async (references: SourceReference[]): Promise<Sou
         () => [],
       ),
     ),
-    // Référentiels et individus n'ont pas de filtre `ids` sur leur query : on filtre après
-    // chargement. Si leur volumétrie dépasse BATCH_SIZE, leur ajouter `ids` comme on l'a
-    // fait pour les collections, plutôt que d'augmenter la page.
-    load(idsOfType(references, 'referentiel'), async (ids) => {
-      const items = await listReferentiels({ pageSize: BATCH_SIZE }).match(
+    load(idsOfType(references, 'referentiel'), (ids) =>
+      listReferentiels({ ids, pageSize: BATCH_SIZE }).match(
         (data) => data.items,
         () => [],
-      )
-      return items.filter((item) => ids.includes(item.id))
-    }),
-    load(idsOfType(references, 'individu'), async (ids) => {
-      const items = await listIndividus({ pageSize: BATCH_SIZE }).match(
+      ),
+    ),
+    load(idsOfType(references, 'individu'), (ids) =>
+      listIndividus({ ids, pageSize: BATCH_SIZE }).match(
         (data) => data.items,
         () => [],
-      )
-      return items.filter((item) => ids.includes(item.id))
-    }),
+      ),
+    ),
   ])
 
   // Les modèles d'API portent leur identifiant public sous `id`, pas `publicId`.

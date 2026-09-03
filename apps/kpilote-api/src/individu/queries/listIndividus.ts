@@ -2,15 +2,22 @@ import { type IndividuListApiModel, type ListIndividusQuery } from '@pilote/kpil
 import { ResultAsync } from 'neverthrow'
 
 import { db } from '@/framework/persistence/dbStore'
+import { type Prisma } from '@/generated/prisma/client'
 import { buildPaginationArgs, toPaginatedResponse } from '@/framework/persistence/paginate'
 import { individuInclude, toIndividuApiModel } from '@/individu/utils'
 
 export const listIndividus = (
   params: ListIndividusQuery,
 ): ResultAsync<IndividuListApiModel, never> => {
-  const where = params.recherche
-    ? { nom: { contains: params.recherche, mode: 'insensitive' as const } }
-    : {}
+  const where: Prisma.IndividuWhereInput = {
+    ...(params.recherche
+      ? { nom: { contains: params.recherche, mode: 'insensitive' as const } }
+      : {}),
+    // Résolution par lot : sans ce filtre, l'appelant devrait charger une page et
+    // filtrer en mémoire, et tout individu hors des `pageSize` premiers par nom
+    // disparaîtrait sans bruit.
+    ...(params.ids?.length ? { publicId: { in: params.ids } } : {}),
+  }
 
   const fetchPage = db().individu.findMany({
     where,

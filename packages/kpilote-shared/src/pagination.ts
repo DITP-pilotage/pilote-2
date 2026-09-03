@@ -36,6 +36,28 @@ export type PaginateQuery = {
   pageSize?: number | undefined
 }
 
+/**
+ * Filtre `ids` d'une route de liste. Accepté en CSV dans la query string
+ * (`?ids=A,B`) comme en tableau ; vide ou absent = aucun filtre.
+ *
+ * Factorisé ici parce que toute liste dont on résout des entités par lot en a
+ * besoin : sans lui, l'appelant doit charger une page et filtrer en mémoire, et
+ * tout ce qui dépasse `pageSize` disparaît silencieusement.
+ */
+export const idsFilterSchema = <T extends z.ZodType<string>>(publicIdSchema: T, exemple: string) =>
+  z
+    .preprocess((val) => {
+      if (typeof val !== 'string') return val
+      const parts = val
+        .split(',')
+        .map((p) => p.trim())
+        .filter(Boolean)
+      return parts.length === 0 ? undefined : parts
+    }, z.array(publicIdSchema).optional())
+    .describe(
+      `Filtre par identifiants publics (CSV, ex. \`${exemple}\`). Vide ou absent = aucun filtre.`,
+    )
+
 export const listQuerySchema = z.object({
   recherche: z.string().optional().describe('Filtre case-insensitive sur le nom.'),
   cursor: paginationCursorSchema.optional(),
