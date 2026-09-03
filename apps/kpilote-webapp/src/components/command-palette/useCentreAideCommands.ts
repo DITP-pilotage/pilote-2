@@ -54,7 +54,7 @@ const construireExtrait = (texte: string, requeteNormalisee: string): Extrait =>
 type ResultatCentreAide = {
   /** Résultats de recherche (articles qui matchent), affichés quand on tape. */
   results: Command[]
-  /** Entrée « Centre d'aide » par défaut, avec la liste des articles en actions (Tab). */
+  /** Entrée « Centre d'aide » par défaut, avec la liste des articles en actions (⌘K). */
   entry: Command | null
 }
 
